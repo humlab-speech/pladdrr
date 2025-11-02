@@ -59,13 +59,17 @@ List create_sound(NumericVector values, double sampling_frequency = 44100.0) {
     int n_samples = values.size();
     double duration = n_samples / sampling_frequency;
     
-    return List::create(
+    List result = List::create(
         Named("values") = values,
         Named("sampling_frequency") = sampling_frequency,
         Named("n_samples") = n_samples,
-        Named("duration") = duration,
-        Named("class") = "PraatSound"
+        Named("duration") = duration
     );
+    
+    // Set the class attribute for proper S3 dispatch
+    result.attr("class") = "PraatSound";
+    
+    return result;
 }
 
 //' Get sound duration

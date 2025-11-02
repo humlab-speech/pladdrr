@@ -23,7 +23,7 @@ test_that("create_sound creates valid sound object", {
     expect_type(sound, "list")
     expect_equal(sound$sampling_frequency, freq)
     expect_equal(sound$n_samples, 4)
-    expect_equal(sound$class, "PraatSound")
+    expect_s3_class(sound, "PraatSound")
     expect_true(sound$duration > 0)
 })
 

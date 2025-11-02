@@ -59,6 +59,5 @@ print.PraatSound <- function(x, ...) {
 #' @return Logical indicating if object is a PraatSound
 #' @export
 is_praat_sound <- function(x) {
-    inherits(x, "PraatSound") || 
-        (is.list(x) && !is.null(x$class) && x$class == "PraatSound")
+    inherits(x, "PraatSound")
 }
