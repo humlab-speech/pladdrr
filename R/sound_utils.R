@@ -29,7 +29,7 @@ generate_sine_wave <- function(frequency = 440,
                                amplitude = 0.5) {
     # Generate time points
     n_samples <- as.integer(duration * sampling_frequency)
-    t <- seq(0, duration, length.out = n_samples)
+    t <- seq(0, length.out = n_samples, by = 1/sampling_frequency)
     
     # Generate sine wave
     values <- amplitude * sin(2 * pi * frequency * t)
