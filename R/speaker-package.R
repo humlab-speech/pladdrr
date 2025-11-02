@@ -19,7 +19,3 @@
 #' @useDynLib speaker, .registration = TRUE
 #' @importFrom Rcpp evalCpp
 NULL
-
-#' @importFrom Rcpp evalCpp
-#' @useDynLib speaker, .registration = TRUE
-NULL
