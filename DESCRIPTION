@@ -1,0 +1,27 @@
+Package: speaker
+Type: Package
+Title: Direct Access to Praat C Functionality from R
+Version: 0.1.0
+Authors@R: c(
+    person("Humlab Speech", role = c("aut", "cre"),
+           email = "humlab-speech@umu.se")
+    )
+Description: Provides direct, efficient access to Praat C implemented 
+    functionality from R using Rcpp. Similar in concept to the parselmouth 
+    package for Python, this package allows R users to leverage Praat's 
+    powerful phonetic analysis capabilities directly.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.5.0)
+Imports:
+    Rcpp (>= 1.0.0)
+LinkingTo: Rcpp
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+SystemRequirements: C++11
+RoxygenNote: 7.3.1
+VignetteBuilder: knitr
