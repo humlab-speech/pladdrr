@@ -79,6 +79,132 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_speaker_get_sound_n_samples_cpp`, sound_obj)
 }
 
+#' Read Sound from file (internal)
+#' @keywords internal
+.sound_read_from_file <- function(path) {
+    .Call(`_speaker_sound_read_from_file`, path)
+}
+
+#' Create Sound from values (internal)
+#' @keywords internal
+.sound_create_from_values <- function(values, sampling_rate) {
+    .Call(`_speaker_sound_create_from_values`, values, sampling_rate)
+}
+
+#' Create simple tone (internal)
+#' @keywords internal
+.sound_create_tone <- function(duration, sampling_rate, frequency, amplitude) {
+    .Call(`_speaker_sound_create_tone`, duration, sampling_rate, frequency, amplitude)
+}
+
+#' Get sound duration (internal)
+#' @keywords internal
+.sound_get_duration <- function(xptr) {
+    .Call(`_speaker_sound_get_duration`, xptr)
+}
+
+#' Get sampling frequency (internal)
+#' @keywords internal
+.sound_get_sampling_frequency <- function(xptr) {
+    .Call(`_speaker_sound_get_sampling_frequency`, xptr)
+}
+
+#' Get number of samples (internal)
+#' @keywords internal
+.sound_get_number_of_samples <- function(xptr) {
+    .Call(`_speaker_sound_get_number_of_samples`, xptr)
+}
+
+#' Get number of channels (internal)
+#' @keywords internal
+.sound_get_number_of_channels <- function(xptr) {
+    .Call(`_speaker_sound_get_number_of_channels`, xptr)
+}
+
+#' Get value at time (internal)
+#' @keywords internal
+.sound_get_value_at_time <- function(xptr, time, channel) {
+    .Call(`_speaker_sound_get_value_at_time`, xptr, time, channel)
+}
+
+#' Get RMS (internal)
+#' @keywords internal
+.sound_get_rms <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_rms`, xptr, from_time, to_time)
+}
+
+#' Get energy (internal)
+#' @keywords internal
+.sound_get_energy <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_energy`, xptr, from_time, to_time)
+}
+
+#' Get power (internal)
+#' @keywords internal
+.sound_get_power <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_power`, xptr, from_time, to_time)
+}
+
+#' Get intensity in dB (internal)
+#' @keywords internal
+.sound_get_intensity_db <- function(xptr) {
+    .Call(`_speaker_sound_get_intensity_db`, xptr)
+}
+
+#' Convert Sound to Pitch (internal)
+#' @keywords internal
+.sound_to_pitch <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling) {
+    .Call(`_speaker_sound_to_pitch`, sound_xptr, time_step, pitch_floor, pitch_ceiling)
+}
+
+#' Convert Sound to Formant via Burg (internal)
+#' @keywords internal
+.sound_to_formant_burg <- function(sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from) {
+    .Call(`_speaker_sound_to_formant_burg`, sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
+}
+
+#' Convert Sound to Intensity (internal)
+#' @keywords internal
+.sound_to_intensity <- function(sound_xptr, minimum_pitch, time_step, subtract_mean) {
+    .Call(`_speaker_sound_to_intensity`, sound_xptr, minimum_pitch, time_step, subtract_mean)
+}
+
+#' Convert Sound to Harmonicity (internal)
+#' @keywords internal
+.sound_to_harmonicity_cc <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
+    .Call(`_speaker_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
+}
+
+#' Convert Sound to Spectrogram (internal)
+#' @keywords internal
+.sound_to_spectrogram <- function(sound_xptr, window_length, maximum_frequency, time_step, frequency_step, window_shape_int) {
+    .Call(`_speaker_sound_to_spectrogram`, sound_xptr, window_length, maximum_frequency, time_step, frequency_step, window_shape_int)
+}
+
+#' Convert Sound to Spectrum (internal)
+#' @keywords internal
+.sound_to_spectrum <- function(sound_xptr, fast) {
+    .Call(`_speaker_sound_to_spectrum`, sound_xptr, fast)
+}
+
+#' Export Sound as data frame (internal)
+#' @keywords internal
+.sound_as_data_frame <- function(xptr) {
+    .Call(`_speaker_sound_as_data_frame`, xptr)
+}
+
+#' Export Sound as matrix (internal)
+#' @keywords internal
+.sound_as_matrix <- function(xptr) {
+    .Call(`_speaker_sound_as_matrix`, xptr)
+}
+
+#' Save Sound to file (internal)
+#' @keywords internal
+.sound_save <- function(xptr, path, file_type) {
+    invisible(.Call(`_speaker_sound_save`, xptr, path, file_type))
+}
+
 #' Safe error wrapper for Praat calls
 #'
 #' Provides a consistent error handling pattern for Praat operations

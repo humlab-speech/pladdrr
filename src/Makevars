@@ -19,6 +19,7 @@ PKG_CPPFLAGS = -I. \
                -I$(PRAAT_SRC)/dwsys \
                -I$(PRAAT_SRC)/fon \
                -I$(PRAAT_SRC)/melder \
+               -I$(PRAAT_SRC)/kar \
                -I$(PRAAT_SRC)/external \
                -I$(PRAAT_SRC)/external/gsl
 
