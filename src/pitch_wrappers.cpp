@@ -3,6 +3,7 @@
 // Part of the speaker package
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "praat_types.h"
 
 // Praat headers
@@ -12,16 +13,6 @@
 #include "praat.github.io/melder/melder.h"
 
 using namespace Rcpp;
-
-// ============================================================================
-// Finalizer
-// ============================================================================
-
-void pitch_finalizer(structPitch* pitch) {
-    if (pitch != nullptr) {
-        forget(pitch);
-    }
-}
 
 // ============================================================================
 // Creation methods
@@ -43,14 +34,16 @@ Rcpp::XPtr<structPitch> pitch_from_sound(
             pitch_floor,
             pitch_ceiling
         );
-        structPitch* ptr = pitch.releaseToAmbiguousOwner();
-        return Rcpp::XPtr<structPitch>(ptr, true, pitch_finalizer);
+        return create_xptr_from_auto<structPitch>(pitch);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract pitch from sound");
     }
 }
 
+// Advanced methods - commented out for now, use Sound_to_Pitch instead
+// TODO: Implement with full parameter support
+/*
 // [[Rcpp::export(.pitch_from_sound_ac)]]
 Rcpp::XPtr<structPitch> pitch_from_sound_ac(
     Rcpp::XPtr<structSound> sound,
@@ -67,21 +60,20 @@ Rcpp::XPtr<structPitch> pitch_from_sound_ac(
     if (!sound) Rcpp::stop("Invalid Sound pointer");
     
     try {
-        autoPitch pitch = Sound_to_Pitch_ac(
+        autoPitch pitch = Sound_to_Pitch_rawAc(
             sound.get(),
             time_step,
             pitch_floor,
-            3.0,  // max_number_of_candidates (standard)
+            pitch_ceiling,
+            15,  // maxnCandidates
             very_accurate,
             silence_threshold,
             voicing_threshold,
             octave_cost,
             octave_jump_cost,
-            voiced_unvoiced_cost,
-            pitch_ceiling
+            voiced_unvoiced_cost
         );
-        structPitch* ptr = pitch.releaseToAmbiguousOwner();
-        return Rcpp::XPtr<structPitch>(ptr, true, pitch_finalizer);
+        return create_xptr_from_auto<structPitch>(pitch);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract pitch using autocorrelation method");
@@ -98,21 +90,26 @@ Rcpp::XPtr<structPitch> pitch_from_sound_cc(
     if (!sound) Rcpp::stop("Invalid Sound pointer");
     
     try {
-        autoPitch pitch = Sound_to_Pitch_cc(
+        autoPitch pitch = Sound_to_Pitch_rawCc(
             sound.get(),
             time_step,
             pitch_floor,
-            1.0,  // max_number_of_candidates
-            kPitch_unit::HERTZ,
-            pitch_ceiling
+            pitch_ceiling,
+            15,  // maxnCandidates
+            true,  // veryAccurate
+            0.03,  // silence_threshold
+            0.45,  // voicing_threshold
+            0.01,  // octave_cost
+            0.35,  // octave_jump_cost
+            0.14   // voiced_unvoiced_cost
         );
-        structPitch* ptr = pitch.releaseToAmbiguousOwner();
-        return Rcpp::XPtr<structPitch>(ptr, true, pitch_finalizer);
+        return create_xptr_from_auto<structPitch>(pitch);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract pitch using cross-correlation method");
     }
 }
+*/
 
 // ============================================================================
 // Query methods - Time domain
@@ -415,7 +412,7 @@ void pitch_save(Rcpp::XPtr<structPitch> pitch, std::string path) {
     if (!pitch) Rcpp::stop("Invalid Pitch pointer");
     
     try {
-        MelderFile file;
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(pitch.get(), &file);
     } catch (MelderError) {

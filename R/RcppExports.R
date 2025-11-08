@@ -129,14 +129,6 @@
     .Call(`_speaker_pitch_from_sound`, sound, time_step, pitch_floor, pitch_ceiling)
 }
 
-.pitch_from_sound_ac <- function(sound, time_step, pitch_floor, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost, pitch_ceiling) {
-    .Call(`_speaker_pitch_from_sound_ac`, sound, time_step, pitch_floor, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost, pitch_ceiling)
-}
-
-.pitch_from_sound_cc <- function(sound, time_step, pitch_floor, pitch_ceiling) {
-    .Call(`_speaker_pitch_from_sound_cc`, sound, time_step, pitch_floor, pitch_ceiling)
-}
-
 .pitch_get_time_from_frame <- function(pitch, frame_number) {
     .Call(`_speaker_pitch_get_time_from_frame`, pitch, frame_number)
 }
@@ -403,6 +395,130 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_save <- function(xptr, path, file_type) {
     invisible(.Call(`_speaker_sound_save`, xptr, path, file_type))
+}
+
+.textgrid_read_from_file <- function(path) {
+    .Call(`_speaker_textgrid_read_from_file`, path)
+}
+
+.textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
+    .Call(`_speaker_textgrid_create`, tmin, tmax, tier_names, point_tiers)
+}
+
+.textgrid_save <- function(xptr, path) {
+    invisible(.Call(`_speaker_textgrid_save`, xptr, path))
+}
+
+.textgrid_get_start_time <- function(xptr) {
+    .Call(`_speaker_textgrid_get_start_time`, xptr)
+}
+
+.textgrid_get_end_time <- function(xptr) {
+    .Call(`_speaker_textgrid_get_end_time`, xptr)
+}
+
+.textgrid_get_total_duration <- function(xptr) {
+    .Call(`_speaker_textgrid_get_total_duration`, xptr)
+}
+
+.textgrid_get_number_of_tiers <- function(xptr) {
+    .Call(`_speaker_textgrid_get_number_of_tiers`, xptr)
+}
+
+.textgrid_get_tier_name <- function(xptr, tier_number) {
+    .Call(`_speaker_textgrid_get_tier_name`, xptr, tier_number)
+}
+
+.textgrid_get_tier_names <- function(xptr) {
+    .Call(`_speaker_textgrid_get_tier_names`, xptr)
+}
+
+.textgrid_tier_is_interval_tier <- function(xptr, tier_number) {
+    .Call(`_speaker_textgrid_tier_is_interval_tier`, xptr, tier_number)
+}
+
+.textgrid_tier_is_point_tier <- function(xptr, tier_number) {
+    .Call(`_speaker_textgrid_tier_is_point_tier`, xptr, tier_number)
+}
+
+.textgrid_get_number_of_intervals <- function(xptr, tier_number) {
+    .Call(`_speaker_textgrid_get_number_of_intervals`, xptr, tier_number)
+}
+
+.textgrid_get_interval_start_time <- function(xptr, tier_number, interval_number) {
+    .Call(`_speaker_textgrid_get_interval_start_time`, xptr, tier_number, interval_number)
+}
+
+.textgrid_get_interval_end_time <- function(xptr, tier_number, interval_number) {
+    .Call(`_speaker_textgrid_get_interval_end_time`, xptr, tier_number, interval_number)
+}
+
+.textgrid_get_interval_text <- function(xptr, tier_number, interval_number) {
+    .Call(`_speaker_textgrid_get_interval_text`, xptr, tier_number, interval_number)
+}
+
+.textgrid_get_interval_at_time <- function(xptr, tier_number, time) {
+    .Call(`_speaker_textgrid_get_interval_at_time`, xptr, tier_number, time)
+}
+
+.textgrid_get_label_at_time <- function(xptr, tier_number, time) {
+    .Call(`_speaker_textgrid_get_label_at_time`, xptr, tier_number, time)
+}
+
+.textgrid_set_interval_text <- function(xptr, tier_number, interval_number, text) {
+    invisible(.Call(`_speaker_textgrid_set_interval_text`, xptr, tier_number, interval_number, text))
+}
+
+.textgrid_insert_boundary <- function(xptr, tier_number, time) {
+    invisible(.Call(`_speaker_textgrid_insert_boundary`, xptr, tier_number, time))
+}
+
+.textgrid_remove_boundary <- function(xptr, tier_number, time) {
+    invisible(.Call(`_speaker_textgrid_remove_boundary`, xptr, tier_number, time))
+}
+
+.textgrid_get_number_of_points <- function(xptr, tier_number) {
+    .Call(`_speaker_textgrid_get_number_of_points`, xptr, tier_number)
+}
+
+.textgrid_get_point_time <- function(xptr, tier_number, point_number) {
+    .Call(`_speaker_textgrid_get_point_time`, xptr, tier_number, point_number)
+}
+
+.textgrid_get_point_text <- function(xptr, tier_number, point_number) {
+    .Call(`_speaker_textgrid_get_point_text`, xptr, tier_number, point_number)
+}
+
+.textgrid_insert_point <- function(xptr, tier_number, time, mark) {
+    invisible(.Call(`_speaker_textgrid_insert_point`, xptr, tier_number, time, mark))
+}
+
+.textgrid_set_point_text <- function(xptr, tier_number, point_number, text) {
+    invisible(.Call(`_speaker_textgrid_set_point_text`, xptr, tier_number, point_number, text))
+}
+
+.textgrid_remove_point <- function(xptr, tier_number, point_number) {
+    invisible(.Call(`_speaker_textgrid_remove_point`, xptr, tier_number, point_number))
+}
+
+.textgrid_add_interval_tier <- function(xptr, name) {
+    invisible(.Call(`_speaker_textgrid_add_interval_tier`, xptr, name))
+}
+
+.textgrid_add_point_tier <- function(xptr, name) {
+    invisible(.Call(`_speaker_textgrid_add_point_tier`, xptr, name))
+}
+
+.textgrid_remove_tier <- function(xptr, tier_number) {
+    invisible(.Call(`_speaker_textgrid_remove_tier`, xptr, tier_number))
+}
+
+.textgrid_extract_part <- function(xptr, start_time, end_time, preserve_times) {
+    .Call(`_speaker_textgrid_extract_part`, xptr, start_time, end_time, preserve_times)
+}
+
+.textgrid_to_data_frame <- function(xptr, tier_numbers = NULL) {
+    .Call(`_speaker_textgrid_to_data_frame`, xptr, tier_numbers)
 }
 
 #' Safe error wrapper for Praat calls
