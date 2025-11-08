@@ -7,7 +7,7 @@
 # Requirements: Rtools (https://cran.r-project.org/bin/windows/Rtools/)
 
 # Use C++11 standard (required for Rcpp and modern C++ features)
-CXX_STD = CXX11
+CXX_STD = CXX17
 
 # Praat source directory (to be populated with Praat C code)
 PRAAT_SRC = praat

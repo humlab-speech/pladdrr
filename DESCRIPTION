@@ -27,7 +27,7 @@ Suggests:
     knitr,
     rmarkdown,
     covr
-SystemRequirements: C++11
+SystemRequirements: C++17
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 URL: https://github.com/humlab-speech/speaker

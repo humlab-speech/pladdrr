@@ -1,13 +1,5 @@
 #include <Rcpp.h>
-
-// Forward declarations for Praat types
-typedef struct structSound *Sound;
-typedef struct structPitch *Pitch;
-
-// Now include Praat headers
-#include "melder.h"
-#include "Sound.h"
-#include "Pitch.h"
+#include "praat_r6_minimal.h"
 
 using namespace Rcpp;
 
