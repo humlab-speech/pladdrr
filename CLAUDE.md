@@ -74,8 +74,363 @@ Important Notes
 - When checking implementations, be specific about what you're looking for to get accurate results
 
 ## Active Technologies
-- R 4.0+ with C++11 (minimum for Rcpp compatibility) (001-praat-r-access)
+- R 4.0+ with C++17 (upgraded for Praat source compatibility) (001-praat-r-access)
+- R6 OOP framework (for object-oriented Praat interface) (001-praat-r-access)
 - N/A (in-memory audio processing, no persistent storage) (001-praat-r-access)
 
 ## Recent Changes
-- 001-praat-r-access: Added R 4.0+ with C++11 (minimum for Rcpp compatibility)
+- 001-praat-r-access: Upgraded to C++17 for Praat source compatibility
+- 001-praat-r-access: Adopted R6-based object-oriented architecture
+
+---
+
+## ARCHITECTURAL DECISIONS FOR PRAAT INTEGRATION
+
+### Decision Date: 2025-11-08
+
+### Context
+The initial implementation used a functional approach (standalone functions for pitch, formant extraction, etc.), but this doesn't reflect Praat's inherently object-oriented nature. Praat is built on a C++ object hierarchy with the `Thing` base class and objects like Sound, Pitch, Formant, TextGrid, etc. The Python Parselmouth library successfully mirrors this OOP structure.
+
+### Decision: Object-Oriented R6 Architecture
+
+**Rationale:**
+1. **Mirrors Praat's Native Design**: Praat is fundamentally OOP with persistent object state and method chaining
+2. **Proven Pattern**: Parselmouth's success demonstrates this approach works well
+3. **Efficient**: Avoids data copying between operations via external pointers to C++ objects
+4. **Intuitive**: Users familiar with Praat scripts can easily translate to R code
+5. **Extensible**: Easy to add new objects and methods as Praat functionality is needed
+
+### Core Architecture Pattern
+
+```
+R Layer (R6 Classes)          C++ Layer (Praat Objects via XPtr)
+─────────────────────────────────────────────────────────
+PraatObject (base)     <───>  Thing* (base, managed by XPtr)
+  └─ Sound             <───>  structSound*
+  └─ Pitch             <───>  structPitch*
+  └─ Formant           <───>  structFormant*
+  └─ Intensity         <───>  structIntensity*
+  └─ TextGrid          <───>  structTextGrid*
+  └─ Spectrogram       <───>  structSpectrogram*
+  └─ Spectrum          <───>  structSpectrum*
+  └─ Manipulation      <───>  structManipulation*
+  └─ PointProcess      <───>  structPointProcess*
+  └─ Harmonicity       <───>  structHarmonicity*
+  └─ LPC               <───>  structLPC*
+  └─ [Future objects]
+```
+
+### Implementation Guidelines for New Objects
+
+#### 1. Naming Conventions (Praat → R)
+
+| Praat Command Pattern | R6 Method Pattern | Example |
+|----------------------|-------------------|---------|
+| `Get [property]` | `get_[property]()` | `get_duration()`, `get_sampling_frequency()` |
+| `To [Object]...` | `to_[object]()` | `to_pitch()`, `to_formant_burg()` |
+| `Extract [part]...` | `extract_[part]()` | `extract_part()`, `extract_channel()` |
+| `[Action]...` | `[action]()` | `scale_intensity()`, `resample()` |
+| `Down to [Type]` | `as_[type]()` or `to_[type]()` | `as_data_frame()`, `as_matrix()` |
+| `Save as...` | `save()` | `save("output.wav")` |
+
+**Consistency Rules:**
+- **Query methods**: `get_*()` → returns value, doesn't modify object
+- **Transformation methods**: `to_*()` → creates and returns new object of different type
+- **Extraction methods**: `extract_*()` → creates new object of same type (subset)
+- **Modification methods**: verb without prefix → modifies object in place (when possible)
+- **Export methods**: `as_*()` → converts to native R type (data.frame, matrix, vector)
+- **I/O methods**: `save(path)` for writing, `$new(path)` constructor for reading
+
+#### 2. C++ Wrapper Pattern
+
+Each Praat object requires C++ wrappers following this pattern:
+
+```cpp
+// File: src/[object]_wrappers.cpp
+
+#include <Rcpp.h>
+#include "praat.github.io/[relevant headers]"
+#include "praat_xptr_utils.h"
+#include "praat_error_handling.h"
+
+using namespace Rcpp;
+
+// Finalizer for proper memory management
+void [object]_finalizer(struct[Object]* obj) {
+    if (obj != nullptr) {
+        forget(obj);  // Praat's memory management
+    }
+}
+
+// Constructor - read from file
+// [[Rcpp::export(.[object]_new)]]
+XPtr<struct[Object]> [object]_new(std::string path) {
+    try {
+        auto[Object] obj = [Object]_readFromFile(Melder_peek8to32(path.c_str()));
+        struct[Object]* ptr = obj.releaseToAmbiguousOwner();
+        return XPtr<struct[Object]>(ptr, true, [object]_finalizer);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to read [Object] from: " + path);
+    }
+}
+
+// Query method example
+// [[Rcpp::export(.[object]_get_[property])]]
+double [object]_get_[property](XPtr<struct[Object]> xptr) {
+    if (!xptr) stop("Invalid [Object] pointer");
+    struct[Object]* obj = xptr.get();
+    // Access Praat object properties/methods
+    return [Object]_get[Property](obj);
+}
+
+// Transformation method example (returns different object type)
+// [[Rcpp::export(.[object]_to_[other_object])]]
+XPtr<struct[OtherObject]> [object]_to_[other_object](
+    XPtr<struct[Object]> xptr,
+    double param1,
+    double param2
+) {
+    if (!xptr) stop("Invalid [Object] pointer");
+    
+    try {
+        auto[OtherObject] result = [Object]_to_[OtherObject](
+            xptr.get(),
+            param1,
+            param2
+        );
+        struct[OtherObject]* ptr = result.releaseToAmbiguousOwner();
+        return XPtr<struct[OtherObject]>(ptr, true, [other_object]_finalizer);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert [Object] to [OtherObject]");
+    }
+}
+```
+
+#### 3. R6 Class Pattern
+
+Each object has an R6 class in `R/[object]-r6.R`:
+
+```r
+#' [Object] Class
+#'
+#' R6 class representing a Praat [Object] object.
+#'
+#' @export
+[Object] <- R6::R6Class("[Object]",
+    inherit = PraatObject,
+    
+    public = list(
+        #' @description
+        #' Create a new [Object]
+        #' @param path Path to [Object] file (optional)
+        #' @param .xptr Internal: external pointer (optional)
+        initialize = function(path = NULL, .xptr = NULL) {
+            if (!is.null(.xptr)) {
+                private$ptr <- .xptr
+            } else if (!is.null(path)) {
+                private$ptr <- .[object]_new(path)
+            } else {
+                stop("Provide either path or .xptr")
+            }
+        },
+        
+        #' @description Get [property]
+        #' @return Numeric value
+        get_[property] = function() {
+            .[object]_get_[property](private$ptr)
+        },
+        
+        #' @description Convert to [OtherObject]
+        #' @param param1 First parameter
+        #' @param param2 Second parameter
+        #' @return New [OtherObject] object
+        to_[other_object] = function(param1 = default1, param2 = default2) {
+            result_ptr <- .[object]_to_[other_object](
+                private$ptr, 
+                param1, 
+                param2
+            )
+            [OtherObject]$new(.xptr = result_ptr)
+        },
+        
+        #' @description Print method
+        print = function() {
+            cat("<Praat [Object]>\n")
+            # Add relevant summary information
+            invisible(self)
+        }
+    ),
+    
+    private = list(
+        ptr = NULL,
+        
+        finalize = function() {
+            # XPtr finalizer handles C++ object cleanup
+            private$ptr <- NULL
+        }
+    )
+)
+```
+
+#### 4. Memory Management Strategy
+
+**Critical for preventing memory leaks:**
+
+1. **C++ side**: Use XPtr with finalizers
+   - Each Praat object type has a specific finalizer function
+   - Finalizer calls `forget()` on the Praat object (Praat's autoThing mechanism)
+   - XPtr automatically calls finalizer when R object is garbage collected
+
+2. **R side**: Minimal cleanup needed
+   - Private `finalize()` method just clears the pointer
+   - XPtr's finalizer does the actual C++ cleanup
+   - No manual `delete` or `free` calls needed
+
+3. **Testing**: Always validate with valgrind
+   ```bash
+   R -d valgrind --vanilla < test_script.R
+   ```
+
+#### 5. Error Handling Strategy
+
+**Bridging Praat's MelderError to R errors:**
+
+```cpp
+try {
+    // Praat function call
+    auto result = SomePraatFunction(...);
+    // Process result
+} catch (MelderError) {
+    Melder_clearError();  // Clear Praat's error state
+    Rcpp::stop("Meaningful error message for R users");
+}
+```
+
+**Never let MelderError propagate to R** - always catch and convert to Rcpp exceptions.
+
+### Object Implementation Priority
+
+Based on the comprehensive OOP plan (`specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md`):
+
+**Phase 1 (Completed):**
+- ✅ Base PraatObject infrastructure
+- ✅ Sound (mostly complete, needs more methods)
+- ✅ Pitch (R6 implemented)
+- ✅ PointProcess (R6 implemented)
+
+**Phase 2 (In Progress):**
+- 🔄 Formant (S3 exists, needs R6 conversion)
+- 🔄 Intensity (S3 exists, needs R6 conversion)
+- 🔄 Harmonicity (S3 exists, needs R6 conversion)
+
+**Phase 3 (High Priority - Missing Critical Features):**
+- ❌ TextGrid (CRITICAL for linguistic annotation)
+- ❌ Manipulation (needed for pitch/duration modification)
+- ❌ Spectrogram
+- ❌ Spectrum
+
+**Phase 4 (Extended Functionality):**
+- ❌ LPC
+- ❌ VoiceReport (composite object)
+- ❌ Tier objects (PitchTier, FormantTier, IntensityTier, DurationTier)
+- ❌ Additional objects as needed
+
+### Testing Requirements for New Objects
+
+Each new object implementation must include:
+
+1. **Unit tests** (`tests/testthat/test-[object].R`):
+   - Constructor from file
+   - Constructor from XPtr (internal)
+   - All query methods
+   - All transformation methods
+   - Print method
+   - Memory cleanup (no leaks)
+
+2. **Integration tests**:
+   - Object creation from other objects (e.g., `sound$to_pitch()`)
+   - Method chaining workflows
+   - Export to R data structures
+
+3. **Validation tests** (compare to Praat desktop output):
+   - Use known test files
+   - Compare numeric results to Praat's output
+   - Tolerance for floating-point differences
+
+### Documentation Requirements
+
+Each object needs:
+
+1. **R documentation** (`man/[Object].Rd` via roxygen2):
+   - Class description
+   - Constructor parameters
+   - All public methods with examples
+   - Link to related objects
+
+2. **Vignettes** (when object is significant):
+   - Basic usage examples
+   - Common workflows
+   - Integration with other objects
+
+3. **Examples** (`inst/examples/`):
+   - Standalone scripts demonstrating capabilities
+   - Re-implementations of Python Parselmouth examples
+
+### Current Status Summary
+
+**Version:** 0.2.1  
+**Last Updated:** 2025-11-08
+
+**Completed:**
+- R6 infrastructure with proper memory management
+- Sound R6 class (partial - needs more methods)
+- Pitch R6 class (complete basic functionality)
+- PointProcess R6 class (complete basic functionality)
+- C++ build system with Praat source integration
+- XPtr-based memory management with finalizers
+
+**In Progress:**
+- Converting remaining S3 implementations to R6
+- Expanding Sound class methods
+- Build system optimization for Praat source compilation
+
+**Next Steps:**
+1. Complete Formant R6 conversion
+2. Complete Intensity R6 conversion  
+3. Complete Harmonicity R6 conversion
+4. Implement TextGrid (critical missing feature)
+5. Implement Manipulation object
+6. Add more Sound methods (filtering, modification, etc.)
+7. Implement spectral objects (Spectrogram, Spectrum)
+
+### Future Considerations
+
+**When adding new Praat source files:**
+1. Check dependencies on other Praat modules
+2. Update `src/Makevars` to include new source files
+3. Add necessary symbolic links if using modular approach
+4. Test compilation on multiple platforms
+5. Update SystemRequirements if needed
+
+**When Praat updates:**
+1. Praat source is included as git submodule or direct copy
+2. Update to new Praat version carefully
+3. Test all existing functionality
+4. Check for API changes in Praat C++ code
+5. Update wrappers if Praat function signatures change
+
+### Reference Documentation
+
+**Key Planning Documents:**
+- `specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md` - Master implementation plan
+- `specs/001-praat-r-access/NAMING-CONVENTIONS.md` - Naming standards
+- `COMPREHENSIVE_OOP_ROADMAP.md` - High-level roadmap
+
+**Implementation Status:**
+- `OOP_IMPLEMENTATION_COMPLETE_STATUS.md` - Current progress tracking
+
+---
+
+*This architecture enables systematic, consistent integration of Praat objects into R, following proven patterns from Parselmouth while leveraging R's strengths.*
