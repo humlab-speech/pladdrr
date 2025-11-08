@@ -96,27 +96,37 @@ mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "Hertz")
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (Weeks 1-2) ⏳
-- [ ] Add R6 dependency to DESCRIPTION
-- [ ] Create base `PraatObject` R6 class
-- [ ] Implement C++ finalizer infrastructure
-- [ ] Implement `Sound` class with naming conventions
+### Phase 1: Foundation (Weeks 1-2) 🔄 IN PROGRESS
+- [x] Add R6 dependency to DESCRIPTION
+- [x] Create base `PraatObject` R6 class
+- [x] Design C++ finalizer infrastructure  
+- [x] Implement `Sound` R6 class structure
+- [x] Implement `Pitch` R6 class structure
+- [x] Create R6 wrapper C++ functions
+- [ ] Fix C++11 vs C++17 compilation issues
 - [ ] Tests for Sound object lifecycle
 
-### Phase 2: Core Objects (Weeks 3-4) ⏳
-- [ ] Implement `Pitch` R6 class
+**Status**: R6 classes and C++ wrappers implemented, compilation blocked by C++ standard compatibility
+
+**Blocker**: Praat code uses C++17 features (digit separators) but R package builds with C++11. Need to either:
+1. Update Makevars to use C++17
+2. Patch Praat code for C++11 compatibility
+3. Use hybrid approach (keep existing S3 for now, migrate incrementally)
+
+### Phase 2: Core Objects (Weeks 3-4) ⏳ PENDING
+- [ ] Fix Phase 1 compilation
 - [ ] Implement `Formant` R6 class
 - [ ] Implement `Intensity` R6 class
 - [ ] Verify naming consistency
 - [ ] Update all tests
 
-### Phase 3: Advanced Features (Weeks 5-6) ⏳
+### Phase 3: Advanced Features (Weeks 5-6) ⏳ PENDING
 - [ ] Implement `TextGrid` R6 class
 - [ ] Implement `Spectrogram` R6 class
 - [ ] Performance benchmarking vs S3
 - [ ] Memory leak testing (valgrind)
 
-### Phase 4: Polish & Release (Weeks 7-8) ⏳
+### Phase 4: Polish & Release (Weeks 7-8) ⏳ PENDING
 - [ ] Documentation with Praat → R examples
 - [ ] Vignettes showing transcoding
 - [ ] CRAN preparation
