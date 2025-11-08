@@ -216,7 +216,29 @@ Sound <- R6::R6Class(
       Intensity$new(.xptr = intensity_ptr)
     },
     
-    #' @description Compute harmonics-to-noise ratio
+    #' @description Compute harmonics-to-noise ratio (autocorrelation method)
+    #' @param time_step Time step in seconds (default: 0.01)
+    #' @param min_pitch Minimum pitch in Hz (default: 75)
+    #' @param silence_threshold Silence threshold (default: 0.1)
+    #' @param periods_per_window Periods per window (default: 1.0)
+    #' @return Harmonicity object
+    to_harmonicity_ac = function(
+      time_step = 0.01,
+      min_pitch = 75.0,
+      silence_threshold = 0.1,
+      periods_per_window = 1.0
+    ) {
+      hnr_ptr <- .harmonicity_to_sound_ac(
+        private$ptr,
+        time_step,
+        min_pitch,
+        silence_threshold,
+        periods_per_window
+      )
+      Harmonicity$new(.xptr = hnr_ptr)
+    },
+    
+    #' @description Compute harmonics-to-noise ratio (cross-correlation method)
     #' @param time_step Time step in seconds (default: 0.01)
     #' @param min_pitch Minimum pitch in Hz (default: 75)
     #' @param silence_threshold Silence threshold (default: 0.1)
@@ -228,7 +250,7 @@ Sound <- R6::R6Class(
       silence_threshold = 0.1,
       periods_per_window = 1.0
     ) {
-      hnr_ptr <- .sound_to_harmonicity_cc(
+      hnr_ptr <- .harmonicity_to_sound_cc(
         private$ptr,
         time_step,
         min_pitch,

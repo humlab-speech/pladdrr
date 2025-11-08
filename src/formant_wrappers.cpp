@@ -2,34 +2,29 @@
 // C++ wrappers for Praat Formant object
 // Part of the speaker package
 
-#include <Rcpp.h>
+// [[Rcpp::interfaces(r, cpp)]]
+// [[Rcpp::plugins(cpp17)]]
+
 #include "praat_types.h"
+#include <Rcpp.h>
+#include "praat_xptr_utils.h"
+#include "praat_error_handling.h"
 
 // Praat headers
-#include "praat.github.io/fon/Formant.h"
-#include "praat.github.io/fon/Sound.h"
-#include "praat.github.io/fon/Sound_to_Formant.h"
-#include "praat.github.io/melder/melder.h"
+#include "fon/Formant.h"
+#include "fon/Sound.h"
+#include "fon/Sound_to_Formant.h"
+#include "melder/melder.h"
 
 using namespace Rcpp;
-
-// ============================================================================
-// Finalizer
-// ============================================================================
-
-void formant_finalizer(structFormant* formant) {
-    if (formant != nullptr) {
-        forget(formant);
-    }
-}
 
 // ============================================================================
 // Creation methods
 // ============================================================================
 
 // [[Rcpp::export(.formant_from_sound_burg)]]
-Rcpp::XPtr<structFormant> formant_from_sound_burg(
-    Rcpp::XPtr<structSound> sound,
+XPtr<structFormant> formant_from_sound_burg(
+    XPtr<structSound> sound,
     double time_step,
     double max_number_of_formants,
     double maximum_formant,
@@ -47,8 +42,7 @@ Rcpp::XPtr<structFormant> formant_from_sound_burg(
             window_length,
             pre_emphasis_from
         );
-        structFormant* ptr = formant.releaseToAmbiguousOwner();
-        return Rcpp::XPtr<structFormant>(ptr, true, formant_finalizer);
+        return create_xptr_from_auto<structFormant>(formant);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract formants using Burg's algorithm");
@@ -56,8 +50,8 @@ Rcpp::XPtr<structFormant> formant_from_sound_burg(
 }
 
 // [[Rcpp::export(.formant_from_sound_keepall)]]
-Rcpp::XPtr<structFormant> formant_from_sound_keepall(
-    Rcpp::XPtr<structSound> sound,
+XPtr<structFormant> formant_from_sound_keepall(
+    XPtr<structSound> sound,
     double time_step,
     double max_number_of_formants,
     double maximum_formant,
@@ -75,8 +69,7 @@ Rcpp::XPtr<structFormant> formant_from_sound_keepall(
             window_length,
             pre_emphasis_from
         );
-        structFormant* ptr = formant.releaseToAmbiguousOwner();
-        return Rcpp::XPtr<structFormant>(ptr, true, formant_finalizer);
+        return create_xptr_from_auto<structFormant>(formant);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract formants (keep all)");
@@ -415,7 +408,7 @@ void formant_save(Rcpp::XPtr<structFormant> formant, std::string path) {
     if (!formant) Rcpp::stop("Invalid Formant pointer");
     
     try {
-        MelderFile file;
+        structMelderFile file {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(formant.get(), &file);
     } catch (MelderError) {
