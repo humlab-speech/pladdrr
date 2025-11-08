@@ -7,8 +7,8 @@
 #define PRAAT_XPTR_UTILS_H
 
 #include <Rcpp.h>
-#include "praat/sys/Thing.h"
-#include "praat/sys/melder.h"
+#include "sys/Thing.h"
+#include "melder/melder.h"
 
 // Finalizer template for Praat Thing objects
 // This is called automatically by R's garbage collector when the XPtr is no longer referenced
@@ -20,8 +20,8 @@ void praat_thing_finalizer(T* thing) {
 }
 
 // Create an XPtr from an auto* Praat object with proper finalizer
-template<typename T>
-Rcpp::XPtr<T> create_xptr_from_auto(auto*& auto_obj) {
+template<typename T, typename AutoType>
+Rcpp::XPtr<T> create_xptr_from_auto(AutoType& auto_obj) {
     T* ptr = auto_obj.releaseToAmbiguousOwner();
     return Rcpp::XPtr<T>(ptr, true, praat_thing_finalizer<T>);
 }

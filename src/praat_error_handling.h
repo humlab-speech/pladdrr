@@ -6,7 +6,7 @@
 #define PRAAT_ERROR_HANDLING_H
 
 #include <Rcpp.h>
-#include "praat/sys/melder.h"
+#include "melder/melder.h"
 #include <string>
 
 // Execute a Praat function and convert MelderError to R exception

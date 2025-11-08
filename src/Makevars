@@ -4,11 +4,11 @@
 # It sets up compiler flags for C++11, includes Praat source directories, and handles
 # compilation of both Rcpp wrapper code and embedded Praat C source files.
 
-# Use C++11 standard (required for Rcpp and modern C++ features)
+# Use C++17 standard (required for Praat compatibility)
 CXX_STD = CXX17
 
-# Praat source directory (to be populated with Praat C code)
-PRAAT_SRC = praat
+# Praat source directories
+PRAAT_SRC = praat.github.io
 
 # Include directories for compilation
 # - Current directory for local headers
@@ -21,7 +21,12 @@ PKG_CPPFLAGS = -I. \
                -I$(PRAAT_SRC)/melder \
                -I$(PRAAT_SRC)/kar \
                -I$(PRAAT_SRC)/external \
-               -I$(PRAAT_SRC)/external/gsl
+               -I$(PRAAT_SRC)/external/gsl \
+               -I$(PRAAT_SRC)/external/flac \
+               -I$(PRAAT_SRC)/external/mp3 \
+               -I$(PRAAT_SRC)/LPC \
+               -I$(PRAAT_SRC)/num \
+               -I$(PRAAT_SRC)/stat
 
 # Compiler flags
 # -DPRAAT_LIB: Define Praat as library (not standalone application)

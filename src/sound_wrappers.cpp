@@ -12,14 +12,14 @@
 #include "praat_error_handling.h"
 
 // Praat headers
-#include "praat/fon/Sound.h"
-#include "praat/fon/Sound_to_Pitch.h"
-#include "praat/fon/Sound_to_Formant.h"
-#include "praat/fon/Sound_to_Intensity.h"
-#include "praat/fon/Sound_to_Harmonicity.h"
-#include "praat/fon/Sound_and_Spectrogram.h"
-#include "praat/fon/Sound_and_Spectrum.h"
-#include "praat/sys/melder.h"
+#include "fon/Sound.h"
+#include "fon/Sound_to_Pitch.h"
+#include "fon/Sound_to_Formant.h"
+#include "fon/Sound_to_Intensity.h"
+#include "fon/Sound_to_Harmonicity.h"
+#include "fon/Sound_and_Spectrogram.h"
+#include "fon/Sound_and_Spectrum.h"
+#include "melder/melder.h"
 
 using namespace Rcpp;
 
