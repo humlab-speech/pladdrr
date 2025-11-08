@@ -2,13 +2,15 @@
 
 **Last Updated**: 2025-11-08  
 **Branch**: 001-praat-r-access  
-**Status**: Phase 1 Infrastructure - In Progress
+**Status**: Plan Amended - Ready for Full Implementation
 
 ## Executive Summary
 
-The speaker package is undergoing a fundamental architectural transformation from a functional S3 approach to a comprehensive object-oriented R6 design that mirrors Praat's native C++ structure and the proven Parselmouth Python library approach.
+The speaker package implementation plan has been **fundamentally revised** to adopt a complete object-oriented approach that mirrors Praat's native C++ architecture. This aligns with the proven success of the Parselmouth Python library and R's modern R6 capabilities.
 
-**Key Shift**: From implementing isolated procedures → to exposing Praat objects with their full method hierarchies
+**Critical Paradigm Shift**: From implementing isolated procedures → to exposing complete Praat objects with their full method hierarchies
+
+**New Master Plan**: `specs/001-praat-r-access/OOP-FOCUSED-PLAN.md`
 
 ## Vision
 
@@ -278,18 +280,24 @@ speaker/
 
 ## Key Documents
 
-1. **Master Plan**: `specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md`
-   - Complete 12-week roadmap
-   - All 12+ objects specified
-   - 200+ methods documented
-   - Implementation patterns and examples
+1. **✨ NEW Master Plan**: `specs/001-praat-r-access/OOP-FOCUSED-PLAN.md` ⭐
+   - Complete object-oriented approach
+   - Addresses limitations of original procedure-based spec
+   - Based on Praat source code analysis
+   - Complete object hierarchy from Praat's fon/ directory
+   - 12-week roadmap with all 12+ objects
+   - 200+ methods across all objects
+   - Naming conventions for Praat → R translation
+   - Detailed implementation patterns
 
-2. **Session Summary**: `IMPLEMENTATION_SESSION_SUMMARY.md`
-   - Current session progress
-   - Files created/modified
-   - Next steps
+2. **Previous Plan**: `specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md`
+   - Earlier OOP plan (superseded by OOP-FOCUSED-PLAN.md)
 
-3. **This Document**: `OOP_IMPLEMENTATION_STATUS.md`
+3. **Original Spec**: `specs/001-praat-r-access/spec.md`
+   - Original procedure-based specification
+   - Insufficient for full Praat functionality
+
+4. **This Document**: `OOP_IMPLEMENTATION_STATUS.md`
    - Overall project status
    - Architecture overview
    - Progress tracking
