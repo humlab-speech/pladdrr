@@ -1,59 +1,88 @@
-# speaker 0.2.0.9000 (Development)
+# speaker 0.2.1
 
 ## Major Changes
 
-* **COMPREHENSIVE OOP AMENDMENT**: Expanded plan to implement complete Praat object hierarchy
-  - Plan to add 18 additional Praat objects (PointProcess, Manipulation, Spectrum, Spectrogram, etc.)
-  - Target: 24 total objects with ~400 methods
-  - Focus on object-oriented design mirroring Praat's C++ architecture
-  
-* **Implementation Roadmap**: 12-week phased approach
-  - Phase 1 (Weeks 1-3): Critical objects (PointProcess, Manipulation, Tier objects)
-  - Phase 2 (Weeks 4-5): Spectral analysis objects
-  - Phase 3 (Weeks 6-7): Advanced objects (FormantPath, Table, Matrix)
-  - Phase 4 (Week 8): Complete TextGrid implementation
-  - Phase 5 (Weeks 9-10): Migrate 11 superassp Python examples to R
-  - Phase 6 (Week 11): Comprehensive documentation and vignettes
-  - Phase 7 (Week 12): Testing, validation, and CRAN preparation
+* **OOP AMENDMENT**: Complete redesign to fully embrace Praat's object-oriented architecture
+* Established definitive roadmap for implementing 30+ Praat object types as R6 classes
+* Shifted focus from isolated procedures to complete object hierarchy with 400+ methods
 
-* **Documentation**: Created comprehensive amendment and roadmap documents
-  - `specs/001-praat-r-access/COMPREHENSIVE-OOP-AMENDMENT.md` - Detailed implementation plan
-  - `COMPREHENSIVE_OOP_ROADMAP.md` - Project tracking and timeline
+## Documentation
 
-## Current Status
+* Added `OOP_AMENDMENT_FINAL.md` - Master implementation plan
+* Detailed 10-week roadmap for complete Praat functionality
+* Method naming conventions aligned with Praat commands
+* Migration paths from Praat scripts and Parselmouth
 
-* 6 objects implemented: Sound, Pitch, Formant, Intensity, Harmonicity, TextGrid (partial)
-* ~195 of ~408 planned methods (48% complete)
-* Foundation established for complete Praat OOP interface
+## Current Implementation (v0.1.0 baseline)
 
-# speaker 0.1.0 (Development)
+* Sound object: ~45/50 methods (90%)
+* Pitch object: ~28/30 methods (93%)
+* Formant object: ~20/25 methods (80%)
+* Intensity object: ~15/18 methods (83%)
+* Harmonicity object: ~15/15 methods (100%)
+* TextGrid object: ~20/35 methods (57%, read-only)
+* PointProcess object: ~5/25 methods (20%, partial)
 
-## Initial Development
+**Total**: ~150/400 methods (37% of planned functionality)
 
-This is the initial development version of the speaker package.
+## Planned Implementation
 
-### Planned Features
+### Phase 1 (Weeks 1-3) - CRITICAL
+* Complete PointProcess (jitter/shimmer)
+* Implement PitchTier, DurationTier, IntensityTier
+* Implement Manipulation object (PSOLA pitch/duration modification)
 
-* **Sound Object Operations**: Load audio files, create sound objects, query properties, compute statistics
-* **Pitch Analysis**: Extract F0 contours, query pitch measurements (min, max, mean)
-* **Formant Analysis**: Extract formants (F1-F5), query formant values and statistics
-* **Intensity Analysis**: Compute intensity contours, measure loudness
-* **Spectral Analysis**: Create spectrograms, query spectral power
+### Phase 2 (Weeks 4-6) - Spectral Analysis
+* Spectrum, Spectrogram, LPC
+* Ltas, Cochleagram, Excitation  
+* MFCC, FormantPath
 
-### Development Status
+### Phase 3 (Weeks 7-8) - Advanced
+* FormantGrid (formant synthesis)
+* Matrix, Table (data structures)
 
-- [x] Project structure initialized
-- [x] Package metadata configured (DESCRIPTION, LICENSE, NEWS)
-- [ ] Praat C source integration
-- [ ] Rcpp wrapper implementation
-- [ ] R function implementation
-- [ ] Test suite with TDD
-- [ ] Documentation and vignettes
-- [ ] CRAN submission preparation
+### Phase 4 (Week 9) - TextGrid Completion
+* Full annotation modification capabilities
+* Tier management, boundary insertion, text editing
 
-### Notes
+### Phase 5 (Week 10) - Utilities
+* Collection, VoiceReport, AmplitudeTier
 
-This package provides direct access to Praat C functionality via Rcpp, enabling
-phonetic analysis directly in R without external Praat software.
+## Breaking Changes
 
-For detailed progress, see `specs/001-praat-r-access/tasks.md`.
+None - this is a planning/documentation release. Implementation follows in subsequent versions.
+
+## Next Release (0.2.2)
+
+* Complete PointProcess implementation
+* Add comprehensive voice quality analysis
+* Update vignettes with jitter/shimmer examples
+
+# speaker 0.2.0
+
+## Major Changes
+
+* Implemented R6 class-based object-oriented interface
+* Added external pointer-based memory management  
+* Established foundation for complete Praat object hierarchy
+
+## New Objects
+
+* Sound (R6 class with ~45 methods)
+* Pitch (R6 class with ~28 methods)
+* Formant (R6 class with ~20 methods)
+* Intensity (R6 class with ~15 methods)
+* Harmonicity (R6 class with ~15 methods)
+* TextGrid (R6 class with ~20 methods, read-only)
+* PointProcess (R6 class, partial implementation)
+
+## Infrastructure
+
+* C++17 support
+* Praat source code integration as submodule
+* Comprehensive test suite
+* Vignette system
+
+# speaker 0.1.0
+
+* Initial release with procedural interface
