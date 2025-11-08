@@ -1365,6 +1365,364 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// pitch_to_point_process
+Rcpp::XPtr<structPointProcess> pitch_to_point_process(Rcpp::XPtr<structPitch> pitch);
+RcppExport SEXP _speaker_pitch_to_point_process(SEXP pitchSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structPitch> >::type pitch(pitchSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_to_point_process(pitch));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_number_of_points
+int pointprocess_get_number_of_points(SEXP xptr);
+RcppExport SEXP _speaker_pointprocess_get_number_of_points(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_number_of_points(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_time_from_index
+double pointprocess_get_time_from_index(SEXP xptr, int index);
+RcppExport SEXP _speaker_pointprocess_get_time_from_index(SEXP xptrSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type index(indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_time_from_index(xptr, index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_nearest_index
+int pointprocess_get_nearest_index(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_get_nearest_index(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_nearest_index(xptr, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_low_index
+int pointprocess_get_low_index(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_get_low_index(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_low_index(xptr, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_high_index
+int pointprocess_get_high_index(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_get_high_index(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_high_index(xptr, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_interval
+double pointprocess_get_interval(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_get_interval(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_interval(xptr, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_jitter_local
+double pointprocess_get_jitter_local(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_jitter_local(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_jitter_local(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_jitter_local_absolute
+double pointprocess_get_jitter_local_absolute(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_jitter_local_absolute(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_jitter_local_absolute(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_jitter_rap
+double pointprocess_get_jitter_rap(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_jitter_rap(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_jitter_rap(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_jitter_ppq5
+double pointprocess_get_jitter_ppq5(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_jitter_ppq5(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_jitter_ppq5(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_jitter_ddp
+double pointprocess_get_jitter_ddp(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_jitter_ddp(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_jitter_ddp(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_local
+double pointprocess_sound_get_shimmer_local(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_local(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_local(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_local_db
+double pointprocess_sound_get_shimmer_local_db(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_local_db(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_local_db(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_apq3
+double pointprocess_sound_get_shimmer_apq3(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_apq3(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_apq3(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_apq5
+double pointprocess_sound_get_shimmer_apq5(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_apq5(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_apq5(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_apq11
+double pointprocess_sound_get_shimmer_apq11(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_apq11(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_apq11(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_sound_get_shimmer_dda
+double pointprocess_sound_get_shimmer_dda(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _speaker_pointprocess_sound_get_shimmer_dda(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_sound_get_shimmer_dda(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_mean_period
+double pointprocess_get_mean_period(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_mean_period(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_mean_period(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_stdev_period
+double pointprocess_get_stdev_period(SEXP xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _speaker_pointprocess_get_stdev_period(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_stdev_period(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_add_point
+void pointprocess_add_point(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_add_point(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    pointprocess_add_point(xptr, time);
+    return R_NilValue;
+END_RCPP
+}
+// pointprocess_remove_point
+void pointprocess_remove_point(SEXP xptr, int index);
+RcppExport SEXP _speaker_pointprocess_remove_point(SEXP xptrSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type index(indexSEXP);
+    pointprocess_remove_point(xptr, index);
+    return R_NilValue;
+END_RCPP
+}
+// pointprocess_remove_point_near
+void pointprocess_remove_point_near(SEXP xptr, double time);
+RcppExport SEXP _speaker_pointprocess_remove_point_near(SEXP xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    pointprocess_remove_point_near(xptr, time);
+    return R_NilValue;
+END_RCPP
+}
+// pointprocess_remove_points_between
+void pointprocess_remove_points_between(SEXP xptr, double from_time, double to_time);
+RcppExport SEXP _speaker_pointprocess_remove_points_between(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    pointprocess_remove_points_between(xptr, from_time, to_time);
+    return R_NilValue;
+END_RCPP
+}
+// pointprocess_save
+void pointprocess_save(SEXP xptr, std::string path);
+RcppExport SEXP _speaker_pointprocess_save(SEXP xptrSEXP, SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    pointprocess_save(xptr, path);
+    return R_NilValue;
+END_RCPP
+}
 // praat_version
 String praat_version();
 RcppExport SEXP _speaker_praat_version() {
@@ -2190,6 +2548,120 @@ RcppExport SEXP _speaker_sound_save(SEXP xptrSEXP, SEXP pathSEXP, SEXP file_type
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_to_point_process_periodic_cc
+XPtr<structPointProcess> sound_to_point_process_periodic_cc(XPtr<structSound> xptr, double time_step, double pitch_floor, double pitch_ceiling, double max_period_factor, double max_amplitude_factor);
+static SEXP _speaker_sound_to_point_process_periodic_cc_try(SEXP xptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_point_process_periodic_cc(xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_to_point_process_periodic_cc(SEXP xptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_to_point_process_periodic_cc_try(xptrSEXP, time_stepSEXP, pitch_floorSEXP, pitch_ceilingSEXP, max_period_factorSEXP, max_amplitude_factorSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_point_process_extrema
+XPtr<structPointProcess> sound_to_point_process_extrema(XPtr<structSound> xptr, int channel, bool include_maxima, bool include_minima, int interpolation);
+static SEXP _speaker_sound_to_point_process_extrema_try(SEXP xptrSEXP, SEXP channelSEXP, SEXP include_maximaSEXP, SEXP include_minimaSEXP, SEXP interpolationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_maxima(include_maximaSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_minima(include_minimaSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_point_process_extrema(xptr, channel, include_maxima, include_minima, interpolation));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_to_point_process_extrema(SEXP xptrSEXP, SEXP channelSEXP, SEXP include_maximaSEXP, SEXP include_minimaSEXP, SEXP interpolationSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_to_point_process_extrema_try(xptrSEXP, channelSEXP, include_maximaSEXP, include_minimaSEXP, interpolationSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_point_process_zeros
+XPtr<structPointProcess> sound_to_point_process_zeros(XPtr<structSound> xptr, int channel, bool include_raisers, bool include_fallers);
+static SEXP _speaker_sound_to_point_process_zeros_try(SEXP xptrSEXP, SEXP channelSEXP, SEXP include_raisersSEXP, SEXP include_fallersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_raisers(include_raisersSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_fallers(include_fallersSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_point_process_zeros(xptr, channel, include_raisers, include_fallers));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_to_point_process_zeros(SEXP xptrSEXP, SEXP channelSEXP, SEXP include_raisersSEXP, SEXP include_fallersSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_to_point_process_zeros_try(xptrSEXP, channelSEXP, include_raisersSEXP, include_fallersSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // praat_error_to_r
 void praat_error_to_r(const std::string& error_msg);
 RcppExport SEXP _speaker_praat_error_to_r(SEXP error_msgSEXP) {
@@ -2257,6 +2729,9 @@ static int _speaker_RcppExport_validate(const char* sig) {
         signatures.insert("DataFrame(*.sound_as_data_frame)(XPtr<structSound>)");
         signatures.insert("NumericMatrix(*.sound_as_matrix)(XPtr<structSound>)");
         signatures.insert("void(*.sound_save)(XPtr<structSound>,std::string,int)");
+        signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_periodic_cc)(XPtr<structSound>,double,double,double,double,double)");
+        signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_extrema)(XPtr<structSound>,int,bool,bool,int)");
+        signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_zeros)(XPtr<structSound>,int,bool,bool)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -2315,6 +2790,9 @@ RcppExport SEXP _speaker_RcppExport_registerCCallable() {
     R_RegisterCCallable("speaker", "_speaker_.sound_as_data_frame", (DL_FUNC)_speaker_sound_as_data_frame_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_as_matrix", (DL_FUNC)_speaker_sound_as_matrix_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_save", (DL_FUNC)_speaker_sound_save_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_periodic_cc", (DL_FUNC)_speaker_sound_to_point_process_periodic_cc_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_extrema", (DL_FUNC)_speaker_sound_to_point_process_extrema_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_zeros", (DL_FUNC)_speaker_sound_to_point_process_zeros_try);
     R_RegisterCCallable("speaker", "_speaker_RcppExport_validate", (DL_FUNC)_speaker_RcppExport_validate);
     return R_NilValue;
 }
@@ -2368,6 +2846,31 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_pitch_as_matrix", (DL_FUNC) &_speaker_pitch_as_matrix, 1},
     {"_speaker_pitch_as_data_frame", (DL_FUNC) &_speaker_pitch_as_data_frame, 1},
     {"_speaker_pitch_save", (DL_FUNC) &_speaker_pitch_save, 2},
+    {"_speaker_pitch_to_point_process", (DL_FUNC) &_speaker_pitch_to_point_process, 1},
+    {"_speaker_pointprocess_get_number_of_points", (DL_FUNC) &_speaker_pointprocess_get_number_of_points, 1},
+    {"_speaker_pointprocess_get_time_from_index", (DL_FUNC) &_speaker_pointprocess_get_time_from_index, 2},
+    {"_speaker_pointprocess_get_nearest_index", (DL_FUNC) &_speaker_pointprocess_get_nearest_index, 2},
+    {"_speaker_pointprocess_get_low_index", (DL_FUNC) &_speaker_pointprocess_get_low_index, 2},
+    {"_speaker_pointprocess_get_high_index", (DL_FUNC) &_speaker_pointprocess_get_high_index, 2},
+    {"_speaker_pointprocess_get_interval", (DL_FUNC) &_speaker_pointprocess_get_interval, 2},
+    {"_speaker_pointprocess_get_jitter_local", (DL_FUNC) &_speaker_pointprocess_get_jitter_local, 6},
+    {"_speaker_pointprocess_get_jitter_local_absolute", (DL_FUNC) &_speaker_pointprocess_get_jitter_local_absolute, 6},
+    {"_speaker_pointprocess_get_jitter_rap", (DL_FUNC) &_speaker_pointprocess_get_jitter_rap, 6},
+    {"_speaker_pointprocess_get_jitter_ppq5", (DL_FUNC) &_speaker_pointprocess_get_jitter_ppq5, 6},
+    {"_speaker_pointprocess_get_jitter_ddp", (DL_FUNC) &_speaker_pointprocess_get_jitter_ddp, 6},
+    {"_speaker_pointprocess_sound_get_shimmer_local", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_local, 8},
+    {"_speaker_pointprocess_sound_get_shimmer_local_db", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_local_db, 8},
+    {"_speaker_pointprocess_sound_get_shimmer_apq3", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_apq3, 8},
+    {"_speaker_pointprocess_sound_get_shimmer_apq5", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_apq5, 8},
+    {"_speaker_pointprocess_sound_get_shimmer_apq11", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_apq11, 8},
+    {"_speaker_pointprocess_sound_get_shimmer_dda", (DL_FUNC) &_speaker_pointprocess_sound_get_shimmer_dda, 8},
+    {"_speaker_pointprocess_get_mean_period", (DL_FUNC) &_speaker_pointprocess_get_mean_period, 6},
+    {"_speaker_pointprocess_get_stdev_period", (DL_FUNC) &_speaker_pointprocess_get_stdev_period, 6},
+    {"_speaker_pointprocess_add_point", (DL_FUNC) &_speaker_pointprocess_add_point, 2},
+    {"_speaker_pointprocess_remove_point", (DL_FUNC) &_speaker_pointprocess_remove_point, 2},
+    {"_speaker_pointprocess_remove_point_near", (DL_FUNC) &_speaker_pointprocess_remove_point_near, 2},
+    {"_speaker_pointprocess_remove_points_between", (DL_FUNC) &_speaker_pointprocess_remove_points_between, 3},
+    {"_speaker_pointprocess_save", (DL_FUNC) &_speaker_pointprocess_save, 2},
     {"_speaker_praat_version", (DL_FUNC) &_speaker_praat_version, 0},
     {"_speaker_praat_initialize", (DL_FUNC) &_speaker_praat_initialize, 0},
     {"_speaker_sound_stats", (DL_FUNC) &_speaker_sound_stats, 1},
@@ -2396,6 +2899,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_sound_as_data_frame", (DL_FUNC) &_speaker_sound_as_data_frame, 1},
     {"_speaker_sound_as_matrix", (DL_FUNC) &_speaker_sound_as_matrix, 1},
     {"_speaker_sound_save", (DL_FUNC) &_speaker_sound_save, 3},
+    {"_speaker_sound_to_point_process_periodic_cc", (DL_FUNC) &_speaker_sound_to_point_process_periodic_cc, 6},
+    {"_speaker_sound_to_point_process_extrema", (DL_FUNC) &_speaker_sound_to_point_process_extrema, 5},
+    {"_speaker_sound_to_point_process_zeros", (DL_FUNC) &_speaker_sound_to_point_process_zeros, 4},
     {"_speaker_praat_error_to_r", (DL_FUNC) &_speaker_praat_error_to_r, 1},
     {"_speaker_RcppExport_registerCCallable", (DL_FUNC) &_speaker_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}

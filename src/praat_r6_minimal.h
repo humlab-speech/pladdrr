@@ -37,9 +37,8 @@ Sound Sound_readFromSoundFile (const char32 *path);
 void Sound_writeToWavFile (Sound me, const char32 *path);
 void Sound_writeToAiffFile (Sound me, const char32 *path);
 
-// Sound creation
-Sound Sound_create (integer numberOfChannels, double xmin, double xmax,
-                   integer nx, double dx, double x1);
+// Sound creation - NOTE: Actual declaration is in fon/Sound.h
+// autoSound Sound_create (...) - use the one from Sound.h
 
 // Sound manipulation
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);

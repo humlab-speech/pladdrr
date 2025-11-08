@@ -19,6 +19,8 @@
 #include "fon/Sound_to_Harmonicity.h"
 #include "fon/Sound_and_Spectrogram.h"
 #include "fon/Sound_and_Spectrum.h"
+#include "fon/Sound_to_PointProcess.h"
+#include "fon/Pitch_to_PointProcess.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -503,5 +505,96 @@ void sound_save(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to save sound to: " + path);
+    }
+}
+
+// ============================================================================
+// Sound to PointProcess Conversions
+// ============================================================================
+
+//' Extract glottal pulses from sound using cross-correlation (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_point_process_periodic_cc)]]
+XPtr<structPointProcess> sound_to_point_process_periodic_cc(
+    XPtr<structSound> xptr,
+    double time_step,
+    double pitch_floor,
+    double pitch_ceiling,
+    double max_period_factor,
+    double max_amplitude_factor
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        // First create pitch object
+        autoPitch pitch = Sound_to_Pitch(sound, time_step, pitch_floor, pitch_ceiling);
+        
+        // Then create PointProcess from Sound and Pitch
+        autoPointProcess pp = Sound_Pitch_to_PointProcess_cc(sound, pitch.get());
+        
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract glottal pulses from sound");
+    }
+}
+
+//' Extract extrema (peaks) from sound (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_point_process_extrema)]]
+XPtr<structPointProcess> sound_to_point_process_extrema(
+    XPtr<structSound> xptr,
+    int channel,
+    bool include_maxima,
+    bool include_minima,
+    int interpolation
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        // Convert interpolation int to enum
+        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
+        
+        autoPointProcess pp = Sound_to_PointProcess_extrema(
+            sound,
+            channel,
+            interp_type,
+            include_maxima,
+            include_minima
+        );
+        
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract extrema from sound");
+    }
+}
+
+//' Extract zero crossings from sound (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_point_process_zeros)]]
+XPtr<structPointProcess> sound_to_point_process_zeros(
+    XPtr<structSound> xptr,
+    int channel,
+    bool include_raisers,
+    bool include_fallers
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoPointProcess pp = Sound_to_PointProcess_zeroes(
+            sound,
+            channel,
+            include_raisers,
+            include_fallers
+        );
+        
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract zero crossings from sound");
     }
 }

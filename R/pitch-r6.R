@@ -226,6 +226,18 @@ Pitch <- R6::R6Class("Pitch",
     },
     
     # ========================================================================
+    # Transform methods
+    # ========================================================================
+    
+    #' @description
+    #' Convert pitch object to PointProcess
+    #' @return PointProcess object containing times of voiced pitch candidates
+    to_point_process = function() {
+      pp_ptr <- .pitch_to_point_process(private$ptr)
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    # ========================================================================
     # Export methods
     # ========================================================================
     

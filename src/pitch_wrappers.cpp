@@ -10,6 +10,8 @@
 #include "praat.github.io/fon/Pitch.h"
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/fon/Sound_to_Pitch.h"
+#include "praat.github.io/fon/Pitch_to_PointProcess.h"
+#include "praat.github.io/fon/PointProcess.h"
 #include "praat.github.io/melder/melder.h"
 
 using namespace Rcpp;
@@ -418,5 +420,22 @@ void pitch_save(Rcpp::XPtr<structPitch> pitch, std::string path) {
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to save pitch to file: " + path);
+    }
+}
+
+// ============================================================================
+// Transform methods
+// ============================================================================
+
+// [[Rcpp::export(.pitch_to_point_process)]]
+Rcpp::XPtr<structPointProcess> pitch_to_point_process(Rcpp::XPtr<structPitch> pitch) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    try {
+        autoPointProcess pp = Pitch_to_PointProcess(pitch.get());
+        return create_xptr_from_auto<structPointProcess>(pp);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to convert Pitch to PointProcess");
     }
 }

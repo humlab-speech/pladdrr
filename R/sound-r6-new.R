@@ -260,6 +260,83 @@ Sound <- R6::R6Class(
       Harmonicity$new(.xptr = hnr_ptr)
     },
     
+    #' @description Extract glottal pulses using cross-correlation method
+    #' @param time_step Time step in seconds (0 = auto: 0.75 / pitch_floor)
+    #' @param pitch_floor Minimum pitch in Hz (default: 75)
+    #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
+    #' @param max_period_factor Maximum period factor for pitch analysis (default: 1.3)
+    #' @param max_amplitude_factor Maximum amplitude factor for pitch analysis (default: 1.6)
+    #' @return PointProcess object containing glottal pulse times
+    to_point_process_periodic_cc = function(
+      time_step = 0.0,
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0,
+      max_period_factor = 1.3,
+      max_amplitude_factor = 1.6
+    ) {
+      pp_ptr <- .sound_to_point_process_periodic_cc(
+        private$ptr,
+        time_step,
+        pitch_floor,
+        pitch_ceiling,
+        max_period_factor,
+        max_amplitude_factor
+      )
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    #' @description Extract peaks (positive extrema) from sound
+    #' @param channel Channel number (1-based, default: 1)
+    #' @param include_maxima Include positive peaks (default: TRUE)
+    #' @param include_minima Include negative peaks (default: FALSE)
+    #' @param interpolation Interpolation method: "None", "Parabolic", "Cubic", "Sinc70", "Sinc700"
+    #' @return PointProcess object containing peak times
+    to_point_process_extrema = function(
+      channel = 1,
+      include_maxima = TRUE,
+      include_minima = FALSE,
+      interpolation = c("None", "Parabolic", "Cubic", "Sinc70", "Sinc700")
+    ) {
+      interpolation <- match.arg(interpolation)
+      interpolation_int <- switch(
+        interpolation,
+        "None" = 0,
+        "Parabolic" = 1,
+        "Cubic" = 2,
+        "Sinc70" = 3,
+        "Sinc700" = 4,
+        1  # Default to parabolic
+      )
+      
+      pp_ptr <- .sound_to_point_process_extrema(
+        private$ptr,
+        as.integer(channel),
+        as.logical(include_maxima),
+        as.logical(include_minima),
+        interpolation_int
+      )
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    #' @description Extract zero crossings from sound
+    #' @param channel Channel number (1-based, default: 1)
+    #' @param include_raisers Include positive-going zero crossings (default: TRUE)
+    #' @param include_fallers Include negative-going zero crossings (default: FALSE)
+    #' @return PointProcess object containing zero crossing times
+    to_point_process_zeros = function(
+      channel = 1,
+      include_raisers = TRUE,
+      include_fallers = FALSE
+    ) {
+      pp_ptr <- .sound_to_point_process_zeros(
+        private$ptr,
+        as.integer(channel),
+        as.logical(include_raisers),
+        as.logical(include_fallers)
+      )
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
     #' @description Create spectrogram
     #' @param window_length Window length in seconds (default: 0.005)
     #' @param maximum_frequency Maximum frequency in Hz (default: 5000)

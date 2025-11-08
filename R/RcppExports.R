@@ -193,6 +193,106 @@
     invisible(.Call(`_speaker_pitch_save`, pitch, path))
 }
 
+.pitch_to_point_process <- function(pitch) {
+    .Call(`_speaker_pitch_to_point_process`, pitch)
+}
+
+.pointprocess_get_number_of_points <- function(xptr) {
+    .Call(`_speaker_pointprocess_get_number_of_points`, xptr)
+}
+
+.pointprocess_get_time_from_index <- function(xptr, index) {
+    .Call(`_speaker_pointprocess_get_time_from_index`, xptr, index)
+}
+
+.pointprocess_get_nearest_index <- function(xptr, time) {
+    .Call(`_speaker_pointprocess_get_nearest_index`, xptr, time)
+}
+
+.pointprocess_get_low_index <- function(xptr, time) {
+    .Call(`_speaker_pointprocess_get_low_index`, xptr, time)
+}
+
+.pointprocess_get_high_index <- function(xptr, time) {
+    .Call(`_speaker_pointprocess_get_high_index`, xptr, time)
+}
+
+.pointprocess_get_interval <- function(xptr, time) {
+    .Call(`_speaker_pointprocess_get_interval`, xptr, time)
+}
+
+.pointprocess_get_jitter_local <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_jitter_local`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_get_jitter_local_absolute <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_jitter_local_absolute`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_get_jitter_rap <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_jitter_rap`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_get_jitter_ppq5 <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_jitter_ppq5`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_get_jitter_ddp <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_jitter_ddp`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_sound_get_shimmer_local <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_local`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_sound_get_shimmer_local_db <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_local_db`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_sound_get_shimmer_apq3 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_apq3`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_sound_get_shimmer_apq5 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_apq5`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_sound_get_shimmer_apq11 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_apq11`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_sound_get_shimmer_dda <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_pointprocess_sound_get_shimmer_dda`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+.pointprocess_get_mean_period <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_mean_period`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_get_stdev_period <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
+    .Call(`_speaker_pointprocess_get_stdev_period`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+.pointprocess_add_point <- function(xptr, time) {
+    invisible(.Call(`_speaker_pointprocess_add_point`, xptr, time))
+}
+
+.pointprocess_remove_point <- function(xptr, index) {
+    invisible(.Call(`_speaker_pointprocess_remove_point`, xptr, index))
+}
+
+.pointprocess_remove_point_near <- function(xptr, time) {
+    invisible(.Call(`_speaker_pointprocess_remove_point_near`, xptr, time))
+}
+
+.pointprocess_remove_points_between <- function(xptr, from_time, to_time) {
+    invisible(.Call(`_speaker_pointprocess_remove_points_between`, xptr, from_time, to_time))
+}
+
+.pointprocess_save <- function(xptr, path) {
+    invisible(.Call(`_speaker_pointprocess_save`, xptr, path))
+}
+
 #' Get Praat version information
 #'
 #' Returns the version string for the Praat library integration
@@ -395,6 +495,24 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_save <- function(xptr, path, file_type) {
     invisible(.Call(`_speaker_sound_save`, xptr, path, file_type))
+}
+
+#' Extract glottal pulses from sound using cross-correlation (internal)
+#' @keywords internal
+.sound_to_point_process_periodic_cc <- function(xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor) {
+    .Call(`_speaker_sound_to_point_process_periodic_cc`, xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor)
+}
+
+#' Extract extrema (peaks) from sound (internal)
+#' @keywords internal
+.sound_to_point_process_extrema <- function(xptr, channel, include_maxima, include_minima, interpolation) {
+    .Call(`_speaker_sound_to_point_process_extrema`, xptr, channel, include_maxima, include_minima, interpolation)
+}
+
+#' Extract zero crossings from sound (internal)
+#' @keywords internal
+.sound_to_point_process_zeros <- function(xptr, channel, include_raisers, include_fallers) {
+    .Call(`_speaker_sound_to_point_process_zeros`, xptr, channel, include_raisers, include_fallers)
 }
 
 #' Safe error wrapper for Praat calls
