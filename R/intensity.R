@@ -96,12 +96,17 @@ extract_intensity <- function(sound,
   n_frames <- floor((duration - window_length) / time_step) + 1
   if (n_frames < 1) n_frames <- 1
   
-  frame_times <- seq(window_length / 2,
-                     duration - window_length / 2,
-                     by = time_step)
-  
-  if (length(frame_times) == 0) {
+  # If time_step would be negative (very short signal), just use one frame
+  if (duration <= window_length) {
     frame_times <- duration / 2
+  } else {
+    frame_times <- seq(window_length / 2,
+                       duration - window_length / 2,
+                       by = time_step)
+    
+    if (length(frame_times) == 0 || any(is.na(frame_times))) {
+      frame_times <- duration / 2
+    }
   }
   
   # Pre-allocate results

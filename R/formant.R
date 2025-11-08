@@ -95,12 +95,17 @@ extract_formants <- function(sound,
   n_frames <- floor((duration - window_length) / time_step) + 1
   if (n_frames < 1) n_frames <- 1
   
-  frame_times <- seq(window_length / 2, 
-                     duration - window_length / 2,
-                     by = time_step)
-  
-  if (length(frame_times) == 0) {
+  # If time_step would be negative (very short signal), just use one frame
+  if (duration <= window_length) {
     frame_times <- duration / 2
+  } else {
+    frame_times <- seq(window_length / 2, 
+                       duration - window_length / 2,
+                       by = time_step)
+    
+    if (length(frame_times) == 0 || any(is.na(frame_times))) {
+      frame_times <- duration / 2
+    }
   }
   
   # Pre-allocate results
@@ -324,6 +329,14 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
   
   if (interpolate) {
     # Linear interpolation
+    # Check if we have enough non-NA values
+    valid_values <- !is.na(formant_data$frequency)
+    if (sum(valid_values) < 2) {
+      # Not enough points to interpolate
+      idx <- which.min(abs(formant_data$time - time))
+      return(formant_data$frequency[idx])
+    }
+    
     if (time <= min(formant_data$time)) {
       return(formant_data$frequency[1])
     } else if (time >= max(formant_data$time)) {
