@@ -1,0 +1,1016 @@
+* installing to library ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’
+* installing *source* package ‘speaker’ ...
+** using staged installation
+** libs
+using C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.4.4.1)’
+using C++17
+using SDK: ‘’
+/bin/sh: --: invalid option
+Usage:	/bin/sh [GNU long option] [option] ...
+	/bin/sh [GNU long option] [option] script-file ...
+GNU long options:
+	--debug
+	--debugger
+	--dump-po-strings
+	--dump-strings
+	--help
+	--init-file
+	--login
+	--noediting
+	--noprofile
+	--norc
+	--posix
+	--protected
+	--rcfile
+	--restricted
+	--verbose
+	--version
+	--wordexp
+Shell options:
+	-irsD or -c command or -O shopt_option		(invocation only)
+	-abefhkmnptuvxBCHP or -o option
+/bin/sh: --: invalid option
+Usage:	/bin/sh [GNU long option] [option] ...
+	/bin/sh [GNU long option] [option] script-file ...
+GNU long options:
+	--debug
+	--debugger
+	--dump-po-strings
+	--dump-strings
+	--help
+	--init-file
+	--login
+	--noediting
+	--noprofile
+	--norc
+	--posix
+	--protected
+	--rcfile
+	--restricted
+	--verbose
+	--version
+	--wordexp
+Shell options:
+	-irsD or -c command or -O shopt_option		(invocation only)
+	-abefhkmnptuvxBCHP or -o option
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder.cpp -o praat.github.io/melder/melder.o
+In file included from praat.github.io/melder/melder.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_alloc.cpp -o praat.github.io/melder/melder_alloc.o
+In file included from praat.github.io/melder/melder_alloc.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_str32.cpp -o praat.github.io/melder/melder_str32.o
+In file included from praat.github.io/melder/melder_str32.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+praat.github.io/melder/melder_str32.cpp:251:16: warning: unused variable 'kar2' [-Wunused-variable]
+  251 |                 const char32 kar2 = ( caseAware ? Melder_toLowerCase (*pstring2) : *pstring2 );
+      |                              ^~~~
+12 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_colour.cpp -o praat.github.io/melder/melder_colour.o
+In file included from praat.github.io/melder/melder_colour.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_ftoa.cpp -o praat.github.io/melder/melder_ftoa.o
+In file included from praat.github.io/melder/melder_ftoa.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+praat.github.io/melder/melder_ftoa.cpp:43:13: warning: unused variable 'n' [-Wunused-variable]
+   43 |                 const int n = snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%ld", (long_not_integer) value);   // cast to identical type, to make compiler happy
+      |                           ^
+praat.github.io/melder/melder_ftoa.cpp:65:13: warning: unused variable 'n' [-Wunused-variable]
+   65 |                 const int n = snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, formatString, value);
+      |                           ^
+praat.github.io/melder/melder_ftoa.cpp:232:12: warning: unused variable 'n' [-Wunused-variable]
+  232 |         const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f",
+      |                   ^
+praat.github.io/melder/melder_ftoa.cpp:255:12: warning: unused variable 'n' [-Wunused-variable]
+  255 |         const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*fE%d",
+      |                   ^
+praat.github.io/melder/melder_ftoa.cpp:277:12: warning: unused variable 'n' [-Wunused-variable]
+  277 |         const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f%%",
+      |                   ^
+praat.github.io/melder/melder_ftoa.cpp:296:12: warning: unused variable 'n' [-Wunused-variable]
+  296 |         const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*llX",
+      |                   ^
+praat.github.io/melder/melder_ftoa.cpp:638:16: warning: unused variable 'tooLong' [-Wunused-variable]
+  638 |         const integer tooLong = length - width;
+      |                       ^~~~~~~
+18 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_console.cpp -o praat.github.io/melder/melder_console.o
+In file included from praat.github.io/melder/melder_console.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_textencoding.cpp -o praat.github.io/melder/melder_textencoding.o
+In file included from praat.github.io/melder/melder_textencoding.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_atof.cpp -o praat.github.io/melder/melder_atof.o
+In file included from praat.github.io/melder/melder_atof.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_files.cpp -o praat.github.io/melder/melder_files.o
+In file included from praat.github.io/melder/melder_files.cpp:58:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+praat.github.io/melder/melder_files.cpp:244:25: warning: variable 'pathIsAbsolute' set but not used [-Wunused-but-set-variable]
+  244 |                 } else if (const bool pathIsAbsolute = (
+      |                                       ^
+praat.github.io/melder/melder_files.cpp:242:18: warning: variable 'pathIsHomeRelative' set but not used [-Wunused-but-set-variable]
+  242 |                 if (const bool pathIsHomeRelative = ( path [0] == U'~' && (path [1] == U'/' || path [1] == U'\0') )) {
+      |                                ^
+13 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_sort.cpp -o praat.github.io/melder/melder_sort.o
+In file included from praat.github.io/melder/melder_sort.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/melder_debug.cpp -o praat.github.io/melder/melder_debug.o
+In file included from praat.github.io/melder/melder_debug.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+praat.github.io/melder/melder_debug.cpp:256:9: warning: unused variable 'today' [-Wunused-variable]
+  256 |         time_t today = time (nullptr);
+      |                ^~~~~
+12 warnings generated.
+clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -I. -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/dwtools -Ipraat.github.io/LPC -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat.github.io/external/glpk -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -fPIC  -falign-functions=64 -Wall -g -O2   -c praat.github.io/melder/MelderFile.cpp -o praat.github.io/melder/MelderFile.o
+In file included from praat.github.io/melder/MelderFile.cpp:19:
+In file included from praat.github.io/melder/melder.h:76:
+praat.github.io/melder/melder_tensor.h:64:1: warning: 'vector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+   64 | struct vector {
+      | ^
+praat.github.io/melder/melder_tensor.h:52:23: note: did you mean struct here?
+   52 | template <typename T> class vector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:104:1: warning: 'constvector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  104 | struct constvector {
+      | ^
+praat.github.io/melder/melder_tensor.h:53:23: note: did you mean struct here?
+   53 | template <typename T> class constvector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:137:1: warning: 'vectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  137 | struct vectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:54:23: note: did you mean struct here?
+   54 | template <typename T> class vectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:167:1: warning: 'constvectorview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  167 | struct constvectorview {
+      | ^
+praat.github.io/melder/melder_tensor.h:55:23: note: did you mean struct here?
+   55 | template <typename T> class constvectorview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:207:1: warning: 'autovector' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  207 | struct autovector {
+      | ^
+praat.github.io/melder/melder_tensor.h:56:23: note: did you mean struct here?
+   56 | template <typename T> class autovector;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:388:1: warning: 'matrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  388 | struct matrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:57:23: note: did you mean struct here?
+   57 | template <typename T> class matrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:461:1: warning: 'constmatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  461 | struct constmatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:58:23: note: did you mean struct here?
+   58 | template <typename T> class constmatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:532:1: warning: 'matrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  532 | struct matrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:59:23: note: did you mean struct here?
+   59 | template <typename T> class matrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:612:1: warning: 'constmatrixview' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  612 | struct constmatrixview {
+      | ^
+praat.github.io/melder/melder_tensor.h:60:23: note: did you mean struct here?
+   60 | template <typename T> class constmatrixview;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:683:1: warning: 'automatrix' defined as a struct template here but previously declared as a class template; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
+  683 | struct automatrix {
+      | ^
+praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
+   61 | template <typename T> class automatrix;
+      |                       ^~~~~
+      |                       struct
+praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
+  703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+11 warnings generated.
+make: *** No rule to make target `praat.github.io/melder/melder_strings.o', needed by `speaker.so'.  Stop.
+ERROR: compilation failed for package ‘speaker’
+* removing ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/speaker’
+* restoring previous ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/speaker’

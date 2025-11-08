@@ -1,51 +1,133 @@
 # Makevars for Unix/Linux/macOS builds
 #
-# This file configures the build process for the speaker package on Unix-like systems.
-# It sets up compiler flags for C++11, includes Praat source directories, and handles
-# compilation of both Rcpp wrapper code and embedded Praat C source files.
+# Compiles Praat C++ source along with R package wrappers
+# Praat sources are accessed via symbolic links in src/
 
 # Use C++17 standard (required for Praat compatibility)
 CXX_STD = CXX17
 
-# Praat source directories
-PRAAT_SRC = praat.github.io
-
-# Include directories for compilation
-# - Current directory for local headers
-# - Praat subdirectories for Praat headers
+# Include directories
 PKG_CPPFLAGS = -I. \
-               -I$(PRAAT_SRC) \
-               -I$(PRAAT_SRC)/sys \
-               -I$(PRAAT_SRC)/dwsys \
-               -I$(PRAAT_SRC)/fon \
-               -I$(PRAAT_SRC)/melder \
-               -I$(PRAAT_SRC)/kar \
-               -I$(PRAAT_SRC)/external \
-               -I$(PRAAT_SRC)/external/gsl \
-               -I$(PRAAT_SRC)/external/flac \
-               -I$(PRAAT_SRC)/external/mp3 \
-               -I$(PRAAT_SRC)/LPC \
-               -I$(PRAAT_SRC)/num \
-               -I$(PRAAT_SRC)/stat
+               -Ipraat.github.io \
+               -Ipraat.github.io/kar \
+               -Ipraat.github.io/melder \
+               -Ipraat.github.io/sys \
+               -Ipraat.github.io/dwsys \
+               -Ipraat.github.io/stat \
+               -Ipraat.github.io/fon \
+               -Ipraat.github.io/foned \
+               -Ipraat.github.io/dwtools \
+               -Ipraat.github.io/LPC \
+               -Ipraat.github.io/external/portaudio \
+               -Ipraat.github.io/external/flac \
+               -Ipraat.github.io/external/mp3 \
+               -Ipraat.github.io/external/espeak \
+               -Ipraat.github.io/external/gsl \
+               -Ipraat.github.io/external/glpk
 
-# Compiler flags
-# -DPRAAT_LIB: Define Praat as library (not standalone application)
-# -Wno-unused-parameter: Suppress Praat's unused parameter warnings
-# -Wno-sign-compare: Suppress sign comparison warnings from Praat code
-# -Wno-unused-variable: Suppress unused variable warnings from Praat
-# -Wno-deprecated-declarations: Suppress deprecation warnings
+# Compiler flags (Praat-specific + warning suppression)
 PKG_CXXFLAGS = -DPRAAT_LIB \
+               -DNO_GUI \
+               -DNO_AUDIO \
+               -DNO_GRAPHICS \
+               -DNO_NETWORK \
+               -DUNIX \
+               -pthread \
+               -ffp-contract=off \
                -Wno-unused-parameter \
                -Wno-sign-compare \
                -Wno-unused-variable \
-               -Wno-deprecated-declarations
+               -Wno-deprecated-declarations \
+               -Wno-trigraphs \
+               -Wno-logical-op-parentheses \
+               -Wno-shift-op-parentheses \
+               -Wno-mismatched-tags \
+               -Wno-unused-const-variable
 
-# Linker flags (if needed for platform-specific libraries)
-PKG_LIBS =
+# Linker flags
+PKG_LIBS = -pthread
 
-# Note: Praat source compilation is complex due to platform dependencies.
-# For now, we use header-only wrapper approach with stub implementations.
-# Full Praat source integration will be added in a future phase.
+# ============================================================================
+# SOURCE FILES
+# Using symlinks: melder/, sys/, dwsys/, stat/, fon/ -> praat.github.io/*/
+# ============================================================================
 
-# The package currently provides R6 object-oriented interface to Praat
-# functionality with C++ wrappers that will eventually call Praat library.
+# Melder sources (core infrastructure)
+MELDER_SRC = melder/melder.cpp melder/melder_alloc.cpp melder/melder_str32.cpp \
+             melder/melder_colour.cpp melder/melder_ftoa.cpp melder/melder_console.cpp \
+             melder/melder_textencoding.cpp melder/melder_atof.cpp melder/melder_files.cpp \
+             melder/melder_sort.cpp melder/melder_debug.cpp melder/MelderFile.cpp \
+             melder/melder_strings.cpp melder/melder_search.cpp melder/melder_info.cpp \
+             melder/melder_error.cpp melder/melder_warning.cpp melder/melder_progress.cpp \
+             melder/melder_play.cpp melder/melder_help.cpp melder/melder_time.cpp \
+             melder/melder_audio.cpp melder/melder_audiofiles.cpp melder/melder_quantity.cpp \
+             melder/MelderReadText.cpp melder/melder_tensorio.cpp melder/abcio.cpp \
+             melder/melder_sysenv.cpp melder/regularExp.cpp melder/NUMmath.cpp \
+             melder/NUMspecfunc.cpp melder/NUMear.cpp melder/NUMinterpol.cpp \
+             melder/NUMmetrics.cpp melder/NUMrandom.cpp melder/NUMfilter.cpp \
+             melder/NUMlinprog.cpp melder/NUM.cpp melder/STR.cpp melder/VEC.cpp \
+             melder/MAT.cpp melder/STRVEC.cpp melder/MelderCat.cpp
+
+# Sys sources (minimal - only Thing,Data,Collection needed)
+SYS_SRC = sys/Thing.cpp sys/Data.cpp sys/Simple.cpp sys/Collection.cpp \
+          sys/Daata.cpp sys/oo_DESTROY.cpp sys/oo_COPY.cpp sys/oo_EQUAL.cpp \
+          sys/oo_CAN_WRITE_AS_ENCODING.cpp sys/oo_WRITE_TEXT.cpp \
+          sys/oo_READ_TEXT.cpp sys/oo_WRITE_BINARY.cpp sys/oo_READ_BINARY.cpp \
+          sys/oo_DESCRIPTION.cpp
+
+# Dwsys sources (minimal)
+DWSYS_SRC = 
+
+# Stat sources (minimal - Table support)
+STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp
+
+# Fon sources (core phonetic objects)
+FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
+          fon/Function.cpp fon/Sampled.cpp fon/SampledXY.cpp fon/Matrix.cpp \
+          fon/Vector.cpp fon/Polygon.cpp fon/PointProcess.cpp \
+          fon/Matrix_and_PointProcess.cpp fon/Matrix_and_Polygon.cpp \
+          fon/AnyTier.cpp fon/RealTier.cpp fon/Sound.cpp fon/LongSound.cpp \
+          fon/Sound_files.cpp fon/Sound_audio.cpp fon/PointProcess_and_Sound.cpp \
+          fon/Sound_PointProcess.cpp fon/ParamCurve.cpp fon/Pitch.cpp \
+          fon/Harmonicity.cpp fon/Intensity.cpp fon/Matrix_and_Pitch.cpp \
+          fon/Sound_to_Pitch.cpp fon/Sound_to_Intensity.cpp \
+          fon/Sound_to_Harmonicity.cpp fon/Sound_to_Harmonicity_GNE.cpp \
+          fon/Sound_to_PointProcess.cpp fon/Pitch_to_PointProcess.cpp \
+          fon/Pitch_to_Sound.cpp fon/Pitch_Intensity.cpp fon/PitchTier.cpp \
+          fon/Pitch_to_PitchTier.cpp fon/PitchTier_to_PointProcess.cpp \
+          fon/PitchTier_to_Sound.cpp fon/Manipulation.cpp \
+          fon/Pitch_AnyTier_to_PitchTier.cpp fon/IntensityTier.cpp \
+          fon/DurationTier.cpp fon/AmplitudeTier.cpp fon/Spectrum.cpp \
+          fon/Ltas.cpp fon/Spectrogram.cpp fon/SpectrumTier.cpp \
+          fon/Ltas_to_SpectrumTier.cpp fon/Formant.cpp fon/Image.cpp \
+          fon/Sound_to_Formant.cpp fon/Sound_and_Spectrogram.cpp \
+          fon/Sound_and_Spectrum.cpp fon/Spectrum_and_Spectrogram.cpp \
+          fon/Spectrum_to_Formant.cpp fon/FormantTier.cpp fon/TextGrid.cpp \
+          fon/TextGrid_Sound.cpp fon/Label.cpp fon/FormantGrid.cpp \
+          fon/Excitation.cpp fon/Cochleagram.cpp fon/Cochleagram_and_Excitation.cpp \
+          fon/Excitation_to_Formant.cpp fon/Sound_to_Cochleagram.cpp \
+          fon/Spectrum_to_Excitation.cpp fon/VocalTract.cpp \
+          fon/VocalTract_to_Spectrum.cpp fon/Sound_enhance.cpp \
+          fon/VoiceAnalysis.cpp
+
+# Wrapper sources (R package code)
+WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
+              formant_wrappers.cpp intensity_wrappers.cpp harmonicity_wrappers.cpp \
+              pointprocess_wrappers.cpp utils.cpp RcppExports.cpp
+
+# All sources combined
+SOURCES = $(MELDER_SRC) $(SYS_SRC) $(STAT_SRC) $(FON_SRC) $(WRAPPER_SRC)
+
+# Object files (R will compile these)
+OBJECTS = $(SOURCES:.cpp=.o)
+
+# Default target
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+# Clean
+clean:
+	rm -f $(OBJECTS) $(SHLIB)
+
+.PHONY: all clean
