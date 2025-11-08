@@ -43,59 +43,9 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
 # Linker flags (if needed for platform-specific libraries)
 PKG_LIBS =
 
-# List of essential Praat source files to compile
-# Core Praat infrastructure (melder - Praat's base library)
-PRAAT_MELDER_SOURCES = \
-    $(PRAAT_SRC)/melder/melder.cpp \
-    $(PRAAT_SRC)/melder/melder_alloc.cpp \
-    $(PRAAT_SRC)/melder/melder_error.cpp \
-    $(PRAAT_SRC)/melder/melder_str32.cpp \
-    $(PRAAT_SRC)/melder/melder_atof.cpp \
-    $(PRAAT_SRC)/melder/melder_tensorio.cpp \
-    $(PRAAT_SRC)/melder/NUM.cpp \
-    $(PRAAT_SRC)/melder/VEC.cpp \
-    $(PRAAT_SRC)/melder/MAT.cpp
+# Note: Praat source compilation is complex due to platform dependencies.
+# For now, we use header-only wrapper approach with stub implementations.
+# Full Praat source integration will be added in a future phase.
 
-# Core Praat object system
-PRAAT_SYS_SOURCES = \
-    $(PRAAT_SRC)/sys/Thing.cpp \
-    $(PRAAT_SRC)/sys/Data.cpp \
-    $(PRAAT_SRC)/sys/Simple.cpp \
-    $(PRAAT_SRC)/sys/Collection.cpp \
-    $(PRAAT_SRC)/sys/Interpreter.cpp
-
-# Phonetic analysis objects
-PRAAT_FON_SOURCES = \
-    $(PRAAT_SRC)/fon/Sound.cpp \
-    $(PRAAT_SRC)/fon/Pitch.cpp \
-    $(PRAAT_SRC)/fon/Formant.cpp \
-    $(PRAAT_SRC)/fon/Intensity.cpp \
-    $(PRAAT_SRC)/fon/Spectrogram.cpp \
-    $(PRAAT_SRC)/fon/Sound_to_Pitch.cpp \
-    $(PRAAT_SRC)/fon/Sound_to_Formant.cpp \
-    $(PRAAT_SRC)/fon/Sound_to_Intensity.cpp \
-    $(PRAAT_SRC)/fon/Sound_and_Spectrogram.cpp
-
-# Combine all sources (Note: R will auto-detect and compile)
-# This list is for documentation; R compiles all .cpp in src/ and subdirs if configured
-PRAAT_SOURCES = $(PRAAT_MELDER_SOURCES) $(PRAAT_SYS_SOURCES) $(PRAAT_FON_SOURCES)
-
-# Note: R's build system will automatically compile all .cpp files in src/
-# including those in src/praat/ subdirectories if properly configured
-
-# Package-specific C++ wrapper sources (auto-detected by R)
-# These will be in src/:
-# - praat_wrapper.cpp
-# - sound_wrapper.cpp
-# - pitch_wrapper.cpp
-# - formant_wrapper.cpp
-# - intensity_wrapper.cpp
-# - spectrogram_wrapper.cpp
-# - utils.cpp
-# - RcppExports.cpp (auto-generated)
-
-# Build all .cpp files in src/ directory
-# R will automatically compile all *.cpp files and link them
-
-# Note: After Praat source is integrated (Phase 2, Task T009-T011),
-# uncomment PRAAT_SOURCES and add the specific files needed.
+# The package currently provides R6 object-oriented interface to Praat
+# functionality with C++ wrappers that will eventually call Praat library.
