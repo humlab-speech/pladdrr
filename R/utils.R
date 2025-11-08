@@ -329,3 +329,56 @@ validate_pitch_object <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+# ==============================================================================
+# Formant Object Validation
+# ==============================================================================
+
+#' Check if object is a valid praat_formant
+#'
+#' Validates that an object has the structure of a praat_formant object
+#'
+#' @param x Object to check
+#' @return Logical indicating validity
+#' @export
+is_praat_formant <- function(x) {
+  if (!inherits(x, "praat_formant")) {
+    return(FALSE)
+  }
+  if (!is.list(x)) {
+    return(FALSE)
+  }
+  
+  # Check required fields
+  required_fields <- c("values", "n_frames", "n_formants")
+  if (!all(required_fields %in% names(x))) {
+    return(FALSE)
+  }
+  
+  # Check values is a data.frame with required columns
+  if (!is.data.frame(x$values)) {
+    return(FALSE)
+  }
+  
+  required_cols <- c("time", "formant_number", "frequency", "bandwidth")
+  if (!all(required_cols %in% names(x$values))) {
+    return(FALSE)
+  }
+  
+  TRUE
+}
+
+#' Validate praat_formant object
+#'
+#' Ensures an object is a valid praat_formant, throwing an error if not
+#'
+#' @param x Object to validate
+#' @param name Parameter name for error messages
+#' @return The validated object (invisibly)
+#' @keywords internal
+validate_formant_object <- function(x, name = deparse(substitute(x))) {
+  if (!is_praat_formant(x)) {
+    stop(sprintf("'%s' must be a praat_formant object", name), call. = FALSE)
+  }
+  invisible(x)
+}

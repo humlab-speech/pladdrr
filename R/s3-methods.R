@@ -202,3 +202,71 @@ summary.praat_pitch <- function(object, ...) {
 
   invisible(object)
 }
+
+# ==============================================================================
+# Formant Object Methods
+# ==============================================================================
+
+#' Print method for praat_formant objects
+#'
+#' @param x A praat_formant object
+#' @param ... Additional arguments (unused)
+#' @export
+print.praat_formant <- function(x, ...) {
+  cat("Praat Formant Object\n")
+  cat("====================\n")
+  cat(sprintf("Number of frames: %d\n", x$n_frames))
+  cat(sprintf("Number of formants tracked: %d\n", x$n_formants))
+  cat(sprintf("Time step: %.6f s\n", x$time_step))
+  cat(sprintf("Maximum formant: %.0f Hz\n", x$max_formant))
+  cat(sprintf("Window length: %.4f s\n", x$window_length))
+  cat("\nFirst few measurements:\n")
+  print(head(x$values, 10))
+  invisible(x)
+}
+
+#' Summary method for praat_formant objects
+#'
+#' @param object A praat_formant object
+#' @param ... Additional arguments (unused)
+#' @export
+summary.praat_formant <- function(object, ...) {
+  cat("Praat Formant Object\n")
+  cat("====================\n")
+  cat(sprintf("Number of frames: %d\n", object$n_frames))
+  cat(sprintf("Number of formants tracked: %d\n", object$n_formants))
+  cat(sprintf("Time step: %.6f s\n", object$time_step))
+  cat(sprintf("Maximum formant: %.0f Hz\n", object$max_formant))
+  
+  # Calculate statistics for each formant
+  for (f in 1:object$n_formants) {
+    formant_data <- object$values[object$values$formant_number == f, ]
+    valid_freqs <- formant_data$frequency[!is.na(formant_data$frequency)]
+    
+    cat(sprintf("\nFormant F%d:\n", f))
+    if (length(valid_freqs) > 0) {
+      cat(sprintf("  Valid frames: %d (%.1f%%)\n",
+                  length(valid_freqs),
+                  100 * length(valid_freqs) / nrow(formant_data)))
+      cat(sprintf("  Mean: %.1f Hz\n", mean(valid_freqs)))
+      cat(sprintf("  SD: %.1f Hz\n", sd(valid_freqs)))
+      cat(sprintf("  Range: %.1f - %.1f Hz\n", min(valid_freqs), max(valid_freqs)))
+    } else {
+      cat("  No valid measurements\n")
+    }
+  }
+  
+  invisible(object)
+}
+
+#' Convert praat_formant to data.frame
+#'
+#' @param x A praat_formant object
+#' @param row.names Not used
+#' @param optional Not used
+#' @param ... Additional arguments (unused)
+#' @return The values data.frame from the formant object
+#' @export
+as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$values
+}
