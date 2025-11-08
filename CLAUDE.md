@@ -396,14 +396,111 @@ Each object needs:
 - Expanding Sound class methods
 - Build system optimization for Praat source compilation
 
-**Next Steps:**
-1. Complete Formant R6 conversion
-2. Complete Intensity R6 conversion  
-3. Complete Harmonicity R6 conversion
-4. Implement TextGrid (critical missing feature)
-5. Implement Manipulation object
-6. Add more Sound methods (filtering, modification, etc.)
-7. Implement spectral objects (Spectrogram, Spectrum)
+### STRATEGIC SHIFT: Full OOP Implementation
+
+**Date:** 2025-11-08  
+**Priority Change:** Move from function-based to comprehensive object-oriented implementation
+
+**Key Insight from Praat Source Analysis:**
+The Praat codebase is fundamentally object-oriented with the following hierarchy:
+- `Thing` (base class) → `Function` → `Sampled`, `Vector`, `Matrix`
+- Core phonetic objects: Sound, Pitch, Formant, Intensity, Spectrogram, TextGrid, etc.
+- Each object has ~10-40 methods for querying, transforming, and exporting data
+- Objects transform into other objects (e.g., `Sound_to_Pitch()`, `Pitch_to_PitchTier()`)
+
+**Amended Implementation Plan:**
+
+**Phase 1: Complete Foundation Objects (Priority)**
+1. ✅ Sound - Expand to include ALL Sound methods (~40 total)
+   - Missing: filtering, pre-emphasis, resampling, concatenation, mixing
+   - Missing transforms: to_Spectrogram, to_Spectrum, to_LPC, to_Manipulation
+2. 🔄 Pitch - Add missing methods (~20 total)
+   - Missing: smooth, interpolate, kill_octave_jumps
+   - Missing transforms: to_PitchTier, to_PointProcess, to_Sound (resynth)
+3. 🔄 Formant - Convert S3 to R6, add methods (~15 total)
+   - Missing: tracker, formula, down_to_FormantGrid
+4. 🔄 Intensity - Convert S3 to R6, add methods (~12 total)
+5. 🔄 Harmonicity - Convert S3 to R6, add methods (~10 total)
+6. ✅ PointProcess - Expand for voice quality metrics
+
+**Phase 2: Critical Missing Objects**
+7. ❌ **TextGrid** ⭐⭐⭐ HIGHEST PRIORITY
+   - Tier management (IntervalTier, PointTier)
+   - Interval/point operations
+   - Integration with Sound for segmentation
+   - Essential for 90%+ of phonetic research
+8. ❌ **Manipulation** ⭐⭐ HIGH PRIORITY  
+   - PSOLA-based pitch/duration modification
+   - Extract/replace PitchTier, DurationTier
+   - Resynthesize modified sound
+   - Essential for prosody research
+
+**Phase 3: Spectral Analysis Objects**
+9. ❌ Spectrogram
+10. ❌ Spectrum
+11. ❌ LPC (Linear Predictive Coding)
+12. ❌ Ltas (Long-term average spectrum)
+
+**Phase 4: Modifiable Tier Objects**
+13. ❌ PitchTier (modifiable F0 contour)
+14. ❌ FormantGrid (modifiable formant tracks)
+15. ❌ IntensityTier (modifiable intensity contour)
+16. ❌ DurationTier (time warping)
+
+**Phase 5: Advanced Analysis**
+17. ❌ VoiceReport (comprehensive voice quality)
+18. ❌ Cochleagram (auditory model)
+19. ❌ Excitation (vocal tract excitation)
+20. ❌ Additional objects as research needs emerge
+
+**Implementation Approach Per Object:**
+
+For each Praat object class, implement in this order:
+1. **Analyze Praat source** (`src/praat.github.io/fon/[Object].h`)
+   - Identify all `[Object]_*` functions in the header
+   - Map inheritance (Thing → Function → Vector/Matrix → SpecificObject)
+   - List creation, query, transform, modify, export methods
+   
+2. **Create C++ wrappers** (`src/[object]_wrappers.cpp`)
+   - Finalizer function for memory management
+   - Constructor wrappers (from file, from data, from other objects)
+   - Query method wrappers (get_* functions)
+   - Transform method wrappers (to_* functions, return new XPtr)
+   - Modify method wrappers (in-place or return modified copy)
+   - Export method wrappers (to R data structures)
+   
+3. **Create R6 class** (`R/[object]-r6.R`)
+   - Inherit from PraatObject
+   - Initialize method (from file or XPtr)
+   - Public methods wrapping C++ functions
+   - Print method showing object summary
+   - Static factory methods if needed (e.g., `Sound$create_tone()`)
+   
+4. **Write tests** (`tests/testthat/test-[object].R`)
+   - Constructor tests
+   - Query method tests with known values
+   - Transform method tests (verify output object type)
+   - Memory leak tests (create/destroy many objects)
+   - Integration tests (workflows combining objects)
+   
+5. **Document** (`man/[Object].Rd` via roxygen2)
+   - Class description linking to Praat manual
+   - Constructor parameters
+   - All method signatures with parameter descriptions
+   - Examples showing common workflows
+   - Links to related objects
+
+**Next Immediate Actions:**
+1. ✅ Document this strategic shift in CLAUDE.md
+2. Expand Sound class with remaining ~25 methods
+3. Convert Formant to R6 with all methods
+4. Convert Intensity to R6 with all methods
+5. Convert Harmonicity to R6 with all methods
+6. Implement TextGrid (most critical missing feature)
+7. Implement Manipulation (pitch/duration modification)
+8. Add spectral objects (Spectrogram, Spectrum, LPC)
+9. Create comprehensive examples re-implementing Parselmouth workflows
+10. Validate against Praat desktop output for numerical accuracy
 
 ### Future Considerations
 
