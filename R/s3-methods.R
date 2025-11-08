@@ -270,3 +270,66 @@ summary.praat_formant <- function(object, ...) {
 as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
 }
+
+# ==============================================================================
+# Intensity Object Methods
+# ==============================================================================
+
+#' Print method for praat_intensity objects
+#'
+#' @param x A praat_intensity object
+#' @param ... Additional arguments (unused)
+#' @export
+print.praat_intensity <- function(x, ...) {
+  cat("Praat Intensity Object\n")
+  cat("======================\n")
+  cat(sprintf("Number of frames: %d\n", x$n_frames))
+  cat(sprintf("Time step: %.6f s\n", x$time_step))
+  cat(sprintf("Minimum pitch: %.0f Hz\n", x$minimum_pitch))
+  cat(sprintf("Window length: %.4f s\n", x$window_length))
+  cat(sprintf("Mean subtracted: %s\n", ifelse(x$subtract_mean, "yes", "no")))
+  cat("\nFirst few measurements:\n")
+  print(head(x$values, 10))
+  invisible(x)
+}
+
+#' Summary method for praat_intensity objects
+#'
+#' @param object A praat_intensity object
+#' @param ... Additional arguments (unused)
+#' @export
+summary.praat_intensity <- function(object, ...) {
+  cat("Praat Intensity Object\n")
+  cat("======================\n")
+  cat(sprintf("Number of frames: %d\n", object$n_frames))
+  cat(sprintf("Time step: %.6f s\n", object$time_step))
+  cat(sprintf("Minimum pitch: %.0f Hz\n", object$minimum_pitch))
+  
+  valid_intensities <- object$values$intensity_db[!is.na(object$values$intensity_db)]
+  
+  if (length(valid_intensities) > 0) {
+    cat(sprintf("\nIntensity statistics:\n"))
+    cat(sprintf("  Valid frames: %d (%.1f%%)\n",
+                length(valid_intensities),
+                100 * length(valid_intensities) / nrow(object$values)))
+    cat(sprintf("  Mean: %.2f dB\n", mean(valid_intensities)))
+    cat(sprintf("  SD: %.2f dB\n", sd(valid_intensities)))
+    cat(sprintf("  Range: %.2f - %.2f dB\n", min(valid_intensities), max(valid_intensities)))
+  } else {
+    cat("\nNo valid intensity measurements\n")
+  }
+  
+  invisible(object)
+}
+
+#' Convert praat_intensity to data.frame
+#'
+#' @param x A praat_intensity object
+#' @param row.names Not used
+#' @param optional Not used
+#' @param ... Additional arguments (unused)
+#' @return The values data.frame from the intensity object
+#' @export
+as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$values
+}

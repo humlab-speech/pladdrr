@@ -243,16 +243,28 @@ extract_formants <- function(sound,
   
   p <- sum(x^2) / n
   
+  # Check if signal has any variation
+  if (p == 0 || is.na(p) || !is.finite(p)) {
+    return(NULL)
+  }
+  
   for (k in 1:order) {
     # Calculate reflection coefficient
     num <- sum(f[(k+1):n] * b[k:(n-1)])
     den <- sum(f[(k+1):n]^2) + sum(b[k:(n-1)]^2)
     
-    if (den == 0) {
+    # Check for invalid values
+    if (is.na(den) || !is.finite(den) || den == 0) {
       return(NULL)
     }
     
     rc <- -2 * num / den
+    
+    # Check reflection coefficient validity
+    if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) {
+      # Reflection coefficient out of range, stop iteration
+      break
+    }
     
     # Update coefficients
     a_new <- numeric(k + 1)
@@ -271,6 +283,16 @@ extract_formants <- function(sound,
     
     # Update prediction error power
     p <- p * (1 - rc^2)
+    
+    # Check if error power is valid
+    if (is.na(p) || !is.finite(p) || p <= 0) {
+      break
+    }
+  }
+  
+  # Check if we got valid coefficients
+  if (length(a) < 2 || any(is.na(a)) || any(!is.finite(a))) {
+    return(NULL)
   }
   
   return(list(
