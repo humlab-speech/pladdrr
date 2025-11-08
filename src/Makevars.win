@@ -1,2 +1,99 @@
-PKG_CXXFLAGS = -I../inst/include
-PKG_LIBS = 
+# Makevars.win for Windows builds with Rtools
+#
+# This file configures the build process for the speaker package on Windows.
+# It sets up compiler flags for C++11, includes Praat source directories, and handles
+# compilation of both Rcpp wrapper code and embedded Praat C source files.
+#
+# Requirements: Rtools (https://cran.r-project.org/bin/windows/Rtools/)
+
+# Use C++11 standard (required for Rcpp and modern C++ features)
+CXX_STD = CXX11
+
+# Praat source directory (to be populated with Praat C code)
+PRAAT_SRC = praat
+
+# Include directories for compilation
+# - Current directory for local headers
+# - Praat subdirectories for Praat headers
+PKG_CPPFLAGS = -I. \
+               -I$(PRAAT_SRC) \
+               -I$(PRAAT_SRC)/sys \
+               -I$(PRAAT_SRC)/dwsys \
+               -I$(PRAAT_SRC)/fon \
+               -I$(PRAAT_SRC)/melder \
+               -I$(PRAAT_SRC)/external \
+               -I$(PRAAT_SRC)/external/gsl
+
+# Compiler flags
+# -DPRAAT_LIB: Define Praat as library (not standalone application)
+# -Wno-unused-parameter: Suppress Praat's unused parameter warnings
+# -Wno-sign-compare: Suppress sign comparison warnings from Praat code
+# -Wno-unused-variable: Suppress unused variable warnings from Praat
+# -Wno-deprecated-declarations: Suppress deprecation warnings
+# -DWIN32: Windows platform flag
+PKG_CXXFLAGS = -DPRAAT_LIB \
+               -DWIN32 \
+               -Wno-unused-parameter \
+               -Wno-sign-compare \
+               -Wno-unused-variable \
+               -Wno-deprecated-declarations
+
+# Linker flags (if needed for Windows-specific libraries)
+PKG_LIBS =
+
+# List of essential Praat source files to compile
+# Core Praat infrastructure (melder - Praat's base library)
+PRAAT_MELDER_SOURCES = \
+    $(PRAAT_SRC)/melder/melder.cpp \
+    $(PRAAT_SRC)/melder/melder_alloc.cpp \
+    $(PRAAT_SRC)/melder/melder_error.cpp \
+    $(PRAAT_SRC)/melder/melder_str32.cpp \
+    $(PRAAT_SRC)/melder/melder_atof.cpp \
+    $(PRAAT_SRC)/melder/melder_tensorio.cpp \
+    $(PRAAT_SRC)/melder/NUM.cpp \
+    $(PRAAT_SRC)/melder/VEC.cpp \
+    $(PRAAT_SRC)/melder/MAT.cpp
+
+# Core Praat object system
+PRAAT_SYS_SOURCES = \
+    $(PRAAT_SRC)/sys/Thing.cpp \
+    $(PRAAT_SRC)/sys/Data.cpp \
+    $(PRAAT_SRC)/sys/Simple.cpp \
+    $(PRAAT_SRC)/sys/Collection.cpp \
+    $(PRAAT_SRC)/sys/Interpreter.cpp
+
+# Phonetic analysis objects
+PRAAT_FON_SOURCES = \
+    $(PRAAT_SRC)/fon/Sound.cpp \
+    $(PRAAT_SRC)/fon/Pitch.cpp \
+    $(PRAAT_SRC)/fon/Formant.cpp \
+    $(PRAAT_SRC)/fon/Intensity.cpp \
+    $(PRAAT_SRC)/fon/Spectrogram.cpp \
+    $(PRAAT_SRC)/fon/Sound_to_Pitch.cpp \
+    $(PRAAT_SRC)/fon/Sound_to_Formant.cpp \
+    $(PRAAT_SRC)/fon/Sound_to_Intensity.cpp \
+    $(PRAAT_SRC)/fon/Sound_and_Spectrogram.cpp
+
+# Combine all sources (Note: R will auto-detect and compile)
+# This list is for documentation; R compiles all .cpp in src/ and subdirs if configured
+PRAAT_SOURCES = $(PRAAT_MELDER_SOURCES) $(PRAAT_SYS_SOURCES) $(PRAAT_FON_SOURCES)
+
+# Note: R's build system will automatically compile all .cpp files in src/
+# including those in src/praat/ subdirectories if properly configured
+
+# Package-specific C++ wrapper sources (auto-detected by R)
+# These will be in src/:
+# - praat_wrapper.cpp
+# - sound_wrapper.cpp
+# - pitch_wrapper.cpp
+# - formant_wrapper.cpp
+# - intensity_wrapper.cpp
+# - spectrogram_wrapper.cpp
+# - utils.cpp
+# - RcppExports.cpp (auto-generated)
+
+# Build all .cpp files in src/ directory
+# R will automatically compile all *.cpp files and link them
+
+# Note: After Praat source is integrated (Phase 2, Task T009-T011),
+# uncomment PRAAT_SOURCES and add the specific files needed.

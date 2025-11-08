@@ -13,5 +13,6 @@ sound_stats(sound_data)
 List containing mean, min, max, and length statistics
 }
 \description{
-Calculates basic statistics for a sound vector (placeholder implementation)
+Calculates basic statistics for a sound vector
 }
+\keyword{internal}

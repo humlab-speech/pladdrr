@@ -6,22 +6,29 @@ Authors@R: c(
     person("Humlab Speech", role = c("aut", "cre"),
            email = "humlab-speech@umu.se")
     )
-Description: Provides direct, efficient access to Praat C implemented 
-    functionality from R using Rcpp. Similar in concept to the parselmouth 
-    package for Python, this package allows R users to leverage Praat's 
-    powerful phonetic analysis capabilities directly.
+Description: Provides direct, efficient access to Praat C implemented
+    functionality from R using Rcpp. Similar in concept to the parselmouth
+    package for Python, this package allows R users to leverage Praat's
+    powerful phonetic analysis capabilities directly from R for sound object
+    manipulation, pitch analysis, formant extraction, intensity measurements,
+    and spectral analysis.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.0.0)
 Imports:
-    Rcpp (>= 1.0.0)
+    Rcpp (>= 1.0.0),
+    R6 (>= 2.5.0)
 LinkingTo: Rcpp
 Suggests:
     testthat (>= 3.0.0),
+    roxygen2 (>= 7.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 SystemRequirements: C++11
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
+URL: https://github.com/humlab-speech/speaker
+BugReports: https://github.com/humlab-speech/speaker/issues

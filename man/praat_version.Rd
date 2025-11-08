@@ -10,5 +10,5 @@ praat_version()
 Character string with version information
 }
 \description{
-Returns the version string for the Praat implementation
+Returns the version string for the Praat library integration
 }

@@ -3,45 +3,264 @@
 
 #' Get Praat version information
 #'
-#' Returns the version string for the Praat implementation
-#' 
+#' Returns the version string for the Praat library integration
+#'
 #' @return Character string with version information
 #' @export
 praat_version <- function() {
     .Call(`_speaker_praat_version`)
 }
 
+#' Initialize Praat library
+#'
+#' Performs any necessary initialization for Praat components
+#' This should be called when the package is loaded
+#'
+#' @return Logical indicating success
+#' @keywords internal
+praat_initialize <- function() {
+    .Call(`_speaker_praat_initialize`)
+}
+
 #' Calculate basic sound statistics
 #'
-#' Calculates basic statistics for a sound vector (placeholder implementation)
-#' 
+#' Calculates basic statistics for a sound vector
+#'
 #' @param sound_data Numeric vector containing sound amplitude values
 #' @return List containing mean, min, max, and length statistics
-#' @export
+#' @keywords internal
 sound_stats <- function(sound_data) {
     .Call(`_speaker_sound_stats`, sound_data)
 }
 
-#' Create a simple Sound object representation
+#' Create a sound object from numeric vector
 #'
-#' Creates a basic sound object structure (placeholder for Praat Sound object)
-#' 
+#' Creates a praat_sound object structure from R numeric data
+#'
 #' @param values Numeric vector of sound amplitude values
-#' @param sampling_frequency Sampling frequency in Hz (default: 44100)
-#' @return List representing a sound object with values and metadata
+#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @param start_time Start time in seconds (default: 0.0)
+#' @return List representing a praat_sound object with values and metadata
 #' @export
-create_sound <- function(values, sampling_frequency = 44100.0) {
-    .Call(`_speaker_create_sound`, values, sampling_frequency)
+create_sound_from_values <- function(values, sampling_rate = 44100.0, start_time = 0.0) {
+    .Call(`_speaker_create_sound_from_values`, values, sampling_rate, start_time)
 }
 
 #' Get sound duration
 #'
-#' Calculate the duration of a sound object in seconds
-#' 
-#' @param sound_object List representing a sound object (from create_sound)
+#' Extract the duration of a sound object in seconds
+#'
+#' @param sound_obj List representing a praat_sound object
 #' @return Numeric value representing duration in seconds
-#' @export
-get_sound_duration <- function(sound_object) {
-    .Call(`_speaker_get_sound_duration`, sound_object)
+#' @keywords internal
+get_sound_duration_cpp <- function(sound_obj) {
+    .Call(`_speaker_get_sound_duration_cpp`, sound_obj)
+}
+
+#' Get sound sampling rate
+#'
+#' Extract the sampling rate of a sound object
+#'
+#' @param sound_obj List representing a praat_sound object
+#' @return Numeric value representing sampling rate in Hz
+#' @keywords internal
+get_sound_sampling_rate_cpp <- function(sound_obj) {
+    .Call(`_speaker_get_sound_sampling_rate_cpp`, sound_obj)
+}
+
+#' Get number of samples in sound
+#'
+#' Extract the number of samples in a sound object
+#'
+#' @param sound_obj List representing a praat_sound object
+#' @return Integer number of samples
+#' @keywords internal
+get_sound_n_samples_cpp <- function(sound_obj) {
+    .Call(`_speaker_get_sound_n_samples_cpp`, sound_obj)
+}
+
+.sound_read_from_file <- function(path) {
+    .Call(`_speaker_sound_read_from_file`, path)
+}
+
+.sound_create_from_values <- function(values, sampling_rate) {
+    .Call(`_speaker_sound_create_from_values`, values, sampling_rate)
+}
+
+.sound_get_duration <- function(sound_ptr) {
+    .Call(`_speaker_sound_get_duration`, sound_ptr)
+}
+
+.sound_get_sampling_frequency <- function(sound_ptr) {
+    .Call(`_speaker_sound_get_sampling_frequency`, sound_ptr)
+}
+
+.sound_get_number_of_channels <- function(sound_ptr) {
+    .Call(`_speaker_sound_get_number_of_channels`, sound_ptr)
+}
+
+.sound_get_number_of_samples <- function(sound_ptr) {
+    .Call(`_speaker_sound_get_number_of_samples`, sound_ptr)
+}
+
+.sound_get_time_from_sample <- function(sound_ptr, sample) {
+    .Call(`_speaker_sound_get_time_from_sample`, sound_ptr, sample)
+}
+
+.sound_get_value_at_time <- function(sound_ptr, time, channel) {
+    .Call(`_speaker_sound_get_value_at_time`, sound_ptr, time, channel)
+}
+
+.sound_to_pitch <- function(sound_ptr, time_step, pitch_floor, pitch_ceiling) {
+    .Call(`_speaker_sound_to_pitch`, sound_ptr, time_step, pitch_floor, pitch_ceiling)
+}
+
+.sound_extract_part <- function(sound_ptr, from_time, to_time) {
+    .Call(`_speaker_sound_extract_part`, sound_ptr, from_time, to_time)
+}
+
+.sound_scale_intensity <- function(sound_ptr, new_average_intensity) {
+    invisible(.Call(`_speaker_sound_scale_intensity`, sound_ptr, new_average_intensity))
+}
+
+.sound_as_data_frame <- function(sound_ptr) {
+    .Call(`_speaker_sound_as_data_frame`, sound_ptr)
+}
+
+.sound_save <- function(sound_ptr, path, format) {
+    invisible(.Call(`_speaker_sound_save`, sound_ptr, path, format))
+}
+
+.pitch_read_from_file <- function(path) {
+    .Call(`_speaker_pitch_read_from_file`, path)
+}
+
+.pitch_save <- function(pitch_ptr, path) {
+    invisible(.Call(`_speaker_pitch_save`, pitch_ptr, path))
+}
+
+.pitch_get_number_of_frames <- function(pitch_ptr) {
+    .Call(`_speaker_pitch_get_number_of_frames`, pitch_ptr)
+}
+
+.pitch_get_time_step <- function(pitch_ptr) {
+    .Call(`_speaker_pitch_get_time_step`, pitch_ptr)
+}
+
+.pitch_get_value_at_time <- function(pitch_ptr, time, unit) {
+    .Call(`_speaker_pitch_get_value_at_time`, pitch_ptr, time, unit)
+}
+
+.pitch_get_mean <- function(pitch_ptr, from_time, to_time, unit) {
+    .Call(`_speaker_pitch_get_mean`, pitch_ptr, from_time, to_time, unit)
+}
+
+.pitch_get_minimum <- function(pitch_ptr, from_time, to_time, unit) {
+    .Call(`_speaker_pitch_get_minimum`, pitch_ptr, from_time, to_time, unit)
+}
+
+.pitch_get_maximum <- function(pitch_ptr, from_time, to_time, unit) {
+    .Call(`_speaker_pitch_get_maximum`, pitch_ptr, from_time, to_time, unit)
+}
+
+.pitch_get_quantile <- function(pitch_ptr, quantile, from_time, to_time, unit) {
+    .Call(`_speaker_pitch_get_quantile`, pitch_ptr, quantile, from_time, to_time, unit)
+}
+
+.pitch_as_data_frame <- function(pitch_ptr) {
+    .Call(`_speaker_pitch_as_data_frame`, pitch_ptr)
+}
+
+#' Safe error wrapper for Praat calls
+#'
+#' Provides a consistent error handling pattern for Praat operations
+#'
+#' @param context Description of what operation failed
+#' @keywords internal
+NULL
+
+#' Validate positive numeric parameter
+#'
+#' Ensures a numeric parameter is positive (> 0)
+#'
+#' @param value The value to check
+#' @param param_name Name of the parameter for error messages
+#' @keywords internal
+NULL
+
+#' Validate non-negative numeric parameter
+#'
+#' Ensures a numeric parameter is non-negative (>= 0)
+#'
+#' @param value The value to check
+#' @param param_name Name of the parameter for error messages
+#' @keywords internal
+NULL
+
+#' Validate numeric parameter is in range
+#'
+#' Ensures a numeric parameter falls within a specified range
+#'
+#' @param value The value to check
+#' @param min_val Minimum allowed value (inclusive)
+#' @param max_val Maximum allowed value (inclusive)
+#' @param param_name Name of the parameter for error messages
+#' @keywords internal
+NULL
+
+#' Validate integer parameter is positive
+#'
+#' Ensures an integer parameter is positive (> 0)
+#'
+#' @param value The value to check
+#' @param param_name Name of the parameter for error messages
+#' @keywords internal
+NULL
+
+#' Validate that an R list represents a valid sound object
+#'
+#' Checks that a list contains the required fields for a praat_sound object
+#'
+#' @param sound_obj R list representing a sound object
+#' @return true if valid, throws error if invalid
+#' @keywords internal
+NULL
+
+#' Validate that an R list represents a valid pitch object
+#'
+#' Checks that a list contains the required fields for a praat_pitch object
+#'
+#' @param pitch_obj R list representing a pitch object
+#' @return true if valid, throws error if invalid
+#' @keywords internal
+NULL
+
+#' Convert R logical to C++ bool with NA handling
+#'
+#' Safely converts R logical values to C++ bool, handling NA as false
+#'
+#' @param x R logical value
+#' @param default_val Default value if NA
+#' @return bool value
+#' @keywords internal
+NULL
+
+#' Convert R numeric to C++ double with NA handling
+#'
+#' Safely converts R numeric values to C++ double
+#'
+#' @param x R numeric value
+#' @return double value (returns R_NaN if NA)
+#' @keywords internal
+NULL
+
+#' Convert Praat errors to R exceptions
+#'
+#' Wraps Praat function calls and converts Praat's error system to R exceptions
+#'
+#' @param error_msg Error message from Praat
+#' @keywords internal
+praat_error_to_r <- function(error_msg) {
+    invisible(.Call(`_speaker_praat_error_to_r`, error_msg))
 }
 

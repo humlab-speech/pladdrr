@@ -3,6 +3,10 @@
 
 #include <Rcpp.h>
 
+// Forward declarations for Praat types
+typedef struct structSound *Sound;
+typedef struct structPitch *Pitch;
+
 using namespace Rcpp;
 
 #ifdef RCPP_USE_GLOBAL_ROSTREAM
@@ -20,6 +24,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// praat_initialize
+bool praat_initialize();
+RcppExport SEXP _speaker_praat_initialize() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(praat_initialize());
+    return rcpp_result_gen;
+END_RCPP
+}
 // sound_stats
 List sound_stats(NumericVector sound_data);
 RcppExport SEXP _speaker_sound_stats(SEXP sound_dataSEXP) {
@@ -31,35 +45,373 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// create_sound
-List create_sound(NumericVector values, double sampling_frequency);
-RcppExport SEXP _speaker_create_sound(SEXP valuesSEXP, SEXP sampling_frequencySEXP) {
+// create_sound_from_values
+List create_sound_from_values(NumericVector values, double sampling_rate, double start_time);
+RcppExport SEXP _speaker_create_sound_from_values(SEXP valuesSEXP, SEXP sampling_rateSEXP, SEXP start_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
-    Rcpp::traits::input_parameter< double >::type sampling_frequency(sampling_frequencySEXP);
-    rcpp_result_gen = Rcpp::wrap(create_sound(values, sampling_frequency));
+    Rcpp::traits::input_parameter< double >::type sampling_rate(sampling_rateSEXP);
+    Rcpp::traits::input_parameter< double >::type start_time(start_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_sound_from_values(values, sampling_rate, start_time));
     return rcpp_result_gen;
 END_RCPP
 }
-// get_sound_duration
-double get_sound_duration(List sound_object);
-RcppExport SEXP _speaker_get_sound_duration(SEXP sound_objectSEXP) {
+// get_sound_duration_cpp
+double get_sound_duration_cpp(List sound_obj);
+RcppExport SEXP _speaker_get_sound_duration_cpp(SEXP sound_objSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type sound_object(sound_objectSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_sound_duration(sound_object));
+    Rcpp::traits::input_parameter< List >::type sound_obj(sound_objSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_sound_duration_cpp(sound_obj));
     return rcpp_result_gen;
+END_RCPP
+}
+// get_sound_sampling_rate_cpp
+double get_sound_sampling_rate_cpp(List sound_obj);
+RcppExport SEXP _speaker_get_sound_sampling_rate_cpp(SEXP sound_objSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type sound_obj(sound_objSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_sound_sampling_rate_cpp(sound_obj));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_sound_n_samples_cpp
+int get_sound_n_samples_cpp(List sound_obj);
+RcppExport SEXP _speaker_get_sound_n_samples_cpp(SEXP sound_objSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type sound_obj(sound_objSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_sound_n_samples_cpp(sound_obj));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_read_from_file
+XPtr<Sound> sound_read_from_file(std::string path);
+RcppExport SEXP _speaker_sound_read_from_file(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_read_from_file(path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_create_from_values
+XPtr<Sound> sound_create_from_values(NumericVector values, double sampling_rate);
+RcppExport SEXP _speaker_sound_create_from_values(SEXP valuesSEXP, SEXP sampling_rateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    Rcpp::traits::input_parameter< double >::type sampling_rate(sampling_rateSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_create_from_values(values, sampling_rate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_duration
+double sound_get_duration(XPtr<Sound> sound_ptr);
+RcppExport SEXP _speaker_sound_get_duration(SEXP sound_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_duration(sound_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_sampling_frequency
+double sound_get_sampling_frequency(XPtr<Sound> sound_ptr);
+RcppExport SEXP _speaker_sound_get_sampling_frequency(SEXP sound_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_sampling_frequency(sound_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_number_of_channels
+int sound_get_number_of_channels(XPtr<Sound> sound_ptr);
+RcppExport SEXP _speaker_sound_get_number_of_channels(SEXP sound_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_number_of_channels(sound_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_number_of_samples
+int sound_get_number_of_samples(XPtr<Sound> sound_ptr);
+RcppExport SEXP _speaker_sound_get_number_of_samples(SEXP sound_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_number_of_samples(sound_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_time_from_sample
+double sound_get_time_from_sample(XPtr<Sound> sound_ptr, int sample);
+RcppExport SEXP _speaker_sound_get_time_from_sample(SEXP sound_ptrSEXP, SEXP sampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< int >::type sample(sampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_time_from_sample(sound_ptr, sample));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_value_at_time
+double sound_get_value_at_time(XPtr<Sound> sound_ptr, double time, int channel);
+RcppExport SEXP _speaker_sound_get_value_at_time(SEXP sound_ptrSEXP, SEXP timeSEXP, SEXP channelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_value_at_time(sound_ptr, time, channel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_to_pitch
+XPtr<Pitch> sound_to_pitch(XPtr<Sound> sound_ptr, double time_step, double pitch_floor, double pitch_ceiling);
+RcppExport SEXP _speaker_sound_to_pitch(SEXP sound_ptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch(sound_ptr, time_step, pitch_floor, pitch_ceiling));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_extract_part
+XPtr<Sound> sound_extract_part(XPtr<Sound> sound_ptr, double from_time, double to_time);
+RcppExport SEXP _speaker_sound_extract_part(SEXP sound_ptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_extract_part(sound_ptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_scale_intensity
+void sound_scale_intensity(XPtr<Sound> sound_ptr, double new_average_intensity);
+RcppExport SEXP _speaker_sound_scale_intensity(SEXP sound_ptrSEXP, SEXP new_average_intensitySEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type new_average_intensity(new_average_intensitySEXP);
+    sound_scale_intensity(sound_ptr, new_average_intensity);
+    return R_NilValue;
+END_RCPP
+}
+// sound_as_data_frame
+DataFrame sound_as_data_frame(XPtr<Sound> sound_ptr);
+RcppExport SEXP _speaker_sound_as_data_frame(SEXP sound_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_as_data_frame(sound_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_save
+void sound_save(XPtr<Sound> sound_ptr, std::string path, std::string format);
+RcppExport SEXP _speaker_sound_save(SEXP sound_ptrSEXP, SEXP pathSEXP, SEXP formatSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Sound> >::type sound_ptr(sound_ptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    sound_save(sound_ptr, path, format);
+    return R_NilValue;
+END_RCPP
+}
+// pitch_read_from_file
+XPtr<Pitch> pitch_read_from_file(std::string path);
+RcppExport SEXP _speaker_pitch_read_from_file(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_read_from_file(path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_save
+void pitch_save(XPtr<Pitch> pitch_ptr, std::string path);
+RcppExport SEXP _speaker_pitch_save(SEXP pitch_ptrSEXP, SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    pitch_save(pitch_ptr, path);
+    return R_NilValue;
+END_RCPP
+}
+// pitch_get_number_of_frames
+int pitch_get_number_of_frames(XPtr<Pitch> pitch_ptr);
+RcppExport SEXP _speaker_pitch_get_number_of_frames(SEXP pitch_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_number_of_frames(pitch_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_time_step
+double pitch_get_time_step(XPtr<Pitch> pitch_ptr);
+RcppExport SEXP _speaker_pitch_get_time_step(SEXP pitch_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_time_step(pitch_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_value_at_time
+double pitch_get_value_at_time(XPtr<Pitch> pitch_ptr, double time, std::string unit);
+RcppExport SEXP _speaker_pitch_get_value_at_time(SEXP pitch_ptrSEXP, SEXP timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_value_at_time(pitch_ptr, time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_mean
+double pitch_get_mean(XPtr<Pitch> pitch_ptr, double from_time, double to_time, std::string unit);
+RcppExport SEXP _speaker_pitch_get_mean(SEXP pitch_ptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_mean(pitch_ptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_minimum
+double pitch_get_minimum(XPtr<Pitch> pitch_ptr, double from_time, double to_time, std::string unit);
+RcppExport SEXP _speaker_pitch_get_minimum(SEXP pitch_ptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_minimum(pitch_ptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_maximum
+double pitch_get_maximum(XPtr<Pitch> pitch_ptr, double from_time, double to_time, std::string unit);
+RcppExport SEXP _speaker_pitch_get_maximum(SEXP pitch_ptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_maximum(pitch_ptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_quantile
+double pitch_get_quantile(XPtr<Pitch> pitch_ptr, double quantile, double from_time, double to_time, std::string unit);
+RcppExport SEXP _speaker_pitch_get_quantile(SEXP pitch_ptrSEXP, SEXP quantileSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type quantile(quantileSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_quantile(pitch_ptr, quantile, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_as_data_frame
+DataFrame pitch_as_data_frame(XPtr<Pitch> pitch_ptr);
+RcppExport SEXP _speaker_pitch_as_data_frame(SEXP pitch_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<Pitch> >::type pitch_ptr(pitch_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_as_data_frame(pitch_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// praat_error_to_r
+void praat_error_to_r(const std::string& error_msg);
+RcppExport SEXP _speaker_praat_error_to_r(SEXP error_msgSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type error_msg(error_msgSEXP);
+    praat_error_to_r(error_msg);
+    return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_speaker_praat_version", (DL_FUNC) &_speaker_praat_version, 0},
+    {"_speaker_praat_initialize", (DL_FUNC) &_speaker_praat_initialize, 0},
     {"_speaker_sound_stats", (DL_FUNC) &_speaker_sound_stats, 1},
-    {"_speaker_create_sound", (DL_FUNC) &_speaker_create_sound, 2},
-    {"_speaker_get_sound_duration", (DL_FUNC) &_speaker_get_sound_duration, 1},
+    {"_speaker_create_sound_from_values", (DL_FUNC) &_speaker_create_sound_from_values, 3},
+    {"_speaker_get_sound_duration_cpp", (DL_FUNC) &_speaker_get_sound_duration_cpp, 1},
+    {"_speaker_get_sound_sampling_rate_cpp", (DL_FUNC) &_speaker_get_sound_sampling_rate_cpp, 1},
+    {"_speaker_get_sound_n_samples_cpp", (DL_FUNC) &_speaker_get_sound_n_samples_cpp, 1},
+    {"_speaker_sound_read_from_file", (DL_FUNC) &_speaker_sound_read_from_file, 1},
+    {"_speaker_sound_create_from_values", (DL_FUNC) &_speaker_sound_create_from_values, 2},
+    {"_speaker_sound_get_duration", (DL_FUNC) &_speaker_sound_get_duration, 1},
+    {"_speaker_sound_get_sampling_frequency", (DL_FUNC) &_speaker_sound_get_sampling_frequency, 1},
+    {"_speaker_sound_get_number_of_channels", (DL_FUNC) &_speaker_sound_get_number_of_channels, 1},
+    {"_speaker_sound_get_number_of_samples", (DL_FUNC) &_speaker_sound_get_number_of_samples, 1},
+    {"_speaker_sound_get_time_from_sample", (DL_FUNC) &_speaker_sound_get_time_from_sample, 2},
+    {"_speaker_sound_get_value_at_time", (DL_FUNC) &_speaker_sound_get_value_at_time, 3},
+    {"_speaker_sound_to_pitch", (DL_FUNC) &_speaker_sound_to_pitch, 4},
+    {"_speaker_sound_extract_part", (DL_FUNC) &_speaker_sound_extract_part, 3},
+    {"_speaker_sound_scale_intensity", (DL_FUNC) &_speaker_sound_scale_intensity, 2},
+    {"_speaker_sound_as_data_frame", (DL_FUNC) &_speaker_sound_as_data_frame, 1},
+    {"_speaker_sound_save", (DL_FUNC) &_speaker_sound_save, 3},
+    {"_speaker_pitch_read_from_file", (DL_FUNC) &_speaker_pitch_read_from_file, 1},
+    {"_speaker_pitch_save", (DL_FUNC) &_speaker_pitch_save, 2},
+    {"_speaker_pitch_get_number_of_frames", (DL_FUNC) &_speaker_pitch_get_number_of_frames, 1},
+    {"_speaker_pitch_get_time_step", (DL_FUNC) &_speaker_pitch_get_time_step, 1},
+    {"_speaker_pitch_get_value_at_time", (DL_FUNC) &_speaker_pitch_get_value_at_time, 3},
+    {"_speaker_pitch_get_mean", (DL_FUNC) &_speaker_pitch_get_mean, 4},
+    {"_speaker_pitch_get_minimum", (DL_FUNC) &_speaker_pitch_get_minimum, 4},
+    {"_speaker_pitch_get_maximum", (DL_FUNC) &_speaker_pitch_get_maximum, 4},
+    {"_speaker_pitch_get_quantile", (DL_FUNC) &_speaker_pitch_get_quantile, 5},
+    {"_speaker_pitch_as_data_frame", (DL_FUNC) &_speaker_pitch_as_data_frame, 1},
+    {"_speaker_praat_error_to_r", (DL_FUNC) &_speaker_praat_error_to_r, 1},
     {NULL, NULL, 0}
 };
 

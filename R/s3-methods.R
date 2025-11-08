@@ -1,0 +1,204 @@
+# s3-methods.R - S3 methods for praat_sound objects
+#
+# This file implements S3 generic methods (print, summary, as.data.frame) for
+# praat_sound objects to provide user-friendly display and conversion.
+
+#' Print method for praat_sound objects
+#'
+#' Provides a concise, informative display of a praat_sound object.
+#'
+#' @param x A praat_sound object
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return The object x, invisibly
+#'
+#' @examples
+#' sound <- create_sound(rep(0, 1000), sampling_rate = 44100)
+#' print(sound)
+#'
+#' @export
+print.praat_sound <- function(x, ...) {
+  cat("Praat Sound Object\n")
+  cat("==================\n")
+  cat(sprintf("Duration:      %.6f seconds\n", x$duration))
+  cat(sprintf("Sampling rate: %d Hz\n", as.integer(x$sampling_rate)))
+  cat(sprintf("Samples:       %d\n", x$n_samples))
+  cat(sprintf("Channels:      %d (%s)\n", x$n_channels,
+              if (x$n_channels == 1) "mono" else "stereo"))
+  cat(sprintf("Time range:    [%.6f, %.6f] seconds\n", x$start_time, x$end_time))
+
+  # Show amplitude range
+  amplitude_range <- range(x$values)
+  cat(sprintf("Amplitude:     [%.6f, %.6f]\n", amplitude_range[1], amplitude_range[2]))
+
+  invisible(x)
+}
+
+#' Summary method for praat_sound objects
+#'
+#' Provides a statistical summary of a praat_sound object, including amplitude
+#' statistics and metadata.
+#'
+#' @param object A praat_sound object
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return The object, invisibly
+#'
+#' @examples
+#' sound <- generate_sine_wave(440, 0.5)
+#' summary(sound)
+#'
+#' @export
+summary.praat_sound <- function(object, ...) {
+  cat("Praat Sound Object - Summary\n")
+  cat("============================\n\n")
+
+  cat("Metadata:\n")
+  cat(sprintf("  Duration:      %.6f seconds\n", object$duration))
+  cat(sprintf("  Sampling rate: %d Hz\n", as.integer(object$sampling_rate)))
+  cat(sprintf("  Samples:       %d\n", object$n_samples))
+  cat(sprintf("  Channels:      %d\n", object$n_channels))
+  cat(sprintf("  Time range:    [%.6f, %.6f] seconds\n",
+              object$start_time, object$end_time))
+
+  cat("\nAmplitude Statistics:\n")
+  cat(sprintf("  Mean:          %.6f\n", mean(object$values)))
+  cat(sprintf("  Min:           %.6f\n", min(object$values)))
+  cat(sprintf("  Max:           %.6f\n", max(object$values)))
+  cat(sprintf("  RMS:           %.6f\n", sqrt(mean(object$values^2))))
+  cat(sprintf("  Std Dev:       %.6f\n", sd(object$values)))
+
+  invisible(object)
+}
+
+#' Convert praat_sound to data frame
+#'
+#' Converts a praat_sound object to a data frame with time and amplitude columns.
+#' This is useful for plotting and further analysis in R.
+#'
+#' @param x A praat_sound object
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A data frame with two columns:
+#'   \describe{
+#'     \item{time}{Time in seconds}
+#'     \item{amplitude}{Amplitude values}
+#'   }
+#'
+#' @examples
+#' sound <- generate_sine_wave(440, 0.01)
+#' df <- as.data.frame(sound)
+#' head(df)
+#'
+#' # Use for plotting
+#' \dontrun{
+#' library(ggplot2)
+#' ggplot(df, aes(x = time, y = amplitude)) +
+#'   geom_line()
+#' }
+#'
+#' @export
+as.data.frame.praat_sound <- function(x, ...) {
+  validate_sound_object(x, "x")
+
+  df <- data.frame(
+    time = x$time,
+    amplitude = x$values,
+    stringsAsFactors = FALSE
+  )
+
+  return(df)
+}
+
+# ============================================================================
+# S3 methods for praat_pitch objects
+# ============================================================================
+
+#' Print method for praat_pitch objects
+#'
+#' Provides a concise display of a pitch contour.
+#'
+#' @param x A praat_pitch object
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return The object x, invisibly
+#'
+#' @export
+print.praat_pitch <- function(x, ...) {
+  cat("Praat Pitch Object\n")
+  cat("==================\n")
+  cat(sprintf("Frames:        %d\n", nrow(x)))
+
+  # Count voiced/unvoiced
+  voiced <- sum(!is.na(x$frequency) & x$frequency > 0)
+  unvoiced <- nrow(x) - voiced
+  cat(sprintf("Voiced:        %d (%.1f%%)\n", voiced, 100 * voiced / nrow(x)))
+  cat(sprintf("Unvoiced:      %d (%.1f%%)\n", unvoiced, 100 * unvoiced / nrow(x)))
+
+  # Time range
+  cat(sprintf("Time range:    [%.3f, %.3f] seconds\n", min(x$time), max(x$time)))
+
+  # Pitch statistics (for voiced frames only)
+  if (voiced > 0) {
+    voiced_freqs <- x$frequency[!is.na(x$frequency) & x$frequency > 0]
+    cat("\nPitch Statistics (Hz):\n")
+    cat(sprintf("  Mean:        %.1f\n", mean(voiced_freqs)))
+    cat(sprintf("  Median:      %.1f\n", median(voiced_freqs)))
+    cat(sprintf("  Min:         %.1f\n", min(voiced_freqs)))
+    cat(sprintf("  Max:         %.1f\n", max(voiced_freqs)))
+    cat(sprintf("  Std Dev:     %.1f\n", sd(voiced_freqs)))
+  }
+
+  invisible(x)
+}
+
+#' Summary method for praat_pitch objects
+#'
+#' Provides a detailed statistical summary of a pitch contour.
+#'
+#' @param object A praat_pitch object
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return The object, invisibly
+#'
+#' @export
+summary.praat_pitch <- function(object, ...) {
+  cat("Praat Pitch Object - Summary\n")
+  cat("============================\n\n")
+
+  cat("Frame Information:\n")
+  cat(sprintf("  Total frames:  %d\n", nrow(object)))
+
+  # Voiced/unvoiced
+  voiced <- sum(!is.na(object$frequency) & object$frequency > 0)
+  unvoiced <- nrow(object) - voiced
+  cat(sprintf("  Voiced:        %d (%.1f%%)\n", voiced, 100 * voiced / nrow(object)))
+  cat(sprintf("  Unvoiced:      %d (%.1f%%)\n", unvoiced, 100 * unvoiced / nrow(object)))
+
+  # Time range
+  cat(sprintf("\nTime Range:\n"))
+  cat(sprintf("  Start:         %.3f seconds\n", min(object$time)))
+  cat(sprintf("  End:           %.3f seconds\n", max(object$time)))
+  cat(sprintf("  Duration:      %.3f seconds\n", max(object$time) - min(object$time)))
+
+  # Pitch statistics (for voiced frames only)
+  if (voiced > 0) {
+    voiced_freqs <- object$frequency[!is.na(object$frequency) & object$frequency > 0]
+    cat("\nPitch Statistics (voiced frames, Hz):\n")
+    cat(sprintf("  Mean:          %.2f\n", mean(voiced_freqs)))
+    cat(sprintf("  Median:        %.2f\n", median(voiced_freqs)))
+    cat(sprintf("  Min:           %.2f\n", min(voiced_freqs)))
+    cat(sprintf("  Max:           %.2f\n", max(voiced_freqs)))
+    cat(sprintf("  Range:         %.2f\n", max(voiced_freqs) - min(voiced_freqs)))
+    cat(sprintf("  Std Dev:       %.2f\n", sd(voiced_freqs)))
+    cat(sprintf("  Quantiles:\n"))
+    quants <- quantile(voiced_freqs, probs = c(0.25, 0.5, 0.75))
+    cat(sprintf("    25%%:          %.2f\n", quants[1]))
+    cat(sprintf("    50%%:          %.2f\n", quants[2]))
+    cat(sprintf("    75%%:          %.2f\n", quants[3]))
+  } else {
+    cat("\nNo voiced frames detected.\n")
+  }
+
+  invisible(object)
+}

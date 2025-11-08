@@ -54,3 +54,36 @@ rsconnect/
 *.so
 *.dll
 *.Rcheck
+
+# Claude credentials
+.claude/
+
+# Additional R package patterns
+src/*.o
+src/*.so
+src/*.dll
+src/*.a
+src/*.dylib
+src/RcppExports.cpp
+src/Makevars.local
+*.Rproj
+.DS_Store
+.vscode/
+.idea/
+
+# C++ build artifacts
+*.gcno
+*.gcda
+*.gcov
+
+# Test artifacts
+tests/testthat/Rplots.pdf
+
+# Praat source (will be vendored, but local modifications ignored)
+# src/praat/ is tracked, but temp files are not
+src/praat/**/*.o
+src/praat/**/*.a
+
+# Package development
+revdep/
+cran-comments.md
