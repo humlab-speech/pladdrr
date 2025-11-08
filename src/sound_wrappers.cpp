@@ -31,8 +31,6 @@ using namespace Rcpp;
 //' @keywords internal
 // [[Rcpp::export(.sound_read_from_file)]]
 XPtr<structSound> sound_read_from_file(std::string path) {
-    validate_xptr<structSound>(XPtr<structSound>(), "Sound");  // Just to initialize template
-    
     try {
         structMelderFile file {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
@@ -190,7 +188,7 @@ double sound_get_rms(
     try {
         double rms = 0.0;
         for (int ch = 1; ch <= sound->ny; ch++) {
-            double channel_rms = Sound_getRootMeanSquare(sound, from_time, to_time, ch);
+            double channel_rms = Sound_getRootMeanSquare(sound, from_time, to_time);
             rms += channel_rms * channel_rms;
         }
         return sqrt(rms / sound->ny);
@@ -393,7 +391,7 @@ XPtr<structSpectrogram> sound_to_spectrogram(
         static_cast<kSound_to_Spectrogram_windowShape>(window_shape_int);
     
     try {
-        autoSpectrogram spec = Sound_to_Spectrogram(
+        autoSpectrogram spec = Sound_to_Spectrogram_e(
             sound,
             window_length,
             maximum_frequency,
@@ -498,9 +496,9 @@ void sound_save(
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         
         // file_type: 0 = WAV, 1 = AIFF, 2 = AIFC, 3 = NeXT/Sun, 4 = NIST, 5 = FLAC
-        Melder_SoundFileFormat format = static_cast<Melder_SoundFileFormat>(file_type);
+        int format_int = file_type;
         
-        Sound_writeToAudioFile(sound, &file, format, 16);  // 16-bit
+        Sound_saveAsAudioFile(sound, &file, format_int, 16);  // 16-bit
         
     } catch (MelderError) {
         Melder_clearError();

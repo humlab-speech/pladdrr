@@ -10,20 +10,20 @@
 #include "sys/Thing.h"
 #include "melder/melder.h"
 
-// Finalizer template for Praat Thing objects
-// This is called automatically by R's garbage collector when the XPtr is no longer referenced
-template<typename T>
-void praat_thing_finalizer(T* thing) {
-    if (thing != nullptr) {
-        forget(thing);  // Praat's memory management function
-    }
-}
-
 // Create an XPtr from an auto* Praat object with proper finalizer
+// Uses a custom deleter that wraps Praat's forget() function
 template<typename T, typename AutoType>
 Rcpp::XPtr<T> create_xptr_from_auto(AutoType& auto_obj) {
     T* ptr = auto_obj.releaseToAmbiguousOwner();
-    return Rcpp::XPtr<T>(ptr, true, praat_thing_finalizer<T>);
+    
+    // Custom deleter as lambda that calls forget()
+    auto deleter = [](T* thing) {
+        if (thing != nullptr) {
+            forget(thing);
+        }
+    };
+    
+    return Rcpp::XPtr<T>(ptr, deleter);
 }
 
 // Validate XPtr before use
