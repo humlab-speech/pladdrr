@@ -53,15 +53,18 @@ PKG_LIBS = -pthread
 # Using symlinks: melder/, sys/, dwsys/, stat/, fon/ -> praat.github.io/*/
 # ============================================================================
 
-# Melder sources (core infrastructure) - minimal set without external dependencies
+# Kar sources (Unicode database)
+KAR_SRC = kar/longchar.cpp
+
+# Melder sources (core infrastructure) - minimal set without external dependencies  
 MELDER_SRC = melder/melder.cpp melder/melder_alloc.cpp melder/melder_str32.cpp \
              melder/melder_colour.cpp melder/melder_ftoa.cpp melder/melder_console.cpp \
              melder/melder_textencoding.cpp melder/melder_atof.cpp \
-             melder/melder_sort.cpp melder/melder_debug.cpp \
+             melder/melder_files.cpp melder/melder_sort.cpp melder/melder_debug.cpp \
              melder/MelderString.cpp melder/melder_search.cpp melder/melder_info.cpp \
              melder/melder_error.cpp melder/melder_warning.cpp melder/melder_progress.cpp \
              melder/melder_play.cpp melder/melder_help.cpp melder/melder_time.cpp \
-             melder/melder_audio.cpp melder/melder_quantity.cpp \
+             melder/melder_quantity.cpp \
              melder/MelderReadText.cpp melder/melder_tensorio.cpp melder/abcio.cpp \
              melder/melder_sysenv.cpp melder/regularExp.cpp melder/NUMmath.cpp \
              melder/NUMspecfunc.cpp melder/NUMear.cpp melder/NUMinterpol.cpp \
@@ -112,11 +115,11 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
 # Wrapper sources (R package code)
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp harmonicity_wrappers.cpp \
-              pointprocess_wrappers.cpp sound_fileio_stub.cpp num_stubs.cpp \
-              longsound_stub.cpp lpc_stub.cpp utils.cpp RcppExports.cpp
+              pointprocess_wrappers.cpp sound_fileio_stub.cpp praat_stubs.cpp \
+              num_stubs.cpp longsound_stub.cpp lpc_stub.cpp utils.cpp RcppExports.cpp
 
 # All sources combined
-SOURCES = $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(WRAPPER_SRC)
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(WRAPPER_SRC)
 
 # Object files (R will compile these)
 OBJECTS = $(SOURCES:.cpp=.o)
