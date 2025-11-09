@@ -19,7 +19,8 @@ Depends:
     R (>= 4.0.0)
 Imports:
     Rcpp (>= 1.0.0),
-    R6 (>= 2.5.0)
+    R6 (>= 2.5.0),
+    av
 LinkingTo: Rcpp
 Suggests:
     testthat (>= 3.0.0),

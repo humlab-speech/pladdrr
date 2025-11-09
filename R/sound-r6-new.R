@@ -10,8 +10,9 @@
 #'
 #' ## Creating Sound Objects
 #'
-#' - `Sound$new(path)` - Read from file (WAV, AIFF, etc.)
+#' - `Sound$new(path)` - Read from file (any format via av/FFmpeg: MP3, WAV, FLAC, OGG, etc.)
 #' - `Sound$from_values(values, sampling_rate)` - Create from numeric matrix
+#' - `Sound$from_matrix(matrix, sampling_rate)` - Alias for from_values
 #' - `Sound$create_tone(duration, frequency, ...)` - Generate pure tone
 #'
 #' ## Querying
@@ -46,8 +47,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Read sound file
-#' sound <- Sound$new("recording.wav")
+#' # Read sound file (any format supported by av/FFmpeg)
+#' sound <- Sound$new("recording.mp3")
+#' sound_wav <- Sound$new("recording.wav")
+#'
+#' # Create from R matrix (e.g., from av package)
+#' library(av)
+#' audio_matrix <- t(av::read_audio_fft("audio.mp3", window = NULL, overlap = 0))
+#' sound <- Sound$from_matrix(audio_matrix, sampling_rate = 44100)
 #'
 #' # Query properties
 #' duration <- sound$get_duration()
@@ -74,19 +81,53 @@ Sound <- R6::R6Class(
   public = list(
     
     #' @description
-    #' Create a Sound object from file
-    #' @param path Path to audio file (WAV, AIFF, NeXT/Sun, NIST, FLAC)
+    #' Create a Sound object from file or data
+    #' @param path Path to audio file (any format supported by av/FFmpeg)
     #' @param .xptr Internal use only - external pointer to C++ Sound object
+    #' @param use_av Use av package for loading (default: TRUE for non-WAV files)
     #' @return A new Sound object
-    initialize = function(path = NULL, .xptr = NULL) {
+    initialize = function(path = NULL, .xptr = NULL, use_av = NULL) {
       if (!is.null(.xptr)) {
         super$initialize(.xptr)
       } else if (!is.null(path)) {
         if (!file.exists(path)) {
           stop("Sound file not found: ", path)
         }
-        ptr <- .sound_read_from_file(path)
-        super$initialize(ptr)
+        
+        # Determine if we should use av
+        if (is.null(use_av)) {
+          # Auto-detect: use av for non-WAV files
+          ext <- tolower(tools::file_ext(path))
+          use_av <- !(ext %in% c("wav", "aiff", "aif", "aifc"))
+        }
+        
+        if (use_av) {
+          # Load via av package
+          if (!requireNamespace("av", quietly = TRUE)) {
+            stop("Package 'av' is required for loading this audio format. Install it with: install.packages('av')")
+          }
+          
+          # Read audio using av
+          audio_info <- av::av_media_info(path)
+          audio_data <- av::read_audio_fft(path, window = NULL, overlap = 0)
+          
+          # av returns samples × channels matrix, we need channels × samples
+          if (is.matrix(audio_data)) {
+            audio_data <- t(audio_data)
+          } else {
+            # Single channel vector
+            audio_data <- matrix(audio_data, nrow = 1)
+          }
+          
+          # Create Sound from matrix
+          sampling_rate <- audio_info$audio$sample_rate
+          ptr <- .sound_create_from_values(audio_data, sampling_rate)
+          super$initialize(ptr)
+        } else {
+          # Use Praat's native file reading
+          ptr <- .sound_read_from_file(path)
+          super$initialize(ptr)
+        }
       } else {
         stop("Must provide either path or .xptr")
       }
@@ -474,6 +515,11 @@ Sound$from_values <- function(values, sampling_rate = 44100) {
   ptr <- .sound_create_from_values(values, sampling_rate)
   Sound$new(.xptr = ptr)
 }
+
+#' @rdname Sound
+#' @description Alias for from_values (matching av workflow)
+#' @export
+Sound$from_matrix <- Sound$from_values
 
 #' @rdname Sound
 #' @description Create a pure tone

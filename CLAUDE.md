@@ -502,6 +502,53 @@ For each Praat object class, implement in this order:
 9. Create comprehensive examples re-implementing Parselmouth workflows
 10. Validate against Praat desktop output for numerical accuracy
 
+### MEDIA LOADING DECISION: AV Package Integration
+
+**Date:** 2025-11-09  
+**Decision:** Use `av` package (humlab-speech fork) for media loading instead of direct file I/O
+
+**Rationale:**
+1. **Standardization**: Other humlab-speech packages use this approach
+2. **Format Support**: av handles diverse audio/video formats via FFmpeg
+3. **In-Memory Processing**: Seamless integration with R's data structures
+4. **Maintained**: Active development by humlab-speech team
+5. **Cross-Platform**: FFmpeg provides consistent behavior across OS
+
+**Implementation Approach (Option D):**
+- **Sound Object Creation**: Accept both file paths AND raw audio matrices
+  ```r
+  # From file (via av)
+  sound <- Sound$new("audio.mp3")  # av loads → matrix → Praat Sound
+  
+  # From matrix (direct)
+  sound <- Sound$from_matrix(audio_matrix, sample_rate = 44100)
+  ```
+- **av Package Source**: https://github.com/humlab-speech/av
+- **DESCRIPTION Dependency**: Add `av` to Imports
+- **Conversion Path**: av::read_audio_fft() → matrix → Sound_create() C++ wrapper
+
+**Technical Details:**
+- av returns audio as numeric matrix (samples × channels)
+- Create C++ wrapper: `Sound_from_matrix(matrix, sample_rate, channels)`
+- R6 Sound class gets two constructors:
+  - `initialize(path)` → uses av internally
+  - `from_matrix(matrix, sample_rate)` → static factory method
+- Maintains compatibility with Praat's native Sound creation
+
+**Benefits Over Direct File I/O:**
+- No need to implement format-specific parsers in C++
+- Automatic resampling and format conversion via av
+- Consistent with other humlab-speech packages (e.g., superassp)
+- Users can pre-process audio in R before creating Sound objects
+
+**Next Steps:**
+1. Add `av` to DESCRIPTION Imports
+2. Implement `Sound_from_matrix()` C++ wrapper
+3. Add `Sound$from_matrix()` static factory method
+4. Update `Sound$new(path)` to use av internally
+5. Test with various audio formats (wav, mp3, flac, etc.)
+6. Document in vignette showing both usage patterns
+
 ### Future Considerations
 
 **When adding new Praat source files:**
