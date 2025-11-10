@@ -1472,6 +1472,128 @@ namespace speaker {
         return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
     }
 
+    inline XPtr<structSound> _sound_extract_channel(XPtr<structSound> xptr, int channel) {
+        typedef SEXP(*Ptr__sound_extract_channel)(SEXP,SEXP);
+        static Ptr__sound_extract_channel p__sound_extract_channel = NULL;
+        if (p__sound_extract_channel == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_extract_channel)(XPtr<structSound>,int)");
+            p__sound_extract_channel = (Ptr__sound_extract_channel)R_GetCCallable("speaker", "_speaker__sound_extract_channel");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_extract_channel(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(channel)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_extract_part(XPtr<structSound> xptr, double from_time, double to_time, int window_shape, double relative_width, bool preserve_times) {
+        typedef SEXP(*Ptr__sound_extract_part)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_extract_part p__sound_extract_part = NULL;
+        if (p__sound_extract_part == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_extract_part)(XPtr<structSound>,double,double,int,double,bool)");
+            p__sound_extract_part = (Ptr__sound_extract_part)R_GetCCallable("speaker", "_speaker__sound_extract_part");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_extract_part(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)), Shield<SEXP>(Rcpp::wrap(window_shape)), Shield<SEXP>(Rcpp::wrap(relative_width)), Shield<SEXP>(Rcpp::wrap(preserve_times)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline void _sound_scale_intensity(XPtr<structSound> xptr, double new_intensity_db) {
+        typedef SEXP(*Ptr__sound_scale_intensity)(SEXP,SEXP);
+        static Ptr__sound_scale_intensity p__sound_scale_intensity = NULL;
+        if (p__sound_scale_intensity == NULL) {
+            validateSignature("void(*_sound_scale_intensity)(XPtr<structSound>,double)");
+            p__sound_scale_intensity = (Ptr__sound_scale_intensity)R_GetCCallable("speaker", "_speaker__sound_scale_intensity");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_scale_intensity(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(new_intensity_db)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _sound_scale_peak(XPtr<structSound> xptr, double new_peak) {
+        typedef SEXP(*Ptr__sound_scale_peak)(SEXP,SEXP);
+        static Ptr__sound_scale_peak p__sound_scale_peak = NULL;
+        if (p__sound_scale_peak == NULL) {
+            validateSignature("void(*_sound_scale_peak)(XPtr<structSound>,double)");
+            p__sound_scale_peak = (Ptr__sound_scale_peak)R_GetCCallable("speaker", "_speaker__sound_scale_peak");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_scale_peak(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(new_peak)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _sound_pre_emphasize(XPtr<structSound> xptr, double from_frequency) {
+        typedef SEXP(*Ptr__sound_pre_emphasize)(SEXP,SEXP);
+        static Ptr__sound_pre_emphasize p__sound_pre_emphasize = NULL;
+        if (p__sound_pre_emphasize == NULL) {
+            validateSignature("void(*_sound_pre_emphasize)(XPtr<structSound>,double)");
+            p__sound_pre_emphasize = (Ptr__sound_pre_emphasize)R_GetCCallable("speaker", "_speaker__sound_pre_emphasize");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_pre_emphasize(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(from_frequency)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _sound_de_emphasize(XPtr<structSound> xptr, double from_frequency) {
+        typedef SEXP(*Ptr__sound_de_emphasize)(SEXP,SEXP);
+        static Ptr__sound_de_emphasize p__sound_de_emphasize = NULL;
+        if (p__sound_de_emphasize == NULL) {
+            validateSignature("void(*_sound_de_emphasize)(XPtr<structSound>,double)");
+            p__sound_de_emphasize = (Ptr__sound_de_emphasize)R_GetCCallable("speaker", "_speaker__sound_de_emphasize");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_de_emphasize(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(from_frequency)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
 }
 
 #endif // RCPP_speaker_RCPPEXPORTS_H_GEN_

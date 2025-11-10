@@ -3157,6 +3157,216 @@ RcppExport SEXP _speaker_sound_to_point_process_zeros(SEXP xptrSEXP, SEXP channe
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_extract_channel
+XPtr<structSound> sound_extract_channel(XPtr<structSound> xptr, int channel);
+static SEXP _speaker_sound_extract_channel_try(SEXP xptrSEXP, SEXP channelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_extract_channel(xptr, channel));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_extract_channel(SEXP xptrSEXP, SEXP channelSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_extract_channel_try(xptrSEXP, channelSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_extract_part
+XPtr<structSound> sound_extract_part(XPtr<structSound> xptr, double from_time, double to_time, int window_shape, double relative_width, bool preserve_times);
+static SEXP _speaker_sound_extract_part_try(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP window_shapeSEXP, SEXP relative_widthSEXP, SEXP preserve_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type window_shape(window_shapeSEXP);
+    Rcpp::traits::input_parameter< double >::type relative_width(relative_widthSEXP);
+    Rcpp::traits::input_parameter< bool >::type preserve_times(preserve_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_extract_part(xptr, from_time, to_time, window_shape, relative_width, preserve_times));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_extract_part(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP window_shapeSEXP, SEXP relative_widthSEXP, SEXP preserve_timesSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_extract_part_try(xptrSEXP, from_timeSEXP, to_timeSEXP, window_shapeSEXP, relative_widthSEXP, preserve_timesSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_scale_intensity
+void sound_scale_intensity(XPtr<structSound> xptr, double new_intensity_db);
+static SEXP _speaker_sound_scale_intensity_try(SEXP xptrSEXP, SEXP new_intensity_dbSEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type new_intensity_db(new_intensity_dbSEXP);
+    sound_scale_intensity(xptr, new_intensity_db);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_scale_intensity(SEXP xptrSEXP, SEXP new_intensity_dbSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_scale_intensity_try(xptrSEXP, new_intensity_dbSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_scale_peak
+void sound_scale_peak(XPtr<structSound> xptr, double new_peak);
+static SEXP _speaker_sound_scale_peak_try(SEXP xptrSEXP, SEXP new_peakSEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type new_peak(new_peakSEXP);
+    sound_scale_peak(xptr, new_peak);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_scale_peak(SEXP xptrSEXP, SEXP new_peakSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_scale_peak_try(xptrSEXP, new_peakSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_pre_emphasize
+void sound_pre_emphasize(XPtr<structSound> xptr, double from_frequency);
+static SEXP _speaker_sound_pre_emphasize_try(SEXP xptrSEXP, SEXP from_frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_frequency(from_frequencySEXP);
+    sound_pre_emphasize(xptr, from_frequency);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_pre_emphasize(SEXP xptrSEXP, SEXP from_frequencySEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_pre_emphasize_try(xptrSEXP, from_frequencySEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_de_emphasize
+void sound_de_emphasize(XPtr<structSound> xptr, double from_frequency);
+static SEXP _speaker_sound_de_emphasize_try(SEXP xptrSEXP, SEXP from_frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_frequency(from_frequencySEXP);
+    sound_de_emphasize(xptr, from_frequency);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_sound_de_emphasize(SEXP xptrSEXP, SEXP from_frequencySEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_sound_de_emphasize_try(xptrSEXP, from_frequencySEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // praat_error_to_r
 void praat_error_to_r(const std::string& error_msg);
 RcppExport SEXP _speaker_praat_error_to_r(SEXP error_msgSEXP) {
@@ -3241,6 +3451,12 @@ static int _speaker_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_periodic_cc)(XPtr<structSound>,double,double,double,double,double)");
         signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_extrema)(XPtr<structSound>,int,bool,bool,int)");
         signatures.insert("XPtr<structPointProcess>(*.sound_to_point_process_zeros)(XPtr<structSound>,int,bool,bool)");
+        signatures.insert("XPtr<structSound>(*.sound_extract_channel)(XPtr<structSound>,int)");
+        signatures.insert("XPtr<structSound>(*.sound_extract_part)(XPtr<structSound>,double,double,int,double,bool)");
+        signatures.insert("void(*.sound_scale_intensity)(XPtr<structSound>,double)");
+        signatures.insert("void(*.sound_scale_peak)(XPtr<structSound>,double)");
+        signatures.insert("void(*.sound_pre_emphasize)(XPtr<structSound>,double)");
+        signatures.insert("void(*.sound_de_emphasize)(XPtr<structSound>,double)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -3316,6 +3532,12 @@ RcppExport SEXP _speaker_RcppExport_registerCCallable() {
     R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_periodic_cc", (DL_FUNC)_speaker_sound_to_point_process_periodic_cc_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_extrema", (DL_FUNC)_speaker_sound_to_point_process_extrema_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_to_point_process_zeros", (DL_FUNC)_speaker_sound_to_point_process_zeros_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_extract_channel", (DL_FUNC)_speaker_sound_extract_channel_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_extract_part", (DL_FUNC)_speaker_sound_extract_part_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_scale_intensity", (DL_FUNC)_speaker_sound_scale_intensity_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_scale_peak", (DL_FUNC)_speaker_sound_scale_peak_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_pre_emphasize", (DL_FUNC)_speaker_sound_pre_emphasize_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_de_emphasize", (DL_FUNC)_speaker_sound_de_emphasize_try);
     R_RegisterCCallable("speaker", "_speaker_RcppExport_validate", (DL_FUNC)_speaker_RcppExport_validate);
     return R_NilValue;
 }
@@ -3439,6 +3661,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_sound_to_point_process_periodic_cc", (DL_FUNC) &_speaker_sound_to_point_process_periodic_cc, 6},
     {"_speaker_sound_to_point_process_extrema", (DL_FUNC) &_speaker_sound_to_point_process_extrema, 5},
     {"_speaker_sound_to_point_process_zeros", (DL_FUNC) &_speaker_sound_to_point_process_zeros, 4},
+    {"_speaker_sound_extract_channel", (DL_FUNC) &_speaker_sound_extract_channel, 2},
+    {"_speaker_sound_extract_part", (DL_FUNC) &_speaker_sound_extract_part, 6},
+    {"_speaker_sound_scale_intensity", (DL_FUNC) &_speaker_sound_scale_intensity, 2},
+    {"_speaker_sound_scale_peak", (DL_FUNC) &_speaker_sound_scale_peak, 2},
+    {"_speaker_sound_pre_emphasize", (DL_FUNC) &_speaker_sound_pre_emphasize, 2},
+    {"_speaker_sound_de_emphasize", (DL_FUNC) &_speaker_sound_de_emphasize, 2},
     {"_speaker_praat_error_to_r", (DL_FUNC) &_speaker_praat_error_to_r, 1},
     {"_speaker_RcppExport_registerCCallable", (DL_FUNC) &_speaker_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}

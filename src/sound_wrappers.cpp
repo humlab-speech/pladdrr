@@ -598,3 +598,139 @@ XPtr<structPointProcess> sound_to_point_process_zeros(
         stop("Failed to extract zero crossings from sound");
     }
 }
+
+// ============================================================================
+// Sound Extraction Methods
+// ============================================================================
+
+//' Extract a specific channel from Sound (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_extract_channel)]]
+XPtr<structSound> sound_extract_channel(
+    XPtr<structSound> xptr,
+    int channel
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    if (channel < 1 || channel > sound->ny) {
+        stop("Channel must be between 1 and " + std::to_string(sound->ny));
+    }
+    
+    try {
+        autoSound extracted = Sound_extractChannel(sound, channel);
+        return create_xptr_from_auto<structSound>(extracted);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract channel from sound");
+    }
+}
+
+//' Extract part of Sound by time (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_extract_part)]]
+XPtr<structSound> sound_extract_part(
+    XPtr<structSound> xptr,
+    double from_time,
+    double to_time,
+    int window_shape,
+    double relative_width,
+    bool preserve_times
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        kSound_windowShape window = static_cast<kSound_windowShape>(window_shape);
+        
+        autoSound extracted = Sound_extractPart(
+            sound,
+            from_time,
+            to_time,
+            window,
+            relative_width,
+            preserve_times
+        );
+        
+        return create_xptr_from_auto<structSound>(extracted);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract part of sound");
+    }
+}
+
+// ============================================================================
+// Sound Modification Methods
+// ============================================================================
+
+//' Scale intensity of Sound to target dB level (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_scale_intensity)]]
+void sound_scale_intensity(
+    XPtr<structSound> xptr,
+    double new_intensity_db
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        Sound_scaleIntensity(sound, new_intensity_db);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to scale intensity");
+    }
+}
+
+//' Scale peak amplitude of Sound (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_scale_peak)]]
+void sound_scale_peak(
+    XPtr<structSound> xptr,
+    double new_peak
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        Vector_scale(sound, new_peak);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to scale peak");
+    }
+}
+
+//' Pre-emphasize Sound (high-pass filter) (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_pre_emphasize)]]
+void sound_pre_emphasize(
+    XPtr<structSound> xptr,
+    double from_frequency
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        Sound_preEmphasize_inplace(sound, from_frequency);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to pre-emphasize sound");
+    }
+}
+
+//' De-emphasize Sound (low-pass filter) (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_de_emphasize)]]
+void sound_de_emphasize(
+    XPtr<structSound> xptr,
+    double from_frequency
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        Sound_deEmphasize_inplace(sound, from_frequency);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to de-emphasize sound");
+    }
+}

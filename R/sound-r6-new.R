@@ -449,6 +449,100 @@ Sound <- R6::R6Class(
     },
     
     # ========================================================================
+    # Extraction Methods
+    # ========================================================================
+    
+    #' @description Extract a specific channel
+    #' @param channel Channel number (1 for mono or left, 2 for right)
+    #' @return New Sound object with extracted channel
+    extract_channel = function(channel = 1) {
+      private$check_valid()
+      if (!is.numeric(channel) || channel < 1) {
+        stop("channel must be a positive integer")
+      }
+      sound_ptr <- .sound_extract_channel(private$ptr, as.integer(channel))
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Extract part of sound by time
+    #' @param from_time Start time in seconds
+    #' @param to_time End time in seconds
+    #' @param window_shape Window shape: "rectangular", "hamming", "bartlett", "welch", "hanning"
+    #' @param relative_width Relative width of window (default: 1.0)
+    #' @param preserve_times Keep original time domain (default: FALSE)
+    #' @return New Sound object with extracted part
+    extract_part = function(
+      from_time,
+      to_time,
+      window_shape = c("rectangular", "hamming", "bartlett", "welch", "hanning"),
+      relative_width = 1.0,
+      preserve_times = FALSE
+    ) {
+      private$check_valid()
+      
+      window_shape <- match.arg(window_shape)
+      window_shape_int <- switch(
+        window_shape,
+        "rectangular" = 0,
+        "hamming" = 1,
+        "bartlett" = 2,
+        "welch" = 3,
+        "hanning" = 4,
+        0
+      )
+      
+      sound_ptr <- .sound_extract_part(
+        private$ptr,
+        from_time,
+        to_time,
+        window_shape_int,
+        relative_width,
+        preserve_times
+      )
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    # ========================================================================
+    # Modification Methods (in-place)
+    # ========================================================================
+    
+    #' @description Scale intensity to target dB level
+    #' @param new_intensity_db Target intensity in dB
+    #' @return Self (invisibly) for method chaining
+    scale_intensity = function(new_intensity_db) {
+      private$check_valid()
+      .sound_scale_intensity(private$ptr, new_intensity_db)
+      invisible(self)
+    },
+    
+    #' @description Scale peak amplitude
+    #' @param new_peak Target peak amplitude (default: 0.99)
+    #' @return Self (invisibly) for method chaining
+    scale_peak = function(new_peak = 0.99) {
+      private$check_valid()
+      .sound_scale_peak(private$ptr, new_peak)
+      invisible(self)
+    },
+    
+    #' @description Apply pre-emphasis filter (high-pass)
+    #' @param from_frequency Frequency from which to start pre-emphasis in Hz (default: 50)
+    #' @return Self (invisibly) for method chaining
+    pre_emphasize = function(from_frequency = 50.0) {
+      private$check_valid()
+      .sound_pre_emphasize(private$ptr, from_frequency)
+      invisible(self)
+    },
+    
+    #' @description Apply de-emphasis filter (low-pass)
+    #' @param from_frequency Frequency from which to start de-emphasis in Hz (default: 50)
+    #' @return Self (invisibly) for method chaining
+    de_emphasize = function(from_frequency = 50.0) {
+      private$check_valid()
+      .sound_de_emphasize(private$ptr, from_frequency)
+      invisible(self)
+    },
+    
+    # ========================================================================
     # Export Methods
     # ========================================================================
     

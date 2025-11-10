@@ -571,6 +571,42 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_speaker_sound_to_point_process_zeros`, xptr, channel, include_raisers, include_fallers)
 }
 
+#' Extract a specific channel from Sound (internal)
+#' @keywords internal
+.sound_extract_channel <- function(xptr, channel) {
+    .Call(`_speaker_sound_extract_channel`, xptr, channel)
+}
+
+#' Extract part of Sound by time (internal)
+#' @keywords internal
+.sound_extract_part <- function(xptr, from_time, to_time, window_shape, relative_width, preserve_times) {
+    .Call(`_speaker_sound_extract_part`, xptr, from_time, to_time, window_shape, relative_width, preserve_times)
+}
+
+#' Scale intensity of Sound to target dB level (internal)
+#' @keywords internal
+.sound_scale_intensity <- function(xptr, new_intensity_db) {
+    invisible(.Call(`_speaker_sound_scale_intensity`, xptr, new_intensity_db))
+}
+
+#' Scale peak amplitude of Sound (internal)
+#' @keywords internal
+.sound_scale_peak <- function(xptr, new_peak) {
+    invisible(.Call(`_speaker_sound_scale_peak`, xptr, new_peak))
+}
+
+#' Pre-emphasize Sound (high-pass filter) (internal)
+#' @keywords internal
+.sound_pre_emphasize <- function(xptr, from_frequency) {
+    invisible(.Call(`_speaker_sound_pre_emphasize`, xptr, from_frequency))
+}
+
+#' De-emphasize Sound (low-pass filter) (internal)
+#' @keywords internal
+.sound_de_emphasize <- function(xptr, from_frequency) {
+    invisible(.Call(`_speaker_sound_de_emphasize`, xptr, from_frequency))
+}
+
 #' Safe error wrapper for Praat calls
 #'
 #' Provides a consistent error handling pattern for Praat operations
