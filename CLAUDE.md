@@ -74,13 +74,30 @@ Important Notes
 - When checking implementations, be specific about what you're looking for to get accurate results
 
 ## Active Technologies
-- R 4.0+ with C++17 (upgraded for Praat source compatibility) (001-praat-r-access)
-- R6 OOP framework (for object-oriented Praat interface) (001-praat-r-access)
-- N/A (in-memory audio processing, no persistent storage) (001-praat-r-access)
+- R 4.0+ with C++17 (required for Praat source compatibility) (001-praat-r-access)
+- Rcpp 1.0+ (R/C++ interface via XPtr for memory management)
+- R6 2.5+ (Object-oriented framework mirroring Praat's class hierarchy)
+- av package (humlab-speech/av fork for audio I/O)
+- Praat source code (selective compilation from fon/ directory)
 
 ## Recent Changes
+
+### 2025-11-10: OOP Architecture Assessment & Future Integration Plan
+- **Confirmed OOP approach is correct** - aligns with Praat's C++ architecture and Parselmouth's design
+- **Documented integration patterns** for adding new Praat objects to the package
+- **Created comprehensive Phase 3 plan** (PHASE3_IMPLEMENTATION_PLAN.md)
+- **Identified critical priorities**:
+  - Phase 3A: Documentation & Examples (re-implement superassp Python examples)
+  - Phase 3B: TextGrid implementation (CRITICAL - 90% of users need this)
+  - Phase 3C: Manipulation & Tier objects (pitch/duration modification)
+  - Phase 3D: Complete spectral suite (Spectrogram, LPC, MFCC)
+- **Established naming conventions** for consistent Praat script → R translation
+
+### Previous
 - 001-praat-r-access: Upgraded to C++17 for Praat source compatibility
 - 001-praat-r-access: Adopted R6-based object-oriented architecture
+- Implemented 6 core objects: Sound, Pitch, Formant, Intensity, Harmonicity, PointProcess
+- Established XPtr memory management pattern with automatic cleanup
 
 ---
 
@@ -889,3 +906,344 @@ Praat → R6 mapping for easy translation:
 ---
 
 *This architecture enables systematic, consistent integration of Praat objects into R, following proven patterns from Parselmouth while leveraging R's strengths and avoiding Python dependency.*
+
+---
+
+## FUTURE OBJECT INTEGRATION GUIDELINES
+
+### Updated: 2025-11-10
+
+This section provides a **step-by-step workflow** for integrating additional Praat objects into the speaker package.
+
+### Step-by-Step Integration Process
+
+#### Step 1: Source Analysis (1-2 hours)
+
+1. **Locate Praat source files**:
+   - Header: `src/praat.github.io/fon/[Object].h` or `src/praat.github.io/dwtools/[Object].h`
+   - Implementation: `src/praat.github.io/fon/[Object].cpp`
+
+2. **Map class hierarchy**:
+   ```
+   Thing → Function → [Sampled/Vector/Matrix] → SpecificObject
+   ```
+
+3. **Catalog methods** into categories:
+   - **Creation**: `[Object]_create()`, `[Object]_readFromFile()`, `Sound_to_[Object]()`
+   - **Query**: `[Object]_get*()`, `[Object]_count*()`
+   - **Transformation**: `[Object]_to_*()` (returns new object)
+   - **Modification**: `[Object]_modify*()` (changes object)
+   - **Export**: `[Object]_down*()`, conversion methods
+
+4. **Check dependencies**:
+   - What Praat subsystems are needed? (file I/O, graphics, threading, collections)
+   - Are stubs already available in `src/*_stubs.cpp`?
+   - Will new stubs be needed?
+
+#### Step 2: C++ Wrappers (2-4 days)
+
+1. **Create `src/[object]_wrappers.cpp`**:
+
+```cpp
+#include <Rcpp.h>
+#include "praat.github.io/fon/[Object].h"
+#include "praat.github.io/fon/Sound.h"  // if needed
+// ... other includes
+
+using namespace Rcpp;
+
+// Finalizer
+void [object]_finalizer(struct[Object]* obj) {
+    if (obj != nullptr) {
+        forget(obj);
+    }
+}
+
+// Constructor from file
+// [[Rcpp::export(.[object]_read)]]
+XPtr<struct[Object]> [object]_read(std::string path) {
+    try {
+        auto[Object] obj = [Object]_readFromFile(Melder_peek8to32(path.c_str()));
+        struct[Object]* ptr = obj.releaseToAmbiguousOwner();
+        return XPtr<struct[Object]>(ptr, true, [object]_finalizer);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to read [Object]: " + path);
+    }
+}
+
+// Query methods
+// [[Rcpp::export(.[object]_get_[property])]]
+double [object]_get_[property](XPtr<struct[Object]> xptr) {
+    if (!xptr) stop("Invalid [Object] pointer");
+    try {
+        return [Object]_get[Property](xptr.get());
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to get [property]");
+    }
+}
+
+// Transform methods (return new object)
+// [[Rcpp::export(.[object]_to_[other])]]
+XPtr<struct[Other]> [object]_to_[other](XPtr<struct[Object]> xptr, /* params */) {
+    if (!xptr) stop("Invalid [Object] pointer");
+    try {
+        auto[Other] result = [Object]_to_[Other](xptr.get(), /* params */);
+        struct[Other]* ptr = result.releaseToAmbiguousOwner();
+        return XPtr<struct[Other]>(ptr, true, [other]_finalizer);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert to [Other]");
+    }
+}
+
+// Export to R data structure
+// [[Rcpp::export(.[object]_as_data_frame)]]
+DataFrame [object]_as_data_frame(XPtr<struct[Object]> xptr) {
+    if (!xptr) stop("Invalid [Object] pointer");
+    struct[Object]* obj = xptr.get();
+    
+    // Extract data from Praat object
+    int n = [Object]_get_numberOfFrames(obj);
+    NumericVector times(n);
+    NumericVector values(n);
+    
+    for (int i = 1; i <= n; i++) {  // Praat uses 1-based indexing
+        times[i-1] = [Object]_indexToX(obj, i);
+        values[i-1] = [Object]_get_valueAtIndex(obj, i);
+    }
+    
+    return DataFrame::create(
+        _["time"] = times,
+        _["value"] = values
+    );
+}
+```
+
+2. **Add to `src/Makevars` or CMakeLists if needed**
+
+3. **Run `Rcpp::compileAttributes()`** to generate `RcppExports.R` and `RcppExports.cpp`
+
+4. **Test compilation**: `R CMD INSTALL --preclean .`
+
+#### Step 3: R6 Class (1-2 days)
+
+1. **Create `R/[object]-r6.R`**:
+
+```r
+#' [Object] R6 Class
+#'
+#' R6 class wrapping Praat's [Object] object.
+#'
+#' @export
+[Object] <- R6::R6Class("[Object]",
+  inherit = PraatObject,
+  
+  public = list(
+    #' @description
+    #' Create new [Object] instance
+    #' @param path Path to [Object] file (optional)
+    #' @param .xptr External pointer to existing [Object] (internal use)
+    initialize = function(path = NULL, .xptr = NULL) {
+      if (!is.null(.xptr)) {
+        private$ptr <- .xptr
+      } else if (!is.null(path)) {
+        private$ptr <- .[object]_read(path)
+      } else {
+        stop("Provide either path or .xptr")
+      }
+    },
+    
+    #' @description Get [property]
+    #' @return Numeric value
+    get_[property] = function() {
+      .[object]_get_[property](private$ptr)
+    },
+    
+    #' @description Convert to [Other] object
+    #' @param param1 Description
+    #' @param param2 Description
+    #' @return [Other] R6 object
+    to_[other] = function(param1, param2) {
+      other_ptr <- .[object]_to_[other](private$ptr, param1, param2)
+      [Other]$new(.xptr = other_ptr)
+    },
+    
+    #' @description Export to data.frame
+    #' @return data.frame with time and value columns
+    as_data_frame = function() {
+      .[object]_as_data_frame(private$ptr)
+    },
+    
+    #' @description Print method
+    print = function() {
+      cat("<Praat [Object]>\n")
+      cat(sprintf("  [Property]: %s\n", self$get_[property]()))
+      invisible(self)
+    }
+  ),
+  
+  private = list(
+    ptr = NULL
+  )
+)
+
+# Static factory methods (if applicable)
+#' @export
+[Object]$create <- function(params...) {
+  ptr <- .[object]_create(params...)
+  [Object]$new(.xptr = ptr)
+}
+```
+
+2. **Update `NAMESPACE`** with `@export` tags
+3. **Run `devtools::document()`** to generate Rd files
+
+#### Step 4: Testing (1-2 days)
+
+1. **Create `tests/testthat/test-[object].R`**:
+
+```r
+test_that("[Object] constructor works", {
+  obj <- [Object]$new("inst/extdata/test.[ext]")
+  expect_s3_class(obj, "[Object]")
+  expect_s3_class(obj, "PraatObject")
+})
+
+test_that("[Object] query methods work", {
+  obj <- [Object]$new("inst/extdata/test.[ext]")
+  
+  prop <- obj$get_[property]()
+  expect_type(prop, "double")
+  expect_gt(prop, 0)
+})
+
+test_that("[Object] transformation works", {
+  obj <- [Object]$new("inst/extdata/test.[ext]")
+  other <- obj$to_[other](param1, param2)
+  
+  expect_s3_class(other, "[Other]")
+})
+
+test_that("[Object] export to data.frame works", {
+  obj <- [Object]$new("inst/extdata/test.[ext]")
+  df <- obj$as_data_frame()
+  
+  expect_s3_class(df, "data.frame")
+  expect_true("time" %in% names(df))
+  expect_true("value" %in% names(df))
+  expect_gt(nrow(df), 0)
+})
+
+test_that("[Object] memory management works", {
+  # Create and destroy many objects to test for leaks
+  for (i in 1:100) {
+    obj <- [Object]$new("inst/extdata/test.[ext]")
+    rm(obj)
+    gc()
+  }
+  # If no crash/hang, memory management is working
+  expect_true(TRUE)
+})
+
+test_that("[Object] integrates with related objects", {
+  # Example: Sound → [Object]
+  sound <- Sound$new("inst/extdata/test.wav")
+  obj <- sound$to_[object](params...)
+  
+  expect_s3_class(obj, "[Object]")
+})
+```
+
+2. **Add test data** to `inst/extdata/` if needed
+3. **Run tests**: `devtools::test()`
+4. **Check coverage**: `covr::package_coverage()`
+
+#### Step 5: Documentation (1 day)
+
+1. **Complete Roxygen documentation** in R6 class
+2. **Add examples** to every public method:
+
+```r
+#' @examples
+#' \dontrun{
+#' # Create from file
+#' obj <- [Object]$new("my_file.[ext]")
+#' 
+#' # Query property
+#' value <- obj$get_[property]()
+#' 
+#' # Transform to other object
+#' other <- obj$to_[other](param1, param2)
+#' 
+#' # Export to data.frame
+#' df <- obj$as_data_frame()
+#' }
+```
+
+3. **Create vignette** (if complex object): `vignettes/[object]-guide.Rmd`
+4. **Add example script**: `inst/examples/XX_[object]_example.R`
+
+#### Step 6: Validation (1 day)
+
+1. **Compare to Praat desktop**:
+   - Process same file in Praat and speaker
+   - Verify identical or near-identical output
+   - Document any known differences
+
+2. **Benchmark performance**:
+   - Time operations in speaker vs. Praat
+   - Target: within 10-20% of Praat desktop
+
+3. **Platform testing**:
+   - macOS (x86_64, arm64)
+   - Linux (Ubuntu, Fedora)
+   - Windows (if applicable)
+
+### Object Priority Matrix (Updated 2025-11-10)
+
+| Praat Object | Usage % | Complexity | Priority | Status | Next Step |
+|--------------|---------|------------|----------|--------|-----------|
+| Sound | 100% | Medium | Foundation | ✅ Complete | Maintain |
+| Pitch | 95% | Medium | Core | ✅ Complete | Add missing methods |
+| Formant | 90% | Medium | Core | ✅ Complete | Add tracking |
+| TextGrid | 90% | High | **CRITICAL** | ⚠️ Disabled | Enable + test |
+| Intensity | 80% | Low | Core | ✅ Complete | Maintain |
+| Harmonicity | 75% | Low | Core | ✅ Complete | Maintain |
+| PointProcess | 70% | Medium | Core | ✅ Complete | Maintain |
+| Manipulation | 60% | High | High | ❌ Not started | Implement |
+| PitchTier | 60% | Low | High | ❌ Not started | Implement |
+| Spectrum | 50% | Medium | Medium | ⚠️ Partial | Complete |
+| Spectrogram | 40% | Medium | Medium | ❌ Not started | Implement |
+| FormantGrid | 30% | Medium | Medium | ❌ Not started | Defer |
+| IntensityTier | 25% | Low | Low | ❌ Not started | Defer |
+| DurationTier | 25% | Low | Low | ❌ Not started | Defer |
+| LPC | 20% | Medium | Medium | ❌ Stubbed | Implement |
+| MFCC | 15% | Medium | Medium | ❌ Not started | Implement |
+| Ltas | 10% | Low | Low | ❌ Not started | Defer |
+
+### Estimated Effort Per Object
+
+| Complexity | C++ Wrappers | R6 Class | Tests | Docs | Total |
+|------------|--------------|----------|-------|------|-------|
+| **Low** (Tier, simple) | 0.5-1 day | 0.5 day | 0.5 day | 0.5 day | **2-2.5 days** |
+| **Medium** (Analysis) | 1-2 days | 1 day | 1 day | 0.5 day | **3.5-4.5 days** |
+| **High** (TextGrid, Manipulation) | 2-4 days | 1-2 days | 1-2 days | 1 day | **5-9 days** |
+
+### Quick Reference: Common Stub Requirements
+
+If you encounter build errors related to missing Praat functions:
+
+| Missing Function | Required Stub | File | Status |
+|------------------|---------------|------|--------|
+| `MelderFile_*` | File I/O stubs | `src/file_stubs.cpp` | ❌ Needed |
+| `Graphics_*` | Graphics stubs | `src/graphics_stubs*.cpp` | ✅ Exists |
+| `praat_*` | Praat command stubs | `src/praat_stubs.cpp` | ✅ Exists |
+| `Collection_*` | Data structures | `src/collection_stubs.cpp` | ❌ Needed |
+| `Thread_*` | Threading | `src/thread_stubs.cpp` | ❌ Needed |
+| `NUM_*` | Numerical routines | `src/num_stubs.cpp` | ✅ Partial |
+
+---
+
+**This integration workflow ensures consistent, high-quality implementation of new Praat objects while maintaining the package's architectural integrity.**
