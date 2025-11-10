@@ -11,6 +11,8 @@
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/fon/Sound_to_Pitch.h"
 #include "praat.github.io/fon/Pitch_to_PointProcess.h"
+#include "praat.github.io/fon/Pitch_to_PitchTier.h"
+#include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/PointProcess.h"
 #include "praat.github.io/melder/melder.h"
 
@@ -437,5 +439,18 @@ Rcpp::XPtr<structPointProcess> pitch_to_point_process(Rcpp::XPtr<structPitch> pi
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to convert Pitch to PointProcess");
+    }
+}
+
+// [[Rcpp::export(.pitch_down_to_pitch_tier)]]
+Rcpp::XPtr<structPitchTier> pitch_down_to_pitch_tier(Rcpp::XPtr<structPitch> pitch) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    try {
+        autoPitchTier tier = Pitch_to_PitchTier(pitch.get());
+        return create_xptr_from_auto<structPitchTier>(tier);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to convert Pitch to PitchTier");
     }
 }

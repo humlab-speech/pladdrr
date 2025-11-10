@@ -237,6 +237,14 @@ Pitch <- R6::R6Class("Pitch",
       PointProcess$new(.xptr = pp_ptr)
     },
     
+    #' @description
+    #' Convert pitch object to PitchTier
+    #' @return PitchTier object with pitch points from voiced frames
+    down_to_pitch_tier = function() {
+      tier_ptr <- .pitch_down_to_pitch_tier(private$ptr)
+      PitchTier$new(.xptr = tier_ptr)
+    },
+    
     # ========================================================================
     # Export methods
     # ========================================================================

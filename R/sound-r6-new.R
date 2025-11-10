@@ -37,6 +37,7 @@
 #' - `$to_harmonicity_cc(...)` - Compute HNR (returns Harmonicity object)
 #' - `$to_spectrogram(...)` - Create spectrogram (returns Spectrogram object)
 #' - `$to_spectrum(...)` - Compute spectrum (returns Spectrum object)
+#' - `$to_manipulation(...)` - Create manipulation for pitch/duration modification (returns Manipulation object)
 #'
 #' ## Export
 #'
@@ -357,6 +358,25 @@ Sound <- R6::R6Class(
         window_shape
       )
       Spectrogram$new(.xptr = spectrogram_ptr)
+    },
+    
+    #' @description Create Manipulation for pitch/duration modification
+    #' @param time_step Time step for pitch analysis (default: 0.01, 0 = auto)
+    #' @param pitch_floor Minimum pitch in Hz (default: 75)
+    #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
+    #' @return Manipulation object
+    to_manipulation = function(
+      time_step = 0.01,
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0
+    ) {
+      manip_ptr <- .manipulation_from_sound(
+        private$ptr,
+        time_step,
+        pitch_floor,
+        pitch_ceiling
+      )
+      Manipulation$new(.xptr = manip_ptr)
     },
     
     #' @description Extract glottal pulses using cross-correlation method
