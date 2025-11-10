@@ -20,11 +20,11 @@ void Graphics_doubleArrow (Graphics, double, double, double, double) {}
 void Graphics_arcArrow (Graphics, double, double, double, double, double, double, int) {}
 void Graphics_arc (Graphics, double, double, double, double, double, double) {}
 
-void Graphics_polyline (Graphics, integer, double *, double *) {}
-void Graphics_polyline_closed (Graphics, integer, double *, double *) {}
-void Graphics_function (Graphics, double *, integer, integer, double, double) {}
+void Graphics_polyline (Graphics, integer, const double *, const double *) {}
+void Graphics_polyline_closed (Graphics, integer, const double *, const double *) {}
+void Graphics_function (Graphics, const double *, integer, integer, double, double) {}
 void Graphics_function16 (Graphics, int16 *, int, integer, integer, double, double, int, double, double, double *, double *) {}
-void Graphics_fillArea (Graphics, integer, double const *, double const *) {}
+void Graphics_fillArea (Graphics, integer, const double *, const double *) {}
 
 void Graphics_rectangle (Graphics, double, double, double, double) {}
 void Graphics_fillRectangle (Graphics, double, double, double, double) {}

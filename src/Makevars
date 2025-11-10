@@ -104,8 +104,8 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
           fon/Ltas_to_SpectrumTier.cpp fon/Formant.cpp fon/Image.cpp \
           fon/Sound_to_Formant.cpp fon/Sound_and_Spectrogram.cpp \
           fon/Sound_and_Spectrum.cpp fon/Spectrum_and_Spectrogram.cpp \
-          fon/Spectrum_to_Formant.cpp fon/FormantTier.cpp fon/TextGrid.cpp \
-          fon/TextGrid_Sound.cpp fon/Label.cpp fon/FormantGrid.cpp \
+          fon/Spectrum_to_Formant.cpp fon/FormantTier.cpp \
+          fon/Label.cpp fon/FormantGrid.cpp \
           fon/Excitation.cpp fon/Cochleagram.cpp fon/Cochleagram_and_Excitation.cpp \
           fon/Excitation_to_Formant.cpp fon/Sound_to_Cochleagram.cpp \
           fon/Spectrum_to_Excitation.cpp fon/VocalTract.cpp \

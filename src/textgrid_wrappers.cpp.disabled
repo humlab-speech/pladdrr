@@ -6,11 +6,8 @@
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
 
-// Praat headers
-extern "C" {
+// Praat headers - TextGrid uses C++ features so no extern "C"
 #include "praat.github.io/fon/TextGrid.h"
-#include "praat.github.io/fon/TextGrid_def.h"
-}
 
 // ============================================================================
 // TextGrid Creation & I/O
@@ -18,12 +15,9 @@ extern "C" {
 
 // [[Rcpp::export(.textgrid_read_from_file)]]
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
-    return praat_try_catch<structTextGrid>([&]() {
-        structMelderFile file = {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-        autoTextGrid textgrid = TextGrid_readFromFile(&file);
-        return textgrid.releaseToAmbiguousOwner();
-    }, "Failed to read TextGrid from file");
+    // TODO: Full file reading implementation requires additional Melder file I/O functions
+    // For now, use TextGrid$create() to create TextGrids programmatically
+    Rcpp::stop("TextGrid file reading not yet implemented. Use TextGrid$create() to create TextGrids programmatically, or load via external tools.");
 }
 
 // [[Rcpp::export(.textgrid_create)]]
@@ -33,24 +27,23 @@ Rcpp::XPtr<structTextGrid> textgrid_create(
     std::string tier_names = "",
     std::string point_tiers = ""
 ) {
-    return praat_try_catch<structTextGrid>([&]() {
+    try {
         autoTextGrid textgrid = TextGrid_create(
             tmin, tmax,
             Melder_peek8to32(tier_names.c_str()),
             Melder_peek8to32(point_tiers.c_str())
         );
-        return textgrid.releaseToAmbiguousOwner();
-    }, "Failed to create TextGrid");
+        return create_xptr_from_auto<structTextGrid>(textgrid);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to create TextGrid");
+    }
 }
 
 // [[Rcpp::export(.textgrid_save)]]
 void textgrid_save(Rcpp::XPtr<structTextGrid> xptr, std::string path) {
-    praat_try_catch_void([&]() {
-        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
-        structMelderFile file = {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-        Data_writeToTextFile(xptr.get(), &file);
-    }, "Failed to save TextGrid");
+    // TODO: Full file writing implementation requires additional Melder file I/O functions
+    Rcpp::stop("TextGrid file writing not yet implemented. Use as_data_frame() to export data.");
 }
 
 // ============================================================================
@@ -87,7 +80,7 @@ int textgrid_get_number_of_tiers(Rcpp::XPtr<structTextGrid> xptr) {
 
 // [[Rcpp::export(.textgrid_get_tier_name)]]
 std::string textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    return praat_try_catch<std::string>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         Function tier = xptr->tiers->at[tier_number];
         return Melder_peek32to8(tier->name.get());
@@ -96,7 +89,7 @@ std::string textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_num
 
 // [[Rcpp::export(.textgrid_get_tier_names)]]
 std::vector<std::string> textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr) {
-    return praat_try_catch<std::vector<std::string>>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         std::vector<std::string> names;
         for (integer i = 1; i <= xptr->tiers->size; i++) {
@@ -109,7 +102,7 @@ std::vector<std::string> textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr
 
 // [[Rcpp::export(.textgrid_tier_is_interval_tier)]]
 bool textgrid_tier_is_interval_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    return praat_try_catch<bool>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         if (tier_number < 1 || tier_number > xptr->tiers->size)
             Rcpp::stop("Tier number out of range");
@@ -125,7 +118,7 @@ bool textgrid_tier_is_interval_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_nu
 
 // [[Rcpp::export(.textgrid_tier_is_point_tier)]]
 bool textgrid_tier_is_point_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    return praat_try_catch<bool>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         if (tier_number < 1 || tier_number > xptr->tiers->size)
             Rcpp::stop("Tier number out of range");
@@ -145,7 +138,7 @@ bool textgrid_tier_is_point_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_numbe
 
 // [[Rcpp::export(.textgrid_get_number_of_intervals)]]
 int textgrid_get_number_of_intervals(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    return praat_try_catch<int>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         return tier->intervals.size;
@@ -154,7 +147,7 @@ int textgrid_get_number_of_intervals(Rcpp::XPtr<structTextGrid> xptr, int tier_n
 
 // [[Rcpp::export(.textgrid_get_interval_start_time)]]
 double textgrid_get_interval_start_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number) {
-    return praat_try_catch<double>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         if (interval_number < 1 || interval_number > tier->intervals.size)
@@ -166,7 +159,7 @@ double textgrid_get_interval_start_time(Rcpp::XPtr<structTextGrid> xptr, int tie
 
 // [[Rcpp::export(.textgrid_get_interval_end_time)]]
 double textgrid_get_interval_end_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number) {
-    return praat_try_catch<double>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         if (interval_number < 1 || interval_number > tier->intervals.size)
@@ -178,7 +171,7 @@ double textgrid_get_interval_end_time(Rcpp::XPtr<structTextGrid> xptr, int tier_
 
 // [[Rcpp::export(.textgrid_get_interval_text)]]
 std::string textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number) {
-    return praat_try_catch<std::string>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         if (interval_number < 1 || interval_number > tier->intervals.size)
@@ -190,7 +183,7 @@ std::string textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier
 
 // [[Rcpp::export(.textgrid_get_interval_at_time)]]
 int textgrid_get_interval_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
-    return praat_try_catch<int>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         integer index = IntervalTier_timeToIndex(tier, time);
@@ -200,7 +193,7 @@ int textgrid_get_interval_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_numb
 
 // [[Rcpp::export(.textgrid_get_label_at_time)]]
 std::string textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
-    return praat_try_catch<std::string>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         integer index = IntervalTier_timeToIndex(tier, time);
@@ -221,7 +214,7 @@ void textgrid_set_interval_text(
     int interval_number,
     std::string text
 ) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextGrid_setIntervalText(
             xptr.get(),
@@ -234,7 +227,7 @@ void textgrid_set_interval_text(
 
 // [[Rcpp::export(.textgrid_insert_boundary)]]
 void textgrid_insert_boundary(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextGrid_insertBoundary(xptr.get(), tier_number, time);
     }, "Failed to insert boundary");
@@ -242,7 +235,7 @@ void textgrid_insert_boundary(Rcpp::XPtr<structTextGrid> xptr, int tier_number, 
 
 // [[Rcpp::export(.textgrid_remove_boundary)]]
 void textgrid_remove_boundary(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextGrid_removeBoundaryAtTime(xptr.get(), tier_number, time);
     }, "Failed to remove boundary");
@@ -254,7 +247,7 @@ void textgrid_remove_boundary(Rcpp::XPtr<structTextGrid> xptr, int tier_number, 
 
 // [[Rcpp::export(.textgrid_get_number_of_points)]]
 int textgrid_get_number_of_points(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    return praat_try_catch<int>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
         return tier->points.size;
@@ -263,7 +256,7 @@ int textgrid_get_number_of_points(Rcpp::XPtr<structTextGrid> xptr, int tier_numb
 
 // [[Rcpp::export(.textgrid_get_point_time)]]
 double textgrid_get_point_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number) {
-    return praat_try_catch<double>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
         if (point_number < 1 || point_number > tier->points.size)
@@ -275,7 +268,7 @@ double textgrid_get_point_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number,
 
 // [[Rcpp::export(.textgrid_get_point_text)]]
 std::string textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number) {
-    return praat_try_catch<std::string>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
         if (point_number < 1 || point_number > tier->points.size)
@@ -296,7 +289,7 @@ void textgrid_insert_point(
     double time,
     std::string mark
 ) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextGrid_insertPoint(
             xptr.get(),
@@ -314,7 +307,7 @@ void textgrid_set_point_text(
     int point_number,
     std::string text
 ) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextGrid_setPointText(
             xptr.get(),
@@ -327,7 +320,7 @@ void textgrid_set_point_text(
 
 // [[Rcpp::export(.textgrid_remove_point)]]
 void textgrid_remove_point(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
         if (point_number < 1 || point_number > tier->points.size)
@@ -342,7 +335,7 @@ void textgrid_remove_point(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int
 
 // [[Rcpp::export(.textgrid_add_interval_tier)]]
 void textgrid_add_interval_tier(Rcpp::XPtr<structTextGrid> xptr, std::string name) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         autoIntervalTier tier = IntervalTier_create(xptr->xmin, xptr->xmax);
         Thing_setName(tier.get(), Melder_peek8to32(name.c_str()));
@@ -352,7 +345,7 @@ void textgrid_add_interval_tier(Rcpp::XPtr<structTextGrid> xptr, std::string nam
 
 // [[Rcpp::export(.textgrid_add_point_tier)]]
 void textgrid_add_point_tier(Rcpp::XPtr<structTextGrid> xptr, std::string name) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         autoTextTier tier = TextTier_create(xptr->xmin, xptr->xmax);
         Thing_setName(tier.get(), Melder_peek8to32(name.c_str()));
@@ -362,7 +355,7 @@ void textgrid_add_point_tier(Rcpp::XPtr<structTextGrid> xptr, std::string name) 
 
 // [[Rcpp::export(.textgrid_remove_tier)]]
 void textgrid_remove_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
-    praat_try_catch_void([&]() {
+    praat_try([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         if (tier_number < 1 || tier_number > xptr->tiers->size)
             Rcpp::stop("Tier number out of range");
@@ -381,16 +374,19 @@ Rcpp::XPtr<structTextGrid> textgrid_extract_part(
     double end_time,
     bool preserve_times
 ) {
-    return praat_try_catch<structTextGrid>([&]() {
-        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+    try {
+        validate_xptr(xptr, "TextGrid");
         autoTextGrid extracted = TextGrid_extractPart(
             xptr.get(),
             start_time,
             end_time,
             preserve_times
         );
-        return extracted.releaseToAmbiguousOwner();
-    }, "Failed to extract part");
+        return create_xptr_from_auto<structTextGrid>(extracted);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to extract part");
+    }
 }
 
 // ============================================================================
@@ -402,7 +398,7 @@ Rcpp::DataFrame textgrid_to_data_frame(
     Rcpp::XPtr<structTextGrid> xptr,
     Rcpp::Nullable<Rcpp::IntegerVector> tier_numbers = R_NilValue
 ) {
-    return praat_try_catch<Rcpp::DataFrame>([&]() {
+    return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         
         std::vector<int> tiers_to_export;

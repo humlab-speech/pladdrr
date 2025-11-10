@@ -159,4 +159,16 @@ double NUMinvChiSquareQ (double q, double df) {
     Melder_throw (U"Inverse chi-square Q function not available in this build.");
 }
 
+/* Brent minimization algorithm */
+void NUMminimize_brent (double (*f)(double x, void *closure), double a, double b, 
+                        void *closure, double tol, double *result) {
+    (void) f;
+    (void) a;
+    (void) b;
+    (void) closure;
+    (void) tol;
+    (void) result;
+    Melder_throw (U"Brent minimization not available in this build.");
+}
+
 /* End of file */
