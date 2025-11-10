@@ -326,6 +326,14 @@ Sound <- R6::R6Class(
       Harmonicity$new(.xptr = hnr_ptr)
     },
     
+    #' @description Convert to Spectrum (FFT)
+    #' @param fast Use fast FFT (rounds to power of 2, default: TRUE)
+    #' @return Spectrum object
+    to_spectrum = function(fast = TRUE) {
+      spectrum_ptr <- .sound_to_spectrum(private$ptr, fast)
+      Spectrum$new(.xptr = spectrum_ptr)
+    },
+    
     #' @description Extract glottal pulses using cross-correlation method
     #' @param time_step Time step in seconds (0 = auto: 0.75 / pitch_floor)
     #' @param pitch_floor Minimum pitch in Hz (default: 75)
@@ -438,14 +446,6 @@ Sound <- R6::R6Class(
         window_shape_int
       )
       Spectrogram$new(.xptr = spec_ptr)
-    },
-    
-    #' @description Compute frequency spectrum
-    #' @param fast Use fast FFT (default: TRUE)
-    #' @return Spectrum object
-    to_spectrum = function(fast = TRUE) {
-      spectrum_ptr <- .sound_to_spectrum(private$ptr, fast)
-      Spectrum$new(.xptr = spectrum_ptr)
     },
     
     # ========================================================================

@@ -607,6 +607,86 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_speaker_sound_de_emphasize`, xptr, from_frequency))
 }
 
+.spectrum_get_lowest_frequency <- function(xptr) {
+    .Call(`_speaker_spectrum_get_lowest_frequency`, xptr)
+}
+
+.spectrum_get_highest_frequency <- function(xptr) {
+    .Call(`_speaker_spectrum_get_highest_frequency`, xptr)
+}
+
+.spectrum_get_number_of_bins <- function(xptr) {
+    .Call(`_speaker_spectrum_get_number_of_bins`, xptr)
+}
+
+.spectrum_get_frequency_step <- function(xptr) {
+    .Call(`_speaker_spectrum_get_frequency_step`, xptr)
+}
+
+.spectrum_get_frequency_from_bin <- function(xptr, bin) {
+    .Call(`_speaker_spectrum_get_frequency_from_bin`, xptr, bin)
+}
+
+.spectrum_get_bin_from_frequency <- function(xptr, frequency) {
+    .Call(`_speaker_spectrum_get_bin_from_frequency`, xptr, frequency)
+}
+
+.spectrum_get_real_value_in_bin <- function(xptr, bin) {
+    .Call(`_speaker_spectrum_get_real_value_in_bin`, xptr, bin)
+}
+
+.spectrum_get_imaginary_value_in_bin <- function(xptr, bin) {
+    .Call(`_speaker_spectrum_get_imaginary_value_in_bin`, xptr, bin)
+}
+
+.spectrum_get_band_density <- function(xptr, fmin, fmax) {
+    .Call(`_speaker_spectrum_get_band_density`, xptr, fmin, fmax)
+}
+
+.spectrum_get_band_energy <- function(xptr, fmin, fmax) {
+    .Call(`_speaker_spectrum_get_band_energy`, xptr, fmin, fmax)
+}
+
+.spectrum_get_centre_of_gravity <- function(xptr, power) {
+    .Call(`_speaker_spectrum_get_centre_of_gravity`, xptr, power)
+}
+
+.spectrum_get_standard_deviation <- function(xptr, power) {
+    .Call(`_speaker_spectrum_get_standard_deviation`, xptr, power)
+}
+
+.spectrum_get_skewness <- function(xptr, power) {
+    .Call(`_speaker_spectrum_get_skewness`, xptr, power)
+}
+
+.spectrum_get_kurtosis <- function(xptr, power) {
+    .Call(`_speaker_spectrum_get_kurtosis`, xptr, power)
+}
+
+.spectrum_get_central_moment <- function(xptr, moment, power) {
+    .Call(`_speaker_spectrum_get_central_moment`, xptr, moment, power)
+}
+
+.spectrum_pass_hann_band <- function(xptr, fmin, fmax, smooth) {
+    invisible(.Call(`_speaker_spectrum_pass_hann_band`, xptr, fmin, fmax, smooth))
+}
+
+.spectrum_stop_hann_band <- function(xptr, fmin, fmax, smooth) {
+    invisible(.Call(`_speaker_spectrum_stop_hann_band`, xptr, fmin, fmax, smooth))
+}
+
+.spectrum_cepstral_smoothing <- function(xptr, bandwidth) {
+    .Call(`_speaker_spectrum_cepstral_smoothing`, xptr, bandwidth)
+}
+
+.spectrum_to_sound <- function(xptr) {
+    .Call(`_speaker_spectrum_to_sound`, xptr)
+}
+
+.spectrum_as_matrix <- function(xptr) {
+    .Call(`_speaker_spectrum_as_matrix`, xptr)
+}
+
 #' Safe error wrapper for Praat calls
 #'
 #' Provides a consistent error handling pattern for Praat operations

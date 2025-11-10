@@ -3367,6 +3367,245 @@ RcppExport SEXP _speaker_sound_de_emphasize(SEXP xptrSEXP, SEXP from_frequencySE
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// spectrum_get_lowest_frequency
+double spectrum_get_lowest_frequency(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_get_lowest_frequency(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_lowest_frequency(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_highest_frequency
+double spectrum_get_highest_frequency(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_get_highest_frequency(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_highest_frequency(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_number_of_bins
+int spectrum_get_number_of_bins(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_get_number_of_bins(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_number_of_bins(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_frequency_step
+double spectrum_get_frequency_step(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_get_frequency_step(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_frequency_step(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_frequency_from_bin
+double spectrum_get_frequency_from_bin(SEXP xptr, int bin);
+RcppExport SEXP _speaker_spectrum_get_frequency_from_bin(SEXP xptrSEXP, SEXP binSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type bin(binSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_frequency_from_bin(xptr, bin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_bin_from_frequency
+double spectrum_get_bin_from_frequency(SEXP xptr, double frequency);
+RcppExport SEXP _speaker_spectrum_get_bin_from_frequency(SEXP xptrSEXP, SEXP frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type frequency(frequencySEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_bin_from_frequency(xptr, frequency));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_real_value_in_bin
+double spectrum_get_real_value_in_bin(SEXP xptr, int bin);
+RcppExport SEXP _speaker_spectrum_get_real_value_in_bin(SEXP xptrSEXP, SEXP binSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type bin(binSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_real_value_in_bin(xptr, bin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_imaginary_value_in_bin
+double spectrum_get_imaginary_value_in_bin(SEXP xptr, int bin);
+RcppExport SEXP _speaker_spectrum_get_imaginary_value_in_bin(SEXP xptrSEXP, SEXP binSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type bin(binSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_imaginary_value_in_bin(xptr, bin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_band_density
+double spectrum_get_band_density(SEXP xptr, double fmin, double fmax);
+RcppExport SEXP _speaker_spectrum_get_band_density(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_band_density(xptr, fmin, fmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_band_energy
+double spectrum_get_band_energy(SEXP xptr, double fmin, double fmax);
+RcppExport SEXP _speaker_spectrum_get_band_energy(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_band_energy(xptr, fmin, fmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_centre_of_gravity
+double spectrum_get_centre_of_gravity(SEXP xptr, double power);
+RcppExport SEXP _speaker_spectrum_get_centre_of_gravity(SEXP xptrSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_centre_of_gravity(xptr, power));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_standard_deviation
+double spectrum_get_standard_deviation(SEXP xptr, double power);
+RcppExport SEXP _speaker_spectrum_get_standard_deviation(SEXP xptrSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_standard_deviation(xptr, power));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_skewness
+double spectrum_get_skewness(SEXP xptr, double power);
+RcppExport SEXP _speaker_spectrum_get_skewness(SEXP xptrSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_skewness(xptr, power));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_kurtosis
+double spectrum_get_kurtosis(SEXP xptr, double power);
+RcppExport SEXP _speaker_spectrum_get_kurtosis(SEXP xptrSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_kurtosis(xptr, power));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_get_central_moment
+double spectrum_get_central_moment(SEXP xptr, double moment, double power);
+RcppExport SEXP _speaker_spectrum_get_central_moment(SEXP xptrSEXP, SEXP momentSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type moment(momentSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_get_central_moment(xptr, moment, power));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_pass_hann_band
+void spectrum_pass_hann_band(SEXP xptr, double fmin, double fmax, double smooth);
+RcppExport SEXP _speaker_spectrum_pass_hann_band(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP smoothSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type smooth(smoothSEXP);
+    spectrum_pass_hann_band(xptr, fmin, fmax, smooth);
+    return R_NilValue;
+END_RCPP
+}
+// spectrum_stop_hann_band
+void spectrum_stop_hann_band(SEXP xptr, double fmin, double fmax, double smooth);
+RcppExport SEXP _speaker_spectrum_stop_hann_band(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP smoothSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type smooth(smoothSEXP);
+    spectrum_stop_hann_band(xptr, fmin, fmax, smooth);
+    return R_NilValue;
+END_RCPP
+}
+// spectrum_cepstral_smoothing
+SEXP spectrum_cepstral_smoothing(SEXP xptr, double bandwidth);
+RcppExport SEXP _speaker_spectrum_cepstral_smoothing(SEXP xptrSEXP, SEXP bandwidthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_cepstral_smoothing(xptr, bandwidth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_to_sound
+SEXP spectrum_to_sound(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_to_sound(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_to_sound(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrum_as_matrix
+NumericMatrix spectrum_as_matrix(SEXP xptr);
+RcppExport SEXP _speaker_spectrum_as_matrix(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_as_matrix(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // praat_error_to_r
 void praat_error_to_r(const std::string& error_msg);
 RcppExport SEXP _speaker_praat_error_to_r(SEXP error_msgSEXP) {
@@ -3667,6 +3906,26 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_sound_scale_peak", (DL_FUNC) &_speaker_sound_scale_peak, 2},
     {"_speaker_sound_pre_emphasize", (DL_FUNC) &_speaker_sound_pre_emphasize, 2},
     {"_speaker_sound_de_emphasize", (DL_FUNC) &_speaker_sound_de_emphasize, 2},
+    {"_speaker_spectrum_get_lowest_frequency", (DL_FUNC) &_speaker_spectrum_get_lowest_frequency, 1},
+    {"_speaker_spectrum_get_highest_frequency", (DL_FUNC) &_speaker_spectrum_get_highest_frequency, 1},
+    {"_speaker_spectrum_get_number_of_bins", (DL_FUNC) &_speaker_spectrum_get_number_of_bins, 1},
+    {"_speaker_spectrum_get_frequency_step", (DL_FUNC) &_speaker_spectrum_get_frequency_step, 1},
+    {"_speaker_spectrum_get_frequency_from_bin", (DL_FUNC) &_speaker_spectrum_get_frequency_from_bin, 2},
+    {"_speaker_spectrum_get_bin_from_frequency", (DL_FUNC) &_speaker_spectrum_get_bin_from_frequency, 2},
+    {"_speaker_spectrum_get_real_value_in_bin", (DL_FUNC) &_speaker_spectrum_get_real_value_in_bin, 2},
+    {"_speaker_spectrum_get_imaginary_value_in_bin", (DL_FUNC) &_speaker_spectrum_get_imaginary_value_in_bin, 2},
+    {"_speaker_spectrum_get_band_density", (DL_FUNC) &_speaker_spectrum_get_band_density, 3},
+    {"_speaker_spectrum_get_band_energy", (DL_FUNC) &_speaker_spectrum_get_band_energy, 3},
+    {"_speaker_spectrum_get_centre_of_gravity", (DL_FUNC) &_speaker_spectrum_get_centre_of_gravity, 2},
+    {"_speaker_spectrum_get_standard_deviation", (DL_FUNC) &_speaker_spectrum_get_standard_deviation, 2},
+    {"_speaker_spectrum_get_skewness", (DL_FUNC) &_speaker_spectrum_get_skewness, 2},
+    {"_speaker_spectrum_get_kurtosis", (DL_FUNC) &_speaker_spectrum_get_kurtosis, 2},
+    {"_speaker_spectrum_get_central_moment", (DL_FUNC) &_speaker_spectrum_get_central_moment, 3},
+    {"_speaker_spectrum_pass_hann_band", (DL_FUNC) &_speaker_spectrum_pass_hann_band, 4},
+    {"_speaker_spectrum_stop_hann_band", (DL_FUNC) &_speaker_spectrum_stop_hann_band, 4},
+    {"_speaker_spectrum_cepstral_smoothing", (DL_FUNC) &_speaker_spectrum_cepstral_smoothing, 2},
+    {"_speaker_spectrum_to_sound", (DL_FUNC) &_speaker_spectrum_to_sound, 1},
+    {"_speaker_spectrum_as_matrix", (DL_FUNC) &_speaker_spectrum_as_matrix, 1},
     {"_speaker_praat_error_to_r", (DL_FUNC) &_speaker_praat_error_to_r, 1},
     {"_speaker_RcppExport_registerCCallable", (DL_FUNC) &_speaker_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
