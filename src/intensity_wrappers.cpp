@@ -10,6 +10,8 @@
 #include "fon/Sound.h"
 #include "fon/Intensity.h"
 #include "fon/Sound_to_Intensity.h"
+#include "fon/IntensityTier.h"
+#include "fon/Intensity_to_IntensityTier.h"
 #include "fon/Vector.h"
 #include "melder/melder.h"
 
@@ -275,5 +277,21 @@ double intensity_get_end_time(XPtr<structIntensity> intensity_xptr) {
     return intensity_xptr->xmax;
   } catch (...) {
     stop("Error getting end time");
+  }
+}
+
+// ============================================================================
+// Transform methods
+// ============================================================================
+
+// [[Rcpp::export(".intensity_down_to_intensity_tier")]]
+XPtr<structIntensityTier> intensity_down_to_intensity_tier(XPtr<structIntensity> intensity_xptr) {
+  try {
+    validate_xptr(intensity_xptr, "Intensity");
+    autoIntensityTier tier = Intensity_to_IntensityTier(intensity_xptr.get());
+    return create_xptr_from_auto<structIntensityTier>(tier);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to convert Intensity to IntensityTier");
   }
 }

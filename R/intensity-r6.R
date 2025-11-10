@@ -200,6 +200,17 @@ Intensity <- R6::R6Class(
     },
     
     # ========================================================================
+    # Transform Methods
+    # ========================================================================
+    
+    #' @description Convert to IntensityTier
+    #' @return IntensityTier object with points from this intensity
+    down_to_intensity_tier = function() {
+      tier_ptr <- .intensity_down_to_intensity_tier(private$ptr)
+      IntensityTier$new(.xptr = tier_ptr)
+    },
+    
+    # ========================================================================
     # Export Methods
     # ========================================================================
     
