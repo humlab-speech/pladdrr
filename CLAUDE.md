@@ -687,6 +687,113 @@ plot.TextGrid(textgrid, tiers = "all")  # Annotation tiers
 
 ---
 
+### COMPREHENSIVE OOP ARCHITECTURE - 2025-11-10 AMENDMENT
+
+**Master Planning Document:** `specs/001-praat-r-access/OOP-ARCHITECTURE-AMENDMENT.md`
+
+**Critical Insight:**
+The Praat application and source code is fundamentally object-oriented with ~30+ object types forming a rich class hierarchy. The initial specification focused on procedural functions (e.g., `extract_pitch()`, `extract_formant()`), which doesn't reflect how Praat actually works and loses the power of object persistence and method chaining.
+
+**Corrected Approach:**
+Focus on making **Praat OBJECTS** work in R via R6 classes, NOT on implementing specific procedures. This mirrors the successful design of Python's Parselmouth library and enables direct transcoding of Praat scripts to R.
+
+**Praat Script vs R Translation Example:**
+```praat
+# Praat script
+sound = Read from file: "audio.wav"
+pitch = To Pitch: 0.0, 75, 600
+meanF0 = Get mean: 0, 0, "Hertz"
+```
+
+```r
+# R translation (speaker package)
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(time_step = 0.0, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "Hertz")
+```
+
+**Complete Object Implementation Roadmap:**
+
+**Phase 1: Foundation Objects** (Weeks 1-3)
+- ✅ Sound (expand with ~15 missing methods)
+- ✅ Pitch (add manipulation methods)
+- ⚠️ **Formant** (CRITICAL: migrate from S3 to R6)
+- ✅ Intensity (complete)
+- ✅ Harmonicity (complete)
+- ✅ PointProcess (complete)
+- ✅ TextGrid (mostly complete)
+
+**Phase 2: Manipulation System** (Weeks 3-5) - CRITICAL MISSING FEATURE
+- ❌ **Manipulation** (PSOLA-based pitch/duration modification)
+- ❌ **PitchTier** (editable pitch contour)
+- ❌ **DurationTier** (duration modification)
+- ❌ **IntensityTier** (editable intensity)
+- ❌ **FormantGrid** (editable formant trajectories)
+
+**Phase 3: Spectral Analysis** (Weeks 5-7)
+- ❌ Spectrum (FFT output)
+- ❌ Spectrogram (time-frequency representation)
+- ❌ LPC (Linear Predictive Coding)
+- ❌ LTAS (Long-term average spectrum)
+- ❌ MFCC (Mel-frequency cepstral coefficients)
+
+**Phase 4: Utilities** (Week 7-8)
+- ❌ Table (Praat's tabular data)
+- ❌ Matrix (2D data container)
+
+**Object Implementation Pattern:**
+
+For each Praat object (e.g., Manipulation):
+
+1. **Analyze Praat source** (`inst/include/praat.github.io/fon/[Object].h`)
+2. **Create C++ wrappers** (`src/[object]-class.cpp`)
+   - Constructor: `cpp_[object]_new()`
+   - Queries: `cpp_[object]_get_*()`
+   - Transforms: `cpp_[object]_to_*()`
+   - Modifications: `cpp_[object]_[action]()`
+3. **Create R6 class** (`R/[object]-r6.R`)
+   - Inherit from `PraatObject`
+   - Wrap C++ functions as methods
+   - Follow naming conventions (see below)
+4. **Write tests** (`tests/testthat/test-[object].R`)
+5. **Document** (roxygen2 + vignettes)
+
+**Naming Convention for Praat Compatibility:**
+- `Get [X]` → `get_[x]()`
+- `To [Object]` → `to_[object]()`
+- `Extract [Part]` → `extract_[part]()`
+- `[Action]` → `[action]()` (modify in place)
+- `Save as` → `save(path)`
+- Export to R → `as_data_frame()`, `as_matrix()`
+
+**Integration with Parselmouth Examples:**
+
+Python code in `/Users/frkkan96/Documents/src/superassp/inst/python` that uses Parselmouth should be re-implemented in R using this package's R6 objects. These re-implementations should be placed in `inst/examples/` to demonstrate:
+1. Migration path from Python to R
+2. Complete workflows using object-oriented approach
+3. Integration with other R packages (av, ggplot2, etc.)
+
+**Next Implementation Steps:**
+
+1. **IMMEDIATE:** Convert Formant from S3 to R6 (critical gap)
+2. **HIGH PRIORITY:** Implement Manipulation + Tier objects (PitchTier, DurationTier)
+   - Required for voice modification research
+   - Missing from current implementation
+   - Used extensively in prosody studies
+3. **MEDIUM PRIORITY:** Implement spectral objects (Spectrum, Spectrogram, LPC, LTAS)
+4. **LOW PRIORITY:** Implement utility objects (Table, Matrix, MFCC)
+5. **ONGOING:** Expand Sound, Pitch methods to match Praat's full API
+
+**Success Metrics:**
+- ✅ All major Praat objects have R6 equivalents
+- ✅ Praat scripts can be mechanically translated to R
+- ✅ No Python/Parselmouth dependency needed
+- ✅ Performance comparable to native Praat
+- ✅ Comprehensive documentation with migration guides
+
+**Key Insight for Future Objects:**
+When adding any new capability, ask: "What Praat OBJECT does this relate to?" not "What procedure should I implement?" The object-oriented approach ensures consistency, extensibility, and alignment with how Praat actually works.
+
 ### Future Considerations
 
 **When adding new Praat source files:**
