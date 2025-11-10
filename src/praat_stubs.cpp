@@ -171,8 +171,8 @@ void MelderThread_run (std::atomic<bool> *, integer, integer, const std::functio
     // No-op: threading disabled in library mode
 }
 
-/* End of file */
-
-void praat_runNotebook (conststring32, long, Stackel, Editor) {
+void praat_runNotebook (const char32_t *, long, structStackel *, structEditor *) {
     // Notebook execution not supported in library mode
 }
+
+/* End of file */

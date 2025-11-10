@@ -117,6 +117,7 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp harmonicity_wrappers.cpp \
               intensity_wrappers.cpp pointprocess_wrappers.cpp \
+              spectrum_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp longsound_stub.cpp lpc_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
