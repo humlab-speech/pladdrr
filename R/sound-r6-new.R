@@ -335,6 +335,15 @@ Sound <- R6::R6Class(
       Spectrum$new(.xptr = spectrum_ptr)
     },
     
+    #' @description Create long-term average spectrum (Ltas)
+    #' Corresponds to Praat: To Ltas: bandwidth
+    #' @param bandwidth Frequency smoothing bandwidth in Hz (default: 100)
+    #' @return Ltas object
+    to_ltas = function(bandwidth = 100.0) {
+      ltas_ptr <- .sound_to_ltas(private$ptr, bandwidth)
+      Ltas$new(.xptr = ltas_ptr)
+    },
+    
     #' @description Create time-frequency spectrogram
     #' @param window_length Analysis window length in seconds (default: 0.005)
     #' @param max_frequency Maximum frequency to analyze in Hz (default: 5000)

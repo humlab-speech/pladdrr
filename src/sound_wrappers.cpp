@@ -21,6 +21,7 @@
 #include "fon/Sound_and_Spectrum.h"
 #include "fon/Sound_to_PointProcess.h"
 #include "fon/Pitch_to_PointProcess.h"
+#include "fon/Ltas.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -392,6 +393,25 @@ XPtr<structSpectrum> sound_to_spectrum(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create spectrum");
+    }
+}
+
+//' Convert Sound to Ltas (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_ltas)]]
+SEXP sound_to_ltas(
+    XPtr<structSound> sound_xptr,
+    double bandwidth
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    try {
+        autoLtas ltas = Sound_to_Ltas(sound, bandwidth);
+        return wrapCopyExternalPointer<structLtas>(ltas.move(), "Ltas");
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create Ltas");
     }
 }
 

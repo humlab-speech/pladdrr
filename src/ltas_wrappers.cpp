@@ -1,0 +1,268 @@
+// Ltas (Long-term Average Spectrum) wrappers for speaker package
+// Provides R bindings for Praat's Ltas object
+
+#include <Rcpp.h>
+#include "praat_xptr_utils.h"
+#include "praat.github.io/fon/Ltas.h"
+#include "praat.github.io/fon/Vector.h"
+#include "praat.github.io/fon/Spectrum.h"
+
+using namespace Rcpp;
+
+// ============================================================================
+// Query methods - Frequency domain
+// ============================================================================
+
+// [[Rcpp::export(.ltas_get_bin_from_frequency)]]
+int ltas_get_bin_from_frequency(SEXP xptr, double frequency) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  integer bin = Sampled_xToIndex(ltas.get(), frequency);
+  return static_cast<int>(bin);
+}
+
+// [[Rcpp::export(.ltas_get_frequency_from_bin)]]
+double ltas_get_frequency_from_bin(SEXP xptr, int bin) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  return Sampled_indexToX(ltas.get(), bin);
+}
+
+// [[Rcpp::export(.ltas_get_number_of_bins)]]
+int ltas_get_number_of_bins(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  return static_cast<int>(ltas->nx);
+}
+
+// [[Rcpp::export(.ltas_get_bin_width)]]
+double ltas_get_bin_width(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  return ltas->dx;
+}
+
+// [[Rcpp::export(.ltas_get_lowest_frequency)]]
+double ltas_get_lowest_frequency(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  return ltas->xmin;
+}
+
+// [[Rcpp::export(.ltas_get_highest_frequency)]]
+double ltas_get_highest_frequency(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  return ltas->xmax;
+}
+
+// ============================================================================
+// Query methods - Values
+// ============================================================================
+
+// [[Rcpp::export(.ltas_get_value_at_frequency)]]
+double ltas_get_value_at_frequency(SEXP xptr, double frequency, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (frequency < ltas->xmin || frequency > ltas->xmax) {
+    return NA_REAL;
+  }
+  
+  double value;
+  if (interpolate) {
+    value = Vector_getValueAtX(ltas.get(), frequency, 1, kVector_valueInterpolation::LINEAR);
+  } else {
+    integer bin = Sampled_xToNearestIndex(ltas.get(), frequency);
+    value = ltas->z[1][bin];
+  }
+  
+  // Convert units if needed (0=dB, 1=sones, 2=linear)
+  if (unit == 1) {  // sones
+    value = pow(10.0, value / 10.0);  // Convert dB to linear, then to sones
+  } else if (unit == 2) {  // linear
+    value = pow(10.0, value / 10.0);
+  }
+  
+  return value;
+}
+
+// [[Rcpp::export(.ltas_get_minimum)]]
+double ltas_get_minimum(SEXP xptr, double fmin, double fmax, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  double min_value = 1e308;
+  integer imin = Sampled_xToNearestIndex(ltas.get(), fmin);
+  integer imax = Sampled_xToNearestIndex(ltas.get(), fmax);
+  
+  for (integer i = imin; i <= imax; i++) {
+    if (ltas->z[1][i] < min_value) {
+      min_value = ltas->z[1][i];
+    }
+  }
+  
+  // Convert units
+  if (unit == 1) {  // sones
+    min_value = pow(10.0, min_value / 10.0);
+  } else if (unit == 2) {  // linear
+    min_value = pow(10.0, min_value / 10.0);
+  }
+  
+  return min_value;
+}
+
+// [[Rcpp::export(.ltas_get_maximum)]]
+double ltas_get_maximum(SEXP xptr, double fmin, double fmax, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  double max_value = -1e308;
+  integer imin = Sampled_xToNearestIndex(ltas.get(), fmin);
+  integer imax = Sampled_xToNearestIndex(ltas.get(), fmax);
+  
+  for (integer i = imin; i <= imax; i++) {
+    if (ltas->z[1][i] > max_value) {
+      max_value = ltas->z[1][i];
+    }
+  }
+  
+  // Convert units
+  if (unit == 1) {  // sones
+    max_value = pow(10.0, max_value / 10.0);
+  } else if (unit == 2) {  // linear
+    max_value = pow(10.0, max_value / 10.0);
+  }
+  
+  return max_value;
+}
+
+// [[Rcpp::export(.ltas_get_mean)]]
+double ltas_get_mean(SEXP xptr, double fmin, double fmax, int unit) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  double sum = 0.0;
+  integer count = 0;
+  integer imin = Sampled_xToNearestIndex(ltas.get(), fmin);
+  integer imax = Sampled_xToNearestIndex(ltas.get(), fmax);
+  
+  for (integer i = imin; i <= imax; i++) {
+    sum += ltas->z[1][i];
+    count++;
+  }
+  
+  double mean_value = count > 0 ? sum / count : NA_REAL;
+  
+  // Convert units
+  if (unit == 1) {  // sones
+    mean_value = pow(10.0, mean_value / 10.0);
+  } else if (unit == 2) {  // linear
+    mean_value = pow(10.0, mean_value / 10.0);
+  }
+  
+  return mean_value;
+}
+
+// [[Rcpp::export(.ltas_get_slope)]]
+double ltas_get_slope(SEXP xptr, double f1min, double f1max, double f2min, double f2max, int unit) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  // Get mean of first range
+  double sum1 = 0.0;
+  integer count1 = 0;
+  integer i1min = Sampled_xToNearestIndex(ltas.get(), f1min);
+  integer i1max = Sampled_xToNearestIndex(ltas.get(), f1max);
+  
+  for (integer i = i1min; i <= i1max; i++) {
+    sum1 += ltas->z[1][i];
+    count1++;
+  }
+  double mean1 = count1 > 0 ? sum1 / count1 : 0.0;
+  
+  // Get mean of second range
+  double sum2 = 0.0;
+  integer count2 = 0;
+  integer i2min = Sampled_xToNearestIndex(ltas.get(), f2min);
+  integer i2max = Sampled_xToNearestIndex(ltas.get(), f2max);
+  
+  for (integer i = i2min; i <= i2max; i++) {
+    sum2 += ltas->z[1][i];
+    count2++;
+  }
+  double mean2 = count2 > 0 ? sum2 / count2 : 0.0;
+  
+  // Slope is difference
+  double slope = mean2 - mean1;
+  
+  // Convert units (slope is already in dB by default)
+  if (unit == 1 || unit == 2) {
+    // For sones/linear, convert to linear scale first
+    double lin1 = pow(10.0, mean1 / 10.0);
+    double lin2 = pow(10.0, mean2 / 10.0);
+    slope = lin2 - lin1;
+  }
+  
+  return slope;
+}
+
+// ============================================================================
+// Transformation methods
+// ============================================================================
+
+// [[Rcpp::export(.ltas_compute_trend_line)]]
+SEXP ltas_compute_trend_line(SEXP xptr, double fmin, double fmax) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  autoLtas trend = Ltas_computeTrendLine(ltas.get(), fmin, fmax);
+  return wrapCopyExternalPointer<structLtas>(trend.move(), "Ltas");
+}
+
+// [[Rcpp::export(.ltas_subtract_trend_line)]]
+SEXP ltas_subtract_trend_line(SEXP xptr, double fmin, double fmax) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  autoLtas corrected = Ltas_subtractTrendLine(ltas.get(), fmin, fmax);
+  return wrapCopyExternalPointer<structLtas>(corrected.move(), "Ltas");
+}
+
+// ============================================================================
+// Export methods
+// ============================================================================
+
+// [[Rcpp::export(.ltas_as_data_frame)]]
+DataFrame ltas_as_data_frame(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  NumericVector frequency(ltas->nx);
+  NumericVector power_db(ltas->nx);
+  
+  for (integer i = 1; i <= ltas->nx; i++) {
+    frequency[i-1] = Sampled_indexToX(ltas.get(), i);
+    power_db[i-1] = ltas->z[1][i];
+  }
+  
+  return DataFrame::create(
+    Named("frequency") = frequency,
+    Named("power_db") = power_db,
+    Named("stringsAsFactors") = false
+  );
+}
+
+// [[Rcpp::export(.ltas_as_matrix)]]
+NumericVector ltas_as_matrix(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
+  
+  NumericVector values(ltas->nx);
+  
+  for (integer i = 1; i <= ltas->nx; i++) {
+    values[i-1] = ltas->z[1][i];
+  }
+  
+  return values;
+}

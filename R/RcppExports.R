@@ -277,6 +277,66 @@
     .Call(`_speaker_intensitytier_read`, path)
 }
 
+.ltas_get_bin_from_frequency <- function(xptr, frequency) {
+    .Call(`_speaker_ltas_get_bin_from_frequency`, xptr, frequency)
+}
+
+.ltas_get_frequency_from_bin <- function(xptr, bin) {
+    .Call(`_speaker_ltas_get_frequency_from_bin`, xptr, bin)
+}
+
+.ltas_get_number_of_bins <- function(xptr) {
+    .Call(`_speaker_ltas_get_number_of_bins`, xptr)
+}
+
+.ltas_get_bin_width <- function(xptr) {
+    .Call(`_speaker_ltas_get_bin_width`, xptr)
+}
+
+.ltas_get_lowest_frequency <- function(xptr) {
+    .Call(`_speaker_ltas_get_lowest_frequency`, xptr)
+}
+
+.ltas_get_highest_frequency <- function(xptr) {
+    .Call(`_speaker_ltas_get_highest_frequency`, xptr)
+}
+
+.ltas_get_value_at_frequency <- function(xptr, frequency, unit, interpolate) {
+    .Call(`_speaker_ltas_get_value_at_frequency`, xptr, frequency, unit, interpolate)
+}
+
+.ltas_get_minimum <- function(xptr, fmin, fmax, unit, interpolate) {
+    .Call(`_speaker_ltas_get_minimum`, xptr, fmin, fmax, unit, interpolate)
+}
+
+.ltas_get_maximum <- function(xptr, fmin, fmax, unit, interpolate) {
+    .Call(`_speaker_ltas_get_maximum`, xptr, fmin, fmax, unit, interpolate)
+}
+
+.ltas_get_mean <- function(xptr, fmin, fmax, unit) {
+    .Call(`_speaker_ltas_get_mean`, xptr, fmin, fmax, unit)
+}
+
+.ltas_get_slope <- function(xptr, f1min, f1max, f2min, f2max, unit) {
+    .Call(`_speaker_ltas_get_slope`, xptr, f1min, f1max, f2min, f2max, unit)
+}
+
+.ltas_compute_trend_line <- function(xptr, fmin, fmax) {
+    .Call(`_speaker_ltas_compute_trend_line`, xptr, fmin, fmax)
+}
+
+.ltas_subtract_trend_line <- function(xptr, fmin, fmax) {
+    .Call(`_speaker_ltas_subtract_trend_line`, xptr, fmin, fmax)
+}
+
+.ltas_as_data_frame <- function(xptr) {
+    .Call(`_speaker_ltas_as_data_frame`, xptr)
+}
+
+.ltas_as_matrix <- function(xptr) {
+    .Call(`_speaker_ltas_as_matrix`, xptr)
+}
+
 .manipulation_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
     .Call(`_speaker_manipulation_from_sound`, sound, time_step, pitch_floor, pitch_ceiling)
 }
@@ -735,6 +795,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_to_spectrum <- function(sound_xptr, fast) {
     .Call(`_speaker_sound_to_spectrum`, sound_xptr, fast)
+}
+
+#' Convert Sound to Ltas (internal)
+#' @keywords internal
+.sound_to_ltas <- function(sound_xptr, bandwidth) {
+    .Call(`_speaker_sound_to_ltas`, sound_xptr, bandwidth)
 }
 
 #' Convert Sound to Spectrogram (internal)

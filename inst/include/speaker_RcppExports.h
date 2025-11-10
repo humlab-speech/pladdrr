@@ -1347,6 +1347,27 @@ namespace speaker {
         return Rcpp::as<XPtr<structSpectrum> >(rcpp_result_gen);
     }
 
+    inline SEXP _sound_to_ltas(XPtr<structSound> sound_xptr, double bandwidth) {
+        typedef SEXP(*Ptr__sound_to_ltas)(SEXP,SEXP);
+        static Ptr__sound_to_ltas p__sound_to_ltas = NULL;
+        if (p__sound_to_ltas == NULL) {
+            validateSignature("SEXP(*_sound_to_ltas)(XPtr<structSound>,double)");
+            p__sound_to_ltas = (Ptr__sound_to_ltas)R_GetCCallable("speaker", "_speaker__sound_to_ltas");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_ltas(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(bandwidth)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<SEXP >(rcpp_result_gen);
+    }
+
     inline XPtr<structSpectrogram> _sound_to_spectrogram(XPtr<structSound> sound_xptr, double window_length, double max_frequency, double time_step, double frequency_step, std::string window_shape) {
         typedef SEXP(*Ptr__sound_to_spectrogram)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_spectrogram p__sound_to_spectrogram = NULL;
