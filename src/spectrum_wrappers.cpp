@@ -1,20 +1,18 @@
 // spectrum_wrappers.cpp
 // Rcpp wrappers for Praat Spectrum object
 
+#include "praat_types.h"
 #include <Rcpp.h>
-#include "praat.github.io/fon/Spectrum.h"
-#include "praat.github.io/fon/Sound_and_Spectrum.h"
-#include "praat.github.io/fon/Matrix.h"
-#include "praat.github.io/sys/melder.h"
+#include "praat_xptr_utils.h"
+#include "praat_error_handling.h"
+
+// Praat headers
+#include "fon/Spectrum.h"
+#include "fon/Sound_and_Spectrum.h"
+#include "fon/Matrix.h"
+#include "melder/melder.h"
 
 using namespace Rcpp;
-
-// Finalizer
-void spectrum_finalizer(structSpectrum* spectrum) {
-    if (spectrum != nullptr) {
-        forget(spectrum);
-    }
-}
 
 // Query: Basic info
 
@@ -203,14 +201,12 @@ void spectrum_stop_hann_band(SEXP xptr, double fmin, double fmax, double smooth)
 }
 
 // [[Rcpp::export(.spectrum_cepstral_smoothing)]]
-SEXP spectrum_cepstral_smoothing(SEXP xptr, double bandwidth) {
-    XPtr<structSpectrum> spectrum(xptr);
+SEXP spectrum_cepstral_smoothing(XPtr<structSpectrum> spectrum, double bandwidth) {
     if (!spectrum) stop("Invalid Spectrum pointer");
     
     try {
-        autoSpectrum smoothed = Spectrum_cepstralSmoothing(spectrum, bandwidth);
-        structSpectrum* ptr = smoothed.releaseToAmbiguousOwner();
-        return XPtr<structSpectrum>(ptr, true, spectrum_finalizer);
+        autoSpectrum smoothed = Spectrum_cepstralSmoothing(spectrum.get(), bandwidth);
+        return create_xptr_from_auto<structSpectrum>(smoothed);
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to perform cepstral smoothing");
@@ -220,17 +216,12 @@ SEXP spectrum_cepstral_smoothing(SEXP xptr, double bandwidth) {
 // Transform
 
 // [[Rcpp::export(.spectrum_to_sound)]]
-SEXP spectrum_to_sound(SEXP xptr) {
-    XPtr<structSpectrum> spectrum(xptr);
+SEXP spectrum_to_sound(XPtr<structSpectrum> spectrum) {
     if (!spectrum) stop("Invalid Spectrum pointer");
     
     try {
-        autoSound sound = Spectrum_to_Sound(spectrum);
-        structSound* ptr = sound.releaseToAmbiguousOwner();
-        
-        // Sound finalizer defined in sound_wrappers.cpp
-        extern void sound_finalizer(structSound*);
-        return XPtr<structSound>(ptr, true, sound_finalizer);
+        autoSound sound = Spectrum_to_Sound(spectrum.get());
+        return create_xptr_from_auto<structSound>(sound);
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to convert spectrum to sound");

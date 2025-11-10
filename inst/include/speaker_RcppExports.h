@@ -1305,27 +1305,6 @@ namespace speaker {
         return Rcpp::as<XPtr<structHarmonicity> >(rcpp_result_gen);
     }
 
-    inline XPtr<structSpectrogram> _sound_to_spectrogram(XPtr<structSound> sound_xptr, double window_length, double maximum_frequency, double time_step, double frequency_step, int window_shape_int) {
-        typedef SEXP(*Ptr__sound_to_spectrogram)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr__sound_to_spectrogram p__sound_to_spectrogram = NULL;
-        if (p__sound_to_spectrogram == NULL) {
-            validateSignature("XPtr<structSpectrogram>(*_sound_to_spectrogram)(XPtr<structSound>,double,double,double,double,int)");
-            p__sound_to_spectrogram = (Ptr__sound_to_spectrogram)R_GetCCallable("speaker", "_speaker__sound_to_spectrogram");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_to_spectrogram(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(maximum_frequency)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(frequency_step)), Shield<SEXP>(Rcpp::wrap(window_shape_int)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structSpectrogram> >(rcpp_result_gen);
-    }
-
     inline XPtr<structSpectrum> _sound_to_spectrum(XPtr<structSound> sound_xptr, bool fast) {
         typedef SEXP(*Ptr__sound_to_spectrum)(SEXP,SEXP);
         static Ptr__sound_to_spectrum p__sound_to_spectrum = NULL;
@@ -1345,6 +1324,27 @@ namespace speaker {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structSpectrum> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSpectrogram> _sound_to_spectrogram(XPtr<structSound> sound_xptr, double window_length, double max_frequency, double time_step, double frequency_step, std::string window_shape) {
+        typedef SEXP(*Ptr__sound_to_spectrogram)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_spectrogram p__sound_to_spectrogram = NULL;
+        if (p__sound_to_spectrogram == NULL) {
+            validateSignature("XPtr<structSpectrogram>(*_sound_to_spectrogram)(XPtr<structSound>,double,double,double,double,std::string)");
+            p__sound_to_spectrogram = (Ptr__sound_to_spectrogram)R_GetCCallable("speaker", "_speaker__sound_to_spectrogram");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_spectrogram(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(max_frequency)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(frequency_step)), Shield<SEXP>(Rcpp::wrap(window_shape)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSpectrogram> >(rcpp_result_gen);
     }
 
     inline DataFrame _sound_as_data_frame(XPtr<structSound> xptr) {

@@ -2866,26 +2866,22 @@ RcppExport SEXP _speaker_sound_to_harmonicity_cc(SEXP sound_xptrSEXP, SEXP time_
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// sound_to_spectrogram
-XPtr<structSpectrogram> sound_to_spectrogram(XPtr<structSound> sound_xptr, double window_length, double maximum_frequency, double time_step, double frequency_step, int window_shape_int);
-static SEXP _speaker_sound_to_spectrogram_try(SEXP sound_xptrSEXP, SEXP window_lengthSEXP, SEXP maximum_frequencySEXP, SEXP time_stepSEXP, SEXP frequency_stepSEXP, SEXP window_shape_intSEXP) {
+// sound_to_spectrum
+XPtr<structSpectrum> sound_to_spectrum(XPtr<structSound> sound_xptr, bool fast);
+static SEXP _speaker_sound_to_spectrum_try(SEXP sound_xptrSEXP, SEXP fastSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
-    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type maximum_frequency(maximum_frequencySEXP);
-    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
-    Rcpp::traits::input_parameter< double >::type frequency_step(frequency_stepSEXP);
-    Rcpp::traits::input_parameter< int >::type window_shape_int(window_shape_intSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_to_spectrogram(sound_xptr, window_length, maximum_frequency, time_step, frequency_step, window_shape_int));
+    Rcpp::traits::input_parameter< bool >::type fast(fastSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_spectrum(sound_xptr, fast));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _speaker_sound_to_spectrogram(SEXP sound_xptrSEXP, SEXP window_lengthSEXP, SEXP maximum_frequencySEXP, SEXP time_stepSEXP, SEXP frequency_stepSEXP, SEXP window_shape_intSEXP) {
+RcppExport SEXP _speaker_sound_to_spectrum(SEXP sound_xptrSEXP, SEXP fastSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_speaker_sound_to_spectrogram_try(sound_xptrSEXP, window_lengthSEXP, maximum_frequencySEXP, time_stepSEXP, frequency_stepSEXP, window_shape_intSEXP));
+        rcpp_result_gen = PROTECT(_speaker_sound_to_spectrum_try(sound_xptrSEXP, fastSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -2905,22 +2901,26 @@ RcppExport SEXP _speaker_sound_to_spectrogram(SEXP sound_xptrSEXP, SEXP window_l
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// sound_to_spectrum
-XPtr<structSpectrum> sound_to_spectrum(XPtr<structSound> sound_xptr, bool fast);
-static SEXP _speaker_sound_to_spectrum_try(SEXP sound_xptrSEXP, SEXP fastSEXP) {
+// sound_to_spectrogram
+XPtr<structSpectrogram> sound_to_spectrogram(XPtr<structSound> sound_xptr, double window_length, double max_frequency, double time_step, double frequency_step, std::string window_shape);
+static SEXP _speaker_sound_to_spectrogram_try(SEXP sound_xptrSEXP, SEXP window_lengthSEXP, SEXP max_frequencySEXP, SEXP time_stepSEXP, SEXP frequency_stepSEXP, SEXP window_shapeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
-    Rcpp::traits::input_parameter< bool >::type fast(fastSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_to_spectrum(sound_xptr, fast));
+    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type frequency_step(frequency_stepSEXP);
+    Rcpp::traits::input_parameter< std::string >::type window_shape(window_shapeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_spectrogram(sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _speaker_sound_to_spectrum(SEXP sound_xptrSEXP, SEXP fastSEXP) {
+RcppExport SEXP _speaker_sound_to_spectrogram(SEXP sound_xptrSEXP, SEXP window_lengthSEXP, SEXP max_frequencySEXP, SEXP time_stepSEXP, SEXP frequency_stepSEXP, SEXP window_shapeSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_speaker_sound_to_spectrum_try(sound_xptrSEXP, fastSEXP));
+        rcpp_result_gen = PROTECT(_speaker_sound_to_spectrogram_try(sound_xptrSEXP, window_lengthSEXP, max_frequencySEXP, time_stepSEXP, frequency_stepSEXP, window_shapeSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -3367,6 +3367,154 @@ RcppExport SEXP _speaker_sound_de_emphasize(SEXP xptrSEXP, SEXP from_frequencySE
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// spectrogram_get_start_time
+double spectrogram_get_start_time(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_start_time(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_start_time(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_end_time
+double spectrogram_get_end_time(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_end_time(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_end_time(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_time_step
+double spectrogram_get_time_step(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_time_step(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_time_step(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_number_of_time_bins
+int spectrogram_get_number_of_time_bins(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_number_of_time_bins(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_number_of_time_bins(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_lowest_frequency
+double spectrogram_get_lowest_frequency(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_lowest_frequency(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_lowest_frequency(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_highest_frequency
+double spectrogram_get_highest_frequency(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_highest_frequency(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_highest_frequency(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_frequency_step
+double spectrogram_get_frequency_step(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_frequency_step(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_frequency_step(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_number_of_frequency_bins
+int spectrogram_get_number_of_frequency_bins(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_get_number_of_frequency_bins(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_number_of_frequency_bins(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_time_from_frame
+double spectrogram_get_time_from_frame(XPtr<structSpectrogram> spectrogram, int frame);
+RcppExport SEXP _speaker_spectrogram_get_time_from_frame(SEXP spectrogramSEXP, SEXP frameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    Rcpp::traits::input_parameter< int >::type frame(frameSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_time_from_frame(spectrogram, frame));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_frequency_from_bin
+double spectrogram_get_frequency_from_bin(XPtr<structSpectrogram> spectrogram, int bin);
+RcppExport SEXP _speaker_spectrogram_get_frequency_from_bin(SEXP spectrogramSEXP, SEXP binSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    Rcpp::traits::input_parameter< int >::type bin(binSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_frequency_from_bin(spectrogram, bin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_get_power_at
+double spectrogram_get_power_at(XPtr<structSpectrogram> spectrogram, double time, double frequency);
+RcppExport SEXP _speaker_spectrogram_get_power_at(SEXP spectrogramSEXP, SEXP timeSEXP, SEXP frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< double >::type frequency(frequencySEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_get_power_at(spectrogram, time, frequency));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_to_spectrum
+SEXP spectrogram_to_spectrum(XPtr<structSpectrogram> spectrogram, double time);
+RcppExport SEXP _speaker_spectrogram_to_spectrum(SEXP spectrogramSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_to_spectrum(spectrogram, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectrogram_as_matrix
+NumericMatrix spectrogram_as_matrix(XPtr<structSpectrogram> spectrogram);
+RcppExport SEXP _speaker_spectrogram_as_matrix(SEXP spectrogramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structSpectrogram> >::type spectrogram(spectrogramSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrogram_as_matrix(spectrogram));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spectrum_get_lowest_frequency
 double spectrum_get_lowest_frequency(SEXP xptr);
 RcppExport SEXP _speaker_spectrum_get_lowest_frequency(SEXP xptrSEXP) {
@@ -3573,25 +3721,25 @@ BEGIN_RCPP
 END_RCPP
 }
 // spectrum_cepstral_smoothing
-SEXP spectrum_cepstral_smoothing(SEXP xptr, double bandwidth);
-RcppExport SEXP _speaker_spectrum_cepstral_smoothing(SEXP xptrSEXP, SEXP bandwidthSEXP) {
+SEXP spectrum_cepstral_smoothing(XPtr<structSpectrum> spectrum, double bandwidth);
+RcppExport SEXP _speaker_spectrum_cepstral_smoothing(SEXP spectrumSEXP, SEXP bandwidthSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< XPtr<structSpectrum> >::type spectrum(spectrumSEXP);
     Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
-    rcpp_result_gen = Rcpp::wrap(spectrum_cepstral_smoothing(xptr, bandwidth));
+    rcpp_result_gen = Rcpp::wrap(spectrum_cepstral_smoothing(spectrum, bandwidth));
     return rcpp_result_gen;
 END_RCPP
 }
 // spectrum_to_sound
-SEXP spectrum_to_sound(SEXP xptr);
-RcppExport SEXP _speaker_spectrum_to_sound(SEXP xptrSEXP) {
+SEXP spectrum_to_sound(XPtr<structSpectrum> spectrum);
+RcppExport SEXP _speaker_spectrum_to_sound(SEXP spectrumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(spectrum_to_sound(xptr));
+    Rcpp::traits::input_parameter< XPtr<structSpectrum> >::type spectrum(spectrumSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectrum_to_sound(spectrum));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -3682,8 +3830,8 @@ static int _speaker_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structFormant>(*.sound_to_formant_burg)(XPtr<structSound>,double,double,double,double,double)");
         signatures.insert("XPtr<structIntensity>(*.sound_to_intensity)(XPtr<structSound>,double,double,bool)");
         signatures.insert("XPtr<structHarmonicity>(*.sound_to_harmonicity_cc)(XPtr<structSound>,double,double,double,double)");
-        signatures.insert("XPtr<structSpectrogram>(*.sound_to_spectrogram)(XPtr<structSound>,double,double,double,double,int)");
         signatures.insert("XPtr<structSpectrum>(*.sound_to_spectrum)(XPtr<structSound>,bool)");
+        signatures.insert("XPtr<structSpectrogram>(*.sound_to_spectrogram)(XPtr<structSound>,double,double,double,double,std::string)");
         signatures.insert("DataFrame(*.sound_as_data_frame)(XPtr<structSound>)");
         signatures.insert("NumericMatrix(*.sound_as_matrix)(XPtr<structSound>)");
         signatures.insert("void(*.sound_save)(XPtr<structSound>,std::string,int)");
@@ -3763,8 +3911,8 @@ RcppExport SEXP _speaker_RcppExport_registerCCallable() {
     R_RegisterCCallable("speaker", "_speaker_.sound_to_formant_burg", (DL_FUNC)_speaker_sound_to_formant_burg_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_to_intensity", (DL_FUNC)_speaker_sound_to_intensity_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_to_harmonicity_cc", (DL_FUNC)_speaker_sound_to_harmonicity_cc_try);
-    R_RegisterCCallable("speaker", "_speaker_.sound_to_spectrogram", (DL_FUNC)_speaker_sound_to_spectrogram_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_to_spectrum", (DL_FUNC)_speaker_sound_to_spectrum_try);
+    R_RegisterCCallable("speaker", "_speaker_.sound_to_spectrogram", (DL_FUNC)_speaker_sound_to_spectrogram_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_as_data_frame", (DL_FUNC)_speaker_sound_as_data_frame_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_as_matrix", (DL_FUNC)_speaker_sound_as_matrix_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_save", (DL_FUNC)_speaker_sound_save_try);
@@ -3892,8 +4040,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_sound_to_formant_burg", (DL_FUNC) &_speaker_sound_to_formant_burg, 6},
     {"_speaker_sound_to_intensity", (DL_FUNC) &_speaker_sound_to_intensity, 4},
     {"_speaker_sound_to_harmonicity_cc", (DL_FUNC) &_speaker_sound_to_harmonicity_cc, 5},
-    {"_speaker_sound_to_spectrogram", (DL_FUNC) &_speaker_sound_to_spectrogram, 6},
     {"_speaker_sound_to_spectrum", (DL_FUNC) &_speaker_sound_to_spectrum, 2},
+    {"_speaker_sound_to_spectrogram", (DL_FUNC) &_speaker_sound_to_spectrogram, 6},
     {"_speaker_sound_as_data_frame", (DL_FUNC) &_speaker_sound_as_data_frame, 1},
     {"_speaker_sound_as_matrix", (DL_FUNC) &_speaker_sound_as_matrix, 1},
     {"_speaker_sound_save", (DL_FUNC) &_speaker_sound_save, 3},
@@ -3906,6 +4054,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_sound_scale_peak", (DL_FUNC) &_speaker_sound_scale_peak, 2},
     {"_speaker_sound_pre_emphasize", (DL_FUNC) &_speaker_sound_pre_emphasize, 2},
     {"_speaker_sound_de_emphasize", (DL_FUNC) &_speaker_sound_de_emphasize, 2},
+    {"_speaker_spectrogram_get_start_time", (DL_FUNC) &_speaker_spectrogram_get_start_time, 1},
+    {"_speaker_spectrogram_get_end_time", (DL_FUNC) &_speaker_spectrogram_get_end_time, 1},
+    {"_speaker_spectrogram_get_time_step", (DL_FUNC) &_speaker_spectrogram_get_time_step, 1},
+    {"_speaker_spectrogram_get_number_of_time_bins", (DL_FUNC) &_speaker_spectrogram_get_number_of_time_bins, 1},
+    {"_speaker_spectrogram_get_lowest_frequency", (DL_FUNC) &_speaker_spectrogram_get_lowest_frequency, 1},
+    {"_speaker_spectrogram_get_highest_frequency", (DL_FUNC) &_speaker_spectrogram_get_highest_frequency, 1},
+    {"_speaker_spectrogram_get_frequency_step", (DL_FUNC) &_speaker_spectrogram_get_frequency_step, 1},
+    {"_speaker_spectrogram_get_number_of_frequency_bins", (DL_FUNC) &_speaker_spectrogram_get_number_of_frequency_bins, 1},
+    {"_speaker_spectrogram_get_time_from_frame", (DL_FUNC) &_speaker_spectrogram_get_time_from_frame, 2},
+    {"_speaker_spectrogram_get_frequency_from_bin", (DL_FUNC) &_speaker_spectrogram_get_frequency_from_bin, 2},
+    {"_speaker_spectrogram_get_power_at", (DL_FUNC) &_speaker_spectrogram_get_power_at, 3},
+    {"_speaker_spectrogram_to_spectrum", (DL_FUNC) &_speaker_spectrogram_to_spectrum, 2},
+    {"_speaker_spectrogram_as_matrix", (DL_FUNC) &_speaker_spectrogram_as_matrix, 1},
     {"_speaker_spectrum_get_lowest_frequency", (DL_FUNC) &_speaker_spectrum_get_lowest_frequency, 1},
     {"_speaker_spectrum_get_highest_frequency", (DL_FUNC) &_speaker_spectrum_get_highest_frequency, 1},
     {"_speaker_spectrum_get_number_of_bins", (DL_FUNC) &_speaker_spectrum_get_number_of_bins, 1},

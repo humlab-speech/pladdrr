@@ -376,42 +376,6 @@ XPtr<structHarmonicity> sound_to_harmonicity_cc(
     }
 }
 
-//' Convert Sound to Spectrogram (internal)
-//' @keywords internal
-// [[Rcpp::export(.sound_to_spectrogram)]]
-XPtr<structSpectrogram> sound_to_spectrogram(
-    XPtr<structSound> sound_xptr,
-    double window_length,
-    double maximum_frequency,
-    double time_step,
-    double frequency_step,
-    int window_shape_int
-) {
-    structSound* sound = get_ptr(sound_xptr, "Sound");
-    
-    kSound_to_Spectrogram_windowShape window_shape = 
-        static_cast<kSound_to_Spectrogram_windowShape>(window_shape_int);
-    
-    try {
-        autoSpectrogram spec = Sound_to_Spectrogram_e(
-            sound,
-            window_length,
-            maximum_frequency,
-            time_step,
-            frequency_step,
-            window_shape,
-            8.0,  // dynamic range
-            8.0   // pre-emphasis
-        );
-        
-        return create_xptr_from_auto<structSpectrogram>(spec);
-        
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to create spectrogram");
-    }
-}
-
 //' Convert Sound to Spectrum (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_to_spectrum)]]
@@ -428,6 +392,59 @@ XPtr<structSpectrum> sound_to_spectrum(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create spectrum");
+    }
+}
+
+//' Convert Sound to Spectrogram (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_spectrogram)]]
+XPtr<structSpectrogram> sound_to_spectrogram(
+    XPtr<structSound> sound_xptr,
+    double window_length,
+    double max_frequency,
+    double time_step,
+    double frequency_step,
+    std::string window_shape
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    try {
+        // Convert window shape string to enum
+        kSound_to_Spectrogram_windowShape shape;
+        if (window_shape == "square" || window_shape == "Square" || window_shape == "SQUARE") {
+            shape = kSound_to_Spectrogram_windowShape::SQUARE;
+        } else if (window_shape == "Hamming" || window_shape == "hamming" || window_shape == "HAMMING") {
+            shape = kSound_to_Spectrogram_windowShape::HAMMING;
+        } else if (window_shape == "Bartlett" || window_shape == "bartlett" || window_shape == "BARTLETT") {
+            shape = kSound_to_Spectrogram_windowShape::BARTLETT;
+        } else if (window_shape == "Welch" || window_shape == "welch" || window_shape == "WELCH") {
+            shape = kSound_to_Spectrogram_windowShape::WELCH;
+        } else if (window_shape == "Hanning" || window_shape == "hanning" || window_shape == "HANNING") {
+            shape = kSound_to_Spectrogram_windowShape::HANNING;
+        } else if (window_shape == "Gaussian" || window_shape == "gaussian" || window_shape == "GAUSSIAN") {
+            shape = kSound_to_Spectrogram_windowShape::GAUSSIAN;
+        } else {
+            stop("Unknown window shape: " + window_shape + ". Must be one of: square, Hamming, Bartlett, Welch, Hanning, Gaussian");
+        }
+        
+        // Use Praat's Sound_to_Spectrogram_e function
+        // Maximum oversampling factors set to 8 (Praat defaults)
+        autoSpectrogram spectrogram = Sound_to_Spectrogram_e(
+            sound,
+            window_length,      // effectiveAnalysisWidth
+            max_frequency,      // fmax
+            time_step,          // minimumTimeStep1
+            frequency_step,     // minimumFreqStep1
+            shape,              // windowShape
+            8.0,                // maximumTimeOversampling
+            8.0                 // maximumFreqOversampling
+        );
+        
+        return create_xptr_from_auto<structSpectrogram>(spectrogram);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create spectrogram");
     }
 }
 

@@ -334,6 +334,31 @@ Sound <- R6::R6Class(
       Spectrum$new(.xptr = spectrum_ptr)
     },
     
+    #' @description Create time-frequency spectrogram
+    #' @param window_length Analysis window length in seconds (default: 0.005)
+    #' @param max_frequency Maximum frequency to analyze in Hz (default: 5000)
+    #' @param time_step Time step between frames in seconds (default: 0.002)
+    #' @param frequency_step Frequency resolution in Hz (default: 20)
+    #' @param window_shape Window shape: "square", "Hamming", "Bartlett", "Welch", "Hanning", "Gaussian" (default: "Gaussian")
+    #' @return Spectrogram object
+    to_spectrogram = function(
+      window_length = 0.005,
+      max_frequency = 5000.0,
+      time_step = 0.002,
+      frequency_step = 20.0,
+      window_shape = "Gaussian"
+    ) {
+      spectrogram_ptr <- .sound_to_spectrogram(
+        private$ptr,
+        window_length,
+        max_frequency,
+        time_step,
+        frequency_step,
+        window_shape
+      )
+      Spectrogram$new(.xptr = spectrogram_ptr)
+    },
+    
     #' @description Extract glottal pulses using cross-correlation method
     #' @param time_step Time step in seconds (0 = auto: 0.75 / pitch_floor)
     #' @param pitch_floor Minimum pitch in Hz (default: 75)
@@ -409,43 +434,6 @@ Sound <- R6::R6Class(
         as.logical(include_fallers)
       )
       PointProcess$new(.xptr = pp_ptr)
-    },
-    
-    #' @description Create spectrogram
-    #' @param window_length Window length in seconds (default: 0.005)
-    #' @param maximum_frequency Maximum frequency in Hz (default: 5000)
-    #' @param time_step Time step in seconds (default: 0.002)
-    #' @param frequency_step Frequency step in Hz (default: 20)
-    #' @param window_shape Window shape: "Gaussian" (default), "Square", "Hamming", "Bartlett", "Welch", "Hanning"
-    #' @return Spectrogram object
-    to_spectrogram = function(
-      window_length = 0.005,
-      maximum_frequency = 5000.0,
-      time_step = 0.002,
-      frequency_step = 20.0,
-      window_shape = c("Gaussian", "Square", "Hamming", "Bartlett", "Welch", "Hanning")
-    ) {
-      window_shape <- match.arg(window_shape)
-      window_shape_int <- switch(
-        window_shape,
-        "Square" = 1,
-        "Hamming" = 2,
-        "Bartlett" = 3,
-        "Welch" = 4,
-        "Hanning" = 5,
-        "Gaussian" = 6,
-        6  # Default to Gaussian
-      )
-      
-      spec_ptr <- .sound_to_spectrogram(
-        private$ptr,
-        window_length,
-        maximum_frequency,
-        time_step,
-        frequency_step,
-        window_shape_int
-      )
-      Spectrogram$new(.xptr = spec_ptr)
     },
     
     # ========================================================================

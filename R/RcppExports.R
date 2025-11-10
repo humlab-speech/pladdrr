@@ -523,16 +523,16 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_speaker_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
 
-#' Convert Sound to Spectrogram (internal)
-#' @keywords internal
-.sound_to_spectrogram <- function(sound_xptr, window_length, maximum_frequency, time_step, frequency_step, window_shape_int) {
-    .Call(`_speaker_sound_to_spectrogram`, sound_xptr, window_length, maximum_frequency, time_step, frequency_step, window_shape_int)
-}
-
 #' Convert Sound to Spectrum (internal)
 #' @keywords internal
 .sound_to_spectrum <- function(sound_xptr, fast) {
     .Call(`_speaker_sound_to_spectrum`, sound_xptr, fast)
+}
+
+#' Convert Sound to Spectrogram (internal)
+#' @keywords internal
+.sound_to_spectrogram <- function(sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape) {
+    .Call(`_speaker_sound_to_spectrogram`, sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape)
 }
 
 #' Export Sound as data frame (internal)
@@ -607,6 +607,58 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_speaker_sound_de_emphasize`, xptr, from_frequency))
 }
 
+.spectrogram_get_start_time <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_start_time`, spectrogram)
+}
+
+.spectrogram_get_end_time <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_end_time`, spectrogram)
+}
+
+.spectrogram_get_time_step <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_time_step`, spectrogram)
+}
+
+.spectrogram_get_number_of_time_bins <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_number_of_time_bins`, spectrogram)
+}
+
+.spectrogram_get_lowest_frequency <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_lowest_frequency`, spectrogram)
+}
+
+.spectrogram_get_highest_frequency <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_highest_frequency`, spectrogram)
+}
+
+.spectrogram_get_frequency_step <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_frequency_step`, spectrogram)
+}
+
+.spectrogram_get_number_of_frequency_bins <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_get_number_of_frequency_bins`, spectrogram)
+}
+
+.spectrogram_get_time_from_frame <- function(spectrogram, frame) {
+    .Call(`_speaker_spectrogram_get_time_from_frame`, spectrogram, frame)
+}
+
+.spectrogram_get_frequency_from_bin <- function(spectrogram, bin) {
+    .Call(`_speaker_spectrogram_get_frequency_from_bin`, spectrogram, bin)
+}
+
+.spectrogram_get_power_at <- function(spectrogram, time, frequency) {
+    .Call(`_speaker_spectrogram_get_power_at`, spectrogram, time, frequency)
+}
+
+.spectrogram_to_spectrum <- function(spectrogram, time) {
+    .Call(`_speaker_spectrogram_to_spectrum`, spectrogram, time)
+}
+
+.spectrogram_as_matrix <- function(spectrogram) {
+    .Call(`_speaker_spectrogram_as_matrix`, spectrogram)
+}
+
 .spectrum_get_lowest_frequency <- function(xptr) {
     .Call(`_speaker_spectrum_get_lowest_frequency`, xptr)
 }
@@ -675,12 +727,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_speaker_spectrum_stop_hann_band`, xptr, fmin, fmax, smooth))
 }
 
-.spectrum_cepstral_smoothing <- function(xptr, bandwidth) {
-    .Call(`_speaker_spectrum_cepstral_smoothing`, xptr, bandwidth)
+.spectrum_cepstral_smoothing <- function(spectrum, bandwidth) {
+    .Call(`_speaker_spectrum_cepstral_smoothing`, spectrum, bandwidth)
 }
 
-.spectrum_to_sound <- function(xptr) {
-    .Call(`_speaker_spectrum_to_sound`, xptr)
+.spectrum_to_sound <- function(spectrum) {
+    .Call(`_speaker_spectrum_to_sound`, spectrum)
 }
 
 .spectrum_as_matrix <- function(xptr) {
