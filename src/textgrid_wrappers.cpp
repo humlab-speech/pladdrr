@@ -7,6 +7,7 @@
 #include "praat_error_handling.h"
 
 // Praat headers - TextGrid uses C++ features so no extern "C"
+#include "praat.github.io/sys/Data.h"
 #include "praat.github.io/fon/TextGrid.h"
 
 // ============================================================================
@@ -15,9 +16,25 @@
 
 // [[Rcpp::export(.textgrid_read_from_file)]]
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
-    // TODO: Full file reading implementation requires additional Melder file I/O functions
-    // For now, use TextGrid$create() to create TextGrids programmatically
-    Rcpp::stop("TextGrid file reading not yet implemented. Use TextGrid$create() to create TextGrids programmatically, or load via external tools.");
+    try {
+        structMelderFile file {};
+        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
+        autoDaata data = Data_readFromFile(&file);
+        if (!data) {
+            Rcpp::stop("Failed to read file as Praat data object");
+        }
+        // Check if it's actually a TextGrid
+        if (!Thing_isa(data.get(), classTextGrid)) {
+            Rcpp::stop("File is not a TextGrid");
+        }
+        // Cast to TextGrid
+        TextGrid textgrid = static_cast<TextGrid>(data.get());
+        data.releaseToAmbiguousOwner();  // Transfer ownership
+        return create_xptr<structTextGrid>(textgrid);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to read TextGrid from file: " + path);
+    }
 }
 
 // [[Rcpp::export(.textgrid_create)]]
@@ -42,8 +59,15 @@ Rcpp::XPtr<structTextGrid> textgrid_create(
 
 // [[Rcpp::export(.textgrid_save)]]
 void textgrid_save(Rcpp::XPtr<structTextGrid> xptr, std::string path) {
-    // TODO: Full file writing implementation requires additional Melder file I/O functions
-    Rcpp::stop("TextGrid file writing not yet implemented. Use as_data_frame() to export data.");
+    if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+    try {
+        structMelderFile file {};
+        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
+        Data_writeToTextFile(xptr.get(), &file);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to write TextGrid to file: " + path);
+    }
 }
 
 // ============================================================================
