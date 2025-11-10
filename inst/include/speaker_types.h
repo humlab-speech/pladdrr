@@ -15,5 +15,8 @@ struct structTextGrid;
 struct structPointProcess;
 struct structManipulation;
 struct structLPC;
+struct structPitchTier;
+struct structDurationTier;
+struct structIntensityTier;
 
 #endif // SPEAKER_TYPES_H

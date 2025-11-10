@@ -107,6 +107,7 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
           fon/Sound_and_Spectrum.cpp fon/Spectrum_and_Spectrogram.cpp \
           fon/Spectrum_to_Formant.cpp fon/FormantTier.cpp \
           fon/Label.cpp fon/FormantGrid.cpp \
+          fon/TextGrid.cpp fon/TextGrid_Sound.cpp \
           fon/Excitation.cpp fon/Cochleagram.cpp fon/Cochleagram_and_Excitation.cpp \
           fon/Excitation_to_Formant.cpp fon/Sound_to_Cochleagram.cpp \
           fon/Spectrum_to_Excitation.cpp fon/VocalTract.cpp \
@@ -118,8 +119,11 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp harmonicity_wrappers.cpp \
               intensity_wrappers.cpp pointprocess_wrappers.cpp \
               spectrum_wrappers.cpp spectrogram_wrappers.cpp \
+              textgrid_wrappers.cpp pitchtier_wrappers.cpp \
+              durationtier_wrappers.cpp intensitytier_wrappers.cpp \
+              manipulation_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
-              num_stubs.cpp longsound_stub.cpp lpc_stub.cpp \
+              num_stubs.cpp num2_stubs.cpp longsound_stub.cpp lpc_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               utils.cpp RcppExports.cpp
 

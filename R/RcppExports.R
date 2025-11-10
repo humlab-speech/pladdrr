@@ -225,6 +225,58 @@
     .Call(`_speaker_intensity_get_end_time`, intensity_xptr)
 }
 
+.intensity_down_to_intensity_tier <- function(intensity_xptr) {
+    .Call(`_speaker_intensity_down_to_intensity_tier`, intensity_xptr)
+}
+
+.intensitytier_create <- function(tmin, tmax) {
+    .Call(`_speaker_intensitytier_create`, tmin, tmax)
+}
+
+.intensitytier_get_start_time <- function(tier) {
+    .Call(`_speaker_intensitytier_get_start_time`, tier)
+}
+
+.intensitytier_get_end_time <- function(tier) {
+    .Call(`_speaker_intensitytier_get_end_time`, tier)
+}
+
+.intensitytier_get_number_of_points <- function(tier) {
+    .Call(`_speaker_intensitytier_get_number_of_points`, tier)
+}
+
+.intensitytier_get_time_from_index <- function(tier, index) {
+    .Call(`_speaker_intensitytier_get_time_from_index`, tier, index)
+}
+
+.intensitytier_get_value_at_index <- function(tier, index) {
+    .Call(`_speaker_intensitytier_get_value_at_index`, tier, index)
+}
+
+.intensitytier_get_value_at_time <- function(tier, time) {
+    .Call(`_speaker_intensitytier_get_value_at_time`, tier, time)
+}
+
+.intensitytier_get_mean <- function(tier, tmin, tmax) {
+    .Call(`_speaker_intensitytier_get_mean`, tier, tmin, tmax)
+}
+
+.intensitytier_add_point <- function(tier, time, value) {
+    invisible(.Call(`_speaker_intensitytier_add_point`, tier, time, value))
+}
+
+.intensitytier_remove_point <- function(tier, index) {
+    invisible(.Call(`_speaker_intensitytier_remove_point`, tier, index))
+}
+
+.intensitytier_save <- function(tier, path) {
+    invisible(.Call(`_speaker_intensitytier_save`, tier, path))
+}
+
+.intensitytier_read <- function(path) {
+    .Call(`_speaker_intensitytier_read`, path)
+}
+
 .manipulation_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
     .Call(`_speaker_manipulation_from_sound`, sound, time_step, pitch_floor, pitch_ceiling)
 }

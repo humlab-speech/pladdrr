@@ -11,7 +11,6 @@
 #include "fon/Intensity.h"
 #include "fon/Sound_to_Intensity.h"
 #include "fon/IntensityTier.h"
-#include "fon/Intensity_to_IntensityTier.h"
 #include "fon/Vector.h"
 #include "melder/melder.h"
 
@@ -288,7 +287,22 @@ double intensity_get_end_time(XPtr<structIntensity> intensity_xptr) {
 XPtr<structIntensityTier> intensity_down_to_intensity_tier(XPtr<structIntensity> intensity_xptr) {
   try {
     validate_xptr(intensity_xptr, "Intensity");
-    autoIntensityTier tier = Intensity_to_IntensityTier(intensity_xptr.get());
+    Intensity intensity = intensity_xptr.get();
+    
+    // Create IntensityTier with same time domain
+    autoIntensityTier tier = IntensityTier_create(intensity->xmin, intensity->xmax);
+    
+    // Sample the intensity contour at frame times
+    for (integer iframe = 1; iframe <= intensity->nx; iframe++) {
+      double time = Sampled_indexToX(intensity, iframe);
+      double value = intensity->z[1][iframe];
+      
+      // Only add point if value is defined (not NaN/undefined)
+      if (isdefined(value)) {
+        RealTier_addPoint(tier.get(), time, value);
+      }
+    }
+    
     return create_xptr_from_auto<structIntensityTier>(tier);
   } catch (MelderError) {
     Melder_clearError();

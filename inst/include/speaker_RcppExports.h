@@ -969,6 +969,27 @@ namespace speaker {
         return Rcpp::as<double >(rcpp_result_gen);
     }
 
+    inline XPtr<structIntensityTier> _intensity_down_to_intensity_tier(XPtr<structIntensity> intensity_xptr) {
+        typedef SEXP(*Ptr__intensity_down_to_intensity_tier)(SEXP);
+        static Ptr__intensity_down_to_intensity_tier p__intensity_down_to_intensity_tier = NULL;
+        if (p__intensity_down_to_intensity_tier == NULL) {
+            validateSignature("XPtr<structIntensityTier>(*_intensity_down_to_intensity_tier)(XPtr<structIntensity>)");
+            p__intensity_down_to_intensity_tier = (Ptr__intensity_down_to_intensity_tier)R_GetCCallable("speaker", "_speaker__intensity_down_to_intensity_tier");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_down_to_intensity_tier(Shield<SEXP>(Rcpp::wrap(intensity_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structIntensityTier> >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_read_from_file(std::string path) {
         typedef SEXP(*Ptr__sound_read_from_file)(SEXP);
         static Ptr__sound_read_from_file p__sound_read_from_file = NULL;
