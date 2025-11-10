@@ -549,6 +549,144 @@ For each Praat object class, implement in this order:
 5. Test with various audio formats (wav, mp3, flac, etc.)
 6. Document in vignette showing both usage patterns
 
+### FUTURE EXTENSIONS: Deferred Features
+
+**Date:** 2025-11-10  
+**Status:** Documented for future implementation
+
+#### 1. Praat Script Interpreter ⏳ DEFERRED
+
+**Current Status:** NOT IMPLEMENTED
+
+**What this means:**
+- Cannot execute raw Praat scripts directly (`.praat` files)
+- Users must translate Praat syntax to R6 method calls
+- No `praat.call()` or `praatScript()` function (like Parselmouth has)
+
+**Why deferred:**
+- Implementing a full script interpreter requires significant effort
+- Would need to parse Praat script syntax
+- Would need to implement Praat's formula language
+- Current focus is on object-oriented API which covers most use cases
+- Translation from Praat scripts to R is straightforward with naming conventions
+
+**Impact:**
+- ✅ All Praat functionality available via R6 methods
+- ✅ Can write R equivalents of Praat scripts
+- ❌ Cannot run .praat files directly
+- ❌ No on-the-fly script execution
+
+**Example Workaround:**
+```r
+# Praat script:
+# sound = Open long sound file: "audio.wav"
+# pitch = To Pitch (ac): 0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+# mean_f0 = Get mean: 0, 0, "Hertz"
+
+# R equivalent (current approach):
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch_ac(
+  time_step = 0,
+  pitch_floor = 75,
+  max_candidates = 15,
+  very_accurate = FALSE,
+  silence_threshold = 0.03,
+  voicing_threshold = 0.45,
+  octave_cost = 0.01,
+  octave_jump_cost = 0.35,
+  voiced_unvoiced_cost = 0.14,
+  pitch_ceiling = 600
+)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+**Future implementation path:**
+1. Implement Praat formula parser (using `fon/Formula.h`)
+2. Create script tokenizer/lexer
+3. Map Praat commands to R6 method calls
+4. Implement `praatScript()` function
+5. Support Praat's form/script parameters
+
+**Estimated effort:** 3-4 weeks of dedicated development
+
+#### 2. Picture Plotting (Praat Graphics System) ⏳ DEFERRED
+
+**Current Status:** NOT IMPLEMENTED
+
+**What this means:**
+- No direct equivalent to Praat's Picture window
+- Cannot use Praat's `Draw...` commands directly
+- No `Erase all`, `Select inner viewport`, `Draw inner box` etc.
+- Graphics stubs are implemented but only prevent compilation errors
+
+**Why deferred:**
+- Praat's graphics system is complex (custom rendering engine)
+- R has excellent native plotting (base, ggplot2, etc.)
+- Converting Praat graphics commands to R graphics is non-trivial
+- Better to leverage R's strengths in visualization
+- Core analysis functionality is higher priority
+
+**Impact:**
+- ✅ All analysis and data extraction works
+- ✅ Can export data to R and plot with R graphics
+- ❌ Cannot use Praat's drawing commands
+- ❌ No `Draw...` methods on objects
+
+**Current approach - Use R for plotting:**
+```r
+# Instead of Praat's drawing commands:
+# select Pitch pitch
+# Draw: 0, 0, 75, 600, "no"
+
+# Use R plotting with exported data:
+pitch <- sound$to_pitch()
+pitch_df <- pitch$as_data_frame()
+
+library(ggplot2)
+ggplot(pitch_df, aes(x = time, y = frequency)) +
+  geom_line() +
+  ylim(75, 600) +
+  labs(title = "Pitch contour", x = "Time (s)", y = "Frequency (Hz)")
+
+# Or use base R:
+plot(pitch_df$time, pitch_df$frequency, type = "l",
+     ylim = c(75, 600), xlab = "Time (s)", ylab = "Frequency (Hz)")
+```
+
+**Future implementation options:**
+
+**Option A: Native R Graphics Wrapper**
+- Create `draw_*()` methods that use R graphics internally
+- Translate Praat graphics calls to R equivalents
+- Estimated effort: 2-3 weeks
+
+**Option B: Export Praat Graphics to R**
+- Implement Praat's graphics engine minimally
+- Capture drawing commands and convert to R graphics objects
+- More complex, estimated effort: 4-6 weeks
+
+**Option C: Hybrid Approach** ⭐ RECOMMENDED
+- Provide convenience plotting functions for common visualizations
+- Use R's native plotting capabilities
+- Document how to create Praat-style plots in R
+- Estimated effort: 1 week
+
+**Recommendation:** Option C - leverage R's superior plotting ecosystem
+
+**Future helper functions to add:**
+```r
+# Convenience plotting functions
+plot.Sound(sound, channel = 1)  # Waveform
+plot.Pitch(pitch, range = c(75, 600))  # F0 contour
+plot.Formant(formant, formants = 1:3)  # Formant tracks
+plot.Spectrogram(spectrogram, freq_range = c(0, 5000))  # Spectrogram
+plot.TextGrid(textgrid, tiers = "all")  # Annotation tiers
+```
+
+**Estimated effort for Option C:** 1-2 weeks
+
+---
+
 ### Future Considerations
 
 **When adding new Praat source files:**
@@ -564,6 +702,19 @@ For each Praat object class, implement in this order:
 3. Test all existing functionality
 4. Check for API changes in Praat C++ code
 5. Update wrappers if Praat function signatures change
+
+**When considering script interpreter (future):**
+1. Study Parselmouth's `praat.call()` implementation
+2. Review Praat's Formula.h and Interpreter.h
+3. Decide on scope (full scripts vs. formula evaluation only)
+4. Consider security implications of code execution
+5. Design R-friendly API for script execution
+
+**When considering graphics support (future):**
+1. Evaluate whether Praat graphics add value over R graphics
+2. If yes, choose implementation option (A, B, or C above)
+3. Create comprehensive examples showing R-based alternatives
+4. Consider using existing R packages (phonR, phonTools, etc.)
 
 ### Reference Documentation
 
