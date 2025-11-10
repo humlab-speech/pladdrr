@@ -1,4 +1,7 @@
-#' Extract formants from a sound object
+#' Extract formants from a sound object (DEPRECATED)
+#'
+#' **DEPRECATED:** This function is deprecated in favor of the R6 interface.
+#' Use `sound$to_formant_burg()` instead.
 #'
 #' Analyzes formant frequencies (vocal tract resonances) from a sound object
 #' using Praat's Burg algorithm.
@@ -24,12 +27,14 @@
 #' @export
 #' @examples
 #' \dontrun{
+#' # Old S3 approach (DEPRECATED)
 #' sound <- read_sound("vowel.wav")
 #' formants <- extract_formants(sound, max_formant = 5500)
 #' 
-#' # Get F1 and F2 at specific time
-#' f1 <- get_formant_at_time(formants, formant_number = 1, time = 0.5)
-#' f2 <- get_formant_at_time(formants, formant_number = 2, time = 0.5)
+#' # New R6 approach (RECOMMENDED)
+#' sound <- Sound$new("vowel.wav")
+#' formants <- sound$to_formant_burg(max_frequency = 5500)
+#' f1_mean <- formants$get_mean(formant_number = 1)
 #' }
 extract_formants <- function(sound,
                              time_step = 0.0,
@@ -37,6 +42,12 @@ extract_formants <- function(sound,
                              n_formants = 5,
                              window_length = 0.025,
                              pre_emphasis_from = 50) {
+  
+  .Deprecated(
+    "sound$to_formant_burg()",
+    package = "speaker",
+    msg = "extract_formants() is deprecated. Use the R6 interface: sound$to_formant_burg()"
+  )
   
   validate_sound_object(sound)
   validate_positive(max_formant, "max_formant")
@@ -306,7 +317,9 @@ extract_formants <- function(sound,
   ))
 }
 
-#' Get formant frequency at a specific time
+#' Get formant frequency at a specific time (DEPRECATED)
+#'
+#' **DEPRECATED:** Use the R6 interface instead: `formant$get_value_at_time()`
 #'
 #' @param formant A praat_formant object from \code{\link{extract_formants}}
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
@@ -316,6 +329,12 @@ extract_formants <- function(sound,
 #' @return Formant frequency in Hz, or NA if undefined
 #' @export
 get_formant_at_time <- function(formant, formant_number, time, interpolate = FALSE) {
+  
+  .Deprecated(
+    "formant$get_value_at_time()",
+    package = "speaker",
+    msg = "get_formant_at_time() is deprecated. Use the R6 interface: formant$get_value_at_time(formant_number, time)"
+  )
   
   validate_formant_object(formant)
   validate_positive_int(formant_number, "formant_number")
@@ -351,7 +370,9 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
   }
 }
 
-#' Get mean formant frequency
+#' Get mean formant frequency (DEPRECATED)
+#'
+#' **DEPRECATED:** Use the R6 interface instead: `formant$get_mean()`
 #'
 #' @param formant A praat_formant object from \code{\link{extract_formants}}
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
@@ -360,6 +381,12 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
 #' @return Mean formant frequency in Hz, or NA if undefined
 #' @export
 get_mean_formant <- function(formant, formant_number, time_range = NULL) {
+  
+  .Deprecated(
+    "formant$get_mean()",
+    package = "speaker",
+    msg = "get_mean_formant() is deprecated. Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)"
+  )
   
   validate_formant_object(formant)
   validate_positive_int(formant_number, "formant_number")

@@ -238,6 +238,31 @@ Sound <- R6::R6Class(
       Formant$new(.xptr = formant_ptr)
     },
     
+    #' @description Extract formants using keep-all method
+    #' @param time_step Time step in seconds (default: 0.005)
+    #' @param max_formants Maximum number of formants to track (default: 5)
+    #' @param max_frequency Maximum formant frequency in Hz (default: 5500)
+    #' @param window_length Window length in seconds (default: 0.025)
+    #' @param pre_emphasis_from Pre-emphasis frequency in Hz (default: 50)
+    #' @return Formant object
+    to_formant_keepall = function(
+      time_step = 0.005,
+      max_formants = 5.0,
+      max_frequency = 5500.0,
+      window_length = 0.025,
+      pre_emphasis_from = 50.0
+    ) {
+      formant_ptr <- .formant_from_sound_keepall(
+        private$ptr,
+        time_step,
+        max_formants,
+        max_frequency,
+        window_length,
+        pre_emphasis_from
+      )
+      Formant$new(.xptr = formant_ptr)
+    },
+    
     #' @description Extract intensity contour
     #' @param minimum_pitch Minimum pitch for accurate intensity (default: 100 Hz)
     #' @param time_step Time step in seconds (0 = auto)
