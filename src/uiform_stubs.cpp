@@ -60,3 +60,7 @@ bool Demo_clickedIn (double left, double right, double bottom, double top) {
 int Demo_peekInput (Interpreter interpreter) {
     return 0;  // Demo functions not supported in NO_GUI build
 }
+
+void Demo_windowTitle (conststring32) {
+    // No-op
+}

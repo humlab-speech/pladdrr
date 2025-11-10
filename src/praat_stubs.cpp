@@ -41,12 +41,25 @@ void praat_selectAll () {
     // No-op in library mode
 }
 
-// UI Pause stubs (interactive dialogs) - matching UiPause.h signatures
-int UiPause_begin (GuiWindow, Editor, conststring32, Interpreter) {
-    Melder_throw (U"Interactive pause dialogs not available in library mode.");
+// Praat action/command stubs
+void praat_doAction (conststring32, integer, Stackel, Interpreter) {
+    // No-op in library mode
 }
 
-void UiPause_comment (int, conststring32) {
+void praat_doCommand (conststring32, integer, Stackel, Interpreter) {
+    // No-op in library mode
+}
+
+void praat_runScript (conststring32, integer, Stackel, Editor) {
+    // No-op in library mode
+}
+
+// UI Pause stubs (interactive dialogs) - matching UiPause.h signatures
+void UiPause_begin (GuiWindow, Editor, conststring32, Interpreter) {
+    // No-op
+}
+
+void UiPause_comment (conststring32) {
     // No-op
 }
 

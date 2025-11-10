@@ -21,4 +21,12 @@ Thing_define (LPC, Sampled) {
 
 Thing_implement (LPC, Sampled, 0);
 
+// Sound Filtering stub (not used but may be referenced)
+struct structSound;
+typedef struct structSound *Sound;
+
+Sound LPC_Sound_filter (const struct structLPC* lpc, const struct structSound* sound, bool use_gain) {
+    Melder_throw (U"LPC filtering not implemented in library mode.");
+}
+
 /* End of file */
