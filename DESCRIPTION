@@ -1,11 +1,13 @@
 Package: speaker
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 0.2.1
+Version: 0.2.2
+Date: 2025-11-10
 Authors@R: c(
-    person("Humlab Speech", role = c("aut", "cre"),
-           email = "humlab-speech@umu.se")
+    person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-3373-0934"))
     )
+Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
 Description: Provides direct, efficient access to Praat C implemented
     functionality from R using Rcpp. Similar in concept to the parselmouth
     package for Python, this package allows R users to leverage Praat's
