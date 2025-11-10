@@ -1247,3 +1247,312 @@ If you encounter build errors related to missing Praat functions:
 ---
 
 **This integration workflow ensures consistent, high-quality implementation of new Praat objects while maintaining the package's architectural integrity.**
+
+---
+
+## UPDATED OOP DESIGN DECISIONS (2025-11-10)
+
+### Amendment Based on Parselmouth Analysis
+
+After analyzing Parselmouth examples in `/Users/frkkan96/Documents/src/superassp/inst/python`, the following updates clarify the implementation approach:
+
+#### Key Findings from Parselmouth Usage
+
+1. **FormantPath Object**: Parselmouth uses `FormantPath` for robust formant tracking (not yet in speaker)
+2. **Method Chaining**: Extensive use of `pm.praat.call(obj, "Method", args)` pattern
+3. **Conversion Methods**: Objects frequently convert to other types (e.g., Intensity → IntensityTier → TableOfReal)
+
+#### Extended Naming Convention
+
+| Praat Command | R Method | Parselmouth Equivalent | Priority |
+|---------------|----------|------------------------|----------|
+| `To FormantPath (burg)...` | `to_formant_path_burg()` | `call(snd, "To FormantPath (burg)", ...)` | HIGH |
+| `Extract Formant` | `extract_formant()` | `call(fp, "Extract Formant")` | HIGH |
+| `Down to IntensityTier` | `down_to_intensity_tier()` | `call(int, "Down to IntensityTier")` | MEDIUM |
+| `Down to TableOfReal` | `down_to_table_of_real()` | `call(tier, "Down to TableOfReal")` | MEDIUM |
+| `To Table` | `to_table()` | `call(tor, "To Table", "col")` | LOW |
+| `To Spectrogram...` | `to_spectrogram()` | `call(snd, "To Spectrogram", ...)` | MEDIUM |
+
+#### Missing Critical Objects (Priority Order)
+
+1. **TextGrid** - Annotation/segmentation (HIGHEST - used in 90% of phonetic research)
+2. **FormantPath** - Robust formant tracking (HIGH - demonstrated in Parselmouth examples)
+3. **Spectrum** - Frequency domain analysis (MEDIUM)
+4. **Ltas** - Long-term average spectrum (MEDIUM)
+5. **FormantGrid** - Detailed formant manipulation (LOW)
+
+#### Deferred Features - Documented
+
+**Praat Script Interpreter**
+- **Status**: Not implemented
+- **Reason**: Requires full Praat parser and command interpreter
+- **Impact**: Cannot execute raw `.praat` scripts directly in R
+- **Workaround**: Manual translation using consistent naming conventions
+- **Future**: May be added as extension if demand exists
+
+**Picture/Graphics Commands**
+- **Status**: Not implemented  
+- **Reason**: Praat's Picture window is GUI-specific, tightly coupled to graphics library
+- **Impact**: Cannot use `Paint...`, `Draw...`, `Speckle...` commands
+- **Workaround**: Export data to R (`as_data_frame()`, `as_matrix()`), visualize with ggplot2/base R
+- **Future**: May create ggplot2-based equivalents for common visualizations
+
+#### Object Integration Workflow
+
+To add a new Praat object (documented for future maintenance):
+
+1. **Analysis Phase**
+   - Identify Praat C++ class in `inst/include/praat/fon/`
+   - List key methods from Praat manual
+   - Check Parselmouth for usage patterns
+   - Estimate stub requirements (Graphics, File I/O, etc.)
+
+2. **Implementation Phase**
+   - Create `R/<objecttype>-r6.R` with R6 class
+   - Create `src/praat_<objecttype>.cpp` with C++ bindings
+   - Export methods with `[[Rcpp::export(.<objecttype>_method)]]`
+   - Add conversion methods to parent objects
+   - Create stub functions for unsupported Praat dependencies
+
+3. **Documentation Phase**
+   - Document each method with Praat menu command equivalent
+   - Create examples showing Praat script → R translation
+   - Add tests comparing against known Praat output
+   - Update package documentation
+
+4. **Testing Phase**
+   - Unit tests for each method
+   - Integration tests for method chains
+   - Comparison tests against Praat output
+   - Parselmouth parity tests (if applicable)
+
+#### Implementation Time Estimates
+
+| Object Type | Implementation | C++ Bindings | Stubs | Testing | Total |
+|-------------|----------------|--------------|-------|---------|-------|
+| Simple (Tier) | 0.5-1 day | 0.5 day | 0.5 day | 0.5 day | **2-2.5 days** |
+| Medium (Spectrum, Ltas) | 1-2 days | 1 day | 1 day | 0.5 day | **3.5-4.5 days** |
+| Complex (TextGrid, FormantPath) | 2-4 days | 1-2 days | 1-2 days | 1 day | **5-9 days** |
+
+### Parselmouth Translation Examples
+
+These examples show how superassp Python code should translate to speaker R code:
+
+**Example 1: Intensity Analysis**
+```python
+# Python (Parselmouth)
+intensity = pm.praat.call(sound, "To Intensity", min_pitch, time_step, subtract_mean)
+intensity_tier = pm.praat.call(intensity, "Down to IntensityTier")
+table_of_real = pm.praat.call(intensity_tier, "Down to TableOfReal")
+```
+
+```r
+# R (speaker)
+intensity <- sound$to_intensity(min_pitch, time_step, subtract_mean)
+intensity_tier <- intensity$down_to_intensity_tier()
+table_of_real <- intensity_tier$down_to_table_of_real()
+```
+
+**Example 2: FormantPath Tracking**
+```python
+# Python (Parselmouth)
+formant_path = pm.praat.call(sound, "To FormantPath (burg)", 
+                             time_step, num_formants, max_formant, ...)
+formant = pm.praat.call(formant_path, "Extract Formant")
+```
+
+```r
+# R (speaker) - TO BE IMPLEMENTED
+formant_path <- sound$to_formant_path_burg(
+  time_step, num_formants, max_formant, ...)
+formant <- formant_path$extract_formant()
+```
+
+### Package Evolution Strategy
+
+**Current State (v0.3.0)**:
+- ✅ Core objects: Sound, Pitch, Formant, Intensity, Harmonicity, PointProcess
+- ✅ Manipulation objects: Manipulation, PitchTier, IntensityTier, DurationTier
+- ✅ Basic spectral: Spectrogram (partial)
+- ✅ R6 architecture with external pointers
+- ✅ av package integration for audio I/O
+
+**Next Release (v0.4.0)** - Missing Critical Objects:
+- ⬜ TextGrid (intervals + points) - PRIORITY 1
+- ⬜ FormantPath - PRIORITY 2
+- ⬜ Spectrum - PRIORITY 3
+- ⬜ Ltas - PRIORITY 3
+- ⬜ Enhanced Spectrogram methods
+
+**Future Release (v0.5.0)** - Advanced Features:
+- ⬜ FormantGrid
+- ⬜ Cochleagram
+- ⬜ LPC
+- ⬜ Excitation
+- ⬜ MFCC (if demanded)
+
+**Long-term (v1.0+)** - Potential Extensions:
+- ⬜ Praat script interpreter (execute .praat files)
+- ⬜ ggplot2-based visualization functions
+- ⬜ Parallel processing for batch analysis
+- ⬜ Streaming audio support
+
+---
+
+**Updated**: 2025-11-10  
+**Next Review**: After TextGrid implementation
+
+---
+
+## UPDATED OOP DESIGN DECISIONS (2025-11-10)
+
+### Amendment Based on Parselmouth Analysis
+
+After analyzing Parselmouth examples in `/Users/frkkan96/Documents/src/superassp/inst/python`, the following updates clarify the implementation approach:
+
+#### Key Findings from Parselmouth Usage
+
+1. **FormantPath Object**: Parselmouth uses `FormantPath` for robust formant tracking (not yet in speaker)
+2. **Method Chaining**: Extensive use of `pm.praat.call(obj, "Method", args)` pattern
+3. **Conversion Methods**: Objects frequently convert to other types (e.g., Intensity → IntensityTier → TableOfReal)
+
+#### Extended Naming Convention
+
+| Praat Command | R Method | Parselmouth Equivalent | Priority |
+|---------------|----------|------------------------|----------|
+| `To FormantPath (burg)...` | `to_formant_path_burg()` | `call(snd, "To FormantPath (burg)", ...)` | HIGH |
+| `Extract Formant` | `extract_formant()` | `call(fp, "Extract Formant")` | HIGH |
+| `Down to IntensityTier` | `down_to_intensity_tier()` | `call(int, "Down to IntensityTier")` | MEDIUM |
+| `Down to TableOfReal` | `down_to_table_of_real()` | `call(tier, "Down to TableOfReal")` | MEDIUM |
+| `To Table` | `to_table()` | `call(tor, "To Table", "col")` | LOW |
+| `To Spectrogram...` | `to_spectrogram()` | `call(snd, "To Spectrogram", ...)` | MEDIUM |
+
+#### Missing Critical Objects (Priority Order)
+
+1. **TextGrid** - Annotation/segmentation (HIGHEST - used in 90% of phonetic research)
+2. **FormantPath** - Robust formant tracking (HIGH - demonstrated in Parselmouth examples)
+3. **Spectrum** - Frequency domain analysis (MEDIUM)
+4. **Ltas** - Long-term average spectrum (MEDIUM)
+5. **FormantGrid** - Detailed formant manipulation (LOW)
+
+#### Deferred Features - Documented
+
+**Praat Script Interpreter**
+- **Status**: Not implemented
+- **Reason**: Requires full Praat parser and command interpreter
+- **Impact**: Cannot execute raw `.praat` scripts directly in R
+- **Workaround**: Manual translation using consistent naming conventions
+- **Future**: May be added as extension if demand exists
+
+**Picture/Graphics Commands**
+- **Status**: Not implemented
+- **Reason**: Praat's Picture window is GUI-specific, tightly coupled to graphics library
+- **Impact**: Cannot use `Paint...`, `Draw...`, `Speckle...` commands
+- **Workaround**: Export data to R (`as_data_frame()`, `as_matrix()`), visualize with ggplot2/base R
+- **Future**: May create ggplot2-based equivalents for common visualizations
+
+#### Object Integration Workflow
+
+To add a new Praat object (documented for future maintenance):
+
+1. **Analysis Phase**
+   - Identify Praat C++ class in `inst/include/praat/fon/`
+   - List key methods from Praat manual
+   - Check Parselmouth for usage patterns
+   - Estimate stub requirements (Graphics, File I/O, etc.)
+
+2. **Implementation Phase**
+   - Create `R/<objecttype>-r6.R` with R6 class
+   - Create `src/praat_<objecttype>.cpp` with C++ bindings
+   - Export methods with `[[Rcpp::export(.<objecttype>_method)]]`
+   - Add conversion methods to parent objects
+   - Create stub functions for unsupported Praat dependencies
+
+3. **Documentation Phase**
+   - Document each method with Praat menu command equivalent
+   - Create examples showing Praat script → R translation
+   - Add tests comparing against known Praat output
+   - Update package documentation
+
+4. **Testing Phase**
+   - Unit tests for each method
+   - Integration tests for method chains
+   - Comparison tests against Praat output
+   - Parselmouth parity tests (if applicable)
+
+#### Implementation Time Estimates
+
+| Object Type | Implementation | C++ Bindings | Stubs | Testing | Total |
+|-------------|----------------|--------------|-------|---------|-------|
+| Simple (Tier) | 0.5-1 day | 0.5 day | 0.5 day | 0.5 day | **2-2.5 days** |
+| Medium (Spectrum, Ltas) | 1-2 days | 1 day | 1 day | 0.5 day | **3.5-4.5 days** |
+| Complex (TextGrid, FormantPath) | 2-4 days | 1-2 days | 1-2 days | 1 day | **5-9 days** |
+
+### Parselmouth Translation Examples
+
+These examples show how superassp Python code should translate to speaker R code:
+
+**Example 1: Intensity Analysis**
+```python
+# Python (Parselmouth)
+intensity = pm.praat.call(sound, "To Intensity", min_pitch, time_step, subtract_mean)
+intensity_tier = pm.praat.call(intensity, "Down to IntensityTier")
+table_of_real = pm.praat.call(intensity_tier, "Down to TableOfReal")
+```
+
+```r
+# R (speaker)
+intensity <- sound$to_intensity(min_pitch, time_step, subtract_mean)
+intensity_tier <- intensity$down_to_intensity_tier()
+table_of_real <- intensity_tier$down_to_table_of_real()
+```
+
+**Example 2: FormantPath Tracking**
+```python
+# Python (Parselmouth)
+formant_path = pm.praat.call(sound, "To FormantPath (burg)", 
+                             time_step, num_formants, max_formant, ...)
+formant = pm.praat.call(formant_path, "Extract Formant")
+```
+
+```r
+# R (speaker) - TO BE IMPLEMENTED
+formant_path <- sound$to_formant_path_burg(
+  time_step, num_formants, max_formant, ...)
+formant <- formant_path$extract_formant()
+```
+
+### Package Evolution Strategy
+
+**Current State (v0.3.0)**:
+- ✅ Core objects: Sound, Pitch, Formant, Intensity, Harmonicity, PointProcess
+- ✅ Manipulation objects: Manipulation, PitchTier, IntensityTier, DurationTier
+- ✅ Basic spectral: Spectrogram (partial)
+- ✅ R6 architecture with external pointers
+- ✅ av package integration for audio I/O
+
+**Next Release (v0.4.0)** - Missing Critical Objects:
+- ⬜ TextGrid (intervals + points) - PRIORITY 1
+- ⬜ FormantPath - PRIORITY 2
+- ⬜ Spectrum - PRIORITY 3
+- ⬜ Ltas - PRIORITY 3
+- ⬜ Enhanced Spectrogram methods
+
+**Future Release (v0.5.0)** - Advanced Features:
+- ⬜ FormantGrid
+- ⬜ Cochleagram
+- ⬜ LPC
+- ⬜ Excitation
+- ⬜ MFCC (if demanded)
+
+**Long-term (v1.0+)** - Potential Extensions:
+- ⬜ Praat script interpreter (execute .praat files)
+- ⬜ ggplot2-based visualization functions
+- ⬜ Parallel processing for batch analysis
+- ⬜ Streaming audio support
+
+---
+
+**Updated**: 2025-11-10  
+**Next Review**: After TextGrid implementation
+
