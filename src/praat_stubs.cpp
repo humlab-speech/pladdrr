@@ -172,3 +172,7 @@ void MelderThread_run (std::atomic<bool> *, integer, integer, const std::functio
 }
 
 /* End of file */
+
+void praat_runNotebook (conststring32, long, Stackel, Editor) {
+    // Notebook execution not supported in library mode
+}

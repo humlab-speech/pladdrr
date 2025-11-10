@@ -8,6 +8,9 @@ typedef const char32 *conststring32;
 struct structUiForm;
 typedef struct structUiForm *UiForm;
 
+struct structUiField;
+typedef struct structUiField *UiField;
+
 struct structGuiWindow;
 typedef struct structGuiWindow *GuiWindow;
 
@@ -29,21 +32,24 @@ UiForm UiForm_create (GuiWindow, Editor, conststring32,
 }
 
 void UiForm_finish (UiForm) {}
-void UiForm_addReal (UiForm, double *, conststring32, conststring32, conststring32) {}
-void UiForm_addText (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) {}
-void UiForm_addWord (UiForm, conststring32 *, conststring32, conststring32, conststring32) {}
+UiField UiForm_addReal (UiForm, double *, conststring32, conststring32, conststring32) { return nullptr; }
+UiField UiForm_addText (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
+UiField UiForm_addWord (UiForm, conststring32 *, conststring32, conststring32, conststring32) { return nullptr; }
 void UiForm_addChoice (UiForm, int *, conststring32 *, conststring32, conststring32, int, int) {}
-void UiForm_addFolder (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) {}
-void UiForm_addInfile (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) {}
-void UiForm_addOutfile (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) {}
+UiField UiForm_addFolder (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
+UiField UiForm_addInfile (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
+UiField UiForm_addOutfile (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
 void UiForm_addOption (UiForm, conststring32) {}
-void UiForm_addBoolean (UiForm, bool *, conststring32, conststring32) {}
+UiField UiForm_addBoolean (UiForm, bool *, conststring32, conststring32, bool) { return nullptr; }
 void UiForm_addLabel (UiForm, conststring32, conststring32) {}
-void UiForm_addNatural (UiForm, long *, conststring32, conststring32, conststring32) {}
-void UiForm_addInteger (UiForm, long *, conststring32, conststring32, conststring32) {}
-void UiForm_addPositive (UiForm, double *, conststring32, conststring32, conststring32) {}
+UiField UiForm_addNatural (UiForm, long *, conststring32, conststring32, conststring32) { return nullptr; }
+UiField UiForm_addInteger (UiForm, long *, conststring32, conststring32, conststring32) { return nullptr; }
+UiField UiForm_addPositive (UiForm, double *, conststring32, conststring32, conststring32) { return nullptr; }
 void UiForm_addRadio (UiForm, int *, conststring32, conststring32, conststring32, int) {}
 void UiForm_addList (UiForm, long *, conststring32, conststring32 *, long, conststring32) {}
+UiField UiForm_addCaption (UiForm, conststring32 *, conststring32) { return nullptr; }
+UiField UiForm_addHeading (UiForm, conststring32 *, conststring32) { return nullptr; }
+UiField UiForm_addComment (UiForm, conststring32 *, conststring32) { return nullptr; }
 
 conststring32 UiForm_getString (UiForm, conststring32) { return U""; }
 long UiForm_getInteger (UiForm, conststring32) { return 0; }
