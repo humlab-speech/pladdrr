@@ -125,6 +125,62 @@
     .Call(`_speaker_harmonicity_get_end_time`, harmonicity_xptr)
 }
 
+.intensity_get_value_at_time <- function(intensity_xptr, time, interpolation_type) {
+    .Call(`_speaker_intensity_get_value_at_time`, intensity_xptr, time, interpolation_type)
+}
+
+.intensity_get_mean <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_mean`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_minimum <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_minimum`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_maximum <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_maximum`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_standard_deviation <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_standard_deviation`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_quantile <- function(intensity_xptr, from_time, to_time, quantile) {
+    .Call(`_speaker_intensity_get_quantile`, intensity_xptr, from_time, to_time, quantile)
+}
+
+.intensity_get_time_of_minimum <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_time_of_minimum`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_time_of_maximum <- function(intensity_xptr, from_time, to_time) {
+    .Call(`_speaker_intensity_get_time_of_maximum`, intensity_xptr, from_time, to_time)
+}
+
+.intensity_get_time_from_frame <- function(intensity_xptr, frame) {
+    .Call(`_speaker_intensity_get_time_from_frame`, intensity_xptr, frame)
+}
+
+.intensity_get_frame_from_time <- function(intensity_xptr, time) {
+    .Call(`_speaker_intensity_get_frame_from_time`, intensity_xptr, time)
+}
+
+.intensity_get_number_of_frames <- function(intensity_xptr) {
+    .Call(`_speaker_intensity_get_number_of_frames`, intensity_xptr)
+}
+
+.intensity_get_sampling_period <- function(intensity_xptr) {
+    .Call(`_speaker_intensity_get_sampling_period`, intensity_xptr)
+}
+
+.intensity_get_start_time <- function(intensity_xptr) {
+    .Call(`_speaker_intensity_get_start_time`, intensity_xptr)
+}
+
+.intensity_get_end_time <- function(intensity_xptr) {
+    .Call(`_speaker_intensity_get_end_time`, intensity_xptr)
+}
+
 .pitch_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
     .Call(`_speaker_pitch_from_sound`, sound, time_step, pitch_floor, pitch_ceiling)
 }

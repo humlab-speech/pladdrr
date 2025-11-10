@@ -1144,6 +1144,501 @@ RcppExport SEXP _speaker_harmonicity_get_end_time(SEXP harmonicity_xptrSEXP) {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// intensity_get_value_at_time
+double intensity_get_value_at_time(XPtr<structIntensity> intensity_xptr, double time, int interpolation_type);
+static SEXP _speaker_intensity_get_value_at_time_try(SEXP intensity_xptrSEXP, SEXP timeSEXP, SEXP interpolation_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation_type(interpolation_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_value_at_time(intensity_xptr, time, interpolation_type));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_value_at_time(SEXP intensity_xptrSEXP, SEXP timeSEXP, SEXP interpolation_typeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_value_at_time_try(intensity_xptrSEXP, timeSEXP, interpolation_typeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_mean
+double intensity_get_mean(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_mean_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_mean(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_mean(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_mean_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_minimum
+double intensity_get_minimum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_minimum_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_minimum(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_minimum(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_minimum_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_maximum
+double intensity_get_maximum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_maximum_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_maximum(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_maximum(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_maximum_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_standard_deviation
+double intensity_get_standard_deviation(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_standard_deviation_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_standard_deviation(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_standard_deviation(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_standard_deviation_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_quantile
+double intensity_get_quantile(XPtr<structIntensity> intensity_xptr, double from_time, double to_time, double quantile);
+static SEXP _speaker_intensity_get_quantile_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP quantileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type quantile(quantileSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_quantile(intensity_xptr, from_time, to_time, quantile));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_quantile(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP quantileSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_quantile_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP, quantileSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_time_of_minimum
+double intensity_get_time_of_minimum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_time_of_minimum_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_time_of_minimum(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_time_of_minimum(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_time_of_minimum_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_time_of_maximum
+double intensity_get_time_of_maximum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time);
+static SEXP _speaker_intensity_get_time_of_maximum_try(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_time_of_maximum(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_time_of_maximum(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_time_of_maximum_try(intensity_xptrSEXP, from_timeSEXP, to_timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_time_from_frame
+double intensity_get_time_from_frame(XPtr<structIntensity> intensity_xptr, int frame);
+static SEXP _speaker_intensity_get_time_from_frame_try(SEXP intensity_xptrSEXP, SEXP frameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type frame(frameSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_time_from_frame(intensity_xptr, frame));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_time_from_frame(SEXP intensity_xptrSEXP, SEXP frameSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_time_from_frame_try(intensity_xptrSEXP, frameSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_frame_from_time
+int intensity_get_frame_from_time(XPtr<structIntensity> intensity_xptr, double time);
+static SEXP _speaker_intensity_get_frame_from_time_try(SEXP intensity_xptrSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_frame_from_time(intensity_xptr, time));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_frame_from_time(SEXP intensity_xptrSEXP, SEXP timeSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_frame_from_time_try(intensity_xptrSEXP, timeSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_number_of_frames
+int intensity_get_number_of_frames(XPtr<structIntensity> intensity_xptr);
+static SEXP _speaker_intensity_get_number_of_frames_try(SEXP intensity_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_number_of_frames(intensity_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_number_of_frames(SEXP intensity_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_number_of_frames_try(intensity_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_sampling_period
+double intensity_get_sampling_period(XPtr<structIntensity> intensity_xptr);
+static SEXP _speaker_intensity_get_sampling_period_try(SEXP intensity_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_sampling_period(intensity_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_sampling_period(SEXP intensity_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_sampling_period_try(intensity_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_start_time
+double intensity_get_start_time(XPtr<structIntensity> intensity_xptr);
+static SEXP _speaker_intensity_get_start_time_try(SEXP intensity_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_start_time(intensity_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_start_time(SEXP intensity_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_start_time_try(intensity_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_get_end_time
+double intensity_get_end_time(XPtr<structIntensity> intensity_xptr);
+static SEXP _speaker_intensity_get_end_time_try(SEXP intensity_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type intensity_xptr(intensity_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_end_time(intensity_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _speaker_intensity_get_end_time(SEXP intensity_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_speaker_intensity_get_end_time_try(intensity_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // pitch_from_sound
 Rcpp::XPtr<structPitch> pitch_from_sound(Rcpp::XPtr<structSound> sound, double time_step, double pitch_floor, double pitch_ceiling);
 RcppExport SEXP _speaker_pitch_from_sound(SEXP soundSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP) {
@@ -2708,6 +3203,20 @@ static int _speaker_RcppExport_validate(const char* sig) {
         signatures.insert("double(*.harmonicity_get_time_step)(XPtr<structHarmonicity>)");
         signatures.insert("double(*.harmonicity_get_start_time)(XPtr<structHarmonicity>)");
         signatures.insert("double(*.harmonicity_get_end_time)(XPtr<structHarmonicity>)");
+        signatures.insert("double(*.intensity_get_value_at_time)(XPtr<structIntensity>,double,int)");
+        signatures.insert("double(*.intensity_get_mean)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_minimum)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_maximum)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_standard_deviation)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_quantile)(XPtr<structIntensity>,double,double,double)");
+        signatures.insert("double(*.intensity_get_time_of_minimum)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_time_of_maximum)(XPtr<structIntensity>,double,double)");
+        signatures.insert("double(*.intensity_get_time_from_frame)(XPtr<structIntensity>,int)");
+        signatures.insert("int(*.intensity_get_frame_from_time)(XPtr<structIntensity>,double)");
+        signatures.insert("int(*.intensity_get_number_of_frames)(XPtr<structIntensity>)");
+        signatures.insert("double(*.intensity_get_sampling_period)(XPtr<structIntensity>)");
+        signatures.insert("double(*.intensity_get_start_time)(XPtr<structIntensity>)");
+        signatures.insert("double(*.intensity_get_end_time)(XPtr<structIntensity>)");
         signatures.insert("XPtr<structSound>(*.sound_read_from_file)(std::string)");
         signatures.insert("XPtr<structSound>(*.sound_create_from_values)(NumericMatrix,double)");
         signatures.insert("XPtr<structSound>(*.sound_create_tone)(double,double,double,double)");
@@ -2769,6 +3278,20 @@ RcppExport SEXP _speaker_RcppExport_registerCCallable() {
     R_RegisterCCallable("speaker", "_speaker_.harmonicity_get_time_step", (DL_FUNC)_speaker_harmonicity_get_time_step_try);
     R_RegisterCCallable("speaker", "_speaker_.harmonicity_get_start_time", (DL_FUNC)_speaker_harmonicity_get_start_time_try);
     R_RegisterCCallable("speaker", "_speaker_.harmonicity_get_end_time", (DL_FUNC)_speaker_harmonicity_get_end_time_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_value_at_time", (DL_FUNC)_speaker_intensity_get_value_at_time_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_mean", (DL_FUNC)_speaker_intensity_get_mean_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_minimum", (DL_FUNC)_speaker_intensity_get_minimum_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_maximum", (DL_FUNC)_speaker_intensity_get_maximum_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_standard_deviation", (DL_FUNC)_speaker_intensity_get_standard_deviation_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_quantile", (DL_FUNC)_speaker_intensity_get_quantile_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_time_of_minimum", (DL_FUNC)_speaker_intensity_get_time_of_minimum_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_time_of_maximum", (DL_FUNC)_speaker_intensity_get_time_of_maximum_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_time_from_frame", (DL_FUNC)_speaker_intensity_get_time_from_frame_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_frame_from_time", (DL_FUNC)_speaker_intensity_get_frame_from_time_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_number_of_frames", (DL_FUNC)_speaker_intensity_get_number_of_frames_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_sampling_period", (DL_FUNC)_speaker_intensity_get_sampling_period_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_start_time", (DL_FUNC)_speaker_intensity_get_start_time_try);
+    R_RegisterCCallable("speaker", "_speaker_.intensity_get_end_time", (DL_FUNC)_speaker_intensity_get_end_time_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_read_from_file", (DL_FUNC)_speaker_sound_read_from_file_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_create_from_values", (DL_FUNC)_speaker_sound_create_from_values_try);
     R_RegisterCCallable("speaker", "_speaker_.sound_create_tone", (DL_FUNC)_speaker_sound_create_tone_try);
@@ -2829,6 +3352,20 @@ static const R_CallMethodDef CallEntries[] = {
     {"_speaker_harmonicity_get_time_step", (DL_FUNC) &_speaker_harmonicity_get_time_step, 1},
     {"_speaker_harmonicity_get_start_time", (DL_FUNC) &_speaker_harmonicity_get_start_time, 1},
     {"_speaker_harmonicity_get_end_time", (DL_FUNC) &_speaker_harmonicity_get_end_time, 1},
+    {"_speaker_intensity_get_value_at_time", (DL_FUNC) &_speaker_intensity_get_value_at_time, 3},
+    {"_speaker_intensity_get_mean", (DL_FUNC) &_speaker_intensity_get_mean, 3},
+    {"_speaker_intensity_get_minimum", (DL_FUNC) &_speaker_intensity_get_minimum, 3},
+    {"_speaker_intensity_get_maximum", (DL_FUNC) &_speaker_intensity_get_maximum, 3},
+    {"_speaker_intensity_get_standard_deviation", (DL_FUNC) &_speaker_intensity_get_standard_deviation, 3},
+    {"_speaker_intensity_get_quantile", (DL_FUNC) &_speaker_intensity_get_quantile, 4},
+    {"_speaker_intensity_get_time_of_minimum", (DL_FUNC) &_speaker_intensity_get_time_of_minimum, 3},
+    {"_speaker_intensity_get_time_of_maximum", (DL_FUNC) &_speaker_intensity_get_time_of_maximum, 3},
+    {"_speaker_intensity_get_time_from_frame", (DL_FUNC) &_speaker_intensity_get_time_from_frame, 2},
+    {"_speaker_intensity_get_frame_from_time", (DL_FUNC) &_speaker_intensity_get_frame_from_time, 2},
+    {"_speaker_intensity_get_number_of_frames", (DL_FUNC) &_speaker_intensity_get_number_of_frames, 1},
+    {"_speaker_intensity_get_sampling_period", (DL_FUNC) &_speaker_intensity_get_sampling_period, 1},
+    {"_speaker_intensity_get_start_time", (DL_FUNC) &_speaker_intensity_get_start_time, 1},
+    {"_speaker_intensity_get_end_time", (DL_FUNC) &_speaker_intensity_get_end_time, 1},
     {"_speaker_pitch_from_sound", (DL_FUNC) &_speaker_pitch_from_sound, 4},
     {"_speaker_pitch_get_time_from_frame", (DL_FUNC) &_speaker_pitch_get_time_from_frame, 2},
     {"_speaker_pitch_get_frame_from_time", (DL_FUNC) &_speaker_pitch_get_frame_from_time, 2},

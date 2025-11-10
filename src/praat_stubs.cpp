@@ -29,6 +29,18 @@ void praat_select (integer) {
     // No-op in library mode
 }
 
+void praat_deselect (integer) {
+    // No-op in library mode
+}
+
+void praat_deselectAll () {
+    // No-op in library mode
+}
+
+void praat_selectAll () {
+    // No-op in library mode
+}
+
 // UI Pause stubs (interactive dialogs) - matching UiPause.h signatures
 int UiPause_begin (GuiWindow, Editor, conststring32, Interpreter) {
     Melder_throw (U"Interactive pause dialogs not available in library mode.");

@@ -675,6 +675,300 @@ namespace speaker {
         return Rcpp::as<double >(rcpp_result_gen);
     }
 
+    inline double _intensity_get_value_at_time(XPtr<structIntensity> intensity_xptr, double time, int interpolation_type) {
+        typedef SEXP(*Ptr__intensity_get_value_at_time)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_value_at_time p__intensity_get_value_at_time = NULL;
+        if (p__intensity_get_value_at_time == NULL) {
+            validateSignature("double(*_intensity_get_value_at_time)(XPtr<structIntensity>,double,int)");
+            p__intensity_get_value_at_time = (Ptr__intensity_get_value_at_time)R_GetCCallable("speaker", "_speaker__intensity_get_value_at_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_value_at_time(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(interpolation_type)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_mean(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_mean)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_mean p__intensity_get_mean = NULL;
+        if (p__intensity_get_mean == NULL) {
+            validateSignature("double(*_intensity_get_mean)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_mean = (Ptr__intensity_get_mean)R_GetCCallable("speaker", "_speaker__intensity_get_mean");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_mean(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_minimum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_minimum)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_minimum p__intensity_get_minimum = NULL;
+        if (p__intensity_get_minimum == NULL) {
+            validateSignature("double(*_intensity_get_minimum)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_minimum = (Ptr__intensity_get_minimum)R_GetCCallable("speaker", "_speaker__intensity_get_minimum");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_minimum(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_maximum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_maximum)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_maximum p__intensity_get_maximum = NULL;
+        if (p__intensity_get_maximum == NULL) {
+            validateSignature("double(*_intensity_get_maximum)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_maximum = (Ptr__intensity_get_maximum)R_GetCCallable("speaker", "_speaker__intensity_get_maximum");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_maximum(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_standard_deviation(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_standard_deviation)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_standard_deviation p__intensity_get_standard_deviation = NULL;
+        if (p__intensity_get_standard_deviation == NULL) {
+            validateSignature("double(*_intensity_get_standard_deviation)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_standard_deviation = (Ptr__intensity_get_standard_deviation)R_GetCCallable("speaker", "_speaker__intensity_get_standard_deviation");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_standard_deviation(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_quantile(XPtr<structIntensity> intensity_xptr, double from_time, double to_time, double quantile) {
+        typedef SEXP(*Ptr__intensity_get_quantile)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_quantile p__intensity_get_quantile = NULL;
+        if (p__intensity_get_quantile == NULL) {
+            validateSignature("double(*_intensity_get_quantile)(XPtr<structIntensity>,double,double,double)");
+            p__intensity_get_quantile = (Ptr__intensity_get_quantile)R_GetCCallable("speaker", "_speaker__intensity_get_quantile");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_quantile(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)), Shield<SEXP>(Rcpp::wrap(quantile)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_time_of_minimum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_time_of_minimum)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_time_of_minimum p__intensity_get_time_of_minimum = NULL;
+        if (p__intensity_get_time_of_minimum == NULL) {
+            validateSignature("double(*_intensity_get_time_of_minimum)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_time_of_minimum = (Ptr__intensity_get_time_of_minimum)R_GetCCallable("speaker", "_speaker__intensity_get_time_of_minimum");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_time_of_minimum(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_time_of_maximum(XPtr<structIntensity> intensity_xptr, double from_time, double to_time) {
+        typedef SEXP(*Ptr__intensity_get_time_of_maximum)(SEXP,SEXP,SEXP);
+        static Ptr__intensity_get_time_of_maximum p__intensity_get_time_of_maximum = NULL;
+        if (p__intensity_get_time_of_maximum == NULL) {
+            validateSignature("double(*_intensity_get_time_of_maximum)(XPtr<structIntensity>,double,double)");
+            p__intensity_get_time_of_maximum = (Ptr__intensity_get_time_of_maximum)R_GetCCallable("speaker", "_speaker__intensity_get_time_of_maximum");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_time_of_maximum(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_time_from_frame(XPtr<structIntensity> intensity_xptr, int frame) {
+        typedef SEXP(*Ptr__intensity_get_time_from_frame)(SEXP,SEXP);
+        static Ptr__intensity_get_time_from_frame p__intensity_get_time_from_frame = NULL;
+        if (p__intensity_get_time_from_frame == NULL) {
+            validateSignature("double(*_intensity_get_time_from_frame)(XPtr<structIntensity>,int)");
+            p__intensity_get_time_from_frame = (Ptr__intensity_get_time_from_frame)R_GetCCallable("speaker", "_speaker__intensity_get_time_from_frame");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_time_from_frame(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(frame)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline int _intensity_get_frame_from_time(XPtr<structIntensity> intensity_xptr, double time) {
+        typedef SEXP(*Ptr__intensity_get_frame_from_time)(SEXP,SEXP);
+        static Ptr__intensity_get_frame_from_time p__intensity_get_frame_from_time = NULL;
+        if (p__intensity_get_frame_from_time == NULL) {
+            validateSignature("int(*_intensity_get_frame_from_time)(XPtr<structIntensity>,double)");
+            p__intensity_get_frame_from_time = (Ptr__intensity_get_frame_from_time)R_GetCCallable("speaker", "_speaker__intensity_get_frame_from_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_frame_from_time(Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<int >(rcpp_result_gen);
+    }
+
+    inline int _intensity_get_number_of_frames(XPtr<structIntensity> intensity_xptr) {
+        typedef SEXP(*Ptr__intensity_get_number_of_frames)(SEXP);
+        static Ptr__intensity_get_number_of_frames p__intensity_get_number_of_frames = NULL;
+        if (p__intensity_get_number_of_frames == NULL) {
+            validateSignature("int(*_intensity_get_number_of_frames)(XPtr<structIntensity>)");
+            p__intensity_get_number_of_frames = (Ptr__intensity_get_number_of_frames)R_GetCCallable("speaker", "_speaker__intensity_get_number_of_frames");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_number_of_frames(Shield<SEXP>(Rcpp::wrap(intensity_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<int >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_sampling_period(XPtr<structIntensity> intensity_xptr) {
+        typedef SEXP(*Ptr__intensity_get_sampling_period)(SEXP);
+        static Ptr__intensity_get_sampling_period p__intensity_get_sampling_period = NULL;
+        if (p__intensity_get_sampling_period == NULL) {
+            validateSignature("double(*_intensity_get_sampling_period)(XPtr<structIntensity>)");
+            p__intensity_get_sampling_period = (Ptr__intensity_get_sampling_period)R_GetCCallable("speaker", "_speaker__intensity_get_sampling_period");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_sampling_period(Shield<SEXP>(Rcpp::wrap(intensity_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_start_time(XPtr<structIntensity> intensity_xptr) {
+        typedef SEXP(*Ptr__intensity_get_start_time)(SEXP);
+        static Ptr__intensity_get_start_time p__intensity_get_start_time = NULL;
+        if (p__intensity_get_start_time == NULL) {
+            validateSignature("double(*_intensity_get_start_time)(XPtr<structIntensity>)");
+            p__intensity_get_start_time = (Ptr__intensity_get_start_time)R_GetCCallable("speaker", "_speaker__intensity_get_start_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_start_time(Shield<SEXP>(Rcpp::wrap(intensity_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _intensity_get_end_time(XPtr<structIntensity> intensity_xptr) {
+        typedef SEXP(*Ptr__intensity_get_end_time)(SEXP);
+        static Ptr__intensity_get_end_time p__intensity_get_end_time = NULL;
+        if (p__intensity_get_end_time == NULL) {
+            validateSignature("double(*_intensity_get_end_time)(XPtr<structIntensity>)");
+            p__intensity_get_end_time = (Ptr__intensity_get_end_time)R_GetCCallable("speaker", "_speaker__intensity_get_end_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__intensity_get_end_time(Shield<SEXP>(Rcpp::wrap(intensity_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_read_from_file(std::string path) {
         typedef SEXP(*Ptr__sound_read_from_file)(SEXP);
         static Ptr__sound_read_from_file p__sound_read_from_file = NULL;

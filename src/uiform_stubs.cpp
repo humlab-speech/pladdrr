@@ -51,3 +51,12 @@ double UiForm_getReal (UiForm, conststring32) { return 0.0; }
 bool UiForm_getBoolean (UiForm, conststring32) { return false; }
 
 void UiForm_do (UiForm, bool) {}
+
+// Demo Editor stubs (for Demo namespace functions used by Formula.cpp)
+bool Demo_clickedIn (double left, double right, double bottom, double top) {
+    return false;  // Demo functions not supported in NO_GUI build
+}
+
+int Demo_peekInput (Interpreter interpreter) {
+    return 0;  // Demo functions not supported in NO_GUI build
+}
