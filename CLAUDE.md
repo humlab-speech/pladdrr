@@ -826,7 +826,8 @@ When adding any new capability, ask: "What Praat OBJECT does this relate to?" no
 ### Reference Documentation
 
 **Key Planning Documents:**
-- `specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md` - Master implementation plan
+- **`OOP_IMPLEMENTATION_ROADMAP_REVISED.md`** ⭐ MASTER PLAN (2025-11-10)
+- `specs/001-praat-r-access/COMPREHENSIVE-OOP-PLAN.md` - Detailed OOP design
 - `specs/001-praat-r-access/NAMING-CONVENTIONS.md` - Naming standards
 - `COMPREHENSIVE_OOP_ROADMAP.md` - High-level roadmap
 
@@ -835,4 +836,56 @@ When adding any new capability, ask: "What Praat OBJECT does this relate to?" no
 
 ---
 
-*This architecture enables systematic, consistent integration of Praat objects into R, following proven patterns from Parselmouth while leveraging R's strengths.*
+## Architecture Decisions (2025-11-10)
+
+### OOP-First Paradigm Shift
+
+**Decision**: Refocus from procedure-based to object-oriented architecture.
+
+**Rationale**: Praat source code is fundamentally OOP (C++ Thing hierarchy). Original spec missed this core design. Python's Parselmouth proves OOP approach works.
+
+**Implementation**: R6 classes wrap Praat C++ objects via XPtr, exposing native methods.
+
+### Critical Priorities
+
+1. **TextGrid** (currently disabled) - Essential for linguistic annotation
+2. **Manipulation** (not implemented) - Required for PSOLA pitch/duration modification  
+3. **Complete foundation objects** - Sound, Pitch, Formant need missing methods
+
+### Naming Convention
+
+Praat → R6 mapping for easy translation:
+- `Get X` → `get_x()`
+- `To X` → `to_x()` (new object)
+- `Extract X` → `extract_x()` (same type)
+- `Scale/Filter X` → `verb_x()` (modify in-place)
+- `Down to Matrix` → `as_x()` (export to R)
+
+### Postponed Features
+
+**Interpreter & Graphics** marked for future (v0.3.0+):
+- Cannot run Praat scripts directly (use R6 API instead)
+- No Picture layer (use R graphics)
+- Mitigation: Comprehensive translation guides + 50+ examples
+
+### Dependencies
+
+- **av package**: Use humlab-speech fork (https://github.com/humlab-speech/av)
+- **C++11**: Minimum for Rcpp + R 4.0+ compatibility
+- **R6**: Object-oriented programming
+
+### Timeline
+
+13 weeks to CRAN-ready package:
+- Weeks 1-2: Complete foundation objects
+- Weeks 3-4: TextGrid implementation
+- Weeks 5-6: Manipulation + tiers
+- Weeks 7-8: Spectral + additional tiers
+- Weeks 9-10: Re-implement superassp Python examples
+- Week 11: Documentation (10 vignettes)
+- Week 12: Testing & validation
+- Week 13: CRAN preparation
+
+---
+
+*This architecture enables systematic, consistent integration of Praat objects into R, following proven patterns from Parselmouth while leveraging R's strengths and avoiding Python dependency.*
