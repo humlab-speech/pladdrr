@@ -82,6 +82,89 @@ Important Notes
 
 ## Recent Changes
 
+### 2025-11-11 (PM): OOP Paradigm Assessment and Amendment
+
+**Status**: Strategic architecture review completed
+
+**Document Created**: `specs/001-praat-r-access/OOP-PARADIGM-ASSESSMENT-AND-AMENDMENT.md`
+
+**Key Findings**:
+- ✅ Current implementation ALREADY adopts proper OOP paradigm
+- ✅ 14+ R6 classes implemented with full method coverage
+- ✅ Architecture mirrors Praat's C++ object hierarchy
+- ⚠️ Need systematic documentation of Praat equivalents for each method
+- ⚠️ Some objects incomplete (missing methods)
+- ❌ 3 critical objects still missing: Spectrum (partial), FormantGrid, Table
+
+**Assessment Summary**:
+The package has substantially **exceeded** the original procedural specification and properly implements Praat's OOP design. The work ahead is **refinement and completion**, not restructuring.
+
+**Completed Objects** (14 total):
+1. Sound - Comprehensive (~60 methods)
+2. Pitch - Complete (~35 methods)
+3. Formant - Complete with tracking (~25 methods)
+4. Intensity - Complete (~20 methods)
+5. Harmonicity - Complete (~15 methods)
+6. TextGrid - Full implementation (~50 methods)
+7. Spectrogram - Mostly complete (~20 methods)
+8. Spectrum - Partial implementation (~15/25 methods needed)
+9. Ltas - Complete (~15 methods)
+10. Manipulation - PSOLA modification (~15 methods)
+11. PointProcess - Voice quality (~20 methods)
+12. PitchTier - Modifiable F0 (~15 methods)
+13. IntensityTier - Modifiable intensity (~12 methods)
+14. DurationTier - Duration modification (~12 methods)
+
+**Priority Work Remaining**:
+1. **Phase 1** (Week 1): Method Documentation Audit
+   - Add Praat equivalent documentation to all methods
+   - Ensure consistent naming across all objects
+   - Create systematic translation guide
+   
+2. **Phase 2** (Weeks 2-3): Complete Missing Methods
+   - Sound: filtering variants, resampling, modification
+   - Pitch: interpolate, smooth, octave correction
+   - Formant: complete tracking implementation
+   - Spectrum: complete all spectral methods
+   - TextGrid: additional manipulation methods
+
+3. **Phase 3** (Weeks 3-5): Implement Missing Objects
+   - Table (data export) - HIGH PRIORITY
+   - FormantGrid (formant manipulation) - MEDIUM PRIORITY
+   - Additional methods for existing objects
+
+4. **Phase 4** (Week 6): Parselmouth Migration Examples
+   - Re-implement all superassp Python examples in R
+   - Create comprehensive translation guide
+   - Document Python → R patterns
+
+5. **Phase 5** (Week 7): Validation
+   - Cross-validate against Praat Desktop
+   - Compare to Parselmouth output
+   - Performance benchmarking
+
+6. **Phase 6** (Week 8): Documentation Polish
+   - 8+ comprehensive vignettes
+   - Complete method documentation
+   - Migration guides (Praat, Parselmouth)
+
+**Future Extensions Documented** (NOT implementing now):
+- ❌ Praat Script Interpreter (can't run .praat files directly)
+  - Mitigation: Clear translation patterns documented
+  - Future: Possible v2.0 feature
+- ❌ Picture/Graphics system (no Praat drawing commands)
+  - Mitigation: Use R plotting (ggplot2, base)
+  - Future: Possible convenience wrappers
+
+**Decision Log for Continued Integration**:
+1. Always document Praat equivalent for each method
+2. Maintain strict naming conventions (get_*, to_*, as_*, extract_*)
+3. Prioritize objects by research usage frequency
+4. Test against Praat Desktop output for validation
+5. Focus on native R6 API, defer script interpreter
+
+**Timeline**: 8 weeks to completion (systematic refinement vs 12 weeks for new build)
+
 ### 2025-11-11 (PM): Completion Plan to v1.0.0
 
 **Status**: Package at 75% completion (v0.4.0), proceeding to v1.0.0
