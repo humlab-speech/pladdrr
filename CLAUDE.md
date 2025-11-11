@@ -2007,3 +2007,106 @@ Sound <- R6Class("Sound",
 - [ ] CRAN-ready package
 
 **Reference**: See `OOP_ARCHITECTURE_AMENDMENT_2025-11-11.md` for complete plan
+
+---
+
+## OOP Architecture Decision (2025-11-11) - MASTER PARADIGM
+
+**Master Document**: `OOP_PARADIGM_SHIFT_AMENDMENT_2025-11-11.md`
+
+### Executive Summary
+
+The speaker package follows **Praat's native object-oriented architecture**, not a procedural function approach. This is a fundamental architectural principle.
+
+### Core Principle
+
+**Expose Praat OBJECTS with their full METHOD suites, not isolated analysis procedures.**
+
+### Implementation Pattern
+
+1. **R6 Classes**: Each Praat object type (Sound, Pitch, Formant, TextGrid, Manipulation, etc.) 
+   is an R6 class backed by an external pointer to a persistent C++ Praat object
+
+2. **Method Naming**: Praat commands translate to snake_case methods
+   - `To Pitch...` → `to_pitch()`
+   - `Get mean...` → `get_mean()`
+   - `Get value at time...` → `get_value_at_time()`
+   - `Extract part...` → `extract_part()`
+   - `Insert boundary...` → `insert_boundary()`
+
+3. **Object Relationships**: Objects create other objects via transformation methods
+   - `sound$to_pitch()` → returns Pitch object
+   - `sound$to_formant_burg()` → returns Formant object
+   - `manipulation$extract_pitch_tier()` → returns PitchTier object
+   - `textgrid$get_tier(1)` → returns IntervalTier or PointTier object
+
+4. **Priority Objects** (Current Implementation Status):
+   - **Tier 1 (Foundation)**: ✅ Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram
+   - **Tier 2 (Tiers)**: ✅ PitchTier, IntensityTier, DurationTier
+   - **Tier 3 (Critical)**: ⚠️ **TextGrid** (annotation - needs completion), ✅ **Manipulation** (modification), ✅ **PointProcess**, ✅ **Harmonicity**, ✅ **LTAS**
+
+5. **Future Extensions** (Documented, not yet implemented):
+   - Additional objects: FormantPath, FormantGrid, Cochleagram, Excitation, Matrix, Table
+   - **Script interpreter** for running unmodified Praat scripts (deferred to v2.0)
+   - **Picture/plotting functionality** (Praat's graphics system - deferred, use R plotting instead)
+
+### Translation Examples
+
+**Praat Script → speaker (R):**
+```praat
+# Praat
+sound = Read from file: "audio.wav"
+pitch = To Pitch: 0.0, 75, 600
+meanF0 = Get mean: 0, 0, "Hertz"
+```
+
+```r
+# R (speaker package)
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(time_step = 0.0, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+**Python Parselmouth → speaker (R):**
+```python
+# Python (Parselmouth)
+import parselmouth as pm
+sound = pm.Sound("audio.wav")
+pitch = sound.to_pitch(time_step=0.01, pitch_floor=75, pitch_ceiling=600)
+mean_f0 = pitch.get_mean(from_time=0, to_time=0, unit="hertz")
+```
+
+```r
+# R (speaker package) - nearly identical!
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+### Continuous Integration Pattern
+
+When adding new Praat objects, follow this workflow:
+
+1. **Analyze Praat source** (`inst/praat-source/fon/[Object].h`)
+2. **Create C++ wrappers** (`src/[object]_wrappers.cpp`) with XPtr and finalizers
+3. **Create R6 class** (`R/[object]-r6.R`) inheriting from PraatObject
+4. **Write tests** (`tests/testthat/test-[object].R`)
+5. **Document** with Praat command equivalents in examples
+
+### Critical Missing Features (as of 2025-11-11)
+
+**Phase 1 Priority:**
+1. ⚠️ **TextGrid** - Complete implementation (partial code exists, needs testing)
+2. ✅ **Manipulation** - PSOLA pitch/duration modification (implemented)
+3. ✅ **PointProcess** - Voice quality (jitter/shimmer) (implemented)
+
+**Phase 2 Priority:**
+- FormantPath (optimal formant tracking)
+- VoiceReport (comprehensive voice analysis)
+- Additional Sound methods (resample, concatenate, mix)
+
+**See**: `OOP_PARADIGM_SHIFT_AMENDMENT_2025-11-11.md` for complete implementation roadmap and Parselmouth/Praat translation guide.
+
+---
+
+**This OOP approach is MANDATORY for all future development. Do not add procedural functions that bypass the object model.**
