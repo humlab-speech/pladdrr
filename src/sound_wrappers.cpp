@@ -407,7 +407,7 @@ SEXP sound_to_ltas(
     
     try {
         autoLtas ltas = Sound_to_Ltas(sound, bandwidth);
-        return wrapCopyExternalPointer<structLtas>(ltas.move(), "Ltas");
+        return create_xptr_from_auto<structLtas>(ltas);
         
     } catch (MelderError) {
         Melder_clearError();
@@ -769,5 +769,167 @@ void sound_de_emphasize(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to de-emphasize sound");
+    }
+}
+
+// ============================================================================
+// Advanced Sound Modification Methods (return new Sound)
+// ============================================================================
+
+//' Resample Sound to new sampling frequency (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_resample)]]
+XPtr<structSound> sound_resample(
+    XPtr<structSound> xptr,
+    double new_frequency,
+    int precision
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound resampled = Sound_resample(sound, new_frequency, precision);
+        return create_xptr_from_auto<structSound>(resampled);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to resample sound");
+    }
+}
+
+//' Convert Sound to mono by averaging channels (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_convert_to_mono)]]
+XPtr<structSound> sound_convert_to_mono(XPtr<structSound> xptr) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound mono = Sound_convertToMono(sound);
+        return create_xptr_from_auto<structSound>(mono);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert sound to mono");
+    }
+}
+
+//' Convert mono Sound to stereo by duplicating channel (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_convert_to_stereo)]]
+XPtr<structSound> sound_convert_to_stereo(XPtr<structSound> xptr) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound stereo = Sound_convertToStereo(sound);
+        return create_xptr_from_auto<structSound>(stereo);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert sound to stereo");
+    }
+}
+
+//' Copy Sound object (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_copy)]]
+XPtr<structSound> sound_copy(XPtr<structSound> xptr) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound copy = Data_copy(sound);
+        return create_xptr_from_auto<structSound>(copy);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to copy sound");
+    }
+}
+
+//' Concatenate two Sound objects (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_concatenate)]]
+XPtr<structSound> sound_concatenate(
+    XPtr<structSound> xptr1,
+    XPtr<structSound> xptr2,
+    double overlap
+) {
+    structSound* sound1 = get_ptr(xptr1, "Sound");
+    structSound* sound2 = get_ptr(xptr2, "Sound");
+    
+    try {
+        // Create SoundList and add both sounds
+        autoSoundList list = SoundList_create();
+        list->addItem_move(Data_copy(sound1));
+        list->addItem_move(Data_copy(sound2));
+        
+        // Concatenate with overlap
+        autoSound concatenated = Sounds_concatenate(list.get(), overlap);
+        return create_xptr_from_auto<structSound>(concatenated);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to concatenate sounds");
+    }
+}
+
+//' Mix two Sound objects (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_mix)]]
+XPtr<structSound> sound_mix(
+    XPtr<structSound> xptr1,
+    XPtr<structSound> xptr2,
+    double balance
+) {
+    structSound* sound1 = get_ptr(xptr1, "Sound");
+    structSound* sound2 = get_ptr(xptr2, "Sound");
+    
+    try {
+        // Sounds_convolve_same creates a sound of same duration by overlapping
+        // For mixing, we want to add the waveforms with a balance factor
+        
+        // Ensure sounds have same sampling frequency
+        if (sound1->dx != sound2->dx) {
+            Melder_throw(U"Sounds must have same sampling frequency to mix");
+        }
+        
+        // Create result with duration = max of the two
+        double xmax = std::max(sound1->xmax, sound2->xmax);
+        double xmin = std::min(sound1->xmin, sound2->xmin);
+        integer nx = Melder_iceiling((xmax - xmin) / sound1->dx);
+        integer ny = std::max(sound1->ny, sound2->ny);
+        
+        autoSound mixed = Sound_create(ny, xmin, xmax, nx, sound1->dx, sound1->x1);
+        
+        // Mix channels with balance
+        for (integer ich = 1; ich <= ny; ich++) {
+            for (integer i = 1; i <= nx; i++) {
+                double t = mixed->x1 + (i - 1) * mixed->dx;
+                double val1 = 0.0, val2 = 0.0;
+                
+                // Get value from sound1 if time is within range
+                if (t >= sound1->xmin && t <= sound1->xmax && ich <= sound1->ny) {
+                    integer i1 = Sampled_xToNearestIndex(sound1, t);
+                    if (i1 >= 1 && i1 <= sound1->nx) {
+                        val1 = sound1->z[ich][i1];
+                    }
+                }
+                
+                // Get value from sound2 if time is within range
+                if (t >= sound2->xmin && t <= sound2->xmax && ich <= sound2->ny) {
+                    integer i2 = Sampled_xToNearestIndex(sound2, t);
+                    if (i2 >= 1 && i2 <= sound2->nx) {
+                        val2 = sound2->z[ich][i2];
+                    }
+                }
+                
+                // Mix with balance: (s1 + balance * s2) / (1 + balance)
+                mixed->z[ich][i] = (val1 + balance * val2) / (1.0 + balance);
+            }
+        }
+        
+        return create_xptr_from_auto<structSound>(mixed);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to mix sounds");
     }
 }

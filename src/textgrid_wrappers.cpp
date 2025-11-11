@@ -29,8 +29,14 @@ Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
         }
         // Cast to TextGrid
         TextGrid textgrid = static_cast<TextGrid>(data.get());
+        // Create XPtr with custom finalizer
+        auto deleter = [](structTextGrid* thing) {
+            if (thing != nullptr) {
+                forget(thing);
+            }
+        };
         data.releaseToAmbiguousOwner();  // Transfer ownership
-        return create_xptr<structTextGrid>(textgrid);
+        return Rcpp::XPtr<structTextGrid>(textgrid, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to read TextGrid from file: " + path);

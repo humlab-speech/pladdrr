@@ -560,6 +560,87 @@ Sound <- R6::R6Class(
     },
     
     # ========================================================================
+    # Advanced Modification Methods (return new Sound)
+    # ========================================================================
+    
+    #' @description Resample to different sampling frequency
+    #' @param new_frequency New sampling frequency in Hz
+    #' @param precision Number of samples per zero crossing (50 = high quality, 1 = fast)
+    #' @return New Sound object with resampled waveform
+    resample = function(new_frequency, precision = 50) {
+      private$check_valid()
+      if (new_frequency <= 0) {
+        stop("new_frequency must be positive")
+      }
+      sound_ptr <- .sound_resample(private$ptr, new_frequency, as.integer(precision))
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Convert to mono by averaging all channels
+    #' @return New Sound object with single channel
+    convert_to_mono = function() {
+      private$check_valid()
+      if (self$get_number_of_channels() == 1) {
+        message("Sound is already mono, returning copy")
+      }
+      sound_ptr <- .sound_convert_to_mono(private$ptr)
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Convert mono sound to stereo by duplicating channel
+    #' @return New Sound object with two identical channels
+    convert_to_stereo = function() {
+      private$check_valid()
+      if (self$get_number_of_channels() > 1) {
+        warning("Sound is already multi-channel, returning as-is")
+        sound_ptr <- .sound_copy(private$ptr)
+      } else {
+        sound_ptr <- .sound_convert_to_stereo(private$ptr)
+      }
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Concatenate with another sound sequentially
+    #' @param other_sound Sound object to append
+    #' @param overlap Overlap duration in seconds (default: 0)
+    #' @return New Sound object with concatenated audio
+    concatenate = function(other_sound, overlap = 0) {
+      private$check_valid()
+      if (!inherits(other_sound, "Sound")) {
+        stop("other_sound must be a Sound object")
+      }
+      if (!other_sound$is_valid()) {
+        stop("other_sound is not a valid Sound object")
+      }
+      sound_ptr <- .sound_concatenate(
+        private$ptr,
+        other_sound$.__enclos_env__$private$ptr,
+        overlap
+      )
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Mix (add) with another sound
+    #' @param other_sound Sound object to mix with
+    #' @param balance Mixing balance: 1 = equal mix, <1 = more of self, >1 = more of other
+    #' @return New Sound object with mixed audio
+    mix = function(other_sound, balance = 1.0) {
+      private$check_valid()
+      if (!inherits(other_sound, "Sound")) {
+        stop("other_sound must be a Sound object")
+      }
+      if (!other_sound$is_valid()) {
+        stop("other_sound is not a valid Sound object")
+      }
+      sound_ptr <- .sound_mix(
+        private$ptr,
+        other_sound$.__enclos_env__$private$ptr,
+        balance
+      )
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    # ========================================================================
     # Export Methods
     # ========================================================================
     

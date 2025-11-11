@@ -331,6 +331,27 @@ These are **documented for future consideration** but NOT implemented in current
 - Availability of R alternatives
 - Impact on package complexity
 
+### Decision 7: LPC as Stub Implementation (Tier 3)
+
+**Choice**: Keep LPC as stub implementation, document as future extension
+
+**Rationale**:
+- Not currently used by exposed R API (only in comments)
+- Praat uses LPC internally for formant estimation (already working via `to_formant_burg`)
+- Full implementation would require significant effort (R6 class + all methods)
+- Formant analysis via Burg's method provides equivalent functionality
+- Can add later if direct LPC coefficient access is needed
+
+**Current stub behavior**: Throws informative error if called (prevents silent failures)
+
+**Future implementation** (if needed) would include:
+- LPC R6 class with coefficient access methods
+- `Sound$to_lpc_auto()`, `to_lpc_burg()`, `to_lpc_covariance()`, `to_lpc_marple()`
+- `LPC$to_formant()`, `to_spectrum_slice()`, `filter_sound()`
+- Query methods for coefficients, frames, sampling period
+
+**Alternative**: Users needing LPC can use R packages (e.g., `lpc`, `signal`) or extract formants directly
+
 ---
 
 ### 2025-11-10: OOP Architecture Assessment & Future Integration Plan
