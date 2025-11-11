@@ -119,6 +119,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp harmonicity_wrappers.cpp \
               intensity_wrappers.cpp pointprocess_wrappers.cpp \
               spectrum_wrappers.cpp spectrogram_wrappers.cpp \
+              ltas_wrappers.cpp \
               textgrid_wrappers.cpp pitchtier_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp \

@@ -55,8 +55,8 @@ double ltas_get_highest_frequency(Rcpp::XPtr<structLtas> ltas) {
 // ============================================================================
 
 // [[Rcpp::export(.ltas_get_value_at_frequency)]]
-double ltas_get_value_at_frequency(Rcpp::XPtr<structLtas> ltas, double frequency, int unit, bool interpolate) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+double ltas_get_value_at_frequency(SEXP xptr, double frequency, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (frequency < ltas->xmin || frequency > ltas->xmax) {
     return NA_REAL;
@@ -81,8 +81,8 @@ double ltas_get_value_at_frequency(Rcpp::XPtr<structLtas> ltas, double frequency
 }
 
 // [[Rcpp::export(.ltas_get_minimum)]]
-double ltas_get_minimum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int unit, bool interpolate) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+double ltas_get_minimum(SEXP xptr, double fmin, double fmax, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
@@ -108,8 +108,8 @@ double ltas_get_minimum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, i
 }
 
 // [[Rcpp::export(.ltas_get_maximum)]]
-double ltas_get_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int unit, bool interpolate) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+double ltas_get_maximum(SEXP xptr, double fmin, double fmax, int unit, bool interpolate) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
@@ -135,8 +135,8 @@ double ltas_get_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, i
 }
 
 // [[Rcpp::export(.ltas_get_mean)]]
-double ltas_get_mean(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int unit) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+double ltas_get_mean(SEXP xptr, double fmin, double fmax, int unit) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
@@ -164,8 +164,8 @@ double ltas_get_mean(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int 
 }
 
 // [[Rcpp::export(.ltas_get_slope)]]
-double ltas_get_slope(Rcpp::XPtr<structLtas> ltas, double f1min, double f1max, double f2min, double f2max, int unit) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+double ltas_get_slope(SEXP xptr, double f1min, double f1max, double f2min, double f2max, int unit) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   // Get mean of first range
   double sum1 = 0.0;
@@ -210,25 +210,25 @@ double ltas_get_slope(Rcpp::XPtr<structLtas> ltas, double f1min, double f1max, d
 // ============================================================================
 
 // [[Rcpp::export(.ltas_compute_trend_line)]]
-Rcpp::XPtr<structLtas> ltas_compute_trend_line(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+SEXP ltas_compute_trend_line(SEXP xptr, double fmin, double fmax) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
   
   autoLtas trend = Ltas_computeTrendLine(ltas.get(), fmin, fmax);
-  return create_xptr_from_auto<structLtas>(trend);
+  return wrapCopyExternalPointer<structLtas>(trend.move(), "Ltas");
 }
 
 // [[Rcpp::export(.ltas_subtract_trend_line)]]
-Rcpp::XPtr<structLtas> ltas_subtract_trend_line(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+SEXP ltas_subtract_trend_line(SEXP xptr, double fmin, double fmax) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
   
   autoLtas corrected = Ltas_subtractTrendLine(ltas.get(), fmin, fmax);
-  return create_xptr_from_auto<structLtas>(corrected);
+  return wrapCopyExternalPointer<structLtas>(corrected.move(), "Ltas");
 }
 
 // ============================================================================
@@ -236,8 +236,8 @@ Rcpp::XPtr<structLtas> ltas_subtract_trend_line(Rcpp::XPtr<structLtas> ltas, dou
 // ============================================================================
 
 // [[Rcpp::export(.ltas_as_data_frame)]]
-DataFrame ltas_as_data_frame(Rcpp::XPtr<structLtas> ltas) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+DataFrame ltas_as_data_frame(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   NumericVector frequency(ltas->nx);
   NumericVector power_db(ltas->nx);
@@ -255,8 +255,8 @@ DataFrame ltas_as_data_frame(Rcpp::XPtr<structLtas> ltas) {
 }
 
 // [[Rcpp::export(.ltas_as_matrix)]]
-NumericVector ltas_as_matrix(Rcpp::XPtr<structLtas> ltas) {
-  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+NumericVector ltas_as_matrix(SEXP xptr) {
+  autoLtas ltas = unwrapCopyExternalPointer<structLtas>(xptr, "Ltas");
   
   NumericVector values(ltas->nx);
   

@@ -8,8 +8,6 @@
 
 // Praat headers
 #include "fon/Manipulation.h"
-#include "fon/Sound_and_Manipulation.h"
-#include "fon/Manipulation_and_PitchTier.h"
 #include "fon/PitchTier.h"
 #include "fon/DurationTier.h"
 #include "fon/PointProcess.h"
@@ -62,7 +60,10 @@ SEXP manipulation_extract_pitch_tier(XPtr<structManipulation> manip) {
     if (!manip) stop("Invalid Manipulation pointer");
     
     try {
-        autoPitchTier tier = Manipulation_extractPitchTier(manip.get());
+        if (!manip->pitch) {
+            stop("No pitch tier in Manipulation");
+        }
+        autoPitchTier tier = Data_copy(manip->pitch.get());
         return create_xptr_from_auto<structPitchTier>(tier);
     } catch (MelderError) {
         Melder_clearError();
@@ -75,7 +76,10 @@ SEXP manipulation_extract_duration_tier(XPtr<structManipulation> manip) {
     if (!manip) stop("Invalid Manipulation pointer");
     
     try {
-        autoDurationTier tier = Manipulation_extractDurationTier(manip.get());
+        if (!manip->duration) {
+            stop("No duration tier in Manipulation");
+        }
+        autoDurationTier tier = Data_copy(manip->duration.get());
         return create_xptr_from_auto<structDurationTier>(tier);
     } catch (MelderError) {
         Melder_clearError();
@@ -174,7 +178,7 @@ SEXP manipulation_get_resynthesis_lpc(XPtr<structManipulation> manip) {
     if (!manip) stop("Invalid Manipulation pointer");
     
     try {
-        autoSound sound = Manipulation_to_Sound(manip.get(), Manipulation_LPC);
+        autoSound sound = Manipulation_to_Sound(manip.get(), Manipulation_PULSES_LPC);
         return create_xptr_from_auto<structSound>(sound);
     } catch (MelderError) {
         Melder_clearError();
