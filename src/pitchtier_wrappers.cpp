@@ -155,7 +155,7 @@ void pitchtier_shift_frequencies(XPtr<structPitchTier> tier, double shift) {
     if (!tier) stop("Invalid PitchTier pointer");
     
     try {
-        PitchTier_shiftFrequencies(tier.get(), tier->xmin, tier->xmax, shift, kPitch_unit::kPitch_unit_HERTZ);
+        PitchTier_shiftFrequencies(tier.get(), tier->xmin, tier->xmax, shift, kPitch_unit::HERTZ);
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to shift frequencies");
@@ -183,7 +183,7 @@ void pitchtier_save(XPtr<structPitchTier> tier, std::string path) {
     if (!tier) stop("Invalid PitchTier pointer");
     
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(tier.get(), &file);
     } catch (MelderError) {
@@ -195,7 +195,7 @@ void pitchtier_save(XPtr<structPitchTier> tier, std::string path) {
 // [[Rcpp::export(.pitchtier_read)]]
 SEXP pitchtier_read(std::string path) {
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         autoPitchTier tier = Data_readFromTextFile(&file).static_cast_move<structPitchTier>();
         return create_xptr_from_auto<structPitchTier>(tier);

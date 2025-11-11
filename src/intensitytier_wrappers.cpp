@@ -134,7 +134,7 @@ void intensitytier_save(XPtr<structIntensityTier> tier, std::string path) {
     if (!tier) stop("Invalid IntensityTier pointer");
     
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(tier.get(), &file);
     } catch (MelderError) {
@@ -146,7 +146,7 @@ void intensitytier_save(XPtr<structIntensityTier> tier, std::string path) {
 // [[Rcpp::export(.intensitytier_read)]]
 SEXP intensitytier_read(std::string path) {
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         autoIntensityTier tier = Data_readFromTextFile(&file).static_cast_move<structIntensityTier>();
         return create_xptr_from_auto<structIntensityTier>(tier);

@@ -416,7 +416,7 @@ void pitch_save(Rcpp::XPtr<structPitch> pitch, std::string path) {
     if (!pitch) Rcpp::stop("Invalid Pitch pointer");
     
     try {
-        structMelderFile file = {};
+        structstructMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(pitch.get(), &file);
     } catch (MelderError) {

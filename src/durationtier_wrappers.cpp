@@ -123,7 +123,7 @@ void durationtier_save(XPtr<structDurationTier> tier, std::string path) {
     if (!tier) stop("Invalid DurationTier pointer");
     
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         Data_writeToTextFile(tier.get(), &file);
     } catch (MelderError) {
@@ -135,7 +135,7 @@ void durationtier_save(XPtr<structDurationTier> tier, std::string path) {
 // [[Rcpp::export(.durationtier_read)]]
 SEXP durationtier_read(std::string path) {
     try {
-        MelderFile file = {};
+        structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
         autoDurationTier tier = Data_readFromTextFile(&file).static_cast_move<structDurationTier>();
         return create_xptr_from_auto<structDurationTier>(tier);
