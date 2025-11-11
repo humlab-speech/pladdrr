@@ -82,6 +82,257 @@ Important Notes
 
 ## Recent Changes
 
+### 2025-11-11: Comprehensive OOP Architecture Reassessment
+
+**Document**: `OOP_REASSESSMENT_2025-11-11.md`
+
+**Key Finding**: The package has already substantially adopted the proper object-oriented paradigm! Current implementation FAR exceeds the original procedural speckit plan.
+
+**Already Implemented** ✅:
+- 14+ R6 classes (Sound, Pitch, Formant, Intensity, Harmonicity, Spectrogram, Spectrum, LTAS, TextGrid, Manipulation, PointProcess, PitchTier, IntensityTier, DurationTier)
+- External pointer memory management
+- Consistent naming conventions (get_*, to_*, as_*, extract_*)
+- Critical objects for phonetics research (TextGrid, Manipulation, PointProcess)
+- Comprehensive C++ wrapper infrastructure
+
+**Remaining Work**: Refinement, not restructuring
+- Complete Harmonicity methods
+- Add FormantPath (optimal formant tracking)
+- Address LPC stub
+- Add missing Sound methods (resample, concatenate, mix)
+- Comprehensive documentation + vignettes
+- Extensive testing
+- Examples replicating superassp Python code
+
+**Architecture Decisions Documented Below** ⬇️
+
+---
+
+## Architectural Decisions for Praat Integration
+
+### Core Architecture: Object-Oriented Approach
+
+**Decision**: Implement Praat functionality as R6 classes that mirror Praat's C++ object hierarchy, NOT as standalone procedural functions.
+
+**Rationale**: Praat is fundamentally object-oriented with ~30+ object types (Thing → Function → Sampled → Sound, Pitch, Formant, etc.). Python's Parselmouth successfully wraps this architecture by exposing objects and their methods. Our R package must follow the same pattern.
+
+**Implementation**:
+- R6 classes for each Praat object type
+- External pointers (XPtr) to C++ Praat objects for memory efficiency
+- Consistent method naming (get_*, to_*, as_*, extract_*)
+- Zero-copy operations via pointer management
+
+### Object Coverage Strategy
+
+**Priority Tier 1: IMPLEMENTED** ✅
+- Sound, Pitch, Formant, Intensity, Harmonicity
+- Spectrogram, Spectrum, LTAS
+- TextGrid (CRITICAL for linguistic annotation)
+- Manipulation (CRITICAL for prosody modification)
+- PointProcess (CRITICAL for voice quality)
+- Supporting Tier objects: PitchTier, IntensityTier, DurationTier
+
+**Priority Tier 2: TO ADD**
+- FormantPath (optimal formant tracking)
+- LPC (complete or document as future work)
+- Voice Report (composite function)
+- Additional Sound modification methods (resample, concatenate, mix)
+
+**Priority Tier 3: FUTURE EXTENSIONS** (document, don't implement now)
+- Generic praat_call() interface (like Parselmouth's pm.praat.call())
+- Praat script interpreter (direct execution of .praat scripts)
+- Additional objects: Cochleagram, Excitation, MFCC, PowerCepstrum
+- Praat Picture/plotting wrappers (R has better plotting tools)
+- Batch processing utilities
+- Matrix/Table objects (use R's native data structures instead)
+
+### Naming Conventions
+
+**Established patterns** (maintain consistency):
+- `get_*` - Query properties: `get_mean()`, `get_duration()`, `get_value_at_time()`
+- `to_*` - Transform to another object: `to_pitch()`, `to_formant_burg()`, `to_intensity()`
+- `as_*` - Export to R structure: `as_data_frame()`, `as_matrix()`
+- `extract_*` - Get subset/component: `extract_part()`, `extract_channel()`, `extract_pitch_tier()`
+- `*_at_time` - Time-specific queries: `get_value_at_time()`, `get_label_at_time()`
+- `*_at_index` - Index-specific queries: `get_value_at_index()`, `get_time_from_index()`
+
+### Media Loading Strategy
+
+**Decision**: Use `av` package (specifically humlab-speech fork: https://github.com/humlab-speech/av) for audio file I/O.
+
+**Rationale**:
+- Supports all formats via FFmpeg (WAV, MP3, FLAC, OGG, AAC, etc.)
+- Consistent with other humlab-speech packages (e.g., superassp)
+- Cross-platform and well-maintained
+- No need to replicate Praat's file I/O code
+- Already integrated in Sound$new() constructor
+
+### Praat Script Interpreter: Deferred
+
+**Decision**: Do NOT implement a Praat script interpreter in the current phase.
+
+**Rationale**:
+- Significant implementation effort (Praat's command parser, variable scope, control flow)
+- R6 API already mirrors Praat's semantics with consistent naming
+- Users can translate scripts manually with good documentation
+- Can be added later if demand exists
+
+**Consequence**: 
+- Users must translate Praat scripts to R code
+- Translation is straightforward due to consistent naming
+- Example: Praat's `To Pitch...` → R's `sound$to_pitch()`
+
+**Future Extension**: If implemented, would enable:
+- Direct execution of .praat script files
+- Zero-modification script reuse
+- Requires command interpreter integration with Praat's C++ parser
+
+### Picture/Plotting: Deferred
+
+**Decision**: Do NOT implement Praat's Picture object or plotting functions in the current phase.
+
+**Rationale**:
+- R has superior plotting capabilities (ggplot2, lattice, base graphics)
+- Praat's plotting is tightly coupled to its GUI
+- `as_data_frame()` export enables full R plotting ecosystem
+- Praat-style plots can be added as convenience wrappers later
+
+**Consequence**:
+- Users plot with R tools (recommended approach)
+- Export to data.frame, then use ggplot2, etc.
+- Can add Praat-compatible plotting functions if needed
+
+### Data Export Strategy
+
+**Decision**: Prefer `as_data_frame()` over Praat's native Table/Matrix formats.
+
+**Rationale**:
+- Data frames are R's lingua franca
+- Enables tidyverse integration
+- More flexible than Praat's Table object
+- Can still save to Praat formats for interoperability (via `save()` methods)
+
+**Implementation**:
+- All analysis objects provide `as_data_frame()` method
+- Returns tidy data (one observation per row)
+- Includes relevant metadata (time, frequency, formant number, etc.)
+
+### Memory Management
+
+**Decision**: Use external pointers (SEXP XPtr) with automatic finalization.
+
+**Implementation**:
+- Each R6 object stores `private$ptr` as external pointer
+- Finalizers call Praat's object destructors
+- Zero-copy operations (pass pointers, not data)
+- Prevents R garbage collection of active C++ objects
+
+**Testing**:
+- Run valgrind to verify no memory leaks
+- Test object lifecycle (create, use, finalize)
+- Verify proper cleanup on error conditions
+
+### Error Handling
+
+**Decision**: Bridge Praat's MelderError to R's error system.
+
+**Implementation**:
+- C++ wrapper functions catch Praat exceptions (MelderError)
+- Convert to R errors via Rcpp::stop()
+- Preserve error messages from Praat
+- Clean up resources before throwing
+
+### Continuation Plan for Additional Objects
+
+**When adding new Praat objects**, follow this pattern:
+
+1. **Research**: Examine Praat's C++ class (fon/*.h files)
+2. **Plan**: List all relevant methods (query, transform, modify, export)
+3. **R6 Class**: Create `R/objectname-r6.R` with methods
+4. **C++ Wrapper**: Create `src/objectname_wrappers.cpp` with Rcpp bindings
+5. **Testing**: Create `tests/testthat/test-objectname.R`
+6. **Documentation**: Roxygen2 docs with examples and Praat manual links
+7. **Integration**: Update NAMESPACE, ensure Sound can transform to new object
+
+**Example workflow** for a new object "Foo":
+```r
+# R6 Class (R/foo-r6.R)
+Foo <- R6::R6Class("Foo",
+  inherit = PraatObject,
+  public = list(
+    initialize = function(.xptr) { private$ptr <- .xptr },
+    get_value = function(time) { foo_get_value(private$ptr, time) },
+    to_bar = function(...) { Bar$new(foo_to_bar(private$ptr, ...)) },
+    as_data_frame = function() { foo_as_data_frame(private$ptr) }
+  )
+)
+
+# C++ Wrapper (src/foo_wrappers.cpp)
+// [[Rcpp::export]]
+double foo_get_value(SEXP xptr, double time) {
+  try {
+    autoFoo foo = XPtr_to_Foo(xptr);
+    return Foo_getValueAtTime(foo.get(), time);
+  } catch (MelderError) {
+    Rcpp::stop("Praat error in foo_get_value");
+  }
+}
+```
+
+### Integration with superassp Python Code
+
+**Plan**: In Phase 4, replicate all Parselmouth-based Python analyses from `/Users/frkkan96/Documents/src/superassp/inst/python/` in pure R.
+
+**Approach**:
+1. Catalog all Python files using Parselmouth
+2. Create equivalent R implementations using speaker R6 classes
+3. Place in `inst/examples/` with side-by-side comparison
+4. Create migration guide vignette
+5. Verify identical numerical results
+
+**Goal**: Demonstrate complete feature parity and provide concrete migration examples.
+
+### Future Extensions (Documented, Not Implemented)
+
+These are **documented for future consideration** but NOT implemented in current phases:
+
+1. **Generic praat_call() Interface**
+   - Like Parselmouth's `pm.praat.call(object, "Command", args...)`
+   - Would enable calling ANY Praat command
+   - Requires command parser integration
+   - Future-proofs against new Praat features
+
+2. **Praat Script Interpreter**
+   - Parse and execute .praat script files directly
+   - Enable zero-modification script reuse
+   - Large undertaking - evaluate need vs effort
+
+3. **Additional Specialized Objects**
+   - Cochleagram (auditory modeling)
+   - Excitation (ERB-based)
+   - MFCC (speech recognition features)
+   - PowerCepstrum (pitch via cepstrum)
+   - Polygon (formant tracking paths)
+
+4. **Batch Processing Utilities**
+   - Process directories of files
+   - Parallel processing support
+   - Progress indicators
+   - Error recovery/logging
+
+5. **Praat Picture/Plotting**
+   - Wrappers for Praat's plotting commands
+   - Generate Praat-style visualizations
+   - Alternative to R's native plotting
+
+**Decision Criteria** for implementing these:
+- User demand (feature requests, use cases)
+- Effort vs benefit analysis
+- Availability of R alternatives
+- Impact on package complexity
+
+---
+
 ### 2025-11-10: OOP Architecture Assessment & Future Integration Plan
 - **Confirmed OOP approach is correct** - aligns with Praat's C++ architecture and Parselmouth's design
 - **Documented integration patterns** for adding new Praat objects to the package
