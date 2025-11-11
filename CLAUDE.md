@@ -82,7 +82,33 @@ Important Notes
 
 ## Recent Changes
 
-### 2025-11-11: Comprehensive OOP Architecture Reassessment
+### 2025-11-11 (PM): Completion Plan to v1.0.0
+
+**Status**: Package at 75% completion (v0.4.0), proceeding to v1.0.0
+
+**Completion Plan Created**: `COMPLETION_PLAN_2025-11-11.md`
+
+**Current Implementation**:
+- ✅ 12 fully implemented objects
+- ⚠️ 2 partially implemented (Spectrogram 80%, TextGrid needs testing)
+- ❌ 4-6 missing objects (LPC, FormantGrid, Cochleagram, Matrix)
+- 📦 Rcpp exports regenerated (44K R, 103K header - comprehensive coverage)
+
+**10-Day Plan to 100%**:
+- **Phase 1** (Days 1-3): Validate TextGrid & Spectrogram, comprehensive testing
+- **Phase 2** (Days 4-7): Implement LPC and FormantGrid objects
+- **Phase 3** (Days 8-9): Complete documentation and vignettes
+- **Phase 4** (Day 10): CRAN preparation and v1.0.0 release
+
+**Key Decisions for v1.0**:
+1. ❌ **No Praat Script Interpreter** - Cannot execute `.praat` files directly
+   - Mitigation: Translation guide provided
+   - Future: Possible v2.0 feature
+2. ❌ **No Picture System** - No Praat-style plotting
+   - Mitigation: Use R plotting (ggplot2, base R)
+   - Future: Possible minimal v2.0 support
+
+### 2025-11-11 (AM): Comprehensive OOP Architecture Reassessment
 
 **Document**: `OOP_REASSESSMENT_2025-11-11.md`
 
