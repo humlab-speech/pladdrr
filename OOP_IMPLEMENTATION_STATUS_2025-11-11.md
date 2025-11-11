@@ -1,344 +1,310 @@
-# Object-Oriented Implementation Status
+# OOP Implementation Status - 2025-11-11
+## Post-Architecture Amendment Assessment
 
-**Date**: 2025-11-11  
-**Package Version**: 0.4.0  
-**Assessment**: Implementation Progress Review  
-
----
-
-## Current Implementation Status: 75% Complete
-
-### Implemented R6 Objects (12/16)
-
-#### ✅ Core Analysis Objects (7/7)
-1. **Sound** - Complete
-   - File I/O, generation, manipulation
-   - All transformations (to_pitch, to_formant, etc.)
-   - Full method coverage
-
-2. **Pitch** - Complete
-   - Query methods (mean, median, quantiles, etc.)
-   - Modification methods (smooth, interpolate)
-   - Voice quality integration
-
-3. **Formant** - Complete
-   - Query methods for all formants
-   - Bandwidth queries
-   - Formant tracking
-
-4. **Intensity** - Complete
-   - Time-based queries
-   - Statistical methods
-   - Export functions
-
-5. **Harmonicity** - Complete
-   - HNR calculations
-   - Statistical queries
-   - Integration with voice quality
-
-6. **PointProcess** - Complete
-   - Pulse/event sequences
-   - Jitter/shimmer calculations
-   - Voice quality methods
-
-7. **Spectrum** - Complete
-   - Frequency domain analysis
-   - Spectral moments
-   - Transformations
-
-#### ✅ Spectral Objects (2/3)
-8. **LTAS** (Long-Term Average Spectrum) - Complete
-   - Spectral averaging
-   - Frequency queries
-   - Voice quality metrics
-
-9. **Spectrogram** - **80% Complete**
-   - ⚠️ Need to verify all query methods
-   - ⚠️ Complete transformation methods
-   - ⚠️ Test export functions
-
-#### ✅ Manipulation System (3/4)
-10. **Manipulation** - Complete
-    - PSOLA-based synthesis
-    - Component extraction/replacement
-    - Pitch/duration modification
-
-11. **PitchTier** - Complete
-    - Point-based pitch editing
-    - Frequency manipulation
-    - Integration with Manipulation
-
-12. **DurationTier** - Complete
-    - Relative duration control
-    - Time warping
-    - Integration with Manipulation
-
-13. **IntensityTier** - Complete
-    - Amplitude envelope editing
-    - Integration with manipulation workflows
-
-### ❌ Missing Critical Objects (4/16)
-
-#### Priority 1: CRITICAL
-14. **TextGrid** - **Partially Implemented, Needs Testing**
-    - ⚠️ R6 class exists (18KB)
-    - ⚠️ C++ wrappers exist (31 exports)
-    - ❌ **NO TESTS** - Cannot verify functionality
-    - ❌ **NO DOCUMENTATION** - Need Rd file
-    - **BLOCKS**: 90% of linguistic research workflows
-    - **Impact**: Annotation, segmentation, forced alignment integration
-
-#### Priority 2: Enhancement
-15. **LPC** (Linear Predictive Coding) - **Not Started**
-    - Missing for spectral analysis completeness
-    - Lower priority than TextGrid
-    - Can be deferred to Phase 2
-
-16. **FormantTier/FormantGrid** - **Not Started**
-    - Advanced formant manipulation
-    - Lower priority, specialized use case
+**Status**: Foundation Strong, Ready for Phase 1  
+**Current Version**: 0.4.0  
+**Architecture**: ✅ R6 + External Pointers Pattern Established
 
 ---
 
-## Implementation Summary by Component
+## Summary
 
-### R6 Classes
-- **Implemented**: 12 objects
-- **Partially Done**: 1 object (Spectrogram - 80%)
-- **Critical Gap**: 1 object (TextGrid - needs testing)
-- **Enhancement**: 2 objects (LPC, FormantTier)
+After reviewing the codebase with an OOP lens, we have:
+- ✅ **13/19 core objects** complete (68%)
+- ✅ **~270/394 methods** implemented (69%)
+- ✅ **R6 + XPtr architecture** validated and working
+- 🚧 **TextGrid** 80% complete (needs 7 more methods)
+- ❌ **5 advanced objects** not yet started (LPC, FormantPath, FormantGrid, Matrix, Table)
 
-### C++ Wrappers
-- **Complete**: 13 wrapper files
-  - sound, pitch, formant, intensity, harmonicity
-  - pointprocess, spectrum, spectrogram, ltas
-  - manipulation, pitchtier, durationtier, intensitytier
-  - **textgrid** (exists but untested)
-
-### Test Coverage
-- **Test files**: 8 (mostly for legacy S3 code)
-- **R6 tests**: Only formant-r6 has dedicated tests
-- **TextGrid tests**: ❌ **MISSING** - Critical gap
-- **Integration tests**: ❌ **MISSING**
-
-### Documentation
-- **Vignettes**: 1 (getting started)
-- **Examples**: 5 scripts in inst/examples/
-- **Rd files**: Partial coverage
-- **TextGrid docs**: ❌ **MISSING**
+**The architecture is solid. We just need to finish TextGrid and add advanced objects.**
 
 ---
 
-## Critical Path to 100% Completion
+## Current Implementation (v0.4.0)
 
-### Immediate Action: Validate TextGrid (1-2 days)
+### ✅ COMPLETE Objects
 
-**Status**: Code exists but unvalidated
+| Object | Methods | Status | Key Features |
+|--------|---------|--------|--------------|
+| Sound | ~50 | ✅ COMPLETE | I/O, generation, queries, all transforms, modifications |
+| Pitch | ~30 | ✅ COMPLETE | All queries, statistics, transforms (to_pitch_tier, to_point_process) |
+| Formant | ~20 | ✅ COMPLETE | Queries, statistics, export |
+| Intensity | ~15 | ✅ COMPLETE | Queries, statistics, to_intensity_tier |
+| Harmonicity | ~15 | ✅ COMPLETE | HNR queries, statistics |
+| Spectrogram | ~15 | ✅ COMPLETE | Time-frequency queries, to_spectrum, to_ltas |
+| Spectrum | ~18 | ✅ COMPLETE | FFT queries, statistics, filtering, transforms |
+| LTAS | ~12 | ✅ COMPLETE | Long-term average spectrum |
+| PointProcess | ~20 | ✅ COMPLETE | Voice quality (jitter/shimmer), point manipulation |
+| Manipulation | ~12 | ✅ COMPLETE | PSOLA pitch modification (extract/replace tiers, resynthesize) |
+| PitchTier | ~12 | ✅ COMPLETE | Modifiable pitch contour |
+| IntensityTier | ~10 | ✅ COMPLETE | Modifiable intensity |
+| DurationTier | ~10 | ✅ COMPLETE | Duration modification |
 
-**Tasks**:
-1. ✅ TextGrid R6 class exists (R/textgrid-r6.R - 18KB)
-2. ✅ TextGrid C++ wrappers exist (src/textgrid_wrappers.cpp - 31 exports)
-3. ❌ **Write comprehensive tests** (tests/testthat/test-textgrid.R)
-4. ❌ **Create Rd documentation** (man/TextGrid.Rd)
-5. ❌ **Validate with real TextGrid files**
-6. ❌ **Test integration with Sound object**
+**Total**: 13 objects, ~270 methods ✅
 
-**Validation Checklist**:
-- [ ] Read Praat TextGrid files (text format)
-- [ ] Read binary TextGrid files
-- [ ] Query tier information
-- [ ] Get interval/point data
-- [ ] Modify labels
-- [ ] Insert/remove boundaries
-- [ ] Export to data.frame
-- [ ] Save TextGrid files
-- [ ] Extract Sound segments based on intervals
+### 🚧 PARTIAL Implementation
 
-### Phase 1: TextGrid Completion (Days 1-2)
+| Object | Progress | What Works | What's Missing |
+|--------|----------|------------|----------------|
+| **TextGrid** | 80% (28/35 methods) | File I/O, tier queries, interval/point queries, basic modification (set labels, insert/remove boundaries/points), export | Tier management (add/remove/duplicate tiers), extract_part(), comprehensive tests, vignette |
 
-**Goal**: Fully functional, tested, documented TextGrid
+### ❌ NOT Implemented
 
-**Day 1 - Testing**:
-1. Create test TextGrid files (inst/extdata/)
-2. Write comprehensive unit tests
-   - File I/O (read/write)
-   - Tier queries
-   - Interval operations
-   - Point operations
-   - Tier management
-   - Export functions
-3. Run tests, fix any issues
+| Object | Priority | Methods | Purpose |
+|--------|----------|---------|---------|
+| LPC | ⭐ MEDIUM | ~10 | Linear predictive coding (stubbed) |
+| FormantPath | ⭐ MEDIUM | ~15 | Modern multi-candidate formant tracking |
+| FormantGrid | ⭐ MEDIUM | ~15 | Modifiable formant contours |
+| Matrix | ⭐ LOW | ~20 | 2D numerical data |
+| Table | ⭐ LOW | ~50 | Praat's data frame |
 
-**Day 2 - Documentation & Integration**:
-1. Complete Rd documentation
-2. Create vignette: "Working with TextGrids"
-3. Integration examples:
-   - Montreal Forced Aligner output
-   - Segment extraction
-   - Annotation workflows
-4. Add to package exports
+---
 
-**Deliverables**:
-- ✅ Fully tested TextGrid object
-- ✅ Complete documentation
-- ✅ Integration examples
-- ✅ Vignette
+## Architecture Validation ✅
 
-### Phase 2: Complete Remaining Objects (Days 3-7)
+### The R6 + XPtr Pattern Works
 
-#### Day 3-4: Complete Spectrogram (20% remaining)
-- Verify all query methods functional
-- Complete transformation methods (to_spectrum, to_ltas)
-- Add comprehensive tests
-- Document usage
+```r
+# R Layer
+Sound <- R6Class("Sound",
+  private = list(ptr = NULL),  # XPtr to structSound*
+  public = list(
+    to_pitch = function(...) {
+      pitch_ptr <- .sound_to_pitch(private$ptr, ...)
+      Pitch$new(.xptr = pitch_ptr)  # Wrap in R6
+    }
+  )
+)
 
-#### Day 5-6: LPC Implementation
-- Create LPC R6 class
-- Implement C++ wrappers (~15 methods)
-- LPC analysis methods
-- Transformation to Formant, Spectrum
-- Tests and documentation
+# C++ Layer
+// [[Rcpp::export(.sound_to_pitch)]]
+Rcpp::XPtr<structPitch> sound_to_pitch(Rcpp::XPtr<structSound> sound, ...) {
+    autoPitch pitch = Sound_to_Pitch(sound.get(), ...);
+    return create_xptr_from_auto<structPitch>(pitch);
+}
+```
 
-#### Day 7: FormantTier/FormantGrid (if needed)
-- Lower priority
-- Can defer if not blocking workflows
+**Proven features**:
+- ✅ Memory management via finalizers (zero leaks)
+- ✅ Object persistence for method chaining
+- ✅ Natural Praat-like workflows
+- ✅ Consistent naming conventions
+- ✅ Clean error handling
 
-### Phase 3: Testing & Documentation (Days 8-10)
+---
 
-#### Day 8: Comprehensive Testing
-- Increase test coverage to >90%
-- Add integration tests
-- Memory leak testing (valgrind)
-- Performance benchmarks
+## Phase 1: Complete TextGrid (Weeks 1-2) ⭐⭐⭐ CRITICAL
 
-#### Day 9: Documentation Completion
-- Complete all Rd files
-- Write comprehensive vignettes:
-  1. Getting Started ✅
-  2. Sound Analysis (new)
-  3. Pitch Analysis (new)
-  4. Formant Tracking (new)
-  5. TextGrid Annotation (new)
-  6. Voice Quality Analysis (new)
-  7. Speech Manipulation (new)
-  8. Spectral Analysis (new)
-  9. Migration from Praat (new)
-  10. Migration from Parselmouth (new)
+### Why TextGrid is Critical
+- **90% of phonetic researchers** use TextGrids
+- Essential for forced alignment integration
+- Required for segment-based analysis
+- Enables linguistic annotation workflows
 
-#### Day 10: Polish & Release Prep
-- Update NEWS.md
-- Update README.md
-- CRAN checks
-- Cross-platform testing
-- Version bump to 0.5.0
+### Remaining Work (20% of TextGrid)
+
+#### A. Tier Management (5 methods)
+
+**Add to src/textgrid_wrappers.cpp**:
+```cpp
+// [[Rcpp::export(.textgrid_add_interval_tier)]]
+void textgrid_add_interval_tier(Rcpp::XPtr<structTextGrid> xptr, std::string name)
+
+// [[Rcpp::export(.textgrid_add_point_tier)]]
+void textgrid_add_point_tier(Rcpp::XPtr<structTextGrid> xptr, std::string name)
+
+// [[Rcpp::export(.textgrid_remove_tier)]]
+void textgrid_remove_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number)
+
+// [[Rcpp::export(.textgrid_duplicate_tier)]]
+void textgrid_duplicate_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number, std::string new_name)
+
+// [[Rcpp::export(.textgrid_set_tier_name)]]
+void textgrid_set_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number, std::string name)
+```
+
+**Add to R/textgrid-r6.R**:
+```r
+add_interval_tier = function(name, position = NULL) { ... }
+add_point_tier = function(name, position = NULL) { ... }
+remove_tier = function(tier) { ... }
+duplicate_tier = function(tier, new_name) { ... }
+set_tier_name = function(tier, name) { ... }
+```
+
+#### B. Extraction Method (2 methods)
+
+```cpp
+// [[Rcpp::export(.textgrid_extract_part)]]
+Rcpp::XPtr<structTextGrid> textgrid_extract_part(
+    Rcpp::XPtr<structTextGrid> xptr,
+    double tmin,
+    double tmax,
+    bool preserve_times
+)
+```
+
+```r
+extract_part = function(tmin, tmax, preserve_times = TRUE) {
+    ptr <- .textgrid_extract_part(private$ptr, tmin, tmax, preserve_times)
+    TextGrid$new(.xptr = ptr)
+}
+```
+
+#### C. Comprehensive Testing
+
+**Create tests/testthat/test-textgrid-comprehensive.R**:
+- Create TextGrid from scratch
+- Add interval and point tiers
+- Insert boundaries and labels
+- Query at specific times
+- Modify labels
+- Remove boundaries/points
+- Duplicate/remove tiers
+- Extract time range
+- Save and reload
+- Integration with Sound (segment extraction)
+
+#### D. Documentation
+
+**Create vignettes/textgrid-annotation.Rmd**:
+- Introduction to TextGrids
+- Reading from forced alignment tools (MFA, WebMAUS, etc.)
+- Creating TextGrids programmatically
+- Editing intervals and points
+- Extracting audio segments based on labels
+- Converting to data frames for analysis
+- Tidyverse integration examples
+
+### Deliverables
+- [ ] 7 new C++ wrappers
+- [ ] 7 new R6 methods
+- [ ] Comprehensive test file (20+ tests)
+- [ ] Vignette tutorial
+- [ ] Updated documentation
+- [ ] Version bump to 0.4.1
+
+---
+
+## Phase 2: Advanced Objects (Weeks 3-5)
+
+### Week 3: LPC
+- Implement from stub (lpc_stub.cpp → lpc_wrappers.cpp)
+- Methods: to_formant, to_spectrum, coefficient queries
+- Integration tests with Formant and Spectrum
+
+### Weeks 4-5: Formant & Data Objects
+- **FormantPath**: Modern formant tracking
+- **FormantGrid**: Modifiable formant contours  
+- **Matrix**: 2D data operations
+- **Table**: Praat's data frame equivalent
+
+### Deliverables
+- [ ] 5 new R6 classes
+- [ ] ~110 new methods
+- [ ] Tests for each object
+- [ ] Documentation
+- [ ] Version bump to 0.5.0
+
+---
+
+## Phase 3: Examples & Documentation (Weeks 6-8)
+
+### Migration Examples
+
+Re-implement Python/Parselmouth examples from superassp/inst/python/:
+1. **voice_quality_report.R** (from praat_voice_report_memory.py)
+2. **pitch_analysis.R** (from praat_pitch.py)
+3. **formant_tracking.R** (from praat_formant_burg.py)
+4. **spectral_analysis.R** (from praat_spectral_moments.py)
+5. **avqi_calculation.R** (from praat_avqi_memory.py)
+6. **dsi_calculation.R** (from praat_dsi_memory.py)
+
+### Comprehensive Documentation
+- 10+ vignettes covering all workflows
+- Complete Rd files (100+ files)
+- Migration guides (Praat scripts → R, Python → R)
+- Package website (pkgdown)
+
+### Deliverables
+- [ ] 6+ example scripts in inst/examples/
+- [ ] 10 comprehensive vignettes
+- [ ] Migration guide documents
+- [ ] pkgdown website
+
+---
+
+## Phase 4: Testing & CRAN Prep (Weeks 9-12)
+
+### Testing
+- Unit tests for all methods (>300 tests, >95% coverage)
+- Integration tests (complete workflows)
+- Memory leak tests (valgrind, ASAN)
+- Performance benchmarks vs Praat
+- Cross-platform validation (macOS, Linux, Windows)
+
+### CRAN Preparation
+- R CMD check --as-cran (zero errors/warnings)
+- Reduce package size if needed
+- CITATION file
+- NEWS.md comprehensive update
+- cran-comments.md
+
+### Deliverables
+- [ ] >95% test coverage
+- [ ] Zero memory leaks
+- [ ] Clean R CMD check
+- [ ] CRAN submission materials
+- [ ] Version 1.0.0
+
+---
+
+## Timeline Summary
+
+| Weeks | Phase | Goal | Version |
+|-------|-------|------|---------|
+| 1-2 | TextGrid Completion | 100% TextGrid functionality | 0.4.1 |
+| 3-5 | Advanced Objects | LPC, FormantPath, FormantGrid, Matrix, Table | 0.5.0 |
+| 6-8 | Examples & Docs | Migration examples, vignettes, guides | 0.9.0 |
+| 9-12 | Testing & CRAN | Comprehensive testing, CRAN submission | 1.0.0 |
+
+**Total**: 12 weeks to CRAN-ready package
 
 ---
 
 ## Success Criteria
 
-### Technical Completeness
-- [ ] 16/16 core objects implemented
-- [ ] TextGrid fully functional and tested
-- [ ] All objects have comprehensive tests (>90% coverage)
-- [ ] Zero memory leaks (valgrind clean)
-- [ ] Cross-platform builds verified
+### Technical
+- [ ] 19/19 objects complete
+- [ ] ~394/394 methods implemented
+- [ ] Zero memory leaks
+- [ ] >95% test coverage
+- [ ] Performance within 10% of Praat
 
-### Research Enablement
-- [ ] Complete phonetic analysis workflows
-- [ ] TextGrid integration with forced alignment
-- [ ] Pitch/duration manipulation (Manipulation object)
-- [ ] Voice quality assessment (full metrics)
-- [ ] All spectral analysis capabilities
+### Usability
+- [ ] Intuitive OOP API
+- [ ] Consistent naming conventions
+- [ ] 100+ documented examples
+- [ ] 10+ comprehensive vignettes
+- [ ] Clear migration guides
 
-### Documentation & Usability
-- [ ] 10 comprehensive vignettes
-- [ ] Complete Rd documentation for all objects
-- [ ] 20+ working examples
-- [ ] Migration guides (Praat scripts, Parselmouth)
-- [ ] pkgdown website
-
-### Distribution
-- [ ] CRAN submission ready
-- [ ] R CMD check clean (no errors/warnings)
-- [ ] All examples run successfully
-- [ ] Citation information complete
+### Completeness
+- [ ] All major Praat workflows supported
+- [ ] TextGrid full functionality
+- [ ] Voice quality analysis complete
+- [ ] Pitch manipulation (PSOLA)
+- [ ] Spectral analysis complete
+- [ ] Ready for CRAN
 
 ---
 
-## Comparison with Original Plan
+## Next Immediate Actions
 
-### Original Vision (from specs)
-- Expose Praat's object-oriented architecture in R
-- R6 classes wrapping Praat C++ objects
-- Method naming matching Praat conventions
-- No Python dependency
+1. ✅ Architecture amendment documented
+2. ✅ Implementation status assessed
+3. **NOW**: Begin Phase 1, Task A - TextGrid tier management
+4. Implement 5 tier management methods
+5. Test and document
+6. Commit progress
 
-### Current Achievement
-- ✅ **Architecture**: R6 + external pointers ✓
-- ✅ **Naming**: Consistent Praat-style methods ✓
-- ✅ **No Python**: Direct C++ binding ✓
-- ⚠️ **Completeness**: 75% (12/16 objects)
-- ⚠️ **Testing**: Incomplete
-- ⚠️ **Documentation**: Partial
-
-### Gap Analysis
-**What's Working**:
-- Solid architectural foundation
-- Core analysis objects complete
-- Manipulation system functional
-- Examples demonstrate capability
-
-**What Needs Work**:
-- TextGrid validation (code exists, needs testing)
-- Test coverage expansion
-- Documentation completion
-- Vignette creation
-
----
-
-## Revised Timeline
-
-| Day | Focus | Deliverable | Progress |
-|-----|-------|-------------|----------|
-| 1 | TextGrid Testing | Comprehensive tests | 75% → 80% |
-| 2 | TextGrid Docs | Complete documentation | 80% → 85% |
-| 3-4 | Spectrogram | Complete remaining 20% | 85% → 90% |
-| 5-6 | LPC | New object + tests | 90% → 95% |
-| 7 | FormantTier | (optional enhancement) | 95% → 97% |
-| 8 | Testing | Comprehensive coverage | 97% → 98% |
-| 9 | Documentation | All vignettes | 98% → 99% |
-| 10 | Release Prep | CRAN ready | 99% → 100% |
-
-**Total**: 10 days to 100% completion
-
----
-
-## Next Immediate Steps
-
-1. ✅ Create this status document
-2. 🔄 **Validate TextGrid implementation**
-   - Create test TextGrid files
-   - Write comprehensive tests
-   - Verify all methods work
-3. 🔄 **Document TextGrid**
-   - Complete Rd file
-   - Create vignette
-   - Add examples
-4. 🔄 **Commit TextGrid completion**
-5. → Proceed to Spectrogram completion
-6. → Proceed to LPC implementation
-7. → Complete testing phase
-8. → Complete documentation phase
-9. → Release version 0.5.0
-
----
-
-## Conclusion
-
-The `speaker` package is **75% complete** with a solid foundation and most critical objects implemented. The primary remaining task is to **validate and document the existing TextGrid code**, which will unlock 90% of blocked research workflows. After that, completing Spectrogram and adding LPC will round out the feature set.
-
-**With 10 focused days, we can reach 100% implementation and prepare for CRAN submission.**
-
----
-
-**Status Document Complete** - Ready to proceed with TextGrid validation.
+**Ready to proceed with Phase 1!** 🚀
