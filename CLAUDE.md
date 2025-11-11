@@ -1828,3 +1828,65 @@ formant <- formant_path$extract_formant()
 **Updated**: 2025-11-10  
 **Next Review**: After TextGrid implementation
 
+
+---
+
+## CRITICAL: Object-Oriented Architecture Decision (2025-11-11)
+
+**Status**: ACTIVE PARADIGM SHIFT  
+**Document**: `specs/001-praat-r-access/OOP-PARADIGM-SHIFT-AMENDMENT.md`
+
+### Core Issue
+
+Original specification used **procedural approach** (INCORRECT):
+```r
+pitch_data <- praat_extract_pitch(audio_file, min_pitch = 75)  # WRONG
+```
+
+This ignores Praat's fundamental object-oriented architecture (~30+ C++ classes).
+
+### Correct Approach
+
+**Object-oriented R6 classes mirroring Praat**:
+```r
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(unit = "hertz")
+```
+
+### Why This Matters
+
+1. Praat is OOP (Thing → Data → Function → Sampled hierarchy)
+2. Python Parselmouth successfully uses OOP
+3. Enables object persistence and method chaining
+4. Allows TextGrid, Manipulation, complete workflows
+5. Direct Praat method → R method mapping
+
+### Naming Convention (CRITICAL)
+
+Enables easy Praat → R translation:
+- Praat `Get duration` → R `get_duration()`
+- Praat `To Pitch: 0, 75, 600` → R `to_pitch(0, 75, 600)`
+- Praat `Extract part: 0, 1` → R `extract_part(0, 1)`
+
+### Priority Objects
+
+1. ⭐⭐⭐ TextGrid (90% of phonetic researchers need this)
+2. ⭐⭐ Manipulation (pitch/duration modification)
+3. ⭐⭐ VoiceReport (jitter, shimmer, HNR)
+4. ⭐ Sound, Pitch, Formant, Intensity (core analysis)
+
+### Media Loading
+
+- **Native**: Praat readers (WAV, AIFF)
+- **Extended**: av package for MP3, MP4, FLAC, OGG
+
+### Future Extensions (Post-CRAN)
+
+- Praat script interpreter
+- Picture/Graphics visualization
+- Additional objects on demand
+
+See full amendment document for complete implementation plan.
+
+**Last Updated**: 2025-11-11
