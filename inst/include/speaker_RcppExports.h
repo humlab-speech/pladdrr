@@ -1636,6 +1636,132 @@ namespace speaker {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
+    inline XPtr<structSound> _sound_resample(XPtr<structSound> xptr, double new_frequency, int precision) {
+        typedef SEXP(*Ptr__sound_resample)(SEXP,SEXP,SEXP);
+        static Ptr__sound_resample p__sound_resample = NULL;
+        if (p__sound_resample == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_resample)(XPtr<structSound>,double,int)");
+            p__sound_resample = (Ptr__sound_resample)R_GetCCallable("speaker", "_speaker__sound_resample");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_resample(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(new_frequency)), Shield<SEXP>(Rcpp::wrap(precision)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_convert_to_mono(XPtr<structSound> xptr) {
+        typedef SEXP(*Ptr__sound_convert_to_mono)(SEXP);
+        static Ptr__sound_convert_to_mono p__sound_convert_to_mono = NULL;
+        if (p__sound_convert_to_mono == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_convert_to_mono)(XPtr<structSound>)");
+            p__sound_convert_to_mono = (Ptr__sound_convert_to_mono)R_GetCCallable("speaker", "_speaker__sound_convert_to_mono");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_convert_to_mono(Shield<SEXP>(Rcpp::wrap(xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_convert_to_stereo(XPtr<structSound> xptr) {
+        typedef SEXP(*Ptr__sound_convert_to_stereo)(SEXP);
+        static Ptr__sound_convert_to_stereo p__sound_convert_to_stereo = NULL;
+        if (p__sound_convert_to_stereo == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_convert_to_stereo)(XPtr<structSound>)");
+            p__sound_convert_to_stereo = (Ptr__sound_convert_to_stereo)R_GetCCallable("speaker", "_speaker__sound_convert_to_stereo");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_convert_to_stereo(Shield<SEXP>(Rcpp::wrap(xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_copy(XPtr<structSound> xptr) {
+        typedef SEXP(*Ptr__sound_copy)(SEXP);
+        static Ptr__sound_copy p__sound_copy = NULL;
+        if (p__sound_copy == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_copy)(XPtr<structSound>)");
+            p__sound_copy = (Ptr__sound_copy)R_GetCCallable("speaker", "_speaker__sound_copy");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_copy(Shield<SEXP>(Rcpp::wrap(xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_concatenate(XPtr<structSound> xptr1, XPtr<structSound> xptr2, double overlap) {
+        typedef SEXP(*Ptr__sound_concatenate)(SEXP,SEXP,SEXP);
+        static Ptr__sound_concatenate p__sound_concatenate = NULL;
+        if (p__sound_concatenate == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_concatenate)(XPtr<structSound>,XPtr<structSound>,double)");
+            p__sound_concatenate = (Ptr__sound_concatenate)R_GetCCallable("speaker", "_speaker__sound_concatenate");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_concatenate(Shield<SEXP>(Rcpp::wrap(xptr1)), Shield<SEXP>(Rcpp::wrap(xptr2)), Shield<SEXP>(Rcpp::wrap(overlap)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_mix(XPtr<structSound> xptr1, XPtr<structSound> xptr2, double balance) {
+        typedef SEXP(*Ptr__sound_mix)(SEXP,SEXP,SEXP);
+        static Ptr__sound_mix p__sound_mix = NULL;
+        if (p__sound_mix == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_mix)(XPtr<structSound>,XPtr<structSound>,double)");
+            p__sound_mix = (Ptr__sound_mix)R_GetCCallable("speaker", "_speaker__sound_mix");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_mix(Shield<SEXP>(Rcpp::wrap(xptr1)), Shield<SEXP>(Rcpp::wrap(xptr2)), Shield<SEXP>(Rcpp::wrap(balance)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_speaker_RCPPEXPORTS_H_GEN_
