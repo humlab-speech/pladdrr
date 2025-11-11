@@ -1916,3 +1916,94 @@ Enables easy Praat → R translation:
 See full amendment document for complete implementation plan.
 
 **Last Updated**: 2025-11-11
+
+---
+
+## Architectural Amendments (2025-11-11)
+
+### Amendment Summary
+**Document**: `OOP_ARCHITECTURE_AMENDMENT_2025-11-11.md`
+
+After reviewing the codebase and existing specs, we identified that while the R6/OOP foundation exists, the **full implications of Praat's object-oriented architecture** need to be emphasized:
+
+### Key Insights
+
+1. **Praat is deeply OOP** - ~30+ C++ classes in rich hierarchy
+2. **Python Parselmouth succeeds** by mirroring this OOP design
+3. **R implementation should do the same** - R6 wrapping XPtr to persistent C++ objects
+
+### Architecture Pattern (Confirmed)
+
+```r
+# R6 Class
+Sound <- R6Class("Sound",
+  private = list(ptr = NULL),  # XPtr to structSound*
+  public = list(
+    initialize = function(path) {
+      private$ptr <- .sound_read(path)  # C++ wrapper
+    },
+    to_pitch = function(...) {
+      pitch_ptr <- .sound_to_pitch(private$ptr, ...)
+      Pitch$new(.xptr = pitch_ptr)  # Return new object
+    }
+  )
+)
+```
+
+### Revised Implementation Priority
+
+**Phase 1 (Weeks 1-2)**: Complete TextGrid ⭐⭐⭐
+- CRITICAL for 90% of phonetic research
+- Enable textgrid_wrappers.cpp (currently disabled)
+- Full interval/point tier manipulation
+- Integration with forced alignment
+
+**Phase 2 (Weeks 3-5)**: Voice Quality & Manipulation ⭐⭐
+- PointProcess (jitter/shimmer calculations)
+- Manipulation object (PSOLA pitch modification)
+- PitchTier, DurationTier, IntensityTier
+
+**Phase 3 (Weeks 6-8)**: Advanced Objects
+- LPC (currently stubbed)
+- FormantPath, FormantGrid
+- Matrix, Table
+
+**Phase 4 (Weeks 9-10)**: Migration Examples
+- Re-implement superassp/inst/python/ Parselmouth examples in R
+- Document Python → R translation patterns
+
+**Phase 5 (Weeks 11-12)**: CRAN Preparation
+- Complete documentation (10+ vignettes)
+- Comprehensive testing (>95% coverage)
+- Performance benchmarks vs Praat/Parselmouth
+
+### Naming Conventions (CRITICAL for Praat → R Translation)
+
+| Praat | R6 Method |
+|-------|-----------|
+| `Get duration` | `get_duration()` |
+| `Get value at time... 0.5` | `get_value_at_time(0.5)` |
+| `Get mean... 0 0 Hertz` | `get_mean(unit="hertz")` |
+| `To Pitch...` | `to_pitch()` |
+| `To Formant (burg)...` | `to_formant_burg()` |
+| `Extract part... 0 1` | `extract_part(0, 1)` |
+| `Insert boundary... 1 0.5` | `insert_boundary(1, 0.5)` |
+| `Save as WAV file...` | `save("out.wav")` |
+
+**Method categories**:
+- `get_*()` - Query methods
+- `to_*()` - Transform to different object type
+- `extract_*()` - Extract subset (same type)
+- `as_*()` - Export to R native type
+- `set_*()`, `scale_*()`, `filter_*()` - Modify in place
+
+### Success Criteria
+
+- [ ] 19+ Praat objects as R6 classes
+- [ ] 400+ methods covering Praat functionality
+- [ ] Zero memory leaks
+- [ ] >95% test coverage
+- [ ] Comprehensive documentation
+- [ ] CRAN-ready package
+
+**Reference**: See `OOP_ARCHITECTURE_AMENDMENT_2025-11-11.md` for complete plan
