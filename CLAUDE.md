@@ -2874,4 +2874,133 @@ Rcpp::XPtr<structPitch> sound_to_pitch(Rcpp::XPtr<structSound> sound, ...) {
 
 ---
 
+## Object-Oriented Architecture Amendment (2025-11-12) ✅
+
+**Context**: After reviewing the spec-kit plan, Parselmouth Python implementation, and current codebase, we identified a critical insight about the package architecture.
+
+### The Paradigm Shift
+
+**Original Spec Approach**: Procedure-focused
+- Spec-kit emphasized implementing specific procedures (e.g., "implement pitch tracking function")
+- Treated Praat as a collection of standalone functions
+- Missed the object-oriented nature of Praat's C++ codebase
+
+**Actual Implementation**: Object-oriented (✅ CORRECT CHOICE)
+- The implementation correctly adopted R6 classes wrapping Praat C++ objects
+- Sound, Pitch, Formant, etc. are proper objects with methods
+- Direct method calls, not string-based dispatchers like Parselmouth's `praat.call()`
+
+**The Amendment**: Complete the object coverage
+
+**Status**: 13/19 core objects (68% coverage) - need to complete remaining 6 objects
+
+### Why This Matters: Praat Code Transcoding
+
+**User Goal**: "We want to allow R versions of code in the praat language"
+
+This requires systematic 1:1 mapping from Praat commands to R methods:
+
+| Praat Command | R Method | Example |
+|---------------|----------|---------|
+| `To Pitch: params` | `$to_pitch(params)` | `sound$to_pitch()` |
+| `Get mean: params` | `$get_mean(params)` | `pitch$get_mean()` |
+| `Set label: params` | `$set_label(params)` | `textgrid$set_label()` |
+| `Extract part: params` | `$extract_part(params)` | `sound$extract_part()` |
+
+**Praat Script**:
+```praat
+sound = Read from file: "audio.wav"
+pitch = To Pitch: 0.01, 75, 600
+meanF0 = Get mean: 0, 0, "Hertz"
+```
+
+**R Transcoding**:
+```r
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+### Advantages Over Parselmouth
+
+**speaker (R)**:
+```r
+sound <- Sound$new("file.wav")
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+✅ Direct method calls
+✅ Type-safe parameters
+✅ RStudio autocomplete
+✅ Self-documenting code
+✅ No Python dependency
+✅ Direct C++ binding
+
+**Parselmouth (Python)**:
+```python
+sound = pm.Sound("file.wav")
+pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+```
+
+⚠️ String-based dispatch (`praat.call()`)
+⚠️ Must know exact Praat command names
+⚠️ No autocomplete for Praat methods
+⚠️ Python interpreter overhead
+
+### Implementation Status
+
+**✅ Fully Implemented (13 objects)**:
+1. Sound - File I/O, generation, all query methods, conversions
+2. Pitch - All query/statistics methods
+3. Formant - Formant values, bandwidths, statistics
+4. Intensity - Intensity queries, statistics
+5. Harmonicity - HNR values
+6. Spectrogram - Time-frequency queries
+7. Spectrum - Power, spectral moments, filtering
+8. Ltas - Long-term average spectrum
+9. PointProcess - Jitter, shimmer, voice quality
+10. Manipulation - PSOLA pitch/duration modification
+11. PitchTier - Modifiable pitch contour
+12. IntensityTier - Modifiable intensity
+13. DurationTier - Duration modification
+
+**🚧 Partially Implemented (1 object)**:
+- TextGrid (80%) - Missing tier management, extract_part()
+
+**❌ Not Yet Implemented (5 objects)**:
+- LPC - Linear predictive coding
+- FormantPath - Modern formant tracking
+- FormantGrid - Modifiable formant contours
+- Matrix - 2D numerical data
+- Table - Praat's tabular data structure
+
+### Roadmap to Completion
+
+**Phase 1: Complete Existing Objects**
+1. TextGrid - Add tier management, extract_part()
+2. LPC - Complete stub implementation
+3. Formant - Add track() and down_to_table() methods
+
+**Phase 2: Critical Missing Objects**
+1. FormantPath - Modern formant tracking (used in latest Praat)
+2. Table - Many Praat methods return Tables, need for data export
+
+**Phase 3: Optional Objects**
+1. FormantGrid - Voice transformation
+2. Matrix - 2D data operations
+3. AmplitudeTier - Complete RealTier family
+
+### Documentation Deliverables
+
+1. **OOP_REASSESSMENT_AND_AMENDMENT_2025-11-12.md** - Full analysis and plan
+2. **Systematic naming conventions** - Praat → R mapping rules
+3. **Object hierarchy documentation** - Visual reference
+4. **Migration examples** - superassp Python → speaker R
+
+**Full details**: See `OOP_REASSESSMENT_AND_AMENDMENT_2025-11-12.md`
+
+---
+
 **Summary**: The speaker package uses a well-designed OOP architecture that directly exposes Praat's C++ objects as R6 classes. The naming conventions enable easy translation of Praat scripts. Future extensions (script interpreter, graphics) are documented but deferred to maintain focus on core functionality for v1.0.0.
