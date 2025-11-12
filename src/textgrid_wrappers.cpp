@@ -393,6 +393,47 @@ void textgrid_remove_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
     }, "Failed to remove tier");
 }
 
+// [[Rcpp::export(.textgrid_set_tier_name)]]
+void textgrid_set_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number, std::string name) {
+    praat_try([&]() {
+        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+        if (tier_number < 1 || tier_number > xptr->tiers->size)
+            Rcpp::stop("Tier number out of range");
+        Function tier = xptr->tiers->at[tier_number];
+        Thing_setName(tier, Melder_peek8to32(name.c_str()));
+    }, "Failed to set tier name");
+}
+
+// [[Rcpp::export(.textgrid_duplicate_tier)]]
+void textgrid_duplicate_tier(Rcpp::XPtr<structTextGrid> xptr, int tier_number, std::string new_name) {
+    praat_try([&]() {
+        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+        if (tier_number < 1 || tier_number > xptr->tiers->size)
+            Rcpp::stop("Tier number out of range");
+        
+        Function tier = xptr->tiers->at[tier_number];
+        
+        // Determine tier type and duplicate
+        IntervalTier intervalTier = nullptr;
+        TextTier textTier = nullptr;
+        AnyTextGridTier_identifyClass(tier, &intervalTier, &textTier);
+        
+        if (intervalTier) {
+            // Duplicate interval tier
+            autoIntervalTier newTier = Data_copy(intervalTier).static_cast_move<structIntervalTier>();
+            Thing_setName(newTier.get(), Melder_peek8to32(new_name.c_str()));
+            TextGrid_addTier_move(xptr.get(), newTier.move());
+        } else if (textTier) {
+            // Duplicate point/text tier
+            autoTextTier newTier = Data_copy(textTier).static_cast_move<structTextTier>();
+            Thing_setName(newTier.get(), Melder_peek8to32(new_name.c_str()));
+            TextGrid_addTier_move(xptr.get(), newTier.move());
+        } else {
+            Rcpp::stop("Unknown tier type");
+        }
+    }, "Failed to duplicate tier");
+}
+
 // ============================================================================
 // Extraction
 // ============================================================================

@@ -11,6 +11,7 @@ struct structIntensity;
 struct structHarmonicity;
 struct structSpectrogram;
 struct structSpectrum;
+struct structLtas;
 struct structTextGrid;
 struct structPointProcess;
 struct structManipulation;

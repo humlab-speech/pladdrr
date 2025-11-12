@@ -44,6 +44,8 @@
 #' - `$add_interval_tier(name)` - Add new IntervalTier
 #' - `$add_point_tier(name)` - Add new PointTier
 #' - `$remove_tier(tier)` - Remove tier
+#' - `$set_tier_name(tier, name)` - Rename a tier
+#' - `$duplicate_tier(tier, new_name)` - Duplicate tier with new name
 #'
 #' ## Export
 #'
@@ -365,6 +367,26 @@ TextGrid <- R6::R6Class(
     remove_tier = function(tier) {
       tier_num <- private$resolve_tier_number(tier)
       .textgrid_remove_tier(private$ptr, tier_num)
+      invisible(self)
+    },
+    
+    #' @description Set tier name
+    #' @param tier Tier number (1-based) or tier name
+    #' @param name New name for the tier
+    #' @return Self (invisibly) for method chaining
+    set_tier_name = function(tier, name) {
+      tier_num <- private$resolve_tier_number(tier)
+      .textgrid_set_tier_name(private$ptr, tier_num, as.character(name))
+      invisible(self)
+    },
+    
+    #' @description Duplicate tier with new name
+    #' @param tier Tier number (1-based) or tier name
+    #' @param new_name Name for the duplicated tier
+    #' @return Self (invisibly) for method chaining
+    duplicate_tier = function(tier, new_name) {
+      tier_num <- private$resolve_tier_number(tier)
+      .textgrid_duplicate_tier(private$ptr, tier_num, as.character(new_name))
       invisible(self)
     },
     

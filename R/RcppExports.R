@@ -1165,6 +1165,14 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_speaker_textgrid_remove_tier`, xptr, tier_number))
 }
 
+.textgrid_set_tier_name <- function(xptr, tier_number, name) {
+    invisible(.Call(`_speaker_textgrid_set_tier_name`, xptr, tier_number, name))
+}
+
+.textgrid_duplicate_tier <- function(xptr, tier_number, new_name) {
+    invisible(.Call(`_speaker_textgrid_duplicate_tier`, xptr, tier_number, new_name))
+}
+
 .textgrid_extract_part <- function(xptr, start_time, end_time, preserve_times) {
     .Call(`_speaker_textgrid_extract_part`, xptr, start_time, end_time, preserve_times)
 }

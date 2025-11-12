@@ -1,3 +1,79 @@
+# speaker 0.4.1
+
+## TextGrid Completion - Phase 1
+
+### New Methods
+
+* `TextGrid$set_tier_name(tier, name)` - Rename a tier
+* `TextGrid$duplicate_tier(tier, new_name)` - Duplicate tier with new name
+
+### Improvements
+
+* TextGrid now feature-complete with all tier management operations
+* Method chaining support for all tier operations
+* Comprehensive test suite for tier management
+* Support for both tier numbers and tier names in all methods
+
+### Bug Fixes
+
+* Added missing `structLtas` to speaker_types.h forward declarations
+
+### Testing
+
+* New test file: `test-textgrid-tier-management.R` with 11 test cases
+* Tests verify method chaining, independent copies, and error handling
+* Integration tests with large benchmark TextGrid files (60min, 90min)
+
+---
+
+# speaker 0.4.0
+
+## Major Release - Object-Oriented Architecture Established
+
+### Architecture
+
+* ✅ R6 + External Pointer architecture proven and stable
+* ✅ 13/19 core Praat objects fully implemented (~270 methods)
+* ✅ Consistent naming conventions for Praat→R translation
+* ✅ Direct C++ integration without Python dependency
+
+### Implemented Objects
+
+**Core Analysis** (5 objects):
+- Sound (~50 methods)
+- Pitch (~30 methods)
+- Formant (~20 methods)
+- Intensity (~15 methods)
+- Harmonicity (~15 methods)
+
+**Spectral Analysis** (3 objects):
+- Spectrogram (~15 methods)
+- Spectrum (~18 methods)
+- Ltas (~12 methods)
+
+**Voice Quality & Manipulation** (5 objects):
+- PointProcess (~20 methods) - jitter, shimmer
+- Manipulation (~12 methods) - PSOLA
+- PitchTier (~12 methods)
+- IntensityTier (~10 methods)
+- DurationTier (~10 methods)
+
+### TextGrid Object
+
+* 33/35 methods implemented (94%)
+* Read/write support (text and binary formats)
+* All query operations
+* Interval and point tier modifications
+* Data frame export
+
+### Documentation
+
+* Complete vignettes for all major workflows
+* Migration guides (Praat, Parselmouth)
+* Package website structure
+
+---
+
 # speaker 0.2.1
 
 ## Major Changes
