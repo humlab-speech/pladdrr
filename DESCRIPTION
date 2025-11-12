@@ -22,6 +22,7 @@ Depends:
 Imports:
     Rcpp (>= 1.0.0),
     R6 (>= 2.5.0),
+    S7 (>= 0.1.0),
     av
 LinkingTo: Rcpp
 Suggests:
