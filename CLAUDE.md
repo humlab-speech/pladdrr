@@ -82,6 +82,68 @@ Important Notes
 
 ## Recent Changes
 
+### 2025-11-12: Refined OOP Architecture Plan
+
+**Status**: Comprehensive OOP roadmap created, architecture validated
+
+**Document Created**: `specs/001-praat-r-access/OOP-ARCHITECTURE-REFINED-2025-11-12.md`
+
+**Key Decisions**:
+
+1. **Architecture Validated**: R6 + XPtr pattern is correct and complete
+   - 13 fully implemented objects (Sound, Pitch, Formant, Intensity, Harmonicity, Spectrogram, Spectrum, Ltas, PointProcess, Manipulation, PitchTier, IntensityTier, DurationTier)
+   - ~270 methods across all objects
+   - Direct C++ Praat integration (no Python layer)
+   - Memory management via R GC + C++ finalizers
+
+2. **Object-Oriented Paradigm Confirmed**:
+   - ✅ Objects expose Praat's native C++ class hierarchy
+   - ✅ Methods mirror Praat commands (get_*, to_*, as_* naming)
+   - ✅ Natural workflow: object creation → transformation → analysis
+   - ✅ Method chaining and object interaction supported
+
+3. **Remaining Work (19 total objects)**:
+   - 🚧 **TextGrid** (80% complete) - 7 more methods needed (tier management, extract_part)
+   - ❌ **LPC** - Stubbed, needs full implementation (~10 methods)
+   - ❌ **FormantPath** - Modern formant tracking (~15 methods)
+   - ❌ **FormantGrid** - Modifiable formant contours (~15 methods)
+   - ❌ **Matrix** - 2D data operations (~20 methods, low priority)
+   - ❌ **Table** - Praat's data frame (~50 methods, low priority - R has data.frame)
+
+4. **Integration Philosophy**:
+   - **Expose objects, not procedures** - Let users interact with Praat objects naturally
+   - **Consistent naming** - Easy translation from Praat scripts to R code
+   - **No Python dependency** - Direct C++ integration unlike Parselmouth
+   - **Complete functionality** - All major Praat workflows supported
+
+5. **Implementation Roadmap** (10 weeks to v1.0.0):
+   - Week 1: Complete TextGrid (add tier management methods)
+   - Week 2: Implement LPC object fully
+   - Weeks 3-4: FormantPath and FormantGrid
+   - Week 5: Matrix/Table (optional)
+   - Weeks 6-7: Re-implement 11 Python examples from superassp
+   - Week 8: Complete documentation (10 vignettes)
+   - Weeks 9-10: Testing, validation, CRAN prep
+
+6. **Future Object Integration Strategy**:
+   - **Pattern**: R6 class → C++ wrappers → Praat source
+   - **Naming**: Follow established conventions (get_*, to_*, as_*)
+   - **Testing**: Each object gets comprehensive test file
+   - **Documentation**: Vignette per major object category
+   - **Validation**: Compare output with Praat desktop
+
+7. **AV Package Integration** (Decision from previous session):
+   - Use `av` package (humlab-speech/av fork) for media loading
+   - Sound object wraps av-loaded audio
+   - No interpreter implementation needed initially
+   - Picture plotting deferred to future extension
+
+8. **Future Extensions** (Post v1.0.0):
+   - Praat script interpreter (execute unconverted scripts)
+   - Picture window plotting functionality
+   - Additional Praat objects as needed
+   - Performance optimizations
+
 ### 2025-11-11 (PM): OOP Paradigm Assessment and Amendment
 
 **Status**: Strategic architecture review completed
