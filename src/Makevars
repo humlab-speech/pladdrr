@@ -18,6 +18,7 @@ PKG_CPPFLAGS = -I. \
                -Ipraat.github.io/foned \
                -Ipraat.github.io/dwtools \
                -Ipraat.github.io/LPC \
+               -Ipraat.github.io/sensors \
                -Ipraat.github.io/external/portaudio \
                -Ipraat.github.io/external/flac \
                -Ipraat.github.io/external/mp3 \
@@ -114,6 +115,9 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
           fon/VocalTract_to_Spectrum.cpp fon/Sound_enhance.cpp \
           fon/VoiceAnalysis.cpp
 
+# Sensors sources
+SENSORS_SRC = praat.github.io/sensors/Electroglottogram.cpp
+
 # Wrapper sources (R package code)
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
@@ -123,13 +127,14 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               textgrid_wrappers.cpp pitchtier_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp \
+              amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               utils.cpp RcppExports.cpp
 
 # All sources combined
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(WRAPPER_SRC)
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(WRAPPER_SRC)
 
 # Object files (R will compile these)
 OBJECTS = $(SOURCES:.cpp=.o)

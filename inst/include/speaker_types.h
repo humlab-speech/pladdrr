@@ -22,5 +22,7 @@ struct structDurationTier;
 struct structIntensityTier;
 struct structMatrix;
 struct structTable;
+struct structAmplitudeTier;
+struct structElectroglottogram;
 
 #endif // SPEAKER_TYPES_H

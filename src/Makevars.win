@@ -72,11 +72,16 @@ PRAAT_FON_SOURCES = \
     $(PRAAT_SRC)/fon/Sound_to_Pitch.cpp \
     $(PRAAT_SRC)/fon/Sound_to_Formant.cpp \
     $(PRAAT_SRC)/fon/Sound_to_Intensity.cpp \
-    $(PRAAT_SRC)/fon/Sound_and_Spectrogram.cpp
+    $(PRAAT_SRC)/fon/Sound_and_Spectrogram.cpp \
+    $(PRAAT_SRC)/fon/AmplitudeTier.cpp
+
+# Sensors sources
+PRAAT_SENSORS_SOURCES = \
+    $(PRAAT_SRC)/sensors/Electroglottogram.cpp
 
 # Combine all sources (Note: R will auto-detect and compile)
 # This list is for documentation; R compiles all .cpp in src/ and subdirs if configured
-PRAAT_SOURCES = $(PRAAT_MELDER_SOURCES) $(PRAAT_SYS_SOURCES) $(PRAAT_FON_SOURCES)
+PRAAT_SOURCES = $(PRAAT_MELDER_SOURCES) $(PRAAT_SYS_SOURCES) $(PRAAT_FON_SOURCES) $(PRAAT_SENSORS_SOURCES)
 
 # Note: R's build system will automatically compile all .cpp files in src/
 # including those in src/praat/ subdirectories if properly configured
