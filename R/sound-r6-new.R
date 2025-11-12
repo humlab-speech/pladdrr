@@ -388,6 +388,100 @@ Sound <- R6::R6Class(
       Manipulation$new(.xptr = manip_ptr)
     },
     
+    #' @description Compute Linear Predictive Coding (Burg method)
+    #' @param prediction_order Number of LPC coefficients (default: 16)
+    #' @param analysis_width Analysis window length in seconds (default: 0.025)
+    #' @param time_step Time step between frames in seconds (default: 0.005)
+    #' @param pre_emphasis_frequency Pre-emphasis frequency in Hz (default: 50)
+    #' @return LPC object
+    to_lpc_burg = function(
+      prediction_order = 16,
+      analysis_width = 0.025,
+      time_step = 0.005,
+      pre_emphasis_frequency = 50.0
+    ) {
+      lpc_ptr <- .sound_to_lpc_burg(
+        private$ptr,
+        as.integer(prediction_order),
+        analysis_width,
+        time_step,
+        pre_emphasis_frequency
+      )
+      LPC$new(.xptr = lpc_ptr)
+    },
+    
+    #' @description Compute Linear Predictive Coding (autocorrelation method)
+    #' @param prediction_order Number of LPC coefficients (default: 16)
+    #' @param analysis_width Analysis window length in seconds (default: 0.025)
+    #' @param time_step Time step between frames in seconds (default: 0.005)
+    #' @param pre_emphasis_frequency Pre-emphasis frequency in Hz (default: 50)
+    #' @return LPC object
+    to_lpc_auto = function(
+      prediction_order = 16,
+      analysis_width = 0.025,
+      time_step = 0.005,
+      pre_emphasis_frequency = 50.0
+    ) {
+      lpc_ptr <- .sound_to_lpc_auto(
+        private$ptr,
+        as.integer(prediction_order),
+        analysis_width,
+        time_step,
+        pre_emphasis_frequency
+      )
+      LPC$new(.xptr = lpc_ptr)
+    },
+    
+    #' @description Compute Linear Predictive Coding (covariance method)
+    #' @param prediction_order Number of LPC coefficients (default: 16)
+    #' @param analysis_width Analysis window length in seconds (default: 0.025)
+    #' @param time_step Time step between frames in seconds (default: 0.005)
+    #' @param pre_emphasis_frequency Pre-emphasis frequency in Hz (default: 50)
+    #' @return LPC object
+    to_lpc_covariance = function(
+      prediction_order = 16,
+      analysis_width = 0.025,
+      time_step = 0.005,
+      pre_emphasis_frequency = 50.0
+    ) {
+      lpc_ptr <- .sound_to_lpc_covariance(
+        private$ptr,
+        as.integer(prediction_order),
+        analysis_width,
+        time_step,
+        pre_emphasis_frequency
+      )
+      LPC$new(.xptr = lpc_ptr)
+    },
+    
+    #' @description Compute Linear Predictive Coding (Marple method)
+    #' @param prediction_order Number of LPC coefficients (default: 16)
+    #' @param analysis_width Analysis window length in seconds (default: 0.025)
+    #' @param time_step Time step between frames in seconds (default: 0.005)
+    #' @param pre_emphasis_frequency Pre-emphasis frequency in Hz (default: 50)
+    #' @param tol1 Tolerance parameter 1 (default: 1e-6)
+    #' @param tol2 Tolerance parameter 2 (default: 1e-6)
+    #' @return LPC object
+    to_lpc_marple = function(
+      prediction_order = 16,
+      analysis_width = 0.025,
+      time_step = 0.005,
+      pre_emphasis_frequency = 50.0,
+      tol1 = 1e-6,
+      tol2 = 1e-6
+    ) {
+      lpc_ptr <- .sound_to_lpc_marple(
+        private$ptr,
+        as.integer(prediction_order),
+        analysis_width,
+        time_step,
+        pre_emphasis_frequency,
+        tol1,
+        tol2
+      )
+      LPC$new(.xptr = lpc_ptr)
+    },
+    
     #' @description Extract glottal pulses using cross-correlation method
     #' @param time_step Time step in seconds (0 = auto: 0.75 / pitch_floor)
     #' @param pitch_floor Minimum pitch in Hz (default: 75)
