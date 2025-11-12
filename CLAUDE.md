@@ -1,29 +1,83 @@
 # speaker Package Development Notes
 
-## Current Development Strategy (Option B - Hybrid Approach)
+## OOP-First Architecture CONFIRMED (2025-11-12) ✅
 
-**v1.0.0 Target**: R6 production release (~4 weeks)
-**v2.0.0 Target**: R7 migration (6+ months post v1.0.0)
+**Date**: 2025-11-12  
+**Package Version**: 0.4.1  
+**Status**: Week 1-2 of 4-week path to v1.0.0  
+**Phase**: Examples from superassp  
+**Master Plan**: `OOP_CONFIRMED_PLAN_2025-11-12.md`
 
-### Rationale
-- R6 implementation complete and stable (19 objects, 311 methods)
-- Proven memory management with external pointers
-- Faster path to CRAN release
-- R7/S7 ecosystem still maturing - time to learn best practices
-- Natural major version bump for R7 breaking changes
+### Core Philosophy: Objects Over Procedures
 
-### R7 Prototypes
-- Located in `dev/r7-prototypes/` (not included in builds)
-- Harmonicity_S7 complete as proof-of-concept
-- Migration template established
-- Will be used for v2.0.0 full migration
+The package correctly implements an **object-oriented paradigm** that mirrors Praat's C++ architecture and improves upon Python's Parselmouth library:
 
-### Next Steps to v1.0.0
-1. ⏭️ Reimplement superassp examples in R (`inst/examples/`)
-2. ⏭️ Write 6 comprehensive vignettes
-3. ⏭️ Achieve 90%+ test coverage
-4. ⏭️ CRAN readiness (R CMD check clean)
-5. ⏭️ Release v1.0.0
+**Praat's Approach** (C++ Objects):
+- Thing → Function → Sampled → Sound, Pitch, Formant, etc.
+- Object methods: `Sound_to_Pitch()`, `Pitch_getMean()`
+- Persistent objects with state
+
+**Parselmouth's Approach** (Python - Indirect):
+```python
+pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+```
+- String-based dispatch via `praat.call()`
+- No method autocomplete
+- Python interpreter overhead
+
+**speaker's Approach** (R - Direct OOP):
+```r
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+- ✅ Direct method calls (R6 classes)
+- ✅ IDE autocomplete support
+- ✅ Type-safe parameters
+- ✅ No Python dependency
+- ✅ Direct C++ binding
+- ✅ Consistent naming enables Praat script transcoding
+
+### Current Implementation Status
+
+**✅ Complete**: 16/17 Praat objects (94%), ~311 methods
+- Sound, Pitch, Formant, Intensity, Harmonicity
+- Spectrogram, Spectrum, Ltas
+- PointProcess, Manipulation, TextGrid
+- PitchTier, IntensityTier, DurationTier
+- LPC, Matrix
+
+**🔨 Remaining**: 1/17 (6%)
+- FormantGrid (modifiable formant contours)
+
+**❌ Not in Current Praat Version**:
+- FormantPath (requires Praat 6.1+)
+- Table (use R's data.frame instead)
+
+### Path to v1.0.0 (4 Weeks)
+
+**Week 1-2** (CURRENT): Examples from superassp
+- Reimplement Python Parselmouth examples in R
+- Location: `inst/examples/`
+- Demonstrate feature parity with Parselmouth
+- Show advantages of direct OOP approach
+
+**Week 2-3**: Documentation
+- 6 comprehensive vignettes
+- Complete function documentation
+- Migration guides (Praat scripts, Parselmouth)
+
+**Week 3-4**: Testing & CRAN Preparation
+- 90%+ test coverage
+- R CMD check clean
+- Cross-platform testing
+- v1.0.0 release
+
+### R7 Migration (v2.0.0 - Future)
+
+**Status**: R7 prototypes exist in `dev/r7-prototypes/`
+**Timeline**: 6-9 months post v1.0.0
+**Why Wait**: Let S7 ecosystem mature, proven R6 is stable
 
 See `INTEGRATION_PLAN_OPTION_B.md` for full roadmap.
 
