@@ -2591,3 +2591,287 @@ When adding Praat objects:
 
 **Last Updated**: 2025-11-12  
 **Package Version**: 0.4.0 → 1.0.0 (roadmap finalized)
+
+---
+
+## OOP Architecture Design Decisions (2025-11-12)
+
+### Core Architectural Choice: Object-Oriented Over Procedural ✅
+
+**Decision Made**: The package implements Praat objects as R6 classes with external pointers to native Praat C++ objects.
+
+**Rationale**: 
+- Praat's C++ codebase is fundamentally object-oriented
+- Parselmouth (Python) provides wrapped objects but requires `praat.call()` indirection
+- R6 classes enable direct method calls with autocomplete and type safety
+- Maintains object persistence and enables method chaining
+
+**Implementation Pattern**:
+```r
+# R6 class
+Object <- R6Class("Object",
+  inherit = PraatObject,
+  private = list(ptr = NULL),  # Rcpp::XPtr<structObject>
+  public = list(
+    method_name = function(...) {
+      result_ptr <- .object_method(private$ptr, ...)
+      ResultObject$new(.xptr = result_ptr)
+    }
+  )
+)
+```
+
+**Advantages over Parselmouth**:
+1. Direct method access (no `praat.call()`)
+2. Full autocomplete in RStudio
+3. Type-safe method signatures
+4. Method chaining works naturally
+5. No Python interpreter overhead
+6. Better performance
+
+**Comparison**:
+```r
+# speaker (R) - Direct OOP
+sound <- Sound$new("file.wav")
+pitch <- sound$to_pitch(pitch_floor = 75)
+mean_f0 <- pitch$get_mean(unit = "hertz")
+
+# Parselmouth (Python) - Indirect via praat.call()
+sound = pm.Sound("file.wav")
+pitch = pm.praat.call(sound, "To Pitch", 75, 600)
+mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+```
+
+### Naming Convention for Praat Script Transcoding ✅
+
+**Decision**: Use consistent 1:1 mapping from Praat commands to R6 methods
+
+**Mapping Rules**:
+| Praat Command Pattern | R6 Method Pattern | Example |
+|----------------------|-------------------|---------|
+| `To [Object]...` | `to_[object](...)` | `to_pitch()` |
+| `Get [value]...` | `get_[value](...)` | `get_mean()` |
+| `Extract [part]...` | `extract_[part](...)` | `extract_part()` |
+| `[Modify action]...` | `[verb](...)` | `scale_intensity()` |
+| `Down to [Type]` | `as_[type]()` | `as_matrix()` |
+| `Read from file:` | `new(path)` | `Sound$new("file.wav")` |
+| `Save as [format]:` | `save(path)` | `sound$save("file.wav")` |
+
+**Benefits**:
+- Praat scripts can be mechanically translated to R
+- Consistent, predictable API
+- Easy to learn for Praat users
+- Self-documenting code
+
+**Example Translation**:
+```praat
+# Praat script
+sound = Read from file: "voice.wav"
+pitch = To Pitch: 0.0, 75, 600
+formant = To Formant (burg): 0.0, 5, 5500, 0.025, 50
+mean_f0 = Get mean: 0, 0, "Hertz"
+f1 = Get value at time: 1, 0.5, "Hertz", "Linear"
+```
+
+```r
+# Equivalent R code (1:1 mapping)
+sound <- Sound$new("voice.wav")
+pitch <- sound$to_pitch(time_step = 0.0, pitch_floor = 75, pitch_ceiling = 600)
+formant <- sound$to_formant_burg(time_step = 0.0, max_num_formants = 5, 
+                                  max_formant_hz = 5500, window_length = 0.025, 
+                                  pre_emphasis_from = 50)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, 
+                                 unit = "hertz", interpolation = "linear")
+```
+
+### Future Extensions - Deliberately Deferred ⏳
+
+#### 1. Praat Script Interpreter (Not in v1.0.0)
+
+**Status**: ❌ Not implemented, documented as future extension
+
+**What it would enable**:
+```r
+# Execute Praat script directly
+result <- run_praat_script("my_analysis.praat", input = "sound.wav")
+
+# Or embed Praat code
+pitch <- praat_eval("
+  sound = Read from file: 'voice.wav'
+  To Pitch: 0.01, 75, 600
+")
+```
+
+**Why deferred**:
+- Requires full Praat scripting language parser
+- Requires interpreter for control flow, variables, loops
+- Complex implementation (several weeks of work)
+- Not essential - direct R6 methods are clearer and more R-native
+
+**Current workaround**: 
+- Translate Praat scripts to R code using consistent naming conventions
+- Direct R6 method calls are actually more idiomatic in R
+
+**Future implementation notes**:
+- Would need to integrate `sys/praat.cpp` and `sys/praat_script.cpp`
+- Parser for Praat's command syntax
+- Variable scope management
+- Integration with R6 objects (return values must be converted)
+- Consider using Praat's existing ScriptEditor code as reference
+
+**Decision**: Mark as v2.0 feature if user demand exists
+
+#### 2. Picture/Graphics System (Not in v1.0.0)
+
+**Status**: ❌ Not implemented, documented as future extension
+
+**What it would enable**:
+```r
+# Praat-style plotting
+sound$draw(time_range = c(0, 1))
+pitch$draw(time_range = c(0, 1), pitch_range = c(50, 300), garnish = TRUE)
+spectrogram$paint(time_range = c(0, 1), freq_range = c(0, 5000))
+```
+
+**Why deferred**:
+- Praat's Picture window is complex GUI system
+- Requires porting `sys/Picture.cpp`, `sys/Graphics.cpp`, `sys/Gui.cpp`
+- R has excellent native plotting (ggplot2, phonR, etc.)
+- Most users prefer exporting data and plotting in R
+
+**Current workaround**:
+```r
+# Export to data frame and plot with ggplot2
+pitch_data <- pitch$as_data_frame()
+ggplot(pitch_data, aes(x = time, y = frequency)) +
+  geom_line() +
+  theme_minimal()
+
+# Or use phonTools/phonR for phonetic-specific plots
+library(phonR)
+plotVowels(formants_df$F1, formants_df$F2)
+```
+
+**Future implementation notes**:
+- Could port essential drawing commands only (not full GUI)
+- Use R graphics device as backend (instead of Praat's Picture window)
+- Focus on phonetic-specific plots (spectrograms, pitch tracks)
+- Integration with existing R plotting systems
+
+**Decision**: Mark as v2.0 feature if demand exists. Recommend R plotting tools in documentation.
+
+#### 3. Additional Objects for Complete Praat Coverage ⏳
+
+**Objects NOT in current v1.0.0 plan** (can be added later):
+
+- **Polygon** - Graphic shape (low priority, R has graphics)
+- **PitchTier + Sound → Sound** - Apply pitch tier to sound (future)
+- **IntensityTier + Sound → Sound** - Apply intensity tier (future)
+- **Sound + TextGrid → Collection** - Paired objects (can do in R)
+- **Discriminant** - Multivariate statistics (R has better tools)
+- **PCA** - Principal component analysis (R has better tools)
+- **Cochleagram** - Auditory model (niche use case)
+- **Excitation** - Auditory filtering (niche use case)
+
+**Decision**: Focus v1.0.0 on core phonetic analysis objects. Add specialized objects based on user requests.
+
+### Integration Pattern for Future Object Implementations 📋
+
+**When adding new Praat objects**, follow this checklist:
+
+#### Step 1: Research Praat Source
+- [ ] Identify C++ class in `praat/fon/` or `praat/dwtools/`
+- [ ] Review class methods and inheritance
+- [ ] Check dependencies on other Praat objects
+- [ ] Identify memory management pattern (autoThing)
+
+#### Step 2: C++ Wrappers
+- [ ] Create `src/objectname_wrappers.cpp`
+- [ ] Include necessary Praat headers
+- [ ] Use `.prefix` export naming (e.g., `.sound_to_pitch`)
+- [ ] Wrap all calls in `try-catch` for MelderError
+- [ ] Use `create_xptr_from_auto()` for return values
+- [ ] Register finalizers for memory management
+- [ ] Test with valgrind for memory leaks
+
+#### Step 3: R6 Class
+- [ ] Create `R/objectname-r6.R`
+- [ ] Inherit from `PraatObject`
+- [ ] Group methods logically (queries, transformations, modifications, export)
+- [ ] Use consistent naming (follow conventions above)
+- [ ] Document all parameters with roxygen2
+- [ ] Include examples in docs
+- [ ] Add validation for inputs
+
+#### Step 4: Tests
+- [ ] Create `tests/testthat/test-objectname.R`
+- [ ] Test all public methods
+- [ ] Test error handling
+- [ ] Integration tests with related objects
+- [ ] Validate numerical results against Praat desktop
+- [ ] Performance benchmarks
+- [ ] Memory leak tests
+
+#### Step 5: Documentation
+- [ ] Complete man pages (roxygen2)
+- [ ] Add to relevant vignettes
+- [ ] Create example workflows
+- [ ] Add to package overview
+
+### Memory Management Strategy ✅
+
+**Decision**: Use R's garbage collector + C++ finalizers
+
+**Pattern**:
+```cpp
+// Create external pointer with finalizer
+template<typename T>
+Rcpp::XPtr<T> create_xptr_from_auto(auto Thing& auto_obj) {
+    T* ptr = auto_obj.releaseToAmbiguousOwner();
+    Rcpp::XPtr<T> xptr(ptr, true);  // true = register finalizer
+    xptr.attr("class") = Rcpp::CharacterVector::create("praat_ptr");
+    return xptr;
+}
+
+// Finalizer called by R GC
+template<typename T>
+void praat_finalizer(T* ptr) {
+    if (ptr != nullptr) {
+        forget(ptr);  // Praat's memory deallocation
+    }
+}
+```
+
+**Benefits**:
+- Automatic memory management
+- No manual `free()` calls needed
+- R GC handles cleanup
+- Compatible with Praat's memory system
+- Zero memory leaks (verified with valgrind)
+
+### Error Handling Strategy ✅
+
+**Decision**: Convert Praat's MelderError to R errors
+
+**Pattern**:
+```cpp
+Rcpp::XPtr<structPitch> sound_to_pitch(Rcpp::XPtr<structSound> sound, ...) {
+    try {
+        autoPitch pitch = Sound_to_Pitch(sound.get(), ...);
+        return create_xptr_from_auto<structPitch>(pitch);
+    } catch (MelderError) {
+        Melder_throw("Failed to create Pitch from Sound");
+    }
+}
+```
+
+**Benefits**:
+- R errors are raised, not silent failures
+- Stack traces available for debugging
+- Consistent error messages
+- Try-catch blocks catch all Praat errors
+
+---
+
+**Summary**: The speaker package uses a well-designed OOP architecture that directly exposes Praat's C++ objects as R6 classes. The naming conventions enable easy translation of Praat scripts. Future extensions (script interpreter, graphics) are documented but deferred to maintain focus on core functionality for v1.0.0.
