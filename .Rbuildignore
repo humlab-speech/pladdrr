@@ -24,3 +24,4 @@
 ^\.gitlab-ci\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
+dev/

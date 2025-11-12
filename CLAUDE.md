@@ -1,4 +1,35 @@
-- # Using Gemini CLI for Large Codebase Analysis
+# speaker Package Development Notes
+
+## Current Development Strategy (Option B - Hybrid Approach)
+
+**v1.0.0 Target**: R6 production release (~4 weeks)
+**v2.0.0 Target**: R7 migration (6+ months post v1.0.0)
+
+### Rationale
+- R6 implementation complete and stable (19 objects, 311 methods)
+- Proven memory management with external pointers
+- Faster path to CRAN release
+- R7/S7 ecosystem still maturing - time to learn best practices
+- Natural major version bump for R7 breaking changes
+
+### R7 Prototypes
+- Located in `dev/r7-prototypes/` (not included in builds)
+- Harmonicity_S7 complete as proof-of-concept
+- Migration template established
+- Will be used for v2.0.0 full migration
+
+### Next Steps to v1.0.0
+1. ⏭️ Reimplement superassp examples in R (`inst/examples/`)
+2. ⏭️ Write 6 comprehensive vignettes
+3. ⏭️ Achieve 90%+ test coverage
+4. ⏭️ CRAN readiness (R CMD check clean)
+5. ⏭️ Release v1.0.0
+
+See `INTEGRATION_PLAN_OPTION_B.md` for full roadmap.
+
+---
+
+# Using Gemini CLI for Large Codebase Analysis
 
 When analyzing large codebases or multiple files that might exceed context limits, use the Gemini CLI with its massive
 context window. Use `gemini -p` to leverage Google Gemini's large context capacity.
