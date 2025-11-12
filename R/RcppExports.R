@@ -121,6 +121,70 @@
     .Call(`_speaker_formant_down_to_table`, formant, include_frame_numbers, include_time, time_decimals, include_intensity, intensity_decimals, include_number_of_formants, frequency_decimals, include_bandwidths)
 }
 
+.formantgrid_create <- function(tmin, tmax, number_of_formants, initial_first_formant, initial_formant_spacing, initial_first_bandwidth, initial_bandwidth_spacing) {
+    .Call(`_speaker_formantgrid_create`, tmin, tmax, number_of_formants, initial_first_formant, initial_formant_spacing, initial_first_bandwidth, initial_bandwidth_spacing)
+}
+
+.formantgrid_create_empty <- function(tmin, tmax, number_of_formants) {
+    .Call(`_speaker_formantgrid_create_empty`, tmin, tmax, number_of_formants)
+}
+
+.formantgrid_from_formant <- function(formant) {
+    .Call(`_speaker_formantgrid_from_formant`, formant)
+}
+
+.formantgrid_get_start_time <- function(grid) {
+    .Call(`_speaker_formantgrid_get_start_time`, grid)
+}
+
+.formantgrid_get_end_time <- function(grid) {
+    .Call(`_speaker_formantgrid_get_end_time`, grid)
+}
+
+.formantgrid_get_number_of_formants <- function(grid) {
+    .Call(`_speaker_formantgrid_get_number_of_formants`, grid)
+}
+
+.formantgrid_get_formant_at_time <- function(grid, formant_number, time) {
+    .Call(`_speaker_formantgrid_get_formant_at_time`, grid, formant_number, time)
+}
+
+.formantgrid_get_bandwidth_at_time <- function(grid, formant_number, time) {
+    .Call(`_speaker_formantgrid_get_bandwidth_at_time`, grid, formant_number, time)
+}
+
+.formantgrid_add_formant_point <- function(grid, formant_number, time, value) {
+    invisible(.Call(`_speaker_formantgrid_add_formant_point`, grid, formant_number, time, value))
+}
+
+.formantgrid_add_bandwidth_point <- function(grid, formant_number, time, value) {
+    invisible(.Call(`_speaker_formantgrid_add_bandwidth_point`, grid, formant_number, time, value))
+}
+
+.formantgrid_remove_formant_points_between <- function(grid, formant_number, tmin, tmax) {
+    invisible(.Call(`_speaker_formantgrid_remove_formant_points_between`, grid, formant_number, tmin, tmax))
+}
+
+.formantgrid_remove_bandwidth_points_between <- function(grid, formant_number, tmin, tmax) {
+    invisible(.Call(`_speaker_formantgrid_remove_bandwidth_points_between`, grid, formant_number, tmin, tmax))
+}
+
+.formantgrid_to_formant <- function(grid, time_step, intensity) {
+    .Call(`_speaker_formantgrid_to_formant`, grid, time_step, intensity)
+}
+
+.formantgrid_to_sound <- function(grid, sampling_frequency, t_start, f0_start, t_mid, f0_mid, t_end, f0_end, adapt_factor, maximum_period, open_phase, collision_phase, power1, power2) {
+    .Call(`_speaker_formantgrid_to_sound`, grid, sampling_frequency, t_start, f0_start, t_mid, f0_mid, t_end, f0_end, adapt_factor, maximum_period, open_phase, collision_phase, power1, power2)
+}
+
+.sound_formantgrid_filter <- function(sound, grid) {
+    .Call(`_speaker_sound_formantgrid_filter`, sound, grid)
+}
+
+.sound_formantgrid_filter_noscale <- function(sound, grid) {
+    .Call(`_speaker_sound_formantgrid_filter_noscale`, sound, grid)
+}
+
 .harmonicity_to_sound_ac <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_speaker_harmonicity_from_sound_ac`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }

@@ -423,6 +423,338 @@ namespace speaker {
         return Rcpp::as<Rcpp::XPtr<structTable> >(rcpp_result_gen);
     }
 
+    inline XPtr<structFormantGrid> _formantgrid_create(double tmin, double tmax, int number_of_formants, double initial_first_formant, double initial_formant_spacing, double initial_first_bandwidth, double initial_bandwidth_spacing) {
+        typedef SEXP(*Ptr__formantgrid_create)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_create p__formantgrid_create = NULL;
+        if (p__formantgrid_create == NULL) {
+            validateSignature("XPtr<structFormantGrid>(*_formantgrid_create)(double,double,int,double,double,double,double)");
+            p__formantgrid_create = (Ptr__formantgrid_create)R_GetCCallable("speaker", "_speaker__formantgrid_create");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_create(Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)), Shield<SEXP>(Rcpp::wrap(number_of_formants)), Shield<SEXP>(Rcpp::wrap(initial_first_formant)), Shield<SEXP>(Rcpp::wrap(initial_formant_spacing)), Shield<SEXP>(Rcpp::wrap(initial_first_bandwidth)), Shield<SEXP>(Rcpp::wrap(initial_bandwidth_spacing)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormantGrid> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structFormantGrid> _formantgrid_create_empty(double tmin, double tmax, int number_of_formants) {
+        typedef SEXP(*Ptr__formantgrid_create_empty)(SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_create_empty p__formantgrid_create_empty = NULL;
+        if (p__formantgrid_create_empty == NULL) {
+            validateSignature("XPtr<structFormantGrid>(*_formantgrid_create_empty)(double,double,int)");
+            p__formantgrid_create_empty = (Ptr__formantgrid_create_empty)R_GetCCallable("speaker", "_speaker__formantgrid_create_empty");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_create_empty(Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)), Shield<SEXP>(Rcpp::wrap(number_of_formants)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormantGrid> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structFormantGrid> _formantgrid_from_formant(XPtr<structFormant> formant) {
+        typedef SEXP(*Ptr__formantgrid_from_formant)(SEXP);
+        static Ptr__formantgrid_from_formant p__formantgrid_from_formant = NULL;
+        if (p__formantgrid_from_formant == NULL) {
+            validateSignature("XPtr<structFormantGrid>(*_formantgrid_from_formant)(XPtr<structFormant>)");
+            p__formantgrid_from_formant = (Ptr__formantgrid_from_formant)R_GetCCallable("speaker", "_speaker__formantgrid_from_formant");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_from_formant(Shield<SEXP>(Rcpp::wrap(formant)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormantGrid> >(rcpp_result_gen);
+    }
+
+    inline double _formantgrid_get_start_time(XPtr<structFormantGrid> grid) {
+        typedef SEXP(*Ptr__formantgrid_get_start_time)(SEXP);
+        static Ptr__formantgrid_get_start_time p__formantgrid_get_start_time = NULL;
+        if (p__formantgrid_get_start_time == NULL) {
+            validateSignature("double(*_formantgrid_get_start_time)(XPtr<structFormantGrid>)");
+            p__formantgrid_get_start_time = (Ptr__formantgrid_get_start_time)R_GetCCallable("speaker", "_speaker__formantgrid_get_start_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_get_start_time(Shield<SEXP>(Rcpp::wrap(grid)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _formantgrid_get_end_time(XPtr<structFormantGrid> grid) {
+        typedef SEXP(*Ptr__formantgrid_get_end_time)(SEXP);
+        static Ptr__formantgrid_get_end_time p__formantgrid_get_end_time = NULL;
+        if (p__formantgrid_get_end_time == NULL) {
+            validateSignature("double(*_formantgrid_get_end_time)(XPtr<structFormantGrid>)");
+            p__formantgrid_get_end_time = (Ptr__formantgrid_get_end_time)R_GetCCallable("speaker", "_speaker__formantgrid_get_end_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_get_end_time(Shield<SEXP>(Rcpp::wrap(grid)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline int _formantgrid_get_number_of_formants(XPtr<structFormantGrid> grid) {
+        typedef SEXP(*Ptr__formantgrid_get_number_of_formants)(SEXP);
+        static Ptr__formantgrid_get_number_of_formants p__formantgrid_get_number_of_formants = NULL;
+        if (p__formantgrid_get_number_of_formants == NULL) {
+            validateSignature("int(*_formantgrid_get_number_of_formants)(XPtr<structFormantGrid>)");
+            p__formantgrid_get_number_of_formants = (Ptr__formantgrid_get_number_of_formants)R_GetCCallable("speaker", "_speaker__formantgrid_get_number_of_formants");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_get_number_of_formants(Shield<SEXP>(Rcpp::wrap(grid)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<int >(rcpp_result_gen);
+    }
+
+    inline double _formantgrid_get_formant_at_time(XPtr<structFormantGrid> grid, int formant_number, double time) {
+        typedef SEXP(*Ptr__formantgrid_get_formant_at_time)(SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_get_formant_at_time p__formantgrid_get_formant_at_time = NULL;
+        if (p__formantgrid_get_formant_at_time == NULL) {
+            validateSignature("double(*_formantgrid_get_formant_at_time)(XPtr<structFormantGrid>,int,double)");
+            p__formantgrid_get_formant_at_time = (Ptr__formantgrid_get_formant_at_time)R_GetCCallable("speaker", "_speaker__formantgrid_get_formant_at_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_get_formant_at_time(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline double _formantgrid_get_bandwidth_at_time(XPtr<structFormantGrid> grid, int formant_number, double time) {
+        typedef SEXP(*Ptr__formantgrid_get_bandwidth_at_time)(SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_get_bandwidth_at_time p__formantgrid_get_bandwidth_at_time = NULL;
+        if (p__formantgrid_get_bandwidth_at_time == NULL) {
+            validateSignature("double(*_formantgrid_get_bandwidth_at_time)(XPtr<structFormantGrid>,int,double)");
+            p__formantgrid_get_bandwidth_at_time = (Ptr__formantgrid_get_bandwidth_at_time)R_GetCCallable("speaker", "_speaker__formantgrid_get_bandwidth_at_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_get_bandwidth_at_time(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline void _formantgrid_add_formant_point(XPtr<structFormantGrid> grid, int formant_number, double time, double value) {
+        typedef SEXP(*Ptr__formantgrid_add_formant_point)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_add_formant_point p__formantgrid_add_formant_point = NULL;
+        if (p__formantgrid_add_formant_point == NULL) {
+            validateSignature("void(*_formantgrid_add_formant_point)(XPtr<structFormantGrid>,int,double,double)");
+            p__formantgrid_add_formant_point = (Ptr__formantgrid_add_formant_point)R_GetCCallable("speaker", "_speaker__formantgrid_add_formant_point");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_add_formant_point(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(value)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _formantgrid_add_bandwidth_point(XPtr<structFormantGrid> grid, int formant_number, double time, double value) {
+        typedef SEXP(*Ptr__formantgrid_add_bandwidth_point)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_add_bandwidth_point p__formantgrid_add_bandwidth_point = NULL;
+        if (p__formantgrid_add_bandwidth_point == NULL) {
+            validateSignature("void(*_formantgrid_add_bandwidth_point)(XPtr<structFormantGrid>,int,double,double)");
+            p__formantgrid_add_bandwidth_point = (Ptr__formantgrid_add_bandwidth_point)R_GetCCallable("speaker", "_speaker__formantgrid_add_bandwidth_point");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_add_bandwidth_point(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(value)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _formantgrid_remove_formant_points_between(XPtr<structFormantGrid> grid, int formant_number, double tmin, double tmax) {
+        typedef SEXP(*Ptr__formantgrid_remove_formant_points_between)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_remove_formant_points_between p__formantgrid_remove_formant_points_between = NULL;
+        if (p__formantgrid_remove_formant_points_between == NULL) {
+            validateSignature("void(*_formantgrid_remove_formant_points_between)(XPtr<structFormantGrid>,int,double,double)");
+            p__formantgrid_remove_formant_points_between = (Ptr__formantgrid_remove_formant_points_between)R_GetCCallable("speaker", "_speaker__formantgrid_remove_formant_points_between");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_remove_formant_points_between(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline void _formantgrid_remove_bandwidth_points_between(XPtr<structFormantGrid> grid, int formant_number, double tmin, double tmax) {
+        typedef SEXP(*Ptr__formantgrid_remove_bandwidth_points_between)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_remove_bandwidth_points_between p__formantgrid_remove_bandwidth_points_between = NULL;
+        if (p__formantgrid_remove_bandwidth_points_between == NULL) {
+            validateSignature("void(*_formantgrid_remove_bandwidth_points_between)(XPtr<structFormantGrid>,int,double,double)");
+            p__formantgrid_remove_bandwidth_points_between = (Ptr__formantgrid_remove_bandwidth_points_between)R_GetCCallable("speaker", "_speaker__formantgrid_remove_bandwidth_points_between");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_remove_bandwidth_points_between(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline XPtr<structFormant> _formantgrid_to_formant(XPtr<structFormantGrid> grid, double time_step, double intensity) {
+        typedef SEXP(*Ptr__formantgrid_to_formant)(SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_to_formant p__formantgrid_to_formant = NULL;
+        if (p__formantgrid_to_formant == NULL) {
+            validateSignature("XPtr<structFormant>(*_formantgrid_to_formant)(XPtr<structFormantGrid>,double,double)");
+            p__formantgrid_to_formant = (Ptr__formantgrid_to_formant)R_GetCCallable("speaker", "_speaker__formantgrid_to_formant");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_to_formant(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(intensity)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _formantgrid_to_sound(XPtr<structFormantGrid> grid, double sampling_frequency, double t_start, double f0_start, double t_mid, double f0_mid, double t_end, double f0_end, double adapt_factor, double maximum_period, double open_phase, double collision_phase, double power1, double power2) {
+        typedef SEXP(*Ptr__formantgrid_to_sound)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formantgrid_to_sound p__formantgrid_to_sound = NULL;
+        if (p__formantgrid_to_sound == NULL) {
+            validateSignature("XPtr<structSound>(*_formantgrid_to_sound)(XPtr<structFormantGrid>,double,double,double,double,double,double,double,double,double,double,double,double,double)");
+            p__formantgrid_to_sound = (Ptr__formantgrid_to_sound)R_GetCCallable("speaker", "_speaker__formantgrid_to_sound");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formantgrid_to_sound(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(sampling_frequency)), Shield<SEXP>(Rcpp::wrap(t_start)), Shield<SEXP>(Rcpp::wrap(f0_start)), Shield<SEXP>(Rcpp::wrap(t_mid)), Shield<SEXP>(Rcpp::wrap(f0_mid)), Shield<SEXP>(Rcpp::wrap(t_end)), Shield<SEXP>(Rcpp::wrap(f0_end)), Shield<SEXP>(Rcpp::wrap(adapt_factor)), Shield<SEXP>(Rcpp::wrap(maximum_period)), Shield<SEXP>(Rcpp::wrap(open_phase)), Shield<SEXP>(Rcpp::wrap(collision_phase)), Shield<SEXP>(Rcpp::wrap(power1)), Shield<SEXP>(Rcpp::wrap(power2)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_formantgrid_filter(XPtr<structSound> sound, XPtr<structFormantGrid> grid) {
+        typedef SEXP(*Ptr__sound_formantgrid_filter)(SEXP,SEXP);
+        static Ptr__sound_formantgrid_filter p__sound_formantgrid_filter = NULL;
+        if (p__sound_formantgrid_filter == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_formantgrid_filter)(XPtr<structSound>,XPtr<structFormantGrid>)");
+            p__sound_formantgrid_filter = (Ptr__sound_formantgrid_filter)R_GetCCallable("speaker", "_speaker__sound_formantgrid_filter");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_formantgrid_filter(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(grid)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_formantgrid_filter_noscale(XPtr<structSound> sound, XPtr<structFormantGrid> grid) {
+        typedef SEXP(*Ptr__sound_formantgrid_filter_noscale)(SEXP,SEXP);
+        static Ptr__sound_formantgrid_filter_noscale p__sound_formantgrid_filter_noscale = NULL;
+        if (p__sound_formantgrid_filter_noscale == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_formantgrid_filter_noscale)(XPtr<structSound>,XPtr<structFormantGrid>)");
+            p__sound_formantgrid_filter_noscale = (Ptr__sound_formantgrid_filter_noscale)R_GetCCallable("speaker", "_speaker__sound_formantgrid_filter_noscale");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_formantgrid_filter_noscale(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(grid)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
     inline XPtr<structHarmonicity> _harmonicity_to_sound_ac(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window) {
         typedef SEXP(*Ptr__harmonicity_to_sound_ac)(SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__harmonicity_to_sound_ac p__harmonicity_to_sound_ac = NULL;

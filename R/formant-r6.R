@@ -222,6 +222,13 @@ Formant <- R6::R6Class("Formant",
       Formant$new(.xptr = tracked_ptr)
     },
     
+    #' @description Convert Formant to FormantGrid (editable formant contours)
+    #' @return A new FormantGrid object
+    to_formantgrid = function() {
+      grid_ptr <- .formantgrid_from_formant(private$ptr)
+      FormantGrid$new(.xptr = grid_ptr)
+    },
+    
     #' @description Convert Formant to Table object
     #' @param include_frame_numbers Include frame numbers (default: TRUE)
     #' @param include_time Include time column (default: TRUE)

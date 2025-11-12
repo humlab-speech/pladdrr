@@ -7,6 +7,7 @@
 struct structSound;
 struct structPitch;
 struct structFormant;
+struct structFormantGrid;
 struct structIntensity;
 struct structHarmonicity;
 struct structSpectrogram;
@@ -19,5 +20,7 @@ struct structLPC;
 struct structPitchTier;
 struct structDurationTier;
 struct structIntensityTier;
+struct structMatrix;
+struct structTable;
 
 #endif // SPEAKER_TYPES_H

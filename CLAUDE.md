@@ -3004,3 +3004,225 @@ mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
 ---
 
 **Summary**: The speaker package uses a well-designed OOP architecture that directly exposes Praat's C++ objects as R6 classes. The naming conventions enable easy translation of Praat scripts. Future extensions (script interpreter, graphics) are documented but deferred to maintain focus on core functionality for v1.0.0.
+
+---
+
+## Table Object Implementation Strategy (2025-11-12) ✅
+
+**Decision Date**: 2025-11-12
+**Status**: Deferred to Interpreter Integration Phase
+**Analysis Document**: TABLE_IMPLEMENTATION_ASSESSMENT.md
+
+### The Question
+
+Can R's data.frame serve as a full substitute for Praat's Table object, or must we implement the full Table class now?
+
+### Analysis Findings
+
+#### 1. Table's Role in Praat Ecosystem
+
+The Praat `Table` object serves as:
+- **Data exchange format** between Praat objects (Formant → Table, Pitch → Table, etc.)
+- **Script interface** for statistical analysis and data manipulation
+- **Formula evaluation platform** (requires Praat Interpreter!)
+- **Interactive editor** (GUI-based, not relevant for R package)
+
+#### 2. Critical Dependency: Praat Interpreter
+
+The Table object's most powerful feature requires the interpreter:
+
+```cpp
+// From Praat source
+void Table_formula (Table me, integer column, 
+                    conststring32 formula, Interpreter interpreter);
+```
+
+**Without the interpreter**, Table formulas (like Excel formulas) cannot work. This means:
+- Many Praat scripts rely on `Table: Formula...` commands
+- Our current implementation would be incomplete for script compatibility
+- Table adds minimal value over R's native data.frame
+
+#### 3. Comparison: data.frame vs tibble vs data.table
+
+**Decision: Use data.frame as the primary tabular format**
+
+**Rationale**:
+- ✅ **Universal compatibility**: Works everywhere in R ecosystem
+- ✅ **No additional dependencies**: Keeps package lightweight  
+- ✅ **User choice**: Users can convert to tibble/data.table if preferred
+- ✅ **Sufficient for translation**: Manual script translation works fine
+- ✅ **Standard in R packages**: Expected by R users
+
+**Provide conversion utilities**:
+```r
+# Direct object → data.frame (efficient, skips Table intermediate)
+formant$to_data_frame()
+pitch$to_data_frame()
+
+# Optional tibble support for tidyverse users
+as_tibble.Formant <- function(x, ...) {
+  tibble::as_tibble(as.data.frame(x))
+}
+```
+
+#### 4. Use Case Analysis
+
+**Use Case A: R-Native Workflow** (Most common)
+```r
+# User wants to analyze formants in pure R
+snd <- praat_sound("voice.wav")
+formant <- snd$to_formant(...)
+df <- formant$to_data_frame()  # Direct conversion
+# Continue with tidyverse/base R operations
+```
+**Verdict**: data.frame is SUPERIOR - No Table object needed
+
+**Use Case B: Praat Script Translation** (Current support)
+```r
+# Translated from Praat script
+formant <- snd$to_formant_burg(...)
+df <- formant$to_data_frame()  # Skip Table, go direct
+mean_f1 <- mean(df$F1, na.rm = TRUE)
+```
+**Verdict**: data.frame is SUFFICIENT - Table adds no value
+
+**Use Case C: Praat Script Execution** (Future with interpreter)
+```r
+# Future capability: run unmodified Praat script
+result <- praat_script("
+  formant = To Formant (burg)...
+  table = Down to Table... yes yes 6 no 3 yes 3 yes
+  Formula... F1_normalized self / meanF1
+")
+```
+**Verdict**: Table object IS REQUIRED for script compatibility
+
+#### 5. Pattern from Parselmouth (Python)
+
+Even the Python parselmouth implementation converts Table → pandas immediately:
+
+```python
+formantTable = pm.praat.call(form, "Down to Table", ...)
+# Then convert to pandas:
+return pd.read_table(io.StringIO(pm.praat.call(formantTable, "List", True)))
+```
+
+**Observation**: Table is used as intermediate format, not end product.
+
+### Implementation Strategy
+
+#### Current Approach (Without Interpreter)
+
+1. **DO NOT** expand Table implementation now
+2. **DO** implement direct conversions: Object → data.frame
+   - `Formant$to_data_frame()` - Direct, efficient
+   - `Pitch$to_data_frame()` - Skip Table intermediate
+   - `Matrix$to_matrix()` - Native R matrix
+3. **DO** document that Table formula features require future interpreter
+4. **DO** mark Table for Phase "Interpreter Integration"
+
+#### Recommended Pattern
+
+**✅ GOOD: Direct conversion (efficient)**
+```r
+# In formant-r6.R
+#' @description Convert Formant to data frame
+#' @param include_intensity Logical: include intensity values
+#' @param include_bandwidths Logical: include bandwidth values  
+#' @param max_formant Integer: maximum formant number
+#' @return data.frame with columns: time, F1, F2, ... [B1, B2, ...] [intensity]
+to_data_frame = function(include_intensity = FALSE, 
+                         include_bandwidths = TRUE,
+                         max_formant = 5) {
+  # Direct C++ implementation - no Table intermediate
+  .formant_to_data_frame(private$ptr, include_intensity, 
+                         include_bandwidths, max_formant)
+}
+```
+
+**❌ NOT RECOMMENDED: Via Table (inefficient)**
+```r
+# Creates Table object just to convert to data.frame - wasteful
+to_data_frame = function() {
+  table <- self$down_to_table(...)
+  table$to_data_frame()
+}
+```
+
+#### Future Integration (With Interpreter)
+
+When Praat interpreter is added, implement full Table object with:
+- ✅ Formula evaluation via interpreter
+- ✅ File I/O operations (CSV, tab-delimited)
+- ✅ Full compatibility with Praat scripts
+- ✅ Integration with interpreter's variable system
+- ✅ All statistical methods from Praat Table
+
+**Compatibility Strategy**:
+```r
+# Future: Interpreter runs unmodified Praat scripts
+praat_script("
+  table = Read Table from... data.csv
+  Formula... newcol self * 2
+  Write to table file... output.csv
+")
+
+# But R users still prefer data.frame for native R workflows
+formant$to_data_frame()  # Recommended for R users
+```
+
+### Current Implementation Status
+
+**Table R6 Class** (`R/table-r6.R`):
+- ✅ Basic structure (rows, columns)
+- ✅ Cell access (get/set numeric/string values)
+- ✅ Row/column operations (append, remove, insert)
+- ✅ Statistical methods (mean, stdev, min, max, sum, quantile)
+- ✅ Conversion to/from R matrix and data.frame
+- ❌ Formula evaluation (requires interpreter) 
+- ❌ File I/O operations
+- ❌ Advanced statistical methods (correlations, t-tests, etc.)
+
+**C++ Wrapper** (`src/table-wrapper.cpp`):
+- ✅ Complete C++ bindings for current functionality
+- ✅ Proper memory management with Rcpp::XPtr
+- ✅ Error handling with try-catch
+
+### Implementation Priorities
+
+**High Priority (Current Phase)**:
+1. ✅ Formant → data.frame conversion (implement now)
+2. ✅ Matrix → matrix/data.frame conversion (implement now)
+3. ✅ Pitch → data.frame conversion (implement now)
+4. ✅ All analysis objects → data.frame (implement now)
+
+**Low Priority (Interpreter Phase)**:
+1. ⏸ Full Table object functionality (defer)
+2. ⏸ Table formula evaluation (defer)
+3. ⏸ Table file I/O operations (defer)
+4. ⏸ Table ↔ Object conversions beyond data export (defer)
+
+### Conclusion
+
+**The Praat Table object is essential for:**
+- ✅ Praat script execution (requires interpreter) → FUTURE
+- ✅ Interactive GUI editing → NOT RELEVANT for R package
+- ❌ Intermediate format → INEFFICIENT for R workflows
+
+**For the R package without interpreter, Table adds minimal value:**
+- R's data.frame is superior for native R workflows
+- Direct object → data.frame conversions are more efficient
+- No formula evaluation capability without interpreter
+- Users expect and prefer data.frame in R
+
+**DECISION**: 
+1. Mark Table object for later implementation when Praat interpreter is integrated
+2. Focus current efforts on direct conversions to R native structures (data.frame, matrix)
+3. Implement `to_data_frame()` methods for all analysis objects
+4. Use data.frame as the standard tabular format (allow users to convert to tibble/data.table)
+
+**Next Steps**:
+- Proceed with Formant object implementation
+- Add `to_data_frame()` method to Formant
+- Add `to_data_frame()` methods to other objects as needed
+- Document the Table deferral decision

@@ -51,7 +51,7 @@ Rcpp::XPtr<structLPC> sound_to_lpc_covariance(
     double pre_emphasis_frequency = 50.0
 ) {
     try {
-        autoLPC lpc = Sound_to_LPC_covariance(
+        autoLPC lpc = Sound_to_LPC_covar(
             sound.get(),
             prediction_order,
             analysis_width,

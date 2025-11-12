@@ -125,3 +125,7 @@ void Graphics_rectangleText_maximalFit (Graphics, double, double, double, double
 void Graphics_xorOn (Graphics, MelderColour) {}
 void Graphics_xorOff (Graphics) {}
 
+// LPC-specific stubs
+#include "praat.github.io/dwsys/Roots.h"
+void Roots_draw (constRoots, Graphics, double, double, double, double, conststring32, double, bool) {}
+
