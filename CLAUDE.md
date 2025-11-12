@@ -2,11 +2,15 @@
 
 ## OOP-First Architecture CONFIRMED (2025-11-12) ✅
 
-**Date**: 2025-11-12  
-**Package Version**: 0.4.1  
-**Status**: Week 1-2 of 4-week path to v1.0.0  
-**Phase**: Examples from superassp  
-**Master Plan**: `OOP_CONFIRMED_PLAN_2025-11-12.md`
+**Date**: 2025-11-12 22:27 UTC  
+**Package Version**: 0.4.0  
+**Status**: Comprehensive Reassessment Complete  
+**Phase**: Ready for Phase 1 - Final Objects + Examples  
+**Master Plan**: `OOP_ARCHITECTURE_COMPREHENSIVE_AMENDMENT_2025-11-12.md`
+
+### Strategic Realignment: Objects Over Procedures
+
+After comprehensive analysis using Gemini CLI across the entire codebase, specs, Praat source, and Parselmouth library, **the package architecture has been confirmed as correct and superior**. The object-oriented approach mirrors Praat's native C++ design while surpassing Parselmouth's capabilities.
 
 ### Core Philosophy: Objects Over Procedures
 
@@ -16,70 +20,216 @@ The package correctly implements an **object-oriented paradigm** that mirrors Pr
 - Thing → Function → Sampled → Sound, Pitch, Formant, etc.
 - Object methods: `Sound_to_Pitch()`, `Pitch_getMean()`
 - Persistent objects with state
+- Object-oriented core design
 
 **Parselmouth's Approach** (Python - Indirect):
 ```python
+import parselmouth as pm
+sound = pm.Sound("audio.wav")
 pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
 mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
 ```
-- String-based dispatch via `praat.call()`
-- No method autocomplete
-- Python interpreter overhead
+- ❌ String-based generic dispatcher via `praat.call()`
+- ❌ No method autocomplete
+- ❌ Must memorize exact Praat command names
+- ❌ Python interpreter overhead
+- ❌ Requires Python installation
 
 **speaker's Approach** (R - Direct OOP):
 ```r
+library(speaker)
+sound <- Sound$new("audio.wav")
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ```
 - ✅ Direct method calls (R6 classes)
-- ✅ IDE autocomplete support
+- ✅ RStudio/VS Code autocomplete support
+- ✅ Self-documenting parameter names
 - ✅ Type-safe parameters
 - ✅ No Python dependency
-- ✅ Direct C++ binding
-- ✅ Consistent naming enables Praat script transcoding
+- ✅ Direct C++ binding (faster)
+- ✅ Better error messages
+- ✅ Consistent naming enables 1:1 Praat script transcoding
 
 ### Current Implementation Status
 
-**✅ Complete**: 16/17 Praat objects (94%), ~311 methods
-- Sound, Pitch, Formant, Intensity, Harmonicity
-- Spectrogram, Spectrum, Ltas
-- PointProcess, Manipulation, TextGrid
-- PitchTier, IntensityTier, DurationTier
-- LPC, Matrix
+**✅ Implemented**: 17/23 Praat objects (74%), ~311 methods
+- **Sound** (50+ methods) - Complete audio I/O and manipulation
+- **Pitch** (30+ methods) - Pitch extraction and queries
+- **Formant** (23+ methods) - Formant tracking
+- **Intensity** (15+ methods) - Intensity contours
+- **Harmonicity** (15+ methods) - Harmonics-to-Noise Ratio
+- **Spectrogram** (15+ methods) - Time-frequency analysis
+- **Spectrum** (18+ methods) - Frequency-domain analysis
+- **Ltas** (12+ methods) - Long-term average spectrum
+- **PointProcess** (20+ methods) - Time points (glottal pulses)
+- **Manipulation** (12+ methods) - PSOLA pitch/duration modification
+- **PitchTier** (12+ methods) - Modifiable pitch contours
+- **IntensityTier** (10+ methods) - Modifiable intensity
+- **AmplitudeTier** (10+ methods) - Amplitude control
+- **DurationTier** (10+ methods) - Duration modification
+- **TextGrid** (34+ methods) - Annotation and segmentation
+- **Matrix** (18+ methods) - 2D numerical data
+- **Table** (20+ methods) - Tabular data
 
-**🔨 Remaining**: 1/17 (6%)
-- FormantGrid (modifiable formant contours)
+**❌ Remaining**: 6/23 objects (26%)
+- **LPC** (Priority: HIGH) - Linear predictive coding, formant extraction
+- **FormantPath** (Priority: MEDIUM) - Modern formant tracking (Praat 6.1+, may not be available)
+- **MFCC** (Priority: MEDIUM) - Mel-frequency cepstral coefficients
+- **MelFilter** (Priority: MEDIUM) - Perceptual frequency scaling
+- **Excitation** (Priority: LOW) - Auditory excitation patterns
+- **Cochleagram** (Priority: LOW) - Auditory filterbank output
 
-**❌ Not in Current Praat Version**:
-- FormantPath (requires Praat 6.1+)
-- Table (use R's data.frame instead)
+### Systematic Praat → R Transcoding
 
-### Path to v1.0.0 (4 Weeks)
+The consistent naming convention enables direct 1:1 mapping:
 
-**Week 1-2** (CURRENT): Examples from superassp
+| Praat Command | R Method | Example |
+|---------------|----------|---------|
+| `To Pitch...` | `to_pitch()` | `sound$to_pitch()` |
+| `To Formant (burg)...` | `to_formant_burg()` | `sound$to_formant_burg()` |
+| `Get mean...` | `get_mean()` | `pitch$get_mean()` |
+| `Get value at time...` | `get_value_at_time()` | `formant$get_value_at_time()` |
+| `Set label...` | `set_label()` | `textgrid$set_label()` |
+| `Extract pitch tier` | `extract_pitch_tier()` | `manipulation$extract_pitch_tier()` |
+
+**Praat Script Example**:
+```praat
+sound = Read from file: "audio.wav"
+pitch = To Pitch: 0.01, 75, 600
+mean_f0 = Get mean: 0, 0, "Hertz"
+```
+
+**Direct R Translation**:
+```r
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+### Path to v1.0.0 (7 Weeks)
+
+**Week 1-2**: Complete Core Objects
+- LPC implementation (15 methods) - HIGH PRIORITY
+- MFCC pipeline (MelFilter, MFCC)
+- Version: 0.4.0 → 0.6.0
+
+**Week 3-4**: Examples from superassp
 - Reimplement Python Parselmouth examples in R
-- Location: `inst/examples/`
-- Demonstrate feature parity with Parselmouth
-- Show advantages of direct OOP approach
+- Location: `inst/examples/` (10+ complete examples)
+- Demonstrate feature parity + advantages
+- Version: 0.6.0 → 0.9.0
 
-**Week 2-3**: Documentation
-- 6 comprehensive vignettes
+**Week 5-6**: Documentation
+- 8 comprehensive vignettes
 - Complete function documentation
 - Migration guides (Praat scripts, Parselmouth)
+- Version: 0.9.0 → 0.9.5
 
-**Week 3-4**: Testing & CRAN Preparation
-- 90%+ test coverage
-- R CMD check clean
+**Week 7**: Testing & CRAN Preparation
+- 95%+ test coverage
+- R CMD check --as-cran clean
 - Cross-platform testing
-- v1.0.0 release
+- Performance benchmarks
+- Version: 0.9.5 → **1.0.0** 🎉
 
-### R7 Migration (v2.0.0 - Future)
+### Architecture Pattern (Established)
 
-**Status**: R7 prototypes exist in `dev/r7-prototypes/`
-**Timeline**: 6-9 months post v1.0.0
-**Why Wait**: Let S7 ecosystem mature, proven R6 is stable
+```
+R User Code
+    ↓
+R6 Classes (speaker package)
+    ↓
+External Pointers (Rcpp XPtr)
+    ↓
+C++ Wrappers (src/*_wrappers.cpp)
+    ↓
+Praat C++ Objects (src/praat/)
+```
 
-See `INTEGRATION_PLAN_OPTION_B.md` for full roadmap.
+**Benefits**:
+- Zero-copy operations
+- Automatic memory management (XPtr finalizers)
+- Type-safe method calls
+- IDE autocomplete support
+- No Python dependency
+- Direct C++ performance
+
+### Adding New Objects Template
+
+To integrate additional Praat objects:
+
+1. **Create R6 Class**: `R/[object]-r6.R`
+   ```r
+   [Object] <- R6::R6Class(
+     "[Object]",
+     public = list(
+       .xptr = NULL,
+       initialize = function(.xptr) {
+         self$.xptr <- .xptr
+       },
+       # Methods following naming conventions
+       get_*()
+       to_*()
+       as_*()
+     )
+   )
+   ```
+
+2. **Create C++ Wrappers**: `src/[object]_wrappers.cpp`
+   ```cpp
+   // [[Rcpp::export]]
+   SEXP praat_[object]_new(...) {
+     auto[Object]* obj = [Object]_create(...);
+     Rcpp::XPtr<auto[Object]> ptr(obj, true);
+     return ptr;
+   }
+   ```
+
+3. **Add Tests**: `tests/testthat/test-[object].R`
+
+4. **Document**: `man/[Object].Rd`
+
+5. **Follow Naming Conventions**:
+   - `to_*()` - Create new object
+   - `get_*()` - Query property
+   - `set_*()` - Modify property  
+   - `as_*()` - Export to R type
+   - `extract_*()` - Extract subset
+
+### Future Extensions (Post v1.0.0)
+
+**Deferred to v2.0.0+**:
+
+1. **Praat Script Interpreter** ❌
+   - Execute unmodified Praat scripts
+   - Would require full interpreter integration
+   - Complex parsing and execution engine
+   - **Alternative**: Use systematic transcoding with naming conventions
+   - **Status**: Not required for v1.0.0, may consider for v2.0.0
+
+2. **Picture/Graphics System** ❌
+   - Praat's plotting functionality (Picture object)
+   - Complex graphics integration
+   - **Alternative**: Use R's graphics (ggplot2, base graphics)
+   - **Status**: Use R graphics instead, deferred indefinitely
+
+3. **EGG/EMA Sensors** ⚠️
+   - Electroglottography, Electromagnetic Articulography
+   - Specialized hardware integration
+   - Limited user base
+   - **Status**: Assessed in `SENSORS_ASSESSMENT.md`, deferred to v2.x
+
+4. **FormantPath** ⚠️
+   - Modern formant tracking (Praat 6.1+ feature)
+   - May not be available in current Praat source
+   - **Status**: Verify availability before implementing
+
+5. **R7/S7 Migration** ⏭️
+   - Modern R OOP system
+   - **Status**: R6 is proven and stable, wait for S7 ecosystem to mature
+   - **Timeline**: 6-9 months post v1.0.0
+   - See `INTEGRATION_PLAN_OPTION_B.md` for roadmap
 
 ---
 
