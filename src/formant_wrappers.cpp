@@ -14,6 +14,7 @@
 #include "fon/Formant.h"
 #include "fon/Sound.h"
 #include "fon/Sound_to_Formant.h"
+#include "stat/Table.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -416,3 +417,70 @@ void formant_save(Rcpp::XPtr<structFormant> formant, std::string path) {
         Rcpp::stop("Failed to save formant to file: " + path);
     }
 }
+
+// ============================================================================
+// Formant tracking and export
+// ============================================================================
+
+// [[Rcpp::export(.formant_tracker)]]
+Rcpp::XPtr<structFormant> formant_tracker(
+    Rcpp::XPtr<structFormant> formant,
+    int number_of_tracks,
+    double ref_f1 = 550.0,
+    double ref_f2 = 1650.0,
+    double ref_f3 = 2750.0,
+    double ref_f4 = 3850.0,
+    double ref_f5 = 4950.0,
+    double frequency_cost = 1.0,
+    double bandwidth_cost = 1.0,
+    double transition_cost = 1.0
+) {
+    if (!formant) Rcpp::stop("Invalid Formant pointer");
+    
+    try {
+        autoFormant tracked = Formant_tracker(
+            formant.get(),
+            number_of_tracks,
+            ref_f1, ref_f2, ref_f3, ref_f4, ref_f5,
+            frequency_cost,
+            bandwidth_cost,
+            transition_cost
+        );
+        return create_xptr_from_auto<structFormant>(tracked);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to track formants");
+    }
+}
+
+// [[Rcpp::export(.formant_down_to_table)]]
+Rcpp::XPtr<structTable> formant_down_to_table(
+    Rcpp::XPtr<structFormant> formant,
+    bool include_frame_numbers = true,
+    bool include_time = true,
+    int time_decimals = 6,
+    bool include_intensity = true,
+    int intensity_decimals = 3,
+    bool include_number_of_formants = true,
+    int frequency_decimals = 3,
+    bool include_bandwidths = true,
+    int bandwidth_decimals = 3
+) {
+    if (!formant) Rcpp::stop("Invalid Formant pointer");
+    
+    try {
+        autoTable table = Formant_downto_Table(
+            formant.get(),
+            include_frame_numbers,
+            include_time, time_decimals,
+            include_intensity, intensity_decimals,
+            include_number_of_formants, frequency_decimals,
+            include_bandwidths, bandwidth_decimals
+        );
+        return create_xptr_from_auto<structTable>(table);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to convert Formant to Table");
+    }
+}
+

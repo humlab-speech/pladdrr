@@ -186,6 +186,77 @@ Formant <- R6::R6Class("Formant",
     },
     
     # ========================================================================
+    # Advanced methods
+    # ========================================================================
+    
+    #' @description Track formant trajectories across time
+    #' @param number_of_tracks Number of formant tracks to keep (default: 3)
+    #' @param ref_f1 Reference F1 in Hz (default: 550)
+    #' @param ref_f2 Reference F2 in Hz (default: 1650)
+    #' @param ref_f3 Reference F3 in Hz (default: 2750)
+    #' @param ref_f4 Reference F4 in Hz (default: 3850)
+    #' @param ref_f5 Reference F5 in Hz (default: 4950)
+    #' @param frequency_cost Cost per kHz deviation from reference (default: 1.0)
+    #' @param bandwidth_cost Cost for bandwidth (default: 1.0)
+    #' @param transition_cost Cost for frequency transitions (default: 1.0)
+    #' @return A new tracked Formant object
+    track = function(
+      number_of_tracks = 3,
+      ref_f1 = 550.0,
+      ref_f2 = 1650.0,
+      ref_f3 = 2750.0,
+      ref_f4 = 3850.0,
+      ref_f5 = 4950.0,
+      frequency_cost = 1.0,
+      bandwidth_cost = 1.0,
+      transition_cost = 1.0
+    ) {
+      tracked_ptr <- .formant_tracker(
+        private$ptr,
+        as.integer(number_of_tracks),
+        ref_f1, ref_f2, ref_f3, ref_f4, ref_f5,
+        frequency_cost,
+        bandwidth_cost,
+        transition_cost
+      )
+      Formant$new(.xptr = tracked_ptr)
+    },
+    
+    #' @description Convert Formant to Table object
+    #' @param include_frame_numbers Include frame numbers (default: TRUE)
+    #' @param include_time Include time column (default: TRUE)
+    #' @param time_decimals Number of decimals for time (default: 6)
+    #' @param include_intensity Include intensity values (default: TRUE)
+    #' @param intensity_decimals Number of decimals for intensity (default: 3)
+    #' @param include_number_of_formants Include formant count column (default: TRUE)
+    #' @param frequency_decimals Number of decimals for frequencies (default: 3)
+    #' @param include_bandwidths Include bandwidth columns (default: TRUE)
+    #' @param bandwidth_decimals Number of decimals for bandwidths (default: 3)
+    #' @return External pointer to Table object (Table R6 class not yet implemented)
+    down_to_table = function(
+      include_frame_numbers = TRUE,
+      include_time = TRUE,
+      time_decimals = 6,
+      include_intensity = TRUE,
+      intensity_decimals = 3,
+      include_number_of_formants = TRUE,
+      frequency_decimals = 3,
+      include_bandwidths = TRUE,
+      bandwidth_decimals = 3
+    ) {
+      table_ptr <- .formant_down_to_table(
+        private$ptr,
+        include_frame_numbers,
+        include_time, as.integer(time_decimals),
+        include_intensity, as.integer(intensity_decimals),
+        include_number_of_formants, as.integer(frequency_decimals),
+        include_bandwidths, as.integer(bandwidth_decimals)
+      )
+      # TODO: Return Table$new(.xptr = table_ptr) when Table class is implemented
+      table_ptr
+    },
+    
+    # ========================================================================
     # Utility methods
     # ========================================================================
     
