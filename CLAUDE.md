@@ -3511,3 +3511,184 @@ The speaker package has **already successfully implemented** the correct archite
 **Last Updated**: 2025-11-12  
 **Package Version**: 0.4.1  
 **Architecture**: VALIDATED AND CONFIRMED ✅
+
+---
+
+## R7/S7 MIGRATION PLAN (2025-11-12) 🎯
+
+**Master Document**: `specs/001-praat-r-access/OOP-ARCHITECTURE-AMENDMENT-R7-2025-11-12.md`
+
+### Why Migrate to R7/S7
+
+**Current**: R6 classes with external pointers (working well)  
+**Future**: R7/S7 for better R ecosystem integration
+
+**Advantages of R7 over R6**:
+1. ✅ Native S3 generic compatibility (`print`, `plot`, `summary`)
+2. ✅ Properties with validation
+3. ✅ Multiple dispatch
+4. ✅ Modern R OOP (backed by R Core)
+5. ✅ Cleaner syntax (methods defined separately)
+
+### Migration Timeline
+
+**Current Status**: 19/19 objects in R6 (100% complete!)
+
+**Phase 1: Setup** (1-2 days)
+- Add S7 to DESCRIPTION
+- Create R7 base PraatObject class
+- Setup testing framework
+
+**Phase 2: Migrate Core Objects** (3-5 days)
+- Sound (no dependencies)
+- Pitch, Formant, Intensity, Harmonicity (depend on Sound)
+- Spectrogram, Spectrum, Ltas
+- Tier objects
+
+**Phase 3: Migrate Remaining** (2-3 days)
+- Complex objects (Manipulation, TextGrid)
+- PointProcess, LPC, Matrix, FormantGrid, Table
+
+**Phase 4: S3 Integration** (1-2 days)
+- `print()` methods for all objects
+- `summary()` methods
+- `plot()` methods for visualizable objects
+- `as.data.frame()` and `as.matrix()` methods
+
+**Phase 5: Documentation** (2-3 days)
+- Update all roxygen2 docs
+- Update vignettes
+- Performance benchmarking
+
+**Total**: 9-15 days
+
+### Pattern Comparison
+
+**Current (R6)**:
+```r
+Sound <- R6::R6Class("Sound",
+  inherit = PraatObject,
+  private = list(ptr = NULL),
+  public = list(
+    to_pitch = function(...) {
+      pitch_ptr <- .sound_to_pitch(private$ptr, ...)
+      Pitch$new(.xptr = pitch_ptr)
+    }
+  )
+)
+```
+
+**Future (R7)**:
+```r
+library(S7)
+
+Sound <- new_class(
+  name = "Sound",
+  parent = PraatObject,
+  properties = list(
+    # ptr inherited from parent
+  )
+)
+
+method(to_pitch, Sound) <- function(object, ...) {
+  pitch_ptr <- .sound_to_pitch(object@ptr, ...)
+  new_object(Pitch, ptr = pitch_ptr)
+}
+
+# S3 generics work automatically
+method(print, Sound) <- function(x, ...) {
+  cat("<Praat Sound object>\n")
+  cat("Duration:", get_duration(x), "seconds\n")
+  cat("Sampling rate:", get_sampling_frequency(x), "Hz\n")
+}
+```
+
+### Implementation Checklist
+
+**Continue with R6** (immediate):
+- [x] Complete FormantGrid (DONE)
+- [x] Complete all 19 core objects (DONE)
+- [ ] Add comprehensive tests
+- [ ] Improve documentation
+
+**Prepare for R7** (next phase):
+- [ ] Add S7 to package dependencies
+- [ ] Create R7 prototype for PraatObject
+- [ ] Create R7 prototype for Sound
+- [ ] Test R7 performance vs R6
+- [ ] Create migration script (R6 → R7)
+- [ ] Decide on migration timeline
+
+### Key Architectural Principles (Unchanged)
+
+**1. Object-Oriented Approach**
+- Each Praat object → R class
+- External pointers manage C++ objects
+- Method chaining support
+
+**2. Naming Conventions**
+```
+Praat Command       R Method
+----------------    ------------------
+Get duration    →   get_duration()
+To Pitch        →   to_pitch()
+Extract part    →   extract_part()
+```
+
+**3. Praat Script Translation**
+```praat
+sound = Read from file: "audio.wav"
+pitch = To Pitch: 0.01, 75, 600
+mean_f0 = Get mean: 0, 0, "Hertz"
+```
+
+```r
+sound <- Sound$new("audio.wav")
+pitch <- to_pitch(sound, time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- get_mean(pitch, from_time = 0, to_time = 0, unit = "hertz")
+```
+
+### Future Extensions (Still Deferred)
+
+**Praat Script Interpreter** ⏳
+- **Status**: Not implemented
+- **Impact**: Cannot run .praat files directly
+- **Workaround**: Translate to R code (straightforward with naming conventions)
+- **Future**: May add in v2.0
+
+**Picture/Graphics System** ⏳
+- **Status**: Not implemented  
+- **Impact**: No Praat drawing commands
+- **Workaround**: Export data, use R plotting (ggplot2)
+- **Future**: May add convenience wrappers in v2.0
+
+**FormantPath** ⏳
+- **Status**: Not in current Praat version embedded
+- **Requires**: Praat 6.1+ source update
+- **Future**: Add when Praat source is updated
+
+### Decision: When to Migrate
+
+**NOT IMMEDIATELY**: R6 implementation is working perfectly
+
+**AFTER**:
+1. Complete all testing
+2. Complete all documentation
+3. Port superassp examples
+4. Initial CRAN release (v1.0.0)
+
+**THEN**: Consider R7 migration for v2.0.0
+
+**Rationale**: 
+- R6 is stable and well-understood
+- R7 is still relatively new
+- Let R7 ecosystem mature
+- Focus on completeness over migration
+
+---
+
+**Last Updated**: 2025-11-12  
+**Package Version**: 0.4.1  
+**R6 Status**: COMPLETE (19/19 objects, ~311 methods)  
+**R7 Status**: PLANNED (post-v1.0.0)  
+**Architecture**: VALIDATED AND CONFIRMED ✅
