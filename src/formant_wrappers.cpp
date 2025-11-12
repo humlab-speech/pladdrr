@@ -463,8 +463,7 @@ Rcpp::XPtr<structTable> formant_down_to_table(
     int intensity_decimals = 3,
     bool include_number_of_formants = true,
     int frequency_decimals = 3,
-    bool include_bandwidths = true,
-    int bandwidth_decimals = 3
+    bool include_bandwidths = true
 ) {
     if (!formant) Rcpp::stop("Invalid Formant pointer");
     
@@ -475,7 +474,7 @@ Rcpp::XPtr<structTable> formant_down_to_table(
             include_time, time_decimals,
             include_intensity, intensity_decimals,
             include_number_of_formants, frequency_decimals,
-            include_bandwidths, bandwidth_decimals
+            include_bandwidths
         );
         return create_xptr_from_auto<structTable>(table);
     } catch (MelderError) {

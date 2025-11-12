@@ -113,6 +113,14 @@
     invisible(.Call(`_speaker_formant_save`, formant, path))
 }
 
+.formant_tracker <- function(formant, number_of_tracks, ref_f1 = 550.0, ref_f2 = 1650.0, ref_f3 = 2750.0, ref_f4 = 3850.0, ref_f5 = 4950.0, frequency_cost = 1.0, bandwidth_cost = 1.0, transition_cost = 1.0) {
+    .Call(`_speaker_formant_tracker`, formant, number_of_tracks, ref_f1, ref_f2, ref_f3, ref_f4, ref_f5, frequency_cost, bandwidth_cost, transition_cost)
+}
+
+.formant_down_to_table <- function(formant, include_frame_numbers = TRUE, include_time = TRUE, time_decimals = 6L, include_intensity = TRUE, intensity_decimals = 3L, include_number_of_formants = TRUE, frequency_decimals = 3L, include_bandwidths = TRUE) {
+    .Call(`_speaker_formant_down_to_table`, formant, include_frame_numbers, include_time, time_decimals, include_intensity, intensity_decimals, include_number_of_formants, frequency_decimals, include_bandwidths)
+}
+
 .harmonicity_to_sound_ac <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_speaker_harmonicity_from_sound_ac`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
@@ -277,6 +285,66 @@
     .Call(`_speaker_intensitytier_read`, path)
 }
 
+.sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_burg`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_covariance <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_covariance`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_auto <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_auto`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_marple <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0, tol1 = 1e-6, tol2 = 1e-6) {
+    .Call(`_speaker_sound_to_lpc_marple`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency, tol1, tol2)
+}
+
+.lpc_get_number_of_frames <- function(lpc) {
+    .Call(`_speaker_lpc_get_number_of_frames`, lpc)
+}
+
+.lpc_get_time_step <- function(lpc) {
+    .Call(`_speaker_lpc_get_time_step`, lpc)
+}
+
+.lpc_get_sampling_period <- function(lpc) {
+    .Call(`_speaker_lpc_get_sampling_period`, lpc)
+}
+
+.lpc_get_max_num_coefficients <- function(lpc) {
+    .Call(`_speaker_lpc_get_max_num_coefficients`, lpc)
+}
+
+.lpc_get_gain_at_frame <- function(lpc, frame_number) {
+    .Call(`_speaker_lpc_get_gain_at_frame`, lpc, frame_number)
+}
+
+.lpc_get_coefficients_at_frame <- function(lpc, frame_number) {
+    .Call(`_speaker_lpc_get_coefficients_at_frame`, lpc, frame_number)
+}
+
+.lpc_get_all_gains <- function(lpc) {
+    .Call(`_speaker_lpc_get_all_gains`, lpc)
+}
+
+.lpc_get_all_coefficients <- function(lpc) {
+    .Call(`_speaker_lpc_get_all_coefficients`, lpc)
+}
+
+.lpc_to_formant <- function(lpc, margin = 50.0) {
+    .Call(`_speaker_lpc_to_formant`, lpc, margin)
+}
+
+.lpc_to_spectrum <- function(lpc, time, df_min = 20.0, bandwidth_reduction = 0.0, de_emphasis_frequency = 50.0) {
+    .Call(`_speaker_lpc_to_spectrum`, lpc, time, df_min, bandwidth_reduction, de_emphasis_frequency)
+}
+
+.lpc_to_matrix <- function(lpc) {
+    .Call(`_speaker_lpc_to_matrix`, lpc)
+}
+
 .ltas_get_bin_from_frequency <- function(ltas, frequency) {
     .Call(`_speaker_ltas_get_bin_from_frequency`, ltas, frequency)
 }
@@ -379,6 +447,94 @@
 
 .manipulation_get_resynthesis_lpc <- function(manip) {
     .Call(`_speaker_manipulation_get_resynthesis_lpc`, manip)
+}
+
+.matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
+    .Call(`_speaker_matrix_create`, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
+}
+
+.matrix_create_simple <- function(numberOfRows, numberOfColumns) {
+    .Call(`_speaker_matrix_create_simple`, numberOfRows, numberOfColumns)
+}
+
+.matrix_get_nx <- function(xptr) {
+    .Call(`_speaker_matrix_get_nx`, xptr)
+}
+
+.matrix_get_ny <- function(xptr) {
+    .Call(`_speaker_matrix_get_ny`, xptr)
+}
+
+.matrix_get_dx <- function(xptr) {
+    .Call(`_speaker_matrix_get_dx`, xptr)
+}
+
+.matrix_get_dy <- function(xptr) {
+    .Call(`_speaker_matrix_get_dy`, xptr)
+}
+
+.matrix_get_x1 <- function(xptr) {
+    .Call(`_speaker_matrix_get_x1`, xptr)
+}
+
+.matrix_get_y1 <- function(xptr) {
+    .Call(`_speaker_matrix_get_y1`, xptr)
+}
+
+.matrix_get_xmin <- function(xptr) {
+    .Call(`_speaker_matrix_get_xmin`, xptr)
+}
+
+.matrix_get_xmax <- function(xptr) {
+    .Call(`_speaker_matrix_get_xmax`, xptr)
+}
+
+.matrix_get_ymin <- function(xptr) {
+    .Call(`_speaker_matrix_get_ymin`, xptr)
+}
+
+.matrix_get_ymax <- function(xptr) {
+    .Call(`_speaker_matrix_get_ymax`, xptr)
+}
+
+.matrix_get_value_at_xy <- function(xptr, x, y) {
+    .Call(`_speaker_matrix_get_value_at_xy`, xptr, x, y)
+}
+
+.matrix_get_value <- function(xptr, row, col) {
+    .Call(`_speaker_matrix_get_value`, xptr, row, col)
+}
+
+.matrix_set_value <- function(xptr, row, col, value) {
+    invisible(.Call(`_speaker_matrix_set_value`, xptr, row, col, value))
+}
+
+.matrix_to_r_matrix <- function(xptr) {
+    .Call(`_speaker_matrix_to_r_matrix`, xptr)
+}
+
+.matrix_from_r_matrix <- function(rmatrix) {
+    .Call(`_speaker_matrix_from_r_matrix`, rmatrix)
+}
+
+.matrix_formula <- function(xptr, formula) {
+    invisible(.Call(`_speaker_matrix_formula`, xptr, formula))
+}
+
+.matrix_get_sum <- function(xptr) {
+    .Call(`_speaker_matrix_get_sum`, xptr)
+}
+
+.matrix_get_mean <- function(xptr) {
+    .Call(`_speaker_matrix_get_mean`, xptr)
+}
+
+.matrix_get_minimum <- function(xptr) {
+    .Call(`_speaker_matrix_get_minimum`, xptr)
+}
+
+.matrix_get_maximum <- function(xptr) {
+    .Call(`_speaker_matrix_get_maximum`, xptr)
 }
 
 .pitch_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
@@ -1047,6 +1203,110 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .spectrum_as_matrix <- function(xptr) {
     .Call(`_speaker_spectrum_as_matrix`, xptr)
+}
+
+.table_create <- function(numberOfRows, numberOfColumns) {
+    .Call(`_speaker_table_create`, numberOfRows, numberOfColumns)
+}
+
+.table_create_with_column_names <- function(numberOfRows, columnNames) {
+    .Call(`_speaker_table_create_with_column_names`, numberOfRows, columnNames)
+}
+
+.table_get_number_of_rows <- function(xptr) {
+    .Call(`_speaker_table_get_number_of_rows`, xptr)
+}
+
+.table_get_number_of_columns <- function(xptr) {
+    .Call(`_speaker_table_get_number_of_columns`, xptr)
+}
+
+.table_get_column_label <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_column_label`, xptr, columnNumber)
+}
+
+.table_get_column_index <- function(xptr, columnName) {
+    .Call(`_speaker_table_get_column_index`, xptr, columnName)
+}
+
+.table_set_column_label <- function(xptr, columnNumber, label) {
+    invisible(.Call(`_speaker_table_set_column_label`, xptr, columnNumber, label))
+}
+
+.table_get_numeric_value <- function(xptr, rowNumber, columnNumber) {
+    .Call(`_speaker_table_get_numeric_value`, xptr, rowNumber, columnNumber)
+}
+
+.table_get_string_value <- function(xptr, rowNumber, columnNumber) {
+    .Call(`_speaker_table_get_string_value`, xptr, rowNumber, columnNumber)
+}
+
+.table_set_numeric_value <- function(xptr, rowNumber, columnNumber, value) {
+    invisible(.Call(`_speaker_table_set_numeric_value`, xptr, rowNumber, columnNumber, value))
+}
+
+.table_set_string_value <- function(xptr, rowNumber, columnNumber, value) {
+    invisible(.Call(`_speaker_table_set_string_value`, xptr, rowNumber, columnNumber, value))
+}
+
+.table_append_row <- function(xptr) {
+    invisible(.Call(`_speaker_table_append_row`, xptr))
+}
+
+.table_append_column <- function(xptr, columnName) {
+    invisible(.Call(`_speaker_table_append_column`, xptr, columnName))
+}
+
+.table_remove_row <- function(xptr, rowNumber) {
+    invisible(.Call(`_speaker_table_remove_row`, xptr, rowNumber))
+}
+
+.table_remove_column <- function(xptr, columnNumber) {
+    invisible(.Call(`_speaker_table_remove_column`, xptr, columnNumber))
+}
+
+.table_insert_row <- function(xptr, rowPosition) {
+    invisible(.Call(`_speaker_table_insert_row`, xptr, rowPosition))
+}
+
+.table_insert_column <- function(xptr, columnPosition, columnName) {
+    invisible(.Call(`_speaker_table_insert_column`, xptr, columnPosition, columnName))
+}
+
+.table_get_mean <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_mean`, xptr, columnNumber)
+}
+
+.table_get_stdev <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_stdev`, xptr, columnNumber)
+}
+
+.table_get_minimum <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_minimum`, xptr, columnNumber)
+}
+
+.table_get_maximum <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_maximum`, xptr, columnNumber)
+}
+
+.table_get_sum <- function(xptr, columnNumber) {
+    .Call(`_speaker_table_get_sum`, xptr, columnNumber)
+}
+
+.table_get_quantile <- function(xptr, columnNumber, quantile) {
+    .Call(`_speaker_table_get_quantile`, xptr, columnNumber, quantile)
+}
+
+.table_get_column_numbers <- function(xptr) {
+    .Call(`_speaker_table_get_column_numbers`, xptr)
+}
+
+.table_get_column_names <- function(xptr) {
+    .Call(`_speaker_table_get_column_names`, xptr)
+}
+
+.table_to_matrix <- function(xptr) {
+    .Call(`_speaker_table_to_matrix`, xptr)
 }
 
 .textgrid_read_from_file <- function(path) {

@@ -381,6 +381,48 @@ namespace speaker {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
+    inline Rcpp::XPtr<structFormant> _formant_tracker(Rcpp::XPtr<structFormant> formant, int number_of_tracks, double ref_f1 = 550.0, double ref_f2 = 1650.0, double ref_f3 = 2750.0, double ref_f4 = 3850.0, double ref_f5 = 4950.0, double frequency_cost = 1.0, double bandwidth_cost = 1.0, double transition_cost = 1.0) {
+        typedef SEXP(*Ptr__formant_tracker)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formant_tracker p__formant_tracker = NULL;
+        if (p__formant_tracker == NULL) {
+            validateSignature("Rcpp::XPtr<structFormant>(*_formant_tracker)(Rcpp::XPtr<structFormant>,int,double,double,double,double,double,double,double,double)");
+            p__formant_tracker = (Ptr__formant_tracker)R_GetCCallable("speaker", "_speaker__formant_tracker");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formant_tracker(Shield<SEXP>(Rcpp::wrap(formant)), Shield<SEXP>(Rcpp::wrap(number_of_tracks)), Shield<SEXP>(Rcpp::wrap(ref_f1)), Shield<SEXP>(Rcpp::wrap(ref_f2)), Shield<SEXP>(Rcpp::wrap(ref_f3)), Shield<SEXP>(Rcpp::wrap(ref_f4)), Shield<SEXP>(Rcpp::wrap(ref_f5)), Shield<SEXP>(Rcpp::wrap(frequency_cost)), Shield<SEXP>(Rcpp::wrap(bandwidth_cost)), Shield<SEXP>(Rcpp::wrap(transition_cost)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::XPtr<structFormant> >(rcpp_result_gen);
+    }
+
+    inline Rcpp::XPtr<structTable> _formant_down_to_table(Rcpp::XPtr<structFormant> formant, bool include_frame_numbers = true, bool include_time = true, int time_decimals = 6, bool include_intensity = true, int intensity_decimals = 3, bool include_number_of_formants = true, int frequency_decimals = 3, bool include_bandwidths = true) {
+        typedef SEXP(*Ptr__formant_down_to_table)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formant_down_to_table p__formant_down_to_table = NULL;
+        if (p__formant_down_to_table == NULL) {
+            validateSignature("Rcpp::XPtr<structTable>(*_formant_down_to_table)(Rcpp::XPtr<structFormant>,bool,bool,int,bool,int,bool,int,bool)");
+            p__formant_down_to_table = (Ptr__formant_down_to_table)R_GetCCallable("speaker", "_speaker__formant_down_to_table");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formant_down_to_table(Shield<SEXP>(Rcpp::wrap(formant)), Shield<SEXP>(Rcpp::wrap(include_frame_numbers)), Shield<SEXP>(Rcpp::wrap(include_time)), Shield<SEXP>(Rcpp::wrap(time_decimals)), Shield<SEXP>(Rcpp::wrap(include_intensity)), Shield<SEXP>(Rcpp::wrap(intensity_decimals)), Shield<SEXP>(Rcpp::wrap(include_number_of_formants)), Shield<SEXP>(Rcpp::wrap(frequency_decimals)), Shield<SEXP>(Rcpp::wrap(include_bandwidths)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::XPtr<structTable> >(rcpp_result_gen);
+    }
+
     inline XPtr<structHarmonicity> _harmonicity_to_sound_ac(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window) {
         typedef SEXP(*Ptr__harmonicity_to_sound_ac)(SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__harmonicity_to_sound_ac p__harmonicity_to_sound_ac = NULL;
