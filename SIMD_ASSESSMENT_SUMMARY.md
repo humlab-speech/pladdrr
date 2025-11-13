@@ -306,7 +306,175 @@ Located in `inst/benchmarks/`:
 
 ---
 
+## UPDATE: Code Analysis Since Initial Assessment (2025-11-13)
+
+**Analysis Date**: 2025-11-13
+**Files Analyzed**: New C++ wrappers added since 2025-11-12
+
+### New Code Added
+
+Since the initial SIMD assessment, the following new wrapper files were implemented:
+
+1. **amplitudetier_wrappers.cpp** (197 lines)
+2. **electroglottogram_wrappers.cpp** (133 lines)
+3. **manipulation_wrappers.cpp** (189 lines)
+4. **formantgrid_wrappers.cpp** (250+ lines)
+5. **lpc_wrappers.cpp** (200+ lines)
+6. **svd_stubs.cpp** (34 lines - stub functions)
+
+### SIMD Opportunities in New Code
+
+#### HIGH PRIORITY - New Opportunities
+
+**1. Electroglottogram Derivative Calculation** ⭐⭐⭐⭐
+- **Location**: `electroglottogram_wrappers.cpp:82-94`
+- **Function**: `electroglottogram_derivative_cpp()` calls `Electroglottogram_derivative()`
+- **Operations**: Signal differentiation, lowpass filtering, smoothing
+- **SIMD Potential**: 
+  - Derivative computation (first differences) - 4-6x speedup
+  - Smoothing operations - 3-5x speedup
+  - Combined pipeline - 3-4x speedup
+- **Impact**: MEDIUM-HIGH (EGG analysis is common in voice research)
+- **Implementation**: Use SIMD for array operations in derivative and smoothing
+
+**2. First Central Difference** ⭐⭐⭐⭐
+- **Location**: `electroglottogram_wrappers.cpp:97-106`
+- **Function**: `electroglottogram_first_central_difference_cpp()`
+- **Operations**: Central difference calculation across signal
+- **SIMD Potential**: 4-6x speedup for array operations
+- **Impact**: MEDIUM-HIGH
+- **Implementation**: Vectorize central difference computation
+
+**3. High-Pass Filtering** ⭐⭐⭐⭐
+- **Location**: `electroglottogram_wrappers.cpp:109-120`
+- **Function**: `electroglottogram_high_pass_filter_cpp()`
+- **Operations**: High-pass filter implementation
+- **SIMD Potential**: 3-5x speedup for convolution/filter operations
+- **Impact**: MEDIUM-HIGH
+- **Implementation**: Vectorize filter convolution
+
+**4. FormantGrid Point Operations** ⭐⭐⭐
+- **Location**: `formantgrid_wrappers.cpp` (various point addition/removal)
+- **Operations**: Bulk point operations on formant/bandwidth tiers
+- **SIMD Potential**: 2-4x speedup when processing multiple points
+- **Impact**: MEDIUM (depends on use case)
+- **Implementation**: Vectorize bulk point operations if arrays are involved
+
+**5. LPC Autocorrelation** ⭐⭐⭐⭐⭐
+- **Location**: `lpc_wrappers.cpp:68-89` (calls Praat LPC functions)
+- **Function**: `sound_to_lpc_auto()` - Autocorrelation method
+- **Operations**: Autocorrelation computation (already in Praat source)
+- **SIMD Potential**: 3-5x speedup for autocorrelation
+- **Impact**: VERY HIGH (LPC is computationally intensive)
+- **Implementation**: Optimize within Praat's LPC implementation
+- **Note**: This was already identified in original assessment (Formant Extraction #7)
+
+#### LOWER PRIORITY - Wrapper Functions Only
+
+**6. AmplitudeTier Shimmer Calculations** ⭐⭐⭐
+- **Location**: `amplitudetier_wrappers.cpp:77-170`
+- **Functions**: Various shimmer calculation wrappers
+- **Operations**: Statistical calculations on amplitude values
+- **SIMD Potential**: 2-4x speedup if underlying Praat functions use arrays
+- **Impact**: MEDIUM
+- **Implementation**: Check Praat source for array operations
+- **Note**: These are mostly wrappers; SIMD would need to be in Praat source
+
+**7. Sound × AmplitudeTier Multiplication** ⭐⭐⭐⭐
+- **Location**: `amplitudetier_wrappers.cpp:186-196`
+- **Function**: `sound_amplitude_tier_multiply_cpp()`
+- **Operations**: Element-wise multiplication of sound samples with amplitude envelope
+- **SIMD Potential**: 4-6x speedup
+- **Impact**: MEDIUM-HIGH
+- **Implementation**: Vectorize sample-by-sample multiplication
+
+**8. Manipulation Synthesis (Overlap-Add)** ⭐⭐⭐⭐⭐
+- **Location**: `manipulation_wrappers.cpp:162-174`
+- **Function**: `manipulation_get_resynthesis_overlap_add()`
+- **Operations**: PSOLA overlap-add synthesis
+- **SIMD Potential**: 3-5x speedup for windowing and overlap-add
+- **Impact**: VERY HIGH (pitch shifting/time stretching)
+- **Implementation**: Vectorize window operations and sample mixing
+- **Note**: Requires Praat source modification
+
+#### NO SIMD OPPORTUNITIES
+
+- **svd_stubs.cpp**: Stub functions only (throw errors)
+- **manipulation_wrappers.cpp**: Mostly pointer manipulation (lines 1-160)
+- **amplitudetier_wrappers.cpp**: Point addition/query (lines 1-76)
+
+### Updated Priority List (Top 15)
+
+Adding new findings to original top 10:
+
+| Rank | Operation | File | Speedup | Impact | Status |
+|------|-----------|------|---------|--------|--------|
+| 1 | Matrix stats (sum, mean, etc.) | matrix_wrappers.cpp | 4-8x | VERY HIGH | Original |
+| 2 | Data conversion (Praat ↔ R) | sound_wrappers.cpp | 4-8x | VERY HIGH | Original |
+| 3 | Tone generation | sound_wrappers.cpp | 4-6x | HIGH | Original |
+| 4 | Intensity calculations | sound_wrappers.cpp | 3-5x | VERY HIGH | Original |
+| 5 | Sound mixing | sound_wrappers.cpp | 4-6x | MEDIUM-HIGH | Original |
+| 6 | Spectrogram (FFT) | sound_wrappers.cpp | 2-4x | VERY HIGH | Original |
+| 7 | Formant extraction (LPC) | formant_wrappers.cpp + **lpc_wrappers.cpp** | 2-4x | VERY HIGH | Original + **NEW** |
+| 8 | Pitch detection | sound_wrappers.cpp | 2-4x | VERY HIGH | Original |
+| 9 | **Manipulation synthesis** | **manipulation_wrappers.cpp** | **3-5x** | **VERY HIGH** | **NEW** |
+| 10 | Spectrogram export | spectrogram_wrappers.cpp | 3-5x | HIGH | Original |
+| 11 | LTAS generation | sound_wrappers.cpp | 2-4x | MEDIUM-HIGH | Original |
+| 12 | **EGG derivative** | **electroglottogram_wrappers.cpp** | **3-4x** | **MEDIUM-HIGH** | **NEW** |
+| 13 | **EGG central difference** | **electroglottogram_wrappers.cpp** | **4-6x** | **MEDIUM-HIGH** | **NEW** |
+| 14 | **EGG high-pass filter** | **electroglottogram_wrappers.cpp** | **3-5x** | **MEDIUM-HIGH** | **NEW** |
+| 15 | **Sound × Amplitude multiply** | **amplitudetier_wrappers.cpp** | **4-6x** | **MEDIUM-HIGH** | **NEW** |
+
+### Revised Implementation Strategy
+
+**Phase 1** remains the same (foundation: matrix ops, data conversion, tone).
+
+**Phase 2** should now include:
+- Intensity calculations (original)
+- Sound mixing/scaling (original)
+- **Sound × AmplitudeTier multiplication** (NEW)
+- **EGG derivative operations** (NEW - if EGG analysis is priority)
+
+**Phase 3** evaluation now includes:
+- FFT/formant/pitch (original)
+- **Manipulation synthesis (PSOLA overlap-add)** (NEW - high impact)
+- **EGG signal processing** (NEW - if voice research focus)
+
+### Key Findings
+
+1. **EGG Processing**: Significant new SIMD opportunities in electroglottogram analysis
+   - Voice research applications would benefit greatly
+   - Derivative, filtering, and central difference operations are good SIMD candidates
+
+2. **Manipulation/PSOLA**: Critical for pitch/time modification
+   - Overlap-add synthesis is computationally intensive
+   - High-impact optimization opportunity for voice synthesis
+
+3. **LPC Confirmed**: New LPC wrappers reinforce original assessment
+   - LPC autocorrelation is a major bottleneck
+   - Already identified in original top 10
+
+4. **Minimal New Wrapper Overhead**: Most new wrappers are thin layers
+   - SIMD benefits require optimizing Praat source, not wrappers
+   - Focus should remain on Praat internal operations
+
+### Recommendation: No Change to Overall Plan
+
+The new code **reinforces** the original SIMD assessment:
+- ✅ Original top 10 priorities remain valid
+- ✅ New opportunities (EGG, Manipulation) fit into Phase 2-3
+- ✅ No new foundational SIMD infrastructure needed
+- ✅ Proceed with original 4-phase plan
+
+**Additional Note**: If package users will heavily use:
+- **Voice quality analysis (EGG)**: Prioritize EGG SIMD in Phase 2
+- **Pitch/time manipulation**: Prioritize Manipulation SIMD in Phase 3
+- Otherwise, stick to original plan
+
+---
+
 **Prepared by**: Claude (Anthropic)
-**Date**: 2025-11-12
-**Status**: Ready for decision
+**Original Date**: 2025-11-12
+**Updated**: 2025-11-13 (post-implementation analysis)
+**Status**: Assessment complete, ready for SIMD implementation
 **Contact**: File issues at https://github.com/humlab-speech/speaker
