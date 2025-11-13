@@ -173,15 +173,16 @@ SEXP manipulation_get_resynthesis_overlap_add(XPtr<structManipulation> manip) {
     }
 }
 
-// [[Rcpp::export(.manipulation_get_resynthesis_lpc)]]
-SEXP manipulation_get_resynthesis_lpc(XPtr<structManipulation> manip) {
-    if (!manip) stop("Invalid Manipulation pointer");
-    
-    try {
-        autoSound sound = Manipulation_to_Sound(manip.get(), Manipulation_PULSES_LPC);
-        return create_xptr_from_auto<structSound>(sound);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to resynthesize sound (LPC)");
-    }
-}
+// LPC resynthesis disabled - requires LPC module not available in current Praat version
+// // [[Rcpp::export(.manipulation_get_resynthesis_lpc)]]
+// SEXP manipulation_get_resynthesis_lpc(XPtr<structManipulation> manip) {
+//     if (!manip) stop("Invalid Manipulation pointer");
+//     
+//     try {
+//         autoSound sound = Manipulation_to_Sound(manip.get(), Manipulation_PULSES_LPC);
+//         return create_xptr_from_auto<structSound>(sound);
+//     } catch (MelderError) {
+//         Melder_clearError();
+//         stop("Failed to resynthesize sound (LPC)");
+//     }
+// }

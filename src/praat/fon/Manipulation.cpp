@@ -624,46 +624,14 @@ static void Sound_PointProcess_fillVoiceless (Sound me, PointProcess pulses) {
 	}
 }
 
+// LPC synthesis disabled - LPC module not available in speaker package
 static autoSound synthesize_pulses_lpc (Manipulation me) {
-	try {
-		if (! my lpc) {
-			if (! my sound) Melder_throw (U"Missing original sound.");
-			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.get(), 20, 0.025, 0.01, 50.0);
-		}
-		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
-		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses.get(), 1.0 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
-		train -> dx = my lpc -> samplingPeriod;   // to be exact
-		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
-		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
-		Vector_scale (result.get(), 0.99);
-		return result;
-	} catch (MelderError) {
-		Melder_throw (me, U": LPC synthesis not performed.");
-	}
+	Melder_throw (U"LPC synthesis is not available in this version. Use get_resynthesis_overlap_add() instead.");
 }
 
+// LPC synthesis disabled - LPC module not available in speaker package
 static autoSound synthesize_pitch_lpc (Manipulation me) {
-	try {
-		if (! my lpc) {
-			if (! my sound) Melder_throw (U"Missing original sound.");
-			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.get(), 20, 0.025, 0.01, 50.0);
-		}
-		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
-		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
-		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch.get(), my pulses.get(), MAX_T);
-		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.get(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
-		train -> dx = my lpc -> samplingPeriod;   // to be exact
-		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
-		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
-		VECdeemphasize_f_inplace (result -> z.row (1), result -> dx, 50.0);
-		Vector_scale (result.get(), 0.99);
-		return result;
-	} catch (MelderError) {
-		Melder_throw (me, U": pitch LPC synthesis not performed.");
-	}
+	Melder_throw (U"LPC synthesis is not available in this version. Use get_resynthesis_overlap_add() instead.");
 }
 
 autoSound Manipulation_to_Sound (Manipulation me, int method) {

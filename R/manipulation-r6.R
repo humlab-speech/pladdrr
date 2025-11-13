@@ -163,12 +163,13 @@ Manipulation <- R6::R6Class(
       Sound$new(.xptr = sound_ptr)
     },
     
-    #' @description Resynthesize using LPC
-    #' @return Sound object (LPC resynthesis)
-    get_resynthesis_lpc = function() {
-      sound_ptr <- .manipulation_get_resynthesis_lpc(private$ptr)
-      Sound$new(.xptr = sound_ptr)
-    },
+    # LPC resynthesis disabled - requires LPC module not available in current Praat version
+    # #' @description Resynthesize using LPC
+    # #' @return Sound object (LPC resynthesis)
+    # get_resynthesis_lpc = function() {
+    #   sound_ptr <- .manipulation_get_resynthesis_lpc(private$ptr)
+    #   Sound$new(.xptr = sound_ptr)
+    # },
     
     # ========================================================================
     # Print Method

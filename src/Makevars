@@ -118,6 +118,9 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
 # Sensors sources
 SENSORS_SRC = praat.github.io/sensors/Electroglottogram.cpp
 
+# LPC sources (minimal - needed for Manipulation struct definition)
+LPC_SRC = praat.github.io/LPC/LPC.cpp praat.github.io/LPC/Sound_and_LPC.cpp
+
 # Wrapper sources (R package code)
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
@@ -134,7 +137,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               utils.cpp RcppExports.cpp
 
 # All sources combined
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(WRAPPER_SRC)
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC)
 
 # Object files (R will compile these)
 OBJECTS = $(SOURCES:.cpp=.o)

@@ -537,10 +537,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_speaker_manipulation_get_resynthesis_overlap_add`, manip)
 }
 
-.manipulation_get_resynthesis_lpc <- function(manip) {
-    .Call(`_speaker_manipulation_get_resynthesis_lpc`, manip)
-}
-
 .matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
     .Call(`_speaker_matrix_create`, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
 }
