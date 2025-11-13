@@ -1,13 +1,13 @@
-# SIMD Benchmarking Suite for speaker Package
+# Benchmarking Suite for speaker Package
 
-This directory contains a comprehensive benchmarking suite for measuring the performance impact of SIMD optimizations using RcppXsimd.
+This directory contains a comprehensive benchmarking suite for measuring the performance of the speaker package compared to Parselmouth and for evaluating potential SIMD optimizations.
 
 ## Overview
 
 The benchmarking suite is designed to:
-1. Establish **baseline performance** metrics before SIMD implementation
-2. Measure **SIMD-optimized performance** after implementation
-3. Calculate **speedup ratios** and validate optimization impact
+1. **Compare speaker vs Parselmouth** for common phonetic analysis operations
+2. **Compare full workflow performance** for converted Praat scripts
+3. Establish **baseline performance** metrics for potential SIMD optimization
 4. Track performance across **different platforms** and CPU architectures
 
 ## Directory Structure
@@ -16,23 +16,40 @@ The benchmarking suite is designed to:
 inst/benchmarks/
 ├── README.md                           # This file
 ├── 00_run_all_benchmarks.R            # Master script (run this!)
-├── 01_matrix_operations.R             # Matrix sum, mean, min, max
-├── 02_data_conversion.R               # Praat <-> R conversions
-├── 03_tone_generation.R               # Sine wave synthesis
+├── 01_matrix_operations.R             # Matrix sum, mean, min, max (SIMD baseline)
+├── 02_data_conversion.R               # Praat <-> R conversions (SIMD baseline)
+├── 03_tone_generation.R               # Sine wave synthesis (SIMD baseline)
+├── 04_parselmouth_comparison.R        # speaker vs parselmouth operations
+├── 05_converted_scripts_comparison.R  # speaker vs parselmouth workflows
+├── compare_results.R                  # Generate comparison report
 ├── results/                           # Benchmark results (created automatically)
 │   ├── 00_system_info.rds            # System/platform information
+│   ├── 00_completion_info.rds        # Benchmark metadata
 │   ├── 01_matrix_operations_baseline.rds
 │   ├── 02_data_conversion_baseline.rds
 │   ├── 03_tone_generation_baseline.rds
-│   └── ...                           # Additional results after SIMD
-└── compare_results.R                  # Compare baseline vs SIMD (TODO)
+│   ├── 04_parselmouth_comparison.rds
+│   ├── 05_converted_scripts_comparison.rds
+│   ├── parselmouth_comparison.png
+│   ├── converted_scripts_comparison.png
+│   └── combined_comparison.png
+└── BASELINE_RESULTS_PENDING.md        # Instructions
 ```
 
 ## Quick Start
 
-### Step 1: Run Baseline Benchmarks (Pre-SIMD)
+### Step 1: Install Package
 
-**Run this BEFORE implementing SIMD optimizations:**
+**Ensure the speaker package is built and installed:**
+
+```bash
+# From package root directory
+R CMD INSTALL --preclean .
+```
+
+### Step 2: Run Benchmarks
+
+**Run all benchmarks including Parselmouth comparison:**
 
 ```r
 # From package root directory
@@ -40,42 +57,30 @@ source("inst/benchmarks/00_run_all_benchmarks.R")
 ```
 
 This will:
-- Run all benchmark scripts
+- Run all benchmark scripts (01-05)
 - Save results to `inst/benchmarks/results/*.rds`
 - Record system information
 - Print summary statistics
 
-**Time required**: ~5-10 minutes depending on system
+**Time required**: ~15-20 minutes (longer with Python/Parselmouth)
+
+**Note**: Benchmarks 04 and 05 require Python with parselmouth installed. If not available, they will be skipped.
 
 ---
 
-### Step 2: Implement SIMD Optimizations
+### Step 3: Generate Comparison Report
 
-Follow the implementation plan in:
-- `SIMD_OPTIMIZATION_REPORT.md`
-- `SIMD_INTEGRATION_PLAN.md`
-
----
-
-### Step 3: Run Post-SIMD Benchmarks
-
-After implementing SIMD optimizations:
+After running benchmarks:
 
 ```r
-# Run benchmarks again (results saved with _simd suffix)
-source("inst/benchmarks/00_run_all_benchmarks.R")
-```
-
----
-
-### Step 4: Compare Results
-
-```r
-# Generate comparison report
+# Generate visualizations and comparison report
 source("inst/benchmarks/compare_results.R")
 ```
 
-This will calculate speedup ratios and generate visualizations.
+This will create:
+- `parselmouth_comparison.png` - Individual operations comparison
+- `converted_scripts_comparison.png` - Full workflow comparison
+- `combined_comparison.png` - Combined overview
 
 ---
 
@@ -135,6 +140,49 @@ source("inst/benchmarks/03_tone_generation.R")
 
 ---
 
+### 4. Parselmouth Comparison (`04_parselmouth_comparison.R`)
+
+**Tests**: Direct comparison of speaker vs parselmouth for common operations
+
+**Operations**:
+- Pitch extraction (autocorrelation)
+- Formant tracking (Burg method)
+- Intensity calculation
+- Spectrogram generation
+- Harmonicity (HNR)
+
+**Expected speaker advantage**: 1.5-3x (direct C++ binding vs Python overhead)
+
+**Requirements**: Python 3.x with parselmouth installed
+
+**Run individually**:
+```r
+source("inst/benchmarks/04_parselmouth_comparison.R")
+```
+
+---
+
+### 5. Converted Scripts Comparison (`05_converted_scripts_comparison.R`)
+
+**Tests**: Full workflow comparisons for converted superassp scripts
+
+**Workflows**:
+- Voice quality analysis (jitter, shimmer, HNR)
+- Formant tracking with statistics
+- Spectral analysis (CoG, spectral moments)
+- PSOLA pitch manipulation
+
+**Expected speaker advantage**: 1.5-3x for complete workflows
+
+**Requirements**: Python 3.x with parselmouth installed
+
+**Run individually**:
+```r
+source("inst/benchmarks/05_converted_scripts_comparison.R")
+```
+
+---
+
 ## Benchmark Results Format
 
 Results are saved as RDS files containing:
@@ -175,9 +223,18 @@ Each `bench::mark` object contains:
 
 ### R Packages
 ```r
-install.packages("bench")  # Accurate microbenchmarking
-install.packages("speaker") # Must be installed
+install.packages("bench")      # Accurate microbenchmarking
+install.packages("ggplot2")    # For visualization
+install.packages("reticulate") # For Python integration (optional)
+install.packages("speaker")    # Must be installed
 ```
+
+### Python (Optional, for Parselmouth Comparison)
+```bash
+pip install praat-parselmouth
+```
+
+**Note**: Benchmarks 04 and 05 require Python with parselmouth. If not available, they will be automatically skipped.
 
 ### Platform Support
 - ✅ macOS (Intel x86-64)

@@ -39,7 +39,9 @@ saveRDS(system_info, "inst/benchmarks/results/00_system_info.rds")
 benchmarks <- c(
   "01_matrix_operations.R",
   "02_data_conversion.R",
-  "03_tone_generation.R"
+  "03_tone_generation.R",
+  "04_parselmouth_comparison.R",
+  "05_converted_scripts_comparison.R"
 )
 
 # Run each benchmark
@@ -78,9 +80,9 @@ for (f in result_files) {
 
 cat("\n")
 cat("Next steps:\n")
-cat("1. Implement SIMD optimizations using RcppXsimd\n")
-cat("2. Run benchmarks again to measure speedup\n")
-cat("3. Compare results using: source('inst/benchmarks/compare_results.R')\n")
+cat("1. Review Parselmouth comparison: source('inst/benchmarks/compare_results.R')\n")
+cat("2. Consider SIMD optimizations using RcppXsimd (see SIMD_INTEGRATION_PLAN.md)\n")
+cat("3. Implement any performance improvements identified\n")
 cat("\n")
 
 # Save completion marker
