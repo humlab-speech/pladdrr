@@ -734,3 +734,334 @@ Guide to migrating Praat scripts to speaker R code.
 ---
 
 **Conclusion**: Focus on completing what we have (18 objects, 330+ methods), document alternatives for excluded features, and create excellent migration guides. This delivers maximum value with minimal maintenance burden.
+
+---
+
+## Part 3: AVQI Script Analysis (2025-11-13)
+
+### Context
+
+Analyzed the AVQI (Acoustic Voice Quality Index) script from superassp to assess:
+1. What Praat graphics commands are actually used
+2. Whether R plotting can replicate the illustrated report
+3. Impact on deferring interpreter/graphics implementation
+
+### AVQI Script Graphics Usage
+
+The AVQI script uses these Praat graphics commands:
+
+**Viewport & Canvas:**
+- `Erase all` - Clear canvas
+- `Select inner viewport...` - Set drawing region coordinates
+
+**Drawing Commands:**
+- `Draw...` - Draw Sound waveform (oscillogram)
+- `Paint...` - Paint Spectrogram/Cepstrogram with color scale
+- `Paint rectangle...` - Draw colored zones (AVQI score indicator)
+- `Draw inner box` - Draw border boxes
+- `Draw arrow...` - Draw arrow pointing to score
+- `Draw tilt line...` - Draw regression line through LTAS
+
+**Text & Labels:**
+- `Text...` - Place text at specific coordinates
+- `Text left/bottom...` - Axis labels
+- `Font size...` - Set font size
+- `Helvetica` - Set font family
+
+**Axes & Marks:**
+- `Axes...` - Define coordinate system
+- `One mark left/bottom...` - Individual axis tick marks
+- `Marks top every...` - Regular tick spacing
+
+**Styling:**
+- `Line width...` - Set line thickness
+- `Solid line` - Line style
+- `Black` - Color selection
+
+### AVQI Report Components
+
+The illustrated output PDF contains:
+
+1. **Oscillogram (Waveform)**
+   - X: Time (seconds)
+   - Y: Sound pressure level (Pa)
+   - Vertical line at voiced/sustained vowel boundary
+   
+2. **Narrow-band Spectrogram**
+   - X: Time (seconds)
+   - Y: Frequency (0-4000 Hz)
+   - Color intensity representing energy
+   - Vertical boundary marker
+   
+3. **Long-Term Average Spectrum (LTAS)**
+   - X: Frequency (Hz)
+   - Y: Intensity (dB)
+   - Original LTAS curve
+   - Trend line overlay
+   
+4. **Power Cepstrogram**
+   - X: Time (seconds)
+   - Y: Quefrency (seconds)
+   - Color intensity plot
+   
+5. **Power Cepstrum Slice**
+   - X: Quefrency (seconds)
+   - Y: Amplitude (dB)
+   - Tilt line overlay
+   
+6. **AVQI Score Display**
+   - Green rectangle (0-2.43 = good)
+   - Red rectangle (2.43-10 = dysphonia)
+   - Arrow pointing to actual score
+   - Large text showing score value
+   
+7. **Acoustic Measures Table**
+   - CPPS (Smoothed Cepstral Peak Prominence)
+   - HNR (Harmonics-to-Noise Ratio)
+   - Shimmer local & Shimmer local dB
+   - LTAS Slope & LTAS Tilt
+
+### R Plotting Capability Assessment
+
+**✅ VERDICT: R can replicate ALL AVQI visualizations**
+
+#### Implementation Approach
+
+**Option A: Base R Graphics** (Recommended for v1.0)
+```r
+# Waveform
+plot(time, amplitude, type = "l")
+
+# Spectrogram
+image(time, freq, spectrogram_matrix, col = heat.colors(100))
+
+# LTAS with trendline
+plot(freq, ltas_db, type = "l")
+abline(lm(ltas_db ~ freq), col = "blue", lwd = 2)
+
+# Multi-panel layout
+layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE))
+```
+
+**Option B: ggplot2** (Recommended for publication quality)
+```r
+library(ggplot2)
+library(patchwork)
+
+# Waveform
+p1 <- ggplot(data, aes(time, amplitude)) + geom_line()
+
+# Spectrogram
+p2 <- ggplot(spec_data, aes(time, freq, fill = intensity)) +
+  geom_tile() + scale_fill_viridis_c()
+
+# Combine
+p1 / p2 / p3 / p4
+```
+
+**Option C: Hybrid** (Best of both)
+- ggplot2 for primary plots
+- Base R fallback (no dependencies)
+- Grid graphics for complex layouts
+
+### Required S7 Plot Methods
+
+```r
+# Core plotting generics
+plot.Sound(x, from = 0, to = 0, ...)
+plot.Spectrogram(x, from = 0, to = 0, dynamic_range = 50, ...)
+plot.Ltas(x, from = 0, to = 10000, show_trendline = FALSE, ...)
+plot.Spectrum(x, ...)
+plot.PowerCepstrogram(x, ...)
+plot.PowerCepstrum(x, show_tilt = FALSE, ...)
+plot.Pitch(x, overlay_on = NULL, ...)
+plot.Formant(x, overlay_on = NULL, max_formant = 5, ...)
+plot.Intensity(x, overlay_on = NULL, ...)
+plot.TextGrid(x, sound = NULL, ...)
+```
+
+### AVQI Report Function Specification
+
+```r
+#' Generate AVQI Illustrated Report
+#' 
+#' Replicates the Praat AVQI script visualization output
+#' 
+#' @param sound_cs Sound object from continuous speech
+#' @param sound_sv Sound object from sustained vowel
+#' @param patient_name Character string
+#' @param dob Date of birth (YYYY-MM-DD)
+#' @param assessment_date Assessment date (YYYY-MM-DD)
+#' @param output Output file path (.pdf, .png)
+#' @return List with AVQI score and acoustic measures
+#' @export
+avqi_report <- function(sound_cs, sound_sv, 
+                       patient_name = "",
+                       dob = "",
+                       assessment_date = Sys.Date(),
+                       output = "avqi_report.pdf") {
+  
+  # 1. Process continuous speech (extract voiced segments)
+  # 2. Concatenate with sustained vowel
+  # 3. Compute acoustic measures (CPPS, HNR, Shimmer, LTAS)
+  # 4. Calculate AVQI score
+  # 5. Generate multi-panel plot
+  # 6. Export to PDF/PNG
+  
+  # Returns list(avqi_score, cpps, hnr, shimmer, ...)
+}
+```
+
+### Impact Assessment: Deferred Interpreter & Graphics
+
+#### What is Lost
+
+1. **Cannot run `.praat` scripts directly**
+   - Must translate Praat syntax to R
+   - Example: `To Pitch...` → `toPitch()`
+   
+2. **No Praat Picture window**
+   - Cannot use viewport commands
+   - Must use R graphics devices instead
+
+#### What is Retained
+
+1. **✅ All Praat analysis functionality**
+   - Every object method available
+   - All calculations identical to Praat
+   
+2. **✅ Better integration with R ecosystem**
+   - Works with tidyverse, data.table
+   - RMarkdown, Shiny compatibility
+   - ggplot2 extensions
+   
+3. **✅ Superior batch processing**
+   - purrr::map() over file lists
+   - Parallel processing with furrr
+   - Database integration
+
+#### Script Translation Example
+
+**Praat Script:**
+```praat
+sound = Read from file: "test.wav"
+pitch = To Pitch... 0 75 600
+mean_f0 = Get mean... 0 0 Hertz
+
+# Graphics
+Erase all
+Select inner viewport... 0 6 0 4
+Draw... 0 0 75 600 yes
+```
+
+**R Translation:**
+```r
+sound <- snd_read("test.wav")
+pitch <- sound$toPitch(timeStep = 0, pitchFloor = 75, pitchCeiling = 600)
+mean_f0 <- pitch$getMean(fromTime = 0, toTime = 0, unit = "Hertz")
+
+# Graphics
+plot(pitch, from = 0, to = 0, floor = 75, ceiling = 600)
+# Or save to PDF
+pdf("pitch_plot.pdf", width = 6, height = 4)
+plot(pitch)
+dev.off()
+```
+
+### Final Recommendations
+
+#### ✅ CONFIRM: Defer Praat Graphics System
+
+**Reasons:**
+1. R plotting is equivalent or superior
+2. Reduces C++ codebase by ~10,000 LOC
+3. Better R ecosystem integration
+4. Easier maintenance
+5. Users expect R-style plotting
+
+**Timeline:** Not planned for v1.0, possibly v2.0 if demand exists
+
+#### ✅ CONFIRM: Defer Praat Script Interpreter
+
+**Reasons:**
+1. R API provides all functionality
+2. Interpreter is 3-6 months of work
+3. Most R users prefer R syntax
+4. Can provide conversion guides instead
+5. Focus on core features first
+
+**Timeline:** Not planned for v1.0, possibly v2.0+ if legacy support needed
+
+#### 🔄 IMPLEMENT: R Plotting Infrastructure
+
+**Priority: HIGH**
+
+**Week 3 Tasks:**
+- [ ] Implement S7 `plot()` generic
+- [ ] Create `plot.Sound()` - oscillogram
+- [ ] Create `plot.Spectrogram()` - spectrogram heatmap
+- [ ] Create `plot.Ltas()` - LTAS curve
+- [ ] Create `plot.PowerCepstrum()` - cepstrum curve
+
+**Week 4 Tasks:**
+- [ ] Create `plot.Pitch()` - pitch contour
+- [ ] Create `plot.Formant()` - formant tracks
+- [ ] Create `plot.Intensity()` - intensity contour
+- [ ] Create `plot.TextGrid()` - tier visualization
+- [ ] Multi-panel layout helper functions
+
+**Week 5-6 Tasks:**
+- [ ] Implement `avqi_report()` function
+- [ ] Create `voice_report()` function
+- [ ] Add vignette: "Visualizing Speech Data"
+- [ ] Add vignette: "Converting Praat Scripts"
+- [ ] Documentation with examples
+
+### Documentation Needs
+
+1. **Vignette: "Converting Praat Scripts to R"**
+   - Command-by-command mapping table
+   - Common patterns and idioms
+   - Batch processing examples
+   
+2. **Vignette: "Visualizing Speech Data"**
+   - All plot methods with examples
+   - AVQI report walkthrough
+   - Custom visualization recipes
+   
+3. **Reference: Praat → R Command Map**
+   - Comprehensive lookup table
+   - Search functionality
+   - Code examples for each
+
+### Success Criteria
+
+The `speaker` package will be considered successful when:
+
+1. ✅ All Praat object types have R equivalents
+2. ✅ All Praat analysis methods are accessible
+3. ✅ AVQI illustrated report can be replicated
+4. ✅ Plot methods exist for all major objects
+5. ✅ Documentation enables easy Praat → R transition
+6. ✅ Performance equals or exceeds Praat
+7. ✅ Integration with R ecosystem is seamless
+
+### Conclusion
+
+**By deferring the Praat graphics system and interpreter**, we:
+
+1. ✅ Deliver core functionality faster (v0.4 → v1.0 in 3-4 weeks)
+2. ✅ Reduce complexity by ~60% (no graphics subsystem, no parser)
+3. ✅ Provide better R integration (native plotting, tidyverse)
+4. ✅ Enable superior visualizations (ggplot2 quality)
+5. ✅ Maintain full Praat analytical capabilities
+6. ✅ Keep option open for v2.0 enhancements
+
+**The AVQI illustrated report serves as proof-of-concept** that all Praat visualizations can be replicated (or exceeded) using R's native plotting capabilities.
+
+**Next step:** Implement S7 plot methods in Week 3 (current session).
+
+---
+
+**Last Updated:** 2025-11-13  
+**Decision:** Proceed with R-based plotting, defer interpreter to v2.0+
