@@ -144,12 +144,14 @@ LPC <- R6::R6Class(
     # Conversion methods
     # ========================================================================
     
-    #' @description Convert LPC to Formant object
+    #' @description Convert LPC to Formant object (DISABLED)
     #' @param margin Safety margin for formant extraction (Hz)
     #' @return A new Formant object
+    #' @note This method is disabled in this build to avoid CLAPACK dependency.
+    #'   Use Sound$to_formant_burg() for formant extraction instead.
     to_formant = function(margin = 50.0) {
-      formant_ptr <- .lpc_to_formant(private$ptr, margin)
-      Formant$new(.xptr = formant_ptr)
+      stop("LPC$to_formant() is not available in this build (requires CLAPACK).\n",
+           "Use Sound$to_formant_burg() for formant extraction instead.")
     },
     
     #' @description Convert LPC to Spectrum at specific time

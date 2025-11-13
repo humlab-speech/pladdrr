@@ -13,10 +13,10 @@ PKG_CPPFLAGS = -I. \
                -Ipraat.github.io/melder \
                -Ipraat.github.io/sys \
                -Ipraat.github.io/dwsys \
+               -Ipraat.github.io/dwtools \
                -Ipraat.github.io/stat \
                -Ipraat.github.io/fon \
                -Ipraat.github.io/foned \
-               -Ipraat.github.io/dwtools \
                -Ipraat.github.io/LPC \
                -Ipraat.github.io/sensors \
                -Ipraat.github.io/external/portaudio \
@@ -78,9 +78,13 @@ MELDER_SRC = melder/melder.cpp melder/melder_alloc.cpp melder/melder_str32.cpp \
 SYS_SRC = sys/Thing.cpp sys/Data.cpp sys/Simple.cpp sys/Collection.cpp \
           sys/Strings.cpp sys/Formula.cpp sys/Interpreter.cpp sys/Script.cpp
 
-# Dwsys sources (minimal - no CLAPACK dependencies)
-DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp praat.github.io/dwsys/Polynomial.cpp \
-            praat.github.io/dwsys/FunctionSeries.cpp 
+# Dwsys sources (minimal - for LPC support without CLAPACK)
+DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
+            praat.github.io/dwsys/Polynomial.cpp \
+            praat.github.io/dwsys/FunctionSeries.cpp
+
+# Dwtools sources (for LPC support)
+DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp
 
 # Stat sources (minimal - Table support)
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
@@ -118,15 +122,21 @@ FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
 # Sensors sources
 SENSORS_SRC = praat.github.io/sensors/Electroglottogram.cpp
 
-# LPC sources (minimal - needed for Manipulation struct definition)
-LPC_SRC = praat.github.io/LPC/LPC.cpp praat.github.io/LPC/Sound_and_LPC.cpp
+# LPC sources (analysis only - without Formant extraction which needs CLAPACK)
+LPC_SRC = praat.github.io/LPC/LPC.cpp \
+          praat.github.io/LPC/Sound_and_LPC.cpp \
+          praat.github.io/LPC/LPC_to_Spectrum.cpp \
+          praat.github.io/LPC/LPC_and_Polynomial.cpp \
+          praat.github.io/LPC/LPC_to_Spectrogram.cpp \
+          praat.github.io/LPC/LineSpectralFrequencies.cpp \
+          praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp
 
 # Wrapper sources (R package code)
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
               intensity_wrappers.cpp pointprocess_wrappers.cpp \
               spectrum_wrappers.cpp spectrogram_wrappers.cpp \
-              ltas_wrappers.cpp \
+              ltas_wrappers.cpp lpc_wrappers.cpp lpc_clapack_stubs.cpp \
               textgrid_wrappers.cpp pitchtier_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp \
@@ -137,7 +147,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               utils.cpp RcppExports.cpp
 
 # All sources combined
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC)
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC)
 
 # Object files (R will compile these)
 OBJECTS = $(SOURCES:.cpp=.o)

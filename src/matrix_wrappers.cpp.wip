@@ -4,7 +4,7 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
-#include "../praat/fon/Matrix.h"
+#include "praat.github.io/fon/Matrix.h"
 
 using namespace Rcpp;
 

@@ -4037,3 +4037,133 @@ The speaker package has **successfully implemented** an object-oriented paradigm
 ## OOP Architecture Comprehensive Documentation (2025-11-12 Amendment)
 
 See OOP_ARCHITECTURE_AMENDMENT_2025-11-12.md for complete specification.
+
+---
+
+## Architectural Decisions (2025-11-13)
+
+### Excluded Features and Rationale
+
+Based on comprehensive assessment documented in `GRAPHICS_AND_INTERPRETER_ASSESSMENT.md`:
+
+#### 1. Praat Graphics System - NOT IMPLEMENTED ❌
+
+**Decision**: Will not implement Praat's Picture window graphics system
+
+**Rationale**:
+- Implementation cost: 6-8 weeks, ~40,000 lines of code
+- Maintenance burden: High (platform-specific graphics, X11/Quartz/Win32)
+- R graphics (ggplot2, phonR) are superior and already familiar to users
+- Better integration with R ecosystem (tidyverse, RMarkdown)
+
+**Alternative Approach**:
+- All objects provide `as_data_frame()` and `as_matrix()` export methods ✅
+- Create `vignettes/plotting.Rmd` showing ggplot2 patterns
+- Provide example plotting functions in `inst/examples/plotting.R`
+- Leverage R's excellent plotting ecosystem (ggplot2, patchwork, phonR)
+
+**Benefits of R Graphics Over Praat Graphics**:
+- ✅ Publication-quality output (ggplot2)
+- ✅ More flexible and customizable
+- ✅ Better statistical graphics integration
+- ✅ Works seamlessly with tidyverse
+- ✅ Export to any format (PDF, PNG, SVG, etc.)
+- ✅ Zero maintenance burden
+- ✅ Already familiar to R users
+
+#### 2. Praat Script Interpreter - NOT IMPLEMENTED (v1.0) ❌
+
+**Decision**: Will not implement full Praat script interpreter in v1.0
+
+**Rationale**:
+- Implementation cost: 8-12 weeks, ~12,000 lines of code
+- Maintenance burden: Very high (syntax compatibility, edge cases, testing)
+- Systematic transcoding with current naming conventions is better approach
+- Native R code is faster and more maintainable than emulated scripts
+
+**Alternative Approach**:
+- Complete 1:1 naming convention documentation ✅
+- Create `vignettes/praat-to-r.Rmd` comprehensive migration guide
+- Provide semi-automated `convert_praat_script()` helper function
+- Include before/after examples for common patterns
+- Document all transcoding patterns in reference
+
+**Benefits of Transcoding Over Interpreter**:
+- ✅ Better code quality (native R, not emulated)
+- ✅ Easier to debug and extend
+- ✅ More performant (no interpreter overhead)
+- ✅ Full R integration (tidyverse, control flow, functions)
+- ✅ Users learn proper R programming
+- ✅ Zero maintenance burden
+- ✅ Can mix Praat and R functionality
+
+**Systematic Transcoding Pattern**:
+
+| Praat Command | R Method | Example |
+|---------------|----------|---------|
+| `Read from file: "audio.wav"` | `Sound$new("audio.wav")` | Object creation |
+| `To Pitch: 0.01, 75, 600` | `sound$to_pitch(time_step=0.01, pitch_floor=75, pitch_ceiling=600)` | Transformation |
+| `Get mean: 0, 0, "Hertz"` | `pitch$get_mean(from_time=0, to_time=0, unit="hertz")` | Query |
+| `selectObject: sound` | (not needed - use variable directly) | Object management |
+| `removeObject: sound` | `rm(sound)` (automatic GC) | Memory management |
+
+**Future Consideration** (v2.0+):
+- May implement as separate package `speaker.interpreter`
+- Only if overwhelming user demand
+- Would require grant funding or significant community contribution
+- Would use formal parsing library (Boost.Spirit or antlr4)
+
+#### 3. LPC Module - DEFERRED to v1.1.0 ⏸️
+
+**Decision**: Defer Linear Predictive Coding to future release
+
+**Rationale**:
+- Implementation cost: 2-3 weeks, ~6,000 lines of code
+- PSOLA synthesis is superior and already fully functional ✅
+- LPC rarely used in modern speech processing workflows
+- Adds complexity and dependencies (NUM library, Polynomial class)
+
+**Alternative Approach**:
+- Use PSOLA resynthesis: `manipulation$get_resynthesis_overlap_add()` ✅
+- PSOLA is industry standard for pitch/duration modification
+- Higher quality output than LPC synthesis
+- No additional dependencies required
+
+**Current Status**:
+- LPC synthesis methods stubbed out in `src/praat/fon/Manipulation.cpp`
+- Throws informative error message directing users to PSOLA
+- Can be added later without breaking changes
+
+**What LPC Would Provide** (if implemented):
+- Linear predictive coding analysis
+- LPC-based formant extraction (alternative to Burg)
+- LPC resynthesis (inferior to PSOLA)
+- Speech coding applications (research)
+
+**Future Consideration** (v1.1.0):
+- Add if users request LPC analysis specifically
+- Separate PR focused on LPC module integration
+- Would require full NUM library and dependencies
+
+### Design Philosophy Summary
+
+**What speaker IS**:
+- ✅ Complete object-oriented interface to Praat in R
+- ✅ Direct C++ bindings with zero-copy efficiency
+- ✅ 18 Praat objects, ~330 methods
+- ✅ Systematic naming for easy Praat script transcoding
+- ✅ Superior to Parselmouth (no Python, better integration)
+- ✅ Production-ready phonetic analysis toolkit
+
+**What speaker is NOT**:
+- ❌ A complete Praat emulator
+- ❌ A graphics system (use R graphics instead)
+- ❌ A script interpreter (use transcoding instead)
+- ❌ A replacement for all Praat features (focused on analysis)
+
+**Design Priorities**:
+1. **Correctness**: Match Praat's analysis results exactly
+2. **Performance**: Direct C++ binding, zero-copy operations
+3. **Usability**: R6 classes, autocomplete, named parameters
+4. **Maintainability**: Minimal code, leverage R ecosystem
+5. **Integration**: Works seamlessly with tidyverse

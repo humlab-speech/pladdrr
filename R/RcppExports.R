@@ -437,6 +437,62 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_speaker_intensitytier_read`, path)
 }
 
+.sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_burg`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_covariance <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_covariance`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_auto <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
+    .Call(`_speaker_sound_to_lpc_auto`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
+}
+
+.sound_to_lpc_marple <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0, tol1 = 1e-6, tol2 = 1e-6) {
+    .Call(`_speaker_sound_to_lpc_marple`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency, tol1, tol2)
+}
+
+.lpc_get_number_of_frames <- function(lpc) {
+    .Call(`_speaker_lpc_get_number_of_frames`, lpc)
+}
+
+.lpc_get_time_step <- function(lpc) {
+    .Call(`_speaker_lpc_get_time_step`, lpc)
+}
+
+.lpc_get_sampling_period <- function(lpc) {
+    .Call(`_speaker_lpc_get_sampling_period`, lpc)
+}
+
+.lpc_get_max_num_coefficients <- function(lpc) {
+    .Call(`_speaker_lpc_get_max_num_coefficients`, lpc)
+}
+
+.lpc_get_gain_at_frame <- function(lpc, frame_number) {
+    .Call(`_speaker_lpc_get_gain_at_frame`, lpc, frame_number)
+}
+
+.lpc_get_coefficients_at_frame <- function(lpc, frame_number) {
+    .Call(`_speaker_lpc_get_coefficients_at_frame`, lpc, frame_number)
+}
+
+.lpc_get_all_gains <- function(lpc) {
+    .Call(`_speaker_lpc_get_all_gains`, lpc)
+}
+
+.lpc_get_all_coefficients <- function(lpc) {
+    .Call(`_speaker_lpc_get_all_coefficients`, lpc)
+}
+
+.lpc_to_spectrum <- function(lpc, time, df_min = 20.0, bandwidth_reduction = 0.0, de_emphasis_frequency = 50.0) {
+    .Call(`_speaker_lpc_to_spectrum`, lpc, time, df_min, bandwidth_reduction, de_emphasis_frequency)
+}
+
+.lpc_to_matrix <- function(lpc) {
+    .Call(`_speaker_lpc_to_matrix`, lpc)
+}
+
 .ltas_get_bin_from_frequency <- function(ltas, frequency) {
     .Call(`_speaker_ltas_get_bin_from_frequency`, ltas, frequency)
 }

@@ -9,10 +9,10 @@
 // Praat headers for LPC
 #include "praat.github.io/LPC/LPC.h"
 #include "praat.github.io/LPC/Sound_and_LPC.h"
-#include "praat.github.io/LPC/LPC_and_Formant.h"
+// #include "praat.github.io/LPC/LPC_and_Formant.h"  // Disabled - requires CLAPACK
 #include "praat.github.io/LPC/LPC_to_Spectrum.h"
 #include "praat.github.io/fon/Sound.h"
-#include "praat.github.io/fon/Formant.h"
+// #include "praat.github.io/fon/Formant.h"  // Already included elsewhere
 #include "praat.github.io/fon/Spectrum.h"
 
 // ============================================================================
@@ -191,16 +191,19 @@ Rcpp::NumericMatrix lpc_get_all_coefficients(Rcpp::XPtr<structLPC> lpc) {
 // LPC Conversion Methods
 // ============================================================================
 
-// [[Rcpp::export(.lpc_to_formant)]]
-Rcpp::XPtr<structFormant> lpc_to_formant(Rcpp::XPtr<structLPC> lpc, double margin = 50.0) {
-    try {
-        autoFormant formant = LPC_to_Formant(lpc.get(), margin);
-        return create_xptr_from_auto<structFormant>(formant);
-    } catch (MelderError) {
-        Melder_clearError();
-        Rcpp::stop("Failed to convert LPC to Formant");
-    }
-}
+// LPC_to_Formant disabled - requires CLAPACK (Roots)
+// Users should use Sound$to_formant_burg() for formant extraction instead
+// 
+// // [[Rcpp::export(.lpc_to_formant)]]
+// Rcpp::XPtr<structFormant> lpc_to_formant(Rcpp::XPtr<structLPC> lpc, double margin = 50.0) {
+//     try {
+//         autoFormant formant = LPC_to_Formant(lpc.get(), margin);
+//         return create_xptr_from_auto<structFormant>(formant);
+//     } catch (MelderError) {
+//         Melder_clearError();
+//         Rcpp::stop("Failed to convert LPC to Formant");
+//     }
+// }
 
 // [[Rcpp::export(.lpc_to_spectrum)]]
 Rcpp::XPtr<structSpectrum> lpc_to_spectrum(
