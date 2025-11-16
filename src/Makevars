@@ -142,6 +142,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp table_wrappers.cpp \
               amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
+              matrix_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
