@@ -26,7 +26,7 @@ PKG_CPPFLAGS = -I. \
                -Ipraat.github.io/external/gsl \
                -Ipraat.github.io/external/glpk
 
-# Compiler flags (Praat-specific + warning suppression)
+# Compiler flags (Praat-specific + warning suppression + SIMD)
 PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_GUI \
                -DNO_AUDIO \
@@ -45,6 +45,15 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
                -Wno-mismatched-tags \
                -Wno-unused-const-variable \
                -Wno-c++11-narrowing
+
+# Platform-specific SIMD flags (detected at compile time)
+ifeq ($(shell uname -m),x86_64)
+  PKG_CXXFLAGS += -march=native -mtune=native
+else ifeq ($(shell uname -m),aarch64)
+  PKG_CXXFLAGS += -march=armv8-a+simd
+else ifeq ($(shell uname -m),arm64)
+  PKG_CXXFLAGS += -march=armv8-a+simd
+endif
 
 # Linker flags
 PKG_LIBS = -pthread

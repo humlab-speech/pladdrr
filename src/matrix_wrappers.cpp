@@ -4,6 +4,7 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
+#include "simd_utils.h"
 #include "fon/Matrix.h"
 
 // Note: Don't use "using namespace Rcpp" to avoid Matrix type collision
@@ -179,66 +180,81 @@ void matrix_formula(SEXP xptr, std::string formula) {
   } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
-// Statistical operations
+// Statistical operations - SIMD-optimized
 
 // [[Rcpp::export(.matrix_get_sum)]]
 double matrix_get_sum(SEXP xptr) {
   try {
-  Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  double sum = 0.0;
-  for (integer i = 1; i <= matrix->ny; i++) {
-    for (integer j = 1; j <= matrix->nx; j++) {
-      sum += matrix->z[i][j];
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+    double sum = 0.0;
+    
+    // Process each row with SIMD
+    for (integer i = 1; i <= matrix->ny; i++) {
+      sum += speaker::simd::sum_array(&matrix->z[i][1], matrix->nx);
     }
+    
+    return sum;
+  } catch (MelderError) { 
+    Melder_clearError(); 
+    Rcpp::stop("Matrix operation failed"); 
   }
-  return sum;
-  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_mean)]]
 double matrix_get_mean(SEXP xptr) {
   try {
-  Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  double sum = 0.0;
-  integer count = 0;
-  for (integer i = 1; i <= matrix->ny; i++) {
-    for (integer j = 1; j <= matrix->nx; j++) {
-      sum += matrix->z[i][j];
-      count++;
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+    double sum = 0.0;
+    integer count = matrix->ny * matrix->nx;
+    
+    if (count == 0) return NAN;
+    
+    // Process each row with SIMD
+    for (integer i = 1; i <= matrix->ny; i++) {
+      sum += speaker::simd::sum_array(&matrix->z[i][1], matrix->nx);
     }
+    
+    return sum / count;
+  } catch (MelderError) { 
+    Melder_clearError(); 
+    Rcpp::stop("Matrix operation failed"); 
   }
-  return count > 0 ? sum / count : NAN;
-  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_minimum)]]
 double matrix_get_minimum(SEXP xptr) {
   try {
-  Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  double min = INFINITY;
-  for (integer i = 1; i <= matrix->ny; i++) {
-    for (integer j = 1; j <= matrix->nx; j++) {
-      if (matrix->z[i][j] < min) {
-        min = matrix->z[i][j];
-      }
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+    double min = INFINITY;
+    
+    // Process each row with SIMD
+    for (integer i = 1; i <= matrix->ny; i++) {
+      double row_min = speaker::simd::min_array(&matrix->z[i][1], matrix->nx);
+      if (row_min < min) min = row_min;
     }
+    
+    return min;
+  } catch (MelderError) { 
+    Melder_clearError(); 
+    Rcpp::stop("Matrix operation failed"); 
   }
-  return min;
-  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_maximum)]]
 double matrix_get_maximum(SEXP xptr) {
   try {
-  Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  double max = -INFINITY;
-  for (integer i = 1; i <= matrix->ny; i++) {
-    for (integer j = 1; j <= matrix->nx; j++) {
-      if (matrix->z[i][j] > max) {
-        max = matrix->z[i][j];
-      }
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+    double max = -INFINITY;
+    
+    // Process each row with SIMD
+    for (integer i = 1; i <= matrix->ny; i++) {
+      double row_max = speaker::simd::max_array(&matrix->z[i][1], matrix->nx);
+      if (row_max > max) max = row_max;
     }
+    
+    return max;
+  } catch (MelderError) { 
+    Melder_clearError(); 
+    Rcpp::stop("Matrix operation failed"); 
   }
-  return max;
-  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }

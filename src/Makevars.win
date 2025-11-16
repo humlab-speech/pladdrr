@@ -31,12 +31,15 @@ PKG_CPPFLAGS = -I. \
 # -Wno-unused-variable: Suppress unused variable warnings from Praat
 # -Wno-deprecated-declarations: Suppress deprecation warnings
 # -DWIN32: Windows platform flag
+# -march=native: Enable SIMD optimizations for host CPU
 PKG_CXXFLAGS = -DPRAAT_LIB \
                -DWIN32 \
                -Wno-unused-parameter \
                -Wno-sign-compare \
                -Wno-unused-variable \
-               -Wno-deprecated-declarations
+               -Wno-deprecated-declarations \
+               -march=native \
+               -mtune=native
 
 # Linker flags (if needed for Windows-specific libraries)
 PKG_LIBS =
