@@ -35,34 +35,42 @@ The speaker package has **excellent SIMD optimization potential** using RcppXsim
 
 ### Tier 1: Critical Impact (Implement First)
 
-**NOTE**: Matrix implementation exists (`matrix_wrappers.cpp.wip`, 244 lines) but is **intentionally deferred** - not compiled or exported. R6 class fully defined. Can be activated in 1-2 hours if desired. Focus on Sound and Table operations for Phase 1.
+**UPDATE 2025-11-16**: Matrix class is NOW ACTIVE! File `src/matrix_wrappers.cpp` (244 lines) is compiled and functional. Matrix operations are now CO-TOP PRIORITY with Sound operations.
 
-1. **Sound Data Conversion (Praat ↔ R)** ⭐⭐⭐⭐⭐ **TOP PRIORITY**
+1. **Matrix Statistical Operations** ⭐⭐⭐⭐⭐ **NOW ACTIVE - CO-TOP PRIORITY**
+   - Location: `src/matrix_wrappers.cpp:184-244`
+   - Operations: sum, mean, min, max (nested loops on 2D arrays)
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH (foundational for numerical analysis)
+   - **Rationale**: Now that Matrix is active, these are critical optimization targets
+
+2. **Matrix Data Conversion (Praat ↔ R)** ⭐⭐⭐⭐⭐ **NOW ACTIVE - CO-TOP PRIORITY**
+   - Location: `src/matrix_wrappers.cpp:140-171`
+   - Operations: Bulk memory transfers (matrix_to_r_matrix, matrix_from_r_matrix)
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH (on every matrix I/O operation)
+   - **Rationale**: Critical for data exchange between R and Praat
+
+3. **Sound Data Conversion (Praat ↔ R)** ⭐⭐⭐⭐⭐ **CO-TOP PRIORITY**
    - Location: `src/sound_wrappers.cpp:72-76, 509-521`
    - Operations: Bulk memory transfers (sound_create_from_values, sound_as_matrix)
    - Expected speedup: 4-8x
    - Impact: VERY HIGH (on every audio I/O operation)
    - **Rationale**: Most frequently called operations in typical workflows
 
-2. **Table Statistical Operations** ⭐⭐⭐⭐⭐ **NEW - HIGH PRIORITY**
-   - Location: `src/table_wrappers.cpp` (bulk operations on numeric columns)
-   - Operations: sum, mean, min, max, quantiles on table columns
-   - Expected speedup: 4-6x
-   - Impact: VERY HIGH (data analysis workflows)
-
-3. **Tone Generation** ⭐⭐⭐⭐⭐
+4. **Tone Generation** ⭐⭐⭐⭐⭐
    - Location: `src/sound_wrappers.cpp:88-110`
    - Operations: Vectorized sine function
    - Expected speedup: 4-6x
    - Impact: HIGH
 
-4. **Intensity Calculations** ⭐⭐⭐⭐⭐
+5. **Intensity Calculations** ⭐⭐⭐⭐⭐
    - Location: `src/sound_wrappers.cpp:180-202`
    - Operations: RMS, sum-of-squares
    - Expected speedup: 3-5x
    - Impact: VERY HIGH
 
-5. **Sound Mixing** ⭐⭐⭐⭐
+6. **Sound Mixing** ⭐⭐⭐⭐
    - Location: `src/sound_wrappers.cpp:876-935`
    - Operations: Weighted sums
    - Expected speedup: 4-6x
@@ -102,21 +110,27 @@ The speaker package has **excellent SIMD optimization potential** using RcppXsim
 
 ---
 
-## Implementation Strategy (REVISED 2025-11-16)
+## Implementation Strategy (REVISED 2025-11-16 - Matrix NOW ACTIVE!)
 
-### Phase 1 (Week 1): Foundation - Sound & Data Operations
-**Goal**: 3-6x speedup for audio I/O and conversion operations
+### Phase 1 (Week 1): Foundation - Matrix & Sound Operations
+**Goal**: 4-8x speedup for Matrix operations, 3-6x for Sound I/O
 
 **Tasks**:
 - Add RcppXsimd dependency to DESCRIPTION
 - Create configure script for SIMD detection
+- **Implement Matrix SIMD (NEW - TOP PRIORITY)**:
+  - `matrix_get_sum_simd()` - row-wise accumulation
+  - `matrix_get_mean_simd()` - sum + division
+  - `matrix_get_min_max_simd()` - single-pass min/max
+  - `matrix_to_r_matrix_simd()` - bulk copy to R
+  - `matrix_from_r_matrix_simd()` - bulk copy from R
 - Implement sound data conversion SIMD (sound_as_matrix, sound_create_from_values)
 - Implement tone generation SIMD (vectorized sine)
 - Implement RMS/intensity calculations SIMD
-- Create benchmark suite for Sound operations
+- Create benchmark suite for Matrix AND Sound operations
 - Validate numerical accuracy (tolerance: 1e-12)
 
-**Estimated Effort**: 3-4 days
+**Estimated Effort**: 4-5 days (increased from 3-4 due to Matrix additions)
 
 ---
 

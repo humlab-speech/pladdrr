@@ -29,7 +29,7 @@ Matrix <- R6::R6Class("Matrix",
                          numberOfRows = NULL, numberOfColumns = NULL,
                          .xptr = NULL) {
       if (!is.null(.xptr)) {
-        if (!inherits(.xptr, "XPtr")) {
+        if (!inherits(.xptr, "externalptr")) {
           stop(".xptr must be an external pointer")
         }
         private$ptr <- .xptr

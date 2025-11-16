@@ -4,6 +4,8 @@
 
 This document provides an updated SIMD optimization assessment for the speaker package based on the actual codebase structure as of 2025-11-16. This update corrects earlier assumptions and focuses optimization efforts on the available C++ wrapper files.
 
+**MAJOR UPDATE**: Matrix class is now ACTIVE! The file `src/matrix_wrappers.cpp` (244 lines) has been activated and is fully functional. Matrix operations are now **CO-TOP PRIORITY** alongside Sound operations for SIMD optimization.
+
 ## Key Findings
 
 ### 1. Codebase Structure Clarification
@@ -11,34 +13,89 @@ This document provides an updated SIMD optimization assessment for the speaker p
 **Initial Assessment Assumption**: Presence of active `src/matrix_wrappers.cpp` with matrix statistical operations.
 
 **Actual Finding**:
-- ⚠️ **`src/matrix_wrappers.cpp.wip` file EXISTS but is NOT COMPILED**
-- ⚠️ Matrix R6 class fully defined in `R/matrix-r6.R` but non-functional
-- ⚠️ 15 C++ wrapper functions prepared (244 lines) but not exported
-- ⚠️ Matrix implementation is **intentionally deferred** (low priority per CLAUDE.md)
-- ✅ Primary optimization targets are Sound and Table wrappers
-- ✅ Praat Matrix C++ source available and compiled, but not exposed to R
+- ✅ **`src/matrix_wrappers.cpp` file NOW ACTIVE AND COMPILED!** 🎉
+- ✅ Matrix R6 class fully defined in `R/matrix-r6.R` and FUNCTIONAL
+- ✅ 19 C++ wrapper functions implemented and exported (244 lines)
+- ✅ Matrix implementation is **NOW OPERATIONAL** (activated 2025-11-16)
+- ✅ Primary optimization targets are **Matrix AND Sound** wrappers
+- ✅ Praat Matrix C++ source available, compiled, and exposed to R
 
 **Detailed Status**:
-- **R6 Class**: `/Users/frkkan96/Documents/src/speaker/R/matrix-r6.R` (229 lines, 15 methods)
-- **C++ Wrapper (WIP)**: `/Users/frkkan96/Documents/src/speaker/src/matrix_wrappers.cpp.wip` (244 lines)
-- **C++ Wrapper (Backup)**: `/Users/frkkan96/Documents/src/speaker/src/matrix_wrappers.cpp.bak`
-- **Makevars Inclusion**: ❌ Not in WRAPPER_SRC list
-- **RcppExports**: ❌ No `.matrix_*()` functions generated
-- **Praat Source**: ✅ Available in `src/praat.github.io/fon/Matrix.cpp` and related files
+- **R6 Class**: `/Users/frkkan96/Documents/src/speaker/R/matrix-r6.R` (229 lines, 15 methods) ✅ FUNCTIONAL
+- **C++ Wrapper**: `/Users/frkkan96/Documents/src/speaker/src/matrix_wrappers.cpp` (244 lines) ✅ ACTIVE
+- **Makevars Inclusion**: ✅ IN WRAPPER_SRC list
+- **RcppExports**: ✅ All `.matrix_*()` functions generated
+- **Praat Source**: ✅ Available in `src/praat.github.io/fon/Matrix.cpp` and compiled
 
-**Architectural Decision** (per CLAUDE.md):
-> Matrix implementation is low-priority. R's data.frame is superior for R workflows. Other objects provide `as_data_frame()` for data export (preferred approach).
+**Matrix Functions Now Available**:
+- **Creation**: `matrix_create()`, `matrix_create_simple()`
+- **Structure Queries**: `matrix_get_nx()`, `matrix_get_ny()`, `matrix_get_dx()`, `matrix_get_dy()`, etc.
+- **Value Access**: `matrix_get_value()`, `matrix_set_value()`, `matrix_get_value_at_xy()`
+- **Conversion**: `matrix_to_r_matrix()`, `matrix_from_r_matrix()`
+- **Statistics**: `matrix_get_sum()`, `matrix_get_mean()`, `matrix_get_minimum()`, `matrix_get_maximum()`
+- **Formula**: `matrix_formula()`
 
 **Impact**:
-- Refocused Phase 1 priorities from matrix operations to Sound data conversion and Table statistical operations
-- Matrix SIMD optimization **deferred to optional Phase 1b** (if Matrix is activated)
-- If Matrix is activated, benchmarks already exist in `inst/benchmarks/01_matrix_operations.R`
+- **PRIORITY SHIFT**: Matrix operations are now **CO-TOP PRIORITY** with Sound operations
+- Phase 1 SIMD implementation expanded to include Matrix alongside Sound
+- Benchmarks exist in `inst/benchmarks/01_matrix_operations.R` and are ready to use
+- Expected performance gains: 4-8x for Matrix statistical operations
 
 ### 2. Available C++ Wrapper Files for SIMD Optimization
 
 Analysis of `src/` directory reveals the following high-value targets:
 
-#### **Tier 1: Sound Operations** (Highest Impact)
+#### **Tier 1A: Matrix Operations** (NOW HIGHEST PRIORITY) 🎉
+
+**File**: `src/matrix_wrappers.cpp` (NOW ACTIVE - 244 lines)
+
+**Critical Functions for SIMD**:
+
+1. **`matrix_get_sum()`** (lines 184-196) ⭐⭐⭐⭐⭐
+   - Current: Nested loop summing all matrix elements
+   - SIMD opportunity: Row-wise vectorized accumulation
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH (foundation for all statistical operations)
+   - Code pattern:
+   ```cpp
+   for (integer i = 1; i <= matrix->ny; i++) {
+       for (integer j = 1; j <= matrix->nx; j++) {
+           sum += matrix->z[i][j];  // ← Vectorize this
+       }
+   }
+   ```
+
+2. **`matrix_get_mean()`** (lines 198-212) ⭐⭐⭐⭐⭐
+   - Current: Nested loop for sum + division
+   - SIMD opportunity: Reuse vectorized sum, single division
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH
+
+3. **`matrix_get_minimum()`** (lines 214-228) ⭐⭐⭐⭐⭐
+   - Current: Nested loop with scalar comparisons
+   - SIMD opportunity: `xsimd::min()` reduction
+   - Expected speedup: 4-6x
+   - Impact: HIGH
+
+4. **`matrix_get_maximum()`** (lines 230-244) ⭐⭐⭐⭐⭐
+   - Current: Nested loop with scalar comparisons
+   - SIMD opportunity: `xsimd::max()` reduction
+   - Expected speedup: 4-6x
+   - Impact: HIGH
+
+5. **`matrix_to_r_matrix()`** (lines 140-153) ⭐⭐⭐⭐⭐
+   - Current: Nested loop copying Praat matrix to R matrix
+   - SIMD opportunity: Row-wise vectorized bulk copy
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH (on every matrix export)
+
+6. **`matrix_from_r_matrix()`** (lines 155-171) ⭐⭐⭐⭐⭐
+   - Current: Nested loop copying R matrix to Praat matrix
+   - SIMD opportunity: Row-wise vectorized bulk copy
+   - Expected speedup: 4-8x
+   - Impact: VERY HIGH (on every matrix import)
+
+#### **Tier 1B: Sound Operations** (Co-Highest Priority)
 
 **File**: `src/sound_wrappers.cpp` (primary audio processing file)
 
@@ -104,24 +161,30 @@ Analysis of `src/` directory reveals the following high-value targets:
 
 **Note**: These files primarily call Praat internal functions. SIMD optimization would require modifying Praat source code (more complex, deferred to Phase 3).
 
-### 3. Revised Priority List
+### 3. Revised Priority List (UPDATED - Matrix NOW ACTIVE!)
 
 | Rank | Operation | File | Lines | Speedup | Impact | Phase |
 |------|-----------|------|-------|---------|--------|-------|
-| 1 | Sound data conversion (to R) | sound_wrappers.cpp | 509-521 | 4-8x | VERY HIGH | 1 |
-| 2 | Sound data conversion (from R) | sound_wrappers.cpp | 72-76 | 4-8x | VERY HIGH | 1 |
-| 3 | Tone generation | sound_wrappers.cpp | 98-102 | 4-6x | HIGH | 1 |
-| 4 | RMS calculation | sound_wrappers.cpp | 192-197 | 3-5x | HIGH | 1 |
-| 5 | Table column statistics | table_wrappers.cpp | NEW | 4-6x | HIGH | 1-2 |
-| 6 | Sound data frame export | sound_wrappers.cpp | 490-497 | 2-4x | MEDIUM-HIGH | 2 |
-| 7 | Intensity calculations | intensity_wrappers.cpp | Various | 2-4x | MEDIUM-HIGH | 2 |
-| 8 | Spectral operations | spectrum_wrappers.cpp | Various | 2-4x | MEDIUM | 2 |
-| 9 | EGG derivative | electroglottogram_wrappers.cpp | 82-94 | 3-4x | MEDIUM | 2 |
-| 10 | Formant extraction | formant_wrappers.cpp | Various | 2-4x | HIGH | 3 |
+| 1 | **Matrix sum** | **matrix_wrappers.cpp** | **184-196** | **4-8x** | **VERY HIGH** | **1** |
+| 2 | **Matrix mean** | **matrix_wrappers.cpp** | **198-212** | **4-8x** | **VERY HIGH** | **1** |
+| 3 | **Matrix to R conversion** | **matrix_wrappers.cpp** | **140-153** | **4-8x** | **VERY HIGH** | **1** |
+| 4 | **Matrix from R conversion** | **matrix_wrappers.cpp** | **155-171** | **4-8x** | **VERY HIGH** | **1** |
+| 5 | **Matrix min/max** | **matrix_wrappers.cpp** | **214-244** | **4-6x** | **HIGH** | **1** |
+| 6 | Sound data conversion (to R) | sound_wrappers.cpp | 509-521 | 4-8x | VERY HIGH | 1 |
+| 7 | Sound data conversion (from R) | sound_wrappers.cpp | 72-76 | 4-8x | VERY HIGH | 1 |
+| 8 | Tone generation | sound_wrappers.cpp | 98-102 | 4-6x | HIGH | 1 |
+| 9 | RMS calculation | sound_wrappers.cpp | 192-197 | 3-5x | HIGH | 1 |
+| 10 | Sound data frame export | sound_wrappers.cpp | 490-497 | 2-4x | MEDIUM-HIGH | 2 |
+| 11 | Intensity calculations | intensity_wrappers.cpp | Various | 2-4x | MEDIUM-HIGH | 2 |
+| 12 | Spectral operations | spectrum_wrappers.cpp | Various | 2-4x | MEDIUM | 2 |
+| 13 | EGG derivative | electroglottogram_wrappers.cpp | 82-94 | 3-4x | MEDIUM | 2 |
+| 14 | Formant extraction | formant_wrappers.cpp | Various | 2-4x | HIGH | 3 |
 
-### 4. Phase 1 Implementation Plan (REVISED)
+**Bold** = Matrix operations (NEW TOP PRIORITIES)
 
-**Duration**: 3-4 days
+### 4. Phase 1 Implementation Plan (REVISED - Matrix Priority!)
+
+**Duration**: 4-5 days (increased due to Matrix additions)
 
 **Deliverables**:
 
@@ -132,34 +195,51 @@ Analysis of `src/` directory reveals the following high-value targets:
    - Create `src/simd/simd_utils.h` with helper macros
    - Create `configure` script for SIMD detection
 
-2. **Sound SIMD Implementations**
+2. **Matrix SIMD Implementations** 🆕 **TOP PRIORITY**
+   - `src/simd/matrix_simd.cpp`:
+     - `matrix_get_sum_simd()` - row-wise accumulation
+     - `matrix_get_mean_simd()` - sum + division
+     - `matrix_get_min_max_simd()` - combined min/max (single pass)
+     - `matrix_to_r_matrix_simd()` - bulk copy to R
+     - `matrix_from_r_matrix_simd()` - bulk copy from R
+
+3. **Sound SIMD Implementations**
    - `src/simd/sound_simd.cpp`:
      - `sound_as_matrix_simd()`
      - `sound_create_from_values_simd()`
      - `sound_create_tone_simd()`
      - `sound_get_rms_simd()`
 
-3. **Conditional Dispatch in Wrappers**
-   - Modify `src/sound_wrappers.cpp`:
+4. **Conditional Dispatch in Wrappers**
+   - Modify `src/matrix_wrappers.cpp`:
      - Add `#ifdef HAVE_XSIMD` guards
      - Add runtime SIMD availability check
      - Maintain scalar fallback paths
+   - Modify `src/sound_wrappers.cpp`:
+     - Same conditional dispatch pattern
 
-4. **Testing Suite**
-   - `tests/testthat/test-simd-sound.R`:
+5. **Testing Suite**
+   - `tests/testthat/test-simd-matrix.R`: 🆕
      - Numerical accuracy tests (tolerance: 1e-12)
+     - Performance benchmarks
+     - Matrix-specific operations
+   - `tests/testthat/test-simd-sound.R`:
+     - Numerical accuracy tests
      - Performance benchmarks
      - Platform compatibility tests
 
-5. **Documentation**
-   - `SIMD_PATTERNS.md` - Developer guide
+6. **Documentation**
+   - `SIMD_PATTERNS.md` - Developer guide (Matrix + Sound)
    - Update README with SIMD capabilities
-   - Document performance gains
+   - Document performance gains for both Matrix and Sound
 
 **Expected Results**:
+- **4-8x speedup for Matrix statistical operations** 🆕
+- **4-8x speedup for Matrix data conversions** 🆕
 - 4-8x speedup for audio I/O operations
 - 4-6x speedup for tone generation
 - 3-5x speedup for RMS/intensity calculations
+- Overall: **3-5x improvement in Matrix-heavy workflows** 🆕
 - Overall: 2-4x improvement in typical audio processing pipelines
 
 ### 5. Technical Implementation Details
@@ -385,143 +465,7 @@ Rcpp::XPtr<structSound> sound_create_tone_simd(
 - SIMD optimization for Table statistical functions
 - Initial work on intensity/spectral SIMD
 
-### 10. Optional: Matrix Activation and SIMD (Phase 1b)
-
-**Status**: Matrix implementation exists but is intentionally deferred
-
-**If Matrix activation is desired**, the following work would be required:
-
-#### Activation Steps
-
-1. **Activate C++ Wrappers**:
-   ```bash
-   # Move .wip file to active
-   mv src/matrix_wrappers.cpp.wip src/matrix_wrappers.cpp
-
-   # Add to Makevars WRAPPER_SRC list
-   # Edit src/Makevars and add matrix_wrappers.cpp
-
-   # Regenerate RcppExports
-   Rcpp::compileAttributes()
-
-   # Rebuild package
-   R CMD INSTALL --preclean .
-   ```
-
-2. **Verify Functionality**:
-   ```r
-   # Test basic matrix creation
-   mat <- praat_matrix_simple(10, 10)
-   mat$get_nx()  # Should return 10
-   mat$get_ny()  # Should return 10
-
-   # Test statistical operations
-   mat$set_value(1, 1, 100.0)
-   mat$get_sum()
-   mat$get_mean()
-   ```
-
-#### SIMD Optimization for Matrix (if activated)
-
-**Files to Create**:
-- `src/simd/matrix_simd.cpp` - SIMD implementations
-- Tests already exist: `inst/benchmarks/01_matrix_operations.R`
-
-**Functions to Optimize**:
-
-1. **`matrix_get_sum_simd()`** - Most critical
-   ```cpp
-   // Process 2D array row by row with SIMD
-   for each row:
-     vectorize sum across columns
-     accumulate to total
-   ```
-   - Expected speedup: 4-8x
-   - High impact: Used in all statistical operations
-
-2. **`matrix_get_mean_simd()`**
-   - Wrapper around `matrix_get_sum_simd()` with division
-   - Expected speedup: 4-8x
-
-3. **`matrix_get_min_max_simd()`** - Single-pass min/max
-   ```cpp
-   // Process with SIMD min/max reductions
-   batch min_vec = batch::max();
-   batch max_vec = batch::min();
-   for each element:
-     min_vec = xsimd::min(min_vec, batch)
-     max_vec = xsimd::max(max_vec, batch)
-   ```
-   - Expected speedup: 4-6x
-   - Single pass more efficient than two calls
-
-4. **`matrix_to_r_matrix_simd()`** - Bulk copy
-   ```cpp
-   // Similar to sound_as_matrix_simd()
-   for each row:
-     vectorized load from Praat matrix
-     vectorized store to R matrix
-   ```
-   - Expected speedup: 4-8x
-   - High impact: Used for data export
-
-5. **`matrix_from_r_matrix_simd()`** - Bulk copy
-   - Mirror of `matrix_to_r_matrix_simd()`
-   - Expected speedup: 4-8x
-   - High impact: Used for data import
-
-**Implementation Pattern**:
-```cpp
-// src/simd/matrix_simd.cpp
-#include <xsimd/xsimd.hpp>
-
-// [[Rcpp::export(.matrix_get_sum_simd)]]
-double matrix_get_sum_simd(SEXP xptr) {
-    structMatrix* matrix = get_ptr(xptr, "Matrix");
-    using batch = xsimd::batch<double>;
-    constexpr size_t simd_size = batch::size;
-
-    double sum = 0.0;
-    for (integer row = 1; row <= matrix->ny; row++) {
-        double* row_data = &matrix->z[row][1];
-        integer nx = matrix->nx;
-
-        batch acc(0.0);
-        integer col = 0;
-
-        // SIMD loop
-        for (; col + simd_size <= nx; col += simd_size) {
-            batch b = xsimd::load_unaligned(&row_data[col]);
-            acc += b;
-        }
-        sum += xsimd::reduce_add(acc);
-
-        // Remainder
-        for (; col < nx; ++col) {
-            sum += row_data[col];
-        }
-    }
-    return sum;
-}
-```
-
-**Estimated Effort** (if Matrix is activated):
-- Matrix activation: 1-2 hours
-- SIMD implementation: 1-2 days
-- Testing and benchmarking: 0.5-1 day
-- **Total**: 2-3 days
-
-**Expected Performance Gains**:
-- 4-8x speedup for statistical operations (sum, mean, min, max)
-- 4-8x speedup for bulk data conversions
-- 2-4x improvement in workflows using matrix-heavy operations
-
-**Decision Point**:
-Discuss with package maintainers whether Matrix activation is desired for v1.0.0 or should remain deferred.
-
----
-
-### 11. Next Steps (Phase 2)
+### 10. Next Steps (Phase 2)
 
 After Phase 1 completion, proceed to:
 

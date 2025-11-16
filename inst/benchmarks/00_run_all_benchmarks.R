@@ -5,14 +5,14 @@
 library(speaker)
 
 cat("\n")
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("SPEAKER PACKAGE - SIMD BASELINE BENCHMARKS\n")
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("Date:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n")
 cat("Package version:", as.character(packageVersion("speaker")), "\n")
 cat("R version:", R.version.string, "\n")
 cat("Platform:", R.version$platform, "\n")
-cat("="*80, "\n\n")
+cat(strrep("=", 80), "\n\n")
 
 # Create results directory
 if (!dir.exists("inst/benchmarks/results")) {
@@ -62,9 +62,9 @@ benchmarks <- c(
 # Run each benchmark
 for (benchmark_file in benchmarks) {
   cat("\n")
-  cat("="*80, "\n")
+  cat(strrep("=", 80), "\n")
   cat("Running:", benchmark_file, "\n")
-  cat("="*80, "\n")
+  cat(strrep("=", 80), "\n")
 
   benchmark_path <- file.path("inst/benchmarks", benchmark_file)
 
@@ -82,9 +82,9 @@ for (benchmark_file in benchmarks) {
 
 # Create summary report
 cat("\n")
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("BASELINE BENCHMARKS COMPLETE\n")
-cat("="*80, "\n\n")
+cat(strrep("=", 80), "\n\n")
 
 cat("Results saved in: inst/benchmarks/results/\n")
 cat("Files created:\n")

@@ -5,9 +5,9 @@
 library(speaker)
 library(bench)
 
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("Benchmark 3: Tone Generation (Baseline - Pre-SIMD)\n")
-cat("="*80, "\n\n")
+cat(strrep("=", 80), "\n\n")
 
 # Test different durations and frequencies
 configs <- list(
@@ -40,7 +40,7 @@ for (config_name in names(configs)) {
     n_samples = n_samples
   )
 
-  print(bench_result[, c("expression", "min", "median", "max", "mem_alloc")])
+  print(bench_result[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
   cat("\n")
 }
 

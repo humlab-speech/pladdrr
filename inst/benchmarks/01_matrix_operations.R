@@ -5,9 +5,9 @@
 library(speaker)
 library(bench)
 
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("Benchmark 1: Matrix Operations (Baseline - Pre-SIMD)\n")
-cat("="*80, "\n\n")
+cat(strrep("=", 80), "\n\n")
 
 # Test matrices of various sizes
 sizes <- list(
@@ -27,7 +27,7 @@ for (size_name in names(sizes)) {
   test_matrix <- matrix(rnorm(dims[1] * dims[2]), dims[1], dims[2])
 
   # Create Matrix object
-  mat_obj <- Matrix$from_r_matrix(test_matrix)
+  mat_obj <- praat_matrix_from_matrix(test_matrix)
 
   # Benchmark all operations
   bench_result <- bench::mark(
@@ -42,7 +42,7 @@ for (size_name in names(sizes)) {
   results[[size_name]] <- bench_result
 
   # Print results
-  print(bench_result[, c("expression", "min", "median", "max", "mem_alloc")])
+  print(bench_result[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
   cat("\n")
 }
 

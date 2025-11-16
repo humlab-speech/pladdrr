@@ -5,9 +5,9 @@
 library(speaker)
 library(bench)
 
-cat("="*80, "\n")
+cat(strrep("=", 80), "\n")
 cat("Benchmark 2: Data Conversion (Baseline - Pre-SIMD)\n")
-cat("="*80, "\n\n")
+cat(strrep("=", 80), "\n\n")
 
 # Test different audio durations and channel counts
 configs <- list(
@@ -58,10 +58,10 @@ for (config_name in names(configs)) {
   )
 
   cat("\nCreation:\n")
-  print(bench_create[, c("expression", "min", "median", "max", "mem_alloc")])
+  print(bench_create[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
 
   cat("\nExport:\n")
-  print(bench_export[, c("expression", "min", "median", "max", "mem_alloc")])
+  print(bench_export[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
   cat("\n")
 }
 

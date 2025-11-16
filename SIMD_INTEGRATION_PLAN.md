@@ -45,39 +45,51 @@ This document integrates SIMD optimization using RcppXsimd into the existing pac
    - Add SIMD test suite template
    - Create configure script to detect SIMD capabilities
 
-2. **Sound data conversion loops** (`src/sound_wrappers.cpp:72-76, 509-521`) ⭐ TOP PRIORITY
+2. **Matrix statistical operations** (`src/matrix_wrappers.cpp:184-244`) ⭐⭐⭐⭐⭐ **NOW ACTIVE!**
+   - `matrix_get_sum()` → SIMD row-wise accumulation (lines 184-196)
+   - `matrix_get_mean()` → SIMD sum + division (lines 198-212)
+   - `matrix_get_minimum()` → SIMD min reduction (lines 214-228)
+   - `matrix_get_maximum()` → SIMD max reduction (lines 230-244)
+   - **Expected speedup**: 4-8x for statistical operations
+
+3. **Matrix data conversion loops** (`src/matrix_wrappers.cpp:140-171`) ⭐⭐⭐⭐⭐
+   - `matrix_to_r_matrix()` → SIMD bulk copy (lines 140-153)
+   - `matrix_from_r_matrix()` → SIMD bulk copy (lines 155-171)
+   - **Expected speedup**: 4-8x for data conversion
+
+4. **Sound data conversion loops** (`src/sound_wrappers.cpp:72-76, 509-521`) ⭐⭐⭐⭐⭐
    - `sound_create_from_values()` → SIMD bulk copy (lines 72-76)
    - `sound_as_matrix()` → SIMD bulk copy (lines 514-518)
    - `sound_as_data_frame()` → SIMD data extraction (lines 490-497)
    - **Expected speedup**: 4-8x for large audio files
 
-3. **Tone generation** (`src/sound_wrappers.cpp:88-110`) ⭐ HIGH IMPACT
+5. **Tone generation** (`src/sound_wrappers.cpp:88-110`) ⭐⭐⭐⭐
    - `sound_create_tone()` → Vectorized sine function
    - Use `xsimd::sin()` for batch processing
    - **Expected speedup**: 4-6x for tone generation
 
-4. **Intensity/RMS calculations** (`src/sound_wrappers.cpp:180-202`)
+6. **Intensity/RMS calculations** (`src/sound_wrappers.cpp:180-202`) ⭐⭐⭐⭐
    - `sound_get_rms()` → SIMD sum-of-squares
    - `sound_get_energy()` → SIMD implementation
    - `sound_get_power()` → SIMD implementation
    - **Expected speedup**: 3-5x for intensity calculations
 
-5. **Table operations** (`src/table_wrappers.cpp`)
+7. **Table operations** (`src/table_wrappers.cpp`) ⭐⭐⭐
    - `table_get_column_statistics()` → SIMD aggregations
    - Bulk numeric value access with SIMD
    - **Expected speedup**: 3-5x for statistical operations
 
 **Deliverables**:
-- 5-7 SIMD-optimized functions (Sound-focused)
-- Microbenchmark suite showing 3-5x speedups
+- 8-10 SIMD-optimized functions (Matrix + Sound focused)
+- Microbenchmark suite showing 3-8x speedups
 - Test suite validating numerical accuracy (tolerance: 1e-12)
 - `SIMD_PATTERNS.md` developer guide
 - Configure script for platform detection
 
-**Estimated Effort**: 3-4 days
-**Expected Speedup**: 3-6x for targeted operations
+**Estimated Effort**: 4-5 days
+**Expected Speedup**: 4-8x for Matrix operations, 3-6x for Sound operations
 
-**Note**: Matrix operations deferred - no matrix_wrappers.cpp file exists. Matrix functionality appears to be handled through Table or direct Praat objects.
+**Status Update**: Matrix class NOW ACTIVE! File `src/matrix_wrappers.cpp` (244 lines) is compiled and functional. Matrix operations are now TOP PRIORITY for SIMD optimization alongside Sound operations.
 
 ---
 
@@ -272,7 +284,193 @@ speaker/
 
 ## Implementation Details by Component
 
-### 1. Sound Data Conversion Operations (Week 1) - REVISED
+### 1. Matrix Statistical Operations (Week 1) - NOW ACTIVE! ⭐⭐⭐⭐⭐
+
+**Files to Modify**:
+- `src/matrix_wrappers.cpp` (add SIMD versions, conditional dispatch)
+- `src/simd/matrix_simd.cpp` (NEW)
+- `src/simd/simd_utils.h` (helper macros)
+- `tests/testthat/test-simd-matrix.R` (NEW)
+
+**Implementation Pattern**:
+```cpp
+// src/simd/matrix_simd.cpp
+#include <xsimd/xsimd.hpp>
+#include <Rcpp.h>
+#include "../praat_xptr_utils.h"
+#include "simd_utils.h"
+
+// [[Rcpp::export(.matrix_get_sum_simd)]]
+double matrix_get_sum_simd(SEXP xptr) {
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    double sum = 0.0;
+
+    // Process row by row
+    for (integer row = 1; row <= matrix->ny; row++) {
+        double* row_data = &matrix->z[row][1];  // Praat uses 1-based indexing
+        integer nx = matrix->nx;
+
+        batch acc(0.0);
+        integer col = 0;
+
+        // SIMD loop - process columns in batches
+        for (; col + simd_size <= nx; col += simd_size) {
+            batch b = xsimd::load_unaligned(&row_data[col]);
+            acc += b;
+        }
+        sum += xsimd::reduce_add(acc);
+
+        // Scalar remainder loop
+        for (; col < nx; ++col) {
+            sum += row_data[col];
+        }
+    }
+    return sum;
+}
+
+// [[Rcpp::export(.matrix_get_min_max_simd)]]
+Rcpp::NumericVector matrix_get_min_max_simd(SEXP xptr) {
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    double min_val = INFINITY;
+    double max_val = -INFINITY;
+
+    // Process row by row
+    for (integer row = 1; row <= matrix->ny; row++) {
+        double* row_data = &matrix->z[row][1];
+        integer nx = matrix->nx;
+
+        batch min_vec(INFINITY);
+        batch max_vec(-INFINITY);
+        integer col = 0;
+
+        // SIMD loop
+        for (; col + simd_size <= nx; col += simd_size) {
+            batch b = xsimd::load_unaligned(&row_data[col]);
+            min_vec = xsimd::min(min_vec, b);
+            max_vec = xsimd::max(max_vec, b);
+        }
+
+        // Reduce to scalar
+        min_val = std::min(min_val, xsimd::reduce_min(min_vec));
+        max_val = std::max(max_val, xsimd::reduce_max(max_vec));
+
+        // Scalar remainder
+        for (; col < nx; ++col) {
+            min_val = std::min(min_val, row_data[col]);
+            max_val = std::max(max_val, row_data[col]);
+        }
+    }
+
+    return Rcpp::NumericVector::create(
+        Rcpp::Named("min") = min_val,
+        Rcpp::Named("max") = max_val
+    );
+}
+
+// [[Rcpp::export(.matrix_to_r_matrix_simd)]]
+Rcpp::NumericMatrix matrix_to_r_matrix_simd(SEXP xptr) {
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    Rcpp::NumericMatrix result(matrix->ny, matrix->nx);
+
+    for (integer row = 1; row <= matrix->ny; row++) {
+        const double* src = &matrix->z[row][1];    // Praat 1-based
+        double* dst = &result(row - 1, 0);         // R 0-based
+
+        integer col = 0;
+        // SIMD bulk copy
+        for (; col + simd_size <= matrix->nx; col += simd_size) {
+            batch b = xsimd::load_unaligned(&src[col]);
+            xsimd::store_unaligned(&dst[col], b);
+        }
+
+        // Remainder
+        for (; col < matrix->nx; ++col) {
+            dst[col] = src[col];
+        }
+    }
+
+    return result;
+}
+```
+
+**Conditional Dispatch**:
+```cpp
+// src/matrix_wrappers.cpp
+#ifdef HAVE_XSIMD
+  extern double matrix_get_sum_simd(SEXP xptr);
+  extern Rcpp::NumericMatrix matrix_to_r_matrix_simd(SEXP xptr);
+#endif
+
+// [[Rcpp::export(.matrix_get_sum)]]
+double matrix_get_sum(SEXP xptr) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return matrix_get_sum_simd(xptr);
+    }
+#endif
+    // Original scalar implementation
+    Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
+    double sum = 0.0;
+    for (integer i = 1; i <= matrix->ny; i++) {
+        for (integer j = 1; j <= matrix->nx; j++) {
+            sum += matrix->z[i][j];
+        }
+    }
+    return sum;
+}
+```
+
+**Testing**:
+```r
+# tests/testthat/test-simd-matrix.R
+test_that("SIMD matrix sum matches scalar", {
+  mat <- praat_matrix_simple(1000, 1000)
+
+  # Fill with test data
+  for (i in 1:10) {
+    for (j in 1:10) {
+      mat$set_value(i, j, rnorm(1))
+    }
+  }
+
+  sum_scalar <- .matrix_get_sum(mat$.__enclos_env__$private$ptr)
+  sum_simd <- .matrix_get_sum_simd(mat$.__enclos_env__$private$ptr)
+
+  expect_equal(sum_scalar, sum_simd, tolerance = 1e-12)
+})
+
+test_that("SIMD matrix operations are faster", {
+  mat <- praat_matrix_simple(1000, 1000)
+
+  bench_result <- bench::mark(
+    scalar = .matrix_get_sum(mat$.__enclos_env__$private$ptr),
+    simd   = .matrix_get_sum_simd(mat$.__enclos_env__$private$ptr),
+    iterations = 50,
+    check = FALSE
+  )
+
+  speedup <- median(bench_result$time[bench_result$expression == "scalar"]) /
+             median(bench_result$time[bench_result$expression == "simd"])
+
+  expect_gt(speedup, 2.0)  # Expect at least 2x speedup
+})
+```
+
+---
+
+### 2. Sound Data Conversion Operations (Week 1)
 
 **Files to Modify**:
 - `src/sound_wrappers.cpp` (add SIMD versions, conditional dispatch)
