@@ -3,6 +3,8 @@
 
 #include "melder/melder.h"
 #include "sys/Interpreter.h"
+#include "fon/Sound.h"
+#include "fon/PointProcess.h"
 
 // Forward declare GUI types
 struct structGuiWindow;
@@ -175,4 +177,140 @@ void praat_runNotebook (const char32_t *, long, structStackel *, structEditor *)
     // Notebook execution not supported in library mode
 }
 
+integer praat_idOfSelected (ClassInfo, integer) {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+void praat_removeObject (integer) {
+    Melder_throw (U"Object removal not available in library mode.");
+}
+
+void praat_doMenuCommand (conststring32, integer, Stackel, Interpreter) {
+    Melder_throw (U"Menu commands not available in library mode.");
+}
+
+void Editor_doMenuCommand (Editor, conststring32, integer, Stackel, conststring32, Interpreter) {
+    Melder_throw (U"Editor menu commands not available in library mode.");
+}
+
+void _Preferences_addEnum (conststring32, int *, int, int, conststring32 (*)(int), int (*)(conststring32), int) {
+    // Preferences system not available in library mode - do nothing
+}
+
+void praat_executeCommand (Interpreter, char32_t *) {
+    Melder_throw (U"Script execution not available in library mode.");
+}
+
+Editor praat_findEditorById (integer) {
+    Melder_throw (U"Editor lookup not available in library mode.");
+}
+
+conststring32 praat_nameOfSelected (ClassInfo, integer) {
+    Melder_throw (U"Object name lookup not available in library mode.");
+}
+
+autoINTVEC praat_idsOfAllSelected (ClassInfo) {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+autoSTRVEC praat_namesOfAllSelected (ClassInfo) {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+integer praat_numberOfSelected (ClassInfo) {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+void praat_runScriptWithForm (conststring32) {
+    Melder_throw (U"Script execution not available in library mode.");
+}
+
+void praat_new (autoDaata) {
+    Melder_throw (U"Object creation not available in library mode.");
+}
+
+void praat_newWithFile (autoDaata, MelderFile, conststring32) {
+    Melder_throw (U"Object creation not available in library mode.");
+}
+
+Daata praat_onlyObject (ClassInfo) {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+autoCollection praat_getSelectedObjects () {
+    Melder_throw (U"Object selection not available in library mode.");
+}
+
+// Speech synthesis stubs (espeak integration)
+struct structSpeechSynthesizer;
+typedef structSpeechSynthesizer* SpeechSynthesizer;
+typedef structSpeechSynthesizer* autoSpeechSynthesizer;
+
+autoSpeechSynthesizer SpeechSynthesizer_create (conststring32, conststring32) {
+    Melder_throw (U"Speech synthesis not available in this build.");
+}
+
 /* End of file */
+
+// Threading stubs
+void Melder_thisThread_setRange (integer, integer) {
+    // No-op - threading disabled in library mode
+}
+
+
+Editor praat_findEditorFromString (conststring32) {
+    Melder_throw (U"Editor lookup not available in library mode.");
+}
+
+
+bool MelderThread_getTraceThreads () {
+    return false;  // Threading disabled in library mode
+}
+
+integer Melder_thisThread_getUniqueID () {
+    return 0;  // Single-threaded mode
+}
+
+double Melder_thisThread_estimateProgress () {
+    return 0.0;  // No progress tracking in library mode
+}
+
+void Melder_thisThread_setCurrentElement (integer) {}
+
+// Voice analysis stubs
+struct structAmplitudeTier;
+typedef structAmplitudeTier* AmplitudeTier;
+typedef structAmplitudeTier* autoAmplitudeTier;
+
+autoAmplitudeTier PointProcess_Sound_to_H1minusH2Tier (PointProcess, Sound, double, double, double, double, double) {
+    Melder_throw (U"PointProcess_Sound_to_H1minusH2Tier: Voice quality analysis not available.");
+}
+
+struct structTextInterval;
+typedef structTextInterval* TextInterval;
+
+void SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer, Sound, TextInterval, double, double, double) {
+    Melder_throw (U"SpeechSynthesizer_Sound_TextInterval_align: Speech synthesis not available.");
+}
+
+bool praat_commandsWithExternalSideEffectsAreAllowed () {
+    return false;  // External side effects disabled in library mode
+}
+
+struct structIntervalTier;
+typedef structIntervalTier* IntervalTier;
+
+void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier, conststring32) {
+    Melder_throw (U"IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals: TextGrid manipulation not available.");
+}
+
+// Portable character classification stubs
+extern "C" {
+int iswlower_portable (int) { return 0; }
+int iswupper_portable (int) { return 0; }
+int iswalpha_portable (int) { return 0; }
+int iswdigit_portable (int) { return 0; }
+int iswspace_portable (int) { return 0; }
+int towlower_portable (int c) { return c; }
+int towupper_portable (int c) { return c; }
+}

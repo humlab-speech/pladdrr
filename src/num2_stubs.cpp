@@ -4,6 +4,7 @@
 
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/melder/NUMrandom.h"
+#include "praat.github.io/melder/VEC.h"
 #include <cmath>
 
 // Stub implementation of sinc functions (without GSL dependency)
@@ -65,3 +66,72 @@ double NUMlnBeta (double a, double b) {
     return lgamma(a) + lgamma(b) - lgamma(a + b);
 }
 
+// Stub for VECrc_from_lpc - converts LPC coefficients to reflection coefficients
+// This is a complex numerical algorithm that would need full NUM2 implementation
+void VECrc_from_lpc (VEC rc, constVEC lpc) {
+    Melder_throw (U"VECrc_from_lpc is not available in this build (requires full NUM2 implementation).");
+}
+
+// Area-to-reflection coefficient conversion (needed by LPC)
+void VECarea_from_rc (VEC area, constVEC rc) {
+    Melder_assert (area.size == rc.size);
+    longdouble s = 0.0001; // 1.0 cm^2 at glottis
+    for (integer i = area.size; i > 0; i --) {
+        s *= (1.0 + rc [i]) / (1.0 - rc [i]);
+        area [i] = s;
+    }
+}
+
+void VECrc_from_area (VEC rc, constVEC area) {
+    Melder_assert (rc.size == area.size);
+    double ar;
+    for (integer j = 1; j <= rc.size - 1; j ++) {
+        ar = area [j + 1] / area [j];
+        rc [j] = (1.0 - ar) / (1.0 + ar);
+    }
+    ar = 0.0001 / area [rc.size];  // 1.0 cm^2 at glottis
+    rc [rc.size] = (1.0 - ar) / (1.0 + ar);
+}
+
+void VECsolveSparse_IHT (VECVU const&, constMATVU const&, constVECVU const&, integer, integer, double, integer) {
+    Melder_throw (U"VECsolveSparse_IHT is not available in this build (requires full NUM2 implementation).");
+}
+
+autoVEC solveSparse_IHT_VEC (constMATVU const&, constVECVU const&, integer, integer, double, integer) {
+    Melder_throw (U"solveSparse_IHT_VEC is not available in this build (requires full NUM2 implementation).");
+}
+
+void windowShape_into_VEC (int, VEC) {
+    Melder_throw (U"windowShape_into_VEC is not available in this build.");
+}
+
+// Define kSound_windowShape enum stub
+enum kSound_windowShape { kSound_windowShape_SQUARE = 0 };
+void windowShape_into_VEC (kSound_windowShape, VEC) {
+    Melder_throw (U"windowShape_into_VEC is not available in this build.");
+}
+
+void VECfilterInverse_inplace (VEC const&, constVEC const&, VEC const&) {
+    Melder_throw (U"VECfilterInverse_inplace is not available in this build.");
+}
+
+
+void VECsolveNonnegativeLeastSquaresRegression (VECVU const&, constMATVU const&, constVECVU const&, integer, double, integer) {
+    Melder_throw (U"VECsolveNonnegativeLeastSquaresRegression is not available in this build.");
+}
+
+void solveWeaklyConstrainedLinearRegression_VEC (constMAT const&, constVEC const&, double, double) {
+    Melder_throw (U"solveWeaklyConstrainedLinearRegression_VEC is not available in this build.");
+}
+
+void VECburg (VEC const&, constVEC const&) {
+    Melder_throw (U"VECburg (Burg algorithm) is not available in this build.");
+}
+
+void solve_MAT (constMATVU const&, constMATVU const&, double) {
+    Melder_throw (U"solve_MAT is not available in this build.");
+}
+
+void solve_VEC (constMATVU const&, constVECVU const&, double) {
+    Melder_throw (U"solve_VEC is not available in this build.");
+}

@@ -5,6 +5,7 @@
 
 #include "melder/melder.h"
 #include "fon/Sampled.h"
+#include "fon/Sound.h"
 
 // LongSound is based on Sampled, which inherits from Function
 // Only define if not already compiled from LongSound.cpp
@@ -18,5 +19,10 @@ Thing_implement (LongSound, Sampled, 0);
 
 // Note: SoundList, SoundSet, SoundAndLongSoundList are already defined
 // in Sound.h and compiled from Sound.cpp - no need to redefine
+
+// Stub for LongSound_extractPart
+autoSound LongSound_extractPart (LongSound, double, double, bool) {
+    Melder_throw (U"LongSound_extractPart: LongSound is not available in this build.");
+}
 
 /* End of file */

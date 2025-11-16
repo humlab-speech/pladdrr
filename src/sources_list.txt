@@ -186,3 +186,4 @@ fon/AmplitudeTier.cpp \
           fon/VocalTract.cpp \
           fon/VoiceAnalysis.cpp \
           fon/WordList.cpp 
+glpk_stubs.cpp

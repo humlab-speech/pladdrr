@@ -129,7 +129,8 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LPC_and_Polynomial.cpp \
           praat.github.io/LPC/LPC_to_Spectrogram.cpp \
           praat.github.io/LPC/LineSpectralFrequencies.cpp \
-          praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp
+          praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp \
+          praat.github.io/LPC/LPC_and_Formant.cpp
 
 # Wrapper sources (R package code)
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
@@ -139,12 +140,12 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               ltas_wrappers.cpp lpc_wrappers.cpp lpc_clapack_stubs.cpp \
               textgrid_wrappers.cpp pitchtier_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
-              manipulation_wrappers.cpp \
+              manipulation_wrappers.cpp table_wrappers.cpp \
               amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
-              svd_stubs.cpp \
+              svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp gsl_stubs.cpp \
               utils.cpp RcppExports.cpp
 
 # All sources combined

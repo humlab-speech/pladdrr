@@ -1,9 +1,15 @@
 // UiForm subsystem stubs for NO_GUI builds
 // These functions are referenced by Interpreter.cpp for interactive forms
 
+#include "praat.github.io/melder/melder.h"
+
 // Forward declarations - minimal types needed
 typedef char32_t char32;
 typedef const char32 *conststring32;
+
+// Define minimal enums for UI vector formats
+enum kUi_realVectorFormat { kUi_realVectorFormat_WHITESPACE_SEPARATED = 1 };
+enum kUi_integerVectorFormat { kUi_integerVectorFormat_WHITESPACE_SEPARATED = 1 };
 
 struct structUiForm;
 typedef struct structUiForm *UiForm;
@@ -35,6 +41,11 @@ void UiForm_finish (UiForm) {}
 UiField UiForm_addReal (UiForm, double *, conststring32, conststring32, conststring32) { return nullptr; }
 UiField UiForm_addText (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
 UiField UiForm_addWord (UiForm, conststring32 *, conststring32, conststring32, conststring32) { return nullptr; }
+UiField UiForm_addSentence (UiForm, conststring32 *, conststring32, conststring32, conststring32) { return nullptr; }
+UiField UiForm_addRealVector (UiForm, constVEC *, conststring32, conststring32, kUi_realVectorFormat, conststring32, long) { return nullptr; }
+UiField UiForm_addIntegerVector (UiForm, constINTVEC *, conststring32, conststring32, kUi_integerVectorFormat, conststring32, long) { return nullptr; }
+UiField UiForm_addNaturalVector (UiForm, constINTVEC *, conststring32, conststring32, kUi_integerVectorFormat, conststring32, long) { return nullptr; }
+UiField UiForm_addPositiveVector (UiForm, constVEC *, conststring32, conststring32, kUi_realVectorFormat, conststring32, long) { return nullptr; }
 void UiForm_addChoice (UiForm, int *, conststring32 *, conststring32, conststring32, int, int) {}
 UiField UiForm_addFolder (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
 UiField UiForm_addInfile (UiForm, conststring32 *, conststring32, conststring32, conststring32, long) { return nullptr; }
@@ -47,6 +58,7 @@ UiField UiForm_addInteger (UiForm, long *, conststring32, conststring32, constst
 UiField UiForm_addPositive (UiForm, double *, conststring32, conststring32, conststring32) { return nullptr; }
 void UiForm_addRadio (UiForm, int *, conststring32, conststring32, conststring32, int) {}
 void UiForm_addList (UiForm, long *, conststring32, conststring32 *, long, conststring32) {}
+void UiForm_addOptionMenu (UiForm, int *, conststring32 *, conststring32, conststring32, int, int) {}
 UiField UiForm_addCaption (UiForm, conststring32 *, conststring32) { return nullptr; }
 UiField UiForm_addHeading (UiForm, conststring32 *, conststring32) { return nullptr; }
 UiField UiForm_addComment (UiForm, conststring32 *, conststring32) { return nullptr; }
@@ -54,7 +66,18 @@ UiField UiForm_addComment (UiForm, conststring32 *, conststring32) { return null
 conststring32 UiForm_getString (UiForm, conststring32) { return U""; }
 long UiForm_getInteger (UiForm, conststring32) { return 0; }
 double UiForm_getReal (UiForm, conststring32) { return 0.0; }
+double UiForm_getReal_check (UiForm, conststring32) { return 0.0; }
 bool UiForm_getBoolean (UiForm, conststring32) { return false; }
+constVEC UiForm_getRealVector (UiForm, conststring32) { 
+    return constVEC();  // Return empty vector
+}
+
+constINTVEC UiForm_getIntegerVector (UiForm, conststring32) {
+    return constINTVEC();  // Return empty vector
+}
+
+integer UiForm_getInteger_check (UiForm, conststring32) { return 0; }
+conststring32 UiForm_getString_check (UiForm, conststring32) { return U""; }
 
 void UiForm_do (UiForm, bool) {}
 
@@ -70,3 +93,51 @@ int Demo_peekInput (Interpreter interpreter) {
 void Demo_windowTitle (conststring32) {
     // No-op
 }
+
+bool Demo_shiftKeyPressed () {
+    return false; // Demo functions not supported in NO_GUI build
+}
+
+bool Demo_optionKeyPressed () {
+    return false; // Demo functions not supported in NO_GUI build
+}
+
+bool Demo_commandKeyPressed () {
+    return false; // Demo functions not supported in NO_GUI build
+}
+
+// UiPause stubs (for interactive pauses in scripts)
+void UiPause_realvector (conststring32, kUi_realVectorFormat, conststring32, long) {}
+void UiPause_positivevector (conststring32, kUi_realVectorFormat, conststring32, long) {}
+void UiPause_integervector (conststring32, kUi_integerVectorFormat, conststring32, long) {}
+void UiPause_naturalvector (conststring32, kUi_integerVectorFormat, conststring32, long) {}
+
+// GUI file selection stubs
+conststring32 GuiFileSelect_getFolderName (GuiWindow, conststring32) {
+    Melder_throw (U"File selection dialogs not available in NO_GUI build.");
+}
+
+
+autoSTRVEC GuiFileSelect_getInfileNames (GuiWindow, conststring32, bool) {
+    Melder_throw (U"File selection dialogs not available in NO_GUI build.");
+}
+
+
+conststring32 GuiFileSelect_getOutfileName (GuiWindow, conststring32, conststring32) {
+    Melder_throw (U"File selection dialogs not available in NO_GUI build.");
+}
+
+conststring32 GuiFileSelect_getInfileName (GuiWindow, conststring32, bool) {
+    Melder_throw (U"File selection dialogs not available in NO_GUI build.");
+}
+
+// Enum conversion functions
+kUi_realVectorFormat kUi_realVectorFormat_getValue (conststring32) {
+    return kUi_realVectorFormat_WHITESPACE_SEPARATED;
+}
+
+kUi_integerVectorFormat kUi_integerVectorFormat_getValue (conststring32) {
+    return kUi_integerVectorFormat_WHITESPACE_SEPARATED;
+}
+
+void Demo_show () {}

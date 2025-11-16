@@ -27,44 +27,57 @@ This document integrates SIMD optimization using RcppXsimd into the existing pac
 
 ## Revised Timeline: v0.4.1 → v1.0.0 (4 Weeks)
 
-### Week 1: Foundation + Phase 1 SIMD (Current Week)
+### Week 1: Foundation + Phase 1 SIMD (REVISED 2025-11-16)
 
 #### Feature Work (from OOP_CONFIRMED_PLAN_2025-11-12.md)
 - ✅ Complete examples from superassp
 - ✅ Begin documentation work
 
-#### SIMD Integration (NEW)
+#### SIMD Integration (UPDATED)
 **Priority**: High-impact, low-complexity wins
+**Status**: REVISED - Matrix operations not available, focusing on Sound/data operations
 
 **Tasks**:
 1. **Setup RcppXsimd infrastructure**
    - Add `LinkingTo: RcppXsimd` to DESCRIPTION
-   - Update `src/Makevars` for C++14
+   - Update `SystemRequirements` to C++14 (minimum for xsimd)
    - Create `src/simd/` directory structure
    - Add SIMD test suite template
+   - Create configure script to detect SIMD capabilities
 
-2. **Matrix operations** (`src/matrix_wrappers.cpp`)
-   - ✅ `matrix_get_sum()` → `matrix_get_sum_simd()`
-   - ✅ `matrix_get_mean()` → `matrix_get_mean_simd()`
-   - ✅ `matrix_get_minimum()` → `matrix_get_minimum_simd()`
-   - ✅ `matrix_get_maximum()` → `matrix_get_maximum_simd()`
-   - ✅ Combined statistics function (single pass)
+2. **Sound data conversion loops** (`src/sound_wrappers.cpp:72-76, 509-521`) ⭐ TOP PRIORITY
+   - `sound_create_from_values()` → SIMD bulk copy (lines 72-76)
+   - `sound_as_matrix()` → SIMD bulk copy (lines 514-518)
+   - `sound_as_data_frame()` → SIMD data extraction (lines 490-497)
+   - **Expected speedup**: 4-8x for large audio files
 
-3. **Data conversion loops** (`src/sound_wrappers.cpp:72-76, 509-521`)
-   - ✅ `sound_create_from_values()` → SIMD bulk copy
-   - ✅ `sound_as_matrix()` → SIMD bulk copy
+3. **Tone generation** (`src/sound_wrappers.cpp:88-110`) ⭐ HIGH IMPACT
+   - `sound_create_tone()` → Vectorized sine function
+   - Use `xsimd::sin()` for batch processing
+   - **Expected speedup**: 4-6x for tone generation
 
-4. **Tone generation** (`src/sound_wrappers.cpp:88-110`)
-   - ✅ `sound_create_tone()` → Vectorized sine function
+4. **Intensity/RMS calculations** (`src/sound_wrappers.cpp:180-202`)
+   - `sound_get_rms()` → SIMD sum-of-squares
+   - `sound_get_energy()` → SIMD implementation
+   - `sound_get_power()` → SIMD implementation
+   - **Expected speedup**: 3-5x for intensity calculations
+
+5. **Table operations** (`src/table_wrappers.cpp`)
+   - `table_get_column_statistics()` → SIMD aggregations
+   - Bulk numeric value access with SIMD
+   - **Expected speedup**: 3-5x for statistical operations
 
 **Deliverables**:
-- 6-8 SIMD-optimized functions
+- 5-7 SIMD-optimized functions (Sound-focused)
 - Microbenchmark suite showing 3-5x speedups
-- Test suite validating numerical accuracy
+- Test suite validating numerical accuracy (tolerance: 1e-12)
 - `SIMD_PATTERNS.md` developer guide
+- Configure script for platform detection
 
 **Estimated Effort**: 3-4 days
-**Expected Speedup**: 3-5x for targeted operations
+**Expected Speedup**: 3-6x for targeted operations
+
+**Note**: Matrix operations deferred - no matrix_wrappers.cpp file exists. Matrix functionality appears to be handled through Table or direct Praat objects.
 
 ---
 
@@ -223,7 +236,7 @@ This document integrates SIMD optimization using RcppXsimd into the existing pac
 
 ---
 
-## SIMD Code Organization
+## SIMD Code Organization (REVISED 2025-11-16)
 
 ### Directory Structure
 
@@ -231,13 +244,15 @@ This document integrates SIMD optimization using RcppXsimd into the existing pac
 speaker/
 ├── src/
 │   ├── simd/                          # NEW: SIMD-optimized implementations
-│   │   ├── matrix_simd.cpp           # Matrix operations
-│   │   ├── sound_simd.cpp            # Sound processing
-│   │   ├── intensity_simd.cpp        # Intensity calculations
-│   │   ├── window_functions_simd.cpp # Window functions
-│   │   └── utils_simd.h              # SIMD utility functions
-│   ├── matrix_wrappers.cpp           # Calls SIMD versions
-│   ├── sound_wrappers.cpp            # Calls SIMD versions
+│   │   ├── sound_simd.cpp            # Sound processing (bulk copy, tone gen)
+│   │   ├── intensity_simd.cpp        # Intensity/RMS calculations
+│   │   ├── table_simd.cpp            # Table statistical operations
+│   │   ├── conversion_simd.cpp       # Data conversion utilities
+│   │   ├── window_functions_simd.cpp # Window functions (Phase 2)
+│   │   └── simd_utils.h              # SIMD utility functions & macros
+│   ├── sound_wrappers.cpp            # Calls SIMD versions conditionally
+│   ├── table_wrappers.cpp            # Calls SIMD versions conditionally
+│   ├── configure                      # NEW: Detect SIMD capabilities
 │   └── ...
 ├── tests/testthat/
 │   ├── test-simd-matrix.R            # NEW: SIMD validation tests
@@ -257,94 +272,130 @@ speaker/
 
 ## Implementation Details by Component
 
-### 1. Matrix Operations (Week 1)
+### 1. Sound Data Conversion Operations (Week 1) - REVISED
 
 **Files to Modify**:
-- `src/matrix_wrappers.cpp` (calls SIMD versions)
-- `src/simd/matrix_simd.cpp` (NEW)
-- `tests/testthat/test-simd-matrix.R` (NEW)
+- `src/sound_wrappers.cpp` (add SIMD versions, conditional dispatch)
+- `src/simd/sound_simd.cpp` (NEW)
+- `src/simd/simd_utils.h` (NEW - helper macros)
+- `tests/testthat/test-simd-sound.R` (NEW)
 
 **Implementation Pattern**:
 ```cpp
-// src/simd/matrix_simd.cpp
+// src/simd/sound_simd.cpp
 #include <xsimd/xsimd.hpp>
+#include <Rcpp.h>
+#include "simd_utils.h"
 
-// [[Rcpp::export(.matrix_get_sum_simd)]]
-double matrix_get_sum_simd(SEXP xptr) {
-    Matrix matrix = GET_PRAAT_OBJECT(Matrix, xptr);
+// [[Rcpp::export(.sound_as_matrix_simd)]]
+Rcpp::NumericMatrix sound_as_matrix_simd(SEXP xptr) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
 
-    double sum = 0.0;
-    for (integer i = 1; i <= matrix->ny; i++) {
-        double* row = &matrix->z[i][1];
-        integer nx = matrix->nx;
+    Rcpp::NumericMatrix mat(sound->ny, sound->nx);
 
-        batch acc(0.0);
-        integer j = 0;
-        for (; j + simd_size <= nx; j += simd_size) {
-            batch b = xsimd::load_unaligned(&row[j]);
-            acc += b;
+    for (int ch = 1; ch <= sound->ny; ch++) {
+        const double* src = &sound->z[ch][1];
+        double* dst = &mat(ch - 1, 0);
+
+        int i = 0;
+        // SIMD loop - process in batches
+        for (; i + simd_size <= sound->nx; i += simd_size) {
+            batch b = xsimd::load_unaligned(&src[i]);
+            xsimd::store_unaligned(&dst[i], b);
         }
-        sum += xsimd::reduce_add(acc);
 
-        // Remainder
-        for (; j < nx; ++j) {
-            sum += row[j];
+        // Remainder loop
+        for (; i < sound->nx; ++i) {
+            dst[i] = src[i];
         }
     }
-    return sum;
+
+    return mat;
+}
+
+// [[Rcpp::export(.sound_create_from_values_simd)]]
+Rcpp::XPtr<structSound> sound_create_from_values_simd(
+    Rcpp::NumericMatrix values,
+    double sampling_rate
+) {
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    int n_channels = values.nrow();
+    int n_samples = values.ncol();
+    double duration = n_samples / sampling_rate;
+
+    autoSound sound = Sound_createSimple(n_channels, duration, sampling_rate);
+
+    for (int ch = 1; ch <= n_channels; ch++) {
+        const double* src = &values(ch - 1, 0);
+        double* dst = &sound->z[ch][1];
+
+        int i = 0;
+        // SIMD bulk copy
+        for (; i + simd_size <= n_samples; i += simd_size) {
+            batch b = xsimd::load_unaligned(&src[i]);
+            xsimd::store_unaligned(&dst[i], b);
+        }
+
+        // Remainder
+        for (; i < n_samples; ++i) {
+            dst[i] = src[i];
+        }
+    }
+
+    return create_xptr_from_auto<structSound>(sound);
 }
 ```
 
-**R6 Integration**:
-```r
-# R/matrix-r6.R
-Matrix <- R6Class("Matrix",
-  public = list(
-    get_sum = function() {
-      if (use_simd()) {
-        .matrix_get_sum_simd(private$ptr)
-      } else {
-        .matrix_get_sum(private$ptr)  # Scalar fallback
-      }
+**Conditional Dispatch**:
+```cpp
+// src/sound_wrappers.cpp
+// [[Rcpp::export(.sound_as_matrix)]]
+NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return sound_as_matrix_simd(xptr);
     }
-  )
-)
-
-use_simd <- function() {
-  # Auto-detect or user preference
-  getOption("speaker.use_simd", default = TRUE)
+#endif
+    // Fallback to scalar version
+    return sound_as_matrix_scalar(xptr);
 }
 ```
 
 **Testing**:
 ```r
-# tests/testthat/test-simd-matrix.R
-test_that("SIMD matrix sum matches scalar", {
-  mat <- matrix(rnorm(1000*1000), 1000, 1000)
-  matrix_obj <- Matrix$from_r_matrix(mat)
+# tests/testthat/test-simd-sound.R
+test_that("SIMD sound conversion matches scalar", {
+  # Create test sound
+  sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100,
+                             frequency = 440, amplitude = 1.0)
 
-  scalar_result <- .matrix_get_sum(matrix_obj$.__enclos_env__$private$ptr)
-  simd_result <- .matrix_get_sum_simd(matrix_obj$.__enclos_env__$private$ptr)
+  # Compare outputs
+  mat_scalar <- .sound_as_matrix_scalar(sound$.__enclos_env__$private$ptr)
+  mat_simd <- .sound_as_matrix_simd(sound$.__enclos_env__$private$ptr)
 
-  expect_equal(scalar_result, simd_result, tolerance = 1e-12)
+  expect_equal(mat_scalar, mat_simd, tolerance = 1e-15)
 })
 
-test_that("SIMD matrix operations are faster", {
-  mat <- matrix(rnorm(1000*1000), 1000, 1000)
-  matrix_obj <- Matrix$from_r_matrix(mat)
+test_that("SIMD sound conversion is faster", {
+  sound <- Sound$create_tone(duration = 10.0, sampling_rate = 44100,
+                             frequency = 440, amplitude = 1.0)
 
   bench_result <- bench::mark(
-    scalar = .matrix_get_sum(matrix_obj$.__enclos_env__$private$ptr),
-    simd   = .matrix_get_sum_simd(matrix_obj$.__enclos_env__$private$ptr),
-    iterations = 100
+    scalar = .sound_as_matrix_scalar(sound$.__enclos_env__$private$ptr),
+    simd   = .sound_as_matrix_simd(sound$.__enclos_env__$private$ptr),
+    iterations = 50,
+    check = FALSE
   )
 
-  # Expect at least 2x speedup
-  expect_gt(median(bench_result$time[bench_result$expression == "scalar"]) /
-            median(bench_result$time[bench_result$expression == "simd"]),
-            2.0)
+  speedup <- median(bench_result$time[bench_result$expression == "scalar"]) /
+             median(bench_result$time[bench_result$expression == "simd"])
+
+  expect_gt(speedup, 2.0)  # Expect at least 2x speedup
 })
 ```
 

@@ -7,6 +7,7 @@
 #include "melder/melder.h"
 #include "sys/Data.h"
 #include "sys/Interpreter.h"
+#include "fon/Vector.h"
 #include <atomic>
 
 // Melder threading symbols needed for error handling
@@ -171,4 +172,27 @@ void NUMminimize_brent (double (*f)(double x, void *closure), double a, double b
     Melder_throw (U"Brent minimization not available in this build.");
 }
 
+void NUMstatistics_huber (constVEC, double *, bool, double *, bool, double, double, integer, VEC const&) {
+    Melder_throw (U"Huber statistics not available in this build.");
+}
+
+void NUMpolynomial_recurrence (VEC const&, double, double, double, constVEC const&, constVEC const&) {
+    Melder_throw (U"Polynomial recurrence not available in this build.");
+}
+
 /* End of file */
+
+// Vector search functions
+enum kVectorSearchDirection { kVectorSearchDirection_NEAREST = 0 };
+
+double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorSearchDirection) {
+    Melder_throw (U"Vector_getNearestLevelCrossing not available in this build.");
+}
+
+double NUMnrbis (double (*)(double, double*, void*), double, double, void*) {
+    Melder_throw (U"NUMnrbis (bisection root finding) not available in this build.");
+}
+
+void NUMmachar () {
+    // Machine characteristics - no-op in library mode
+}

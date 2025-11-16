@@ -4,248 +4,350 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
-#include "../praat.github.io/stat/Table.h"
-#include "../praat.github.io/stat/TableOfReal.h"
+#include "praat.github.io/stat/Table.h"
+#include "praat.github.io/stat/TableOfReal.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::export(.table_create)]]
 SEXP table_create(int numberOfRows, int numberOfColumns) {
-  BEGIN_RCPP_PRAAT
-  autoTable table = Table_create(numberOfRows, numberOfColumns);
-  return Rcpp::XPtr<structTable>(table.releaseToAmbiguousOwner(), true);
-  END_RCPP_PRAAT
+  try {
+    autoTable table = Table_create(numberOfRows, numberOfColumns);
+    return create_xptr_from_auto<structTable>(table);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to create table");
+  }
 }
 
 // [[Rcpp::export(.table_create_with_column_names)]]
 SEXP table_create_with_column_names(int numberOfRows, CharacterVector columnNames) {
-  BEGIN_RCPP_PRAAT
-  autoSTRVEC names = autoSTRVEC(columnNames.size());
-  for (int i = 0; i < columnNames.size(); i++) {
-    names[i] = Melder_dup(Rcpp::as<std::string>(columnNames[i]).c_str()).releaseToAmbiguousOwner();
+  try {
+    autoTable table = Table_create(numberOfRows, columnNames.size());
+    for (int i = 0; i < columnNames.size(); i++) {
+      conststring32 name = Melder_peek8to32(Rcpp::as<std::string>(columnNames[i]).c_str());
+      Table_renameColumn_e(table.get(), i+1, name);
+    }
+    return create_xptr_from_auto<structTable>(table);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to create table with column names");
   }
-  autoTable table = Table_createWithColumnNames(numberOfRows, names.get());
-  return Rcpp::XPtr<structTable>(table.releaseToAmbiguousOwner(), true);
-  END_RCPP_PRAAT
 }
 
 // [[Rcpp::export(.table_get_number_of_rows)]]
 int table_get_number_of_rows(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return table->rows.size;
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return ptr->rows.size;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get number of rows");
+  }
 }
 
 // [[Rcpp::export(.table_get_number_of_columns)]]
 int table_get_number_of_columns(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return table->numberOfColumns;
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return ptr->numberOfColumns;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get number of columns");
+  }
 }
 
 // [[Rcpp::export(.table_get_column_label)]]
 std::string table_get_column_label(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  if (columnNumber < 1 || columnNumber > table->numberOfColumns) {
-    Rf_error("Column number %d out of range [1, %ld]", columnNumber, (long)table->numberOfColumns);
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    if (columnNumber < 1 || columnNumber > ptr->numberOfColumns) {
+      stop("Column number out of range");
+    }
+    return Melder_peek32to8(ptr->columnHeaders[columnNumber].label.get());
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get column label");
   }
-  return Melder_peek32to8(table->columnHeaders[columnNumber].label.get());
-  END_RCPP_PRAAT
 }
 
 // [[Rcpp::export(.table_get_column_index)]]
 int table_get_column_index(SEXP xptr, std::string columnName) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  autostring32 name = Melder_peek8to32(columnName.c_str());
-  integer index = Table_columnNameToNumber_0(table, name.get());
-  return (int)index;
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 name = Melder_peek8to32(columnName.c_str());
+    integer index = Table_columnNameToNumber_0(ptr.get(), name);
+    return (int)index;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get column index");
+  }
 }
 
 // [[Rcpp::export(.table_set_column_label)]]
 void table_set_column_label(SEXP xptr, int columnNumber, std::string label) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  autostring32 labelStr = Melder_peek8to32(label.c_str());
-  Table_renameColumn_e(table, columnNumber, labelStr.get());
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 labelStr = Melder_peek8to32(label.c_str());
+    Table_renameColumn_e(ptr.get(), columnNumber, labelStr);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to set column label");
+  }
 }
 
 // [[Rcpp::export(.table_get_numeric_value)]]
 double table_get_numeric_value(SEXP xptr, int rowNumber, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getNumericValue_a(table, rowNumber, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getNumericValue_a(ptr.get(), rowNumber, columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get numeric value");
+  }
 }
 
 // [[Rcpp::export(.table_get_string_value)]]
 std::string table_get_string_value(SEXP xptr, int rowNumber, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  conststring32 value = Table_getStringValue_a(table, rowNumber, columnNumber);
-  return Melder_peek32to8(value);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 value = Table_getStringValue_a(ptr.get(), rowNumber, columnNumber);
+    return Melder_peek32to8(value);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get string value");
+  }
 }
 
 // [[Rcpp::export(.table_set_numeric_value)]]
 void table_set_numeric_value(SEXP xptr, int rowNumber, int columnNumber, double value) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  Table_setNumericValue(table, rowNumber, columnNumber, value);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    Table_setNumericValue(ptr.get(), rowNumber, columnNumber, value);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to set numeric value");
+  }
 }
 
 // [[Rcpp::export(.table_set_string_value)]]
 void table_set_string_value(SEXP xptr, int rowNumber, int columnNumber, std::string value) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  autostring32 valueStr = Melder_peek8to32(value.c_str());
-  Table_setStringValue(table, rowNumber, columnNumber, valueStr.get());
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 valueStr = Melder_peek8to32(value.c_str());
+    Table_setStringValue(ptr.get(), rowNumber, columnNumber, valueStr);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to set string value");
+  }
 }
 
 // [[Rcpp::export(.table_append_row)]]
 void table_append_row(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  Table_appendRow(table);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    Table_appendRow(ptr.get());
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to append row");
+  }
 }
 
 // [[Rcpp::export(.table_append_column)]]
 void table_append_column(SEXP xptr, std::string columnName) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  autostring32 name = Melder_peek8to32(columnName.c_str());
-  Table_appendColumn(table, name.get());
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 name = Melder_peek8to32(columnName.c_str());
+    Table_appendColumn(ptr.get(), name);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to append column");
+  }
 }
 
 // [[Rcpp::export(.table_remove_row)]]
 void table_remove_row(SEXP xptr, int rowNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  Table_removeRow(table, rowNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    Table_removeRow(ptr.get(), rowNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to remove row");
+  }
 }
 
 // [[Rcpp::export(.table_remove_column)]]
 void table_remove_column(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  Table_removeColumn(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    Table_removeColumn(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to remove column");
+  }
 }
 
 // [[Rcpp::export(.table_insert_row)]]
 void table_insert_row(SEXP xptr, int rowPosition) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  Table_insertRow(table, rowPosition);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    Table_insertRow(ptr.get(), rowPosition);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to insert row");
+  }
 }
 
 // [[Rcpp::export(.table_insert_column)]]
 void table_insert_column(SEXP xptr, int columnPosition, std::string columnName) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  autostring32 name = Melder_peek8to32(columnName.c_str());
-  Table_insertColumn(table, columnPosition, name.get());
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    conststring32 name = Melder_peek8to32(columnName.c_str());
+    Table_insertColumn(ptr.get(), columnPosition, name);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to insert column");
+  }
 }
 
 // Statistical functions
 
 // [[Rcpp::export(.table_get_mean)]]
 double table_get_mean(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getMean(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getMean(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get mean");
+  }
 }
 
 // [[Rcpp::export(.table_get_stdev)]]
 double table_get_stdev(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getStdev(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getStdev(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get standard deviation");
+  }
 }
 
 // [[Rcpp::export(.table_get_minimum)]]
 double table_get_minimum(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getMinimum(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getMinimum(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get minimum");
+  }
 }
 
 // [[Rcpp::export(.table_get_maximum)]]
 double table_get_maximum(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getMaximum(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getMaximum(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get maximum");
+  }
 }
 
 // [[Rcpp::export(.table_get_sum)]]
 double table_get_sum(SEXP xptr, int columnNumber) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getSum(table, columnNumber);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getSum(ptr.get(), columnNumber);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get sum");
+  }
 }
 
 // [[Rcpp::export(.table_get_quantile)]]
 double table_get_quantile(SEXP xptr, int columnNumber, double quantile) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  return Table_getQuantile(table, columnNumber, quantile);
-  END_RCPP_PRAAT
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    return Table_getQuantile(ptr.get(), columnNumber, quantile);
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get quantile");
+  }
 }
 
 // [[Rcpp::export(.table_get_column_numbers)]]
 NumericVector table_get_column_numbers(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  NumericVector result(table->numberOfColumns);
-  for (integer i = 1; i <= table->numberOfColumns; i++) {
-    result[i-1] = (double)i;
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    NumericVector result(ptr->numberOfColumns);
+    for (integer i = 1; i <= ptr->numberOfColumns; i++) {
+      result[i-1] = (double)i;
+    }
+    return result;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get column numbers");
   }
-  return result;
-  END_RCPP_PRAAT
 }
 
 // [[Rcpp::export(.table_get_column_names)]]
 CharacterVector table_get_column_names(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  CharacterVector result(table->numberOfColumns);
-  for (integer i = 1; i <= table->numberOfColumns; i++) {
-    result[i-1] = Melder_peek32to8(table->columnHeaders[i].label.get());
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    CharacterVector result(ptr->numberOfColumns);
+    for (integer i = 1; i <= ptr->numberOfColumns; i++) {
+      result[i-1] = Melder_peek32to8(ptr->columnHeaders[i].label.get());
+    }
+    return result;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to get column names");
   }
-  return result;
-  END_RCPP_PRAAT
 }
 
 // [[Rcpp::export(.table_to_matrix)]]
 NumericMatrix table_to_matrix(SEXP xptr) {
-  BEGIN_RCPP_PRAAT
-  Table table = GET_PRAAT_OBJECT(Table, xptr);
-  int nrow = table->rows.size;
-  int ncol = table->numberOfColumns;
-  
-  NumericMatrix result(nrow, ncol);
-  for (int i = 0; i < nrow; i++) {
-    for (int j = 0; j < ncol; j++) {
-      result(i, j) = Table_getNumericValue_a(table, i+1, j+1);
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+    int nrow = ptr->rows.size;
+    int ncol = ptr->numberOfColumns;
+    
+    NumericMatrix result(nrow, ncol);
+    for (int i = 0; i < nrow; i++) {
+      for (int j = 0; j < ncol; j++) {
+        result(i, j) = Table_getNumericValue_a(ptr.get(), i+1, j+1);
+      }
     }
+    return result;
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to convert table to matrix");
   }
-  return result;
-  END_RCPP_PRAAT
 }

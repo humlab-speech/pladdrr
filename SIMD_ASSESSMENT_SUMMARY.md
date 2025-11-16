@@ -31,21 +31,24 @@ The speaker package has **excellent SIMD optimization potential** using RcppXsim
 
 ---
 
-## Top 10 SIMD Opportunities (Priority Order)
+## Top 10 SIMD Opportunities (Priority Order) - REVISED 2025-11-16
 
 ### Tier 1: Critical Impact (Implement First)
 
-1. **Matrix Statistical Operations** ⭐⭐⭐⭐⭐
-   - Location: `src/matrix_wrappers.cpp:184-244`
-   - Operations: sum, mean, min, max
-   - Expected speedup: 4-8x
-   - Impact: VERY HIGH
+**NOTE**: Matrix implementation exists (`matrix_wrappers.cpp.wip`, 244 lines) but is **intentionally deferred** - not compiled or exported. R6 class fully defined. Can be activated in 1-2 hours if desired. Focus on Sound and Table operations for Phase 1.
 
-2. **Data Conversion (Praat ↔ R)** ⭐⭐⭐⭐⭐
+1. **Sound Data Conversion (Praat ↔ R)** ⭐⭐⭐⭐⭐ **TOP PRIORITY**
    - Location: `src/sound_wrappers.cpp:72-76, 509-521`
-   - Operations: Bulk memory transfers
+   - Operations: Bulk memory transfers (sound_create_from_values, sound_as_matrix)
    - Expected speedup: 4-8x
-   - Impact: VERY HIGH (on every I/O operation)
+   - Impact: VERY HIGH (on every audio I/O operation)
+   - **Rationale**: Most frequently called operations in typical workflows
+
+2. **Table Statistical Operations** ⭐⭐⭐⭐⭐ **NEW - HIGH PRIORITY**
+   - Location: `src/table_wrappers.cpp` (bulk operations on numeric columns)
+   - Operations: sum, mean, min, max, quantiles on table columns
+   - Expected speedup: 4-6x
+   - Impact: VERY HIGH (data analysis workflows)
 
 3. **Tone Generation** ⭐⭐⭐⭐⭐
    - Location: `src/sound_wrappers.cpp:88-110`
@@ -99,17 +102,19 @@ The speaker package has **excellent SIMD optimization potential** using RcppXsim
 
 ---
 
-## Implementation Strategy
+## Implementation Strategy (REVISED 2025-11-16)
 
-### Phase 1 (Week 1): Foundation - Low-Hanging Fruit
-**Goal**: 3-5x speedup for targeted operations
+### Phase 1 (Week 1): Foundation - Sound & Data Operations
+**Goal**: 3-6x speedup for audio I/O and conversion operations
 
 **Tasks**:
-- Add RcppXsimd dependency
-- Implement matrix operations SIMD
-- Implement data conversion SIMD
-- Implement tone generation SIMD
-- Create benchmark suite
+- Add RcppXsimd dependency to DESCRIPTION
+- Create configure script for SIMD detection
+- Implement sound data conversion SIMD (sound_as_matrix, sound_create_from_values)
+- Implement tone generation SIMD (vectorized sine)
+- Implement RMS/intensity calculations SIMD
+- Create benchmark suite for Sound operations
+- Validate numerical accuracy (tolerance: 1e-12)
 
 **Estimated Effort**: 3-4 days
 

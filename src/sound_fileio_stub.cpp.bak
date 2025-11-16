@@ -8,7 +8,6 @@
 
 #include "melder/melder.h"
 #include "fon/Sound.h"
-#include "sys/Collection.h"
 
 /* File reader stub - directs users to create Sound from data instead */
 autoSound Sound_readFromSoundFile (MelderFile file) {
@@ -124,6 +123,7 @@ autoTextGrid TextGrid_readFromTimitLabelFile (MelderFile, bool) {
 }
 
 // TextGrid collection functions
+template<class T> struct OrderedOf;
 
 autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>*, bool) {
     Melder_throw (U"TextGrids_to_TextGrid_appendContinuous: TextGrid merging not available.");

@@ -31,3 +31,34 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 	              U"This package does not include CLAPACK.");
 	return autoGSVD();  // Never reached, but needed for compilation
 }
+
+void SVD_compute (SVD me) {
+	Melder_throw (U"SVD_compute: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+void SVD_compute (SVD me, VEC const& workspace) {
+	Melder_throw (U"SVD_compute: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+void SVD_setTolerance (SVD me, double tolerance) {
+	Melder_throw (U"SVD_setTolerance: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+integer SVD_getWorkspaceSize (SVD) {
+	Melder_throw (U"SVD_getWorkspaceSize: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+void SVD_solve_preallocated (SVD, constVECVU const&, VECVU const&, VEC const&) {
+	Melder_throw (U"SVD_solve_preallocated: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+void SVD_resizeWithinOldBounds (SVD, integer, integer, integer, integer) {
+Melder_throw (U"SVD_resizeWithinOldBounds: SVD decomposition is not available. "
+              U"This package does not include CLAPACK/LAPACK.");
+}
+

@@ -149,7 +149,7 @@ void Graphics_markBottomLogarithmic (Graphics, double, bool, bool, bool, constst
 void Graphics_markTopLogarithmic (Graphics, double, bool, bool, bool, conststring32) {}
 
 
-
+void Graphics_marksLeftLogarithmic (Graphics, integer, bool, bool, bool) {}
 void Graphics_marksRightLogarithmic (Graphics, integer, bool, bool, bool) {}
 void Graphics_marksBottomLogarithmic (Graphics, integer, bool, bool, bool) {}
 void Graphics_marksTopLogarithmic (Graphics, integer, bool, bool, bool) {}
