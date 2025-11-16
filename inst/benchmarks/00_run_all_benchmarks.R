@@ -37,11 +37,26 @@ saveRDS(system_info, "inst/benchmarks/results/00_system_info.rds")
 
 # List of benchmark scripts
 benchmarks <- c(
-  "01_matrix_operations.R",
-  "02_data_conversion.R",
-  "03_tone_generation.R",
-  "04_parselmouth_comparison.R",
-  "05_converted_scripts_comparison.R"
+  # Phase 1: Foundation (Week 1) - Target: 4-8x speedup
+  "01_matrix_operations.R",           # Matrix stats
+  "02_data_conversion.R",             # Praat ↔ R conversion
+  "03_tone_generation.R",             # Sine wave synthesis
+  
+  # Phase 2: Signal Processing (Week 2) - Target: 3-5x speedup
+  "06_phase2_intensity.R",            # RMS/energy calculations
+  "07_phase2_sound_mixing.R",         # Sound mixing/scaling
+  
+  # Phase 3: Complex Algorithms (Week 3) - Target: 2-4x speedup
+  "08_phase3_fft_operations.R",       # Spectrogram, FFT
+  "09_phase3_formant_lpc.R",          # LPC autocorrelation
+  "10_phase3_pitch_detection.R",      # Pitch autocorrelation
+  
+  # Phase 4: End-to-End (Week 4) - Target: 2-4x overall
+  "11_end_to_end_pipelines.R",        # Complete workflows
+  
+  # Optional: Comparisons
+  "04_parselmouth_comparison.R",      # Compare with Python Parselmouth
+  "05_converted_scripts_comparison.R" # Praat script conversions
 )
 
 # Run each benchmark
