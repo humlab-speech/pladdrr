@@ -54,7 +54,7 @@ double matrix_get_dy(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->dy;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_x1)]]
@@ -62,7 +62,7 @@ double matrix_get_x1(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->x1;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_y1)]]
@@ -70,7 +70,7 @@ double matrix_get_y1(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->y1;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_xmin)]]
@@ -78,7 +78,7 @@ double matrix_get_xmin(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->xmin;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_xmax)]]
@@ -86,7 +86,7 @@ double matrix_get_xmax(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->xmax;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_ymin)]]
@@ -94,7 +94,7 @@ double matrix_get_ymin(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->ymin;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_ymax)]]
@@ -102,7 +102,7 @@ double matrix_get_ymax(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return matrix->ymax;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_value_at_xy)]]
@@ -110,7 +110,7 @@ double matrix_get_value_at_xy(SEXP xptr, double x, double y) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
   return Matrix_getValueAtXY(matrix, x, y);
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_value)]]
@@ -122,7 +122,7 @@ double matrix_get_value(SEXP xptr, int row, int col) {
              row, (long)matrix->ny, col, (long)matrix->nx);
   }
   return matrix->z[row][col];
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_set_value)]]
@@ -134,14 +134,14 @@ void matrix_set_value(SEXP xptr, int row, int col, double value) {
              row, (long)matrix->ny, col, (long)matrix->nx);
   }
   matrix->z[row][col] = value;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_to_r_matrix)]]
-NumericMatrix matrix_to_r_matrix(SEXP xptr) {
+Rcpp::NumericMatrix matrix_to_r_matrix(SEXP xptr) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  NumericMatrix result(matrix->ny, matrix->nx);
+  Rcpp::NumericMatrix result(matrix->ny, matrix->nx);
   
   for (integer i = 1; i <= matrix->ny; i++) {
     for (integer j = 1; j <= matrix->nx; j++) {
@@ -149,11 +149,11 @@ NumericMatrix matrix_to_r_matrix(SEXP xptr) {
     }
   }
   return result;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_from_r_matrix)]]
-SEXP matrix_from_r_matrix(NumericMatrix rmatrix) {
+SEXP matrix_from_r_matrix(Rcpp::NumericMatrix rmatrix) {
   try {
   int ny = rmatrix.nrow();
   int nx = rmatrix.ncol();
@@ -167,16 +167,16 @@ SEXP matrix_from_r_matrix(NumericMatrix rmatrix) {
   }
   
   return create_xptr_from_auto<structMatrix>(matrix);
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_formula)]]
 void matrix_formula(SEXP xptr, std::string formula) {
   try {
   Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-  autostring32 formulaStr = Melder_peek8to32(formula.c_str());
-  Matrix_formula(matrix, formulaStr.get(), nullptr, nullptr);
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  conststring32 formulaStr = Melder_peek8to32(formula.c_str());
+  Matrix_formula(matrix, formulaStr, nullptr, nullptr);
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // Statistical operations
@@ -192,7 +192,7 @@ double matrix_get_sum(SEXP xptr) {
     }
   }
   return sum;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_mean)]]
@@ -208,7 +208,7 @@ double matrix_get_mean(SEXP xptr) {
     }
   }
   return count > 0 ? sum / count : NAN;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_minimum)]]
@@ -224,7 +224,7 @@ double matrix_get_minimum(SEXP xptr) {
     }
   }
   return min;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
 // [[Rcpp::export(.matrix_get_maximum)]]
@@ -240,5 +240,5 @@ double matrix_get_maximum(SEXP xptr) {
     }
   }
   return max;
-  } catch (MelderError) { Melder_clearError(); stop("Matrix operation failed"); }
+  } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
