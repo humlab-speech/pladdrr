@@ -99,11 +99,16 @@ for (benchmark_file in benchmarks) {
 
   if (file.exists(benchmark_path)) {
     tryCatch({
-      # Source in a new environment but with same working directory
-      source(benchmark_path, local = new.env(), chdir = FALSE)
+      # Source in inst/benchmarks directory for correct relative paths
+      old_wd <- getwd()
+      setwd("inst/benchmarks")
+      source(benchmark_file, local = new.env())
+      setwd(old_wd)
       cat("✓ Completed:", benchmark_file, "\n")
     }, error = function(e) {
       cat("✗ Error in", benchmark_file, ":", conditionMessage(e), "\n")
+      # Restore directory in case of error
+      if (exists("old_wd")) setwd(old_wd)
     })
   } else {
     cat("✗ File not found:", benchmark_path, "\n")

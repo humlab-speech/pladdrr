@@ -22,21 +22,25 @@ if (!dir.exists(results_dir)) {
 sys_info_file <- file.path(results_dir, "00_system_info.rds")
 completion_info_file <- file.path(results_dir, "00_completion_info.rds")
 
-if (file.exists(sys_info_file) && file.exists(completion_info_file)) {
+if (file.exists(sys_info_file)) {
   sys_info <- readRDS(sys_info_file)
-  completion_info <- readRDS(completion_info_file)
   
   cat("System Information\n")
   cat(strrep("=", 80), "\n")
   cat("Platform:", sys_info$platform, "\n")
   cat("R version:", sys_info$r_version, "\n")
-  cat("CPU:", sys_info$cpu, "\n")
-  cat("Package version:", as.character(completion_info$package_version), "\n")
-  cat("Benchmark date:", format(completion_info$timestamp), "\n\n")
+  cat("CPU:", if(!is.null(sys_info$cpu_info)) sys_info$cpu_info else "Unknown", "\n")
+  cat("Package version:", sys_info$package_version, "\n")
+  cat("Benchmark date:", format(sys_info$timestamp, "%Y-%m-%d %H:%M:%S"), "\n\n")
 } else {
   cat("System information not found. Using default values.\n\n")
-  sys_info <- list(platform = "unknown", r_version = "unknown", cpu = "unknown")
-  completion_info <- list(package_version = "unknown", timestamp = Sys.time())
+  sys_info <- list(
+    platform = R.version$platform, 
+    r_version = R.version.string, 
+    cpu_info = "Unknown",
+    package_version = as.character(packageVersion("speaker")),
+    timestamp = Sys.time()
+  )
 }
 
 # ============================================================================
@@ -89,23 +93,55 @@ for (benchmark_name in simd_benchmarks) {
       for (size_name in names(scalar)) {
         if (!size_name %in% names(simd)) next
         
-        scalar_bench <- scalar[[size_name]]
-        simd_bench <- simd[[size_name]]
+        scalar_config <- scalar[[size_name]]
+        simd_config <- simd[[size_name]]
         
-        # Extract median times (already numeric from bench::mark)
-        scalar_medians <- as.numeric(scalar_bench$median)
-        simd_medians <- as.numeric(simd_bench$median)
-        speedups <- scalar_medians / simd_medians
-        all_speedups <- c(all_speedups, speedups)
-        
-        cat(sprintf("\nConfiguration: %s\n", size_name))
-        comparison_df <- data.frame(
-          expression = as.character(scalar_bench$expression),
-          scalar_ms = scalar_medians * 1000,
-          simd_ms = simd_medians * 1000,
-          speedup = speedups
-        )
-        print(comparison_df)
+        # Handle nested structure (e.g., create/export sub-benchmarks)
+        if (is.list(scalar_config) && !inherits(scalar_config, "bench_mark")) {
+          for (sub_name in names(scalar_config)) {
+            if (inherits(scalar_config[[sub_name]], "bench_mark") && 
+                sub_name %in% names(simd_config)) {
+              scalar_bench <- scalar_config[[sub_name]]
+              simd_bench <- simd_config[[sub_name]]
+              
+              if (nrow(scalar_bench) > 0 && nrow(simd_bench) > 0) {
+                scalar_medians <- as.numeric(scalar_bench$median)
+                simd_medians <- as.numeric(simd_bench$median)
+                speedups_sub <- scalar_medians / simd_medians
+                all_speedups <- c(all_speedups, speedups_sub)
+                
+                cat(sprintf("\nConfiguration: %s - %s\n", size_name, sub_name))
+                comparison_df <- data.frame(
+                  expression = as.character(scalar_bench$expression),
+                  scalar_ms = scalar_medians * 1000,
+                  simd_ms = simd_medians * 1000,
+                  speedup = speedups_sub
+                )
+                print(comparison_df)
+              }
+            }
+          }
+        } else {
+          # Direct bench_mark at this level
+          scalar_bench <- scalar_config
+          simd_bench <- simd_config
+          
+          if (inherits(scalar_bench, "bench_mark") && nrow(scalar_bench) > 0) {
+            scalar_medians <- as.numeric(scalar_bench$median)
+            simd_medians <- as.numeric(simd_bench$median)
+            speedups_sub <- scalar_medians / simd_medians
+            all_speedups <- c(all_speedups, speedups_sub)
+            
+            cat(sprintf("\nConfiguration: %s\n", size_name))
+            comparison_df <- data.frame(
+              expression = as.character(scalar_bench$expression),
+              scalar_ms = scalar_medians * 1000,
+              simd_ms = simd_medians * 1000,
+              speedup = speedups_sub
+            )
+            print(comparison_df)
+          }
+        }
       }
       
       # Use all speedups for summary
@@ -127,6 +163,11 @@ for (benchmark_name in simd_benchmarks) {
       )
       
       print(comparison_df)
+    }
+    
+    if (length(speedups) == 0) {
+      cat("⚠️  No valid benchmark data found\n\n")
+      next
     }
     
     cat("\nSummary Statistics:\n")
@@ -162,11 +203,11 @@ for (benchmark_name in simd_benchmarks) {
                 vjust = -0.5, size = 3.5) +
       labs(
         title = paste("SIMD Optimization Results:", benchmark_name),
-        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu),
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
         x = "Operation",
         y = "Speedup (times faster)",
-        caption = paste0("Package version: ", completion_info$package_version, 
-                        " | Benchmark date: ", format(completion_info$timestamp))
+        caption = paste0("Package version: ", sys_info$package_version, 
+                        " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
       ) +
       theme_minimal() +
       theme(
@@ -261,11 +302,11 @@ if (file.exists(pm_file)) {
               vjust = -0.5, size = 3.5) +
     labs(
       title = "speaker vs Parselmouth Performance",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu),
+      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
       x = "Operation",
       y = "Speedup (times faster)",
-      caption = paste0("Package version: ", completion_info$package_version, 
-                      " | Benchmark date: ", format(completion_info$timestamp))
+      caption = paste0("Package version: ", sys_info$package_version, 
+                      " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
     ) +
     theme_minimal() +
     theme(
@@ -318,11 +359,11 @@ if (file.exists(scripts_file)) {
               vjust = -0.5, size = 3.5) +
     labs(
       title = "speaker vs Parselmouth: Full Workflow Performance",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu),
+      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
       x = "Workflow",
       y = "Speedup (times faster)",
-      caption = paste0("Package version: ", completion_info$package_version, 
-                      " | Benchmark date: ", format(completion_info$timestamp))
+      caption = paste0("Package version: ", sys_info$package_version, 
+                      " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
     ) +
     theme_minimal() +
     theme(
@@ -384,12 +425,12 @@ if (file.exists(pm_file) && file.exists(scripts_file)) {
                                   "Full Workflows" = "darkgreen")) +
     labs(
       title = "speaker vs Parselmouth: Complete Performance Comparison",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu),
+      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
       x = "Test",
       y = "Speedup (times faster)",
       fill = "Category",
-      caption = paste0("Package version: ", completion_info$package_version, 
-                      " | Benchmark date: ", format(completion_info$timestamp))
+      caption = paste0("Package version: ", sys_info$package_version, 
+                      " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
     ) +
     theme_minimal() +
     theme(

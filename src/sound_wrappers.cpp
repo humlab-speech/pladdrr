@@ -180,6 +180,12 @@ double sound_get_value_at_time(
     }
 }
 
+#ifdef HAVE_XSIMD
+extern double sound_get_rms_simd(XPtr<structSound>, double, double);
+extern double sound_get_energy_simd(XPtr<structSound>, double, double);
+extern double sound_get_power_simd(XPtr<structSound>, double, double);
+#endif
+
 //' Get RMS (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_get_rms)]]
@@ -188,6 +194,12 @@ double sound_get_rms(
     double from_time,
     double to_time
 ) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return sound_get_rms_simd(xptr, from_time, to_time);
+    }
+#endif
+    
     structSound* sound = get_ptr(xptr, "Sound");
     
     if (from_time == 0.0) from_time = sound->xmin;
@@ -214,6 +226,12 @@ double sound_get_energy(
     double from_time,
     double to_time
 ) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return sound_get_energy_simd(xptr, from_time, to_time);
+    }
+#endif
+    
     structSound* sound = get_ptr(xptr, "Sound");
     
     if (from_time == 0.0) from_time = sound->xmin;
@@ -235,6 +253,12 @@ double sound_get_power(
     double from_time,
     double to_time
 ) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return sound_get_power_simd(xptr, from_time, to_time);
+    }
+#endif
+    
     structSound* sound = get_ptr(xptr, "Sound");
     
     if (from_time == 0.0) from_time = sound->xmin;
@@ -724,6 +748,11 @@ void sound_scale_intensity(
     }
 }
 
+#ifdef HAVE_XSIMD
+extern void sound_scale_peak_simd(XPtr<structSound>, double);
+extern XPtr<structSound> sound_mix_simd(XPtr<structSound>, XPtr<structSound>, double);
+#endif
+
 //' Scale peak amplitude of Sound (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_scale_peak)]]
@@ -731,6 +760,13 @@ void sound_scale_peak(
     XPtr<structSound> xptr,
     double new_peak
 ) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        sound_scale_peak_simd(xptr, new_peak);
+        return;
+    }
+#endif
+    
     structSound* sound = get_ptr(xptr, "Sound");
     
     try {
@@ -885,6 +921,12 @@ XPtr<structSound> sound_mix(
     XPtr<structSound> xptr2,
     double balance
 ) {
+#ifdef HAVE_XSIMD
+    if (use_simd()) {
+        return sound_mix_simd(xptr1, xptr2, balance);
+    }
+#endif
+    
     structSound* sound1 = get_ptr(xptr1, "Sound");
     structSound* sound2 = get_ptr(xptr2, "Sound");
     
