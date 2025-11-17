@@ -20,20 +20,22 @@ if (!dir.exists("inst/benchmarks/results")) {
   cat("Created results directory: inst/benchmarks/results/\n\n")
 }
 
-# Store system info
+# Store system info  
 system_info <- list(
   timestamp = Sys.time(),
   package_version = as.character(packageVersion("speaker")),
   r_version = R.version.string,
   platform = R.version$platform,
   cpu_info = if (.Platform$OS.type == "unix") {
-    system("sysctl -n machdep.cpu.brand_string", intern = TRUE)
+    system("sysctl -n machdep.cpu.brand_string 2>/dev/null || echo 'Unknown'", intern = TRUE)
   } else {
     "Windows"
-  }
+  },
+  has_simd = requireNamespace("RcppXsimd", quietly = TRUE)
 )
 
 saveRDS(system_info, "inst/benchmarks/results/00_system_info.rds")
+
 
 # List of benchmark scripts
 benchmarks <- c(
@@ -59,6 +61,23 @@ benchmarks <- c(
   "05_converted_scripts_comparison.R" # Praat script conversions
 )
 
+# Detect SIMD support
+forced_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "")
+if (forced_mode != "") {
+  has_simd <- (forced_mode == "simd")
+  run_mode <- forced_mode
+  cat("Mode forced to:", run_mode, "\n")
+} else {
+  has_simd <- requireNamespace("RcppXsimd", quietly = TRUE)
+  run_mode <- if (has_simd) "simd" else "scalar"
+}
+
+cat("SIMD support:", ifelse(has_simd, "✓ Available (RcppXsimd loaded)", "✗ Not available"), "\n")
+cat("Run mode:", run_mode, "\n\n")
+
+# Set environment variable for benchmarks to know the mode
+Sys.setenv(SPEAKER_BENCHMARK_MODE = run_mode)
+
 # Run each benchmark
 for (benchmark_file in benchmarks) {
   cat("\n")
@@ -70,7 +89,8 @@ for (benchmark_file in benchmarks) {
 
   if (file.exists(benchmark_path)) {
     tryCatch({
-      source(benchmark_path, local = new.env())
+      # Source in a new environment but with same working directory
+      source(benchmark_path, local = new.env(), chdir = FALSE)
       cat("✓ Completed:", benchmark_file, "\n")
     }, error = function(e) {
       cat("✗ Error in", benchmark_file, ":", conditionMessage(e), "\n")
@@ -80,10 +100,19 @@ for (benchmark_file in benchmarks) {
   }
 }
 
+# Save completion info
+completion_info <- list(
+  timestamp = Sys.time(),
+  mode = run_mode,
+  has_simd = has_simd,
+  completed_benchmarks = benchmarks
+)
+saveRDS(completion_info, paste0("inst/benchmarks/results/00_completion_", run_mode, ".rds"))
+
 # Create summary report
 cat("\n")
 cat(strrep("=", 80), "\n")
-cat("BASELINE BENCHMARKS COMPLETE\n")
+cat(toupper(run_mode), "BENCHMARKS COMPLETE\n")
 cat(strrep("=", 80), "\n\n")
 
 cat("Results saved in: inst/benchmarks/results/\n")
@@ -94,10 +123,19 @@ for (f in result_files) {
 }
 
 cat("\n")
-cat("Next steps:\n")
-cat("1. Review Parselmouth comparison: source('inst/benchmarks/compare_results.R')\n")
-cat("2. Consider SIMD optimizations using RcppXsimd (see SIMD_INTEGRATION_PLAN.md)\n")
-cat("3. Implement any performance improvements identified\n")
+if (run_mode == "scalar") {
+  cat("Next steps:\n")
+  cat("1. Install RcppXsimd: install.packages('RcppXsimd')\n")
+  cat("2. Re-run this script to generate SIMD benchmarks\n")
+  cat("3. Compare results: Rscript inst/benchmarks/compare_results.R\n")
+} else {
+  cat("Next steps:\n")
+  cat("1. Compare SIMD vs scalar: Rscript inst/benchmarks/compare_results.R\n")
+  cat("2. Review Parselmouth comparison (if available)\n")
+  cat("3. Identify optimization opportunities\n")
+}
+
+cat("\n", run_mode, " benchmark run completed successfully!\n")
 cat("\n")
 
 # Save completion marker

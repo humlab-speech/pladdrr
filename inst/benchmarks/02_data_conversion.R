@@ -6,7 +6,8 @@ library(speaker)
 library(bench)
 
 cat(strrep("=", 80), "\n")
-cat("Benchmark 2: Data Conversion (Baseline - Pre-SIMD)\n")
+run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "baseline")
+cat(sprintf("Benchmark 2: Data Conversion [%s mode]\n", toupper(run_mode)))
 cat(strrep("=", 80), "\n\n")
 
 # Test different audio durations and channel counts
@@ -66,6 +67,8 @@ for (config_name in names(configs)) {
 }
 
 # Save results
-saveRDS(results, "inst/benchmarks/results/02_data_conversion_baseline.rds")
+output_file <- sprintf("inst/benchmarks/results/02_data_conversion_%s.rds", run_mode)
+saveRDS(results, output_file)
 
-cat("\nBaseline results saved to: inst/benchmarks/results/02_data_conversion_baseline.rds\n")
+cat(sprintf("\nResults saved to: %s\n", output_file))
+

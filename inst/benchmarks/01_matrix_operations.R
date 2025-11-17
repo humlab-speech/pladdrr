@@ -5,8 +5,11 @@
 library(speaker)
 library(bench)
 
+# Detect run mode
+run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "baseline")
+
 cat(strrep("=", 80), "\n")
-cat("Benchmark 1: Matrix Operations (Baseline - Pre-SIMD)\n")
+cat(sprintf("Benchmark 1: Matrix Operations [%s mode]\n", toupper(run_mode)))
 cat(strrep("=", 80), "\n\n")
 
 # Test matrices of various sizes
@@ -47,7 +50,12 @@ for (size_name in names(sizes)) {
 }
 
 # Save results
-saveRDS(results, "inst/benchmarks/results/01_matrix_operations_baseline.rds")
+output_file <- sprintf("inst/benchmarks/results/01_matrix_operations_%s.rds", run_mode)
+saveRDS(results, output_file)
 
-cat("\nBaseline results saved to: inst/benchmarks/results/01_matrix_operations_baseline.rds\n")
-cat("Run this benchmark again after SIMD implementation to compare.\n")
+cat(sprintf("\nResults saved to: %s\n", output_file))
+if (run_mode == "scalar") {
+  cat("Run with RcppXsimd installed to generate SIMD comparison.\n")
+} else {
+  cat("Compare with scalar results using compare_results.R\n")
+}

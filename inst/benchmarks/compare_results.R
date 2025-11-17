@@ -43,7 +43,7 @@ if (file.exists(sys_info_file) && file.exists(completion_info_file)) {
 # SIMD Baseline vs Optimized Comparison (Primary Use Case)
 # ============================================================================
 
-# Benchmark files that may have baseline and simd versions
+# Benchmark files that may have scalar and simd versions
 simd_benchmarks <- c(
   "01_matrix_operations",
   "02_data_conversion", 
@@ -58,10 +58,16 @@ simd_benchmarks <- c(
 simd_comparisons_made <- FALSE
 
 for (benchmark_name in simd_benchmarks) {
-  baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
+  scalar_file <- file.path(results_dir, paste0(benchmark_name, "_scalar.rds"))
   simd_file <- file.path(results_dir, paste0(benchmark_name, "_simd.rds"))
+  baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
   
-  if (file.exists(baseline_file) && file.exists(simd_file)) {
+  # Support both scalar/simd and baseline naming
+  if (!file.exists(scalar_file) && file.exists(baseline_file)) {
+    scalar_file <- baseline_file
+  }
+  
+  if (file.exists(scalar_file) && file.exists(simd_file)) {
     if (!simd_comparisons_made) {
       cat(strrep("=", 80), "\n")
       cat("SIMD OPTIMIZATION RESULTS\n")
@@ -69,27 +75,59 @@ for (benchmark_name in simd_benchmarks) {
       simd_comparisons_made <- TRUE
     }
     
-    baseline <- readRDS(baseline_file)
+    scalar <- readRDS(scalar_file)
     simd <- readRDS(simd_file)
     
     cat("Benchmark:", benchmark_name, "\n")
     cat(strrep("-", 80), "\n")
     
-    # Extract median times and compute speedup
-    baseline_medians <- sapply(baseline$time, function(x) median(x))
-    simd_medians <- sapply(simd$time, function(x) median(x))
-    
-    speedups <- baseline_medians / simd_medians
-    
-    # Create comparison data frame
-    comparison_df <- data.frame(
-      expression = as.character(baseline$expression),
-      baseline_median = baseline_medians,
-      simd_median = simd_medians,
-      speedup = speedups
-    )
-    
-    print(comparison_df)
+    # Handle both list and bench_mark formats
+    if (is.list(scalar) && !inherits(scalar, "bench_mark")) {
+      # Nested list format - extract all test configurations
+      all_speedups <- c()
+      
+      for (size_name in names(scalar)) {
+        if (!size_name %in% names(simd)) next
+        
+        scalar_bench <- scalar[[size_name]]
+        simd_bench <- simd[[size_name]]
+        
+        # Extract median times (already numeric from bench::mark)
+        scalar_medians <- as.numeric(scalar_bench$median)
+        simd_medians <- as.numeric(simd_bench$median)
+        speedups <- scalar_medians / simd_medians
+        all_speedups <- c(all_speedups, speedups)
+        
+        cat(sprintf("\nConfiguration: %s\n", size_name))
+        comparison_df <- data.frame(
+          expression = as.character(scalar_bench$expression),
+          scalar_ms = scalar_medians * 1000,
+          simd_ms = simd_medians * 1000,
+          speedup = speedups
+        )
+        print(comparison_df)
+      }
+      
+      # Use all speedups for summary
+      speedups <- all_speedups
+      
+    } else {
+      # Direct bench_mark format
+      scalar_medians <- as.numeric(scalar$median)
+      simd_medians <- as.numeric(simd$median)
+      
+      speedups <- scalar_medians / simd_medians
+      
+      # Create comparison data frame
+      comparison_df <- data.frame(
+        expression = as.character(scalar$expression),
+        scalar_ms = scalar_medians * 1000,
+        simd_ms = simd_medians * 1000,
+        speedup = speedups
+      )
+      
+      print(comparison_df)
+    }
     
     cat("\nSummary Statistics:\n")
     cat("  Mean speedup:   ", sprintf("%.2fx\n", mean(speedups)))
@@ -148,14 +186,43 @@ if (!simd_comparisons_made) {
   cat("SIMD OPTIMIZATION RESULTS\n")
   cat(strrep("=", 80), "\n\n")
   cat("No SIMD optimization results found yet.\n")
-  cat("Baseline results available for:\n")
+  
+  # Check what modes are available
+  scalar_available <- c()
+  simd_available <- c()
+  baseline_available <- c()
+  
   for (benchmark_name in simd_benchmarks) {
+    scalar_file <- file.path(results_dir, paste0(benchmark_name, "_scalar.rds"))
+    simd_file <- file.path(results_dir, paste0(benchmark_name, "_simd.rds"))
     baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
-    if (file.exists(baseline_file)) {
-      cat("  ✅", benchmark_name, "\n")
+    
+    if (file.exists(scalar_file)) scalar_available <- c(scalar_available, benchmark_name)
+    if (file.exists(simd_file)) simd_available <- c(simd_available, benchmark_name)
+    if (file.exists(baseline_file)) baseline_available <- c(baseline_available, benchmark_name)
+  }
+  
+  if (length(scalar_available) > 0 || length(baseline_available) > 0) {
+    cat("Scalar/baseline results available for:\n")
+    for (bn in union(scalar_available, baseline_available)) {
+      cat("  ✅", bn, "\n")
     }
   }
-  cat("\nRun benchmarks again after SIMD implementation to generate comparisons.\n\n")
+  
+  if (length(simd_available) > 0) {
+    cat("\nSIMD results available for:\n")
+    for (bn in simd_available) {
+      cat("  ✅", bn, "\n")
+    }
+  }
+  
+  if (length(scalar_available) > 0 && length(simd_available) == 0) {
+    cat("\nRun benchmarks with RcppXsimd installed to generate SIMD comparisons.\n")
+  } else if (length(scalar_available) == 0 && length(simd_available) > 0) {
+    cat("\nRun benchmarks without RcppXsimd to generate scalar baseline.\n")
+  }
+  
+  cat("\n")
 }
 
 # ============================================================================

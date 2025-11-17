@@ -5,8 +5,9 @@
 library(speaker)
 library(bench)
 
-cat(strrep("=", 80), "\n")
-cat("Benchmark 3: Tone Generation (Baseline - Pre-SIMD)\n")
+cat(strrep("=", 80)", toupper(run_mode))\n")
+run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "baseline")
+cat(sprintf("Benchmark 3: Tone Generation [%s mode]\n")
 cat(strrep("=", 80), "\n\n")
 
 # Test different durations and frequencies
