@@ -5,11 +5,11 @@
 library(speaker)
 library(bench)
 
-# Detect run mode
-run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "baseline")
+# Detect run mode (default to scalar if not set)
+run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "scalar")
 
 cat(strrep("=", 80), "\n")
-cat(sprintf("Benchmark 1: Matrix Operations [%s mode]\n", toupper(run_mode)))
+cat(sprintf("Benchmark 1: Matrix Operations (%s mode)\n", toupper(run_mode)))
 cat(strrep("=", 80), "\n\n")
 
 # Test matrices of various sizes

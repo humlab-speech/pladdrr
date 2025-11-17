@@ -10,6 +10,7 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
+#include "simd_utils.h"
 
 // Praat headers
 #include "fon/Sound.h"
@@ -68,11 +69,11 @@ XPtr<structSound> sound_create_from_values(
         
         autoSound sound = Sound_createSimple(n_channels, duration, sampling_rate);
         
-        // Copy values
+        // Copy values with SIMD optimization
         for (int ch = 1; ch <= n_channels; ch++) {
-            for (int i = 1; i <= n_samples; i++) {
-                sound->z[ch][i] = values(ch - 1, i - 1);
-            }
+            const double* src = &values(ch - 1, 0);
+            double* dst = &sound->z[ch][1];
+            speaker::simd::copy_array(dst, src, n_samples);
         }
         
         return create_xptr_from_auto<structSound>(sound);
@@ -95,11 +96,15 @@ XPtr<structSound> sound_create_tone(
     try {
         autoSound sound = Sound_createSimple(1, duration, sampling_rate);
         
-        // Generate tone
-        for (int i = 1; i <= sound->nx; i++) {
-            double t = sound->x1 + (i - 1) * sound->dx;
-            sound->z[1][i] = amplitude * sin(2.0 * M_PI * frequency * t);
-        }
+        // Generate tone with SIMD optimization
+        speaker::simd::generate_sine_wave(
+            &sound->z[1][1],      // destination
+            sound->nx,            // number of samples
+            sound->x1,            // start time
+            sound->dx,            // time step
+            frequency,            // frequency
+            amplitude             // amplitude
+        );
         
         return create_xptr_from_auto<structSound>(sound);
         
@@ -511,10 +516,11 @@ NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
     
     NumericMatrix mat(sound->ny, sound->nx);
     
+    // Copy channels with SIMD optimization
     for (int ch = 1; ch <= sound->ny; ch++) {
-        for (int i = 1; i <= sound->nx; i++) {
-            mat(ch - 1, i - 1) = sound->z[ch][i];
-        }
+        const double* src = &sound->z[ch][1];
+        double* dst = &mat(ch - 1, 0);
+        speaker::simd::copy_array(dst, src, sound->nx);
     }
     
     return mat;

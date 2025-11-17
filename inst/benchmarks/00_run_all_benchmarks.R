@@ -66,14 +66,24 @@ forced_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "")
 if (forced_mode != "") {
   has_simd <- (forced_mode == "simd")
   run_mode <- forced_mode
-  cat("Mode forced to:", run_mode, "\n")
+  cat("⚠️  Mode forced to:", run_mode, "(via SPEAKER_BENCHMARK_MODE env var)\n")
 } else {
   has_simd <- requireNamespace("RcppXsimd", quietly = TRUE)
   run_mode <- if (has_simd) "simd" else "scalar"
 }
 
 cat("SIMD support:", ifelse(has_simd, "✓ Available (RcppXsimd loaded)", "✗ Not available"), "\n")
-cat("Run mode:", run_mode, "\n\n")
+cat("Run mode:", run_mode, "\n")
+
+if (run_mode == "simd") {
+  cat("\n💡 TIP: To generate scalar baseline for comparison:\n")
+  cat("   Sys.setenv(SPEAKER_BENCHMARK_MODE='scalar'); source('inst/benchmarks/00_run_all_benchmarks.R')\n")
+} else {
+  cat("\n💡 TIP: To generate SIMD comparison:\n")
+  cat("   install.packages('RcppXsimd') then re-run benchmarks\n")
+  cat("   OR: Sys.setenv(SPEAKER_BENCHMARK_MODE='simd'); source('inst/benchmarks/00_run_all_benchmarks.R')\n")
+}
+cat("\n")
 
 # Set environment variable for benchmarks to know the mode
 Sys.setenv(SPEAKER_BENCHMARK_MODE = run_mode)

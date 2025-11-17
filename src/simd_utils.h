@@ -259,6 +259,81 @@ inline void copy_array(double* dst, const double* src, size_t n) {
   }
 }
 
+// Generate sine wave: dst[i] = amplitude * sin(2*pi * frequency * (t_start + i * dt))
+// This is optimized for tone generation
+inline void generate_sine_wave(
+    double* dst, 
+    size_t n, 
+    double t_start, 
+    double dt, 
+    double frequency, 
+    double amplitude
+) {
+  const double two_pi_f = 2.0 * M_PI * frequency;
+  const double amp = amplitude;
+  
+  // For very short arrays or when SIMD isn't beneficial, use scalar
+  if (n < 8) {
+    for (size_t i = 0; i < n; i++) {
+      double t = t_start + i * dt;
+      dst[i] = amp * std::sin(two_pi_f * t);
+    }
+    return;
+  }
+  
+  // SIMD approach: compute times first, then sine
+  // This is faster than computing sine in SIMD directly
+  size_t i = 0;
+  
+#ifdef __ARM_NEON
+  float64x2_t t_vec = vdupq_n_f64(t_start);
+  float64x2_t dt_vec = {0.0, dt};
+  float64x2_t dt2_vec = vdupq_n_f64(2.0 * dt);
+  float64x2_t two_pi_f_vec = vdupq_n_f64(two_pi_f);
+  float64x2_t amp_vec = vdupq_n_f64(amp);
+  
+  t_vec = vaddq_f64(t_vec, dt_vec);  // [t_start, t_start + dt]
+  
+  for (; i + 2 <= n; i += 2) {
+    // Compute phase = 2*pi*f*t
+    float64x2_t phase = vmulq_f64(two_pi_f_vec, t_vec);
+    
+    // Use scalar sin for now (NEON doesn't have vectorized sin)
+    double phase_arr[2];
+    vst1q_f64(phase_arr, phase);
+    double result[2] = {amp * std::sin(phase_arr[0]), amp * std::sin(phase_arr[1])};
+    vst1q_f64(&dst[i], vld1q_f64(result));
+    
+    t_vec = vaddq_f64(t_vec, dt2_vec);
+  }
+  
+#elif defined(__SSE2__)
+  __m128d t_vec = _mm_set_pd(t_start + dt, t_start);
+  __m128d dt2_vec = _mm_set1_pd(2.0 * dt);
+  __m128d two_pi_f_vec = _mm_set1_pd(two_pi_f);
+  __m128d amp_vec = _mm_set1_pd(amp);
+  
+  for (; i + 2 <= n; i += 2) {
+    // Compute phase = 2*pi*f*t
+    __m128d phase = _mm_mul_pd(two_pi_f_vec, t_vec);
+    
+    // Use scalar sin (SSE2 doesn't have vectorized sin)
+    double phase_arr[2];
+    _mm_storeu_pd(phase_arr, phase);
+    double result[2] = {amp * std::sin(phase_arr[0]), amp * std::sin(phase_arr[1])};
+    _mm_storeu_pd(&dst[i], _mm_loadu_pd(result));
+    
+    t_vec = _mm_add_pd(t_vec, dt2_vec);
+  }
+#endif
+  
+  // Scalar remainder
+  for (; i < n; i++) {
+    double t = t_start + i * dt;
+    dst[i] = amp * std::sin(two_pi_f * t);
+  }
+}
+
 } // namespace simd
 } // namespace speaker
 
