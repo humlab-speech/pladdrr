@@ -43,7 +43,7 @@ void sound_scale_peak_simd(
         
         double scale_factor = new_peak / current_max;
         
-        using batch = xsimd::batch<double>;
+        using batch = xsimd::batch<double, 2>;
         constexpr size_t simd_size = batch::size;
         batch scale_vec(scale_factor);
         
@@ -96,7 +96,7 @@ XPtr<structSound> sound_mix_simd(
         
         autoSound mixed = Sound_create(ny, xmin, xmax, nx, sound1->dx, sound1->x1);
         
-        using batch = xsimd::batch<double>;
+        using batch = xsimd::batch<double, 2>;
         constexpr size_t simd_size = batch::size;
         
         batch balance_vec(balance);

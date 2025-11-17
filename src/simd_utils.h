@@ -16,6 +16,20 @@
 // SIMD support enabled
 #define SPEAKER_USE_SIMD 1
 
+// Function to check if SIMD should be used
+// Can be controlled via R options: getOption("speaker.use_simd", default = TRUE)
+inline bool use_simd() {
+#ifdef HAVE_XSIMD
+    // Check if user has disabled SIMD via R options
+    Rcpp::Environment base("package:base");
+    Rcpp::Function getOption = base["getOption"];
+    Rcpp::RObject opt = getOption("speaker.use_simd", Rcpp::Named("default") = true);
+    return Rcpp::as<bool>(opt);
+#else
+    return false;
+#endif
+}
+
 namespace speaker {
 namespace simd {
 

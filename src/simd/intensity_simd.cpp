@@ -36,7 +36,7 @@ double sound_get_rms_simd(
     if (i_start < 1) i_start = 1;
     if (i_end > sound->nx) i_end = sound->nx;
     
-    using batch = xsimd::batch<double>;
+    using batch = xsimd::batch<double, 2>;
     constexpr size_t simd_size = batch::size;
     
     double sum_squares = 0.0;
@@ -56,7 +56,10 @@ double sound_get_rms_simd(
             batch x = xsimd::load_unaligned(&data[i]);
             acc = xsimd::fma(x, x, acc);  // acc += x * x
         }
-        sum_squares += xsimd::reduce_add(acc);
+        // Manual reduction (sum elements in acc)
+        for (size_t j = 0; j < simd_size; ++j) {
+            sum_squares += acc[j];
+        }
         
         // Scalar remainder
         for (; i < n_samples; ++i) {
@@ -90,7 +93,7 @@ double sound_get_energy_simd(
     if (i_start < 1) i_start = 1;
     if (i_end > sound->nx) i_end = sound->nx;
     
-    using batch = xsimd::batch<double>;
+    using batch = xsimd::batch<double, 2>;
     constexpr size_t simd_size = batch::size;
     
     double sum_squares = 0.0;
@@ -108,7 +111,10 @@ double sound_get_energy_simd(
             batch x = xsimd::load_unaligned(&data[i]);
             acc = xsimd::fma(x, x, acc);
         }
-        sum_squares += xsimd::reduce_add(acc);
+        // Manual reduction
+        for (size_t j = 0; j < simd_size; ++j) {
+            sum_squares += acc[j];
+        }
         
         // Remainder
         for (; i < n_samples; ++i) {
