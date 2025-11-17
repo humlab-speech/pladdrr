@@ -27,8 +27,8 @@ for (config_name in names(configs)) {
   
   # Create test sound (noise signal for realistic computation)
   n_samples <- cfg$duration * cfg$sample_rate
-  values <- matrix(rnorm(n_samples), nrow = 1)
-  sound <- Sound$new_from_values(
+  values <- rnorm(n_samples)
+  sound <- Sound$from_values(
     values = values,
     sampling_rate = cfg$sample_rate
   )
@@ -51,13 +51,12 @@ for (config_name in names(configs)) {
     check = FALSE
   )
   
-  # Benchmark: Intensity object creation (windowed analysis)
+  # Benchmark: Intensity extraction (windowed analysis)
   bm_intensity <- bench::mark(
     to_intensity = {
       intensity <- sound$to_intensity(
         minimum_pitch = 75,
-        time_step = 0.01,
-        subtract_mean = TRUE
+        time_step = 0.01
       )
       # Clean up
       rm(intensity)
@@ -67,10 +66,10 @@ for (config_name in names(configs)) {
     check = FALSE
   )
   
-  # Benchmark: Standard deviation (involves multiple passes)
-  bm_std <- bench::mark(
-    std_dev = {
-      sound$get_standard_deviation(from_time = 0, to_time = cfg$duration)
+  # Benchmark: Power calculation
+  bm_power <- bench::mark(
+    power = {
+      sound$get_power(from_time = 0, to_time = cfg$duration)
     },
     iterations = 100,
     check = FALSE
@@ -81,13 +80,13 @@ for (config_name in names(configs)) {
     rms = bm_rms,
     energy = bm_energy,
     to_intensity = bm_intensity,
-    std_dev = bm_std
+    power = bm_power
   )
   
   cat(sprintf("  RMS: median = %s\n", format(bm_rms$median)))
   cat(sprintf("  Energy: median = %s\n", format(bm_energy$median)))
   cat(sprintf("  to_intensity: median = %s\n", format(bm_intensity$median)))
-  cat(sprintf("  Std dev: median = %s\n", format(bm_std$median)))
+  cat(sprintf("  Power: median = %s\n", format(bm_power$median)))
 }
 
 # Summary
@@ -125,9 +124,9 @@ for (config_name in names(results)) {
   ))
   summary_df <- rbind(summary_df, data.frame(
     size = config_name,
-    operation = "Std Dev",
-    median_time = as.numeric(r$std_dev$median),
-    mem_alloc = as.numeric(r$std_dev$mem_alloc),
+    operation = "Power",
+    median_time = as.numeric(r$power$median),
+    mem_alloc = as.numeric(r$power$mem_alloc),
     stringsAsFactors = FALSE
   ))
 }

@@ -13,42 +13,122 @@
   #include <emmintrin.h>  // SSE2
 #endif
 
-// SIMD support temporarily disabled - using scalar fallback
-// TODO: Fix xsimd v7.1.3 API usage for batch<T, N> template
-#define SPEAKER_USE_SIMD 0
+// SIMD support enabled
+#define SPEAKER_USE_SIMD 1
 
 namespace speaker {
 namespace simd {
 
-// Scalar sum implementation (SIMD TODO)
-inline double sum_array(const double* data, size_t size) {
-  double result = 0.0;
-  for (size_t i = 0; i < size; i++) {
-    result += data[i];
+// SIMD-optimized sum implementation
+inline double sum_array(const double* data, size_t n) {
+  double sum = 0.0;
+  size_t i = 0;
+  
+#ifdef __ARM_NEON
+  float64x2_t sum_vec = vdupq_n_f64(0.0);
+  
+  for (; i + 2 <= n; i += 2) {
+    float64x2_t v = vld1q_f64(&data[i]);
+    sum_vec = vaddq_f64(sum_vec, v);
   }
-  return result;
+  
+  sum = vgetq_lane_f64(sum_vec, 0) + vgetq_lane_f64(sum_vec, 1);
+  
+#elif defined(__SSE2__)
+  __m128d sum_vec = _mm_setzero_pd();
+  
+  for (; i + 2 <= n; i += 2) {
+    __m128d v = _mm_loadu_pd(&data[i]);
+    sum_vec = _mm_add_pd(sum_vec, v);
+  }
+  
+  double sum_arr[2];
+  _mm_storeu_pd(sum_arr, sum_vec);
+  sum = sum_arr[0] + sum_arr[1];
+#endif
+  
+  // Scalar remainder
+  for (; i < n; i++) {
+    sum += data[i];
+  }
+  
+  return sum;
 }
 
-// Scalar minimum implementation (SIMD TODO)
-inline double min_array(const double* data, size_t size) {
-  if (size == 0) return NAN;
+// SIMD-optimized minimum implementation
+inline double min_array(const double* data, size_t n) {
+  if (n == 0) return NAN;
   
-  double result = INFINITY;
-  for (size_t i = 0; i < size; i++) {
-    if (data[i] < result) result = data[i];
+  double min_val = INFINITY;
+  size_t i = 0;
+  
+#ifdef __ARM_NEON
+  float64x2_t min_vec = vdupq_n_f64(INFINITY);
+  
+  for (; i + 2 <= n; i += 2) {
+    float64x2_t v = vld1q_f64(&data[i]);
+    min_vec = vminq_f64(min_vec, v);
   }
-  return result;
+  
+  min_val = std::min(vgetq_lane_f64(min_vec, 0), vgetq_lane_f64(min_vec, 1));
+  
+#elif defined(__SSE2__)
+  __m128d min_vec = _mm_set1_pd(INFINITY);
+  
+  for (; i + 2 <= n; i += 2) {
+    __m128d v = _mm_loadu_pd(&data[i]);
+    min_vec = _mm_min_pd(min_vec, v);
+  }
+  
+  double min_arr[2];
+  _mm_storeu_pd(min_arr, min_vec);
+  min_val = std::min(min_arr[0], min_arr[1]);
+#endif
+  
+  // Scalar remainder
+  for (; i < n; i++) {
+    if (data[i] < min_val) min_val = data[i];
+  }
+  
+  return min_val;
 }
 
-// Scalar maximum implementation (SIMD TODO)
-inline double max_array(const double* data, size_t size) {
-  if (size == 0) return NAN;
+// SIMD-optimized maximum implementation
+inline double max_array(const double* data, size_t n) {
+  if (n == 0) return NAN;
   
-  double result = -INFINITY;
-  for (size_t i = 0; i < size; i++) {
-    if (data[i] > result) result = data[i];
+  double max_val = -INFINITY;
+  size_t i = 0;
+  
+#ifdef __ARM_NEON
+  float64x2_t max_vec = vdupq_n_f64(-INFINITY);
+  
+  for (; i + 2 <= n; i += 2) {
+    float64x2_t v = vld1q_f64(&data[i]);
+    max_vec = vmaxq_f64(max_vec, v);
   }
-  return result;
+  
+  max_val = std::max(vgetq_lane_f64(max_vec, 0), vgetq_lane_f64(max_vec, 1));
+  
+#elif defined(__SSE2__)
+  __m128d max_vec = _mm_set1_pd(-INFINITY);
+  
+  for (; i + 2 <= n; i += 2) {
+    __m128d v = _mm_loadu_pd(&data[i]);
+    max_vec = _mm_max_pd(max_vec, v);
+  }
+  
+  double max_arr[2];
+  _mm_storeu_pd(max_arr, max_vec);
+  max_val = std::max(max_arr[0], max_arr[1]);
+#endif
+  
+  // Scalar remainder
+  for (; i < n; i++) {
+    if (data[i] > max_val) max_val = data[i];
+  }
+  
+  return max_val;
 }
 
 // Sum of squares for RMS/energy calculations

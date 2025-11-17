@@ -1,0 +1,3 @@
+* installing to library ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’
+ERROR: failed to lock directory ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’ for modifying
+Try removing ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/00LOCK-speaker’

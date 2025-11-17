@@ -248,8 +248,7 @@ Formant <- R6::R6Class("Formant",
       intensity_decimals = 3,
       include_number_of_formants = TRUE,
       frequency_decimals = 3,
-      include_bandwidths = TRUE,
-      bandwidth_decimals = 3
+      include_bandwidths = TRUE
     ) {
       table_ptr <- .formant_down_to_table(
         private$ptr,
@@ -257,7 +256,7 @@ Formant <- R6::R6Class("Formant",
         include_time, as.integer(time_decimals),
         include_intensity, as.integer(intensity_decimals),
         include_number_of_formants, as.integer(frequency_decimals),
-        include_bandwidths, as.integer(bandwidth_decimals)
+        include_bandwidths
       )
       # TODO: Return Table$new(.xptr = table_ptr) when Table class is implemented
       table_ptr
