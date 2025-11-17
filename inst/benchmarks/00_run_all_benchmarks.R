@@ -48,7 +48,9 @@ benchmarks <- c(
   "06_phase2_intensity.R",            # RMS/energy calculations
   "07_phase2_sound_mixing.R",         # Sound mixing/scaling
   
-  # Phase 3: Complex Algorithms (Week 3) - Target: 2-4x speedup
+  # Phase 3: DSP Operations (Week 3) - Target: 2.5-6x speedup  ⭐ NEW!
+  "12_phase3_window_functions.R",     # Hamming, Hanning, Gaussian windows
+  "13_phase3_autocorrelation.R",      # Autocorrelation (HIGHEST IMPACT!)
   "08_phase3_fft_operations.R",       # Spectrogram, FFT
   "09_phase3_formant_lpc.R",          # LPC autocorrelation
   "10_phase3_pitch_detection.R",      # Pitch autocorrelation
