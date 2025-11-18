@@ -31,27 +31,43 @@ if (!file.exists(test_file) || test_file == "") {
   cat("✗ Test audio file not found at inst/extdata/test.wav\n")
   cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
   
-  cat("Running speaker benchmarks (synthetic audio):\n")
+  cat("Running speaker benchmarks (synthetic audio):\n\n")
   
-  # Create fresh sound for each benchmark iteration
-  result <- bench::mark(
-    pitch = {
-      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_pitch()
-    },
-    formants = {
-      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_formant_burg()
-    },
-    intensity = {
-      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_intensity()
-    },
-    iterations = 10,
-    check = FALSE
-  )
+  # Note: bench::mark() with R6 objects requires separate calls
+  # due to environment/serialization issues
   
-  print(result[, c("expression", "min", "median", "itr/sec")])
+  cat("  Benchmarking pitch extraction...\n")
+  system.time({
+    for (i in 1:10) {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      pitch <- sound$to_pitch()
+    }
+  }) -> time_pitch
+  
+  cat("  Benchmarking formant extraction...\n")
+  system.time({
+    for (i in 1:10) {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      formants <- sound$to_formant_burg()
+    }
+  }) -> time_formants
+  
+  cat("  Benchmarking intensity...\n")
+  system.time({
+    for (i in 1:10) {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      intensity <- sound$to_intensity()
+    }
+  }) -> time_intensity
+  
+  cat("\nResults (10 iterations each):\n")
+  cat(sprintf("  Pitch:     %.3f seconds (%.1f ms/iter)\n", 
+              time_pitch["elapsed"], time_pitch["elapsed"]*100))
+  cat(sprintf("  Formants:  %.3f seconds (%.1f ms/iter)\n", 
+              time_formants["elapsed"], time_formants["elapsed"]*100))
+  cat(sprintf("  Intensity: %.3f seconds (%.1f ms/iter)\n", 
+              time_intensity["elapsed"], time_intensity["elapsed"]*100))
+  
   cat("\nNote: Parselmouth comparison requires test.wav file\n")
   cat("      Showing speaker-only results instead.\n\n")
   

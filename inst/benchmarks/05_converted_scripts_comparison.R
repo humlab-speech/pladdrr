@@ -82,25 +82,39 @@ if (!file.exists(test_file) || test_file == "") {
   cat("Speaker Performance (synthetic 440Hz tone):\n")
   cat("────────────────────────────────────────\n")
   
-  # Create fresh sound for each benchmark iteration
-  result <- bench::mark(
-    pitch = {
+  # Use system.time() instead of bench::mark() for R6 objects
+  cat("  Benchmarking pitch extraction...\n")
+  system.time({
+    for (i in 1:10) {
       sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_pitch()
-    },
-    formants = {
-      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_formant_burg()
-    },
-    intensity = {
-      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-      sound$to_intensity()
-    },
-    iterations = 10,
-    check = FALSE
-  )
+      pitch <- sound$to_pitch()
+    }
+  }) -> time_pitch
   
-  print(result[, c("expression", "min", "median", "itr/sec")])
+  cat("  Benchmarking formants...\n")
+  system.time({
+    for (i in 1:10) {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      formants <- sound$to_formant_burg()
+    }
+  }) -> time_formants
+  
+  cat("  Benchmarking intensity...\n")
+  system.time({
+    for (i in 1:10) {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      intensity <- sound$to_intensity()
+    }
+  }) -> time_intensity
+  
+  cat("\nResults (10 iterations each):\n")
+  cat(sprintf("  Pitch:     %.3f seconds (%.1f ms/iter)\n", 
+              time_pitch["elapsed"], time_pitch["elapsed"]*100))
+  cat(sprintf("  Formants:  %.3f seconds (%.1f ms/iter)\n", 
+              time_formants["elapsed"], time_formants["elapsed"]*100))
+  cat(sprintf("  Intensity: %.3f seconds (%.1f ms/iter)\n", 
+              time_intensity["elapsed"], time_intensity["elapsed"]*100))
+  
   cat("\nNote: Parselmouth comparison requires test.wav file\n")
   cat("      Install real audio file to enable full comparisons.\n\n")
   
