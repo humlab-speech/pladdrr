@@ -6,6 +6,23 @@ Direct Access to Praat C Functionality from R
 
 The `speaker` package provides direct, efficient access to Praat C implemented functionality from R using Rcpp. Similar to the [parselmouth](https://github.com/YannickJadoul/Parselmouth) package for Python, this package enables R users to leverage Praat's powerful phonetic analysis capabilities directly from R.
 
+## Performance 🚀
+
+Version 0.5.0 introduces **SIMD (Single Instruction Multiple Data) optimizations** for significant performance improvements:
+
+- **Matrix operations**: 2-3x faster (sum, mean, min, max)
+- **Audio processing**: 2-3x faster (RMS, energy, power)
+- **DSP operations**: 3-6x faster (autocorrelation, windowing)
+
+SIMD automatically adapts to your CPU:
+- ✅ **Apple Silicon** (M1/M2/M3): ARM NEON 128-bit
+- ✅ **AMD EPYC**: AVX2 256-bit  
+- ✅ **Intel x86_64**: SSE2/AVX2 fallback
+
+No configuration needed—SIMD is automatically detected and enabled!
+
+See [SIMD_BENCHMARKS.md](SIMD_BENCHMARKS.md) for detailed performance analysis.
+
 ## Installation
 
 You can install the development version of speaker from GitHub:
