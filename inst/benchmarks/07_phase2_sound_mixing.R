@@ -12,7 +12,7 @@ cat("Required functions: sound_add(), sound_multiply(), sound_scale_peak()\n\n")
 
 # Create placeholder results file
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("results/baseline/07_phase2_sound_mixing_%s.rds", timestamp)
+output_file <- sprintf("inst/benchmarks/results/baseline/07_phase2_sound_mixing_%s.rds", timestamp)
 
 results_package <- list(
   metadata = list(
@@ -22,7 +22,7 @@ results_package <- list(
   )
 )
 
-dir.create("results/baseline", showWarnings = FALSE, recursive = TRUE)
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
 saveRDS(results_package, output_file)
 
 cat(sprintf("\nPlaceholder saved to: %s\n", output_file))

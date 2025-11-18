@@ -58,5 +58,6 @@ for (size_name in names(test_sizes)) {
 }
 
 # Save results
+dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 saveRDS(results, "inst/benchmarks/results/12_phase3_window_functions_baseline.rds")
 cat("\n✓ Window functions benchmark complete\n")

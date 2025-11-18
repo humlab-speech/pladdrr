@@ -11,7 +11,7 @@ cat("Target pipelines: Vowel analysis, prosody extraction, complete workflows\n\
 
 # Create placeholder results file
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("results/baseline/11_end_to_end_pipelines_%s.rds", timestamp)
+output_file <- sprintf("inst/benchmarks/results/baseline/11_end_to_end_pipelines_%s.rds", timestamp)
 
 results_package <- list(
   metadata = list(
@@ -21,7 +21,7 @@ results_package <- list(
   )
 )
 
-dir.create("results/baseline", showWarnings = FALSE, recursive = TRUE)
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
 saveRDS(results_package, output_file)
 
 cat(sprintf("\nPlaceholder saved to: %s\n", output_file))

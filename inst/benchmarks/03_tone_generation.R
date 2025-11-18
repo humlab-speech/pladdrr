@@ -46,6 +46,7 @@ for (config_name in names(configs)) {
 }
 
 # Save results
+dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 saveRDS(results, "inst/benchmarks/results/03_tone_generation_baseline.rds")
 
 cat("\nBaseline results saved to: inst/benchmarks/results/03_tone_generation_baseline.rds\n")

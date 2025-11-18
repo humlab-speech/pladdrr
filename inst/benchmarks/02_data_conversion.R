@@ -67,6 +67,7 @@ for (config_name in names(configs)) {
 }
 
 # Save results
+dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 output_file <- sprintf("inst/benchmarks/results/02_data_conversion_%s.rds", run_mode)
 saveRDS(results, output_file)
 

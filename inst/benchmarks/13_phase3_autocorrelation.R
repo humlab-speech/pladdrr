@@ -92,6 +92,7 @@ cat(sprintf("  LPC autocorrelation speedup: %.2fx\n", lpc_speedup))
 results$lpc <- lpc_result
 
 # Save results
+dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 saveRDS(results, "inst/benchmarks/results/13_phase3_autocorrelation_baseline.rds")
 cat("\n✓ Autocorrelation benchmark complete\n")
 cat("  This is the HIGHEST IMPACT optimization for pitch and formant analysis!\n")

@@ -50,6 +50,7 @@ for (size_name in names(sizes)) {
 }
 
 # Save results
+dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 output_file <- sprintf("inst/benchmarks/results/01_matrix_operations_%s.rds", run_mode)
 saveRDS(results, output_file)
 
