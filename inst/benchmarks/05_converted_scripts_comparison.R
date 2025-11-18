@@ -62,10 +62,31 @@ if (!parselmouth_available) {
 
 cat("Running parselmouth comparison benchmarks...\n\n")
 
-# Load test audio
+# Load test audio - handle missing gracefully
 test_file <- system.file("extdata", "test.wav", package = "speaker")
-if (!file.exists(test_file)) {
-  stop("Test audio file not found.")
+if (!file.exists(test_file) || test_file == "") {
+  cat("✗ Test audio file not found\n")
+  cat("  Expected location: inst/extdata/test.wav\n")
+  cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
+  
+  # Use synthetic audio
+  sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+  
+  cat("Speaker Performance (synthetic 440Hz tone):\n")
+  cat("────────────────────────────────────────\n")
+  result <- bench::mark(
+    pitch = sound$to_pitch(),
+    formants = sound$to_formant_burg(),
+    intensity = sound$to_intensity(),
+    iterations = 10,
+    check = FALSE
+  )
+  
+  print(result[, c("expression", "min", "median", "itr/sec")])
+  cat("\nNote: Parselmouth comparison requires test.wav file\n")
+  cat("      Install real audio file to enable full comparisons.\n\n")
+  
+  quit(save = "no", status = 0)
 }
 
 cat("Running benchmarks (this may take several minutes)...\n\n")

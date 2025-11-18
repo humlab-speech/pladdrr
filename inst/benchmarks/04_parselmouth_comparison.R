@@ -2,23 +2,52 @@
 # Tests: Direct comparison of speaker vs parselmouth for common operations
 # Expected speedup: 1.5-3x (direct C++ binding vs Python overhead)
 
+
 library(speaker)
 library(bench)
 library(reticulate)
 
-cat("========================================\n")
+cat("================================================================================\n")
 cat("Benchmark 4: Parselmouth Comparison\n")
-cat("========================================\n\n")
+cat("================================================================================\n\n")
 
-# Initialize Python and import parselmouth
-cat("Initializing Python environment...\n")
-pm <- import("parselmouth")
-cat("Parselmouth version:", pm$`__version__`, "\n\n")
+# Check parselmouth availability
+cat("Checking parselmouth...\n")
+parselmouth_available <- FALSE
 
-# Load test audio file
+tryCatch({
+  pm <- import("parselmouth")
+  parselmouth_available <- TRUE
+  cat("✓ Parselmouth version:", pm$`__version__`, "\n\n")
+}, error = function(e) {
+  cat("✗ Parselmouth not installed - skipping comparison\n")
+  cat("  Install: pip install praat-parselmouth\n\n")
+  quit(save = "no", status = 0)
+})
+
+# Load test audio file - handle missing gracefully
 test_file <- system.file("extdata", "test.wav", package = "speaker")
-if (!file.exists(test_file)) {
-  stop("Test audio file not found. Please ensure inst/extdata/test.wav exists.")
+if (!file.exists(test_file) || test_file == "") {
+  cat("✗ Test audio file not found at inst/extdata/test.wav\n")
+  cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
+  
+  # Create synthetic test sound
+  sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+  
+  cat("Running speaker benchmarks (synthetic audio):\n")
+  result <- bench::mark(
+    pitch = sound$to_pitch(),
+    formants = sound$to_formant_burg(),
+    intensity = sound$to_intensity(),
+    iterations = 10,
+    check = FALSE
+  )
+  
+  print(result[, c("expression", "min", "median", "itr/sec")])
+  cat("\nNote: Parselmouth comparison requires test.wav file\n")
+  cat("      Showing speaker-only results instead.\n\n")
+  
+  quit(save = "no", status = 0)
 }
 
 # Helper function to run parselmouth operation
