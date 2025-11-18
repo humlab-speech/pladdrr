@@ -69,11 +69,11 @@ XPtr<structSound> sound_create_from_values(
         
         autoSound sound = Sound_createSimple(n_channels, duration, sampling_rate);
         
-        // Copy values with SIMD optimization
+        // Copy values
         for (int ch = 1; ch <= n_channels; ch++) {
             const double* src = &values(ch - 1, 0);
             double* dst = &sound->z[ch][1];
-            speaker::simd::copy_array(dst, src, n_samples);
+            std::memcpy(dst, src, n_samples * sizeof(double));
         }
         
         return create_xptr_from_auto<structSound>(sound);
@@ -96,15 +96,13 @@ XPtr<structSound> sound_create_tone(
     try {
         autoSound sound = Sound_createSimple(1, duration, sampling_rate);
         
-        // Generate tone with SIMD optimization
-        speaker::simd::generate_sine_wave(
-            &sound->z[1][1],      // destination
-            sound->nx,            // number of samples
-            sound->x1,            // start time
-            sound->dx,            // time step
-            frequency,            // frequency
-            amplitude             // amplitude
-        );
+        // Generate tone
+        double* dst = &sound->z[1][1];
+        double t = sound->x1;
+        for (int i = 0; i < sound->nx; i++) {
+            dst[i] = amplitude * sin(2.0 * M_PI * frequency * t);
+            t += sound->dx;
+        }
         
         return create_xptr_from_auto<structSound>(sound);
         
@@ -544,7 +542,7 @@ NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
     for (int ch = 1; ch <= sound->ny; ch++) {
         const double* src = &sound->z[ch][1];
         double* dst = &mat(ch - 1, 0);
-        speaker::simd::copy_array(dst, src, sound->nx);
+        std::memcpy(dst, src, sound->nx * sizeof(double));
     }
     
     return mat;

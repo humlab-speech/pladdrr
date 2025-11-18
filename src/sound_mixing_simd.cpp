@@ -1,6 +1,6 @@
 // [[Rcpp::plugins(cpp17)]]
 
-#ifdef HAVE_XSIMD
+#ifdef RCPPXSIMD_XSIMD_HPP
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -15,8 +15,6 @@
 #include "praat.github.io/melder/melder.h"
 
 using namespace Rcpp;
-
-#ifdef HAVE_XSIMD
 
 //' SIMD-optimized sound scaling (peak amplitude)
 //' @keywords internal
@@ -43,6 +41,7 @@ void sound_scale_peak_simd(
         
         double scale_factor = new_peak / current_max;
         
+#ifdef RCPPXSIMD_XSIMD_HPP
         using batch = xsimd::batch<double, 2>;
         constexpr size_t simd_size = batch::size;
         batch scale_vec(scale_factor);
@@ -64,6 +63,14 @@ void sound_scale_peak_simd(
                 data[i] *= scale_factor;
             }
         }
+#else
+        // Scalar fallback
+        for (integer ch = 1; ch <= sound->ny; ch++) {
+            for (integer i = 1; i <= sound->nx; i++) {
+                sound->z[ch][i] *= scale_factor;
+            }
+        }
+#endif
         
     } catch (MelderError) {
         Melder_clearError();
@@ -96,11 +103,13 @@ XPtr<structSound> sound_mix_simd(
         
         autoSound mixed = Sound_create(ny, xmin, xmax, nx, sound1->dx, sound1->x1);
         
+#ifdef RCPPXSIMD_XSIMD_HPP
         using batch = xsimd::batch<double, 2>;
         constexpr size_t simd_size = batch::size;
         
         batch balance_vec(balance);
         batch norm_factor(1.0 / (1.0 + balance));
+#endif
         
         // Mix channels with balance
         for (integer ich = 1; ich <= ny; ich++) {
@@ -111,11 +120,12 @@ XPtr<structSound> sound_mix_simd(
                            ich <= sound1->ny && ich <= sound2->ny);
             
             if (aligned) {
-                // Fast SIMD path
+                // Fast path (SIMD if available)
                 const double* data1 = &sound1->z[ich][1];
                 const double* data2 = &sound2->z[ich][1];
                 double* result = &mixed->z[ich][1];
                 
+#ifdef RCPPXSIMD_XSIMD_HPP
                 integer i = 0;
                 // SIMD mixing: (s1 + balance * s2) / (1 + balance)
                 for (; i + simd_size <= sound1->nx; i += simd_size) {
@@ -129,6 +139,12 @@ XPtr<structSound> sound_mix_simd(
                 for (; i < sound1->nx; ++i) {
                     result[i] = (data1[i] + balance * data2[i]) * (1.0 / (1.0 + balance));
                 }
+#else
+                // Scalar fallback
+                for (integer i = 0; i < sound1->nx; ++i) {
+                    result[i] = (data1[i] + balance * data2[i]) / (1.0 + balance);
+                }
+#endif
                 
             } else {
                 // Slow path for misaligned sounds
@@ -165,4 +181,3 @@ XPtr<structSound> sound_mix_simd(
     }
 }
 
-#endif // HAVE_XSIMD

@@ -49,12 +49,10 @@ for (config_name in names(test_configs)) {
   
   # Benchmark autocorrelation
   result <- bench::mark(
-    autocorr_scalar = .autocorrelation_scalar(data, config$max_lag),
-    autocorr_simd = if (exists(".autocorrelation_simd")) 
-      .autocorrelation_simd(data, config$max_lag) else NA,
-    autocorr_norm_scalar = .autocorrelation_normalized_scalar(data, config$max_lag),
-    autocorr_norm_simd = if (exists(".autocorrelation_normalized_simd")) 
-      .autocorrelation_normalized_simd(data, config$max_lag) else NA,
+    autocorr_scalar = speaker:::.autocorrelation_scalar(data, config$max_lag),
+    autocorr_simd = speaker:::.autocorrelation_simd(data, config$max_lag),
+    autocorr_norm_scalar = speaker:::.autocorrelation_normalized_scalar(data, config$max_lag),
+    autocorr_norm_simd = speaker:::.autocorrelation_normalized_simd(data, config$max_lag),
     iterations = if (config$n < 1000) 100 else 50,
     check = FALSE
   )
@@ -62,15 +60,13 @@ for (config_name in names(test_configs)) {
   print(result[, c("expression", "median", "mem_alloc")])
   
   # Calculate speedups
-  if (exists(".autocorrelation_simd")) {
-    speedup <- median(result$time[result$expression == "autocorr_scalar"]) /
-              median(result$time[result$expression == "autocorr_simd"])
-    cat(sprintf("  Autocorrelation speedup: %.2fx\n", speedup))
-    
-    norm_speedup <- median(result$time[result$expression == "autocorr_norm_scalar"]) /
-                   median(result$time[result$expression == "autocorr_norm_simd"])
-    cat(sprintf("  Normalized autocorr speedup: %.2fx\n", norm_speedup))
-  }
+  speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_scalar"]) /
+            as.numeric(result$median[as.character(result$expression) == "autocorr_simd"])
+  cat(sprintf("  Autocorrelation speedup: %.2fx\n", speedup))
+  
+  norm_speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_norm_scalar"]) /
+                 as.numeric(result$median[as.character(result$expression) == "autocorr_norm_simd"])
+  cat(sprintf("  Normalized autocorr speedup: %.2fx\n", norm_speedup))
   
   results[[config_name]] <- result
 }
@@ -81,20 +77,17 @@ lpc_data <- sin(2 * pi * seq(0, 1, length.out = 8000) * 120) + rnorm(8000, sd = 
 num_coeffs <- 12  # Typical for formant extraction
 
 lpc_result <- bench::mark(
-  lpc_scalar = .lpc_autocorrelation_scalar(lpc_data, num_coeffs),
-  lpc_simd = if (exists(".lpc_autocorrelation_simd")) 
-    .lpc_autocorrelation_simd(lpc_data, num_coeffs) else NA,
+  lpc_scalar = speaker:::.lpc_autocorrelation_scalar(lpc_data, num_coeffs),
+  lpc_simd = speaker:::.lpc_autocorrelation_simd(lpc_data, num_coeffs),
   iterations = 100,
   check = FALSE
 )
 
 print(lpc_result[, c("expression", "median", "mem_alloc")])
 
-if (exists(".lpc_autocorrelation_simd")) {
-  lpc_speedup <- median(lpc_result$time[lpc_result$expression == "lpc_scalar"]) /
-                median(lpc_result$time[lpc_result$expression == "lpc_simd"])
-  cat(sprintf("  LPC autocorrelation speedup: %.2fx\n", lpc_speedup))
-}
+lpc_speedup <- as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_scalar"]) /
+              as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_simd"])
+cat(sprintf("  LPC autocorrelation speedup: %.2fx\n", lpc_speedup))
 
 results$lpc <- lpc_result
 

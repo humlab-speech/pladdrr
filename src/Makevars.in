@@ -156,8 +156,9 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               utils.cpp RcppExports.cpp
 
 # SIMD sources (Phase 3: Window functions and autocorrelation)
-SIMD_SRC = simd/sound_mixing_simd.cpp simd/intensity_simd.cpp \
-           simd/window_functions_simd.cpp simd/autocorrelation_simd.cpp
+# SIMD sources (Phase 3: Window functions and autocorrelation)
+SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
+           window_functions_simd.cpp autocorrelation_simd.cpp
 
 # All sources combined
 SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC)

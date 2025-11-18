@@ -14,10 +14,8 @@
 using namespace Rcpp;
 
 // ============================================================================
-// SIMD Window Functions
+// SIMD Window Functions (always defined, conditionally implemented)
 // ============================================================================
-
-#ifdef RCPPXSIMD_XSIMD_HPP
 
 // Hamming window: w(n) = 0.54 - 0.46 * cos(2π * n / (N-1))
 // [[Rcpp::export(.apply_hamming_window_simd)]]
@@ -25,15 +23,15 @@ NumericVector apply_hamming_window_simd(NumericVector data) {
     const int n = data.size();
     NumericVector result(n);
     
+    const double* src = REAL(data);
+    double* dst = REAL(result);
+    const double two_pi = 2.0 * M_PI;
+    const double n_minus_1 = static_cast<double>(n - 1);
+    
+#ifdef RCPPXSIMD_XSIMD_HPP
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
-    const double* src = REAL(data);
-    double* dst = REAL(result);
-    
-    // Constants
-    const double two_pi = 2.0 * M_PI;
-    const double n_minus_1 = static_cast<double>(n - 1);
     const batch alpha(0.54);
     const batch beta(0.46);
     const batch two_pi_batch(two_pi);
@@ -64,6 +62,13 @@ NumericVector apply_hamming_window_simd(NumericVector data) {
         double window = 0.54 - 0.46 * std::cos(two_pi * i / n_minus_1);
         dst[i] = src[i] * window;
     }
+#else
+    // Scalar fallback
+    for (int i = 0; i < n; ++i) {
+        double window = 0.54 - 0.46 * std::cos(two_pi * i / n_minus_1);
+        dst[i] = src[i] * window;
+    }
+#endif
     
     return result;
 }
@@ -74,15 +79,15 @@ NumericVector apply_hanning_window_simd(NumericVector data) {
     const int n = data.size();
     NumericVector result(n);
     
+    const double* src = REAL(data);
+    double* dst = REAL(result);
+    const double two_pi = 2.0 * M_PI;
+    const double n_minus_1 = static_cast<double>(n - 1);
+    
+#ifdef RCPPXSIMD_XSIMD_HPP
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
-    const double* src = REAL(data);
-    double* dst = REAL(result);
-    
-    // Constants
-    const double two_pi = 2.0 * M_PI;
-    const double n_minus_1 = static_cast<double>(n - 1);
     const batch half(0.5);
     const batch one(1.0);
     const batch two_pi_batch(two_pi);
@@ -112,6 +117,13 @@ NumericVector apply_hanning_window_simd(NumericVector data) {
         double window = 0.5 * (1.0 - std::cos(two_pi * i / n_minus_1));
         dst[i] = src[i] * window;
     }
+#else
+    // Scalar fallback
+    for (int i = 0; i < n; ++i) {
+        double window = 0.5 * (1.0 - std::cos(two_pi * i / n_minus_1));
+        dst[i] = src[i] * window;
+    }
+#endif
     
     return result;
 }
@@ -122,15 +134,15 @@ NumericVector apply_gaussian_window_simd(NumericVector data, double sigma = 0.4)
     const int n = data.size();
     NumericVector result(n);
     
+    const double* src = REAL(data);
+    double* dst = REAL(result);
+    const double center = (n - 1) / 2.0;
+    const double denominator = sigma * center;
+    
+#ifdef RCPPXSIMD_XSIMD_HPP
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
-    const double* src = REAL(data);
-    double* dst = REAL(result);
-    
-    // Constants
-    const double center = (n - 1) / 2.0;
-    const double denominator = sigma * center;
     const batch minus_half(-0.5);
     const batch center_batch(center);
     const batch denom_batch(denominator);
@@ -163,14 +175,21 @@ NumericVector apply_gaussian_window_simd(NumericVector data, double sigma = 0.4)
         double window = std::exp(-0.5 * normalized * normalized);
         dst[i] = src[i] * window;
     }
+#else
+    // Scalar fallback
+    for (int i = 0; i < n; ++i) {
+        double diff = i - center;
+        double normalized = diff / denominator;
+        double window = std::exp(-0.5 * normalized * normalized);
+        dst[i] = src[i] * window;
+    }
+#endif
     
     return result;
 }
 
-#endif // RCPPXSIMD_XSIMD_HPP
-
 // ============================================================================
-// Scalar fallback versions
+// Explicit Scalar Versions (for benchmarking)
 // ============================================================================
 
 // [[Rcpp::export(.apply_hamming_window_scalar)]]

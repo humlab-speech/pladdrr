@@ -1,0 +1,347 @@
+
+================================================================================ 
+RUNNING BENCHMARKS IN SCALAR MODE (NO SIMD)
+================================================================================ 
+
+SIMD optimization: DISABLED
+This run will establish the scalar baseline for comparison.
+
+
+================================================================================ 
+SPEAKER PACKAGE - SIMD BASELINE BENCHMARKS
+================================================================================ 
+Date: 2025-11-18 13:31:24 
+Package version: 0.5.0 
+R version: R version 4.4.2 (2024-10-31) 
+Platform: aarch64-apple-darwin20 
+================================================================================ 
+
+⚠️  Mode forced to: scalar (via SPEAKER_BENCHMARK_MODE env var)
+SIMD support: ✗ Not available 
+Run mode: scalar 
+
+💡 TIP: To generate SIMD comparison:
+   install.packages('RcppXsimd') then re-run benchmarks
+   OR: Sys.setenv(SPEAKER_BENCHMARK_MODE='simd'); source('inst/benchmarks/00_run_all_benchmarks.R')
+
+
+================================================================================ 
+Running: 01_matrix_operations.R 
+================================================================================ 
+================================================================================ 
+Benchmark 1: Matrix Operations (SCALAR mode)
+================================================================================ 
+
+
+Testing small matrix (100x100):
+[38;5;246m# A tibble: 4 × 5[39m
+  expression      min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m sum          42.8µs     43µs    [4m2[24m[4m2[24m792.    2.25KB
+[38;5;250m2[39m mean         37.7µs     38µs    [4m2[24m[4m6[24m105.    2.25KB
+[38;5;250m3[39m min            40µs   40.3µs    [4m2[24m[4m4[24m772.    2.27KB
+[38;5;250m4[39m max          39.8µs     40µs    [4m2[24m[4m4[24m910.    2.27KB
+
+
+Testing medium matrix (500x500):
+[38;5;246m# A tibble: 4 × 5[39m
+  expression      min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m sum           812µs    812µs     [4m1[24m225.        0B
+[38;5;250m2[39m mean          813µs    834µs     [4m1[24m200.        0B
+[38;5;250m3[39m min           816µs    842µs     [4m1[24m180.        0B
+[38;5;250m4[39m max           824µs    842µs     [4m1[24m187.        0B
+
+
+Testing large matrix (1000x1000):
+[38;5;246m# A tibble: 4 × 5[39m
+  expression      min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m sum          3.26ms   3.36ms      298.        0B
+[38;5;250m2[39m mean         3.23ms   3.24ms      307.        0B
+[38;5;250m3[39m min          3.23ms   3.25ms      304.        0B
+[38;5;250m4[39m max          3.23ms   3.24ms      308.        0B
+
+
+Testing xlarge matrix (2000x2000):
+[38;5;246m# A tibble: 4 × 5[39m
+  expression      min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m sum          12.9ms   13.5ms      74.1        0B
+[38;5;250m2[39m mean         12.9ms   13.3ms      75.0        0B
+[38;5;250m3[39m min          12.9ms   13.1ms      76.3        0B
+[38;5;250m4[39m max          12.9ms   13.3ms      75.4        0B
+
+✗ Error in 01_matrix_operations.R : cannot open the connection 
+
+================================================================================ 
+Running: 02_data_conversion.R 
+================================================================================ 
+================================================================================ 
+Benchmark 2: Data Conversion [SCALAR mode]
+================================================================================ 
+
+
+Testing mono_1s (1 channels, 1.0 seconds, 44100 samples):
+
+Creation:
+[38;5;246m# A tibble: 1 × 5[39m
+  expression        min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m   [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m create_sound    185µs    194µs     [4m4[24m997.     740KB
+
+Export:
+[38;5;246m# A tibble: 2 × 5[39m
+  expression         min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m    [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m export_matrix 118.28µs 120.83µs     [4m8[24m203.     347KB
+[38;5;250m2[39m export_df       1.02ms   1.11ms      897.     921KB
+
+
+Testing stereo_1s (2 channels, 1.0 seconds, 44100 samples):
+
+Creation:
+[38;5;246m# A tibble: 1 × 5[39m
+  expression        min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m   [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m create_sound    267µs    291µs     [4m3[24m302.    3.51KB
+
+Export:
+[38;5;246m# A tibble: 2 × 5[39m
+  expression         min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m    [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m export_matrix    187µs 222.06µs     [4m4[24m033.  689.11KB
+[38;5;250m2[39m export_df        1.9ms   1.98ms      506.    1.68MB
+
+
+Testing mono_10s (1 channels, 10.0 seconds, 441000 samples):
+
+Creation:
+[38;5;246m# A tibble: 1 × 5[39m
+  expression        min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m   [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m create_sound    851µs    922µs     [4m1[24m058.    3.51KB
+
+Export:
+[38;5;246m# A tibble: 2 × 5[39m
+  expression         min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m    [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m export_matrix 888.76µs   1.02ms     [4m1[24m014.    3.37MB
+[38;5;250m2[39m export_df       9.34ms   9.68ms      103.    8.41MB
+
+
+Testing stereo_10s (2 channels, 10.0 seconds, 441000 samples):
+
+Creation:
+[38;5;246m# A tibble: 1 × 5[39m
+  expression        min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m   [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m create_sound   1.56ms   1.65ms      581.    3.51KB
+
+Export:
+[38;5;246m# A tibble: 2 × 5[39m
+  expression         min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m    [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m export_matrix   2.02ms   2.32ms     388.     6.73MB
+[38;5;250m2[39m export_df      18.27ms  18.56ms      53.5   16.82MB
+
+
+Testing mono_60s (1 channels, 60.0 seconds, 2646000 samples):
+
+Creation:
+[38;5;246m# A tibble: 1 × 5[39m
+  expression        min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m   [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m create_sound   4.23ms   4.61ms      212.    3.51KB
+
+Export:
+[38;5;246m# A tibble: 2 × 5[39m
+  expression         min   median `itr/sec` mem_alloc
+  [3m[38;5;246m<bch:expr>[39m[23m    [3m[38;5;246m<bch:tm>[39m[23m [3m[38;5;246m<bch:tm>[39m[23m     [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<bch:byt>[39m[23m
+[38;5;250m1[39m export_matrix   6.17ms   6.26ms     158.     20.2MB
+[38;5;250m2[39m export_df      54.41ms  55.59ms      18.0    50.5MB
+
+✗ Error in 02_data_conversion.R : cannot open the connection 
+
+================================================================================ 
+Running: 03_tone_generation.R 
+================================================================================ 
+✗ Error in 03_tone_generation.R : 03_tone_generation.R:8:20: unexpected string constant
+7: 
+8: cat(strrep("=", 80)", toupper(run_mode))\n"
+                      ^ 
+
+================================================================================ 
+Running: 06_phase2_intensity.R 
+================================================================================ 
+
+=== Phase 2: Intensity Calculations Benchmark ===
+Target speedup: 3-5x
+Operations: RMS over windows, energy calculations
+
+
+Benchmarking: Small (0.5s)
+  Duration: 0.5s, Sample rate: 16000 Hz
+  RMS: median = 75.9µs
+  Energy: median = 73.9µs
+  to_intensity: median = 21.9ms
+  Power: median = 75µs
+
+Benchmarking: Medium (2s)
+  Duration: 2.0s, Sample rate: 16000 Hz
+  RMS: median = 286µs
+  Energy: median = 283µs
+  to_intensity: median = 24.9ms
+  Power: median = 290µs
+
+Benchmarking: Large (10s)
+  Duration: 10.0s, Sample rate: 16000 Hz
+  RMS: median = 1.39ms
+  Energy: median = 1.39ms
+  to_intensity: median = 38.6ms
+  Power: median = 1.43ms
+
+Benchmarking: XLarge (30s)
+  Duration: 30.0s, Sample rate: 16000 Hz
+  RMS: median = 4.15ms
+  Energy: median = 4.16ms
+  to_intensity: median = 73ms
+  Power: median = 4.15ms
+
+=== Summary ===
+     size    operation  median_time mem_alloc
+1   small          RMS 7.591152e-05         0
+2   small       Energy 7.390254e-05         0
+3   small to_intensity 2.186637e-02    604848
+4   small        Power 7.498905e-05         0
+5  medium          RMS 2.857086e-04         0
+6  medium       Energy 2.834330e-04         0
+7  medium to_intensity 2.487101e-02      1456
+8  medium        Power 2.903415e-04         0
+9   large          RMS 1.385943e-03         0
+10  large       Energy 1.385780e-03         0
+11  large to_intensity 3.860474e-02      1456
+12  large        Power 1.429650e-03         0
+13 xlarge          RMS 4.151967e-03         0
+14 xlarge       Energy 4.156355e-03         0
+15 xlarge to_intensity 7.298252e-02      1456
+16 xlarge        Power 4.146125e-03         0
+
+Results saved to: results/baseline/06_phase2_intensity_20251118_133142.rds
+
+Note: After SIMD implementation, re-run with simd_enabled = TRUE
+Expected speedup: 3-5x for all operations
+✓ Completed: 06_phase2_intensity.R 
+
+================================================================================ 
+Running: 07_phase2_sound_mixing.R 
+================================================================================ 
+
+=== Phase 2: Sound Mixing Benchmark (SKIPPED) ===
+Status: Benchmark disabled - awaiting sound manipulation function implementation
+Required functions: sound_add(), sound_multiply(), sound_scale_peak()
+
+
+Placeholder saved to: results/baseline/07_phase2_sound_mixing_20251118_133142.rds
+This benchmark will be enabled once sound manipulation functions are implemented.
+✓ Completed: 07_phase2_sound_mixing.R 
+
+================================================================================ 
+Running: 12_phase3_window_functions.R 
+================================================================================ 
+
+=== Phase 3: Window Functions Benchmark ===
+Target speedup: 4-6x (EPYC), 2.5-3x (M1)
+Operations: Hamming, Hanning, Gaussian windows
+
+
+Benchmarking: Small (256 samples, typical FFT frame) 
+✗ Error in 12_phase3_window_functions.R : could not find function ".apply_hamming_window_scalar" 
+
+================================================================================ 
+Running: 13_phase3_autocorrelation.R 
+================================================================================ 
+
+=== Phase 3: Autocorrelation Benchmark ===
+Target speedup: 4.5-6x (EPYC), 2.5-3.5x (M1) - HIGHEST IMPACT
+Operations: Autocorrelation for pitch detection and LPC
+
+
+Benchmarking: Small (0.025s @ 16kHz, typical pitch frame) 
+✗ Error in 13_phase3_autocorrelation.R : could not find function ".autocorrelation_scalar" 
+
+================================================================================ 
+Running: 08_phase3_fft_operations.R 
+================================================================================ 
+
+=== Phase 3: FFT Operations Benchmark (SKIPPED) ===
+Status: Benchmark disabled - method signature verification needed
+Target operations: to_spectrogram(), to_spectrum(), to_ltas(), to_harmonicity_ac()
+
+
+Placeholder saved to: results/baseline/08_phase3_fft_operations_20251118_133142.rds
+✓ Completed: 08_phase3_fft_operations.R 
+
+================================================================================ 
+Running: 09_phase3_formant_lpc.R 
+================================================================================ 
+
+=== Phase 3: Formant/LPC Benchmark (SKIPPED) ===
+Status: Benchmark disabled - method signature verification needed
+Target operations: to_formant_burg(), to_lpc_burg(), to_lpc_autocorrelation()
+
+
+Placeholder saved to: results/baseline/09_phase3_formant_lpc_20251118_133142.rds
+✓ Completed: 09_phase3_formant_lpc.R 
+
+================================================================================ 
+Running: 10_phase3_pitch_detection.R 
+================================================================================ 
+
+=== Phase 3: Pitch Detection Benchmark (SKIPPED) ===
+Status: Benchmark disabled - method signature verification needed
+Target operations: to_pitch(), to_pitch_ac(), to_pitch_cc()
+
+
+Placeholder saved to: results/baseline/10_phase3_pitch_detection_20251118_133142.rds
+✓ Completed: 10_phase3_pitch_detection.R 
+
+================================================================================ 
+Running: 11_end_to_end_pipelines.R 
+================================================================================ 
+
+=== End-to-End Pipeline Benchmarks (SKIPPED) ===
+Status: Benchmark disabled - awaiting Phase 3 function verification
+Target pipelines: Vowel analysis, prosody extraction, complete workflows
+
+
+Placeholder saved to: results/baseline/11_end_to_end_pipelines_20251118_133142.rds
+✓ Completed: 11_end_to_end_pipelines.R 
+
+================================================================================ 
+Running: 04_parselmouth_comparison.R 
+================================================================================ 
+================================================================================
+Benchmark 4: Parselmouth Comparison
+================================================================================
+
+Checking parselmouth...
+✓ Parselmouth version: 0.4.6 
+
+✗ Test audio file not found at inst/extdata/test.wav
+  Using synthetic audio for speaker-only benchmarks...
+
+Running speaker benchmarks (synthetic audio):
+
+  Benchmarking pitch extraction...
+  Benchmarking formant extraction...
+  Benchmarking intensity...
+
+Results (10 iterations each):
+  Pitch:     0.017 seconds (1.7 ms/iter)
+  Formants:  0.131 seconds (13.1 ms/iter)
+  Intensity: 0.048 seconds (4.8 ms/iter)
+
+Note: Parselmouth comparison requires test.wav file
+      Showing speaker-only results instead.
+

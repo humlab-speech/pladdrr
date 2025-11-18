@@ -29,15 +29,12 @@ for (size_name in names(test_sizes)) {
   
   # Benchmark window functions
   result <- bench::mark(
-    hamming_scalar = .apply_hamming_window_scalar(data),
-    hamming_simd = if (exists(".apply_hamming_window_simd")) 
-      .apply_hamming_window_simd(data) else NA,
-    hanning_scalar = .apply_hanning_window_scalar(data),
-    hanning_simd = if (exists(".apply_hanning_window_simd")) 
-      .apply_hanning_window_simd(data) else NA,
-    gaussian_scalar = .apply_gaussian_window_scalar(data, 0.4),
-    gaussian_simd = if (exists(".apply_gaussian_window_simd")) 
-      .apply_gaussian_window_simd(data, 0.4) else NA,
+    hamming_scalar = speaker:::.apply_hamming_window_scalar(data),
+    hamming_simd = speaker:::.apply_hamming_window_simd(data),
+    hanning_scalar = speaker:::.apply_hanning_window_scalar(data),
+    hanning_simd = speaker:::.apply_hanning_window_simd(data),
+    gaussian_scalar = speaker:::.apply_gaussian_window_scalar(data, 0.4),
+    gaussian_simd = speaker:::.apply_gaussian_window_simd(data, 0.4),
     iterations = 100,
     check = FALSE
   )
@@ -45,19 +42,17 @@ for (size_name in names(test_sizes)) {
   print(result[, c("expression", "median", "mem_alloc")])
   
   # Calculate speedups
-  if (exists(".apply_hamming_window_simd")) {
-    hamming_speedup <- median(result$time[result$expression == "hamming_scalar"]) /
-                      median(result$time[result$expression == "hamming_simd"])
-    cat(sprintf("  Hamming speedup: %.2fx\n", hamming_speedup))
-    
-    hanning_speedup <- median(result$time[result$expression == "hanning_scalar"]) /
-                      median(result$time[result$expression == "hanning_simd"])
-    cat(sprintf("  Hanning speedup: %.2fx\n", hanning_speedup))
-    
-    gaussian_speedup <- median(result$time[result$expression == "gaussian_scalar"]) /
-                       median(result$time[result$expression == "gaussian_simd"])
-    cat(sprintf("  Gaussian speedup: %.2fx\n", gaussian_speedup))
-  }
+  hamming_speedup <- as.numeric(result$median[as.character(result$expression) == "hamming_scalar"]) /
+                    as.numeric(result$median[as.character(result$expression) == "hamming_simd"])
+  cat(sprintf("  Hamming speedup: %.2fx\n", hamming_speedup))
+  
+  hanning_speedup <- as.numeric(result$median[as.character(result$expression) == "hanning_scalar"]) /
+                    as.numeric(result$median[as.character(result$expression) == "hanning_simd"])
+  cat(sprintf("  Hanning speedup: %.2fx\n", hanning_speedup))
+  
+  gaussian_speedup <- as.numeric(result$median[as.character(result$expression) == "gaussian_scalar"]) /
+                     as.numeric(result$median[as.character(result$expression) == "gaussian_simd"])
+  cat(sprintf("  Gaussian speedup: %.2fx\n", gaussian_speedup))
   
   results[[size_name]] <- result
 }

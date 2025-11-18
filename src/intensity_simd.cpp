@@ -1,6 +1,6 @@
 // [[Rcpp::plugins(cpp17)]]
 
-#ifdef HAVE_XSIMD
+#ifdef RCPPXSIMD_XSIMD_HPP
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -14,8 +14,6 @@
 #include "praat.github.io/melder/melder.h"
 
 using namespace Rcpp;
-
-#ifdef HAVE_XSIMD
 
 //' SIMD-optimized RMS calculation
 //' @keywords internal
@@ -36,9 +34,6 @@ double sound_get_rms_simd(
     if (i_start < 1) i_start = 1;
     if (i_end > sound->nx) i_end = sound->nx;
     
-    using batch = xsimd::batch<double, 2>;
-    constexpr size_t simd_size = batch::size;
-    
     double sum_squares = 0.0;
     integer total_samples = 0;
     
@@ -47,7 +42,11 @@ double sound_get_rms_simd(
         const double* data = &sound->z[ch][i_start];
         integer n_samples = i_end - i_start + 1;
         
+#ifdef RCPPXSIMD_XSIMD_HPP
         // SIMD sum of squares
+        using batch = xsimd::batch<double, 2>;
+        constexpr size_t simd_size = batch::size;
+        
         batch acc(0.0);
         integer i = 0;
         
@@ -65,6 +64,12 @@ double sound_get_rms_simd(
         for (; i < n_samples; ++i) {
             sum_squares += data[i] * data[i];
         }
+#else
+        // Scalar fallback
+        for (integer i = 0; i < n_samples; ++i) {
+            sum_squares += data[i] * data[i];
+        }
+#endif
         
         total_samples += n_samples;
     }
@@ -93,15 +98,16 @@ double sound_get_energy_simd(
     if (i_start < 1) i_start = 1;
     if (i_end > sound->nx) i_end = sound->nx;
     
-    using batch = xsimd::batch<double, 2>;
-    constexpr size_t simd_size = batch::size;
-    
     double sum_squares = 0.0;
     
     // Process each channel
     for (integer ch = 1; ch <= sound->ny; ch++) {
         const double* data = &sound->z[ch][i_start];
         integer n_samples = i_end - i_start + 1;
+        
+#ifdef RCPPXSIMD_XSIMD_HPP
+        using batch = xsimd::batch<double, 2>;
+        constexpr size_t simd_size = batch::size;
         
         batch acc(0.0);
         integer i = 0;
@@ -120,6 +126,12 @@ double sound_get_energy_simd(
         for (; i < n_samples; ++i) {
             sum_squares += data[i] * data[i];
         }
+#else
+        // Scalar fallback
+        for (integer i = 0; i < n_samples; ++i) {
+            sum_squares += data[i] * data[i];
+        }
+#endif
     }
     
     // Energy = sum(x^2) * dx
@@ -147,4 +159,3 @@ double sound_get_power_simd(
     return energy / duration;
 }
 
-#endif // HAVE_XSIMD

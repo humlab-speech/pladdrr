@@ -57,6 +57,66 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
     .Call(`_speaker_sound_amplitude_tier_multiply_cpp`, sound_xptr, tier_xptr)
 }
 
+.autocorrelation_simd <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation_simd`, data, max_lag)
+}
+
+.autocorrelation_normalized_simd <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation_normalized_simd`, data, max_lag)
+}
+
+.cross_correlation_simd <- function(x, y) {
+    .Call(`_speaker_cross_correlation_simd`, x, y)
+}
+
+.windowed_autocorrelation_simd <- function(data, frame_length, max_lag, hop_size) {
+    .Call(`_speaker_windowed_autocorrelation_simd`, data, frame_length, max_lag, hop_size)
+}
+
+.lpc_autocorrelation_simd <- function(data, num_coefficients) {
+    .Call(`_speaker_lpc_autocorrelation_simd`, data, num_coefficients)
+}
+
+.autocorrelation_scalar <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation_scalar`, data, max_lag)
+}
+
+.autocorrelation_normalized_scalar <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation_normalized_scalar`, data, max_lag)
+}
+
+.cross_correlation_scalar <- function(x, y) {
+    .Call(`_speaker_cross_correlation_scalar`, x, y)
+}
+
+.windowed_autocorrelation_scalar <- function(data, frame_length, max_lag, hop_size) {
+    .Call(`_speaker_windowed_autocorrelation_scalar`, data, frame_length, max_lag, hop_size)
+}
+
+.lpc_autocorrelation_scalar <- function(data, num_coefficients) {
+    .Call(`_speaker_lpc_autocorrelation_scalar`, data, num_coefficients)
+}
+
+.autocorrelation <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation`, data, max_lag)
+}
+
+.autocorrelation_normalized <- function(data, max_lag) {
+    .Call(`_speaker_autocorrelation_normalized`, data, max_lag)
+}
+
+.cross_correlation <- function(x, y) {
+    .Call(`_speaker_cross_correlation`, x, y)
+}
+
+.windowed_autocorrelation <- function(data, frame_length, max_lag, hop_size) {
+    .Call(`_speaker_windowed_autocorrelation`, data, frame_length, max_lag, hop_size)
+}
+
+.lpc_autocorrelation <- function(data, num_coefficients) {
+    .Call(`_speaker_lpc_autocorrelation`, data, num_coefficients)
+}
+
 .durationtier_create <- function(tmin, tmax) {
     .Call(`_speaker_durationtier_create`, tmin, tmax)
 }
@@ -327,6 +387,24 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .harmonicity_get_end_time <- function(harmonicity_xptr) {
     .Call(`_speaker_harmonicity_get_end_time`, harmonicity_xptr)
+}
+
+#' SIMD-optimized RMS calculation
+#' @keywords internal
+.sound_get_rms_simd <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_rms_simd`, xptr, from_time, to_time)
+}
+
+#' SIMD-optimized energy calculation
+#' @keywords internal
+.sound_get_energy_simd <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_energy_simd`, xptr, from_time, to_time)
+}
+
+#' SIMD-optimized power calculation
+#' @keywords internal
+.sound_get_power_simd <- function(xptr, from_time, to_time) {
+    .Call(`_speaker_sound_get_power_simd`, xptr, from_time, to_time)
 }
 
 .intensity_get_value_at_time <- function(intensity_xptr, time, interpolation_type) {
@@ -993,6 +1071,18 @@ get_sound_sampling_rate_cpp <- function(sound_obj) {
 #' @keywords internal
 get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_speaker_get_sound_n_samples_cpp`, sound_obj)
+}
+
+#' SIMD-optimized sound scaling (peak amplitude)
+#' @keywords internal
+.sound_scale_peak_simd <- function(xptr, new_peak) {
+    invisible(.Call(`_speaker_sound_scale_peak_simd`, xptr, new_peak))
+}
+
+#' SIMD-optimized sound mixing with balance
+#' @keywords internal
+.sound_mix_simd <- function(xptr1, xptr2, balance) {
+    .Call(`_speaker_sound_mix_simd`, xptr1, xptr2, balance)
 }
 
 #' Read Sound from file (internal)
@@ -1676,6 +1766,42 @@ NULL
 #' @keywords internal
 praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_speaker_praat_error_to_r`, error_msg))
+}
+
+.apply_hamming_window_simd <- function(data) {
+    .Call(`_speaker_apply_hamming_window_simd`, data)
+}
+
+.apply_hanning_window_simd <- function(data) {
+    .Call(`_speaker_apply_hanning_window_simd`, data)
+}
+
+.apply_gaussian_window_simd <- function(data, sigma = 0.4) {
+    .Call(`_speaker_apply_gaussian_window_simd`, data, sigma)
+}
+
+.apply_hamming_window_scalar <- function(data) {
+    .Call(`_speaker_apply_hamming_window_scalar`, data)
+}
+
+.apply_hanning_window_scalar <- function(data) {
+    .Call(`_speaker_apply_hanning_window_scalar`, data)
+}
+
+.apply_gaussian_window_scalar <- function(data, sigma = 0.4) {
+    .Call(`_speaker_apply_gaussian_window_scalar`, data, sigma)
+}
+
+.apply_hamming_window <- function(data) {
+    .Call(`_speaker_apply_hamming_window`, data)
+}
+
+.apply_hanning_window <- function(data) {
+    .Call(`_speaker_apply_hanning_window`, data)
+}
+
+.apply_gaussian_window <- function(data, sigma = 0.4) {
+    .Call(`_speaker_apply_gaussian_window`, data, sigma)
 }
 
 # Register entry points for exported C++ functions

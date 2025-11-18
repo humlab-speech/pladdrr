@@ -4,6 +4,7 @@
 if (!requireNamespace("RcppXsimd", quietly = TRUE)) {
   stop("RcppXsimd package not installed. Install with: install.packages('RcppXsimd')")
 }
+Sys.setenv(RETICULATE_PYTHON = "/opt/miniconda3/bin/python3")
 
 cat("\n")
 cat(strrep("=", 80), "\n")

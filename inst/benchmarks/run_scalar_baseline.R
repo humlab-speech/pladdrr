@@ -8,7 +8,7 @@ cat(strrep("=", 80), "\n\n")
 
 # Force scalar mode by setting environment variable
 Sys.setenv(SPEAKER_BENCHMARK_MODE = "scalar")
-
+Sys.setenv(RETICULATE_PYTHON = "/opt/miniconda3/bin/python3")
 cat("SIMD optimization: DISABLED\n")
 cat("This run will establish the scalar baseline for comparison.\n\n")
 

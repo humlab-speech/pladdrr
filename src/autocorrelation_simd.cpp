@@ -14,14 +14,26 @@
 using namespace Rcpp;
 
 // ============================================================================
-// SIMD Autocorrelation Functions
+// Helper Functions
 // ============================================================================
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+// Scalar autocorrelation at a single lag (fallback)
+inline double autocorr_at_lag_scalar(const double* data, int n, int lag) {
+    const double* x1 = data;
+    const double* x2 = data + lag;
+    int count = n - lag;
+    
+    double sum = 0.0;
+    for (int i = 0; i < count; ++i) {
+        sum += x1[i] * x2[i];
+    }
+    
+    return sum;
+}
 
-// Compute autocorrelation at a single lag using SIMD
-// This is the core operation for pitch detection and LPC
-inline double autocorr_at_lag_simd(const double* data, int n, int lag) {
+#ifdef RCPPXSIMD_XSIMD_HPP
+// SIMD autocorrelation at a single lag
+inline double autocorr_at_lag_simd_impl(const double* data, int n, int lag) {
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -48,6 +60,11 @@ inline double autocorr_at_lag_simd(const double* data, int n, int lag) {
     
     return sum;
 }
+#endif
+
+// ============================================================================
+// Exported SIMD Functions (always defined, conditionally implemented)
+// ============================================================================
 
 // Full autocorrelation sequence (for pitch detection)
 // [[Rcpp::export(.autocorrelation_simd)]]
@@ -59,10 +76,17 @@ NumericVector autocorrelation_simd(NumericVector data, int max_lag) {
     const double* src = REAL(data);
     double* dst = REAL(result);
     
-    // Compute autocorrelation for each lag
+#ifdef RCPPXSIMD_XSIMD_HPP
+    // Use SIMD implementation
     for (int lag = 0; lag <= max_lag; ++lag) {
-        dst[lag] = autocorr_at_lag_simd(src, n, lag);
+        dst[lag] = autocorr_at_lag_simd_impl(src, n, lag);
     }
+#else
+    // Fallback to scalar
+    for (int lag = 0; lag <= max_lag; ++lag) {
+        dst[lag] = autocorr_at_lag_scalar(src, n, lag);
+    }
+#endif
     
     return result;
 }
@@ -75,8 +99,11 @@ NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag) {
     
     const double* src = REAL(data);
     
-    // Compute lag-0 (variance)
-    double var = autocorr_at_lag_simd(src, n, 0);
+#ifdef RCPPXSIMD_XSIMD_HPP
+    double var = autocorr_at_lag_simd_impl(src, n, 0);
+#else
+    double var = autocorr_at_lag_scalar(src, n, 0);
+#endif
     
     if (var == 0.0) {
         return NumericVector(max_lag + 1, 0.0);
@@ -85,10 +112,15 @@ NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag) {
     NumericVector result(max_lag + 1);
     double* dst = REAL(result);
     
-    // Normalized values
+#ifdef RCPPXSIMD_XSIMD_HPP
     for (int lag = 0; lag <= max_lag; ++lag) {
-        dst[lag] = autocorr_at_lag_simd(src, n, lag) / var;
+        dst[lag] = autocorr_at_lag_simd_impl(src, n, lag) / var;
     }
+#else
+    for (int lag = 0; lag <= max_lag; ++lag) {
+        dst[lag] = autocorr_at_lag_scalar(src, n, lag) / var;
+    }
+#endif
     
     return result;
 }
@@ -104,6 +136,7 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
     const double* x_ptr = REAL(x);
     const double* y_ptr = REAL(y);
     
+#ifdef RCPPXSIMD_XSIMD_HPP
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -124,6 +157,13 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
     }
     
     return sum;
+#else
+    double sum = 0.0;
+    for (int i = 0; i < n; ++i) {
+        sum += x_ptr[i] * y_ptr[i];
+    }
+    return sum;
+#endif
 }
 
 // Windowed autocorrelation (for pitch detection with frames)
@@ -142,14 +182,25 @@ NumericMatrix windowed_autocorrelation_simd(
     NumericMatrix result(num_frames, max_lag + 1);
     const double* src = REAL(data);
     
+#ifdef RCPPXSIMD_XSIMD_HPP
     for (int frame = 0; frame < num_frames; ++frame) {
         int start = frame * hop_size;
         const double* frame_data = src + start;
         
         for (int lag = 0; lag <= max_lag; ++lag) {
-            result(frame, lag) = autocorr_at_lag_simd(frame_data, frame_length, lag);
+            result(frame, lag) = autocorr_at_lag_simd_impl(frame_data, frame_length, lag);
         }
     }
+#else
+    for (int frame = 0; frame < num_frames; ++frame) {
+        int start = frame * hop_size;
+        const double* frame_data = src + start;
+        
+        for (int lag = 0; lag <= max_lag; ++lag) {
+            result(frame, lag) = autocorr_at_lag_scalar(frame_data, frame_length, lag);
+        }
+    }
+#endif
     
     return result;
 }
@@ -168,33 +219,22 @@ NumericVector lpc_autocorrelation_simd(NumericVector data, int num_coefficients)
     const double* src = REAL(data);
     double* dst = REAL(result);
     
-    // Compute autocorrelation for each lag
+#ifdef RCPPXSIMD_XSIMD_HPP
     for (int lag = 0; lag <= max_lag; ++lag) {
-        dst[lag] = autocorr_at_lag_simd(src, n, lag);
+        dst[lag] = autocorr_at_lag_simd_impl(src, n, lag);
     }
+#else
+    for (int lag = 0; lag <= max_lag; ++lag) {
+        dst[lag] = autocorr_at_lag_scalar(src, n, lag);
+    }
+#endif
     
     return result;
 }
 
-#endif // RCPPXSIMD_XSIMD_HPP
-
 // ============================================================================
-// Scalar fallback versions
+// Explicit Scalar Versions (for benchmarking)
 // ============================================================================
-
-// Scalar autocorrelation at single lag
-inline double autocorr_at_lag_scalar(const double* data, int n, int lag) {
-    const double* x1 = data;
-    const double* x2 = data + lag;
-    int count = n - lag;
-    
-    double sum = 0.0;
-    for (int i = 0; i < count; ++i) {
-        sum += x1[i] * x2[i];
-    }
-    
-    return sum;
-}
 
 // [[Rcpp::export(.autocorrelation_scalar)]]
 NumericVector autocorrelation_scalar(NumericVector data, int max_lag) {

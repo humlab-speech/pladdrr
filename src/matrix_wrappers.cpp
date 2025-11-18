@@ -2,6 +2,8 @@
 // Wrappers for Praat Matrix objects
 
 #include <Rcpp.h>
+#include <numeric>
+#include <algorithm>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
 #include "simd_utils.h"
@@ -188,9 +190,10 @@ double matrix_get_sum(SEXP xptr) {
     Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
     double sum = 0.0;
     
-    // Process each row with SIMD
+    // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      sum += speaker::simd::sum_array(&matrix->z[i][1], matrix->nx);
+      double* row_start = &matrix->z[i][1];
+      sum += std::accumulate(row_start, row_start + matrix->nx, 0.0);
     }
     
     return sum;
@@ -209,9 +212,10 @@ double matrix_get_mean(SEXP xptr) {
     
     if (count == 0) return NAN;
     
-    // Process each row with SIMD
+    // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      sum += speaker::simd::sum_array(&matrix->z[i][1], matrix->nx);
+      double* row_start = &matrix->z[i][1];
+      sum += std::accumulate(row_start, row_start + matrix->nx, 0.0);
     }
     
     return sum / count;
@@ -227,9 +231,10 @@ double matrix_get_minimum(SEXP xptr) {
     Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
     double min = INFINITY;
     
-    // Process each row with SIMD
+    // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      double row_min = speaker::simd::min_array(&matrix->z[i][1], matrix->nx);
+      double* row_start = &matrix->z[i][1];
+      double row_min = *std::min_element(row_start, row_start + matrix->nx);
       if (row_min < min) min = row_min;
     }
     
@@ -246,9 +251,10 @@ double matrix_get_maximum(SEXP xptr) {
     Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
     double max = -INFINITY;
     
-    // Process each row with SIMD
+    // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      double row_max = speaker::simd::max_array(&matrix->z[i][1], matrix->nx);
+      double* row_start = &matrix->z[i][1];
+      double row_max = *std::max_element(row_start, row_start + matrix->nx);
       if (row_max > max) max = row_max;
     }
     
