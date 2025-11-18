@@ -6,13 +6,7 @@ test_that("SIMD data conversion preserves values", {
   library(speaker)
   
   # Generate test sound
-  sound <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 1.0,
-    sample_rate = 44100,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound <- Sound$create_tone(1.0, 44100, 440, 0.5)
   
   # Convert to matrix
   mat <- sound$as_matrix()
@@ -41,21 +35,9 @@ test_that("SIMD data conversion handles stereo", {
   library(speaker)
   
   # Generate stereo tone (if available)
-  sound_left <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 0.5,
-    sample_rate = 44100,
-    frequency = 440,
-    amplitude = 0.3
-  )
+  sound_left <- Sound$create_tone(0.5, 44100, 440, 0.3)
   
-  sound_right <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 0.5,
-    sample_rate = 44100,
-    frequency = 880,
-    amplitude = 0.7
-  )
+  sound_right <- Sound$create_tone(0.5, 44100, 880, 0.7)
   
   # Test individual sounds
   mat_left <- sound_left$as_matrix()
@@ -70,25 +52,13 @@ test_that("SIMD data conversion handles different sample rates", {
   library(speaker)
   
   # Low sample rate
-  sound_low <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 1.0,
-    sample_rate = 16000,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound_low <- Sound$create_tone(1.0, 16000, 440, 0.5)
   
   mat_low <- sound_low$as_matrix()
   expect_equal(nrow(mat_low), 16000, tolerance = 5)
   
   # High sample rate
-  sound_high <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 1.0,
-    sample_rate = 48000,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound_high <- Sound$create_tone(1.0, 48000, 440, 0.5)
   
   mat_high <- sound_high$as_matrix()
   expect_equal(nrow(mat_high), 48000, tolerance = 5)
@@ -99,13 +69,7 @@ test_that("SIMD data conversion is lossless", {
   library(speaker)
   
   # Generate sound
-  sound1 <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 0.1,
-    sample_rate = 44100,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound1 <- Sound$create_tone(0.1, 44100, 440, 0.5)
   
   # Convert to matrix and back
   mat <- sound1$as_matrix()
@@ -127,13 +91,7 @@ test_that("SIMD data conversion handles edge cases", {
   library(speaker)
   
   # Very short sound
-  sound_short <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 0.01,
-    sample_rate = 44100,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound_short <- Sound$create_tone(0.01, 44100, 440, 0.5)
   
   mat_short <- sound_short$as_matrix()
   expect_true(nrow(mat_short) > 0)
@@ -149,13 +107,7 @@ test_that("SIMD data conversion performance is reasonable", {
   library(speaker)
   
   # Large sound file
-  sound_large <- Sound$new_generate_tone(
-    start_time = 0,
-    end_time = 10.0,
-    sample_rate = 44100,
-    frequency = 440,
-    amplitude = 0.5
-  )
+  sound_large <- Sound$create_tone(10.0, 44100, 440, 0.5)
   
   # Conversion should complete in reasonable time
   time_matrix <- system.time({
