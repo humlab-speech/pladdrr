@@ -6,13 +6,13 @@ test_that("SIMD data conversion preserves values", {
   library(speaker)
   
   # Generate test sound
-  sound <- Sound$create_tone(1.0, 44100, 440, 0.5)
+  sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
   
   # Convert to matrix
   mat <- sound$as_matrix()
   
   # Check dimensions
-  expect_true(ncol(mat) == 1)  # Mono
+  expect_true(nrow(mat) == 1)  # Mono
   expect_true(nrow(mat) > 0)
   
   # Check values are in reasonable range
@@ -24,10 +24,10 @@ test_that("SIMD data conversion preserves values", {
   # Check structure
   expect_true(is.data.frame(df))
   expect_true("time" %in% names(df))
-  expect_true("channel_1" %in% names(df))
+  expect_true("value" %in% names(df))
   
   # Values should match matrix
-  expect_equal(df$channel_1, as.vector(mat), tolerance = 1e-12)
+  expect_equal(df$value, as.vector(mat), tolerance = 1e-12)
 })
 
 test_that("SIMD data conversion handles stereo", {
@@ -35,9 +35,9 @@ test_that("SIMD data conversion handles stereo", {
   library(speaker)
   
   # Generate stereo tone (if available)
-  sound_left <- Sound$create_tone(0.5, 44100, 440, 0.3)
+  sound_left <- Sound$create_tone(0.5, 440, 44100, 0.3)
   
-  sound_right <- Sound$create_tone(0.5, 44100, 880, 0.7)
+  sound_right <- Sound$create_tone(0.5, 880, 44100, 0.7)
   
   # Test individual sounds
   mat_left <- sound_left$as_matrix()
@@ -52,16 +52,16 @@ test_that("SIMD data conversion handles different sample rates", {
   library(speaker)
   
   # Low sample rate
-  sound_low <- Sound$create_tone(1.0, 16000, 440, 0.5)
+  sound_low <- Sound$create_tone(1.0, 440, 16000, 0.5)
   
   mat_low <- sound_low$as_matrix()
-  expect_equal(nrow(mat_low), 16000, tolerance = 5)
+  expect_equal(ncol(mat_low), 16000, tolerance = 5)  # ncol = samples
   
   # High sample rate
-  sound_high <- Sound$create_tone(1.0, 48000, 440, 0.5)
+  sound_high <- Sound$create_tone(1.0, 440, 48000, 0.5)
   
   mat_high <- sound_high$as_matrix()
-  expect_equal(nrow(mat_high), 48000, tolerance = 5)
+  expect_equal(ncol(mat_high), 48000, tolerance = 5)  # ncol = samples
 })
 
 test_that("SIMD data conversion is lossless", {
@@ -69,7 +69,7 @@ test_that("SIMD data conversion is lossless", {
   library(speaker)
   
   # Generate sound
-  sound1 <- Sound$create_tone(0.1, 44100, 440, 0.5)
+  sound1 <- Sound$create_tone(0.1, 440, 44100, 0.5)
   
   # Convert to matrix and back
   mat <- sound1$as_matrix()
@@ -79,7 +79,7 @@ test_that("SIMD data conversion is lossless", {
   df <- sound1$as_data_frame()
   
   # Data frame and matrix should have same values
-  expect_equal(df$channel_1, as.vector(mat), tolerance = 1e-12)
+  expect_equal(df$value, as.vector(mat), tolerance = 1e-12)
   
   # Time vector should be evenly spaced
   time_diffs <- diff(df$time)
@@ -91,11 +91,11 @@ test_that("SIMD data conversion handles edge cases", {
   library(speaker)
   
   # Very short sound
-  sound_short <- Sound$create_tone(0.01, 44100, 440, 0.5)
+  sound_short <- Sound$create_tone(0.01, 440, 44100, 0.5)
   
   mat_short <- sound_short$as_matrix()
   expect_true(nrow(mat_short) > 0)
-  expect_true(ncol(mat_short) == 1)
+  expect_true(nrow(mat_short) == 1)
   
   df_short <- sound_short$as_data_frame()
   expect_true(nrow(df_short) > 0)
@@ -107,7 +107,7 @@ test_that("SIMD data conversion performance is reasonable", {
   library(speaker)
   
   # Large sound file
-  sound_large <- Sound$create_tone(10.0, 44100, 440, 0.5)
+  sound_large <- Sound$create_tone(10.0, 440, 44100, 0.5)
   
   # Conversion should complete in reasonable time
   time_matrix <- system.time({
