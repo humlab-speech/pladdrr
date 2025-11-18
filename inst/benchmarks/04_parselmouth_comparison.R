@@ -31,14 +31,22 @@ if (!file.exists(test_file) || test_file == "") {
   cat("✗ Test audio file not found at inst/extdata/test.wav\n")
   cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
   
-  # Create synthetic test sound
-  sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-  
   cat("Running speaker benchmarks (synthetic audio):\n")
+  
+  # Create fresh sound for each benchmark iteration
   result <- bench::mark(
-    pitch = sound$to_pitch(),
-    formants = sound$to_formant_burg(),
-    intensity = sound$to_intensity(),
+    pitch = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_pitch()
+    },
+    formants = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_formant_burg()
+    },
+    intensity = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_intensity()
+    },
     iterations = 10,
     check = FALSE
   )

@@ -42,13 +42,23 @@ if (!parselmouth_available) {
     cat("Speaker Performance (without comparison):\n")
     cat("────────────────────────────────────────\n")
     
-    sound <- Sound$new(test_file)
+    # Load sound file
+    sound_file <- test_file
     
-    # Basic operations benchmark
+    # Basic operations benchmark - create fresh sound each time
     result <- bench::mark(
-      pitch = sound$to_pitch(),
-      formants = sound$to_formant_burg(),
-      intensity = sound$to_intensity(),
+      pitch = {
+        sound <- Sound$new(sound_file)
+        sound$to_pitch()
+      },
+      formants = {
+        sound <- Sound$new(sound_file)
+        sound$to_formant_burg()
+      },
+      intensity = {
+        sound <- Sound$new(sound_file)
+        sound$to_intensity()
+      },
       iterations = 10,
       check = FALSE
     )
@@ -69,15 +79,23 @@ if (!file.exists(test_file) || test_file == "") {
   cat("  Expected location: inst/extdata/test.wav\n")
   cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
   
-  # Use synthetic audio
-  sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
-  
   cat("Speaker Performance (synthetic 440Hz tone):\n")
   cat("────────────────────────────────────────\n")
+  
+  # Create fresh sound for each benchmark iteration
   result <- bench::mark(
-    pitch = sound$to_pitch(),
-    formants = sound$to_formant_burg(),
-    intensity = sound$to_intensity(),
+    pitch = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_pitch()
+    },
+    formants = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_formant_burg()
+    },
+    intensity = {
+      sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
+      sound$to_intensity()
+    },
     iterations = 10,
     check = FALSE
   )
