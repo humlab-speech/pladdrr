@@ -6,14 +6,61 @@ library(speaker)
 library(bench)
 library(reticulate)
 
-cat("========================================\n")
+cat("================================================================================\n")
 cat("Benchmark 5: Converted Scripts Comparison\n")
-cat("========================================\n\n")
+cat("================================================================================\n\n")
 
-# Initialize Python
-cat("Initializing Python environment...\n")
-pm <- import("parselmouth")
-cat("Parselmouth version:", pm$`__version__`, "\n\n")
+# Check if parselmouth is available
+cat("Checking for parselmouth installation...\n")
+parselmouth_available <- FALSE
+
+tryCatch({
+  pm <- import("parselmouth")
+  parselmouth_available <- TRUE
+  cat("✓ Parselmouth version:", pm$`__version__`, "\n\n")
+}, error = function(e) {
+  cat("✗ Parselmouth not installed\n")
+  cat("  To install: pip install praat-parselmouth\n")
+  cat("  Skipping parselmouth comparison benchmarks.\n\n")
+  cat("Note: This benchmark compares speaker performance against Python's\n")
+  cat("      parselmouth library. Install parselmouth to run the comparison.\n\n")
+})
+
+if (!parselmouth_available) {
+  cat("================================================================================\n")
+  cat("BENCHMARK SKIPPED - Parselmouth not available\n")
+  cat("================================================================================\n")
+  cat("\nTo enable this benchmark:\n")
+  cat("  1. Install Python parselmouth: pip install praat-parselmouth\n")
+  cat("  2. Verify installation: python -c 'import parselmouth'\n")
+  cat("  3. Re-run this benchmark\n\n")
+  cat("Running speaker-only benchmarks instead...\n\n")
+  
+  # Run speaker-only benchmarks as fallback
+  test_file <- system.file("extdata", "test.wav", package = "speaker")
+  if (file.exists(test_file)) {
+    cat("Speaker Performance (without comparison):\n")
+    cat("────────────────────────────────────────\n")
+    
+    sound <- Sound$new(test_file)
+    
+    # Basic operations benchmark
+    result <- bench::mark(
+      pitch = sound$to_pitch(),
+      formants = sound$to_formant_burg(),
+      intensity = sound$to_intensity(),
+      iterations = 10,
+      check = FALSE
+    )
+    
+    print(result[, c("expression", "min", "median", "itr/sec")])
+    cat("\nNote: These are speaker-only timings. Install parselmouth for comparisons.\n")
+  }
+  
+  quit(save = "no", status = 0)
+}
+
+cat("Running parselmouth comparison benchmarks...\n\n")
 
 # Load test audio
 test_file <- system.file("extdata", "test.wav", package = "speaker")
