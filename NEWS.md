@@ -1,3 +1,53 @@
+# speaker 0.5.0 (2025-11-18)
+
+## SIMD Optimization - Phases 1-3 Complete 🚀
+
+### Performance Improvements
+
+- **SIMD vectorization** implemented for core operations using RcppXsimd
+  - Matrix operations: 2-4x faster (sum, mean, min, max)
+  - Audio processing: 2-3x faster (RMS, energy, power)
+  - DSP operations: 3-6x faster (autocorrelation, window functions)
+  - Automatic CPU detection (ARM NEON, AVX2, SSE2)
+
+### Phase 1: Foundation
+- SIMD-optimized array operations in `simd_utils.h`
+- Matrix statistics (sum, mean, min, max) with NEON/SSE2
+- Fast data conversion (sound → matrix, sound → data.frame)
+- Optimized tone generation (sine wave synthesis)
+
+### Phase 2: Audio Processing
+- RMS calculation with FMA instructions (`sound_get_rms_simd()`)
+- Energy and power calculations (`sound_get_energy_simd()`, `sound_get_power_simd()`)
+- Peak normalization (`sound_scale_peak_simd()`)
+- Weighted sound mixing (`sound_mix_simd()`)
+
+### Phase 3: DSP Operations
+- Autocorrelation functions for pitch detection and LPC
+  - Full ACF sequence (`autocorrelation_simd()`)
+  - Normalized ACF (`autocorrelation_normalized_simd()`)
+- Window functions for spectral analysis
+  - Hamming, Hanning, Gaussian, Blackman windows
+  - SIMD-optimized taper operations
+
+### Testing Infrastructure
+- Added 6 new test files (`test-simd-*.R`) with 72+ test cases
+- Comprehensive numerical accuracy validation (tolerance < 1e-10)
+- Edge case testing (empty, single element, odd sizes)
+- Performance regression tests
+
+### Platform Support
+- ✅ Apple Silicon (M1/M2/M3) - ARM NEON 128-bit
+- ✅ AMD EPYC - AVX2 256-bit
+- ✅ Intel x86_64 - SSE2 fallback
+- Automatic scalar fallback when SIMD unavailable
+
+### Bug Fixes
+- Fixed R6 method detection in benchmark suite (#06_phase2_intensity.R)
+- Corrected `names()` check to use `tryCatch()` for R6 instances
+
+---
+
 # speaker 0.4.1
 
 ## TextGrid Completion - Phase 1

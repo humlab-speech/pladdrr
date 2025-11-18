@@ -9,11 +9,22 @@ cat("\n=== Phase 2: Intensity Calculations Benchmark ===\n")
 cat("Target speedup: 3-5x\n")
 cat("Operations: RMS over windows, energy calculations\n\n")
 
-# Check if required methods exist
+# Check if required methods exist by trying to call them
 sound_test <- Sound$from_values(values = c(0, 0), sampling_rate = 16000)
-has_get_rms <- "get_rms" %in% names(sound_test)
-has_get_energy <- "get_energy" %in% names(sound_test)
-has_get_power <- "get_power" %in% names(sound_test)
+has_get_rms <- tryCatch({
+  sound_test$get_rms(0, 0)
+  TRUE
+}, error = function(e) FALSE)
+
+has_get_energy <- tryCatch({
+  sound_test$get_energy(0, 0)
+  TRUE
+}, error = function(e) FALSE)
+
+has_get_power <- tryCatch({
+  sound_test$get_power(0, 0)
+  TRUE
+}, error = function(e) FALSE)
 
 if (!has_get_rms || !has_get_energy || !has_get_power) {
   cat("SKIPPING: Required Sound methods not yet implemented:\n")
@@ -23,6 +34,8 @@ if (!has_get_rms || !has_get_energy || !has_get_power) {
   cat("\nThis benchmark will be enabled after Phase 2 SIMD implementation.\n")
   quit(save = "no", status = 0)
 }
+
+rm(sound_test)  # Clean up test object
 
 # Test configurations
 configs <- list(
