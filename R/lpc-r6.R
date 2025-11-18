@@ -76,7 +76,7 @@ LPC <- R6::R6Class(
       if (is.null(.xptr)) {
         stop("LPC objects must be created from a Sound object using sound$to_lpc_burg() or similar methods")
       }
-      if (!inherits(.xptr, "XPtr")) {
+      if (!inherits(.xptr, "externalptr")) {
         stop(".xptr must be an external pointer")
       }
       private$ptr <- .xptr

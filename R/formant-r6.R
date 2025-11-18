@@ -16,7 +16,7 @@ Formant <- R6::R6Class("Formant",
       if (is.null(.xptr)) {
         stop("Formant objects must be created from a Sound object using to_formant_burg() or to_formant_keepall()")
       }
-      if (!inherits(.xptr, "XPtr")) {
+      if (!inherits(.xptr, "externalptr")) {
         stop(".xptr must be an external pointer")
       }
       private$ptr <- .xptr

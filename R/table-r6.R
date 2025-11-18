@@ -18,7 +18,7 @@ Table <- R6::R6Class("Table",
     initialize = function(numberOfRows = NULL, numberOfColumns = NULL, 
                          columnNames = NULL, .xptr = NULL) {
       if (!is.null(.xptr)) {
-        if (!inherits(.xptr, "XPtr")) {
+        if (!inherits(.xptr, "externalptr")) {
           stop(".xptr must be an external pointer")
         }
         private$ptr <- .xptr

@@ -27,7 +27,7 @@ FormantGrid <- R6::R6Class("FormantGrid",
                          .xptr = NULL) {
       if (!is.null(.xptr)) {
         # Created from existing pointer
-        if (!inherits(.xptr, "XPtr")) {
+        if (!inherits(.xptr, "externalptr")) {
           stop(".xptr must be an external pointer")
         }
         private$ptr <- .xptr
