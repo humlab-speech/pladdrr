@@ -1,3 +1,31 @@
+# speaker 0.5.4 (2025-11-19)
+
+## New Features
+
+### Comprehensive Vignettes
+- **NEW**: `vignette("integrated-phonetic-analysis")` - Complete TextGrid + acoustic analysis workflow
+  - TextGrid creation and manipulation
+  - Sound segmentation and processing
+  - Batch acoustic feature extraction
+  - Integration with R's data analysis tools
+  
+- **NEW**: `vignette("vowel-space-analysis")` - Vowel acoustics research pipeline
+  - Multi-point formant measurements (onset, midpoint, offset)
+  - Lobanov normalization method
+  - Vowel space area calculations
+  - F1-F2 trajectory analysis
+  - Publication-quality visualization examples
+
+### Documentation Enhancements
+- Expanded vignette collection from 1 to 3 comprehensive guides
+- Added theoretical background and best practices
+- Included real-world research application examples
+- Complete integration with ggplot2 for visualization
+
+## Repository Cleanup
+- Removed obsolete test scripts from repository root
+- Consolidated testing into proper `tests/testthat/` structure
+
 # speaker 0.5.3 (2025-11-19)
 
 ## Bug Fixes and Improvements
