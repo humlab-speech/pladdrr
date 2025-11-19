@@ -31,6 +31,9 @@ See [SIMD_BENCHMARKS.md](SIMD_BENCHMARKS.md) for detailed performance analysis.
 # Install devtools if needed
 if (!require("devtools")) install.packages("devtools")
 
+# Install the humlab-speech fork of av (required for audio I/O)
+devtools::install_github("humlab-speech/av")
+
 # Install speaker from GitHub
 devtools::install_github("humlab-speech/speaker")
 ```
@@ -42,6 +45,19 @@ devtools::install_github("humlab-speech/speaker")
   - macOS: Xcode Command Line Tools (`xcode-select --install`)
   - Linux: GCC >= 7 or Clang >= 5
   - Windows: Rtools >= 4.0
+- **FFmpeg** libraries (for av package audio I/O)
+  - macOS: `brew install ffmpeg`
+  - Ubuntu/Debian: `sudo apt-get install libavfilter-dev`
+  - Windows: Included with av package
+
+### Audio I/O
+
+The `speaker` package uses the [humlab-speech/av](https://github.com/humlab-speech/av) fork for all audio file operations. This provides:
+
+- Support for **any audio/video format** via FFmpeg (MP3, WAV, FLAC, OGG, AAC, M4A, etc.)
+- Fast, efficient audio reading and writing
+- No external Praat installation required
+- Cross-platform compatibility
 
 ### Optional Dependencies
 

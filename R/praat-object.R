@@ -67,6 +67,13 @@ PraatObject <- R6::R6Class(
       }
     },
     
+    # Check if pointer is valid and throw error if not
+    check_valid = function() {
+      if (!self$is_valid()) {
+        stop(sprintf("%s object is invalid or has been deleted", self$get_class_name()))
+      }
+    },
+    
     # Finalizer called when R object is garbage collected
     finalize = function() {
       # XPtr finalizer in C++ will handle actual cleanup

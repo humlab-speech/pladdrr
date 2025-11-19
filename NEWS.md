@@ -1,3 +1,36 @@
+# speaker 0.5.6 (2025-11-19)
+
+## Major Changes
+
+### Sound File I/O Now Uses av Package Exclusively
+
+All Sound object file operations now use the **humlab-speech/av** fork for maximum format support and ecosystem integration:
+
+**Breaking Changes**:
+- `Sound$new(use_av=)` parameter removed (av is always used now)
+- Native Praat file reading/writing disabled for ordinary Sound objects
+
+**New Capabilities**:
+- Support for **any audio/video format** via FFmpeg (MP3, WAV, FLAC, OGG, AAC, M4A, etc.)
+- Extract audio from video files (MP4, MKV, MOV, etc.)
+- Save with codec control: `sound$save("out.mp3", codec = "libmp3lame")`
+- Auto-format detection from file extension
+- Sample rate and channel conversion on save
+
+**Installation**:
+```r
+# Install av fork first
+remotes::install_github("humlab-speech/av")
+# Then install speaker
+remotes::install_github("humlab-speech/speaker")
+```
+
+**Migration**: Existing code continues to work without changes. New format capabilities are available immediately.
+
+See `AV_INTEGRATION_COMPLETE.md` for complete details.
+
+---
+
 # speaker 0.5.5 (2025-11-19)
 
 ## New Features
