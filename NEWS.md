@@ -1,3 +1,19 @@
+# speaker 0.5.3 (2025-11-19)
+
+## Bug Fixes and Improvements
+
+### File I/O
+- **Known Issue**: File reading temporarily disabled due to Praat initialization issues
+  - `TextGrid$new(file)` and `Sound$new(file)` currently unavailable
+  - **Workaround**: Use `TextGrid$create()` and `Sound$create_tone()` for object creation
+  - All other functionality (editing, analysis, saving) works normally
+  - Issue tracked in SESSION_SUMMARY_2025-11-19.md - fix planned for v0.6.0
+
+### Internal Improvements
+- Added Praat class registration in `praat_initialize()`
+- Improved error messages for file I/O functions
+- Updated wrapper code to use consistent XPtr management
+
 # speaker 0.5.0 (2025-11-18)
 
 ## SIMD Optimization - Phases 1-3 Complete 🚀

@@ -16,31 +16,29 @@
 
 // [[Rcpp::export(.textgrid_read_from_file)]]
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
+    // NOTE: File I/O currently has issues with Data_readFromFile segfaulting
+    // This is under investigation. For now, use TextGrid$create() instead.
+    // See SESSION_SUMMARY_2025-11-19.md for details.
+    Rcpp::stop("TextGrid file reading is currently unavailable due to Praat initialization issues. Use TextGrid$create() to create new TextGrids programmatically.");
+    
+    /* Original implementation - disabled until fixed:
     try {
-        structMelderFile file {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
+        structMelderFile file = {};
+        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
         autoDaata data = Data_readFromFile(&file);
         if (!data) {
             Rcpp::stop("Failed to read file as Praat data object");
         }
-        // Check if it's actually a TextGrid
         if (!Thing_isa(data.get(), classTextGrid)) {
             Rcpp::stop("File is not a TextGrid");
         }
-        // Cast to TextGrid
-        TextGrid textgrid = static_cast<TextGrid>(data.get());
-        // Create XPtr with custom finalizer
-        auto deleter = [](structTextGrid* thing) {
-            if (thing != nullptr) {
-                forget(thing);
-            }
-        };
-        data.releaseToAmbiguousOwner();  // Transfer ownership
-        return Rcpp::XPtr<structTextGrid>(textgrid, deleter);
+        autoTextGrid textgrid = data.static_cast_move<structTextGrid>();
+        return create_xptr_from_auto<structTextGrid>(textgrid);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to read TextGrid from file: " + path);
     }
+    */
 }
 
 // [[Rcpp::export(.textgrid_create)]]

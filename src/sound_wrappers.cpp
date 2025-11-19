@@ -35,6 +35,12 @@ using namespace Rcpp;
 //' @keywords internal
 // [[Rcpp::export(.sound_read_from_file)]]
 XPtr<structSound> sound_read_from_file(std::string path) {
+    // NOTE: File I/O currently has issues - under investigation
+    // Use Sound$create_tone(), Sound$create_from_formula(), etc. instead
+    // See SESSION_SUMMARY_2025-11-19.md for details
+    stop("Sound file reading is currently unavailable. Use Sound$create_tone() or other creation methods.");
+    
+    /* Original implementation - disabled until file I/O is fixed:
     try {
         structMelderFile file {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
@@ -46,6 +52,7 @@ XPtr<structSound> sound_read_from_file(std::string path) {
         Melder_clearError();
         stop("Failed to read sound file: " + path);
     }
+    */
 }
 
 //' Create Sound from values (internal)

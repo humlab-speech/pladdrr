@@ -8,6 +8,23 @@
 // (configured in Makevars). This initial version provides placeholder
 // implementations that will be replaced with actual Praat calls.
 
+// Praat headers for initialization
+#include "praat.github.io/sys/Thing.h"
+#include "praat.github.io/sys/Data.h"
+#include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/Pitch.h"
+#include "praat.github.io/fon/Formant.h"
+#include "praat.github.io/fon/Intensity.h"
+#include "praat.github.io/fon/Spectrum.h"
+#include "praat.github.io/fon/Spectrogram.h"
+#include "praat.github.io/fon/Harmonicity.h"
+#include "praat.github.io/fon/TextGrid.h"
+#include "praat.github.io/fon/PointProcess.h"
+#include "praat.github.io/fon/Matrix.h"
+#include "praat.github.io/fon/Ltas.h"
+#include "praat.github.io/LPC/LPC.h"
+#include "praat.github.io/stat/Table.h"
+
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -44,8 +61,23 @@ String praat_version() {
 //' @keywords internal
 // [[Rcpp::export]]
 bool praat_initialize() {
-    // TODO: Initialize Praat's memory management and error handling
-    // For now, just return true
+    // Register all Praat classes for file I/O
+    // This is required for Data_readFromFile to work correctly
+    Thing_recognizeClassesByName(classSound,
+                                  classPitch,
+                                  classFormant,
+                                  classIntensity,
+                                  classSpectrum,
+                                  classSpectrogram,
+                                  classHarmonicity,
+                                  classTextGrid,
+                                  classPointProcess,
+                                  classMatrix,
+                                  classLtas,
+                                  classLPC,
+                                  classTable,
+                                  nullptr);   // nullptr terminates the list
+    
     return true;
 }
 
