@@ -89,7 +89,7 @@ run_pm <- function(file, operation) {
 
 # Helper function to run speaker operation
 run_speaker <- function(file, operation) {
-  snd <- Sound$new(file)
+  snd <- Sound$new(file, use_av = TRUE)
   switch(operation,
     "pitch" = snd$to_pitch(),
     "formant" = snd$to_formant(),

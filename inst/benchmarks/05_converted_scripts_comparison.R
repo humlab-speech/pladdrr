@@ -48,15 +48,15 @@ if (!parselmouth_available) {
     # Basic operations benchmark - create fresh sound each time
     result <- bench::mark(
       pitch = {
-        sound <- Sound$new(sound_file)
+        sound <- Sound$new(sound_file, use_av = TRUE)
         sound$to_pitch()
       },
       formants = {
-        sound <- Sound$new(sound_file)
+        sound <- Sound$new(sound_file, use_av = TRUE)
         sound$to_formant_burg()
       },
       intensity = {
-        sound <- Sound$new(sound_file)
+        sound <- Sound$new(sound_file, use_av = TRUE)
         sound$to_intensity()
       },
       iterations = 10,

@@ -110,7 +110,9 @@ Sound <- R6::R6Class(
           
           # Read audio using av
           audio_info <- av::av_media_info(path)
-          audio_data <- av::read_audio_fft(path, window = NULL, overlap = 0)
+          # Note: av::read_audio_fft requires a valid window parameter
+          # We'll use a large window to get the full audio
+          audio_data <- av::read_audio_bin(path)
           
           # av returns samples × channels matrix, we need channels × samples
           if (is.matrix(audio_data)) {
