@@ -1,7 +1,7 @@
 Package: speaker
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 0.5.3
+Version: 0.5.4
 Date: 2025-11-19
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),

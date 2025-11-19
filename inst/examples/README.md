@@ -11,10 +11,15 @@ This directory contains example R scripts demonstrating how to use the `speaker`
 
 ### Example Scripts  
 - **01_basic_analysis.R** - Pitch, formants, and intensity extraction (✅ Fully Implemented)
-- **02_voice_quality.R** - Voice quality measures including planned jitter/shimmer/HNR
+- **02_voice_quality.R** - Voice quality measures including jitter/shimmer/HNR
 - **03_spectral_analysis.R** - Spectral moments and fricative analysis
-- **04_formant_optimization.R** - Formant ceiling optimization (planned)
+- **04_spectral_moments.R** - Spectral moments for fricative analysis
 - **05_complete_workflow.R** - End-to-end phonetic analysis pipeline
+- **06_textgrid_analysis.R** - TextGrid manipulation and annotation workflows
+- **07_comprehensive_phonetic_analysis.R** - Integrated TextGrid + acoustic analysis
+- **08_textgrid_corpus_analysis.R** - Large-scale corpus processing with benchmark data
+- **09_vowel_space_analysis.R** - Complete vowel acoustics pipeline (F1-F2 analysis)
+- **textgrid_editing_demo.R** - TextGrid creation and editing demonstrations
 
 ## Quick Start
 
@@ -380,8 +385,85 @@ If you create useful analysis scripts, consider contributing them:
 - **Parselmouth**: Jadoul, Y., Thompson, B., & de Boer, B. (2018). Introducing Parselmouth: A Python interface to Praat.
 - **speaker**: This package - Pure R implementation of Praat algorithms
 
+## New Advanced Examples (v0.5.4+)
+
+### Example 6: TextGrid Analysis (`06_textgrid_analysis.R`)
+
+Demonstrates comprehensive TextGrid functionality for linguistic annotation:
+
+- **Loading and inspection**: Read TextGrid files, query tier structure
+- **Interval queries**: Extract labels, boundaries, and time-based lookups
+- **Label statistics**: Distribution analysis, pattern matching
+- **Duration statistics**: Calculate interval durations, coverage percentages
+- **Data export**: Convert to R data frames for further analysis
+- **TextGrid creation**: Build new TextGrids from scratch
+- **Modification**: Add boundaries, set labels, manage tiers
+- **File I/O**: Save modified TextGrids
+
+**Use cases**: Annotation workflows, corpus preprocessing, forced alignment post-processing
+
+### Example 7: Comprehensive Phonetic Analysis (`07_comprehensive_phonetic_analysis.R`)
+
+Integrated workflow combining TextGrid annotation with acoustic analysis:
+
+- **TextGrid-guided segmentation**: Extract audio segments based on annotations
+- **Multi-tier analysis**: Process words, phones, or other linguistic units
+- **Batch processing**: Iterate over annotated intervals automatically
+- **Acoustic features**: Extract F0, formants, intensity, HNR for each segment
+- **Vowel classification**: Separate vowels from consonants for targeted analysis
+- **Statistical summaries**: Compute means, SDs by phone type
+- **Data preparation**: Export ready for statistical modeling
+
+**Use cases**: Phonetic corpus analysis, vowel quality studies, prosodic research
+
+### Example 8: TextGrid Corpus Analysis (`08_textgrid_corpus_analysis.R`)
+
+Efficient processing of large annotated corpora (uses benchmark data):
+
+- **Large file handling**: Load and process multi-minute TextGrid files
+- **Performance benchmarking**: Measure query operation speeds
+- **Sampling strategies**: Handle very large datasets efficiently
+- **Tier-level statistics**: Duration, coverage, label frequency by tier
+- **Memory-conscious processing**: Process subsets for scalability
+- **Temporal coverage**: Calculate proportion of labeled vs. unlabeled time
+- **Quality control**: Identify annotation patterns and potential errors
+
+**Use cases**: Corpus statistics, annotation quality assessment, preprocessing for ML pipelines
+
+### Example 9: Vowel Space Analysis (`09_vowel_space_analysis.R`)
+
+Complete pipeline for vowel acoustics research (F1-F2 analysis):
+
+- **Multi-point measurement**: Extract formants at onset, midpoint, and offset
+- **Formant normalization**: Lobanov (z-score) normalization implementation
+- **Vowel space metrics**: Calculate vowel space area (triangulation)
+- **Multiple tracking methods**: Compare Burg, Keep-all, and optimized tracking
+- **Gender-appropriate settings**: Adjust formant ceiling by speaker type
+- **Statistical analysis**: Compute vowel-specific means, SDs, and distributions
+- **Visualization prep**: Export data ready for ggplot2 vowel plots
+- **Trajectory analysis**: Track formant movement across vowel duration
+
+**Use cases**: Sociolinguistic variation, L2 acquisition, dialect studies, clinical assessment
+
+## Example Workflow Combinations
+
+### Basic Phonetic Research
+1. **06_textgrid_analysis.R** - Create/load annotations
+2. **07_comprehensive_phonetic_analysis.R** - Extract features
+3. **09_vowel_space_analysis.R** - Analyze vowel acoustics
+
+### Large-Scale Corpus Processing
+1. **08_textgrid_corpus_analysis.R** - Corpus statistics and QC
+2. **07_comprehensive_phonetic_analysis.R** - Batch feature extraction
+3. Export to CSV for statistical modeling in R/Python
+
+### Voice Quality Assessment
+1. **06_textgrid_analysis.R** - Identify voiced segments
+2. **02_voice_quality.R** - Extract jitter, shimmer, HNR
+3. Combine with formant data for comprehensive profile
+
 ---
 
-**Last Updated**: 2025-01-08  
-**Package Version**: 0.1.0  
-**Implementation Status**: Phase 2 Complete (35% coverage)
+**Last Updated**: 2025-11-19  
+**Package Version**: 0.5.4  
+**Implementation Status**: Comprehensive TextGrid + Sound manipulation complete
