@@ -1,3 +1,24 @@
+# speaker 0.5.5 (2025-11-19)
+
+## New Features
+
+### Additional Vignette: TextGrid Workflows
+- **NEW**: `vignette("textgrid-workflows")` - Comprehensive TextGrid manipulation guide
+  - Creating TextGrids (from scratch or files)
+  - Querying annotations (intervals, points, time-based queries)
+  - Modifying annotations (insert, delete, relabel boundaries)
+  - Tier management (add, remove, rename, duplicate)
+  - Large-scale corpus processing strategies
+  - Integration with forced alignment tools (MFA, WebMAUS)
+  - Quality control and validation workflows
+  - Data export to CSV and visualization examples
+
+### Documentation Expansion
+- Complete vignette collection: 3 comprehensive guides covering all major workflows
+- Real-world integration examples (Montreal Forced Aligner, batch processing)
+- Best practices for annotation standards and quality control
+- Performance optimization strategies for large corpora
+
 # speaker 0.5.4 (2025-11-19)
 
 ## New Features
