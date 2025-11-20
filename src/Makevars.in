@@ -87,12 +87,15 @@ SYS_SRC = sys/Thing.cpp sys/Data.cpp sys/Simple.cpp sys/Collection.cpp \
 # Dwsys sources
 DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/Polynomial.cpp \
-            praat.github.io/dwsys/FunctionSeries.cpp
+            praat.github.io/dwsys/FunctionSeries.cpp \
+            praat.github.io/dwsys/Eigen.cpp
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
-              praat.github.io/dwtools/DTW.cpp
+              praat.github.io/dwtools/DTW.cpp \
+              praat.github.io/dwtools/Matrix_extensions.cpp \
+              praat.github.io/dwtools/SampledIntoSampled.cpp
 
 # Stat sources
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
