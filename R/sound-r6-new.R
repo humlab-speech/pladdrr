@@ -366,6 +366,28 @@ Sound <- R6::R6Class(
       Spectrogram$new(.xptr = spectrogram_ptr)
     },
     
+    #' @description Create PowerCepstrogram for voice quality analysis (CPP)
+    #' @param pitch_floor Minimum pitch for analysis in Hz (default: 60)
+    #' @param time_step Time step between frames in seconds (default: 0.002)
+    #' @param maximum_frequency Maximum frequency to analyze in Hz (default: 5000)
+    #' @param pre_emphasis_frequency Pre-emphasis from frequency in Hz (default: 50)
+    #' @return PowerCepstrogram object
+    to_powercepstrogram = function(
+      pitch_floor = 60.0,
+      time_step = 0.002,
+      maximum_frequency = 5000.0,
+      pre_emphasis_frequency = 50.0
+    ) {
+      cepstrogram_ptr <- .sound_to_powercepstrogram(
+        private$ptr,
+        pitch_floor,
+        time_step,
+        maximum_frequency,
+        pre_emphasis_frequency
+      )
+      PowerCepstrogram$new(.xptr = cepstrogram_ptr)
+    },
+    
     #' @description Create Manipulation for pitch/duration modification
     #' @param time_step Time step for pitch analysis (default: 0.01, 0 = auto)
     #' @param pitch_floor Minimum pitch in Hz (default: 75)

@@ -204,6 +204,13 @@ Spectrum <- R6::R6Class("Spectrum",
       Sound$new(.xptr = ptr)
     },
     
+    #' @description Convert to PowerCepstrum (for voice quality analysis)
+    #' @return PowerCepstrum object
+    to_powercepstrum = function() {
+      ptr <- .spectrum_to_powercepstrum(private$ptr)
+      PowerCepstrum$new(.xptr = ptr)
+    },
+    
     # Export
     
     #' @description Export as matrix (row 1 = real, row 2 = imaginary)

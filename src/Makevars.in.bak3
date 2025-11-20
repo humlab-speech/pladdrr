@@ -5,7 +5,7 @@
 CXX_STD = CXX17
 
 # Include directories
-PKG_CPPFLAGS =  -DHAVE_XSIMD -I. \
+PKG_CPPFLAGS = @PKG_CPPFLAGS@ -I. \
                -Ipraat.github.io \
                -Ipraat.github.io/kar \
                -Ipraat.github.io/melder \
@@ -25,7 +25,7 @@ PKG_CPPFLAGS =  -DHAVE_XSIMD -I. \
                -Ipraat.github.io/external/glpk
 
 # Compiler flags
-PKG_CXXFLAGS =  -DPRAAT_LIB \
+PKG_CXXFLAGS = @PKG_CXXFLAGS@ -DPRAAT_LIB \
                -DNO_GUI \
                -DNO_AUDIO \
                -DNO_GRAPHICS \
@@ -54,7 +54,7 @@ else ifeq ($(shell uname -m),arm64)
 endif
 
 # Linker flags
-PKG_LIBS =  -pthread
+PKG_LIBS = @PKG_LIBS@ -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -91,8 +91,7 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
-              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
-              praat.github.io/dwtools/DTW.cpp
+              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp
 
 # Stat sources
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp

@@ -90,7 +90,9 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/FunctionSeries.cpp
 
 # Dwtools sources
-DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp
+DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
+              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
+              praat.github.io/dwtools/DTW.cpp
 
 # Stat sources
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
@@ -136,7 +138,15 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LPC_to_Spectrogram.cpp \
           praat.github.io/LPC/LineSpectralFrequencies.cpp \
           praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp \
-          praat.github.io/LPC/LPC_and_Formant.cpp
+          praat.github.io/LPC/LPC_and_Formant.cpp \
+          praat.github.io/LPC/Cepstrum.cpp \
+          praat.github.io/LPC/Cepstrumc.cpp \
+          praat.github.io/LPC/PowerCepstrum.cpp \
+          praat.github.io/LPC/PowerCepstrogram.cpp \
+          praat.github.io/LPC/Sound_and_Cepstrum.cpp \
+          praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
+          praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
+          praat.github.io/LPC/LPC_and_Cepstrumc.cpp
 
 # Wrapper sources
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
@@ -148,6 +158,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp table_wrappers.cpp \
               amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
+              powercepstrum_wrappers.cpp \
               matrix_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \

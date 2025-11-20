@@ -995,6 +995,62 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     invisible(.Call(`_speaker_pointprocess_save`, xptr, path))
 }
 
+.sound_to_powercepstrogram <- function(sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency) {
+    .Call(`_speaker_sound_to_powercepstrogram`, sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
+}
+
+.spectrum_to_powercepstrum <- function(spectrum_xptr) {
+    .Call(`_speaker_spectrum_to_powercepstrum`, spectrum_xptr)
+}
+
+.powercepstrum_get_peak_prominence <- function(xptr, interpolation, qmin, qmax, fit_method, tolerance) {
+    .Call(`_speaker_powercepstrum_get_peak_prominence`, xptr, interpolation, qmin, qmax, fit_method, tolerance)
+}
+
+.powercepstrum_get_quefrency_of_peak <- function(xptr, interpolation, qmin, qmax) {
+    .Call(`_speaker_powercepstrum_get_quefrency_of_peak`, xptr, interpolation, qmin, qmax)
+}
+
+.powercepstrum_get_value_at_quefrency <- function(xptr, quefrency, interpolation, unit) {
+    .Call(`_speaker_powercepstrum_get_value_at_quefrency`, xptr, quefrency, interpolation, unit)
+}
+
+.powercepstrum_smooth <- function(xptr, averaging_window, nsamples) {
+    .Call(`_speaker_powercepstrum_smooth`, xptr, averaging_window, nsamples)
+}
+
+.powercepstrum_to_matrix <- function(xptr) {
+    .Call(`_speaker_powercepstrum_to_matrix`, xptr)
+}
+
+.powercepstrum_as_matrix <- function(xptr) {
+    .Call(`_speaker_powercepstrum_as_matrix`, xptr)
+}
+
+.powercepstrogram_get_cpp_at_time <- function(xptr, time, interpolation, qmin, qmax, fit_method, tolerance) {
+    .Call(`_speaker_powercepstrogram_get_cpp_at_time`, xptr, time, interpolation, qmin, qmax, fit_method, tolerance)
+}
+
+.powercepstrogram_get_mean_cpp <- function(xptr, from_time, to_time, qmin, qmax, fit_method, tolerance) {
+    .Call(`_speaker_powercepstrogram_get_mean_cpp`, xptr, from_time, to_time, qmin, qmax, fit_method, tolerance)
+}
+
+.powercepstrogram_to_powercepstrum_slice <- function(xptr, time) {
+    .Call(`_speaker_powercepstrogram_to_powercepstrum_slice`, xptr, time)
+}
+
+.powercepstrogram_to_matrix <- function(xptr) {
+    .Call(`_speaker_powercepstrogram_to_matrix`, xptr)
+}
+
+.powercepstrogram_as_matrix <- function(xptr) {
+    .Call(`_speaker_powercepstrogram_as_matrix`, xptr)
+}
+
+.powercepstrogram_smooth <- function(xptr, time_averaging_window, quefrency_averaging_window) {
+    .Call(`_speaker_powercepstrogram_smooth`, xptr, time_averaging_window, quefrency_averaging_window)
+}
+
 #' Get Praat version information
 #'
 #' Returns the version string for the Praat library integration

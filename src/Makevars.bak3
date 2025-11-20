@@ -91,8 +91,7 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
-              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
-              praat.github.io/dwtools/DTW.cpp
+              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp
 
 # Stat sources
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
