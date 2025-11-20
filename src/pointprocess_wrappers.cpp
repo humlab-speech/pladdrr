@@ -637,6 +637,122 @@ void pointprocess_remove_points_between(SEXP xptr, double from_time, double to_t
 }
 
 // =============================================================================
+// =============================================================================
+// Voice Analysis Methods
+// =============================================================================
+
+// [[Rcpp::export(.pointprocess_voice_report)]]
+List pointprocess_voice_report(SEXP sound_xptr, SEXP pitch_xptr, SEXP pp_xptr,
+                               double tmin, double tmax,
+                               double floor, double ceiling,
+                               double maximum_period_factor,
+                               double maximum_amplitude_factor,
+                               double silence_threshold,
+                               double voicing_threshold) {
+    XPtr<structSound> sound(sound_xptr);
+    XPtr<structPitch> pitch(pitch_xptr);
+    XPtr<structPointProcess> pulses(pp_xptr);
+    
+    if (!sound || !pitch || !pulses) {
+        stop("Invalid Sound, Pitch, or PointProcess pointer");
+    }
+    
+    try {
+        // Auto-window if needed
+        Function_unidirectionalAutowindow(sound, &tmin, &tmax);
+        
+        // Calculate pitch statistics
+        double median_pitch = Pitch_getQuantile(pitch, tmin, tmax, 0.50, kPitch_unit::HERTZ);
+        double mean_pitch = Pitch_getMean(pitch, tmin, tmax, kPitch_unit::HERTZ);
+        double stdev_pitch = Pitch_getStandardDeviation(pitch, tmin, tmax, kPitch_unit::HERTZ);
+        double minimum_pitch = Pitch_getMinimum(pitch, tmin, tmax, kPitch_unit::HERTZ, 1);
+        double maximum_pitch = Pitch_getMaximum(pitch, tmin, tmax, kPitch_unit::HERTZ, 1);
+        
+        // Pulse statistics
+        double pmin = 0.8 / ceiling;
+        double pmax = 1.25 / floor;
+        
+        MelderIntegerRange pulseNumbers = PointProcess_getWindowPoints(pulses, tmin, tmax);
+        integer numberOfPeriods = PointProcess_getNumberOfPeriods(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double meanPeriod = PointProcess_getMeanPeriod(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double stdevPeriod = PointProcess_getStdevPeriod(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        
+        // Voicing
+        MelderFraction unvoicedFraction = Pitch_getFractionOfLocallyUnvoicedFrames(
+            pitch, tmin, tmax, ceiling, silence_threshold, voicing_threshold
+        );
+        MelderCountAndFraction breaks = PointProcess_getCountAndFractionOfVoiceBreaks(pulses, tmin, tmax, pmax);
+        
+        // Jitter measurements
+        double jitter_local = PointProcess_getJitter_local(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double jitter_local_absolute = PointProcess_getJitter_local_absolute(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double jitter_rap = PointProcess_getJitter_rap(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double jitter_ppq5 = PointProcess_getJitter_ppq5(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        double jitter_ddp = PointProcess_getJitter_ddp(pulses, tmin, tmax, pmin, pmax, maximum_period_factor);
+        
+        // Shimmer measurements
+        double shimmer_local, shimmer_local_db, shimmer_apq3, shimmer_apq5, shimmer_apq11, shimmer_dda;
+        PointProcess_Sound_getShimmer_multi(pulses, sound, tmin, tmax, pmin, pmax,
+            maximum_period_factor, maximum_amplitude_factor,
+            &shimmer_local, &shimmer_local_db, &shimmer_apq3, &shimmer_apq5, &shimmer_apq11, &shimmer_dda
+        );
+        
+        // Harmonicity
+        double mean_autocorrelation = Pitch_getMeanStrength(pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION);
+        double mean_noise_to_harmonics_ratio = Pitch_getMeanStrength(pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO);
+        double mean_harmonics_to_noise_ratio = Pitch_getMeanStrength(pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB);
+        
+        // Return all measurements as a named list
+        return List::create(
+            Named("time_range") = NumericVector::create(tmin, tmax),
+            Named("duration") = tmax - tmin,
+            
+            // Pitch
+            Named("median_pitch") = median_pitch,
+            Named("mean_pitch") = mean_pitch,
+            Named("stdev_pitch") = stdev_pitch,
+            Named("minimum_pitch") = minimum_pitch,
+            Named("maximum_pitch") = maximum_pitch,
+            
+            // Pulses
+            Named("number_of_pulses") = static_cast<int>(pulseNumbers.size()),
+            Named("number_of_periods") = static_cast<int>(numberOfPeriods),
+            Named("mean_period") = meanPeriod,
+            Named("stdev_period") = stdevPeriod,
+            
+            // Voicing
+            Named("fraction_unvoiced_frames") = unvoicedFraction.get(),
+            Named("number_of_voice_breaks") = static_cast<int>(breaks.count),
+            Named("degree_of_voice_breaks") = breaks.getFraction(),
+            
+            // Jitter (as proportions, multiply by 100 for percentage)
+            Named("jitter_local") = jitter_local,
+            Named("jitter_local_absolute") = jitter_local_absolute,
+            Named("jitter_rap") = jitter_rap,
+            Named("jitter_ppq5") = jitter_ppq5,
+            Named("jitter_ddp") = jitter_ddp,
+            
+            // Shimmer (as proportions, multiply by 100 for percentage)
+            Named("shimmer_local") = shimmer_local,
+            Named("shimmer_local_db") = shimmer_local_db,
+            Named("shimmer_apq3") = shimmer_apq3,
+            Named("shimmer_apq5") = shimmer_apq5,
+            Named("shimmer_apq11") = shimmer_apq11,
+            Named("shimmer_dda") = shimmer_dda,
+            
+            // Harmonicity
+            Named("mean_autocorrelation") = mean_autocorrelation,
+            Named("mean_noise_to_harmonics_ratio") = mean_noise_to_harmonics_ratio,
+            Named("mean_harmonics_to_noise_ratio") = mean_harmonics_to_noise_ratio
+        );
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute voice report");
+    }
+}
+
+// =============================================================================
 // I/O Methods
 // =============================================================================
 

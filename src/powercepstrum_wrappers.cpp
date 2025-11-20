@@ -404,3 +404,89 @@ SEXP powercepstrogram_smooth(SEXP xptr, double time_averaging_window,
         stop("Failed to smooth PowerCepstrogram");
     }
 }
+
+// ==============================================================================
+// CPPS (Smoothed Cepstral Peak Prominence) - Critical for AVQI
+// ==============================================================================
+
+// [[Rcpp::export(.powercepstrogram_get_cpps)]]
+double powercepstrogram_get_cpps(SEXP xptr,
+                                bool subtract_tilt,
+                                double time_averaging_window,
+                                double quefrency_averaging_window,
+                                double pitch_floor,
+                                double pitch_ceiling,
+                                double delta_f0,
+                                int interpolation,
+                                double qstart_fit,
+                                double qend_fit,
+                                int trend_type,
+                                int fit_method) {
+    XPtr<structPowerCepstrogram> cepstrogram(xptr);
+    if (!cepstrogram) stop("Invalid PowerCepstrogram pointer");
+    
+    try {
+        // Convert integer enums to Praat types
+        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        double cpps = PowerCepstrogram_getCPPS(
+            cepstrogram.get(),
+            subtract_tilt,
+            time_averaging_window,
+            quefrency_averaging_window,
+            pitch_floor,
+            pitch_ceiling,
+            delta_f0,
+            interp_type,
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit
+        );
+        
+        return cpps;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute CPPS from PowerCepstrogram");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_get_peak_prominence_cpps)]]
+double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
+                                             double pitch_floor,
+                                             double pitch_ceiling,
+                                             int interpolation,
+                                             double qstart_fit,
+                                             double qend_fit,
+                                             int trend_type,
+                                             int fit_method) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        // Convert integer enums to Praat types
+        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        double qpeak = 0.0;
+        double prominence = PowerCepstrum_getPeakProminence(
+            cepstrum.get(),
+            pitch_floor,
+            pitch_ceiling,
+            interp_type,
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit,
+            &qpeak
+        );
+        
+        return prominence;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute peak prominence from PowerCepstrum");
+    }
+}

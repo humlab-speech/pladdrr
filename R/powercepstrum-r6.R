@@ -295,6 +295,110 @@ PowerCepstrogram <- R6::R6Class(
     },
     
     #' @description
+    #' Get CPPS (Smoothed Cepstral Peak Prominence) - CRITICAL FOR AVQI
+    #' 
+    #' Computes the Smoothed Cepstral Peak Prominence, a robust measure of voice quality
+    #' that is less sensitive to noise than traditional CPP. This is one of the six
+    #' acoustic measures required for AVQI calculation.
+    #' 
+    #' @param subtract_tilt Logical. Subtract trend line before smoothing (default: TRUE)
+    #' @param time_averaging_window Numeric. Time smoothing window in seconds (default: 0.001)
+    #' @param quefrency_averaging_window Numeric. Quefrency smoothing window in seconds (default: 0.0005)
+    #' @param pitch_floor Numeric. Minimum pitch in Hz for peak search (default: 60)
+    #' @param pitch_ceiling Numeric. Maximum pitch in Hz for peak search (default: 333.3)
+    #' @param delta_f0 Numeric. Step size for F0 search (default: 0.05)
+    #' @param interpolation Character. Peak interpolation method (default: "parabolic")
+    #' @param quefrency_range_start Numeric. Start of quefrency fit range (default: 0.001)
+    #' @param quefrency_range_end Numeric. End of quefrency fit range (default: 0.05)
+    #' @param trend_line_type Character. Trend line type (default: "straight")
+    #' @param fit_method Character. Fitting method (default: "least squares")
+    #' 
+    #' @return Numeric. CPPS value in dB
+    #' 
+    #' @details
+    #' CPPS is computed by:
+    #' 1. Optionally subtracting a trend line from the cepstrogram
+    #' 2. Smoothing in both time and quefrency dimensions
+    #' 3. Finding the peak in the expected F0 range
+    #' 4. Measuring the prominence of that peak above the regression line
+    #'
+    #' For AVQI, use the default parameters which match the AVQI protocol
+    #' (Barsties & Maryn, 2015).
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' sound <- Sound$new("voice.wav")
+    #' cepstrogram <- sound$to_power_cepstrogram(
+    #'   pitch_floor = 60,
+    #'   time_step = 0.002,
+    #'   max_frequency = 5000,
+    #'   pre_emphasis_from = 50
+    #' )
+    #' 
+    #' # Get CPPS with AVQI-standard parameters
+    #' cpps <- cepstrogram$get_cpps(
+    #'   subtract_tilt = TRUE,
+    #'   time_averaging_window = 0.001,
+    #'   quefrency_averaging_window = 0.05,
+    #'   pitch_floor = 60,
+    #'   pitch_ceiling = 330
+    #' )
+    #' cat("CPPS:", round(cpps, 2), "dB\n")
+    #' }
+    get_cpps = function(subtract_tilt = TRUE,
+                       time_averaging_window = 0.001,
+                       quefrency_averaging_window = 0.0005,
+                       pitch_floor = 60,
+                       pitch_ceiling = 333.3,
+                       delta_f0 = 0.05,
+                       interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
+                       quefrency_range_start = 0.001,
+                       quefrency_range_end = 0.05,
+                       trend_line_type = c("straight", "exponential decay", "parabolic"),
+                       fit_method = c("least squares", "robust", "robust slow")) {
+      
+      interpolation <- match.arg(interpolation)
+      trend_line_type <- match.arg(trend_line_type)
+      fit_method <- match.arg(fit_method)
+      
+      # Map to Praat enum values
+      interp_map <- c(
+        "none" = 0,
+        "parabolic" = 1,
+        "cubic" = 2,
+        "sinc70" = 3,
+        "sinc700" = 4
+      )
+      
+      trend_map <- c(
+        "straight" = 1,
+        "exponential decay" = 2,
+        "parabolic" = 3
+      )
+      
+      fit_map <- c(
+        "least squares" = 1,
+        "robust" = 2,
+        "robust slow" = 3
+      )
+      
+      .powercepstrogram_get_cpps(
+        self$.xptr,
+        subtract_tilt = subtract_tilt,
+        time_averaging_window = time_averaging_window,
+        quefrency_averaging_window = quefrency_averaging_window,
+        pitch_floor = pitch_floor,
+        pitch_ceiling = pitch_ceiling,
+        delta_f0 = delta_f0,
+        interpolation = interp_map[[interpolation]],
+        qstart_fit = quefrency_range_start,
+        qend_fit = quefrency_range_end,
+        trend_type = trend_map[[trend_line_type]],
+        fit_method = fit_map[[fit_method]]
+      )
+    },
+    
+    #' @description
     #' Smooth the power cepstrogram
     #' @param time_averaging_window Numeric. Time smoothing window (seconds)
     #' @param quefrency_averaging_window Numeric. Quefrency smoothing window (seconds)

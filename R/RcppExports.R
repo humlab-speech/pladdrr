@@ -991,6 +991,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     invisible(.Call(`_speaker_pointprocess_remove_points_between`, xptr, from_time, to_time))
 }
 
+.pointprocess_voice_report <- function(sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold) {
+    .Call(`_speaker_pointprocess_voice_report`, sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold)
+}
+
 .pointprocess_save <- function(xptr, path) {
     invisible(.Call(`_speaker_pointprocess_save`, xptr, path))
 }
@@ -1049,6 +1053,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .powercepstrogram_smooth <- function(xptr, time_averaging_window, quefrency_averaging_window) {
     .Call(`_speaker_powercepstrogram_smooth`, xptr, time_averaging_window, quefrency_averaging_window)
+}
+
+.powercepstrogram_get_cpps <- function(xptr, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_speaker_powercepstrogram_get_cpps`, xptr, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
+}
+
+.powercepstrum_get_peak_prominence_cpps <- function(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_speaker_powercepstrum_get_peak_prominence_cpps`, xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
 #' Get Praat version information

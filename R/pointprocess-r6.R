@@ -27,14 +27,19 @@
 #'
 #' ## Voice Quality Metrics
 #'
-#' Jitter measures (period perturbation):
+#' **Comprehensive Voice Report** (NEW - for AVQI/DSI):
+#' - `$voice_report(sound, pitch, ...)` - Complete voice quality analysis with all
+#'   jitter, shimmer, and harmonicity measures in a single call. Essential for
+#'   computing AVQI and DSI voice quality indices.
+#'
+#' Individual Jitter measures (period perturbation):
 #' - `$get_jitter_local(...)` - Local jitter (relative)
 #' - `$get_jitter_local_absolute(...)` - Local jitter (absolute)
 #' - `$get_jitter_rap(...)` - Relative Average Perturbation
 #' - `$get_jitter_ppq5(...)` - Five-point Period Perturbation Quotient
 #' - `$get_jitter_ddp(...)` - Difference of Differences of Periods
 #'
-#' Shimmer measures (amplitude perturbation, require Sound object):
+#' Individual Shimmer measures (amplitude perturbation, require Sound object):
 #' - `$get_shimmer_local(sound, ...)` - Local shimmer (relative)
 #' - `$get_shimmer_local_db(sound, ...)` - Local shimmer (dB)
 #' - `$get_shimmer_apq3(sound, ...)` - 3-point Amplitude Perturbation Quotient
@@ -577,6 +582,108 @@ PointProcess <- R6::R6Class(
     
     # ========================================================================
     # Print Method
+    # ========================================================================
+    # Voice Analysis
+    # ========================================================================
+    
+    #' @description
+    #' Generate comprehensive voice report with jitter, shimmer, and harmonicity measures.
+    #' 
+    #' This function computes all standard voice quality metrics as provided by Praat's
+    #' Voice Report. It requires a Sound object and a Pitch object to compute the complete
+    #' set of measurements.
+    #' 
+    #' @param sound Sound object
+    #' @param pitch Pitch object
+    #' @param from_time Start time (0 = start of sound)
+    #' @param to_time End time (0 = end of sound)
+    #' @param pitch_floor Minimum pitch for period calculations (Hz)
+    #' @param pitch_ceiling Maximum pitch for period calculations (Hz)
+    #' @param maximum_period_factor Maximum allowed period factor for jitter
+    #' @param maximum_amplitude_factor Maximum allowed amplitude factor for shimmer
+    #' @param silence_threshold Silence threshold (fraction of global peak)
+    #' @param voicing_threshold Voicing threshold (fraction between 0 and 1)
+    #' 
+    #' @return Named list with voice quality measurements:
+    #' \describe{
+    #'   \item{jitter_local}{Local jitter (period-to-period variation)}
+    #'   \item{jitter_local_absolute}{Local jitter in seconds}
+    #'   \item{jitter_rap}{Relative Average Perturbation}
+    #'   \item{jitter_ppq5}{5-point Period Perturbation Quotient (required for DSI)}
+    #'   \item{jitter_ddp}{Difference of Differences of Periods}
+    #'   \item{shimmer_local}{Local shimmer (amplitude variation, required for AVQI)}
+    #'   \item{shimmer_local_db}{Local shimmer in dB (required for AVQI)}
+    #'   \item{shimmer_apq3}{3-point Amplitude Perturbation Quotient}
+    #'   \item{shimmer_apq5}{5-point Amplitude Perturbation Quotient}
+    #'   \item{shimmer_apq11}{11-point Amplitude Perturbation Quotient}
+    #'   \item{shimmer_dda}{Difference of Differences of Amplitudes}
+    #'   \item{mean_harmonics_to_noise_ratio}{Mean HNR in dB}
+    #'   \item{mean_autocorrelation}{Mean autocorrelation coefficient}
+    #'   \item{mean_noise_to_harmonics_ratio}{Mean NHR}
+    #'   \item{median_pitch}{Median pitch in Hz}
+    #'   \item{mean_pitch}{Mean pitch in Hz}
+    #'   \item{stdev_pitch}{Standard deviation of pitch}
+    #'   \item{minimum_pitch}{Minimum pitch}
+    #'   \item{maximum_pitch}{Maximum pitch}
+    #'   \item{number_of_pulses}{Total number of detected pulses}
+    #'   \item{number_of_periods}{Number of valid periods}
+    #'   \item{mean_period}{Mean period in seconds}
+    #'   \item{stdev_period}{Standard deviation of periods}
+    #'   \item{fraction_unvoiced_frames}{Fraction of unvoiced frames}
+    #'   \item{number_of_voice_breaks}{Count of voice breaks}
+    #'   \item{degree_of_voice_breaks}{Fraction of time in voice breaks}
+    #' }
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' sound <- Sound$new("audio.wav")
+    #' pitch <- sound$to_pitch_cc()
+    #' pp <- sound$to_point_process_cc(pitch)
+    #' 
+    #' # Get complete voice report
+    #' report <- pp$voice_report(sound, pitch)
+    #' 
+    #' # Extract specific measures for AVQI
+    #' shimmer_local <- report$shimmer_local * 100  # Convert to percentage
+    #' shimmer_local_db <- report$shimmer_local_db
+    #' 
+    #' # Extract jitter ppq5 for DSI
+    #' jitter_ppq5 <- report$jitter_ppq5 * 100  # Convert to percentage
+    #' }
+    voice_report = function(sound, pitch,
+                           from_time = 0,
+                           to_time = 0,
+                           pitch_floor = 75,
+                           pitch_ceiling = 600,
+                           maximum_period_factor = 1.3,
+                           maximum_amplitude_factor = 1.6,
+                           silence_threshold = 0.03,
+                           voicing_threshold = 0.45) {
+      
+      if (!inherits(sound, "Sound")) {
+        stop("sound must be a Sound object")
+      }
+      if (!inherits(pitch, "Pitch")) {
+        stop("pitch must be a Pitch object")
+      }
+      
+      .pointprocess_voice_report(
+        sound$.xptr,
+        pitch$.xptr,
+        self$.xptr,
+        from_time,
+        to_time,
+        pitch_floor,
+        pitch_ceiling,
+        maximum_period_factor,
+        maximum_amplitude_factor,
+        silence_threshold,
+        voicing_threshold
+      )
+    },
+    
+    # ========================================================================
+    # Print
     # ========================================================================
     
     #' @description

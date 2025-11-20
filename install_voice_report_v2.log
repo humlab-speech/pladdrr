@@ -1,0 +1,13 @@
+* installing to library ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’
+* installing *source* package ‘speaker’ ...
+** using staged installation
+Checking for RcppXsimd...
+RcppXsimd found - enabling SIMD optimizations
+Configuration complete
+** libs
+using C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.4.4.1)’
+using C++17
+using SDK: ‘’
+make: *** No rule to make target `praat.github.io/dwsys/Eigen.o', needed by `speaker.so'.  Stop.
+ERROR: compilation failed for package ‘speaker’
+* removing ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/speaker’
