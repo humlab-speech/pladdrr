@@ -1,7 +1,7 @@
 Package: speaker
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 0.8.0
+Version: 0.9.0
 Date: 2025-11-20
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
@@ -25,14 +25,16 @@ Imports:
     Rcpp (>= 1.0.0),
     R6 (>= 2.5.0),
     S7 (>= 0.1.0),
-    av
+    av,
+    ggplot2
 LinkingTo: Rcpp, RcppXsimd
 Suggests:
     testthat (>= 3.0.0),
     roxygen2 (>= 7.0.0),
     knitr,
     rmarkdown,
-    covr
+    covr,
+    gridExtra
 Remotes: humlab-speech/av
 SystemRequirements: C++17
 RoxygenNote: 7.3.3
