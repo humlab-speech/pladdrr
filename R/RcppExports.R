@@ -1836,6 +1836,18 @@ praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_speaker_praat_error_to_r`, error_msg))
 }
 
+.sound_to_textgrid_silences <- function(sound_xptr, minimum_pitch, time_step, silence_threshold_db, min_silent_interval, min_sounding_interval, silent_label, sounding_label) {
+    .Call(`_speaker_sound_to_textgrid_silences`, sound_xptr, minimum_pitch, time_step, silence_threshold_db, min_silent_interval, min_sounding_interval, silent_label, sounding_label)
+}
+
+.textgrid_get_intervals_where <- function(xptr, tier_number, condition, match_text) {
+    .Call(`_speaker_textgrid_get_intervals_where`, xptr, tier_number, condition, match_text)
+}
+
+.sound_extract_parts <- function(sound_xptr, start_times, end_times, window_shape, relative_width, preserve_times) {
+    .Call(`_speaker_sound_extract_parts`, sound_xptr, start_times, end_times, window_shape, relative_width, preserve_times)
+}
+
 .apply_hamming_window_simd <- function(data) {
     .Call(`_speaker_apply_hamming_window_simd`, data)
 }
