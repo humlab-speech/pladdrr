@@ -54,7 +54,7 @@ int_tier$save("modified.IntensityTier")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{IntensityTier}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{IntensityTier}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

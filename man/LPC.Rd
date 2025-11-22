@@ -71,7 +71,7 @@ spectrum <- lpc$to_spectrum(time = 0.5, df_min = 20)
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{LPC}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{LPC}
 }
 \section{Methods}{
 \subsection{Public methods}{

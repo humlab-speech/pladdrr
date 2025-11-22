@@ -44,7 +44,7 @@ Spectrum objects represent frequency-domain representations of sounds.
 }
 
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Spectrum}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Spectrum}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -69,6 +69,7 @@ Spectrum objects represent frequency-domain representations of sounds.
 \item \href{#method-Spectrum-stop_hann_band}{\code{Spectrum$stop_hann_band()}}
 \item \href{#method-Spectrum-cepstral_smoothing}{\code{Spectrum$cepstral_smoothing()}}
 \item \href{#method-Spectrum-to_sound}{\code{Spectrum$to_sound()}}
+\item \href{#method-Spectrum-to_powercepstrum}{\code{Spectrum$to_powercepstrum()}}
 \item \href{#method-Spectrum-as_matrix}{\code{Spectrum$as_matrix()}}
 \item \href{#method-Spectrum-as_data_frame}{\code{Spectrum$as_data_frame()}}
 \item \href{#method-Spectrum-print}{\code{Spectrum$print()}}
@@ -457,6 +458,19 @@ Convert to Sound (inverse FFT)
 
 \subsection{Returns}{
 Sound object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-to_powercepstrum"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-to_powercepstrum}{}}}
+\subsection{Method \code{to_powercepstrum()}}{
+Convert to PowerCepstrum (for voice quality analysis)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$to_powercepstrum()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+PowerCepstrum object
 }
 }
 \if{html}{\out{<hr>}}

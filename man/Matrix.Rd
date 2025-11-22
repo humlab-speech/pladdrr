@@ -13,7 +13,7 @@ R6 class representing a Praat Matrix object. Matrix objects represent
 two-dimensional sampled data with x and y axes.
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Matrix}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Matrix}
 }
 \section{Methods}{
 \subsection{Public methods}{

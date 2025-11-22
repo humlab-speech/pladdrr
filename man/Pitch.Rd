@@ -11,7 +11,7 @@ It provides methods for querying pitch values, statistics, and transformations.
 An R6 class representing a Praat Pitch object (fundamental frequency contour).
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Pitch}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Pitch}
 }
 \section{Methods}{
 \subsection{Public methods}{

@@ -70,7 +70,7 @@ plot(df$time, df$intensity_db, type = "l",
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Intensity}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Intensity}
 }
 \section{Methods}{
 \subsection{Public methods}{

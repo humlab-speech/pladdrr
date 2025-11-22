@@ -59,7 +59,7 @@ pitch_tier$save("modified.PitchTier")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{PitchTier}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{PitchTier}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

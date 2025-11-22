@@ -15,7 +15,7 @@ transformation and synthesis. This is the editable counterpart to the
 read-only Formant object.
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{FormantGrid}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{FormantGrid}
 }
 \section{Methods}{
 \subsection{Public methods}{

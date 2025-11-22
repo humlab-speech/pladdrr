@@ -55,7 +55,7 @@ dur_tier$save("modified.DurationTier")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{DurationTier}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{DurationTier}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

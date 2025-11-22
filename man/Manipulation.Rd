@@ -66,7 +66,7 @@ result <- manip$get_resynthesis_overlap_add()
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Manipulation}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Manipulation}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

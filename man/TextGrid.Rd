@@ -101,7 +101,7 @@ tg$save("output.TextGrid")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{TextGrid}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{TextGrid}
 }
 \section{Methods}{
 \subsection{Public methods}{

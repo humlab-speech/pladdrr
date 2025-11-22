@@ -31,14 +31,19 @@ PointProcess objects are typically created from Sound or Pitch objects:
 
 ## Voice Quality Metrics
 
-Jitter measures (period perturbation):
+**Comprehensive Voice Report** (NEW - for AVQI/DSI):
+- `$voice_report(sound, pitch, ...)` - Complete voice quality analysis with all
+  jitter, shimmer, and harmonicity measures in a single call. Essential for
+  computing AVQI and DSI voice quality indices.
+
+Individual Jitter measures (period perturbation):
 - `$get_jitter_local(...)` - Local jitter (relative)
 - `$get_jitter_local_absolute(...)` - Local jitter (absolute)
 - `$get_jitter_rap(...)` - Relative Average Perturbation
 - `$get_jitter_ppq5(...)` - Five-point Period Perturbation Quotient
 - `$get_jitter_ddp(...)` - Difference of Differences of Periods
 
-Shimmer measures (amplitude perturbation, require Sound object):
+Individual Shimmer measures (amplitude perturbation, require Sound object):
 - `$get_shimmer_local(sound, ...)` - Local shimmer (relative)
 - `$get_shimmer_local_db(sound, ...)` - Local shimmer (dB)
 - `$get_shimmer_apq3(sound, ...)` - 3-point Amplitude Perturbation Quotient
@@ -108,9 +113,29 @@ mean_period <- pp$get_mean_period(
 df <- pp$as_data_frame()
 }
 
+
+## ------------------------------------------------
+## Method `PointProcess$voice_report`
+## ------------------------------------------------
+
+\dontrun{
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch_cc()
+pp <- sound$to_point_process_cc(pitch)
+
+# Get complete voice report
+report <- pp$voice_report(sound, pitch)
+
+# Extract specific measures for AVQI
+shimmer_local <- report$shimmer_local * 100  # Convert to percentage
+shimmer_local_db <- report$shimmer_local_db
+
+# Extract jitter ppq5 for DSI
+jitter_ppq5 <- report$jitter_ppq5 * 100  # Convert to percentage
+}
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{PointProcess}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{PointProcess}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -141,6 +166,7 @@ df <- pp$as_data_frame()
 \item \href{#method-PointProcess-remove_points_between}{\code{PointProcess$remove_points_between()}}
 \item \href{#method-PointProcess-as_data_frame}{\code{PointProcess$as_data_frame()}}
 \item \href{#method-PointProcess-save}{\code{PointProcess$save()}}
+\item \href{#method-PointProcess-voice_report}{\code{PointProcess$voice_report()}}
 \item \href{#method-PointProcess-print}{\code{PointProcess$print()}}
 \item \href{#method-PointProcess-clone}{\code{PointProcess$clone()}}
 }
@@ -878,6 +904,109 @@ Save PointProcess to file
 \subsection{Returns}{
 Invisible self
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PointProcess-voice_report"></a>}}
+\if{latex}{\out{\hypertarget{method-PointProcess-voice_report}{}}}
+\subsection{Method \code{voice_report()}}{
+Generate comprehensive voice report with jitter, shimmer, and harmonicity measures.
+
+This function computes all standard voice quality metrics as provided by Praat's
+Voice Report. It requires a Sound object and a Pitch object to compute the complete
+set of measurements.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PointProcess$voice_report(
+  sound,
+  pitch,
+  from_time = 0,
+  to_time = 0,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  maximum_period_factor = 1.3,
+  maximum_amplitude_factor = 1.6,
+  silence_threshold = 0.03,
+  voicing_threshold = 0.45
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object}
+
+\item{\code{pitch}}{Pitch object}
+
+\item{\code{from_time}}{Start time (0 = start of sound)}
+
+\item{\code{to_time}}{End time (0 = end of sound)}
+
+\item{\code{pitch_floor}}{Minimum pitch for period calculations (Hz)}
+
+\item{\code{pitch_ceiling}}{Maximum pitch for period calculations (Hz)}
+
+\item{\code{maximum_period_factor}}{Maximum allowed period factor for jitter}
+
+\item{\code{maximum_amplitude_factor}}{Maximum allowed amplitude factor for shimmer}
+
+\item{\code{silence_threshold}}{Silence threshold (fraction of global peak)}
+
+\item{\code{voicing_threshold}}{Voicing threshold (fraction between 0 and 1)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Named list with voice quality measurements:
+\describe{
+  \item{jitter_local}{Local jitter (period-to-period variation)}
+  \item{jitter_local_absolute}{Local jitter in seconds}
+  \item{jitter_rap}{Relative Average Perturbation}
+  \item{jitter_ppq5}{5-point Period Perturbation Quotient (required for DSI)}
+  \item{jitter_ddp}{Difference of Differences of Periods}
+  \item{shimmer_local}{Local shimmer (amplitude variation, required for AVQI)}
+  \item{shimmer_local_db}{Local shimmer in dB (required for AVQI)}
+  \item{shimmer_apq3}{3-point Amplitude Perturbation Quotient}
+  \item{shimmer_apq5}{5-point Amplitude Perturbation Quotient}
+  \item{shimmer_apq11}{11-point Amplitude Perturbation Quotient}
+  \item{shimmer_dda}{Difference of Differences of Amplitudes}
+  \item{mean_harmonics_to_noise_ratio}{Mean HNR in dB}
+  \item{mean_autocorrelation}{Mean autocorrelation coefficient}
+  \item{mean_noise_to_harmonics_ratio}{Mean NHR}
+  \item{median_pitch}{Median pitch in Hz}
+  \item{mean_pitch}{Mean pitch in Hz}
+  \item{stdev_pitch}{Standard deviation of pitch}
+  \item{minimum_pitch}{Minimum pitch}
+  \item{maximum_pitch}{Maximum pitch}
+  \item{number_of_pulses}{Total number of detected pulses}
+  \item{number_of_periods}{Number of valid periods}
+  \item{mean_period}{Mean period in seconds}
+  \item{stdev_period}{Standard deviation of periods}
+  \item{fraction_unvoiced_frames}{Fraction of unvoiced frames}
+  \item{number_of_voice_breaks}{Count of voice breaks}
+  \item{degree_of_voice_breaks}{Fraction of time in voice breaks}
+}
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+sound <- Sound$new("audio.wav")
+pitch <- sound$to_pitch_cc()
+pp <- sound$to_point_process_cc(pitch)
+
+# Get complete voice report
+report <- pp$voice_report(sound, pitch)
+
+# Extract specific measures for AVQI
+shimmer_local <- report$shimmer_local * 100  # Convert to percentage
+shimmer_local_db <- report$shimmer_local_db
+
+# Extract jitter ppq5 for DSI
+jitter_ppq5 <- report$jitter_ppq5 * 100  # Convert to percentage
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PointProcess-print"></a>}}

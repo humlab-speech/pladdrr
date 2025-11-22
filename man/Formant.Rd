@@ -13,7 +13,7 @@ R6 class representing a Praat Formant object. Formant objects represent
 the resonance frequencies of the vocal tract over time.
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Formant}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Formant}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -515,8 +515,7 @@ Convert Formant to Table object
   intensity_decimals = 3,
   include_number_of_formants = TRUE,
   frequency_decimals = 3,
-  include_bandwidths = TRUE,
-  bandwidth_decimals = 3
+  include_bandwidths = TRUE
 )}\if{html}{\out{</div>}}
 }
 

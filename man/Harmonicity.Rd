@@ -60,7 +60,7 @@ plot(df$time, df$hnr_db, type = "l", xlab = "Time (s)", ylab = "HNR (dB)")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Harmonicity}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Harmonicity}
 }
 \section{Methods}{
 \subsection{Public methods}{

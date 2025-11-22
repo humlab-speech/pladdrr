@@ -13,7 +13,7 @@ R6 class representing a Praat Table object. Table objects store tabular data
 with named columns and support various statistical operations.
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Table}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Table}
 }
 \section{Methods}{
 \subsection{Public methods}{

@@ -47,7 +47,7 @@ df <- ltas$as_data_frame()
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Ltas}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Ltas}
 }
 \section{Methods}{
 \subsection{Public methods}{

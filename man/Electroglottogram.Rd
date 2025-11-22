@@ -62,7 +62,7 @@ degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 
 }
 \section{Super classes}{
-\code{speaker::PraatObject} -> \code{speaker::Sound} -> \code{Electroglottogram}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{\link[speaker:Sound]{speaker::Sound}} -> \code{Electroglottogram}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -121,6 +121,7 @@ degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 <li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_extrema"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_extrema'><code>speaker::Sound$to_point_process_extrema()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_periodic_cc"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_periodic_cc'><code>speaker::Sound$to_point_process_periodic_cc()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_zeros"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_zeros'><code>speaker::Sound$to_point_process_zeros()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_powercepstrogram"><a href='../../speaker/html/Sound.html#method-Sound-to_powercepstrogram'><code>speaker::Sound$to_powercepstrogram()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_spectrogram"><a href='../../speaker/html/Sound.html#method-Sound-to_spectrogram'><code>speaker::Sound$to_spectrogram()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_spectrum"><a href='../../speaker/html/Sound.html#method-Sound-to_spectrum'><code>speaker::Sound$to_spectrum()</code></a></span></li>
 </ul>

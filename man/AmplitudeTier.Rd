@@ -57,7 +57,7 @@ int_tier <- amp_tier$to_intensity_tier()
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{AmplitudeTier}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{AmplitudeTier}
 }
 \section{Methods}{
 \subsection{Public methods}{

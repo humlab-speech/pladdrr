@@ -14,6 +14,10 @@ A Sound object represents a sampled acoustic waveform with one or more channels.
 This class provides methods for reading, creating, querying, and transforming
 sound data using Praat's underlying C implementation.
 
+**File I/O**: All file operations use the `av` package (humlab-speech/av fork)
+which supports a wide range of audio and video formats via FFmpeg, including:
+WAV, MP3, FLAC, OGG, AAC, M4A, WMA, AIFF, and many more.
+
 ## Creating Sound Objects
 
 - `Sound$new(path)` - Read from file (any format via av/FFmpeg: MP3, WAV, FLAC, OGG, etc.)
@@ -47,16 +51,17 @@ Transformation methods create new Praat objects:
 
 ## Export
 
-Export methods convert to R data structures:
+Export methods convert to R data structures or save to files:
 - `$as_data_frame()` - Long-format data frame (time, channel, value)
 - `$as_matrix()` - Matrix with channels as rows, samples as columns
-- `$save(path, format)` - Write to audio file
+- `$save(path, format, ...)` - Write to audio file (any format supported by av/FFmpeg)
 }
 \examples{
 \dontrun{
 # Read sound file (any format supported by av/FFmpeg)
 sound <- Sound$new("recording.mp3")
 sound_wav <- Sound$new("recording.wav")
+sound_flac <- Sound$new("recording.flac")
 
 # Create from R matrix (e.g., from av package)
 library(av)
@@ -75,6 +80,11 @@ intensity <- sound$to_intensity()
 # Export to R
 df <- sound$as_data_frame()
 
+# Save to various formats
+sound$save("output.wav")
+sound$save("output.mp3", format = "mp3")
+sound$save("output.flac", format = "flac")
+
 # Create synthetic sound
 tone <- Sound$create_tone(duration = 1.0, frequency = 440)
 tone$save("A440.wav")
@@ -82,7 +92,7 @@ tone$save("A440.wav")
 
 }
 \section{Super class}{
-\code{speaker::PraatObject} -> \code{Sound}
+\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{Sound}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -106,6 +116,7 @@ tone$save("A440.wav")
 \item \href{#method-Sound-to_spectrum}{\code{Sound$to_spectrum()}}
 \item \href{#method-Sound-to_ltas}{\code{Sound$to_ltas()}}
 \item \href{#method-Sound-to_spectrogram}{\code{Sound$to_spectrogram()}}
+\item \href{#method-Sound-to_powercepstrogram}{\code{Sound$to_powercepstrogram()}}
 \item \href{#method-Sound-to_manipulation}{\code{Sound$to_manipulation()}}
 \item \href{#method-Sound-to_lpc_burg}{\code{Sound$to_lpc_burg()}}
 \item \href{#method-Sound-to_lpc_auto}{\code{Sound$to_lpc_auto()}}
@@ -146,7 +157,7 @@ tone$save("A440.wav")
 \subsection{Method \code{new()}}{
 Create a Sound object from file or data
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$new(path = NULL, .xptr = NULL, use_av = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Sound$new(path = NULL, .xptr = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -155,8 +166,6 @@ Create a Sound object from file or data
 \item{\code{path}}{Path to audio file (any format supported by av/FFmpeg)}
 
 \item{\code{.xptr}}{Internal use only - external pointer to C++ Sound object}
-
-\item{\code{use_av}}{Use av package for loading (default: TRUE for non-WAV files)}
 }
 \if{html}{\out{</div>}}
 }
@@ -568,6 +577,37 @@ Create time-frequency spectrogram
 }
 \subsection{Returns}{
 Spectrogram object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_powercepstrogram"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_powercepstrogram}{}}}
+\subsection{Method \code{to_powercepstrogram()}}{
+Create PowerCepstrogram for voice quality analysis (CPP)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_powercepstrogram(
+  pitch_floor = 60,
+  time_step = 0.002,
+  maximum_frequency = 5000,
+  pre_emphasis_frequency = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Minimum pitch for analysis in Hz (default: 60)}
+
+\item{\code{time_step}}{Time step between frames in seconds (default: 0.002)}
+
+\item{\code{maximum_frequency}}{Maximum frequency to analyze in Hz (default: 5000)}
+
+\item{\code{pre_emphasis_frequency}}{Pre-emphasis from frequency in Hz (default: 50)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+PowerCepstrogram object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1075,7 +1115,13 @@ Numeric matrix with channels as rows, samples as columns
 \subsection{Method \code{save()}}{
 Save to audio file
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$save(path, format = c("WAV", "AIFF", "AIFC", "NeXT", "NIST", "FLAC"))}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Sound$save(
+  path,
+  format = NULL,
+  codec = NULL,
+  sample_rate = NULL,
+  channels = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1083,7 +1129,13 @@ Save to audio file
 \describe{
 \item{\code{path}}{Output file path}
 
-\item{\code{format}}{File format: "WAV" (default), "AIFF", "AIFC", "NeXT", "NIST", "FLAC"}
+\item{\code{format}}{File format (auto-detected from extension, or specify: "wav", "mp3", "flac", "ogg", etc.)}
+
+\item{\code{codec}}{Audio codec (optional, auto-selected based on format)}
+
+\item{\code{sample_rate}}{Output sample rate (default: original sample rate)}
+
+\item{\code{channels}}{Number of output channels (default: original channels)}
 }
 \if{html}{\out{</div>}}
 }
