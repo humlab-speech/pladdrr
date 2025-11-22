@@ -3,3 +3,20 @@
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
 * installing the package to build vignettes
+* creating vignettes ... OK
+* cleaning src
+* checking for LF line-endings in source and make files and shell scripts
+* checking for empty or unneeded directories
+Removed empty directory ‘speaker/dev’
+Removed empty directory ‘speaker/inst/benchmarks/inst/benchmarks/results’
+Removed empty directory ‘speaker/inst/benchmarks/inst/benchmarks’
+Removed empty directory ‘speaker/inst/benchmarks/inst’
+Removed empty directory ‘speaker/inst/benchmarks/results’
+Removed empty directory ‘speaker/results’
+Removed empty directory ‘speaker/src/dwsys’
+Removed empty directory ‘speaker/src/praat.github.io/excluded_sources’
+Removed empty directory ‘speaker/src/praat.github.io/test/dwsys/examples/FileInMemory’
+Removed empty directory ‘speaker/src/praat.github.io/test/dwsys/examples’
+Removed empty directory ‘speaker/tests/testthat/_snaps’
+Omitted ‘LazyData’ from DESCRIPTION
+* building ‘speaker_0.9.7.tar.gz’
