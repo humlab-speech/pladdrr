@@ -1,0 +1,39 @@
+# File: makefile.defs.linux.pulse-clang
+# System: Linux
+# David Weenink and Paul Boersma 2025-07-28
+
+CC = clang
+CXX = clang
+LINK = $(CXX)
+
+PKG_CONFIG ?= pkg-config
+
+COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags gtk+-3.0` \
+	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
+
+# This one works for the Praat team:
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+# Somebody who submitted a pull request suggested to change the above to the following,
+# which unfortunately causes many build failure at the Praat team, e.g.
+## /usr/bin/ld: .../praats/melder/NUMrandom.cpp:162: undefined reference to `std::chrono::_V2::system_clock::now()'
+## clang: error: linker command failed with exit code 1 (use -v to see invocation)
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libstdc++ -Wshadow
+
+EXECUTABLE = praat
+
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lc++ -lc++abi -lm -lpulse -lasound -lpthread
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -Wl,-Bstatic ~/libunwind/unpacked/usr/lib/aarch64-linux-gnu/libunwind.a -Wl,-Bdynamic -lc++ -lm -lpulse -lasound -lpthread
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lc++ -lm -lpulse -lasound -lpthread
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread /usr/lib/llvm-10/lib/libc++.a /usr/lib/llvm-10/lib/libc++abi.a 
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =
+
+INSTALL = install -p praat /usr/local/bin

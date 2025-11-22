@@ -16,6 +16,7 @@
 languages:
 - cpp
 - r
+- bash
 encoding: "utf-8"
 
 # whether to use the project's gitignore file to ignore files

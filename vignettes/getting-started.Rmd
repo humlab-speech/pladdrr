@@ -246,38 +246,16 @@ intensity_df <- as.data.frame(intensity)
 head(intensity_df)
 ```
 
-## Plotting Results
+## Visualization
 
-### Plot Formant Trajectories
+The `speaker` package provides comprehensive ggplot2-based visualization functions for all analysis types. For detailed examples of creating publication-quality plots, see `vignette("visualization")`, which covers:
 
-```{r fig.width=7, fig.height=5}
-# Get formant data
-formant_df <- as.data.frame(formants)
-
-# Filter for F1 and F2
-f1_data <- formant_df[formant_df$formant_number == 1, ]
-f2_data <- formant_df[formant_df$formant_number == 2, ]
-
-# Plot
-plot(f1_data$time, f1_data$frequency, type = "l", col = "blue",
-     xlab = "Time (s)", ylab = "Frequency (Hz)",
-     main = "Formant Trajectories", ylim = c(0, 3000))
-lines(f2_data$time, f2_data$frequency, col = "red")
-legend("topright", legend = c("F1", "F2"), col = c("blue", "red"), lty = 1)
-```
-
-### Plot Intensity Contour
-
-```{r fig.width=7, fig.height=5}
-# Get intensity data
-intensity_df <- as.data.frame(intensity)
-
-# Plot
-plot(intensity_df$time, intensity_df$intensity_db, type = "l", col = "darkgreen",
-     xlab = "Time (s)", ylab = "Intensity (dB)",
-     main = "Intensity Contour")
-grid()
-```
+- Voice quality visualization (AVQI, DSI, CPP)
+- Formant analysis (vowel spaces, trajectories)
+- Pitch and intensity contours
+- Spectral analysis (spectrograms, spectra, LTAS)
+- TextGrid annotations
+- Multi-panel diagnostic reports
 
 ## Complete Workflow Example
 

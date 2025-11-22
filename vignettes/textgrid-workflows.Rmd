@@ -465,38 +465,9 @@ tg$save("modified_annotation.TextGrid")
 # Praat can now open and display your changes
 ```
 
-### Visualization with ggplot2
+### Visualization
 
-```{r visualize, eval=FALSE}
-library(ggplot2)
-
-# Interval duration distribution
-ggplot(intervals_df, aes(x = duration)) +
-  geom_histogram(binwidth = 0.1, fill = "steelblue", color = "white") +
-  labs(
-    title = "Interval Duration Distribution",
-    x = "Duration (s)",
-    y = "Count"
-  ) +
-  theme_minimal()
-
-# Label frequency
-label_counts <- table(intervals_df$label)
-label_df <- data.frame(
-  label = names(label_counts),
-  count = as.numeric(label_counts)
-)
-
-ggplot(label_df, aes(x = reorder(label, count), y = count)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  coord_flip() +
-  labs(
-    title = "Annotation Label Frequency",
-    x = "Label",
-    y = "Count"
-  ) +
-  theme_minimal()
-```
+For comprehensive examples of TextGrid visualization including tier displays, interval duration distributions, label frequency plots, and multi-tier layouts, see `vignette("visualization")`.
 
 ## Best Practices
 

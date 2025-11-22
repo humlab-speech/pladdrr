@@ -344,24 +344,9 @@ print(vowel_features)
 write.csv(vowel_features, "vowel_acoustic_features.csv", row.names = FALSE)
 ```
 
-### Visualization with ggplot2
+### Visualization
 
-```{r visualization, eval=FALSE}
-# Vowel space plot (F1 vs F2)
-library(ggplot2)
-
-ggplot(vowel_features, aes(x = f2, y = f1, label = phone)) +
-  geom_point(size = 3, color = "blue") +
-  geom_text(vjust = -1) +
-  scale_x_reverse() +  # F2 decreases left to right
-  scale_y_reverse() +  # F1 decreases bottom to top
-  labs(
-    title = "Vowel Space",
-    x = "F2 (Hz)",
-    y = "F1 (Hz)"
-  ) +
-  theme_minimal()
-```
+The `speaker` package provides comprehensive plotting functions for all analysis types. For detailed visualization examples including vowel spaces, formant trajectories, pitch/intensity contours, spectrograms, and voice quality reports, see `vignette("visualization")`.
 
 ## Real-World Applications
 

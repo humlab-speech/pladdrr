@@ -32,6 +32,8 @@ This vignette demonstrates a complete vowel acoustics research workflow using th
 
 This workflow is essential for sociolinguistic variation studies, L2 acquisition research, and dialectology.
 
+**Note:** For comprehensive visualization examples including additional plot types (spectrograms, voice quality reports, cepstral analysis), see `vignette("visualization")`.
+
 ## Background
 
 ### Vowel Acoustics
