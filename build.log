@@ -3,36 +3,3 @@
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
 * installing the package to build vignettes
-* creating vignettes ... OK
-* cleaning src
-* checking for LF line-endings in source and make files and shell scripts
-* checking for empty or unneeded directories
-Removed empty directory ‘speaker/dev’
-Removed empty directory ‘speaker/inst/benchmarks/inst/benchmarks/results’
-Removed empty directory ‘speaker/inst/benchmarks/inst/benchmarks’
-Removed empty directory ‘speaker/inst/benchmarks/inst’
-Removed empty directory ‘speaker/inst/benchmarks/results’
-Removed empty directory ‘speaker/results’
-Removed empty directory ‘speaker/src/dwsys’
-Removed empty directory ‘speaker/src/praat.github.io/excluded_sources’
-Removed empty directory ‘speaker/src/praat.github.io/test/dwsys/examples/FileInMemory’
-Removed empty directory ‘speaker/src/praat.github.io/test/dwsys/examples’
-Removed empty directory ‘speaker/tests/testthat/_snaps’
-Omitted ‘LazyData’ from DESCRIPTION
-* building ‘speaker_0.9.2.tar.gz’
-Warning in utils::tar(filepath, pkgname, compression = compression, compression_level = 9L,  :
-  storing paths of more than 100 bytes is not portable:
-  ‘speaker/src/praat.github.io/docs/manual/Feedforward_neural_networks_1__What_is_a_feedforward_ne_1.png’
-Warning in utils::tar(filepath, pkgname, compression = compression, compression_level = 9L,  :
-  storing paths of more than 100 bytes is not portable:
-  ‘speaker/src/praat.github.io/docs/manual/PowerCepstrogram__To_Table__cepstral_peak_prominences___1.png’
-Warning in utils::tar(filepath, pkgname, compression = compression, compression_level = 9L,  :
-  storing paths of more than 100 bytes is not portable:
-  ‘speaker/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_1.png’
-Warning in utils::tar(filepath, pkgname, compression = compression, compression_level = 9L,  :
-  storing paths of more than 100 bytes is not portable:
-  ‘speaker/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_2.png’
-Warning in utils::tar(filepath, pkgname, compression = compression, compression_level = 9L,  :
-  storing paths of more than 100 bytes is not portable:
-  ‘speaker/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_3.png’
-
