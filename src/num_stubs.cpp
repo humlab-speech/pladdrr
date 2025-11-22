@@ -80,106 +80,6 @@ void Demo_peekInput (conststring32 keys) {
     // No-op in library mode
 }
 
-// Eigen class stub - prevents linker errors for Matrix eigen decomposition
-// which we don't use in phonetic analysis
-Thing_define (Eigen, Daata) {
-    // Empty - no fields needed for stub
-};
-
-Thing_implement (Eigen, Daata, 0);
-
-/* Fisher's F distribution cumulative probability */
-double NUMfisherP (double f, double df1, double df2) {
-    (void) f;
-    (void) df1;
-    (void) df2;
-    Melder_throw (U"Fisher P distribution function not available in this build.");
-}
-
-/* Fisher's F distribution Q function (complement of P) */
-double NUMfisherQ (double f, double df1, double df2) {
-    (void) f;
-    (void) df1;
-    (void) df2;
-    Melder_throw (U"Fisher Q distribution function not available in this build.");
-}
-
-/* Inverse Fisher Q function */
-double NUMinvFisherQ (double q, double df1, double df2) {
-    (void) q;
-    (void) df1;
-    (void) df2;
-    Melder_throw (U"Inverse Fisher Q function not available in this build.");
-}
-
-/* Random gamma variate */
-double NUMrandomGamma (double shape, double scale) {
-    (void) shape;
-    (void) scale;
-    Melder_throw (U"Random gamma function not available in this build.");
-}
-
-/* Ridders root finding */
-double NUMridders (double (*f) (double x, void *closure), double xmin, double xmax, void *closure) {
-    (void) f;
-    (void) xmin;
-    (void) xmax;
-    (void) closure;
-    Melder_throw (U"Ridders root finding not available in this build.");
-}
-
-/* Student's t distribution */
-double NUMstudentP (double t, double df) {
-    (void) t;
-    (void) df;
-    Melder_throw (U"Student's t distribution not available in this build.");
-}
-
-double NUMstudentQ (double t, double df) {
-    (void) t;
-    (void) df;
-    Melder_throw (U"Student's t Q function not available in this build.");
-}
-
-double NUMinvStudentQ (double q, double df) {
-    (void) q;
-    (void) df;
-    Melder_throw (U"Inverse Student's t Q function not available in this build.");
-}
-
-/* Inverse Gaussian distribution (only inverses, P/Q are in NUMspecfunc) */
-double NUMinvGaussQ (double q) {
-    (void) q;
-    Melder_throw (U"Inverse Gaussian Q function not available in this build.");
-}
-
-/* Inverse Chi-square distribution (only inverses, P/Q are in NUMspecfunc) */
-double NUMinvChiSquareQ (double q, double df) {
-    (void) q;
-    (void) df;
-    Melder_throw (U"Inverse chi-square Q function not available in this build.");
-}
-
-/* Brent minimization algorithm */
-void NUMminimize_brent (double (*f)(double x, void *closure), double a, double b, 
-                        void *closure, double tol, double *result) {
-    (void) f;
-    (void) a;
-    (void) b;
-    (void) closure;
-    (void) tol;
-    (void) result;
-    Melder_throw (U"Brent minimization not available in this build.");
-}
-
-void NUMstatistics_huber (constVEC, double *, bool, double *, bool, double, double, integer, VEC const&) {
-    Melder_throw (U"Huber statistics not available in this build.");
-}
-
-void NUMpolynomial_recurrence (VEC const&, double, double, double, constVEC const&, constVEC const&) {
-    Melder_throw (U"Polynomial recurrence not available in this build.");
-}
-
 /* End of file */
 
 // Vector search functions
@@ -189,10 +89,41 @@ double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorS
     Melder_throw (U"Vector_getNearestLevelCrossing not available in this build.");
 }
 
-double NUMnrbis (double (*)(double, double*, void*), double, double, void*) {
-    Melder_throw (U"NUMnrbis (bisection root finding) not available in this build.");
-}
-
 void NUMmachar () {
     // Machine characteristics - no-op in library mode
+}
+
+// Matrix statistics function needed by PowerCepstrogram
+#include "fon/Matrix.h"
+
+double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
+    if (xmin >= xmax) {
+        xmin = my xmin;
+        xmax = my xmax;
+    }
+    if (ymin >= ymax) {
+        ymin = my ymin;
+        ymax = my ymax;
+    }
+    
+    // Convert x/y ranges to column/row indices
+    integer ixmin = Melder_clippedLeft (integer(1), Matrix_xToNearestColumn (me, xmin));
+    integer ixmax = Melder_clippedRight (Matrix_xToNearestColumn (me, xmax), my nx);
+    integer iymin = Melder_clippedLeft (integer(1), Matrix_yToNearestRow (me, ymin));
+    integer iymax = Melder_clippedRight (Matrix_yToNearestRow (me, ymax), my ny);
+    
+    if (ixmin > ixmax || iymin > iymax) {
+        return undefined;
+    }
+    
+    double sum = 0.0;
+    integer count = 0;
+    for (integer iy = iymin; iy <= iymax; iy++) {
+        for (integer ix = ixmin; ix <= ixmax; ix++) {
+            sum += my z [iy] [ix];
+            count++;
+        }
+    }
+    
+    return count > 0 ? sum / count : undefined;
 }

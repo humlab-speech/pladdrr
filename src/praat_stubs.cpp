@@ -297,13 +297,6 @@ bool praat_commandsWithExternalSideEffectsAreAllowed () {
     return false;  // External side effects disabled in library mode
 }
 
-struct structIntervalTier;
-typedef structIntervalTier* IntervalTier;
-
-void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier, conststring32) {
-    Melder_throw (U"IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals: TextGrid manipulation not available.");
-}
-
 // Portable character classification stubs
 extern "C" {
 int iswlower_portable (int) { return 0; }
@@ -313,4 +306,18 @@ int iswdigit_portable (int) { return 0; }
 int iswspace_portable (int) { return 0; }
 int towlower_portable (int c) { return c; }
 int towupper_portable (int c) { return c; }
+}
+
+// Additional multithreading stubs
+void MelderThread_debugMultithreading (bool useMultithreading, integer numberOfConcurrentThreadsToUse,
+	integer minimumNumberOfElementsPerThread, bool extraAnalysisInfo) {
+	// No-op in library mode (no debug UI)
+}
+
+integer MelderThread_getNumberOfProcessors () {
+	return 1;  // Single-threaded mode
+}
+
+bool MelderThread_getUseMultithreading () {
+	return false;  // Disable multithreading in library mode
 }

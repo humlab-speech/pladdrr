@@ -182,21 +182,13 @@ void matrix_formula(SEXP xptr, std::string formula) {
   } catch (MelderError) { Melder_clearError(); Rcpp::stop("Matrix operation failed"); }
 }
 
-// Statistical operations - SIMD-optimized
+// Statistical operations
 
 // [[Rcpp::export(.matrix_get_sum)]]
 double matrix_get_sum(SEXP xptr) {
   try {
     Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-    double sum = 0.0;
-    
-    // Process each row
-    for (integer i = 1; i <= matrix->ny; i++) {
-      double* row_start = &matrix->z[i][1];
-      sum += std::accumulate(row_start, row_start + matrix->nx, 0.0);
-    }
-    
-    return sum;
+    return Matrix_getSum(matrix);
   } catch (MelderError) { 
     Melder_clearError(); 
     Rcpp::stop("Matrix operation failed"); 
@@ -207,18 +199,11 @@ double matrix_get_sum(SEXP xptr) {
 double matrix_get_mean(SEXP xptr) {
   try {
     Matrix matrix = Rcpp::as<Rcpp::XPtr<structMatrix>>(xptr);
-    double sum = 0.0;
     integer count = matrix->ny * matrix->nx;
     
     if (count == 0) return NAN;
     
-    // Process each row
-    for (integer i = 1; i <= matrix->ny; i++) {
-      double* row_start = &matrix->z[i][1];
-      sum += std::accumulate(row_start, row_start + matrix->nx, 0.0);
-    }
-    
-    return sum / count;
+    return Matrix_getSum(matrix) / count;
   } catch (MelderError) { 
     Melder_clearError(); 
     Rcpp::stop("Matrix operation failed"); 
@@ -233,9 +218,9 @@ double matrix_get_minimum(SEXP xptr) {
     
     // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      double* row_start = &matrix->z[i][1];
-      double row_min = *std::min_element(row_start, row_start + matrix->nx);
-      if (row_min < min) min = row_min;
+      for (integer j = 1; j <= matrix->nx; j++) {
+        if (matrix->z[i][j] < min) min = matrix->z[i][j];
+      }
     }
     
     return min;
@@ -253,9 +238,9 @@ double matrix_get_maximum(SEXP xptr) {
     
     // Process each row
     for (integer i = 1; i <= matrix->ny; i++) {
-      double* row_start = &matrix->z[i][1];
-      double row_max = *std::max_element(row_start, row_start + matrix->nx);
-      if (row_max > max) max = row_max;
+      for (integer j = 1; j <= matrix->nx; j++) {
+        if (matrix->z[i][j] > max) max = matrix->z[i][j];
+      }
     }
     
     return max;

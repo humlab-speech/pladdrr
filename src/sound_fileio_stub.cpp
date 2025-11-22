@@ -124,7 +124,4 @@ autoTextGrid TextGrid_readFromTimitLabelFile (MelderFile, bool) {
 }
 
 // TextGrid collection functions
-
-autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>*, bool) {
-    Melder_throw (U"TextGrids_to_TextGrid_appendContinuous: TextGrid merging not available.");
-}
+// (Moved to TextGrid_extensions.cpp)

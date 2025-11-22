@@ -3,6 +3,8 @@
 
 #include "praat.github.io/sys/Thing.h"
 #include "praat.github.io/sys/Graphics.h"
+#include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/dwtools/Sound_extensions_enums.h"
 
 // Note: These are no-op stubs since we build with NO_GRAPHICS
 // Graphics functionality is disabled in non-GUI builds
@@ -153,3 +155,8 @@ void Graphics_markTopLogarithmic (Graphics, double, bool, bool, bool, conststrin
 void Graphics_marksRightLogarithmic (Graphics, integer, bool, bool, bool) {}
 void Graphics_marksBottomLogarithmic (Graphics, integer, bool, bool, bool) {}
 void Graphics_marksTopLogarithmic (Graphics, integer, bool, bool, bool) {}
+
+void Sound_draw_btlr (Sound me, Graphics g, double xmin, double xmax, double ymin, double ymax, kSoundDrawingDirection direction, bool garnish) {
+    (void) me; (void) g; (void) xmin; (void) xmax; (void) ymin; (void) ymax; (void) direction; (void) garnish;
+    Melder_throw (U"Sound_draw_btlr: Graphics functions are not available in this build.");
+}

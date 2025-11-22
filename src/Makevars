@@ -22,7 +22,8 @@ PKG_CPPFLAGS =  -DHAVE_XSIMD -I. \
                -Ipraat.github.io/external/mp3 \
                -Ipraat.github.io/external/espeak \
                -Ipraat.github.io/external/gsl \
-               -Ipraat.github.io/external/glpk
+               -Ipraat.github.io/external/glpk \
+               -Iclapack/INCLUDE
 
 # Compiler flags
 PKG_CXXFLAGS =  -DPRAAT_LIB \
@@ -53,8 +54,8 @@ else ifeq ($(shell uname -m),arm64)
   PKG_CXXFLAGS += -march=armv8-a+simd
 endif
 
-# Linker flags
-PKG_LIBS =  -pthread
+# Linker flags - link against R's LAPACK
+PKG_LIBS =  $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -88,14 +89,21 @@ SYS_SRC = sys/Thing.cpp sys/Data.cpp sys/Simple.cpp sys/Collection.cpp \
 DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/Polynomial.cpp \
             praat.github.io/dwsys/FunctionSeries.cpp \
-            praat.github.io/dwsys/Eigen.cpp
+            praat.github.io/dwsys/Eigen.cpp \
+            praat.github.io/dwsys/SlopeSelector.cpp \
+            praat.github.io/dwsys/Permutation.cpp \
+            praat.github.io/dwsys/PermutationInversionCounter.cpp \
+            praat.github.io/dwsys/NUM2.cpp \
+            praat.github.io/dwsys/NUMhuber.cpp \
+            praat.github.io/dwsys/MAT_numerics.cpp \
+            praat.github.io/dwsys/NUMstring.cpp
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
-              praat.github.io/dwtools/DTW.cpp \
-              praat.github.io/dwtools/Matrix_extensions.cpp \
-              praat.github.io/dwtools/SampledIntoSampled.cpp
+              praat.github.io/dwtools/SampledIntoSampled.cpp \
+              praat.github.io/dwtools/Intensity_extensions.cpp \
+              praat.github.io/dwtools/TextGrid_extensions.cpp
 
 # Stat sources
 STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
@@ -142,6 +150,7 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LineSpectralFrequencies.cpp \
           praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp \
           praat.github.io/LPC/LPC_and_Formant.cpp \
+          praat.github.io/LPC/Roots_and_Formant.cpp \
           praat.github.io/LPC/Cepstrum.cpp \
           praat.github.io/LPC/Cepstrumc.cpp \
           praat.github.io/LPC/PowerCepstrum.cpp \
@@ -156,7 +165,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
               intensity_wrappers.cpp pointprocess_wrappers.cpp \
               spectrum_wrappers.cpp spectrogram_wrappers.cpp \
-              ltas_wrappers.cpp lpc_wrappers.cpp lpc_clapack_stubs.cpp \
+              ltas_wrappers.cpp lpc_wrappers.cpp \
               textgrid_wrappers.cpp pitchtier_wrappers.cpp \
               durationtier_wrappers.cpp intensitytier_wrappers.cpp \
               manipulation_wrappers.cpp table_wrappers.cpp \
@@ -165,9 +174,13 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               matrix_wrappers.cpp \
               vad_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
-              num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \
+              num_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp gsl_stubs.cpp \
+              dtw_stubs.cpp \
+              sound_extensions_stubs.cpp \
+              sound_create_gaussian.cpp \
+              r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp
 
 # SIMD sources (Phase 3: Window functions and autocorrelation)

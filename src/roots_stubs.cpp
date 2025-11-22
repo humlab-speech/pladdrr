@@ -122,15 +122,7 @@ void Polynomial_into_Roots (constPolynomial, Roots, VEC) {
 }
 
 // Eigen decomposition stubs
-struct structEigen;
-typedef structEigen* Eigen;
-
-void Eigen_initFromSymmetricMatrix (Eigen, constMATVU const&) {
-Melder_throw (U"Eigen_initFromSymmetricMatrix: Eigenvalue decomposition is not available. "
-              U"This package does not include the full statistical library.");
-}
-
 void SSCP_drawConcentrationEllipse (SSCP, Graphics, double, int, integer, integer, double, double, double, double, bool) {
-Melder_throw (U"SSCP_drawConcentrationEllipse: SSCP graphics are not available. "
-              U"This package does not include graphics support.");
+    Melder_throw (U"SSCP_drawConcentrationEllipse: SSCP graphics are not available. "
+                  U"This package does not include graphics support.");
 }

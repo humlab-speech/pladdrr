@@ -9,6 +9,7 @@
 // Praat headers
 #include "fon/Sound.h"
 #include "fon/Intensity.h"
+#include "fon/Sound_to_Intensity.h"
 #include "fon/TextGrid.h"
 #include "dwtools/Intensity_extensions.h"
 
@@ -46,8 +47,8 @@ SEXP sound_to_textgrid_silences(SEXP sound_xptr,
             silence_threshold_db,
             min_silent_interval,
             min_sounding_interval,
-            Melder_cat(silent_label.c_str()),
-            Melder_cat(sounding_label.c_str())
+            Melder_peek8to32(silent_label.c_str()),
+            Melder_peek8to32(sounding_label.c_str())
         );
         
         return create_xptr_from_auto<structTextGrid>(textgrid);
@@ -76,10 +77,10 @@ List textgrid_get_intervals_where(SEXP xptr,
                  tier_number, textgrid->tiers->size);
         }
         
-        Function tier = textgrid->tiers->at [tier_number];
+        ::Function tier = textgrid->tiers->at [tier_number];
         
         // Check if it's an interval tier
-        if (!tier->classInfo == classIntervalTier) {
+        if (tier->classInfo != classIntervalTier) {
             stop("Tier %d is not an interval tier", tier_number);
         }
         
@@ -95,9 +96,7 @@ List textgrid_get_intervals_where(SEXP xptr,
             conststring32 label = interval->text.get();
             
             // Convert to std::string for comparison
-            char32_t *labelCopy = Melder_dup(label);
-            std::string label_str = Melder_peek32to8(labelCopy);
-            Melder_free(labelCopy);
+            std::string label_str = Melder_peek32to8(label);
             
             bool matches = false;
             

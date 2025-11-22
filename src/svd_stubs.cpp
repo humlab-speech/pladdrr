@@ -57,8 +57,23 @@ void SVD_solve_preallocated (SVD, constVECVU const&, VECVU const&, VEC const&) {
 	              U"This package does not include CLAPACK/LAPACK.");
 }
 
+autoVEC SVD_solve (SVD, constVECVU const&) {
+	Melder_throw (U"SVD_solve: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
 void SVD_resizeWithinOldBounds (SVD, integer, integer, integer, integer) {
 Melder_throw (U"SVD_resizeWithinOldBounds: SVD decomposition is not available. "
               U"This package does not include CLAPACK/LAPACK.");
+}
+
+autoMAT SVD_synthesize (SVD, integer, integer) {
+	Melder_throw (U"SVD_synthesize: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
+}
+
+integer SVD_zeroSmallSingularValues (SVD, double) {
+	Melder_throw (U"SVD_zeroSmallSingularValues: SVD decomposition is not available. "
+	              U"This package does not include CLAPACK/LAPACK.");
 }
 

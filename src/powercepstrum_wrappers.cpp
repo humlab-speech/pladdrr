@@ -481,7 +481,7 @@ double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
             qend_fit,
             trend,
             fit,
-            &qpeak
+            qpeak
         );
         
         return prominence;
