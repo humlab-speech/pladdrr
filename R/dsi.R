@@ -115,7 +115,7 @@ compute_dsi <- function(sound,
     sound <- Sound$new(sound)
   }
   
-  duration <- sound$get_total_duration()
+  duration <- sound$get_duration()
   if (verbose) cat(sprintf("Total duration: %.2f s\n\n", duration))
   
   # ============================================================================
@@ -151,7 +151,7 @@ compute_dsi <- function(sound,
     subtract_mean = FALSE  # We want absolute dB SPL
   )
   
-  i_low <- intensity$get_minimum(0, 0, "parabolic")
+  i_low <- intensity$get_minimum(0, 0)
   
   if (verbose) cat(sprintf("%.2f dB SPL\n", i_low))
   
@@ -159,14 +159,13 @@ compute_dsi <- function(sound,
   # For glide or combined, find maximum pitch
   if (verbose) cat("3. Highest F0 (F0-high)... ")
   
-  pitch <- sound$to_pitch_cc(
+  pitch <- sound$to_pitch(
     time_step = 0.0,  # auto
     pitch_floor = f0_min,
-    pitch_ceiling = f0_max,
-    very_accurate = TRUE
+    pitch_ceiling = f0_max
   )
   
-  f0_high <- pitch$get_maximum(0, 0, "hertz", "parabolic")
+  f0_high <- pitch$get_maximum(0, 0, "hertz", TRUE)
   
   if (verbose) cat(sprintf("%.1f Hz\n", f0_high))
   
@@ -184,7 +183,7 @@ compute_dsi <- function(sound,
       if (verbose) cat(sprintf("\n   Extracting stable portion: %.2f - %.2f s\n   ", 
                               mid_start, mid_end))
       sound_jitter <- sound$extract_part(mid_start, mid_end)
-      pitch_jitter <- sound_jitter$to_pitch_cc(
+      pitch_jitter <- sound_jitter$to_pitch(
         time_step = 0.0,
         pitch_floor = f0_min,
         pitch_ceiling = f0_max
@@ -195,7 +194,11 @@ compute_dsi <- function(sound,
     }
     
     # Get point process and voice report
-    pp <- sound_jitter$to_point_process_cc(pitch_jitter)
+    pp <- sound_jitter$to_point_process_periodic_cc(
+      time_step = 0.0,
+      pitch_floor = f0_min,
+      pitch_ceiling = f0_max
+    )
     report <- pp$voice_report(sound_jitter, pitch_jitter)
     
     # Jitter ppq5 in proportion, convert to %

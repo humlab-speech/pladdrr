@@ -304,7 +304,7 @@ compute_avqi <- function(sound,
 .compute_avqi_vowel <- function(sound, f0_min, f0_max, verbose = TRUE) {
   
   # Get duration
-  duration <- sound$get_total_duration()
+  duration <- sound$get_duration()
   if (verbose) cat(sprintf("Duration: %.2f s\n", duration))
   
   if (duration < 2.0) {
@@ -323,11 +323,11 @@ compute_avqi <- function(sound,
   
   # 1. CPPS - Smoothed Cepstral Peak Prominence
   if (verbose) cat("Computing CPPS... ")
-  cepstrogram <- sound_analysis$to_power_cepstrogram(
+  cepstrogram <- sound_analysis$to_powercepstrogram(
     pitch_floor = f0_min,
     time_step = 0.002,
-    max_frequency = 5000,
-    pre_emphasis_from = 50
+    maximum_frequency = 5000,
+    pre_emphasis_frequency = 50
   )
   cpps <- cepstrogram$get_cpps()  # Uses AVQI defaults
   if (verbose) cat(sprintf("%.2f dB\n", cpps))
@@ -345,12 +345,16 @@ compute_avqi <- function(sound,
   
   # 3-4. Shimmer - Voice Report
   if (verbose) cat("Computing shimmer... ")
-  pitch <- sound_analysis$to_pitch_cc(
+  pitch <- sound_analysis$to_pitch(
     time_step = 0.0,  # auto
     pitch_floor = f0_min,
     pitch_ceiling = f0_max
   )
-  pp <- sound_analysis$to_point_process_cc(pitch)
+  pp <- sound_analysis$to_point_process_periodic_cc(
+    time_step = 0.0,
+    pitch_floor = f0_min,
+    pitch_ceiling = f0_max
+  )
   report <- pp$voice_report(sound_analysis, pitch)
   
   shimmer_local <- report$shimmer_local * 100  # Convert to %
@@ -400,7 +404,7 @@ compute_avqi <- function(sound,
     shimmer_local_db = shimmer_local_db,
     slope = slope,
     tilt = tilt,
-    duration = sound_analysis$get_total_duration(),
+    duration = sound_analysis$get_duration(),
     f0_mean = f0_mean
   )
 }
@@ -409,7 +413,7 @@ compute_avqi <- function(sound,
 .compute_avqi_speech <- function(sound, f0_min, f0_max, verbose = TRUE) {
   
   # Get duration
-  duration <- sound$get_total_duration()
+  duration <- sound$get_duration()
   if (verbose) cat(sprintf("Duration: %.2f s\n", duration))
   
   if (duration < 3.0) {
@@ -432,7 +436,7 @@ compute_avqi <- function(sound,
     stop("No voiced segments detected in speech recording")
   }
   
-  voiced_duration <- voiced_sound$get_total_duration()
+  voiced_duration <- voiced_sound$get_duration()
   if (verbose) cat(sprintf("%.2f s voiced\n", voiced_duration))
   
   # Use voiced segments for analysis
@@ -440,7 +444,7 @@ compute_avqi <- function(sound,
   
   # Same measurements as vowel
   if (verbose) cat("Computing CPPS... ")
-  cepstrogram <- sound_analysis$to_power_cepstrogram(
+  cepstrogram <- sound_analysis$to_powercepstrogram(
     pitch_floor = f0_min,
     time_step = 0.002,
     max_frequency = 5000,
@@ -460,12 +464,16 @@ compute_avqi <- function(sound,
   if (verbose) cat(sprintf("%.2f dB\n", hnr))
   
   if (verbose) cat("Computing shimmer... ")
-  pitch <- sound_analysis$to_pitch_cc(
+  pitch <- sound_analysis$to_pitch(
     time_step = 0.0,
     pitch_floor = f0_min,
     pitch_ceiling = f0_max
   )
-  pp <- sound_analysis$to_point_process_cc(pitch)
+  pp <- sound_analysis$to_point_process_periodic_cc(
+    time_step = 0.0,
+    pitch_floor = f0_min,
+    pitch_ceiling = f0_max
+  )
   report <- pp$voice_report(sound_analysis, pitch)
   
   shimmer_local <- report$shimmer_local * 100
