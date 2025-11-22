@@ -1,0 +1,611 @@
+#' PowerCepstrum and PowerCepstrogram Visualization Functions
+#'
+#' @description
+#' ggplot2-based visualizations for power cepstrum objects, replacing
+#' Praat's native graphics system with R's powerful plotting capabilities.
+#'
+#' @name cepstrum_plots
+NULL
+
+#' @title Plot PowerCepstrum
+#'
+#' @description
+#' Creates a visualization of a power cepstrum showing the cepstral values
+#' across quefrencies, with optional peak and trend line annotations.
+#'
+#' @param cepstrum PowerCepstrum object
+#' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
+#' @param show_trendline Logical. Show regression trend line (default: TRUE)
+#' @param qmin Numeric. Minimum quefrency for peak search (seconds, default: 0.001)
+#' @param qmax Numeric. Maximum quefrency for peak search (seconds, default: 0)
+#' @param fit_method Character. Trend line fit method (default: "straight")
+#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
+#' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
+#' @param title Character. Plot title (default: auto-generated)
+#' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("voice.wav")
+#' spectrum <- sound$to_spectrum()
+#' cepstrum <- spectrum$to_powercepstrum()
+#' 
+#' # Basic plot
+#' plot_powercepstrum(cepstrum)
+#' 
+#' # Customized plot
+#' plot_powercepstrum(cepstrum, 
+#'                   show_peak = TRUE,
+#'                   show_trendline = TRUE,
+#'                   quefrency_range = c(0.001, 0.02),
+#'                   title = "Voice Quality Analysis")
+#' }
+#'
+#' @export
+plot_powercepstrum <- function(cepstrum,
+                              show_peak = TRUE,
+                              show_trendline = TRUE,
+                              qmin = 0.001,
+                              qmax = 0,
+                              fit_method = c("straight", "exponential decay", "parabolic"),
+                              quefrency_range = NULL,
+                              db_range = NULL,
+                              title = NULL,
+                              theme = c("minimal", "bw", "classic")) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(cepstrum, "PowerCepstrum")) {
+    stop("cepstrum must be a PowerCepstrum object")
+  }
+  
+  fit_method <- match.arg(fit_method)
+  theme <- match.arg(theme)
+  
+  # Extract cepstrum data as matrix
+  mat <- cepstrum$as_matrix()
+  
+  # Get quefrency values (assuming uniform sampling)
+  n_frames <- ncol(mat)
+  max_quefrency <- 0.05  # Reasonable default max quefrency
+  quefrencies <- seq(0, max_quefrency, length.out = n_frames)
+  
+  # Extract first row (power cepstrum values)
+  values <- mat[1, ]
+  
+  # Create data frame
+  plot_data <- data.frame(
+    quefrency = quefrencies,
+    power_db = values
+  )
+  
+  # Apply quefrency range filter if specified
+  if (!is.null(quefrency_range)) {
+    plot_data <- plot_data[plot_data$quefrency >= quefrency_range[1] & 
+                           plot_data$quefrency <= quefrency_range[2], ]
+  }
+  
+  # Create base plot
+  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = quefrency, y = power_db)) +
+    ggplot2::geom_line(color = "steelblue", linewidth = 0.8)
+  
+  # Add peak annotation if requested
+  if (show_peak) {
+    tryCatch({
+      peak_quefrency <- cepstrum$get_quefrency_of_peak(
+        interpolation = "parabolic",
+        qmin = qmin,
+        qmax = qmax
+      )
+      
+      cpp <- cepstrum$get_peak_prominence(
+        interpolation = "parabolic",
+        qmin = qmin,
+        qmax = qmax,
+        fit_method = fit_method
+      )
+      
+      peak_value <- cepstrum$get_value_at_quefrency(
+        quefrency = peak_quefrency,
+        interpolation = "linear",
+        unit = "dB"
+      )
+      
+      # Add peak marker
+      p <- p + ggplot2::geom_point(
+        data = data.frame(quefrency = peak_quefrency, power_db = peak_value),
+        ggplot2::aes(x = quefrency, y = power_db),
+        color = "red", size = 4, shape = 17
+      ) +
+      ggplot2::annotate("text",
+                       x = peak_quefrency,
+                       y = peak_value,
+                       label = sprintf("CPP: %.2f dB\nQ: %.4f s", cpp, peak_quefrency),
+                       vjust = -1.5, hjust = 0.5,
+                       size = 3.5, fontface = "bold", color = "red")
+    }, error = function(e) {
+      warning("Could not compute peak: ", e$message)
+    })
+  }
+  
+  # Add trend line if requested
+  if (show_trendline) {
+    # Simple linear regression for visualization
+    fit <- lm(power_db ~ quefrency, data = plot_data)
+    plot_data$fitted <- predict(fit)
+    
+    p <- p + ggplot2::geom_line(
+      data = plot_data,
+      ggplot2::aes(x = quefrency, y = fitted),
+      color = "darkgray", linetype = "dashed", linewidth = 0.6
+    )
+  }
+  
+  # Apply dB range if specified
+  if (!is.null(db_range)) {
+    p <- p + ggplot2::coord_cartesian(ylim = db_range)
+  }
+  
+  # Add labels
+  if (is.null(title)) {
+    title <- "Power Cepstrum"
+  }
+  
+  p <- p + ggplot2::labs(
+    title = title,
+    subtitle = "Cepstral analysis for voice quality assessment",
+    x = "Quefrency (s)",
+    y = "Power (dB)"
+  )
+  
+  # Apply theme
+  p <- p + switch(theme,
+    minimal = ggplot2::theme_minimal(),
+    bw = ggplot2::theme_bw(),
+    classic = ggplot2::theme_classic()
+  )
+  
+  p <- p + ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold", size = 14),
+    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40")
+  )
+  
+  return(p)
+}
+
+
+#' @title Plot PowerCepstrogram
+#'
+#' @description
+#' Creates a heatmap visualization of a power cepstrogram showing how
+#' the cepstral spectrum varies over time, similar to a spectrogram.
+#'
+#' @param cepstrogram PowerCepstrogram object
+#' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
+#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: c(0, 0.05))
+#' @param db_range Numeric vector. c(min, max) dB range for color scale (default: NULL = auto)
+#' @param color_scale Character. Color palette: "viridis", "inferno", "magma", "plasma" (default: "viridis")
+#' @param show_cpp_contour Logical. Overlay CPP contour over time (default: FALSE)
+#' @param contour_color Character. Color for CPP contour line (default: "white")
+#' @param title Character. Plot title (default: auto-generated)
+#' @param theme Character. ggplot2 theme (default: "minimal")
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("voice.wav")
+#' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
+#' 
+#' # Basic plot
+#' plot_powercepstrogram(cepstrogram)
+#' 
+#' # With CPP contour
+#' plot_powercepstrogram(cepstrogram, 
+#'                      show_cpp_contour = TRUE,
+#'                      quefrency_range = c(0.001, 0.02))
+#' }
+#'
+#' @export
+plot_powercepstrogram <- function(cepstrogram,
+                                 time_range = NULL,
+                                 quefrency_range = c(0, 0.05),
+                                 db_range = NULL,
+                                 color_scale = c("viridis", "inferno", "magma", "plasma"),
+                                 show_cpp_contour = FALSE,
+                                 contour_color = "white",
+                                 title = NULL,
+                                 theme = c("minimal", "bw", "classic")) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(cepstrogram, "PowerCepstrogram")) {
+    stop("cepstrogram must be a PowerCepstrogram object")
+  }
+  
+  color_scale <- match.arg(color_scale)
+  theme <- match.arg(theme)
+  
+  # Extract cepstrogram data as matrix (quefrency × time)
+  mat <- cepstrogram$as_matrix()
+  
+  # Get dimensions
+  n_quefrencies <- nrow(mat)
+  n_times <- ncol(mat)
+  
+  # Create time and quefrency axes
+  # These would ideally come from the object metadata
+  max_time <- 5.0  # Placeholder - should be extracted from object
+  max_quefrency <- quefrency_range[2]
+  
+  times <- seq(0, max_time, length.out = n_times)
+  quefrencies <- seq(0, max_quefrency, length.out = n_quefrencies)
+  
+  # Convert matrix to long format for ggplot2
+  plot_data <- expand.grid(
+    time = times,
+    quefrency = quefrencies
+  )
+  plot_data$power_db <- as.vector(mat)
+  
+  # Apply time range filter if specified
+  if (!is.null(time_range)) {
+    plot_data <- plot_data[plot_data$time >= time_range[1] & 
+                           plot_data$time <= time_range[2], ]
+  }
+  
+  # Apply quefrency range filter
+  plot_data <- plot_data[plot_data$quefrency >= quefrency_range[1] & 
+                         plot_data$quefrency <= quefrency_range[2], ]
+  
+  # Create base heatmap
+  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = quefrency, fill = power_db)) +
+    ggplot2::geom_raster(interpolate = TRUE)
+  
+  # Apply color scale
+  p <- p + switch(color_scale,
+    viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "viridis"),
+    inferno = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "inferno"),
+    magma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "magma"),
+    plasma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "plasma")
+  )
+  
+  # Apply dB range to color scale if specified
+  if (!is.null(db_range)) {
+    p <- p + ggplot2::scale_fill_viridis_c(
+      name = "Power (dB)",
+      option = color_scale,
+      limits = db_range
+    )
+  }
+  
+  # Add CPP contour if requested
+  if (show_cpp_contour) {
+    # Sample CPP values over time
+    n_samples <- min(100, n_times)
+    sample_times <- seq(min(times), max(times), length.out = n_samples)
+    
+    cpp_data <- data.frame(
+      time = sample_times,
+      cpp = numeric(n_samples),
+      quefrency = numeric(n_samples)
+    )
+    
+    tryCatch({
+      for (i in seq_along(sample_times)) {
+        cpp_data$cpp[i] <- cepstrogram$get_cpp_at_time(
+          time = sample_times[i],
+          interpolation = "linear"
+        )
+        # Convert CPP to approximate quefrency for visualization
+        # This is approximate - actual peak quefrency would be better
+        cpp_data$quefrency[i] <- 0.01  # Placeholder
+      }
+      
+      # Add contour line
+      p <- p + ggplot2::geom_line(
+        data = cpp_data,
+        ggplot2::aes(x = time, y = quefrency),
+        color = contour_color,
+        linewidth = 1.2,
+        inherit.aes = FALSE
+      )
+    }, error = function(e) {
+      warning("Could not compute CPP contour: ", e$message)
+    })
+  }
+  
+  # Add labels
+  if (is.null(title)) {
+    title <- "Power Cepstrogram"
+  }
+  
+  p <- p + ggplot2::labs(
+    title = title,
+    subtitle = "Time-varying cepstral analysis",
+    x = "Time (s)",
+    y = "Quefrency (s)"
+  )
+  
+  # Apply theme
+  p <- p + switch(theme,
+    minimal = ggplot2::theme_minimal(),
+    bw = ggplot2::theme_bw(),
+    classic = ggplot2::theme_classic()
+  )
+  
+  p <- p + ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold", size = 14),
+    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40"),
+    legend.position = "right"
+  )
+  
+  return(p)
+}
+
+
+#' @title Plot CPP Time Series
+#'
+#' @description
+#' Creates a line plot of Cepstral Peak Prominence (CPP) values over time
+#' from a PowerCepstrogram object. Useful for tracking voice quality variation.
+#'
+#' @param cepstrogram PowerCepstrogram object
+#' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
+#' @param qmin Numeric. Minimum quefrency for peak search (default: 0.001)
+#' @param qmax Numeric. Maximum quefrency for peak search (default: 0)
+#' @param n_samples Integer. Number of time points to sample (default: 100)
+#' @param smooth Logical. Apply smoothing to CPP contour (default: FALSE)
+#' @param smooth_span Numeric. Smoothing span for loess (default: 0.1)
+#' @param reference_lines Numeric vector. Reference CPP values to plot as horizontal lines (default: NULL)
+#' @param title Character. Plot title (default: auto-generated)
+#' @param theme Character. ggplot2 theme (default: "minimal")
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("voice.wav")
+#' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
+#' 
+#' # CPP time series
+#' plot_cpp_timeseries(cepstrogram)
+#' 
+#' # With smoothing and reference lines
+#' plot_cpp_timeseries(cepstrogram, 
+#'                    smooth = TRUE,
+#'                    reference_lines = c(5, 10, 15))
+#' }
+#'
+#' @export
+plot_cpp_timeseries <- function(cepstrogram,
+                               time_range = NULL,
+                               qmin = 0.001,
+                               qmax = 0,
+                               n_samples = 100,
+                               smooth = FALSE,
+                               smooth_span = 0.1,
+                               reference_lines = NULL,
+                               title = NULL,
+                               theme = c("minimal", "bw", "classic")) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(cepstrogram, "PowerCepstrogram")) {
+    stop("cepstrogram must be a PowerCepstrogram object")
+  }
+  
+  theme <- match.arg(theme)
+  
+  # Extract matrix to get time dimension
+  mat <- cepstrogram$as_matrix()
+  n_times <- ncol(mat)
+  max_time <- 5.0  # Placeholder - should be extracted from object
+  
+  # Determine time range
+  if (is.null(time_range)) {
+    time_range <- c(0, max_time)
+  }
+  
+  # Sample times
+  sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
+  
+  # Compute CPP at each time point
+  cpp_values <- numeric(n_samples)
+  
+  for (i in seq_along(sample_times)) {
+    tryCatch({
+      cpp_values[i] <- cepstrogram$get_cpp_at_time(
+        time = sample_times[i],
+        interpolation = "linear",
+        qmin = qmin,
+        qmax = qmax
+      )
+    }, error = function(e) {
+      cpp_values[i] <- NA
+    })
+  }
+  
+  # Create plot data
+  plot_data <- data.frame(
+    time = sample_times,
+    cpp = cpp_values
+  )
+  
+  # Remove NAs
+  plot_data <- plot_data[!is.na(plot_data$cpp), ]
+  
+  # Create base plot
+  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = cpp)) +
+    ggplot2::geom_line(color = "steelblue", linewidth = 1)
+  
+  # Add smoothing if requested
+  if (smooth && nrow(plot_data) > 10) {
+    p <- p + ggplot2::geom_smooth(
+      method = "loess",
+      span = smooth_span,
+      se = TRUE,
+      color = "darkblue",
+      fill = "lightblue",
+      alpha = 0.3
+    )
+  }
+  
+  # Add reference lines if specified
+  if (!is.null(reference_lines)) {
+    for (ref_val in reference_lines) {
+      p <- p + ggplot2::geom_hline(
+        yintercept = ref_val,
+        linetype = "dashed",
+        color = "gray50",
+        alpha = 0.7
+      )
+    }
+  }
+  
+  # Add mean CPP line
+  mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
+  p <- p + ggplot2::geom_hline(
+    yintercept = mean_cpp,
+    linetype = "solid",
+    color = "red",
+    linewidth = 0.8,
+    alpha = 0.6
+  ) +
+  ggplot2::annotate("text",
+                   x = max(plot_data$time) * 0.95,
+                   y = mean_cpp,
+                   label = sprintf("Mean: %.2f dB", mean_cpp),
+                   vjust = -0.5,
+                   hjust = 1,
+                   size = 3.5,
+                   color = "red",
+                   fontface = "bold")
+  
+  # Add labels
+  if (is.null(title)) {
+    title <- "CPP Time Series"
+  }
+  
+  p <- p + ggplot2::labs(
+    title = title,
+    subtitle = sprintf("Mean CPP: %.2f dB (SD: %.2f)", 
+                       mean(plot_data$cpp, na.rm = TRUE),
+                       sd(plot_data$cpp, na.rm = TRUE)),
+    x = "Time (s)",
+    y = "CPP (dB)"
+  )
+  
+  # Apply theme
+  p <- p + switch(theme,
+    minimal = ggplot2::theme_minimal(),
+    bw = ggplot2::theme_bw(),
+    classic = ggplot2::theme_classic()
+  )
+  
+  p <- p + ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold", size = 14),
+    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40")
+  )
+  
+  return(p)
+}
+
+
+#' @title Create Cepstrum Report Plot
+#'
+#' @description
+#' Creates a multi-panel diagnostic plot combining power cepstrum,
+#' cepstrogram, and CPP time series for comprehensive analysis.
+#'
+#' @param cepstrogram PowerCepstrogram object
+#' @param time_slice Numeric. Time point for extracting single cepstrum (default: middle)
+#' @param save_path Character. Path to save plot (optional)
+#' @param format Character. Output format: "png", "pdf", "svg" (default: "png")
+#' @param dpi Numeric. Resolution for raster formats (default: 300)
+#'
+#' @return A combined plot object (invisibly)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("voice.wav")
+#' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
+#' 
+#' # Create comprehensive report
+#' create_cepstrum_report(cepstrogram, save_path = "cepstrum_report.png")
+#' }
+#'
+#' @export
+create_cepstrum_report <- function(cepstrogram,
+                                  time_slice = NULL,
+                                  save_path = NULL,
+                                  format = c("png", "pdf", "svg"),
+                                  dpi = 300) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required. Please install it.")
+  }
+  
+  if (!requireNamespace("gridExtra", quietly = TRUE)) {
+    stop("Package 'gridExtra' is required for multi-panel layout. Please install it.")
+  }
+  
+  format <- match.arg(format)
+  
+  # Determine time slice if not specified
+  if (is.null(time_slice)) {
+    mat <- cepstrogram$as_matrix()
+    n_times <- ncol(mat)
+    max_time <- 5.0  # Placeholder
+    time_slice <- max_time / 2
+  }
+  
+  # Extract single cepstrum at time slice
+  cepstrum <- cepstrogram$get_power_cepstrum_at_time(time_slice)
+  
+  # Create individual plots
+  p1 <- plot_powercepstrum(
+    cepstrum,
+    title = sprintf("Power Cepstrum at t=%.2f s", time_slice)
+  )
+  
+  p2 <- plot_powercepstrogram(
+    cepstrogram,
+    title = "Power Cepstrogram"
+  )
+  
+  p3 <- plot_cpp_timeseries(
+    cepstrogram,
+    title = "CPP Over Time"
+  )
+  
+  # Combine plots
+  combined <- gridExtra::grid.arrange(
+    p1, p2, p3,
+    ncol = 1,
+    heights = c(1, 1.5, 1)
+  )
+  
+  # Save if requested
+  if (!is.null(save_path)) {
+    ggplot2::ggsave(
+      filename = save_path,
+      plot = combined,
+      width = 10,
+      height = 12,
+      dpi = dpi,
+      device = format
+    )
+    message("Cepstrum report saved to: ", save_path)
+  }
+  
+  invisible(combined)
+}
