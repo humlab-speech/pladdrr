@@ -4,6 +4,7 @@
 #ifndef RCPP_pladdrr_RCPPEXPORTS_H_GEN_
 #define RCPP_pladdrr_RCPPEXPORTS_H_GEN_
 
+#include "pladdrr_types.h"
 #include <Rcpp.h>
 
 namespace pladdrr {

@@ -1170,7 +1170,7 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 }
 
 .sound_convert_to_mono_simd <- function(xptr) {
-    .Call(`_pladdrr_sound_convert_to_mono`, xptr)
+    .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
 
 .complex_multiply_simd <- function(a, b) {

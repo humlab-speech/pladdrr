@@ -1,7 +1,7 @@
-// speaker_types.h - Package-wide type definitions for Rcpp
+// pladdrr_types.h - Package-wide type definitions for Rcpp
 
-#ifndef SPEAKER_TYPES_H
-#define SPEAKER_TYPES_H
+#ifndef PLADDRR_TYPES_H
+#define PLADDRR_TYPES_H
 
 // Forward declarations for Praat types
 struct structSound;
@@ -25,4 +25,4 @@ struct structTable;
 struct structAmplitudeTier;
 struct structElectroglottogram;
 
-#endif // SPEAKER_TYPES_H
+#endif // PLADDRR_TYPES_H

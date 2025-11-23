@@ -192,7 +192,7 @@ void convert_int16_to_double_scalar(const int16_t* input, double* output, intege
 
 // Exported function for R
 // [[Rcpp::export(.sound_convert_to_mono_simd)]]
-SEXP sound_convert_to_mono(SEXP xptr) {
+SEXP sound_convert_to_mono_simd(SEXP xptr) {
     Sound sound = (Sound) R_ExternalPtrAddr(xptr);
     if (!sound) {
         Rcpp::stop("Invalid Sound pointer");
