@@ -1,6 +1,6 @@
 [submodule "src/praat.github.io"]
 	path = src/praat.github.io
-	url = https://github.com/praat/praat.github.io.git
+	url = https://github.com/humlab-speech/praat.github.io.git
 [submodule "src/clapack"]
 	path = src/clapack
-	url = https://github.com/alphacep/clapack.git
+	url = https://github.com/humlab-speech/clapack.git
