@@ -2,7 +2,7 @@
 # These tests verify the new duplicate_tier() and set_tier_name() methods
 
 library(testthat)
-library(speaker)
+library(pladdrr)
 
 test_that("set_tier_name() works with tier number", {
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones", point_tiers = "")

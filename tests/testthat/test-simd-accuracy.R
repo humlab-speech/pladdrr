@@ -1,5 +1,5 @@
 test_that("SIMD sound statistics are accurate", {
-  skip_if_not_installed("speaker")
+  skip_if_not_installed("pladdrr")
   
   # Create test sound with known properties
   sound <- Sound$new(duration = 1, sample_rate = 1000, n_channels = 1)
@@ -31,7 +31,7 @@ test_that("SIMD sound statistics are accurate", {
 })
 
 test_that("SIMD mono conversion is accurate for stereo", {
-  skip_if_not_installed("speaker")
+  skip_if_not_installed("pladdrr")
   
   # Create stereo sound
   stereo <- Sound$new(duration = 0.1, sample_rate = 1000, n_channels = 2)
@@ -60,7 +60,7 @@ test_that("SIMD mono conversion is accurate for stereo", {
 })
 
 test_that("SIMD mono conversion is accurate for multi-channel", {
-  skip_if_not_installed("speaker")
+  skip_if_not_installed("pladdrr")
   
   # Create 4-channel sound
   multichannel <- Sound$new(duration = 0.05, sample_rate = 1000, n_channels = 4)

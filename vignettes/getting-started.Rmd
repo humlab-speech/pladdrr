@@ -33,7 +33,7 @@ install.packages("speaker", type = "source")
 ```
 
 ```{r}
-library(speaker)
+library(pladdrr)
 ```
 
 ## Creating and Loading Sounds
@@ -366,7 +366,7 @@ citation("speaker")
 ## See Also
 
 - Praat: <https://www.praat.org>
-- Package documentation: `help(package = "speaker")`
+- Package documentation: `help(package = "pladdrr")`
 - Function reference: `?extract_pitch`, `?extract_formants`, `?extract_intensity`
 
 ## Conclusion

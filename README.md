@@ -1,10 +1,10 @@
-# speaker
+# pladdrr
 
 Direct Access to Praat C Functionality from R
 
 ## Overview
 
-The `speaker` package provides direct, efficient access to Praat C implemented functionality from R using Rcpp. Similar to the [parselmouth](https://github.com/YannickJadoul/Parselmouth) package for Python, this package enables R users to leverage Praat's powerful phonetic analysis capabilities directly from R.
+The `pladdrr` package provides direct, efficient access to Praat C implemented functionality from R using Rcpp. Similar to the [parselmouth](https://github.com/YannickJadoul/Parselmouth) package for Python, this package enables R users to leverage Praat's powerful phonetic analysis capabilities directly from R.
 
 ## Performance 🚀
 
@@ -34,8 +34,8 @@ if (!require("devtools")) install.packages("devtools")
 # Install the humlab-speech fork of av (required for audio I/O)
 devtools::install_github("humlab-speech/av")
 
-# Install speaker from GitHub
-devtools::install_github("humlab-speech/speaker")
+# Install pladdrr from GitHub
+devtools::install_github("humlab-speech/pladdrr")
 ```
 
 ### System Requirements
@@ -52,7 +52,7 @@ devtools::install_github("humlab-speech/speaker")
 
 ### Audio I/O
 
-The `speaker` package uses the [humlab-speech/av](https://github.com/humlab-speech/av) fork for all audio file operations. This provides:
+The `pladdrr` package uses the [humlab-speech/av](https://github.com/humlab-speech/av) fork for all audio file operations. This provides:
 
 - Support for **any audio/video format** via FFmpeg (MP3, WAV, FLAC, OGG, AAC, M4A, etc.)
 - Fast, efficient audio reading and writing
@@ -107,7 +107,7 @@ See `inst/examples/` for complete, real-world workflows:
 ## Quick Start
 
 ```r
-library(speaker)
+library(pladdrr)
 
 # Create a Sound object with a pure tone
 sound <- Sound$create_tone(440, duration = 1.0, sampling_frequency = 44100)
@@ -181,7 +181,7 @@ label <- tg$get_label_of_interval(tier = 1, interval_number = 2)
 
 ```r
 # Process multiple files
-library(speaker)
+library(pladdrr)
 
 process_file <- function(wav_path) {
   sound <- Sound$new(wav_path)
@@ -293,7 +293,7 @@ See `NEXT_STEPS_POST_EXAMPLES_2025-11-19.md` for detailed roadmap.
 
 ### Comparison with Parselmouth
 
-|  | **speaker** (R) | **Parselmouth** (Python) |
+|  | **pladdrr** (R) | **Parselmouth** (Python) |
 |---|---|---|
 | **Interface** | Direct R6 methods | Generic `praat.call()` dispatcher |
 | **Autocomplete** | ✅ Full IDE support | ❌ String-based commands |
@@ -307,7 +307,7 @@ See `NEXT_STEPS_POST_EXAMPLES_2025-11-19.md` for detailed roadmap.
 - [PraatR](https://github.com/usagi5886/PraatR) - Calls external Praat via scripts (slower, requires Praat installation)
 - [rPraat](https://github.com/bbTomas/rPraat) - Pure R implementation (limited functionality)
 
-**speaker** provides the best of both worlds: Praat's full C++ functionality with R's data analysis ecosystem.
+**pladdrr** provides the best of both worlds: Praat's full C++ functionality with R's data analysis ecosystem.
 
 ## Documentation
 
@@ -317,13 +317,13 @@ Three comprehensive guides are available:
 
 ```r
 # Complete phonetic analysis workflow
-vignette("integrated-phonetic-analysis", package = "speaker")
+vignette("integrated-phonetic-analysis", package = "pladdrr")
 
 # Vowel acoustics research pipeline  
-vignette("vowel-space-analysis", package = "speaker")
+vignette("vowel-space-analysis", package = "pladdrr")
 
 # TextGrid annotation and corpus processing
-vignette("textgrid-workflows", package = "speaker")
+vignette("textgrid-workflows", package = "pladdrr")
 ```
 
 ### Examples
@@ -343,10 +343,10 @@ Nine complete, real-world examples in `inst/examples/`:
 Run examples:
 ```r
 # View example code
-file.show(system.file("examples", "07_comprehensive_phonetic_analysis.R", package = "speaker"))
+file.show(system.file("examples", "07_comprehensive_phonetic_analysis.R", package = "pladdrr"))
 
-# Run example (after installing speaker)
-source(system.file("examples", "07_comprehensive_phonetic_analysis.R", package = "speaker"))
+# Run example (after installing pladdrr)
+source(system.file("examples", "07_comprehensive_phonetic_analysis.R", package = "pladdrr"))
 ```
 
 ## Contributing

@@ -1,6 +1,6 @@
 # Test FormantGrid R6 class
 library(testthat)
-library(speaker)
+library(pladdrr)
 
 test_that("FormantGrid creation works", {
   # Create empty FormantGrid

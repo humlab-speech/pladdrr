@@ -76,7 +76,7 @@ Speaker-intrinsic differences (vocal tract length, physiology) require normaliza
 For this demonstration, we'll use synthetic data. In real research, load actual recordings:
 
 ```{r load_data}
-library(speaker)
+library(pladdrr)
 
 # Create synthetic audio (in real research: Sound$new("recording.wav"))
 sound <- Sound$create_tone(

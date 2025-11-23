@@ -1,6 +1,6 @@
 # Tests for Formant R6 class
 library(testthat)
-library(speaker)
+library(pladdrr)
 
 # Helper function to create a test sound
 create_test_sound <- function() {
@@ -28,7 +28,7 @@ create_test_sound <- function() {
 }
 
 test_that("Formant object creation from Sound works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   
@@ -47,7 +47,7 @@ test_that("Formant object creation from Sound works", {
 })
 
 test_that("Formant object creation via to_formant_keepall works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   
@@ -62,7 +62,7 @@ test_that("Formant object creation via to_formant_keepall works", {
 })
 
 test_that("Formant query methods return valid values", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -86,7 +86,7 @@ test_that("Formant query methods return valid values", {
 })
 
 test_that("Formant value queries work", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg(max_frequency = 5500)
@@ -108,7 +108,7 @@ test_that("Formant value queries work", {
 })
 
 test_that("Formant statistics methods work", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -139,7 +139,7 @@ test_that("Formant statistics methods work", {
 })
 
 test_that("Formant time of min/max methods work", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -160,7 +160,7 @@ test_that("Formant time of min/max methods work", {
 })
 
 test_that("Formant export to data frame works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg(max_formants = 5)
@@ -185,7 +185,7 @@ test_that("Formant export to data frame works", {
 })
 
 test_that("Formant save method works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -202,7 +202,7 @@ test_that("Formant save method works", {
 })
 
 test_that("Formant print method works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -216,7 +216,7 @@ test_that("Formant print method works", {
 })
 
 test_that("Formant unit parameter works (hertz vs bark)", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -240,7 +240,7 @@ test_that("Formant unit parameter works (hertz vs bark)", {
 })
 
 test_that("Formant works with different max_formants settings", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   
@@ -261,7 +261,7 @@ test_that("Formant works with different max_formants settings", {
 })
 
 test_that("Formant interpolation parameter works", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
@@ -281,7 +281,7 @@ test_that("Formant interpolation parameter works", {
 })
 
 test_that("Deprecated S3 functions still work with warnings", {
-  skip_if_not(require("speaker"), message = "speaker package not available")
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   # Create old-style sound object (if still supported)
   # This test may need adjustment based on actual S3 support

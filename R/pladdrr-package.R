@@ -1,6 +1,6 @@
-#' speaker: Direct Access to Praat C Functionality from R
+#' pladdrr: Direct Access to Praat C Functionality from R
 #'
-#' The speaker package provides direct access to Praat's C phonetic analysis
+#' The pladdrr package provides direct access to Praat's C phonetic analysis
 #' functionality from R. Praat is a widely-used tool for speech analysis in
 #' phonetics research. This package wraps Praat's core C library using Rcpp,
 #' providing efficient, native access to Praat's analysis capabilities without
@@ -41,7 +41,7 @@
 #'
 #' @section Design Principles:
 #'
-#' The speaker package follows these core principles:
+#' The pladdrr package follows these core principles:
 #'
 #' \enumerate{
 #'   \item \strong{Scientific Accuracy}: All analyses must match Praat's output
@@ -77,7 +77,7 @@
 #'
 #' @section Getting Started:
 #'
-#' See \code{vignette("basic-usage", package = "speaker")} for an introduction
+#' See \code{vignette("basic-usage", package = "pladdrr")} for an introduction
 #' to the package. Additional vignettes cover specific analysis types:
 #'
 #' \itemize{
@@ -99,9 +99,9 @@
 #' [Computer program]. Version 6.3.x, retrieved from http://www.praat.org/
 #'
 #' @docType package
-#' @name speaker-package
-#' @aliases speaker
-#' @useDynLib speaker, .registration = TRUE
+#' @name pladdrr-package
+#' @aliases pladdrr
+#' @useDynLib pladdrr, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @keywords internal
 "_PACKAGE"
@@ -118,8 +118,8 @@
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    "speaker: Direct access to Praat C functionality\n",
-    "See ?speaker for an overview and citation information.\n",
-    "Use citation('speaker') for citing this package in publications."
+    "pladdrr: Direct access to Praat C functionality\n",
+    "See ?pladdrr for an overview and citation information.\n",
+    "Use citation('pladdrr') for citing this package in publications."
   )
 }

@@ -65,7 +65,7 @@ The **speaker** package provides all necessary tools for steps 2-5.
 For demonstration, we create a 5-second audio signal. In real research, you would load existing recordings.
 
 ```{r create_audio}
-library(speaker)
+library(pladdrr)
 
 # Create synthetic audio (440 Hz tone)
 sound <- Sound$create_tone(

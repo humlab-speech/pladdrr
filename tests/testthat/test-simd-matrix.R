@@ -2,8 +2,8 @@
 # Validates numerical accuracy of SIMD-accelerated matrix functions
 
 test_that("SIMD matrix sum matches scalar result", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Small matrix
   mat <- matrix(runif(100 * 100), nrow = 100, ncol = 100)
@@ -31,8 +31,8 @@ test_that("SIMD matrix sum matches scalar result", {
 })
 
 test_that("SIMD matrix mean matches scalar result", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   mat <- matrix(runif(500 * 500), nrow = 500, ncol = 500)
   mat_obj <- praat_matrix_from_matrix(mat)
@@ -43,8 +43,8 @@ test_that("SIMD matrix mean matches scalar result", {
 })
 
 test_that("SIMD matrix min matches scalar result", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   mat <- matrix(runif(500 * 500, min = -100, max = 100), nrow = 500, ncol = 500)
   mat_obj <- praat_matrix_from_matrix(mat)
@@ -55,8 +55,8 @@ test_that("SIMD matrix min matches scalar result", {
 })
 
 test_that("SIMD matrix max matches scalar result", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   mat <- matrix(runif(500 * 500, min = -100, max = 100), nrow = 500, ncol = 500)
   mat_obj <- praat_matrix_from_matrix(mat)
@@ -67,8 +67,8 @@ test_that("SIMD matrix max matches scalar result", {
 })
 
 test_that("SIMD matrix operations handle edge cases", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Single element
   mat <- matrix(42.0, nrow = 1, ncol = 1)
@@ -94,8 +94,8 @@ test_that("SIMD matrix operations handle edge cases", {
 })
 
 test_that("SIMD matrix operations handle special values", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Matrix with zeros
   mat <- matrix(0, nrow = 100, ncol = 100)

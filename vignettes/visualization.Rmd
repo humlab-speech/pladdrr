@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(speaker)
+library(pladdrr)
 library(ggplot2)
 ```
 
@@ -44,7 +44,7 @@ The `plot_avqi()` function displays individual AVQI components:
 
 ```{r avqi-components, eval=FALSE}
 # Load example audio
-sound <- Sound$new(system.file("extdata", "voice_sample.wav", package = "speaker"))
+sound <- Sound$new(system.file("extdata", "voice_sample.wav", package = "pladdrr"))
 
 # Compute AVQI
 avqi_result <- compute_avqi(sound)

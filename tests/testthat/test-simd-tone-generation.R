@@ -2,8 +2,8 @@
 # Validates numerical accuracy and performance of tone synthesis
 
 test_that("SIMD tone generation creates valid sine wave", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate 440 Hz sine wave
   sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
@@ -27,8 +27,8 @@ test_that("SIMD tone generation creates valid sine wave", {
 })
 
 test_that("SIMD tone generation handles different frequencies", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Low frequency
   sound_low <- Sound$create_tone(1.0, 110, 44100, 0.5)
@@ -46,8 +46,8 @@ test_that("SIMD tone generation handles different frequencies", {
 })
 
 test_that("SIMD tone generation handles different amplitudes", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Low amplitude
   sound_quiet <- Sound$create_tone(1.0, 440, 44100, 0.1)
@@ -67,8 +67,8 @@ test_that("SIMD tone generation handles different amplitudes", {
 })
 
 test_that("SIMD tone generation handles different sample rates", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Low sample rate
   sound_16k <- Sound$create_tone(1.0, 440, 16000, 0.5)
@@ -90,8 +90,8 @@ test_that("SIMD tone generation handles different sample rates", {
 })
 
 test_that("SIMD tone generation handles different durations", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Short
   sound_short <- Sound$create_tone(0.1, 440, 44100, 0.5)
@@ -110,8 +110,8 @@ test_that("SIMD tone generation handles different durations", {
 })
 
 test_that("SIMD tone generation is deterministic", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate same tone twice
   sound1 <- Sound$create_tone(1.0, 440, 44100, 0.5)
@@ -126,8 +126,8 @@ test_that("SIMD tone generation is deterministic", {
 })
 
 test_that("SIMD tone generation performance is reasonable", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate long tone and measure time
   time_taken <- system.time({

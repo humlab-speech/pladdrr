@@ -1,4 +1,4 @@
-Package: speaker
+Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
 Version: 0.9.9
@@ -39,5 +39,5 @@ Remotes: humlab-speech/av
 SystemRequirements: C++17
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
-URL: https://github.com/humlab-speech/speaker
-BugReports: https://github.com/humlab-speech/speaker/issues
+URL: https://github.com/humlab-speech/pladdrr
+BugReports: https://github.com/humlab-speech/pladdrr/issues

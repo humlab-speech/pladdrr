@@ -2,8 +2,8 @@
 # Validates numerical accuracy of RMS, energy, and power calculations
 
 test_that("SIMD RMS calculation is numerically accurate", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate sine wave
   sound <- Sound$create_tone(1.0, 44100, 440, 0.5)
@@ -22,8 +22,8 @@ test_that("SIMD RMS calculation is numerically accurate", {
 })
 
 test_that("SIMD energy calculation is consistent", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate sine wave
   sound <- Sound$create_tone(1.0, 44100, 440, 0.5)
@@ -45,8 +45,8 @@ test_that("SIMD energy calculation is consistent", {
 })
 
 test_that("SIMD power calculation is consistent with energy", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   sound <- Sound$create_tone(2.0, 44100, 440, 0.5)
   dur <- sound$get_duration()
@@ -61,8 +61,8 @@ test_that("SIMD power calculation is consistent with energy", {
 })
 
 test_that("SIMD intensity calculations handle time windows", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate sounds with different amplitudes
   sound1 <- Sound$create_tone(1.0, 44100, 440, 0.3)
@@ -79,8 +79,8 @@ test_that("SIMD intensity calculations handle time windows", {
 })
 
 test_that("SIMD intensity handles edge cases", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Silence
   sound <- Sound$create_tone(1.0, 44100, 440, 0.0)
@@ -96,8 +96,8 @@ test_that("SIMD intensity handles edge cases", {
 })
 
 test_that("SIMD intensity calculations are consistent across durations", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Short sound
   sound_short <- Sound$create_tone(0.5, 44100, 440, 0.5)

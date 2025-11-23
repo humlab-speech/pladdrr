@@ -69,7 +69,7 @@ A TextGrid contains **tiers** of two types:
 ### Creating from Scratch
 
 ```{r create_textgrid}
-library(speaker)
+library(pladdrr)
 
 # Create a TextGrid with multiple tiers
 tg <- TextGrid$create(
@@ -128,7 +128,7 @@ events_tier <- 4
 tg <- TextGrid$new("path/to/annotation.TextGrid")
 
 # Or from package example data
-tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "speaker")
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
 tg <- TextGrid$new(tg_file)
 ```
 
@@ -294,7 +294,7 @@ For large TextGrids (many intervals/points), consider performance:
 
 ```{r large_textgrid, eval=FALSE}
 # Load large file
-tg_file <- system.file("extdata", "benchmarkdata10min.TextGrid", package = "speaker")
+tg_file <- system.file("extdata", "benchmarkdata10min.TextGrid", package = "pladdrr")
 
 # Measure load time
 start_time <- Sys.time()

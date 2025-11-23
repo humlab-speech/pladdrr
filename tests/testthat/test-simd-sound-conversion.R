@@ -2,8 +2,8 @@
 # Validates numerical accuracy of sound-to-matrix conversions
 
 test_that("SIMD data conversion preserves values", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate test sound
   sound <- Sound$create_tone(1.0, 440, 44100, 0.5)
@@ -31,8 +31,8 @@ test_that("SIMD data conversion preserves values", {
 })
 
 test_that("SIMD data conversion handles stereo", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate stereo tone (if available)
   sound_left <- Sound$create_tone(0.5, 440, 44100, 0.3)
@@ -48,8 +48,8 @@ test_that("SIMD data conversion handles stereo", {
 })
 
 test_that("SIMD data conversion handles different sample rates", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Low sample rate
   sound_low <- Sound$create_tone(1.0, 440, 16000, 0.5)
@@ -65,8 +65,8 @@ test_that("SIMD data conversion handles different sample rates", {
 })
 
 test_that("SIMD data conversion is lossless", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate sound
   sound1 <- Sound$create_tone(0.1, 440, 44100, 0.5)
@@ -87,8 +87,8 @@ test_that("SIMD data conversion is lossless", {
 })
 
 test_that("SIMD data conversion handles edge cases", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Very short sound
   sound_short <- Sound$create_tone(0.01, 440, 44100, 0.5)
@@ -103,8 +103,8 @@ test_that("SIMD data conversion handles edge cases", {
 })
 
 test_that("SIMD data conversion performance is reasonable", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Large sound file
   sound_large <- Sound$create_tone(10.0, 440, 44100, 0.5)

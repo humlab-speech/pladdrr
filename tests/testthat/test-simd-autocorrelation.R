@@ -2,15 +2,15 @@
 # Validates numerical accuracy and performance of autocorrelation
 
 test_that("SIMD autocorrelation is symmetric", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # White noise
   set.seed(42)
   data <- rnorm(1000)
   
   # Check if SIMD autocorrelation function is exported
-  if (exists(".autocorrelation_simd", where = asNamespace("speaker"), inherits = FALSE)) {
+  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     acf_result <- .autocorrelation_simd(data, max_lag = 50)
     
     # Lag-0 should be maximum (variance)
@@ -24,15 +24,15 @@ test_that("SIMD autocorrelation is symmetric", {
 })
 
 test_that("SIMD autocorrelation handles periodic signals", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   # Generate periodic signal (sine wave)
   t <- seq(0, 1, length.out = 1000)
   freq <- 10  # 10 Hz
   data <- sin(2 * pi * freq * t)
   
-  if (exists(".autocorrelation_simd", where = asNamespace("speaker"), inherits = FALSE)) {
+  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     acf_result <- .autocorrelation_simd(data, max_lag = 200)
     
     # For periodic signal, autocorrelation should also be periodic
@@ -50,13 +50,13 @@ test_that("SIMD autocorrelation handles periodic signals", {
 })
 
 test_that("SIMD normalized autocorrelation is in [-1, 1]", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
   set.seed(123)
   data <- rnorm(1000)
   
-  if (exists(".autocorrelation_normalized_simd", where = asNamespace("speaker"), inherits = FALSE)) {
+  if (exists(".autocorrelation_normalized_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     acf_norm <- .autocorrelation_normalized_simd(data, max_lag = 100)
     
     # All values should be in [-1, 1]
@@ -71,10 +71,10 @@ test_that("SIMD normalized autocorrelation is in [-1, 1]", {
 })
 
 test_that("SIMD autocorrelation handles edge cases", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
-  if (exists(".autocorrelation_simd", where = asNamespace("speaker"), inherits = FALSE)) {
+  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     # Constant signal
     data <- rep(1.0, 100)
     acf_result <- .autocorrelation_simd(data, max_lag = 10)
@@ -94,10 +94,10 @@ test_that("SIMD autocorrelation handles edge cases", {
 })
 
 test_that("SIMD autocorrelation performance scales reasonably", {
-  skip_if_not_installed("speaker")
-  library(speaker)
+  skip_if_not_installed("pladdrr")
+  library(pladdrr)
   
-  if (exists(".autocorrelation_simd", where = asNamespace("speaker"), inherits = FALSE)) {
+  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     set.seed(42)
     
     # Small data
