@@ -1,8 +1,8 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 0.9.9
-Date: 2025-11-22
+Version: 1.0.0
+Date: 2025-11-24
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
@@ -16,7 +16,7 @@ Description: Provides direct, efficient access to Praat C implemented
     manipulation, pitch analysis, formant extraction, intensity measurements,
     spectral analysis, TextGrid annotation, and voice quality assessment.
     Features SIMD optimization for 2-4x performance improvements on modern CPUs.
-License: GPL-3
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -25,7 +25,7 @@ Imports:
     Rcpp (>= 1.0.0),
     R6 (>= 2.5.0),
     S7 (>= 0.1.0),
-    av,
+    av (>= 0.5.0),
     ggplot2
 LinkingTo: Rcpp, RcppXsimd
 Suggests:
@@ -33,10 +33,9 @@ Suggests:
     roxygen2 (>= 7.0.0),
     knitr,
     rmarkdown,
-    covr,
     gridExtra
 Remotes: humlab-speech/av
-SystemRequirements: C++17
+SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017), FFmpeg libraries (for av package)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 URL: https://github.com/humlab-speech/pladdrr

@@ -48,13 +48,13 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
   return(sound)
 }
 
-#' Read sound from WAV file
+#' Read sound from audio file
 #'
-#' Reads a WAV audio file and creates a praat_sound object. Supports mono
-#' and stereo files. For stereo files, specify which channel to read
-#' (default is left channel).
+#' Reads an audio file and creates a praat_sound object. Supports many formats
+#' including WAV, MP3, FLAC, OGG, M4A, etc. via the av package (FFmpeg).
+#' For stereo files, specify which channel to read (default is left channel).
 #'
-#' @param file_path Path to WAV file
+#' @param file_path Path to audio file (any format supported by av/FFmpeg)
 #' @param channel Channel to read for stereo files: 0 for left, 1 for right
 #'   (default: 0). Ignored for mono files.
 #'
@@ -62,8 +62,10 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #'
 #' @examples
 #' \dontrun{
-#' # Read a mono WAV file
+#' # Read various audio formats
 #' sound <- read_sound("recording.wav")
+#' sound_mp3 <- read_sound("audio.mp3")
+#' sound_flac <- read_sound("music.flac")
 #'
 #' # Read right channel from stereo file
 #' sound_right <- read_sound("stereo.wav", channel = 1)
@@ -74,7 +76,6 @@ read_sound <- function(file_path, channel = 0) {
   # Validate file path
   validate_string(file_path, "file_path")
   validate_file_exists(file_path, "file_path")
-  validate_file_extension(file_path, c("wav", "WAV"), "file_path")
 
   # Validate channel parameter
   if (!is.numeric(channel) || length(channel) != 1) {
@@ -84,37 +85,37 @@ read_sound <- function(file_path, channel = 0) {
     stop("'channel' must be 0 (left) or 1 (right)", call. = FALSE)
   }
 
-  # Read WAV file using tuneR (since Praat integration is not yet complete)
-  if (!requireNamespace("tuneR", quietly = TRUE)) {
-    stop("Package 'tuneR' is required to read WAV files. ",
-         "Install it with: install.packages('tuneR')", call. = FALSE)
+  # Read audio file using av package (humlab-speech/av fork)
+  if (!requireNamespace("av", quietly = TRUE)) {
+    stop("Package 'av' is required to read audio files.\n",
+         "Install from GitHub: remotes::install_github('humlab-speech/av')",
+         call. = FALSE)
   }
 
-  # Read the file
-  wave <- tuneR::readWave(file_path)
-
+  # Read the file using av
+  audio_info <- av::av_media_info(file_path)
+  audio_data <- av::read_audio_bin(file_path)
+  
+  # av returns samples × channels matrix (or vector for mono)
   # Extract the appropriate channel
-  if (wave@stereo) {
-    # Stereo file
+  if (is.matrix(audio_data)) {
+    # Stereo or multi-channel
+    n_channels <- ncol(audio_data)
     if (channel == 0) {
-      values <- wave@left
+      values <- audio_data[, 1]
+    } else if (channel == 1 && n_channels >= 2) {
+      values <- audio_data[, 2]
     } else {
-      values <- wave@right
+      stop("Channel ", channel, " not available in file (has ", n_channels, " channels)", call. = FALSE)
     }
-    n_channels <- 2
   } else {
     # Mono file
-    values <- wave@left
+    values <- as.numeric(audio_data)
     n_channels <- 1
   }
 
-  # Normalize to [-1, 1] range
-  bit_depth <- wave@bit
-  max_val <- 2^(bit_depth - 1) - 1
-  values <- as.numeric(values) / max_val
-
   # Get sampling rate
-  sampling_rate <- wave@samp.rate
+  sampling_rate <- audio_info$audio$sample_rate
 
   # Create sound object
   n_samples <- length(values)
