@@ -200,3 +200,66 @@ The package has successfully transitioned to a modern R6 OOP architecture while 
 **Commits**: 10  
 **Lines Changed**: ~500  
 **Documentation**: 4 comprehensive guides created
+
+## Critical Build System Fix
+
+### Catastrophic .Rbuildignore Error Discovered
+
+**Date**: 2025-11-25 (later session)  
+**Severity**: CRITICAL  
+
+### Problem
+The `.Rbuildignore` file contained `^.*\.cpp$` which **excluded ALL C++ source files** from the package tarball:
+```
+make: *** No rule to make target 'praat_wrapper.o', needed by 'pladdrr.so'.  Stop.
+ERROR: compilation failed for package 'pladdrr'
+```
+
+### Root Cause
+- The pattern `^.*\.cpp$` was blocking all 52 C++ wrapper files from being included
+- Package tarball had ZERO .cpp files
+- Impossible to compile or install the package
+- Issue went undetected because local builds used existing .o files
+
+### Solution Applied
+**Removed line from `.Rbuildignore`**: `^.*\.cpp$`
+
+### Verification
+```bash
+$ tar -tzf pladdrr_0.9.11.tar.gz | grep "praat_wrapper.cpp"
+pladdrr/src/praat_wrapper.cpp  # ✅ Now included!
+```
+
+### Build Status After Fix
+- ✅ **Compilation**: SUCCESS
+- ✅ **Linking**: SUCCESS  
+- ❌ **Tests**: Segfault (needs investigation)
+- ❌ **Examples**: S3 methods still referenced
+- ❌ **Vignettes**: API mismatches
+
+### Current R CMD check Status
+```
+Status: 3 ERRORs, 13 WARNINGs, 6 NOTEs
+```
+
+**Errors**:
+1. Examples use deprecated `as.data.frame(sound)` 
+2. Test suite crashes with segfault
+3. Vignettes have R6 API mismatches
+
+## Next Actions Required
+
+1. **Fix Examples**: Replace S3 calls with R6 methods
+2. **Fix Tests**: Debug segfault (likely XPtr lifecycle)
+3. **Fix Vignettes**: Update to correct R6 API
+4. **Complete Deprecation**: Ensure all S3 generics show warnings
+
+## Impact
+
+This `.Rbuildignore` error made the package **completely unbuildable from source**. The fix is essential for:
+- CRAN submission
+- User installations
+- CI/CD pipelines  
+- Package distribution
+
+**Lesson Learned**: Always verify source files are included in tarball during development!

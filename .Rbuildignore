@@ -33,7 +33,6 @@ results/
 ^.*\.tar\.gz$
 ^.*\.txt$
 ^.*\.py$
-^.*\.cpp$
 ^test_.*\.R$
 ^create_test_audio\.R$
 ^1$
