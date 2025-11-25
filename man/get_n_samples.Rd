@@ -2,21 +2,16 @@
 % Please edit documentation in R/sound.R
 \name{get_n_samples}
 \alias{get_n_samples}
-\title{Get number of samples in sound object}
+\title{Get number of samples in sound object (DEPRECATED)}
 \usage{
 get_n_samples(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A Sound R6 object}
 }
 \value{
-Number of samples (integer scalar)
+Number of samples
 }
 \description{
-Extracts the number of samples in a praat_sound object.
-}
-\examples{
-sound <- create_sound(rep(0, 1000), sampling_rate = 44100)
-get_n_samples(sound)  # Returns 1000
-
+**DEPRECATED:** Use \code{sound$get_number_of_samples()} instead.
 }

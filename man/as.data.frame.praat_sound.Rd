@@ -23,15 +23,10 @@ Converts a praat_sound object to a data frame with time and amplitude columns.
 This is useful for plotting and further analysis in R.
 }
 \examples{
-sound <- generate_sine_wave(440, 0.01)
-df <- as.data.frame(sound)
-head(df)
-
-# Use for plotting
 \dontrun{
-library(ggplot2)
-ggplot(df, aes(x = time, y = amplitude)) +
-  geom_line()
+# DEPRECATED - Use R6 interface instead:
+sound <- Sound$new("audio.wav")
+df <- sound$as_data_frame()
 }
 
 }

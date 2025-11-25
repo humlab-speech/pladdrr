@@ -2,31 +2,22 @@
 % Please edit documentation in R/pitch.R
 \name{get_pitch_at_time}
 \alias{get_pitch_at_time}
-\title{Get pitch at specific time point}
+\title{Get pitch at specific time point (DEPRECATED)}
 \usage{
 get_pitch_at_time(pitch, time, unit = "Hz", interpolate = FALSE)
 }
 \arguments{
-\item{pitch}{A praat_pitch object}
+\item{pitch}{A Pitch R6 object}
 
-\item{time}{Time point in seconds}
+\item{time}{Time in seconds}
 
-\item{unit}{Unit for pitch value: "Hz" (default) or "semitones"}
+\item{unit}{Unit: "Hz" or "semitones"}
 
-\item{interpolate}{Logical, whether to interpolate between frames (default: FALSE)}
+\item{interpolate}{Whether to interpolate}
 }
 \value{
-Pitch value in specified unit, or NA if unvoiced
+Pitch value or NA
 }
 \description{
-Extracts the fundamental frequency at a specific time point from a pitch object.
-Can optionally interpolate between frames.
-}
-\examples{
-\dontrun{
-sound <- read_sound("speech.wav")
-pitch <- extract_pitch(sound)
-f0 <- get_pitch_at_time(pitch, 0.5)  # Get pitch at 0.5 seconds
-}
-
+**DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.
 }

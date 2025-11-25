@@ -7,7 +7,7 @@
 sound_statistics(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A praat_sound (S3) or Sound (R6) object}
 }
 \value{
 A named list containing:
@@ -24,6 +24,7 @@ A named list containing:
 \description{
 Calculates a comprehensive set of statistics for a sound object, including
 amplitude statistics and metadata.
+Works with both S3 praat_sound objects and R6 Sound objects.
 }
 \examples{
 sound <- generate_sine_wave(440, 0.5)

@@ -62,7 +62,7 @@ degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 
 }
 \section{Super classes}{
-\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{\link[speaker:Sound]{speaker::Sound}} -> \code{Electroglottogram}
+\code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{\link[pladdrr:Sound]{pladdrr::Sound}} -> \code{Electroglottogram}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -80,50 +80,50 @@ degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="PraatObject" data-id="get_class_name"><a href='../../speaker/html/PraatObject.html#method-PraatObject-get_class_name'><code>speaker::PraatObject$get_class_name()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="PraatObject" data-id="is_valid"><a href='../../speaker/html/PraatObject.html#method-PraatObject-is_valid'><code>speaker::PraatObject$is_valid()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="as_data_frame"><a href='../../speaker/html/Sound.html#method-Sound-as_data_frame'><code>speaker::Sound$as_data_frame()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="as_matrix"><a href='../../speaker/html/Sound.html#method-Sound-as_matrix'><code>speaker::Sound$as_matrix()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="concatenate"><a href='../../speaker/html/Sound.html#method-Sound-concatenate'><code>speaker::Sound$concatenate()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="convert_to_mono"><a href='../../speaker/html/Sound.html#method-Sound-convert_to_mono'><code>speaker::Sound$convert_to_mono()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="convert_to_stereo"><a href='../../speaker/html/Sound.html#method-Sound-convert_to_stereo'><code>speaker::Sound$convert_to_stereo()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="de_emphasize"><a href='../../speaker/html/Sound.html#method-Sound-de_emphasize'><code>speaker::Sound$de_emphasize()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="extract_channel"><a href='../../speaker/html/Sound.html#method-Sound-extract_channel'><code>speaker::Sound$extract_channel()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="extract_part"><a href='../../speaker/html/Sound.html#method-Sound-extract_part'><code>speaker::Sound$extract_part()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_duration"><a href='../../speaker/html/Sound.html#method-Sound-get_duration'><code>speaker::Sound$get_duration()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_energy"><a href='../../speaker/html/Sound.html#method-Sound-get_energy'><code>speaker::Sound$get_energy()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_intensity_db"><a href='../../speaker/html/Sound.html#method-Sound-get_intensity_db'><code>speaker::Sound$get_intensity_db()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_number_of_channels"><a href='../../speaker/html/Sound.html#method-Sound-get_number_of_channels'><code>speaker::Sound$get_number_of_channels()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_number_of_samples"><a href='../../speaker/html/Sound.html#method-Sound-get_number_of_samples'><code>speaker::Sound$get_number_of_samples()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_power"><a href='../../speaker/html/Sound.html#method-Sound-get_power'><code>speaker::Sound$get_power()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_rms"><a href='../../speaker/html/Sound.html#method-Sound-get_rms'><code>speaker::Sound$get_rms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_sampling_frequency"><a href='../../speaker/html/Sound.html#method-Sound-get_sampling_frequency'><code>speaker::Sound$get_sampling_frequency()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="get_value_at_time"><a href='../../speaker/html/Sound.html#method-Sound-get_value_at_time'><code>speaker::Sound$get_value_at_time()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="mix"><a href='../../speaker/html/Sound.html#method-Sound-mix'><code>speaker::Sound$mix()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="pre_emphasize"><a href='../../speaker/html/Sound.html#method-Sound-pre_emphasize'><code>speaker::Sound$pre_emphasize()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="print"><a href='../../speaker/html/Sound.html#method-Sound-print'><code>speaker::Sound$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="resample"><a href='../../speaker/html/Sound.html#method-Sound-resample'><code>speaker::Sound$resample()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="save"><a href='../../speaker/html/Sound.html#method-Sound-save'><code>speaker::Sound$save()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="scale_intensity"><a href='../../speaker/html/Sound.html#method-Sound-scale_intensity'><code>speaker::Sound$scale_intensity()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="scale_peak"><a href='../../speaker/html/Sound.html#method-Sound-scale_peak'><code>speaker::Sound$scale_peak()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_formant_burg"><a href='../../speaker/html/Sound.html#method-Sound-to_formant_burg'><code>speaker::Sound$to_formant_burg()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_formant_keepall"><a href='../../speaker/html/Sound.html#method-Sound-to_formant_keepall'><code>speaker::Sound$to_formant_keepall()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_harmonicity_ac"><a href='../../speaker/html/Sound.html#method-Sound-to_harmonicity_ac'><code>speaker::Sound$to_harmonicity_ac()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_harmonicity_cc"><a href='../../speaker/html/Sound.html#method-Sound-to_harmonicity_cc'><code>speaker::Sound$to_harmonicity_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_intensity"><a href='../../speaker/html/Sound.html#method-Sound-to_intensity'><code>speaker::Sound$to_intensity()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_lpc_auto"><a href='../../speaker/html/Sound.html#method-Sound-to_lpc_auto'><code>speaker::Sound$to_lpc_auto()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_lpc_burg"><a href='../../speaker/html/Sound.html#method-Sound-to_lpc_burg'><code>speaker::Sound$to_lpc_burg()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_lpc_covariance"><a href='../../speaker/html/Sound.html#method-Sound-to_lpc_covariance'><code>speaker::Sound$to_lpc_covariance()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_lpc_marple"><a href='../../speaker/html/Sound.html#method-Sound-to_lpc_marple'><code>speaker::Sound$to_lpc_marple()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_ltas"><a href='../../speaker/html/Sound.html#method-Sound-to_ltas'><code>speaker::Sound$to_ltas()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_manipulation"><a href='../../speaker/html/Sound.html#method-Sound-to_manipulation'><code>speaker::Sound$to_manipulation()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_pitch"><a href='../../speaker/html/Sound.html#method-Sound-to_pitch'><code>speaker::Sound$to_pitch()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_extrema"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_extrema'><code>speaker::Sound$to_point_process_extrema()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_periodic_cc"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_periodic_cc'><code>speaker::Sound$to_point_process_periodic_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_point_process_zeros"><a href='../../speaker/html/Sound.html#method-Sound-to_point_process_zeros'><code>speaker::Sound$to_point_process_zeros()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_powercepstrogram"><a href='../../speaker/html/Sound.html#method-Sound-to_powercepstrogram'><code>speaker::Sound$to_powercepstrogram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_spectrogram"><a href='../../speaker/html/Sound.html#method-Sound-to_spectrogram'><code>speaker::Sound$to_spectrogram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="Sound" data-id="to_spectrum"><a href='../../speaker/html/Sound.html#method-Sound-to_spectrum'><code>speaker::Sound$to_spectrum()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="as_data_frame"><a href='../../pladdrr/html/Sound.html#method-Sound-as_data_frame'><code>pladdrr::Sound$as_data_frame()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="as_matrix"><a href='../../pladdrr/html/Sound.html#method-Sound-as_matrix'><code>pladdrr::Sound$as_matrix()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="concatenate"><a href='../../pladdrr/html/Sound.html#method-Sound-concatenate'><code>pladdrr::Sound$concatenate()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="convert_to_mono"><a href='../../pladdrr/html/Sound.html#method-Sound-convert_to_mono'><code>pladdrr::Sound$convert_to_mono()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="convert_to_stereo"><a href='../../pladdrr/html/Sound.html#method-Sound-convert_to_stereo'><code>pladdrr::Sound$convert_to_stereo()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="de_emphasize"><a href='../../pladdrr/html/Sound.html#method-Sound-de_emphasize'><code>pladdrr::Sound$de_emphasize()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_channel"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_channel'><code>pladdrr::Sound$extract_channel()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_part"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_part'><code>pladdrr::Sound$extract_part()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_duration"><a href='../../pladdrr/html/Sound.html#method-Sound-get_duration'><code>pladdrr::Sound$get_duration()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_energy"><a href='../../pladdrr/html/Sound.html#method-Sound-get_energy'><code>pladdrr::Sound$get_energy()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_intensity_db"><a href='../../pladdrr/html/Sound.html#method-Sound-get_intensity_db'><code>pladdrr::Sound$get_intensity_db()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_number_of_channels"><a href='../../pladdrr/html/Sound.html#method-Sound-get_number_of_channels'><code>pladdrr::Sound$get_number_of_channels()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_number_of_samples"><a href='../../pladdrr/html/Sound.html#method-Sound-get_number_of_samples'><code>pladdrr::Sound$get_number_of_samples()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_power"><a href='../../pladdrr/html/Sound.html#method-Sound-get_power'><code>pladdrr::Sound$get_power()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_rms"><a href='../../pladdrr/html/Sound.html#method-Sound-get_rms'><code>pladdrr::Sound$get_rms()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_sampling_frequency"><a href='../../pladdrr/html/Sound.html#method-Sound-get_sampling_frequency'><code>pladdrr::Sound$get_sampling_frequency()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_value_at_time"><a href='../../pladdrr/html/Sound.html#method-Sound-get_value_at_time'><code>pladdrr::Sound$get_value_at_time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="mix"><a href='../../pladdrr/html/Sound.html#method-Sound-mix'><code>pladdrr::Sound$mix()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="pre_emphasize"><a href='../../pladdrr/html/Sound.html#method-Sound-pre_emphasize'><code>pladdrr::Sound$pre_emphasize()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="print"><a href='../../pladdrr/html/Sound.html#method-Sound-print'><code>pladdrr::Sound$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="resample"><a href='../../pladdrr/html/Sound.html#method-Sound-resample'><code>pladdrr::Sound$resample()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="save"><a href='../../pladdrr/html/Sound.html#method-Sound-save'><code>pladdrr::Sound$save()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="scale_intensity"><a href='../../pladdrr/html/Sound.html#method-Sound-scale_intensity'><code>pladdrr::Sound$scale_intensity()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="scale_peak"><a href='../../pladdrr/html/Sound.html#method-Sound-scale_peak'><code>pladdrr::Sound$scale_peak()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_burg"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_burg'><code>pladdrr::Sound$to_formant_burg()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_keepall"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_keepall'><code>pladdrr::Sound$to_formant_keepall()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_harmonicity_ac"><a href='../../pladdrr/html/Sound.html#method-Sound-to_harmonicity_ac'><code>pladdrr::Sound$to_harmonicity_ac()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_harmonicity_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_harmonicity_cc'><code>pladdrr::Sound$to_harmonicity_cc()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_intensity"><a href='../../pladdrr/html/Sound.html#method-Sound-to_intensity'><code>pladdrr::Sound$to_intensity()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_auto"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_auto'><code>pladdrr::Sound$to_lpc_auto()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_burg"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_burg'><code>pladdrr::Sound$to_lpc_burg()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_covariance"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_covariance'><code>pladdrr::Sound$to_lpc_covariance()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_marple"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_marple'><code>pladdrr::Sound$to_lpc_marple()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_ltas"><a href='../../pladdrr/html/Sound.html#method-Sound-to_ltas'><code>pladdrr::Sound$to_ltas()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_manipulation"><a href='../../pladdrr/html/Sound.html#method-Sound-to_manipulation'><code>pladdrr::Sound$to_manipulation()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pitch"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pitch'><code>pladdrr::Sound$to_pitch()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_extrema"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_extrema'><code>pladdrr::Sound$to_point_process_extrema()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_periodic_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_periodic_cc'><code>pladdrr::Sound$to_point_process_periodic_cc()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_zeros"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_zeros'><code>pladdrr::Sound$to_point_process_zeros()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_powercepstrogram"><a href='../../pladdrr/html/Sound.html#method-Sound-to_powercepstrogram'><code>pladdrr::Sound$to_powercepstrogram()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_spectrogram"><a href='../../pladdrr/html/Sound.html#method-Sound-to_spectrogram'><code>pladdrr::Sound$to_spectrogram()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_spectrum"><a href='../../pladdrr/html/Sound.html#method-Sound-to_spectrum'><code>pladdrr::Sound$to_spectrum()</code></a></span></li>
 </ul>
 </details>
 }}

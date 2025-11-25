@@ -2,21 +2,16 @@
 % Please edit documentation in R/sound.R
 \name{get_duration}
 \alias{get_duration}
-\title{Get duration of sound object}
+\title{Get duration of sound object (DEPRECATED)}
 \usage{
 get_duration(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A Sound R6 object}
 }
 \value{
-Duration in seconds (numeric scalar)
+Duration in seconds
 }
 \description{
-Extracts the duration (in seconds) of a praat_sound object.
-}
-\examples{
-sound <- create_sound(rep(0, 44100), sampling_rate = 44100)
-get_duration(sound)  # Returns 1.0
-
+**DEPRECATED:** Use \code{sound$get_duration()} instead.
 }

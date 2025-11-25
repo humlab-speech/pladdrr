@@ -2,18 +2,18 @@
 % Please edit documentation in R/intensity.R
 \name{get_min_intensity}
 \alias{get_min_intensity}
-\title{Get minimum intensity}
+\title{Get minimum intensity (DEPRECATED)}
 \usage{
 get_min_intensity(intensity, time_range = NULL)
 }
 \arguments{
-\item{intensity}{A praat_intensity object from \code{\link{extract_intensity}}}
+\item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional numeric vector c(start, end) in seconds}
+\item{time_range}{Optional time range}
 }
 \value{
-Minimum intensity in dB, or NA if undefined
+Minimum intensity in dB
 }
 \description{
-Get minimum intensity
+**DEPRECATED:** Use \code{intensity$get_minimum()} instead.
 }

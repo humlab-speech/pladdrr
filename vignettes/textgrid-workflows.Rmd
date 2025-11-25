@@ -191,7 +191,7 @@ query_time <- 3.0
 interval_idx <- tg$get_interval_at_time(tier_idx, query_time)
 
 if (!is.na(interval_idx)) {
-  label <- tg$get_interval_label(tier_idx, interval_idx)
+  label <- tg$get_interval_text(tier_idx, interval_idx)
   start <- tg$get_interval_start_time(tier_idx, interval_idx)
   end <- tg$get_interval_end_time(tier_idx, interval_idx)
   
@@ -202,7 +202,7 @@ if (!is.na(interval_idx)) {
 # Find interval by label
 target_label <- "world"
 for (i in 1:n_intervals) {
-  if (tg$get_interval_label(tier_idx, i) == target_label) {
+  if (tg$get_interval_text(tier_idx, i) == target_label) {
     cat(sprintf("Found '%s' at interval %d\n", target_label, i))
     break
   }
@@ -368,7 +368,7 @@ for (tg_file in tg_files) {
   for (i in 1:n_intervals) {
     start <- tg$get_interval_start_time(tier_idx, i)
     end <- tg$get_interval_end_time(tier_idx, i)
-    label <- tg$get_interval_label(tier_idx, i)
+    label <- tg$get_interval_text(tier_idx, i)
     
     all_data <- rbind(all_data, data.frame(
       file = basename(tg_file),
@@ -409,7 +409,7 @@ phone_durations <- data.frame(
 )
 
 for (i in 1:n_phones) {
-  phone_durations$phone[i] <- mfa_tg$get_interval_label(phone_tier, i)
+  phone_durations$phone[i] <- mfa_tg$get_interval_text(phone_tier, i)
   start <- mfa_tg$get_interval_start_time(phone_tier, i)
   end <- mfa_tg$get_interval_end_time(phone_tier, i)
   phone_durations$duration[i] <- end - start
@@ -482,7 +482,7 @@ consonants <- c("p", "t", "k", "b", "d", "g", "m", "n")
 
 # Validate labels
 for (i in 1:n_intervals) {
-  label <- tg$get_interval_label(tier_idx, i)
+  label <- tg$get_interval_text(tier_idx, i)
   if (!(label %in% c(vowels, consonants, ""))) {
     cat("Warning: Non-standard label at interval", i, ":", label, "\n")
   }
@@ -598,7 +598,7 @@ vowels <- c("i", "e", "a", "o", "u")
 # Group phones into syllables (simplified logic)
 current_syllable_start <- 0
 for (i in 1:tg$get_number_of_intervals(phone_tier)) {
-  phone <- tg$get_interval_label(phone_tier, i)
+  phone <- tg$get_interval_text(phone_tier, i)
   
   if (phone %in% vowels) {
     # Found vowel - mark syllable boundary

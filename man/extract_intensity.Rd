@@ -2,7 +2,7 @@
 % Please edit documentation in R/intensity.R
 \name{extract_intensity}
 \alias{extract_intensity}
-\title{Extract intensity from a sound object}
+\title{Extract intensity from a sound object (DEPRECATED)}
 \usage{
 extract_intensity(
   sound,
@@ -12,38 +12,17 @@ extract_intensity(
 )
 }
 \arguments{
-\item{sound}{A praat_sound object created by \code{\link{read_sound}} or
-\code{\link{create_sound}}}
+\item{sound}{A Sound R6 object}
 
-\item{time_step}{Time step in seconds for intensity analysis (0 = auto: 0.8 / minimum_pitch)}
+\item{time_step}{Time step in seconds}
 
-\item{minimum_pitch}{Minimum pitch for analysis in Hz (default: 100). Used to
-determine window length}
+\item{minimum_pitch}{Minimum pitch in Hz}
 
-\item{subtract_mean}{Logical; subtract mean intensity to get relative values (default: TRUE)}
+\item{subtract_mean}{Subtract mean intensity}
 }
 \value{
-A praat_intensity object (S3 class) with:
-  \itemize{
-    \item \code{values}: data.frame with columns time, intensity_db
-    \item \code{n_frames}: number of analysis frames
-    \item \code{time_step}: actual time step used
-    \item \code{minimum_pitch}: minimum pitch setting
-  }
+Intensity R6 object
 }
 \description{
-Analyzes intensity (sound power) from a sound object over time.
-Intensity is measured in dB relative to the auditory threshold.
-}
-\examples{
-\dontrun{
-sound <- read_sound("speech.wav")
-intensity <- extract_intensity(sound, minimum_pitch = 100)
-
-# Get intensity at specific time
-int_at_time <- get_intensity_at_time(intensity, time = 0.5)
-
-# Get mean intensity
-mean_int <- get_mean_intensity(intensity)
-}
+**DEPRECATED:** Use \code{sound$to_intensity()} instead.
 }

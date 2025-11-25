@@ -2,41 +2,31 @@
 % Please edit documentation in R/sound.R
 \name{create_sound}
 \alias{create_sound}
-\title{Create a sound object from numeric values}
+\title{Create a sound object from numeric values (DEPRECATED)}
 \usage{
 create_sound(values, sampling_rate = 44100, start_time = 0)
 }
 \arguments{
-\item{values}{Numeric vector of amplitude values (typically in range [-1, 1])}
+\item{values}{Numeric vector of amplitude values}
 
 \item{sampling_rate}{Sampling rate in Hz (default: 44100)}
 
 \item{start_time}{Start time in seconds (default: 0.0)}
 }
 \value{
-A praat_sound object (S3 class) containing:
-  \describe{
-    \item{values}{Numeric vector of amplitude values}
-    \item{time}{Numeric vector of time points}
-    \item{sampling_rate}{Sampling rate in Hz}
-    \item{n_samples}{Number of samples}
-    \item{n_channels}{Number of channels (1 for mono)}
-    \item{channel}{Channel index (0 for left/mono)}
-    \item{duration}{Duration in seconds}
-    \item{start_time}{Start time in seconds}
-    \item{end_time}{End time in seconds}
-  }
+Sound R6 object
 }
 \description{
-Creates a praat_sound object from a numeric vector of amplitude values.
-This is the primary constructor for sound objects in R.
+**DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
+\code{Sound$from_values(values, sampling_rate)}
 }
 \examples{
-# Create a simple sound from values
-sound <- create_sound(c(0.1, 0.2, -0.1, -0.2), sampling_rate = 1000)
+\dontrun{
+# Old S3 approach (DEPRECATED)
+sound <- create_sound(c(0.1, 0.2), sampling_rate = 1000)
 
-# Create a sine wave manually
-t <- seq(0, 1, length.out = 44100)
-sine <- create_sound(sin(2 * pi * 440 * t), sampling_rate = 44100)
+# New R6 approach (RECOMMENDED)
+sound <- Sound$from_values(c(0.1, 0.2), sampling_rate = 1000)
+}
 
 }

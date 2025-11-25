@@ -7,16 +7,17 @@
 sound_mean(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A praat_sound (S3) or Sound (R6) object}
 }
 \value{
 Mean amplitude (numeric scalar)
 }
 \description{
 Calculates the mean (average) of all amplitude values in a sound object.
+Works with both S3 praat_sound objects and R6 Sound objects.
 }
 \examples{
-sound <- create_sound(c(-1, 0, 1), sampling_rate = 1000)
+sound <- Sound$from_values(c(-1, 0, 1), sampling_rate = 1000)
 sound_mean(sound)  # Returns 0
 
 }

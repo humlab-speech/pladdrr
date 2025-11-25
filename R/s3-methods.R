@@ -86,19 +86,20 @@ summary.praat_sound <- function(object, ...) {
 #'   }
 #'
 #' @examples
-#' sound <- generate_sine_wave(440, 0.01)
-#' df <- as.data.frame(sound)
-#' head(df)
-#'
-#' # Use for plotting
 #' \dontrun{
-#' library(ggplot2)
-#' ggplot(df, aes(x = time, y = amplitude)) +
-#'   geom_line()
+#' # DEPRECATED - Use R6 interface instead:
+#' sound <- Sound$new("audio.wav")
+#' df <- sound$as_data_frame()
 #' }
 #'
 #' @export
 as.data.frame.praat_sound <- function(x, ...) {
+  .Deprecated(
+    "Sound$as_data_frame()",
+    package = "pladdrr",
+    msg = "as.data.frame.praat_sound() is deprecated. Use Sound$as_data_frame() instead."
+  )
+  
   validate_sound_object(x, "x")
 
   df <- data.frame(
@@ -108,6 +109,22 @@ as.data.frame.praat_sound <- function(x, ...) {
   )
 
   return(df)
+}
+
+#' Convert R6 Sound to data frame
+#' 
+#' S3 method for converting R6 Sound objects to data frames.
+#' Delegates to the R6 `$as_data_frame()` method.
+#' 
+#' @param x A Sound R6 object
+#' @param row.names Ignored
+#' @param optional Ignored
+#' @param ... Additional arguments (ignored)
+#' @return A data frame with time, channel, and value columns
+#' @export
+as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
+  # R6 Sound object - delegate to R6 method
+  x$as_data_frame()
 }
 
 # ============================================================================
@@ -332,4 +349,53 @@ summary.praat_intensity <- function(object, ...) {
 #' @export
 as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
+}
+
+# ==============================================================================
+# S3 methods for R6 classes (Sound, Formant, Intensity, etc.)
+# ==============================================================================
+
+#' Convert R6 Formant to data frame
+#' 
+#' S3 method for converting R6 Formant objects to data frames.
+#' Delegates to the R6 `$as_data_frame()` method.
+#' 
+#' @param x A Formant R6 object
+#' @param row.names Ignored
+#' @param optional Ignored
+#' @param ... Additional arguments passed to `$as_data_frame()`
+#' @return A data frame with formant measurements
+#' @export
+as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame(...)
+}
+
+#' Convert R6 Intensity to data frame
+#' 
+#' S3 method for converting R6 Intensity objects to data frames.
+#' Delegates to the R6 `$as_data_frame()` method.
+#' 
+#' @param x An Intensity R6 object
+#' @param row.names Ignored
+#' @param optional Ignored
+#' @param ... Additional arguments (ignored)
+#' @return A data frame with time and intensity columns
+#' @export
+as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}
+
+#' Convert R6 Pitch to data frame
+#' 
+#' S3 method for converting R6 Pitch objects to data frames.
+#' Delegates to the R6 `$as_data_frame()` method.
+#' 
+#' @param x A Pitch R6 object
+#' @param row.names Ignored
+#' @param optional Ignored
+#' @param ... Additional arguments (ignored)
+#' @return A data frame with pitch measurements
+#' @export
+as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
 }

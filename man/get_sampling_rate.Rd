@@ -2,21 +2,16 @@
 % Please edit documentation in R/sound.R
 \name{get_sampling_rate}
 \alias{get_sampling_rate}
-\title{Get sampling rate of sound object}
+\title{Get sampling rate of sound object (DEPRECATED)}
 \usage{
 get_sampling_rate(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A Sound R6 object}
 }
 \value{
-Sampling rate in Hz (numeric scalar)
+Sampling rate in Hz
 }
 \description{
-Extracts the sampling rate (in Hz) of a praat_sound object.
-}
-\examples{
-sound <- create_sound(c(0.1, 0.2), sampling_rate = 22050)
-get_sampling_rate(sound)  # Returns 22050
-
+**DEPRECATED:** Use \code{sound$get_sampling_frequency()} instead.
 }

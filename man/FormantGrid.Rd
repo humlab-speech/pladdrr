@@ -15,7 +15,7 @@ transformation and synthesis. This is the editable counterpart to the
 read-only Formant object.
 }
 \section{Super class}{
-\code{\link[speaker:PraatObject]{speaker::PraatObject}} -> \code{FormantGrid}
+\code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{FormantGrid}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -38,9 +38,9 @@ read-only Formant object.
 \if{html}{\out{
 <details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="PraatObject" data-id="get_class_name"><a href='../../speaker/html/PraatObject.html#method-PraatObject-get_class_name'><code>speaker::PraatObject$get_class_name()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="PraatObject" data-id="is_valid"><a href='../../speaker/html/PraatObject.html#method-PraatObject-is_valid'><code>speaker::PraatObject$is_valid()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="speaker" data-topic="PraatObject" data-id="print"><a href='../../speaker/html/PraatObject.html#method-PraatObject-print'><code>speaker::PraatObject$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="print"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-print'><code>pladdrr::PraatObject$print()</code></a></span></li>
 </ul>
 </details>
 }}

@@ -2,21 +2,20 @@
 % Please edit documentation in R/pitch.R
 \name{get_min_pitch}
 \alias{get_min_pitch}
-\title{Get minimum pitch}
+\title{Get minimum pitch (DEPRECATED)}
 \usage{
 get_min_pitch(pitch, unit = "Hz", time_range = NULL)
 }
 \arguments{
-\item{pitch}{A praat_pitch object}
+\item{pitch}{A Pitch R6 object}
 
-\item{unit}{Unit for result: "Hz" (default) or "semitones"}
+\item{unit}{Unit: "Hz" or "semitones"}
 
-\item{time_range}{Optional numeric vector c(start, end) to restrict analysis}
+\item{time_range}{Optional time range}
 }
 \value{
-Minimum pitch value in specified unit
+Minimum pitch value
 }
 \description{
-Finds the minimum fundamental frequency in a pitch contour,
-excluding unvoiced frames.
+**DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.
 }

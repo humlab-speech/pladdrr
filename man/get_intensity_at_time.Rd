@@ -2,20 +2,20 @@
 % Please edit documentation in R/intensity.R
 \name{get_intensity_at_time}
 \alias{get_intensity_at_time}
-\title{Get intensity at a specific time}
+\title{Get intensity at a specific time (DEPRECATED)}
 \usage{
 get_intensity_at_time(intensity, time, interpolate = FALSE)
 }
 \arguments{
-\item{intensity}{A praat_intensity object from \code{\link{extract_intensity}}}
+\item{intensity}{An Intensity R6 object}
 
 \item{time}{Time in seconds}
 
-\item{interpolate}{Logical; if TRUE, interpolate between frames}
+\item{interpolate}{Whether to interpolate}
 }
 \value{
-Intensity in dB, or NA if undefined
+Intensity in dB
 }
 \description{
-Get intensity at a specific time
+**DEPRECATED:** Use \code{intensity$get_value_at_time(time)} instead.
 }

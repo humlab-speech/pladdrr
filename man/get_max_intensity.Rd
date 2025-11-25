@@ -2,18 +2,18 @@
 % Please edit documentation in R/intensity.R
 \name{get_max_intensity}
 \alias{get_max_intensity}
-\title{Get maximum intensity}
+\title{Get maximum intensity (DEPRECATED)}
 \usage{
 get_max_intensity(intensity, time_range = NULL)
 }
 \arguments{
-\item{intensity}{A praat_intensity object from \code{\link{extract_intensity}}}
+\item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional numeric vector c(start, end) in seconds}
+\item{time_range}{Optional time range}
 }
 \value{
-Maximum intensity in dB, or NA if undefined
+Maximum intensity in dB
 }
 \description{
-Get maximum intensity
+**DEPRECATED:** Use \code{intensity$get_maximum()} instead.
 }

@@ -2,18 +2,18 @@
 % Please edit documentation in R/intensity.R
 \name{get_mean_intensity}
 \alias{get_mean_intensity}
-\title{Get mean intensity}
+\title{Get mean intensity (DEPRECATED)}
 \usage{
 get_mean_intensity(intensity, time_range = NULL)
 }
 \arguments{
-\item{intensity}{A praat_intensity object from \code{\link{extract_intensity}}}
+\item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional numeric vector c(start, end) in seconds}
+\item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Mean intensity in dB, or NA if undefined
+Mean intensity in dB
 }
 \description{
-Get mean intensity
+**DEPRECATED:** Use \code{intensity$get_mean()} instead.
 }

@@ -2,31 +2,33 @@
 % Please edit documentation in R/sound.R
 \name{read_sound}
 \alias{read_sound}
-\title{Read sound from WAV file}
+\title{Read sound from audio file (DEPRECATED)}
 \usage{
 read_sound(file_path, channel = 0)
 }
 \arguments{
-\item{file_path}{Path to WAV file}
+\item{file_path}{Path to audio file (any format supported by av/FFmpeg)}
 
-\item{channel}{Channel to read for stereo files: 0 for left, 1 for right
-(default: 0). Ignored for mono files.}
+\item{channel}{Channel to read (0 = left, 1 = right) - ignored in R6}
 }
 \value{
-A praat_sound object containing the audio data
+Sound R6 object
 }
 \description{
-Reads a WAV audio file and creates a praat_sound object. Supports mono
-and stereo files. For stereo files, specify which channel to read
-(default is left channel).
+**DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
+\code{Sound$new(file_path)}
 }
 \examples{
 \dontrun{
-# Read a mono WAV file
-sound <- read_sound("recording.wav")
+# Old S3 approach (DEPRECATED)
+sound <- read_sound("audio.wav")
 
-# Read right channel from stereo file
-sound_right <- read_sound("stereo.wav", channel = 1)
+# New R6 approach (RECOMMENDED)
+sound <- Sound$new("audio.wav")
+
+# For specific channel, extract after loading
+sound <- Sound$new("stereo.wav")
+sound_right <- sound$extract_channel(2)
 }
 
 }

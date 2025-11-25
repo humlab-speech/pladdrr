@@ -7,16 +7,17 @@
 sound_min(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A praat_sound (S3) or Sound (R6) object}
 }
 \value{
 Minimum amplitude (numeric scalar)
 }
 \description{
 Finds the minimum amplitude value in a sound object.
+Works with both S3 praat_sound objects and R6 Sound objects.
 }
 \examples{
-sound <- create_sound(c(0.5, -0.8, 0.2), sampling_rate = 1000)
+sound <- Sound$from_values(c(0.5, -0.8, 0.2), sampling_rate = 1000)
 sound_min(sound)  # Returns -0.8
 
 }

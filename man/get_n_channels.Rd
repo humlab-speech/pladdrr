@@ -2,21 +2,16 @@
 % Please edit documentation in R/sound.R
 \name{get_n_channels}
 \alias{get_n_channels}
-\title{Get number of channels in sound object}
+\title{Get number of channels in sound object (DEPRECATED)}
 \usage{
 get_n_channels(sound)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A Sound R6 object}
 }
 \value{
-Number of channels (integer scalar)
+Number of channels
 }
 \description{
-Extracts the number of channels (1 for mono, 2 for stereo) of a praat_sound object.
-}
-\examples{
-sound <- create_sound(c(0.1, 0.2), sampling_rate = 44100)
-get_n_channels(sound)  # Returns 1 (mono)
-
+**DEPRECATED:** Use \code{sound$get_number_of_channels()} instead.
 }

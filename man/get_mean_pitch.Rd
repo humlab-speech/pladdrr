@@ -2,29 +2,20 @@
 % Please edit documentation in R/pitch.R
 \name{get_mean_pitch}
 \alias{get_mean_pitch}
-\title{Get mean pitch}
+\title{Get mean pitch (DEPRECATED)}
 \usage{
 get_mean_pitch(pitch, unit = "Hz", time_range = NULL)
 }
 \arguments{
-\item{pitch}{A praat_pitch object}
+\item{pitch}{A Pitch R6 object}
 
-\item{unit}{Unit for result: "Hz" (default) or "semitones"}
+\item{unit}{Unit: "Hz" or "semitones"}
 
-\item{time_range}{Optional numeric vector c(start, end) to restrict analysis}
+\item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Mean pitch value in specified unit
+Mean pitch value
 }
 \description{
-Computes the mean (average) fundamental frequency across a pitch contour,
-excluding unvoiced frames.
-}
-\examples{
-\dontrun{
-sound <- read_sound("speech.wav")
-pitch <- extract_pitch(sound)
-mean_f0 <- get_mean_pitch(pitch)
-}
-
+**DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.
 }

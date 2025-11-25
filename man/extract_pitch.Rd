@@ -2,45 +2,36 @@
 % Please edit documentation in R/pitch.R
 \name{extract_pitch}
 \alias{extract_pitch}
-\title{Extract pitch contour from sound}
+\title{Extract pitch contour from sound (DEPRECATED)}
 \usage{
 extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 600, time_step = 0.01)
 }
 \arguments{
-\item{sound}{A praat_sound object}
+\item{sound}{A Sound R6 object}
 
-\item{pitch_floor}{Minimum pitch to detect in Hz (default: 75)}
+\item{pitch_floor}{Minimum pitch in Hz (default: 75)}
 
-\item{pitch_ceiling}{Maximum pitch to detect in Hz (default: 600)}
+\item{pitch_ceiling}{Maximum pitch in Hz (default: 600)}
 
-\item{time_step}{Time step between frames in seconds (default: 0.01, i.e., 10ms)}
+\item{time_step}{Time step in seconds (default: 0.01)}
 }
 \value{
-A praat_pitch object (data frame with S3 class) containing:
-  \describe{
-    \item{time}{Time points in seconds}
-    \item{frequency}{Fundamental frequency in Hz (NA for unvoiced)}
-    \item{strength}{Confidence/strength measure (0-1)}
-  }
+Pitch R6 object
 }
 \description{
-Extracts the fundamental frequency (F0) contour from a sound object using
-autocorrelation-based pitch detection. Returns a praat_pitch object containing
-time-frequency pairs.
-}
-\details{
-The algorithm uses autocorrelation to detect periodicity in the signal.
-Unvoiced segments are returned as NA. Quality warnings are issued if:
-\itemize{
-  \item Less than 30\% of frames are voiced
-  \item Audio quality appears poor
-}
+**DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
+\code{sound$to_pitch(time_step, pitch_floor, pitch_ceiling)}
 }
 \examples{
 \dontrun{
+# Old S3 approach (DEPRECATED)
 sound <- read_sound("speech.wav")
 pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
-plot(pitch$time, pitch$frequency, type = "l")
+
+# New R6 approach (RECOMMENDED)
+sound <- Sound$new("speech.wav")
+pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+mean_f0 <- pitch$get_mean()
 }
 
 }
