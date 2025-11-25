@@ -90,7 +90,7 @@ extract_formants <- function(sound,
     pre_emphasis_from = pre_emphasis_from
   )
   
-  # Create formant object
+  # Create formant object (plain list - S3 class removed)
   result <- list(
     values = formant_data,
     n_frames = length(unique(formant_data$time)),
@@ -100,7 +100,8 @@ extract_formants <- function(sound,
     window_length = window_length
   )
   
-  class(result) <- c("praat_formant", "list")
+  # S3 class assignment removed - this path deprecated
+  # Function delegates to R6 for R6 objects
   return(result)
 }
 
