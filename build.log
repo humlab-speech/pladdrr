@@ -6,19 +6,20 @@
 * creating vignettes ... ERROR
 --- re-building ‘getting-started.Rmd’ using rmarkdown
 
-Quitting from getting-started.Rmd:152-157 [unnamed-chunk-11]
+Quitting from getting-started.Rmd:176-183 [unnamed-chunk-13]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <error/rlang_error>
-Error in `sound$to_formant_burg()`:
-! unused argument (n_formants = n_formants)
+Error:
+! 'formant' must be a praat_formant object
 ---
 Backtrace:
     ▆
- 1. └─pladdrr::extract_formants(sound_a4, max_formant = 5500, n_formants = 5)
+ 1. └─pladdrr::get_formant_at_time(formants, formant_number = 1, time = 0.25)
+ 2.   └─pladdrr:::validate_formant_object(formant)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Error: processing vignette 'getting-started.Rmd' failed with diagnostics:
-unused argument (n_formants = n_formants)
+'formant' must be a praat_formant object
 --- failed re-building ‘getting-started.Rmd’
 
 --- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
