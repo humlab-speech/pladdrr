@@ -175,8 +175,8 @@ formants_child <- sound$to_formant_burg(max_frequency = 8000, max_formants = 5)
 
 ```{r}
 # Get F1 and F2 at specific time (vowel quality)
-f1 <- get_formant_at_time(formants, formant_number = 1, time = 0.25)
-f2 <- get_formant_at_time(formants, formant_number = 2, time = 0.25)
+f1 <- formants$get_value_at_time(formant_number = 1, time = 0.25)
+f2 <- formants$get_value_at_time(formant_number = 2, time = 0.25)
 
 cat("F1:", round(f1, 1), "Hz\n")
 cat("F2:", round(f2, 1), "Hz\n")
@@ -184,10 +184,10 @@ cat("F2:", round(f2, 1), "Hz\n")
 
 ```{r}
 # Get mean formant over time range
-mean_f1 <- get_mean_formant(formants, formant_number = 1, 
-                           time_range = c(0.1, 0.4))
-mean_f2 <- get_mean_formant(formants, formant_number = 2, 
-                           time_range = c(0.1, 0.4))
+mean_f1 <- formants$get_mean(formant_number = 1, 
+                             from_time = 0.1, to_time = 0.4)
+mean_f2 <- formants$get_mean(formant_number = 2, 
+                             from_time = 0.1, to_time = 0.4)
 
 cat("Mean F1:", round(mean_f1, 1), "Hz\n")
 cat("Mean F2:", round(mean_f2, 1), "Hz\n")
@@ -351,7 +351,7 @@ if (is.na(f0)) {
 }
 
 # Mean functions automatically exclude NA
-mean_f0 <- get_mean_pitch(pitch)  # NA values excluded
+mean_f0 <- pitch$get_mean()  # NA values excluded
 ```
 
 ## Package Information
