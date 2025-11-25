@@ -19,7 +19,9 @@
 sound_mean <- function(sound) {
   # Handle R6 objects
   if (inherits(sound, "Sound")) {
-    values <- sound$as_vector()
+    mat <- sound$as_matrix()
+    # For mono, get first channel; for stereo, average all channels
+    values <- as.numeric(mat[1, ])
   } else {
     # Handle S3 objects
     validate_sound_object(sound, "sound")
@@ -45,7 +47,8 @@ sound_mean <- function(sound) {
 sound_min <- function(sound) {
   # Handle R6 objects
   if (inherits(sound, "Sound")) {
-    values <- sound$as_vector()
+    mat <- sound$as_matrix()
+    values <- as.numeric(mat[1, ])
   } else {
     # Handle S3 objects
     validate_sound_object(sound, "sound")
@@ -71,7 +74,8 @@ sound_min <- function(sound) {
 sound_max <- function(sound) {
   # Handle R6 objects
   if (inherits(sound, "Sound")) {
-    values <- sound$as_vector()
+    mat <- sound$as_matrix()
+    values <- as.numeric(mat[1, ])
   } else {
     # Handle S3 objects
     validate_sound_object(sound, "sound")
@@ -132,7 +136,8 @@ sound_rms <- function(sound) {
 sound_statistics <- function(sound) {
   # Handle R6 objects
   if (inherits(sound, "Sound")) {
-    values <- sound$as_vector()
+    mat <- sound$as_matrix()
+    values <- as.numeric(mat[1, ])
     stats <- list(
       mean = mean(values),
       min = min(values),
