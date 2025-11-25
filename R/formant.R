@@ -49,6 +49,19 @@ extract_formants <- function(sound,
     msg = "extract_formants() is deprecated. Use the R6 interface: sound$to_formant_burg()"
   )
   
+  # Handle both S3 and R6 objects
+  if (inherits(sound, "Sound")) {
+    # R6 object - use directly
+    return(sound$to_formant_burg(
+      time_step = time_step,
+      max_frequency = max_formant,
+      number_of_formants = n_formants,
+      window_length = window_length,
+      pre_emphasis_from = pre_emphasis_from
+    ))
+  }
+  
+  # S3 object - old implementation
   validate_sound_object(sound)
   validate_positive(max_formant, "max_formant")
   validate_positive_int(n_formants, "n_formants")
