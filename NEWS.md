@@ -1,3 +1,24 @@
+# pladdrr 0.9.11 (2025-11-25)
+
+## Documentation
+
+* **Vignettes updated to R6**: All vignettes now use R6 interface exclusively
+  - `getting-started.Rmd` completely rewritten with R6 examples
+  - All other vignettes confirmed R6-compliant
+  - Examples demonstrate modern object-oriented interface
+  
+* **User-facing improvements**:
+  - Getting started guide teaches R6 from beginning
+  - Clearer method naming (e.g., `sound$to_pitch()` vs `extract_pitch()`)
+  - Better autocomplete support in RStudio/VS Code
+  - Consistent with Praat's object-oriented design
+
+## Package Quality
+
+* All vignettes build successfully without warnings
+* Complete R6 interface documentation
+* Backward compatibility maintained via deprecated S3 wrappers
+
 # pladdrr 0.9.10 (2025-11-25)
 
 ## Major Changes
