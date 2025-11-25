@@ -104,8 +104,16 @@ sound_max <- function(sound) {
 #'
 #' @export
 sound_rms <- function(sound) {
-  validate_sound_object(sound, "sound")
-  return(sqrt(mean(sound$values^2)))
+  # Handle R6 objects
+  if (inherits(sound, "Sound")) {
+    mat <- sound$as_matrix()
+    values <- as.numeric(mat[1, ])
+  } else {
+    # Handle S3 objects
+    validate_sound_object(sound, "sound")
+    values <- sound$values
+  }
+  return(sqrt(mean(values^2)))
 }
 
 #' Compute comprehensive sound statistics
