@@ -5,55 +5,79 @@
 #' Compute mean amplitude
 #'
 #' Calculates the mean (average) of all amplitude values in a sound object.
+#' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @param sound A praat_sound object
+#' @param sound A praat_sound (S3) or Sound (R6) object
 #'
 #' @return Mean amplitude (numeric scalar)
 #'
 #' @examples
-#' sound <- create_sound(c(-1, 0, 1), sampling_rate = 1000)
+#' sound <- Sound$from_values(c(-1, 0, 1), sampling_rate = 1000)
 #' sound_mean(sound)  # Returns 0
 #'
 #' @export
 sound_mean <- function(sound) {
-  validate_sound_object(sound, "sound")
-  return(mean(sound$values))
+  # Handle R6 objects
+  if (inherits(sound, "Sound")) {
+    values <- sound$as_vector()
+  } else {
+    # Handle S3 objects
+    validate_sound_object(sound, "sound")
+    values <- sound$values
+  }
+  return(mean(values))
 }
 
 #' Compute minimum amplitude
 #'
 #' Finds the minimum amplitude value in a sound object.
+#' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @param sound A praat_sound object
+#' @param sound A praat_sound (S3) or Sound (R6) object
 #'
 #' @return Minimum amplitude (numeric scalar)
 #'
 #' @examples
-#' sound <- create_sound(c(0.5, -0.8, 0.2), sampling_rate = 1000)
+#' sound <- Sound$from_values(c(0.5, -0.8, 0.2), sampling_rate = 1000)
 #' sound_min(sound)  # Returns -0.8
 #'
 #' @export
 sound_min <- function(sound) {
-  validate_sound_object(sound, "sound")
-  return(min(sound$values))
+  # Handle R6 objects
+  if (inherits(sound, "Sound")) {
+    values <- sound$as_vector()
+  } else {
+    # Handle S3 objects
+    validate_sound_object(sound, "sound")
+    values <- sound$values
+  }
+  return(min(values))
 }
 
 #' Compute maximum amplitude
 #'
 #' Finds the maximum amplitude value in a sound object.
+#' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @param sound A praat_sound object
+#' @param sound A praat_sound (S3) or Sound (R6) object
 #'
 #' @return Maximum amplitude (numeric scalar)
 #'
 #' @examples
-#' sound <- create_sound(c(0.5, -0.8, 1.0), sampling_rate = 1000)
+#' sound <- Sound$from_values(c(0.5, -0.8, 1.0), sampling_rate = 1000)
 #' sound_max(sound)  # Returns 1.0
 #'
 #' @export
 sound_max <- function(sound) {
-  validate_sound_object(sound, "sound")
-  return(max(sound$values))
+  # Handle R6 objects
+  if (inherits(sound, "Sound")) {
+    values <- sound$as_vector()
+  } else {
+    # Handle S3 objects
+    validate_sound_object(sound, "sound")
+    values <- sound$values
+  }
+  return(max(values))
 }
 
 #' Compute RMS (root mean square) amplitude
@@ -84,8 +108,9 @@ sound_rms <- function(sound) {
 #'
 #' Calculates a comprehensive set of statistics for a sound object, including
 #' amplitude statistics and metadata.
+#' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @param sound A praat_sound object
+#' @param sound A praat_sound (S3) or Sound (R6) object
 #'
 #' @return A named list containing:
 #'   \describe{
@@ -105,17 +130,31 @@ sound_rms <- function(sound) {
 #'
 #' @export
 sound_statistics <- function(sound) {
-  validate_sound_object(sound, "sound")
-
-  stats <- list(
-    mean = mean(sound$values),
-    min = min(sound$values),
-    max = max(sound$values),
-    rms = sqrt(mean(sound$values^2)),
-    duration = sound$duration,
-    n_samples = sound$n_samples,
-    sampling_rate = sound$sampling_rate
-  )
+  # Handle R6 objects
+  if (inherits(sound, "Sound")) {
+    values <- sound$as_vector()
+    stats <- list(
+      mean = mean(values),
+      min = min(values),
+      max = max(values),
+      rms = sqrt(mean(values^2)),
+      duration = sound$get_duration(),
+      n_samples = sound$get_number_of_samples(),
+      sampling_rate = sound$get_sampling_frequency()
+    )
+  } else {
+    # Handle S3 objects
+    validate_sound_object(sound, "sound")
+    stats <- list(
+      mean = mean(sound$values),
+      min = min(sound$values),
+      max = max(sound$values),
+      rms = sqrt(mean(sound$values^2)),
+      duration = sound$duration,
+      n_samples = sound$n_samples,
+      sampling_rate = sound$sampling_rate
+    )
+  }
 
   return(stats)
 }
