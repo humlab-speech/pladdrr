@@ -1,0 +1,34 @@
+Package: pladdrr
+Type: Package
+Title: Object-Oriented Interface to Praat Phonetic Analysis
+Version: 0.9.9
+Date: 2025-11-22
+Authors@R: c(
+    person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-3373-0934"))
+    )
+Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
+Description: Provides direct, efficient access to Praat C implemented
+    functionality from R using Rcpp and R6 object-oriented design. Similar
+    in concept to the Parselmouth package for Python, this package allows R
+    users to leverage Praat's powerful phonetic analysis capabilities directly
+    from R. Includes 17+ Praat object types with 300+ methods for sound
+    manipulation, pitch analysis, formant extraction, intensity measurements,
+    spectral analysis, TextGrid annotation, and voice quality assessment.
+    Features SIMD optimization for 2-4x performance improvements on modern CPUs.
+License: GPL-3
+Encoding: UTF-8
+Depends: R (>= 4.0.0)
+Imports: Rcpp (>= 1.0.0), R6 (>= 2.5.0), S7 (>= 0.1.0), av, ggplot2
+LinkingTo: Rcpp, RcppXsimd
+Suggests: testthat (>= 3.0.0), roxygen2 (>= 7.0.0), knitr, rmarkdown,
+        covr, gridExtra
+Remotes: humlab-speech/av
+SystemRequirements: C++17
+RoxygenNote: 7.3.3
+VignetteBuilder: knitr
+URL: https://github.com/humlab-speech/pladdrr
+BugReports: https://github.com/humlab-speech/pladdrr/issues
+NeedsCompilation: yes
+Packaged: 2025-11-23 09:50:35 UTC; frkkan96
+Author: Fredrik Nylén [aut, cre] (<https://orcid.org/0000-0003-3373-0934>)

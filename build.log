@@ -1,0 +1,44 @@
+* checking for file ‘./DESCRIPTION’ ... OK
+* preparing ‘pladdrr’:
+* checking DESCRIPTION meta-information ... OK
+* cleaning src
+* installing the package to build vignettes
+* creating vignettes ... ERROR
+--- re-building ‘getting-started.Rmd’ using rmarkdown
+
+Quitting from getting-started.Rmd:152-157 [unnamed-chunk-11]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<error/rlang_error>
+Error in `sound$to_formant_burg()`:
+! unused argument (n_formants = n_formants)
+---
+Backtrace:
+    ▆
+ 1. └─pladdrr::extract_formants(sound_a4, max_formant = 5500, n_formants = 5)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Error: processing vignette 'getting-started.Rmd' failed with diagnostics:
+unused argument (n_formants = n_formants)
+--- failed re-building ‘getting-started.Rmd’
+
+--- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘integrated-phonetic-analysis.Rmd’
+
+--- re-building ‘textgrid-workflows.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘textgrid-workflows.Rmd’
+
+--- re-building ‘visualization.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘visualization.Rmd’
+
+--- re-building ‘vowel-space-analysis.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘vowel-space-analysis.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘getting-started.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted

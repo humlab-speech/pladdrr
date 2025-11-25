@@ -1,0 +1,30 @@
+* using log directory ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck’
+* using R version 4.4.2 (2024-10-31)
+* using platform: aarch64-apple-darwin20
+* R was compiled by
+    Apple clang version 14.0.0 (clang-1400.0.29.202)
+    GNU Fortran (GCC) 12.2.0
+* running under: macOS 26.1
+* using session charset: UTF-8
+* using options ‘--no-manual --no-build-vignettes’
+* checking for file ‘pladdrr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘pladdrr’ version ‘0.9.9’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package suggested but not available: ‘covr’
+
+The suggested packages are required for a complete check.
+Checking can be attempted without them by setting the environment
+variable _R_CHECK_FORCE_SUGGESTS_ to a false value.
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+
+Status: 1 ERROR
+See
+  ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00check.log’
+for details.
+

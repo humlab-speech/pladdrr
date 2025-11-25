@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Configure script for speaker package with SIMD support
+
+# Default flags
+PKG_CPPFLAGS=""
+PKG_CXXFLAGS=""
+PKG_LIBS=""
+
+# Check if RcppXsimd is available
+echo "Checking for RcppXsimd..."
+"${R_HOME}/bin/Rscript" -e "if (!requireNamespace('RcppXsimd', quietly = TRUE)) quit(status = 1)" 2>/dev/null
+
+if [ $? -eq 0 ]; then
+  echo "RcppXsimd found - enabling SIMD optimizations"
+  PKG_CPPFLAGS="${PKG_CPPFLAGS} -DHAVE_XSIMD"
+else
+  echo "RcppXsimd not found - SIMD optimizations disabled"
+  echo "Install RcppXsimd for better performance: install.packages('RcppXsimd')"
+fi
+
+# Substitute variables in Makevars
+sed -e "s|@PKG_CPPFLAGS@|${PKG_CPPFLAGS}|" \
+    -e "s|@PKG_CXXFLAGS@|${PKG_CXXFLAGS}|" \
+    -e "s|@PKG_LIBS@|${PKG_LIBS}|" \
+    src/Makevars.in > src/Makevars
+
+echo "Configuration complete"
+exit 0

@@ -4,3 +4,6 @@
 [submodule "src/clapack"]
 	path = src/clapack
 	url = https://github.com/humlab-speech/clapack.git
+[submodule "src/pffft"]
+	path = src/pffft
+	url = https://github.com/cpuimage/pffft.git

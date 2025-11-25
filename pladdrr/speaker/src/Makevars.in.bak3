@@ -1,0 +1,177 @@
+# Makevars.in for Unix/Linux/macOS builds
+# Processed by configure script
+
+# Use C++17 standard
+CXX_STD = CXX17
+
+# Include directories
+PKG_CPPFLAGS = @PKG_CPPFLAGS@ -I. \
+               -Ipraat.github.io \
+               -Ipraat.github.io/kar \
+               -Ipraat.github.io/melder \
+               -Ipraat.github.io/sys \
+               -Ipraat.github.io/dwsys \
+               -Ipraat.github.io/dwtools \
+               -Ipraat.github.io/stat \
+               -Ipraat.github.io/fon \
+               -Ipraat.github.io/foned \
+               -Ipraat.github.io/LPC \
+               -Ipraat.github.io/sensors \
+               -Ipraat.github.io/external/portaudio \
+               -Ipraat.github.io/external/flac \
+               -Ipraat.github.io/external/mp3 \
+               -Ipraat.github.io/external/espeak \
+               -Ipraat.github.io/external/gsl \
+               -Ipraat.github.io/external/glpk
+
+# Compiler flags
+PKG_CXXFLAGS = @PKG_CXXFLAGS@ -DPRAAT_LIB \
+               -DNO_GUI \
+               -DNO_AUDIO \
+               -DNO_GRAPHICS \
+               -DNO_NETWORK \
+               -DUNIX \
+               -pthread \
+               -ffp-contract=off \
+               -Wno-unused-parameter \
+               -Wno-sign-compare \
+               -Wno-unused-variable \
+               -Wno-deprecated-declarations \
+               -Wno-trigraphs \
+               -Wno-logical-op-parentheses \
+               -Wno-shift-op-parentheses \
+               -Wno-mismatched-tags \
+               -Wno-unused-const-variable \
+               -Wno-c++11-narrowing
+
+# Platform-specific SIMD flags
+ifeq ($(shell uname -m),x86_64)
+  PKG_CXXFLAGS += -march=native -mtune=native
+else ifeq ($(shell uname -m),aarch64)
+  PKG_CXXFLAGS += -march=armv8-a+simd
+else ifeq ($(shell uname -m),arm64)
+  PKG_CXXFLAGS += -march=armv8-a+simd
+endif
+
+# Linker flags
+PKG_LIBS = @PKG_LIBS@ -pthread
+
+# ============================================================================
+# SOURCE FILES
+# ============================================================================
+
+# Kar sources
+KAR_SRC = kar/longchar.cpp
+
+# Melder sources
+MELDER_SRC = melder/melder.cpp melder/melder_alloc.cpp melder/melder_str32.cpp \
+             melder/melder_colour.cpp melder/melder_ftoa.cpp melder/melder_console.cpp \
+             melder/melder_textencoding.cpp melder/melder_atof.cpp \
+             melder/melder_files.cpp melder/melder_sort.cpp melder/melder_debug.cpp \
+             melder/MelderString.cpp melder/melder_search.cpp melder/melder_info.cpp \
+             melder/melder_error.cpp melder/melder_warning.cpp melder/melder_progress.cpp \
+             melder/melder_play.cpp melder/melder_help.cpp melder/melder_time.cpp \
+             melder/melder_quantity.cpp \
+             melder/MelderReadText.cpp melder/melder_tensorio.cpp melder/abcio.cpp \
+             melder/melder_sysenv.cpp melder/regularExp.cpp melder/NUMmath.cpp \
+             melder/NUMspecfunc.cpp melder/NUMear.cpp melder/NUMinterpol.cpp \
+             melder/NUMmetrics.cpp melder/NUMrandom.cpp melder/NUMfilter.cpp \
+             melder/NUMlinprog.cpp melder/NUM.cpp melder/STR.cpp melder/VEC.cpp \
+             melder/MAT.cpp melder/STRVEC.cpp melder/MelderCat.cpp melder/melder_casual.cpp \
+             melder/melder_app.cpp melder/complex.cpp melder/melder_trust.cpp
+
+# Sys sources
+SYS_SRC = sys/Thing.cpp sys/Data.cpp sys/Simple.cpp sys/Collection.cpp \
+          sys/Strings.cpp sys/Formula.cpp sys/Interpreter.cpp sys/Script.cpp
+
+# Dwsys sources
+DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
+            praat.github.io/dwsys/Polynomial.cpp \
+            praat.github.io/dwsys/FunctionSeries.cpp
+
+# Dwtools sources
+DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
+              praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp
+
+# Stat sources
+STAT_SRC = stat/Table.cpp stat/TableOfReal.cpp stat/Distributions.cpp
+
+# Fon sources
+FON_SRC = fon/Transition.cpp fon/Distributions_and_Transition.cpp \
+          fon/Function.cpp fon/Sampled.cpp fon/SampledXY.cpp fon/Matrix.cpp \
+          fon/Vector.cpp fon/Polygon.cpp fon/PointProcess.cpp \
+          fon/Matrix_and_PointProcess.cpp fon/Matrix_and_Polygon.cpp \
+          fon/AnyTier.cpp fon/RealTier.cpp fon/Sound.cpp \
+          fon/PointProcess_and_Sound.cpp \
+          fon/Sound_PointProcess.cpp fon/ParamCurve.cpp fon/Pitch.cpp \
+          fon/Harmonicity.cpp fon/Intensity.cpp fon/Matrix_and_Pitch.cpp \
+          fon/Sound_to_Pitch.cpp fon/Sound_to_Intensity.cpp \
+          fon/Sound_to_Harmonicity.cpp fon/Sound_to_Harmonicity_GNE.cpp \
+          fon/Sound_to_PointProcess.cpp fon/Pitch_to_PointProcess.cpp \
+          fon/Pitch_to_Sound.cpp fon/Pitch_Intensity.cpp fon/PitchTier.cpp \
+          fon/Pitch_to_PitchTier.cpp fon/PitchTier_to_PointProcess.cpp \
+          fon/PitchTier_to_Sound.cpp fon/Manipulation.cpp \
+          fon/Pitch_AnyTier_to_PitchTier.cpp fon/IntensityTier.cpp \
+          fon/DurationTier.cpp fon/AmplitudeTier.cpp fon/Spectrum.cpp \
+          fon/Ltas.cpp fon/Spectrogram.cpp fon/SpectrumTier.cpp \
+          fon/Ltas_to_SpectrumTier.cpp fon/Formant.cpp fon/Image.cpp \
+          fon/Sound_to_Formant.cpp fon/Sound_and_Spectrogram.cpp \
+          fon/Sound_and_Spectrum.cpp fon/Spectrum_and_Spectrogram.cpp \
+          fon/Spectrum_to_Formant.cpp fon/FormantTier.cpp \
+          fon/Label.cpp fon/FormantGrid.cpp \
+          fon/TextGrid.cpp fon/TextGrid_Sound.cpp \
+          fon/Excitation.cpp fon/Cochleagram.cpp fon/Cochleagram_and_Excitation.cpp \
+          fon/Excitation_to_Formant.cpp fon/Sound_to_Cochleagram.cpp \
+          fon/Spectrum_to_Excitation.cpp fon/VocalTract.cpp \
+          fon/VocalTract_to_Spectrum.cpp fon/Sound_enhance.cpp \
+          fon/VoiceAnalysis.cpp
+
+# Sensors sources
+SENSORS_SRC = praat.github.io/sensors/Electroglottogram.cpp
+
+# LPC sources
+LPC_SRC = praat.github.io/LPC/LPC.cpp \
+          praat.github.io/LPC/Sound_and_LPC.cpp \
+          praat.github.io/LPC/LPC_to_Spectrum.cpp \
+          praat.github.io/LPC/LPC_and_Polynomial.cpp \
+          praat.github.io/LPC/LPC_to_Spectrogram.cpp \
+          praat.github.io/LPC/LineSpectralFrequencies.cpp \
+          praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp \
+          praat.github.io/LPC/LPC_and_Formant.cpp \
+          praat.github.io/LPC/Cepstrum.cpp \
+          praat.github.io/LPC/Cepstrumc.cpp \
+          praat.github.io/LPC/PowerCepstrum.cpp \
+          praat.github.io/LPC/PowerCepstrogram.cpp \
+          praat.github.io/LPC/Sound_and_Cepstrum.cpp \
+          praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
+          praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
+          praat.github.io/LPC/LPC_and_Cepstrumc.cpp
+
+# Wrapper sources
+WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
+              formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
+              intensity_wrappers.cpp pointprocess_wrappers.cpp \
+              spectrum_wrappers.cpp spectrogram_wrappers.cpp \
+              ltas_wrappers.cpp lpc_wrappers.cpp lpc_clapack_stubs.cpp \
+              textgrid_wrappers.cpp pitchtier_wrappers.cpp \
+              durationtier_wrappers.cpp intensitytier_wrappers.cpp \
+              manipulation_wrappers.cpp table_wrappers.cpp \
+              amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
+              powercepstrum_wrappers.cpp \
+              matrix_wrappers.cpp \
+              sound_fileio_stub.cpp praat_stubs.cpp \
+              num_stubs.cpp num2_stubs.cpp longsound_stub.cpp \
+              graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
+              svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp gsl_stubs.cpp \
+              utils.cpp RcppExports.cpp
+
+# SIMD sources (Phase 3: Window functions and autocorrelation)
+# SIMD sources (Phase 3: Window functions and autocorrelation)
+SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
+           window_functions_simd.cpp autocorrelation_simd.cpp
+
+# All sources combined
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC)
+
+# Object files
+OBJECTS = $(SOURCES:.cpp=.o)

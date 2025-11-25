@@ -180,9 +180,7 @@ LPC <- R6::R6Class(
     #' @return A new Matrix object containing LPC coefficients
     to_matrix = function() {
       matrix_ptr <- .lpc_to_matrix(private$ptr)
-      # Matrix is not yet implemented as R6 class, return external pointer
-      # TODO: Return Matrix$new(.xptr = matrix_ptr) when Matrix class is available
-      matrix_ptr
+      Matrix$new(.xptr = matrix_ptr)
     },
     
     # ========================================================================

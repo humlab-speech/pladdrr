@@ -260,54 +260,6 @@ The package includes 17+ Praat object types with 300+ methods:
 
 See `vignette("integrated-phonetic-analysis")` for complete workflow examples.
 
-## Development Status
-
-**Current Version**: 0.5.5 (November 2025)
-
-### Completed ✅
-- ✅ R6 + External Pointer architecture
-- ✅ 17 Praat object types with 300+ methods
-- ✅ SIMD optimization (Phases 1-3 complete)
-- ✅ Comprehensive vignettes (3 guides)
-- ✅ Complete example suite (9 real-world workflows)
-- ✅ TextGrid full read/write support
-- ✅ Voice quality analysis (HNR, jitter, shimmer)
-- ✅ Manipulation (PSOLA pitch/duration modification)
-
-### In Progress 🔄
-- 🔄 Additional object types (LPC, MFCC, MelFilter)
-- 🔄 File I/O completion (currently using workarounds)
-- 🔄 CRAN preparation
-- 🔄 Cross-platform testing (macOS ✅, Linux/Windows pending)
-
-### Roadmap to v1.0.0
-1. Complete file I/O fixes
-2. Expand test coverage to >90%
-3. Cross-platform validation
-4. Performance documentation
-5. CRAN submission
-
-See `NEXT_STEPS_POST_EXAMPLES_2025-11-19.md` for detailed roadmap.
-
-## Similar Projects
-
-### Comparison with Parselmouth
-
-|  | **pladdrr** (R) | **Parselmouth** (Python) |
-|---|---|---|
-| **Interface** | Direct R6 methods | Generic `praat.call()` dispatcher |
-| **Autocomplete** | ✅ Full IDE support | ❌ String-based commands |
-| **Performance** | Direct C++ + SIMD | Python overhead |
-| **Dependencies** | R only | Python + NumPy |
-| **Documentation** | Method-specific docs | Generic Praat docs |
-| **Learning curve** | Moderate (R + Praat) | Requires Praat command memorization |
-
-### Other R Packages
-
-- [PraatR](https://github.com/usagi5886/PraatR) - Calls external Praat via scripts (slower, requires Praat installation)
-- [rPraat](https://github.com/bbTomas/rPraat) - Pure R implementation (limited functionality)
-
-**pladdrr** provides the best of both worlds: Praat's full C++ functionality with R's data analysis ecosystem.
 
 ## Documentation
 

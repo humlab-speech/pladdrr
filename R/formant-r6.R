@@ -258,8 +258,7 @@ Formant <- R6::R6Class("Formant",
         include_number_of_formants, as.integer(frequency_decimals),
         include_bandwidths
       )
-      # TODO: Return Table$new(.xptr = table_ptr) when Table class is implemented
-      table_ptr
+      Table$new(.xptr = table_ptr)
     },
     
     # ========================================================================

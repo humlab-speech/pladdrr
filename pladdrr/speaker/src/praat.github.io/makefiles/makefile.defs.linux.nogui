@@ -1,0 +1,28 @@
+# File: makefile.defs.linux.nogui
+
+# System: Linux without GUI, network, and sound
+# Paul Boersma 2021-12-27
+
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
+
+PKG_CONFIG ?= "pkg-config"
+
+COMMONFLAGS = -DNO_GUI -DNO_NETWORK -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags pangocairo` -DUNIX -Dlinux \
+	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
+
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+
+EXECUTABLE = praat_nogui
+
+LIBS = `$(PKG_CONFIG) --libs pangocairo` -no-pie -lm -static-libgcc -static-libstdc++ -lpthread
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =
+
+INSTALL = cp ./praat_nogui /usr/bin

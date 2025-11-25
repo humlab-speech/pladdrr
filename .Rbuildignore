@@ -75,3 +75,14 @@ results/
 ^CHANGES_.*\.md$
 ^SPEAKER_.*\.md$
 ^COMMIT_.*\.md$
+^speaker$
+^speaker_1$
+^pladdrr/pladdrr$
+^pladdrr/speaker$
+^pladdrr/speaker_1$
+^src/praat\.github\.io/docs/
+^src/praat\.github\.io/external/
+^src/praat\.github\.io/generate/
+^speaker_1/src/praat\.github\.io/
+^\.Rcheck$
+^..Rcheck$

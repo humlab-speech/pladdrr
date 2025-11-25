@@ -1,12 +1,2 @@
-GPL-3
-
-This package is licensed under GPL-3 (GNU General Public License version 3).
-
-This package incorporates Praat C source code, which is licensed under GPL-2+.
-The GPL-3 license is compatible with and satisfies the requirements of GPL-2+.
-
-For the full text of the GPL-3 license, see:
-https://www.gnu.org/licenses/gpl-3.0.en.html
-
-For Praat licensing information, see:
-https://www.fon.hum.uva.nl/praat/
+YEAR: 2025
+COPYRIGHT HOLDER: Fredrik Nylén
