@@ -55,7 +55,7 @@ extract_formants <- function(sound,
     return(sound$to_formant_burg(
       time_step = time_step,
       max_frequency = max_formant,
-      number_of_formants = n_formants,
+      n_formants = n_formants,
       window_length = window_length,
       pre_emphasis_from = pre_emphasis_from
     ))
