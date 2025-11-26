@@ -1,8 +1,8 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 0.9.11
-Date: 2025-11-25
+Version: 1.0.0
+Date: 2025-11-26
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
@@ -12,10 +12,11 @@ Description: Provides direct, efficient access to Praat C implemented
     functionality from R using Rcpp and R6 object-oriented design. Similar
     in concept to the Parselmouth package for Python, this package allows R
     users to leverage Praat's powerful phonetic analysis capabilities directly
-    from R. Includes 17+ Praat object types with 300+ methods for sound
+    from R. Includes 19+ Praat object types with 320+ methods for sound
     manipulation, pitch analysis, formant extraction, intensity measurements,
-    spectral analysis, TextGrid annotation, and voice quality assessment.
-    Features SIMD optimization for 2-4x performance improvements on modern CPUs.
+    spectral analysis, auditory modeling (Cochleagram, Excitation), TextGrid
+    annotation, and voice quality assessment. Features SIMD optimization for
+    2-4x performance improvements on modern CPUs.
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true

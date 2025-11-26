@@ -117,6 +117,50 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
     .Call(`_pladdrr_lpc_autocorrelation`, data, num_coefficients)
 }
 
+.cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
+    .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
+}
+
+.sound_to_cochleagram <- function(sound_xptr, dt, df, window_length, forward_masking_time) {
+    .Call(`_pladdrr_sound_to_cochleagram`, sound_xptr, dt, df, window_length, forward_masking_time)
+}
+
+.sound_to_cochleagram_edb <- function(sound_xptr, dtime, dfreq, has_synapse, replenishment_rate, loss_rate, return_rate, reprocessing_rate) {
+    .Call(`_pladdrr_sound_to_cochleagram_edb`, sound_xptr, dtime, dfreq, has_synapse, replenishment_rate, loss_rate, return_rate, reprocessing_rate)
+}
+
+.cochleagram_get_value_at_time_and_frequency <- function(xptr, time, freq_bark) {
+    .Call(`_pladdrr_cochleagram_get_value_at_time_and_frequency`, xptr, time, freq_bark)
+}
+
+.cochleagram_get_time_from_column <- function(xptr, i_col) {
+    .Call(`_pladdrr_cochleagram_get_time_from_column`, xptr, i_col)
+}
+
+.cochleagram_get_frequency_from_row <- function(xptr, i_row) {
+    .Call(`_pladdrr_cochleagram_get_frequency_from_row`, xptr, i_row)
+}
+
+.cochleagram_to_excitation <- function(xptr, time) {
+    .Call(`_pladdrr_cochleagram_to_excitation`, xptr, time)
+}
+
+.cochleagram_difference <- function(xptr1, xptr2, tmin, tmax) {
+    .Call(`_pladdrr_cochleagram_difference`, xptr1, xptr2, tmin, tmax)
+}
+
+.cochleagram_as_matrix <- function(xptr) {
+    .Call(`_pladdrr_cochleagram_as_matrix`, xptr)
+}
+
+.cochleagram_get_info <- function(xptr) {
+    .Call(`_pladdrr_cochleagram_get_info`, xptr)
+}
+
+.cochleagram_finalizer <- function(xptr) {
+    invisible(.Call(`_pladdrr_cochleagram_finalizer`, xptr))
+}
+
 .durationtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_durationtier_create`, tmin, tmax)
 }
@@ -191,6 +235,42 @@ electroglottogram_high_pass_filter_cpp <- function(xptr, from_freq, smoothing) {
 
 electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_electroglottogram_to_sound_cpp`, xptr)
+}
+
+.excitation_create <- function(freq_step, n_freqs) {
+    .Call(`_pladdrr_excitation_create`, freq_step, n_freqs)
+}
+
+.spectrum_to_excitation <- function(spectrum_xptr, erb_density) {
+    .Call(`_pladdrr_spectrum_to_excitation`, spectrum_xptr, erb_density)
+}
+
+.excitation_get_loudness <- function(xptr) {
+    .Call(`_pladdrr_excitation_get_loudness`, xptr)
+}
+
+.excitation_get_value_at_frequency <- function(xptr, freq_bark) {
+    .Call(`_pladdrr_excitation_get_value_at_frequency`, xptr, freq_bark)
+}
+
+.excitation_get_distance <- function(xptr1, xptr2) {
+    .Call(`_pladdrr_excitation_get_distance`, xptr1, xptr2)
+}
+
+.excitation_to_formant <- function(xptr, max_formants) {
+    .Call(`_pladdrr_excitation_to_formant`, xptr, max_formants)
+}
+
+.excitation_as_vector <- function(xptr) {
+    .Call(`_pladdrr_excitation_as_vector`, xptr)
+}
+
+.excitation_get_info <- function(xptr) {
+    .Call(`_pladdrr_excitation_get_info`, xptr)
+}
+
+.excitation_finalizer <- function(xptr) {
+    invisible(.Call(`_pladdrr_excitation_finalizer`, xptr))
 }
 
 .formant_from_sound_burg <- function(sound, time_step, max_number_of_formants, maximum_formant, window_length, pre_emphasis_from) {

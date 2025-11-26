@@ -341,6 +341,43 @@ Sound <- R6::R6Class(
       Ltas$new(.xptr = ltas_ptr)
     },
     
+    #' @description Create Cochleagram (auditory filterbank representation)
+    #' Corresponds to Praat: To Cochleagram
+    #' Models the basilar membrane response using Bark frequency scale.
+    #' @param dt Time step in seconds (default: 0.01)
+    #' @param df Frequency step in Bark (default: 0.1)
+    #' @param window_length Analysis window length in seconds (default: 0.03)
+    #' @param forward_masking_time Forward masking time constant in seconds (default: 0.03)
+    #' @return Cochleagram object
+    to_cochleagram = function(dt = 0.01, df = 0.1, window_length = 0.03, 
+                              forward_masking_time = 0.03) {
+      cochleagram_ptr <- .sound_to_cochleagram(
+        private$ptr, dt, df, window_length, forward_masking_time
+      )
+      Cochleagram$new(.xptr = cochleagram_ptr)
+    },
+    
+    #' @description Create Cochleagram using Ear-Drum-Brain model
+    #' Corresponds to Praat: To Cochleagram (edb)
+    #' More realistic auditory model including synaptic processing.
+    #' @param dtime Time step in seconds (default: 0.01)
+    #' @param dfreq Frequency step in Bark (default: 0.1)
+    #' @param has_synapse Include synaptic processing (default: TRUE)
+    #' @param replenishment_rate Neurotransmitter replenishment rate (default: 0.01)
+    #' @param loss_rate Neurotransmitter loss rate (default: 0.1)
+    #' @param return_rate Calcium return rate (default: 0.05)
+    #' @param reprocessing_rate Reprocessing rate (default: 0.01)
+    #' @return Cochleagram object
+    to_cochleagram_edb = function(dtime = 0.01, dfreq = 0.1, has_synapse = TRUE,
+                                   replenishment_rate = 0.01, loss_rate = 0.1,
+                                   return_rate = 0.05, reprocessing_rate = 0.01) {
+      cochleagram_ptr <- .sound_to_cochleagram_edb(
+        private$ptr, dtime, dfreq, has_synapse, 
+        replenishment_rate, loss_rate, return_rate, reprocessing_rate
+      )
+      Cochleagram$new(.xptr = cochleagram_ptr)
+    },
+    
     #' @description Create time-frequency spectrogram
     #' @param window_length Analysis window length in seconds (default: 0.005)
     #' @param max_frequency Maximum frequency to analyze in Hz (default: 5000)

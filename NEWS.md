@@ -1,3 +1,52 @@
+# pladdrr 1.0.0 (2025-11-26)
+
+## New Features: Auditory Modeling 🆕
+
+### Cochleagram Object
+* **NEW**: `Sound$to_cochleagram()` - Create cochleagram (basilar membrane model)
+  - Models auditory filterbank response on Bark frequency scale (0-25.6 Bark)
+  - Standard method: `sound$to_cochleagram(dt, df, window_length, forward_masking_time)`
+  - EDB method: `sound$to_cochleagram_edb(...)` - Ear-drum-brain model with synaptic processing
+  
+* **Cochleagram methods**:
+  - `$get_value_at_time_and_frequency(time, freq_bark)` - Query excitation
+  - `$to_excitation(time)` - Extract excitation pattern at specific time
+  - `$get_difference(other, tmin, tmax)` - Compare two cochleagrams
+  - `$as_matrix()` - Export for visualization
+  - `$get_info()` - Time/frequency domain parameters
+
+### Excitation Object
+* **NEW**: `Spectrum$to_excitation()` - Create excitation pattern
+  - Represents auditory nerve firing rate on ERB scale
+  - Perceptual loudness distribution across frequency range
+  - Created from Spectrum or extracted from Cochleagram
+
+* **Excitation methods**:
+  - `$get_loudness()` - Total loudness in sones
+  - `$get_value_at_frequency(freq_bark)` - Excitation at specific frequency
+  - `$get_distance(other)` - Perceptual distance between patterns
+  - `$to_formant(max_formants)` - Extract formants from excitation
+  - `$as_vector()` - Export as data frame
+
+## Impact
+
+This release adds **auditory modeling capabilities**, opening new applications:
+- Psychoacoustic analysis
+- Speech perception studies  
+- Hearing aid algorithm development
+- Cochlear implant research
+- Clinical audiology applications
+
+Package now includes **19 Praat object types** with **320+ methods**.
+
+## Version Milestone
+
+**v1.0.0** represents the first feature-complete stable release, ready for CRAN submission.
+All core Praat objects implemented with R6 interface, comprehensive documentation,
+and SIMD performance optimization.
+
+---
+
 # pladdrr 0.9.11 (2025-11-25)
 
 ## Documentation

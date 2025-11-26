@@ -32,6 +32,7 @@
 #' * `to_sound()` - Convert to Sound (inverse FFT)
 #' * `to_ltas(bandwidth)` - Convert to long-term average spectrum
 #' * `to_spectrogram(...)` - Convert to Spectrogram
+#' * `to_excitation(erb_density)` - Convert to Excitation (auditory representation)
 #'
 #' **Export Methods:**
 #' * `as_matrix()` - Export as numeric matrix (real + imaginary)
@@ -226,6 +227,16 @@ Spectrum <- R6::R6Class("Spectrum",
     to_powercepstrum = function() {
       ptr <- .spectrum_to_powercepstrum(private$ptr)
       PowerCepstrum$new(.xptr = ptr)
+    },
+    
+    #' @description Convert to Excitation (auditory nerve firing rate)
+    #' Corresponds to Praat: To Excitation
+    #' Applies ERB-scale auditory filtering and perceptual weighting.
+    #' @param erb_density Frequency step in ERB scale (default: 0.1)
+    #' @return Excitation object
+    to_excitation = function(erb_density = 0.1) {
+      ptr <- .spectrum_to_excitation(private$ptr, as.numeric(erb_density))
+      Excitation$new(.xptr = ptr)
     },
     
     # Export
