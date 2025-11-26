@@ -8,7 +8,7 @@ test_that("extract_intensity works with basic input", {
   intensity <- extract_intensity(sound, minimum_pitch = 100)
   
   # Check structure
-  expect_s3_class(intensity, "praat_intensity")
+  expect_s3_class(intensity, "Intensity")
   expect_type(intensity, "list")
   expect_true("values" %in% names(intensity))
   expect_true("n_frames" %in% names(intensity))
@@ -68,8 +68,8 @@ test_that("extract_intensity with subtract_mean works", {
   intensity_absolute <- extract_intensity(sound, minimum_pitch = 100, 
                                          subtract_mean = FALSE)
   
-  expect_s3_class(intensity_relative, "praat_intensity")
-  expect_s3_class(intensity_absolute, "praat_intensity")
+  expect_s3_class(intensity_relative, "Intensity")
+  expect_s3_class(intensity_absolute, "Intensity")
   
   # Relative should have mean close to 0
   mean_relative <- mean(intensity_relative$values$intensity_db, na.rm = TRUE)
@@ -238,14 +238,14 @@ test_that("intensity extraction handles edge cases", {
   sound_short <- generate_sine_wave(440, duration = 0.01, sampling_rate = 16000)
   intensity_short <- extract_intensity(sound_short, minimum_pitch = 100)
   
-  expect_s3_class(intensity_short, "praat_intensity")
+  expect_s3_class(intensity_short, "Intensity")
   expect_gt(nrow(intensity_short$values), 0)
   
   # Silent sound (all zeros)
   sound_silent <- create_sound(rep(0, 1600), sampling_rate = 16000)
   intensity_silent <- extract_intensity(sound_silent, minimum_pitch = 100)
   
-  expect_s3_class(intensity_silent, "praat_intensity")
+  expect_s3_class(intensity_silent, "Intensity")
   # Should handle gracefully (may have NA or very low values)
 })
 
@@ -257,9 +257,9 @@ test_that("intensity extraction with different minimum_pitch", {
   intensity_mid <- extract_intensity(sound, minimum_pitch = 100)
   intensity_high <- extract_intensity(sound, minimum_pitch = 200)
   
-  expect_s3_class(intensity_low, "praat_intensity")
-  expect_s3_class(intensity_mid, "praat_intensity")
-  expect_s3_class(intensity_high, "praat_intensity")
+  expect_s3_class(intensity_low, "Intensity")
+  expect_s3_class(intensity_mid, "Intensity")
+  expect_s3_class(intensity_high, "Intensity")
   
   # Lower minimum_pitch means larger window, fewer frames
   expect_lt(intensity_low$n_frames, intensity_high$n_frames)
@@ -301,8 +301,8 @@ test_that("intensity auto time_step works", {
   # With manual time step
   intensity_manual <- extract_intensity(sound, minimum_pitch = 100, time_step = 0.01)
   
-  expect_s3_class(intensity_auto, "praat_intensity")
-  expect_s3_class(intensity_manual, "praat_intensity")
+  expect_s3_class(intensity_auto, "Intensity")
+  expect_s3_class(intensity_manual, "Intensity")
   
   # Auto should calculate time_step = 0.8 / minimum_pitch = 0.008
   expect_equal(intensity_auto$time_step, 0.8 / 100)

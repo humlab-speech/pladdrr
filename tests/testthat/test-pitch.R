@@ -11,7 +11,7 @@ test_that("extract_pitch() creates valid praat_pitch object", {
   pitch <- extract_pitch(sound)
 
   # Check object class
-  expect_s3_class(pitch, "praat_pitch")
+  expect_s3_class(pitch, "Pitch")
   expect_s3_class(pitch, "data.frame")
 
   # Check required columns exist
@@ -39,7 +39,7 @@ test_that("extract_pitch() accepts pitch_floor and pitch_ceiling parameters", {
   # Extract with custom pitch range (typical male voice)
   pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 
-  expect_s3_class(pitch, "praat_pitch")
+  expect_s3_class(pitch, "Pitch")
 
   # All defined frequencies should be within range
   defined_freqs <- pitch$frequency[!is.na(pitch$frequency)]

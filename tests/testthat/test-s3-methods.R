@@ -75,7 +75,7 @@ test_that("summary.praat_sound() returns invisibly", {
   # summary() should return the object invisibly
   result <- withVisible(summary(sound))
   expect_false(result$visible)
-  expect_s3_class(result$value, "praat_sound")
+  expect_s3_class(result$value, "Sound")
 })
 
 test_that("as.data.frame.praat_sound() converts to data frame correctly", {
@@ -243,7 +243,7 @@ test_that("summary.praat_pitch() returns invisibly", {
 
   result <- withVisible(summary(pitch))
   expect_false(result$visible)
-  expect_s3_class(result$value, "praat_pitch")
+  expect_s3_class(result$value, "Pitch")
 })
 
 test_that("S3 methods work with pitch objects", {

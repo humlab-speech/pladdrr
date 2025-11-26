@@ -8,7 +8,7 @@ test_that("extract_formants works with basic input", {
   formants <- extract_formants(sound, max_formant = 5000, n_formants = 3)
   
   # Check structure
-  expect_s3_class(formants, "praat_formant")
+  expect_s3_class(formants, "Formant")
   expect_type(formants, "list")
   expect_true("values" %in% names(formants))
   expect_true("n_frames" %in% names(formants))
@@ -180,14 +180,14 @@ test_that("formant extraction handles edge cases", {
   sound_short <- generate_sine_wave(440, duration = 0.01, sampling_rate = 16000)
   formants_short <- extract_formants(sound_short, max_formant = 5000, n_formants = 2)
   
-  expect_s3_class(formants_short, "praat_formant")
+  expect_s3_class(formants_short, "Formant")
   expect_gt(nrow(formants_short$values), 0)
   
   # Silent sound (all zeros)
   sound_silent <- create_sound(rep(0, 1600), sampling_rate = 16000)
   formants_silent <- extract_formants(sound_silent, max_formant = 5000, n_formants = 2)
   
-  expect_s3_class(formants_silent, "praat_formant")
+  expect_s3_class(formants_silent, "Formant")
   # Should handle gracefully (may have all NA values)
 })
 
@@ -199,9 +199,9 @@ test_that("formant extraction with different parameters", {
   formants_female <- extract_formants(sound, max_formant = 5500, n_formants = 5)
   formants_child <- extract_formants(sound, max_formant = 8000, n_formants = 5)
   
-  expect_s3_class(formants_male, "praat_formant")
-  expect_s3_class(formants_female, "praat_formant")
-  expect_s3_class(formants_child, "praat_formant")
+  expect_s3_class(formants_male, "Formant")
+  expect_s3_class(formants_female, "Formant")
+  expect_s3_class(formants_child, "Formant")
   
   expect_equal(formants_male$max_formant, 5000)
   expect_equal(formants_female$max_formant, 5500)

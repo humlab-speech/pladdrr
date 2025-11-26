@@ -14,7 +14,7 @@ test_that("generate_sine_wave() creates mathematically correct waveform", {
                               amplitude = amplitude)
 
   # Check object type
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
@@ -42,7 +42,7 @@ test_that("generate_sine_wave() uses default parameters correctly", {
   # Test with minimal parameters (should use defaults)
   sound <- generate_sine_wave(440, 0.1)
 
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
   expect_equal(sound$sampling_rate, 44100)  # Default
   # Default amplitude should create values in [-1, 1] range
   expect_true(all(sound$values >= -1.0))
@@ -88,7 +88,7 @@ test_that("generate_noise() creates random noise with correct properties", {
                          amplitude = amplitude, seed = seed)
 
   # Check object type
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
@@ -135,7 +135,7 @@ test_that("generate_noise() without seed produces different results", {
 test_that("generate_noise() uses default parameters correctly", {
   sound <- generate_noise(0.1)
 
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
   expect_equal(sound$sampling_rate, 44100)  # Default
   expect_equal(sound$duration, 0.1, tolerance = 1e-6)
 })

@@ -143,14 +143,20 @@ validate_logical <- function(x, name = deparse(substitute(x))) {
 # Sound Object Validation
 # ==============================================================================
 
-#' Check if object is a valid praat_sound
+#' Check if object is a valid Sound (R6 or legacy S3)
 #'
-#' Validates that an object has the structure of a praat_sound object
+#' Validates that an object is a Sound R6 object or legacy praat_sound
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
 #' @export
 is_praat_sound <- function(x) {
+  # Check for R6 Sound object first (preferred)
+  if (inherits(x, "Sound")) {
+    return(TRUE)
+  }
+  
+  # Legacy S3 check (deprecated but still supported for now)
   if (!inherits(x, "praat_sound")) {
     return(FALSE)
   }
@@ -158,7 +164,7 @@ is_praat_sound <- function(x) {
     return(FALSE)
   }
 
-  # Check required fields
+  # Check required fields for legacy S3
   required_fields <- c("values", "time", "sampling_rate", "n_samples",
                       "duration", "start_time", "end_time")
   if (!all(required_fields %in% names(x))) {
@@ -198,14 +204,20 @@ validate_sound_object <- function(x, name = deparse(substitute(x))) {
 # Pitch Object Validation
 # ==============================================================================
 
-#' Check if object is a valid praat_pitch
+#' Check if object is a valid Pitch (R6 or legacy S3)
 #'
-#' Validates that an object has the structure of a praat_pitch object
+#' Validates that an object is a Pitch R6 object or legacy praat_pitch
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
 #' @export
 is_praat_pitch <- function(x) {
+  # Check for R6 Pitch object first (preferred)
+  if (inherits(x, "Pitch")) {
+    return(TRUE)
+  }
+  
+  # Legacy S3 check (deprecated but still supported for now)
   if (!inherits(x, "praat_pitch")) {
     return(FALSE)
   }
@@ -334,14 +346,20 @@ validate_pitch_object <- function(x, name = deparse(substitute(x))) {
 # Formant Object Validation
 # ==============================================================================
 
-#' Check if object is a valid praat_formant
+#' Check if object is a valid Formant (R6 or legacy S3)
 #'
-#' Validates that an object has the structure of a praat_formant object
+#' Validates that an object is a Formant R6 object or legacy praat_formant
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
 #' @export
 is_praat_formant <- function(x) {
+  # Check for R6 Formant object first (preferred)
+  if (inherits(x, "Formant")) {
+    return(TRUE)
+  }
+  
+  # Legacy S3 check (deprecated but still supported for now)
   if (!inherits(x, "praat_formant")) {
     return(FALSE)
   }
@@ -387,14 +405,20 @@ validate_formant_object <- function(x, name = deparse(substitute(x))) {
 # Intensity Object Validation
 # ==============================================================================
 
-#' Check if object is a valid praat_intensity
+#' Check if object is a valid Intensity (R6 or legacy S3)
 #'
-#' Validates that an object has the structure of a praat_intensity object
+#' Validates that an object is an Intensity R6 object or legacy praat_intensity
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
 #' @export
 is_praat_intensity <- function(x) {
+  # Check for R6 Intensity object first (preferred)
+  if (inherits(x, "Intensity")) {
+    return(TRUE)
+  }
+  
+  # Legacy S3 check (deprecated but still supported for now)
   if (!inherits(x, "praat_intensity")) {
     return(FALSE)
   }

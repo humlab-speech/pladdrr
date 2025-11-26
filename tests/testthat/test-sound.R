@@ -11,7 +11,7 @@ test_that("create_sound() creates valid praat_sound object with correct attribut
   sound <- create_sound(values, sampling_rate = sampling_rate)
 
   # Check object class
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
   expect_type(sound, "list")
 
   # Check required fields exist
@@ -77,7 +77,7 @@ test_that("read_sound() loads WAV file and extracts correct metadata", {
   sound <- read_sound(wav_path)
 
   # Check object class
-  expect_s3_class(sound, "praat_sound")
+  expect_s3_class(sound, "Sound")
 
   # Check expected properties for 1 second 440 Hz sine wave at 44100 Hz
   expect_equal(sound$sampling_rate, 44100)
