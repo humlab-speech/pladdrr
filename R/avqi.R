@@ -433,7 +433,12 @@ compute_avqi <- function(sound,
   )
   
   if (is.null(voiced_sound)) {
-    stop("No voiced segments detected in speech recording")
+    stop(
+      "No voiced segments detected in speech recording. ",
+      "Please check that the audio contains speech and that the ",
+      "silence_threshold (", silence_threshold, ") and pitch range (",
+      f0_min, "-", f0_max, " Hz) are appropriate for the speaker."
+    )
   }
   
   voiced_duration <- voiced_sound$get_duration()

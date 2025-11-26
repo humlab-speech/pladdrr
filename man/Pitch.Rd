@@ -10,6 +10,25 @@ It provides methods for querying pitch values, statistics, and transformations.
 \details{
 An R6 class representing a Praat Pitch object (fundamental frequency contour).
 }
+\examples{
+\dontrun{
+# Create a pitch object from a sound
+sound <- Sound$new(system.file("extdata", "example.wav", package = "speaker"))
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+
+# Query pitch statistics
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "Hertz")
+min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "Hertz", interpolate = TRUE)
+max_f0 <- pitch$get_maximum(from_time = 0, to_time = 0, unit = "Hertz", interpolate = TRUE)
+
+# Get pitch at specific time
+f0_at_1s <- pitch$get_value_at_time(time = 1.0, unit = "Hertz", interpolate = TRUE)
+
+# Count voiced frames
+n_voiced <- pitch$count_voiced_frames()
+}
+
+}
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{Pitch}
 }

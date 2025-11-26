@@ -118,9 +118,10 @@ plot_avqi <- function(avqi_result,
 
 #' @keywords internal
 .plot_avqi_waveform <- function(avqi_result, sound) {
-  if (is.null(sound)) {
-    stop("Sound object required for waveform plot")
-  }
+  stopifnot(
+    "Sound object required for waveform plot" = !is.null(sound),
+    "Sound object must be an R6 Sound instance" = inherits(sound, "Sound")
+  )
   
   # Extract waveform data
   n_samples <- sound$get_number_of_samples()
@@ -156,9 +157,10 @@ plot_avqi <- function(avqi_result,
 
 #' @keywords internal
 .plot_avqi_spectrogram <- function(avqi_result, sound) {
-  if (is.null(sound)) {
-    stop("Sound object required for spectrogram plot")
-  }
+  stopifnot(
+    "Sound object required for spectrogram plot" = !is.null(sound),
+    "Sound object must be an R6 Sound instance" = inherits(sound, "Sound")
+  )
   
   # This would create a spectrogram visualization
   # For now, return a placeholder
@@ -306,9 +308,10 @@ plot_dsi <- function(dsi_result,
 
 #' @keywords internal
 .plot_dsi_contours <- function(dsi_result, sound) {
-  if (is.null(sound)) {
-    stop("Sound object required for contour plots")
-  }
+  stopifnot(
+    "Sound object required for contour plots" = !is.null(sound),
+    "Sound object must be an R6 Sound instance" = inherits(sound, "Sound")
+  )
   
   # This would create pitch and intensity contour plots
   # For now, return a placeholder

@@ -32,13 +32,13 @@ FormantGrid <- R6::R6Class("FormantGrid",
         }
         private$ptr <- .xptr
       } else {
-        # Create new FormantGrid
-        if (is.null(tmin) || is.null(tmax)) {
-          stop("tmin and tmax must be provided when creating a new FormantGrid")
-        }
-        if (tmin >= tmax) {
-          stop("tmin must be less than tmax")
-        }
+        # Create new FormantGrid - validate parameters
+        stopifnot(
+          "tmin and tmax must be provided when creating a new FormantGrid" = 
+            !is.null(tmin) && !is.null(tmax),
+          "tmin must be less than tmax" = tmin < tmax,
+          "number_of_formants must be positive" = number_of_formants > 0
+        )
         private$ptr <- .formantgrid_create(
           tmin, tmax, as.integer(number_of_formants),
           initial_first_formant, initial_formant_spacing,

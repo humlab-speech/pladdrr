@@ -12,6 +12,27 @@ Table Class
 R6 class representing a Praat Table object. Table objects store tabular data
 with named columns and support various statistical operations.
 }
+\examples{
+\dontrun{
+# Create a table with column names
+tbl <- Table$new(numberOfRows = 10, columnNames = c("time", "f0", "intensity"))
+
+# Set values
+tbl$set_numeric_value(row = 1, column = "time", value = 0.5)
+tbl$set_numeric_value(row = 1, column = "f0", value = 120.5)
+
+# Get values
+time_val <- tbl$get_numeric_value(row = 1, column = "time")
+
+# Get column statistics
+mean_f0 <- tbl$get_mean(column = "f0")
+sd_f0 <- tbl$get_standard_deviation(column = "f0")
+
+# Export to R data frame
+df <- tbl$as_data_frame()
+}
+
+}
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{Table}
 }

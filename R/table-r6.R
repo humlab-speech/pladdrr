@@ -3,6 +3,26 @@
 #' R6 class representing a Praat Table object. Table objects store tabular data
 #' with named columns and support various statistical operations.
 #'
+#' @examples
+#' \dontrun{
+#' # Create a table with column names
+#' tbl <- Table$new(numberOfRows = 10, columnNames = c("time", "f0", "intensity"))
+#' 
+#' # Set values
+#' tbl$set_numeric_value(row = 1, column = "time", value = 0.5)
+#' tbl$set_numeric_value(row = 1, column = "f0", value = 120.5)
+#' 
+#' # Get values
+#' time_val <- tbl$get_numeric_value(row = 1, column = "time")
+#' 
+#' # Get column statistics
+#' mean_f0 <- tbl$get_mean(column = "f0")
+#' sd_f0 <- tbl$get_standard_deviation(column = "f0")
+#' 
+#' # Export to R data frame
+#' df <- tbl$as_data_frame()
+#' }
+#'
 #' @export
 Table <- R6::R6Class("Table",
   inherit = PraatObject,
@@ -18,21 +38,20 @@ Table <- R6::R6Class("Table",
     initialize = function(numberOfRows = NULL, numberOfColumns = NULL, 
                          columnNames = NULL, .xptr = NULL) {
       if (!is.null(.xptr)) {
-        if (!inherits(.xptr, "externalptr")) {
-          stop(".xptr must be an external pointer")
-        }
+        stopifnot(".xptr must be an external pointer" = inherits(.xptr, "externalptr"))
         private$ptr <- .xptr
       } else {
-        if (is.null(numberOfRows)) {
-          stop("numberOfRows must be specified")
-        }
+        stopifnot(
+          "numberOfRows must be specified" = !is.null(numberOfRows),
+          "numberOfRows must be positive" = is.numeric(numberOfRows) && numberOfRows > 0,
+          "Either numberOfColumns or columnNames must be specified" = 
+            !is.null(numberOfColumns) || !is.null(columnNames)
+        )
         
         if (!is.null(columnNames)) {
           private$ptr <- .table_create_with_column_names(numberOfRows, columnNames)
         } else if (!is.null(numberOfColumns)) {
           private$ptr <- .table_create(numberOfRows, numberOfColumns)
-        } else {
-          stop("Either numberOfColumns or columnNames must be specified")
         }
       }
     },

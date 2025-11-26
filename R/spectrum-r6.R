@@ -38,6 +38,23 @@
 #' * `as_data_frame()` - Export as data.frame (freq, real, imag, power)
 #' * `save(path)` - Save to file
 #'
+#' @examples
+#' \dontrun{
+#' # Create spectrum from sound
+#' sound <- Sound$new(system.file("extdata", "example.wav", package = "speaker"))
+#' spectrum <- sound$to_spectrum(fast = TRUE)
+#' 
+#' # Query spectral properties
+#' cog <- spectrum$get_centre_of_gravity(power = 2.0)
+#' sd <- spectrum$get_standard_deviation(power = 2.0)
+#' 
+#' # Get energy in frequency band
+#' energy_500_2000 <- spectrum$get_band_energy(fmin = 500, fmax = 2000)
+#' 
+#' # Export to data frame
+#' spec_df <- spectrum$as_data_frame()
+#' }
+#'
 #' @export
 Spectrum <- R6::R6Class("Spectrum",
   inherit = PraatObject,
