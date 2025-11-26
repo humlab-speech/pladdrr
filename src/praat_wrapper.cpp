@@ -28,12 +28,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// TODO: Once Praat headers are properly integrated, include:
-// #include "praat/melder/melder.h"
-// #include "praat/sys/Thing.h"
-// #include "praat/fon/Sound.h"
-// #include "praat/fon/Pitch.h"
-// etc.
+// Praat library headers are integrated via individual wrapper files
+// Each wrapper includes the specific Praat headers needed for that object type
+// This modular approach provides better compilation times and dependency management
 
 // ============================================================================
 // Package Information and Initialization
@@ -47,9 +44,9 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 String praat_version() {
-    // TODO: Replace with actual Praat version from headers when integrated
-    // Example: return String(PRAAT_VERSION);
-    return "speaker v0.1.0 (Praat C library integration)";
+    // Returns pladdrr package version with Praat integration note
+    // The integrated Praat source is from github.com/praat/praat
+    return "pladdrr v0.9.11 (Praat C library integration)";
 }
 
 //' Initialize Praat library

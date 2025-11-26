@@ -3,6 +3,20 @@
 #' R6 class representing a Praat Matrix object. Matrix objects represent
 #' two-dimensional sampled data with x and y axes.
 #'
+#' @examples
+#' \dontrun{
+#' # Create a simple 10x5 matrix
+#' mat <- Matrix$new(numberOfRows = 10, numberOfColumns = 5)
+#' 
+#' # Set and get values
+#' mat$set_value(row = 3, col = 2, value = 42.0)
+#' val <- mat$get_value(row = 3, col = 2)
+#' 
+#' # Get matrix dimensions
+#' nrows <- mat$get_number_of_rows()
+#' ncols <- mat$get_number_of_columns()
+#' }
+#' 
 #' @export
 Matrix <- R6::R6Class("Matrix",
   inherit = PraatObject,

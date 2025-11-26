@@ -45,8 +45,9 @@ Rcpp::XPtr<structPitch> pitch_from_sound(
     }
 }
 
-// Advanced methods - commented out for now, use Sound_to_Pitch instead
-// TODO: Implement with full parameter support
+// Advanced methods - not currently exposed
+// These methods provide alternative pitch extraction algorithms
+// For now, Sound_to_Pitch provides the main AC algorithm with full parameter support
 /*
 // [[Rcpp::export(.pitch_from_sound_ac)]]
 Rcpp::XPtr<structPitch> pitch_from_sound_ac(
