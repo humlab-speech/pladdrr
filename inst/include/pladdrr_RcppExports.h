@@ -1364,6 +1364,27 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structIntensityTier> >(rcpp_result_gen);
     }
 
+    inline Rcpp::List _simd_info() {
+        typedef SEXP(*Ptr__simd_info)();
+        static Ptr__simd_info p__simd_info = NULL;
+        if (p__simd_info == NULL) {
+            validateSignature("Rcpp::List(*_simd_info)()");
+            p__simd_info = (Ptr__simd_info)R_GetCCallable("pladdrr", "_pladdrr__simd_info");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__simd_info();
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_read_from_file(std::string path) {
         typedef SEXP(*Ptr__sound_read_from_file)(SEXP);
         static Ptr__sound_read_from_file p__sound_read_from_file = NULL;

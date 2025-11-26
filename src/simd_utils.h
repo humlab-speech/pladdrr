@@ -2,6 +2,7 @@
 #define SIMD_UTILS_H
 
 #include <Rcpp.h>
+#include <string>
 
 // Check if SIMD should be used
 inline bool use_simd() {
@@ -22,6 +23,32 @@ inline bool use_simd() {
 #else
     return false;  // SIMD not available
 #endif
+}
+
+// Get SIMD architecture in use
+inline std::string get_simd_arch() {
+#ifdef HAVE_XSIMD
+  #if defined(__AVX2__)
+    return "AVX2";
+  #elif defined(__AVX__)
+    return "AVX";
+  #elif defined(__SSE4_2__)
+    return "SSE4.2";
+  #elif defined(__SSE4_1__)
+    return "SSE4.1";
+  #elif defined(__ARM_NEON)
+    return "NEON";
+  #else
+    return "Generic";
+  #endif
+#else
+  return "Disabled";
+#endif
+}
+
+// Check if pointer is aligned to given alignment (default 32 bytes for AVX2)
+inline bool is_aligned(const void* ptr, size_t alignment = 32) {
+  return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
 }
 
 #endif // SIMD_UTILS_H

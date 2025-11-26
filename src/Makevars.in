@@ -193,7 +193,7 @@ SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
            sound_statistics_simd.cpp sound_conversion_simd.cpp \
            num_matrix_simd.cpp num_filtering_simd.cpp \
            num_distance_simd.cpp sound_convolution_simd.cpp \
-           pitch_processing_simd.cpp
+           pitch_processing_simd.cpp simd_info.cpp
 
 # All sources combined
 SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC)

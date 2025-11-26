@@ -1169,6 +1169,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_n_samples_cpp`, sound_obj)
 }
 
+#' Get SIMD capabilities (internal)
+#' @keywords internal
+.simd_info <- function() {
+    .Call(`_pladdrr_simd_info`)
+}
+
 .sound_convert_to_mono_simd <- function(xptr) {
     .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
