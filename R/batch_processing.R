@@ -367,7 +367,7 @@ aggregate_measurements <- function(measurements,
   }
   
   # Get numeric columns
-  numeric_cols <- names(measurements)[sapply(measurements, is.numeric)]
+  numeric_cols <- names(measurements)[vapply(measurements, is.numeric, logical(1))]
   
   # Aggregate
   agg_list <- list()
@@ -385,7 +385,13 @@ aggregate_measurements <- function(measurements,
       
       agg_col <- aggregate(measurements[[col]], 
                           by = list(label = measurements[[by]]),
-                          FUN = function(x) stat_fun(x, na.rm = TRUE))
+                          FUN = function(x) {
+                            if (stat == "n") {
+                              stat_fun(x)
+                            } else {
+                              stat_fun(x, na.rm = TRUE)
+                            }
+                          })
       
       col_name <- if (stat == "n") "n" else paste0(col, "_", stat)
       

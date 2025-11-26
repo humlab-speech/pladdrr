@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is_praat_sound}
 \alias{is_praat_sound}
-\title{Check if object is a valid praat_sound}
+\title{Check if object is a valid Sound (R6 or legacy S3)}
 \usage{
 is_praat_sound(x)
 }
@@ -13,5 +13,5 @@ is_praat_sound(x)
 Logical indicating validity
 }
 \description{
-Validates that an object has the structure of a praat_sound object
+Validates that an object is a Sound R6 object or legacy praat_sound
 }

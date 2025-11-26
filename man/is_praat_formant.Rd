@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is_praat_formant}
 \alias{is_praat_formant}
-\title{Check if object is a valid praat_formant}
+\title{Check if object is a valid Formant (R6 or legacy S3)}
 \usage{
 is_praat_formant(x)
 }
@@ -13,5 +13,5 @@ is_praat_formant(x)
 Logical indicating validity
 }
 \description{
-Validates that an object has the structure of a praat_formant object
+Validates that an object is a Formant R6 object or legacy praat_formant
 }

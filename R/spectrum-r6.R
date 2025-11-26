@@ -225,7 +225,7 @@ Spectrum <- R6::R6Class("Spectrum",
       mat <- self$as_matrix()
       nbins <- ncol(mat)
       
-      freq <- sapply(seq_len(nbins), function(i) self$get_frequency_from_bin(i))
+      freq <- vapply(seq_len(nbins), function(i) self$get_frequency_from_bin(i), numeric(1))
       real_vals <- mat[1, ]
       imag_vals <- mat[2, ]
       

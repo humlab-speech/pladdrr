@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is_praat_pitch}
 \alias{is_praat_pitch}
-\title{Check if object is a valid praat_pitch}
+\title{Check if object is a valid Pitch (R6 or legacy S3)}
 \usage{
 is_praat_pitch(x)
 }
@@ -13,5 +13,5 @@ is_praat_pitch(x)
 Logical indicating validity
 }
 \description{
-Validates that an object has the structure of a praat_pitch object
+Validates that an object is a Pitch R6 object or legacy praat_pitch
 }

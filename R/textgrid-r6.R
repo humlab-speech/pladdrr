@@ -420,7 +420,7 @@ TextGrid <- R6::R6Class(
       if (is.null(tiers)) {
         .textgrid_to_data_frame(private$ptr)
       } else {
-        tier_nums <- sapply(tiers, private$resolve_tier_number)
+        tier_nums <- vapply(tiers, private$resolve_tier_number, integer(1))
         .textgrid_to_data_frame(private$ptr, as.integer(tier_nums))
       }
     },

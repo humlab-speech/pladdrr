@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is_praat_intensity}
 \alias{is_praat_intensity}
-\title{Check if object is a valid praat_intensity}
+\title{Check if object is a valid Intensity (R6 or legacy S3)}
 \usage{
 is_praat_intensity(x)
 }
@@ -13,5 +13,5 @@ is_praat_intensity(x)
 Logical indicating validity
 }
 \description{
-Validates that an object has the structure of a praat_intensity object
+Validates that an object is an Intensity R6 object or legacy praat_intensity
 }
