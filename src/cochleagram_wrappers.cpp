@@ -82,11 +82,14 @@ double cochleagram_get_value_at_time_and_frequency(SEXP xptr, double time, doubl
     }
     
     // Use Matrix functions to get value (Cochleagram inherits from Matrix)
-    double value = cochleagram->z.at[
-      Melder_iround((freq_bark - cochleagram->y1) / cochleagram->dy + 1)
-    ][
-      Melder_iround((time - cochleagram->x1) / cochleagram->dx + 1)
-    ];
+    integer ifreq = Melder_iround((freq_bark - cochleagram->y1) / cochleagram->dy + 1);
+    integer itime = Melder_iround((time - cochleagram->x1) / cochleagram->dx + 1);
+    
+    if (ifreq < 1 || ifreq > cochleagram->ny || itime < 1 || itime > cochleagram->nx) {
+      Rcpp::stop("Time or frequency out of range");
+    }
+    
+    double value = cochleagram->z[ifreq][itime];
     
     return value;
   } catch (MelderError) {
@@ -241,8 +244,6 @@ Rcpp::List cochleagram_get_info(SEXP xptr) {
 // Finalizer for Cochleagram objects
 // [[Rcpp::export(.cochleagram_finalizer)]]
 void cochleagram_finalizer(SEXP xptr) {
-  Rcpp::XPtr<structCochleagram> ptr(xptr);
-  if (ptr) {
-    forget(ptr.get());
-  }
+  // XPtr handles cleanup automatically, no need for explicit delete
+  // The finalizer is set up by create_xptr_from_auto which handles it
 }

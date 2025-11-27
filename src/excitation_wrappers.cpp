@@ -166,8 +166,6 @@ Rcpp::List excitation_get_info(SEXP xptr) {
 // Finalizer for Excitation objects
 // [[Rcpp::export(.excitation_finalizer)]]
 void excitation_finalizer(SEXP xptr) {
-  Rcpp::XPtr<structExcitation> ptr(xptr);
-  if (ptr) {
-    forget(ptr.get());
-  }
+  // XPtr handles cleanup automatically, no need for explicit delete
+  // The finalizer is set up by create_xptr_from_auto which handles it
 }

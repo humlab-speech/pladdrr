@@ -281,6 +281,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_formant_from_sound_keepall`, sound, time_step, max_number_of_formants, maximum_formant, window_length, pre_emphasis_from)
 }
 
+.formant_from_sound_willems <- function(sound, time_step, number_of_formants, maximum_formant, window_length, pre_emphasis_from) {
+    .Call(`_pladdrr_formant_from_sound_willems`, sound, time_step, number_of_formants, maximum_formant, window_length, pre_emphasis_from)
+}
+
+.formant_from_sound_sl <- function(sound, time_step, number_of_poles, maximum_formant, window_length, pre_emphasis_from) {
+    .Call(`_pladdrr_formant_from_sound_sl`, sound, time_step, number_of_poles, maximum_formant, window_length, pre_emphasis_from)
+}
+
 .formant_get_number_of_frames <- function(formant) {
     .Call(`_pladdrr_formant_get_number_of_frames`, formant)
 }

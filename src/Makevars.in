@@ -175,6 +175,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               manipulation_wrappers.cpp table_wrappers.cpp \
               amplitudetier_wrappers.cpp electroglottogram_wrappers.cpp \
               powercepstrum_wrappers.cpp \
+              cochleagram_wrappers.cpp excitation_wrappers.cpp \
               matrix_wrappers.cpp \
               vad_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \

@@ -77,6 +77,63 @@ XPtr<structFormant> formant_from_sound_keepall(
     }
 }
 
+// [[Rcpp::export(.formant_from_sound_willems)]]
+XPtr<structFormant> formant_from_sound_willems(
+    XPtr<structSound> sound,
+    double time_step,
+    double number_of_formants,
+    double maximum_formant,
+    double window_length,
+    double pre_emphasis_from
+) {
+    if (!sound) Rcpp::stop("Invalid Sound pointer");
+    
+    try {
+        autoFormant formant = Sound_to_Formant_willems(
+            sound.get(),
+            time_step,
+            number_of_formants,
+            maximum_formant,
+            window_length,
+            pre_emphasis_from
+        );
+        return create_xptr_from_auto<structFormant>(formant);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to extract formants using Willems method");
+    }
+}
+
+// [[Rcpp::export(.formant_from_sound_sl)]]
+XPtr<structFormant> formant_from_sound_sl(
+    XPtr<structSound> sound,
+    double time_step,
+    int number_of_poles,
+    double maximum_formant,
+    double window_length,
+    double pre_emphasis_from
+) {
+    if (!sound) Rcpp::stop("Invalid Sound pointer");
+    
+    try {
+        // which = 2 for Split-Levinson method
+        autoFormant formant = Sound_to_Formant_any(
+            sound.get(),
+            time_step,
+            number_of_poles,
+            maximum_formant,
+            window_length,
+            2,  // Split-Levinson
+            pre_emphasis_from,
+            50.0  // safety margin
+        );
+        return create_xptr_from_auto<structFormant>(formant);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to extract formants using Split-Levinson method");
+    }
+}
+
 // ============================================================================
 // Query methods - Time domain
 // ============================================================================

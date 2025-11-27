@@ -36,7 +36,10 @@
 #'
 #' Transformation methods create new Praat objects:
 #' - `$to_pitch(...)` - Extract pitch contour (returns Pitch object)
-#' - `$to_formant_burg(...)` - Extract formants (returns Formant object)
+#' - `$to_formant_burg(...)` - Extract formants using Burg's method (returns Formant object)
+#' - `$to_formant_keepall(...)` - Extract formants, keep all (returns Formant object)
+#' - `$to_formant_willems(...)` - Extract formants using Willems method (returns Formant object)
+#' - `$to_formant_sl(...)` - Extract formants using Split-Levinson method (returns Formant object)
 #' - `$to_intensity(...)` - Extract intensity contour (returns Intensity object)
 #' - `$to_harmonicity_cc(...)` - Compute HNR (returns Harmonicity object)
 #' - `$to_spectrogram(...)` - Create spectrogram (returns Spectrogram object)
@@ -68,7 +71,9 @@
 #'
 #' # Extract features
 #' pitch <- sound$to_pitch()
-#' formants <- sound$to_formant_burg()
+#' formants <- sound$to_formant_burg()        # Standard Burg's method
+#' formants_w <- sound$to_formant_willems()   # Willems method (better for synthesis)
+#' formants_sl <- sound$to_formant_sl()       # Split-Levinson (alternative algorithm)
 #' intensity <- sound$to_intensity()
 #'
 #' # Export to R
@@ -254,6 +259,62 @@ Sound <- R6::R6Class(
         private$ptr,
         time_step,
         max_formants,
+        max_frequency,
+        window_length,
+        pre_emphasis_from
+      )
+      Formant$new(.xptr = formant_ptr)
+    },
+    
+    #' @description Extract formants using Willems method
+    #' @details The Willems method is optimized for extracting a specific
+    #'   number of formants with more accurate bandwidth estimates. Better
+    #'   suited for formant synthesis applications.
+    #' @param time_step Time step in seconds (default: 0.005)
+    #' @param number_of_formants Target number of formants (default: 5)
+    #' @param max_frequency Maximum formant frequency in Hz (default: 5500)
+    #' @param window_length Window length in seconds (default: 0.025)
+    #' @param pre_emphasis_from Pre-emphasis frequency in Hz (default: 50)
+    #' @return Formant object
+    to_formant_willems = function(
+      time_step = 0.005,
+      number_of_formants = 5.0,
+      max_frequency = 5500.0,
+      window_length = 0.025,
+      pre_emphasis_from = 50.0
+    ) {
+      formant_ptr <- .formant_from_sound_willems(
+        private$ptr,
+        time_step,
+        number_of_formants,
+        max_frequency,
+        window_length,
+        pre_emphasis_from
+      )
+      Formant$new(.xptr = formant_ptr)
+    },
+    
+    #' @description Extract formants using Split-Levinson method
+    #' @details The Split-Levinson (SL) method is an alternative to Burg's
+    #'   algorithm with different numerical characteristics. Useful for
+    #'   comparison and verification studies.
+    #' @param time_step Time step in seconds (default: 0.005)
+    #' @param number_of_poles Number of LPC poles (default: 10)
+    #' @param max_frequency Maximum formant frequency in Hz (default: 5500)
+    #' @param window_length Window length in seconds (default: 0.025)
+    #' @param pre_emphasis_from Pre-emphasis frequency in Hz (default: 50)
+    #' @return Formant object
+    to_formant_sl = function(
+      time_step = 0.005,
+      number_of_poles = 10L,
+      max_frequency = 5500.0,
+      window_length = 0.025,
+      pre_emphasis_from = 50.0
+    ) {
+      formant_ptr <- .formant_from_sound_sl(
+        private$ptr,
+        time_step,
+        as.integer(number_of_poles),
         max_frequency,
         window_length,
         pre_emphasis_from

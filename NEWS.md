@@ -1,3 +1,39 @@
+# pladdrr 1.0.1 (2025-11-26)
+
+## New Features: Advanced Formant Tracking
+
+### Additional Formant Extraction Methods
+
+* **NEW**: `Sound$to_formant_willems()` - Willems method for formant extraction
+  - Optimized for extracting a specific number of formants
+  - More accurate bandwidth estimates
+  - Better suited for formant synthesis applications
+  - Parameters: `time_step`, `number_of_formants`, `max_frequency`, `window_length`, `pre_emphasis_from`
+
+* **NEW**: `Sound$to_formant_sl()` - Split-Levinson method
+  - Alternative to Burg's algorithm with different numerical characteristics
+  - Useful for comparison and verification studies
+  - Parameters: `time_step`, `number_of_poles`, `max_frequency`, `window_length`, `pre_emphasis_from`
+
+### Method Comparison
+
+Users can now choose from **four formant extraction algorithms**:
+1. **Burg** (`to_formant_burg()`) - Standard method, general-purpose
+2. **Keep-All** (`to_formant_keepall()`) - Keeps all formants, good for resynthesis
+3. **Willems** (`to_formant_willems()`) - NEW: Accurate bandwidth, better for synthesis
+4. **Split-Levinson** (`to_formant_sl()`) - NEW: Alternative algorithm for verification
+
+## Documentation
+
+* Updated Sound class documentation with new formant methods
+* Added comparative examples showing different formant extraction approaches
+
+## Version Numbering
+
+Following semantic versioning: v1.0.0 → v1.0.1 (new features, backward compatible)
+
+---
+
 # pladdrr 1.0.0 (2025-11-26)
 
 ## New Features: Auditory Modeling 🆕

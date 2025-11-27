@@ -4,22 +4,26 @@
 #include <Rcpp.h>
 #include "simd_utils.h"
 
-#ifdef HAVE_XSIMD
+#ifdef RCPPXSIMD_XSIMD_HPP
 #include <xsimd/xsimd.hpp>
-namespace simd = xsimd;
 #endif
 
 //' Get SIMD capabilities (internal)
 //' @keywords internal
 // [[Rcpp::export(.simd_info)]]
 Rcpp::List simd_info() {
-#ifdef HAVE_XSIMD
+#ifdef RCPPXSIMD_XSIMD_HPP
+  // Use simd namespace default batch types
+  using xsimd::batch;
+  constexpr size_t batch_size_double = batch<double>::size;
+  constexpr size_t batch_size_float = batch<float>::size;
+  
   return Rcpp::List::create(
     Rcpp::Named("enabled") = use_simd(),
     Rcpp::Named("available") = true,
     Rcpp::Named("architecture") = get_simd_arch(),
-    Rcpp::Named("batch_size_double") = (int)simd::batch<double>::size,
-    Rcpp::Named("batch_size_float") = (int)simd::batch<float>::size,
+    Rcpp::Named("batch_size_double") = (int)batch_size_double,
+    Rcpp::Named("batch_size_float") = (int)batch_size_float,
     Rcpp::Named("version") = "xsimd"
   );
 #else

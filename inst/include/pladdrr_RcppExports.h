@@ -67,6 +67,48 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
     }
 
+    inline XPtr<structFormant> _formant_from_sound_willems(XPtr<structSound> sound, double time_step, double number_of_formants, double maximum_formant, double window_length, double pre_emphasis_from) {
+        typedef SEXP(*Ptr__formant_from_sound_willems)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formant_from_sound_willems p__formant_from_sound_willems = NULL;
+        if (p__formant_from_sound_willems == NULL) {
+            validateSignature("XPtr<structFormant>(*_formant_from_sound_willems)(XPtr<structSound>,double,double,double,double,double)");
+            p__formant_from_sound_willems = (Ptr__formant_from_sound_willems)R_GetCCallable("pladdrr", "_pladdrr__formant_from_sound_willems");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formant_from_sound_willems(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(number_of_formants)), Shield<SEXP>(Rcpp::wrap(maximum_formant)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(pre_emphasis_from)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structFormant> _formant_from_sound_sl(XPtr<structSound> sound, double time_step, int number_of_poles, double maximum_formant, double window_length, double pre_emphasis_from) {
+        typedef SEXP(*Ptr__formant_from_sound_sl)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formant_from_sound_sl p__formant_from_sound_sl = NULL;
+        if (p__formant_from_sound_sl == NULL) {
+            validateSignature("XPtr<structFormant>(*_formant_from_sound_sl)(XPtr<structSound>,double,int,double,double,double)");
+            p__formant_from_sound_sl = (Ptr__formant_from_sound_sl)R_GetCCallable("pladdrr", "_pladdrr__formant_from_sound_sl");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formant_from_sound_sl(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(number_of_poles)), Shield<SEXP>(Rcpp::wrap(maximum_formant)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(pre_emphasis_from)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
+    }
+
     inline int _formant_get_number_of_frames(Rcpp::XPtr<structFormant> formant) {
         typedef SEXP(*Ptr__formant_get_number_of_frames)(SEXP);
         static Ptr__formant_get_number_of_frames p__formant_get_number_of_frames = NULL;
