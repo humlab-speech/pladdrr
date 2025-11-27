@@ -24,7 +24,9 @@
 #include "melder_enums.h"
 
 #include "../dwsys/NUMmachar.h"
-#include "../external/gsl/gsl_errno.h"
+// GSL stubbed out for R package
+// #include "../external/gsl/gsl_errno.h"
+extern "C" void* gsl_set_error_handler_off();
 #ifdef macintosh
 	#include <Carbon/Carbon.h>   // Gestalt
 #endif

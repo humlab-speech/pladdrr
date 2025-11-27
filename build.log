@@ -5,12 +5,6 @@
 * installing the package to build vignettes
 * creating vignettes ... OK
 * cleaning src
-* excluding invalid files
-Subdirectory 'R' contains invalid file names:
-  ‘cochleagram-r6.R.bak4’ ‘excitation-r6.R.bak5’ ‘excitation-r6.R.bak6’
-  ‘pointprocess-r6.R.bak_other’ ‘pointprocess-r6.R.bak_xptr’
-  ‘powercepstrum-r6.R.bak_other’ ‘powercepstrum-r6.R.bak_xptr’
-  ‘spectrogram-r6.R.bak_other’ ‘spectrogram-r6.R.bak_xptr’
 * checking for LF line-endings in source and make files and shell scripts
 * checking for empty or unneeded directories
 Removed empty directory ‘pladdrr/dev’
