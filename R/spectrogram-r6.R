@@ -40,7 +40,7 @@ Spectrogram <- R6::R6Class("Spectrogram",
       if (is.null(.xptr)) {
         stop("Spectrogram objects must be created from Sound$to_spectrogram()")
       }
-      self$.xptr <- .xptr
+      private$ptr <- .xptr
     },
     
     # ---- TIME/FREQUENCY DOMAIN QUERIES ----
@@ -48,49 +48,49 @@ Spectrogram <- R6::R6Class("Spectrogram",
     #' @description Get the start time of the spectrogram
     #' @return Start time in seconds
     get_start_time = function() {
-      .spectrogram_get_start_time(self$.xptr)
+      .spectrogram_get_start_time(private$ptr)
     },
     
     #' @description Get the end time of the spectrogram
     #' @return End time in seconds
     get_end_time = function() {
-      .spectrogram_get_end_time(self$.xptr)
+      .spectrogram_get_end_time(private$ptr)
     },
     
     #' @description Get the time step between frames
     #' @return Time step in seconds
     get_time_step = function() {
-      .spectrogram_get_time_step(self$.xptr)
+      .spectrogram_get_time_step(private$ptr)
     },
     
     #' @description Get the number of time frames
     #' @return Number of frames
     get_number_of_time_bins = function() {
-      .spectrogram_get_number_of_time_bins(self$.xptr)
+      .spectrogram_get_number_of_time_bins(private$ptr)
     },
     
     #' @description Get the lowest frequency
     #' @return Minimum frequency in Hz
     get_lowest_frequency = function() {
-      .spectrogram_get_lowest_frequency(self$.xptr)
+      .spectrogram_get_lowest_frequency(private$ptr)
     },
     
     #' @description Get the highest frequency
     #' @return Maximum frequency in Hz
     get_highest_frequency = function() {
-      .spectrogram_get_highest_frequency(self$.xptr)
+      .spectrogram_get_highest_frequency(private$ptr)
     },
     
     #' @description Get the frequency step
     #' @return Frequency step in Hz
     get_frequency_step = function() {
-      .spectrogram_get_frequency_step(self$.xptr)
+      .spectrogram_get_frequency_step(private$ptr)
     },
     
     #' @description Get the number of frequency bins
     #' @return Number of frequency bins
     get_number_of_frequency_bins = function() {
-      .spectrogram_get_number_of_frequency_bins(self$.xptr)
+      .spectrogram_get_number_of_frequency_bins(private$ptr)
     },
     
     # ---- CONVERSION METHODS ----
@@ -99,14 +99,14 @@ Spectrogram <- R6::R6Class("Spectrogram",
     #' @param frame Frame number (1-indexed)
     #' @return Time in seconds
     get_time_from_frame = function(frame) {
-      .spectrogram_get_time_from_frame(self$.xptr, frame)
+      .spectrogram_get_time_from_frame(private$ptr, frame)
     },
     
     #' @description Get frequency from bin index
     #' @param bin Frequency bin number (1-indexed)
     #' @return Frequency in Hz
     get_frequency_from_bin = function(bin) {
-      .spectrogram_get_frequency_from_bin(self$.xptr, bin)
+      .spectrogram_get_frequency_from_bin(private$ptr, bin)
     },
     
     # ---- QUERY METHODS ----
@@ -116,7 +116,7 @@ Spectrogram <- R6::R6Class("Spectrogram",
     #' @param frequency Frequency in Hz
     #' @return Power spectral density (Pa²/Hz)
     get_power_at = function(time, frequency) {
-      .spectrogram_get_power_at(self$.xptr, time, frequency)
+      .spectrogram_get_power_at(private$ptr, time, frequency)
     },
     
     # ---- TRANSFORMATION METHODS ----
@@ -125,7 +125,7 @@ Spectrogram <- R6::R6Class("Spectrogram",
     #' @param time Time in seconds
     #' @return A Spectrum object
     to_spectrum = function(time) {
-      spectrum_ptr <- .spectrogram_to_spectrum(self$.xptr, time)
+      spectrum_ptr <- .spectrogram_to_spectrum(private$ptr, time)
       Spectrum$new(.xptr = spectrum_ptr)
     },
     
@@ -134,7 +134,7 @@ Spectrogram <- R6::R6Class("Spectrogram",
     #' @description Convert to R matrix (time × frequency)
     #' @return Numeric matrix with power values
     as_matrix = function() {
-      .spectrogram_as_matrix(self$.xptr)
+      .spectrogram_as_matrix(private$ptr)
     },
     
     #' @description Convert to data frame

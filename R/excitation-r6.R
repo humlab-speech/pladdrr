@@ -66,14 +66,13 @@ Excitation <- R6::R6Class("Excitation",
         stop("Excitation objects should be created via Spectrum$to_excitation() or Cochleagram$to_excitation()")
       }
       super$initialize(.xptr)
-      reg.finalizer(self$.xptr, .excitation_finalizer, onexit = TRUE)
     },
     
     #' @description
     #' Get total loudness in sones
     #' @return Loudness value in sones
     get_loudness = function() {
-      .excitation_get_loudness(self$.xptr)
+      .excitation_get_loudness(private$ptr)
     },
     
     #' @description
@@ -82,7 +81,7 @@ Excitation <- R6::R6Class("Excitation",
     #' @return Excitation value
     get_value_at_frequency = function(freq_bark) {
       stopifnot("freq_bark must be numeric" = is.numeric(freq_bark))
-      .excitation_get_value_at_frequency(self$.xptr, freq_bark)
+      .excitation_get_value_at_frequency(private$ptr, freq_bark)
     },
     
     #' @description
@@ -91,7 +90,7 @@ Excitation <- R6::R6Class("Excitation",
     #' @return Distance value
     get_distance = function(other) {
       stopifnot("other must be an Excitation object" = inherits(other, "Excitation"))
-      .excitation_get_distance(self$.xptr, other$.xptr)
+      .excitation_get_distance(private$ptr, other$.__enclos_env__$private$ptr)
     },
     
     #' @description
@@ -103,7 +102,7 @@ Excitation <- R6::R6Class("Excitation",
         "max_formants must be numeric" = is.numeric(max_formants),
         "max_formants must be positive" = max_formants > 0
       )
-      xptr <- .excitation_to_formant(self$.xptr, as.integer(max_formants))
+      xptr <- .excitation_to_formant(private$ptr, as.integer(max_formants))
       Formant$new(xptr)
     },
     
@@ -111,14 +110,14 @@ Excitation <- R6::R6Class("Excitation",
     #' Export excitation data as R data frame
     #' @return Data frame with frequency_bark and excitation columns
     as_vector = function() {
-      .excitation_as_vector(self$.xptr)
+      .excitation_as_vector(private$ptr)
     },
     
     #' @description
     #' Get excitation information
     #' @return List with frequency domain parameters
     get_info = function() {
-      .excitation_get_info(self$.xptr)
+      .excitation_get_info(private$ptr)
     },
     
     #' @description

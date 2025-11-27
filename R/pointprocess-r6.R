@@ -670,7 +670,7 @@ PointProcess <- R6::R6Class(
       .pointprocess_voice_report(
         sound$.xptr,
         pitch$.xptr,
-        self$.xptr,
+        private$ptr,
         from_time,
         to_time,
         pitch_floor,

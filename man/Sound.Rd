@@ -42,7 +42,10 @@ Query methods return properties of the sound:
 
 Transformation methods create new Praat objects:
 - `$to_pitch(...)` - Extract pitch contour (returns Pitch object)
-- `$to_formant_burg(...)` - Extract formants (returns Formant object)
+- `$to_formant_burg(...)` - Extract formants using Burg's method (returns Formant object)
+- `$to_formant_keepall(...)` - Extract formants, keep all (returns Formant object)
+- `$to_formant_willems(...)` - Extract formants using Willems method (returns Formant object)
+- `$to_formant_sl(...)` - Extract formants using Split-Levinson method (returns Formant object)
 - `$to_intensity(...)` - Extract intensity contour (returns Intensity object)
 - `$to_harmonicity_cc(...)` - Compute HNR (returns Harmonicity object)
 - `$to_spectrogram(...)` - Create spectrogram (returns Spectrogram object)
@@ -74,7 +77,9 @@ sr <- sound$get_sampling_frequency()
 
 # Extract features
 pitch <- sound$to_pitch()
-formants <- sound$to_formant_burg()
+formants <- sound$to_formant_burg()        # Standard Burg's method
+formants_w <- sound$to_formant_willems()   # Willems method (better for synthesis)
+formants_sl <- sound$to_formant_sl()       # Split-Levinson (alternative algorithm)
 intensity <- sound$to_intensity()
 
 # Export to R
@@ -110,11 +115,15 @@ tone$save("A440.wav")
 \item \href{#method-Sound-to_pitch}{\code{Sound$to_pitch()}}
 \item \href{#method-Sound-to_formant_burg}{\code{Sound$to_formant_burg()}}
 \item \href{#method-Sound-to_formant_keepall}{\code{Sound$to_formant_keepall()}}
+\item \href{#method-Sound-to_formant_willems}{\code{Sound$to_formant_willems()}}
+\item \href{#method-Sound-to_formant_sl}{\code{Sound$to_formant_sl()}}
 \item \href{#method-Sound-to_intensity}{\code{Sound$to_intensity()}}
 \item \href{#method-Sound-to_harmonicity_ac}{\code{Sound$to_harmonicity_ac()}}
 \item \href{#method-Sound-to_harmonicity_cc}{\code{Sound$to_harmonicity_cc()}}
 \item \href{#method-Sound-to_spectrum}{\code{Sound$to_spectrum()}}
 \item \href{#method-Sound-to_ltas}{\code{Sound$to_ltas()}}
+\item \href{#method-Sound-to_cochleagram}{\code{Sound$to_cochleagram()}}
+\item \href{#method-Sound-to_cochleagram_edb}{\code{Sound$to_cochleagram_edb()}}
 \item \href{#method-Sound-to_spectrogram}{\code{Sound$to_spectrogram()}}
 \item \href{#method-Sound-to_powercepstrogram}{\code{Sound$to_powercepstrogram()}}
 \item \href{#method-Sound-to_manipulation}{\code{Sound$to_manipulation()}}
@@ -419,6 +428,86 @@ Formant object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_formant_willems"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_formant_willems}{}}}
+\subsection{Method \code{to_formant_willems()}}{
+Extract formants using Willems method
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_formant_willems(
+  time_step = 0.005,
+  number_of_formants = 5,
+  max_frequency = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time_step}}{Time step in seconds (default: 0.005)}
+
+\item{\code{number_of_formants}}{Target number of formants (default: 5)}
+
+\item{\code{max_frequency}}{Maximum formant frequency in Hz (default: 5500)}
+
+\item{\code{window_length}}{Window length in seconds (default: 0.025)}
+
+\item{\code{pre_emphasis_from}}{Pre-emphasis frequency in Hz (default: 50)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The Willems method is optimized for extracting a specific
+  number of formants with more accurate bandwidth estimates. Better
+  suited for formant synthesis applications.
+}
+
+\subsection{Returns}{
+Formant object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_formant_sl"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_formant_sl}{}}}
+\subsection{Method \code{to_formant_sl()}}{
+Extract formants using Split-Levinson method
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_formant_sl(
+  time_step = 0.005,
+  number_of_poles = 10L,
+  max_frequency = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time_step}}{Time step in seconds (default: 0.005)}
+
+\item{\code{number_of_poles}}{Number of LPC poles (default: 10)}
+
+\item{\code{max_frequency}}{Maximum formant frequency in Hz (default: 5500)}
+
+\item{\code{window_length}}{Window length in seconds (default: 0.025)}
+
+\item{\code{pre_emphasis_from}}{Pre-emphasis frequency in Hz (default: 50)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The Split-Levinson (SL) method is an alternative to Burg's
+  algorithm with different numerical characteristics. Useful for
+  comparison and verification studies.
+}
+
+\subsection{Returns}{
+Formant object
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-to_intensity"></a>}}
 \if{latex}{\out{\hypertarget{method-Sound-to_intensity}{}}}
 \subsection{Method \code{to_intensity()}}{
@@ -543,6 +632,81 @@ Corresponds to Praat: To Ltas: bandwidth
 }
 \subsection{Returns}{
 Ltas object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_cochleagram"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_cochleagram}{}}}
+\subsection{Method \code{to_cochleagram()}}{
+Create Cochleagram (auditory filterbank representation)
+Corresponds to Praat: To Cochleagram
+Models the basilar membrane response using Bark frequency scale.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_cochleagram(
+  dt = 0.01,
+  df = 0.1,
+  window_length = 0.03,
+  forward_masking_time = 0.03
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dt}}{Time step in seconds (default: 0.01)}
+
+\item{\code{df}}{Frequency step in Bark (default: 0.1)}
+
+\item{\code{window_length}}{Analysis window length in seconds (default: 0.03)}
+
+\item{\code{forward_masking_time}}{Forward masking time constant in seconds (default: 0.03)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Cochleagram object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_cochleagram_edb"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_cochleagram_edb}{}}}
+\subsection{Method \code{to_cochleagram_edb()}}{
+Create Cochleagram using Ear-Drum-Brain model
+Corresponds to Praat: To Cochleagram (edb)
+More realistic auditory model including synaptic processing.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_cochleagram_edb(
+  dtime = 0.01,
+  dfreq = 0.1,
+  has_synapse = TRUE,
+  replenishment_rate = 0.01,
+  loss_rate = 0.1,
+  return_rate = 0.05,
+  reprocessing_rate = 0.01
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dtime}}{Time step in seconds (default: 0.01)}
+
+\item{\code{dfreq}}{Frequency step in Bark (default: 0.1)}
+
+\item{\code{has_synapse}}{Include synaptic processing (default: TRUE)}
+
+\item{\code{replenishment_rate}}{Neurotransmitter replenishment rate (default: 0.01)}
+
+\item{\code{loss_rate}}{Neurotransmitter loss rate (default: 0.1)}
+
+\item{\code{return_rate}}{Calcium return rate (default: 0.05)}
+
+\item{\code{reprocessing_rate}}{Reprocessing rate (default: 0.01)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Cochleagram object
 }
 }
 \if{html}{\out{<hr>}}

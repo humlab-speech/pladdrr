@@ -13,6 +13,23 @@ The Spectrogram class wraps Praat's Spectrogram object, providing access to
 time-frequency analysis. Spectrograms are typically created from Sound objects
 using the `to_spectrogram()` method.
 }
+\examples{
+\dontrun{
+# Create a sound and compute spectrogram
+snd <- Sound$new("audio.wav")
+spec <- snd$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+
+# Query spectral properties
+power <- spec$get_power_at(time = 0.5, frequency = 1000)
+
+# Get time-frequency dimensions
+tmin <- spec$get_start_time()
+tmax <- spec$get_end_time()
+fmin <- spec$get_lowest_frequency()
+fmax <- spec$get_highest_frequency()
+}
+
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

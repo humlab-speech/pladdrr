@@ -14,6 +14,23 @@ manipulation of formant frequencies and bandwidths over time for voice
 transformation and synthesis. This is the editable counterpart to the
 read-only Formant object.
 }
+\examples{
+\dontrun{
+# Create a FormantGrid for a 1-second interval
+fg <- FormantGrid$new(tmin = 0, tmax = 1, n_formants = 5)
+
+# Add formant frequency points
+fg$add_formant_point(formant_number = 1, time = 0.5, value = 500)
+fg$add_formant_point(formant_number = 2, time = 0.5, value = 1500)
+
+# Add bandwidth points
+fg$add_bandwidth_point(formant_number = 1, time = 0.5, value = 50)
+
+# Query values
+f1 <- fg$get_formant_at_time(formant_number = 1, time = 0.5)
+}
+
+}
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{FormantGrid}
 }

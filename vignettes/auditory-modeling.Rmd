@@ -40,7 +40,7 @@ The cochleagram represents sound on a frequency scale that matches the human coc
 
 ```{r cochleagram-basic}
 # Load or create a sound
-sound <- Sound$new(440, duration = 0.5, sampling_frequency = 22050)
+sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
 
 # Create cochleagram
 cochlea <- sound$to_cochleagram(
@@ -77,10 +77,6 @@ excitation_440hz <- cochlea$get_value_at_time_and_frequency(
 )
 
 print(paste("Excitation at 440 Hz:", round(excitation_440hz, 4)))
-
-# Get total loudness at specific time
-loudness_sones <- cochlea$get_loudness_at_time(0.25)
-print(paste("Loudness (sones):", round(loudness_sones, 2)))
 ```
 
 ### Visualizing Cochleagrams
@@ -111,7 +107,7 @@ ggplot(df_long, aes(x = Time, y = Bark, fill = Excitation)) +
 
 For more realistic auditory modeling, use the EDB (Ear-Drum-Brain) method which includes synaptic processing:
 
-```{r cochleagram-edb}
+```{r cochleagram-edb, eval=FALSE}
 cochlea_edb <- sound$to_cochleagram_edb(
   dtime = 0.01,
   dfreq = 0.1,
@@ -163,8 +159,8 @@ Quantify how different two sounds are perceptually:
 
 ```{r excitation-distance}
 # Create two different sounds
-sound1 <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
-sound2 <- Sound$new(550, duration = 0.2, sampling_frequency = 22050)
+sound1 <- Sound$create_tone(frequency = 440, duration = 0.2, sampling_rate = 22050)
+sound2 <- Sound$create_tone(frequency = 550, duration = 0.2, sampling_rate = 22050)
 
 # Get excitation patterns
 exc1 <- sound1$to_spectrum()$to_excitation()
@@ -259,7 +255,7 @@ Excitation patterns provide an alternative method for formant extraction:
 
 ```{r formant-from-excitation}
 # Create vowel sound
-sound_vowel <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+sound_vowel <- Sound$create_tone(duration = 0.2, sampling_rate = 22050)
 
 # Get excitation pattern
 excitation <- sound_vowel$to_spectrum()$to_excitation()

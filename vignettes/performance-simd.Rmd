@@ -60,13 +60,9 @@ SIMD is particularly effective for:
 pladdrr automatically detects and uses SIMD capabilities at **compile time**:
 
 ```{r simd-info}
-# Check if SIMD is available
-has_simd <- pladdrr:::.has_simd()
-print(paste("SIMD available:", has_simd))
-
 # Get SIMD information
-simd_info <- pladdrr:::.get_simd_info()
-print(simd_info)
+info <- simd_info()
+print(info)
 ```
 
 ### Supported CPU Extensions

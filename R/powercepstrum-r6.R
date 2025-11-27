@@ -53,7 +53,7 @@ PowerCepstrum <- R6::R6Class(
       if (!inherits(.xptr, "externalptr")) {
         stop(".xptr must be an external pointer")
       }
-      self$.xptr <- .xptr
+      private$ptr <- .xptr
     },
     
     #' @description
@@ -73,7 +73,7 @@ PowerCepstrum <- R6::R6Class(
       fit_method <- match.arg(fit_method)
       
       .powercepstrum_get_peak_prominence(
-        self$.xptr, 
+        private$ptr, 
         interpolation = interpolation,
         qmin = qmin,
         qmax = qmax,
@@ -94,7 +94,7 @@ PowerCepstrum <- R6::R6Class(
       interpolation <- match.arg(interpolation)
       
       .powercepstrum_get_quefrency_of_peak(
-        self$.xptr,
+        private$ptr,
         interpolation = interpolation,
         qmin = qmin,
         qmax = qmax
@@ -114,7 +114,7 @@ PowerCepstrum <- R6::R6Class(
       unit <- match.arg(unit)
       
       .powercepstrum_get_value_at_quefrency(
-        self$.xptr,
+        private$ptr,
         quefrency = quefrency,
         interpolation = interpolation,
         unit = unit
@@ -128,7 +128,7 @@ PowerCepstrum <- R6::R6Class(
     #' @return New PowerCepstrum object
     smooth = function(averaging_window, nsamples = 100) {
       xptr <- .powercepstrum_smooth(
-        self$.xptr,
+        private$ptr,
         averaging_window = averaging_window,
         nsamples = as.integer(nsamples)
       )
@@ -139,7 +139,7 @@ PowerCepstrum <- R6::R6Class(
     #' Convert to Matrix
     #' @return Matrix object
     to_matrix = function() {
-      xptr <- .powercepstrum_to_matrix(self$.xptr)
+      xptr <- .powercepstrum_to_matrix(private$ptr)
       Matrix$new(xptr)
     },
     
@@ -147,7 +147,7 @@ PowerCepstrum <- R6::R6Class(
     #' Convert to R matrix
     #' @return Numeric matrix
     as_matrix = function() {
-      .powercepstrum_as_matrix(self$.xptr)
+      .powercepstrum_as_matrix(private$ptr)
     }
   )
 )
@@ -210,7 +210,7 @@ PowerCepstrogram <- R6::R6Class(
       if (!inherits(.xptr, "externalptr")) {
         stop(".xptr must be an external pointer")
       }
-      self$.xptr <- .xptr
+      private$ptr <- .xptr
     },
     
     #' @description
@@ -232,7 +232,7 @@ PowerCepstrogram <- R6::R6Class(
       fit_method <- match.arg(fit_method)
       
       .powercepstrogram_get_cpp_at_time(
-        self$.xptr,
+        private$ptr,
         time = time,
         interpolation = interpolation,
         qmin = qmin,
@@ -260,7 +260,7 @@ PowerCepstrogram <- R6::R6Class(
       fit_method <- match.arg(fit_method)
       
       .powercepstrogram_get_mean_cpp(
-        self$.xptr,
+        private$ptr,
         from_time = from_time,
         to_time = to_time,
         qmin = qmin,
@@ -275,7 +275,7 @@ PowerCepstrogram <- R6::R6Class(
     #' @param time Numeric. Time in seconds
     #' @return PowerCepstrum object
     get_power_cepstrum_at_time = function(time) {
-      xptr <- .powercepstrogram_to_powercepstrum_slice(self$.xptr, time = time)
+      xptr <- .powercepstrogram_to_powercepstrum_slice(private$ptr, time = time)
       PowerCepstrum$new(xptr)
     },
     
@@ -283,7 +283,7 @@ PowerCepstrogram <- R6::R6Class(
     #' Convert to Matrix
     #' @return Matrix object
     to_matrix = function() {
-      xptr <- .powercepstrogram_to_matrix(self$.xptr)
+      xptr <- .powercepstrogram_to_matrix(private$ptr)
       Matrix$new(xptr)
     },
     
@@ -291,7 +291,7 @@ PowerCepstrogram <- R6::R6Class(
     #' Convert to R matrix
     #' @return Numeric matrix (quefrency × time)
     as_matrix = function() {
-      .powercepstrogram_as_matrix(self$.xptr)
+      .powercepstrogram_as_matrix(private$ptr)
     },
     
     #' @description
@@ -383,7 +383,7 @@ PowerCepstrogram <- R6::R6Class(
       )
       
       .powercepstrogram_get_cpps(
-        self$.xptr,
+        private$ptr,
         subtract_tilt = subtract_tilt,
         time_averaging_window = time_averaging_window,
         quefrency_averaging_window = quefrency_averaging_window,
@@ -405,7 +405,7 @@ PowerCepstrogram <- R6::R6Class(
     #' @return New PowerCepstrogram object
     smooth = function(time_averaging_window, quefrency_averaging_window) {
       xptr <- .powercepstrogram_smooth(
-        self$.xptr,
+        private$ptr,
         time_averaging_window = time_averaging_window,
         quefrency_averaging_window = quefrency_averaging_window
       )

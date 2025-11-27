@@ -51,13 +51,13 @@ The most commonly used method, based on the Burg algorithm for LPC analysis:
 
 ```{r burg-basic}
 # Create or load a sound
-sound <- Sound$new(duration = 0.5, sampling_frequency = 22050)
+sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050)
 
 # Standard Burg formant extraction
 formant_burg <- sound$to_formant_burg(
   time_step = 0.005,                   # 5 ms steps
-  max_number_of_formants = 5,          # Track up to F5
-  maximum_formant_frequency = 5500,    # Ceiling (Hz)
+  max_formants = 5,                    # Track up to F5
+  max_frequency = 5500,                # Ceiling (Hz)
   window_length = 0.025,               # 25 ms analysis window
   pre_emphasis_from = 50               # Pre-emphasis from 50 Hz
 )
@@ -92,7 +92,7 @@ Optimized for extracting a specific number of formants:
 formant_willems <- sound$to_formant_willems(
   time_step = 0.005,
   number_of_formants = 5,              # Exact number to extract
-  maximum_formant_frequency = 5500,
+  max_frequency = 5500,
   window_length = 0.025,
   pre_emphasis_from = 50
 )
@@ -114,7 +114,7 @@ formant_willems <- sound$to_formant_willems(
 
 ```{r compare-willems-burg}
 # Same sound, both methods
-formant_b <- sound$to_formant_burg(max_number_of_formants = 4)
+formant_b <- sound$to_formant_burg(max_formants = 4)
 formant_w <- sound$to_formant_willems(number_of_formants = 4)
 
 # Extract F1 and F2
@@ -144,7 +144,7 @@ Alternative algorithm useful for verification:
 formant_sl <- sound$to_formant_sl(
   time_step = 0.005,
   number_of_poles = 10,                # Number of LPC poles
-  maximum_frequency = 5500,
+  max_frequency = 5500,
   window_length = 0.025,
   pre_emphasis_from = 50
 )
@@ -167,17 +167,17 @@ The maximum formant frequency affects which formants are tracked:
 ```{r formant-ceiling}
 # Adult male
 formant_male <- sound$to_formant_burg(
-  maximum_formant_frequency = 5000    # Men: 5000 Hz
+  max_frequency = 5000    # Men: 5000 Hz
 )
 
 # Adult female
 formant_female <- sound$to_formant_burg(
-  maximum_formant_frequency = 5500    # Women: 5500 Hz
+  max_frequency = 5500    # Women: 5500 Hz
 )
 
 # Child
 formant_child <- sound$to_formant_burg(
-  maximum_formant_frequency = 8000    # Children: 7000-8000 Hz
+  max_frequency = 8000    # Children: 7000-8000 Hz
 )
 ```
 
@@ -235,15 +235,15 @@ formant_fine <- sound$to_formant_burg(time_step = 0.002)    # 2 ms
 
 ```{r num-formants}
 # Track only F1-F2 (faster)
-formant_2 <- sound$to_formant_burg(max_number_of_formants = 2)
+formant_2 <- sound$to_formant_burg(max_formants = 2)
 
 # Standard (F1-F5)
-formant_5 <- sound$to_formant_burg(max_number_of_formants = 5)
+formant_5 <- sound$to_formant_burg(max_formants = 5)
 
 # Extended (up to F7, slower)
 formant_7 <- sound$to_formant_burg(
-  max_number_of_formants = 7,
-  maximum_formant_frequency = 7000
+  max_formants = 7,
+  max_frequency = 7000
 )
 ```
 
@@ -262,7 +262,7 @@ f1 <- formant$get_value_at_time(1, 0.1, unit = "hertz")
 1. **Lower the ceiling**:
 ```{r lower-ceiling, eval=FALSE}
 # Try lower maximum frequency
-formant <- sound$to_formant_burg(maximum_formant_frequency = 4500)
+formant <- sound$to_formant_burg(max_frequency = 4500)
 ```
 
 2. **Increase window length**:
@@ -314,7 +314,7 @@ formant <- sound$to_formant_burg(time_step = 0.002)
 1. **Adjust formant ceiling**:
 ```{r adjust-ceiling, eval=FALSE}
 # Lower ceiling may force re-evaluation
-formant <- sound$to_formant_burg(maximum_formant_frequency = 4800)
+formant <- sound$to_formant_burg(max_frequency = 4800)
 ```
 
 2. **Try Willems method**:
@@ -402,7 +402,7 @@ ggplot(df, aes(x = Time, y = Frequency, color = Formant)) +
 For noisy or breathy speech, excitation-based formant extraction can be more robust:
 
 ```{r excitation-formant}
-sound <- Sound$new(duration = 0.3, sampling_frequency = 22050)
+sound <- Sound$create_tone(duration = 0.3, sampling_rate = 22050)
 
 # Method 1: Via Spectrum
 spectrum <- sound$to_spectrum()

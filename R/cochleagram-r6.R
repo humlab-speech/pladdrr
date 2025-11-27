@@ -80,7 +80,6 @@ Cochleagram <- R6::R6Class("Cochleagram",
         stop("Cochleagram objects should be created via Sound$to_cochleagram() or Sound$to_cochleagram_edb()")
       }
       super$initialize(.xptr)
-      reg.finalizer(self$.xptr, .cochleagram_finalizer, onexit = TRUE)
     },
     
     #' @description
@@ -93,7 +92,7 @@ Cochleagram <- R6::R6Class("Cochleagram",
         "time must be numeric" = is.numeric(time),
         "freq_bark must be numeric" = is.numeric(freq_bark)
       )
-      .cochleagram_get_value_at_time_and_frequency(self$.xptr, time, freq_bark)
+      .cochleagram_get_value_at_time_and_frequency(private$ptr, time, freq_bark)
     },
     
     #' @description
@@ -105,7 +104,7 @@ Cochleagram <- R6::R6Class("Cochleagram",
         "i_col must be numeric" = is.numeric(i_col),
         "i_col must be positive" = i_col > 0
       )
-      .cochleagram_get_time_from_column(self$.xptr, as.integer(i_col))
+      .cochleagram_get_time_from_column(private$ptr, as.integer(i_col))
     },
     
     #' @description
@@ -117,7 +116,7 @@ Cochleagram <- R6::R6Class("Cochleagram",
         "i_row must be numeric" = is.numeric(i_row),
         "i_row must be positive" = i_row > 0
       )
-      .cochleagram_get_frequency_from_row(self$.xptr, as.integer(i_row))
+      .cochleagram_get_frequency_from_row(private$ptr, as.integer(i_row))
     },
     
     #' @description
@@ -126,7 +125,7 @@ Cochleagram <- R6::R6Class("Cochleagram",
     #' @return Excitation object
     to_excitation = function(time) {
       stopifnot("time must be numeric" = is.numeric(time))
-      xptr <- .cochleagram_to_excitation(self$.xptr, time)
+      xptr <- .cochleagram_to_excitation(private$ptr, time)
       Excitation$new(xptr)
     },
     
@@ -142,21 +141,21 @@ Cochleagram <- R6::R6Class("Cochleagram",
         "tmin must be numeric" = is.numeric(tmin),
         "tmax must be numeric" = is.numeric(tmax)
       )
-      .cochleagram_difference(self$.xptr, other$.xptr, tmin, tmax)
+      .cochleagram_difference(private$ptr, other$.__enclos_env__$private$ptr, tmin, tmax)
     },
     
     #' @description
     #' Export cochleagram data as R matrix
     #' @return List containing matrix values, time vector, frequency vector, and domain info
     as_matrix = function() {
-      .cochleagram_as_matrix(self$.xptr)
+      .cochleagram_as_matrix(private$ptr)
     },
     
     #' @description
     #' Get cochleagram information
     #' @return List with time and frequency domain parameters
     get_info = function() {
-      .cochleagram_get_info(self$.xptr)
+      .cochleagram_get_info(private$ptr)
     },
     
     #' @description

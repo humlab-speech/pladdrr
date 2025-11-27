@@ -36,6 +36,7 @@ Spectrum objects represent frequency-domain representations of sounds.
 * `to_sound()` - Convert to Sound (inverse FFT)
 * `to_ltas(bandwidth)` - Convert to long-term average spectrum
 * `to_spectrogram(...)` - Convert to Spectrogram
+* `to_excitation(erb_density)` - Convert to Excitation (auditory representation)
 
 **Export Methods:**
 * `as_matrix()` - Export as numeric matrix (real + imaginary)
@@ -88,6 +89,7 @@ spec_df <- spectrum$as_data_frame()
 \item \href{#method-Spectrum-cepstral_smoothing}{\code{Spectrum$cepstral_smoothing()}}
 \item \href{#method-Spectrum-to_sound}{\code{Spectrum$to_sound()}}
 \item \href{#method-Spectrum-to_powercepstrum}{\code{Spectrum$to_powercepstrum()}}
+\item \href{#method-Spectrum-to_excitation}{\code{Spectrum$to_excitation()}}
 \item \href{#method-Spectrum-as_matrix}{\code{Spectrum$as_matrix()}}
 \item \href{#method-Spectrum-as_data_frame}{\code{Spectrum$as_data_frame()}}
 \item \href{#method-Spectrum-print}{\code{Spectrum$print()}}
@@ -489,6 +491,28 @@ Convert to PowerCepstrum (for voice quality analysis)
 
 \subsection{Returns}{
 PowerCepstrum object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-to_excitation"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-to_excitation}{}}}
+\subsection{Method \code{to_excitation()}}{
+Convert to Excitation (auditory nerve firing rate)
+Corresponds to Praat: To Excitation
+Applies ERB-scale auditory filtering and perceptual weighting.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$to_excitation(erb_density = 0.1)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{erb_density}}{Frequency step in ERB scale (default: 0.1)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Excitation object
 }
 }
 \if{html}{\out{<hr>}}
