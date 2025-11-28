@@ -671,6 +671,60 @@ XPtr<structPointProcess> sound_to_point_process_zeros(
     }
 }
 
+//' Extract periodic pulses using cross-correlation (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pointprocess_periodic_cc)]]
+XPtr<structPointProcess> sound_to_pointprocess_periodic_cc(
+    XPtr<structSound> xptr,
+    double pitch_floor,
+    double pitch_ceiling
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoPointProcess pp = Sound_to_PointProcess_periodic_cc(
+            sound,
+            pitch_floor,
+            pitch_ceiling
+        );
+        
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract periodic pulses (cross-correlation method)");
+    }
+}
+
+//' Extract periodic pulses using peak detection (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pointprocess_periodic_peaks)]]
+XPtr<structPointProcess> sound_to_pointprocess_periodic_peaks(
+    XPtr<structSound> xptr,
+    double pitch_floor,
+    double pitch_ceiling,
+    bool include_maxima,
+    bool include_minima
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoPointProcess pp = Sound_to_PointProcess_periodic_peaks(
+            sound,
+            pitch_floor,
+            pitch_ceiling,
+            include_maxima,
+            include_minima
+        );
+        
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract periodic pulses (peak detection method)");
+    }
+}
+
 // ============================================================================
 // Sound Extraction Methods
 // ============================================================================

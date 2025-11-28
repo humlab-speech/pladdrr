@@ -1951,6 +1951,48 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
     }
 
+    inline XPtr<structPointProcess> _sound_to_pointprocess_periodic_cc(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling) {
+        typedef SEXP(*Ptr__sound_to_pointprocess_periodic_cc)(SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pointprocess_periodic_cc p__sound_to_pointprocess_periodic_cc = NULL;
+        if (p__sound_to_pointprocess_periodic_cc == NULL) {
+            validateSignature("XPtr<structPointProcess>(*_sound_to_pointprocess_periodic_cc)(XPtr<structSound>,double,double)");
+            p__sound_to_pointprocess_periodic_cc = (Ptr__sound_to_pointprocess_periodic_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pointprocess_periodic_cc");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pointprocess_periodic_cc(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structPointProcess> _sound_to_pointprocess_periodic_peaks(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling, bool include_maxima, bool include_minima) {
+        typedef SEXP(*Ptr__sound_to_pointprocess_periodic_peaks)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pointprocess_periodic_peaks p__sound_to_pointprocess_periodic_peaks = NULL;
+        if (p__sound_to_pointprocess_periodic_peaks == NULL) {
+            validateSignature("XPtr<structPointProcess>(*_sound_to_pointprocess_periodic_peaks)(XPtr<structSound>,double,double,bool,bool)");
+            p__sound_to_pointprocess_periodic_peaks = (Ptr__sound_to_pointprocess_periodic_peaks)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pointprocess_periodic_peaks");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pointprocess_periodic_peaks(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(include_maxima)), Shield<SEXP>(Rcpp::wrap(include_minima)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_extract_channel(XPtr<structSound> xptr, int channel) {
         typedef SEXP(*Ptr__sound_extract_channel)(SEXP,SEXP);
         static Ptr__sound_extract_channel p__sound_extract_channel = NULL;

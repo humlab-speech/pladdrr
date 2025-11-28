@@ -1437,6 +1437,18 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_to_point_process_zeros`, xptr, channel, include_raisers, include_fallers)
 }
 
+#' Extract periodic pulses using cross-correlation (internal)
+#' @keywords internal
+.sound_to_pointprocess_periodic_cc <- function(xptr, pitch_floor, pitch_ceiling) {
+    .Call(`_pladdrr_sound_to_pointprocess_periodic_cc`, xptr, pitch_floor, pitch_ceiling)
+}
+
+#' Extract periodic pulses using peak detection (internal)
+#' @keywords internal
+.sound_to_pointprocess_periodic_peaks <- function(xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima) {
+    .Call(`_pladdrr_sound_to_pointprocess_periodic_peaks`, xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima)
+}
+
 #' Extract a specific channel from Sound (internal)
 #' @keywords internal
 .sound_extract_channel <- function(xptr, channel) {
@@ -1891,6 +1903,10 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .textgrid_extend_time <- function(textgrid, delta_time, position) {
     invisible(.Call(`_pladdrr_textgrid_extend_time`, textgrid, delta_time, position))
+}
+
+.textgrid_to_table <- function(textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals) {
+    .Call(`_pladdrr_textgrid_to_table`, textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals)
 }
 
 #' Safe error wrapper for Praat calls

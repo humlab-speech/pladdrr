@@ -638,3 +638,32 @@ void textgrid_extend_time(
         Rcpp::stop("Failed to extend time");
     }
 }
+
+// ==============================================================================
+// Conversion Methods
+// ==============================================================================
+
+// [[Rcpp::export(.textgrid_to_table)]]
+Rcpp::XPtr<structTable> textgrid_to_table(
+    Rcpp::XPtr<structTextGrid> textgrid,
+    bool include_line_numbers,
+    int time_decimals,
+    bool include_tier_names,
+    bool include_empty_intervals
+) {
+    try {
+        autoTable table = TextGrid_downto_Table(
+            textgrid,
+            include_line_numbers,
+            static_cast<integer>(time_decimals),
+            include_tier_names,
+            include_empty_intervals
+        );
+        
+        return create_xptr_from_auto<structTable>(table);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to convert TextGrid to Table");
+    }
+}

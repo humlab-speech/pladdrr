@@ -527,6 +527,28 @@ TextGrid <- R6::R6Class(
         as.integer(position)
       )
       invisible(self)
+    },
+    
+    #' @description Convert TextGrid to Table object
+    #' @param include_line_numbers Include line numbers in Table (default: FALSE)
+    #' @param time_decimals Number of decimal places for times (default: 6)
+    #' @param include_tier_names Include tier names in Table (default: TRUE)
+    #' @param include_empty_intervals Include empty intervals (default: FALSE)
+    #' @return Table object containing TextGrid data
+    to_table = function(
+      include_line_numbers = FALSE,
+      time_decimals = 6,
+      include_tier_names = TRUE,
+      include_empty_intervals = FALSE
+    ) {
+      table_ptr <- .textgrid_to_table(
+        private$ptr,
+        as.logical(include_line_numbers),
+        as.integer(time_decimals),
+        as.logical(include_tier_names),
+        as.logical(include_empty_intervals)
+      )
+      Table$new(.xptr = table_ptr)
     }
   ),
   

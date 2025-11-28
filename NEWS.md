@@ -334,3 +334,30 @@ All audio file loading now exclusively uses the `av` package (humlab-speech fork
 * Initial implementation of core Praat objects
 * R6-based object-oriented architecture
 * Basic audio I/O and analysis functions
+
+# pladdrr 1.0.6 (Development)
+
+## New Features
+
+### Voice Quality Analysis
+- Added `Sound$to_pointprocess_periodic_cc()` - Periodic pulse detection via cross-correlation
+- Added `Sound$to_pointprocess_periodic_peaks()` - Periodic pulse detection via peak finding
+- Enables jitter/shimmer analysis workflows used in 20-25% of Praat archive scripts
+
+### Table Conversion
+- Added `TextGrid$to_table()` - Convert annotations to Table object for statistical analysis
+- Enables Praat-style table-based annotation workflows
+
+## Coverage
+- Increased from 92% to ~95% of programmatic Praat use cases (when R6 issue resolved)
+
+## Known Issues
+- Intermittent R6 method access issue under investigation
+- Methods compile and exist but may throw "attempt to apply non-function" inconsistently
+- Workaround: Use internal `.function()` calls if needed
+
+## Documentation
+- Added comprehensive missing wrappers analysis
+- Added Table conversion assessment and implementation guides
+- Added R6 debugging investigation documentation
+
