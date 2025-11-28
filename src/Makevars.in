@@ -6,6 +6,8 @@ CXX_STD = CXX17
 
 # Include directories
 PKG_CPPFLAGS =  -DHAVE_XSIMD -I. \
+               -Igsl-2.8 \
+               -Igsl-2.8/gsl \
                -Ipraat.github.io \
                -Ipraat.github.io/kar \
                -Ipraat.github.io/melder \
@@ -58,8 +60,8 @@ else ifeq ($(shell uname -m),arm64)
   PKG_CXXFLAGS += -march=armv8-a+simd
 endif
 
-# Linker flags - link against R's LAPACK
-PKG_LIBS =  $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
+# Linker flags - link against GSL, R's LAPACK and BLAS
+PKG_LIBS = -L. -lgsl $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -181,7 +183,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
-              svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp gsl_stubs.cpp \
+              svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp \
               dtw_stubs.cpp \
               sound_extensions_stubs.cpp \
               sound_create_gaussian.cpp \

@@ -1,3 +1,79 @@
+# pladdrr 1.0.4 (2025-11-28)
+
+## Major Enhancement: GSL 2.8 Integration ✅
+
+### Complete Statistical & Mathematical Functionality
+
+This release replaces all stub implementations with real GSL (GNU Scientific Library) 2.8 functions, enabling full statistical and mathematical capabilities for voice analysis.
+
+#### What Changed
+* **COMPLETE**: Integrated GSL 2.8 library (1.3 MB static library)
+* **REMOVED**: All 54 GSL stub functions that returned placeholder values
+* **ENABLED**: Real implementations for all statistical and mathematical operations
+
+#### Functions Now Available (54 total)
+
+**Special Functions (24)**:
+- Bessel functions (modified: In, Kn; orders 0, 1)
+- Beta functions (beta, incomplete beta, log beta)
+- Gamma functions (gamma, incomplete gamma, log gamma, complex log gamma)
+- Error functions (erf, erfc)
+- Hypergeometric functions (2F1)
+- Digamma/Psi functions
+- Sinc function
+
+**Cumulative Distribution Functions (28)**:
+- F-distribution (P, Q, inverses)
+- Log-normal distribution (P, Q, Pinv, Qinv)
+- Gaussian distribution (P, Q, Pinv, Qinv)
+- Beta distribution (P, Q, Pinv, Qinv)
+- Chi-squared distribution (P, Q, Pinv, Qinv)
+- t-distribution (P, Q, Pinv, Qinv)
+- Unit Gaussian distribution (P, Q, Pinv, Qinv)
+
+**Polynomial Solvers (2)**:
+- Quadratic equation solver
+- Cubic equation solver
+
+#### Impact on Analysis Accuracy
+
+**Before v1.0.4**: Statistical functions returned stub values (0.0, NaN)
+**After v1.0.4**: All functions return mathematically correct results
+
+This enables:
+- ✅ Accurate voice quality metrics (AVQI, DSI, jitter, shimmer)
+- ✅ Correct LPC and formant analysis
+- ✅ Proper statistical calculations in `NUMspecfunc.cpp`
+- ✅ Full Praat algorithm compatibility
+
+#### Technical Details
+
+**GSL Modules Included**:
+- specfunc - Special functions
+- cdf - Cumulative distribution functions
+- poly - Polynomial solvers
+- complex - Complex number arithmetic
+- randist - Random distributions
+- rng - Random number generators
+- err, sys, ieee-utils, utils, cblas - Support libraries
+
+**Build Configuration**:
+- Added GSL include paths: `-Igsl-2.8 -Igsl-2.8/gsl`
+- Added GSL linking: `-L. -lgsl`
+- Removed `gsl_stubs.cpp` from compilation
+- Build script: `src/build_gsl.sh`
+
+#### Files Affected
+* Modified: `src/Makevars.in` - Added GSL includes and linking
+* Modified: `src/build_gsl.sh` - Added complex, randist, rng modules
+* Removed: `src/gsl_stubs.cpp` - Replaced by libgsl.a
+* Created: `src/libgsl.a` - GSL static library (1.3 MB)
+
+### Version Numbering
+Following semantic versioning: v1.0.3 → v1.0.4 (significant enhancement, backward compatible)
+
+---
+
 # pladdrr 1.0.1 (2025-11-26)
 
 ## New Features: Advanced Formant Tracking
