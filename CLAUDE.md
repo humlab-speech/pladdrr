@@ -4040,6 +4040,39 @@ See OOP_ARCHITECTURE_AMENDMENT_2025-11-12.md for complete specification.
 
 ---
 
+## Architectural Decisions (2025-11-28)
+
+### Graphics System Implementation Assessment ✅ COMPLETE
+
+**Assessment Date**: 2025-11-28
+**Status**: Comprehensive analysis completed
+**Documents**:
+- `PRAAT_GRAPHICS_IMPLEMENTATION_ASSESSMENT.md` (detailed, 13 sections)
+- `GRAPHICS_IMPLEMENTATION_SUMMARY.md` (executive summary)
+
+**Decision**: ❌ **DO NOT IMPLEMENT** full Praat graphics system
+
+**Rationale**:
+- **High cost**: 11-17 weeks, ~36,000 lines of code, $60k-$100k
+- **High maintenance**: Platform-specific (Cairo/Quartz/GDI+), dependency hell
+- **Wrong paradigm**: R users expect ggplot2, not Praat Picture
+- **Better alternative**: Helper functions + comprehensive plotting vignette
+
+**Recommended Instead** (v1.1.0):
+- Plot methods for all objects (base R graphics) - 1 week
+- Comprehensive plotting vignette with ggplot2 examples - 1 week
+- Total: 2 weeks vs 11-17 weeks
+
+**PDF Generation Libraries Identified**:
+- **Linux**: Cairo (`libcairo2-dev`), Pango (`libpango1.0-dev`), FreeType, FontConfig
+- **macOS**: Quartz (Core Graphics) - built into macOS SDK, no dependencies
+- **Windows**: Cairo via Rtools or R's graphics device
+- **R Native**: R's built-in `pdf()` device (recommended, zero dependencies)
+
+**Future**: May implement as separate `speaker.graphics` package if funded
+
+---
+
 ## Architectural Decisions (2025-11-13)
 
 ### Excluded Features and Rationale

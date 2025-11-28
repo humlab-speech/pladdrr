@@ -453,6 +453,80 @@ TextGrid <- R6::R6Class(
       }
       
       invisible(self)
+    },
+    
+    #' @description Change labels (find/replace) in a tier
+    #' @param tier Tier number or name
+    #' @param search Search string (or regex pattern if use_regexp=TRUE)
+    #' @param replace Replacement string
+    #' @param use_regexp Use regular expressions (default FALSE)
+    #' @param from First interval to search (default 1)
+    #' @param to Last interval to search (0 = to end, default 0)
+    change_labels = function(tier, search, replace, use_regexp = FALSE, from = 1, to = 0) {
+      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
+        tier_names <- self$get_tier_names()
+        match_idx <- which(tier_names == tier)
+        if (length(match_idx) == 0) stop("Tier not found: ", tier)
+        as.integer(match_idx[1])
+      }
+      .textgrid_change_labels(
+        private$ptr,
+        tier_num,
+        as.character(search),
+        as.character(replace),
+        as.logical(use_regexp),
+        as.integer(from),
+        as.integer(to)
+      )
+      invisible(self)
+    },
+    
+    #' @description Merge consecutive intervals with identical labels
+    #' @param tier Tier number or name (must be IntervalTier)
+    #' @param label Label to merge (intervals with this label will be merged)
+    merge_identical_intervals = function(tier, label) {
+      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
+        tier_names <- self$get_tier_names()
+        match_idx <- which(tier_names == tier)
+        if (length(match_idx) == 0) stop("Tier not found: ", tier)
+        as.integer(match_idx[1])
+      }
+      .textgrid_merge_identical_intervals(
+        private$ptr,
+        tier_num,
+        as.character(label)
+      )
+      invisible(self)
+    },
+    
+    #' @description Get total duration of intervals matching a criterion
+    #' @param tier Tier number or name
+    #' @param criterion Label to match
+    #' @return Total duration in seconds
+    get_total_duration_where = function(tier, criterion) {
+      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
+        tier_names <- self$get_tier_names()
+        match_idx <- which(tier_names == tier)
+        if (length(match_idx) == 0) stop("Tier not found: ", tier)
+        as.integer(match_idx[1])
+      }
+      .textgrid_get_total_duration_where(
+        private$ptr,
+        tier_num,
+        as.character(criterion)
+      )
+    },
+    
+    #' @description Extend the time domain of the TextGrid
+    #' @param delta_time Time to add (negative for start, positive for end)
+    #' @param position Position: 0 for start, 1 for end
+    extend_time = function(delta_time, position = 1) {
+      .textgrid_extend_time(
+        private$ptr,
+        as.numeric(delta_time),
+        as.integer(position)
+      )
+      invisible(self)
     }
   ),
   
@@ -460,7 +534,7 @@ TextGrid <- R6::R6Class(
     #' @description Resolve tier name or number to tier number
     #' @param tier Tier number or name
     #' @return Tier number (integer)
-    resolve_tier_number = function(tier) {
+    .resolve_tier = function(tier) {
       if (is.numeric(tier)) {
         return(as.integer(tier))
       } else if (is.character(tier)) {

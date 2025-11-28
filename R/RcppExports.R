@@ -1877,6 +1877,22 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_textgrid_to_data_frame`, xptr, tier_numbers)
 }
 
+.textgrid_change_labels <- function(textgrid, tier, search, replace, use_regexp = FALSE, from = 1L, to = 0L) {
+    invisible(.Call(`_pladdrr_textgrid_change_labels`, textgrid, tier, search, replace, use_regexp, from, to))
+}
+
+.textgrid_merge_identical_intervals <- function(textgrid, tier, label) {
+    invisible(.Call(`_pladdrr_textgrid_merge_identical_intervals`, textgrid, tier, label))
+}
+
+.textgrid_get_total_duration_where <- function(textgrid, tier, criterion) {
+    .Call(`_pladdrr_textgrid_get_total_duration_where`, textgrid, tier, criterion)
+}
+
+.textgrid_extend_time <- function(textgrid, delta_time, position) {
+    invisible(.Call(`_pladdrr_textgrid_extend_time`, textgrid, delta_time, position))
+}
+
 #' Safe error wrapper for Praat calls
 #'
 #' Provides a consistent error handling pattern for Praat operations

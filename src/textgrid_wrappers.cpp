@@ -9,6 +9,7 @@
 // Praat headers - TextGrid uses C++ features so no extern "C"
 #include "praat.github.io/sys/Data.h"
 #include "praat.github.io/fon/TextGrid.h"
+#include "praat.github.io/dwtools/TextGrid_extensions.h"
 
 // ============================================================================
 // TextGrid Creation & I/O
@@ -530,4 +531,110 @@ Rcpp::DataFrame textgrid_to_data_frame(
             Rcpp::Named("stringsAsFactors") = false
         );
     }, "Failed to convert TextGrid to data frame");
+}
+
+// ============================================================================
+// TextGrid Extensions (from dwtools/TextGrid_extensions.h)
+// ============================================================================
+
+// [[Rcpp::export(.textgrid_change_labels)]]
+void textgrid_change_labels(
+    Rcpp::XPtr<structTextGrid> textgrid,
+    int tier,
+    std::string search,
+    std::string replace,
+    bool use_regexp = false,
+    int from = 1,
+    int to = 0
+) {
+    try {
+        integer nmatches = 0;
+        integer nstringmatches = 0;
+        
+        // Convert to must be 0 for "to end"
+        integer to_converted = (to <= 0) ? 0 : static_cast<integer>(to);
+        
+        TextGrid_changeLabels(
+            textgrid,
+            static_cast<integer>(tier),
+            static_cast<integer>(from),
+            to_converted,
+            Melder_peek8to32(search.c_str()),
+            Melder_peek8to32(replace.c_str()),
+            use_regexp,
+            &nmatches,
+            &nstringmatches
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to change labels");
+    }
+}
+
+// [[Rcpp::export(.textgrid_merge_identical_intervals)]]
+void textgrid_merge_identical_intervals(
+    Rcpp::XPtr<structTextGrid> textgrid,
+    int tier,
+    std::string label
+) {
+    try {
+        // Get the tier
+        if (tier < 1 || tier > textgrid->tiers->size) {
+            Rcpp::stop("Tier number out of range");
+        }
+        
+        Function anyTier = textgrid->tiers->at[tier];
+        
+        // Check if it's an IntervalTier
+        if (!Thing_isa(anyTier, classIntervalTier)) {
+            Rcpp::stop("Tier is not an IntervalTier");
+        }
+        
+        IntervalTier intervalTier = static_cast<IntervalTier>(anyTier);
+        
+        IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals(
+            intervalTier,
+            Melder_peek8to32(label.c_str())
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to merge identical intervals");
+    }
+}
+
+// [[Rcpp::export(.textgrid_get_total_duration_where)]]
+double textgrid_get_total_duration_where(
+    Rcpp::XPtr<structTextGrid> textgrid,
+    int tier,
+    std::string criterion
+) {
+    try {
+        return TextGrid_getTotalDurationOfIntervalsWhere(
+            textgrid,
+            static_cast<integer>(tier),
+            kMelder_string::EQUAL_TO,
+            Melder_peek8to32(criterion.c_str())
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to get total duration");
+    }
+}
+
+// [[Rcpp::export(.textgrid_extend_time)]]
+void textgrid_extend_time(
+    Rcpp::XPtr<structTextGrid> textgrid,
+    double delta_time,
+    int position
+) {
+    try {
+        TextGrid_extendTime(
+            textgrid,
+            delta_time,
+            position
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to extend time");
+    }
 }
