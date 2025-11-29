@@ -239,4 +239,135 @@ Rcpp::XPtr<structMatrix> lpc_to_matrix(Rcpp::XPtr<structLPC> lpc) {
     }
 }
 
+// ============================================================================
+// LPC Inverse Filtering - Voice Source Extraction
+// ============================================================================
+
+//' LPC inverse filtering - extract voice source (glottal flow)
+//' 
+//' Applies inverse filtering using LPC coefficients to extract the voice source
+//' (glottal flow) from a speech signal. This removes the vocal tract resonances,
+//' leaving the excitation signal.
+//' 
+//' @param lpc_xptr External pointer to LPC object
+//' @param sound_xptr External pointer to Sound object
+//' @return External pointer to new Sound object containing the voice source
+//' @keywords internal
+// [[Rcpp::export(.lpc_sound_filter_inverse)]]
+Rcpp::XPtr<structSound> lpc_sound_filter_inverse(
+    Rcpp::XPtr<structLPC> lpc_xptr,
+    Rcpp::XPtr<structSound> sound_xptr
+) {
+    try {
+        autoSound source = LPC_Sound_filterInverse(
+            lpc_xptr.get(),
+            sound_xptr.get()
+        );
+        return create_xptr_from_auto<structSound>(source);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to perform LPC inverse filtering");
+    }
+}
+
+//' Helper wrapper for R6: LPC inverse filtering from R6 objects
+//' @param lpc_xptr External pointer to LPC object
+//' @param sound_r6 R6 Sound object
+//' @return External pointer to new Sound object containing the voice source
+//' @keywords internal
+// [[Rcpp::export(.lpc_sound_filter_inverse_r6)]]
+Rcpp::XPtr<structSound> lpc_sound_filter_inverse_r6(
+    Rcpp::XPtr<structLPC> lpc_xptr,
+    Rcpp::S4 sound_r6
+) {
+    try {
+        // Extract the external pointer from the R6 object
+        // R6 objects store the pointer in a private field, we need to extract it
+        Rcpp::Environment env(sound_r6);
+        Rcpp::Environment private_env = env.get(".__enclos_env__");
+        private_env = private_env.get("private");
+        Rcpp::XPtr<structSound> sound_xptr = private_env.get("ptr");
+        
+        autoSound source = LPC_Sound_filterInverse(
+            lpc_xptr.get(),
+            sound_xptr.get()
+        );
+        return create_xptr_from_auto<structSound>(source);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to perform LPC inverse filtering");
+    } catch (...) {
+        Rcpp::stop("Failed to extract Sound pointer from R6 object");
+    }
+}
+
+//' LPC inverse filtering at specific time - extract voice source
+//' 
+//' Applies inverse filtering using LPC coefficients at a specific time point.
+//' This is useful when you want to use a single LPC frame's filter for the
+//' entire signal.
+//' 
+//' @param lpc_xptr External pointer to LPC object
+//' @param sound_xptr External pointer to Sound object  
+//' @param channel Channel number (1 for mono or left, 2 for right)
+//' @param time Time point (seconds) at which to extract LPC filter
+//' @return External pointer to new Sound object containing the voice source
+//' @keywords internal
+// [[Rcpp::export(.lpc_sound_filter_inverse_at_time)]]
+Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time(
+    Rcpp::XPtr<structLPC> lpc_xptr,
+    Rcpp::XPtr<structSound> sound_xptr,
+    int channel,
+    double time
+) {
+    try {
+        autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
+            lpc_xptr.get(),
+            sound_xptr.get(),
+            static_cast<integer>(channel),
+            time
+        );
+        return create_xptr_from_auto<structSound>(source);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
+    }
+}
+
+//' Helper wrapper for R6: LPC inverse filtering at time from R6 objects
+//' @param lpc_xptr External pointer to LPC object
+//' @param sound_r6 R6 Sound object
+//' @param channel Channel number
+//' @param time Time point (seconds)
+//' @return External pointer to new Sound object containing the voice source
+//' @keywords internal
+// [[Rcpp::export(.lpc_sound_filter_inverse_at_time_r6)]]
+Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
+    Rcpp::XPtr<structLPC> lpc_xptr,
+    Rcpp::S4 sound_r6,
+    int channel,
+    double time
+) {
+    try {
+        // Extract the external pointer from the R6 object
+        Rcpp::Environment env(sound_r6);
+        Rcpp::Environment private_env = env.get(".__enclos_env__");
+        private_env = private_env.get("private");
+        Rcpp::XPtr<structSound> sound_xptr = private_env.get("ptr");
+        
+        autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
+            lpc_xptr.get(),
+            sound_xptr.get(),
+            static_cast<integer>(channel),
+            time
+        );
+        return create_xptr_from_auto<structSound>(source);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
+    } catch (...) {
+        Rcpp::stop("Failed to extract Sound pointer from R6 object");
+    }
+}
+
 /* End of file */

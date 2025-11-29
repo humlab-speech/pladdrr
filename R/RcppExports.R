@@ -659,6 +659,56 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_lpc_to_matrix`, lpc)
 }
 
+#' LPC inverse filtering - extract voice source (glottal flow)
+#' 
+#' Applies inverse filtering using LPC coefficients to extract the voice source
+#' (glottal flow) from a speech signal. This removes the vocal tract resonances,
+#' leaving the excitation signal.
+#' 
+#' @param lpc_xptr External pointer to LPC object
+#' @param sound_xptr External pointer to Sound object
+#' @return External pointer to new Sound object containing the voice source
+#' @keywords internal
+.lpc_sound_filter_inverse <- function(lpc_xptr, sound_xptr) {
+    .Call(`_pladdrr_lpc_sound_filter_inverse`, lpc_xptr, sound_xptr)
+}
+
+#' Helper wrapper for R6: LPC inverse filtering from R6 objects
+#' @param lpc_xptr External pointer to LPC object
+#' @param sound_r6 R6 Sound object
+#' @return External pointer to new Sound object containing the voice source
+#' @keywords internal
+.lpc_sound_filter_inverse_r6 <- function(lpc_xptr, sound_r6) {
+    .Call(`_pladdrr_lpc_sound_filter_inverse_r6`, lpc_xptr, sound_r6)
+}
+
+#' LPC inverse filtering at specific time - extract voice source
+#' 
+#' Applies inverse filtering using LPC coefficients at a specific time point.
+#' This is useful when you want to use a single LPC frame's filter for the
+#' entire signal.
+#' 
+#' @param lpc_xptr External pointer to LPC object
+#' @param sound_xptr External pointer to Sound object  
+#' @param channel Channel number (1 for mono or left, 2 for right)
+#' @param time Time point (seconds) at which to extract LPC filter
+#' @return External pointer to new Sound object containing the voice source
+#' @keywords internal
+.lpc_sound_filter_inverse_at_time <- function(lpc_xptr, sound_xptr, channel, time) {
+    .Call(`_pladdrr_lpc_sound_filter_inverse_at_time`, lpc_xptr, sound_xptr, channel, time)
+}
+
+#' Helper wrapper for R6: LPC inverse filtering at time from R6 objects
+#' @param lpc_xptr External pointer to LPC object
+#' @param sound_r6 R6 Sound object
+#' @param channel Channel number
+#' @param time Time point (seconds)
+#' @return External pointer to new Sound object containing the voice source
+#' @keywords internal
+.lpc_sound_filter_inverse_at_time_r6 <- function(lpc_xptr, sound_r6, channel, time) {
+    .Call(`_pladdrr_lpc_sound_filter_inverse_at_time_r6`, lpc_xptr, sound_r6, channel, time)
+}
+
 .ltas_get_bin_from_frequency <- function(ltas, frequency) {
     .Call(`_pladdrr_ltas_get_bin_from_frequency`, ltas, frequency)
 }
