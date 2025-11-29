@@ -1,3 +1,41 @@
+# pladdrr 1.0.7 (2025-11-29)
+
+## Benchmarking Enhancements
+
+### Three-Way Performance Comparison
+Extended benchmarking system to compare pladdrr against both **Parselmouth** (Python) and **native Praat** (desktop application).
+
+**New Infrastructure**:
+* `inst/benchmarks/praat_runner.R` - Praat script execution framework with timing isolation
+* `run_praat_script()` - Execute Praat scripts from R with accurate timing
+* `benchmark_praat()` - Run Praat benchmarks with warmup and statistics
+* Script generators for pitch, formant, intensity, spectrogram, harmonicity
+
+**Enhanced Benchmark 04**:
+* Three-way comparison: pladdrr vs Parselmouth vs Praat
+* Measures execution time only (excludes startup overhead)
+* Comprehensive speedup reporting
+* Graceful degradation if Praat not installed
+
+**Methodology**:
+* Uses Praat's `stopwatch` command for accurate timing
+* 50 iterations per operation
+* 3 warmup iterations for stable results
+* Median timing reported
+
+**Initial Results**:
+* Native Praat: 3-67x faster than pladdrr
+* Parselmouth: 2-90x faster than pladdrr
+* Performance investigation planned (R6 overhead, build flags, SIMD engagement)
+
+**Documentation**:
+* `THREE_WAY_BENCHMARK_PRAAT_2025-11-29.md` - Complete analysis and methodology
+
+## Notes
+This release focuses on benchmarking infrastructure. Performance optimization will be addressed in future releases based on profiling results.
+
+---
+
 # pladdrr 1.1.0 (2025-11-29)
 
 ## New Features
