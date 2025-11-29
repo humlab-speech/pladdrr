@@ -556,7 +556,7 @@ TextGrid <- R6::R6Class(
     #' @description Resolve tier name or number to tier number
     #' @param tier Tier number or name
     #' @return Tier number (integer)
-    .resolve_tier = function(tier) {
+    resolve_tier_number = function(tier) {
       if (is.numeric(tier)) {
         return(as.integer(tier))
       } else if (is.character(tier)) {

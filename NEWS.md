@@ -351,10 +351,10 @@ All audio file loading now exclusively uses the `av` package (humlab-speech fork
 ## Coverage
 - Increased from 92% to ~95% of programmatic Praat use cases (when R6 issue resolved)
 
-## Known Issues
-- Intermittent R6 method access issue under investigation
-- Methods compile and exist but may throw "attempt to apply non-function" inconsistently
-- Workaround: Use internal `.function()` calls if needed
+## Bug Fixes
+- Fixed R6 method access issue (private method naming mismatch)
+- All TextGrid tier-based methods now work correctly
+- Sound periodic PointProcess methods added to R6 class
 
 ## Documentation
 - Added comprehensive missing wrappers analysis

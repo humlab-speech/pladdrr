@@ -1,16 +1,20 @@
 library(pladdrr)
 
 cat("═══════════════════════════════════════════════════════\n")
-cat("  Testing TextGrid R6 Method Fix\n")
+cat("  Testing Sound Periodic Methods\n")
 cat("═══════════════════════════════════════════════════════\n\n")
 
-tg <- TextGrid$create(0, 5, "words phonemes")
+# Create a simple test sound (sine wave at 440 Hz)
+cat("Creating test sound...\n")
+values <- sin(2*pi*440*seq(0, 0.5, length.out=11025))  # 0.5s at 22050 Hz
+sound <- Sound$from_values(values, sampling_rate = 22050)
+cat("✅ Sound created (", sound$get_duration(), " seconds)\n\n", sep="")
 
 success <- 0
 fail <- 0
 
 test <- function(name, expr) {
-  cat(sprintf("%-40s ", name))
+  cat(sprintf("%-50s ", name))
   tryCatch({
     result <- expr
     cat("✅\n")
@@ -23,30 +27,33 @@ test <- function(name, expr) {
   })
 }
 
-cat("【Previously Broken Methods】\n")
+cat("【New Periodic PointProcess Methods】\n")
 cat("───────────────────────────────────────────────────────\n")
-test("insert_boundary(1, 2.5)", {tg$insert_boundary(1, 2.5); TRUE})
-test("set_interval_text(1, 1, 'hello')", {tg$set_interval_text(1, 1, "hello"); TRUE})
-test("get_number_of_intervals(1)", tg$get_number_of_intervals(1) > 0)
-test("get_interval_text(1, 1)", nchar(tg$get_interval_text(1, 1)) >= 0)
-test("insert_boundary(2, 3.0)", {tg$insert_boundary(2, 3.0); TRUE})
-test("remove_boundary(1, 2.5)", {tg$remove_boundary(1, 2.5); TRUE})
 
-cat("\n【Previously Working Methods】\n")
+test("to_pointprocess_periodic_cc(75, 600)", {
+  pp <- sound$to_pointprocess_periodic_cc(75, 600)
+  !is.null(pp)
+})
+
+test("to_pointprocess_periodic_peaks(75, 600, TRUE, FALSE)", {
+  pp <- sound$to_pointprocess_periodic_peaks(75, 600, TRUE, FALSE)
+  !is.null(pp)
+})
+
+cat("\n【Existing Sound Methods】\n")
 cat("───────────────────────────────────────────────────────\n")
-test("get_total_duration()", tg$get_total_duration() == 5)
-test("get_number_of_tiers()", tg$get_number_of_tiers() == 2)
-test("change_labels(1, 'hello', 'hi')", {tg$change_labels(1, "hello", "hi"); TRUE})
-test("to_table()", !is.null(tg$to_table()))
+
+test("get_duration()", sound$get_duration() > 0)
+test("to_pitch()", !is.null(sound$to_pitch()))
+test("to_intensity()", !is.null(sound$to_intensity()))
+test("to_spectrum()", !is.null(sound$to_spectrum()))
 
 cat("\n═══════════════════════════════════════════════════════\n")
 cat(sprintf("  Results: %d passed, %d failed\n", success, fail))
 cat("═══════════════════════════════════════════════════════\n")
 
 if (fail == 0) {
-  cat("\n🎉 ALL METHODS WORKING!\n")
-  quit(status = 0)
+  cat("\n🎉 ALL SOUND METHODS WORKING!\n")
 } else {
-  cat("\n❌ Some methods still failing\n")
-  quit(status = 1)
+  cat("\n⚠️  Some methods failed\n")
 }

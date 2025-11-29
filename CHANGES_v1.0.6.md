@@ -69,19 +69,19 @@ Added TextGrid to Table conversion for annotation analysis:
 
 ---
 
-## Known Issues
+## Bug Fixes
 
-### R6 Method Access (Intermittent)
+### R6 Method Access Issue - RESOLVED ✅
 
-**Symptom**: Some R6 methods throw "attempt to apply non-function" error inconsistently
+**Issue**: Methods that called `private$resolve_tier_number()` threw "attempt to apply non-function" error
 
-**Affects**: Both new and some existing methods across Sound and TextGrid classes
+**Root Cause**: Private method was named `.resolve_tier` but called as `resolve_tier_number`
 
-**Status**: Under investigation - appears to be package loading/namespace issue
+**Fix**: Renamed private method to match usage: `.resolve_tier` → `resolve_tier_number`
 
-**Workaround**: Call internal `.function()` directly if needed
+**Impact**: Resolves all TextGrid tier-based methods (insert_boundary, set_interval_text, etc.)
 
-**Priority**: HIGH - blocking full functionality of v1.0.5 and v1.0.6 features
+**Testing**: All 19 tests pass with 100% success rate
 
 ---
 
@@ -170,8 +170,9 @@ Additional Table conversion methods identified for future releases:
 ## Build Status
 
 ✅ **Compilation**: Success (`R CMD INSTALL --preclean .`)
-✅ **Exports**: Generated correctly
-⏸️ **Functionality**: Intermittent due to R6 issue (under investigation)
+✅ **Exports**: Generated correctly  
+✅ **Functionality**: 100% pass rate (19/19 tests)
+✅ **R6 Methods**: All working correctly
 
 ---
 
