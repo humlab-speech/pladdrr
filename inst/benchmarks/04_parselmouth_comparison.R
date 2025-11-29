@@ -1,9 +1,9 @@
 # Benchmark 4: Parselmouth Comparison
-# Tests: Direct comparison of speaker vs parselmouth for common operations
+# Tests: Direct comparison of pladdrr vs parselmouth for common operations
 # Expected speedup: 1.5-3x (direct C++ binding vs Python overhead)
 
 
-library(speaker)
+library(pladdrr)
 library(bench)
 library(reticulate)
 
@@ -53,12 +53,12 @@ tryCatch({
 })
 
 # Load test audio file - handle missing gracefully
-test_file <- system.file("extdata", "test.wav", package = "speaker")
+test_file <- system.file("extdata", "test.wav", package = "pladdrr")
 if (!file.exists(test_file) || test_file == "") {
   cat("✗ Test audio file not found at inst/extdata/test.wav\n")
-  cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
+  cat("  Using synthetic audio for pladdrr-only benchmarks...\n\n")
   
-  cat("Running speaker benchmarks (synthetic audio):\n\n")
+  cat("Running pladdrr benchmarks (synthetic audio):\n\n")
   
   # Note: bench::mark() with R6 objects requires separate calls
   # due to environment/serialization issues
@@ -96,7 +96,7 @@ if (!file.exists(test_file) || test_file == "") {
               time_intensity["elapsed"], time_intensity["elapsed"]*100))
   
   cat("\nNote: Parselmouth comparison requires test.wav file\n")
-  cat("      Showing speaker-only results instead.\n\n")
+  cat("      Showing pladdrr-only results instead.\n\n")
   
   quit(save = "no", status = 0)
 }
@@ -114,8 +114,8 @@ run_pm <- function(file, operation) {
   )
 }
 
-# Helper function to run speaker operation
-run_speaker <- function(file, operation) {
+# Helper function to run pladdrr operation
+run_pladdrr <- function(file, operation) {
   snd <- Sound$new(file)
   switch(operation,
     "pitch" = snd$to_pitch(),
@@ -133,7 +133,7 @@ cat("Running benchmarks (this may take several minutes)...\n\n")
 cat("1. Pitch extraction (autocorrelation)...\n")
 pitch_bench <- mark(
   parselmouth = run_pm(test_file, "pitch"),
-  speaker = run_speaker(test_file, "pitch"),
+  pladdrr = run_pladdrr(test_file, "pitch"),
   iterations = 50,
   check = FALSE
 )
@@ -141,20 +141,20 @@ pitch_bench <- mark(
 pm_time <- pitch_bench$median[1]
 sp_time <- pitch_bench$median[2]
 cat("   Parselmouth:", format(pm_time), "\n")
-cat("   Speaker:    ", format(sp_time), "\n")
-speedup_pitch <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   pladdrr:    ", format(sp_time), "\n")
+speedup_pitch <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   Speedup:    ", sprintf("%.2fx", speedup_pitch))
-if (speedup_pitch > 1) {
-  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_pitch), " faster)\n\n")
+if (speedup_pitch < 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", 1/speedup_pitch), " faster)\n\n")
 } else {
-  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_pitch), " faster)\n\n")
+  cat(" (pladdrr is ", sprintf("%.2fx", speedup_pitch), " faster)\n\n")
 }
 
 # 2. Formant tracking
 cat("2. Formant tracking (Burg method)...\n")
 formant_bench <- mark(
   parselmouth = run_pm(test_file, "formant"),
-  speaker = run_speaker(test_file, "formant"),
+  pladdrr = run_pladdrr(test_file, "formant"),
   iterations = 50,
   check = FALSE
 )
@@ -162,20 +162,20 @@ formant_bench <- mark(
 pm_time <- formant_bench$median[1]
 sp_time <- formant_bench$median[2]
 cat("   Parselmouth:", format(pm_time), "\n")
-cat("   Speaker:    ", format(sp_time), "\n")
-speedup_formant <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   pladdrr:    ", format(sp_time), "\n")
+speedup_formant <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   Speedup:    ", sprintf("%.2fx", speedup_formant))
-if (speedup_formant > 1) {
-  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_formant), " faster)\n\n")
+if (speedup_formant < 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", 1/speedup_formant), " faster)\n\n")
 } else {
-  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_formant), " faster)\n\n")
+  cat(" (pladdrr is ", sprintf("%.2fx", speedup_formant), " faster)\n\n")
 }
 
 # 3. Intensity calculation
 cat("3. Intensity calculation...\n")
 intensity_bench <- mark(
   parselmouth = run_pm(test_file, "intensity"),
-  speaker = run_speaker(test_file, "intensity"),
+  pladdrr = run_pladdrr(test_file, "intensity"),
   iterations = 50,
   check = FALSE
 )
@@ -183,20 +183,20 @@ intensity_bench <- mark(
 pm_time <- intensity_bench$median[1]
 sp_time <- intensity_bench$median[2]
 cat("   Parselmouth:", format(pm_time), "\n")
-cat("   Speaker:    ", format(sp_time), "\n")
-speedup_intensity <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   pladdrr:    ", format(sp_time), "\n")
+speedup_intensity <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   Speedup:    ", sprintf("%.2fx", speedup_intensity))
-if (speedup_intensity > 1) {
-  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_intensity), " faster)\n\n")
+if (speedup_intensity < 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", 1/speedup_intensity), " faster)\n\n")
 } else {
-  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_intensity), " faster)\n\n")
+  cat(" (pladdrr is ", sprintf("%.2fx", speedup_intensity), " faster)\n\n")
 }
 
 # 4. Spectrogram generation
 cat("4. Spectrogram generation...\n")
 spectrogram_bench <- mark(
   parselmouth = run_pm(test_file, "spectrogram"),
-  speaker = run_speaker(test_file, "spectrogram"),
+  pladdrr = run_pladdrr(test_file, "spectrogram"),
   iterations = 50,
   check = FALSE
 )
@@ -204,20 +204,20 @@ spectrogram_bench <- mark(
 pm_time <- spectrogram_bench$median[1]
 sp_time <- spectrogram_bench$median[2]
 cat("   Parselmouth:", format(pm_time), "\n")
-cat("   Speaker:    ", format(sp_time), "\n")
-speedup_spectrogram <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   pladdrr:    ", format(sp_time), "\n")
+speedup_spectrogram <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   Speedup:    ", sprintf("%.2fx", speedup_spectrogram))
-if (speedup_spectrogram > 1) {
-  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_spectrogram), " faster)\n\n")
+if (speedup_spectrogram < 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", 1/speedup_spectrogram), " faster)\n\n")
 } else {
-  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_spectrogram), " faster)\n\n")
+  cat(" (pladdrr is ", sprintf("%.2fx", speedup_spectrogram), " faster)\n\n")
 }
 
 # 5. Harmonicity (HNR)
 cat("5. Harmonicity (HNR)...\n")
 harmonicity_bench <- mark(
   parselmouth = run_pm(test_file, "harmonicity"),
-  speaker = run_speaker(test_file, "harmonicity"),
+  pladdrr = run_pladdrr(test_file, "harmonicity"),
   iterations = 50,
   check = FALSE
 )
@@ -225,13 +225,13 @@ harmonicity_bench <- mark(
 pm_time <- harmonicity_bench$median[1]
 sp_time <- harmonicity_bench$median[2]
 cat("   Parselmouth:", format(pm_time), "\n")
-cat("   Speaker:    ", format(sp_time), "\n")
-speedup_harmonicity <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   pladdrr:    ", format(sp_time), "\n")
+speedup_harmonicity <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   Speedup:    ", sprintf("%.2fx", speedup_harmonicity))
-if (speedup_harmonicity > 1) {
-  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_harmonicity), " faster)\n\n")
+if (speedup_harmonicity < 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", 1/speedup_harmonicity), " faster)\n\n")
 } else {
-  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_harmonicity), " faster)\n\n")
+  cat(" (pladdrr is ", sprintf("%.2fx", speedup_harmonicity), " faster)\n\n")
 }
 
 # Save results
