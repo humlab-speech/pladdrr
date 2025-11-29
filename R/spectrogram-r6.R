@@ -183,6 +183,11 @@ Spectrogram <- R6::R6Class("Spectrogram",
     }
   ),
   
+  # ---- PRIVATE FIELDS ----
+  private = list(
+    ptr = NULL
+  ),
+  
   # ---- ACTIVE BINDINGS ----
   active = list(
     #' @field start_time Start time (read-only)
