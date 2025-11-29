@@ -11,6 +11,31 @@ cat("===========================================================================
 cat("Benchmark 4: Parselmouth Comparison\n")
 cat("================================================================================\n\n")
 
+# Configure Python environment
+# Try conda/miniconda first, then system python
+python_paths <- c(
+  "/opt/miniconda3/bin/python3",
+  "/opt/anaconda3/bin/python3",
+  "/usr/local/bin/python3",
+  "/usr/bin/python3"
+)
+
+python_found <- FALSE
+for (py_path in python_paths) {
+  if (file.exists(py_path)) {
+    tryCatch({
+      use_python(py_path, required = TRUE)
+      python_found <- TRUE
+      cat("✓ Using Python:", py_path, "\n")
+      break
+    }, error = function(e) {})
+  }
+}
+
+if (!python_found) {
+  cat("✗ Could not find Python - using reticulate default\n")
+}
+
 # Check parselmouth availability
 cat("Checking parselmouth...\n")
 parselmouth_available <- FALSE
@@ -21,7 +46,9 @@ tryCatch({
   cat("✓ Parselmouth version:", pm$`__version__`, "\n\n")
 }, error = function(e) {
   cat("✗ Parselmouth not installed - skipping comparison\n")
-  cat("  Install: pip install praat-parselmouth\n\n")
+  cat("  Error:", conditionMessage(e), "\n")
+  cat("  Install: pip install praat-parselmouth\n")
+  cat("  Note: Install in the Python environment shown above\n\n")
   quit(save = "no", status = 0)
 })
 
@@ -89,13 +116,13 @@ run_pm <- function(file, operation) {
 
 # Helper function to run speaker operation
 run_speaker <- function(file, operation) {
-  snd <- Sound$new(file, use_av = TRUE)
+  snd <- Sound$new(file)
   switch(operation,
     "pitch" = snd$to_pitch(),
-    "formant" = snd$to_formant(),
+    "formant" = snd$to_formant_burg(),
     "intensity" = snd$to_intensity(),
     "spectrogram" = snd$to_spectrogram(),
-    "harmonicity" = snd$to_harmonicity(),
+    "harmonicity" = snd$to_harmonicity_cc(),
     stop("Unknown operation")
   )
 }
@@ -111,11 +138,17 @@ pitch_bench <- mark(
   check = FALSE
 )
 
-cat("   Parselmouth:", format(median(pitch_bench$time[pitch_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(pitch_bench$time[pitch_bench$expression == "speaker"])), "\n")
-speedup_pitch <- median(pitch_bench$time[pitch_bench$expression == "parselmouth"]) / 
-                 median(pitch_bench$time[pitch_bench$expression == "speaker"])
-cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_pitch))
+pm_time <- pitch_bench$median[1]
+sp_time <- pitch_bench$median[2]
+cat("   Parselmouth:", format(pm_time), "\n")
+cat("   Speaker:    ", format(sp_time), "\n")
+speedup_pitch <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   Speedup:    ", sprintf("%.2fx", speedup_pitch))
+if (speedup_pitch > 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_pitch), " faster)\n\n")
+} else {
+  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_pitch), " faster)\n\n")
+}
 
 # 2. Formant tracking
 cat("2. Formant tracking (Burg method)...\n")
@@ -126,11 +159,17 @@ formant_bench <- mark(
   check = FALSE
 )
 
-cat("   Parselmouth:", format(median(formant_bench$time[formant_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(formant_bench$time[formant_bench$expression == "speaker"])), "\n")
-speedup_formant <- median(formant_bench$time[formant_bench$expression == "parselmouth"]) / 
-                   median(formant_bench$time[formant_bench$expression == "speaker"])
-cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_formant))
+pm_time <- formant_bench$median[1]
+sp_time <- formant_bench$median[2]
+cat("   Parselmouth:", format(pm_time), "\n")
+cat("   Speaker:    ", format(sp_time), "\n")
+speedup_formant <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   Speedup:    ", sprintf("%.2fx", speedup_formant))
+if (speedup_formant > 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_formant), " faster)\n\n")
+} else {
+  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_formant), " faster)\n\n")
+}
 
 # 3. Intensity calculation
 cat("3. Intensity calculation...\n")
@@ -141,11 +180,17 @@ intensity_bench <- mark(
   check = FALSE
 )
 
-cat("   Parselmouth:", format(median(intensity_bench$time[intensity_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(intensity_bench$time[intensity_bench$expression == "speaker"])), "\n")
-speedup_intensity <- median(intensity_bench$time[intensity_bench$expression == "parselmouth"]) / 
-                     median(intensity_bench$time[intensity_bench$expression == "speaker"])
-cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_intensity))
+pm_time <- intensity_bench$median[1]
+sp_time <- intensity_bench$median[2]
+cat("   Parselmouth:", format(pm_time), "\n")
+cat("   Speaker:    ", format(sp_time), "\n")
+speedup_intensity <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   Speedup:    ", sprintf("%.2fx", speedup_intensity))
+if (speedup_intensity > 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_intensity), " faster)\n\n")
+} else {
+  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_intensity), " faster)\n\n")
+}
 
 # 4. Spectrogram generation
 cat("4. Spectrogram generation...\n")
@@ -156,11 +201,17 @@ spectrogram_bench <- mark(
   check = FALSE
 )
 
-cat("   Parselmouth:", format(median(spectrogram_bench$time[spectrogram_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(spectrogram_bench$time[spectrogram_bench$expression == "speaker"])), "\n")
-speedup_spectrogram <- median(spectrogram_bench$time[spectrogram_bench$expression == "parselmouth"]) / 
-                       median(spectrogram_bench$time[spectrogram_bench$expression == "speaker"])
-cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_spectrogram))
+pm_time <- spectrogram_bench$median[1]
+sp_time <- spectrogram_bench$median[2]
+cat("   Parselmouth:", format(pm_time), "\n")
+cat("   Speaker:    ", format(sp_time), "\n")
+speedup_spectrogram <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   Speedup:    ", sprintf("%.2fx", speedup_spectrogram))
+if (speedup_spectrogram > 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_spectrogram), " faster)\n\n")
+} else {
+  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_spectrogram), " faster)\n\n")
+}
 
 # 5. Harmonicity (HNR)
 cat("5. Harmonicity (HNR)...\n")
@@ -171,11 +222,17 @@ harmonicity_bench <- mark(
   check = FALSE
 )
 
-cat("   Parselmouth:", format(median(harmonicity_bench$time[harmonicity_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(harmonicity_bench$time[harmonicity_bench$expression == "speaker"])), "\n")
-speedup_harmonicity <- median(harmonicity_bench$time[harmonicity_bench$expression == "parselmouth"]) / 
-                       median(harmonicity_bench$time[harmonicity_bench$expression == "speaker"])
-cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_harmonicity))
+pm_time <- harmonicity_bench$median[1]
+sp_time <- harmonicity_bench$median[2]
+cat("   Parselmouth:", format(pm_time), "\n")
+cat("   Speaker:    ", format(sp_time), "\n")
+speedup_harmonicity <- as.numeric(sp_time) / as.numeric(pm_time)
+cat("   Speedup:    ", sprintf("%.2fx", speedup_harmonicity))
+if (speedup_harmonicity > 1) {
+  cat(" (Parselmouth is ", sprintf("%.2fx", speedup_harmonicity), " faster)\n\n")
+} else {
+  cat(" (speaker is ", sprintf("%.2fx", 1/speedup_harmonicity), " faster)\n\n")
+}
 
 # Save results
 results <- list(
