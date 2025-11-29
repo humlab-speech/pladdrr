@@ -241,6 +241,13 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
   # Filter formant number
   df <- df[df$formant_number <= max_formant, ]
   
+  # Check if we have formant data
+  if (nrow(df) == 0) {
+    warning("Formant object has no data to plot")
+    return(ggplot2::ggplot() + ggplot2::theme_void() +
+             ggplot2::labs(title = "No formant data available"))
+  }
+  
   # Default colors
   if (is.null(colors)) {
     colors <- c("red", "green4", "blue", "purple", "orange")[1:max_formant]
