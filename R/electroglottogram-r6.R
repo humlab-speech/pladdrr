@@ -188,18 +188,6 @@ electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {
 
 #' Add extract_electroglottogram method to Sound class
 #'
-#' This is added as a method to the existing Sound R6 class
+#' This is added as a method to the existing Sound R6 class during package load
 #' @name Sound
 NULL
-
-# Add method to Sound class after it's defined
-.onLoad <- function(libname, pkgname) {
-  # This will be executed when the package is loaded
-  # Add the extract_electroglottogram method to Sound class
-  if (exists("Sound") && R6::is.R6Class(Sound)) {
-    Sound$set("public", "extract_electroglottogram", function(channel = 1, invert = FALSE) {
-      ptr <- sound_extract_electroglottogram_cpp(self$.pointer, channel, invert)
-      Electroglottogram$new(.xptr = ptr)
-    })
-  }
-}

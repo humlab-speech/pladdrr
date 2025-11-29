@@ -134,6 +134,8 @@ tone$save("A440.wav")
 \item \href{#method-Sound-to_point_process_periodic_cc}{\code{Sound$to_point_process_periodic_cc()}}
 \item \href{#method-Sound-to_point_process_extrema}{\code{Sound$to_point_process_extrema()}}
 \item \href{#method-Sound-to_point_process_zeros}{\code{Sound$to_point_process_zeros()}}
+\item \href{#method-Sound-to_pointprocess_periodic_cc}{\code{Sound$to_pointprocess_periodic_cc()}}
+\item \href{#method-Sound-to_pointprocess_periodic_peaks}{\code{Sound$to_pointprocess_periodic_peaks()}}
 \item \href{#method-Sound-extract_channel}{\code{Sound$extract_channel()}}
 \item \href{#method-Sound-extract_part}{\code{Sound$extract_part()}}
 \item \href{#method-Sound-scale_intensity}{\code{Sound$scale_intensity()}}
@@ -1019,6 +1021,63 @@ Extract zero crossings from sound
 }
 \subsection{Returns}{
 PointProcess object containing zero crossing times
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_pointprocess_periodic_cc"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_pointprocess_periodic_cc}{}}}
+\subsection{Method \code{to_pointprocess_periodic_cc()}}{
+Extract periodic PointProcess using cross-correlation
+Detects periodic pulses (e.g., glottal pulses) using pitch-synchronous analysis.
+Corresponds to Praat: To PointProcess (periodic, cc)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Minimum pitch in Hz (default: 75)}
+
+\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default: 600)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+PointProcess object with detected pulses
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_pointprocess_periodic_peaks"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_pointprocess_periodic_peaks}{}}}
+\subsection{Method \code{to_pointprocess_periodic_peaks()}}{
+Extract periodic PointProcess using peak detection
+Detects periodic pulses by finding peaks in the signal.
+Corresponds to Praat: To PointProcess (periodic, peaks)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_peaks(
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  include_maxima = TRUE,
+  include_minima = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Minimum pitch in Hz (default: 75)}
+
+\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default: 600)}
+
+\item{\code{include_maxima}}{Include positive peaks (default: TRUE)}
+
+\item{\code{include_minima}}{Include negative peaks (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+PointProcess object with detected pulses
 }
 }
 \if{html}{\out{<hr>}}

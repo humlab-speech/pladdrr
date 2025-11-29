@@ -139,6 +139,11 @@ tg$save("output.TextGrid")
 \item \href{#method-TextGrid-as_data_frame}{\code{TextGrid$as_data_frame()}}
 \item \href{#method-TextGrid-save}{\code{TextGrid$save()}}
 \item \href{#method-TextGrid-print}{\code{TextGrid$print()}}
+\item \href{#method-TextGrid-change_labels}{\code{TextGrid$change_labels()}}
+\item \href{#method-TextGrid-merge_identical_intervals}{\code{TextGrid$merge_identical_intervals()}}
+\item \href{#method-TextGrid-get_total_duration_where}{\code{TextGrid$get_total_duration_where()}}
+\item \href{#method-TextGrid-extend_time}{\code{TextGrid$extend_time()}}
+\item \href{#method-TextGrid-to_table}{\code{TextGrid$to_table()}}
 \item \href{#method-TextGrid-clone}{\code{TextGrid$clone()}}
 }
 }
@@ -812,6 +817,131 @@ Print TextGrid summary
 \item{\code{...}}{Additional arguments (ignored)}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-change_labels"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-change_labels}{}}}
+\subsection{Method \code{change_labels()}}{
+Change labels (find/replace) in a tier
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$change_labels(
+  tier,
+  search,
+  replace,
+  use_regexp = FALSE,
+  from = 1,
+  to = 0
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tier}}{Tier number or name}
+
+\item{\code{search}}{Search string (or regex pattern if use_regexp=TRUE)}
+
+\item{\code{replace}}{Replacement string}
+
+\item{\code{use_regexp}}{Use regular expressions (default FALSE)}
+
+\item{\code{from}}{First interval to search (default 1)}
+
+\item{\code{to}}{Last interval to search (0 = to end, default 0)}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-merge_identical_intervals"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-merge_identical_intervals}{}}}
+\subsection{Method \code{merge_identical_intervals()}}{
+Merge consecutive intervals with identical labels
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$merge_identical_intervals(tier, label)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tier}}{Tier number or name (must be IntervalTier)}
+
+\item{\code{label}}{Label to merge (intervals with this label will be merged)}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-get_total_duration_where"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-get_total_duration_where}{}}}
+\subsection{Method \code{get_total_duration_where()}}{
+Get total duration of intervals matching a criterion
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$get_total_duration_where(tier, criterion)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tier}}{Tier number or name}
+
+\item{\code{criterion}}{Label to match}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Total duration in seconds
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-extend_time"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-extend_time}{}}}
+\subsection{Method \code{extend_time()}}{
+Extend the time domain of the TextGrid
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$extend_time(delta_time, position = 1)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{delta_time}}{Time to add (negative for start, positive for end)}
+
+\item{\code{position}}{Position: 0 for start, 1 for end}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-to_table"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-to_table}{}}}
+\subsection{Method \code{to_table()}}{
+Convert TextGrid to Table object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$to_table(
+  include_line_numbers = FALSE,
+  time_decimals = 6,
+  include_tier_names = TRUE,
+  include_empty_intervals = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{include_line_numbers}}{Include line numbers in Table (default: FALSE)}
+
+\item{\code{time_decimals}}{Number of decimal places for times (default: 6)}
+
+\item{\code{include_tier_names}}{Include tier names in Table (default: TRUE)}
+
+\item{\code{include_empty_intervals}}{Include empty intervals (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Table object containing TextGrid data
 }
 }
 \if{html}{\out{<hr>}}

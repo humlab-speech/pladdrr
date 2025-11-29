@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 1.0.7
+Version: 1.0.8
 Date: 2025-11-29
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
@@ -34,7 +34,9 @@ Suggests:
     roxygen2 (>= 7.0.0),
     knitr,
     rmarkdown,
-    gridExtra
+    gridExtra,
+    patchwork,
+    scales
 Remotes: humlab-speech/av
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017), FFmpeg libraries (for av package)
 RoxygenNote: 7.3.3

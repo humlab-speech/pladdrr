@@ -1,3 +1,38 @@
+# pladdrr 1.0.8 (2025-11-29)
+
+## Internal Changes
+
+### GSL Integration Completed ✅
+* GSL 2.8 library fully integrated and statically linked
+* All 54 stub implementations replaced with real GSL functions
+* Package now includes complete statistical functionality:
+  - Special functions (Bessel, Beta, Gamma, Error, Hypergeometric, Psi, Sinc)
+  - Cumulative Distribution Functions (F, Log-normal, Gaussian, Beta, Chi-squared, t)
+  - Polynomial solvers (quadratic, cubic)
+* Improves accuracy of LPC analysis and voice quality metrics
+* No external GSL dependency required (static linking)
+
+# pladdrr 1.0.7 (2025-11-29)
+
+## New Features
+
+### Table Conversion Methods
+Added bidirectional conversion between TextGrid and Table (data.frame) objects:
+
+* `TextGrid$downto_table()` - Convert TextGrid to Table with tier information
+* `Table$upto_textgrid()` - Reconstruct TextGrid from Table representation
+
+These methods enable Praat-style workflow where intermediate Table representations facilitate complex analyses before reconstruction.
+
+# pladdrr 1.0.6 (2025-11-29)
+
+## Bug Fixes
+
+### R6 Method Resolution
+* Fixed external pointer validation in all R6 classes
+* Methods now correctly resolve via `$` notation
+* Improved error messages for invalid objects
+
 # pladdrr 1.0.5 (2025-11-28)
 
 ## New Features
