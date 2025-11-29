@@ -286,7 +286,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_r6(
         Rcpp::Environment env(sound_r6);
         Rcpp::Environment private_env = env.get(".__enclos_env__");
         private_env = private_env.get("private");
-        Rcpp::XPtr<structSound> sound_xptr = private_env.get("ptr");
+        Rcpp::XPtr<structSound> sound_xptr(private_env.get("ptr"));
         
         autoSound source = LPC_Sound_filterInverse(
             lpc_xptr.get(),
@@ -353,7 +353,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
         Rcpp::Environment env(sound_r6);
         Rcpp::Environment private_env = env.get(".__enclos_env__");
         private_env = private_env.get("private");
-        Rcpp::XPtr<structSound> sound_xptr = private_env.get("ptr");
+        Rcpp::XPtr<structSound> sound_xptr(private_env.get("ptr"));
         
         autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
             lpc_xptr.get(),
