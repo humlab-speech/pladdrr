@@ -573,3 +573,194 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   
   p
 }
+
+
+#' @title Plot Spectrogram with Pitch Overlay
+#'
+#' @description
+#' Creates a combined visualization showing a spectrogram with pitch contour
+#' overlaid. This is one of the most common Praat visualizations for voice analysis.
+#'
+#' @param spectrogram Spectrogram object
+#' @param pitch Pitch object
+#' @param from_time Start time in seconds (NULL = from beginning)
+#' @param to_time End time in seconds (NULL = to end)
+#' @param freq_max Maximum frequency to display in Hz (default: 5000)
+#' @param pitch_color Character. Pitch track color (default: "blue")
+#' @param pitch_floor Minimum F0 to display in Hz (default: NULL = auto)
+#' @param pitch_ceiling Maximum F0 to display in Hz (default: NULL = auto)
+#' @param title Character. Plot title (default: "Spectrogram with Pitch")
+#' @param ... Additional arguments passed to plot methods
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("recording.wav")
+#' spectrogram <- sound$to_spectrogram()
+#' pitch <- sound$to_pitch()
+#' 
+#' # Basic combined plot
+#' plot_spectrogram_pitch(spectrogram, pitch)
+#' 
+#' # Customize pitch range
+#' plot_spectrogram_pitch(spectrogram, pitch,
+#'                       pitch_floor = 75, pitch_ceiling = 500,
+#'                       pitch_color = "red")
+#' }
+#'
+#' @export
+plot_spectrogram_pitch <- function(spectrogram, pitch,
+                                  from_time = NULL, to_time = NULL,
+                                  freq_max = 5000,
+                                  pitch_color = "blue",
+                                  pitch_floor = NULL,
+                                  pitch_ceiling = NULL,
+                                  title = "Spectrogram with Pitch", ...) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(spectrogram, "Spectrogram")) {
+    stop("spectrogram must be a Spectrogram object")
+  }
+  if (!inherits(pitch, "Pitch")) {
+    stop("pitch must be a Pitch object")
+  }
+  
+  # Create base spectrogram plot
+  p <- plot(spectrogram, from_time = from_time, to_time = to_time,
+           garnish = TRUE, title = title, freq_max = freq_max)
+  
+  # Get pitch data
+  pitch_df <- pitch$as_data_frame()
+  
+  # Filter time range
+  if (!is.null(from_time)) {
+    pitch_df <- pitch_df[pitch_df$time_s >= from_time, ]
+  }
+  if (!is.null(to_time)) {
+    pitch_df <- pitch_df[pitch_df$time_s <= to_time, ]
+  }
+  
+  # Filter pitch range
+  if (!is.null(pitch_floor)) {
+    pitch_df <- pitch_df[pitch_df$frequency_hz >= pitch_floor, ]
+  }
+  if (!is.null(pitch_ceiling)) {
+    pitch_df <- pitch_df[pitch_df$frequency_hz <= pitch_ceiling, ]
+  }
+  
+  # Remove unvoiced frames
+  pitch_df <- pitch_df[!is.na(pitch_df$frequency_hz) & pitch_df$frequency_hz > 0, ]
+  
+  if (nrow(pitch_df) == 0) {
+    warning("No pitch data available in the specified range")
+    return(p)
+  }
+  
+  # Overlay pitch track
+  p <- p +
+    ggplot2::geom_line(data = pitch_df,
+                      ggplot2::aes(x = .data$time_s, y = .data$frequency_hz),
+                      color = pitch_color, linewidth = 1.5, alpha = 0.9) +
+    ggplot2::geom_point(data = pitch_df,
+                       ggplot2::aes(x = .data$time_s, y = .data$frequency_hz),
+                       color = pitch_color, size = 1, alpha = 0.6)
+  
+  p
+}
+
+
+#' @title Plot Sound Waveform with Pitch Contour
+#'
+#' @description
+#' Creates a two-panel visualization showing the sound waveform in the top panel
+#' and pitch contour in the bottom panel, aligned by time. This is a common
+#' Praat visualization pattern.
+#'
+#' @param sound Sound object
+#' @param pitch Pitch object
+#' @param from_time Start time in seconds (NULL = from beginning)
+#' @param to_time End time in seconds (NULL = to end)
+#' @param waveform_color Character. Waveform color (default: "steelblue")
+#' @param pitch_color Character. Pitch color (default: "darkblue")
+#' @param pitch_floor Minimum F0 to display in Hz (default: NULL = auto)
+#' @param pitch_ceiling Maximum F0 to display in Hz (default: NULL = auto)
+#' @param title Character. Overall plot title (default: NULL)
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A combined plot object (requires patchwork or gridExtra)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("recording.wav")
+#' pitch <- sound$to_pitch()
+#' 
+#' # Basic two-panel plot
+#' plot_sound_pitch(sound, pitch)
+#' 
+#' # Time range and custom colors
+#' plot_sound_pitch(sound, pitch,
+#'                 from_time = 1.0, to_time = 2.0,
+#'                 waveform_color = "black",
+#'                 pitch_color = "red")
+#' }
+#'
+#' @export
+plot_sound_pitch <- function(sound, pitch,
+                            from_time = NULL, to_time = NULL,
+                            waveform_color = "steelblue",
+                            pitch_color = "darkblue",
+                            pitch_floor = NULL,
+                            pitch_ceiling = NULL,
+                            title = NULL, ...) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(sound, "Sound")) {
+    stop("sound must be a Sound object")
+  }
+  if (!inherits(pitch, "Pitch")) {
+    stop("pitch must be a Pitch object")
+  }
+  
+  # Create individual plots
+  p_sound <- plot(sound, from_time = from_time, to_time = to_time,
+                 garnish = TRUE, title = "Waveform",
+                 color = waveform_color)
+  
+  p_pitch <- plot(pitch, from_time = from_time, to_time = to_time,
+                 garnish = TRUE, title = "Pitch",
+                 color = pitch_color,
+                 pitch_floor = pitch_floor,
+                 pitch_ceiling = pitch_ceiling)
+  
+  # Try patchwork first, then gridExtra
+  if (requireNamespace("patchwork", quietly = TRUE)) {
+    combined <- p_sound / p_pitch
+    if (!is.null(title)) {
+      combined <- combined + patchwork::plot_annotation(title = title)
+    }
+    return(combined)
+  } else if (requireNamespace("gridExtra", quietly = TRUE)) {
+    if (!is.null(title)) {
+      title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = 14, fontface = "bold"))
+      combined <- gridExtra::grid.arrange(
+        title_grob,
+        p_sound, p_pitch,
+        ncol = 1,
+        heights = c(0.5, 5, 5)
+      )
+    } else {
+      combined <- gridExtra::grid.arrange(p_sound, p_pitch, ncol = 1)
+    }
+    return(combined)
+  } else {
+    stop("Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
+  }
+}
+

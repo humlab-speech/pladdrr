@@ -756,3 +756,212 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
   
   p
 }
+
+
+#' @title Plot Matrix as Heatmap
+#'
+#' @description
+#' Creates a heatmap visualization of a Matrix object. Supports any Matrix-derived
+#' objects including generic matrices, spectrograms, etc.
+#'
+#' @param x Matrix object
+#' @param from_x Start value for x-axis (NULL = from beginning)
+#' @param to_x End value for x-axis (NULL = to end)
+#' @param from_y Start value for y-axis (NULL = from beginning)
+#' @param to_y End value for y-axis (NULL = to end)
+#' @param garnish Logical. Add axis labels and title (default: TRUE)
+#' @param title Character. Plot title (default: "Matrix")
+#' @param x_label Character. X-axis label (default: "X")
+#' @param y_label Character. Y-axis label (default: "Y")
+#' @param color_scale Character. Color scale to use: "viridis", "magma", "plasma", 
+#'   "inferno", "cividis", or "greyscale" (default: "viridis")
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' matrix <- Matrix$new(...)  # Create or load matrix
+#' 
+#' # Basic heatmap
+#' plot(matrix)
+#' 
+#' # Custom color scale
+#' plot(matrix, color_scale = "magma", title = "My Matrix")
+#' 
+#' # Range selection
+#' plot(matrix, from_x = 0, to_x = 1, from_y = 0, to_y = 5000)
+#' }
+#'
+#' @export
+plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
+                       from_y = NULL, to_y = NULL,
+                       garnish = TRUE, title = "Matrix",
+                       x_label = "X", y_label = "Y",
+                       color_scale = "viridis", ...) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(x, "Matrix")) {
+    stop("x must be a Matrix object")
+  }
+  
+  # Convert to data frame
+  df <- x$as_data_frame()
+  
+  if (nrow(df) == 0) {
+    warning("Matrix contains no data")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+  
+  # Filter ranges
+  if (!is.null(from_x) && "x" %in% names(df)) {
+    df <- df[df$x >= from_x, ]
+  }
+  if (!is.null(to_x) && "x" %in% names(df)) {
+    df <- df[df$x <= to_x, ]
+  }
+  if (!is.null(from_y) && "y" %in% names(df)) {
+    df <- df[df$y >= from_y, ]
+  }
+  if (!is.null(to_y) && "y" %in% names(df)) {
+    df <- df[df$y <= to_y, ]
+  }
+  
+  # Determine column names (flexible for different matrix types)
+  x_col <- if ("time" %in% names(df)) "time" else if ("x" %in% names(df)) "x" else names(df)[1]
+  y_col <- if ("frequency" %in% names(df)) "frequency" else if ("y" %in% names(df)) "y" else names(df)[2]
+  val_col <- if ("value" %in% names(df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(df)[3]
+  
+  # Create base plot
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[x_col]], y = .data[[y_col]], 
+                                        fill = .data[[val_col]])) +
+    ggplot2::geom_tile()
+  
+  # Apply color scale
+  p <- switch(color_scale,
+    "viridis" = p + ggplot2::scale_fill_viridis_c(),
+    "magma" = p + ggplot2::scale_fill_viridis_c(option = "magma"),
+    "plasma" = p + ggplot2::scale_fill_viridis_c(option = "plasma"),
+    "inferno" = p + ggplot2::scale_fill_viridis_c(option = "inferno"),
+    "cividis" = p + ggplot2::scale_fill_viridis_c(option = "cividis"),
+    "greyscale" = p + ggplot2::scale_fill_gradient(low = "white", high = "black"),
+    p + ggplot2::scale_fill_viridis_c()  # default
+  )
+  
+  # Add garnish
+  if (garnish) {
+    p <- p + 
+      ggplot2::labs(
+        title = title,
+        x = x_label,
+        y = y_label,
+        fill = "Value"
+      ) + 
+      ggplot2::theme_minimal()
+  }
+  
+  p
+}
+
+
+#' @title Plot PowerCepstrum
+#'
+#' @description
+#' Creates a visualization of a PowerCepstrum object showing the cepstral
+#' coefficients as a function of quefrency. Optionally highlights the peak
+#' related to pitch.
+#'
+#' @param x PowerCepstrum object
+#' @param from_quefrency Start quefrency in seconds (NULL = from beginning)
+#' @param to_quefrency End quefrency in seconds (NULL = to end)
+#' @param garnish Logical. Add axis labels and title (default: TRUE)
+#' @param title Character. Plot title (default: "Power Cepstrum")
+#' @param color Character. Line color (default: "darkblue")
+#' @param mark_peak Logical. Mark the peak prominence if available (default: TRUE)
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("recording.wav")
+#' pc <- sound$to_powercepstrum(pitch_floor = 75)
+#' 
+#' # Basic plot
+#' plot(pc)
+#' 
+#' # Focus on vocal range (60-500 Hz = 0.002-0.0167 s quefrency)
+#' plot(pc, from_quefrency = 0.002, to_quefrency = 0.017)
+#' 
+#' # Customize
+#' plot(pc, color = "red", title = "Cepstral Analysis")
+#' }
+#'
+#' @export
+plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
+                               garnish = TRUE, title = "Power Cepstrum",
+                               color = "darkblue", mark_peak = TRUE, ...) {
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+  
+  if (!inherits(x, "PowerCepstrum")) {
+    stop("x must be a PowerCepstrum object")
+  }
+  
+  # Convert to data frame
+  df <- x$as_data_frame()
+  
+  if (nrow(df) == 0) {
+    warning("PowerCepstrum contains no data")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+  
+  # Filter quefrency range
+  if (!is.null(from_quefrency)) {
+    df <- df[df$quefrency >= from_quefrency, ]
+  }
+  if (!is.null(to_quefrency)) {
+    df <- df[df$quefrency <= to_quefrency, ]
+  }
+  
+  # Create plot
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$value)) +
+    ggplot2::geom_line(color = color, linewidth = 0.8)
+  
+  # Optionally mark peak
+  if (mark_peak && nrow(df) > 0) {
+    # Find peak in visible range
+    peak_idx <- which.max(df$value)
+    if (length(peak_idx) > 0) {
+      peak_q <- df$quefrency[peak_idx]
+      peak_v <- df$value[peak_idx]
+      
+      p <- p +
+        ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed", 
+                           color = "red", alpha = 0.5) +
+        ggplot2::annotate("text", x = peak_q, y = peak_v,
+                         label = sprintf("Peak\n%.4f s\n(%.0f Hz)",
+                                       peak_q, 1/peak_q),
+                         hjust = -0.1, size = 3, color = "red")
+    }
+  }
+  
+  # Add garnish
+  if (garnish) {
+    p <- p + 
+      ggplot2::labs(
+        title = title,
+        x = "Quefrency (s)",
+        y = "Power (dB)"
+      ) + 
+      ggplot2::theme_minimal()
+  }
+  
+  p
+}
+

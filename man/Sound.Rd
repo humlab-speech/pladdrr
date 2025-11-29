@@ -4,7 +4,7 @@
 \alias{Sound}
 \title{Add extract_electroglottogram method to Sound class}
 \description{
-This is added as a method to the existing Sound R6 class
+This is added as a method to the existing Sound R6 class during package load
 
 R6 class representing a Praat Sound object. Wraps a Praat C++ Sound
 object with automatic memory management via external pointers.
@@ -102,6 +102,7 @@ tone$save("A440.wav")
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
+\item \href{#method-Sound-extract_electroglottogram}{\code{Sound$extract_electroglottogram()}}
 \item \href{#method-Sound-new}{\code{Sound$new()}}
 \item \href{#method-Sound-get_duration}{\code{Sound$get_duration()}}
 \item \href{#method-Sound-get_sampling_frequency}{\code{Sound$get_sampling_frequency()}}
@@ -162,6 +163,15 @@ tone$save("A440.wav")
 </ul>
 </details>
 }}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-extract_electroglottogram"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-extract_electroglottogram}{}}}
+\subsection{Method \code{extract_electroglottogram()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$extract_electroglottogram(channel = 1, invert = FALSE)}\if{html}{\out{</div>}}
+}
+
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Sound-new}{}}}

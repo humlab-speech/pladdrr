@@ -1,3 +1,28 @@
+# pladdrr 1.0.9 (2025-11-29)
+
+## New Features
+
+### Phase 3 Plotting Functions
+Added 4 new plotting functions covering medium-priority visualization gaps:
+
+**Combined Visualizations**:
+* `plot_spectrogram_pitch()` - Overlay pitch track on spectrogram (very common analysis pattern)
+* `plot_sound_pitch()` - Two-panel waveform + pitch visualization
+
+**S3 Plot Methods**:
+* `plot.Matrix()` - General matrix/heatmap visualization with configurable color scales
+  - Supports viridis, magma, plasma, inferno, cividis, greyscale
+  - Works with any Matrix-derived object
+* `plot.PowerCepstrum()` - Cepstral visualization with quefrency axis and peak marking
+
+**Coverage**: Package now provides 16 plotting functions covering ~95% of common Praat visualizations
+
+## Internal
+
+* All new functions return ggplot2 objects for customization
+* Full documentation with examples
+* Consistent API across all plotting functions
+
 # pladdrr 1.0.8 (2025-11-29)
 
 ## Internal Changes
