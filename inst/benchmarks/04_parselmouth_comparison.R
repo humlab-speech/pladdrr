@@ -395,6 +395,8 @@ results <- list(
   ),
   summary = data.frame(
     operation = c("Pitch", "Formant", "Intensity", "Spectrogram", "Harmonicity"),
+    speedup = c(speedup_vs_pm, speedup_formant, speedup_intensity, 
+                speedup_spectrogram, speedup_harmonicity),
     speedup_vs_parselmouth = c(speedup_vs_pm, speedup_formant, speedup_intensity, 
                                 speedup_spectrogram, speedup_harmonicity),
     speedup_vs_praat = c(

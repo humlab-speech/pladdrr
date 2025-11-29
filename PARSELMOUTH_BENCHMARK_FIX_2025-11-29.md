@@ -2,7 +2,45 @@
 
 **Status**: ✅ **COMPLETE AND FUNCTIONAL**  
 **Benchmark**: `inst/benchmarks/04_parselmouth_comparison.R`  
-**Commit**: 4853dec
+**Commit**: Updated with three-way comparison support
+
+---
+
+## Latest Update: Three-Way Comparison (pladdrr vs Parselmouth vs Praat)
+
+### Issues Fixed
+
+#### 1. Missing `speedup` Column in Results
+**Problem**: The `compare_results.R` script expected a `speedup` column, but `04_parselmouth_comparison.R` only created `speedup_vs_parselmouth` and `speedup_vs_praat` columns.
+
+**Solution**: Added a `speedup` column (alias for `speedup_vs_parselmouth`) to maintain backward compatibility.
+
+#### 2. Column Name Collision in pivot_longer
+**Problem**: When reshaping data, the existing `speedup` column conflicted with the new value column created by `pivot_longer()`.
+
+**Solution**: 
+- Explicitly selected only needed columns before pivot
+- Changed value column name to `speedup_value` to avoid collision
+- Updated all references in the plotting code
+
+#### 3. Missing tidyr/dplyr Dependencies
+**Problem**: Script used tidyr/dplyr functions without checking availability.
+
+**Solution**: Added conditional loading with fallback to simple plot if packages not available.
+
+### Results
+
+✅ Three-way comparison working  
+✅ Plot generated: `inst/benchmarks/results/parselmouth_comparison.png`  
+✅ Summary statistics for both comparisons
+
+**Current Performance (vs Parselmouth):**
+- Mean: 0.22x (pladdrr slower)
+- Range: 0.06x - 0.48x
+
+**Current Performance (vs Praat):**
+- Mean: 0.14x (pladdrr slower)  
+- Range: 0.04x - 0.32x
 
 ---
 

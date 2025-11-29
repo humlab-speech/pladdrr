@@ -281,42 +281,103 @@ if (file.exists(pm_file)) {
   print(pm_results$summary)
   cat("\n")
   
-  # Calculate summary statistics
-  mean_speedup <- mean(pm_results$summary$speedup)
-  median_speedup <- median(pm_results$summary$speedup)
-  min_speedup <- min(pm_results$summary$speedup)
-  max_speedup <- max(pm_results$summary$speedup)
+  # Calculate summary statistics for parselmouth comparison
+  mean_speedup_pm <- mean(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+  median_speedup_pm <- median(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+  min_speedup_pm <- min(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+  max_speedup_pm <- max(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
   
-  cat("Summary Statistics:\n")
-  cat("  Mean speedup:   ", sprintf("%.2fx\n", mean_speedup))
-  cat("  Median speedup: ", sprintf("%.2fx\n", median_speedup))
-  cat("  Min speedup:    ", sprintf("%.2fx\n", min_speedup))
-  cat("  Max speedup:    ", sprintf("%.2fx\n", max_speedup))
+  cat("Summary Statistics (vs Parselmouth):\n")
+  cat("  Mean speedup:   ", sprintf("%.2fx\n", mean_speedup_pm))
+  cat("  Median speedup: ", sprintf("%.2fx\n", median_speedup_pm))
+  cat("  Min speedup:    ", sprintf("%.2fx\n", min_speedup_pm))
+  cat("  Max speedup:    ", sprintf("%.2fx\n", max_speedup_pm))
+  
+  # Calculate summary statistics for Praat comparison (if available)
+  if (!all(is.na(pm_results$summary$speedup_vs_praat))) {
+    mean_speedup_praat <- mean(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+    median_speedup_praat <- median(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+    min_speedup_praat <- min(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+    max_speedup_praat <- max(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+    
+    cat("\nSummary Statistics (vs Praat):\n")
+    cat("  Mean speedup:   ", sprintf("%.2fx\n", mean_speedup_praat))
+    cat("  Median speedup: ", sprintf("%.2fx\n", median_speedup_praat))
+    cat("  Min speedup:    ", sprintf("%.2fx\n", min_speedup_praat))
+    cat("  Max speedup:    ", sprintf("%.2fx\n", max_speedup_praat))
+  }
   cat("\n")
   
-  # Create visualization
-  p1 <- ggplot(pm_results$summary, aes(x = operation, y = speedup)) +
-    geom_col(fill = "steelblue") +
-    geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
-    geom_text(aes(label = sprintf("%.2fx", speedup)), 
-              vjust = -0.5, size = 3.5) +
-    labs(
-      title = "speaker vs Parselmouth Performance",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
-      x = "Operation",
-      y = "Speedup (times faster)",
-      caption = paste0("Package version: ", sys_info$package_version, 
-                      " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
-    ) +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5, size = 9),
-      axis.text.x = element_text(angle = 45, hjust = 1)
-    )
+  # Create visualizations - reshape data for faceting
+  if (!requireNamespace("tidyr", quietly = TRUE) || !requireNamespace("dplyr", quietly = TRUE)) {
+    cat("⚠ tidyr or dplyr not available for advanced plotting\n")
+    cat("  Creating simple plot instead\n\n")
+    
+    # Simple plot - just parselmouth comparison
+    p1 <- ggplot(pm_results$summary, aes(x = operation, y = speedup_vs_parselmouth)) +
+      geom_col(fill = "steelblue") +
+      geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+      geom_text(aes(label = sprintf("%.2fx", speedup_vs_parselmouth)), 
+                vjust = -0.5, size = 3) +
+      labs(
+        title = "pladdrr vs Parselmouth Performance",
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+        x = "Operation",
+        y = "Speedup (times faster than Parselmouth)",
+        caption = paste0("Package version: ", sys_info$package_version, 
+                        " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 9),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      )
+  } else {
+    library(tidyr)
+    library(dplyr)
+    
+    plot_data <- pm_results$summary %>%
+      select(operation, speedup_vs_parselmouth, speedup_vs_praat) %>%
+      pivot_longer(
+        cols = c(speedup_vs_parselmouth, speedup_vs_praat),
+        names_to = "comparison",
+        values_to = "speedup_value"
+      ) %>%
+      filter(!is.na(speedup_value)) %>%
+      mutate(
+        comparison = ifelse(comparison == "speedup_vs_parselmouth", 
+                           "vs Parselmouth", "vs Praat")
+      )
+    
+    # Create side-by-side comparison plot
+    p1 <- ggplot(plot_data, aes(x = operation, y = speedup_value, fill = comparison)) +
+      geom_col(position = "dodge") +
+      geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+      geom_text(aes(label = sprintf("%.2fx", speedup_value)), 
+                position = position_dodge(width = 0.9),
+                vjust = -0.5, size = 3) +
+      scale_fill_manual(values = c("vs Parselmouth" = "steelblue", "vs Praat" = "darkgreen")) +
+      labs(
+        title = "pladdrr Performance: Three-Way Comparison",
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+        x = "Operation",
+        y = "Speedup (times faster than baseline)",
+        fill = "Comparison",
+        caption = paste0("Package version: ", sys_info$package_version, 
+                        " | Benchmark date: ", format(sys_info$timestamp, "%Y-%m-%d"))
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 9),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "top"
+      )
+  }
   
   ggsave("inst/benchmarks/results/parselmouth_comparison.png", 
-         p1, width = 8, height = 6, dpi = 300)
+         p1, width = 10, height = 6, dpi = 300)
   cat("Saved plot: inst/benchmarks/results/parselmouth_comparison.png\n\n")
   
 } else {
