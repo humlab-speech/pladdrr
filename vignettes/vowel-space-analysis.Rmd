@@ -1,10 +1,10 @@
 ---
-title: "Vowel Space Analysis with speaker"
-author: "speaker Package Authors"
+title: "Vowel Space Analysis with pladdrr"
+author: "pladdrr Package Authors"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vowel Space Analysis with speaker}
+  %\VignetteIndexEntry{Vowel Space Analysis with pladdrr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-This vignette demonstrates a complete vowel acoustics research workflow using the **speaker** package. Topics covered:
+This vignette demonstrates a complete vowel acoustics research workflow using the **pladdrr** package. Topics covered:
 
 - **Formant extraction** with optimal parameters
 - **Multi-point measurements** (onset, midpoint, offset)
@@ -562,7 +562,7 @@ vowel_features_clean <- vowel_features[
 
 ## Summary
 
-The **speaker** package provides a complete vowel acoustics pipeline:
+The **pladdrr** package provides a complete vowel acoustics pipeline:
 
 - **Flexible formant extraction** with validated Praat algorithms
 - **Multi-point measurements** for trajectory analysis

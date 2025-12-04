@@ -1,10 +1,10 @@
 ---
-title: "Getting Started with speaker: Phonetic Analysis in R"
-author: "speaker Package Authors"
+title: "Getting Started with pladdrr: Phonetic Analysis in R"
+author: "pladdrr Package Authors"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started with speaker: Phonetic Analysis in R}
+  %\VignetteIndexEntry{Getting Started with pladdrr: Phonetic Analysis in R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,16 +20,16 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The `speaker` package provides direct access to Praat's phonetic analysis capabilities from R, without requiring Python. It implements core phonetic analysis objects (Sound, Pitch, Formant, Intensity) with a modern R6 object-oriented interface that follows Praat's conventions.
+The `pladdrr` package provides direct access to Praat's phonetic analysis capabilities from R, without requiring Python. It implements core phonetic analysis objects (Sound, Pitch, Formant, Intensity) with a modern R6 object-oriented interface that follows Praat's conventions.
 
 ## Installation
 
 ```{r eval = FALSE}
 # Install from source
-install.packages("speaker", type = "source")
+install.packages("pladdrr", type = "source")
 
 # Or install from GitHub
-# devtools::install_github("your-username/speaker")
+# devtools::install_github("your-username/pladdrr")
 ```
 
 ```{r}
@@ -251,7 +251,7 @@ head(intensity_df)
 
 ## Visualization
 
-The `speaker` package provides comprehensive ggplot2-based visualization functions for all analysis types. For detailed examples of creating publication-quality plots, see `vignette("visualization")`, which covers:
+The `pladdrr` package provides comprehensive ggplot2-based visualization functions for all analysis types. For detailed examples of creating publication-quality plots, see `vignette("visualization")`, which covers:
 
 - Voice quality visualization (AVQI, DSI, CPP)
 - Formant analysis (vowel spaces, trajectories)
@@ -306,9 +306,9 @@ pitch = To Pitch: 0.01, 75, 600
 f0 = Get mean: 0, 0, "Hertz"
 ```
 
-### speaker Equivalent (R6)
+### pladdrr Equivalent (R6)
 ```{r eval = FALSE}
-# R with speaker (R6 interface)
+# R with pladdrr (R6 interface)
 sound <- Sound$new("sound.wav")
 pitch <- sound$to_pitch(time_step = 0.01, 
                        pitch_floor = 75, pitch_ceiling = 600)
@@ -358,10 +358,10 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 
 ```{r}
 # Package version
-packageVersion("speaker")
+packageVersion("pladdrr")
 
 # Citation information
-citation("speaker")
+citation("pladdrr")
 ```
 
 ## See Also
@@ -372,7 +372,7 @@ citation("speaker")
 
 ## Conclusion
 
-The `speaker` package provides a comprehensive toolkit for phonetic analysis in R, with:
+The `pladdrr` package provides a comprehensive toolkit for phonetic analysis in R, with:
 
 - **4 core analysis objects**: Sound, Pitch, Formant, Intensity
 - **45+ functions**: Complete analysis capabilities

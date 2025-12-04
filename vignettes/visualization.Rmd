@@ -1,8 +1,8 @@
 ---
-title: "Visualization with speaker"
+title: "Visualization with pladdrr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Visualization with speaker}
+  %\VignetteIndexEntry{Visualization with pladdrr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,20 +23,20 @@ library(ggplot2)
 
 # Introduction
 
-The `speaker` package provides comprehensive visualization capabilities using R's `ggplot2` graphics system. This approach offers several advantages over Praat's native Picture window:
+The `pladdrr` package provides comprehensive visualization capabilities using R's `ggplot2` graphics system. This approach offers several advantages over Praat's native Picture window:
 
 - **Publication-quality output** - Vector graphics (PDF, SVG) and high-resolution raster formats
 - **Reproducible workflows** - All plots generated programmatically from R scripts
 - **Customization** - Full control over colors, themes, annotations, and layouts
 - **Integration** - Works seamlessly with R Markdown, tidyverse, and other R packages
 
-This vignette demonstrates the plotting functions available in `speaker`, organized by analysis type.
+This vignette demonstrates the plotting functions available in `pladdrr`, organized by analysis type.
 
 # Voice Quality Visualization
 
 ## AVQI (Acoustic Voice Quality Index)
 
-The Acoustic Voice Quality Index (AVQI) is a multivariate measure of voice quality. The `speaker` package provides several visualization options for AVQI analysis.
+The Acoustic Voice Quality Index (AVQI) is a multivariate measure of voice quality. The `pladdrr` package provides several visualization options for AVQI analysis.
 
 ### Component Visualization
 
@@ -671,7 +671,7 @@ for (name in names(plots)) {
 
 # Summary
 
-The `speaker` package provides a comprehensive suite of visualization functions leveraging R's `ggplot2` ecosystem. Key advantages include:
+The `pladdrr` package provides a comprehensive suite of visualization functions leveraging R's `ggplot2` ecosystem. Key advantages include:
 
 - **Voice quality metrics**: AVQI and DSI with multi-panel diagnostic reports
 - **Cepstral analysis**: PowerCepstrum, PowerCepstrogram, and CPP time series

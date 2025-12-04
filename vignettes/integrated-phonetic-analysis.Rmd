@@ -1,10 +1,10 @@
 ---
-title: "Integrated Phonetic Analysis with speaker"
-author: "speaker Package Authors"
+title: "Integrated Phonetic Analysis with pladdrr"
+author: "pladdrr Package Authors"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Integrated Phonetic Analysis with speaker}
+  %\VignetteIndexEntry{Integrated Phonetic Analysis with pladdrr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-This vignette demonstrates how to perform integrated phonetic analysis workflows using the **speaker** package. We will cover:
+This vignette demonstrates how to perform integrated phonetic analysis workflows using the **pladdrr** package. We will cover:
 
 - **TextGrid-based segmentation**: Create and manipulate annotations
 - **Sound manipulation**: Extract, resample, and normalize audio
@@ -56,7 +56,7 @@ A typical phonetic analysis workflow:
 4. **Extract** acoustic features for each segment
 5. **Analyze** patterns statistically
 
-The **speaker** package provides all necessary tools for steps 2-5.
+The **pladdrr** package provides all necessary tools for steps 2-5.
 
 ## Part 1: Loading and Creating Data
 
@@ -346,7 +346,7 @@ write.csv(vowel_features, "vowel_acoustic_features.csv", row.names = FALSE)
 
 ### Visualization
 
-The `speaker` package provides comprehensive plotting functions for all analysis types. For detailed visualization examples including vowel spaces, formant trajectories, pitch/intensity contours, spectrograms, and voice quality reports, see `vignette("visualization")`.
+The `pladdrr` package provides comprehensive plotting functions for all analysis types. For detailed visualization examples including vowel spaces, formant trajectories, pitch/intensity contours, spectrograms, and voice quality reports, see `vignette("visualization")`.
 
 ## Real-World Applications
 
@@ -454,7 +454,7 @@ if (nrow(data) > 10000) {
 
 ## Summary
 
-The **speaker** package enables:
+The **pladdrr** package enables:
 
 - **Flexible annotation workflows** with TextGrid creation and manipulation
 - **Comprehensive sound processing** (segmentation, resampling, filtering)

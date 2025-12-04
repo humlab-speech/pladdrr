@@ -1,10 +1,10 @@
 ---
-title: "TextGrid Workflows with speaker"
-author: "speaker Package Authors"
+title: "TextGrid Workflows with pladdrr"
+author: "pladdrr Package Authors"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{TextGrid Workflows with speaker}
+  %\VignetteIndexEntry{TextGrid Workflows with pladdrr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -610,7 +610,7 @@ for (i in 1:tg$get_number_of_intervals(phone_tier)) {
 
 ## Summary
 
-The **speaker** package provides comprehensive TextGrid support:
+The **pladdrr** package provides comprehensive TextGrid support:
 
 - **Flexible creation** (from scratch or from files)
 - **Efficient querying** (intervals, points, time-based)
@@ -619,7 +619,7 @@ The **speaker** package provides comprehensive TextGrid support:
 - **Seamless integration** with forced alignment tools
 - **R ecosystem compatibility** for analysis and visualization
 
-TextGrids in speaker enable:
+TextGrids in pladdrr enable:
 - Systematic annotation workflows
 - Integration with acoustic analysis
 - Reproducible phonetic research
