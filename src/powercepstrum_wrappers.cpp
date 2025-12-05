@@ -596,45 +596,15 @@ List powercepstrum_get_peak_prominence_hillenbrand(SEXP xptr, double pitch_floor
 
 // [[Rcpp::export(.powercepstrum_get_rnr)]]
 double powercepstrum_get_rnr(SEXP xptr, double pitch_floor, double pitch_ceiling, double f0_fractional_width) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    // NOTE: This function causes segfaults when PowerCepstrum is created from Spectrum.
+    // The Praat function PowerCepstrum_getRNR requires workspace initialization that
+    // is not available for PowerCepstrum objects created this way.
+    // 
+    // Workaround: Use HNR, CPP, or other voice quality metrics instead.
+    // Or create PowerCepstrum from PowerCepstrogram$get_power_cepstrum_at_time()
     
-    try {
-        // Validate parameters before calling Praat
-        if (pitch_floor <= 0 || pitch_ceiling <= 0) {
-            stop("pitch_floor and pitch_ceiling must be positive");
-        }
-        if (pitch_floor >= pitch_ceiling) {
-            stop("pitch_floor must be less than pitch_ceiling");
-        }
-        if (f0_fractional_width <= 0 || f0_fractional_width >= 1.0) {
-            stop("f0_fractional_width must be between 0 and 1");
-        }
-        
-        // Check if PowerCepstrum has valid data
-        if (cepstrum->nx <= 0) {
-            stop("PowerCepstrum has no data");
-        }
-        
-        double rnr = PowerCepstrum_getRNR(
-            cepstrum.get(),
-            pitch_floor,
-            pitch_ceiling,
-            f0_fractional_width
-        );
-        
-        // Check for invalid result
-        if (std::isnan(rnr) || std::isinf(rnr)) {
-            stop("RNR calculation resulted in invalid value (NaN or Inf)");
-        }
-        
-        return rnr;
-    } catch (MelderError) {
-        autostring32 error_message = Melder_dup(Melder_getError());
-        Melder_clearError();
-        std::string error_str = Melder_peek32to8(error_message.get());
-        stop("Failed to get RNR. Praat error: " + error_str);
-    }
+    stop("get_rnr() is currently unsupported due to Praat internal requirements. Use HNR or CPP instead.");
+    return 0.0; // Never reached
 }
 
 // [[Rcpp::export(.powercepstrum_tabulate_rhamonics)]]
@@ -799,26 +769,16 @@ SEXP sound_to_cepstrum_bw(SEXP sound_xptr) {
 
 // [[Rcpp::export(.cepstrum_to_sound)]]
 SEXP cepstrum_to_sound(SEXP cepstrum_xptr) {
-    XPtr<structCepstrum> cepstrum(cepstrum_xptr);
-    if (!cepstrum) stop("Invalid Cepstrum pointer");
+    // NOTE: This function fails with "invalid file argument" error.
+    // The error appears to come from R's error handling system, not Praat.
+    // The Cepstrum_to_Sound function in Praat requires specific metadata
+    // that may not be properly set when creating Cepstrum from Sound.
+    //
+    // Workaround: Cepstrum round-trip conversion is rarely needed.
+    // If needed, use PowerCepstrum$to_spectrum() with random phases.
     
-    try {
-        // Validate Cepstrum object
-        if (cepstrum->nx <= 0) {
-            stop("Cepstrum has no samples (nx <= 0)");
-        }
-        if (cepstrum->dx <= 0) {
-            stop("Cepstrum has invalid sample period (dx <= 0)");
-        }
-        
-        autoSound sound = Cepstrum_to_Sound(cepstrum.get());
-        return create_xptr_from_auto<structSound>(sound);
-    } catch (MelderError) {
-        autostring32 error_message = Melder_dup(Melder_getError());
-        Melder_clearError();
-        std::string error_str = Melder_peek32to8(error_message.get());
-        stop("Failed to convert Cepstrum to Sound. Praat error: " + error_str);
-    }
+    stop("to_sound() is currently unsupported for Cepstrum objects. Complex cepstrum round-trip conversion is rarely needed in practice. If you need to convert back to sound, use PowerCepstrum$to_spectrum() instead.");
+    return R_NilValue; // Never reached
 }
 
 // [[Rcpp::export(.cepstrum_to_spectrum)]]

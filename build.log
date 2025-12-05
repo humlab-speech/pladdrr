@@ -32951,7 +32951,7 @@ praat.github.io/melder/melder_progress.h:143:9: note: did you mean struct here?
       |         struct
 19 warnings generated.
 clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DHAVE_XSIMD -I. -Igsl-2.8 -Igsl-2.8/gsl -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/dwtools -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/LPC -Ipraat.github.io/sensors -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat/external/gsl -Ipraat.github.io/external/glpk -Ipraat/external/glpk -Ipraat.github.io/external/num -Ipraat/external/num -Iclapack/INCLUDE -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppXsimd/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -Wno-logical-op-parentheses -Wno-shift-op-parentheses -Wno-mismatched-tags -Wno-unused-const-variable -Wno-c++11-narrowing -march=armv8-a+simd -fPIC  -falign-functions=64 -Wall -g -O2   -c powercepstrum_wrappers.cpp -o powercepstrum_wrappers.o
-In file included from powercepstrum_wrappers.cpp:6:
+In file included from powercepstrum_wrappers.cpp:7:
 In file included from ./praat_xptr_utils.h:10:
 In file included from praat.github.io/sys/Thing.h:24:
 In file included from praat.github.io/melder/melder.h:76:
@@ -33028,7 +33028,7 @@ praat.github.io/melder/melder_tensor.h:61:23: note: did you mean struct here?
 praat.github.io/melder/melder_tensor.h:703:18: warning: unused variable 'numberOfColumnsInThisRow' [-Wunused-variable]
   703 |                         const integer numberOfColumnsInThisRow = uinteger_to_integer_a (row.size());
       |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
-In file included from powercepstrum_wrappers.cpp:6:
+In file included from powercepstrum_wrappers.cpp:7:
 In file included from ./praat_xptr_utils.h:10:
 praat.github.io/sys/Thing.h:77:9: warning: struct 'structThing' was previously declared as a class; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
    77 | typedef struct structThing *Thing;   // we need an explicit "struct" here, because this is a forward declaration
@@ -33036,7 +33036,7 @@ praat.github.io/sys/Thing.h:77:9: warning: struct 'structThing' was previously d
 praat.github.io/melder/MelderArg.h:21:15: note: previous use is here
    21 | typedef class structThing *Thing;   // forward declaration
       |               ^
-In file included from powercepstrum_wrappers.cpp:6:
+In file included from powercepstrum_wrappers.cpp:7:
 In file included from ./praat_xptr_utils.h:10:
 praat.github.io/sys/Thing.h:78:9: warning: struct 'structThing' was previously declared as a class; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
    78 | typedef struct structThing *mutableThing;
@@ -33044,7 +33044,7 @@ praat.github.io/sys/Thing.h:78:9: warning: struct 'structThing' was previously d
 praat.github.io/melder/MelderArg.h:21:15: note: previous use is here
    21 | typedef class structThing *Thing;   // forward declaration
       |               ^
-In file included from powercepstrum_wrappers.cpp:6:
+In file included from powercepstrum_wrappers.cpp:7:
 In file included from ./praat_xptr_utils.h:10:
 praat.github.io/sys/Thing.h:79:15: warning: struct 'structThing' was previously declared as a class; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
    79 | typedef const struct structThing *constThing;
@@ -33052,7 +33052,7 @@ praat.github.io/sys/Thing.h:79:15: warning: struct 'structThing' was previously 
 praat.github.io/melder/MelderArg.h:21:15: note: previous use is here
    21 | typedef class structThing *Thing;   // forward declaration
       |               ^
-In file included from powercepstrum_wrappers.cpp:6:
+In file included from powercepstrum_wrappers.cpp:7:
 In file included from ./praat_xptr_utils.h:10:
 praat.github.io/sys/Thing.h:82:1: warning: 'structThing' defined as a struct here but previously declared as a class; this is valid, but may result in linker errors under the Microsoft C++ ABI [-Wmismatched-tags]
    82 | struct structThing {
@@ -33061,7 +33061,7 @@ praat.github.io/melder/MelderArg.h:21:9: note: did you mean struct here?
    21 | typedef class structThing *Thing;   // forward declaration
       |         ^~~~~
       |         struct
-In file included from powercepstrum_wrappers.cpp:10:
+In file included from powercepstrum_wrappers.cpp:11:
 In file included from praat.github.io/LPC/PowerCepstrum.h:21:
 In file included from praat.github.io/LPC/Cepstrum.h:32:
 In file included from praat.github.io/fon/Matrix.h:21:
@@ -33079,7 +33079,7 @@ praat.github.io/sys/Thing.h:52:10: note: expanded from macro 'Thing_declare'
 praat.github.io/melder/melder_progress.h:143:15: note: previous use is here
   143 | typedef class structGraphics *Graphics;
       |               ^
-In file included from powercepstrum_wrappers.cpp:10:
+In file included from powercepstrum_wrappers.cpp:11:
 In file included from praat.github.io/LPC/PowerCepstrum.h:21:
 In file included from praat.github.io/LPC/Cepstrum.h:32:
 In file included from praat.github.io/fon/Matrix.h:21:
@@ -33097,7 +33097,7 @@ praat.github.io/sys/Thing.h:53:10: note: expanded from macro 'Thing_declare'
 praat.github.io/melder/melder_progress.h:143:15: note: previous use is here
   143 | typedef class structGraphics *Graphics;
       |               ^
-In file included from powercepstrum_wrappers.cpp:10:
+In file included from powercepstrum_wrappers.cpp:11:
 In file included from praat.github.io/LPC/PowerCepstrum.h:21:
 In file included from praat.github.io/LPC/Cepstrum.h:32:
 In file included from praat.github.io/fon/Matrix.h:21:
@@ -33115,7 +33115,7 @@ praat.github.io/sys/Thing.h:54:16: note: expanded from macro 'Thing_declare'
 praat.github.io/melder/melder_progress.h:143:15: note: previous use is here
   143 | typedef class structGraphics *Graphics;
       |               ^
-In file included from powercepstrum_wrappers.cpp:10:
+In file included from powercepstrum_wrappers.cpp:11:
 In file included from praat.github.io/LPC/PowerCepstrum.h:21:
 In file included from praat.github.io/LPC/Cepstrum.h:32:
 In file included from praat.github.io/fon/Matrix.h:21:
