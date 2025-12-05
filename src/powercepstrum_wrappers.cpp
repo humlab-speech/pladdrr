@@ -3,6 +3,7 @@
 
 #include "praat_types.h"
 #include <Rcpp.h>
+#include <cmath>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
 
@@ -599,16 +600,40 @@ double powercepstrum_get_rnr(SEXP xptr, double pitch_floor, double pitch_ceiling
     if (!cepstrum) stop("Invalid PowerCepstrum pointer");
     
     try {
+        // Validate parameters before calling Praat
+        if (pitch_floor <= 0 || pitch_ceiling <= 0) {
+            stop("pitch_floor and pitch_ceiling must be positive");
+        }
+        if (pitch_floor >= pitch_ceiling) {
+            stop("pitch_floor must be less than pitch_ceiling");
+        }
+        if (f0_fractional_width <= 0 || f0_fractional_width >= 1.0) {
+            stop("f0_fractional_width must be between 0 and 1");
+        }
+        
+        // Check if PowerCepstrum has valid data
+        if (cepstrum->nx <= 0) {
+            stop("PowerCepstrum has no data");
+        }
+        
         double rnr = PowerCepstrum_getRNR(
             cepstrum.get(),
             pitch_floor,
             pitch_ceiling,
             f0_fractional_width
         );
+        
+        // Check for invalid result
+        if (std::isnan(rnr) || std::isinf(rnr)) {
+            stop("RNR calculation resulted in invalid value (NaN or Inf)");
+        }
+        
         return rnr;
     } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
         Melder_clearError();
-        stop("Failed to get RNR");
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to get RNR. Praat error: " + error_str);
     }
 }
 
@@ -778,11 +803,21 @@ SEXP cepstrum_to_sound(SEXP cepstrum_xptr) {
     if (!cepstrum) stop("Invalid Cepstrum pointer");
     
     try {
+        // Validate Cepstrum object
+        if (cepstrum->nx <= 0) {
+            stop("Cepstrum has no samples (nx <= 0)");
+        }
+        if (cepstrum->dx <= 0) {
+            stop("Cepstrum has invalid sample period (dx <= 0)");
+        }
+        
         autoSound sound = Cepstrum_to_Sound(cepstrum.get());
         return create_xptr_from_auto<structSound>(sound);
     } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
         Melder_clearError();
-        stop("Failed to convert Cepstrum to Sound");
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to convert Cepstrum to Sound. Praat error: " + error_str);
     }
 }
 
