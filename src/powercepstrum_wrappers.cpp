@@ -11,6 +11,9 @@
 #include "LPC/PowerCepstrogram.h"
 #include "LPC/Sound_to_PowerCepstrogram.h"
 #include "LPC/Cepstrum_and_Spectrum.h"
+#include "LPC/Sound_and_Cepstrum.h"
+#include "LPC/Cepstrum.h"
+#include "stat/Table.h"
 #include "fon/Spectrum.h"
 #include "fon/Sound.h"
 #include "fon/Matrix.h"
@@ -29,6 +32,74 @@ SEXP sound_to_powercepstrogram(SEXP sound_xptr, double pitch_floor, double time_
     XPtr<structSound> sound(sound_xptr);
     if (!sound) stop("Invalid Sound pointer");
     
+    // Validate Sound object
+    if (sound->nx <= 0) {
+        stop("Sound object has no samples");
+    }
+    if (sound->dx <= 0) {
+        stop("Sound object has invalid sample period (dx <= 0)");
+    }
+    
+    double duration = sound->xmax - sound->xmin;
+    if (duration <= 0) {
+        stop("Sound object has invalid duration");
+    }
+    
+    double nyquist_freq = 0.5 / sound->dx;
+    double sampling_rate = 1.0 / sound->dx;
+    
+    // Validate pitch_floor
+    if (pitch_floor <= 0) {
+        stop("pitch_floor must be positive");
+    }
+    if (pitch_floor >= nyquist_freq) {
+        stop("pitch_floor (" + std::to_string(pitch_floor) + 
+             " Hz) must be less than Nyquist frequency (" + 
+             std::to_string(nyquist_freq) + " Hz)");
+    }
+    
+    // Validate duration vs pitch_floor
+    // Praat requires at least ~3 pitch periods for analysis
+    double min_duration = 3.0 / pitch_floor;
+    if (duration < min_duration) {
+        stop("Sound duration (" + std::to_string(duration) + 
+             " s) is too short for pitch_floor " + 
+             std::to_string(pitch_floor) + " Hz. " +
+             "Minimum duration: " + std::to_string(min_duration) + " s. " +
+             "Either use a longer sound or increase pitch_floor.");
+    }
+    
+    // Validate time_step
+    if (time_step <= 0) {
+        stop("time_step must be positive");
+    }
+    if (time_step > duration) {
+        stop("time_step (" + std::to_string(time_step) + 
+             " s) cannot be longer than sound duration (" + 
+             std::to_string(duration) + " s)");
+    }
+    
+    // Validate maximum_frequency
+    if (maximum_frequency <= 0) {
+        stop("maximum_frequency must be positive");
+    }
+    if (maximum_frequency >= nyquist_freq) {
+        stop("maximum_frequency (" + std::to_string(maximum_frequency) + 
+             " Hz) must be less than Nyquist frequency (" + 
+             std::to_string(nyquist_freq) + " Hz). " +
+             "Sound sampling rate is " + std::to_string(sampling_rate) + " Hz.");
+    }
+    
+    // Validate pre_emphasis_frequency
+    if (pre_emphasis_frequency < 0) {
+        stop("pre_emphasis_frequency cannot be negative");
+    }
+    if (pre_emphasis_frequency > 0 && pre_emphasis_frequency >= nyquist_freq) {
+        stop("pre_emphasis_frequency (" + std::to_string(pre_emphasis_frequency) + 
+             " Hz) must be less than Nyquist frequency (" + 
+             std::to_string(nyquist_freq) + " Hz)");
+    }
+    
     try {
         autoPowerCepstrogram cepstrogram = Sound_to_PowerCepstrogram(
             sound.get(),
@@ -39,8 +110,11 @@ SEXP sound_to_powercepstrogram(SEXP sound_xptr, double pitch_floor, double time_
         );
         return create_xptr_from_auto<structPowerCepstrogram>(cepstrogram);
     } catch (MelderError) {
+        // Capture Praat error message before clearing
+        autostring32 error_message = Melder_dup (Melder_getError());
         Melder_clearError();
-        stop("Failed to create PowerCepstrogram from Sound");
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("PowerCepstrogram creation failed. Praat error: " + error_str);
     }
 }
 
@@ -488,5 +562,282 @@ double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to compute peak prominence from PowerCepstrum");
+    }
+}
+
+// ==============================================================================
+// Additional PowerCepstrum Methods - Voice Quality Analysis
+// ==============================================================================
+
+// [[Rcpp::export(.powercepstrum_get_peak_prominence_hillenbrand)]]
+List powercepstrum_get_peak_prominence_hillenbrand(SEXP xptr, double pitch_floor, double pitch_ceiling) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        double qpeak = 0.0;
+        double prominence = PowerCepstrum_getPeakProminence_hillenbrand(
+            cepstrum.get(),
+            pitch_floor,
+            pitch_ceiling,
+            qpeak
+        );
+        
+        return List::create(
+            Named("prominence") = prominence,
+            Named("quefrency") = qpeak
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to get Hillenbrand peak prominence");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_get_rnr)]]
+double powercepstrum_get_rnr(SEXP xptr, double pitch_floor, double pitch_ceiling, double f0_fractional_width) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        double rnr = PowerCepstrum_getRNR(
+            cepstrum.get(),
+            pitch_floor,
+            pitch_ceiling,
+            f0_fractional_width
+        );
+        return rnr;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to get RNR");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_tabulate_rhamonics)]]
+SEXP powercepstrum_tabulate_rhamonics(SEXP xptr, double pitch_floor, double pitch_ceiling, int interpolation) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
+        
+        autoTable table = PowerCepstrum_tabulateRhamonics(
+            cepstrum.get(),
+            pitch_floor,
+            pitch_ceiling,
+            interp_type
+        );
+        
+        return create_xptr_from_auto<structTable>(table);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to tabulate rhamonics");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_fit_trend_line)]]
+List powercepstrum_fit_trend_line(SEXP xptr, double qmin, double qmax, int trend_type, int fit_method) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        double slope = 0.0, intercept = 0.0;
+        PowerCepstrum_fitTrendLine(
+            cepstrum.get(),
+            qmin,
+            qmax,
+            &slope,
+            &intercept,
+            trend,
+            fit
+        );
+        
+        return List::create(
+            Named("slope") = slope,
+            Named("intercept") = intercept
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to fit trend line");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_get_trend_line_value)]]
+double powercepstrum_get_trend_line_value(SEXP xptr, double quefrency, double qstart_fit, double qend_fit, 
+                                          int trend_type, int fit_method) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        double value = PowerCepstrum_getTrendLineValue(
+            cepstrum.get(),
+            quefrency,
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit
+        );
+        
+        return value;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to get trend line value");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_subtract_trend)]]
+SEXP powercepstrum_subtract_trend(SEXP xptr, double qstart_fit, double qend_fit, int trend_type, int fit_method) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        autoPowerCepstrum detrended = PowerCepstrum_subtractTrend(
+            cepstrum.get(),
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit
+        );
+        
+        return create_xptr_from_auto<structPowerCepstrum>(detrended);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to subtract trend");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_subtract_trend_inplace)]]
+void powercepstrum_subtract_trend_inplace(SEXP xptr, double qstart_fit, double qend_fit, int trend_type, int fit_method) {
+    XPtr<structPowerCepstrum> cepstrum(xptr);
+    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        
+        PowerCepstrum_subtractTrend_inplace(
+            cepstrum.get(),
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to subtract trend in-place");
+    }
+}
+
+// ==============================================================================
+// Sound to Cepstrum conversions (distinct from PowerCepstrum)
+// ==============================================================================
+
+// [[Rcpp::export(.sound_to_cepstrum)]]
+SEXP sound_to_cepstrum(SEXP sound_xptr) {
+    XPtr<structSound> sound(sound_xptr);
+    if (!sound) stop("Invalid Sound pointer");
+    
+    try {
+        autoCepstrum cepstrum = Sound_to_Cepstrum(sound.get());
+        return create_xptr_from_auto<structCepstrum>(cepstrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create Cepstrum from Sound");
+    }
+}
+
+// [[Rcpp::export(.sound_to_cepstrum_bw)]]
+SEXP sound_to_cepstrum_bw(SEXP sound_xptr) {
+    XPtr<structSound> sound(sound_xptr);
+    if (!sound) stop("Invalid Sound pointer");
+    
+    try {
+        autoCepstrum cepstrum = Sound_to_Cepstrum_bw(sound.get());
+        return create_xptr_from_auto<structCepstrum>(cepstrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create bandwidth-weighted Cepstrum from Sound");
+    }
+}
+
+// ==============================================================================
+// Cepstrum conversion methods
+// ==============================================================================
+
+// [[Rcpp::export(.cepstrum_to_sound)]]
+SEXP cepstrum_to_sound(SEXP cepstrum_xptr) {
+    XPtr<structCepstrum> cepstrum(cepstrum_xptr);
+    if (!cepstrum) stop("Invalid Cepstrum pointer");
+    
+    try {
+        autoSound sound = Cepstrum_to_Sound(cepstrum.get());
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert Cepstrum to Sound");
+    }
+}
+
+// [[Rcpp::export(.cepstrum_to_spectrum)]]
+SEXP cepstrum_to_spectrum(SEXP cepstrum_xptr) {
+    XPtr<structCepstrum> cepstrum(cepstrum_xptr);
+    if (!cepstrum) stop("Invalid Cepstrum pointer");
+    
+    try {
+        autoSpectrum spectrum = Cepstrum_to_Spectrum(cepstrum.get());
+        return create_xptr_from_auto<structSpectrum>(spectrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert Cepstrum to Spectrum");
+    }
+}
+
+// [[Rcpp::export(.cepstrum_to_powercepstrum)]]
+SEXP cepstrum_to_powercepstrum(SEXP cepstrum_xptr) {
+    XPtr<structCepstrum> cepstrum(cepstrum_xptr);
+    if (!cepstrum) stop("Invalid Cepstrum pointer");
+    
+    try {
+        autoPowerCepstrum powercepstrum = Cepstrum_downto_PowerCepstrum(cepstrum.get());
+        return create_xptr_from_auto<structPowerCepstrum>(powercepstrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert Cepstrum to PowerCepstrum");
+    }
+}
+
+// [[Rcpp::export(.spectrum_to_cepstrum_hillenbrand)]]
+SEXP spectrum_to_cepstrum_hillenbrand(SEXP spectrum_xptr) {
+    XPtr<structSpectrum> spectrum(spectrum_xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+    
+    try {
+        autoCepstrum cepstrum = Spectrum_to_Cepstrum_hillenbrand(spectrum.get());
+        return create_xptr_from_auto<structCepstrum>(cepstrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create Hillenbrand Cepstrum from Spectrum");
+    }
+}
+
+// [[Rcpp::export(.powercepstrum_to_spectrum)]]
+SEXP powercepstrum_to_spectrum(SEXP powercepstrum_xptr, bool random_phases) {
+    XPtr<structPowerCepstrum> powercepstrum(powercepstrum_xptr);
+    if (!powercepstrum) stop("Invalid PowerCepstrum pointer");
+    
+    try {
+        autoSpectrum spectrum = PowerCepstrum_to_Spectrum(powercepstrum.get(), random_phases);
+        return create_xptr_from_auto<structSpectrum>(spectrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PowerCepstrum to Spectrum");
     }
 }

@@ -229,6 +229,29 @@ Spectrum <- R6::R6Class("Spectrum",
       PowerCepstrum$new(.xptr = ptr)
     },
     
+    #' @description
+    #' Convert to Cepstrum (complex cepstrum with phase)
+    #' 
+    #' Computes the complex cepstrum from the spectrum. Unlike PowerCepstrum,
+    #' this preserves phase information and can be inverted back to Spectrum or Sound.
+    #' 
+    #' @return Cepstrum object
+    to_cepstrum = function() {
+      xptr <- .spectrum_to_cepstrum(private$ptr)
+      Cepstrum$new(xptr)
+    },
+    
+    #' @description
+    #' Convert to Cepstrum using Hillenbrand method
+    #' 
+    #' Alternative cepstrum computation method based on Hillenbrand's algorithm.
+    #' 
+    #' @return Cepstrum object
+    to_cepstrum_hillenbrand = function() {
+      xptr <- .spectrum_to_cepstrum_hillenbrand(private$ptr)
+      Cepstrum$new(xptr)
+    },
+    
     #' @description Convert to Excitation (auditory nerve firing rate)
     #' Corresponds to Praat: To Excitation
     #' Applies ERB-scale auditory filtering and perceptual weighting.

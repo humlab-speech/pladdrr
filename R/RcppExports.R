@@ -1229,6 +1229,62 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_powercepstrum_get_peak_prominence_cpps`, xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
+.powercepstrum_get_peak_prominence_hillenbrand <- function(xptr, pitch_floor, pitch_ceiling) {
+    .Call(`_pladdrr_powercepstrum_get_peak_prominence_hillenbrand`, xptr, pitch_floor, pitch_ceiling)
+}
+
+.powercepstrum_get_rnr <- function(xptr, pitch_floor, pitch_ceiling, f0_fractional_width) {
+    .Call(`_pladdrr_powercepstrum_get_rnr`, xptr, pitch_floor, pitch_ceiling, f0_fractional_width)
+}
+
+.powercepstrum_tabulate_rhamonics <- function(xptr, pitch_floor, pitch_ceiling, interpolation) {
+    .Call(`_pladdrr_powercepstrum_tabulate_rhamonics`, xptr, pitch_floor, pitch_ceiling, interpolation)
+}
+
+.powercepstrum_fit_trend_line <- function(xptr, qmin, qmax, trend_type, fit_method) {
+    .Call(`_pladdrr_powercepstrum_fit_trend_line`, xptr, qmin, qmax, trend_type, fit_method)
+}
+
+.powercepstrum_get_trend_line_value <- function(xptr, quefrency, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_pladdrr_powercepstrum_get_trend_line_value`, xptr, quefrency, qstart_fit, qend_fit, trend_type, fit_method)
+}
+
+.powercepstrum_subtract_trend <- function(xptr, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_pladdrr_powercepstrum_subtract_trend`, xptr, qstart_fit, qend_fit, trend_type, fit_method)
+}
+
+.powercepstrum_subtract_trend_inplace <- function(xptr, qstart_fit, qend_fit, trend_type, fit_method) {
+    invisible(.Call(`_pladdrr_powercepstrum_subtract_trend_inplace`, xptr, qstart_fit, qend_fit, trend_type, fit_method))
+}
+
+.sound_to_cepstrum <- function(sound_xptr) {
+    .Call(`_pladdrr_sound_to_cepstrum`, sound_xptr)
+}
+
+.sound_to_cepstrum_bw <- function(sound_xptr) {
+    .Call(`_pladdrr_sound_to_cepstrum_bw`, sound_xptr)
+}
+
+.cepstrum_to_sound <- function(cepstrum_xptr) {
+    .Call(`_pladdrr_cepstrum_to_sound`, cepstrum_xptr)
+}
+
+.cepstrum_to_spectrum <- function(cepstrum_xptr) {
+    .Call(`_pladdrr_cepstrum_to_spectrum`, cepstrum_xptr)
+}
+
+.cepstrum_to_powercepstrum <- function(cepstrum_xptr) {
+    .Call(`_pladdrr_cepstrum_to_powercepstrum`, cepstrum_xptr)
+}
+
+.spectrum_to_cepstrum_hillenbrand <- function(spectrum_xptr) {
+    .Call(`_pladdrr_spectrum_to_cepstrum_hillenbrand`, spectrum_xptr)
+}
+
+.powercepstrum_to_spectrum <- function(powercepstrum_xptr, random_phases) {
+    .Call(`_pladdrr_powercepstrum_to_spectrum`, powercepstrum_xptr, random_phases)
+}
+
 #' Get Praat version information
 #'
 #' Returns the version string for the Praat library integration
@@ -1701,6 +1757,10 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .spectrum_as_matrix <- function(xptr) {
     .Call(`_pladdrr_spectrum_as_matrix`, xptr)
+}
+
+.spectrum_to_cepstrum <- function(spectrum_xptr) {
+    .Call(`_pladdrr_spectrum_to_cepstrum`, spectrum_xptr)
 }
 
 .table_create <- function(numberOfRows, numberOfColumns) {

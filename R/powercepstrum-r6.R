@@ -148,7 +148,212 @@ PowerCepstrum <- R6::R6Class(
     #' @return Numeric matrix
     as_matrix = function() {
       .powercepstrum_as_matrix(private$ptr)
+    },
+    
+    #' @description
+    #' Convert PowerCepstrum to Spectrum
+    #' 
+    #' Converts the power cepstrum back to a spectrum representation.
+    #' Since phase information is lost in PowerCepstrum, you can optionally
+    #' generate random phases.
+    #' 
+    #' @param random_phases Logical. If TRUE, generate random phases (default: FALSE)
+    #' @return Spectrum object
+    to_spectrum = function(random_phases = FALSE) {
+      xptr <- .powercepstrum_to_spectrum(private$ptr, random_phases = random_phases)
+      Spectrum$new(xptr)
+    },
+    
+    #' @description
+    #' Get peak prominence using Hillenbrand method
+    #' 
+    #' Computes peak prominence using the standard Hillenbrand algorithm,
+    #' which is an alternative to the general getPeakProminence method.
+    #' 
+    #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 60)
+    #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 333.3)
+    #' @return List with 'prominence' (dB) and 'quefrency' (seconds)
+    get_peak_prominence_hillenbrand = function(pitch_floor = 60, pitch_ceiling = 333.3) {
+      .powercepstrum_get_peak_prominence_hillenbrand(
+        private$ptr,
+        pitch_floor = pitch_floor,
+        pitch_ceiling = pitch_ceiling
+      )
+    },
+    
+    #' @description
+    #' Get RNR (Rahmonic-to-Noise Ratio)
+    #' 
+    #' Computes the Rahmonic-to-Noise Ratio, a voice quality measure
+    #' that quantifies the ratio of periodic to aperiodic energy in the cepstrum.
+    #' 
+    #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 60)
+    #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 333.3)
+    #' @param f0_fractional_width Numeric. Fractional bandwidth around F0 (default: 0.05)
+    #' @return Numeric. RNR value in dB
+    get_rnr = function(pitch_floor = 60, pitch_ceiling = 333.3, f0_fractional_width = 0.05) {
+      .powercepstrum_get_rnr(
+        private$ptr,
+        pitch_floor = pitch_floor,
+        pitch_ceiling = pitch_ceiling,
+        f0_fractional_width = f0_fractional_width
+      )
+    },
+    
+    #' @description
+    #' Tabulate rhamonics (quefrency peaks)
+    #' 
+    #' Creates a table of rhamonics (peaks in the cepstrum corresponding to
+    #' harmonics in the original signal). The table contains quefrency values
+    #' and their corresponding power.
+    #' 
+    #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 60)
+    #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 333.3)
+    #' @param interpolation Character. Peak interpolation method
+    #' @return Table object with quefrency and power columns
+    tabulate_rhamonics = function(pitch_floor = 60, pitch_ceiling = 333.3,
+                                  interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700")) {
+      interpolation <- match.arg(interpolation)
+      
+      interp_map <- c(
+        "none" = 0,
+        "parabolic" = 1,
+        "cubic" = 2,
+        "sinc70" = 3,
+        "sinc700" = 4
+      )
+      
+      xptr <- .powercepstrum_tabulate_rhamonics(
+        private$ptr,
+        pitch_floor = pitch_floor,
+        pitch_ceiling = pitch_ceiling,
+        interpolation = interp_map[[interpolation]]
+      )
+      Table$new(xptr)
+    },
+    
+    #' @description
+    #' Fit trend line to cepstrum
+    #' 
+    #' Fits a trend line (linear or exponential decay) to the power cepstrum
+    #' and returns the slope and intercept parameters.
+    #' 
+    #' @param qmin Numeric. Minimum quefrency for fit (default: 0.001)
+    #' @param qmax Numeric. Maximum quefrency for fit (default: 0.05)
+    #' @param trend_type Character. Type of trend line
+    #' @param fit_method Character. Fitting method
+    #' @return List with 'slope' and 'intercept'
+    fit_trend_line = function(qmin = 0.001, qmax = 0.05,
+                             trend_type = c("straight", "exponential decay", "parabolic"),
+                             fit_method = c("least squares", "robust", "robust slow")) {
+      trend_type <- match.arg(trend_type)
+      fit_method <- match.arg(fit_method)
+      
+      trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
+      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      
+      .powercepstrum_fit_trend_line(
+        private$ptr,
+        qmin = qmin,
+        qmax = qmax,
+        trend_type = trend_map[[trend_type]],
+        fit_method = fit_map[[fit_method]]
+      )
+    },
+    
+    #' @description
+    #' Get trend line value at quefrency
+    #' 
+    #' Returns the value of the fitted trend line at a specific quefrency.
+    #' 
+    #' @param quefrency Numeric. Quefrency in seconds
+    #' @param qstart_fit Numeric. Start of fitting range (default: 0.001)
+    #' @param qend_fit Numeric. End of fitting range (default: 0.05)
+    #' @param trend_type Character. Type of trend line
+    #' @param fit_method Character. Fitting method
+    #' @return Numeric. Trend line value at quefrency
+    get_trend_line_value = function(quefrency, qstart_fit = 0.001, qend_fit = 0.05,
+                                    trend_type = c("straight", "exponential decay", "parabolic"),
+                                    fit_method = c("least squares", "robust", "robust slow")) {
+      trend_type <- match.arg(trend_type)
+      fit_method <- match.arg(fit_method)
+      
+      trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
+      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      
+      .powercepstrum_get_trend_line_value(
+        private$ptr,
+        quefrency = quefrency,
+        qstart_fit = qstart_fit,
+        qend_fit = qend_fit,
+        trend_type = trend_map[[trend_type]],
+        fit_method = fit_map[[fit_method]]
+      )
+    },
+    
+    #' @description
+    #' Subtract trend line from cepstrum
+    #' 
+    #' Creates a new PowerCepstrum with the trend line subtracted. This is
+    #' useful for removing low-frequency trends before analysis.
+    #' 
+    #' @param qstart_fit Numeric. Start of fitting range (default: 0.001)
+    #' @param qend_fit Numeric. End of fitting range (default: 0.05)
+    #' @param trend_type Character. Type of trend line
+    #' @param fit_method Character. Fitting method
+    #' @return New PowerCepstrum object with trend removed
+    subtract_trend = function(qstart_fit = 0.001, qend_fit = 0.05,
+                             trend_type = c("straight", "exponential decay", "parabolic"),
+                             fit_method = c("least squares", "robust", "robust slow")) {
+      trend_type <- match.arg(trend_type)
+      fit_method <- match.arg(fit_method)
+      
+      trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
+      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      
+      xptr <- .powercepstrum_subtract_trend(
+        private$ptr,
+        qstart_fit = qstart_fit,
+        qend_fit = qend_fit,
+        trend_type = trend_map[[trend_type]],
+        fit_method = fit_map[[fit_method]]
+      )
+      PowerCepstrum$new(xptr)
+    },
+    
+    #' @description
+    #' Subtract trend line in-place
+    #' 
+    #' Modifies this PowerCepstrum by subtracting the trend line.
+    #' Unlike subtract_trend(), this modifies the object in-place.
+    #' 
+    #' @param qstart_fit Numeric. Start of fitting range (default: 0.001)
+    #' @param qend_fit Numeric. End of fitting range (default: 0.05)
+    #' @param trend_type Character. Type of trend line
+    #' @param fit_method Character. Fitting method
+    #' @return NULL (modifies object in-place)
+    subtract_trend_inplace = function(qstart_fit = 0.001, qend_fit = 0.05,
+                                     trend_type = c("straight", "exponential decay", "parabolic"),
+                                     fit_method = c("least squares", "robust", "robust slow")) {
+      trend_type <- match.arg(trend_type)
+      fit_method <- match.arg(fit_method)
+      
+      trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
+      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      
+      .powercepstrum_subtract_trend_inplace(
+        private$ptr,
+        qstart_fit = qstart_fit,
+        qend_fit = qend_fit,
+        trend_type = trend_map[[trend_type]],
+        fit_method = fit_map[[fit_method]]
+      )
+      invisible(self)
     }
+  ),
+
+  private = list(
+    ptr = NULL
   )
 )
 
@@ -411,5 +616,9 @@ PowerCepstrogram <- R6::R6Class(
       )
       PowerCepstrogram$new(xptr)
     }
+  ),
+
+  private = list(
+    ptr = NULL
   )
 )

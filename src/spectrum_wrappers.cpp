@@ -10,6 +10,8 @@
 #include "fon/Spectrum.h"
 #include "fon/Sound_and_Spectrum.h"
 #include "fon/Matrix.h"
+#include "LPC/Cepstrum.h"
+#include "LPC/Cepstrum_and_Spectrum.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -243,4 +245,22 @@ NumericMatrix spectrum_as_matrix(SEXP xptr) {
     }
     
     return mat;
+}
+
+// ==============================================================================
+// Spectrum to Cepstrum conversions
+// ==============================================================================
+
+// [[Rcpp::export(.spectrum_to_cepstrum)]]
+SEXP spectrum_to_cepstrum(SEXP spectrum_xptr) {
+    XPtr<structSpectrum> spectrum(spectrum_xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+    
+    try {
+        autoCepstrum cepstrum = Spectrum_to_Cepstrum(spectrum.get());
+        return create_xptr_from_auto<structCepstrum>(cepstrum);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create Cepstrum from Spectrum");
+    }
 }

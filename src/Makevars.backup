@@ -109,8 +109,7 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/SampledFrameIntoSampledFrame.cpp \
               praat.github.io/dwtools/SampledIntoSampled.cpp \
               praat.github.io/dwtools/Intensity_extensions.cpp \
-              praat.github.io/dwtools/TextGrid_extensions.cpp \
-              sound_extensions_minimal.cpp
+              praat.github.io/dwtools/TextGrid_extensions.cpp
 
 # Stat sources
 STAT_SRC = praat.github.io/stat/Table.cpp praat.github.io/stat/TableOfReal.cpp praat.github.io/stat/Distributions.cpp
@@ -186,6 +185,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp \
               dtw_stubs.cpp \
+              sound_extensions_stubs.cpp \
               sound_create_gaussian.cpp \
               r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp

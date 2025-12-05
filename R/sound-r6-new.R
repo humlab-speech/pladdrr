@@ -145,7 +145,12 @@ Sound <- R6::R6Class(
     get_duration = function() {
       .sound_get_duration(private$ptr)
     },
-    
+
+    to_powercepstrogram_MOVED = function(pitch_floor = 60.0, time_step = 0.002, maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {
+      pcep_ptr <- .sound_to_powercepstrogram(private$ptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
+      PowerCepstrogram$new(.xptr = pcep_ptr)
+    },
+
     #' @description Get sampling frequency in Hz
     #' @return Numeric sampling frequency
     get_sampling_frequency = function() {
@@ -464,26 +469,38 @@ Sound <- R6::R6Class(
       Spectrogram$new(.xptr = spectrogram_ptr)
     },
     
-    #' @description Create PowerCepstrogram for voice quality analysis (CPP)
-    #' @param pitch_floor Minimum pitch for analysis in Hz (default: 60)
-    #' @param time_step Time step between frames in seconds (default: 0.002)
-    #' @param maximum_frequency Maximum frequency to analyze in Hz (default: 5000)
-    #' @param pre_emphasis_frequency Pre-emphasis from frequency in Hz (default: 50)
-    #' @return PowerCepstrogram object
-    to_powercepstrogram = function(
-      pitch_floor = 60.0,
-      time_step = 0.002,
-      maximum_frequency = 5000.0,
-      pre_emphasis_frequency = 50.0
-    ) {
-      cepstrogram_ptr <- .sound_to_powercepstrogram(
-        private$ptr,
-        pitch_floor,
-        time_step,
-        maximum_frequency,
-        pre_emphasis_frequency
-      )
-      PowerCepstrogram$new(.xptr = cepstrogram_ptr)
+    to_power_cepstrogram_NEW = function(pitch_floor = 60.0, time_step = 0.002, maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {
+      pcep_ptr <- .sound_to_powercepstrogram(private$ptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
+      PowerCepstrogram$new(.xptr = pcep_ptr)
+    },
+
+    to_powercepstrogram = function(pitch_floor = 60.0, time_step = 0.002, maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {
+      self$to_power_cepstrogram_NEW(pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
+    },
+    
+    #' @description
+    #' Convert Sound to Cepstrum
+    #' 
+    #' Computes the complex cepstrum from the sound. This is different from
+    #' PowerCepstrum - the Cepstrum is the inverse Fourier transform of the
+    #' logarithm of the spectrum, preserving phase information.
+    #' 
+    #' @return Cepstrum object
+    to_cepstrum = function() {
+      xptr <- .sound_to_cepstrum(private$ptr)
+      Cepstrum$new(xptr)
+    },
+    
+    #' @description
+    #' Convert Sound to bandwidth-weighted Cepstrum
+    #' 
+    #' Computes a bandwidth-weighted cepstrum, which applies additional
+    #' weighting based on frequency bandwidth characteristics.
+    #' 
+    #' @return Cepstrum object
+    to_cepstrum_bw = function() {
+      xptr <- .sound_to_cepstrum_bw(private$ptr)
+      Cepstrum$new(xptr)
     },
     
     #' @description Create Manipulation for pitch/duration modification
