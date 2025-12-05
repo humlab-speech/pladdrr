@@ -1471,6 +1471,18 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_to_pitch`, sound_xptr, time_step, pitch_floor, pitch_ceiling)
 }
 
+#' Convert Sound to Pitch using autocorrelation with full voicing parameters (internal)
+#' @keywords internal
+.sound_to_pitch_ac <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost) {
+    .Call(`_pladdrr_sound_to_pitch_ac`, sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+}
+
+#' Convert Sound to Pitch using cross-correlation with full voicing parameters (internal)
+#' @keywords internal
+.sound_to_pitch_cc <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost) {
+    .Call(`_pladdrr_sound_to_pitch_cc`, sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+}
+
 #' Convert Sound to Formant via Burg (internal)
 #' @keywords internal
 .sound_to_formant_burg <- function(sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from) {

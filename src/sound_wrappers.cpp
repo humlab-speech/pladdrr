@@ -324,6 +324,92 @@ XPtr<structPitch> sound_to_pitch(
     }
 }
 
+//' Convert Sound to Pitch using autocorrelation with full voicing parameters (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_ac)]]
+XPtr<structPitch> sound_to_pitch_ac(
+    XPtr<structSound> sound_xptr,
+    double time_step,
+    double pitch_floor,
+    double pitch_ceiling,
+    int max_candidates,
+    bool very_accurate,
+    double silence_threshold,
+    double voicing_threshold,
+    double octave_cost,
+    double octave_jump_cost,
+    double voiced_unvoiced_cost
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    try {
+        autoPitch pitch = Sound_to_Pitch_rawAc(
+            sound,
+            time_step,
+            pitch_floor,
+            pitch_ceiling,
+            max_candidates,
+            very_accurate,
+            silence_threshold,
+            voicing_threshold,
+            octave_cost,
+            octave_jump_cost,
+            voiced_unvoiced_cost
+        );
+        
+        return create_xptr_from_auto<structPitch>(pitch);
+        
+    } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
+        Melder_clearError();
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to extract pitch using autocorrelation. Praat error: " + error_str);
+    }
+}
+
+//' Convert Sound to Pitch using cross-correlation with full voicing parameters (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_cc)]]
+XPtr<structPitch> sound_to_pitch_cc(
+    XPtr<structSound> sound_xptr,
+    double time_step,
+    double pitch_floor,
+    double pitch_ceiling,
+    int max_candidates,
+    bool very_accurate,
+    double silence_threshold,
+    double voicing_threshold,
+    double octave_cost,
+    double octave_jump_cost,
+    double voiced_unvoiced_cost
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    try {
+        autoPitch pitch = Sound_to_Pitch_rawCc(
+            sound,
+            time_step,
+            pitch_floor,
+            pitch_ceiling,
+            max_candidates,
+            very_accurate,
+            silence_threshold,
+            voicing_threshold,
+            octave_cost,
+            octave_jump_cost,
+            voiced_unvoiced_cost
+        );
+        
+        return create_xptr_from_auto<structPitch>(pitch);
+        
+    } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
+        Melder_clearError();
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to extract pitch using cross-correlation. Praat error: " + error_str);
+    }
+}
+
 //' Convert Sound to Formant via Burg (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_to_formant_burg)]]

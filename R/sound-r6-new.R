@@ -36,6 +36,8 @@
 #'
 #' Transformation methods create new Praat objects:
 #' - `$to_pitch(...)` - Extract pitch contour (returns Pitch object)
+#' - `$to_pitch_ac(...)` - Extract pitch with autocorrelation and full voicing parameters (returns Pitch object)
+#' - `$to_pitch_cc(...)` - Extract pitch with cross-correlation and full voicing parameters (returns Pitch object)
 #' - `$to_formant_burg(...)` - Extract formants using Burg's method (returns Formant object)
 #' - `$to_formant_keepall(...)` - Extract formants, keep all (returns Formant object)
 #' - `$to_formant_willems(...)` - Extract formants using Willems method (returns Formant object)
@@ -218,6 +220,86 @@ Sound <- R6::R6Class(
     #' @return Pitch object
     to_pitch = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
       pitch_ptr <- .sound_to_pitch(private$ptr, time_step, pitch_floor, pitch_ceiling)
+      Pitch$new(.xptr = pitch_ptr)
+    },
+    
+    #' @description Extract pitch using autocorrelation with full voicing parameters
+    #' @param time_step Time step in seconds (0 = auto) (default: 0.0)
+    #' @param pitch_floor Minimum pitch in Hz (default: 75)
+    #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
+    #' @param max_candidates Maximum number of pitch candidates (default: 15)
+    #' @param very_accurate Use accurate algorithm (slower) (default: FALSE)
+    #' @param silence_threshold Silence threshold relative to max amplitude (default: 0.03)
+    #' @param voicing_threshold Voicing threshold (default: 0.45)
+    #' @param octave_cost Cost for octave jumps (default: 0.01)
+    #' @param octave_jump_cost Cost for octave jumps between frames (default: 0.35)
+    #' @param voiced_unvoiced_cost Cost for voicing changes (default: 0.14)
+    #' @return Pitch object
+    to_pitch_ac = function(
+      time_step = 0.0,
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0,
+      max_candidates = 15,
+      very_accurate = FALSE,
+      silence_threshold = 0.03,
+      voicing_threshold = 0.45,
+      octave_cost = 0.01,
+      octave_jump_cost = 0.35,
+      voiced_unvoiced_cost = 0.14
+    ) {
+      pitch_ptr <- .sound_to_pitch_ac(
+        private$ptr,
+        time_step,
+        pitch_floor,
+        pitch_ceiling,
+        as.integer(max_candidates),
+        very_accurate,
+        silence_threshold,
+        voicing_threshold,
+        octave_cost,
+        octave_jump_cost,
+        voiced_unvoiced_cost
+      )
+      Pitch$new(.xptr = pitch_ptr)
+    },
+    
+    #' @description Extract pitch using cross-correlation with full voicing parameters
+    #' @param time_step Time step in seconds (0 = auto) (default: 0.0)
+    #' @param pitch_floor Minimum pitch in Hz (default: 75)
+    #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
+    #' @param max_candidates Maximum number of pitch candidates (default: 15)
+    #' @param very_accurate Use accurate algorithm (slower) (default: FALSE)
+    #' @param silence_threshold Silence threshold relative to max amplitude (default: 0.03)
+    #' @param voicing_threshold Voicing threshold (default: 0.45)
+    #' @param octave_cost Cost for octave jumps (default: 0.01)
+    #' @param octave_jump_cost Cost for octave jumps between frames (default: 0.35)
+    #' @param voiced_unvoiced_cost Cost for voicing changes (default: 0.14)
+    #' @return Pitch object
+    to_pitch_cc = function(
+      time_step = 0.0,
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0,
+      max_candidates = 15,
+      very_accurate = FALSE,
+      silence_threshold = 0.03,
+      voicing_threshold = 0.45,
+      octave_cost = 0.01,
+      octave_jump_cost = 0.35,
+      voiced_unvoiced_cost = 0.14
+    ) {
+      pitch_ptr <- .sound_to_pitch_cc(
+        private$ptr,
+        time_step,
+        pitch_floor,
+        pitch_ceiling,
+        as.integer(max_candidates),
+        very_accurate,
+        silence_threshold,
+        voicing_threshold,
+        octave_cost,
+        octave_jump_cost,
+        voiced_unvoiced_cost
+      )
       Pitch$new(.xptr = pitch_ptr)
     },
     

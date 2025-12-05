@@ -1700,6 +1700,48 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
     }
 
+    inline XPtr<structPitch> _sound_to_pitch_ac(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
+        typedef SEXP(*Ptr__sound_to_pitch_ac)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_ac p__sound_to_pitch_ac = NULL;
+        if (p__sound_to_pitch_ac == NULL) {
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_ac)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
+            p__sound_to_pitch_ac = (Ptr__sound_to_pitch_ac)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_ac");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_ac(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_candidates)), Shield<SEXP>(Rcpp::wrap(very_accurate)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(octave_cost)), Shield<SEXP>(Rcpp::wrap(octave_jump_cost)), Shield<SEXP>(Rcpp::wrap(voiced_unvoiced_cost)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structPitch> _sound_to_pitch_cc(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
+        typedef SEXP(*Ptr__sound_to_pitch_cc)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_cc p__sound_to_pitch_cc = NULL;
+        if (p__sound_to_pitch_cc == NULL) {
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_cc)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
+            p__sound_to_pitch_cc = (Ptr__sound_to_pitch_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_cc");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_cc(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_candidates)), Shield<SEXP>(Rcpp::wrap(very_accurate)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(octave_cost)), Shield<SEXP>(Rcpp::wrap(octave_jump_cost)), Shield<SEXP>(Rcpp::wrap(voiced_unvoiced_cost)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
+    }
+
     inline XPtr<structFormant> _sound_to_formant_burg(XPtr<structSound> sound_xptr, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from) {
         typedef SEXP(*Ptr__sound_to_formant_burg)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_formant_burg p__sound_to_formant_burg = NULL;
