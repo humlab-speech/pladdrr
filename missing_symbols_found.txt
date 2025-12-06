@@ -1,2 +1,0 @@
-__Z24MelderFile_close_nothrowP16structMelderFile
-__Z24MelderFile_close_nothrowP16structMelderFile
