@@ -47,6 +47,7 @@
 #' - `$to_spectrogram(...)` - Create spectrogram (returns Spectrogram object)
 #' - `$to_spectrum(...)` - Compute spectrum (returns Spectrum object)
 #' - `$to_manipulation(...)` - Create manipulation for pitch/duration modification (returns Manipulation object)
+#' - `$to_textgrid_silences(...)` - Detect silences and create annotated TextGrid (returns TextGrid object)
 #'
 #' ## Export
 #'
@@ -497,6 +498,70 @@ Sound <- R6::R6Class(
     to_ltas = function(bandwidth = 100.0) {
       ltas_ptr <- .sound_to_ltas(private$ptr, bandwidth)
       Ltas$new(.xptr = ltas_ptr)
+    },
+    
+    #' @description Detect silences and create TextGrid
+    #' 
+    #' Creates a TextGrid with one IntervalTier marking silent and sounding intervals.
+    #' Uses intensity-based silence detection. Corresponds to Praat menu:
+    #' Annotate > To TextGrid (silences)...
+    #' 
+    #' @param min_pitch Minimum pitch for intensity analysis (default: 100 Hz)
+    #' @param time_step Time step for intensity analysis in seconds (0 = auto: 0.8 / min_pitch)
+    #' @param silence_threshold Silence threshold in dB relative to maximum intensity (default: -25.0)
+    #'   More negative = stricter silence detection (e.g., -35 dB detects only very quiet parts)
+    #' @param min_silent_duration Minimum duration of silent intervals in seconds (default: 0.1)
+    #'   Shorter silent periods are ignored
+    #' @param min_sounding_duration Minimum duration of sounding intervals in seconds (default: 0.1)
+    #'   Shorter sounding periods are ignored
+    #' @param silent_label Label for silent intervals (default: "silent")
+    #' @param sounding_label Label for sounding intervals (default: "sounding")
+    #' @return TextGrid object with one tier containing silence/sound annotations
+    #' 
+    #' @details
+    #' The function:
+    #' 1. Converts Sound to Intensity using min_pitch and time_step
+    #' 2. Finds maximum intensity value
+    #' 3. Marks frames below (max_intensity + silence_threshold) as silent
+    #' 4. Merges adjacent silent/sounding intervals
+    #' 5. Removes intervals shorter than minimum durations
+    #' 
+    #' Critical for AVQI analysis where accurate silence detection affects quality metrics.
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' # Detect silences with default parameters
+    #' sound <- Sound$new("voice.wav")
+    #' tg <- sound$to_textgrid_silences()
+    #' 
+    #' # Stricter silence detection for AVQI
+    #' tg <- sound$to_textgrid_silences(
+    #'   min_pitch = 75,
+    #'   silence_threshold = -30.0,  # Only very quiet parts
+    #'   min_silent_duration = 0.2,
+    #'   min_sounding_duration = 0.3
+    #' )
+    #' }
+    to_textgrid_silences = function(
+      min_pitch = 100.0,
+      time_step = 0.0,
+      silence_threshold = -25.0,
+      min_silent_duration = 0.1,
+      min_sounding_duration = 0.1,
+      silent_label = "silent",
+      sounding_label = "sounding"
+    ) {
+      tg_ptr <- .sound_to_textgrid_silences(
+        private$ptr,
+        min_pitch,
+        time_step,
+        silence_threshold,
+        min_silent_duration,
+        min_sounding_duration,
+        silent_label,
+        sounding_label
+      )
+      TextGrid$new(.xptr = tg_ptr)
     },
     
     #' @description Create Cochleagram (auditory filterbank representation)

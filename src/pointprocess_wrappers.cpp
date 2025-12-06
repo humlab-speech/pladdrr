@@ -10,6 +10,7 @@
 #include "praat.github.io/fon/PointProcess_and_Sound.h"
 #include "praat.github.io/fon/VoiceAnalysis.h"
 #include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/TextGrid.h"
 
 using namespace Rcpp;
 
@@ -637,6 +638,29 @@ void pointprocess_remove_points_between(SEXP xptr, double from_time, double to_t
 }
 
 // =============================================================================
+// Conversion Methods
+// =============================================================================
+
+// [[Rcpp::export(.pointprocess_to_textgrid_vuv)]]
+Rcpp::XPtr<structTextGrid> pointprocess_to_textgrid_vuv(
+    SEXP xptr,
+    double max_voiced_period,
+    double max_unvoiced_period
+) {
+    XPtr<structPointProcess> pp(xptr);
+    if (!pp) {
+        stop("Invalid PointProcess pointer");
+    }
+    
+    try {
+        autoTextGrid tg = PointProcess_to_TextGrid_vuv(pp, max_voiced_period, max_unvoiced_period);
+        return create_xptr_from_auto<structTextGrid>(tg);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PointProcess to TextGrid (vuv)");
+    }
+}
+
 // =============================================================================
 // Voice Analysis Methods
 // =============================================================================

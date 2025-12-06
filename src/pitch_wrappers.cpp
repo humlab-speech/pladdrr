@@ -15,6 +15,7 @@
 #include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/PointProcess.h"
 #include "praat.github.io/fon/TextGrid.h"
+#include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
 #include "praat.github.io/melder/melder.h"
 
 using namespace Rcpp;

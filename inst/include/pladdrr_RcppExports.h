@@ -2283,6 +2283,27 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
+    inline XPtr<structTextGrid> _sound_to_textgrid_silences(XPtr<structSound> sound_xptr, double min_pitch, double time_step, double silence_threshold, double min_silent_duration, double min_sounding_duration, std::string silent_label, std::string sounding_label) {
+        typedef SEXP(*Ptr__sound_to_textgrid_silences)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_textgrid_silences p__sound_to_textgrid_silences = NULL;
+        if (p__sound_to_textgrid_silences == NULL) {
+            validateSignature("XPtr<structTextGrid>(*_sound_to_textgrid_silences)(XPtr<structSound>,double,double,double,double,double,std::string,std::string)");
+            p__sound_to_textgrid_silences = (Ptr__sound_to_textgrid_silences)R_GetCCallable("pladdrr", "_pladdrr__sound_to_textgrid_silences");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_textgrid_silences(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(min_pitch)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(min_silent_duration)), Shield<SEXP>(Rcpp::wrap(min_sounding_duration)), Shield<SEXP>(Rcpp::wrap(silent_label)), Shield<SEXP>(Rcpp::wrap(sounding_label)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structTextGrid> >(rcpp_result_gen);
+    }
+
     inline Rcpp::List _sound_extract_intervals_where(XPtr<structSound> sound_xptr, XPtr<structTextGrid> textgrid_xptr, int tier_number, int which_comparison, std::string text_pattern) {
         typedef SEXP(*Ptr__sound_extract_intervals_where)(SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_extract_intervals_where p__sound_extract_intervals_where = NULL;

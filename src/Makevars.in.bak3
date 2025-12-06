@@ -110,7 +110,6 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/SampledIntoSampled.cpp \
               praat.github.io/dwtools/Intensity_extensions.cpp \
               praat.github.io/dwtools/TextGrid_extensions.cpp \
-              praat.github.io/dwtools/Sound_and_TextGrid_extensions.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources

@@ -58,6 +58,11 @@
 #' - `$remove_point_near(time)` - Remove nearest point to time
 #' - `$remove_points_between(t1, t2)` - Remove all points in range
 #'
+#' ## Conversion
+#'
+#' - `$to_textgrid_vuv(max_voiced_period, max_unvoiced_period)` - Create voiced/unvoiced TextGrid
+#'   (required for DSI calculation with soft phonation)
+#'
 #' ## Export
 #'
 #' - `$as_data_frame()` - Export points to data frame
@@ -548,6 +553,72 @@ PointProcess <- R6::R6Class(
         as.numeric(to_time)
       )
       invisible(self)
+    },
+    
+    # ========================================================================
+    # Conversion Methods
+    # ========================================================================
+    
+    #' @description
+    #' Create a TextGrid with voiced/unvoiced intervals based on the point process.
+    #' 
+    #' This method creates a TextGrid with one interval tier that marks voiced (V) 
+    #' and unvoiced (U) intervals. An interval is considered voiced if it contains
+    #' enough glottal pulses (points in the PointProcess) with sufficiently small
+    #' inter-pulse intervals. This is the method required for DSI calculation,
+    #' where accurate voiced/unvoiced detection in soft phonation is critical.
+    #' 
+    #' @param max_voiced_period Maximum duration of a voiced period (in seconds).
+    #'   If two consecutive pulses are more than this far apart, the interval
+    #'   between them is considered unvoiced. Default: 0.02 (20 ms, corresponding
+    #'   to 50 Hz minimum pitch).
+    #' @param max_unvoiced_period Maximum duration of an unvoiced period (in seconds).
+    #'   If an unvoiced interval is shorter than this, it may be considered a 
+    #'   voiced interval if surrounded by voiced regions. Default: 0.01 (10 ms).
+    #' 
+    #' @return TextGrid object with one IntervalTier containing "V" (voiced) and
+    #'   "U" (unvoiced) labels.
+    #' 
+    #' @details
+    #' This is the PointProcess-based voiced/unvoiced detection method, which is
+    #' more accurate than pitch-based methods for soft phonation and pathological
+    #' voices. It's required for the DSI (Dysphonia Severity Index) calculation.
+    #' 
+    #' The algorithm works by examining inter-pulse intervals:
+    #' - Intervals shorter than max_voiced_period are marked as voiced
+    #' - Longer intervals are marked as unvoiced
+    #' - Very short unvoiced intervals (< max_unvoiced_period) may be merged
+    #'   with adjacent voiced regions
+    #' 
+    #' @section Praat Equivalent:
+    #' `PointProcess: To TextGrid (vuv)... max_voiced_period max_unvoiced_period`
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' # DSI workflow - detect voiced intervals in soft phonation
+    #' sound <- Sound$new("soft_phonation.wav")
+    #' pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+    #' point_process <- sound$to_point_process_cc(pitch)
+    #' 
+    #' # Create VUV TextGrid with sensitive parameters for soft voice
+    #' textgrid <- point_process$to_textgrid_vuv(
+    #'   max_voiced_period = 0.02,    # 50 Hz minimum pitch
+    #'   max_unvoiced_period = 0.01   # Merge short unvoiced gaps
+    #' )
+    #' 
+    #' # Extract only voiced intervals
+    #' voiced_intervals <- sound$extract_intervals_where(
+    #'   textgrid, 1, "is equal to", "V", preserve_times = FALSE
+    #' )
+    #' }
+    to_textgrid_vuv = function(max_voiced_period = 0.02, 
+                                max_unvoiced_period = 0.01) {
+      tg_ptr <- .pointprocess_to_textgrid_vuv(
+        private$ptr,
+        as.numeric(max_voiced_period),
+        as.numeric(max_unvoiced_period)
+      )
+      TextGrid$new(.xptr = tg_ptr)
     },
     
     # ========================================================================

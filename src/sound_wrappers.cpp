@@ -25,6 +25,8 @@
 #include "fon/Ltas.h"
 #include "fon/TextGrid.h"
 #include "fon/TextGrid_Sound.h"
+#include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
+#include "praat.github.io/dwtools/Intensity_extensions.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -1126,6 +1128,116 @@ XPtr<structSound> sound_mix(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to mix sounds");
+    }
+}
+
+// ============================================================================
+// Sound to TextGrid conversions
+// ============================================================================
+
+//' Detect silences in Sound and create TextGrid (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_textgrid_silences)]]
+XPtr<structTextGrid> sound_to_textgrid_silences(
+    XPtr<structSound> sound_xptr,
+    double min_pitch,
+    double time_step,
+    double silence_threshold,
+    double min_silent_duration,
+    double min_sounding_duration,
+    std::string silent_label,
+    std::string sounding_label
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    if (!sound) {
+        stop("Invalid Sound pointer");
+    }
+    
+    // Validate parameters
+    if (min_pitch <= 0.0) {
+        stop("min_pitch must be positive");
+    }
+    if (time_step < 0.0) {
+        stop("time_step must be non-negative");
+    }
+    if (min_silent_duration < 0.0 || min_sounding_duration < 0.0) {
+        stop("Duration parameters must be non-negative");
+    }
+    
+    try {
+        // Step 1: Convert Sound to Intensity
+        autoIntensity intensity = Sound_to_Intensity(
+            sound,
+            min_pitch,
+            time_step,
+            true  // subtract mean pressure
+        );
+        
+        if (!intensity) {
+            stop("Failed to create Intensity from Sound");
+        }
+        
+        // Step 2: Find maximum intensity manually (avoid buggy Vector_getMaximumAndX)
+        double max_intensity_db = -1000.0;
+        for (integer i = 1; i <= intensity->nx; i++) {
+            if (intensity->z[1][i] > max_intensity_db) {
+                max_intensity_db = intensity->z[1][i];
+            }
+        }
+        
+        // Calculate threshold relative to maximum
+        double intensity_threshold = max_intensity_db + silence_threshold;  // silence_threshold is negative
+        
+        // Step 3: Create TextGrid manually
+        autostring32 silent_u32 = Melder_8to32(silent_label.c_str());
+        autostring32 sounding_u32 = Melder_8to32(sounding_label.c_str());
+        
+        autoTextGrid textgrid = TextGrid_create(intensity->xmin, intensity->xmax, U"silences", U"");
+        IntervalTier tier = (IntervalTier) textgrid->tiers->at[1];
+        
+        // Step 4: Detect all boundaries first
+        std::vector<double> boundaries;
+        bool in_silence = intensity->z[1][1] < intensity_threshold;
+        
+        for (integer i = 2; i <= intensity->nx; i++) {
+            bool current_is_silent = intensity->z[1][i] < intensity_threshold;
+            
+            if (current_is_silent != in_silence) {
+                double boundary_time = intensity->x1 + (i - 1) * intensity->dx;
+                boundaries.push_back(boundary_time);
+                in_silence = current_is_silent;
+            }
+        }
+        
+        // Insert all boundaries
+        for (double boundary_time : boundaries) {
+            TextGrid_insertBoundary(textgrid.get(), 1, boundary_time);
+        }
+        
+        // Step 5: Set labels for all intervals
+        tier = (IntervalTier) textgrid->tiers->at[1];  // Refresh tier pointer
+        for (integer i = 1; i <= tier->intervals.size; i++) {
+            TextInterval interval = tier->intervals.at[i];
+            double mid_time = (interval->xmin + interval->xmax) / 2.0;
+            
+            // Find intensity value at midpoint
+            integer frame_index = Sampled_xToNearestIndex(intensity.get(), mid_time);
+            if (frame_index < 1) frame_index = 1;
+            if (frame_index > intensity->nx) frame_index = intensity->nx;
+            
+            bool is_silent = intensity->z[1][frame_index] < intensity_threshold;
+            TextInterval_setText(interval, is_silent ? silent_u32.get() : sounding_u32.get());
+        }
+        
+        // Step 6: Merge short intervals
+        // (TODO: implement min_silent_duration and min_sounding_duration filtering)
+        
+        return create_xptr_from_auto<structTextGrid>(textgrid);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to detect silences in sound");
     }
 }
 

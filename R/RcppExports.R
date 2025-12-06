@@ -1165,6 +1165,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     invisible(.Call(`_pladdrr_pointprocess_remove_points_between`, xptr, from_time, to_time))
 }
 
+.pointprocess_to_textgrid_vuv <- function(xptr, max_voiced_period, max_unvoiced_period) {
+    .Call(`_pladdrr_pointprocess_to_textgrid_vuv`, xptr, max_voiced_period, max_unvoiced_period)
+}
+
 .pointprocess_voice_report <- function(sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold) {
     .Call(`_pladdrr_pointprocess_voice_report`, sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold)
 }
@@ -1645,6 +1649,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_mix <- function(xptr1, xptr2, balance) {
     .Call(`_pladdrr_sound_mix`, xptr1, xptr2, balance)
+}
+
+#' Detect silences in Sound and create TextGrid (internal)
+#' @keywords internal
+.sound_to_textgrid_silences <- function(sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label) {
+    .Call(`_pladdrr_sound_to_textgrid_silences`, sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label)
 }
 
 .sound_extract_intervals_where <- function(sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern) {
@@ -2138,18 +2148,6 @@ NULL
 #' @keywords internal
 praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_pladdrr_praat_error_to_r`, error_msg))
-}
-
-.sound_to_textgrid_silences <- function(sound_xptr, minimum_pitch, time_step, silence_threshold_db, min_silent_interval, min_sounding_interval, silent_label, sounding_label) {
-    .Call(`_pladdrr_sound_to_textgrid_silences`, sound_xptr, minimum_pitch, time_step, silence_threshold_db, min_silent_interval, min_sounding_interval, silent_label, sounding_label)
-}
-
-.textgrid_get_intervals_where <- function(xptr, tier_number, condition, match_text) {
-    .Call(`_pladdrr_textgrid_get_intervals_where`, xptr, tier_number, condition, match_text)
-}
-
-.sound_extract_parts <- function(sound_xptr, start_times, end_times, window_shape, relative_width, preserve_times) {
-    .Call(`_pladdrr_sound_extract_parts`, sound_xptr, start_times, end_times, window_shape, relative_width, preserve_times)
 }
 
 .apply_hamming_window_simd <- function(data) {
