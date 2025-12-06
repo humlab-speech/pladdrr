@@ -678,47 +678,22 @@ Rcpp::List textgrid_sound_extract_intervals_where(
     std::string text,
     bool preserve_times
 ) {
-    if (!textgrid) Rcpp::stop("Invalid TextGrid pointer");
-    if (!sound) Rcpp::stop("Invalid Sound pointer");
-    
-    structTextGrid* tg = get_ptr(textgrid, "TextGrid");
-    structSound* snd = get_ptr(sound, "Sound");
-    
     try {
-        // Validate TextGrid has tiers
-        if (tg->tiers->size < 1) {
-            Rcpp::stop("TextGrid has no tiers");
-        }
-        if (tier_number < 1 || tier_number > tg->tiers->size) {
-            Rcpp::stop("Tier number out of range");
-        }
-        
-        // CRITICAL: Validate criterion value BEFORE cast
-        // kMelder_string enum is 1-based: 1=EQUAL_TO, 2=NOT_EQUAL_TO, etc.
-        // Value 0 = UNDEFINED which calls Melder_fatal()
-        if (which_criterion < 1 || which_criterion > 19) {
-            Rcpp::stop("Invalid criterion value: must be 1-19, got " + std::to_string(which_criterion));
-        }
-        
         kMelder_string criterion = static_cast<kMelder_string>(which_criterion);
-        
         autoSoundList sounds = TextGrid_Sound_extractIntervalsWhere(
-            tg,
-            snd,
+            textgrid,
+            sound,
             static_cast<integer>(tier_number),
             criterion,
             Melder_peek8to32(text.c_str()),
             preserve_times
         );
-        Rcpp::Rcout << "Praat function returned, got " << sounds->size << " sounds" << std::endl;
         
         // Convert SoundList to R list of Sound XPtrs
         Rcpp::List result(sounds->size);
         for (integer i = 1; i <= sounds->size; i++) {
-            Sound extracted = sounds->at[i];
-            // Create copy to avoid ownership issues
-            autoSound copy = Data_copy(extracted);
-            result[i-1] = create_xptr_from_auto<structSound>(copy);
+            autoSound snd = sounds->at[i].move();
+            result[i-1] = create_xptr_from_auto<structSound>(snd);
         }
         
         return result;

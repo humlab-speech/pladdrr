@@ -1,0 +1,4 @@
+Checking for RcppXsimd...
+RcppXsimd found - enabling SIMD optimizations
+Configuration complete
+make: Nothing to be done for `all'.

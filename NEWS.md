@@ -1,3 +1,28 @@
+# pladdrr 1.1.1 (2025-12-06)
+
+## Critical Bug Fixes
+
+### Fixed TextGrid$extract_intervals_where() Segfault
+* **Issue**: Segfault at address 0x68 when extracting intervals
+* **Root Cause**: Off-by-one enum mapping (Praat `kMelder_string` is 1-based, R was passing 0-based)
+* **Fix**: Corrected criterion mapping in `R/textgrid-r6.R` (lines 568-581)
+* **Added**: Bounds validation in `src/textgrid_wrappers.cpp` (lines 696-701)
+
+### Fixed PointProcess$voice_report() Pointer Access
+* **Issue**: Crashed with "Expecting an external pointer: [type=NULL]"
+* **Fix**: Corrected pointer access pattern to `$.__enclos_env__$private$ptr` in `R/pointprocess-r6.R`
+
+### Implemented Missing Pitch Methods
+* **Added**: `Pitch$to_textgrid_vuv()` - Creates voiced/unvoiced TextGrid
+* **Added**: `Pitch$to_textgrid_silences()` - Detects silent intervals
+* **Removed**: Duplicate C++ implementations in `src/pitch_wrappers.cpp`
+
+### Code Cleanup
+* Removed duplicate `Sound$from_values()` implementation in `src/sound_wrappers.cpp`
+* Regenerated Rcpp exports for consistency
+
+**Status**: All functions tested and passing. Ready for DSI/AVQI/tremor implementations.
+
 # pladdrr 1.0.7 (2025-11-29)
 
 ## Benchmarking Enhancements

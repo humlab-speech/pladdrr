@@ -2283,6 +2283,27 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
+    inline Rcpp::List _sound_extract_intervals_where(XPtr<structSound> sound_xptr, XPtr<structTextGrid> textgrid_xptr, int tier_number, int which_comparison, std::string text_pattern) {
+        typedef SEXP(*Ptr__sound_extract_intervals_where)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_extract_intervals_where p__sound_extract_intervals_where = NULL;
+        if (p__sound_extract_intervals_where == NULL) {
+            validateSignature("Rcpp::List(*_sound_extract_intervals_where)(XPtr<structSound>,XPtr<structTextGrid>,int,int,std::string)");
+            p__sound_extract_intervals_where = (Ptr__sound_extract_intervals_where)R_GetCCallable("pladdrr", "_pladdrr__sound_extract_intervals_where");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_extract_intervals_where(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)), Shield<SEXP>(Rcpp::wrap(which_comparison)), Shield<SEXP>(Rcpp::wrap(text_pattern)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_pladdrr_RCPPEXPORTS_H_GEN_

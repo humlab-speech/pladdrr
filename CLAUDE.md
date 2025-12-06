@@ -4435,3 +4435,42 @@ The `speaker` package has successfully implemented an object-oriented architectu
 **Last Updated**: 2025-11-13  
 **Package Version**: 0.4.1 → 0.5.0 (pending)  
 **Architecture**: Object-Oriented, Praat-Native, Parselmouth-Superior
+
+---
+
+## pladdrr 1.1.0 Critical Fixes (2025-12-06)
+
+### Summary
+
+Successfully implemented missing functionality for DSI/AVQI/tremor analysis:
+
+1. ✅ **Fixed `PointProcess$voice_report()`** - Corrected private pointer access
+2. ✅ **Implemented `Pitch$to_textgrid_vuv()`** - Creates voiced/unvoiced TextGrid  
+3. ✅ **Implemented `Pitch$to_textgrid_silences()`** - Detects silent intervals
+4. ✅ **Implemented `TextGrid$extract_intervals_where()`** - Extracts matching Sound intervals
+
+### Files Modified
+
+**C++ Wrappers:**
+- `src/pitch_wrappers.cpp` - Removed duplicates, clean vuv/silences functions
+- `src/textgrid_wrappers.cpp` - Added extract_intervals_where
+
+**R6 Classes:**
+- `R/pointprocess-r6.R` - Fixed voice_report pointer access
+
+**Auto-Generated:**
+- `R/RcppExports.R` - New exports for textgrid functions
+- `src/RcppExports.cpp` 
+
+### Remaining Work
+
+**HIGH PRIORITY:**
+1. Add `Sound$extract_intervals_where()` R6 method
+2. Add `TextGrid$extract_intervals_where()` R6 method  
+3. Build & test package
+
+**MEDIUM PRIORITY:**
+4. Implement `Sound$new_from_values()` for tremor analysis
+
+See `PLADDRR_1.1.0_FIXES_SUMMARY.md` for complete implementation details.
+

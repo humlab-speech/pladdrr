@@ -551,8 +551,6 @@ TextGrid <- R6::R6Class(
       Table$new(.xptr = table_ptr)
     },
 
-    #' @description Extract Sound intervals matching criterion from TextGrid
-    #' @param sound Sound object to extract intervals from
     #' @param tier_number Tier number (1-based) or tier name
     #' @param criterion Matching criterion: "is equal to", "is not equal to", "contains", "starts with", "ends with", "matches regex"
     #' @param text Text to match against
@@ -565,19 +563,14 @@ TextGrid <- R6::R6Class(
       
       tier_num <- private$resolve_tier_number(tier_number)
       
-      # Map criterion string to enum value (1-based, from kMelder_string enum)
+      # Map criterion string to enum value
       criterion_map <- c(
-        "is equal to" = 1L,
-        "is not equal to" = 2L,
-        "contains" = 3L,
-        "does not contain" = 4L,
-        "starts with" = 5L,
-        "does not start with" = 6L,
-        "ends with" = 7L,
-        "does not end with" = 8L,
-        "contains a word equal to" = 9L,
-        "does not contain a word equal to" = 10L,
-        "matches regex" = 21L
+        "is equal to" = 0L,
+        "is not equal to" = 1L,
+        "contains" = 2L,
+        "starts with" = 3L,
+        "ends with" = 4L,
+        "matches regex" = 5L
       )
       
       if (!criterion %in% names(criterion_map)) {
@@ -617,7 +610,10 @@ TextGrid <- R6::R6Class(
       } else {
         stop("Tier must be numeric index or character name")
       }
-    }
+    },
+    
+    #' @description Extract Sound intervals matching criterion
+    #' @param sound Sound object to extract intervals from
   )
 )
 

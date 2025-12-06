@@ -1095,6 +1095,22 @@ Sound <- R6::R6Class(
       }
       
       invisible(self)
+    },
+    
+    #' @description Extract intervals from TextGrid matching criterion
+    #' @param textgrid TextGrid object containing annotation
+    #' @param tier_number Tier number (1-based) or tier name
+    #' @param criterion Matching criterion: "is equal to", "is not equal to", "contains", "starts with", "ends with", "matches regex"
+    #' @param text Text to match against
+    #' @param preserve_times If TRUE, keep original time stamps; if FALSE, center at 0
+    #' @return List of Sound objects, one per matching interval
+    extract_intervals_where = function(textgrid, tier_number, criterion = "is equal to", text = "", preserve_times = FALSE) {
+      if (!inherits(textgrid, "TextGrid")) {
+        stop("textgrid must be a TextGrid object")
+      }
+      
+      # Use TextGrid's method to do the extraction
+      textgrid$extract_intervals_where(self, tier_number, criterion, text, preserve_times)
     }
   )
 )

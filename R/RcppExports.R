@@ -1001,6 +1001,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_down_to_pitch_tier`, pitch)
 }
 
+.pitch_to_textgrid_vuv <- function(pitch) {
+    .Call(`_pladdrr_pitch_to_textgrid_vuv`, pitch)
+}
+
+.pitch_to_textgrid_silences <- function(pitch, min_silent_dur, min_sounding_dur) {
+    .Call(`_pladdrr_pitch_to_textgrid_silences`, pitch, min_silent_dur, min_sounding_dur)
+}
+
 .pitchtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_pitchtier_create`, tmin, tmax)
 }
@@ -1639,6 +1647,10 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_mix`, xptr1, xptr2, balance)
 }
 
+.sound_extract_intervals_where <- function(sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern) {
+    .Call(`_pladdrr_sound_extract_intervals_where`, sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern)
+}
+
 .spectrogram_get_start_time <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_get_start_time`, spectrogram)
 }
@@ -2029,6 +2041,10 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .textgrid_to_table <- function(textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals) {
     .Call(`_pladdrr_textgrid_to_table`, textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals)
+}
+
+.textgrid_sound_extract_intervals_where <- function(textgrid, sound, tier_number, which_criterion, text, preserve_times) {
+    .Call(`_pladdrr_textgrid_sound_extract_intervals_where`, textgrid, sound, tier_number, which_criterion, text, preserve_times)
 }
 
 #' Safe error wrapper for Praat calls
