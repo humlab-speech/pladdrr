@@ -121,6 +121,16 @@ Sound <- R6::R6Class(
         audio_info <- av::av_media_info(path)
         audio_data <- av::read_audio_bin(path)
         
+        # Normalize PCM integers to [-1, 1] range
+        # av returns raw PCM data as integers, need to normalize based on bit depth
+        bit_depth <- audio_info$audio$bit_depth
+        if (is.null(bit_depth) || bit_depth == 0) {
+          # Fallback: assume 16-bit if not specified
+          bit_depth <- 16
+        }
+        max_value <- 2^(bit_depth - 1) - 1
+        audio_data <- audio_data / max_value
+        
         # av returns samples × channels matrix, we need channels × samples
         if (is.matrix(audio_data)) {
           audio_data <- t(audio_data)

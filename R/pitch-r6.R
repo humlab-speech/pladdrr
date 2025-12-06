@@ -263,6 +263,28 @@ Pitch <- R6::R6Class("Pitch",
       PitchTier$new(.xptr = tier_ptr)
     },
     
+    #' @description
+    #' Convert pitch to TextGrid marking voiced/unvoiced intervals
+    #' @return TextGrid object with voiced (V) and unvoiced (U) intervals
+    to_textgrid_vuv = function() {
+      tg_ptr <- .pitch_to_textgrid_vuv(private$ptr)
+      TextGrid$new(.xptr = tg_ptr)
+    },
+    
+    #' @description
+    #' Convert pitch to TextGrid marking silent/sounding intervals
+    #' @param min_silent_duration Minimum duration for silent intervals (default: 0.1 s)
+    #' @param min_sounding_duration Minimum duration for sounding intervals (default: 0.1 s)
+    #' @return TextGrid object with silent and sounding intervals
+    to_textgrid_silences = function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
+      tg_ptr <- .pitch_to_textgrid_silences(
+        private$ptr,
+        min_silent_duration,
+        min_sounding_duration
+      )
+      TextGrid$new(.xptr = tg_ptr)
+    },
+    
     # ========================================================================
     # Export methods
     # ========================================================================

@@ -23,6 +23,8 @@
 #include "fon/Sound_to_PointProcess.h"
 #include "fon/Pitch_to_PointProcess.h"
 #include "fon/Ltas.h"
+#include "fon/TextGrid.h"
+#include "fon/TextGrid_Sound.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -1124,5 +1126,47 @@ XPtr<structSound> sound_mix(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to mix sounds");
+    }
+}
+
+// ============================================================================
+// TextGrid interval extraction
+// ============================================================================
+
+// [[Rcpp::export(.sound_extract_intervals_where)]]
+Rcpp::List sound_extract_intervals_where(
+    XPtr<structSound> sound_xptr,
+    XPtr<structTextGrid> textgrid_xptr,
+    int tier_number,
+    int which_comparison,
+    std::string text_pattern
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structTextGrid* textgrid = get_ptr(textgrid_xptr, "TextGrid");
+    
+    try {
+        // Extract matching intervals using Praat function
+        autoSoundList sounds = TextGrid_Sound_extractIntervalsWhere(
+            textgrid,
+            sound,
+            tier_number,
+            static_cast<kMelder_string>(which_comparison),
+            Melder_peek8to32(text_pattern.c_str()),
+            false  // preserveTimes
+        );
+        
+        // Convert to R list of Sound XPtrs
+        Rcpp::List result(sounds->size);
+        for (integer i = 1; i <= sounds->size; i++) {
+            Sound extracted = sounds->at[i];
+            // Create copy to avoid ownership issues
+            autoSound copy = Data_copy(extracted);
+            result[i-1] = create_xptr_from_auto<structSound>(copy);
+        }
+        
+        return result;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract sound intervals");
     }
 }
