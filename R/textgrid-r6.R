@@ -586,6 +586,9 @@ TextGrid <- R6::R6Class(
       
       criterion_int <- criterion_map[[criterion]]
       
+      # Debug output
+      cat(sprintf("DEBUG: criterion='%s', criterion_int=%d\n", criterion, criterion_int))
+      
       sound_list <- .textgrid_sound_extract_intervals_where(
         private$ptr, 
         sound$.__enclos_env__$private$ptr,

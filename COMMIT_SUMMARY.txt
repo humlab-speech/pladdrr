@@ -1,0 +1,20 @@
+## Code Changes Summary
+
+### R/ Changes
+- R/pladdrr-package.R: Removed `.init_melder_warning_handler()` call from `.onLoad()` (was referencing non-existent export)
+- R/RcppExports.R: Regenerated via Rcpp::compileAttributes() (removed old handler export)
+
+### src/ Changes
+- src/textgrid_wrappers.cpp: 
+  * Lines 14-54: Added static warning handler `melder_warning_handler()` + `ensure_warning_handler()`
+  * Line 725: Added `ensure_warning_handler()` call in `textgrid_sound_extract_intervals_where()`
+  * Converts UTF-32 Praat warnings to UTF-8 for R console
+  * Prevents segfault when no TextGrid intervals match search criterion
+
+### tests/ Changes (NEW)
+- tests/testthat/test-extract-intervals-where.R: New test suite (6 tests)
+- test_warning_handler.R: Manual verification script
+
+### Impact
+Fixes critical segfault in Sound$extract_intervals_where() that blocked DSI/AVQI workflows.
+Function now safely returns empty list with warning when no matches found.

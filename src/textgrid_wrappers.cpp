@@ -13,6 +13,47 @@
 #include "praat.github.io/dwtools/TextGrid_extensions.h"
 
 // ============================================================================
+// Melder Warning Handler
+// ============================================================================
+
+// Global flag to ensure we only initialize once
+static bool warning_handler_initialized = false;
+
+// Simple warning handler that prints to R console instead of showing GUI dialog
+static void melder_warning_handler(conststring32 message) {
+    // Convert UTF-32 to UTF-8 for R
+    char32 const * p = message;
+    std::string utf8;
+    while (*p) {
+        char32 c = *p++;
+        if (c < 0x80) {
+            utf8 += static_cast<char>(c);
+        } else if (c < 0x800) {
+            utf8 += static_cast<char>(0xC0 | (c >> 6));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        } else if (c < 0x10000) {
+            utf8 += static_cast<char>(0xE0 | (c >> 12));
+            utf8 += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        } else {
+            utf8 += static_cast<char>(0xF0 | (c >> 18));
+            utf8 += static_cast<char>(0x80 | ((c >> 12) & 0x3F));
+            utf8 += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        }
+    }
+    Rcpp::Rcerr << "Praat warning: " << utf8 << std::endl;
+}
+
+// Initialize warning handler (called before first use)
+static void ensure_warning_handler() {
+    if (!warning_handler_initialized) {
+        Melder_setWarningProc(melder_warning_handler);
+        warning_handler_initialized = true;
+    }
+}
+
+// ============================================================================
 // TextGrid Creation & I/O
 // ============================================================================
 
@@ -679,6 +720,9 @@ Rcpp::List textgrid_sound_extract_intervals_where(
     bool preserve_times
 ) {
     if (!textgrid) Rcpp::stop("Invalid TextGrid pointer");
+    
+    // Initialize warning handler before any Praat calls
+    ensure_warning_handler();
     if (!sound) Rcpp::stop("Invalid Sound pointer");
     
     structTextGrid* tg = get_ptr(textgrid, "TextGrid");
