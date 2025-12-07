@@ -674,6 +674,31 @@ void sound_save(
 // Sound to PointProcess Conversions
 // ============================================================================
 
+//' Create PointProcess from Sound and Pitch using cross-correlation (internal)
+//' 
+//' This is the critical two-object command needed for DSI.
+//' Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
+//' 
+//' @keywords internal
+// [[Rcpp::export(.sound_pitch_to_pointprocess_cc)]]
+XPtr<structPointProcess> sound_pitch_to_pointprocess_cc(
+    XPtr<structSound> sound_xptr,
+    XPtr<structPitch> pitch_xptr
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structPitch* pitch = get_ptr(pitch_xptr, "Pitch");
+    
+    try {
+        // TWO-OBJECT COMMAND: [Sound, Pitch] -> To PointProcess (cc)
+        autoPointProcess pp = Sound_Pitch_to_PointProcess_cc(sound, pitch);
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create PointProcess from Sound and Pitch");
+    }
+}
+
 //' Extract glottal pulses from sound using cross-correlation (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_to_point_process_periodic_cc)]]

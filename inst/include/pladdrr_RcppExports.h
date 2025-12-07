@@ -1930,6 +1930,27 @@ namespace pladdrr {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
+    inline XPtr<structPointProcess> _sound_pitch_to_pointprocess_cc(XPtr<structSound> sound_xptr, XPtr<structPitch> pitch_xptr) {
+        typedef SEXP(*Ptr__sound_pitch_to_pointprocess_cc)(SEXP,SEXP);
+        static Ptr__sound_pitch_to_pointprocess_cc p__sound_pitch_to_pointprocess_cc = NULL;
+        if (p__sound_pitch_to_pointprocess_cc == NULL) {
+            validateSignature("XPtr<structPointProcess>(*_sound_pitch_to_pointprocess_cc)(XPtr<structSound>,XPtr<structPitch>)");
+            p__sound_pitch_to_pointprocess_cc = (Ptr__sound_pitch_to_pointprocess_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_pitch_to_pointprocess_cc");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_pitch_to_pointprocess_cc(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(pitch_xptr)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
+    }
+
     inline XPtr<structPointProcess> _sound_to_point_process_periodic_cc(XPtr<structSound> xptr, double time_step, double pitch_floor, double pitch_ceiling, double max_period_factor, double max_amplitude_factor) {
         typedef SEXP(*Ptr__sound_to_point_process_periodic_cc)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_point_process_periodic_cc p__sound_to_point_process_periodic_cc = NULL;

@@ -256,6 +256,46 @@ Pitch <- R6::R6Class("Pitch",
     },
     
     #' @description
+    #' Create PointProcess from Pitch and Sound using cross-correlation.
+    #' 
+    #' This is the TWO-OBJECT COMMAND required for DSI calculation.
+    #' Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
+    #' 
+    #' This method detects glottal pulses by finding the points of maximum
+    #' cross-correlation between the sound and a predicted pulse train based
+    #' on the pitch contour. This is more accurate than simple zero-crossing
+    #' or peak detection, especially for breathy or irregular voices.
+    #' 
+    #' @param sound Sound object to extract pulses from
+    #' @return PointProcess object with glottal pulse times
+    #' 
+    #' @section Praat Equivalent:
+    #' `[Sound, Pitch] → To PointProcess (cc)`
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' # DSI workflow requiring accurate pulse detection
+    #' sound <- Sound$new("soft_phonation.wav")
+    #' pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+    #' 
+    #' # Create PointProcess from BOTH Sound and Pitch (two-object command)
+    #' point_process <- pitch$to_pointprocess_cc(sound)
+    #' 
+    #' # Now can create VUV TextGrid
+    #' textgrid <- point_process$to_textgrid_vuv(
+    #'   max_voiced_period = 0.02,
+    #'   max_unvoiced_period = 0.01
+    #' )
+    #' }
+    to_pointprocess_cc = function(sound) {
+      if (!inherits(sound, "Sound")) {
+        stop("Argument 'sound' must be a Sound object")
+      }
+      pp_ptr <- .sound_pitch_to_pointprocess_cc(sound$.__enclos_env__$private$ptr, private$ptr)
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    #' @description
     #' Convert pitch object to PitchTier
     #' @return PitchTier object with pitch points from voiced frames
     down_to_pitch_tier = function() {

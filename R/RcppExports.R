@@ -1549,6 +1549,16 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_pladdrr_sound_save`, xptr, path, file_type))
 }
 
+#' Create PointProcess from Sound and Pitch using cross-correlation (internal)
+#' 
+#' This is the critical two-object command needed for DSI.
+#' Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
+#' 
+#' @keywords internal
+.sound_pitch_to_pointprocess_cc <- function(sound_xptr, pitch_xptr) {
+    .Call(`_pladdrr_sound_pitch_to_pointprocess_cc`, sound_xptr, pitch_xptr)
+}
+
 #' Extract glottal pulses from sound using cross-correlation (internal)
 #' @keywords internal
 .sound_to_point_process_periodic_cc <- function(xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor) {
