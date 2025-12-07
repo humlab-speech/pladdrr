@@ -20,8 +20,8 @@
 
 using namespace Rcpp;
 
-// Forward declaration - NUMfpp initialization from num_stubs.cpp
-extern void initialize_numfpp();
+// Forward declaration - NUMfpp initialization from NUMmachar.cpp
+extern void NUMmachar();
 
 // ============================================================================
 // Creation methods
@@ -36,7 +36,7 @@ Rcpp::XPtr<structPitch> pitch_from_sound(
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
     // Ensure NUMfpp is initialized before pitch analysis
-    initialize_numfpp();
+    NUMmachar();
 
     
     try {
