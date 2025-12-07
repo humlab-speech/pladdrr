@@ -311,7 +311,6 @@ XPtr<structPitch> sound_to_pitch(
     double pitch_ceiling
 ) {
     structSound* sound = get_ptr(sound_xptr, "Sound");
-    fprintf(stderr, "WR APPER: sound_to_pitch called, floor=%.1f ceiling=%.1f\n", pitch_floor, pitch_ceiling); fflush(stderr);
     
     try {
         autoPitch pitch = Sound_to_Pitch(

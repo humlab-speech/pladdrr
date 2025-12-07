@@ -4,42 +4,14 @@
  * in our phonetic analysis workflows.
  */
 
-#include "praat.github.io/melder/melder.h"
-#include "praat.github.io/sys/Data.h"
-#include "praat.github.io/sys/Interpreter.h"
-#include "praat.github.io/fon/Vector.h"
-#include "praat.github.io/dwsys/NUMmachar.h"
-#include "praat.github.io/dwsys/NUMlapack.h"
+#include "melder/melder.h"
+#include "sys/Data.h"
+#include "sys/Interpreter.h"
+#include "fon/Vector.h"
 #include <atomic>
 
 // Melder threading symbols needed for error handling
 std::atomic<integer> theMelder_error_threadId (0);
-
-// NUMfpp initialization - static table for machine constants
-static struct structmachar_Table machar_table_static;
-static bool numfpp_initialized = false;
-
-// Initialize NUMfpp on first use
-void initialize_numfpp() {
-    if (numfpp_initialized || NUMfpp != nullptr) return;
-    
-    NUMfpp = &machar_table_static;
-    
-    // Initialize using R's LAPACK dlamch function
-    NUMfpp->base = (int) NUMlapack_dlamch_("Base");
-    NUMfpp->t = (int) NUMlapack_dlamch_("Number of digits in mantissa");
-    NUMfpp->emin = (int) NUMlapack_dlamch_("Minimum exponent");
-    NUMfpp->emax = (int) NUMlapack_dlamch_("Largest exponent");
-    NUMfpp->rnd = (int) NUMlapack_dlamch_("Rounding mode");
-    NUMfpp->prec = NUMlapack_dlamch_("Precision");
-    NUMfpp->eps = NUMlapack_dlamch_("Epsilon");
-    NUMfpp->rmin = NUMlapack_dlamch_("Underflow threshold");
-    NUMfpp->sfmin = NUMlapack_dlamch_("Safe minimum");
-    NUMfpp->rmax = NUMlapack_dlamch_("Overflow threshold");
-    
-    numfpp_initialized = true;
-}
-
 
 // Forward declare types
 struct structManPages;
@@ -108,16 +80,18 @@ void Demo_peekInput (conststring32 keys) {
     // No-op in library mode
 }
 
-// Vector search functions
-enum kVectorSearchDirection { kVectorSearchDirection_NEAREST = 0 };
-
 /* End of file */
 
+// Vector search functions
+enum kVectorSearchDirection { kVectorSearchDirection_NEAREST = 0 };
 
 double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorSearchDirection) {
     Melder_throw (U"Vector_getNearestLevelCrossing not available in this build.");
 }
 
+void NUMmachar () {
+    // Machine characteristics - no-op in library mode
+}
 
 // Matrix statistics function needed by PowerCepstrogram
 #include "fon/Matrix.h"

@@ -20,7 +20,7 @@ static struct structmachar_Table machar_table_static;
 static bool numfpp_initialized = false;
 
 // Initialize NUMfpp on first use
-void initialize_numfpp() {
+static void initialize_numfpp() {
     if (numfpp_initialized || NUMfpp != nullptr) return;
     
     NUMfpp = &machar_table_static;

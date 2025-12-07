@@ -985,6 +985,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_as_matrix`, pitch)
 }
 
+.pitch_debug_candidates <- function(pitch, max_frames = 10L) {
+    .Call(`_pladdrr_pitch_debug_candidates`, pitch, max_frames)
+}
+
 .pitch_as_data_frame <- function(pitch) {
     .Call(`_pladdrr_pitch_as_data_frame`, pitch)
 }

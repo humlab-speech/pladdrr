@@ -61,7 +61,7 @@ else ifeq ($(shell uname -m),arm64)
 endif
 
 # Linker flags - link against GSL, R's LAPACK and BLAS
-PKG_LIBS = -L. -lgsl $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
+PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -102,7 +102,8 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/NUM2.cpp \
             praat.github.io/dwsys/NUMhuber.cpp \
             praat.github.io/dwsys/MAT_numerics.cpp \
-            praat.github.io/dwsys/NUMstring.cpp
+            praat.github.io/dwsys/NUMstring.cpp \
+            praat.github.io/dwsys/NUMmachar.cpp
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \

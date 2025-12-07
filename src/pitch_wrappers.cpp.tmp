@@ -35,9 +35,6 @@ Rcpp::XPtr<structPitch> pitch_from_sound(
     double pitch_ceiling
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
-    // Ensure NUMfpp is initialized before pitch analysis
-    initialize_numfpp();
-
     
     try {
         autoPitch pitch = Sound_to_Pitch(

@@ -20,7 +20,7 @@ static struct structmachar_Table machar_table_static;
 static bool numfpp_initialized = false;
 
 // Initialize NUMfpp on first use
-void initialize_numfpp() {
+static void initialize_numfpp() {
     if (numfpp_initialized || NUMfpp != nullptr) return;
     
     NUMfpp = &machar_table_static;
@@ -40,6 +40,13 @@ void initialize_numfpp() {
     numfpp_initialized = true;
 }
 
+// Ensure NUMfpp is initialized before any Praat function uses it
+// This is called automatically when the package loads
+extern "C" {
+void R_init_pladdrr(void* dll) {
+    initialize_numfpp();
+}
+}
 
 // Forward declare types
 struct structManPages;

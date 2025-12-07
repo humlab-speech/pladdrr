@@ -20,7 +20,7 @@ static struct structmachar_Table machar_table_static;
 static bool numfpp_initialized = false;
 
 // Initialize NUMfpp on first use
-void initialize_numfpp() {
+static void initialize_numfpp() {
     if (numfpp_initialized || NUMfpp != nullptr) return;
     
     NUMfpp = &machar_table_static;
@@ -40,6 +40,13 @@ void initialize_numfpp() {
     numfpp_initialized = true;
 }
 
+// Ensure NUMfpp is initialized before any Praat function uses it
+// This is called automatically when the package loads
+extern "C" {
+void R_init_pladdrr(void* dll) {
+    initialize_numfpp();
+}
+}
 
 // Forward declare types
 struct structManPages;
@@ -108,11 +115,35 @@ void Demo_peekInput (conststring32 keys) {
     // No-op in library mode
 }
 
-// Vector search functions
-enum kVectorSearchDirection { kVectorSearchDirection_NEAREST = 0 };
-
 /* End of file */
 
+// NUMfpp initialization - static table for machine constants
+static struct structmachar_Table machar_table_static;
+static bool numfpp_initialized = false;
+
+// Initialize NUMfpp on first use
+void initialize_numfpp() {
+    if (numfpp_initialized || NUMfpp != nullptr) return;
+    
+    NUMfpp = &machar_table_static;
+    
+    // Initialize using R's LAPACK dlamch function
+    NUMfpp->base = (int) NUMlapack_dlamch_("Base");
+    NUMfpp->t = (int) NUMlapack_dlamch_("Number of digits in mantissa");
+    NUMfpp->emin = (int) NUMlapack_dlamch_("Minimum exponent");
+    NUMfpp->emax = (int) NUMlapack_dlamch_("Largest exponent");
+    NUMfpp->rnd = (int) NUMlapack_dlamch_("Rounding mode");
+    NUMfpp->prec = NUMlapack_dlamch_("Precision");
+    NUMfpp->eps = NUMlapack_dlamch_("Epsilon");
+    NUMfpp->rmin = NUMlapack_dlamch_("Underflow threshold");
+    NUMfpp->sfmin = NUMlapack_dlamch_("Safe minimum");
+    NUMfpp->rmax = NUMlapack_dlamch_("Overflow threshold");
+    
+    numfpp_initialized = true;
+}
+
+// Vector search functions
+enum kVectorSearchDirection { kVectorSearchDirection_NEAREST = 0 };
 
 double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorSearchDirection) {
     Melder_throw (U"Vector_getNearestLevelCrossing not available in this build.");

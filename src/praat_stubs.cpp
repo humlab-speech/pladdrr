@@ -169,8 +169,16 @@ MelderFile MelderFile_create (MelderFile file) {
 }
 
 // Stub for threading functions (used by Praat's parallel processing)
-void MelderThread_run (std::atomic<bool> *, integer, integer, const std::function<void(integer, integer, integer)>&) {
-    // No-op: threading disabled in library mode
+void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements, integer thresholdNumberOfElementsPerThread, const std::function<void(integer, integer, integer)>& threadFunction) {
+    // Single-threaded execution for library mode
+    // Call the function once for all elements (thread 0, elements 1 to numberOfElements)
+    fprintf(stderr, "STUB MelderThread_run: calling threadFunction(0, 1, %ld)\n", (long)numberOfElements); fflush(stderr);
+    threadFunction(0, 1, numberOfElements);
+    fprintf(stderr, "STUB MelderThread_run: threadFunction returned\n"); fflush(stderr);
+    // If the function set the error flag, throw
+    if (*p_errorFlag) {
+        Melder_throw(U"Error in parallel computation");
+    }
 }
 
 void praat_runNotebook (const char32_t *, long, structStackel *, structEditor *) {

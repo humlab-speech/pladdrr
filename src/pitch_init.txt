@@ -1,0 +1,3 @@
+    // Ensure NUMfpp is initialized before pitch analysis
+    initialize_numfpp();
+    

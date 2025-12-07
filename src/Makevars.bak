@@ -61,7 +61,7 @@ else ifeq ($(shell uname -m),arm64)
 endif
 
 # Linker flags - link against GSL, R's LAPACK and BLAS
-PKG_LIBS = -L. -lgsl $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
+PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -110,6 +110,7 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/SampledIntoSampled.cpp \
               praat.github.io/dwtools/Intensity_extensions.cpp \
               praat.github.io/dwtools/TextGrid_extensions.cpp \
+              praat.github.io/dwtools/Sound_and_TextGrid_extensions.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -180,7 +181,6 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               powercepstrum_wrappers.cpp \
               cochleagram_wrappers.cpp excitation_wrappers.cpp \
               matrix_wrappers.cpp \
-              vad_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
