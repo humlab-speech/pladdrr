@@ -19,6 +19,20 @@
 
 using namespace Rcpp;
 
+// Forward declarations
+extern void NUMmachar();  // NUMfpp initialization
+extern void NUMrandom_initializeSafelyAndUnpredictably();  // RNG initialization
+
+// Helper function to ensure all numeric libraries are initialized
+static void ensure_numeric_libs_initialized() {
+    static bool initialized = false;
+    if (!initialized) {
+        NUMmachar();
+        NUMrandom_initializeSafelyAndUnpredictably();
+        initialized = true;
+    }
+}
+
 // ============================================================================
 // Creation methods
 // ============================================================================
@@ -33,6 +47,8 @@ XPtr<structFormant> formant_from_sound_burg(
     double pre_emphasis_from
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
+    // Ensure NUMfpp and RNG are initialized before formant analysis
+    ensure_numeric_libs_initialized();
     
     try {
         autoFormant formant = Sound_to_Formant_burg(
@@ -60,6 +76,8 @@ XPtr<structFormant> formant_from_sound_keepall(
     double pre_emphasis_from
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
+    // Ensure NUMfpp is initialized
+    ensure_numeric_libs_initialized();
     
     try {
         autoFormant formant = Sound_to_Formant_keepAll(
@@ -87,6 +105,8 @@ XPtr<structFormant> formant_from_sound_willems(
     double pre_emphasis_from
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
+    // Ensure NUMfpp is initialized
+    ensure_numeric_libs_initialized();
     
     try {
         autoFormant formant = Sound_to_Formant_willems(
@@ -114,6 +134,8 @@ XPtr<structFormant> formant_from_sound_sl(
     double pre_emphasis_from
 ) {
     if (!sound) Rcpp::stop("Invalid Sound pointer");
+    // Ensure NUMfpp is initialized
+    ensure_numeric_libs_initialized();
     
     try {
         // which = 2 for Split-Levinson method

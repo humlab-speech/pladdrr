@@ -94,6 +94,7 @@ SYS_SRC = praat.github.io/sys/Thing.cpp praat.github.io/sys/Data.cpp praat.githu
 # Dwsys sources
 DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/Polynomial.cpp \
+            praat.github.io/dwsys/Roots.cpp \
             praat.github.io/dwsys/FunctionSeries.cpp \
             praat.github.io/dwsys/Eigen.cpp \
             praat.github.io/dwsys/SlopeSelector.cpp \
@@ -103,7 +104,8 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/NUMhuber.cpp \
             praat.github.io/dwsys/MAT_numerics.cpp \
             praat.github.io/dwsys/NUMstring.cpp \
-            praat.github.io/dwsys/NUMmachar.cpp
+            praat.github.io/dwsys/NUMmachar.cpp \
+            praat.github.io/dwsys/NUMsorting.cpp
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
@@ -185,8 +187,8 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               sound_fileio_stub.cpp praat_stubs.cpp \
               num_stubs.cpp longsound_stub.cpp \
               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
-              svd_stubs.cpp roots_stubs.cpp glpk_stubs.cpp \
-              dtw_stubs.cpp \
+              svd_stubs.cpp glpk_stubs.cpp \
+              dtw_stubs.cpp eigen_sscp_stubs.cpp configuration_stubs.cpp table_stubs.cpp \
               sound_create_gaussian.cpp \
               r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp

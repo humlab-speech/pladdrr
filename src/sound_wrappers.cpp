@@ -31,6 +31,10 @@
 
 using namespace Rcpp;
 
+// Forward declaration - NUMfpp initialization from NUMmachar.cpp
+extern void NUMmachar();
+
+
 // ============================================================================
 // Sound Creation
 // ============================================================================
@@ -427,6 +431,9 @@ XPtr<structFormant> sound_to_formant_burg(
     double pre_emphasis_from
 ) {
     structSound* sound = get_ptr(sound_xptr, "Sound");
+    // Ensure NUMfpp is initialized
+    NUMmachar();
+
     
     try {
         autoFormant formant = Sound_to_Formant_burg(

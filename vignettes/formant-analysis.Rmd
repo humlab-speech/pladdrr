@@ -29,20 +29,19 @@ library(ggplot2)
 
 ### Available Methods
 
-1. **Burg** (`to_formant_burg`) - Most common, good general-purpose
-2. **Willems** (`to_formant_willems`) - More accurate for specific number of formants
-3. **Split-Levinson** (`to_formant_sl`) - Alternative algorithm for verification
-4. **Keep All** (`to_formant_keepall`) - Retains all LPC formants
-5. **From Excitation** (`excitation$to_formant`) - Perceptual-based extraction
+1. **Burg** (`to_formant_burg`) - Most common, recommended for general use
+2. **Keep All** (`to_formant_keepall`) - Retains all LPC formants without filtering
+3. **From Excitation** (`excitation$to_formant`) - Perceptual-based extraction
+
+**Note**: Willems and Split-Levinson methods are currently not supported due to 
+threading infrastructure limitations.
 
 ### Method Comparison
 
 | Method | Speed | Accuracy | Best For |
 |--------|-------|----------|----------|
-| **Burg** | Fast | Good | General speech analysis |
-| **Willems** | Medium | Better | Synthesis, specific F count |
-| **Split-Levinson** | Fast | Good | Verification, comparison |
-| **Keep All** | Fast | Variable | Research, exploration |
+| **Burg** | Fast | Good | General speech analysis (recommended) |
+| **Keep All** | Fast | Variable | Research, exploration, comparison |
 | **Excitation** | Slow | Good | Noisy/breathy speech |
 
 ## 1. Burg's Method (Standard)
@@ -75,88 +74,73 @@ if (!is.na(f1) && !is.na(f2)) {
 ### When to Use Burg
 
 ✅ **Use Burg for**:
-- Standard speech analysis
+- Standard speech analysis (recommended)
 - When you need fast processing
 - General vowel formant tracking
 - Batch processing of many files
+- Production pipelines
 
-❌ **Avoid Burg for**:
-- Exact formant count requirements (use Willems)
-- Verification (use Split-Levinson as second opinion)
+❌ **Consider alternatives for**:
+- Very noisy recordings (try Excitation-based method)
+- Exploratory research (consider Keep All to see all formants)
 
-## 2. Willems' Method
+## 2. Keep All Method
 
-Optimized for extracting a specific number of formants:
+Retains all detected LPC formants without filtering:
 
-```{r willems}
-formant_willems <- sound$to_formant_willems(
+```{r keepall}
+formant_keepall <- sound$to_formant_keepall(
   time_step = 0.005,
-  number_of_formants = 5,              # Exact number to extract
+  max_formants = 5,                    # Maximum formants to track
   max_frequency = 5500,
   window_length = 0.025,
   pre_emphasis_from = 50
 )
 ```
 
-### When to Use Willems
+### When to Use Keep All
 
-✅ **Use Willems for**:
-- When you know exact formant count needed
-- Formant synthesis applications
-- Better bandwidth estimation
-- More accurate formant tracking
+✅ **Use Keep All for**:
+- Exploratory analysis
+- Research applications
+- When you want all detected formants
+- Comparison with standard Burg method
 
-❌ **Avoid Willems for**:
-- Exploratory analysis (formant count unknown)
-- When speed is critical
+❌ **Avoid Keep All for**:
+- Production pipelines (less stable)
+- When you need only specific formants
 
-### Willems vs. Burg Example
+### Keep All vs. Burg Example
 
-```{r compare-willems-burg}
+```{r compare-keepall-burg}
 # Same sound, both methods
 formant_b <- sound$to_formant_burg(max_formants = 4)
-formant_w <- sound$to_formant_willems(number_of_formants = 4)
+formant_k <- sound$to_formant_keepall(max_formants = 4)
 
 # Extract F1 and F2
 time <- 0.25
 f1_burg <- formant_b$get_value_at_time(1, time, unit = "hertz")
-f1_will <- formant_w$get_value_at_time(1, time, unit = "hertz")
+f1_keep <- formant_k$get_value_at_time(1, time, unit = "hertz")
 
 f2_burg <- formant_b$get_value_at_time(2, time, unit = "hertz")
-f2_will <- formant_w$get_value_at_time(2, time, unit = "hertz")
+f2_keep <- formant_k$get_value_at_time(2, time, unit = "hertz")
 
 # Comparison
-if (!any(is.na(c(f1_burg, f1_will, f2_burg, f2_will)))) {
+if (!any(is.na(c(f1_burg, f1_keep, f2_burg, f2_keep)))) {
   cat("Method Comparison:\n")
-  cat(sprintf("  Burg:    F1 = %d Hz, F2 = %d Hz\n", round(f1_burg), round(f2_burg)))
-  cat(sprintf("  Willems: F1 = %d Hz, F2 = %d Hz\n", round(f1_will), round(f2_will)))
-  cat(sprintf("  Diff:    F1 = %d Hz, F2 = %d Hz\n",
-              round(abs(f1_burg - f1_will)),
-              round(abs(f2_burg - f2_will))))
+  cat(sprintf("  Burg:     F1 = %d Hz, F2 = %d Hz\n", round(f1_burg), round(f2_burg)))
+  cat(sprintf("  Keep All: F1 = %d Hz, F2 = %d Hz\n", round(f1_keep), round(f2_keep)))
+  cat(sprintf("  Diff:     F1 = %d Hz, F2 = %d Hz\n",
+              round(abs(f1_burg - f1_keep)),
+              round(abs(f2_burg - f2_keep))))
 }
 ```
 
-## 3. Split-Levinson Method
+## 3. Alternative Methods (Advanced)
 
-Alternative algorithm useful for verification:
-
-```{r split-levinson}
-formant_sl <- sound$to_formant_sl(
-  time_step = 0.005,
-  number_of_poles = 10,                # Number of LPC poles
-  max_frequency = 5500,
-  window_length = 0.025,
-  pre_emphasis_from = 50
-)
-```
-
-### When to Use Split-Levinson
-
-✅ **Use Split-Levinson for**:
-- Verifying results from other methods
-- Comparison studies
-- Research applications
-- When Burg produces unexpected results
+**Note**: Some alternative formant extraction methods (Willems, Split-Levinson) are 
+currently not supported due to threading infrastructure limitations. Use Burg method
+(recommended) or Keep All method instead.
 
 ## Choosing Formant Ceiling
 
@@ -317,9 +301,9 @@ formant <- sound$to_formant_burg(time_step = 0.002)
 formant <- sound$to_formant_burg(max_frequency = 4800)
 ```
 
-2. **Try Willems method**:
-```{r try-willems, eval=FALSE}
-formant <- sound$to_formant_willems(number_of_formants = 5)
+2. **Try Keep All method for comparison**:
+```{r try-keepall, eval=FALSE}
+formant <- sound$to_formant_keepall(max_formants = 5)
 ```
 
 3. **Check bandwidth**:
@@ -425,11 +409,12 @@ formant_exc2 <- excitation2$to_formant(max_formants = 5)
 
 ### General Recommendations
 
-1. **Start with Burg** - Good default for most cases
-2. **Verify with Willems or SL** - If results look suspicious
+1. **Start with Burg** - Recommended default for most cases
+2. **Compare with Keep All** - If results look suspicious
 3. **Adjust ceiling** - Based on speaker demographics
 4. **Use appropriate time step** - Balance speed vs. detail
 5. **Check intensity** - Low intensity → unreliable formants
+6. **Try Excitation method** - For very noisy recordings
 
 ### Quality Checks
 

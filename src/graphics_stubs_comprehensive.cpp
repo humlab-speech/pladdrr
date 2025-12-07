@@ -5,9 +5,13 @@
 #include "praat.github.io/sys/Graphics.h"
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/dwtools/Sound_extensions_enums.h"
+#include "praat.github.io/fon/Matrix.h"
 
 // Note: These are no-op stubs since we build with NO_GRAPHICS
 // Graphics functionality is disabled in non-GUI builds
+
+// Matrix extensions graphics stubs (for TableOfReal_extensions dependency)
+void Matrix_drawDistribution (Matrix, Graphics, double, double, double, double, double, double, integer, double, double, bool, bool) {}
 
 void Graphics_grey (Graphics, constMATVU const&, double, double, double, double, int, double []) {}
 void Graphics_image (Graphics, constMATVU const&, double, double, double, double, double, double) {}

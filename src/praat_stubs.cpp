@@ -173,11 +173,25 @@ void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements,
     // Single-threaded execution for library mode
     // Call the function once for all elements (thread 0, elements 1 to numberOfElements)
     fprintf(stderr, "STUB MelderThread_run: calling threadFunction(0, 1, %ld)\n", (long)numberOfElements); fflush(stderr);
-    threadFunction(0, 1, numberOfElements);
-    fprintf(stderr, "STUB MelderThread_run: threadFunction returned\n"); fflush(stderr);
-    // If the function set the error flag, throw
-    if (*p_errorFlag) {
+    try {
+        threadFunction(0, 1, numberOfElements);
+        fprintf(stderr, "STUB MelderThread_run: threadFunction returned successfully\n"); fflush(stderr);
+    } catch (MelderError) {
+        fprintf(stderr, "STUB MelderThread_run: MelderError caught\n"); fflush(stderr);
+        if (p_errorFlag) *p_errorFlag = true;
         Melder_throw(U"Error in parallel computation");
+    } catch (std::exception& e) {
+        fprintf(stderr, "STUB MelderThread_run: std::exception caught: %s\n", e.what()); fflush(stderr);
+        if (p_errorFlag) *p_errorFlag = true;
+        Melder_throw(U"C++ exception in parallel computation");
+    } catch (...) {
+        fprintf(stderr, "STUB MelderThread_run: unknown exception caught\n"); fflush(stderr);
+        if (p_errorFlag) *p_errorFlag = true;
+        Melder_throw(U"Unknown exception in parallel computation");
+    }
+    // If the function set the error flag, throw
+    if (p_errorFlag && *p_errorFlag) {
+        Melder_throw(U"Error flag set in parallel computation");
     }
 }
 
