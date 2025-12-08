@@ -1427,17 +1427,17 @@ namespace pladdrr {
         return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
-    inline XPtr<structSound> _sound_read_from_file(std::string path) {
-        typedef SEXP(*Ptr__sound_read_from_file)(SEXP);
-        static Ptr__sound_read_from_file p__sound_read_from_file = NULL;
-        if (p__sound_read_from_file == NULL) {
-            validateSignature("XPtr<structSound>(*_sound_read_from_file)(std::string)");
-            p__sound_read_from_file = (Ptr__sound_read_from_file)R_GetCCallable("pladdrr", "_pladdrr__sound_read_from_file");
+    inline XPtr<structSound> _sound_read_from_file_native(std::string path) {
+        typedef SEXP(*Ptr__sound_read_from_file_native)(SEXP);
+        static Ptr__sound_read_from_file_native p__sound_read_from_file_native = NULL;
+        if (p__sound_read_from_file_native == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_read_from_file_native)(std::string)");
+            p__sound_read_from_file_native = (Ptr__sound_read_from_file_native)R_GetCCallable("pladdrr", "_pladdrr__sound_read_from_file_native");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_read_from_file(Shield<SEXP>(Rcpp::wrap(path)));
+            rcpp_result_gen = p__sound_read_from_file_native(Shield<SEXP>(Rcpp::wrap(path)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -1866,6 +1866,26 @@ namespace pladdrr {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structSpectrogram> >(rcpp_result_gen);
+    }
+
+    inline void _sound_write_to_file_native(XPtr<structSound> sound_xptr, std::string path, std::string format, int bits_per_sample) {
+        typedef SEXP(*Ptr__sound_write_to_file_native)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_write_to_file_native p__sound_write_to_file_native = NULL;
+        if (p__sound_write_to_file_native == NULL) {
+            validateSignature("void(*_sound_write_to_file_native)(XPtr<structSound>,std::string,std::string,int)");
+            p__sound_write_to_file_native = (Ptr__sound_write_to_file_native)R_GetCCallable("pladdrr", "_pladdrr__sound_write_to_file_native");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_write_to_file_native(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(path)), Shield<SEXP>(Rcpp::wrap(format)), Shield<SEXP>(Rcpp::wrap(bits_per_sample)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
     inline DataFrame _sound_as_data_frame(XPtr<structSound> xptr) {

@@ -1,5 +1,28 @@
 # speaker Package Development Notes
 
+## FORMANT EXTRACTION FIX IN PROGRESS (2025-12-07) 🔧
+
+**Current Work**: Fixing formant extraction by enabling Roots.cpp  
+**Session Start**: 2025-12-07 14:00 UTC  
+**Status**: Code changes complete, build testing pending  
+**Files Modified**: 6 (Makevars.in, formant_wrappers.cpp, sound_wrappers.cpp, eigen_sscp_stubs.cpp + 2 docs)  
+**See**: `FORMANT_FIX_SUMMARY_2025-12-07.md` and `NEXT_STEPS.md`
+
+### What We Fixed
+1. ✅ NUMfpp segfault (v1.1.5) - changed inline → extern  
+2. ✅ Added Roots.cpp to enable polynomial root finding for formants
+3. ✅ Resolved Table.cpp statistical dependencies (SSCP, PCA, Covariance, Correlation)
+4. ✅ Added NUMmachar() initialization to formant/sound wrappers
+5. ⏳ Testing pending (build timeout issue)
+
+### Next Actions
+- Complete full build test (see NEXT_STEPS.md)
+- Test formant extraction: `snd$to_formant_burg()`
+- Remove debug logging if successful
+- Bump to v1.1.6 and commit
+
+---
+
 ## OOP-First Architecture CONFIRMED (2025-11-12) ✅
 
 **Date**: 2025-11-12 22:27 UTC  

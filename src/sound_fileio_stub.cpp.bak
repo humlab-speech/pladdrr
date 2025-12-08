@@ -66,24 +66,13 @@ autoSound Sound_readFromRawFile (MelderFile file, int encoding, double sampleRat
     Melder_throw (U"Reading raw audio files is not supported in this build.");
 }
 
-/* Audio playback stubs - not supported in library mode (NO_AUDIO) */
-void Sound_play (constSound me, Sound_PlayCallback playCallback, Thing playBoss) {
-    (void) me;
-    (void) playCallback;
-    (void) playBoss;
-    Melder_throw (U"Sound playback is not available in library mode.\n"
-        U"This is a non-interactive R package for analysis, not playback.");
-}
+/* Audio playback stubs - not supported in library mode (NO_AUDIO)
+ * 
+ * NOTE: These are now provided by including Sound_audio.cpp in the build.
+ * The functions below are kept as fallback but should not be called.
+ */
 
-void Sound_playPart (constSound me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss) {
-    (void) me;
-    (void) tmin;
-    (void) tmax;
-    (void) playCallback;
-    (void) playBoss;
-    Melder_throw (U"Sound playback is not available in library mode.\n"
-        U"This is a non-interactive R package for analysis, not playback.");
-}
+// REMOVED - now using real implementations from Sound_audio.cpp
 
 void Sound_saveAsAudioFile (constSound me, MelderFile file, int audioFileType, int bitDepth) {
     (void) me;

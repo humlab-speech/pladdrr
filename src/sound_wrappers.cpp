@@ -33,34 +33,46 @@ using namespace Rcpp;
 
 // Forward declaration - NUMfpp initialization from NUMmachar.cpp
 extern void NUMmachar();
+extern void NUMrandom_initializeSafelyAndUnpredictably();  // RNG initialization
+
+// Helper function to ensure all numeric libraries are initialized
+static void ensure_numeric_libs_initialized() {
+    static bool initialized = false;
+    if (!initialized) {
+        NUMmachar();
+        NUMrandom_initializeSafelyAndUnpredictably();
+        initialized = true;
+    }
+}
 
 
 // ============================================================================
 // Sound Creation
 // ============================================================================
 
-//' Read Sound from file (internal)
+//' Read Sound from file using native Praat readers (internal)
 //' @keywords internal
-// [[Rcpp::export(.sound_read_from_file)]]
-XPtr<structSound> sound_read_from_file(std::string path) {
-    // NOTE: File I/O currently has issues - under investigation
-    // Use Sound$create_tone(), Sound$create_from_formula(), etc. instead
-    // See SESSION_SUMMARY_2025-11-19.md for details
-    stop("Sound file reading is currently unavailable. Use Sound$create_tone() or other creation methods.");
-    
-    /* Original implementation - disabled until file I/O is fixed:
+// [[Rcpp::export(.sound_read_from_file_native)]]
+XPtr<structSound> sound_read_from_file_native(std::string path) {
     try {
-        structMelderFile file {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
+        // Initialize numeric libraries if needed
+        ensure_numeric_libs_initialized();
         
+        // Convert path to MelderFile
+        structMelderFile file { };
+        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+        
+        // Read sound using native Praat reader (auto-detects format)
+        // Supports: WAV, AIFF, AIFC, NeXT/Sun, NIST
         autoSound sound = Sound_readFromSoundFile(&file);
+        
         return create_xptr_from_auto<structSound>(sound);
         
     } catch (MelderError) {
         Melder_clearError();
-        stop("Failed to read sound file: " + path);
+        stop("Native sound file reading failed: " + path + 
+             "\n(Try different format or check file corruption)");
     }
-    */
 }
 
 //' Create Sound from values (internal)
@@ -597,6 +609,61 @@ XPtr<structSpectrogram> sound_to_spectrogram(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create spectrogram");
+    }
+}
+
+// ============================================================================
+// Sound File Writing
+// ============================================================================
+
+//' Write Sound to file using native Praat writers (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_write_to_file_native)]]
+void sound_write_to_file_native(
+    XPtr<structSound> sound_xptr,
+    std::string path,
+    std::string format,
+    int bits_per_sample
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    ensure_numeric_libs_initialized();
+    
+    try {
+        // Convert format string to Praat constant
+        int praat_format = 0;
+        std::string fmt_upper = format;
+        std::transform(fmt_upper.begin(), fmt_upper.end(), fmt_upper.begin(), ::toupper);
+        
+        if (fmt_upper == "WAV") {
+            praat_format = Melder_WAV;
+        } else if (fmt_upper == "AIFF" || fmt_upper == "AIF") {
+            praat_format = Melder_AIFF;
+        } else if (fmt_upper == "AIFC") {
+            praat_format = Melder_AIFC;
+        } else if (fmt_upper == "NIST") {
+            praat_format = Melder_NIST;
+        } else if (fmt_upper == "NEXT" || fmt_upper == "SUN" || fmt_upper == "AU") {
+            praat_format = Melder_NEXT_SUN;
+        } else {
+            stop("Unsupported format: " + format + 
+                 ". Supported: WAV, AIFF, AIFC, NIST, NEXT/SUN");
+        }
+        
+        // Validate bits per sample
+        if (bits_per_sample != 16 && bits_per_sample != 24 && bits_per_sample != 32) {
+            stop("bits_per_sample must be 16, 24, or 32");
+        }
+        
+        // Create Praat MelderFile
+        structMelderFile file { };
+        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+        
+        // Write using Praat's native writer
+        Sound_saveAsAudioFile(sound, &file, praat_format, bits_per_sample);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to write Sound to file: " + path);
     }
 }
 

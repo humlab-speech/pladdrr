@@ -158,15 +158,7 @@ int GuiTrust_get (structGuiWindow *, structEditor *, conststring32, conststring3
     Melder_throw (U"Secure trust dialogs not available in library mode.");
 }
 
-// Stub for file I/O functions (used by TextGrid and other file operations)
-void MelderFile_close (MelderFile file) {
-    // No-op: basic file operations only
-}
-
-MelderFile MelderFile_create (MelderFile file) {
-    // No-op: basic file operations only
-    return file;
-}
+// MelderFile_close and MelderFile_create now provided by MelderFile.cpp (not stubs)
 
 // Stub for threading functions (used by Praat's parallel processing)
 void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements, integer thresholdNumberOfElementsPerThread, const std::function<void(integer, integer, integer)>& threadFunction) {

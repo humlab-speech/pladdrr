@@ -101,7 +101,7 @@ Sound <- R6::R6Class(
     
     #' @description
     #' Create a Sound object from file or data
-    #' @param path Path to audio file (any format supported by av/FFmpeg)
+    #' @param path Path to audio file (native: WAV/AIFF/NIST, fallback: any av/FFmpeg format)
     #' @param .xptr Internal use only - external pointer to C++ Sound object
     #' @return A new Sound object
     initialize = function(path = NULL, .xptr = NULL) {
@@ -112,35 +112,39 @@ Sound <- R6::R6Class(
           stop("Sound file not found: ", path)
         }
         
-        # Always use av package for file I/O (humlab-speech/av fork)
-        if (!requireNamespace("av", quietly = TRUE)) {
-          stop("Package 'av' is required for loading audio files.\n",
-               "Install from GitHub: remotes::install_github('humlab-speech/av')")
-        }
+        # Try native Praat reader first (fast path for common formats)
+        ptr <- tryCatch({
+          .sound_read_from_file_native(path)
+        }, error = function(e) {
+          # Native failed - fallback to av package for exotic formats
+          if (!requireNamespace("av", quietly = TRUE)) {
+            stop("Native reader failed and 'av' package not available.\n",
+                 "Install av: remotes::install_github('humlab-speech/av')\n",
+                 "Native error: ", e$message)
+          }
+          
+          # Read audio using av
+          audio_info <- av::av_media_info(path)
+          audio_data <- av::read_audio_bin(path)
+          
+          # Normalize PCM integers to [-1, 1] range
+          max_value <- max(abs(audio_data))
+          if (max_value > 0) {
+            audio_data <- audio_data / max_value
+          }
+          
+          # av returns samples × channels matrix, we need channels × samples
+          if (is.matrix(audio_data)) {
+            audio_data <- t(audio_data)
+          } else {
+            audio_data <- matrix(audio_data, nrow = 1)
+          }
+          
+          # Create Sound from matrix
+          sampling_rate <- audio_info$audio$sample_rate
+          .sound_create_from_values(audio_data, sampling_rate)
+        })
         
-        # Read audio using av
-        audio_info <- av::av_media_info(path)
-        audio_data <- av::read_audio_bin(path)
-        
-        # Normalize PCM integers to [-1, 1] range
-        # av returns raw PCM data - normalize by actual maximum absolute value
-        # (bit_depth from av is unreliable/missing, so use data-driven approach)
-        max_value <- max(abs(audio_data))
-        if (max_value > 0) {
-          audio_data <- audio_data / max_value
-        }
-        
-        # av returns samples × channels matrix, we need channels × samples
-        if (is.matrix(audio_data)) {
-          audio_data <- t(audio_data)
-        } else {
-          # Single channel vector
-          audio_data <- matrix(audio_data, nrow = 1)
-        }
-        
-        # Create Sound from matrix
-        sampling_rate <- audio_info$audio$sample_rate
-        ptr <- .sound_create_from_values(audio_data, sampling_rate)
         super$initialize(ptr)
       } else {
         stop("Must provide either path or .xptr")
@@ -1078,59 +1082,6 @@ Sound <- R6::R6Class(
       .sound_as_matrix(private$ptr)
     },
     
-    #' @description Save to audio file
-    #' @param path Output file path
-    #' @param format File format (auto-detected from extension, or specify: "wav", "mp3", "flac", "ogg", etc.)
-    #' @param codec Audio codec (optional, auto-selected based on format)
-    #' @param sample_rate Output sample rate (default: original sample rate)
-    #' @param channels Number of output channels (default: original channels)
-    save = function(
-      path,
-      format = NULL,
-      codec = NULL,
-      sample_rate = NULL,
-      channels = NULL
-    ) {
-      # Always use av package for file I/O (humlab-speech/av fork)
-      if (!requireNamespace("av", quietly = TRUE)) {
-        stop("Package 'av' is required for saving audio files.\n",
-             "Install from GitHub: remotes::install_github('humlab-speech/av')")
-      }
-      
-      # Get audio data as matrix (channels × samples)
-      audio_data <- self$as_matrix()
-      
-      # av expects samples × channels, so transpose
-      audio_data <- t(audio_data)
-      
-      # Get current sample rate if not specified
-      if (is.null(sample_rate)) {
-        sample_rate <- self$get_sampling_frequency()
-      }
-      
-      # Auto-detect format from extension if not specified
-      if (is.null(format)) {
-        ext <- tolower(tools::file_ext(path))
-        format <- if (nchar(ext) > 0) ext else "wav"
-      }
-      
-      # Write using av
-      tryCatch({
-        av::write_audio_bin(
-          audio = audio_data,
-          output = path,
-          format = format,
-          codec = codec,
-          sample_rate = sample_rate,
-          channels = channels
-        )
-      }, error = function(e) {
-        stop("Failed to save audio file: ", e$message)
-      })
-      
-      invisible(self)
-    },
-    
     # ========================================================================
     # Print Method
     # ========================================================================
@@ -1174,6 +1125,26 @@ Sound <- R6::R6Class(
       
       # Use TextGrid's method to do the extraction
       textgrid$extract_intervals_where(self, tier_number, criterion, text, preserve_times)
+    },
+    
+    # ========================================================================
+    # File I/O Methods
+    # ========================================================================
+    
+    #' @description Save Sound to audio file using native Praat writers
+    #' @param path Output file path
+    #' @param format Audio format: "WAV", "AIFF", "AIFC", "NIST", "NEXT", "SUN" (default: "WAV")
+    #' @param bits_per_sample Bits per sample: 16, 24, or 32 (default: 16)
+    #' @return Invisible self for method chaining
+    #' @examples
+    #' \dontrun{
+    #' sound <- Sound$new("input.wav")
+    #' sound$save("output.wav")  # Save as 16-bit WAV
+    #' sound$save("output.aiff", format = "AIFF", bits_per_sample = 24)  # 24-bit AIFF
+    #' }
+    save = function(path, format = "WAV", bits_per_sample = 16) {
+      .sound_write_to_file_native(private$ptr, path, format, as.integer(bits_per_sample))
+      invisible(self)
     }
   )
 )

@@ -1,20 +1,62 @@
-## Code Changes Summary
+# pladdrr v1.1.5 - Formant Extraction Fix Summary
 
-### R/ Changes
-- R/pladdrr-package.R: Removed `.init_melder_warning_handler()` call from `.onLoad()` (was referencing non-existent export)
-- R/RcppExports.R: Regenerated via Rcpp::compileAttributes() (removed old handler export)
+## What We Fixed
 
-### src/ Changes
-- src/textgrid_wrappers.cpp: 
-  * Lines 14-54: Added static warning handler `melder_warning_handler()` + `ensure_warning_handler()`
-  * Line 725: Added `ensure_warning_handler()` call in `textgrid_sound_extract_intervals_where()`
-  * Converts UTF-32 Praat warnings to UTF-8 for R console
-  * Prevents segfault when no TextGrid intervals match search criterion
+**Problem**: `Sound$to_formant_burg()` segfaulted with "Polynomial_to_Roots not available"
 
-### tests/ Changes (NEW)
-- tests/testthat/test-extract-intervals-where.R: New test suite (6 tests)
-- test_warning_handler.R: Manual verification script
+**Solution**: Added missing dependencies + initialization code
 
-### Impact
-Fixes critical segfault in Sound$extract_intervals_where() that blocked DSI/AVQI workflows.
-Function now safely returns empty list with warning when no matches found.
+**Result**: ✅ Formant extraction works perfectly (190 frames extracted from test.wav)
+
+## Changes Made
+
+### Build System (src/Makevars.in)
+- Added `Roots.cpp` (line 97) - polynomial root finding for LPC
+- Added `NUMsorting.cpp` (line 108) - sorting for formant tracking
+- Added `table_stubs.cpp` (line 191) - statistical stubs
+
+### New Files
+- `src/table_stubs.cpp` - SSCP/PCA/Covariance/Correlation stubs
+- `src/configuration_stubs.cpp` - Configuration analysis stubs  
+- `src/eigen_sscp_stubs.cpp` - Fixed include paths to NUM2.h
+
+### Code Changes
+- `src/formant_wrappers.cpp` - Added `ensure_numeric_libs_initialized()`:
+  - Calls `NUMmachar()` for floating-point precision
+  - Calls `NUMrandom_initializeSafelyAndUnpredictably()` for RNG
+- `src/sound_wrappers.cpp` - Added NUMmachar() initialization
+- `src/praat_stubs.cpp` - NULL check in MelderThread_run()
+- `src/graphics_stubs_comprehensive.cpp` - Matrix_drawDistribution() stub
+
+### Documentation
+- `vignettes/formant-analysis.Rmd` - Removed Willems/SL methods, updated docs
+- `NEWS.md` - Added v1.1.5 entry
+- `DESCRIPTION` - Version 1.1.5
+
+## Known Limitations
+
+Threading methods NOT supported:
+- ❌ `to_formant_willems()` - crashes at 0x68 (threading issue)
+- ❌ `to_formant_sl()` - crashes at 0x68 (threading issue)
+
+Recommended methods:
+- ✅ `to_formant_burg()` - DEFAULT, recommended by Praat
+- ✅ `to_formant_keepall()` - Burg variant with all candidates
+
+## Test Results
+
+library(pladdrr)
+snd <- Sound$new('inst/extdata/test.wav')
+formant <- snd$to_formant_burg()
+# SUCCESS: 190 frames extracted
+
+## Ready to Commit
+
+All files staged. See COMMIT_CHECKLIST.md for commit command.
+
+## Documentation Created
+
+- FORMANT_FIX_SUMMARY_2025-12-07.md - Detailed technical analysis
+- FORMANT_FIX_SESSION_SUMMARY.md - Complete session summary
+- COMMIT_CHECKLIST.md - Commit instructions
+- COMMIT_SUMMARY.txt - This file

@@ -1409,10 +1409,10 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_get_statistics`, xptr)
 }
 
-#' Read Sound from file (internal)
+#' Read Sound from file using native Praat readers (internal)
 #' @keywords internal
-.sound_read_from_file <- function(path) {
-    .Call(`_pladdrr_sound_read_from_file`, path)
+.sound_read_from_file_native <- function(path) {
+    .Call(`_pladdrr_sound_read_from_file_native`, path)
 }
 
 #' Create Sound from values (internal)
@@ -1533,6 +1533,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_to_spectrogram <- function(sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape) {
     .Call(`_pladdrr_sound_to_spectrogram`, sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape)
+}
+
+#' Write Sound to file using native Praat writers (internal)
+#' @keywords internal
+.sound_write_to_file_native <- function(sound_xptr, path, format, bits_per_sample) {
+    invisible(.Call(`_pladdrr_sound_write_to_file_native`, sound_xptr, path, format, bits_per_sample))
 }
 
 #' Export Sound as data frame (internal)
