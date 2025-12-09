@@ -173,7 +173,9 @@ double ltas_get_slope(Rcpp::XPtr<structLtas> ltas, double f1min, double f1max, d
     double slope = Ltas_getSlope(ltas.get(), f1min, f1max, f2min, f2max, averagingMethod);
     return slope;
   } catch(MelderError) {
-    Melder_throw ("Failed to calculate LTAS slope");
+    Melder_clearError();
+    Rcpp::stop("Failed to calculate LTAS slope");
+    Rcpp::stop("Failed to calculate LTAS slope");
   }
 }
 

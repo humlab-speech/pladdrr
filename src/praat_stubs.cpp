@@ -164,20 +164,30 @@ int GuiTrust_get (structGuiWindow *, structEditor *, conststring32, conststring3
 void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements, integer thresholdNumberOfElementsPerThread, const std::function<void(integer, integer, integer)>& threadFunction) {
     // Single-threaded execution for library mode
     // Call the function once for all elements (thread 0, elements 1 to numberOfElements)
+#ifndef PLADDRR_NO_DEBUG
     fprintf(stderr, "STUB MelderThread_run: calling threadFunction(0, 1, %ld)\n", (long)numberOfElements); fflush(stderr);
+#endif
     try {
         threadFunction(0, 1, numberOfElements);
+#ifndef PLADDRR_NO_DEBUG
         fprintf(stderr, "STUB MelderThread_run: threadFunction returned successfully\n"); fflush(stderr);
+#endif
     } catch (MelderError) {
+#ifndef PLADDRR_NO_DEBUG
         fprintf(stderr, "STUB MelderThread_run: MelderError caught\n"); fflush(stderr);
+#endif
         if (p_errorFlag) *p_errorFlag = true;
         Melder_throw(U"Error in parallel computation");
     } catch (std::exception& e) {
+#ifndef PLADDRR_NO_DEBUG
         fprintf(stderr, "STUB MelderThread_run: std::exception caught: %s\n", e.what()); fflush(stderr);
+#endif
         if (p_errorFlag) *p_errorFlag = true;
         Melder_throw(U"C++ exception in parallel computation");
     } catch (...) {
+#ifndef PLADDRR_NO_DEBUG
         fprintf(stderr, "STUB MelderThread_run: unknown exception caught\n"); fflush(stderr);
+#endif
         if (p_errorFlag) *p_errorFlag = true;
         Melder_throw(U"Unknown exception in parallel computation");
     }
