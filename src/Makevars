@@ -238,13 +238,7 @@ SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
            pitch_processing_simd.cpp simd_info.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC) flac_stubs.cpp flac_symbols.cpp sound_audio_stubs.cpp
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC) flac_stubs.cpp sound_audio_stubs.cpp
 
-# Object files - handle both .c and .cpp files
-C_SOURCES = $(filter %.c,$(SOURCES))
-CPP_SOURCES = $(filter %.cpp,$(SOURCES))
-OBJECTS = $(C_SOURCES:.c=.o) $(CPP_SOURCES:.cpp=.o)
-
-# Explicit rule for C files
-%.o: %.c
-	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c $< -o $@
+# Object files
+OBJECTS = $(SOURCES:.cpp=.o)

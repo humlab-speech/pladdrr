@@ -2,7 +2,27 @@
 // Headers already included by melder_audiofiles.cpp - we just provide stubs
 
 #include <cstdio>
-#include "praat.github.io/external/mp3/mp3.h"  // Get exact MP3 type declarations
+#include <cstdint>
+
+// Praat integer type (from melder_int.h)
+using integer = intptr_t;
+
+// MP3 types (from mp3.h) - manually defined to avoid missing header during R install
+typedef struct _MP3_FILE *MP3_FILE;
+typedef int MP3F_SAMPLE;
+#if defined (_OFF_T) || defined (__off_t_defined)
+typedef off_t MP3F_OFFSET;
+#else
+typedef unsigned long MP3F_OFFSET;
+#endif
+
+#define MP3F_MAX_CHANNELS 2
+#define MP3F_MAX_SAMPLES  1152
+
+typedef void (*MP3F_CALLBACK) (
+    const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS],
+    integer num_samples,
+    void *context);
 
 // Forward declarations for FLAC types
 typedef struct FLAC__StreamDecoder FLAC__StreamDecoder;
@@ -33,8 +53,6 @@ typedef enum {
     FLAC__STREAM_ENCODER_INIT_STATUS_OK = 0,
     FLAC__STREAM_ENCODER_INIT_STATUS_ENCODER_ERROR
 } FLAC__StreamEncoderInitStatus;
-
-// MP3 types are now defined by including mp3.h above
 
 // ============================================================================
 // FLAC Decoder Stubs
