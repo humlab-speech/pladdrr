@@ -164,45 +164,17 @@ double ltas_get_mean(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int 
 }
 
 // [[Rcpp::export(.ltas_get_slope)]]
-double ltas_get_slope(Rcpp::XPtr<structLtas> ltas, double f1min, double f1max, double f2min, double f2max, int unit) {
+double ltas_get_slope(Rcpp::XPtr<structLtas> ltas, double f1min, double f1max, double f2min, double f2max, int averagingMethod) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");
   
-  // Get mean of first range
-  double sum1 = 0.0;
-  integer count1 = 0;
-  integer i1min = Sampled_xToNearestIndex(ltas.get(), f1min);
-  integer i1max = Sampled_xToNearestIndex(ltas.get(), f1max);
-  
-  for (integer i = i1min; i <= i1max; i++) {
-    sum1 += ltas->z[1][i];
-    count1++;
+  try {
+    // Use Praat's native Ltas_getSlope function
+    // averagingMethod: 1=energy, 2=sones, 3=dB (Praat enum values)
+    double slope = Ltas_getSlope(ltas.get(), f1min, f1max, f2min, f2max, averagingMethod);
+    return slope;
+  } catch(MelderError) {
+    Melder_throw ("Failed to calculate LTAS slope");
   }
-  double mean1 = count1 > 0 ? sum1 / count1 : 0.0;
-  
-  // Get mean of second range
-  double sum2 = 0.0;
-  integer count2 = 0;
-  integer i2min = Sampled_xToNearestIndex(ltas.get(), f2min);
-  integer i2max = Sampled_xToNearestIndex(ltas.get(), f2max);
-  
-  for (integer i = i2min; i <= i2max; i++) {
-    sum2 += ltas->z[1][i];
-    count2++;
-  }
-  double mean2 = count2 > 0 ? sum2 / count2 : 0.0;
-  
-  // Slope is difference
-  double slope = mean2 - mean1;
-  
-  // Convert units (slope is already in dB by default)
-  if (unit == 1 || unit == 2) {
-    // For sones/linear, convert to linear scale first
-    double lin1 = pow(10.0, mean1 / 10.0);
-    double lin2 = pow(10.0, mean2 / 10.0);
-    slope = lin2 - lin1;
-  }
-  
-  return slope;
 }
 
 // ============================================================================

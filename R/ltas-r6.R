@@ -114,15 +114,15 @@ Ltas <- R6::R6Class(
     #' Get the power value at a specific frequency
     #' Corresponds to Praat: Get value at frequency: frequency, unit
     #' @param frequency Frequency in Hz
-    #' @param unit Unit: "dB" (default), "sones", "linear"
+    #' @param unit Averaging method: "energy", "sones", "dB" (default)
     #' @param interpolate Interpolate between bins (default TRUE)
     #' @return Power value in specified unit
     get_value_at_frequency = function(frequency, unit = "dB", interpolate = TRUE) {
       unit_code <- switch(tolower(unit),
-        "db" = 0L,
-        "sones" = 1L,
-        "linear" = 2L,
-        stop("Unknown unit: ", unit)
+        "energy" = 1L,
+        "sones" = 2L,
+        "db" = 3L,
+        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
       )
       .ltas_get_value_at_frequency(private$ptr, as.numeric(frequency), 
                                     unit_code, as.logical(interpolate))
@@ -133,15 +133,15 @@ Ltas <- R6::R6Class(
     #' Corresponds to Praat: Get minimum: fmin, fmax, unit
     #' @param fmin Minimum frequency (Hz, 0 = start)
     #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Unit: "dB" (default), "sones", "linear"
+    #' @param unit Averaging method: "energy", "sones", "dB" (default)
     #' @param interpolate Interpolate between bins (default TRUE)
     #' @return Minimum power value
     get_minimum = function(fmin = 0, fmax = 0, unit = "dB", interpolate = TRUE) {
       unit_code <- switch(tolower(unit),
-        "db" = 0L,
-        "sones" = 1L,
-        "linear" = 2L,
-        stop("Unknown unit: ", unit)
+        "energy" = 1L,
+        "sones" = 2L,
+        "db" = 3L,
+        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
       )
       .ltas_get_minimum(private$ptr, as.numeric(fmin), as.numeric(fmax), 
                         unit_code, as.logical(interpolate))
@@ -152,15 +152,15 @@ Ltas <- R6::R6Class(
     #' Corresponds to Praat: Get maximum: fmin, fmax, unit
     #' @param fmin Minimum frequency (Hz, 0 = start)
     #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Unit: "dB" (default), "sones", "linear"
+    #' @param unit Averaging method: "energy", "sones", "dB" (default)
     #' @param interpolate Interpolate between bins (default TRUE)
     #' @return Maximum power value
     get_maximum = function(fmin = 0, fmax = 0, unit = "dB", interpolate = TRUE) {
       unit_code <- switch(tolower(unit),
-        "db" = 0L,
-        "sones" = 1L,
-        "linear" = 2L,
-        stop("Unknown unit: ", unit)
+        "energy" = 1L,
+        "sones" = 2L,
+        "db" = 3L,
+        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
       )
       .ltas_get_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), 
                         unit_code, as.logical(interpolate))
@@ -171,14 +171,14 @@ Ltas <- R6::R6Class(
     #' Corresponds to Praat: Get mean: fmin, fmax, unit
     #' @param fmin Minimum frequency (Hz, 0 = start)
     #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Unit: "dB" (default), "sones", "linear"
+    #' @param unit Averaging method: "energy", "sones", "dB" (default)
     #' @return Mean power value
     get_mean = function(fmin = 0, fmax = 0, unit = "dB") {
       unit_code <- switch(tolower(unit),
-        "db" = 0L,
-        "sones" = 1L,
-        "linear" = 2L,
-        stop("Unknown unit: ", unit)
+        "energy" = 1L,
+        "sones" = 2L,
+        "db" = 3L,
+        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
       )
       .ltas_get_mean(private$ptr, as.numeric(fmin), as.numeric(fmax), unit_code)
     },
@@ -190,14 +190,14 @@ Ltas <- R6::R6Class(
     #' @param f1max Low range maximum frequency (Hz)
     #' @param f2min High range minimum frequency (Hz)
     #' @param f2max High range maximum frequency (Hz)
-    #' @param unit Unit: "dB" (default), "sones", "linear"
-    #' @return Slope (difference in dB/Hz)
-    get_slope = function(f1min, f1max, f2min, f2max, unit = "dB") {
+    #' @param unit Averaging method: "energy" (default), "sones", "dB"
+    #' @return Slope (difference in dB)
+    get_slope = function(f1min, f1max, f2min, f2max, unit = "energy") {
       unit_code <- switch(tolower(unit),
-        "db" = 0L,
-        "sones" = 1L,
-        "linear" = 2L,
-        stop("Unknown unit: ", unit)
+        "energy" = 1L,
+        "sones" = 2L,
+        "db" = 3L,
+        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
       )
       .ltas_get_slope(private$ptr, as.numeric(f1min), as.numeric(f1max),
                       as.numeric(f2min), as.numeric(f2max), unit_code)

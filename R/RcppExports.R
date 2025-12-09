@@ -749,8 +749,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_get_mean`, ltas, fmin, fmax, unit)
 }
 
-.ltas_get_slope <- function(ltas, f1min, f1max, f2min, f2max, unit) {
-    .Call(`_pladdrr_ltas_get_slope`, ltas, f1min, f1max, f2min, f2max, unit)
+.ltas_get_slope <- function(ltas, f1min, f1max, f2min, f2max, averagingMethod) {
+    .Call(`_pladdrr_ltas_get_slope`, ltas, f1min, f1max, f2min, f2max, averagingMethod)
 }
 
 .ltas_compute_trend_line <- function(ltas, fmin, fmax) {
