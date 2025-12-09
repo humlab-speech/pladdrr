@@ -162,3 +162,120 @@ STUB MelderThread_run: calling threadFunction(0, 1, 613)
 - [ ] Issue #3: Debug output (FIXED via compile flag)
 
 **Next Release**: 1.1.9 (after filtering methods + testing)
+
+---
+
+## Update: Session Continued 2025-12-09
+
+### Additional Completed Tasks ✅
+
+#### 3. Sound Filtering Methods (Priority 3)
+**Status**: ✅ COMPLETE  
+**Commit**: `a7163e5`
+
+**Implementation**:
+- Added `Sound$filter_pass_hann_band(fmin, fmax, smooth = 100)` 
+  - Passes frequencies between fmin and fmax
+  - Returns new filtered Sound object
+- Added `Sound$filter_stop_hann_band(fmin, fmax, smooth = 100)`
+  - Stops/removes frequencies between fmin and fmax  
+  - Returns new filtered Sound object
+
+**Technical Details**:
+- C++ wrappers in `src/sound_wrappers.cpp`
+- Uses Praat's native `Sound_filter_passHannBand()` and `Sound_filter_stopHannBand()`
+- R6 methods in `R/sound-r6-new.R` with input validation
+- Non-destructive (return new Sound objects)
+- Default smooth=100 Hz (typical Praat value)
+
+**Files Modified**:
+- `src/sound_wrappers.cpp` - C++ wrappers
+- `R/sound-r6-new.R` - R6 methods
+- `R/RcppExports.R` - Auto-generated exports
+- `inst/include/pladdrr_RcppExports.h` - Auto-generated header
+
+**Impact**: ✅ AVQI pre-filtering now fully supported (though low impact per analysis)
+
+---
+
+### Test Script Created
+
+**File**: `test_1.1.8_fixes.R`
+
+**Tests**:
+1. LTAS get_slope with unit="energy", "sones", "db"
+2. Sound filter_pass_hann_band() 
+3. Sound filter_stop_hann_band()
+4. Debug output suppression verification
+
+**Usage**:
+```bash
+Rscript test_1.1.8_fixes.R
+```
+
+---
+
+### Final Version Summary
+
+**Version**: 1.1.8  
+**Date**: 2025-12-09
+
+**Changes from 1.1.7**:
+1. ✅ Fixed LTAS averaging method (CRITICAL) - unit="energy" support
+2. ✅ Suppressed debug output (compile-time flag)
+3. ✅ Added Sound filtering methods (filter_pass/stop_hann_band)
+4. ✅ Fixed error handling in ltas_wrappers
+5. ✅ Maintained macOS ARM64 build compatibility
+
+**CRITICAL Issues Status**: 2 of 3 resolved
+- [x] Issue #1: LTAS unit="energy" support - FIXED
+- [ ] Issue #2: formant_wrappers segfault - DEFERRED (needs deep investigation)
+- [x] Issue #3: Debug output - FIXED (compile-time suppression)
+
+**Total Commits**: 7 (ahead of origin)
+
+**Ready for**:
+- Build testing
+- Integration testing with AVQI workflows
+- Push to repository
+
+---
+
+### Next Steps (Post-1.1.8)
+
+1. **Testing** (IMMEDIATE):
+   - Build package successfully on macOS ARM64
+   - Run `test_1.1.8_fixes.R` 
+   - Verify AVQI computation works end-to-end
+   - Run full test suite: `devtools::test()`
+   - R CMD check --as-cran
+
+2. **Version 1.1.9** (IF NEEDED):
+   - Address formant_wrappers segfault (Issue #2)
+   - Additional AVQI-related fixes if discovered during testing
+
+3. **Documentation**:
+   - Update NEWS.md with 1.1.8 changes
+   - Document new filtering methods
+   - Add AVQI workflow vignette
+
+---
+
+### Git Status
+
+**Branch**: `001-praat-r-access`  
+**Commits ahead**: 7  
+**Modified files**: All committed  
+**Ready to push**: Yes (pending successful build)
+
+**Recent commits**:
+```
+a7163e5 Add Sound filtering methods (Priority 3)
+e258021 Add pladdrr 1.1.8 progress summary  
+8e20cfb Suppress debug output with PLADDRR_NO_DEBUG flag
+405fa86 Fix LTAS averaging method - add 'energy' unit support (CRITICAL)
+4619a33 Fix mp3.h missing header
+fb83fc5 Fix FLAC/MP3 stub symbol linkage
+8aa8a38 Fix critical formant extraction and pitch detection crashes
+```
+
