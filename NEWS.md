@@ -1,3 +1,76 @@
+# pladdrr 1.1.8 (2025-12-09)
+
+## ⚠️ BREAKING CHANGES
+
+### LTAS Default Unit Changed to "energy"
+* **Affected Methods**: `Ltas$get_slope()`, `Ltas$get_mean()`, `Ltas$get_minimum()`, `Ltas$get_maximum()`
+* **Change**: Default `unit` parameter changed from `"dB"` to `"energy"`
+* **Rationale**: 
+  - Matches Praat's native default behavior
+  - Required for AVQI computation (AVQI spec requires energy-based averaging)
+  - Fixes invalid LTAS slope values (-3.98e+300) when using energy unit
+* **Migration**:
+  - **To preserve old behavior**: Explicitly specify `unit = "dB"` in all LTAS method calls
+  - **To audit code**: Search for `ltas$get_` calls without explicit `unit` parameter
+  - **Example**:
+    ```r
+    # Old code (implicitly used dB)
+    slope <- ltas$get_slope(1000, 2000, 1000, 4000)
+    
+    # New behavior (uses energy)
+    slope <- ltas$get_slope(1000, 2000, 1000, 4000)  # Now defaults to energy
+    
+    # Preserve old behavior
+    slope <- ltas$get_slope(1000, 2000, 1000, 4000, unit = "dB")
+    ```
+
+## Critical Bug Fixes
+
+### Fixed LTAS Energy Unit Support (Issue #1)
+* **Issue**: `Ltas$get_slope()` returned invalid values (-3.98e+300) when `unit = "energy"`
+* **Root Cause**: Incorrect enum mapping in R layer (energy=0 instead of 1)
+* **Fixes**:
+  - **C++ layer** (`src/ltas_wrappers.cpp`):
+    - Switched to native `Ltas_getSlope()` function (was using custom wrapper)
+    - Passes unit code directly to Praat (no conversion)
+    - Added proper error handling with `Melder_clearError()`
+  - **R layer** (`R/ltas-r6.R`):
+    - Fixed enum mapping: `energy=1, sones=2, dB=3` (Praat standard)
+    - Removed incorrect `"linear"` unit option
+    - Applied fix to ALL methods: `get_minimum()`, `get_maximum()`, `get_mean()`, `get_slope()`
+* **Impact**: CRITICAL - Enables AVQI calculation
+* **Commit**: `405fa86`
+
+### Suppressed Debug Output (Issue #3)
+* **Issue**: Excessive debug fprintf statements cluttering console
+  - "PITCH_DEBUG: ..." (16 statements in Sound_to_Pitch.cpp)
+  - "LOOP ITERATION: ..."
+  - "STUB MelderThread_run()" (5 statements in praat_stubs.cpp)
+* **Fix**: 
+  - Wrapped all debug fprintf with `#ifndef PLADDRR_NO_DEBUG` guards
+  - Compile-time suppression using flag `-DPLADDRR_NO_DEBUG` (already in Makevars)
+  - Fixed error handling: `Melder_throw` → `Melder_clearError()` + `Rcpp::stop()`
+* **Files Modified**:
+  - `src/praat.github.io/fon/Sound_to_Pitch.cpp` (16 debug locations)
+  - `src/praat_stubs.cpp` (5 stub locations)
+* **Impact**: Clean console output for production use
+* **Commit**: `8e20cfb`
+
+## New Features
+
+### Sound Filtering Methods (Priority 3)
+* **Added**:
+  - `Sound$filter_pass_hann_band(fmin, fmax, smooth = 100)` - Bandpass filter
+  - `Sound$filter_stop_hann_band(fmin, fmax, smooth = 100)` - Bandstop/notch filter
+* **Implementation**:
+  - C++ wrappers in `src/sound_wrappers.cpp` using Praat's `Sound_filterWithOneFormantInline()`
+  - R6 methods in `R/sound-r6-new.R` with input validation
+  - Pass band: positive bandwidth, Stop band: negative bandwidth
+* **Use Case**: Preprocessing for AVQI/DSI analysis
+* **Commit**: `a7163e5`
+
+---
+
 # pladdrr 1.1.6 (2025-12-08)
 
 ## Performance Improvements

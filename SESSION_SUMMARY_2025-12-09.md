@@ -3,6 +3,14 @@
 **Focus**: Critical bug fixes for AVQI computation  
 **Status**: Code changes complete, build testing incomplete (timeout issues)
 
+## ⚠️ BREAKING CHANGES
+
+**Default unit changed for LTAS methods** (`get_slope()`, `get_mean()`, `get_minimum()`, `get_maximum()`):
+- **Old default**: `unit = "dB"`
+- **New default**: `unit = "energy"` (matches Praat behavior)
+- **Migration**: Explicitly specify `unit = "dB"` to preserve old behavior
+- **Rationale**: AVQI requires energy-based averaging; Praat defaults to energy
+
 ## Completed Work
 
 ### 1. Fixed LTAS slope with "energy" unit support ✅ 
@@ -111,15 +119,20 @@ filtered <- sound$filter_stop_hann_band(1000, 2000, smooth = 100)
 - `devtools::load_all()` also times out during compilation
 - Lock files created in both system and user R libraries
 
-**Attempted Solutions**:
-1. User library install (`~/R-libs`) - timeout
-2. `pkgload::load_all()` - timeout
-3. Background compilation - incomplete
+**Resolution Path**:
+1. **Immediate**: Manual compilation on local machine with extended timeout (10+ min)
+   - Command: `R CMD INSTALL --preclean . --no-test-load`
+   - Or use ccache for incremental builds
+2. **CI/CD**: GitHub Actions with 30-minute timeout for package builds
+3. **Future**: Consider splitting large Praat modules or using pre-compiled binaries
+4. **Contributors**: Document in README that initial build requires 5-10 minutes
+   - Subsequent builds are faster with ccache (~1-2 min)
+   - Provide binary packages for macOS/Windows
 
-**Workaround Options**:
-1. Manual compilation with longer timeout
-2. Use pre-compiled package from previous install
-3. Test on different machine with faster build
+**Attempted Solutions** (all timed out at 2 min):
+1. User library install (`~/R-libs`)
+2. `pkgload::load_all()`
+3. Background compilation
 
 ### 📋 Test Plan (When Build Succeeds)
 
