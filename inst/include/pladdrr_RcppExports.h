@@ -2198,6 +2198,48 @@ namespace pladdrr {
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
     }
 
+    inline XPtr<structSound> _sound_filter_pass_hann_band(XPtr<structSound> xptr, double fmin, double fmax, double smooth) {
+        typedef SEXP(*Ptr__sound_filter_pass_hann_band)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_filter_pass_hann_band p__sound_filter_pass_hann_band = NULL;
+        if (p__sound_filter_pass_hann_band == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_filter_pass_hann_band)(XPtr<structSound>,double,double,double)");
+            p__sound_filter_pass_hann_band = (Ptr__sound_filter_pass_hann_band)R_GetCCallable("pladdrr", "_pladdrr__sound_filter_pass_hann_band");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_filter_pass_hann_band(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(fmin)), Shield<SEXP>(Rcpp::wrap(fmax)), Shield<SEXP>(Rcpp::wrap(smooth)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_filter_stop_hann_band(XPtr<structSound> xptr, double fmin, double fmax, double smooth) {
+        typedef SEXP(*Ptr__sound_filter_stop_hann_band)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_filter_stop_hann_band p__sound_filter_stop_hann_band = NULL;
+        if (p__sound_filter_stop_hann_band == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_filter_stop_hann_band)(XPtr<structSound>,double,double,double)");
+            p__sound_filter_stop_hann_band = (Ptr__sound_filter_stop_hann_band)R_GetCCallable("pladdrr", "_pladdrr__sound_filter_stop_hann_band");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_filter_stop_hann_band(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(fmin)), Shield<SEXP>(Rcpp::wrap(fmax)), Shield<SEXP>(Rcpp::wrap(smooth)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_resample(XPtr<structSound> xptr, double new_frequency, int precision) {
         typedef SEXP(*Ptr__sound_resample)(SEXP,SEXP,SEXP);
         static Ptr__sound_resample p__sound_resample = NULL;

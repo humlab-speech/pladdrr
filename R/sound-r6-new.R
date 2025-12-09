@@ -984,6 +984,35 @@ Sound <- R6::R6Class(
       .sound_de_emphasize(private$ptr, from_frequency)
       invisible(self)
     },
+
+    #' @description Apply pass Hann band filter (passes frequencies between fmin and fmax)
+    #' @param fmin Minimum frequency of pass band in Hz
+    #' @param fmax Maximum frequency of pass band in Hz  
+    #' @param smooth Smoothing parameter (100 Hz is typical)
+    #' @return New Sound object with filtered waveform
+    filter_pass_hann_band = function(fmin, fmax, smooth = 100.0) {
+      private$check_valid()
+      if (fmin < 0 || fmax <= fmin) {
+        stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      }
+      sound_ptr <- .sound_filter_pass_hann_band(private$ptr, fmin, fmax, smooth)
+      Sound$new(.xptr = sound_ptr)
+    },
+    
+    #' @description Apply stop Hann band filter (stops frequencies between fmin and fmax)
+    #' @param fmin Minimum frequency of stop band in Hz
+    #' @param fmax Maximum frequency of stop band in Hz
+    #' @param smooth Smoothing parameter (100 Hz is typical)
+    #' @return New Sound object with filtered waveform
+    filter_stop_hann_band = function(fmin, fmax, smooth = 100.0) {
+      private$check_valid()
+      if (fmin < 0 || fmax <= fmin) {
+        stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      }
+      sound_ptr <- .sound_filter_stop_hann_band(private$ptr, fmin, fmax, smooth)
+      Sound$new(.xptr = sound_ptr)
+    },
+    
     
     # ========================================================================
     # Advanced Modification Methods (return new Sound)

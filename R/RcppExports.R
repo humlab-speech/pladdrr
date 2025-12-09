@@ -1635,6 +1635,18 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     invisible(.Call(`_pladdrr_sound_de_emphasize`, xptr, from_frequency))
 }
 
+#' Filter Sound - pass Hann band (internal)
+#' @keywords internal
+.sound_filter_pass_hann_band <- function(xptr, fmin, fmax, smooth) {
+    .Call(`_pladdrr_sound_filter_pass_hann_band`, xptr, fmin, fmax, smooth)
+}
+
+#' Filter Sound - stop Hann band (internal)
+#' @keywords internal
+.sound_filter_stop_hann_band <- function(xptr, fmin, fmax, smooth) {
+    .Call(`_pladdrr_sound_filter_stop_hann_band`, xptr, fmin, fmax, smooth)
+}
+
 #' Resample Sound to new sampling frequency (internal)
 #' @keywords internal
 .sound_resample <- function(xptr, new_frequency, precision) {

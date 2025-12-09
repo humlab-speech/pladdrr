@@ -1063,6 +1063,49 @@ void sound_de_emphasize(
     }
 }
 
+//' Filter Sound - pass Hann band (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_filter_pass_hann_band)]]
+XPtr<structSound> sound_filter_pass_hann_band(
+    XPtr<structSound> xptr,
+    double fmin,
+    double fmax,
+    double smooth
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound filtered = Sound_filter_passHannBand(sound, fmin, fmax, smooth);
+        return create_xptr_from_auto<structSound>(filtered);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to apply pass Hann band filter");
+    }
+}
+
+//' Filter Sound - stop Hann band (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_filter_stop_hann_band)]]
+XPtr<structSound> sound_filter_stop_hann_band(
+    XPtr<structSound> xptr,
+    double fmin,
+    double fmax,
+    double smooth
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    
+    try {
+        autoSound filtered = Sound_filter_stopHannBand(sound, fmin, fmax, smooth);
+        return create_xptr_from_auto<structSound>(filtered);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to apply stop Hann band filter");
+    }
+}
+
+
 // ============================================================================
 // Advanced Sound Modification Methods (return new Sound)
 // ============================================================================
