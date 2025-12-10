@@ -17,7 +17,7 @@
 #' - `Sound$new(path)` - Read from file (any format via av/FFmpeg: MP3, WAV, FLAC, OGG, etc.)
 #' - `Sound$from_values(values, sampling_rate)` - Create from numeric matrix
 #' - `Sound$from_matrix(matrix, sampling_rate)` - Alias for from_values
-#' - `Sound$create_tone(duration, frequency, ...)` - Generate pure tone
+#' - `Sound$create_tone(duration, sampling_rate, frequency, ...)` - Generate pure tone
 #'
 #' ## Querying
 #'
@@ -88,7 +88,7 @@
 #' sound$save("output.flac", format = "flac")
 #'
 #' # Create synthetic sound
-#' tone <- Sound$create_tone(duration = 1.0, frequency = 440)
+#' tone <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
 #' tone$save("A440.wav")
 #' }
 #'
@@ -1215,8 +1215,8 @@ Sound$from_matrix <- Sound$from_values
 #' @export
 Sound$create_tone <- function(
   duration = 1.0,
-  frequency = 440.0,
   sampling_rate = 44100,
+  frequency = 440.0,
   amplitude = 0.99
 ) {
   ptr <- .sound_create_tone(duration, sampling_rate, frequency, amplitude)
