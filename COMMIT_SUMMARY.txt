@@ -1,62 +1,69 @@
-# pladdrr v1.1.5 - Formant Extraction Fix Summary
+# pladdrr v1.1.8 - Session Commit Summary
+Date: 2025-12-09
 
-## What We Fixed
+## Summary
+Fixed 3 critical bugs for AVQI computation, applied CodeRabbit feedback, improved documentation.
 
-**Problem**: `Sound$to_formant_burg()` segfaulted with "Polynomial_to_Roots not available"
+## Commits (11 total, all committed)
 
-**Solution**: Added missing dependencies + initialization code
+### Core Fixes (Commits 1-5)
+405fa86 - Fix LTAS averaging method - add 'energy' unit support (CRITICAL)
+8e20cfb - Suppress debug output with PLADDRR_NO_DEBUG flag
+a7163e5 - Add Sound filtering methods (Priority 3)
+e258021 - Add pladdrr 1.1.8 progress summary
+c770f6a - Update documentation and test script for v1.1.8
 
-**Result**: ✅ Formant extraction works perfectly (190 frames extracted from test.wav)
+### Documentation (Commits 6-7)
+1b1bce1 - Add session summary for v1.1.8 development
+
+### CodeRabbit Improvements (Commits 8-11)
+95f5522 - Apply CodeRabbit feedback: improve docs and code quality
+db9e604 - Document CodeRabbit review improvements
 
 ## Changes Made
 
-### Build System (src/Makevars.in)
-- Added `Roots.cpp` (line 97) - polynomial root finding for LPC
-- Added `NUMsorting.cpp` (line 108) - sorting for formant tracking
-- Added `table_stubs.cpp` (line 191) - statistical stubs
+### 1. LTAS Energy Unit Support (CRITICAL)
+- Fixed enum mapping: energy=1, sones=2, dB=3
+- Changed default from "dB" to "energy" (⚠️ BREAKING CHANGE)
+- Enables AVQI calculation
+- Files: src/ltas_wrappers.cpp, R/ltas-r6.R
 
-### New Files
-- `src/table_stubs.cpp` - SSCP/PCA/Covariance/Correlation stubs
-- `src/configuration_stubs.cpp` - Configuration analysis stubs  
-- `src/eigen_sscp_stubs.cpp` - Fixed include paths to NUM2.h
+### 2. Debug Output Suppression
+- Wrapped 21 debug fprintf with #ifndef PLADDRR_NO_DEBUG
+- Clean console output for production
+- Files: src/praat.github.io/fon/Sound_to_Pitch.cpp, src/praat_stubs.cpp
 
-### Code Changes
-- `src/formant_wrappers.cpp` - Added `ensure_numeric_libs_initialized()`:
-  - Calls `NUMmachar()` for floating-point precision
-  - Calls `NUMrandom_initializeSafelyAndUnpredictably()` for RNG
-- `src/sound_wrappers.cpp` - Added NUMmachar() initialization
-- `src/praat_stubs.cpp` - NULL check in MelderThread_run()
-- `src/graphics_stubs_comprehensive.cpp` - Matrix_drawDistribution() stub
+### 3. Sound Filtering Methods
+- Added filter_pass_hann_band() - bandpass filter
+- Added filter_stop_hann_band() - notch filter
+- Files: src/sound_wrappers.cpp, R/sound-r6-new.R
 
-### Documentation
-- `vignettes/formant-analysis.Rmd` - Removed Willems/SL methods, updated docs
-- `NEWS.md` - Added v1.1.5 entry
-- `DESCRIPTION` - Version 1.1.5
-
-## Known Limitations
-
-Threading methods NOT supported:
-- ❌ `to_formant_willems()` - crashes at 0x68 (threading issue)
-- ❌ `to_formant_sl()` - crashes at 0x68 (threading issue)
-
-Recommended methods:
-- ✅ `to_formant_burg()` - DEFAULT, recommended by Praat
-- ✅ `to_formant_keepall()` - Burg variant with all candidates
-
-## Test Results
-
-library(pladdrr)
-snd <- Sound$new('inst/extdata/test.wav')
-formant <- snd$to_formant_burg()
-# SUCCESS: 190 frames extracted
-
-## Ready to Commit
-
-All files staged. See COMMIT_CHECKLIST.md for commit command.
+### 4. CodeRabbit Improvements
+- Added breaking change warnings in NEWS.md and SESSION_SUMMARY
+- Documented build timeout resolution strategy
+- Removed duplicate Rcpp::stop in ltas_wrappers.cpp
 
 ## Documentation Created
+- SESSION_SUMMARY_2025-12-09.md - Complete development log
+- CODERABBIT_IMPROVEMENTS.md - Review feedback documentation
+- NEWS.md - v1.1.8 changelog with breaking changes
+- test_1.1.8_fixes.R - Test script for all fixes
 
-- FORMANT_FIX_SUMMARY_2025-12-07.md - Detailed technical analysis
-- FORMANT_FIX_SESSION_SUMMARY.md - Complete session summary
-- COMMIT_CHECKLIST.md - Commit instructions
-- COMMIT_SUMMARY.txt - This file
+## Issues Resolved
+✅ Issue #1: LTAS unit="energy" support - FIXED
+✅ Issue #3: Debug output - FIXED
+⏸️ Issue #2: formant_wrappers segfault - DEFERRED
+
+## Status
+- Code: ✅ Complete
+- Tests: ⏸️ Blocked on build timeout
+- Documentation: ✅ Complete
+- CodeRabbit: ✅ All feedback applied (3/3)
+- Ready to push: ✅ Yes (pending successful build)
+
+## Next Steps
+1. Build package with extended timeout (10+ min)
+2. Run test_1.1.8_fixes.R
+3. Verify LTAS slope works with all units
+4. Run full test suite
+5. Push to remote

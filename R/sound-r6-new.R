@@ -858,13 +858,15 @@ Sound <- R6::R6Class(
     #' @param pitch_floor Minimum pitch in Hz (default: 75)
     #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
     #' @return PointProcess object with detected pulses
-    to_pointprocess_periodic_cc = function(pitch_floor = 75.0, pitch_ceiling = 600.0) {
-      pp_ptr <- .sound_to_pointprocess_periodic_cc(
-        private$ptr,
-        pitch_floor,
-        pitch_ceiling
-      )
-      PointProcess$new(.xptr = pp_ptr)
+    #' @description Alias for backward compatibility
+    to_pointprocess_periodic_cc = function(
+      time_step = 0.0,
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0,
+      max_period_factor = 1.3,
+      max_amplitude_factor = 1.6
+    ) {
+      self$to_point_process_periodic_cc(time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor)
     },
     
     #' @description Extract periodic PointProcess using peak detection
@@ -875,7 +877,7 @@ Sound <- R6::R6Class(
     #' @param include_maxima Include positive peaks (default: TRUE)
     #' @param include_minima Include negative peaks (default: FALSE)
     #' @return PointProcess object with detected pulses
-    to_pointprocess_periodic_peaks = function(
+    to_point_process_periodic_peaks = function(
       pitch_floor = 75.0,
       pitch_ceiling = 600.0,
       include_maxima = TRUE,
@@ -889,6 +891,16 @@ Sound <- R6::R6Class(
         include_minima
       )
       PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    #' @description Alias for backward compatibility
+    to_pointprocess_periodic_peaks = function(
+      pitch_floor = 75.0,
+      pitch_ceiling = 600.0,
+      include_maxima = TRUE,
+      include_minima = FALSE
+    ) {
+      self$to_point_process_periodic_peaks(pitch_floor, pitch_ceiling, include_maxima, include_minima)
     },
     
     # ========================================================================
