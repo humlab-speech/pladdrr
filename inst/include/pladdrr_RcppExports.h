@@ -1700,11 +1700,11 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
     }
 
-    inline XPtr<structPitch> _sound_to_pitch_ac(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
+    inline XPtr<structPitch> _sound_to_pitch_ac(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, integer max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
         typedef SEXP(*Ptr__sound_to_pitch_ac)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_pitch_ac p__sound_to_pitch_ac = NULL;
         if (p__sound_to_pitch_ac == NULL) {
-            validateSignature("XPtr<structPitch>(*_sound_to_pitch_ac)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_ac)(XPtr<structSound>,double,double,double,integer,bool,double,double,double,double,double)");
             p__sound_to_pitch_ac = (Ptr__sound_to_pitch_ac)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_ac");
         }
         RObject rcpp_result_gen;
@@ -1721,11 +1721,11 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
     }
 
-    inline XPtr<structPitch> _sound_to_pitch_cc(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
+    inline XPtr<structPitch> _sound_to_pitch_cc(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double pitch_ceiling, integer max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost) {
         typedef SEXP(*Ptr__sound_to_pitch_cc)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_pitch_cc p__sound_to_pitch_cc = NULL;
         if (p__sound_to_pitch_cc == NULL) {
-            validateSignature("XPtr<structPitch>(*_sound_to_pitch_cc)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_cc)(XPtr<structSound>,double,double,double,integer,bool,double,double,double,double,double)");
             p__sound_to_pitch_cc = (Ptr__sound_to_pitch_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_cc");
         }
         RObject rcpp_result_gen;
