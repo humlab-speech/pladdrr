@@ -1,3 +1,45 @@
+# pladdrr 1.2.1 (2025-12-11)
+
+## Critical Bug Fixes
+
+### Fixed Pitch Detection Type Mismatch (Issue #TBD)
+* **Issue**: Pitch detection produced incorrect F0 values, causing tremor frequency errors (188% off)
+  - Example: Detected 4.999 Hz tremor vs expected 1.736 Hz
+  - Frames 4-9: pladdrr detected F0 (120-137 Hz), Praat correctly marked unvoiced
+* **Root Cause**: Praat's pitch functions expect `integer` (64-bit `intptr_t`), but wrappers used `int` (32-bit)
+  - On 64-bit systems, parameter misalignment caused `max_candidates` to be misinterpreted
+* **Fix**: Use `static_cast<integer>(max_candidates)` when calling Praat functions
+  - Keep R/Rcpp interface as `int` (Rcpp can't handle Praat's `integer` type)
+  - Cast to `integer` in C++ layer before calling Praat
+* **Affected Methods**: 
+  - `Sound$to_pitch()` (autocorrelation)
+  - `Sound$to_pitch_ac()` 
+  - `Sound$to_pitch_cc()` (cross-correlation)
+* **Impact**: CRITICAL - Fixes pitch detection accuracy, tremor analysis, voice quality metrics
+* **Commit**: `6da6e20`
+
+---
+
+# pladdrr 1.2.0 (2025-12-10)
+
+## Bug Fixes
+
+### Fixed PointProcess Method Names
+* **Issue**: Inconsistent naming - `to_pointprocess_periodic_peaks()` vs standard convention
+* **Fix**: Renamed to `to_point_process_periodic_peaks()` (snake_case with underscore)
+* **Also Fixed**: Completed `to_pointprocess_periodic_cc()` alias (was missing 3 parameters)
+* **Commit**: `aa9398f`
+
+### Fixed Sound$create_tone() Parameter Order
+* **Issue**: R method parameter order didn't match C++ wrapper
+  - R: `(frequency, start_time, end_time, sample_rate, amplitude, fade_fraction)`
+  - C++: `(start_time, end_time, sample_rate, frequency, amplitude, fade_fraction)`
+* **Fix**: Reordered R method to match C++ (Praat order)
+* **Impact**: Prevented silent parameter misinterpretation
+* **Commit**: `36d267a`
+
+---
+
 # pladdrr 1.1.8 (2025-12-09)
 
 ## ⚠️ BREAKING CHANGES
