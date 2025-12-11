@@ -6,6 +6,11 @@
 #ifndef PRAAT_TYPES_H
 #define PRAAT_TYPES_H
 
+#include <cstdint>  // For intptr_t
+
+// Praat's integer type (must match melder_int.h)
+using integer = intptr_t;
+
 // Forward declarations for Praat structs
 struct structSound;
 struct structPitch;
