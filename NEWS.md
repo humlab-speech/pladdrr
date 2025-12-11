@@ -1,8 +1,44 @@
+# pladdrr 1.2.2 (2025-12-11)
+
+## Critical Bug Fixes
+
+### Fixed Window Shape Enum Mapping (Issue #4)
+* **Issue**: `Sound$extract_part()` used WRONG enum values for window shapes
+  - `hamming` was mapped to 1 (should be 4)
+  - `hanning` was mapped to 4 (should be 3)
+  - `bartlett`, `welch` don't exist in Praat - incorrect options
+* **Root Cause**: Incorrect switch statement, not matching Praat's `kSound_windowShape` enum
+* **Fix**: Corrected enum mapping to match Praat's Sound_enums.h:
+  - `rectangular` = 0, `triangular` = 1, `parabolic` = 2
+  - `hanning` = 3, `hamming` = 4
+  - Added: `Gaussian1-5` (5-9), `Kaiser1-2` (10-11)
+* **Impact**: HIGH - Previous window functions produced incorrect results
+* **Commit**: `ae27d05`
+
+## New Features
+
+### Added Pitch$to_pointprocess_peaks() Method
+* **Feature**: Two-object command `[Sound, Pitch] → To PointProcess (peaks)`
+* **Usage**: 
+  ```r
+  pitch <- sound$to_pitch()
+  pp <- pitch$to_pointprocess_peaks(sound, 
+                                     include_maxima = TRUE, 
+                                     include_minima = FALSE)
+  ```
+* **Difference from existing methods**:
+  - `Sound$to_point_process_periodic_peaks()` - Creates Pitch internally (one object)
+  - `Pitch$to_pointprocess_peaks()` - Uses existing Pitch (two objects, more flexible)
+* **Benefit**: Allows reusing computed Pitch object, more control over detection
+* **Commit**: `ae27d05`
+
+---
+
 # pladdrr 1.2.1 (2025-12-11)
 
 ## Critical Bug Fixes
 
-### Fixed Pitch Detection Type Mismatch (Issue #TBD)
+### Fixed Pitch Detection Type Mismatch (Issue #3)
 * **Issue**: Pitch detection produced incorrect F0 values, causing tremor frequency errors (188% off)
   - Example: Detected 4.999 Hz tremor vs expected 1.736 Hz
   - Frames 4-9: pladdrr detected F0 (120-137 Hz), Praat correctly marked unvoiced
