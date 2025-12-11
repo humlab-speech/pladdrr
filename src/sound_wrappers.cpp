@@ -770,7 +770,36 @@ XPtr<structPointProcess> sound_pitch_to_pointprocess_cc(
         
     } catch (MelderError) {
         Melder_clearError();
-        stop("Failed to create PointProcess from Sound and Pitch");
+        stop("Failed to create PointProcess from Sound and Pitch (cc)");
+    }
+}
+
+//' Create PointProcess from Sound and Pitch near peaks (internal)
+//' 
+//' Two-object command: uses existing Pitch object to guide peak detection.
+//' Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
+//' 
+//' @keywords internal
+// [[Rcpp::export(.sound_pitch_to_pointprocess_peaks)]]
+XPtr<structPointProcess> sound_pitch_to_pointprocess_peaks(
+    XPtr<structSound> sound_xptr,
+    XPtr<structPitch> pitch_xptr,
+    bool include_maxima,
+    bool include_minima
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structPitch* pitch = get_ptr(pitch_xptr, "Pitch");
+    
+    try {
+        // TWO-OBJECT COMMAND: [Sound, Pitch] -> To PointProcess (peaks)
+        autoPointProcess pp = Sound_Pitch_to_PointProcess_peaks(
+            sound, pitch, include_maxima, include_minima
+        );
+        return create_xptr_from_auto<structPointProcess>(pp);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create PointProcess from Sound and Pitch (peaks)");
     }
 }
 

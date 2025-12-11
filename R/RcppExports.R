@@ -1569,6 +1569,16 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_pitch_to_pointprocess_cc`, sound_xptr, pitch_xptr)
 }
 
+#' Create PointProcess from Sound and Pitch near peaks (internal)
+#' 
+#' Two-object command: uses existing Pitch object to guide peak detection.
+#' Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
+#' 
+#' @keywords internal
+.sound_pitch_to_pointprocess_peaks <- function(sound_xptr, pitch_xptr, include_maxima, include_minima) {
+    .Call(`_pladdrr_sound_pitch_to_pointprocess_peaks`, sound_xptr, pitch_xptr, include_maxima, include_minima)
+}
+
 #' Extract glottal pulses from sound using cross-correlation (internal)
 #' @keywords internal
 .sound_to_point_process_periodic_cc <- function(xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor) {

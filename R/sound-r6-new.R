@@ -922,28 +922,39 @@ Sound <- R6::R6Class(
     #' @description Extract part of sound by time
     #' @param from_time Start time in seconds
     #' @param to_time End time in seconds
-    #' @param window_shape Window shape: "rectangular", "hamming", "bartlett", "welch", "hanning"
+    #' @param window_shape Window shape (Praat enum): "rectangular", "triangular", "parabolic",
+    #'   "hanning", "hamming", "Gaussian1" through "Gaussian5", "Kaiser1", "Kaiser2"
     #' @param relative_width Relative width of window (default: 1.0)
     #' @param preserve_times Keep original time domain (default: FALSE)
     #' @return New Sound object with extracted part
     extract_part = function(
       from_time,
       to_time,
-      window_shape = c("rectangular", "hamming", "bartlett", "welch", "hanning"),
+      window_shape = c("rectangular", "triangular", "parabolic", "hanning", "hamming", 
+                       "Gaussian1", "Gaussian2", "Gaussian3", "Gaussian4", "Gaussian5",
+                       "Kaiser1", "Kaiser2"),
       relative_width = 1.0,
       preserve_times = FALSE
     ) {
       private$check_valid()
       
       window_shape <- match.arg(window_shape)
+      # Praat kSound_windowShape enum (Sound_enums.h)
       window_shape_int <- switch(
         window_shape,
-        "rectangular" = 0,
-        "hamming" = 1,
-        "bartlett" = 2,
-        "welch" = 3,
-        "hanning" = 4,
-        0
+        "rectangular" = 0L,
+        "triangular"  = 1L,
+        "parabolic"   = 2L,
+        "hanning"     = 3L,
+        "hamming"     = 4L,
+        "Gaussian1"   = 5L,
+        "Gaussian2"   = 6L,
+        "Gaussian3"   = 7L,
+        "Gaussian4"   = 8L,
+        "Gaussian5"   = 9L,
+        "Kaiser1"     = 10L,
+        "Kaiser2"     = 11L,
+        0L
       )
       
       sound_ptr <- .sound_extract_part(

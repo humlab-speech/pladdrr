@@ -1971,6 +1971,27 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
     }
 
+    inline XPtr<structPointProcess> _sound_pitch_to_pointprocess_peaks(XPtr<structSound> sound_xptr, XPtr<structPitch> pitch_xptr, bool include_maxima, bool include_minima) {
+        typedef SEXP(*Ptr__sound_pitch_to_pointprocess_peaks)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_pitch_to_pointprocess_peaks p__sound_pitch_to_pointprocess_peaks = NULL;
+        if (p__sound_pitch_to_pointprocess_peaks == NULL) {
+            validateSignature("XPtr<structPointProcess>(*_sound_pitch_to_pointprocess_peaks)(XPtr<structSound>,XPtr<structPitch>,bool,bool)");
+            p__sound_pitch_to_pointprocess_peaks = (Ptr__sound_pitch_to_pointprocess_peaks)R_GetCCallable("pladdrr", "_pladdrr__sound_pitch_to_pointprocess_peaks");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_pitch_to_pointprocess_peaks(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(pitch_xptr)), Shield<SEXP>(Rcpp::wrap(include_maxima)), Shield<SEXP>(Rcpp::wrap(include_minima)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
+    }
+
     inline XPtr<structPointProcess> _sound_to_point_process_periodic_cc(XPtr<structSound> xptr, double time_step, double pitch_floor, double pitch_ceiling, double max_period_factor, double max_amplitude_factor) {
         typedef SEXP(*Ptr__sound_to_point_process_periodic_cc)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_point_process_periodic_cc p__sound_to_point_process_periodic_cc = NULL;

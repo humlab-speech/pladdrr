@@ -296,6 +296,47 @@ Pitch <- R6::R6Class("Pitch",
     },
     
     #' @description
+    #' Create PointProcess from Pitch and Sound near amplitude peaks.
+    #' 
+    #' Two-object command: uses existing Pitch object to guide peak detection.
+    #' Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
+    #' 
+    #' This method finds points of maximum amplitude in the sound near the times
+    #' indicated by the pitch contour. More flexible than cc method - can find
+    #' maxima (peaks) or minima (valleys).
+    #' 
+    #' @param sound Sound object to extract peaks from
+    #' @param include_maxima Include positive peaks (default: TRUE)
+    #' @param include_minima Include negative valleys (default: FALSE)
+    #' @return PointProcess object with detected peak/valley times
+    #' 
+    #' @section Praat Equivalent:
+    #' `[Sound, Pitch] → To PointProcess (peaks)...`
+    #' 
+    #' @examples
+    #' \dontrun{
+    #' sound <- Sound$new("voice.wav")
+    #' pitch <- sound$to_pitch()
+    #' 
+    #' # Find positive peaks
+    #' pp_peaks <- pitch$to_pointprocess_peaks(sound, 
+    #'                                          include_maxima = TRUE, 
+    #'                                          include_minima = FALSE)
+    #' }
+    to_pointprocess_peaks = function(sound, include_maxima = TRUE, include_minima = FALSE) {
+      if (!inherits(sound, "Sound")) {
+        stop("Argument 'sound' must be a Sound object")
+      }
+      pp_ptr <- .sound_pitch_to_pointprocess_peaks(
+        sound$.__enclos_env__$private$ptr, 
+        private$ptr,
+        include_maxima,
+        include_minima
+      )
+      PointProcess$new(.xptr = pp_ptr)
+    },
+    
+    #' @description
     #' Convert pitch object to PitchTier
     #' @return PitchTier object with pitch points from voiced frames
     down_to_pitch_tier = function() {
