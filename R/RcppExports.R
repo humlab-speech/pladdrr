@@ -989,6 +989,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_get_mean_strength`, pitch, from_time, to_time, unit)
 }
 
+.pitch_get_intensity_at_time <- function(pitch, time) {
+    .Call(`_pladdrr_pitch_get_intensity_at_time`, pitch, time)
+}
+
+.pitch_get_mean_intensity <- function(pitch, from_time, to_time) {
+    .Call(`_pladdrr_pitch_get_mean_intensity`, pitch, from_time, to_time)
+}
+
 .pitch_as_matrix <- function(pitch) {
     .Call(`_pladdrr_pitch_as_matrix`, pitch)
 }
@@ -997,8 +1005,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_debug_candidates`, pitch, max_frames)
 }
 
-.pitch_as_data_frame <- function(pitch, include_strength = FALSE) {
-    .Call(`_pladdrr_pitch_as_data_frame`, pitch, include_strength)
+.pitch_as_data_frame <- function(pitch, include_strength = FALSE, include_intensity = FALSE) {
+    .Call(`_pladdrr_pitch_as_data_frame`, pitch, include_strength, include_intensity)
 }
 
 .pitch_save <- function(pitch, path) {

@@ -418,6 +418,58 @@ double pitch_get_mean_strength(
 }
 
 // ============================================================================
+// Intensity query methods
+// ============================================================================
+
+// [[Rcpp::export(.pitch_get_intensity_at_time)]]
+double pitch_get_intensity_at_time(
+    Rcpp::XPtr<structPitch> pitch,
+    double time
+) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    // Find nearest frame
+    integer iframe = Sampled_xToNearestIndex(pitch.get(), time);
+    if (iframe < 1 || iframe > pitch->nx) {
+        return NA_REAL;
+    }
+    
+    // Get intensity from frame
+    Pitch_Frame frame = &pitch->frames[iframe];
+    return frame->intensity;
+}
+
+// [[Rcpp::export(.pitch_get_mean_intensity)]]
+double pitch_get_mean_intensity(
+    Rcpp::XPtr<structPitch> pitch,
+    double from_time,
+    double to_time
+) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    // Find frame range
+    integer ifrom = Sampled_xToHighIndex(pitch.get(), from_time);
+    integer ito = Sampled_xToLowIndex(pitch.get(), to_time);
+    
+    if (ifrom < 1) ifrom = 1;
+    if (ito > pitch->nx) ito = pitch->nx;
+    if (ifrom > ito) return NA_REAL;
+    
+    // Compute mean intensity
+    double sum = 0.0;
+    integer count = 0;
+    for (integer i = ifrom; i <= ito; i++) {
+        Pitch_Frame frame = &pitch->frames[i];
+        if (frame->intensity > 0.0) {
+            sum += frame->intensity;
+            count++;
+        }
+    }
+    
+    return (count > 0) ? (sum / count) : NA_REAL;
+}
+
+// ============================================================================
 // Export methods
 // ============================================================================
 
@@ -473,7 +525,7 @@ Rcpp::List pitch_debug_candidates(Rcpp::XPtr<structPitch> pitch, int max_frames 
 }
 
 // [[Rcpp::export(.pitch_as_data_frame)]]
-Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_strength = false) {
+Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_strength = false, bool include_intensity = false) {
     if (!pitch) Rcpp::stop("Invalid Pitch pointer");
     
     integer nx = pitch->nx;
@@ -481,6 +533,7 @@ Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_
     Rcpp::NumericVector frequency(nx);
     Rcpp::LogicalVector voiced(nx);
     Rcpp::NumericVector strength(nx);
+    Rcpp::NumericVector intensity(nx);
     
     for (integer i = 1; i <= nx; i++) {
         double t = Sampled_indexToX(pitch.get(), i);
@@ -495,14 +548,35 @@ Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_
             double str = Pitch_getStrengthAtTime(pitch.get(), t, kPitch_unit::HERTZ, false);
             strength[i-1] = (str >= 0) ? str : NA_REAL;
         }
+        
+        if (include_intensity) {
+            Pitch_Frame frame = &pitch->frames[i];
+            intensity[i-1] = frame->intensity;
+        }
     }
     
-    if (include_strength) {
+    // Build result based on requested columns
+    if (include_strength && include_intensity) {
+        return DataFrame::create(
+            Named("time") = time,
+            Named("frequency") = frequency,
+            Named("voiced") = voiced,
+            Named("strength") = strength,
+            Named("intensity") = intensity
+        );
+    } else if (include_strength) {
         return DataFrame::create(
             Named("time") = time,
             Named("frequency") = frequency,
             Named("voiced") = voiced,
             Named("strength") = strength
+        );
+    } else if (include_intensity) {
+        return DataFrame::create(
+            Named("time") = time,
+            Named("frequency") = frequency,
+            Named("voiced") = voiced,
+            Named("intensity") = intensity
         );
     } else {
         return DataFrame::create(

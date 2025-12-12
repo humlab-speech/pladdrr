@@ -202,6 +202,15 @@ analyze_tremor <- function(sound,
     }
     if (verbose) cat(sprintf("%d frames\n", length(f0_values)))
 
+    # Calculate FCoM (Frequency Contour Magnitude) from pitch strength
+    if (verbose) cat("Computing contour magnitude... ")
+    pitch_df <- pitch$as_data_frame(include_strength = TRUE)
+    voiced_strength <- pitch_df$strength[pitch_df$voiced]
+    fcom <- ifelse(length(voiced_strength) > 0, 
+                   max(voiced_strength, na.rm = TRUE), 
+                   0.0)
+    if (verbose) cat(sprintf("%.4f\n", fcom))
+
     # Calculate statistics
     mean_f0 <- mean(f0_values)
 
@@ -250,8 +259,14 @@ analyze_tremor <- function(sound,
 
     ftrf <- tremor_stats$frequency
     ftri <- tremor_stats$intensity
-    ftrc <- tremor_stats$cyclicality
     fmon <- tremor_stats$n_modulations
+
+    # Compute FTrC (Frequency Tremor Cyclicality) from autocorrelation
+    if (verbose) cat("Computing tremor cyclicality... ")
+    ftrc <- .compute_tremor_cyclicality(
+      f0_uniform, sample_rate, min_tremor_freq, max_tremor_freq
+    )
+    if (verbose) cat(sprintf("%.4f\n", ftrc))
 
     # Calculate derived measures
     ftrp <- ifelse(ftrf > 0, ftri * ftrf / (ftrf + 1), 0.0)
@@ -265,8 +280,8 @@ analyze_tremor <- function(sound,
     }
 
     list(
-      FCoM = 0.5,  # Simplified - contour magnitude
-      FTrC = ftrc,
+      FCoM = fcom,  # Maximum pitch strength
+      FTrC = ftrc,  # Autocorrelation-based cyclicality
       FMoN = as.integer(fmon),
       FTrF = ftrf,
       FTrI = ftri,
@@ -321,8 +336,15 @@ analyze_tremor <- function(sound,
     }
     if (verbose) cat(sprintf("%d frames\n", length(amp_values)))
 
-    # Normalize amplitude
+    # Calculate ACoM (Amplitude Contour Magnitude) from max amplitude range
+    if (verbose) cat("Computing amplitude contour magnitude... ")
+    amp_range <- max(amp_values) - min(amp_values)
     mean_amp <- mean(amp_values)
+    acom <- amp_range / (mean_amp + 1e-10)
+    acom <- min(acom, 1.0)  # Cap at 1.0
+    if (verbose) cat(sprintf("%.4f\n", acom))
+
+    # Normalize amplitude
     amp_normalized <- (amp_values - mean_amp) / mean_amp
 
     # Create uniformly sampled signal
@@ -359,8 +381,14 @@ analyze_tremor <- function(sound,
 
     atrf <- tremor_stats$frequency
     atri <- tremor_stats$intensity
-    atrc <- tremor_stats$cyclicality
     amon <- tremor_stats$n_modulations
+
+    # Compute ATrC (Amplitude Tremor Cyclicality) from autocorrelation
+    if (verbose) cat("Computing amplitude tremor cyclicality... ")
+    atrc <- .compute_tremor_cyclicality(
+      amp_uniform, sample_rate, min_tremor_freq, max_tremor_freq
+    )
+    if (verbose) cat(sprintf("%.4f\n", atrc))
 
     # Calculate derived measures
     atrp <- ifelse(atrf > 0, atri * atrf / (atrf + 1), 0.0)
@@ -374,8 +402,8 @@ analyze_tremor <- function(sound,
     }
 
     list(
-      ACoM = 0.5,  # Simplified
-      ATrC = atrc,
+      ACoM = acom,  # Amplitude range / mean
+      ATrC = atrc,  # Autocorrelation-based cyclicality
       AMoN = as.integer(amon),
       ATrF = atrf,
       ATrI = atri,
@@ -455,6 +483,48 @@ analyze_tremor <- function(sound,
     cyclicality = cyclicality,
     n_modulations = n_modulations
   )
+}
+
+
+#' @keywords internal
+.compute_tremor_cyclicality <- function(signal, sample_rate, min_freq, max_freq) {
+  # Compute autocorrelation-based cyclicality measure
+  # Following Brückl (2012) protocol
+  
+  n <- length(signal)
+  if (n < 10) return(0.0)
+  
+  # Compute autocorrelation for lags corresponding to tremor frequencies
+  min_lag <- max(1, floor(sample_rate / max_freq))
+  max_lag <- min(n - 1, ceiling(sample_rate / min_freq))
+  
+  if (min_lag >= max_lag) return(0.0)
+  
+  # Compute autocorrelation coefficients
+  signal_centered <- signal - mean(signal, na.rm = TRUE)
+  var_signal <- sum(signal_centered^2, na.rm = TRUE)
+  
+  if (var_signal < 1e-10) return(0.0)
+  
+  acf_values <- numeric(max_lag - min_lag + 1)
+  
+  for (lag_idx in 1:length(acf_values)) {
+    lag <- min_lag + lag_idx - 1
+    if (lag < n) {
+      acf_values[lag_idx] <- sum(
+        signal_centered[1:(n-lag)] * signal_centered[(lag+1):n],
+        na.rm = TRUE
+      ) / var_signal
+    }
+  }
+  
+  # Find maximum autocorrelation in tremor range
+  max_acf <- max(acf_values, na.rm = TRUE)
+  
+  # Normalize to 0-1 range
+  cyclicality <- max(0, min(1, max_acf))
+  
+  return(cyclicality)
 }
 
 

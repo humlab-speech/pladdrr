@@ -286,6 +286,30 @@ Pitch <- R6::R6Class("Pitch",
       .pitch_get_mean_strength(private$ptr, as.numeric(from_time), as.numeric(to_time), unit_code)
     },
     
+    #' @description
+    #' Get pitch frame intensity at a specific time
+    #' @param time Time in seconds
+    #' @return Frame intensity value, or NA if no frame
+    #' @details
+    #' Returns the intensity value stored in the pitch frame at the given time.
+    #' This is the raw acoustic intensity (amplitude) of the pitch candidate,
+    #' distinct from pitch strength (periodicity). Used for FCoM and ACoM metrics.
+    get_intensity_at_time = function(time) {
+      .pitch_get_intensity_at_time(private$ptr, as.numeric(time))
+    },
+    
+    #' @description
+    #' Get mean pitch frame intensity over a time range
+    #' @param from_time Start time (default: start of pitch)
+    #' @param to_time End time (default: end of pitch)
+    #' @return Mean intensity value
+    #' @details
+    #' Computes the average frame intensity across the specified time range.
+    #' This is the acoustic intensity/amplitude stored in each pitch frame.
+    get_mean_intensity = function(from_time = 0, to_time = 0) {
+      .pitch_get_mean_intensity(private$ptr, as.numeric(from_time), as.numeric(to_time))
+    },
+    
     # ========================================================================
     # Transform methods
     # ========================================================================
@@ -423,12 +447,16 @@ Pitch <- R6::R6Class("Pitch",
     #' @description
     #' Convert pitch contour to data frame
     #' @param include_strength Include pitch strength column (default FALSE)
-    #' @return Data frame with columns: time, frequency, voiced, and optionally strength
+    #' @param include_intensity Include frame intensity column (default FALSE)
+    #' @return Data frame with columns: time, frequency, voiced, and optionally strength/intensity
     #' @details
     #' The strength column contains the pitch periodicity measure (0-1) for each frame.
-    #' This is useful for tremor analysis and identifying the most periodic pitch candidates.
-    as_data_frame = function(include_strength = FALSE) {
-      .pitch_as_data_frame(private$ptr, include_strength = as.logical(include_strength))
+    #' The intensity column contains the raw acoustic intensity/amplitude of each frame.
+    #' Both are useful for tremor analysis (FCoM, FTrC, ACoM, ATrC metrics).
+    as_data_frame = function(include_strength = FALSE, include_intensity = FALSE) {
+      .pitch_as_data_frame(private$ptr, 
+                          include_strength = as.logical(include_strength),
+                          include_intensity = as.logical(include_intensity))
     },
     
     #' @description
