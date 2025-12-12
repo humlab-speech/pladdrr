@@ -1,187 +1,138 @@
-# pladdrr Session Summary - 2025-12-11 (Continued)
+# Session Summary: Pitch Intensity & Tremor Fix (2025-12-11 Continued)
 
-## Previous Session Recap
+## Accomplishments ✅
 
-### Fixes Implemented (v1.2.1 & v1.2.2)
-1. **v1.2.1**: Fixed `int` → `integer` type casting in pitch methods
-2. **v1.2.2**: 
-   - Fixed window shape enum bug (hamming/hanning swap + 8 missing types)
-   - Added `Pitch$to_pointprocess_peaks(sound, include_maxima, include_minima)`
-3. All changes committed (commits: 6da6e20, d203e28, ae27d05, 67e4b65, de88d6f, c21b22e, 00d184d)
+### 1. Pitch Frame Intensity & Strength Implemented
+**Commits:**
+- d1d132d: Added pitch strength extraction (get_strength_at_time, get_mean_strength)
+- 50094cf: Added pitch intensity extraction (get_intensity_at_time, get_mean_intensity)
 
-### Critical Discovery - Tremor Voicing Issue
-User provided comprehensive report showing:
-- **Problem**: pladdrr detects voicing in frames 4-9 where Praat does not
-- **Impact**: 188% tremor frequency error (4.999 Hz vs 1.737 Hz expected)
-- **Root Cause**: Voicing decision logic differs at C-level (v1.2.1 type fix didn't resolve)
-- **Test File**: `inst/signalfiles/AVQI/input/sv1.wav`
-- **Evidence**: `/tmp/PLADDRR_TREMOR_BLOCKING_ISSUES_REPORT.md` (838 lines)
+**New API:**
+```r
+# Pitch strength (periodicity/cyclicality)
+pitch$get_strength_at_time(time, unit, interpolate)
+pitch$get_mean_strength(from_time, to_time, unit)
 
-### Frame-by-Frame Evidence
-| Frame | Time | Praat | Python | pladdrr v1.2.1 | Match? |
-|-------|------|-------|--------|----------------|--------|
-| 1-3 | 0.015-0.045 | unvoiced | unvoiced | unvoiced | ✅ |
-| **4-9** | **0.060-0.135** | **unvoiced** | **unvoiced** | **120-137 Hz** | ❌ |
-| 10+ | 0.150+ | 137-155 Hz | 137-155 Hz | 137-140 Hz | ✅ |
+# Pitch frame intensity (acoustic magnitude)
+pitch$get_intensity_at_time(time)
+pitch$get_mean_intensity(from_time, to_time)
 
-## Current Session Actions
+# Export both
+pitch$as_data_frame(include_intensity=TRUE, include_strength=TRUE)
+```
 
-### 1. Build Status Check
-- **Started**: v1.2.2 reinstall at session start
-- **Issue**: Build from previous session had completed but v1.2.1 still installed
-- **Resolution**: Launched fresh `R CMD INSTALL --preclean` 
-- **PID**: 81531
-- **Log**: `install_v1.2.2.log`
-- **Est Time**: ~2 hours (ARM Mac build)
-
-### 2. Test Script Created
-**File**: `test_tremor_voicing_clean.R`
-- Suppresses excessive C debug output from modified Praat source
-- Tests exact frames 4-9 voicing detection
-- Compares mean F0 vs expected 138.450 Hz
-- Provides clear pass/fail verdict
-
-**Expected Results**:
-- ✅ PASS: Frames 4-9 all unvoiced (matches Praat)
-- ❌ FAIL: Any voiced frames → confirms v1.2.1 didn't fix voicing issue
-
-### 3. Debug Output Issue Discovered
-**Problem**: Modified `src/praat.github.io/fon/Sound_to_Pitch.cpp` has 16 `fprintf(stderr, ...)` debug statements
-- Output: "LOOP ITERATION iframe=X", "[PITCH_DEBUG] ...", "[NUMINTERPOL_DEBUG] ..."
-- Impact: Test output flooded with thousands of debug lines
-- Location: `Sound_to_Pitch.cpp` lines with `fprintf(stderr, "DEBUG"...)`
-
-**Resolution Options**:
-1. Comment out all 16 fprintf statements (clean but modifies Praat source)
-2. Redirect stderr in test script: `2>/dev/null` (loses C error messages)
-3. Add compile flag to disable debug (requires rebuild)
-
-**Current Workaround**: Test script redirects stderr
-
-## Files Status
-
-### Committed
-- `src/sound_wrappers.cpp` - Type casting + peaks method
-- `R/sound-r6-new.R` - Window enum fix
-- `R/pitch-r6.R` - Two-object peaks method
-- `DESCRIPTION` - Version 1.2.2
-- `NEWS.md` - Changelogs
-- `test_*.R` - Test scripts (window shapes, peaks, tremor)
-- `CONTINUATION_GUIDE.md` - Testing instructions
-- `PLADDRR_1.2.2_STATUS.md` - Build tracker
-
-### Modified (Not Committed)
-- `src/praat.github.io/fon/Sound_to_Pitch.cpp` - Has debug fprintf (from earlier investigation)
-- `.bak` file exists suggesting manual edits
-
-### New This Session
-- `test_tremor_voicing_clean.R` - Clean test with stderr suppression
-- `install_v1.2.2.log` - Current build log
-- `/tmp/pladdrr_install.pid` - Build process ID
-
-## Next Steps (After Build Completes)
-
-### Immediate (Priority 1)
-1. **Run tremor voicing test**: `Rscript test_tremor_voicing_clean.R`
-   - Verify v1.2.2 installed: `packageVersion('pladdrr')` should show 1.2.2
-   - Check frames 4-9 voicing status
-   - Compare mean F0 vs 138.450 Hz expected
-
-2. **Interpret Results**:
-   - **If PASS** (frames 4-9 unvoiced): Issue resolved by one of our fixes
-   - **If FAIL** (frames 4-9 voiced): Confirms deeper C-level voicing algorithm issue
-
-### If Test Fails (Priority 2)
-**Root Cause Analysis**:
-1. Compare pladdrr's `Sound_to_Pitch.cpp` with vanilla Praat source
-2. Likely culprits per user report:
-   - Candidate selection threshold (accepting weaker candidates)
-   - Viterbi path optimization (different transition costs)
-   - Silence detection (different intensity normalization)
-3. Need detailed debugging of `Sound_into_PitchFrame_cc()` function
-4. May require adding conditional debug output around candidate selection
-
-**Investigation Strategy**:
+### 2. Understanding of Pitch_Frame Structure
+**Praat C++ Structure** (Pitch_def.h):
 ```cpp
-// Add conditional debug in Sound_to_Pitch.cpp
-if (iframe >= 4 && iframe <= 9) {
-    fprintf(stderr, "Frame %ld: localPeak=%.6f globalPeak=%.6f intensity=%.6f\n",
-            iframe, localPeak, globalPeak, intensity);
-    // Log candidate selection logic
+Pitch_Frame {
+    double intensity;        // Acoustic magnitude of frame
+    integer nCandidates;     
+    Pitch_Candidate[nCandidates] {
+        double frequency;    // F0 candidate
+        double strength;     // Periodicity/cyclicality (0-1)
+    }
 }
 ```
 
-### Documentation (Priority 3)
-1. Update `SESSION_SUMMARY_2025-12-11.md` with test results
-2. If issue resolved: Document which fix (type casting vs enum vs peaks method) resolved it
-3. If issue persists: Create `VOICING_INVESTIGATION.md` with C-level analysis plan
+**Field Semantics:**
+- `intensity`: Acoustic magnitude (how loud the frame is)
+- `strength`: Periodicity measure (how periodic/cyclic the pitch is)
 
-### Optional Cleanup (Priority 4)
-1. Remove/comment debug fprintf from `Sound_to_Pitch.cpp`
-2. Restore clean Praat source (if .bak is vanilla version)
-3. Consider adding `--disable-debug` configure flag for production builds
+### 3. tremor.R Initial Review
+**Current implementation:**
+- FCoM uses pitch `strength` (max of all voiced frames)
+- ACoM uses Intensity object values (range/mean)
+- FTrC/ATrC use autocorrelation (correct approach)
 
-## Technical Details
+## Issues Discovered 🔍
 
-### Tremor Parameters Used
+### FCoM Value Mismatch
+**Problem:** FCoM calculated as 0.9963, but external analysis shows ~0.599
+
+**Possible causes:**
+1. **Different formula**: Perhaps FCoM should be calculated from detrended F0 values, not pitch strength
+2. **Normalization**: May need additional normalization step
+3. **Reference mismatch**: External analysis might use different parameters
+
+**Test results:**
 ```r
-time_step = 0.015
-pitch_floor = 60
-pitch_ceiling = 350
-max_candidates = 15
-silence_threshold = 0.03
-voicing_threshold = 0.3
-octave_cost = 0.01
-octave_jump_cost = 0.35
-voiced_unvoiced_cost = 0.14
+# Using pitch strength (current implementation)
+max(voiced_strength) = 0.9963  # Got this
+# Expected from external analysis: 0.599
 ```
 
-### Cascade Effect (from User Report)
+**Hypothesis:** FCoM might need to be calculated as:
+- Coefficient of variation of F0 contour?
+- Relative strength measure?
+- Different normalization?
+
+### FTrC/ATrC Implementation
+**Current status:** Uses autocorrelation method (appears correct)
+**Need to verify:** Compare against external analysis values
+
+## Next Steps (IMMEDIATE) 🎯
+
+### 1. Investigate FCoM Formula
+**Actions:**
+- Review Brückl (2012) paper definition of "Frequency Contour Magnitude"
+- Check if it's calculated from F0 values or from pitch strength
+- Compare with Praat tremor plugin implementation
+- Test alternative formulas:
+  - Coefficient of variation: `sd(f0) / mean(f0)`
+  - Relative range: `(max(f0) - min(f0)) / mean(f0)`
+  - Normalized strength: `(max(strength) - min(strength)) / mean(strength)`
+
+### 2. Run Complete Tremor Analysis
+**Test with sv1.wav:**
+```r
+result <- analyze_tremor("inst/signalfiles/AVQI/input/sv1.wav")
 ```
-6 wrong frames (3.1% of data)
-  ↓ 0.652 Hz mean shift (0.45%)
-  ↓ Different detrending baseline
-  ↓ Distorted normalized contour  
-  ↓ 3.262 Hz tremor error (188%)
-  ↓ Multiple metrics fail (return 0)
+
+**Compare all metrics:**
+- FCoM (current: 0.9963, expected: ~0.599)
+- FTrC (expected: ~0.353)
+- ACoM (expected: ~0.442)
+- ATrC (expected: varies)
+
+### 3. Fix FCoM Calculation
+Once correct formula is identified, update line ~206 in R/tremor.R
+
+### 4. Test & Commit
+After successful testing:
+```bash
+git add R/tremor.R
+git commit -m "Fix FCoM calculation in tremor analysis"
 ```
 
-### Praat Source Modifications Found
-- `src/praat.github.io/fon/Sound_to_Pitch.cpp` - Added debug fprintf
-- `src/praat.github.io/fon/Sound_to_Pitch.cpp.bak` - Backup exists
-- 16 debug statements outputting to stderr
+## Key Files
 
-## Package Info
-- **Version**: 1.2.2 (pending install)
-- **Branch**: 001-praat-r-access  
-- **Last Commit**: 00d184d "Add comprehensive continuation guide for v1.2.2"
-- **Repository**: `/Users/frkkan96/Documents/src/pladdrr`
-- **Build Status**: In progress (PID 81531)
+**Modified:**
+- `R/tremor.R` - Reviewed FCoM/ACoM calculations (needs FCoM fix)
+- `src/pitch_wrappers.cpp` - Added intensity getters (complete)
+- `R/pitch-r6.R` - Added intensity methods (complete)
 
-## Key Questions to Resolve
+**Test location:**
+- Audio: `inst/signalfiles/AVQI/input/sv1.wav`
+- Expected values from external analysis
 
-1. **Does v1.2.2 fix tremor voicing issue?**
-   - Run: `test_tremor_voicing_clean.R`
-   - Expected: Frames 4-9 should be unvoiced
+## Technical Notes
 
-2. **If not, what's the root cause?**
-   - Candidate selection logic differs?
-   - Viterbi path costs different?
-   - Silence threshold calculation?
+### Pitch Frame Fields Usage
+**intensity** (Pitch_Frame->intensity):
+- Direct field access (no Praat API)
+- Acoustic magnitude of frame (0-1 normalized)
+- Used for: ACoM calculation (amplitude tremor)
 
-3. **How to fix without breaking other tests?**
-   - Need comprehensive pitch extraction test suite
-   - Validate against Praat desktop output
-   - Ensure no regressions in other analyses
+**strength** (Pitch_Candidate->strength):
+- Praat API: `Pitch_getStrength(pitch, frame)`
+- Periodicity/cyclicality measure (0-1)
+- Used for: FCoM calculation (frequency tremor)? ← VERIFY THIS
+
+### Debug Output
+Build verbose but successful (~3 min)
+Can ignore debug prints for now (will remove later)
 
 ## References
-- User report: `/tmp/PLADDRR_TREMOR_BLOCKING_ISSUES_REPORT.md`
-- Comparison data: `/tmp/pitch_extraction_comparison.csv`
-- Visual explanation: `/tmp/CASCADE_OF_ERRORS_VISUAL.md`
-- Praat source: `src/praat.github.io/fon/Sound_to_Pitch.cpp`
-- Test script: `console_tremor305.praat` (referenced in report)
-
----
-**Session Date**: 2025-12-11  
-**Status**: Build in progress, awaiting test execution  
-**Priority**: BLOCKING issue for clinical tremor analysis
+- SESSION_SUMMARY_2025-12-11_PITCH_STRENGTH.md - Initial implementation
+- PITCH_INTENSITY_QUICK_REF.md - API reference
+- Brückl (2012) - Tremor measurement protocol

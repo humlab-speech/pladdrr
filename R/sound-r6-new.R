@@ -187,9 +187,10 @@ Sound <- R6::R6Class(
     #' @description Get amplitude value at specific time
     #' @param time Time in seconds
     #' @param channel Channel number (1-based, default: 1)
+    #' @param interpolation Interpolation method: "nearest", "linear", "cubic", "sinc70", "sinc700" (default: "linear")
     #' @return Numeric amplitude value
-    get_value_at_time = function(time, channel = 1) {
-      .sound_get_value_at_time(private$ptr, time, channel)
+    get_value_at_time = function(time, channel = 1, interpolation = "linear") {
+      .sound_get_value_at_time(private$ptr, time, channel, interpolation)
     },
     
     #' @description Get root-mean-square amplitude

@@ -1,254 +1,209 @@
-# Session Summary: Pitch Strength Extraction Implementation
-**Date**: 2025-12-11  
-**Package**: pladdrr 1.2.2  
-**Status**: ✅ **COMPLETE - BUILD SUCCESSFUL**
+# Session Summary: Pitch Strength & Intensity Implementation (2025-12-11)
 
-## Objective
-Enable extraction of pitch strength (periodicity) values from Pitch objects to support FCoM, FTrC, and ACoM tremor metrics.
+## Status: ✅ COMPLETE
 
-## What Was Implemented
+## What We Accomplished
 
-### 1. C++ Wrappers (`src/pitch_wrappers.cpp`)
+### 1. Pitch Strength Methods (Commit: d1d132d) ✅
+**Files Modified:**
+- `src/pitch_wrappers.cpp` - Added 3 C++ wrappers for strength extraction
+- `R/pitch-r6.R` - Added 3 R6 methods
+- Auto-generated: `R/RcppExports.R`, `src/RcppExports.cpp`
 
-**Location**: After line 368 (after `pitch_count_voiced_frames`)
-
-**Three new functions added:**
-
-```cpp
-// [[Rcpp::export(.pitch_get_strength_at_time)]]
-double pitch_get_strength_at_time(
-    SEXP xptr,
-    double time,
-    std::string unit,
-    bool interpolate
-)
-```
-- Wraps `Pitch_getStrengthAtTime()`
-- Returns strength (periodicity) at specific time
-- Range: 0.0 (aperiodic) to 1.0 (perfectly periodic)
-- Supports interpolation
-
-```cpp
-// [[Rcpp::export(.pitch_get_mean_strength)]]
-double pitch_get_mean_strength(
-    SEXP xptr,
-    double from_time,
-    double to_time,
-    std::string unit
-)
-```
-- Wraps `Pitch_getMeanStrength()`
-- Returns average strength over time range
-- Used for overall periodicity assessment
-
-```cpp
-// [[Rcpp::export(.pitch_as_data_frame)]]
-Rcpp::DataFrame pitch_as_data_frame(
-    SEXP xptr,
-    bool include_strength
-)
-```
-- **Enhanced** existing function
-- Added `include_strength` parameter (default: FALSE)
-- Returns data.frame with columns: time, frequency, voiced, [strength]
-- Strength column only included if requested
-
-### 2. R6 Methods (`R/pitch-r6.R`)
-
-**Location**: After `count_voiced_frames()` method (~line 244)
-
-**Two new public methods added:**
-
+**New Methods:**
 ```r
-#' @description Get strength (periodicity) at specific time
-#' @param time Time in seconds
-#' @param unit Unit for frequency ("hertz" or "bark", default: "hertz")
-#' @param interpolate Logical: interpolate between frames (default: TRUE)
-#' @return Numeric: strength value (0-1)
-get_strength_at_time = function(time, unit = "hertz", interpolate = TRUE)
+pitch$get_strength_at_time(time, unit = "hertz", interpolate = TRUE)
+pitch$get_mean_strength(from_time, to_time, unit = "hertz") 
+pitch$as_data_frame(include_strength = TRUE)
 ```
 
+**Purpose:** Extract pitch candidate strength (periodicity/cyclicality) for FTrC and ATrC tremor metrics.
+
+**Status:** Tested and working. Values range 0-1 as expected.
+
+---
+
+### 2. Pitch Frame Intensity Methods (Commit: 50094cf) ✅
+**Files Modified:**
+- `src/pitch_wrappers.cpp` - Added 2 C++ wrappers for intensity extraction
+- `R/pitch-r6.R` - Added 2 R6 methods + updated as_data_frame()
+- Auto-generated: `R/RcppExports.R`, `src/RcppExports.cpp`
+
+**New Methods:**
 ```r
-#' @description Get mean strength (periodicity) over time range
-#' @param from_time Start time in seconds (0 = start of signal)
-#' @param to_time End time in seconds (0 = end of signal)
-#' @param unit Unit for frequency ("hertz" or "bark", default: "hertz")
-#' @return Numeric: mean strength value (0-1)
-get_mean_strength = function(from_time = 0, to_time = 0, unit = "hertz")
+pitch$get_intensity_at_time(time)
+pitch$get_mean_intensity(from_time, to_time)
+pitch$as_data_frame(include_intensity = TRUE)
 ```
 
-**One method enhanced:**
+**Purpose:** Extract pitch frame intensity (acoustic amplitude) for FCoM and ACoM tremor metrics.
 
+**Implementation Details:**
+- Direct access to `Pitch_Frame->intensity` field (double)
+- Used by Praat for acoustic magnitude measurement
+- Distinct from strength (which measures cyclicality)
+
+---
+
+## Critical Discovery: Praat Pitch Frame Structure
+
+### What We Found:
+```cpp
+// Praat Pitch_Frame structure (from Pitch_def.h)
+#define ooSTRUCT Pitch_Frame
+oo_DOUBLE (intensity)           // ← Acoustic magnitude (FCoM/ACoM)
+oo_INTEGER (nCandidates)
+oo_STRUCTVEC (Pitch_Candidate, candidates, nCandidates)
+  ├─ frequency
+  └─ strength                   // ← Cyclicality (FTrC/ATrC)
+```
+
+### Why This Matters:
+The external analysis in `/tmp/TREMOR_R_*` revealed:
+- **FCoM/ACoM** should use `frame->intensity` (contour magnitude)
+- **FTrC/ATrC** should use `candidate[1].strength` (tremor cyclicality)
+
+**Before this fix:**
+- Our R/tremor.R was using max(strength) for FCoM ❌
+- Missing pitch intensity methods entirely ❌
+
+**After this fix:**
+- FCoM/ACoM will use `pitch$get_intensity_at_time()` ✅
+- FTrC/ATrC use `pitch$get_strength_at_time()` ✅
+
+---
+
+## Next Steps (IMMEDIATE)
+
+### 1. Update R/tremor.R Implementation
+**File:** `R/tremor.R` (uncommitted changes exist)
+
+**Fix FCoM (line ~206):**
 ```r
-#' @description Convert Pitch to data frame
-#' @param include_strength Logical: include strength column (default: FALSE)
-#' @return data.frame with columns: time, frequency, voiced, [strength]
-as_data_frame = function(include_strength = FALSE)
+# OLD (WRONG):
+FCoM <- max(pitch_df$strength[voiced])
+
+# NEW (CORRECT):
+pitch_df <- pitch$as_data_frame(include_intensity = TRUE)
+FCoM <- max(pitch_df$intensity[voiced])
 ```
 
-### 3. Rcpp Exports Auto-Generated
+**Fix ACoM (line ~327):**
+```r
+# OLD (WRONG):
+# Using amplitude from intensity object
 
-✅ `R/RcppExports.R` regenerated via `Rcpp::compileAttributes()`  
-✅ `src/RcppExports.cpp` regenerated  
-✅ New exports confirmed at lines 984-985, 1000-1001
-
-## Build Results
-
-### Compilation Status
-✅ **BUILD SUCCESSFUL**  
-- Compilation time: ~5 minutes (expected for large C++ codebase)
-- Warnings: Only cosmetic (struct/class mismatches in Praat headers)
-- No errors
-- Package installed to: `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/pladdrr`
-
-### Installation Confirmation
-```
-* DONE (pladdrr)
+# NEW (CORRECT):
+amp_contour <- pitch$as_data_frame(include_intensity = TRUE)$intensity
+ACoM <- (max(amp_contour) - min(amp_contour)) / mean(amp_contour)
 ```
 
-## Testing Notes
+**Keep FTrC/ATrC (lines ~254, ~367):**
+```r
+# Already correct - use strength for cyclicality
+FTrC <- .compute_tremor_cyclicality(pitch_df$strength)
+ATrC <- .compute_tremor_cyclicality(amp_contour)
+```
 
-### Test File Used
-- `inst/signalfiles/AVQI/input/sv1.wav`
-- Duration: ~2.9 seconds
-- 288 pitch frames (time_step = 0.01)
+### 2. Test Complete Workflow
+**Expected Values (sv1.wav):**
+- FCoM ≈ 0.599 (not 0.359)
+- FTrC ≈ 0.353
+- ACoM ≈ 0.442
+- ATrC ≈ varies
 
-### Observed Behavior
-- ✅ Pitch object creates successfully
-- ✅ New methods are callable
-- ⚠️ **Debug logging is extremely verbose** (from Praat source)
-  - Prints frame-by-frame pitch analysis details
-  - Shows interpolation algorithm details
-  - Does not affect functionality
-  - Can be ignored or disabled in future build
-
-### Expected Functionality
-Based on code review, the implementation should provide:
-
-1. **`get_strength_at_time(time)`**
-   - Query strength at any time point
-   - Returns 0-1 value representing periodicity
-   - Interpolation enabled by default
-
-2. **`get_mean_strength(from, to)`**
-   - Average strength over time range
-   - from=0, to=0 means full duration
-   - Used for FCoM calculation
-
-3. **`as_data_frame(include_strength=TRUE)`**
-   - Export complete pitch data including strength
-   - Each row: time, frequency, voiced, strength
-   - Strength = NA for unvoiced frames
-   - Used for detailed tremor analysis
-
-## Files Modified
-
-### Source Files
-1. `src/pitch_wrappers.cpp` - Added 3 new wrapper functions
-2. `R/pitch-r6.R` - Added 2 new methods, enhanced 1 existing
-
-### Auto-Generated Files
-3. `R/RcppExports.R` - Regenerated by Rcpp
-4. `src/RcppExports.cpp` - Regenerated by Rcpp
-
-## Next Steps
-
-### 1. Verify Functionality (HIGH PRIORITY)
-Test with cleaner output (redirect verbose debug):
+**Test Script:**
 ```r
 library(pladdrr)
-sound <- Sound$new('inst/signalfiles/AVQI/input/sv1.wav')
-pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
-
-# Test new methods
-strength_mid <- pitch$get_strength_at_time(0.5)
-mean_str <- pitch$get_mean_strength(0, 0)
-df <- pitch$as_data_frame(include_strength = TRUE)
-
-# Verify output
-stopifnot(is.numeric(strength_mid), strength_mid >= 0, strength_mid <= 1)
-stopifnot(is.numeric(mean_str), mean_str >= 0, mean_str <= 1)
-stopifnot("strength" %in% names(df))
-stopifnot(all(df$strength[df$voiced] >= 0, na.rm = TRUE))
+snd <- Sound$new("inst/signalfiles/AVQI/input/sv1.wav")
+pitch <- snd$to_pitch_ac(...)
+results <- compute_tremor_metrics(snd, pitch)
 ```
 
-### 2. Implement Tremor Metrics (NEXT)
-Now that strength is available:
+### 3. Commit All Changes
+- Uncomm itted: `R/tremor.R`, test scripts, documentation
+- After successful testing
 
-**FCoM (Frequency maximum of autocorrelation of frequency)**:
-```r
-# FCoM = maximum strength value from pitch
-df <- pitch$as_data_frame(include_strength = TRUE)
-FCoM <- max(df$strength[df$voiced], na.rm = TRUE)
-```
-
-**FTrC (Tremor Center Frequency)**:
-- Uses autocorrelation of F0 contour
-- Depends on FCoM threshold
-- Complex calculation involving FFT
-
-**ACoM (Average maximum autocorrelation amplitude)**:
-- Uses strength values for voicing detection
-- Averages autocorrelation maxima across voiced segments
-
-### 3. Documentation Updates
-- Add roxygen2 docs for new methods (DONE in code)
-- Update NEWS.md with new features
-- Version bump: 1.2.2 → 1.2.3
-- Document in vignettes
-
-### 4. Optional: Disable Debug Logging
-The verbose Praat debug output can be disabled by:
-- Removing debug defines from Praat source
-- Recompiling package
-- Not critical - does not affect functionality
+---
 
 ## Technical Details
 
-### Praat Functions Wrapped
-1. **`Pitch_getStrengthAtTime(pitch, time)`**
-   - Returns strength from pitch candidates
-   - Uses `Sampled_getValueAtX()` for interpolation
-   - Returns 0.0 for unvoiced frames
+### C++ Implementation Highlights:
 
-2. **`Pitch_getMeanStrength(pitch, tmin, tmax, unit)`**
-   - Averages strength values across frames
-   - Skips undefined frames
-   - Returns 0.0 if no voiced frames
-
-### Data Structure
-Pitch candidates store strength values:
-```c
-struct Pitch_Candidate {
-    double frequency;   // F0 estimate
-    double strength;    // Periodicity (0-1)
-};
-
-struct Pitch_Frame {
-    integer nCandidates;
-    Pitch_Candidate *candidates;  // candidates[0] = unvoiced, candidates[1..n] = voiced
-};
-```
-
-Best candidate (maximum strength) is used by `getStrengthAtTime()`.
-
-### Error Handling
-All wrapper functions use try-catch:
+**Intensity Extraction:**
 ```cpp
-try {
-    // Praat function call
-} catch (MelderError) {
-    Melder_clearError();
-    Rcpp::stop("Error message");
-}
+// Direct field access (no Praat API function exists)
+Pitch_Frame frame = &pitch->frames[iframe];
+return frame->intensity;  // Raw double value
 ```
 
-## Summary
+**Mean Intensity Computation:**
+```cpp
+// Find frame range, iterate, average non-zero values
+for (integer i = ifrom; i <= ito; i++) {
+    Pitch_Frame frame = &pitch->frames[i];
+    if (frame->intensity > 0.0) {
+        sum += frame->intensity;
+        count++;
+    }
+}
+return (count > 0) ? (sum / count) : NA_REAL;
+```
 
-✅ **Implementation Complete**  
-✅ **Build Successful**  
-✅ **Methods Callable**  
+### R6 API Design:
 
-The pitch strength extraction functionality is now available in pladdrr and ready for use in tremor analysis (FCoM, FTrC, ACoM calculations).
+**Consistency with existing methods:**
+- `get_*_at_time()` pattern for single point queries
+- `get_mean_*()` pattern for range statistics
+- `as_data_frame(include_* = TRUE)` for bulk export
 
-**Remaining work**: Test with real data, implement tremor metrics, document, and release as v1.2.3.
+**Parameters:**
+- Intensity methods don't need `unit` parameter (raw magnitude)
+- Strength methods keep `unit` for consistency (though not frequency-dependent)
+
+---
+
+## Package Status
+
+**Version:** pladdrr 1.2.2  
+**Branch:** 001-praat-r-access  
+**Commits Ahead:** 15 (d1d132d + 50094cf)  
+**Build Status:** ✅ Successful (18 warnings, 0 errors)
+
+**Warnings:** Standard Rcpp incomplete type warnings (harmless)
+
+---
+
+## Key Files
+
+### Committed (2 commits):
+1. **d1d132d** - Pitch strength methods
+   - `src/pitch_wrappers.cpp`
+   - `R/pitch-r6.R`
+   - Auto-generated exports
+
+2. **50094cf** - Pitch intensity methods
+   - `src/pitch_wrappers.cpp`
+   - `R/pitch-r6.R`
+   - Auto-generated exports
+
+### Uncommitted (needs fixing):
+- `R/tremor.R` - Has FCoM/ACoM/FTrC/ATrC implementations (needs intensity fix)
+- `test_tremor_fixed.R` - Test script
+- `TREMOR_METRICS_FIX.md` - Documentation
+- Various session summaries
+
+---
+
+## Conclusion
+
+We successfully implemented BOTH strength and intensity extraction from Praat Pitch objects:
+
+1. ✅ **Strength methods** - For cyclicality measurement (FTrC/ATrC)
+2. ✅ **Intensity methods** - For magnitude measurement (FCoM/ACoM)
+
+The R/tremor.R file can now be corrected to use the proper metrics:
+- FCoM/ACoM → `pitch$get_intensity_at_time()` (contour magnitude)
+- FTrC/ATrC → `pitch$get_strength_at_time()` (tremor cyclicality)
+
+**Next Action:** Update R/tremor.R with correct metric implementations, test, and commit.

@@ -7,9 +7,9 @@ cat("Testing: inst/signalfiles/AVQI/input/sv1.wav\n")
 cat("Issue: Frames 4-9 should be unvoiced (match Praat)\n\n")
 
 # Load audio
-snd <- praat_sound("inst/signalfiles/AVQI/input/sv1.wav")
+snd <- Sound$new("inst/signalfiles/AVQI/input/sv1.wav")
 cat(sprintf("Duration: %.3f sec, Sample rate: %d Hz\n", 
-            snd$get_total_duration(), snd$get_sampling_frequency()))
+            snd$get_duration(), snd$get_sampling_rate()))
 
 # Extract pitch with tremor parameters (redirect stderr to suppress C debug)
 cat("\nExtracting pitch (this may take a moment)...\n")
@@ -28,9 +28,12 @@ pitch <- snd$to_pitch_cc(
 sink(type = "output")  # Restore stderr
 
 # Get pitch contour
-times <- pitch$frame_number_to_time(1:pitch$get_number_of_frames())
+times <- sapply(1:pitch$get_number_of_frames(), function(i) {
+  pitch$get_time_from_frame(i)
+})
 freqs <- sapply(1:pitch$get_number_of_frames(), function(i) {
-  pitch$get_value_in_frame(i)
+  time <- pitch$get_time_from_frame(i)
+  pitch$get_value_at_time(time, unit = "HERTZ", interpolate = FALSE)
 })
 
 # Focus on first 10 frames

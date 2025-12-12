@@ -1,180 +1,171 @@
-# Session Summary: Tremor Metrics Implementation (2025-12-11 PM)
+# Tremor Metrics Implementation Session Summary
+## Date: 2025-12-11
 
-## Accomplishments
+## Completed ✅
 
-### 1. Committed Pitch Strength Implementation ✅
-- **Files**: `src/pitch_wrappers.cpp`, `R/pitch-r6.R`, `R/RcppExports.R`
-- **Commit**: d1d132d "Add Pitch strength (periodicity) extraction methods"
-- **Methods Added**:
-  - `get_strength_at_time()` - Query strength at specific time
-  - `get_mean_strength()` - Query mean strength over range
-  - `as_data_frame(include_strength=TRUE)` - Add strength column
+### 1. Pitch Intensity & Strength API
+**New R6 methods:**
+- `pitch$get_intensity_at_time(time)`
+- `pitch$get_mean_intensity(from_time, to_time)`  
+- `pitch$get_strength_at_time(time, unit, interpolate)`
+- `pitch$get_mean_strength(from_time, to_time, unit)`
+- `pitch$as_data_frame(include_intensity=TRUE, include_strength=TRUE)`
 
-### 2. Implemented Missing Tremor Metrics ✅
-- **File Modified**: `R/tremor.R`
-- **Status**: Code complete, pending build + test
+**Implementation:** Direct C struct field access via new C++ wrappers in `src/pitch_wrappers.cpp`
 
-#### FCoM (Frequency Contour Magnitude)
+### 2. Tremor Analysis Function
+**File:** `R/tremor.R`  
+**Function:** `analyze_tremor(sound, ...)`  
+**Exports:** Added to `NAMESPACE`
+
+**18 tremor measures extracted:**
+- Frequency modulation: FCoM, FTrC, FMoN, FTrF, FTrI, FTrP, FTrCIP, FTrPS, FCoHNR
+- Amplitude modulation: ACoM, ATrC, AMoN, ATrF, ATrI, ATrP, ATrCIP, ATrPS, ACoHNR
+
+### 3. Bug Fixes in tremor.R
+1. ✅ Fixed `pitch$get_value_in_frame()` → `pitch$get_value_at_time(t, unit, interpolate=FALSE)`
+2. ✅ Fixed `pitch$get_time_from_frame_number()` → `pitch$get_time_from_frame(i)`
+3. ✅ Fixed `Sound$from_values(..., sampling_frequency=...)` → `sampling_rate=...`
+4. ✅ Added missing `mean_amp` variable calculation
+5. ✅ Fixed contour intensity extraction (use ALL frames, not just voiced)
+
+**Critical insight:** F0/amplitude contour Pitch objects have NO voiced frames (they're not periodic audio). FCoM/ACoM must use `max(all intensity values)`.
+
+## Current Test Results ⚠️
+
+**Test file:** `inst/signalfiles/AVQI/input/sv1.wav`
+
+| Measure | Current | Expected | Status |
+|---------|---------|----------|--------|
+| FCoM | 0.1550 | ~0.599 | ❌ Too low |
+| FTrC | 0.2557 | ~0.353 | ✅ Close |
+| FTrF | 1.82 Hz | | ✅ Working |
+| FTrI | 15.48% | | ✅ Working |
+| ACoM | 0.1561 | ~0.442 | ❌ Too low |
+| ATrC | 0.8625 | | ✅ Working |
+| ATrF | 1.82 Hz | | ✅ Working |
+| ATrI | 24.59% | | ✅ Working |
+
+## Outstanding Issues 🔍
+
+### Issue 1: FCoM/ACoM Values Too Low
+
+**Problem:** Getting 0.15 but expect ~0.5-0.6
+
+**Current implementation:**
 ```r
-# Line ~206
-pitch_df <- pitch$as_data_frame(include_strength = TRUE)
-voiced_strength <- pitch_df$strength[pitch_df$voiced]
-fcom <- max(voiced_strength, na.rm = TRUE)
-```
-- **Definition**: Maximum pitch strength from voiced frames
-- **Range**: [0, 1]
-- **Interpretation**: Higher = more periodic voicing
-
-#### FTrC (Frequency Tremor Cyclicality)
-```r
-# Line ~254 - uses new helper function
-ftrc <- .compute_tremor_cyclicality(
-  f0_uniform, sample_rate, min_tremor_freq, max_tremor_freq
-)
-```
-- **Definition**: Autocorrelation-based periodicity in tremor range
-- **Range**: [0, 1]
-- **Interpretation**: Higher = more cyclic tremor
-
-#### ACoM (Amplitude Contour Magnitude)
-```r
-# Line ~327
-amp_range <- max(amp_values) - min(amp_values)
-mean_amp <- mean(amp_values)
-acom <- amp_range / (mean_amp + 1e-10)
-acom <- min(acom, 1.0)  # Cap at 1.0
-```
-- **Definition**: Amplitude variation relative to mean
-- **Range**: [0, 1]
-- **Interpretation**: Higher = greater amplitude modulation
-
-#### ATrC (Amplitude Tremor Cyclicality)
-```r
-# Line ~367 - uses same helper function
-atrc <- .compute_tremor_cyclicality(
-  amp_uniform, sample_rate, min_tremor_freq, max_tremor_freq
-)
-```
-- **Definition**: Autocorrelation-based amplitude periodicity
-- **Range**: [0, 1]
-- **Interpretation**: Higher = more cyclic amplitude tremor
-
-### 3. New Helper Function ✅
-```r
-# Lines 461-509
-.compute_tremor_cyclicality <- function(signal, sample_rate, min_freq, max_freq)
-```
-- **Purpose**: Compute autocorrelation-based cyclicality measure
-- **Algorithm**:
-  1. Compute lags for tremor frequency range (1.5-15 Hz)
-  2. Calculate autocorrelation coefficients
-  3. Find maximum ACF in tremor range
-  4. Normalize to [0, 1]
-- **Used by**: Both FTrC and ATrC
-
-### 4. Documentation Created ✅
-- `TREMOR_METRICS_FIX.md` - Implementation details
-- `test_tremor_fixed.R` - Test script for validation
-
-## Technical Details
-
-### Autocorrelation Method (Brückl 2012)
-```r
-# Compute ACF for tremor frequency range
-min_lag <- floor(sample_rate / max_freq)  # ~67 samples at 66.7 Hz for 15 Hz
-max_lag <- ceiling(sample_rate / min_freq)  # ~44 samples at 66.7 Hz for 1.5 Hz
-
-# Centered signal
-signal_centered <- signal - mean(signal)
-var_signal <- sum(signal_centered^2)
-
-# ACF at each lag
-for (lag in min_lag:max_lag) {
-  acf[lag] <- sum(signal[1:(n-lag)] * signal[(lag+1):n]) / var_signal
-}
-
-# Maximum ACF = cyclicality measure
-cyclicality <- max(acf)
+# 1. Extract F0 contour from audio
+# 2. Detrend: f0_detrended = f0_values - linear_trend
+# 3. Normalize: f0_normalized = f0_detrended / mean_f0
+# 4. Create Sound from normalized contour
+# 5. Create Pitch from contour Sound (pitch_floor=1.5, pitch_ceiling=15 Hz)
+# 6. FCoM = max(intensity from all frames)
 ```
 
-## Changes Summary
-
-### Modified Files
-1. **R/tremor.R** (4 sections):
-   - Line ~206: Added FCoM calculation
-   - Line ~254: Added FTrC using autocorrelation
-   - Line ~327: Added ACoM calculation
-   - Line ~367: Added ATrC using autocorrelation
-   - Line ~461: Added `.compute_tremor_cyclicality()` helper
-
-### New Files
-1. **TREMOR_METRICS_FIX.md** - Implementation documentation
-2. **test_tremor_fixed.R** - Validation test script
-
-## Testing Status
-
-- ✅ Syntax validated (R/tremor.R loads without errors)
-- ⏸️ Build pending (timeout issue with R CMD INSTALL)
-- ⏸️ Runtime testing pending
-
-## Expected Validation Results
-
-When build completes and tests run, expect:
+**Diagnostic output:**
 ```
-FCoM (frequency contour magnitude): 0.9XXX (high for good voicing)
-FTrC (frequency tremor cyclicality): 0.XXXX (varies with tremor)
-ACoM (amplitude contour magnitude): 0.XXXX (varies with modulation)
-ATrC (amplitude tremor cyclicality): 0.XXXX (varies with tremor)
-
-All values in [0, 1]: TRUE
+F0 pitch df: 54 rows
+Voiced frames: 0/54  (expected - contours aren't periodic)
+Intensity range: [0.0802, 0.1550]
+FCoM = 0.1550
 ```
 
-## Next Session Actions
+**Possible causes:**
+1. Contour normalization method incorrect
+2. Pitch parameters for tremor range need adjustment
+3. Different interpretation of "intensity" in Brückl protocol
+4. May need different scaling/preprocessing
 
-1. **Build Package**:
-   ```bash
-   cd /Users/frkkan96/Documents/src/pladdrr
-   R CMD INSTALL --preclean .
-   ```
+**Next steps:**
+1. Review original Brückl (2012, 2015) papers for exact protocol
+2. Check if FCoM should be calculated differently
+3. Compare with reference Praat Tremor script implementation
+4. Test with multiple audio files to see if pattern holds
 
-2. **Run Test**:
-   ```bash
-   Rscript test_tremor_fixed.R
-   ```
+### Issue 2: Excessive Debug Logging
 
-3. **Validate Results**:
-   - All 4 metrics in [0, 1] range
-   - FCoM > 0.9 for sv1.wav (good voicing)
-   - FTrC, ATrC show periodicity measures
-   - Compare with reference implementation
+**Files with debug output:**
+- `src/praat.github.io/fon/Sound_to_Pitch.cpp`
+- `src/praat.github.io/melder/NUMinterpol.cpp`
 
-4. **Commit if Validation Passes**:
-   ```bash
-   git add R/tremor.R TREMOR_METRICS_FIX.md test_tremor_fixed.R
-   git commit -m "Implement FCoM/FTrC/ACoM/ATrC tremor metrics
+**Output pollution:** Thousands of lines of:
+```
+LOOP ITERATION iframe=1
+[PITCH_DEBUG] t=0.027 localPeak=...
+[NUMINTERPOL_DEBUG] Enter: ixmid=403...
+```
 
-   Add autocorrelation-based cyclicality calculations:
-   - FCoM: Max pitch strength (periodicity)
-   - FTrC: F0 tremor cyclicality via ACF
-   - ACoM: Amplitude modulation depth
-   - ATrC: Amplitude tremor cyclicality via ACF
-   
-   Includes new .compute_tremor_cyclicality() helper.
-   Completes tremor metric implementations."
-   ```
+**Solution needed:** Comment out fprintf debug statements
 
-5. **Fix FTrI** (if time permits):
-   - Current 33% error in intensity calculation
-   - Improve peak detection in spectrum
-   - Add better normalization
+## Technical Implementation Details
+
+### Brückl Protocol Steps (as understood)
+
+**Frequency tremor:**
+1. Extract F0 from audio (standard pitch tracking)
+2. Remove linear trend from F0 contour
+3. Normalize: `(f0 - trend) / mean_f0`
+4. Create uniform-sampled signal (interpolate to fixed rate)
+5. Convert to Sound object
+6. Extract Pitch from contour Sound (1.5-15 Hz range for tremor)
+7. FCoM = max intensity from contour Pitch
+8. FTrC = autocorrelation-based cyclicality
+9. FTrF, FTrI = dominant frequency & power from spectrum
+
+**Amplitude tremor:**
+1. Extract intensity from audio
+2. Convert dB to linear scale
+3. Normalize: `(amp - mean_amp) / mean_amp`
+4. Create uniform-sampled signal
+5. Convert to Sound object
+6. Extract Pitch from contour Sound (1.5-15 Hz range)
+7. ACoM = max intensity from contour Pitch
+8. ATrC, ATrF, ATrI = similar to frequency measures
+
+### Key Design Decisions
+
+1. **No voiced frame filtering for contours:** Contour signals are NOT periodic audio, so all frames are used
+2. **Uniform sampling:** Interpolate irregular F0/intensity samples to uniform grid for FFT
+3. **Tremor frequency range:** 1.5-15 Hz (characteristic of vocal tremor)
+4. **Autocorrelation for cyclicality:** Following Brückl's formulation
+
+## Files Modified
+
+**C++ (wrappers):**
+- `src/pitch_wrappers.cpp` - Added intensity/strength field access
+
+**R (code):**
+- `R/pitch-r6.R` - Added intensity/strength methods
+- `R/tremor.R` - Complete tremor analysis implementation
+- `NAMESPACE` - Exported `analyze_tremor`
+
+**Auto-generated:**
+- `R/RcppExports.R`
+- `src/RcppExports.cpp`
+
+## Package Info
+
+**Package:** pladdrr v1.2.2  
+**Branch:** 001-praat-r-access  
+**Status:** 15 commits ahead of main
+
+## Next Steps (Priority Order)
+
+1. **HIGH:** Review Brückl papers to verify FCoM/ACoM calculation
+2. **HIGH:** Test with additional audio files to confirm pattern
+3. **MEDIUM:** Remove debug fprintf statements from Praat source
+4. **MEDIUM:** Validate tremor metrics against reference implementation
+5. **LOW:** Add unit tests for tremor functions
+6. **LOW:** Document tremor analysis in vignette
 
 ## References
 
-Brückl, M. (2012). Vocal Tremor Measurement Based on Autocorrelation of Contours. *Interspeech '12*.
+- Brückl, M. (2012). Vocal Tremor Measurement Based on Autocorrelation of Contours. Interspeech '12.
+- Brückl, M., Ghio, A., & Viallet, F. (2015). Measurement of Tremor in the Voices of Speakers with Parkinson's Disease. ICNLSP 2015.
 
-## Git Status
+## Questions for Resolution
 
-- **Branch**: 001-praat-r-access
-- **Commits ahead**: 14 (after pitch strength commit)
-- **Uncommitted**: R/tremor.R modifications
-- **New files**: TREMOR_METRICS_FIX.md, test_tremor_fixed.R
+1. What is the correct calculation for FCoM/ACoM in Brückl's protocol?
+2. Should contour normalization use different method?
+3. Are the pitch_floor/pitch_ceiling parameters correct for tremor analysis?
+4. Should intensity values be scaled or transformed before max() calculation?

@@ -181,7 +181,8 @@ int sound_get_number_of_channels(XPtr<structSound> xptr) {
 double sound_get_value_at_time(
     XPtr<structSound> xptr,
     double time,
-    int channel
+    int channel,
+    std::string interpolation = "linear"
 ) {
     structSound* sound = get_ptr(xptr, "Sound");
     
@@ -192,12 +193,28 @@ double sound_get_value_at_time(
         return NA_REAL;
     }
     
+    // Parse interpolation type
+    kVector_valueInterpolation interp_type;
+    if (interpolation == "nearest") {
+        interp_type = kVector_valueInterpolation::NEAREST;
+    } else if (interpolation == "linear") {
+        interp_type = kVector_valueInterpolation::LINEAR;
+    } else if (interpolation == "cubic") {
+        interp_type = kVector_valueInterpolation::CUBIC;
+    } else if (interpolation == "sinc70") {
+        interp_type = kVector_valueInterpolation::SINC70;
+    } else if (interpolation == "sinc700") {
+        interp_type = kVector_valueInterpolation::SINC700;
+    } else {
+        stop("Invalid interpolation type. Must be: nearest, linear, cubic, sinc70, or sinc700");
+    }
+    
     try {
         return Vector_getValueAtX(
             sound,
             time,
             channel,
-            kVector_valueInterpolation::LINEAR
+            interp_type
         );
     } catch (MelderError) {
         Melder_clearError();

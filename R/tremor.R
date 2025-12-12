@@ -278,10 +278,10 @@ analyze_tremor <- function(sound,
     ftr_hnr <- .calculate_contour_hnr(f0_sound, min_tremor_freq, max_tremor_freq)
     if (verbose) cat(sprintf("%.2f dB\n", ftr_hnr))
 
-    # Detect tremor using spectrum
+    # Detect tremor using Brückl's algorithm
     if (verbose) cat("Detecting frequency tremor... ")
     tremor_stats <- .detect_tremor_from_spectrum(
-      f0_sound, min_tremor_freq, max_tremor_freq
+      f0_sound, min_tremor_freq, max_tremor_freq, f0_pitch
     )
     if (verbose) cat("done\n")
 
@@ -432,10 +432,10 @@ analyze_tremor <- function(sound,
     atr_hnr <- .calculate_contour_hnr(amp_sound, min_tremor_freq, max_tremor_freq)
     if (verbose) cat(sprintf("%.2f dB\n", atr_hnr))
 
-    # Detect tremor
+    # Detect tremor using Brückl's algorithm
     if (verbose) cat("Detecting amplitude tremor... ")
     tremor_stats <- .detect_tremor_from_spectrum(
-      amp_sound, min_tremor_freq, max_tremor_freq
+      amp_sound, min_tremor_freq, max_tremor_freq, amp_pitch
     )
     if (verbose) cat("done\n")
 
@@ -481,67 +481,94 @@ analyze_tremor <- function(sound,
 
 
 #' @keywords internal
-.detect_tremor_from_spectrum <- function(sound, min_freq, max_freq) {
-
-  # Convert to spectrum (FFT)
+.detect_tremor_from_spectrum <- function(sound, min_freq, max_freq, pitch_obj) {
+  # Brückl's tremIntIndex algorithm (tremor3.05/procedures/tremIntIndex.praat)
+  # Measures amplitude deviation of peaks/valleys in normalized F0 contour
+  
+  # Step 1: Create PointProcess of maxima (peaks)
+  pp_max <- pitch_obj$to_pointprocess_peaks(sound, include_maxima = TRUE, include_minima = FALSE)
+  n_max_points <- pp_max$get_number_of_points()
+  
+  tri_max <- 0.0
+  no_f_max <- 0
+  
+  # Sample amplitude at each maximum time using Sinc70 interpolation
+  for (i_point in seq_len(n_max_points)) {
+    ti <- pp_max$get_time_from_index(i_point)
+    tri_point <- sound$get_value_at_time(time = ti, channel = 1, interpolation = "sinc70")
+    
+    if (is.na(tri_point)) {
+      tri_point <- 0.0
+      no_f_max <- no_f_max + 1
+    }
+    
+    tri_max <- tri_max + abs(tri_point)
+  }
+  
+  # tri_max := (mean) percentual deviation of contour maxima from mean contour
+  number_of_maxima <- n_max_points - no_f_max
+  if (number_of_maxima > 0) {
+    tri_max <- 100 * tri_max / number_of_maxima
+  } else {
+    tri_max <- 0.0
+  }
+  
+  # Step 2: Create PointProcess of minima (valleys)
+  pp_min <- pitch_obj$to_pointprocess_peaks(sound, include_maxima = FALSE, include_minima = TRUE)
+  n_min_points <- pp_min$get_number_of_points()
+  
+  tri_min <- 0.0
+  no_f_min <- 0
+  
+  # Sample amplitude at each minimum time using Sinc70 interpolation
+  for (i_point in seq_len(n_min_points)) {
+    ti <- pp_min$get_time_from_index(i_point)
+    tri_point <- sound$get_value_at_time(time = ti, channel = 1, interpolation = "sinc70")
+    
+    if (is.na(tri_point)) {
+      tri_point <- 0.0
+      no_f_min <- no_f_min + 1
+    }
+    
+    tri_min <- tri_min + abs(tri_point)
+  }
+  
+  # tri_min := (mean) percentual deviation of contour minima from mean contour
+  number_of_minima <- n_min_points - no_f_min
+  if (number_of_minima > 0) {
+    tri_min <- 100 * tri_min / number_of_minima
+  } else {
+    tri_min <- 0.0
+  }
+  
+  # Step 3: FTrI = average of peak and valley deviations
+  tri <- (tri_max + tri_min) / 2
+  
+  # For backwards compatibility, also compute frequency from spectrum
   spectrum <- sound$to_spectrum(fast = TRUE)
-
-  # Find peak power in tremor frequency range
   n_bins <- spectrum$get_number_of_bins()
-
   max_power <- 0.0
   max_freq_found <- 0.0
-  powers_in_range <- numeric(0)
-  freqs_in_range <- numeric(0)
-
+  
   for (i in 1:n_bins) {
     freq <- spectrum$get_frequency_from_bin(i)
     if (freq >= min_freq && freq <= max_freq) {
       real_val <- spectrum$get_real_value_in_bin(i)
       imag_val <- spectrum$get_imaginary_value_in_bin(i)
       power <- real_val^2 + imag_val^2
-
-      powers_in_range <- c(powers_in_range, power)
-      freqs_in_range <- c(freqs_in_range, freq)
-
+      
       if (power > max_power) {
         max_power <- power
         max_freq_found <- freq
       }
     }
   }
-
-  if (length(powers_in_range) == 0 || max_power == 0) {
-    return(list(
-      frequency = 0.0,
-      intensity = 0.0,
-      cyclicality = 0.0,
-      n_modulations = 0
-    ))
-  }
-
-  # Calculate intensity as percentage of total power
-  total_power <- sum(powers_in_range)
-  intensity <- (max_power / (total_power + 1e-10)) * 100
-
-  # Cyclicality - ratio of dominant peak to nearby mean
-  max_idx <- which.max(powers_in_range)
-  nearby_start <- max(1, max_idx - 2)
-  nearby_end <- min(length(powers_in_range), max_idx + 2)
-  nearby_power <- powers_in_range[nearby_start:nearby_end]
-
-  cyclicality <- max_power / (mean(nearby_power) + 1e-10)
-  cyclicality <- min(cyclicality / 10.0, 1.0)  # Normalize to 0-1
-
-  # Count modulations above threshold
-  threshold <- mean(powers_in_range) + sd(powers_in_range)
-  n_modulations <- sum(powers_in_range > threshold)
-
+  
   list(
     frequency = max_freq_found,
-    intensity = intensity,
-    cyclicality = cyclicality,
-    n_modulations = n_modulations
+    intensity = tri,  # FTrI from Brückl's algorithm
+    cyclicality = 0.0,  # Deprecated
+    n_modulations = number_of_maxima + number_of_minima
   )
 }
 
