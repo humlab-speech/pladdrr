@@ -5,7 +5,7 @@
 CXX_STD = CXX17
 
 # Include directories
-PKG_CPPFLAGS =  -DHAVE_XSIMD -I. \
+PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -I. \
                -Igsl-2.8 \
                -Igsl-2.8/gsl \
                -Ipraat.github.io \
@@ -38,6 +38,7 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
                -DNO_GRAPHICS \
                -DNO_NETWORK \
                -DUNIX \
+               -DPLADDRR_NO_DEBUG \
                -pthread \
                -ffp-contract=off \
                -Wno-unused-parameter \

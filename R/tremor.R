@@ -147,7 +147,7 @@ analyze_tremor <- function(sound,
     duration = duration,
     metadata = list(
       date = Sys.time(),
-      speaker_version = as.character(packageVersion("speaker")),
+      speaker_version = as.character(packageVersion("pladdrr")),
       protocol = "Tremor v3.05 (Brückl, 2012)"
     )
   )
@@ -188,9 +188,9 @@ analyze_tremor <- function(sound,
     time_values <- numeric(0)
 
     for (i in 1:n_frames) {
-      f0 <- pitch$get_value_in_frame(i, unit = "hertz")
+      t <- pitch$get_time_from_frame(i)
+      f0 <- pitch$get_value_at_time(t, unit = "hertz", interpolate = FALSE)
       if (!is.na(f0) && !is.nan(f0) && f0 > 0) {
-        t <- pitch$get_time_from_frame_number(i)
         f0_values <- c(f0_values, f0)
         time_values <- c(time_values, t)
       }
@@ -202,14 +202,9 @@ analyze_tremor <- function(sound,
     }
     if (verbose) cat(sprintf("%d frames\n", length(f0_values)))
 
-    # Calculate FCoM (Frequency Contour Magnitude) from pitch strength
-    if (verbose) cat("Computing contour magnitude... ")
-    pitch_df <- pitch$as_data_frame(include_strength = TRUE)
-    voiced_strength <- pitch_df$strength[pitch_df$voiced]
-    fcom <- ifelse(length(voiced_strength) > 0, 
-                   max(voiced_strength, na.rm = TRUE), 
-                   0.0)
-    if (verbose) cat(sprintf("%.4f\n", fcom))
+    # FCoM will be calculated after creating F0 contour Pitch object
+    # (following Brückl protocol: create Pitch from F0 contour, extract intensity)
+    fcom <- 0.0  # Placeholder, calculated below after f0_pitch created
 
     # Calculate statistics
     mean_f0 <- mean(f0_values)
@@ -241,9 +236,42 @@ analyze_tremor <- function(sound,
     if (verbose) cat("Converting to Sound... ")
     f0_sound <- Sound$from_values(
       values = matrix(f0_uniform, nrow = 1),
-      sampling_frequency = sample_rate
+      sampling_rate = sample_rate
     )
     if (verbose) cat("done\n")
+
+    # Create Pitch object from F0 contour for FCoM calculation
+    # (Following Brückl protocol: pitch object from F0 contour has intensity field)
+    if (verbose) cat("Creating Pitch from F0 contour... ")
+    f0_pitch <- f0_sound$to_pitch(
+      time_step = time_step,
+      pitch_floor = min_tremor_freq,
+      pitch_ceiling = max_tremor_freq
+    )
+    if (verbose) cat("done\n")
+    
+    # Calculate FCoM from F0 contour Pitch intensity
+    if (verbose) cat("Computing frequency contour magnitude... ")
+    f0_pitch_df <- f0_pitch$as_data_frame(include_intensity = TRUE)
+    if (verbose) {
+      cat(sprintf("\n  F0 pitch df: %d rows, cols: %s\n", 
+                  nrow(f0_pitch_df), paste(names(f0_pitch_df), collapse=", ")))
+      cat(sprintf("  Voiced frames: %d/%d\n", sum(f0_pitch_df$voiced), nrow(f0_pitch_df)))
+      if ("intensity" %in% names(f0_pitch_df)) {
+        cat(sprintf("  Intensity range: [%.4f, %.4f]\n",
+                    min(f0_pitch_df$intensity, na.rm=TRUE),
+                    max(f0_pitch_df$intensity, na.rm=TRUE)))
+      } else {
+        cat("  WARNING: No intensity column!\n")
+      }
+    }
+    # Don't filter by voiced - contour signals are not periodic, use all frames
+    # Use frame 1 intensity (following Brückl's readPitchOb.praat implementation)
+    fcom <- ifelse(nrow(f0_pitch_df) > 0 && "intensity" %in% names(f0_pitch_df) &&
+                   !is.na(f0_pitch_df$intensity[1]),
+                   f0_pitch_df$intensity[1],
+                   0.0)
+    if (verbose) cat(sprintf("  FCoM = %.4f\n", fcom))
 
     # Calculate HNR of F0 contour
     if (verbose) cat("Computing F0 contour HNR... ")
@@ -280,8 +308,8 @@ analyze_tremor <- function(sound,
     }
 
     list(
-      FCoM = fcom,  # Maximum pitch strength
-      FTrC = ftrc,  # Autocorrelation-based cyclicality
+      FCoM = fcom,  # Max intensity from Pitch created from F0 contour (Brückl protocol)
+      FTrC = ftrc,  # Autocorrelation-based cyclicality (tremor periodicity)
       FMoN = as.integer(fmon),
       FTrF = ftrf,
       FTrI = ftri,
@@ -320,9 +348,9 @@ analyze_tremor <- function(sound,
     time_values <- numeric(0)
 
     for (i in 1:n_frames) {
-      amp_db <- intensity$get_value_in_frame(i)
+      t <- intensity$get_time_from_frame(i)
+      amp_db <- intensity$get_value_at_time(t, interpolation = "nearest")
       if (!is.na(amp_db) && !is.nan(amp_db)) {
-        t <- intensity$get_time_from_frame_number(i)
         # Convert dB to linear
         amp_linear <- 10^(amp_db / 20.0)
         amp_values <- c(amp_values, amp_linear)
@@ -336,13 +364,12 @@ analyze_tremor <- function(sound,
     }
     if (verbose) cat(sprintf("%d frames\n", length(amp_values)))
 
-    # Calculate ACoM (Amplitude Contour Magnitude) from max amplitude range
-    if (verbose) cat("Computing amplitude contour magnitude... ")
-    amp_range <- max(amp_values) - min(amp_values)
+    # ACoM will be calculated after creating amplitude contour Pitch object
+    # (following Brückl protocol: create Pitch from amplitude contour, extract intensity)
+    acom <- 0.0  # Placeholder, calculated below after amp_pitch created
+
+    # Calculate mean amplitude
     mean_amp <- mean(amp_values)
-    acom <- amp_range / (mean_amp + 1e-10)
-    acom <- min(acom, 1.0)  # Cap at 1.0
-    if (verbose) cat(sprintf("%.4f\n", acom))
 
     # Normalize amplitude
     amp_normalized <- (amp_values - mean_amp) / mean_amp
@@ -363,9 +390,42 @@ analyze_tremor <- function(sound,
     if (verbose) cat("Converting to Sound... ")
     amp_sound <- Sound$from_values(
       values = matrix(amp_uniform, nrow = 1),
-      sampling_frequency = sample_rate
+      sampling_rate = sample_rate
     )
     if (verbose) cat("done\n")
+
+    # Create Pitch object from amplitude contour for ACoM calculation
+    # (Following Brückl protocol: pitch object from amp contour has intensity field)
+    if (verbose) cat("Creating Pitch from amplitude contour... ")
+    amp_pitch <- amp_sound$to_pitch(
+      time_step = time_step,
+      pitch_floor = min_tremor_freq,
+      pitch_ceiling = max_tremor_freq
+    )
+    if (verbose) cat("done\n")
+    
+    # Calculate ACoM from amplitude contour Pitch intensity
+    if (verbose) cat("Computing amplitude contour magnitude... ")
+    amp_pitch_df <- amp_pitch$as_data_frame(include_intensity = TRUE)
+    if (verbose) {
+      cat(sprintf("\n  Amp pitch df: %d rows, cols: %s\n",
+                  nrow(amp_pitch_df), paste(names(amp_pitch_df), collapse=", ")))
+      cat(sprintf("  Voiced frames: %d/%d\n", sum(amp_pitch_df$voiced), nrow(amp_pitch_df)))
+      if ("intensity" %in% names(amp_pitch_df)) {
+        cat(sprintf("  Intensity range: [%.4f, %.4f]\n",
+                    min(amp_pitch_df$intensity, na.rm=TRUE),
+                    max(amp_pitch_df$intensity, na.rm=TRUE)))
+      } else {
+        cat("  WARNING: No intensity column!\n")
+      }
+    }
+    # Don't filter by voiced - contour signals are not periodic, use all frames
+    # Use frame 1 intensity (following Brückl's readPitchOb.praat implementation)
+    acom <- ifelse(nrow(amp_pitch_df) > 0 && "intensity" %in% names(amp_pitch_df) &&
+                   !is.na(amp_pitch_df$intensity[1]),
+                   amp_pitch_df$intensity[1],
+                   0.0)
+    if (verbose) cat(sprintf("  ACoM = %.4f\n", acom))
 
     # Calculate HNR
     if (verbose) cat("Computing amplitude contour HNR... ")
@@ -402,7 +462,7 @@ analyze_tremor <- function(sound,
     }
 
     list(
-      ACoM = acom,  # Amplitude range / mean
+      ACoM = acom,  # Max intensity from Pitch created from amplitude contour (Brückl protocol)
       ATrC = atrc,  # Autocorrelation-based cyclicality
       AMoN = as.integer(amon),
       ATrF = atrf,
