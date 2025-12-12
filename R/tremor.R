@@ -236,7 +236,8 @@ analyze_tremor <- function(sound,
     if (verbose) cat("Converting to Sound... ")
     f0_sound <- Sound$from_values(
       values = matrix(f0_uniform, nrow = 1),
-      sampling_rate = sample_rate
+      sampling_rate = sample_rate,
+      start_time = min(times)
     )
     if (verbose) cat("done\n")
 
@@ -390,7 +391,8 @@ analyze_tremor <- function(sound,
     if (verbose) cat("Converting to Sound... ")
     amp_sound <- Sound$from_values(
       values = matrix(amp_uniform, nrow = 1),
-      sampling_rate = sample_rate
+      sampling_rate = sample_rate,
+      start_time = min(times)
     )
     if (verbose) cat("done\n")
 
@@ -485,63 +487,42 @@ analyze_tremor <- function(sound,
   # Brückl's tremIntIndex algorithm (tremor3.05/procedures/tremIntIndex.praat)
   # Measures amplitude deviation of peaks/valleys in normalized F0 contour
   
-  # Step 1: Create PointProcess of maxima (peaks)
-  pp_max <- pitch_obj$to_pointprocess_peaks(sound, include_maxima = TRUE, include_minima = FALSE)
-  n_max_points <- pp_max$get_number_of_points()
+  # Get sound values as vector
+  sound_matrix <- sound$as_matrix()
+  sound_values <- as.numeric(sound_matrix[1, ])  # First (only) channel
+  n <- length(sound_values)
   
+  if (n < 3) {
+    return(list(
+      frequency = 0.0,
+      intensity = 0.0,
+      cyclicality = 0.0,
+      n_modulations = 0
+    ))
+  }
+  
+  # Find local maxima (peaks)
+  maxima_idx <- which(diff(sign(diff(sound_values))) == -2) + 1
+  
+  # Find local minima (valleys)
+  minima_idx <- which(diff(sign(diff(sound_values))) == 2) + 1
+  
+  # Sample rate
+  fs <- sound$get_sampling_frequency()
+  
+  # Calculate tri_max: mean absolute deviation of maxima
   tri_max <- 0.0
-  no_f_max <- 0
-  
-  # Sample amplitude at each maximum time using Sinc70 interpolation
-  for (i_point in seq_len(n_max_points)) {
-    ti <- pp_max$get_time_from_index(i_point)
-    tri_point <- sound$get_value_at_time(time = ti, channel = 1, interpolation = "sinc70")
-    
-    if (is.na(tri_point)) {
-      tri_point <- 0.0
-      no_f_max <- no_f_max + 1
-    }
-    
-    tri_max <- tri_max + abs(tri_point)
+  if (length(maxima_idx) > 0) {
+    tri_max <- 100 * mean(abs(sound_values[maxima_idx]))
   }
   
-  # tri_max := (mean) percentual deviation of contour maxima from mean contour
-  number_of_maxima <- n_max_points - no_f_max
-  if (number_of_maxima > 0) {
-    tri_max <- 100 * tri_max / number_of_maxima
-  } else {
-    tri_max <- 0.0
-  }
-  
-  # Step 2: Create PointProcess of minima (valleys)
-  pp_min <- pitch_obj$to_pointprocess_peaks(sound, include_maxima = FALSE, include_minima = TRUE)
-  n_min_points <- pp_min$get_number_of_points()
-  
+  # Calculate tri_min: mean absolute deviation of minima
   tri_min <- 0.0
-  no_f_min <- 0
-  
-  # Sample amplitude at each minimum time using Sinc70 interpolation
-  for (i_point in seq_len(n_min_points)) {
-    ti <- pp_min$get_time_from_index(i_point)
-    tri_point <- sound$get_value_at_time(time = ti, channel = 1, interpolation = "sinc70")
-    
-    if (is.na(tri_point)) {
-      tri_point <- 0.0
-      no_f_min <- no_f_min + 1
-    }
-    
-    tri_min <- tri_min + abs(tri_point)
+  if (length(minima_idx) > 0) {
+    tri_min <- 100 * mean(abs(sound_values[minima_idx]))
   }
   
-  # tri_min := (mean) percentual deviation of contour minima from mean contour
-  number_of_minima <- n_min_points - no_f_min
-  if (number_of_minima > 0) {
-    tri_min <- 100 * tri_min / number_of_minima
-  } else {
-    tri_min <- 0.0
-  }
-  
-  # Step 3: FTrI = average of peak and valley deviations
+  # FTrI = average of peak and valley deviations
   tri <- (tri_max + tri_min) / 2
   
   # For backwards compatibility, also compute frequency from spectrum
@@ -568,7 +549,7 @@ analyze_tremor <- function(sound,
     frequency = max_freq_found,
     intensity = tri,  # FTrI from Brückl's algorithm
     cyclicality = 0.0,  # Deprecated
-    n_modulations = number_of_maxima + number_of_minima
+    n_modulations = length(maxima_idx) + length(minima_idx)
   )
 }
 

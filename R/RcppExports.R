@@ -1433,8 +1433,8 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 #' Create Sound from values (internal)
 #' @keywords internal
-.sound_create_from_values <- function(values, sampling_rate) {
-    .Call(`_pladdrr_sound_create_from_values`, values, sampling_rate)
+.sound_create_from_values <- function(values, sampling_rate, start_time = 0.0) {
+    .Call(`_pladdrr_sound_create_from_values`, values, sampling_rate, start_time)
 }
 
 #' Create simple tone (internal)
@@ -1469,8 +1469,8 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 #' Get value at time (internal)
 #' @keywords internal
-.sound_get_value_at_time <- function(xptr, time, channel) {
-    .Call(`_pladdrr_sound_get_value_at_time`, xptr, time, channel)
+.sound_get_value_at_time <- function(xptr, time, channel, interpolation = "linear") {
+    .Call(`_pladdrr_sound_get_value_at_time`, xptr, time, channel, interpolation)
 }
 
 #' Get RMS (internal)

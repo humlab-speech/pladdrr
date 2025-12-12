@@ -1448,17 +1448,17 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
-    inline XPtr<structSound> _sound_create_from_values(NumericMatrix values, double sampling_rate) {
-        typedef SEXP(*Ptr__sound_create_from_values)(SEXP,SEXP);
+    inline XPtr<structSound> _sound_create_from_values(NumericMatrix values, double sampling_rate, double start_time = 0.0) {
+        typedef SEXP(*Ptr__sound_create_from_values)(SEXP,SEXP,SEXP);
         static Ptr__sound_create_from_values p__sound_create_from_values = NULL;
         if (p__sound_create_from_values == NULL) {
-            validateSignature("XPtr<structSound>(*_sound_create_from_values)(NumericMatrix,double)");
+            validateSignature("XPtr<structSound>(*_sound_create_from_values)(NumericMatrix,double,double)");
             p__sound_create_from_values = (Ptr__sound_create_from_values)R_GetCCallable("pladdrr", "_pladdrr__sound_create_from_values");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_create_from_values(Shield<SEXP>(Rcpp::wrap(values)), Shield<SEXP>(Rcpp::wrap(sampling_rate)));
+            rcpp_result_gen = p__sound_create_from_values(Shield<SEXP>(Rcpp::wrap(values)), Shield<SEXP>(Rcpp::wrap(sampling_rate)), Shield<SEXP>(Rcpp::wrap(start_time)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -1574,17 +1574,17 @@ namespace pladdrr {
         return Rcpp::as<int >(rcpp_result_gen);
     }
 
-    inline double _sound_get_value_at_time(XPtr<structSound> xptr, double time, int channel) {
-        typedef SEXP(*Ptr__sound_get_value_at_time)(SEXP,SEXP,SEXP);
+    inline double _sound_get_value_at_time(XPtr<structSound> xptr, double time, int channel, std::string interpolation = "linear") {
+        typedef SEXP(*Ptr__sound_get_value_at_time)(SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_get_value_at_time p__sound_get_value_at_time = NULL;
         if (p__sound_get_value_at_time == NULL) {
-            validateSignature("double(*_sound_get_value_at_time)(XPtr<structSound>,double,int)");
+            validateSignature("double(*_sound_get_value_at_time)(XPtr<structSound>,double,int,std::string)");
             p__sound_get_value_at_time = (Ptr__sound_get_value_at_time)R_GetCCallable("pladdrr", "_pladdrr__sound_get_value_at_time");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_get_value_at_time(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(channel)));
+            rcpp_result_gen = p__sound_get_value_at_time(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(channel)), Shield<SEXP>(Rcpp::wrap(interpolation)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

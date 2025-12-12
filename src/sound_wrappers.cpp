@@ -80,7 +80,8 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
 // [[Rcpp::export(.sound_create_from_values)]]
 XPtr<structSound> sound_create_from_values(
     NumericMatrix values,
-    double sampling_rate
+    double sampling_rate,
+    double start_time = 0.0
 ) {
     if (values.ncol() == 0 || values.nrow() == 0) {
         stop("Cannot create sound from empty values");
@@ -95,6 +96,11 @@ XPtr<structSound> sound_create_from_values(
         double duration = n_samples / sampling_rate;
         
         autoSound sound = Sound_createSimple(n_channels, duration, sampling_rate);
+        
+        // Set start time (xmin)
+        sound->xmin = start_time;
+        sound->xmax = start_time + duration;
+        sound->x1 = start_time + 0.5 * sound->dx;
         
         // Copy values
         for (int ch = 1; ch <= n_channels; ch++) {

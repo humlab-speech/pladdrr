@@ -1,3 +1,25 @@
+# pladdrr 1.2.3 (2025-12-12)
+
+## Bug Fixes
+
+### Fixed FTrI Calculation - Added start_time Parameter
+* **Issue**: FTrI (Frequency Tremor Intensity Index) returned 0.0% instead of expected 2.17%
+* **Root Cause**: `Sound$from_values()` lacked `start_time` parameter, breaking time alignment for peak detection
+* **Fix**: 
+  - Added `start_time` parameter to `.sound_create_from_values()` C++ wrapper
+  - Updated `Sound$from_values()` R6 method with `start_time` (default: 0.0)
+  - Pass `start_time = min(times)` in tremor analysis for F0/amplitude contours
+  - Added `Sound$new_from_values()` alias
+* **Impact**: FTrI now correctly detects tremor peaks in normalized F0 contours
+* **Algorithm**: Brückl's time-domain peak detection: finds local maxima/minima, calculates mean deviation
+* **Files Modified**: 
+  - `src/sound_wrappers.cpp` - C++ wrapper with time axis setting
+  - `R/sound-r6-new.R` - R6 method + documentation
+  - `R/tremor.R` - Pass start_time in 2 locations
+* **Commit**: Current
+
+---
+
 # pladdrr 1.2.2 (2025-12-11)
 
 ## Critical Bug Fixes

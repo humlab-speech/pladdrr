@@ -1210,8 +1210,9 @@ Sound <- R6::R6Class(
 #' @description Create Sound from numeric values
 #' @param values Numeric matrix with channels as rows, samples as columns (or vector for mono)
 #' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @param start_time Start time of the sound in seconds (default: 0.0)
 #' @export
-Sound$from_values <- function(values, sampling_rate = 44100) {
+Sound$from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   # Convert vector to matrix if needed
   if (is.vector(values)) {
     values <- matrix(values, nrow = 1)
@@ -1221,7 +1222,7 @@ Sound$from_values <- function(values, sampling_rate = 44100) {
     stop("values must be a numeric vector or matrix")
   }
   
-  ptr <- .sound_create_from_values(values, sampling_rate)
+  ptr <- .sound_create_from_values(values, sampling_rate, start_time)
   Sound$new(.xptr = ptr)
 }
 
@@ -1229,6 +1230,11 @@ Sound$from_values <- function(values, sampling_rate = 44100) {
 #' @description Alias for from_values (matching av workflow)
 #' @export
 Sound$from_matrix <- Sound$from_values
+
+#' @rdname Sound
+#' @description Alias for from_values (for clarity)
+#' @export
+Sound$new_from_values <- Sound$from_values
 
 #' @rdname Sound
 #' @description Create a pure tone
