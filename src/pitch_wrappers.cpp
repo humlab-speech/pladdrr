@@ -368,6 +368,56 @@ int pitch_count_voiced_frames(Rcpp::XPtr<structPitch> pitch) {
 }
 
 // ============================================================================
+// Strength query methods
+// ============================================================================
+
+// [[Rcpp::export(.pitch_get_strength_at_time)]]
+double pitch_get_strength_at_time(
+    Rcpp::XPtr<structPitch> pitch,
+    double time,
+    int unit,
+    bool interpolate
+) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    try {
+        double strength = Pitch_getStrengthAtTime(
+            pitch.get(),
+            time,
+            static_cast<kPitch_unit>(unit),
+            interpolate
+        );
+        return strength;
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to get pitch strength at time");
+    }
+}
+
+// [[Rcpp::export(.pitch_get_mean_strength)]]
+double pitch_get_mean_strength(
+    Rcpp::XPtr<structPitch> pitch,
+    double from_time,
+    double to_time,
+    int unit
+) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    try {
+        double mean_strength = Pitch_getMeanStrength(
+            pitch.get(),
+            from_time,
+            to_time,
+            unit
+        );
+        return mean_strength;
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to get mean pitch strength");
+    }
+}
+
+// ============================================================================
 // Export methods
 // ============================================================================
 
@@ -423,13 +473,14 @@ Rcpp::List pitch_debug_candidates(Rcpp::XPtr<structPitch> pitch, int max_frames 
 }
 
 // [[Rcpp::export(.pitch_as_data_frame)]]
-Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch) {
+Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_strength = false) {
     if (!pitch) Rcpp::stop("Invalid Pitch pointer");
     
     integer nx = pitch->nx;
     Rcpp::NumericVector time(nx);
     Rcpp::NumericVector frequency(nx);
     Rcpp::LogicalVector voiced(nx);
+    Rcpp::NumericVector strength(nx);
     
     for (integer i = 1; i <= nx; i++) {
         double t = Sampled_indexToX(pitch.get(), i);
@@ -439,13 +490,27 @@ Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch) {
         time[i-1] = t;
         frequency[i-1] = is_voiced ? freq : NA_REAL;
         voiced[i-1] = is_voiced;
+        
+        if (include_strength) {
+            double str = Pitch_getStrengthAtTime(pitch.get(), t, kPitch_unit::HERTZ, false);
+            strength[i-1] = (str >= 0) ? str : NA_REAL;
+        }
     }
     
-    return DataFrame::create(
-        Named("time") = time,
-        Named("frequency") = frequency,
-        Named("voiced") = voiced
-    );
+    if (include_strength) {
+        return DataFrame::create(
+            Named("time") = time,
+            Named("frequency") = frequency,
+            Named("voiced") = voiced,
+            Named("strength") = strength
+        );
+    } else {
+        return DataFrame::create(
+            Named("time") = time,
+            Named("frequency") = frequency,
+            Named("voiced") = voiced
+        );
+    }
 }
 
 // ============================================================================

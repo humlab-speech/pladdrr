@@ -243,6 +243,49 @@ Pitch <- R6::R6Class("Pitch",
       .pitch_count_voiced_frames(private$ptr)
     },
     
+    #' @description
+    #' Get pitch strength (periodicity) at a specific time
+    #' @param time Time in seconds
+    #' @param unit Unit: "hertz" (default), "semitones", "mel", "erb"
+    #' @param interpolate Interpolate between frames (default TRUE)
+    #' @return Strength value (0-1), or NA if unvoiced
+    #' @details
+    #' Pitch strength measures the periodicity of the signal at the given time.
+    #' Values range from 0 (completely aperiodic) to 1 (perfectly periodic).
+    #' This is useful for tremor analysis and voice quality assessment.
+    get_strength_at_time = function(time, unit = "hertz", interpolate = TRUE) {
+      unit_code <- switch(tolower(unit),
+        "hertz" = 0L,
+        "hz" = 0L,
+        "semitones" = 1L,
+        "mel" = 2L,
+        "erb" = 3L,
+        stop("Unknown unit: ", unit)
+      )
+      .pitch_get_strength_at_time(private$ptr, as.numeric(time), unit_code, as.logical(interpolate))
+    },
+    
+    #' @description
+    #' Get mean pitch strength over a time range
+    #' @param from_time Start time (default: start of pitch)
+    #' @param to_time End time (default: end of pitch)
+    #' @param unit Unit: "hertz" (default), "semitones", "mel", "erb"
+    #' @return Mean strength value (0-1)
+    #' @details
+    #' Computes the average pitch strength (periodicity) across the specified time range.
+    #' Higher values indicate more consistent voicing.
+    get_mean_strength = function(from_time = 0, to_time = 0, unit = "hertz") {
+      unit_code <- switch(tolower(unit),
+        "hertz" = 0L,
+        "hz" = 0L,
+        "semitones" = 1L,
+        "mel" = 2L,
+        "erb" = 3L,
+        stop("Unknown unit: ", unit)
+      )
+      .pitch_get_mean_strength(private$ptr, as.numeric(from_time), as.numeric(to_time), unit_code)
+    },
+    
     # ========================================================================
     # Transform methods
     # ========================================================================
@@ -379,9 +422,13 @@ Pitch <- R6::R6Class("Pitch",
     
     #' @description
     #' Convert pitch contour to data frame
-    #' @return Data frame with columns: time, frequency, voiced
-    as_data_frame = function() {
-      .pitch_as_data_frame(private$ptr)
+    #' @param include_strength Include pitch strength column (default FALSE)
+    #' @return Data frame with columns: time, frequency, voiced, and optionally strength
+    #' @details
+    #' The strength column contains the pitch periodicity measure (0-1) for each frame.
+    #' This is useful for tremor analysis and identifying the most periodic pitch candidates.
+    as_data_frame = function(include_strength = FALSE) {
+      .pitch_as_data_frame(private$ptr, include_strength = as.logical(include_strength))
     },
     
     #' @description
