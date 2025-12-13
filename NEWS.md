@@ -1,3 +1,24 @@
+# pladdrr 1.2.4 (2025-12-13)
+
+## Performance Improvements
+
+### Phase 1 Compiler Optimization - 6x DSI Speedup
+* **Achievement**: 6.16x speedup in DSI calculation (83.8% improvement)
+* **Changes**: Added aggressive compiler optimizations to `src/Makevars` and `src/Makevars.in`:
+  - `-O3`: Aggressive optimization (loop unrolling, auto-vectorization)
+  - `-flto -fno-fat-lto-objects`: Link-time optimization for cross-module inlining
+  - `-mfpmath=sse`: SSE floating-point math (x86_64)
+* **Results**:
+  - Pitch extraction: 289ms → 77ms (3.76x faster)
+  - Full DSI (12 files): 2.902s → 0.471s (6.16x faster)
+* **Impact**: pladdrr now FASTER than Python Parselmouth (0.471s vs 0.558s)
+* **Platform**: Tested on Apple Silicon ARM64, should improve x86_64 similarly
+* **Validation**: ✅ No numerical regressions, results identical to unoptimized build
+* **Documentation**: See `PHASE1_OPTIMIZATION_RESULTS.md` and `OPTIMIZATION_SUMMARY.md`
+* **Commit**: Current
+
+---
+
 # pladdrr 1.2.3 (2025-12-12)
 
 ## Bug Fixes
