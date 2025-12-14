@@ -272,6 +272,185 @@ public:
             stop("Failed to create spectrum");
         }
     }
+    
+    // ========================================================================
+    // Day 2: Complex Transformation Methods
+    // ========================================================================
+    
+    // Formant extraction using Burg's method
+    SEXP to_formant_burg(
+        double time_step = 0.0,
+        int max_num_formants = 5,
+        double max_formant_hz = 5500.0,
+        double window_length = 0.025,
+        double pre_emphasis_from = 50.0
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            autoFormant formant = Sound_to_Formant_burg(
+                sound, time_step, max_num_formants, 
+                max_formant_hz, window_length, pre_emphasis_from
+            );
+            return create_xptr_from_auto<structFormant>(formant);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to extract formants");
+        }
+    }
+    
+    // Harmonicity via cross-correlation
+    SEXP to_harmonicity_cc(
+        double time_step = 0.01,
+        double minimum_pitch = 75.0,
+        double silence_threshold = 0.1,
+        double periods_per_window = 1.0
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            autoHarmonicity hnr = Sound_to_Harmonicity_cc(
+                sound, time_step, minimum_pitch, 
+                silence_threshold, periods_per_window
+            );
+            return create_xptr_from_auto<structHarmonicity>(hnr);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to compute harmonicity");
+        }
+    }
+    
+    // Spectrogram creation
+    SEXP to_spectrogram(
+        double window_length = 0.005,
+        double maximum_frequency = 5000.0,
+        double time_step = 0.002,
+        double frequency_step = 20.0,
+        const std::string& window_shape = "Gaussian"
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            // Convert window_shape string to enum
+            int window_type = 1; // Default: Gaussian
+            if (window_shape == "square") window_type = 0;
+            else if (window_shape == "Hamming") window_type = 2;
+            else if (window_shape == "Bartlett") window_type = 3;
+            else if (window_shape == "Welch") window_type = 4;
+            else if (window_shape == "Hanning") window_type = 5;
+            
+            autoSpectrogram spectrogram = Sound_to_Spectrogram(
+                sound, window_length, maximum_frequency,
+                time_step, frequency_step, 
+                (kSound_to_Spectrogram_windowShape)window_type, 8.0, 8.0
+            );
+            return create_xptr_from_auto<structSpectrogram>(spectrogram);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to create spectrogram");
+        }
+    }
+    
+    // Pitch via autocorrelation (complex: 11 parameters)
+    SEXP to_pitch_ac(
+        double time_step = 0.0,
+        double pitch_floor = 75.0,
+        int max_candidates = 15,
+        bool very_accurate = false,
+        double silence_threshold = 0.03,
+        double voicing_threshold = 0.45,
+        double octave_cost = 0.01,
+        double octave_jump_cost = 0.35,
+        double voiced_unvoiced_cost = 0.14,
+        double pitch_ceiling = 600.0
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            autoPitch pitch = Sound_to_Pitch_ac(
+                sound, time_step, pitch_floor, max_candidates,
+                very_accurate, silence_threshold, voicing_threshold,
+                octave_cost, octave_jump_cost, voiced_unvoiced_cost,
+                pitch_ceiling
+            );
+            return create_xptr_from_auto<structPitch>(pitch);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to extract pitch (autocorrelation)");
+        }
+    }
+    
+    // Pitch via cross-correlation (complex: 11 parameters)
+    SEXP to_pitch_cc(
+        double time_step = 0.0,
+        double pitch_floor = 75.0,
+        int max_candidates = 15,
+        bool very_accurate = false,
+        double silence_threshold = 0.03,
+        double voicing_threshold = 0.45,
+        double octave_cost = 0.01,
+        double octave_jump_cost = 0.35,
+        double voiced_unvoiced_cost = 0.14,
+        double pitch_ceiling = 600.0
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            autoPitch pitch = Sound_to_Pitch_cc(
+                sound, time_step, pitch_floor, max_candidates,
+                very_accurate, silence_threshold, voicing_threshold,
+                octave_cost, octave_jump_cost, voiced_unvoiced_cost,
+                pitch_ceiling
+            );
+            return create_xptr_from_auto<structPitch>(pitch);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to extract pitch (cross-correlation)");
+        }
+    }
+    
+    // Extract part of sound (complex: 6 parameters with enum)
+    SEXP extract_part(
+        double start_time,
+        double end_time,
+        const std::string& window_shape = "rectangular",
+        double relative_width = 1.0,
+        bool preserve_times = false
+    ) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            // Convert window_shape to enum
+            int window_type = 1; // rectangular
+            if (window_shape == "triangular") window_type = 2;
+            else if (window_shape == "parabolic") window_type = 3;
+            else if (window_shape == "Hanning") window_type = 4;
+            else if (window_shape == "Hamming") window_type = 5;
+            else if (window_shape == "Gaussian1") window_type = 6;
+            else if (window_shape == "Gaussian2") window_type = 7;
+            else if (window_shape == "Gaussian3") window_type = 8;
+            else if (window_shape == "Gaussian4") window_type = 9;
+            else if (window_shape == "Gaussian5") window_type = 10;
+            else if (window_shape == "Kaiser1") window_type = 11;
+            else if (window_shape == "Kaiser2") window_type = 12;
+            
+            autoSound part = Sound_extractPart(
+                sound, start_time, end_time,
+                (kSound_windowShape)window_type,
+                relative_width, preserve_times
+            );
+            return create_xptr_from_auto<structSound>(part);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to extract part");
+        }
+    }
 };
 
 // ============================================================================
@@ -322,25 +501,52 @@ RCPP_MODULE(sound_poc) {
                 "Extract intensity contour (returns Intensity XPtr)")
         .method("to_spectrum", &SoundModulePOC::to_spectrum, 
                 "Compute spectrum (returns Spectrum XPtr)")
+        
+        // Day 2: Complex transformations
+        .method("to_formant_burg", &SoundModulePOC::to_formant_burg,
+                "Extract formants using Burg's method")
+        .method("to_harmonicity_cc", &SoundModulePOC::to_harmonicity_cc,
+                "Compute harmonicity-to-noise ratio via cross-correlation")
+        .method("to_spectrogram", &SoundModulePOC::to_spectrogram,
+                "Create time-frequency spectrogram")
+        .method("to_pitch_ac", &SoundModulePOC::to_pitch_ac,
+                "Extract pitch via autocorrelation (11 parameters)")
+        .method("to_pitch_cc", &SoundModulePOC::to_pitch_cc,
+                "Extract pitch via cross-correlation (11 parameters)")
+        .method("extract_part", &SoundModulePOC::extract_part,
+                "Extract time range with windowing")
         ;
 }
 
 // ============================================================================
-// Code Statistics (Day 1 end)
+// Code Statistics (Day 2 end)
 // ============================================================================
 //
-// POC Lines (this file):  ~380 lines
-// Current equivalent:     ~750 lines (sound_wrappers.cpp + sound-r6-new.R for 18 methods)
+// POC Lines (this file):  ~540 lines (24 methods implemented)
 //
-// Code Reduction: 49% for first 18 methods
+// Day 1 (18 methods): Basic queries + simple transformations
+// Day 2 (6 methods):  Complex transformations with many parameters
+//   - to_formant_burg (5 params)
+//   - to_harmonicity_cc (4 params)
+//   - to_spectrogram (5 params + enum conversion)
+//   - to_pitch_ac (10 params)
+//   - to_pitch_cc (10 params)
+//   - extract_part (5 params + enum conversion)
 //
-// What's missing compared to current:
-// - R6 wrapper class (~50 lines needed in R)
-// - Static factory methods (from_values, create_tone)
-// - Export methods (as_data_frame, as_matrix, save)
-// - Remaining transformations (to_formant_burg, to_harmonicity_cc, etc.)
-// - Modification methods (scale_intensity, filter_*, resample, etc.)
-// - Extraction methods (extract_channel, extract_part)
+// Current equivalent for 24 methods:
+//   - sound_wrappers.cpp: ~31 lines/method × 24 = ~744 lines
+//   - sound-r6-new.R: ~21 lines/method × 24 = ~504 lines
+//   - Total: ~1,248 lines
 //
-// Estimated final: ~980 lines total (vs 2,733 current) = 64% reduction
+// POC: 540 lines for same functionality
+// Code Reduction: 57% (540 vs 1,248)
+//
+// What's remaining (24 more methods):
+// - Export methods (as_data_frame, as_matrix, save) - Day 3
+// - Static factories (from_values, create_tone, create_simple) - Day 3
+// - Modification methods (scale_intensity, filter_*, resample) - Day 4
+// - Additional transformations (to_ltas, to_textgrid_silences) - Day 4
+// - Two-object operations (to_pointprocess_cc, to_pointprocess_peaks) - Day 4
+//
+// Projected final: ~950 lines for all 48 methods (vs ~2,733 current) = 65% reduction
 // ============================================================================
