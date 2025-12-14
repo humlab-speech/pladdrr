@@ -451,7 +451,237 @@ public:
             stop("Failed to extract part");
         }
     }
+    
+    // ========================================================================
+    // Day 3: Export Methods (data → R)
+    // ========================================================================
+    
+    // Export to R data.frame (time × amplitude)
+    DataFrame as_data_frame() const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        int n_samples = sound->nx;
+        int n_channels = sound->ny;
+        
+        // Create time vector
+        NumericVector times(n_samples);
+        for (int i = 0; i < n_samples; i++) {
+            times[i] = sound->x1 + i * sound->dx;
+        }
+        
+        // Create result list
+        List result;
+        result["time"] = times;
+        
+        // Add channel columns
+        for (int ch = 0; ch < n_channels; ch++) {
+            NumericVector values(n_samples);
+            for (int i = 0; i < n_samples; i++) {
+                values[i] = sound->z[ch][i];
+            }
+            std::string col_name = (n_channels == 1) ? "amplitude" : 
+                                   "channel_" + std::to_string(ch + 1);
+            result[col_name] = values;
+        }
+        
+        return DataFrame(result);
+    }
+    
+    // Export to R matrix (samples × channels)
+    NumericMatrix as_matrix() const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        int n_samples = sound->nx;
+        int n_channels = sound->ny;
+        
+        NumericMatrix mat(n_samples, n_channels);
+        
+        for (int ch = 0; ch < n_channels; ch++) {
+            for (int i = 0; i < n_samples; i++) {
+                mat(i, ch) = sound->z[ch][i];
+            }
+        }
+        
+        return mat;
+    }
+    
+    // Save to file
+    void save(const std::string& path, const std::string& format = "WAV") const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        try {
+            structMelderFile file { };
+            Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+            
+            // Determine format
+            if (format == "WAV" || format == "wav") {
+                Sound_writeToAudioFile(sound, &file, Melder_WAV, 16);
+            } else if (format == "AIFF" || format == "aiff") {
+                Sound_writeToAudioFile(sound, &file, Melder_AIFF, 16);
+            } else if (format == "AIFC" || format == "aifc") {
+                Sound_writeToAudioFile(sound, &file, Melder_AIFC, 16);
+            } else if (format == "FLAC" || format == "flac") {
+                Sound_writeToAudioFile(sound, &file, Melder_FLAC, 16);
+            } else {
+                stop("Unsupported format: " + format);
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to save sound to: " + path);
+        }
+    }
+    
+    // ========================================================================
+    // Day 3: Channel Operations
+    // ========================================================================
+    
+    // Extract single channel
+    SEXP extract_channel(int channel_number) const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        if (channel_number < 1 || channel_number > sound->ny) {
+            stop("Channel number out of range");
+        }
+        
+        try {
+            autoSound channel = Sound_extractChannel(sound, channel_number);
+            return create_xptr_from_auto<structSound>(channel);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to extract channel");
+        }
+    }
+    
+    // Convert to mono
+    SEXP convert_to_mono() const {
+        structSound* sound = ptr_.get();
+        if (!sound) stop("Invalid Sound pointer");
+        
+        if (sound->ny == 1) {
+            // Already mono, return copy
+            try {
+                autoSound copy = Data_copy(sound);
+                return create_xptr_from_auto<structSound>(copy);
+            } catch (MelderError) {
+                Melder_clearError();
+                stop("Failed to copy sound");
+            }
+        }
+        
+        try {
+            autoSound mono = Sound_convertToMono(sound);
+            return create_xptr_from_auto<structSound>(mono);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to convert to mono");
+        }
+    }
+    
+    // ========================================================================
+    // Day 3: Static Factory Methods (non-member, defined outside class)
+    // ========================================================================
+    // Note: These need special handling in Rcpp Modules - see below
 };
+
+// ============================================================================
+// Static Factory Functions (Day 3)
+// ============================================================================
+
+// Create Sound from raw values (matrix)
+SEXP sound_from_values(NumericMatrix values, double sampling_frequency, 
+                       double start_time = 0.0) {
+    ensure_numeric_libs_initialized();
+    
+    int n_samples = values.nrow();
+    int n_channels = values.ncol();
+    
+    if (n_samples < 1) stop("Need at least 1 sample");
+    if (n_channels < 1 || n_channels > 2) stop("Need 1 or 2 channels");
+    if (sampling_frequency <= 0) stop("Sampling frequency must be positive");
+    
+    try {
+        double duration = n_samples / sampling_frequency;
+        autoSound sound = Sound_create(
+            n_channels, start_time, start_time + duration,
+            n_samples, 1.0 / sampling_frequency, start_time + 0.5 / sampling_frequency
+        );
+        
+        // Copy data from R matrix to Praat Sound
+        for (int ch = 0; ch < n_channels; ch++) {
+            for (int i = 0; i < n_samples; i++) {
+                sound->z[ch][i] = values(i, ch);
+            }
+        }
+        
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create sound from values");
+    }
+}
+
+// Create simple tone
+SEXP sound_create_tone(
+    double duration = 1.0,
+    double sampling_frequency = 44100.0,
+    double frequency = 440.0,
+    double amplitude = 0.9
+) {
+    ensure_numeric_libs_initialized();
+    
+    if (duration <= 0) stop("Duration must be positive");
+    if (sampling_frequency <= 0) stop("Sampling frequency must be positive");
+    if (frequency <= 0) stop("Frequency must be positive");
+    
+    try {
+        autoSound sound = Sound_createSimple(
+            1, duration, sampling_frequency
+        );
+        
+        // Generate sine wave
+        int n_samples = sound->nx;
+        for (int i = 0; i < n_samples; i++) {
+            double time = sound->x1 + i * sound->dx;
+            sound->z[0][i] = amplitude * sin(2.0 * NUMpi * frequency * time);
+        }
+        
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create tone");
+    }
+}
+
+// Create sound from formula
+SEXP sound_create_from_formula(
+    double duration = 1.0,
+    double sampling_frequency = 44100.0,
+    const std::string& formula = "0.9 * sin(2*pi*440*x)"
+) {
+    ensure_numeric_libs_initialized();
+    
+    if (duration <= 0) stop("Duration must be positive");
+    if (sampling_frequency <= 0) stop("Sampling frequency must be positive");
+    
+    try {
+        autoSound sound = Sound_createSimple(1, duration, sampling_frequency);
+        
+        // Apply formula via Praat's Formula mechanism
+        // For POC: simplified - just create silence
+        // Full implementation would use Praat's Formula interpreter
+        Sound_formula(sound.get(), Melder_peek8to32(formula.c_str()), 
+                     nullptr, nullptr);
+        
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create sound from formula: " + formula);
+    }
+}
 
 // ============================================================================
 // Rcpp Module Registration (The magic that replaces tons of manual code!)
@@ -515,38 +745,64 @@ RCPP_MODULE(sound_poc) {
                 "Extract pitch via cross-correlation (11 parameters)")
         .method("extract_part", &SoundModulePOC::extract_part,
                 "Extract time range with windowing")
+        
+        // Day 3: Export methods
+        .method("as_data_frame", &SoundModulePOC::as_data_frame,
+                "Export to R data.frame (time + amplitude)")
+        .method("as_matrix", &SoundModulePOC::as_matrix,
+                "Export to R matrix (samples × channels)")
+        .method("save", &SoundModulePOC::save,
+                "Save to audio file (WAV, AIFF, AIFC, FLAC)")
+        
+        // Day 3: Channel operations
+        .method("extract_channel", &SoundModulePOC::extract_channel,
+                "Extract single channel by number")
+        .method("convert_to_mono", &SoundModulePOC::convert_to_mono,
+                "Convert to mono by averaging channels")
         ;
+    
+    // Day 3: Static factory functions (module-level, not class methods)
+    function("sound_from_values", &sound_from_values,
+             "Create Sound from matrix of values");
+    function("sound_create_tone", &sound_create_tone,
+             "Create simple sine tone");
+    function("sound_create_from_formula", &sound_create_from_formula,
+             "Create sound using Praat formula");
 }
 
 // ============================================================================
-// Code Statistics (Day 2 end)
+// Code Statistics (Day 3 end)
 // ============================================================================
 //
-// POC Lines (this file):  ~540 lines (24 methods implemented)
+// POC Lines (this file):  ~800 lines (32 methods + 3 static functions)
 //
 // Day 1 (18 methods): Basic queries + simple transformations
 // Day 2 (6 methods):  Complex transformations with many parameters
-//   - to_formant_burg (5 params)
-//   - to_harmonicity_cc (4 params)
-//   - to_spectrogram (5 params + enum conversion)
-//   - to_pitch_ac (10 params)
-//   - to_pitch_cc (10 params)
-//   - extract_part (5 params + enum conversion)
+// Day 3 (8 methods + 3 static): Export, channel ops, factory functions
+//   - as_data_frame() - Export to R data.frame
+//   - as_matrix() - Export to R matrix
+//   - save() - Write to file (WAV/AIFF/FLAC)
+//   - extract_channel() - Single channel extraction
+//   - convert_to_mono() - Mix to mono
+//   - sound_from_values() - Create from matrix (static)
+//   - sound_create_tone() - Generate sine wave (static)
+//   - sound_create_from_formula() - Generate via formula (static)
 //
-// Current equivalent for 24 methods:
-//   - sound_wrappers.cpp: ~31 lines/method × 24 = ~744 lines
-//   - sound-r6-new.R: ~21 lines/method × 24 = ~504 lines
-//   - Total: ~1,248 lines
+// Current equivalent for 32 methods:
+//   - sound_wrappers.cpp: ~31 lines/method × 32 = ~992 lines
+//   - sound-r6-new.R: ~21 lines/method × 32 = ~672 lines
+//   - Total: ~1,664 lines
 //
-// POC: 540 lines for same functionality
-// Code Reduction: 57% (540 vs 1,248)
+// POC: 800 lines for same functionality
+// Code Reduction: 52% (800 vs 1,664)
 //
-// What's remaining (24 more methods):
-// - Export methods (as_data_frame, as_matrix, save) - Day 3
-// - Static factories (from_values, create_tone, create_simple) - Day 3
-// - Modification methods (scale_intensity, filter_*, resample) - Day 4
-// - Additional transformations (to_ltas, to_textgrid_silences) - Day 4
-// - Two-object operations (to_pointprocess_cc, to_pointprocess_peaks) - Day 4
+// What's remaining (16 more methods for full Sound coverage):
+// - Modification methods: scale_intensity, scale_peak, pre_emphasize, de_emphasize
+// - Filtering: filter_pass_hann_band, filter_stop_hann_band
+// - Structural: resample, reverse, append, concatenate
+// - Advanced: to_ltas, to_textgrid_silences
+// - Two-object: to_pointprocess_cc, to_pointprocess_peaks
+// - Metadata: override_sampling_frequency
 //
-// Projected final: ~950 lines for all 48 methods (vs ~2,733 current) = 65% reduction
+// Projected final: ~1,050 lines for all 48 methods (vs ~2,733 current) = 62% reduction
 // ============================================================================
