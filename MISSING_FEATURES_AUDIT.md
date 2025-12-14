@@ -1,46 +1,30 @@
 # Package Audit: Missing Features from Previous Version
 
-## Issue #1: Missing Gaussian1 Window Support ❌ NOT FIXED
+## Issue #1: Gaussian1 Window Support ✅ FIXED in v1.2.2
 
-**Current Status**: Only 5 window shapes supported in `Sound$extract_part()`
-- rectangular (0)
-- hamming (1) 
-- bartlett (2)
-- welch (3)
-- hanning (4)
+**Status**: ALL window shapes now supported correctly in `Sound$extract_part()`
 
-**Missing from Praat**: 
-- triangular (1) ← WRONG MAPPING!
-- parabolic (2) ← WRONG MAPPING!
-- Gaussian1 through Gaussian5 (5-9)
-- Kaiser1, Kaiser2 (10-11)
+**Fixed on**: 2025-12-11 (commit 67e4b65)
 
-**Praat Enum** (from `Sound_enums.h`):
-```
-0  = RECTANGULAR
-1  = TRIANGULAR
-2  = PARABOLIC  
-3  = HANNING
-4  = HAMMING
-5  = GAUSSIAN_1
-6  = GAUSSIAN_2
-7  = GAUSSIAN_3
-8  = GAUSSIAN_4
-9  = GAUSSIAN_5
-10 = KAISER_1
-11 = KAISER_2
-```
-
-**Current pladdrr mapping** (WRONG):
+**Current Implementation** (CORRECT):
 ```r
-"rectangular" = 0  ✓
-"hamming" = 1      ✗ Should be 4
-"bartlett" = 2     ✗ Should be... (Bartlett not in Praat enum!)
-"welch" = 3        ✗ (Welch not in Praat enum!)
-"hanning" = 4      ✗ Should be 3
+"rectangular" = 0   # kSound_windowShape::RECTANGULAR
+"triangular"  = 1   # kSound_windowShape::TRIANGULAR
+"parabolic"   = 2   # kSound_windowShape::PARABOLIC
+"hanning"     = 3   # kSound_windowShape::HANNING
+"hamming"     = 4   # kSound_windowShape::HAMMING
+"Gaussian1"   = 5   # kSound_windowShape::GAUSSIAN_1
+"Gaussian2"   = 6   # kSound_windowShape::GAUSSIAN_2
+"Gaussian3"   = 7   # kSound_windowShape::GAUSSIAN_3
+"Gaussian4"   = 8   # kSound_windowShape::GAUSSIAN_4
+"Gaussian5"   = 9   # kSound_windowShape::GAUSSIAN_5
+"Kaiser1"     = 10  # kSound_windowShape::KAISER_1
+"Kaiser2"     = 11  # kSound_windowShape::KAISER_2
 ```
 
-**FIX NEEDED**: Correct enum mapping + add all Praat window types
+**Verified**: All 12 window shapes tested and working ✓
+
+**File**: `R/sound-r6-new.R` lines 944-958
 
 ---
 
@@ -77,7 +61,11 @@ double pitch_get_value_at_time(
 
 ---
 
-## Issue #3: Sound + Pitch → PointProcess (peaks) ⚠️ PARTIALLY FIXED
+## Issue #3: Sound + Pitch → PointProcess (peaks) ✅ FIXED in v1.2.2
+
+**Status**: Method exists and works correctly
+
+**Fixed on**: 2025-12-11 (commit 67e4b65)
 
 **Available Methods**:
 
@@ -101,18 +89,17 @@ pp <- pitch$to_point_process_cc(sound)  # Two-object command
 ```
 Uses: `Sound_Pitch_to_PointProcess_cc(sound, pitch)`
 
-### ❌ Pitch$to_point_process_peaks() - MISSING
+### ✅ Pitch$to_pointprocess_peaks() - WORKS
 Two-object command using existing Pitch:
 ```r
-# SHOULD EXIST BUT DOESN'T:
 pitch <- sound$to_pitch()
-pp <- pitch$to_point_process_peaks(sound, 
-                                    include_maxima = TRUE,
-                                    include_minima = FALSE)
+pp <- pitch$to_pointprocess_peaks(sound, 
+                                   include_maxima = TRUE,
+                                   include_minima = FALSE)
 ```
-Should use: `Sound_Pitch_to_PointProcess_peaks(sound, pitch, maxima, minima)`
+Uses: `Sound_Pitch_to_PointProcess_peaks(sound, pitch, maxima, minima)`
 
-**FIX NEEDED**: Add wrapper + R6 method for `Sound_Pitch_to_PointProcess_peaks()`
+**File**: `R/pitch-r6.R` lines 389-404
 
 ---
 
@@ -120,11 +107,15 @@ Should use: `Sound_Pitch_to_PointProcess_peaks(sound, pitch, maxima, minima)`
 
 | Issue | Status | Action Required |
 |-------|--------|-----------------|
-| 1. Gaussian1 windows | ❌ BROKEN | Fix enum mapping + add all window types |
+| 1. Gaussian1 windows | ✅ FIXED | None - all 12 window types working |
 | 2. Interpolation parameter | ✅ FIXED | None |
-| 3. Sound+Pitch→PP(peaks) | ⚠️ PARTIAL | Add `Pitch$to_point_process_peaks(sound, ...)` method |
+| 3. Sound+Pitch→PP(peaks) | ✅ FIXED | None |
 
-## Priority
+## Status Update
 
-**HIGH**: Issue #1 (window shapes) - Current implementation has WRONG enum values, may produce incorrect results
-**MEDIUM**: Issue #3 - Workaround exists via `to_point_process_periodic_peaks()`
+**All issues resolved in v1.2.2 (2025-12-11)**
+
+This audit document is now historical. All identified missing features have been implemented and tested.
+
+**Last Updated**: 2025-12-14
+**Package Version**: 1.2.5
