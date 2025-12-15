@@ -252,7 +252,7 @@ Pitch <- R6::R6Class("Pitch",
     #' @details
     #' Pitch strength measures the periodicity of the signal at the given time.
     #' Values range from 0 (completely aperiodic) to 1 (perfectly periodic).
-    #' This is useful for tremor analysis and voice quality assessment.
+    #' This is useful for voice quality assessment and periodicity analysis.
     get_strength_at_time = function(time, unit = "hertz", interpolate = TRUE) {
       unit_code <- switch(tolower(unit),
         "hertz" = 0L,
@@ -452,7 +452,7 @@ Pitch <- R6::R6Class("Pitch",
     #' @details
     #' The strength column contains the pitch periodicity measure (0-1) for each frame.
     #' The intensity column contains the raw acoustic intensity/amplitude of each frame.
-    #' Both are useful for tremor analysis (FCoM, FTrC, ACoM, ATrC metrics).
+    #' Both are useful for voice quality and periodicity analysis.
     as_data_frame = function(include_strength = FALSE, include_intensity = FALSE) {
       .pitch_as_data_frame(private$ptr, 
                           include_strength = as.logical(include_strength),
