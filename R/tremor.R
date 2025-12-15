@@ -237,7 +237,7 @@ analyze_tremor <- function(sound,
     f0_sound <- Sound$from_values(
       values = matrix(f0_uniform, nrow = 1),
       sampling_rate = sample_rate,
-      start_time = min(times)
+      start_time = min(time_values)
     )
     if (verbose) cat("done\n")
 
@@ -290,11 +290,9 @@ analyze_tremor <- function(sound,
     ftri <- tremor_stats$intensity
     fmon <- tremor_stats$n_modulations
 
-    # Compute FTrC (Frequency Tremor Cyclicality) from autocorrelation
-    if (verbose) cat("Computing tremor cyclicality... ")
-    ftrc <- .compute_tremor_cyclicality(
-      f0_uniform, sample_rate, min_tremor_freq, max_tremor_freq
-    )
+    # Compute FTrC (Frequency Tremor Cyclicality) from Pitch candidates (Brückl method)
+    if (verbose) cat("Computing tremor cyclicality (Brückl method)... ")
+    ftrc <- .compute_tremor_cyclicality_from_pitch(f0_pitch, max_tremor_freq)
     if (verbose) cat(sprintf("%.4f\n", ftrc))
 
     # Calculate derived measures
@@ -392,7 +390,7 @@ analyze_tremor <- function(sound,
     amp_sound <- Sound$from_values(
       values = matrix(amp_uniform, nrow = 1),
       sampling_rate = sample_rate,
-      start_time = min(times)
+      start_time = time_values[1]
     )
     if (verbose) cat("done\n")
 
@@ -445,11 +443,9 @@ analyze_tremor <- function(sound,
     atri <- tremor_stats$intensity
     amon <- tremor_stats$n_modulations
 
-    # Compute ATrC (Amplitude Tremor Cyclicality) from autocorrelation
-    if (verbose) cat("Computing amplitude tremor cyclicality... ")
-    atrc <- .compute_tremor_cyclicality(
-      amp_uniform, sample_rate, min_tremor_freq, max_tremor_freq
-    )
+    # Compute ATrC (Amplitude Tremor Cyclicality) from Pitch candidates (Brückl method)
+    if (verbose) cat("Computing amplitude tremor cyclicality (Brückl method)... ")
+    atrc <- .compute_tremor_cyclicality_from_pitch(amp_pitch, max_tremor_freq)
     if (verbose) cat(sprintf("%.4f\n", atrc))
 
     # Calculate derived measures
@@ -593,6 +589,45 @@ analyze_tremor <- function(sound,
   cyclicality <- max(0, min(1, max_acf))
   
   return(cyclicality)
+}
+
+# Brückl-style cyclicality: max strength from Pitch candidates
+# This is the CORRECT method used by Brückl (2012)
+# Extracts all pitch candidates with freq <= max_freq and returns max strength
+.compute_tremor_cyclicality_from_pitch <- function(pitch_obj, max_freq = 15.0) {
+  if (is.null(pitch_obj) || !inherits(pitch_obj, "Pitch")) {
+    return(0.0)
+  }
+  
+  # Extract ALL candidates from ALL frames
+  candidates <- tryCatch({
+    .pitch_get_all_candidates(pitch_obj$.__enclos_env__$private$ptr)
+  }, error = function(e) {
+    warning(sprintf("Failed to extract candidates: %s", e$message))
+    return(NULL)
+  })
+  
+  if (is.null(candidates) || nrow(candidates) == 0) {
+    return(0.0)
+  }
+  
+  # Filter: keep only candidates with frequency <= max_freq
+  # Exclude unvoiced (frequency = 0)
+  valid <- !is.na(candidates$frequency) & 
+           candidates$frequency > 0 & 
+           candidates$frequency <= max_freq &
+           !is.na(candidates$strength)
+  
+  filtered <- candidates[valid, ]
+  
+  if (nrow(filtered) == 0) {
+    return(0.0)
+  }
+  
+  # Return maximum strength (Brückl's method)
+  max_strength <- max(filtered$strength, na.rm = TRUE)
+  
+  return(max_strength)
 }
 
 

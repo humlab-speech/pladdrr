@@ -1,19 +1,28 @@
-#!/usr/bin/env Rscript
-# Quick test of FCoM/ACoM frame 1 fix
 library(pladdrr)
 
-cat("Testing FCoM/ACoM fix...\n")
-result <- analyze_tremor("inst/signalfiles/AVQI/input/sv1.wav", verbose = FALSE)
+cat("=== Testing FCoM/ACoM Fix ===\n\n")
 
-cat("\n=== RESULTS ===\n")
-cat(sprintf("FCoM: %.4f (expected ~0.599)\n", result$frequency$fcom))
-cat(sprintf("ACoM: %.4f (expected ~0.442)\n", result$amplitude$acom))
-cat(sprintf("FTrC: %.4f (expected ~0.353)\n", result$frequency$ftrc))
-cat(sprintf("ATrC: %.4f\n", result$amplitude$atrc))
+s <- Sound$new('inst/signalfiles/AVQI/input/sv1.wav')
+cat("Loaded:", s$get_duration(), "sec\n\n")
 
-# Check if fix worked
-if (abs(result$frequency$fcom - 0.599) < 0.1 && abs(result$amplitude$acom - 0.442) < 0.1) {
-  cat("\n✅ PASS: FCoM/ACoM values in expected range!\n")
+cat("Running analyze_tremor...\n")
+t <- analyze_tremor(s, verbose = TRUE)
+
+cat("\n===== FINAL RESULTS =====\n")
+cat("FCoM:", t$FCoM, "(expected 0.599)\n")
+cat("ACoM:", t$ACoM, "(expected 0.442)\n")
+cat("FTrC:", t$FTrC, "(expected 0.998)\n")
+cat("FTrF:", t$FTrF, "(expected 5.169 Hz)\n")
+
+cat("\n")
+if (abs(t$FCoM - 0.599) < 0.01) {
+  cat("✅ FCoM CORRECT!\n")
 } else {
-  cat("\n❌ FAIL: Values still too far from expected\n")
+  cat("❌ FCoM still wrong (diff:", abs(t$FCoM - 0.599), ")\n")
+}
+
+if (abs(t$ACoM - 0.442) < 0.01) {
+  cat("✅ ACoM CORRECT!\n")
+} else {
+  cat("❌ ACoM still wrong (diff:", abs(t$ACoM - 0.442), ")\n")
 }

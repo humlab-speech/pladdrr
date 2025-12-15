@@ -524,6 +524,51 @@ Rcpp::List pitch_debug_candidates(Rcpp::XPtr<structPitch> pitch, int max_frames 
     return result;
 }
 
+// Extract ALL pitch candidates from ALL frames as DataFrame
+// This is needed for Brückl-style cyclicality calculation
+// [[Rcpp::export(.pitch_get_all_candidates)]]
+Rcpp::DataFrame pitch_get_all_candidates(Rcpp::XPtr<structPitch> pitch) {
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    
+    // First pass: count total candidates
+    integer total_candidates = 0;
+    for (integer i = 1; i <= pitch->nx; i++) {
+        Pitch_Frame frame = &pitch->frames[i];
+        total_candidates += frame->nCandidates;
+    }
+    
+    // Allocate vectors
+    Rcpp::NumericVector times(total_candidates);
+    Rcpp::IntegerVector frame_nums(total_candidates);
+    Rcpp::IntegerVector candidate_nums(total_candidates);
+    Rcpp::NumericVector frequencies(total_candidates);
+    Rcpp::NumericVector strengths(total_candidates);
+    
+    // Second pass: fill vectors
+    integer idx = 0;
+    for (integer i = 1; i <= pitch->nx; i++) {
+        Pitch_Frame frame = &pitch->frames[i];
+        double t = Sampled_indexToX(pitch.get(), i);
+        
+        for (integer j = 1; j <= frame->nCandidates; j++) {
+            times[idx] = t;
+            frame_nums[idx] = (int)i;
+            candidate_nums[idx] = (int)j;
+            frequencies[idx] = frame->candidates[j].frequency;
+            strengths[idx] = frame->candidates[j].strength;
+            idx++;
+        }
+    }
+    
+    return DataFrame::create(
+        Named("time") = times,
+        Named("frame") = frame_nums,
+        Named("candidate") = candidate_nums,
+        Named("frequency") = frequencies,
+        Named("strength") = strengths
+    );
+}
+
 // [[Rcpp::export(.pitch_as_data_frame)]]
 Rcpp::DataFrame pitch_as_data_frame(Rcpp::XPtr<structPitch> pitch, bool include_strength = false, bool include_intensity = false) {
     if (!pitch) Rcpp::stop("Invalid Pitch pointer");

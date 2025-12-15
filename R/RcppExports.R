@@ -1005,6 +1005,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_debug_candidates`, pitch, max_frames)
 }
 
+.pitch_get_all_candidates <- function(pitch) {
+    .Call(`_pladdrr_pitch_get_all_candidates`, pitch)
+}
+
 .pitch_as_data_frame <- function(pitch, include_strength = FALSE, include_intensity = FALSE) {
     .Call(`_pladdrr_pitch_as_data_frame`, pitch, include_strength, include_intensity)
 }

@@ -986,7 +986,7 @@ SEXP sound_concatenate(List sound_xptr_list) {
 // Rcpp Module Registration (The magic that replaces tons of manual code!)
 // ============================================================================
 
-// RCPP_MODULE(sound_poc) {
+RCPP_MODULE(sound_poc) {
     class_<SoundModulePOC>("SoundModulePOC")
         // Constructor
         .constructor<std::string>("Create Sound from file path")

@@ -1,0 +1,70 @@
+<svg width="200" height="231" xmlns="http://www.w3.org/2000/svg" xmlns:undefined="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:undefined="http://www.inkscape.org/namespaces/inkscape" version="1.1">
+ <!-- Hexagon background -->
+ <defs id="defs406">
+  <linearGradient id="waveGrad" x1="-0.0075" y1="-0.06667" x2="1.0075" y2="-0.06667">
+   <stop id="stop401" offset="0%" stop-color="#dc143c"/>
+   <stop id="stop403" offset="100%" stop-color="#1e90ff"/>
+  </linearGradient>
+ </defs>
+ <!-- Ear symbol (left side) - Praat style -->
+ <!-- Waveform connection in the middle -->
+ <!-- Mouth symbol (right side) - Praat style -->
+ <!-- Arrow flow indicators (subtle) -->
+ <!-- Package name -->
+ <!-- Tagline -->
+ <!-- Small R badge -->
+ <g>
+  <title>Layer 1</title>
+  <path d="m48.92545,16.61183l100,0l50,85l-50,85l-100,0l-50,-85l50,-85z" fill="#fafafa" stroke="#2c3e50" stroke-width="2.5" id="svg_1"/>
+  <g transform="matrix(-1,0,0,1,197.64792,4.4454539e-7)" id="svg_2">
+   <path d="m40,85c-8,0 -15,7 -15,15c0,8 7,15 15,15l0,-2c-7,0 -13,-6 -13,-13c0,-7 6,-13 13,-13l0,-2z" fill="#dc143c" opacity="0.9" id="svg_3"/>
+   <!-- Inner ear detail -->
+   <path d="m40,93c-4,0 -7,3 -7,7c0,4 3,7 7,7l0,-2c-3,0 -5,-2 -5,-5c0,-3 2,-5 5,-5l0,-2z" fill="#dc143c" opacity="0.7" id="svg_4"/>
+   <!-- Ear canal opening -->
+   <rect x="40" y="97" width="8" height="6" fill="#dc143c" opacity="0.8" id="svg_5"/>
+  </g>
+  <g transform="matrix(1.1191005,0,0,1,-9.7609465,15.043713)" id="svg_6">
+   <!-- Oscillogram bars connecting ear to mouth -->
+   <rect x="65" y="80" width="3" height="10" fill="#dc143c" opacity="0.7" id="svg_7"/>
+   <rect x="71" y="77" width="3" height="16" fill="#1e90ff" opacity="0.7" id="svg_8"/>
+   <rect x="77" y="73" width="3" height="24" fill="#dc143c" opacity="0.7" id="svg_9"/>
+   <rect x="83" y="70" width="3" height="30" fill="#1e90ff" opacity="0.7" id="svg_10"/>
+   <rect x="89" y="67" width="3" height="36" fill="#dc143c" opacity="0.7" id="svg_11"/>
+   <rect x="95" y="65" width="3" height="40" fill="#1e90ff" opacity="0.7" id="svg_12"/>
+   <rect x="101" y="67" width="3" height="36" fill="#dc143c" opacity="0.7" id="svg_13"/>
+   <rect x="107" y="70" width="3" height="30" fill="#1e90ff" opacity="0.7" id="svg_14"/>
+   <rect x="113" y="73" width="3" height="24" fill="#dc143c" opacity="0.7" id="svg_15"/>
+   <rect x="119" y="77" width="3" height="16" fill="#1e90ff" opacity="0.7" id="svg_16"/>
+   <rect x="125" y="80" width="3" height="10" fill="#dc143c" opacity="0.7" id="svg_17"/>
+   <!-- Continuous wave line through the bars -->
+   <path d="m60,85q20,-15 40,0q20,15 40,0" fill="none" stroke="url(#waveGrad)" stroke-width="2" opacity="0.8" id="svg_18"/>
+  </g>
+  <g id="svg_19">
+   <!-- Lips outline -->
+   <ellipse cx="37.56032" cy="100.58099" rx="15" ry="8" fill="none" stroke="#1e90ff" stroke-width="2.5" id="svg_20"/>
+   <!-- Upper lip -->
+   <path d="m22.56032,100.58099q7,-6 15,-6q8,0 15,6" fill="none" stroke="#1e90ff" stroke-width="2.5" id="svg_21"/>
+   <!-- Lower lip -->
+   <path d="m22.56032,100.58099q7,6 15,6q8,0 15,-6" fill="none" stroke="#1e90ff" stroke-width="2.5" id="svg_22"/>
+   <!-- Mouth opening -->
+   <ellipse cx="37.56032" cy="100.58099" rx="8" ry="3" fill="#1e90ff" opacity="0.3" id="svg_23"/>
+  </g>
+  <g opacity="0.4" id="svg_24">
+   <path d="m61.61183,100.04372l5,-3l0,6l-5,-3z" fill="#666666" id="svg_25"/>
+   <path d="m136.61183,100.04372l5,-3l0,6l-5,-3z" fill="#666666" id="svg_26"/>
+  </g>
+  <text style="cursor: move;" x="97.85089" y="61.51407" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="32px" font-weight="700" fill="#2c3e50" id="svg_27">pladdrr</text>
+  <text x="98.92544" y="156.88173" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10px" font-weight="500" fill="#7f8c8d" letter-spacing="0.5" id="svg_28">
+   <tspan y="156.88173" x="98.92544" id="tspan1212" >ACOUSTIC PHONETICS</tspan>
+   <tspan y="169.38173" x="99.17544" id="tspan1214" >IN R</tspan>
+  </text>
+  <g id="g216" transform="matrix(-1.4062328,0,0,1,167.35674,100.54629)">
+   <path id="path210" stroke-linecap="round" stroke-width="3" stroke="#dc143c" fill="none" d="m5,25c-10,0 -17,-7 -17,-17l0,-16c0,-10 7,-17 17,-17"/>
+   <!-- Ear detail -->
+  </g>
+  <g id="g250" transform="matrix(-1.4062328,0,0,1,31.821114,101.08357)">
+   <path id="path244" stroke-linecap="round" stroke-width="3" stroke="#1e90ff" fill="none" d="m-5,25c10,0 17,-7 17,-17l0,-16c0,-10 -7,-17 -17,-17"/>
+   <!-- Mouth detail -->
+  </g>
+ </g>
+</svg>
