@@ -374,12 +374,11 @@ compute_avqi <- function(sound,
     method = "energy"
   )
   
-  # Tilt: H1-A3 approximation (F0 vs F3)
-  # Get F0 for H1 estimation
+  # Get F0 mean for output
   f0_mean <- pitch$get_mean(0, 0, "hertz")
-  h1_freq <- f0_mean
   
-  # Get F3 for A3 estimation
+  # Tilt: LTAS slope calculation
+  # Get F3 for formant-based analysis
   formant <- sound_analysis$to_formant_burg(
     time_step = 0.005,
     max_number_of_formants = 5,
@@ -388,12 +387,10 @@ compute_avqi <- function(sound,
     pre_emphasis_from = 50
   )
   f3_mean <- formant$get_mean(3, 0, 0)
-  a3_freq <- f3_mean
   
-  # Tilt = H1 - A3 (in dB)
-  h1_db <- ltas$get_value_at_frequency(h1_freq, "nearest")
-  a3_db <- ltas$get_value_at_frequency(a3_freq, "nearest")
-  tilt <- h1_db - a3_db
+  # Tilt = LTAS slope between 0-1000 Hz and 1000-10000 Hz
+  # Using energy averaging as per AVQI specification (AVQI203.praat line 254)
+  tilt <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")
   
   if (verbose) cat(sprintf("Slope: %.2f dB, Tilt: %.2f dB\n", slope, tilt))
   
@@ -506,9 +503,9 @@ compute_avqi <- function(sound,
   )
   f3_mean <- formant$get_mean(3, 0, 0)
   
-  h1_db <- ltas$get_value_at_frequency(f0_mean, "nearest")
-  a3_db <- ltas$get_value_at_frequency(f3_mean, "nearest")
-  tilt <- h1_db - a3_db
+  # Tilt = LTAS slope between 0-1000 Hz and 1000-10000 Hz
+  # Using energy averaging as per AVQI specification (AVQI203.praat line 254)
+  tilt <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")
   
   if (verbose) cat(sprintf("Slope: %.2f dB, Tilt: %.2f dB\n", slope, tilt))
   

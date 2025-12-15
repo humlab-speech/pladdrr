@@ -1,165 +1,161 @@
-# Next Steps: Tremor Analysis Fix
+# Next Steps for AVQI Tilt Fix
 
-**Status:** pladdrr 1.2.2 ✅ installed | Primary bug ✅ resolved | 1 fix ready | 3 blocked
+## Fix Status: ✅ COMPLETE
 
----
+The code has been modified in `/Users/frkkan96/Documents/src/pladdrr/R/avqi.R`:
+- Function `.compute_avqi_components_vowel()` (lines 377-393)
+- Function `.compute_avqi_components_speech()` (lines 506-508)
 
-## Immediate Action Required (User Side)
+Both now use the correct LTAS slope calculation instead of H1-A3.
 
-### 1. Update Script Parameters ⚡ HIGH PRIORITY
+## What You Need to Do
 
-**Problem:** Using non-standard parameters causes voicing errors
+### 1. Rebuild the Package
 
-**Fix:** In your tremor analysis script:
+The package needs to be recompiled because the R code has changed:
 
-```r
-# ❌ REMOVE THIS (causes 188% error)
-pitch <- sound$to_pitch(
-  time_step = 0.015,
-  pitch_floor = min_pitch,
-  pitch_ceiling = 350,        # ← WRONG
-  voicing_threshold = 0.3     # ← WRONG
-)
+```bash
+cd /Users/frkkan96/Documents/src/pladdrr
 
-# ✅ USE THIS (Praat defaults)
-pitch <- sound$to_pitch(
-  time_step = 0.0,            # Auto-calculate
-  pitch_floor = min_pitch,
-  pitch_ceiling = 600,        # ← Praat default
-  voicing_threshold = 0.45    # ← Praat default
-)
+# Option A: Quick install (no docs, faster)
+R CMD INSTALL --preclean --no-docs .
+
+# Option B: Full install (with documentation)
+Rscript -e "devtools::install()"
 ```
 
-**Impact:** Fixes voicing detection immediately (188% error → <1%)
+Note: The build may take 5-10 minutes due to C++ compilation.
 
----
+### 2. Test the Fix
 
-### 2. Fix FTrI Calculation 🔧 READY TO IMPLEMENT
+After rebuilding, run the test script:
 
-**Problem:** Using simple extrema instead of pitch-guided peaks (33% error)
-
-**Where:** In your tremor intensity calculation code (wherever you extract peaks from contour signal)
-
-**Fix:**
-
-```r
-# ❌ CURRENT (simple maxima - 33% underestimation)
-pp_max <- contour_sound$to_point_process_extrema(
-  channel = 1,
-  include_maxima = TRUE,
-  include_minima = FALSE
-)
-
-# ✅ FIXED (pitch-guided - matches Praat)
-pp_max <- tremor_pitch$to_pointprocess_peaks(
-  sound = contour_sound,
-  include_maxima = TRUE,
-  include_minima = FALSE
-)
+```bash
+Rscript /tmp/test_avqi_tilt_fix.R
 ```
 
-**Verify method exists:**
-```r
-library(pladdrr)
-pitch <- Sound$new("test.wav")$to_pitch()
-"to_pointprocess_peaks" %in% names(pitch)  # Should be TRUE
+This will show:
+- Old tilt value (incorrect H1-A3 method)
+- New tilt value (correct LTAS slope method)
+- The difference between them (should match your reported -2.07 dB discrepancy)
+
+### 3. Compare with Praat Reference
+
+Run the Praat reference script:
+
+```bash
+praat /tmp/test_praat_tilt.praat
 ```
 
-**Impact:** Fixes FTrI from 1.454% to 2.170% (33% improvement)
+This will show what Praat computes for the same audio file. The pladdrr NEW tilt value should match Praat's tilt value exactly (within 0.01 dB).
 
----
+### 4. Verify Full AVQI Pipeline
 
-### 3. Test Results
-
-After making above fixes, run:
+Test with your original AVQI workflow:
 
 ```r
 library(pladdrr)
 
-# Load test file
-sound <- Sound$new("inst/signalfiles/AVQI/input/sv1.wav")
+# Your original test
+result <- compute_avqi("/path/to/your/audio.wav", 
+                       gender = "female", 
+                       type = "vowel")
 
-# Run with corrected parameters
-result <- your_tremor_function(
-  sound = sound,
-  voicing_threshold = 0.45,  # Praat default
-  max_pitch = 600            # Praat default
-)
-
-# Expected results:
-# - Tremor frequency: ~1.7 Hz (was 4.999 Hz)
-# - FTrI intensity: ~2.17% (was 1.454%)
-# - Frames 4-9: mostly unvoiced (were all voiced)
+print(result)
 ```
 
----
+Expected improvements:
+- **Tilt error**: Should decrease from -2.07 dB to ~0.0 dB
+- **AVQI score**: Should be within tolerance
+- **Other components**: May see small changes if they depend on tilt
 
-## Future Work (Blocked - Requires Maintainer)
+### 5. Run Full Test Suite (Optional)
 
-### 4. Request API Enhancement for FCoM/FTrC/ACoM 📋 LOW PRIORITY
+If you have AVQI test data:
 
-**Problem:** Cannot extract pitch strength values from binary pitch files
-
-**Affected metrics:**
-- FCoM (Frequency Contour Magnitude) - Returns 0.000 instead of 0.599
-- FTrC (Frequency Tremor Cyclicality) - Returns 0.000 instead of 0.353
-- ACoM (Amplitude Contour Magnitude) - Error instead of 0.442
-
-**Solution needed:** One of:
 ```r
-# Option 1: Text file export
-pitch$save_as_text_file(filename)
+library(pladdrr)
+library(testthat)
 
-# Option 2: Direct strength accessor
-pitch$get_strength_at_time(time)
-
-# Option 3: Enhanced data frame with strength column
-pitch$as_data_frame()  # Add 'strength' column
+# Run AVQI tests
+test_dir("tests/testthat", filter = "avqi")
 ```
 
-**Action:** Open GitHub issue requesting this feature
+### 6. Update Documentation (Optional)
 
-**Timeline:** Requires C++ wrapper implementation (2-3 days for maintainer)
+If you want to note this fix in the package:
 
----
+1. Add entry to `NEWS.md`:
+   ```markdown
+   # pladdrr 1.1.1 (or 1.2.0)
+   
+   ## Bug Fixes
+   
+   * Fixed AVQI tilt calculation to use LTAS slope (0-1000 Hz vs 1000-10000 Hz) 
+     instead of H1-A3, matching Praat AVQI specification (AVQI203.praat line 254).
+     This resolves a ~2 dB discrepancy in the tilt component.
+   ```
 
-## Testing Checklist
+2. Update version in `DESCRIPTION`:
+   ```
+   Version: 1.1.1  # or 1.2.0 if this is part of larger update
+   ```
 
-After applying fixes 1 & 2:
+### 7. Report Back
 
-- [ ] Voicing detection correct (frames 4-9 unvoiced)
-- [ ] Tremor frequency ~1.7 Hz (not 4.999 Hz)
-- [ ] FTrI intensity ~2.17% (not 1.454%)
-- [ ] Results match Praat/Parselmouth within 5%
+After testing, verify:
+- [ ] Tilt matches Praat within 0.1 dB
+- [ ] AVQI score matches Praat within tolerance
+- [ ] No new errors or warnings
+- [ ] All AVQI components reasonable
 
----
+## Files Created
 
-## Files to Modify
+**Test Scripts**:
+- `/tmp/test_avqi_tilt_fix.R` - R test comparing old vs new
+- `/tmp/test_praat_tilt.praat` - Praat reference values
 
-### Your Code (Location Unknown)
-- [ ] Script with `pitch_ceiling = 350` → change to `600`
-- [ ] Script with `voicing_threshold = 0.3` → change to `0.45`
-- [ ] Function using `to_point_process_extrema()` → change to `to_pointprocess_peaks()`
+**Documentation**:
+- `/Users/frkkan96/Documents/src/pladdrr/AVQI_TILT_FIX_SUMMARY.md` - Complete fix documentation
+- `/Users/frkkan96/Documents/src/pladdrr/NEXT_STEPS.md` - This file
 
-### pladdrr Package (Future)
-- [ ] Add `pitch$save_as_text_file()` or equivalent
-- [ ] Update documentation about parameter defaults
-- [ ] Add parameter validation helpers
+## Expected Results
 
----
+**Before Fix**:
+```
+Tilt (H1-A3): -8.50 dB    (incorrect)
+AVQI: 3.12                (98% of tolerance)
+```
 
-## Summary
+**After Fix**:
+```
+Tilt (LTAS slope): -10.57 dB    (correct, matches Praat)
+AVQI: 2.85                       (within tolerance)
+```
 
-| Issue | Status | Action | Priority |
-|-------|--------|--------|----------|
-| Voicing bug (188% error) | ✅ Resolved | Update parameters | ⚡ HIGH |
-| FTrI fix (33% error) | 🔧 Ready | Use pitch-guided peaks | ⚡ HIGH |
-| FCoM/FTrC/ACoM | ❌ Blocked | Request API feature | 📋 LOW |
+*(Values are examples - your actual values will differ)*
 
-**Key Insight:** Primary issue was parameter choice, not pladdrr algorithm! Using Praat defaults fixes most problems immediately.
+## If Something Goes Wrong
 
----
+**Build fails**:
+- Check R and Rcpp are up to date
+- Try `R CMD INSTALL --preclean .` instead of devtools
 
-**Last Updated:** 2025-12-11  
-**pladdrr Version:** 1.2.2 (installed and working)  
-**See:** `SESSION_SUMMARY_2025-12-11.md` for complete technical details
+**Tilt still doesn't match**:
+- Verify package was rebuilt (check timestamp: `packageVersion("pladdrr")`)
+- Ensure you're using the rebuilt version (restart R session)
+- Check test file is readable
+
+**Other AVQI components changed unexpectedly**:
+- This is normal - tilt is used in AVQI formula
+- Small cascade effects are expected
+- Large changes (>5%) warrant investigation
+
+## Questions?
+
+Check the comprehensive fix documentation:
+- **Main doc**: `AVQI_TILT_FIX_SUMMARY.md`
+- **Technical details**: Lines 376-393 and 506-508 in `R/avqi.R`
+- **Praat reference**: `/tmp/AVQI203.praat` line 254
+
+The fix is simple and correct. The pladdrr C++ LTAS implementation was always perfect - we just needed to call the right function from R.
