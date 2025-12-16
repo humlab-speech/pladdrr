@@ -559,14 +559,14 @@ PowerCepstrogram <- R6::R6Class(
                        interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
                        quefrency_range_start = 0.001,
                        quefrency_range_end = 0.05,
-                       trend_line_type = c("straight", "exponential decay", "parabolic"),
-                       fit_method = c("least squares", "robust", "robust slow")) {
+                        trend_line_type = c("straight", "exponential decay"),
+                        fit_method = c("robust", "least squares", "robust slow")) {
       
       interpolation <- match.arg(interpolation)
       trend_line_type <- match.arg(trend_line_type)
       fit_method <- match.arg(fit_method)
       
-      # Map to Praat enum values
+      # Map to Praat enum values (from Vector_enums.h and Cepstrum_enums.h)
       interp_map <- c(
         "none" = 0,
         "parabolic" = 1,
@@ -575,15 +575,16 @@ PowerCepstrogram <- R6::R6Class(
         "sinc700" = 4
       )
       
+      # kCepstrum_trendType: 1=LINEAR, 2=EXPONENTIAL_DECAY
       trend_map <- c(
         "straight" = 1,
-        "exponential decay" = 2,
-        "parabolic" = 3
+        "exponential decay" = 2
       )
       
+      # kCepstrum_trendFit: 1=ROBUST_FAST, 2=LEAST_SQUARES, 3=ROBUST_SLOW
       fit_map <- c(
-        "least squares" = 1,
-        "robust" = 2,
+        "robust" = 1,
+        "least squares" = 2,
         "robust slow" = 3
       )
       
