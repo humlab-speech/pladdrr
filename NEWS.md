@@ -1,3 +1,19 @@
+# pladdrr 1.2.7 (2025-12-16)
+
+## Bug Fixes
+
+* **Removed debug logging from production code**
+  - Removed `fprintf` debug statement from `src/sound_wrappers.cpp`
+  - Clean console output during pitch extraction operations
+  - Package now production-ready without debug spam
+
+## Minor Changes
+
+* Cleaned obsolete documentation files from repository
+* Fixed NAMESPACE exports after AVQI/DSI removal
+
+---
+
 # pladdrr 1.2.6 (2025-12-14)
 
 ## Breaking Changes
