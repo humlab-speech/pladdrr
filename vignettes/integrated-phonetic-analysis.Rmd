@@ -398,7 +398,23 @@ voice_profile <- data.frame(
   hnr = harmonicity$get_mean(),
   intensity_mean = intensity$get_mean()
 )
+
+# Add cepstral peak prominence smoothed (CPPS)
+# CPPS is highly sensitive to parameter choice - see example for details
+cepstrogram <- intensity$to_power_cepstrogram(
+  pitch_floor = 60,
+  time_step = 0.002
+)
+voice_profile$cpps <- cepstrogram$get_cpps(
+  subtract_tilt = FALSE,  # Match Praat default
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 0.0005,
+  pitch_floor = 60,
+  pitch_ceiling = 330
+)
 ```
+
+**Note:** CPPS values are highly sensitive to parameters. See `system.file("examples", "10_cpps_analysis.R", package = "pladdrr")` for a comprehensive guide on parameter effects and clinical interpretation.
 
 ## Best Practices
 
