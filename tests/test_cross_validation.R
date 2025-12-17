@@ -9,7 +9,7 @@
 #' - speakr R package (optional, for direct Praat script calling)
 
 library(testthat)
-library(speaker)  # pladdrr's speaker package
+library(pladdrr)
 
 # Test configuration
 PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"

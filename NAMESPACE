@@ -18,7 +18,6 @@ S3method(plot,PowerCepstrum)
 S3method(plot,Sound)
 S3method(plot,Spectrogram)
 S3method(plot,Spectrum)
-
 S3method(print,praat_formant)
 S3method(print,praat_intensity)
 S3method(print,praat_pitch)
@@ -56,12 +55,9 @@ export(TextGrid)
 export(aggregate_measurements)
 export(amplitude_tier_create)
 export(amplitude_tier_from_point_process)
-
 export(batch_process)
 export(check_audio_quality)
-
 export(create_cepstrum_report)
-
 export(create_file_list)
 export(create_sound)
 export(create_sound_from_values)
@@ -96,9 +92,7 @@ export(is_praat_pitch)
 export(is_praat_sound)
 export(pair_files)
 export(pair_sound_textgrid)
-
 export(plot_cpp_timeseries)
-
 export(plot_pitch_intensity)
 export(plot_powercepstrogram)
 export(plot_powercepstrum)

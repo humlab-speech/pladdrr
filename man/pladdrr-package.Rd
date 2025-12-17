@@ -80,7 +80,7 @@
 }
 \examples{
 # Create a pure tone
-sound <- Sound$create_tone(440, duration = 1.0, sampling_frequency = 44100)
+sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
 
 # Extract pitch
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
