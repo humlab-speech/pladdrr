@@ -1,0 +1,12 @@
+## Use C++11
+CXX_STD = CXX11
+
+## Compiler flags for optimization
+PKG_CXXFLAGS = -I. -DNDEBUG
+
+## Linker flags
+PKG_LIBS = 
+
+## Additional flags for Praat integration
+## (Would need to be configured based on Praat source location)
+# PKG_CXXFLAGS += -Ipraat/sys -Ipraat/dwtools -Ipraat/fon -Ipraat/dwsys

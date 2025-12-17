@@ -1,0 +1,27 @@
+Package: pladdrr
+Type: Package
+Title: Efficient Access to Praat Algorithms via Rcpp Modules
+Version: 0.1.0
+Date: 2025-12-17
+Authors@R: c(
+    person("Fredrik", "Nylén", email = "dargosch@gmail.com", role = c("aut", "cre"))
+    )
+Description: Provides efficient access to Praat speech analysis algorithms by
+    directly exposing C++ classes through Rcpp modules. This approach minimizes
+    overhead compared to traditional R6 class wrappers and achieves performance
+    comparable to the Python parselmouth package.
+License: GPL (>= 2)
+Imports:
+    Rcpp (>= 1.0.0),
+    methods
+LinkingTo: Rcpp
+SystemRequirements: C++11
+RoxygenNote: 7.0.0
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Encoding: UTF-8
+URL: https://github.com/humlab-speech/pladdrr
+BugReports: https://github.com/humlab-speech/pladdrr/issues
