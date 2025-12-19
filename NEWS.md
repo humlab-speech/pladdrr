@@ -1,3 +1,20 @@
+# pladdrr 1.2.8 (2025-12-19)
+
+## Bug Fixes
+
+* **Fixed TextGrid file reading segfault**
+  - Added `Melder_alloc_init()` call to `praat_initialize()` in `src/praat_wrapper.cpp`
+  - Initializes Praat's emergency memory buffer (`theRainyDayFund`) required for error handling
+  - Fixes segfault at address 0x0 when reading TextGrid files with `TextGrid$new(path)`
+  - Registered additional TextGrid component classes: `classTextPoint`, `classTextInterval`, `classTextTier`, `classIntervalTier`
+  - TextGrid reading now fully functional for all file sizes including large benchmark files (60min/77MB, 90min/115MB)
+
+## Technical Details
+
+The segfault occurred because Praat's generic file reader `Data_readFromTextFile()` requires proper memory allocator initialization before any file I/O operations. Without `Melder_alloc_init()`, error handling attempts to use an uninitialized NULL pointer, causing immediate crash. Sound reading worked because it uses a specialized reader that bypasses this code path.
+
+---
+
 # pladdrr 1.2.7 (2025-12-16)
 
 ## Bug Fixes

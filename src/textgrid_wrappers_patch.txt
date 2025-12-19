@@ -1,0 +1,87 @@
+// Numeric library headers for initialization
+#include "praat.github.io/dwsys/NUMmachar.h"
+#include "praat.github.io/melder/NUMrandom.h"
+
+// ============================================================================
+// Melder Warning Handler
+// ============================================================================
+
+// Global flag to ensure we only initialize once
+static bool warning_handler_initialized = false;
+
+// Simple warning handler that prints to R console instead of showing GUI dialog
+static void melder_warning_handler(conststring32 message) {
+    // Convert UTF-32 to UTF-8 for R
+    char32 const * p = message;
+    std::string utf8;
+    while (*p) {
+        char32 c = *p++;
+        if (c < 0x80) {
+            utf8 += static_cast<char>(c);
+        } else if (c < 0x800) {
+            utf8 += static_cast<char>(0xC0 | (c >> 6));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        } else if (c < 0x10000) {
+            utf8 += static_cast<char>(0xE0 | (c >> 12));
+            utf8 += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        } else {
+            utf8 += static_cast<char>(0xF0 | (c >> 18));
+            utf8 += static_cast<char>(0x80 | ((c >> 12) & 0x3F));
+            utf8 += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+            utf8 += static_cast<char>(0x80 | (c & 0x3F));
+        }
+    }
+    Rcpp::Rcerr << "Praat warning: " << utf8 << std::endl;
+}
+
+// Initialize warning handler (called before first use)
+static void ensure_warning_handler() {
+    if (!warning_handler_initialized) {
+        Melder_setWarningProc(melder_warning_handler);
+        warning_handler_initialized = true;
+    }
+}
+
+// ============================================================================
+// Numeric Library Initialization
+// ============================================================================
+
+// Global flag to ensure we only initialize numeric libraries once
+static bool numeric_libs_initialized = false;
+
+// Initialize numeric libraries (required for text parsing and data reading)
+static void ensure_numeric_libs_initialized() {
+    if (!numeric_libs_initialized) {
+        NUMmachar();
+        NUMrandom_initializeSafelyAndUnpredictably();
+        numeric_libs_initialized = true;
+    }
+}
+
+// ============================================================================
+// TextGrid Creation & I/O
+// ============================================================================
+
+// [[Rcpp::export(.textgrid_read_from_file)]]
+Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
+    try {
+        // Initialize numeric libraries (required for text parsing)
+        ensure_numeric_libs_initialized();
+        
+        structMelderFile file = {};
+        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+        autoDaata data = Data_readFromTextFile(&file);
+        if (!data) {
+            Rcpp::stop("Failed to read file as Praat data object");
+        }
+        if (!Thing_isa(data.get(), classTextGrid)) {
+            Rcpp::stop("File is not a TextGrid");
+        }
+        autoTextGrid textgrid = data.static_cast_move<structTextGrid>();
+        return create_xptr_from_auto<structTextGrid>(textgrid);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to read TextGrid from file: " + path);
+    }
+}

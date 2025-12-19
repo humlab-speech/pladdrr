@@ -11,6 +11,7 @@
 // Praat headers for initialization
 #include "praat.github.io/sys/Thing.h"
 #include "praat.github.io/sys/Data.h"
+#include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/fon/Pitch.h"
 #include "praat.github.io/fon/Formant.h"
@@ -58,6 +59,10 @@ String praat_version() {
 //' @keywords internal
 // [[Rcpp::export]]
 bool praat_initialize() {
+    // Critical: Initialize Melder memory allocator (theRainyDayFund)
+    // This MUST be called before any Praat object operations
+    Melder_alloc_init();
+    
     // Register all Praat classes for file I/O
     // This is required for Data_readFromFile to work correctly
     Thing_recognizeClassesByName(classSound,
@@ -74,6 +79,13 @@ bool praat_initialize() {
                                   classLPC,
                                   classTable,
                                   nullptr);   // nullptr terminates the list
+    
+    // Register additional TextGrid-related classes
+    Thing_recognizeClassesByName(classTextPoint,
+                                  classTextInterval,
+                                  classTextTier,
+                                  classIntervalTier,
+                                  nullptr);
     
     return true;
 }

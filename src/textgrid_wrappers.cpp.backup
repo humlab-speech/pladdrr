@@ -80,9 +80,6 @@ static void ensure_numeric_libs_initialized() {
 // [[Rcpp::export(.textgrid_read_from_file)]]
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
     try {
-        // Initialize numeric libraries (required for text parsing)
-        ensure_numeric_libs_initialized();
-        
         structMelderFile file = {};
         Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
         autoDaata data = Data_readFromTextFile(&file);
