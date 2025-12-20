@@ -23,6 +23,7 @@ struct structTextGrid;
 struct structPointProcess;
 struct structManipulation;
 struct structLPC;
+struct structLtas;
 struct structPitchTier;
 struct structFormantTier;
 struct structIntensityTier;

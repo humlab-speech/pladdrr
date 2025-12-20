@@ -745,6 +745,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_get_maximum`, ltas, fmin, fmax, unit, interpolate)
 }
 
+.ltas_get_frequency_of_maximum <- function(ltas, fmin, fmax, interpolation) {
+    .Call(`_pladdrr_ltas_get_frequency_of_maximum`, ltas, fmin, fmax, interpolation)
+}
+
 .ltas_get_mean <- function(ltas, fmin, fmax, unit) {
     .Call(`_pladdrr_ltas_get_mean`, ltas, fmin, fmax, unit)
 }
@@ -1857,6 +1861,14 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .spectrum_as_matrix <- function(xptr) {
     .Call(`_pladdrr_spectrum_as_matrix`, xptr)
+}
+
+.spectrum_formula <- function(xptr, formula_str) {
+    invisible(.Call(`_pladdrr_spectrum_formula`, xptr, formula_str))
+}
+
+.spectrum_to_ltas_1to1 <- function(xptr) {
+    .Call(`_pladdrr_spectrum_to_ltas_1to1`, xptr)
 }
 
 .spectrum_to_cepstrum <- function(spectrum_xptr) {

@@ -9,12 +9,16 @@
 // Praat headers
 #include "fon/Spectrum.h"
 #include "fon/Sound_and_Spectrum.h"
+#include "fon/Ltas.h"
 #include "fon/Matrix.h"
 #include "LPC/Cepstrum.h"
 #include "LPC/Cepstrum_and_Spectrum.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
+
+// Avoid ambiguity with Rcpp::Matrix
+using PraatMatrix = structMatrix*;
 
 // Query: Basic info
 
@@ -245,6 +249,44 @@ NumericMatrix spectrum_as_matrix(SEXP xptr) {
     }
     
     return mat;
+}
+
+// ==============================================================================
+// Spectrum formula modification
+// ==============================================================================
+
+// [[Rcpp::export(.spectrum_formula)]]
+void spectrum_formula(SEXP xptr, std::string formula_str) {
+    XPtr<structSpectrum> spectrum(xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+    
+    try {
+        // Convert formula string to Praat format
+        conststring32 formula = Melder_peek8to32(formula_str.c_str());
+        
+        // Apply formula using Praat's built-in formula interpreter
+        // Note: Praat's Matrix_formula modifies in place
+        Matrix_formula(reinterpret_cast<structMatrix*>(spectrum.get()), 
+                      formula, nullptr, nullptr);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to apply formula to Spectrum");
+    }
+}
+
+// [[Rcpp::export(.spectrum_to_ltas_1to1)]]
+SEXP spectrum_to_ltas_1to1(SEXP xptr) {
+    XPtr<structSpectrum> spectrum(xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+    
+    try {
+        // Create LTAS with 1-to-1 frequency mapping
+        autoLtas ltas = Spectrum_to_Ltas(spectrum.get(), 1.0);
+        return create_xptr_from_auto<structLtas>(ltas);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert Spectrum to Ltas");
+    }
 }
 
 // ==============================================================================
