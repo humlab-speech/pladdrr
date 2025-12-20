@@ -1342,6 +1342,10 @@ praat_initialize <- function() {
     .Call(`_pladdrr_praat_initialize`)
 }
 
+.test_class_registry <- function() {
+    .Call(`_pladdrr_test_class_registry`)
+}
+
 #' Calculate basic sound statistics
 #'
 #' Calculates basic statistics for a sound vector

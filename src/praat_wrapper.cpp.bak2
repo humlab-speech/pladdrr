@@ -12,7 +12,8 @@
 #include "praat.github.io/sys/Thing.h"
 #include "praat.github.io/sys/Data.h"
 #include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
-#include "praat.github.io/melder/melder_textencoding.h"  // For Melder_setInputEncoding()
+#include "praat.github.io/melder/NUMrandom.h"     // For NUMrandom_initializeSafelyAndUnpredictably()
+#include "praat.github.io/dwsys/NUMmachar.h"      // For NUMmachar()
 #include "praat.github.io/melder/NUMrandom.h"     // For NUMrandom_initializeSafelyAndUnpredictably()
 #include "praat.github.io/dwsys/NUMmachar.h"      // For NUMmachar()
 #include "praat.github.io/fon/Sound.h"
@@ -63,23 +64,12 @@ String praat_version() {
 // [[Rcpp::export]]
 bool praat_initialize() {
     // Initialize Praat numerical library (must come BEFORE Melder_alloc_init)
-    // This sets up machine precision constants and random number generator
     NUMmachar();
     NUMrandom_initializeSafelyAndUnpredictably();
-
+    
     // Critical: Initialize Melder memory allocator (theRainyDayFund)
     // This MUST be called before any Praat object operations
     Melder_alloc_init();
-    
-    // Initialize text encoding (required for file reading)
-    #if defined (macintosh) || defined (__APPLE__)
-        Melder_setInputEncoding(kMelder_textInputEncoding::UTF8_THEN_MACROMAN);
-    #elif defined (_WIN32)
-        Melder_setInputEncoding(kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1);
-    #else
-        Melder_setInputEncoding(kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1);
-    #endif
-    Melder_setOutputEncoding(kMelder_textOutputEncoding::UTF8);
     
     // Register all Praat classes for file I/O
     // This is required for Data_readFromFile to work correctly
@@ -105,30 +95,7 @@ bool praat_initialize() {
                                   classIntervalTier,
                                   nullptr);
     
-    // Note: Thing_listReadableClasses() call removed - was causing segfault
-    // The registry is working correctly (classes are being registered)
     return true;
-}
-
-// Expose the registry variables for testing
-extern integer theNumberOfReadableClasses;
-extern ClassInfo theReadableClasses [1 + 1000];
-
-// [[Rcpp::export(.test_class_registry)]]
-int test_class_registry() {
-    Rcpp::Rcout << "Registry address: " << &theNumberOfReadableClasses << "\n";
-    Rcpp::Rcout << "Number of classes: " << theNumberOfReadableClasses << "\n";
-    
-    for (integer i = 1; i <= theNumberOfReadableClasses && i <= 10; i++) {
-        ClassInfo klas = theReadableClasses[i];
-        if (klas) {
-            Rcpp::Rcout << "  [" << i << "] " << Melder_peek32to8(klas->className) << "\n";
-        } else {
-            Rcpp::Rcout << "  [" << i << "] NULL\n";
-        }
-    }
-    
-    return theNumberOfReadableClasses;
 }
 
 // ============================================================================

@@ -16,7 +16,6 @@
 #include "praat.github.io/dwsys/NUMmachar.h"
 #include "praat.github.io/melder/NUMrandom.h"
 #include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
-#include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
 
 // ============================================================================
 // Melder Warning Handler

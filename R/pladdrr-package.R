@@ -117,7 +117,7 @@
   # Add extract_electroglottogram method to Sound class
   if (exists("Sound") && R6::is.R6Class(Sound)) {
     Sound$set("public", "extract_electroglottogram", function(channel = 1, invert = FALSE) {
-      ptr <- sound_extract_electroglottogram_cpp(self$.pointer, channel, invert)
+      ptr <- sound_extract_electroglottogram_cpp(private$ptr, channel, invert)
       Electroglottogram$new(.xptr = ptr)
     })
   }

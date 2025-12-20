@@ -15,6 +15,8 @@
 // Numeric library headers for initialization
 #include "praat.github.io/dwsys/NUMmachar.h"
 #include "praat.github.io/melder/NUMrandom.h"
+#include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
+#include "praat.github.io/melder/melder_alloc.h"  // For Melder_alloc_init()
 
 // ============================================================================
 // Melder Warning Handler
@@ -69,6 +71,7 @@ static void ensure_numeric_libs_initialized() {
     if (!numeric_libs_initialized) {
         NUMmachar();
         NUMrandom_initializeSafelyAndUnpredictably();
+        Melder_alloc_init();  // Initialize emergency memory buffer
         numeric_libs_initialized = true;
     }
 }
@@ -84,7 +87,12 @@ Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path) {
         ensure_numeric_libs_initialized();
         
         structMelderFile file = {};
-        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+        
+        const char32 *path32 = Melder_peek8to32(path.c_str());
+        
+        Melder_pathToFile(path32, &file);
+        
+        Rcpp::Rcout.flush();  // Force output
         autoDaata data = Data_readFromTextFile(&file);
         if (!data) {
             Rcpp::stop("Failed to read file as Praat data object");
