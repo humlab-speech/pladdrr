@@ -1,0 +1,636 @@
+* using log directory ‘/Users/frkkan96/Documents/src/pladdrr/..Rcheck’
+* using R version 4.4.2 (2024-10-31)
+* using platform: aarch64-apple-darwin20
+* R was compiled by
+    Apple clang version 14.0.0 (clang-1400.0.29.202)
+    GNU Fortran (GCC) 12.2.0
+* running under: macOS 26.1
+* using session charset: UTF-8
+* using option ‘--as-cran’
+* checking for file ‘./DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘pladdrr’ version ‘1.3.0’
+* package encoding: UTF-8
+* checking CRAN incoming feasibility ... [4s/21s] NOTE
+Maintainer: ‘Fredrik Nylén <fredrik.nylen@umu.se>’
+
+New submission
+
+License components with restrictions and base license permitting such:
+  GPL-3 + file LICENSE
+File 'LICENSE':
+  YEAR: 2025
+  COPYRIGHT HOLDER: Fredrik Nylén
+
+Unknown, possibly misspelled, fields in DESCRIPTION:
+  ‘Remotes’
+
+Package has a VignetteBuilder field but no prebuilt vignette index.
+
+Found the following (possibly) invalid URLs:
+  URL: https://github.com/humlab-speech/pladdrr
+    From: DESCRIPTION
+          inst/CITATION
+    Status: 404
+    Message: Not Found
+  URL: https://github.com/humlab-speech/pladdrr/issues
+    From: DESCRIPTION
+    Status: 404
+    Message: Not Found
+  URL: https://www.praat.org/ (moved to https://praat.org/)
+    From: man/pladdrr-package.Rd
+          inst/CITATION
+    Status: 200
+    Message: OK
+
+The build time stamp is missing.
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory ‘pladdrr/src’ contains apparent object files/libraries
+  RcppExports.o amplitudetier_wrappers.o area_stubs.o
+  autocorrelation_simd.o cochleagram_wrappers.o configuration_stubs.o
+  dtw_stubs.o durationtier_wrappers.o eigen_sscp_stubs.o
+  electroglottogram_wrappers.o excitation_wrappers.o flac_stubs.o
+  formant_wrappers.o formantgrid_wrappers.o glpk_stubs.o
+  graphics_stubs_comprehensive.o harmonicity_wrappers.o
+  intensity_simd.o intensity_wrappers.o intensitytier_wrappers.o
+  interpreter_wrappers.o longsound_stub.o lpc_wrappers.o
+  ltas_wrappers.o manipulation_wrappers.o matrix_wrappers.o
+  num_distance_simd.o num_filtering_simd.o num_matrix_simd.o
+  num_stubs.o pitch_processing_simd.o pitch_wrappers.o
+  pitchtier_wrappers.o pladdrr.so pointprocess_wrappers.o
+  powercepstrum_wrappers.o praat_app_stubs.o praat_stubs.o
+  praat_wrapper.o r_lapack_wrapper.o simd_info.o sound_audio_stubs.o
+  sound_conversion_simd.o sound_convolution_simd.o
+  sound_create_gaussian.o sound_extensions_minimal.o
+  sound_mixing_simd.o sound_statistics_simd.o sound_wrappers.o
+  spectrogram_wrappers.o spectrum_wrappers.o speechsynthesizer_stubs.o
+  svd_stubs.o table_stubs.o table_wrappers.o textgrid_wrappers.o
+  uiform_stubs.o utils.o window_functions_simd.o
+Object files/libraries should not be included in a source package.
+
+In addition to the above warning(s), found the following notes:
+
+Found the following apparent object files/libraries:
+  src/gsl-2.8/cblas/libgslcblas.la src/gsl-2.8/cdf/libgslcdf.la
+  src/gsl-2.8/complex/libgslcomplex.la src/gsl-2.8/err/libgslerr.la
+  src/gsl-2.8/ieee-utils/libgslieeeutils.la
+  src/gsl-2.8/poly/libgslpoly.la src/gsl-2.8/randist/libgslrandist.la
+  src/gsl-2.8/rng/libgslrng.la src/gsl-2.8/specfunc/libgslspecfunc.la
+  src/gsl-2.8/sys/libgslsys.la src/gsl-2.8/utils/libutils.la
+  src/praat.github.io/LPC/Cepstrum.o
+  src/praat.github.io/LPC/Cepstrum_and_Spectrum.o
+  src/praat.github.io/LPC/Cepstrumc.o src/praat.github.io/LPC/LPC.o
+  src/praat.github.io/LPC/LPC_and_Cepstrumc.o
+  src/praat.github.io/LPC/LPC_and_Formant.o
+  src/praat.github.io/LPC/LPC_and_LineSpectralFrequencies.o
+  src/praat.github.io/LPC/LPC_and_Polynomial.o
+  src/praat.github.io/LPC/LPC_to_Spectrogram.o
+  src/praat.github.io/LPC/LPC_to_Spectrum.o
+  src/praat.github.io/LPC/LineSpectralFrequencies.o
+  src/praat.github.io/LPC/PowerCepstrogram.o
+  src/praat.github.io/LPC/PowerCepstrum.o
+  src/praat.github.io/LPC/Roots_and_Formant.o
+  src/praat.github.io/LPC/Sound_and_Cepstrum.o
+  src/praat.github.io/LPC/Sound_and_LPC.o
+  src/praat.github.io/LPC/Sound_to_PowerCepstrogram.o
+  src/praat.github.io/dwsys/Eigen.o
+  src/praat.github.io/dwsys/FunctionSeries.o
+  src/praat.github.io/dwsys/Index.o
+  src/praat.github.io/dwsys/MAT_numerics.o
+  src/praat.github.io/dwsys/NUM2.o
+  src/praat.github.io/dwsys/NUMFourier.o
+  src/praat.github.io/dwsys/NUMhuber.o
+  src/praat.github.io/dwsys/NUMmachar.o
+  src/praat.github.io/dwsys/NUMselect.o
+  src/praat.github.io/dwsys/NUMsorting.o
+  src/praat.github.io/dwsys/NUMstring.o
+  src/praat.github.io/dwsys/Permutation.o
+  src/praat.github.io/dwsys/PermutationInversionCounter.o
+  src/praat.github.io/dwsys/Polynomial.o
+  src/praat.github.io/dwsys/Roots.o
+  src/praat.github.io/dwsys/SlopeSelector.o
+  src/praat.github.io/dwtools/Intensity_extensions.o
+  src/praat.github.io/dwtools/Matrix_extensions.o
+  src/praat.github.io/dwtools/PatternList.o
+  src/praat.github.io/dwtools/SampledFrameIntoSampledFrame.o
+  src/praat.github.io/dwtools/SampledIntoSampled.o
+  src/praat.github.io/dwtools/SoundFrames.o
+  src/praat.github.io/dwtools/Sound_and_TextGrid_extensions.o
+  src/praat.github.io/dwtools/Strings_extensions.o
+  src/praat.github.io/dwtools/TextGrid_extensions.o
+  src/praat.github.io/excluded_sources/Sound_files.o
+  src/praat.github.io/fon/AmplitudeTier.o
+  src/praat.github.io/fon/AnyTier.o
+  src/praat.github.io/fon/Cochleagram.o
+  src/praat.github.io/fon/Cochleagram_and_Excitation.o
+  src/praat.github.io/fon/Corpus.o
+  src/praat.github.io/fon/Distributions_and_Transition.o
+  src/praat.github.io/fon/DurationTier.o
+  src/praat.github.io/fon/Excitation.o
+  src/praat.github.io/fon/Excitation_to_Formant.o
+  src/praat.github.io/fon/Formant.o
+  src/praat.github.io/fon/FormantGrid.o
+  src/praat.github.io/fon/FormantTier.o
+  src/praat.github.io/fon/Function.o
+  src/praat.github.io/fon/H1minusH2Tier.o
+  src/praat.github.io/fon/Harmonicity.o src/praat.github.io/fon/Image.o
+  src/praat.github.io/fon/Intensity.o
+  src/praat.github.io/fon/IntensityTier.o
+  src/praat.github.io/fon/Label.o src/praat.github.io/fon/LongSound.o
+  src/praat.github.io/fon/Ltas.o
+  src/praat.github.io/fon/Ltas_to_SpectrumTier.o
+  src/praat.github.io/fon/Manipulation.o
+  src/praat.github.io/fon/Matrix.o
+  src/praat.github.io/fon/Matrix_and_Pitch.o
+  src/praat.github.io/fon/Matrix_and_PointProcess.o
+  src/praat.github.io/fon/Matrix_and_Polygon.o
+  src/praat.github.io/fon/Movie.o src/praat.github.io/fon/ParamCurve.o
+  src/praat.github.io/fon/Photo.o src/praat.github.io/fon/Pitch.o
+  src/praat.github.io/fon/PitchTier.o
+  src/praat.github.io/fon/PitchTier_to_PointProcess.o
+  src/praat.github.io/fon/PitchTier_to_Sound.o
+  src/praat.github.io/fon/Pitch_AnyTier_to_PitchTier.o
+  src/praat.github.io/fon/Pitch_Intensity.o
+  src/praat.github.io/fon/Pitch_to_PitchTier.o
+  src/praat.github.io/fon/Pitch_to_PointProcess.o
+  src/praat.github.io/fon/Pitch_to_Sound.o
+  src/praat.github.io/fon/PointProcess.o
+  src/praat.github.io/fon/PointProcess_and_Sound.o
+  src/praat.github.io/fon/Polygon.o
+  src/praat.github.io/fon/Praat_tests.o
+  src/praat.github.io/fon/RealTier.o src/praat.github.io/fon/Sampled.o
+  src/praat.github.io/fon/SampledXY.o src/praat.github.io/fon/Sound.o
+  src/praat.github.io/fon/SoundSet.o
+  src/praat.github.io/fon/Sound_PointProcess.o
+  src/praat.github.io/fon/Sound_and_Spectrogram.o
+  src/praat.github.io/fon/Sound_and_Spectrum.o
+  src/praat.github.io/fon/Sound_enhance.o
+  src/praat.github.io/fon/Sound_to_Cochleagram.o
+  src/praat.github.io/fon/Sound_to_Formant.o
+  src/praat.github.io/fon/Sound_to_Harmonicity.o
+  src/praat.github.io/fon/Sound_to_Harmonicity_GNE.o
+  src/praat.github.io/fon/Sound_to_Intensity.o
+  src/praat.github.io/fon/Sound_to_Pitch.o
+  src/praat.github.io/fon/Sound_to_PointProcess.o
+  src/praat.github.io/fon/Spectrogram.o
+  src/praat.github.io/fon/Spectrum.o
+  src/praat.github.io/fon/SpectrumTier.o
+  src/praat.github.io/fon/Spectrum_and_Spectrogram.o
+  src/praat.github.io/fon/Spectrum_to_Excitation.o
+  src/praat.github.io/fon/Spectrum_to_Formant.o
+  src/praat.github.io/fon/SpellingChecker.o
+  src/praat.github.io/fon/TextGrid.o
+  src/praat.github.io/fon/TextGrid_Sound.o
+  src/praat.github.io/fon/TextGrid_files.o
+  src/praat.github.io/fon/Transition.o src/praat.github.io/fon/Vector.o
+  src/praat.github.io/fon/VocalTract.o
+  src/praat.github.io/fon/VocalTract_to_Spectrum.o
+  src/praat.github.io/fon/VoiceAnalysis.o
+  src/praat.github.io/fon/WordList.o
+  src/praat.github.io/fon/praat_Matrix.o
+  src/praat.github.io/fon/praat_Sound.o
+  src/praat.github.io/fon/praat_TextGrid_init.o
+  src/praat.github.io/fon/praat_Tiers.o
+  src/praat.github.io/fon/praat_uvafon_init.o
+  src/praat.github.io/kar/longchar.o
+  src/praat.github.io/kar/wctype_portable.o
+  src/praat.github.io/melder/MAT.o
+  src/praat.github.io/melder/MelderCat.o
+  src/praat.github.io/melder/MelderFile.o
+  src/praat.github.io/melder/MelderReadText.o
+  src/praat.github.io/melder/MelderString.o
+  src/praat.github.io/melder/NUM.o src/praat.github.io/melder/NUMear.o
+  src/praat.github.io/melder/NUMfilter.o
+  src/praat.github.io/melder/NUMinterpol.o
+  src/praat.github.io/melder/NUMmath.o
+  src/praat.github.io/melder/NUMmetrics.o
+  src/praat.github.io/melder/NUMrandom.o
+  src/praat.github.io/melder/NUMspecfunc.o
+  src/praat.github.io/melder/STR.o src/praat.github.io/melder/STRVEC.o
+  src/praat.github.io/melder/VEC.o src/praat.github.io/melder/abcio.o
+  src/praat.github.io/melder/complex.o
+  src/praat.github.io/melder/melder.o
+  src/praat.github.io/melder/melder_alloc.o
+  src/praat.github.io/melder/melder_app.o
+  src/praat.github.io/melder/melder_atof.o
+  src/praat.github.io/melder/melder_audiofiles.o
+  src/praat.github.io/melder/melder_casual.o
+  src/praat.github.io/melder/melder_colour.o
+  src/praat.github.io/melder/melder_console.o
+  src/praat.github.io/melder/melder_debug.o
+  src/praat.github.io/melder/melder_error.o
+  src/praat.github.io/melder/melder_files.o
+  src/praat.github.io/melder/melder_ftoa.o
+  src/praat.github.io/melder/melder_help.o
+  src/praat.github.io/melder/melder_info.o
+  src/praat.github.io/melder/melder_play.o
+  src/praat.github.io/melder/melder_progress.o
+  src/praat.github.io/melder/melder_quantity.o
+  src/praat.github.io/melder/melder_search.o
+  src/praat.github.io/melder/melder_sort.o
+  src/praat.github.io/melder/melder_str32.o
+  src/praat.github.io/melder/melder_sysenv.o
+  src/praat.github.io/melder/melder_tensorio.o
+  src/praat.github.io/melder/melder_textencoding.o
+  src/praat.github.io/melder/melder_time.o
+  src/praat.github.io/melder/melder_trust.o
+  src/praat.github.io/melder/melder_warning.o
+  src/praat.github.io/melder/regularExp.o
+  src/praat.github.io/sensors/Electroglottogram.o
+  src/praat.github.io/stat/Distributions.o
+  src/praat.github.io/stat/Table.o
+  src/praat.github.io/stat/TableOfReal.o
+  src/praat.github.io/sys/Collection.o src/praat.github.io/sys/Data.o
+  src/praat.github.io/sys/Formula.o
+  src/praat.github.io/sys/Interpreter.o
+  src/praat.github.io/sys/ManPage.o src/praat.github.io/sys/ManPages.o
+  src/praat.github.io/sys/Script.o src/praat.github.io/sys/Simple.o
+  src/praat.github.io/sys/Strings.o src/praat.github.io/sys/Thing.o
+  src/praat.github.io/sys/praat.o
+  src/praat.github.io/sys/praat_script.o
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... WARNING
+Found the following executable files:
+  .git/objects/32/bb1704c581667f2c9d399e775c9c6efffd830c
+  .git/objects/f4/b8f1c438783bb7e4846794fc3c55b2cabb26cd
+  src/praat.github.io/docs/sendpraat-linux
+  src/praat.github.io/docs/sendpraat-mac
+  src/praat.github.io/docs/sendpraat-win.exe
+  src/praat.github.io/docs/silipa93.exe
+  src/praat.github.io/test/manually/spit/spit mac arm64
+  src/praat.github.io/test/manually/spit/spit mac intel64
+  src/praat.github.io/test/manually/spit/spit win arm64.exe
+  src/praat.github.io/test/manually/spit/spit win intel64.exe
+  src/praat.github.io/test/manually/spit/spit_mac_arm64
+  src/praat.github.io/test/manually/spit/spit_mac_intel64
+  src/praat.github.io/test/manually/spit/spit_win_arm64.exe
+  src/praat.github.io/test/manually/spit/spit_win_intel64exe
+Source packages should not contain undeclared executable files.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .DS_Store
+  .gitignore
+  .gitmodules
+  .serena/.gitignore
+  dev/.DS_Store
+  inst/.DS_Store
+  inst/benchmarks/.DS_Store
+  inst/benchmarks/results/.DS_Store
+  specs/.DS_Store
+  specs/001-praat-r-access/.DS_Store
+  src/clapack/.git
+  src/clapack/.gitignore
+  src/pffft/.git
+  src/praat.github.io/.clang-format
+  src/praat.github.io/.git
+  src/praat.github.io/.gitattributes
+  src/praat.github.io/.gitignore
+  src/praat.github.io/docs/.nojekyll
+  ..Rcheck
+  .claude
+  .git
+  .github
+  .serena
+  .specify
+  src/gsl-2.8/.deps
+  src/gsl-2.8/blas/.deps
+  src/gsl-2.8/block/.deps
+  src/gsl-2.8/bspline/.deps
+  src/gsl-2.8/bst/.deps
+  src/gsl-2.8/cblas/.deps
+  src/gsl-2.8/cblas/.libs
+  src/gsl-2.8/cdf/.deps
+  src/gsl-2.8/cdf/.libs
+  src/gsl-2.8/cheb/.deps
+  src/gsl-2.8/combination/.deps
+  src/gsl-2.8/complex/.deps
+  src/gsl-2.8/complex/.libs
+  src/gsl-2.8/const/.deps
+  src/gsl-2.8/deriv/.deps
+  src/gsl-2.8/dht/.deps
+  src/gsl-2.8/diff/.deps
+  src/gsl-2.8/doc/examples/.deps
+  src/gsl-2.8/eigen/.deps
+  src/gsl-2.8/err/.deps
+  src/gsl-2.8/err/.libs
+  src/gsl-2.8/fft/.deps
+  src/gsl-2.8/filter/.deps
+  src/gsl-2.8/fit/.deps
+  src/gsl-2.8/histogram/.deps
+  src/gsl-2.8/ieee-utils/.deps
+  src/gsl-2.8/ieee-utils/.libs
+  src/gsl-2.8/integration/.deps
+  src/gsl-2.8/interpolation/.deps
+  src/gsl-2.8/linalg/.deps
+  src/gsl-2.8/matrix/.deps
+  src/gsl-2.8/min/.deps
+  src/gsl-2.8/monte/.deps
+  src/gsl-2.8/movstat/.deps
+  src/gsl-2.8/multifit/.deps
+  src/gsl-2.8/multifit_nlinear/.deps
+  src/gsl-2.8/multilarge/.deps
+  src/gsl-2.8/multilarge_nlinear/.deps
+  src/gsl-2.8/multimin/.deps
+  src/gsl-2.8/multiroots/.deps
+  src/gsl-2.8/multiset/.deps
+  src/gsl-2.8/ntuple/.deps
+  src/gsl-2.8/ode-initval/.deps
+  src/gsl-2.8/ode-initval2/.deps
+  src/gsl-2.8/permutation/.deps
+  src/gsl-2.8/poly/.deps
+  src/gsl-2.8/poly/.libs
+  src/gsl-2.8/qrng/.deps
+  src/gsl-2.8/randist/.deps
+  src/gsl-2.8/randist/.libs
+  src/gsl-2.8/rng/.deps
+  src/gsl-2.8/rng/.libs
+  src/gsl-2.8/roots/.deps
+  src/gsl-2.8/rstat/.deps
+  src/gsl-2.8/siman/.deps
+  src/gsl-2.8/sort/.deps
+  src/gsl-2.8/spblas/.deps
+  src/gsl-2.8/specfunc/.deps
+  src/gsl-2.8/specfunc/.libs
+  src/gsl-2.8/splinalg/.deps
+  src/gsl-2.8/spmatrix/.deps
+  src/gsl-2.8/statistics/.deps
+  src/gsl-2.8/sum/.deps
+  src/gsl-2.8/sys/.deps
+  src/gsl-2.8/sys/.libs
+  src/gsl-2.8/test/.deps
+  src/gsl-2.8/utils/.deps
+  src/gsl-2.8/utils/.libs
+  src/gsl-2.8/vector/.deps
+  src/gsl-2.8/wavelet/.deps
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+
+CRAN-pack does not know about
+  .DS_Store
+  dev/.DS_Store
+  inst/.DS_Store
+  inst/benchmarks/.DS_Store
+  inst/benchmarks/results/.DS_Store
+  specs/.DS_Store
+  specs/001-praat-r-access/.DS_Store
+  src/clapack/.git
+  src/pffft/.git
+  src/praat.github.io/.clang-format
+  src/praat.github.io/.git
+  src/praat.github.io/docs/.nojekyll
+  ..Rcheck
+  .claude
+  .git
+  .github
+  .serena
+  .specify
+  src/gsl-2.8/cblas/.libs
+  src/gsl-2.8/cdf/.libs
+  src/gsl-2.8/complex/.libs
+  src/gsl-2.8/err/.libs
+  src/gsl-2.8/ieee-utils/.libs
+  src/gsl-2.8/poly/.libs
+  src/gsl-2.8/randist/.libs
+  src/gsl-2.8/rng/.libs
+  src/gsl-2.8/specfunc/.libs
+  src/gsl-2.8/sys/.libs
+  src/gsl-2.8/utils/.libs
+* checking for portable file names ... WARNING
+Found the following files with non-portable file names:
+  src/praat.github.io/docs/manual/Févotte__Bertin___Durrieu__2009_.html
+  src/praat.github.io/docs/manual/Jäger__2003_.html
+  src/praat.github.io/generate/Unicode/ISO-IEC 30112 wd10.pdf
+  src/praat.github.io/generate/Unicode/PropList 16.0.0.txt
+  src/praat.github.io/generate/Unicode/UAX #44 Unicode Character Database 16.0.0.html
+  src/praat.github.io/generate/Unicode/UnicodeData 16.0.txt
+  src/praat.github.io/generate/Unicode/UnicodeData File Format 3.0.0.html
+  src/praat.github.io/generate/espeak/data/voices/!v/Mr serious
+  src/praat.github.io/test/fon ExperimentMFC/perceptual experiment.txt
+  src/praat.github.io/test/fon/examples/あ　あ.wav
+  src/praat.github.io/test/fon/examples/にほん.flac
+  src/praat.github.io/test/kar/åbçéü.wav
+  src/praat.github.io/test/kar/éééürtüéŋəü.wav
+  src/praat.github.io/test/manually/commandLine/e x a m p l e.wav
+  src/praat.github.io/test/manually/commandLine/p l a y.praat
+  src/praat.github.io/test/manually/spit/spit mac arm64
+  src/praat.github.io/test/manually/spit/spit mac intel64
+  src/praat.github.io/test/manually/spit/spit win arm64.exe
+  src/praat.github.io/test/manually/spit/spit win intel64.exe
+  src/praat.github.io/test/sys/large PDF/large PDF.praat
+  src/praat.github.io/test/fon ExperimentMFC
+  src/praat.github.io/test/fon ExperimentMFC/fəuldə
+  src/praat.github.io/test/fon/examples/sounds/elephant calls
+  src/praat.github.io/test/manually/external/Chris Darwin
+  src/praat.github.io/test/sys/large PDF
+These are not fully portable file names.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+Found the following non-portable file paths:
+  pladdrr/.git/modules/src/praat.github.io/objects/pack/pack-c9622577ddd25beb42138e639417757fe9a013b1.idx
+  pladdrr/.git/modules/src/praat.github.io/objects/pack/pack-c9622577ddd25beb42138e639417757fe9a013b1.pack
+  pladdrr/.git/modules/src/praat.github.io/objects/pack/pack-c9622577ddd25beb42138e639417757fe9a013b1.rev
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/08_phase3_fft_operations_20251118_214058.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/08_phase3_fft_operations_20251118_214142.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/08_phase3_fft_operations_20251129_084435.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/08_phase3_fft_operations_20251129_160414.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/08_phase3_fft_operations_20251129_214458.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/10_phase3_pitch_detection_20251118_214058.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/10_phase3_pitch_detection_20251118_214142.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/10_phase3_pitch_detection_20251129_084435.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/10_phase3_pitch_detection_20251129_160414.rds
+  pladdrr/inst/benchmarks/inst/benchmarks/results/baseline/10_phase3_pitch_detection_20251129_214458.rds
+  pladdrr/src/praat.github.io/docs/manual/Feedforward_neural_networks_1__What_is_a_feedforward_ne_1.png
+  pladdrr/src/praat.github.io/docs/manual/PowerCepstrogram__To_Table__cepstral_peak_prominences___1.png
+  pladdrr/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_1.png
+  pladdrr/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_2.png
+  pladdrr/src/praat.github.io/docs/manual/Source-filter_synthesis_1__Creating_a_source_from_pitch_3.png
+
+Tarballs are only required to store paths of up to 100 bytes and cannot
+store those of more than 256 bytes, with restrictions including to 100
+bytes for the final component.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘pladdrr’ can be installed ... [15s/26s] OK
+* used C compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+* used C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+* used SDK: ‘’
+* checking C++ specification ... OK
+  Not all R platforms support C++17
+* checking installed package size ... NOTE
+  installed size is 71.9Mb
+  sub-directories of 1Mb or more:
+    R             2.0Mb
+    benchmarks    1.4Mb
+    extdata      50.2Mb
+    libs         13.9Mb
+    signalfiles   3.2Mb
+* checking package directory ... OK
+* checking for future file timestamps ... NOTE
+unable to verify current time
+* checking DESCRIPTION meta-information ... NOTE
+Author field differs from that derived from Authors@R
+  Author:    ‘Fredrik Nylén <fredrik.nylen@umu.se>’
+  Authors@R: ‘Fredrik Nylén [aut, cre] (<https://orcid.org/0000-0003-3373-0934>)’
+
+Checking should be performed on sources prepared by ‘R CMD build’.
+* checking top-level files ... WARNING
+A complete check needs the 'checkbashisms' script.
+See section ‘Configure and cleanup’ in the ‘Writing R Extensions’
+manual.
+Non-standard files/directories found at top level:
+  ‘CLAUDE.md’ ‘DEBUG_SESSION7_SUMMARY.md’ ‘DOCUMENTATION_INDEX.md’
+  ‘NEXT_DEBUGGING_STEPS.md’ ‘PLADDRR_API_GAPS_ASSESSMENT.md’
+  ‘PLADDRR_TEXTGRID_ISSUE.md’ ‘PRAAT_FILE_OUTPUT_PLAN.md’
+  ‘PRAAT_GRAPHICS_INTEGRATION_PLAN.md’
+  ‘PRAAT_INTERPRETER_INTEGRATION_PLAN.md’ ‘QUICK_START_TEXTGRID.md’
+  ‘SESSION10_SPECTRAL_API_CONTINUATION.md’
+  ‘SESSION10_SPECTRAL_API_IMPLEMENTATION.md’ ‘SESSION7_QUICK_REF.md’
+  ‘SESSION9_FINAL_STATUS.md’ ‘SESSION9_FORMANT_FIX_COMPLETE.md’
+  ‘SESSION_SUMMARY_2025-12-17_PM.md’
+  ‘TEXTGRID_FILE_READ_CRASH_SESSION6_SUMMARY.md’
+  ‘TEXTGRID_FIX_CHECKLIST.md’ ‘TEXTGRID_FIX_COMPLETE.md’
+  ‘TEXTGRID_FIX_SESSION2_SUMMARY.md’ ‘TEXTGRID_FIX_SESSION3_SUMMARY.md’
+  ‘TEXTGRID_FIX_SUMMARY.md’ ‘build.log’ ‘build2.log’ ‘check.log’ ‘dev’
+  ‘docs’ ‘final_verification.R’ ‘pladdrr_1.2.7.tar.gz’
+  ‘pladdrr_1.2.8.tar.gz’ ‘pladdrr_1.3.0.tar.gz’ ‘pladdrr_logo.svg’
+  ‘specs’ ‘test_formant.R’ ‘verify_session9.R’
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... WARNING
+Found the following directory with the name of a check directory:
+  ./..Rcheck
+Most likely, these were included erroneously.
+Found the following directory with the name of a version control directory:
+  ./.git
+These should not be in a package tarball.
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking whether startup messages can be suppressed ... OK
+* checking use of S3 registration ... OK
+* checking dependencies in R code ... WARNING
+'::' or ':::' import not declared from: ‘progress’
+'loadNamespace' or 'requireNamespace' call not declared from: ‘progress’
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+.onLoad : <anonymous>: no visible binding for global variable ‘private’
+aggregate_measurements: no visible binding for global variable ‘sd’
+aggregate_measurements: no visible binding for global variable ‘median’
+aggregate_measurements: no visible global function definition for
+  ‘aggregate’
+generate_noise: no visible global function definition for ‘rnorm’
+get_formant_at_time: no visible global function definition for ‘approx’
+plot.Formant: no visible binding for global variable ‘.data’
+plot.Harmonicity: no visible binding for global variable ‘.data’
+plot.Intensity: no visible binding for global variable ‘.data’
+plot.Ltas: no visible binding for global variable ‘.data’
+plot.Matrix: no visible binding for global variable ‘.data’
+plot.Pitch: no visible binding for global variable ‘.data’
+plot.PointProcess: no visible binding for global variable ‘.data’
+plot.PowerCepstrum: no visible binding for global variable ‘.data’
+plot.Sound: no visible binding for global variable ‘.data’
+plot.Spectrogram: no visible binding for global variable ‘.data’
+plot.Spectrum: no visible binding for global variable ‘.data’
+plot_cpp_timeseries: no visible binding for global variable ‘time’
+plot_cpp_timeseries: no visible binding for global variable ‘cpp’
+plot_cpp_timeseries: no visible global function definition for ‘sd’
+plot_pitch_intensity: no visible binding for global variable ‘.data’
+plot_powercepstrogram: no visible binding for global variable ‘time’
+plot_powercepstrogram: no visible binding for global variable
+  ‘quefrency’
+plot_powercepstrogram: no visible binding for global variable
+  ‘power_db’
+plot_powercepstrum: no visible binding for global variable ‘quefrency’
+plot_powercepstrum: no visible binding for global variable ‘power_db’
+plot_powercepstrum: no visible global function definition for ‘lm’
+plot_powercepstrum: no visible global function definition for ‘predict’
+plot_powercepstrum: no visible binding for global variable ‘fitted’
+plot_spectrogram_formants: no visible binding for global variable
+  ‘.data’
+plot_spectrogram_pitch: no visible binding for global variable ‘.data’
+plot_textgrid_pitch: no visible binding for global variable ‘.data’
+plot_textgrid_sound: no visible binding for global variable ‘.data’
+print.praat_formant: no visible global function definition for ‘head’
+print.praat_intensity: no visible global function definition for ‘head’
+print.praat_pitch: no visible global function definition for ‘median’
+print.praat_pitch: no visible global function definition for ‘sd’
+sound_extract_parts: no visible global function definition for
+  ‘.sound_extract_parts’
+summary.praat_formant: no visible global function definition for ‘sd’
+summary.praat_intensity: no visible global function definition for ‘sd’
+summary.praat_pitch: no visible global function definition for ‘median’
+summary.praat_pitch: no visible global function definition for ‘sd’
+summary.praat_pitch: no visible global function definition for
+  ‘quantile’
+summary.praat_sound: no visible global function definition for ‘sd’
+textgrid_get_intervals_where: no visible global function definition for
+  ‘.textgrid_get_intervals_where’
+Undefined global functions or variables:
+  .data .sound_extract_parts .textgrid_get_intervals_where aggregate
+  approx cpp fitted head lm median power_db predict private quantile
+  quefrency rnorm sd time
+Consider adding
+  importFrom("stats", "aggregate", "approx", "fitted", "lm", "median",
+             "predict", "quantile", "rnorm", "sd", "time")
+  importFrom("utils", "head")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd line widths ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... WARNING
+Documented arguments not in \usage in Rd file 'batch_process.Rd':
+  ‘cores’
+
+Documented arguments not in \usage in Rd file 'extract_measurements.Rd':
+  ‘measures’ ‘interval_filter’ ‘aggregate_by’
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking LazyData ... NOTE
+  'LazyData' is specified without a 'data' directory
+* checking line endings in shell scripts ... OK
+* checking line endings in C/C++/Fortran sources/headers ... NOTE
+Found the following sources/headers with CR or CRLF line endings:
+  src/gsl-2.8/gsl/gsl_sf_hermite.h
+  src/gsl-2.8/specfunc/gsl_sf_hermite.h
+Some Unix compilers require LF line endings.
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... WARNING
+Non-portable flags in variable 'PKG_CXXFLAGS':
+  -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -Wno-logical-op-parentheses -Wno-shift-op-parentheses -Wno-mismatched-tags -Wno-unused-const-variable -Wno-c++11-narrowing -O2 -march=armv8-a+simd
+Package has both ‘src/Makevars.in’ and ‘src/Makevars’.
+Installation with --no-configure' is unlikely to work.  If you intended
+‘src/Makevars’ to be used on Windows, rename it to ‘src/Makevars.win’
+otherwise remove it.  If ‘configure’ created ‘src/Makevars’, you need a
+‘cleanup’ script.
+* checking for GNU extensions in Makefiles ... WARNING
+Found the following file(s) containing GNU extensions:
+  src/Makevars
+  src/Makevars.in
+Portable Makefiles do not use GNU extensions such as +=, :=, $(shell),
+$(wildcard), ifeq ... endif, .NOTPARALLEL See section ‘Writing portable
+packages’ in the ‘Writing R Extensions’ manual.
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... WARNING
+  apparently using $(BLAS_LIBS) without following $(FLIBS) in ‘src/Makevars’
+  apparently using $(BLAS_LIBS) without following $(FLIBS) in ‘src/Makevars.in’
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking use of SHLIB_OPENMP_*FLAGS in Makefiles ... OK
+* checking include directives in Makefiles ... OK
+* checking pragmas in C/C++ headers and code ...

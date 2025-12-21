@@ -87,3 +87,21 @@ src/praat/**/*.a
 # Package development
 revdep/
 cran-comments.md
+
+# Compiled objects in all subdirs
+src/**/*.o
+src/**/*.so
+src/**/*.a
+src/**/*.la
+src/**/*.dylib
+
+# Build directories  
+src/gsl-2.8/**/.deps
+src/gsl-2.8/**/.libs
+
+# Generated Makevars
+src/Makevars
+
+# Check directory
+..Rcheck/
+*.Rcheck/

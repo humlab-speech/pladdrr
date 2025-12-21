@@ -52,22 +52,27 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
                -Wno-unused-const-variable \
                -Wno-c++11-narrowing
 
-# Performance optimization flags (Phase 1 - Added 2025-12-13 for DSI performance)
-# TEMPORARY: LTO disabled for faster debugging builds
+# Performance optimization flags
 PKG_CXXFLAGS += -O2
 
 # Platform-specific SIMD flags
-ifeq ($(shell uname -m),x86_64)
+# Detect platform and set appropriate flags
+UNAME_M := $(shell uname -m 2>/dev/null || echo unknown)
+
+ifeq ($(UNAME_M),x86_64)
   PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
-else ifeq ($(shell uname -m),aarch64)
-  PKG_CXXFLAGS += -march=armv8-a+simd
-else ifeq ($(shell uname -m),arm64)
-  PKG_CXXFLAGS += -march=armv8-a+simd
+else
+  ifeq ($(UNAME_M),aarch64)
+    PKG_CXXFLAGS += -march=armv8-a+simd
+  else
+    ifeq ($(UNAME_M),arm64)
+      PKG_CXXFLAGS += -march=armv8-a+simd
+    endif
+  endif
 endif
 
 # Linker flags - link against GSL, R's LAPACK and BLAS
-# TEMPORARY: LTO disabled for faster debugging builds
-PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) -pthread
+PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES

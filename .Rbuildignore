@@ -85,3 +85,16 @@ results/
 ^speaker_1/src/praat\.github\.io/
 ^\.Rcheck$
 ^..Rcheck$
+^verify_.*\.R$
+^final_.*\.R$
+^.*\.log$
+^.*TEXTGRID.*\.md$
+^.*DEBUG.*\.md$
+^.*QUICK.*\.md$
+^.*DOCUMENTATION.*\.md$
+^.*PLADDRR.*\.md$
+^src/praat\.github\.io/test/
+^src/praat\.github\.io/\.git
+^src/clapack/\.git
+^src/pffft/\.git
+^src/gsl-2\.8/.*\.deps$
