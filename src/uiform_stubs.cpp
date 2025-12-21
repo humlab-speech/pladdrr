@@ -141,3 +141,280 @@ kUi_integerVectorFormat kUi_integerVectorFormat_getValue (conststring32) {
 }
 
 void Demo_show () {}
+
+struct structUiForm;
+struct structStackel;
+
+void UiForm_call (structUiForm *, integer, structStackel *, structInterpreter *) {
+    Melder_throw (U"UiForm_call not available in library mode.");
+}
+
+// UI Pause system (used by pause command in scripts)
+void UiPause_begin (GuiWindow, Editor, conststring32, Interpreter) {
+    Melder_throw (U"UiPause_begin (pause command) not available in library mode.");
+}
+
+int UiPause_end (int, int, int, conststring32, conststring32, conststring32, 
+                 conststring32, conststring32, conststring32, conststring32,
+                 conststring32, conststring32, conststring32, structInterpreter *) {
+    Melder_throw (U"UiPause_end (pause command) not available in library mode.");
+}
+
+// Auto-generated stub for missing symbol
+// GuiTrust_get(structGuiWindow*, structEditor*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, char32_t const*, structInterpreter*)  
+int GuiTrust_get (...) {
+    Melder_throw (U"GuiTrust_get not available in library mode.");
+}
+
+// GUI Trust dialog (used for security prompts)
+int GuiTrust_get (structGuiWindow *, structEditor *, conststring32, conststring32,
+                  conststring32, conststring32, conststring32, conststring32,
+                  conststring32, conststring32, conststring32, conststring32,
+                  structInterpreter *) {
+    Melder_throw (U"GuiTrust_get not available in library mode.");
+}
+
+// UiPause system - real number input
+double UiPause_real (conststring32, conststring32) {
+    Melder_throw (U"UiPause_real not available in library mode.");
+}
+
+// Additional UiPause functions
+conststring32 UiPause_text (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_text not available in library mode.");
+}
+
+integer UiPause_integer (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_integer not available in library mode.");
+}
+
+conststring32 UiPause_choice (conststring32, int) {
+    Melder_throw (U"UiPause_choice not available in library mode.");
+}
+
+int UiPause_boolean (conststring32, int) {
+    Melder_throw (U"UiPause_boolean not available in library mode.");
+}
+
+void UiPause_comment (conststring32) { /* No-op */ }
+
+
+conststring32 UiPause_word (conststring32, conststring32) {
+    Melder_throw (U"UiPause_word not available in library mode.");
+}
+
+
+// GuiThing functions (GUI object system)
+struct structGuiThing;
+void GuiThing_show (structGuiThing *) { /* No-op */ }
+void GuiThing_hide (structGuiThing *) { /* No-op */ }
+void GuiThing_setSensitive (structGuiThing *, int) { /* No-op */ }
+
+
+// UiFile functions (file selection dialogs)
+conststring32 UiFile_getFile (structUiForm *, conststring32) {
+    Melder_throw (U"UiFile_getFile not available.");
+}
+
+// Editor-related Gui functions
+struct structDataEditor;
+void DataEditor_create (conststring32, void *) {
+    Melder_throw (U"DataEditor_create not available.");
+}
+
+conststring32 UiPause_folder (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_folder not available in library mode.");
+}
+
+conststring32 UiPause_infile (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_infile not available in library mode.");
+}
+
+conststring32 UiPause_outfile (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_outfile not available in library mode.");
+}
+
+conststring32 UiPause_word (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_word not available in library mode.");
+}
+
+conststring32 UiPause_sentence (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_sentence not available in library mode.");
+}
+
+void UiPause_optionmenu (conststring32, int) {
+    /* No-op */
+}
+
+void UiPause_radio (conststring32, int) {
+    /* No-op */
+}
+
+void UiPause_list (conststring32, long) {
+    /* No-op */
+}
+
+void UiPause_label (conststring32) {
+    /* No-op */
+}
+
+void UiPause_option (conststring32) {
+    /* No-op */
+}
+
+// Additional overloads for UiPause functions
+bool UiPause_boolean (conststring32, bool) {
+    Melder_throw (U"UiPause_boolean not available in library mode.");
+}
+
+long UiPause_natural (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_natural not available in library mode.");
+}
+
+double UiPause_positive (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_positive not available in library mode.");
+}
+
+conststring32 UiPause_heading (conststring32) {
+    return U"";  // Return empty string
+}
+
+conststring32 UiPause_caption (conststring32) {
+    return U"";
+}
+
+void UiPause_choice (conststring32) {
+    /* No-op */
+}
+
+double UiPause_real_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_real_check not available in library mode.");
+}
+
+integer UiPause_natural_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_natural_check not available in library mode.");
+}
+
+integer UiPause_integer_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_integer_check not available in library mode.");
+}
+
+double UiPause_positive_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_positive_check not available in library mode.");
+}
+
+conststring32 UiPause_word_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_word_check not available in library mode.");
+}
+
+conststring32 UiPause_sentence_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_sentence_check not available in library mode.");
+}
+
+conststring32 UiPause_text_check (conststring32, conststring32, long) {
+    Melder_throw (U"UiPause_text_check not available in library mode.");
+}
+
+// Simpler UiPause overloads (without long parameter)
+
+// 2-parameter UiPause overloads (no long parameter)
+integer UiPause_integer (conststring32, conststring32) {
+    Melder_throw (U"UiPause_integer not available in library mode.");
+}
+
+long UiPause_natural (conststring32, conststring32) {
+    Melder_throw (U"UiPause_natural not available in library mode.");
+}
+
+double UiPause_positive (conststring32, conststring32) {
+    Melder_throw (U"UiPause_positive not available in library mode.");
+}
+
+conststring32 UiPause_sentence (conststring32, conststring32) {
+    Melder_throw (U"UiPause_sentence not available in library mode.");
+}
+
+
+// GuiWindow creation - use concrete callback type
+GuiWindow GuiWindow_create (int, int, int, int, int, int, conststring32, 
+                            MelderCallback<void, structThing>, structThing *, unsigned int) {
+    return nullptr;  // GUI windows not supported
+}
+
+// UiForm parsing/execution
+void UiForm_parseString (UiForm, conststring32, Interpreter) {
+    Melder_throw (U"UiForm_parseString not available in library mode.");
+}
+
+void UiForm_showAndWait (UiForm) {
+    Melder_throw (U"UiForm_showAndWait not available in library mode.");
+}
+
+// GuiList functions
+struct structGuiList;
+struct structGuiList_SelectionChangedEvent;
+
+void GuiList_setSelectionChangedCallback (structGuiList *, 
+    MelderCallback<void, structThing, structGuiList_SelectionChangedEvent *>, 
+    structThing *) 
+{
+    /* No-op - GUI callbacks not available */
+}
+
+void Ui_prefs () {
+    /* No-op - UI preferences not needed in library mode */
+}
+
+// Editor preferences stub - forward declare class, implement static method
+struct structEditor {
+    static void f_preferences();
+};
+
+void structEditor::f_preferences() {
+    /* No-op - Editor preferences not needed in library mode */
+}
+
+// DataGui preferences stub
+struct structDataGui {
+    static void f_preferences();
+};
+
+void structDataGui::f_preferences() {
+    /* No-op - DataGui preferences not needed in library mode */
+}
+
+// HyperPage preferences stub
+struct structHyperPage {
+    static void f_preferences();
+};
+
+void structHyperPage::f_preferences() {
+    /* No-op - HyperPage preferences not needed in library mode */
+}
+
+// Manual preferences stub (likely needed too)
+struct structManual {
+    static void f_preferences();
+};
+
+void structManual::f_preferences() {
+    /* No-op - Manual preferences not needed in library mode */
+}
+
+// TextEditor preferences stub
+struct structTextEditor {
+    static void f_preferences();
+};
+
+void structTextEditor::f_preferences() {
+    /* No-op - TextEditor preferences not needed in library mode */
+}
+
+// ScriptEditor preferences stub (probably needed)
+struct structScriptEditor {
+    static void f_preferences();
+};
+
+void structScriptEditor::f_preferences() {
+    /* No-op - ScriptEditor preferences not needed in library mode */
+}

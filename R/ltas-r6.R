@@ -167,6 +167,27 @@ Ltas <- R6::R6Class(
     },
     
     #' @description
+    #' Get frequency of maximum power in frequency range
+    #' Corresponds to Praat: Get frequency of maximum: fmin, fmax, interpolation
+    #' @param fmin Minimum frequency (Hz, 0 = start)
+    #' @param fmax Maximum frequency (Hz, 0 = end)
+    #' @param interpolation Interpolation method: "none", "parabolic", "cubic", "sinc70", "sinc700"
+    #' @return Frequency of maximum power (Hz)
+    get_frequency_of_maximum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
+      interp_code <- switch(tolower(interpolation),
+        "none" = 0L,
+        "nearest" = 0L,
+        "linear" = 1L,
+        "parabolic" = 2L,
+        "cubic" = 3L,
+        "sinc70" = 4L,
+        "sinc700" = 5L,
+        stop("Unknown interpolation: ", interpolation)
+      )
+      .ltas_get_frequency_of_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), interp_code)
+    },
+    
+    #' @description
     #' Get mean power in frequency range
     #' Corresponds to Praat: Get mean: fmin, fmax, unit
     #' @param fmin Minimum frequency (Hz, 0 = start)

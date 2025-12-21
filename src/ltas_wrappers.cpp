@@ -134,6 +134,47 @@ double ltas_get_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, i
   return max_value;
 }
 
+// [[Rcpp::export(.ltas_get_frequency_of_maximum)]]
+double ltas_get_frequency_of_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int interpolation) {
+  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+  
+  if (fmin == 0.0) fmin = ltas->xmin;
+  if (fmax == 0.0) fmax = ltas->xmax;
+  
+  // Find bin with maximum value
+  double max_value = -1e308;
+  integer max_bin = 0;
+  integer imin = Sampled_xToNearestIndex(ltas.get(), fmin);
+  integer imax = Sampled_xToNearestIndex(ltas.get(), fmax);
+  
+  for (integer i = imin; i <= imax; i++) {
+    if (ltas->z[1][i] > max_value) {
+      max_value = ltas->z[1][i];
+      max_bin = i;
+    }
+  }
+  
+  if (max_bin == 0) return NA_REAL;
+  
+  double frequency = Sampled_indexToX(ltas.get(), max_bin);
+  
+  // Apply parabolic interpolation if requested (interpolation == 2)
+  if (interpolation == 2 && max_bin > 1 && max_bin < ltas->nx) {
+    double y1 = ltas->z[1][max_bin - 1];
+    double y2 = ltas->z[1][max_bin];
+    double y3 = ltas->z[1][max_bin + 1];
+    
+    // Parabolic peak refinement: offset = (y1-y3)/(2*(2*y2-y1-y3))
+    double denominator = 2.0 * (2.0 * y2 - y1 - y3);
+    if (fabs(denominator) > 1e-10) {
+      double offset = (y1 - y3) / denominator;
+      frequency += offset * ltas->dx;  // Adjust by bin width
+    }
+  }
+  
+  return frequency;
+}
+
 // [[Rcpp::export(.ltas_get_mean)]]
 double ltas_get_mean(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int unit) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");

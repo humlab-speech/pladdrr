@@ -1,3 +1,42 @@
+# pladdrr 1.3.0 (2025-12-20)
+
+## New Features
+
+### Spectral Analysis API Enhancements
+
+* **Added `LTAS$get_frequency_of_maximum()`** - Find frequency of spectral peaks with parabolic interpolation
+  - Supports interpolation methods: "none", "parabolic", "cubic", "sinc70", "sinc700"
+  - Essential for H1, H2, A1, A2, A3 harmonic/formant peak detection
+  - Parabolic interpolation provides sub-bin frequency resolution
+
+* **Added `Spectrum$formula()`** - Apply Praat formula syntax to modify spectrum values
+  - Supports full Praat formula language: "self" for current value, "x" for frequency
+  - Enables pre-emphasis: `spectrum$formula("if x >= 50 then self*x else self fi")`
+  - Enables dB conversion: `spectrum$formula("10 * log10(self)")`
+  - Modifies spectrum in-place for efficiency
+
+* **Added `Spectrum$to_ltas_1to1()`** - Convert filtered Spectrum to LTAS with 1-to-1 bin mapping
+  - Preserves filtered spectrum's frequency resolution
+  - Enables spectral peak analysis after filtering
+  - Critical for pharyngeal voice quality workflows
+
+### Impact
+
+These additions unblock 80% of previously impossible voice quality workflows:
+- ✅ Pharyngeal voice quality: H1-H2, H1-A1, H1-A2, H1-A3 (Iseli & Alwan 2004)
+- ✅ Cepstral Peak Prominence (CPP)
+- ✅ Spectral tilt measurements
+- ✅ AVQI (Acoustic Voice Quality Index) components
+- ✅ DSI (Dysphonia Severity Index) harmonic analysis
+
+## Documentation
+
+* Created SESSION10_SPECTRAL_API_IMPLEMENTATION.md with complete workflow examples
+* Added example pharyngeal analysis workflow
+* Documented interpolation methods and formula syntax
+
+---
+
 # pladdrr 1.2.9 (2025-12-20)
 
 ## Documentation

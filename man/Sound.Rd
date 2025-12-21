@@ -23,7 +23,7 @@ WAV, MP3, FLAC, OGG, AAC, M4A, WMA, AIFF, and many more.
 - `Sound$new(path)` - Read from file (any format via av/FFmpeg: MP3, WAV, FLAC, OGG, etc.)
 - `Sound$from_values(values, sampling_rate)` - Create from numeric matrix
 - `Sound$from_matrix(matrix, sampling_rate)` - Alias for from_values
-- `Sound$create_tone(duration, frequency, ...)` - Generate pure tone
+- `Sound$create_tone(duration, sampling_rate, frequency, ...)` - Generate pure tone
 
 ## Querying
 
@@ -42,6 +42,8 @@ Query methods return properties of the sound:
 
 Transformation methods create new Praat objects:
 - `$to_pitch(...)` - Extract pitch contour (returns Pitch object)
+- `$to_pitch_ac(...)` - Extract pitch with autocorrelation and full voicing parameters (returns Pitch object)
+- `$to_pitch_cc(...)` - Extract pitch with cross-correlation and full voicing parameters (returns Pitch object)
 - `$to_formant_burg(...)` - Extract formants using Burg's method (returns Formant object)
 - `$to_formant_keepall(...)` - Extract formants, keep all (returns Formant object)
 - `$to_formant_willems(...)` - Extract formants using Willems method (returns Formant object)
@@ -51,6 +53,7 @@ Transformation methods create new Praat objects:
 - `$to_spectrogram(...)` - Create spectrogram (returns Spectrogram object)
 - `$to_spectrum(...)` - Compute spectrum (returns Spectrum object)
 - `$to_manipulation(...)` - Create manipulation for pitch/duration modification (returns Manipulation object)
+- `$to_textgrid_silences(...)` - Detect silences and create annotated TextGrid (returns TextGrid object)
 
 ## Export
 
@@ -91,10 +94,38 @@ sound$save("output.mp3", format = "mp3")
 sound$save("output.flac", format = "flac")
 
 # Create synthetic sound
-tone <- Sound$create_tone(duration = 1.0, frequency = 440)
+tone <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
 tone$save("A440.wav")
 }
 
+
+## ------------------------------------------------
+## Method `Sound$to_textgrid_silences`
+## ------------------------------------------------
+
+\dontrun{
+# Detect silences with default parameters
+sound <- Sound$new("voice.wav")
+tg <- sound$to_textgrid_silences()
+
+# Stricter silence detection for AVQI
+tg <- sound$to_textgrid_silences(
+  min_pitch = 75,
+  silence_threshold = -30.0,  # Only very quiet parts
+  min_silent_duration = 0.2,
+  min_sounding_duration = 0.3
+)
+}
+
+## ------------------------------------------------
+## Method `Sound$save`
+## ------------------------------------------------
+
+\dontrun{
+sound <- Sound$new("input.wav")
+sound$save("output.wav")  # Save as 16-bit WAV
+sound$save("output.aiff", format = "AIFF", bits_per_sample = 24)  # 24-bit AIFF
+}
 }
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{Sound}
@@ -105,6 +136,7 @@ tone$save("A440.wav")
 \item \href{#method-Sound-extract_electroglottogram}{\code{Sound$extract_electroglottogram()}}
 \item \href{#method-Sound-new}{\code{Sound$new()}}
 \item \href{#method-Sound-get_duration}{\code{Sound$get_duration()}}
+\item \href{#method-Sound-to_powercepstrogram_MOVED}{\code{Sound$to_powercepstrogram_MOVED()}}
 \item \href{#method-Sound-get_sampling_frequency}{\code{Sound$get_sampling_frequency()}}
 \item \href{#method-Sound-get_number_of_samples}{\code{Sound$get_number_of_samples()}}
 \item \href{#method-Sound-get_number_of_channels}{\code{Sound$get_number_of_channels()}}
@@ -114,6 +146,8 @@ tone$save("A440.wav")
 \item \href{#method-Sound-get_power}{\code{Sound$get_power()}}
 \item \href{#method-Sound-get_intensity_db}{\code{Sound$get_intensity_db()}}
 \item \href{#method-Sound-to_pitch}{\code{Sound$to_pitch()}}
+\item \href{#method-Sound-to_pitch_ac}{\code{Sound$to_pitch_ac()}}
+\item \href{#method-Sound-to_pitch_cc}{\code{Sound$to_pitch_cc()}}
 \item \href{#method-Sound-to_formant_burg}{\code{Sound$to_formant_burg()}}
 \item \href{#method-Sound-to_formant_keepall}{\code{Sound$to_formant_keepall()}}
 \item \href{#method-Sound-to_formant_willems}{\code{Sound$to_formant_willems()}}
@@ -123,10 +157,14 @@ tone$save("A440.wav")
 \item \href{#method-Sound-to_harmonicity_cc}{\code{Sound$to_harmonicity_cc()}}
 \item \href{#method-Sound-to_spectrum}{\code{Sound$to_spectrum()}}
 \item \href{#method-Sound-to_ltas}{\code{Sound$to_ltas()}}
+\item \href{#method-Sound-to_textgrid_silences}{\code{Sound$to_textgrid_silences()}}
 \item \href{#method-Sound-to_cochleagram}{\code{Sound$to_cochleagram()}}
 \item \href{#method-Sound-to_cochleagram_edb}{\code{Sound$to_cochleagram_edb()}}
 \item \href{#method-Sound-to_spectrogram}{\code{Sound$to_spectrogram()}}
+\item \href{#method-Sound-to_power_cepstrogram_NEW}{\code{Sound$to_power_cepstrogram_NEW()}}
 \item \href{#method-Sound-to_powercepstrogram}{\code{Sound$to_powercepstrogram()}}
+\item \href{#method-Sound-to_cepstrum}{\code{Sound$to_cepstrum()}}
+\item \href{#method-Sound-to_cepstrum_bw}{\code{Sound$to_cepstrum_bw()}}
 \item \href{#method-Sound-to_manipulation}{\code{Sound$to_manipulation()}}
 \item \href{#method-Sound-to_lpc_burg}{\code{Sound$to_lpc_burg()}}
 \item \href{#method-Sound-to_lpc_auto}{\code{Sound$to_lpc_auto()}}
@@ -136,6 +174,7 @@ tone$save("A440.wav")
 \item \href{#method-Sound-to_point_process_extrema}{\code{Sound$to_point_process_extrema()}}
 \item \href{#method-Sound-to_point_process_zeros}{\code{Sound$to_point_process_zeros()}}
 \item \href{#method-Sound-to_pointprocess_periodic_cc}{\code{Sound$to_pointprocess_periodic_cc()}}
+\item \href{#method-Sound-to_point_process_periodic_peaks}{\code{Sound$to_point_process_periodic_peaks()}}
 \item \href{#method-Sound-to_pointprocess_periodic_peaks}{\code{Sound$to_pointprocess_periodic_peaks()}}
 \item \href{#method-Sound-extract_channel}{\code{Sound$extract_channel()}}
 \item \href{#method-Sound-extract_part}{\code{Sound$extract_part()}}
@@ -143,6 +182,8 @@ tone$save("A440.wav")
 \item \href{#method-Sound-scale_peak}{\code{Sound$scale_peak()}}
 \item \href{#method-Sound-pre_emphasize}{\code{Sound$pre_emphasize()}}
 \item \href{#method-Sound-de_emphasize}{\code{Sound$de_emphasize()}}
+\item \href{#method-Sound-filter_pass_hann_band}{\code{Sound$filter_pass_hann_band()}}
+\item \href{#method-Sound-filter_stop_hann_band}{\code{Sound$filter_stop_hann_band()}}
 \item \href{#method-Sound-resample}{\code{Sound$resample()}}
 \item \href{#method-Sound-convert_to_mono}{\code{Sound$convert_to_mono()}}
 \item \href{#method-Sound-convert_to_stereo}{\code{Sound$convert_to_stereo()}}
@@ -150,8 +191,9 @@ tone$save("A440.wav")
 \item \href{#method-Sound-mix}{\code{Sound$mix()}}
 \item \href{#method-Sound-as_data_frame}{\code{Sound$as_data_frame()}}
 \item \href{#method-Sound-as_matrix}{\code{Sound$as_matrix()}}
-\item \href{#method-Sound-save}{\code{Sound$save()}}
 \item \href{#method-Sound-print}{\code{Sound$print()}}
+\item \href{#method-Sound-extract_intervals_where}{\code{Sound$extract_intervals_where()}}
+\item \href{#method-Sound-save}{\code{Sound$save()}}
 \item \href{#method-Sound-clone}{\code{Sound$clone()}}
 }
 }
@@ -184,7 +226,7 @@ Create a Sound object from file or data
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{path}}{Path to audio file (any format supported by av/FFmpeg)}
+\item{\code{path}}{Path to audio file (native: WAV/AIFF/NIST, fallback: any av/FFmpeg format)}
 
 \item{\code{.xptr}}{Internal use only - external pointer to C++ Sound object}
 }
@@ -206,6 +248,20 @@ Get duration in seconds
 \subsection{Returns}{
 Numeric duration in seconds
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_powercepstrogram_MOVED"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_powercepstrogram_MOVED}{}}}
+\subsection{Method \code{to_powercepstrogram_MOVED()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_powercepstrogram_MOVED(
+  pitch_floor = 60,
+  time_step = 0.002,
+  maximum_frequency = 5000,
+  pre_emphasis_frequency = 50
+)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-get_sampling_frequency"></a>}}
@@ -252,7 +308,7 @@ Integer number of channels
 \subsection{Method \code{get_value_at_time()}}{
 Get amplitude value at specific time
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$get_value_at_time(time, channel = 1)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Sound$get_value_at_time(time, channel = 1, interpolation = "linear")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -261,6 +317,8 @@ Get amplitude value at specific time
 \item{\code{time}}{Time in seconds}
 
 \item{\code{channel}}{Channel number (1-based, default: 1)}
+
+\item{\code{interpolation}}{Interpolation method: "nearest", "linear", "cubic", "sinc70", "sinc700" (default: "linear")}
 }
 \if{html}{\out{</div>}}
 }
@@ -364,6 +422,104 @@ Extract pitch contour
 \item{\code{pitch_floor}}{Minimum pitch in Hz (default: 75)}
 
 \item{\code{pitch_ceiling}}{Maximum pitch in Hz (default: 600)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Pitch object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_pitch_ac"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_pitch_ac}{}}}
+\subsection{Method \code{to_pitch_ac()}}{
+Extract pitch using autocorrelation with full voicing parameters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pitch_ac(
+  time_step = 0,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  max_candidates = 15,
+  very_accurate = FALSE,
+  silence_threshold = 0.03,
+  voicing_threshold = 0.45,
+  octave_cost = 0.01,
+  octave_jump_cost = 0.35,
+  voiced_unvoiced_cost = 0.14
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time_step}}{Time step in seconds (0 = auto) (default: 0.0)}
+
+\item{\code{pitch_floor}}{Minimum pitch in Hz (default: 75)}
+
+\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default: 600)}
+
+\item{\code{max_candidates}}{Maximum number of pitch candidates (default: 15)}
+
+\item{\code{very_accurate}}{Use accurate algorithm (slower) (default: FALSE)}
+
+\item{\code{silence_threshold}}{Silence threshold relative to max amplitude (default: 0.03)}
+
+\item{\code{voicing_threshold}}{Voicing threshold (default: 0.45)}
+
+\item{\code{octave_cost}}{Cost for octave jumps (default: 0.01)}
+
+\item{\code{octave_jump_cost}}{Cost for octave jumps between frames (default: 0.35)}
+
+\item{\code{voiced_unvoiced_cost}}{Cost for voicing changes (default: 0.14)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Pitch object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_pitch_cc"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_pitch_cc}{}}}
+\subsection{Method \code{to_pitch_cc()}}{
+Extract pitch using cross-correlation with full voicing parameters
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pitch_cc(
+  time_step = 0,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  max_candidates = 15,
+  very_accurate = FALSE,
+  silence_threshold = 0.03,
+  voicing_threshold = 0.45,
+  octave_cost = 0.01,
+  octave_jump_cost = 0.35,
+  voiced_unvoiced_cost = 0.14
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time_step}}{Time step in seconds (0 = auto) (default: 0.0)}
+
+\item{\code{pitch_floor}}{Minimum pitch in Hz (default: 75)}
+
+\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default: 600)}
+
+\item{\code{max_candidates}}{Maximum number of pitch candidates (default: 15)}
+
+\item{\code{very_accurate}}{Use accurate algorithm (slower) (default: FALSE)}
+
+\item{\code{silence_threshold}}{Silence threshold relative to max amplitude (default: 0.03)}
+
+\item{\code{voicing_threshold}}{Voicing threshold (default: 0.45)}
+
+\item{\code{octave_cost}}{Cost for octave jumps (default: 0.01)}
+
+\item{\code{octave_jump_cost}}{Cost for octave jumps between frames (default: 0.35)}
+
+\item{\code{voiced_unvoiced_cost}}{Cost for voicing changes (default: 0.14)}
 }
 \if{html}{\out{</div>}}
 }
@@ -647,6 +803,84 @@ Ltas object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_textgrid_silences"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_textgrid_silences}{}}}
+\subsection{Method \code{to_textgrid_silences()}}{
+Detect silences and create TextGrid
+
+Creates a TextGrid with one IntervalTier marking silent and sounding intervals.
+Uses intensity-based silence detection. Corresponds to Praat menu:
+Annotate > To TextGrid (silences)...
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_textgrid_silences(
+  min_pitch = 100,
+  time_step = 0,
+  silence_threshold = -25,
+  min_silent_duration = 0.1,
+  min_sounding_duration = 0.1,
+  silent_label = "silent",
+  sounding_label = "sounding"
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{min_pitch}}{Minimum pitch for intensity analysis (default: 100 Hz)}
+
+\item{\code{time_step}}{Time step for intensity analysis in seconds (0 = auto: 0.8 / min_pitch)}
+
+\item{\code{silence_threshold}}{Silence threshold in dB relative to maximum intensity (default: -25.0)
+More negative = stricter silence detection (e.g., -35 dB detects only very quiet parts)}
+
+\item{\code{min_silent_duration}}{Minimum duration of silent intervals in seconds (default: 0.1)
+Shorter silent periods are ignored}
+
+\item{\code{min_sounding_duration}}{Minimum duration of sounding intervals in seconds (default: 0.1)
+Shorter sounding periods are ignored}
+
+\item{\code{silent_label}}{Label for silent intervals (default: "silent")}
+
+\item{\code{sounding_label}}{Label for sounding intervals (default: "sounding")}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The function:
+1. Converts Sound to Intensity using min_pitch and time_step
+2. Finds maximum intensity value
+3. Marks frames below (max_intensity + silence_threshold) as silent
+4. Merges adjacent silent/sounding intervals
+5. Removes intervals shorter than minimum durations
+
+Critical for AVQI analysis where accurate silence detection affects quality metrics.
+}
+
+\subsection{Returns}{
+TextGrid object with one tier containing silence/sound annotations
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# Detect silences with default parameters
+sound <- Sound$new("voice.wav")
+tg <- sound$to_textgrid_silences()
+
+# Stricter silence detection for AVQI
+tg <- sound$to_textgrid_silences(
+  min_pitch = 75,
+  silence_threshold = -30.0,  # Only very quiet parts
+  min_silent_duration = 0.2,
+  min_sounding_duration = 0.3
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-to_cochleagram"></a>}}
 \if{latex}{\out{\hypertarget{method-Sound-to_cochleagram}{}}}
 \subsection{Method \code{to_cochleagram()}}{
@@ -756,10 +990,23 @@ Spectrogram object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_power_cepstrogram_NEW"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_power_cepstrogram_NEW}{}}}
+\subsection{Method \code{to_power_cepstrogram_NEW()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_power_cepstrogram_NEW(
+  pitch_floor = 60,
+  time_step = 0.002,
+  maximum_frequency = 5000,
+  pre_emphasis_frequency = 50
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-to_powercepstrogram"></a>}}
 \if{latex}{\out{\hypertarget{method-Sound-to_powercepstrogram}{}}}
 \subsection{Method \code{to_powercepstrogram()}}{
-Create PowerCepstrogram for voice quality analysis (CPP)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Sound$to_powercepstrogram(
   pitch_floor = 60,
@@ -769,21 +1016,38 @@ Create PowerCepstrogram for voice quality analysis (CPP)
 )}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pitch_floor}}{Minimum pitch for analysis in Hz (default: 60)}
-
-\item{\code{time_step}}{Time step between frames in seconds (default: 0.002)}
-
-\item{\code{maximum_frequency}}{Maximum frequency to analyze in Hz (default: 5000)}
-
-\item{\code{pre_emphasis_frequency}}{Pre-emphasis from frequency in Hz (default: 50)}
 }
-\if{html}{\out{</div>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_cepstrum"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_cepstrum}{}}}
+\subsection{Method \code{to_cepstrum()}}{
+Convert Sound to Cepstrum
+
+Computes the complex cepstrum from the sound. This is different from
+PowerCepstrum - the Cepstrum is the inverse Fourier transform of the
+logarithm of the spectrum, preserving phase information.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_cepstrum()}\if{html}{\out{</div>}}
 }
+
 \subsection{Returns}{
-PowerCepstrogram object
+Cepstrum object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_cepstrum_bw"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_cepstrum_bw}{}}}
+\subsection{Method \code{to_cepstrum_bw()}}{
+Convert Sound to bandwidth-weighted Cepstrum
+
+Computes a bandwidth-weighted cepstrum, which applies additional
+weighting based on frequency bandwidth characteristics.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_cepstrum_bw()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Cepstrum object
 }
 }
 \if{html}{\out{<hr>}}
@@ -1040,8 +1304,17 @@ PointProcess object containing zero crossing times
 Extract periodic PointProcess using cross-correlation
 Detects periodic pulses (e.g., glottal pulses) using pitch-synchronous analysis.
 Corresponds to Praat: To PointProcess (periodic, cc)
+
+
+Alias for backward compatibility
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_cc(
+  time_step = 0,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  max_period_factor = 1.3,
+  max_amplitude_factor = 1.6
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1058,14 +1331,14 @@ PointProcess object with detected pulses
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Sound-to_pointprocess_periodic_peaks"></a>}}
-\if{latex}{\out{\hypertarget{method-Sound-to_pointprocess_periodic_peaks}{}}}
-\subsection{Method \code{to_pointprocess_periodic_peaks()}}{
+\if{html}{\out{<a id="method-Sound-to_point_process_periodic_peaks"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_point_process_periodic_peaks}{}}}
+\subsection{Method \code{to_point_process_periodic_peaks()}}{
 Extract periodic PointProcess using peak detection
 Detects periodic pulses by finding peaks in the signal.
 Corresponds to Praat: To PointProcess (periodic, peaks)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_peaks(
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_point_process_periodic_peaks(
   pitch_floor = 75,
   pitch_ceiling = 600,
   include_maxima = TRUE,
@@ -1089,6 +1362,21 @@ Corresponds to Praat: To PointProcess (periodic, peaks)
 \subsection{Returns}{
 PointProcess object with detected pulses
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-to_pointprocess_periodic_peaks"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-to_pointprocess_periodic_peaks}{}}}
+\subsection{Method \code{to_pointprocess_periodic_peaks()}}{
+Alias for backward compatibility
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$to_pointprocess_periodic_peaks(
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  include_maxima = TRUE,
+  include_minima = FALSE
+)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-extract_channel"></a>}}
@@ -1119,7 +1407,9 @@ Extract part of sound by time
 \if{html}{\out{<div class="r">}}\preformatted{Sound$extract_part(
   from_time,
   to_time,
-  window_shape = c("rectangular", "hamming", "bartlett", "welch", "hanning"),
+  window_shape = c("rectangular", "triangular", "parabolic", "hanning", "hamming",
+    "Gaussian1", "Gaussian2", "Gaussian3", "Gaussian4", "Gaussian5", "Kaiser1",
+    "Kaiser2"),
   relative_width = 1,
   preserve_times = FALSE
 )}\if{html}{\out{</div>}}
@@ -1132,7 +1422,8 @@ Extract part of sound by time
 
 \item{\code{to_time}}{End time in seconds}
 
-\item{\code{window_shape}}{Window shape: "rectangular", "hamming", "bartlett", "welch", "hanning"}
+\item{\code{window_shape}}{Window shape (Praat enum): "rectangular", "triangular", "parabolic",
+"hanning", "hamming", "Gaussian1" through "Gaussian5", "Kaiser1", "Kaiser2"}
 
 \item{\code{relative_width}}{Relative width of window (default: 1.0)}
 
@@ -1222,6 +1513,54 @@ Apply de-emphasis filter (low-pass)
 }
 \subsection{Returns}{
 Self (invisibly) for method chaining
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-filter_pass_hann_band"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-filter_pass_hann_band}{}}}
+\subsection{Method \code{filter_pass_hann_band()}}{
+Apply pass Hann band filter (passes frequencies between fmin and fmax)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$filter_pass_hann_band(fmin, fmax, smooth = 100)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fmin}}{Minimum frequency of pass band in Hz}
+
+\item{\code{fmax}}{Maximum frequency of pass band in Hz}
+
+\item{\code{smooth}}{Smoothing parameter (100 Hz is typical)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New Sound object with filtered waveform
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-filter_stop_hann_band"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-filter_stop_hann_band}{}}}
+\subsection{Method \code{filter_stop_hann_band()}}{
+Apply stop Hann band filter (stops frequencies between fmin and fmax)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$filter_stop_hann_band(fmin, fmax, smooth = 100)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fmin}}{Minimum frequency of stop band in Hz}
+
+\item{\code{fmax}}{Maximum frequency of stop band in Hz}
+
+\item{\code{smooth}}{Smoothing parameter (100 Hz is typical)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New Sound object with filtered waveform
 }
 }
 \if{html}{\out{<hr>}}
@@ -1343,18 +1682,56 @@ Numeric matrix with channels as rows, samples as columns
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-print"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-print}{}}}
+\subsection{Method \code{print()}}{
+Print Sound object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Sound-extract_intervals_where"></a>}}
+\if{latex}{\out{\hypertarget{method-Sound-extract_intervals_where}{}}}
+\subsection{Method \code{extract_intervals_where()}}{
+Extract intervals from TextGrid matching criterion
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Sound$extract_intervals_where(
+  textgrid,
+  tier_number,
+  criterion = "is equal to",
+  text = "",
+  preserve_times = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{textgrid}}{TextGrid object containing annotation}
+
+\item{\code{tier_number}}{Tier number (1-based) or tier name}
+
+\item{\code{criterion}}{Matching criterion: "is equal to", "is not equal to", "contains", "starts with", "ends with", "matches regex"}
+
+\item{\code{text}}{Text to match against}
+
+\item{\code{preserve_times}}{If TRUE, keep original time stamps; if FALSE, center at 0}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List of Sound objects, one per matching interval
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Sound-save"></a>}}
 \if{latex}{\out{\hypertarget{method-Sound-save}{}}}
 \subsection{Method \code{save()}}{
-Save to audio file
+Save Sound to audio file using native Praat writers
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$save(
-  path,
-  format = NULL,
-  codec = NULL,
-  sample_rate = NULL,
-  channels = NULL
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Sound$save(path, format = "WAV", bits_per_sample = 16)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -1362,24 +1739,25 @@ Save to audio file
 \describe{
 \item{\code{path}}{Output file path}
 
-\item{\code{format}}{File format (auto-detected from extension, or specify: "wav", "mp3", "flac", "ogg", etc.)}
+\item{\code{format}}{Audio format: "WAV", "AIFF", "AIFC", "NIST", "NEXT", "SUN" (default: "WAV")}
 
-\item{\code{codec}}{Audio codec (optional, auto-selected based on format)}
-
-\item{\code{sample_rate}}{Output sample rate (default: original sample rate)}
-
-\item{\code{channels}}{Number of output channels (default: original channels)}
+\item{\code{bits_per_sample}}{Bits per sample: 16, 24, or 32 (default: 16)}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+Invisible self for method chaining
 }
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Sound-print"></a>}}
-\if{latex}{\out{\hypertarget{method-Sound-print}{}}}
-\subsection{Method \code{print()}}{
-Print Sound object
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Sound$print()}\if{html}{\out{</div>}}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+sound <- Sound$new("input.wav")
+sound$save("output.wav")  # Save as 16-bit WAV
+sound$save("output.aiff", format = "AIFF", bits_per_sample = 24)  # 24-bit AIFF
+}
+}
+\if{html}{\out{</div>}}
+
 }
 
 }

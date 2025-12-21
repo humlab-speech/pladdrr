@@ -9,7 +9,38 @@ It provides methods for querying pitch values, statistics, and transformations.
 }
 \details{
 An R6 class representing a Praat Pitch object (fundamental frequency contour).
+
+
+Pitch strength measures the periodicity of the signal at the given time.
+Values range from 0 (completely aperiodic) to 1 (perfectly periodic).
+This is useful for voice quality assessment and periodicity analysis.
+
+
+Computes the average pitch strength (periodicity) across the specified time range.
+Higher values indicate more consistent voicing.
+
+
+Returns the intensity value stored in the pitch frame at the given time.
+This is the raw acoustic intensity (amplitude) of the pitch candidate,
+distinct from pitch strength (periodicity). Used for FCoM and ACoM metrics.
+
+
+Computes the average frame intensity across the specified time range.
+This is the acoustic intensity/amplitude stored in each pitch frame.
+
+
+The strength column contains the pitch periodicity measure (0-1) for each frame.
+The intensity column contains the raw acoustic intensity/amplitude of each frame.
+Both are useful for voice quality and periodicity analysis.
 }
+\section{Praat Equivalent}{
+
+`[Sound, Pitch] → To PointProcess (cc)`
+
+
+`[Sound, Pitch] → To PointProcess (peaks)...`
+}
+
 \examples{
 \dontrun{
 # Create a pitch object from a sound
@@ -28,6 +59,39 @@ f0_at_1s <- pitch$get_value_at_time(time = 1.0, unit = "Hertz", interpolate = TR
 n_voiced <- pitch$count_voiced_frames()
 }
 
+
+## ------------------------------------------------
+## Method `Pitch$to_pointprocess_cc`
+## ------------------------------------------------
+
+\dontrun{
+# DSI workflow requiring accurate pulse detection
+sound <- Sound$new("soft_phonation.wav")
+pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+
+# Create PointProcess from BOTH Sound and Pitch (two-object command)
+point_process <- pitch$to_pointprocess_cc(sound)
+
+# Now can create VUV TextGrid
+textgrid <- point_process$to_textgrid_vuv(
+  max_voiced_period = 0.02,
+  max_unvoiced_period = 0.01
+)
+}
+
+## ------------------------------------------------
+## Method `Pitch$to_pointprocess_peaks`
+## ------------------------------------------------
+
+\dontrun{
+sound <- Sound$new("voice.wav")
+pitch <- sound$to_pitch()
+
+# Find positive peaks
+pp_peaks <- pitch$to_pointprocess_peaks(sound, 
+                                         include_maxima = TRUE, 
+                                         include_minima = FALSE)
+}
 }
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{Pitch}
@@ -49,8 +113,16 @@ n_voiced <- pitch$count_voiced_frames()
 \item \href{#method-Pitch-get_time_of_minimum}{\code{Pitch$get_time_of_minimum()}}
 \item \href{#method-Pitch-get_time_of_maximum}{\code{Pitch$get_time_of_maximum()}}
 \item \href{#method-Pitch-count_voiced_frames}{\code{Pitch$count_voiced_frames()}}
+\item \href{#method-Pitch-get_strength_at_time}{\code{Pitch$get_strength_at_time()}}
+\item \href{#method-Pitch-get_mean_strength}{\code{Pitch$get_mean_strength()}}
+\item \href{#method-Pitch-get_intensity_at_time}{\code{Pitch$get_intensity_at_time()}}
+\item \href{#method-Pitch-get_mean_intensity}{\code{Pitch$get_mean_intensity()}}
 \item \href{#method-Pitch-to_point_process}{\code{Pitch$to_point_process()}}
+\item \href{#method-Pitch-to_pointprocess_cc}{\code{Pitch$to_pointprocess_cc()}}
+\item \href{#method-Pitch-to_pointprocess_peaks}{\code{Pitch$to_pointprocess_peaks()}}
 \item \href{#method-Pitch-down_to_pitch_tier}{\code{Pitch$down_to_pitch_tier()}}
+\item \href{#method-Pitch-to_textgrid_vuv}{\code{Pitch$to_textgrid_vuv()}}
+\item \href{#method-Pitch-to_textgrid_silences}{\code{Pitch$to_textgrid_silences()}}
 \item \href{#method-Pitch-as_matrix}{\code{Pitch$as_matrix()}}
 \item \href{#method-Pitch-as_data_frame}{\code{Pitch$as_data_frame()}}
 \item \href{#method-Pitch-save}{\code{Pitch$save()}}
@@ -385,6 +457,96 @@ Number of voiced frames
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-get_strength_at_time"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-get_strength_at_time}{}}}
+\subsection{Method \code{get_strength_at_time()}}{
+Get pitch strength (periodicity) at a specific time
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$get_strength_at_time(time, unit = "hertz", interpolate = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time}}{Time in seconds}
+
+\item{\code{unit}}{Unit: "hertz" (default), "semitones", "mel", "erb"}
+
+\item{\code{interpolate}}{Interpolate between frames (default TRUE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Strength value (0-1), or NA if unvoiced
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-get_mean_strength"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-get_mean_strength}{}}}
+\subsection{Method \code{get_mean_strength()}}{
+Get mean pitch strength over a time range
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$get_mean_strength(from_time = 0, to_time = 0, unit = "hertz")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from_time}}{Start time (default: start of pitch)}
+
+\item{\code{to_time}}{End time (default: end of pitch)}
+
+\item{\code{unit}}{Unit: "hertz" (default), "semitones", "mel", "erb"}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Mean strength value (0-1)
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-get_intensity_at_time"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-get_intensity_at_time}{}}}
+\subsection{Method \code{get_intensity_at_time()}}{
+Get pitch frame intensity at a specific time
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$get_intensity_at_time(time)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{time}}{Time in seconds}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Frame intensity value, or NA if no frame
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-get_mean_intensity"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-get_mean_intensity}{}}}
+\subsection{Method \code{get_mean_intensity()}}{
+Get mean pitch frame intensity over a time range
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$get_mean_intensity(from_time = 0, to_time = 0)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from_time}}{Start time (default: start of pitch)}
+
+\item{\code{to_time}}{End time (default: end of pitch)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Mean intensity value
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Pitch-to_point_process"></a>}}
 \if{latex}{\out{\hypertarget{method-Pitch-to_point_process}{}}}
 \subsection{Method \code{to_point_process()}}{
@@ -398,6 +560,106 @@ PointProcess object containing times of voiced pitch candidates
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-to_pointprocess_cc"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-to_pointprocess_cc}{}}}
+\subsection{Method \code{to_pointprocess_cc()}}{
+Create PointProcess from Pitch and Sound using cross-correlation.
+
+This is the TWO-OBJECT COMMAND required for DSI calculation.
+Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
+
+This method detects glottal pulses by finding the points of maximum
+cross-correlation between the sound and a predicted pulse train based
+on the pitch contour. This is more accurate than simple zero-crossing
+or peak detection, especially for breathy or irregular voices.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$to_pointprocess_cc(sound)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object to extract pulses from}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+PointProcess object with glottal pulse times
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# DSI workflow requiring accurate pulse detection
+sound <- Sound$new("soft_phonation.wav")
+pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+
+# Create PointProcess from BOTH Sound and Pitch (two-object command)
+point_process <- pitch$to_pointprocess_cc(sound)
+
+# Now can create VUV TextGrid
+textgrid <- point_process$to_textgrid_vuv(
+  max_voiced_period = 0.02,
+  max_unvoiced_period = 0.01
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-to_pointprocess_peaks"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-to_pointprocess_peaks}{}}}
+\subsection{Method \code{to_pointprocess_peaks()}}{
+Create PointProcess from Pitch and Sound near amplitude peaks.
+
+Two-object command: uses existing Pitch object to guide peak detection.
+Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
+
+This method finds points of maximum amplitude in the sound near the times
+indicated by the pitch contour. More flexible than cc method - can find
+maxima (peaks) or minima (valleys).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$to_pointprocess_peaks(
+  sound,
+  include_maxima = TRUE,
+  include_minima = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object to extract peaks from}
+
+\item{\code{include_maxima}}{Include positive peaks (default: TRUE)}
+
+\item{\code{include_minima}}{Include negative valleys (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+PointProcess object with detected peak/valley times
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+sound <- Sound$new("voice.wav")
+pitch <- sound$to_pitch()
+
+# Find positive peaks
+pp_peaks <- pitch$to_pointprocess_peaks(sound, 
+                                         include_maxima = TRUE, 
+                                         include_minima = FALSE)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Pitch-down_to_pitch_tier"></a>}}
 \if{latex}{\out{\hypertarget{method-Pitch-down_to_pitch_tier}{}}}
 \subsection{Method \code{down_to_pitch_tier()}}{
@@ -408,6 +670,44 @@ Convert pitch object to PitchTier
 
 \subsection{Returns}{
 PitchTier object with pitch points from voiced frames
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-to_textgrid_vuv"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-to_textgrid_vuv}{}}}
+\subsection{Method \code{to_textgrid_vuv()}}{
+Convert pitch to TextGrid marking voiced/unvoiced intervals
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$to_textgrid_vuv()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+TextGrid object with voiced (V) and unvoiced (U) intervals
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-to_textgrid_silences"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-to_textgrid_silences}{}}}
+\subsection{Method \code{to_textgrid_silences()}}{
+Convert pitch to TextGrid marking silent/sounding intervals
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$to_textgrid_silences(
+  min_silent_duration = 0.1,
+  min_sounding_duration = 0.1
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{min_silent_duration}}{Minimum duration for silent intervals (default: 0.1 s)}
+
+\item{\code{min_sounding_duration}}{Minimum duration for sounding intervals (default: 0.1 s)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+TextGrid object with silent and sounding intervals
 }
 }
 \if{html}{\out{<hr>}}
@@ -429,11 +729,20 @@ Matrix with columns: time, frequency
 \subsection{Method \code{as_data_frame()}}{
 Convert pitch contour to data frame
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Pitch$as_data_frame()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$as_data_frame(include_strength = FALSE, include_intensity = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{include_strength}}{Include pitch strength column (default FALSE)}
+
+\item{\code{include_intensity}}{Include frame intensity column (default FALSE)}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
-Data frame with columns: time, frequency, voiced
+Data frame with columns: time, frequency, voiced, and optionally strength/intensity
 }
 }
 \if{html}{\out{<hr>}}

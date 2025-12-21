@@ -213,6 +213,54 @@ Spectrum <- R6::R6Class("Spectrum",
       Spectrum$new(.xptr = ptr)
     },
     
+    #' @description
+    #' Apply formula to modify spectrum values (NOT AVAILABLE)
+    #'
+    #' Note: This method is not available because it requires Praat's script
+    #' interpreter which is not integrated. Use apply_pre_emphasis() instead
+    #' for pre-emphasis filtering, or manipulate values via as_matrix().
+    #'
+    #' @param formula Character string with formula
+    #' @return Error - use alternative methods
+    formula = function(formula) {
+      stop("Spectrum$formula() is not available (requires Praat interpreter). ",
+           "Use apply_pre_emphasis() for pre-emphasis, or get values with as_matrix(), ",
+           "modify in R, then create new Sound from modified spectrum.")
+    },
+
+    #' @description
+    #' Apply pre-emphasis filter (boost high frequencies)
+    #'
+    #' Multiplies spectrum values by frequency for frequencies >= from_frequency.
+    #' This is equivalent to Praat formula: "if x >= from_frequency then self*x else self fi"
+    #' Used in voice quality analysis to compensate for spectral tilt.
+    #'
+    #' @param from_frequency Frequency (Hz) above which to apply pre-emphasis (default: 50)
+    #' @return Self (invisibly, modifies in place)
+    #' @examples
+    #' \dontrun{
+    #' spectrum <- sound$to_spectrum()
+    #' spectrum$apply_pre_emphasis(50)  # Standard pre-emphasis
+    #' ltas <- spectrum$to_ltas_1to1()
+    #' }
+    apply_pre_emphasis = function(from_frequency = 50) {
+      .spectrum_apply_pre_emphasis(private$ptr, as.numeric(from_frequency))
+      invisible(self)
+    },
+
+    #' @description
+    #' Multiply spectrum by frequency raised to a power
+    #'
+    #' Useful for spectral tilt corrections. Multiplies each bin's values
+    #' by frequency^power.
+    #'
+    #' @param power Exponent for frequency (default: 1.0)
+    #' @return Self (invisibly, modifies in place)
+    multiply_by_frequency = function(power = 1.0) {
+      .spectrum_multiply_by_frequency(private$ptr, as.numeric(power))
+      invisible(self)
+    },
+    
     # Transform
     
     #' @description Convert to Sound (inverse FFT)
@@ -220,6 +268,16 @@ Spectrum <- R6::R6Class("Spectrum",
     to_sound = function() {
       ptr <- .spectrum_to_sound(private$ptr)
       Sound$new(.xptr = ptr)
+    },
+    
+    #' @description
+    #' Convert to LTAS (1-to-1 bin mapping)
+    #' Corresponds to Praat: To Ltas (1-to-1)
+    #' Creates LTAS with same frequency bins as spectrum
+    #' @return Ltas object
+    to_ltas_1to1 = function() {
+      ptr <- .spectrum_to_ltas_1to1(private$ptr)
+      Ltas$new(.xptr = ptr)
     },
     
     #' @description Convert to PowerCepstrum (for voice quality analysis)

@@ -164,3 +164,15 @@ void Sound_draw_btlr (Sound me, Graphics g, double xmin, double xmax, double ymi
     (void) me; (void) g; (void) xmin; (void) xmax; (void) ymin; (void) ymax; (void) direction; (void) garnish;
     Melder_throw (U"Sound_draw_btlr: Graphics functions are not available in this build.");
 }
+
+void Graphics_WCtoDC (Graphics, double, double, long *, long *) { /* No-op */ }
+
+// Screen graphics creation (for GUI)
+autoGraphics Graphics_create_screen (void *, void *, int) {
+    return autoGraphics();
+}
+void Graphics_inqWsViewport (Graphics, integer *, integer *, integer *, integer *) { /* No-op */ }
+bool Graphics_startRecording (Graphics) { return false; }
+void Graphics_resetWsViewport (Graphics, integer, integer, integer, integer) { /* No-op */ }
+void Graphics_setWsViewport (Graphics, integer, integer, integer, integer) { /* No-op */ }
+bool Graphics_stopRecording (Graphics) { return false; }

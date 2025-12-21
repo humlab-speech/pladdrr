@@ -60,6 +60,14 @@ print(paste("CPP:", round(cpp, 2), "dB"))
 \item \href{#method-PowerCepstrum-smooth}{\code{PowerCepstrum$smooth()}}
 \item \href{#method-PowerCepstrum-to_matrix}{\code{PowerCepstrum$to_matrix()}}
 \item \href{#method-PowerCepstrum-as_matrix}{\code{PowerCepstrum$as_matrix()}}
+\item \href{#method-PowerCepstrum-to_spectrum}{\code{PowerCepstrum$to_spectrum()}}
+\item \href{#method-PowerCepstrum-get_peak_prominence_hillenbrand}{\code{PowerCepstrum$get_peak_prominence_hillenbrand()}}
+\item \href{#method-PowerCepstrum-get_rnr}{\code{PowerCepstrum$get_rnr()}}
+\item \href{#method-PowerCepstrum-tabulate_rhamonics}{\code{PowerCepstrum$tabulate_rhamonics()}}
+\item \href{#method-PowerCepstrum-fit_trend_line}{\code{PowerCepstrum$fit_trend_line()}}
+\item \href{#method-PowerCepstrum-get_trend_line_value}{\code{PowerCepstrum$get_trend_line_value()}}
+\item \href{#method-PowerCepstrum-subtract_trend}{\code{PowerCepstrum$subtract_trend()}}
+\item \href{#method-PowerCepstrum-subtract_trend_inplace}{\code{PowerCepstrum$subtract_trend_inplace()}}
 \item \href{#method-PowerCepstrum-clone}{\code{PowerCepstrum$clone()}}
 }
 }
@@ -216,6 +224,259 @@ Convert to R matrix
 
 \subsection{Returns}{
 Numeric matrix
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-to_spectrum"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-to_spectrum}{}}}
+\subsection{Method \code{to_spectrum()}}{
+Convert PowerCepstrum to Spectrum
+
+Converts the power cepstrum back to a spectrum representation.
+Since phase information is lost in PowerCepstrum, you can optionally
+generate random phases.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$to_spectrum(random_phases = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{random_phases}}{Logical. If TRUE, generate random phases (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Spectrum object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-get_peak_prominence_hillenbrand"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-get_peak_prominence_hillenbrand}{}}}
+\subsection{Method \code{get_peak_prominence_hillenbrand()}}{
+Get peak prominence using Hillenbrand method
+
+Computes peak prominence using the standard Hillenbrand algorithm,
+which is an alternative to the general getPeakProminence method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$get_peak_prominence_hillenbrand(
+  pitch_floor = 60,
+  pitch_ceiling = 333.3
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Numeric. Minimum pitch in Hz (default: 60)}
+
+\item{\code{pitch_ceiling}}{Numeric. Maximum pitch in Hz (default: 333.3)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List with 'prominence' (dB) and 'quefrency' (seconds)
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-get_rnr"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-get_rnr}{}}}
+\subsection{Method \code{get_rnr()}}{
+Get RNR (Rahmonic-to-Noise Ratio)
+
+Computes the Rahmonic-to-Noise Ratio, a voice quality measure
+that quantifies the ratio of periodic to aperiodic energy in the cepstrum.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$get_rnr(
+  pitch_floor = 60,
+  pitch_ceiling = 333.3,
+  f0_fractional_width = 0.05
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Numeric. Minimum pitch in Hz (default: 60)}
+
+\item{\code{pitch_ceiling}}{Numeric. Maximum pitch in Hz (default: 333.3)}
+
+\item{\code{f0_fractional_width}}{Numeric. Fractional bandwidth around F0 (default: 0.05)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric. RNR value in dB
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-tabulate_rhamonics"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-tabulate_rhamonics}{}}}
+\subsection{Method \code{tabulate_rhamonics()}}{
+Tabulate rhamonics (quefrency peaks)
+
+Creates a table of rhamonics (peaks in the cepstrum corresponding to
+harmonics in the original signal). The table contains quefrency values
+and their corresponding power.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$tabulate_rhamonics(
+  pitch_floor = 60,
+  pitch_ceiling = 333.3,
+  interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pitch_floor}}{Numeric. Minimum pitch in Hz (default: 60)}
+
+\item{\code{pitch_ceiling}}{Numeric. Maximum pitch in Hz (default: 333.3)}
+
+\item{\code{interpolation}}{Character. Peak interpolation method}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Table object with quefrency and power columns
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-fit_trend_line"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-fit_trend_line}{}}}
+\subsection{Method \code{fit_trend_line()}}{
+Fit trend line to cepstrum
+
+Fits a trend line (linear or exponential decay) to the power cepstrum
+and returns the slope and intercept parameters.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$fit_trend_line(
+  qmin = 0.001,
+  qmax = 0.05,
+  trend_type = c("straight", "exponential decay", "parabolic"),
+  fit_method = c("least squares", "robust", "robust slow")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{qmin}}{Numeric. Minimum quefrency for fit (default: 0.001)}
+
+\item{\code{qmax}}{Numeric. Maximum quefrency for fit (default: 0.05)}
+
+\item{\code{trend_type}}{Character. Type of trend line}
+
+\item{\code{fit_method}}{Character. Fitting method}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List with 'slope' and 'intercept'
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-get_trend_line_value"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-get_trend_line_value}{}}}
+\subsection{Method \code{get_trend_line_value()}}{
+Get trend line value at quefrency
+
+Returns the value of the fitted trend line at a specific quefrency.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$get_trend_line_value(
+  quefrency,
+  qstart_fit = 0.001,
+  qend_fit = 0.05,
+  trend_type = c("straight", "exponential decay", "parabolic"),
+  fit_method = c("least squares", "robust", "robust slow")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{quefrency}}{Numeric. Quefrency in seconds}
+
+\item{\code{qstart_fit}}{Numeric. Start of fitting range (default: 0.001)}
+
+\item{\code{qend_fit}}{Numeric. End of fitting range (default: 0.05)}
+
+\item{\code{trend_type}}{Character. Type of trend line}
+
+\item{\code{fit_method}}{Character. Fitting method}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric. Trend line value at quefrency
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-subtract_trend"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-subtract_trend}{}}}
+\subsection{Method \code{subtract_trend()}}{
+Subtract trend line from cepstrum
+
+Creates a new PowerCepstrum with the trend line subtracted. This is
+useful for removing low-frequency trends before analysis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$subtract_trend(
+  qstart_fit = 0.001,
+  qend_fit = 0.05,
+  trend_type = c("straight", "exponential decay", "parabolic"),
+  fit_method = c("least squares", "robust", "robust slow")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{qstart_fit}}{Numeric. Start of fitting range (default: 0.001)}
+
+\item{\code{qend_fit}}{Numeric. End of fitting range (default: 0.05)}
+
+\item{\code{trend_type}}{Character. Type of trend line}
+
+\item{\code{fit_method}}{Character. Fitting method}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New PowerCepstrum object with trend removed
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PowerCepstrum-subtract_trend_inplace"></a>}}
+\if{latex}{\out{\hypertarget{method-PowerCepstrum-subtract_trend_inplace}{}}}
+\subsection{Method \code{subtract_trend_inplace()}}{
+Subtract trend line in-place
+
+Modifies this PowerCepstrum by subtracting the trend line.
+Unlike subtract_trend(), this modifies the object in-place.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PowerCepstrum$subtract_trend_inplace(
+  qstart_fit = 0.001,
+  qend_fit = 0.05,
+  trend_type = c("straight", "exponential decay", "parabolic"),
+  fit_method = c("least squares", "robust", "robust slow")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{qstart_fit}}{Numeric. Start of fitting range (default: 0.001)}
+
+\item{\code{qend_fit}}{Numeric. End of fitting range (default: 0.05)}
+
+\item{\code{trend_type}}{Character. Type of trend line}
+
+\item{\code{fit_method}}{Character. Fitting method}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+NULL (modifies object in-place)
 }
 }
 \if{html}{\out{<hr>}}

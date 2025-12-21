@@ -247,8 +247,8 @@ acoustic measures required for AVQI calculation.
   interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
   quefrency_range_start = 0.001,
   quefrency_range_end = 0.05,
-  trend_line_type = c("straight", "exponential decay", "parabolic"),
-  fit_method = c("least squares", "robust", "robust slow")
+  trend_line_type = c("straight", "exponential decay"),
+  fit_method = c("robust", "least squares", "robust slow")
 )}\if{html}{\out{</div>}}
 }
 

@@ -603,6 +603,42 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_intensitytier_read`, path)
 }
 
+.praat_interpreter_init <- function() {
+    invisible(.Call(`_pladdrr_praat_interpreter_init`))
+}
+
+.praat_is_initialized <- function() {
+    .Call(`_pladdrr_praat_is_initialized`)
+}
+
+.praat_run_script <- function(script_text) {
+    invisible(.Call(`_pladdrr_praat_run_script`, script_text))
+}
+
+.praat_evaluate_numeric <- function(expression) {
+    .Call(`_pladdrr_praat_evaluate_numeric`, expression)
+}
+
+.praat_evaluate_string <- function(expression) {
+    .Call(`_pladdrr_praat_evaluate_string`, expression)
+}
+
+.praat_evaluate_vector <- function(expression) {
+    .Call(`_pladdrr_praat_evaluate_vector`, expression)
+}
+
+.praat_interpreter_create <- function() {
+    .Call(`_pladdrr_praat_interpreter_create`)
+}
+
+.praat_interpreter_run <- function(xptr, script) {
+    invisible(.Call(`_pladdrr_praat_interpreter_run`, xptr, script))
+}
+
+.praat_interpreter_get_variable <- function(xptr, name) {
+    .Call(`_pladdrr_praat_interpreter_get_variable`, xptr, name)
+}
+
 .sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
     .Call(`_pladdrr_sound_to_lpc_burg`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
 }
@@ -1865,6 +1901,14 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 .spectrum_formula <- function(xptr, formula_str) {
     invisible(.Call(`_pladdrr_spectrum_formula`, xptr, formula_str))
+}
+
+.spectrum_apply_pre_emphasis <- function(xptr, from_frequency) {
+    invisible(.Call(`_pladdrr_spectrum_apply_pre_emphasis`, xptr, from_frequency))
+}
+
+.spectrum_multiply_by_frequency <- function(xptr, power) {
+    invisible(.Call(`_pladdrr_spectrum_multiply_by_frequency`, xptr, power))
 }
 
 .spectrum_to_ltas_1to1 <- function(xptr) {

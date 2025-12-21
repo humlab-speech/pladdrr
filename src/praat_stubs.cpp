@@ -1,5 +1,8 @@
 // Stubs for Praat GUI functions
 // These are needed for linking but not used in library mode
+// When full praat.cpp/praat_script.cpp are linked, skip these stubs
+
+#ifndef PLADDRR_FULL_PRAAT
 
 #include "melder/melder.h"
 #include "sys/Interpreter.h"
@@ -301,14 +304,8 @@ double Melder_thisThread_estimateProgress () {
 
 void Melder_thisThread_setCurrentElement (integer) {}
 
-// Voice analysis stubs
-struct structAmplitudeTier;
-typedef structAmplitudeTier* AmplitudeTier;
-typedef structAmplitudeTier* autoAmplitudeTier;
-
-autoAmplitudeTier PointProcess_Sound_to_H1minusH2Tier (PointProcess, Sound, double, double, double, double, double) {
-    Melder_throw (U"PointProcess_Sound_to_H1minusH2Tier: Voice quality analysis not available.");
-}
+// Voice analysis stubs - H1minusH2Tier is now compiled
+// REMOVED: PointProcess_Sound_to_H1minusH2Tier - now in H1minusH2Tier.cpp
 
 struct structTextInterval;
 typedef structTextInterval* TextInterval;
@@ -345,3 +342,5 @@ integer MelderThread_getNumberOfProcessors () {
 bool MelderThread_getUseMultithreading () {
 	return false;  // Disable multithreading in library mode
 }
+
+#endif // PLADDRR_FULL_PRAAT

@@ -144,6 +144,7 @@ tg$save("output.TextGrid")
 \item \href{#method-TextGrid-get_total_duration_where}{\code{TextGrid$get_total_duration_where()}}
 \item \href{#method-TextGrid-extend_time}{\code{TextGrid$extend_time()}}
 \item \href{#method-TextGrid-to_table}{\code{TextGrid$to_table()}}
+\item \href{#method-TextGrid-extract_intervals_where}{\code{TextGrid$extract_intervals_where()}}
 \item \href{#method-TextGrid-clone}{\code{TextGrid$clone()}}
 }
 }
@@ -942,6 +943,40 @@ Convert TextGrid to Table object
 }
 \subsection{Returns}{
 Table object containing TextGrid data
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TextGrid-extract_intervals_where"></a>}}
+\if{latex}{\out{\hypertarget{method-TextGrid-extract_intervals_where}{}}}
+\subsection{Method \code{extract_intervals_where()}}{
+Extract Sound intervals matching criterion from TextGrid
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TextGrid$extract_intervals_where(
+  sound,
+  tier_number,
+  criterion = "is equal to",
+  text = "",
+  preserve_times = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object to extract intervals from}
+
+\item{\code{tier_number}}{Tier number (1-based) or tier name}
+
+\item{\code{criterion}}{Matching criterion: "is equal to", "is not equal to", "contains", "starts with", "ends with", "matches regex"}
+
+\item{\code{text}}{Text to match against}
+
+\item{\code{preserve_times}}{If TRUE, keep original time stamps; if FALSE, center at 0}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List of Sound objects, one per matching interval
 }
 }
 \if{html}{\out{<hr>}}

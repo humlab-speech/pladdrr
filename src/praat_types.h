@@ -24,6 +24,7 @@ struct structPointProcess;
 struct structManipulation;
 struct structLPC;
 struct structLtas;
+struct structInterpreter;
 struct structPitchTier;
 struct structFormantTier;
 struct structIntensityTier;

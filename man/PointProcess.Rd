@@ -62,11 +62,21 @@ Period statistics:
 - `$remove_point_near(time)` - Remove nearest point to time
 - `$remove_points_between(t1, t2)` - Remove all points in range
 
+## Conversion
+
+- `$to_textgrid_vuv(max_voiced_period, max_unvoiced_period)` - Create voiced/unvoiced TextGrid
+  (required for DSI calculation with soft phonation)
+
 ## Export
 
 - `$as_data_frame()` - Export points to data frame
 - `$save(path)` - Write to file
 }
+\section{Praat Equivalent}{
+
+`PointProcess: To TextGrid (vuv)... max_voiced_period max_unvoiced_period`
+}
+
 \examples{
 \dontrun{
 # Extract glottal pulses from sound
@@ -113,6 +123,28 @@ mean_period <- pp$get_mean_period(
 df <- pp$as_data_frame()
 }
 
+
+## ------------------------------------------------
+## Method `PointProcess$to_textgrid_vuv`
+## ------------------------------------------------
+
+\dontrun{
+# DSI workflow - detect voiced intervals in soft phonation
+sound <- Sound$new("soft_phonation.wav")
+pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+point_process <- sound$to_point_process_cc(pitch)
+
+# Create VUV TextGrid with sensitive parameters for soft voice
+textgrid <- point_process$to_textgrid_vuv(
+  max_voiced_period = 0.02,    # 50 Hz minimum pitch
+  max_unvoiced_period = 0.01   # Merge short unvoiced gaps
+)
+
+# Extract only voiced intervals
+voiced_intervals <- sound$extract_intervals_where(
+  textgrid, 1, "is equal to", "V", preserve_times = FALSE
+)
+}
 
 ## ------------------------------------------------
 ## Method `PointProcess$voice_report`
@@ -164,6 +196,7 @@ jitter_ppq5 <- report$jitter_ppq5 * 100  # Convert to percentage
 \item \href{#method-PointProcess-remove_point}{\code{PointProcess$remove_point()}}
 \item \href{#method-PointProcess-remove_point_near}{\code{PointProcess$remove_point_near()}}
 \item \href{#method-PointProcess-remove_points_between}{\code{PointProcess$remove_points_between()}}
+\item \href{#method-PointProcess-to_textgrid_vuv}{\code{PointProcess$to_textgrid_vuv()}}
 \item \href{#method-PointProcess-as_data_frame}{\code{PointProcess$as_data_frame()}}
 \item \href{#method-PointProcess-save}{\code{PointProcess$save()}}
 \item \href{#method-PointProcess-voice_report}{\code{PointProcess$voice_report()}}
@@ -871,6 +904,79 @@ Remove all points between two times
 \subsection{Returns}{
 Invisible self (for method chaining)
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PointProcess-to_textgrid_vuv"></a>}}
+\if{latex}{\out{\hypertarget{method-PointProcess-to_textgrid_vuv}{}}}
+\subsection{Method \code{to_textgrid_vuv()}}{
+Create a TextGrid with voiced/unvoiced intervals based on the point process.
+
+This method creates a TextGrid with one interval tier that marks voiced (V) 
+and unvoiced (U) intervals. An interval is considered voiced if it contains
+enough glottal pulses (points in the PointProcess) with sufficiently small
+inter-pulse intervals. This is the method required for DSI calculation,
+where accurate voiced/unvoiced detection in soft phonation is critical.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PointProcess$to_textgrid_vuv(
+  max_voiced_period = 0.02,
+  max_unvoiced_period = 0.01
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{max_voiced_period}}{Maximum duration of a voiced period (in seconds).
+If two consecutive pulses are more than this far apart, the interval
+between them is considered unvoiced. Default: 0.02 (20 ms, corresponding
+to 50 Hz minimum pitch).}
+
+\item{\code{max_unvoiced_period}}{Maximum duration of an unvoiced period (in seconds).
+If an unvoiced interval is shorter than this, it may be considered a 
+voiced interval if surrounded by voiced regions. Default: 0.01 (10 ms).}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+This is the PointProcess-based voiced/unvoiced detection method, which is
+more accurate than pitch-based methods for soft phonation and pathological
+voices. It's required for the DSI (Dysphonia Severity Index) calculation.
+
+The algorithm works by examining inter-pulse intervals:
+- Intervals shorter than max_voiced_period are marked as voiced
+- Longer intervals are marked as unvoiced
+- Very short unvoiced intervals (< max_unvoiced_period) may be merged
+  with adjacent voiced regions
+}
+
+\subsection{Returns}{
+TextGrid object with one IntervalTier containing "V" (voiced) and
+  "U" (unvoiced) labels.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# DSI workflow - detect voiced intervals in soft phonation
+sound <- Sound$new("soft_phonation.wav")
+pitch <- sound$to_pitch_cc(time_step = 0.001, pitch_floor = 50, pitch_ceiling = 300)
+point_process <- sound$to_point_process_cc(pitch)
+
+# Create VUV TextGrid with sensitive parameters for soft voice
+textgrid <- point_process$to_textgrid_vuv(
+  max_voiced_period = 0.02,    # 50 Hz minimum pitch
+  max_unvoiced_period = 0.01   # Merge short unvoiced gaps
+)
+
+# Extract only voiced intervals
+voiced_intervals <- sound$extract_intervals_where(
+  textgrid, 1, "is equal to", "V", preserve_times = FALSE
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PointProcess-as_data_frame"></a>}}

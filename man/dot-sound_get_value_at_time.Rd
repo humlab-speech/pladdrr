@@ -4,7 +4,7 @@
 \alias{.sound_get_value_at_time}
 \title{Get value at time (internal)}
 \usage{
-.sound_get_value_at_time(xptr, time, channel)
+.sound_get_value_at_time(xptr, time, channel, interpolation = "linear")
 }
 \description{
 Get value at time (internal)

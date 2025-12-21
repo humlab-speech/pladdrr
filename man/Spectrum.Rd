@@ -61,6 +61,16 @@ energy_500_2000 <- spectrum$get_band_energy(fmin = 500, fmax = 2000)
 spec_df <- spectrum$as_data_frame()
 }
 
+
+## ------------------------------------------------
+## Method `Spectrum$apply_pre_emphasis`
+## ------------------------------------------------
+
+\dontrun{
+spectrum <- sound$to_spectrum()
+spectrum$apply_pre_emphasis(50)  # Standard pre-emphasis
+ltas <- spectrum$to_ltas_1to1()
+}
 }
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{Spectrum}
@@ -87,8 +97,14 @@ spec_df <- spectrum$as_data_frame()
 \item \href{#method-Spectrum-pass_hann_band}{\code{Spectrum$pass_hann_band()}}
 \item \href{#method-Spectrum-stop_hann_band}{\code{Spectrum$stop_hann_band()}}
 \item \href{#method-Spectrum-cepstral_smoothing}{\code{Spectrum$cepstral_smoothing()}}
+\item \href{#method-Spectrum-formula}{\code{Spectrum$formula()}}
+\item \href{#method-Spectrum-apply_pre_emphasis}{\code{Spectrum$apply_pre_emphasis()}}
+\item \href{#method-Spectrum-multiply_by_frequency}{\code{Spectrum$multiply_by_frequency()}}
 \item \href{#method-Spectrum-to_sound}{\code{Spectrum$to_sound()}}
+\item \href{#method-Spectrum-to_ltas_1to1}{\code{Spectrum$to_ltas_1to1()}}
 \item \href{#method-Spectrum-to_powercepstrum}{\code{Spectrum$to_powercepstrum()}}
+\item \href{#method-Spectrum-to_cepstrum}{\code{Spectrum$to_cepstrum()}}
+\item \href{#method-Spectrum-to_cepstrum_hillenbrand}{\code{Spectrum$to_cepstrum_hillenbrand()}}
 \item \href{#method-Spectrum-to_excitation}{\code{Spectrum$to_excitation()}}
 \item \href{#method-Spectrum-as_matrix}{\code{Spectrum$as_matrix()}}
 \item \href{#method-Spectrum-as_data_frame}{\code{Spectrum$as_data_frame()}}
@@ -468,6 +484,89 @@ New smoothed Spectrum
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-formula"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-formula}{}}}
+\subsection{Method \code{formula()}}{
+Apply formula to modify spectrum values (NOT AVAILABLE)
+
+Note: This method is not available because it requires Praat's script
+interpreter which is not integrated. Use apply_pre_emphasis() instead
+for pre-emphasis filtering, or manipulate values via as_matrix().
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$formula(formula)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{formula}}{Character string with formula}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Error - use alternative methods
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-apply_pre_emphasis"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-apply_pre_emphasis}{}}}
+\subsection{Method \code{apply_pre_emphasis()}}{
+Apply pre-emphasis filter (boost high frequencies)
+
+Multiplies spectrum values by frequency for frequencies >= from_frequency.
+This is equivalent to Praat formula: "if x >= from_frequency then self*x else self fi"
+Used in voice quality analysis to compensate for spectral tilt.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$apply_pre_emphasis(from_frequency = 50)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from_frequency}}{Frequency (Hz) above which to apply pre-emphasis (default: 50)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly, modifies in place)
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+spectrum <- sound$to_spectrum()
+spectrum$apply_pre_emphasis(50)  # Standard pre-emphasis
+ltas <- spectrum$to_ltas_1to1()
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-multiply_by_frequency"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-multiply_by_frequency}{}}}
+\subsection{Method \code{multiply_by_frequency()}}{
+Multiply spectrum by frequency raised to a power
+
+Useful for spectral tilt corrections. Multiplies each bin's values
+by frequency^power.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$multiply_by_frequency(power = 1)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{power}}{Exponent for frequency (default: 1.0)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly, modifies in place)
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Spectrum-to_sound"></a>}}
 \if{latex}{\out{\hypertarget{method-Spectrum-to_sound}{}}}
 \subsection{Method \code{to_sound()}}{
@@ -481,6 +580,21 @@ Sound object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-to_ltas_1to1"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-to_ltas_1to1}{}}}
+\subsection{Method \code{to_ltas_1to1()}}{
+Convert to LTAS (1-to-1 bin mapping)
+Corresponds to Praat: To Ltas (1-to-1)
+Creates LTAS with same frequency bins as spectrum
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$to_ltas_1to1()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Ltas object
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Spectrum-to_powercepstrum"></a>}}
 \if{latex}{\out{\hypertarget{method-Spectrum-to_powercepstrum}{}}}
 \subsection{Method \code{to_powercepstrum()}}{
@@ -491,6 +605,37 @@ Convert to PowerCepstrum (for voice quality analysis)
 
 \subsection{Returns}{
 PowerCepstrum object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-to_cepstrum"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-to_cepstrum}{}}}
+\subsection{Method \code{to_cepstrum()}}{
+Convert to Cepstrum (complex cepstrum with phase)
+
+Computes the complex cepstrum from the spectrum. Unlike PowerCepstrum,
+this preserves phase information and can be inverted back to Spectrum or Sound.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$to_cepstrum()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Cepstrum object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Spectrum-to_cepstrum_hillenbrand"></a>}}
+\if{latex}{\out{\hypertarget{method-Spectrum-to_cepstrum_hillenbrand}{}}}
+\subsection{Method \code{to_cepstrum_hillenbrand()}}{
+Convert to Cepstrum using Hillenbrand method
+
+Alternative cepstrum computation method based on Hillenbrand's algorithm.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Spectrum$to_cepstrum_hillenbrand()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Cepstrum object
 }
 }
 \if{html}{\out{<hr>}}

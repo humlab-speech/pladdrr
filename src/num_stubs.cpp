@@ -7,13 +7,42 @@
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/sys/Data.h"
 #include "praat.github.io/sys/Interpreter.h"
+#ifndef PLADDRR_FULL_PRAAT
+    #include "praat.github.io/sys/ManPage.h"
+    #include "praat.github.io/sys/ManPages.h"
+#endif
 #include "praat.github.io/fon/Vector.h"
 #include "praat.github.io/dwsys/NUMmachar.h"
 #include "praat.github.io/dwsys/NUMlapack.h"
 #include <atomic>
 
+#ifndef PLADDRR_FULL_PRAAT
+// ManPage enum implementations (needed by ManPages class)
+#include "praat.github.io/sys/enums_getText.h"
+#include "praat.github.io/sys/ManPage_enums.h"
+#include "praat.github.io/sys/enums_getValue.h"
+#include "praat.github.io/sys/ManPage_enums.h"
+
+// ManPage class implementation (needed by ManPages)
+Thing_implement (ManPage, Thing, 0);
+#endif
+
 // Melder threading symbols needed for error handling
 std::atomic<integer> theMelder_error_threadId (0);
+
+// ManPages class implementation (needed by praat.cpp Thing_recognizeClassesByName)
+// Skip if using full praat.cpp which includes real ManPages.cpp
+#ifndef PLADDRR_FULL_PRAAT
+Thing_implement (ManPages, Daata, 0);
+
+void structManPages :: v9_destroy () noexcept {
+    ManPages_Parent :: v9_destroy ();
+}
+
+void structManPages :: v1_readText (MelderReadText, int) {
+    Melder_throw (U"ManPages reading not supported in library mode.");
+}
+#endif // PLADDRR_FULL_PRAAT
 
 // NUMfpp initialization - static table for machine constants
 static struct structmachar_Table machar_table_static;
@@ -61,15 +90,21 @@ struct structPraatObjects {
 
 typedef struct structPraatObjects *PraatObjects;
 
-// Provide the global variables that Formula.cpp and other code references
-structPraatApplication theForegroundPraatApplication = { nullptr };
-PraatApplication theCurrentPraatApplication = &theForegroundPraatApplication;
-
-structPraatObjects theForegroundPraatObjects = { 0 };
-PraatObjects theCurrentPraatObjects = &theForegroundPraatObjects;
+// Note: theForegroundPraatApplication, theCurrentPraatApplication,
+// theForegroundPraatObjects, and theCurrentPraatObjects are now
+// defined in praat.github.io/sys/praat.cpp (which is being compiled).
+// We don't define them here to avoid duplicate symbols.
 
 // Demo mode stubs (GUI-only features not used in library mode)
-double Demo_input (conststring32 prompt) {
+void Demo_open () {
+    Melder_throw (U"Demo_open not available in library mode.");
+}
+
+void Demo_close () {
+    // No-op in library mode
+}
+
+bool Demo_input (conststring32 prompt) {
     (void) prompt;
     Melder_throw (U"Demo_input not available in library mode.");
 }
@@ -153,3 +188,28 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
     
     return count > 0 ? sum / count : undefined;
 }
+void Site_prefs () { /* No-op */ }
+void praat_show () { /* No-op */ }
+
+// Threading stubs
+#include <atomic>
+#include <functional>
+
+void MelderThread_run (std::atomic<bool> *, long, long, const std::function<void(long, long, long)> &) {
+    Melder_throw (U"MelderThread_run not available in library mode.");
+}
+
+// Threading range functions
+void Melder_thisThread_setRange (long, long) { /* No-op */ }
+
+bool MelderThread_getTraceThreads () { return false; }
+
+integer Melder_thisThread_getUniqueID () { return 1; }
+
+void MelderThread_debugMultithreading (bool, long, long, bool) { /* No-op */ }
+
+integer MelderThread_getNumberOfProcessors () { return 1; }
+
+double Melder_thisThread_estimateProgress () { return 0.0; }
+
+void Melder_thisThread_setCurrentElement (long) { /* No-op */ }

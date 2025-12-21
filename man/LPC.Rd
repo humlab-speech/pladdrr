@@ -38,6 +38,14 @@ LPC objects are created from Sound objects using one of several methods:
 - `$to_formant(margin)` - Convert to Formant object
 - `$to_spectrum(time, ...)` - Convert to Spectrum at specific time
 - `$to_matrix()` - Convert to Matrix object
+
+## Voice Source Extraction (Inverse Filtering)
+
+- `$filter_inverse(sound)` - Extract glottal flow by inverse filtering
+- `$filter_inverse_at_time(sound, time, channel)` - Use filter from specific time
+
+These methods remove vocal tract resonances to reveal the voice source (glottal
+flow waveform). Essential for voice quality research and vocal fold dynamics.
 }
 \note{
 This method is disabled in this build to avoid CLAPACK dependency.
@@ -65,10 +73,52 @@ coeffs <- lpc$get_all_coefficients()
 coef_frame10 <- lpc$get_coefficients_at_frame(10)
 
 # Convert to other representations
-formant <- lpc$to_formant(margin = 50)
 spectrum <- lpc$to_spectrum(time = 0.5, df_min = 20)
+
+# Extract voice source (glottal flow) via inverse filtering
+glottal_flow <- lpc$filter_inverse(sound)
+
+# Or use filter from a specific time (e.g., vowel midpoint)
+midpoint <- sound$get_duration() / 2
+glottal_flow_fixed <- lpc$filter_inverse_at_time(sound, time = midpoint)
 }
 
+
+## ------------------------------------------------
+## Method `LPC$filter_inverse`
+## ------------------------------------------------
+
+\dontrun{
+# Load speech
+sound <- Sound$new("vowel.wav")
+
+# Compute LPC
+lpc <- sound$to_lpc_burg(
+  prediction_order = 16,
+  analysis_width = 0.025,
+  time_step = 0.005,
+  pre_emphasis_frequency = 50.0
+)
+
+# Extract voice source
+glottal_flow <- lpc$filter_inverse(sound)
+
+# Save result
+glottal_flow$save("glottal_flow.wav")
+}
+
+## ------------------------------------------------
+## Method `LPC$filter_inverse_at_time`
+## ------------------------------------------------
+
+\dontrun{
+# Extract voice source using filter at vowel midpoint
+sound <- Sound$new("vowel.wav")
+lpc <- sound$to_lpc_burg(prediction_order = 16)
+
+midpoint <- sound$get_duration() / 2
+glottal_flow <- lpc$filter_inverse_at_time(sound, time = midpoint)
+}
 }
 \section{Super class}{
 \code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{LPC}
@@ -88,6 +138,8 @@ spectrum <- lpc$to_spectrum(time = 0.5, df_min = 20)
 \item \href{#method-LPC-to_formant}{\code{LPC$to_formant()}}
 \item \href{#method-LPC-to_spectrum}{\code{LPC$to_spectrum()}}
 \item \href{#method-LPC-to_matrix}{\code{LPC$to_matrix()}}
+\item \href{#method-LPC-filter_inverse}{\code{LPC$filter_inverse()}}
+\item \href{#method-LPC-filter_inverse_at_time}{\code{LPC$filter_inverse_at_time()}}
 \item \href{#method-LPC-print}{\code{LPC$print()}}
 \item \href{#method-LPC-clone}{\code{LPC$clone()}}
 }
@@ -301,6 +353,122 @@ Convert LPC coefficients to Matrix object
 \subsection{Returns}{
 A new Matrix object containing LPC coefficients
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LPC-filter_inverse"></a>}}
+\if{latex}{\out{\hypertarget{method-LPC-filter_inverse}{}}}
+\subsection{Method \code{filter_inverse()}}{
+Extract voice source via inverse filtering
+Applies LPC inverse filtering to remove vocal tract resonances from the
+speech signal, leaving the glottal flow waveform (voice source).
+This is fundamental for voice source analysis and vocal fold dynamics research.
+
+Corresponds to Praat: To Sound (inverse filter)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{LPC$filter_inverse(sound)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object to filter}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The inverse filter applies the formula: E(z) = X(z)A(z), where:
+- X(z) is the input speech signal
+- A(z) is the LPC filter (1 + sum of a_k * z^-k)
+- E(z) is the output excitation signal (voice source)
+
+This removes the vocal tract resonances (formants) from the speech signal,
+revealing the glottal flow waveform. The result can be used for:
+- Glottal flow analysis
+- Voice quality assessment
+- Vocal fold dynamics research
+- Source-filter separation
+}
+
+\subsection{Returns}{
+A new Sound object containing the extracted voice source (glottal flow)
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# Load speech
+sound <- Sound$new("vowel.wav")
+
+# Compute LPC
+lpc <- sound$to_lpc_burg(
+  prediction_order = 16,
+  analysis_width = 0.025,
+  time_step = 0.005,
+  pre_emphasis_frequency = 50.0
+)
+
+# Extract voice source
+glottal_flow <- lpc$filter_inverse(sound)
+
+# Save result
+glottal_flow$save("glottal_flow.wav")
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LPC-filter_inverse_at_time"></a>}}
+\if{latex}{\out{\hypertarget{method-LPC-filter_inverse_at_time}{}}}
+\subsection{Method \code{filter_inverse_at_time()}}{
+Extract voice source using filter at specific time
+Similar to filter_inverse() but uses the LPC filter coefficients from
+a single time point for the entire signal. Useful for stationary signals.
+
+Corresponds to Praat: To Sound (inverse filter, at time)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{LPC$filter_inverse_at_time(sound, time, channel = 1)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sound}}{Sound object to filter}
+
+\item{\code{time}}{Time point (seconds) at which to extract LPC filter}
+
+\item{\code{channel}}{Channel number (1 for mono or left, 2 for right)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+Instead of using time-varying LPC coefficients, this method extracts
+the filter at a single time point and applies it to the entire signal.
+This is appropriate when:
+- The signal is relatively stationary (e.g., sustained vowel)
+- You want a consistent filter across the entire signal
+- Comparing different analysis time points
+}
+
+\subsection{Returns}{
+A new Sound object containing the extracted voice source
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+# Extract voice source using filter at vowel midpoint
+sound <- Sound$new("vowel.wav")
+lpc <- sound$to_lpc_burg(prediction_order = 16)
+
+midpoint <- sound$get_duration() / 2
+glottal_flow <- lpc$filter_inverse_at_time(sound, time = midpoint)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LPC-print"></a>}}

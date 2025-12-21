@@ -252,25 +252,49 @@ NumericMatrix spectrum_as_matrix(SEXP xptr) {
 }
 
 // ==============================================================================
-// Spectrum formula modification
+// Spectrum modification methods
 // ==============================================================================
 
 // [[Rcpp::export(.spectrum_formula)]]
 void spectrum_formula(SEXP xptr, std::string formula_str) {
+    // Note: Matrix_formula requires Praat's interpreter, which we don't have.
+    // This function is kept for API compatibility but will error.
+    stop("Spectrum$formula() requires Praat's script interpreter which is not available. "
+         "Use apply_pre_emphasis() for pre-emphasis, or manipulate spectrum values "
+         "via as_matrix() and create a new Sound from the modified values.");
+}
+
+// [[Rcpp::export(.spectrum_apply_pre_emphasis)]]
+void spectrum_apply_pre_emphasis(SEXP xptr, double from_frequency) {
     XPtr<structSpectrum> spectrum(xptr);
     if (!spectrum) stop("Invalid Spectrum pointer");
-    
-    try {
-        // Convert formula string to Praat format
-        conststring32 formula = Melder_peek8to32(formula_str.c_str());
-        
-        // Apply formula using Praat's built-in formula interpreter
-        // Note: Praat's Matrix_formula modifies in place
-        Matrix_formula(reinterpret_cast<structMatrix*>(spectrum.get()), 
-                      formula, nullptr, nullptr);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to apply formula to Spectrum");
+
+    // Apply pre-emphasis: multiply by frequency for frequencies >= from_frequency
+    // This is equivalent to: formula("if x >= from_frequency then self*x else self fi")
+    for (integer i = 1; i <= spectrum->nx; i++) {
+        double freq = spectrum->x1 + (i - 1) * spectrum->dx;
+        if (freq >= from_frequency) {
+            // Multiply both real and imaginary parts by frequency
+            spectrum->z[1][i] *= freq;  // Real part
+            spectrum->z[2][i] *= freq;  // Imaginary part
+        }
+    }
+}
+
+// [[Rcpp::export(.spectrum_multiply_by_frequency)]]
+void spectrum_multiply_by_frequency(SEXP xptr, double power) {
+    XPtr<structSpectrum> spectrum(xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+
+    // Multiply spectrum values by frequency raised to a power
+    // Useful for spectral tilt corrections
+    for (integer i = 1; i <= spectrum->nx; i++) {
+        double freq = spectrum->x1 + (i - 1) * spectrum->dx;
+        if (freq > 0) {
+            double factor = pow(freq, power);
+            spectrum->z[1][i] *= factor;  // Real part
+            spectrum->z[2][i] *= factor;  // Imaginary part
+        }
     }
 }
 

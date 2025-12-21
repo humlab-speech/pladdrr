@@ -4,7 +4,7 @@
 \alias{.sound_create_from_values}
 \title{Create Sound from values (internal)}
 \usage{
-.sound_create_from_values(values, sampling_rate)
+.sound_create_from_values(values, sampling_rate, start_time = 0)
 }
 \description{
 Create Sound from values (internal)
