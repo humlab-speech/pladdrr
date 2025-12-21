@@ -157,37 +157,8 @@ double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorS
 // Matrix statistics function needed by PowerCepstrogram
 #include "fon/Matrix.h"
 
-double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
-    if (xmin >= xmax) {
-        xmin = my xmin;
-        xmax = my xmax;
-    }
-    if (ymin >= ymax) {
-        ymin = my ymin;
-        ymax = my ymax;
-    }
-    
-    // Convert x/y ranges to column/row indices
-    integer ixmin = Melder_clippedLeft (integer(1), Matrix_xToNearestColumn (me, xmin));
-    integer ixmax = Melder_clippedRight (Matrix_xToNearestColumn (me, xmax), my nx);
-    integer iymin = Melder_clippedLeft (integer(1), Matrix_yToNearestRow (me, ymin));
-    integer iymax = Melder_clippedRight (Matrix_yToNearestRow (me, ymax), my ny);
-    
-    if (ixmin > ixmax || iymin > iymax) {
-        return undefined;
-    }
-    
-    double sum = 0.0;
-    integer count = 0;
-    for (integer iy = iymin; iy <= iymax; iy++) {
-        for (integer ix = ixmin; ix <= ixmax; ix++) {
-            sum += my z [iy] [ix];
-            count++;
-        }
-    }
-    
-    return count > 0 ? sum / count : undefined;
-}
+// NOTE: Matrix_getMean is now provided by Matrix_extensions.cpp - stub removed
+
 void Site_prefs () { /* No-op */ }
 void praat_show () { /* No-op */ }
 

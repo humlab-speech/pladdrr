@@ -122,6 +122,7 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/Intensity_extensions.cpp \
               praat.github.io/dwtools/TextGrid_extensions.cpp \
               praat.github.io/dwtools/Sound_and_TextGrid_extensions.cpp \
+              praat.github.io/dwtools/Matrix_extensions.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -155,7 +156,10 @@ FON_SRC = praat.github.io/fon/Transition.cpp praat.github.io/fon/Distributions_a
           praat.github.io/fon/Excitation_to_Formant.cpp praat.github.io/fon/Sound_to_Cochleagram.cpp \
           praat.github.io/fon/Spectrum_to_Excitation.cpp praat.github.io/fon/VocalTract.cpp \
           praat.github.io/fon/VocalTract_to_Spectrum.cpp praat.github.io/fon/Sound_enhance.cpp \
-          praat.github.io/fon/VoiceAnalysis.cpp praat.github.io/fon/H1minusH2Tier.cpp
+          praat.github.io/fon/VoiceAnalysis.cpp praat.github.io/fon/H1minusH2Tier.cpp \
+          praat.github.io/fon/Praat_tests.cpp \
+          praat.github.io/fon/praat_Sound.cpp praat.github.io/fon/praat_Matrix.cpp praat.github.io/fon/praat_Tiers.cpp \
+          praat.github.io/fon/praat_TextGrid_init.cpp praat.github.io/fon/praat_uvafon_init.cpp
 
 # Sensors sources
 SENSORS_SRC = praat.github.io/sensors/Electroglottogram.cpp

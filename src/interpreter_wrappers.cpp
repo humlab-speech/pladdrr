@@ -11,6 +11,7 @@
 #include "sys/praat.h"
 #include "sys/praat_script.h"
 #include "melder/melder.h"
+#include "praat.github.io/fon/praat_uvafon_init.h"
 
 using namespace Rcpp;
 
@@ -27,8 +28,8 @@ void praat_interpreter_init() {
             // Initialize Praat library
             praatlib_init();
             
-            // Note: praat_uvafon_init() not available in our build
-            // Commands are registered by individual object wrappers
+            // Register all Praat object classes and commands
+            praat_uvafon_init();
             
             praat_interpreter_initialized = true;
         } catch (MelderError) {

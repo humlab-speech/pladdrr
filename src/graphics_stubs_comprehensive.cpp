@@ -11,7 +11,7 @@
 // Graphics functionality is disabled in non-GUI builds
 
 // Matrix extensions graphics stubs (for TableOfReal_extensions dependency)
-void Matrix_drawDistribution (Matrix, Graphics, double, double, double, double, double, double, integer, double, double, bool, bool) {}
+// NOTE: Matrix_drawDistribution is now provided by Matrix_extensions.cpp - stub removed
 
 void Graphics_grey (Graphics, constMATVU const&, double, double, double, double, int, double []) {}
 void Graphics_image (Graphics, constMATVU const&, double, double, double, double, double, double) {}
