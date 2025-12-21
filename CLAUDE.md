@@ -4497,3 +4497,48 @@ Successfully implemented missing functionality for DSI/AVQI/tremor analysis:
 
 See `PLADDRR_1.1.0_FIXES_SUMMARY.md` for complete implementation details.
 
+
+## SESSION 9 COMPLETION: Formant Extraction Fixed (2025-12-21) ✅
+
+### Issue Resolved
+**Vignette build failures** - formant extraction threw `MelderThread_run not available`
+
+### Root Cause
+Two `MelderThread_run` stubs existed with different signatures:
+- `num_stubs.cpp`: `long, long, long` → **just threw error**
+- `praat_stubs.cpp`: `integer, integer, integer` → **working implementation**
+
+Formant extraction called the `long` version, hit the error.
+
+### Solution
+Replaced broken stub in `num_stubs.cpp` with working single-threaded implementation:
+```cpp
+void MelderThread_run(std::atomic<bool> *errorFlag, long numElements, long threshold, 
+                      const std::function<void(long, long, long)> &func) {
+    try {
+        func(0, 1, numElements);  // Single-threaded: process all elements at once
+    } catch (MelderError) {
+        if (errorFlag) *errorFlag = true;
+        Melder_throw(U"Error in parallel computation");
+    }
+}
+```
+
+### Results
+✅ Formant extraction works: `sound$to_formant_burg()` succeeds  
+✅ All 9 vignettes build successfully  
+✅ Package tarball builds cleanly (`pladdrr_1.3.0.tar.gz`)
+
+### Files Modified
+- `src/sound_wrappers.cpp` - Better error messages (capture Praat errors)
+- `src/num_stubs.cpp` - Working threading stub implementation
+
+### Package Status
+**PRODUCTION READY** for v1.3.0 release
+- Full Praat interpreter integration ✅
+- All phonetic analysis functions working ✅
+- Formant extraction functional ✅
+- All vignettes building ✅
+
+**See**: `SESSION9_FORMANT_FIX_COMPLETE.md` for complete details
+

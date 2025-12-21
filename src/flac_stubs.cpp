@@ -84,6 +84,43 @@ FLAC__bool FLAC__stream_decoder_finish(FLAC__StreamDecoder *) {
     return false;
 }
 
+// Additional FLAC functions for LongSound support
+typedef enum {
+    FLAC__STREAM_DECODER_SEARCH_FOR_METADATA = 0,
+    FLAC__STREAM_DECODER_READ_METADATA,
+    FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC,
+    FLAC__STREAM_DECODER_READ_FRAME,
+    FLAC__STREAM_DECODER_END_OF_STREAM,
+    FLAC__STREAM_DECODER_OGG_ERROR,
+    FLAC__STREAM_DECODER_SEEK_ERROR,
+    FLAC__STREAM_DECODER_ABORTED,
+    FLAC__STREAM_DECODER_MEMORY_ALLOCATION_ERROR,
+    FLAC__STREAM_DECODER_UNINITIALIZED
+} FLAC__StreamDecoderState;
+
+FLAC__StreamDecoderState FLAC__stream_decoder_get_state(const FLAC__StreamDecoder *) {
+    return FLAC__STREAM_DECODER_UNINITIALIZED;
+}
+
+FLAC__StreamDecoderInitStatus FLAC__stream_decoder_init_FILE(
+    FLAC__StreamDecoder *,
+    FILE *,
+    FLAC__StreamDecoderWriteCallback,
+    FLAC__StreamDecoderMetadataCallback,
+    FLAC__StreamDecoderErrorCallback,
+    void *
+) {
+    return FLAC__STREAM_DECODER_INIT_STATUS_ERROR_OPENING_FILE;
+}
+
+FLAC__bool FLAC__stream_decoder_seek_absolute(FLAC__StreamDecoder *, FLAC__uint64) {
+    return false;
+}
+
+FLAC__bool FLAC__stream_decoder_process_single(FLAC__StreamDecoder *) {
+    return false;
+}
+
 } // extern "C"
 
 // ============================================================================

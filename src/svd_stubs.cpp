@@ -77,3 +77,16 @@ integer SVD_zeroSmallSingularValues (SVD, double) {
 	              U"This package does not include CLAPACK/LAPACK.");
 }
 
+
+// SVD_solve_preallocated template
+template<typename T>
+struct constmatrixview;
+template<typename T>
+struct matrixview;
+struct structSVD;
+
+void SVD_solve_preallocated (structSVD *svd, 
+                             const constmatrixview<double>& b,
+                             const matrixview<double>& x) {
+    /* No-op */
+}

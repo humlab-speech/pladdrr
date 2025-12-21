@@ -9,6 +9,9 @@
 struct structSpeechSynthesizer;
 typedef structSpeechSynthesizer* SpeechSynthesizer;
 
+// Global variable stub (defined in SpeechSynthesizer.cpp line 827)
+STRVEC theSpeechSynthesizerLanguageNames { };
+
 // Stub implementation
 autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (
     SpeechSynthesizer /* me */,

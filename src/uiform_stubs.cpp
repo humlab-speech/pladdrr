@@ -212,6 +212,10 @@ void GuiThing_setSensitive (structGuiThing *, int) { /* No-op */ }
 
 
 // UiFile functions (file selection dialogs)
+MelderFile UiFile_getFile (structUiForm *) {
+    Melder_throw (U"UiFile_getFile not available.");
+}
+
 conststring32 UiFile_getFile (structUiForm *, conststring32) {
     Melder_throw (U"UiFile_getFile not available.");
 }
@@ -418,3 +422,90 @@ struct structScriptEditor {
 void structScriptEditor::f_preferences() {
     /* No-op - ScriptEditor preferences not needed in library mode */
 }
+
+// UiInfile_do stub (UiOutfile_do already in praat_app_stubs.cpp)
+struct structUiForm;
+typedef structUiForm *UiForm;
+
+void UiInfile_do (UiForm /* me */) {
+    // No-op - File dialog not needed in library mode
+}
+
+void UiFile_addHistory (conststring32 /* path */) {
+    // No-op - File history not needed in library mode
+}
+
+// UiForm setters (for programmatic form value setting)
+void UiForm_setReal (structUiForm *, double *, double) {
+    /* No-op - form value setting not needed in library mode */
+}
+
+// UiInfile_create - creates an input file selection dialog  
+UiForm UiInfile_create (GuiWindow, Editor, conststring32,
+    void (*)(UiForm, long, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor),
+    void *, conststring32, conststring32, bool) {
+    return nullptr;  // File dialogs not supported in NO_GUI build
+}
+
+void UiForm_addColour (structUiForm *, MelderColour *, conststring32, conststring32, conststring32) {
+    /* No-op - color fields not supported in library mode */
+}
+
+void UiForm_setOption (structUiForm *, int *, int) {
+    /* No-op - option menus not supported */
+}
+
+struct structEditor;
+void UiOutfile_create (structGuiWindow *, structEditor *, conststring32,
+                       void (*)(structUiForm*, long, structStackel*, conststring32, 
+                               structInterpreter*, conststring32, bool, void*, structEditor*),
+                       void *, conststring32, conststring32) {
+    /* No-op - file dialogs not supported */
+}
+
+void UiForm_addChannel (structUiForm *, long *, conststring32, conststring32, conststring32) {
+    /* No-op - channel fields not supported */
+}
+
+void UiForm_addFormula (structUiForm *, conststring32 *, conststring32, conststring32, conststring32, long) {
+    /* No-op - formula fields not supported */
+}
+
+void UiForm_setBoolean (structUiForm *, bool *, bool) {
+    /* No-op - boolean setters not supported */
+}
+
+void UiForm_setInteger (structUiForm *, long *, long) {
+    /* No-op - integer setters not supported */
+}
+
+void UiForm_addChoiceEnum (structUiForm *, int *, conststring32 *, conststring32, conststring32, 
+                           int, int, int (*)(conststring32)) {
+    /* No-op - choice enum fields not supported */
+}
+
+void UiForm_addRealMatrix (structUiForm *, constmatrix<double> *, conststring32, conststring32, 
+                           constmatrixview<double>, long) {
+    /* No-op - matrix fields not supported */
+}
+
+// String array template types
+template<typename T>
+struct _conststringvector;
+
+void UiForm_addStringArray (structUiForm *form, 
+                            _conststringvector<char32_t> *strings, 
+                            const char32_t *label, 
+                            const char32_t *defaultValue, 
+                            _conststringvector<char32_t> options, 
+                            long defaultIndex) {
+    /* No-op - string arrays not needed */
+}
+
+void UiForm_addOptionMenuEnum (structUiForm *, int *, const char32 **, const char32 *, const char32 *, int, int, int (*)(const char32 *)) { }
+void UiForm_setOptionMenuStr (structUiForm *, const char32 *, const char32 *) { }  
+void UiForm_addIntegerOrLabeledRadioButtons (structUiForm *, long *, const char32 *, const char32 *, long, const char32 *) { }
+
+void UiForm_addRealOrUndefined (structUiForm *, double *, const char32 *, const char32 *, const char32 *) { }
+void UiForm_addPositive (structUiForm *, double *, const char32 *, const char32 *) { }
+void UiForm_addNatural (structUiForm *, long *, const char32 *, const char32 *) { }

@@ -110,10 +110,12 @@ DWSYS_SRC = praat.github.io/dwsys/NUMFourier.cpp \
             praat.github.io/dwsys/PermutationInversionCounter.cpp \
             praat.github.io/dwsys/NUM2.cpp \
             praat.github.io/dwsys/NUMhuber.cpp \
+            praat.github.io/dwsys/NUMselect.cpp \
             praat.github.io/dwsys/MAT_numerics.cpp \
             praat.github.io/dwsys/NUMstring.cpp \
             praat.github.io/dwsys/NUMmachar.cpp \
-            praat.github.io/dwsys/NUMsorting.cpp
+            praat.github.io/dwsys/NUMsorting.cpp \
+            praat.github.io/dwsys/Index.cpp \
 
 # Dwtools sources
 DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
@@ -123,6 +125,8 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/TextGrid_extensions.cpp \
               praat.github.io/dwtools/Sound_and_TextGrid_extensions.cpp \
               praat.github.io/dwtools/Matrix_extensions.cpp \
+              praat.github.io/dwtools/Strings_extensions.cpp \
+              praat.github.io/dwtools/PatternList.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -157,6 +161,9 @@ FON_SRC = praat.github.io/fon/Transition.cpp praat.github.io/fon/Distributions_a
           praat.github.io/fon/Spectrum_to_Excitation.cpp praat.github.io/fon/VocalTract.cpp \
           praat.github.io/fon/VocalTract_to_Spectrum.cpp praat.github.io/fon/Sound_enhance.cpp \
           praat.github.io/fon/VoiceAnalysis.cpp praat.github.io/fon/H1minusH2Tier.cpp \
+          praat.github.io/fon/WordList.cpp praat.github.io/fon/SpellingChecker.cpp praat.github.io/fon/Corpus.cpp \
+          praat.github.io/fon/Movie.cpp praat.github.io/fon/Photo.cpp praat.github.io/fon/LongSound.cpp \
+          praat.github.io/fon/SoundSet.cpp \
           praat.github.io/fon/Praat_tests.cpp \
           praat.github.io/fon/praat_Sound.cpp praat.github.io/fon/praat_Matrix.cpp praat.github.io/fon/praat_Tiers.cpp \
           praat.github.io/fon/praat_TextGrid_init.cpp praat.github.io/fon/praat_uvafon_init.cpp
@@ -230,12 +237,13 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               powercepstrum_wrappers.cpp \
               cochleagram_wrappers.cpp excitation_wrappers.cpp \
               matrix_wrappers.cpp interpreter_wrappers.cpp \
-              praat.github.io/excluded_sources/Sound_files.cpp \
-              praat_stubs.cpp praat_app_stubs.cpp speechsynthesizer_stubs.cpp \
-              num_stubs.cpp longsound_stub.cpp \
-              graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
+               praat.github.io/excluded_sources/Sound_files.cpp \
+               praat_stubs.cpp praat_app_stubs.cpp speechsynthesizer_stubs.cpp \
+               num_stubs.cpp \
+               graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               svd_stubs.cpp glpk_stubs.cpp \
               dtw_stubs.cpp eigen_sscp_stubs.cpp configuration_stubs.cpp table_stubs.cpp \
+              area_stubs.cpp \
               sound_create_gaussian.cpp \
               r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp

@@ -481,8 +481,13 @@ XPtr<structFormant> sound_to_formant_burg(
         return create_xptr_from_auto<structFormant>(formant);
         
     } catch (MelderError) {
+        std::string error_msg = "Failed to extract formants: ";
+        conststring32 praat_error = Melder_getError();
+        if (praat_error) {
+            error_msg += Melder_peek32to8(praat_error);
+        }
         Melder_clearError();
-        stop("Failed to extract formants");
+        stop(error_msg);
     }
 }
 

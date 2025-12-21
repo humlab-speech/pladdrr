@@ -7,6 +7,22 @@
 #include "praat.github.io/dwtools/Sound_extensions_enums.h"
 #include "praat.github.io/fon/Matrix.h"
 
+// Forward declarations for GUI types
+struct structGuiForm;
+struct structGuiDialog;
+struct structGuiWindow;
+struct structGuiShell;
+struct structGuiControl;
+struct structMovie;
+struct structMovieWindow;
+struct structGuiDrawingArea;
+struct structGuiDrawingArea_ExposeEvent;
+struct structGuiDrawingArea_MouseEvent;
+struct structGuiDrawingArea_KeyEvent;
+struct structGuiDrawingArea_ResizeEvent;
+struct structGuiDrawingArea_ZoomEvent;
+enum class GuiDialog_Modality { MODAL, MODELESS };
+
 // Note: These are no-op stubs since we build with NO_GRAPHICS
 // Graphics functionality is disabled in non-GUI builds
 
@@ -176,3 +192,52 @@ bool Graphics_startRecording (Graphics) { return false; }
 void Graphics_resetWsViewport (Graphics, integer, integer, integer, integer) { /* No-op */ }
 void Graphics_setWsViewport (Graphics, integer, integer, integer, integer) { /* No-op */ }
 bool Graphics_stopRecording (Graphics) { return false; }
+
+structGuiDrawingArea* GuiDrawingArea_createShown (
+    structGuiForm *parent,
+    int left, int top, int width, int height,
+    MelderCallback<void, structThing, structGuiDrawingArea_ExposeEvent*> exposeCallback,
+    MelderCallback<void, structThing, structGuiDrawingArea_MouseEvent*> mouseCallback,
+    MelderCallback<void, structThing, structGuiDrawingArea_KeyEvent*> keyCallback,
+    MelderCallback<void, structThing, structGuiDrawingArea_ResizeEvent*> resizeCallback,
+    MelderCallback<void, structThing, structGuiDrawingArea_ZoomEvent*> zoomCallback,
+    structThing *boss,
+    unsigned int flags
+) {
+    return nullptr;  // No GUI
+}
+
+autoGraphics Graphics_create_xmdrawingarea (structGuiDrawingArea *) {
+    return autoGraphics();  // No GUI graphics
+}
+
+void Graphics_play (Graphics me, Graphics thee) {
+    // No-op - playback not available
+}
+
+structGuiDialog* GuiDialog_create (
+    structGuiWindow *parent,
+    int x, int y, int width, int height,
+    conststring32 title,
+    MelderCallback<void, structThing> okCallback,
+    structThing *boss,
+    GuiDialog_Modality modality
+) {
+    return nullptr;  // No GUI
+}
+
+void GuiShell_setTitle (structGuiShell *, conststring32) {
+    // No-op - no GUI
+}
+
+void GuiControl_setSize (structGuiControl *, int, int) {}
+
+structMovieWindow* MovieWindow_create (conststring32, structMovie *) {
+    return nullptr;
+}
+
+void Graphics_image_colour (Graphics, constmatrixview<MelderColour> const&, double, double, double, double, double, double) {}
+
+void Graphics_imageFromFile (Graphics, conststring32, double, double, double, double) {}
+
+void Graphics_cellArray_colour (Graphics, constmatrixview<MelderColour> const&, double, double, double, double, double, double) {}

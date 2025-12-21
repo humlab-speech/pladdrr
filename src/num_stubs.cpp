@@ -166,8 +166,22 @@ void praat_show () { /* No-op */ }
 #include <atomic>
 #include <functional>
 
-void MelderThread_run (std::atomic<bool> *, long, long, const std::function<void(long, long, long)> &) {
-    Melder_throw (U"MelderThread_run not available in library mode.");
+// Stub for long-based signature (single-threaded execution)
+void MelderThread_run (std::atomic<bool> *errorFlag, long numElements, long threshold, 
+                       const std::function<void(long, long, long)> &func) {
+    // Single-threaded execution: call function for all elements
+    try {
+        func(0, 1, numElements);  // thread 0, elements 1 to numElements
+    } catch (MelderError) {
+        if (errorFlag) *errorFlag = true;
+        Melder_throw(U"Error in parallel computation");
+    } catch (...) {
+        if (errorFlag) *errorFlag = true;
+        Melder_throw(U"Unknown exception in parallel computation");
+    }
+    if (errorFlag && *errorFlag) {
+        Melder_throw(U"Error flag set in parallel computation");
+    }
 }
 
 // Threading range functions
