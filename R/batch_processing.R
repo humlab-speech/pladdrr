@@ -79,14 +79,11 @@ batch_process <- function(directory,
     parallel::clusterExport(cl, c("Sound", "func"), envir = environment())
     results <- parallel::parLapply(cl, files, process_file)
   } else {
-    if (progress && requireNamespace("progress", quietly = TRUE)) {
-      pb <- progress::progress_bar$new(
-        format = "[:bar] :percent :eta",
-        total = length(files)
-      )
-      results <- lapply(files, function(f) {
-        pb$tick()
-        process_file(f)
+    if (progress) {
+      message("Processing ", length(files), " files...")
+      results <- lapply(seq_along(files), function(i) {
+        if (i %% 10 == 0) message("  Processed ", i, "/", length(files))
+        process_file(files[[i]])
       })
     } else {
       results <- lapply(files, process_file)

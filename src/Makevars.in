@@ -59,20 +59,34 @@ PKG_CXXFLAGS += -O2
 # Detect platform and set appropriate flags
 UNAME_M := $(shell uname -m 2>/dev/null || echo unknown)
 
-ifeq ($(UNAME_M),x86_64)
-  PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
-else
-  ifeq ($(UNAME_M),aarch64)
-    PKG_CXXFLAGS += -march=armv8-a+simd
-  else
-    ifeq ($(UNAME_M),arm64)
-      PKG_CXXFLAGS += -march=armv8-a+simd
-    endif
-  endif
-endif
+# Platform-specific optimizations (commented out for CRAN portability)
+# Uncomment for local builds to enable SIMD optimizations
+# ifeq ($(UNAME_M),x86_64)
+#   PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
+# else
+#   ifeq ($(UNAME_M),aarch64)
+#     PKG_CXXFLAGS += -march=armv8-a+simd
+#   else
+#     ifeq ($(UNAME_M),arm64)
+#       PKG_CXXFLAGS += -march=armv8-a+simd
+#     endif
+#   endif
+# endif
 
 # Linker flags - link against GSL, R's LAPACK and BLAS
-PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
+# Override FLIBS to use Homebrew gfortran if /opt/gfortran doesn't exist
+HOMEBREW_GCC := $(shell brew --prefix gcc 2>/dev/null)
+ifneq ($(HOMEBREW_GCC),)
+  ifeq ($(wildcard /opt/gfortran),)
+    # Use Homebrew gfortran location
+    FLIBS_OVERRIDE = -L$(HOMEBREW_GCC)/lib/gcc/current -lgfortran -lquadmath
+    PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS_OVERRIDE) -pthread
+  else
+    PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
+  endif
+else
+  PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
+endif
 
 # ============================================================================
 # SOURCE FILES

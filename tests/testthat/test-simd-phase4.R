@@ -259,7 +259,7 @@ test_that("SIMD performance is better than scalar", {
   sound <- Sound$new(440, duration = 0.5, sampling_frequency = 22050)
   
   # Warm-up
-  _ <- sound$to_spectrum()
+  dummy <- sound$to_spectrum()
   
   # Time SIMD execution
   time_simd <- system.time({
