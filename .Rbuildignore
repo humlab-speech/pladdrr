@@ -98,3 +98,20 @@ results/
 ^src/clapack/\.git
 ^src/pffft/\.git
 ^src/gsl-2\.8/.*\.deps$
+^src/.*\.o$
+^src/.*\.so$
+^src/.*\.la$
+^src/.*\.exe$
+^src/praat\.github\.io/test/fon ExperimentMFC/
+^src/praat\.github\.io/test/sys/large PDF/
+^src/praat\.github\.io/test/manually/external/Chris Darwin/
+^GRAPHICS_IMPLEMENTATION_PLAN\.md$
+^src/Makevars$
+^src/Makevars\.backup$
+^src/Makevars\.backup2$
+^src/Makevars\.bak2$
+^src/Makevars\.in\.backup$
+^src/Makevars\.in\.bak3$
+^src/Makevars\.in\.bak4$
+^src/Makevars\.in\.pre-opt$
+^src/Makevars\.pre-opt$

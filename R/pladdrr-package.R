@@ -103,6 +103,8 @@
 #' @aliases pladdrr
 #' @useDynLib pladdrr, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom stats aggregate approx fitted lm median predict quantile rnorm sd time
+#' @importFrom utils head
 #' @keywords internal
 "_PACKAGE"
 
