@@ -80,8 +80,8 @@ results/
 ^pladdrr/speaker$
 ^pladdrr/speaker_1$
 ^src/praat\.github\.io/docs/
-^src/praat\.github\.io/external/
 ^src/praat\.github\.io/generate/
+^src/praat\.github\.io/test/
 ^speaker_1/src/praat\.github\.io/
 ^\.Rcheck$
 ^..Rcheck$
