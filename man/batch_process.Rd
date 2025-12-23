@@ -46,6 +46,8 @@ batch_process(
 \item{return_type}{Character. How to combine results: "list", "data.frame", or "bind_rows" (default: "data.frame").}
 
 \item{...}{Additional arguments passed to func.}
+
+\item{cores}{Integer, number of cores for parallel processing (default: NULL = all-1)}
 }
 \value{
 Data frame with results from all files

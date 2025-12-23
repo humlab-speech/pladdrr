@@ -299,8 +299,8 @@ cat("Renamed tier 3 to 'segments'\n")
 The package efficiently handles TextGrid files of all sizes, including hour-long recordings.
 
 ```{r large_textgrid, eval=FALSE}
-# Load large file
-tg_file <- system.file("extdata", "benchmarkdata10min.TextGrid", package = "pladdrr")
+# Example with 1min file (large files removed to reduce package size)
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
 
 # Measure load time
 start_time <- Sys.time()

@@ -103,6 +103,18 @@ PraatInterpreter <- R6::R6Class(
       })
     },
     
+    #' @description Get count of objects in Praat object list
+    #' @return Integer count of objects
+    object_count = function() {
+      .praat_interpreter_object_count()
+    },
+    
+    #' @description List all objects in Praat object list
+    #' @return Data frame with columns: id, name, class, selected
+    list_objects = function() {
+      .praat_interpreter_list_objects()
+    },
+    
     #' @description Print method
     print = function() {
       cat("<PraatInterpreter>\n")

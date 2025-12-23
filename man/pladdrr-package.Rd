@@ -89,8 +89,8 @@ mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 # Extract formants
 formant <- sound$to_formant_burg(
   time_step = 0.01,
-  max_number_of_formants = 5,
-  maximum_formant = 5500
+  max_formants = 5,
+  max_frequency = 5500
 )
 
 # Get formant values at midpoint

@@ -75,16 +75,10 @@ test_that("Time-based queries work", {
 
 test_that("Large files load successfully", {
   skip_on_cran()
+  skip("Large benchmark files removed to reduce package size")
   
-  # 10-minute file
-  tg10 <- TextGrid$new('../../inst/extdata/benchmarkdata10min.TextGrid')
-  expect_equal(tg10$get_total_duration(), 600)
-  expect_equal(tg10$get_number_of_tiers(), 10)
-  
-  # 30-minute file
-  tg30 <- TextGrid$new('../../inst/extdata/benchmarkdata30min.TextGrid')
-  expect_equal(tg30$get_total_duration(), 1800)
-  expect_equal(tg30$get_number_of_tiers(), 10)
+  # These tests used 10min and 30min TextGrid files (49MB total)
+  # Keep 1min file (1.2MB) for other tests
 })
 
 test_that("TextGrid handles edge cases", {

@@ -111,3 +111,28 @@ praat_init <- function() {
 praat_initialized <- function() {
   .praat_is_initialized()
 }
+
+#' Get count of objects in Praat object list
+#'
+#' @return Integer count of objects
+#' @export
+#' @examples
+#' \dontrun{
+#' count <- praat_object_count()
+#' }
+praat_object_count <- function() {
+  .praat_interpreter_object_count()
+}
+
+#' List all objects in Praat object list
+#'
+#' @return Data frame with columns: id, name, class, selected
+#' @export
+#' @examples
+#' \dontrun{
+#' objects <- praat_list_objects()
+#' print(objects)
+#' }
+praat_list_objects <- function() {
+  .praat_interpreter_list_objects()
+}

@@ -35,6 +35,27 @@ interp <- PraatInterpreter$new()
 interp$run('x = 42')
 value <- interp$get_variable("x")
 }
+
+## ------------------------------------------------
+## Method `PraatInterpreter$set_variable`
+## ------------------------------------------------
+
+\dontrun{
+interp <- PraatInterpreter$new()
+interp$set_variable("x", 42)
+interp$set_variable("name", "test")
+interp$set_variable("data", c(1, 2, 3))
+}
+
+## ------------------------------------------------
+## Method `PraatInterpreter$eval`
+## ------------------------------------------------
+
+\dontrun{
+interp <- PraatInterpreter$new()
+result <- interp$eval("2 + 2")  # Returns 4
+result <- interp$eval("\"hello\"")  # Returns "hello"
+}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -42,6 +63,10 @@ value <- interp$get_variable("x")
 \item \href{#method-PraatInterpreter-new}{\code{PraatInterpreter$new()}}
 \item \href{#method-PraatInterpreter-run}{\code{PraatInterpreter$run()}}
 \item \href{#method-PraatInterpreter-get_variable}{\code{PraatInterpreter$get_variable()}}
+\item \href{#method-PraatInterpreter-set_variable}{\code{PraatInterpreter$set_variable()}}
+\item \href{#method-PraatInterpreter-eval}{\code{PraatInterpreter$eval()}}
+\item \href{#method-PraatInterpreter-object_count}{\code{PraatInterpreter$object_count()}}
+\item \href{#method-PraatInterpreter-list_objects}{\code{PraatInterpreter$list_objects()}}
 \item \href{#method-PraatInterpreter-print}{\code{PraatInterpreter$print()}}
 \item \href{#method-PraatInterpreter-clone}{\code{PraatInterpreter$clone()}}
 }
@@ -106,7 +131,7 @@ Get variable value from interpreter
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{Variable name (with suffix: x for numeric, x$ for string, 
-x# for vector, x## for matrix)}
+x# for vector, x## for matrix, x$# for string array)}
 }
 \if{html}{\out{</div>}}
 }
@@ -125,6 +150,99 @@ value <- interp$get_variable("x")
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-set_variable"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-set_variable}{}}}
+\subsection{Method \code{set_variable()}}{
+Set variable value in interpreter
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$set_variable(name, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Variable name (suffix auto-detected from R type)}
+
+\item{\code{value}}{Variable value (numeric, string, vector, matrix, or character vector)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly), for method chaining
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+interp <- PraatInterpreter$new()
+interp$set_variable("x", 42)
+interp$set_variable("name", "test")
+interp$set_variable("data", c(1, 2, 3))
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-eval"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-eval}{}}}
+\subsection{Method \code{eval()}}{
+Evaluate expression and return result
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$eval(expression)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{expression}}{Praat expression to evaluate}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Result of expression (type depends on expression)
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+interp <- PraatInterpreter$new()
+result <- interp$eval("2 + 2")  # Returns 4
+result <- interp$eval("\"hello\"")  # Returns "hello"
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-object_count"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-object_count}{}}}
+\subsection{Method \code{object_count()}}{
+Get count of objects in Praat object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$object_count()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Integer count of objects
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-list_objects"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-list_objects}{}}}
+\subsection{Method \code{list_objects()}}{
+List all objects in Praat object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$list_objects()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Data frame with columns: id, name, class, selected
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-print"></a>}}

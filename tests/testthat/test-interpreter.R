@@ -329,3 +329,44 @@ test_that("Matrix operations work with set variables", {
   result <- interp$eval("numberOfColumns(mat##)")
   expect_equal(result, 2)
 })
+
+# === Object Management Tests ===
+
+test_that("praat_object_count() returns integer count", {
+  count <- praat_object_count()
+  expect_type(count, "integer")
+  expect_gte(count, 0)
+})
+
+test_that("praat_list_objects() returns data frame with correct structure", {
+  objects <- praat_list_objects()
+  expect_s3_class(objects, "data.frame")
+  expect_named(objects, c("id", "name", "class", "selected"))
+  expect_type(objects$id, "integer")
+  expect_type(objects$name, "character")
+  expect_type(objects$class, "character")
+  expect_type(objects$selected, "logical")
+})
+
+test_that("PraatInterpreter object_count() method works", {
+  interp <- PraatInterpreter$new()
+  count <- interp$object_count()
+  expect_type(count, "integer")
+  expect_gte(count, 0)
+})
+
+test_that("PraatInterpreter list_objects() method works", {
+  interp <- PraatInterpreter$new()
+  objects <- interp$list_objects()
+  expect_s3_class(objects, "data.frame")
+  expect_named(objects, c("id", "name", "class", "selected"))
+})
+
+test_that("Object list is initially empty in library mode", {
+  # In library mode without GUI, object list should be empty
+  count <- praat_object_count()
+  expect_equal(count, 0)
+  
+  objects <- praat_list_objects()
+  expect_equal(nrow(objects), 0)
+})

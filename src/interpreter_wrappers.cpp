@@ -489,3 +489,56 @@ CharacterVector praat_interpreter_eval_string_array(SEXP xptr, std::string expre
         stop(error_msg);
     }
 }
+
+// ==============================================================================
+// Object Management (query global Praat object list)
+// ==============================================================================
+
+// [[Rcpp::export(.praat_interpreter_object_count)]]
+int praat_interpreter_object_count() {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+    
+    // theCurrentPraatObjects is the global object list
+    return theCurrentPraatObjects->n;
+}
+
+// [[Rcpp::export(.praat_interpreter_list_objects)]]
+DataFrame praat_interpreter_list_objects() {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+    
+    int n = theCurrentPraatObjects->n;
+    
+    if (n == 0) {
+        // Return empty data frame with correct columns
+        return DataFrame::create(
+            Named("id") = IntegerVector(),
+            Named("name") = CharacterVector(),
+            Named("class") = CharacterVector(),
+            Named("selected") = LogicalVector()
+        );
+    }
+    
+    IntegerVector ids(n);
+    CharacterVector names(n);
+    CharacterVector classes(n);
+    LogicalVector selected(n);
+    
+    for (int i = 0; i < n; i++) {
+        int iobject = i + 1;  // Praat uses 1-based indexing
+        ids[i] = theCurrentPraatObjects->list[iobject].id;
+        names[i] = Melder_peek32to8(theCurrentPraatObjects->list[iobject].name.get());
+        classes[i] = Melder_peek32to8(theCurrentPraatObjects->list[iobject].klas->className);
+        selected[i] = theCurrentPraatObjects->list[iobject].isSelected;
+    }
+    
+    return DataFrame::create(
+        Named("id") = ids,
+        Named("name") = names,
+        Named("class") = classes,
+        Named("selected") = selected
+    );
+}

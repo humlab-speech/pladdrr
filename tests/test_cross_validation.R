@@ -11,6 +11,11 @@
 library(testthat)
 library(pladdrr)
 
+# Skip this entire file on CRAN - requires external dependencies
+if (!interactive() && !identical(Sys.getenv("NOT_CRAN"), "true")) {
+  exit_file("Skipping cross-validation tests on CRAN (requires external deps)")
+}
+
 # Test configuration
 PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
 PLABENCH_DIR <- "/Users/frkkan96/Documents/src/plabench"
