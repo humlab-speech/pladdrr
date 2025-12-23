@@ -105,7 +105,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   for (i in seq_along(tiers_to_plot)) {
     tier_idx <- tiers_to_plot[i]
     tier_name <- textgrid$get_tier_name(tier_idx)
-    tier_type <- if (textgrid$is_interval_tier(tier_idx)) "interval" else "point"
+    tier_type <- if (textgrid$tier_is_interval_tier(tier_idx)) "interval" else "point"
     
     # Create tier visualization data
     if (tier_type == "interval") {
@@ -118,9 +118,9 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
       )
       
       for (j in 1:n_intervals) {
-        tier_data$start[j] <- textgrid$get_start_time_of_interval(tier_idx, j)
-        tier_data$end[j] <- textgrid$get_end_time_of_interval(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_label_of_interval(tier_idx, j)
+        tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
+        tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
+        tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
       }
       
       # Filter by time range
@@ -150,8 +150,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
       )
       
       for (j in 1:n_points) {
-        tier_data$time[j] <- textgrid$get_time_of_point(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_label_of_point(tier_idx, j)
+        tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
+        tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
       }
       
       # Filter by time range
@@ -284,7 +284,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   for (i in seq_along(tiers_to_plot)) {
     tier_idx <- tiers_to_plot[i]
     tier_name <- textgrid$get_tier_name(tier_idx)
-    tier_type <- if (textgrid$is_interval_tier(tier_idx)) "interval" else "point"
+    tier_type <- if (textgrid$tier_is_interval_tier(tier_idx)) "interval" else "point"
     
     if (tier_type == "interval") {
       n_intervals <- textgrid$get_number_of_intervals(tier_idx)
@@ -296,9 +296,9 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
       )
       
       for (j in 1:n_intervals) {
-        tier_data$start[j] <- textgrid$get_start_time_of_interval(tier_idx, j)
-        tier_data$end[j] <- textgrid$get_end_time_of_interval(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_label_of_interval(tier_idx, j)
+        tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
+        tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
+        tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
       }
       
       tier_data <- tier_data[tier_data$end >= from_time & tier_data$start <= to_time, ]
@@ -325,8 +325,8 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
       )
       
       for (j in 1:n_points) {
-        tier_data$time[j] <- textgrid$get_time_of_point(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_label_of_point(tier_idx, j)
+        tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
+        tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
       }
       
       tier_data <- tier_data[tier_data$time >= from_time & tier_data$time <= to_time, ]
