@@ -277,58 +277,55 @@ test_that("set_variable() rejects unsupported types", {
 
 # === Integration Tests ===
 
-# TODO: These tests require interpreter-context evaluation (Sprint 2)
-# Currently eval() doesn't use the persistent interpreter state
+test_that("Variables can be used in expressions after being set", {
+  interp <- PraatInterpreter$new()
+  
+  # Set variables and use them in expressions
+  interp$set_variable("a", 10)
+  interp$set_variable("b", 20)
+  
+  result <- interp$eval("a + b")
+  expect_equal(result, 30)
+  
+  result <- interp$eval("a * b")
+  expect_equal(result, 200)
+})
 
-# test_that("Variables can be used in expressions after being set", {
-#   interp <- PraatInterpreter$new()
-#   
-#   # Set variables and use them in expressions
-#   interp$set_variable("a", 10)
-#   interp$set_variable("b", 20)
-#   
-#   result <- interp$eval("a + b")
-#   expect_equal(result, 30)
-#   
-#   result <- interp$eval("a * b")
-#   expect_equal(result, 200)
-# })
-# 
-# test_that("String variables can be concatenated in expressions", {
-#   interp <- PraatInterpreter$new()
-#   
-#   interp$set_variable("first", "hello")
-#   interp$set_variable("second", "world")
-#   
-#   result <- interp$eval("first$ + \" \" + second$")
-#   expect_equal(result, "hello world")
-# })
-# 
-# test_that("Vector operations work with set variables", {
-#   interp <- PraatInterpreter$new()
-#   
-#   interp$set_variable("vec", c(1, 2, 3, 4, 5))
-#   
-#   # Get size
-#   result <- interp$eval("size(vec#)")
-#   expect_equal(result, 5)
-#   
-#   # Sum vector
-#   result <- interp$eval("sum(vec#)")
-#   expect_equal(result, 15)
-# })
-# 
-# test_that("Matrix operations work with set variables", {
-#   interp <- PraatInterpreter$new()
-#   
-#   mat <- matrix(1:4, nrow = 2, ncol = 2)
-#   interp$set_variable("mat", mat)
-#   
-#   # Get number of rows
-#   result <- interp$eval("numberOfRows(mat##)")
-#   expect_equal(result, 2)
-#   
-#   # Get number of columns
-#   result <- interp$eval("numberOfColumns(mat##)")
-#   expect_equal(result, 2)
-# })
+test_that("String variables can be concatenated in expressions", {
+  interp <- PraatInterpreter$new()
+  
+  interp$set_variable("first", "hello")
+  interp$set_variable("second", "world")
+  
+  result <- interp$eval("first$ + \" \" + second$")
+  expect_equal(result, "hello world")
+})
+
+test_that("Vector operations work with set variables", {
+  interp <- PraatInterpreter$new()
+  
+  interp$set_variable("vec", c(1, 2, 3, 4, 5))
+  
+  # Get size
+  result <- interp$eval("size(vec#)")
+  expect_equal(result, 5)
+  
+  # Sum vector
+  result <- interp$eval("sum(vec#)")
+  expect_equal(result, 15)
+})
+
+test_that("Matrix operations work with set variables", {
+  interp <- PraatInterpreter$new()
+  
+  mat <- matrix(1:4, nrow = 2, ncol = 2)
+  interp$set_variable("mat", mat)
+  
+  # Get number of rows
+  result <- interp$eval("numberOfRows(mat##)")
+  expect_equal(result, 2)
+  
+  # Get number of columns
+  result <- interp$eval("numberOfColumns(mat##)")
+  expect_equal(result, 2)
+})

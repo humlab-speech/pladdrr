@@ -375,3 +375,117 @@ void praat_interpreter_set_variable(SEXP xptr, std::string name, SEXP value) {
         stop(error_msg);
     }
 }
+
+// ==============================================================================
+// Context-Aware Expression Evaluation (uses interpreter state)
+// ==============================================================================
+
+// [[Rcpp::export(.praat_interpreter_eval_numeric)]]
+double praat_interpreter_eval_numeric(SEXP xptr, std::string expression) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        double result;
+        Interpreter_numericExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &result);
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_interpreter_eval_string)]]
+std::string praat_interpreter_eval_string(SEXP xptr, std::string expression) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        autostring32 result = Interpreter_stringExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()));
+        return Melder_peek32to8(result.get());
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_interpreter_eval_vector)]]
+NumericVector praat_interpreter_eval_vector(SEXP xptr, std::string expression) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        VEC vec;
+        bool owned;
+        Interpreter_numericVectorExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &vec, &owned);
+        
+        // Copy to R numeric vector
+        NumericVector result(vec.size);
+        for (integer i = 1; i <= vec.size; i++) {
+            result[i-1] = vec[i];
+        }
+        
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_interpreter_eval_matrix)]]
+NumericMatrix praat_interpreter_eval_matrix(SEXP xptr, std::string expression) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        MAT mat;
+        bool owned;
+        Interpreter_numericMatrixExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &mat, &owned);
+        
+        // Copy to R numeric matrix (column-major order)
+        NumericMatrix result(mat.nrow, mat.ncol);
+        for (integer i = 1; i <= mat.nrow; i++) {
+            for (integer j = 1; j <= mat.ncol; j++) {
+                result(i-1, j-1) = mat[i][j];  // 1-based -> 0-based
+            }
+        }
+        
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_interpreter_eval_string_array)]]
+CharacterVector praat_interpreter_eval_string_array(SEXP xptr, std::string expression) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        STRVEC strvec;
+        bool owned;
+        Interpreter_stringArrayExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &strvec, &owned);
+        
+        // Copy to R character vector
+        CharacterVector result(strvec.size);
+        for (integer i = 1; i <= strvec.size; i++) {
+            result[i-1] = Melder_peek32to8(strvec[i]);
+        }
+        
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
