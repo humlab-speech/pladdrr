@@ -63,6 +63,51 @@ PraatInterpreter <- R6::R6Class(
       invisible(self)
     },
     
+    #' @description Evaluate expression and return result
+    #' @param expression Praat expression to evaluate
+    #' @return Result of expression (type depends on expression)
+    #' @examples
+    #' \dontrun{
+    #' interp <- PraatInterpreter$new()
+    #' result <- interp$eval("2 + 2")  # Returns 4
+    #' result <- interp$eval("\"hello\"")  # Returns "hello"
+    #' }
+    eval = function(expression) {
+      # Try to determine result type and evaluate
+      # This is a simple wrapper around the standalone evaluation functions
+      # Note: This doesn't use the persistent interpreter state yet
+      # TODO: Implement proper interpreter-context evaluation
+      
+      # For now, use standalone evaluation
+      # Try numeric first
+      tryCatch({
+        return(praat_eval_numeric(expression))
+      }, error = function(e) {
+        # Try string
+        tryCatch({
+          return(praat_eval_string(expression))
+        }, error = function(e2) {
+          # Try vector
+          tryCatch({
+            return(praat_eval_vector(expression))
+          }, error = function(e3) {
+            # Try matrix
+            tryCatch({
+              return(praat_eval_matrix(expression))
+            }, error = function(e4) {
+              # Try string array
+              tryCatch({
+                return(praat_eval_string_array(expression))
+              }, error = function(e5) {
+                stop("Could not evaluate expression: ", expression, 
+                     "\nLast error: ", conditionMessage(e5))
+              })
+            })
+          })
+        })
+      })
+    },
+    
     #' @description Print method
     print = function() {
       cat("<PraatInterpreter>\n")

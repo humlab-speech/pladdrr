@@ -291,80 +291,81 @@ void praat_interpreter_set_variable(SEXP xptr, std::string name, SEXP value) {
     if (!interpreter) stop("Invalid Interpreter pointer");
     
     try {
-        if (Rf_isReal(value) && Rf_length(value) == 1 && !Rf_isMatrix(value)) {
+        // Check matrix FIRST (before length checks), since 1x1 matrices have length 1
+        if (Rf_isMatrix(value) && (Rf_isReal(value) || Rf_isInteger(value))) {
+            // Matrix - add ## suffix if needed
+            conststring32 tempName = Melder_peek8to32(name.c_str());
+            conststring32 varNameRaw;
+            if (Melder_endsWith(tempName, U"##")) {
+                varNameRaw = tempName;
+            } else {
+                varNameRaw = Melder_cat(tempName, U"##");
+            }
+            NumericMatrix mat(value);
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varNameRaw);
+            // Create temporary MAT and copy data
+            autoMAT temp = raw_MAT(mat.nrow(), mat.ncol());
+            for (int i = 0; i < mat.nrow(); i++) {
+                for (int j = 0; j < mat.ncol(); j++) {
+                    temp[i+1][j+1] = mat(i, j);  // 0-based -> 1-based
+                }
+            }
+            var->numericMatrixValue = temp.move();
+            
+        } else if ((Rf_isReal(value) || Rf_isInteger(value)) && Rf_length(value) == 1) {
             // Numeric scalar - use name as-is (no suffix)
             autostring32 varName = Melder_8to32(name.c_str());
             double val = Rf_asReal(value);
             InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
             var->numericValue = val;
             
-        } else if (Rf_isString(value) && Rf_length(value) == 1) {
-            // String - add $ suffix if needed
-            conststring32 tempName = Melder_peek8to32(name.c_str());
-            autostring32 varName;
-            if (Melder_endsWith(tempName, U"$")) {
-                varName = Melder_dup_f(tempName);
-            } else {
-                varName = Melder_cat(tempName, U"$");
-            }
-            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
-            var->stringValue = Melder_dup_f(Melder_peek8to32(CHAR(STRING_ELT(value, 0))));
-            
-        } else if (Rf_isReal(value) && Rf_length(value) > 1) {
-            if (Rf_isMatrix(value)) {
-                // Matrix - add ## suffix if needed
-                conststring32 tempName = Melder_peek8to32(name.c_str());
-                autostring32 varName;
-                if (Melder_endsWith(tempName, U"##")) {
-                    varName = Melder_dup_f(tempName);
-                } else {
-                    varName = Melder_cat(tempName, U"##");
-                }
-                NumericMatrix mat(value);
-                InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
-                // Create temporary MAT and copy data
-                autoMAT temp = raw_MAT(mat.nrow(), mat.ncol());
-                for (int i = 0; i < mat.nrow(); i++) {
-                    for (int j = 0; j < mat.ncol(); j++) {
-                        temp[i+1][j+1] = mat(i, j);  // 0-based -> 1-based
-                    }
-                }
-                var->numericMatrixValue = temp.move();
-            } else {
-                // Vector - add # suffix if needed
-                conststring32 tempName = Melder_peek8to32(name.c_str());
-                autostring32 varName;
-                if (Melder_endsWith(tempName, U"#") && !Melder_endsWith(tempName, U"##")) {
-                    varName = Melder_dup_f(tempName);
-                } else {
-                    varName = Melder_cat(tempName, U"#");
-                }
-                NumericVector vec(value);
-                InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
-                // Create temporary VEC and copy data
-                autoVEC temp = raw_VEC(vec.length());
-                for (int i = 0; i < vec.length(); i++) {
-                    temp[i+1] = vec[i];  // 0-based -> 1-based
-                }
-                var->numericVectorValue = temp.move();
-            }
         } else if (Rf_isString(value) && Rf_length(value) > 1) {
             // String array - add $# suffix if needed
             conststring32 tempName = Melder_peek8to32(name.c_str());
-            autostring32 varName;
+            conststring32 varNameRaw;
             if (Melder_endsWith(tempName, U"$#")) {
-                varName = Melder_dup_f(tempName);
+                varNameRaw = tempName;
             } else {
-                varName = Melder_cat(tempName, U"$#");
+                varNameRaw = Melder_cat(tempName, U"$#");
             }
             CharacterVector strvec(value);
-            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varNameRaw);
             // Create temporary STRVEC and copy data
             autoSTRVEC temp (strvec.length());
             for (int i = 0; i < strvec.length(); i++) {
                 temp[i+1] = Melder_dup_f(Melder_peek8to32(CHAR(STRING_ELT(value, i))));
             }
             var->stringArrayValue = temp.move();
+            
+        } else if (Rf_isString(value) && Rf_length(value) == 1) {
+            // String - add $ suffix if needed
+            conststring32 tempName = Melder_peek8to32(name.c_str());
+            conststring32 varNameRaw;
+            if (Melder_endsWith(tempName, U"$")) {
+                varNameRaw = tempName;
+            } else {
+                varNameRaw = Melder_cat(tempName, U"$");
+            }
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varNameRaw);
+            var->stringValue = Melder_dup_f(Melder_peek8to32(CHAR(STRING_ELT(value, 0))));
+            
+        } else if ((Rf_isReal(value) || Rf_isInteger(value)) && Rf_length(value) > 1) {
+            // Vector - add # suffix if needed
+            conststring32 tempName = Melder_peek8to32(name.c_str());
+            conststring32 varNameRaw;
+            if (Melder_endsWith(tempName, U"#") && !Melder_endsWith(tempName, U"##")) {
+                varNameRaw = tempName;
+            } else {
+                varNameRaw = Melder_cat(tempName, U"#");
+            }
+            NumericVector vec(value);
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varNameRaw);
+            // Create temporary VEC and copy data
+            autoVEC temp = raw_VEC(vec.length());
+            for (int i = 0; i < vec.length(); i++) {
+                temp[i+1] = vec[i];  // 0-based -> 1-based
+            }
+            var->numericVectorValue = temp.move();
         } else {
             stop("Unsupported R type for Praat variable");
         }

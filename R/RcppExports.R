@@ -627,6 +627,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_praat_evaluate_vector`, expression)
 }
 
+.praat_evaluate_matrix <- function(expression) {
+    .Call(`_pladdrr_praat_evaluate_matrix`, expression)
+}
+
+.praat_evaluate_string_array <- function(expression) {
+    .Call(`_pladdrr_praat_evaluate_string_array`, expression)
+}
+
 .praat_interpreter_create <- function() {
     .Call(`_pladdrr_praat_interpreter_create`)
 }
@@ -637,6 +645,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .praat_interpreter_get_variable <- function(xptr, name) {
     .Call(`_pladdrr_praat_interpreter_get_variable`, xptr, name)
+}
+
+.praat_interpreter_set_variable <- function(xptr, name, value) {
+    invisible(.Call(`_pladdrr_praat_interpreter_set_variable`, xptr, name, value))
 }
 
 .sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
