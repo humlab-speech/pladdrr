@@ -136,6 +136,66 @@ NumericVector praat_evaluate_vector(std::string expression) {
     }
 }
 
+// [[Rcpp::export(.praat_evaluate_matrix)]]
+NumericMatrix praat_evaluate_matrix(std::string expression) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+    
+    try {
+        autoInterpreter interpreter = Interpreter_create();
+        MAT mat;
+        bool owned;
+        Interpreter_numericMatrixExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &mat, &owned);
+        
+        // Copy to R matrix (1-based -> 0-based indexing)
+        NumericMatrix result(mat.nrow, mat.ncol);
+        for (integer i = 1; i <= mat.nrow; i++) {
+            for (integer j = 1; j <= mat.ncol; j++) {
+                result(i-1, j-1) = mat[i][j];
+            }
+        }
+        
+        // Note: mat is automatically freed by autoInterpreter destructor
+        
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_evaluate_string_array)]]
+CharacterVector praat_evaluate_string_array(std::string expression) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+    
+    try {
+        autoInterpreter interpreter = Interpreter_create();
+        STRVEC strvec;
+        bool owned;
+        Interpreter_stringArrayExpression(interpreter.get(),
+            Melder_peek8to32(expression.c_str()), &strvec, &owned);
+        
+        // Copy to R character vector
+        CharacterVector result(strvec.size);
+        for (integer i = 1; i <= strvec.size; i++) {
+            result[i-1] = Melder_peek32to8(strvec[i]);
+        }
+        
+        // Note: strvec is automatically freed by autoInterpreter destructor
+        
+        return result;
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
 // ==============================================================================
 // Persistent Interpreter
 // ==============================================================================
@@ -185,7 +245,25 @@ SEXP praat_interpreter_get_variable(SEXP xptr, std::string name) {
         }
         
         // Determine type from variable name suffix
-        if (Melder_endsWith(key.get(), U"$")) {
+        if (Melder_endsWith(key.get(), U"$#")) {
+            // String array variable (must check before single $)
+            STRVEC strvec = var->stringArrayValue.get();
+            CharacterVector result(strvec.size);
+            for (integer i = 1; i <= strvec.size; i++) {
+                result[i-1] = Melder_peek32to8(strvec[i]);
+            }
+            return result;
+        } else if (Melder_endsWith(key.get(), U"##")) {
+            // Matrix variable (must check before single #)
+            MAT mat = var->numericMatrixValue.get();
+            NumericMatrix result(mat.nrow, mat.ncol);
+            for (integer i = 1; i <= mat.nrow; i++) {
+                for (integer j = 1; j <= mat.ncol; j++) {
+                    result(i-1, j-1) = mat[i][j];
+                }
+            }
+            return result;
+        } else if (Melder_endsWith(key.get(), U"$")) {
             // String variable
             return wrap(Melder_peek32to8(var->stringValue.get()));
         } else if (Melder_endsWith(key.get(), U"#")) {
@@ -196,19 +274,99 @@ SEXP praat_interpreter_get_variable(SEXP xptr, std::string name) {
                 result[i-1] = vec[i];
             }
             return result;
-        } else if (Melder_endsWith(key.get(), U"##")) {
-            // Matrix variable
-            MAT mat = var->numericMatrixValue.get();
-            NumericMatrix result(mat.nrow, mat.ncol);
-            for (integer i = 1; i <= mat.nrow; i++) {
-                for (integer j = 1; j <= mat.ncol; j++) {
-                    result(i-1, j-1) = mat[i][j];
-                }
-            }
-            return result;
         } else {
             // Numeric variable
             return wrap(var->numericValue);
+        }
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop(error_msg);
+    }
+}
+
+// [[Rcpp::export(.praat_interpreter_set_variable)]]
+void praat_interpreter_set_variable(SEXP xptr, std::string name, SEXP value) {
+    XPtr<structInterpreter> interpreter(xptr);
+    if (!interpreter) stop("Invalid Interpreter pointer");
+    
+    try {
+        if (Rf_isReal(value) && Rf_length(value) == 1 && !Rf_isMatrix(value)) {
+            // Numeric scalar - use name as-is (no suffix)
+            autostring32 varName = Melder_8to32(name.c_str());
+            double val = Rf_asReal(value);
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+            var->numericValue = val;
+            
+        } else if (Rf_isString(value) && Rf_length(value) == 1) {
+            // String - add $ suffix if needed
+            conststring32 tempName = Melder_peek8to32(name.c_str());
+            autostring32 varName;
+            if (Melder_endsWith(tempName, U"$")) {
+                varName = Melder_dup_f(tempName);
+            } else {
+                varName = Melder_cat(tempName, U"$");
+            }
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+            var->stringValue = Melder_dup_f(Melder_peek8to32(CHAR(STRING_ELT(value, 0))));
+            
+        } else if (Rf_isReal(value) && Rf_length(value) > 1) {
+            if (Rf_isMatrix(value)) {
+                // Matrix - add ## suffix if needed
+                conststring32 tempName = Melder_peek8to32(name.c_str());
+                autostring32 varName;
+                if (Melder_endsWith(tempName, U"##")) {
+                    varName = Melder_dup_f(tempName);
+                } else {
+                    varName = Melder_cat(tempName, U"##");
+                }
+                NumericMatrix mat(value);
+                InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+                // Create temporary MAT and copy data
+                autoMAT temp = raw_MAT(mat.nrow(), mat.ncol());
+                for (int i = 0; i < mat.nrow(); i++) {
+                    for (int j = 0; j < mat.ncol(); j++) {
+                        temp[i+1][j+1] = mat(i, j);  // 0-based -> 1-based
+                    }
+                }
+                var->numericMatrixValue = temp.move();
+            } else {
+                // Vector - add # suffix if needed
+                conststring32 tempName = Melder_peek8to32(name.c_str());
+                autostring32 varName;
+                if (Melder_endsWith(tempName, U"#") && !Melder_endsWith(tempName, U"##")) {
+                    varName = Melder_dup_f(tempName);
+                } else {
+                    varName = Melder_cat(tempName, U"#");
+                }
+                NumericVector vec(value);
+                InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+                // Create temporary VEC and copy data
+                autoVEC temp = raw_VEC(vec.length());
+                for (int i = 0; i < vec.length(); i++) {
+                    temp[i+1] = vec[i];  // 0-based -> 1-based
+                }
+                var->numericVectorValue = temp.move();
+            }
+        } else if (Rf_isString(value) && Rf_length(value) > 1) {
+            // String array - add $# suffix if needed
+            conststring32 tempName = Melder_peek8to32(name.c_str());
+            autostring32 varName;
+            if (Melder_endsWith(tempName, U"$#")) {
+                varName = Melder_dup_f(tempName);
+            } else {
+                varName = Melder_cat(tempName, U"$#");
+            }
+            CharacterVector strvec(value);
+            InterpreterVariable var = Interpreter_lookUpVariable(interpreter.get(), varName.get());
+            // Create temporary STRVEC and copy data
+            autoSTRVEC temp (strvec.length());
+            for (int i = 0; i < strvec.length(); i++) {
+                temp[i+1] = Melder_dup_f(Melder_peek8to32(CHAR(STRING_ELT(value, i))));
+            }
+            var->stringArrayValue = temp.move();
+        } else {
+            stop("Unsupported R type for Praat variable");
         }
     } catch (MelderError) {
         std::string error_msg = Melder_peek32to8(Melder_getError());

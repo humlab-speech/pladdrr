@@ -35,7 +35,7 @@ PraatInterpreter <- R6::R6Class(
     
     #' @description Get variable value from interpreter
     #' @param name Variable name (with suffix: x for numeric, x$ for string, 
-    #'   x# for vector, x## for matrix)
+    #'   x# for vector, x## for matrix, x$# for string array)
     #' @return Variable value (type depends on variable)
     #' @examples
     #' \dontrun{
@@ -45,6 +45,22 @@ PraatInterpreter <- R6::R6Class(
     #' }
     get_variable = function(name) {
       .praat_interpreter_get_variable(private$ptr, name)
+    },
+    
+    #' @description Set variable value in interpreter
+    #' @param name Variable name (suffix auto-detected from R type)
+    #' @param value Variable value (numeric, string, vector, matrix, or character vector)
+    #' @return Self (invisibly), for method chaining
+    #' @examples
+    #' \dontrun{
+    #' interp <- PraatInterpreter$new()
+    #' interp$set_variable("x", 42)
+    #' interp$set_variable("name", "test")
+    #' interp$set_variable("data", c(1, 2, 3))
+    #' }
+    set_variable = function(name, value) {
+      .praat_interpreter_set_variable(private$ptr, name, value)
+      invisible(self)
     },
     
     #' @description Print method

@@ -64,6 +64,34 @@ praat_eval_vector <- function(expression) {
   .praat_evaluate_vector(expression)
 }
 
+#' Evaluate a matrix Praat expression
+#'
+#' @param expression Character string containing a Praat matrix formula
+#' @return Numeric matrix
+#' @export
+#' @examples
+#' \dontrun{
+#' # Create matrix
+#' mat <- praat_eval_matrix("{{ 1, 2 }, { 3, 4 }}")
+#' }
+praat_eval_matrix <- function(expression) {
+  .praat_evaluate_matrix(expression)
+}
+
+#' Evaluate a string array Praat expression
+#'
+#' @param expression Character string containing a Praat string array formula
+#' @return Character vector
+#' @export
+#' @examples
+#' \dontrun{
+#' # Create string array
+#' arr <- praat_eval_string_array('{ "hello", "world" }')
+#' }
+praat_eval_string_array <- function(expression) {
+  .praat_evaluate_string_array(expression)
+}
+
 #' Initialize Praat interpreter
 #'
 #' Manually initialize the Praat interpreter. Normally called automatically
