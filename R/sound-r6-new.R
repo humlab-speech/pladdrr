@@ -577,6 +577,20 @@ Sound <- R6::R6Class(
     #' @return Cochleagram object
     to_cochleagram = function(dt = 0.01, df = 0.1, window_length = 0.03, 
                               forward_masking_time = 0.03) {
+      # Validate parameters to prevent segfaults in Praat C code
+      if (!is.numeric(dt) || length(dt) != 1 || dt <= 0) {
+        stop("dt must be a positive number")
+      }
+      if (!is.numeric(df) || length(df) != 1 || df <= 0) {
+        stop("df must be a positive number")
+      }
+      if (!is.numeric(window_length) || length(window_length) != 1 || window_length <= 0) {
+        stop("window_length must be a positive number")
+      }
+      if (!is.numeric(forward_masking_time) || length(forward_masking_time) != 1 || forward_masking_time < 0) {
+        stop("forward_masking_time must be a non-negative number")
+      }
+      
       cochleagram_ptr <- .sound_to_cochleagram(
         private$ptr, dt, df, window_length, forward_masking_time
       )
@@ -597,6 +611,20 @@ Sound <- R6::R6Class(
     to_cochleagram_edb = function(dtime = 0.01, dfreq = 0.1, has_synapse = TRUE,
                                    replenishment_rate = 0.01, loss_rate = 0.1,
                                    return_rate = 0.05, reprocessing_rate = 0.01) {
+      # KNOWN ISSUE: Praat's EDB algorithm has bugs causing segfaults at various
+      # sampling rates (especially < 44.1kHz). The algorithm creates gammatone
+      # filters of length 50/freq_hz seconds which can be 10+ seconds at low
+      # frequency bands, causing issues in convolution with short signals.
+      # Recommend using standard to_cochleagram() instead.
+      sampling_rate <- self$get_sampling_frequency()
+      if (sampling_rate < 44100) {
+        stop(
+          "Cochleagram EDB algorithm is unstable with sampling rates < 44.1kHz.\n",
+          "Current rate: ", sampling_rate, " Hz.\n",
+          "Recommendation: Use $to_cochleagram() instead, which is more stable."
+        )
+      }
+      
       cochleagram_ptr <- .sound_to_cochleagram_edb(
         private$ptr, dtime, dfreq, has_synapse, 
         replenishment_rate, loss_rate, return_rate, reprocessing_rate

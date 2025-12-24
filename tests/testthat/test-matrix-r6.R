@@ -6,8 +6,8 @@ test_that("Matrix R6 class basic operations work", {
   expect_s3_class(mat, "R6")
   
   # Check dimensions
-  expect_equal(mat$get_number_of_rows(), 5)
-  expect_equal(mat$get_number_of_columns(), 3)
+  expect_equal(mat$get_ny(), 5)
+  expect_equal(mat$get_nx(), 3)
   
   # Set and get values
   mat$set_value(row = 2, col = 2, value = 42.0)
