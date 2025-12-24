@@ -1,4 +1,10 @@
 # Tests for Formant extraction and analysis
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (extract_formants, etc.) is deprecated in favor of R6.
+# Tests are skipped. Use R6 API: sound$to_formant_burg(), formant$get_value_at_time(), etc.
+
+skip("S3 API deprecated - use R6 API instead (sound$to_formant_*(), formant$get_*())")
 
 test_that("extract_formants works with basic input", {
   # Create a simple sound

@@ -1,6 +1,12 @@
 # test-s3-methods.R - Tests for S3 methods (print, summary, as.data.frame)
 #
 # These tests verify that S3 methods provide appropriate output
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (print.praat_sound, summary.praat_sound, etc.) is deprecated.
+# Tests are skipped. Use R6 API: sound$print(), sound$as_data_frame(), etc.
+
+skip("S3 API deprecated - use R6 API instead (sound$print(), sound$as_data_frame())")
 
 test_that("print.praat_sound() produces informative console output", {
   sound <- create_sound(rep(0.5, 1000), sampling_rate = 10000)

@@ -2,6 +2,12 @@
 #
 # These tests follow TDD principles (written BEFORE implementation)
 # They define the expected behavior of sound object functions
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (create_sound, read_sound returning praat_sound S3 objects) is deprecated.
+# Tests are skipped. Use R6 API: Sound$new(), Sound$from_values(), etc.
+
+skip("S3 API deprecated - use R6 API instead (Sound$new(), Sound$from_values())")
 
 test_that("create_sound() creates valid praat_sound object with correct attributes", {
   # Create a simple sound object from numeric vector

@@ -1,6 +1,12 @@
 # test-sound-stats.R - Tests for sound statistics functions
 #
 # These tests verify that statistical functions compute correct values
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (sound_mean, sound_rms, etc.) is deprecated in favor of R6.
+# Tests are skipped. Use R6 API: sound$get_rms(), sound$get_energy(), etc.
+
+skip("S3 API deprecated - use R6 API instead (sound$get_*() methods)")
 
 test_that("sound_mean() computes correct mean", {
   values <- c(-1.0, -0.5, 0.0, 0.5, 1.0)

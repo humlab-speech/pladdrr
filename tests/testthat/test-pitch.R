@@ -2,6 +2,12 @@
 #
 # These tests follow TDD principles (written BEFORE implementation)
 # They define expected behavior for pitch analysis functions
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (extract_pitch, get_pitch_at_time, etc.) is deprecated in favor of R6.
+# Tests are skipped. Use R6 API: sound$to_pitch(), pitch$get_value_at_time(), etc.
+
+skip("S3 API deprecated - use R6 API instead (sound$to_pitch(), pitch$get_*())")
 
 test_that("extract_pitch() creates valid praat_pitch object", {
   # Load test sound

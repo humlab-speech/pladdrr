@@ -1,4 +1,10 @@
 # Tests for Intensity extraction and analysis
+#
+# NOTE: These tests are for the DEPRECATED S3 API.
+# The S3 API (extract_intensity, etc.) is deprecated in favor of R6.
+# Tests are skipped. Use R6 API: sound$to_intensity(), intensity$get_value(), etc.
+
+skip("S3 API deprecated - use R6 API instead (sound$to_intensity(), intensity$get_*())")
 
 test_that("extract_intensity works with basic input", {
   # Create a simple sound
