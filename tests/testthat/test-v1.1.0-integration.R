@@ -3,7 +3,7 @@
 
 test_that("Complete auditory modeling pipeline works", {
   # Create test sound
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   
   # Step 1: Create cochleagram
   cochlea <- sound$to_cochleagram(dt = 0.01, df = 0.1)
@@ -26,7 +26,7 @@ test_that("Complete auditory modeling pipeline works", {
 })
 
 test_that("Spectrum to Excitation to Formant pipeline works", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   
   # Alternative path: Spectrum → Excitation → Formant
   spectrum <- sound$to_spectrum()
@@ -66,7 +66,7 @@ test_that("Multiple formant methods produce comparable vowel formants", {
 
 test_that("Cochleagram comparison workflow for hearing simulation", {
   # Simulate normal hearing and hearing loss
-  sound_original <- Sound$new(440, duration = 0.1, sampling_frequency = 22050)
+  sound_original <- generate_sine_wave(440, 0.1, sampling_rate = 22050)
   
   # Normal hearing cochleagram
   cochlea_normal <- sound_original$to_cochleagram(dt = 0.01, df = 0.1)
@@ -87,9 +87,9 @@ test_that("Cochleagram comparison workflow for hearing simulation", {
 test_that("Batch processing with new objects works", {
   # Create multiple test sounds
   sounds <- list(
-    Sound$new(440, duration = 0.1, sampling_frequency = 16000),
-    Sound$new(550, duration = 0.1, sampling_frequency = 16000),
-    Sound$new(660, duration = 0.1, sampling_frequency = 16000)
+    generate_sine_wave(440, 0.1, sampling_rate = 16000),
+    generate_sine_wave(550, 0.1, sampling_rate = 16000),
+    generate_sine_wave(660, 0.1, sampling_rate = 16000)
   )
   
   # Process all with cochleagram
@@ -110,9 +110,9 @@ test_that("Batch processing with new objects works", {
 })
 
 test_that("SIMD-accelerated operations maintain accuracy", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   
   # Run same analysis twice (should use SIMD both times)
   formant1 <- sound$to_formant_burg()
@@ -137,7 +137,7 @@ test_that("SIMD-accelerated operations maintain accuracy", {
 })
 
 test_that("Export and visualization pipeline works", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   # Create cochleagram and export
   cochlea <- sound$to_cochleagram(dt = 0.01, df = 0.2)
@@ -156,7 +156,7 @@ test_that("Export and visualization pipeline works", {
 
 test_that("Memory management works across object conversions", {
   # Create chain of object conversions
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   cochlea <- sound$to_cochleagram()
   excitation <- cochlea$to_excitation(0.1)
   formant <- excitation$to_formant(max_formants = 5)
@@ -165,10 +165,10 @@ test_that("Memory management works across object conversions", {
   gc()
   
   # Objects should still be accessible
-  expect_true(!is.null(sound$.xptr))
-  expect_true(!is.null(cochlea$.xptr))
-  expect_true(!is.null(excitation$.xptr))
-  expect_true(!is.null(formant$.xptr))
+  expect_true(sound$is_valid())
+  expect_true(cochlea$is_valid())
+  expect_true(excitation$is_valid())
+  expect_true(formant$is_valid())
   
   # Can still query
   loudness <- excitation$get_loudness()
@@ -176,7 +176,7 @@ test_that("Memory management works across object conversions", {
 })
 
 test_that("Error handling works across new features", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   # Invalid cochleagram parameters
   expect_error(sound$to_cochleagram(dt = -1))

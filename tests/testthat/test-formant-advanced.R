@@ -2,7 +2,7 @@
 # Tests for Willems, Split-Levinson, and Robust formant methods
 
 test_that("Sound can create formant using Willems method", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 16000)
   
   formant <- sound$to_formant_willems(
     time_step = 0.005,
@@ -14,11 +14,11 @@ test_that("Sound can create formant using Willems method", {
   
   expect_s3_class(formant, "Formant")
   expect_s3_class(formant, "PraatObject")
-  expect_true(!is.null(formant$.xptr))
+  expect_true(formant$is_valid())
 })
 
 test_that("Sound can create formant using Split-Levinson method", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 16000)
   
   formant <- sound$to_formant_sl(
     time_step = 0.005,
@@ -29,12 +29,12 @@ test_that("Sound can create formant using Split-Levinson method", {
   )
   
   expect_s3_class(formant, "Formant")
-  expect_true(!is.null(formant$.xptr))
+  expect_true(formant$is_valid())
 })
 
 test_that("Willems method produces valid formant values", {
   # Create a sound with clear formant structure (vowel-like)
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_willems(
     time_step = 0.01,
@@ -54,7 +54,7 @@ test_that("Willems method produces valid formant values", {
 })
 
 test_that("Split-Levinson method produces valid formant values", {
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_sl(
     time_step = 0.01,
@@ -74,7 +74,7 @@ test_that("Split-Levinson method produces valid formant values", {
 })
 
 test_that("Different formant methods produce comparable results", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   
   # Same parameters for all methods
   params <- list(
@@ -116,18 +116,18 @@ test_that("Different formant methods produce comparable results", {
 
 test_that("Formant methods handle edge cases", {
   # Very short sound
-  sound_short <- Sound$new(440, duration = 0.01, sampling_frequency = 16000)
+  sound_short <- generate_sine_wave(440, 0.01, sampling_rate = 16000)
   formant_short <- sound_short$to_formant_willems(time_step = 0.002)
   expect_s3_class(formant_short, "Formant")
   
   # Silence
-  sound_silence <- Sound$new(duration = 0.1, sampling_frequency = 16000)
+  sound_silence <- Sound(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
   formant_silence <- sound_silence$to_formant_sl()
   expect_s3_class(formant_silence, "Formant")
 })
 
 test_that("Formant methods validate parameters", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 16000)
   
   # Invalid time step
   expect_error(sound$to_formant_willems(time_step = -0.01))
@@ -143,7 +143,7 @@ test_that("Formant methods validate parameters", {
 })
 
 test_that("Willems method number_of_formants parameter works", {
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # Request 3 formants
   formant_3 <- sound$to_formant_willems(number_of_formants = 3)
@@ -161,7 +161,7 @@ test_that("Willems method number_of_formants parameter works", {
 })
 
 test_that("Split-Levinson poles parameter affects results", {
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # Different number of poles
   formant_10 <- sound$to_formant_sl(number_of_poles = 10)
@@ -174,7 +174,7 @@ test_that("Split-Levinson poles parameter affects results", {
 
 test_that("Formant methods handle high sampling rates", {
   # High sampling rate (48 kHz)
-  sound_hifi <- Sound$new(440, duration = 0.2, sampling_frequency = 48000)
+  sound_hifi <- generate_sine_wave(440, 0.2, sampling_rate = 48000)
   
   formant_willems <- sound_hifi$to_formant_willems(
     maximum_formant_frequency = 8000
@@ -189,7 +189,7 @@ test_that("Formant methods handle high sampling rates", {
 })
 
 test_that("Pre-emphasis affects formant extraction", {
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # No pre-emphasis
   formant_no_preemph <- sound$to_formant_willems(pre_emphasis_from = 0)

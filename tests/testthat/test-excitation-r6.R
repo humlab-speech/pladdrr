@@ -2,7 +2,7 @@
 # Tests for auditory excitation pattern modeling (ERB scale)
 
 test_that("Excitation can be created from Spectrum", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   
   # Create excitation pattern
@@ -10,22 +10,22 @@ test_that("Excitation can be created from Spectrum", {
   
   expect_s3_class(excitation, "Excitation")
   expect_s3_class(excitation, "PraatObject")
-  expect_true(!is.null(excitation$.xptr))
+  expect_true(excitation$is_valid())
 })
 
 test_that("Excitation can be created from Cochleagram", {
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 16000)
   cochlea <- sound$to_cochleagram(dt = 0.01, df = 0.1)
   
   # Extract excitation at specific time
   excitation <- cochlea$to_excitation(0.1)
   
   expect_s3_class(excitation, "Excitation")
-  expect_true(!is.null(excitation$.xptr))
+  expect_true(excitation$is_valid())
 })
 
 test_that("Excitation can calculate total loudness", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   excitation <- spectrum$to_excitation()
   
@@ -38,7 +38,7 @@ test_that("Excitation can calculate total loudness", {
 })
 
 test_that("Excitation can query value at frequency", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   excitation <- spectrum$to_excitation()
   
@@ -51,8 +51,8 @@ test_that("Excitation can query value at frequency", {
 })
 
 test_that("Excitation perceptual distance works", {
-  sound1 <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
-  sound2 <- Sound$new(880, duration = 0.1, sampling_frequency = 16000)
+  sound1 <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
+  sound2 <- generate_sine_wave(880, 0.1, sampling_rate = 16000)
   
   spectrum1 <- sound1$to_spectrum()
   spectrum2 <- sound2$to_spectrum()
@@ -70,7 +70,7 @@ test_that("Excitation perceptual distance works", {
 })
 
 test_that("Excitation can be converted to Formant", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   excitation <- spectrum$to_excitation()
   
@@ -78,11 +78,11 @@ test_that("Excitation can be converted to Formant", {
   formant <- excitation$to_formant(max_formants = 5)
   
   expect_s3_class(formant, "Formant")
-  expect_true(!is.null(formant$.xptr))
+  expect_true(formant$is_valid())
 })
 
 test_that("Excitation can be exported as vector", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   excitation <- spectrum$to_excitation()
   
@@ -95,7 +95,7 @@ test_that("Excitation can be exported as vector", {
 
 test_that("Excitation handles silence correctly", {
   # Create silent sound
-  sound_silence <- Sound$new(duration = 0.1, sampling_frequency = 16000)
+  sound_silence <- Sound(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
   spectrum_silence <- sound_silence$to_spectrum()
   excitation_silence <- spectrum_silence$to_excitation()
   
@@ -107,9 +107,9 @@ test_that("Excitation handles silence correctly", {
 })
 
 test_that("Excitation SIMD accuracy matches scalar", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   
   # Create two excitations (should use SIMD if available)
@@ -124,7 +124,7 @@ test_that("Excitation SIMD accuracy matches scalar", {
 })
 
 test_that("Excitation validates parameters", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   spectrum <- sound$to_spectrum()
   
   # Invalid ERB density
@@ -133,8 +133,8 @@ test_that("Excitation validates parameters", {
 })
 
 test_that("Excitation distance is symmetric", {
-  sound1 <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
-  sound2 <- Sound$new(550, duration = 0.1, sampling_frequency = 16000)
+  sound1 <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
+  sound2 <- generate_sine_wave(550, 0.1, sampling_rate = 16000)
   
   excitation1 <- sound1$to_spectrum()$to_excitation()
   excitation2 <- sound2$to_spectrum()$to_excitation()
@@ -147,7 +147,7 @@ test_that("Excitation distance is symmetric", {
 })
 
 test_that("Excitation identical sounds have zero distance", {
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   excitation1 <- sound$to_spectrum()$to_excitation()
   excitation2 <- sound$to_spectrum()$to_excitation()

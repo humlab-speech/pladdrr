@@ -2,10 +2,10 @@
 # Tests for SIMD-accelerated FFT and formant extraction operations
 
 test_that("SIMD FFT produces accurate results", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create test signal (sine wave)
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   # Perform FFT via Spectrum creation (uses FFT internally)
   spectrum <- sound$to_spectrum()
@@ -18,9 +18,9 @@ test_that("SIMD FFT produces accurate results", {
 })
 
 test_that("SIMD FFT matches scalar FFT", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   # Create two spectra (should use same SIMD path)
   spectrum1 <- sound$to_spectrum()
@@ -35,10 +35,10 @@ test_that("SIMD FFT matches scalar FFT", {
 })
 
 test_that("SIMD inverse FFT works correctly", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create sound, convert to spectrum, back to sound
-  sound_original <- Sound$new(440, duration = 0.05, sampling_frequency = 16000)
+  sound_original <- generate_sine_wave(440, 0.05, sampling_rate = 16000)
   spectrum <- sound_original$to_spectrum()
   sound_reconstructed <- spectrum$to_sound()
   
@@ -54,10 +54,10 @@ test_that("SIMD inverse FFT works correctly", {
 })
 
 test_that("SIMD formant extraction is accurate", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create vowel-like sound
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # Extract formants (uses LPC with SIMD)
   formant <- sound$to_formant_burg(max_number_of_formants = 5)
@@ -75,9 +75,9 @@ test_that("SIMD formant extraction is accurate", {
 })
 
 test_that("SIMD LPC coefficients are consistent", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(440, duration = 0.2, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.2, sampling_rate = 22050)
   
   # Create LPC object twice
   lpc1 <- sound$to_lpc_burg(prediction_order = 10, analysis_width = 0.025)
@@ -100,10 +100,10 @@ test_that("SIMD LPC coefficients are consistent", {
 })
 
 test_that("SIMD autocorrelation in LPC is accurate", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create periodic signal
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   
   # LPC analysis (uses autocorrelation internally)
   lpc <- sound$to_lpc_burg(prediction_order = 12)
@@ -116,9 +116,9 @@ test_that("SIMD autocorrelation in LPC is accurate", {
 })
 
 test_that("SIMD bandwidth estimation works", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   formant <- sound$to_formant_burg()
   
   # Query bandwidth
@@ -132,9 +132,9 @@ test_that("SIMD bandwidth estimation works", {
 })
 
 test_that("SIMD Willems formant method works", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_willems(number_of_formants = 5)
   
@@ -152,9 +152,9 @@ test_that("SIMD Willems formant method works", {
 })
 
 test_that("SIMD Split-Levinson method works", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$new(duration = 0.2, sampling_frequency = 22050)
+  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_sl(number_of_poles = 10)
   
@@ -162,7 +162,7 @@ test_that("SIMD Split-Levinson method works", {
 })
 
 test_that("SIMD FFT handles power-of-2 sizes efficiently", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create sounds with power-of-2 sample counts
   sound_256 <- Sound$new(440, duration = 256/16000, sampling_frequency = 16000)
@@ -180,10 +180,10 @@ test_that("SIMD FFT handles power-of-2 sizes efficiently", {
 })
 
 test_that("SIMD FFT handles non-power-of-2 sizes correctly", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create sound with non-power-of-2 sample count
-  sound_odd <- Sound$new(440, duration = 0.0573, sampling_frequency = 16000)
+  sound_odd <- generate_sine_wave(440, 0.0573, sampling_rate = 16000)
   # 0.0573 * 16000 = ~917 samples (not power of 2)
   
   spectrum <- sound_odd$to_spectrum()
@@ -195,29 +195,29 @@ test_that("SIMD FFT handles non-power-of-2 sizes correctly", {
 })
 
 test_that("SIMD formant extraction handles edge cases", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Very short sound
-  sound_short <- Sound$new(440, duration = 0.01, sampling_frequency = 16000)
+  sound_short <- generate_sine_wave(440, 0.01, sampling_rate = 16000)
   formant_short <- sound_short$to_formant_burg(max_number_of_formants = 3)
   expect_s3_class(formant_short, "Formant")
   
   # Silence
-  sound_silence <- Sound$new(duration = 0.1, sampling_frequency = 16000)
+  sound_silence <- Sound(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
   formant_silence <- sound_silence$to_formant_burg()
   expect_s3_class(formant_silence, "Formant")
   
   # Very long sound
-  sound_long <- Sound$new(440, duration = 2.0, sampling_frequency = 16000)
+  sound_long <- generate_sine_wave(440, 2.0, sampling_rate = 16000)
   formant_long <- sound_long$to_formant_burg(time_step = 0.01)
   expect_s3_class(formant_long, "Formant")
 })
 
 test_that("SIMD operations maintain numerical stability", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Test with very quiet sound (numerical stability test)
-  sound_quiet <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
+  sound_quiet <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   sound_quiet <- sound_quiet$multiply(0.001)  # Make very quiet
   
   spectrum <- sound_quiet$to_spectrum()
@@ -233,11 +233,11 @@ test_that("SIMD operations maintain numerical stability", {
 })
 
 test_that("SIMD complex operations work correctly", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create complex signal (sum of sine waves)
-  sound <- Sound$new(440, duration = 0.1, sampling_frequency = 16000)
-  sound2 <- Sound$new(880, duration = 0.1, sampling_frequency = 16000)
+  sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
+  sound2 <- generate_sine_wave(880, 0.1, sampling_rate = 16000)
   sound_complex <- sound$add(sound2)
   
   # FFT should identify both frequency components
@@ -253,10 +253,10 @@ test_that("SIMD complex operations work correctly", {
 })
 
 test_that("SIMD performance is better than scalar", {
-  skip_if_not(pladdrr:::.has_simd(), "SIMD not available")
+  skip_if_not(simd_info()$available, "SIMD not available")
   skip_on_cran()  # Performance tests can be slow
   
-  sound <- Sound$new(440, duration = 0.5, sampling_frequency = 22050)
+  sound <- generate_sine_wave(440, 0.5, sampling_rate = 22050)
   
   # Warm-up
   dummy <- sound$to_spectrum()
