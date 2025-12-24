@@ -316,9 +316,9 @@ Spectrum <- R6::R6Class("Spectrum",
     #' @param erb_density Frequency step in ERB scale (default: 0.1)
     #' @return Excitation object
     to_excitation = function(erb_density = 0.1) {
-      if (!is.numeric(erb_density) || length(erb_density) != 1 || erb_density <= 0) {
-        stop("erb_density must be a positive number")
-      }
+      stopifnot(
+        "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
+      )
       ptr <- .spectrum_to_excitation(private$ptr, as.numeric(erb_density))
       Excitation$new(.xptr = ptr)
     },

@@ -31,7 +31,7 @@ See ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00install.out’ for
 * checking C++ specification ... OK
   Not all R platforms support C++17
 * checking installed package size ... NOTE
-  installed size is 23.4Mb
+  installed size is 23.3Mb
   sub-directories of 1Mb or more:
     R             2.0Mb
     doc           1.5Mb
@@ -115,21 +115,7 @@ Undefined global functions or variables:
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
 * checking for code/documentation mismatches ... OK
-* checking Rd \usage sections ... WARNING
-Undocumented arguments in Rd file 'autoplot-methods.Rd'
-  ‘geom’ ‘ymin’ ‘ymax’
-
-Documented arguments not in \usage in Rd file 'batch_process.Rd':
-  ‘cores’
-
-Documented arguments not in \usage in Rd file 'extract_measurements.Rd':
-  ‘measures’ ‘interval_filter’ ‘aggregate_by’
-
-Functions with \usage entries need to have the appropriate \alias
-entries, and all their arguments documented.
-The \usage entries must correspond to syntactically valid R code.
-See chapter ‘Writing R documentation files’ in the ‘Writing R
-Extensions’ manual.
+* checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
 * checking line endings in shell scripts ... OK
@@ -197,47 +183,33 @@ Files in the 'vignettes' directory newer than same file in 'inst/doc':
   ‘migration-from-parselmouth.html’ ‘migration-from-praat.html’
   ‘performance-simd.html’ ‘textgrid-workflows.html’
   ‘visualization.html’ ‘vowel-space-analysis.html’
-* checking examples ... ERROR
-Running examples in ‘pladdrr-Ex.R’ failed
-The error most likely occurred in:
-
-> ### Name: summary.praat_sound
-> ### Title: Summary method for praat_sound objects
-> ### Aliases: summary.praat_sound
-> 
-> ### ** Examples
-> 
-> sound <- generate_sine_wave(440, 0.5)
-Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0) :
-  create_sound() is deprecated and will be removed in v1.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
-> summary(sound)
-Error in object[[i]] : wrong arguments for subsetting an environment
-Calls: summary -> summary.default
-Execution halted
+* checking examples ... OK
 * checking for unstated dependencies in ‘tests’ ... WARNING
 '::' or ':::' import not declared from: ‘jsonlite’
 'library' or 'require' call not declared from: ‘speakr’
 * checking tests ...
   Running ‘quick_smoke_test.R’
   Running ‘test_cross_validation.R’
+  Running ‘testthat.R’/Library/Frameworks/R.framework/Resources/bin/BATCH: line 60: 76721 Segmentation fault: 11  ${R_HOME}/bin/R -f ${in} ${opts} ${R_BATCH_OPTIONS} > ${out} 2>&1
+
  ERROR
-Running the tests in ‘tests/test_cross_validation.R’ failed.
+Running the tests in ‘tests/testthat.R’ failed.
 Last 13 lines of output:
-  > #' - speakr R package (optional, for direct Praat script calling)
-  > 
-  > library(testthat)
-  > library(pladdrr)
-  pladdrr: Direct access to Praat C functionality
-  See ?pladdrr for an overview and citation information.
-  Use citation('pladdrr') for citing this package in publications.
-  > 
-  > # Skip this entire file on CRAN - requires external dependencies
-  > if (!interactive() && !identical(Sys.getenv("NOT_CRAN"), "true")) {
-  +   exit_file("Skipping cross-validation tests on CRAN (requires external deps)")
-  + }
-  Error in exit_file("Skipping cross-validation tests on CRAN (requires external deps)") : 
-    could not find function "exit_file"
-  Execution halted
+  24: withRestarts(tryCatch(withCallingHandlers({    eval(code, test_env)    new_expectations <- the$test_expectations > starting_expectations    if (snapshot_skipped) {        skip("On CRAN")    }    else if (!new_expectations && skip_on_empty) {        skip_empty()    }}, expectation = handle_expectation, packageNotFoundError = function(e) {    if (on_cran()) {        skip(paste0("{", e$package, "} is not installed."))    }}, snapshot_on_cran = function(cnd) {    snapshot_skipped <<- TRUE    invokeRestart("muffle_cran_snapshot")}, skip = handle_skip, warning = handle_warning, message = handle_message,     error = handle_error, interrupt = handle_interrupt), error = handle_fatal),     end_test = function() {    })
+  25: test_code(code = exprs, env = env, reporter = get_reporter() %||%     StopReporter$new())
+  26: source_file(path, env = env(env), desc = desc, shuffle = shuffle,     error_call = error_call)
+  27: FUN(X[[i]], ...)
+  28: lapply(test_paths, test_one_file, env = env, desc = desc, shuffle = shuffle,     error_call = error_call)
+  29: doTryCatch(return(expr), name, parentenv, handler)
+  30: tryCatchOne(expr, names, parentenv, handlers[[1L]])
+  31: tryCatchList(expr, classes, parentenv, handlers)
+  32: tryCatch(code, testthat_abort_reporter = function(cnd) {    cat(conditionMessage(cnd), "\n")    NULL})
+  33: with_reporter(reporters$multi, lapply(test_paths, test_one_file,     env = env, desc = desc, shuffle = shuffle, error_call = error_call))
+  34: test_files_serial(test_dir = test_dir, test_package = test_package,     test_paths = test_paths, load_helpers = load_helpers, reporter = reporter,     env = env, stop_on_failure = stop_on_failure, stop_on_warning = stop_on_warning,     desc = desc, load_package = load_package, shuffle = shuffle,     error_call = error_call)
+  35: test_files(test_dir = path, test_paths = test_paths, test_package = package,     reporter = reporter, load_helpers = load_helpers, env = env,     stop_on_failure = stop_on_failure, stop_on_warning = stop_on_warning,     load_package = load_package, parallel = parallel, shuffle = shuffle)
+  36: test_dir("testthat", package = package, reporter = reporter,     ..., load_package = "installed")
+  37: test_check("pladdrr")
+  An irrecoverable exception occurred. R is aborting now ...
 * checking for unstated dependencies in vignettes ... OK
 * checking package vignettes ... WARNING
 Failed to locate ‘weave’ output file ‘praat-interpreter.pdf’ or ‘praat-interpreter.html’ for vignette with name ‘praat-interpreter’ and engine ‘knitr::rmarkdown’. The following files exist in working directory ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00_pkg_src/pladdrr/inst/doc’: ‘auditory-modeling.Rmd’ (10119 bytes), ‘auditory-modeling.html’ (46321 bytes), ‘autoplot-autolayer.html’ (839639 bytes), ‘formant-analysis.Rmd’ (12212 bytes), ‘formant-analysis.html’ (57328 bytes), ‘getting-started.Rmd’ (9796 bytes), ‘getting-started.html’ (57912 bytes), ‘integrated-phonetic-analysis.Rmd’ (13356 bytes), ‘integrated-phonetic-analysis.html’ (58385 bytes), ‘migration-from-parselmouth.Rmd’ (10564 bytes), ‘migration-from-parselmouth.html’ (47532 bytes), ‘migration-from-praat.Rmd’ (7768 bytes), ‘migration-from-praat.html’ (33074 bytes), ‘performance-simd.Rmd’ (11922 bytes), ‘performance-simd.html’ (49868 bytes), ‘textgrid-workflows.Rmd’ (17774 bytes), ‘textgrid-workflows.html’ (73977 bytes), ‘visualization.Rmd’ (14219 bytes), ‘visualization.html’ (71206 bytes), ‘vowel-space-analysis.Rmd’ (16087 bytes), ‘vowel-space-analysis.html’ (66952 bytes)
@@ -260,7 +232,7 @@ Package vignettes without corresponding tangle output:
 * checking re-building of vignette outputs ... SKIPPED
 * DONE
 
-Status: 2 ERRORs, 8 WARNINGs, 2 NOTEs
+Status: 1 ERROR, 7 WARNINGs, 2 NOTEs
 See
   ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00check.log’
 for details.

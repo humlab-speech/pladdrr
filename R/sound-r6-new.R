@@ -578,18 +578,12 @@ Sound <- R6::R6Class(
     to_cochleagram = function(dt = 0.01, df = 0.1, window_length = 0.03, 
                               forward_masking_time = 0.03) {
       # Validate parameters to prevent segfaults in Praat C code
-      if (!is.numeric(dt) || length(dt) != 1 || dt <= 0) {
-        stop("dt must be a positive number")
-      }
-      if (!is.numeric(df) || length(df) != 1 || df <= 0) {
-        stop("df must be a positive number")
-      }
-      if (!is.numeric(window_length) || length(window_length) != 1 || window_length <= 0) {
-        stop("window_length must be a positive number")
-      }
-      if (!is.numeric(forward_masking_time) || length(forward_masking_time) != 1 || forward_masking_time < 0) {
-        stop("forward_masking_time must be a non-negative number")
-      }
+      stopifnot(
+        "dt must be a positive number" = is.numeric(dt) && length(dt) == 1 && dt > 0,
+        "df must be a positive number" = is.numeric(df) && length(df) == 1 && df > 0,
+        "window_length must be a positive number" = is.numeric(window_length) && length(window_length) == 1 && window_length > 0,
+        "forward_masking_time must be a non-negative number" = is.numeric(forward_masking_time) && length(forward_masking_time) == 1 && forward_masking_time >= 0
+      )
       
       cochleagram_ptr <- .sound_to_cochleagram(
         private$ptr, dt, df, window_length, forward_masking_time
@@ -619,9 +613,10 @@ Sound <- R6::R6Class(
       sampling_rate <- self$get_sampling_frequency()
       if (sampling_rate < 44100) {
         stop(
-          "Cochleagram EDB algorithm is unstable with sampling rates < 44.1kHz.\n",
-          "Current rate: ", sampling_rate, " Hz.\n",
-          "Recommendation: Use $to_cochleagram() instead, which is more stable."
+          "Cochleagram EDB algorithm is unstable with sampling rates < 44.1kHz\n",
+          sprintf("  Current rate: %.0f Hz\n", sampling_rate),
+          "  Recommendation: Use $to_cochleagram() instead, which is more stable.",
+          call. = FALSE
         )
       }
       
