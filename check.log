@@ -1,0 +1,267 @@
+* using log directory ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck’
+* using R version 4.4.2 (2024-10-31)
+* using platform: aarch64-apple-darwin20
+* R was compiled by
+    Apple clang version 14.0.0 (clang-1400.0.29.202)
+    GNU Fortran (GCC) 12.2.0
+* running under: macOS 26.1
+* using session charset: UTF-8
+* using options ‘--no-manual --no-vignettes’
+* checking for file ‘pladdrr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘pladdrr’ version ‘1.4.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘pladdrr’ can be installed ... WARNING
+Found the following significant warnings:
+  praat.github.io/sys/praat.cpp:2425:61: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+  praat.github.io/sys/praat.cpp:2429:63: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+  praat.github.io/fon/PitchTier.cpp:116:12: warning: 5 enumeration values not handled in switch: 'UNDEFINED', 'HERTZ_LOGARITHMIC', 'SEMITONES_100'... [-Wswitch]
+See ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00install.out’ for details.
+* used C compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+* used C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+* used SDK: ‘’
+* checking C++ specification ... OK
+  Not all R platforms support C++17
+* checking installed package size ... NOTE
+  installed size is 23.4Mb
+  sub-directories of 1Mb or more:
+    R             2.0Mb
+    doc           1.5Mb
+    extdata       1.3Mb
+    libs         13.9Mb
+    signalfiles   3.2Mb
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking whether startup messages can be suppressed ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+.onLoad : <anonymous>: no visible binding for global variable ‘private’
+autolayer.Formant: no visible binding for global variable ‘.data’
+autolayer.Harmonicity: no visible binding for global variable ‘.data’
+autolayer.Intensity: no visible binding for global variable ‘.data’
+autolayer.Ltas: no visible binding for global variable ‘.data’
+autolayer.Pitch: no visible binding for global variable ‘.data’
+autolayer.PointProcess: no visible binding for global variable ‘.data’
+autolayer.PowerCepstrum: no visible binding for global variable ‘.data’
+autolayer.Sound: no visible binding for global variable ‘.data’
+autolayer.Spectrogram: no visible binding for global variable ‘.data’
+autolayer.Spectrum: no visible binding for global variable ‘.data’
+autolayer.TextGrid: no visible binding for global variable ‘.data’
+autoplot.Formant: no visible binding for global variable ‘.data’
+autoplot.Harmonicity: no visible binding for global variable ‘.data’
+autoplot.Intensity: no visible binding for global variable ‘.data’
+autoplot.Ltas: no visible binding for global variable ‘.data’
+autoplot.Pitch: no visible binding for global variable ‘.data’
+autoplot.PointProcess: no visible binding for global variable ‘.data’
+autoplot.PowerCepstrum: no visible binding for global variable ‘.data’
+autoplot.Sound: no visible binding for global variable ‘.data’
+autoplot.Spectrogram: no visible binding for global variable ‘.data’
+autoplot.Spectrum: no visible binding for global variable ‘.data’
+plot.Formant: no visible binding for global variable ‘.data’
+plot.Harmonicity: no visible binding for global variable ‘.data’
+plot.Intensity: no visible binding for global variable ‘.data’
+plot.Ltas: no visible binding for global variable ‘.data’
+plot.Matrix: no visible binding for global variable ‘.data’
+plot.Pitch: no visible binding for global variable ‘.data’
+plot.PointProcess: no visible binding for global variable ‘.data’
+plot.PowerCepstrum: no visible binding for global variable ‘.data’
+plot.Sound: no visible binding for global variable ‘.data’
+plot.Spectrogram: no visible binding for global variable ‘.data’
+plot.Spectrum: no visible binding for global variable ‘.data’
+plot_cpp_timeseries: no visible binding for global variable ‘cpp’
+plot_pitch_intensity: no visible binding for global variable ‘.data’
+plot_powercepstrogram: no visible binding for global variable
+  ‘quefrency’
+plot_powercepstrogram: no visible binding for global variable
+  ‘power_db’
+plot_powercepstrum: no visible binding for global variable ‘quefrency’
+plot_powercepstrum: no visible binding for global variable ‘power_db’
+plot_spectrogram_formants: no visible binding for global variable
+  ‘.data’
+plot_spectrogram_pitch: no visible binding for global variable ‘.data’
+plot_textgrid_pitch: no visible binding for global variable ‘.data’
+plot_textgrid_sound: no visible binding for global variable ‘.data’
+sound_extract_parts: no visible global function definition for
+  ‘.sound_extract_parts’
+textgrid_get_intervals_where: no visible global function definition for
+  ‘.textgrid_get_intervals_where’
+Undefined global functions or variables:
+  .data .sound_extract_parts .textgrid_get_intervals_where cpp power_db
+  private quefrency
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... WARNING
+Undocumented arguments in Rd file 'autoplot-methods.Rd'
+  ‘geom’ ‘ymin’ ‘ymax’
+
+Documented arguments not in \usage in Rd file 'batch_process.Rd':
+  ‘cores’
+
+Documented arguments not in \usage in Rd file 'extract_measurements.Rd':
+  ‘measures’ ‘interval_filter’ ‘aggregate_by’
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking line endings in shell scripts ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... WARNING
+Non-portable flags in variable 'PKG_CXXFLAGS':
+  -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -Wno-logical-op-parentheses -Wno-shift-op-parentheses -Wno-mismatched-tags -Wno-unused-const-variable -Wno-c++11-narrowing -O2
+* checking for GNU extensions in Makefiles ... WARNING
+Found the following file(s) containing GNU extensions:
+  src/Makevars
+  src/Makevars.in
+Portable Makefiles do not use GNU extensions such as +=, :=, $(shell),
+$(wildcard), ifeq ... endif, .NOTPARALLEL See section ‘Writing portable
+packages’ in the ‘Writing R Extensions’ manual.
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking include directives in Makefiles ... OK
+* checking compiled code ... WARNING
+File ‘pladdrr/libs/pladdrr.so’:
+  Found ‘__Exit’, possibly from ‘_Exit’ (C)
+    Object: ‘praat.github.io/sys/praat.o’
+  Found ‘___stderrp’, possibly from ‘stderr’ (C)
+    Objects: ‘praat.github.io/melder/melder_console.o’,
+      ‘praat.github.io/sys/praat.o’,
+      ‘praat.github.io/fon/Praat_tests.o’
+  Found ‘___stdoutp’, possibly from ‘stdout’ (C)
+    Objects: ‘praat.github.io/melder/melder_console.o’,
+      ‘praat.github.io/sys/praat.o’
+  Found ‘__exit’, possibly from ‘_exit’ (C), ‘_Exit’ (C)
+    Object: ‘praat.github.io/melder/melder_sysenv.o’
+  Found ‘_abort’, possibly from ‘abort’ (C)
+    Objects: ‘praat.github.io/melder/melder_alloc.o’,
+      ‘praat.github.io/melder/melder_textencoding.o’,
+      ‘praat.github.io/melder/melder_search.o’,
+      ‘praat.github.io/melder/melder_error.o’,
+      ‘praat.github.io/melder/abcio.o’,
+      ‘praat.github.io/melder/NUMspecfunc.o’,
+      ‘praat.github.io/sys/Thing.o’, ‘praat.github.io/sys/Formula.o’,
+      ‘praat.github.io/sys/Interpreter.o’,
+      ‘praat.github.io/sys/praat.o’, ‘praat.github.io/stat/Table.o’,
+      ‘praat.github.io/fon/Sound.o’,
+      ‘praat.github.io/fon/Pitch_to_PointProcess.o’,
+      ‘praat.github.io/fon/TextGrid_Sound.o’,
+      ‘praat.github.io/fon/Photo.o’
+  Found ‘_exit’, possibly from ‘exit’ (C)
+    Object: ‘praat.github.io/sys/praat.o’
+  Found ‘_printf’, possibly from ‘printf’ (C)
+    Object: ‘praat.github.io/sys/praat_script.o’
+  Found ‘_sprintf’, possibly from ‘sprintf’ (C)
+    Object: ‘praat.github.io/melder/melder_ftoa.o’
+
+Compiled code should not call entry points which might terminate R nor
+write to stdout/stderr instead of to the console, nor use Fortran I/O
+nor system RNGs nor [v]sprintf.
+
+See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... WARNING
+Files in the 'vignettes' directory newer than all files in 'inst/doc':
+  ‘praat-interpreter.Rmd’ ‘praat-interpreter.html’
+Files in the 'vignettes' directory newer than same file in 'inst/doc':
+  ‘auditory-modeling.html’ ‘formant-analysis.html’
+  ‘getting-started.html’ ‘integrated-phonetic-analysis.html’
+  ‘migration-from-parselmouth.html’ ‘migration-from-praat.html’
+  ‘performance-simd.html’ ‘textgrid-workflows.html’
+  ‘visualization.html’ ‘vowel-space-analysis.html’
+* checking examples ... ERROR
+Running examples in ‘pladdrr-Ex.R’ failed
+The error most likely occurred in:
+
+> ### Name: summary.praat_sound
+> ### Title: Summary method for praat_sound objects
+> ### Aliases: summary.praat_sound
+> 
+> ### ** Examples
+> 
+> sound <- generate_sine_wave(440, 0.5)
+Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0) :
+  create_sound() is deprecated and will be removed in v1.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
+> summary(sound)
+Error in object[[i]] : wrong arguments for subsetting an environment
+Calls: summary -> summary.default
+Execution halted
+* checking for unstated dependencies in ‘tests’ ... WARNING
+'::' or ':::' import not declared from: ‘jsonlite’
+'library' or 'require' call not declared from: ‘speakr’
+* checking tests ...
+  Running ‘quick_smoke_test.R’
+  Running ‘test_cross_validation.R’
+ ERROR
+Running the tests in ‘tests/test_cross_validation.R’ failed.
+Last 13 lines of output:
+  > #' - speakr R package (optional, for direct Praat script calling)
+  > 
+  > library(testthat)
+  > library(pladdrr)
+  pladdrr: Direct access to Praat C functionality
+  See ?pladdrr for an overview and citation information.
+  Use citation('pladdrr') for citing this package in publications.
+  > 
+  > # Skip this entire file on CRAN - requires external dependencies
+  > if (!interactive() && !identical(Sys.getenv("NOT_CRAN"), "true")) {
+  +   exit_file("Skipping cross-validation tests on CRAN (requires external deps)")
+  + }
+  Error in exit_file("Skipping cross-validation tests on CRAN (requires external deps)") : 
+    could not find function "exit_file"
+  Execution halted
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes ... WARNING
+Failed to locate ‘weave’ output file ‘praat-interpreter.pdf’ or ‘praat-interpreter.html’ for vignette with name ‘praat-interpreter’ and engine ‘knitr::rmarkdown’. The following files exist in working directory ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00_pkg_src/pladdrr/inst/doc’: ‘auditory-modeling.Rmd’ (10119 bytes), ‘auditory-modeling.html’ (46321 bytes), ‘autoplot-autolayer.html’ (839639 bytes), ‘formant-analysis.Rmd’ (12212 bytes), ‘formant-analysis.html’ (57328 bytes), ‘getting-started.Rmd’ (9796 bytes), ‘getting-started.html’ (57912 bytes), ‘integrated-phonetic-analysis.Rmd’ (13356 bytes), ‘integrated-phonetic-analysis.html’ (58385 bytes), ‘migration-from-parselmouth.Rmd’ (10564 bytes), ‘migration-from-parselmouth.html’ (47532 bytes), ‘migration-from-praat.Rmd’ (7768 bytes), ‘migration-from-praat.html’ (33074 bytes), ‘performance-simd.Rmd’ (11922 bytes), ‘performance-simd.html’ (49868 bytes), ‘textgrid-workflows.Rmd’ (17774 bytes), ‘textgrid-workflows.html’ (73977 bytes), ‘visualization.Rmd’ (14219 bytes), ‘visualization.html’ (71206 bytes), ‘vowel-space-analysis.Rmd’ (16087 bytes), ‘vowel-space-analysis.html’ (66952 bytes)
+Package vignette without corresponding single PDF/HTML:
+  ‘praat-interpreter.Rmd’
+Package vignettes without corresponding tangle output:
+  ‘auditory-modeling.Rmd’
+  ‘autoplot-autolayer.Rmd’
+  ‘formant-analysis.Rmd’
+  ‘getting-started.Rmd’
+  ‘integrated-phonetic-analysis.Rmd’
+  ‘migration-from-parselmouth.Rmd’
+  ‘migration-from-praat.Rmd’
+  ‘performance-simd.Rmd’
+  ‘praat-interpreter.Rmd’
+  ‘textgrid-workflows.Rmd’
+  ‘visualization.Rmd’
+  ‘vowel-space-analysis.Rmd’
+* checking running R code from vignettes ... SKIPPED
+* checking re-building of vignette outputs ... SKIPPED
+* DONE
+
+Status: 2 ERRORs, 8 WARNINGs, 2 NOTEs
+See
+  ‘/Users/frkkan96/Documents/src/pladdrr/pladdrr.Rcheck/00check.log’
+for details.
+

@@ -45,8 +45,12 @@ print.praat_sound <- function(x, ...) {
 #' @return The object, invisibly
 #'
 #' @examples
+#' \dontrun{
+#' # DEPRECATED - generate_sine_wave now returns R6 Sound objects
+#' # This S3 method is only for legacy praat_sound objects
 #' sound <- generate_sine_wave(440, 0.5)
 #' summary(sound)
+#' }
 #'
 #' @export
 summary.praat_sound <- function(object, ...) {

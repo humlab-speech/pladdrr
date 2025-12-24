@@ -167,6 +167,8 @@
 
 \item{show_voicing}{Color by voicing strength (default: FALSE)}
 
+\item{geom}{For Pitch: type of geometry ("line" or "point")}
+
 \item{max_formant}{Maximum formant number to display (default: 3)}
 
 \item{colors}{Colors for each formant track}
@@ -178,6 +180,10 @@
 \item{dynamic_range}{Dynamic range in dB (default: 70)}
 
 \item{log_freq}{Use logarithmic frequency scale (default: FALSE)}
+
+\item{ymin}{For PointProcess: minimum y value for vertical lines (default: 0)}
+
+\item{ymax}{For PointProcess: maximum y value for vertical lines (default: 1)}
 
 \item{from_quefrency}{Start quefrency in seconds}
 

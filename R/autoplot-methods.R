@@ -104,6 +104,7 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
 }
 
 #' @rdname autoplot-methods
+#' @param geom For Pitch: type of geometry ("line" or "point")
 #' @export
 autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
                             color = "darkgreen", geom = c("line", "point"), ...) {
@@ -538,6 +539,8 @@ autoplot.PointProcess <- function(object, from_time = NULL, to_time = NULL,
 }
 
 #' @rdname autoplot-methods
+#' @param ymin For PointProcess: minimum y value for vertical lines (default: 0)
+#' @param ymax For PointProcess: maximum y value for vertical lines (default: 1)
 #' @export
 autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
                                    color = "black", ymin = 0, ymax = 1, ...) {

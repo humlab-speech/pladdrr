@@ -20,7 +20,7 @@ NULL
 #'   as first argument and return a named list or data frame row
 #' @param recursive Logical, search directories recursively (default: FALSE)
 #' @param parallel Logical, use parallel processing (default: FALSE)
-#' @param cores Integer, number of cores for parallel processing (default: NULL = all-1)
+#' @param ncores Integer, number of cores for parallel processing (default: NULL = all-1)
 #' @param progress Logical, show progress bar (default: TRUE)
 #' @param ... Additional arguments passed to func
 #'
@@ -45,7 +45,7 @@ NULL
 #' @export
 batch_process <- function(directory, pattern = "\\.wav$", func, 
                          recursive = FALSE, parallel = FALSE, 
-                         cores = NULL, progress = TRUE, ...) {
+                         ncores = NULL, progress = TRUE, ...) {
   
   # Get file list
   files <- list.files(directory, pattern = pattern, 
@@ -84,10 +84,10 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
     if (!requireNamespace("parallel", quietly = TRUE)) {
       stop("Package 'parallel' is required for parallel processing")
     }
-    if (is.null(cores)) {
-      cores <- parallel::detectCores() - 1
+    if (is.null(ncores)) {
+      ncores <- parallel::detectCores() - 1
     }
-    results <- parallel::mclapply(files, process_file, mc.cores = cores)
+    results <- parallel::mclapply(files, process_file, mc.cores = ncores)
   } else {
     if (progress && requireNamespace("utils", quietly = TRUE)) {
       pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
@@ -217,7 +217,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
   pairs
 }
 
-#' Extract Measurements from Sound and TextGrid Pairs
+#' Extract Custom Measurements from TextGrid Intervals
 #'
 #' @description
 #' Extract acoustic measurements from intervals or points in TextGrid annotations.
@@ -238,7 +238,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' @examples
 #' \dontrun{
 #' # Extract pitch and intensity for each vowel interval
-#' measurements <- extract_measurements(
+#' measurements <- extract_measurements_custom(
 #'   sound = "recording.wav",
 #'   textgrid = "recording.TextGrid",
 #'   tier = "phones",
@@ -257,7 +257,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' }
 #'
 #' @export
-extract_measurements <- function(sound, textgrid, tier, measures,
+extract_measurements_custom <- function(sound, textgrid, tier, measures,
                                 interval_filter = NULL,
                                 aggregate_by = "interval") {
   

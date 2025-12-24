@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(speaker)
+library(pladdrr)
 
-test_check("speaker")
+test_check("pladdrr")

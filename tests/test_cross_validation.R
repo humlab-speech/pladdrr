@@ -13,7 +13,8 @@ library(pladdrr)
 
 # Skip this entire file on CRAN - requires external dependencies
 if (!interactive() && !identical(Sys.getenv("NOT_CRAN"), "true")) {
-  exit_file("Skipping cross-validation tests on CRAN (requires external deps)")
+  message("Skipping cross-validation tests on CRAN (requires external deps)")
+  quit(save = "no", status = 0)
 }
 
 # Test configuration
