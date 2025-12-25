@@ -1,3 +1,37 @@
+# pladdrr 1.4.1 (2025-12-25)
+
+## Bug Fixes
+
+### Critical Segfault Prevention
+
+* **Fixed segfaults in cochleagram/excitation/matrix tests**
+  - Added parameter validation to `Sound$to_cochleagram()` preventing negative/invalid parameters from reaching C code
+  - Added sampling rate check to `Sound$to_cochleagram_edb()` - requires ≥44.1kHz due to Praat bug
+  - Added validation to `Spectrum$to_excitation()` for erb_density parameter
+  - Root cause: Praat's EDB algorithm creates 10+ second gammatone filters at low frequencies causing memory corruption
+
+* **Fixed test suite errors**
+  - Updated `test-cochleagram-r6.R`: Fixed method names, updated EDB tests to use 44.1kHz, adjusted edge cases
+  - Updated `test-excitation-r6.R`: Migrated to `Sound$from_values()`, adjusted silence expectations
+  - Updated `test-matrix-r6.R`: Fixed method names (`get_ny()`/`get_nx()` vs `get_number_of_rows()`)
+
+## Code Quality
+
+* **Refactored validation code for better maintainability**
+  - Replaced multiple if/stop blocks with idiomatic `stopifnot()` (62% code reduction: 16→6 lines)
+  - Improved error messages: proper formatting with `sprintf()`, indentation, and `call.=FALSE`
+  - Enhanced user experience by hiding internal call stacks in error messages
+
+## Test Results
+
+* All previously crashing tests now pass without segfaults
+  - ✅ test-cochleagram-r6: 25 PASS, 2 SKIP
+  - ✅ test-excitation-r6: 25 PASS, 1 SKIP
+  - ✅ test-matrix-r6: 26 PASS
+  - ✅ Core R6 tests run without crashes
+
+---
+
 # pladdrr 1.3.0 (2025-12-20)
 
 ## New Features
