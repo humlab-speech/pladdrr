@@ -817,8 +817,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_get_minimum`, ltas, fmin, fmax, unit, interpolate)
 }
 
-.ltas_get_maximum <- function(ltas, fmin, fmax, unit, interpolate) {
-    .Call(`_pladdrr_ltas_get_maximum`, ltas, fmin, fmax, unit, interpolate)
+.ltas_get_maximum <- function(ltas, fmin, fmax, interpolation) {
+    .Call(`_pladdrr_ltas_get_maximum`, ltas, fmin, fmax, interpolation)
 }
 
 .ltas_get_frequency_of_maximum <- function(ltas, fmin, fmax, interpolation) {

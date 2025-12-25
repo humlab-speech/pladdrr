@@ -108,30 +108,23 @@ double ltas_get_minimum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, i
 }
 
 // [[Rcpp::export(.ltas_get_maximum)]]
-double ltas_get_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int unit, bool interpolate) {
+double ltas_get_maximum(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax, int interpolation) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");
   
   if (fmin == 0.0) fmin = ltas->xmin;
   if (fmax == 0.0) fmax = ltas->xmax;
   
-  double max_value = -1e308;
-  integer imin = Sampled_xToNearestIndex(ltas.get(), fmin);
-  integer imax = Sampled_xToNearestIndex(ltas.get(), fmax);
+  // Use Praat's Vector_getMaximum with interpolation
+  // interpolation: 0=NONE, 1=PARABOLIC, 2=CUBIC, 3=SINC70, 4=SINC700
+  kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
   
-  for (integer i = imin; i <= imax; i++) {
-    if (ltas->z[1][i] > max_value) {
-      max_value = ltas->z[1][i];
-    }
+  try {
+    double max_value = Vector_getMaximum((structVector*)ltas.get(), fmin, fmax, interp_type);
+    return max_value;  // Already in dB
+  } catch (MelderError) {
+    Melder_clearError();
+    Rcpp::stop("Failed to get maximum from Ltas");
   }
-  
-  // Convert units
-  if (unit == 1) {  // sones
-    max_value = pow(10.0, max_value / 10.0);
-  } else if (unit == 2) {  // linear
-    max_value = pow(10.0, max_value / 10.0);
-  }
-  
-  return max_value;
 }
 
 // [[Rcpp::export(.ltas_get_frequency_of_maximum)]]

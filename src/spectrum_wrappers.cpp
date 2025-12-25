@@ -13,6 +13,8 @@
 #include "fon/Matrix.h"
 #include "LPC/Cepstrum.h"
 #include "LPC/Cepstrum_and_Spectrum.h"
+#include "sys/Interpreter.h"
+#include "sys/Interpreter.h"
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -257,11 +259,23 @@ NumericMatrix spectrum_as_matrix(SEXP xptr) {
 
 // [[Rcpp::export(.spectrum_formula)]]
 void spectrum_formula(SEXP xptr, std::string formula_str) {
-    // Note: Matrix_formula requires Praat's interpreter, which we don't have.
-    // This function is kept for API compatibility but will error.
-    stop("Spectrum$formula() requires Praat's script interpreter which is not available. "
-         "Use apply_pre_emphasis() for pre-emphasis, or manipulate spectrum values "
-         "via as_matrix() and create a new Sound from the modified values.");
+    XPtr<structSpectrum> spectrum(xptr);
+    if (!spectrum) stop("Invalid Spectrum pointer");
+    
+    try {
+        // Create a temporary interpreter for this operation
+        autoInterpreter interpreter = Interpreter_create();
+        autostring32 formula = Melder_8to32(formula_str.c_str());
+        
+        // Apply formula to spectrum (Spectrum inherits from Matrix)
+        // Matrix_formula modifies the matrix in-place
+        Matrix_formula((structMatrix *) spectrum.get(), formula.get(), interpreter.get(), nullptr);
+        
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to apply formula to Spectrum: " + error_msg);
+    }
 }
 
 // [[Rcpp::export(.spectrum_apply_pre_emphasis)]]
@@ -305,7 +319,7 @@ SEXP spectrum_to_ltas_1to1(SEXP xptr) {
     
     try {
         // Create LTAS with 1-to-1 frequency mapping
-        autoLtas ltas = Spectrum_to_Ltas(spectrum.get(), 1.0);
+        autoLtas ltas = Spectrum_to_Ltas_1to1(spectrum.get());
         return create_xptr_from_auto<structLtas>(ltas);
     } catch (MelderError) {
         Melder_clearError();

@@ -18,7 +18,7 @@
 #' - `$get_frequency_from_bin(bin)` - Get frequency for bin number
 #' - `$get_value_at_frequency(frequency, unit)` - Get power at frequency
 #' - `$get_minimum(fmin, fmax, unit)` - Minimum in frequency range
-#' - `$get_maximum(fmin, fmax, unit)` - Maximum in frequency range
+#' - `$get_maximum(fmin, fmax, interpolation)` - Maximum in frequency range (dB)
 #' - `$get_mean(fmin, fmax, unit)` - Mean in frequency range
 #' - `$get_slope(f1min, f1max, f2min, f2max, unit)` - Spectral slope
 #'
@@ -148,25 +148,6 @@ Ltas <- R6::R6Class(
     },
     
     #' @description
-    #' Get maximum power in frequency range
-    #' Corresponds to Praat: Get maximum: fmin, fmax, unit
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Averaging method: "energy", "sones", "dB" (default)
-    #' @param interpolate Interpolate between bins (default TRUE)
-    #' @return Maximum power value
-    get_maximum = function(fmin = 0, fmax = 0, unit = "dB", interpolate = TRUE) {
-      unit_code <- switch(tolower(unit),
-        "energy" = 1L,
-        "sones" = 2L,
-        "db" = 3L,
-        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
-      )
-      .ltas_get_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), 
-                        unit_code, as.logical(interpolate))
-    },
-    
-    #' @description
     #' Get frequency of maximum power in frequency range
     #' Corresponds to Praat: Get frequency of maximum: fmin, fmax, interpolation
     #' @param fmin Minimum frequency (Hz, 0 = start)
@@ -188,20 +169,22 @@ Ltas <- R6::R6Class(
     },
     
     #' @description
-    #' Get mean power in frequency range
-    #' Corresponds to Praat: Get mean: fmin, fmax, unit
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Averaging method: "energy", "sones", "dB" (default)
-    #' @return Mean power value
-    get_mean = function(fmin = 0, fmax = 0, unit = "dB") {
-      unit_code <- switch(tolower(unit),
-        "energy" = 1L,
-        "sones" = 2L,
-        "db" = 3L,
-        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
+    #' Get the maximum power in a frequency range
+    #' @param fmin Minimum frequency (Hz, default 0 = all)
+    #' @param fmax Maximum frequency (Hz, default 0 = all)
+    #' @param interpolation Interpolation method: "none", "parabolic" (default), "cubic", "sinc70", "sinc700"
+    #' @return Maximum power value in dB
+    get_maximum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
+      interp_code <- switch(tolower(interpolation),
+        "none" = 0L,
+        "parabolic" = 1L,
+        "cubic" = 2L,
+        "sinc70" = 3L,
+        "sinc700" = 4L,
+        stop("Unknown interpolation: ", interpolation, 
+             ". Must be 'none', 'parabolic', 'cubic', 'sinc70', or 'sinc700'")
       )
-      .ltas_get_mean(private$ptr, as.numeric(fmin), as.numeric(fmax), unit_code)
+      .ltas_get_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), interp_code)
     },
     
     #' @description

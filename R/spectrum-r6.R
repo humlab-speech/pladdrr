@@ -214,18 +214,33 @@ Spectrum <- R6::R6Class("Spectrum",
     },
     
     #' @description
-    #' Apply formula to modify spectrum values (NOT AVAILABLE)
+    #' Apply formula to modify spectrum values in-place
     #'
-    #' Note: This method is not available because it requires Praat's script
-    #' interpreter which is not integrated. Use apply_pre_emphasis() instead
-    #' for pre-emphasis filtering, or manipulate values via as_matrix().
+    #' Uses Praat's formula language to modify spectrum values.
+    #' The formula can reference:
+    #' - `self` - current spectrum value (complex)
+    #' - `x` - frequency in Hz
+    #' - `row` - frequency bin index (1-based)
+    #' - `col` - always 1 or 2 (real/imaginary parts)
     #'
-    #' @param formula Character string with formula
-    #' @return Error - use alternative methods
+    #' Common formulas:
+    #' - Pre-emphasis: `"if x >= 50 then self*x else self fi"`
+    #' - dB conversion: `"10 * log10(self)"`
+    #' - High-pass filter: `"if x < 100 then 0 else self fi"`
+    #'
+    #' @param formula Character string with Praat formula
+    #' @return Self (invisibly, modifies in place)
+    #' @examples
+    #' \dontrun{
+    #' spectrum <- sound$to_spectrum()
+    #' # Apply pre-emphasis above 50 Hz
+    #' spectrum$formula("if x >= 50 then self*x else self fi")
+    #' # Convert to dB
+    #' spectrum$formula("10 * log10(self + 1e-10)")
+    #' }
     formula = function(formula) {
-      stop("Spectrum$formula() is not available (requires Praat interpreter). ",
-           "Use apply_pre_emphasis() for pre-emphasis, or get values with as_matrix(), ",
-           "modify in R, then create new Sound from modified spectrum.")
+      .spectrum_formula(private$ptr, formula)
+      invisible(self)
     },
 
     #' @description

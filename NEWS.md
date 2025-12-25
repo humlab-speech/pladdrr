@@ -1,5 +1,27 @@
 # pladdrr 1.4.1 (2025-12-25)
 
+## New Features
+
+### Pharyngeal Voice Quality Analysis Support
+
+* **Implemented `Spectrum$formula()` for spectral manipulation**
+  - Added real implementation (was stub in 1.3.0)
+  - Supports full Praat formula language (`self`, `x`, `row`, `col`)
+  - Enables pre-emphasis formulas: `"if x >= 50 then self*x else self fi"`
+  - Required for pharyngeal voice quality analysis workflows
+
+* **Fixed `Spectrum$to_ltas_1to1()` conversion**
+  - Changed from `Spectrum_to_Ltas(bandwidth=1.0)` to `Spectrum_to_Ltas_1to1()`
+  - Now uses correct Praat function for 1-to-1 bin mapping
+  - Essential for accurate H1-H2, H1-A1, etc. measurements
+
+* **Fixed `Ltas$get_maximum()` signature to match Praat**
+  - Changed from `get_maximum(fmin, fmax, unit, interpolate)` 
+  - To: `get_maximum(fmin, fmax, interpolation)` 
+  - Interpolation options: "none", "parabolic", "cubic", "sinc70", "sinc700"
+  - Always returns dB (as in Praat)
+  - Uses Praat's `Vector_getMaximum()` for accurate peak detection
+
 ## Bug Fixes
 
 ### Critical Segfault Prevention
