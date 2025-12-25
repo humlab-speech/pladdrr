@@ -1,4 +1,4 @@
-# pladdrr 1.4.1 (2025-12-25)
+# pladdrr 1.4.2 (2025-12-25)
 
 ## New Features
 
