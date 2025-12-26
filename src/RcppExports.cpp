@@ -29,6 +29,11 @@ extern "C" SEXP _rcpp_module_boot_cochleagram_module();
 extern "C" SEXP _rcpp_module_boot_excitation_module();
 extern "C" SEXP _rcpp_module_boot_electroglottogram_module();
 extern "C" SEXP _rcpp_module_boot_formantgrid_module();
+// Phase 5 modules
+extern "C" SEXP _rcpp_module_boot_lpc_module();
+extern "C" SEXP _rcpp_module_boot_table_module();
+extern "C" SEXP _rcpp_module_boot_textgrid_module();
+extern "C" SEXP _rcpp_module_boot_manipulation_module();
 
 using namespace Rcpp;
 
@@ -9922,6 +9927,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_excitation_module", (DL_FUNC) &_rcpp_module_boot_excitation_module, 0},
     {"_rcpp_module_boot_electroglottogram_module", (DL_FUNC) &_rcpp_module_boot_electroglottogram_module, 0},
     {"_rcpp_module_boot_formantgrid_module", (DL_FUNC) &_rcpp_module_boot_formantgrid_module, 0},
+    // Phase 5 modules
+    {"_rcpp_module_boot_lpc_module", (DL_FUNC) &_rcpp_module_boot_lpc_module, 0},
+    {"_rcpp_module_boot_table_module", (DL_FUNC) &_rcpp_module_boot_table_module, 0},
+    {"_rcpp_module_boot_textgrid_module", (DL_FUNC) &_rcpp_module_boot_textgrid_module, 0},
+    {"_rcpp_module_boot_manipulation_module", (DL_FUNC) &_rcpp_module_boot_manipulation_module, 0},
     {NULL, NULL, 0}
 };
 
