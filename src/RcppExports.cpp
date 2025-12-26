@@ -15,6 +15,12 @@ extern "C" SEXP _rcpp_module_boot_intensity_module();
 extern "C" SEXP _rcpp_module_boot_spectrum_module();
 extern "C" SEXP _rcpp_module_boot_spectrogram_module();
 extern "C" SEXP _rcpp_module_boot_harmonicity_module();
+extern "C" SEXP _rcpp_module_boot_pitchtier_module();
+extern "C" SEXP _rcpp_module_boot_intensitytier_module();
+extern "C" SEXP _rcpp_module_boot_durationtier_module();
+extern "C" SEXP _rcpp_module_boot_amplitudetier_module();
+extern "C" SEXP _rcpp_module_boot_pointprocess_module();
+extern "C" SEXP _rcpp_module_boot_ltas_module();
 
 using namespace Rcpp;
 
@@ -9894,6 +9900,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_spectrum_module", (DL_FUNC) &_rcpp_module_boot_spectrum_module, 0},
     {"_rcpp_module_boot_spectrogram_module", (DL_FUNC) &_rcpp_module_boot_spectrogram_module, 0},
     {"_rcpp_module_boot_harmonicity_module", (DL_FUNC) &_rcpp_module_boot_harmonicity_module, 0},
+    {"_rcpp_module_boot_pitchtier_module", (DL_FUNC) &_rcpp_module_boot_pitchtier_module, 0},
+    {"_rcpp_module_boot_intensitytier_module", (DL_FUNC) &_rcpp_module_boot_intensitytier_module, 0},
+    {"_rcpp_module_boot_durationtier_module", (DL_FUNC) &_rcpp_module_boot_durationtier_module, 0},
+    {"_rcpp_module_boot_amplitudetier_module", (DL_FUNC) &_rcpp_module_boot_amplitudetier_module, 0},
+    {"_rcpp_module_boot_pointprocess_module", (DL_FUNC) &_rcpp_module_boot_pointprocess_module, 0},
+    {"_rcpp_module_boot_ltas_module", (DL_FUNC) &_rcpp_module_boot_ltas_module, 0},
     {NULL, NULL, 0}
 };
 
