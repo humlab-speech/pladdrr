@@ -21,6 +21,14 @@ extern "C" SEXP _rcpp_module_boot_durationtier_module();
 extern "C" SEXP _rcpp_module_boot_amplitudetier_module();
 extern "C" SEXP _rcpp_module_boot_pointprocess_module();
 extern "C" SEXP _rcpp_module_boot_ltas_module();
+// Phase 4 modules
+extern "C" SEXP _rcpp_module_boot_matrix_module();
+extern "C" SEXP _rcpp_module_boot_cepstrum_module();
+extern "C" SEXP _rcpp_module_boot_powercepstrum_module();
+extern "C" SEXP _rcpp_module_boot_cochleagram_module();
+extern "C" SEXP _rcpp_module_boot_excitation_module();
+extern "C" SEXP _rcpp_module_boot_electroglottogram_module();
+extern "C" SEXP _rcpp_module_boot_formantgrid_module();
 
 using namespace Rcpp;
 
@@ -9906,6 +9914,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_amplitudetier_module", (DL_FUNC) &_rcpp_module_boot_amplitudetier_module, 0},
     {"_rcpp_module_boot_pointprocess_module", (DL_FUNC) &_rcpp_module_boot_pointprocess_module, 0},
     {"_rcpp_module_boot_ltas_module", (DL_FUNC) &_rcpp_module_boot_ltas_module, 0},
+    // Phase 4 modules
+    {"_rcpp_module_boot_matrix_module", (DL_FUNC) &_rcpp_module_boot_matrix_module, 0},
+    {"_rcpp_module_boot_cepstrum_module", (DL_FUNC) &_rcpp_module_boot_cepstrum_module, 0},
+    {"_rcpp_module_boot_powercepstrum_module", (DL_FUNC) &_rcpp_module_boot_powercepstrum_module, 0},
+    {"_rcpp_module_boot_cochleagram_module", (DL_FUNC) &_rcpp_module_boot_cochleagram_module, 0},
+    {"_rcpp_module_boot_excitation_module", (DL_FUNC) &_rcpp_module_boot_excitation_module, 0},
+    {"_rcpp_module_boot_electroglottogram_module", (DL_FUNC) &_rcpp_module_boot_electroglottogram_module, 0},
+    {"_rcpp_module_boot_formantgrid_module", (DL_FUNC) &_rcpp_module_boot_formantgrid_module, 0},
     {NULL, NULL, 0}
 };
 
