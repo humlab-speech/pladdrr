@@ -5,7 +5,7 @@
 #include "praat.github.io/sys/oo.h"
 #include "praat.github.io/fon/Sound.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace {
@@ -41,7 +41,7 @@ void complex_multiply_inplace_simd(double* data, const double* kernel, integer n
 
 } // anonymous namespace
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD
 
 // Scalar fallback implementations
 namespace {
@@ -74,7 +74,7 @@ Rcpp::NumericVector complex_multiply(Rcpp::NumericVector a, Rcpp::NumericVector 
     const integer n_complex = a.size() / 2;
     Rcpp::NumericVector result(a.size());
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     complex_multiply_simd(result.begin(), a.begin(), b.begin(), n_complex);
 #else
     complex_multiply_scalar(result.begin(), a.begin(), b.begin(), n_complex);
@@ -87,7 +87,7 @@ Rcpp::NumericVector complex_multiply(Rcpp::NumericVector a, Rcpp::NumericVector 
 extern "C" {
 
 void speaker_complex_multiply(double* result, const double* a, const double* b, integer n_complex) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     complex_multiply_simd(result, a, b, n_complex);
 #else
     complex_multiply_scalar(result, a, b, n_complex);
@@ -95,7 +95,7 @@ void speaker_complex_multiply(double* result, const double* a, const double* b, 
 }
 
 void speaker_complex_multiply_inplace(double* data, const double* kernel, integer n_complex) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     complex_multiply_inplace_simd(data, kernel, n_complex);
 #else
     complex_multiply_inplace_scalar(data, kernel, n_complex);

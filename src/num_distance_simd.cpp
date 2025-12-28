@@ -5,7 +5,7 @@
 #include "praat.github.io/sys/oo.h"
 #include "praat.github.io/dwsys/NUM2.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace {
@@ -110,7 +110,7 @@ double cosine_similarity_simd(constVEC const& x, constVEC const& y) {
 
 } // anonymous namespace
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD
 
 // Scalar fallback implementations
 namespace {
@@ -170,7 +170,7 @@ double euclidean_distance(Rcpp::NumericVector x, Rcpp::NumericVector y) {
     constVEC vx = constVEC(x.begin(), n);
     constVEC vy = constVEC(y.begin(), n);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return euclidean_distance_simd(vx, vy);
 #else
     return euclidean_distance_scalar(vx, vy);
@@ -187,7 +187,7 @@ double cosine_similarity(Rcpp::NumericVector x, Rcpp::NumericVector y) {
     constVEC vx = constVEC(x.begin(), n);
     constVEC vy = constVEC(y.begin(), n);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return cosine_similarity_simd(vx, vy);
 #else
     return cosine_similarity_scalar(vx, vy);

@@ -6,7 +6,7 @@
 #include "praat.github.io/fon/Cochleagram.h"
 #include "praat.github.io/fon/Sound_to_Cochleagram.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace cochleagram_simd {
@@ -209,4 +209,4 @@ void cochleagram_difference_simd(
 
 } // namespace cochleagram_simd
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD

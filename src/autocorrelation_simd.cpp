@@ -4,7 +4,7 @@
 
 #include <Rcpp.h>
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -31,7 +31,7 @@ inline double autocorr_at_lag_scalar(const double* data, int n, int lag) {
     return sum;
 }
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 // SIMD autocorrelation at a single lag
 inline double autocorr_at_lag_simd_impl(const double* data, int n, int lag) {
     using batch = xsimd::batch<double>;
@@ -76,7 +76,7 @@ NumericVector autocorrelation_simd(NumericVector data, int max_lag) {
     const double* src = REAL(data);
     double* dst = REAL(result);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     // Use SIMD implementation
     for (int lag = 0; lag <= max_lag; ++lag) {
         dst[lag] = autocorr_at_lag_simd_impl(src, n, lag);
@@ -99,7 +99,7 @@ NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag) {
     
     const double* src = REAL(data);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     double var = autocorr_at_lag_simd_impl(src, n, 0);
 #else
     double var = autocorr_at_lag_scalar(src, n, 0);
@@ -112,7 +112,7 @@ NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag) {
     NumericVector result(max_lag + 1);
     double* dst = REAL(result);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     for (int lag = 0; lag <= max_lag; ++lag) {
         dst[lag] = autocorr_at_lag_simd_impl(src, n, lag) / var;
     }
@@ -136,7 +136,7 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
     const double* x_ptr = REAL(x);
     const double* y_ptr = REAL(y);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -182,7 +182,7 @@ NumericMatrix windowed_autocorrelation_simd(
     NumericMatrix result(num_frames, max_lag + 1);
     const double* src = REAL(data);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     for (int frame = 0; frame < num_frames; ++frame) {
         int start = frame * hop_size;
         const double* frame_data = src + start;
@@ -219,7 +219,7 @@ NumericVector lpc_autocorrelation_simd(NumericVector data, int num_coefficients)
     const double* src = REAL(data);
     double* dst = REAL(result);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     for (int lag = 0; lag <= max_lag; ++lag) {
         dst[lag] = autocorr_at_lag_simd_impl(src, n, lag);
     }
@@ -345,7 +345,7 @@ NumericVector lpc_autocorrelation_scalar(NumericVector data, int num_coefficient
 
 // [[Rcpp::export(.autocorrelation)]]
 NumericVector autocorrelation(NumericVector data, int max_lag) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return autocorrelation_simd(data, max_lag);
 #else
     return autocorrelation_scalar(data, max_lag);
@@ -354,7 +354,7 @@ NumericVector autocorrelation(NumericVector data, int max_lag) {
 
 // [[Rcpp::export(.autocorrelation_normalized)]]
 NumericVector autocorrelation_normalized(NumericVector data, int max_lag) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return autocorrelation_normalized_simd(data, max_lag);
 #else
     return autocorrelation_normalized_scalar(data, max_lag);
@@ -363,7 +363,7 @@ NumericVector autocorrelation_normalized(NumericVector data, int max_lag) {
 
 // [[Rcpp::export(.cross_correlation)]]
 double cross_correlation(NumericVector x, NumericVector y) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return cross_correlation_simd(x, y);
 #else
     return cross_correlation_scalar(x, y);
@@ -377,7 +377,7 @@ NumericMatrix windowed_autocorrelation(
     int max_lag,
     int hop_size
 ) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return windowed_autocorrelation_simd(data, frame_length, max_lag, hop_size);
 #else
     return windowed_autocorrelation_scalar(data, frame_length, max_lag, hop_size);
@@ -386,7 +386,7 @@ NumericMatrix windowed_autocorrelation(
 
 // [[Rcpp::export(.lpc_autocorrelation)]]
 NumericVector lpc_autocorrelation(NumericVector data, int num_coefficients) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return lpc_autocorrelation_simd(data, num_coefficients);
 #else
     return lpc_autocorrelation_scalar(data, num_coefficients);

@@ -1,6 +1,6 @@
 // [[Rcpp::plugins(cpp17)]]
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -41,8 +41,8 @@ void sound_scale_peak_simd(
         
         double scale_factor = new_peak / current_max;
         
-#ifdef RCPPXSIMD_XSIMD_HPP
-        using batch = xsimd::batch<double, 2>;
+#ifdef HAVE_XSIMD
+        using batch = xsimd::batch<double>;
         constexpr size_t simd_size = batch::size;
         batch scale_vec(scale_factor);
         
@@ -103,10 +103,10 @@ XPtr<structSound> sound_mix_simd(
         
         autoSound mixed = Sound_create(ny, xmin, xmax, nx, sound1->dx, sound1->x1);
         
-#ifdef RCPPXSIMD_XSIMD_HPP
-        using batch = xsimd::batch<double, 2>;
+#ifdef HAVE_XSIMD
+        using batch = xsimd::batch<double>;
         constexpr size_t simd_size = batch::size;
-        
+
         batch balance_vec(balance);
         batch norm_factor(1.0 / (1.0 + balance));
 #endif
@@ -125,7 +125,7 @@ XPtr<structSound> sound_mix_simd(
                 const double* data2 = &sound2->z[ich][1];
                 double* result = &mixed->z[ich][1];
                 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
                 integer i = 0;
                 // SIMD mixing: (s1 + balance * s2) / (1 + balance)
                 for (; i + simd_size <= sound1->nx; i += simd_size) {

@@ -6,7 +6,7 @@
 #include "praat.github.io/fon/Excitation.h"
 #include "praat.github.io/fon/Spectrum_to_Excitation.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace excitation_simd {
@@ -236,4 +236,4 @@ void spectrum_to_excitation_simd(
 
 } // namespace excitation_simd
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD

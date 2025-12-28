@@ -5,7 +5,7 @@
 #include "praat.github.io/sys/oo.h"
 #include "praat.github.io/dwsys/NUM2.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace {
@@ -54,7 +54,7 @@ void filter_inverse_inplace_simd(VEC const& s, constVEC const& filter, VEC const
 
 } // anonymous namespace
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD
 
 // Scalar fallback (just call original Praat implementation)
 namespace {
@@ -77,7 +77,7 @@ void speaker_filter_inverse_inplace(double* s_data, integer s_size,
     constVEC filter = constVEC(filter_data, filter_size);
     VEC memory = VEC(memory_data, memory_size);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     filter_inverse_inplace_simd(s, filter, memory);
 #else
     filter_inverse_inplace_scalar(s, filter, memory);

@@ -1807,6 +1807,147 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_extract_intervals_where`, sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern)
 }
 
+#' Concatenate multiple Sound objects in one C++ call (internal)
+#'
+#' This avoids O(n) R→C boundary crossings that occur with Reduce(concatenate, sounds).
+#' All concatenation happens at C++ level with a single result returned.
+#'
+#' @param sound_list List of Sound external pointers
+#' @param overlap Overlap duration in seconds between consecutive sounds
+#' @return Single concatenated Sound external pointer
+#' @keywords internal
+.sound_concatenate_all <- function(sound_list, overlap = 0.0) {
+    .Call(`_pladdrr_sound_concatenate_all`, sound_list, overlap)
+}
+
+#' Extract multiple parts from Sound in one C++ call (internal)
+#'
+#' Extracts all time ranges in a single C++ call, returning a list of Sound xptrs.
+#' Avoids O(n) R→C boundary crossings from calling extract_part() in a loop.
+#'
+#' @param xptr Sound external pointer
+#' @param from_times Numeric vector of start times
+#' @param to_times Numeric vector of end times
+#' @param window_shape Window shape (0=rectangular, etc.)
+#' @param relative_width Relative width for windowing
+#' @param preserve_times Whether to preserve original times
+#' @return List of Sound external pointers
+#' @keywords internal
+.sound_extract_parts_batch <- function(xptr, from_times, to_times, window_shape = 0L, relative_width = 1.0, preserve_times = FALSE) {
+    .Call(`_pladdrr_sound_extract_parts_batch`, xptr, from_times, to_times, window_shape, relative_width, preserve_times)
+}
+
+#' Extract pitch from multiple sounds in one C++ call (internal)
+#'
+#' Processes a list of Sound objects and returns list of Pitch objects.
+#' Avoids O(n) R→C boundary crossings from calling to_pitch() in a loop.
+#'
+#' @param sound_list List of Sound external pointers
+#' @param time_step Time step (0 = automatic)
+#' @param pitch_floor Pitch floor in Hz
+#' @param pitch_ceiling Pitch ceiling in Hz
+#' @return List of Pitch external pointers
+#' @keywords internal
+.sound_to_pitch_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+    .Call(`_pladdrr_sound_to_pitch_batch`, sound_list, time_step, pitch_floor, pitch_ceiling)
+}
+
+#' Extract formants from multiple sounds in one C++ call (internal)
+#'
+#' @param sound_list List of Sound external pointers
+#' @param time_step Time step in seconds
+#' @param max_formants Maximum number of formants
+#' @param max_frequency Maximum frequency in Hz
+#' @param window_length Window length in seconds
+#' @param pre_emphasis_from Pre-emphasis from frequency
+#' @return List of Formant external pointers
+#' @keywords internal
+.sound_to_formant_batch <- function(sound_list, time_step = 0.005, max_formants = 5.0, max_frequency = 5500.0, window_length = 0.025, pre_emphasis_from = 50.0) {
+    .Call(`_pladdrr_sound_to_formant_batch`, sound_list, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
+}
+
+#' Extract intensity from multiple sounds in one C++ call (internal)
+#'
+#' @param sound_list List of Sound external pointers
+#' @param minimum_pitch Minimum pitch for analysis
+#' @param time_step Time step (0 = automatic)
+#' @param subtract_mean Whether to subtract mean
+#' @return List of Intensity external pointers
+#' @keywords internal
+.sound_to_intensity_batch <- function(sound_list, minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
+    .Call(`_pladdrr_sound_to_intensity_batch`, sound_list, minimum_pitch, time_step, subtract_mean)
+}
+
+#' Combined extract-and-analyze: extract parts and compute pitch in one C++ call (internal)
+#'
+#' This is the most efficient way to analyze multiple intervals from a sound.
+#' Combines extract_parts_batch + to_pitch_batch in a single C++ call.
+#'
+#' @param xptr Sound external pointer
+#' @param from_times Numeric vector of start times
+#' @param to_times Numeric vector of end times
+#' @param time_step Pitch time step
+#' @param pitch_floor Pitch floor in Hz
+#' @param pitch_ceiling Pitch ceiling in Hz
+#' @return List of Pitch external pointers
+#' @keywords internal
+.sound_extract_and_pitch_batch <- function(xptr, from_times, to_times, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+    .Call(`_pladdrr_sound_extract_and_pitch_batch`, xptr, from_times, to_times, time_step, pitch_floor, pitch_ceiling)
+}
+
+#' Combined extract-and-analyze: extract parts and compute formants in one C++ call (internal)
+#'
+#' @param xptr Sound external pointer
+#' @param from_times Numeric vector of start times
+#' @param to_times Numeric vector of end times
+#' @param time_step Formant time step
+#' @param max_formants Maximum number of formants
+#' @param max_frequency Maximum frequency
+#' @param window_length Window length
+#' @param pre_emphasis_from Pre-emphasis frequency
+#' @return List of Formant external pointers
+#' @keywords internal
+.sound_extract_and_formant_batch <- function(xptr, from_times, to_times, time_step = 0.005, max_formants = 5.0, max_frequency = 5500.0, window_length = 0.025, pre_emphasis_from = 50.0) {
+    .Call(`_pladdrr_sound_extract_and_formant_batch`, xptr, from_times, to_times, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
+}
+
+#' Get multiple pitch values at specific times in one C++ call (internal)
+#'
+#' Avoids O(n) R→C boundary crossings when getting pitch at multiple times.
+#'
+#' @param xptr Pitch external pointer
+#' @param times Numeric vector of times
+#' @param unit Unit (0=Hertz, 1=Hertz logarithmic, etc.)
+#' @param interpolate Whether to interpolate
+#' @return Numeric vector of pitch values
+#' @keywords internal
+.pitch_get_values_at_times <- function(xptr, times, unit = 0L, interpolate = TRUE) {
+    .Call(`_pladdrr_pitch_get_values_at_times`, xptr, times, unit, interpolate)
+}
+
+#' Get multiple formant values at specific times in one C++ call (internal)
+#'
+#' @param xptr Formant external pointer
+#' @param times Numeric vector of times
+#' @param formant_number Which formant (1-5)
+#' @param unit Unit (0=Hertz, 1=Bark)
+#' @return Numeric vector of formant values
+#' @keywords internal
+.formant_get_values_at_times <- function(xptr, times, formant_number = 1L, unit = 0L) {
+    .Call(`_pladdrr_formant_get_values_at_times`, xptr, times, formant_number, unit)
+}
+
+#' Get multiple intensity values at specific times in one C++ call (internal)
+#'
+#' @param xptr Intensity external pointer
+#' @param times Numeric vector of times
+#' @param interpolation Interpolation type
+#' @return Numeric vector of intensity values
+#' @keywords internal
+.intensity_get_values_at_times <- function(xptr, times, interpolation = 1L) {
+    .Call(`_pladdrr_intensity_get_values_at_times`, xptr, times, interpolation)
+}
+
 .spectrogram_get_start_time <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_get_start_time`, spectrogram)
 }

@@ -22,7 +22,7 @@ analysis and speaker characterization.
 - `$get_frequency_from_bin(bin)` - Get frequency for bin number
 - `$get_value_at_frequency(frequency, unit)` - Get power at frequency
 - `$get_minimum(fmin, fmax, unit)` - Minimum in frequency range
-- `$get_maximum(fmin, fmax, unit)` - Maximum in frequency range
+- `$get_maximum(fmin, fmax, interpolation)` - Maximum in frequency range (dB)
 - `$get_mean(fmin, fmax, unit)` - Mean in frequency range
 - `$get_slope(f1min, f1max, f2min, f2max, unit)` - Spectral slope
 
@@ -61,9 +61,8 @@ df <- ltas$as_data_frame()
 \item \href{#method-Ltas-get_highest_frequency}{\code{Ltas$get_highest_frequency()}}
 \item \href{#method-Ltas-get_value_at_frequency}{\code{Ltas$get_value_at_frequency()}}
 \item \href{#method-Ltas-get_minimum}{\code{Ltas$get_minimum()}}
-\item \href{#method-Ltas-get_maximum}{\code{Ltas$get_maximum()}}
 \item \href{#method-Ltas-get_frequency_of_maximum}{\code{Ltas$get_frequency_of_maximum()}}
-\item \href{#method-Ltas-get_mean}{\code{Ltas$get_mean()}}
+\item \href{#method-Ltas-get_maximum}{\code{Ltas$get_maximum()}}
 \item \href{#method-Ltas-get_slope}{\code{Ltas$get_slope()}}
 \item \href{#method-Ltas-compute_trend_line}{\code{Ltas$compute_trend_line()}}
 \item \href{#method-Ltas-subtract_trend_line}{\code{Ltas$subtract_trend_line()}}
@@ -243,33 +242,6 @@ Minimum power value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Ltas-get_maximum"></a>}}
-\if{latex}{\out{\hypertarget{method-Ltas-get_maximum}{}}}
-\subsection{Method \code{get_maximum()}}{
-Get maximum power in frequency range
-Corresponds to Praat: Get maximum: fmin, fmax, unit
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Ltas$get_maximum(fmin = 0, fmax = 0, unit = "dB", interpolate = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{fmin}}{Minimum frequency (Hz, 0 = start)}
-
-\item{\code{fmax}}{Maximum frequency (Hz, 0 = end)}
-
-\item{\code{unit}}{Averaging method: "energy", "sones", "dB" (default)}
-
-\item{\code{interpolate}}{Interpolate between bins (default TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Maximum power value
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Ltas-get_frequency_of_maximum"></a>}}
 \if{latex}{\out{\hypertarget{method-Ltas-get_frequency_of_maximum}{}}}
 \subsection{Method \code{get_frequency_of_maximum()}}{
@@ -295,28 +267,27 @@ Frequency of maximum power (Hz)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Ltas-get_mean"></a>}}
-\if{latex}{\out{\hypertarget{method-Ltas-get_mean}{}}}
-\subsection{Method \code{get_mean()}}{
-Get mean power in frequency range
-Corresponds to Praat: Get mean: fmin, fmax, unit
+\if{html}{\out{<a id="method-Ltas-get_maximum"></a>}}
+\if{latex}{\out{\hypertarget{method-Ltas-get_maximum}{}}}
+\subsection{Method \code{get_maximum()}}{
+Get the maximum power in a frequency range
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Ltas$get_mean(fmin = 0, fmax = 0, unit = "dB")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Ltas$get_maximum(fmin = 0, fmax = 0, interpolation = "parabolic")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{fmin}}{Minimum frequency (Hz, 0 = start)}
+\item{\code{fmin}}{Minimum frequency (Hz, default 0 = all)}
 
-\item{\code{fmax}}{Maximum frequency (Hz, 0 = end)}
+\item{\code{fmax}}{Maximum frequency (Hz, default 0 = all)}
 
-\item{\code{unit}}{Averaging method: "energy", "sones", "dB" (default)}
+\item{\code{interpolation}}{Interpolation method: "none", "parabolic" (default), "cubic", "sinc70", "sinc700"}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Mean power value
+Maximum power value in dB
 }
 }
 \if{html}{\out{<hr>}}

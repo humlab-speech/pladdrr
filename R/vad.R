@@ -213,33 +213,57 @@ textgrid_get_intervals_where <- function(textgrid,
 #' }
 #' }
 #'
+#' @param return_r6 Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
+#'   Using FALSE avoids R6 wrapper overhead for maximum performance.
 #' @export
 sound_extract_parts <- function(sound,
                                start_times,
                                end_times,
                                window_shape = "rectangular",
                                relative_width = 1.0,
-                               preserve_times = FALSE) {
-  
-  if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+                               preserve_times = FALSE,
+                               return_r6 = TRUE) {
+
+  # Accept both R6 and xptr
+  if (inherits(sound, "Sound")) {
+    xptr <- sound$.__enclos_env__$private$ptr
+  } else if (inherits(sound, "externalptr")) {
+    xptr <- sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
   }
-  
+
   if (length(start_times) != length(end_times)) {
     stop("start_times and end_times must have the same length")
   }
-  
-  xptrs <- .sound_extract_parts(
-    sound$.xptr,
+
+  # Convert window_shape to integer for C++ function
+  window_int <- switch(
+    tolower(window_shape),
+    rectangular = 0L, triangular = 1L, parabolic = 2L,
+    hanning = 3L, hamming = 4L,
+    gaussian1 = 5L, gaussian2 = 6L, gaussian3 = 7L,
+    gaussian4 = 8L, gaussian5 = 9L,
+    kaiser1 = 10L, kaiser2 = 11L,
+    0L  # default
+  )
+
+  # Use efficient C++ batch function
+  xptrs <- .sound_extract_parts_batch(
+    xptr,
     as.numeric(start_times),
     as.numeric(end_times),
-    as.character(window_shape),
+    window_int,
     as.numeric(relative_width),
     as.logical(preserve_times)
   )
-  
-  # Convert XPtrs to Sound objects
-  lapply(xptrs, function(xptr) Sound$new(.xptr = xptr))
+
+  if (return_r6) {
+    # Convert XPtrs to Sound objects
+    lapply(xptrs, function(xptr) Sound$new(.xptr = xptr))
+  } else {
+    xptrs
+  }
 }
 
 #' @title Complete Voice Activity Detection Workflow

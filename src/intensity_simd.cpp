@@ -1,6 +1,6 @@
 // [[Rcpp::plugins(cpp17)]]
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -42,9 +42,9 @@ double sound_get_rms_simd(
         const double* data = &sound->z[ch][i_start];
         integer n_samples = i_end - i_start + 1;
         
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
         // SIMD sum of squares
-        using batch = xsimd::batch<double, 2>;
+        using batch = xsimd::batch<double>;
         constexpr size_t simd_size = batch::size;
         
         batch acc(0.0);
@@ -55,10 +55,8 @@ double sound_get_rms_simd(
             batch x = xsimd::load_unaligned(&data[i]);
             acc = xsimd::fma(x, x, acc);  // acc += x * x
         }
-        // Manual reduction (sum elements in acc)
-        for (size_t j = 0; j < simd_size; ++j) {
-            sum_squares += acc[j];
-        }
+        // Horizontal reduction using xsimd::reduce_add
+        sum_squares += xsimd::reduce_add(acc);
         
         // Scalar remainder
         for (; i < n_samples; ++i) {
@@ -105,8 +103,8 @@ double sound_get_energy_simd(
         const double* data = &sound->z[ch][i_start];
         integer n_samples = i_end - i_start + 1;
         
-#ifdef RCPPXSIMD_XSIMD_HPP
-        using batch = xsimd::batch<double, 2>;
+#ifdef HAVE_XSIMD
+        using batch = xsimd::batch<double>;
         constexpr size_t simd_size = batch::size;
         
         batch acc(0.0);
@@ -117,10 +115,8 @@ double sound_get_energy_simd(
             batch x = xsimd::load_unaligned(&data[i]);
             acc = xsimd::fma(x, x, acc);
         }
-        // Manual reduction
-        for (size_t j = 0; j < simd_size; ++j) {
-            sum_squares += acc[j];
-        }
+        // Horizontal reduction
+        sum_squares += xsimd::reduce_add(acc);
         
         // Remainder
         for (; i < n_samples; ++i) {

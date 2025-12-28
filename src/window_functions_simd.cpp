@@ -4,7 +4,7 @@
 
 #include <Rcpp.h>
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -28,7 +28,7 @@ NumericVector apply_hamming_window_simd(NumericVector data) {
     const double two_pi = 2.0 * M_PI;
     const double n_minus_1 = static_cast<double>(n - 1);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -84,7 +84,7 @@ NumericVector apply_hanning_window_simd(NumericVector data) {
     const double two_pi = 2.0 * M_PI;
     const double n_minus_1 = static_cast<double>(n - 1);
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -139,7 +139,7 @@ NumericVector apply_gaussian_window_simd(NumericVector data, double sigma = 0.4)
     const double center = (n - 1) / 2.0;
     const double denominator = sigma * center;
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -254,7 +254,7 @@ NumericVector apply_gaussian_window_scalar(NumericVector data, double sigma = 0.
 
 // [[Rcpp::export(.apply_hamming_window)]]
 NumericVector apply_hamming_window(NumericVector data) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return apply_hamming_window_simd(data);
 #else
     return apply_hamming_window_scalar(data);
@@ -263,7 +263,7 @@ NumericVector apply_hamming_window(NumericVector data) {
 
 // [[Rcpp::export(.apply_hanning_window)]]
 NumericVector apply_hanning_window(NumericVector data) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return apply_hanning_window_simd(data);
 #else
     return apply_hanning_window_scalar(data);
@@ -272,7 +272,7 @@ NumericVector apply_hanning_window(NumericVector data) {
 
 // [[Rcpp::export(.apply_gaussian_window)]]
 NumericVector apply_gaussian_window(NumericVector data, double sigma = 0.4) {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     return apply_gaussian_window_simd(data, sigma);
 #else
     return apply_gaussian_window_scalar(data, sigma);

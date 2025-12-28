@@ -63,6 +63,18 @@ spec_df <- spectrum$as_data_frame()
 
 
 ## ------------------------------------------------
+## Method `Spectrum$formula`
+## ------------------------------------------------
+
+\dontrun{
+spectrum <- sound$to_spectrum()
+# Apply pre-emphasis above 50 Hz
+spectrum$formula("if x >= 50 then self*x else self fi")
+# Convert to dB
+spectrum$formula("10 * log10(self + 1e-10)")
+}
+
+## ------------------------------------------------
 ## Method `Spectrum$apply_pre_emphasis`
 ## ------------------------------------------------
 
@@ -487,11 +499,19 @@ New smoothed Spectrum
 \if{html}{\out{<a id="method-Spectrum-formula"></a>}}
 \if{latex}{\out{\hypertarget{method-Spectrum-formula}{}}}
 \subsection{Method \code{formula()}}{
-Apply formula to modify spectrum values (NOT AVAILABLE)
+Apply formula to modify spectrum values in-place
 
-Note: This method is not available because it requires Praat's script
-interpreter which is not integrated. Use apply_pre_emphasis() instead
-for pre-emphasis filtering, or manipulate values via as_matrix().
+Uses Praat's formula language to modify spectrum values.
+The formula can reference:
+- `self` - current spectrum value (complex)
+- `x` - frequency in Hz
+- `row` - frequency bin index (1-based)
+- `col` - always 1 or 2 (real/imaginary parts)
+
+Common formulas:
+- Pre-emphasis: `"if x >= 50 then self*x else self fi"`
+- dB conversion: `"10 * log10(self)"`
+- High-pass filter: `"if x < 100 then 0 else self fi"`
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Spectrum$formula(formula)}\if{html}{\out{</div>}}
 }
@@ -499,13 +519,27 @@ for pre-emphasis filtering, or manipulate values via as_matrix().
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{formula}}{Character string with formula}
+\item{\code{formula}}{Character string with Praat formula}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Error - use alternative methods
+Self (invisibly, modifies in place)
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+spectrum <- sound$to_spectrum()
+# Apply pre-emphasis above 50 Hz
+spectrum$formula("if x >= 50 then self*x else self fi")
+# Convert to dB
+spectrum$formula("10 * log10(self + 1e-10)")
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Spectrum-apply_pre_emphasis"></a>}}

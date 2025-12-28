@@ -4,7 +4,7 @@
 #include <Rcpp.h>
 #include "simd_utils.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 #endif
 
@@ -12,7 +12,7 @@
 //' @keywords internal
 // [[Rcpp::export(.simd_info)]]
 Rcpp::List simd_info() {
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
   // Use simd namespace default batch types
   using xsimd::batch;
   constexpr size_t batch_size_double = batch<double>::size;

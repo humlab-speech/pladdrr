@@ -6,7 +6,7 @@
 #include <complex>
 #include <cmath>
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace fft_simd {
@@ -270,4 +270,4 @@ void spectral_magnitude_simd(
 
 } // namespace fft_simd
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD

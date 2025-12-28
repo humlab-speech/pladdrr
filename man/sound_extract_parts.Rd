@@ -10,7 +10,8 @@ sound_extract_parts(
   end_times,
   window_shape = "rectangular",
   relative_width = 1,
-  preserve_times = FALSE
+  preserve_times = FALSE,
+  return_r6 = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ sound_extract_parts(
 \item{relative_width}{Numeric. Relative width of window (default: 1.0)}
 
 \item{preserve_times}{Logical. Preserve original time stamps (default: FALSE)}
+
+\item{return_r6}{Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
+Using FALSE avoids R6 wrapper overhead for maximum performance.}
 }
 \value{
 List of Sound objects, one for each extracted interval

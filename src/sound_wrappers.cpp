@@ -1480,3 +1480,472 @@ Rcpp::List sound_extract_intervals_where(
         stop("Failed to extract sound intervals");
     }
 }
+
+// ============================================================================
+// BATCH OPERATIONS - Minimize R→C boundary crossings
+// These functions process multiple items in a single C++ call
+// ============================================================================
+
+//' Concatenate multiple Sound objects in one C++ call (internal)
+//'
+//' This avoids O(n) R→C boundary crossings that occur with Reduce(concatenate, sounds).
+//' All concatenation happens at C++ level with a single result returned.
+//'
+//' @param sound_list List of Sound external pointers
+//' @param overlap Overlap duration in seconds between consecutive sounds
+//' @return Single concatenated Sound external pointer
+//' @keywords internal
+// [[Rcpp::export(.sound_concatenate_all)]]
+XPtr<structSound> sound_concatenate_all(
+    Rcpp::List sound_list,
+    double overlap = 0.0
+) {
+    if (sound_list.size() == 0) {
+        stop("Cannot concatenate empty list of sounds");
+    }
+
+    if (sound_list.size() == 1) {
+        // Single sound - just return a copy
+        XPtr<structSound> xptr = sound_list[0];
+        structSound* sound = get_ptr(xptr, "Sound");
+        try {
+            autoSound copy = Data_copy(sound);
+            return create_xptr_from_auto<structSound>(copy);
+        } catch (MelderError) {
+            Melder_clearError();
+            stop("Failed to copy sound");
+        }
+    }
+
+    try {
+        // Create SoundList and add all sounds
+        autoSoundList list = SoundList_create();
+
+        for (int i = 0; i < sound_list.size(); i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+            list->addItem_move(Data_copy(sound));
+        }
+
+        // Concatenate all at once with overlap
+        autoSound concatenated = Sounds_concatenate(list.get(), overlap);
+        return create_xptr_from_auto<structSound>(concatenated);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to concatenate sounds");
+    }
+}
+
+//' Extract multiple parts from Sound in one C++ call (internal)
+//'
+//' Extracts all time ranges in a single C++ call, returning a list of Sound xptrs.
+//' Avoids O(n) R→C boundary crossings from calling extract_part() in a loop.
+//'
+//' @param xptr Sound external pointer
+//' @param from_times Numeric vector of start times
+//' @param to_times Numeric vector of end times
+//' @param window_shape Window shape (0=rectangular, etc.)
+//' @param relative_width Relative width for windowing
+//' @param preserve_times Whether to preserve original times
+//' @return List of Sound external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_extract_parts_batch)]]
+Rcpp::List sound_extract_parts_batch(
+    XPtr<structSound> xptr,
+    NumericVector from_times,
+    NumericVector to_times,
+    int window_shape = 0,
+    double relative_width = 1.0,
+    bool preserve_times = false
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    if (from_times.size() != to_times.size()) {
+        stop("from_times and to_times must have same length");
+    }
+
+    int n = from_times.size();
+    Rcpp::List result(n);
+
+    try {
+        kSound_windowShape window = static_cast<kSound_windowShape>(window_shape);
+
+        for (int i = 0; i < n; i++) {
+            autoSound extracted = Sound_extractPart(
+                sound,
+                from_times[i],
+                to_times[i],
+                window,
+                relative_width,
+                preserve_times
+            );
+            result[i] = create_xptr_from_auto<structSound>(extracted);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract parts from sound");
+    }
+}
+
+//' Extract pitch from multiple sounds in one C++ call (internal)
+//'
+//' Processes a list of Sound objects and returns list of Pitch objects.
+//' Avoids O(n) R→C boundary crossings from calling to_pitch() in a loop.
+//'
+//' @param sound_list List of Sound external pointers
+//' @param time_step Time step (0 = automatic)
+//' @param pitch_floor Pitch floor in Hz
+//' @param pitch_ceiling Pitch ceiling in Hz
+//' @return List of Pitch external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_batch)]]
+Rcpp::List sound_to_pitch_batch(
+    Rcpp::List sound_list,
+    double time_step = 0.0,
+    double pitch_floor = 75.0,
+    double pitch_ceiling = 600.0
+) {
+    int n = sound_list.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+
+            autoPitch pitch = Sound_to_Pitch(
+                sound,
+                time_step,
+                pitch_floor,
+                pitch_ceiling
+            );
+            result[i] = create_xptr_from_auto<structPitch>(pitch);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract pitch from sounds");
+    }
+}
+
+//' Extract formants from multiple sounds in one C++ call (internal)
+//'
+//' @param sound_list List of Sound external pointers
+//' @param time_step Time step in seconds
+//' @param max_formants Maximum number of formants
+//' @param max_frequency Maximum frequency in Hz
+//' @param window_length Window length in seconds
+//' @param pre_emphasis_from Pre-emphasis from frequency
+//' @return List of Formant external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_to_formant_batch)]]
+Rcpp::List sound_to_formant_batch(
+    Rcpp::List sound_list,
+    double time_step = 0.005,
+    double max_formants = 5.0,
+    double max_frequency = 5500.0,
+    double window_length = 0.025,
+    double pre_emphasis_from = 50.0
+) {
+    ensure_numeric_libs_initialized();
+
+    int n = sound_list.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+
+            autoFormant formant = Sound_to_Formant_burg(
+                sound,
+                time_step,
+                max_formants,
+                max_frequency,
+                window_length,
+                pre_emphasis_from
+            );
+            result[i] = create_xptr_from_auto<structFormant>(formant);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract formants from sounds");
+    }
+}
+
+//' Extract intensity from multiple sounds in one C++ call (internal)
+//'
+//' @param sound_list List of Sound external pointers
+//' @param minimum_pitch Minimum pitch for analysis
+//' @param time_step Time step (0 = automatic)
+//' @param subtract_mean Whether to subtract mean
+//' @return List of Intensity external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_to_intensity_batch)]]
+Rcpp::List sound_to_intensity_batch(
+    Rcpp::List sound_list,
+    double minimum_pitch = 100.0,
+    double time_step = 0.0,
+    bool subtract_mean = true
+) {
+    int n = sound_list.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+
+            autoIntensity intensity = Sound_to_Intensity(
+                sound,
+                minimum_pitch,
+                time_step,
+                subtract_mean
+            );
+            result[i] = create_xptr_from_auto<structIntensity>(intensity);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract intensity from sounds");
+    }
+}
+
+//' Combined extract-and-analyze: extract parts and compute pitch in one C++ call (internal)
+//'
+//' This is the most efficient way to analyze multiple intervals from a sound.
+//' Combines extract_parts_batch + to_pitch_batch in a single C++ call.
+//'
+//' @param xptr Sound external pointer
+//' @param from_times Numeric vector of start times
+//' @param to_times Numeric vector of end times
+//' @param time_step Pitch time step
+//' @param pitch_floor Pitch floor in Hz
+//' @param pitch_ceiling Pitch ceiling in Hz
+//' @return List of Pitch external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_extract_and_pitch_batch)]]
+Rcpp::List sound_extract_and_pitch_batch(
+    XPtr<structSound> xptr,
+    NumericVector from_times,
+    NumericVector to_times,
+    double time_step = 0.0,
+    double pitch_floor = 75.0,
+    double pitch_ceiling = 600.0
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    if (from_times.size() != to_times.size()) {
+        stop("from_times and to_times must have same length");
+    }
+
+    int n = from_times.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            // Extract part
+            autoSound extracted = Sound_extractPart(
+                sound,
+                from_times[i],
+                to_times[i],
+                kSound_windowShape::RECTANGULAR,
+                1.0,
+                false
+            );
+
+            // Analyze pitch immediately (no R6 wrapper overhead)
+            autoPitch pitch = Sound_to_Pitch(
+                extracted.get(),
+                time_step,
+                pitch_floor,
+                pitch_ceiling
+            );
+            result[i] = create_xptr_from_auto<structPitch>(pitch);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract and analyze pitch");
+    }
+}
+
+//' Combined extract-and-analyze: extract parts and compute formants in one C++ call (internal)
+//'
+//' @param xptr Sound external pointer
+//' @param from_times Numeric vector of start times
+//' @param to_times Numeric vector of end times
+//' @param time_step Formant time step
+//' @param max_formants Maximum number of formants
+//' @param max_frequency Maximum frequency
+//' @param window_length Window length
+//' @param pre_emphasis_from Pre-emphasis frequency
+//' @return List of Formant external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_extract_and_formant_batch)]]
+Rcpp::List sound_extract_and_formant_batch(
+    XPtr<structSound> xptr,
+    NumericVector from_times,
+    NumericVector to_times,
+    double time_step = 0.005,
+    double max_formants = 5.0,
+    double max_frequency = 5500.0,
+    double window_length = 0.025,
+    double pre_emphasis_from = 50.0
+) {
+    ensure_numeric_libs_initialized();
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    if (from_times.size() != to_times.size()) {
+        stop("from_times and to_times must have same length");
+    }
+
+    int n = from_times.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            // Extract part
+            autoSound extracted = Sound_extractPart(
+                sound,
+                from_times[i],
+                to_times[i],
+                kSound_windowShape::RECTANGULAR,
+                1.0,
+                false
+            );
+
+            // Analyze formants immediately
+            autoFormant formant = Sound_to_Formant_burg(
+                extracted.get(),
+                time_step,
+                max_formants,
+                max_frequency,
+                window_length,
+                pre_emphasis_from
+            );
+            result[i] = create_xptr_from_auto<structFormant>(formant);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract and analyze formants");
+    }
+}
+
+//' Get multiple pitch values at specific times in one C++ call (internal)
+//'
+//' Avoids O(n) R→C boundary crossings when getting pitch at multiple times.
+//'
+//' @param xptr Pitch external pointer
+//' @param times Numeric vector of times
+//' @param unit Unit (0=Hertz, 1=Hertz logarithmic, etc.)
+//' @param interpolate Whether to interpolate
+//' @return Numeric vector of pitch values
+//' @keywords internal
+// [[Rcpp::export(.pitch_get_values_at_times)]]
+NumericVector pitch_get_values_at_times(
+    XPtr<structPitch> xptr,
+    NumericVector times,
+    int unit = 0,
+    bool interpolate = true
+) {
+    structPitch* pitch = get_ptr(xptr, "Pitch");
+    int n = times.size();
+    NumericVector result(n);
+
+    kPitch_unit pitch_unit = static_cast<kPitch_unit>(unit);
+
+    for (int i = 0; i < n; i++) {
+        double value = Pitch_getValueAtTime(
+            pitch,
+            times[i],
+            pitch_unit,
+            interpolate
+        );
+        result[i] = value;
+    }
+
+    return result;
+}
+
+//' Get multiple formant values at specific times in one C++ call (internal)
+//'
+//' @param xptr Formant external pointer
+//' @param times Numeric vector of times
+//' @param formant_number Which formant (1-5)
+//' @param unit Unit (0=Hertz, 1=Bark)
+//' @return Numeric vector of formant values
+//' @keywords internal
+// [[Rcpp::export(.formant_get_values_at_times)]]
+NumericVector formant_get_values_at_times(
+    XPtr<structFormant> xptr,
+    NumericVector times,
+    int formant_number = 1,
+    int unit = 0
+) {
+    structFormant* formant = get_ptr(xptr, "Formant");
+    int n = times.size();
+    NumericVector result(n);
+
+    kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
+
+    for (int i = 0; i < n; i++) {
+        double value = Formant_getValueAtTime(
+            formant,
+            formant_number,
+            times[i],
+            formant_unit
+        );
+        result[i] = value;
+    }
+
+    return result;
+}
+
+//' Get multiple intensity values at specific times in one C++ call (internal)
+//'
+//' @param xptr Intensity external pointer
+//' @param times Numeric vector of times
+//' @param interpolation Interpolation type
+//' @return Numeric vector of intensity values
+//' @keywords internal
+// [[Rcpp::export(.intensity_get_values_at_times)]]
+NumericVector intensity_get_values_at_times(
+    XPtr<structIntensity> xptr,
+    NumericVector times,
+    int interpolation = 1
+) {
+    structIntensity* intensity = get_ptr(xptr, "Intensity");
+    int n = times.size();
+    NumericVector result(n);
+
+    kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
+
+    for (int i = 0; i < n; i++) {
+        double value = Vector_getValueAtX(
+            intensity,
+            times[i],
+            1,  // channel
+            interp
+        );
+        result[i] = value;
+    }
+
+    return result;
+}

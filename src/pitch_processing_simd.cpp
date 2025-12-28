@@ -5,7 +5,7 @@
 #include "praat.github.io/sys/oo.h"
 #include "praat.github.io/fon/Pitch.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace {
@@ -201,7 +201,7 @@ void subtract_quadratic_trend_simd(double* frequencies, const double* times, int
 
 } // anonymous namespace
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD
 
 // Scalar fallback implementations
 namespace {
@@ -265,7 +265,7 @@ Rcpp::NumericVector subtract_linear_trend(Rcpp::NumericVector frequencies, Rcpp:
     Rcpp::NumericVector result = Rcpp::clone(frequencies);
     const integer n = result.size();
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     subtract_linear_trend_simd(result.begin(), times.begin(), n);
 #else
     subtract_linear_trend_scalar(result.begin(), times.begin(), n);
@@ -279,7 +279,7 @@ Rcpp::NumericVector subtract_mean(Rcpp::NumericVector data) {
     Rcpp::NumericVector result = Rcpp::clone(data);
     const integer n = result.size();
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     subtract_mean_simd(result.begin(), n);
 #else
     subtract_mean_scalar(result.begin(), n);

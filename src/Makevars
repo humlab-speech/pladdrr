@@ -5,7 +5,9 @@
 CXX_STD = CXX17
 
 # Include directories
+# Note: xsimd from Homebrew for SIMD support
 PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
+               -I/opt/homebrew/include \
                -Igsl-2.8 \
                -Igsl-2.8/gsl \
                -Ipraat.github.io \
@@ -53,25 +55,25 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
                -Wno-c++11-narrowing
 
 # Performance optimization flags
-PKG_CXXFLAGS += -O2
+PKG_CXXFLAGS += -O3
 
 # Platform-specific SIMD flags
 # Detect platform and set appropriate flags
 UNAME_M := $(shell uname -m 2>/dev/null || echo unknown)
 
-# Platform-specific optimizations (commented out for CRAN portability)
-# Uncomment for local builds to enable SIMD optimizations
-# ifeq ($(UNAME_M),x86_64)
-#   PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
-# else
-#   ifeq ($(UNAME_M),aarch64)
-#     PKG_CXXFLAGS += -march=armv8-a+simd
-#   else
-#     ifeq ($(UNAME_M),arm64)
-#       PKG_CXXFLAGS += -march=armv8-a+simd
-#     endif
-#   endif
-# endif
+# Platform-specific optimizations (enabled for local builds)
+# NOTE: Comment these out before CRAN submission
+ifeq ($(UNAME_M),x86_64)
+  PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
+else
+  ifeq ($(UNAME_M),aarch64)
+    PKG_CXXFLAGS += -march=armv8-a+simd
+  else
+    ifeq ($(UNAME_M),arm64)
+      PKG_CXXFLAGS += -march=armv8-a+simd
+    endif
+  endif
+endif
 
 # Linker flags - link against GSL, R's LAPACK and BLAS
 # Override FLIBS to use Homebrew gfortran if /opt/gfortran doesn't exist

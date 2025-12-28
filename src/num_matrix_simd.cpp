@@ -5,7 +5,7 @@
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/dwsys/NUM2.h"
 
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
 
 namespace {
@@ -85,7 +85,7 @@ void axpy_simd(double alpha, constVEC const& x, VEC const& y) {
 
 } // anonymous namespace
 
-#endif // RCPPXSIMD_XSIMD_HPP
+#endif // HAVE_XSIMD
 
 // Scalar fallback implementations
 namespace {
@@ -126,7 +126,7 @@ void r_matrix_multiply_rows(Rcpp::NumericMatrix x, Rcpp::NumericVector v) {
     // Convert to Praat-style structures (1-based indexing)
     // Note: This is a simplified wrapper; full integration would use Praat's MAT type
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     // SIMD implementation would be called here
     Rcpp::Rcout << "Using SIMD matrix row multiplication\n";
 #else
@@ -146,7 +146,7 @@ double r_dot_product(Rcpp::NumericVector x, Rcpp::NumericVector y) {
         Rcpp::stop("Vectors must have same length");
     }
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
@@ -184,7 +184,7 @@ void r_axpy(double alpha, Rcpp::NumericVector x, Rcpp::NumericVector y) {
         Rcpp::stop("Vectors must have same length");
     }
     
-#ifdef RCPPXSIMD_XSIMD_HPP
+#ifdef HAVE_XSIMD
     using batch = xsimd::batch<double>;
     constexpr size_t simd_size = batch::size;
     
