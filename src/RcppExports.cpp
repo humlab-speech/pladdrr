@@ -8289,6 +8289,94 @@ RcppExport SEXP _pladdrr_sound_to_pitch_batch(SEXP sound_listSEXP, SEXP time_ste
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_to_pitch_ac_batch
+Rcpp::List sound_to_pitch_ac_batch(Rcpp::List sound_list, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost);
+static SEXP _pladdrr_sound_to_pitch_ac_batch_try(SEXP sound_listSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP, SEXP very_accurateSEXP, SEXP silence_thresholdSEXP, SEXP voicing_thresholdSEXP, SEXP octave_costSEXP, SEXP octave_jump_costSEXP, SEXP voiced_unvoiced_costSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type sound_list(sound_listSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< int >::type max_candidates(max_candidatesSEXP);
+    Rcpp::traits::input_parameter< bool >::type very_accurate(very_accurateSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type voicing_threshold(voicing_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type octave_cost(octave_costSEXP);
+    Rcpp::traits::input_parameter< double >::type octave_jump_cost(octave_jump_costSEXP);
+    Rcpp::traits::input_parameter< double >::type voiced_unvoiced_cost(voiced_unvoiced_costSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch_ac_batch(sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_pitch_ac_batch(SEXP sound_listSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP, SEXP very_accurateSEXP, SEXP silence_thresholdSEXP, SEXP voicing_thresholdSEXP, SEXP octave_costSEXP, SEXP octave_jump_costSEXP, SEXP voiced_unvoiced_costSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_pitch_ac_batch_try(sound_listSEXP, time_stepSEXP, pitch_floorSEXP, pitch_ceilingSEXP, max_candidatesSEXP, very_accurateSEXP, silence_thresholdSEXP, voicing_thresholdSEXP, octave_costSEXP, octave_jump_costSEXP, voiced_unvoiced_costSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_pitch_cc_batch
+Rcpp::List sound_to_pitch_cc_batch(Rcpp::List sound_list, double time_step, double pitch_floor, double pitch_ceiling, int max_candidates, bool very_accurate, double silence_threshold, double voicing_threshold, double octave_cost, double octave_jump_cost, double voiced_unvoiced_cost);
+static SEXP _pladdrr_sound_to_pitch_cc_batch_try(SEXP sound_listSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP, SEXP very_accurateSEXP, SEXP silence_thresholdSEXP, SEXP voicing_thresholdSEXP, SEXP octave_costSEXP, SEXP octave_jump_costSEXP, SEXP voiced_unvoiced_costSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type sound_list(sound_listSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< int >::type max_candidates(max_candidatesSEXP);
+    Rcpp::traits::input_parameter< bool >::type very_accurate(very_accurateSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type voicing_threshold(voicing_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type octave_cost(octave_costSEXP);
+    Rcpp::traits::input_parameter< double >::type octave_jump_cost(octave_jump_costSEXP);
+    Rcpp::traits::input_parameter< double >::type voiced_unvoiced_cost(voiced_unvoiced_costSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch_cc_batch(sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_pitch_cc_batch(SEXP sound_listSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP, SEXP very_accurateSEXP, SEXP silence_thresholdSEXP, SEXP voicing_thresholdSEXP, SEXP octave_costSEXP, SEXP octave_jump_costSEXP, SEXP voiced_unvoiced_costSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_pitch_cc_batch_try(sound_listSEXP, time_stepSEXP, pitch_floorSEXP, pitch_ceilingSEXP, max_candidatesSEXP, very_accurateSEXP, silence_thresholdSEXP, voicing_thresholdSEXP, octave_costSEXP, octave_jump_costSEXP, voiced_unvoiced_costSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // sound_to_formant_batch
 Rcpp::List sound_to_formant_batch(Rcpp::List sound_list, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from);
 static SEXP _pladdrr_sound_to_formant_batch_try(SEXP sound_listSEXP, SEXP time_stepSEXP, SEXP max_formantsSEXP, SEXP max_frequencySEXP, SEXP window_lengthSEXP, SEXP pre_emphasis_fromSEXP) {
@@ -10321,6 +10409,8 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structSound>(*.sound_concatenate_all)(Rcpp::List,double)");
         signatures.insert("Rcpp::List(*.sound_extract_parts_batch)(XPtr<structSound>,NumericVector,NumericVector,int,double,bool)");
         signatures.insert("Rcpp::List(*.sound_to_pitch_batch)(Rcpp::List,double,double,double)");
+        signatures.insert("Rcpp::List(*.sound_to_pitch_ac_batch)(Rcpp::List,double,double,double,int,bool,double,double,double,double,double)");
+        signatures.insert("Rcpp::List(*.sound_to_pitch_cc_batch)(Rcpp::List,double,double,double,int,bool,double,double,double,double,double)");
         signatures.insert("Rcpp::List(*.sound_to_formant_batch)(Rcpp::List,double,double,double,double,double)");
         signatures.insert("Rcpp::List(*.sound_to_intensity_batch)(Rcpp::List,double,double,bool)");
         signatures.insert("Rcpp::List(*.sound_extract_and_pitch_batch)(XPtr<structSound>,NumericVector,NumericVector,double,double,double)");
@@ -10452,6 +10542,8 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_concatenate_all", (DL_FUNC)_pladdrr_sound_concatenate_all_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_extract_parts_batch", (DL_FUNC)_pladdrr_sound_extract_parts_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_batch", (DL_FUNC)_pladdrr_sound_to_pitch_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_ac_batch", (DL_FUNC)_pladdrr_sound_to_pitch_ac_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_cc_batch", (DL_FUNC)_pladdrr_sound_to_pitch_cc_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_batch", (DL_FUNC)_pladdrr_sound_to_formant_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_intensity_batch", (DL_FUNC)_pladdrr_sound_to_intensity_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_extract_and_pitch_batch", (DL_FUNC)_pladdrr_sound_extract_and_pitch_batch_try);
@@ -10904,6 +10996,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_concatenate_all", (DL_FUNC) &_pladdrr_sound_concatenate_all, 2},
     {"_pladdrr_sound_extract_parts_batch", (DL_FUNC) &_pladdrr_sound_extract_parts_batch, 6},
     {"_pladdrr_sound_to_pitch_batch", (DL_FUNC) &_pladdrr_sound_to_pitch_batch, 4},
+    {"_pladdrr_sound_to_pitch_ac_batch", (DL_FUNC) &_pladdrr_sound_to_pitch_ac_batch, 11},
+    {"_pladdrr_sound_to_pitch_cc_batch", (DL_FUNC) &_pladdrr_sound_to_pitch_cc_batch, 11},
     {"_pladdrr_sound_to_formant_batch", (DL_FUNC) &_pladdrr_sound_to_formant_batch, 6},
     {"_pladdrr_sound_to_intensity_batch", (DL_FUNC) &_pladdrr_sound_to_intensity_batch, 4},
     {"_pladdrr_sound_extract_and_pitch_batch", (DL_FUNC) &_pladdrr_sound_extract_and_pitch_batch, 6},

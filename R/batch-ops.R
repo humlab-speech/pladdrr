@@ -89,6 +89,128 @@ sound_to_pitch_batch <- function(sounds,
 }
 
 
+#' Extract Pitch (AC) from Multiple Sounds in Single C++ Call
+#'
+#' Batch version of to_pitch_ac with full voicing parameters.
+#' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+#'
+#' @param sounds List of Sound objects (R6) or external pointers
+#' @param time_step Numeric. Time step (0 = automatic)
+#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
+#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
+#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
+#' @param silence_threshold Numeric. Silence threshold (default: 0.03)
+#' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
+#' @param octave_cost Numeric. Octave cost (default: 0.01)
+#' @param octave_jump_cost Numeric. Octave jump cost (default: 0.35)
+#' @param voiced_unvoiced_cost Numeric. Voiced/unvoiced cost (default: 0.14)
+#' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
+#'
+#' @return List of Pitch objects (R6 or xptr depending on return_r6)
+#'
+#' @export
+sound_to_pitch_ac_batch <- function(sounds,
+                                    time_step = 0,
+                                    pitch_floor = 75,
+                                    pitch_ceiling = 600,
+                                    max_candidates = 15L,
+                                    very_accurate = FALSE,
+                                    silence_threshold = 0.03,
+                                    voicing_threshold = 0.45,
+                                    octave_cost = 0.01,
+                                    octave_jump_cost = 0.35,
+                                    voiced_unvoiced_cost = 0.14,
+                                    return_r6 = TRUE) {
+  xptrs <- lapply(sounds, function(s) {
+    if (inherits(s, "Sound")) {
+      s$.__enclos_env__$private$ptr
+    } else {
+      s
+    }
+  })
+
+  result_ptrs <- .sound_to_pitch_ac_batch(
+    xptrs, time_step, pitch_floor, pitch_ceiling,
+    as.integer(max_candidates), very_accurate,
+    silence_threshold, voicing_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost
+  )
+
+  if (return_r6) {
+    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+  } else {
+    result_ptrs
+  }
+}
+
+
+#' Extract Pitch (CC) from Multiple Sounds in Single C++ Call
+#'
+#' Batch version of to_pitch_cc with full voicing parameters.
+#' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+#' Use this for maximum performance when processing many sound segments.
+#'
+#' @param sounds List of Sound objects (R6) or external pointers
+#' @param time_step Numeric. Time step (0 = automatic)
+#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
+#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
+#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
+#' @param silence_threshold Numeric. Silence threshold (default: 0.03)
+#' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
+#' @param octave_cost Numeric. Octave cost (default: 0.01)
+#' @param octave_jump_cost Numeric. Octave jump cost (default: 0.35)
+#' @param voiced_unvoiced_cost Numeric. Voiced/unvoiced cost (default: 0.14)
+#' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
+#'
+#' @return List of Pitch objects (R6 or xptr depending on return_r6)
+#'
+#' @examples
+#' \dontrun{
+#' # Instead of slow loop:
+#' # pitches <- lapply(sounds, function(s) s$to_pitch_cc())
+#'
+#' # Use batch operation (much faster for many sounds):
+#' pitches <- sound_to_pitch_cc_batch(sounds)
+#' }
+#'
+#' @export
+sound_to_pitch_cc_batch <- function(sounds,
+                                    time_step = 0,
+                                    pitch_floor = 75,
+                                    pitch_ceiling = 600,
+                                    max_candidates = 15L,
+                                    very_accurate = FALSE,
+                                    silence_threshold = 0.03,
+                                    voicing_threshold = 0.45,
+                                    octave_cost = 0.01,
+                                    octave_jump_cost = 0.35,
+                                    voiced_unvoiced_cost = 0.14,
+                                    return_r6 = TRUE) {
+  xptrs <- lapply(sounds, function(s) {
+    if (inherits(s, "Sound")) {
+      s$.__enclos_env__$private$ptr
+    } else {
+      s
+    }
+  })
+
+  result_ptrs <- .sound_to_pitch_cc_batch(
+    xptrs, time_step, pitch_floor, pitch_ceiling,
+    as.integer(max_candidates), very_accurate,
+    silence_threshold, voicing_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost
+  )
+
+  if (return_r6) {
+    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+  } else {
+    result_ptrs
+  }
+}
+
+
 #' Extract Formants from Multiple Sounds in Single C++ Call
 #'
 #' @param sounds List of Sound objects (R6) or external pointers

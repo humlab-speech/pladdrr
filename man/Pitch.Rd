@@ -32,6 +32,22 @@ This is the acoustic intensity/amplitude stored in each pitch frame.
 The strength column contains the pitch periodicity measure (0-1) for each frame.
 The intensity column contains the raw acoustic intensity/amplitude of each frame.
 Both are useful for voice quality and periodicity analysis.
+
+
+Fills in pitch values for unvoiced frames by linear interpolation
+between voiced frames. No extrapolation beyond first/last voiced frame.
+
+
+Smooths pitch contour by convolution with a Gaussian curve.
+Higher bandwidth = more smoothing. Typical values: 5-20 Hz.
+
+
+Adjusts pitch values so no step exceeds half an octave.
+Useful for cleaning up pitch tracks with tracking errors.
+
+
+Removes linear declination/inclination from pitch contour.
+Useful for isolating local pitch movements from global trends.
 }
 \section{Praat Equivalent}{
 
@@ -126,6 +142,10 @@ pp_peaks <- pitch$to_pointprocess_peaks(sound,
 \item \href{#method-Pitch-as_matrix}{\code{Pitch$as_matrix()}}
 \item \href{#method-Pitch-as_data_frame}{\code{Pitch$as_data_frame()}}
 \item \href{#method-Pitch-save}{\code{Pitch$save()}}
+\item \href{#method-Pitch-interpolate}{\code{Pitch$interpolate()}}
+\item \href{#method-Pitch-smooth}{\code{Pitch$smooth()}}
+\item \href{#method-Pitch-kill_octave_jumps}{\code{Pitch$kill_octave_jumps()}}
+\item \href{#method-Pitch-subtract_linear_fit}{\code{Pitch$subtract_linear_fit()}}
 \item \href{#method-Pitch-print}{\code{Pitch$print()}}
 \item \href{#method-Pitch-clone}{\code{Pitch$clone()}}
 }
@@ -134,6 +154,7 @@ pp_peaks <- pitch$to_pointprocess_peaks(sound,
 <details open><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_ptr"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_ptr'><code>pladdrr::PraatObject$get_ptr()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
 </ul>
 </details>
@@ -760,6 +781,72 @@ Save pitch to file
 \item{\code{path}}{Output file path}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-interpolate"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-interpolate}{}}}
+\subsection{Method \code{interpolate()}}{
+Interpolate unvoiced frames
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$interpolate()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+New Pitch object with interpolated values in unvoiced frames
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-smooth"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-smooth}{}}}
+\subsection{Method \code{smooth()}}{
+Smooth pitch by Gaussian convolution
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$smooth(bandwidth = 10)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{bandwidth}}{Smoothing bandwidth in Hz (default 10)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New Pitch object with smoothed values
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-kill_octave_jumps"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-kill_octave_jumps}{}}}
+\subsection{Method \code{kill_octave_jumps()}}{
+Kill octave jumps
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$kill_octave_jumps()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+New Pitch object without octave jumps
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Pitch-subtract_linear_fit"></a>}}
+\if{latex}{\out{\hypertarget{method-Pitch-subtract_linear_fit}{}}}
+\subsection{Method \code{subtract_linear_fit()}}{
+Subtract linear fit from pitch
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Pitch$subtract_linear_fit(unit = "hertz")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{unit}}{Unit for linear fit: "hertz", "log_hertz", "semitones", "mel", "erb"}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New Pitch object with linear trend removed
 }
 }
 \if{html}{\out{<hr>}}

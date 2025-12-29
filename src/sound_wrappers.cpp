@@ -1634,6 +1634,134 @@ Rcpp::List sound_to_pitch_batch(
     }
 }
 
+//' Extract pitch (AC) from multiple sounds in one C++ call (internal)
+//'
+//' Batch version of to_pitch_ac with full voicing parameters.
+//' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+//'
+//' @param sound_list List of Sound external pointers
+//' @param time_step Time step (0 = automatic)
+//' @param pitch_floor Pitch floor in Hz
+//' @param pitch_ceiling Pitch ceiling in Hz
+//' @param max_candidates Maximum candidates per frame
+//' @param very_accurate Use very accurate algorithm
+//' @param silence_threshold Silence threshold
+//' @param voicing_threshold Voicing threshold
+//' @param octave_cost Octave cost
+//' @param octave_jump_cost Octave jump cost
+//' @param voiced_unvoiced_cost Voiced/unvoiced cost
+//' @return List of Pitch external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_ac_batch)]]
+Rcpp::List sound_to_pitch_ac_batch(
+    Rcpp::List sound_list,
+    double time_step = 0.0,
+    double pitch_floor = 75.0,
+    double pitch_ceiling = 600.0,
+    int max_candidates = 15,
+    bool very_accurate = false,
+    double silence_threshold = 0.03,
+    double voicing_threshold = 0.45,
+    double octave_cost = 0.01,
+    double octave_jump_cost = 0.35,
+    double voiced_unvoiced_cost = 0.14
+) {
+    int n = sound_list.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+
+            autoPitch pitch = Sound_to_Pitch_rawAc(
+                sound,
+                time_step,
+                pitch_floor,
+                pitch_ceiling,
+                static_cast<integer>(max_candidates),
+                very_accurate,
+                silence_threshold,
+                voicing_threshold,
+                octave_cost,
+                octave_jump_cost,
+                voiced_unvoiced_cost
+            );
+            result[i] = create_xptr_from_auto<structPitch>(pitch);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract pitch (AC) from sounds");
+    }
+}
+
+//' Extract pitch (CC) from multiple sounds in one C++ call (internal)
+//'
+//' Batch version of to_pitch_cc with full voicing parameters.
+//' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+//'
+//' @param sound_list List of Sound external pointers
+//' @param time_step Time step (0 = automatic)
+//' @param pitch_floor Pitch floor in Hz
+//' @param pitch_ceiling Pitch ceiling in Hz
+//' @param max_candidates Maximum candidates per frame
+//' @param very_accurate Use very accurate algorithm
+//' @param silence_threshold Silence threshold
+//' @param voicing_threshold Voicing threshold
+//' @param octave_cost Octave cost
+//' @param octave_jump_cost Octave jump cost
+//' @param voiced_unvoiced_cost Voiced/unvoiced cost
+//' @return List of Pitch external pointers
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_cc_batch)]]
+Rcpp::List sound_to_pitch_cc_batch(
+    Rcpp::List sound_list,
+    double time_step = 0.0,
+    double pitch_floor = 75.0,
+    double pitch_ceiling = 600.0,
+    int max_candidates = 15,
+    bool very_accurate = false,
+    double silence_threshold = 0.03,
+    double voicing_threshold = 0.45,
+    double octave_cost = 0.01,
+    double octave_jump_cost = 0.35,
+    double voiced_unvoiced_cost = 0.14
+) {
+    int n = sound_list.size();
+    Rcpp::List result(n);
+
+    try {
+        for (int i = 0; i < n; i++) {
+            XPtr<structSound> xptr = sound_list[i];
+            structSound* sound = get_ptr(xptr, "Sound");
+
+            autoPitch pitch = Sound_to_Pitch_rawCc(
+                sound,
+                time_step,
+                pitch_floor,
+                pitch_ceiling,
+                static_cast<integer>(max_candidates),
+                very_accurate,
+                silence_threshold,
+                voicing_threshold,
+                octave_cost,
+                octave_jump_cost,
+                voiced_unvoiced_cost
+            );
+            result[i] = create_xptr_from_auto<structPitch>(pitch);
+        }
+
+        return result;
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract pitch (CC) from sounds");
+    }
+}
+
 //' Extract formants from multiple sounds in one C++ call (internal)
 //'
 //' @param sound_list List of Sound external pointers

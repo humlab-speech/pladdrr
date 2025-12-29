@@ -4,24 +4,8 @@ Direct Access to Praat C Functionality from R
 
 ## Overview
 
-The `pladdrr` package provides direct, efficient access to Praat C implemented functionality from R using Rcpp. Similar to the [parselmouth](https://github.com/YannickJadoul/Parselmouth) package for Python, this package enables R users to leverage Praat's powerful phonetic analysis capabilities directly from R.
+The `pladdrr` package aims to provide  direct, efficient access to Praat C implemented functionality from R using Rcpp and to enable R users to leverage Praat's powerful phonetic analysis capabilities directly from R.
 
-## Performance 🚀
-
-Version 0.5.0 introduces **SIMD (Single Instruction Multiple Data) optimizations** for significant performance improvements:
-
-- **Matrix operations**: 2-3x faster (sum, mean, min, max)
-- **Audio processing**: 2-3x faster (RMS, energy, power)
-- **DSP operations**: 3-6x faster (autocorrelation, windowing)
-
-SIMD automatically adapts to your CPU:
-- ✅ **Apple Silicon** (M1/M2/M3): ARM NEON 128-bit
-- ✅ **AMD EPYC**: AVX2 256-bit  
-- ✅ **Intel x86_64**: SSE2/AVX2 fallback
-
-No configuration needed—SIMD is automatically detected and enabled!
-
-See [SIMD_BENCHMARKS.md](SIMD_BENCHMARKS.md) for detailed performance analysis.
 
 ## Installation
 
@@ -70,10 +54,6 @@ install.packages("ggplot2")
 # Data manipulation (used in vignettes)
 install.packages("dplyr")
 
-# Parselmouth comparison benchmarks (optional)
-install.packages("reticulate")
-# Then install parselmouth in Python:
-# pip install praat-parselmouth
 ```
 
 ## Features
@@ -97,12 +77,6 @@ See `inst/examples/` for complete, real-world workflows:
 - **Voice quality profiling** (HNR, jitter, shimmer, spectral moments)
 - **Complete phonetic pipelines** (integrated analysis combining multiple measures)
 
-### Performance 
-
-- **SIMD acceleration**: 2-4x speedup on modern CPUs (automatic CPU detection)
-- **Zero-copy operations**: Direct C++ memory access via external pointers
-- **Efficient large file handling**: Sampling strategies for corpus-scale analyses
-- **R6 object-oriented design**: Type-safe, autocomplete-friendly method calls
 
 ## Quick Start
 

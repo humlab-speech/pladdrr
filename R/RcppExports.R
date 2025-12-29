@@ -2154,6 +2154,50 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_sound_to_pitch_batch`, sound_list, time_step, pitch_floor, pitch_ceiling)
 }
 
+#' Extract pitch (AC) from multiple sounds in one C++ call (internal)
+#'
+#' Batch version of to_pitch_ac with full voicing parameters.
+#' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+#'
+#' @param sound_list List of Sound external pointers
+#' @param time_step Time step (0 = automatic)
+#' @param pitch_floor Pitch floor in Hz
+#' @param pitch_ceiling Pitch ceiling in Hz
+#' @param max_candidates Maximum candidates per frame
+#' @param very_accurate Use very accurate algorithm
+#' @param silence_threshold Silence threshold
+#' @param voicing_threshold Voicing threshold
+#' @param octave_cost Octave cost
+#' @param octave_jump_cost Octave jump cost
+#' @param voiced_unvoiced_cost Voiced/unvoiced cost
+#' @return List of Pitch external pointers
+#' @keywords internal
+.sound_to_pitch_ac_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0, max_candidates = 15L, very_accurate = FALSE, silence_threshold = 0.03, voicing_threshold = 0.45, octave_cost = 0.01, octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14) {
+    .Call(`_pladdrr_sound_to_pitch_ac_batch`, sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+}
+
+#' Extract pitch (CC) from multiple sounds in one C++ call (internal)
+#'
+#' Batch version of to_pitch_cc with full voicing parameters.
+#' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
+#'
+#' @param sound_list List of Sound external pointers
+#' @param time_step Time step (0 = automatic)
+#' @param pitch_floor Pitch floor in Hz
+#' @param pitch_ceiling Pitch ceiling in Hz
+#' @param max_candidates Maximum candidates per frame
+#' @param very_accurate Use very accurate algorithm
+#' @param silence_threshold Silence threshold
+#' @param voicing_threshold Voicing threshold
+#' @param octave_cost Octave cost
+#' @param octave_jump_cost Octave jump cost
+#' @param voiced_unvoiced_cost Voiced/unvoiced cost
+#' @return List of Pitch external pointers
+#' @keywords internal
+.sound_to_pitch_cc_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0, max_candidates = 15L, very_accurate = FALSE, silence_threshold = 0.03, voicing_threshold = 0.45, octave_cost = 0.01, octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14) {
+    .Call(`_pladdrr_sound_to_pitch_cc_batch`, sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+}
+
 #' Extract formants from multiple sounds in one C++ call (internal)
 #'
 #' @param sound_list List of Sound external pointers

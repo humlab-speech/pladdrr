@@ -2492,6 +2492,48 @@ namespace pladdrr {
         return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
+    inline Rcpp::List _sound_to_pitch_ac_batch(Rcpp::List sound_list, double time_step = 0.0, double pitch_floor = 75.0, double pitch_ceiling = 600.0, int max_candidates = 15, bool very_accurate = false, double silence_threshold = 0.03, double voicing_threshold = 0.45, double octave_cost = 0.01, double octave_jump_cost = 0.35, double voiced_unvoiced_cost = 0.14) {
+        typedef SEXP(*Ptr__sound_to_pitch_ac_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_ac_batch p__sound_to_pitch_ac_batch = NULL;
+        if (p__sound_to_pitch_ac_batch == NULL) {
+            validateSignature("Rcpp::List(*_sound_to_pitch_ac_batch)(Rcpp::List,double,double,double,int,bool,double,double,double,double,double)");
+            p__sound_to_pitch_ac_batch = (Ptr__sound_to_pitch_ac_batch)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_ac_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_ac_batch(Shield<SEXP>(Rcpp::wrap(sound_list)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_candidates)), Shield<SEXP>(Rcpp::wrap(very_accurate)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(octave_cost)), Shield<SEXP>(Rcpp::wrap(octave_jump_cost)), Shield<SEXP>(Rcpp::wrap(voiced_unvoiced_cost)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
+    }
+
+    inline Rcpp::List _sound_to_pitch_cc_batch(Rcpp::List sound_list, double time_step = 0.0, double pitch_floor = 75.0, double pitch_ceiling = 600.0, int max_candidates = 15, bool very_accurate = false, double silence_threshold = 0.03, double voicing_threshold = 0.45, double octave_cost = 0.01, double octave_jump_cost = 0.35, double voiced_unvoiced_cost = 0.14) {
+        typedef SEXP(*Ptr__sound_to_pitch_cc_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_cc_batch p__sound_to_pitch_cc_batch = NULL;
+        if (p__sound_to_pitch_cc_batch == NULL) {
+            validateSignature("Rcpp::List(*_sound_to_pitch_cc_batch)(Rcpp::List,double,double,double,int,bool,double,double,double,double,double)");
+            p__sound_to_pitch_cc_batch = (Ptr__sound_to_pitch_cc_batch)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_cc_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_cc_batch(Shield<SEXP>(Rcpp::wrap(sound_list)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_candidates)), Shield<SEXP>(Rcpp::wrap(very_accurate)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(octave_cost)), Shield<SEXP>(Rcpp::wrap(octave_jump_cost)), Shield<SEXP>(Rcpp::wrap(voiced_unvoiced_cost)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
+    }
+
     inline Rcpp::List _sound_to_formant_batch(Rcpp::List sound_list, double time_step = 0.005, double max_formants = 5.0, double max_frequency = 5500.0, double window_length = 0.025, double pre_emphasis_from = 50.0) {
         typedef SEXP(*Ptr__sound_to_formant_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_formant_batch p__sound_to_formant_batch = NULL;
