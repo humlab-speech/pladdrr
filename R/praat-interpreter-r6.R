@@ -39,6 +39,7 @@
     "PowerCepstrum" = PowerCepstrum$new(.xptr = xptr),
     "Cepstrum" = Cepstrum$new(.xptr = xptr),
     "VocalTract" = VocalTract$new(.xptr = xptr),
+    "LongSound" = LongSound$new(.xptr = xptr),
     {
       warning("Unknown Praat class: ", class_name, ", returning raw pointer")
       xptr

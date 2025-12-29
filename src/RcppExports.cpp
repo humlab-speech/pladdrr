@@ -3725,6 +3725,163 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// longsound_open
+SEXP longsound_open(std::string path);
+RcppExport SEXP _pladdrr_longsound_open(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_open(path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_duration
+double longsound_get_duration(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_duration(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_duration(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_start_time
+double longsound_get_start_time(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_start_time(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_start_time(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_end_time
+double longsound_get_end_time(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_end_time(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_end_time(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_sample_rate
+double longsound_get_sample_rate(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_sample_rate(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_sample_rate(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_number_of_channels
+int longsound_get_number_of_channels(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_number_of_channels(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_number_of_channels(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_number_of_samples
+int longsound_get_number_of_samples(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_number_of_samples(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_number_of_samples(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_file_path
+std::string longsound_get_file_path(SEXP xptr);
+RcppExport SEXP _pladdrr_longsound_get_file_path(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_file_path(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_extract_part
+SEXP longsound_extract_part(SEXP xptr, double tmin, double tmax, bool preserve_times);
+RcppExport SEXP _pladdrr_longsound_extract_part(SEXP xptrSEXP, SEXP tminSEXP, SEXP tmaxSEXP, SEXP preserve_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< bool >::type preserve_times(preserve_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_extract_part(xptr, tmin, tmax, preserve_times));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_have_window
+bool longsound_have_window(SEXP xptr, double tmin, double tmax);
+RcppExport SEXP _pladdrr_longsound_have_window(SEXP xptrSEXP, SEXP tminSEXP, SEXP tmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_have_window(xptr, tmin, tmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_get_window_extrema
+NumericVector longsound_get_window_extrema(SEXP xptr, double tmin, double tmax, int channel);
+RcppExport SEXP _pladdrr_longsound_get_window_extrema(SEXP xptrSEXP, SEXP tminSEXP, SEXP tmaxSEXP, SEXP channelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    rcpp_result_gen = Rcpp::wrap(longsound_get_window_extrema(xptr, tmin, tmax, channel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// longsound_save_part
+void longsound_save_part(SEXP xptr, int audio_file_type, double tmin, double tmax, std::string path, int bits_per_sample);
+RcppExport SEXP _pladdrr_longsound_save_part(SEXP xptrSEXP, SEXP audio_file_typeSEXP, SEXP tminSEXP, SEXP tmaxSEXP, SEXP pathSEXP, SEXP bits_per_sampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type audio_file_type(audio_file_typeSEXP);
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< int >::type bits_per_sample(bits_per_sampleSEXP);
+    longsound_save_part(xptr, audio_file_type, tmin, tmax, path, bits_per_sample);
+    return R_NilValue;
+END_RCPP
+}
+// longsound_save_channel
+void longsound_save_channel(SEXP xptr, int audio_file_type, int channel, std::string path);
+RcppExport SEXP _pladdrr_longsound_save_channel(SEXP xptrSEXP, SEXP audio_file_typeSEXP, SEXP channelSEXP, SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type audio_file_type(audio_file_typeSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    longsound_save_channel(xptr, audio_file_type, channel, path);
+    return R_NilValue;
+END_RCPP
+}
 // sound_to_lpc_burg
 Rcpp::XPtr<structLPC> sound_to_lpc_burg(Rcpp::XPtr<structSound> sound, int prediction_order, double analysis_width, double time_step, double pre_emphasis_frequency);
 RcppExport SEXP _pladdrr_sound_to_lpc_burg(SEXP soundSEXP, SEXP prediction_orderSEXP, SEXP analysis_widthSEXP, SEXP time_stepSEXP, SEXP pre_emphasis_frequencySEXP) {
@@ -10138,6 +10295,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_praat_interpreter_remove_object_by_id", (DL_FUNC) &_pladdrr_praat_interpreter_remove_object_by_id, 1},
     {"_pladdrr_praat_interpreter_select_object", (DL_FUNC) &_pladdrr_praat_interpreter_select_object, 2},
     {"_pladdrr_praat_interpreter_clear_objects", (DL_FUNC) &_pladdrr_praat_interpreter_clear_objects, 0},
+    {"_pladdrr_longsound_open", (DL_FUNC) &_pladdrr_longsound_open, 1},
+    {"_pladdrr_longsound_get_duration", (DL_FUNC) &_pladdrr_longsound_get_duration, 1},
+    {"_pladdrr_longsound_get_start_time", (DL_FUNC) &_pladdrr_longsound_get_start_time, 1},
+    {"_pladdrr_longsound_get_end_time", (DL_FUNC) &_pladdrr_longsound_get_end_time, 1},
+    {"_pladdrr_longsound_get_sample_rate", (DL_FUNC) &_pladdrr_longsound_get_sample_rate, 1},
+    {"_pladdrr_longsound_get_number_of_channels", (DL_FUNC) &_pladdrr_longsound_get_number_of_channels, 1},
+    {"_pladdrr_longsound_get_number_of_samples", (DL_FUNC) &_pladdrr_longsound_get_number_of_samples, 1},
+    {"_pladdrr_longsound_get_file_path", (DL_FUNC) &_pladdrr_longsound_get_file_path, 1},
+    {"_pladdrr_longsound_extract_part", (DL_FUNC) &_pladdrr_longsound_extract_part, 4},
+    {"_pladdrr_longsound_have_window", (DL_FUNC) &_pladdrr_longsound_have_window, 3},
+    {"_pladdrr_longsound_get_window_extrema", (DL_FUNC) &_pladdrr_longsound_get_window_extrema, 4},
+    {"_pladdrr_longsound_save_part", (DL_FUNC) &_pladdrr_longsound_save_part, 6},
+    {"_pladdrr_longsound_save_channel", (DL_FUNC) &_pladdrr_longsound_save_channel, 4},
     {"_pladdrr_sound_to_lpc_burg", (DL_FUNC) &_pladdrr_sound_to_lpc_burg, 5},
     {"_pladdrr_sound_to_lpc_covariance", (DL_FUNC) &_pladdrr_sound_to_lpc_covariance, 5},
     {"_pladdrr_sound_to_lpc_auto", (DL_FUNC) &_pladdrr_sound_to_lpc_auto, 5},
