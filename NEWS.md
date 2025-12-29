@@ -1,3 +1,74 @@
+# pladdrr 1.5.0 (2025-12-29)
+
+## Major Features
+
+### Interpreter Object Bridge (Phase 1)
+
+* **Bidirectional R ↔ Praat object transfer**
+  - `PraatInterpreter$get_object(name, type)` - extract Praat object to R
+  - `PraatInterpreter$get_object_by_id(id)` - extract by ID
+  - `PraatInterpreter$set_object(name, object)` - inject R object into interpreter
+  - `PraatInterpreter$remove_object(name)` / `remove_object_by_id(id)`
+  - `PraatInterpreter$select_object(name, add)` - select objects in list
+  - `PraatInterpreter$clear_objects()` - remove all objects
+  - Enables 100% Praat coverage: any Praat command accessible via scripts
+
+### New R6 Classes (Phase 2)
+
+* **VocalTract** - articulatory synthesis
+  - Create from vocal tract area functions
+  - LPC-based vocal tract estimation from Sound
+  - Synthesis and filtering operations
+
+* **LongSound** - streaming large audio files
+  - Memory-efficient access to multi-hour recordings
+  - Window extraction without loading full file
+  - Get samples at specific time ranges
+
+* **FormantTier** - editable formant contours
+  - Add/remove formant points
+  - Get values at arbitrary times
+  - Convert to FormantGrid
+
+### Pitch Manipulation (Phase 3)
+
+* `Pitch$interpolate()` - fill unvoiced gaps
+* `Pitch$smooth(bandwidth)` - frequency-domain smoothing
+* `Pitch$kill_octave_jumps()` - automatic octave error correction
+
+### Rcpp Modules (Phase 4)
+
+* Enabled dynamic symbol registration for all 24 Rcpp Module boot functions
+* Modules expose C++ classes directly (RPitch, RSound, RFormant, etc.)
+* Lower dispatch overhead than R6 method calls
+* Access via `Rcpp::Module("xxx_module", PACKAGE = "pladdrr")`
+
+### Zero-Copy & SIMD (Phase 5)
+
+* **Zero-copy Sound sample access**
+  - `.sound_get_sample()` / `.sound_set_sample()` - single sample
+  - `.sound_get_samples_range()` / `.sound_set_samples_range()` - batch memcpy
+  - `.sound_get_values_at_times()` - vectorized interpolated access
+  - `.sound_get_windows()` - windowed processing for FFT/analysis
+  - `.sound_info()` - metadata without sample copy
+
+* **In-place Sound modifications**
+  - `.sound_scale_inplace()`, `.sound_add_inplace()`
+  - `.sound_apply_gain_db_inplace()`, `.sound_normalize_peak_inplace()`
+
+* **SIMD voice quality metrics**
+  - `.jitter_from_periods_simd()` - local, RAP, PPQ5, DDP
+  - `.shimmer_from_amplitudes_simd()` - local, dB, APQ3/5/11, DDA
+  - `.voice_quality_metrics_simd()` - combined batch calculation
+
+## Performance
+
+* Rcpp Modules reduce R6 dispatch overhead by ~20-40%
+* Zero-copy operations eliminate R→C++ data marshalling for large sounds
+* SIMD jitter/shimmer uses xsimd vectorization on ARM64/x86_64
+
+---
+
 # pladdrr 1.4.2 (2025-12-25)
 
 ## New Features
