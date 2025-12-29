@@ -542,3 +542,292 @@ DataFrame praat_interpreter_list_objects() {
         Named("selected") = selected
     );
 }
+
+// ==============================================================================
+// Object Bridge: Transfer objects between interpreter and R
+// ==============================================================================
+
+// Helper: Find object index by name (returns -1 if not found)
+static int find_object_by_name(const std::string& name) {
+    autostring32 searchName = Melder_8to32(name.c_str());
+
+    for (int iobject = 1; iobject <= theCurrentPraatObjects->n; iobject++) {
+        // Check if name matches (Praat stores "Type name", we accept either)
+        conststring32 fullName = theCurrentPraatObjects->list[iobject].name.get();
+        conststring32 className = theCurrentPraatObjects->list[iobject].klas->className;
+
+        // Match against full name "Type name" or just "name"
+        if (Melder_equ(fullName, searchName.get())) {
+            return iobject;
+        }
+
+        // Also try matching just the name part (after class name + space)
+        // Build the prefixed name using MelderString
+        static MelderString buffer;
+        MelderString_empty(&buffer);
+        MelderString_append(&buffer, className, U" ", searchName.get());
+        if (Melder_equ(fullName, buffer.string)) {
+            return iobject;
+        }
+    }
+    return -1;
+}
+
+// Helper: Find object index by ID
+static int find_object_by_id(integer id) {
+    for (int iobject = 1; iobject <= theCurrentPraatObjects->n; iobject++) {
+        if (theCurrentPraatObjects->list[iobject].id == id) {
+            return iobject;
+        }
+    }
+    return -1;
+}
+
+//' Get object from Praat object list by name
+//' @param name Object name (e.g., "Sound mySound" or just "mySound")
+//' @param expected_type Expected class name (e.g., "Sound"), or empty for any
+//' @return External pointer to the Praat object (copy)
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_get_object)]]
+SEXP praat_interpreter_get_object(std::string name, std::string expected_type) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    int iobject = find_object_by_name(name);
+    if (iobject < 0) {
+        stop("Object not found: " + name);
+    }
+
+    Daata original = theCurrentPraatObjects->list[iobject].object;
+    conststring32 actualClass = theCurrentPraatObjects->list[iobject].klas->className;
+
+    // Check type if specified
+    if (!expected_type.empty()) {
+        autostring32 expectedType32 = Melder_8to32(expected_type.c_str());
+        if (!Melder_equ(actualClass, expectedType32.get())) {
+            stop("Type mismatch: expected " + expected_type +
+                 " but found " + Melder_peek32to8(actualClass));
+        }
+    }
+
+    try {
+        // Make a copy of the object (so R owns its own copy)
+        autoDaata copy = _Data_copy(original);
+
+        // Release ownership to get raw pointer
+        // Note: Daata is already a pointer type (structDaata*)
+        structDaata* rawPtr = copy.releaseToAmbiguousOwner();
+
+        auto deleter = [](structDaata* thing) {
+            if (thing != nullptr) {
+                forget(thing);
+            }
+        };
+
+        // Add class name as attribute for R to dispatch correctly
+        Rcpp::XPtr<structDaata> xptr(rawPtr, deleter);
+        xptr.attr("praat_class") = Melder_peek32to8(actualClass);
+
+        return xptr;
+
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to copy object: " + error_msg);
+    }
+
+    return R_NilValue;  // unreachable
+}
+
+//' Get object by ID from Praat object list
+//' @param id Object ID number
+//' @return External pointer to the Praat object (copy)
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_get_object_by_id)]]
+SEXP praat_interpreter_get_object_by_id(int id) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    int iobject = find_object_by_id(id);
+    if (iobject < 0) {
+        stop("Object with ID " + std::to_string(id) + " not found");
+    }
+
+    Daata original = theCurrentPraatObjects->list[iobject].object;
+    conststring32 actualClass = theCurrentPraatObjects->list[iobject].klas->className;
+
+    try {
+        autoDaata copy = _Data_copy(original);
+        structDaata* rawPtr = copy.releaseToAmbiguousOwner();
+
+        auto deleter = [](structDaata* thing) {
+            if (thing != nullptr) {
+                forget(thing);
+            }
+        };
+
+        Rcpp::XPtr<structDaata> xptr(rawPtr, deleter);
+        xptr.attr("praat_class") = Melder_peek32to8(actualClass);
+
+        return xptr;
+
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to copy object: " + error_msg);
+    }
+
+    return R_NilValue;
+}
+
+//' Add R object to Praat object list
+//' @param xptr External pointer to Praat object (will be copied)
+//' @param name Name for the object in Praat's list
+//' @param class_name Class name (e.g., "Sound", "Pitch")
+//' @return ID of the newly added object
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_set_object)]]
+int praat_interpreter_set_object(SEXP xptr, std::string name, std::string class_name) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    // The XPtr wraps a structDaata* (which is what Daata is an alias for)
+    // But R6 classes use XPtr<structSound>, XPtr<structPitch>, etc.
+    // All of these inherit from structDaata, so we can cast
+    Rcpp::XPtr<structDaata> ptr(xptr);
+    if (!ptr) {
+        stop("Invalid object pointer");
+    }
+
+    try {
+        // Make a copy for Praat to own
+        // ptr.get() returns structDaata* which is the same as Daata
+        autoDaata copy = _Data_copy(ptr.get());
+
+        // Add to Praat's object list with the given name
+        autostring32 name32 = Melder_8to32(name.c_str());
+        praat_new(std::move(copy), name32.get());
+
+        // Return the ID of the newly added object
+        return theCurrentPraatObjects->list[theCurrentPraatObjects->n].id;
+
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to add object: " + error_msg);
+    }
+
+    return -1;
+}
+
+//' Remove object from Praat object list by name
+//' @param name Object name
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_remove_object)]]
+void praat_interpreter_remove_object(std::string name) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    int iobject = find_object_by_name(name);
+    if (iobject < 0) {
+        stop("Object not found: " + name);
+    }
+
+    try {
+        praat_removeObject(iobject);
+        praat_show();  // Update the object list display
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to remove object: " + error_msg);
+    }
+}
+
+//' Remove object from Praat object list by ID
+//' @param id Object ID
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_remove_object_by_id)]]
+void praat_interpreter_remove_object_by_id(int id) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    int iobject = find_object_by_id(id);
+    if (iobject < 0) {
+        stop("Object with ID " + std::to_string(id) + " not found");
+    }
+
+    try {
+        praat_removeObject(iobject);
+        praat_show();
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to remove object: " + error_msg);
+    }
+}
+
+//' Select object in Praat object list by name
+//' @param name Object name
+//' @param add If TRUE, add to selection; if FALSE, replace selection
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_select_object)]]
+void praat_interpreter_select_object(std::string name, bool add = false) {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    int iobject = find_object_by_name(name);
+    if (iobject < 0) {
+        stop("Object not found: " + name);
+    }
+
+    try {
+        if (!add) {
+            // Deselect all first
+            for (int i = 1; i <= theCurrentPraatObjects->n; i++) {
+                if (theCurrentPraatObjects->list[i].isSelected) {
+                    theCurrentPraatObjects->list[i].isSelected = false;
+                    theCurrentPraatObjects->totalSelection--;
+                }
+            }
+        }
+
+        // Select the target object
+        if (!theCurrentPraatObjects->list[iobject].isSelected) {
+            theCurrentPraatObjects->list[iobject].isSelected = true;
+            theCurrentPraatObjects->totalSelection++;
+        }
+
+        praat_show();
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to select object: " + error_msg);
+    }
+}
+
+//' Clear all objects from Praat object list
+//' @keywords internal
+// [[Rcpp::export(.praat_interpreter_clear_objects)]]
+void praat_interpreter_clear_objects() {
+    if (!praat_interpreter_initialized) {
+        praat_interpreter_init();
+    }
+
+    try {
+        // Remove objects from end to beginning
+        while (theCurrentPraatObjects->n > 0) {
+            praat_removeObject(theCurrentPraatObjects->n);
+        }
+        praat_show();
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        stop("Failed to clear objects: " + error_msg);
+    }
+}

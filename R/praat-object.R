@@ -44,6 +44,14 @@ PraatObject <- R6::R6Class(
     get_class_name = function() {
       class(self)[1]
     },
+
+    #' @description
+    #' Get the raw external pointer (for advanced use/interpreter bridge)
+    #' @return External pointer to the underlying C++ object
+    get_ptr = function() {
+      private$check_valid()
+      private$ptr
+    },
     
     #' @description
     #' Print method for Praat objects

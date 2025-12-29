@@ -679,6 +679,61 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_praat_interpreter_list_objects`)
 }
 
+#' Get object from Praat object list by name
+#' @param name Object name (e.g., "Sound mySound" or just "mySound")
+#' @param expected_type Expected class name (e.g., "Sound"), or empty for any
+#' @return External pointer to the Praat object (copy)
+#' @keywords internal
+.praat_interpreter_get_object <- function(name, expected_type) {
+    .Call(`_pladdrr_praat_interpreter_get_object`, name, expected_type)
+}
+
+#' Get object by ID from Praat object list
+#' @param id Object ID number
+#' @return External pointer to the Praat object (copy)
+#' @keywords internal
+.praat_interpreter_get_object_by_id <- function(id) {
+    .Call(`_pladdrr_praat_interpreter_get_object_by_id`, id)
+}
+
+#' Add R object to Praat object list
+#' @param xptr External pointer to Praat object (will be copied)
+#' @param name Name for the object in Praat's list
+#' @param class_name Class name (e.g., "Sound", "Pitch")
+#' @return ID of the newly added object
+#' @keywords internal
+.praat_interpreter_set_object <- function(xptr, name, class_name) {
+    .Call(`_pladdrr_praat_interpreter_set_object`, xptr, name, class_name)
+}
+
+#' Remove object from Praat object list by name
+#' @param name Object name
+#' @keywords internal
+.praat_interpreter_remove_object <- function(name) {
+    invisible(.Call(`_pladdrr_praat_interpreter_remove_object`, name))
+}
+
+#' Remove object from Praat object list by ID
+#' @param id Object ID
+#' @keywords internal
+.praat_interpreter_remove_object_by_id <- function(id) {
+    invisible(.Call(`_pladdrr_praat_interpreter_remove_object_by_id`, id))
+}
+
+#' Select object in Praat object list by name
+#' @param name Object name
+#' @param add If TRUE, add to selection; if FALSE, replace selection
+#' @keywords internal
+.praat_interpreter_select_object <- function(name, add = FALSE) {
+    invisible(.Call(`_pladdrr_praat_interpreter_select_object`, name, add))
+}
+
+#' Clear all objects from Praat object list
+#' @keywords internal
+.praat_interpreter_clear_objects <- function() {
+    invisible(.Call(`_pladdrr_praat_interpreter_clear_objects`))
+}
+
 .sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {
     .Call(`_pladdrr_sound_to_lpc_burg`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency)
 }

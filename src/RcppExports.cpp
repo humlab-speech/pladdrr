@@ -3649,6 +3649,82 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// praat_interpreter_get_object
+SEXP praat_interpreter_get_object(std::string name, std::string expected_type);
+RcppExport SEXP _pladdrr_praat_interpreter_get_object(SEXP nameSEXP, SEXP expected_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type name(nameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type expected_type(expected_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(praat_interpreter_get_object(name, expected_type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// praat_interpreter_get_object_by_id
+SEXP praat_interpreter_get_object_by_id(int id);
+RcppExport SEXP _pladdrr_praat_interpreter_get_object_by_id(SEXP idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type id(idSEXP);
+    rcpp_result_gen = Rcpp::wrap(praat_interpreter_get_object_by_id(id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// praat_interpreter_set_object
+int praat_interpreter_set_object(SEXP xptr, std::string name, std::string class_name);
+RcppExport SEXP _pladdrr_praat_interpreter_set_object(SEXP xptrSEXP, SEXP nameSEXP, SEXP class_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type name(nameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type class_name(class_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(praat_interpreter_set_object(xptr, name, class_name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// praat_interpreter_remove_object
+void praat_interpreter_remove_object(std::string name);
+RcppExport SEXP _pladdrr_praat_interpreter_remove_object(SEXP nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type name(nameSEXP);
+    praat_interpreter_remove_object(name);
+    return R_NilValue;
+END_RCPP
+}
+// praat_interpreter_remove_object_by_id
+void praat_interpreter_remove_object_by_id(int id);
+RcppExport SEXP _pladdrr_praat_interpreter_remove_object_by_id(SEXP idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type id(idSEXP);
+    praat_interpreter_remove_object_by_id(id);
+    return R_NilValue;
+END_RCPP
+}
+// praat_interpreter_select_object
+void praat_interpreter_select_object(std::string name, bool add);
+RcppExport SEXP _pladdrr_praat_interpreter_select_object(SEXP nameSEXP, SEXP addSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type name(nameSEXP);
+    Rcpp::traits::input_parameter< bool >::type add(addSEXP);
+    praat_interpreter_select_object(name, add);
+    return R_NilValue;
+END_RCPP
+}
+// praat_interpreter_clear_objects
+void praat_interpreter_clear_objects();
+RcppExport SEXP _pladdrr_praat_interpreter_clear_objects() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    praat_interpreter_clear_objects();
+    return R_NilValue;
+END_RCPP
+}
 // sound_to_lpc_burg
 Rcpp::XPtr<structLPC> sound_to_lpc_burg(Rcpp::XPtr<structSound> sound, int prediction_order, double analysis_width, double time_step, double pre_emphasis_frequency);
 RcppExport SEXP _pladdrr_sound_to_lpc_burg(SEXP soundSEXP, SEXP prediction_orderSEXP, SEXP analysis_widthSEXP, SEXP time_stepSEXP, SEXP pre_emphasis_frequencySEXP) {
@@ -9926,6 +10002,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_praat_interpreter_eval_string_array", (DL_FUNC) &_pladdrr_praat_interpreter_eval_string_array, 2},
     {"_pladdrr_praat_interpreter_object_count", (DL_FUNC) &_pladdrr_praat_interpreter_object_count, 0},
     {"_pladdrr_praat_interpreter_list_objects", (DL_FUNC) &_pladdrr_praat_interpreter_list_objects, 0},
+    {"_pladdrr_praat_interpreter_get_object", (DL_FUNC) &_pladdrr_praat_interpreter_get_object, 2},
+    {"_pladdrr_praat_interpreter_get_object_by_id", (DL_FUNC) &_pladdrr_praat_interpreter_get_object_by_id, 1},
+    {"_pladdrr_praat_interpreter_set_object", (DL_FUNC) &_pladdrr_praat_interpreter_set_object, 3},
+    {"_pladdrr_praat_interpreter_remove_object", (DL_FUNC) &_pladdrr_praat_interpreter_remove_object, 1},
+    {"_pladdrr_praat_interpreter_remove_object_by_id", (DL_FUNC) &_pladdrr_praat_interpreter_remove_object_by_id, 1},
+    {"_pladdrr_praat_interpreter_select_object", (DL_FUNC) &_pladdrr_praat_interpreter_select_object, 2},
+    {"_pladdrr_praat_interpreter_clear_objects", (DL_FUNC) &_pladdrr_praat_interpreter_clear_objects, 0},
     {"_pladdrr_sound_to_lpc_burg", (DL_FUNC) &_pladdrr_sound_to_lpc_burg, 5},
     {"_pladdrr_sound_to_lpc_covariance", (DL_FUNC) &_pladdrr_sound_to_lpc_covariance, 5},
     {"_pladdrr_sound_to_lpc_auto", (DL_FUNC) &_pladdrr_sound_to_lpc_auto, 5},
