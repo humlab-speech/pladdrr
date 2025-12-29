@@ -8555,6 +8555,142 @@ RcppExport SEXP _pladdrr_intensity_get_values_at_times(SEXP xptrSEXP, SEXP times
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_get_sample
+double sound_get_sample(SEXP xptr, int channel, int sample);
+RcppExport SEXP _pladdrr_sound_get_sample(SEXP xptrSEXP, SEXP channelSEXP, SEXP sampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< int >::type sample(sampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_sample(xptr, channel, sample));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_set_sample
+void sound_set_sample(SEXP xptr, int channel, int sample, double value);
+RcppExport SEXP _pladdrr_sound_set_sample(SEXP xptrSEXP, SEXP channelSEXP, SEXP sampleSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< int >::type sample(sampleSEXP);
+    Rcpp::traits::input_parameter< double >::type value(valueSEXP);
+    sound_set_sample(xptr, channel, sample, value);
+    return R_NilValue;
+END_RCPP
+}
+// sound_get_samples_range
+NumericVector sound_get_samples_range(SEXP xptr, int channel, int from_sample, int to_sample);
+RcppExport SEXP _pladdrr_sound_get_samples_range(SEXP xptrSEXP, SEXP channelSEXP, SEXP from_sampleSEXP, SEXP to_sampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< int >::type from_sample(from_sampleSEXP);
+    Rcpp::traits::input_parameter< int >::type to_sample(to_sampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_samples_range(xptr, channel, from_sample, to_sample));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_set_samples_range
+void sound_set_samples_range(SEXP xptr, int channel, int from_sample, NumericVector values);
+RcppExport SEXP _pladdrr_sound_set_samples_range(SEXP xptrSEXP, SEXP channelSEXP, SEXP from_sampleSEXP, SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< int >::type from_sample(from_sampleSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    sound_set_samples_range(xptr, channel, from_sample, values);
+    return R_NilValue;
+END_RCPP
+}
+// sound_get_values_at_times
+NumericVector sound_get_values_at_times(SEXP xptr, int channel, NumericVector times, int interpolation);
+RcppExport SEXP _pladdrr_sound_get_values_at_times(SEXP xptrSEXP, SEXP channelSEXP, SEXP timesSEXP, SEXP interpolationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_values_at_times(xptr, channel, times, interpolation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_scale_inplace
+void sound_scale_inplace(SEXP xptr, double factor);
+RcppExport SEXP _pladdrr_sound_scale_inplace(SEXP xptrSEXP, SEXP factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type factor(factorSEXP);
+    sound_scale_inplace(xptr, factor);
+    return R_NilValue;
+END_RCPP
+}
+// sound_add_inplace
+void sound_add_inplace(SEXP xptr, double value);
+RcppExport SEXP _pladdrr_sound_add_inplace(SEXP xptrSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type value(valueSEXP);
+    sound_add_inplace(xptr, value);
+    return R_NilValue;
+END_RCPP
+}
+// sound_apply_gain_db_inplace
+void sound_apply_gain_db_inplace(SEXP xptr, double gain_db);
+RcppExport SEXP _pladdrr_sound_apply_gain_db_inplace(SEXP xptrSEXP, SEXP gain_dbSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type gain_db(gain_dbSEXP);
+    sound_apply_gain_db_inplace(xptr, gain_db);
+    return R_NilValue;
+END_RCPP
+}
+// sound_normalize_peak_inplace
+void sound_normalize_peak_inplace(SEXP xptr, double peak_value);
+RcppExport SEXP _pladdrr_sound_normalize_peak_inplace(SEXP xptrSEXP, SEXP peak_valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type peak_value(peak_valueSEXP);
+    sound_normalize_peak_inplace(xptr, peak_value);
+    return R_NilValue;
+END_RCPP
+}
+// sound_get_windows
+NumericMatrix sound_get_windows(SEXP xptr, int channel, int window_size, int hop_size);
+RcppExport SEXP _pladdrr_sound_get_windows(SEXP xptrSEXP, SEXP channelSEXP, SEXP window_sizeSEXP, SEXP hop_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type channel(channelSEXP);
+    Rcpp::traits::input_parameter< int >::type window_size(window_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type hop_size(hop_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_windows(xptr, channel, window_size, hop_size));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_info
+List sound_info(SEXP xptr);
+RcppExport SEXP _pladdrr_sound_info(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_info(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spectrogram_get_start_time
 double spectrogram_get_start_time(XPtr<structSpectrogram> spectrogram);
 RcppExport SEXP _pladdrr_spectrogram_get_start_time(SEXP spectrogramSEXP) {
@@ -9926,6 +10062,40 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// jitter_from_periods_simd
+List jitter_from_periods_simd(NumericVector periods);
+RcppExport SEXP _pladdrr_jitter_from_periods_simd(SEXP periodsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type periods(periodsSEXP);
+    rcpp_result_gen = Rcpp::wrap(jitter_from_periods_simd(periods));
+    return rcpp_result_gen;
+END_RCPP
+}
+// shimmer_from_amplitudes_simd
+List shimmer_from_amplitudes_simd(NumericVector amplitudes);
+RcppExport SEXP _pladdrr_shimmer_from_amplitudes_simd(SEXP amplitudesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type amplitudes(amplitudesSEXP);
+    rcpp_result_gen = Rcpp::wrap(shimmer_from_amplitudes_simd(amplitudes));
+    return rcpp_result_gen;
+END_RCPP
+}
+// voice_quality_metrics_simd
+List voice_quality_metrics_simd(NumericVector periods, NumericVector amplitudes);
+RcppExport SEXP _pladdrr_voice_quality_metrics_simd(SEXP periodsSEXP, SEXP amplitudesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type periods(periodsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type amplitudes(amplitudesSEXP);
+    rcpp_result_gen = Rcpp::wrap(voice_quality_metrics_simd(periods, amplitudes));
+    return rcpp_result_gen;
+END_RCPP
+}
 // apply_hamming_window_simd
 NumericVector apply_hamming_window_simd(NumericVector data);
 RcppExport SEXP _pladdrr_apply_hamming_window_simd(SEXP dataSEXP) {
@@ -10741,6 +10911,17 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pitch_get_values_at_times", (DL_FUNC) &_pladdrr_pitch_get_values_at_times, 4},
     {"_pladdrr_formant_get_values_at_times", (DL_FUNC) &_pladdrr_formant_get_values_at_times, 4},
     {"_pladdrr_intensity_get_values_at_times", (DL_FUNC) &_pladdrr_intensity_get_values_at_times, 3},
+    {"_pladdrr_sound_get_sample", (DL_FUNC) &_pladdrr_sound_get_sample, 3},
+    {"_pladdrr_sound_set_sample", (DL_FUNC) &_pladdrr_sound_set_sample, 4},
+    {"_pladdrr_sound_get_samples_range", (DL_FUNC) &_pladdrr_sound_get_samples_range, 4},
+    {"_pladdrr_sound_set_samples_range", (DL_FUNC) &_pladdrr_sound_set_samples_range, 4},
+    {"_pladdrr_sound_get_values_at_times", (DL_FUNC) &_pladdrr_sound_get_values_at_times, 4},
+    {"_pladdrr_sound_scale_inplace", (DL_FUNC) &_pladdrr_sound_scale_inplace, 2},
+    {"_pladdrr_sound_add_inplace", (DL_FUNC) &_pladdrr_sound_add_inplace, 2},
+    {"_pladdrr_sound_apply_gain_db_inplace", (DL_FUNC) &_pladdrr_sound_apply_gain_db_inplace, 2},
+    {"_pladdrr_sound_normalize_peak_inplace", (DL_FUNC) &_pladdrr_sound_normalize_peak_inplace, 2},
+    {"_pladdrr_sound_get_windows", (DL_FUNC) &_pladdrr_sound_get_windows, 4},
+    {"_pladdrr_sound_info", (DL_FUNC) &_pladdrr_sound_info, 1},
     {"_pladdrr_spectrogram_get_start_time", (DL_FUNC) &_pladdrr_spectrogram_get_start_time, 1},
     {"_pladdrr_spectrogram_get_end_time", (DL_FUNC) &_pladdrr_spectrogram_get_end_time, 1},
     {"_pladdrr_spectrogram_get_time_step", (DL_FUNC) &_pladdrr_spectrogram_get_time_step, 1},
@@ -10856,6 +11037,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_vocaltract_set_areas", (DL_FUNC) &_pladdrr_vocaltract_set_areas, 2},
     {"_pladdrr_vocaltract_to_spectrum", (DL_FUNC) &_pladdrr_vocaltract_to_spectrum, 6},
     {"_pladdrr_vocaltract_to_matrix", (DL_FUNC) &_pladdrr_vocaltract_to_matrix, 1},
+    {"_pladdrr_jitter_from_periods_simd", (DL_FUNC) &_pladdrr_jitter_from_periods_simd, 1},
+    {"_pladdrr_shimmer_from_amplitudes_simd", (DL_FUNC) &_pladdrr_shimmer_from_amplitudes_simd, 1},
+    {"_pladdrr_voice_quality_metrics_simd", (DL_FUNC) &_pladdrr_voice_quality_metrics_simd, 2},
     {"_pladdrr_apply_hamming_window_simd", (DL_FUNC) &_pladdrr_apply_hamming_window_simd, 1},
     {"_pladdrr_apply_hanning_window_simd", (DL_FUNC) &_pladdrr_apply_hanning_window_simd, 1},
     {"_pladdrr_apply_gaussian_window_simd", (DL_FUNC) &_pladdrr_apply_gaussian_window_simd, 2},

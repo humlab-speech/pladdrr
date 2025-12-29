@@ -270,13 +270,14 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp
 
-# SIMD sources (Phases 1-3: Comprehensive SIMD optimizations)
+# SIMD sources (Phases 1-5: Comprehensive SIMD optimizations)
 SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
            window_functions_simd.cpp autocorrelation_simd.cpp \
            sound_statistics_simd.cpp sound_conversion_simd.cpp \
            num_matrix_simd.cpp num_filtering_simd.cpp \
            num_distance_simd.cpp sound_convolution_simd.cpp \
-           pitch_processing_simd.cpp simd_info.cpp
+           pitch_processing_simd.cpp simd_info.cpp \
+           voice_quality_simd.cpp sound_zerocopy.cpp
 
 # Rcpp Module sources (pladdrr 2.0 architecture)
 MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_module.cpp \

@@ -2250,6 +2250,98 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_intensity_get_values_at_times`, xptr, times, interpolation)
 }
 
+#' Get a single sample from Sound (no copy)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param sample Sample index (1-based)
+#' @return Sample value
+.sound_get_sample <- function(xptr, channel, sample) {
+    .Call(`_pladdrr_sound_get_sample`, xptr, channel, sample)
+}
+
+#' Set a single sample in Sound (in-place modification)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param sample Sample index (1-based)
+#' @param value New sample value
+.sound_set_sample <- function(xptr, channel, sample, value) {
+    invisible(.Call(`_pladdrr_sound_set_sample`, xptr, channel, sample, value))
+}
+
+#' Get a range of samples from Sound (minimal copy)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param from_sample Start sample (1-based, inclusive)
+#' @param to_sample End sample (1-based, inclusive)
+#' @return Numeric vector of samples
+.sound_get_samples_range <- function(xptr, channel, from_sample, to_sample) {
+    .Call(`_pladdrr_sound_get_samples_range`, xptr, channel, from_sample, to_sample)
+}
+
+#' Set a range of samples in Sound (in-place modification)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param from_sample Start sample (1-based, inclusive)
+#' @param values Numeric vector of new values
+.sound_set_samples_range <- function(xptr, channel, from_sample, values) {
+    invisible(.Call(`_pladdrr_sound_set_samples_range`, xptr, channel, from_sample, values))
+}
+
+#' Get samples at specific time points (vectorized)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param times Numeric vector of time points
+#' @param interpolation 0=nearest, 1=linear, 2=cubic, 3=sinc70, 4=sinc700
+#' @return Numeric vector of sample values
+.sound_get_values_at_times <- function(xptr, channel, times, interpolation) {
+    .Call(`_pladdrr_sound_get_values_at_times`, xptr, channel, times, interpolation)
+}
+
+#' Scale samples in-place (no copy)
+#' @param xptr External pointer to Sound
+#' @param factor Scale factor
+.sound_scale_inplace <- function(xptr, factor) {
+    invisible(.Call(`_pladdrr_sound_scale_inplace`, xptr, factor))
+}
+
+#' Add value to all samples in-place
+#' @param xptr External pointer to Sound
+#' @param value Value to add
+.sound_add_inplace <- function(xptr, value) {
+    invisible(.Call(`_pladdrr_sound_add_inplace`, xptr, value))
+}
+
+#' Apply gain in dB in-place
+#' @param xptr External pointer to Sound
+#' @param gain_db Gain in decibels
+.sound_apply_gain_db_inplace <- function(xptr, gain_db) {
+    invisible(.Call(`_pladdrr_sound_apply_gain_db_inplace`, xptr, gain_db))
+}
+
+#' Normalize peak to value in-place
+#' @param xptr External pointer to Sound
+#' @param peak_value Target peak value (default 0.99)
+.sound_normalize_peak_inplace <- function(xptr, peak_value) {
+    invisible(.Call(`_pladdrr_sound_normalize_peak_inplace`, xptr, peak_value))
+}
+
+#' Apply function to overlapping windows (zero-copy windowed processing)
+#' @param xptr External pointer to Sound
+#' @param channel Channel number (1-based)
+#' @param window_size Window size in samples
+#' @param hop_size Hop size in samples
+#' @return Matrix with one column per window
+.sound_get_windows <- function(xptr, channel, window_size, hop_size) {
+    .Call(`_pladdrr_sound_get_windows`, xptr, channel, window_size, hop_size)
+}
+
+#' Get Sound info without copying samples
+#' @param xptr External pointer to Sound
+#' @return List with sound properties
+.sound_info <- function(xptr) {
+    .Call(`_pladdrr_sound_info`, xptr)
+}
+
 .spectrogram_get_start_time <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_get_start_time`, spectrogram)
 }
@@ -2849,6 +2941,28 @@ praat_error_to_r <- function(error_msg) {
 #' @keywords internal
 .vocaltract_to_matrix <- function(xptr) {
     .Call(`_pladdrr_vocaltract_to_matrix`, xptr)
+}
+
+#' Compute jitter metrics from period array (SIMD-optimized)
+#' @param periods Numeric vector of period durations
+#' @return List with jitter_local, jitter_local_absolute, jitter_rap, jitter_ppq5, jitter_ddp
+.jitter_from_periods_simd <- function(periods) {
+    .Call(`_pladdrr_jitter_from_periods_simd`, periods)
+}
+
+#' Compute shimmer metrics from amplitude array (SIMD-optimized)
+#' @param amplitudes Numeric vector of peak amplitudes per period
+#' @return List with shimmer_local, shimmer_local_db, shimmer_apq3, shimmer_apq5, shimmer_apq11, shimmer_dda
+.shimmer_from_amplitudes_simd <- function(amplitudes) {
+    .Call(`_pladdrr_shimmer_from_amplitudes_simd`, amplitudes)
+}
+
+#' Compute complete voice quality metrics from periods and amplitudes
+#' @param periods Numeric vector of period durations
+#' @param amplitudes Numeric vector of peak amplitudes per period
+#' @return List with all jitter and shimmer metrics
+.voice_quality_metrics_simd <- function(periods, amplitudes) {
+    .Call(`_pladdrr_voice_quality_metrics_simd`, periods, amplitudes)
 }
 
 .apply_hamming_window_simd <- function(data) {
