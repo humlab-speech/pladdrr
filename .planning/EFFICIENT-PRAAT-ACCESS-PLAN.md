@@ -378,20 +378,43 @@ praat --run tests/generate_reference.praat test_data/ reference_values.json
 
 **Estimated scope:** ~800 LOC
 
-### Phase 4: Rcpp Modules Migration (2.0)
+### Phase 4: Rcpp Modules Migration (2.0) ✅ DONE
 
 **Goal:** 40% code reduction, better type safety
 
+**Completed:**
+- Enabled dynamic symbol registration for all 24 Rcpp Module boot functions
+- Added `R/zzz.R` with `get_module()` helper for cached module loading
+- All modules now loadable via `Rcpp::Module("xxx_module", PACKAGE = "pladdrr")`
+- Modules expose C++ classes directly (e.g., RPitch, RSound, RFormant) with lower dispatch overhead
+
 Detailed in existing `.planning/PLADDRR-2.0-RCPP-MODULES-PLAN.md`
 
-### Phase 5: Zero-Copy & SIMD Expansion
+### Phase 5: Zero-Copy & SIMD Expansion ✅ DONE
 
 **Goal:** Maximum performance
 
-**Tasks:**
-1. Zero-copy Sound sample access
-2. SIMD jitter/shimmer calculations
-3. SIMD harmonicity computation
+**Status:** Implemented 2025-12-29
+
+**Completed:**
+1. ✅ Zero-copy Sound sample access (`sound_zerocopy.cpp`)
+   - `sound_get_sample()`, `sound_set_sample()` - single sample access
+   - `sound_get_samples_range()`, `sound_set_samples_range()` - batch access with memcpy
+   - `sound_get_values_at_times()` - vectorized interpolated access
+   - `sound_get_windows()` - windowed processing for FFT/analysis
+   - `sound_info()` - metadata without sample copy
+2. ✅ In-place Sound modifications (avoid R copies)
+   - `sound_scale_inplace()`, `sound_add_inplace()`
+   - `sound_apply_gain_db_inplace()`, `sound_normalize_peak_inplace()`
+3. ✅ SIMD jitter/shimmer calculations (`voice_quality_simd.cpp`)
+   - `jitter_from_periods_simd()` - local, RAP, PPQ5, DDP metrics
+   - `shimmer_from_amplitudes_simd()` - local, dB, APQ3/5/11, DDA metrics
+   - `voice_quality_metrics_simd()` - combined batch calculation
+4. ✅ SIMD harmonicity computation (already in `autocorrelation_simd.cpp`)
+
+**Files created:**
+- `src/sound_zerocopy.cpp` (249 LOC)
+- `src/voice_quality_simd.cpp` (296 LOC)
 
 ---
 
