@@ -421,6 +421,101 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_sound_formantgrid_filter_noscale`, sound, grid)
 }
 
+#' Create an empty FormantTier
+#' @param tmin Start time
+#' @param tmax End time
+#' @return External pointer to FormantTier
+#' @keywords internal
+.formanttier_create <- function(tmin, tmax) {
+    .Call(`_pladdrr_formanttier_create`, tmin, tmax)
+}
+
+#' Create FormantTier from Formant (downsample)
+#' @param xptr External pointer to Formant
+#' @return External pointer to FormantTier
+#' @keywords internal
+.formanttier_from_formant <- function(xptr) {
+    .Call(`_pladdrr_formanttier_from_formant`, xptr)
+}
+
+#' Get FormantTier start time
+#' @param xptr External pointer to FormantTier
+#' @return Start time in seconds
+#' @keywords internal
+.formanttier_get_start_time <- function(xptr) {
+    .Call(`_pladdrr_formanttier_get_start_time`, xptr)
+}
+
+#' Get FormantTier end time
+#' @param xptr External pointer to FormantTier
+#' @return End time in seconds
+#' @keywords internal
+.formanttier_get_end_time <- function(xptr) {
+    .Call(`_pladdrr_formanttier_get_end_time`, xptr)
+}
+
+#' Get number of points in FormantTier
+#' @param xptr External pointer to FormantTier
+#' @return Number of points
+#' @keywords internal
+.formanttier_get_number_of_points <- function(xptr) {
+    .Call(`_pladdrr_formanttier_get_number_of_points`, xptr)
+}
+
+#' Get minimum number of formants
+#' @param xptr External pointer to FormantTier
+#' @return Minimum number of formants across points
+#' @keywords internal
+.formanttier_get_min_num_formants <- function(xptr) {
+    .Call(`_pladdrr_formanttier_get_min_num_formants`, xptr)
+}
+
+#' Get maximum number of formants
+#' @param xptr External pointer to FormantTier
+#' @return Maximum number of formants across points
+#' @keywords internal
+.formanttier_get_max_num_formants <- function(xptr) {
+    .Call(`_pladdrr_formanttier_get_max_num_formants`, xptr)
+}
+
+#' Get formant value at time
+#' @param xptr External pointer to FormantTier
+#' @param formant_number Formant number (1=F1, 2=F2, etc.)
+#' @param time Time in seconds
+#' @return Formant frequency in Hz
+#' @keywords internal
+.formanttier_get_value_at_time <- function(xptr, formant_number, time) {
+    .Call(`_pladdrr_formanttier_get_value_at_time`, xptr, formant_number, time)
+}
+
+#' Get formant bandwidth at time
+#' @param xptr External pointer to FormantTier
+#' @param formant_number Formant number (1=F1, 2=F2, etc.)
+#' @param time Time in seconds
+#' @return Bandwidth in Hz
+#' @keywords internal
+.formanttier_get_bandwidth_at_time <- function(xptr, formant_number, time) {
+    .Call(`_pladdrr_formanttier_get_bandwidth_at_time`, xptr, formant_number, time)
+}
+
+#' Filter Sound through FormantTier
+#' @param sound_xptr External pointer to Sound
+#' @param ft_xptr External pointer to FormantTier
+#' @return External pointer to filtered Sound
+#' @keywords internal
+.formanttier_filter_sound <- function(sound_xptr, ft_xptr) {
+    .Call(`_pladdrr_formanttier_filter_sound`, sound_xptr, ft_xptr)
+}
+
+#' Filter Sound through FormantTier (no scaling)
+#' @param sound_xptr External pointer to Sound
+#' @param ft_xptr External pointer to FormantTier
+#' @return External pointer to filtered Sound
+#' @keywords internal
+.formanttier_filter_sound_noscale <- function(sound_xptr, ft_xptr) {
+    .Call(`_pladdrr_formanttier_filter_sound_noscale`, sound_xptr, ft_xptr)
+}
+
 .harmonicity_to_sound_ac <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_pladdrr_harmonicity_from_sound_ac`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }

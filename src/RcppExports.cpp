@@ -2231,6 +2231,134 @@ RcppExport SEXP _pladdrr_sound_formantgrid_filter_noscale(SEXP soundSEXP, SEXP g
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// formanttier_create
+SEXP formanttier_create(double tmin, double tmax);
+RcppExport SEXP _pladdrr_formanttier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_create(tmin, tmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_from_formant
+SEXP formanttier_from_formant(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_from_formant(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_from_formant(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_start_time
+double formanttier_get_start_time(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_get_start_time(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_start_time(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_end_time
+double formanttier_get_end_time(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_get_end_time(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_end_time(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_number_of_points
+int formanttier_get_number_of_points(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_get_number_of_points(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_number_of_points(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_min_num_formants
+int formanttier_get_min_num_formants(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_get_min_num_formants(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_min_num_formants(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_max_num_formants
+int formanttier_get_max_num_formants(SEXP xptr);
+RcppExport SEXP _pladdrr_formanttier_get_max_num_formants(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_max_num_formants(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_value_at_time
+double formanttier_get_value_at_time(SEXP xptr, int formant_number, double time);
+RcppExport SEXP _pladdrr_formanttier_get_value_at_time(SEXP xptrSEXP, SEXP formant_numberSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_value_at_time(xptr, formant_number, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_get_bandwidth_at_time
+double formanttier_get_bandwidth_at_time(SEXP xptr, int formant_number, double time);
+RcppExport SEXP _pladdrr_formanttier_get_bandwidth_at_time(SEXP xptrSEXP, SEXP formant_numberSEXP, SEXP timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_get_bandwidth_at_time(xptr, formant_number, time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_filter_sound
+SEXP formanttier_filter_sound(SEXP sound_xptr, SEXP ft_xptr);
+RcppExport SEXP _pladdrr_formanttier_filter_sound(SEXP sound_xptrSEXP, SEXP ft_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ft_xptr(ft_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_filter_sound(sound_xptr, ft_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formanttier_filter_sound_noscale
+SEXP formanttier_filter_sound_noscale(SEXP sound_xptr, SEXP ft_xptr);
+RcppExport SEXP _pladdrr_formanttier_filter_sound_noscale(SEXP sound_xptrSEXP, SEXP ft_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ft_xptr(ft_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(formanttier_filter_sound_noscale(sound_xptr, ft_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // harmonicity_from_sound_ac
 XPtr<structHarmonicity> harmonicity_from_sound_ac(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window);
 static SEXP _pladdrr_harmonicity_from_sound_ac_try(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP silence_thresholdSEXP, SEXP periods_per_windowSEXP) {
@@ -10225,6 +10353,17 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_formantgrid_to_sound", (DL_FUNC) &_pladdrr_formantgrid_to_sound, 14},
     {"_pladdrr_sound_formantgrid_filter", (DL_FUNC) &_pladdrr_sound_formantgrid_filter, 2},
     {"_pladdrr_sound_formantgrid_filter_noscale", (DL_FUNC) &_pladdrr_sound_formantgrid_filter_noscale, 2},
+    {"_pladdrr_formanttier_create", (DL_FUNC) &_pladdrr_formanttier_create, 2},
+    {"_pladdrr_formanttier_from_formant", (DL_FUNC) &_pladdrr_formanttier_from_formant, 1},
+    {"_pladdrr_formanttier_get_start_time", (DL_FUNC) &_pladdrr_formanttier_get_start_time, 1},
+    {"_pladdrr_formanttier_get_end_time", (DL_FUNC) &_pladdrr_formanttier_get_end_time, 1},
+    {"_pladdrr_formanttier_get_number_of_points", (DL_FUNC) &_pladdrr_formanttier_get_number_of_points, 1},
+    {"_pladdrr_formanttier_get_min_num_formants", (DL_FUNC) &_pladdrr_formanttier_get_min_num_formants, 1},
+    {"_pladdrr_formanttier_get_max_num_formants", (DL_FUNC) &_pladdrr_formanttier_get_max_num_formants, 1},
+    {"_pladdrr_formanttier_get_value_at_time", (DL_FUNC) &_pladdrr_formanttier_get_value_at_time, 3},
+    {"_pladdrr_formanttier_get_bandwidth_at_time", (DL_FUNC) &_pladdrr_formanttier_get_bandwidth_at_time, 3},
+    {"_pladdrr_formanttier_filter_sound", (DL_FUNC) &_pladdrr_formanttier_filter_sound, 2},
+    {"_pladdrr_formanttier_filter_sound_noscale", (DL_FUNC) &_pladdrr_formanttier_filter_sound_noscale, 2},
     {"_pladdrr_harmonicity_from_sound_ac", (DL_FUNC) &_pladdrr_harmonicity_from_sound_ac, 5},
     {"_pladdrr_harmonicity_from_sound_cc", (DL_FUNC) &_pladdrr_harmonicity_from_sound_cc, 5},
     {"_pladdrr_harmonicity_get_value_at_time", (DL_FUNC) &_pladdrr_harmonicity_get_value_at_time, 3},

@@ -258,7 +258,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               powercepstrum_wrappers.cpp \
               cochleagram_wrappers.cpp excitation_wrappers.cpp \
               matrix_wrappers.cpp interpreter_wrappers.cpp \
-              vocaltract_wrappers.cpp longsound_wrappers.cpp \
+              vocaltract_wrappers.cpp longsound_wrappers.cpp formanttier_wrappers.cpp \
                praat.github.io/excluded_sources/Sound_files.cpp \
                praat_stubs.cpp praat_app_stubs.cpp speechsynthesizer_stubs.cpp \
                num_stubs.cpp \
