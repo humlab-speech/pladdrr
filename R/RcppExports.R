@@ -1381,6 +1381,40 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitch_to_textgrid_silences`, pitch, min_silent_dur, min_sounding_dur)
 }
 
+#' Interpolate unvoiced frames in Pitch
+#' @param pitch External pointer to Pitch
+#' @return External pointer to new Pitch with interpolated values
+#' @keywords internal
+.pitch_interpolate <- function(xptr) {
+    .Call(`_pladdrr_pitch_interpolate`, xptr)
+}
+
+#' Smooth Pitch by convolution with Gaussian
+#' @param pitch External pointer to Pitch
+#' @param bandwidth Smoothing bandwidth in Hz (typical: 10)
+#' @return External pointer to new smoothed Pitch
+#' @keywords internal
+.pitch_smooth <- function(xptr, bandwidth) {
+    .Call(`_pladdrr_pitch_smooth`, xptr, bandwidth)
+}
+
+#' Kill octave jumps in Pitch
+#' @param pitch External pointer to Pitch
+#' @return External pointer to new Pitch without octave jumps
+#' @keywords internal
+.pitch_kill_octave_jumps <- function(xptr) {
+    .Call(`_pladdrr_pitch_kill_octave_jumps`, xptr)
+}
+
+#' Subtract linear fit from Pitch
+#' @param pitch External pointer to Pitch
+#' @param unit Pitch unit: 1=Hz, 2=Hertz (log), 3=semitones, 4=mel, 5=ERB
+#' @return External pointer to new Pitch with linear fit subtracted
+#' @keywords internal
+.pitch_subtract_linear_fit <- function(xptr, unit) {
+    .Call(`_pladdrr_pitch_subtract_linear_fit`, xptr, unit)
+}
+
 .pitchtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_pitchtier_create`, tmin, tmax)
 }

@@ -775,3 +775,100 @@ Rcpp::XPtr<structTextGrid> pitch_to_textgrid_silences(
         Rcpp::stop("Failed to create silence TextGrid");
     }
 }
+
+// ==============================================================================
+// Pitch Manipulation (Phase 3)
+// ==============================================================================
+
+//' Interpolate unvoiced frames in Pitch
+//' @param pitch External pointer to Pitch
+//' @return External pointer to new Pitch with interpolated values
+//' @keywords internal
+// [[Rcpp::export(.pitch_interpolate)]]
+SEXP pitch_interpolate(SEXP xptr) {
+    Rcpp::XPtr<structPitch> pitch(xptr);
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+
+    try {
+        autoPitch result = Pitch_interpolate(pitch.get());
+        return create_xptr_from_auto<structPitch>(result);
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        Rcpp::stop("Failed to interpolate Pitch: " + error_msg);
+    }
+    return R_NilValue;
+}
+
+//' Smooth Pitch by convolution with Gaussian
+//' @param pitch External pointer to Pitch
+//' @param bandwidth Smoothing bandwidth in Hz (typical: 10)
+//' @return External pointer to new smoothed Pitch
+//' @keywords internal
+// [[Rcpp::export(.pitch_smooth)]]
+SEXP pitch_smooth(SEXP xptr, double bandwidth) {
+    Rcpp::XPtr<structPitch> pitch(xptr);
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+    if (bandwidth <= 0) Rcpp::stop("bandwidth must be > 0");
+
+    try {
+        autoPitch result = Pitch_smooth(pitch.get(), bandwidth);
+        return create_xptr_from_auto<structPitch>(result);
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        Rcpp::stop("Failed to smooth Pitch: " + error_msg);
+    }
+    return R_NilValue;
+}
+
+//' Kill octave jumps in Pitch
+//' @param pitch External pointer to Pitch
+//' @return External pointer to new Pitch without octave jumps
+//' @keywords internal
+// [[Rcpp::export(.pitch_kill_octave_jumps)]]
+SEXP pitch_kill_octave_jumps(SEXP xptr) {
+    Rcpp::XPtr<structPitch> pitch(xptr);
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+
+    try {
+        autoPitch result = Pitch_killOctaveJumps(pitch.get());
+        return create_xptr_from_auto<structPitch>(result);
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        Rcpp::stop("Failed to kill octave jumps: " + error_msg);
+    }
+    return R_NilValue;
+}
+
+//' Subtract linear fit from Pitch
+//' @param pitch External pointer to Pitch
+//' @param unit Pitch unit: 1=Hz, 2=Hertz (log), 3=semitones, 4=mel, 5=ERB
+//' @return External pointer to new Pitch with linear fit subtracted
+//' @keywords internal
+// [[Rcpp::export(.pitch_subtract_linear_fit)]]
+SEXP pitch_subtract_linear_fit(SEXP xptr, int unit) {
+    Rcpp::XPtr<structPitch> pitch(xptr);
+    if (!pitch) Rcpp::stop("Invalid Pitch pointer");
+
+    kPitch_unit pitchUnit;
+    switch (unit) {
+        case 1: pitchUnit = kPitch_unit::HERTZ; break;
+        case 2: pitchUnit = kPitch_unit::HERTZ_LOGARITHMIC; break;
+        case 3: pitchUnit = kPitch_unit::SEMITONES_1; break;
+        case 4: pitchUnit = kPitch_unit::MEL; break;
+        case 5: pitchUnit = kPitch_unit::ERB; break;
+        default: Rcpp::stop("Invalid unit: must be 1-5");
+    }
+
+    try {
+        autoPitch result = Pitch_subtractLinearFit(pitch.get(), pitchUnit);
+        return create_xptr_from_auto<structPitch>(result);
+    } catch (MelderError) {
+        std::string error_msg = Melder_peek32to8(Melder_getError());
+        Melder_clearError();
+        Rcpp::stop("Failed to subtract linear fit: " + error_msg);
+    }
+    return R_NilValue;
+}

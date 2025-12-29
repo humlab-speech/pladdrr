@@ -5241,6 +5241,52 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pitch_interpolate
+SEXP pitch_interpolate(SEXP xptr);
+RcppExport SEXP _pladdrr_pitch_interpolate(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_interpolate(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_smooth
+SEXP pitch_smooth(SEXP xptr, double bandwidth);
+RcppExport SEXP _pladdrr_pitch_smooth(SEXP xptrSEXP, SEXP bandwidthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_smooth(xptr, bandwidth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_kill_octave_jumps
+SEXP pitch_kill_octave_jumps(SEXP xptr);
+RcppExport SEXP _pladdrr_pitch_kill_octave_jumps(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_kill_octave_jumps(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_subtract_linear_fit
+SEXP pitch_subtract_linear_fit(SEXP xptr, int unit);
+RcppExport SEXP _pladdrr_pitch_subtract_linear_fit(SEXP xptrSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_subtract_linear_fit(xptr, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pitchtier_create
 SEXP pitchtier_create(double tmin, double tmax);
 RcppExport SEXP _pladdrr_pitchtier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
@@ -10547,6 +10593,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pitch_down_to_pitch_tier", (DL_FUNC) &_pladdrr_pitch_down_to_pitch_tier, 1},
     {"_pladdrr_pitch_to_textgrid_vuv", (DL_FUNC) &_pladdrr_pitch_to_textgrid_vuv, 1},
     {"_pladdrr_pitch_to_textgrid_silences", (DL_FUNC) &_pladdrr_pitch_to_textgrid_silences, 3},
+    {"_pladdrr_pitch_interpolate", (DL_FUNC) &_pladdrr_pitch_interpolate, 1},
+    {"_pladdrr_pitch_smooth", (DL_FUNC) &_pladdrr_pitch_smooth, 2},
+    {"_pladdrr_pitch_kill_octave_jumps", (DL_FUNC) &_pladdrr_pitch_kill_octave_jumps, 1},
+    {"_pladdrr_pitch_subtract_linear_fit", (DL_FUNC) &_pladdrr_pitch_subtract_linear_fit, 2},
     {"_pladdrr_pitchtier_create", (DL_FUNC) &_pladdrr_pitchtier_create, 2},
     {"_pladdrr_pitchtier_get_start_time", (DL_FUNC) &_pladdrr_pitchtier_get_start_time, 1},
     {"_pladdrr_pitchtier_get_end_time", (DL_FUNC) &_pladdrr_pitchtier_get_end_time, 1},

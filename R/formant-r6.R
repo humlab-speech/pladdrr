@@ -281,11 +281,11 @@ Formant <- R6::R6Class("Formant",
       )
       Table$new(.xptr = table_ptr)
     },
-    
+
     # ========================================================================
     # Utility methods
     # ========================================================================
-    
+
     #' @description Print method for Formant objects
     print = function() {
       cat("<Praat Formant object>\n")

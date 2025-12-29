@@ -466,7 +466,66 @@ Pitch <- R6::R6Class("Pitch",
       .pitch_save(private$ptr, as.character(path))
       invisible(self)
     },
-    
+
+    # ========================================================================
+    # Pitch Manipulation (Phase 3)
+    # ========================================================================
+
+    #' @description
+    #' Interpolate unvoiced frames
+    #' @return New Pitch object with interpolated values in unvoiced frames
+    #' @details
+    #' Fills in pitch values for unvoiced frames by linear interpolation
+
+    #' between voiced frames. No extrapolation beyond first/last voiced frame.
+    interpolate = function() {
+      private$check_valid()
+      ptr <- .pitch_interpolate(private$ptr)
+      Pitch$new(.xptr = ptr)
+    },
+
+    #' @description
+    #' Smooth pitch by Gaussian convolution
+    #' @param bandwidth Smoothing bandwidth in Hz (default 10)
+    #' @return New Pitch object with smoothed values
+    #' @details
+    #' Smooths pitch contour by convolution with a Gaussian curve.
+    #' Higher bandwidth = more smoothing. Typical values: 5-20 Hz.
+    smooth = function(bandwidth = 10) {
+      private$check_valid()
+      ptr <- .pitch_smooth(private$ptr, bandwidth)
+      Pitch$new(.xptr = ptr)
+    },
+
+    #' @description
+    #' Kill octave jumps
+    #' @return New Pitch object without octave jumps
+    #' @details
+    #' Adjusts pitch values so no step exceeds half an octave.
+    #' Useful for cleaning up pitch tracks with tracking errors.
+    kill_octave_jumps = function() {
+      private$check_valid()
+      ptr <- .pitch_kill_octave_jumps(private$ptr)
+      Pitch$new(.xptr = ptr)
+    },
+
+    #' @description
+    #' Subtract linear fit from pitch
+    #' @param unit Unit for linear fit: "hertz", "log_hertz", "semitones", "mel", "erb"
+    #' @return New Pitch object with linear trend removed
+    #' @details
+    #' Removes linear declination/inclination from pitch contour.
+    #' Useful for isolating local pitch movements from global trends.
+    subtract_linear_fit = function(unit = "hertz") {
+      private$check_valid()
+      unit_map <- c(hertz = 1L, log_hertz = 2L, semitones = 3L, mel = 4L, erb = 5L)
+      if (!unit %in% names(unit_map)) {
+        stop("unit must be one of: ", paste(names(unit_map), collapse = ", "))
+      }
+      ptr <- .pitch_subtract_linear_fit(private$ptr, unit_map[[unit]])
+      Pitch$new(.xptr = ptr)
+    },
+
     # ========================================================================
     # Print method
     # ========================================================================
