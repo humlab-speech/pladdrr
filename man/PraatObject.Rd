@@ -23,6 +23,7 @@ Derived classes (Sound, Pitch, Formant, etc.) inherit from this base class.
 \item \href{#method-PraatObject-new}{\code{PraatObject$new()}}
 \item \href{#method-PraatObject-is_valid}{\code{PraatObject$is_valid()}}
 \item \href{#method-PraatObject-get_class_name}{\code{PraatObject$get_class_name()}}
+\item \href{#method-PraatObject-get_ptr}{\code{PraatObject$get_ptr()}}
 \item \href{#method-PraatObject-print}{\code{PraatObject$print()}}
 \item \href{#method-PraatObject-clone}{\code{PraatObject$clone()}}
 }
@@ -68,6 +69,19 @@ Get the class name of the Praat object
 
 \subsection{Returns}{
 character Class name
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatObject-get_ptr"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatObject-get_ptr}{}}}
+\subsection{Method \code{get_ptr()}}{
+Get the raw external pointer (for advanced use/interpreter bridge)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatObject$get_ptr()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+External pointer to the underlying C++ object
 }
 }
 \if{html}{\out{<hr>}}

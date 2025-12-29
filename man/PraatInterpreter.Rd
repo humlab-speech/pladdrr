@@ -11,6 +11,7 @@ Praat Script Interpreter
 \details{
 R6 class for executing Praat scripts with persistent interpreter state.
 Allows running multiple scripts while maintaining variables and state between runs.
+Provides bidirectional object transfer between R and Praat's object list.
 }
 \examples{
 
@@ -56,6 +57,30 @@ interp <- PraatInterpreter$new()
 result <- interp$eval("2 + 2")  # Returns 4
 result <- interp$eval("\"hello\"")  # Returns "hello"
 }
+
+## ------------------------------------------------
+## Method `PraatInterpreter$get_object`
+## ------------------------------------------------
+
+\dontrun{
+interp <- PraatInterpreter$new()
+interp$run('Create Sound from formula: "test", 1, 0, 1, 44100, "sin(2*pi*440*x)"')
+sound <- interp$get_object("test", "Sound")
+sound$get_total_duration()  # Use as normal R6 object
+}
+
+## ------------------------------------------------
+## Method `PraatInterpreter$set_object`
+## ------------------------------------------------
+
+\dontrun{
+interp <- PraatInterpreter$new()
+sound <- Sound$create_tone(440, duration = 1.0)
+interp$set_object("myTone", sound)
+# Now you can use it in Praat scripts:
+interp$run('selectObject: "Sound myTone"
+            Filter (one formant): 1000, 100')
+}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -67,6 +92,13 @@ result <- interp$eval("\"hello\"")  # Returns "hello"
 \item \href{#method-PraatInterpreter-eval}{\code{PraatInterpreter$eval()}}
 \item \href{#method-PraatInterpreter-object_count}{\code{PraatInterpreter$object_count()}}
 \item \href{#method-PraatInterpreter-list_objects}{\code{PraatInterpreter$list_objects()}}
+\item \href{#method-PraatInterpreter-get_object}{\code{PraatInterpreter$get_object()}}
+\item \href{#method-PraatInterpreter-get_object_by_id}{\code{PraatInterpreter$get_object_by_id()}}
+\item \href{#method-PraatInterpreter-set_object}{\code{PraatInterpreter$set_object()}}
+\item \href{#method-PraatInterpreter-remove_object}{\code{PraatInterpreter$remove_object()}}
+\item \href{#method-PraatInterpreter-remove_object_by_id}{\code{PraatInterpreter$remove_object_by_id()}}
+\item \href{#method-PraatInterpreter-select_object}{\code{PraatInterpreter$select_object()}}
+\item \href{#method-PraatInterpreter-clear_objects}{\code{PraatInterpreter$clear_objects()}}
 \item \href{#method-PraatInterpreter-print}{\code{PraatInterpreter$print()}}
 \item \href{#method-PraatInterpreter-clone}{\code{PraatInterpreter$clone()}}
 }
@@ -242,6 +274,173 @@ List all objects in Praat object list
 
 \subsection{Returns}{
 Data frame with columns: id, name, class, selected
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-get_object"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object}{}}}
+\subsection{Method \code{get_object()}}{
+Get Praat object from interpreter's object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$get_object(name, type = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Object name (e.g., "Sound mySound" or just "mySound")}
+
+\item{\code{type}}{Expected type (e.g., "Sound"). If NULL, accepts any type.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+R6 object of the appropriate type
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+interp <- PraatInterpreter$new()
+interp$run('Create Sound from formula: "test", 1, 0, 1, 44100, "sin(2*pi*440*x)"')
+sound <- interp$get_object("test", "Sound")
+sound$get_total_duration()  # Use as normal R6 object
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-get_object_by_id"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object_by_id}{}}}
+\subsection{Method \code{get_object_by_id()}}{
+Get Praat object by ID from interpreter's object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$get_object_by_id(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{Object ID number}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+R6 object of the appropriate type
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-set_object"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-set_object}{}}}
+\subsection{Method \code{set_object()}}{
+Add R object to Praat's object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$set_object(name, object)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Name for the object in Praat's list (without type prefix)}
+
+\item{\code{object}}{R6 Praat object (Sound, Pitch, etc.)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+ID of the newly added object (invisibly)
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+interp <- PraatInterpreter$new()
+sound <- Sound$create_tone(440, duration = 1.0)
+interp$set_object("myTone", sound)
+# Now you can use it in Praat scripts:
+interp$run('selectObject: "Sound myTone"
+            Filter (one formant): 1000, 100')
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-remove_object"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object}{}}}
+\subsection{Method \code{remove_object()}}{
+Remove object from Praat's object list by name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$remove_object(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Object name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly), for method chaining
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-remove_object_by_id"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object_by_id}{}}}
+\subsection{Method \code{remove_object_by_id()}}{
+Remove object from Praat's object list by ID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$remove_object_by_id(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{Object ID}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly), for method chaining
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-select_object"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-select_object}{}}}
+\subsection{Method \code{select_object()}}{
+Select object in Praat's object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$select_object(name, add = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Object name}
+
+\item{\code{add}}{If TRUE, add to selection; if FALSE, replace selection}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self (invisibly), for method chaining
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PraatInterpreter-clear_objects"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-clear_objects}{}}}
+\subsection{Method \code{clear_objects()}}{
+Clear all objects from Praat's object list
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$clear_objects()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self (invisibly), for method chaining
 }
 }
 \if{html}{\out{<hr>}}

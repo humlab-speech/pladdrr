@@ -9466,6 +9466,135 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vocaltract_create
+SEXP vocaltract_create(int nx, double dx);
+RcppExport SEXP _pladdrr_vocaltract_create(SEXP nxSEXP, SEXP dxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type nx(nxSEXP);
+    Rcpp::traits::input_parameter< double >::type dx(dxSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_create(nx, dx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_create_from_phone
+SEXP vocaltract_create_from_phone(std::string phone);
+RcppExport SEXP _pladdrr_vocaltract_create_from_phone(SEXP phoneSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type phone(phoneSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_create_from_phone(phone));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_get_length
+double vocaltract_get_length(SEXP xptr);
+RcppExport SEXP _pladdrr_vocaltract_get_length(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_get_length(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_get_number_of_sections
+int vocaltract_get_number_of_sections(SEXP xptr);
+RcppExport SEXP _pladdrr_vocaltract_get_number_of_sections(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_get_number_of_sections(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_get_section_length
+double vocaltract_get_section_length(SEXP xptr);
+RcppExport SEXP _pladdrr_vocaltract_get_section_length(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_get_section_length(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_get_area
+double vocaltract_get_area(SEXP xptr, int section);
+RcppExport SEXP _pladdrr_vocaltract_get_area(SEXP xptrSEXP, SEXP sectionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type section(sectionSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_get_area(xptr, section));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_set_area
+void vocaltract_set_area(SEXP xptr, int section, double area);
+RcppExport SEXP _pladdrr_vocaltract_set_area(SEXP xptrSEXP, SEXP sectionSEXP, SEXP areaSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type section(sectionSEXP);
+    Rcpp::traits::input_parameter< double >::type area(areaSEXP);
+    vocaltract_set_area(xptr, section, area);
+    return R_NilValue;
+END_RCPP
+}
+// vocaltract_get_areas
+NumericVector vocaltract_get_areas(SEXP xptr);
+RcppExport SEXP _pladdrr_vocaltract_get_areas(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_get_areas(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_set_areas
+void vocaltract_set_areas(SEXP xptr, NumericVector areas);
+RcppExport SEXP _pladdrr_vocaltract_set_areas(SEXP xptrSEXP, SEXP areasSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type areas(areasSEXP);
+    vocaltract_set_areas(xptr, areas);
+    return R_NilValue;
+END_RCPP
+}
+// vocaltract_to_spectrum
+SEXP vocaltract_to_spectrum(SEXP xptr, int number_of_frequencies, double maximum_frequency, double glottal_damping, bool radiation_damping, bool internal_damping);
+RcppExport SEXP _pladdrr_vocaltract_to_spectrum(SEXP xptrSEXP, SEXP number_of_frequenciesSEXP, SEXP maximum_frequencySEXP, SEXP glottal_dampingSEXP, SEXP radiation_dampingSEXP, SEXP internal_dampingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type number_of_frequencies(number_of_frequenciesSEXP);
+    Rcpp::traits::input_parameter< double >::type maximum_frequency(maximum_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type glottal_damping(glottal_dampingSEXP);
+    Rcpp::traits::input_parameter< bool >::type radiation_damping(radiation_dampingSEXP);
+    Rcpp::traits::input_parameter< bool >::type internal_damping(internal_dampingSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_to_spectrum(xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vocaltract_to_matrix
+SEXP vocaltract_to_matrix(SEXP xptr);
+RcppExport SEXP _pladdrr_vocaltract_to_matrix(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(vocaltract_to_matrix(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // apply_hamming_window_simd
 NumericVector apply_hamming_window_simd(NumericVector data);
 RcppExport SEXP _pladdrr_apply_hamming_window_simd(SEXP dataSEXP) {
@@ -10357,6 +10486,17 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_to_table", (DL_FUNC) &_pladdrr_textgrid_to_table, 5},
     {"_pladdrr_textgrid_sound_extract_intervals_where", (DL_FUNC) &_pladdrr_textgrid_sound_extract_intervals_where, 6},
     {"_pladdrr_praat_error_to_r", (DL_FUNC) &_pladdrr_praat_error_to_r, 1},
+    {"_pladdrr_vocaltract_create", (DL_FUNC) &_pladdrr_vocaltract_create, 2},
+    {"_pladdrr_vocaltract_create_from_phone", (DL_FUNC) &_pladdrr_vocaltract_create_from_phone, 1},
+    {"_pladdrr_vocaltract_get_length", (DL_FUNC) &_pladdrr_vocaltract_get_length, 1},
+    {"_pladdrr_vocaltract_get_number_of_sections", (DL_FUNC) &_pladdrr_vocaltract_get_number_of_sections, 1},
+    {"_pladdrr_vocaltract_get_section_length", (DL_FUNC) &_pladdrr_vocaltract_get_section_length, 1},
+    {"_pladdrr_vocaltract_get_area", (DL_FUNC) &_pladdrr_vocaltract_get_area, 2},
+    {"_pladdrr_vocaltract_set_area", (DL_FUNC) &_pladdrr_vocaltract_set_area, 3},
+    {"_pladdrr_vocaltract_get_areas", (DL_FUNC) &_pladdrr_vocaltract_get_areas, 1},
+    {"_pladdrr_vocaltract_set_areas", (DL_FUNC) &_pladdrr_vocaltract_set_areas, 2},
+    {"_pladdrr_vocaltract_to_spectrum", (DL_FUNC) &_pladdrr_vocaltract_to_spectrum, 6},
+    {"_pladdrr_vocaltract_to_matrix", (DL_FUNC) &_pladdrr_vocaltract_to_matrix, 1},
     {"_pladdrr_apply_hamming_window_simd", (DL_FUNC) &_pladdrr_apply_hamming_window_simd, 1},
     {"_pladdrr_apply_hanning_window_simd", (DL_FUNC) &_pladdrr_apply_hanning_window_simd, 1},
     {"_pladdrr_apply_gaussian_window_simd", (DL_FUNC) &_pladdrr_apply_gaussian_window_simd, 2},

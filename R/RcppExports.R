@@ -2508,6 +2508,102 @@ praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_pladdrr_praat_error_to_r`, error_msg))
 }
 
+#' Create a VocalTract with specified sections
+#' @param nx Number of sections
+#' @param dx Section length in metres
+#' @return External pointer to VocalTract
+#' @keywords internal
+.vocaltract_create <- function(nx, dx) {
+    .Call(`_pladdrr_vocaltract_create`, nx, dx)
+}
+
+#' Create VocalTract from phone specification
+#' @param phone Phone name (a, e, i, o, u, y1, y2, y3, jery, p, t, k, x, pa, ta, ka, pi, ti, ki, pu, tu, ku)
+#' @return External pointer to VocalTract
+#' @keywords internal
+.vocaltract_create_from_phone <- function(phone) {
+    .Call(`_pladdrr_vocaltract_create_from_phone`, phone)
+}
+
+#' Get VocalTract total length
+#' @param xptr External pointer to VocalTract
+#' @return Total length in metres
+#' @keywords internal
+.vocaltract_get_length <- function(xptr) {
+    .Call(`_pladdrr_vocaltract_get_length`, xptr)
+}
+
+#' Get number of sections
+#' @param xptr External pointer to VocalTract
+#' @return Number of sections
+#' @keywords internal
+.vocaltract_get_number_of_sections <- function(xptr) {
+    .Call(`_pladdrr_vocaltract_get_number_of_sections`, xptr)
+}
+
+#' Get section length
+#' @param xptr External pointer to VocalTract
+#' @return Section length in metres
+#' @keywords internal
+.vocaltract_get_section_length <- function(xptr) {
+    .Call(`_pladdrr_vocaltract_get_section_length`, xptr)
+}
+
+#' Get area at section
+#' @param xptr External pointer to VocalTract
+#' @param section Section index (1-based)
+#' @return Area in square metres
+#' @keywords internal
+.vocaltract_get_area <- function(xptr, section) {
+    .Call(`_pladdrr_vocaltract_get_area`, xptr, section)
+}
+
+#' Set area at section
+#' @param xptr External pointer to VocalTract
+#' @param section Section index (1-based)
+#' @param area Area in square metres
+#' @keywords internal
+.vocaltract_set_area <- function(xptr, section, area) {
+    invisible(.Call(`_pladdrr_vocaltract_set_area`, xptr, section, area))
+}
+
+#' Get all areas as vector
+#' @param xptr External pointer to VocalTract
+#' @return Numeric vector of areas
+#' @keywords internal
+.vocaltract_get_areas <- function(xptr) {
+    .Call(`_pladdrr_vocaltract_get_areas`, xptr)
+}
+
+#' Set all areas from vector
+#' @param xptr External pointer to VocalTract
+#' @param areas Numeric vector of areas
+#' @keywords internal
+.vocaltract_set_areas <- function(xptr, areas) {
+    invisible(.Call(`_pladdrr_vocaltract_set_areas`, xptr, areas))
+}
+
+#' Convert VocalTract to Spectrum
+#' @param xptr External pointer to VocalTract
+#' @param number_of_frequencies Number of frequency bins
+#' @param maximum_frequency Maximum frequency in Hz
+#' @param glottal_damping Glottal damping coefficient
+#' @param radiation_damping Include radiation damping
+#' @param internal_damping Include internal damping
+#' @return External pointer to Spectrum
+#' @keywords internal
+.vocaltract_to_spectrum <- function(xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping) {
+    .Call(`_pladdrr_vocaltract_to_spectrum`, xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping)
+}
+
+#' Convert VocalTract to Matrix
+#' @param xptr External pointer to VocalTract
+#' @return External pointer to Matrix
+#' @keywords internal
+.vocaltract_to_matrix <- function(xptr) {
+    .Call(`_pladdrr_vocaltract_to_matrix`, xptr)
+}
+
 .apply_hamming_window_simd <- function(data) {
     .Call(`_pladdrr_apply_hamming_window_simd`, data)
 }
