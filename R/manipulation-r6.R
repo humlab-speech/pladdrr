@@ -109,7 +109,7 @@ Manipulation <- R6::R6Class(
     #' @return DurationTier object
     extract_duration_tier = function() {
       tier_ptr <- .manipulation_extract_duration_tier(private$ptr)
-      DurationTier$new(.xptr = tier_ptr)
+      DurationTier(.xptr = tier_ptr)
     },
     
     #' @description Extract PointProcess (pulse markers)

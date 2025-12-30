@@ -1,7 +1,6 @@
 #' @title Praat DurationTier Object
 #' @description
-#' R6 class representing a Praat DurationTier object. A DurationTier is a time-stamped
-#' sequence of relative duration targets used for duration manipulation and speech synthesis.
+#' Praat DurationTier object with direct C++ module binding for duration manipulation.
 #'
 #' @details
 #' DurationTiers are used in conjunction with Manipulation objects to modify the
@@ -10,190 +9,83 @@
 #' - 2.0 = half speed (doubled duration)
 #' - 0.5 = double speed (halved duration)
 #'
-#' ## Creating DurationTier Objects
-#'
-#' - `DurationTier$new(tmin, tmax)` - Create empty DurationTier
-#'
-#' ## Querying
-#'
-#' - `$get_number_of_points()` - Number of duration points
-#' - `$get_value_at_time(time)` - Interpolated duration factor at time
-#' - `$get_value_at_index(index)` - Duration factor of specific point
-#' - `$get_time_from_index(index)` - Time of specific point
-#'
-#' ## Modification
-#'
-#' - `$add_point(time, value)` - Add duration point (relative factor)
-#' - `$remove_point(index)` - Remove point
-#'
-#' ## Export
-#'
-#' - `$as_data_frame()` - Convert to data frame
-#' - `$save(path)` - Write to file
-#'
-#' @examples
-#' \dontrun{
-#' # Create duration tier
-#' dur_tier <- DurationTier$new(0, 3)
-#'
-#' # Add duration modifications
-#' dur_tier$add_point(0.5, 1.5)  # Slow down at 0.5s (1.5x duration)
-#' dur_tier$add_point(1.5, 0.8)  # Speed up at 1.5s (0.8x duration)
-#' dur_tier$add_point(2.5, 1.0)  # Normal speed at 2.5s
-#'
-#' # Query
-#' factor_at_1s <- dur_tier$get_value_at_time(1.0)
-#'
-#' # Export
-#' df <- dur_tier$as_data_frame()
-#' dur_tier$save("modified.DurationTier")
-#' }
-#'
 #' @export
-DurationTier <- R6::R6Class(
-  "DurationTier",
-  inherit = PraatObject,
+DurationTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   
-  public = list(
+  if (!is.null(.xptr)) {
+    ptr <- .xptr
+  } else if (!is.null(tmin) && !is.null(tmax)) {
+    ptr <- .durationtier_create(as.numeric(tmin), as.numeric(tmax))
+  } else {
+    stop("Must provide either (tmin, tmax) or .xptr")
+  }
+  
+  tier_mod <- get_module("durationtier_module")
+  cpp_obj <- tier_mod$RDurationTier$new(ptr)
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = ptr,
     
-    #' @description
-    #' Create a DurationTier object
-    #' @param tmin Start time (seconds)
-    #' @param tmax End time (seconds)
-    #' @param .xptr Internal use only - external pointer
-    #' @return A new DurationTier object
-    initialize = function(tmin = NULL, tmax = NULL, .xptr = NULL) {
-      if (!is.null(.xptr)) {
-        super$initialize(.xptr)
-      } else if (!is.null(tmin) && !is.null(tmax)) {
-        ptr <- .durationtier_create(as.numeric(tmin), as.numeric(tmax))
-        super$initialize(ptr)
-      } else {
-        stop("Must provide either (tmin, tmax) or .xptr")
-      }
+    # Query
+    get_start_time = function() cpp_obj$get_xmin(),
+    get_end_time = function() cpp_obj$get_xmax(),
+    get_number_of_points = function() cpp_obj$get_number_of_points(),
+    get_time_from_index = function(index) cpp_obj$get_time(as.integer(index)),
+    get_value_at_index = function(index) cpp_obj$get_value(as.integer(index)),
+    get_value_at_time = function(time) cpp_obj$get_value_at_time(as.numeric(time)),
+    get_mean = function(tmin = NULL, tmax = NULL) {
+      if (is.null(tmin)) tmin <- cpp_obj$get_xmin()
+      if (is.null(tmax)) tmax <- cpp_obj$get_xmax()
+      cpp_obj$get_mean_curve(as.numeric(tmin), as.numeric(tmax))
     },
     
-    # ========================================================================
-    # Query Methods
-    # ========================================================================
-    
-    #' @description Get start time
-    #' @return Start time in seconds
-    get_start_time = function() {
-      .durationtier_get_start_time(private$ptr)
-    },
-    
-    #' @description Get end time
-    #' @return End time in seconds
-    get_end_time = function() {
-      .durationtier_get_end_time(private$ptr)
-    },
-    
-    #' @description Get number of duration points
-    #' @return Number of points
-    get_number_of_points = function() {
-      .durationtier_get_number_of_points(private$ptr)
-    },
-    
-    #' @description Get time of specific point
-    #' @param index Point index (1-based)
-    #' @return Time in seconds
-    get_time_from_index = function(index) {
-      .durationtier_get_time_from_index(private$ptr, as.integer(index))
-    },
-    
-    #' @description Get duration factor of specific point
-    #' @param index Point index (1-based)
-    #' @return Duration multiplication factor
-    get_value_at_index = function(index) {
-      .durationtier_get_value_at_index(private$ptr, as.integer(index))
-    },
-    
-    #' @description Get interpolated duration factor at time
-    #' @param time Time in seconds
-    #' @return Duration multiplication factor (1.0 if undefined)
-    get_value_at_time = function(time) {
-      .durationtier_get_value_at_time(private$ptr, as.numeric(time))
-    },
-    
-    # ========================================================================
-    # Modification Methods
-    # ========================================================================
-    
-    #' @description Add a duration point
-    #' @param time Time in seconds
-    #' @param value Duration multiplication factor
-    #' @return Self (invisibly) for method chaining
+    # Modification
     add_point = function(time, value) {
-      .durationtier_add_point(private$ptr, as.numeric(time), as.numeric(value))
-      invisible(self)
+      cpp_obj$add_point(as.numeric(time), as.numeric(value))
+      invisible(obj)
     },
-    
-    #' @description Remove a point
-    #' @param index Point index (1-based)
-    #' @return Self (invisibly) for method chaining
     remove_point = function(index) {
-      .durationtier_remove_point(private$ptr, as.integer(index))
-      invisible(self)
+      cpp_obj$remove_point(as.integer(index))
+      invisible(obj)
     },
     
-    # ========================================================================
-    # Export Methods
-    # ========================================================================
-    
-    #' @description Convert to data frame
-    #' @return Data frame with columns: time, duration_factor
+    # Export
     as_data_frame = function() {
-      n_points <- self$get_number_of_points()
+      n_points <- cpp_obj$get_number_of_points()
       if (n_points == 0) {
         return(data.frame(time = numeric(0), duration_factor = numeric(0)))
       }
-      
       times <- numeric(n_points)
-      factors <- numeric(n_points)
-      
+      values <- numeric(n_points)
       for (i in seq_len(n_points)) {
-        times[i] <- self$get_time_from_index(i)
-        factors[i] <- self$get_value_at_index(i)
+        times[i] <- cpp_obj$get_time(i)
+        values[i] <- cpp_obj$get_value(i)
       }
-      
-      data.frame(time = times, duration_factor = factors)
+      data.frame(time = times, duration_factor = values)
     },
-    
-    #' @description Save to file
-    #' @param path Output file path
-    #' @return Self (invisibly)
     save = function(path) {
-      .durationtier_save(private$ptr, as.character(path))
-      invisible(self)
+      .durationtier_save(.xptr, as.character(path))
+      invisible(obj)
     },
     
-    # ========================================================================
-    # Print Method
-    # ========================================================================
+    # Utility
+    get_xptr = function() .xptr,
     
-    #' @description Print duration tier information
+    # Print
     print = function() {
       cat("<Praat DurationTier>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", 
-                  self$get_start_time(), self$get_end_time()))
-      n_points <- self$get_number_of_points()
-      cat(sprintf("  Number of points: %d\n", n_points))
-      invisible(self)
+      cat(sprintf("  Time domain: %.3f to %.3f s\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
+      cat(sprintf("  Number of points: %d\n", cpp_obj$get_number_of_points()))
+      invisible(obj)
     }
-  ),
+  ), class = c("DurationTier", "PraatObject"))
   
-  # ========================================================================
-  # Active Bindings
-  # ========================================================================
-  active = list(
-    #' @field tmin Start time (read-only)
-    tmin = function() self$get_start_time(),
-    
-    #' @field tmax End time (read-only)
-    tmax = function() self$get_end_time(),
-    
-    #' @field n_points Number of points (read-only)
-    n_points = function() self$get_number_of_points()
-  )
-)
+  obj
+}
+
+#' @export
+print.DurationTier <- function(x, ...) x$print()
+
+#' @export
+as.data.frame.DurationTier <- function(x, ...) x$as_data_frame()

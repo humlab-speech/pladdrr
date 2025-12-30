@@ -112,9 +112,9 @@ Electroglottogram <- R6::R6Class(
       )
       # Convert external pointers to AmplitudeTier objects
       list(
-        levels = AmplitudeTier$new(.xptr = result_list$levels),
-        peaks = AmplitudeTier$new(.xptr = result_list$peaks),
-        valleys = AmplitudeTier$new(.xptr = result_list$valleys)
+        levels = AmplitudeTier(.xptr = result_list$levels),
+        peaks = AmplitudeTier(.xptr = result_list$peaks),
+        valleys = AmplitudeTier(.xptr = result_list$valleys)
       )
     },
 
