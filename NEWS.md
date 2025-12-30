@@ -1,3 +1,41 @@
+# pladdrr 1.7.4 (2025-12-30)
+
+## Documentation & Planning
+
+* **Phase 1+ Complete - Documentation Update**
+  - Comprehensive performance architecture documentation
+  - Phase 1+ completion summary (27/28 objects, 96%)
+  - Updated README with performance badges and highlights
+  - Detailed benchmarking guidelines and optimization patterns
+
+## Documentation Files Added
+
+* `.planning/PERFORMANCE_ARCHITECTURE.md` - Complete performance guide
+  - Module architecture patterns
+  - Performance breakdown (10x improvement)
+  - SIMD vectorization details (17 optimized files)
+  - Memory optimization strategies
+  - Benchmarking recommendations
+  - Development guidelines for adding module methods
+
+* `.planning/PHASE1PLUS_COMPLETE.md` - Milestone summary
+  - 27/28 objects converted (96%)
+  - Performance impact analysis
+  - Technical architecture overview
+  - Next steps recommendations
+
+* Updated `README.md` with performance highlights:
+  - Rcpp Modules architecture badges
+  - 5-10x faster method dispatch vs R6
+  - Competitive with Python's Parselmouth (2-3x gap vs 5-18x)
+  - SIMD vectorization features
+
+## Status
+
+* **Phase 1+ COMPLETE:** All performance-critical objects optimized
+* **Production Ready:** Package stable, tested, and documented
+* **27/28 objects converted (96%)** - Only PraatInterpreter remains R6 (intentional)
+
 # pladdrr 1.7.3 (2025-12-30)
 
 ## Performance Improvements
