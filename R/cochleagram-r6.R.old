@@ -126,7 +126,7 @@ Cochleagram <- R6::R6Class("Cochleagram",
     to_excitation = function(time) {
       stopifnot("time must be numeric" = is.numeric(time))
       xptr <- .cochleagram_to_excitation(private$ptr, time)
-      Excitation(.xptr = xptr)
+      Excitation$new(xptr)
     },
     
     #' @description

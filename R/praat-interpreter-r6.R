@@ -35,7 +35,7 @@
     "DurationTier" = DurationTier(.xptr = xptr),
     "AmplitudeTier" = AmplitudeTier(.xptr = xptr),
     "Cochleagram" = Cochleagram$new(.xptr = xptr),
-    "Excitation" = Excitation$new(.xptr = xptr),
+    "Excitation" = Excitation(.xptr = xptr),
     "PowerCepstrum" = PowerCepstrum$new(.xptr = xptr),
     "Cepstrum" = Cepstrum(.xptr = xptr),
     "VocalTract" = VocalTract$new(.xptr = xptr),

@@ -196,7 +196,7 @@ Spectrum <- function(.xptr = NULL) {
         "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
       )
       ptr <- .spectrum_to_excitation(.xptr, as.numeric(erb_density))
-      Excitation$new(.xptr = ptr)
+      Excitation(.xptr = ptr)
     },
     
     # Export
