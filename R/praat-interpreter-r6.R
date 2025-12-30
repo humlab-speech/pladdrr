@@ -38,7 +38,7 @@
     "Excitation" = Excitation(.xptr = xptr),
     "PowerCepstrum" = PowerCepstrum(.xptr = xptr),
     "Cepstrum" = Cepstrum(.xptr = xptr),
-    "VocalTract" = VocalTract$new(.xptr = xptr),
+    "VocalTract" = VocalTract(.xptr = xptr),
     "LongSound" = LongSound$new(.xptr = xptr),
     "FormantTier" = FormantTier(.xptr = xptr),
     {
