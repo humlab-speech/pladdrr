@@ -115,7 +115,7 @@ MELDER_SRC = praat.github.io/melder/melder.cpp praat.github.io/melder/melder_all
              praat.github.io/melder/melder_app.cpp praat.github.io/melder/complex.cpp praat.github.io/melder/melder_trust.cpp \
              praat.github.io/melder/melder_audiofiles.cpp
 
-# Sys sources
+# Sys sources (uiform_libmode.cpp provides UiForm_call/UiForm_parseString for script argument parsing)
 SYS_SRC = praat.github.io/sys/Thing.cpp praat.github.io/sys/Data.cpp praat.github.io/sys/Simple.cpp praat.github.io/sys/Collection.cpp \
           praat.github.io/sys/Strings.cpp praat.github.io/sys/Formula.cpp praat.github.io/sys/Interpreter.cpp praat.github.io/sys/Script.cpp \
           praat.github.io/sys/ManPage.cpp praat.github.io/sys/ManPages.cpp praat.github.io/sys/praat.cpp praat.github.io/sys/praat_script.cpp
@@ -245,6 +245,9 @@ MP3_SRC = praat/external/mp3/mp3.cpp \
           praat/external/mp3/mad_timer.c \
           praat/external/mp3/mad_version.c
 
+# Action dispatch (library-mode implementation)
+ACTION_SRC = praat_actions_libmode.cpp
+
 # Wrapper sources
 WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp harmonicity_wrappers.cpp \
@@ -265,7 +268,7 @@ WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp pitch_wrappers.cpp \
                graphics_stubs_comprehensive.cpp uiform_stubs.cpp \
               svd_stubs.cpp glpk_stubs.cpp \
               dtw_stubs.cpp eigen_sscp_stubs.cpp configuration_stubs.cpp table_stubs.cpp \
-              area_stubs.cpp \
+              area_stubs.cpp uiform_libmode.cpp \
               sound_create_gaussian.cpp \
               r_lapack_wrapper.cpp \
               utils.cpp RcppExports.cpp
@@ -295,7 +298,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp
 
 # Object files
 OBJECTS = $(SOURCES:.cpp=.o)

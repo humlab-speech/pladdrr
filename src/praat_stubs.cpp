@@ -48,9 +48,7 @@ void praat_selectAll () {
 }
 
 // Praat action/command stubs
-void praat_doAction (conststring32, integer, Stackel, Interpreter) {
-    // No-op in library mode
-}
+// REMOVED: praat_doAction - now provided by praat_actions.cpp
 
 void praat_doCommand (conststring32, integer, Stackel, Interpreter) {
     // No-op in library mode
@@ -213,9 +211,7 @@ void praat_removeObject (integer) {
     Melder_throw (U"Object removal not available in library mode.");
 }
 
-void praat_doMenuCommand (conststring32, integer, Stackel, Interpreter) {
-    Melder_throw (U"Menu commands not available in library mode.");
-}
+// REMOVED: praat_doMenuCommand - now provided by praat_menuCommands.cpp
 
 void Editor_doMenuCommand (Editor, conststring32, integer, Stackel, conststring32, Interpreter) {
     Melder_throw (U"Editor menu commands not available in library mode.");
@@ -415,37 +411,7 @@ void manual_voice_init (structManPages *) {
     // No-op - manual pages not needed
 }
 
-void praat_addAction1_ (structClassInfo *, long, conststring32, conststring32, unsigned int,
-                       void (*)(structUiForm*, long, structStackel*, conststring32, 
-                               structInterpreter*, conststring32, bool, void*, structEditor*),
-                       conststring32) {
-    // No-op - menu actions not needed in library mode
-}
-
-void praat_addAction2_ (structClassInfo *, long, structClassInfo *, long, 
-                       conststring32, conststring32, unsigned int,
-                       void (*)(structUiForm*, long, structStackel*, conststring32, 
-                               structInterpreter*, conststring32, bool, void*, structEditor*),
-                       conststring32) {
-    // No-op - menu actions not needed in library mode
-}
-
-void praat_addAction3_ (structClassInfo *, long, structClassInfo *, long, structClassInfo *, long,
-                       conststring32, conststring32, unsigned int,
-                       void (*)(structUiForm*, long, structStackel*, conststring32, 
-                               structInterpreter*, conststring32, bool, void*, structEditor*),
-                       conststring32) {
-    // No-op - menu actions not needed
-}
-
-void praat_addAction4_ (structClassInfo *, long, structClassInfo *, long, 
-                       structClassInfo *, long, structClassInfo *, long,
-                       conststring32, conststring32, unsigned int,
-                       void (*)(structUiForm*, long, structStackel*, conststring32, 
-                               structInterpreter*, conststring32, bool, void*, structEditor*),
-                       conststring32) {
-    // No-op - menu actions not needed
-}
+// REMOVED: praat_addAction1_, praat_addAction2_, praat_addAction3_, praat_addAction4_ - now in praat_actions.cpp
 
 void manual_Manual_init (structManPages *) {
     // No-op - manual pages not needed

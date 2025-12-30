@@ -34,8 +34,7 @@ void Printer_prefs () { /* No-op */ }
 
 // App control
 // REMOVED: praat_show() - already in num_stubs.cpp
-void praat_background () { /* No-op */ }
-void praat_foreground () { /* No-op */ }
+// REMOVED: praat_background, praat_foreground - now in praat_actions.cpp
 
 // Picture functions
 void praat_picture_init (bool) { /* No-op */ }
@@ -48,14 +47,12 @@ void praat_statistics_exit () { /* No-op */ }
 void praat_statistics_prefs () { /* No-op */ }
 void praat_statistics_prefsChanged () { /* No-op */ }
 
-// Menu/action functions  
+// Menu/action functions
 void praat_addMenus (structGuiWindow *) { /* No-op */ }
 void praat_addMenus2 () { /* No-op */ }
-void praat_sortActions () { /* No-op */ }
-void praat_sortMenuCommands () { /* No-op */ }
+// REMOVED: praat_sortActions, praat_sortMenuCommands - now in praat_actions.cpp/praat_menuCommands.cpp
 void praat_addFixedButtons (structGuiWindow *) { /* No-op */ }
-void praat_actions_exit_optimizeByLeaking () { /* No-op */ }
-void praat_menuCommands_exit_optimizeByLeaking () { /* No-op */ }
+// REMOVED: praat_actions_exit_optimizeByLeaking, praat_menuCommands_exit_optimizeByLeaking - now in real files
 void Preferences_exit_optimizeByLeaking () { /* No-op */ }
 
 // UiForm functions
@@ -121,7 +118,7 @@ void UiHistory_write_expandQuotes (conststring32) { /* No-op */ }
 // REMOVED: folderNames_STRVEC() - provided by real Praat (STRVEC.o)
 // REMOVED: quote_doubleSTR() - provided by real Praat (STR.o)
 
-void praat_actions_createDynamicMenu (structGuiWindow *) { /* No-op */ }
+// REMOVED: praat_actions_createDynamicMenu - now in praat_actions.cpp
 
 // REMOVED: praat_executeCommandFromStandardInput() - provided by real Praat (praat_script.o)
 
@@ -158,15 +155,46 @@ void praat_list_renameObject () {
 // More GUI functions as needed
 void GuiObject_destroy (void *) { /* No-op */ }
 
+// GuiMenu functions needed by praat_actions.cpp and praat_menuCommands.cpp
+struct structGuiMenu;
+struct structGuiMenuItem;
+struct structGuiMenuItemEvent;
 
-// Praat action dispatcher
-void praat_doAction (conststring32, conststring32, Interpreter) {
-    Melder_throw (U"praat_doAction not available in library mode.");
+structGuiMenuItem * GuiMenu_addItem (structGuiMenu *, conststring32, unsigned int,
+    MelderCallback<void, structThing, structGuiMenuItemEvent*>, Thing) {
+    return nullptr;  // No GUI in library mode
 }
 
-void praat_doAction (conststring32, long, Stackel, Interpreter) {
-    Melder_throw (U"praat_doAction not available in library mode.");
+structGuiMenuItem * GuiMenu_addSeparator (structGuiMenu *) {
+    return nullptr;  // No GUI in library mode
 }
+
+structGuiMenu * GuiMenu_createInWindow (structGuiWindow *, conststring32, unsigned int) {
+    return nullptr;  // No GUI in library mode
+}
+
+structGuiMenu * GuiMenu_createInMenu (structGuiMenu *, conststring32, unsigned int) {
+    return nullptr;  // No GUI in library mode
+}
+
+void GuiThing_show (void *) { /* No-op */ }
+void GuiThing_hide (void *) { /* No-op */ }
+
+// GuiButton functions
+struct structGuiButton;
+struct structGuiButtonEvent;
+
+structGuiButton * GuiButton_create (structGuiForm *, int, int, int, int, conststring32,
+    MelderCallback<void, structThing, structGuiButtonEvent*>, Thing, unsigned int) {
+    return nullptr;  // No GUI in library mode
+}
+
+structGuiButton * GuiButton_createShown (structGuiForm *, int, int, int, int, conststring32,
+    MelderCallback<void, structThing, structGuiButtonEvent*>, Thing, unsigned int) {
+    return nullptr;  // No GUI in library mode
+}
+
+// REMOVED: praat_doAction - now provided by praat_actions.cpp
 
 // Preferences I/O stubs
 struct structMelderFile;
@@ -192,10 +220,9 @@ integer praat_getIdOfSelected (void *, int) { return 0; }
 int praat_selection (void *) { return 0; }
 
 // Action visibility functions
-void praat_actions_show () { /* No-op */ }
+// REMOVED: praat_actions_show - now in praat_actions.cpp
 void ScriptEditors_dirty () { /* No-op */ }
-void praat_doMenuCommand (conststring32, conststring32, Interpreter) { /* No-op */ }
-void praat_doMenuCommand (conststring32, long, Stackel, Interpreter) { /* No-op */ }
+// REMOVED: praat_doMenuCommand - now provided by praat_menuCommands.cpp
 void Editor_doMenuCommand (Editor, conststring32, long, Stackel, conststring32, Interpreter) { /* No-op */ }
 
 // Preferences functions (for enums and other types)
@@ -207,21 +234,8 @@ void _Preferences_addEnum (conststring32, int *, int, int,
     /* No-op */
 }
 
-// Menu command system
-void praat_addMenuCommand_ (conststring32, conststring32, conststring32, conststring32, 
-    unsigned int, 
-    void (*callback)(UiForm, long, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor), 
-    conststring32) 
-{
-    /* No-op */
-}
-
-void praat_addCommandsToEditor (Editor) { /* No-op */ }
-void praat_removeAction (ClassInfo, ClassInfo, ClassInfo, conststring32) { /* No-op */ }
-// Auto-generated stub
-
-// Action saving/serialization
-void praat_saveAddedActions (MelderString *) { /* No-op */ }
+// REMOVED: praat_addMenuCommand_, praat_addCommandsToEditor, praat_removeAction - now in praat_actions.cpp/praat_menuCommands.cpp
+// REMOVED: praat_saveAddedActions, praat_saveToggledActions, praat_saveAddedMenuCommands, praat_saveToggledMenuCommands - now in real files
 
 // Speech synthesis (espeak integration - not available in library mode)
 struct structSpeechSynthesizer;
@@ -229,6 +243,3 @@ typedef struct structSpeechSynthesizer *SpeechSynthesizer;
 SpeechSynthesizer SpeechSynthesizer_create (conststring32, conststring32) {
     return nullptr;  // Speech synthesis not available
 }
-void praat_saveToggledActions (MelderString *) { /* No-op */ }
-void praat_saveAddedMenuCommands (MelderString *) { /* No-op */ }
-void praat_saveToggledMenuCommands (MelderString *) { /* No-op */ }
