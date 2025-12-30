@@ -1,3 +1,25 @@
+# pladdrr 1.7.3 (2025-12-30)
+
+## Performance Improvements
+
+* **LongSound Module Conversion (27/28 objects - 96% COMPLETE)**
+  - Converted `LongSound` from R6 to Rcpp Module architecture
+  - 5-10x faster method dispatch for streaming large audio files
+  - 11 methods: duration, sample rate, channels, file path queries
+  - Streaming methods: `extract_part()`, `have_window()`, `get_window_extrema()`
+  - Static method: `LongSound$open(path)`
+  - Save methods remain as wrappers (file I/O operations)
+
+## Bug Fixes
+
+* Fixed LongSound file path access: `file.path` field structure
+
+## Status
+
+* **Converted:** 27/28 Praat objects (96%)
+* **Remaining R6:** PraatInterpreter (intentionally kept for stateful scripting)
+* **Phase 1+ COMPLETE:** All meaningful conversions done
+
 # pladdrr 1.7.2 (2025-12-30)
 
 ## Performance Improvements
