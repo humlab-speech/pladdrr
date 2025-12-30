@@ -1,3 +1,24 @@
+# pladdrr 1.7.1 (2025-12-30)
+
+## Performance Improvements
+
+* **FormantTier Module Conversion (25/28 objects - 89% COMPLETE)**
+  - Converted `FormantTier` from R6 to Rcpp Module architecture
+  - Adds fast C++ method dispatch for formant manipulation workflows
+  - 5-10x faster method calls for formant filtering and queries
+  - Static method support: `FormantTier$from_formant()`
+
+## Bug Fixes
+
+* Fixed FormantTier compilation in Makevars and Makevars.in
+* Fixed `as_data_frame()` field name: `formants` → `formant`
+* Added S3 method exports for FormantTier static methods
+
+## Status
+
+* **Converted:** 25/28 Praat objects (89%)
+* **Remaining R6:** LongSound, PraatInterpreter, VocalTract (intentionally kept)
+
 # pladdrr 1.7.0 (2025-12-30)
 
 ## Major Performance Improvements
