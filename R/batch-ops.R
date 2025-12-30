@@ -41,7 +41,7 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
   result_ptr <- .sound_concatenate_all(xptrs, overlap)
 
   if (return_r6) {
-    Sound$new(.xptr = result_ptr)
+    Sound(.xptr = result_ptr)
   } else {
     result_ptr
   }

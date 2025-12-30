@@ -44,7 +44,7 @@ Manipulation <- function(.xptr) {
     },
     extract_original_sound = function() {
       sound_ptr <- .manipulation_extract_sound(.xptr)
-      Sound$new(.xptr = sound_ptr)
+      Sound(.xptr = sound_ptr)
     },
     
     # Replace tiers
@@ -73,11 +73,11 @@ Manipulation <- function(.xptr) {
     # Synthesis
     get_resynthesis_overlap_add = function() {
       sound_ptr <- .manipulation_get_resynthesis_overlap_add(.xptr)
-      Sound$new(.xptr = sound_ptr)
+      Sound(.xptr = sound_ptr)
     },
     get_resynthesis_pulses = function() {
       sound_ptr <- .manipulation_get_resynthesis_pulses(.xptr)
-      Sound$new(.xptr = sound_ptr)
+      Sound(.xptr = sound_ptr)
     },
     
     # Utility

@@ -98,7 +98,7 @@ LongSound <- R6::R6Class(
     extract_part = function(tmin, tmax, preserve_times = FALSE) {
       private$check_valid()
       ptr <- .longsound_extract_part(private$ptr, tmin, tmax, preserve_times)
-      Sound$new(.xptr = ptr)
+      Sound(.xptr = ptr)
     },
 
     #' @description Check if time window is in buffer
@@ -187,5 +187,5 @@ LongSound$open <- function(path) {
     stop("File not found: ", path)
   }
   ptr <- .longsound_open(normalizePath(path, mustWork = TRUE))
-  LongSound$new(.xptr = ptr)
+  LongSound(.xptr = ptr)
 }

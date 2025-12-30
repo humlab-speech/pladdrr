@@ -154,7 +154,7 @@ LPC <- function(.xptr = NULL) {
       }
       
       source_ptr <- .lpc_sound_filter_inverse_r6(.xptr, sound)
-      Sound$new(.xptr = source_ptr)
+      Sound(.xptr = source_ptr)
     },
     
     filter_inverse_at_time = function(sound, time, channel = 1) {
@@ -174,7 +174,7 @@ LPC <- function(.xptr = NULL) {
         as.integer(channel),
         as.numeric(time)
       )
-      Sound$new(.xptr = source_ptr)
+      Sound(.xptr = source_ptr)
     },
     
     # Utility methods

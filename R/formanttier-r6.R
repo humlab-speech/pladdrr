@@ -119,7 +119,7 @@ FormantTier <- R6::R6Class(
       } else {
         ptr <- .formanttier_filter_sound_noscale(sound$get_ptr(), private$ptr)
       }
-      Sound$new(.xptr = ptr)
+      Sound(.xptr = ptr)
     },
 
     #' @description Print method

@@ -15,8 +15,8 @@
   # Each R6 class should accept a .xptr parameter
 
   switch(class_name,
-    "Sound" = Sound$new(.xptr = xptr),
-    "Pitch" = Pitch$new(.xptr = xptr),
+    "Sound" = Sound(.xptr = xptr),
+    "Pitch" = Pitch(.xptr = xptr),
     "Formant" = Formant(.xptr = xptr),
     "Intensity" = Intensity(.xptr = xptr),
     "Spectrogram" = Spectrogram(.xptr = xptr),

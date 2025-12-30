@@ -260,7 +260,7 @@ sound_extract_parts <- function(sound,
 
   if (return_r6) {
     # Convert XPtrs to Sound objects
-    lapply(xptrs, function(xptr) Sound$new(.xptr = xptr))
+    lapply(xptrs, function(xptr) Sound(.xptr = xptr))
   } else {
     xptrs
   }

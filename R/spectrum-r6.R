@@ -168,7 +168,7 @@ Spectrum <- function(.xptr = NULL) {
     # Transform
     to_sound = function() {
       ptr <- .spectrum_to_sound(.xptr)
-      Sound$new(.xptr = ptr)
+      Sound(.xptr = ptr)
     },
     
     to_ltas_1to1 = function() {
