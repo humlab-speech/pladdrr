@@ -671,7 +671,7 @@ Sound <- R6::R6Class(
     #' @return Cepstrum object
     to_cepstrum = function() {
       xptr <- .sound_to_cepstrum(private$ptr)
-      Cepstrum$new(xptr)
+      Cepstrum(.xptr = xptr)
     },
     
     #' @description
@@ -683,7 +683,7 @@ Sound <- R6::R6Class(
     #' @return Cepstrum object
     to_cepstrum_bw = function() {
       xptr <- .sound_to_cepstrum_bw(private$ptr)
-      Cepstrum$new(xptr)
+      Cepstrum(.xptr = xptr)
     },
     
     #' @description Create Manipulation for pitch/duration modification

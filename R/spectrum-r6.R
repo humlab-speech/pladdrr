@@ -183,12 +183,12 @@ Spectrum <- function(.xptr = NULL) {
     
     to_cepstrum = function() {
       xptr <- .spectrum_to_cepstrum(.xptr)
-      Cepstrum$new(xptr)
+      Cepstrum(.xptr = xptr)
     },
     
     to_cepstrum_hillenbrand = function() {
       xptr <- .spectrum_to_cepstrum_hillenbrand(.xptr)
-      Cepstrum$new(xptr)
+      Cepstrum(.xptr = xptr)
     },
     
     to_excitation = function(erb_density = 0.1) {
