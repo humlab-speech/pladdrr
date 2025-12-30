@@ -1,6 +1,6 @@
 #' @title Praat Harmonicity Object
 #' @description
-#' R6 class representing a Praat Harmonicity object (Harmonics-to-Noise Ratio).
+#' Praat Harmonicity object with direct C++ module binding (Harmonics-to-Noise Ratio).
 #' Wraps a Praat C++ Harmonicity object with automatic memory management.
 #'
 #' @details
@@ -53,158 +53,135 @@
 #' }
 #'
 #' @export
-Harmonicity <- R6::R6Class(
-  "Harmonicity",
-  inherit = PraatObject,
+Harmonicity <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Harmonicity objects should be created from Sound objects using to_harmonicity_ac() or to_harmonicity_cc()")
+  }
   
-  public = list(
+  # Load module
+  harmonicity_mod <- get_module("harmonicity_module")
+  cpp_obj <- harmonicity_mod$RHarmonicity$new(.xptr)
+  
+  # Helper
+  interpolation_code <- function(method) {
+    switch(tolower(method),
+      "nearest" = 0,
+      "linear" = 1,
+      "cubic" = 2,
+      "sinc70" = 3,
+      "sinc700" = 4,
+      2  # default cubic
+    )
+  }
+  
+  peak_interpolation_code <- function(method) {
+    switch(tolower(method),
+      "none" = 0,
+      "parabolic" = 1,
+      "cubic" = 2,
+      "sinc70" = 3,
+      "sinc700" = 4,
+      1  # default parabolic
+    )
+  }
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
     
-    #' @description
-    #' Create a Harmonicity object (internal use - use Sound$to_harmonicity_*() instead)
-    #' @param .xptr External pointer to C++ Harmonicity object
-    #' @return A new Harmonicity object
-    initialize = function(.xptr) {
-      if (is.null(.xptr)) {
-        stop("Harmonicity objects should be created from Sound objects using to_harmonicity_ac() or to_harmonicity_cc()")
-      }
-      super$initialize(.xptr)
-    },
-    
-    # ========================================================================
-    # Query Methods
-    # ========================================================================
-    
-    #' @description Get HNR value at specific time
-    #' @param time Time in seconds
-    #' @param interpolation Interpolation method: "nearest", "linear", "cubic", "sinc70", "sinc700"
-    #' @return HNR in dB (or NA if undefined)
+    # Query methods
     get_value_at_time = function(time, interpolation = "cubic") {
-      interpolation_code <- switch(interpolation,
-        "nearest" = 0,
-        "linear" = 1,
-        "cubic" = 2,
-        "sinc70" = 3,
-        "sinc700" = 4,
-        2  # default to cubic
-      )
-      .harmonicity_get_value_at_time(private$ptr, time, interpolation_code)
+      cpp_obj$get_value_at_time(time, interpolation_code(interpolation))
     },
     
-    #' @description Get mean HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @return Mean HNR in dB
     get_mean = function(from_time = 0, to_time = 0) {
-      .harmonicity_get_mean(private$ptr, from_time, to_time)
+      cpp_obj$get_mean(from_time, to_time)
     },
     
-    #' @description Get minimum HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @param interpolation Interpolation method: "parabolic" (recommended) or "none"
-    #' @return Minimum HNR in dB
     get_minimum = function(from_time = 0, to_time = 0, interpolation = "parabolic") {
-      interpolation_code <- if (interpolation == "parabolic") 2 else 0
-      .harmonicity_get_minimum(private$ptr, from_time, to_time, interpolation_code)
+      cpp_obj$get_minimum(from_time, to_time, peak_interpolation_code(interpolation))
     },
     
-    #' @description Get maximum HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @param interpolation Interpolation method: "parabolic" (recommended) or "none"
-    #' @return Maximum HNR in dB
     get_maximum = function(from_time = 0, to_time = 0, interpolation = "parabolic") {
-      interpolation_code <- if (interpolation == "parabolic") 2 else 0
-      .harmonicity_get_maximum(private$ptr, from_time, to_time, interpolation_code)
+      cpp_obj$get_maximum(from_time, to_time, peak_interpolation_code(interpolation))
     },
     
-    #' @description Get standard deviation of HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @return Standard deviation of HNR in dB
     get_standard_deviation = function(from_time = 0, to_time = 0) {
-      .harmonicity_get_standard_deviation(private$ptr, from_time, to_time)
+      cpp_obj$get_standard_deviation(from_time, to_time)
     },
     
-    #' @description Get time of minimum HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @param interpolation Interpolation method: "parabolic" (recommended) or "none"
-    #' @return Time in seconds where HNR is minimum
     get_time_of_minimum = function(from_time = 0, to_time = 0, interpolation = "parabolic") {
-      interpolation_code <- if (interpolation == "parabolic") 2 else 0
-      .harmonicity_get_time_of_minimum(private$ptr, from_time, to_time, interpolation_code)
+      cpp_obj$get_time_of_minimum(from_time, to_time, peak_interpolation_code(interpolation))
     },
     
-    #' @description Get time of maximum HNR
-    #' @param from_time Start time (0 = start of object)
-    #' @param to_time End time (0 = end of object)
-    #' @param interpolation Interpolation method: "parabolic" (recommended) or "none"
-    #' @return Time in seconds where HNR is maximum
     get_time_of_maximum = function(from_time = 0, to_time = 0, interpolation = "parabolic") {
-      interpolation_code <- if (interpolation == "parabolic") 2 else 0
-      .harmonicity_get_time_of_maximum(private$ptr, from_time, to_time, interpolation_code)
+      cpp_obj$get_time_of_maximum(from_time, to_time, peak_interpolation_code(interpolation))
     },
     
-    #' @description Get number of analysis frames
-    #' @return Integer number of frames
+    # Time domain
     get_number_of_frames = function() {
-      .harmonicity_get_number_of_frames(private$ptr)
+      cpp_obj$get_number_of_frames()
     },
     
-    #' @description Get time step between frames
-    #' @return Time step in seconds
-    get_time_step = function() {
-      .harmonicity_get_time_step(private$ptr)
+    get_sampling_period = function() {
+      cpp_obj$get_time_step()
     },
     
-    #' @description Get start time
-    #' @return Start time in seconds
     get_start_time = function() {
-      .harmonicity_get_start_time(private$ptr)
+      cpp_obj$get_xmin()
     },
     
-    #' @description Get end time
-    #' @return End time in seconds
     get_end_time = function() {
-      .harmonicity_get_end_time(private$ptr)
+      cpp_obj$get_xmax()
     },
     
-    # ========================================================================
-    # Export Methods
-    # ========================================================================
+    get_time_from_frame = function(frame) {
+      cpp_obj$get_time_from_frame(frame)
+    },
     
-    #' @description Export to data frame
-    #' @return Data frame with columns: time, hnr_db
+    get_frame_from_time = function(time) {
+      cpp_obj$get_frame_from_time(time)
+    },
+    
+    # Export
     as_data_frame = function() {
-      mat <- .harmonicity_as_matrix(private$ptr)
-      data.frame(
-        time = mat[1, ],
-        hnr_db = mat[2, ],
-        stringsAsFactors = FALSE
+      df <- cpp_obj$as_data_frame()
+      names(df) <- c("time", "hnr_db", "voiced")
+      df
+    },
+    
+    as_matrix = function() {
+      mat <- cpp_obj$as_matrix()
+      rbind(
+        time = mat[, 1],
+        hnr_db = mat[, 2]
       )
     },
     
-    #' @description Export as matrix
-    #' @return Matrix with 2 rows: time and HNR values
-    as_matrix = function() {
-      .harmonicity_as_matrix(private$ptr)
-    },
-    
-    # ========================================================================
-    # Print Method
-    # ========================================================================
-    
-    #' @description Print summary of Harmonicity object
-    print = function() {
-      cat("Praat Harmonicity object\n")
-      cat(sprintf("  Duration: %.4f s\n", self$get_end_time() - self$get_start_time()))
-      cat(sprintf("  Time step: %.4f s\n", self$get_time_step()))
-      cat(sprintf("  Number of frames: %d\n", self$get_number_of_frames()))
-      cat(sprintf("  Mean HNR: %.2f dB\n", self$get_mean()))
-      cat(sprintf("  Min HNR: %.2f dB\n", self$get_minimum()))
-      cat(sprintf("  Max HNR: %.2f dB\n", self$get_maximum()))
-      invisible(self)
+    # Display
+    print = function(...) {
+      cat("<Praat Harmonicity>\n")
+      cat(sprintf("  Duration: %.3f s\n", cpp_obj$get_duration()))
+      cat(sprintf("  Number of frames: %d\n", cpp_obj$get_number_of_frames()))
+      cat(sprintf("  Time step: %.4f s\n", cpp_obj$get_time_step()))
+      cat(sprintf("  Mean HNR: %.2f dB\n", cpp_obj$get_mean(0, 0)))
+      cat(sprintf("  Range: [%.2f, %.2f] dB\n",
+                  cpp_obj$get_minimum(0, 0, 1),
+                  cpp_obj$get_maximum(0, 0, 1)))
+      invisible(obj)
     }
-  )
-)
+    
+  ), class = c("Harmonicity", "PraatObject"))
+  
+  obj
+}
+
+# S3 methods
+#' @export
+print.Harmonicity <- function(x, ...) {
+  x$print(...)
+}
+
+#' @export
+as.data.frame.Harmonicity <- function(x, ...) {
+  x$as_data_frame()
+}

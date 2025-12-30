@@ -1,7 +1,7 @@
-#' Spectrogram R6 Class
+#' Spectrogram Object
 #'
 #' @description
-#' An R6 class representing a Praat Spectrogram object. Spectrograms provide
+#' Praat Spectrogram object with direct C++ module binding. Spectrograms provide
 #' time-frequency representations of sounds, showing how spectral content
 #' varies over time.
 #'
@@ -27,179 +27,124 @@
 #' }
 #'
 #' @export
-Spectrogram <- R6::R6Class("Spectrogram",
-  public = list(
-    #' @field .xptr External pointer to Praat Spectrogram object
-    .xptr = NULL,
+Spectrogram <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Spectrogram objects must be created from Sound$to_spectrogram()")
+  }
+  
+  # Load module
+  spectrogram_mod <- get_module("spectrogram_module")
+  cpp_obj <- spectrogram_mod$RSpectrogram$new(.xptr)
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = .xptr,
     
-    #' @description
-    #' Create a new Spectrogram object
-    #' @param .xptr External pointer from C++ (internal use)
-    #' @return A new Spectrogram object
-    initialize = function(.xptr = NULL) {
-      if (is.null(.xptr)) {
-        stop("Spectrogram objects must be created from Sound$to_spectrogram()")
-      }
-      private$ptr <- .xptr
-    },
-    
-    # ---- TIME/FREQUENCY DOMAIN QUERIES ----
-    
-    #' @description Get the start time of the spectrogram
-    #' @return Start time in seconds
+    # Time domain
     get_start_time = function() {
-      .spectrogram_get_start_time(private$ptr)
+      cpp_obj$get_xmin()
     },
     
-    #' @description Get the end time of the spectrogram
-    #' @return End time in seconds
     get_end_time = function() {
-      .spectrogram_get_end_time(private$ptr)
+      cpp_obj$get_xmax()
     },
     
-    #' @description Get the time step between frames
-    #' @return Time step in seconds
     get_time_step = function() {
-      .spectrogram_get_time_step(private$ptr)
+      cpp_obj$get_time_step()
     },
     
-    #' @description Get the number of time frames
-    #' @return Number of frames
     get_number_of_time_bins = function() {
-      .spectrogram_get_number_of_time_bins(private$ptr)
+      cpp_obj$get_number_of_frames()
     },
     
-    #' @description Get the lowest frequency
-    #' @return Minimum frequency in Hz
+    # Frequency domain
     get_lowest_frequency = function() {
-      .spectrogram_get_lowest_frequency(private$ptr)
+      cpp_obj$get_ymin()
     },
     
-    #' @description Get the highest frequency
-    #' @return Maximum frequency in Hz
     get_highest_frequency = function() {
-      .spectrogram_get_highest_frequency(private$ptr)
+      cpp_obj$get_ymax()
     },
     
-    #' @description Get the frequency step
-    #' @return Frequency step in Hz
     get_frequency_step = function() {
-      .spectrogram_get_frequency_step(private$ptr)
+      cpp_obj$get_frequency_step()
     },
     
-    #' @description Get the number of frequency bins
-    #' @return Number of frequency bins
     get_number_of_frequency_bins = function() {
-      .spectrogram_get_number_of_frequency_bins(private$ptr)
+      cpp_obj$get_number_of_frequency_bins()
     },
     
-    # ---- CONVERSION METHODS ----
-    
-    #' @description Get time from frame index
-    #' @param frame Frame number (1-indexed)
-    #' @return Time in seconds
+    # Conversion
     get_time_from_frame = function(frame) {
-      .spectrogram_get_time_from_frame(private$ptr, frame)
+      cpp_obj$get_time_from_frame(as.integer(frame))
     },
     
-    #' @description Get frequency from bin index
-    #' @param bin Frequency bin number (1-indexed)
-    #' @return Frequency in Hz
+    get_frame_from_time = function(time) {
+      cpp_obj$get_frame_from_time(as.numeric(time))
+    },
+    
     get_frequency_from_bin = function(bin) {
-      .spectrogram_get_frequency_from_bin(private$ptr, bin)
+      cpp_obj$get_frequency_from_bin(as.integer(bin))
     },
     
-    # ---- QUERY METHODS ----
+    get_bin_from_frequency = function(frequency) {
+      cpp_obj$get_bin_from_frequency(as.numeric(frequency))
+    },
     
-    #' @description Get power at specific time and frequency
-    #' @param time Time in seconds
-    #' @param frequency Frequency in Hz
-    #' @return Power spectral density (Pa²/Hz)
+    # Query
     get_power_at = function(time, frequency) {
-      .spectrogram_get_power_at(private$ptr, time, frequency)
+      cpp_obj$get_power_at(as.numeric(time), as.numeric(frequency))
     },
     
-    # ---- TRANSFORMATION METHODS ----
-    
-    #' @description Extract spectrum at a specific time
-    #' @param time Time in seconds
-    #' @return A Spectrum object
+    # Transform
     to_spectrum = function(time) {
-      spectrum_ptr <- .spectrogram_to_spectrum(private$ptr, time)
-      Spectrum$new(.xptr = spectrum_ptr)
+      spectrum_ptr <- cpp_obj$to_spectrum_ptr(as.numeric(time))
+      Spectrum(.xptr = spectrum_ptr)
     },
     
-    # ---- EXPORT METHODS ----
-    
-    #' @description Convert to R matrix (time × frequency)
-    #' @return Numeric matrix with power values
+    # Export
     as_matrix = function() {
-      .spectrogram_as_matrix(private$ptr)
+      .spectrogram_as_matrix(.xptr)
     },
     
-    #' @description Convert to data frame
-    #' @return Data frame with columns: time, frequency, power
     as_data_frame = function() {
-      mat <- self$as_matrix()
-      n_times <- self$get_number_of_time_bins()
-      n_freqs <- self$get_number_of_frequency_bins()
+      mat <- obj$as_matrix()
+      n_time <- cpp_obj$get_nx()
+      n_freq <- cpp_obj$get_ny()
       
-      times <- numeric(n_times)
-      for (i in seq_len(n_times)) {
-        times[i] <- self$get_time_from_frame(i)
-      }
+      times <- vapply(seq_len(n_time), function(i) obj$get_time_from_frame(i), numeric(1))
+      freqs <- vapply(seq_len(n_freq), function(i) obj$get_frequency_from_bin(i), numeric(1))
       
-      freqs <- numeric(n_freqs)
-      for (i in seq_len(n_freqs)) {
-        freqs[i] <- self$get_frequency_from_bin(i)
-      }
-      
-      # Convert to long format
-      df <- expand.grid(
-        time = times,
-        frequency = freqs,
-        KEEP.OUT.ATTRS = FALSE,
-        stringsAsFactors = FALSE
-      )
-      df$power <- as.vector(t(mat))  # mat is freq × time, transpose for time × freq
-      
+      # Long format
+      df <- expand.grid(time = times, frequency = freqs)
+      df$power <- as.vector(t(mat))
       df
     },
     
-    # ---- PRINT METHOD ----
-    
-    #' @description Print spectrogram information
+    # Display
     print = function() {
       cat("<Praat Spectrogram>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", 
-                  self$get_start_time(), self$get_end_time()))
-      cat(sprintf("  Time frames: %d (step = %.4f s)\n",
-                  self$get_number_of_time_bins(), self$get_time_step()))
-      cat(sprintf("  Frequency domain: %.1f to %.1f Hz\n",
-                  self$get_lowest_frequency(), self$get_highest_frequency()))
-      cat(sprintf("  Frequency bins: %d (step = %.2f Hz)\n",
-                  self$get_number_of_frequency_bins(), self$get_frequency_step()))
-      invisible(self)
+      cat(sprintf("  Time: %.3f - %.3f s (%d bins, step %.4f s)\n",
+                  cpp_obj$get_xmin(), cpp_obj$get_xmax(),
+                  cpp_obj$get_nx(), cpp_obj$get_dx()))
+      cat(sprintf("  Frequency: %.2f - %.2f Hz (%d bins, step %.2f Hz)\n",
+                  cpp_obj$get_ymin(), cpp_obj$get_ymax(),
+                  cpp_obj$get_ny(), cpp_obj$get_dy()))
+      invisible(obj)
     }
-  ),
+    
+  ), class = c("Spectrogram", "PraatObject"))
   
-  # ---- PRIVATE FIELDS ----
-  private = list(
-    ptr = NULL
-  ),
-  
-  # ---- ACTIVE BINDINGS ----
-  active = list(
-    #' @field start_time Start time (read-only)
-    start_time = function() self$get_start_time(),
-    
-    #' @field end_time End time (read-only)
-    end_time = function() self$get_end_time(),
-    
-    #' @field n_times Number of time bins (read-only)
-    n_times = function() self$get_number_of_time_bins(),
-    
-    #' @field n_freqs Number of frequency bins (read-only)
-    n_freqs = function() self$get_number_of_frequency_bins()
-  )
-)
+  obj
+}
+
+# S3 methods
+#' @export
+print.Spectrogram <- function(x, ...) {
+  x$print()
+}
+
+#' @export
+as.data.frame.Spectrogram <- function(x, ...) {
+  x$as_data_frame()
+}

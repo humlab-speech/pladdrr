@@ -1,7 +1,7 @@
-#' Spectrum R6 Class
+#' Spectrum Object
 #'
 #' @description
-#' R6 class representing a Praat Spectrum object (complex FFT spectrum).
+#' Praat Spectrum object with direct C++ module binding (complex FFT spectrum).
 #' Spectrum objects represent frequency-domain representations of sounds.
 #'
 #' @section Methods:
@@ -57,302 +57,158 @@
 #' }
 #'
 #' @export
-Spectrum <- R6::R6Class("Spectrum",
-  inherit = PraatObject,
+Spectrum <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Spectrum objects must be created from Sound using to_spectrum()")
+  }
   
-  public = list(
-    #' @description Create a new Spectrum object
-    #' @param .xptr External pointer to Praat Spectrum object
-    initialize = function(.xptr = NULL) {
-      if (is.null(.xptr)) {
-        stop("Spectrum objects must be created from Sound using to_spectrum()")
-      }
-      private$ptr <- .xptr
-      private$type <- "Spectrum"
-    },
+  # Load module
+  spectrum_mod <- get_module("spectrum_module")
+  cpp_obj <- spectrum_mod$RSpectrum$new(.xptr)
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = .xptr,  # Keep for legacy exports
     
     # Query: Basic info
-    
-    #' @description Get lowest frequency
-    #' @return Lowest frequency in Hz
     get_lowest_frequency = function() {
-      .spectrum_get_lowest_frequency(private$ptr)
+      cpp_obj$get_fmin()
     },
     
-    #' @description Get highest frequency
-    #' @return Highest frequency in Hz
     get_highest_frequency = function() {
-      .spectrum_get_highest_frequency(private$ptr)
+      cpp_obj$get_fmax()
     },
     
-    #' @description Get number of frequency bins
-    #' @return Number of bins
     get_number_of_bins = function() {
-      .spectrum_get_number_of_bins(private$ptr)
+      cpp_obj$get_n_bins()
     },
     
-    #' @description Get frequency step
-    #' @return Frequency step in Hz
     get_frequency_step = function() {
-      .spectrum_get_frequency_step(private$ptr)
+      cpp_obj$get_df()
     },
     
-    #' @description Get frequency for bin number
-    #' @param bin Bin number (1-indexed)
-    #' @return Frequency in Hz
     get_frequency_from_bin = function(bin) {
-      .spectrum_get_frequency_from_bin(private$ptr, as.integer(bin))
+      cpp_obj$get_frequency_from_bin(as.integer(bin))
     },
     
-    #' @description Get bin number for frequency
-    #' @param frequency Frequency in Hz
-    #' @return Bin number (may be fractional)
     get_bin_from_frequency = function(frequency) {
-      .spectrum_get_bin_from_frequency(private$ptr, as.numeric(frequency))
+      cpp_obj$get_bin_from_frequency(as.numeric(frequency))
     },
     
     # Query: Values
-    
-    #' @description Get real part at bin
-    #' @param bin Bin number (1-indexed)
-    #' @return Real value
     get_real_value_in_bin = function(bin) {
-      .spectrum_get_real_value_in_bin(private$ptr, as.integer(bin))
+      cpp_obj$get_real_value_at_bin(as.integer(bin))
     },
     
-    #' @description Get imaginary part at bin
-    #' @param bin Bin number (1-indexed)
-    #' @return Imaginary value
     get_imaginary_value_in_bin = function(bin) {
-      .spectrum_get_imaginary_value_in_bin(private$ptr, as.integer(bin))
+      cpp_obj$get_imaginary_value_at_bin(as.integer(bin))
     },
     
     # Query: Band statistics
-    
-    #' @description Get power density in frequency band
-    #' @param fmin Minimum frequency (Hz)
-    #' @param fmax Maximum frequency (Hz)
-    #' @return Power density (Pa²/Hz²)
     get_band_density = function(fmin, fmax) {
-      .spectrum_get_band_density(private$ptr, as.numeric(fmin), as.numeric(fmax))
+      cpp_obj$get_band_density(as.numeric(fmin), as.numeric(fmax))
     },
     
-    #' @description Get energy in frequency band
-    #' @param fmin Minimum frequency (Hz)
-    #' @param fmax Maximum frequency (Hz)
-    #' @return Energy (Pa²·s)
     get_band_energy = function(fmin, fmax) {
-      .spectrum_get_band_energy(private$ptr, as.numeric(fmin), as.numeric(fmax))
+      cpp_obj$get_band_energy(as.numeric(fmin), as.numeric(fmax))
     },
     
     # Query: Spectral moments
-    
-    #' @description Get spectral centre of gravity
-    #' @param power Power to raise power density to (default: 2.0)
-    #' @return Centre of gravity in Hz
     get_centre_of_gravity = function(power = 2.0) {
-      .spectrum_get_centre_of_gravity(private$ptr, as.numeric(power))
+      cpp_obj$get_centre_of_gravity(as.numeric(power))
     },
     
-    #' @description Get spectral standard deviation
-    #' @param power Power to raise power density to (default: 2.0)
-    #' @return Standard deviation in Hz
     get_standard_deviation = function(power = 2.0) {
-      .spectrum_get_standard_deviation(private$ptr, as.numeric(power))
+      cpp_obj$get_standard_deviation(as.numeric(power))
     },
     
-    #' @description Get spectral skewness
-    #' @param power Power to raise power density to (default: 2.0)
-    #' @return Skewness
     get_skewness = function(power = 2.0) {
-      .spectrum_get_skewness(private$ptr, as.numeric(power))
+      cpp_obj$get_skewness(as.numeric(power))
     },
     
-    #' @description Get spectral kurtosis
-    #' @param power Power to raise power density to (default: 2.0)
-    #' @return Kurtosis
     get_kurtosis = function(power = 2.0) {
-      .spectrum_get_kurtosis(private$ptr, as.numeric(power))
+      cpp_obj$get_kurtosis(as.numeric(power))
     },
     
-    #' @description Get spectral central moment
-    #' @param moment Moment order
-    #' @param power Power to raise power density to (default: 2.0)
-    #' @return Central moment
     get_central_moment = function(moment, power = 2.0) {
-      .spectrum_get_central_moment(private$ptr, as.numeric(moment), as.numeric(power))
+      cpp_obj$get_central_moment(as.numeric(moment), as.numeric(power))
     },
     
     # Modification
-    
-    #' @description Apply Hann band-pass filter
-    #' @param fmin Minimum frequency (Hz)
-    #' @param fmax Maximum frequency (Hz)
-    #' @param smooth Smoothing width (Hz, default: 100)
-    #' @return Self (invisibly)
     pass_hann_band = function(fmin, fmax, smooth = 100) {
-      .spectrum_pass_hann_band(private$ptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
-      invisible(self)
+      .spectrum_pass_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+      invisible(obj)
     },
     
-    #' @description Apply Hann band-stop filter
-    #' @param fmin Minimum frequency (Hz)
-    #' @param fmax Maximum frequency (Hz)
-    #' @param smooth Smoothing width (Hz, default: 100)
-    #' @return Self (invisibly)
     stop_hann_band = function(fmin, fmax, smooth = 100) {
-      .spectrum_stop_hann_band(private$ptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
-      invisible(self)
+      .spectrum_stop_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+      invisible(obj)
     },
     
-    #' @description Smooth spectrum using cepstral method
-    #' @param bandwidth Bandwidth (Hz)
-    #' @return New smoothed Spectrum
     cepstral_smoothing = function(bandwidth) {
-      ptr <- .spectrum_cepstral_smoothing(private$ptr, as.numeric(bandwidth))
-      Spectrum$new(.xptr = ptr)
+      ptr <- .spectrum_cepstral_smoothing(.xptr, as.numeric(bandwidth))
+      Spectrum(.xptr = ptr)
     },
     
-    #' @description
-    #' Apply formula to modify spectrum values in-place
-    #'
-    #' Uses Praat's formula language to modify spectrum values.
-    #' The formula can reference:
-    #' - `self` - current spectrum value (complex)
-    #' - `x` - frequency in Hz
-    #' - `row` - frequency bin index (1-based)
-    #' - `col` - always 1 or 2 (real/imaginary parts)
-    #'
-    #' Common formulas:
-    #' - Pre-emphasis: `"if x >= 50 then self*x else self fi"`
-    #' - dB conversion: `"10 * log10(self)"`
-    #' - High-pass filter: `"if x < 100 then 0 else self fi"`
-    #'
-    #' @param formula Character string with Praat formula
-    #' @return Self (invisibly, modifies in place)
-    #' @examples
-    #' \dontrun{
-    #' spectrum <- sound$to_spectrum()
-    #' # Apply pre-emphasis above 50 Hz
-    #' spectrum$formula("if x >= 50 then self*x else self fi")
-    #' # Convert to dB
-    #' spectrum$formula("10 * log10(self + 1e-10)")
-    #' }
     formula = function(formula) {
-      .spectrum_formula(private$ptr, formula)
-      invisible(self)
+      .spectrum_formula(.xptr, formula)
+      invisible(obj)
     },
-
-    #' @description
-    #' Apply pre-emphasis filter (boost high frequencies)
-    #'
-    #' Multiplies spectrum values by frequency for frequencies >= from_frequency.
-    #' This is equivalent to Praat formula: "if x >= from_frequency then self*x else self fi"
-    #' Used in voice quality analysis to compensate for spectral tilt.
-    #'
-    #' @param from_frequency Frequency (Hz) above which to apply pre-emphasis (default: 50)
-    #' @return Self (invisibly, modifies in place)
-    #' @examples
-    #' \dontrun{
-    #' spectrum <- sound$to_spectrum()
-    #' spectrum$apply_pre_emphasis(50)  # Standard pre-emphasis
-    #' ltas <- spectrum$to_ltas_1to1()
-    #' }
+    
     apply_pre_emphasis = function(from_frequency = 50) {
-      .spectrum_apply_pre_emphasis(private$ptr, as.numeric(from_frequency))
-      invisible(self)
+      .spectrum_apply_pre_emphasis(.xptr, as.numeric(from_frequency))
+      invisible(obj)
     },
-
-    #' @description
-    #' Multiply spectrum by frequency raised to a power
-    #'
-    #' Useful for spectral tilt corrections. Multiplies each bin's values
-    #' by frequency^power.
-    #'
-    #' @param power Exponent for frequency (default: 1.0)
-    #' @return Self (invisibly, modifies in place)
+    
     multiply_by_frequency = function(power = 1.0) {
-      .spectrum_multiply_by_frequency(private$ptr, as.numeric(power))
-      invisible(self)
+      .spectrum_multiply_by_frequency(.xptr, as.numeric(power))
+      invisible(obj)
     },
     
     # Transform
-    
-    #' @description Convert to Sound (inverse FFT)
-    #' @return Sound object
     to_sound = function() {
-      ptr <- .spectrum_to_sound(private$ptr)
+      ptr <- .spectrum_to_sound(.xptr)
       Sound$new(.xptr = ptr)
     },
     
-    #' @description
-    #' Convert to LTAS (1-to-1 bin mapping)
-    #' Corresponds to Praat: To Ltas (1-to-1)
-    #' Creates LTAS with same frequency bins as spectrum
-    #' @return Ltas object
     to_ltas_1to1 = function() {
-      ptr <- .spectrum_to_ltas_1to1(private$ptr)
+      ptr <- .spectrum_to_ltas_1to1(.xptr)
       Ltas$new(.xptr = ptr)
     },
     
-    #' @description Convert to PowerCepstrum (for voice quality analysis)
-    #' @return PowerCepstrum object
     to_powercepstrum = function() {
-      ptr <- .spectrum_to_powercepstrum(private$ptr)
+      ptr <- .spectrum_to_powercepstrum(.xptr)
       PowerCepstrum$new(.xptr = ptr)
     },
     
-    #' @description
-    #' Convert to Cepstrum (complex cepstrum with phase)
-    #' 
-    #' Computes the complex cepstrum from the spectrum. Unlike PowerCepstrum,
-    #' this preserves phase information and can be inverted back to Spectrum or Sound.
-    #' 
-    #' @return Cepstrum object
     to_cepstrum = function() {
-      xptr <- .spectrum_to_cepstrum(private$ptr)
+      xptr <- .spectrum_to_cepstrum(.xptr)
       Cepstrum$new(xptr)
     },
     
-    #' @description
-    #' Convert to Cepstrum using Hillenbrand method
-    #' 
-    #' Alternative cepstrum computation method based on Hillenbrand's algorithm.
-    #' 
-    #' @return Cepstrum object
     to_cepstrum_hillenbrand = function() {
-      xptr <- .spectrum_to_cepstrum_hillenbrand(private$ptr)
+      xptr <- .spectrum_to_cepstrum_hillenbrand(.xptr)
       Cepstrum$new(xptr)
     },
     
-    #' @description Convert to Excitation (auditory nerve firing rate)
-    #' Corresponds to Praat: To Excitation
-    #' Applies ERB-scale auditory filtering and perceptual weighting.
-    #' @param erb_density Frequency step in ERB scale (default: 0.1)
-    #' @return Excitation object
     to_excitation = function(erb_density = 0.1) {
       stopifnot(
         "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
       )
-      ptr <- .spectrum_to_excitation(private$ptr, as.numeric(erb_density))
+      ptr <- .spectrum_to_excitation(.xptr, as.numeric(erb_density))
       Excitation$new(.xptr = ptr)
     },
     
     # Export
-    
-    #' @description Export as matrix (row 1 = real, row 2 = imaginary)
-    #' @return Numeric matrix (2 × nbins)
     as_matrix = function() {
-      .spectrum_as_matrix(private$ptr)
+      .spectrum_as_matrix(.xptr)
     },
     
-    #' @description Export as data frame
-    #' @return data.frame with columns: bin, frequency, real, imaginary, power, phase
     as_data_frame = function() {
-      mat <- self$as_matrix()
+      mat <- obj$as_matrix()
       nbins <- ncol(mat)
       
-      freq <- vapply(seq_len(nbins), function(i) self$get_frequency_from_bin(i), numeric(1))
+      freq <- vapply(seq_len(nbins), function(i) obj$get_frequency_from_bin(i), numeric(1))
       real_vals <- mat[1, ]
       imag_vals <- mat[2, ]
       
@@ -370,20 +226,29 @@ Spectrum <- R6::R6Class("Spectrum",
       )
     },
     
-    #' @description Print spectrum information
+    # Display
     print = function() {
       cat("<Praat Spectrum>\n")
       cat(sprintf("  Frequency range: %.2f - %.2f Hz\n", 
-                  self$get_lowest_frequency(), 
-                  self$get_highest_frequency()))
-      cat(sprintf("  Number of bins: %d\n", self$get_number_of_bins()))
-      cat(sprintf("  Frequency step: %.2f Hz\n", self$get_frequency_step()))
-      invisible(self)
+                  cpp_obj$get_fmin(), 
+                  cpp_obj$get_fmax()))
+      cat(sprintf("  Number of bins: %d\n", cpp_obj$get_n_bins()))
+      cat(sprintf("  Frequency step: %.2f Hz\n", cpp_obj$get_df()))
+      invisible(obj)
     }
-  ),
+    
+  ), class = c("Spectrum", "PraatObject"))
   
-  private = list(
-    ptr = NULL,
-    type = "Spectrum"
-  )
-)
+  obj
+}
+
+# S3 methods
+#' @export
+print.Spectrum <- function(x, ...) {
+  x$print()
+}
+
+#' @export
+as.data.frame.Spectrum <- function(x, ...) {
+  x$as_data_frame()
+}

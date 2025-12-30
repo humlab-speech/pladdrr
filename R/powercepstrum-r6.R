@@ -161,7 +161,7 @@ PowerCepstrum <- R6::R6Class(
     #' @return Spectrum object
     to_spectrum = function(random_phases = FALSE) {
       xptr <- .powercepstrum_to_spectrum(private$ptr, random_phases = random_phases)
-      Spectrum$new(xptr)
+      Spectrum(xptr)
     },
     
     #' @description

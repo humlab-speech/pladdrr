@@ -461,7 +461,7 @@ Sound <- R6::R6Class(
         silence_threshold,
         periods_per_window
       )
-      Harmonicity$new(.xptr = hnr_ptr)
+      Harmonicity(.xptr = hnr_ptr)
     },
     
     #' @description Compute harmonics-to-noise ratio (cross-correlation method)
@@ -483,7 +483,7 @@ Sound <- R6::R6Class(
         silence_threshold,
         periods_per_window
       )
-      Harmonicity$new(.xptr = hnr_ptr)
+      Harmonicity(.xptr = hnr_ptr)
     },
     
     #' @description Convert to Spectrum (FFT)
@@ -491,7 +491,7 @@ Sound <- R6::R6Class(
     #' @return Spectrum object
     to_spectrum = function(fast = TRUE) {
       spectrum_ptr <- .sound_to_spectrum(private$ptr, fast)
-      Spectrum$new(.xptr = spectrum_ptr)
+      Spectrum(.xptr = spectrum_ptr)
     },
     
     #' @description Create long-term average spectrum (Ltas)
@@ -649,7 +649,7 @@ Sound <- R6::R6Class(
         frequency_step,
         window_shape
       )
-      Spectrogram$new(.xptr = spectrogram_ptr)
+      Spectrogram(.xptr = spectrogram_ptr)
     },
     
     to_power_cepstrogram_NEW = function(pitch_floor = 60.0, time_step = 0.002, maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {

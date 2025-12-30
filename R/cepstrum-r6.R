@@ -68,7 +68,7 @@ Cepstrum <- R6::R6Class(
     #' @return Spectrum object
     to_spectrum = function() {
       xptr <- .cepstrum_to_spectrum(private$ptr)
-      Spectrum$new(xptr)
+      Spectrum(xptr)
     },
     
     #' @description

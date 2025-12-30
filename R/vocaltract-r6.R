@@ -121,7 +121,7 @@ VocalTract <- R6::R6Class(
         radiation_damping,
         internal_damping
       )
-      Spectrum$new(.xptr = ptr)
+      Spectrum(.xptr = ptr)
     },
 
     #' @description Convert to Matrix

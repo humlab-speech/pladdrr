@@ -187,7 +187,7 @@ LPC <- R6::R6Class(
         bandwidth_reduction,
         de_emphasis_frequency
       )
-      Spectrum$new(.xptr = spectrum_ptr)
+      Spectrum(.xptr = spectrum_ptr)
     },
     
     #' @description Convert LPC coefficients to Matrix object
