@@ -297,9 +297,11 @@ Sound <- function(path = NULL, .xptr = NULL) {
     as_matrix = function() cpp_snd$as_matrix(),
     as_data_frame = function() cpp_snd$as_data_frame(),
     save = function(path, format = "WAV", bits_per_sample = 16) {
+      # Praat Melder audio file type constants (melder_audiofiles.h)
       format_code <- switch(toupper(format),
-        "WAV" = 0L, "AIFF" = 1L, "AIFC" = 2L,
-        "NIST" = 3L, "NEXT" = 4L, "SUN" = 5L, 0L)
+        "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
+        "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
+        "FLAC" = 6L, "MP3" = 7L, 3L)  # Default to WAV
       cpp_snd$save(as.character(path), as.integer(format_code))
       invisible(NULL)
     },

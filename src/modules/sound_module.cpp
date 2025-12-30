@@ -301,8 +301,8 @@ public:
                 time_step,
                 frequency_step,
                 (kSound_to_Spectrogram_windowShape) window_shape,
-                8.0,  // relativeDuration
-                0.0   // filterPreEmphasis
+                8.0,  // maximumTimeOversampling
+                8.0   // maximumFreqOversampling
             );
             Spectrogram raw = result.releaseToAmbiguousOwner();
             return XPtr<structSpectrogram>(raw, true);

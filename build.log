@@ -1,0 +1,87 @@
+* checking for file ‘./DESCRIPTION’ ... OK
+* preparing ‘pladdrr’:
+* checking DESCRIPTION meta-information ... OK
+* cleaning src
+* installing the package to build vignettes
+* creating vignettes ... ERROR
+--- re-building ‘auditory-modeling.Rmd’ using rmarkdown
+
+Quitting from auditory-modeling.Rmd:41-52 [cochleagram-basic]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<error/rlang_error>
+Error in `Sound$create_tone`:
+! object of type 'closure' is not subsettable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Error: processing vignette 'auditory-modeling.Rmd' failed with diagnostics:
+object of type 'closure' is not subsettable
+--- failed re-building ‘auditory-modeling.Rmd’
+
+--- re-building ‘autoplot-autolayer.Rmd’ using rmarkdown
+
+Quitting from autoplot-autolayer.Rmd:45-48 [load-sound]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<error/rlang_error>
+Error in `Sound$new`:
+! object of type 'closure' is not subsettable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Error: processing vignette 'autoplot-autolayer.Rmd' failed with diagnostics:
+object of type 'closure' is not subsettable
+--- failed re-building ‘autoplot-autolayer.Rmd’
+
+--- re-building ‘formant-analysis.Rmd’ using rmarkdown
+
+Quitting from formant-analysis.Rmd:51-72 [burg-basic]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<error/rlang_error>
+Error in `Sound$create_tone`:
+! object of type 'closure' is not subsettable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Error: processing vignette 'formant-analysis.Rmd' failed with diagnostics:
+object of type 'closure' is not subsettable
+--- failed re-building ‘formant-analysis.Rmd’
+
+--- re-building ‘getting-started.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘getting-started.Rmd’
+
+--- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘integrated-phonetic-analysis.Rmd’
+
+--- re-building ‘migration-from-parselmouth.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘migration-from-parselmouth.Rmd’
+
+--- re-building ‘migration-from-praat.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘migration-from-praat.Rmd’
+
+--- re-building ‘performance-simd.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘performance-simd.Rmd’
+
+--- re-building ‘praat-interpreter.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘praat-interpreter.Rmd’
+
+--- re-building ‘textgrid-workflows.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘textgrid-workflows.Rmd’
+
+--- re-building ‘visualization.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘visualization.Rmd’
+
+--- re-building ‘vowel-space-analysis.Rmd’ using rmarkdown
+[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
+--- finished re-building ‘vowel-space-analysis.Rmd’
+
+SUMMARY: processing the following files failed:
+  ‘auditory-modeling.Rmd’ ‘autoplot-autolayer.Rmd’
+  ‘formant-analysis.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
