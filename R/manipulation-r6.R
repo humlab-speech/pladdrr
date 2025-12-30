@@ -102,7 +102,7 @@ Manipulation <- R6::R6Class(
     #' @return PitchTier object
     extract_pitch_tier = function() {
       tier_ptr <- .manipulation_extract_pitch_tier(private$ptr)
-      PitchTier$new(.xptr = tier_ptr)
+      PitchTier(.xptr = tier_ptr)
     },
     
     #' @description Extract DurationTier for editing

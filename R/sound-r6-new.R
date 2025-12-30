@@ -500,7 +500,7 @@ Sound <- R6::R6Class(
     #' @return Ltas object
     to_ltas = function(bandwidth = 100.0) {
       ltas_ptr <- .sound_to_ltas(private$ptr, bandwidth)
-      Ltas$new(.xptr = ltas_ptr)
+      Ltas(.xptr = ltas_ptr)
     },
     
     #' @description Detect silences and create TextGrid
@@ -724,7 +724,7 @@ Sound <- R6::R6Class(
         time_step,
         pre_emphasis_frequency
       )
-      LPC$new(.xptr = lpc_ptr)
+      LPC(.xptr = lpc_ptr)
     },
     
     #' @description Compute Linear Predictive Coding (autocorrelation method)
@@ -746,7 +746,7 @@ Sound <- R6::R6Class(
         time_step,
         pre_emphasis_frequency
       )
-      LPC$new(.xptr = lpc_ptr)
+      LPC(.xptr = lpc_ptr)
     },
     
     #' @description Compute Linear Predictive Coding (covariance method)
@@ -768,7 +768,7 @@ Sound <- R6::R6Class(
         time_step,
         pre_emphasis_frequency
       )
-      LPC$new(.xptr = lpc_ptr)
+      LPC(.xptr = lpc_ptr)
     },
     
     #' @description Compute Linear Predictive Coding (Marple method)
@@ -796,7 +796,7 @@ Sound <- R6::R6Class(
         tol1,
         tol2
       )
-      LPC$new(.xptr = lpc_ptr)
+      LPC(.xptr = lpc_ptr)
     },
     
     #' @description Extract glottal pulses using cross-correlation method

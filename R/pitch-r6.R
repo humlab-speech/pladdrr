@@ -151,7 +151,7 @@ Pitch <- function(.xptr = NULL) {
     
     down_to_pitch_tier = function() {
       tier_ptr <- cpp_obj$down_to_pitch_tier_ptr()
-      PitchTier$new(.xptr = tier_ptr)
+      PitchTier(.xptr = tier_ptr)
     },
     
     to_textgrid_vuv = function() {

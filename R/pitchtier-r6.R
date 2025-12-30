@@ -1,7 +1,6 @@
 #' @title Praat PitchTier Object
 #' @description
-#' R6 class representing a Praat PitchTier object. A PitchTier is a time-stamped
-#' sequence of pitch (F0) targets used for pitch manipulation and speech synthesis.
+#' Praat PitchTier object with direct C++ module binding for pitch manipulation.
 #'
 #' @details
 #' PitchTiers are used in conjunction with Manipulation objects to modify the
@@ -10,7 +9,7 @@
 #'
 #' ## Creating PitchTier Objects
 #'
-#' - `PitchTier$new(tmin, tmax)` - Create empty PitchTier
+#' - `PitchTier(tmin, tmax)` - Create empty PitchTier
 #' - `pitch$down_to_pitch_tier()` - Extract from Pitch object
 #'
 #' ## Querying
@@ -36,7 +35,7 @@
 #' @examples
 #' \dontrun{
 #' # Create from Pitch
-#' sound <- Sound$new("audio.wav")
+#' sound <- Sound("audio.wav")
 #' pitch <- sound$to_pitch()
 #' pitch_tier <- pitch$down_to_pitch_tier()
 #'
@@ -54,199 +53,130 @@
 #' }
 #'
 #' @export
-PitchTier <- R6::R6Class(
-  "PitchTier",
-  inherit = PraatObject,
+PitchTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   
-  public = list(
+  # Handle creation modes
+  if (!is.null(.xptr)) {
+    # From existing C++ object
+    ptr <- .xptr
+  } else if (!is.null(tmin) && !is.null(tmax)) {
+    # Create new empty tier
+    ptr <- .pitchtier_create(as.numeric(tmin), as.numeric(tmax))
+  } else {
+    stop("Must provide either (tmin, tmax) or .xptr")
+  }
+  
+  tier_mod <- get_module("pitchtier_module")
+  cpp_obj <- tier_mod$RPitchTier$new(ptr)
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = ptr,
     
-    #' @description
-    #' Create a PitchTier object
-    #' @param tmin Start time (seconds)
-    #' @param tmax End time (seconds)
-    #' @param .xptr Internal use only - external pointer
-    #' @return A new PitchTier object
-    initialize = function(tmin = NULL, tmax = NULL, .xptr = NULL) {
-      if (!is.null(.xptr)) {
-        super$initialize(.xptr)
-      } else if (!is.null(tmin) && !is.null(tmax)) {
-        ptr <- .pitchtier_create(as.numeric(tmin), as.numeric(tmax))
-        super$initialize(ptr)
-      } else {
-        stop("Must provide either (tmin, tmax) or .xptr")
-      }
-    },
-    
-    # ========================================================================
     # Query Methods
-    # ========================================================================
-    
-    #' @description Get start time
-    #' @return Start time in seconds
     get_start_time = function() {
-      .pitchtier_get_start_time(private$ptr)
+      cpp_obj$get_xmin()
     },
     
-    #' @description Get end time
-    #' @return End time in seconds
     get_end_time = function() {
-      .pitchtier_get_end_time(private$ptr)
+      cpp_obj$get_xmax()
     },
     
-    #' @description Get number of pitch points
-    #' @return Number of points
     get_number_of_points = function() {
-      .pitchtier_get_number_of_points(private$ptr)
+      cpp_obj$get_number_of_points()
     },
     
-    #' @description Get time of specific point
-    #' @param index Point index (1-based)
-    #' @return Time in seconds
     get_time_from_index = function(index) {
-      .pitchtier_get_time_from_index(private$ptr, as.integer(index))
+      cpp_obj$get_time(as.integer(index))
     },
     
-    #' @description Get frequency value of specific point
-    #' @param index Point index (1-based)
-    #' @return Frequency in Hz
     get_value_at_index = function(index) {
-      .pitchtier_get_value_at_index(private$ptr, as.integer(index))
+      cpp_obj$get_value(as.integer(index))
     },
     
-    #' @description Get interpolated frequency at time
-    #' @param time Time in seconds
-    #' @return Frequency in Hz (NA if undefined)
     get_value_at_time = function(time) {
-      .pitchtier_get_value_at_time(private$ptr, as.numeric(time))
+      cpp_obj$get_value_at_time(as.numeric(time))
     },
     
-    #' @description Get mean frequency
-    #' @param tmin Start time (default: tier start)
-    #' @param tmax End time (default: tier end)
-    #' @return Mean frequency in Hz
     get_mean = function(tmin = NULL, tmax = NULL) {
-      if (is.null(tmin)) tmin <- self$get_start_time()
-      if (is.null(tmax)) tmax <- self$get_end_time()
-      .pitchtier_get_mean(private$ptr, as.numeric(tmin), as.numeric(tmax))
+      if (is.null(tmin)) tmin <- cpp_obj$get_xmin()
+      if (is.null(tmax)) tmax <- cpp_obj$get_xmax()
+      cpp_obj$get_mean_curve(as.numeric(tmin), as.numeric(tmax))
     },
     
-    # ========================================================================
     # Modification Methods
-    # ========================================================================
-    
-    #' @description Add a pitch point
-    #' @param time Time in seconds
-    #' @param value Frequency in Hz
-    #' @return Self (invisibly) for method chaining
     add_point = function(time, value) {
-      .pitchtier_add_point(private$ptr, as.numeric(time), as.numeric(value))
-      invisible(self)
+      cpp_obj$add_point(as.numeric(time), as.numeric(value))
+      invisible(obj)
     },
     
-    #' @description Remove a point
-    #' @param index Point index (1-based)
-    #' @return Self (invisibly) for method chaining
     remove_point = function(index) {
-      .pitchtier_remove_point(private$ptr, as.integer(index))
-      invisible(self)
+      cpp_obj$remove_point(as.integer(index))
+      invisible(obj)
     },
     
-    #' @description Remove points between times
-    #' @param tmin Start time
-    #' @param tmax End time
-    #' @return Self (invisibly) for method chaining
     remove_points_between = function(tmin, tmax) {
-      .pitchtier_remove_points_between(private$ptr, as.numeric(tmin), as.numeric(tmax))
-      invisible(self)
+      cpp_obj$remove_points_between(as.numeric(tmin), as.numeric(tmax))
+      invisible(obj)
     },
     
-    #' @description Multiply all frequencies by factor
-    #' @param factor Multiplication factor
-    #' @return Self (invisibly) for method chaining
     multiply_frequencies = function(factor) {
-      .pitchtier_multiply_frequencies(private$ptr, as.numeric(factor))
-      invisible(self)
+      cpp_obj$multiply_frequencies(as.numeric(factor))
+      invisible(obj)
     },
     
-    #' @description Shift all frequencies by constant
-    #' @param shift Frequency shift in Hz
-    #' @return Self (invisibly) for method chaining
     shift_frequencies = function(shift) {
-      .pitchtier_shift_frequencies(private$ptr, as.numeric(shift))
-      invisible(self)
+      cpp_obj$shift_frequencies(as.numeric(shift))
+      invisible(obj)
     },
     
-    #' @description Stylize pitch tier (reduce number of points)
-    #' @param frequency_resolution Maximum frequency difference for merging points (Hz)
-    #' @param use_semitones Use semitone scale for resolution
-    #' @return Self (invisibly) for method chaining
     stylize = function(frequency_resolution = 2.0, use_semitones = FALSE) {
-      .pitchtier_stylize(private$ptr, as.numeric(frequency_resolution), 
-                         as.logical(use_semitones))
-      invisible(self)
+      cpp_obj$stylize(as.numeric(frequency_resolution), as.logical(use_semitones))
+      invisible(obj)
     },
     
-    # ========================================================================
     # Export Methods
-    # ========================================================================
-    
-    #' @description Convert to data frame
-    #' @return Data frame with columns: time, frequency
     as_data_frame = function() {
-      n_points <- self$get_number_of_points()
-      if (n_points == 0) {
-        return(data.frame(time = numeric(0), frequency = numeric(0)))
-      }
-      
-      times <- numeric(n_points)
-      freqs <- numeric(n_points)
-      
-      for (i in seq_len(n_points)) {
-        times[i] <- self$get_time_from_index(i)
-        freqs[i] <- self$get_value_at_index(i)
-      }
-      
-      data.frame(time = times, frequency = freqs)
+      df <- cpp_obj$as_data_frame()
+      names(df) <- c("time", "frequency")
+      df
     },
     
-    #' @description Save to file
-    #' @param path Output file path
-    #' @return Self (invisibly)
     save = function(path) {
-      .pitchtier_save(private$ptr, as.character(path))
-      invisible(self)
+      cpp_obj$save(as.character(path))
+      invisible(obj)
     },
     
-    # ========================================================================
-    # Print Method
-    # ========================================================================
+    # Utility
+    get_xptr = function() {
+      .xptr
+    },
     
-    #' @description Print pitch tier information
+    # Print
     print = function() {
       cat("<Praat PitchTier>\n")
       cat(sprintf("  Time domain: %.3f to %.3f s\n", 
-                  self$get_start_time(), self$get_end_time()))
-      n_points <- self$get_number_of_points()
+                  cpp_obj$get_xmin(), cpp_obj$get_xmax()))
+      n_points <- cpp_obj$get_number_of_points()
       cat(sprintf("  Number of points: %d\n", n_points))
       if (n_points > 0) {
-        mean_f0 <- self$get_mean()
+        mean_f0 <- cpp_obj$get_mean_curve(cpp_obj$get_xmin(), cpp_obj$get_xmax())
         cat(sprintf("  Mean frequency: %.1f Hz\n", mean_f0))
       }
-      invisible(self)
+      invisible(obj)
     }
-  ),
+    
+  ), class = c("PitchTier", "PraatObject"))
   
-  # ========================================================================
-  # Active Bindings
-  # ========================================================================
-  active = list(
-    #' @field tmin Start time (read-only)
-    tmin = function() self$get_start_time(),
-    
-    #' @field tmax End time (read-only)
-    tmax = function() self$get_end_time(),
-    
-    #' @field n_points Number of points (read-only)
-    n_points = function() self$get_number_of_points()
-  )
-)
+  obj
+}
+
+#' @export
+print.PitchTier <- function(x, ...) {
+  x$print()
+}
+
+#' @export
+as.data.frame.PitchTier <- function(x, ...) {
+  x$as_data_frame()
+}

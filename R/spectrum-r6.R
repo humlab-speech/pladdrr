@@ -173,7 +173,7 @@ Spectrum <- function(.xptr = NULL) {
     
     to_ltas_1to1 = function() {
       ptr <- .spectrum_to_ltas_1to1(.xptr)
-      Ltas$new(.xptr = ptr)
+      Ltas(.xptr = ptr)
     },
     
     to_powercepstrum = function() {

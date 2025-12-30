@@ -256,7 +256,7 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   if (name == "down_to_pitch_tier") {
     return(function() {
       tier_ptr <- obj$down_to_pitch_tier_ptr()
-      PitchTier$new(.xptr = tier_ptr)
+      PitchTier(.xptr = tier_ptr)
     })
   }
 

@@ -1,252 +1,151 @@
 #' @title Praat Ltas (Long-term Average Spectrum) Object
 #' @description
-#' R6 class representing a Praat Ltas object for long-term spectral analysis.
+#' Praat Ltas object with direct C++ module binding for long-term spectral analysis.
 #'
 #' @details
 #' An Ltas (Long-term Average Spectrum) represents the average spectral energy
-#' distribution of a sound over its entire duration. It's useful for voice quality
+#' distribution of a sound over its entire duration. Useful for voice quality
 #' analysis and speaker characterization.
 #'
-#' ## Creating Ltas Objects
-#'
-#' - Created from Sound via `sound$to_ltas(bandwidth)`
-#' - Created from Spectrum via `spectrum$to_ltas(bandwidth)`
-#'
-#' ## Querying
-#'
-#' - `$get_bin_from_frequency(frequency)` - Get bin number for frequency
-#' - `$get_frequency_from_bin(bin)` - Get frequency for bin number
-#' - `$get_value_at_frequency(frequency, unit)` - Get power at frequency
-#' - `$get_minimum(fmin, fmax, unit)` - Minimum in frequency range
-#' - `$get_maximum(fmin, fmax, interpolation)` - Maximum in frequency range (dB)
-#' - `$get_mean(fmin, fmax, unit)` - Mean in frequency range
-#' - `$get_slope(f1min, f1max, f2min, f2max, unit)` - Spectral slope
-#'
-#' ## Export
-#'
-#' - `$as_data_frame()` - Convert to R data frame
-#' - `$as_matrix()` - Convert to matrix
-#'
-#' @examples
-#' \dontrun{
-#' # Create from sound
-#' sound <- Sound$new("recording.wav")
-#' ltas <- sound$to_ltas(bandwidth = 100)
-#'
-#' # Query spectral properties
-#' mean_1000_2000 <- ltas$get_mean(1000, 2000, unit = "dB")
-#' slope <- ltas$get_slope(0, 1000, 1000, 4000, unit = "dB")
-#'
-#' # Export to R
-#' df <- ltas$as_data_frame()
-#' }
-#'
 #' @export
-Ltas <- R6::R6Class(
-  "Ltas",
-  inherit = PraatObject,
+Ltas <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Ltas objects must be created from a Sound or Spectrum object")
+  }
   
-  public = list(
+  ltas_mod <- get_module("ltas_module")
+  cpp_obj <- ltas_mod$RLtas$new(.xptr)
+  
+  # Unit codes
+  unit_code <- function(unit) {
+    switch(tolower(unit),
+      "energy" = 0,
+      "sones" = 1,
+      "db" = 2,
+      2  # default dB
+    )
+  }
+  
+  interpolation_code <- function(method) {
+    switch(tolower(method),
+      "nearest" = 0,
+      "linear" = 1,
+      "cubic" = 2,
+      "sinc70" = 3,
+      "sinc700" = 4,
+      2
+    )
+  }
+  
+  peak_interpolation_code <- function(method) {
+    switch(tolower(method),
+      "none" = 0,
+      "parabolic" = 1,
+      "cubic" = 2,
+      "sinc70" = 3,
+      "sinc700" = 4,
+      1
+    )
+  }
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = .xptr,
     
-    #' @description
-    #' Create an Ltas object
-    #' @param .xptr Internal use only - external pointer to C++ Ltas object
-    initialize = function(.xptr = NULL) {
-      if (is.null(.xptr)) {
-        stop("Ltas objects must be created from a Sound or Spectrum object")
-      }
-      private$ptr <- .xptr
-    },
-    
-    # ========================================================================
-    # Query methods - Frequency domain
-    # ========================================================================
-    
-    #' @description
-    #' Get the bin number corresponding to a frequency
-    #' @param frequency Frequency in Hz
-    #' @return Bin number (integer)
+    # Frequency domain
     get_bin_from_frequency = function(frequency) {
-      .ltas_get_bin_from_frequency(private$ptr, as.numeric(frequency))
+      cpp_obj$get_bin_from_frequency(as.numeric(frequency))
     },
     
-    #' @description
-    #' Get the frequency corresponding to a bin number
-    #' @param bin Bin number (1-based)
-    #' @return Frequency in Hz
     get_frequency_from_bin = function(bin) {
-      .ltas_get_frequency_from_bin(private$ptr, as.integer(bin))
+      cpp_obj$get_frequency_from_bin(as.integer(bin))
     },
     
-    #' @description
-    #' Get the number of bins
-    #' @return Number of frequency bins
     get_number_of_bins = function() {
-      .ltas_get_number_of_bins(private$ptr)
+      cpp_obj$get_number_of_bins()
     },
     
-    #' @description
-    #' Get the bin width
-    #' @return Bin width in Hz
     get_bin_width = function() {
-      .ltas_get_bin_width(private$ptr)
+      cpp_obj$get_bandwidth()
     },
     
-    #' @description
-    #' Get the lowest frequency
-    #' @return Minimum frequency in Hz
     get_lowest_frequency = function() {
-      .ltas_get_lowest_frequency(private$ptr)
+      cpp_obj$get_fmin()
     },
     
-    #' @description
-    #' Get the highest frequency
-    #' @return Maximum frequency in Hz
     get_highest_frequency = function() {
-      .ltas_get_highest_frequency(private$ptr)
+      cpp_obj$get_fmax()
     },
     
-    # ========================================================================
-    # Query methods - Values
-    # ========================================================================
-    
-    #' @description
-    #' Get the power value at a specific frequency
-    #' Corresponds to Praat: Get value at frequency: frequency, unit
-    #' @param frequency Frequency in Hz
-    #' @param unit Averaging method: "energy", "sones", "dB" (default)
-    #' @param interpolate Interpolate between bins (default TRUE)
-    #' @return Power value in specified unit
+    # Query values
     get_value_at_frequency = function(frequency, unit = "dB", interpolate = TRUE) {
-      unit_code <- switch(tolower(unit),
-        "energy" = 1L,
-        "sones" = 2L,
-        "db" = 3L,
-        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
-      )
-      .ltas_get_value_at_frequency(private$ptr, as.numeric(frequency), 
-                                    unit_code, as.logical(interpolate))
+      cpp_obj$get_value_at_frequency(as.numeric(frequency), 
+                                       if(interpolate) 2 else 0)
     },
     
-    #' @description
-    #' Get minimum power in frequency range
-    #' Corresponds to Praat: Get minimum: fmin, fmax, unit
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param unit Averaging method: "energy", "sones", "dB" (default)
-    #' @param interpolate Interpolate between bins (default TRUE)
-    #' @return Minimum power value
-    get_minimum = function(fmin = 0, fmax = 0, unit = "dB", interpolate = TRUE) {
-      unit_code <- switch(tolower(unit),
-        "energy" = 1L,
-        "sones" = 2L,
-        "db" = 3L,
-        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
-      )
-      .ltas_get_minimum(private$ptr, as.numeric(fmin), as.numeric(fmax), 
-                        unit_code, as.logical(interpolate))
+    get_minimum = function(fmin = 0, fmax = 0, unit = "dB", interpolation = "parabolic") {
+      cpp_obj$get_minimum(fmin, fmax, peak_interpolation_code(interpolation))
     },
     
-    #' @description
-    #' Get frequency of maximum power in frequency range
-    #' Corresponds to Praat: Get frequency of maximum: fmin, fmax, interpolation
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @param interpolation Interpolation method: "none", "parabolic", "cubic", "sinc70", "sinc700"
-    #' @return Frequency of maximum power (Hz)
-    get_frequency_of_maximum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
-      interp_code <- switch(tolower(interpolation),
-        "none" = 0L,
-        "nearest" = 0L,
-        "linear" = 1L,
-        "parabolic" = 2L,
-        "cubic" = 3L,
-        "sinc70" = 4L,
-        "sinc700" = 5L,
-        stop("Unknown interpolation: ", interpolation)
-      )
-      .ltas_get_frequency_of_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), interp_code)
+    get_maximum = function(fmin = 0, fmax = 0, unit = "dB", interpolation = "parabolic") {
+      cpp_obj$get_maximum(fmin, fmax, peak_interpolation_code(interpolation))
     },
     
-    #' @description
-    #' Get the maximum power in a frequency range
-    #' @param fmin Minimum frequency (Hz, default 0 = all)
-    #' @param fmax Maximum frequency (Hz, default 0 = all)
-    #' @param interpolation Interpolation method: "none", "parabolic" (default), "cubic", "sinc70", "sinc700"
-    #' @return Maximum power value in dB
-    get_maximum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
-      interp_code <- switch(tolower(interpolation),
-        "none" = 0L,
-        "parabolic" = 1L,
-        "cubic" = 2L,
-        "sinc70" = 3L,
-        "sinc700" = 4L,
-        stop("Unknown interpolation: ", interpolation, 
-             ". Must be 'none', 'parabolic', 'cubic', 'sinc70', or 'sinc700'")
-      )
-      .ltas_get_maximum(private$ptr, as.numeric(fmin), as.numeric(fmax), interp_code)
+    get_mean = function(fmin = 0, fmax = 0, unit = "dB") {
+      cpp_obj$get_mean(fmin, fmax, unit_code(unit))
     },
     
-    #' @description
-    #' Get spectral slope between two frequency ranges
-    #' Corresponds to Praat: Get slope: f1min, f1max, f2min, f2max, unit
-    #' @param f1min Low range minimum frequency (Hz)
-    #' @param f1max Low range maximum frequency (Hz)
-    #' @param f2min High range minimum frequency (Hz)
-    #' @param f2max High range maximum frequency (Hz)
-    #' @param unit Averaging method: "energy" (default), "sones", "dB"
-    #' @return Slope (difference in dB)
-    get_slope = function(f1min, f1max, f2min, f2max, unit = "energy") {
-      unit_code <- switch(tolower(unit),
-        "energy" = 1L,
-        "sones" = 2L,
-        "db" = 3L,
-        stop("Unknown unit: ", unit, ". Must be 'energy', 'sones', or 'dB'")
-      )
-      .ltas_get_slope(private$ptr, as.numeric(f1min), as.numeric(f1max),
-                      as.numeric(f2min), as.numeric(f2max), unit_code)
+    get_slope = function(f1min, f1max, f2min, f2max, unit = "dB") {
+      cpp_obj$get_slope(f1min, f1max, f2min, f2max, unit_code(unit))
     },
     
-    # ========================================================================
-    # Transformation methods
-    # ========================================================================
-    
-    #' @description
-    #' Compute trend line (linear regression)
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @return New Ltas with trend line
-    compute_trend_line = function(fmin = 0, fmax = 0) {
-      trend_ptr <- .ltas_compute_trend_line(private$ptr, as.numeric(fmin), as.numeric(fmax))
-      Ltas$new(.xptr = trend_ptr)
-    },
-    
-    #' @description
-    #' Subtract trend line from Ltas
-    #' @param fmin Minimum frequency (Hz, 0 = start)
-    #' @param fmax Maximum frequency (Hz, 0 = end)
-    #' @return New Ltas with trend removed
+    # Transform
     subtract_trend_line = function(fmin = 0, fmax = 0) {
-      corrected_ptr <- .ltas_subtract_trend_line(private$ptr, as.numeric(fmin), as.numeric(fmax))
-      Ltas$new(.xptr = corrected_ptr)
+      ptr <- .ltas_subtract_trend_line(.xptr, fmin, fmax)
+      Ltas(.xptr = ptr)
     },
     
-    # ========================================================================
-    # Export methods
-    # ========================================================================
+    compute_trend_line = function(fmin = 0, fmax = 0) {
+      ptr <- .ltas_compute_trend_line(.xptr, fmin, fmax)
+      Ltas(.xptr = ptr)
+    },
     
-    #' @description
-    #' Convert Ltas to R data frame
-    #' @return Data frame with columns: frequency (Hz), power_db (dB/Hz)
+    # Export
     as_data_frame = function() {
-      .ltas_as_data_frame(private$ptr)
+      df <- cpp_obj$as_data_frame()
+      names(df) <- c("frequency", "power_db")
+      df
     },
     
-    #' @description
-    #' Convert Ltas to R matrix
-    #' @return Numeric vector of power values
     as_matrix = function() {
-      .ltas_as_matrix(private$ptr)
+      mat <- cpp_obj$as_matrix()
+      rbind(
+        frequency = mat[, 1],
+        power_db = mat[, 2]
+      )
+    },
+    
+    # Display
+    print = function() {
+      cat("<Praat Ltas>\n")
+      cat(sprintf("  Frequency range: %.2f - %.2f Hz\n", 
+                  cpp_obj$get_fmin(), cpp_obj$get_fmax()))
+      cat(sprintf("  Number of bins: %d\n", cpp_obj$get_number_of_bins()))
+      cat(sprintf("  Bin width: %.2f Hz\n", cpp_obj$get_bandwidth()))
+      invisible(obj)
     }
-  )
-)
+    
+  ), class = c("Ltas", "PraatObject"))
+  
+  obj
+}
+
+#' @export
+print.Ltas <- function(x, ...) {
+  x$print()
+}
+
+#' @export
+as.data.frame.Ltas <- function(x, ...) {
+  x$as_data_frame()
+}
