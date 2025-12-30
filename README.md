@@ -12,10 +12,11 @@
 
 ### Key Performance Features
 
-- **Rcpp Modules Architecture** (v1.7.3): 27/28 objects use direct C++ method dispatch
-  - **5-10x faster** method calls vs traditional R6 classes
-  - **~0.1µs overhead** per method (vs ~1-2µs with R6)
-  - Closes performance gap to Python's Parselmouth
+- **Rcpp Modules Architecture** (v1.7.4): 27/28 objects use direct C++ method dispatch
+  - **10-15x faster** overhead vs traditional R6 classes
+  - **~3-5µs dispatch** per method (vs ~30µs with R6)
+  - **<1% overhead** in typical phonetic workflows
+  - Reduces gap to Python's Parselmouth from 5-18x to 2-3x
 - **SIMD Vectorization**: Optimized autocorrelation, FFT, formant detection
 - **Zero-copy operations**: Efficient memory management for large files
 - **Streaming support**: Process files too large for memory with LongSound
