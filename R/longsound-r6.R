@@ -1,9 +1,10 @@
 # longsound-r6.R
-# R6 class for Praat LongSound objects (streaming large audio files)
+# Function wrapper for Praat LongSound objects (streaming large audio files)
+# Converted from R6 to modules for pladdrr 2.0
 
 #' @title LongSound Class
 #' @description
-#' R6 class for Praat LongSound objects representing large audio files.
+#' Function wrapper for Praat LongSound objects representing large audio files.
 #' Unlike Sound objects which load entirely into memory, LongSound streams
 #' from disk, making it suitable for very long recordings.
 #'
@@ -11,6 +12,9 @@
 #' A LongSound keeps the audio file open and reads portions on demand.
 #' This allows working with files that would be too large to load into memory.
 #' Use `extract_part()` to get a Sound object for a specific time window.
+#'
+#' @param .xptr External pointer to LongSound (for internal use)
+#' @return LongSound object (list with methods)
 #'
 #' @examples
 #' \dontrun{
@@ -26,149 +30,101 @@
 #' }
 #'
 #' @export
-LongSound <- R6::R6Class(
-  "LongSound",
-  inherit = PraatObject,
-
-  public = list(
-    #' @description Create LongSound from external pointer
-    #' @param .xptr External pointer (for internal use)
-    initialize = function(.xptr = NULL) {
-      if (!is.null(.xptr)) {
-        super$initialize(.xptr)
-      } else {
-        stop("Use LongSound$open() to create a LongSound from a file")
-      }
-    },
-
-    #' @description Get total duration
-    #' @return Duration in seconds
-    get_duration = function() {
-      private$check_valid()
-      .longsound_get_duration(private$ptr)
-    },
-
-    #' @description Get start time
-    #' @return Start time in seconds
-    get_start_time = function() {
-      private$check_valid()
-      .longsound_get_start_time(private$ptr)
-    },
-
-    #' @description Get end time
-    #' @return End time in seconds
-    get_end_time = function() {
-      private$check_valid()
-      .longsound_get_end_time(private$ptr)
-    },
-
-    #' @description Get sample rate
-    #' @return Sample rate in Hz
-    get_sample_rate = function() {
-      private$check_valid()
-      .longsound_get_sample_rate(private$ptr)
-    },
-
-    #' @description Get number of channels
-    #' @return Number of channels
-    get_number_of_channels = function() {
-      private$check_valid()
-      .longsound_get_number_of_channels(private$ptr)
-    },
-
-    #' @description Get number of samples
-    #' @return Number of samples
-    get_number_of_samples = function() {
-      private$check_valid()
-      .longsound_get_number_of_samples(private$ptr)
-    },
-
-    #' @description Get source file path
-    #' @return File path
-    get_file_path = function() {
-      private$check_valid()
-      .longsound_get_file_path(private$ptr)
-    },
-
-    #' @description Extract part as Sound object
-    #' @param tmin Start time in seconds
-    #' @param tmax End time in seconds
-    #' @param preserve_times If TRUE, keep original time domain (default FALSE)
-    #' @return Sound object
+LongSound <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Use LongSound$open() to create a LongSound from a file")
+  }
+  
+  ptr <- .xptr
+  
+  # Get C++ module instance
+  mod <- get_module("longsound_module")
+  cpp_obj <- mod$RLongSound$new(ptr)
+  
+  # Create object with methods
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = ptr,
+    
+    # Query methods - duration and timing
+    get_duration = function() cpp_obj$get_duration(),
+    get_start_time = function() cpp_obj$get_start_time(),
+    get_end_time = function() cpp_obj$get_end_time(),
+    
+    # Query methods - audio properties
+    get_sample_rate = function() cpp_obj$get_sample_rate(),
+    get_number_of_channels = function() cpp_obj$get_number_of_channels(),
+    get_number_of_samples = function() cpp_obj$get_number_of_samples(),
+    get_file_path = function() cpp_obj$get_file_path(),
+    
+    # Streaming methods - extract_part
     extract_part = function(tmin, tmax, preserve_times = FALSE) {
-      private$check_valid()
-      ptr <- .longsound_extract_part(private$ptr, tmin, tmax, preserve_times)
-      Sound(.xptr = ptr)
+      result_ptr <- cpp_obj$extract_part_ptr(
+        as.numeric(tmin), 
+        as.numeric(tmax), 
+        preserve_times
+      )
+      Sound(.xptr = result_ptr)
     },
-
-    #' @description Check if time window is in buffer
-    #' @param tmin Start time
-    #' @param tmax End time
-    #' @return TRUE if window is available in buffer
+    
+    # Streaming methods - have_window
     have_window = function(tmin, tmax) {
-      private$check_valid()
-      .longsound_have_window(private$ptr, tmin, tmax)
+      cpp_obj$have_window(as.numeric(tmin), as.numeric(tmax))
     },
-
-    #' @description Get extrema in time window
-    #' @param tmin Start time
-    #' @param tmax End time
-    #' @param channel Channel number (1-based, default 1)
-    #' @return Named vector with minimum and maximum
+    
+    # Streaming methods - get_window_extrema
     get_window_extrema = function(tmin, tmax, channel = 1L) {
-      private$check_valid()
-      .longsound_get_window_extrema(private$ptr, tmin, tmax, as.integer(channel))
+      cpp_obj$get_window_extrema(
+        as.numeric(tmin), 
+        as.numeric(tmax), 
+        as.integer(channel)
+      )
     },
-
-    #' @description Save part to audio file
-    #' @param tmin Start time
-    #' @param tmax End time
-    #' @param path Output file path
-    #' @param format Audio format: "wav" (default), "aiff", "aifc", "flac", "wav24"
-    #' @return Self (invisibly)
+    
+    # Save methods (use wrappers - involve file I/O)
     save_part = function(tmin, tmax, path, format = "wav") {
-      private$check_valid()
       type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L, wav24 = 1L)
       bits_map <- c(wav = 16L, aiff = 16L, aifc = 16L, flac = 16L, wav24 = 24L)
       if (!format %in% names(type_map)) {
         stop("Unknown format: ", format, ". Use wav, aiff, aifc, flac, or wav24")
       }
-      .longsound_save_part(private$ptr, type_map[[format]], tmin, tmax,
-                           path, bits_map[[format]])
-      invisible(self)
+      .longsound_save_part(ptr, type_map[[format]], tmin, tmax,
+                          path, bits_map[[format]])
+      invisible(obj)
     },
-
-    #' @description Save single channel to audio file
-    #' @param channel Channel number (1-based)
-    #' @param path Output file path
-    #' @param format Audio format: "wav" (default), "aiff", "aifc", "flac"
-    #' @return Self (invisibly)
+    
     save_channel = function(channel, path, format = "wav") {
-      private$check_valid()
       type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L)
       if (!format %in% names(type_map)) {
         stop("Unknown format: ", format, ". Use wav, aiff, aifc, or flac")
       }
-      .longsound_save_channel(private$ptr, type_map[[format]], as.integer(channel), path)
-      invisible(self)
+      .longsound_save_channel(ptr, type_map[[format]], as.integer(channel), path)
+      invisible(obj)
     },
-
-    #' @description Print method
+    
+    # Utility methods
+    is_valid = function() cpp_obj$is_valid(),
+    get_ptr = function() ptr,
+    get_xptr = function() ptr,
+    
+    # Print method
     print = function() {
       cat("<Praat LongSound>\n")
-      if (!self$is_valid()) {
+      if (!cpp_obj$is_valid()) {
         cat("  [Invalid or deleted object]\n")
       } else {
-        cat("  File:", self$get_file_path(), "\n")
-        cat("  Duration:", sprintf("%.3f", self$get_duration()), "seconds\n")
-        cat("  Sample rate:", self$get_sample_rate(), "Hz\n")
-        cat("  Channels:", self$get_number_of_channels(), "\n")
-        cat("  Samples:", self$get_number_of_samples(), "\n")
+        cat("  File:", cpp_obj$get_file_path(), "\n")
+        cat("  Duration:", sprintf("%.3f", cpp_obj$get_duration()), "seconds\n")
+        cat("  Sample rate:", cpp_obj$get_sample_rate(), "Hz\n")
+        cat("  Channels:", cpp_obj$get_number_of_channels(), "\n")
+        cat("  Samples:", cpp_obj$get_number_of_samples(), "\n")
       }
-      invisible(self)
+      invisible(obj)
     }
-  )
-)
+  ), class = c("LongSound", "PraatObject"))
+  
+  obj
+}
 
 #' Open a LongSound from file
 #' @param path Path to audio file (WAV, AIFF, FLAC, MP3, etc.)
@@ -182,10 +138,23 @@ LongSound <- R6::R6Class(
 #' # Extract portion
 #' sound <- ls$extract_part(0, 10)
 #' }
-LongSound$open <- function(path) {
+longsound_open <- function(path) {
   if (!file.exists(path)) {
     stop("File not found: ", path)
   }
   ptr <- .longsound_open(normalizePath(path, mustWork = TRUE))
   LongSound(.xptr = ptr)
 }
+
+# Static method environment for LongSound
+.longsound_static_env <- new.env(parent = emptyenv())
+.longsound_static_env$open <- longsound_open
+.longsound_static_env$new <- LongSound
+
+# S3 method for $ on longsound_constructor
+`$.longsound_constructor` <- function(x, name) {
+  .longsound_static_env[[name]]
+}
+
+# Make LongSound a constructor class
+class(LongSound) <- c("longsound_constructor", "function")
