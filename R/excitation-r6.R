@@ -103,7 +103,7 @@ Excitation <- R6::R6Class("Excitation",
         "max_formants must be positive" = max_formants > 0
       )
       xptr <- .excitation_to_formant(private$ptr, as.integer(max_formants))
-      Formant$new(xptr)
+      Formant(xptr)
     },
     
     #' @description

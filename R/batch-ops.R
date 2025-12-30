@@ -245,7 +245,7 @@ sound_to_formant_batch <- function(sounds,
   )
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Formant$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Formant(.xptr = ptr))
   } else {
     result_ptrs
   }
@@ -279,7 +279,7 @@ sound_to_intensity_batch <- function(sounds,
   result_ptrs <- .sound_to_intensity_batch(xptrs, minimum_pitch, time_step, subtract_mean)
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Intensity$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Intensity(.xptr = ptr))
   } else {
     result_ptrs
   }
@@ -372,7 +372,7 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
   )
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Formant$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Formant(.xptr = ptr))
   } else {
     result_ptrs
   }

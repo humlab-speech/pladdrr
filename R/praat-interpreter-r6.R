@@ -17,8 +17,8 @@
   switch(class_name,
     "Sound" = Sound$new(.xptr = xptr),
     "Pitch" = Pitch$new(.xptr = xptr),
-    "Formant" = Formant$new(.xptr = xptr),
-    "Intensity" = Intensity$new(.xptr = xptr),
+    "Formant" = Formant(.xptr = xptr),
+    "Intensity" = Intensity(.xptr = xptr),
     "Spectrogram" = Spectrogram$new(.xptr = xptr),
     "Spectrum" = Spectrum$new(.xptr = xptr),
     "TextGrid" = TextGrid$new(.xptr = xptr),
@@ -54,6 +54,26 @@
 #' Allows running multiple scripts while maintaining variables and state between runs.
 #' Provides bidirectional object transfer between R and Praat's object list.
 #'
+#' @section Limitations:
+#' Object creation commands (e.g., "Create Sound...") have limitations due to
+#' stubbed GUI code. For creating objects, use R6 classes directly (e.g., Sound$new()),
+#' then transfer to interpreter with set_object() if needed.
+#'
+#' @examples
+#' \dontrun{
+#' # Create interpreter
+#' interp <- PraatInterpreter$new()
+#' 
+#' # Run scripts with variables
+#' interp$run("x = 42\ny = x * 2")
+#' interp$get_variable("y")  # Returns 84
+#' 
+#' # Transfer objects between R and Praat
+#' sound <- Sound$new(path = "audio.wav")
+#' interp$set_object("mysound", sound)
+#' retrieved <- interp$get_object("mysound", "Sound")
+#' }
+#'
 #' @export
 PraatInterpreter <- R6::R6Class(
   "PraatInterpreter",
@@ -71,10 +91,10 @@ PraatInterpreter <- R6::R6Class(
     #' @examples
     #' \dontrun{
     #' interp <- PraatInterpreter$new()
-    #' interp$run('
-    #'   Create Sound from formula: "test", 1, 0, 1, 44100, "sin(2*pi*440*x)"
-    #'   duration = Get duration
-    #' ')
+    #' # Variables persist across run() calls
+    #' interp$run('x = 10\ny = 20')
+    #' interp$run('sum = x + y')
+    #' interp$get_variable("sum")  # Returns 30
     #' }
     run = function(script) {
       .praat_interpreter_run(private$ptr, script)

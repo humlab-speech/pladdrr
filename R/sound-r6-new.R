@@ -234,7 +234,7 @@ Sound <- R6::R6Class(
     #' @return Pitch object
     to_pitch = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
       pitch_ptr <- .sound_to_pitch(private$ptr, time_step, pitch_floor, pitch_ceiling)
-      Pitch$new(.xptr = pitch_ptr)
+      Pitch(.xptr = pitch_ptr)  # Module-based constructor
     },
     
     #' @description Extract pitch using autocorrelation with full voicing parameters
@@ -274,7 +274,7 @@ Sound <- R6::R6Class(
         octave_jump_cost,
         voiced_unvoiced_cost
       )
-      Pitch$new(.xptr = pitch_ptr)
+      Pitch(.xptr = pitch_ptr)
     },
     
     #' @description Extract pitch using cross-correlation with full voicing parameters
@@ -314,7 +314,7 @@ Sound <- R6::R6Class(
         octave_jump_cost,
         voiced_unvoiced_cost
       )
-      Pitch$new(.xptr = pitch_ptr)
+      Pitch(.xptr = pitch_ptr)
     },
     
     #' @description Extract formants using Burg's method
@@ -339,7 +339,7 @@ Sound <- R6::R6Class(
         window_length,
         pre_emphasis_from
       )
-      Formant$new(.xptr = formant_ptr)
+      Formant(.xptr = formant_ptr)
     },
     
     #' @description Extract formants using keep-all method
@@ -364,7 +364,7 @@ Sound <- R6::R6Class(
         window_length,
         pre_emphasis_from
       )
-      Formant$new(.xptr = formant_ptr)
+      Formant(.xptr = formant_ptr)
     },
     
     #' @description Extract formants using Willems method
@@ -392,7 +392,7 @@ Sound <- R6::R6Class(
         window_length,
         pre_emphasis_from
       )
-      Formant$new(.xptr = formant_ptr)
+      Formant(.xptr = formant_ptr)
     },
     
     #' @description Extract formants using Split-Levinson method
@@ -420,7 +420,7 @@ Sound <- R6::R6Class(
         window_length,
         pre_emphasis_from
       )
-      Formant$new(.xptr = formant_ptr)
+      Formant(.xptr = formant_ptr)
     },
     
     #' @description Extract intensity contour
@@ -439,7 +439,7 @@ Sound <- R6::R6Class(
         time_step,
         subtract_mean
       )
-      Intensity$new(.xptr = intensity_ptr)
+      Intensity(.xptr = intensity_ptr)
     },
     
     #' @description Compute harmonics-to-noise ratio (autocorrelation method)

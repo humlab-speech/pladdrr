@@ -159,7 +159,7 @@ FormantGrid <- R6::R6Class("FormantGrid",
     #' @return A new Formant object
     to_formant = function(time_step = 0.01, intensity = 70) {
       formant_ptr <- .formantgrid_to_formant(private$ptr, time_step, intensity)
-      Formant$new(.xptr = formant_ptr)
+      Formant(.xptr = formant_ptr)
     },
     
     # ========================================================================
