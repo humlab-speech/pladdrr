@@ -82,7 +82,7 @@ public:
         for (integer i = 1; i <= ptr->points.size; i++) {
             FormantPoint point = static_cast<FormantPoint>(ptr->points.at[i]);
             times.push_back(point->number);
-            num_formants.push_back(static_cast<int>(point->formants.size));
+            num_formants.push_back(static_cast<int>(point->formant.size));
         }
         
         return DataFrame::create(
