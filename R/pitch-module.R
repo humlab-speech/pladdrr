@@ -249,7 +249,7 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   if (name == "to_point_process") {
     return(function() {
       pp_ptr <- obj$to_point_process_ptr()
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     })
   }
 
@@ -263,14 +263,14 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   if (name == "to_textgrid_vuv") {
     return(function() {
       tg_ptr <- obj$to_textgrid_vuv_ptr()
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     })
   }
 
   if (name == "to_textgrid_silences") {
     return(function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
       tg_ptr <- obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     })
   }
 

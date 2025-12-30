@@ -11,6 +11,7 @@
 #include "sys/praat.h"
 #include "sys/praat_script.h"
 #include "melder/melder.h"
+#include "praat.github.io/melder/melder_info.h"
 #include "praat.github.io/fon/praat_uvafon_init.h"
 
 using namespace Rcpp;
@@ -200,14 +201,32 @@ CharacterVector praat_evaluate_string_array(std::string expression) {
 // Persistent Interpreter
 // ==============================================================================
 
+// Helper to add predefined boolean constants to interpreter
+static void addPredefinedVariables(Interpreter interpreter) {
+    // Add yes/no as predefined boolean constants for colon-syntax arguments
+    InterpreterVariable yes_var = Interpreter_lookUpVariable(interpreter, U"yes");
+    yes_var->numericValue = 1.0;
+
+    InterpreterVariable no_var = Interpreter_lookUpVariable(interpreter, U"no");
+    no_var->numericValue = 0.0;
+
+    // Also add true/false for consistency
+    InterpreterVariable true_var = Interpreter_lookUpVariable(interpreter, U"true");
+    true_var->numericValue = 1.0;
+
+    InterpreterVariable false_var = Interpreter_lookUpVariable(interpreter, U"false");
+    false_var->numericValue = 0.0;
+}
+
 // [[Rcpp::export(.praat_interpreter_create)]]
 SEXP praat_interpreter_create() {
     if (!praat_interpreter_initialized) {
         praat_interpreter_init();
     }
-    
+
     try {
         autoInterpreter interpreter = Interpreter_create();
+        addPredefinedVariables(interpreter.get());
         return create_xptr_from_auto<structInterpreter>(interpreter);
     } catch (MelderError) {
         std::string error_msg = Melder_peek32to8(Melder_getError());

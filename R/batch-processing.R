@@ -266,7 +266,7 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
     sound <- Sound$new(sound)
   }
   if (is.character(textgrid)) {
-    textgrid <- TextGrid$new(textgrid)
+    textgrid <- TextGrid(path = textgrid)
   }
   
   # Get tier

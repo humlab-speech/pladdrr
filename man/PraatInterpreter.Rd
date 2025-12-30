@@ -13,7 +13,28 @@ R6 class for executing Praat scripts with persistent interpreter state.
 Allows running multiple scripts while maintaining variables and state between runs.
 Provides bidirectional object transfer between R and Praat's object list.
 }
+\section{Limitations}{
+
+Object creation commands (e.g., "Create Sound...") have limitations due to
+stubbed GUI code. For creating objects, use R6 classes directly (e.g., Sound$new()),
+then transfer to interpreter with set_object() if needed.
+}
+
 \examples{
+\dontrun{
+# Create interpreter
+interp <- PraatInterpreter$new()
+
+# Run scripts with variables
+interp$run("x = 42\ny = x * 2")
+interp$get_variable("y")  # Returns 84
+
+# Transfer objects between R and Praat
+sound <- Sound$new(path = "audio.wav")
+interp$set_object("mysound", sound)
+retrieved <- interp$get_object("mysound", "Sound")
+}
+
 
 ## ------------------------------------------------
 ## Method `PraatInterpreter$run`
@@ -21,10 +42,10 @@ Provides bidirectional object transfer between R and Praat's object list.
 
 \dontrun{
 interp <- PraatInterpreter$new()
-interp$run('
-  Create Sound from formula: "test", 1, 0, 1, 44100, "sin(2*pi*440*x)"
-  duration = Get duration
-')
+# Variables persist across run() calls
+interp$run('x = 10\ny = 20')
+interp$run('sum = x + y')
+interp$get_variable("sum")  # Returns 30
 }
 
 ## ------------------------------------------------
@@ -139,10 +160,10 @@ Self (invisibly), for method chaining
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{\dontrun{
 interp <- PraatInterpreter$new()
-interp$run('
-  Create Sound from formula: "test", 1, 0, 1, 44100, "sin(2*pi*440*x)"
-  duration = Get duration
-')
+# Variables persist across run() calls
+interp$run('x = 10\ny = 20')
+interp$run('sum = x + y')
+interp$get_variable("sum")  # Returns 30
 }
 }
 \if{html}{\out{</div>}}

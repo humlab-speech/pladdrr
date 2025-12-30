@@ -256,7 +256,7 @@ extract_measurements <- function(sound,
     sound <- Sound$new(sound)
   }
   if (is.character(textgrid)) {
-    textgrid <- TextGrid$new(textgrid)
+    textgrid <- TextGrid(path = textgrid)
   }
   
   # Create analysis objects

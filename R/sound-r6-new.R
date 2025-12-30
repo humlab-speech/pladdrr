@@ -564,7 +564,7 @@ Sound <- R6::R6Class(
         silent_label,
         sounding_label
       )
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     },
     
     #' @description Create Cochleagram (auditory filterbank representation)
@@ -702,7 +702,7 @@ Sound <- R6::R6Class(
         pitch_floor,
         pitch_ceiling
       )
-      Manipulation$new(.xptr = manip_ptr)
+      Manipulation(.xptr = manip_ptr)
     },
     
     #' @description Compute Linear Predictive Coding (Burg method)
@@ -821,7 +821,7 @@ Sound <- R6::R6Class(
         max_period_factor,
         max_amplitude_factor
       )
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     },
     
     #' @description Extract peaks (positive extrema) from sound
@@ -854,7 +854,7 @@ Sound <- R6::R6Class(
         as.logical(include_minima),
         interpolation_int
       )
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     },
     
     #' @description Extract zero crossings from sound
@@ -873,7 +873,7 @@ Sound <- R6::R6Class(
         as.logical(include_raisers),
         as.logical(include_fallers)
       )
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     },
     
     #' @description Extract periodic PointProcess using cross-correlation
@@ -914,7 +914,7 @@ Sound <- R6::R6Class(
         include_maxima,
         include_minima
       )
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     },
     
     #' @description Alias for backward compatibility

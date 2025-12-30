@@ -1,8 +1,8 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 1.5.0
-Date: 2025-12-29
+Version: 1.6.0
+Date: 2025-12-30
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
@@ -16,7 +16,8 @@ Description: Provides direct, efficient access to Praat C implemented
     from R. Includes 19+ Praat object types with 320+ methods for sound
     manipulation, pitch analysis, formant extraction, intensity measurements,
     spectral analysis, auditory modeling (Cochleagram, Excitation), TextGrid
-    annotation, and voice quality assessment. 
+    annotation, voice quality assessment, and a persistent Praat script
+    interpreter with bidirectional R-Praat object transfer. 
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 Depends:

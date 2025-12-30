@@ -618,7 +618,7 @@ PointProcess <- R6::R6Class(
         as.numeric(max_voiced_period),
         as.numeric(max_unvoiced_period)
       )
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     },
     
     # ========================================================================

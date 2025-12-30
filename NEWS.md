@@ -1,3 +1,39 @@
+# pladdrr 1.6.0 (2025-12-30)
+
+## Major Features
+
+### Praat Script Interpreter (Complete)
+
+* **Persistent interpreter with state** (`PraatInterpreter` R6 class)
+  - `run(script)` - execute Praat scripts with persistent variables
+  - `get_variable(name)` / `set_variable(name, value)` - access interpreter vars
+  - `eval(expression)` - evaluate expressions in interpreter context
+  - Variables persist across multiple `run()` calls
+  - Supports all Praat data types: numeric, string, vector, matrix, string arrays
+
+* **Bidirectional R ↔ Praat object transfer**
+  - `get_object(name, type)` - extract Praat object to R6 class
+  - `set_object(name, object)` - inject R6 object into interpreter
+  - `list_objects()` / `object_count()` - inspect interpreter state
+  - Enables 100% Praat functionality via script commands
+
+* **Predefined script constants**
+  - `yes` / `no` - boolean values for colon-syntax commands
+  - `true` / `false` - alternative boolean constants
+
+### Limitations
+
+* Object creation commands (e.g., `Create Sound...`) not fully supported
+  - Due to stubbed GUI code in library mode
+  - Use R6 classes for object creation, then transfer with `set_object()`
+
+## Documentation
+
+* Added comprehensive `PraatInterpreter` examples
+* Updated class documentation with limitations and best practices
+
+---
+
 # pladdrr 1.5.0 (2025-12-29)
 
 ## Major Features

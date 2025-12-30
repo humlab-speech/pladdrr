@@ -146,7 +146,7 @@ Pitch <- function(.xptr = NULL) {
     # Transformation methods (return wrapped objects)
     to_point_process = function() {
       pp_ptr <- cpp_obj$to_point_process_ptr()
-      PointProcess$new(.xptr = pp_ptr)
+      PointProcess(.xptr = pp_ptr)
     },
     
     down_to_pitch_tier = function() {
@@ -156,12 +156,12 @@ Pitch <- function(.xptr = NULL) {
     
     to_textgrid_vuv = function() {
       tg_ptr <- cpp_obj$to_textgrid_vuv_ptr()
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     },
     
     to_textgrid_silences = function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
       tg_ptr <- cpp_obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
-      TextGrid$new(.xptr = tg_ptr)
+      TextGrid(.xptr = tg_ptr)
     },
     
     # Export methods

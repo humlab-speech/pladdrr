@@ -96,533 +96,243 @@
 #' }
 #'
 #' @export
-TextGrid <- R6::R6Class(
-  "TextGrid",
-  inherit = PraatObject,
+#' @export
+TextGrid <- function(path = NULL, .xptr = NULL) {
+  # Handle initialization
+  if (!is.null(.xptr)) {
+    ptr <- .xptr
+  } else if (!is.null(path)) {
+    if (!file.exists(path)) {
+      stop("TextGrid file not found: ", path)
+    }
+    ptr <- .textgrid_read_from_file(path)
+  } else {
+    stop("Must provide either path or .xptr")
+  }
   
-  public = list(
-    
-    #' @description
-    #' Create a TextGrid object from file or pointer
-    #' @param path Path to TextGrid file (Praat text or binary format)
-    #' @param .xptr Internal use only - external pointer to C++ TextGrid object
-    #' @return A new TextGrid object
-    initialize = function(path = NULL, .xptr = NULL) {
-      if (!is.null(.xptr)) {
-        super$initialize(.xptr)
-      } else if (!is.null(path)) {
-        if (!file.exists(path)) {
-          stop("TextGrid file not found: ", path)
-        }
-        ptr <- .textgrid_read_from_file(path)
-        super$initialize(ptr)
-      } else {
-        stop("Must provide either path or .xptr")
+  # Load Rcpp Module
+  tg_mod <- get_module("textgrid_module")
+  cpp_tg <- tg_mod$RTextGrid$new(ptr)
+  
+  # Helper to resolve tier name/number
+  resolve_tier_number <- function(tier) {
+    if (is.numeric(tier)) {
+      return(as.integer(tier))
+    } else if (is.character(tier)) {
+      tier_names <- cpp_tg$get_tier_names()
+      match_idx <- which(tier_names == tier)
+      if (length(match_idx) == 0) {
+        stop("Tier not found: ", tier)
       }
-    },
+      return(as.integer(match_idx[1]))
+    } else {
+      stop("Tier must be numeric index or character name")
+    }
+  }
+  
+  # Create wrapper
+  tg <- structure(list(
+    .cpp = cpp_tg,
+    .xptr = ptr,
     
-    # ========================================================================
-    # Query Methods - Basic Properties
-    # ========================================================================
+    # === Basic Properties ===
+    is_valid = function() cpp_tg$is_valid(),
+    get_start_time = function() cpp_tg$get_xmin(),
+    get_end_time = function() cpp_tg$get_xmax(),
+    get_total_duration = function() cpp_tg$get_duration(),
+    get_number_of_tiers = function() cpp_tg$get_number_of_tiers(),
+    get_xmin = function() cpp_tg$get_xmin(),
+    get_xmax = function() cpp_tg$get_xmax(),
+    get_duration = function() cpp_tg$get_duration(),
     
-    #' @description Get start time of TextGrid
-    #' @return Start time in seconds
-    get_start_time = function() {
-      .textgrid_get_start_time(private$ptr)
-    },
-    
-    #' @description Get end time of TextGrid
-    #' @return End time in seconds
-    get_end_time = function() {
-      .textgrid_get_end_time(private$ptr)
-    },
-    
-    #' @description Get total duration of TextGrid
-    #' @return Duration in seconds
-    get_total_duration = function() {
-      .textgrid_get_total_duration(private$ptr)
-    },
-    
-    #' @description Get number of tiers
-    #' @return Number of tiers
-    get_number_of_tiers = function() {
-      .textgrid_get_number_of_tiers(private$ptr)
-    },
-    
-    # ========================================================================
-    # Query Methods - Tier Information
-    # ========================================================================
-    
-    #' @description Get tier names
-    #' @return Character vector of tier names
-    get_tier_names = function() {
-      .textgrid_get_tier_names(private$ptr)
-    },
-    
-    #' @description Get name of specific tier
-    #' @param tier_number Tier number (1-based) or tier name
-    #' @return Tier name
+    # === Tier Information ===
+    get_tier_names = function() cpp_tg$get_tier_names(),
     get_tier_name = function(tier_number) {
-      tier_num <- private$resolve_tier_number(tier_number)
-      .textgrid_get_tier_name(private$ptr, tier_num)
+      tier_num <- resolve_tier_number(tier_number)
+      cpp_tg$get_tier_name(tier_num)
     },
-    
-    #' @description Check if tier is an IntervalTier
-    #' @param tier Tier number (1-based) or tier name
-    #' @return TRUE if IntervalTier, FALSE otherwise
+    set_tier_name = function(tier, new_name) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$set_tier_name(tier_num, as.character(new_name))
+      invisible(tg)
+    },
     tier_is_interval_tier = function(tier) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_tier_is_interval_tier(private$ptr, tier_num)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$is_interval_tier(tier_num)
     },
-    
-    #' @description Check if tier is a PointTier (TextTier)
-    #' @param tier Tier number (1-based) or tier name
-    #' @return TRUE if PointTier, FALSE otherwise
     tier_is_point_tier = function(tier) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_tier_is_point_tier(private$ptr, tier_num)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$is_point_tier(tier_num)
     },
     
-    # ========================================================================
-    # IntervalTier Query
-    # ========================================================================
-    
-    #' @description Get number of intervals in tier
-    #' @param tier Tier number (1-based) or tier name
-    #' @return Number of intervals
+    # === IntervalTier Query ===
     get_number_of_intervals = function(tier) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_number_of_intervals(private$ptr, tier_num)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_number_of_intervals(tier_num)
     },
-    
-    #' @description Get start time of interval
-    #' @param tier Tier number (1-based) or tier name
-    #' @param interval_number Interval number (1-based)
-    #' @return Start time in seconds
     get_interval_start_time = function(tier, interval_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_interval_start_time(private$ptr, tier_num, as.integer(interval_number))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_interval_start_time(tier_num, as.integer(interval_number))
     },
-    
-    #' @description Get end time of interval
-    #' @param tier Tier number (1-based) or tier name
-    #' @param interval_number Interval number (1-based)
-    #' @return End time in seconds
     get_interval_end_time = function(tier, interval_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_interval_end_time(private$ptr, tier_num, as.integer(interval_number))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_interval_end_time(tier_num, as.integer(interval_number))
     },
-    
-    #' @description Get text/label of interval
-    #' @param tier Tier number (1-based) or tier name
-    #' @param interval_number Interval number (1-based)
-    #' @return Interval label
     get_interval_text = function(tier, interval_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_interval_text(private$ptr, tier_num, as.integer(interval_number))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_interval_text(tier_num, as.integer(interval_number))
     },
-    
-    #' @description Get interval number at specific time
-    #' @param tier Tier number (1-based) or tier name
-    #' @param time Time in seconds
-    #' @return Interval number (0 if time outside range)
     get_interval_at_time = function(tier, time) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_interval_at_time(private$ptr, tier_num, as.numeric(time))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_interval_at_time(tier_num, as.numeric(time))
     },
-    
-    #' @description Get label at specific time
-    #' @param tier Tier number (1-based) or tier name
-    #' @param time Time in seconds
-    #' @return Label at that time (empty string if outside range)
     get_label_at_time = function(tier, time) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_label_at_time(private$ptr, tier_num, as.numeric(time))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_label_at_time(tier_num, as.numeric(time))
     },
     
-    # ========================================================================
-    # IntervalTier Modification
-    # ========================================================================
-    
-    #' @description Set text/label of interval
-    #' @param tier Tier number (1-based) or tier name
-    #' @param interval_number Interval number (1-based)
-    #' @param text New label text
-    #' @return Self (invisibly) for method chaining
+    # === IntervalTier Modification ===
     set_interval_text = function(tier, interval_number, text) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_set_interval_text(private$ptr, tier_num, as.integer(interval_number), as.character(text))
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$set_interval_text(tier_num, as.integer(interval_number), as.character(text))
+      invisible(tg)
     },
-    
-    #' @description Insert boundary at time (splits interval)
-    #' @param tier Tier number (1-based) or tier name
-    #' @param time Time in seconds
-    #' @return Self (invisibly) for method chaining
     insert_boundary = function(tier, time) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_insert_boundary(private$ptr, tier_num, as.numeric(time))
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$insert_boundary(tier_num, as.numeric(time))
+      invisible(tg)
     },
-    
-    #' @description Remove boundary at time (merges intervals)
-    #' @param tier Tier number (1-based) or tier name
-    #' @param time Time in seconds
-    #' @return Self (invisibly) for method chaining
     remove_boundary = function(tier, time) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_remove_boundary(private$ptr, tier_num, as.numeric(time))
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$remove_boundary_at_time(tier_num, as.numeric(time))
+      invisible(tg)
+    },
+    remove_boundary_at_time = function(tier, time) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$remove_boundary_at_time(tier_num, as.numeric(time))
+      invisible(tg)
     },
     
-    # ========================================================================
-    # PointTier Query
-    # ========================================================================
-    
-    #' @description Get number of points in tier
-    #' @param tier Tier number (1-based) or tier name
-    #' @return Number of points
+    # === PointTier Query ===
     get_number_of_points = function(tier) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_number_of_points(private$ptr, tier_num)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_number_of_points(tier_num)
     },
-    
-    #' @description Get time of point
-    #' @param tier Tier number (1-based) or tier name
-    #' @param point_number Point number (1-based)
-    #' @return Point time in seconds
     get_point_time = function(tier, point_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_point_time(private$ptr, tier_num, as.integer(point_number))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_point_time(tier_num, as.integer(point_number))
     },
-    
-    #' @description Get text/mark of point
-    #' @param tier Tier number (1-based) or tier name
-    #' @param point_number Point number (1-based)
-    #' @return Point label
     get_point_text = function(tier, point_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_get_point_text(private$ptr, tier_num, as.integer(point_number))
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_point_text(tier_num, as.integer(point_number))
     },
     
-    # ========================================================================
-    # PointTier Modification
-    # ========================================================================
-    
-    #' @description Insert point with label
-    #' @param tier Tier number (1-based) or tier name
-    #' @param time Time in seconds
-    #' @param mark Label/mark for the point
-    #' @return Self (invisibly) for method chaining
-    insert_point = function(tier, time, mark = "") {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_insert_point(private$ptr, tier_num, as.numeric(time), as.character(mark))
-      invisible(self)
+    # === PointTier Modification ===
+    insert_point = function(tier, time, mark) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$insert_point(tier_num, as.numeric(time), as.character(mark))
+      invisible(tg)
     },
-    
-    #' @description Set text/mark of point
-    #' @param tier Tier number (1-based) or tier name
-    #' @param point_number Point number (1-based)
-    #' @param text New label text
-    #' @return Self (invisibly) for method chaining
     set_point_text = function(tier, point_number, text) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_set_point_text(private$ptr, tier_num, as.integer(point_number), as.character(text))
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$set_point_text(tier_num, as.integer(point_number), as.character(text))
+      invisible(tg)
     },
-    
-    #' @description Remove point
-    #' @param tier Tier number (1-based) or tier name
-    #' @param point_number Point number (1-based)
-    #' @return Self (invisibly) for method chaining
     remove_point = function(tier, point_number) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_remove_point(private$ptr, tier_num, as.integer(point_number))
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$remove_point(tier_num, as.integer(point_number))
+      invisible(tg)
     },
     
-    # ========================================================================
-    # Tier Management
-    # ========================================================================
-    
-    #' @description Add new IntervalTier
-    #' @param name Name for the new tier
-    #' @return Self (invisibly) for method chaining
+    # === Tier Management ===
     add_interval_tier = function(name) {
-      .textgrid_add_interval_tier(private$ptr, as.character(name))
-      invisible(self)
+      cpp_tg$add_interval_tier(as.character(name))
+      invisible(tg)
     },
-    
-    #' @description Add new PointTier (TextTier)
-    #' @param name Name for the new tier
-    #' @return Self (invisibly) for method chaining
     add_point_tier = function(name) {
-      .textgrid_add_point_tier(private$ptr, as.character(name))
-      invisible(self)
+      cpp_tg$add_point_tier(as.character(name))
+      invisible(tg)
     },
-    
-    #' @description Remove tier
-    #' @param tier Tier number (1-based) or tier name
-    #' @return Self (invisibly) for method chaining
     remove_tier = function(tier) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_remove_tier(private$ptr, tier_num)
-      invisible(self)
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$remove_tier(tier_num)
+      invisible(tg)
     },
     
-    #' @description Set tier name
-    #' @param tier Tier number (1-based) or tier name
-    #' @param name New name for the tier
-    #' @return Self (invisibly) for method chaining
-    set_tier_name = function(tier, name) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_set_tier_name(private$ptr, tier_num, as.character(name))
-      invisible(self)
-    },
-    
-    #' @description Duplicate tier with new name
-    #' @param tier Tier number (1-based) or tier name
-    #' @param new_name Name for the duplicated tier
-    #' @return Self (invisibly) for method chaining
-    duplicate_tier = function(tier, new_name) {
-      tier_num <- private$resolve_tier_number(tier)
-      .textgrid_duplicate_tier(private$ptr, tier_num, as.character(new_name))
-      invisible(self)
-    },
-    
-    # ========================================================================
-    # Extraction
-    # ========================================================================
-    
-    #' @description Extract part of TextGrid
-    #' @param start_time Start time in seconds
-    #' @param end_time End time in seconds
-    #' @param preserve_times Keep original times (TRUE) or shift to start at 0 (FALSE)
-    #' @return New TextGrid object
+    # === Transformations ===
     extract_part = function(start_time, end_time, preserve_times = TRUE) {
-      ptr <- .textgrid_extract_part(
-        private$ptr,
+      ptr_result <- cpp_tg$extract_part_ptr(
         as.numeric(start_time),
         as.numeric(end_time),
         as.logical(preserve_times)
       )
-      TextGrid$new(.xptr = ptr)
+      TextGrid(.xptr = ptr_result)
     },
     
-    # ========================================================================
-    # Export
-    # ========================================================================
+    to_table = function() {
+      ptr_result <- cpp_tg$to_table_ptr()
+      Table(.xptr = ptr_result)
+    },
     
-    #' @description Convert to data frame
-    #' @param tiers Tier numbers or names to export (default: all tiers)
-    #' @return Data frame with columns: tier_name, tier_type, item_number, start_time, end_time, label
+    # === Export ===
     as_data_frame = function(tiers = NULL) {
-      if (is.null(tiers)) {
-        .textgrid_to_data_frame(private$ptr)
-      } else {
-        tier_nums <- vapply(tiers, private$resolve_tier_number, integer(1))
-        .textgrid_to_data_frame(private$ptr, as.integer(tier_nums))
+      # If specific tiers requested, filter
+      if (!is.null(tiers)) {
+        # Get full dataframe first
+        df <- cpp_tg$as_data_frame()
+        # Filter by tier
+        if (is.numeric(tiers)) {
+          df <- df[df$tier_number %in% tiers, ]
+        } else if (is.character(tiers)) {
+          df <- df[df$tier_name %in% tiers, ]
+        }
+        return(df)
       }
+      cpp_tg$as_data_frame()
     },
     
-    #' @description Save TextGrid to file
-    #' @param path Output file path
-    #' @return Self (invisibly)
-    save = function(path) {
-      .textgrid_save(private$ptr, as.character(path))
-      invisible(self)
+    get_info = function() cpp_tg$get_info(),
+    save = function(path) cpp_tg$save(as.character(path)),
+    get_xptr = function() ptr,
+    
+    # === Additional convenience methods (using old wrappers for now) ===
+    duplicate_tier = function(tier, new_name) {
+      tier_num <- resolve_tier_number(tier)
+      .textgrid_duplicate_tier(ptr, tier_num, as.character(new_name))
+      invisible(tg)
     },
     
-    #' @description Print TextGrid summary
-    #' @param ... Additional arguments (ignored)
-    print = function(...) {
+    get_intervals_where = function(tier, pattern = NULL, regex = FALSE) {
+      tier_num <- resolve_tier_number(tier)
+      textgrid_get_intervals_where(tg, tier = tier_num, pattern = pattern, regex = regex)
+    },
+    
+    print = function() {
+      info <- cpp_tg$get_info()
       cat("<Praat TextGrid>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f seconds (duration: %.3f s)\n",
-                  self$get_start_time(), self$get_end_time(), self$get_total_duration()))
-      cat(sprintf("  Number of tiers: %d\n", self$get_number_of_tiers()))
-      
-      tier_names <- self$get_tier_names()
+      cat(sprintf("  Time domain: [%.3f, %.3f] s (%.3f s)\n", 
+                  cpp_tg$get_xmin(), cpp_tg$get_xmax(), cpp_tg$get_duration()))
+      cat(sprintf("  Tiers: %d\n", cpp_tg$get_number_of_tiers()))
+      tier_names <- cpp_tg$get_tier_names()
       for (i in seq_along(tier_names)) {
-        tier_type <- if (self$tier_is_interval_tier(i)) "IntervalTier" else "PointTier"
-        if (tier_type == "IntervalTier") {
-          n_items <- self$get_number_of_intervals(i)
+        is_interval <- cpp_tg$is_interval_tier(i)
+        tier_type <- if (is_interval) "Interval" else "Point"
+        n_items <- if (is_interval) {
+          cpp_tg$get_number_of_intervals(i)
         } else {
-          n_items <- self$get_number_of_points(i)
+          cpp_tg$get_number_of_points(i)
         }
-        cat(sprintf("  Tier %d: %s (%s, %d items)\n", i, tier_names[i], tier_type, n_items))
+        cat(sprintf("    %d. %s (%s, %d items)\n", i, tier_names[i], tier_type, n_items))
       }
-      
-      invisible(self)
-    },
-    
-    #' @description Change labels (find/replace) in a tier
-    #' @param tier Tier number or name
-    #' @param search Search string (or regex pattern if use_regexp=TRUE)
-    #' @param replace Replacement string
-    #' @param use_regexp Use regular expressions (default FALSE)
-    #' @param from First interval to search (default 1)
-    #' @param to Last interval to search (0 = to end, default 0)
-    change_labels = function(tier, search, replace, use_regexp = FALSE, from = 1, to = 0) {
-      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
-        tier_names <- self$get_tier_names()
-        match_idx <- which(tier_names == tier)
-        if (length(match_idx) == 0) stop("Tier not found: ", tier)
-        as.integer(match_idx[1])
-      }
-      .textgrid_change_labels(
-        private$ptr,
-        tier_num,
-        as.character(search),
-        as.character(replace),
-        as.logical(use_regexp),
-        as.integer(from),
-        as.integer(to)
-      )
-      invisible(self)
-    },
-    
-    #' @description Merge consecutive intervals with identical labels
-    #' @param tier Tier number or name (must be IntervalTier)
-    #' @param label Label to merge (intervals with this label will be merged)
-    merge_identical_intervals = function(tier, label) {
-      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
-        tier_names <- self$get_tier_names()
-        match_idx <- which(tier_names == tier)
-        if (length(match_idx) == 0) stop("Tier not found: ", tier)
-        as.integer(match_idx[1])
-      }
-      .textgrid_merge_identical_intervals(
-        private$ptr,
-        tier_num,
-        as.character(label)
-      )
-      invisible(self)
-    },
-    
-    #' @description Get total duration of intervals matching a criterion
-    #' @param tier Tier number or name
-    #' @param criterion Label to match
-    #' @return Total duration in seconds
-    get_total_duration_where = function(tier, criterion) {
-      tier_num <- if (is.numeric(tier)) as.integer(tier) else {
-        tier_names <- self$get_tier_names()
-        match_idx <- which(tier_names == tier)
-        if (length(match_idx) == 0) stop("Tier not found: ", tier)
-        as.integer(match_idx[1])
-      }
-      .textgrid_get_total_duration_where(
-        private$ptr,
-        tier_num,
-        as.character(criterion)
-      )
-    },
-    
-    #' @description Extend the time domain of the TextGrid
-    #' @param delta_time Time to add (negative for start, positive for end)
-    #' @param position Position: 0 for start, 1 for end
-    extend_time = function(delta_time, position = 1) {
-      .textgrid_extend_time(
-        private$ptr,
-        as.numeric(delta_time),
-        as.integer(position)
-      )
-      invisible(self)
-    },
-    
-    #' @description Convert TextGrid to Table object
-    #' @param include_line_numbers Include line numbers in Table (default: FALSE)
-    #' @param time_decimals Number of decimal places for times (default: 6)
-    #' @param include_tier_names Include tier names in Table (default: TRUE)
-    #' @param include_empty_intervals Include empty intervals (default: FALSE)
-    #' @return Table object containing TextGrid data
-    to_table = function(
-      include_line_numbers = FALSE,
-      time_decimals = 6,
-      include_tier_names = TRUE,
-      include_empty_intervals = FALSE
-    ) {
-      table_ptr <- .textgrid_to_table(
-        private$ptr,
-        as.logical(include_line_numbers),
-        as.integer(time_decimals),
-        as.logical(include_tier_names),
-        as.logical(include_empty_intervals)
-      )
-      Table$new(.xptr = table_ptr)
-    },
-
-    #' @description Extract Sound intervals matching criterion from TextGrid
-    #' @param sound Sound object to extract intervals from
-    #' @param tier_number Tier number (1-based) or tier name
-    #' @param criterion Matching criterion: "is equal to", "is not equal to", "contains", "starts with", "ends with", "matches regex"
-    #' @param text Text to match against
-    #' @param preserve_times If TRUE, keep original time stamps; if FALSE, center at 0
-    #' @return List of Sound objects, one per matching interval
-    extract_intervals_where = function(sound, tier_number, criterion = "is equal to", text = "", preserve_times = FALSE) {
-      if (!inherits(sound, "Sound")) {
-        stop("sound must be a Sound object")
-      }
-      
-      tier_num <- private$resolve_tier_number(tier_number)
-      
-      # Map criterion string to enum value (1-based, from kMelder_string enum)
-      criterion_map <- c(
-        "is equal to" = 1L,
-        "is not equal to" = 2L,
-        "contains" = 3L,
-        "does not contain" = 4L,
-        "starts with" = 5L,
-        "does not start with" = 6L,
-        "ends with" = 7L,
-        "does not end with" = 8L,
-        "contains a word equal to" = 9L,
-        "does not contain a word equal to" = 10L,
-        "matches regex" = 21L
-      )
-      
-      if (!criterion %in% names(criterion_map)) {
-        stop("Invalid criterion. Must be one of: ", paste(names(criterion_map), collapse=", "))
-      }
-      
-      criterion_int <- criterion_map[[criterion]]
-      
-      # Debug output
-      cat(sprintf("DEBUG: criterion='%s', criterion_int=%d\n", criterion, criterion_int))
-      
-      sound_list <- .textgrid_sound_extract_intervals_where(
-        private$ptr, 
-        sound$.__enclos_env__$private$ptr,
-        as.integer(tier_num),
-        criterion_int,
-        as.character(text),
-        as.logical(preserve_times)
-      )
-      
-      # Convert list of XPtrs to list of Sound objects
-      lapply(sound_list, function(xptr) Sound$new(.xptr = xptr))
+      invisible(tg)
     }
-  ),
+  ), class = c("TextGrid", "PraatObject"))
   
-  private = list(
-    #' @description Resolve tier name or number to tier number
-    #' @param tier Tier number or name
-    #' @return Tier number (integer)
-    resolve_tier_number = function(tier) {
-      if (is.numeric(tier)) {
-        return(as.integer(tier))
-      } else if (is.character(tier)) {
-        tier_names <- self$get_tier_names()
-        match_idx <- which(tier_names == tier)
-        if (length(match_idx) == 0) {
-          stop("Tier not found: ", tier)
-        }
-        return(as.integer(match_idx[1]))
-      } else {
-        stop("Tier must be numeric index or character name")
-      }
-    }
-  )
-)
+  tg
+}
+
+#' @export
+print.TextGrid <- function(x, ...) x$print()
 
 #' @title Create TextGrid
 #' @description
@@ -638,17 +348,17 @@ TextGrid <- R6::R6Class(
 #' @examples
 #' \dontrun{
 #' # Create TextGrid with 3 interval tiers
-#' tg <- TextGrid$create(0, 10, "phones words syllables")
+#' tg <- textgrid_create(0, 10, "phones words syllables")
 #'
 #' # Create TextGrid with mixed tier types
-#' tg <- TextGrid$create(0, 10, "phones tones", "tones")  # tones is PointTier
+#' tg <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 #' }
-TextGrid$create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
+textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
   ptr <- .textgrid_create(
     as.numeric(tmin),
     as.numeric(tmax),
     as.character(tier_names),
     as.character(point_tiers)
   )
-  TextGrid$new(.xptr = ptr)
+  TextGrid(.xptr = ptr)
 }
