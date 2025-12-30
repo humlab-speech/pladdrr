@@ -1,3 +1,26 @@
+# pladdrr 1.7.2 (2025-12-30)
+
+## Performance Improvements
+
+* **VocalTract Module Conversion (26/28 objects - 93% COMPLETE)**
+  - Converted `VocalTract` from R6 to Rcpp Module architecture
+  - 5-10x faster method dispatch for vocal tract modeling
+  - 10 methods: length/section queries, area get/set, transformations
+  - Static method: `VocalTract$create_from_phone(phone)`
+  - Transformations: `to_spectrum()`, `to_matrix()`
+
+## Bug Fixes
+
+* Fixed VocalTract module compilation: corrected Matrix.h include path
+* Fixed NAMESPACE S3method syntax: backticks for `$` operator
+* Fixed Matrix type ambiguity with Rcpp::Matrix namespace
+* Updated factory call in praat-interpreter-r6.R
+
+## Status
+
+* **Converted:** 26/28 Praat objects (93%)
+* **Remaining R6:** LongSound (next), PraatInterpreter (intentionally kept)
+
 # pladdrr 1.7.1 (2025-12-30)
 
 ## Performance Improvements
