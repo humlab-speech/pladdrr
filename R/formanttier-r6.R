@@ -1,15 +1,33 @@
-# formanttier-r6.R
-# R6 class for Praat FormantTier objects
-
-#' @title FormantTier Class
+#' @title Praat FormantTier Object
 #' @description
-#' R6 class for Praat FormantTier objects representing formant contours as points.
-#' Used for formant manipulation and resynthesis.
+#' Praat FormantTier object with direct C++ module binding for formant manipulation.
 #'
 #' @details
 #' A FormantTier stores formant frequencies and bandwidths at discrete time points,
 #' with interpolation between points. This allows for smooth formant contours
 #' that can be used to filter sounds for vowel modification or resynthesis.
+#'
+#' ## Creating FormantTier Objects
+#'
+#' - `FormantTier(tmin, tmax)` - Create empty FormantTier
+#' - `FormantTier$from_formant(formant)` - Convert from Formant object
+#'
+#' ## Querying
+#'
+#' - `$get_start_time()` - Start time in seconds
+#' - `$get_end_time()` - End time in seconds
+#' - `$get_duration()` - Duration in seconds
+#' - `$get_number_of_points()` - Number of time points
+#' - `$get_min_num_formants()` - Min formants across points
+#' - `$get_max_num_formants()` - Max formants across points
+#' - `$get_value_at_time(formant_number, time)` - Formant frequency (Hz)
+#' - `$get_bandwidth_at_time(formant_number, time)` - Bandwidth (Hz)
+#'
+#' ## Transformation
+#'
+#' - `$filter_sound(sound, scale=TRUE)` - Filter sound through formants
+#' - `$as_data_frame()` - Export to data frame
+#' - `$save(path)` - Save to file
 #'
 #' @examples
 #' \dontrun{
@@ -28,120 +46,111 @@
 #' }
 #'
 #' @export
-FormantTier <- R6::R6Class(
-  "FormantTier",
-  inherit = PraatObject,
-
-  public = list(
-    #' @description Create FormantTier from parameters or external pointer
-    #' @param tmin Start time (default 0)
-    #' @param tmax End time (default 1)
-    #' @param .xptr External pointer (for internal use)
-    initialize = function(tmin = 0, tmax = 1, .xptr = NULL) {
-      if (!is.null(.xptr)) {
-        super$initialize(.xptr)
-      } else {
-        ptr <- .formanttier_create(tmin, tmax)
-        super$initialize(ptr)
-      }
-    },
-
-    #' @description Get start time
-    #' @return Start time in seconds
+FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
+  
+  # Handle creation modes
+  if (!is.null(.xptr)) {
+    # From existing C++ object
+    ptr <- .xptr
+  } else {
+    # Create new empty tier
+    ptr <- .formanttier_create(as.numeric(tmin), as.numeric(tmax))
+  }
+  
+  tier_mod <- get_module("formanttier_module")
+  cpp_obj <- tier_mod$RFormantTier$new(ptr)
+  
+  obj <- structure(list(
+    .cpp = cpp_obj,
+    .xptr = ptr,
+    
+    # Query Methods
     get_start_time = function() {
-      private$check_valid()
-      .formanttier_get_start_time(private$ptr)
+      cpp_obj$get_xmin()
     },
-
-    #' @description Get end time
-    #' @return End time in seconds
+    
     get_end_time = function() {
-      private$check_valid()
-      .formanttier_get_end_time(private$ptr)
+      cpp_obj$get_xmax()
     },
-
-    #' @description Get duration
-    #' @return Duration in seconds
+    
     get_duration = function() {
-      self$get_end_time() - self$get_start_time()
+      cpp_obj$get_duration()
     },
-
-    #' @description Get number of points
-    #' @return Number of points
+    
     get_number_of_points = function() {
-      private$check_valid()
-      .formanttier_get_number_of_points(private$ptr)
+      cpp_obj$get_number_of_points()
     },
-
-    #' @description Get minimum number of formants across points
-    #' @return Minimum number of formants
+    
     get_min_num_formants = function() {
-      private$check_valid()
-      .formanttier_get_min_num_formants(private$ptr)
+      cpp_obj$get_min_num_formants()
     },
-
-    #' @description Get maximum number of formants across points
-    #' @return Maximum number of formants
+    
     get_max_num_formants = function() {
-      private$check_valid()
-      .formanttier_get_max_num_formants(private$ptr)
+      cpp_obj$get_max_num_formants()
     },
-
-    #' @description Get formant value at time
-    #' @param formant_number Formant number (1=F1, 2=F2, etc.)
-    #' @param time Time in seconds
-    #' @return Formant frequency in Hz
+    
     get_value_at_time = function(formant_number, time) {
-      private$check_valid()
-      .formanttier_get_value_at_time(private$ptr, as.integer(formant_number), time)
+      cpp_obj$get_value_at_time(as.integer(formant_number), as.numeric(time))
     },
-
-    #' @description Get formant bandwidth at time
-    #' @param formant_number Formant number (1=F1, 2=F2, etc.)
-    #' @param time Time in seconds
-    #' @return Bandwidth in Hz
+    
     get_bandwidth_at_time = function(formant_number, time) {
-      private$check_valid()
-      .formanttier_get_bandwidth_at_time(private$ptr, as.integer(formant_number), time)
+      cpp_obj$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
     },
-
-    #' @description Filter sound through this FormantTier
-    #' @param sound Sound object to filter
-    #' @param scale If TRUE (default), scale output amplitude
-    #' @return Filtered Sound object
+    
+    # Transformation
     filter_sound = function(sound, scale = TRUE) {
-      private$check_valid()
       if (!inherits(sound, "Sound")) {
         stop("sound must be a Sound object")
       }
-      if (scale) {
-        ptr <- .formanttier_filter_sound(sound$get_ptr(), private$ptr)
-      } else {
-        ptr <- .formanttier_filter_sound_noscale(sound$get_ptr(), private$ptr)
-      }
-      Sound(.xptr = ptr)
+      result_ptr <- cpp_obj$filter_sound_ptr(sound$.xptr, scale)
+      Sound(.xptr = result_ptr)
     },
-
-    #' @description Print method
+    
+    # Export
+    as_data_frame = function() {
+      cpp_obj$as_data_frame()
+    },
+    
+    save = function(path) {
+      cpp_obj$save(as.character(path))
+    },
+    
+    # Compatibility
+    is_valid = function() {
+      cpp_obj$is_valid()
+    },
+    
+    get_ptr = function() {
+      ptr
+    },
+    
+    get_xptr = function() {
+      ptr
+    },
+    
+    # Print method
     print = function() {
       cat("<Praat FormantTier>\n")
-      if (!self$is_valid()) {
+      if (!cpp_obj$is_valid()) {
         cat("  [Invalid or deleted object]\n")
       } else {
-        cat("  Time domain:", sprintf("%.3f - %.3f", self$get_start_time(), self$get_end_time()), "seconds\n")
-        cat("  Number of points:", self$get_number_of_points(), "\n")
-        nf_min <- self$get_min_num_formants()
-        nf_max <- self$get_max_num_formants()
+        cat(sprintf("  Time domain: %.3f - %.3f seconds\n", 
+                    cpp_obj$get_xmin(), cpp_obj$get_xmax()))
+        cat("  Number of points:", cpp_obj$get_number_of_points(), "\n")
+        nf_min <- cpp_obj$get_min_num_formants()
+        nf_max <- cpp_obj$get_max_num_formants()
         if (nf_min == nf_max) {
           cat("  Formants per point:", nf_min, "\n")
         } else {
           cat("  Formants per point:", nf_min, "-", nf_max, "\n")
         }
       }
-      invisible(self)
+      invisible(obj)
     }
-  )
-)
+  ), class = c("FormantTier", "PraatObject"))
+  
+  obj
+}
 
 #' Create FormantTier from Formant
 #' @param formant Formant object to convert
@@ -154,10 +163,31 @@ FormantTier <- R6::R6Class(
 #' ft <- FormantTier$from_formant(formant)
 #' print(ft)
 #' }
-FormantTier$from_formant <- function(formant) {
+formanttier_from_formant <- function(formant) {
   if (!inherits(formant, "Formant")) {
     stop("formant must be a Formant object")
   }
-  ptr <- .formanttier_from_formant(formant$get_ptr())
-  FormantTier$new(.xptr = ptr)
+  ptr <- .formanttier_from_formant(formant$.xptr)
+  FormantTier(.xptr = ptr)
+}
+
+# Static method support
+.formanttier_static_env <- new.env(parent = emptyenv())
+.formanttier_static_env$from_formant <- formanttier_from_formant
+.formanttier_static_env$new <- FormantTier
+
+`$.formanttier_constructor` <- function(x, name) {
+  .formanttier_static_env[[name]]
+}
+
+class(FormantTier) <- c("formanttier_constructor", "function")
+
+#' @export
+print.FormantTier <- function(x, ...) {
+  x$print()
+}
+
+#' @export
+as.data.frame.FormantTier <- function(x, ...) {
+  x$as_data_frame()
 }

@@ -40,7 +40,7 @@
     "Cepstrum" = Cepstrum(.xptr = xptr),
     "VocalTract" = VocalTract$new(.xptr = xptr),
     "LongSound" = LongSound$new(.xptr = xptr),
-    "FormantTier" = FormantTier$new(.xptr = xptr),
+    "FormantTier" = FormantTier(.xptr = xptr),
     {
       warning("Unknown Praat class: ", class_name, ", returning raw pointer")
       xptr
