@@ -120,7 +120,7 @@
   if (exists("Sound") && R6::is.R6Class(Sound)) {
     Sound$set("public", "extract_electroglottogram", function(channel = 1, invert = FALSE) {
       ptr <- sound_extract_electroglottogram_cpp(private$ptr, channel, invert)
-      Electroglottogram$new(.xptr = ptr)
+      Electroglottogram(.xptr = ptr)
     })
   }
 }

@@ -178,7 +178,7 @@ Spectrum <- function(.xptr = NULL) {
     
     to_powercepstrum = function() {
       ptr <- .spectrum_to_powercepstrum(.xptr)
-      PowerCepstrum$new(.xptr = ptr)
+      PowerCepstrum(.xptr = ptr)
     },
     
     to_cepstrum = function() {

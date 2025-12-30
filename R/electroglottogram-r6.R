@@ -58,22 +58,37 @@
 #' }
 #'
 #' @export
-Electroglottogram <- R6::R6Class(
-  "Electroglottogram",
-  inherit = Sound,
-
-  public = list(
-    #' @description
-    #' Create an Electroglottogram object (internal use)
-    #' @param .xptr External pointer to C++ Electroglottogram object
-    #' @return A new Electroglottogram object
-    initialize = function(.xptr = NULL) {
-      if (is.null(.xptr)) {
-        stop("Electroglottogram objects must be created using sound$extract_electroglottogram() or electroglottogram_create()")
-      }
-      super$initialize(.xptr)
-    },
-
+Electroglottogram <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("Electroglottogram objects must be created using sound$extract_electroglottogram() or electroglottogram_create()")
+  }
+  
+  # Load Rcpp Module
+  egg_mod <- get_module("electroglottogram_module")
+  cpp_egg <- egg_mod$RElectroglottogram$new(.xptr)
+  
+  # Create wrapper
+  egg <- structure(list(
+    .cpp = cpp_egg,
+    .xptr = .xptr,
+    .pointer = .xptr,  # For Sound compatibility
+    
+    # Query methods (inherited from Sound via module)
+    get_xmin = function() cpp_egg$get_xmin(),
+    get_xmax = function() cpp_egg$get_xmax(),
+    get_duration = function() cpp_egg$get_duration(),
+    get_nx = function() cpp_egg$get_nx(),
+    get_dx = function() cpp_egg$get_dx(),
+    get_x1 = function() cpp_egg$get_x1(),
+    get_number_of_samples = function() cpp_egg$get_number_of_samples(),
+    get_sample_period = function() cpp_egg$get_sample_period(),
+    get_sample_rate = function() cpp_egg$get_sample_rate(),
+    get_value_at_sample = function(sample) cpp_egg$get_value_at_sample(as.integer(sample)),
+    get_value_at_time = function(time) cpp_egg$get_value_at_time(as.numeric(time)),
+    get_time_from_sample = function(sample) cpp_egg$get_time_from_sample(as.integer(sample)),
+    get_sample_from_time = function(time) cpp_egg$get_sample_from_time(as.numeric(time)),
+    is_valid = function() cpp_egg$is_valid(),
+    
     #' @description
     #' Detect closed glottis intervals and return as TextGrid
     #' @param pitch_floor Minimum pitch in Hz (default 75)
@@ -85,16 +100,15 @@ Electroglottogram <- R6::R6Class(
                                           pitch_ceiling = 500,
                                           closing_threshold = 0.3,
                                           peak_threshold = 0.05) {
-      ptr <- electroglottogram_to_textgrid_closed_glottis_cpp(
-        self$.pointer,
-        pitch_floor,
-        pitch_ceiling,
-        closing_threshold,
-        peak_threshold
+      ptr <- cpp_egg$to_textgrid_closed_glottis_ptr(
+        as.numeric(pitch_floor),
+        as.numeric(pitch_ceiling),
+        as.numeric(closing_threshold),
+        as.numeric(peak_threshold)
       )
-      TextGrid$new(.xptr = ptr)
+      TextGrid(.xptr = ptr)
     },
-
+    
     #' @description
     #' Extract amplitude level tiers (peak, valley, and closing levels)
     #' @param pitch_floor Minimum pitch in Hz (default 75)
@@ -104,11 +118,10 @@ Electroglottogram <- R6::R6Class(
     to_amplitude_tier_levels = function(pitch_floor = 75,
                                         pitch_ceiling = 500,
                                         closing_threshold = 0.3) {
-      result_list <- electroglottogram_to_amplitude_tier_levels_cpp(
-        self$.pointer,
-        pitch_floor,
-        pitch_ceiling,
-        closing_threshold
+      result_list <- cpp_egg$to_amplitude_tier_levels(
+        as.numeric(pitch_floor),
+        as.numeric(pitch_ceiling),
+        as.numeric(closing_threshold)
       )
       # Convert external pointers to AmplitudeTier objects
       list(
@@ -117,7 +130,7 @@ Electroglottogram <- R6::R6Class(
         valleys = AmplitudeTier(.xptr = result_list$valleys)
       )
     },
-
+    
     #' @description
     #' Calculate the derivative (DEGG) of the EGG signal
     #' @param lowpass_freq Low-pass frequency in Hz (default 5000)
@@ -127,50 +140,66 @@ Electroglottogram <- R6::R6Class(
     derivative = function(lowpass_freq = 5000,
                          smoothing = 100,
                          peak_amplitude = 0) {
-      ptr <- electroglottogram_derivative_cpp(
-        self$.pointer,
-        lowpass_freq,
-        smoothing,
-        peak_amplitude
+      ptr <- cpp_egg$derivative_ptr(
+        as.numeric(lowpass_freq),
+        as.numeric(smoothing),
+        as.numeric(peak_amplitude)
       )
-      Sound$new(.xptr = ptr)
+      Sound(.xptr = ptr)
     },
-
+    
     #' @description
     #' Calculate first central difference approximation of derivative
     #' @param peak_amplitude New absolute peak value (0 = don't scale) (default 0)
     #' @return Sound object containing the approximate derivative
     first_central_difference = function(peak_amplitude = 0) {
-      ptr <- electroglottogram_first_central_difference_cpp(
-        self$.pointer,
-        peak_amplitude
-      )
-      Sound$new(.xptr = ptr)
+      ptr <- cpp_egg$first_central_difference_ptr(as.numeric(peak_amplitude))
+      Sound(.xptr = ptr)
     },
-
+    
     #' @description
     #' Apply high-pass filter to remove DC drift
     #' @param from_freq Low frequency cutoff in Hz (default 100)
     #' @param smoothing Smoothing frequency in Hz (default 100)
     #' @return Filtered Electroglottogram object
     high_pass_filter = function(from_freq = 100, smoothing = 100) {
-      ptr <- electroglottogram_high_pass_filter_cpp(
-        self$.pointer,
-        from_freq,
-        smoothing
+      ptr <- cpp_egg$high_pass_filter_ptr(
+        as.numeric(from_freq),
+        as.numeric(smoothing)
       )
-      Electroglottogram$new(.xptr = ptr)
+      Electroglottogram(.xptr = ptr)
     },
-
+    
     #' @description
     #' Convert to generic Sound object
     #' @return Sound object
     to_sound = function() {
-      ptr <- electroglottogram_to_sound_cpp(self$.pointer)
-      Sound$new(.xptr = ptr)
+      ptr <- cpp_egg$to_sound_ptr()
+      Sound(.xptr = ptr)
+    },
+    
+    # Export methods
+    as_vector = function() cpp_egg$as_vector(),
+    as_data_frame = function() cpp_egg$as_data_frame(),
+    get_info = function() cpp_egg$get_info(),
+    save = function(path) cpp_egg$save(as.character(path)),
+    get_xptr = function() .xptr,
+    
+    print = function() {
+      info <- cpp_egg$get_info()
+      cat("<Praat Electroglottogram>\n")
+      cat(sprintf("  Duration: %.3f s\n", cpp_egg$get_duration()))
+      cat(sprintf("  Samples: %d\n", cpp_egg$get_number_of_samples()))
+      cat(sprintf("  Sample rate: %.1f Hz\n", cpp_egg$get_sample_rate()))
+      invisible(egg)
     }
-  )
-)
+  ), class = c("Electroglottogram", "Sound", "PraatObject"))
+  
+  egg
+}
+
+#' @export
+print.Electroglottogram <- function(x, ...) x$print()
 
 #' Create an Electroglottogram object
 #'
@@ -183,7 +212,7 @@ Electroglottogram <- R6::R6Class(
 #' @export
 electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {
   ptr <- electroglottogram_create_cpp(xmin, xmax, nx, dx, x1)
-  Electroglottogram$new(.xptr = ptr)
+  Electroglottogram(.xptr = ptr)
 }
 
 #' Add extract_electroglottogram method to Sound class
