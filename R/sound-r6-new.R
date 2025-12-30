@@ -588,7 +588,7 @@ Sound <- R6::R6Class(
       cochleagram_ptr <- .sound_to_cochleagram(
         private$ptr, dt, df, window_length, forward_masking_time
       )
-      Cochleagram$new(.xptr = cochleagram_ptr)
+      Cochleagram(.xptr = cochleagram_ptr)
     },
     
     #' @description Create Cochleagram using Ear-Drum-Brain model
@@ -624,7 +624,7 @@ Sound <- R6::R6Class(
         private$ptr, dtime, dfreq, has_synapse, 
         replenishment_rate, loss_rate, return_rate, reprocessing_rate
       )
-      Cochleagram$new(.xptr = cochleagram_ptr)
+      Cochleagram(.xptr = cochleagram_ptr)
     },
     
     #' @description Create time-frequency spectrogram

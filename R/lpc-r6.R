@@ -144,7 +144,7 @@ LPC <- function(.xptr = NULL) {
     
     to_matrix = function() {
       matrix_ptr <- .lpc_to_matrix(.xptr)
-      Matrix$new(.xptr = matrix_ptr)
+      Matrix(.xptr = matrix_ptr)
     },
     
     # Inverse Filtering - Voice Source Extraction

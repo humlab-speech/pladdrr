@@ -140,7 +140,7 @@ PowerCepstrum <- R6::R6Class(
     #' @return Matrix object
     to_matrix = function() {
       xptr <- .powercepstrum_to_matrix(private$ptr)
-      Matrix$new(xptr)
+      Matrix(.xptr = xptr)
     },
     
     #' @description
@@ -489,7 +489,7 @@ PowerCepstrogram <- R6::R6Class(
     #' @return Matrix object
     to_matrix = function() {
       xptr <- .powercepstrogram_to_matrix(private$ptr)
-      Matrix$new(xptr)
+      Matrix(.xptr = xptr)
     },
     
     #' @description

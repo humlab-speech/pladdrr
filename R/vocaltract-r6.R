@@ -129,7 +129,7 @@ VocalTract <- R6::R6Class(
     to_matrix = function() {
       private$check_valid()
       ptr <- .vocaltract_to_matrix(private$ptr)
-      Matrix$new(.xptr = ptr)
+      Matrix(.xptr = ptr)
     },
 
     #' @description Print method
