@@ -10,10 +10,10 @@ Authors@R: c(
 Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
 Author: Fredrik Nylén <fredrik.nylen@umu.se>
 Description: Provides direct, efficient access to Praat C implemented
-    functionality from R using Rcpp and R6 object-oriented design. Similar
-    in concept to the Parselmouth package for Python, this package allows R
-    users to leverage Praat's powerful phonetic analysis capabilities directly
-    from R. Includes 19+ Praat object types with 320+ methods for sound
+    functionality from R using Rcpp modules. Similar in concept to the
+    Parselmouth package for Python, this package allows R users to leverage
+    Praat's powerful phonetic analysis capabilities directly from R. Includes
+    28 Praat object types (27 via Rcpp modules) with 400+ methods for sound
     manipulation, pitch analysis, formant extraction, intensity measurements,
     spectral analysis, auditory modeling (Cochleagram, Excitation), TextGrid
     annotation, voice quality assessment, and a persistent Praat script

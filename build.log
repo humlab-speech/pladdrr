@@ -3,85 +3,30 @@
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
 * installing the package to build vignettes
-* creating vignettes ... ERROR
---- re-building ‘auditory-modeling.Rmd’ using rmarkdown
-
-Quitting from auditory-modeling.Rmd:41-52 [cochleagram-basic]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `Sound$create_tone`:
-! object of type 'closure' is not subsettable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'auditory-modeling.Rmd' failed with diagnostics:
-object of type 'closure' is not subsettable
---- failed re-building ‘auditory-modeling.Rmd’
-
---- re-building ‘autoplot-autolayer.Rmd’ using rmarkdown
-
-Quitting from autoplot-autolayer.Rmd:45-48 [load-sound]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `Sound$new`:
-! object of type 'closure' is not subsettable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'autoplot-autolayer.Rmd' failed with diagnostics:
-object of type 'closure' is not subsettable
---- failed re-building ‘autoplot-autolayer.Rmd’
-
---- re-building ‘formant-analysis.Rmd’ using rmarkdown
-
-Quitting from formant-analysis.Rmd:51-72 [burg-basic]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `Sound$create_tone`:
-! object of type 'closure' is not subsettable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'formant-analysis.Rmd' failed with diagnostics:
-object of type 'closure' is not subsettable
---- failed re-building ‘formant-analysis.Rmd’
-
---- re-building ‘getting-started.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘getting-started.Rmd’
-
---- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘integrated-phonetic-analysis.Rmd’
-
---- re-building ‘migration-from-parselmouth.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-parselmouth.Rmd’
-
---- re-building ‘migration-from-praat.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-praat.Rmd’
-
---- re-building ‘performance-simd.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘performance-simd.Rmd’
-
---- re-building ‘praat-interpreter.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘praat-interpreter.Rmd’
-
---- re-building ‘textgrid-workflows.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘textgrid-workflows.Rmd’
-
---- re-building ‘visualization.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘visualization.Rmd’
-
---- re-building ‘vowel-space-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘vowel-space-analysis.Rmd’
-
-SUMMARY: processing the following files failed:
-  ‘auditory-modeling.Rmd’ ‘autoplot-autolayer.Rmd’
-  ‘formant-analysis.Rmd’
-
-Error: Vignette re-building failed.
-Execution halted
+* creating vignettes ... OK
+* cleaning src
+* excluding invalid files
+Subdirectory 'R' contains invalid file names:
+  ‘amplitudetier-r6.R.old’ ‘cepstrum-r6.R.old’ ‘cochleagram-r6.R.old’
+  ‘durationtier-r6.R.old’ ‘electroglottogram-r6.R.old’
+  ‘excitation-r6.R.old’ ‘formant-r6.R.old’ ‘formantgrid-r6.R.old’
+  ‘harmonicity.R.old’ ‘intensity-r6.R.old’ ‘intensitytier-r6.R.old’
+  ‘lpc-r6.R.old’ ‘ltas-r6.R.old’ ‘manipulation-r6.R.old’
+  ‘matrix-r6.R.old’ ‘pitch-r6.R.backup’ ‘pitch-r6.R.old’
+  ‘pitchtier-r6.R.old’ ‘pointprocess-r6.R.old’ ‘powercepstrum-r6.R.old’
+  ‘sound-r6-new.R.old’ ‘sound-r6-new.R.old2’ ‘spectrogram-r6.R.old’
+  ‘spectrum-r6.R.old’ ‘table-r6.R.old’ ‘textgrid-r6.R.old’
+* checking for LF line-endings in source and make files and shell scripts
+* checking for empty or unneeded directories
+Removed empty directory ‘pladdrr/dev’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst’
+Removed empty directory ‘pladdrr/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/src/gsl-2.8/doc/_static’
+Removed empty directory ‘pladdrr/src/gsl_build’
+Removed empty directory ‘pladdrr/src/praat.github.io/docs’
+Removed empty directory ‘pladdrr/src/praat.github.io/generate’
+Removed empty directory ‘pladdrr/src/praat.github.io/test’
+Removed empty directory ‘pladdrr/tests/testthat/_snaps’
+* building ‘pladdrr_1.7.4.tar.gz’
