@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Fredrik Nylén" />
+
+<meta name="date" content="2025-12-23" />
+
+<title>Migration Guide: From Praat Scripts to pladdrr</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Migration Guide: From Praat Scripts to
+pladdrr</h1>
+<h4 class="author">Fredrik Nylén</h4>
+<h4 class="date">2025-12-23</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This guide helps you translate Praat scripts into R code using
+pladdrr. The package provides a direct object-oriented interface to
+Praat’s functionality, making translation straightforward and
+systematic.</p>
+</div>
+<div id="key-principles" class="section level2">
+<h2>Key Principles</h2>
+<div id="object-creation" class="section level3">
+<h3>1. Object Creation</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>sound = Read from file: &quot;audio.wav&quot;</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(pladdrr)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span></code></pre></div>
+</div>
+<div id="method-calls" class="section level3">
+<h3>2. Method Calls</h3>
+<p>Praat commands become method calls following a consistent naming
+pattern:</p>
+<table>
+<colgroup>
+<col width="37%" />
+<col width="40%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Praat Command</th>
+<th>pladdrr Method</th>
+<th>Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>To Pitch...</code></td>
+<td><code>to_pitch()</code></td>
+<td><code>To X</code> → <code>to_x()</code></td>
+</tr>
+<tr class="even">
+<td><code>To Formant (burg)...</code></td>
+<td><code>to_formant_burg()</code></td>
+<td><code>To X (y)</code> → <code>to_x_y()</code></td>
+</tr>
+<tr class="odd">
+<td><code>Get mean...</code></td>
+<td><code>get_mean()</code></td>
+<td><code>Get x</code> → <code>get_x()</code></td>
+</tr>
+<tr class="even">
+<td><code>Set value...</code></td>
+<td><code>set_value()</code></td>
+<td><code>Set x</code> → <code>set_x()</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="parameters" class="section level3">
+<h3>3. Parameters</h3>
+<p>Praat’s positional parameters become named parameters in R:</p>
+<p><strong>Praat:</strong></p>
+<pre class="praat"><code>pitch = To Pitch: 0.01, 75, 600</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="common-workflows" class="section level2">
+<h2>Common Workflows</h2>
+<div id="basic-pitch-analysis" class="section level3">
+<h3>Basic Pitch Analysis</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>sound = Read from file: &quot;audio.wav&quot;
+pitch = To Pitch: 0.01, 75, 600
+mean_f0 = Get mean: 0, 0, &quot;Hertz&quot;
+std_f0 = Get standard deviation: 0, 0, &quot;Hertz&quot;</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>mean_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>std_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_standard_deviation</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span></code></pre></div>
+</div>
+<div id="formant-extraction" class="section level3">
+<h3>Formant Extraction</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>sound = Read from file: &quot;vowel.wav&quot;
+formant = To Formant (burg): 0.01, 5, 5500, 0.025, 50
+f1 = Get value at time: 1, 0.5, &quot;Hertz&quot;, &quot;Linear&quot;
+f2 = Get value at time: 2, 0.5, &quot;Hertz&quot;, &quot;Linear&quot;</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;vowel.wav&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>formant <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">time_step =</span> <span class="fl">0.01</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">max_number_of_formants =</span> <span class="dv">5</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">maximum_formant =</span> <span class="dv">5500</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">window_length =</span> <span class="fl">0.025</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">pre_emphasis_from =</span> <span class="dv">50</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> formant<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">1</span>, <span class="at">time =</span> <span class="fl">0.5</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>f2 <span class="ot">&lt;-</span> formant<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">2</span>, <span class="at">time =</span> <span class="fl">0.5</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span></code></pre></div>
+</div>
+<div id="intensity-measurements" class="section level3">
+<h3>Intensity Measurements</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>sound = Read from file: &quot;audio.wav&quot;
+intensity = To Intensity: 100, 0.01, &quot;yes&quot;
+mean_intensity = Get mean: 0, 0, &quot;energy&quot;
+max_intensity = Get maximum: 0, 0, &quot;Parabolic&quot;</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>intensity <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_intensity</span>(<span class="at">minimum_pitch =</span> <span class="dv">100</span>, <span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">subtract_mean =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>mean_intensity <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">averaging_method =</span> <span class="st">&quot;energy&quot;</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>max_intensity <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_maximum</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">interpolation =</span> <span class="st">&quot;parabolic&quot;</span>)</span></code></pre></div>
+</div>
+<div id="spectral-analysis" class="section level3">
+<h3>Spectral Analysis</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>sound = Read from file: &quot;audio.wav&quot;
+spectrum = To Spectrum: &quot;yes&quot;
+cog = Get centre of gravity: 2.0</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>spectrum <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_spectrum</span>(<span class="at">fast =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>cog <span class="ot">&lt;-</span> spectrum<span class="sc">$</span><span class="fu">get_centre_of_gravity</span>(<span class="at">power =</span> <span class="fl">2.0</span>)</span></code></pre></div>
+</div>
+<div id="textgrid-manipulation" class="section level3">
+<h3>TextGrid Manipulation</h3>
+<p><strong>Praat Script:</strong></p>
+<pre class="praat"><code>textgrid = Create TextGrid: 0, 1, &quot;words phones&quot;, &quot;phones&quot;
+Insert boundary: 1, 0.5
+Set interval text: 1, 1, &quot;hello&quot;</code></pre>
+<p><strong>pladdrr:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>textgrid <span class="ot">&lt;-</span> TextGrid<span class="sc">$</span><span class="fu">new</span>(<span class="at">xmin =</span> <span class="dv">0</span>, <span class="at">xmax =</span> <span class="dv">1</span>, <span class="at">tier_names =</span> <span class="st">&quot;words phones&quot;</span>, <span class="at">point_tiers =</span> <span class="st">&quot;phones&quot;</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>textgrid<span class="sc">$</span><span class="fu">insert_boundary</span>(<span class="at">tier_number =</span> <span class="dv">1</span>, <span class="at">time =</span> <span class="fl">0.5</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>textgrid<span class="sc">$</span><span class="fu">set_interval_text</span>(<span class="at">tier_number =</span> <span class="dv">1</span>, <span class="at">interval_number =</span> <span class="dv">1</span>, <span class="at">text =</span> <span class="st">&quot;hello&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="batch-processing" class="section level2">
+<h2>Batch Processing</h2>
+<div id="praat-script-approach" class="section level3">
+<h3>Praat Script Approach</h3>
+<pre class="praat"><code>Create Strings as file list: &quot;fileList&quot;, &quot;*.wav&quot;
+numberOfFiles = Get number of strings
+
+for ifile to numberOfFiles
+    selectObject: &quot;Strings fileList&quot;
+    fileName$ = Get string: ifile
+    sound = Read from file: fileName$
+    
+    pitch = To Pitch: 0.01, 75, 600
+    mean_f0 = Get mean: 0, 0, &quot;Hertz&quot;
+    
+    appendFileLine: &quot;results.txt&quot;, fileName$, tab$, mean_f0
+    
+    removeObject: sound, pitch
+endfor</code></pre>
+</div>
+<div id="pladdrr-approach" class="section level3">
+<h3>pladdrr Approach</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">library</span>(pladdrr)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co"># Get list of WAV files</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.wav$&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co"># Process each file</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">lapply</span>(files, <span class="cf">function</span>(filepath) {</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(filepath)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  mean_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  </span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    <span class="at">file =</span> <span class="fu">basename</span>(filepath),</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    <span class="at">mean_f0 =</span> mean_f0</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>  )</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>})</span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co"># Combine results</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results)</span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="fu">write.csv</span>(results_df, <span class="st">&quot;results.csv&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="advanced-features-in-pladdrr" class="section level2">
+<h2>Advanced Features in pladdrr</h2>
+<div id="integration-with-tidyverse" class="section level3">
+<h3>Integration with tidyverse</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">library</span>(pladdrr)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">file =</span> <span class="fu">list.files</span>(<span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.wav$&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    <span class="at">sound =</span> <span class="fu">map</span>(file, Sound<span class="sc">$</span>new),</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>    <span class="at">pitch =</span> <span class="fu">map</span>(sound, <span class="sc">~</span>.<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)),</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    <span class="at">mean_f0 =</span> <span class="fu">map_dbl</span>(pitch, <span class="sc">~</span>.<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)),</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    <span class="at">sd_f0 =</span> <span class="fu">map_dbl</span>(pitch, <span class="sc">~</span>.<span class="sc">$</span><span class="fu">get_standard_deviation</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>))</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="fu">select</span>(file, mean_f0, sd_f0)</span></code></pre></div>
+</div>
+<div id="visualization-with-ggplot2" class="section level3">
+<h3>Visualization with ggplot2</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co"># Extract pitch contour</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>pitch_data <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">as_data_frame</span>()</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="fu">ggplot</span>(pitch_data, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> frequency)) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Pitch Contour&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Time (s)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Frequency (Hz)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</div>
+</div>
+<div id="advantages-over-praat-scripts" class="section level2">
+<h2>Advantages Over Praat Scripts</h2>
+<ol style="list-style-type: decimal">
+<li><strong>Type Safety</strong>: R catches type errors at runtime</li>
+<li><strong>Code Completion</strong>: RStudio provides autocomplete for
+all methods</li>
+<li><strong>Integration</strong>: Seamless integration with R’s data
+analysis ecosystem</li>
+<li><strong>Reproducibility</strong>: Version control and package
+management</li>
+<li><strong>Performance</strong>: Direct C++ binding (no scripting
+overhead)</li>
+<li><strong>Memory Management</strong>: Automatic cleanup of Praat
+objects</li>
+</ol>
+</div>
+<div id="common-pitfalls" class="section level2">
+<h2>Common Pitfalls</h2>
+<div id="object-lifetime" class="section level3">
+<h3>1. Object Lifetime</h3>
+<p><strong>Praat</strong> uses explicit object selection and
+removal:</p>
+<pre class="praat"><code>selectObject: sound
+removeObject: sound</code></pre>
+<p><strong>pladdrr</strong> uses R’s garbage collection (automatic):</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># Objects are automatically cleaned up when no longer referenced</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;audio.wav&quot;</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co"># &#39;sound&#39; is freed when it goes out of scope or is reassigned</span></span></code></pre></div>
+</div>
+<div id="time-ranges" class="section level3">
+<h3>2. Time Ranges</h3>
+<p><strong>Praat</strong> uses <code>0, 0</code> to mean “entire
+range”:</p>
+<pre class="praat"><code>mean_f0 = Get mean: 0, 0, &quot;Hertz&quot;</code></pre>
+<p><strong>pladdrr</strong> follows the same convention:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>mean_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span></code></pre></div>
+</div>
+<div id="unit-strings" class="section level3">
+<h3>3. Unit Strings</h3>
+<p>Use lowercase for units in pladdrr:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="co"># Correct</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="co"># Also works (case-insensitive in many methods)</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">unit =</span> <span class="st">&quot;Hertz&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="getting-help" class="section level2">
+<h2>Getting Help</h2>
+<ul>
+<li>Package documentation: <code>help(package = &quot;pladdrr&quot;)</code></li>
+<li>Class methods: <code>?Sound</code>, <code>?Pitch</code>,
+<code>?Formant</code>, etc.</li>
+<li>Vignettes: <code>vignette(package = &quot;pladdrr&quot;)</code></li>
+<li>GitHub issues: <a href="https://github.com/humlab-speech/pladdrr/issues" class="uri">https://github.com/humlab-speech/pladdrr/issues</a></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The systematic naming conventions in pladdrr make migration from
+Praat scripts straightforward. Most translations follow a simple
+pattern: convert Praat commands to lowercase method names with
+underscores, and use named parameters.</p>
+<p>For complex workflows, pladdrr offers additional advantages through
+R’s data manipulation and visualization capabilities.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -3861,19 +3861,6 @@ In file included from RcppExports.cpp:4:
 In file included from ./../inst/include/pladdrr.h:7:
 In file included from ./../inst/include/pladdrr_RcppExports.h:8:
 In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structFormant' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structFormant>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:9:8: note: forward declaration of 'structFormant'
-    9 | struct structFormant;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
 /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structSound' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
    31 |     delete obj;
       |     ^      ~~~
@@ -3887,32 +3874,6 @@ In file included from RcppExports.cpp:4:
 In file included from ./../inst/include/pladdrr.h:7:
 In file included from ./../inst/include/pladdrr_RcppExports.h:8:
 In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structTable' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structTable>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:24:8: note: forward declaration of 'structTable'
-   24 | struct structTable;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structFormantGrid' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structFormantGrid>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:10:8: note: forward declaration of 'structFormantGrid'
-   10 | struct structFormantGrid;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
 /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structPitch' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
    31 |     delete obj;
       |     ^      ~~~
@@ -3921,6 +3882,19 @@ In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resourc
       |                          ^
 ./../inst/include/pladdrr_types.h:8:8: note: forward declaration of 'structPitch'
     8 | struct structPitch;
+      |        ^
+In file included from RcppExports.cpp:4:
+In file included from ./../inst/include/pladdrr.h:7:
+In file included from ./../inst/include/pladdrr_RcppExports.h:8:
+In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
+/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structFormant' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
+   31 |     delete obj;
+      |     ^      ~~~
+/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structFormant>' requested here
+   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
+      |                          ^
+./../inst/include/pladdrr_types.h:9:8: note: forward declaration of 'structFormant'
+    9 | struct structFormant;
       |        ^
 In file included from RcppExports.cpp:4:
 In file included from ./../inst/include/pladdrr.h:7:
@@ -4000,98 +3974,7 @@ In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resourc
 ./../inst/include/pladdrr_types.h:16:8: note: forward declaration of 'structTextGrid'
    16 | struct structTextGrid;
       |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structDurationTier' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structDurationTier>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:21:8: note: forward declaration of 'structDurationTier'
-   21 | struct structDurationTier;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structIntensityTier' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structIntensityTier>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:22:8: note: forward declaration of 'structIntensityTier'
-   22 | struct structIntensityTier;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structLPC' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structLPC>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:19:8: note: forward declaration of 'structLPC'
-   19 | struct structLPC;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structMatrix' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structMatrix>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:23:8: note: forward declaration of 'structMatrix'
-   23 | struct structMatrix;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structLtas' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structLtas>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:15:8: note: forward declaration of 'structLtas'
-   15 | struct structLtas;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structManipulation' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structManipulation>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:18:8: note: forward declaration of 'structManipulation'
-   18 | struct structManipulation;
-      |        ^
-In file included from RcppExports.cpp:4:
-In file included from ./../inst/include/pladdrr.h:7:
-In file included from ./../inst/include/pladdrr_RcppExports.h:8:
-In file included from /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp.h:47:
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:31:5: warning: deleting pointer to incomplete type 'structPitchTier' is incompatible with C++2c and may cause undefined behavior [-Wdelete-incomplete]
-   31 |     delete obj;
-      |     ^      ~~~
-/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include/Rcpp/XPtr.h:54:26: note: in instantiation of function template specialization 'Rcpp::standard_delete_finalizer<structPitchTier>' requested here
-   54 |     void Finalizer(T*) = standard_delete_finalizer<T>,
-      |                          ^
-./../inst/include/pladdrr_types.h:20:8: note: forward declaration of 'structPitchTier'
-   20 | struct structPitchTier;
-      |        ^
-18 warnings generated.
+9 warnings generated.
 clang++ -arch arm64 -std=gnu++17 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. -I/opt/homebrew/include -Igsl-2.8 -Igsl-2.8/gsl -Ipraat.github.io -Ipraat.github.io/kar -Ipraat.github.io/melder -Ipraat.github.io/sys -Ipraat.github.io/dwsys -Ipraat.github.io/dwtools -Ipraat.github.io/stat -Ipraat.github.io/fon -Ipraat.github.io/foned -Ipraat.github.io/LPC -Ipraat.github.io/sensors -Ipraat.github.io/external/portaudio -Ipraat.github.io/external/flac -Ipraat.github.io/external/mp3 -Ipraat.github.io/external/espeak -Ipraat.github.io/external/gsl -Ipraat/external/gsl -Ipraat.github.io/external/glpk -Ipraat/external/glpk -Ipraat.github.io/external/num -Ipraat/external/num -Iclapack/INCLUDE -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/Rcpp/include' -I'/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RcppXsimd/include' -I/opt/R/arm64/include -I/opt/homebrew/opt/libomp/include -Xclang -fopenmp   -DPRAAT_LIB -DNO_GUI -DNO_AUDIO -DNO_GRAPHICS -DNO_NETWORK -DUNIX -DPLADDRR_NO_DEBUG -pthread -ffp-contract=off -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-deprecated-declarations -Wno-trigraphs -Wno-logical-op-parentheses -Wno-shift-op-parentheses -Wno-mismatched-tags -Wno-unused-const-variable -Wno-c++11-narrowing -O3 -march=armv8-a+simd -fPIC  -falign-functions=64 -Wall -g -O2   -c sound_mixing_simd.cpp -o sound_mixing_simd.o
 In file included from sound_mixing_simd.cpp:9:
 In file included from gsl-2.8/../praat_xptr_utils.h:10:
@@ -6398,12 +6281,11 @@ sound_audio_stubs.cpp:51:24: warning: unused variable 'FLAC__StreamEncoderInitSt
    51 |     const char * const FLAC__StreamEncoderInitStatusString[] = {
       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 22 warnings generated.
-clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -L/opt/homebrew/opt/libomp/lib -lomp -o pladdrr.so praat.github.io/kar/longchar.o praat.github.io/kar/wctype_portable.o praat.github.io/melder/melder.o praat.github.io/melder/melder_alloc.o praat.github.io/melder/melder_str32.o praat.github.io/melder/melder_colour.o praat.github.io/melder/melder_ftoa.o praat.github.io/melder/melder_console.o praat.github.io/melder/melder_textencoding.o praat.github.io/melder/melder_atof.o praat.github.io/melder/melder_files.o praat.github.io/melder/MelderFile.o praat.github.io/melder/melder_sort.o praat.github.io/melder/melder_debug.o praat.github.io/melder/MelderString.o praat.github.io/melder/melder_search.o praat.github.io/melder/melder_info.o praat.github.io/melder/melder_error.o praat.github.io/melder/melder_warning.o praat.github.io/melder/melder_progress.o praat.github.io/melder/melder_play.o praat.github.io/melder/melder_help.o praat.github.io/melder/melder_time.o praat.github.io/melder/melder_quantity.o praat.github.io/melder/MelderReadText.o praat.github.io/melder/melder_tensorio.o praat.github.io/melder/abcio.o praat.github.io/melder/melder_sysenv.o praat.github.io/melder/regularExp.o praat.github.io/melder/NUMmath.o praat.github.io/melder/NUMspecfunc.o praat.github.io/melder/NUMear.o praat.github.io/melder/NUMinterpol.o praat.github.io/melder/NUMmetrics.o praat.github.io/melder/NUMrandom.o praat.github.io/melder/NUMfilter.o praat.github.io/melder/NUM.o praat.github.io/melder/STR.o praat.github.io/melder/VEC.o praat.github.io/melder/MAT.o praat.github.io/melder/STRVEC.o praat.github.io/melder/MelderCat.o praat.github.io/melder/melder_casual.o praat.github.io/melder/melder_app.o praat.github.io/melder/complex.o praat.github.io/melder/melder_trust.o praat.github.io/melder/melder_audiofiles.o praat.github.io/sys/Thing.o praat.github.io/sys/Data.o praat.github.io/sys/Simple.o praat.github.io/sys/Collection.o praat.github.io/sys/Strings.o praat.github.io/sys/Formula.o praat.github.io/sys/Interpreter.o praat.github.io/sys/Script.o praat.github.io/sys/ManPage.o praat.github.io/sys/ManPages.o praat.github.io/sys/praat.o praat.github.io/sys/praat_script.o praat.github.io/dwsys/NUMFourier.o praat.github.io/dwsys/Polynomial.o praat.github.io/dwsys/Roots.o praat.github.io/dwsys/FunctionSeries.o praat.github.io/dwsys/Eigen.o praat.github.io/dwsys/SlopeSelector.o praat.github.io/dwsys/Permutation.o praat.github.io/dwsys/PermutationInversionCounter.o praat.github.io/dwsys/NUM2.o praat.github.io/dwsys/NUMhuber.o praat.github.io/dwsys/NUMselect.o praat.github.io/dwsys/MAT_numerics.o praat.github.io/dwsys/NUMstring.o praat.github.io/dwsys/NUMmachar.o praat.github.io/dwsys/NUMsorting.o praat.github.io/dwsys/Index.o praat.github.io/dwtools/SoundFrames.o praat.github.io/dwtools/SampledFrameIntoSampledFrame.o praat.github.io/dwtools/SampledIntoSampled.o praat.github.io/dwtools/Intensity_extensions.o praat.github.io/dwtools/TextGrid_extensions.o praat.github.io/dwtools/Sound_and_TextGrid_extensions.o praat.github.io/dwtools/Matrix_extensions.o praat.github.io/dwtools/Strings_extensions.o praat.github.io/dwtools/PatternList.o sound_extensions_minimal.o praat.github.io/stat/Table.o praat.github.io/stat/TableOfReal.o praat.github.io/stat/Distributions.o praat.github.io/fon/Transition.o praat.github.io/fon/Distributions_and_Transition.o praat.github.io/fon/Function.o praat.github.io/fon/Sampled.o praat.github.io/fon/SampledXY.o praat.github.io/fon/Matrix.o praat.github.io/fon/Vector.o praat.github.io/fon/Polygon.o praat.github.io/fon/PointProcess.o praat.github.io/fon/Matrix_and_PointProcess.o praat.github.io/fon/Matrix_and_Polygon.o praat.github.io/fon/AnyTier.o praat.github.io/fon/RealTier.o praat.github.io/fon/Sound.o praat.github.io/fon/PointProcess_and_Sound.o praat.github.io/fon/Sound_PointProcess.o praat.github.io/fon/ParamCurve.o praat.github.io/fon/Pitch.o praat.github.io/fon/Harmonicity.o praat.github.io/fon/Intensity.o praat.github.io/fon/Matrix_and_Pitch.o praat.github.io/fon/Sound_to_Pitch.o praat.github.io/fon/Sound_to_Intensity.o praat.github.io/fon/Sound_to_Harmonicity.o praat.github.io/fon/Sound_to_Harmonicity_GNE.o praat.github.io/fon/Sound_to_PointProcess.o praat.github.io/fon/Pitch_to_PointProcess.o praat.github.io/fon/Pitch_to_Sound.o praat.github.io/fon/Pitch_Intensity.o praat.github.io/fon/PitchTier.o praat.github.io/fon/Pitch_to_PitchTier.o praat.github.io/fon/PitchTier_to_PointProcess.o praat.github.io/fon/PitchTier_to_Sound.o praat.github.io/fon/Manipulation.o praat.github.io/fon/Pitch_AnyTier_to_PitchTier.o praat.github.io/fon/IntensityTier.o praat.github.io/fon/DurationTier.o praat.github.io/fon/AmplitudeTier.o praat.github.io/fon/Spectrum.o praat.github.io/fon/Ltas.o praat.github.io/fon/Spectrogram.o praat.github.io/fon/SpectrumTier.o praat.github.io/fon/Ltas_to_SpectrumTier.o praat.github.io/fon/Formant.o praat.github.io/fon/Image.o praat.github.io/fon/Sound_to_Formant.o praat.github.io/fon/Sound_and_Spectrogram.o praat.github.io/fon/Sound_and_Spectrum.o praat.github.io/fon/Spectrum_and_Spectrogram.o praat.github.io/fon/Spectrum_to_Formant.o praat.github.io/fon/FormantTier.o praat.github.io/fon/Label.o praat.github.io/fon/FormantGrid.o praat.github.io/fon/TextGrid.o praat.github.io/fon/TextGrid_Sound.o praat.github.io/fon/TextGrid_files.o praat.github.io/fon/Excitation.o praat.github.io/fon/Cochleagram.o praat.github.io/fon/Cochleagram_and_Excitation.o praat.github.io/fon/Excitation_to_Formant.o praat.github.io/fon/Sound_to_Cochleagram.o praat.github.io/fon/Spectrum_to_Excitation.o praat.github.io/fon/VocalTract.o praat.github.io/fon/VocalTract_to_Spectrum.o praat.github.io/fon/Sound_enhance.o praat.github.io/fon/VoiceAnalysis.o praat.github.io/fon/H1minusH2Tier.o praat.github.io/fon/WordList.o praat.github.io/fon/SpellingChecker.o praat.github.io/fon/Corpus.o praat.github.io/fon/Movie.o praat.github.io/fon/Photo.o praat.github.io/fon/LongSound.o praat.github.io/fon/SoundSet.o praat.github.io/fon/Praat_tests.o praat.github.io/fon/praat_Sound.o praat.github.io/fon/praat_Matrix.o praat.github.io/fon/praat_Tiers.o praat.github.io/fon/praat_TextGrid_init.o praat.github.io/fon/praat_uvafon_init.o praat.github.io/sensors/Electroglottogram.o praat.github.io/LPC/LPC.o praat.github.io/LPC/Sound_and_LPC.o praat.github.io/LPC/LPC_to_Spectrum.o praat.github.io/LPC/LPC_and_Polynomial.o praat.github.io/LPC/LPC_to_Spectrogram.o praat.github.io/LPC/LineSpectralFrequencies.o praat.github.io/LPC/LPC_and_LineSpectralFrequencies.o praat.github.io/LPC/LPC_and_Formant.o praat.github.io/LPC/Roots_and_Formant.o praat.github.io/LPC/Cepstrum.o praat.github.io/LPC/Cepstrumc.o praat.github.io/LPC/PowerCepstrum.o praat.github.io/LPC/PowerCepstrogram.o praat.github.io/LPC/Sound_and_Cepstrum.o praat.github.io/LPC/Sound_to_PowerCepstrogram.o praat.github.io/LPC/Cepstrum_and_Spectrum.o praat.github.io/LPC/LPC_and_Cepstrumc.o praat_actions_libmode.o praat_wrapper.o interpreter_wrappers.o praat.github.io/excluded_sources/Sound_files.o praat_stubs.o praat_app_stubs.o speechsynthesizer_stubs.o num_stubs.o graphics_stubs_comprehensive.o uiform_stubs.o svd_stubs.o glpk_stubs.o dtw_stubs.o eigen_sscp_stubs.o configuration_stubs.o table_stubs.o area_stubs.o uiform_libmode.o sound_create_gaussian.o r_lapack_wrapper.o utils.o RcppExports.o sound_mixing_simd.o intensity_simd.o window_functions_simd.o autocorrelation_simd.o sound_statistics_simd.o sound_conversion_simd.o num_matrix_simd.o num_filtering_simd.o num_distance_simd.o sound_convolution_simd.o pitch_processing_simd.o simd_info.o voice_quality_simd.o sound_zerocopy.o modules/pitch_module.o modules/sound_module.o modules/formant_module.o modules/intensity_module.o modules/spectrum_module.o modules/spectrogram_module.o modules/harmonicity_module.o modules/pitchtier_module.o modules/intensitytier_module.o modules/durationtier_module.o modules/amplitudetier_module.o modules/pointprocess_module.o modules/ltas_module.o modules/matrix_module.o modules/cepstrum_module.o modules/powercepstrum_module.o modules/cochleagram_module.o modules/excitation_module.o modules/electroglottogram_module.o modules/formantgrid_module.o modules/formanttier_module.o modules/vocaltract_module.o modules/longsound_module.o modules/lpc_module.o modules/table_module.o modules/textgrid_module.o modules/manipulation_module.o module_init.o flac_stubs.o sound_audio_stubs.o -L. -L/opt/homebrew/lib -lgsl -lgslcblas -L/Library/Frameworks/R.framework/Resources/lib -lRlapack -L/Library/Frameworks/R.framework/Resources/lib -lRblas -L/opt/homebrew/opt/gcc/lib/gcc/current -lgfortran -lquadmath -pthread -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
-installing to /private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp9Qdak8/Rinstc483181016d4/00LOCK-pladdrr/00new/pladdrr/libs
+clang++ -arch arm64 -std=gnu++17 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -L/Library/Frameworks/R.framework/Resources/lib -L/opt/R/arm64/lib -L/opt/homebrew/opt/libomp/lib -lomp -o pladdrr.so praat.github.io/kar/longchar.o praat.github.io/kar/wctype_portable.o praat.github.io/melder/melder.o praat.github.io/melder/melder_alloc.o praat.github.io/melder/melder_str32.o praat.github.io/melder/melder_colour.o praat.github.io/melder/melder_ftoa.o praat.github.io/melder/melder_console.o praat.github.io/melder/melder_textencoding.o praat.github.io/melder/melder_atof.o praat.github.io/melder/melder_files.o praat.github.io/melder/MelderFile.o praat.github.io/melder/melder_sort.o praat.github.io/melder/melder_debug.o praat.github.io/melder/MelderString.o praat.github.io/melder/melder_search.o praat.github.io/melder/melder_info.o praat.github.io/melder/melder_error.o praat.github.io/melder/melder_warning.o praat.github.io/melder/melder_progress.o praat.github.io/melder/melder_play.o praat.github.io/melder/melder_help.o praat.github.io/melder/melder_time.o praat.github.io/melder/melder_quantity.o praat.github.io/melder/MelderReadText.o praat.github.io/melder/melder_tensorio.o praat.github.io/melder/abcio.o praat.github.io/melder/melder_sysenv.o praat.github.io/melder/regularExp.o praat.github.io/melder/NUMmath.o praat.github.io/melder/NUMspecfunc.o praat.github.io/melder/NUMear.o praat.github.io/melder/NUMinterpol.o praat.github.io/melder/NUMmetrics.o praat.github.io/melder/NUMrandom.o praat.github.io/melder/NUMfilter.o praat.github.io/melder/NUM.o praat.github.io/melder/STR.o praat.github.io/melder/VEC.o praat.github.io/melder/MAT.o praat.github.io/melder/STRVEC.o praat.github.io/melder/MelderCat.o praat.github.io/melder/melder_casual.o praat.github.io/melder/melder_app.o praat.github.io/melder/complex.o praat.github.io/melder/melder_trust.o praat.github.io/melder/melder_audiofiles.o praat.github.io/sys/Thing.o praat.github.io/sys/Data.o praat.github.io/sys/Simple.o praat.github.io/sys/Collection.o praat.github.io/sys/Strings.o praat.github.io/sys/Formula.o praat.github.io/sys/Interpreter.o praat.github.io/sys/Script.o praat.github.io/sys/ManPage.o praat.github.io/sys/ManPages.o praat.github.io/sys/praat.o praat.github.io/sys/praat_script.o praat.github.io/dwsys/NUMFourier.o praat.github.io/dwsys/Polynomial.o praat.github.io/dwsys/Roots.o praat.github.io/dwsys/FunctionSeries.o praat.github.io/dwsys/Eigen.o praat.github.io/dwsys/SlopeSelector.o praat.github.io/dwsys/Permutation.o praat.github.io/dwsys/PermutationInversionCounter.o praat.github.io/dwsys/NUM2.o praat.github.io/dwsys/NUMhuber.o praat.github.io/dwsys/NUMselect.o praat.github.io/dwsys/MAT_numerics.o praat.github.io/dwsys/NUMstring.o praat.github.io/dwsys/NUMmachar.o praat.github.io/dwsys/NUMsorting.o praat.github.io/dwsys/Index.o praat.github.io/dwtools/SoundFrames.o praat.github.io/dwtools/SampledFrameIntoSampledFrame.o praat.github.io/dwtools/SampledIntoSampled.o praat.github.io/dwtools/Intensity_extensions.o praat.github.io/dwtools/TextGrid_extensions.o praat.github.io/dwtools/Sound_and_TextGrid_extensions.o praat.github.io/dwtools/Matrix_extensions.o praat.github.io/dwtools/Strings_extensions.o praat.github.io/dwtools/PatternList.o sound_extensions_minimal.o praat.github.io/stat/Table.o praat.github.io/stat/TableOfReal.o praat.github.io/stat/Distributions.o praat.github.io/fon/Transition.o praat.github.io/fon/Distributions_and_Transition.o praat.github.io/fon/Function.o praat.github.io/fon/Sampled.o praat.github.io/fon/SampledXY.o praat.github.io/fon/Matrix.o praat.github.io/fon/Vector.o praat.github.io/fon/Polygon.o praat.github.io/fon/PointProcess.o praat.github.io/fon/Matrix_and_PointProcess.o praat.github.io/fon/Matrix_and_Polygon.o praat.github.io/fon/AnyTier.o praat.github.io/fon/RealTier.o praat.github.io/fon/Sound.o praat.github.io/fon/PointProcess_and_Sound.o praat.github.io/fon/Sound_PointProcess.o praat.github.io/fon/ParamCurve.o praat.github.io/fon/Pitch.o praat.github.io/fon/Harmonicity.o praat.github.io/fon/Intensity.o praat.github.io/fon/Matrix_and_Pitch.o praat.github.io/fon/Sound_to_Pitch.o praat.github.io/fon/Sound_to_Intensity.o praat.github.io/fon/Sound_to_Harmonicity.o praat.github.io/fon/Sound_to_Harmonicity_GNE.o praat.github.io/fon/Sound_to_PointProcess.o praat.github.io/fon/Pitch_to_PointProcess.o praat.github.io/fon/Pitch_to_Sound.o praat.github.io/fon/Pitch_Intensity.o praat.github.io/fon/PitchTier.o praat.github.io/fon/Pitch_to_PitchTier.o praat.github.io/fon/PitchTier_to_PointProcess.o praat.github.io/fon/PitchTier_to_Sound.o praat.github.io/fon/Manipulation.o praat.github.io/fon/Pitch_AnyTier_to_PitchTier.o praat.github.io/fon/IntensityTier.o praat.github.io/fon/DurationTier.o praat.github.io/fon/AmplitudeTier.o praat.github.io/fon/Spectrum.o praat.github.io/fon/Ltas.o praat.github.io/fon/Spectrogram.o praat.github.io/fon/SpectrumTier.o praat.github.io/fon/Ltas_to_SpectrumTier.o praat.github.io/fon/Formant.o praat.github.io/fon/Image.o praat.github.io/fon/Sound_to_Formant.o praat.github.io/fon/Sound_and_Spectrogram.o praat.github.io/fon/Sound_and_Spectrum.o praat.github.io/fon/Spectrum_and_Spectrogram.o praat.github.io/fon/Spectrum_to_Formant.o praat.github.io/fon/FormantTier.o praat.github.io/fon/Label.o praat.github.io/fon/FormantGrid.o praat.github.io/fon/TextGrid.o praat.github.io/fon/TextGrid_Sound.o praat.github.io/fon/TextGrid_files.o praat.github.io/fon/Excitation.o praat.github.io/fon/Cochleagram.o praat.github.io/fon/Cochleagram_and_Excitation.o praat.github.io/fon/Excitation_to_Formant.o praat.github.io/fon/Sound_to_Cochleagram.o praat.github.io/fon/Spectrum_to_Excitation.o praat.github.io/fon/VocalTract.o praat.github.io/fon/VocalTract_to_Spectrum.o praat.github.io/fon/Sound_enhance.o praat.github.io/fon/VoiceAnalysis.o praat.github.io/fon/H1minusH2Tier.o praat.github.io/fon/WordList.o praat.github.io/fon/SpellingChecker.o praat.github.io/fon/Corpus.o praat.github.io/fon/Movie.o praat.github.io/fon/Photo.o praat.github.io/fon/LongSound.o praat.github.io/fon/SoundSet.o praat.github.io/fon/Praat_tests.o praat.github.io/fon/praat_Sound.o praat.github.io/fon/praat_Matrix.o praat.github.io/fon/praat_Tiers.o praat.github.io/fon/praat_TextGrid_init.o praat.github.io/fon/praat_uvafon_init.o praat.github.io/sensors/Electroglottogram.o praat.github.io/LPC/LPC.o praat.github.io/LPC/Sound_and_LPC.o praat.github.io/LPC/LPC_to_Spectrum.o praat.github.io/LPC/LPC_and_Polynomial.o praat.github.io/LPC/LPC_to_Spectrogram.o praat.github.io/LPC/LineSpectralFrequencies.o praat.github.io/LPC/LPC_and_LineSpectralFrequencies.o praat.github.io/LPC/LPC_and_Formant.o praat.github.io/LPC/Roots_and_Formant.o praat.github.io/LPC/Cepstrum.o praat.github.io/LPC/Cepstrumc.o praat.github.io/LPC/PowerCepstrum.o praat.github.io/LPC/PowerCepstrogram.o praat.github.io/LPC/Sound_and_Cepstrum.o praat.github.io/LPC/Sound_to_PowerCepstrogram.o praat.github.io/LPC/Cepstrum_and_Spectrum.o praat.github.io/LPC/LPC_and_Cepstrumc.o praat_actions_libmode.o praat_wrapper.o interpreter_wrappers.o praat.github.io/excluded_sources/Sound_files.o praat_stubs.o praat_app_stubs.o speechsynthesizer_stubs.o num_stubs.o graphics_stubs_comprehensive.o uiform_stubs.o svd_stubs.o glpk_stubs.o dtw_stubs.o eigen_sscp_stubs.o configuration_stubs.o table_stubs.o area_stubs.o uiform_libmode.o sound_create_gaussian.o r_lapack_wrapper.o utils.o RcppExports.o sound_mixing_simd.o intensity_simd.o window_functions_simd.o autocorrelation_simd.o sound_statistics_simd.o sound_conversion_simd.o num_matrix_simd.o num_filtering_simd.o num_distance_simd.o sound_convolution_simd.o pitch_processing_simd.o simd_info.o voice_quality_simd.o sound_zerocopy.o modules/pitch_module.o modules/sound_module.o modules/formant_module.o modules/intensity_module.o modules/spectrum_module.o modules/spectrogram_module.o modules/harmonicity_module.o modules/pitchtier_module.o modules/intensitytier_module.o modules/durationtier_module.o modules/amplitudetier_module.o modules/pointprocess_module.o modules/ltas_module.o modules/matrix_module.o modules/cepstrum_module.o modules/powercepstrum_module.o modules/cochleagram_module.o modules/excitation_module.o modules/electroglottogram_module.o modules/formantgrid_module.o modules/formanttier_module.o modules/vocaltract_module.o modules/longsound_module.o modules/lpc_module.o modules/table_module.o modules/textgrid_module.o modules/manipulation_module.o modules/polygon_module.o module_init.o flac_stubs.o sound_audio_stubs.o -L. -L/opt/homebrew/lib -lgsl -lgslcblas -L/Library/Frameworks/R.framework/Resources/lib -lRlapack -L/Library/Frameworks/R.framework/Resources/lib -lRblas -L/opt/homebrew/opt/gcc/lib/gcc/current -lgfortran -lquadmath -pthread -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+installing to /private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp6x3On8/Rinst86a75affc939/00LOCK-pladdrr/00new/pladdrr/libs
 ** R
 ** inst
 ** byte-compile and prepare package for lazy loading
-Note: possible error in '.formantgrid_to_formant(ptr, ': unused arguments (first_frequency, ceiling, bandwidth_fraction) 
 Note: possible error in 'textgrid_get_intervals_where(tg, ': unused arguments (pattern = pattern, regex = regex) 
 ** help
 *** installing help indices
@@ -6411,11 +6293,11 @@ Note: possible error in 'textgrid_get_intervals_where(tg, ': unused arguments (p
 ** installing vignettes
 ** testing if installed package can be loaded from temporary location
 Error: package or namespace load failed for ‘pladdrr’ in dyn.load(file, DLLpath = DLLpath, ...):
- unable to load shared object '/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp9Qdak8/Rinstc483181016d4/00LOCK-pladdrr/00new/pladdrr/libs/pladdrr.so':
-  dlopen(/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp9Qdak8/Rinstc483181016d4/00LOCK-pladdrr/00new/pladdrr/libs/pladdrr.so, 0x0006): symbol not found in flat namespace '__Z10sound_copyN4Rcpp4XPtrI11structSoundNS_15PreserveStorageEXadL_ZNS_25standard_delete_finalizerIS1_EEvPT_EELb0EEE'
+ unable to load shared object '/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp6x3On8/Rinst86a75affc939/00LOCK-pladdrr/00new/pladdrr/libs/pladdrr.so':
+  dlopen(/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp6x3On8/Rinst86a75affc939/00LOCK-pladdrr/00new/pladdrr/libs/pladdrr.so, 0x0006): symbol not found in flat namespace '__Z10sound_copyN4Rcpp4XPtrI11structSoundNS_15PreserveStorageEXadL_ZNS_25standard_delete_finalizerIS1_EEvPT_EELb0EEE'
 Error: loading failed
 Execution halted
 ERROR: loading failed
-* removing ‘/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp9Qdak8/Rinstc483181016d4/pladdrr’
+* removing ‘/private/var/folders/lr/h3mlkmq540d6xjrh3bpdms600000gn/T/Rtmp6x3On8/Rinst86a75affc939/pladdrr’
       -----------------------------------
 ERROR: package installation failed

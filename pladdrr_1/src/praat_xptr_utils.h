@@ -1,0 +1,44 @@
+// praat_xptr_utils.h - Utilities for managing Praat object external pointers
+//
+// This header provides utilities for creating and managing XPtr objects
+// that wrap Praat C++ objects with automatic memory management via finalizers.
+
+#ifndef PRAAT_XPTR_UTILS_H
+#define PRAAT_XPTR_UTILS_H
+
+#include <Rcpp.h>
+#include "sys/Thing.h"
+#include "melder/melder.h"
+
+// Create an XPtr from an auto* Praat object with proper finalizer
+// Uses a custom deleter that wraps Praat's forget() function
+template<typename T, typename AutoType>
+Rcpp::XPtr<T> create_xptr_from_auto(AutoType& auto_obj) {
+    T* ptr = auto_obj.releaseToAmbiguousOwner();
+    
+    // Custom deleter as lambda that calls forget()
+    auto deleter = [](T* thing) {
+        if (thing != nullptr) {
+            forget(thing);
+        }
+    };
+    
+    return Rcpp::XPtr<T>(ptr, deleter);
+}
+
+// Validate XPtr before use
+template<typename T>
+void validate_xptr(const Rcpp::XPtr<T>& xptr, const char* object_type = "Praat object") {
+    if (!xptr) {
+        Rcpp::stop(std::string("Invalid ") + object_type + " pointer (NULL)");
+    }
+}
+
+// Get raw pointer from XPtr with validation
+template<typename T>
+T* get_ptr(const Rcpp::XPtr<T>& xptr, const char* object_type = "Praat object") {
+    validate_xptr(xptr, object_type);
+    return xptr.get();
+}
+
+#endif // PRAAT_XPTR_UTILS_H

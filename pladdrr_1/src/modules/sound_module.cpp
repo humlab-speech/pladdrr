@@ -1,0 +1,495 @@
+// sound_module.cpp
+// Rcpp Module exposing Sound functionality (pladdrr 2.0)
+
+#include <Rcpp.h>
+#include "module_common.h"
+
+// Praat headers
+#include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/Pitch.h"
+#include "praat.github.io/fon/Formant.h"
+#include "praat.github.io/fon/Intensity.h"
+#include "praat.github.io/fon/Harmonicity.h"
+#include "praat.github.io/fon/Spectrum.h"
+#include "praat.github.io/fon/Spectrogram.h"
+#include "praat.github.io/fon/Ltas.h"
+#include "praat.github.io/fon/PointProcess.h"
+#include "praat.github.io/fon/Sound_to_Pitch.h"
+#include "praat.github.io/fon/Sound_to_Formant.h"
+#include "praat.github.io/fon/Sound_to_Intensity.h"
+#include "praat.github.io/fon/Sound_to_Harmonicity.h"
+#include "praat.github.io/fon/Sound_and_Spectrum.h"
+#include "praat.github.io/fon/Sound_and_Spectrogram.h"
+#include "praat.github.io/fon/Sound_to_PointProcess.h"
+
+using namespace Rcpp;
+
+// Custom deleter for Praat objects
+template<typename T>
+void praat_deleter(T* obj) {
+    if (obj) forget(obj);
+}
+
+// =============================================================================
+// RSound Class - Wraps Sound XPtr with methods
+// =============================================================================
+
+class RSound {
+private:
+    XPtr<structSound> ptr;
+
+public:
+    // Default constructor (empty)
+    RSound() : ptr(R_NilValue) {}
+
+    // Constructor from XPtr
+    RSound(XPtr<structSound> xptr) : ptr(xptr) {}
+
+    // =========================================================================
+    // Validation
+    // =========================================================================
+
+    bool is_valid() {
+        return ptr.get() != nullptr;
+    }
+
+    // =========================================================================
+    // Time Domain Properties (inherited from Function/Sampled)
+    // =========================================================================
+
+    double get_xmin() {
+        VALIDATE_PTR(ptr, Sound);
+        return ptr->xmin;
+    }
+
+    double get_xmax() {
+        VALIDATE_PTR(ptr, Sound);
+        return ptr->xmax;
+    }
+
+    double get_duration() {
+        VALIDATE_PTR(ptr, Sound);
+        return ptr->xmax - ptr->xmin;
+    }
+
+    // =========================================================================
+    // Sampling Properties
+    // =========================================================================
+
+    int get_nx() {
+        VALIDATE_PTR(ptr, Sound);
+        return static_cast<int>(ptr->nx);
+    }
+
+    double get_dx() {
+        VALIDATE_PTR(ptr, Sound);
+        return ptr->dx;
+    }
+
+    double get_x1() {
+        VALIDATE_PTR(ptr, Sound);
+        return ptr->x1;
+    }
+
+    double get_sampling_frequency() {
+        VALIDATE_PTR(ptr, Sound);
+        return 1.0 / ptr->dx;
+    }
+
+    int get_number_of_samples() {
+        VALIDATE_PTR(ptr, Sound);
+        return static_cast<int>(ptr->nx);
+    }
+
+    int get_number_of_channels() {
+        VALIDATE_PTR(ptr, Sound);
+        return static_cast<int>(ptr->ny);
+    }
+
+    // =========================================================================
+    // Query Methods
+    // =========================================================================
+
+    double get_value_at_time(double time, int channel, int interpolation) {
+        VALIDATE_PTR(ptr, Sound);
+        if (channel < 1 || channel > ptr->ny) {
+            Rcpp::stop("Channel out of range [1, %d]: %d", ptr->ny, channel);
+        }
+        // Convert channel to 0-based for indexing
+        return Vector_getValueAtX(ptr.get(), time, channel, (kVector_valueInterpolation) interpolation);
+    }
+
+    double get_rms(double from_time, double to_time) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Sound_getRootMeanSquare(ptr.get(), from_time, to_time);
+    }
+
+    double get_energy(double from_time, double to_time) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Sound_getEnergy(ptr.get(), from_time, to_time);
+    }
+
+    double get_power(double from_time, double to_time) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Sound_getPower(ptr.get(), from_time, to_time);
+    }
+
+    double get_intensity_db() {
+        VALIDATE_PTR(ptr, Sound);
+        return Sound_getIntensity_dB(ptr.get());
+    }
+
+    double get_minimum(double from_time, double to_time, int interpolation) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Vector_getMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
+    }
+
+    double get_maximum(double from_time, double to_time, int interpolation) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Vector_getMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
+    }
+
+    double get_mean(double from_time, double to_time, int channel) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        return Vector_getMean(ptr.get(), from_time, to_time, channel);
+    }
+
+    // =========================================================================
+    // Time/Sample Conversion
+    // =========================================================================
+
+    double get_time_from_sample(int sample) {
+        VALIDATE_PTR(ptr, Sound);
+        return Sampled_indexToX(ptr.get(), sample);
+    }
+
+    int get_sample_from_time(double time) {
+        VALIDATE_PTR(ptr, Sound);
+        return static_cast<int>(Sampled_xToNearestIndex(ptr.get(), time));
+    }
+
+    // =========================================================================
+    // Transform Methods (return XPtrs for R-side wrapping)
+    // =========================================================================
+
+    XPtr<structPitch> to_pitch_ptr(double time_step, double pitch_floor, double pitch_ceiling) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoPitch result = Sound_to_Pitch(
+                ptr.get(),
+                time_step,
+                pitch_floor,
+                pitch_ceiling
+            );
+            Pitch raw = result.releaseToAmbiguousOwner();
+            return XPtr<structPitch>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Pitch from Sound");
+        }
+    }
+
+    XPtr<structFormant> to_formant_burg_ptr(
+        double time_step,
+        double max_formants,
+        double max_frequency,
+        double window_length,
+        double pre_emphasis_from
+    ) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoFormant result = Sound_to_Formant_burg(
+                ptr.get(),
+                time_step,
+                max_formants,
+                max_frequency,
+                window_length,
+                pre_emphasis_from
+            );
+            Formant raw = result.releaseToAmbiguousOwner();
+            return XPtr<structFormant>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Formant from Sound");
+        }
+    }
+
+    XPtr<structIntensity> to_intensity_ptr(double minimum_pitch, double time_step, bool subtract_mean) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoIntensity result = Sound_to_Intensity(
+                ptr.get(),
+                minimum_pitch,
+                time_step,
+                subtract_mean
+            );
+            Intensity raw = result.releaseToAmbiguousOwner();
+            return XPtr<structIntensity>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Intensity from Sound");
+        }
+    }
+
+    XPtr<structHarmonicity> to_harmonicity_cc_ptr(double time_step, double minimum_pitch, double silence_threshold, double periods_per_window) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoHarmonicity result = Sound_to_Harmonicity_cc(
+                ptr.get(),
+                time_step,
+                minimum_pitch,
+                silence_threshold,
+                periods_per_window
+            );
+            Harmonicity raw = result.releaseToAmbiguousOwner();
+            return XPtr<structHarmonicity>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Harmonicity from Sound");
+        }
+    }
+
+    XPtr<structSpectrum> to_spectrum_ptr(bool fast) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoSpectrum result = Sound_to_Spectrum(ptr.get(), fast);
+            Spectrum raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSpectrum>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Spectrum from Sound");
+        }
+    }
+
+    XPtr<structSpectrogram> to_spectrogram_ptr(
+        double window_length,
+        double maximum_frequency,
+        double time_step,
+        double frequency_step,
+        int window_shape
+    ) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoSpectrogram result = Sound_to_Spectrogram_e(
+                ptr.get(),
+                window_length,
+                maximum_frequency,
+                time_step,
+                frequency_step,
+                (kSound_to_Spectrogram_windowShape) window_shape,
+                8.0,  // maximumTimeOversampling
+                8.0   // maximumFreqOversampling
+            );
+            Spectrogram raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSpectrogram>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create Spectrogram from Sound");
+        }
+    }
+
+    XPtr<structPointProcess> to_point_process_periodic_cc_ptr(double minimum_pitch, double maximum_pitch) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoPointProcess result = Sound_to_PointProcess_periodic_cc(
+                ptr.get(),
+                minimum_pitch,
+                maximum_pitch
+            );
+            PointProcess raw = result.releaseToAmbiguousOwner();
+            return XPtr<structPointProcess>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to create PointProcess from Sound");
+        }
+    }
+
+    // =========================================================================
+    // Modification Methods (return new Sound XPtrs)
+    // =========================================================================
+
+    XPtr<structSound> extract_channel_ptr(int channel) {
+        VALIDATE_PTR(ptr, Sound);
+        if (channel < 1 || channel > ptr->ny) {
+            Rcpp::stop("Channel out of range [1, %d]: %d", ptr->ny, channel);
+        }
+        try {
+            autoSound result = Sound_extractChannel(ptr.get(), channel);
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to extract channel");
+        }
+    }
+
+    XPtr<structSound> extract_part_ptr(double from_time, double to_time, int window_shape, double relative_width, bool preserve_times) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            autoSound result = Sound_extractPart(
+                ptr.get(),
+                from_time,
+                to_time,
+                (kSound_windowShape) window_shape,
+                relative_width,
+                preserve_times
+            );
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to extract part");
+        }
+    }
+
+    // =========================================================================
+    // Export Methods
+    // =========================================================================
+
+    NumericMatrix as_matrix() {
+        VALIDATE_PTR(ptr, Sound);
+        integer nchannels = ptr->ny;
+        integer nsamples = ptr->nx;
+
+        NumericMatrix mat(nchannels, nsamples);
+        for (integer ch = 1; ch <= nchannels; ch++) {
+            for (integer s = 1; s <= nsamples; s++) {
+                mat(ch - 1, s - 1) = ptr->z[ch][s];
+            }
+        }
+        return mat;
+    }
+
+    DataFrame as_data_frame() {
+        VALIDATE_PTR(ptr, Sound);
+        integer nchannels = ptr->ny;
+        integer nsamples = ptr->nx;
+
+        // Long format: time, channel, value
+        std::vector<double> times;
+        std::vector<int> channels;
+        std::vector<double> values;
+
+        times.reserve(nchannels * nsamples);
+        channels.reserve(nchannels * nsamples);
+        values.reserve(nchannels * nsamples);
+
+        for (integer ch = 1; ch <= nchannels; ch++) {
+            for (integer s = 1; s <= nsamples; s++) {
+                times.push_back(Sampled_indexToX(ptr.get(), s));
+                channels.push_back(ch);
+                values.push_back(ptr->z[ch][s]);
+            }
+        }
+
+        return DataFrame::create(
+            Named("time") = times,
+            Named("channel") = channels,
+            Named("value") = values
+        );
+    }
+
+    // =========================================================================
+    // Save Method
+    // =========================================================================
+
+    void save(std::string path, int format) {
+        VALIDATE_PTR(ptr, Sound);
+        try {
+            structMelderFile file = {};
+            Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
+            Sound_saveAsAudioFile(ptr.get(), &file, format, 16);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to save Sound to file: %s", path.c_str());
+        }
+    }
+};
+
+// =============================================================================
+// Module Registration
+// =============================================================================
+
+RCPP_MODULE(sound_module) {
+    using namespace Rcpp;
+
+    class_<RSound>("RSound")
+        // Constructors
+        .constructor()
+        .constructor<XPtr<structSound>>()
+
+        // Validation
+        .method("is_valid", &RSound::is_valid, "Check if pointer is valid")
+
+        // Time domain properties
+        .method("get_xmin", &RSound::get_xmin, "Get start time")
+        .method("get_xmax", &RSound::get_xmax, "Get end time")
+        .method("get_duration", &RSound::get_duration, "Get duration")
+
+        // Sampling properties
+        .method("get_nx", &RSound::get_nx, "Get number of samples")
+        .method("get_dx", &RSound::get_dx, "Get sample period")
+        .method("get_x1", &RSound::get_x1, "Get time of first sample")
+        .method("get_sampling_frequency", &RSound::get_sampling_frequency, "Get sampling frequency")
+        .method("get_number_of_samples", &RSound::get_number_of_samples, "Get number of samples")
+        .method("get_number_of_channels", &RSound::get_number_of_channels, "Get number of channels")
+
+        // Query methods
+        .method("get_value_at_time", &RSound::get_value_at_time, "Get amplitude at time")
+        .method("get_rms", &RSound::get_rms, "Get RMS amplitude")
+        .method("get_energy", &RSound::get_energy, "Get energy")
+        .method("get_power", &RSound::get_power, "Get power")
+        .method("get_intensity_db", &RSound::get_intensity_db, "Get intensity in dB")
+        .method("get_minimum", &RSound::get_minimum, "Get minimum amplitude")
+        .method("get_maximum", &RSound::get_maximum, "Get maximum amplitude")
+        .method("get_mean", &RSound::get_mean, "Get mean amplitude")
+
+        // Time/sample conversion
+        .method("get_time_from_sample", &RSound::get_time_from_sample, "Convert sample to time")
+        .method("get_sample_from_time", &RSound::get_sample_from_time, "Convert time to sample")
+
+        // Transform methods (return XPtrs)
+        .method("to_pitch_ptr", &RSound::to_pitch_ptr, "Create Pitch from Sound")
+        .method("to_formant_burg_ptr", &RSound::to_formant_burg_ptr, "Create Formant from Sound")
+        .method("to_intensity_ptr", &RSound::to_intensity_ptr, "Create Intensity from Sound")
+        .method("to_harmonicity_cc_ptr", &RSound::to_harmonicity_cc_ptr, "Create Harmonicity from Sound")
+        .method("to_spectrum_ptr", &RSound::to_spectrum_ptr, "Create Spectrum from Sound")
+        .method("to_spectrogram_ptr", &RSound::to_spectrogram_ptr, "Create Spectrogram from Sound")
+        .method("to_point_process_periodic_cc_ptr", &RSound::to_point_process_periodic_cc_ptr, "Create PointProcess from Sound")
+
+        // Modification methods
+        .method("extract_channel_ptr", &RSound::extract_channel_ptr, "Extract single channel")
+        .method("extract_part_ptr", &RSound::extract_part_ptr, "Extract time range")
+
+        // Export methods
+        .method("as_matrix", &RSound::as_matrix, "Export as matrix")
+        .method("as_data_frame", &RSound::as_data_frame, "Export as data frame")
+
+        // Save method
+        .method("save", &RSound::save, "Save to file")
+    ;
+}

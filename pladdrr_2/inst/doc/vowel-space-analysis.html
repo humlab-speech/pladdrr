@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="pladdrr Package Authors" />
+
+<meta name="date" content="2025-12-22" />
+
+<title>Vowel Space Analysis with pladdrr</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Vowel Space Analysis with pladdrr</h1>
+<h4 class="author">pladdrr Package Authors</h4>
+<h4 class="date">2025-12-22</h4>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>This vignette demonstrates a complete vowel acoustics research
+workflow using the <strong>pladdrr</strong> package. Topics covered:</p>
+<ul>
+<li><strong>Formant extraction</strong> with optimal parameters</li>
+<li><strong>Multi-point measurements</strong> (onset, midpoint,
+offset)</li>
+<li><strong>Formant normalization</strong> (Lobanov z-score method)</li>
+<li><strong>Vowel space statistics</strong> and area calculations</li>
+<li><strong>F1-F2 plotting</strong> preparation</li>
+<li><strong>Integration with ggplot2</strong> for publication-quality
+graphics</li>
+</ul>
+<p>This workflow is essential for sociolinguistic variation studies, L2
+acquisition research, and dialectology.</p>
+<p><strong>Note:</strong> For comprehensive visualization examples
+including additional plot types (spectrograms, voice quality reports,
+cepstral analysis), see <code>vignette(&quot;visualization&quot;)</code>.</p>
+</div>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<div id="vowel-acoustics" class="section level3">
+<h3>Vowel Acoustics</h3>
+<p>Vowels are characterized acoustically by their
+<strong>formants</strong> - resonance frequencies of the vocal
+tract:</p>
+<ul>
+<li><strong>F1</strong> (First formant): Correlates with tongue height
+(inverse)
+<ul>
+<li>High vowels (i, u): Low F1 (~280-300 Hz)</li>
+<li>Low vowels (a): High F1 (~700 Hz)</li>
+</ul></li>
+<li><strong>F2</strong> (Second formant): Correlates with tongue
+backness (inverse)
+<ul>
+<li>Front vowels (i, e): High F2 (~2000-2250 Hz)</li>
+<li>Back vowels (u, o): Low F2 (~800-900 Hz)</li>
+</ul></li>
+<li><strong>F3</strong> (Third formant): Useful for rhoticity and
+speaker normalization</li>
+</ul>
+</div>
+<div id="the-f1-f2-vowel-space" class="section level3">
+<h3>The F1-F2 Vowel Space</h3>
+<p>Vowels are visualized in <strong>acoustic space</strong>:</p>
+<ul>
+<li>X-axis: F2 (typically reversed, high values on left)</li>
+<li>Y-axis: F1 (typically reversed, low values at top)</li>
+<li>This mirrors the articulatory vowel quadrilateral</li>
+</ul>
+</div>
+<div id="formant-normalization" class="section level3">
+<h3>Formant Normalization</h3>
+<p>Speaker-intrinsic differences (vocal tract length, physiology)
+require normalization for comparison:</p>
+<ul>
+<li><strong>Lobanov z-scores</strong>: Standardize formants within
+speaker
+<ul>
+<li>z = (F - mean_F) / sd_F</li>
+<li>Mean-centers and scales to unit variance</li>
+<li>Preserves vowel space structure</li>
+</ul></li>
+<li>Other methods: Bark difference, Nearey, Watt &amp; Fabricius</li>
+</ul>
+</div>
+</div>
+<div id="part-1-data-preparation" class="section level2">
+<h2>Part 1: Data Preparation</h2>
+<div id="loading-audio-and-annotations" class="section level3">
+<h3>Loading Audio and Annotations</h3>
+<p>For this demonstration, we’ll use synthetic data. In real research,
+load actual recordings:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(pladdrr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># Create synthetic audio (in real research: Sound$new(&quot;recording.wav&quot;))</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">create_tone</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">duration =</span> <span class="fl">10.0</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">frequency =</span> <span class="dv">100</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">sampling_rate =</span> <span class="dv">16000</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">amplitude =</span> <span class="fl">0.3</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># Create TextGrid with vowel annotations</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># In real research: TextGrid$new(&quot;annotation.TextGrid&quot;)</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>tg <span class="ot">&lt;-</span> TextGrid<span class="sc">$</span><span class="fu">create</span>(</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="at">tmin =</span> <span class="dv">0</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  <span class="at">tmax =</span> <span class="dv">10</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>  <span class="at">tier_names =</span> <span class="st">&quot;vowels context&quot;</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>  <span class="at">point_tiers =</span> <span class="st">&quot;&quot;</span>  <span class="co"># Both are interval tiers</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>)</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co"># Define vowel segments (start, end, label, word context)</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>vowel_segments <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>, <span class="fl">5.5</span>, <span class="fl">6.5</span>, <span class="fl">7.5</span>, <span class="fl">8.5</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>  <span class="at">end =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>, <span class="fl">4.0</span>, <span class="fl">5.0</span>, <span class="fl">6.0</span>, <span class="fl">7.0</span>, <span class="fl">8.0</span>, <span class="fl">9.0</span>),</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>  <span class="at">vowel =</span> <span class="fu">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;o&quot;</span>, <span class="st">&quot;u&quot;</span>, <span class="st">&quot;i&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;u&quot;</span>),</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>  <span class="at">word =</span> <span class="fu">c</span>(<span class="st">&quot;beet&quot;</span>, <span class="st">&quot;bait&quot;</span>, <span class="st">&quot;bat&quot;</span>, <span class="st">&quot;boat&quot;</span>, <span class="st">&quot;boot&quot;</span>, <span class="st">&quot;beat&quot;</span>, <span class="st">&quot;father&quot;</span>, <span class="st">&quot;bet&quot;</span>, <span class="st">&quot;boot&quot;</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>)</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co"># Add boundaries and labels</span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(vowel_segments)) {</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>  tg<span class="sc">$</span><span class="fu">insert_boundary</span>(<span class="dv">1</span>, vowel_segments<span class="sc">$</span>start[i])</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>}</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>tg<span class="sc">$</span><span class="fu">insert_boundary</span>(<span class="dv">1</span>, vowel_segments<span class="sc">$</span>end[<span class="fu">nrow</span>(vowel_segments)])</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(vowel_segments)) {</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>  tg<span class="sc">$</span><span class="fu">set_interval_text</span>(<span class="dv">1</span>, i <span class="sc">+</span> <span class="dv">1</span>, vowel_segments<span class="sc">$</span>vowel[i])</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>}</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Prepared&quot;</span>, <span class="fu">nrow</span>(vowel_segments), <span class="st">&quot;vowel tokens</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="part-2-formant-extraction" class="section level2">
+<h2>Part 2: Formant Extraction</h2>
+<div id="choosing-analysis-parameters" class="section level3">
+<h3>Choosing Analysis Parameters</h3>
+<p>Formant analysis parameters must match speaker characteristics:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Parameter guidelines:</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co"># Adult male: max_formant = 5000 Hz</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># Adult female: max_formant = 5500 Hz  </span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Child: max_formant = 8000 Hz</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># For this example (adult female):</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>max_formant <span class="ot">&lt;-</span> <span class="dv">5500</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>time_step <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>window_length <span class="ot">&lt;-</span> <span class="fl">0.025</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>pre_emphasis <span class="ot">&lt;-</span> <span class="dv">50</span></span></code></pre></div>
+</div>
+<div id="pre-emphasis" class="section level3">
+<h3>Pre-emphasis</h3>
+<p>Apply pre-emphasis to boost higher frequencies before formant
+analysis:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Note: pre_emphasize modifies sound in-place, so we skip for demonstration</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># sound$pre_emphasize(from_frequency = pre_emphasis)</span></span></code></pre></div>
+</div>
+<div id="extract-formants" class="section level3">
+<h3>Extract Formants</h3>
+<p>Use Burg’s algorithm (Praat’s default):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Extract formants from the original sound</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>formant <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">time_step =</span> time_step,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">max_formants =</span> <span class="dv">5</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">max_frequency =</span> max_formant,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">window_length =</span> window_length,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">pre_emphasis_from =</span> pre_emphasis</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Formant object created</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Time step:&quot;</span>, time_step, <span class="st">&quot;s</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Maximum formant:&quot;</span>, max_formant, <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="part-3-multi-point-measurements" class="section level2">
+<h2>Part 3: Multi-Point Measurements</h2>
+<p>Measure formants at <strong>three time points</strong> per vowel:</p>
+<ul>
+<li><strong>20%</strong> into vowel (onset, after coarticulation)</li>
+<li><strong>50%</strong> (midpoint, most stable)</li>
+<li><strong>80%</strong> (offset, before coarticulation)</li>
+</ul>
+<p>This captures vowel trajectories and diphthongization.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Initialize results data frame</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>vowel_features <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">vowel =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">word =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">end =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">duration =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">f1_20 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">f2_20 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">f3_20 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">f1_50 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="at">f2_50 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">f3_50 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>  <span class="at">f1_80 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>  <span class="at">f2_80 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>  <span class="at">f3_80 =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>)</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co"># Measure formants for each vowel</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(vowel_segments)) {</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>  start <span class="ot">&lt;-</span> vowel_segments<span class="sc">$</span>start[i]</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>  end <span class="ot">&lt;-</span> vowel_segments<span class="sc">$</span>end[i]</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>  duration <span class="ot">&lt;-</span> end <span class="sc">-</span> start</span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>  </span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>  <span class="co"># Calculate time points</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>  t_20 <span class="ot">&lt;-</span> start <span class="sc">+</span> <span class="fl">0.20</span> <span class="sc">*</span> duration</span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>  t_50 <span class="ot">&lt;-</span> start <span class="sc">+</span> <span class="fl">0.50</span> <span class="sc">*</span> duration</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>  t_80 <span class="ot">&lt;-</span> start <span class="sc">+</span> <span class="fl">0.80</span> <span class="sc">*</span> duration</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>  </span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a>  <span class="co"># Measure formants at each time point</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a>  measure_formants <span class="ot">&lt;-</span> <span class="cf">function</span>(time) {</span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a>      <span class="at">f1 =</span> formant<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="dv">1</span>, time, <span class="st">&quot;hertz&quot;</span>),</span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a>      <span class="at">f2 =</span> formant<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="dv">2</span>, time, <span class="st">&quot;hertz&quot;</span>),</span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a>      <span class="at">f3 =</span> formant<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="dv">3</span>, time, <span class="st">&quot;hertz&quot;</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a>    )</span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a>  }</span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a>  </span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a>  f_20 <span class="ot">&lt;-</span> <span class="fu">measure_formants</span>(t_20)</span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a>  f_50 <span class="ot">&lt;-</span> <span class="fu">measure_formants</span>(t_50)</span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a>  f_80 <span class="ot">&lt;-</span> <span class="fu">measure_formants</span>(t_80)</span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a>  </span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a>  <span class="co"># Add to results</span></span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a>  vowel_features <span class="ot">&lt;-</span> <span class="fu">rbind</span>(vowel_features, <span class="fu">data.frame</span>(</span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a>    <span class="at">vowel =</span> vowel_segments<span class="sc">$</span>vowel[i],</span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a>    <span class="at">word =</span> vowel_segments<span class="sc">$</span>word[i],</span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a>    <span class="at">start =</span> start,</span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a>    <span class="at">end =</span> end,</span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a>    <span class="at">duration =</span> duration,</span>
+<span id="cb5-51"><a href="#cb5-51" tabindex="-1"></a>    <span class="at">f1_20 =</span> f_20[<span class="st">&quot;f1&quot;</span>],</span>
+<span id="cb5-52"><a href="#cb5-52" tabindex="-1"></a>    <span class="at">f2_20 =</span> f_20[<span class="st">&quot;f2&quot;</span>],</span>
+<span id="cb5-53"><a href="#cb5-53" tabindex="-1"></a>    <span class="at">f3_20 =</span> f_20[<span class="st">&quot;f3&quot;</span>],</span>
+<span id="cb5-54"><a href="#cb5-54" tabindex="-1"></a>    <span class="at">f1_50 =</span> f_50[<span class="st">&quot;f1&quot;</span>],</span>
+<span id="cb5-55"><a href="#cb5-55" tabindex="-1"></a>    <span class="at">f2_50 =</span> f_50[<span class="st">&quot;f2&quot;</span>],</span>
+<span id="cb5-56"><a href="#cb5-56" tabindex="-1"></a>    <span class="at">f3_50 =</span> f_50[<span class="st">&quot;f3&quot;</span>],</span>
+<span id="cb5-57"><a href="#cb5-57" tabindex="-1"></a>    <span class="at">f1_80 =</span> f_80[<span class="st">&quot;f1&quot;</span>],</span>
+<span id="cb5-58"><a href="#cb5-58" tabindex="-1"></a>    <span class="at">f2_80 =</span> f_80[<span class="st">&quot;f2&quot;</span>],</span>
+<span id="cb5-59"><a href="#cb5-59" tabindex="-1"></a>    <span class="at">f3_80 =</span> f_80[<span class="st">&quot;f3&quot;</span>]</span>
+<span id="cb5-60"><a href="#cb5-60" tabindex="-1"></a>  ))</span>
+<span id="cb5-61"><a href="#cb5-61" tabindex="-1"></a>}</span>
+<span id="cb5-62"><a href="#cb5-62" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" tabindex="-1"></a><span class="fu">print</span>(vowel_features)</span></code></pre></div>
+</div>
+<div id="part-4-formant-normalization" class="section level2">
+<h2>Part 4: Formant Normalization</h2>
+<div id="lobanov-z-score-method" class="section level3">
+<h3>Lobanov Z-Score Method</h3>
+<p>Normalize formants to remove speaker-specific variation:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Function to compute Lobanov z-scores</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>lobanov_normalize <span class="ot">&lt;-</span> <span class="cf">function</span>(formant_values) {</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  (formant_values <span class="sc">-</span> <span class="fu">mean</span>(formant_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="fu">sd</span>(formant_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>}</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co"># Normalize F1 and F2 at midpoint (50%)</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>vowel_features<span class="sc">$</span>f1_norm <span class="ot">&lt;-</span> <span class="fu">lobanov_normalize</span>(vowel_features<span class="sc">$</span>f1_50)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>vowel_features<span class="sc">$</span>f2_norm <span class="ot">&lt;-</span> <span class="fu">lobanov_normalize</span>(vowel_features<span class="sc">$</span>f2_50)</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co"># Also normalize F3 for completeness</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>vowel_features<span class="sc">$</span>f3_norm <span class="ot">&lt;-</span> <span class="fu">lobanov_normalize</span>(vowel_features<span class="sc">$</span>f3_50)</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Applied Lobanov normalization</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F1_norm: mean =&quot;</span>, <span class="fu">round</span>(<span class="fu">mean</span>(vowel_features<span class="sc">$</span>f1_norm), <span class="dv">2</span>), </span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    <span class="st">&quot;, SD =&quot;</span>, <span class="fu">round</span>(<span class="fu">sd</span>(vowel_features<span class="sc">$</span>f1_norm), <span class="dv">2</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F2_norm: mean =&quot;</span>, <span class="fu">round</span>(<span class="fu">mean</span>(vowel_features<span class="sc">$</span>f2_norm), <span class="dv">2</span>), </span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>    <span class="st">&quot;, SD =&quot;</span>, <span class="fu">round</span>(<span class="fu">sd</span>(vowel_features<span class="sc">$</span>f2_norm), <span class="dv">2</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="part-5-vowel-space-statistics" class="section level2">
+<h2>Part 5: Vowel Space Statistics</h2>
+<div id="descriptive-statistics-by-vowel" class="section level3">
+<h3>Descriptive Statistics by Vowel</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Aggregate by vowel type</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>vowel_stats <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">cbind</span>(f1_50, f2_50, f1_norm, f2_norm) <span class="sc">~</span> vowel,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">data =</span> vowel_features,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">c</span>(<span class="at">mean =</span> <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                      <span class="at">sd =</span> <span class="fu">sd</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="fu">print</span>(vowel_stats)</span></code></pre></div>
+</div>
+<div id="vowel-space-area" class="section level3">
+<h3>Vowel Space Area</h3>
+<p>Calculate vowel space area using the convex hull of F1-F2 points:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Use normalized values for comparison across speakers</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>f1_coords <span class="ot">&lt;-</span> vowel_features<span class="sc">$</span>f1_norm</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>f2_coords <span class="ot">&lt;-</span> vowel_features<span class="sc">$</span>f2_norm</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># Compute convex hull</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>hull_indices <span class="ot">&lt;-</span> <span class="fu">chull</span>(f2_coords, f1_coords)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>hull_points <span class="ot">&lt;-</span> <span class="fu">cbind</span>(f2_coords[hull_indices], f1_coords[hull_indices])</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># Calculate area using shoelace formula</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>shoelace_area <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  area <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(n<span class="dv">-1</span>)) {</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>    area <span class="ot">&lt;-</span> area <span class="sc">+</span> (x[i] <span class="sc">*</span> y[i<span class="sc">+</span><span class="dv">1</span>] <span class="sc">-</span> x[i<span class="sc">+</span><span class="dv">1</span>] <span class="sc">*</span> y[i])</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>  }</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>  area <span class="ot">&lt;-</span> area <span class="sc">+</span> (x[n] <span class="sc">*</span> y[<span class="dv">1</span>] <span class="sc">-</span> x[<span class="dv">1</span>] <span class="sc">*</span> y[n])</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>  <span class="fu">abs</span>(area) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>}</span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>vowel_space_area <span class="ot">&lt;-</span> <span class="fu">shoelace_area</span>(hull_points[,<span class="dv">1</span>], hull_points[,<span class="dv">2</span>])</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Vowel space area (normalized):&quot;</span>, <span class="fu">round</span>(vowel_space_area, <span class="dv">2</span>), <span class="st">&quot;square units</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<p>Larger vowel space area indicates: - Greater vowel dispersion
+(clearer articulation) - Useful for comparing clear vs. casual speech -
+Developmental changes (child vs. adult) - Clinical applications
+(dysarthria assessment)</p>
+</div>
+</div>
+<div id="part-6-trajectory-analysis" class="section level2">
+<h2>Part 6: Trajectory Analysis</h2>
+<div id="detect-diphthongization" class="section level3">
+<h3>Detect Diphthongization</h3>
+<p>Compare onset (20%) and offset (80%) formants:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Calculate formant movement</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>vowel_features<span class="sc">$</span>f1_movement <span class="ot">&lt;-</span> <span class="fu">abs</span>(vowel_features<span class="sc">$</span>f1_80 <span class="sc">-</span> vowel_features<span class="sc">$</span>f1_20)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>vowel_features<span class="sc">$</span>f2_movement <span class="ot">&lt;-</span> <span class="fu">abs</span>(vowel_features<span class="sc">$</span>f2_80 <span class="sc">-</span> vowel_features<span class="sc">$</span>f2_20)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co"># Euclidean distance in F1-F2 space</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>vowel_features<span class="sc">$</span>trajectory_length <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  vowel_features<span class="sc">$</span>f1_movement<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> vowel_features<span class="sc">$</span>f2_movement<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co"># Identify potential diphthongs (large trajectory)</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>diphthong_threshold <span class="ot">&lt;-</span> <span class="fu">median</span>(vowel_features<span class="sc">$</span>trajectory_length, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">*</span> <span class="fl">1.5</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>potential_diphthongs <span class="ot">&lt;-</span> vowel_features<span class="sc">$</span>vowel[</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  vowel_features<span class="sc">$</span>trajectory_length <span class="sc">&gt;</span> diphthong_threshold</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>]</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Potential diphthongs (large F1-F2 movement):</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">unique</span>(potential_diphthongs), <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="part-7-visualization" class="section level2">
+<h2>Part 7: Visualization</h2>
+<div id="basic-f1-f2-vowel-plot" class="section level3">
+<h3>Basic F1-F2 Vowel Plot</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Using base R graphics</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  vowel_features<span class="sc">$</span>f2_50,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  vowel_features<span class="sc">$</span>f1_50,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">xlim =</span> <span class="fu">rev</span>(<span class="fu">range</span>(vowel_features<span class="sc">$</span>f2_50, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),  <span class="co"># Reverse F2</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">ylim =</span> <span class="fu">rev</span>(<span class="fu">range</span>(vowel_features<span class="sc">$</span>f1_50, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),  <span class="co"># Reverse F1</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">&quot;F2 (Hz)&quot;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">&quot;F1 (Hz)&quot;</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">&quot;Vowel Space (Raw Formants)&quot;</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>  <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>  <span class="at">col =</span> <span class="st">&quot;blue&quot;</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="fu">text</span>(</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  vowel_features<span class="sc">$</span>f2_50,</span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>  vowel_features<span class="sc">$</span>f1_50,</span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  <span class="at">labels =</span> vowel_features<span class="sc">$</span>vowel,</span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>  <span class="at">pos =</span> <span class="dv">3</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.8</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="advanced-plotting-with-ggplot2" class="section level3">
+<h3>Advanced Plotting with ggplot2</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co"># Normalized vowel space</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="fu">ggplot</span>(vowel_features, <span class="fu">aes</span>(<span class="at">x =</span> f2_norm, <span class="at">y =</span> f1_norm, <span class="at">label =</span> vowel, <span class="at">color =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>() <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Normalized Vowel Space (Lobanov)&quot;</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;F2 (z-score)&quot;</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;F1 (z-score)&quot;</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co"># With trajectories</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="fu">ggplot</span>(vowel_features) <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> f2_20, <span class="at">y =</span> f1_20, <span class="at">xend =</span> f2_80, <span class="at">yend =</span> f1_80, <span class="at">color =</span> vowel),</span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.2</span>, <span class="st">&quot;cm&quot;</span>)), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> f2_50, <span class="at">y =</span> f1_50, <span class="at">color =</span> vowel), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> f2_50, <span class="at">y =</span> f1_50, <span class="at">label =</span> vowel), <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>() <span class="sc">+</span></span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span></span>
+<span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Vowel Trajectories (20% → 80%)&quot;</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;F2 (Hz)&quot;</span>,</span>
+<span id="cb11-28"><a href="#cb11-28" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;F1 (Hz)&quot;</span></span>
+<span id="cb11-29"><a href="#cb11-29" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-30"><a href="#cb11-30" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</div>
+<div id="faceted-by-speaker-or-condition" class="section level3">
+<h3>Faceted by Speaker or Condition</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># For multi-speaker data:</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co"># vowel_features$speaker &lt;- ... (add speaker ID)</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="fu">ggplot</span>(vowel_features, <span class="fu">aes</span>(<span class="at">x =</span> f2_norm, <span class="at">y =</span> f1_norm, <span class="at">label =</span> vowel, <span class="at">color =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> speaker, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>() <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Vowel Spaces by Speaker&quot;</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;F2 (normalized)&quot;</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;F1 (normalized)&quot;</span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="part-8-statistical-analysis" class="section level2">
+<h2>Part 8: Statistical Analysis</h2>
+<div id="anova-vowel-differences" class="section level3">
+<h3>ANOVA: Vowel Differences</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Test if vowels differ in F1</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>f1_model <span class="ot">&lt;-</span> <span class="fu">aov</span>(f1_50 <span class="sc">~</span> vowel, <span class="at">data =</span> vowel_features)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">summary</span>(f1_model)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co"># Post-hoc pairwise comparisons</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="fu">TukeyHSD</span>(f1_model)</span></code></pre></div>
+</div>
+<div id="mixed-effects-models" class="section level3">
+<h3>Mixed-Effects Models</h3>
+<p>For multi-speaker data with repeated measures:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># Random intercept for speaker</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(f1_50 <span class="sc">~</span> vowel <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> speaker), <span class="at">data =</span> vowel_features)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code></pre></div>
+</div>
+</div>
+<div id="real-world-applications" class="section level2">
+<h2>Real-World Applications</h2>
+<div id="sociolinguistic-variation" class="section level3">
+<h3>1. Sociolinguistic Variation</h3>
+<p>Compare vowel systems across dialects:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Load data from multiple dialect regions</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>northeast <span class="ot">&lt;-</span> <span class="fu">load_vowels</span>(<span class="st">&quot;northeast_speakers/*.wav&quot;</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>south <span class="ot">&lt;-</span> <span class="fu">load_vowels</span>(<span class="st">&quot;south_speakers/*.wav&quot;</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># Combine and analyze</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  <span class="fu">transform</span>(northeast, <span class="at">dialect =</span> <span class="st">&quot;Northeast&quot;</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>  <span class="fu">transform</span>(south, <span class="at">dialect =</span> <span class="st">&quot;South&quot;</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>)</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co"># Statistical test</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(f1_norm <span class="sc">~</span> vowel <span class="sc">*</span> dialect, <span class="at">data =</span> all_data)</span></code></pre></div>
+</div>
+<div id="l2-acquisition" class="section level3">
+<h3>2. L2 Acquisition</h3>
+<p>Track vowel learning over time:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Longitudinal data (same learner, multiple sessions)</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>learner_data<span class="sc">$</span>session <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(learner_data<span class="sc">$</span>session)</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># Test for improvement</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  trajectory_length <span class="sc">~</span> session <span class="sc">*</span> vowel <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> learner_id),</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="at">data =</span> learner_data</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co"># Expect decreasing trajectory (more monophthongal)</span></span></code></pre></div>
+</div>
+<div id="speech-clarity-assessment" class="section level3">
+<h3>3. Speech Clarity Assessment</h3>
+<p>Compare clear vs. conversational speech:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Calculate vowel space area for each style</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>clear_area <span class="ot">&lt;-</span> <span class="fu">compute_vowel_space_area</span>(clear_speech_data)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>casual_area <span class="ot">&lt;-</span> <span class="fu">compute_vowel_space_area</span>(casual_speech_data)</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co"># Typically: clear_area &gt; casual_area</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Clear speech area:&quot;</span>, clear_area, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Casual speech area:&quot;</span>, casual_area, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Expansion ratio:&quot;</span>, clear_area <span class="sc">/</span> casual_area, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="best-practices" class="section level2">
+<h2>Best Practices</h2>
+<div id="parameter-selection" class="section level3">
+<h3>1. Parameter Selection</h3>
+<p><strong>Formant ceiling</strong> (most critical parameter):</p>
+<ul>
+<li>Too high: Spurious formants, misidentifications</li>
+<li>Too low: Missing formants, tracking failures</li>
+<li>Test with known tokens and adjust iteratively</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Test multiple ceilings</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>ceilings <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5000</span>, <span class="dv">5500</span>, <span class="dv">6000</span>, <span class="dv">6500</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="cf">for</span> (ceiling <span class="cf">in</span> ceilings) {</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>  formant <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> ceiling, ...)</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>  <span class="co"># Manually check F1-F2 values for sanity</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="quality-control" class="section level3">
+<h3>2. Quality Control</h3>
+<p>Check for outliers and tracking errors:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># Flag extreme values</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>f1_outliers <span class="ot">&lt;-</span> vowel_features<span class="sc">$</span>f1_50 <span class="sc">&gt;</span> <span class="dv">1000</span> <span class="sc">|</span> vowel_features<span class="sc">$</span>f1_50 <span class="sc">&lt;</span> <span class="dv">200</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>f2_outliers <span class="ot">&lt;-</span> vowel_features<span class="sc">$</span>f2_50 <span class="sc">&gt;</span> <span class="dv">3000</span> <span class="sc">|</span> vowel_features<span class="sc">$</span>f2_50 <span class="sc">&lt;</span> <span class="dv">500</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Potential tracking errors:&quot;</span>, <span class="fu">sum</span>(f1_outliers <span class="sc">|</span> f2_outliers), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co"># Manual review or retrack with different parameters</span></span></code></pre></div>
+</div>
+<div id="normalization-choice" class="section level3">
+<h3>3. Normalization Choice</h3>
+<p>Select normalization based on research question:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Lobanov</strong></td>
+<td>General purpose, preserves dispersion</td>
+</tr>
+<tr class="even">
+<td><strong>Bark difference</strong></td>
+<td>Perceptual scaling</td>
+</tr>
+<tr class="odd">
+<td><strong>Nearey</strong></td>
+<td>Minimizes formant-specific biases</td>
+</tr>
+<tr class="even">
+<td><strong>Watt &amp; Fabricius</strong></td>
+<td>No within-speaker variation data needed</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="missing-data" class="section level3">
+<h3>4. Missing Data</h3>
+<p>Handle tracking failures gracefully:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># Remove rows with missing formants</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>vowel_features_clean <span class="ot">&lt;-</span> vowel_features[</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  <span class="fu">complete.cases</span>(vowel_features[, <span class="fu">c</span>(<span class="st">&quot;f1_50&quot;</span>, <span class="st">&quot;f2_50&quot;</span>)]),</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>]</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="co"># Or impute using formant tracking refinement</span></span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a><span class="co"># (see Praat&#39;s &quot;Track formants&quot; for advanced methods)</span></span></code></pre></div>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>The <strong>pladdrr</strong> package provides a complete vowel
+acoustics pipeline:</p>
+<ul>
+<li><strong>Flexible formant extraction</strong> with validated Praat
+algorithms</li>
+<li><strong>Multi-point measurements</strong> for trajectory
+analysis</li>
+<li><strong>Built-in normalization</strong> (or bring your own)</li>
+<li><strong>Vowel space metrics</strong> (area, dispersion)</li>
+<li><strong>Seamless R integration</strong> for analysis and
+visualization</li>
+</ul>
+<p>For related workflows, see:</p>
+<ul>
+<li><code>vignette(&quot;integrated-phonetic-analysis&quot;)</code> -
+TextGrid-guided analysis</li>
+<li><code>vignette(&quot;textgrid-workflows&quot;)</code> - Advanced annotation
+techniques</li>
+<li><code>inst/examples/09_vowel_space_analysis.R</code> - Full
+executable script</li>
+</ul>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li>Lobanov, B. M. (1971). Classification of Russian vowels spoken by
+different speakers. <em>The Journal of the Acoustical Society of
+America</em>, 49(2B), 606-608.</li>
+<li>Thomas, E. R., &amp; Kendall, T. (2007). NORM: The vowel
+normalization and plotting suite.</li>
+<li>Boersma, P., &amp; Weenink, D. (2023). <em>Praat: doing phonetics by
+computer</em>. <a href="http://www.praat.org/" class="uri">http://www.praat.org/</a></li>
+<li>Nearey, T. M. (1978). <em>Phonetic feature systems for vowels</em>.
+Indiana University Linguistics Club.</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

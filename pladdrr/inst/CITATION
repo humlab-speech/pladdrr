@@ -1,0 +1,36 @@
+citHeader("To cite pladdrr in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "pladdrr: Object-Oriented Interface to Praat Phonetic Analysis",
+  author   = person("Fredrik", "Nylén", email = "fredrik.nylen@umu.se", 
+                    role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0003-3373-0934")),
+  year     = 2025,
+  note     = "R package version 0.9.9",
+  url      = "https://github.com/humlab-speech/pladdrr",
+  
+  textVersion = paste(
+    "Nylén, Fredrik (2025).",
+    "pladdrr: Object-Oriented Interface to Praat Phonetic Analysis.",
+    "R package version 0.9.9.",
+    "https://github.com/humlab-speech/pladdrr"
+  )
+)
+
+citFooter("Please also cite Praat itself:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "Praat: doing phonetics by computer",
+  author   = c(person("Paul", "Boersma"), person("David", "Weenink")),
+  year     = 2023,
+  note     = "Version 6.3",
+  url      = "https://www.praat.org/",
+  
+  textVersion = paste(
+    "Boersma, Paul & Weenink, David (2023).",
+    "Praat: doing phonetics by computer [Computer program].",
+    "Version 6.3, retrieved from https://www.praat.org/"
+  )
+)

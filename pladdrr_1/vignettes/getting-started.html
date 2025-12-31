@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="pladdrr Package Authors" />
+
+<meta name="date" content="2025-12-23" />
+
+<title>Getting Started with pladdrr: Phonetic Analysis in R</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting Started with pladdrr: Phonetic
+Analysis in R</h1>
+<h4 class="author">pladdrr Package Authors</h4>
+<h4 class="date">2025-12-23</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The <code>pladdrr</code> package provides direct access to Praat’s
+phonetic analysis capabilities from R, without requiring Python. It
+implements core phonetic analysis objects (Sound, Pitch, Formant,
+Intensity) with a modern R6 object-oriented interface that follows
+Praat’s conventions.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install from source</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;pladdrr&quot;</span>, <span class="at">type =</span> <span class="st">&quot;source&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># Or install from GitHub</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># devtools::install_github(&quot;your-username/pladdrr&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(pladdrr)</span></code></pre></div>
+</div>
+<div id="creating-and-loading-sounds" class="section level2">
+<h2>Creating and Loading Sounds</h2>
+<div id="generate-test-sounds" class="section level3">
+<h3>Generate Test Sounds</h3>
+<p>The package includes functions to generate test signals:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Generate a 440 Hz sine wave (A4 note)</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>sound_a4 <span class="ot">&lt;-</span> <span class="fu">generate_sine_wave</span>(<span class="at">frequency =</span> <span class="dv">440</span>, <span class="at">duration =</span> <span class="fl">0.5</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                               <span class="at">amplitude =</span> <span class="fl">0.7</span>, <span class="at">sampling_rate =</span> <span class="dv">44100</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; create_sound() is deprecated and will be removed in v1.0.0. Use</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Sound$from_values(values, sampling_rate) instead. The R6 interface provides</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; better performance and more features.</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">print</span>(sound_a4)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; &lt;Praat Sound&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt;   Duration: 0.500 s</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;   Sampling frequency: 44100 Hz</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;   Number of samples: 22050</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;   Number of channels: 1</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;   Intensity: 87.9 dB</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Generate white noise</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>noise <span class="ot">&lt;-</span> <span class="fu">generate_noise</span>(<span class="at">duration =</span> <span class="fl">0.2</span>, <span class="at">sampling_rate =</span> <span class="dv">44100</span>, </span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                       <span class="at">amplitude =</span> <span class="fl">0.3</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; create_sound() is deprecated and will be removed in v1.0.0. Use</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; Sound$from_values(values, sampling_rate) instead. The R6 interface provides</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; better performance and more features.</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">print</span>(noise)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; &lt;Praat Sound&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;   Duration: 0.200 s</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;   Sampling frequency: 44100 Hz</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;   Number of samples: 8820</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt;   Number of channels: 1</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt;   Intensity: 83.6 dB</span></span></code></pre></div>
+</div>
+<div id="load-audio-files" class="section level3">
+<h3>Load Audio Files</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Load a WAV file using R6 interface</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>speech <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;path/to/speech.wav&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># Load specific channel from stereo file (1-indexed)</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>speech_left <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;path/to/stereo.wav&quot;</span>, <span class="at">channel =</span> <span class="dv">1</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>speech_right <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;path/to/stereo.wav&quot;</span>, <span class="at">channel =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="basic-sound-properties" class="section level2">
+<h2>Basic Sound Properties</h2>
+<p>Extract basic information from sound objects using R6 methods:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Duration in seconds</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Duration:&quot;</span>, sound_a4<span class="sc">$</span><span class="fu">get_duration</span>(), <span class="st">&quot;seconds</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Duration: 0.5 seconds</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Sampling rate</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Sampling rate:&quot;</span>, sound_a4<span class="sc">$</span><span class="fu">get_sampling_frequency</span>(), <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; Sampling rate: 44100 Hz</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co"># Number of samples</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Samples:&quot;</span>, sound_a4<span class="sc">$</span><span class="fu">get_number_of_samples</span>(), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; Samples: 22050</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co"># Number of channels</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Channels:&quot;</span>, sound_a4<span class="sc">$</span><span class="fu">get_number_of_channels</span>(), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; Channels: 1</span></span></code></pre></div>
+</div>
+<div id="sound-statistics" class="section level2">
+<h2>Sound Statistics</h2>
+<p>Calculate amplitude statistics:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Individual statistics</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Mean amplitude:&quot;</span>, <span class="fu">sound_mean</span>(sound_a4), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; Mean amplitude: -3.921466e-17</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;RMS amplitude:&quot;</span>, <span class="fu">sound_rms</span>(sound_a4), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; RMS amplitude: 0.4949747</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Min amplitude:&quot;</span>, <span class="fu">sound_min</span>(sound_a4), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; Min amplitude: -0.6999998</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Max amplitude:&quot;</span>, <span class="fu">sound_max</span>(sound_a4), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Max amplitude: 0.6999998</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># All statistics at once</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">sound_statistics</span>(sound_a4)</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="fu">print</span>(stats)</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; $mean</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; [1] -3.921466e-17</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; $min</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; [1] -0.6999998</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; $max</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; [1] 0.6999998</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; $rms</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; [1] 0.4949747</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; $duration</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; $n_samples</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt; [1] 22050</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; $sampling_rate</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="co">#&gt; [1] 44100</span></span></code></pre></div>
+</div>
+<div id="pitch-analysis" class="section level2">
+<h2>Pitch Analysis</h2>
+<p>Extract fundamental frequency (F0) from speech or sustained tones
+using R6 methods:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># For speech, use typical settings</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co"># pitch &lt;- speech$to_pitch(pitch_floor = 75, pitch_ceiling = 600)</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co"># For our test signal, we need to create a more complex sound</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># (pure sine waves may not be detected as voiced)</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># In real usage with speech:</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co"># mean_f0 &lt;- pitch$get_mean()</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># min_f0 &lt;- pitch$get_minimum()</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># max_f0 &lt;- pitch$get_maximum()</span></span></code></pre></div>
+<div id="pitch-parameters" class="section level3">
+<h3>Pitch Parameters</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Male voice</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>pitch_male <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">pitch_floor =</span> <span class="dv">50</span>, <span class="at">pitch_ceiling =</span> <span class="dv">300</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Female voice  </span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>pitch_female <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">pitch_floor =</span> <span class="dv">100</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co"># Child voice</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>pitch_child <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">pitch_floor =</span> <span class="dv">150</span>, <span class="at">pitch_ceiling =</span> <span class="dv">800</span>)</span></code></pre></div>
+</div>
+<div id="querying-pitch-values" class="section level3">
+<h3>Querying Pitch Values</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Get F0 at specific time point</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>f0_at_1s <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> <span class="fl">1.0</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Get mean F0 over time range</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>mean_f0_range <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="fl">0.5</span>, <span class="at">to_time =</span> <span class="fl">1.5</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co"># Get minimum and maximum</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>min_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_minimum</span>()</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>max_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_maximum</span>()</span></code></pre></div>
+</div>
+</div>
+<div id="formant-analysis" class="section level2">
+<h2>Formant Analysis</h2>
+<p>Analyze vocal tract resonances (formants) for vowel characterization
+using R6:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Extract formants (default settings for adult female)</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>formants <span class="ot">&lt;-</span> sound_a4<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> <span class="dv">5500</span>, <span class="at">max_formants =</span> <span class="dv">5</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co"># R6 objects print nicely</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>formants</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; &lt;Praat Formant object&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt;   Number of frames: 90</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt;   Time step: 0.005000 s</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt;   Min formants: 3</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt;   Max formants: 4</span></span></code></pre></div>
+<div id="speaker-specific-settings" class="section level3">
+<h3>Speaker-Specific Settings</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Adult male</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>formants_male <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> <span class="dv">5000</span>, <span class="at">max_formants =</span> <span class="dv">5</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># Adult female</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>formants_female <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> <span class="dv">5500</span>, <span class="at">max_formants =</span> <span class="dv">5</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># Child</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>formants_child <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> <span class="dv">8000</span>, <span class="at">max_formants =</span> <span class="dv">5</span>)</span></code></pre></div>
+</div>
+<div id="querying-formant-values" class="section level3">
+<h3>Querying Formant Values</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Get F1 and F2 at specific time (vowel quality)</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">1</span>, <span class="at">time =</span> <span class="fl">0.25</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>f2 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">2</span>, <span class="at">time =</span> <span class="fl">0.25</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F1:&quot;</span>, <span class="fu">round</span>(f1, <span class="dv">1</span>), <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; F1: 4.1 Hz</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;F2:&quot;</span>, <span class="fu">round</span>(f2, <span class="dv">1</span>), <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; F2: 4.5 Hz</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Get mean formant over time range</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>mean_f1 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">formant_number =</span> <span class="dv">1</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                             <span class="at">from_time =</span> <span class="fl">0.1</span>, <span class="at">to_time =</span> <span class="fl">0.4</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>mean_f2 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">formant_number =</span> <span class="dv">2</span>, </span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                             <span class="at">from_time =</span> <span class="fl">0.1</span>, <span class="at">to_time =</span> <span class="fl">0.4</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Mean F1:&quot;</span>, <span class="fu">round</span>(mean_f1, <span class="dv">1</span>), <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; Mean F1: 4.1 Hz</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Mean F2:&quot;</span>, <span class="fu">round</span>(mean_f2, <span class="dv">1</span>), <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; Mean F2: 4.5 Hz</span></span></code></pre></div>
+</div>
+</div>
+<div id="intensity-analysis" class="section level2">
+<h2>Intensity Analysis</h2>
+<p>Measure sound power (loudness) over time using R6:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Extract intensity</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>intensity <span class="ot">&lt;-</span> sound_a4<span class="sc">$</span><span class="fu">to_intensity</span>(<span class="at">minimum_pitch =</span> <span class="dv">100</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co"># R6 objects print nicely</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>intensity</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; &lt;Praat Intensity&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt;   Duration: 0.500 s</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt;   Number of frames: 55</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt;   Time step: 0.0080 s</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt;   Mean intensity: 87.87 dB</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt;   Range: [87.87, 87.87] dB</span></span></code></pre></div>
+<div id="intensity-statistics" class="section level3">
+<h3>Intensity Statistics</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Mean intensity</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>mean_db <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_mean</span>()</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Mean intensity:&quot;</span>, <span class="fu">round</span>(mean_db, <span class="dv">2</span>), <span class="st">&quot;dB</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; Mean intensity: 87.87 dB</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co"># Intensity range</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>min_db <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_minimum</span>()</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>max_db <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_maximum</span>()</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Intensity range:&quot;</span>, <span class="fu">round</span>(min_db, <span class="dv">2</span>), <span class="st">&quot;-&quot;</span>, <span class="fu">round</span>(max_db, <span class="dv">2</span>), <span class="st">&quot;dB</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt; Intensity range: 87.87 - 87.87 dB</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co"># Standard deviation</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>sd_db <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_standard_deviation</span>()</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;SD intensity:&quot;</span>, <span class="fu">round</span>(sd_db, <span class="dv">2</span>), <span class="st">&quot;dB</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt; SD intensity: 0 dB</span></span></code></pre></div>
+</div>
+<div id="intensity-at-specific-time" class="section level3">
+<h3>Intensity at Specific Time</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Query intensity at time point</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>int_at_time <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> <span class="fl">0.25</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Intensity at 0.25s:&quot;</span>, <span class="fu">round</span>(int_at_time, <span class="dv">2</span>), <span class="st">&quot;dB</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; Intensity at 0.25s: 87.87 dB</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co"># With interpolation (cubic)</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>int_interp <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> <span class="fl">0.25</span>, <span class="at">interpolation =</span> <span class="st">&quot;cubic&quot;</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Intensity (interpolated):&quot;</span>, <span class="fu">round</span>(int_interp, <span class="dv">2</span>), <span class="st">&quot;dB</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt; Intensity (interpolated): 87.87 dB</span></span></code></pre></div>
+</div>
+</div>
+<div id="working-with-data-frames" class="section level2">
+<h2>Working with Data Frames</h2>
+<p>All analysis objects can be converted to data frames for plotting and
+further analysis:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Convert to data frame using R6 method</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>formant_df <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">as_data_frame</span>()</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">head</span>(formant_df)</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt;     time       F1       F2       F3 F4 F5        B1        B2        B3 B4 B5</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; 1 0.0275 406.7238 444.7119 482.7092 NA NA 0.5967145 0.5712194 0.5496185 NA NA</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; 2 0.0325 406.7234 444.7116 482.7092 NA NA 0.6126355 0.5865413 0.5644368 NA NA</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; 3 0.0375 406.7230 444.7114 482.7090 NA NA 0.6225269 0.5960568 0.5736356 NA NA</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; 4 0.0425 406.7218 444.7105 482.7083 NA NA 0.6515140 0.6239547 0.6006149 NA NA</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt; 5 0.0475 406.7208 444.7096 482.7076 NA NA 0.6663627 0.6382347 0.6144121 NA NA</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; 6 0.0525 406.7197 444.7086 482.7067 NA NA 0.6788427 0.6502220 0.6259783 NA NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>intensity_df <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">as_data_frame</span>()</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">head</span>(intensity_df)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt;    time intensity_db</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt; 1 0.034     87.87108</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt; 2 0.042     87.87107</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt; 3 0.050     87.87106</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt; 4 0.058     87.87106</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt; 5 0.066     87.87107</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt; 6 0.074     87.87109</span></span></code></pre></div>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>The <code>pladdrr</code> package provides comprehensive ggplot2-based
+visualization functions for all analysis types. For detailed examples of
+creating publication-quality plots, see
+<code>vignette(&quot;visualization&quot;)</code>, which covers:</p>
+<ul>
+<li>Voice quality visualization (AVQI, DSI, CPP)</li>
+<li>Formant analysis (vowel spaces, trajectories)</li>
+<li>Pitch and intensity contours</li>
+<li>Spectral analysis (spectrograms, spectra, LTAS)</li>
+<li>TextGrid annotations</li>
+<li>Multi-panel diagnostic reports</li>
+</ul>
+</div>
+<div id="complete-workflow-example" class="section level2">
+<h2>Complete Workflow Example</h2>
+<p>Here’s a complete analysis workflow using R6:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># 1. Load sound</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;vowel.wav&quot;</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co"># 2. Extract all analyses</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>formants <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(<span class="at">max_frequency =</span> <span class="dv">5500</span>, <span class="at">max_formants =</span> <span class="dv">5</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>intensity <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_intensity</span>(<span class="at">minimum_pitch =</span> <span class="dv">75</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a><span class="co"># 3. Get measurements at vowel midpoint</span></span>
+<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a>midpoint <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">get_duration</span>() <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a></span>
+<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a>f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> midpoint)</span>
+<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">1</span>, <span class="at">time =</span> midpoint)</span>
+<span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a>f2 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">2</span>, <span class="at">time =</span> midpoint)</span>
+<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a>f3 <span class="ot">&lt;-</span> formants<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">formant_number =</span> <span class="dv">3</span>, <span class="at">time =</span> midpoint)</span>
+<span id="cb20-16"><a href="#cb20-16" tabindex="-1"></a>int <span class="ot">&lt;-</span> intensity<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> midpoint)</span>
+<span id="cb20-17"><a href="#cb20-17" tabindex="-1"></a></span>
+<span id="cb20-18"><a href="#cb20-18" tabindex="-1"></a><span class="co"># 4. Create summary</span></span>
+<span id="cb20-19"><a href="#cb20-19" tabindex="-1"></a>vowel_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb20-20"><a href="#cb20-20" tabindex="-1"></a>  <span class="at">F0 =</span> f0,</span>
+<span id="cb20-21"><a href="#cb20-21" tabindex="-1"></a>  <span class="at">F1 =</span> f1,</span>
+<span id="cb20-22"><a href="#cb20-22" tabindex="-1"></a>  <span class="at">F2 =</span> f2,</span>
+<span id="cb20-23"><a href="#cb20-23" tabindex="-1"></a>  <span class="at">F3 =</span> f3,</span>
+<span id="cb20-24"><a href="#cb20-24" tabindex="-1"></a>  <span class="at">Intensity =</span> int</span>
+<span id="cb20-25"><a href="#cb20-25" tabindex="-1"></a>)</span>
+<span id="cb20-26"><a href="#cb20-26" tabindex="-1"></a></span>
+<span id="cb20-27"><a href="#cb20-27" tabindex="-1"></a><span class="fu">print</span>(vowel_data)</span></code></pre></div>
+</div>
+<div id="comparing-with-praat-scripts" class="section level2">
+<h2>Comparing with Praat Scripts</h2>
+<p>The package follows Praat’s conventions, making it easy to translate
+Praat scripts:</p>
+<div id="praat-script" class="section level3">
+<h3>Praat Script</h3>
+<pre><code># Praat
+sound = Read from file: &quot;sound.wav&quot;
+pitch = To Pitch: 0.01, 75, 600
+f0 = Get mean: 0, 0, &quot;Hertz&quot;</code></pre>
+</div>
+<div id="pladdrr-equivalent-r6" class="section level3">
+<h3>pladdrr Equivalent (R6)</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># R with pladdrr (R6 interface)</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>sound <span class="ot">&lt;-</span> Sound<span class="sc">$</span><span class="fu">new</span>(<span class="st">&quot;sound.wav&quot;</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>pitch <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_pitch</span>(<span class="at">time_step =</span> <span class="fl">0.01</span>, </span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>                       <span class="at">pitch_floor =</span> <span class="dv">75</span>, <span class="at">pitch_ceiling =</span> <span class="dv">600</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>(<span class="at">from_time =</span> <span class="dv">0</span>, <span class="at">to_time =</span> <span class="dv">0</span>, <span class="at">unit =</span> <span class="st">&quot;hertz&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="advanced-topics" class="section level2">
+<h2>Advanced Topics</h2>
+<div id="custom-analysis-parameters" class="section level3">
+<h3>Custom Analysis Parameters</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="co"># Fine-tune formant detection</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>formants <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_formant_burg</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="at">time_step =</span> <span class="fl">0.005</span>,           <span class="co"># 5 ms steps</span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>  <span class="at">max_frequency =</span> <span class="dv">5500</span>,        <span class="co"># Adult female range</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>  <span class="at">max_formants =</span> <span class="dv">5</span>,            <span class="co"># Track F1-F5</span></span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>  <span class="at">window_length =</span> <span class="fl">0.025</span>,       <span class="co"># 25 ms window</span></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>  <span class="at">pre_emphasis_from =</span> <span class="dv">50</span>       <span class="co"># Pre-emphasis from 50 Hz</span></span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>)</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a><span class="co"># Fine-tune intensity</span></span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>intensity <span class="ot">&lt;-</span> sound<span class="sc">$</span><span class="fu">to_intensity</span>(</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>  <span class="at">minimum_pitch =</span> <span class="dv">75</span>,          <span class="co"># Affects window length</span></span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>  <span class="at">time_step =</span> <span class="fl">0.01</span>,            <span class="co"># 10 ms steps (auto if 0)</span></span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a>  <span class="at">subtract_mean =</span> <span class="cn">FALSE</span>        <span class="co"># Absolute intensity in dB SPL</span></span>
+<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="handling-na-values" class="section level3">
+<h3>Handling NA Values</h3>
+<p>All analysis functions gracefully handle undefined values:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co"># Pitch may be NA for unvoiced segments</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_value_at_time</span>(<span class="at">time =</span> <span class="fl">1.0</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.na</span>(f0)) {</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;Unvoiced at this time point</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;F0:&quot;</span>, f0, <span class="st">&quot;Hz</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>}</span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a><span class="co"># Mean functions automatically exclude NA</span></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>mean_f0 <span class="ot">&lt;-</span> pitch<span class="sc">$</span><span class="fu">get_mean</span>()  <span class="co"># NA values excluded</span></span></code></pre></div>
+</div>
+</div>
+<div id="package-information" class="section level2">
+<h2>Package Information</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co"># Package version</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;pladdrr&quot;</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="co">#&gt; [1] &#39;1.3.2&#39;</span></span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co"># Citation information</span></span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;pladdrr&quot;</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a><span class="co">#&gt; To cite pladdrr in publications use:</span></span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a><span class="co">#&gt;   Nylén, Fredrik (2025). pladdrr: Object-Oriented Interface to Praat</span></span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a><span class="co">#&gt;   Phonetic Analysis. R package version 0.9.9.</span></span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="co">#&gt;   https://github.com/humlab-speech/pladdrr</span></span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="co">#&gt;   Boersma, Paul &amp; Weenink, David (2023). Praat: doing phonetics by</span></span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a><span class="co">#&gt;   computer [Computer program]. Version 6.3, retrieved from</span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a><span class="co">#&gt;   https://www.praat.org/</span></span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a><span class="co">#&gt; Please also cite Praat itself:</span></span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a><span class="co">#&gt; To see these entries in BibTeX format, use &#39;print(&lt;citation&gt;,</span></span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a><span class="co">#&gt; bibtex=TRUE)&#39;, &#39;toBibtex(.)&#39;, or set</span></span>
+<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a><span class="co">#&gt; &#39;options(citation.bibtex.max=999)&#39;.</span></span></code></pre></div>
+</div>
+<div id="see-also" class="section level2">
+<h2>See Also</h2>
+<ul>
+<li>Praat: <a href="https://www.praat.org" class="uri">https://www.praat.org</a></li>
+<li>Package documentation: <code>help(package = &quot;pladdrr&quot;)</code></li>
+<li>Function reference: <code>?extract_pitch</code>,
+<code>?extract_formants</code>, <code>?extract_intensity</code></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The <code>pladdrr</code> package provides a comprehensive toolkit for
+phonetic analysis in R, with:</p>
+<ul>
+<li><strong>4 core analysis objects</strong>: Sound, Pitch, Formant,
+Intensity</li>
+<li><strong>45+ functions</strong>: Complete analysis capabilities</li>
+<li><strong>Praat compatibility</strong>: Easy translation from Praat
+scripts</li>
+<li><strong>Clean S3 interface</strong>: Familiar R programming
+patterns</li>
+<li><strong>Robust error handling</strong>: Graceful handling of edge
+cases</li>
+</ul>
+<p>For more information, see the individual function documentation and
+the package README.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
