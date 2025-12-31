@@ -3,6 +3,39 @@
 \name{Electroglottogram}
 \alias{Electroglottogram}
 \title{Praat Electroglottogram Object}
+\usage{
+Electroglottogram(.xptr = NULL)
+}
+\arguments{
+\item{peak_threshold}{Peak threshold fraction (default 0.05)}
+
+\item{pitch_floor}{Minimum pitch in Hz (default 75)}
+
+\item{pitch_ceiling}{Maximum pitch in Hz (default 500)}
+
+\item{closing_threshold}{Fraction of peak-valley range for closure (default 0.3)}
+
+\item{lowpass_freq}{Low-pass frequency in Hz (default 5000)}
+
+\item{peak_amplitude}{New absolute peak value (0 = don't scale) (default 0)}
+
+\item{from_freq}{Low frequency cutoff in Hz (default 100)}
+
+\item{smoothing}{Smoothing frequency in Hz (default 100)}
+}
+\value{
+TextGrid object with closed glottis intervals marked
+
+List with three AmplitudeTier objects: levels, peaks, valleys
+
+Sound object containing the derivative
+
+Sound object containing the approximate derivative
+
+Filtered Electroglottogram object
+
+Sound object
+}
 \description{
 R6 class representing a Praat Electroglottogram (EGG) object. An Electroglottogram
 measures the electrical impedance across the larynx, which varies with the degree
@@ -39,6 +72,18 @@ egg <- sound$extract_electroglottogram(channel = 2, invert = FALSE)
 The derivative of the EGG signal (DEGG) shows the rate of change of vocal fold
 contact. The negative peak in DEGG typically corresponds to the instant of
 glottal closure (GCI), which is important for voice source analysis.
+
+Detect closed glottis intervals and return as TextGrid
+
+Extract amplitude level tiers (peak, valley, and closing levels)
+
+Calculate the derivative (DEGG) of the EGG signal
+
+Calculate first central difference approximation of derivative
+
+Apply high-pass filter to remove DC drift
+
+Convert to generic Sound object
 }
 \examples{
 \dontrun{
@@ -60,269 +105,4 @@ tg <- egg_filtered$to_textgrid_closed_glottis(
 degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 }
 
-}
-\section{Super classes}{
-\code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{\link[pladdrr:Sound]{pladdrr::Sound}} -> \code{Electroglottogram}
-}
-\section{Methods}{
-\subsection{Public methods}{
-\itemize{
-\item \href{#method-Electroglottogram-new}{\code{Electroglottogram$new()}}
-\item \href{#method-Electroglottogram-to_textgrid_closed_glottis}{\code{Electroglottogram$to_textgrid_closed_glottis()}}
-\item \href{#method-Electroglottogram-to_amplitude_tier_levels}{\code{Electroglottogram$to_amplitude_tier_levels()}}
-\item \href{#method-Electroglottogram-derivative}{\code{Electroglottogram$derivative()}}
-\item \href{#method-Electroglottogram-first_central_difference}{\code{Electroglottogram$first_central_difference()}}
-\item \href{#method-Electroglottogram-high_pass_filter}{\code{Electroglottogram$high_pass_filter()}}
-\item \href{#method-Electroglottogram-to_sound}{\code{Electroglottogram$to_sound()}}
-\item \href{#method-Electroglottogram-clone}{\code{Electroglottogram$clone()}}
-}
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_ptr"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_ptr'><code>pladdrr::PraatObject$get_ptr()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="as_data_frame"><a href='../../pladdrr/html/Sound.html#method-Sound-as_data_frame'><code>pladdrr::Sound$as_data_frame()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="as_matrix"><a href='../../pladdrr/html/Sound.html#method-Sound-as_matrix'><code>pladdrr::Sound$as_matrix()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="concatenate"><a href='../../pladdrr/html/Sound.html#method-Sound-concatenate'><code>pladdrr::Sound$concatenate()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="convert_to_mono"><a href='../../pladdrr/html/Sound.html#method-Sound-convert_to_mono'><code>pladdrr::Sound$convert_to_mono()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="convert_to_stereo"><a href='../../pladdrr/html/Sound.html#method-Sound-convert_to_stereo'><code>pladdrr::Sound$convert_to_stereo()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="de_emphasize"><a href='../../pladdrr/html/Sound.html#method-Sound-de_emphasize'><code>pladdrr::Sound$de_emphasize()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_channel"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_channel'><code>pladdrr::Sound$extract_channel()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_electroglottogram"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_electroglottogram'><code>pladdrr::Sound$extract_electroglottogram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_intervals_where"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_intervals_where'><code>pladdrr::Sound$extract_intervals_where()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="extract_part"><a href='../../pladdrr/html/Sound.html#method-Sound-extract_part'><code>pladdrr::Sound$extract_part()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="filter_pass_hann_band"><a href='../../pladdrr/html/Sound.html#method-Sound-filter_pass_hann_band'><code>pladdrr::Sound$filter_pass_hann_band()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="filter_stop_hann_band"><a href='../../pladdrr/html/Sound.html#method-Sound-filter_stop_hann_band'><code>pladdrr::Sound$filter_stop_hann_band()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_duration"><a href='../../pladdrr/html/Sound.html#method-Sound-get_duration'><code>pladdrr::Sound$get_duration()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_energy"><a href='../../pladdrr/html/Sound.html#method-Sound-get_energy'><code>pladdrr::Sound$get_energy()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_intensity_db"><a href='../../pladdrr/html/Sound.html#method-Sound-get_intensity_db'><code>pladdrr::Sound$get_intensity_db()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_number_of_channels"><a href='../../pladdrr/html/Sound.html#method-Sound-get_number_of_channels'><code>pladdrr::Sound$get_number_of_channels()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_number_of_samples"><a href='../../pladdrr/html/Sound.html#method-Sound-get_number_of_samples'><code>pladdrr::Sound$get_number_of_samples()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_power"><a href='../../pladdrr/html/Sound.html#method-Sound-get_power'><code>pladdrr::Sound$get_power()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_rms"><a href='../../pladdrr/html/Sound.html#method-Sound-get_rms'><code>pladdrr::Sound$get_rms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_sampling_frequency"><a href='../../pladdrr/html/Sound.html#method-Sound-get_sampling_frequency'><code>pladdrr::Sound$get_sampling_frequency()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="get_value_at_time"><a href='../../pladdrr/html/Sound.html#method-Sound-get_value_at_time'><code>pladdrr::Sound$get_value_at_time()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="mix"><a href='../../pladdrr/html/Sound.html#method-Sound-mix'><code>pladdrr::Sound$mix()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="pre_emphasize"><a href='../../pladdrr/html/Sound.html#method-Sound-pre_emphasize'><code>pladdrr::Sound$pre_emphasize()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="print"><a href='../../pladdrr/html/Sound.html#method-Sound-print'><code>pladdrr::Sound$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="resample"><a href='../../pladdrr/html/Sound.html#method-Sound-resample'><code>pladdrr::Sound$resample()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="save"><a href='../../pladdrr/html/Sound.html#method-Sound-save'><code>pladdrr::Sound$save()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="scale_intensity"><a href='../../pladdrr/html/Sound.html#method-Sound-scale_intensity'><code>pladdrr::Sound$scale_intensity()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="scale_peak"><a href='../../pladdrr/html/Sound.html#method-Sound-scale_peak'><code>pladdrr::Sound$scale_peak()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_cepstrum"><a href='../../pladdrr/html/Sound.html#method-Sound-to_cepstrum'><code>pladdrr::Sound$to_cepstrum()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_cepstrum_bw"><a href='../../pladdrr/html/Sound.html#method-Sound-to_cepstrum_bw'><code>pladdrr::Sound$to_cepstrum_bw()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_cochleagram"><a href='../../pladdrr/html/Sound.html#method-Sound-to_cochleagram'><code>pladdrr::Sound$to_cochleagram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_cochleagram_edb"><a href='../../pladdrr/html/Sound.html#method-Sound-to_cochleagram_edb'><code>pladdrr::Sound$to_cochleagram_edb()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_burg"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_burg'><code>pladdrr::Sound$to_formant_burg()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_keepall"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_keepall'><code>pladdrr::Sound$to_formant_keepall()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_sl"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_sl'><code>pladdrr::Sound$to_formant_sl()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_formant_willems"><a href='../../pladdrr/html/Sound.html#method-Sound-to_formant_willems'><code>pladdrr::Sound$to_formant_willems()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_harmonicity_ac"><a href='../../pladdrr/html/Sound.html#method-Sound-to_harmonicity_ac'><code>pladdrr::Sound$to_harmonicity_ac()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_harmonicity_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_harmonicity_cc'><code>pladdrr::Sound$to_harmonicity_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_intensity"><a href='../../pladdrr/html/Sound.html#method-Sound-to_intensity'><code>pladdrr::Sound$to_intensity()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_auto"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_auto'><code>pladdrr::Sound$to_lpc_auto()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_burg"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_burg'><code>pladdrr::Sound$to_lpc_burg()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_covariance"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_covariance'><code>pladdrr::Sound$to_lpc_covariance()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_lpc_marple"><a href='../../pladdrr/html/Sound.html#method-Sound-to_lpc_marple'><code>pladdrr::Sound$to_lpc_marple()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_ltas"><a href='../../pladdrr/html/Sound.html#method-Sound-to_ltas'><code>pladdrr::Sound$to_ltas()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_manipulation"><a href='../../pladdrr/html/Sound.html#method-Sound-to_manipulation'><code>pladdrr::Sound$to_manipulation()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pitch"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pitch'><code>pladdrr::Sound$to_pitch()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pitch_ac"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pitch_ac'><code>pladdrr::Sound$to_pitch_ac()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pitch_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pitch_cc'><code>pladdrr::Sound$to_pitch_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_extrema"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_extrema'><code>pladdrr::Sound$to_point_process_extrema()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_periodic_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_periodic_cc'><code>pladdrr::Sound$to_point_process_periodic_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_periodic_peaks"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_periodic_peaks'><code>pladdrr::Sound$to_point_process_periodic_peaks()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_point_process_zeros"><a href='../../pladdrr/html/Sound.html#method-Sound-to_point_process_zeros'><code>pladdrr::Sound$to_point_process_zeros()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pointprocess_periodic_cc"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pointprocess_periodic_cc'><code>pladdrr::Sound$to_pointprocess_periodic_cc()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_pointprocess_periodic_peaks"><a href='../../pladdrr/html/Sound.html#method-Sound-to_pointprocess_periodic_peaks'><code>pladdrr::Sound$to_pointprocess_periodic_peaks()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_power_cepstrogram_NEW"><a href='../../pladdrr/html/Sound.html#method-Sound-to_power_cepstrogram_NEW'><code>pladdrr::Sound$to_power_cepstrogram_NEW()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_powercepstrogram"><a href='../../pladdrr/html/Sound.html#method-Sound-to_powercepstrogram'><code>pladdrr::Sound$to_powercepstrogram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_powercepstrogram_MOVED"><a href='../../pladdrr/html/Sound.html#method-Sound-to_powercepstrogram_MOVED'><code>pladdrr::Sound$to_powercepstrogram_MOVED()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_spectrogram"><a href='../../pladdrr/html/Sound.html#method-Sound-to_spectrogram'><code>pladdrr::Sound$to_spectrogram()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_spectrum"><a href='../../pladdrr/html/Sound.html#method-Sound-to_spectrum'><code>pladdrr::Sound$to_spectrum()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="Sound" data-id="to_textgrid_silences"><a href='../../pladdrr/html/Sound.html#method-Sound-to_textgrid_silences'><code>pladdrr::Sound$to_textgrid_silences()</code></a></span></li>
-</ul>
-</details>
-}}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-new"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-new}{}}}
-\subsection{Method \code{new()}}{
-Create an Electroglottogram object (internal use)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$new(.xptr = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{.xptr}}{External pointer to C++ Electroglottogram object}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new Electroglottogram object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-to_textgrid_closed_glottis"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-to_textgrid_closed_glottis}{}}}
-\subsection{Method \code{to_textgrid_closed_glottis()}}{
-Detect closed glottis intervals and return as TextGrid
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$to_textgrid_closed_glottis(
-  pitch_floor = 75,
-  pitch_ceiling = 500,
-  closing_threshold = 0.3,
-  peak_threshold = 0.05
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pitch_floor}}{Minimum pitch in Hz (default 75)}
-
-\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default 500)}
-
-\item{\code{closing_threshold}}{Fraction of peak-valley range for closure (default 0.3)}
-
-\item{\code{peak_threshold}}{Peak threshold fraction (default 0.05)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-TextGrid object with closed glottis intervals marked
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-to_amplitude_tier_levels"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-to_amplitude_tier_levels}{}}}
-\subsection{Method \code{to_amplitude_tier_levels()}}{
-Extract amplitude level tiers (peak, valley, and closing levels)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$to_amplitude_tier_levels(
-  pitch_floor = 75,
-  pitch_ceiling = 500,
-  closing_threshold = 0.3
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pitch_floor}}{Minimum pitch in Hz (default 75)}
-
-\item{\code{pitch_ceiling}}{Maximum pitch in Hz (default 500)}
-
-\item{\code{closing_threshold}}{Fraction of peak-valley range for closure (default 0.3)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List with three AmplitudeTier objects: levels, peaks, valleys
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-derivative"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-derivative}{}}}
-\subsection{Method \code{derivative()}}{
-Calculate the derivative (DEGG) of the EGG signal
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$derivative(
-  lowpass_freq = 5000,
-  smoothing = 100,
-  peak_amplitude = 0
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{lowpass_freq}}{Low-pass frequency in Hz (default 5000)}
-
-\item{\code{smoothing}}{Smoothing frequency in Hz (default 100)}
-
-\item{\code{peak_amplitude}}{New absolute peak value (0 = don't scale) (default 0)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Sound object containing the derivative
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-first_central_difference"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-first_central_difference}{}}}
-\subsection{Method \code{first_central_difference()}}{
-Calculate first central difference approximation of derivative
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$first_central_difference(peak_amplitude = 0)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{peak_amplitude}}{New absolute peak value (0 = don't scale) (default 0)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Sound object containing the approximate derivative
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-high_pass_filter"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-high_pass_filter}{}}}
-\subsection{Method \code{high_pass_filter()}}{
-Apply high-pass filter to remove DC drift
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$high_pass_filter(from_freq = 100, smoothing = 100)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{from_freq}}{Low frequency cutoff in Hz (default 100)}
-
-\item{\code{smoothing}}{Smoothing frequency in Hz (default 100)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Filtered Electroglottogram object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-to_sound"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-to_sound}{}}}
-\subsection{Method \code{to_sound()}}{
-Convert to generic Sound object
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$to_sound()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Sound object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Electroglottogram-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-Electroglottogram-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Electroglottogram$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

@@ -2,10 +2,12 @@
 % Please edit documentation in R/vocaltract-r6.R
 \name{VocalTract}
 \alias{VocalTract}
-\title{VocalTract Class}
+\title{Praat VocalTract Object}
+\usage{
+VocalTract(nx = 17L, dx = 0.01, .xptr = NULL)
+}
 \description{
-R6 class for Praat VocalTract objects representing vocal tract area functions.
-Used for articulatory synthesis and vowel/consonant modeling.
+Praat VocalTract object with direct C++ module binding for articulatory synthesis.
 }
 \details{
 A VocalTract represents the cross-sectional areas of the vocal tract from
@@ -13,6 +15,29 @@ glottis to lips, divided into sections. This can be used for:
 - Articulatory synthesis (convert to Spectrum)
 - Vowel modeling (create from phone)
 - Acoustic tube modeling
+
+## Creating VocalTract Objects
+
+- `VocalTract(nx, dx)` - Create empty vocal tract with nx sections
+- `VocalTract$create_from_phone(phone)` - Create from phone name
+
+## Querying
+
+- `$get_length()` - Total length in metres
+- `$get_number_of_sections()` - Number of sections
+- `$get_section_length()` - Section length in metres
+- `$get_area(section)` - Area at section (m²)
+- `$get_areas()` - All areas as vector
+
+## Modification
+
+- `$set_area(section, area)` - Set area at section
+- `$set_areas(areas)` - Set all areas from vector
+
+## Transformation
+
+- `$to_spectrum(...)` - Convert to Spectrum for synthesis
+- `$to_matrix()` - Convert to Matrix
 }
 \examples{
 \dontrun{
@@ -27,243 +52,4 @@ areas <- vt$get_areas()
 spectrum <- vt$to_spectrum()
 }
 
-}
-\section{Super class}{
-\code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{VocalTract}
-}
-\section{Methods}{
-\subsection{Public methods}{
-\itemize{
-\item \href{#method-VocalTract-new}{\code{VocalTract$new()}}
-\item \href{#method-VocalTract-get_length}{\code{VocalTract$get_length()}}
-\item \href{#method-VocalTract-get_number_of_sections}{\code{VocalTract$get_number_of_sections()}}
-\item \href{#method-VocalTract-get_section_length}{\code{VocalTract$get_section_length()}}
-\item \href{#method-VocalTract-get_area}{\code{VocalTract$get_area()}}
-\item \href{#method-VocalTract-set_area}{\code{VocalTract$set_area()}}
-\item \href{#method-VocalTract-get_areas}{\code{VocalTract$get_areas()}}
-\item \href{#method-VocalTract-set_areas}{\code{VocalTract$set_areas()}}
-\item \href{#method-VocalTract-to_spectrum}{\code{VocalTract$to_spectrum()}}
-\item \href{#method-VocalTract-to_matrix}{\code{VocalTract$to_matrix()}}
-\item \href{#method-VocalTract-print}{\code{VocalTract$print()}}
-\item \href{#method-VocalTract-clone}{\code{VocalTract$clone()}}
-}
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_ptr"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_ptr'><code>pladdrr::PraatObject$get_ptr()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
-</ul>
-</details>
-}}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-new"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-new}{}}}
-\subsection{Method \code{new()}}{
-Create VocalTract from parameters or external pointer
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$new(nx = 17L, dx = 0.01, .xptr = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nx}}{Number of sections (default 17 for standard model)}
-
-\item{\code{dx}}{Section length in metres (default 0.01 = 1cm)}
-
-\item{\code{.xptr}}{External pointer (for internal use)}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-get_length"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-get_length}{}}}
-\subsection{Method \code{get_length()}}{
-Get total length of vocal tract
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$get_length()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Length in metres
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-get_number_of_sections"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-get_number_of_sections}{}}}
-\subsection{Method \code{get_number_of_sections()}}{
-Get number of sections
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$get_number_of_sections()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Integer number of sections
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-get_section_length"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-get_section_length}{}}}
-\subsection{Method \code{get_section_length()}}{
-Get section length
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$get_section_length()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Section length in metres
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-get_area"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-get_area}{}}}
-\subsection{Method \code{get_area()}}{
-Get area at specific section
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$get_area(section)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{section}}{Section index (1-based)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Area in square metres
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-set_area"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-set_area}{}}}
-\subsection{Method \code{set_area()}}{
-Set area at specific section
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$set_area(section, area)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{section}}{Section index (1-based)}
-
-\item{\code{area}}{Area in square metres (must be positive)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self (invisibly)
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-get_areas"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-get_areas}{}}}
-\subsection{Method \code{get_areas()}}{
-Get all areas as vector
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$get_areas()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Numeric vector of areas (in square metres)
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-set_areas"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-set_areas}{}}}
-\subsection{Method \code{set_areas()}}{
-Set all areas from vector
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$set_areas(areas)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{areas}}{Numeric vector of areas (length must match number of sections)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self (invisibly)
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-to_spectrum"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-to_spectrum}{}}}
-\subsection{Method \code{to_spectrum()}}{
-Convert to Spectrum for articulatory synthesis
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$to_spectrum(
-  number_of_frequencies = 4096L,
-  maximum_frequency = 5000,
-  glottal_damping = 0.1,
-  radiation_damping = TRUE,
-  internal_damping = TRUE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{number_of_frequencies}}{Number of frequency bins (default 4096)}
-
-\item{\code{maximum_frequency}}{Maximum frequency in Hz (default 5000)}
-
-\item{\code{glottal_damping}}{Glottal damping coefficient (default 0.1)}
-
-\item{\code{radiation_damping}}{Include radiation damping (default TRUE)}
-
-\item{\code{internal_damping}}{Include internal damping (default TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Spectrum object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-to_matrix"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-to_matrix}{}}}
-\subsection{Method \code{to_matrix()}}{
-Convert to Matrix
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$to_matrix()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Matrix object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-print"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-print}{}}}
-\subsection{Method \code{print()}}{
-Print method
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$print()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-VocalTract-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-VocalTract-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{VocalTract$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

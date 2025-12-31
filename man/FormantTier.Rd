@@ -2,15 +2,39 @@
 % Please edit documentation in R/formanttier-r6.R
 \name{FormantTier}
 \alias{FormantTier}
-\title{FormantTier Class}
+\title{Praat FormantTier Object}
+\usage{
+FormantTier(tmin = 0, tmax = 1, .xptr = NULL)
+}
 \description{
-R6 class for Praat FormantTier objects representing formant contours as points.
-Used for formant manipulation and resynthesis.
+Praat FormantTier object with direct C++ module binding for formant manipulation.
 }
 \details{
 A FormantTier stores formant frequencies and bandwidths at discrete time points,
 with interpolation between points. This allows for smooth formant contours
 that can be used to filter sounds for vowel modification or resynthesis.
+
+## Creating FormantTier Objects
+
+- `FormantTier(tmin, tmax)` - Create empty FormantTier
+- `FormantTier$from_formant(formant)` - Convert from Formant object
+
+## Querying
+
+- `$get_start_time()` - Start time in seconds
+- `$get_end_time()` - End time in seconds
+- `$get_duration()` - Duration in seconds
+- `$get_number_of_points()` - Number of time points
+- `$get_min_num_formants()` - Min formants across points
+- `$get_max_num_formants()` - Max formants across points
+- `$get_value_at_time(formant_number, time)` - Formant frequency (Hz)
+- `$get_bandwidth_at_time(formant_number, time)` - Bandwidth (Hz)
+
+## Transformation
+
+- `$filter_sound(sound, scale=TRUE)` - Filter sound through formants
+- `$as_data_frame()` - Export to data frame
+- `$save(path)` - Save to file
 }
 \examples{
 \dontrun{
@@ -28,226 +52,4 @@ source <- Sound$create_tone(100, duration = 1.0)  # Buzz
 vowel <- ft$filter_sound(source)
 }
 
-}
-\section{Super class}{
-\code{\link[pladdrr:PraatObject]{pladdrr::PraatObject}} -> \code{FormantTier}
-}
-\section{Methods}{
-\subsection{Public methods}{
-\itemize{
-\item \href{#method-FormantTier-new}{\code{FormantTier$new()}}
-\item \href{#method-FormantTier-get_start_time}{\code{FormantTier$get_start_time()}}
-\item \href{#method-FormantTier-get_end_time}{\code{FormantTier$get_end_time()}}
-\item \href{#method-FormantTier-get_duration}{\code{FormantTier$get_duration()}}
-\item \href{#method-FormantTier-get_number_of_points}{\code{FormantTier$get_number_of_points()}}
-\item \href{#method-FormantTier-get_min_num_formants}{\code{FormantTier$get_min_num_formants()}}
-\item \href{#method-FormantTier-get_max_num_formants}{\code{FormantTier$get_max_num_formants()}}
-\item \href{#method-FormantTier-get_value_at_time}{\code{FormantTier$get_value_at_time()}}
-\item \href{#method-FormantTier-get_bandwidth_at_time}{\code{FormantTier$get_bandwidth_at_time()}}
-\item \href{#method-FormantTier-filter_sound}{\code{FormantTier$filter_sound()}}
-\item \href{#method-FormantTier-print}{\code{FormantTier$print()}}
-\item \href{#method-FormantTier-clone}{\code{FormantTier$clone()}}
-}
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_class_name"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_class_name'><code>pladdrr::PraatObject$get_class_name()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="get_ptr"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-get_ptr'><code>pladdrr::PraatObject$get_ptr()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="pladdrr" data-topic="PraatObject" data-id="is_valid"><a href='../../pladdrr/html/PraatObject.html#method-PraatObject-is_valid'><code>pladdrr::PraatObject$is_valid()</code></a></span></li>
-</ul>
-</details>
-}}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-new"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-new}{}}}
-\subsection{Method \code{new()}}{
-Create FormantTier from parameters or external pointer
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$new(tmin = 0, tmax = 1, .xptr = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tmin}}{Start time (default 0)}
-
-\item{\code{tmax}}{End time (default 1)}
-
-\item{\code{.xptr}}{External pointer (for internal use)}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_start_time"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_start_time}{}}}
-\subsection{Method \code{get_start_time()}}{
-Get start time
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_start_time()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Start time in seconds
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_end_time"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_end_time}{}}}
-\subsection{Method \code{get_end_time()}}{
-Get end time
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_end_time()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-End time in seconds
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_duration"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_duration}{}}}
-\subsection{Method \code{get_duration()}}{
-Get duration
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_duration()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Duration in seconds
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_number_of_points"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_number_of_points}{}}}
-\subsection{Method \code{get_number_of_points()}}{
-Get number of points
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_number_of_points()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Number of points
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_min_num_formants"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_min_num_formants}{}}}
-\subsection{Method \code{get_min_num_formants()}}{
-Get minimum number of formants across points
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_min_num_formants()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Minimum number of formants
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_max_num_formants"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_max_num_formants}{}}}
-\subsection{Method \code{get_max_num_formants()}}{
-Get maximum number of formants across points
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_max_num_formants()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Maximum number of formants
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_value_at_time"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_value_at_time}{}}}
-\subsection{Method \code{get_value_at_time()}}{
-Get formant value at time
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_value_at_time(formant_number, time)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{formant_number}}{Formant number (1=F1, 2=F2, etc.)}
-
-\item{\code{time}}{Time in seconds}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Formant frequency in Hz
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-get_bandwidth_at_time"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-get_bandwidth_at_time}{}}}
-\subsection{Method \code{get_bandwidth_at_time()}}{
-Get formant bandwidth at time
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$get_bandwidth_at_time(formant_number, time)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{formant_number}}{Formant number (1=F1, 2=F2, etc.)}
-
-\item{\code{time}}{Time in seconds}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Bandwidth in Hz
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-filter_sound"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-filter_sound}{}}}
-\subsection{Method \code{filter_sound()}}{
-Filter sound through this FormantTier
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$filter_sound(sound, scale = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sound}}{Sound object to filter}
-
-\item{\code{scale}}{If TRUE (default), scale output amplitude}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Filtered Sound object
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-print"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-print}{}}}
-\subsection{Method \code{print()}}{
-Print method
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$print()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-FormantTier-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-FormantTier-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FormantTier$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
