@@ -280,7 +280,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/excitation_module.cpp modules/electroglottogram_module.cpp \
              modules/formantgrid_module.cpp modules/formanttier_module.cpp modules/vocaltract_module.cpp modules/longsound_module.cpp modules/lpc_module.cpp \
              modules/table_module.cpp modules/textgrid_module.cpp \
-             modules/manipulation_module.cpp \
+             modules/manipulation_module.cpp modules/polygon_module.cpp \
              module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)

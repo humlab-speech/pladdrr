@@ -17,7 +17,7 @@ get_module <- function(name) {
 
 # Preload all modules on package load
 .onLoad <- function(libname, pkgname) {
-  # Preload all 27 modules into cache
+  # Preload all modules into cache
   modules <- c(
     "pitch_module", "sound_module", "formant_module", 
     "intensity_module", "spectrum_module", "spectrogram_module",
@@ -27,7 +27,8 @@ get_module <- function(name) {
     "powercepstrum_module", "cochleagram_module", "excitation_module",
     "electroglottogram_module", "formantgrid_module", "formanttier_module",
     "vocaltract_module", "longsound_module", "lpc_module",
-    "table_module", "textgrid_module", "manipulation_module"
+    "table_module", "textgrid_module", "manipulation_module",
+    "polygon_module"
   )
   
   for (mod in modules) {
