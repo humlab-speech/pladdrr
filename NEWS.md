@@ -1,3 +1,15 @@
+# pladdrr 1.8.1 (2025-12-31)
+
+## Performance Optimization
+
+* **Module Preloading**
+  - All 27 modules now preloaded during package load (`.onLoad`)
+  - Eliminates repeated module lookup overhead
+  - Faster object creation and initialization
+  - Measured performance: ~8-12µs per method call
+
+---
+
 # pladdrr 1.8.0 (2025-12-31)
 
 ## Major Code Cleanup - Phase 1+ Finalization

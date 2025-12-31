@@ -14,3 +14,26 @@ get_module <- function(name) {
   }
   .module_cache[[name]]
 }
+
+# Preload all modules on package load
+.onLoad <- function(libname, pkgname) {
+  # Preload all 27 modules into cache
+  modules <- c(
+    "pitch_module", "sound_module", "formant_module", 
+    "intensity_module", "spectrum_module", "spectrogram_module",
+    "harmonicity_module", "pitchtier_module", "intensitytier_module",
+    "durationtier_module", "amplitudetier_module", "pointprocess_module",
+    "ltas_module", "matrix_module", "cepstrum_module",
+    "powercepstrum_module", "cochleagram_module", "excitation_module",
+    "electroglottogram_module", "formantgrid_module", "formanttier_module",
+    "vocaltract_module", "longsound_module", "lpc_module",
+    "table_module", "textgrid_module", "manipulation_module"
+  )
+  
+  for (mod in modules) {
+    tryCatch(
+      get_module(mod),
+      error = function(e) warning("Failed to load module: ", mod, " - ", e$message)
+    )
+  }
+}
