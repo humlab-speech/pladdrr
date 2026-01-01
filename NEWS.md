@@ -1,3 +1,26 @@
+# pladdrr 1.9.2 (2026-01-01)
+
+## New Features - Phase 3.1 (Standalone Functions)
+
+* **Sound Operations Module** - 9 new standalone functions
+  - `sounds_append()` - Concatenate sounds with optional silence
+  - `sound_extract_part()` - Extract time slices
+  - `sound_lengthen()` - Time-stretch using overlap-add (pitch-preserve)
+  - `sound_deepen_band_modulation()` - Hearing enhancement
+  - `sounds_convolve()` - Signal convolution
+  - `sounds_cross_correlate()` - Cross-correlation analysis
+  - `sound_auto_correlate()` - Auto-correlation
+  - `sound_filter_pass_hann_band()` - Band-pass filter
+  - `sound_filter_stop_hann_band()` - Band-stop filter
+
+## Architecture
+
+* Added sound_operations_module (30th module total)
+* Functional interface - no class instantiation needed
+* All functions return new Sound objects
+
+---
+
 # pladdrr 1.9.1 (2026-01-01)
 
 ## New Features - Phase 2.2

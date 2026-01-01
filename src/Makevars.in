@@ -210,8 +210,8 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/Sound_and_Cepstrum.cpp \
           praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
           praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
-          praat.github.io/LPC/LPC_and_Cepstrumc.cpp \
-          praat.github.io/LPC/FormantPath.cpp
+          praat.github.io/LPC/LPC_and_Cepstrumc.cpp
+          # Disabled: praat.github.io/LPC/FormantPath.cpp (missing Formant_extractPart symbol)
 
 # FLAC library sources (for native FLAC file I/O)
 FLAC_SRC = praat/external/flac/flac_bitmath.c \
@@ -295,7 +295,9 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/formantgrid_module.cpp modules/formanttier_module.cpp modules/vocaltract_module.cpp modules/longsound_module.cpp modules/lpc_module.cpp \
              modules/table_module.cpp modules/textgrid_module.cpp \
              modules/manipulation_module.cpp modules/polygon_module.cpp \
-             modules/formantpath_module.cpp module_init.cpp
+             modules/sound_operations_module.cpp \
+             module_init.cpp
+             # Disabled: modules/formantpath_module.cpp (missing Formant_extractPart symbol)
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
 SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp
