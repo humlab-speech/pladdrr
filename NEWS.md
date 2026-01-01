@@ -1,3 +1,17 @@
+# pladdrr 1.9.3 (2026-01-01)
+
+## New Features - Phase 3.2 (Spectrum Wrappers)
+
+* **Spectrum Operation Wrappers** - 3 convenience functions
+  - `spectrum_cepstral_smoothing()` - Cepstral smoothing for spectral envelope
+  - `spectrum_pass_hann_band()` - In-place Hann band-pass filter
+  - `spectrum_stop_hann_band()` - In-place Hann band-stop filter
+
+## Architecture
+
+* R wrappers for existing C++ exports (no new module needed)
+* Simplified functional interface for spectrum operations
+
 # pladdrr 1.9.2 (2026-01-01)
 
 ## New Features - Phase 3.1 (Standalone Functions)
