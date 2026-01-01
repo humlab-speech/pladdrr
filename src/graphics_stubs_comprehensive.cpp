@@ -241,3 +241,14 @@ void Graphics_image_colour (Graphics, constmatrixview<MelderColour> const&, doub
 void Graphics_imageFromFile (Graphics, conststring32, double, double, double, double) {}
 
 void Graphics_cellArray_colour (Graphics, constmatrixview<MelderColour> const&, double, double, double, double, double, double) {}
+
+// Graphics coordinate conversion functions (for FormantPath drawing)
+double Graphics_dxWCtoMM (Graphics me, double dx) {
+    // Stub: no graphics context
+    return 10.0;  // Return dummy value
+}
+
+double Graphics_dyWCtoMM (Graphics me, double dy) {
+    // Stub: no graphics context  
+    return 10.0;  // Return dummy value
+}

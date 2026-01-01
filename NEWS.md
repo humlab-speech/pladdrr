@@ -1,3 +1,23 @@
+# pladdrr 1.9.1 (2026-01-01)
+
+## New Features - Phase 2.2
+
+* **FormantPath Module** (29th module total)
+  - Robust formant tracking with multiple candidate ceilings
+  - Automatic optimal path selection
+  - Multiple analysis algorithms (Burg, robust)
+  - Path optimization and stress calculation
+  - Extract optimal Formant from FormantPath
+  - Functions: `FormantPath()`, `extract_formant()`, path manipulation
+  - Example: `fp <- FormantPath(sound); formant <- fp$extract_formant()`
+
+## Documentation
+
+* Added comprehensive roxygen documentation for FormantPath
+* Updated module preloading list in `.onLoad` (29 modules)
+
+---
+
 # pladdrr 1.8.1 (2025-12-31)
 
 ## Performance Optimization

@@ -3,116 +3,23 @@
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
 * installing the package to build vignettes
-* creating vignettes ... ERROR
---- re-building ‘auditory-modeling.Rmd’ using rmarkdown
-
-Quitting from auditory-modeling.Rmd:41-52 [cochleagram-basic]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `.sound_create_tone()`:
-! could not find function ".sound_create_tone"
----
-Backtrace:
-    ▆
- 1. └─Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'auditory-modeling.Rmd' failed with diagnostics:
-could not find function ".sound_create_tone"
---- failed re-building ‘auditory-modeling.Rmd’
-
---- re-building ‘autoplot-autolayer.Rmd’ using rmarkdown
-
-Quitting from autoplot-autolayer.Rmd:45-48 [load-sound]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `.sound_create_from_values()`:
-! could not find function ".sound_create_from_values"
----
-Backtrace:
-    ▆
- 1. └─Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
- 2.   └─base::tryCatch(...)
- 3.     └─base (local) tryCatchList(expr, classes, parentenv, handlers)
- 4.       └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 5.         └─value[[3L]](cond)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'autoplot-autolayer.Rmd' failed with diagnostics:
-could not find function ".sound_create_from_values"
---- failed re-building ‘autoplot-autolayer.Rmd’
-
---- re-building ‘formant-analysis.Rmd’ using rmarkdown
-
-Quitting from formant-analysis.Rmd:51-72 [burg-basic]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `.sound_create_tone()`:
-! could not find function ".sound_create_tone"
----
-Backtrace:
-    ▆
- 1. └─Sound$create_tone(duration = 0.5, sampling_rate = 22050)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'formant-analysis.Rmd' failed with diagnostics:
-could not find function ".sound_create_tone"
---- failed re-building ‘formant-analysis.Rmd’
-
---- re-building ‘getting-started.Rmd’ using rmarkdown
-
-Quitting from getting-started.Rmd:45-51 [unnamed-chunk-3]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `.sound_create_from_values()`:
-! could not find function ".sound_create_from_values"
----
-Backtrace:
-    ▆
- 1. └─pladdrr::generate_sine_wave(...)
- 2.   └─pladdrr::create_sound(...)
- 3.     └─Sound$from_values(values, sampling_rate)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'getting-started.Rmd' failed with diagnostics:
-could not find function ".sound_create_from_values"
---- failed re-building ‘getting-started.Rmd’
-
---- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘integrated-phonetic-analysis.Rmd’
-
---- re-building ‘migration-from-parselmouth.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-parselmouth.Rmd’
-
---- re-building ‘migration-from-praat.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-praat.Rmd’
-
---- re-building ‘performance-simd.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘performance-simd.Rmd’
-
---- re-building ‘praat-interpreter.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘praat-interpreter.Rmd’
-
---- re-building ‘textgrid-workflows.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘textgrid-workflows.Rmd’
-
---- re-building ‘visualization.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘visualization.Rmd’
-
---- re-building ‘vowel-space-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘vowel-space-analysis.Rmd’
-
-SUMMARY: processing the following files failed:
-  ‘auditory-modeling.Rmd’ ‘autoplot-autolayer.Rmd’
-  ‘formant-analysis.Rmd’ ‘getting-started.Rmd’
-
-Error: Vignette re-building failed.
-Execution halted
+* creating vignettes ... OK
+* cleaning src
+* checking for LF line-endings in source and make files and shell scripts
+* checking for empty or unneeded directories
+Removed empty directory ‘pladdrr/dev’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst’
+Removed empty directory ‘pladdrr/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/pladdrr/.planning’
+Removed empty directory ‘pladdrr/pladdrr_1/.planning’
+Removed empty directory ‘pladdrr/pladdrr_2/.planning’
+Removed empty directory ‘pladdrr/pladdrr_3/.planning’
+Removed empty directory ‘pladdrr/src/gsl-2.8/doc/_static’
+Removed empty directory ‘pladdrr/src/gsl_build’
+Removed empty directory ‘pladdrr/src/praat.github.io/docs’
+Removed empty directory ‘pladdrr/src/praat.github.io/generate’
+Removed empty directory ‘pladdrr/src/praat.github.io/test’
+Removed empty directory ‘pladdrr/tests/testthat/_snaps’
+* building ‘pladdrr_1.9.0.tar.gz’
