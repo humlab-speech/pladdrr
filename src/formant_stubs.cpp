@@ -8,7 +8,7 @@
 
 // Stub for Formant_extractPart - extracts time slice of Formant
 // This function is referenced in FormantPath.cpp but not present in current Praat
-autoFormant Formant_extractPart(constFormant me, double tmin, double tmax) {
+autoFormant Formant_extractPart(Formant me, double tmin, double tmax) {
     try {
         // Get frame range
         integer ifmin, ifmax;
