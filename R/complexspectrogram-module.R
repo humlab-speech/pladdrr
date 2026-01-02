@@ -15,10 +15,19 @@ ComplexSpectrogram <- function(sound, window_length = 0.005, maximum_frequency =
         stop("First argument must be a Sound object")
     }
     
+    # Get the XPtr from Sound object
+    sound_ptr <- if (!is.null(sound$.xptr)) {
+        sound$.xptr
+    } else if (!is.null(sound$.cpp)) {
+        sound$.cpp$ptr
+    } else {
+        stop("Cannot extract XPtr from Sound object")
+    }
+    
     # Get module and create ComplexSpectrogram
     cs_mod <- get_module("complexspectrogram_module")
     xptr <- cs_mod$complexspectrogram_create_from_sound(
-        sound$.cpp$get_xptr(),
+        sound_ptr,
         window_length,
         maximum_frequency
     )

@@ -137,8 +137,8 @@ public:
         VALIDATE_PTR(ptr, ComplexSpectrogram);
         
         try {
-            integer ifreq = Sampled_xToNearestIndex(ptr, frequency);
-            integer itime = Sampled_yToNearestIndex(ptr, time);
+            integer itime = Matrix_xToColumn(ptr, time);
+            integer ifreq = Matrix_yToRow(ptr, frequency);
             
             if (itime < 1 || itime > ptr->nx || ifreq < 1 || ifreq > ptr->ny) {
                 return NA_REAL;
@@ -155,8 +155,8 @@ public:
         VALIDATE_PTR(ptr, ComplexSpectrogram);
         
         try {
-            integer ifreq = Sampled_xToNearestIndex(ptr, frequency);
-            integer itime = Sampled_yToNearestIndex(ptr, time);
+            integer itime = Matrix_xToColumn(ptr, time);
+            integer ifreq = Matrix_yToRow(ptr, frequency);
             
             if (itime < 1 || itime > ptr->nx || ifreq < 1 || ifreq > ptr->ny) {
                 return NA_REAL;
@@ -218,9 +218,9 @@ public:
         std::vector<double> phases;
 
         for (integer itime = 1; itime <= ptr->nx; itime++) {
-            double time = Sampled_indexToX(ptr, itime);
+            double time = Matrix_columnToX(ptr, itime);
             for (integer ifreq = 1; ifreq <= ptr->ny; ifreq++) {
-                double freq = Sampled_indexToY(ptr, ifreq);
+                double freq = Matrix_rowToY(ptr, ifreq);
                 times.push_back(time);
                 frequencies.push_back(freq);
                 amplitudes.push_back(ptr->z[ifreq][itime]);

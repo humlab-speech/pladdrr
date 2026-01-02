@@ -392,7 +392,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
     },
     
     to_complex_spectrogram = function(window_length = 0.005, maximum_frequency = 5000.0) {
-      ComplexSpectrogram(self, window_length, maximum_frequency)
+      ComplexSpectrogram(snd, window_length, maximum_frequency)
     },
     
     to_textgrid_silences = function(min_pitch = 100.0, time_step = 0.0,

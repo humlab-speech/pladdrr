@@ -211,8 +211,7 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/Sound_and_Cepstrum.cpp \
           praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
           praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
-          praat.github.io/LPC/LPC_and_Cepstrumc.cpp \
-          praat.github.io/LPC/FormantPath.cpp
+          praat.github.io/LPC/LPC_and_Cepstrumc.cpp
 
 # FLAC library sources (for native FLAC file I/O)
 FLAC_SRC = praat/external/flac/flac_bitmath.c \
@@ -296,7 +295,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/formantgrid_module.cpp modules/formanttier_module.cpp modules/vocaltract_module.cpp modules/longsound_module.cpp modules/lpc_module.cpp \
              modules/table_module.cpp modules/textgrid_module.cpp \
              modules/manipulation_module.cpp modules/polygon_module.cpp \
-             modules/formantpath_module.cpp modules/complexspectrogram_module.cpp modules/sound_operations_module.cpp \
+             modules/complexspectrogram_module.cpp modules/sound_operations_module.cpp \
              module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
