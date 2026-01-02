@@ -9,7 +9,7 @@
 #' automatically selecting the optimal tracking path.
 #'
 #' @param sound A Sound object or path to audio file
-#' @param time_step Time step for analysis in seconds (0 = auto)
+#' @param time_step Time step for analysis in seconds (must be > 0, typically 0.005)
 #' @param max_num_formants Maximum number of formants to track (typically 5)
 #' @param formant_ceiling Maximum formant frequency in Hz (typically 5000-5500)
 #' @param window_length Analysis window length in seconds (typically 0.025)
@@ -35,7 +35,7 @@
 #' df <- as.data.frame(fp)
 #' }
 FormantPath <- function(sound,
-                        time_step = 0.0,
+                        time_step = 0.005,
                         max_num_formants = 5.0,
                         formant_ceiling = 5500.0,
                         window_length = 0.025,
@@ -157,26 +157,7 @@ FormantPath <- function(sound,
         # Extraction
         extract_formant = function() {
             formant_xptr <- cpp_obj$extract_formant()
-            formant_mod <- get_module("formant_module")
-            formant_cpp <- formant_mod$RFormant$new(formant_xptr)
-            
-            # Wrap in R Formant object
-            # Note: This reuses the existing Formant wrapper structure
-            formant_obj <- structure(list(
-                .cpp = formant_cpp,
-                get_xmin = function() formant_cpp$get_xmin(),
-                get_xmax = function() formant_cpp$get_xmax(),
-                get_duration = function() formant_cpp$get_duration(),
-                get_number_of_frames = function() formant_cpp$get_number_of_frames(),
-                get_value_at_time = function(formant_number, time, unit = 0L) {
-                    formant_cpp$get_value_at_time(as.integer(formant_number), time, as.integer(unit))
-                },
-                as_data_frame = function(max_formants = 5L) {
-                    formant_cpp$as_data_frame(as.integer(max_formants))
-                }
-            ), class = c("Formant", "PraatObject"))
-            
-            formant_obj
+            Formant(.xptr = formant_xptr)
         },
         
         # Export

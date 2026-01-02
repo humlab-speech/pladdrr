@@ -379,7 +379,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Ltas(.xptr = ltas_ptr)
     },
     
-    to_formant_path = function(time_step = 0.0,
+    to_formant_path = function(time_step = 0.005,
                                max_num_formants = 5.0,
                                formant_ceiling = 5500.0,
                                window_length = 0.025,

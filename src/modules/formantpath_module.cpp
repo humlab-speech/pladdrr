@@ -49,10 +49,17 @@ XPtr<structFormantPath> formantpath_create_from_sound_burg(
             num_steps_up_down
         );
         
+        if (!fp) {
+            Rcpp::stop("Sound_to_FormantPath_burg returned null");
+        }
+        
         return create_xptr_from_auto<structFormantPath>(fp);
     } catch (MelderError) {
+        // Try to get error message
+        conststring32 err = Melder_getError();
+        std::string errmsg = err ? Melder_peek32to8(err) : "Unknown error";
         Melder_clearError();
-        Rcpp::stop("Failed to create FormantPath from Sound");
+        Rcpp::stop("FormantPath creation failed: " + errmsg);
     }
 }
 
