@@ -379,6 +379,18 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Ltas(.xptr = ltas_ptr)
     },
     
+    to_formant_path = function(time_step = 0.0,
+                               max_num_formants = 5.0,
+                               formant_ceiling = 5500.0,
+                               window_length = 0.025,
+                               preemphasis_from = 50.0,
+                               ceiling_step_fraction = 0.05,
+                               num_steps_up_down = 4L) {
+      FormantPath(self, time_step, max_num_formants, formant_ceiling,
+                 window_length, preemphasis_from, ceiling_step_fraction,
+                 num_steps_up_down)
+    },
+    
     to_textgrid_silences = function(min_pitch = 100.0, time_step = 0.0,
                                     silence_threshold = -25.0,
                                     min_silent_duration = 0.1,
