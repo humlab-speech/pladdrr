@@ -386,7 +386,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
                                preemphasis_from = 50.0,
                                ceiling_step_fraction = 0.05,
                                num_steps_up_down = 4L) {
-      FormantPath(self, time_step, max_num_formants, formant_ceiling,
+      FormantPath(snd, time_step, max_num_formants, formant_ceiling,
                  window_length, preemphasis_from, ceiling_step_fraction,
                  num_steps_up_down)
     },

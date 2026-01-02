@@ -56,7 +56,7 @@ FormantPath <- function(sound,
     }
     
     # Get the C++ Sound pointer
-    sound_ptr <- sound$.cpp$ptr
+    sound_ptr <- sound$.xptr
     
     # Create FormantPath
     xptr <- mod$formantpath_create_from_sound_burg(

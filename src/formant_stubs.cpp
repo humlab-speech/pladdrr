@@ -5,6 +5,8 @@
 #include "praat_types.h"
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/fon/Formant.h"
+#include "praat.github.io/LPC/FormantModeler.h"
+#include "praat.github.io/sys/Graphics.h"
 
 // Stub for Formant_extractPart - extracts time slice of Formant
 // This function is referenced in FormantPath.cpp but not present in current Praat
@@ -44,4 +46,23 @@ autoFormant Formant_extractPart(Formant me, double tmin, double tmax) {
     } catch (MelderError) {
         Melder_throw(me, U": not extracted.");
     }
+}
+
+// Stub for FormantModeler_speckle_inside with signature mismatch
+// Header declares: (FormantModeler, Graphics, double, double, double, integer, integer, bool, integer, bool, MelderColour, MelderColour)
+// Implementation has: (FormantModeler, Graphics, double, double, double, integer, integer, bool, bool, MelderColour, MelderColour)
+// We stub the header version to avoid link errors
+struct structGraphics;
+typedef structGraphics* Graphics;
+struct structFormantModeler;
+typedef structFormantModeler* FormantModeler;
+
+void FormantModeler_speckle_inside(FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
+    integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars,
+    MelderColour oddTracks, MelderColour evenTracks) {
+    // This is a drawing function not needed for non-GUI operations
+    // Stub out for library mode
+    (void) me; (void) g; (void) xmin; (void) xmax; (void) fmax;
+    (void) fromTrack; (void) toTrack; (void) useEstimatedTrack; (void) numberOfParameters;
+    (void) errorBars; (void) oddTracks; (void) evenTracks;
 }

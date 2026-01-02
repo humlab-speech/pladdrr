@@ -9,8 +9,8 @@ cat("=======================\n\n")
 
 # 1. Create test sound
 cat("1. Creating test sound...\n")
-sound <- Sound$generate_tone(440, 0.5, 44100)
-cat("   Sound duration:", sound$duration(), "s\n\n")
+sound <- Sound$create_tone(440, 0.5, 44100)
+cat("   Sound duration:", sound$get_duration(), "s\n\n")
 
 # 2. Create FormantPath
 cat("2. Creating FormantPath...\n")
