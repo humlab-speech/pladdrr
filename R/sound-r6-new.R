@@ -391,6 +391,10 @@ Sound <- function(path = NULL, .xptr = NULL) {
                  num_steps_up_down)
     },
     
+    to_complex_spectrogram = function(window_length = 0.005, maximum_frequency = 5000.0) {
+      ComplexSpectrogram(self, window_length, maximum_frequency)
+    },
+    
     to_textgrid_silences = function(min_pitch = 100.0, time_step = 0.0,
                                     silence_threshold = -25.0,
                                     min_silent_duration = 0.1,
