@@ -28,7 +28,8 @@ get_module <- function(name) {
     "electroglottogram_module", "formantgrid_module", "formanttier_module",
     "vocaltract_module", "longsound_module", "lpc_module",
     "table_module", "textgrid_module", "manipulation_module",
-    "polygon_module", "formantpath_module", "complexspectrogram_module", "sound_operations_module"
+    "polygon_module", "formantpath_module", "complexspectrogram_module",
+    "klattgrid_module", "sound_operations_module"
   )
   
   for (mod in modules) {

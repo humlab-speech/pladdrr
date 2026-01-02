@@ -176,6 +176,10 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/OptimalCeilingTier.cpp \
               praat.github.io/dwtools/Table_extensions.cpp \
               praat.github.io/dwtools/TableOfReal_and_Permutation.cpp \
+              praat.github.io/dwtools/Resonator.cpp \
+              praat.github.io/dwtools/KlattTable.cpp \
+              praat.github.io/dwtools/KlattGrid.cpp \
+              praat.github.io/dwtools/FormantGrid_extensions.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -325,7 +329,8 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/formantgrid_module.cpp modules/formanttier_module.cpp modules/vocaltract_module.cpp modules/longsound_module.cpp modules/lpc_module.cpp \
              modules/table_module.cpp modules/textgrid_module.cpp \
              modules/manipulation_module.cpp modules/polygon_module.cpp \
-             modules/formantpath_module.cpp modules/complexspectrogram_module.cpp modules/sound_operations_module.cpp \
+             modules/formantpath_module.cpp modules/complexspectrogram_module.cpp \
+             modules/klattgrid_module.cpp modules/sound_operations_module.cpp \
              module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
