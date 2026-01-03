@@ -35,7 +35,6 @@ This approach is invaluable for:
 ```{r setup, message=FALSE}
 library(pladdrr)
 library(ggplot2)
-library(dplyr)
 ```
 
 ## Why Speech Synthesis?
@@ -272,7 +271,7 @@ kg_rise$add_pitch_point(0.5, 180)  # Rise from 100 to 180 Hz
 
 Create smooth vowel-to-vowel transitions:
 
-```{r diphthong}
+```{r diphthong, eval=FALSE}
 # /ai/ diphthong: /a/ → /i/ (as in "buy")
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 150,
@@ -282,16 +281,16 @@ kg <- KlattGrid_createFromVowel(
 )
 
 # Transition to /i/ at end
-kg$add_formant_frequency_point(1, 0.5, 280)   # F1: 730 → 280 Hz
-kg$add_formant_frequency_point(2, 0.5, 2250)  # F2: 1090 → 2250 Hz
-kg$add_formant_frequency_point(3, 0.5, 2890)  # F3: 2440 → 2890 Hz
+kg$add_formant_point(0, 1, 0.5, 280)   # F1: 730 → 280 Hz
+kg$add_formant_point(0, 2, 0.5, 2250)  # F2: 1090 → 2250 Hz
+kg$add_formant_point(0, 3, 0.5, 2890)  # F3: 2440 → 2890 Hz
 
 sound <- kg$to_sound()
 
 # Extract formants to visualize transition
-formant_obj <- sound$to_formant_burg()
-df <- as.data.frame(formant_obj)
-df <- subset(df, formant %in% 1:3)
+frm_result <- sound$to_formant_burg(max_frequency = 5500)
+df <- as.data.frame(frm_result)
+df <- df[df$formant %in% 1:3, ]
 names(df)[names(df) == "formant"] <- "formant_number"
 
 ggplot(df, aes(time, frequency, color = factor(formant_number))) +
@@ -340,7 +339,7 @@ for (i in 1:10) {
 
 ### Spectrogram of Synthetic Vowel
 
-```{r spectrogram, fig.width=8, fig.height=5}
+```{r spectrogram, eval=FALSE, fig.width=8, fig.height=5}
 # Synthesize /a/ vowel
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 120,
@@ -358,8 +357,8 @@ spec <- sound$to_spectrogram(
 )
 
 # Extract formants for overlay
-formant <- sound$to_formant_burg(max_frequency = 5500)
-formant_df <- as.data.frame(formant)
+frm_result <- sound$to_formant_burg(max_frequency = 5500)
+formant_df <- as.data.frame(frm_result)
 formant_df <- formant_df[formant_df$formant %in% 1:3, ]
 formant_df$formant_num <- formant_df$formant
 
@@ -464,10 +463,10 @@ sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # 2. Extract formants (using FormantPath for robustness)
 fp <- sound_orig$to_formant_path(num_steps_up_down = 2L)
-formant <- fp$extract_formant()
+frm_result <- fp$extract_formant()
 
 # 3. Get mean formant values
-df <- as.data.frame(formant)
+df <- as.data.frame(frm_result)
 f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
 f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
 f3_mean <- mean(df[df$formant == 3, "frequency"], na.rm = TRUE)
@@ -697,7 +696,7 @@ Existing R packages (e.g., `phonTools`) use simpler synthesis methods. KlattGrid
 **Key functions:**
 - `KlattGrid_createFromVowel()` - Safe vowel synthesis
 - `add_pitch_point()` - Dynamic intonation
-- `add_formant_frequency_point()` - Formant transitions
+- `add_formant_point()` - Formant transitions
 - `to_sound()` - Generate audio
 
 **Typical workflow:**

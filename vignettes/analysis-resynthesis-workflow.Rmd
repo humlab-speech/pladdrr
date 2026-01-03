@@ -33,7 +33,6 @@ This workflow enables powerful speech research applications:
 ```{r setup, message=FALSE}
 library(pladdrr)
 library(ggplot2)
-library(dplyr)
 ```
 
 ## Why Analysis-Resynthesis?
@@ -89,15 +88,15 @@ cat("  Ceiling range:",
     round(max(fp$get_all_ceiling_frequencies())), "Hz\n")
 
 # Extract optimal formant track
-formant <- fp$extract_formant()
-cat("  Formant frames:", formant$get_number_of_frames(), "\n")
+frm_result <- fp$extract_formant()
+cat("  Formant frames:", frm_result$get_number_of_frames(), "\n")
 ```
 
 ### Step 2: Extract Mean Formant Values
 
 ```{r extract-formants}
 # Convert to data frame for easy manipulation
-df <- as.data.frame(formant)
+df <- as.data.frame(frm_result)
 
 # Calculate mean F1, F2, F3 across all frames
 f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
@@ -163,7 +162,7 @@ df_resynth <- df_resynth[df_resynth$formant %in% 1:3, ]
 df_resynth$source <- "Resynthesized"
 
 # Combine for plotting
-df_combined <- bind_rows(df_orig, df_resynth)
+df_combined <- rbind(df_orig, df_resynth)
 df_combined$formant_num <- df_combined$formant
 
 # Plot formant tracks comparison
@@ -222,14 +221,14 @@ fp_vowel <- sound_vowel$to_formant_path(
   num_steps_up_down = 2L
 )
 
-formant_vowel <- fp_vowel$extract_formant()
+frm_result <- fp_vowel$extract_formant()
 
 # Extract values at midpoint
-mid_time <- formant_vowel$get_duration() / 2
+mid_time <- sound_vowel$get_duration() / 2
 
-f1_extracted <- formant_vowel$get_value_at_time(1, mid_time, "HERTZ")
-f2_extracted <- formant_vowel$get_value_at_time(2, mid_time, "HERTZ")
-f3_extracted <- formant_vowel$get_value_at_time(3, mid_time, "HERTZ")
+f1_extracted <- frm_result$get_value_at_time(1, mid_time, "hertz")
+f2_extracted <- frm_result$get_value_at_time(2, mid_time, "hertz")
+f3_extracted <- frm_result$get_value_at_time(3, mid_time, "hertz")
 
 cat("\nExtracted formants (at midpoint):\n")
 cat(sprintf("  F1: %.0f Hz\n", f1_extracted))
@@ -317,10 +316,10 @@ for (v_name in names(vowels)) {
   
   # Robust formant tracking
   fp <- sound$to_formant_path(num_steps_up_down = 1L)
-  formant <- fp$extract_formant()
+  frm_result <- fp$extract_formant()
   
   # Get mean formants
-  df <- as.data.frame(formant)
+  df <- as.data.frame(frm_result)
   f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
   f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
   
@@ -575,10 +574,10 @@ accuracy <- apply(test_vowels, 1, function(params) {
   
   # Analyze
   fp <- sound$to_formant_path(num_steps_up_down = 2L)
-  formant <- fp$extract_formant()
+  frm_result <- fp$extract_formant()
   
   # Compare
-  df <- as.data.frame(formant)
+  df <- as.data.frame(frm_result)
   f1_extracted <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
   f2_extracted <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
   
@@ -689,8 +688,8 @@ FormantPath dominates computation (proportional to number of candidates).
 **Typical pipeline**:
 1. Load audio: `Sound("file.wav")`
 2. Analyze: `fp <- sound$to_formant_path(num_steps_up_down=2L)`
-3. Extract: `formant <- fp$extract_formant()`
-4. Get values: `df <- as.data.frame(formant)`
+3. Extract: `frm_result <- fp$extract_formant()`
+4. Get values: `df <- as.data.frame(frm_result)`
 5. Synthesize: `kg <- KlattGrid_createFromVowel(...)`
 6. Compare: Visual/perceptual validation
 

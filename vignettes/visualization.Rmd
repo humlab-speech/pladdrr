@@ -168,9 +168,9 @@ for (i in 1:tier$get_number_of_intervals()) {
     t_mid <- (t_start + t_end) / 2
 
     formant <- sound$to_formant_burg()
-    f1 <- formant$get_value_at_time(1, t_mid, "HERTZ")
-    f2 <- formant$get_value_at_time(2, t_mid, "HERTZ")
-    f3 <- formant$get_value_at_time(3, t_mid, "HERTZ")
+    f1 <- formant$get_value_at_time(1, t_mid, "hertz")
+    f2 <- formant$get_value_at_time(2, t_mid, "hertz")
+    f3 <- formant$get_value_at_time(3, t_mid, "hertz")
 
     formant_data <- rbind(formant_data, data.frame(
       vowel = label,

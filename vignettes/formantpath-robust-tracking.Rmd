@@ -30,7 +30,6 @@ Unlike standard formant extraction (`to_formant_burg()`), FormantPath generates 
 ```{r setup, message=FALSE}
 library(pladdrr)
 library(ggplot2)
-library(dplyr)
 ```
 
 ## Why Use FormantPath?
@@ -173,17 +172,17 @@ cat("\nLowest stress: Candidate", best_idx,
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Extract the automatically selected optimal path
-formant <- fp$extract_formant()
+frm_result <- fp$extract_formant()
 
 cat("Extracted formant:\n")
-cat("  Duration:", formant$get_duration(), "seconds\n")
-cat("  Frames:", formant$get_number_of_frames(), "\n")
+cat("  Duration:", sound$get_duration(), "seconds\n")
+cat("  Frames:", frm_result$get_number_of_frames(), "\n")
 
 # Query formant values
-mid_time <- formant$get_duration() / 2
-f1 <- formant$get_value_at_time(1, mid_time, "HERTZ")
-f2 <- formant$get_value_at_time(2, mid_time, "HERTZ")
-f3 <- formant$get_value_at_time(3, mid_time, "HERTZ")
+mid_time <- sound$get_duration() / 2
+f1 <- frm_result$get_value_at_time(1, mid_time, "hertz")
+f2 <- frm_result$get_value_at_time(2, mid_time, "hertz")
+f3 <- frm_result$get_value_at_time(3, mid_time, "hertz")
 
 cat("\nFormants at midpoint (", round(mid_time, 3), "s):\n", sep = "")
 cat("  F1:", round(f1), "Hz\n")
@@ -208,7 +207,7 @@ fp$set_optimal_path(
 )
 
 # Then extract
-formant <- fp$extract_formant()
+frm_result <- fp$extract_formant()
 ```
 
 ## Visualizing FormantPath Results
@@ -218,29 +217,22 @@ formant <- fp$extract_formant()
 ```{r plot-candidates, fig.width=8, fig.height=6}
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
-# Export all candidate tracks
+# Export optimal formant track
 df <- fp$as_data_frame()
 
-# Plot F1 and F2 for all candidates
-df_plot <- df %>%
-  dplyr::filter(formant %in% 1:2)
+# Plot F1 and F2
+df_plot <- df[df$formant %in% 1:2, ]
 df_plot$formant_num <- df_plot$formant
 
-df_plot %>%
-  ggplot(aes(time, frequency, color = factor(formant_num))) +
-  geom_line(alpha = 0.7) +
-  facet_wrap(~ candidate, ncol = 3, 
-             labeller = labeller(candidate = function(x) {
-               ceiling <- round(fp$get_ceiling_frequency(as.integer(x)))
-               paste0("Candidate ", x, "\n(", ceiling, " Hz)")
-             })) +
+ggplot(df_plot, aes(time, frequency, color = factor(formant_num))) +
+  geom_line(alpha = 0.7, linewidth = 1) +
   scale_color_manual(
     values = c("1" = "#E41A1C", "2" = "#377EB8"),
     labels = c("F1", "F2")
   ) +
   labs(
-    title = "FormantPath: All Candidate Tracks",
-    subtitle = paste(fp$get_number_of_candidates(), "different ceiling frequencies"),
+    title = "FormantPath: Optimal Formant Track",
+    subtitle = paste("Selected from", fp$get_number_of_candidates(), "ceiling frequency candidates"),
     x = "Time (s)",
     y = "Frequency (Hz)",
     color = "Formant"
@@ -255,18 +247,18 @@ df_plot %>%
 # Get optimal formant from FormantPath
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 formant_optimal <- fp$extract_formant()
-df_optimal <- as.data.frame(formant_optimal) %>%
-  mutate(method = "FormantPath (Optimal)")
+df_optimal <- as.data.frame(formant_optimal)
+df_optimal$method <- "FormantPath (Optimal)"
 
 # Standard single-ceiling
 formant_standard <- sound$to_formant_burg(max_frequency = 5500)
-df_standard <- as.data.frame(formant_standard) %>%
-  mutate(method = "Standard (5500 Hz)")
+df_standard <- as.data.frame(formant_standard)
+df_standard$method <- "Standard (5500 Hz)"
 
 # Combine and plot
-bind_rows(df_optimal, df_standard) %>%
-  dplyr::filter(formant %in% 1:3) %>%
-  ggplot(aes(time, frequency, color = method)) +
+combined_df <- rbind(df_optimal, df_standard)
+combined_df <- combined_df[combined_df$formant %in% 1:3, ]
+ggplot(combined_df, aes(time, frequency, color = method)) +
   geom_line(alpha = 0.7, linewidth = 0.8) +
   facet_wrap(~ paste0("F", formant), ncol = 1, scales = "free_y") +
   scale_color_manual(values = c(
@@ -304,7 +296,7 @@ fp$path_finder(
   powerf = 1.25
 )
 
-formant <- fp$extract_formant()
+frm_result <- fp$extract_formant()
 ```
 
 **Weight meanings**:
@@ -333,7 +325,7 @@ cat("Testing range:", round(min(ceilings)), "-",
     round(max(ceilings)), "Hz\n")
 cat("Covers: Male (5000), Female (5500), Child (6500+)\n")
 
-formant <- fp$extract_formant()
+frm_result <- fp$extract_formant()
 ```
 
 ### 2. Noisy or Difficult Audio
@@ -370,10 +362,10 @@ results <- lapply(vowels, function(v) {
   
   # Robust formant tracking
   fp <- vowel_sound$to_formant_path(num_steps_up_down = 2L)
-  formant <- fp$extract_formant()
+  frm_result <- fp$extract_formant()
   
   # Get mean F1/F2
-  df <- as.data.frame(formant)
+  df <- as.data.frame(frm_result)
   list(
     vowel = v$text,
     f1 = mean(df[df$formant == 1, "frequency"], na.rm = TRUE),
@@ -426,7 +418,7 @@ FormantPath is slower than standard extraction:
 
 ```{r timing, eval=FALSE}
 # Standard: ~0.3s for 1s audio
-system.time(formant <- sound$to_formant_burg())
+system.time(frm_result <- sound$to_formant_burg())
 
 # FormantPath with 5 candidates: ~1.5s for 1s audio
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
@@ -442,7 +434,7 @@ Roughly **N× slower** where N = number of candidates.
 2. **Start with `num_steps_up_down = 2`** (5 candidates) as default
 3. **Extract the formant immediately** to save memory:
    ```r
-   formant <- sound$to_formant_path(num_steps_up_down = 2L)$extract_formant()
+   frm_result <- sound$to_formant_path(num_steps_up_down = 2L)$extract_formant()
    ```
 4. **Compare candidates visually** when results look suspicious
 5. **Use wider step fractions (0.10)** for diverse speakers
