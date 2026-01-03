@@ -1,0 +1,719 @@
+---
+title: "Speech Synthesis with KlattGrid"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Speech Synthesis with KlattGrid}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Introduction
+
+KlattGrid is pladdrr's implementation of the Klatt cascade/parallel formant synthesizer - a powerful tool for generating synthetic speech from parametric descriptions. Unlike recording or playing back audio, KlattGrid lets you **create speech from scratch** by specifying:
+
+- **Pitch contours** (fundamental frequency)
+- **Formant frequencies** (F1, F2, F3, ...)
+- **Formant bandwidths** (spectral width)
+- **Voicing amplitude** (phonation intensity)
+
+This approach is invaluable for:
+
+- Voice manipulation research
+- Perceptual experiments with controlled stimuli
+- Teaching phonetics concepts
+- Speech resynthesis with modified parameters
+
+```{r setup, message=FALSE}
+library(pladdrr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Why Speech Synthesis?
+
+### Research Applications
+
+**KlattGrid enables experiments that natural speech cannot provide:**
+
+1. **Perfect control** - Change F1 independently of F2, impossible in human speech
+2. **Parametric variation** - Generate continua (e.g., /i/ to /u/ in 10 steps)
+3. **Impossible voices** - Male formants + female pitch
+4. **Reproducibility** - Exact same stimulus across sessions
+
+### The Klatt Synthesizer
+
+Dennis Klatt's 1980 formant synthesizer remains the gold standard for parametric speech synthesis. It models the vocal tract as a cascade of resonant filters (formants) excited by a periodic source (voicing) or noise.
+
+**pladdrr provides direct R access to Praat's KlattGrid implementation.**
+
+## Basic Usage
+
+### ✅ RECOMMENDED: Pre-configured Vowels
+
+The safest way to create a KlattGrid is with `KlattGrid_createFromVowel()`:
+
+```{r basic-vowel}
+# Synthesize /a/ vowel (low central)
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5,           # 500 ms
+  f0start = 120,            # Pitch: 120 Hz (adult male)
+  f1 = 800, b1 = 80,        # First formant + bandwidth
+  f2 = 1200, b2 = 120,      # Second formant + bandwidth
+  f3 = 2500, b3 = 150       # Third formant + bandwidth
+)
+
+# Synthesize to audio
+sound <- kg$to_sound()
+
+cat("Created sound:\n")
+cat("  Duration:", sound$get_duration(), "s\n")
+cat("  Samples:", sound$get_number_of_samples(), "\n")
+cat("  Sampling rate:", sound$get_sampling_frequency(), "Hz\n")
+```
+
+### Save to File
+
+```{r save-file, eval=FALSE}
+# Save synthesized audio
+sound$save("vowel_a.wav", "WAV")
+
+# Save KlattGrid parameters
+kg$save("vowel_a.KlattGrid")
+```
+
+### ⚠️ WARNING: Avoid Empty Grids
+
+**DO NOT use the empty constructor for synthesis:**
+
+```{r empty-grid-warning, eval=FALSE}
+# ❌ THIS WILL SEGFAULT
+kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
+sound <- kg$to_sound()  # CRASH
+```
+
+**Why?** Empty grids need complete initialization:
+- Pitch tier (fundamental frequency)
+- Voicing amplitude tier (phonation)
+- All formant frequency tiers (F1, F2, F3, ...)
+- All formant bandwidth tiers (B1, B2, B3, ...)
+
+**Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()` instead.**
+
+## Vowel Synthesis
+
+### The Vowel Triangle
+
+The three corner vowels (/i/, /a/, /u/) define the vowel space:
+
+```{r vowel-triangle}
+# /i/ - high front vowel (English "beet")
+kg_i <- KlattGrid_createFromVowel(
+  duration = 0.3, f0start = 200,
+  f1 = 280, b1 = 50,
+  f2 = 2250, b2 = 100,
+  f3 = 2890, b3 = 120
+)
+
+# /a/ - low central vowel (English "father")
+kg_a <- KlattGrid_createFromVowel(
+  duration = 0.3, f0start = 200,
+  f1 = 730, b1 = 80,
+  f2 = 1090, b2 = 120,
+  f3 = 2440, b3 = 140
+)
+
+# /u/ - high back vowel (English "boot")
+kg_u <- KlattGrid_createFromVowel(
+  duration = 0.3, f0start = 200,
+  f1 = 310, b1 = 60,
+  f2 = 870, b2 = 90,
+  f3 = 2250, b3 = 140
+)
+
+# Synthesize all three
+sound_i <- kg_i$to_sound()
+sound_a <- kg_a$to_sound()
+sound_u <- kg_u$to_sound()
+
+cat("Vowel triangle synthesized:\n")
+cat("  /i/: F1=", 280, " F2=", 2250, " Hz (high front)\n", sep="")
+cat("  /a/: F1=", 730, " F2=", 1090, " Hz (low central)\n", sep="")
+cat("  /u/: F1=", 310, " F2=", 870, " Hz (high back)\n", sep="")
+```
+
+### Formant Values for Common Vowels
+
+Adult male (~120 Hz pitch):
+
+| Vowel | IPA | F1 (Hz) | F2 (Hz) | F3 (Hz) | Example Word |
+|-------|-----|---------|---------|---------|--------------|
+| beet  | /i/ | 280     | 2250    | 2890    | "beet"       |
+| bit   | /ɪ/ | 400     | 2000    | 2550    | "bit"        |
+| bait  | /e/ | 550     | 1770    | 2490    | "bait"       |
+| bet   | /ɛ/ | 660     | 1720    | 2410    | "bet"        |
+| bat   | /æ/ | 860     | 1760    | 2390    | "bat"        |
+| father| /a/ | 730     | 1090    | 2440    | "father"     |
+| bought| /ɔ/ | 570     | 840     | 2410    | "bought"     |
+| boat  | /o/ | 500     | 700     | 2410    | "boat"       |
+| book  | /ʊ/ | 440     | 1020    | 2240    | "book"       |
+| boot  | /u/ | 310     | 870     | 2250    | "boot"       |
+
+### Voice Types
+
+Different speakers require different formant and pitch values:
+
+```{r voice-types}
+# Male voice (low pitch, lower formants)
+kg_male <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 100,
+  f1 = 750, b1 = 80,
+  f2 = 1100, b2 = 120,
+  f3 = 2400, b3 = 150
+)
+
+# Female voice (higher pitch, higher formants)
+kg_female <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 220,
+  f1 = 850, b1 = 70,
+  f2 = 1300, b2 = 110,
+  f3 = 2800, b3 = 140
+)
+
+# Child voice (very high pitch)
+kg_child <- KlattGrid_createFromVowel(
+  duration = 0.4, f0start = 300,
+  f1 = 900, b1 = 60,
+  f2 = 1400, b2 = 100,
+  f3 = 3000, b3 = 130
+)
+
+cat("Pitch ranges:\n")
+cat("  Male:   80-180 Hz (typical ~100-120 Hz)\n")
+cat("  Female: 160-250 Hz (typical ~200-220 Hz)\n")
+cat("  Child:  250-400 Hz (typical ~300 Hz)\n")
+```
+
+## Pitch Contours
+
+### Dynamic Intonation
+
+Add pitch points to create dynamic intonation patterns:
+
+```{r pitch-contour}
+# Start with base vowel
+kg <- KlattGrid_createFromVowel(
+  duration = 0.6, f0start = 120,
+  f1 = 500, b1 = 50,
+  f2 = 1500, b2 = 100,
+  f3 = 2500, b3 = 150
+)
+
+# Add rising intonation (question)
+kg$add_pitch_point(0.2, 110)  # Slight dip
+kg$add_pitch_point(0.4, 105)  # Lower
+kg$add_pitch_point(0.6, 150)  # Rise at end
+
+sound <- kg$to_sound()
+pitch <- sound$to_pitch()
+
+# Visualize pitch contour
+df <- as.data.frame(pitch)
+df <- df[!is.na(df$frequency), ]
+
+ggplot(df, aes(time, frequency)) +
+  geom_line(color = "#E41A1C", linewidth = 1) +
+  geom_point(color = "#E41A1C", size = 2, alpha = 0.5) +
+  labs(
+    title = "Question Intonation Pattern",
+    subtitle = "Rising pitch contour: 120 → 105 → 150 Hz",
+    x = "Time (s)",
+    y = "Frequency (Hz)"
+  ) +
+  theme_minimal()
+```
+
+### Common Pitch Patterns
+
+```{r pitch-patterns, eval=FALSE}
+# Flat pitch (citation form)
+kg_flat <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 120,
+  f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
+)
+# No additional points needed
+
+# Falling pitch (statement)
+kg_fall <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 150,
+  f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
+)
+kg_fall$add_pitch_point(0.5, 100)  # Fall from 150 to 100 Hz
+
+# Rising pitch (question)
+kg_rise <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 100,
+  f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
+)
+kg_rise$add_pitch_point(0.5, 180)  # Rise from 100 to 180 Hz
+```
+
+## Formant Transitions
+
+### Diphthongs
+
+Create smooth vowel-to-vowel transitions:
+
+```{r diphthong}
+# /ai/ diphthong: /a/ → /i/ (as in "buy")
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 150,
+  f1 = 730, b1 = 80,      # Start: /a/
+  f2 = 1090, b2 = 120,
+  f3 = 2440, b3 = 140
+)
+
+# Transition to /i/ at end
+kg$add_formant_frequency_point(1, 0.5, 280)   # F1: 730 → 280 Hz
+kg$add_formant_frequency_point(2, 0.5, 2250)  # F2: 1090 → 2250 Hz
+kg$add_formant_frequency_point(3, 0.5, 2890)  # F3: 2440 → 2890 Hz
+
+sound <- kg$to_sound()
+
+# Extract formants to visualize transition
+formant <- sound$to_formant_burg()
+df <- as.data.frame(formant) %>%
+  filter(formant %in% 1:3)
+
+ggplot(df, aes(time, frequency, color = factor(formant))) +
+  geom_line(linewidth = 1, alpha = 0.8) +
+  scale_color_manual(
+    values = c("1" = "#E41A1C", "2" = "#377EB8", "3" = "#4DAF4A"),
+    labels = c("F1", "F2", "F3")
+  ) +
+  labs(
+    title = "Diphthong /ai/ Formant Transitions",
+    subtitle = "/a/ → /i/ transition over 500 ms",
+    x = "Time (s)",
+    y = "Frequency (Hz)",
+    color = "Formant"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+### Vowel Continuum
+
+Generate perceptual continua for experiments:
+
+```{r vowel-continuum, eval=FALSE}
+# Create /i/ to /u/ continuum (10 steps)
+f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) → 310 (/u/)
+f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 → 870
+
+vowel_continuum <- lapply(1:10, function(i) {
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.3, f0start = 200,
+    f1 = f1_seq[i], b1 = 50,
+    f2 = f2_seq[i], b2 = 100,
+    f3 = 2500, b3 = 150
+  )
+  kg$to_sound()
+})
+
+# Save each step
+for (i in 1:10) {
+  vowel_continuum[[i]]$save(sprintf("continuum_%02d.wav", i), "WAV")
+}
+```
+
+## Visualizing Synthesis
+
+### Spectrogram of Synthetic Vowel
+
+```{r spectrogram, fig.width=8, fig.height=5}
+# Synthesize /a/ vowel
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 120,
+  f1 = 730, b1 = 80,
+  f2 = 1090, b2 = 120,
+  f3 = 2440, b3 = 140
+)
+
+sound <- kg$to_sound()
+
+# Create spectrogram
+spec <- sound$to_spectrogram(
+  window_length = 0.005,
+  maximum_frequency = 5000
+)
+
+# Extract formants for overlay
+formant <- sound$to_formant_burg(formant_ceiling = 5500)
+formant_df <- as.data.frame(formant) %>%
+  filter(formant %in% 1:3)
+
+# Plot
+autoplot(spec) +
+  geom_line(
+    data = formant_df,
+    aes(time, frequency, color = factor(formant)),
+    linewidth = 1.5, alpha = 0.8
+  ) +
+  scale_color_manual(
+    values = c("1" = "red", "2" = "yellow", "3" = "white"),
+    labels = c("F1", "F2", "F3")
+  ) +
+  labs(
+    title = "Synthetic /a/ Vowel Spectrogram",
+    subtitle = "F1=730, F2=1090, F3=2440 Hz (male voice, 120 Hz pitch)",
+    color = "Formant"
+  ) +
+  theme(legend.position = "right")
+```
+
+### Comparing Real vs Synthetic
+
+```{r compare-real-synthetic, fig.width=8, fig.height=6}
+# Load real speech
+sound_real <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# Extract mean formants from real speech
+formant_real <- sound_real$to_formant_burg()
+df_real <- as.data.frame(formant_real)
+
+f1_mean <- mean(df_real[df_real$formant == 1, "frequency"], na.rm = TRUE)
+f2_mean <- mean(df_real[df_real$formant == 2, "frequency"], na.rm = TRUE)
+f3_mean <- mean(df_real[df_real$formant == 3, "frequency"], na.rm = TRUE)
+
+cat("Extracted formants from real speech:\n")
+cat(sprintf("  F1: %.0f Hz\n", f1_mean))
+cat(sprintf("  F2: %.0f Hz\n", f2_mean))
+cat(sprintf("  F3: %.0f Hz\n", f3_mean))
+
+# Resynthesize with extracted formants
+kg_synth <- KlattGrid_createFromVowel(
+  duration = min(sound_real$get_duration(), 1.0),
+  f0start = 120,
+  f1 = f1_mean, b1 = 80,
+  f2 = f2_mean, b2 = 120,
+  f3 = f3_mean, b3 = 150
+)
+
+sound_synth <- kg_synth$to_sound()
+
+# Compare spectrograms side-by-side
+spec_real <- sound_real$to_spectrogram(maximum_frequency = 5000)
+spec_synth <- sound_synth$to_spectrogram(maximum_frequency = 5000)
+
+cat("\nSynthetic sound matches real speech formant averages\n")
+```
+
+## Advanced Features
+
+### Voice Quality Control
+
+Manipulate voicing amplitude for breathiness or creaky voice:
+
+```{r voice-quality, eval=FALSE}
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 120,
+  f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
+)
+
+# Add breathiness (fade voicing)
+kg$add_voicing_amplitude_point(0.0, 60)  # Start normal
+kg$add_voicing_amplitude_point(0.5, 30)  # End breathy
+
+sound <- kg$to_sound()
+```
+
+### Complex Synthesis Example
+
+Use the pre-configured example for complex synthesis:
+
+```{r complex-example}
+# Pre-configured grid with multiple tiers
+kg_complex <- KlattGrid_createExample()
+
+# Synthesize full signal
+sound_complex <- kg_complex$to_sound()
+
+cat("Complex KlattGrid example:\n")
+cat("  Duration:", sound_complex$get_duration(), "s\n")
+cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
+```
+
+## Analysis → Synthesis Workflow
+
+### Complete Pipeline
+
+```{r analysis-synthesis-workflow}
+# 1. Load real speech
+sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# 2. Extract formants (using FormantPath for robustness)
+fp <- sound_orig$to_formant_path(num_steps_up_down = 2L)
+formant <- fp$extract_formant()
+
+# 3. Get mean formant values
+df <- as.data.frame(formant)
+f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
+f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+f3_mean <- mean(df[df$formant == 3, "frequency"], na.rm = TRUE)
+
+# 4. Extract pitch
+pitch <- sound_orig$to_pitch()
+f0_mean <- mean(as.data.frame(pitch)$frequency, na.rm = TRUE)
+
+cat("Extracted parameters:\n")
+cat(sprintf("  F0: %.0f Hz\n", f0_mean))
+cat(sprintf("  F1: %.0f Hz\n", f1_mean))
+cat(sprintf("  F2: %.0f Hz\n", f2_mean))
+cat(sprintf("  F3: %.0f Hz\n", f3_mean))
+
+# 5. Resynthesize
+kg_resynth <- KlattGrid_createFromVowel(
+  duration = min(sound_orig$get_duration(), 1.0),
+  f0start = f0_mean,
+  f1 = f1_mean, b1 = 80,
+  f2 = f2_mean, b2 = 120,
+  f3 = f3_mean, b3 = 150
+)
+
+sound_resynth <- kg_resynth$to_sound()
+
+cat("\nResynthesis complete - compare original vs synthetic\n")
+```
+
+## Use Cases
+
+### 1. Perceptual Experiments
+
+Control stimuli precisely for categorical perception studies:
+
+```{r perceptual-experiment, eval=FALSE}
+# Voice onset time (VOT) continuum simulation
+# Generate /ba/ to /pa/ continuum by manipulating voice onset
+
+vot_values <- seq(0, 60, by = 10)  # 0-60 ms VOT
+
+stimuli <- lapply(vot_values, function(vot_ms) {
+  # Voicing delay = VOT
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.5, f0start = 120,
+    f1 = 730, b1 = 80, f2 = 1090, b2 = 120, f3 = 2440, b3 = 140
+  )
+  
+  # Manipulate voicing onset (simplified)
+  if (vot_ms > 0) {
+    kg$add_voicing_amplitude_point(0, 0)
+    kg$add_voicing_amplitude_point(vot_ms / 1000, 60)
+  }
+  
+  kg$to_sound()
+})
+```
+
+### 2. Voice Morphing
+
+Create intermediate voices between two speakers:
+
+```{r voice-morphing, eval=FALSE}
+# Male voice parameters
+f1_male <- 730
+f2_male <- 1090
+f0_male <- 100
+
+# Female voice parameters
+f1_female <- 850
+f2_female <- 1300
+f0_female <- 220
+
+# Morph continuum (10 steps)
+morph_steps <- seq(0, 1, length.out = 10)
+
+morphed_voices <- lapply(morph_steps, function(alpha) {
+  # Linear interpolation
+  f1 <- f1_male + alpha * (f1_female - f1_male)
+  f2 <- f2_male + alpha * (f2_female - f2_male)
+  f0 <- f0_male + alpha * (f0_female - f0_male)
+  
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.5, f0start = f0,
+    f1 = f1, b1 = 80, f2 = f2, b2 = 120, f3 = 2500, b3 = 150
+  )
+  
+  kg$to_sound()
+})
+```
+
+### 3. Teaching Phonetics
+
+Demonstrate formant-vowel relationships interactively:
+
+```{r teaching-demo, eval=FALSE}
+# Function to synthesize any vowel from F1/F2
+synthesize_vowel <- function(f1, f2, label = "") {
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.5, f0start = 120,
+    f1 = f1, b1 = 80, f2 = f2, b2 = 120, f3 = 2500, b3 = 150
+  )
+  
+  sound <- kg$to_sound()
+  filename <- sprintf("vowel_%s_F1%d_F2%d.wav", label, f1, f2)
+  sound$save(filename, "WAV")
+  
+  cat(sprintf("Created %s: F1=%d, F2=%d Hz\n", label, f1, f2))
+}
+
+# Generate examples
+synthesize_vowel(280, 2250, "i")
+synthesize_vowel(730, 1090, "a")
+synthesize_vowel(310, 870, "u")
+```
+
+## Known Limitations
+
+### 1. Empty Grid Segfault
+
+**Issue**: Direct synthesis from empty `KlattGrid()` crashes
+
+**Workaround**: Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()`
+
+**Example of SAFE usage:**
+```{r safe-usage, eval=FALSE}
+# ✓ SAFE
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 120,
+  f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
+)
+
+# ✓ SAFE
+kg <- KlattGrid_createExample()
+
+# ✗ UNSAFE - will crash
+kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
+sound <- kg$to_sound()  # SEGFAULT
+```
+
+### 2. Limited Tier Manipulation
+
+**Current limitations:**
+- Cannot query tier contents directly
+- Cannot remove points after adding
+- No direct formant amplitude control
+
+**Best practice:** Create new grid with desired parameters rather than modifying existing grid
+
+### 3. Formant Constraints
+
+**Physical constraints that must be maintained:**
+- F1 < F2 < F3 (formants increase monotonically)
+- Bandwidths > 0 Hz (zero bandwidth causes artifacts)
+- Pitch in range 50-400 Hz (outside this sounds unnatural)
+
+## Best Practices
+
+### ✓ DO
+
+1. **Always use `KlattGrid_createFromVowel()`** for vowel synthesis
+2. **Start with known formant values** from the reference table
+3. **Adjust formants gradually** (±50-100 Hz steps)
+4. **Keep bandwidths proportional**: B1 < B2 < B3 (typically 50-80-120 Hz)
+5. **Match pitch to speaker type**: male ~100-120 Hz, female ~200-220 Hz
+6. **Test with short durations** (0.3-0.5s) before scaling up
+7. **Export to WAV** for analysis in other tools
+
+### ✗ DON'T
+
+1. **Don't use empty `KlattGrid()` constructor** (segfault risk)
+2. **Don't violate F1 < F2 < F3** (unnatural synthesis)
+3. **Don't use zero bandwidth** (causes artifacts)
+4. **Don't expect consonant synthesis** (formants only, no articulation model)
+5. **Don't modify existing grids** (create new ones instead)
+
+## Troubleshooting
+
+### Segfault on `to_sound()`
+
+**Cause**: Incomplete grid initialization
+
+**Solution**: Use `KlattGrid_createFromVowel()` instead of empty grid
+
+### Unnatural sounding synthesis
+
+**Cause**: Formant values out of range or wrong bandwidths
+
+**Solution**: 
+- Check F1 < F2 < F3 relationship
+- Use bandwidth ratio B1:B2:B3 ≈ 1:1.5:2
+- Verify pitch is in 80-300 Hz range
+
+### No sound output
+
+**Cause**: Voicing amplitude too low or pitch out of range
+
+**Solution**: Ensure `f0start` is 80-300 Hz and voicing amplitude > 40 dB
+
+## Comparison with Other Tools
+
+### pladdrr vs Praat GUI
+
+| Feature | pladdrr KlattGrid | Praat GUI |
+|---------|-------------------|-----------|
+| Vowel synthesis | ✅ `createFromVowel()` | ✅ Manual setup |
+| Pitch contours | ✅ `add_pitch_point()` | ✅ PitchTier editor |
+| Batch synthesis | ✅ R loops | ❌ Manual |
+| Parametric experiments | ✅ Easy continua | ❌ Tedious |
+| Visualization | ✅ ggplot2 | ✅ Built-in |
+
+### vs Parselmouth
+
+Parselmouth does not currently expose KlattGrid - pladdrr is the only R package with direct Klatt synthesis support.
+
+### vs Other R Synthesis
+
+Existing R packages (e.g., `phonTools`) use simpler synthesis methods. KlattGrid provides research-grade formant synthesis matching Praat's quality.
+
+## Summary
+
+**KlattGrid is ideal for:**
+- Perceptual experiments requiring controlled stimuli
+- Voice manipulation research
+- Teaching phonetic concepts
+- Speech resynthesis with modified parameters
+
+**Key functions:**
+- `KlattGrid_createFromVowel()` - Safe vowel synthesis
+- `add_pitch_point()` - Dynamic intonation
+- `add_formant_frequency_point()` - Formant transitions
+- `to_sound()` - Generate audio
+
+**Typical workflow:**
+1. Define formant parameters (F1/F2/F3, B1/B2/B3)
+2. Set pitch contour (f0start + optional points)
+3. Create grid with `createFromVowel()`
+4. Synthesize with `to_sound()`
+5. Analyze or export
+
+## Further Reading
+
+- Klatt, D. H. (1980). "Software for a cascade/parallel formant synthesizer". *JASA*, 67(3), 971-995.
+- Praat manual: [KlattGrid](http://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
+- pladdrr documentation: `?KlattGrid_createFromVowel`
+- See also: `vignette("formantpath-robust-tracking")` for formant extraction
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```
