@@ -1,3 +1,42 @@
+# pladdrr 2.0.1 (2026-01-03)
+
+## Bug Fixes
+
+### Vignette Build Errors (Critical)
+* Fixed all v2.0.0 vignette compilation errors
+* **Root causes**:
+  - Removed `library(dplyr)` causing `$` operator conflicts (3 vignettes)
+  - Renamed `formant` variable → `frm_result` to avoid namespace conflicts
+  - Fixed Formant API: use `sound$get_duration()` not `formant$get_duration()`
+  - Fixed parameter case sensitivity: `"HERTZ"` → `"hertz"`
+  - Fixed KlattGrid API: `add_formant_point(formantType, iformant, t, value)`
+  - Corrected FormantPath parameter names (`max_num_formants`, `formant_ceiling`)
+  - Removed candidate faceting (API limitation)
+  - Replaced `bind_rows()` with `rbind()` (base R)
+* **Result**: All vignettes build successfully
+* **Files**: `formantpath-robust-tracking.Rmd`, `analysis-resynthesis-workflow.Rmd`, 
+  `speech-synthesis-klattgrid.Rmd`, `visualization.Rmd`
+* **Commits**: 5d005db, 251143e, 7bd4a44, 7392bc6
+
+### SIMD Jitter/Shimmer Removal (Praat Fidelity)
+* Removed SIMD voice quality implementation due to algorithmic differences
+* **Issue**: SIMD version missing period filtering logic from Praat
+  - No filtering by `pmin`/`pmax` duration bounds
+  - No `maximumPeriodFactor` interval ratio checking
+  - Resulted in 0.1-100%+ output differences (voice quality dependent)
+* **Verification**: SIMD functions were never used (package always called Praat directly)
+* **Retained**: All 17 Praat-native jitter/shimmer wrappers in `pointprocess_wrappers.cpp`
+* **Technical details**: `.planning/SIMD_JITTER_ACCURACY_ASSESSMENT.md`
+* **Rationale**: `.planning/SIMD_JITTER_REMOVAL_RATIONALE.md`
+* **Files removed**: `src/voice_quality_simd.cpp`, 3 man pages
+* **Commit**: 16f1f76
+
+## Documentation
+* Added comprehensive SIMD jitter analysis (`.planning/SIMD_JITTER_ACCURACY_ASSESSMENT.md`)
+* Added removal rationale document (`.planning/SIMD_JITTER_REMOVAL_RATIONALE.md`)
+
+---
+
 # pladdrr 2.0.0 (2026-01-03) 🎉
 
 ## Major Release - Phase 2 & 3 Complete

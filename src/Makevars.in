@@ -314,7 +314,7 @@ SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
            num_matrix_simd.cpp num_filtering_simd.cpp \
            num_distance_simd.cpp sound_convolution_simd.cpp \
            pitch_processing_simd.cpp simd_info.cpp \
-           voice_quality_simd.cpp sound_zerocopy.cpp
+           sound_zerocopy.cpp
 
 # Rcpp Module sources (pladdrr 2.0 architecture)
 MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_module.cpp \
