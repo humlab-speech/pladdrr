@@ -2729,28 +2729,6 @@ praat_error_to_r <- function(error_msg) {
     .Call(`_pladdrr_vocaltract_to_matrix`, xptr)
 }
 
-#' Compute jitter metrics from period array (SIMD-optimized)
-#' @param periods Numeric vector of period durations
-#' @return List with jitter_local, jitter_local_absolute, jitter_rap, jitter_ppq5, jitter_ddp
-.jitter_from_periods_simd <- function(periods) {
-    .Call(`_pladdrr_jitter_from_periods_simd`, periods)
-}
-
-#' Compute shimmer metrics from amplitude array (SIMD-optimized)
-#' @param amplitudes Numeric vector of peak amplitudes per period
-#' @return List with shimmer_local, shimmer_local_db, shimmer_apq3, shimmer_apq5, shimmer_apq11, shimmer_dda
-.shimmer_from_amplitudes_simd <- function(amplitudes) {
-    .Call(`_pladdrr_shimmer_from_amplitudes_simd`, amplitudes)
-}
-
-#' Compute complete voice quality metrics from periods and amplitudes
-#' @param periods Numeric vector of period durations
-#' @param amplitudes Numeric vector of peak amplitudes per period
-#' @return List with all jitter and shimmer metrics
-.voice_quality_metrics_simd <- function(periods, amplitudes) {
-    .Call(`_pladdrr_voice_quality_metrics_simd`, periods, amplitudes)
-}
-
 .apply_hamming_window_simd <- function(data) {
     .Call(`_pladdrr_apply_hamming_window_simd`, data)
 }

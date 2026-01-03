@@ -8728,40 +8728,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// jitter_from_periods_simd
-List jitter_from_periods_simd(NumericVector periods);
-RcppExport SEXP _pladdrr_jitter_from_periods_simd(SEXP periodsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type periods(periodsSEXP);
-    rcpp_result_gen = Rcpp::wrap(jitter_from_periods_simd(periods));
-    return rcpp_result_gen;
-END_RCPP
-}
-// shimmer_from_amplitudes_simd
-List shimmer_from_amplitudes_simd(NumericVector amplitudes);
-RcppExport SEXP _pladdrr_shimmer_from_amplitudes_simd(SEXP amplitudesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type amplitudes(amplitudesSEXP);
-    rcpp_result_gen = Rcpp::wrap(shimmer_from_amplitudes_simd(amplitudes));
-    return rcpp_result_gen;
-END_RCPP
-}
-// voice_quality_metrics_simd
-List voice_quality_metrics_simd(NumericVector periods, NumericVector amplitudes);
-RcppExport SEXP _pladdrr_voice_quality_metrics_simd(SEXP periodsSEXP, SEXP amplitudesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type periods(periodsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type amplitudes(amplitudesSEXP);
-    rcpp_result_gen = Rcpp::wrap(voice_quality_metrics_simd(periods, amplitudes));
-    return rcpp_result_gen;
-END_RCPP
-}
 // apply_hamming_window_simd
 NumericVector apply_hamming_window_simd(NumericVector data);
 RcppExport SEXP _pladdrr_apply_hamming_window_simd(SEXP dataSEXP) {
@@ -9591,9 +9557,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_vocaltract_set_areas", (DL_FUNC) &_pladdrr_vocaltract_set_areas, 2},
     {"_pladdrr_vocaltract_to_spectrum", (DL_FUNC) &_pladdrr_vocaltract_to_spectrum, 6},
     {"_pladdrr_vocaltract_to_matrix", (DL_FUNC) &_pladdrr_vocaltract_to_matrix, 1},
-    {"_pladdrr_jitter_from_periods_simd", (DL_FUNC) &_pladdrr_jitter_from_periods_simd, 1},
-    {"_pladdrr_shimmer_from_amplitudes_simd", (DL_FUNC) &_pladdrr_shimmer_from_amplitudes_simd, 1},
-    {"_pladdrr_voice_quality_metrics_simd", (DL_FUNC) &_pladdrr_voice_quality_metrics_simd, 2},
     {"_pladdrr_apply_hamming_window_simd", (DL_FUNC) &_pladdrr_apply_hamming_window_simd, 1},
     {"_pladdrr_apply_hanning_window_simd", (DL_FUNC) &_pladdrr_apply_hanning_window_simd, 1},
     {"_pladdrr_apply_gaussian_window_simd", (DL_FUNC) &_pladdrr_apply_gaussian_window_simd, 2},
