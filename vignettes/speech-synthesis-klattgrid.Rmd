@@ -289,11 +289,12 @@ kg$add_formant_frequency_point(3, 0.5, 2890)  # F3: 2440 → 2890 Hz
 sound <- kg$to_sound()
 
 # Extract formants to visualize transition
-formant <- sound$to_formant_burg()
-df <- as.data.frame(formant)
-df <- df[df$formant %in% 1:3, ]
+formant_obj <- sound$to_formant_burg()
+df <- as.data.frame(formant_obj)
+df <- subset(df, formant %in% 1:3)
+names(df)[names(df) == "formant"] <- "formant_number"
 
-ggplot(df, aes(time, frequency, color = factor(formant))) +
+ggplot(df, aes(time, frequency, color = factor(formant_number))) +
   geom_line(linewidth = 1, alpha = 0.8) +
   scale_color_manual(
     values = c("1" = "#E41A1C", "2" = "#377EB8", "3" = "#4DAF4A"),
@@ -360,12 +361,13 @@ spec <- sound$to_spectrogram(
 formant <- sound$to_formant_burg(max_frequency = 5500)
 formant_df <- as.data.frame(formant)
 formant_df <- formant_df[formant_df$formant %in% 1:3, ]
+formant_df$formant_num <- formant_df$formant
 
 # Plot
 autoplot(spec) +
   geom_line(
     data = formant_df,
-    aes(time, frequency, color = factor(formant)),
+    aes(time, frequency, color = factor(formant_num)),
     linewidth = 1.5, alpha = 0.8
   ) +
   scale_color_manual(

@@ -222,9 +222,12 @@ fp <- sound$to_formant_path(num_steps_up_down = 2L)
 df <- fp$as_data_frame()
 
 # Plot F1 and F2 for all candidates
-df %>%
-  dplyr::filter(formant %in% 1:2) %>%
-  ggplot(aes(time, frequency, color = factor(formant))) +
+df_plot <- df %>%
+  dplyr::filter(formant %in% 1:2)
+df_plot$formant_num <- df_plot$formant
+
+df_plot %>%
+  ggplot(aes(time, frequency, color = factor(formant_num))) +
   geom_line(alpha = 0.7) +
   facet_wrap(~ candidate, ncol = 3, 
              labeller = labeller(candidate = function(x) {

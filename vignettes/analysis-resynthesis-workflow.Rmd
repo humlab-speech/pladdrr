@@ -164,9 +164,10 @@ df_resynth$source <- "Resynthesized"
 
 # Combine for plotting
 df_combined <- bind_rows(df_orig, df_resynth)
+df_combined$formant_num <- df_combined$formant
 
 # Plot formant tracks comparison
-ggplot(df_combined, aes(time, frequency, color = factor(formant))) +
+ggplot(df_combined, aes(time, frequency, color = factor(formant_num))) +
   geom_line(alpha = 0.7, linewidth = 0.8) +
   facet_wrap(~ source, ncol = 1) +
   scale_color_manual(
