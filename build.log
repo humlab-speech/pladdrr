@@ -68,7 +68,7 @@ unused arguments (max_formants = 5, max_frequency = 5500)
 
 --- re-building ‘speech-synthesis-klattgrid.Rmd’ using rmarkdown
 
-Quitting from speech-synthesis-klattgrid.Rmd:275-311 [diphthong]
+Quitting from speech-synthesis-klattgrid.Rmd:275-312 [diphthong]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <error/rlang_error>
 Error:

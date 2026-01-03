@@ -61,8 +61,8 @@ formant_standard <- sound$to_formant_burg(
 # FormantPath (multiple ceilings)
 formant_path <- sound$to_formant_path(
   time_step = 0.005,
-  max_formants = 5,
-  max_frequency = 5500,
+  max_num_formants = 5,
+  formant_ceiling = 5500,
   num_steps_up_down = 2L  # Test 5 ceilings: ±10% around 5500 Hz
 )
 
@@ -87,8 +87,8 @@ The key parameter is `num_steps_up_down` - how many ceiling values to test above
 # Test 3 ceilings (±5% around 5500 Hz)
 fp <- sound$to_formant_path(
   time_step = 0.005,
-  max_formants = 5,
-  max_frequency = 5500,           # Center frequency
+  max_num_formants = 5,
+  formant_ceiling = 5500,           # Center frequency
   ceiling_step_fraction = 0.05,     # ±5% steps
   num_steps_up_down = 1L            # 1 step up, 1 down = 3 total
 )
@@ -486,14 +486,14 @@ Parselmouth does not currently expose FormantPath - only standard `to_formant()`
 ```{r troubleshoot-similar, eval=FALSE}
 # Instead of this (too narrow)
 fp <- sound$to_formant_path(
-  max_frequency = 5500,
+  formant_ceiling = 5500,
   ceiling_step_fraction = 0.02,  # ±2% only
   num_steps_up_down = 2L
 )
 
 # Use this (better range)
 fp <- sound$to_formant_path(
-  max_frequency = 5500,
+  formant_ceiling = 5500,
   ceiling_step_fraction = 0.10,  # ±10%
   num_steps_up_down = 2L
 )
@@ -503,12 +503,12 @@ fp <- sound$to_formant_path(
 
 **Cause**: No candidate had valid formants at those frames
 
-**Solution**: Increase `max_formants` or adjust `max_frequency`
+**Solution**: Increase `max_num_formants` or adjust `formant_ceiling`
 
 ```{r troubleshoot-gaps, eval=FALSE}
 fp <- sound$to_formant_path(
-  max_formants = 6,  # Instead of 5
-  max_frequency = 5500,
+  max_num_formants = 6,  # Instead of 5
+  formant_ceiling = 5500,
   num_steps_up_down = 2L
 )
 ```
@@ -522,7 +522,7 @@ fp <- sound$to_formant_path(
 fp <- sound$to_formant_path(
   time_step = 0.010,         # Instead of 0.005
   num_steps_up_down = 1L,    # 3 candidates instead of 5
-  max_frequency = 5500
+  formant_ceiling = 5500
 )
 ```
 
@@ -541,7 +541,7 @@ fp <- sound$to_formant_path(
 - Memory is limited
 
 **Key Parameters**:
-- `max_frequency`: Center frequency (5000-5500 for adults)
+- `formant_ceiling`: Center frequency (5000-5500 for adults)
 - `num_steps_up_down`: 1-2 for most cases, 3-4 for difficult audio
 - `ceiling_step_fraction`: 0.05 (narrow) to 0.10 (wide)
 

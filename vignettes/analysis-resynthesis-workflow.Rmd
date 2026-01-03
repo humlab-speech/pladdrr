@@ -77,8 +77,8 @@ cat("  Samples:", sound_orig$get_number_of_samples(), "\n")
 # Extract formants with FormantPath (robust multi-ceiling)
 fp <- sound_orig$to_formant_path(
   time_step = 0.005,
-  max_formants = 5,
-  max_frequency = 5500,
+  max_num_formants = 5,
+  formant_ceiling = 5500,
   num_steps_up_down = 2L  # Test 5 different ceilings
 )
 
