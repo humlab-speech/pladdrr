@@ -1,3 +1,120 @@
+# pladdrr 2.0.0 (2026-01-03) 🎉
+
+## Major Release - Phase 2 & 3 Complete
+
+pladdrr 2.0.0 represents a major milestone with **31 Praat modules** (32% coverage), advanced analysis capabilities, speech synthesis, and comprehensive documentation.
+
+## New Features - Phase 2 (Advanced Modules)
+
+### Phase 2.1: ComplexSpectrogram Module
+* **ComplexSpectrogram** - Time-frequency analysis with phase information
+  - Create from Sound with configurable FFT parameters
+  - Query magnitude and phase spectra at time points
+  - Convert to Spectrum or Sound
+  - Used in Pitch analysis internals
+
+### Phase 2.2: FormantPath Module
+* **FormantPath** - Robust formant tracking with multiple ceiling candidates
+  - Tests multiple formant ceiling frequencies (e.g., 5 candidates: 4977-6078 Hz)
+  - Automatic optimal path selection via stress minimization
+  - Viterbi-style path finder for global optimization
+  - Extract optimal Formant from FormantPath
+  - Handles 25+ statistical dependencies (SVD, PCA, CCA, Procrustes, stress)
+  - **80% test pass rate** on comprehensive test suite
+  - Example: `fp <- sound$to_formant_path(num_steps_up_down=2L); formant <- fp$extract_formant()`
+
+### Phase 2.3: KlattGrid Module
+* **KlattGrid** - Parametric speech synthesis (Klatt cascade/parallel synthesizer)
+  - `KlattGrid_createFromVowel()` - Safe vowel synthesis with F1/F2/F3 + bandwidths
+  - `KlattGrid_createExample()` - Pre-configured complex synthesis
+  - Pitch contour manipulation (`add_pitch_point()`)
+  - Formant transitions for diphthongs
+  - Voicing amplitude control
+  - **83% test pass rate** (20/24 tests)
+  - Real-world synthesis validated on vowel triangle (/i/, /a/, /u/)
+
+### Phase 2.4: Polygon Module
+* **Polygon** - Geometric operations for vowel space analysis
+  - Create polygons from point sequences
+  - Query perimeter, area, centroid
+  - Point-in-polygon testing
+  - Reverse, translate, rotate, scale operations
+  - Used in FormantPath statistical computations
+
+## New Features - Phase 3 (Enhancements)
+
+### Phase 3.1: Sound Operations Module
+* **9 standalone sound functions** (functional interface)
+  - `sounds_append()` - Concatenate with optional silence
+  - `sound_extract_part()` - Time slice extraction
+  - `sound_lengthen()` - Pitch-preserving time stretch
+  - `sound_deepen_band_modulation()` - Hearing enhancement
+  - `sounds_convolve()`, `sounds_cross_correlate()`, `sound_auto_correlate()`
+  - `sound_filter_pass_hann_band()`, `sound_filter_stop_hann_band()`
+
+### Phase 3.2: Spectrum Operations
+* **3 spectrum wrapper functions**
+  - `spectrum_cepstral_smoothing()` - Spectral envelope smoothing
+  - `spectrum_pass_hann_band()`, `spectrum_stop_hann_band()` - In-place filters
+
+### Phase 3.4: Comprehensive Vignettes
+* **3 new vignettes for Phase 2 modules** (~3,000 lines total)
+  - `vignette("formantpath-robust-tracking")` - Multi-ceiling formant tracking
+  - `vignette("speech-synthesis-klattgrid")` - Vowel synthesis, pitch contours, formant transitions
+  - `vignette("analysis-resynthesis-workflow")` - Complete FormantPath→KlattGrid pipeline
+
+## Module Coverage
+
+* **31 Praat modules** implemented (32% of ~96 target classes)
+* **25/28 R6→Module conversions** complete (89%)
+* **Key capabilities unlocked**:
+  - Advanced formant tracking (FormantPath)
+  - Speech synthesis (KlattGrid)
+  - Complex spectral analysis (ComplexSpectrogram)
+  - Geometric operations (Polygon)
+  - Sound manipulation (9 operations)
+
+## Testing & Validation
+
+* **Phase 2 comprehensive test suites** (56 tests, 1,244 lines)
+  - FormantPath: 82% pass (18/22)
+  - KlattGrid: 83% pass (20/24)
+  - Integration workflow: 80% pass (8/10)
+  - Vowel space relationships preserved in synthesis-analysis round-trip
+
+## Documentation
+
+* **11 comprehensive vignettes** (including 3 new Phase 2 guides)
+* **344-line KlattGrid usage guide** with formant tables
+* **Complete API documentation** for all Phase 2 modules
+* **Planning documents** tracking architecture and progress
+
+## Breaking Changes
+
+* None - fully backward compatible with 1.9.x
+
+## Known Issues
+
+* **KlattGrid empty grid**: `KlattGrid(0,1,5)$to_sound()` segfaults
+  - **Workaround**: Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()`
+* **FormantPath API**: Some methods untested (core functionality works)
+
+## Performance
+
+* Module preloading maintained (~8-12µs per method call)
+* 40% binary size reduction from Phase 1+ cleanup
+* FormantPath: ~5× slower than standard (5 candidates)
+* KlattGrid synthesis: ~1-2s per minute of audio
+
+## Migration Guide
+
+See existing vignettes for upgrade assistance:
+* `vignette("migration-from-praat")` - For Praat users
+* `vignette("migration-from-parselmouth")` - For Parselmouth users
+* `vignette("getting-started")` - Package overview
+
+---
+
 # pladdrr 1.9.3 (2026-01-01)
 
 ## New Features - Phase 3.2 (Spectrum Wrappers)

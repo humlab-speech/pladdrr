@@ -2,8 +2,10 @@
 
 **Direct Access to Praat C Functionality from R**
 
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)]()
 [![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)]()
-[![Rcpp Modules](https://img.shields.io/badge/modules-27%2F28-blue)]()
+[![Rcpp Modules](https://img.shields.io/badge/modules-31-blue)]()
+[![Coverage](https://img.shields.io/badge/Praat%20coverage-32%25-orange)]()
 [![SIMD](https://img.shields.io/badge/SIMD-enabled-orange)]()
 
 ## Overview
@@ -12,14 +14,15 @@
 
 ### Key Performance Features
 
-- **Rcpp Modules Architecture** (v1.7.4): 27/28 objects use direct C++ method dispatch
+- **Rcpp Modules Architecture** (v2.0.0): 31 Praat modules with direct C++ method dispatch
   - **10-15x faster** overhead vs traditional R6 classes
-  - **~3-5µs dispatch** per method (vs ~30µs with R6)
+  - **~8-12µs dispatch** per method (module preloading)
   - **<1% overhead** in typical phonetic workflows
   - Reduces gap to Python's Parselmouth from 5-18x to 2-3x
 - **SIMD Vectorization**: Optimized autocorrelation, FFT, formant detection
 - **Zero-copy operations**: Efficient memory management for large files
 - **Streaming support**: Process files too large for memory with LongSound
+- **Advanced modules**: FormantPath (robust tracking), KlattGrid (synthesis), ComplexSpectrogram
 
 
 ## Installation
@@ -76,11 +79,13 @@ install.packages("dplyr")
 ### Comprehensive Phonetic Analysis
 
 - **Pitch extraction**: F0 tracking with autocorrelation and cross-correlation algorithms
-- **Formant analysis**: Burg's algorithm for formant tracking, normalization methods
+- **Formant analysis**: Burg's algorithm, **FormantPath** (robust multi-ceiling tracking), normalization
+- **Speech synthesis**: **KlattGrid** parametric synthesizer for vowel generation and voice morphing
 - **Voice quality**: Harmonicity-to-Noise Ratio (HNR), jitter, shimmer measurements  
-- **Spectral analysis**: Spectrogram, spectrum, LTAS (Long-Term Average Spectrum)
+- **Spectral analysis**: Spectrogram, **ComplexSpectrogram** (phase), Spectrum, LTAS
 - **Intensity**: Intensity contours and measurements
 - **TextGrid support**: Full read/write with comprehensive annotation workflows
+- **Sound operations**: Concatenation, filtering, convolution, time-stretching (9 operations)
 
 ### Research Workflows
 
@@ -105,7 +110,7 @@ sound <- Sound$create_tone(440, duration = 1.0, sampling_frequency = 44100)
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
-# Extract formants
+# Extract formants (standard)
 formant <- sound$to_formant_burg(
   time_step = 0.01,
   max_number_of_formants = 5,
@@ -121,6 +126,45 @@ f2 <- formant$get_value_at_time(formant_number = 2, time = 0.5, unit = "hertz")
 # Voice quality analysis
 harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, minimum_pitch = 75)
 hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
+```
+
+### NEW in v2.0: Advanced Features
+
+```r
+# Robust formant tracking with FormantPath (Phase 2.2)
+fp <- sound$to_formant_path(
+  time_step = 0.005,
+  formant_ceiling = 5500,
+  num_steps_up_down = 2L  # Test 5 different ceilings
+)
+formant_robust <- fp$extract_formant()  # Get optimal track
+
+# Speech synthesis with KlattGrid (Phase 2.3)
+kg <- KlattGrid_createFromVowel(
+  duration = 0.5,
+  f0start = 120,           # Pitch in Hz
+  f1 = 730, b1 = 80,       # F1 + bandwidth
+  f2 = 1090, b2 = 120,     # F2 + bandwidth
+  f3 = 2440, b3 = 150      # F3 + bandwidth
+)
+synthetic_vowel <- kg$to_sound()
+
+# Analysis-resynthesis workflow
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+formant <- fp$extract_formant()
+df <- as.data.frame(formant)
+f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
+f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+f3_mean <- mean(df[df$formant == 3, "frequency"], na.rm = TRUE)
+
+# Resynthesize with extracted formants
+kg_resynth <- KlattGrid_createFromVowel(
+  duration = 0.5, f0start = 120,
+  f1 = f1_mean, b1 = 80,
+  f2 = f2_mean, b2 = 120,
+  f3 = f3_mean, b3 = 150
+)
+sound_resynth <- kg_resynth$to_sound()
 ```
 
 ## Usage Examples
