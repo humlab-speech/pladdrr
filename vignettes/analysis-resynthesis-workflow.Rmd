@@ -77,8 +77,8 @@ cat("  Samples:", sound_orig$get_number_of_samples(), "\n")
 # Extract formants with FormantPath (robust multi-ceiling)
 fp <- sound_orig$to_formant_path(
   time_step = 0.005,
-  max_num_formants = 5,
-  formant_ceiling = 5500,
+  max_formants = 5,
+  max_frequency = 5500,
   num_steps_up_down = 2L  # Test 5 different ceilings
 )
 
@@ -142,25 +142,25 @@ cat("  Samples:", sound_resynth$get_number_of_samples(), "\n")
 # Create spectrograms for comparison
 spec_orig <- sound_orig$to_spectrogram(
   window_length = 0.005,
-  maximum_frequency = 5000
+  max_frequency = 5000
 )
 
 spec_resynth <- sound_resynth$to_spectrogram(
   window_length = 0.005,
-  maximum_frequency = 5000
+  max_frequency = 5000
 )
 
 # Extract formants for overlay
-formant_orig <- sound_orig$to_formant_burg(formant_ceiling = 5500)
-formant_resynth <- sound_resynth$to_formant_burg(formant_ceiling = 5500)
+formant_orig <- sound_orig$to_formant_burg(max_frequency = 5500)
+formant_resynth <- sound_resynth$to_formant_burg(max_frequency = 5500)
 
-df_orig <- as.data.frame(formant_orig) %>% 
-  filter(formant %in% 1:3) %>%
-  mutate(source = "Original")
+df_orig <- as.data.frame(formant_orig)
+df_orig <- df_orig[df_orig$formant %in% 1:3, ]
+df_orig$source <- "Original"
 
-df_resynth <- as.data.frame(formant_resynth) %>% 
-  filter(formant %in% 1:3) %>%
-  mutate(source = "Resynthesized")
+df_resynth <- as.data.frame(formant_resynth)
+df_resynth <- df_resynth[df_resynth$formant %in% 1:3, ]
+df_resynth$source <- "Resynthesized"
 
 # Combine for plotting
 df_combined <- bind_rows(df_orig, df_resynth)
