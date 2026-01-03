@@ -1,0 +1,555 @@
+---
+title: "Robust Formant Tracking with FormantPath"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Robust Formant Tracking with FormantPath}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Introduction
+
+FormantPath is Praat's advanced formant tracking algorithm that tests multiple formant ceiling values and automatically selects the optimal tracking path. This approach is particularly valuable when:
+
+- Speaker characteristics are unknown (male vs female vs child)
+- Audio quality is poor or contains noise
+- Standard formant tracking produces spurious values
+- You need maximum robustness across diverse speakers
+
+Unlike standard formant extraction (`to_formant_burg()`), FormantPath generates multiple candidate formant tracks with different ceiling frequencies, then uses statistical criteria to select the best path frame-by-frame.
+
+```{r setup, message=FALSE}
+library(pladdrr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Why Use FormantPath?
+
+### The Ceiling Frequency Problem
+
+Formant tracking quality depends heavily on choosing the right **formant ceiling** - the maximum frequency for formant detection:
+
+- **Too low** (e.g., 5000 Hz for female speaker): Misses F3, tracks harmonics as formants
+- **Too high** (e.g., 6500 Hz for male speaker): Detects spurious formants, poor F1/F2 accuracy
+- **Just right**: Accurate F1/F2/F3 tracking with minimal errors
+
+**FormantPath solves this** by testing multiple ceilings automatically.
+
+### Standard vs FormantPath Comparison
+
+```{r standard-vs-path, fig.width=8, fig.height=4}
+# Load example audio
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# Standard method (single ceiling)
+formant_standard <- sound$to_formant_burg(
+  time_step = 0.005,
+  max_num_formants = 5,
+  formant_ceiling = 5500
+)
+
+# FormantPath (multiple ceilings)
+formant_path <- sound$to_formant_path(
+  time_step = 0.005,
+  max_num_formants = 5,
+  formant_ceiling = 5500,
+  num_steps_up_down = 2L  # Test 5 ceilings: ±10% around 5500 Hz
+)
+
+# Extract optimal formant from path
+formant_optimal <- formant_path$extract_formant()
+
+cat("Standard method: 1 ceiling (5500 Hz)\n")
+cat("FormantPath: ", formant_path$get_number_of_candidates(), 
+    " ceilings tested\n", sep = "")
+cat("Ceiling range: ", 
+    round(min(formant_path$get_all_ceiling_frequencies())), " - ",
+    round(max(formant_path$get_all_ceiling_frequencies())), " Hz\n", sep = "")
+```
+
+## Basic Usage
+
+### Creating a FormantPath
+
+The key parameter is `num_steps_up_down` - how many ceiling values to test above and below the center:
+
+```{r basic-creation}
+# Test 3 ceilings (±5% around 5500 Hz)
+fp <- sound$to_formant_path(
+  time_step = 0.005,
+  max_num_formants = 5,
+  formant_ceiling = 5500,           # Center frequency
+  ceiling_step_fraction = 0.05,     # ±5% steps
+  num_steps_up_down = 1L            # 1 step up, 1 down = 3 total
+)
+
+cat("Created FormantPath with:\n")
+cat("  Duration:", fp$get_duration(), "seconds\n")
+cat("  Frames:", fp$get_nx(), "\n")
+cat("  Candidates:", fp$get_number_of_candidates(), "\n")
+cat("  Ceilings tested:", 
+    paste(round(fp$get_all_ceiling_frequencies()), collapse = ", "), 
+    "Hz\n")
+```
+
+### Interpreting num_steps_up_down
+
+| `num_steps_up_down` | Ceilings Tested | Example (5500 Hz, 5% steps) |
+|---------------------|-----------------|------------------------------|
+| 0                   | 1               | 5500 Hz                      |
+| 1                   | 3               | 5225, 5500, 5788 Hz         |
+| 2                   | 5               | 4977, 5225, 5500, 5788, 6078 Hz |
+| 3                   | 7               | 4737, 4977, ... 6378 Hz     |
+| 4                   | 9               | 4507, ... 6696 Hz           |
+
+More candidates = more robust but slower and more memory.
+
+## Querying FormantPath
+
+### Inspecting Candidates
+
+```{r query-candidates}
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+
+# Get all tested ceilings
+ceilings <- fp$get_all_ceiling_frequencies()
+cat("Tested ceilings (Hz):\n")
+print(round(ceilings))
+
+# Check which candidate was chosen in middle frame
+mid_frame <- fp$get_nx() %/% 2
+chosen_candidate <- fp$get_candidate_in_frame(mid_frame)
+chosen_ceiling <- fp$get_ceiling_frequency(chosen_candidate)
+
+cat("\nAt frame", mid_frame, "(mid-point):\n")
+cat("  Chosen candidate:", chosen_candidate, "\n")
+cat("  Ceiling:", round(chosen_ceiling), "Hz\n")
+```
+
+### Stress Values (Quality Metric)
+
+Each candidate has a "stress" value - lower is better:
+
+```{r stress-values}
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+
+# Calculate stress for each candidate
+n_candidates <- fp$get_number_of_candidates()
+stresses <- sapply(1:n_candidates, function(i) {
+  fp$get_stress_of_candidate(
+    candidate = i,
+    parameters = c(1, 1, 1, 1, 1),  # Equal weights
+    powerf = 1.25
+  )
+})
+
+# Find best candidate
+best_idx <- which.min(stresses)
+cat("Stress by candidate:\n")
+print(data.frame(
+  Candidate = 1:n_candidates,
+  Ceiling = round(fp$get_all_ceiling_frequencies()),
+  Stress = round(stresses, 4)
+))
+cat("\nLowest stress: Candidate", best_idx, 
+    "(", round(fp$get_ceiling_frequency(best_idx)), "Hz )\n")
+```
+
+## Extracting the Optimal Formant
+
+### Automatic Extraction
+
+```{r extract-automatic}
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+
+# Extract the automatically selected optimal path
+formant <- fp$extract_formant()
+
+cat("Extracted formant:\n")
+cat("  Duration:", formant$get_duration(), "seconds\n")
+cat("  Frames:", formant$get_number_of_frames(), "\n")
+
+# Query formant values
+mid_time <- formant$get_duration() / 2
+f1 <- formant$get_value_at_time(1, mid_time, "HERTZ")
+f2 <- formant$get_value_at_time(2, mid_time, "HERTZ")
+f3 <- formant$get_value_at_time(3, mid_time, "HERTZ")
+
+cat("\nFormants at midpoint (", round(mid_time, 3), "s):\n", sep = "")
+cat("  F1:", round(f1), "Hz\n")
+cat("  F2:", round(f2), "Hz\n")
+cat("  F3:", round(f3), "Hz\n")
+```
+
+### Manual Path Selection
+
+You can manually override the automatic selection:
+
+```{r manual-path, eval=FALSE}
+# Set candidate 3 for time range 0.2-0.4s
+fp$set_path(tmin = 0.2, tmax = 0.4, selected_candidate = 3)
+
+# Or set optimal path for entire duration
+fp$set_optimal_path(
+  tmin = fp$get_xmin(),
+  tmax = fp$get_xmax(),
+  parameters = c(1, 1, 1, 1, 1),
+  powerf = 1.25
+)
+
+# Then extract
+formant <- fp$extract_formant()
+```
+
+## Visualizing FormantPath Results
+
+### Comparing All Candidates
+
+```{r plot-candidates, fig.width=8, fig.height=6}
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+
+# Export all candidate tracks
+df <- fp$as_data_frame()
+
+# Plot F1 and F2 for all candidates
+df %>%
+  filter(formant %in% 1:2) %>%
+  ggplot(aes(time, frequency, color = factor(formant))) +
+  geom_line(alpha = 0.7) +
+  facet_wrap(~ candidate, ncol = 3, 
+             labeller = labeller(candidate = function(x) {
+               ceiling <- round(fp$get_ceiling_frequency(as.integer(x)))
+               paste0("Candidate ", x, "\n(", ceiling, " Hz)")
+             })) +
+  scale_color_manual(
+    values = c("1" = "#E41A1C", "2" = "#377EB8"),
+    labels = c("F1", "F2")
+  ) +
+  labs(
+    title = "FormantPath: All Candidate Tracks",
+    subtitle = paste(fp$get_number_of_candidates(), "different ceiling frequencies"),
+    x = "Time (s)",
+    y = "Frequency (Hz)",
+    color = "Formant"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+### Optimal Path vs Standard
+
+```{r plot-comparison, fig.width=8, fig.height=5}
+# Get optimal formant from FormantPath
+fp <- sound$to_formant_path(num_steps_up_down = 2L)
+formant_optimal <- fp$extract_formant()
+df_optimal <- as.data.frame(formant_optimal) %>%
+  mutate(method = "FormantPath (Optimal)")
+
+# Standard single-ceiling
+formant_standard <- sound$to_formant_burg(formant_ceiling = 5500)
+df_standard <- as.data.frame(formant_standard) %>%
+  mutate(method = "Standard (5500 Hz)")
+
+# Combine and plot
+bind_rows(df_optimal, df_standard) %>%
+  filter(formant %in% 1:3) %>%
+  ggplot(aes(time, frequency, color = method)) +
+  geom_line(alpha = 0.7, linewidth = 0.8) +
+  facet_wrap(~ paste0("F", formant), ncol = 1, scales = "free_y") +
+  scale_color_manual(values = c(
+    "FormantPath (Optimal)" = "#E41A1C",
+    "Standard (5500 Hz)" = "#377EB8"
+  )) +
+  labs(
+    title = "FormantPath vs Standard Formant Tracking",
+    x = "Time (s)",
+    y = "Frequency (Hz)",
+    color = "Method"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+## Advanced Path Finding
+
+### Viterbi-Style Path Optimization
+
+FormantPath can use a Viterbi-like algorithm to find the globally optimal path:
+
+```{r path-finder, eval=FALSE}
+fp <- sound$to_formant_path(num_steps_up_down = 3L)
+
+# Find optimal path with custom weights
+fp$path_finder(
+  q_weight = 1.0,                        # Formant quality
+  frequency_change_weight = 1.0,         # Smoothness penalty
+  stress_weight = 1.0,                   # Model fit
+  ceiling_change_weight = 1.0,           # Consistency bonus
+  intensity_modulation_step_size = 5.0,
+  window_length = 0.025,
+  parameters = c(1, 1, 1, 1, 1),
+  powerf = 1.25
+)
+
+formant <- fp$extract_formant()
+```
+
+**Weight meanings**:
+
+- `q_weight`: Prefer higher formant quality scores
+- `frequency_change_weight`: Penalize large formant jumps
+- `stress_weight`: Prefer lower stress (better model fit)
+- `ceiling_change_weight`: Prefer consistent ceiling choice
+
+## Use Cases
+
+### 1. Unknown Speaker Demographics
+
+When you don't know if the speaker is male, female, or child:
+
+```{r use-case-unknown}
+# Test wide range of ceilings
+fp <- sound$to_formant_path(
+  formant_ceiling = 5500,      # Middle ground
+  ceiling_step_fraction = 0.10, # ±10% steps (wider range)
+  num_steps_up_down = 3L       # 7 candidates: 4500-6800 Hz
+)
+
+ceilings <- fp$get_all_ceiling_frequencies()
+cat("Testing range:", round(min(ceilings)), "-", 
+    round(max(ceilings)), "Hz\n")
+cat("Covers: Male (5000), Female (5500), Child (6500+)\n")
+
+formant <- fp$extract_formant()
+```
+
+### 2. Noisy or Difficult Audio
+
+For poor quality audio, use more candidates and tighter steps:
+
+```{r use-case-noisy}
+fp <- sound$to_formant_path(
+  formant_ceiling = 5500,
+  ceiling_step_fraction = 0.05,  # Finer steps
+  num_steps_up_down = 4L,        # More candidates (9 total)
+  window_length = 0.030          # Longer window for stability
+)
+
+cat("Using", fp$get_number_of_candidates(), "candidates for robustness\n")
+```
+
+### 3. Vowel-Specific Analysis
+
+Compare formants across different vowels:
+
+```{r use-case-vowels, eval=FALSE}
+# Assuming you have time-aligned TextGrid
+textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+
+# Extract vowel segments
+intervals <- textgrid$get_tier(1)$get_intervals()
+vowels <- intervals[intervals$text %in% c("i", "a", "u")]
+
+# Analyze each vowel with FormantPath
+results <- lapply(vowels, function(v) {
+  # Extract vowel segment
+  vowel_sound <- sound$extract_part(v$xmin, v$xmax)
+  
+  # Robust formant tracking
+  fp <- vowel_sound$to_formant_path(num_steps_up_down = 2L)
+  formant <- fp$extract_formant()
+  
+  # Get mean F1/F2
+  df <- as.data.frame(formant)
+  list(
+    vowel = v$text,
+    f1 = mean(df[df$formant == 1, "frequency"], na.rm = TRUE),
+    f2 = mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+  )
+})
+
+vowel_space <- do.call(rbind, lapply(results, as.data.frame))
+print(vowel_space)
+```
+
+### 4. Batch Processing Multiple Files
+
+```{r batch-processing, eval=FALSE}
+# Process multiple speakers with unknown characteristics
+files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
+
+formants <- lapply(files, function(file) {
+  sound <- Sound(file)
+  fp <- sound$to_formant_path(
+    formant_ceiling = 5500,
+    num_steps_up_down = 2L
+  )
+  fp$extract_formant()
+})
+
+names(formants) <- files
+```
+
+## Performance Considerations
+
+### Memory Usage
+
+FormantPath stores multiple formant candidates:
+
+```{r memory-note, eval=FALSE}
+# 5 candidates = 5× the memory of standard Formant
+fp <- sound$to_formant_path(num_steps_up_down = 2L)  # 5 candidates
+# Memory ≈ 5 × size of single Formant object
+```
+
+**Tips**:
+- Use fewer candidates for long files (`num_steps_up_down = 1`)
+- Extract and discard FormantPath after getting optimal Formant
+- Process files individually rather than loading all in memory
+
+### Computation Time
+
+FormantPath is slower than standard extraction:
+
+```{r timing, eval=FALSE}
+# Standard: ~0.3s for 1s audio
+system.time(formant <- sound$to_formant_burg())
+
+# FormantPath with 5 candidates: ~1.5s for 1s audio
+system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
+```
+
+Roughly **N× slower** where N = number of candidates.
+
+## Best Practices
+
+### ✓ DO
+
+1. **Use FormantPath when speaker characteristics are unknown**
+2. **Start with `num_steps_up_down = 2`** (5 candidates) as default
+3. **Extract the formant immediately** to save memory:
+   ```r
+   formant <- sound$to_formant_path(num_steps_up_down = 2L)$extract_formant()
+   ```
+4. **Compare candidates visually** when results look suspicious
+5. **Use wider step fractions (0.10)** for diverse speakers
+6. **Document which method you used** for reproducibility
+
+### ✗ DON'T
+
+1. **Don't use FormantPath for all analyses** - standard method is faster for known speakers
+2. **Don't use too many candidates** (`num_steps_up_down > 4`) unless necessary
+3. **Don't forget to extract** - FormantPath itself isn't directly usable
+4. **Don't assume optimal = perfect** - always inspect difficult cases
+5. **Don't ignore stress values** - high stress indicates poor fit
+
+## Comparison with Other Tools
+
+### pladdrr FormantPath vs Praat
+
+pladdrr provides direct R access to Praat's FormantPath algorithm:
+
+| Feature | pladdrr | Praat GUI |
+|---------|---------|-----------|
+| Multiple candidates | ✅ | ✅ |
+| Automatic path selection | ✅ | ✅ |
+| Manual path override | ✅ | ✅ |
+| Data export | ✅ (data.frame) | ✅ (text file) |
+| Batch processing | ✅ (R loops) | ❌ (manual) |
+| Visualization | ✅ (ggplot2) | ✅ (built-in) |
+
+### vs Parselmouth
+
+Parselmouth does not currently expose FormantPath - only standard `to_formant()`.
+
+## Troubleshooting
+
+### Issue: All candidates look similar
+
+**Cause**: Step fraction too small or range too narrow
+
+**Solution**: Increase `ceiling_step_fraction` to 0.10 or higher
+
+```{r troubleshoot-similar, eval=FALSE}
+# Instead of this (too narrow)
+fp <- sound$to_formant_path(
+  formant_ceiling = 5500,
+  ceiling_step_fraction = 0.02,  # ±2% only
+  num_steps_up_down = 2L
+)
+
+# Use this (better range)
+fp <- sound$to_formant_path(
+  formant_ceiling = 5500,
+  ceiling_step_fraction = 0.10,  # ±10%
+  num_steps_up_down = 2L
+)
+```
+
+### Issue: Extracted formant has gaps (NA values)
+
+**Cause**: No candidate had valid formants at those frames
+
+**Solution**: Increase `max_num_formants` or adjust `formant_ceiling`
+
+```{r troubleshoot-gaps, eval=FALSE}
+fp <- sound$to_formant_path(
+  max_num_formants = 6,  # Instead of 5
+  formant_ceiling = 5500,
+  num_steps_up_down = 2L
+)
+```
+
+### Issue: FormantPath is too slow
+
+**Solution**: Reduce candidates or increase time step
+
+```{r troubleshoot-slow, eval=FALSE}
+# Faster: fewer candidates, larger time step
+fp <- sound$to_formant_path(
+  time_step = 0.010,         # Instead of 0.005
+  num_steps_up_down = 1L,    # 3 candidates instead of 5
+  formant_ceiling = 5500
+)
+```
+
+## Summary
+
+**FormantPath is ideal when**:
+- Speaker demographics unknown
+- Audio quality is poor
+- Need maximum robustness
+- Comparing diverse speakers
+
+**Use standard formant extraction when**:
+- Speaker type is known (male/female)
+- Audio quality is good
+- Speed is critical
+- Memory is limited
+
+**Key Parameters**:
+- `formant_ceiling`: Center frequency (5000-5500 for adults)
+- `num_steps_up_down`: 1-2 for most cases, 3-4 for difficult audio
+- `ceiling_step_fraction`: 0.05 (narrow) to 0.10 (wide)
+
+## Further Reading
+
+- Praat manual: [FormantPath](http://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
+- Weenink, D. (2015). "Improved formant frequency measurements of short segments"
+- pladdrr documentation: `?to_formant_path`
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```
