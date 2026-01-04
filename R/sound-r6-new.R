@@ -40,6 +40,7 @@
 #' - `to_formant_burg()` - Extract formants (F1, F2, F3, ...)
 #' - `to_intensity()` - Extract intensity contour
 #' - `to_harmonicity_cc()` - Harmonics-to-noise ratio
+#' - `to_harmonicity_gne()` - Glottal-to-Noise Excitation ratio (GNE)
 #' - `to_spectrum()` - Frequency spectrum
 #' - `to_spectrogram()` - Time-frequency representation
 #' - `to_ltas()` - Long-term average spectrum
@@ -237,6 +238,17 @@ Sound <- function(path = NULL, .xptr = NULL) {
         as.numeric(silence_threshold), as.numeric(periods_per_window)
       )
       Harmonicity(.xptr = harm_ptr)
+    },
+    
+    to_harmonicity_gne = function(fmin = 500, fmax = 4500, bandwidth = 1000, step = 80) {
+      gne_ptr <- .sound_to_harmonicity_gne(
+        .xptr,
+        as.numeric(fmin),
+        as.numeric(fmax),
+        as.numeric(bandwidth),
+        as.numeric(step)
+      )
+      Matrix(.xptr = gne_ptr)
     },
     
     to_spectrum = function(fast = TRUE) {

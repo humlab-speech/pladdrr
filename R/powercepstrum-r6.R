@@ -65,8 +65,8 @@ PowerCepstrum <- function(.xptr = NULL) {
     get_q1 = function() cpp_pc$get_q1(),
     
     get_peak_prominence = function(interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
-                                   qmin = 0.001,
-                                   qmax = 0,
+                                   qmin = 0.003,
+                                   qmax = 0.04,
                                    fit_method = c("straight", "exponential decay", "parabolic"),
                                    tolerance = 0.05) {
       interpolation <- match.arg(interpolation)
@@ -85,8 +85,8 @@ PowerCepstrum <- function(.xptr = NULL) {
     },
     
     get_quefrency_of_peak = function(interpolation = c("parabolic", "none", "cubic"),
-                                     qmin = 0.001,
-                                     qmax = 0) {
+                                     qmin = 0.003,
+                                     qmax = 0.04) {
       interpolation <- match.arg(interpolation)
       interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2)
       
@@ -150,7 +150,7 @@ PowerCepstrum <- function(.xptr = NULL) {
       Table(.xptr = xptr)
     },
     
-    fit_trend_line = function(qmin = 0.001, qmax = 0.05,
+    fit_trend_line = function(qmin = 0.003, qmax = 0.05,
                              trend_type = c("straight", "exponential decay", "parabolic"),
                              fit_method = c("least squares", "robust", "robust slow")) {
       trend_type <- match.arg(trend_type)
@@ -167,7 +167,7 @@ PowerCepstrum <- function(.xptr = NULL) {
       )
     },
     
-    get_trend_line_value = function(quefrency, qstart_fit = 0.001, qend_fit = 0.05,
+    get_trend_line_value = function(quefrency, qstart_fit = 0.003, qend_fit = 0.05,
                                    trend_type = c("straight", "exponential decay", "parabolic"),
                                    fit_method = c("least squares", "robust", "robust slow")) {
       trend_type <- match.arg(trend_type)
@@ -194,7 +194,7 @@ PowerCepstrum <- function(.xptr = NULL) {
       PowerCepstrum(.xptr = xptr)
     },
     
-    subtract_trend = function(qstart_fit = 0.001, qend_fit = 0.05,
+    subtract_trend = function(qstart_fit = 0.003, qend_fit = 0.05,
                              trend_type = c("straight", "exponential decay", "parabolic"),
                              fit_method = c("least squares", "robust", "robust slow")) {
       trend_type <- match.arg(trend_type)
@@ -332,8 +332,8 @@ PowerCepstrogram <- R6::R6Class(
     #' @return Numeric. CPP value in dB
     get_cpp_at_time = function(time,
                                interpolation = c("linear", "cubic"),
-                               qmin = 0.001,
-                               qmax = 0,
+                               qmin = 0.003,
+                               qmax = 0.04,
                                fit_method = c("straight", "exponential decay", "parabolic"),
                                tolerance = 0.05) {
       interpolation <- match.arg(interpolation)
@@ -361,8 +361,8 @@ PowerCepstrogram <- R6::R6Class(
     #' @return Numeric. Mean CPP in dB
     get_mean_cpp = function(from_time = 0,
                            to_time = 0,
-                           qmin = 0.001,
-                           qmax = 0,
+                           qmin = 0.003,
+                           qmax = 0.04,
                            fit_method = c("straight", "exponential decay", "parabolic"),
                            tolerance = 0.05) {
       fit_method <- match.arg(fit_method)
@@ -460,8 +460,8 @@ PowerCepstrogram <- R6::R6Class(
                        pitch_ceiling = 333.3,
                        delta_f0 = 0.05,
                        interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
-                       quefrency_range_start = 0.001,
-                       quefrency_range_end = 0.05,
+                       quefrency_range_start = 0.003,
+                       quefrency_range_end = 0.04,
                         trend_line_type = c("straight", "exponential decay"),
                         fit_method = c("robust", "least squares", "robust slow")) {
       

@@ -547,6 +547,35 @@ XPtr<structHarmonicity> sound_to_harmonicity_cc(
     }
 }
 
+//' Convert Sound to Harmonicity (GNE - Glottal-to-Noise Excitation ratio)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_harmonicity_gne)]]
+XPtr<structMatrix> sound_to_harmonicity_gne(
+    XPtr<structSound> sound_xptr,
+    double fmin,
+    double fmax,
+    double bandwidth,
+    double step
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    
+    try {
+        autoMatrix gne = Sound_to_Harmonicity_GNE(
+            sound,
+            fmin,
+            fmax,
+            bandwidth,
+            step
+        );
+        
+        return create_xptr_from_auto<structMatrix>(gne);
+        
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute GNE");
+    }
+}
+
 //' Convert Sound to Spectrum (internal)
 //' @keywords internal
 // [[Rcpp::export(.sound_to_spectrum)]]
