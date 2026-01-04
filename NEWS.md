@@ -29,6 +29,15 @@
   - **Validation**: DSI, AVQI v2.03, AVQI v3.01, and VQ tests now pass ✅
   - **Reference**: User feedback comparing pladdrr vs Praat/Parselmouth
 
+### TextGrid Reading - Critical Fix
+* **Fixed segfault when reading TextGrid files (CRITICAL)**
+  - Root cause: `praat_initialize()` was never called on package load
+  - Praat class registry was uninitialized, causing null pointer dereference in `Data_readFromTextFile()`
+  - Fix: Added `praat_initialize()` call to `.onLoad()` in `R/zzz.R`
+  - **Impact**: TextGrid reading now works correctly for all file formats
+  - Tested with 1.7KB and 1.2MB TextGrid files
+  - File: `R/zzz.R`
+
 ### Voice Quality Analysis - Usage Warnings
 * **PointProcess creation for jitter/shimmer**: 
   - Added warning to `Pitch$to_point_process()` method
@@ -40,10 +49,6 @@
   - Shimmer methods return fractions (not percentages)
   - No multiplication by 100 needed (matches Praat/Parselmouth behavior)
   - Example: `0.0268` (not `2.68`)
-* **TextGrid reading**:
-  - Some TextGrid files still cause segfaults on read
-  - Issue under investigation (no reproduction case yet)
-  - Workaround: Use TextGrid$create() to create new grids
 
 ## New Features
 

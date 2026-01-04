@@ -17,6 +17,13 @@ get_module <- function(name) {
 
 # Preload all modules on package load
 .onLoad <- function(libname, pkgname) {
+  # Initialize Praat library (CRITICAL: must come first)
+  # This initializes memory allocator, encoding, and class registry
+  tryCatch(
+    praat_initialize(),
+    error = function(e) stop("Failed to initialize Praat library: ", e$message)
+  )
+  
   # Preload all modules into cache
   modules <- c(
     "pitch_module", "sound_module", "formant_module", 
