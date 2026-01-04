@@ -145,6 +145,13 @@ Pitch <- function(.xptr = NULL) {
     
     # Transformation methods (return wrapped objects)
     to_point_process = function() {
+      warning(
+        "pitch$to_point_process() creates PointProcess from Pitch candidates only.\n",
+        "For voice quality analysis (jitter/shimmer), use:\n",
+        "  sound$to_point_process_periodic_cc(pitch_floor, pitch_ceiling)\n",
+        "This ensures accurate glottal pulse timing with amplitude information.",
+        call. = FALSE
+      )
       pp_ptr <- cpp_obj$to_point_process_ptr()
       PointProcess(.xptr = pp_ptr)
     },

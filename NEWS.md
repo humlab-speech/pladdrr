@@ -29,11 +29,13 @@
   - **Validation**: DSI, AVQI v2.03, AVQI v3.01, and VQ tests now pass ✅
   - **Reference**: User feedback comparing pladdrr vs Praat/Parselmouth
 
-### Voice Quality Analysis - Known Issues
+### Voice Quality Analysis - Usage Warnings
 * **PointProcess creation for jitter/shimmer**: 
-  - Users should call `sound$to_point_process_periodic_cc(pitch_floor, pitch_ceiling)` 
-  - NOT `pitch$to_point_process()` (creates PointProcess from Pitch only, missing Sound data)
-  - Documented in `R/pointprocess-r6.R` and vignettes
+  - Added warning to `Pitch$to_point_process()` method
+  - Warning directs users to `sound$to_point_process_periodic_cc()` for voice quality analysis
+  - `pitch$to_point_process()` only uses pitch candidates (no amplitude data)
+  - Can cause 80-137× incorrect jitter/shimmer values if used for voice quality
+  - File: `R/pitch-r6.R`
 * **Shimmer values**:
   - Shimmer methods return fractions (not percentages)
   - No multiplication by 100 needed (matches Praat/Parselmouth behavior)
