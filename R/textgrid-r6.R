@@ -302,9 +302,9 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
       invisible(tg)
     },
     
-    get_intervals_where = function(tier, pattern = NULL, regex = FALSE) {
+    get_intervals_where = function(tier, condition = "equals", text = "") {
       tier_num <- resolve_tier_number(tier)
-      textgrid_get_intervals_where(tg, tier = tier_num, pattern = pattern, regex = regex)
+      textgrid_get_intervals_where(tg, tier = tier_num, condition = condition, text = text)
     },
     
     print = function() {

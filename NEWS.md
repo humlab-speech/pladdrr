@@ -2,6 +2,18 @@
 
 ## Bug Fixes
 
+### Function Signature Fixes (Build Warnings)
+* **FormantGrid$to_formant()**: Removed unused parameters
+  - Old signature had `first_frequency`, `ceiling`, `bandwidth_fraction` (ignored)
+  - Praat's `FormantGrid_to_Formant()` only accepts `(time_step, intensity)`
+  - File: `R/formantgrid-r6.R`
+  
+* **TextGrid$get_intervals_where()**: Fixed parameter names
+  - Old: `pattern`, `regex` (parameter mismatch)
+  - New: `condition`, `text` (matches underlying function)
+  - Conditions: "equals", "contains", "does not contain", "starts with", "ends with"
+  - File: `R/textgrid-r6.R`
+
 ### Voice Quality Analysis - CPP Parameters (Critical)
 * **Fixed CPP default parameters to match Praat standards**
   - Changed `qmin` default: `0.001` → `0.003` (quefrency floor)

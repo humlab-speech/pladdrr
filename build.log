@@ -3,97 +3,23 @@
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
 * installing the package to build vignettes
-* creating vignettes ... ERROR
---- re-building ‘analysis-resynthesis-workflow.Rmd’ using rmarkdown
-
-Quitting from analysis-resynthesis-workflow.Rmd:69-94 [load-analyze]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `sound_orig$to_formant_path()`:
-! unused arguments (max_formants = 5, max_frequency = 5500)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'analysis-resynthesis-workflow.Rmd' failed with diagnostics:
-unused arguments (max_formants = 5, max_frequency = 5500)
---- failed re-building ‘analysis-resynthesis-workflow.Rmd’
-
---- re-building ‘auditory-modeling.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘auditory-modeling.Rmd’
-
---- re-building ‘autoplot-autolayer.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘autoplot-autolayer.Rmd’
-
---- re-building ‘formant-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘formant-analysis.Rmd’
-
---- re-building ‘formantpath-robust-tracking.Rmd’ using rmarkdown
-
-Quitting from formantpath-robust-tracking.Rmd:50-78 [standard-vs-path]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error in `sound$to_formant_path()`:
-! unused arguments (max_formants = 5, max_frequency = 5500)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'formantpath-robust-tracking.Rmd' failed with diagnostics:
-unused arguments (max_formants = 5, max_frequency = 5500)
---- failed re-building ‘formantpath-robust-tracking.Rmd’
-
---- re-building ‘getting-started.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘getting-started.Rmd’
-
---- re-building ‘integrated-phonetic-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘integrated-phonetic-analysis.Rmd’
-
---- re-building ‘migration-from-parselmouth.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-parselmouth.Rmd’
-
---- re-building ‘migration-from-praat.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘migration-from-praat.Rmd’
-
---- re-building ‘performance-simd.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘performance-simd.Rmd’
-
---- re-building ‘praat-interpreter.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘praat-interpreter.Rmd’
-
---- re-building ‘speech-synthesis-klattgrid.Rmd’ using rmarkdown
-
-Quitting from speech-synthesis-klattgrid.Rmd:275-312 [diphthong]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<error/rlang_error>
-Error:
-! attempt to apply non-function
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Error: processing vignette 'speech-synthesis-klattgrid.Rmd' failed with diagnostics:
-attempt to apply non-function
---- failed re-building ‘speech-synthesis-klattgrid.Rmd’
-
---- re-building ‘textgrid-workflows.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘textgrid-workflows.Rmd’
-
---- re-building ‘visualization.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘visualization.Rmd’
-
---- re-building ‘vowel-space-analysis.Rmd’ using rmarkdown
-[WARNING] Deprecated: --highlight-style. Use --syntax-highlighting instead.
---- finished re-building ‘vowel-space-analysis.Rmd’
-
-SUMMARY: processing the following files failed:
-  ‘analysis-resynthesis-workflow.Rmd’ ‘formantpath-robust-tracking.Rmd’
-  ‘speech-synthesis-klattgrid.Rmd’
-
-Error: Vignette re-building failed.
-Execution halted
+* creating vignettes ... OK
+* cleaning src
+* checking for LF line-endings in source and make files and shell scripts
+* checking for empty or unneeded directories
+Removed empty directory ‘pladdrr/dev’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst/benchmarks’
+Removed empty directory ‘pladdrr/inst/benchmarks/inst’
+Removed empty directory ‘pladdrr/inst/benchmarks/results’
+Removed empty directory ‘pladdrr/pladdrr/.planning’
+Removed empty directory ‘pladdrr/pladdrr_1/.planning’
+Removed empty directory ‘pladdrr/pladdrr_2/.planning’
+Removed empty directory ‘pladdrr/pladdrr_3/.planning’
+Removed empty directory ‘pladdrr/src/gsl-2.8/doc/_static’
+Removed empty directory ‘pladdrr/src/gsl_build’
+Removed empty directory ‘pladdrr/src/praat.github.io/docs’
+Removed empty directory ‘pladdrr/src/praat.github.io/generate’
+Removed empty directory ‘pladdrr/src/praat.github.io/test’
+Removed empty directory ‘pladdrr/tests/testthat/_snaps’
+* building ‘pladdrr_2.0.2.tar.gz’

@@ -67,9 +67,8 @@ FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
     },
     
     # Conversion
-    to_formant = function(time_step = 0.005, intensity = 1.0, first_frequency = 100, 
-                          ceiling = 0, bandwidth_fraction = 1.0) {
-      ptr_out <- .formantgrid_to_formant(ptr, time_step, intensity, first_frequency, ceiling, bandwidth_fraction)
+    to_formant = function(time_step = 0.005, intensity = 1.0) {
+      ptr_out <- .formantgrid_to_formant(ptr, time_step, intensity)
       Formant(.xptr = ptr_out)
     },
     
