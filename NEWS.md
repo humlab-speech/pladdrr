@@ -1,3 +1,26 @@
+# pladdrr 2.0.3 (2026-01-04)
+
+## Bug Fixes
+
+### TextGrid Reading - Critical Fix
+* **Fixed segfault when reading TextGrid files (CRITICAL)**
+  - Root cause: `praat_initialize()` never called on package load
+  - Praat class registry uninitialized → null pointer in `Data_readFromTextFile()`
+  - Added `praat_initialize()` call to `.onLoad()` in `R/zzz.R`
+  - Tested with 1.7KB and 1.2MB TextGrid files ✓
+  - Pharyngeal test now unblocked
+
+### PointProcess Usage Warning
+* **Added warning to `Pitch$to_point_process()` for voice quality**
+  - Warns users to use `sound$to_point_process_periodic_cc()` for jitter/shimmer
+  - `pitch$to_point_process()` lacks amplitude data (causes 80-137× errors)
+  - File: `R/pitch-r6.R`
+
+### Shimmer Units - Verified
+* **No bug found - shimmer correctly returns fractions (not percentages)**
+  - Matches Praat/Parselmouth behavior
+  - Example: `0.0268` (not `2.68`)
+
 # pladdrr 2.0.2 (2026-01-04)
 
 ## Bug Fixes
