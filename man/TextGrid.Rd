@@ -19,8 +19,8 @@ one or more tiers, where each tier can be:
 
 ## Creating TextGrid Objects
 
-- `TextGrid$new(path)` - Read from file (Praat text or binary format)
-- `TextGrid$create(tmin, tmax, tier_names, point_tiers)` - Create empty grid
+- `TextGrid(path)` - Read from file (Praat text or binary format)
+- `textgrid_create(tmin, tmax, tier_names, point_tiers)` - Create empty grid
 
 ## Querying Tiers
 
@@ -63,7 +63,7 @@ one or more tiers, where each tier can be:
 \examples{
 \dontrun{
 # Read existing TextGrid
-tg <- TextGrid$new("annotation.TextGrid")
+tg <- TextGrid("annotation.TextGrid")
 tg$get_tier_names()
 tg$get_number_of_intervals("words")
 
@@ -72,7 +72,7 @@ label <- tg$get_label_at_time("words", 1.5)
 word_text <- tg$get_interval_text("words", 5)
 
 # Create new TextGrid
-tg <- TextGrid$create(0, 10, "phones words", "tones")
+tg <- textgrid_create(0, 10, "phones words", "tones")
 
 # Add boundaries and labels (IntervalTier)
 tg$insert_boundary("words", 1.5)
@@ -89,7 +89,7 @@ df <- tg$as_data_frame()
 df <- tg$as_data_frame(tiers = c(1, 3))  # Only tiers 1 and 3
 
 # Integration with Sound
-sound <- Sound$new("audio.wav")
+sound <- Sound("audio.wav")
 words <- tg$as_data_frame(tiers = "words")
 for (i in 1:nrow(words)) {
   if (words$label[i] != "") {

@@ -1196,6 +1196,27 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structHarmonicity> >(rcpp_result_gen);
     }
 
+    inline XPtr<structMatrix> _sound_to_harmonicity_gne(XPtr<structSound> sound_xptr, double fmin, double fmax, double bandwidth, double step) {
+        typedef SEXP(*Ptr__sound_to_harmonicity_gne)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_harmonicity_gne p__sound_to_harmonicity_gne = NULL;
+        if (p__sound_to_harmonicity_gne == NULL) {
+            validateSignature("XPtr<structMatrix>(*_sound_to_harmonicity_gne)(XPtr<structSound>,double,double,double,double)");
+            p__sound_to_harmonicity_gne = (Ptr__sound_to_harmonicity_gne)R_GetCCallable("pladdrr", "_pladdrr__sound_to_harmonicity_gne");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_harmonicity_gne(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(fmin)), Shield<SEXP>(Rcpp::wrap(fmax)), Shield<SEXP>(Rcpp::wrap(bandwidth)), Shield<SEXP>(Rcpp::wrap(step)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structMatrix> >(rcpp_result_gen);
+    }
+
     inline XPtr<structSpectrum> _sound_to_spectrum(XPtr<structSound> sound_xptr, bool fast) {
         typedef SEXP(*Ptr__sound_to_spectrum)(SEXP,SEXP);
         static Ptr__sound_to_spectrum p__sound_to_spectrum = NULL;

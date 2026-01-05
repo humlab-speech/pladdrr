@@ -1333,8 +1333,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_spectrum_to_powercepstrum`, spectrum_xptr)
 }
 
-.powercepstrum_get_peak_prominence <- function(xptr, interpolation, qmin, qmax, fit_method, tolerance) {
-    .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, qmin, qmax, fit_method, tolerance)
+.powercepstrum_get_peak_prominence <- function(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance) {
+    .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance)
 }
 
 .powercepstrum_get_quefrency_of_peak <- function(xptr, interpolation, qmin, qmax) {
@@ -1663,6 +1663,12 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 #' @keywords internal
 .sound_to_harmonicity_cc <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_pladdrr_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
+}
+
+#' Convert Sound to Harmonicity (GNE - Glottal-to-Noise Excitation ratio)
+#' @keywords internal
+.sound_to_harmonicity_gne <- function(sound_xptr, fmin, fmax, bandwidth, step) {
+    .Call(`_pladdrr_sound_to_harmonicity_gne`, sound_xptr, fmin, fmax, bandwidth, step)
 }
 
 #' Convert Sound to Spectrum (internal)

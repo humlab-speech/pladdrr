@@ -117,3 +117,5 @@ results/
 ^src/Makevars\.in\.bak4$
 ^src/Makevars\.in\.pre-opt$
 ^src/Makevars\.pre-opt$
+^doc$
+^Meta$

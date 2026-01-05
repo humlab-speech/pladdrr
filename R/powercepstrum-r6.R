@@ -64,22 +64,26 @@ PowerCepstrum <- function(.xptr = NULL) {
     get_dq = function() cpp_pc$get_dq(),
     get_q1 = function() cpp_pc$get_q1(),
     
-    get_peak_prominence = function(interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
-                                   qmin = 0.003,
-                                   qmax = 0.04,
-                                   fit_method = c("straight", "exponential decay", "parabolic"),
+    get_peak_prominence = function(pitch_floor = 60,
+                                   pitch_ceiling = 333.3,
+                                   interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
+                                   qmin = 0.001,
+                                   qmax = 0.05,
+                                   fit_method = c("exponential decay", "straight"),
                                    tolerance = 0.05) {
       interpolation <- match.arg(interpolation)
       fit_method <- match.arg(fit_method)
       
-      interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2, "sinc70" = 3, "sinc700" = 4)
-      fit_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-      
-      cpp_pc$get_peak_prominence(
-        as.integer(interp_map[[interpolation]]),
+      # Use the internal .powercepstrum_get_peak_prominence function directly
+      # since the Rcpp module wrapper needs to be regenerated
+      .powercepstrum_get_peak_prominence(
+        .xptr,
+        as.character(interpolation),
+        as.numeric(pitch_floor),
+        as.numeric(pitch_ceiling),
         as.numeric(qmin),
         as.numeric(qmax),
-        as.integer(fit_map[[fit_method]]),
+        as.character(fit_method),
         as.numeric(tolerance)
       )
     },

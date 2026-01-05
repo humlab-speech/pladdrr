@@ -1,0 +1,25 @@
+* installing to library ‘/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library’
+* installing *source* package ‘pladdrr’ ...
+** using staged installation
+Checking for RcppXsimd...
+RcppXsimd found - enabling SIMD optimizations
+Configuration complete
+** libs
+using C compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+using C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’
+using C++17
+using SDK: ‘’
+make: Nothing to be done for `all'.
+installing to /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/00LOCK-pladdrr/00new/pladdrr/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (pladdrr)

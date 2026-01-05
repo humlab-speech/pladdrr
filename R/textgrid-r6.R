@@ -12,8 +12,8 @@
 #'
 #' ## Creating TextGrid Objects
 #'
-#' - `TextGrid$new(path)` - Read from file (Praat text or binary format)
-#' - `TextGrid$create(tmin, tmax, tier_names, point_tiers)` - Create empty grid
+#' - `TextGrid(path)` - Read from file (Praat text or binary format)
+#' - `textgrid_create(tmin, tmax, tier_names, point_tiers)` - Create empty grid
 #'
 #' ## Querying Tiers
 #'
@@ -56,7 +56,7 @@
 #' @examples
 #' \dontrun{
 #' # Read existing TextGrid
-#' tg <- TextGrid$new("annotation.TextGrid")
+#' tg <- TextGrid("annotation.TextGrid")
 #' tg$get_tier_names()
 #' tg$get_number_of_intervals("words")
 #'
@@ -65,7 +65,7 @@
 #' word_text <- tg$get_interval_text("words", 5)
 #'
 #' # Create new TextGrid
-#' tg <- TextGrid$create(0, 10, "phones words", "tones")
+#' tg <- textgrid_create(0, 10, "phones words", "tones")
 #'
 #' # Add boundaries and labels (IntervalTier)
 #' tg$insert_boundary("words", 1.5)
@@ -82,7 +82,7 @@
 #' df <- tg$as_data_frame(tiers = c(1, 3))  # Only tiers 1 and 3
 #'
 #' # Integration with Sound
-#' sound <- Sound$new("audio.wav")
+#' sound <- Sound("audio.wav")
 #' words <- tg$as_data_frame(tiers = "words")
 #' for (i in 1:nrow(words)) {
 #'   if (words$label[i] != "") {
@@ -95,7 +95,6 @@
 #' tg$save("output.TextGrid")
 #' }
 #'
-#' @export
 #' @export
 TextGrid <- function(path = NULL, .xptr = NULL) {
   # Handle initialization
@@ -362,3 +361,24 @@ textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
   )
   TextGrid(.xptr = ptr)
 }
+
+# Static method support for TextGrid (enables TextGrid$new(), TextGrid$create())
+.textgrid_static_env <- new.env(parent = emptyenv())
+.textgrid_static_env$new <- TextGrid
+.textgrid_static_env$create <- textgrid_create
+
+#' $ method for TextGrid constructor (enables TextGrid$new(), TextGrid$create())
+#' @param x The TextGrid constructor function
+#' @param name Name of static method to access
+#' @return The requested static method function
+#' @exportS3Method $ textgrid_constructor
+`$.textgrid_constructor` <- function(x, name) {
+  val <- .textgrid_static_env[[name]]
+  if (is.null(val)) {
+    stop("TextGrid has no static method '", name, "'. Available: new, create")
+  }
+  val
+}
+
+# Assign class to enable $ operator
+class(TextGrid) <- c("textgrid_constructor", "function")

@@ -6,7 +6,7 @@
 #' Requires:
 #' - Praat executable at /Applications/Praat.app/Contents/MacOS/Praat
 #' - plabench Python package installed
-#' - speakr R package (optional, for direct Praat script calling)
+#' - RcppSimdJson R package (for fast JSON parsing)
 
 library(testthat)
 library(pladdrr)
@@ -110,7 +110,7 @@ parse_praat_avqi <- function(output) {
 parse_python_avqi <- function(output) {
   # Parse JSON output from Python script
   json_line <- grep("\\{", output, value = TRUE)[1]
-  result <- jsonlite::fromJSON(json_line)
+  result <- RcppSimdJson::fparse(json_line)
 
   list(
     avqi = result$avqi,
@@ -315,7 +315,7 @@ print(json.dumps({
 
   python_output <- run_python_plabench(python_code)
   json_line <- grep("\\{", python_output, value = TRUE)[1]
-  python_result <- jsonlite::fromJSON(json_line)
+  python_result <- RcppSimdJson::fparse(json_line)
 
   # Compare results
   cat("\n=== DSI Comparison ===\n")
@@ -381,7 +381,7 @@ print(json.dumps({
 
   python_output <- run_python_plabench(python_code)
   json_line <- grep("\\{", python_output, value = TRUE)[1]
-  python_result <- jsonlite::fromJSON(json_line)
+  python_result <- RcppSimdJson::fparse(json_line)
 
   # Compare results
   cat("\n=== Tremor Comparison ===\n")
@@ -414,27 +414,28 @@ test_that("Tremor v3.05: R/pladdrr vs Praat script", {
 })
 
 # =============================================================================
-# Speakr Integration Tests
+# PraatInterpreter Integration Tests
 # =============================================================================
 
-test_that("speakr package can call Praat scripts", {
-  skip_if_not_installed("speakr")
+test_that("PraatInterpreter can execute Praat scripts", {
+  # Test basic Praat script execution via pladdrr's PraatInterpreter
+  interp <- PraatInterpreter$new()
 
-  library(speakr)
 
-  # Test basic Praat script execution via speakr
-  test_script <- tempfile(fileext = ".praat")
-  writeLines(c(
-    'writeInfoLine: "Hello from Praat"',
-    'appendInfoLine: "Version: ", praatVersion$'
-  ), test_script)
+  # Test variable assignment and retrieval
+  interp$run('testVar = 42')
+  result <- interp$get_variable("testVar")
+  expect_equal(result, 42)
 
-  result <- praat(test_script, capture = TRUE)
+ # Test string variable
+  interp$run('testString$ = "Hello from pladdrr"')
+  str_result <- interp$get_variable("testString$")
+  expect_equal(str_result, "Hello from pladdrr")
 
-  expect_true(grepl("Hello from Praat", result))
-  expect_true(grepl("Version:", result))
-
-  unlink(test_script)
+  # Test arithmetic expression
+  interp$run('calcResult = 10 + 5 * 2')
+  calc_result <- interp$get_variable("calcResult")
+  expect_equal(calc_result, 20)
 })
 
 # =============================================================================
@@ -449,10 +450,10 @@ run_cross_validation <- function() {
   cat("=============================================================\n\n")
 
   cat("Checking prerequisites...\n")
-  cat(sprintf("  Praat:    %s\n", ifelse(praat_available(), "✓", "✗")))
-  cat(sprintf("  plabench: %s\n", ifelse(plabench_available(), "✓", "✗")))
-  cat(sprintf("  speakr:   %s\n",
-              ifelse(requireNamespace("speakr", quietly = TRUE), "✓", "✗")))
+  cat(sprintf("  Praat:        %s\n", ifelse(praat_available(), "✓", "✗")))
+  cat(sprintf("  plabench:     %s\n", ifelse(plabench_available(), "✓", "✗")))
+  cat(sprintf("  RcppSimdJson: %s\n",
+              ifelse(requireNamespace("RcppSimdJson", quietly = TRUE), "✓", "✗")))
   cat("\n")
 
   cat("Running tests...\n\n")

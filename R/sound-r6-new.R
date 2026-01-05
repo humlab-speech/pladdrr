@@ -242,7 +242,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
     
     to_harmonicity_gne = function(fmin = 500, fmax = 4500, bandwidth = 1000, step = 80) {
       gne_ptr <- .sound_to_harmonicity_gne(
-        .xptr,
+        ptr,  # Use ptr from parent scope instead of .xptr
         as.numeric(fmin),
         as.numeric(fmax),
         as.numeric(bandwidth),

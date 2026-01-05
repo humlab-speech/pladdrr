@@ -4458,18 +4458,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // powercepstrum_get_peak_prominence
-double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation, double qmin, double qmax, std::string fit_method, double tolerance);
-RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence(SEXP xptrSEXP, SEXP interpolationSEXP, SEXP qminSEXP, SEXP qmaxSEXP, SEXP fit_methodSEXP, SEXP toleranceSEXP) {
+double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation, double pitch_floor, double pitch_ceiling, double qmin, double qmax, std::string fit_method, double tolerance);
+RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence(SEXP xptrSEXP, SEXP interpolationSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP qminSEXP, SEXP qmaxSEXP, SEXP fit_methodSEXP, SEXP toleranceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type interpolation(interpolationSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
     Rcpp::traits::input_parameter< double >::type qmin(qminSEXP);
     Rcpp::traits::input_parameter< double >::type qmax(qmaxSEXP);
     Rcpp::traits::input_parameter< std::string >::type fit_method(fit_methodSEXP);
     Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
-    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence(xptr, interpolation, qmin, qmax, fit_method, tolerance));
+    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -5656,6 +5658,44 @@ RcppExport SEXP _pladdrr_sound_to_harmonicity_cc(SEXP sound_xptrSEXP, SEXP time_
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
         rcpp_result_gen = PROTECT(_pladdrr_sound_to_harmonicity_cc_try(sound_xptrSEXP, time_stepSEXP, min_pitchSEXP, silence_thresholdSEXP, periods_per_windowSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_harmonicity_gne
+XPtr<structMatrix> sound_to_harmonicity_gne(XPtr<structSound> sound_xptr, double fmin, double fmax, double bandwidth, double step);
+static SEXP _pladdrr_sound_to_harmonicity_gne_try(SEXP sound_xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP bandwidthSEXP, SEXP stepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
+    Rcpp::traits::input_parameter< double >::type step(stepSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_harmonicity_gne(sound_xptr, fmin, fmax, bandwidth, step));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_harmonicity_gne(SEXP sound_xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP bandwidthSEXP, SEXP stepSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_harmonicity_gne_try(sound_xptrSEXP, fminSEXP, fmaxSEXP, bandwidthSEXP, stepSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -8891,6 +8931,7 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structFormant>(*.sound_to_formant_burg)(XPtr<structSound>,double,double,double,double,double)");
         signatures.insert("XPtr<structIntensity>(*.sound_to_intensity)(XPtr<structSound>,double,double,bool)");
         signatures.insert("XPtr<structHarmonicity>(*.sound_to_harmonicity_cc)(XPtr<structSound>,double,double,double,double)");
+        signatures.insert("XPtr<structMatrix>(*.sound_to_harmonicity_gne)(XPtr<structSound>,double,double,double,double)");
         signatures.insert("XPtr<structSpectrum>(*.sound_to_spectrum)(XPtr<structSound>,bool)");
         signatures.insert("SEXP(*.sound_to_ltas)(XPtr<structSound>,double)");
         signatures.insert("XPtr<structSpectrogram>(*.sound_to_spectrogram)(XPtr<structSound>,double,double,double,double,std::string)");
@@ -8995,6 +9036,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_burg", (DL_FUNC)_pladdrr_sound_to_formant_burg_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_intensity", (DL_FUNC)_pladdrr_sound_to_intensity_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_cc", (DL_FUNC)_pladdrr_sound_to_harmonicity_cc_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_gne", (DL_FUNC)_pladdrr_sound_to_harmonicity_gne_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_spectrum", (DL_FUNC)_pladdrr_sound_to_spectrum_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_ltas", (DL_FUNC)_pladdrr_sound_to_ltas_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_spectrogram", (DL_FUNC)_pladdrr_sound_to_spectrogram_try);
@@ -9329,7 +9371,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pointprocess_save", (DL_FUNC) &_pladdrr_pointprocess_save, 2},
     {"_pladdrr_sound_to_powercepstrogram", (DL_FUNC) &_pladdrr_sound_to_powercepstrogram, 5},
     {"_pladdrr_spectrum_to_powercepstrum", (DL_FUNC) &_pladdrr_spectrum_to_powercepstrum, 1},
-    {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 6},
+    {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 8},
     {"_pladdrr_powercepstrum_get_quefrency_of_peak", (DL_FUNC) &_pladdrr_powercepstrum_get_quefrency_of_peak, 4},
     {"_pladdrr_powercepstrum_get_value_at_quefrency", (DL_FUNC) &_pladdrr_powercepstrum_get_value_at_quefrency, 4},
     {"_pladdrr_powercepstrum_smooth", (DL_FUNC) &_pladdrr_powercepstrum_smooth, 3},
@@ -9389,6 +9431,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_to_formant_burg", (DL_FUNC) &_pladdrr_sound_to_formant_burg, 6},
     {"_pladdrr_sound_to_intensity", (DL_FUNC) &_pladdrr_sound_to_intensity, 4},
     {"_pladdrr_sound_to_harmonicity_cc", (DL_FUNC) &_pladdrr_sound_to_harmonicity_cc, 5},
+    {"_pladdrr_sound_to_harmonicity_gne", (DL_FUNC) &_pladdrr_sound_to_harmonicity_gne, 5},
     {"_pladdrr_sound_to_spectrum", (DL_FUNC) &_pladdrr_sound_to_spectrum, 2},
     {"_pladdrr_sound_to_ltas", (DL_FUNC) &_pladdrr_sound_to_ltas, 2},
     {"_pladdrr_sound_to_spectrogram", (DL_FUNC) &_pladdrr_sound_to_spectrogram, 6},

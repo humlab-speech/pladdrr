@@ -116,8 +116,8 @@ Get CPP at a specific time
 \if{html}{\out{<div class="r">}}\preformatted{PowerCepstrogram$get_cpp_at_time(
   time,
   interpolation = c("linear", "cubic"),
-  qmin = 0.001,
-  qmax = 0,
+  qmin = 0.003,
+  qmax = 0.04,
   fit_method = c("straight", "exponential decay", "parabolic"),
   tolerance = 0.05
 )}\if{html}{\out{</div>}}
@@ -153,8 +153,8 @@ Get mean CPP over a time range
 \if{html}{\out{<div class="r">}}\preformatted{PowerCepstrogram$get_mean_cpp(
   from_time = 0,
   to_time = 0,
-  qmin = 0.001,
-  qmax = 0,
+  qmin = 0.003,
+  qmax = 0.04,
   fit_method = c("straight", "exponential decay", "parabolic"),
   tolerance = 0.05
 )}\if{html}{\out{</div>}}
@@ -245,8 +245,8 @@ acoustic measures required for AVQI calculation.
   pitch_ceiling = 333.3,
   delta_f0 = 0.05,
   interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
-  quefrency_range_start = 0.001,
-  quefrency_range_end = 0.05,
+  quefrency_range_start = 0.003,
+  quefrency_range_end = 0.04,
   trend_line_type = c("straight", "exponential decay"),
   fit_method = c("robust", "least squares", "robust slow")
 )}\if{html}{\out{</div>}}

@@ -143,6 +143,7 @@ SEXP spectrum_to_powercepstrum(SEXP spectrum_xptr) {
 
 // [[Rcpp::export(.powercepstrum_get_peak_prominence)]]
 double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
+                                         double pitch_floor, double pitch_ceiling,
                                          double qmin, double qmax,
                                          std::string fit_method, double tolerance) {
     XPtr<structPowerCepstrum> cepstrum(xptr);
@@ -172,13 +173,15 @@ double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
     
     try {
         double qpeak;
+        // Note: pitch_floor and pitch_ceiling define the peak search range
+        // qmin and qmax define the quefrency range for trend line fitting
         double prominence = PowerCepstrum_getPeakProminence(
             cepstrum.get(),
-            1.0 / qmax,  // Convert quefrency to pitch floor
-            1.0 / qmin,  // Convert quefrency to pitch ceiling
+            pitch_floor,  // Pitch floor for peak search (e.g., 60 Hz)
+            pitch_ceiling,  // Pitch ceiling for peak search (e.g., 333.3 Hz)
             interp_type,
-            qmin,
-            qmax,
+            qmin,  // Quefrency start for trend line fit (e.g., 0.001 s)
+            qmax,  // Quefrency end for trend line fit (e.g., 0.05 s)
             trend_type,
             fit_type,
             qpeak
