@@ -240,6 +240,45 @@ test_that("Formant unit parameter works (hertz vs bark)", {
   }
 })
 
+test_that("Formant unit bug fix: get_value_at_time returns correct scale", {
+  skip_if_not(require("pladdrr"), message = "speaker package not available")
+  
+  sound <- create_test_sound()
+  formant <- sound$to_formant_burg()
+  
+  # Get F1 at time 0.25 using get_value_at_time with "hertz"
+  f1_method <- formant$get_value_at_time(1, 0.25, unit = "hertz")
+  
+  # Get F1 at time 0.25 from data frame
+  df <- formant$as_data_frame()
+  idx <- which.min(abs(df$time - 0.25))
+  f1_dataframe <- df$F1[idx]
+  
+  # Skip if either is NA
+  skip_if(is.na(f1_method) || is.na(f1_dataframe), "No formant data at test time")
+  
+  # Both methods should return Hertz values (not Bark)
+  # Hertz values for F1 are typically 300-1500 Hz
+  # Bark values for F1 are typically 3-13 bark
+  expect_true(f1_method > 50, 
+              info = "get_value_at_time should return Hertz (>50), not Bark (<20)")
+  
+  # The two methods should return similar values (within 100 Hz tolerance)
+  # This was the bug: get_value_at_time returned ~7 (bark) while dataframe returned ~862 (Hz)
+  expect_true(abs(f1_method - f1_dataframe) < 100,
+              info = sprintf("Methods should agree: get_value_at_time=%.2f, dataframe=%.2f", 
+                           f1_method, f1_dataframe))
+  
+  # Also verify that bark scale returns different (smaller) values
+  f1_bark <- formant$get_value_at_time(1, 0.25, unit = "bark")
+  if (!is.na(f1_bark)) {
+    expect_true(f1_bark < 20, 
+                info = "Bark values should be < 20 for typical F1")
+    expect_true(f1_bark < f1_method / 10,
+                info = "Bark values should be much smaller than Hertz values")
+  }
+})
+
 test_that("Formant works with different max_formants settings", {
   skip_if_not(require("pladdrr"), message = "speaker package not available")
   

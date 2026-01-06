@@ -37,7 +37,7 @@ Formant <- function(.xptr = NULL) {
   # Helper: unit code conversion
   unit_code <- function(unit) {
     unit <- match.arg(tolower(unit), c("hertz", "bark"))
-    if (unit == "hertz") 1L else 2L
+    if (unit == "hertz") 0L else 1L
   }
   
   # Create object with methods

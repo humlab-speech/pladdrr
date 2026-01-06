@@ -1,3 +1,16 @@
+# pladdrr 2.0.4 (2026-01-06)
+
+## Bug Fixes
+
+### Formant Unit Code - Critical Fix
+* **Fixed unit code mapping in `Formant$get_value_at_time()` (CRITICAL)**
+  - Root cause: `unit_code()` returned 1L for "hertz" and 2L for "bark" (should be 0L and 1L)
+  - Symptom: Requesting "hertz" returned Bark values (~7) instead of Hz (~862)
+  - Users had to workaround by extracting via `as_data_frame()` instead
+  - Fixed in: `R/formant-r6.R` line 40
+  - Affects all formant query methods: `get_value_at_time()`, `get_mean()`, `get_standard_deviation()`, `get_quantile()`, `get_minimum()`, `get_maximum()`
+  - Discovered by: plabench 3-way validation testing (Praat ↔ Python ↔ R)
+
 # pladdrr 2.0.3 (2026-01-04)
 
 ## Bug Fixes
