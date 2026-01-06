@@ -276,6 +276,73 @@ public:
     }
 
     // ========================================================================
+    // Batch Statistics (NEW - Performance Enhancement)
+    // ========================================================================
+
+    List get_statistics(double from_time, double to_time, int unit, 
+                        CharacterVector metrics) {
+        VALIDATE_PTR(ptr, Pitch);
+        
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        
+        List result;
+        kPitch_unit pitch_unit = static_cast<kPitch_unit>(unit);
+        
+        try {
+            for (int i = 0; i < metrics.size(); i++) {
+                std::string metric = Rcpp::as<std::string>(metrics[i]);
+                
+                if (metric == "minimum" || metric == "min") {
+                    double val = Pitch_getMinimum(ptr.get(), from_time, to_time, 
+                                                 pitch_unit, false);
+                    result[metric] = val;
+                    
+                } else if (metric == "maximum" || metric == "max") {
+                    double val = Pitch_getMaximum(ptr.get(), from_time, to_time, 
+                                                 pitch_unit, false);
+                    result[metric] = val;
+                    
+                } else if (metric == "mean") {
+                    double val = Pitch_getMean(ptr.get(), from_time, to_time, 
+                                              pitch_unit);
+                    result[metric] = val;
+                    
+                } else if (metric == "stdev" || metric == "standard_deviation" || metric == "sd") {
+                    double val = Pitch_getStandardDeviation(ptr.get(), from_time, to_time, 
+                                                           pitch_unit);
+                    result[metric] = val;
+                    
+                } else if (metric == "median") {
+                    double val = Pitch_getQuantile(ptr.get(), from_time, to_time, 
+                                                  0.5, pitch_unit);
+                    result[metric] = val;
+                    
+                } else if (metric == "quantile25" || metric == "q25") {
+                    double val = Pitch_getQuantile(ptr.get(), from_time, to_time, 
+                                                  0.25, pitch_unit);
+                    result[metric] = val;
+                    
+                } else if (metric == "quantile75" || metric == "q75") {
+                    double val = Pitch_getQuantile(ptr.get(), from_time, to_time, 
+                                                  0.75, pitch_unit);
+                    result[metric] = val;
+                    
+                } else {
+                    Rcpp::warning("Unknown metric: %s", metric.c_str());
+                }
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to calculate pitch statistics");
+        }
+        
+        return result;
+    }
+
+    // ========================================================================
     // Strength Query Methods
     // ========================================================================
 
@@ -665,6 +732,9 @@ RCPP_MODULE(pitch_module) {
         .method("get_time_of_minimum", &RPitch::get_time_of_minimum, "Get time of min pitch")
         .method("get_time_of_maximum", &RPitch::get_time_of_maximum, "Get time of max pitch")
         .method("count_voiced_frames", &RPitch::count_voiced_frames, "Count voiced frames")
+
+        // Batch statistics (fast - single call for multiple metrics)
+        .method("get_statistics", &RPitch::get_statistics, "Get multiple statistics in one call")
 
         // Strength methods
         .method("get_strength_at_time", &RPitch::get_strength_at_time, "Get pitch strength at time")

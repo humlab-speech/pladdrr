@@ -34,6 +34,8 @@
 #' - `get_rms()`, `get_energy()`, `get_power()` - Energy measures
 #' - `get_intensity_db()` - Intensity in dB
 #' - `get_minimum()`, `get_maximum()`, `get_mean()` - Amplitude statistics
+#' - `get_values(channel)` - **NEW**: Get sample values as numeric vector (fast, no data frame)
+#' - `get_sample_times()` - **NEW**: Get sample times as numeric vector (fast, no data frame)
 #'
 #' @section Analysis Methods:
 #' - `to_pitch()` - Extract pitch contour (F0)
@@ -201,7 +203,16 @@ Sound <- function(path = NULL, .xptr = NULL) {
       cpp_snd$get_mean(as.numeric(from_time), as.numeric(to_time), as.integer(channel))
     },
     
-    # === Core Transformations (from module - FAST) ===
+    # === Direct Data Access (NEW - FAST, no data frame overhead) ===
+    get_values = function(channel = 1) {
+      cpp_snd$get_values(as.integer(channel))
+    },
+    
+    get_sample_times = function() {
+      cpp_snd$get_sample_times()
+    },
+    
+    # === Time/Sample Conversion ===
     to_pitch = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
       pitch_ptr <- cpp_snd$to_pitch_ptr(
         as.numeric(time_step),

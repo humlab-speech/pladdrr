@@ -81,6 +81,66 @@ public:
         return Intensity_getQuantile(ptr.get(), from_time, to_time, quantile);
     }
 
+    // ========================================================================
+    // Batch Statistics (NEW - Performance Enhancement)
+    // ========================================================================
+
+    List get_statistics(double from_time, double to_time, CharacterVector metrics) {
+        VALIDATE_PTR(ptr, Intensity);
+        
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        
+        List result;
+        
+        try {
+            for (int i = 0; i < metrics.size(); i++) {
+                std::string metric = Rcpp::as<std::string>(metrics[i]);
+                
+                if (metric == "minimum" || metric == "min") {
+                    double val = Vector_getMinimum(ptr.get(), from_time, to_time, 
+                                                  kVector_peakInterpolation::PARABOLIC);
+                    result[metric] = val;
+                    
+                } else if (metric == "maximum" || metric == "max") {
+                    double val = Vector_getMaximum(ptr.get(), from_time, to_time, 
+                                                  kVector_peakInterpolation::PARABOLIC);
+                    result[metric] = val;
+                    
+                } else if (metric == "mean") {
+                    double val = Intensity_getAverage(ptr.get(), from_time, to_time, 0);
+                    result[metric] = val;
+                    
+                } else if (metric == "stdev" || metric == "standard_deviation" || metric == "sd") {
+                    double val = Vector_getStandardDeviation(ptr.get(), from_time, to_time, 1);
+                    result[metric] = val;
+                    
+                } else if (metric == "median") {
+                    double val = Intensity_getQuantile(ptr.get(), from_time, to_time, 0.5);
+                    result[metric] = val;
+                    
+                } else if (metric == "quantile25" || metric == "q25") {
+                    double val = Intensity_getQuantile(ptr.get(), from_time, to_time, 0.25);
+                    result[metric] = val;
+                    
+                } else if (metric == "quantile75" || metric == "q75") {
+                    double val = Intensity_getQuantile(ptr.get(), from_time, to_time, 0.75);
+                    result[metric] = val;
+                    
+                } else {
+                    Rcpp::warning("Unknown metric: %s", metric.c_str());
+                }
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to calculate intensity statistics");
+        }
+        
+        return result;
+    }
+
     // Transform
     XPtr<structIntensityTier> down_to_intensity_tier_ptr() {
         VALIDATE_PTR(ptr, Intensity);
@@ -151,6 +211,7 @@ RCPP_MODULE(intensity_module) {
         .method("get_time_of_maximum", &RIntensity::get_time_of_maximum)
         .method("get_standard_deviation", &RIntensity::get_standard_deviation)
         .method("get_quantile", &RIntensity::get_quantile)
+        .method("get_statistics", &RIntensity::get_statistics, "Get multiple statistics in one call")
         .method("down_to_intensity_tier_ptr", &RIntensity::down_to_intensity_tier_ptr)
         .method("as_data_frame", &RIntensity::as_data_frame)
         .method("as_matrix", &RIntensity::as_matrix)

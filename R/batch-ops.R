@@ -30,7 +30,20 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
   # Extract xptrs from R6 objects if needed
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
+      # Try multiple extraction methods (Sound objects store xptr in different ways)
+      ptr <- s$.xptr  # Primary method for function-based Sound objects
+      if (is.null(ptr)) ptr <- s$get_xptr()  # Fallback 1: method call
+      if (is.null(ptr) && !is.null(s$.pointer)) ptr <- s$.pointer  # Fallback 2: alternative name
+      if (is.null(ptr)) {
+        # Last resort: try private environment (old R6 style)
+        tryCatch({
+          ptr <- s$.__enclos_env__$private$ptr
+        }, error = function(e) NULL)
+      }
+      if (is.null(ptr)) {
+        stop("Could not extract external pointer from Sound object")
+      }
+      ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {

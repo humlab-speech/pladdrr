@@ -179,6 +179,44 @@ public:
     }
 
     // =========================================================================
+    // Direct Data Access (NEW - Performance Enhancement)
+    // =========================================================================
+
+    NumericVector get_values(int channel = 1) {
+        VALIDATE_PTR(ptr, Sound);
+        
+        if (channel < 1 || channel > ptr->ny) {
+            Rcpp::stop("Channel out of range [1, %d]: %d", ptr->ny, channel);
+        }
+        
+        integer n_samples = ptr->nx;
+        NumericVector values(n_samples);
+        
+        // Direct memory access to Praat's sample array
+        for (integer i = 1; i <= n_samples; i++) {
+            values[i-1] = ptr->z[channel][i];  // Convert to 0-based indexing for R
+        }
+        
+        return values;
+    }
+
+    NumericVector get_sample_times() {
+        VALIDATE_PTR(ptr, Sound);
+        
+        integer n_samples = ptr->nx;
+        NumericVector times(n_samples);
+        
+        // Calculate time for each sample: t = x1 + (i-1) * dx
+        double time = ptr->x1;
+        for (integer i = 0; i < n_samples; i++) {
+            times[i] = time;
+            time += ptr->dx;
+        }
+        
+        return times;
+    }
+
+    // =========================================================================
     // Time/Sample Conversion
     // =========================================================================
 
@@ -467,6 +505,10 @@ RCPP_MODULE(sound_module) {
         .method("get_minimum", &RSound::get_minimum, "Get minimum amplitude")
         .method("get_maximum", &RSound::get_maximum, "Get maximum amplitude")
         .method("get_mean", &RSound::get_mean, "Get mean amplitude")
+
+        // Direct data access (fast, no data frame overhead)
+        .method("get_values", &RSound::get_values, "Get sample values as vector")
+        .method("get_sample_times", &RSound::get_sample_times, "Get sample times as vector")
 
         // Time/sample conversion
         .method("get_time_from_sample", &RSound::get_time_from_sample, "Convert sample to time")

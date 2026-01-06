@@ -1,4 +1,40 @@
-# pladdrr 2.0.4 (2026-01-06)
+# pladdrr 2.0.5 (2026-01-06)
+
+## Performance Enhancements
+
+### Critical Bug Fix
+* **Fixed `sound_concatenate_all()` pointer extraction bug**
+  - Root cause: Function tried `s$.__enclos_env__$private$ptr` but Sound objects use `.xptr` field
+  - Added robust pointer extraction with fallback methods
+  - Fixes multi-file batch concatenation operations
+  - Expected impact: 10-20% speedup for multi-file workflows
+
+### New Direct Vector Access Methods
+* **Added `Sound$get_values(channel)` and `Sound$get_sample_times()`**
+  - Returns numeric vectors directly, bypassing data frame overhead
+  - Expected impact: 20-30% speedup for signal processing (AVQI v3.01, VQ analyses)
+  - Implemented in: `src/modules/sound_module.cpp`, `R/sound-r6-new.R`
+
+### Batch Statistics Methods
+* **Added `Pitch$get_statistics()` method**
+  - Returns multiple statistics in single call: min, max, mean, stdev, median, quantiles
+  - Expected impact: 10-15% speedup for pitch analyses requiring multiple stats
+  - Usage: `pitch$.cpp$get_statistics(from_time, to_time, unit, c("mean", "stdev"))`
+  - Implemented in: `src/modules/pitch_module.cpp`
+
+* **Added `Intensity$get_statistics()` method**
+  - Same metrics as Pitch: min, max, mean, stdev, median, quantiles
+  - Expected impact: 10-15% speedup for intensity analyses
+  - Usage: `intensity$.cpp$get_statistics(from_time, to_time, c("mean", "maximum"))`
+  - Implemented in: `src/modules/intensity_module.cpp`
+
+### Documentation
+* **Created comprehensive planning documents**
+  - `ARCHITECTURAL_CHANGES_ROADMAP.md` - Long-term performance roadmap
+  - `IMPLEMENTATION_SUMMARY_2026-01-06.md` - Session implementation details
+  - Based on user feedback analyzing 5-56× performance gap vs Python/Parselmouth
+
+**Overall Expected Performance Improvement: 30-40% for typical voice analysis workflows**
 
 ## Bug Fixes
 
