@@ -1,6 +1,42 @@
+# pladdrr 2.0.6 (2026-01-06)
+
+## Phase 2 Performance Enhancements: Batch Operations Framework
+
+### New Batch Analysis Functions
+
+Implemented batch operations that combine multiple R<->C++ calls into single function calls:
+
+* **`voice_quality_batch()`** - Voice quality analysis in one call
+  - Combines 10 separate operations: to_pitch_cc() + 4 pitch stats + to_intensity() + 4 intensity stats
+  - Returns: pitch (mean, max, min, stdev, median) + intensity (mean, max, min, stdev, median)
+  - Expected impact: 15-20% speedup for DSI, AVQI workflows
+  - Implemented in: `src/sound_batch_analysis.cpp`, `R/batch-analysis.R`
+
+* **`formant_analysis_batch()`** - Multi-formant statistics in one call
+  - Combines 21 operations for 4 formants: to_formant_burg() + (5 stats × 4 formants)
+  - Returns: F1, F2, F3, F4 each with mean, stdev, median, minimum, maximum
+  - Expected impact: 20-25% speedup for vowel space analysis
+  - Implemented in: `src/sound_batch_analysis.cpp`, `R/batch-analysis.R`
+
+* **`pitch_harmonicity_batch()`** - Combined pitch/HNR analysis
+  - Optimized to share autocorrelation computation between pitch and harmonicity
+  - Returns: pitch statistics + HNR statistics
+  - Expected impact: 10-15% speedup compared to separate analyses
+  - Implemented in: `src/sound_batch_analysis.cpp`, `R/batch-analysis.R`
+
+### Testing
+* Added comprehensive test suite: `tests/testthat/test-batch-analysis.R`
+* Tests verify correctness by comparing batch vs individual calls
+* Tests validate input handling and error messages
+
+**Phase 2 Expected Impact: 15-25% additional speedup**  
+**Combined with Phase 1: 40-55% total workflow speedup**
+
+---
+
 # pladdrr 2.0.5 (2026-01-06)
 
-## Performance Enhancements
+## Phase 1 Performance Enhancements
 
 ### Critical Bug Fix
 * **Fixed `sound_concatenate_all()` pointer extraction bug**

@@ -818,6 +818,69 @@ namespace pladdrr {
         return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
+    inline List sound_voice_quality_batch(SEXP sound_xptr, double time_step = 0.0, double pitch_floor = 75.0, double pitch_ceiling = 600.0, double periods_per_window = 3.0, int max_n_candidates = 15, bool very_accurate = false, double silence_threshold = 0.03, double voicing_threshold = 0.45, double octave_cost = 0.01, double octave_jump_cost = 0.35, double voiced_unvoiced_cost = 0.14, double minimum_pitch_intensity = 100.0, double from_time = 0.0, double to_time = 0.0) {
+        typedef SEXP(*Ptr_sound_voice_quality_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_sound_voice_quality_batch p_sound_voice_quality_batch = NULL;
+        if (p_sound_voice_quality_batch == NULL) {
+            validateSignature("List(*sound_voice_quality_batch)(SEXP,double,double,double,double,int,bool,double,double,double,double,double,double,double,double)");
+            p_sound_voice_quality_batch = (Ptr_sound_voice_quality_batch)R_GetCCallable("pladdrr", "_pladdrr_sound_voice_quality_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_sound_voice_quality_batch(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(periods_per_window)), Shield<SEXP>(Rcpp::wrap(max_n_candidates)), Shield<SEXP>(Rcpp::wrap(very_accurate)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(octave_cost)), Shield<SEXP>(Rcpp::wrap(octave_jump_cost)), Shield<SEXP>(Rcpp::wrap(voiced_unvoiced_cost)), Shield<SEXP>(Rcpp::wrap(minimum_pitch_intensity)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
+    inline List sound_formant_analysis_batch(SEXP sound_xptr, double time_step = 0.0, int max_n_formants = 5, double maximum_formant = 5500.0, double window_length = 0.025, double pre_emphasis_from = 50.0, double from_time = 0.0, double to_time = 0.0, IntegerVector formant_numbers = IntegerVector::create(1, 2, 3, 4)) {
+        typedef SEXP(*Ptr_sound_formant_analysis_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_sound_formant_analysis_batch p_sound_formant_analysis_batch = NULL;
+        if (p_sound_formant_analysis_batch == NULL) {
+            validateSignature("List(*sound_formant_analysis_batch)(SEXP,double,int,double,double,double,double,double,IntegerVector)");
+            p_sound_formant_analysis_batch = (Ptr_sound_formant_analysis_batch)R_GetCCallable("pladdrr", "_pladdrr_sound_formant_analysis_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_sound_formant_analysis_batch(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(max_n_formants)), Shield<SEXP>(Rcpp::wrap(maximum_formant)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(pre_emphasis_from)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)), Shield<SEXP>(Rcpp::wrap(formant_numbers)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
+    inline List sound_pitch_harmonicity_batch(SEXP sound_xptr, double time_step = 0.01, double pitch_floor = 75.0, double pitch_ceiling = 600.0, double silence_threshold = 0.1, double voicing_threshold = 0.45, double from_time = 0.0, double to_time = 0.0) {
+        typedef SEXP(*Ptr_sound_pitch_harmonicity_batch)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_sound_pitch_harmonicity_batch p_sound_pitch_harmonicity_batch = NULL;
+        if (p_sound_pitch_harmonicity_batch == NULL) {
+            validateSignature("List(*sound_pitch_harmonicity_batch)(SEXP,double,double,double,double,double,double,double)");
+            p_sound_pitch_harmonicity_batch = (Ptr_sound_pitch_harmonicity_batch)R_GetCCallable("pladdrr", "_pladdrr_sound_pitch_harmonicity_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_sound_pitch_harmonicity_batch(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(voicing_threshold)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_read_from_file_native(std::string path) {
         typedef SEXP(*Ptr__sound_read_from_file_native)(SEXP);
         static Ptr__sound_read_from_file_native p__sound_read_from_file_native = NULL;

@@ -1533,6 +1533,116 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_simd_info`)
 }
 
+#' Voice Quality Batch Analysis
+#' 
+#' Efficiently extracts common voice quality measures in a single C++ call,
+#' avoiding multiple R<->C++ boundary crossings.
+#' 
+#' @param sound_xptr External pointer to Sound object
+#' @param time_step Time step for pitch and intensity analysis (default 0.0 = auto)
+#' @param pitch_floor Minimum pitch in Hz (default 75.0)
+#' @param pitch_ceiling Maximum pitch in Hz (default 600.0)
+#' @param periods_per_window Periods per window for pitch (default 3.0)
+#' @param max_n_candidates Maximum number of pitch candidates (default 15)
+#' @param very_accurate Use accurate but slow pitch algorithm (default false)
+#' @param silence_threshold Silence threshold (default 0.03)
+#' @param voicing_threshold Voicing threshold (default 0.45)
+#' @param octave_cost Cost per octave jump (default 0.01)
+#' @param octave_jump_cost Cost per octave jump (default 0.35)
+#' @param voiced_unvoiced_cost Cost for voiced/unvoiced transition (default 0.14)
+#' @param minimum_pitch_intensity Minimum intensity for pitch (default 100.0)
+#' @param from_time Start time for statistics (default 0.0 = start)
+#' @param to_time End time for statistics (default 0.0 = end)
+#' 
+#' @return List containing:
+#'   - pitch: list with mean, max, min, stdev, median (all in Hz)
+#'   - intensity: list with mean, max, min, stdev, median (all in dB)
+#'   
+#' @details
+#' This function combines multiple operations that would normally require
+#' separate R<->C++ calls:
+#' - sound$to_pitch_cc() -> 1 call
+#' - pitch$get_mean() -> 1 call
+#' - pitch$get_maximum() -> 1 call  
+#' - pitch$get_minimum() -> 1 call
+#' - pitch$get_standard_deviation() -> 1 call
+#' - sound$to_intensity() -> 1 call
+#' - intensity$get_mean() -> 1 call
+#' - intensity$get_maximum() -> 1 call
+#' - intensity$get_minimum() -> 1 call
+#' - intensity$get_standard_deviation() -> 1 call
+#' 
+#' Total: 10 R<->C++ calls reduced to 1 call
+#' Expected speedup: 15-20% for typical voice quality workflows
+#' 
+#' @export
+sound_voice_quality_batch <- function(sound_xptr, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0, periods_per_window = 3.0, max_n_candidates = 15L, very_accurate = FALSE, silence_threshold = 0.03, voicing_threshold = 0.45, octave_cost = 0.01, octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14, minimum_pitch_intensity = 100.0, from_time = 0.0, to_time = 0.0) {
+    .Call(`_pladdrr_sound_voice_quality_batch`, sound_xptr, time_step, pitch_floor, pitch_ceiling, periods_per_window, max_n_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost, minimum_pitch_intensity, from_time, to_time)
+}
+
+#' Formant Statistics Batch Analysis
+#' 
+#' Efficiently extracts formant statistics for multiple formants in a single call.
+#' 
+#' @param sound_xptr External pointer to Sound object
+#' @param time_step Time step for formant analysis (default 0.0 = auto)
+#' @param max_n_formants Maximum number of formants to extract (default 5)
+#' @param maximum_formant Maximum formant frequency in Hz (default 5500.0)
+#' @param window_length Window length in seconds (default 0.025)
+#' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0)
+#' @param from_time Start time for statistics (default 0.0 = start)
+#' @param to_time End time for statistics (default 0.0 = end)
+#' @param formant_numbers Which formants to analyze (default c(1,2,3,4) = F1-F4)
+#' 
+#' @return List containing for each formant number:
+#'   - F1, F2, F3, F4: each with mean, stdev, median, minimum, maximum (all in Hz)
+#'   
+#' @details
+#' This function combines multiple operations:
+#' - sound$to_formant_burg() -> 1 call
+#' - formant$get_mean(1) -> 1 call
+#' - formant$get_standard_deviation(1) -> 1 call
+#' - ... repeated for each formant and statistic
+#' 
+#' For 4 formants with 5 statistics each: 21 R<->C++ calls reduced to 1 call
+#' Expected speedup: 20-25% for vowel space analysis
+#' 
+#' @export
+sound_formant_analysis_batch <- function(sound_xptr, time_step = 0.0, max_n_formants = 5L, maximum_formant = 5500.0, window_length = 0.025, pre_emphasis_from = 50.0, from_time = 0.0, to_time = 0.0, formant_numbers = as.integer( c(1, 2, 3, 4))) {
+    .Call(`_pladdrr_sound_formant_analysis_batch`, sound_xptr, time_step, max_n_formants, maximum_formant, window_length, pre_emphasis_from, from_time, to_time, formant_numbers)
+}
+
+#' Pitch and Harmonicity Combined Analysis
+#' 
+#' Efficiently extracts both Pitch and Harmonicity (HNR) by sharing the
+#' autocorrelation computation between them.
+#' 
+#' @param sound_xptr External pointer to Sound object
+#' @param time_step Time step for analysis (default 0.01)
+#' @param pitch_floor Minimum pitch in Hz (default 75.0)
+#' @param pitch_ceiling Maximum pitch in Hz (default 600.0)
+#' @param periods_per_window Periods per window (default 1.0 for HNR, 3.0 for pitch)
+#' @param silence_threshold Silence threshold (default 0.1)
+#' @param voicing_threshold Voicing threshold (default 0.45)
+#' @param from_time Start time for statistics (default 0.0 = start)
+#' @param to_time End time for statistics (default 0.0 = end)
+#' 
+#' @return List containing:
+#'   - pitch: list with mean, max, min, stdev, median (all in Hz)
+#'   - hnr: list with mean, stdev, median (all in dB)
+#'   
+#' @details
+#' This function is more efficient than calling sound$to_pitch() and 
+#' sound$to_harmonicity() separately, as both analyses use autocorrelation
+#' which can be computed once and shared.
+#' 
+#' Expected speedup: 10-15% compared to separate analyses
+#' 
+#' @export
+sound_pitch_harmonicity_batch <- function(sound_xptr, time_step = 0.01, pitch_floor = 75.0, pitch_ceiling = 600.0, silence_threshold = 0.1, voicing_threshold = 0.45, from_time = 0.0, to_time = 0.0) {
+    .Call(`_pladdrr_sound_pitch_harmonicity_batch`, sound_xptr, time_step, pitch_floor, pitch_ceiling, silence_threshold, voicing_threshold, from_time, to_time)
+}
+
 .sound_convert_to_mono_simd <- function(xptr) {
     .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
