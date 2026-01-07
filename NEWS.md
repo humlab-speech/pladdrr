@@ -1,3 +1,80 @@
+# pladdrr 2.1.1 (2026-01-07)
+
+## Bug Fixes: API Consistency
+
+Fixed class naming and method consistency issues across sampled objects:
+
+* **Class name standardization**
+  - Changed `inherits()` checks from internal names (`formant_constructor`, `pitch_constructor`, `intensity_constructor`) to clean public names (`Formant`, `Pitch`, `Intensity`)
+  - Improves consistency with module-based object architecture
+  
+* **Method aliases for consistency**
+  - Added `get_xmin()` and `get_xmax()` aliases to Formant, Intensity, Pitch R6 classes
+  - Ensures consistent API across all sampled objects (Sound, Pitch, Formant, Intensity, etc.)
+  
+* **Fixed interpolation codes**
+  - Corrected `get_intensity_at_times()` interpolation mapping:
+    - cubic: 4 → 2 (correct)
+    - sinc70: 6 → 3 (correct)
+    - Added missing sinc700: 4
+  - Aligns with Praat's internal interpolation constants
+  
+* **Test updates**
+  - Updated tests to use specific method names (`to_formant_burg`, `to_pitch_cc`) instead of deprecated generic methods
+  - All batch-queries tests passing (43 PASS, 0 FAIL)
+
+**Files changed:** `R/batch-queries.R`, `R/formant-r6.R`, `R/intensity-r6.R`, `R/pitch-r6.R`, `tests/testthat/test-batch-queries.R`
+
+---
+
+# pladdrr 2.1.0 (2026-01-07)
+
+## Phase 2 Complete: Interpreter Module
+
+Migrated persistent Praat interpreter from wrapper functions to Rcpp Module for better performance and memory management.
+
+### Interpreter Module (`RInterpreter` class)
+
+* **New module:** `src/modules/interpreter_module.cpp` (370 lines)
+  - Wraps `XPtr<structInterpreter>` with clean C++ class interface
+  - 10 methods migrated from wrapper functions to module methods
+  
+* **Methods migrated to module:**
+  - `run(script)` - Execute Praat script
+  - `eval_numeric(expr)` - Evaluate numeric expression
+  - `eval_string(expr)` - Evaluate string expression
+  - `eval_vector(expr)` - Evaluate vector expression
+  - `eval_matrix(expr)` - Evaluate matrix expression
+  - `eval_string_array(expr)` - Evaluate string array
+  - `get_variable(name, type)` - Get variable from interpreter
+  - `set_variable(name, value)` - Set variable in interpreter
+  - `is_valid()` - Check interpreter validity
+  - `get_xptr()` - Get raw XPtr (for legacy compatibility)
+
+* **Preserved wrapper functions:** 8 global object list operations
+  - These operate on `theCurrentPraatObjects` singleton (global state)
+  - Correctly kept as wrappers: `interpreter_object_count()`, `interpreter_object_info()`, `interpreter_select()`, etc.
+
+### Architecture Clarification
+
+* **Module vs Wrapper roles documented:**
+  - **Modules:** Instance methods, property access, queries (performance-critical)
+  - **Wrappers:** Factory functions, transformations, global state operations
+  - Both are necessary and complementary (not duplicates)
+
+### Updated Documentation
+
+* **`LEGACY_AUDIT.md`**: Marked Phase 2 (Interpreter Module) as COMPLETE
+* **`IMPLEMENTATION_STATUS_2026-01-07.md`**: Comprehensive package status report
+  - 33 Rcpp modules (92% coverage)
+  - 780+ module methods
+  - ~530 wrapper functions (creation/transformation - needed)
+  - Package is production-ready at v2.1.0
+
+**Implementation:** `src/modules/interpreter_module.cpp`, `R/praat-interpreter-r6.R`
+
+---
+
 # pladdrr 2.0.9 (2026-01-07)
 
 ## Phase 5 Performance Enhancements: Batch Query Operations (3-5x faster)
