@@ -376,25 +376,55 @@ These use direct `[[Rcpp::export]]` intentionally for performance - bypassing mo
 
 **Impact:** 26 exports migrated to proper OOP pattern
 
+**Status:** ✅ COMPLETE (2026-01-07)
+
+**Implementation:**
+- Created `src/modules/interpreter_module.cpp` with `RInterpreter` class
+- Migrated 10 persistent interpreter methods to module:
+  - `run()` - Execute Praat script
+  - `eval_numeric()`, `eval_string()`, `eval_vector()`, `eval_matrix()`, `eval_string_array()`
+  - `get_variable()`, `set_variable()`
+  - `is_valid()`, `get_xptr()`
+- Updated `R/praat-interpreter-r6.R` to use module for instance methods
+- Kept global object list operations (8 functions) as `[[Rcpp::export]]` wrappers
+- Kept stateless evaluation (6 functions) and init (2 functions) as wrappers
+
 **Design:**
 ```cpp
 class RInterpreter {
     XPtr<structInterpreter> ptr;
 public:
     RInterpreter();
-    void run_script(std::string script);
-    double evaluate_numeric(std::string expr);
-    std::string evaluate_string(std::string expr);
-    // ... etc
+    void run(std::string script);
+    double eval_numeric(std::string expr);
+    std::string eval_string(std::string expr);
+    NumericVector eval_vector(std::string expr);
+    NumericMatrix eval_matrix(std::string expr);
+    CharacterVector eval_string_array(std::string expr);
+    SEXP get_variable(std::string name);
+    void set_variable(std::string name, SEXP value);
 };
 
 RCPP_MODULE(interpreter_module) {
     class_<RInterpreter>("RInterpreter")
         .constructor()
-        .method("run_script", &RInterpreter::run_script)
-        // ...
+        .method("run", &RInterpreter::run)
+        .method("eval_numeric", &RInterpreter::eval_numeric)
+        .method("eval_string", &RInterpreter::eval_string)
+        .method("eval_vector", &RInterpreter::eval_vector)
+        .method("eval_matrix", &RInterpreter::eval_matrix)
+        .method("eval_string_array", &RInterpreter::eval_string_array)
+        .method("get_variable", &RInterpreter::get_variable)
+        .method("set_variable", &RInterpreter::set_variable)
+        .method("is_valid", &RInterpreter::is_valid)
+        .method("get_xptr", &RInterpreter::get_xptr);
 }
 ```
+
+**Files Modified:**
+- Created: `src/modules/interpreter_module.cpp`
+- Modified: `R/praat-interpreter-r6.R` (updated to use module)
+- Preserved: `src/interpreter_wrappers.cpp` (still needed for global operations)
 
 ### Phase 3: Audit Performance Files (LOW PRIORITY)
 

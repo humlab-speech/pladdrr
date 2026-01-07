@@ -82,7 +82,9 @@ PraatInterpreter <- R6::R6Class(
     #' @description Create new interpreter instance
     #' @return A new PraatInterpreter object
     initialize = function() {
-      private$ptr <- .praat_interpreter_create()
+      # Load Rcpp Module
+      interp_mod <- get_module("interpreter_module")
+      private$cpp <- interp_mod$RInterpreter$new()
     },
     
     #' @description Execute Praat script code
@@ -97,7 +99,7 @@ PraatInterpreter <- R6::R6Class(
     #' interp$get_variable("sum")  # Returns 30
     #' }
     run = function(script) {
-      .praat_interpreter_run(private$ptr, script)
+      private$cpp$run(script)
       invisible(self)
     },
     
@@ -112,7 +114,7 @@ PraatInterpreter <- R6::R6Class(
     #' value <- interp$get_variable("x")
     #' }
     get_variable = function(name) {
-      .praat_interpreter_get_variable(private$ptr, name)
+      private$cpp$get_variable(name)
     },
     
     #' @description Set variable value in interpreter
@@ -127,7 +129,7 @@ PraatInterpreter <- R6::R6Class(
     #' interp$set_variable("data", c(1, 2, 3))
     #' }
     set_variable = function(name, value) {
-      .praat_interpreter_set_variable(private$ptr, name, value)
+      private$cpp$set_variable(name, value)
       invisible(self)
     },
     
@@ -144,23 +146,23 @@ PraatInterpreter <- R6::R6Class(
       # Try to determine result type and evaluate using interpreter context
       # Try numeric first
       tryCatch({
-        return(.praat_interpreter_eval_numeric(private$ptr, expression))
+        return(private$cpp$eval_numeric(expression))
       }, error = function(e) {
         # Try string
         tryCatch({
-          return(.praat_interpreter_eval_string(private$ptr, expression))
+          return(private$cpp$eval_string(expression))
         }, error = function(e2) {
           # Try vector
           tryCatch({
-            return(.praat_interpreter_eval_vector(private$ptr, expression))
+            return(private$cpp$eval_vector(expression))
           }, error = function(e3) {
             # Try matrix
             tryCatch({
-              return(.praat_interpreter_eval_matrix(private$ptr, expression))
+              return(private$cpp$eval_matrix(expression))
             }, error = function(e4) {
               # Try string array
               tryCatch({
-                return(.praat_interpreter_eval_string_array(private$ptr, expression))
+                return(private$cpp$eval_string_array(expression))
               }, error = function(e5) {
                 stop("Could not evaluate expression: ", expression, 
                      "\nLast error: ", conditionMessage(e5))
@@ -287,6 +289,6 @@ PraatInterpreter <- R6::R6Class(
   ),
 
   private = list(
-    ptr = NULL
+    cpp = NULL  # Rcpp module instance
   )
 )
