@@ -117,6 +117,70 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
     .Call(`_pladdrr_lpc_autocorrelation`, data, num_coefficients)
 }
 
+#' Batch query MULTIPLE formant frequencies at multiple time points
+#' 
+#' @param formant_xptr External pointer to Formant object
+#' @param times Numeric vector of time points
+#' @param formant_numbers Integer vector of formant numbers (1=F1, 2=F2, etc)
+#' @param unit Integer code for unit (0=HERTZ, 1=BARK)
+#' @return List with one element per formant number, each containing a numeric vector
+#' @keywords internal
+formant_get_multiple_formants_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
+    .Call(`_pladdrr_formant_get_multiple_formants_at_times`, formant_xptr, times, formant_numbers, unit)
+}
+
+#' Batch query MULTIPLE formant bandwidths at multiple time points
+#' 
+#' @param formant_xptr External pointer to Formant object
+#' @param times Numeric vector of time points
+#' @param formant_numbers Integer vector of formant numbers
+#' @param unit Integer code for unit
+#' @return List with bandwidth vectors for each formant
+#' @keywords internal
+formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
+    .Call(`_pladdrr_formant_get_multiple_bandwidths_at_times`, formant_xptr, times, formant_numbers, unit)
+}
+
+#' Batch query pitch strengths at multiple time points
+#' 
+#' @param pitch_xptr External pointer to Pitch object
+#' @param times Numeric vector of time points
+#' @param unit Integer code for unit
+#' @param interpolate Logical, whether to interpolate
+#' @return Numeric vector of pitch strengths
+#' @keywords internal
+pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpolate = TRUE) {
+    .Call(`_pladdrr_pitch_get_strengths_at_times`, pitch_xptr, times, unit, interpolate)
+}
+
+#' Get all point times from PointProcess as vector
+#' 
+#' @param pp_xptr External pointer to PointProcess object
+#' @return Numeric vector of all point times
+#' @keywords internal
+pointprocess_get_all_times <- function(pp_xptr) {
+    .Call(`_pladdrr_pointprocess_get_all_times`, pp_xptr)
+}
+
+#' Get inter-point intervals from PointProcess
+#' 
+#' @param pp_xptr External pointer to PointProcess object
+#' @return Numeric vector of intervals (length = n_points - 1)
+#' @keywords internal
+pointprocess_get_intervals <- function(pp_xptr) {
+    .Call(`_pladdrr_pointprocess_get_intervals`, pp_xptr)
+}
+
+#' Query PointProcess at multiple times to get nearest indices
+#' 
+#' @param pp_xptr External pointer to PointProcess object
+#' @param times Numeric vector of query times
+#' @return Integer vector of nearest point indices (1-based)
+#' @keywords internal
+pointprocess_get_nearest_indices <- function(pp_xptr, times) {
+    .Call(`_pladdrr_pointprocess_get_nearest_indices`, pp_xptr, times)
+}
+
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
     .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
 }

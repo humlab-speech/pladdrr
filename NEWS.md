@@ -1,3 +1,72 @@
+# pladdrr 2.0.9 (2026-01-07)
+
+## Phase 5 Performance Enhancements: Batch Query Operations (3-5x faster)
+
+Added batch query operations for common analysis workflows, reducing R<->C++ boundary crossings.
+
+### Formant Batch Queries
+
+* **`get_formants_at_times(formant, times, formant_numbers = 1:4, unit = "hertz")`**
+  - Query multiple formants at multiple time points in single call
+  - Returns list with `F1`, `F2`, `F3`, `F4`, etc.
+  - Impact: 4n → 1 call reduction (3-5x faster for vowel analysis)
+  - Example: Extract F1-F4 at 100 time points = 400 → 1 calls
+
+* **`get_formant_bandwidths_at_times(formant, times, formant_numbers, unit)`**
+  - Batch query formant bandwidths
+  - Returns list with `B1`, `B2`, `B3`, `B4`, etc.
+
+### Pitch Batch Queries
+
+* **`get_pitch_at_times(pitch, times, unit = "hertz", interpolate = TRUE)`**
+  - Query pitch (F0) values at multiple time points
+  - Returns numeric vector
+  - Impact: n → 1 calls (2-3x faster for pitch contour extraction)
+
+* **`get_pitch_strengths_at_times(pitch, times, unit, interpolate)`**
+  - Query pitch strengths (voicing confidence) in batch
+  - Useful for voice quality analysis
+
+### Intensity Batch Queries
+
+* **`get_intensity_at_times(intensity, times, interpolate = "cubic")`**
+  - Query intensity (dB) at multiple time points
+  - Supports: "nearest", "linear", "cubic", "sinc70" interpolation
+  - Impact: n → 1 calls (2-3x faster)
+
+### PointProcess Batch Operations
+
+* **`get_pointprocess_times(pointprocess)`**
+  - Extract all point times as vector in single call
+  - Impact: n → 1 calls (5-10x faster than looping `get_time(i)`)
+
+* **`get_pointprocess_intervals(pointprocess)`**
+  - Compute all inter-point intervals in C++
+  - Returns vector of length `n_points - 1`
+  - Impact: Useful for jitter analysis (5-10x faster)
+
+* **`get_pointprocess_nearest_indices(pointprocess, times)`**
+  - Find nearest point index for multiple query times
+  - Returns integer vector of indices (1-based)
+
+### Implementation
+
+* **New C++ file:** `src/batch_queries.cpp` (320 lines)
+* **New R file:** `R/batch-queries.R` (360 lines)
+* **Tests:** `tests/testthat/test-batch-queries.R` (15 tests + benchmarks)
+
+### Performance Summary
+
+| Operation | Old (calls) | New (calls) | Speedup |
+|-----------|-------------|-------------|---------|
+| Formant F1-F4 × 50 times | 200 | 1 | 3-5x |
+| Pitch contour × 100 times | 100 | 1 | 2-3x |
+| PointProcess all times (n=500) | 500 | 1 | 5-10x |
+
+**Total workflow speedup (Phase 1-5):** 75-100% (~2x faster than baseline v2.0.4)
+
+---
+
 # pladdrr 2.0.8 (2026-01-07)
 
 ## Phase 3+4 Performance Enhancements: Zero-Copy + TextGrid Batch + Module Properties

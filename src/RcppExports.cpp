@@ -378,6 +378,82 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// formant_get_multiple_formants_at_times
+List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times, IntegerVector formant_numbers, int unit);
+RcppExport SEXP _pladdrr_formant_get_multiple_formants_at_times(SEXP formant_xptrSEXP, SEXP timesSEXP, SEXP formant_numbersSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type formant_numbers(formant_numbersSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_multiple_formants_at_times(formant_xptr, times, formant_numbers, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formant_get_multiple_bandwidths_at_times
+List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector times, IntegerVector formant_numbers, int unit);
+RcppExport SEXP _pladdrr_formant_get_multiple_bandwidths_at_times(SEXP formant_xptrSEXP, SEXP timesSEXP, SEXP formant_numbersSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type formant_numbers(formant_numbersSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_multiple_bandwidths_at_times(formant_xptr, times, formant_numbers, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_strengths_at_times
+NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times, int unit, bool interpolate);
+RcppExport SEXP _pladdrr_pitch_get_strengths_at_times(SEXP pitch_xptrSEXP, SEXP timesSEXP, SEXP unitSEXP, SEXP interpolateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    Rcpp::traits::input_parameter< bool >::type interpolate(interpolateSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_strengths_at_times(pitch_xptr, times, unit, interpolate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_all_times
+NumericVector pointprocess_get_all_times(SEXP pp_xptr);
+RcppExport SEXP _pladdrr_pointprocess_get_all_times(SEXP pp_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_all_times(pp_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_intervals
+NumericVector pointprocess_get_intervals(SEXP pp_xptr);
+RcppExport SEXP _pladdrr_pointprocess_get_intervals(SEXP pp_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_intervals(pp_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_get_nearest_indices
+IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times);
+RcppExport SEXP _pladdrr_pointprocess_get_nearest_indices(SEXP pp_xptrSEXP, SEXP timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_get_nearest_indices(pp_xptr, times));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cochleagram_create
 SEXP cochleagram_create(double tmin, double tmax, int nt, double dt, double t1, double df, int nf);
 RcppExport SEXP _pladdrr_cochleagram_create(SEXP tminSEXP, SEXP tmaxSEXP, SEXP ntSEXP, SEXP dtSEXP, SEXP t1SEXP, SEXP dfSEXP, SEXP nfSEXP) {
@@ -9238,6 +9314,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_cross_correlation", (DL_FUNC) &_pladdrr_cross_correlation, 2},
     {"_pladdrr_windowed_autocorrelation", (DL_FUNC) &_pladdrr_windowed_autocorrelation, 4},
     {"_pladdrr_lpc_autocorrelation", (DL_FUNC) &_pladdrr_lpc_autocorrelation, 2},
+    {"_pladdrr_formant_get_multiple_formants_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_formants_at_times, 4},
+    {"_pladdrr_formant_get_multiple_bandwidths_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_bandwidths_at_times, 4},
+    {"_pladdrr_pitch_get_strengths_at_times", (DL_FUNC) &_pladdrr_pitch_get_strengths_at_times, 4},
+    {"_pladdrr_pointprocess_get_all_times", (DL_FUNC) &_pladdrr_pointprocess_get_all_times, 1},
+    {"_pladdrr_pointprocess_get_intervals", (DL_FUNC) &_pladdrr_pointprocess_get_intervals, 1},
+    {"_pladdrr_pointprocess_get_nearest_indices", (DL_FUNC) &_pladdrr_pointprocess_get_nearest_indices, 2},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
