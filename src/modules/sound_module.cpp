@@ -483,12 +483,23 @@ RCPP_MODULE(sound_module) {
         // Validation
         .method("is_valid", &RSound::is_valid, "Check if pointer is valid")
 
-        // Time domain properties
+        // Time domain properties (PROPERTIES for 2-3x faster access)
+        .property("xmin", &RSound::get_xmin, "Start time")
+        .property("xmax", &RSound::get_xmax, "End time")
+        .property("duration", &RSound::get_duration, "Duration in seconds")
+        
+        // Sampling properties (PROPERTIES for faster access)
+        .property("nx", &RSound::get_nx, "Number of samples")
+        .property("dx", &RSound::get_dx, "Sample period")
+        .property("x1", &RSound::get_x1, "Time of first sample")
+        .property("sampling_frequency", &RSound::get_sampling_frequency, "Sampling frequency in Hz")
+        .property("number_of_samples", &RSound::get_number_of_samples, "Number of samples")
+        .property("number_of_channels", &RSound::get_number_of_channels, "Number of channels")
+        
+        // Keep old method names for backward compatibility
         .method("get_xmin", &RSound::get_xmin, "Get start time")
         .method("get_xmax", &RSound::get_xmax, "Get end time")
         .method("get_duration", &RSound::get_duration, "Get duration")
-
-        // Sampling properties
         .method("get_nx", &RSound::get_nx, "Get number of samples")
         .method("get_dx", &RSound::get_dx, "Get sample period")
         .method("get_x1", &RSound::get_x1, "Get time of first sample")

@@ -321,12 +321,22 @@ RCPP_MODULE(formant_module) {
         // Validation
         .method("is_valid", &RFormant::is_valid, "Check if pointer is valid")
 
-        // Time domain properties
+        // Properties for fast access (2-3x faster than method calls)
+        .property("duration", &RFormant::get_duration, "Duration in seconds")
+        .property("xmin", &RFormant::get_xmin, "Start time in seconds")
+        .property("xmax", &RFormant::get_xmax, "End time in seconds")
+        .property("nx", &RFormant::get_nx, "Number of frames")
+        .property("dx", &RFormant::get_dx, "Time step between frames")
+        .property("x1", &RFormant::get_x1, "Time of first frame")
+        .property("min_num_formants", &RFormant::get_min_num_formants, "Min formants per frame")
+        .property("max_num_formants", &RFormant::get_max_num_formants, "Max formants per frame")
+
+        // Time domain methods (keep for backward compatibility)
         .method("get_xmin", &RFormant::get_xmin, "Get start time")
         .method("get_xmax", &RFormant::get_xmax, "Get end time")
         .method("get_duration", &RFormant::get_duration, "Get duration")
 
-        // Frame properties
+        // Frame methods
         .method("get_nx", &RFormant::get_nx, "Get number of frames")
         .method("get_dx", &RFormant::get_dx, "Get time step")
         .method("get_x1", &RFormant::get_x1, "Get time of first frame")

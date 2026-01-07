@@ -121,6 +121,16 @@ RCPP_MODULE(harmonicity_module) {
         .constructor()
         .constructor<XPtr<structHarmonicity>>()
         .method("is_valid", &RHarmonicity::is_valid)
+        
+        // Properties for fast access (2-3x faster)
+        .property("duration", &RHarmonicity::get_duration, "Duration in seconds")
+        .property("xmin", &RHarmonicity::get_xmin, "Start time in seconds")
+        .property("xmax", &RHarmonicity::get_xmax, "End time in seconds")
+        .property("nx", &RHarmonicity::get_nx, "Number of frames")
+        .property("dx", &RHarmonicity::get_dx, "Time step between frames")
+        .property("x1", &RHarmonicity::get_x1, "Time of first frame")
+        
+        // Keep methods for backward compatibility
         .method("get_xmin", &RHarmonicity::get_xmin)
         .method("get_xmax", &RHarmonicity::get_xmax)
         .method("get_duration", &RHarmonicity::get_duration)

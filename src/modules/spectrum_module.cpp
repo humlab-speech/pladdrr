@@ -171,6 +171,15 @@ RCPP_MODULE(spectrum_module) {
         .constructor()
         .constructor<XPtr<structSpectrum>>()
         .method("is_valid", &RSpectrum::is_valid)
+        
+        // Properties for fast access
+        .property("fmin", &RSpectrum::get_fmin, "Minimum frequency (Hz)")
+        .property("fmax", &RSpectrum::get_fmax, "Maximum frequency (Hz)")
+        .property("n_bins", &RSpectrum::get_n_bins, "Number of frequency bins")
+        .property("df", &RSpectrum::get_df, "Frequency step (Hz)")
+        .property("f1", &RSpectrum::get_f1, "First bin frequency (Hz)")
+        
+        // Keep methods for backward compatibility
         .method("get_fmin", &RSpectrum::get_fmin)
         .method("get_fmax", &RSpectrum::get_fmax)
         .method("get_frequency_range", &RSpectrum::get_frequency_range)

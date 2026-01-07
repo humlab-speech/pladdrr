@@ -235,6 +235,14 @@ RCPP_MODULE(pointprocess_module) {
         .constructor()
         .constructor<XPtr<structPointProcess>>()
         .method("is_valid", &RPointProcess::is_valid)
+        
+        // Properties for fast access
+        .property("xmin", &RPointProcess::get_xmin, "Start time (s)")
+        .property("xmax", &RPointProcess::get_xmax, "End time (s)")
+        .property("duration", &RPointProcess::get_duration, "Duration (s)")
+        .property("nt", &RPointProcess::get_number_of_points, "Number of points")
+        
+        // Keep methods for backward compatibility
         .method("get_xmin", &RPointProcess::get_xmin)
         .method("get_xmax", &RPointProcess::get_xmax)
         .method("get_duration", &RPointProcess::get_duration)

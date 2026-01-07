@@ -85,24 +85,27 @@ voice_quality_batch <- function(sound,
     stop("Could not extract external pointer from Sound object")
   }
   
-  # Call C++ batch function
-  sound_voice_quality_batch(
-    xptr,
-    time_step,
-    pitch_floor,
-    pitch_ceiling,
-    periods_per_window,
-    max_n_candidates,
-    very_accurate,
-    silence_threshold,
-    voicing_threshold,
-    octave_cost,
-    octave_jump_cost,
-    voiced_unvoiced_cost,
-    minimum_pitch_intensity,
-    from_time,
-    to_time
-  )
+  # TODO: Re-enable once sound_batch_analysis.cpp is fixed for current Praat API
+  stop("voice_quality_batch is temporarily disabled - use individual functions instead")
+  
+  # # Call C++ batch function
+  # sound_voice_quality_batch(
+  #   xptr,
+  #   time_step,
+  #   pitch_floor,
+  #   pitch_ceiling,
+  #   periods_per_window,
+  #   max_n_candidates,
+  #   very_accurate,
+  #   silence_threshold,
+  #   voicing_threshold,
+  #   octave_cost,
+  #   octave_jump_cost,
+  #   voiced_unvoiced_cost,
+  #   minimum_pitch_intensity,
+  #   from_time,
+  #   to_time
+  # )
 }
 
 

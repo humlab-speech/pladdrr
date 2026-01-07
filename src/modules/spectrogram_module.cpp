@@ -125,6 +125,21 @@ RCPP_MODULE(spectrogram_module) {
         .constructor()
         .constructor<XPtr<structSpectrogram>>()
         .method("is_valid", &RSpectrogram::is_valid)
+        
+        // Properties for fast access
+        .property("duration", &RSpectrogram::get_duration, "Duration in seconds")
+        .property("xmin", &RSpectrogram::get_xmin, "Start time (s)")
+        .property("xmax", &RSpectrogram::get_xmax, "End time (s)")
+        .property("nx", &RSpectrogram::get_nx, "Number of time frames")
+        .property("dx", &RSpectrogram::get_dx, "Time step (s)")
+        .property("x1", &RSpectrogram::get_x1, "Time of first frame (s)")
+        .property("ymin", &RSpectrogram::get_ymin, "Min frequency (Hz)")
+        .property("ymax", &RSpectrogram::get_ymax, "Max frequency (Hz)")
+        .property("ny", &RSpectrogram::get_ny, "Number of frequency bins")
+        .property("dy", &RSpectrogram::get_dy, "Frequency step (Hz)")
+        .property("y1", &RSpectrogram::get_y1, "First bin frequency (Hz)")
+        
+        // Keep methods for backward compatibility
         .method("get_xmin", &RSpectrogram::get_xmin)
         .method("get_xmax", &RSpectrogram::get_xmax)
         .method("get_duration", &RSpectrogram::get_duration)
