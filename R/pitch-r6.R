@@ -57,11 +57,14 @@ Pitch <- function(.xptr = NULL) {
   # Create wrapper object with user-friendly method signatures
   obj <- structure(list(
     .cpp = cpp_obj,
+    .xptr = .xptr,  # Store raw pointer for legacy exports
     
     # Properties (direct C++ access)
     is_valid = function() cpp_obj$is_valid(),
     xmin = function() cpp_obj$get_xmin(),
     xmax = function() cpp_obj$get_xmax(),
+    get_xmin = function() cpp_obj$get_xmin(),  # Alias for consistency
+    get_xmax = function() cpp_obj$get_xmax(),  # Alias for consistency
     duration = function() cpp_obj$get_duration(),
     nx = function() cpp_obj$get_nx(),
     dx = function() cpp_obj$get_dx(),

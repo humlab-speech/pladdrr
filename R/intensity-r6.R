@@ -96,6 +96,7 @@ Intensity <- function(.xptr = NULL) {
   # Create object with methods
   obj <- structure(list(
     .cpp = cpp_obj,
+    .xptr = .xptr,  # Store raw pointer for legacy exports
     
     # Query methods
     get_value_at_time = function(time, interpolation = "cubic") {
@@ -184,6 +185,14 @@ Intensity <- function(.xptr = NULL) {
     },
     
     get_end_time = function() {
+      cpp_obj$get_xmax()
+    },
+    
+    get_xmin = function() {
+      cpp_obj$get_xmin()
+    },
+    
+    get_xmax = function() {
       cpp_obj$get_xmax()
     },
     

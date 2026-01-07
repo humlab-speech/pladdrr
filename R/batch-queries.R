@@ -38,7 +38,7 @@
 #'
 #' @export
 get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
-  if (!inherits(formant, "formant_constructor")) {
+  if (!inherits(formant, "Formant")) {
     stop("formant must be a Formant object")
   }
   
@@ -89,7 +89,7 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
 #'
 #' @export
 get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
-  if (!inherits(formant, "formant_constructor")) {
+  if (!inherits(formant, "Formant")) {
     stop("formant must be a Formant object")
   }
   
@@ -139,7 +139,7 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #'
 #' @export
 get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
-  if (!inherits(pitch, "pitch_constructor")) {
+  if (!inherits(pitch, "Pitch")) {
     stop("pitch must be a Pitch object")
   }
   
@@ -187,7 +187,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #'
 #' @export
 get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
-  if (!inherits(pitch, "pitch_constructor")) {
+  if (!inherits(pitch, "Pitch")) {
     stop("pitch must be a Pitch object")
   }
   
@@ -232,7 +232,7 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #'
 #' @export
 get_intensity_at_times <- function(intensity, times, interpolate = "cubic") {
-  if (!inherits(intensity, "intensity_constructor")) {
+  if (!inherits(intensity, "Intensity")) {
     stop("intensity must be an Intensity object")
   }
   
@@ -243,8 +243,9 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic") {
   interp_code <- switch(tolower(interpolate),
     "nearest" = 0L,
     "linear" = 1L,
-    "cubic" = 4L,
-    "sinc70" = 6L,
+    "cubic" = 2L,
+    "sinc70" = 3L,
+    "sinc700" = 4L,
     stop("Unknown interpolation method: ", interpolate)
   )
   
@@ -279,7 +280,7 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic") {
 #'
 #' @export
 get_pointprocess_times <- function(pointprocess) {
-  if (!inherits(pointprocess, "pointprocess_constructor")) {
+  if (!inherits(pointprocess, "PointProcess")) {
     stop("pointprocess must be a PointProcess object")
   }
   
@@ -310,7 +311,7 @@ get_pointprocess_times <- function(pointprocess) {
 #'
 #' @export
 get_pointprocess_intervals <- function(pointprocess) {
-  if (!inherits(pointprocess, "pointprocess_constructor")) {
+  if (!inherits(pointprocess, "PointProcess")) {
     stop("pointprocess must be a PointProcess object")
   }
   
@@ -337,7 +338,7 @@ get_pointprocess_intervals <- function(pointprocess) {
 #'
 #' @export
 get_pointprocess_nearest_indices <- function(pointprocess, times) {
-  if (!inherits(pointprocess, "pointprocess_constructor")) {
+  if (!inherits(pointprocess, "PointProcess")) {
     stop("pointprocess must be a PointProcess object")
   }
   

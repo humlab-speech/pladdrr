@@ -46,6 +46,14 @@ Formant <- function(.xptr = NULL) {
     .xptr = .xptr,  # Keep raw pointer for legacy exports
     
     # Time domain methods
+    get_xmin = function() {
+      cpp_obj$get_xmin()
+    },
+    
+    get_xmax = function() {
+      cpp_obj$get_xmax()
+    },
+    
     get_number_of_frames = function() {
       cpp_obj$get_number_of_frames()
     },
