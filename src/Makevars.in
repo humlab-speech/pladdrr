@@ -331,7 +331,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/manipulation_module.cpp modules/polygon_module.cpp \
              modules/formantpath_module.cpp modules/complexspectrogram_module.cpp \
              modules/klattgrid_module.cpp modules/sound_operations_module.cpp \
-             module_init.cpp
+             modules/interpreter_module.cpp module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
 SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp

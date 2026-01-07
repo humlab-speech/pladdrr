@@ -4,19 +4,34 @@
 #include <Rcpp.h>
 #include "module_common.h"
 
-// Praat headers
-#include "../praat/sys/Interpreter.h"
-#include "../praat/sys/praat.h"
-#include "../praat/sys/praat_script.h"
-#include "../praat/melder/melder.h"
-#include "../praat.github.io/melder/melder_info.h"
-#include "../praat.github.io/fon/praat_uvafon_init.h"
+// Praat headers (use -I paths from Makevars)
+#include "praat.github.io/sys/Interpreter.h"
+#include "praat.github.io/sys/praat.h"
+#include "praat.github.io/sys/praat_script.h"
+#include "praat.github.io/melder/melder.h"
+#include "praat.github.io/melder/melder_info.h"
+#include "praat.github.io/fon/praat_uvafon_init.h"
 
 using namespace Rcpp;
 
-// External initialization function (from interpreter_wrappers.cpp)
-extern "C" {
-    void praat_interpreter_init();
+// =============================================================================
+// Module-local initialization (mirrors interpreter_wrappers.cpp)
+// =============================================================================
+
+static bool s_interpreter_initialized = false;
+
+static void ensure_interpreter_initialized() {
+    if (!s_interpreter_initialized) {
+        try {
+            // Initialize Praat library (registers classes and commands)
+            praatlib_init();
+            praat_uvafon_init();
+            s_interpreter_initialized = true;
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to initialize Praat interpreter subsystem");
+        }
+    }
 }
 
 // Helper to add predefined boolean constants to interpreter
@@ -42,36 +57,30 @@ static void addPredefinedVariables(Interpreter interpreter) {
 
 class RInterpreter {
 private:
-    XPtr<structInterpreter> ptr;
+    // Helper to create XPtr - used in constructor initializer list
+    static XPtr<structInterpreter> make_interpreter() {
+        ensure_interpreter_initialized();
 
-public:
-    // Default constructor (empty)
-    RInterpreter() : ptr(R_NilValue) {
-        praat_interpreter_init();
-        
         try {
             autoInterpreter interpreter = Interpreter_create();
             addPredefinedVariables(interpreter.get());
-            
-            // Create XPtr with custom deleter
-            auto deleter = [](structInterpreter* obj) {
-                if (obj) forget(obj);
-            };
-            
-            ptr = XPtr<structInterpreter>(interpreter.releaseToAmbiguousOwner(), deleter);
+            return create_xptr_from_auto<structInterpreter>(interpreter);
         } catch (MelderError) {
             std::string error_msg = Melder_peek32to8(Melder_getError());
             Melder_clearError();
             stop("Failed to create interpreter: " + error_msg);
         }
+        return XPtr<structInterpreter>(R_NilValue);  // Never reached
     }
 
+public:
+    XPtr<structInterpreter> ptr;
+
+    // Default constructor - creates a valid interpreter
+    RInterpreter() : ptr(make_interpreter()) {}
+
     // Constructor from XPtr (for wrapping existing interpreter)
-    RInterpreter(SEXP xptr) : ptr(xptr) {
-        if (!ptr) {
-            stop("Invalid Interpreter pointer");
-        }
-    }
+    RInterpreter(XPtr<structInterpreter> p) : ptr(p) {}
 
     // =========================================================================
     // Validation
@@ -363,7 +372,6 @@ public:
 RCPP_MODULE(interpreter_module) {
     class_<RInterpreter>("RInterpreter")
         .constructor("Create a new Praat interpreter instance")
-        .constructor<SEXP>("Wrap an existing interpreter XPtr")
         
         // Validation
         .method("is_valid", &RInterpreter::is_valid, 

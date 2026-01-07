@@ -26,7 +26,7 @@ get_module <- function(name) {
   
   # Preload all modules into cache
   modules <- c(
-    "pitch_module", "sound_module", "formant_module", 
+    "pitch_module", "sound_module", "formant_module",
     "intensity_module", "spectrum_module", "spectrogram_module",
     "harmonicity_module", "pitchtier_module", "intensitytier_module",
     "durationtier_module", "amplitudetier_module", "pointprocess_module",
@@ -36,7 +36,7 @@ get_module <- function(name) {
     "vocaltract_module", "longsound_module", "lpc_module",
     "table_module", "textgrid_module", "manipulation_module",
     "polygon_module", "formantpath_module", "complexspectrogram_module",
-    "klattgrid_module", "sound_operations_module"
+    "klattgrid_module", "sound_operations_module", "interpreter_module"
   )
   
   for (mod in modules) {
