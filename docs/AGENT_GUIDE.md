@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.1.2 (2026-01-08)  
+**Version:** 2.2.1 (2026-01-08)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -268,6 +268,130 @@ intervals <- get_pointprocess_intervals(pointprocess)
 - `get_pointprocess_times(pointprocess)`
 - `get_pointprocess_intervals(pointprocess)`
 - `get_pointprocess_nearest_indices(pointprocess, times)`
+
+### Pattern 2c: Batch Statistics (NEW in v2.2.1)
+
+**Performance:** 10-50x faster than loops for multi-interval statistics.
+
+When you need statistics (min, max, mean, stdev, quartiles) over **multiple time intervals**, use batch statistics functions:
+
+```r
+# Define 100 time intervals
+from_times <- seq(0, 9, length.out = 100)
+to_times <- from_times + 0.1
+metrics <- c("min", "max", "mean", "stdev", "q25", "q75")
+
+# SLOW: Loop with repeated R↔C++ boundary crossings (600 calls)
+for (i in 1:100) {
+  min_val <- pitch$get_minimum(from_times[i], to_times[i], "hertz")
+  max_val <- pitch$get_maximum(from_times[i], to_times[i], "hertz")
+  # ... 4 more calls per interval
+}
+
+# FAST: Single C++ call returns 100x6 matrix (1 call)
+stats <- pitch_get_statistics_batch(
+  pitch$.xptr,
+  from_times,
+  to_times,
+  metrics,
+  unit = 0L  # 0=Hertz
+)
+# Returns: matrix[100 rows, 6 cols] with column names from metrics
+```
+
+**Batch statistics functions:**
+- `pitch_get_statistics_batch(pitch_xptr, from_times, to_times, metrics, unit)`
+  - Metrics: `"min"`, `"max"`, `"mean"`, `"stdev"`, `"q25"`, `"q50"`, `"q75"`, `"count_voiced"`
+- `intensity_get_statistics_batch(intensity_xptr, from_times, to_times, metrics, averaging_method)`
+  - Metrics: `"min"`, `"max"`, `"mean"`, `"stdev"`, `"q25"`, `"q50"`, `"q75"`
+- `pitch_get_adaptive_range(pitch_xptr, from_time, to_time, q1_factor, q3_factor, unit)`
+  - Returns: `list(q1, q3, min_pitch, max_pitch)` for VUV two-pass analysis
+
+**Example: Two-pass VUV pitch analysis (3.6x faster)**
+```r
+# First pass: wide range
+pitch1 <- sound$to_pitch_cc(pitch_floor = 50, pitch_ceiling = 800)
+
+# Get adaptive range in single C++ call
+adaptive <- pitch_get_adaptive_range(
+  pitch1$.xptr,
+  from_time = 0, to_time = 0,  # 0,0 = full duration
+  q1_factor = 0.75,
+  q3_factor = 1.5,
+  unit = 0L
+)
+
+# Second pass: refined range
+pitch2 <- sound$to_pitch_cc(
+  pitch_floor = adaptive$min_pitch,
+  pitch_ceiling = adaptive$max_pitch
+)
+```
+
+### Pattern 2d: Fast CPPS API (NEW in v2.2.0)
+
+For AVQI v3.01 and voice quality analysis, bypass R6 dispatch overhead:
+
+```r
+# STANDARD (slower due to R6 method dispatch)
+cpps <- {
+  pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
+  pcep$get_cpps(subtract_tilt = FALSE, time_averaging_window = 0.01)
+}
+
+# FAST (1.5-2x faster): Direct C++ call
+cpps <- calculate_cpps_fast(
+  sound,
+  subtract_tilt = FALSE,
+  time_averaging_window = 0.01,
+  quefrency_averaging_window = 0.001,
+  pitch_floor = 60,
+  pitch_ceiling = 330
+)
+```
+
+### Pattern 2e: XPtr Window Functions (NEW in v2.2.1)
+
+**Performance:** 70x faster than R function callbacks for custom DSP.
+
+When applying custom window or transform functions to large audio files, use compiled C++ functions via RcppXPtrUtils:
+
+```r
+# Requires: install.packages("RcppXPtrUtils")
+library(RcppXPtrUtils)
+
+# Create compiled C++ window function (runs once at setup)
+gauss_window <- cppXPtr(
+  "#include <cmath>
+   double window(double t) {
+     double x = t - 0.5;
+     return exp(-18.0 * x * x);
+   }",
+  depends = character()
+)
+
+# Apply to sound (70x faster than R function callback)
+windowed <- apply_window_xptr(sound, gauss_window)
+
+# Or use pre-defined window types (no RcppXPtrUtils code needed)
+hamming <- create_window_xptr("hamming")  # Also: hanning, gaussian, triangular, blackman
+windowed <- apply_window_xptr(sound, hamming)
+```
+
+**XPtr performance functions:**
+- `apply_window_xptr(sound, window_func)` - Apply window (t normalized 0-1)
+- `apply_transform_xptr(sound, transform_func)` - Transform sample values
+- `create_window_xptr(type, sigma)` - Create pre-defined window function
+
+**Custom transform example (soft clipping):**
+```r
+soft_clip <- cppXPtr(
+  "#include <cmath>
+   double clip(double x) { return tanh(x * 2.0); }",
+  depends = character()
+)
+clipped <- apply_transform_xptr(sound, soft_clip)
+```
 
 ---
 
@@ -586,7 +710,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v2.1.1**
+**Updated for v2.2.1**
 
 ```r
 # === LOAD AUDIO ===
@@ -608,6 +732,25 @@ times <- seq(0.5, 2.5, by = 0.01)
 formants <- get_formants_at_times(formant, times, 1:4)  # Returns list(F1, F2, F3, F4)
 f0_contour <- get_pitch_at_times(pitch, times, "hertz")
 db_contour <- get_intensity_at_times(intensity, times, "cubic")
+
+# === BATCH STATISTICS (10-50x faster for multi-interval) [v2.2.1] ===
+from_times <- seq(0, 9, length.out = 100)
+to_times <- from_times + 0.1
+stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
+                                     c("min", "max", "mean", "stdev"), 0L)
+
+# === ADAPTIVE PITCH RANGE (3.6x faster VUV) [v2.2.1] ===
+adaptive <- pitch_get_adaptive_range(pitch$.xptr, 0, 0, 0.75, 1.5, 0L)
+pitch2 <- sound$to_pitch_cc(pitch_floor = adaptive$min_pitch,
+                            pitch_ceiling = adaptive$max_pitch)
+
+# === FAST CPPS (1.5-2x faster AVQI) [v2.2.0] ===
+cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
+                             pitch_floor = 60, pitch_ceiling = 330)
+
+# === XPTR WINDOWS (70x faster custom DSP) [v2.2.1] ===
+hamming <- create_window_xptr("hamming")
+windowed <- apply_window_xptr(sound, hamming)
 
 # === STATISTICS (0,0 = entire duration) ===
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
@@ -652,6 +795,18 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ## Version History
 
+**v2.2.1 (2026-01-08):**
+- Added batch statistics APIs: `pitch_get_statistics_batch()`, `intensity_get_statistics_batch()` (10-50x faster)
+- Added `pitch_get_adaptive_range()` for VUV two-pass analysis (3.6x faster)
+- Added XPtr window/transform functions via RcppXPtrUtils (70x faster custom DSP)
+  - `apply_window_xptr()`, `apply_transform_xptr()`, `create_window_xptr()`
+- Enabled Link-Time Optimization (LTO) for 5-15% overall speedup
+- Added RcppXPtrUtils to Suggests for optional custom function compilation
+
+**v2.2.0 (2026-01-08):**
+- Added fast CPPS API: `calculate_cpps_fast()` (1.5-2x faster for AVQI v3.01)
+- Added `to_powercepstrogram_fast()`, `get_cpps_fast()` for two-step workflows
+
 **v2.1.2 (2026-01-08):**
 - Fixed AGENT_GUIDE pitch `get_quantile()` parameter order documentation
 - Clarified that R API uses string units (not integer codes)
@@ -679,8 +834,7 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ---
 
-**Guide Version:** 2.1.2
+**Guide Version:** 2.2.1
 **Last Updated:** 2026-01-08
-**Package Version:** 2.1.2  
+**Package Version:** 2.2.1
 **Modules:** 33 (92% Praat class coverage)
-```
