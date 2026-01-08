@@ -282,9 +282,18 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Spectrogram(.xptr = spec_ptr)
     },
     
-    to_point_process_periodic_cc = function(time_step = 0.0, pitch_floor = 75.0, 
-                                            pitch_ceiling = 600.0, max_period_factor = 1.3,
-                                            max_amplitude_factor = 1.6) {
+    # Note: time_step, max_period_factor, max_amplitude_factor are accepted for API
+    # compatibility with Praat GUI but are NOT used by the underlying C function
+    # Sound_to_PointProcess_periodic_cc() which only takes pitch_floor and pitch_ceiling
+    to_point_process_periodic_cc = function(pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                            time_step = NULL, max_period_factor = NULL,
+                                            max_amplitude_factor = NULL) {
+      # Warn if unused parameters are specified
+      if (!is.null(time_step) || !is.null(max_period_factor) || !is.null(max_amplitude_factor)) {
+        warning("time_step, max_period_factor, and max_amplitude_factor are not used by ",
+                "Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.",
+                call. = FALSE)
+      }
       pp_ptr <- cpp_snd$to_point_process_periodic_cc_ptr(
         as.numeric(pitch_floor),
         as.numeric(pitch_ceiling)

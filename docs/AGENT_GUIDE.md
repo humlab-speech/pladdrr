@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.1.1 (2026-01-07)  
+**Version:** 2.1.2 (2026-01-08)  
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -354,38 +354,39 @@ sound_segment <- sound$extract_part(start, end)
 
 ### Pitch Methods
 
-| Method | Parameters | Return | Praat Function |
-|--------|------------|--------|----------------|
-| `get_value_at_time(time, unit, interpolate)` | `double, int, bool` | `numeric` | `Pitch_getValueAtTime()` |
-| `get_mean(from_time, to_time, unit)` | `double, double, int` | `numeric` | `Pitch_getMean()` |
-| `get_standard_deviation(from_time, to_time, unit)` | `double, double, int` | `numeric` | `Pitch_getStandardDeviation()` |
-| `get_minimum(from_time, to_time, unit, interpolate)` | `double, double, int, bool` | `numeric` | `Pitch_getMinimum()` |
-| `get_maximum(from_time, to_time, unit, interpolate)` | `double, double, int, bool` | `numeric` | `Pitch_getMaximum()` |
-| `get_quantile(from_time, to_time, quantile, unit)` | `double, double, double, int` | `numeric` | `Pitch_getQuantile()` |
-| `count_voiced_frames()` | - | `integer` | Loop counting non-zero candidates |
-| `down_to_pitch_tier()` | - | `PitchTier` | `Pitch_to_PitchTier()` |
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_value_at_time(time, unit, interpolate)` | `double, string, bool` | `numeric` | unit: "hertz", "semitones", "mel", "erb" |
+| `get_mean(from_time, to_time, unit)` | `double, double, string` | `numeric` | 0,0 = entire duration |
+| `get_standard_deviation(from_time, to_time, unit)` | `double, double, string` | `numeric` | |
+| `get_minimum(from_time, to_time, unit, interpolate)` | `double, double, string, bool` | `numeric` | |
+| `get_maximum(from_time, to_time, unit, interpolate)` | `double, double, string, bool` | `numeric` | |
+| `get_quantile(quantile, from_time, to_time, unit)` | `double, double, double, string` | `numeric` | quantile: 0.5 = median |
+| `count_voiced_frames()` | - | `integer` | |
+| `down_to_pitch_tier()` | - | `PitchTier` | |
 
 ### Formant Methods
 
-| Method | Parameters | Return | Praat Function |
-|--------|------------|--------|----------------|
-| `get_value_at_time(formant_number, time, unit)` | `int, double, int` | `numeric` | `Formant_getValueAtTime()` |
-| `get_bandwidth_at_time(formant_number, time, unit)` | `int, double, int` | `numeric` | `Formant_getBandwidthAtTime()` |
-| `get_mean(formant_number, from_time, to_time, unit)` | `int, double, double, int` | `numeric` | `Formant_getMean()` |
-| `get_standard_deviation(formant_number, from_time, to_time, unit)` | `int, double, double, int` | `numeric` | `Formant_getStandardDeviation()` |
-| `get_quantile(formant_number, quantile, from_time, to_time, unit)` | `int, double, double, double, int` | `numeric` | `Formant_getQuantile()` |
-| `track(number_of_tracks, ref_f1, ...)` | multiple | `Formant` | `Formant_tracker()` |
-| `to_formantgrid()` | - | `FormantGrid` | `Formant_to_FormantGrid()` |
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_value_at_time(formant_number, time, unit)` | `int, double, string` | `numeric` | unit: "hertz", "bark" |
+| `get_bandwidth_at_time(formant_number, time, unit)` | `int, double, string` | `numeric` | |
+| `get_mean(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` | |
+| `get_standard_deviation(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` | |
+| `get_quantile(formant_number, quantile, from_time, to_time, unit)` | `int, double, double, double, string` | `numeric` | |
+| `track(number_of_tracks, ref_f1, ...)` | multiple | `Formant` | |
+| `to_formantgrid()` | - | `FormantGrid` | |
 
 ### Intensity Methods
 
-| Method | Parameters | Return | Praat Function |
-|--------|------------|--------|----------------|
-| `get_value_at_time(time, interpolation)` | `double, int` | `numeric` | `Vector_getValueAtX()` |
-| `get_mean(from_time, to_time, averaging_method)` | `double, double, int` | `numeric` | `Intensity_getMean()` |
-| `get_minimum(from_time, to_time, interpolation)` | `double, double, int` | `numeric` | `Vector_getMinimum()` |
-| `get_maximum(from_time, to_time, interpolation)` | `double, double, int` | `numeric` | `Vector_getMaximum()` |
-| `get_standard_deviation(from_time, to_time)` | `double, double` | `numeric` | `Intensity_getStandardDeviation()` |
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_value_at_time(time, interpolate)` | `double, string` | `numeric` | interpolate: "nearest", "linear", "cubic" |
+| `get_mean(from_time, to_time, averaging_method)` | `double, double, string` | `numeric` | |
+| `get_minimum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
+| `get_maximum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
+| `get_standard_deviation(from_time, to_time)` | `double, double` | `numeric` | |
+| `get_quantile(from_time, to_time, quantile)` | `double, double, double` | `numeric` | |
 
 ---
 
@@ -469,17 +470,6 @@ unit_code <- function(unit) {
   switch(tolower(unit), "hertz" = 0L, "semitones" = 1L, ...)
 }
 f0 <- pitch$get_value_at_time(time = 1.0, unit = unit_code("hertz"))
-```
-
-### 3. Frame Indexing (1-based)
-
-```r
-# Praat uses 1-based indexing
-first_frame <- pitch$get_time_from_frame(1)    # Correct
-first_frame <- pitch$get_time_from_frame(0)    # Error!
-
-# Interval numbers are also 1-based
-label <- tg$get_label_of_interval(tier_number = 1, interval_number = 1)
 ```
 
 ### 3. Frame Indexing (1-based)
@@ -644,7 +634,29 @@ result <- interp$eval_numeric('x * 2')
 
 ---
 
+## Known Limitations
+
+### to_point_process_periodic_cc Parameters
+
+The R wrapper accepts `time_step`, `max_period_factor`, and `max_amplitude_factor` parameters for API compatibility with Praat's GUI, but **only `pitch_floor` and `pitch_ceiling` are currently used**. The underlying Praat C function `Sound_to_PointProcess_periodic_cc()` only accepts minimum and maximum pitch.
+
+```r
+# These parameters are used:
+pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+
+# These parameters are accepted but ignored:
+# time_step, max_period_factor, max_amplitude_factor
+```
+
+---
+
 ## Version History
+
+**v2.1.2 (2026-01-08):**
+- Fixed AGENT_GUIDE pitch `get_quantile()` parameter order documentation
+- Clarified that R API uses string units (not integer codes)
+- Added Intensity `get_quantile()` method
+- Documented `to_point_process_periodic_cc` parameter limitations
 
 **v2.1.1 (2026-01-07):**
 - Fixed class name checks (use `Formant`, `Pitch`, `Intensity` not `*_constructor`)
@@ -667,8 +679,8 @@ result <- interp$eval_numeric('x * 2')
 
 ---
 
-**Guide Version:** 2.1.1  
-**Last Updated:** 2026-01-07  
-**Package Version:** 2.1.1  
+**Guide Version:** 2.1.2
+**Last Updated:** 2026-01-08
+**Package Version:** 2.1.2  
 **Modules:** 33 (92% Praat class coverage)
 ```
