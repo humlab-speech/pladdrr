@@ -130,6 +130,20 @@ Pitch <- function(.xptr = NULL) {
       cpp_obj$count_voiced_frames()
     },
     
+    get_statistics = function(from_time = 0, to_time = 0, unit = "hertz", 
+                              metrics = c("mean", "stdev", "min", "max", "median", "q1", "q3")) {
+      cpp_obj$get_statistics(as.numeric(from_time), as.numeric(to_time), 
+                             unit_code(unit), as.character(metrics))
+    },
+    
+    get_times_vector = function() {
+      cpp_obj$get_times_vector()
+    },
+    
+    get_values_vector = function(unit = "hertz") {
+      cpp_obj$get_values_vector(unit_code(unit))
+    },
+    
     get_strength_at_time = function(time, unit = "hertz", interpolate = TRUE) {
       cpp_obj$get_strength_at_time(as.numeric(time), unit_code(unit), as.logical(interpolate))
     },

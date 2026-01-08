@@ -320,14 +320,18 @@ public:
                                                   0.5, pitch_unit);
                     result[metric] = val;
                     
-                } else if (metric == "quantile25" || metric == "q25") {
+                } else if (metric == "quantile25" || metric == "q25" || metric == "q1") {
                     double val = Pitch_getQuantile(ptr.get(), from_time, to_time, 
                                                   0.25, pitch_unit);
                     result[metric] = val;
                     
-                } else if (metric == "quantile75" || metric == "q75") {
+                } else if (metric == "quantile75" || metric == "q75" || metric == "q3") {
                     double val = Pitch_getQuantile(ptr.get(), from_time, to_time, 
                                                   0.75, pitch_unit);
+                    result[metric] = val;
+                    
+                } else if (metric == "count_voiced" || metric == "voiced_frames") {
+                    int val = (int)Pitch_countVoicedFrames(ptr.get());
                     result[metric] = val;
                     
                 } else {
@@ -414,6 +418,36 @@ public:
     // ========================================================================
     // Export Methods
     // ========================================================================
+
+    // Direct vector access (NEW - Performance Enhancement)
+    // Faster than as_data_frame() when you only need times or values
+    Rcpp::NumericVector get_times_vector() {
+        VALIDATE_PTR(ptr, Pitch);
+        integer nx = ptr->nx;
+        Rcpp::NumericVector times(nx);
+        
+        for (integer i = 1; i <= nx; i++) {
+            times[i-1] = Sampled_indexToX(ptr.get(), i);
+        }
+        
+        return times;
+    }
+    
+    Rcpp::NumericVector get_values_vector(int unit = 0) {
+        VALIDATE_PTR(ptr, Pitch);
+        integer nx = ptr->nx;
+        Rcpp::NumericVector values(nx);
+        kPitch_unit pitch_unit = static_cast<kPitch_unit>(unit);
+        
+        for (integer i = 1; i <= nx; i++) {
+            double t = Sampled_indexToX(ptr.get(), i);
+            double val = Pitch_getValueAtTime(ptr.get(), t, pitch_unit, false);
+            // Return NA for unvoiced frames
+            values[i-1] = (val > 0 && val < ptr->ceiling) ? val : NA_REAL;
+        }
+        
+        return values;
+    }
 
     Rcpp::NumericMatrix as_matrix() {
         VALIDATE_PTR(ptr, Pitch);
@@ -752,6 +786,10 @@ RCPP_MODULE(pitch_module) {
         // Intensity methods (frame intensity)
         .method("get_intensity_at_time", &RPitch::get_intensity_at_time, "Get frame intensity at time")
         .method("get_mean_intensity", &RPitch::get_mean_intensity, "Get mean frame intensity")
+
+        // Direct vector access (fast - avoids data.frame overhead)
+        .method("get_times_vector", &RPitch::get_times_vector, "Get all frame times as vector")
+        .method("get_values_vector", &RPitch::get_values_vector, "Get all F0 values as vector")
 
         // Export methods
         .method("as_matrix", &RPitch::as_matrix, "Convert to matrix")

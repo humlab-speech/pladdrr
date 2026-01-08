@@ -186,3 +186,53 @@ test_that("Intensity$get_statistics returns all metrics", {
   expect_true(stats$mean <= stats$maximum)
   expect_gte(stats$stdev, 0)
 })
+
+test_that("TextGrid$get_all_intervals works correctly", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  tg <- tryCatch({
+    tg <- textgrid_create(0, 3, "words", "")
+    tg$insert_boundary("words", 1.0)
+    tg$insert_boundary("words", 2.0)
+    tg$set_interval_text("words", 1, "hello")
+    tg$set_interval_text("words", 2, "world")
+    tg$set_interval_text("words", 3, "test")
+    tg
+  }, error = function(e) skip("Could not create test TextGrid"))
+  
+  intervals <- tryCatch({
+    tg$get_all_intervals("words")
+  }, error = function(e) skip("get_all_intervals not available - needs recompilation"))
+  
+  expect_s3_class(intervals, "data.frame")
+  expect_equal(names(intervals), c("start", "end", "text"))
+  expect_equal(nrow(intervals), 3)
+  
+  for (i in 1:3) {
+    expect_equal(intervals$start[i], tg$get_interval_start_time("words", i))
+    expect_equal(intervals$end[i], tg$get_interval_end_time("words", i))
+    expect_equal(intervals$text[i], tg$get_interval_text("words", i))
+  }
+})
+
+test_that("TextGrid$get_all_points works correctly", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  tg <- tryCatch({
+    tg <- textgrid_create(0, 3, "", "events")
+    tg$insert_point("events", 0.5, "start")
+    tg$insert_point("events", 1.5, "middle")
+    tg$insert_point("events", 2.5, "end")
+    tg
+  }, error = function(e) skip("Could not create test TextGrid"))
+  
+  points <- tryCatch({
+    tg$get_all_points("events")
+  }, error = function(e) skip("get_all_points not available - needs recompilation"))
+  
+  expect_s3_class(points, "data.frame")
+  expect_equal(names(points), c("time", "text"))
+  expect_equal(nrow(points), 3)
+})

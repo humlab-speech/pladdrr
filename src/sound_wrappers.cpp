@@ -1533,9 +1533,27 @@ XPtr<structSound> sound_concatenate_all(
         stop("Cannot concatenate empty list of sounds");
     }
 
+    // Helper function to extract XPtr from R6 object or raw pointer
+    auto extract_xptr = [](SEXP item) -> XPtr<structSound> {
+        if (Rf_isEnvironment(item)) {
+            // R6 object - extract pointer from .xptr field
+            Rcpp::Environment env(item);
+            if (env.exists(".xptr")) {
+                return XPtr<structSound>(env[".xptr"]);
+            } else {
+                stop("Sound R6 object missing .xptr field");
+            }
+        } else if (TYPEOF(item) == EXTPTRSXP) {
+            // Raw external pointer
+            return XPtr<structSound>(item);
+        } else {
+            stop("Element is not a Sound object or pointer");
+        }
+    };
+
     if (sound_list.size() == 1) {
         // Single sound - just return a copy
-        XPtr<structSound> xptr = sound_list[0];
+        XPtr<structSound> xptr = extract_xptr(sound_list[0]);
         structSound* sound = get_ptr(xptr, "Sound");
         try {
             autoSound copy = Data_copy(sound);
@@ -1551,7 +1569,7 @@ XPtr<structSound> sound_concatenate_all(
         autoSoundList list = SoundList_create();
 
         for (int i = 0; i < sound_list.size(); i++) {
-            XPtr<structSound> xptr = sound_list[i];
+            XPtr<structSound> xptr = extract_xptr(sound_list[i]);
             structSound* sound = get_ptr(xptr, "Sound");
             list->addItem_move(Data_copy(sound));
         }

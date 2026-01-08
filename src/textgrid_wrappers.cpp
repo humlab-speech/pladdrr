@@ -298,6 +298,33 @@ std::string textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier
     }, "Failed to get label at time");
 }
 
+// [[Rcpp::export(.textgrid_get_all_intervals)]]
+Rcpp::DataFrame textgrid_get_all_intervals(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
+    return praat_try_return([&]() {
+        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+        IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
+        
+        int n = tier->intervals.size;
+        Rcpp::NumericVector starts(n);
+        Rcpp::NumericVector ends(n);
+        Rcpp::CharacterVector texts(n);
+        
+        for (int i = 1; i <= n; i++) {
+            TextInterval interval = tier->intervals.at[i];
+            starts[i-1] = interval->xmin;
+            ends[i-1] = interval->xmax;
+            texts[i-1] = Melder_peek32to8(interval->text.get());
+        }
+        
+        return Rcpp::DataFrame::create(
+            Rcpp::Named("start") = starts,
+            Rcpp::Named("end") = ends,
+            Rcpp::Named("text") = texts,
+            Rcpp::Named("stringsAsFactors") = false
+        );
+    }, "Failed to get all intervals");
+}
+
 // ============================================================================
 // IntervalTier Modification
 // ============================================================================
@@ -371,6 +398,30 @@ std::string textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_nu
         TextPoint point = tier->points.at[point_number];
         return Melder_peek32to8(point->mark.get());
     }, "Failed to get point text");
+}
+
+// [[Rcpp::export(.textgrid_get_all_points)]]
+Rcpp::DataFrame textgrid_get_all_points(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
+    return praat_try_return([&]() {
+        if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
+        TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
+        
+        int n = tier->points.size;
+        Rcpp::NumericVector times(n);
+        Rcpp::CharacterVector texts(n);
+        
+        for (int i = 1; i <= n; i++) {
+            TextPoint point = tier->points.at[i];
+            times[i-1] = point->number;
+            texts[i-1] = Melder_peek32to8(point->mark.get());
+        }
+        
+        return Rcpp::DataFrame::create(
+            Rcpp::Named("time") = times,
+            Rcpp::Named("text") = texts,
+            Rcpp::Named("stringsAsFactors") = false
+        );
+    }, "Failed to get all points");
 }
 
 // ============================================================================

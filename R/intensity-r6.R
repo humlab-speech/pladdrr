@@ -202,6 +202,21 @@ Intensity <- function(.xptr = NULL) {
       IntensityTier(.xptr = tier_ptr)
     },
     
+    # Direct vector access (faster than as_data_frame when you only need one column)
+    get_times_vector = function() {
+      cpp_obj$get_times_vector()
+    },
+    
+    get_values_vector = function() {
+      cpp_obj$get_values_vector()
+    },
+    
+    get_statistics = function(from_time = 0, to_time = 0,
+                              metrics = c("mean", "stdev", "min", "max", "median")) {
+      cpp_obj$get_statistics(as.numeric(from_time), as.numeric(to_time),
+                             as.character(metrics))
+    },
+    
     # Export methods
     as_data_frame = function() {
       df <- cpp_obj$as_data_frame()

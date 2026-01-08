@@ -155,6 +155,24 @@ public:
     }
 
     // Export
+    NumericVector get_times_vector() {
+        VALIDATE_PTR(ptr, Intensity);
+        NumericVector times(ptr->nx);
+        for (integer i = 1; i <= ptr->nx; i++) {
+            times[i-1] = Sampled_indexToX(ptr.get(), i);
+        }
+        return times;
+    }
+    
+    NumericVector get_values_vector() {
+        VALIDATE_PTR(ptr, Intensity);
+        NumericVector values(ptr->nx);
+        for (integer i = 1; i <= ptr->nx; i++) {
+            values[i-1] = ptr->z[1][i];
+        }
+        return values;
+    }
+    
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, Intensity);
         std::vector<double> times, values;
@@ -222,6 +240,8 @@ RCPP_MODULE(intensity_module) {
         .method("get_standard_deviation", &RIntensity::get_standard_deviation)
         .method("get_quantile", &RIntensity::get_quantile)
         .method("get_statistics", &RIntensity::get_statistics, "Get multiple statistics in one call")
+        .method("get_times_vector", &RIntensity::get_times_vector, "Get all frame times as vector")
+        .method("get_values_vector", &RIntensity::get_values_vector, "Get all intensity values as vector")
         .method("down_to_intensity_tier_ptr", &RIntensity::down_to_intensity_tier_ptr)
         .method("as_data_frame", &RIntensity::as_data_frame)
         .method("as_matrix", &RIntensity::as_matrix)

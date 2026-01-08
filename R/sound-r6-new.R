@@ -325,6 +325,25 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Sound(.xptr = ptr_result)
     },
     
+    extract_parts_batch = function(from_times, to_times, window_shape = "rectangular",
+                                    relative_width = 1.0, preserve_times = FALSE) {
+      # Map window shape strings to codes
+      shape_code <- switch(tolower(window_shape),
+        "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
+        "hanning" = 3L, "hamming" = 4L,
+        "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
+        "gaussian4" = 8L, "gaussian5" = 9L,
+        "kaiser1" = 10L, "kaiser2" = 11L, 0L)
+      
+      xptrs <- .sound_extract_parts_batch(
+        ptr,
+        as.numeric(from_times), as.numeric(to_times),
+        shape_code, as.numeric(relative_width),
+        as.logical(preserve_times)
+      )
+      lapply(xptrs, function(xptr) Sound(.xptr = xptr))
+    },
+    
     # === Export (from module - FAST) ===
     as_matrix = function() cpp_snd$as_matrix(),
     as_data_frame = function() cpp_snd$as_data_frame(),
