@@ -136,6 +136,13 @@ Pitch <- function(.xptr = NULL) {
                              unit_code(unit), as.character(metrics))
     },
     
+    get_adaptive_range = function(q1_factor = 0.75, q3_factor = 1.5,
+                                 from_time = 0, to_time = 0, unit = "hertz") {
+      cpp_obj$get_adaptive_range(as.numeric(q1_factor), as.numeric(q3_factor),
+                                as.numeric(from_time), as.numeric(to_time), 
+                                unit_code(unit))
+    },
+    
     get_times_vector = function() {
       cpp_obj$get_times_vector()
     },

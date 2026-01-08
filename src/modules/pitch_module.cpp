@@ -346,6 +346,40 @@ public:
         return result;
     }
 
+    List get_adaptive_range(double q1_factor, double q3_factor, 
+                           double from_time, double to_time, int unit) {
+        VALIDATE_PTR(ptr, Pitch);
+        
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        
+        kPitch_unit pitch_unit = static_cast<kPitch_unit>(unit);
+        
+        try {
+            // Get quartiles using Praat functions
+            double q1 = Pitch_getQuantile(ptr.get(), from_time, to_time, 
+                                         0.25, pitch_unit);
+            double q3 = Pitch_getQuantile(ptr.get(), from_time, to_time, 
+                                         0.75, pitch_unit);
+            
+            // Calculate adaptive range in C++ (no R boundary crossing)
+            double min_pitch = q1 * q1_factor;
+            double max_pitch = q3 * q3_factor;
+            
+            return List::create(
+                Named("q1") = q1,
+                Named("q3") = q3,
+                Named("min_pitch") = min_pitch,
+                Named("max_pitch") = max_pitch
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to calculate adaptive pitch range");
+        }
+    }
+
     // ========================================================================
     // Strength Query Methods
     // ========================================================================
@@ -778,6 +812,7 @@ RCPP_MODULE(pitch_module) {
 
         // Batch statistics (fast - single call for multiple metrics)
         .method("get_statistics", &RPitch::get_statistics, "Get multiple statistics in one call")
+        .method("get_adaptive_range", &RPitch::get_adaptive_range, "Calculate adaptive pitch range from quartiles")
 
         // Strength methods
         .method("get_strength_at_time", &RPitch::get_strength_at_time, "Get pitch strength at time")

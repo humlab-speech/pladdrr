@@ -27,6 +27,8 @@
 #' - `$get_number_of_intervals(tier)` - Number of intervals in tier
 #' - `$get_interval_text(tier, n)` - Get label of interval n
 #' - `$get_label_at_time(tier, time)` - Get label at specific time
+#' - `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
+#' - `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
 #' - `$set_interval_text(tier, n, text)` - Set label of interval n
 #' - `$insert_boundary(tier, time)` - Insert new boundary
 #' - `$remove_boundary(tier, time)` - Remove boundary
@@ -90,6 +92,16 @@
 #'     segment$save(paste0("word_", i, ".wav"))
 #'   }
 #' }
+#' 
+#' # Fast batch extraction of matching intervals
+#' result <- tg$extract_intervals_batch(
+#'   tier = "words",
+#'   comparison_type = "equals",
+#'   target_value = "hello",
+#'   sound = sound,
+#'   extract_sounds = TRUE
+#' )
+#' # Access results: result$indices, result$start_times, result$sounds
 #'
 #' # Save TextGrid
 #' tg$save("output.TextGrid")
@@ -192,6 +204,33 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
     get_all_intervals = function(tier) {
       tier_num <- resolve_tier_number(tier)
       .textgrid_get_all_intervals(ptr, tier_num)
+    },
+    extract_intervals_batch = function(tier, comparison_type = "equals", 
+                                       target_value = "", sound = NULL,
+                                       extract_sounds = FALSE) {
+      tier_num <- resolve_tier_number(tier)
+      
+      if (extract_sounds && is.null(sound)) {
+        stop("sound argument required when extract_sounds = TRUE")
+      }
+      
+      result <- textgrid_extract_intervals_batch(
+        textgrid_xptr = ptr,
+        sound_xptr = if (!is.null(sound)) sound$.xptr else NULL,
+        tier_number = tier_num,
+        comparison_type = comparison_type,
+        target_value = target_value,
+        extract_sounds = extract_sounds
+      )
+      
+      # Wrap Sound objects if extracted
+      if (extract_sounds && length(result$sounds) > 0) {
+        result$sounds <- lapply(result$sounds, function(xptr) {
+          Sound(.xptr = xptr)
+        })
+      }
+      
+      return(result)
     },
     
     # === IntervalTier Modification ===

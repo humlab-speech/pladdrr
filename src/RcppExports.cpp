@@ -8536,6 +8536,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// textgrid_get_all_intervals
+Rcpp::DataFrame textgrid_get_all_intervals(Rcpp::XPtr<structTextGrid> xptr, int tier_number);
+RcppExport SEXP _pladdrr_textgrid_get_all_intervals(SEXP xptrSEXP, SEXP tier_numberSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structTextGrid> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_get_all_intervals(xptr, tier_number));
+    return rcpp_result_gen;
+END_RCPP
+}
 // textgrid_set_interval_text
 void textgrid_set_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number, std::string text);
 RcppExport SEXP _pladdrr_textgrid_set_interval_text(SEXP xptrSEXP, SEXP tier_numberSEXP, SEXP interval_numberSEXP, SEXP textSEXP) {
@@ -8608,6 +8620,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
     Rcpp::traits::input_parameter< int >::type point_number(point_numberSEXP);
     rcpp_result_gen = Rcpp::wrap(textgrid_get_point_text(xptr, tier_number, point_number));
+    return rcpp_result_gen;
+END_RCPP
+}
+// textgrid_get_all_points
+Rcpp::DataFrame textgrid_get_all_points(Rcpp::XPtr<structTextGrid> xptr, int tier_number);
+RcppExport SEXP _pladdrr_textgrid_get_all_points(SEXP xptrSEXP, SEXP tier_numberSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structTextGrid> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_get_all_points(xptr, tier_number));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -9769,12 +9793,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_get_interval_text", (DL_FUNC) &_pladdrr_textgrid_get_interval_text, 3},
     {"_pladdrr_textgrid_get_interval_at_time", (DL_FUNC) &_pladdrr_textgrid_get_interval_at_time, 3},
     {"_pladdrr_textgrid_get_label_at_time", (DL_FUNC) &_pladdrr_textgrid_get_label_at_time, 3},
+    {"_pladdrr_textgrid_get_all_intervals", (DL_FUNC) &_pladdrr_textgrid_get_all_intervals, 2},
     {"_pladdrr_textgrid_set_interval_text", (DL_FUNC) &_pladdrr_textgrid_set_interval_text, 4},
     {"_pladdrr_textgrid_insert_boundary", (DL_FUNC) &_pladdrr_textgrid_insert_boundary, 3},
     {"_pladdrr_textgrid_remove_boundary", (DL_FUNC) &_pladdrr_textgrid_remove_boundary, 3},
     {"_pladdrr_textgrid_get_number_of_points", (DL_FUNC) &_pladdrr_textgrid_get_number_of_points, 2},
     {"_pladdrr_textgrid_get_point_time", (DL_FUNC) &_pladdrr_textgrid_get_point_time, 3},
     {"_pladdrr_textgrid_get_point_text", (DL_FUNC) &_pladdrr_textgrid_get_point_text, 3},
+    {"_pladdrr_textgrid_get_all_points", (DL_FUNC) &_pladdrr_textgrid_get_all_points, 2},
     {"_pladdrr_textgrid_insert_point", (DL_FUNC) &_pladdrr_textgrid_insert_point, 4},
     {"_pladdrr_textgrid_set_point_text", (DL_FUNC) &_pladdrr_textgrid_set_point_text, 4},
     {"_pladdrr_textgrid_remove_point", (DL_FUNC) &_pladdrr_textgrid_remove_point, 3},

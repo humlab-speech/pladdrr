@@ -2624,6 +2624,10 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
     .Call(`_pladdrr_textgrid_get_label_at_time`, xptr, tier_number, time)
 }
 
+.textgrid_get_all_intervals <- function(xptr, tier_number) {
+    .Call(`_pladdrr_textgrid_get_all_intervals`, xptr, tier_number)
+}
+
 .textgrid_set_interval_text <- function(xptr, tier_number, interval_number, text) {
     invisible(.Call(`_pladdrr_textgrid_set_interval_text`, xptr, tier_number, interval_number, text))
 }
@@ -2646,6 +2650,10 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 
 .textgrid_get_point_text <- function(xptr, tier_number, point_number) {
     .Call(`_pladdrr_textgrid_get_point_text`, xptr, tier_number, point_number)
+}
+
+.textgrid_get_all_points <- function(xptr, tier_number) {
+    .Call(`_pladdrr_textgrid_get_all_points`, xptr, tier_number)
 }
 
 .textgrid_insert_point <- function(xptr, tier_number, time, mark) {

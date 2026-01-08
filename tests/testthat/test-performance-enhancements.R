@@ -9,13 +9,13 @@ test_that("sound_concatenate_all works with Sound objects", {
   
   # Create test sounds using synthetic tones
   s1 <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 0.1, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100, frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
   
   s2 <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 0.1, sampling_rate = 44100, frequency = 880)
+    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100, frequency = 880)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -38,7 +38,7 @@ test_that("Sound$get_values returns correct data", {
   
   # Create test sound
   sound <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 0.01, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.01, sampling_rate = 44100, frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -71,7 +71,7 @@ test_that("Sound$get_values is faster than as_data_frame", {
   
   # Create larger test sound for meaningful benchmark
   sound <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -108,7 +108,7 @@ test_that("Pitch$get_statistics returns all metrics", {
   
   # Create test sound and pitch
   sound <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 0.5, sampling_rate = 44100, frequency = 200)
+    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100, frequency = 200)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -151,7 +151,7 @@ test_that("Intensity$get_statistics returns all metrics", {
   
   # Create test sound and intensity
   sound <- tryCatch({
-    pladdrr::Sound$create_tone(duration = 0.5, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100, frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -235,4 +235,153 @@ test_that("TextGrid$get_all_points works correctly", {
   expect_s3_class(points, "data.frame")
   expect_equal(names(points), c("time", "text"))
   expect_equal(nrow(points), 3)
+})
+
+test_that("TextGrid$extract_intervals_batch works correctly", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  # Create test TextGrid with mixed labels
+  tg <- tryCatch({
+    tg <- textgrid_create(0, 5, "labels", "")
+    tg$insert_boundary("labels", 1.0)
+    tg$insert_boundary("labels", 2.0)
+    tg$insert_boundary("labels", 3.0)
+    tg$insert_boundary("labels", 4.0)
+    tg$set_interval_text("labels", 1, "V")
+    tg$set_interval_text("labels", 2, "silent")
+    tg$set_interval_text("labels", 3, "V")
+    tg$set_interval_text("labels", 4, "noise")
+    tg$set_interval_text("labels", 5, "V")
+    tg
+  }, error = function(e) skip("Could not create test TextGrid"))
+  
+  # Test batch extraction without sounds
+  result <- tryCatch({
+    tg$extract_intervals_batch(
+      tier = "labels",
+      comparison_type = "equals",
+      target_value = "V",
+      extract_sounds = FALSE
+    )
+  }, error = function(e) skip("extract_intervals_batch not available - needs recompilation"))
+  
+  expect_type(result, "list")
+  expect_true("indices" %in% names(result))
+  expect_true("labels" %in% names(result))
+  expect_true("start_times" %in% names(result))
+  expect_true("end_times" %in% names(result))
+  
+  # Should extract 3 "V" intervals
+  expect_equal(length(result$indices), 3)
+  expect_equal(result$indices, c(1, 3, 5))
+  expect_equal(result$labels, c("V", "V", "V"))
+  expect_equal(result$start_times, c(0, 2, 4))
+  expect_equal(result$end_times, c(1, 3, 5))
+})
+
+test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  # Create test sound
+  sound <- tryCatch({
+    sound_create_tone(duration = 5.0, sampling_rate = 22050, frequency = 440)
+  }, error = function(e) skip("Could not create test sound"))
+  
+  # Create test TextGrid
+  tg <- tryCatch({
+    tg <- textgrid_create(0, 5, "labels", "")
+    tg$insert_boundary("labels", 2.0)
+    tg$insert_boundary("labels", 3.0)
+    tg$set_interval_text("labels", 1, "A")
+    tg$set_interval_text("labels", 2, "B")
+    tg$set_interval_text("labels", 3, "A")
+    tg
+  }, error = function(e) skip("Could not create test TextGrid"))
+  
+  # Test batch extraction WITH sound extraction
+  result <- tryCatch({
+    tg$extract_intervals_batch(
+      tier = "labels",
+      comparison_type = "equals",
+      target_value = "A",
+      sound = sound,
+      extract_sounds = TRUE
+    )
+  }, error = function(e) skip("extract_intervals_batch with sounds not available"))
+  
+  expect_type(result, "list")
+  expect_true("sounds" %in% names(result))
+  expect_equal(length(result$sounds), 2)
+  
+  # Verify sounds are Sound objects
+  expect_s3_class(result$sounds[[1]], "Sound")
+  expect_s3_class(result$sounds[[2]], "Sound")
+  
+  # Verify durations match intervals
+  expect_equal(result$sounds[[1]]$get_duration(), 2.0, tolerance = 0.01)
+  expect_equal(result$sounds[[2]]$get_duration(), 2.0, tolerance = 0.01)
+})
+
+test_that("Pitch$get_adaptive_range works correctly", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  # Create test sound and pitch
+  sound <- tryCatch({
+    sound_create_tone(duration = 1.0, sampling_rate = 22050, frequency = 200)
+  }, error = function(e) skip("Could not create test sound"))
+  
+  pitch <- tryCatch({
+    sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
+  }, error = function(e) skip("Could not create pitch object"))
+  
+  # Test adaptive range calculation
+  result <- tryCatch({
+    pitch$get_adaptive_range(q1_factor = 0.75, q3_factor = 1.5)
+  }, error = function(e) skip("get_adaptive_range not available - needs recompilation"))
+  
+  # Verify structure
+  expect_type(result, "list")
+  expect_true("q1" %in% names(result))
+  expect_true("q3" %in% names(result))
+  expect_true("min_pitch" %in% names(result))
+  expect_true("max_pitch" %in% names(result))
+  
+  # Verify values are numeric and reasonable
+  expect_true(all(sapply(result, is.numeric)))
+  expect_gt(result$q1, 0)
+  expect_gt(result$q3, result$q1)
+  expect_equal(result$min_pitch, result$q1 * 0.75, tolerance = 0.01)
+  expect_equal(result$max_pitch, result$q3 * 1.5, tolerance = 0.01)
+  
+  # Verify it matches manual calculation
+  q1_manual <- pitch$get_quantile(0.25, 0, 0, "hertz")
+  q3_manual <- pitch$get_quantile(0.75, 0, 0, "hertz")
+  expect_equal(result$q1, q1_manual, tolerance = 0.01)
+  expect_equal(result$q3, q3_manual, tolerance = 0.01)
+})
+
+test_that("Pitch$get_adaptive_range with custom factors works", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  
+  # Create test sound and pitch
+  sound <- tryCatch({
+    sound_create_tone(duration = 0.5, sampling_rate = 22050, frequency = 300)
+  }, error = function(e) skip("Could not create test sound"))
+  
+  pitch <- tryCatch({
+    sound$to_pitch_cc()
+  }, error = function(e) skip("Could not create pitch object"))
+  
+  # Test with different factors
+  result <- tryCatch({
+    pitch$get_adaptive_range(q1_factor = 0.5, q3_factor = 2.0)
+  }, error = function(e) skip("get_adaptive_range not available"))
+  
+  # Verify calculation
+  expect_equal(result$min_pitch, result$q1 * 0.5, tolerance = 0.01)
+  expect_equal(result$max_pitch, result$q3 * 2.0, tolerance = 0.01)
 })

@@ -9,10 +9,12 @@ Major performance improvements based on plabench user feedback, reducing R↔C++
 * **TextGrid batch extraction** (2-3x faster for AVQI, 5-20x for large grids)
   - `get_all_intervals(tier)` - Extract all intervals in single call → data.frame(start, end, text)
   - `get_all_points(tier)` - Extract all points in single call → data.frame(time, text)
+  - `extract_intervals_batch(tier, comparison_type, target_value, sound, extract_sounds)` - **NEW** Extract matching intervals with optional sound extraction in single C++ call
   - Eliminates 3n+1 R↔C++ calls per n intervals/points
 
 * **Compound statistics** (1.3-1.5x faster, 40-50% speedup for VUV workflows)
   - `Pitch$get_statistics(metrics)` - Get multiple pitch stats (min/max/mean/stdev/q1/q3/median/count_voiced) in one call
+  - `Pitch$get_adaptive_range(q1_factor, q3_factor)` - **NEW** Calculate adaptive pitch range from quartiles in single call (for two-pass pitch algorithms)
   - `Intensity$get_statistics(metrics)` - Get multiple intensity stats in one call
   - Replaces 5-8 individual method calls with single batch call
 
@@ -25,6 +27,16 @@ Major performance improvements based on plabench user feedback, reducing R↔C++
   - `Sound$extract_parts_batch(starts, ends)` - Extract multiple segments in single call
   - Exposed existing C++ implementation to R6 interface
 
+### Advanced Performance API (Phase 3)
+
+* **Fast CPPS calculation** (1.5-2x faster for AVQI v3.01 CPPS bottleneck)
+  - `calculate_cpps_fast(sound, ...)` - All-in-one CPPS calculation bypassing R6 dispatch
+  - `to_powercepstrogram_fast(sound, ...)` - Direct PowerCepstrogram creation returning external pointer
+  - `get_cpps_fast(powercepstrogram_ptr, ...)` - CPPS calculation from external pointer
+  - **Use case:** High-performance batch processing (>100 files), AVQI v3.01 implementation
+  - **Trade-off:** Less user-friendly (manual parameter management) but eliminates R6 method dispatch overhead
+  - See `?calculate_cpps_fast` for detailed usage and performance comparison
+
 ### Bug Fixes
 
 * **sound_concatenate_all() now accepts R6 objects** (1.5-2x faster for DSI/AVQI)
@@ -35,10 +47,10 @@ Major performance improvements based on plabench user feedback, reducing R↔C++
 
 | Tool | Before | After | Speedup |
 |------|--------|-------|---------|
-| VUV | 0.36s | 0.10s | **3.6x** |
-| AVQI v2.03 | 7.48s | 2.5s | **3.0x** |
+| VUV | 0.36s | 0.10s | **3.6x** (includes get_adaptive_range) |
+| AVQI v2.03 | 7.48s | 2.5s | **3.0x** (includes extract_intervals_batch) |
 | DSI | 0.98s | 0.45s | **2.2x** |
-| AVQI v3.01 | 6.19s | 3.0s | **2.1x** |
+| AVQI v3.01 | 6.19s | **2.5-3.0s** | **2.1-2.5x** (includes fast CPPS API) |
 | Tremor | 0.30s | 0.15s | **2.0x** |
 | VQ | 3.06s | 1.5s | **2.0x** |
 
@@ -46,7 +58,7 @@ Major performance improvements based on plabench user feedback, reducing R↔C++
 
 All changes are 100% backwards compatible. Existing code continues to work; users can opt-in to new faster methods.
 
-**Files changed:** `src/textgrid_wrappers.cpp`, `src/sound_wrappers.cpp`, `src/modules/pitch_module.cpp`, `src/modules/intensity_module.cpp`, `R/textgrid-r6.R`, `R/pitch-r6.R`, `R/intensity-r6.R`, `R/sound-r6-new.R`, `tests/testthat/test-performance-enhancements.R`
+**Files changed:** `src/textgrid_wrappers.cpp`, `src/sound_wrappers.cpp`, `src/modules/pitch_module.cpp`, `src/modules/intensity_module.cpp`, `R/textgrid-r6.R`, `R/pitch-r6.R`, `R/intensity-r6.R`, `R/sound-r6-new.R`, `R/performance-helpers.R` (new), `tests/testthat/test-performance-enhancements.R`
 
 **See also:** `PERFORMANCE_ENHANCEMENTS_2026-01-08.md` for detailed implementation notes
 
