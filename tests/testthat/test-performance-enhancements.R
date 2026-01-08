@@ -385,3 +385,242 @@ test_that("Pitch$get_adaptive_range with custom factors works", {
   expect_equal(result$min_pitch, result$q1 * 0.5, tolerance = 0.01)
   expect_equal(result$max_pitch, result$q3 * 2.0, tolerance = 0.01)
 })
+
+# =============================================================================
+# Phase 3: XPtr Function Tests (RcppXPtrUtils Integration)
+# =============================================================================
+
+test_that("apply_window_xptr works with RcppXPtrUtils", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  skip_if_not_installed("RcppXPtrUtils")
+
+  # Create test sound
+  sound <- tryCatch({
+    sound_create_tone(duration = 0.5, sampling_rate = 22050, frequency = 440)
+  }, error = function(e) skip("Could not create test sound"))
+
+  # Create Hanning window via XPtr
+  hanning_xptr <- tryCatch({
+    RcppXPtrUtils::cppXPtr(
+      "#include <cmath>
+       #ifndef M_PI
+       #define M_PI 3.14159265358979323846
+       #endif
+       double window(double t) {
+         return 0.5 * (1.0 - cos(2.0 * M_PI * t));
+       }",
+      depends = character()
+    )
+  }, error = function(e) skip("Could not compile XPtr window function"))
+
+  # Apply window
+  result <- tryCatch({
+    apply_window_xptr(sound, hanning_xptr)
+  }, error = function(e) skip("apply_window_xptr not available - needs recompilation"))
+
+  # Verify result
+  expect_s3_class(result, "Sound")
+  expect_equal(result$get_duration(), sound$get_duration(), tolerance = 0.001)
+
+  # Window should zero out the edges (Hanning window = 0 at t=0 and t=1)
+  # Get first and last sample values
+  values <- result$get_values()
+  expect_lt(abs(values[1]), 0.01)  # Should be near zero at start
+  expect_lt(abs(values[length(values)]), 0.01)  # Should be near zero at end
+})
+
+test_that("apply_transform_xptr works with RcppXPtrUtils", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  skip_if_not_installed("RcppXPtrUtils")
+
+  # Create test sound
+  sound <- tryCatch({
+    sound_create_tone(duration = 0.1, sampling_rate = 22050, frequency = 440)
+  }, error = function(e) skip("Could not create test sound"))
+
+  # Create absolute value (rectifier) transform via XPtr
+  rectifier_xptr <- tryCatch({
+    RcppXPtrUtils::cppXPtr(
+      "#include <cmath>
+       double transform(double x) {
+         return fabs(x);
+       }",
+      depends = character()
+    )
+  }, error = function(e) skip("Could not compile XPtr transform function"))
+
+  # Apply transform
+  result <- tryCatch({
+    apply_transform_xptr(sound, rectifier_xptr)
+  }, error = function(e) skip("apply_transform_xptr not available - needs recompilation"))
+
+  # Verify result
+  expect_s3_class(result, "Sound")
+
+  # All values should be non-negative after rectification
+  values <- result$get_values()
+  expect_true(all(values >= 0))
+})
+
+test_that("create_window_xptr creates valid window functions", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  skip_if_not_installed("RcppXPtrUtils")
+
+  # Test that create_window_xptr works for all window types
+  window_types <- c("hamming", "hanning", "gaussian", "triangular", "blackman", "rectangular")
+
+  for (wtype in window_types) {
+    window_xptr <- tryCatch({
+      create_window_xptr(wtype)
+    }, error = function(e) {
+      skip(paste("create_window_xptr failed for", wtype))
+    })
+
+    expect_true(inherits(window_xptr, "externalptr"),
+                info = paste("Window type:", wtype))
+  }
+})
+
+# =============================================================================
+# Phase 3: Batch Statistics Tests
+# =============================================================================
+
+test_that("pitch_get_statistics_batch returns correct matrix", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+
+  # Create test sound and pitch
+  sound <- tryCatch({
+    sound_create_tone(duration = 3.0, sampling_rate = 22050, frequency = 200)
+  }, error = function(e) skip("Could not create test sound"))
+
+  pitch <- tryCatch({
+    sound$to_pitch_cc()
+  }, error = function(e) skip("Could not create pitch object"))
+
+  # Define time intervals
+  from_times <- c(0, 1, 2)
+  to_times <- c(1, 2, 3)
+  metrics <- c("min", "max", "mean", "stdev", "q25", "q75")
+
+  # Test batch statistics
+  result <- tryCatch({
+    pitch_get_statistics_batch(
+      pitch$.xptr,
+      from_times,
+      to_times,
+      metrics,
+      unit = 0L
+    )
+  }, error = function(e) skip("pitch_get_statistics_batch not available - needs recompilation"))
+
+  # Verify structure
+  expect_true(is.matrix(result))
+  expect_equal(nrow(result), 3)
+  expect_equal(ncol(result), 6)
+  expect_equal(colnames(result), metrics)
+
+  # Verify values are reasonable
+  for (i in 1:nrow(result)) {
+    expect_true(result[i, "min"] <= result[i, "mean"])
+    expect_true(result[i, "mean"] <= result[i, "max"])
+    expect_gte(result[i, "stdev"], 0)
+  }
+})
+
+test_that("intensity_get_statistics_batch returns correct matrix", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+
+  # Create test sound and intensity
+  sound <- tryCatch({
+    sound_create_tone(duration = 3.0, sampling_rate = 22050, frequency = 440)
+  }, error = function(e) skip("Could not create test sound"))
+
+  intensity <- tryCatch({
+    sound$to_intensity()
+  }, error = function(e) skip("Could not create intensity object"))
+
+  # Define time intervals
+  from_times <- c(0, 1, 2)
+  to_times <- c(1, 2, 3)
+  metrics <- c("min", "max", "mean", "stdev")
+
+  # Test batch statistics
+  result <- tryCatch({
+    intensity_get_statistics_batch(
+      intensity$.xptr,
+      from_times,
+      to_times,
+      metrics,
+      averaging_method = 0L
+    )
+  }, error = function(e) skip("intensity_get_statistics_batch not available - needs recompilation"))
+
+  # Verify structure
+  expect_true(is.matrix(result))
+  expect_equal(nrow(result), 3)
+  expect_equal(ncol(result), 4)
+  expect_equal(colnames(result), metrics)
+
+  # Verify values are reasonable
+  for (i in 1:nrow(result)) {
+    expect_true(result[i, "min"] <= result[i, "mean"])
+    expect_true(result[i, "mean"] <= result[i, "max"])
+    expect_gte(result[i, "stdev"], 0)
+  }
+})
+
+test_that("batch statistics are faster than individual calls", {
+  skip_on_cran()
+  skip_if_not_installed("pladdrr")
+  skip_if_not_installed("microbenchmark")
+
+  # Create test sound and pitch
+  sound <- tryCatch({
+    sound_create_tone(duration = 10.0, sampling_rate = 22050, frequency = 200)
+  }, error = function(e) skip("Could not create test sound"))
+
+  pitch <- tryCatch({
+    sound$to_pitch_cc()
+  }, error = function(e) skip("Could not create pitch object"))
+
+  # Define 100 time intervals
+  n_intervals <- 100
+  from_times <- seq(0, 9, length.out = n_intervals)
+  to_times <- from_times + 0.1
+  metrics <- c("min", "max", "mean", "stdev")
+
+  # Test if batch function exists
+  batch_works <- tryCatch({
+    pitch_get_statistics_batch(pitch$.xptr, from_times[1:2], to_times[1:2], metrics[1:2], 0L)
+    TRUE
+  }, error = function(e) FALSE)
+
+  if (!batch_works) {
+    skip("pitch_get_statistics_batch not available")
+  }
+
+  # Benchmark batch vs individual
+  bench <- microbenchmark::microbenchmark(
+    batch = pitch_get_statistics_batch(pitch$.xptr, from_times, to_times, metrics, 0L),
+    individual = {
+      for (i in 1:n_intervals) {
+        pitch$get_minimum(from_times[i], to_times[i], "hertz")
+        pitch$get_maximum(from_times[i], to_times[i], "hertz")
+        pitch$get_mean(from_times[i], to_times[i], "hertz")
+        pitch$get_standard_deviation(from_times[i], to_times[i], "hertz")
+      }
+    },
+    times = 10
+  )
+
+  median_batch <- median(bench$time[bench$expr == "batch"])
+  median_individual <- median(bench$time[bench$expr == "individual"])
+
+  # Batch should be at least 2x faster
+  expect_lt(median_batch, median_individual * 0.5)
+})

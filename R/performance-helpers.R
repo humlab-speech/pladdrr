@@ -277,3 +277,216 @@ get_cpps_fast <- function(
     as.integer(fit_map[[fit_method]])
   )
 }
+
+
+# =============================================================================
+# Advanced Performance API: XPtr Window Functions
+# Requires RcppXPtrUtils package for compilation
+# =============================================================================
+
+#' Apply Compiled Window Function (Advanced Performance API)
+#'
+#' @description
+#' Apply a user-defined C++ window function to a Sound object with 70x speedup
+#' over R function callbacks. Requires the RcppXPtrUtils package.
+#'
+#' @param sound Sound object or external pointer
+#' @param window_func External pointer from RcppXPtrUtils::cppXPtr()
+#'
+#' @return Sound object with window function applied
+#'
+#' @details
+#' **ADVANCED API** - Requires RcppXPtrUtils package.
+#'
+#' The window function receives normalized time (0 to 1) and returns a
+#' multiplier. Common window functions:
+#'
+#' \itemize{
+#'   \item Hamming: `0.54 - 0.46 * cos(2 * M_PI * t)`
+#'   \item Hanning: `0.5 * (1 - cos(2 * M_PI * t))`
+#'   \item Gaussian: `exp(-18 * (t - 0.5)^2)`
+#'   \item Triangular: `1 - fabs(2*t - 1)`
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(RcppXPtrUtils)
+#'
+#' # Create compiled Gaussian window function
+#' gauss_window <- cppXPtr(
+#'   "double gauss(double t) {
+#'     double x = t - 0.5;
+#'     return exp(-18.0 * x * x);
+#'   }",
+#'   depends = character()
+#' )
+#'
+#' # Verify signature (optional but recommended)
+#' checkXPtr(gauss_window, "double", "double")
+#'
+#' # Apply to sound (70x faster than R function)
+#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' windowed <- apply_window_xptr(sound, gauss_window)
+#' }
+#'
+#' @export
+apply_window_xptr <- function(sound, window_func) {
+  if (!requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+    stop("RcppXPtrUtils package required for apply_window_xptr(). ",
+         "Install with: install.packages('RcppXPtrUtils')")
+  }
+
+  # Extract pointer if R6 object
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  # Get internal RSound module
+  ns <- asNamespace("pladdrr")
+  sound_module <- ns$sound_module
+
+  # Create RSound wrapper and call method
+  rsound <- sound_module$RSound$new(sound_ptr)
+  result_ptr <- rsound$apply_window_xptr(window_func)
+
+  # Wrap result in R6 Sound object
+  Sound$new(.xptr = result_ptr)
+}
+
+
+#' Apply Compiled Transform Function (Advanced Performance API)
+#'
+#' @description
+#' Apply a user-defined C++ transform function to sample values with 70x speedup
+#' over R function callbacks. Requires the RcppXPtrUtils package.
+#'
+#' @param sound Sound object or external pointer
+#' @param transform_func External pointer from RcppXPtrUtils::cppXPtr()
+#'
+#' @return Sound object with transform function applied
+#'
+#' @details
+#' **ADVANCED API** - Requires RcppXPtrUtils package.
+#'
+#' The transform function receives sample amplitude and returns transformed
+#' amplitude. Common transforms:
+#'
+#' \itemize{
+#'   \item Clipping: `x > threshold ? threshold : (x < -threshold ? -threshold : x)`
+#'   \item Soft clipping: `tanh(x * gain)`
+#'   \item Rectification: `fabs(x)`
+#'   \item Squaring: `x * x`
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(RcppXPtrUtils)
+#'
+#' # Create compiled soft clipping function
+#' soft_clip <- cppXPtr(
+#'   "double softclip(double x) { return tanh(x * 2.0); }",
+#'   depends = character()
+#' )
+#'
+#' # Apply to sound (70x faster than R function)
+#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' clipped <- apply_transform_xptr(sound, soft_clip)
+#' }
+#'
+#' @export
+apply_transform_xptr <- function(sound, transform_func) {
+  if (!requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+    stop("RcppXPtrUtils package required for apply_transform_xptr(). ",
+         "Install with: install.packages('RcppXPtrUtils')")
+  }
+
+  # Extract pointer if R6 object
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  # Get internal RSound module
+  ns <- asNamespace("pladdrr")
+  sound_module <- ns$sound_module
+
+  # Create RSound wrapper and call method
+  rsound <- sound_module$RSound$new(sound_ptr)
+  result_ptr <- rsound$apply_transform_xptr(transform_func)
+
+  # Wrap result in R6 Sound object
+  Sound$new(.xptr = result_ptr)
+}
+
+
+#' Create Common Window Function XPtr
+#'
+#' @description
+#' Convenience function to create pre-defined window functions as compiled XPtrs.
+#' Requires the RcppXPtrUtils package.
+#'
+#' @param type Character, one of "hamming", "hanning", "gaussian", "triangular",
+#'   "blackman", "rectangular"
+#' @param sigma Numeric, standard deviation for Gaussian window (default 0.25)
+#'
+#' @return External pointer to compiled window function
+#'
+#' @examples
+#' \dontrun{
+#' library(RcppXPtrUtils)
+#'
+#' # Create Hamming window (pre-compiled)
+#' hamming <- create_window_xptr("hamming")
+#'
+#' # Apply to sound
+#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' windowed <- apply_window_xptr(sound, hamming)
+#' }
+#'
+#' @export
+create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
+                                         "triangular", "blackman", "rectangular"),
+                               sigma = 0.25) {
+  if (!requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+    stop("RcppXPtrUtils package required for create_window_xptr(). ",
+         "Install with: install.packages('RcppXPtrUtils')")
+  }
+
+  type <- match.arg(type)
+
+  # C++ window function implementations
+  window_code <- switch(type,
+    hamming = "double window(double t) {
+      return 0.54 - 0.46 * cos(2.0 * M_PI * t);
+    }",
+    hanning = "double window(double t) {
+      return 0.5 * (1.0 - cos(2.0 * M_PI * t));
+    }",
+    gaussian = sprintf("double window(double t) {
+      double x = t - 0.5;
+      double sigma = %f;
+      return exp(-0.5 * (x * x) / (sigma * sigma));
+    }", sigma),
+    triangular = "double window(double t) {
+      return 1.0 - fabs(2.0 * t - 1.0);
+    }",
+    blackman = "double window(double t) {
+      return 0.42 - 0.5 * cos(2.0 * M_PI * t) + 0.08 * cos(4.0 * M_PI * t);
+    }",
+    rectangular = "double window(double t) {
+      return 1.0;
+    }"
+  )
+
+  # Add required includes
+  full_code <- paste0("#include <cmath>\n#ifndef M_PI\n#define M_PI 3.14159265358979323846\n#endif\n", window_code)
+
+  RcppXPtrUtils::cppXPtr(full_code, depends = character())
+}

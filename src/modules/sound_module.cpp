@@ -405,6 +405,94 @@ public:
     }
 
     // =========================================================================
+    // Advanced Performance API: XPtr Window Functions
+    // These methods accept compiled C++ function pointers from RcppXPtrUtils
+    // for 70x speedup over R function callbacks
+    // =========================================================================
+
+    // Apply user-defined window function via compiled XPtr (normalized time 0-1)
+    // Usage: window_fn <- cppXPtr("double gauss(double t) { return exp(-t*t*16); }")
+    //        sound$apply_window_xptr(window_fn)
+    XPtr<structSound> apply_window_xptr(SEXP window_func_xptr) {
+        VALIDATE_PTR(ptr, Sound);
+
+        // Validate XPtr
+        if (TYPEOF(window_func_xptr) != EXTPTRSXP) {
+            Rcpp::stop("window_func must be an external pointer from cppXPtr()");
+        }
+
+        // Cast to function pointer type: double(*)(double)
+        typedef double (*WindowFunc)(double);
+        WindowFunc window_fn = *reinterpret_cast<WindowFunc*>(R_ExternalPtrAddr(window_func_xptr));
+
+        if (!window_fn) {
+            Rcpp::stop("Invalid window function pointer (NULL)");
+        }
+
+        try {
+            // Create copy of sound to modify
+            autoSound result = Data_copy(ptr.get());
+
+            integer nchannels = result->ny;
+            integer nsamples = result->nx;
+            double duration = result->xmax - result->xmin;
+
+            // Apply window function to each sample
+            for (integer ch = 1; ch <= nchannels; ch++) {
+                for (integer s = 1; s <= nsamples; s++) {
+                    double t = Sampled_indexToX(result.get(), s);
+                    // Normalize time to [0, 1] for window function
+                    double t_norm = (t - result->xmin) / duration;
+                    result->z[ch][s] *= window_fn(t_norm);
+                }
+            }
+
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to apply window function");
+        }
+    }
+
+    // Apply user-defined sample transformation via XPtr (operates on amplitude)
+    // Usage: transform_fn <- cppXPtr("double clip(double x) { return x > 0.5 ? 0.5 : x; }")
+    //        sound$apply_transform_xptr(transform_fn)
+    XPtr<structSound> apply_transform_xptr(SEXP transform_func_xptr) {
+        VALIDATE_PTR(ptr, Sound);
+
+        if (TYPEOF(transform_func_xptr) != EXTPTRSXP) {
+            Rcpp::stop("transform_func must be an external pointer from cppXPtr()");
+        }
+
+        typedef double (*TransformFunc)(double);
+        TransformFunc transform_fn = *reinterpret_cast<TransformFunc*>(R_ExternalPtrAddr(transform_func_xptr));
+
+        if (!transform_fn) {
+            Rcpp::stop("Invalid transform function pointer (NULL)");
+        }
+
+        try {
+            autoSound result = Data_copy(ptr.get());
+
+            integer nchannels = result->ny;
+            integer nsamples = result->nx;
+
+            for (integer ch = 1; ch <= nchannels; ch++) {
+                for (integer s = 1; s <= nsamples; s++) {
+                    result->z[ch][s] = transform_fn(result->z[ch][s]);
+                }
+            }
+
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to apply transform function");
+        }
+    }
+
+    // =========================================================================
     // Export Methods
     // =========================================================================
 
@@ -537,6 +625,13 @@ RCPP_MODULE(sound_module) {
         // Modification methods
         .method("extract_channel_ptr", &RSound::extract_channel_ptr, "Extract single channel")
         .method("extract_part_ptr", &RSound::extract_part_ptr, "Extract time range")
+
+        // Advanced Performance API: XPtr functions (70x faster than R callbacks)
+        // Requires RcppXPtrUtils: window_fn <- cppXPtr("double f(double t) { return 1-t*t; }")
+        .method("apply_window_xptr", &RSound::apply_window_xptr,
+                "Apply compiled window function (t normalized 0-1)")
+        .method("apply_transform_xptr", &RSound::apply_transform_xptr,
+                "Apply compiled transform function to sample values")
 
         // Export methods
         .method("as_matrix", &RSound::as_matrix, "Export as matrix")

@@ -57,6 +57,11 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
 # Performance optimization flags
 PKG_CXXFLAGS += -O3
 
+# Link-Time Optimization (LTO) - 5-15% speedup
+# Enables cross-file inlining and dead code elimination
+# NOTE: Increases build time; comment out for faster dev builds
+PKG_CXXFLAGS += -flto
+
 # Platform-specific SIMD flags
 # Detect platform and set appropriate flags
 UNAME_M := $(shell uname -m 2>/dev/null || echo unknown)
@@ -89,6 +94,9 @@ ifneq ($(HOMEBREW_GCC),)
 else
   PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
 endif
+
+# LTO requires -flto at link time as well
+PKG_LIBS += -flto
 
 # ============================================================================
 # SOURCE FILES

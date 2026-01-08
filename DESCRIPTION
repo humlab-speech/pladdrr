@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 2.2.0
+Version: 2.2.1
 Date: 2026-01-08
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
@@ -37,7 +37,8 @@ Suggests:
     gridExtra,
     patchwork,
     scales,
-    RcppSimdJson
+    RcppSimdJson,
+    RcppXPtrUtils
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
