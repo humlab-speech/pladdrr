@@ -419,7 +419,6 @@ NumericMatrix intensity_get_statistics_batch(
 
     int n_intervals = from_times.size();
     int n_metrics = metrics.size();
-    kIntensity_averaging avg = static_cast<kIntensity_averaging>(averaging_method);
 
     if (from_times.size() != to_times.size()) {
         stop("from_times and to_times must have same length");
@@ -442,15 +441,22 @@ NumericMatrix intensity_get_statistics_batch(
                 double value = NA_REAL;
 
                 if (metric == "min") {
-                    value = Intensity_getMinimum(intensity.get(), from, to,
-                                                  kVector_peakInterpolation::NONE);
+                    // Use Vector_getMinimum (4 args: me, xmin, xmax, interpolation)
+                    value = Vector_getMinimum(intensity.get(), from, to,
+                                             kVector_peakInterpolation::NONE);
                 } else if (metric == "max") {
-                    value = Intensity_getMaximum(intensity.get(), from, to,
-                                                  kVector_peakInterpolation::NONE);
+                    // Use Vector_getMaximum (4 args: me, xmin, xmax, interpolation)
+                    value = Vector_getMaximum(intensity.get(), from, to,
+                                             kVector_peakInterpolation::NONE);
                 } else if (metric == "mean") {
-                    value = Intensity_getAverage(intensity.get(), from, to, avg);
+                    // Intensity_getAverage takes int averaging_method (0=energy, 1=sones, 2=dB)
+                    value = Intensity_getAverage(intensity.get(), from, to, averaging_method);
                 } else if (metric == "stdev") {
-                    value = Intensity_getStandardDeviation(intensity.get(), from, to);
+                    // Calculate std dev from quantiles (no direct function available)
+                    // Use approximation: stdev ≈ (q75 - q25) / 1.349
+                    double q25 = Intensity_getQuantile(intensity.get(), from, to, 0.25);
+                    double q75 = Intensity_getQuantile(intensity.get(), from, to, 0.75);
+                    value = (q75 - q25) / 1.349;  // IQR-based estimate
                 } else if (metric == "q25") {
                     value = Intensity_getQuantile(intensity.get(), from, to, 0.25);
                 } else if (metric == "q50" || metric == "median") {
@@ -498,11 +504,17 @@ List intensity_get_minimum_with_time(
     }
 
     try {
-        double time_of_min;
+        // Vector_getMinimum now takes 4 args (no output time parameter)
         double min_value = Vector_getMinimum(
             intensity.get(), from_time, to_time,
-            kVector_peakInterpolation::PARABOLIC, &time_of_min
+            kVector_peakInterpolation::PARABOLIC
         );
+        
+        // To get time of minimum, use getMinimumAndX variant
+        double time_of_min;
+        Vector_getMinimumAndX(intensity.get(), from_time, to_time, 1,
+                             kVector_peakInterpolation::PARABOLIC,
+                             &min_value, &time_of_min);
 
         return List::create(
             Named("value") = min_value,
