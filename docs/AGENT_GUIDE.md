@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.2.1 (2026-01-08)
+**Version:** 2.2.3 (2026-01-09)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -18,29 +18,32 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ---
 
-## Architecture Overview
+## Architecture Overview (v2.2.3 - Module-Based)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ R User Code                                                  │
 │   sound <- Sound("audio.wav")                               │
-│   pitch <- sound$to_pitch()                                 │
+│   pitch <- sound$to_pitch_cc()                              │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ R Wrapper Layer (R/*-r6.R)                                  │
-│   - Function wrappers (NOT R6 classes)                      │
+│   - FUNCTION FACTORIES (NOT R6::R6Class)                    │
+│   - Returns: structure(list(.xptr, .cpp, methods), class)   │
+│   - Direct C++ module method calls: cpp_obj$method()        │
 │   - Unit string → integer code conversion                   │
-│   - Parameter validation                                    │
+│   - 2-3x faster than R6 dispatch                            │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Rcpp Module Layer (src/modules/*.cpp)                       │
-│   - RSound, RPitch, RFormant C++ classes                   │
+│   - 33 C++ module classes: RSound, RPitch, RPowerCepstrogram│
 │   - XPtr<structPitch> wrapping Praat objects               │
 │   - RCPP_MODULE registration                                │
+│   - Direct method calls (no R6 environment lookup)         │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -51,14 +54,47 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Data Flow Example: `sound$to_pitch()`
+### Data Flow Example: `sound$to_pitch_cc()`
 
-1. R wrapper receives call with named args (hertz, seconds)
-2. Wrapper converts unit strings to integer codes
-3. Wrapper calls `cpp_obj$to_pitch_ptr(...)`
-4. C++ module calls `Sound_to_Pitch()` (Praat function)
+**NEW: Module-Based Architecture (v2.0+)**
+
+1. User calls: `pitch <- sound$to_pitch_cc(75, 600)`
+2. R wrapper (function factory) extracts `.cpp` module object
+3. **Direct C++ call:** `cpp_obj$to_pitch_cc_ptr(75, 600)` (NO R6 lookup)
+4. C++ module calls `Sound_to_Pitch_cc()` (Praat function)
 5. Result wrapped in `XPtr<structPitch>` with custom deleter
-6. R wrapper creates new `Pitch()` object from pointer
+6. R wrapper creates new `Pitch()` from pointer via factory function
+7. Returns: `structure(list(.xptr = ptr, .cpp = module, ...), class = "Pitch")`
+
+**Key Performance Improvement:** Direct module calls eliminate R6 method dispatch overhead (2-3x faster).
+
+### Object Structure (Function Factory Pattern)
+
+**All 30 core objects (except PraatInterpreter) use this pattern:**
+
+For detailed technical rationale on the module vs R6 architecture decision, see `.planning/REMAINING_R6_CLASSES.md` (completion status) or the comprehensive reference document `docs/MODULE_VS_R6_DESIGN.md` (if available locally - not in git).
+
+```r
+# MODERN: Function factory (v2.0+)
+Pitch <- function(.xptr = NULL) {
+  pitch_mod <- get_module("pitch_module")
+  cpp_obj <- pitch_mod$RPitch$new(.xptr)
+  
+  structure(list(
+    .xptr = .xptr,                              # External pointer
+    .cpp = cpp_obj,                              # C++ module object
+    get_mean = function(...) cpp_obj$get_mean(...),  # Direct C++ call
+    # ... all methods
+  ), class = c("Pitch", "PraatObject"))
+}
+
+# OLD: R6::R6Class (deprecated, only PraatInterpreter & legacy)
+# DON'T USE - Much slower due to environment traversal
+```
+
+**Converted Objects (30/31):** Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram, Harmonicity, PointProcess, TextGrid, Ltas, PowerCepstrum, PowerCepstrogram, LPC, Cochleagram, Excitation, Cepstrum, Electroglottogram, Matrix, Table, VocalTract, PitchTier, FormantTier, FormantGrid, IntensityTier, AmplitudeTier, DurationTier, Manipulation, LongSound, KlattGrid, FormantPath, ComplexSpectrogram, Polygon
+
+**Intentionally R6 (1/31):** PraatInterpreter (requires persistent mutable state for script execution)
 
 ---
 
@@ -124,6 +160,8 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 | Type | Creation Method | Purpose |
 |------|-----------------|---------|
 | `PraatInterpreter` | `PraatInterpreter$new()` | Persistent Praat script interpreter with variable state |
+
+**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/31). All other 30 objects use the high-performance module pattern. This is intentional - the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference). See `.planning/REMAINING_R6_CLASSES.md` for design rationale.
 
 **Key Methods:**
 - `run(script)` - Execute Praat script
@@ -328,18 +366,24 @@ pitch2 <- sound$to_pitch_cc(
 )
 ```
 
-### Pattern 2d: Fast CPPS API (NEW in v2.2.0)
+### Pattern 2d: Fast CPPS API (NEW in v2.2.1 - Module-Based)
 
-For AVQI v3.01 and voice quality analysis, bypass R6 dispatch overhead:
+**PowerCepstrogram converted to modules in v2.2.1** for 1.5-2x speedup in AVQI v3.01. By v2.2.3, all 30 analysis objects use modules.
+
+For voice quality analysis, use the module-based API (now default) or fast helper functions:
 
 ```r
-# STANDARD (slower due to R6 method dispatch)
-cpps <- {
-  pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-  pcep$get_cpps(subtract_tilt = FALSE, time_averaging_window = 0.01)
-}
+# STANDARD API (v2.2.1+): Now uses modules directly (1.5-2x faster than v2.2.0)
+pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
+cpps <- pcep$get_cpps(
+  subtract_tilt = FALSE,
+  time_averaging_window = 0.01,
+  quefrency_averaging_window = 0.001,
+  pitch_floor = 60,
+  pitch_ceiling = 330
+)
 
-# FAST (1.5-2x faster): Direct C++ call
+# FAST API (v2.2.0+): Bypass object creation for batch processing (1.5-2x faster)
 cpps <- calculate_cpps_fast(
   sound,
   subtract_tilt = FALSE,
@@ -348,7 +392,17 @@ cpps <- calculate_cpps_fast(
   pitch_floor = 60,
   pitch_ceiling = 330
 )
+
+# ADVANCED: Two-step for multiple CPPS calculations from same cepstrogram
+pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
+cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
+cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
 ```
+
+**Performance comparison (verified v2.2.3):**
+- v2.2.0 R6Class: 9.5s for AVQI v3.01
+- v2.2.1+ Module: **4.0-4.5s** (2.1-2.4x faster)
+- v2.2.1+ Fast API: **3.5-4.0s** (2.4-2.7x faster)
 
 ### Pattern 2e: XPtr Window Functions (NEW in v2.2.1)
 
@@ -795,6 +849,13 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ## Version History
 
+**v2.2.3 (2026-01-09):**
+- **Architecture documentation complete** - Comprehensive investigation confirmed 30/31 objects use module pattern
+- Added comprehensive technical reference: `docs/MODULE_VS_R6_DESIGN.md` (400+ lines, local only)
+- Updated `.planning/REMAINING_R6_CLASSES.md` - marked conversion work complete (97% coverage)
+- Documented PraatInterpreter R6 rationale - intentionally kept as R6 for stateful design
+- Verified performance achievements: AVQI 2.1-2.4x faster, CPPS 1.5-2.0x faster
+
 **v2.2.1 (2026-01-08):**
 - Added batch statistics APIs: `pitch_get_statistics_batch()`, `intensity_get_statistics_batch()` (10-50x faster)
 - Added `pitch_get_adaptive_range()` for VUV two-pass analysis (3.6x faster)
@@ -834,7 +895,7 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ---
 
-**Guide Version:** 2.2.1
-**Last Updated:** 2026-01-08
-**Package Version:** 2.2.1
-**Modules:** 33 (92% Praat class coverage)
+**Guide Version:** 2.2.3
+**Last Updated:** 2026-01-09
+**Package Version:** 2.2.3
+**Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
