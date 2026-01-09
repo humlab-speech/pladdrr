@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 2.2.3
+Version: 2.2.4
 Date: 2026-01-09
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
