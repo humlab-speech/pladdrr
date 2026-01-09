@@ -1,3 +1,22 @@
+# pladdrr 2.2.3 (2026-01-09)
+
+## Documentation
+
+### Architecture Documentation
+* **R6→Module conversion complete** - Comprehensive investigation confirmed 30/31 objects use high-performance module pattern
+* **Added `docs/MODULE_VS_R6_DESIGN.md`** - 400+ line technical reference explaining module vs R6 architecture decisions
+  - Pattern comparison and when to use each
+  - Performance benchmarks (2-3x speedup achieved)
+  - Decision trees for future development
+  - Maintenance guidelines
+* **Updated `.planning/REMAINING_R6_CLASSES.md`** - Marked conversion work complete (30/31 objects, 97%)
+* **Documented PraatInterpreter R6 rationale** - Added design notes explaining why PraatInterpreter intentionally remains R6 (persistent state, reference semantics)
+
+### Performance Achievements Verified
+* AVQI v3.01: 9.5s → 4.0-4.5s (2.1-2.4x speedup)
+* CPPS calculation: 8.1s → 4.0-5.4s (1.5-2.0x speedup)
+* Method overhead: 50-100ns (R6) → 5-10ns (modules) = 10-20x faster
+
 # pladdrr 2.2.0 (2026-01-08)
 
 ## Performance Enhancements

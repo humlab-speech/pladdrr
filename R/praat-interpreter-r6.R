@@ -1,5 +1,18 @@
 # praat-interpreter-r6.R
 # R6 class for persistent Praat interpreter with state
+#
+# DESIGN NOTE: PraatInterpreter intentionally uses R6::R6Class instead of
+# the module-based function factory pattern used by other Praat objects (30/31).
+#
+# REASON: The interpreter maintains persistent mutable state across method
+# calls (variables, object list, script context). R6's reference semantics
+# are the correct design pattern for this stateful behavior.
+#
+# PERFORMANCE: The interpreter is not called in tight loops like analysis
+# objects, so the R6 overhead (~50ns per call) is negligible compared to
+# script execution time (milliseconds to seconds).
+#
+# See docs/MODULE_VS_R6_DESIGN.md for detailed rationale.
 
 # Helper: Wrap raw Praat pointer in appropriate R6 class
 .wrap_praat_object <- function(xptr) {
