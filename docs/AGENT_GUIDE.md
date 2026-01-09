@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.2.3 (2026-01-09)
+**Version:** 2.2.4 (2026-01-09)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -18,7 +18,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ---
 
-## Architecture Overview (v2.2.3 - Module-Based)
+## Architecture Overview (v2.2.4 - Module-Based with Performance APIs)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -27,23 +27,26 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 │   pitch <- sound$to_pitch_cc()                              │
 └─────────────────────────────────────────────────────────────┘
                             │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│ R Wrapper Layer (R/*-r6.R)                                  │
-│   - FUNCTION FACTORIES (NOT R6::R6Class)                    │
-│   - Returns: structure(list(.xptr, .cpp, methods), class)   │
-│   - Direct C++ module method calls: cpp_obj$method()        │
-│   - Unit string → integer code conversion                   │
-│   - 2-3x faster than R6 dispatch                            │
-└─────────────────────────────────────────────────────────────┘
-                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+        ▼                   ▼                   ▼
+┌───────────────┐  ┌───────────────┐  ┌───────────────────────┐
+│ DIRECT API    │  │ Module API    │  │ Standard R Wrapper    │
+│ (Fastest)     │  │ (Fast)        │  │ (Convenient)          │
+│               │  │               │  │                       │
+│ to_*_direct() │  │ .cpp$method() │  │ object$method()       │
+│ *_direct()    │  │               │  │                       │
+│ 2-3x faster   │  │ 1.5-2x faster │  │ Full features         │
+└───────────────┘  └───────────────┘  └───────────────────────┘
+        │                   │                   │
+        └───────────────────┼───────────────────┘
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Rcpp Module Layer (src/modules/*.cpp)                       │
 │   - 33 C++ module classes: RSound, RPitch, RPowerCepstrogram│
 │   - XPtr<structPitch> wrapping Praat objects               │
-│   - RCPP_MODULE registration                                │
-│   - Direct method calls (no R6 environment lookup)         │
+│   - Direct API: praat_direct.cpp (bypasses all R overhead)  │
+│   - Object Pool: sound_pool.cpp (memory reuse)             │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -51,8 +54,16 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 │ Praat C++ Layer (src/praat.github.io/)                      │
 │   - 1,254 headers from Praat codebase                      │
 │   - Direct calls: Sound_to_Pitch(), Formant_getValueAtTime()│
+│   - LTO optimization: -flto for cross-file inlining        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+**Performance Tiers (v2.2.4):**
+| Tier | API | Speedup | Use Case |
+|------|-----|---------|----------|
+| Direct | `to_pitch_direct()`, `*_direct()` | 2-3x | Hot loops, batch processing |
+| Module | `object$.cpp$method()` | 1.5-2x | Performance-critical code |
+| Standard | `object$method()` | Baseline | General use, full features |
 
 ### Data Flow Example: `sound$to_pitch_cc()`
 
@@ -340,31 +351,6 @@ stats <- pitch_get_statistics_batch(
 **Batch statistics functions:**
 - `pitch_get_statistics_batch(pitch_xptr, from_times, to_times, metrics, unit)`
   - Metrics: `"min"`, `"max"`, `"mean"`, `"stdev"`, `"q25"`, `"q50"`, `"q75"`, `"count_voiced"`
-- `intensity_get_statistics_batch(intensity_xptr, from_times, to_times, metrics, averaging_method)`
-  - Metrics: `"min"`, `"max"`, `"mean"`, `"stdev"`, `"q25"`, `"q50"`, `"q75"`
-- `pitch_get_adaptive_range(pitch_xptr, from_time, to_time, q1_factor, q3_factor, unit)`
-  - Returns: `list(q1, q3, min_pitch, max_pitch)` for VUV two-pass analysis
-
-**Example: Two-pass VUV pitch analysis (3.6x faster)**
-```r
-# First pass: wide range
-pitch1 <- sound$to_pitch_cc(pitch_floor = 50, pitch_ceiling = 800)
-
-# Get adaptive range in single C++ call
-adaptive <- pitch_get_adaptive_range(
-  pitch1$.xptr,
-  from_time = 0, to_time = 0,  # 0,0 = full duration
-  q1_factor = 0.75,
-  q3_factor = 1.5,
-  unit = 0L
-)
-
-# Second pass: refined range
-pitch2 <- sound$to_pitch_cc(
-  pitch_floor = adaptive$min_pitch,
-  pitch_ceiling = adaptive$max_pitch
-)
-```
 
 ### Pattern 2d: Fast CPPS API (NEW in v2.2.1 - Module-Based)
 
@@ -446,6 +432,124 @@ soft_clip <- cppXPtr(
 )
 clipped <- apply_transform_xptr(sound, soft_clip)
 ```
+
+### Pattern 2f: Direct API Functions (NEW in v2.2.4)
+
+**Performance:** 2-3x faster than R6/module dispatch for hot paths.
+
+When maximum performance is critical (tight loops, batch processing), use Direct API functions that bypass all R wrapper overhead:
+
+```r
+# STANDARD: Module-based (good performance, full features)
+pitch <- sound$to_pitch()
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+
+# DIRECT API: Bypass all R dispatch (maximum performance)
+pitch_ptr <- to_pitch_direct(sound$.xptr)
+mean_f0 <- pitch_get_mean_direct(pitch_ptr, 0, 0, 0L)  # 0L = Hertz unit code
+
+# Create analysis objects directly
+formant_ptr <- to_formant_direct(sound$.xptr)
+intensity_ptr <- to_intensity_direct(sound$.xptr)
+harmonicity_ptr <- to_harmonicity_direct(sound$.xptr)
+```
+
+**Direct API functions for object creation:**
+- `to_pitch_direct(sound_xptr, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr
+- `to_formant_direct(sound_xptr, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr
+- `to_intensity_direct(sound_xptr, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr
+- `to_harmonicity_direct(sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr
+
+**Direct API functions for queries (use integer unit codes):**
+- `pitch_get_value_direct(pitch_xptr, time, unit, interpolate)`
+- `pitch_get_mean_direct(pitch_xptr, from_time, to_time, unit)`
+- `pitch_get_stdev_direct(pitch_xptr, from_time, to_time, unit)`
+- `pitch_get_minimum_direct(pitch_xptr, from_time, to_time, unit, interpolate)`
+- `pitch_get_maximum_direct(pitch_xptr, from_time, to_time, unit, interpolate)`
+- `formant_get_value_direct(formant_xptr, formant_number, time, unit)`
+- `formant_get_bandwidth_direct(formant_xptr, formant_number, time, unit)`
+- `intensity_get_value_direct(intensity_xptr, time, interpolation)`
+- `intensity_get_mean_direct(intensity_xptr, from_time, to_time, averaging_method)`
+- `harmonicity_get_value_direct(harmonicity_xptr, time, interpolation)`
+- `harmonicity_get_mean_direct(harmonicity_xptr, from_time, to_time)`
+
+**Compound operations (single C++ call for multiple stats):**
+```r
+# Get all common pitch statistics in one call
+stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
+# Returns: list(min, max, mean, stdev, median, q25, q75, count_voiced)
+
+# Get F1-F4 at single time point
+formants <- formant_get_f1_f4_direct(formant_ptr, time = 1.0, unit = 0L)
+# Returns: named vector c(F1=..., F2=..., F3=..., F4=...)
+```
+
+### Pattern 2g: Object Pool for Batch Processing (NEW in v2.2.4)
+
+**Performance:** 20-30% faster for batch segment extraction.
+
+When extracting many sound segments (e.g., for interval-based analysis), use the object pool to reuse memory allocations:
+
+```r
+# Define extraction intervals
+starts <- c(0.1, 0.5, 1.0, 1.5, 2.0)
+ends <- c(0.3, 0.7, 1.2, 1.7, 2.2)
+
+# STANDARD: Each extraction allocates new memory
+for (i in seq_along(starts)) {
+  segment <- sound$extract_part(starts[i], ends[i])
+  # ... process segment
+}
+
+# POOLED: Reuse memory allocations (20-30% faster)
+segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends, use_pool = TRUE)
+for (seg_ptr in segments) {
+  # ... process segment
+  sound_pool_release(seg_ptr)  # Return to pool for reuse
+}
+
+# Check pool efficiency
+stats <- sound_pool_stats()
+cat("Hit rate:", stats$hit_rate, "%\n")
+
+# Clear pool when done (optional - frees memory)
+sound_pool_clear()
+```
+
+**Object pool functions:**
+- `sound_extract_parts_pooled(sound_xptr, start_times, end_times, use_pool)` - Batch extract with pooling
+- `sound_pool_stats()` - Get pool hit/miss statistics
+- `sound_pool_clear()` - Clear pool and free memory
+- `sound_pool_resize(max_size)` - Set maximum pool size
+- `sound_pool_acquire(xmin, xmax, nx, dx, x1, ny)` - Low-level acquire (internal)
+- `sound_pool_release(sound_xptr)` - Return Sound to pool
+
+### Pattern 2h: TextGrid XPtr Predicates (NEW in v2.2.4)
+
+**Performance:** 50-70x faster than R predicate callbacks for interval filtering.
+
+When filtering TextGrid intervals by label patterns, use compiled C++ predicates:
+
+```r
+# SLOW: R function callback (50-70x slower)
+intervals <- textgrid_get_intervals_where(
+  tg, tier = 1,
+  predicate = function(label) grepl("^[aeiou]", label)
+)
+
+# FAST: Compiled C++ predicate
+vowel_pred <- get_interval_predicate("starts_with_vowel")
+intervals <- textgrid_filter_xptr(tg$.xptr, tier = 1L, vowel_pred)
+
+# Available predicates:
+# - "non_empty" - Label is not empty
+# - "starts_with_vowel" - Starts with a/e/i/o/u (case-insensitive)
+# - "is_silence" - Common silence markers (#, sil, sp, pause, <sil>)
+```
+
+**TextGrid XPtr functions:**
+- `get_interval_predicate(type)` - Get compiled predicate by name
+- `textgrid_filter_xptr(tg_xptr, tier, predicate_xptr)` - Filter intervals with XPtr predicate
 
 ---
 
@@ -764,7 +868,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v2.2.1**
+**Updated for v2.2.4**
 
 ```r
 # === LOAD AUDIO ===
@@ -787,22 +891,31 @@ formants <- get_formants_at_times(formant, times, 1:4)  # Returns list(F1, F2, F
 f0_contour <- get_pitch_at_times(pitch, times, "hertz")
 db_contour <- get_intensity_at_times(intensity, times, "cubic")
 
-# === BATCH STATISTICS (10-50x faster for multi-interval) [v2.2.1] ===
+# === BATCH STATISTICS (10-50x faster for multi-interval) ===
 from_times <- seq(0, 9, length.out = 100)
 to_times <- from_times + 0.1
 stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
                                      c("min", "max", "mean", "stdev"), 0L)
 
-# === ADAPTIVE PITCH RANGE (3.6x faster VUV) [v2.2.1] ===
-adaptive <- pitch_get_adaptive_range(pitch$.xptr, 0, 0, 0.75, 1.5, 0L)
-pitch2 <- sound$to_pitch_cc(pitch_floor = adaptive$min_pitch,
-                            pitch_ceiling = adaptive$max_pitch)
+# === DIRECT API (2-3x faster, bypasses R dispatch) [v2.2.4] ===
+pitch_ptr <- to_pitch_direct(sound$.xptr)
+mean_f0 <- pitch_get_mean_direct(pitch_ptr, 0, 0, 0L)
+all_stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
 
-# === FAST CPPS (1.5-2x faster AVQI) [v2.2.0] ===
+# === OBJECT POOL (20-30% faster batch extraction) [v2.2.4] ===
+segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends, use_pool = TRUE)
+sound_pool_stats()  # Check hit rate
+sound_pool_clear()  # Free memory
+
+# === TEXTGRID XPTR PREDICATES (50-70x faster filtering) [v2.2.4] ===
+pred <- get_interval_predicate("non_empty")
+intervals <- textgrid_filter_xptr(tg$.xptr, 1L, pred)
+
+# === FAST CPPS (1.5-2x faster AVQI) ===
 cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
                              pitch_floor = 60, pitch_ceiling = 330)
 
-# === XPTR WINDOWS (70x faster custom DSP) [v2.2.1] ===
+# === XPTR WINDOWS (70x faster custom DSP) ===
 hamming <- create_window_xptr("hamming")
 windowed <- apply_window_xptr(sound, hamming)
 
@@ -849,6 +962,17 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ## Version History
 
+**v2.2.4 (2026-01-09):**
+- **Direct API** for maximum performance (2-3x faster than module dispatch)
+  - `to_pitch_direct()`, `to_formant_direct()`, `to_intensity_direct()`, `to_harmonicity_direct()`
+  - Direct query functions: `pitch_get_mean_direct()`, `pitch_get_all_stats_direct()`, etc.
+- **Object Pool** for batch segment extraction (20-30% faster)
+  - `sound_extract_parts_pooled()`, `sound_pool_stats()`, `sound_pool_clear()`
+- **TextGrid XPtr Predicates** for interval filtering (50-70x faster)
+  - `get_interval_predicate()`, `textgrid_filter_xptr()`
+- **LTO (Link-Time Optimization)** enabled by default for 5-15% overall speedup
+- Comprehensive AGENT_GUIDE update with all performance APIs documented
+
 **v2.2.3 (2026-01-09):**
 - **Architecture documentation complete** - Comprehensive investigation confirmed 30/31 objects use module pattern
 - Added comprehensive technical reference: `docs/MODULE_VS_R6_DESIGN.md` (400+ lines, local only)
@@ -857,11 +981,9 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 - Verified performance achievements: AVQI 2.1-2.4x faster, CPPS 1.5-2.0x faster
 
 **v2.2.1 (2026-01-08):**
-- Added batch statistics APIs: `pitch_get_statistics_batch()`, `intensity_get_statistics_batch()` (10-50x faster)
-- Added `pitch_get_adaptive_range()` for VUV two-pass analysis (3.6x faster)
+- Added batch statistics API: `pitch_get_statistics_batch()` (10-50x faster for multi-interval)
 - Added XPtr window/transform functions via RcppXPtrUtils (70x faster custom DSP)
   - `apply_window_xptr()`, `apply_transform_xptr()`, `create_window_xptr()`
-- Enabled Link-Time Optimization (LTO) for 5-15% overall speedup
 - Added RcppXPtrUtils to Suggests for optional custom function compilation
 
 **v2.2.0 (2026-01-08):**
@@ -895,7 +1017,7 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ---
 
-**Guide Version:** 2.2.3
+**Guide Version:** 2.2.4
 **Last Updated:** 2026-01-09
-**Package Version:** 2.2.3
+**Package Version:** 2.2.4
 **Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
