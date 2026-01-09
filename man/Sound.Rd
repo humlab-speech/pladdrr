@@ -51,6 +51,8 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 - `get_rms()`, `get_energy()`, `get_power()` - Energy measures
 - `get_intensity_db()` - Intensity in dB
 - `get_minimum()`, `get_maximum()`, `get_mean()` - Amplitude statistics
+- `get_values(channel)` - **NEW**: Get sample values as numeric vector (fast, no data frame)
+- `get_sample_times()` - **NEW**: Get sample times as numeric vector (fast, no data frame)
 }
 
 \section{Analysis Methods}{

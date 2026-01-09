@@ -57,10 +57,10 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
 # Performance optimization flags
 PKG_CXXFLAGS += -O3
 
-# Link-Time Optimization (LTO) - 5-15% speedup
+# Link-Time Optimization (LTO) for 5-15% speedup
 # Enables cross-file inlining and dead code elimination
-# NOTE: Increases build time; comment out for faster dev builds
 PKG_CXXFLAGS += -flto
+PKG_LDFLAGS = -flto
 
 # Platform-specific SIMD flags
 # Detect platform and set appropriate flags
@@ -94,9 +94,6 @@ ifneq ($(HOMEBREW_GCC),)
 else
   PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
 endif
-
-# LTO requires -flto at link time as well
-PKG_LIBS += -flto
 
 # ============================================================================
 # SOURCE FILES
@@ -294,7 +291,7 @@ ACTION_SRC = praat_actions_libmode.cpp
 
 # Wrapper sources
 # Note: pitch_wrappers, intensity_wrappers, harmonicity_wrappers removed (superseded by modules)
-WRAPPER_SRC = praat_wrapper.cpp sound_wrappers.cpp \
+WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \
               formant_wrappers.cpp formantgrid_wrappers.cpp \
               pointprocess_wrappers.cpp \
               spectrum_wrappers.cpp spectrogram_wrappers.cpp \
@@ -342,7 +339,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/interpreter_module.cpp module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp sound_pool.cpp
 
 # Object files
 OBJECTS = $(SOURCES:.cpp=.o)

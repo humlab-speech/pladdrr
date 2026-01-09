@@ -454,6 +454,65 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pitch_get_statistics_batch
+NumericMatrix pitch_get_statistics_batch(SEXP pitch_xptr, NumericVector from_times, NumericVector to_times, CharacterVector metrics, int unit);
+RcppExport SEXP _pladdrr_pitch_get_statistics_batch(SEXP pitch_xptrSEXP, SEXP from_timesSEXP, SEXP to_timesSEXP, SEXP metricsSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type from_times(from_timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type to_times(to_timesSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type metrics(metricsSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_statistics_batch(pitch_xptr, from_times, to_times, metrics, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_adaptive_range
+List pitch_get_adaptive_range(SEXP pitch_xptr, double from_time, double to_time, double q1_factor, double q3_factor, int unit);
+RcppExport SEXP _pladdrr_pitch_get_adaptive_range(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP q1_factorSEXP, SEXP q3_factorSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type q1_factor(q1_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type q3_factor(q3_factorSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_adaptive_range(pitch_xptr, from_time, to_time, q1_factor, q3_factor, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_statistics_batch
+NumericMatrix intensity_get_statistics_batch(SEXP intensity_xptr, NumericVector from_times, NumericVector to_times, CharacterVector metrics, int averaging_method);
+RcppExport SEXP _pladdrr_intensity_get_statistics_batch(SEXP intensity_xptrSEXP, SEXP from_timesSEXP, SEXP to_timesSEXP, SEXP metricsSEXP, SEXP averaging_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type from_times(from_timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type to_times(to_timesSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type metrics(metricsSEXP);
+    Rcpp::traits::input_parameter< int >::type averaging_method(averaging_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_statistics_batch(intensity_xptr, from_times, to_times, metrics, averaging_method));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_minimum_with_time
+List intensity_get_minimum_with_time(SEXP intensity_xptr, double from_time, double to_time);
+RcppExport SEXP _pladdrr_intensity_get_minimum_with_time(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_minimum_with_time(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cochleagram_create
 SEXP cochleagram_create(double tmin, double tmax, int nt, double dt, double t1, double df, int nf);
 RcppExport SEXP _pladdrr_cochleagram_create(SEXP tminSEXP, SEXP tmaxSEXP, SEXP ntSEXP, SEXP dtSEXP, SEXP t1SEXP, SEXP dfSEXP, SEXP nfSEXP) {
@@ -4914,6 +4973,336 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sound_get_duration_direct
+double sound_get_duration_direct(SEXP sound_xptr);
+RcppExport SEXP _pladdrr_sound_get_duration_direct(SEXP sound_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_duration_direct(sound_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_get_rms_direct
+double sound_get_rms_direct(SEXP sound_xptr, double from_time, double to_time);
+RcppExport SEXP _pladdrr_sound_get_rms_direct(SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_get_rms_direct(sound_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_value_direct
+double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit, bool interpolate);
+RcppExport SEXP _pladdrr_pitch_get_value_direct(SEXP pitch_xptrSEXP, SEXP timeSEXP, SEXP unitSEXP, SEXP interpolateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    Rcpp::traits::input_parameter< bool >::type interpolate(interpolateSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_value_direct(pitch_xptr, time, unit, interpolate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_mean_direct
+double pitch_get_mean_direct(SEXP pitch_xptr, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_pitch_get_mean_direct(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_mean_direct(pitch_xptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_stdev_direct
+double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_pitch_get_stdev_direct(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_stdev_direct(pitch_xptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_minimum_direct
+double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time, double to_time, int unit, bool interpolate);
+RcppExport SEXP _pladdrr_pitch_get_minimum_direct(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP, SEXP interpolateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    Rcpp::traits::input_parameter< bool >::type interpolate(interpolateSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_minimum_direct(pitch_xptr, from_time, to_time, unit, interpolate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_maximum_direct
+double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time, double to_time, int unit, bool interpolate);
+RcppExport SEXP _pladdrr_pitch_get_maximum_direct(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP, SEXP interpolateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    Rcpp::traits::input_parameter< bool >::type interpolate(interpolateSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_maximum_direct(pitch_xptr, from_time, to_time, unit, interpolate));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_quantile_direct
+double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_pitch_get_quantile_direct(SEXP pitch_xptrSEXP, SEXP quantileSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type quantile(quantileSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_quantile_direct(pitch_xptr, quantile, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_count_voiced_direct
+int pitch_count_voiced_direct(SEXP pitch_xptr);
+RcppExport SEXP _pladdrr_pitch_count_voiced_direct(SEXP pitch_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_count_voiced_direct(pitch_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formant_get_value_direct
+double formant_get_value_direct(SEXP formant_xptr, int formant_number, double time, int unit);
+RcppExport SEXP _pladdrr_formant_get_value_direct(SEXP formant_xptrSEXP, SEXP formant_numberSEXP, SEXP timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_value_direct(formant_xptr, formant_number, time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formant_get_bandwidth_direct
+double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, double time, int unit);
+RcppExport SEXP _pladdrr_formant_get_bandwidth_direct(SEXP formant_xptrSEXP, SEXP formant_numberSEXP, SEXP timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_bandwidth_direct(formant_xptr, formant_number, time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formant_get_mean_direct
+double formant_get_mean_direct(SEXP formant_xptr, int formant_number, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_formant_get_mean_direct(SEXP formant_xptrSEXP, SEXP formant_numberSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_mean_direct(formant_xptr, formant_number, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_value_direct
+double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpolation);
+RcppExport SEXP _pladdrr_intensity_get_value_direct(SEXP intensity_xptrSEXP, SEXP timeSEXP, SEXP interpolationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_value_direct(intensity_xptr, time, interpolation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_mean_direct
+double intensity_get_mean_direct(SEXP intensity_xptr, double from_time, double to_time, int averaging_method);
+RcppExport SEXP _pladdrr_intensity_get_mean_direct(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP averaging_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type averaging_method(averaging_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_mean_direct(intensity_xptr, from_time, to_time, averaging_method));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_minimum_direct
+double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time, double to_time);
+RcppExport SEXP _pladdrr_intensity_get_minimum_direct(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_minimum_direct(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// intensity_get_maximum_direct
+double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time, double to_time);
+RcppExport SEXP _pladdrr_intensity_get_maximum_direct(SEXP intensity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_get_maximum_direct(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// harmonicity_get_value_direct
+double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int interpolation);
+RcppExport SEXP _pladdrr_harmonicity_get_value_direct(SEXP harmonicity_xptrSEXP, SEXP timeSEXP, SEXP interpolationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type harmonicity_xptr(harmonicity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    rcpp_result_gen = Rcpp::wrap(harmonicity_get_value_direct(harmonicity_xptr, time, interpolation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// harmonicity_get_mean_direct
+double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time, double to_time);
+RcppExport SEXP _pladdrr_harmonicity_get_mean_direct(SEXP harmonicity_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type harmonicity_xptr(harmonicity_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(harmonicity_get_mean_direct(harmonicity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_to_pitch_direct
+SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step, double pitch_floor, double pitch_ceiling);
+RcppExport SEXP _pladdrr_sound_to_pitch_direct(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch_direct(sound_xptr, time_step, pitch_floor, pitch_ceiling));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_to_formant_direct
+SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step, double max_formants, double max_formant, double window_length, double pre_emphasis);
+RcppExport SEXP _pladdrr_sound_to_formant_direct(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP max_formantsSEXP, SEXP max_formantSEXP, SEXP window_lengthSEXP, SEXP pre_emphasisSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type max_formants(max_formantsSEXP);
+    Rcpp::traits::input_parameter< double >::type max_formant(max_formantSEXP);
+    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type pre_emphasis(pre_emphasisSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_formant_direct(sound_xptr, time_step, max_formants, max_formant, window_length, pre_emphasis));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_to_intensity_direct
+SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch, double time_step, bool subtract_mean);
+RcppExport SEXP _pladdrr_sound_to_intensity_direct(SEXP sound_xptrSEXP, SEXP minimum_pitchSEXP, SEXP time_stepSEXP, SEXP subtract_meanSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type minimum_pitch(minimum_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< bool >::type subtract_mean(subtract_meanSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_intensity_direct(sound_xptr, minimum_pitch, time_step, subtract_mean));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_to_harmonicity_direct
+SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step, double minimum_pitch, double silence_threshold, double periods_per_window);
+RcppExport SEXP _pladdrr_sound_to_harmonicity_direct(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP minimum_pitchSEXP, SEXP silence_thresholdSEXP, SEXP periods_per_windowSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type minimum_pitch(minimum_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type periods_per_window(periods_per_windowSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_harmonicity_direct(sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitch_get_all_stats_direct
+List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_pitch_get_all_stats_direct(SEXP pitch_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_all_stats_direct(pitch_xptr, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// formant_get_f1_f4_direct
+NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit);
+RcppExport SEXP _pladdrr_formant_get_f1_f4_direct(SEXP formant_xptrSEXP, SEXP timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_f1_f4_direct(formant_xptr, time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // praat_version
 String praat_version();
 RcppExport SEXP _pladdrr_praat_version() {
@@ -5078,6 +5467,75 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr2(xptr2SEXP);
     Rcpp::traits::input_parameter< double >::type balance(balanceSEXP);
     rcpp_result_gen = Rcpp::wrap(sound_mix_simd(xptr1, xptr2, balance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_pool_stats
+List sound_pool_stats();
+RcppExport SEXP _pladdrr_sound_pool_stats() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(sound_pool_stats());
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_pool_clear
+void sound_pool_clear();
+RcppExport SEXP _pladdrr_sound_pool_clear() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    sound_pool_clear();
+    return R_NilValue;
+END_RCPP
+}
+// sound_pool_resize
+void sound_pool_resize(int max_size);
+RcppExport SEXP _pladdrr_sound_pool_resize(SEXP max_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type max_size(max_sizeSEXP);
+    sound_pool_resize(max_size);
+    return R_NilValue;
+END_RCPP
+}
+// sound_pool_acquire
+SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, int ny);
+RcppExport SEXP _pladdrr_sound_pool_acquire(SEXP xminSEXP, SEXP xmaxSEXP, SEXP nxSEXP, SEXP dxSEXP, SEXP x1SEXP, SEXP nySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type xmin(xminSEXP);
+    Rcpp::traits::input_parameter< double >::type xmax(xmaxSEXP);
+    Rcpp::traits::input_parameter< int >::type nx(nxSEXP);
+    Rcpp::traits::input_parameter< double >::type dx(dxSEXP);
+    Rcpp::traits::input_parameter< double >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< int >::type ny(nySEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_pool_acquire(xmin, xmax, nx, dx, x1, ny));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sound_pool_release
+void sound_pool_release(SEXP sound_xptr);
+RcppExport SEXP _pladdrr_sound_pool_release(SEXP sound_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    sound_pool_release(sound_xptr);
+    return R_NilValue;
+END_RCPP
+}
+// sound_extract_parts_pooled
+List sound_extract_parts_pooled(SEXP sound_xptr, NumericVector start_times, NumericVector end_times, bool use_pool);
+RcppExport SEXP _pladdrr_sound_extract_parts_pooled(SEXP sound_xptrSEXP, SEXP start_timesSEXP, SEXP end_timesSEXP, SEXP use_poolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type start_times(start_timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type end_times(end_timesSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_pool(use_poolSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_extract_parts_pooled(sound_xptr, start_times, end_times, use_pool));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -8332,6 +8790,79 @@ RcppExport SEXP _pladdrr_textgrid_interval_statistics_batch(SEXP textgrid_xptrSE
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// textgrid_filter_xptr
+List textgrid_filter_xptr(SEXP textgrid_xptr, int tier_number, SEXP predicate_xptr, SEXP sound_xptr, bool extract_sounds);
+static SEXP _pladdrr_textgrid_filter_xptr_try(SEXP textgrid_xptrSEXP, SEXP tier_numberSEXP, SEXP predicate_xptrSEXP, SEXP sound_xptrSEXP, SEXP extract_soundsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type textgrid_xptr(textgrid_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type predicate_xptr(predicate_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< bool >::type extract_sounds(extract_soundsSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_filter_xptr(textgrid_xptr, tier_number, predicate_xptr, sound_xptr, extract_sounds));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_filter_xptr(SEXP textgrid_xptrSEXP, SEXP tier_numberSEXP, SEXP predicate_xptrSEXP, SEXP sound_xptrSEXP, SEXP extract_soundsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_filter_xptr_try(textgrid_xptrSEXP, tier_numberSEXP, predicate_xptrSEXP, sound_xptrSEXP, extract_soundsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// get_interval_predicate
+SEXP get_interval_predicate(std::string type, double threshold);
+static SEXP _pladdrr_get_interval_predicate_try(SEXP typeSEXP, SEXP thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_interval_predicate(type, threshold));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_get_interval_predicate(SEXP typeSEXP, SEXP thresholdSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_get_interval_predicate_try(typeSEXP, thresholdSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // textgrid_read_from_file
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path);
 RcppExport SEXP _pladdrr_textgrid_read_from_file(SEXP pathSEXP) {
@@ -9192,6 +9723,8 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("List(*textgrid_extract_intervals_batch)(SEXP,SEXP,int,std::string,std::string,bool)");
         signatures.insert("CharacterVector(*textgrid_get_all_labels)(SEXP,int)");
         signatures.insert("DataFrame(*textgrid_interval_statistics_batch)(SEXP,int)");
+        signatures.insert("List(*textgrid_filter_xptr)(SEXP,int,SEXP,SEXP,bool)");
+        signatures.insert("SEXP(*get_interval_predicate)(std::string,double)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -9304,6 +9837,8 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_extract_intervals_batch", (DL_FUNC)_pladdrr_textgrid_extract_intervals_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_get_all_labels", (DL_FUNC)_pladdrr_textgrid_get_all_labels_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC)_pladdrr_textgrid_interval_statistics_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_filter_xptr", (DL_FUNC)_pladdrr_textgrid_filter_xptr_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_get_interval_predicate", (DL_FUNC)_pladdrr_get_interval_predicate_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_RcppExport_validate", (DL_FUNC)_pladdrr_RcppExport_validate);
     return R_NilValue;
 }
@@ -9344,6 +9879,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pointprocess_get_all_times", (DL_FUNC) &_pladdrr_pointprocess_get_all_times, 1},
     {"_pladdrr_pointprocess_get_intervals", (DL_FUNC) &_pladdrr_pointprocess_get_intervals, 1},
     {"_pladdrr_pointprocess_get_nearest_indices", (DL_FUNC) &_pladdrr_pointprocess_get_nearest_indices, 2},
+    {"_pladdrr_pitch_get_statistics_batch", (DL_FUNC) &_pladdrr_pitch_get_statistics_batch, 5},
+    {"_pladdrr_pitch_get_adaptive_range", (DL_FUNC) &_pladdrr_pitch_get_adaptive_range, 6},
+    {"_pladdrr_intensity_get_statistics_batch", (DL_FUNC) &_pladdrr_intensity_get_statistics_batch, 5},
+    {"_pladdrr_intensity_get_minimum_with_time", (DL_FUNC) &_pladdrr_intensity_get_minimum_with_time, 3},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
@@ -9630,6 +10169,30 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_cepstrum_to_powercepstrum", (DL_FUNC) &_pladdrr_cepstrum_to_powercepstrum, 1},
     {"_pladdrr_spectrum_to_cepstrum_hillenbrand", (DL_FUNC) &_pladdrr_spectrum_to_cepstrum_hillenbrand, 1},
     {"_pladdrr_powercepstrum_to_spectrum", (DL_FUNC) &_pladdrr_powercepstrum_to_spectrum, 2},
+    {"_pladdrr_sound_get_duration_direct", (DL_FUNC) &_pladdrr_sound_get_duration_direct, 1},
+    {"_pladdrr_sound_get_rms_direct", (DL_FUNC) &_pladdrr_sound_get_rms_direct, 3},
+    {"_pladdrr_pitch_get_value_direct", (DL_FUNC) &_pladdrr_pitch_get_value_direct, 4},
+    {"_pladdrr_pitch_get_mean_direct", (DL_FUNC) &_pladdrr_pitch_get_mean_direct, 4},
+    {"_pladdrr_pitch_get_stdev_direct", (DL_FUNC) &_pladdrr_pitch_get_stdev_direct, 4},
+    {"_pladdrr_pitch_get_minimum_direct", (DL_FUNC) &_pladdrr_pitch_get_minimum_direct, 5},
+    {"_pladdrr_pitch_get_maximum_direct", (DL_FUNC) &_pladdrr_pitch_get_maximum_direct, 5},
+    {"_pladdrr_pitch_get_quantile_direct", (DL_FUNC) &_pladdrr_pitch_get_quantile_direct, 5},
+    {"_pladdrr_pitch_count_voiced_direct", (DL_FUNC) &_pladdrr_pitch_count_voiced_direct, 1},
+    {"_pladdrr_formant_get_value_direct", (DL_FUNC) &_pladdrr_formant_get_value_direct, 4},
+    {"_pladdrr_formant_get_bandwidth_direct", (DL_FUNC) &_pladdrr_formant_get_bandwidth_direct, 4},
+    {"_pladdrr_formant_get_mean_direct", (DL_FUNC) &_pladdrr_formant_get_mean_direct, 5},
+    {"_pladdrr_intensity_get_value_direct", (DL_FUNC) &_pladdrr_intensity_get_value_direct, 3},
+    {"_pladdrr_intensity_get_mean_direct", (DL_FUNC) &_pladdrr_intensity_get_mean_direct, 4},
+    {"_pladdrr_intensity_get_minimum_direct", (DL_FUNC) &_pladdrr_intensity_get_minimum_direct, 3},
+    {"_pladdrr_intensity_get_maximum_direct", (DL_FUNC) &_pladdrr_intensity_get_maximum_direct, 3},
+    {"_pladdrr_harmonicity_get_value_direct", (DL_FUNC) &_pladdrr_harmonicity_get_value_direct, 3},
+    {"_pladdrr_harmonicity_get_mean_direct", (DL_FUNC) &_pladdrr_harmonicity_get_mean_direct, 3},
+    {"_pladdrr_sound_to_pitch_direct", (DL_FUNC) &_pladdrr_sound_to_pitch_direct, 4},
+    {"_pladdrr_sound_to_formant_direct", (DL_FUNC) &_pladdrr_sound_to_formant_direct, 6},
+    {"_pladdrr_sound_to_intensity_direct", (DL_FUNC) &_pladdrr_sound_to_intensity_direct, 4},
+    {"_pladdrr_sound_to_harmonicity_direct", (DL_FUNC) &_pladdrr_sound_to_harmonicity_direct, 5},
+    {"_pladdrr_pitch_get_all_stats_direct", (DL_FUNC) &_pladdrr_pitch_get_all_stats_direct, 4},
+    {"_pladdrr_formant_get_f1_f4_direct", (DL_FUNC) &_pladdrr_formant_get_f1_f4_direct, 3},
     {"_pladdrr_praat_version", (DL_FUNC) &_pladdrr_praat_version, 0},
     {"_pladdrr_praat_initialize", (DL_FUNC) &_pladdrr_praat_initialize, 0},
     {"_pladdrr_test_class_registry", (DL_FUNC) &_pladdrr_test_class_registry, 0},
@@ -9643,6 +10206,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_complex_multiply", (DL_FUNC) &_pladdrr_complex_multiply, 2},
     {"_pladdrr_sound_scale_peak_simd", (DL_FUNC) &_pladdrr_sound_scale_peak_simd, 2},
     {"_pladdrr_sound_mix_simd", (DL_FUNC) &_pladdrr_sound_mix_simd, 3},
+    {"_pladdrr_sound_pool_stats", (DL_FUNC) &_pladdrr_sound_pool_stats, 0},
+    {"_pladdrr_sound_pool_clear", (DL_FUNC) &_pladdrr_sound_pool_clear, 0},
+    {"_pladdrr_sound_pool_resize", (DL_FUNC) &_pladdrr_sound_pool_resize, 1},
+    {"_pladdrr_sound_pool_acquire", (DL_FUNC) &_pladdrr_sound_pool_acquire, 6},
+    {"_pladdrr_sound_pool_release", (DL_FUNC) &_pladdrr_sound_pool_release, 1},
+    {"_pladdrr_sound_extract_parts_pooled", (DL_FUNC) &_pladdrr_sound_extract_parts_pooled, 4},
     {"_pladdrr_sound_get_statistics", (DL_FUNC) &_pladdrr_sound_get_statistics, 1},
     {"_pladdrr_sound_read_from_file_native", (DL_FUNC) &_pladdrr_sound_read_from_file_native, 1},
     {"_pladdrr_sound_create_from_values", (DL_FUNC) &_pladdrr_sound_create_from_values, 3},
@@ -9776,6 +10345,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_extract_intervals_batch", (DL_FUNC) &_pladdrr_textgrid_extract_intervals_batch, 6},
     {"_pladdrr_textgrid_get_all_labels", (DL_FUNC) &_pladdrr_textgrid_get_all_labels, 2},
     {"_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC) &_pladdrr_textgrid_interval_statistics_batch, 2},
+    {"_pladdrr_textgrid_filter_xptr", (DL_FUNC) &_pladdrr_textgrid_filter_xptr, 5},
+    {"_pladdrr_get_interval_predicate", (DL_FUNC) &_pladdrr_get_interval_predicate, 2},
     {"_pladdrr_textgrid_read_from_file", (DL_FUNC) &_pladdrr_textgrid_read_from_file, 1},
     {"_pladdrr_textgrid_create", (DL_FUNC) &_pladdrr_textgrid_create, 4},
     {"_pladdrr_textgrid_save", (DL_FUNC) &_pladdrr_textgrid_save, 2},

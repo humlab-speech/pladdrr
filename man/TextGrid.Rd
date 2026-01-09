@@ -6,6 +6,15 @@
 \usage{
 TextGrid(path = NULL, .xptr = NULL)
 }
+\arguments{
+\item{tier}{Tier number (1-based) or name}
+}
+\value{
+data.frame with start, end, text columns
+Get all points from a point tier in single C++ call
+
+data.frame with time, text columns
+}
 \description{
 R6 class representing a Praat TextGrid object for linguistic annotation.
 A TextGrid contains multiple tiers (IntervalTier or TextTier/PointTier) for
@@ -34,6 +43,8 @@ one or more tiers, where each tier can be:
 - `$get_number_of_intervals(tier)` - Number of intervals in tier
 - `$get_interval_text(tier, n)` - Get label of interval n
 - `$get_label_at_time(tier, time)` - Get label at specific time
+- `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
+- `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
 - `$set_interval_text(tier, n, text)` - Set label of interval n
 - `$insert_boundary(tier, time)` - Insert new boundary
 - `$remove_boundary(tier, time)` - Remove boundary
@@ -97,6 +108,16 @@ for (i in 1:nrow(words)) {
     segment$save(paste0("word_", i, ".wav"))
   }
 }
+
+# Fast batch extraction of matching intervals
+result <- tg$extract_intervals_batch(
+  tier = "words",
+  comparison_type = "equals",
+  target_value = "hello",
+  sound = sound,
+  extract_sounds = TRUE
+)
+# Access results: result$indices, result$start_times, result$sounds
 
 # Save TextGrid
 tg$save("output.TextGrid")

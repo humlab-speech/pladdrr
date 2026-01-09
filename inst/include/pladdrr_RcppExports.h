@@ -2240,6 +2240,48 @@ namespace pladdrr {
         return Rcpp::as<DataFrame >(rcpp_result_gen);
     }
 
+    inline List textgrid_filter_xptr(SEXP textgrid_xptr, int tier_number, SEXP predicate_xptr, SEXP sound_xptr = R_NilValue, bool extract_sounds = false) {
+        typedef SEXP(*Ptr_textgrid_filter_xptr)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_textgrid_filter_xptr p_textgrid_filter_xptr = NULL;
+        if (p_textgrid_filter_xptr == NULL) {
+            validateSignature("List(*textgrid_filter_xptr)(SEXP,int,SEXP,SEXP,bool)");
+            p_textgrid_filter_xptr = (Ptr_textgrid_filter_xptr)R_GetCCallable("pladdrr", "_pladdrr_textgrid_filter_xptr");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_filter_xptr(Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)), Shield<SEXP>(Rcpp::wrap(predicate_xptr)), Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(extract_sounds)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
+    inline SEXP get_interval_predicate(std::string type, double threshold = 0.0) {
+        typedef SEXP(*Ptr_get_interval_predicate)(SEXP,SEXP);
+        static Ptr_get_interval_predicate p_get_interval_predicate = NULL;
+        if (p_get_interval_predicate == NULL) {
+            validateSignature("SEXP(*get_interval_predicate)(std::string,double)");
+            p_get_interval_predicate = (Ptr_get_interval_predicate)R_GetCCallable("pladdrr", "_pladdrr_get_interval_predicate");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_get_interval_predicate(Shield<SEXP>(Rcpp::wrap(type)), Shield<SEXP>(Rcpp::wrap(threshold)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<SEXP >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_pladdrr_RCPPEXPORTS_H_GEN_
