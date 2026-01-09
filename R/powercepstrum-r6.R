@@ -161,7 +161,8 @@ PowerCepstrum <- function(.xptr = NULL) {
       fit_method <- match.arg(fit_method)
       
       trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+      fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
       
       cpp_pc$fit_trend_line(
         as.numeric(qmin),
@@ -178,7 +179,8 @@ PowerCepstrum <- function(.xptr = NULL) {
       fit_method <- match.arg(fit_method)
       
       trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+      fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
       
       cpp_pc$get_trend_line_value(
         as.numeric(quefrency),
@@ -205,7 +207,8 @@ PowerCepstrum <- function(.xptr = NULL) {
       fit_method <- match.arg(fit_method)
       
       trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+      fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
       
       xptr <- cpp_pc$subtract_trend_ptr(
         as.numeric(qstart_fit),
@@ -223,7 +226,8 @@ PowerCepstrum <- function(.xptr = NULL) {
       fit_method <- match.arg(fit_method)
       
       trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-      fit_map <- c("least squares" = 1, "robust" = 2, "robust slow" = 3)
+      # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+      fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
       
       cpp_pc$subtract_trend_inplace(
         as.numeric(qstart_fit),

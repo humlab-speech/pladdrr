@@ -111,8 +111,10 @@ calculate_cpps_fast <- function(
   # Map string arguments to integer codes (Praat convention)
   interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2,
                   "sinc70" = 3, "sinc700" = 4)
-  trend_map <- c("straight" = 0, "exponential" = 1, "exponential decay" = 1)
-  fit_map <- c("least_squares" = 0, "robust" = 1, "robust slow" = 2)
+  # Praat enum: kCepstrum_trendType: LINEAR=1, EXPONENTIAL_DECAY=2
+  trend_map <- c("straight" = 1, "exponential" = 2, "exponential decay" = 2)
+  # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+  fit_map <- c("robust" = 1, "least_squares" = 2, "robust slow" = 3)
 
   interpolation <- match.arg(interpolation, names(interp_map))
   trend_line_type <- match.arg(trend_line_type, names(trend_map))
@@ -255,8 +257,10 @@ get_cpps_fast <- function(
   # Map string arguments to integer codes
   interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2,
                   "sinc70" = 3, "sinc700" = 4)
-  trend_map <- c("straight" = 0, "exponential" = 1, "exponential decay" = 1)
-  fit_map <- c("least_squares" = 0, "robust" = 1, "robust slow" = 2)
+  # Praat enum: kCepstrum_trendType: LINEAR=1, EXPONENTIAL_DECAY=2
+  trend_map <- c("straight" = 1, "exponential" = 2, "exponential decay" = 2)
+  # Praat enum: kCepstrum_trendFit: ROBUST_FAST=1, LEAST_SQUARES=2, ROBUST_SLOW=3
+  fit_map <- c("robust" = 1, "least_squares" = 2, "robust slow" = 3)
 
   interpolation <- match.arg(interpolation, names(interp_map))
   trend_line_type <- match.arg(trend_line_type, names(trend_map))
