@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.2.4 (2026-01-09)
+**Version:** 2.2.6 (2026-01-09)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -18,7 +18,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ---
 
-## Architecture Overview (v2.2.4 - Module-Based with Performance APIs)
+## Architecture Overview (v2.2.6 - Module-Based with Performance APIs)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,7 +58,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Performance Tiers (v2.2.4):**
+**Performance Tiers (v2.2.6):**
 | Tier | API | Speedup | Use Case |
 |------|-----|---------|----------|
 | Direct | `to_pitch_direct()`, `*_direct()` | 2-3x | Hot loops, batch processing |
@@ -446,7 +446,7 @@ mean_f0 <- pitch$get_mean(0, 0, "hertz")
 
 # DIRECT API: Bypass all R dispatch (maximum performance)
 pitch_ptr <- to_pitch_direct(sound$.xptr)
-mean_f0 <- pitch_get_mean_direct(pitch_ptr, 0, 0, 0L)  # 0L = Hertz unit code
+f0_value <- get_pitch_value_direct(pitch_ptr, time = 1.0, unit = 0L, interpolate = TRUE)
 
 # Create analysis objects directly
 formant_ptr <- to_formant_direct(sound$.xptr)
@@ -461,27 +461,21 @@ harmonicity_ptr <- to_harmonicity_direct(sound$.xptr)
 - `to_harmonicity_direct(sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr
 
 **Direct API functions for queries (use integer unit codes):**
-- `pitch_get_value_direct(pitch_xptr, time, unit, interpolate)`
-- `pitch_get_mean_direct(pitch_xptr, from_time, to_time, unit)`
-- `pitch_get_stdev_direct(pitch_xptr, from_time, to_time, unit)`
-- `pitch_get_minimum_direct(pitch_xptr, from_time, to_time, unit, interpolate)`
-- `pitch_get_maximum_direct(pitch_xptr, from_time, to_time, unit, interpolate)`
-- `formant_get_value_direct(formant_xptr, formant_number, time, unit)`
-- `formant_get_bandwidth_direct(formant_xptr, formant_number, time, unit)`
-- `intensity_get_value_direct(intensity_xptr, time, interpolation)`
-- `intensity_get_mean_direct(intensity_xptr, from_time, to_time, averaging_method)`
-- `harmonicity_get_value_direct(harmonicity_xptr, time, interpolation)`
-- `harmonicity_get_mean_direct(harmonicity_xptr, from_time, to_time)`
+- `get_pitch_value_direct(pitch_xptr, time, unit, interpolate)` - Single F0 value
+- `get_pitch_stats_direct(pitch_xptr, from_time, to_time, unit)` - All pitch statistics
+- `get_formant_value_direct(formant_xptr, formant_number, time, unit)` - Single formant
+- `get_formants_direct(formant_xptr, time, unit)` - All formants at time
+- `get_intensity_value_direct(intensity_xptr, time, interpolation)` - Single intensity
 
 **Compound operations (single C++ call for multiple stats):**
 ```r
 # Get all common pitch statistics in one call
-stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
+stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, 0L)
 # Returns: list(min, max, mean, stdev, median, q25, q75, count_voiced)
 
-# Get F1-F4 at single time point
-formants <- formant_get_f1_f4_direct(formant_ptr, time = 1.0, unit = 0L)
-# Returns: named vector c(F1=..., F2=..., F3=..., F4=...)
+# Get all formants at single time point
+formants <- get_formants_direct(formant_ptr, time = 1.0, unit = 0L)
+# Returns: numeric vector of formant values
 ```
 
 ### Pattern 2g: Object Pool for Batch Processing (NEW in v2.2.4)
@@ -868,7 +862,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v2.2.4**
+**Updated for v2.2.6**
 
 ```r
 # === LOAD AUDIO ===
@@ -899,8 +893,8 @@ stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
 
 # === DIRECT API (2-3x faster, bypasses R dispatch) [v2.2.4] ===
 pitch_ptr <- to_pitch_direct(sound$.xptr)
-mean_f0 <- pitch_get_mean_direct(pitch_ptr, 0, 0, 0L)
-all_stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
+f0_value <- get_pitch_value_direct(pitch_ptr, 1.0, 0L, TRUE)
+all_stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, 0L)
 
 # === OBJECT POOL (20-30% faster batch extraction) [v2.2.4] ===
 segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends, use_pool = TRUE)
@@ -962,16 +956,28 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ## Version History
 
+**v2.2.6 (2026-01-09):**
+- **File rename:** `powercepstrum-r6.R` → `powercepstrum.R` (was never R6)
+- Added missing `print.PowerCepstrogram` S3 method
+- **AGENT_GUIDE accuracy fixes:**
+  - Corrected Direct API function names to match NAMESPACE exports
+  - `get_pitch_value_direct()`, `get_pitch_stats_direct()`, `get_formants_direct()`
+
+**v2.2.5 (2026-01-09):**
+- **Critical bug fix:** Corrected `kCepstrum_trendFit` enum mapping for CPPS/AVQI
+  - Fixed slope calculation discrepancy (R was -23.85 vs Praat -19.20)
+  - Affected: `calculate_cpps_fast()`, `get_cpps_fast()`, PowerCepstrum trend methods
+  - Root cause: R mapped "least_squares"=0, but Praat expects LEAST_SQUARES=2
+
 **v2.2.4 (2026-01-09):**
 - **Direct API** for maximum performance (2-3x faster than module dispatch)
   - `to_pitch_direct()`, `to_formant_direct()`, `to_intensity_direct()`, `to_harmonicity_direct()`
-  - Direct query functions: `pitch_get_mean_direct()`, `pitch_get_all_stats_direct()`, etc.
+  - Direct query functions: `get_pitch_value_direct()`, `get_pitch_stats_direct()`, etc.
 - **Object Pool** for batch segment extraction (20-30% faster)
   - `sound_extract_parts_pooled()`, `sound_pool_stats()`, `sound_pool_clear()`
 - **TextGrid XPtr Predicates** for interval filtering (50-70x faster)
   - `get_interval_predicate()`, `textgrid_filter_xptr()`
 - **LTO (Link-Time Optimization)** enabled by default for 5-15% overall speedup
-- Comprehensive AGENT_GUIDE update with all performance APIs documented
 
 **v2.2.3 (2026-01-09):**
 - **Architecture documentation complete** - Comprehensive investigation confirmed 30/31 objects use module pattern
@@ -1017,7 +1023,7 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ---
 
-**Guide Version:** 2.2.4
+**Guide Version:** 2.2.6
 **Last Updated:** 2026-01-09
-**Package Version:** 2.2.4
+**Package Version:** 2.2.6
 **Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
