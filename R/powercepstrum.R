@@ -1,7 +1,8 @@
-#' PowerCepstrum R6 Class
+#' PowerCepstrum Class
 #'
 #' @description
 #' Represents a power cepstrum object from Praat.
+#' Implemented as list wrapper around Rcpp module for performance.
 #' Used for voice quality analysis, particularly Cepstral Peak Prominence (CPP).
 #'
 #' @details
@@ -39,7 +40,6 @@
 #' print(paste("CPP:", round(cpp, 2), "dB"))
 #' }
 #'
-#' @export
 #' @export
 PowerCepstrum <- function(.xptr = NULL) {
   if (!inherits(.xptr, "externalptr")) {
