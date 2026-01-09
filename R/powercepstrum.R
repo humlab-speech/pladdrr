@@ -534,3 +534,9 @@ PowerCepstrogram <- R6::R6Class(
     ptr = NULL
   )
 )
+
+#' @export
+print.PowerCepstrogram <- function(x, ...) {
+  cat("<Praat PowerCepstrogram>\n")
+  invisible(x)
+}
