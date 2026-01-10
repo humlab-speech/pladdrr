@@ -1,3 +1,64 @@
+# pladdrr 3.0.1 (2026-01-10)
+
+## Documentation & Package Maintenance
+
+### pkgdown Documentation Structure
+
+**Complete reorganization of documentation for professional pkgdown site:**
+
+- **Created comprehensive `_pkgdown.yml` configuration**
+  - 15 function reference groups (450+ functions organized logically)
+  - 4 article categories with 19 total articles
+  - Custom Bootstrap 5 theme with branding
+  - Accessible navigation with aria-labels
+
+- **Added developer documentation articles** (`vignettes/articles/`)
+  - `migration-guide.Rmd` - v3.0 breaking changes guide
+  - `naming-conventions.Rmd` - API organization and patterns
+  - `batch-operations-guide.Rmd` - High-performance batch processing
+
+- **Archived historical documentation**
+  - Moved 48 planning/implementation docs to `docs-archive/`
+  - Clean root directory (only README.md, NEWS.md, LICENSE)
+  - Added `docs-archive/` to `.Rbuildignore`
+
+- **Fixed pkgdown build errors**
+  - Added URL and BugReports to DESCRIPTION
+  - Fixed articles metadata (removed vignette YAML from pkgdown-only articles)
+  - Fixed reference patterns (sound_pool functions)
+  - Added accessibility labels
+
+### Package Metadata
+
+- **DESCRIPTION updates**
+  - Added `URL: https://humlab-speech.github.io/pladdrr`
+  - Added `BugReports: https://github.com/humlab-speech/pladdrr/issues`
+
+### Files Changed
+
+**60 files, +1,999 insertions, -1,438 deletions**
+
+- Created: `_pkgdown.yml` (297 lines)
+- Created: `vignettes/articles/` (3 new developer articles)
+- Created: `docs-archive/` (48 archived documents)
+- Updated: `DESCRIPTION` (added URL/BugReports)
+- Updated: `README.md` (added documentation links, updated version)
+- Updated: `.Rbuildignore`, `.gitignore`
+- Removed: 28 root-level markdown files (archived)
+- Removed: 25 `.planning/` files (archived)
+- Removed: 3 `docs/` files (archived)
+
+### Benefits
+
+- Professional, navigable documentation site
+- Clean repository structure
+- Comprehensive function reference organization
+- Easy-to-find guides for users and developers
+- Historical documentation preserved but out of the way
+- Ready for GitHub Pages deployment
+
+---
+
 # pladdrr 3.0.0 (2026-01-10)
 
 ## BREAKING CHANGES
