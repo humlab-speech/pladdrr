@@ -205,20 +205,17 @@ reference:
   - starts_with("sound_to_.*_batch")
   - starts_with("textgrid_.*_batch")
   - starts_with("sound_pool")
-  - sound_extract_parts_pooled
 
 - title: Direct API
   desc: Low-level direct C++ access (fastest performance)
   contents:
   - ends_with("_direct")
   - ends_with("_xptr")
-  - extract_xptr
 
 - title: Visualization
   desc: Plotting methods for acoustic objects
   contents:
   - autoplot-methods
-  - autolayer-methods
   - starts_with("plot_")
 
 - title: Praat Interpreter
@@ -254,6 +251,20 @@ reference:
   - Electroglottogram
   - LPC
   - Manipulation
+
+- title: Internal & Development
+  desc: Helper functions and S3 methods
+  contents:
+  - starts_with("as.data.frame")
+  - starts_with("$")
+  - starts_with(".")
+  - starts_with("summary")
+  - starts_with("print")
+  - starts_with("create_")
+  - batch_processing
+  - cepstrum_plots
+  - create_cepstrum_report
+  - vad
 
 articles:
 - title: Getting Started
@@ -291,6 +302,6 @@ articles:
 - title: Developer Documentation
   desc: Package development and migration information
   contents:
-  - migration-guide
-  - naming-conventions
-  - batch-operations-guide
+  - articles/migration-guide
+  - articles/naming-conventions
+  - articles/batch-operations-guide
