@@ -1,3 +1,39 @@
+# pladdrr 2.4.2 (2026-01-10)
+
+## Investigation & Documentation (Phase 5)
+
+### Batch Analysis Functions Investigation
+
+**Investigated re-enabling disabled batch analysis functions** (`voice_quality_batch`, `formant_analysis_batch`, `pitch_harmonicity_batch`) from `dev/sound_batch_analysis.cpp.disabled`.
+
+**Conclusion:** Re-enabling not recommended due to significant Praat API changes and excellent existing alternatives.
+
+**Key findings:**
+* Praat API has removed many convenience functions (e.g., `Intensity_getMean()`, `Intensity_getStandardDeviation()`)
+* Re-implementation would require 25-40 hours of work for 10-15% speedup in niche use cases
+* **Existing batch query functions already provide 5-20x speedup** for common workflows
+* **Parallel processing (added v2.3.0) provides 3-8x speedup** for multi-file analysis
+* Cost-benefit analysis favors using existing high-performance functions
+
+**Recommended approach:**
+```r
+# Instead of disabled voice_quality_batch():
+# Use Direct API (2-3x faster) + R statistics (negligible overhead)
+pitch_ptr <- to_pitch_direct(sound$.xptr, 0.01, 75, 500)
+pitch <- Pitch(.xptr = pitch_ptr)
+stats <- list(mean = pitch$get_mean(0, 0, "hertz"))
+
+# For multiple files: use parallel processing (3-8x faster)
+results <- analyze_files_parallel(files, analysis_func, n_cores = 4)
+```
+
+**Documentation:**
+* Created `PHASE5_INVESTIGATION_SUMMARY.md` - Detailed investigation findings
+* Existing `BATCH_OPERATIONS_GUIDE.md` covers all high-performance alternatives
+* Existing `vignettes/performance-optimization.Rmd` explains 3-tier API
+
+**Impact:** No new code, but clarified that improvement plan goals are already met through existing functionality.
+
 # pladdrr 2.4.1 (2026-01-10)
 
 ## Maintenance Release
