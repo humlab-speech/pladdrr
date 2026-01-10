@@ -1,3 +1,9 @@
+# pladdrr 2.4.1 (2026-01-10)
+
+## Maintenance Release
+
+* Version bump for package maintenance
+
 # pladdrr 2.4.0 (2026-01-10)
 
 ## Documentation & Polish (Phase 4)
