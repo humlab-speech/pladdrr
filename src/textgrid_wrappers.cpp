@@ -5,6 +5,7 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
+#include "datatable_utils.h"
 
 // Praat headers - TextGrid uses C++ features so no extern "C"
 #include "praat.github.io/sys/Data.h"
@@ -316,11 +317,14 @@ Rcpp::DataFrame textgrid_get_all_intervals(Rcpp::XPtr<structTextGrid> xptr, int 
             texts[i-1] = Melder_peek32to8(interval->text.get());
         }
         
-        return Rcpp::DataFrame::create(
-            Rcpp::Named("start") = starts,
-            Rcpp::Named("end") = ends,
-            Rcpp::Named("text") = texts,
-            Rcpp::Named("stringsAsFactors") = false
+        return pladdrr::dt::create_datatable(
+            Rcpp::List::create(
+                Rcpp::Named("start") = starts,
+                Rcpp::Named("end") = ends,
+                Rcpp::Named("text") = texts
+            ),
+            Rcpp::CharacterVector::create("start", "end", "text"),
+            Rcpp::CharacterVector::create("start")
         );
     }, "Failed to get all intervals");
 }
@@ -416,10 +420,13 @@ Rcpp::DataFrame textgrid_get_all_points(Rcpp::XPtr<structTextGrid> xptr, int tie
             texts[i-1] = Melder_peek32to8(point->mark.get());
         }
         
-        return Rcpp::DataFrame::create(
-            Rcpp::Named("time") = times,
-            Rcpp::Named("text") = texts,
-            Rcpp::Named("stringsAsFactors") = false
+        return pladdrr::dt::create_datatable(
+            Rcpp::List::create(
+                Rcpp::Named("time") = times,
+                Rcpp::Named("text") = texts
+            ),
+            Rcpp::CharacterVector::create("time", "text"),
+            Rcpp::CharacterVector::create("time")
         );
     }, "Failed to get all points");
 }
@@ -638,14 +645,17 @@ Rcpp::DataFrame textgrid_to_data_frame(
             }
         }
         
-        return Rcpp::DataFrame::create(
-            Rcpp::Named("tier_name") = tier_names,
-            Rcpp::Named("tier_type") = tier_types,
-            Rcpp::Named("item_number") = item_numbers,
-            Rcpp::Named("start_time") = start_times,
-            Rcpp::Named("end_time") = end_times,
-            Rcpp::Named("label") = labels,
-            Rcpp::Named("stringsAsFactors") = false
+        return pladdrr::dt::create_datatable(
+            Rcpp::List::create(
+                Rcpp::Named("tier_name") = tier_names,
+                Rcpp::Named("tier_type") = tier_types,
+                Rcpp::Named("item_number") = item_numbers,
+                Rcpp::Named("start_time") = start_times,
+                Rcpp::Named("end_time") = end_times,
+                Rcpp::Named("label") = labels
+            ),
+            Rcpp::CharacterVector::create("tier_name", "tier_type", "item_number", "start_time", "end_time", "label"),
+            Rcpp::CharacterVector::create("tier_name", "start_time")
         );
     }, "Failed to convert TextGrid to data frame");
 }

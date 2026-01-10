@@ -4,6 +4,8 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
+#include "../datatable_utils.h"
 
 // Praat headers
 #include "../praat.github.io/fon/Pitch.h"
@@ -530,32 +532,48 @@ public:
         }
 
         if (include_strength && include_intensity) {
-            return DataFrame::create(
-                Named("time") = time,
-                Named("frequency") = frequency,
-                Named("voiced") = voiced,
-                Named("strength") = strength,
-                Named("intensity") = intensity
+            return pladdrr::dt::create_datatable(
+                List::create(
+                    Named("time") = time,
+                    Named("frequency") = frequency,
+                    Named("voiced") = voiced,
+                    Named("strength") = strength,
+                    Named("intensity") = intensity
+                ),
+                CharacterVector::create("time", "frequency", "voiced", "strength", "intensity"),
+                CharacterVector::create("time")
             );
         } else if (include_strength) {
-            return DataFrame::create(
-                Named("time") = time,
-                Named("frequency") = frequency,
-                Named("voiced") = voiced,
-                Named("strength") = strength
+            return pladdrr::dt::create_datatable(
+                List::create(
+                    Named("time") = time,
+                    Named("frequency") = frequency,
+                    Named("voiced") = voiced,
+                    Named("strength") = strength
+                ),
+                CharacterVector::create("time", "frequency", "voiced", "strength"),
+                CharacterVector::create("time")
             );
         } else if (include_intensity) {
-            return DataFrame::create(
-                Named("time") = time,
-                Named("frequency") = frequency,
-                Named("voiced") = voiced,
-                Named("intensity") = intensity
+            return pladdrr::dt::create_datatable(
+                List::create(
+                    Named("time") = time,
+                    Named("frequency") = frequency,
+                    Named("voiced") = voiced,
+                    Named("intensity") = intensity
+                ),
+                CharacterVector::create("time", "frequency", "voiced", "intensity"),
+                CharacterVector::create("time")
             );
         } else {
-            return DataFrame::create(
-                Named("time") = time,
-                Named("frequency") = frequency,
-                Named("voiced") = voiced
+            return pladdrr::dt::create_datatable(
+                List::create(
+                    Named("time") = time,
+                    Named("frequency") = frequency,
+                    Named("voiced") = voiced
+                ),
+                CharacterVector::create("time", "frequency", "voiced"),
+                CharacterVector::create("time")
             );
         }
     }
@@ -593,12 +611,16 @@ public:
             }
         }
 
-        return DataFrame::create(
-            Named("time") = times,
-            Named("frame") = frame_nums,
-            Named("candidate") = candidate_nums,
-            Named("frequency") = frequencies,
-            Named("strength") = strengths
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("frame") = frame_nums,
+                Named("candidate") = candidate_nums,
+                Named("frequency") = frequencies,
+                Named("strength") = strengths
+            ),
+            CharacterVector::create("time", "frame", "candidate", "frequency", "strength"),
+            CharacterVector::create("time", "frame", "candidate")
         );
     }
 

@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Intensity.h"
 #include "praat.github.io/fon/IntensityTier.h"
 
@@ -180,7 +181,14 @@ public:
             times.push_back(Sampled_indexToX(ptr.get(), i));
             values.push_back(ptr->z[1][i]);
         }
-        return DataFrame::create(Named("time") = times, Named("intensity") = values);
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("intensity") = values
+            ),
+            CharacterVector::create("time", "intensity"),
+            CharacterVector::create("time")
+        );
     }
 
     NumericMatrix as_matrix() {

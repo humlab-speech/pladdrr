@@ -5,6 +5,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/sys/Data.h"
 #include "praat.github.io/fon/TextGrid.h"
 #include "praat.github.io/fon/TextGrid_Sound.h"
@@ -398,14 +399,17 @@ public:
             }
         }
 
-        return DataFrame::create(
-            Named("tier_name") = tier_names,
-            Named("tier_type") = tier_types,
-            Named("item_number") = item_numbers,
-            Named("start_time") = start_times,
-            Named("end_time") = end_times,
-            Named("label") = labels,
-            Named("stringsAsFactors") = false
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("tier_name") = tier_names,
+                Named("tier_type") = tier_types,
+                Named("item_number") = item_numbers,
+                Named("start_time") = start_times,
+                Named("end_time") = end_times,
+                Named("label") = labels
+            ),
+            CharacterVector::create("tier_name", "tier_type", "item_number", "start_time", "end_time", "label"),
+            CharacterVector::create("tier_name", "start_time")
         );
     }
 
