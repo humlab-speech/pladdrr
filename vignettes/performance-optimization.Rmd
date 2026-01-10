@@ -182,14 +182,13 @@ f0_values <- sapply(times, function(t) {
 })
 
 # FAST: Vectorized query (1 R→C crossing)
-f0_values <- pitch_get_values_at_times(pitch, times)  # 10x faster
+f0_values <- get_pitch_at_times(pitch, times)  # 10x faster
 ```
 
 **Vectorized query functions:**
-- `pitch_get_values_at_times()` - Batch pitch queries
-- `formant_get_values_at_times()` - Batch formant queries
-- `intensity_get_values_at_times()` - Batch intensity queries
+- `get_pitch_at_times()` - Batch pitch queries
 - `get_formants_at_times()` - Batch F1-F4 queries
+- `get_intensity_at_times()` - Batch intensity queries
 
 ### Parallel Processing (NEW in v2.3.0)
 
@@ -292,7 +291,7 @@ system.time({
 
 # Tier 3: Vectorized
 system.time({
-  f1_values <- formant_get_values_at_times(formant, times, formant_number = 1)
+  f1_values <- get_formants_at_times(formant, times, formant_number = 1)
 })
 # ~40ms (20x faster)
 ```
@@ -357,7 +356,7 @@ for (time in times) {
 
 # FAST: Extract once, use vectorized query
 pitch_ptr <- pitch$.xptr
-values <- pitch_get_values_at_times(pitch_ptr, times)
+values <- get_pitch_at_times(pitch_ptr, times)
 ```
 
 ### 4. Choose Optimal Core Count
@@ -391,7 +390,7 @@ analyze_files_parallel(files, function(sound) {
   
   # Vectorized queries
   lapply(formants, function(f) {
-    formant_get_values_at_times(f, analysis_times)
+    get_formants_at_times(f, analysis_times)
   })
 }, n_cores = 4)
 ```

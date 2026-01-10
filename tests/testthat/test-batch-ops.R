@@ -118,21 +118,21 @@ test_that("vectorized query functions work", {
   # Create time points
   times <- seq(pitch$get_start_time(), pitch$get_end_time(), length.out = 10)
   
-  # Test pitch_get_values_at_times
+  # Test get_pitch_at_times
   expect_no_error({
-    pitch_values <- pitch_get_values_at_times(pitch, times)
+    pitch_values <- get_pitch_at_times(pitch, times)
   })
   expect_length(pitch_values, 10)
   
-  # Test formant_get_values_at_times
+  # Test get_formants_at_times
   expect_no_error({
-    formant_values <- formant_get_values_at_times(formant, times)
+    formant_values <- get_formants_at_times(formant, times)
   })
   expect_length(formant_values, 10)
   
-  # Test intensity_get_values_at_times
+  # Test get_intensity_at_times
   expect_no_error({
-    intensity_values <- intensity_get_values_at_times(intensity, times)
+    intensity_values <- get_intensity_at_times(intensity, times)
   })
   expect_length(intensity_values, 10)
   
