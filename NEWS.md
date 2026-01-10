@@ -1,3 +1,60 @@
+# pladdrr 2.4.0 (2026-01-10)
+
+## Documentation & Polish (Phase 4)
+
+### Deprecation Cycle Started
+
+**Cleaning up duplicate APIs** - Three redundant batch query functions are now deprecated in favor of their clearer alternatives.
+
+* **Deprecated functions** (will be removed in v3.0.0):
+  - `pitch_get_values_at_times()` → use `get_pitch_at_times()` instead
+  - `formant_get_values_at_times()` → use `get_formants_at_times()` instead
+  - `intensity_get_values_at_times()` → use `get_intensity_at_times()` instead
+* All deprecated functions now emit `.Deprecated()` warnings with migration guidance
+* No breaking changes - all functions continue to work
+* Timeline: Deprecated in v2.4.0, warnings in v2.5.0, removed in v3.0.0 (12+ months)
+
+**Example migration:**
+```r
+# Old (deprecated)
+values <- pitch_get_values_at_times(pitch_obj, times, unit = "hertz")
+
+# New (recommended)
+values <- get_pitch_at_times(pitch_obj, times, unit = "hertz")
+```
+
+### Comprehensive Migration Documentation
+
+* **New guide: `MIGRATION_GUIDE.md`** - Complete migration reference (400+ lines)
+  - Breaking changes summary (none in v2.4.0!)
+  - Deprecated function replacements with examples
+  - PowerCepstrogram API changes (v2.2.7)
+  - Pointer extraction changes
+  - Performance optimization opportunities
+  - Common migration scenarios (AVQI, corpus analysis, formant tracking)
+  - Deprecation timeline and policy
+
+* **New guide: `NAMING_CONVENTIONS.md`** - Function naming explained (350+ lines)
+  - Explains all function suffixes (`_direct`, `_fast`, `_batch`, `_parallel`, `_at_times`)
+  - Clarifies `_fast` vs `_direct` naming (legacy compatibility)
+  - API organization by tier (Standard/Direct/Batch-Parallel)
+  - Function organization by file
+  - Naming decision tree for contributors
+  - Future plans for v3.0.0
+
+### Developer Experience
+
+* Clear guidance on which functions to use
+* Consistent naming patterns across all APIs
+* Deprecation warnings help users migrate gradually
+* Comprehensive documentation for all performance tiers
+
+## Files Added/Modified
+
+* `R/batch-ops.R` - Added deprecation warnings to 3 functions
+* `MIGRATION_GUIDE.md` - New comprehensive migration guide (400+ lines)
+* `NAMING_CONVENTIONS.md` - New function naming reference (350+ lines)
+
 # pladdrr 2.3.0 (2026-01-10)
 
 ## Performance Enhancements (Phase 3)

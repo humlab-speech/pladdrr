@@ -429,6 +429,10 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 
 #' Get Pitch Values at Multiple Times in Single C++ Call
 #'
+#' @description
+#' \strong{Deprecated:} Use \code{\link{get_pitch_at_times}} instead.
+#' This function will be removed in a future version.
+#'
 #' Vectorized extraction of pitch values, avoiding O(n) R→C boundary crossings.
 #'
 #' @param pitch Pitch object (R6) or external pointer
@@ -440,10 +444,13 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #'
 #' @return Numeric vector of pitch values
 #'
+#' @seealso \code{\link{get_pitch_at_times}} for the preferred function
 #' @export
 pitch_get_values_at_times <- function(pitch, times,
                                       unit = "hertz",
                                       interpolate = TRUE) {
+  .Deprecated("get_pitch_at_times", 
+              msg = "pitch_get_values_at_times() is deprecated. Use get_pitch_at_times() instead.")
   xptr <- if (inherits(pitch, "Pitch")) {
     ptr <- pitch$.xptr
     if (is.null(ptr)) ptr <- pitch$get_xptr()
@@ -475,6 +482,10 @@ pitch_get_values_at_times <- function(pitch, times,
 
 #' Get Formant Values at Multiple Times in Single C++ Call
 #'
+#' @description
+#' \strong{Deprecated:} Use \code{\link{get_formants_at_times}} instead.
+#' This function will be removed in a future version.
+#'
 #' Vectorized extraction of formant values, avoiding O(n) R→C boundary crossings.
 #'
 #' @param formant Formant object (R6) or external pointer
@@ -484,10 +495,13 @@ pitch_get_values_at_times <- function(pitch, times,
 #'
 #' @return Numeric vector of formant values
 #'
+#' @seealso \code{\link{get_formants_at_times}} for the preferred function
 #' @export
 formant_get_values_at_times <- function(formant, times,
                                         formant_number = 1,
                                         unit = "hertz") {
+  .Deprecated("get_formants_at_times",
+              msg = "formant_get_values_at_times() is deprecated. Use get_formants_at_times() instead.")
   xptr <- if (inherits(formant, "Formant")) {
     ptr <- formant$.xptr
     if (is.null(ptr)) ptr <- formant$get_xptr()
@@ -507,6 +521,10 @@ formant_get_values_at_times <- function(formant, times,
 
 #' Get Intensity Values at Multiple Times in Single C++ Call
 #'
+#' @description
+#' \strong{Deprecated:} Use \code{\link{get_intensity_at_times}} instead.
+#' This function will be removed in a future version.
+#'
 #' Vectorized extraction of intensity values, avoiding O(n) R→C boundary crossings.
 #'
 #' @param intensity Intensity object (R6) or external pointer
@@ -516,9 +534,12 @@ formant_get_values_at_times <- function(formant, times,
 #'
 #' @return Numeric vector of intensity values
 #'
+#' @seealso \code{\link{get_intensity_at_times}} for the preferred function
 #' @export
 intensity_get_values_at_times <- function(intensity, times,
                                           interpolation = "linear") {
+  .Deprecated("get_intensity_at_times",
+              msg = "intensity_get_values_at_times() is deprecated. Use get_intensity_at_times() instead.")
   xptr <- if (inherits(intensity, "Intensity")) {
     ptr <- intensity$.xptr
     if (is.null(ptr)) ptr <- intensity$get_xptr()
