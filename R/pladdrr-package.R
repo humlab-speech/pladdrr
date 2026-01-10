@@ -103,6 +103,7 @@
 #' @aliases pladdrr
 #' @useDynLib pladdrr, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom data.table data.table as.data.table is.data.table setDT setkeyv rbindlist
 #' @importFrom stats aggregate approx fitted lm median predict quantile rnorm sd time
 #' @importFrom utils head
 #' @keywords internal
@@ -114,12 +115,19 @@
 .onLoad <- function(libname, pkgname) {
   # Initialize Praat library components
   praat_initialize()
+  
+  # Set default to return data.table (v4.0.0+)
+  # Users can opt out with: options(pladdrr.return_datatable = FALSE)
+  # but this is deprecated and will be removed in v5.0
+  if (is.null(getOption("pladdrr.return_datatable"))) {
+    options(pladdrr.return_datatable = TRUE)
+  }
 }
 
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    "pladdrr: Direct access to Praat C functionality\n",
+    "pladdrr v4.0: Now using data.table for high-performance data operations\n",
     "See ?pladdrr for an overview and citation information.\n",
     "Use citation('pladdrr') for citing this package in publications."
   )
