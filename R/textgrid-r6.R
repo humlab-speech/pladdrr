@@ -107,6 +107,9 @@
 #' tg$save("output.TextGrid")
 #' }
 #'
+#' @name TextGrid
+NULL
+
 #' @export
 TextGrid <- function(path = NULL, .xptr = NULL) {
   # Handle initialization
