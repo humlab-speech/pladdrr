@@ -27,6 +27,7 @@ navbar:
     home:
       icon: fas fa-home fa-lg
       href: index.html
+      aria-label: "Home"
     intro:
       text: Get Started
       href: articles/getting-started.html
@@ -203,9 +204,8 @@ reference:
   - batch_process
   - starts_with("sound_to_.*_batch")
   - starts_with("textgrid_.*_batch")
-  - sound_pool_stats
-  - sound_pool_clear
-  - sound_pool_resize
+  - starts_with("sound_pool")
+  - sound_extract_parts_pooled
 
 - title: Direct API
   desc: Low-level direct C++ access (fastest performance)

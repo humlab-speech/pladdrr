@@ -40,5 +40,7 @@ Suggests:
     RcppSimdJson,
     RcppXPtrUtils
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017)
+URL: https://humlab-speech.github.io/pladdrr, https://github.com/humlab-speech/pladdrr
+BugReports: https://github.com/humlab-speech/pladdrr/issues
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr

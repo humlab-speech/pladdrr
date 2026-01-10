@@ -2,11 +2,6 @@
 title: "Naming Conventions and API Organization"
 description: |
   Complete guide to pladdrr function naming patterns and API organization.
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Naming Conventions and API Organization}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 # pladdrr Naming Conventions and API Organization
