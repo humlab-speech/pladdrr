@@ -1,0 +1,296 @@
+url: https://humlab-speech.github.io/pladdrr
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  bslib:
+    primary: "#0054a6"
+    base_font: {google: "Roboto"}
+    heading_font: {google: "Roboto Slab"}
+    code_font: {google: "JetBrains Mono"}
+
+home:
+  title: "pladdrr: Direct Access to Praat C Functionality from R"
+  description: |
+    High-performance phonetic analysis in R with direct C++ access to Praat.
+    31 Rcpp modules, SIMD optimization, zero-copy operations.
+  
+  links:
+  - text: Browse source code
+    href: https://github.com/humlab-speech/pladdrr
+
+navbar:
+  structure:
+    left:  [home, intro, reference, articles, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    intro:
+      text: Get Started
+      href: articles/getting-started.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: User Guides
+      - text: Getting Started
+        href: articles/getting-started.html
+      - text: Migration from Praat
+        href: articles/migration-from-praat.html
+      - text: Migration from Parselmouth
+        href: articles/migration-from-parselmouth.html
+      - text: -------
+      - text: Analysis Workflows
+      - text: Formant Analysis
+        href: articles/formant-analysis.html
+      - text: FormantPath Robust Tracking
+        href: articles/formantpath-robust-tracking.html
+      - text: Vowel Space Analysis
+        href: articles/vowel-space-analysis.html
+      - text: TextGrid Workflows
+        href: articles/textgrid-workflows.html
+      - text: Integrated Phonetic Analysis
+        href: articles/integrated-phonetic-analysis.html
+      - text: -------
+      - text: Advanced Topics
+      - text: Speech Synthesis (KlattGrid)
+        href: articles/speech-synthesis-klattgrid.html
+      - text: Analysis-Resynthesis Workflow
+        href: articles/analysis-resynthesis-workflow.html
+      - text: Auditory Modeling
+        href: articles/auditory-modeling.html
+      - text: Visualization (ggplot2)
+        href: articles/visualization.html
+      - text: autoplot & autolayer
+        href: articles/autoplot-autolayer.html
+      - text: Praat Script Interpreter
+        href: articles/praat-interpreter.html
+      - text: -------
+      - text: Performance & Optimization
+      - text: Performance Optimization
+        href: articles/performance-optimization.html
+      - text: SIMD Performance
+        href: articles/performance-simd.html
+      - text: -------
+      - text: Developer Documentation
+      - text: Migration Guide (v3.0)
+        href: articles/migration-guide.html
+      - text: Naming Conventions
+        href: articles/naming-conventions.html
+      - text: Batch Operations Guide
+        href: articles/batch-operations-guide.html
+    news:
+      text: News
+      href: news/index.html
+
+reference:
+- title: Core Audio Objects
+  desc: Primary sound and acoustic representation objects
+  contents:
+  - Sound
+  - LongSound
+  - Spectrum
+  - Spectrogram
+  - Ltas
+  - ComplexSpectrogram
+
+- title: Pitch Analysis
+  desc: Fundamental frequency extraction and manipulation
+  contents:
+  - Pitch
+  - PitchModule
+  - PitchTier
+  - to_pitch_direct
+  - get_pitch_at_time
+  - get_pitch_at_times
+  - get_pitch_value_direct
+  - get_pitch_stats_direct
+  - get_pitch_strengths_at_times
+  - starts_with("sound_to_pitch")
+  - extract_pitch
+
+- title: Formant Analysis
+  desc: Resonance frequency tracking and analysis
+  contents:
+  - Formant
+  - FormantPath
+  - FormantGrid
+  - FormantTier
+  - to_formant_direct
+  - get_formant_at_time
+  - get_formants_at_times
+  - get_formant_value_direct
+  - get_formants_direct
+  - get_formant_bandwidths_at_times
+  - get_mean_formant
+  - sound_to_formant_batch
+  - extract_formants
+
+- title: Intensity & Voice Quality
+  desc: Intensity measurements and voice quality analysis
+  contents:
+  - Intensity
+  - IntensityTier
+  - Harmonicity
+  - to_intensity_direct
+  - to_harmonicity_direct
+  - get_intensity_at_time
+  - get_intensity_at_times
+  - get_intensity_value_direct
+  - starts_with("get_max_intensity")
+  - starts_with("get_min_intensity")
+  - starts_with("get_mean_intensity")
+  - starts_with("get_sd_intensity")
+  - sound_to_intensity_batch
+  - extract_intensity
+
+- title: TextGrid & Annotation
+  desc: Time-aligned phonetic annotation
+  contents:
+  - TextGrid
+  - textgrid_create
+  - starts_with("textgrid_")
+  - starts_with("get_textgrid_")
+  - extract_textgrid_intervals
+  - pair_sound_textgrid
+  - sound_to_textgrid_silences
+
+- title: Speech Synthesis
+  desc: Parametric speech synthesis with KlattGrid
+  contents:
+  - KlattGrid
+  - KlattGrid_createExample
+  - KlattGrid_createFromVowel
+  - VocalTract
+  - vocaltract_create_from_phone
+
+- title: Auditory Models
+  desc: Perceptual and cochlear models
+  contents:
+  - Cochleagram
+  - Excitation
+  - Cepstrum
+  - PowerCepstrum
+  - PowerCepstrogram
+  - to_powercepstrogram_fast
+  - calculate_cpps_fast
+  - get_cpps_fast
+
+- title: Sound Manipulation
+  desc: Audio processing and transformation
+  contents:
+  - starts_with("sound_extract")
+  - starts_with("sound_filter")
+  - sound_concatenate_all
+  - sounds_append
+  - sounds_convolve
+  - sounds_cross_correlate
+  - sound_lengthen
+  - sound_deepen_band_modulation
+  - sound_create_tone
+  - starts_with("sound_statistics")
+  - sound_auto_correlate
+
+- title: Batch & Parallel Operations
+  desc: High-performance batch processing
+  contents:
+  - starts_with("analyze_files")
+  - starts_with("extract_.*_parallel")
+  - batch_process
+  - starts_with("sound_to_.*_batch")
+  - starts_with("textgrid_.*_batch")
+  - sound_pool_stats
+  - sound_pool_clear
+  - sound_pool_resize
+
+- title: Direct API
+  desc: Low-level direct C++ access (fastest performance)
+  contents:
+  - ends_with("_direct")
+  - ends_with("_xptr")
+  - extract_xptr
+
+- title: Visualization
+  desc: Plotting methods for acoustic objects
+  contents:
+  - autoplot-methods
+  - autolayer-methods
+  - starts_with("plot_")
+
+- title: Praat Interpreter
+  desc: Execute Praat scripts from R
+  contents:
+  - PraatInterpreter
+  - starts_with("praat_")
+
+- title: Utilities
+  desc: Helper functions and utilities
+  contents:
+  - aggregate_measurements
+  - extract_measurements
+  - extract_measurements_custom
+  - pair_files
+  - create_file_list
+  - check_audio_quality
+  - simd_info
+  - get_duration
+  - get_sampling_rate
+  - get_n_channels
+  - get_n_samples
+
+- title: Data Structures
+  desc: Additional Praat data types
+  contents:
+  - Matrix
+  - Table
+  - PointProcess
+  - Polygon
+  - AmplitudeTier
+  - DurationTier
+  - Electroglottogram
+  - LPC
+  - Manipulation
+
+articles:
+- title: Getting Started
+  navbar: ~
+  contents:
+  - getting-started
+  - migration-from-praat
+  - migration-from-parselmouth
+
+- title: Analysis Workflows
+  desc: Common phonetic analysis tasks
+  contents:
+  - formant-analysis
+  - formantpath-robust-tracking
+  - vowel-space-analysis
+  - textgrid-workflows
+  - integrated-phonetic-analysis
+
+- title: Advanced Topics
+  desc: Complex analysis and synthesis
+  contents:
+  - speech-synthesis-klattgrid
+  - analysis-resynthesis-workflow
+  - auditory-modeling
+  - visualization
+  - autoplot-autolayer
+  - praat-interpreter
+
+- title: Performance & Optimization
+  desc: Optimizing your analysis pipelines
+  contents:
+  - performance-optimization
+  - performance-simd
+
+- title: Developer Documentation
+  desc: Package development and migration information
+  contents:
+  - migration-guide
+  - naming-conventions
+  - batch-operations-guide

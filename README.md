@@ -2,11 +2,14 @@
 
 **Direct Access to Praat C Functionality from R**
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)]()
+[![Version](https://img.shields.io/badge/version-3.0.0-blue)]()
 [![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)]()
 [![Rcpp Modules](https://img.shields.io/badge/modules-31-blue)]()
 [![Coverage](https://img.shields.io/badge/Praat%20coverage-32%25-orange)]()
 [![SIMD](https://img.shields.io/badge/SIMD-enabled-orange)]()
+
+<!-- badges: start -->
+<!-- badges: end -->
 
 ## Overview
 
@@ -24,6 +27,13 @@
 - **Streaming support**: Process files too large for memory with LongSound
 - **Advanced modules**: FormantPath (robust tracking), KlattGrid (synthesis), ComplexSpectrogram
 
+## Documentation
+
+- [Getting Started Guide](https://humlab-speech.github.io/pladdrr/articles/getting-started.html) - Your first steps with pladdrr
+- [Full Documentation](https://humlab-speech.github.io/pladdrr/) - Complete package documentation
+- [Function Reference](https://humlab-speech.github.io/pladdrr/reference/) - All available functions
+- [Performance Optimization](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.html) - Speed up your analyses
+- [Migration Guide (v3.0)](https://humlab-speech.github.io/pladdrr/articles/migration-guide.html) - Upgrading from v2.x
 
 ## Installation
 
