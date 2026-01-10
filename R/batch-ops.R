@@ -86,9 +86,14 @@ sound_to_pitch_batch <- function(sounds,
   # Extract xptrs
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
-    } else {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
       s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -137,9 +142,14 @@ sound_to_pitch_ac_batch <- function(sounds,
                                     return_r6 = TRUE) {
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
-    } else {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
       s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -203,9 +213,14 @@ sound_to_pitch_cc_batch <- function(sounds,
                                     return_r6 = TRUE) {
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
-    } else {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
       s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -246,9 +261,14 @@ sound_to_formant_batch <- function(sounds,
                                    return_r6 = TRUE) {
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
-    } else {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
       s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -283,9 +303,14 @@ sound_to_intensity_batch <- function(sounds,
                                      return_r6 = TRUE) {
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      s$.__enclos_env__$private$ptr
-    } else {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
       s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -332,9 +357,14 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
                                     pitch_ceiling = 600,
                                     return_r6 = TRUE) {
   xptr <- if (inherits(sound, "Sound")) {
-    sound$.__enclos_env__$private$ptr
-  } else {
+    ptr <- sound$.xptr
+    if (is.null(ptr)) ptr <- sound$get_xptr()
+    if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+    ptr
+  } else if (inherits(sound, "externalptr")) {
     sound
+  } else {
+    stop("Invalid input type: expected Sound or externalptr")
   }
 
   result_ptrs <- .sound_extract_and_pitch_batch(
@@ -373,9 +403,14 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
                                       pre_emphasis_from = 50,
                                       return_r6 = TRUE) {
   xptr <- if (inherits(sound, "Sound")) {
-    sound$.__enclos_env__$private$ptr
-  } else {
+    ptr <- sound$.xptr
+    if (is.null(ptr)) ptr <- sound$get_xptr()
+    if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+    ptr
+  } else if (inherits(sound, "externalptr")) {
     sound
+  } else {
+    stop("Invalid input type: expected Sound or externalptr")
   }
 
   result_ptrs <- .sound_extract_and_formant_batch(
@@ -410,9 +445,14 @@ pitch_get_values_at_times <- function(pitch, times,
                                       unit = "hertz",
                                       interpolate = TRUE) {
   xptr <- if (inherits(pitch, "Pitch")) {
-    pitch$.__enclos_env__$private$ptr
-  } else {
+    ptr <- pitch$.xptr
+    if (is.null(ptr)) ptr <- pitch$get_xptr()
+    if (is.null(ptr)) stop("Could not extract pointer from Pitch object")
+    ptr
+  } else if (inherits(pitch, "externalptr")) {
     pitch
+  } else {
+    stop("Invalid input type: expected Pitch or externalptr")
   }
 
   unit_int <- switch(
@@ -449,9 +489,14 @@ formant_get_values_at_times <- function(formant, times,
                                         formant_number = 1,
                                         unit = "hertz") {
   xptr <- if (inherits(formant, "Formant")) {
-    formant$.__enclos_env__$private$ptr
-  } else {
+    ptr <- formant$.xptr
+    if (is.null(ptr)) ptr <- formant$get_xptr()
+    if (is.null(ptr)) stop("Could not extract pointer from Formant object")
+    ptr
+  } else if (inherits(formant, "externalptr")) {
     formant
+  } else {
+    stop("Invalid input type: expected Formant or externalptr")
   }
 
   unit_int <- switch(tolower(unit), hertz = 0L, bark = 1L, 0L)
@@ -475,9 +520,14 @@ formant_get_values_at_times <- function(formant, times,
 intensity_get_values_at_times <- function(intensity, times,
                                           interpolation = "linear") {
   xptr <- if (inherits(intensity, "Intensity")) {
-    intensity$.__enclos_env__$private$ptr
-  } else {
+    ptr <- intensity$.xptr
+    if (is.null(ptr)) ptr <- intensity$get_xptr()
+    if (is.null(ptr)) stop("Could not extract pointer from Intensity object")
+    ptr
+  } else if (inherits(intensity, "externalptr")) {
     intensity
+  } else {
+    stop("Invalid input type: expected Intensity or externalptr")
   }
 
   interp_int <- switch(

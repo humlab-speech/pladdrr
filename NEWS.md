@@ -1,3 +1,43 @@
+# pladdrr 2.2.7 (2026-01-09)
+
+## Bug Fixes
+
+### Critical Fixes (Phase 1)
+* **Fixed pointer extraction bug in batch-ops.R** - All batch functions now correctly work with function-wrapper objects
+  - `sound_to_pitch_batch()`, `sound_to_pitch_ac_batch()`, `sound_to_pitch_cc_batch()`
+  - `sound_to_formant_batch()`, `sound_to_intensity_batch()`
+  - `sound_extract_and_pitch()`, `sound_extract_and_formant()`
+  - `pitch_get_values_at_times()`, `formant_get_values_at_times()`, `intensity_get_values_at_times()`
+* **PowerCepstrogram converted to function wrapper** - Now consistent with PowerCepstrum, Sound, Pitch, etc.
+  - Uses `.xptr` field instead of R6 `private$ptr`
+  - Matches modern pladdrr architecture pattern
+  - All methods preserved, backward compatible
+
+## New Features
+
+### API Consistency (Phase 2)
+* **Added `extract_xptr()` utility** - Unified pointer extraction across all object types
+  - Handles function-wrapper style (`.xptr` field)
+  - Fallback to method call (`$get_xptr()`)
+  - Backward compatible with legacy R6 style
+* **Added `unit_to_code()` utility** - Standardized unit mapping across all APIs
+  - Consistent pitch unit codes (hertz, mel, erb, semitones, etc.)
+  - Consistent formant unit codes (hertz, bark)
+  - Prevents unit code inconsistencies between Tier 1/2/3 APIs
+* **Added `interpolation_to_code()` utility** - Standardized interpolation mapping
+
+## Testing
+
+* **Added comprehensive batch operations tests** - `test-batch-ops.R`
+  - Tests all batch functions with function-wrapper objects
+  - Validates result equivalence with individual calls
+  - Tests external pointer acceptance
+  - Tests utility functions
+
+## Documentation
+
+* See `PLADDRR_IMPROVEMENT_PLAN.md` for full architectural analysis and future plans
+
 # pladdrr 2.2.3 (2026-01-09)
 
 ## Documentation

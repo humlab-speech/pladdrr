@@ -269,7 +269,7 @@ PowerCepstrum <- function(.xptr = NULL) {
 print.PowerCepstrum <- function(x, ...) x$print()
 
 
-#' PowerCepstrogram R6 Class
+#' PowerCepstrogram Class (Function Wrapper)
 #'
 #' @description
 #' Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
@@ -303,7 +303,7 @@ print.PowerCepstrum <- function(x, ...) x$print()
 #' @examples
 #' \dontrun{
 #' # Analyze CPP over time
-#' sound <- Sound$new("voice.wav")
+#' sound <- Sound("voice.wav")
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #' mean_cpp <- cepstrogram$get_mean_cpp()
 #' print(paste("Mean CPP:", round(mean_cpp, 2), "dB"))
@@ -313,31 +313,16 @@ print.PowerCepstrum <- function(x, ...) x$print()
 #' }
 #'
 #' @export
-PowerCepstrogram <- R6::R6Class(
-  "PowerCepstrogram",
-  public = list(
-    #' @field .xptr External pointer to Praat PowerCepstrogram object
-    .xptr = NULL,
+PowerCepstrogram <- function(.xptr = NULL) {
+  if (!inherits(.xptr, "externalptr")) {
+    stop(".xptr must be an external pointer")
+  }
+  
+  # Create wrapper
+  pcg <- structure(list(
+    .xptr = .xptr,
     
-    #' @description
-    #' Create a new PowerCepstrogram object (internal use)
-    #' @param .xptr External pointer to Praat object
-    initialize = function(.xptr) {
-      if (!inherits(.xptr, "externalptr")) {
-        stop(".xptr must be an external pointer")
-      }
-      private$ptr <- .xptr
-    },
-    
-    #' @description
-    #' Get CPP at a specific time
-    #' @param time Numeric. Time in seconds
-    #' @param interpolation Character. Time interpolation method
-    #' @param qmin Numeric. Minimum quefrency
-    #' @param qmax Numeric. Maximum quefrency
-    #' @param fit_method Character. Fit method for trend line
-    #' @param tolerance Numeric. Tolerance for fit
-    #' @return Numeric. CPP value in dB
+    # Query methods
     get_cpp_at_time = function(time,
                                interpolation = c("linear", "cubic"),
                                qmin = 0.003,
@@ -348,7 +333,7 @@ PowerCepstrogram <- R6::R6Class(
       fit_method <- match.arg(fit_method)
       
       .powercepstrogram_get_cpp_at_time(
-        private$ptr,
+        .xptr,
         time = time,
         interpolation = interpolation,
         qmin = qmin,
@@ -358,15 +343,6 @@ PowerCepstrogram <- R6::R6Class(
       )
     },
     
-    #' @description
-    #' Get mean CPP over a time range
-    #' @param from_time Numeric. Start time (0 = start of object)
-    #' @param to_time Numeric. End time (0 = end of object)
-    #' @param qmin Numeric. Minimum quefrency
-    #' @param qmax Numeric. Maximum quefrency
-    #' @param fit_method Character. Fit method for trend line
-    #' @param tolerance Numeric. Tolerance for fit
-    #' @return Numeric. Mean CPP in dB
     get_mean_cpp = function(from_time = 0,
                            to_time = 0,
                            qmin = 0.003,
@@ -376,7 +352,7 @@ PowerCepstrogram <- R6::R6Class(
       fit_method <- match.arg(fit_method)
       
       .powercepstrogram_get_mean_cpp(
-        private$ptr,
+        .xptr,
         from_time = from_time,
         to_time = to_time,
         qmin = qmin,
@@ -386,81 +362,20 @@ PowerCepstrogram <- R6::R6Class(
       )
     },
     
-    #' @description
-    #' Get PowerCepstrum slice at a specific time
-    #' @param time Numeric. Time in seconds
-    #' @return PowerCepstrum object
     get_power_cepstrum_at_time = function(time) {
-      xptr <- .powercepstrogram_to_powercepstrum_slice(private$ptr, time = time)
-      PowerCepstrum(.xptr = xptr)
+      ptr <- .powercepstrogram_to_powercepstrum_slice(.xptr, time = time)
+      PowerCepstrum(.xptr = ptr)
     },
     
-    #' @description
-    #' Convert to Matrix
-    #' @return Matrix object
     to_matrix = function() {
-      xptr <- .powercepstrogram_to_matrix(private$ptr)
-      Matrix(.xptr = xptr)
+      ptr <- .powercepstrogram_to_matrix(.xptr)
+      Matrix(.xptr = ptr)
     },
     
-    #' @description
-    #' Convert to R matrix
-    #' @return Numeric matrix (quefrency × time)
     as_matrix = function() {
-      .powercepstrogram_as_matrix(private$ptr)
+      .powercepstrogram_as_matrix(.xptr)
     },
     
-    #' @description
-    #' Get CPPS (Smoothed Cepstral Peak Prominence) - CRITICAL FOR AVQI
-    #' 
-    #' Computes the Smoothed Cepstral Peak Prominence, a robust measure of voice quality
-    #' that is less sensitive to noise than traditional CPP. This is one of the six
-    #' acoustic measures required for AVQI calculation.
-    #' 
-    #' @param subtract_tilt Logical. Subtract trend line before smoothing (default: TRUE)
-    #' @param time_averaging_window Numeric. Time smoothing window in seconds (default: 0.001)
-    #' @param quefrency_averaging_window Numeric. Quefrency smoothing window in seconds (default: 0.0005)
-    #' @param pitch_floor Numeric. Minimum pitch in Hz for peak search (default: 60)
-    #' @param pitch_ceiling Numeric. Maximum pitch in Hz for peak search (default: 333.3)
-    #' @param delta_f0 Numeric. Step size for F0 search (default: 0.05)
-    #' @param interpolation Character. Peak interpolation method (default: "parabolic")
-    #' @param quefrency_range_start Numeric. Start of quefrency fit range (default: 0.001)
-    #' @param quefrency_range_end Numeric. End of quefrency fit range (default: 0.05)
-    #' @param trend_line_type Character. Trend line type (default: "straight")
-    #' @param fit_method Character. Fitting method (default: "least squares")
-    #' 
-    #' @return Numeric. CPPS value in dB
-    #' 
-    #' @details
-    #' CPPS is computed by:
-    #' 1. Optionally subtracting a trend line from the cepstrogram
-    #' 2. Smoothing in both time and quefrency dimensions
-    #' 3. Finding the peak in the expected F0 range
-    #' 4. Measuring the prominence of that peak above the regression line
-    #'
-    #' For AVQI, use the default parameters which match the AVQI protocol
-    #' (Barsties & Maryn, 2015).
-    #' 
-    #' @examples
-    #' \dontrun{
-    #' sound <- Sound$new("voice.wav")
-    #' cepstrogram <- sound$to_power_cepstrogram(
-    #'   pitch_floor = 60,
-    #'   time_step = 0.002,
-    #'   max_frequency = 5000,
-    #'   pre_emphasis_from = 50
-    #' )
-    #' 
-    #' # Get CPPS with AVQI-standard parameters
-    #' cpps <- cepstrogram$get_cpps(
-    #'   subtract_tilt = TRUE,
-    #'   time_averaging_window = 0.001,
-    #'   quefrency_averaging_window = 0.05,
-    #'   pitch_floor = 60,
-    #'   pitch_ceiling = 330
-    #' )
-    #' cat("CPPS:", round(cpps, 2), "dB\n")
-    #' }
     get_cpps = function(subtract_tilt = TRUE,
                        time_averaging_window = 0.001,
                        quefrency_averaging_window = 0.0005,
@@ -470,37 +385,24 @@ PowerCepstrogram <- R6::R6Class(
                        interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
                        quefrency_range_start = 0.003,
                        quefrency_range_end = 0.04,
-                        trend_line_type = c("straight", "exponential decay"),
-                        fit_method = c("robust", "least squares", "robust slow")) {
+                       trend_line_type = c("straight", "exponential decay"),
+                       fit_method = c("robust", "least squares", "robust slow")) {
       
       interpolation <- match.arg(interpolation)
       trend_line_type <- match.arg(trend_line_type)
       fit_method <- match.arg(fit_method)
       
-      # Map to Praat enum values (from Vector_enums.h and Cepstrum_enums.h)
+      # Map to Praat enum values
       interp_map <- c(
-        "none" = 0,
-        "parabolic" = 1,
-        "cubic" = 2,
-        "sinc70" = 3,
-        "sinc700" = 4
+        "none" = 0, "parabolic" = 1, "cubic" = 2, 
+        "sinc70" = 3, "sinc700" = 4
       )
       
-      # kCepstrum_trendType: 1=LINEAR, 2=EXPONENTIAL_DECAY
-      trend_map <- c(
-        "straight" = 1,
-        "exponential decay" = 2
-      )
-      
-      # kCepstrum_trendFit: 1=ROBUST_FAST, 2=LEAST_SQUARES, 3=ROBUST_SLOW
-      fit_map <- c(
-        "robust" = 1,
-        "least squares" = 2,
-        "robust slow" = 3
-      )
+      trend_map <- c("straight" = 1, "exponential decay" = 2)
+      fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
       
       .powercepstrogram_get_cpps(
-        private$ptr,
+        .xptr,
         subtract_tilt = subtract_tilt,
         time_averaging_window = time_averaging_window,
         quefrency_averaging_window = quefrency_averaging_window,
@@ -515,28 +417,25 @@ PowerCepstrogram <- R6::R6Class(
       )
     },
     
-    #' @description
-    #' Smooth the power cepstrogram
-    #' @param time_averaging_window Numeric. Time smoothing window (seconds)
-    #' @param quefrency_averaging_window Numeric. Quefrency smoothing window (seconds)
-    #' @return New PowerCepstrogram object
     smooth = function(time_averaging_window, quefrency_averaging_window) {
-      xptr <- .powercepstrogram_smooth(
-        private$ptr,
+      ptr <- .powercepstrogram_smooth(
+        .xptr,
         time_averaging_window = time_averaging_window,
         quefrency_averaging_window = quefrency_averaging_window
       )
-      PowerCepstrogram$new(xptr)
+      PowerCepstrogram(.xptr = ptr)
+    },
+    
+    get_xptr = function() .xptr,
+    
+    print = function() {
+      cat("<Praat PowerCepstrogram>\n")
+      invisible(pcg)
     }
-  ),
-
-  private = list(
-    ptr = NULL
-  )
-)
+  ), class = c("PowerCepstrogram", "PraatObject"))
+  
+  pcg
+}
 
 #' @export
-print.PowerCepstrogram <- function(x, ...) {
-  cat("<Praat PowerCepstrogram>\n")
-  invisible(x)
-}
+print.PowerCepstrogram <- function(x, ...) x$print()

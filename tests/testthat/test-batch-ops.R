@@ -1,0 +1,199 @@
+test_that("batch functions work with function-wrapper Sound", {
+  skip_on_cran()
+  
+  # Create test sounds using function wrapper
+  sounds <- lapply(1:3, function(i) {
+    Sound$from_values(sin(seq(0, 2*pi, length.out = 44100)), 44100)
+  })
+  
+  # Test sound_to_pitch_batch
+  expect_no_error({
+    pitches <- sound_to_pitch_batch(sounds)
+  })
+  expect_length(pitches, 3)
+  
+  # Test sound_to_pitch_ac_batch
+  expect_no_error({
+    pitches_ac <- sound_to_pitch_ac_batch(sounds)
+  })
+  expect_length(pitches_ac, 3)
+  
+  # Test sound_to_pitch_cc_batch
+  expect_no_error({
+    pitches_cc <- sound_to_pitch_cc_batch(sounds)
+  })
+  expect_length(pitches_cc, 3)
+  
+  # Test sound_to_formant_batch
+  expect_no_error({
+    formants <- sound_to_formant_batch(sounds)
+  })
+  expect_length(formants, 3)
+  
+  # Test sound_to_intensity_batch
+  expect_no_error({
+    intensities <- sound_to_intensity_batch(sounds)
+  })
+  expect_length(intensities, 3)
+})
+
+
+test_that("batch results match individual calls", {
+  skip_on_cran()
+  
+  # Use test audio file if available
+  test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
+  if (!file.exists(test_file)) {
+    skip("Test file not available")
+  }
+  
+  sound <- Sound(test_file)
+  sounds <- list(sound, sound, sound)
+  
+  # Test pitch batch
+  batch_pitches <- sound_to_pitch_batch(sounds, pitch_floor = 75, pitch_ceiling = 300)
+  individual_pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+  
+  # Compare first result
+  batch_mean <- batch_pitches[[1]]$get_mean(0, 0, "hertz")
+  individual_mean <- individual_pitch$get_mean(0, 0, "hertz")
+  
+  expect_equal(batch_mean, individual_mean, tolerance = 1e-10)
+  
+  # Test formant batch
+  batch_formants <- sound_to_formant_batch(sounds, time_step = 0.005, max_formants = 5)
+  individual_formant <- sound$to_formant(time_step = 0.005, max_formants = 5)
+  
+  # Get a formant value at a specific time
+  time_point <- individual_formant$get_time_from_frame_number(1)
+  batch_f1 <- batch_formants[[1]]$get_value_at_time(1, time_point, "hertz")
+  individual_f1 <- individual_formant$get_value_at_time(1, time_point, "hertz")
+  
+  expect_equal(batch_f1, individual_f1, tolerance = 1e-10)
+})
+
+
+test_that("batch extract-and-analyze functions work", {
+  skip_on_cran()
+  
+  test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
+  if (!file.exists(test_file)) {
+    skip("Test file not available")
+  }
+  
+  sound <- Sound(test_file)
+  duration <- sound$get_total_duration()
+  
+  # Create some time intervals
+  from_times <- c(0, duration * 0.3)
+  to_times <- c(duration * 0.3, duration * 0.6)
+  
+  # Test sound_extract_and_pitch
+  expect_no_error({
+    pitches <- sound_extract_and_pitch(sound, from_times, to_times)
+  })
+  expect_length(pitches, 2)
+  
+  # Test sound_extract_and_formant
+  expect_no_error({
+    formants <- sound_extract_and_formant(sound, from_times, to_times)
+  })
+  expect_length(formants, 2)
+})
+
+
+test_that("vectorized query functions work", {
+  skip_on_cran()
+  
+  test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
+  if (!file.exists(test_file)) {
+    skip("Test file not available")
+  }
+  
+  sound <- Sound(test_file)
+  pitch <- sound$to_pitch()
+  formant <- sound$to_formant()
+  intensity <- sound$to_intensity()
+  
+  # Create time points
+  times <- seq(pitch$get_start_time(), pitch$get_end_time(), length.out = 10)
+  
+  # Test pitch_get_values_at_times
+  expect_no_error({
+    pitch_values <- pitch_get_values_at_times(pitch, times)
+  })
+  expect_length(pitch_values, 10)
+  
+  # Test formant_get_values_at_times
+  expect_no_error({
+    formant_values <- formant_get_values_at_times(formant, times)
+  })
+  expect_length(formant_values, 10)
+  
+  # Test intensity_get_values_at_times
+  expect_no_error({
+    intensity_values <- intensity_get_values_at_times(intensity, times)
+  })
+  expect_length(intensity_values, 10)
+  
+  # Compare with individual calls
+  pitch_val_0 <- pitch$get_value_at_time(times[1], "hertz")
+  expect_equal(pitch_values[1], pitch_val_0, tolerance = 1e-10)
+})
+
+
+test_that("batch functions accept external pointers", {
+  skip_on_cran()
+  
+  # Create sounds and extract pointers
+  sounds <- lapply(1:2, function(i) {
+    Sound$from_values(sin(seq(0, 2*pi, length.out = 44100)), 44100)
+  })
+  
+  xptrs <- lapply(sounds, function(s) s$.xptr)
+  
+  # Batch functions should accept xptrs directly
+  expect_no_error({
+    pitches <- sound_to_pitch_batch(xptrs, return_r6 = FALSE)
+  })
+  expect_length(pitches, 2)
+  expect_true(inherits(pitches[[1]], "externalptr"))
+})
+
+
+test_that("extract_xptr utility works correctly", {
+  skip_on_cran()
+  
+  sound <- Sound$from_values(sin(seq(0, 2*pi, length.out = 44100)), 44100)
+  
+  # Extract pointer
+  ptr <- extract_xptr(sound, "Sound")
+  expect_true(inherits(ptr, "externalptr"))
+  
+  # Should accept pointer directly
+  ptr2 <- extract_xptr(ptr, "Sound")
+  expect_identical(ptr, ptr2)
+  
+  # Should fail on wrong class
+  expect_error({
+    extract_xptr(list(a = 1), "Sound")
+  })
+})
+
+
+test_that("unit_to_code utility provides consistent mapping", {
+  skip_on_cran()
+  
+  # Pitch units
+  expect_equal(unit_to_code("hertz", "pitch"), 0L)
+  expect_equal(unit_to_code("Hz", "pitch"), 0L)
+  expect_equal(unit_to_code("mel", "pitch"), 2L)
+  expect_equal(unit_to_code("erb", "pitch"), 8L)
+  
+  # Formant units
+  expect_equal(unit_to_code("hertz", "formant"), 0L)
+  expect_equal(unit_to_code("bark", "formant"), 1L)
+  
+  # Default fallback
+  expect_equal(unit_to_code("unknown", "pitch"), 0L)
+})

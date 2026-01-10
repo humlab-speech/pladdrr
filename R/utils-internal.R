@@ -1,0 +1,112 @@
+# Internal utility functions for pladdrr
+
+#' Extract External Pointer from pladdrr Objects
+#'
+#' Unified function to extract external pointers from pladdrr objects.
+#' Handles both function-wrapper and R6 class implementations.
+#'
+#' @param obj Object to extract pointer from (Sound, Pitch, Formant, etc.)
+#' @param class_name Expected class name for error messages
+#'
+#' @return External pointer
+#' @keywords internal
+extract_xptr <- function(obj, class_name) {
+  if (inherits(obj, class_name)) {
+    # Try function-wrapper style first (.xptr field)
+    ptr <- obj$.xptr
+    
+    # Fallback 1: method call
+    if (is.null(ptr)) {
+      tryCatch({
+        ptr <- obj$get_xptr()
+      }, error = function(e) NULL)
+    }
+    
+    # Fallback 2: alternative field name
+    if (is.null(ptr) && !is.null(obj$.pointer)) {
+      ptr <- obj$.pointer
+    }
+    
+    # Fallback 3: R6 private environment (legacy)
+    if (is.null(ptr)) {
+      tryCatch({
+        ptr <- obj$.__enclos_env__$private$ptr
+      }, error = function(e) NULL)
+    }
+    
+    if (is.null(ptr)) {
+      stop(sprintf("Could not extract external pointer from %s object", class_name))
+    }
+    
+    ptr
+  } else if (inherits(obj, "externalptr")) {
+    obj
+  } else {
+    stop(sprintf("Expected %s or externalptr, got %s", class_name, class(obj)[1]))
+  }
+}
+
+
+#' Convert Unit Name to Praat Unit Code
+#'
+#' Standardized mapping from unit names to Praat integer codes.
+#' Ensures consistency across all APIs (Tier 1, 2, and 3).
+#'
+#' @param unit Character. Unit name
+#' @param type Character. Type of unit: "pitch", "formant", or "intensity"
+#'
+#' @return Integer unit code for Praat C++ layer
+#' @keywords internal
+unit_to_code <- function(unit, type = "pitch") {
+  unit <- tolower(unit)
+  
+  switch(type,
+    pitch = switch(unit,
+      hertz = 0L,
+      hz = 0L,
+      hertz_logarithmic = 1L,
+      mel = 2L,
+      loghertz = 3L,
+      semitones_re_1hz = 4L,
+      semitones_re_100hz = 5L,
+      semitones_re_200hz = 6L,
+      semitones_re_440hz = 7L,
+      erb = 8L,
+      0L  # default to hertz
+    ),
+    
+    formant = switch(unit,
+      hertz = 0L,
+      hz = 0L,
+      bark = 1L,
+      0L  # default to hertz
+    ),
+    
+    intensity = switch(unit,
+      db = 0L,
+      0L
+    ),
+    
+    stop(sprintf("Unknown unit type: %s", type))
+  )
+}
+
+
+#' Convert Interpolation Name to Praat Code
+#'
+#' Maps interpolation method names to integer codes.
+#'
+#' @param interpolation Character. Interpolation method name
+#'
+#' @return Integer interpolation code
+#' @keywords internal
+interpolation_to_code <- function(interpolation) {
+  switch(tolower(interpolation),
+    nearest = 0L,
+    linear = 1L,
+    cubic = 2L,
+    sinc70 = 3L,
+    sinc700 = 4L,
+    1L  # default to linear
+  )
+}
