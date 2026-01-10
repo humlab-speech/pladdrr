@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Spectrogram.h"
 #include "praat.github.io/fon/Spectrum.h"
 #include "praat.github.io/fon/Spectrum_and_Spectrogram.h"
@@ -100,10 +101,14 @@ public:
                 powers.push_back(ptr->z[row][col]);
             }
         }
-        return DataFrame::create(
-            Named("time") = times,
-            Named("frequency") = freqs,
-            Named("power") = powers
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("frequency") = freqs,
+                Named("power") = powers
+            ),
+            CharacterVector::create("time", "frequency", "power"),
+            CharacterVector::create("time", "frequency")
         );
     }
 

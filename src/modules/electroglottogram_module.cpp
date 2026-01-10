@@ -5,6 +5,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/sensors/Electroglottogram.h"
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/fon/TextGrid.h"

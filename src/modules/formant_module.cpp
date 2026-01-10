@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 
 // Praat headers
 #include "praat.github.io/fon/Formant.h"
@@ -252,11 +253,15 @@ public:
             }
         }
 
-        return DataFrame::create(
-            Named("time") = times,
-            Named("formant") = formant_nums,
-            Named("frequency") = frequencies,
-            Named("bandwidth") = bandwidths
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("formant") = formant_nums,
+                Named("frequency") = frequencies,
+                Named("bandwidth") = bandwidths
+            ),
+            CharacterVector::create("time", "formant", "frequency", "bandwidth"),
+            CharacterVector::create("time", "formant")  // Key for fast lookups
         );
     }
 

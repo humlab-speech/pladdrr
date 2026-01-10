@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/PointProcess.h"
 #include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/IntensityTier.h"
@@ -211,9 +212,13 @@ public:
             indices.push_back(static_cast<int>(i));
             times.push_back(ptr->t[i]);
         }
-        return DataFrame::create(
-            Named("index") = indices,
-            Named("time") = times
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("index") = indices,
+                Named("time") = times
+            ),
+            CharacterVector::create("index", "time"),
+            CharacterVector::create("time")
         );
     }
 

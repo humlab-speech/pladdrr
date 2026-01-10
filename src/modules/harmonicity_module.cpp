@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Harmonicity.h"
 
 using namespace Rcpp;
@@ -86,10 +87,14 @@ public:
             values.push_back(val);
             voiced.push_back(val > -200);  // -200 dB indicates unvoiced
         }
-        return DataFrame::create(
-            Named("time") = times,
-            Named("hnr") = values,
-            Named("voiced") = voiced
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("hnr") = values,
+                Named("voiced") = voiced
+            ),
+            CharacterVector::create("time", "hnr", "voiced"),
+            CharacterVector::create("time")
         );
     }
 

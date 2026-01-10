@@ -5,6 +5,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Excitation.h"
 #include "praat.github.io/fon/Spectrum_to_Excitation.h"
 #include "praat.github.io/fon/Excitation_to_Formant.h"

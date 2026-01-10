@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Ltas.h"
 #include "praat.github.io/fon/Matrix.h"
 
@@ -138,9 +139,13 @@ public:
             freqs.push_back(Matrix_columnToX(ptr.get(), i));
             values.push_back(ptr->z[1][i]);
         }
-        return DataFrame::create(
-            Named("frequency") = freqs,
-            Named("power_density") = values
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("frequency") = freqs,
+                Named("power_density") = values
+            ),
+            CharacterVector::create("frequency", "power_density"),
+            CharacterVector::create("frequency")
         );
     }
 

@@ -5,6 +5,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/LPC/LPC.h"
 #include "praat.github.io/LPC/Sound_and_LPC.h"
 #include "praat.github.io/LPC/LPC_to_Spectrum.h"

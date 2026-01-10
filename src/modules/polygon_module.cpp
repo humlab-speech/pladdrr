@@ -4,6 +4,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 
 // Praat headers
 #include "../praat.github.io/fon/Polygon.h"

@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/PointProcess.h"
 
@@ -139,9 +140,13 @@ public:
             times.push_back(ptr->points.at[i]->number);
             values.push_back(ptr->points.at[i]->value);
         }
-        return DataFrame::create(
-            Named("time") = times,
-            Named("frequency") = values
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("frequency") = values
+            ),
+            CharacterVector::create("time", "frequency"),
+            CharacterVector::create("time")
         );
     }
 

@@ -4,6 +4,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 
 // Praat headers
 #include "../praat.github.io/dwtools/ComplexSpectrogram.h"
@@ -228,11 +229,15 @@ public:
             }
         }
 
-        return DataFrame::create(
-            Named("time") = times,
-            Named("frequency") = frequencies,
-            Named("amplitude") = amplitudes,
-            Named("phase") = phases
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("time") = times,
+                Named("frequency") = frequencies,
+                Named("amplitude") = amplitudes,
+                Named("phase") = phases
+            ),
+            CharacterVector::create("time", "frequency", "amplitude", "phase"),
+            CharacterVector::create("time", "frequency")
         );
     }
 };

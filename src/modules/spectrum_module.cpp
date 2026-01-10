@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/Spectrum.h"
 #include "praat.github.io/fon/Sound.h"
 #include "praat.github.io/fon/Sound_and_Spectrum.h"
@@ -133,11 +134,15 @@ public:
             imags.push_back(ptr->z[2][i]);
             powers.push_back(ptr->z[1][i]*ptr->z[1][i] + ptr->z[2][i]*ptr->z[2][i]);
         }
-        return DataFrame::create(
-            Named("frequency") = freqs,
-            Named("real") = reals,
-            Named("imaginary") = imags,
-            Named("power") = powers
+        return pladdrr::dt::create_datatable(
+            List::create(
+                Named("frequency") = freqs,
+                Named("real") = reals,
+                Named("imaginary") = imags,
+                Named("power") = powers
+            ),
+            CharacterVector::create("frequency", "real", "imaginary", "power"),
+            CharacterVector::create("frequency")
         );
     }
 

@@ -3,6 +3,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/fon/DurationTier.h"
 #include "praat.github.io/fon/PointProcess.h"
 

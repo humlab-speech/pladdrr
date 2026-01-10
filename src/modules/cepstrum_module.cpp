@@ -6,6 +6,7 @@
 
 #include <Rcpp.h>
 #include "module_common.h"
+#include "../datatable_utils.h"
 #include "praat.github.io/LPC/Cepstrum.h"
 #include "praat.github.io/LPC/Cepstrum_and_Spectrum.h"
 #include "praat.github.io/LPC/Sound_and_Cepstrum.h"
