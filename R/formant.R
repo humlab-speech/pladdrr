@@ -133,14 +133,9 @@ extract_formants <- function(sound,
     }
   }
   
-  # Pre-allocate results
-  results <- data.frame(
-    time = numeric(),
-    formant_number = integer(),
-    frequency = numeric(),
-    bandwidth = numeric(),
-    stringsAsFactors = FALSE
-  )
+  # Pre-allocate results as list for rbindlist
+  results_list <- vector("list", length(frame_times) * n_formants)
+  idx <- 1L
   
   # Process each frame
   for (i in seq_along(frame_times)) {
@@ -167,28 +162,31 @@ extract_formants <- function(sound,
     lpc_order <- 2 * n_formants + 2
     formants <- .lpc_to_formants(frame, sr, lpc_order, n_formants, max_formant)
     
-    # Add to results
+    # Add to results list
     for (f in seq_len(n_formants)) {
       if (f <= nrow(formants)) {
-        results <- rbind(results, data.frame(
+        results_list[[idx]] <- list(
           time = t,
           formant_number = f,
           frequency = formants$frequency[f],
-          bandwidth = formants$bandwidth[f],
-          stringsAsFactors = FALSE
-        ))
+          bandwidth = formants$bandwidth[f]
+        )
       } else {
         # Undefined formant
-        results <- rbind(results, data.frame(
+        results_list[[idx]] <- list(
           time = t,
           formant_number = f,
           frequency = NA_real_,
-          bandwidth = NA_real_,
-          stringsAsFactors = FALSE
-        ))
+          bandwidth = NA_real_
+        )
       }
+      idx <- idx + 1L
     }
   }
+  
+  # Combine all results efficiently with rbindlist
+  results <- data.table::rbindlist(results_list)
+  data.table::setkey(results, time, formant_number)
   
   return(results)
 }

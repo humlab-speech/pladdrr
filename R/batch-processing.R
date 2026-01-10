@@ -477,48 +477,25 @@ pair_files <- function(sound_dir,
   
   # Match files
   if (by == "basename") {
-    pairs <- data.frame(
-      sound_file = character(),
-      textgrid_file = character(),
-      basename = character(),
-      stringsAsFactors = FALSE
+    # Use vectorized data.table join instead of loop
+    sound_dt <- data.table::data.table(
+      sound_file = sound_files,
+      basename = sound_basenames
+    )
+    tg_dt <- data.table::data.table(
+      textgrid_file = textgrid_files,
+      basename = tg_basenames
     )
     
-    # Find matches
-    for (i in seq_along(sound_files)) {
-      snd_base <- sound_basenames[i]
-      tg_idx <- match(snd_base, tg_basenames)
-      
-      if (!is.na(tg_idx)) {
-        pairs <- rbind(pairs, data.frame(
-          sound_file = sound_files[i],
-          textgrid_file = textgrid_files[tg_idx],
-          basename = snd_base,
-          stringsAsFactors = FALSE
-        ))
-      } else if (!require_both) {
-        pairs <- rbind(pairs, data.frame(
-          sound_file = sound_files[i],
-          textgrid_file = NA_character_,
-          basename = snd_base,
-          stringsAsFactors = FALSE
-        ))
-      }
+    if (require_both) {
+      # Inner join - only matched pairs
+      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename", all = FALSE)
+    } else {
+      # Full outer join - all files
+      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename", all = TRUE)
     }
     
-    # Add unmatched TextGrids if require_both = FALSE
-    if (!require_both) {
-      unmatched_tg <- setdiff(tg_basenames, pairs$basename)
-      for (tg_base in unmatched_tg) {
-        tg_idx <- match(tg_base, tg_basenames)
-        pairs <- rbind(pairs, data.frame(
-          sound_file = NA_character_,
-          textgrid_file = textgrid_files[tg_idx],
-          basename = tg_base,
-          stringsAsFactors = FALSE
-        ))
-      }
-    }
+    data.table::setkey(pairs, basename)
   } else {
     stop("Only 'basename' matching is currently supported")
   }
