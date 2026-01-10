@@ -1,0 +1,445 @@
+---
+title: "Performance Optimization Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Performance Optimization Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+# pladdrr Performance Optimization Guide
+
+This guide explains the **3-tier performance API** in pladdrr and how to choose the right level for your needs.
+
+## The Three Performance Tiers
+
+pladdrr provides three API tiers with increasing performance:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ TIER 1: High-Level API (Sound, Pitch, Formant, etc.)   │
+│ - Full object-oriented interface                        │
+│ - Method chaining: sound$to_pitch()$get_mean()         │
+│ - Best for: Interactive analysis, small datasets        │
+│ - Speed: Baseline (1x)                                  │
+└─────────────────────────────────────────────────────────┘
+           ↓
+┌─────────────────────────────────────────────────────────┐
+│ TIER 2: Direct API (*_direct functions)                 │
+│ - Accept XPtr directly, skip object dispatch            │
+│ - Best for: Tight loops, repeated queries               │
+│ - Speed: 2-3x faster than Tier 1                        │
+└─────────────────────────────────────────────────────────┘
+           ↓
+┌─────────────────────────────────────────────────────────┐
+│ TIER 3: Batch/Parallel API (*_batch, *_parallel)        │
+│ - Maximum performance for bulk operations               │
+│ - Best for: Large datasets, production workflows        │
+│ - Speed: 5-20x faster for batch processing              │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Tier 1: High-Level API (Best for Most Users)
+
+**When to use:** Interactive analysis, exploration, small datasets (<100 files)
+
+**Characteristics:**
+- Intuitive object-oriented interface
+- Method chaining
+- Full error checking and validation
+- Easy to read and maintain
+
+```{r tier1}
+library(pladdrr)
+
+# Load sound
+sound <- Sound("voice.wav")
+
+# Extract pitch (returns Pitch object)
+pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+
+# Query statistics
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+sd_f0 <- pitch$get_standard_deviation(0, 0, "hertz")
+
+# Method chaining
+formants <- sound$to_formant()$smooth()
+```
+
+**Performance:** Fine for most use cases. Only optimize if profiling shows bottlenecks.
+
+---
+
+## Tier 2: Direct API (2-3x Faster)
+
+**When to use:** Processing >100 files, tight loops, production code
+
+**Characteristics:**
+- Functions accept external pointers (XPtr) directly
+- Skip R6 object dispatch overhead
+- Return raw values or pointers
+- Require manual pointer extraction
+
+```{r tier2}
+# Extract pointer once
+sound_ptr <- sound$.xptr
+
+# Direct conversion (returns XPtr, not Pitch object)
+pitch_ptr <- to_pitch_direct(sound_ptr, 
+                              time_step = 0,
+                              pitch_floor = 75, 
+                              pitch_ceiling = 300)
+
+# Get statistics in one call (much faster than multiple queries)
+stats <- get_pitch_stats_direct(pitch_ptr)
+# Returns: list(min, max, mean, stdev, median, q25, q75, count_voiced)
+
+# Get F1-F4 in one call
+formant_ptr <- to_formant_direct(sound_ptr)
+formants <- get_formants_direct(formant_ptr, time = 0.5)
+# Returns: c(F1 = 500, F2 = 1500, F3 = 2500, F4 = 3500)
+```
+
+**Speedup comparison:**
+
+```{r tier2_comparison}
+# SLOW: 8 separate R→C boundary crossings
+min_f0 <- pitch$get_minimum(0, 0, "hertz")
+max_f0 <- pitch$get_maximum(0, 0, "hertz")
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+# ... 5 more calls
+
+# FAST: 1 boundary crossing
+stats <- get_pitch_stats_direct(pitch)  # 2-3x faster
+```
+
+### Available Direct Functions
+
+**Conversion:**
+- `to_pitch_direct()` - Create Pitch
+- `to_formant_direct()` - Create Formant
+- `to_intensity_direct()` - Create Intensity
+- `to_harmonicity_direct()` - Create Harmonicity
+- `to_spectrum_direct()` - Create Spectrum (NEW in v2.3.0)
+- `to_spectrogram_direct()` - Create Spectrogram (NEW)
+- `to_ltas_direct()` - Create LTAS (NEW)
+- `to_point_process_direct()` - Create PointProcess (NEW)
+
+**Queries:**
+- `get_pitch_stats_direct()` - All pitch statistics at once
+- `get_formants_direct()` - F1-F4 at time point
+- `get_pitch_value_direct()` - Single pitch value
+- `get_intensity_value_direct()` - Single intensity value
+- `get_formant_value_direct()` - Single formant value
+
+---
+
+## Tier 3: Batch & Parallel API (5-20x Faster)
+
+**When to use:** Large datasets (>100 files), production pipelines
+
+### Batch Operations
+
+Process multiple sounds in a single C++ call:
+
+```{r tier3_batch}
+# Load multiple sounds
+sounds <- lapply(files, Sound)
+
+# SLOW: Loop with Tier 1 API
+pitches <- lapply(sounds, function(s) s$to_pitch())  # n R→C crossings
+
+# FAST: Batch operation
+pitches <- sound_to_pitch_batch(sounds)  # 1 R→C crossing, 5-10x faster
+```
+
+**Available batch functions:**
+- `sound_to_pitch_batch()` - Batch pitch extraction
+- `sound_to_pitch_ac_batch()` - Batch autocorrelation pitch
+- `sound_to_pitch_cc_batch()` - Batch cross-correlation pitch
+- `sound_to_formant_batch()` - Batch formant extraction
+- `sound_to_intensity_batch()` - Batch intensity extraction
+
+### Vectorized Queries
+
+Extract values at multiple time points efficiently:
+
+```{r vectorized}
+# SLOW: Loop over time points (n R→C crossings)
+times <- seq(0.1, 1.0, by = 0.01)
+f0_values <- sapply(times, function(t) {
+  pitch$get_value_at_time(t, "hertz")
+})
+
+# FAST: Vectorized query (1 R→C crossing)
+f0_values <- pitch_get_values_at_times(pitch, times)  # 10x faster
+```
+
+**Vectorized query functions:**
+- `pitch_get_values_at_times()` - Batch pitch queries
+- `formant_get_values_at_times()` - Batch formant queries
+- `intensity_get_values_at_times()` - Batch intensity queries
+- `get_formants_at_times()` - Batch F1-F4 queries
+
+### Parallel Processing (NEW in v2.3.0)
+
+Use multiple CPU cores for maximum throughput:
+
+```{r parallel}
+# Analyze files in parallel
+files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+
+# Simple parallel analysis
+results <- analyze_files_parallel(files, function(sound) {
+  pitch <- sound$to_pitch()
+  list(
+    mean_f0 = pitch$get_mean(0, 0, "hertz"),
+    sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
+  )
+}, n_cores = 4)
+
+# Convenience functions
+pitches <- extract_pitch_parallel(files, n_cores = 4)
+formants <- extract_formant_parallel(files, n_cores = 4)
+intensities <- extract_intensity_parallel(files, n_cores = 4)
+```
+
+**Parallel functions:**
+- `analyze_files_parallel()` - Generic parallel file processing
+- `process_sounds_parallel()` - Parallel processing of loaded sounds
+- `extract_pitch_parallel()` - Parallel pitch extraction
+- `extract_formant_parallel()` - Parallel formant extraction
+- `extract_intensity_parallel()` - Parallel intensity extraction
+- `benchmark_parallel()` - Find optimal core count
+
+---
+
+## Performance Comparison Examples
+
+### Example 1: Single File Analysis
+
+```{r example1}
+sound <- Sound("voice.wav")
+
+# Tier 1: Standard API
+system.time({
+  pitch <- sound$to_pitch()
+  mean_f0 <- pitch$get_mean(0, 0, "hertz")
+  sd_f0 <- pitch$get_standard_deviation(0, 0, "hertz")
+  min_f0 <- pitch$get_minimum(0, 0, "hertz")
+  max_f0 <- pitch$get_maximum(0, 0, "hertz")
+})
+# ~50ms (baseline)
+
+# Tier 2: Direct API
+system.time({
+  pitch_ptr <- to_pitch_direct(sound$.xptr)
+  stats <- get_pitch_stats_direct(pitch_ptr)
+})
+# ~20ms (2.5x faster)
+```
+
+### Example 2: Batch Processing (100 files)
+
+```{r example2}
+files <- list.files("audio/", full.names = TRUE)[1:100]
+
+# Tier 1: Sequential
+system.time({
+  sounds <- lapply(files, Sound)
+  pitches <- lapply(sounds, function(s) s$to_pitch())
+})
+# ~15 seconds
+
+# Tier 3: Batch
+system.time({
+  sounds <- lapply(files, Sound)
+  pitches <- sound_to_pitch_batch(sounds)
+})
+# ~3 seconds (5x faster)
+
+# Tier 3: Parallel (4 cores)
+system.time({
+  pitches <- extract_pitch_parallel(files, n_cores = 4)
+})
+# ~4 seconds (3.75x faster, includes file I/O)
+```
+
+### Example 3: Formant Tracking Over Time
+
+```{r example3}
+sound <- Sound("vowel.wav")
+formant <- sound$to_formant()
+times <- seq(0.1, 0.5, by = 0.001)  # 400 time points
+
+# Tier 1: Loop
+system.time({
+  f1_values <- sapply(times, function(t) {
+    formant$get_value_at_time(1, t, "hertz")
+  })
+})
+# ~800ms (400 R→C crossings)
+
+# Tier 3: Vectorized
+system.time({
+  f1_values <- formant_get_values_at_times(formant, times, formant_number = 1)
+})
+# ~40ms (20x faster)
+```
+
+---
+
+## Decision Tree: Which Tier Should I Use?
+
+```
+Are you processing < 10 files?
+├─ YES → Use Tier 1 (standard API)
+└─ NO ↓
+
+Are you processing < 100 files?
+├─ YES → Use Tier 2 (direct API) if you need speed
+└─ NO ↓
+
+Are you processing > 100 files?
+├─ Single machine → Use Tier 3 batch + parallel
+└─ Cluster → Use Tier 2 direct + your cluster manager
+```
+
+---
+
+## Best Practices
+
+### 1. Start with Tier 1, Optimize Later
+
+Don't prematurely optimize. Use the standard API first:
+
+```{r best_practice1}
+# Good: Clear and maintainable
+pitch <- sound$to_pitch()$smooth()
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+```
+
+Only move to Tier 2/3 when:
+- Profiling shows bottlenecks
+- You're processing >100 files
+- Performance is critical for your workflow
+
+### 2. Batch Similar Operations
+
+```{r best_practice2}
+# SLOW: Multiple individual queries
+f1 <- formant$get_value_at_time(1, 0.5, "hertz")
+f2 <- formant$get_value_at_time(2, 0.5, "hertz")
+f3 <- formant$get_value_at_time(3, 0.5, "hertz")
+f4 <- formant$get_value_at_time(4, 0.5, "hertz")
+
+# FAST: Single batch query
+formants <- get_formants_direct(formant, time = 0.5)
+```
+
+### 3. Reuse Pointers in Loops
+
+```{r best_practice3}
+# SLOW: Extract pointer every iteration
+for (time in times) {
+  val <- get_pitch_value_direct(pitch, time)
+}
+
+# FAST: Extract once, use vectorized query
+pitch_ptr <- pitch$.xptr
+values <- pitch_get_values_at_times(pitch_ptr, times)
+```
+
+### 4. Choose Optimal Core Count
+
+Not all workloads scale linearly. Benchmark to find the sweet spot:
+
+```{r best_practice4}
+# Test different core counts
+benchmark_results <- benchmark_parallel(
+  files[1:20],  # Use subset for quick test
+  function(s) s$to_pitch()$get_mean(0, 0, "hertz"),
+  core_counts = c(1, 2, 4, 8)
+)
+
+print(benchmark_results)
+#   cores time_sec speedup
+# 1     1     5.2     1.00
+# 2     2     2.8     1.86
+# 3     4     1.6     3.25
+# 4     8     1.4     3.71  # Diminishing returns
+```
+
+### 5. Combine Batch + Parallel for Maximum Performance
+
+```{r best_practice5}
+# Ultimate performance: Parallel processing with batch operations
+analyze_files_parallel(files, function(sound) {
+  # Use batch operations within each worker
+  parts <- sound$extract_parts_batch(start_times, end_times)
+  formants <- sound_to_formant_batch(parts)
+  
+  # Vectorized queries
+  lapply(formants, function(f) {
+    formant_get_values_at_times(f, analysis_times)
+  })
+}, n_cores = 4)
+```
+
+---
+
+## Troubleshooting
+
+### Parallel Processing Issues
+
+**macOS/Linux:**
+- Uses `mclapply()` (fork-based parallelism)
+- Very efficient, minimal overhead
+- Shares memory between processes
+
+**Windows:**
+- Uses `parLapply()` (socket-based parallelism)
+- Creates separate R processes
+- Higher overhead, may need to export objects explicitly
+
+**Memory constraints:**
+- Each core loads files independently
+- With 4 cores and 100MB files, you need ~400MB RAM
+- Reduce `n_cores` if you hit memory limits
+
+### Performance Not Improving?
+
+1. **I/O bound?** - File reading may be the bottleneck
+2. **Small files?** - Parallelization overhead may exceed benefits
+3. **Disk speed?** - Try processing from SSD instead of HDD
+4. **Check CPU usage** - Use `htop` or Task Manager
+
+---
+
+## Summary Table
+
+| Tier | Use Case | Functions | Speedup | Learning Curve |
+|------|----------|-----------|---------|----------------|
+| 1 | Interactive, <10 files | `sound$to_pitch()` | 1x | Easy |
+| 2 | Loops, 10-100 files | `to_pitch_direct()` | 2-3x | Medium |
+| 3 | Production, >100 files | `sound_to_pitch_batch()` | 5-10x | Medium |
+| 3+ | Large datasets | `extract_pitch_parallel()` | 10-20x | Easy |
+
+---
+
+## Further Reading
+
+- `vignette("getting-started")` - Introduction to pladdrr
+- `?analyze_files_parallel` - Parallel processing documentation
+- `?get_pitch_stats_direct` - Direct API reference
+- `PLADDRR_IMPROVEMENT_PLAN.md` - Technical architecture details

@@ -298,3 +298,143 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
   unit_code <- switch(unit, hertz = 0L, bark = 1L, 0L)
   formant_get_value_direct(formant_ptr, formant_number, time, unit_code)
 }
+
+
+# =============================================================================
+# Additional Conversion Functions (Phase 3)
+# =============================================================================
+
+#' Create Spectrum from Sound Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param fast Logical. Use fast algorithm (default: TRUE)
+#'
+#' @return External pointer to Spectrum
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' # Fast direct conversion
+#' spec_ptr <- to_spectrum_direct(sound)
+#' spec <- Spectrum(.xptr = spec_ptr)
+#' }
+#'
+#' @export
+to_spectrum_direct <- function(sound, fast = TRUE) {
+  sound_ptr <- extract_xptr(sound, "Sound")
+  
+  # Use module method if available
+  if (inherits(sound, "Sound") && !is.null(sound$.cpp)) {
+    return(sound$.cpp$to_spectrum_ptr(as.logical(fast)))
+  }
+  
+  # Fallback to wrapper function
+  .sound_to_spectrum(sound_ptr, as.logical(fast))
+}
+
+
+#' Create Spectrogram from Sound Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param window_length Numeric. Window length in seconds (default: 0.005)
+#' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
+#' @param time_step Numeric. Time step in seconds (default: 0.002)
+#' @param frequency_step Numeric. Frequency step in Hz (default: 20)
+#' @param window_shape Character. Window shape (default: "Gaussian")
+#'
+#' @return External pointer to Spectrogram
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' # Fast direct conversion
+#' spg_ptr <- to_spectrogram_direct(sound, window_length = 0.005)
+#' spg <- Spectrogram(.xptr = spg_ptr)
+#' }
+#'
+#' @export
+to_spectrogram_direct <- function(sound, window_length = 0.005, 
+                                   max_frequency = 5000.0,
+                                   time_step = 0.002, 
+                                   frequency_step = 20.0,
+                                   window_shape = "Gaussian") {
+  sound_ptr <- extract_xptr(sound, "Sound")
+  
+  # Use module method if available
+  if (inherits(sound, "Sound") && !is.null(sound$.cpp)) {
+    return(sound$.cpp$to_spectrogram_ptr(
+      as.numeric(window_length),
+      as.numeric(max_frequency),
+      as.numeric(time_step),
+      as.numeric(frequency_step),
+      as.character(window_shape)
+    ))
+  }
+  
+  # Fallback to wrapper function
+  .sound_to_spectrogram(sound_ptr, window_length, max_frequency, 
+                        time_step, frequency_step, window_shape)
+}
+
+
+#' Create LTAS from Sound Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param bandwidth Numeric. Bandwidth in Hz (default: 100)
+#'
+#' @return External pointer to Ltas
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' # Fast direct conversion
+#' ltas_ptr <- to_ltas_direct(sound, bandwidth = 100)
+#' ltas <- Ltas(.xptr = ltas_ptr)
+#' }
+#'
+#' @export
+to_ltas_direct <- function(sound, bandwidth = 100.0) {
+  sound_ptr <- extract_xptr(sound, "Sound")
+  .sound_to_ltas(sound_ptr, as.numeric(bandwidth))
+}
+
+
+#' Create PointProcess from Sound Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
+#' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
+#' @param max_period_factor Numeric. Max period factor (default: 1.3)
+#' @param max_amplitude_factor Numeric. Max amplitude factor (default: 1.6)
+#'
+#' @return External pointer to PointProcess
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' # Extract glottal pulses
+#' pp_ptr <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
+#' pp <- PointProcess(.xptr = pp_ptr)
+#' }
+#'
+#' @export
+to_point_process_direct <- function(sound, pitch_floor = 75.0, 
+                                     pitch_ceiling = 600.0,
+                                     max_period_factor = 1.3,
+                                     max_amplitude_factor = 1.6) {
+  sound_ptr <- extract_xptr(sound, "Sound")
+  
+  # Use module method if available
+  if (inherits(sound, "Sound") && !is.null(sound$.cpp)) {
+    return(sound$.cpp$to_point_process_periodic_cc_ptr(
+      as.numeric(pitch_floor),
+      as.numeric(pitch_ceiling),
+      as.numeric(max_period_factor),
+      as.numeric(max_amplitude_factor)
+    ))
+  }
+  
+  # Fallback
+  .sound_to_point_process_periodic_cc(sound_ptr, pitch_floor, pitch_ceiling,
+                                       max_period_factor, max_amplitude_factor)
+}
