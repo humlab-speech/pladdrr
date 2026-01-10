@@ -2,7 +2,7 @@
 
 **Direct Access to Praat C Functionality from R**
 
-[![Version](https://img.shields.io/badge/version-3.0.1-blue)]()
+[![Version](https://img.shields.io/badge/version-3.0.2-blue)]()
 [![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)]()
 [![Rcpp Modules](https://img.shields.io/badge/modules-31-blue)]()
 [![Coverage](https://img.shields.io/badge/Praat%20coverage-32%25-orange)]()

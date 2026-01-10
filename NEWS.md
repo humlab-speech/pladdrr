@@ -1,3 +1,17 @@
+# pladdrr 3.0.2 (2026-01-10)
+
+## Bug Fixes
+
+* **CRITICAL:** Fixed `TextGrid` not being exported from package NAMESPACE (#bug reported by users)
+  - Added missing `@name TextGrid` roxygen tag to match other R6 objects (Sound, Pitch, Formant)
+  - Users no longer need `pladdrr:::TextGrid` workaround
+* Fixed pkgdown site build errors
+  - Removed invalid function references (sound_extract_parts_pooled, extract_xptr, autolayer-methods)
+  - Fixed article paths (articles/* prefix required for vignettes/articles/*.Rmd)
+  - Added "Internal & Development" section for helper functions and S3 methods
+
+---
+
 # pladdrr 3.0.1 (2026-01-10)
 
 ## Documentation & Package Maintenance
