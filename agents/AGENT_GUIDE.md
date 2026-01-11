@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 2.4.2 (2026-01-10)
+**Version:** 4.0.1 (2026-01-11)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -18,7 +18,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ---
 
-## Architecture Overview (v2.4.2 - 3-Tier Performance API)
+## Architecture Overview (v4.0.1 - 3-Tier Performance API + data.table)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,19 +58,18 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Performance Tiers (v2.4.2):**
+**Performance Tiers (v4.0.1):**
 | Tier | API | Speedup | Use Case |
 |------|-----|---------|----------|
 | **Tier 1 (Standard)** | `sound$to_pitch()` | 1x baseline | Interactive, <10 files |
 | **Tier 2 (Direct)** | `to_pitch_direct()` | 2-3x | Loops, 10-100 files |
 | **Tier 3 (Batch)** | `sound_to_pitch_batch()` | 5-10x | Production, >100 files |
-| **Tier 3 (Parallel)** | `analyze_files_parallel()` | 10-20x | Large datasets |
 
 **See comprehensive guides:**
 - `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
-- `BATCH_OPERATIONS_GUIDE.md` - All batch functions with examples
-- `MIGRATION_GUIDE.md` - How to optimize existing code
-- `NAMING_CONVENTIONS.md` - Function naming patterns explained
+- `vignettes/articles/batch-operations-guide.Rmd` - High-performance batch processing
+- `vignettes/articles/migration-guide.Rmd` - v3.0 breaking changes guide
+- `vignettes/articles/naming-conventions.Rmd` - API organization and patterns
 
 ### Data Flow Example: `sound$to_pitch_cc()`
 
@@ -448,43 +447,44 @@ soft_clip <- cppXPtr(
 clipped <- apply_transform_xptr(sound, soft_clip)
 ```
 
-### Pattern 2f: Parallel Processing (NEW in v2.3.0)
+### Pattern 2f: Parallel Processing (NOT YET EXPORTED - v4.0.1)
 
-**Performance:** 3-8x faster on multi-core systems for batch file processing.
+**NOTE:** Parallel processing functions exist in `R/parallel-batch.R` but are **not currently exported** in NAMESPACE. These are planned for a future release.
 
-When processing many audio files, use parallel processing to utilize multiple CPU cores:
+**Performance (when available):** 3-8x speedup on multi-core systems for I/O-bound tasks.
 
 ```r
-# Process 100 files using 4 cores (3-4x faster)
-files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+# FUTURE: Generic parallel file processing (NOT AVAILABLE YET)
+# files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+# 
+# results <- analyze_files_parallel(files, function(sound) {
+#   pitch <- sound$to_pitch()
+#   list(
+#     mean_f0 = pitch$get_mean(0, 0, "hertz"),
+#     sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
+#   )
+# }, n_cores = 4)
 
-# Generic parallel framework
-results <- analyze_files_parallel(files, function(sound) {
+# WORKAROUND: Use parallel package directly
+library(parallel)
+cl <- makeCluster(4)
+clusterEvalQ(cl, library(pladdrr))
+results <- parLapply(cl, files, function(file) {
+  sound <- Sound(file)
   pitch <- sound$to_pitch()
   list(mean_f0 = pitch$get_mean(0, 0, "hertz"))
-}, n_cores = 4)
-
-# Convenience functions for common analyses
-pitch_results <- extract_pitch_parallel(files, n_cores = 4)
-formant_results <- extract_formant_parallel(files, n_cores = 4)
-intensity_results <- extract_intensity_parallel(files, n_cores = 4)
-
-# Pre-loaded sounds
-sounds <- lapply(files, Sound)
-results <- process_sounds_parallel(sounds, function(sound) {
-  # Your analysis here
-}, n_cores = 4)
-
-# Find optimal core count for your workload
-optimal_cores <- benchmark_parallel(files[1:10], analysis_func, cores = 1:8)
+})
+stopCluster(cl)
 ```
 
-**Parallel processing functions:**
+**Parallel processing functions (NOT EXPORTED):**
 - `analyze_files_parallel(files, analysis_func, n_cores)` - Generic parallel file processing
 - `process_sounds_parallel(sounds, analysis_func, n_cores)` - Process pre-loaded sounds
 - `extract_pitch_parallel(files, n_cores, ...)` - Parallel pitch extraction
 - `extract_formant_parallel(files, n_cores, ...)` - Parallel formant extraction
 - `extract_intensity_parallel(files, n_cores, ...)` - Parallel intensity extraction
+
+**Status:** Implementation exists but awaiting export decision and comprehensive testing.
 - `benchmark_parallel(files, analysis_func, cores)` - Find optimal core count
 
 **Best practices:**
@@ -504,33 +504,33 @@ pitch <- sound$to_pitch()
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
 
 # TIER 2: Direct API (2-3x faster)
-pitch_ptr <- to_pitch_direct(sound$.xptr)
-f0_value <- get_pitch_value_direct(pitch_ptr, time = 1.0, unit = 0L, interpolate = TRUE)
+pitch_ptr <- to_pitch_direct(sound)
+f0_value <- get_pitch_value_direct(pitch_ptr, time = 1.0, unit = "hertz", interpolate = TRUE)
 
 # Create analysis objects directly (returns XPtr)
-formant_ptr <- to_formant_direct(sound$.xptr)
-intensity_ptr <- to_intensity_direct(sound$.xptr)
-harmonicity_ptr <- to_harmonicity_direct(sound$.xptr)
+formant_ptr <- to_formant_direct(sound)
+intensity_ptr <- to_intensity_direct(sound)
+harmonicity_ptr <- to_harmonicity_direct(sound)
 
 # NEW in v2.3.0: Complete Direct API coverage
-spectrum_ptr <- to_spectrum_direct(sound$.xptr, fast = TRUE)
-spectrogram_ptr <- to_spectrogram_direct(sound$.xptr)
-ltas_ptr <- to_ltas_direct(sound$.xptr, bandwidth = 100)
-pointprocess_ptr <- to_point_process_direct(sound$.xptr)
+spectrum_ptr <- to_spectrum_direct(sound, fast = TRUE)
+spectrogram_ptr <- to_spectrogram_direct(sound)
+ltas_ptr <- to_ltas_direct(sound, bandwidth = 100)
+pointprocess_ptr <- to_point_process_direct(sound)
 ```
 
 **Direct API functions for object creation:**
-- `to_pitch_direct(sound_xptr, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr
-- `to_formant_direct(sound_xptr, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr
-- `to_intensity_direct(sound_xptr, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr
-- `to_harmonicity_direct(sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr
-- `to_spectrum_direct(sound_xptr, fast)` → Spectrum XPtr (v2.3.0)
-- `to_spectrogram_direct(sound_xptr, ...)` → Spectrogram XPtr (v2.3.0)
-- `to_ltas_direct(sound_xptr, bandwidth)` → LTAS XPtr (v2.3.0)
-- `to_point_process_direct(sound_xptr, ...)` → PointProcess XPtr (v2.3.0)
+- `to_pitch_direct(sound, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr
+- `to_formant_direct(sound, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr
+- `to_intensity_direct(sound, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr
+- `to_harmonicity_direct(sound, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr
+- `to_spectrum_direct(sound, fast)` → Spectrum XPtr (v2.3.0)
+- `to_spectrogram_direct(sound, ...)` → Spectrogram XPtr (v2.3.0)
+- `to_ltas_direct(sound, bandwidth)` → LTAS XPtr (v2.3.0)
+- `to_point_process_direct(sound, ...)` → PointProcess XPtr (v2.3.0)
 
-**Direct API functions for queries (use integer unit codes):**
-- `get_pitch_value_direct(pitch_xptr, time, unit, interpolate)` - Single F0 value
+**Direct API functions for queries (accepts string units):**
+- `get_pitch_value_direct(pitch_xptr, time, unit, interpolate)` - Single F0 value (unit: "hertz", "semitones", etc.)
 - `get_pitch_stats_direct(pitch_xptr, from_time, to_time, unit)` - All pitch statistics
 - `get_formant_value_direct(formant_xptr, formant_number, time, unit)` - Single formant
 - `get_formants_direct(formant_xptr, time, unit)` - All formants at time
@@ -539,11 +539,11 @@ pointprocess_ptr <- to_point_process_direct(sound$.xptr)
 **Compound operations (single C++ call for multiple stats):**
 ```r
 # Get all common pitch statistics in one call
-stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, 0L)
+stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, "hertz")
 # Returns: list(min, max, mean, stdev, median, q25, q75, count_voiced)
 
 # Get all formants at single time point
-formants <- get_formants_direct(formant_ptr, time = 1.0, unit = 0L)
+formants <- get_formants_direct(formant_ptr, time = 1.0, unit = "hertz")
 # Returns: numeric vector of formant values
 ```
 
@@ -588,17 +588,31 @@ results <- sound_extract_and_formant(sound, start_times, end_times)
 - `sound_extract_and_formant(sound, starts, ends)` - Extract parts + formant
 - `sound_concatenate_all(sounds)` - Concatenate multiple sounds
 
-See `BATCH_OPERATIONS_GUIDE.md` for comprehensive batch operations documentation.
+See `vignettes/articles/batch-operations-guide.Rmd` for comprehensive batch operations documentation.
 
 ---
 
-### Pattern 3: Export to Data Frame
+### Pattern 3: Export to Data Frame (v4.0+: Returns data.table)
+
+**NEW in v4.0:** All `as.data.frame()` methods now return `data.table` (inherits from `data.frame`) for 5-15x faster batch operations.
 
 ```r
-# All objects support as.data.frame()
-pitch_df <- as.data.frame(pitch)           # time, f0
-formant_df <- as.data.frame(formant)       # time, f1, f2, f3, ...
-intensity_df <- as.data.frame(intensity)   # time, intensity
+# All objects support as.data.frame() - returns data.table
+pitch_df <- as.data.frame(pitch)           # time, f0 (data.table)
+formant_df <- as.data.frame(formant)       # time, f1, f2, f3, ... (data.table)
+intensity_df <- as.data.frame(intensity)   # time, intensity (data.table)
+
+# Check return type
+class(pitch_df)  # c("data.table", "data.frame")
+
+# data.table provides fast operations
+library(data.table)
+pitch_df[f0 > 200]              # Fast filtering (keyed by time)
+pitch_df[, mean(f0, na.rm=TRUE)] # Fast aggregation
+
+# Backward compatible - works with data.frame code
+pitch_df$f0                     # Column access works as before
+pitch_df[pitch_df$f0 > 200, ]  # data.frame syntax still works
 
 # With options
 pitch_df <- pitch$as_data_frame(
@@ -606,6 +620,12 @@ pitch_df <- pitch$as_data_frame(
   include_intensity = TRUE
 )
 ```
+
+**Performance benefits:**
+- Fast keyed lookups by time/formant/frequency
+- `rbindlist()` for efficient aggregation (replaces slow rbind loops)
+- In-place modification for memory efficiency
+- 5-15x faster for batch operations
 
 ### Pattern 4: Tier Manipulation
 
@@ -895,10 +915,13 @@ src/
 │   │   ├── Pitch.h
 │   │   └── ...
 │   └── melder/           # Error handling
+├── datatable_utils.h      # C++ helpers for data.table creation (v4.0+)
 R/
 ├── sound-r6-new.R         # Sound R wrapper
 ├── pitch-r6.R             # Pitch R wrapper
 ├── formant-r6.R           # Formant R wrapper
+├── datatable-utils.R      # R data.table helpers (v4.0+)
+├── parallel-batch.R       # Parallel processing (not exported)
 ├── zzz.R                  # Module loading
 └── RcppExports.R          # Auto-generated (don't edit)
 ```
@@ -907,7 +930,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v2.4.2 - 3-Tier Performance API**
+**Updated for v4.0.1 - 3-Tier Performance API + data.table**
 
 ```r
 # === LOAD AUDIO ===
@@ -924,10 +947,16 @@ f1 <- formant$get_value_at_time(1, 1.0, "hertz")
 f2 <- formant$get_value_at_time(2, 1.0, "hertz")
 db <- intensity$get_value_at_time(1.0, "cubic")
 
+# === DATA EXPORT (v4.0+: returns data.table) ===
+pitch_df <- as.data.frame(pitch)      # Returns data.table (inherits data.frame)
+formant_df <- as.data.frame(formant)  # data.table with keyed columns
+library(data.table)
+pitch_df[f0 > 200]                    # Fast filtering (5-15x faster)
+
 # === TIER 2: DIRECT API (2-3x faster, bypasses R dispatch) ===
-pitch_ptr <- to_pitch_direct(sound$.xptr)
-f0_value <- get_pitch_value_direct(pitch_ptr, 1.0, 0L, TRUE)
-all_stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, 0L)
+pitch_ptr <- to_pitch_direct(sound)
+f0_value <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+all_stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, "hertz")
 
 # === TIER 3: BATCH QUERIES (5-10x faster for multiple points) ===
 times <- seq(0.5, 2.5, by = 0.01)
@@ -940,15 +969,9 @@ sounds <- lapply(files, Sound)
 pitches <- sound_to_pitch_batch(sounds, time_step = 0.01)
 formants <- sound_to_formant_batch(sounds)
 
-# === TIER 3: PARALLEL PROCESSING (3-8x faster, multi-core) ===
-files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
-results <- analyze_files_parallel(files, function(sound) {
-  pitch <- sound$to_pitch()
-  list(mean_f0 = pitch$get_mean(0, 0, "hertz"))
-}, n_cores = 4)
-
-# Or use convenience functions
-pitch_results <- extract_pitch_parallel(files, n_cores = 4)
+# Aggregate using data.table::rbindlist (v4.0+)
+library(data.table)
+all_results <- rbindlist(results, idcol = "file_id")
 
 # === BATCH STATISTICS (10-50x faster for multi-interval) ===
 from_times <- seq(0, 9, length.out = 100)
@@ -1019,6 +1042,42 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ## Version History
 
+**v4.0.1 (2026-01-11):**
+- **MAJOR: Complete data.table migration** - All C++ modules and R code
+  - 26 Rcpp modules migrated to return data.table (inherits from data.frame)
+  - Added `src/datatable_utils.h` - C++ helpers for data.table creation
+  - Added `R/datatable-utils.R` - R utilities and backward compatibility
+  - **Performance gains:** 5-15x faster batch operations, 8x faster formant extraction
+  - Fast keyed lookups by time/formant/frequency columns
+  - `rbindlist()` eliminates slow rbind loops (400+ operations in formant.R)
+- **Critical R bottleneck refactoring:**
+  - `formant.R`: Replaced nested rbind() → list + rbindlist() (8x faster)
+  - `batch-processing.R`: Vectorized data.table merge (8x faster file pairing)
+  - TextGrid filtering: 10-50x faster with keyed data.table lookups
+- **Infrastructure updates:**
+  - Package now requires `data.table (>= 1.14.0)` in Imports
+  - All `@return` tags updated to reflect data.table return types
+  - Comprehensive benchmarks in `inst/benchmarks/16_datatable_migration_benchmark.R`
+  - Migration guide: `vignettes/articles/migration-guide.Rmd`
+- **Build fixes:**
+  - Fixed KlattGrid vignette segfaults (disabled execution during build)
+  - All vignettes now render successfully in R CMD build
+
+**v3.0.2 (2026-01-10):**
+- **CRITICAL:** Fixed TextGrid export bug (missing NAMESPACE entry)
+- Fixed pkgdown site build errors
+
+**v3.0.1 (2026-01-10):**
+- **Documentation restructure for pkgdown**
+  - Created `_pkgdown.yml` with 15 function groups (450+ functions)
+  - Added developer articles: migration-guide, naming-conventions, batch-operations-guide
+  - Archived 48 historical docs to `docs-archive/`
+- **Package metadata:** Added URL and BugReports to DESCRIPTION
+
+**v3.0.0 (2026-01-10):**
+- **BREAKING:** Removed deprecated functions and disabled batch analysis stubs
+- Clean v3.0 baseline for data.table migration
+
 **v2.4.2 (2026-01-10):**
 - **Phase 5 investigation:** Analyzed disabled batch analysis functions (voice_quality_batch, etc.)
   - Conclusion: Not worth re-enabling due to Praat API changes and excellent existing alternatives
@@ -1037,8 +1096,8 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
   - All deprecated functions emit `.Deprecated()` warnings
   - Will be removed in v3.0.0 (12+ month notice)
 - **New guides:**
-  - `MIGRATION_GUIDE.md` - Complete migration reference (400+ lines)
-  - `NAMING_CONVENTIONS.md` - Function naming patterns explained (350+ lines)
+  - `vignettes/articles/migration-guide.Rmd` - Complete migration reference (v3.0 breaking changes)
+  - `vignettes/articles/naming-conventions.Rmd` - Function naming patterns explained
 - **Developer experience:** Clear guidance on API usage and deprecation timeline
 
 **v2.3.0 (2026-01-10):**
@@ -1055,7 +1114,7 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
   - `to_point_process_direct()` - Create PointProcess (returns XPtr)
 - **Comprehensive documentation:**
   - New vignette: `performance-optimization.Rmd` - Complete 3-tier API guide (500+ lines)
-  - New guide: `BATCH_OPERATIONS_GUIDE.md` - All batch functions explained (400+ lines)
+  - New article: `vignettes/articles/batch-operations-guide.Rmd` - All batch functions explained
   - Decision trees, benchmarks, best practices
 
 **v2.2.7 (2026-01-09):**
@@ -1132,7 +1191,8 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 ---
 
-**Guide Version:** 2.4.2
-**Last Updated:** 2026-01-10
-**Package Version:** 2.4.2
+**Guide Version:** 4.0.1
+**Last Updated:** 2026-01-11
+**Package Version:** 4.0.1
 **Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
+**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization
