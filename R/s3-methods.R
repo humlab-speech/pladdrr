@@ -83,7 +83,7 @@ summary.praat_sound <- function(object, ...) {
 #' @param x A praat_sound object
 #' @param ... Additional arguments (currently unused)
 #'
-#' @return A data frame with two columns:
+#' @return A data.table (inherits from data.frame) with two columns:
 #'   \describe{
 #'     \item{time}{Time in seconds}
 #'     \item{amplitude}{Amplitude values}
@@ -124,7 +124,7 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' @param row.names Ignored
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
-#' @return A data frame with time, channel, and value columns
+#' @return A data.table (inherits from data.frame) with time, channel, and value columns
 #' @export
 as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
   # R6 Sound object - delegate to R6 method
@@ -286,7 +286,7 @@ summary.praat_formant <- function(object, ...) {
 #' @param row.names Not used
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
-#' @return The values data.frame from the formant object
+#' @return The values data.table (inherits from data.frame) from the formant object
 #' @export
 as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
@@ -349,7 +349,7 @@ summary.praat_intensity <- function(object, ...) {
 #' @param row.names Not used
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
-#' @return The values data.frame from the intensity object
+#' @return The values data.table (inherits from data.frame) from the intensity object
 #' @export
 as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
@@ -368,7 +368,7 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE,
 #' @param row.names Ignored
 #' @param optional Ignored
 #' @param ... Additional arguments passed to `$as_data_frame()`
-#' @return A data frame with formant measurements
+#' @return A data.table (inherits from data.frame) with formant measurements
 #' @export
 as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame(...)
@@ -383,7 +383,7 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @param row.names Ignored
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
-#' @return A data frame with time and intensity columns
+#' @return A data.table (inherits from data.frame) with time and intensity columns
 #' @export
 as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()
@@ -398,7 +398,7 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) 
 #' @param row.names Ignored
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
-#' @return A data frame with pitch measurements
+#' @return A data.table (inherits from data.frame) with pitch measurements
 #' @export
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()

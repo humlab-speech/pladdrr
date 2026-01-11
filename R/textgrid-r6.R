@@ -360,7 +360,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 
     #' Get all intervals from a tier in single C++ call
     #' @param tier Tier number (1-based) or name
-    #' @return data.frame with start, end, text columns
+    #' @return data.table (inherits from data.frame) with start, end, text columns
     get_all_intervals = function(tier = 1L) {
       tier_num <- resolve_tier_number(tier)
       if (!cpp_tg$is_interval_tier(tier_num)) {
@@ -379,7 +379,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 
     #' Get all points from a point tier in single C++ call
     #' @param tier Tier number (1-based) or name
-    #' @return data.frame with time, text columns
+    #' @return data.table (inherits from data.frame) with time, text columns
     get_all_points = function(tier = 1L) {
       tier_num <- resolve_tier_number(tier)
       if (!cpp_tg$is_point_tier(tier_num)) {
