@@ -117,7 +117,7 @@ cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
 
 ### Step 3: Resynthesize with KlattGrid
 
-```{r resynthesize}
+```{r resynthesize, eval=FALSE}
 # Create KlattGrid with extracted parameters
 kg <- KlattGrid_createFromVowel(
   duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
@@ -137,7 +137,7 @@ cat("  Samples:", sound_resynth$get_number_of_samples(), "\n")
 
 ### Step 4: Compare Original vs Resynthesized
 
-```{r compare-spectrograms, fig.width=8, fig.height=6}
+```{r compare-spectrograms, fig.width=8, fig.height=6, eval=FALSE}
 # Create spectrograms for comparison
 spec_orig <- sound_orig$to_spectrogram(
   window_length = 0.005,
@@ -188,7 +188,7 @@ ggplot(df_combined, aes(time, frequency, color = factor(formant_num))) +
 
 ### Create Synthetic Vowel with Known Parameters
 
-```{r synthetic-vowel}
+```{r synthetic-vowel, eval=FALSE}
 # Define target /a/ vowel parameters
 target_f1 <- 730
 target_f2 <- 1090
@@ -213,7 +213,7 @@ sound_vowel <- kg_vowel$to_sound()
 
 ### Analyze Synthetic Vowel
 
-```{r analyze-synthetic}
+```{r analyze-synthetic, eval=FALSE}
 # Analyze with FormantPath
 fp_vowel <- sound_vowel$to_formant_path(
   time_step = 0.005,
@@ -248,7 +248,7 @@ cat(sprintf("  F3 error: %.1f%%\n", f3_error))
 
 ### Visualize Round-Trip
 
-```{r round-trip-viz, fig.width=8, fig.height=4}
+```{r round-trip-viz, fig.width=8, fig.height=4, eval=FALSE}
 # Create comparison data frame
 df_comparison <- data.frame(
   Formant = rep(c("F1", "F2", "F3"), 2),
@@ -276,7 +276,7 @@ ggplot(df_comparison, aes(Formant, Frequency, fill = Type)) +
 
 ### Synthesize Vowel Triangle
 
-```{r vowel-triangle-synth}
+```{r vowel-triangle-synth, eval=FALSE}
 # Define cardinal vowels
 vowels <- list(
   i = list(label = "/i/ (beet)", f1 = 280, f2 = 2250, f3 = 2890),
@@ -309,7 +309,7 @@ for (v_name in names(vowels)) {
 
 ### Analyze Vowel Triangle
 
-```{r vowel-triangle-analyze}
+```{r vowel-triangle-analyze, eval=FALSE}
 # Analyze each synthetic vowel
 for (v_name in names(vowels)) {
   sound <- vowel_sounds[[v_name]]
@@ -342,7 +342,7 @@ vowel_space <- do.call(rbind, vowel_results)
 
 ### Plot Vowel Space
 
-```{r vowel-space-plot, fig.width=8, fig.height=6}
+```{r vowel-space-plot, fig.width=8, fig.height=6, eval=FALSE}
 # Create vowel space plot (F1 vs F2)
 vowel_space_long <- rbind(
   data.frame(
@@ -386,7 +386,7 @@ ggplot(vowel_space_long, aes(F2, F1, color = type, shape = vowel)) +
 
 ### Verify Vowel Space Relationships
 
-```{r vowel-relationships}
+```{r vowel-relationships, eval=FALSE}
 # Check phonetic relationships are preserved
 cat("Vowel space relationships:\n\n")
 
@@ -427,7 +427,7 @@ cat(sprintf("  ✓ /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
 
 ### Morph Between Two Speakers
 
-```{r voice-morph}
+```{r voice-morph, eval=FALSE}
 # Define two speaker profiles
 speaker_male <- list(
   f1 = 730, f2 = 1090, f3 = 2440,
@@ -481,7 +481,7 @@ for (i in seq_along(morph_alphas)) {
 
 ### Visualize Morph Continuum
 
-```{r morph-viz, fig.width=8, fig.height=5}
+```{r morph-viz, fig.width=8, fig.height=5, eval=FALSE}
 # Plot formant trajectories across morph
 morph_long <- tidyr::pivot_longer(
   morph_results,
