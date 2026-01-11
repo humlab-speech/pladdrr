@@ -153,6 +153,7 @@ test_that("get_textgrid_interval_stats returns correct stats", {
   
   # Should be data frame
   expect_s3_class(stats, "data.frame")
+  expect_s3_class(df, "data.table")
   
   # Check columns
   expect_true("index" %in% names(stats))

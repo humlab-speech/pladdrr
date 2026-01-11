@@ -1,4 +1,5 @@
 test_that("Benchmark TextGrid 60min loads successfully", {
+library(data.table)
   skip_on_cran()  # Large file, skip on CRAN
   
   tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid", package = "speaker")
@@ -104,6 +105,7 @@ test_that("Benchmark TextGrid data frame export works", {
     df <- tg$as_data_frame(tiers = 1)
     
     expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
     expect_true("time" %in% names(df) || "start_time" %in% names(df))
   }
 })

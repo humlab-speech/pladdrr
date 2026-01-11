@@ -19,6 +19,7 @@ test_that("extract_pitch() creates valid praat_pitch object", {
   # Check object class
   expect_s3_class(pitch, "Pitch")
   expect_s3_class(pitch, "data.frame")
+  expect_s3_class(df, "data.table")
 
   # Check required columns exist
   expect_true("time" %in% names(pitch))

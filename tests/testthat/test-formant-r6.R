@@ -1,4 +1,5 @@
 # Tests for Formant R6 class
+library(data.table)
 library(testthat)
 library(pladdrr)
 
@@ -168,6 +169,7 @@ test_that("Formant export to data frame works", {
   df <- formant$as_data_frame(max_formants = 5)
   
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("F1" %in% names(df))
   expect_true("F2" %in% names(df))

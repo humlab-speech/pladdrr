@@ -1,4 +1,5 @@
 # test-s3-methods.R - Tests for S3 methods (print, summary, as.data.frame)
+library(data.table)
 #
 # These tests verify that S3 methods provide appropriate output
 #
@@ -92,6 +93,7 @@ test_that("as.data.frame.praat_sound() converts to data frame correctly", {
 
   # Check structure
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_equal(nrow(df), length(values))
   expect_equal(ncol(df), 2)  # time and amplitude columns
 
@@ -150,6 +152,7 @@ test_that("as.data.frame.praat_sound() can be used for plotting", {
     # Simulate plot call (doesn't actually render in tests)
     plot_data <- df[, c("time", "amplitude")]
     expect_s3_class(plot_data, "data.frame")
+  expect_s3_class(df, "data.table")
   })
 })
 

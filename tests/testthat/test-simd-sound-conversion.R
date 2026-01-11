@@ -1,4 +1,5 @@
 # Test SIMD data conversion operations
+library(data.table)
 # Validates numerical accuracy of sound-to-matrix conversions
 
 test_that("SIMD data conversion preserves values", {

@@ -1,4 +1,5 @@
 # test-phase4-modules.R - Tests for Phase 4 Rcpp Modules (pladdrr 2.0)
+library(data.table)
 # Covers: Matrix, Cepstrum, PowerCepstrum, Cochleagram, Excitation,
 #         Electroglottogram, FormantGrid
 
@@ -126,6 +127,7 @@ test_that("RCepstrum export works", {
 
   df <- rcepstrum$as_data_frame()
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("quefrency" %in% names(df))
   expect_true("value" %in% names(df))
 })
@@ -324,6 +326,7 @@ test_that("RElectroglottogram export works", {
 
   df <- regg$as_data_frame()
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("amplitude" %in% names(df))
 })

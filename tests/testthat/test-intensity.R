@@ -22,6 +22,7 @@ test_that("extract_intensity works with basic input", {
   
   # Check values data.frame
   expect_s3_class(intensity$values, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(intensity$values))
   expect_true("intensity_db" %in% names(intensity$values))
   
@@ -225,6 +226,7 @@ test_that("intensity S3 methods work", {
   # as.data.frame method
   df <- as.data.frame(intensity)
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("intensity_db" %in% names(df))
 })

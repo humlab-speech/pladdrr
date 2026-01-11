@@ -1,4 +1,5 @@
 # test-pitch-module.R - Tests for RPitch Rcpp Module (pladdrr 2.0)
+library(data.table)
 
 # Skip all tests if module boot function not registered
 # (requires manual RcppExports.cpp patch after compileAttributes)
@@ -146,6 +147,7 @@ test_that("RPitch as_data_frame exports correctly", {
   # Basic export
   df <- rpitch$as_data_frame(TRUE, FALSE)
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("frequency" %in% names(df))
   expect_true("voiced" %in% names(df))

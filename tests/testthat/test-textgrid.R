@@ -1,4 +1,5 @@
 test_that("TextGrid can be read from file", {
+library(data.table)
   skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
               "Test TextGrid file not found")
   
@@ -136,6 +137,7 @@ test_that("TextGrid can export to data frame", {
   # Export all tiers
   df <- tg$as_data_frame()
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("tier_name" %in% names(df))
   expect_true("tier_number" %in% names(df))
   expect_true("label" %in% names(df) || "text" %in% names(df))
@@ -143,6 +145,7 @@ test_that("TextGrid can export to data frame", {
   # Export specific tier
   df_words <- tg$as_data_frame(tiers = "words")
   expect_s3_class(df_words, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true(all(df_words$tier_name == "words"))
 })
 

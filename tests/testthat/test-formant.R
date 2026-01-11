@@ -22,6 +22,7 @@ test_that("extract_formants works with basic input", {
   
   # Check values data.frame
   expect_s3_class(formants$values, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(formants$values))
   expect_true("formant_number" %in% names(formants$values))
   expect_true("frequency" %in% names(formants$values))
@@ -167,6 +168,7 @@ test_that("formant S3 methods work", {
   # as.data.frame method
   df <- as.data.frame(formants)
   expect_s3_class(df, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("frequency" %in% names(df))
 })

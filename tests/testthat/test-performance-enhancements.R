@@ -1,4 +1,5 @@
 # Tests for performance enhancement features
+library(data.table)
 # Added 2026-01-06 based on user feedback
 
 context("Performance Enhancements")
@@ -206,6 +207,7 @@ test_that("TextGrid$get_all_intervals works correctly", {
   }, error = function(e) skip("get_all_intervals not available - needs recompilation"))
   
   expect_s3_class(intervals, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_equal(names(intervals), c("start", "end", "text"))
   expect_equal(nrow(intervals), 3)
   
@@ -233,6 +235,7 @@ test_that("TextGrid$get_all_points works correctly", {
   }, error = function(e) skip("get_all_points not available - needs recompilation"))
   
   expect_s3_class(points, "data.frame")
+  expect_s3_class(df, "data.table")
   expect_equal(names(points), c("time", "text"))
   expect_equal(nrow(points), 3)
 })
