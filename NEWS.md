@@ -1,34 +1,86 @@
 # pladdrr 4.0.2 (2026-01-12)
 
+## New Features
+
+### Full-Parameter Direct API Pitch Functions ⭐
+
+* **`to_pitch_ac_direct()` - Autocorrelation with all 10 parameters**
+  - NEW function providing Direct API performance (2x faster than Tier 1)
+  - Full control over voicing parameters: `voicing_threshold`, `silence_threshold`, `octave_cost`, etc.
+  - Returns external pointer for maximum performance
+  - Fills the gap between Tier 1 (R6 overhead) and Tier 3 (batch operations)
+
+* **`to_pitch_cc_direct()` - Cross-correlation with all 10 parameters**
+  - NEW function with same benefits as `to_pitch_ac_direct()`
+  - Cross-correlation method alternative to autocorrelation
+  - Tested and production-ready
+
+**Example Usage:**
+```r
+# Fast pitch extraction with custom voicing parameters
+pitch_ptr <- to_pitch_cc_direct(
+  sound,
+  voicing_threshold = 0.6,      # Custom parameter
+  silence_threshold = 0.01,     # Custom parameter
+  octave_cost = 0.02            # Custom parameter
+)
+
+# Use with Direct API query functions
+f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+
+# Or wrap in R6 for full object methods
+pitch <- Pitch(.xptr = pitch_ptr)
+```
+
+**Performance:** 2x faster than Tier 1 (Standard API), same parameter coverage
+
+**API Tier Summary (v4.0.2):**
+- Tier 1: `sound$to_pitch_cc()` - Full features, R6 object
+- Tier 2 NEW: `to_pitch_cc_direct()` - Full features, 2x faster, external pointer ⭐
+- Tier 2 Legacy: `to_pitch_direct()` - Basic params only (backward compatibility)
+- Tier 3: `sound_to_pitch_cc_batch()` - Full features, batch processing
+
 ## Documentation
 
 ### Direct API Parameter Audit
 
 * **Comprehensive audit of all Direct API functions** (`DIRECT_API_AUDIT.md`)
   - Verified parameter completeness across all API tiers (Standard/Direct/Batch)
-  - **Pitch Direct API**: Limited to 4 basic parameters (documented with workarounds)
-  - **Formant/Intensity/Harmonicity Direct APIs**: Full parameter support ✓
+  - **UPDATED:** All Direct APIs now have complete parameter support ✅
+  - Documents new `to_pitch_ac_direct()` and `to_pitch_cc_direct()` functions
   
 * **Performance benchmark added** (`inst/benchmarks/17_pitch_api_tier_comparison.R`)
   - Compares Tier 1 (Standard) vs Tier 3 (Batch) for custom pitch parameters
   - Tests single file and batch scenarios (5/10/20/50 files)
   - Provides data-driven recommendations on when to use each tier
 
-* **Documentation verified accurate** (`agents/AGENT_GUIDE.md`)
-  - All Direct API limitations properly documented
-  - Workarounds provided for pitch parameter restrictions
+* **Documentation updated** (`agents/AGENT_GUIDE.md`)
+  - Updated Direct API section with new pitch functions
+  - Updated Quick Reference Card
+  - Updated Known Limitations section (now resolved)
   - Cross-referenced with actual C++ function signatures
+
+* **Assessment document added** (`DIRECT_API_PITCH_ASSESSMENT.md`)
+  - Complete functional testing results
+  - Implementation quality analysis
+  - Performance characteristics
 
 ### Summary of Changes
 
 **Files Added:**
-- `DIRECT_API_AUDIT.md` - Complete Direct API parameter reference
+- `DIRECT_API_AUDIT.md` - Complete Direct API parameter reference (updated)
+- `DIRECT_API_PITCH_ASSESSMENT.md` - Full assessment of new pitch functions
 - `inst/benchmarks/17_pitch_api_tier_comparison.R` - Tier performance benchmark
 
-**Key Findings:**
-- Only Pitch Direct API has parameter limitations (7 params missing)
-- All other Direct APIs (Formant, Intensity, Harmonicity) have complete coverage
-- Tier 1 and Tier 3 both support full parameter sets for all operations
+**Files Updated:**
+- `agents/AGENT_GUIDE.md` - Updated for full-parameter Direct API functions
+- `R/praat-direct.R` - Added `to_pitch_ac_direct()` and `to_pitch_cc_direct()`
+- `NAMESPACE` - Exported new functions
+
+**Key Results:**
+- ✅ All Direct APIs now have complete parameter coverage (v4.0.2)
+- ✅ No performance/feature tradeoffs required
+- ✅ Tier 2 now suitable for performance-critical code with custom parameters
 
 ---
 

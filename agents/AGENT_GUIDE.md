@@ -496,61 +496,33 @@ stopCluster(cl)
 
 **Performance:** 2-3x faster than module dispatch for hot paths.
 
-**IMPORTANT LIMITATION (v4.0.1):** The current Direct API pitch functions (`to_pitch_direct()`) only support basic parameters (time_step, pitch_floor, pitch_ceiling). For full control over voicing parameters (voicing_threshold, silence_threshold, octave_cost, etc.), you must use:
-
-1. **Tier 1 (Standard API)** - Full parameter control, R6 overhead
-2. **Tier 3 (Batch API)** - Full parameters + batch performance
-
-**Workaround for loops requiring custom voicing parameters:**
-```r
-# OPTION 1: Use Tier 1 with pre-created objects (minimal overhead)
-pitch <- sound$to_pitch_cc(
-  time_step = 0,
-  pitch_floor = 75,
-  pitch_ceiling = 600,
-  voicing_threshold = 0.6,     # Custom voicing detection
-  silence_threshold = 0.01     # Custom silence threshold
-)
-# Then use fast query methods
-f0 <- pitch$get_value_at_time(1.0, "hertz")
-
-# OPTION 2: Use Tier 3 batch operations for multiple sounds
-sounds <- lapply(files, Sound)
-pitches <- sound_to_pitch_cc_batch(
-  sounds,
-  voicing_threshold = 0.6,
-  silence_threshold = 0.01
-)
-```
-
-When maximum performance is critical AND basic pitch parameters are sufficient, use Direct API functions that bypass all R wrapper overhead:
+**NEW in v4.0.2:** Full-parameter Direct API pitch functions now available! Use `to_pitch_ac_direct()` or `to_pitch_cc_direct()` for custom voicing parameters with Direct API performance.
 
 ```r
-# TIER 1: Standard (baseline, full features)
-pitch <- sound$to_pitch()
+# TIER 1: Standard (baseline, full features, R6 object)
+pitch <- sound$to_pitch_cc(voicing_threshold = 0.6)
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
 
-# TIER 2: Direct API (2-3x faster, BASIC PARAMETERS ONLY)
-pitch_ptr <- to_pitch_direct(sound)  # Only: time_step, pitch_floor, pitch_ceiling
+# TIER 2: Direct API with FULL PARAMETERS (v4.0.2+) ⭐ NEW
+pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)
 f0_value <- get_pitch_value_direct(pitch_ptr, time = 1.0, unit = "hertz", interpolate = TRUE)
+# 2x faster than Tier 1, returns external pointer
 
-# Create analysis objects directly (returns XPtr)
-formant_ptr <- to_formant_direct(sound)      # Full parameters available
-intensity_ptr <- to_intensity_direct(sound)  # Full parameters available
-harmonicity_ptr <- to_harmonicity_direct(sound)  # Full parameters available
+# TIER 2: Legacy Direct API (basic parameters only)
+pitch_ptr <- to_pitch_direct(sound)  # Only: time_step, pitch_floor, pitch_ceiling
+# Kept for backward compatibility
 
-# NEW in v2.3.0: Complete Direct API coverage
-spectrum_ptr <- to_spectrum_direct(sound, fast = TRUE)
-spectrogram_ptr <- to_spectrogram_direct(sound)
-ltas_ptr <- to_ltas_direct(sound, bandwidth = 100)
-pointprocess_ptr <- to_point_process_direct(sound)
+# TIER 3: Batch API (fastest for >10 files)
+pitches <- sound_to_pitch_cc_batch(sounds, voicing_threshold = 0.6)
 ```
 
 **Direct API functions for object creation:**
-- `to_pitch_direct(sound, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr ⚠️ **Basic params only**
-- `to_formant_direct(sound, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr ✓ **Full params**
-- `to_intensity_direct(sound, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr ✓ **Full params**
-- `to_harmonicity_direct(sound, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr ✓ **Full params**
+- `to_pitch_direct(sound, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr (legacy, basic params)
+- `to_pitch_ac_direct(sound, ...)` → Pitch XPtr ✅ **Full params (v4.0.2+)**
+- `to_pitch_cc_direct(sound, ...)` → Pitch XPtr ✅ **Full params (v4.0.2+)**
+- `to_formant_direct(sound, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr ✅ **Full params**
+- `to_intensity_direct(sound, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr ✅ **Full params**
+- `to_harmonicity_direct(sound, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr ✅ **Full params**
 - `to_spectrum_direct(sound, fast)` → Spectrum XPtr (v2.3.0)
 - `to_spectrogram_direct(sound, ...)` → Spectrogram XPtr (v2.3.0)
 - `to_ltas_direct(sound, bandwidth)` → LTAS XPtr (v2.3.0)
@@ -981,11 +953,13 @@ library(data.table)
 pitch_df[f0 > 200]                    # Fast filtering (5-15x faster)
 
 # === TIER 2: DIRECT API (2-3x faster, bypasses R dispatch) ===
-# NOTE: to_pitch_direct() only supports basic parameters
-# For custom voicing_threshold, silence_threshold, etc., use Tier 1 or Tier 3
-pitch_ptr <- to_pitch_direct(sound)  # Basic: time_step, pitch_floor, pitch_ceiling
+# NEW in v4.0.2: Full-parameter pitch functions available!
+pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)  # All 10 params ✓
 f0_value <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
 all_stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, "hertz")
+
+# Legacy: Basic parameters only
+pitch_ptr <- to_pitch_direct(sound)  # Basic: time_step, pitch_floor, pitch_ceiling
 
 # === TIER 3: BATCH QUERIES (5-10x faster for multiple points) ===
 times <- seq(0.5, 2.5, by = 0.01)
@@ -1055,45 +1029,47 @@ result <- interp$eval_numeric('x * 2')
 
 ## Known Limitations
 
-### Direct API Pitch Parameters (v4.0.1)
+### Direct API Pitch Parameters (v4.0.2)
 
-**Limitation:** `to_pitch_direct()` only supports basic parameters (time_step, pitch_floor, pitch_ceiling). Advanced voicing parameters (voicing_threshold, silence_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost, max_candidates, very_accurate) are **not available** in the Direct API.
+**Status:** ✅ **RESOLVED** - Full-parameter Direct API functions now available!
 
-**Affected use cases:**
-- Custom voicing detection thresholds
-- Octave jump cost adjustments
-- Silence threshold modifications
-- Accurate mode for challenging signals
-
-**Workarounds:**
+**NEW in v4.0.2:** Use `to_pitch_ac_direct()` or `to_pitch_cc_direct()` for custom parameters:
 
 ```r
-# WORKAROUND 1: Use Tier 1 (Standard API) with full parameters
-pitch <- sound$to_pitch_cc(
-  time_step = 0,
-  pitch_floor = 75,
-  pitch_ceiling = 600,
-  voicing_threshold = 0.6,      # Custom parameter
-  silence_threshold = 0.01,     # Custom parameter
-  octave_cost = 0.02            # Custom parameter
+# ✅ RECOMMENDED: Direct API with full parameters (v4.0.2+)
+pitch_ptr <- to_pitch_ac_direct(
+  sound,
+  voicing_threshold = 0.6,      # Custom parameter ✓
+  silence_threshold = 0.01,     # Custom parameter ✓
+  octave_cost = 0.02            # Custom parameter ✓
 )
-# Overhead: ~1-2x slower than Direct API, but full control
+# Fast (2x faster than Tier 1), full control, returns external pointer
 
-# WORKAROUND 2: Use Tier 3 (Batch API) for multiple files
-sounds <- lapply(files, Sound)
-pitches <- sound_to_pitch_cc_batch(
-  sounds,
+# Alternative: Cross-correlation method
+pitch_ptr <- to_pitch_cc_direct(
+  sound,
   voicing_threshold = 0.6,
-  silence_threshold = 0.01,
-  octave_cost = 0.02
+  silence_threshold = 0.01
 )
-# Best performance for >10 files with custom parameters
-
-# NOT AVAILABLE: Direct API with custom parameters
-# pitch_ptr <- to_pitch_direct(sound, voicing_threshold = 0.6)  # ❌ Won't work
 ```
 
-**Future Enhancement:** Full-parameter Direct API functions (`to_pitch_ac_direct()`, `to_pitch_cc_direct()`) are planned for v4.1.0.
+**Legacy Function:** `to_pitch_direct()` remains available but only supports 4 basic parameters (time_step, pitch_floor, pitch_ceiling, method). Use the new `_ac_direct()` or `_cc_direct()` variants for custom voicing parameters.
+
+**API Tier Comparison for Custom Parameters:**
+
+```r
+# Tier 1: Standard API (R6 object returned)
+pitch <- sound$to_pitch_cc(voicing_threshold = 0.6)
+# Speed: Medium | Returns: R6 Pitch object
+
+# Tier 2: Direct API (external pointer returned) ⭐ NEW
+pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)
+# Speed: Fast (2x faster) | Returns: External pointer
+
+# Tier 3: Batch API (list returned)
+pitches <- sound_to_pitch_cc_batch(sounds, voicing_threshold = 0.6)
+# Speed: Fastest | Returns: List of Pitch objects | Best for >10 files
+```
 
 ### to_point_process_periodic_cc Parameters
 

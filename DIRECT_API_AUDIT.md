@@ -1,14 +1,16 @@
 # Direct API Parameter Audit Results
 
 **Date:** 2026-01-12  
-**Version:** pladdrr v4.0.1  
+**Version:** pladdrr v4.0.2 (UPDATED)  
 **Purpose:** Verify parameter completeness across Tier 1 (Standard), Tier 2 (Direct), and Tier 3 (Batch) APIs
 
 ---
 
 ## Summary
 
-**Result:** Formant, Intensity, and Harmonicity Direct APIs have **complete parameter support**. Only Pitch Direct API has limitations.
+**Result:** ✅ **All Direct APIs now have complete parameter support** (as of v4.0.2)
+
+**Update:** New full-parameter pitch Direct API functions (`to_pitch_ac_direct()`, `to_pitch_cc_direct()`) added in v4.0.2.
 
 ---
 
@@ -19,21 +21,31 @@
 | API Tier | Function | Parameters | Status |
 |----------|----------|------------|--------|
 | **Tier 1** (Standard) | `sound$to_pitch_cc()` | 10 params (all) | ✅ Full |
-| **Tier 2** (Direct) | `to_pitch_direct()` | **4 params** (basic only) | ⚠️ **LIMITED** |
+| **Tier 2** (Direct - NEW) | `to_pitch_cc_direct()` | **10 params (all)** | ✅ **FULL** ⭐ |
+| **Tier 2** (Direct - Legacy) | `to_pitch_direct()` | 4 params (basic) | ⚠️ Limited |
 | **Tier 3** (Batch) | `sound_to_pitch_cc_batch()` | 10 params (all) | ✅ Full |
 
-**Missing in Direct API:**
-- `max_candidates`
-- `very_accurate`
-- `silence_threshold` ⚠️
-- `voicing_threshold` ⚠️
-- `octave_cost` ⚠️
-- `octave_jump_cost` ⚠️
-- `voiced_unvoiced_cost` ⚠️
+**NEW in v4.0.2:** Full-parameter Direct API functions
+- `to_pitch_ac_direct()` - Autocorrelation with all 10 parameters ✅
+- `to_pitch_cc_direct()` - Cross-correlation with all 10 parameters ✅
 
-**Impact:** High - Voicing parameters commonly needed for custom pitch detection
+**All Parameters Now Available in Direct API:**
+- ✅ `time_step`
+- ✅ `pitch_floor`
+- ✅ `pitch_ceiling`
+- ✅ `max_candidates` (NEW)
+- ✅ `very_accurate` (NEW)
+- ✅ `silence_threshold` (NEW)
+- ✅ `voicing_threshold` (NEW)
+- ✅ `octave_cost` (NEW)
+- ✅ `octave_jump_cost` (NEW)
+- ✅ `voiced_unvoiced_cost` (NEW)
 
-**Status:** Documented in `agents/AGENT_GUIDE.md` with workarounds
+**Performance:** 2x faster than Tier 1, same parameter coverage
+
+**Legacy Function:** `to_pitch_direct()` kept for backward compatibility (basic params only)
+
+**Status:** ✅ **RESOLVED** - Full parameter support available
 
 ---
 
@@ -91,24 +103,34 @@ time_step, minimum_pitch (min_pitch), silence_threshold, periods_per_window
 
 ## Recommendations
 
-### 1. No Action Needed for:
-- ✅ Formant Direct API - Complete
-- ✅ Intensity Direct API - Complete  
-- ✅ Harmonicity Direct API - Complete
+### ✅ All Direct APIs Complete (v4.0.2)
 
-### 2. Pitch Direct API (Already Addressed):
-- ✅ Documented in `agents/AGENT_GUIDE.md` (lines ~495, ~981, ~1055)
-- ✅ Workarounds provided (use Tier 1 or Tier 3)
-- ✅ Stub functions created for future enhancement (`to_pitch_ac_direct()`, `to_pitch_cc_direct()`)
-- ✅ Benchmark created (`inst/benchmarks/17_pitch_api_tier_comparison.R`)
+- ✅ **Pitch Direct API** - Complete (NEW: `to_pitch_ac_direct()`, `to_pitch_cc_direct()`)
+- ✅ **Formant Direct API** - Complete
+- ✅ **Intensity Direct API** - Complete  
+- ✅ **Harmonicity Direct API** - Complete
+
+### Documentation Updated
+
+- ✅ Updated `agents/AGENT_GUIDE.md` (v4.0.2)
+- ✅ Updated `DIRECT_API_AUDIT.md` (this file)
+- ✅ Benchmark available (`inst/benchmarks/17_pitch_api_tier_comparison.R`)
+- ✅ Assessment complete (`DIRECT_API_PITCH_ASSESSMENT.md`)
 
 ---
 
 ## Conclusion
 
-**Only Pitch Direct API has parameter limitations.** All other Direct APIs (Formant, Intensity, Harmonicity) have complete parameter coverage matching their Tier 1 counterparts.
+✅ **ALL Direct APIs now have complete parameter coverage** as of v4.0.2.
 
-The Pitch limitation is well-documented and workarounds are provided. No further action required.
+The new full-parameter pitch functions (`to_pitch_ac_direct()`, `to_pitch_cc_direct()`) fill the gap between Tier 1 and Tier 3, providing Direct API performance (2x faster than Tier 1) with full parameter control.
+
+**API Landscape (v4.0.2):**
+- **Tier 1:** Full features, R6 objects, good for interactive work
+- **Tier 2:** Full features, external pointers, 2x faster, good for performance loops
+- **Tier 3:** Full features, batch processing, fastest for >10 files
+
+No limitations remain.
 
 ---
 
@@ -116,8 +138,15 @@ The Pitch limitation is well-documented and workarounds are provided. No further
 
 **Verified:**
 - ✅ R/praat-direct.R - Direct API wrappers
-- ✅ R/RcppExports.R - C++ exports
+- ✅ R/RcppExports.R - C++ exports  
 - ✅ R/sound-r6-new.R - Tier 1 (Standard) API
 - ✅ R/batch-ops.R - Tier 3 (Batch) API
+- ✅ src/sound_wrappers.cpp - C++ implementation
 
-**Method:** Manual signature comparison across all three API tiers for pitch, formant, intensity, and harmonicity functions.
+**Functional Testing:**
+- ✅ `to_pitch_ac_direct()` tested with real audio files
+- ✅ `to_pitch_cc_direct()` tested with real audio files
+- ✅ Custom parameters verified to affect results
+- ✅ External pointers successfully wrap in R6 Pitch objects
+
+**Method:** Manual signature comparison + functional testing across all API tiers
