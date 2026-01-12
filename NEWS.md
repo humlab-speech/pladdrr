@@ -1,3 +1,37 @@
+# pladdrr 4.0.2 (2026-01-12)
+
+## Documentation
+
+### Direct API Parameter Audit
+
+* **Comprehensive audit of all Direct API functions** (`DIRECT_API_AUDIT.md`)
+  - Verified parameter completeness across all API tiers (Standard/Direct/Batch)
+  - **Pitch Direct API**: Limited to 4 basic parameters (documented with workarounds)
+  - **Formant/Intensity/Harmonicity Direct APIs**: Full parameter support ✓
+  
+* **Performance benchmark added** (`inst/benchmarks/17_pitch_api_tier_comparison.R`)
+  - Compares Tier 1 (Standard) vs Tier 3 (Batch) for custom pitch parameters
+  - Tests single file and batch scenarios (5/10/20/50 files)
+  - Provides data-driven recommendations on when to use each tier
+
+* **Documentation verified accurate** (`agents/AGENT_GUIDE.md`)
+  - All Direct API limitations properly documented
+  - Workarounds provided for pitch parameter restrictions
+  - Cross-referenced with actual C++ function signatures
+
+### Summary of Changes
+
+**Files Added:**
+- `DIRECT_API_AUDIT.md` - Complete Direct API parameter reference
+- `inst/benchmarks/17_pitch_api_tier_comparison.R` - Tier performance benchmark
+
+**Key Findings:**
+- Only Pitch Direct API has parameter limitations (7 params missing)
+- All other Direct APIs (Formant, Intensity, Harmonicity) have complete coverage
+- Tier 1 and Tier 3 both support full parameter sets for all operations
+
+---
+
 # pladdrr 4.0.1 (2026-01-11)
 
 ## Performance Enhancements - data.table Migration
