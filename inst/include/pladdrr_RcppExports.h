@@ -818,6 +818,27 @@ namespace pladdrr {
         return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
+    inline SEXP _sound_load_window(std::string path, double start, double end, Nullable<double> resample_to = R_NilValue, bool preserve_times = false) {
+        typedef SEXP(*Ptr__sound_load_window)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_load_window p__sound_load_window = NULL;
+        if (p__sound_load_window == NULL) {
+            validateSignature("SEXP(*_sound_load_window)(std::string,double,double,Nullable<double>,bool)");
+            p__sound_load_window = (Ptr__sound_load_window)R_GetCCallable("pladdrr", "_pladdrr__sound_load_window");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_load_window(Shield<SEXP>(Rcpp::wrap(path)), Shield<SEXP>(Rcpp::wrap(start)), Shield<SEXP>(Rcpp::wrap(end)), Shield<SEXP>(Rcpp::wrap(resample_to)), Shield<SEXP>(Rcpp::wrap(preserve_times)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<SEXP >(rcpp_result_gen);
+    }
+
     inline XPtr<structSound> _sound_read_from_file_native(std::string path) {
         typedef SEXP(*Ptr__sound_read_from_file_native)(SEXP);
         static Ptr__sound_read_from_file_native p__sound_read_from_file_native = NULL;
@@ -2272,6 +2293,27 @@ namespace pladdrr {
         {
             RNGScope RCPP_rngScope_gen;
             rcpp_result_gen = p_get_interval_predicate(Shield<SEXP>(Rcpp::wrap(type)), Shield<SEXP>(Rcpp::wrap(threshold)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<SEXP >(rcpp_result_gen);
+    }
+
+    inline SEXP _textgrid_merge(List textgrids, bool equalize_domains = false) {
+        typedef SEXP(*Ptr__textgrid_merge)(SEXP,SEXP);
+        static Ptr__textgrid_merge p__textgrid_merge = NULL;
+        if (p__textgrid_merge == NULL) {
+            validateSignature("SEXP(*_textgrid_merge)(List,bool)");
+            p__textgrid_merge = (Ptr__textgrid_merge)R_GetCCallable("pladdrr", "_pladdrr__textgrid_merge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__textgrid_merge(Shield<SEXP>(Rcpp::wrap(textgrids)), Shield<SEXP>(Rcpp::wrap(equalize_domains)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

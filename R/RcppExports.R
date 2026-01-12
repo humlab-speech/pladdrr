@@ -1924,6 +1924,47 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_complex_multiply`, a, b)
 }
 
+#' Load sound window from file with optional resampling (internal)
+#'
+#' Extracts a time window from a sound file without loading the entire file.
+#' Optionally resamples the window to a target sampling rate.
+#'
+#' @param path Path to sound file
+#' @param start Start time of window in seconds
+#' @param end End time of window in seconds
+#' @param resample_to Target sampling rate (Hz). If NULL or 0, no resampling. (default: NULL)
+#' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to start at 0. (default: FALSE)
+#' @return External pointer to Sound object containing the windowed (and optionally resampled) audio
+#'
+#' @details
+#' Traditional workflow (slow):
+#'   1. Load entire file into memory (e.g., 10 seconds @ 44.1 kHz = 441,000 samples)
+#'   2. Resample entire file (e.g., to 10 kHz = 100,000 samples)
+#'   3. Extract window (e.g., 40ms = 400 samples)
+#'   Waste factor: 100,000 / 400 = 250x
+#'
+#' Window-first workflow (fast):
+#'   1. Open file as LongSound (lazy load - just reads header)
+#'   2. Extract window directly from file (loads only 40ms from disk)
+#'   3. Resample small window (400 samples → 400 samples)
+#'   Memory: 400 samples vs 100,000 samples (250x reduction)
+#'   CPU: Resample 400 samples vs 100,000 samples (250x reduction)
+#'
+#' Performance gain: Scales with (file_duration / window_duration)
+#'   - 10s file, 40ms window: 250x
+#'   - 60s file, 100ms window: 600x
+#'   - 300s file, 50ms window: 6000x
+#'
+#' Pharyngeal analysis example:
+#'   - Typical: 5-20s recordings, 40ms vowel windows
+#'   - Speedup: 125x - 500x per window
+#'   - With multiple windows: 27x overall speedup (as measured)
+#'
+#' @keywords internal
+.sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {
+    .Call(`_pladdrr_sound_load_window`, path, start, end, resample_to, preserve_times)
+}
+
 #' SIMD-optimized sound scaling (peak amplitude)
 #' @keywords internal
 .sound_scale_peak_simd <- function(xptr, new_peak) {
@@ -3074,6 +3115,41 @@ textgrid_filter_xptr <- function(textgrid_xptr, tier_number, predicate_xptr, sou
 #' @export
 get_interval_predicate <- function(type, threshold = 0.0) {
     .Call(`_pladdrr_get_interval_predicate`, type, threshold)
+}
+
+#' Merge multiple TextGrid objects efficiently (internal)
+#'
+#' Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier copy.
+#'
+#' @param textgrids List of TextGrid objects (external pointers or R6 objects)
+#' @param equalize_domains If TRUE, all tiers will have the same domain (default: FALSE)
+#' @return External pointer to merged TextGrid
+#'
+#' @details
+#' Manual merge workflow:
+#'   1. Save/reload original TextGrid (disk I/O)
+#'   2. Add empty tier
+#'   3. Insert boundaries one-by-one (each shifts all later intervals: O(n²))
+#'   4. Set labels (O(n))
+#'   Total: O(n²) + disk I/O
+#'
+#' Batch merge:
+#'   Single-pass merge with proper interval handling: O(n)
+#'
+#' Performance gain: 17x for VUV (100 intervals), scales with N
+#'
+#' Domain handling:
+#'   - If equalize_domains=FALSE (default):
+#'     New domain runs from min(xmin) to max(xmax) of all input TextGrids.
+#'     Tiers retain their original domains.
+#'
+#'   - If equalize_domains=TRUE:
+#'     All tiers extended to the new domain.
+#'     Empty intervals added at edges if needed.
+#'
+#' @keywords internal
+.textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
+    .Call(`_pladdrr_textgrid_merge`, textgrids, equalize_domains)
 }
 
 .textgrid_read_from_file <- function(path) {

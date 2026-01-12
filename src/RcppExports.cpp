@@ -5446,6 +5446,44 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sound_load_window
+SEXP sound_load_window(std::string path, double start, double end, Nullable<double> resample_to, bool preserve_times);
+static SEXP _pladdrr_sound_load_window_try(SEXP pathSEXP, SEXP startSEXP, SEXP endSEXP, SEXP resample_toSEXP, SEXP preserve_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< double >::type start(startSEXP);
+    Rcpp::traits::input_parameter< double >::type end(endSEXP);
+    Rcpp::traits::input_parameter< Nullable<double> >::type resample_to(resample_toSEXP);
+    Rcpp::traits::input_parameter< bool >::type preserve_times(preserve_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_load_window(path, start, end, resample_to, preserve_times));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_load_window(SEXP pathSEXP, SEXP startSEXP, SEXP endSEXP, SEXP resample_toSEXP, SEXP preserve_timesSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_load_window_try(pathSEXP, startSEXP, endSEXP, resample_toSEXP, preserve_timesSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // sound_scale_peak_simd
 void sound_scale_peak_simd(XPtr<structSound> xptr, double new_peak);
 RcppExport SEXP _pladdrr_sound_scale_peak_simd(SEXP xptrSEXP, SEXP new_peakSEXP) {
@@ -8863,6 +8901,41 @@ RcppExport SEXP _pladdrr_get_interval_predicate(SEXP typeSEXP, SEXP thresholdSEX
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// textgrid_merge
+SEXP textgrid_merge(List textgrids, bool equalize_domains);
+static SEXP _pladdrr_textgrid_merge_try(SEXP textgridsSEXP, SEXP equalize_domainsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< List >::type textgrids(textgridsSEXP);
+    Rcpp::traits::input_parameter< bool >::type equalize_domains(equalize_domainsSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_merge(textgrids, equalize_domains));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_merge(SEXP textgridsSEXP, SEXP equalize_domainsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_merge_try(textgridsSEXP, equalize_domainsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // textgrid_read_from_file
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path);
 RcppExport SEXP _pladdrr_textgrid_read_from_file(SEXP pathSEXP) {
@@ -9655,6 +9728,7 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structSound>(*.sound_formantgrid_filter)(XPtr<structSound>,XPtr<structFormantGrid>)");
         signatures.insert("XPtr<structSound>(*.sound_formantgrid_filter_noscale)(XPtr<structSound>,XPtr<structFormantGrid>)");
         signatures.insert("Rcpp::List(*.simd_info)()");
+        signatures.insert("SEXP(*.sound_load_window)(std::string,double,double,Nullable<double>,bool)");
         signatures.insert("XPtr<structSound>(*.sound_read_from_file_native)(std::string)");
         signatures.insert("XPtr<structSound>(*.sound_create_from_values)(NumericMatrix,double,double)");
         signatures.insert("XPtr<structSound>(*.sound_create_tone)(double,double,double,double)");
@@ -9725,6 +9799,7 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("DataFrame(*textgrid_interval_statistics_batch)(SEXP,int)");
         signatures.insert("List(*textgrid_filter_xptr)(SEXP,int,SEXP,SEXP,bool)");
         signatures.insert("SEXP(*get_interval_predicate)(std::string,double)");
+        signatures.insert("SEXP(*.textgrid_merge)(List,bool)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -9769,6 +9844,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_formantgrid_filter", (DL_FUNC)_pladdrr_sound_formantgrid_filter_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_formantgrid_filter_noscale", (DL_FUNC)_pladdrr_sound_formantgrid_filter_noscale_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.simd_info", (DL_FUNC)_pladdrr_simd_info_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_load_window", (DL_FUNC)_pladdrr_sound_load_window_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_read_from_file_native", (DL_FUNC)_pladdrr_sound_read_from_file_native_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_create_from_values", (DL_FUNC)_pladdrr_sound_create_from_values_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_create_tone", (DL_FUNC)_pladdrr_sound_create_tone_try);
@@ -9839,6 +9915,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC)_pladdrr_textgrid_interval_statistics_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_filter_xptr", (DL_FUNC)_pladdrr_textgrid_filter_xptr_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_get_interval_predicate", (DL_FUNC)_pladdrr_get_interval_predicate_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.textgrid_merge", (DL_FUNC)_pladdrr_textgrid_merge_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_RcppExport_validate", (DL_FUNC)_pladdrr_RcppExport_validate);
     return R_NilValue;
 }
@@ -10204,6 +10281,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_simd_info", (DL_FUNC) &_pladdrr_simd_info, 0},
     {"_pladdrr_sound_convert_to_mono_simd", (DL_FUNC) &_pladdrr_sound_convert_to_mono_simd, 1},
     {"_pladdrr_complex_multiply", (DL_FUNC) &_pladdrr_complex_multiply, 2},
+    {"_pladdrr_sound_load_window", (DL_FUNC) &_pladdrr_sound_load_window, 5},
     {"_pladdrr_sound_scale_peak_simd", (DL_FUNC) &_pladdrr_sound_scale_peak_simd, 2},
     {"_pladdrr_sound_mix_simd", (DL_FUNC) &_pladdrr_sound_mix_simd, 3},
     {"_pladdrr_sound_pool_stats", (DL_FUNC) &_pladdrr_sound_pool_stats, 0},
@@ -10347,6 +10425,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC) &_pladdrr_textgrid_interval_statistics_batch, 2},
     {"_pladdrr_textgrid_filter_xptr", (DL_FUNC) &_pladdrr_textgrid_filter_xptr, 5},
     {"_pladdrr_get_interval_predicate", (DL_FUNC) &_pladdrr_get_interval_predicate, 2},
+    {"_pladdrr_textgrid_merge", (DL_FUNC) &_pladdrr_textgrid_merge, 2},
     {"_pladdrr_textgrid_read_from_file", (DL_FUNC) &_pladdrr_textgrid_read_from_file, 1},
     {"_pladdrr_textgrid_create", (DL_FUNC) &_pladdrr_textgrid_create, 4},
     {"_pladdrr_textgrid_save", (DL_FUNC) &_pladdrr_textgrid_save, 2},

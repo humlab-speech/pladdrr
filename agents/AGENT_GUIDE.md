@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.1 (2026-01-11)
+**Version:** 4.0.3 (2026-01-12)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -18,7 +18,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ---
 
-## Architecture Overview (v4.0.1 - 3-Tier Performance API + data.table)
+## Architecture Overview (v4.0.3 - 3-Tier Performance API + data.table)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,7 +58,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Performance Tiers (v4.0.1):**
+**Performance Tiers (v4.0.3):**
 | Tier | API | Speedup | Use Case |
 |------|-----|---------|----------|
 | **Tier 1 (Standard)** | `sound$to_pitch()` | 1x baseline | Interactive, <10 files |
@@ -585,7 +585,28 @@ results <- sound_extract_and_formant(sound, start_times, end_times)
 - `sound_to_intensity_batch(sounds, ...)` - Batch intensity extraction
 - `sound_extract_and_pitch(sound, starts, ends)` - Extract parts + pitch
 - `sound_extract_and_formant(sound, starts, ends)` - Extract parts + formant
-- `sound_concatenate_all(sounds)` - Concatenate multiple sounds
+- `sound_concatenate_all(sounds)` - Concatenate multiple sounds (19x faster than iterative)
+- `sound_load_window(path, start, end, resample_to = NULL)` - Load audio window without full file read (27x faster)
+- `textgrid_merge(textgrids, equalize_domains = FALSE)` - Merge multiple TextGrids (17x faster than manual tier copying)
+
+**NEW in v4.0.3:** Added specialized functions for complex workflows:
+
+```r
+# Load only needed audio segment (avoids loading entire file)
+window <- sound_load_window("long_audio.wav", start = 10.5, end = 10.55, resample_to = 10000)
+# Use case: Extract 50ms window from 10-minute file + resample in one operation
+
+# Merge TextGrids efficiently (native Praat function)
+tg1 <- TextGrid(0, 1); tg1$add_interval_tier("words")
+tg2 <- TextGrid(0, 1); tg2$add_point_tier("events")
+merged <- textgrid_merge(list(tg1, tg2))
+# Use case: Combine annotation layers from different sources
+
+# Concatenate voiced segments efficiently
+voiced_parts <- list(sound1, sound2, sound3)  # 10-50 segments
+concatenated <- sound_concatenate_all(voiced_parts)
+# Use case: AVQI analysis requiring voiced-only audio
+```
 
 See `vignettes/articles/batch-operations-guide.Rmd` for comprehensive batch operations documentation.
 
