@@ -131,12 +131,15 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 # Conversion Direct API (returns XPtrs, not R6 objects)
 # =============================================================================
 
-#' Create Pitch from Sound Directly (returns XPtr)
+#' Create Pitch from Sound Directly (returns XPtr) - Basic Parameters
 #'
 #' @description
 #' Create Pitch analysis directly, returning raw external pointer.
-#' Use when you need maximum performance and will pass result to
-#' other direct functions.
+#' This is a simplified version with basic parameters only.
+#'
+#' **NOTE:** For full control over voicing parameters (silence_threshold,
+#' voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
+#' instead.
 #'
 #' @param sound Sound object or external pointer
 #' @param time_step Time step (0 = auto)
@@ -145,18 +148,17 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
+#' @seealso [to_pitch_ac_direct()], [to_pitch_cc_direct()] for full parameter control
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound("speech.wav")
 #'
-#' # FAST: Returns raw pointer
+#' # FAST: Returns raw pointer (basic parameters)
 #' pitch_ptr <- to_pitch_direct(sound)
 #'
 #' # Use with other direct functions
 #' stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
-#'
-#' # Or wrap in R6 if needed later
-#' pitch <- Pitch$new(.xptr = pitch_ptr)
 #' }
 #'
 #' @export
@@ -170,6 +172,134 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
   }
 
   sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling)
+}
+
+
+#' Create Pitch from Sound Directly (Autocorrelation) - Full Parameters
+#'
+#' @description
+#' Create Pitch analysis using autocorrelation method with full control over
+#' all voicing parameters. Returns raw external pointer for maximum performance.
+#'
+#' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
+#' available in Tier 1 (Standard) API.
+#'
+#' @param sound Sound object or external pointer
+#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @param pitch_floor Minimum pitch (Hz, default 75)
+#' @param pitch_ceiling Maximum pitch (Hz, default 600)
+#' @param max_candidates Maximum number of pitch candidates (default 15)
+#' @param very_accurate Use accurate but slower method (default FALSE)
+#' @param silence_threshold Frames below this relative intensity are unvoiced (default 0.03)
+#' @param voicing_threshold Strength required for voiced decision (default 0.45)
+#' @param octave_cost Cost per octave in path finding (default 0.01)
+#' @param octave_jump_cost Cost for octave jumps (default 0.35)
+#' @param voiced_unvoiced_cost Cost for voicing transitions (default 0.14)
+#'
+#' @return External pointer to Pitch (NOT R6 object)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("speech.wav")
+#'
+#' # With custom voicing threshold (stricter voicing detection)
+#' pitch_ptr <- to_pitch_ac_direct(sound, voicing_threshold = 0.6)
+#'
+#' # With custom silence threshold (more sensitive)
+#' pitch_ptr <- to_pitch_ac_direct(sound, silence_threshold = 0.01)
+#'
+#' # Use with query functions
+#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+#' }
+#'
+#' @export
+to_pitch_ac_direct <- function(sound, 
+                                time_step = 0,
+                                pitch_floor = 75,
+                                pitch_ceiling = 600,
+                                max_candidates = 15,
+                                very_accurate = FALSE,
+                                silence_threshold = 0.03,
+                                voicing_threshold = 0.45,
+                                octave_cost = 0.01,
+                                octave_jump_cost = 0.35,
+                                voiced_unvoiced_cost = 0.14) {
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  .sound_to_pitch_ac(sound_ptr, time_step, pitch_floor, pitch_ceiling,
+                     as.integer(max_candidates), very_accurate,
+                     silence_threshold, voicing_threshold,
+                     octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+}
+
+
+#' Create Pitch from Sound Directly (Cross-Correlation) - Full Parameters
+#'
+#' @description
+#' Create Pitch analysis using cross-correlation method with full control over
+#' all voicing parameters. Returns raw external pointer for maximum performance.
+#'
+#' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
+#' available in Tier 1 (Standard) API.
+#'
+#' @param sound Sound object or external pointer
+#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @param pitch_floor Minimum pitch (Hz, default 75)
+#' @param pitch_ceiling Maximum pitch (Hz, default 600)
+#' @param max_candidates Maximum number of pitch candidates (default 15)
+#' @param very_accurate Use accurate but slower method (default FALSE)
+#' @param silence_threshold Frames below this relative intensity are unvoiced (default 0.03)
+#' @param voicing_threshold Strength required for voiced decision (default 0.45)
+#' @param octave_cost Cost per octave in path finding (default 0.01)
+#' @param octave_jump_cost Cost for octave jumps (default 0.35)
+#' @param voiced_unvoiced_cost Cost for voicing transitions (default 0.14)
+#'
+#' @return External pointer to Pitch (NOT R6 object)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("speech.wav")
+#'
+#' # With custom voicing threshold (stricter voicing detection)
+#' pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)
+#'
+#' # With custom silence threshold (more sensitive)
+#' pitch_ptr <- to_pitch_cc_direct(sound, silence_threshold = 0.01)
+#'
+#' # Use with query functions
+#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+#' }
+#'
+#' @export
+to_pitch_cc_direct <- function(sound, 
+                                time_step = 0,
+                                pitch_floor = 75,
+                                pitch_ceiling = 600,
+                                max_candidates = 15,
+                                very_accurate = FALSE,
+                                silence_threshold = 0.03,
+                                voicing_threshold = 0.45,
+                                octave_cost = 0.01,
+                                octave_jump_cost = 0.35,
+                                voiced_unvoiced_cost = 0.14) {
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  .sound_to_pitch_cc(sound_ptr, time_step, pitch_floor, pitch_ceiling,
+                     as.integer(max_candidates), very_accurate,
+                     silence_threshold, voicing_threshold,
+                     octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
 
 
