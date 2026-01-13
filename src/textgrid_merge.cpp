@@ -8,8 +8,6 @@
 //
 // Use case: VUV analysis merges original TextGrid with VUV tier (17x speedup)
 
-// [[Rcpp::interfaces(r, cpp)]]
-// [[Rcpp::plugins(cpp17)]]
 
 #include "praat_types.h"
 #include <Rcpp.h>
