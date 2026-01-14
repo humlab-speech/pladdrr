@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.3 (2026-01-13)
+**Version:** 4.0.4 (2026-01-13)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -224,6 +224,26 @@ result <- interp$eval_numeric('y')  # 84
 | `"db"` | `0` | dB SPL |
 | `"energy"` | `1` | Energy (Pa²·s) |
 | `"sones"` | `2` | Sones |
+
+### LTAS Units (FIXED in v4.0.4)
+
+**BREAKING CHANGE:** Prior to v4.0.4, LTAS unit codes were incorrectly mapped. The fix aligns with Praat's `Ltas.cpp:44-60`.
+
+| R String | Code | Praat Behavior |
+|----------|------|----------------|
+| `"db"` | `0` | Passthrough (no conversion) |
+| `"energy"` | `1` | `10*log10(ratio)` → dB |
+| `"sones"` | `2` | `10*log2(ratio)` → dB |
+
+**Migration note:** If you used `unit="sones"` as a workaround for getting correct dB values, switch to `unit="energy"` or `unit="dB"`.
+
+```r
+# CORRECT (v4.0.4+):
+slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")  # Returns dB
+
+# WRONG (pre-v4.0.4 workaround - no longer needed):
+slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "sones")   # Was accidental fix
+```
 
 ### Interpolation Methods
 
@@ -688,6 +708,90 @@ end <- tg$get_end_time_of_interval(tier_number = 1, interval_number = 5)
 sound_segment <- sound$extract_part(start, end)
 ```
 
+### Pattern 6: Voice Activity Detection with ZCR (NEW in v4.0.4)
+
+**Critical for AVQI:** The AVQI algorithm uses both intensity AND Zero Crossing Rate (ZCR) filtering to identify voiced segments. pladdrr v4.0.4 adds proper ZCR support matching Praat's `checkZeros` procedure.
+
+```r
+# === COMPLETE AVQI-COMPATIBLE VOICED EXTRACTION ===
+sound <- Sound("continuous_speech.wav")
+
+# Single function: intensity + ZCR filtering (default: use_zcr = TRUE)
+voiced <- extract_voiced_segments(
+  sound,
+  minimum_pitch = 50,           # Hz, for intensity detection
+  silence_threshold = -25,      # dB below max
+  zcr_threshold = 3000,         # Hz, reject segments above this
+  use_zcr = TRUE                # Enable ZCR filtering (default)
+)
+
+# Result: Concatenated voiced audio matching Praat's AVQI extraction
+cat("Voiced duration:", voiced$get_duration(), "s\n")
+
+# === INTENSITY-ONLY EXTRACTION (legacy behavior) ===
+voiced_no_zcr <- extract_voiced_segments(sound, use_zcr = FALSE)
+
+# === WITH TEXTGRID OUTPUT (for inspection) ===
+result <- extract_voiced_segments(sound, return_textgrid = TRUE)
+voiced_sound <- result$sound
+vad_grid <- result$textgrid
+```
+
+**Step-by-step manual control:**
+
+```r
+# 1. Create VAD TextGrid (intensity-based)
+vad_grid <- sound_to_textgrid_silences(
+  sound,
+  minimum_pitch = 50,
+  time_step = 0.003,
+  silence_threshold = -25,
+  min_silent_interval = 0.1,
+  min_sounding_interval = 0.1
+)
+
+# 2. Get matching intervals
+voiced_intervals <- textgrid_get_intervals_where(
+  vad_grid,
+  tier = 1,
+  condition = "equals",        # Also: "contains", "starts with", "ends with"
+  text = "sounding"
+)
+# Returns: list(xmin, xmax, text, count)
+
+# 3. Calculate ZCR for filtering
+zcr_data <- sound_get_zcr(
+  sound,
+  window_duration = 0.03,      # 30ms windows (AVQI standard)
+  hop_duration = 0.01          # 10ms hop
+)
+# Returns: list(times, zcr, window_duration, hop_duration)
+
+# 4. Filter intervals by ZCR (manual approach)
+keep_intervals <- logical(voiced_intervals$count)
+for (i in seq_along(voiced_intervals$xmin)) {
+  in_interval <- zcr_data$times >= voiced_intervals$xmin[i] &
+                 zcr_data$times <= voiced_intervals$xmax[i]
+  mean_zcr <- mean(zcr_data$zcr[in_interval])
+  keep_intervals[i] <- mean_zcr < 3000  # Voiced < 3000 Hz
+}
+
+# 5. Extract and concatenate passing intervals
+voiced_sounds <- sound_extract_parts(
+  sound,
+  voiced_intervals$xmin[keep_intervals],
+  voiced_intervals$xmax[keep_intervals]
+)
+concatenated <- sound_concatenate_all(voiced_sounds)
+```
+
+**ZCR interpretation:**
+- **Voiced speech:** 500-2000 crossings/second (low ZCR)
+- **Unvoiced fricatives:** 3000-6000 crossings/second (high ZCR)
+- **Silence:** Variable (depends on noise floor)
+
+**AVQI threshold:** `zcr_threshold = 3000` rejects unvoiced segments (fricatives, aspiration).
+
 ---
 
 ## Method Signatures
@@ -788,7 +892,7 @@ praat_run_script('
 ')
 
 # Get variables back
-duration <- praat_evaluate_numeric("duration")
+duration <- praat_eval_numeric("duration")
 ```
 
 ---
@@ -950,7 +1054,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v4.0.1 - 3-Tier Performance API + data.table**
+**Updated for v4.0.4 - 3-Tier Performance API + data.table + ZCR**
 
 ```r
 # === LOAD AUDIO ===
@@ -1006,6 +1110,10 @@ stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
 # === FAST CPPS (1.5-2x faster AVQI) ===
 cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
                              pitch_floor = 60, pitch_ceiling = 330)
+
+# === VOICED EXTRACTION WITH ZCR (v4.0.4 - AVQI-compatible) ===
+voiced <- extract_voiced_segments(sound, zcr_threshold = 3000, use_zcr = TRUE)
+zcr_data <- sound_get_zcr(sound, window_duration = 0.03)  # Per-frame ZCR
 
 # === XPTR WINDOWS (70x faster custom DSP) ===
 hamming <- create_window_xptr("hamming")
@@ -1320,6 +1428,27 @@ When reimplementing Praat code that involves:
 
 ## Version History
 
+**v4.0.4 (2026-01-13):**
+- **BREAKING: Fixed LTAS `get_slope()` unit parameter**
+  - Unit codes were incorrectly mapped: energy/sones/dB off by one
+  - Now matches Praat's `Ltas.cpp:44-60`: dB=0, energy=1, sones=2
+  - Migration: If you used `unit="sones"` as workaround, switch to `unit="energy"`
+- **NEW: Zero Crossing Rate (ZCR) support for AVQI-compatible extraction**
+  - `sound_get_zcr(sound, window_duration, hop_duration)` - Calculate ZCR per frame
+  - Uses Praat's `to_point_process_zeros()` for accurate interpolated detection
+  - Matches AVQI203.praat `checkZeros` procedure
+- **ENHANCED: `extract_voiced_segments()` now includes ZCR filtering**
+  - New parameters: `zcr_threshold = 3000`, `zcr_window = 0.03`, `use_zcr = TRUE`
+  - Default `use_zcr = TRUE` for AVQI-compatible extraction
+  - Set `use_zcr = FALSE` for intensity-only detection (legacy behavior)
+- **NEW: `textgrid_get_intervals_where()` - Query intervals by condition**
+  - Conditions: "equals", "contains", "does not contain", "starts with", "ends with"
+  - Returns list with xmin, xmax, text, count
+- **NEW: `sound_extract_parts()` - Batch extract multiple time intervals**
+  - Vectorized extraction of multiple Sound segments
+  - Supports `return_r6 = FALSE` for raw pointer performance
+- **Pattern 6 added:** Voice Activity Detection with ZCR documentation
+
 **v4.0.3 (2026-01-13):**
 - **NEW: Tier 3 specialized batch operations for complex workflows** (3 new functions)
   - `sound_concatenate_all(sounds, overlap)` - O(n) batch concatenation (19x faster than iterative)
@@ -1493,8 +1622,8 @@ When reimplementing Praat code that involves:
 
 ---
 
-**Guide Version:** 4.0.3
+**Guide Version:** 4.0.4
 **Last Updated:** 2026-01-13
-**Package Version:** 4.0.3
+**Package Version:** 4.0.4
 **Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
-**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, specialized workflow functions (v4.0.3: sound_concatenate_all, sound_load_window, textgrid_merge)
+**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR (v4.0.4), specialized workflow functions (sound_concatenate_all, sound_load_window, textgrid_merge)
