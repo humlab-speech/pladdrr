@@ -794,6 +794,114 @@ concatenated <- sound_concatenate_all(voiced_sounds)
 
 ---
 
+## Utility Functions
+
+### Memory Pooling API
+
+For batch segment extraction, reuses Sound allocations for 20-30% speedup:
+
+```r
+# Check pool efficiency
+stats <- sound_pool_stats()
+cat("Hit rate:", stats$hits / (stats$hits + stats$misses) * 100, "%\n")
+
+# Clear pool to free memory
+sound_pool_clear()
+
+# Resize pool capacity (default: 32)
+sound_pool_resize(64)
+```
+
+| Function | Description |
+|----------|-------------|
+| `sound_pool_stats()` | Get hit/miss statistics |
+| `sound_pool_clear()` | Clear pool, free memory |
+| `sound_pool_resize(max_size)` | Change pool capacity |
+| `sound_pool_acquire(...)` | Internal: get Sound from pool |
+| `sound_pool_release(xptr)` | Internal: return Sound to pool |
+
+### Spectrum Filtering
+
+Filter spectrum frequencies with Hann window smoothing:
+
+```r
+spectrum <- sound$to_spectrum()
+
+# Pass band (keep 100-4000 Hz, smooth 100 Hz)
+spectrum_pass_hann_band(spectrum, fmin = 100, fmax = 4000, smooth = 100)
+
+# Stop band (remove 50-60 Hz hum)
+spectrum_stop_hann_band(spectrum, fmin = 50, fmax = 60, smooth = 10)
+```
+
+### Sound Filtering
+
+Apply frequency filters directly to Sound objects:
+
+```r
+# Bandpass filter (100-4000 Hz)
+filtered <- sound_filter_pass_hann_band(sound, fmin = 100, fmax = 4000, smooth = 100)
+
+# Bandstop filter (remove hum)
+cleaned <- sound_filter_stop_hann_band(sound, fmin = 50, fmax = 60, smooth = 10)
+```
+
+### Sound Operations
+
+Correlation and convolution functions:
+
+```r
+# Auto-correlation
+autocorr <- sound_auto_correlate(sound, scaling = 4L, signal_outside = 1L)
+
+# Cross-correlation between two sounds
+xcorr <- sounds_cross_correlate(sound1, sound2, scaling = 4L)
+
+# Convolve two sounds
+convolved <- sounds_convolve(sound1, sound2, scaling = 4L)
+```
+
+### Zero-Copy Data Access
+
+5-10x faster read-only access to Sound samples:
+
+```r
+# Fast zero-copy access (READ-ONLY - do not modify!)
+samples <- get_sound_values_zerocopy(sound, channel = 1)
+rms <- sqrt(mean(samples^2))  # Safe
+peak <- max(abs(samples))      # Safe
+
+# Check if vector is zero-copy
+is_zerocopy_vector(samples)  # TRUE
+
+# Matrix access (mono sounds only for zerocopy)
+mat <- sound_as_matrix_zerocopy(sound, zerocopy = TRUE)
+
+# Fast time vector computation
+times <- get_sound_times_fast(sound)
+```
+
+**Warning:** Zero-copy vectors are READ-ONLY views into Praat memory. Modifying them corrupts data!
+
+### SIMD Information
+
+Check SIMD acceleration capabilities:
+
+```r
+info <- simd_info()
+# Returns: enabled, available, architecture, batch_size_double, batch_size_float, version
+
+# Common architectures:
+# - AVX2: 4 doubles/operation (Intel/AMD x86_64)
+# - SSE4.2: 2 doubles/operation (older x86_64)
+# - NEON: 2 doubles/operation (ARM/Apple Silicon)
+
+# Disable SIMD for testing
+options(speaker.use_simd = FALSE)
+```
+
+---
+
 ## Method Signatures
 
 ### Sound Methods
