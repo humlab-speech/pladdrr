@@ -174,7 +174,17 @@ Formant <- function(.xptr = NULL) {
       )
       Table(.xptr = table_ptr)
     },
-    
+
+    # FormantModeler - robust formant tracking
+    to_formant_modeler = function(tmin = 0.0, tmax = 0.0, num_tracks = 4, num_params = 5) {
+      if (tmax == 0.0) tmax <- cpp_obj$get_xmax()
+      fm_mod <- get_module("formantmodeler_module")
+      fm_ptr <- fm_mod$Formant_to_FormantModeler(
+        .xptr, tmin, tmax, as.integer(num_tracks), as.integer(num_params)
+      )
+      FormantModeler(.xptr = fm_ptr)
+    },
+
     # Display
     print = function() {
       cat("<Praat Formant object>\n")

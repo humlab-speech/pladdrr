@@ -1,3 +1,111 @@
+# pladdrr 4.0.8 (2026-01-15)
+
+## New Features
+
+### Statistical Analysis Modules (4 new modules)
+
+* **`MFCC()` - Mel-Frequency Cepstral Coefficients**
+  - Create from Sound: `sound$to_mfcc(num_coefficients = 12, ...)`
+  - Methods: `get_coefficients_at_frame()`, `get_all_coefficients()`, `lifter()`
+  - Use case: Speaker recognition, speech recognition features
+
+* **`LFCC()` - Linear-Frequency Cepstral Coefficients**
+  - Create from LPC: `lpc$to_lfcc(num_coefficients = 12)`
+  - Same interface as MFCC, uses linear frequency scale
+  - Use case: Alternative to MFCC for certain applications
+
+* **`FormantModeler()` - Robust Polynomial Formant Tracking**
+  - Create from Formant: `formant$to_formant_modeler(tmin, tmax, num_tracks, num_params)`
+  - Methods: `get_model_value_at_time()`, `process_outliers()`, `to_formant()`
+  - Use case: Improved formant estimation with outlier detection
+
+* **`PCA()` - Principal Component Analysis**
+  - Create: `pca_from_matrix(data)` where rows are observations
+  - Methods: `get_eigenvalues()`, `get_eigenvectors()`, `project()`, `get_fraction_variance()`
+  - Use case: Vowel space analysis, dimensionality reduction
+
+* **`Discriminant()` - Linear Discriminant Analysis**
+  - Create: `discriminant_from_matrix(data, labels)`
+  - Methods: `get_wilks_lambda()`, `get_group_centroids()`, `get_eigenvectors()`
+  - Use case: Vowel classification, speaker identification, dialect analysis
+
+### New Object Creation Methods
+
+* `sound$to_mfcc()` - Extract MFCC from audio
+* `sound$to_formant_optimal()` - Find optimal formant with ceiling search
+* `sound$get_optimal_formant_ceiling()` - Ceiling search for speaker
+* `lpc$to_lfcc()` - Convert LPC to LFCC
+* `formant$to_formant_modeler()` - Create robust formant model
+
+## Internal Changes
+
+### File Naming Standardization
+
+* Renamed 30 R wrapper files from `*-r6.R` to `*-wrapper.R`
+* Reflects actual function-wrapper pattern (not R6 classes)
+* No API changes - internal reorganization only
+
+### Module Count
+
+* Increased from 33 to 37 modules
+* New modules: mfcc_module, formantmodeler_module, pca_module, discriminant_module
+
+---
+
+# pladdrr 4.0.4 (2026-01-13)
+
+## Bug Fixes
+
+### LTAS `get_slope()` Unit Parameter Fix (BREAKING CHANGE)
+
+Fixed incorrect unit code mapping in `Ltas$get_slope()`. The unit parameter now correctly matches Praat's behavior:
+
+| Unit | Before (WRONG) | After (CORRECT) | Praat Behavior |
+|------|----------------|-----------------|----------------|
+| `"energy"` | Code 0 | Code 1 | `10*log10(ratio)` → dB |
+| `"sones"` | Code 1 | Code 2 | `10*log2(ratio)` → dB |
+| `"dB"` | Code 2 | Code 0 | Passthrough |
+
+**Impact:** Users who used `unit="sones"` as a workaround for correct dB slope values should now use `unit="energy"` or `unit="dB"`.
+
+```r
+# Before (workaround):
+slope <- ltas$get_slope(0, 1000, 1000, 10000, "sones")  # Accidentally correct
+
+# After (proper):
+slope <- ltas$get_slope(0, 1000, 1000, 10000, "energy")  # Correct
+```
+
+## New Features
+
+### Zero Crossing Rate (ZCR) for AVQI-Compatible Voiced Extraction
+
+* **`sound_get_zcr()` - Calculate ZCR per frame**
+  - Returns zero crossing rate (crossings/second) per analysis frame
+  - Parameters: `window_duration`, `hop_duration`, `channel`
+  - Useful for voiced/unvoiced discrimination
+
+* **`extract_voiced_segments()` - Enhanced with ZCR filtering**
+  - Now includes AVQI-compatible ZCR filtering (default: `use_zcr = TRUE`)
+  - Matches AVQI v2.03/v3.01 voiced segment extraction algorithm
+  - `zcr_threshold = 3000` rejects high-ZCR (unvoiced) segments
+  - Set `use_zcr = FALSE` for intensity-only detection
+
+```r
+# AVQI-compatible extraction (with ZCR, default)
+voiced <- extract_voiced_segments(
+  sound,
+  minimum_pitch = 50,
+  silence_threshold = -25,
+  zcr_threshold = 3000
+)
+
+# Intensity-only (disable ZCR)
+voiced <- extract_voiced_segments(sound, use_zcr = FALSE)
+```
+
+---
+
 # pladdrr 4.0.3 (2026-01-12)
 
 ## New Features

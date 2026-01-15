@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.4 (2026-01-13)
+**Version:** 4.0.8 (2026-01-15)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -43,7 +43,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Rcpp Module Layer (src/modules/*.cpp)                       │
-│   - 33 C++ module classes: RSound, RPitch, etc.            │
+│   - 37 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc.            │
 │   - XPtr<structPitch> wrapping Praat objects               │
 │   - Batch queries: batch_queries.cpp (vectorized)          │
 │   - Parallel processing: R/parallel-batch.R (multi-core)   │
@@ -109,15 +109,15 @@ Pitch <- function(.xptr = NULL) {
 # DON'T USE - Much slower due to environment traversal
 ```
 
-**Converted Objects (30/31):** Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram, Harmonicity, PointProcess, TextGrid, Ltas, PowerCepstrum, PowerCepstrogram, LPC, Cochleagram, Excitation, Cepstrum, Electroglottogram, Matrix, Table, VocalTract, PitchTier, FormantTier, FormantGrid, IntensityTier, AmplitudeTier, DurationTier, Manipulation, LongSound, KlattGrid, FormantPath, ComplexSpectrogram, Polygon
+**Converted Objects (34/35):** Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram, Harmonicity, PointProcess, TextGrid, Ltas, PowerCepstrum, PowerCepstrogram, LPC, Cochleagram, Excitation, Cepstrum, Electroglottogram, Matrix, Table, VocalTract, PitchTier, FormantTier, FormantGrid, IntensityTier, AmplitudeTier, DurationTier, Manipulation, LongSound, KlattGrid, FormantPath, ComplexSpectrogram, Polygon, MFCC, LFCC, FormantModeler, PCA, Discriminant
 
 **Intentionally R6 (1/31):** PraatInterpreter (requires persistent mutable state for script execution)
 
 ---
 
-## Object Types (33 modules)
+## Object Types (37 modules)
 
-**Update v2.1.0:** Added `Interpreter` module for persistent Praat script execution.
+**Update v4.0.7:** Added MFCC, LFCC, FormantModeler, PCA, Discriminant modules for speaker recognition, robust formant tracking, and statistical analysis.
 
 ### Audio Analysis
 
@@ -154,6 +154,16 @@ Pitch <- function(.xptr = NULL) {
 | `Excitation` | `cochleagram$to_excitation()` |
 | `LPC` | `sound$to_lpc_burg()` |
 | `FormantPath` | `sound$to_formant_path()` |
+| `FormantModeler` | `formant$to_formant_modeler()` |
+| `MFCC` | `sound$to_mfcc()` |
+| `LFCC` | `lpc$to_lfcc()` |
+
+### Statistical Analysis (NEW in v4.0.7)
+
+| Type | Creation Method | Use Case |
+|------|-----------------|----------|
+| `PCA` | `pca_from_matrix(data)` | Dimensionality reduction, vowel space analysis |
+| `Discriminant` | `discriminant_from_matrix(data, labels)` | Classification, speaker ID, vowel classification |
 
 ### Manipulation
 
@@ -961,6 +971,132 @@ options(speaker.use_simd = FALSE)
 | `get_standard_deviation(from_time, to_time)` | `double, double` | `numeric` | |
 | `get_quantile(from_time, to_time, quantile)` | `double, double, double` | `numeric` | |
 
+### MFCC Methods (NEW in v4.0.7)
+
+MFCC (Mel-Frequency Cepstral Coefficients) for speaker recognition and speech analysis.
+
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_number_of_frames()` | - | `integer` | Total analysis frames |
+| `get_number_of_coefficients()` | - | `integer` | Coefficients per frame (usually 12-13) |
+| `get_xmin()`, `get_xmax()` | - | `numeric` | Time domain |
+| `get_frame_time(frame)` | `int` | `numeric` | Time of frame center |
+| `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
+| `get_all_coefficients()` | - | `matrix` | Frames × coefficients matrix |
+| `lifter(from, to)` | `int, int` | `MFCC` | Apply liftering to coefficient range |
+| `as_data_frame()` | - | `data.table` | Export to data.table |
+
+**Creation:** `sound$to_mfcc(num_coefficients = 12, window_length = 0.015, time_step = 0.005, first_filter_freq = 100, filter_freq_delta = 100, max_freq = 0)`
+
+### LFCC Methods (NEW in v4.0.7)
+
+LFCC (Linear-Frequency Cepstral Coefficients) - alternative to MFCC with linear frequency scale.
+
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_number_of_frames()` | - | `integer` | Total analysis frames |
+| `get_number_of_coefficients()` | - | `integer` | Coefficients per frame |
+| `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
+| `get_all_coefficients()` | - | `matrix` | Frames × coefficients matrix |
+| `as_data_frame()` | - | `data.table` | Export to data.table |
+
+**Creation:** `lpc$to_lfcc(num_coefficients = 12)` (from LPC object)
+
+### FormantModeler Methods (NEW in v4.0.7)
+
+Robust polynomial formant tracking with outlier detection.
+
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_number_of_tracks()` | - | `integer` | Number of formant tracks |
+| `get_number_of_parameters()` | - | `integer` | Polynomial order per track |
+| `get_xmin()`, `get_xmax()` | - | `numeric` | Time domain |
+| `get_coefficient_of_determination(track)` | `int` | `numeric` | R² for track |
+| `get_model_value_at_time(track, time)` | `int, double` | `numeric` | Smoothed formant value |
+| `get_residual_at_time(track, time)` | `int, double` | `numeric` | Deviation from model |
+| `get_data_point_status(track, frame)` | `int, int` | `integer` | 1=valid, 0=outlier |
+| `to_formant()` | - | `Formant` | Convert back to Formant |
+| `process_outliers(sigma)` | `double` | `FormantModeler` | Mark outliers beyond sigma |
+| `as_data_frame()` | - | `data.table` | Export modeled values |
+
+**Creation:** `formant$to_formant_modeler(tmin, tmax, num_tracks = 4, num_params = 5)`
+
+### PCA Methods (NEW in v4.0.7)
+
+Principal Component Analysis for vowel space analysis and dimensionality reduction.
+
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_number_of_components()` | - | `integer` | Number of principal components |
+| `get_dimension()` | - | `integer` | Original data dimension |
+| `get_number_of_observations()` | - | `integer` | Training data count |
+| `get_eigenvalues()` | - | `numeric vector` | All eigenvalues |
+| `get_eigenvalue(component)` | `int` | `numeric` | Single eigenvalue |
+| `get_fraction_variance(from, to)` | `int, int` | `numeric` | Cumulative variance explained |
+| `get_dimension_of_fraction(frac)` | `double` | `integer` | Components for variance fraction |
+| `get_eigenvector(component)` | `int` | `numeric vector` | PC loadings |
+| `get_eigenvectors()` | - | `matrix` | All PC loadings |
+| `get_centroid()` | - | `numeric vector` | Data centroid |
+| `project(data, num_dim)` | `matrix, int` | `matrix` | Project new data |
+| `as_data_frame()` | - | `data.table` | Component summary |
+
+**Creation:** `pca_from_matrix(data)` where rows are observations, columns are variables.
+
+**Example - Vowel Space Analysis:**
+```r
+# F1, F2, F3 measurements for vowels
+vowels <- matrix(c(
+  700, 1200, 2500,  # /a/
+  350, 2100, 2800,  # /i/
+  450, 700, 2400    # /u/
+), ncol = 3, byrow = TRUE)
+
+pca <- pca_from_matrix(vowels)
+pca$get_fraction_variance(1, 2)  # Variance in first 2 PCs
+projected <- pca$project(new_vowels, num_dim = 2)  # Project to 2D
+```
+
+### Discriminant Methods (NEW in v4.0.7)
+
+Linear Discriminant Analysis for classification (vowel ID, speaker ID, dialect classification).
+
+| Method | Parameters | Return | Notes |
+|--------|------------|--------|-------|
+| `get_number_of_groups()` | - | `integer` | Number of classes |
+| `get_number_of_functions()` | - | `integer` | Discriminant functions |
+| `get_dimension()` | - | `integer` | Feature dimension |
+| `get_number_of_observations(group)` | `int` | `integer` | Training samples in group |
+| `get_total_observations()` | - | `integer` | Total training samples |
+| `get_eigenvalues()` | - | `numeric vector` | Discriminant eigenvalues |
+| `get_fraction_variance(from, to)` | `int, int` | `numeric` | Variance explained |
+| `get_wilks_lambda(from)` | `int` | `numeric` | Wilks' Lambda statistic |
+| `get_partial_discrimination_probability(n)` | `int` | `list` | Chi-squared test |
+| `get_eigenvector(func)` | `int` | `numeric vector` | Discriminant function coefficients |
+| `get_eigenvectors()` | - | `matrix` | All discriminant coefficients |
+| `get_group_centroids()` | - | `matrix` | Group means in original space |
+| `get_group_labels()` | - | `character vector` | Class names |
+| `get_apriori_probabilities()` | - | `numeric vector` | Prior probabilities |
+| `set_apriori_probability(group, p)` | `int, double` | - | Set prior for group |
+| `as_data_frame()` | - | `data.table` | Function summary |
+
+**Creation:** `discriminant_from_matrix(data, labels)` where labels is a character vector of group memberships.
+
+**Example - Vowel Classification:**
+```r
+# Training data: F1, F2, F3 for labeled vowels
+vowels <- matrix(c(
+  700, 1200, 2500,  # /a/
+  720, 1180, 2520,  # /a/
+  350, 2100, 2800,  # /i/
+  340, 2150, 2780   # /i/
+), ncol = 3, byrow = TRUE)
+labels <- c("a", "a", "i", "i")
+
+lda <- discriminant_from_matrix(vowels, labels)
+lda$get_wilks_lambda(1)  # Classification power (lower = better)
+lda$get_group_centroids()  # Mean formants per vowel
+```
+
 ---
 
 ## Validation Patterns
@@ -1027,7 +1163,7 @@ if (inherits(formant, "formant_constructor")) {  # Old, don't use
 }
 ```
 
-**Available class names:** `Sound`, `Pitch`, `Formant`, `Intensity`, `Spectrum`, `Spectrogram`, `TextGrid`, `PointProcess`, `Harmonicity`, `Ltas`, `Cepstrum`, `PowerCepstrum`, `LPC`, `Cochleagram`, `Excitation`, `Matrix`, `Table`, `PitchTier`, `FormantTier`, `IntensityTier`, `AmplitudeTier`, `DurationTier`, `FormantGrid`, `Manipulation`, `KlattGrid`, `FormantPath`, `ComplexSpectrogram`, `Polygon`, `VocalTract`, `LongSound`, `Electroglottogram`
+**Available class names:** `Sound`, `Pitch`, `Formant`, `Intensity`, `Spectrum`, `Spectrogram`, `TextGrid`, `PointProcess`, `Harmonicity`, `Ltas`, `Cepstrum`, `PowerCepstrum`, `LPC`, `Cochleagram`, `Excitation`, `Matrix`, `Table`, `PitchTier`, `FormantTier`, `IntensityTier`, `AmplitudeTier`, `DurationTier`, `FormantGrid`, `Manipulation`, `KlattGrid`, `FormantPath`, `ComplexSpectrogram`, `Polygon`, `VocalTract`, `LongSound`, `Electroglottogram`, `MFCC`, `LFCC`, `FormantModeler`, `PCA`, `Discriminant`
 
 ### 2. Unit Code Mismatch
 
@@ -1136,33 +1272,44 @@ f1_values <- result$F1
 
 ```
 src/
-├── modules/               # Rcpp Module C++ code
+├── modules/               # Rcpp Module C++ code (37 modules)
 │   ├── module_common.h    # Unit codes, validation macros
 │   ├── sound_module.cpp   # RSound class
 │   ├── pitch_module.cpp   # RPitch class
+│   ├── mfcc_module.cpp    # RMFCC, RLFCC classes (v4.0.7)
+│   ├── pca_module.cpp     # RPCA class (v4.0.7)
+│   ├── discriminant_module.cpp  # RDiscriminant class (v4.0.7)
+│   ├── formantmodeler_module.cpp # RFormantModeler class (v4.0.7)
 │   └── ...
 ├── praat.github.io/       # Praat C++ source
 │   ├── fon/              # Core phonetic objects
 │   │   ├── Sound.h
 │   │   ├── Pitch.h
 │   │   └── ...
+│   ├── dwtools/          # Statistical analysis (PCA, Discriminant, MFCC)
 │   └── melder/           # Error handling
 ├── datatable_utils.h      # C++ helpers for data.table creation (v4.0+)
 R/
-├── sound-r6-new.R         # Sound R wrapper
-├── pitch-r6.R             # Pitch R wrapper
-├── formant-r6.R           # Formant R wrapper
+├── sound-wrapper.R        # Sound R wrapper (renamed from sound-r6-new.R in v4.0.7)
+├── pitch-wrapper.R        # Pitch R wrapper (renamed from pitch-r6.R in v4.0.7)
+├── formant-wrapper.R      # Formant R wrapper
+├── mfcc-wrapper.R         # MFCC/LFCC R wrappers (v4.0.7)
+├── pca-wrapper.R          # PCA R wrapper (v4.0.7)
+├── discriminant-wrapper.R # Discriminant R wrapper (v4.0.7)
+├── formantmodeler-wrapper.R # FormantModeler R wrapper (v4.0.7)
 ├── datatable-utils.R      # R data.table helpers (v4.0+)
 ├── parallel-batch.R       # Parallel processing (not exported)
 ├── zzz.R                  # Module loading
 └── RcppExports.R          # Auto-generated (don't edit)
 ```
 
+**File Naming Convention (v4.0.7):** All R wrapper files use `-wrapper.R` suffix (not `-r6.R`) to accurately reflect the function-wrapper pattern used instead of R6 classes.
+
 ---
 
 ## Quick Reference Card
 
-**Updated for v4.0.4 - 3-Tier Performance API + data.table + ZCR**
+**Updated for v4.0.7 - 3-Tier Performance API + data.table + ZCR + Statistical Analysis**
 
 ```r
 # === LOAD AUDIO ===
@@ -1226,6 +1373,27 @@ zcr_data <- sound_get_zcr(sound, window_duration = 0.03)  # Per-frame ZCR
 # === XPTR WINDOWS (70x faster custom DSP) ===
 hamming <- create_window_xptr("hamming")
 windowed <- apply_window_xptr(sound, hamming)
+
+# === MFCC/LFCC (v4.0.7 - Speaker Recognition) ===
+mfcc <- sound$to_mfcc(num_coefficients = 12)
+coeffs <- mfcc$get_all_coefficients()  # Frames × coefficients matrix
+
+lpc <- sound$to_lpc_burg()
+lfcc <- lpc$to_lfcc(num_coefficients = 12)
+
+# === PCA (v4.0.7 - Dimensionality Reduction) ===
+vowels <- matrix(c(700, 1200, 350, 2100, 450, 700), ncol = 2, byrow = TRUE)
+pca <- pca_from_matrix(vowels)
+projected <- pca$project(new_data, num_dim = 2)
+
+# === DISCRIMINANT (v4.0.7 - Classification) ===
+lda <- discriminant_from_matrix(vowels, labels = c("a", "i", "u"))
+lda$get_wilks_lambda(1)  # Lower = better separation
+lda$get_group_centroids()  # Class means
+
+# === FORMANTMODELER (v4.0.7 - Robust Formant Tracking) ===
+fm <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 4)
+smoothed_f1 <- fm$get_model_value_at_time(track = 1, time = 0.5)
 
 # === STATISTICS (0,0 = entire duration) ===
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
@@ -1536,6 +1704,39 @@ When reimplementing Praat code that involves:
 
 ## Version History
 
+**v4.0.7 (2026-01-15):**
+- **NEW: 4 statistical/cepstral modules** (37 total modules)
+  - `MFCC` - Mel-Frequency Cepstral Coefficients for speaker recognition
+    - `sound$to_mfcc(num_coefficients, window_length, time_step, ...)`
+    - Methods: `get_coefficients_at_frame()`, `get_all_coefficients()`, `lifter()`
+  - `LFCC` - Linear-Frequency Cepstral Coefficients (alternative to MFCC)
+    - `lpc$to_lfcc(num_coefficients)` - Create from LPC object
+    - Same query methods as MFCC
+  - `FormantModeler` - Robust polynomial formant tracking
+    - `formant$to_formant_modeler(tmin, tmax, num_tracks, num_params)`
+    - Methods: `get_model_value_at_time()`, `process_outliers()`, `to_formant()`
+    - Use case: Improved formant estimation with outlier detection
+  - `PCA` - Principal Component Analysis
+    - `pca_from_matrix(data)` - Create from numeric matrix
+    - Methods: `get_eigenvalues()`, `get_eigenvectors()`, `project()`, `get_fraction_variance()`
+    - Use case: Vowel space dimensionality reduction
+  - `Discriminant` - Linear Discriminant Analysis
+    - `discriminant_from_matrix(data, labels)` - Create from labeled data
+    - Methods: `get_wilks_lambda()`, `get_group_centroids()`, `get_eigenvectors()`
+    - Use case: Vowel classification, speaker identification
+- **File naming standardization:**
+  - Renamed 30 R wrapper files: `*-r6.R` → `*-wrapper.R`
+  - Reflects actual function-wrapper pattern (not R6 classes)
+  - No breaking changes to API - only internal file names changed
+- **Sound methods added:**
+  - `sound$to_mfcc()` - Extract MFCC from audio
+  - `sound$to_formant_optimal()` - Find optimal formant ceiling
+  - `sound$get_optimal_formant_ceiling()` - Ceiling search for speaker
+- **LPC method added:**
+  - `lpc$to_lfcc()` - Convert LPC to LFCC
+- **Formant method added:**
+  - `formant$to_formant_modeler()` - Create robust formant model
+
 **v4.0.4 (2026-01-13):**
 - **BREAKING: Fixed LTAS `get_slope()` unit parameter**
   - Unit codes were incorrectly mapped: energy/sones/dB off by one
@@ -1730,8 +1931,8 @@ When reimplementing Praat code that involves:
 
 ---
 
-**Guide Version:** 4.0.4
-**Last Updated:** 2026-01-13
-**Package Version:** 4.0.4
-**Modules:** 33 (30/31 objects use modules, PraatInterpreter uses R6)
-**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR (v4.0.4), specialized workflow functions (sound_concatenate_all, sound_load_window, textgrid_merge)
+**Guide Version:** 4.0.8
+**Last Updated:** 2026-01-15
+**Package Version:** 4.0.8
+**Modules:** 37 (34/35 objects use modules, PraatInterpreter uses R6)
+**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler)

@@ -232,7 +232,63 @@ Sound <- function(path = NULL, .xptr = NULL) {
       )
       Formant(.xptr = formant_ptr)
     },
-    
+
+    # Robust formant extraction with optimal ceiling search
+    to_formant_optimal = function(
+      start_time = 0.0, end_time = 0.0,
+      window_length = 0.025, time_step = 0.005,
+      min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
+      preemphasis_freq = 50.0,
+      num_formant_tracks = 4, num_params_per_track = 5,
+      weigh_formants = "bandwidth",
+      num_sigmas = 1.0, power = 1.25,
+      use_constraints = FALSE,
+      min_f1 = 0.0, max_f1 = 0.0,
+      min_f2 = 0.0, max_f2 = 0.0,
+      min_f3 = 0.0
+    ) {
+      weigh_code <- switch(tolower(weigh_formants),
+        "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
+      fm_mod <- get_module("formantmodeler_module")
+      result <- fm_mod$Sound_to_Formant_interval(
+        ptr, start_time, end_time,
+        window_length, time_step,
+        min_freq, max_freq, as.integer(num_freq_steps),
+        preemphasis_freq,
+        as.integer(num_formant_tracks), as.integer(num_params_per_track),
+        weigh_code,
+        num_sigmas, power,
+        use_constraints, min_f1, max_f1, min_f2, max_f2, min_f3
+      )
+      list(
+        formant = Formant(.xptr = result$formant_ptr),
+        optimal_ceiling = result$optimal_ceiling
+      )
+    },
+
+    get_optimal_formant_ceiling = function(
+      start_time = 0.0, end_time = 0.0,
+      window_length = 0.025, time_step = 0.005,
+      min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
+      preemphasis_freq = 50.0,
+      num_formant_tracks = 4, num_params_per_track = 5,
+      weigh_formants = "bandwidth",
+      num_sigmas = 1.0, power = 1.25
+    ) {
+      weigh_code <- switch(tolower(weigh_formants),
+        "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
+      fm_mod <- get_module("formantmodeler_module")
+      fm_mod$Sound_get_optimal_formant_ceiling(
+        ptr, start_time, end_time,
+        window_length, time_step,
+        min_freq, max_freq, as.integer(num_freq_steps),
+        preemphasis_freq,
+        as.integer(num_formant_tracks), as.integer(num_params_per_track),
+        weigh_code,
+        num_sigmas, power
+      )
+    },
+
     to_intensity = function(minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
       intensity_ptr <- cpp_snd$to_intensity_ptr(
         as.numeric(minimum_pitch),
@@ -548,7 +604,19 @@ Sound <- function(path = NULL, .xptr = NULL) {
       )
       LPC(.xptr = lpc_ptr)
     },
-    
+
+    # MFCC extraction (speech/speaker recognition features)
+    to_mfcc = function(num_coefficients = 13, analysis_width = 0.025,
+                       time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0,
+                       df_mel = 100.0) {
+      mfcc_mod <- get_module("mfcc_module")
+      mfcc_ptr <- mfcc_mod$Sound_to_MFCC(
+        ptr, as.integer(num_coefficients), analysis_width,
+        time_step, f1_mel, fmax_mel, df_mel
+      )
+      MFCC(.xptr = mfcc_ptr)
+    },
+
     to_point_process_extrema = function(channel = 1, include_maxima = TRUE,
                                         include_minima = FALSE,
                                         interpolation = c("None", "Parabolic", "Cubic", "Sinc70", "Sinc700")) {

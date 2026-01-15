@@ -16,13 +16,14 @@ Ltas <- function(.xptr = NULL) {
   ltas_mod <- get_module("ltas_module")
   cpp_obj <- ltas_mod$RLtas$new(.xptr)
   
-  # Unit codes
+  # Unit codes - matches Praat's Ltas.cpp:44-60
+  # 0 = dB passthrough, 1 = energy (10*log10), 2 = sones (10*log2)
   unit_code <- function(unit) {
     switch(tolower(unit),
-      "energy" = 0,
-      "sones" = 1,
-      "db" = 2,
-      2  # default dB
+      "energy" = 1L,  # Praat: ratio → dB via 10*log10()
+      "sones" = 2L,   # Praat: ratio → dB via 10*log2()
+      "db" = 0L,      # Praat: dB passthrough
+      1L  # default energy (matches Parselmouth behavior)
     )
   }
   

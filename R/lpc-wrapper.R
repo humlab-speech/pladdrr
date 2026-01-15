@@ -146,7 +146,14 @@ LPC <- function(.xptr = NULL) {
       matrix_ptr <- .lpc_to_matrix(.xptr)
       Matrix(.xptr = matrix_ptr)
     },
-    
+
+    # LFCC extraction (Linear Frequency Cepstral Coefficients)
+    to_lfcc = function(num_coefficients = 12) {
+      mfcc_mod <- get_module("mfcc_module")
+      lfcc_ptr <- mfcc_mod$LPC_to_LFCC(.xptr, as.integer(num_coefficients))
+      LFCC(.xptr = lfcc_ptr)
+    },
+
     # Inverse Filtering - Voice Source Extraction
     filter_inverse = function(sound) {
       if (!inherits(sound, "Sound")) {
