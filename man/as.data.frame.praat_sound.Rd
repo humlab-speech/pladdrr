@@ -12,7 +12,7 @@
 \item{...}{Additional arguments (currently unused)}
 }
 \value{
-A data frame with two columns:
+A data.table (inherits from data.frame) with two columns:
   \describe{
     \item{time}{Time in seconds}
     \item{amplitude}{Amplitude values}

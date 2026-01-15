@@ -16,7 +16,7 @@
 \item{...}{Additional arguments passed to `$as_data_frame()`}
 }
 \value{
-A data frame with formant measurements
+A data.table (inherits from data.frame) with formant measurements
 }
 \description{
 S3 method for converting R6 Formant objects to data frames.

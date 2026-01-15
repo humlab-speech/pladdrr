@@ -151,7 +151,7 @@ longsound_open <- function(path) {
 .longsound_static_env$open <- longsound_open
 .longsound_static_env$new <- LongSound
 
-#' @exportS3Method
+#' @exportS3Method $ longsound_constructor
 `$.longsound_constructor` <- function(x, name) {
   .longsound_static_env[[name]]
 }

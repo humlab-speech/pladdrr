@@ -16,7 +16,7 @@
 \item{...}{Additional arguments (ignored)}
 }
 \value{
-A data frame with time, channel, and value columns
+A data.table (inherits from data.frame) with time, channel, and value columns
 }
 \description{
 S3 method for converting R6 Sound objects to data frames.

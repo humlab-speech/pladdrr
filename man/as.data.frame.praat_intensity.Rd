@@ -16,7 +16,7 @@
 \item{...}{Additional arguments (unused)}
 }
 \value{
-The values data.frame from the intensity object
+The values data.table (inherits from data.frame) from the intensity object
 }
 \description{
 Convert praat_intensity to data.frame

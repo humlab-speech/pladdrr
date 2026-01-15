@@ -103,7 +103,7 @@ sound_to_textgrid_silences <- function(sound,
     sounding_label
   )
   
-  TextGrid$new(xptr)
+  TextGrid(.xptr = xptr)
 }
 
 #' @title Extract Intervals from TextGrid Matching Criteria
@@ -145,22 +145,55 @@ sound_to_textgrid_silences <- function(sound,
 #' @export
 textgrid_get_intervals_where <- function(textgrid,
                                         tier = 1,
-                                        condition = c("equals", "contains", 
+                                        condition = c("equals", "contains",
                                                      "does not contain",
                                                      "starts with", "ends with"),
                                         text) {
-  
+
   if (!inherits(textgrid, "TextGrid")) {
     stop("textgrid must be a TextGrid object")
   }
-  
+
   condition <- match.arg(condition)
-  
-  .textgrid_get_intervals_where(
-    textgrid$.xptr,
-    as.integer(tier),
-    condition,
-    as.character(text)
+
+  # Get number of intervals in tier
+  n_intervals <- textgrid$get_number_of_intervals(tier)
+
+  if (n_intervals == 0) {
+    return(list(xmin = numeric(0), xmax = numeric(0),
+                text = character(0), count = 0L))
+  }
+
+  # Collect matching intervals
+  xmin <- numeric(0)
+  xmax <- numeric(0)
+  labels <- character(0)
+
+  for (i in seq_len(n_intervals)) {
+    interval_text <- textgrid$get_interval_text(tier, i)
+
+    # Check if interval matches condition
+    match <- switch(condition,
+      "equals" = interval_text == text,
+      "contains" = grepl(text, interval_text, fixed = TRUE),
+      "does not contain" = !grepl(text, interval_text, fixed = TRUE),
+      "starts with" = startsWith(interval_text, text),
+      "ends with" = endsWith(interval_text, text),
+      FALSE
+    )
+
+    if (match) {
+      xmin <- c(xmin, textgrid$get_interval_start_time(tier, i))
+      xmax <- c(xmax, textgrid$get_interval_end_time(tier, i))
+      labels <- c(labels, interval_text)
+    }
+  }
+
+  list(
+    xmin = xmin,
+    xmax = xmax,
+    text = labels,
+    count = length(xmin)
   )
 }
 
@@ -266,53 +299,67 @@ sound_extract_parts <- function(sound,
   }
 }
 
-#' @title Complete Voice Activity Detection Workflow
+#' @title Extract Voiced Segments from Speech
 #'
 #' @description
-#' High-level function that performs complete voice activity detection workflow:
-#' detects voiced segments and returns them as a concatenated Sound object.
-#' This is the main function used for AVQI continuous speech processing.
+#' Voice activity detection combining intensity-based detection with optional
+#' Zero Crossing Rate (ZCR) filtering. Returns concatenated voiced segments
+#' as a Sound object. This matches the AVQI v2.03/v3.01 voiced extraction.
 #'
 #' @param sound Sound object (continuous speech)
-#' @param minimum_pitch Numeric. Minimum pitch for detection (Hz, default: 50)
-#' @param time_step Numeric. Time step for intensity (s, default: 0.003)
-#' @param silence_threshold Numeric. Silence threshold in dB (default: -25)
+#' @param minimum_pitch Numeric. Minimum pitch for intensity detection (Hz, default: 50)
+#' @param time_step Numeric. Time step for intensity analysis (s, default: 0.003)
+#' @param silence_threshold Numeric. Silence threshold in dB below max (default: -25)
 #' @param min_silent_interval Numeric. Minimum silence duration (s, default: 0.1)
 #' @param min_sounding_interval Numeric. Minimum voiced duration (s, default: 0.1)
-#' @param return_textgrid Logical. Also return the VAD TextGrid (default: FALSE)
+#' @param zcr_threshold Numeric. Maximum ZCR for voiced speech (Hz, default: 3000)
+#' @param zcr_window Numeric. ZCR analysis window duration (s, default: 0.03)
+#' @param use_zcr Logical. Apply ZCR filtering (default: TRUE)
+#' @param return_textgrid Logical. Also return VAD TextGrid (default: FALSE)
 #'
 #' @return If `return_textgrid = FALSE`: Sound object with concatenated voiced segments.
 #'         If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
 #'
+#' @details
+#' The detection pipeline:
+#' 1. Intensity-based: Find segments above silence threshold
+#' 2. ZCR filtering (if `use_zcr = TRUE`): Reject high-ZCR segments (unvoiced)
+#'
+#' AVQI uses both intensity AND ZCR filtering. Set `use_zcr = FALSE` for
+#' intensity-only detection.
+#'
 #' @examples
 #' \dontrun{
-#' # Simple usage for AVQI
-#' continuous_speech <- Sound$new("speech.wav")
-#' voiced_only <- extract_voiced_segments(continuous_speech)
-#' 
-#' cat("Original duration:", continuous_speech$get_total_duration(), "s\n")
-#' cat("Voiced duration:", voiced_only$get_total_duration(), "s\n")
-#' 
-#' # Get TextGrid for inspection
-#' result <- extract_voiced_segments(continuous_speech, return_textgrid = TRUE)
-#' voiced_sound <- result$sound
-#' vad_grid <- result$textgrid
+#' sound <- Sound$new("speech.wav")
+#'
+#' # Full AVQI-compatible extraction (default)
+#' voiced <- extract_voiced_segments(sound)
+#'
+#' # Intensity-only (no ZCR filtering)
+#' voiced_no_zcr <- extract_voiced_segments(sound, use_zcr = FALSE)
+#'
+#' # With TextGrid output
+#' result <- extract_voiced_segments(sound, return_textgrid = TRUE)
+#' cat("Duration:", result$sound$get_duration(), "s\n")
 #' }
 #'
 #' @export
 extract_voiced_segments <- function(sound,
-                                   minimum_pitch = 50,
-                                   time_step = 0.003,
-                                   silence_threshold = -25,
-                                   min_silent_interval = 0.1,
-                                   min_sounding_interval = 0.1,
-                                   return_textgrid = FALSE) {
-  
+                                    minimum_pitch = 50,
+                                    time_step = 0.003,
+                                    silence_threshold = -25,
+                                    min_silent_interval = 0.1,
+                                    min_sounding_interval = 0.1,
+                                    zcr_threshold = 3000,
+                                    zcr_window = 0.03,
+                                    use_zcr = TRUE,
+                                    return_textgrid = FALSE) {
+
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
   }
-  
-  # Step 1: Detect silences
+
+  # Step 1: Intensity-based detection
   vad_grid <- sound_to_textgrid_silences(
     sound,
     minimum_pitch = minimum_pitch,
@@ -321,40 +368,257 @@ extract_voiced_segments <- function(sound,
     min_silent_interval = min_silent_interval,
     min_sounding_interval = min_sounding_interval
   )
-  
-  # Step 2: Get voiced intervals
+
+  # Step 2: Get initial voiced intervals
   voiced_intervals <- textgrid_get_intervals_where(
     vad_grid,
     tier = 1,
     condition = "equals",
     text = "sounding"
   )
-  
+
   if (voiced_intervals$count == 0) {
-    warning("No voiced segments detected")
+    warning("No voiced segments detected by intensity")
     if (return_textgrid) {
       return(list(sound = NULL, textgrid = vad_grid))
-    } else {
+    }
+    return(NULL)
+  }
+
+  # Step 3: Apply ZCR filtering if requested
+  xmin <- voiced_intervals$xmin
+  xmax <- voiced_intervals$xmax
+
+  if (use_zcr && voiced_intervals$count > 0) {
+    # Get all zero crossings for entire sound (efficient - single call)
+    pp_zeros <- sound$to_point_process_zeros(
+      channel = 1L,
+      include_raisers = TRUE,
+      include_fallers = TRUE
+    )
+    all_zeros <- pp_zeros$as_vector()
+
+    keep_mask <- logical(length(xmin))
+
+    for (i in seq_along(xmin)) {
+      segment_duration <- xmax[i] - xmin[i]
+
+      # For segments >= 30ms, use AVQI-style ZCR (0.0025-0.0275 window)
+      if (segment_duration >= zcr_window) {
+        # Get zeros within segment
+        segment_zeros <- all_zeros[all_zeros >= xmin[i] & all_zeros < xmax[i]]
+
+        if (length(segment_zeros) >= 2) {
+          # Convert to segment-relative times
+          relative_zeros <- segment_zeros - xmin[i]
+
+          # AVQI analysis window: 0.0025s to 0.0275s within segment
+          analysis_start <- 0.0025
+          analysis_end <- min(0.0275, segment_duration - 0.0025)
+
+          analysis_zeros <- relative_zeros[
+            relative_zeros >= analysis_start & relative_zeros <= analysis_end
+          ]
+
+          if (length(analysis_zeros) >= 2) {
+            # AVQI formula: N / (last_zero - first_zero)
+            afstand <- analysis_zeros[length(analysis_zeros)] - analysis_zeros[1]
+            if (afstand > 0) {
+              segment_zcr <- length(analysis_zeros) / afstand
+              keep_mask[i] <- segment_zcr < zcr_threshold
+            } else {
+              keep_mask[i] <- TRUE  # Can't calculate, keep segment
+            }
+          } else {
+            keep_mask[i] <- TRUE  # Not enough zeros in analysis window
+          }
+        } else {
+          keep_mask[i] <- TRUE  # Not enough zeros
+        }
+      } else {
+        # Short segment - use simple ZCR across entire segment
+        segment_zeros <- all_zeros[all_zeros >= xmin[i] & all_zeros < xmax[i]]
+        if (length(segment_zeros) >= 2) {
+          afstand <- segment_zeros[length(segment_zeros)] - segment_zeros[1]
+          if (afstand > 0) {
+            segment_zcr <- length(segment_zeros) / afstand
+            keep_mask[i] <- segment_zcr < zcr_threshold
+          } else {
+            keep_mask[i] <- TRUE
+          }
+        } else {
+          keep_mask[i] <- TRUE
+        }
+      }
+    }
+
+    xmin <- xmin[keep_mask]
+    xmax <- xmax[keep_mask]
+
+    if (length(xmin) == 0) {
+      warning("All segments rejected by ZCR filter")
+      if (return_textgrid) {
+        return(list(sound = NULL, textgrid = vad_grid))
+      }
       return(NULL)
     }
   }
-  
-  # Step 3: Extract voiced parts
+
+  # Step 4: Extract and concatenate
   voiced_sounds <- sound_extract_parts(
     sound,
-    voiced_intervals$xmin,
-    voiced_intervals$xmax,
+    xmin,
+    xmax,
     window_shape = "rectangular",
     relative_width = 1.0,
     preserve_times = FALSE
   )
-  
-  # Step 4: Concatenate
+
   voiced_concatenated <- Sound$concatenate(voiced_sounds)
-  
+
   if (return_textgrid) {
     list(sound = voiced_concatenated, textgrid = vad_grid)
   } else {
     voiced_concatenated
   }
 }
+
+#' @title Calculate Zero Crossing Rate for Sound
+#'
+#' @description
+#' Calculates Zero Crossing Rate (ZCR) per frame using Praat's built-in zero
+#' crossing detection. ZCR is the rate at which the signal changes sign,
+#' useful for distinguishing voiced (low ZCR) from unvoiced (high ZCR) speech.
+#'
+#' @param sound Sound object
+#' @param window_duration Numeric. Window duration in seconds (default: 0.03)
+#' @param hop_duration Numeric. Hop between windows in seconds (default: 0.01)
+#' @param channel Integer. Channel to analyze for stereo (default: 1)
+#' @param avqi_compatible Logical. Use AVQI-compatible analysis window
+#'   (0.0025-0.0275s within each frame) instead of full frame (default: TRUE)
+#'
+#' @return Named list with:
+#'   - `times`: Numeric vector of frame center times
+#'   - `zcr`: Numeric vector of zero crossing rates (crossings per second)
+#'   - `window_duration`: Window duration used
+#'   - `hop_duration`: Hop duration used
+#'
+#' @details
+#' Uses Praat's `to_point_process_zeros()` for accurate zero crossing detection
+#' with interpolation.
+#'
+#' When `avqi_compatible = TRUE` (default), uses AVQI203.praat's checkZeros
+#' procedure: analyzes zeros within 0.0025-0.0275s of each frame (25ms analysis
+#' window within 30ms frame). This matches Praat's AVQI implementation.
+#'
+#' Typical ZCR values:
+#' - Voiced speech: 500-2000 crossings/second
+#' - Unvoiced speech: 3000-6000 crossings/second
+#' - Silence: variable, depends on noise
+#'
+#' For AVQI, segments with ZCR > 3000 Hz are typically rejected as unvoiced.
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound$new("speech.wav")
+#' zcr_data <- sound_get_zcr(sound, window_duration = 0.03)
+#'
+#' # Plot ZCR over time
+#' plot(zcr_data$times, zcr_data$zcr, type = "l",
+#'      xlab = "Time (s)", ylab = "ZCR (crossings/s)")
+#' abline(h = 3000, col = "red", lty = 2)  # Voiced/unvoiced threshold
+#' }
+#'
+#' @export
+sound_get_zcr <- function(sound,
+                          window_duration = 0.03,
+                          hop_duration = 0.01,
+                          channel = 1L,
+                          avqi_compatible = TRUE) {
+
+  if (!inherits(sound, "Sound")) {
+    stop("sound must be a Sound object")
+  }
+
+  # Get all zero crossings using Praat's built-in detection (with interpolation)
+  pp_zeros <- sound$to_point_process_zeros(
+    channel = channel,
+    include_raisers = TRUE,
+    include_fallers = TRUE
+  )
+
+  # Get zero crossing times as vector
+  zero_times <- pp_zeros$as_vector()
+
+  # Get sound timing info
+  duration <- sound$get_duration()
+  start_time <- sound$get_xmin()
+  end_time <- sound$get_xmax()
+
+  # Calculate frame parameters
+  n_frames <- max(1L, as.integer((duration - window_duration) / hop_duration) + 1L)
+
+  times <- numeric(n_frames)
+  zcr <- numeric(n_frames)
+
+  # AVQI analysis window offsets (within each frame)
+  avqi_start_offset <- 0.0025
+  avqi_end_offset <- 0.0275
+
+  for (i in seq_len(n_frames)) {
+    # Frame boundaries
+    frame_start <- start_time + (i - 1L) * hop_duration
+    frame_end <- frame_start + window_duration
+    frame_center <- frame_start + window_duration / 2
+
+    times[i] <- frame_center
+
+    # Get zeros in frame
+    in_frame <- zero_times >= frame_start & zero_times < frame_end
+    frame_zeros <- zero_times[in_frame]
+
+    if (avqi_compatible && window_duration >= 0.03) {
+      # AVQI-compatible: analyze 0.0025-0.0275s within frame
+      relative_zeros <- frame_zeros - frame_start
+      analysis_zeros <- relative_zeros[
+        relative_zeros >= avqi_start_offset & relative_zeros <= avqi_end_offset
+      ]
+      n_crossings <- length(analysis_zeros)
+
+      if (n_crossings >= 2) {
+        afstand <- analysis_zeros[n_crossings] - analysis_zeros[1]
+        if (afstand > 0) {
+          zcr[i] <- n_crossings / afstand
+        } else {
+          zcr[i] <- 0
+        }
+      } else {
+        zcr[i] <- 0
+      }
+    } else {
+      # Standard: use full frame
+      n_crossings <- length(frame_zeros)
+
+      if (n_crossings >= 2) {
+        afstand <- frame_zeros[n_crossings] - frame_zeros[1]
+        if (afstand > 0) {
+          zcr[i] <- n_crossings / afstand
+        } else {
+          zcr[i] <- 0
+        }
+      } else if (n_crossings == 1) {
+        zcr[i] <- 1 / window_duration
+      } else {
+        zcr[i] <- 0
+      }
+    }
+  }
+
+  list(
+    times = times,
+    zcr = zcr,
+    window_duration = window_duration,
+    hop_duration = hop_duration
+  )
+}
+

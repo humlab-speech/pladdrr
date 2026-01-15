@@ -2,7 +2,7 @@
 % Please edit documentation in R/praat-direct.R
 \name{to_pitch_direct}
 \alias{to_pitch_direct}
-\title{Create Pitch from Sound Directly (returns XPtr)}
+\title{Create Pitch from Sound Directly (returns XPtr) - Basic Parameters}
 \usage{
 to_pitch_direct(sound, time_step = 0, pitch_floor = 75, pitch_ceiling = 600)
 }
@@ -20,21 +20,24 @@ External pointer to Pitch (NOT R6 object)
 }
 \description{
 Create Pitch analysis directly, returning raw external pointer.
-Use when you need maximum performance and will pass result to
-other direct functions.
+This is a simplified version with basic parameters only.
+
+**NOTE:** For full control over voicing parameters (silence_threshold,
+voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
+instead.
 }
 \examples{
 \dontrun{
 sound <- Sound("speech.wav")
 
-# FAST: Returns raw pointer
+# FAST: Returns raw pointer (basic parameters)
 pitch_ptr <- to_pitch_direct(sound)
 
 # Use with other direct functions
 stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
-
-# Or wrap in R6 if needed later
-pitch <- Pitch$new(.xptr = pitch_ptr)
 }
 
+}
+\seealso{
+[to_pitch_ac_direct()], [to_pitch_cc_direct()] for full parameter control
 }

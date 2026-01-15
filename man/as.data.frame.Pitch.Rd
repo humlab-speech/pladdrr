@@ -16,7 +16,7 @@
 \item{...}{Additional arguments (ignored)}
 }
 \value{
-A data frame with pitch measurements
+A data.table (inherits from data.frame) with pitch measurements
 }
 \description{
 S3 method for converting R6 Pitch objects to data frames.

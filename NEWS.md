@@ -1,3 +1,21 @@
+# pladdrr 4.0.9 (2026-01-15)
+
+## Documentation
+
+* Added roxygen documentation for undocumented factory functions:
+  - `amplitude_tier_create()`, `amplitude_tier_from_point_process()`
+  - `intensity_tier_to_amplitude_tier()`
+  - `matrix_create()`, `matrix_create_simple()`, `matrix_read()`
+  - `table_create()`
+
+## Bug Fixes
+
+* Fixed @exportS3Method tags in formanttier, vocaltract, longsound wrappers
+* Fixed roxygen2 R6 class introspection issue with PraatInterpreter
+* Regenerated NAMESPACE with all exports
+
+---
+
 # pladdrr 4.0.8 (2026-01-15)
 
 ## New Features

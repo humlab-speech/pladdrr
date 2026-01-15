@@ -2,7 +2,7 @@
 % Please edit documentation in R/vad.R
 \name{extract_voiced_segments}
 \alias{extract_voiced_segments}
-\title{Complete Voice Activity Detection Workflow}
+\title{Extract Voiced Segments from Speech}
 \usage{
 extract_voiced_segments(
   sound,
@@ -11,46 +11,63 @@ extract_voiced_segments(
   silence_threshold = -25,
   min_silent_interval = 0.1,
   min_sounding_interval = 0.1,
+  zcr_threshold = 3000,
+  zcr_window = 0.03,
+  use_zcr = TRUE,
   return_textgrid = FALSE
 )
 }
 \arguments{
 \item{sound}{Sound object (continuous speech)}
 
-\item{minimum_pitch}{Numeric. Minimum pitch for detection (Hz, default: 50)}
+\item{minimum_pitch}{Numeric. Minimum pitch for intensity detection (Hz, default: 50)}
 
-\item{time_step}{Numeric. Time step for intensity (s, default: 0.003)}
+\item{time_step}{Numeric. Time step for intensity analysis (s, default: 0.003)}
 
-\item{silence_threshold}{Numeric. Silence threshold in dB (default: -25)}
+\item{silence_threshold}{Numeric. Silence threshold in dB below max (default: -25)}
 
 \item{min_silent_interval}{Numeric. Minimum silence duration (s, default: 0.1)}
 
 \item{min_sounding_interval}{Numeric. Minimum voiced duration (s, default: 0.1)}
 
-\item{return_textgrid}{Logical. Also return the VAD TextGrid (default: FALSE)}
+\item{zcr_threshold}{Numeric. Maximum ZCR for voiced speech (Hz, default: 3000)}
+
+\item{zcr_window}{Numeric. ZCR analysis window duration (s, default: 0.03)}
+
+\item{use_zcr}{Logical. Apply ZCR filtering (default: TRUE)}
+
+\item{return_textgrid}{Logical. Also return VAD TextGrid (default: FALSE)}
 }
 \value{
 If `return_textgrid = FALSE`: Sound object with concatenated voiced segments.
         If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
 }
 \description{
-High-level function that performs complete voice activity detection workflow:
-detects voiced segments and returns them as a concatenated Sound object.
-This is the main function used for AVQI continuous speech processing.
+Voice activity detection combining intensity-based detection with optional
+Zero Crossing Rate (ZCR) filtering. Returns concatenated voiced segments
+as a Sound object. This matches the AVQI v2.03/v3.01 voiced extraction.
+}
+\details{
+The detection pipeline:
+1. Intensity-based: Find segments above silence threshold
+2. ZCR filtering (if `use_zcr = TRUE`): Reject high-ZCR segments (unvoiced)
+
+AVQI uses both intensity AND ZCR filtering. Set `use_zcr = FALSE` for
+intensity-only detection.
 }
 \examples{
 \dontrun{
-# Simple usage for AVQI
-continuous_speech <- Sound$new("speech.wav")
-voiced_only <- extract_voiced_segments(continuous_speech)
+sound <- Sound$new("speech.wav")
 
-cat("Original duration:", continuous_speech$get_total_duration(), "s\n")
-cat("Voiced duration:", voiced_only$get_total_duration(), "s\n")
+# Full AVQI-compatible extraction (default)
+voiced <- extract_voiced_segments(sound)
 
-# Get TextGrid for inspection
-result <- extract_voiced_segments(continuous_speech, return_textgrid = TRUE)
-voiced_sound <- result$sound
-vad_grid <- result$textgrid
+# Intensity-only (no ZCR filtering)
+voiced_no_zcr <- extract_voiced_segments(sound, use_zcr = FALSE)
+
+# With TextGrid output
+result <- extract_voiced_segments(sound, return_textgrid = TRUE)
+cat("Duration:", result$sound$get_duration(), "s\n")
 }
 
 }

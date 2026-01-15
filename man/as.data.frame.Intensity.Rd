@@ -16,7 +16,7 @@
 \item{...}{Additional arguments (ignored)}
 }
 \value{
-A data frame with time and intensity columns
+A data.table (inherits from data.frame) with time and intensity columns
 }
 \description{
 S3 method for converting R6 Intensity objects to data frames.

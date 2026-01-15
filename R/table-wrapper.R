@@ -126,6 +126,16 @@ print.Table <- function(x, ...) x$print()
 as.data.frame.Table <- function(x, ...) x$as_data_frame()
 
 # Factory functions
+
+#' Create a Praat Table
+#'
+#' Creates a new Table object with specified dimensions.
+#'
+#' @param numberOfRows Number of rows
+#' @param numberOfColumns Number of columns (optional if columnNames provided)
+#' @param columnNames Character vector of column names (optional)
+#' @return A Table object
+#' @seealso [Table] for object methods
 #' @export
 table_create <- function(numberOfRows, numberOfColumns = NULL, columnNames = NULL) {
   Table(numberOfRows = numberOfRows, 

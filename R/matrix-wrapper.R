@@ -88,17 +88,49 @@ print.Matrix <- function(x, ...) x$print()
 as.matrix.Matrix <- function(x, ...) x$as_matrix()
 
 # Factory functions for backward compatibility
+
+#' Create a Praat Matrix with full parameters
+#'
+#' Creates a new Matrix object with explicit domain and sampling parameters.
+#'
+#' @param xmin Minimum x value (start of x domain)
+#' @param xmax Maximum x value (end of x domain)
+#' @param nx Number of columns
+#' @param dx X sampling period (step between columns)
+#' @param x1 X value of first column
+#' @param ymin Minimum y value (start of y domain)
+#' @param ymax Maximum y value (end of y domain)
+#' @param ny Number of rows
+#' @param dy Y sampling period (step between rows)
+#' @param y1 Y value of first row
+#' @return A Matrix object
+#' @seealso [matrix_create_simple()] for simpler creation, [Matrix] for object methods
 #' @export
 matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
   Matrix(xmin = xmin, xmax = xmax, nx = nx, dx = dx, x1 = x1,
          ymin = ymin, ymax = ymax, ny = ny, dy = dy, y1 = y1)
 }
 
+#' Create a simple Praat Matrix
+#'
+#' Creates a new Matrix object with given dimensions. Domain defaults to [0,1] for both axes.
+#'
+#' @param numberOfRows Number of rows
+#' @param numberOfColumns Number of columns
+#' @return A Matrix object
+#' @seealso [matrix_create()] for full parameter control, [Matrix] for object methods
 #' @export
 matrix_create_simple <- function(numberOfRows, numberOfColumns) {
   Matrix(numberOfRows = numberOfRows, numberOfColumns = numberOfColumns)
 }
 
+#' Read a Matrix from file
+#'
+#' Reads a Praat Matrix object from a text or binary file.
+#'
+#' @param path Path to the Matrix file
+#' @return A Matrix object
+#' @seealso [matrix_create()], [matrix_create_simple()]
 #' @export
 matrix_read <- function(path) {
   xptr <- .matrix_read(path)

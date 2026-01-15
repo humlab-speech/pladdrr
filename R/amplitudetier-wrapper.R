@@ -104,13 +104,33 @@ print.AmplitudeTier <- function(x, ...) x$print()
 #' @export
 as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()
 
-# Factory functions (keep existing exports)
+# Factory functions
+
+#' Create an empty AmplitudeTier
+#'
+#' Creates a new AmplitudeTier object with no points.
+#'
+#' @param tmin Start time in seconds
+#' @param tmax End time in seconds
+#' @return An AmplitudeTier object
+#' @examples
+#' \dontrun{
+#' tier <- amplitude_tier_create(0, 1)
+#' tier$add_point(0.5, 0.8)
+#' }
 #' @export
 amplitude_tier_create <- function(tmin, tmax) {
   ptr <- amplitude_tier_create_cpp(tmin, tmax)
   AmplitudeTier(.xptr = ptr)
 }
 
+#' Create AmplitudeTier from PointProcess and Sound
+#'
+#' Extracts amplitude values from a Sound at the times specified by a PointProcess.
+#'
+#' @param point_process A PointProcess object
+#' @param sound A Sound object
+#' @return An AmplitudeTier object with amplitudes at each point time
 #' @export
 amplitude_tier_from_point_process <- function(point_process, sound) {
   if (!inherits(point_process, "PointProcess")) {
@@ -123,6 +143,12 @@ amplitude_tier_from_point_process <- function(point_process, sound) {
   AmplitudeTier(.xptr = ptr)
 }
 
+#' Convert IntensityTier to AmplitudeTier
+#'
+#' Converts intensity values (dB) to amplitude values.
+#'
+#' @param intensity_tier An IntensityTier object
+#' @return An AmplitudeTier object
 #' @export
 intensity_tier_to_amplitude_tier <- function(intensity_tier) {
   if (!inherits(intensity_tier, "IntensityTier")) {
