@@ -1763,6 +1763,13 @@ When reimplementing Praat code that involves:
 
 ## Version History
 
+**v4.0.12 (2026-01-16):**
+- **CRITICAL:** Fixed `TextGrid()` constructor export
+  - `TextGrid()` had `@export` roxygen tag but was missing from NAMESPACE
+  - Now properly exported: `TextGrid("file.TextGrid")` works without `pladdrr::` prefix
+- **Build fix:** Removed 9 spurious NAMESPACE exports (`C++`, `in`, `Get`, `a`, `all`, `call`, `from`, `intervals`, `single`, `tier`)
+  - These were incorrectly parsed from Praat command documentation and caused install failures
+
 **v4.0.7 (2026-01-15):**
 - **NEW: 4 statistical/cepstral modules** (37 total modules)
   - `MFCC` - Mel-Frequency Cepstral Coefficients for speaker recognition
@@ -1990,8 +1997,8 @@ When reimplementing Praat code that involves:
 
 ---
 
-**Guide Version:** 4.0.8
-**Last Updated:** 2026-01-15
-**Package Version:** 4.0.8
+**Guide Version:** 4.0.12
+**Last Updated:** 2026-01-16
+**Package Version:** 4.0.12
 **Modules:** 37 (34/35 objects use modules, PraatInterpreter uses R6)
 **Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler)
