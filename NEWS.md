@@ -1,3 +1,21 @@
+# pladdrr 4.0.11 (2026-01-16)
+
+## New Features
+
+* Added `Sound$pitch_to_pointprocess_peaks()` for pitch-guided amplitude peak detection
+  - Wraps Praat's `Sound_Pitch_to_PointProcess_peaks()`
+  - Improves ATrI (Amplitude Tremor Intensity) accuracy from 58.6% to 64.0%
+  - Args: `pitch` (Pitch object), `include_maxima = TRUE`, `include_minima = FALSE`
+  - See: `agents/AGENT_GUIDE.md` lines 1492-1549
+
+## Bug Fixes
+
+* Removed Cepstrumc.cpp from build (caused DTW dependency errors)
+  - Regenerated src/Makevars cleanly from src/Makevars.in
+  - Package now builds without DTW dependencies
+
+---
+
 # pladdrr 4.0.10 (2026-01-15)
 
 ## Internal

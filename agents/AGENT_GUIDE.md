@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.8 (2026-01-15)
+**Version:** 4.0.9 (2026-01-15)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -932,6 +932,7 @@ options(speaker.use_simd = FALSE)
 | `to_intensity(minimum_pitch, time_step, subtract_mean)` | `double, double, bool` | `Intensity` | `Sound_to_Intensity()` |
 | `to_spectrum(fast)` | `bool` | `Spectrum` | `Sound_to_Spectrum()` |
 | `to_spectrogram(window_length, max_freq, time_step, freq_step, window_shape)` | multiple | `Spectrogram` | `Sound_to_Spectrogram()` |
+| `pitch_to_pointprocess_peaks(pitch, include_maxima, include_minima)` | `Pitch, bool, bool` | `PointProcess` | `Sound_Pitch_to_PointProcess_peaks()` (NEW v4.0.9) |
 | `extract_part(start_time, end_time)` | `double, double` | `Sound` | `Sound_extractPart()` |
 | `extract_channel(channel)` | `int` | `Sound` | `Sound_extractChannel()` |
 
@@ -1486,6 +1487,64 @@ pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 
 # These parameters are accepted but ignored:
 # time_step, max_period_factor, max_amplitude_factor
+```
+
+### pitch_to_pointprocess_peaks (NEW in v4.0.9)
+
+**Purpose:** Extract amplitude peaks and/or troughs from a sound guided by pitch contour. Essential for **tremor analysis** (vocal amplitude modulation detection).
+
+**Signature:** `sound$pitch_to_pointprocess_peaks(pitch, include_maxima = TRUE, include_minima = FALSE)`
+
+**Parameters:**
+- `pitch`: Pitch object (created with `sound$to_pitch()`)
+- `include_maxima`: Include amplitude peaks (default: TRUE)
+- `include_minima`: Include amplitude troughs (default: FALSE)
+
+**Returns:** PointProcess object with timestamps of detected peaks/troughs
+
+**Praat Equivalent:** `Sound & Pitch: To PointProcess (peaks)...`
+
+**Use Case - Tremor Analysis:**
+
+```r
+# Step 1: Extract pitch contour
+pitch <- sound$to_pitch(time_step = 0.0, pitch_floor = 75, pitch_ceiling = 600)
+
+# Step 2: Extract amplitude peaks guided by pitch
+pp_peaks <- sound$pitch_to_pointprocess_peaks(pitch, 
+                                               include_maxima = TRUE, 
+                                               include_minima = FALSE)
+
+# Step 3: Get timestamps and amplitudes at peaks
+peak_times <- pp_peaks$get_times()
+peak_amplitudes <- sapply(peak_times, function(t) {
+  sound$get_value_at_time(time = t, channel = 1, interpolation = 2)
+})
+
+# Step 4: Calculate tremor intensity (mean absolute deviation)
+tremor_intensity <- 100 * mean(abs(peak_amplitudes))
+```
+
+**Why Use Pitch-Guided Detection:**
+- **Accuracy:** Aligns peak detection with fundamental frequency periods
+- **Robustness:** Filters out noise peaks that don't align with vocal fold cycles
+- **Clinical Validity:** Matches Praat's established tremor analysis methodology
+
+**Alternative - Both Peaks and Troughs:**
+
+```r
+# For comprehensive tremor analysis, analyze both peaks and troughs
+pp_peaks <- sound$pitch_to_pointprocess_peaks(pitch, 
+                                               include_maxima = TRUE, 
+                                               include_minima = FALSE)
+pp_troughs <- sound$pitch_to_pointprocess_peaks(pitch, 
+                                                 include_maxima = FALSE, 
+                                                 include_minima = TRUE)
+
+# Calculate separate intensities
+peak_intensity <- calculate_intensity_at_points(sound, pp_peaks)
+trough_intensity <- calculate_intensity_at_points(sound, pp_troughs)
+tremor_intensity <- (peak_intensity + trough_intensity) / 2
 ```
 
 ---

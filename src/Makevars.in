@@ -240,13 +240,11 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LPC_and_Formant.cpp \
           praat.github.io/LPC/Roots_and_Formant.cpp \
           praat.github.io/LPC/Cepstrum.cpp \
-          praat.github.io/LPC/Cepstrumc.cpp \
           praat.github.io/LPC/PowerCepstrum.cpp \
           praat.github.io/LPC/PowerCepstrogram.cpp \
           praat.github.io/LPC/Sound_and_Cepstrum.cpp \
           praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
           praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
-          praat.github.io/LPC/LPC_and_Cepstrumc.cpp \
           praat.github.io/LPC/FormantModeler.cpp \
           praat.github.io/LPC/FormantModelerList.cpp \
           praat.github.io/LPC/FormantPath.cpp \

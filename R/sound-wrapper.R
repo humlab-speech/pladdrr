@@ -357,6 +357,22 @@ Sound <- function(path = NULL, .xptr = NULL) {
       PointProcess(.xptr = pp_ptr)
     },
     
+    pitch_to_pointprocess_peaks = function(pitch, include_maxima = TRUE, include_minima = FALSE) {
+      if (!inherits(pitch, "Pitch")) {
+        stop("pitch must be a Pitch object (created with sound$to_pitch())")
+      }
+      if (!pitch$is_valid()) {
+        stop("Invalid Pitch object")
+      }
+      pp_ptr <- .sound_pitch_to_pointprocess_peaks(
+        ptr,
+        pitch$.xptr,
+        as.logical(include_maxima),
+        as.logical(include_minima)
+      )
+      PointProcess(.xptr = pp_ptr)
+    },
+    
     # === Extraction (from module - FAST) ===
     extract_channel = function(channel) {
       ptr_result <- cpp_snd$extract_channel_ptr(as.integer(channel))
@@ -616,6 +632,15 @@ Sound <- function(path = NULL, .xptr = NULL) {
       )
       MFCC(.xptr = mfcc_ptr)
     },
+
+    # DTW alignment (temporarily disabled)
+    # to_dtw = function(reference, analysis_width = 0.015, time_step = 0.005,
+    #                   band = 0.0, slope = 3) {
+    #   if (!inherits(reference, "Sound")) {
+    #     stop("reference must be a Sound object")
+    #   }
+    #   sounds_to_dtw(reference, snd, analysis_width, time_step, band, slope)
+    # },
 
     to_point_process_extrema = function(channel = 1, include_maxima = TRUE,
                                         include_minima = FALSE,
