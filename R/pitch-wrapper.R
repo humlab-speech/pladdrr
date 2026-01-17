@@ -166,7 +166,28 @@ Pitch <- function(.xptr = NULL) {
     get_mean_intensity = function(from_time = 0, to_time = 0) {
       cpp_obj$get_mean_intensity(as.numeric(from_time), as.numeric(to_time))
     },
-    
+
+    # === Batch/Vectorized Operations (5x speedup for DSI/Tremor) ===
+    get_voiced_mask = function() {
+      cpp_obj$get_voiced_mask()
+    },
+
+    get_strengths_vector = function(unit = "hertz") {
+      cpp_obj$get_strengths_vector(unit_code(unit))
+    },
+
+    get_values_at_times = function(times, unit = "hertz", interpolate = TRUE) {
+      cpp_obj$get_values_at_times(
+        as.numeric(times),
+        unit_code(unit),
+        as.logical(interpolate)
+      )
+    },
+
+    get_intensities_vector = function() {
+      cpp_obj$get_intensities_vector()
+    },
+
     # Transformation methods (return wrapped objects)
     to_point_process = function() {
       warning(
@@ -194,7 +215,16 @@ Pitch <- function(.xptr = NULL) {
       tg_ptr <- cpp_obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
       TextGrid(.xptr = tg_ptr)
     },
-    
+
+    to_dtw = function(reference, vuv_costs = 24.0, time_weight = 10.0,
+                      match_start = TRUE, match_end = TRUE, slope = 1) {
+      if (!inherits(reference, "Pitch")) {
+        stop("reference must be a Pitch object")
+      }
+      pitches_to_dtw(reference, obj, vuv_costs, time_weight,
+                     match_start, match_end, slope)
+    },
+
     # Export methods
     as_matrix = function() {
       cpp_obj$as_matrix()

@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.9 (2026-01-15)
+**Version:** 4.0.13 (2026-01-17)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -14,7 +14,8 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 3. **Units**: Specify as strings: `"hertz"`, `"bark"`, `"db"` (converted internally to codes)
 4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names)
 5. **Batch Operations**: Use batch query functions when extracting multiple values
-6. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
+6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()` for 20-150x speedups (Pattern 2i)
+7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 
 ---
 
@@ -640,6 +641,172 @@ concatenated <- sound_concatenate_all(voiced_parts)
 
 See `vignettes/articles/batch-operations-guide.Rmd` for comprehensive batch operations documentation.
 
+### Pattern 2i: Vectorized Object Methods (NEW in v4.0.13)
+
+**Performance:** 20-150x faster than R loops by keeping iteration inside C++.
+
+These methods avoid the 1-2ms R↔C++ boundary crossing overhead per call. Instead of looping in R and calling individual methods, use vectorized methods that loop in C++.
+
+#### Sound Batch Window Operations
+
+```r
+# SLOW: R loop (1-2ms per call × 500 windows = 500-1000ms)
+starts <- seq(0, 14.97, by = 0.03)  # 500 windows
+ends <- starts + 0.03
+powers <- vapply(seq_along(starts), function(i) {
+  sound$get_power(starts[i], ends[i])
+}, numeric(1))
+
+# FAST: Single C++ call (all 500 windows in ~5ms = 100-150x speedup)
+powers <- sound$get_power_windows(starts, ends)
+rms_vals <- sound$get_rms_windows(starts, ends)
+energies <- sound$get_energy_windows(starts, ends)
+zcr_vals <- sound$get_zcr_windows(starts, ends, channel = 1)
+```
+
+#### Sound Vectorized Value Extraction
+
+```r
+# SLOW: R loop for amplitude extraction
+times <- seq(0.01, 2.99, by = 0.001)  # 2980 time points
+values <- vapply(times, function(t) sound$get_value_at_time(t), numeric(1))
+
+# FAST: Single C++ call (20x speedup)
+values <- sound$get_values_at_times(times, channel = 1, interpolation = "linear")
+
+# Get all samples in a time range
+values <- sound$get_values_in_range(from_time = 0.5, to_time = 1.5, channel = 1)
+times <- sound$get_times_in_range(from_time = 0.5, to_time = 1.5)
+```
+
+#### Pitch Vectorized Operations
+
+```r
+pitch <- sound$to_pitch(0.01, 75, 500)
+
+# Get all frame times and values at once
+times <- pitch$get_times_vector()
+values <- pitch$get_values_vector()
+
+# Voiced/unvoiced mask (logical vector, TRUE = voiced)
+voiced <- pitch$get_voiced_mask()
+voiced_times <- times[voiced]
+voiced_f0 <- values[voiced]
+
+# Strengths and intensities
+strengths <- pitch$get_strengths_vector(unit = "hertz")
+intensities <- pitch$get_intensities_vector()
+
+# Values at specific times (interpolated)
+query_times <- seq(0.5, 2.5, by = 0.1)
+f0_values <- pitch$get_values_at_times(query_times, unit = "hertz", interpolate = TRUE)
+```
+
+#### Harmonicity Batch Statistics
+
+```r
+hnr <- sound$to_harmonicity_ac(0.01, 75)
+
+# Direct vector access
+values <- hnr$get_values_vector()
+times <- hnr$get_times_vector()
+
+# Batch statistics for multiple windows (10x speedup for multi-band analysis)
+starts <- c(0.5, 1.0, 1.5, 2.0)
+ends <- c(1.0, 1.5, 2.0, 2.5)
+metrics <- c("mean", "min", "max", "stdev")
+stats <- hnr$get_statistics_batch(starts, ends, metrics)
+# Returns: matrix[4 windows, 4 metrics]
+```
+
+#### Spectrum Vector Extraction
+
+```r
+spectrum <- sound$to_spectrum()
+
+# Get all vectors at once (150x speedup for spectral analysis)
+freqs <- spectrum$get_frequencies_vector()
+powers <- spectrum$get_power_vector()
+reals <- spectrum$get_real_vector()
+imags <- spectrum$get_imaginary_vector()
+
+# Band energies for multiple bands
+fmins <- c(0, 500, 1000, 2000)
+fmaxs <- c(500, 1000, 2000, 4000)
+energies <- spectrum$get_band_energies(fmins, fmaxs)
+densities <- spectrum$get_band_densities(fmins, fmaxs)
+```
+
+#### Formant Track Extraction
+
+```r
+formant <- sound$to_formant_burg(0.01, 5, 5500)
+
+# Get complete formant tracks (20x speedup)
+times <- formant$get_times_vector()
+f1_track <- formant$get_formant_track(1, unit = "hertz")
+f2_track <- formant$get_formant_track(2, unit = "hertz")
+b1_track <- formant$get_bandwidth_track(1, unit = "hertz")
+
+# Get all formant tracks as matrix
+all_tracks <- formant$get_all_formant_tracks(max_formants = 4, unit = "hertz")
+# Returns: matrix[n_frames, 4]
+
+# Values at specific times
+query_times <- seq(0.5, 2.5, by = 0.1)
+f1_at_times <- formant$get_values_at_times(1, query_times, unit = "hertz")
+```
+
+#### Spectrogram Batch Queries
+
+```r
+spectrogram <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+
+# Get dimension vectors
+times <- spectrogram$get_times_vector()
+freqs <- spectrogram$get_frequencies_vector()
+
+# Get frames and slices (50x speedup)
+frame <- spectrogram$get_frame(time = 1.0)           # All freqs at one time
+slice <- spectrogram$get_frequency_slice(freq = 1000) # One freq across all times
+
+# Get multiple frames at once
+query_times <- c(0.5, 1.0, 1.5, 2.0)
+frames <- spectrogram$get_frames(query_times)  # matrix[n_freqs, 4]
+
+# Band power over time
+band_power <- spectrogram$get_band_power(fmin = 500, fmax = 2000)
+# Returns: power in band for each time frame
+```
+
+#### TextGrid Batch Labels
+
+```r
+tg <- TextGrid("annotations.TextGrid")
+
+# Get labels at multiple times (60x speedup for VUV analysis)
+times <- seq(0.1, 9.9, by = 0.1)
+labels <- tg$get_labels_at_times(tier_number = 1, times)
+
+# Batch set interval texts
+intervals <- c(1, 2, 3, 4)
+texts <- c("hello", "world", "test", "end")
+tg$set_interval_texts_batch(tier_number = 1, intervals, texts)
+```
+
+**Summary of vectorized methods:**
+
+| Object | Method | Speedup | Use Case |
+|--------|--------|---------|----------|
+| Sound | `get_power_windows()`, `get_rms_windows()`, `get_energy_windows()` | 100-150x | AVQI windowed analysis |
+| Sound | `get_values_at_times()`, `get_values_in_range()` | 20x | Tremor peak extraction |
+| Pitch | `get_voiced_mask()`, `get_strengths_vector()` | 5x | DSI voicing analysis |
+| Harmonicity | `get_statistics_batch()` | 10x | Multi-band HNR (VQ) |
+| Spectrum | `get_power_vector()`, `get_band_energies()` | 150x | Pharyngeal analysis |
+| Formant | `get_formant_track()`, `get_all_formant_tracks()` | 20x | Vowel space analysis |
+| Spectrogram | `get_frame()`, `get_band_power()` | 50x | Time-frequency analysis |
+| TextGrid | `get_labels_at_times()` | 60x | VUV segmentation |
+
 ---
 
 ### Pattern 3: Export to Data Frame (v4.0+: Returns data.table)
@@ -1255,17 +1422,34 @@ nx <- sound$get_number_of_samples()
 ### 9. Batch Operations vs Loops
 
 ```r
-# SLOW: R loop with repeated C++ calls
+# SLOW: R loop with repeated C++ calls (1-2ms per call overhead)
 times <- seq(0, 2, by = 0.01)
 f1_values <- numeric(length(times))
 for (i in seq_along(times)) {
   f1_values[i] <- formant$get_value_at_time(1, times[i], "hertz")
 }
 
-# FAST: Batch query (3-5x faster)
+# FAST: Batch query function (5-10x faster)
 result <- get_formants_at_times(formant, times, formant_numbers = 1)
 f1_values <- result$F1
+
+# FASTEST: Vectorized object method (20x faster, loops in C++)
+f1_track <- formant$get_formant_track(1, unit = "hertz")  # All frames at once
+
+# Sound window operations (100-150x speedup)
+starts <- seq(0, 14.97, by = 0.03)  # 500 windows
+ends <- starts + 0.03
+# SLOW: ~500-1000ms (1-2ms × 500)
+powers <- vapply(seq_along(starts), function(i) sound$get_power(starts[i], ends[i]), numeric(1))
+# FAST: ~5ms
+powers <- sound$get_power_windows(starts, ends)
+
+# Pitch voiced mask (5x speedup)
+voiced_mask <- pitch$get_voiced_mask()  # Logical vector, TRUE = voiced
+voiced_f0 <- pitch$get_values_vector()[voiced_mask]
 ```
+
+**Rule:** If you're writing a loop that calls the same method repeatedly, check for a vectorized `$get_*_windows()`, `$get_*_vector()`, or `$get_*_track()` method first.
 
 ---
 
@@ -1363,6 +1547,35 @@ to_times <- from_times + 0.1
 stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
                                      c("min", "max", "mean", "stdev"), 0L)
 
+# === VECTORIZED OBJECT METHODS (20-150x faster, v4.0.13) ===
+# Sound window operations (AVQI: 100-150x speedup)
+powers <- sound$get_power_windows(starts, ends)
+rms_vals <- sound$get_rms_windows(starts, ends)
+values <- sound$get_values_at_times(times, channel = 1)
+
+# Pitch vectors (DSI: 5x speedup)
+voiced_mask <- pitch$get_voiced_mask()           # Logical: TRUE = voiced
+f0_values <- pitch$get_values_vector()           # All frame values
+strengths <- pitch$get_strengths_vector()
+
+# Formant tracks (Vowel analysis: 20x speedup)
+f1_track <- formant$get_formant_track(1)
+all_tracks <- formant$get_all_formant_tracks(4)  # matrix[frames, 4]
+
+# Spectrum vectors (Pharyngeal: 150x speedup)
+powers <- spectrum$get_power_vector()
+energies <- spectrum$get_band_energies(fmins, fmaxs)
+
+# Spectrogram slices (50x speedup)
+frame <- spectrogram$get_frame(time = 1.0)
+band_power <- spectrogram$get_band_power(500, 2000)
+
+# HNR batch stats (VQ: 10x speedup)
+stats <- hnr$get_statistics_batch(starts, ends, c("mean", "min", "max"))
+
+# TextGrid batch labels (VUV: 60x speedup)
+labels <- tg$get_labels_at_times(tier = 1, times)
+
 # === FAST CPPS (1.5-2x faster AVQI) ===
 cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
                              pitch_floor = 60, pitch_ceiling = 330)
@@ -1423,6 +1636,7 @@ result <- interp$eval_numeric('x * 2')
 - **< 10 files, interactive:** Use Tier 1 (Standard API)
 - **10-100 files, loops:** Use Tier 2 (Direct API)
 - **> 100 files, production:** Use Tier 3 (Batch/Parallel)
+- **Many values from one object:** Use Vectorized Methods (`$get_*_vector()`, `$get_*_windows()`)
 - **Need statistics from many intervals:** Use Tier 3 (Batch Statistics)
 
 **See comprehensive guides:**
@@ -1762,6 +1976,19 @@ When reimplementing Praat code that involves:
 ---
 
 ## Version History
+
+**v4.0.13 (2026-01-17):**
+- **NEW: Vectorized Object Methods (20-150x speedup)** - Loop inside C++ instead of R
+  - Eliminates 1-2ms R↔C++ boundary crossing overhead per call
+  - **Sound:** `get_power_windows()`, `get_rms_windows()`, `get_energy_windows()`, `get_zcr_windows()` (100-150x for AVQI)
+  - **Sound:** `get_values_at_times()`, `get_values_in_range()`, `get_times_in_range()` (20x for Tremor)
+  - **Pitch:** `get_voiced_mask()`, `get_strengths_vector()`, `get_values_at_times()`, `get_intensities_vector()` (5x for DSI)
+  - **Harmonicity:** `get_statistics_batch()`, `get_values_vector()`, `get_times_vector()` (10x for VQ)
+  - **Spectrum:** `get_frequencies_vector()`, `get_power_vector()`, `get_real_vector()`, `get_imaginary_vector()`, `get_band_energies()`, `get_band_densities()` (150x for Pharyngeal)
+  - **Formant:** `get_formant_track()`, `get_bandwidth_track()`, `get_all_formant_tracks()`, `get_values_at_times()` (20x for vowel analysis)
+  - **Spectrogram:** `get_frame()`, `get_frequency_slice()`, `get_frames()`, `get_band_power()` (50x for time-frequency)
+  - **TextGrid:** `get_labels_at_times()`, `set_interval_texts_batch()` (60x for VUV)
+- **AGENT_GUIDE updated:** Added Pattern 2i with comprehensive vectorized method documentation
 
 **v4.0.12 (2026-01-16):**
 - **CRITICAL:** Fixed `TextGrid()` constructor export

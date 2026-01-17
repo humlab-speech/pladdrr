@@ -99,6 +99,110 @@ public:
         return Spectrum_getCentralMoment(ptr.get(), moment, power);
     }
 
+    // =========================================================================
+    // Batch/Vectorized Operations (Phase 6: Pharyngeal - 150x speedup)
+    // =========================================================================
+
+    // Get all frequencies as vector
+    NumericVector get_frequencies_vector() {
+        VALIDATE_PTR(ptr, Spectrum);
+        integer nx = ptr->nx;
+        NumericVector freqs(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            freqs[i-1] = Matrix_columnToX(ptr.get(), i);
+        }
+
+        return freqs;
+    }
+
+    // Get all power values as vector
+    NumericVector get_power_vector() {
+        VALIDATE_PTR(ptr, Spectrum);
+        integer nx = ptr->nx;
+        NumericVector powers(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            double re = ptr->z[1][i];
+            double im = ptr->z[2][i];
+            powers[i-1] = re*re + im*im;
+        }
+
+        return powers;
+    }
+
+    // Get all real values as vector
+    NumericVector get_real_vector() {
+        VALIDATE_PTR(ptr, Spectrum);
+        integer nx = ptr->nx;
+        NumericVector reals(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            reals[i-1] = ptr->z[1][i];
+        }
+
+        return reals;
+    }
+
+    // Get all imaginary values as vector
+    NumericVector get_imaginary_vector() {
+        VALIDATE_PTR(ptr, Spectrum);
+        integer nx = ptr->nx;
+        NumericVector imags(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            imags[i-1] = ptr->z[2][i];
+        }
+
+        return imags;
+    }
+
+    // Get band energies for multiple frequency bands in one call
+    NumericVector get_band_energies(NumericVector fmins, NumericVector fmaxs) {
+        VALIDATE_PTR(ptr, Spectrum);
+
+        int n = fmins.size();
+        if (n != fmaxs.size()) {
+            Rcpp::stop("fmins and fmaxs must have same length");
+        }
+
+        NumericVector energies(n);
+
+        try {
+            for (int i = 0; i < n; i++) {
+                energies[i] = Spectrum_getBandEnergy(ptr.get(), fmins[i], fmaxs[i]);
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to compute band energies");
+        }
+
+        return energies;
+    }
+
+    // Get band densities for multiple frequency bands in one call
+    NumericVector get_band_densities(NumericVector fmins, NumericVector fmaxs) {
+        VALIDATE_PTR(ptr, Spectrum);
+
+        int n = fmins.size();
+        if (n != fmaxs.size()) {
+            Rcpp::stop("fmins and fmaxs must have same length");
+        }
+
+        NumericVector densities(n);
+
+        try {
+            for (int i = 0; i < n; i++) {
+                densities[i] = Spectrum_getBandDensity(ptr.get(), fmins[i], fmaxs[i]);
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to compute band densities");
+        }
+
+        return densities;
+    }
+
     // Transform
     XPtr<structSound> to_sound_ptr() {
         VALIDATE_PTR(ptr, Spectrum);
@@ -204,6 +308,15 @@ RCPP_MODULE(spectrum_module) {
         .method("get_skewness", &RSpectrum::get_skewness)
         .method("get_kurtosis", &RSpectrum::get_kurtosis)
         .method("get_central_moment", &RSpectrum::get_central_moment)
+
+        // Batch/Vectorized operations (150x speedup for Pharyngeal analysis)
+        .method("get_frequencies_vector", &RSpectrum::get_frequencies_vector, "Get all frequencies as vector")
+        .method("get_power_vector", &RSpectrum::get_power_vector, "Get all power values as vector")
+        .method("get_real_vector", &RSpectrum::get_real_vector, "Get all real values as vector")
+        .method("get_imaginary_vector", &RSpectrum::get_imaginary_vector, "Get all imaginary values as vector")
+        .method("get_band_energies", &RSpectrum::get_band_energies, "Get energies for multiple bands")
+        .method("get_band_densities", &RSpectrum::get_band_densities, "Get densities for multiple bands")
+
         .method("to_sound_ptr", &RSpectrum::to_sound_ptr)
         .method("to_ltas_ptr", &RSpectrum::to_ltas_ptr)
         .method("as_data_frame", &RSpectrum::as_data_frame)

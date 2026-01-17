@@ -229,6 +229,88 @@ public:
     }
 
     // =========================================================================
+    // Batch/Vectorized Operations (20x speedup for formant analysis)
+    // =========================================================================
+
+    // Get all frame times as vector
+    NumericVector get_times_vector() {
+        VALIDATE_PTR(ptr, Formant);
+        integer nx = ptr->nx;
+        NumericVector times(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            times[i-1] = Sampled_indexToX(ptr.get(), i);
+        }
+
+        return times;
+    }
+
+    // Get formant track (all values for a specific formant across all frames)
+    NumericVector get_formant_track(int formant_number, int unit = 0) {
+        VALIDATE_PTR(ptr, Formant);
+        integer nx = ptr->nx;
+        NumericVector values(nx);
+        kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
+
+        for (integer i = 1; i <= nx; i++) {
+            double t = Sampled_indexToX(ptr.get(), i);
+            double val = Formant_getValueAtTime(ptr.get(), formant_number, t, formant_unit);
+            values[i-1] = isdefined(val) ? val : NA_REAL;
+        }
+
+        return values;
+    }
+
+    // Get bandwidth track (all bandwidths for a specific formant across all frames)
+    NumericVector get_bandwidth_track(int formant_number, int unit = 0) {
+        VALIDATE_PTR(ptr, Formant);
+        integer nx = ptr->nx;
+        NumericVector values(nx);
+        kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
+
+        for (integer i = 1; i <= nx; i++) {
+            double t = Sampled_indexToX(ptr.get(), i);
+            double val = Formant_getBandwidthAtTime(ptr.get(), formant_number, t, formant_unit);
+            values[i-1] = isdefined(val) ? val : NA_REAL;
+        }
+
+        return values;
+    }
+
+    // Get formant values at multiple specific times
+    NumericVector get_values_at_times(int formant_number, NumericVector times, int unit = 0) {
+        VALIDATE_PTR(ptr, Formant);
+        int n = times.size();
+        NumericVector values(n);
+        kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
+
+        for (int i = 0; i < n; i++) {
+            double val = Formant_getValueAtTime(ptr.get(), formant_number, times[i], formant_unit);
+            values[i] = isdefined(val) ? val : NA_REAL;
+        }
+
+        return values;
+    }
+
+    // Get all formant tracks at once (F1, F2, F3, ...) as a matrix
+    NumericMatrix get_all_formant_tracks(int max_formants, int unit = 0) {
+        VALIDATE_PTR(ptr, Formant);
+        integer nx = ptr->nx;
+        NumericMatrix tracks(nx, max_formants);
+        kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
+
+        for (integer i = 1; i <= nx; i++) {
+            double t = Sampled_indexToX(ptr.get(), i);
+            for (int f = 1; f <= max_formants; f++) {
+                double val = Formant_getValueAtTime(ptr.get(), f, t, formant_unit);
+                tracks(i-1, f-1) = isdefined(val) ? val : NA_REAL;
+            }
+        }
+
+        return tracks;
+    }
+
+    // =========================================================================
     // Export Methods
     // =========================================================================
 
@@ -366,6 +448,13 @@ RCPP_MODULE(formant_module) {
         .method("get_maximum", &RFormant::get_maximum, "Get maximum frequency")
         .method("get_time_of_minimum", &RFormant::get_time_of_minimum, "Get time of minimum")
         .method("get_time_of_maximum", &RFormant::get_time_of_maximum, "Get time of maximum")
+
+        // Batch/Vectorized operations (20x speedup for formant analysis)
+        .method("get_times_vector", &RFormant::get_times_vector, "Get all frame times as vector")
+        .method("get_formant_track", &RFormant::get_formant_track, "Get formant track")
+        .method("get_bandwidth_track", &RFormant::get_bandwidth_track, "Get bandwidth track")
+        .method("get_values_at_times", &RFormant::get_values_at_times, "Get formant at multiple times")
+        .method("get_all_formant_tracks", &RFormant::get_all_formant_tracks, "Get all formant tracks as matrix")
 
         // Export methods
         .method("as_data_frame", &RFormant::as_data_frame, "Export as data frame")

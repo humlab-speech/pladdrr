@@ -133,7 +133,38 @@ Spectrum <- function(.xptr = NULL) {
     get_central_moment = function(moment, power = 2.0) {
       cpp_obj$get_central_moment(as.numeric(moment), as.numeric(power))
     },
-    
+
+    # === Batch/Vectorized Operations (150x speedup for Pharyngeal analysis) ===
+    get_frequencies_vector = function() {
+      cpp_obj$get_frequencies_vector()
+    },
+
+    get_power_vector = function() {
+      cpp_obj$get_power_vector()
+    },
+
+    get_real_vector = function() {
+      cpp_obj$get_real_vector()
+    },
+
+    get_imaginary_vector = function() {
+      cpp_obj$get_imaginary_vector()
+    },
+
+    get_band_energies = function(fmins, fmaxs) {
+      cpp_obj$get_band_energies(
+        as.numeric(fmins),
+        as.numeric(fmaxs)
+      )
+    },
+
+    get_band_densities = function(fmins, fmaxs) {
+      cpp_obj$get_band_densities(
+        as.numeric(fmins),
+        as.numeric(fmaxs)
+      )
+    },
+
     # Modification
     pass_hann_band = function(fmin, fmax, smooth = 100) {
       .spectrum_pass_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))

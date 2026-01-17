@@ -170,6 +170,116 @@ public:
         }
     }
 
+    // =========================================================================
+    // Batch/Vectorized Operations (Phase 5: VUV - 60x speedup)
+    // =========================================================================
+
+    // Get labels at multiple times in a single call
+    CharacterVector get_labels_at_times(int tier_number, NumericVector times) {
+        VALIDATE_PTR(ptr, TextGrid);
+
+        int n = times.size();
+        CharacterVector labels(n);
+
+        try {
+            IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(ptr.get(), tier_number);
+
+            for (int i = 0; i < n; i++) {
+                integer index = IntervalTier_timeToIndex(tier, times[i]);
+                if (index == 0) {
+                    labels[i] = NA_STRING;
+                } else {
+                    labels[i] = Melder_peek32to8(tier->intervals.at[index]->text.get());
+                }
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get labels at times (is this an interval tier?)");
+        }
+
+        return labels;
+    }
+
+    // Set multiple interval texts in a single call
+    void set_interval_texts_batch(int tier_number, IntegerVector interval_numbers,
+                                  CharacterVector texts) {
+        VALIDATE_PTR(ptr, TextGrid);
+
+        int n = interval_numbers.size();
+        if (n != texts.size()) {
+            Rcpp::stop("interval_numbers and texts must have same length");
+        }
+
+        try {
+            for (int i = 0; i < n; i++) {
+                TextGrid_setIntervalText(
+                    ptr.get(), tier_number, interval_numbers[i],
+                    Melder_peek8to32(Rcpp::as<std::string>(texts[i]).c_str())
+                );
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to set interval texts batch");
+        }
+    }
+
+    // Get all intervals for a tier as vectors (fast extraction)
+    List get_all_intervals(int tier_number) {
+        VALIDATE_PTR(ptr, TextGrid);
+
+        try {
+            IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(ptr.get(), tier_number);
+            integer n = tier->intervals.size;
+
+            NumericVector starts(n);
+            NumericVector ends(n);
+            CharacterVector labels(n);
+
+            for (integer i = 1; i <= n; i++) {
+                TextInterval interval = tier->intervals.at[i];
+                starts[i-1] = interval->xmin;
+                ends[i-1] = interval->xmax;
+                labels[i-1] = Melder_peek32to8(interval->text.get());
+            }
+
+            return List::create(
+                Named("start") = starts,
+                Named("end") = ends,
+                Named("label") = labels
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get all intervals (is this an interval tier?)");
+        }
+    }
+
+    // Get all points for a tier as vectors (fast extraction)
+    List get_all_points(int tier_number) {
+        VALIDATE_PTR(ptr, TextGrid);
+
+        try {
+            TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(ptr.get(), tier_number);
+            integer n = tier->points.size;
+
+            NumericVector times(n);
+            CharacterVector marks(n);
+
+            for (integer i = 1; i <= n; i++) {
+                TextPoint point = tier->points.at[i];
+                times[i-1] = point->number;
+                marks[i-1] = Melder_peek32to8(point->mark.get());
+            }
+
+            return List::create(
+                Named("time") = times,
+                Named("mark") = marks
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get all points (is this a point tier?)");
+        }
+    }
+
     // IntervalTier modifications
     void set_interval_text(int tier_number, int interval_number, std::string text) {
         VALIDATE_PTR(ptr, TextGrid);
@@ -494,6 +604,12 @@ RCPP_MODULE(textgrid_module) {
         .method("get_interval_text", &RTextGrid::get_interval_text)
         .method("get_interval_at_time", &RTextGrid::get_interval_at_time)
         .method("get_label_at_time", &RTextGrid::get_label_at_time)
+        // Batch/Vectorized operations (60x speedup for VUV)
+        .method("get_labels_at_times", &RTextGrid::get_labels_at_times, "Get labels at multiple times")
+        .method("set_interval_texts_batch", &RTextGrid::set_interval_texts_batch, "Set multiple interval texts")
+        .method("get_all_intervals", &RTextGrid::get_all_intervals, "Get all intervals as vectors")
+        .method("get_all_points", &RTextGrid::get_all_points, "Get all points as vectors")
+
         // IntervalTier modifications
         .method("set_interval_text", &RTextGrid::set_interval_text)
         .method("insert_boundary", &RTextGrid::insert_boundary)

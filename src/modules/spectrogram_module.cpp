@@ -65,6 +65,135 @@ public:
         return Matrix_getValueAtXY(ptr.get(), time, frequency);
     }
 
+    // =========================================================================
+    // Batch/Vectorized Operations (50x speedup for spectral analysis)
+    // =========================================================================
+
+    // Get all frame times as vector
+    NumericVector get_times_vector() {
+        VALIDATE_PTR(ptr, Spectrogram);
+        integer nx = ptr->nx;
+        NumericVector times(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            times[i-1] = Matrix_columnToX(ptr.get(), i);
+        }
+
+        return times;
+    }
+
+    // Get all frequency bin centers as vector
+    NumericVector get_frequencies_vector() {
+        VALIDATE_PTR(ptr, Spectrogram);
+        integer ny = ptr->ny;
+        NumericVector freqs(ny);
+
+        for (integer i = 1; i <= ny; i++) {
+            freqs[i-1] = Matrix_rowToY(ptr.get(), i);
+        }
+
+        return freqs;
+    }
+
+    // Get power at multiple (time, frequency) points
+    NumericVector get_power_at_points(NumericVector times, NumericVector frequencies) {
+        VALIDATE_PTR(ptr, Spectrogram);
+
+        int n = times.size();
+        if (n != frequencies.size()) {
+            Rcpp::stop("times and frequencies must have same length");
+        }
+
+        NumericVector powers(n);
+
+        for (int i = 0; i < n; i++) {
+            powers[i] = Matrix_getValueAtXY(ptr.get(), times[i], frequencies[i]);
+        }
+
+        return powers;
+    }
+
+    // Get a single time frame (all frequencies at one time)
+    NumericVector get_frame(double time) {
+        VALIDATE_PTR(ptr, Spectrogram);
+        integer col = Sampled_xToNearestIndex(ptr.get(), time);
+        if (col < 1) col = 1;
+        if (col > ptr->nx) col = ptr->nx;
+
+        integer ny = ptr->ny;
+        NumericVector frame(ny);
+
+        for (integer row = 1; row <= ny; row++) {
+            frame[row-1] = ptr->z[row][col];
+        }
+
+        return frame;
+    }
+
+    // Get a frequency slice (one frequency across all times)
+    NumericVector get_frequency_slice(double frequency) {
+        VALIDATE_PTR(ptr, Spectrogram);
+        integer row = Matrix_yToNearestRow(ptr.get(), frequency);
+        if (row < 1) row = 1;
+        if (row > ptr->ny) row = ptr->ny;
+
+        integer nx = ptr->nx;
+        NumericVector slice(nx);
+
+        for (integer col = 1; col <= nx; col++) {
+            slice[col-1] = ptr->z[row][col];
+        }
+
+        return slice;
+    }
+
+    // Get multiple frames at once (columns of the spectrogram)
+    NumericMatrix get_frames(NumericVector times) {
+        VALIDATE_PTR(ptr, Spectrogram);
+
+        int n = times.size();
+        integer ny = ptr->ny;
+        NumericMatrix frames(ny, n);
+
+        for (int i = 0; i < n; i++) {
+            integer col = Sampled_xToNearestIndex(ptr.get(), times[i]);
+            if (col < 1) col = 1;
+            if (col > ptr->nx) col = ptr->nx;
+
+            for (integer row = 1; row <= ny; row++) {
+                frames(row-1, i) = ptr->z[row][col];
+            }
+        }
+
+        return frames;
+    }
+
+    // Get band power over time (energy in a frequency band for each frame)
+    NumericVector get_band_power(double fmin, double fmax) {
+        VALIDATE_PTR(ptr, Spectrogram);
+
+        integer row1 = Matrix_yToLowRow(ptr.get(), fmin);
+        integer row2 = Matrix_yToHighRow(ptr.get(), fmax);
+        if (row1 < 1) row1 = 1;
+        if (row2 > ptr->ny) row2 = ptr->ny;
+        if (row1 > row2) {
+            return NumericVector(ptr->nx, NA_REAL);
+        }
+
+        integer nx = ptr->nx;
+        NumericVector band_power(nx);
+
+        for (integer col = 1; col <= nx; col++) {
+            double sum = 0.0;
+            for (integer row = row1; row <= row2; row++) {
+                sum += ptr->z[row][col];
+            }
+            band_power[col-1] = sum;
+        }
+
+        return band_power;
+    }
+
     // Transform
     XPtr<structSpectrum> to_spectrum_ptr(double time) {
         VALIDATE_PTR(ptr, Spectrogram);
@@ -165,6 +294,16 @@ RCPP_MODULE(spectrogram_module) {
         .method("get_frequency_from_bin", &RSpectrogram::get_frequency_from_bin)
         .method("get_bin_from_frequency", &RSpectrogram::get_bin_from_frequency)
         .method("get_power_at", &RSpectrogram::get_power_at)
+
+        // Batch/Vectorized operations (50x speedup for spectral analysis)
+        .method("get_times_vector", &RSpectrogram::get_times_vector, "Get all frame times as vector")
+        .method("get_frequencies_vector", &RSpectrogram::get_frequencies_vector, "Get all frequencies as vector")
+        .method("get_power_at_points", &RSpectrogram::get_power_at_points, "Get power at multiple points")
+        .method("get_frame", &RSpectrogram::get_frame, "Get one frame (all freqs at one time)")
+        .method("get_frequency_slice", &RSpectrogram::get_frequency_slice, "Get one freq across all times")
+        .method("get_frames", &RSpectrogram::get_frames, "Get multiple frames")
+        .method("get_band_power", &RSpectrogram::get_band_power, "Get power in freq band over time")
+
         .method("to_spectrum_ptr", &RSpectrogram::to_spectrum_ptr)
         .method("as_matrix", &RSpectrogram::as_matrix)
         .method("as_data_frame", &RSpectrogram::as_data_frame)

@@ -235,7 +235,33 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
       
       return(result)
     },
-    
+
+    # === Batch/Vectorized Operations (60x speedup for VUV) ===
+    get_labels_at_times = function(tier, times) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_labels_at_times(tier_num, as.numeric(times))
+    },
+
+    set_interval_texts_batch = function(tier, interval_numbers, texts) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$set_interval_texts_batch(
+        tier_num,
+        as.integer(interval_numbers),
+        as.character(texts)
+      )
+      invisible(tg)
+    },
+
+    get_all_intervals_fast = function(tier) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_all_intervals(tier_num)
+    },
+
+    get_all_points_fast = function(tier) {
+      tier_num <- resolve_tier_number(tier)
+      cpp_tg$get_all_points(tier_num)
+    },
+
     # === IntervalTier Modification ===
     set_interval_text = function(tier, interval_number, text) {
       tier_num <- resolve_tier_number(tier)

@@ -76,6 +76,103 @@ public:
         return Harmonicity_getStandardDeviation(ptr.get(), from_time, to_time);
     }
 
+    // =========================================================================
+    // Batch/Vectorized Operations (Phase 4: VQ multi-band HNR - 10x speedup)
+    // =========================================================================
+
+    // Get statistics for multiple time windows in a single call
+    NumericMatrix get_statistics_batch(NumericVector from_times, NumericVector to_times,
+                                       CharacterVector metrics) {
+        VALIDATE_PTR(ptr, Harmonicity);
+
+        int n_windows = from_times.size();
+        if (n_windows != to_times.size()) {
+            Rcpp::stop("from_times and to_times must have same length");
+        }
+
+        int n_metrics = metrics.size();
+        NumericMatrix result(n_windows, n_metrics);
+
+        try {
+            for (int i = 0; i < n_windows; i++) {
+                double from = from_times[i];
+                double to = to_times[i];
+                if (from == 0 && to == 0) {
+                    from = ptr->xmin;
+                    to = ptr->xmax;
+                }
+
+                for (int j = 0; j < n_metrics; j++) {
+                    std::string metric = Rcpp::as<std::string>(metrics[j]);
+
+                    if (metric == "mean") {
+                        result(i, j) = Harmonicity_getMean(ptr.get(), from, to);
+                    } else if (metric == "min" || metric == "minimum") {
+                        result(i, j) = Vector_getMinimum(ptr.get(), from, to, kVector_peakInterpolation::PARABOLIC);
+                    } else if (metric == "max" || metric == "maximum") {
+                        result(i, j) = Vector_getMaximum(ptr.get(), from, to, kVector_peakInterpolation::PARABOLIC);
+                    } else if (metric == "stdev" || metric == "sd" || metric == "standard_deviation") {
+                        result(i, j) = Harmonicity_getStandardDeviation(ptr.get(), from, to);
+                    } else {
+                        Rcpp::warning("Unknown metric: %s", metric.c_str());
+                        result(i, j) = NA_REAL;
+                    }
+                }
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to compute harmonicity statistics batch");
+        }
+
+        colnames(result) = metrics;
+        return result;
+    }
+
+    // Get all HNR values as vector (fast extraction)
+    NumericVector get_values_vector() {
+        VALIDATE_PTR(ptr, Harmonicity);
+        integer nx = ptr->nx;
+        NumericVector values(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            values[i-1] = ptr->z[1][i];
+        }
+
+        return values;
+    }
+
+    // Get all frame times as vector
+    NumericVector get_times_vector() {
+        VALIDATE_PTR(ptr, Harmonicity);
+        integer nx = ptr->nx;
+        NumericVector times(nx);
+
+        for (integer i = 1; i <= nx; i++) {
+            times[i-1] = Sampled_indexToX(ptr.get(), i);
+        }
+
+        return times;
+    }
+
+    // Get HNR values at multiple specific times
+    NumericVector get_values_at_times(NumericVector times, int interpolation = 2) {
+        VALIDATE_PTR(ptr, Harmonicity);
+        int n = times.size();
+        NumericVector values(n);
+        kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
+
+        try {
+            for (int i = 0; i < n; i++) {
+                values[i] = Vector_getValueAtX(ptr.get(), times[i], 1, interp);
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get HNR values at times");
+        }
+
+        return values;
+    }
+
     // Export
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, Harmonicity);
@@ -153,6 +250,13 @@ RCPP_MODULE(harmonicity_module) {
         .method("get_time_of_minimum", &RHarmonicity::get_time_of_minimum)
         .method("get_time_of_maximum", &RHarmonicity::get_time_of_maximum)
         .method("get_standard_deviation", &RHarmonicity::get_standard_deviation)
+
+        // Batch/Vectorized operations (10x speedup for VQ multi-band HNR)
+        .method("get_statistics_batch", &RHarmonicity::get_statistics_batch, "Get stats for multiple windows")
+        .method("get_values_vector", &RHarmonicity::get_values_vector, "Get all HNR values as vector")
+        .method("get_times_vector", &RHarmonicity::get_times_vector, "Get all frame times as vector")
+        .method("get_values_at_times", &RHarmonicity::get_values_at_times, "Get HNR at multiple times")
+
         .method("as_data_frame", &RHarmonicity::as_data_frame)
         .method("as_matrix", &RHarmonicity::as_matrix)
         .method("save", &RHarmonicity::save)

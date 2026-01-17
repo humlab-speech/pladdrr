@@ -2303,27 +2303,6 @@ namespace pladdrr {
         return Rcpp::as<SEXP >(rcpp_result_gen);
     }
 
-    inline SEXP _textgrid_merge(List textgrids, bool equalize_domains = false) {
-        typedef SEXP(*Ptr__textgrid_merge)(SEXP,SEXP);
-        static Ptr__textgrid_merge p__textgrid_merge = NULL;
-        if (p__textgrid_merge == NULL) {
-            validateSignature("SEXP(*_textgrid_merge)(List,bool)");
-            p__textgrid_merge = (Ptr__textgrid_merge)R_GetCCallable("pladdrr", "_pladdrr__textgrid_merge");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__textgrid_merge(Shield<SEXP>(Rcpp::wrap(textgrids)), Shield<SEXP>(Rcpp::wrap(equalize_domains)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<SEXP >(rcpp_result_gen);
-    }
-
 }
 
 #endif // RCPP_pladdrr_RCPPEXPORTS_H_GEN_

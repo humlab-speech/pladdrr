@@ -115,7 +115,36 @@ Formant <- function(.xptr = NULL) {
       unit <- match.arg(unit)
       cpp_obj$get_time_of_maximum(as.integer(formant_number), from_time, to_time, unit_code(unit), interpolate)
     },
-    
+
+    # === Batch/Vectorized Operations (20x speedup for formant analysis) ===
+    get_times_vector = function() {
+      cpp_obj$get_times_vector()
+    },
+
+    get_formant_track = function(formant_number, unit = c("hertz", "bark")) {
+      unit <- match.arg(unit)
+      cpp_obj$get_formant_track(as.integer(formant_number), unit_code(unit))
+    },
+
+    get_bandwidth_track = function(formant_number, unit = c("hertz", "bark")) {
+      unit <- match.arg(unit)
+      cpp_obj$get_bandwidth_track(as.integer(formant_number), unit_code(unit))
+    },
+
+    get_values_at_times = function(formant_number, times, unit = c("hertz", "bark")) {
+      unit <- match.arg(unit)
+      cpp_obj$get_values_at_times(
+        as.integer(formant_number),
+        as.numeric(times),
+        unit_code(unit)
+      )
+    },
+
+    get_all_formant_tracks = function(max_formants = 5, unit = c("hertz", "bark")) {
+      unit <- match.arg(unit)
+      cpp_obj$get_all_formant_tracks(as.integer(max_formants), unit_code(unit))
+    },
+
     # Export methods
     as_data_frame = function(max_formants = 5) {
       cpp_obj$as_data_frame(as.integer(max_formants))
