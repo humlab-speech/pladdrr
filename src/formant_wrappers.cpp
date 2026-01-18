@@ -9,6 +9,7 @@
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
+#include "datatable_utils.h"
 
 // Praat headers
 #include "fon/Formant.h"
@@ -468,7 +469,7 @@ Rcpp::DataFrame formant_as_data_frame(Rcpp::XPtr<structFormant> formant, int max
         bw_names[f] = "B" + std::to_string(f+1);
     }
     
-    // Build data frame
+    // Build data.table
     Rcpp::List df_list;
     df_list.push_back(time, "time");
     
@@ -479,8 +480,19 @@ Rcpp::DataFrame formant_as_data_frame(Rcpp::XPtr<structFormant> formant, int max
         df_list.push_back(bandwidths(Rcpp::_, f), std::string(bw_names[f]));
     }
     
-    Rcpp::DataFrame df(df_list);
-    return df;
+    // Create column name vector
+    Rcpp::CharacterVector all_names(1 + 2*max_formants);
+    all_names[0] = "time";
+    for (int f = 0; f < max_formants; f++) {
+        all_names[1 + f] = freq_names[f];
+        all_names[1 + max_formants + f] = bw_names[f];
+    }
+    
+    return pladdrr::dt::create_datatable(
+        df_list,
+        all_names,
+        Rcpp::CharacterVector::create("time")  // Key on time
+    );
 }
 
 // [[Rcpp::export(.formant_save)]]

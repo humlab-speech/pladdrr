@@ -158,6 +158,19 @@ MFCC <- function(.xptr = NULL) {
       Matrix(.xptr = matrix_ptr)
     },
 
+    to_dtw = function(reference, coefficient_weight = 1.0,
+                      log_energy_weight = 0.0,
+                      coefficient_regression_weight = 0.0,
+                      log_energy_regression_weight = 0.0,
+                      regression_window_length = 0.0) {
+      if (!inherits(reference, "MFCC")) {
+        stop("reference must be an MFCC object")
+      }
+      mfccs_to_dtw(reference, obj, coefficient_weight, log_energy_weight,
+                   coefficient_regression_weight, log_energy_regression_weight,
+                   regression_window_length)
+    },
+
     # Export
     as_data_frame = function(include_c0 = TRUE) {
       cpp_obj$as_data_frame(include_c0)

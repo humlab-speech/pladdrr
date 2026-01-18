@@ -185,12 +185,6 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/KlattTable.cpp \
               praat.github.io/dwtools/KlattGrid.cpp \
               praat.github.io/dwtools/FormantGrid_extensions.cpp \
-              praat.github.io/dwtools/CC.cpp \
-              praat.github.io/dwtools/MFCC.cpp \
-              praat.github.io/dwtools/LFCC.cpp \
-              praat.github.io/dwtools/Sound_to_MFCC.cpp \
-              praat.github.io/dwtools/Spectrogram_extensions.cpp \
-              praat.github.io/dwtools/Sound_and_Spectrogram_extensions.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -246,18 +240,15 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LPC_and_Formant.cpp \
           praat.github.io/LPC/Roots_and_Formant.cpp \
           praat.github.io/LPC/Cepstrum.cpp \
-          praat.github.io/LPC/Cepstrumc.cpp \
           praat.github.io/LPC/PowerCepstrum.cpp \
           praat.github.io/LPC/PowerCepstrogram.cpp \
           praat.github.io/LPC/Sound_and_Cepstrum.cpp \
           praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp \
           praat.github.io/LPC/Cepstrum_and_Spectrum.cpp \
-          praat.github.io/LPC/LPC_and_Cepstrumc.cpp \
           praat.github.io/LPC/FormantModeler.cpp \
           praat.github.io/LPC/FormantModelerList.cpp \
           praat.github.io/LPC/FormantPath.cpp \
-          praat.github.io/LPC/Sound_to_Formant_mt.cpp \
-          praat.github.io/LPC/LPC_and_LFCC.cpp
+          praat.github.io/LPC/Sound_to_Formant_mt.cpp
 
 # FLAC library sources (for native FLAC file I/O)
 FLAC_SRC = praat/external/flac/flac_bitmath.c \
@@ -344,9 +335,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/manipulation_module.cpp modules/polygon_module.cpp \
              modules/formantpath_module.cpp modules/complexspectrogram_module.cpp \
              modules/klattgrid_module.cpp modules/sound_operations_module.cpp \
-             modules/interpreter_module.cpp modules/mfcc_module.cpp \
-             modules/formantmodeler_module.cpp modules/pca_module.cpp \
-             modules/discriminant_module.cpp module_init.cpp
+             modules/interpreter_module.cpp module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
 SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp sound_pool.cpp
