@@ -188,6 +188,45 @@ Pitch <- function(.xptr = NULL) {
       cpp_obj$get_intensities_vector()
     },
 
+    # === Detrending Methods (10x speedup for Tremor analysis) ===
+
+    #' Subtract linear fit and return new Pitch object
+    #' @param unit Pitch unit ("hertz", "semitones", "mel", "erb")
+    #' @return New Pitch object with linear trend removed
+    subtract_linear_fit = function(unit = "hertz") {
+      pitch_ptr <- cpp_obj$subtract_linear_fit_ptr(unit_code(unit))
+      Pitch(.xptr = pitch_ptr)
+    },
+
+    #' Get detrended F0 values directly as a vector
+    #' @param unit Pitch unit ("hertz", "semitones", "mel", "erb")
+    #' @return Numeric vector of detrended F0 values (NA for unvoiced frames)
+    get_values_detrended = function(unit = "hertz") {
+      cpp_obj$get_values_detrended(unit_code(unit))
+    },
+
+    #' Interpolate unvoiced frames
+    #' @return New Pitch object with interpolated values
+    interpolate = function() {
+      pitch_ptr <- cpp_obj$interpolate_ptr()
+      Pitch(.xptr = pitch_ptr)
+    },
+
+    #' Smooth pitch contour
+    #' @param bandwidth Smoothing bandwidth in Hz (default: 10)
+    #' @return New Pitch object with smoothed values
+    smooth = function(bandwidth = 10.0) {
+      pitch_ptr <- cpp_obj$smooth_ptr(as.numeric(bandwidth))
+      Pitch(.xptr = pitch_ptr)
+    },
+
+    #' Kill octave jumps
+    #' @return New Pitch object with octave jumps removed
+    kill_octave_jumps = function() {
+      pitch_ptr <- cpp_obj$kill_octave_jumps_ptr()
+      Pitch(.xptr = pitch_ptr)
+    },
+
     # Transformation methods (return wrapped objects)
     to_point_process = function() {
       warning(

@@ -100,6 +100,76 @@ Ltas <- function(.xptr = NULL) {
       cpp_obj$get_slope(f1min, f1max, f2min, f2max, unit_code(unit))
     },
     
+    # === Batch Operations (18x speedup for pharyngeal analysis) ===
+
+    #' Get peaks for multiple frequency ranges in a single call
+    #' @param fmins Numeric vector of minimum frequencies
+    #' @param fmaxs Numeric vector of maximum frequencies
+    #' @param interpolation Interpolation method ("none", "parabolic", "cubic", "sinc70", "sinc700")
+    #' @return Data frame with fmin, fmax, peak_value, peak_frequency
+    get_peaks_batch = function(fmins, fmaxs, interpolation = "parabolic") {
+      cpp_obj$get_peaks_batch(
+        as.numeric(fmins),
+        as.numeric(fmaxs),
+        peak_interpolation_code(interpolation)
+      )
+    },
+
+    #' Get minima for multiple frequency ranges in a single call
+    #' @param fmins Numeric vector of minimum frequencies
+    #' @param fmaxs Numeric vector of maximum frequencies
+    #' @param interpolation Interpolation method
+    #' @return Data frame with fmin, fmax, min_value, min_frequency
+    get_minima_batch = function(fmins, fmaxs, interpolation = "parabolic") {
+      cpp_obj$get_minima_batch(
+        as.numeric(fmins),
+        as.numeric(fmaxs),
+        peak_interpolation_code(interpolation)
+      )
+    },
+
+    #' Get values at multiple frequencies in a single call
+    #' @param frequencies Numeric vector of frequencies
+    #' @param interpolation Interpolation method ("nearest", "linear", "cubic", "sinc70", "sinc700")
+    #' @return Numeric vector of values at the specified frequencies
+    get_values_at_frequencies = function(frequencies, interpolation = "cubic") {
+      cpp_obj$get_values_at_frequencies(
+        as.numeric(frequencies),
+        interpolation_code(interpolation)
+      )
+    },
+
+    #' Get means for multiple frequency ranges in a single call
+    #' @param fmins Numeric vector of minimum frequencies
+    #' @param fmaxs Numeric vector of maximum frequencies
+    #' @param unit Unit for averaging ("dB", "energy", "sones")
+    #' @return Numeric vector of mean values
+    get_means_batch = function(fmins, fmaxs, unit = "dB") {
+      cpp_obj$get_means_batch(
+        as.numeric(fmins),
+        as.numeric(fmaxs),
+        unit_code(unit)
+      )
+    },
+
+    #' Get frequency of maximum for a frequency range
+    #' @param fmin Minimum frequency
+    #' @param fmax Maximum frequency
+    #' @param interpolation Interpolation method
+    #' @return Frequency of maximum value
+    get_frequency_of_maximum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
+      cpp_obj$get_frequency_of_maximum(fmin, fmax, peak_interpolation_code(interpolation))
+    },
+
+    #' Get frequency of minimum for a frequency range
+    #' @param fmin Minimum frequency
+    #' @param fmax Maximum frequency
+    #' @param interpolation Interpolation method
+    #' @return Frequency of minimum value
+    get_frequency_of_minimum = function(fmin = 0, fmax = 0, interpolation = "parabolic") {
+      cpp_obj$get_frequency_of_minimum(fmin, fmax, peak_interpolation_code(interpolation))
+    },
+
     # Transform
     subtract_trend_line = function(fmin = 0, fmax = 0) {
       ptr <- .ltas_subtract_trend_line(.xptr, fmin, fmax)

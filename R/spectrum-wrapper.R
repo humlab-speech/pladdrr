@@ -165,6 +165,13 @@ Spectrum <- function(.xptr = NULL) {
       )
     },
 
+    #' Get power values at specific frequencies
+    #' @param frequencies Numeric vector of frequencies to query
+    #' @return Numeric vector of power values at specified frequencies
+    get_power_at_frequencies = function(frequencies) {
+      cpp_obj$get_power_at_frequencies(as.numeric(frequencies))
+    },
+
     # Modification
     pass_hann_band = function(fmin, fmax, smooth = 100) {
       .spectrum_pass_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))

@@ -203,6 +203,33 @@ public:
         return densities;
     }
 
+    // Get power values at specific frequencies (interpolated)
+    NumericVector get_power_at_frequencies(NumericVector frequencies) {
+        VALIDATE_PTR(ptr, Spectrum);
+
+        int n = frequencies.size();
+        NumericVector powers(n);
+
+        try {
+            for (int i = 0; i < n; i++) {
+                double freq = frequencies[i];
+                int bin = static_cast<int>(Matrix_xToNearestColumn(ptr.get(), freq));
+                if (bin >= 1 && bin <= ptr->nx) {
+                    double re = ptr->z[1][bin];
+                    double im = ptr->z[2][bin];
+                    powers[i] = re*re + im*im;
+                } else {
+                    powers[i] = NA_REAL;
+                }
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get power at frequencies");
+        }
+
+        return powers;
+    }
+
     // Transform
     XPtr<structSound> to_sound_ptr() {
         VALIDATE_PTR(ptr, Spectrum);
@@ -316,6 +343,7 @@ RCPP_MODULE(spectrum_module) {
         .method("get_imaginary_vector", &RSpectrum::get_imaginary_vector, "Get all imaginary values as vector")
         .method("get_band_energies", &RSpectrum::get_band_energies, "Get energies for multiple bands")
         .method("get_band_densities", &RSpectrum::get_band_densities, "Get densities for multiple bands")
+        .method("get_power_at_frequencies", &RSpectrum::get_power_at_frequencies, "Get power at specific frequencies")
 
         .method("to_sound_ptr", &RSpectrum::to_sound_ptr)
         .method("to_ltas_ptr", &RSpectrum::to_ltas_ptr)

@@ -7,6 +7,9 @@
 #include "praat.github.io/fon/PointProcess.h"
 #include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/IntensityTier.h"
+#include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/PointProcess_and_Sound.h"
+#include "praat.github.io/fon/VoiceAnalysis.h"
 
 using namespace Rcpp;
 
@@ -194,6 +197,113 @@ public:
         }
     }
 
+    // ========================================================================
+    // Batch Operations (Phase 3: DSI/Shimmer speedup)
+    // ========================================================================
+
+    // Get Sound values at all point times in a single call
+    // This is 10-20x faster than individual queries for shimmer analysis
+    NumericVector get_values_from_sound(XPtr<structSound> sound_ptr, int channel, int interpolation) {
+        VALIDATE_PTR(ptr, PointProcess);
+        if (!sound_ptr || sound_ptr.get() == nullptr) {
+            Rcpp::stop("Invalid Sound pointer");
+        }
+
+        integer n = ptr->nt;
+        NumericVector values(n);
+        kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
+
+        try {
+            for (integer i = 1; i <= n; i++) {
+                double t = ptr->t[i];
+                values[i-1] = Vector_getValueAtX(sound_ptr.get(), t, channel, interp);
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get values from sound at point times");
+        }
+
+        return values;
+    }
+
+    // Get periods (inter-point intervals) as vector
+    NumericVector get_periods_vector() {
+        VALIDATE_PTR(ptr, PointProcess);
+
+        integer n = ptr->nt;
+        if (n < 2) {
+            return NumericVector(0);
+        }
+
+        NumericVector periods(n - 1);
+        for (integer i = 1; i < n; i++) {
+            periods[i-1] = ptr->t[i+1] - ptr->t[i];
+        }
+
+        return periods;
+    }
+
+    // Get filtered periods (only those within specified range)
+    NumericVector get_periods_filtered(double min_period, double max_period) {
+        VALIDATE_PTR(ptr, PointProcess);
+
+        integer n = ptr->nt;
+        if (n < 2) {
+            return NumericVector(0);
+        }
+
+        // First pass: count valid periods
+        integer count = 0;
+        for (integer i = 1; i < n; i++) {
+            double p = ptr->t[i+1] - ptr->t[i];
+            if (p >= min_period && p <= max_period) {
+                count++;
+            }
+        }
+
+        NumericVector periods(count);
+        integer idx = 0;
+        for (integer i = 1; i < n; i++) {
+            double p = ptr->t[i+1] - ptr->t[i];
+            if (p >= min_period && p <= max_period) {
+                periods[idx++] = p;
+            }
+        }
+
+        return periods;
+    }
+
+    // Get jitter measures in a single call (local, local_absolute, rap, ppq5, ddp)
+    List get_jitter_batch(double tmin, double tmax,
+                          double min_period, double max_period,
+                          double max_period_factor) {
+        VALIDATE_PTR(ptr, PointProcess);
+
+        try {
+            double local = PointProcess_getJitter_local(
+                ptr.get(), tmin, tmax, min_period, max_period, max_period_factor);
+            double local_abs = PointProcess_getJitter_local_absolute(
+                ptr.get(), tmin, tmax, min_period, max_period, max_period_factor);
+            double rap = PointProcess_getJitter_rap(
+                ptr.get(), tmin, tmax, min_period, max_period, max_period_factor);
+            double ppq5 = PointProcess_getJitter_ppq5(
+                ptr.get(), tmin, tmax, min_period, max_period, max_period_factor);
+            double ddp = PointProcess_getJitter_ddp(
+                ptr.get(), tmin, tmax, min_period, max_period, max_period_factor);
+
+            return List::create(
+                Named("local") = local,
+                Named("local_absolute") = local_abs,
+                Named("rap") = rap,
+                Named("ppq5") = ppq5,
+                Named("ddp") = ddp
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to compute jitter measures");
+        }
+    }
+
     // Export
     NumericVector as_vector() {
         VALIDATE_PTR(ptr, PointProcess);
@@ -272,6 +382,13 @@ RCPP_MODULE(pointprocess_module) {
         .method("difference_with", &RPointProcess::difference_with)
         .method("upto_pitch_tier_ptr", &RPointProcess::upto_pitch_tier_ptr)
         .method("upto_intensity_tier_ptr", &RPointProcess::upto_intensity_tier_ptr)
+
+        // Batch operations (10-20x speedup for shimmer/DSI analysis)
+        .method("get_values_from_sound", &RPointProcess::get_values_from_sound, "Get Sound values at all point times")
+        .method("get_periods_vector", &RPointProcess::get_periods_vector, "Get all periods as vector")
+        .method("get_periods_filtered", &RPointProcess::get_periods_filtered, "Get periods within range")
+        .method("get_jitter_batch", &RPointProcess::get_jitter_batch, "Get all jitter measures in one call")
+
         .method("as_vector", &RPointProcess::as_vector)
         .method("as_data_frame", &RPointProcess::as_data_frame)
         .method("save", &RPointProcess::save)

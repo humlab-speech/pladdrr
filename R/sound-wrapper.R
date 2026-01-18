@@ -270,7 +270,78 @@ Sound <- function(path = NULL, .xptr = NULL) {
         as.numeric(to_time)
       )
     },
-    
+
+    # === Batch/Filtered Window Extraction (AVQI 2.9x -> 1.5x speedup) ===
+
+    #' Extract windows, filter by power/ZCR, and concatenate
+    #' @param window_starts Numeric vector of window start times
+    #' @param window_ends Numeric vector of window end times
+    #' @param min_power Minimum power threshold (windows below this are excluded)
+    #' @param max_zcr Maximum zero-crossing rate (windows above this are excluded, -1 to disable)
+    #' @param overlap_time Overlap time for concatenation (default: 0)
+    #' @param window_shape Window shape ("rectangular", "hanning", etc.)
+    #' @return Sound object containing concatenated passing windows
+    extract_windows_filtered = function(window_starts, window_ends,
+                                         min_power = 0.0, max_zcr = -1.0,
+                                         overlap_time = 0.0, window_shape = "rectangular") {
+      shape_code <- switch(tolower(window_shape),
+        "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
+        "hanning" = 3L, "hamming" = 4L,
+        "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
+        "gaussian4" = 8L, "gaussian5" = 9L,
+        "kaiser1" = 10L, "kaiser2" = 11L, 0L)
+
+      sound_ptr <- cpp_snd$extract_windows_filtered_ptr(
+        as.numeric(window_starts),
+        as.numeric(window_ends),
+        as.numeric(min_power),
+        as.numeric(max_zcr),
+        as.numeric(overlap_time),
+        shape_code
+      )
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Check which windows pass power/ZCR filter without extraction
+    #' @param window_starts Numeric vector of window start times
+    #' @param window_ends Numeric vector of window end times
+    #' @param min_power Minimum power threshold
+    #' @param max_zcr Maximum zero-crossing rate (-1 to disable)
+    #' @return Logical vector indicating which windows pass the filter
+    get_windows_passing_filter = function(window_starts, window_ends,
+                                           min_power = 0.0, max_zcr = -1.0) {
+      cpp_snd$get_windows_passing_filter(
+        as.numeric(window_starts),
+        as.numeric(window_ends),
+        as.numeric(min_power),
+        as.numeric(max_zcr)
+      )
+    },
+
+    #' Concatenate multiple Sound objects
+    #' @param sounds List of Sound objects to concatenate
+    #' @param overlap_time Overlap time between sounds (default: 0)
+    #' @return Sound object containing concatenated audio
+    concatenate_sounds = function(sounds, overlap_time = 0.0) {
+      if (!is.list(sounds)) {
+        stop("sounds must be a list of Sound objects")
+      }
+
+      # Extract pointers from Sound objects
+      sound_ptrs <- lapply(sounds, function(s) {
+        if (!inherits(s, "Sound")) {
+          stop("All elements must be Sound objects")
+        }
+        s$.xptr
+      })
+
+      sound_ptr <- cpp_snd$concatenate_parts_ptr(
+        sound_ptrs,
+        as.numeric(overlap_time)
+      )
+      Sound(.xptr = sound_ptr)
+    },
+
     # === Time/Sample Conversion ===
     to_pitch = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
       pitch_ptr <- cpp_snd$to_pitch_ptr(

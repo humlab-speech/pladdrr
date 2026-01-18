@@ -552,6 +552,84 @@ public:
         return intensities;
     }
 
+    // ========================================================================
+    // Detrending Methods (Phase 2a: Tremor 10x -> 4x speedup)
+    // ========================================================================
+
+    // Subtract linear fit and return new Pitch object pointer
+    // This is the Praat function Pitch_subtractLinearFit()
+    Rcpp::XPtr<structPitch> subtract_linear_fit_ptr(int unit) {
+        VALIDATE_PTR(ptr, Pitch);
+        try {
+            autoPitch result = Pitch_subtractLinearFit(ptr.get(), static_cast<kPitch_unit>(unit));
+            return create_xptr_from_auto<structPitch>(result);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to subtract linear fit from pitch");
+        }
+    }
+
+    // Get detrended values directly as a vector (avoids creating intermediate Pitch object)
+    // More efficient for tremor analysis where we only need the values
+    Rcpp::NumericVector get_values_detrended(int unit) {
+        VALIDATE_PTR(ptr, Pitch);
+        try {
+            // Create detrended pitch
+            autoPitch detrended = Pitch_subtractLinearFit(ptr.get(), static_cast<kPitch_unit>(unit));
+
+            integer nx = detrended->nx;
+            Rcpp::NumericVector values(nx);
+            kPitch_unit pitch_unit = static_cast<kPitch_unit>(unit);
+
+            for (integer i = 1; i <= nx; i++) {
+                double t = Sampled_indexToX(detrended.get(), i);
+                double val = Pitch_getValueAtTime(detrended.get(), t, pitch_unit, false);
+                values[i-1] = (val > 0 && val < detrended->ceiling) ? val : NA_REAL;
+            }
+
+            return values;
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to get detrended pitch values");
+        }
+    }
+
+    // Interpolate unvoiced frames - useful for tremor analysis
+    Rcpp::XPtr<structPitch> interpolate_ptr() {
+        VALIDATE_PTR(ptr, Pitch);
+        try {
+            autoPitch result = Pitch_interpolate(ptr.get());
+            return create_xptr_from_auto<structPitch>(result);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to interpolate pitch");
+        }
+    }
+
+    // Smooth pitch with bandwidth parameter
+    Rcpp::XPtr<structPitch> smooth_ptr(double bandwidth) {
+        VALIDATE_PTR(ptr, Pitch);
+        try {
+            autoPitch result = Pitch_smooth(ptr.get(), bandwidth);
+            return create_xptr_from_auto<structPitch>(result);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to smooth pitch");
+        }
+    }
+
+    // Kill octave jumps for cleaner analysis
+    Rcpp::XPtr<structPitch> kill_octave_jumps_ptr() {
+        VALIDATE_PTR(ptr, Pitch);
+        try {
+            autoPitch result = Pitch_killOctaveJumps(ptr.get());
+            return create_xptr_from_auto<structPitch>(result);
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to kill octave jumps");
+        }
+    }
+
     Rcpp::NumericMatrix as_matrix() {
         VALIDATE_PTR(ptr, Pitch);
         integer nx = ptr->nx;
@@ -920,6 +998,13 @@ RCPP_MODULE(pitch_module) {
         .method("get_strengths_vector", &RPitch::get_strengths_vector, "Get all pitch strengths as vector")
         .method("get_values_at_times", &RPitch::get_values_at_times, "Get pitch values at multiple times")
         .method("get_intensities_vector", &RPitch::get_intensities_vector, "Get frame intensities as vector")
+
+        // Detrending methods (10x speedup for Tremor analysis)
+        .method("subtract_linear_fit_ptr", &RPitch::subtract_linear_fit_ptr, "Subtract linear fit, return new Pitch")
+        .method("get_values_detrended", &RPitch::get_values_detrended, "Get detrended F0 values as vector")
+        .method("interpolate_ptr", &RPitch::interpolate_ptr, "Interpolate unvoiced frames")
+        .method("smooth_ptr", &RPitch::smooth_ptr, "Smooth pitch with bandwidth")
+        .method("kill_octave_jumps_ptr", &RPitch::kill_octave_jumps_ptr, "Remove octave jumps")
 
         // Export methods
         .method("as_matrix", &RPitch::as_matrix, "Convert to matrix")

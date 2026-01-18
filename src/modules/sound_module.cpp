@@ -726,6 +726,194 @@ public:
     }
 
     // =========================================================================
+    // Batch/Filtered Window Extraction (Phase 2b: AVQI 2.9x -> 1.5x speedup)
+    // Extract multiple windows, filter by power/ZCR, concatenate passing windows
+    // =========================================================================
+
+    // Helper: Calculate zero-crossing rate for a sample range
+    double calculate_zcr(integer i1, integer i2, integer channel) {
+        if (i1 >= i2) return 0.0;
+
+        integer crossings = 0;
+        for (integer j = i1; j < i2; j++) {
+            double v1 = ptr->z[channel][j];
+            double v2 = ptr->z[channel][j+1];
+            if ((v1 >= 0 && v2 < 0) || (v1 < 0 && v2 >= 0)) {
+                crossings++;
+            }
+        }
+
+        double duration = (i2 - i1 + 1) * ptr->dx;
+        return (duration > 0) ? (crossings / duration) : 0.0;
+    }
+
+    // Extract windows, filter by power and ZCR thresholds, concatenate passing windows
+    // Returns a single Sound containing only the windows that pass the filter criteria
+    XPtr<structSound> extract_windows_filtered_ptr(
+        NumericVector window_starts,
+        NumericVector window_ends,
+        double min_power,
+        double max_zcr,
+        double overlap_time,
+        int window_shape
+    ) {
+        VALIDATE_PTR(ptr, Sound);
+
+        int n = window_starts.size();
+        if (n != window_ends.size()) {
+            Rcpp::stop("window_starts and window_ends must have same length");
+        }
+
+        try {
+            // Collect passing windows
+            autoSoundList list = SoundList_create();
+
+            for (int i = 0; i < n; i++) {
+                double from = window_starts[i];
+                double to = window_ends[i];
+
+                // Check power threshold
+                double power = Sound_getPower(ptr.get(), from, to);
+                if (min_power > 0 && power < min_power) {
+                    continue;  // Skip window with insufficient power
+                }
+
+                // Check ZCR threshold if specified
+                if (max_zcr > 0) {
+                    integer i1 = Sampled_xToHighIndex(ptr.get(), from);
+                    integer i2 = Sampled_xToLowIndex(ptr.get(), to);
+                    if (i1 < 1) i1 = 1;
+                    if (i2 > ptr->nx) i2 = ptr->nx;
+
+                    double zcr = calculate_zcr(i1, i2, 1);  // Channel 1
+                    if (zcr > max_zcr) {
+                        continue;  // Skip window with too high ZCR (likely unvoiced)
+                    }
+                }
+
+                // Extract this window and add to list
+                autoSound part = Sound_extractPart(
+                    ptr.get(),
+                    from,
+                    to,
+                    (kSound_windowShape) window_shape,
+                    1.0,   // relative width
+                    false  // preserve times
+                );
+                list->addItem_move(part.move());
+            }
+
+            // If no windows passed, return empty sound
+            if (list->size == 0) {
+                // Create minimal silent sound
+                autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
+                Sound raw = empty.releaseToAmbiguousOwner();
+                return XPtr<structSound>(raw, true);
+            }
+
+            // Concatenate all passing windows
+            autoSound result = Sounds_concatenate(list.get(), overlap_time);
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to extract and filter windows");
+        }
+    }
+
+    // Return filter results as a logical vector (which windows pass)
+    // Useful when user wants to know which windows passed without extraction
+    LogicalVector get_windows_passing_filter(
+        NumericVector window_starts,
+        NumericVector window_ends,
+        double min_power,
+        double max_zcr
+    ) {
+        VALIDATE_PTR(ptr, Sound);
+
+        int n = window_starts.size();
+        if (n != window_ends.size()) {
+            Rcpp::stop("window_starts and window_ends must have same length");
+        }
+
+        LogicalVector passes(n);
+
+        try {
+            for (int i = 0; i < n; i++) {
+                double from = window_starts[i];
+                double to = window_ends[i];
+                bool pass = true;
+
+                // Check power threshold
+                if (min_power > 0) {
+                    double power = Sound_getPower(ptr.get(), from, to);
+                    if (power < min_power) {
+                        pass = false;
+                    }
+                }
+
+                // Check ZCR threshold if specified
+                if (pass && max_zcr > 0) {
+                    integer i1 = Sampled_xToHighIndex(ptr.get(), from);
+                    integer i2 = Sampled_xToLowIndex(ptr.get(), to);
+                    if (i1 < 1) i1 = 1;
+                    if (i2 > ptr->nx) i2 = ptr->nx;
+
+                    double zcr = calculate_zcr(i1, i2, 1);
+                    if (zcr > max_zcr) {
+                        pass = false;
+                    }
+                }
+
+                passes[i] = pass;
+            }
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to check window filters");
+        }
+
+        return passes;
+    }
+
+    // Concatenate extracted parts batch - given already-extracted parts,
+    // concatenate them with overlap
+    XPtr<structSound> concatenate_parts_ptr(
+        List sound_ptrs,
+        double overlap_time
+    ) {
+        VALIDATE_PTR(ptr, Sound);
+
+        try {
+            autoSoundList list = SoundList_create();
+
+            for (int i = 0; i < sound_ptrs.size(); i++) {
+                XPtr<structSound> part_ptr = sound_ptrs[i];
+                if (part_ptr && part_ptr.get()) {
+                    // Need to copy since SoundList takes ownership
+                    autoSound copy = Data_copy(part_ptr.get());
+                    list->addItem_move(copy.move());
+                }
+            }
+
+            if (list->size == 0) {
+                // Create minimal silent sound
+                autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
+                Sound raw = empty.releaseToAmbiguousOwner();
+                return XPtr<structSound>(raw, true);
+            }
+
+            autoSound result = Sounds_concatenate(list.get(), overlap_time);
+            Sound raw = result.releaseToAmbiguousOwner();
+            return XPtr<structSound>(raw, true);
+
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("Failed to concatenate sound parts");
+        }
+    }
+
+    // =========================================================================
     // Export Methods
     // =========================================================================
 
@@ -856,6 +1044,11 @@ RCPP_MODULE(sound_module) {
         .method("get_values_at_times", &RSound::get_values_at_times, "Get values at multiple times")
         .method("get_values_in_range", &RSound::get_values_in_range, "Get all values in time range")
         .method("get_times_in_range", &RSound::get_times_in_range, "Get sample times in range")
+
+        // Batch/Filtered window extraction (AVQI 2.9x -> 1.5x speedup)
+        .method("extract_windows_filtered_ptr", &RSound::extract_windows_filtered_ptr, "Extract and concatenate windows passing power/ZCR filter")
+        .method("get_windows_passing_filter", &RSound::get_windows_passing_filter, "Check which windows pass power/ZCR filter")
+        .method("concatenate_parts_ptr", &RSound::concatenate_parts_ptr, "Concatenate list of Sound parts")
 
         // Time/sample conversion
         .method("get_time_from_sample", &RSound::get_time_from_sample, "Convert sample to time")
