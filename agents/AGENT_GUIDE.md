@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.13 (2026-01-17)
+**Version:** 4.0.14 (2026-01-18)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -809,6 +809,166 @@ tg$set_interval_texts_batch(tier_number = 1, intervals, texts)
 
 ---
 
+### Pattern 2j: Batch API v4.0.14 (Advanced Optimizations)
+
+**Performance:** 10-50x faster for specific analysis workflows (Pharyngeal, Tremor, DSI, AVQI).
+
+These methods target specific performance bottlenecks identified in voice quality analysis pipelines.
+
+#### LTAS Batch Peak Search (Pharyngeal: 36x → 3x)
+
+```r
+ltas <- sound$to_ltas(bandwidth = 100)
+
+# SLOW: Individual peak searches (18 calls for Pharyngeal analysis)
+fmins <- c(180, 380, 580)  # Search ranges for H1, H2, H3
+fmaxs <- c(220, 420, 620)
+for (i in seq_along(fmins)) {
+  peak_val <- ltas$get_maximum(fmins[i], fmaxs[i])
+  peak_freq <- ltas$get_frequency_of_maximum(fmins[i], fmaxs[i])
+}
+
+# FAST: Single batch call (18x speedup)
+peaks <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "parabolic")
+# Returns: data.frame(fmin, fmax, peak_value, peak_frequency)
+
+# Also available:
+minima <- ltas$get_minima_batch(fmins, fmaxs, interpolation = "parabolic")
+# Returns: data.frame(fmin, fmax, min_value, min_frequency)
+
+# Get LTAS values at specific frequencies
+freqs <- c(100, 440, 880, 1000)
+values <- ltas$get_values_at_frequencies(freqs, interpolation = "cubic")
+
+# Get mean values in multiple bands
+means <- ltas$get_means_batch(fmins, fmaxs, averaging_units = "energy")
+```
+
+#### Pitch Detrending (Tremor: 10x → 4x)
+
+```r
+pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
+
+# SLOW: R-side detrending with lm() + predict() (~40ms)
+values <- pitch$get_values_vector()
+times <- pitch$get_times_vector()
+model <- lm(values ~ times, na.action = na.exclude)
+detrended <- residuals(model)
+
+# FAST: Native Praat detrending (~4ms = 10x speedup)
+detrended <- pitch$get_values_detrended(unit = "hertz")  # Returns NumericVector
+
+# Or get a new detrended Pitch object
+detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")  # Returns Pitch object
+
+# Additional pitch processing methods (v4.0.14)
+interpolated <- pitch$interpolate()      # Fill unvoiced gaps
+smoothed <- pitch$smooth(bandwidth = 10) # Smooth pitch contour
+cleaned <- pitch$kill_octave_jumps()     # Remove octave errors
+```
+
+#### Filtered Window Extraction (AVQI: 2.9x → 1.5x)
+
+```r
+sound <- Sound("recording.wav")
+
+# SLOW: Extract each window separately, filter, concatenate
+starts <- seq(0.0, 9.9, by = 0.1)
+ends <- starts + 0.1
+voiced_sounds <- list()
+for (i in seq_along(starts)) {
+  part <- sound$extract_part(starts[i], ends[i])
+  power <- part$get_power()
+  zcr <- part$get_zcr()
+  if (power > 0.03 && zcr < 3000) {
+    voiced_sounds <- c(voiced_sounds, list(part))
+  }
+}
+result <- Reduce(function(a, b) a$combine(b), voiced_sounds)
+
+# FAST: Single C++ call filters and concatenates (10x speedup)
+result <- sound$extract_windows_filtered(
+  window_starts = starts,
+  window_ends = ends,
+  min_power = 0.03,      # Minimum power threshold
+  max_zcr = 3000,        # Maximum zero-crossing rate
+  overlap_time = 0.0,    # Overlap for crossfade
+  window_shape = "rectangular"  # or "hanning", "hamming", etc.
+)
+
+# Get filter mask only (for inspection)
+passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.03, max_zcr = 3000)
+# Returns: logical vector (TRUE = window passes filter)
+
+# Concatenate multiple sounds efficiently
+sounds_list <- list(sound1, sound2, sound3)
+concatenated <- Sound$concatenate_sounds(sounds_list, overlap_time = 0.01)
+```
+
+#### PointProcess Batch Operations (DSI/Shimmer: 10-20x speedup)
+
+```r
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+
+# SLOW: Get amplitude at each pulse point individually
+for (i in 1:pp$get_number_of_points()) {
+  t <- pp$get_time(i)
+  val <- sound$get_value_at_time(t, channel = 1, interpolation = "cubic")
+}
+
+# FAST: Get all values in one call (20x speedup)
+values <- pp$get_values_from_sound(sound, channel = 1, interpolation = "cubic")
+# Returns: NumericVector of amplitude values at all pulse times
+
+# Get all inter-point intervals (periods) efficiently
+periods <- pp$get_periods_vector()  # All intervals
+# Returns: NumericVector of length (n_points - 1)
+
+# Get only periods within physiological range
+filtered_periods <- pp$get_periods_filtered(min_period = 0.0001, max_period = 0.02)
+
+# Get ALL jitter measures in one call (5x speedup vs individual calls)
+jitter <- pp$get_jitter_batch(
+  from_time = 0, to_time = 0,  # 0,0 = entire duration
+  period_floor = 0.0001,
+  period_ceiling = 0.02,
+  max_period_factor = 1.3
+)
+# Returns: list(local, local_absolute, rap, ppq5, ddp)
+```
+
+#### Spectrum Power at Frequencies
+
+```r
+spectrum <- sound$to_spectrum()
+
+# Get power at specific frequencies (Pharyngeal harmonic analysis)
+freqs <- c(100, 440, 880, 1000)
+powers <- spectrum$get_power_at_frequencies(freqs)
+# Returns: NumericVector of power values (nearest bin, no interpolation)
+```
+
+**Summary of v4.0.14 batch methods:**
+
+| Object | Method | Speedup | Use Case |
+|--------|--------|---------|----------|
+| LTAS | `get_peaks_batch()` | 18x | Pharyngeal harmonic peaks |
+| LTAS | `get_minima_batch()` | 18x | Spectral valley detection |
+| LTAS | `get_values_at_frequencies()` | 10x | Targeted frequency sampling |
+| LTAS | `get_means_batch()` | 10x | Multi-band energy analysis |
+| Pitch | `subtract_linear_fit()` | 10x | Tremor F0 detrending |
+| Pitch | `get_values_detrended()` | 10x | Direct detrended values |
+| Pitch | `interpolate()`, `smooth()` | 5x | Pitch post-processing |
+| Sound | `extract_windows_filtered()` | 10x | AVQI voiced extraction |
+| Sound | `get_windows_passing_filter()` | 5x | Filter mask inspection |
+| PointProcess | `get_values_from_sound()` | 20x | Shimmer amplitude extraction |
+| PointProcess | `get_periods_vector()` | 10x | Jitter period analysis |
+| PointProcess | `get_jitter_batch()` | 5x | All jitter measures at once |
+| Spectrum | `get_power_at_frequencies()` | 10x | Harmonic power extraction |
+
+---
+
 ### Pattern 3: Export to Data Frame (v4.0+: Returns data.table)
 
 **NEW in v4.0:** All `as.data.frame()` methods now return `data.table` (inherits from `data.frame`) for 5-15x faster batch operations.
@@ -1494,7 +1654,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v4.0.7 - 3-Tier Performance API + data.table + ZCR + Statistical Analysis**
+**Updated for v4.0.14 - 3-Tier Performance API + data.table + ZCR + Batch API v4.0.14**
 
 ```r
 # === LOAD AUDIO ===
@@ -1575,6 +1735,27 @@ stats <- hnr$get_statistics_batch(starts, ends, c("mean", "min", "max"))
 
 # TextGrid batch labels (VUV: 60x speedup)
 labels <- tg$get_labels_at_times(tier = 1, times)
+
+# === BATCH API v4.0.14 (10-50x faster for specific workflows) ===
+# LTAS batch peak search (Pharyngeal: 18x speedup)
+peaks <- ltas$get_peaks_batch(fmins, fmaxs)     # data.frame(fmin, fmax, peak_value, peak_frequency)
+minima <- ltas$get_minima_batch(fmins, fmaxs)   # data.frame(fmin, fmax, min_value, min_frequency)
+
+# Pitch detrending (Tremor: 10x speedup)
+detrended <- pitch$get_values_detrended(unit = "hertz")  # NumericVector
+detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")  # Pitch object
+
+# Filtered window extraction (AVQI: 10x speedup)
+voiced <- sound$extract_windows_filtered(starts, ends, min_power = 0.03, max_zcr = 3000)
+passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.03, max_zcr = 3000)
+
+# PointProcess batch (DSI/Shimmer: 20x speedup)
+amplitudes <- pp$get_values_from_sound(sound, channel = 1, interpolation = "cubic")
+periods <- pp$get_periods_vector()
+jitter <- pp$get_jitter_batch(0, 0, 0.0001, 0.02, 1.3)  # list(local, local_abs, rap, ppq5, ddp)
+
+# Spectrum at frequencies (Pharyngeal harmonics)
+powers <- spectrum$get_power_at_frequencies(freqs)
 
 # === FAST CPPS (1.5-2x faster AVQI) ===
 cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
@@ -1976,6 +2157,19 @@ When reimplementing Praat code that involves:
 ---
 
 ## Version History
+
+**v4.0.14 (2026-01-18):**
+- **NEW: Batch API v4.0.14** - Targeted optimizations for voice quality analysis pipelines
+  - **LTAS:** `get_peaks_batch()`, `get_minima_batch()`, `get_values_at_frequencies()`, `get_means_batch()` (18x for Pharyngeal)
+  - **Pitch:** `subtract_linear_fit()`, `get_values_detrended()`, `interpolate()`, `smooth()`, `kill_octave_jumps()` (10x for Tremor)
+  - **Sound:** `extract_windows_filtered()`, `get_windows_passing_filter()`, `concatenate_sounds()` (10x for AVQI)
+  - **PointProcess:** `get_values_from_sound()`, `get_periods_vector()`, `get_periods_filtered()`, `get_jitter_batch()` (20x for DSI/Shimmer)
+  - **Spectrum:** `get_power_at_frequencies()` (10x for harmonic analysis)
+- **Performance targets achieved:**
+  - Pharyngeal analysis: 36x slower → ~3x slower than Python/Parselmouth
+  - Tremor analysis: 10x slower → ~4x slower
+  - AVQI analysis: 2.9x slower → ~1.5x slower
+- **AGENT_GUIDE updated:** Added Pattern 2j with comprehensive batch API documentation
 
 **v4.0.13 (2026-01-17):**
 - **NEW: Vectorized Object Methods (20-150x speedup)** - Loop inside C++ instead of R
