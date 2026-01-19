@@ -570,6 +570,70 @@ double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
 }
 
 // ==============================================================================
+// Direct Sound to CPPS - Optimized single-call API (v4.1.0)
+// ==============================================================================
+
+// [[Rcpp::export(.sound_to_cpps_direct)]]
+double sound_to_cpps_direct(SEXP sound_xptr,
+                            // PowerCepstrogram creation parameters
+                            double cepstrogram_pitch_floor,
+                            double time_step,
+                            double max_frequency,
+                            double pre_emphasis_from,
+                            // CPPS calculation parameters
+                            bool subtract_tilt,
+                            double time_averaging_window,
+                            double quefrency_averaging_window,
+                            double pitch_floor,
+                            double pitch_ceiling,
+                            double delta_f0,
+                            int interpolation,
+                            double qstart_fit,
+                            double qend_fit,
+                            int trend_type,
+                            int fit_method) {
+    XPtr<structSound> sound(sound_xptr);
+    if (!sound) stop("Invalid Sound pointer");
+
+    try {
+        // Step 1: Create PowerCepstrogram internally (not exposed to R)
+        autoPowerCepstrogram cepstrogram = Sound_to_PowerCepstrogram(
+            sound.get(),
+            cepstrogram_pitch_floor,
+            time_step,
+            max_frequency,
+            pre_emphasis_from
+        );
+
+        // Step 2: Calculate CPPS directly
+        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
+        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
+        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+
+        double cpps = PowerCepstrogram_getCPPS(
+            cepstrogram.get(),
+            subtract_tilt,
+            time_averaging_window,
+            quefrency_averaging_window,
+            pitch_floor,
+            pitch_ceiling,
+            delta_f0,
+            interp_type,
+            qstart_fit,
+            qend_fit,
+            trend,
+            fit
+        );
+
+        // PowerCepstrogram automatically freed when function exits
+        return cpps;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute CPPS directly from Sound");
+    }
+}
+
+// ==============================================================================
 // Additional PowerCepstrum Methods - Voice Quality Analysis
 // ==============================================================================
 

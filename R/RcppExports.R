@@ -1510,6 +1510,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_powercepstrogram_get_cpps`, xptr, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
+.sound_to_cpps_direct <- function(sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_pladdrr_sound_to_cpps_direct`, sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
+}
+
 .powercepstrum_get_peak_prominence_cpps <- function(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
     .Call(`_pladdrr_powercepstrum_get_peak_prominence_cpps`, xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }

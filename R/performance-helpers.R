@@ -74,15 +74,15 @@
 #' @export
 calculate_cpps_fast <- function(
   sound,
-  subtract_tilt = FALSE,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
+  subtract_tilt = TRUE,
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 0.0005,
   pitch_floor = 60,
-  pitch_ceiling = 330,
+  pitch_ceiling = 333.3,
   delta_f0 = 0.05,
   interpolation = "parabolic",
-  qstart_fit = 0.001,
-  qend_fit = 0,
+  qstart_fit = 0.003,
+  qend_fit = 0.04,
   trend_line_type = "straight",
   fit_method = "robust",
   cepstrogram_pitch_floor = 60,
@@ -99,15 +99,6 @@ calculate_cpps_fast <- function(
     stop("sound must be a Sound object or external pointer")
   }
 
-  # Create PowerCepstrogram directly (bypass R6)
-  pcep_ptr <- .sound_to_powercepstrogram(
-    sound_ptr,
-    cepstrogram_pitch_floor,
-    time_step,
-    max_frequency,
-    pre_emphasis_from
-  )
-
   # Map string arguments to integer codes (Praat convention)
   interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2,
                   "sinc70" = 3, "sinc700" = 4)
@@ -120,9 +111,16 @@ calculate_cpps_fast <- function(
   trend_line_type <- match.arg(trend_line_type, names(trend_map))
   fit_method <- match.arg(fit_method, names(fit_map))
 
-  # Call internal C++ function directly (bypass R6 method dispatch)
-  cpps <- .powercepstrogram_get_cpps(
-    pcep_ptr,
+  # Direct Sound → CPPS path (v4.1.0 optimization)
+  # Keeps PowerCepstrogram entirely in C++, no R/C++ boundary crossing
+  cpps <- .sound_to_cpps_direct(
+    sound_ptr,
+    # PowerCepstrogram creation params
+    as.numeric(cepstrogram_pitch_floor),
+    as.numeric(time_step),
+    as.numeric(max_frequency),
+    as.numeric(pre_emphasis_from),
+    # CPPS calculation params
     as.logical(subtract_tilt),
     as.numeric(time_averaging_window),
     as.numeric(quefrency_averaging_window),
