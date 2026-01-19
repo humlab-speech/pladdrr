@@ -76,9 +76,7 @@ results/
 ^COMMIT_.*\.md$
 ^speaker$
 ^speaker_1$
-^pladdrr/pladdrr$
-^pladdrr/speaker$
-^pladdrr/speaker_1$
+^pladdrr$
 ^src/praat\.github\.io/docs/
 ^src/praat\.github\.io/generate/
 ^src/praat\.github\.io/test/
