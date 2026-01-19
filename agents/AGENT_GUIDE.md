@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.0.14 (2026-01-18)
+**Version:** 4.1.0 (2026-01-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -397,31 +397,37 @@ stats <- pitch_get_statistics_batch(
 - `pitch_get_statistics_batch(pitch_xptr, from_times, to_times, metrics, unit)`
   - Metrics: `"min"`, `"max"`, `"mean"`, `"stdev"`, `"q25"`, `"q50"`, `"q75"`, `"count_voiced"`
 
-### Pattern 2d: Fast CPPS API (NEW in v2.2.1 - Module-Based)
+### Pattern 2d: Fast CPPS API (Updated v4.1.0 - Direct Sound→CPPS)
+
+**v4.1.0 Major Performance Fix:** Removed debug output from Praat threading code, achieving **3x speedup** for CPPS and all multi-threaded operations. AVQI benchmark improved from 8x slower to **2.67x slower** than Python/Parselmouth.
 
 **PowerCepstrogram converted to modules in v2.2.1** for 1.5-2x speedup in AVQI v3.01. By v2.2.3, all 30 analysis objects use modules.
 
 For voice quality analysis, use the module-based API (now default) or fast helper functions:
 
 ```r
-# STANDARD API (v2.2.1+): Now uses modules directly (1.5-2x faster than v2.2.0)
-pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-cpps <- pcep$get_cpps(
-  subtract_tilt = FALSE,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
-  pitch_floor = 60,
-  pitch_ceiling = 330
-)
+# RECOMMENDED (v4.1.0+): Direct Sound→CPPS path (single C++ call, no intermediate objects)
+# PowerCepstrogram created and destroyed internally - no R/C++ boundary crossing
+cpps <- calculate_cpps_fast(sound)  # Uses optimized defaults matching get_cpps()
 
-# FAST API (v2.2.0+): Bypass object creation for batch processing (1.5-2x faster)
+# With custom parameters:
 cpps <- calculate_cpps_fast(
   sound,
-  subtract_tilt = FALSE,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
+  subtract_tilt = TRUE,              # Default: TRUE (matches R6 get_cpps)
+  time_averaging_window = 0.001,     # Default: 0.001
+  quefrency_averaging_window = 0.0005, # Default: 0.0005
   pitch_floor = 60,
-  pitch_ceiling = 330
+  pitch_ceiling = 333.3              # Default: 333.3
+)
+
+# STANDARD API: Two-step with R6 object (same performance, returns reusable object)
+pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
+cpps <- pcep$get_cpps(
+  subtract_tilt = TRUE,
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 0.0005,
+  pitch_floor = 60,
+  pitch_ceiling = 333.3
 )
 
 # ADVANCED: Two-step for multiple CPPS calculations from same cepstrogram
@@ -430,10 +436,18 @@ cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
 cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
 ```
 
-**Performance comparison (verified v2.2.3):**
-- v2.2.0 R6Class: 9.5s for AVQI v3.01
-- v2.2.1+ Module: **4.0-4.5s** (2.1-2.4x faster)
-- v2.2.1+ Fast API: **3.5-4.0s** (2.4-2.7x faster)
+**Performance comparison (verified v4.1.0):**
+| Version | AVQI Benchmark | vs Python |
+|---------|---------------|-----------|
+| v4.0.x (with debug output) | ~17s | 8.0x slower |
+| **v4.1.0 (threading fix)** | **~5.7s** | **2.67x slower** |
+| Python/Parselmouth | ~2.1s | baseline |
+
+**Key v4.1.0 changes:**
+- `calculate_cpps_fast()` now uses direct C++ path (Sound→CPPS in single call)
+- Defaults aligned with R6 `get_cpps()` method for identical output
+- Threading debug output removed from Praat's `MelderThread.cpp`
+- Benefits ALL multi-threaded Praat operations (Pitch, Formant, CPPS, etc.)
 
 ### Pattern 2e: XPtr Window Functions (NEW in v2.2.1)
 
@@ -2355,6 +2369,19 @@ When reimplementing Praat code that involves:
   - Added `interpolation_to_code()` utility - Standardized interpolation codes
 - **New tests:** `test-batch-ops.R` - Comprehensive batch operation tests (210 lines)
 
+**v4.1.0 (2026-01-19):**
+- **MAJOR PERFORMANCE FIX:** Removed debug `fprintf(stderr)` from Praat threading code
+  - Root cause: `MelderThread.cpp` had debug output executing for every threaded frame
+  - Impact: **3x speedup** for CPPS; AVQI benchmark improved from 8x to **2.67x** vs Python
+  - Affects ALL multi-threaded Praat operations: CPPS, Pitch, Formant, etc.
+- **New direct CPPS API:** `sound_to_cpps_direct()` C++ function
+  - Single C++ call: Sound → CPPS (PowerCepstrogram kept internal, no R/C++ boundary)
+  - `calculate_cpps_fast()` now uses this optimized path
+- **Default alignment:** `calculate_cpps_fast()` defaults now match R6 `get_cpps()` method
+  - `subtract_tilt = TRUE`, `time_averaging_window = 0.001`, `quefrency_averaging_window = 0.0005`
+  - `pitch_ceiling = 333.3`, `qstart_fit = 0.003`, `qend_fit = 0.04`
+  - Output verified identical (difference = 0.0 dB)
+
 **v2.2.6 (2026-01-09):**
 - **File rename:** `powercepstrum-r6.R` → `powercepstrum.R` (was never R6)
 - Added missing `print.PowerCepstrogram` S3 method
@@ -2418,8 +2445,8 @@ When reimplementing Praat code that involves:
 
 ---
 
-**Guide Version:** 4.0.12
-**Last Updated:** 2026-01-16
-**Package Version:** 4.0.12
+**Guide Version:** 4.1.0
+**Last Updated:** 2026-01-19
+**Package Version:** 4.1.0
 **Modules:** 37 (34/35 objects use modules, PraatInterpreter uses R6)
-**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler)
+**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler), **v4.1.0 threading performance fix (3x speedup for multi-threaded ops)**
