@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.1.0 (2026-01-19)
+**Version:** 4.1.1 (2026-01-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -2445,8 +2445,8 @@ When reimplementing Praat code that involves:
 
 ---
 
-**Guide Version:** 4.1.0
+**Guide Version:** 4.1.1
 **Last Updated:** 2026-01-19
-**Package Version:** 4.1.0
+**Package Version:** 4.1.1
 **Modules:** 37 (34/35 objects use modules, PraatInterpreter uses R6)
 **Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler), **v4.1.0 threading performance fix (3x speedup for multi-threaded ops)**
