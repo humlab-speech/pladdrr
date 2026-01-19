@@ -13,8 +13,9 @@
 #' - Acoustic space analysis
 #' - Convex hull computation
 #' 
-#' @param x Numeric vector of x coordinates
-#' @param y Numeric vector of y coordinates
+#' @param x Numeric vector of x coordinates (required unless .xptr provided)
+#' @param y Numeric vector of y coordinates (required unless .xptr provided)
+#' @param .xptr External pointer from C++ (internal use)
 #' @return Polygon object with methods for geometry operations
 #' 
 #' @examples
@@ -34,34 +35,41 @@
 #' }
 #' 
 #' @export
-Polygon <- function(x, y) {
-  if (missing(x) || missing(y)) {
-    stop("Both x and y coordinates required")
-  }
-  if (length(x) != length(y)) {
-    stop("x and y must have same length")
-  }
-  if (length(x) < 1) {
-    stop("At least 1 point required")
-  }
-  
+Polygon <- function(x, y, .xptr = NULL) {
   # Load Rcpp Module
   poly_mod <- get_module("polygon_module")
   if (is.null(poly_mod)) {
     stop("polygon_module not available - package installation may be incomplete")
   }
-  
-  # Create XPtr first, then wrap in module class
-  xptr <- poly_mod$polygon_create_xptr(
-    as.numeric(x), 
-    as.numeric(y)
-  )
-  
+
+  # If .xptr provided, use it directly (internal construction from C++)
+  if (!is.null(.xptr)) {
+    xptr <- .xptr
+  } else {
+    # Normal construction from x, y coordinates
+    if (missing(x) || missing(y)) {
+      stop("Both x and y coordinates required")
+    }
+    if (length(x) != length(y)) {
+      stop("x and y must have same length")
+    }
+    if (length(x) < 1) {
+      stop("At least 1 point required")
+    }
+
+    # Create XPtr from coordinates
+    xptr <- poly_mod$polygon_create_xptr(
+      as.numeric(x),
+      as.numeric(y)
+    )
+  }
+
   # Wrap in module class
   cpp_obj <- poly_mod$RPolygon$new(xptr)
   
   # Create wrapper object
   obj <- structure(list(
+    .xptr = xptr,
     .cpp = cpp_obj,
     
     # Properties
