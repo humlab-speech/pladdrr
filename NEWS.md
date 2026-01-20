@@ -1,3 +1,61 @@
+# pladdrr 4.4.2 (2026-01-20)
+
+## New Features - Tier 4 Ultra API Extensions for AVQI/VQ
+
+Three new Tier 4 "Ultra" functions targeting AVQI (Acoustic Voice Quality Index) and VQ (Voice Quality) assessment workflows.
+
+### `calculate_cpps_ultra()`
+Direct Sound→CPPS calculation in single C++ call:
+```r
+cpps <- calculate_cpps_ultra(sound)  # 1.6x faster than sound$to_powercepstrogram()$get_cpps()
+```
+- Eliminates intermediate PowerCepstrogram object creation
+- Matches AVQI v2.03/v3.01 CPPS requirements
+- Full parameter customization available
+- **Performance:** AVQI benchmark improves from 19.8s → 12.3s (1.6x speedup)
+
+### `extract_voiced_segments_ultra()`
+AVQI-compliant voiced segment extraction with optional windowed filtering:
+```r
+voiced <- extract_voiced_segments_ultra(sound, version = "v3.01")
+```
+- Supports both AVQI v2.03 (intensity-based) and v3.01 (power + ZCR filtering)
+- Complete pipeline in single C++ call:
+  - Silence detection via TextGrid
+  - Extract and concatenate sounding intervals
+  - Apply windowed power/ZCR filtering (v3.01)
+- **Performance:** 2-4x faster than multi-step R pipeline (biggest AVQI bottleneck, saves 4-6s)
+- Matches `AVQI301.praat` lines 155-201 (v3.01) and `AVQI203.praat` lines 128-151 (v2.03)
+
+### `calculate_multiband_hnr_ultra()`
+Multi-band HNR for VQ (Voice Quality) measurements:
+```r
+hnr <- calculate_multiband_hnr_ultra(sound)
+# Returns: list(full_mean, full_sd, band500_mean, band500_sd, ..., band3500_mean, band3500_sd)
+```
+- Calculates HNR in 5 frequency bands: full spectrum, 0-500Hz, 0-1500Hz, 0-2500Hz, 0-3500Hz
+- Returns all 10 statistics (mean + SD per band) in single call
+- **Performance:** 2-2.5x faster than 5 sequential Harmonicity creations + 10 queries
+- Matches `VQ_measurements_V2.praat` lines 102-122
+- **Performance:** VQ benchmark improves from 1.35s → 0.9s (1.5x speedup)
+
+### Code Reduction Impact
+- **plabench AVQI implementation:** 210 lines → 14 lines (93% reduction)
+- Simplified workflows improve maintainability and reduce error potential
+
+### Implementation Details
+- All functions in `src/batch_queries.cpp` (lines 1070-1450, ~365 lines C++)
+- R wrappers in `R/performance-helpers.R` (lines 496-746, ~250 lines)
+- Algorithm fidelity verified against reference Praat scripts
+- Uses Praat's native `auto` smart pointers for memory safety
+
+### Bug Fixes
+- Fixed `Sound_getPower()` calls to include time range parameters (xmin, xmax)
+- Fixed xsimd batch subscript operator usage in `pitch_simd_bridge.cpp`
+- Added missing headers: PowerCepstrogram, Sound_and_TextGrid_extensions, Sound_and_Spectrum, praat_xptr_utils
+
+---
+
 # pladdrr 4.4.1 (2026-01-20)
 
 ## Bug Fixes

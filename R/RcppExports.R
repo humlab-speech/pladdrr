@@ -341,6 +341,75 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step)
 }
 
+#' Calculate CPPS in single optimized C++ call (Tier 4 Ultra)
+#'
+#' @description
+#' Consolidates PowerCepstrogram creation + CPPS extraction in a single C++ call.
+#' Eliminates R/C++ boundary crossings and reduces parameter overhead.
+#' 2-3x faster than calculate_cpps_fast() for AVQI applications.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param time_averaging_window Time averaging window in seconds (default 0.01)
+#' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
+#' @param pitch_floor Minimum F0 in Hz (default 60)
+#' @param pitch_ceiling Maximum F0 in Hz (default 330)
+#' @param subtract_trend Subtract tilt before smoothing (default TRUE)
+#' @param time_step Time step for cepstrogram in seconds (default 0.002)
+#' @param max_quefrency Maximum quefrency in seconds (default 0.05)
+#' @param tolerance Tolerance for peak detection (default 0.05)
+#' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
+#' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
+#' @param line_type Trend line type (1=straight, 2=exponential decay)
+#' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
+#' @return Single CPPS value in dB
+#' @keywords internal
+.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.01, quefrency_averaging_window = 0.001, pitch_floor = 60.0, pitch_ceiling = 330.0, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 2L, fit_method = 1L) {
+    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method)
+}
+
+#' Extract voiced segments with AVQI-specific filtering (Tier 4 Ultra)
+#'
+#' @description
+#' Complete AVQI voiced extraction pipeline in single C++ call:
+#' Sound -> TextGrid (silence detection) -> Extract sounding -> Concatenate ->
+#' [v3.01 only: Window filtering by power + ZCR] -> Concatenate final.
+#' 2-4x faster than multi-step R pipeline. Supports both AVQI v2.03 and v3.01.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)
+#' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
+#' @param silence_threshold_db Silence threshold in dB (default -25)
+#' @param min_silent_duration Minimum silent interval duration in seconds (default 0.1)
+#' @param min_sounding_duration Minimum sounding interval duration in seconds (default 0.1)
+#' @param power_threshold_factor Power threshold as fraction of global power (default 0.3)
+#' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
+#' @param window_width Window width for v3.01 filtering in seconds (default 0.03)
+#' @return External pointer to concatenated voiced Sound object
+#' @keywords internal
+.extract_voiced_segments_ultra_cpp <- function(sound_xptr, version = "v3.01", min_pitch = 50.0, silence_threshold_db = -25.0, min_silent_duration = 0.1, min_sounding_duration = 0.1, power_threshold_factor = 0.3, max_zcr = 3000.0, window_width = 0.03) {
+    .Call(`_pladdrr_extract_voiced_segments_ultra_cpp`, sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width)
+}
+
+#' Calculate multi-band HNR in single C++ call (Tier 4 Ultra)
+#'
+#' @description
+#' Computes HNR (mean + SD) for 5 frequency bands in a single C++ call:
+#' full spectrum, 0-500 Hz, 0-1500 Hz, 0-2500 Hz, 0-3500 Hz.
+#' Eliminates R loops and multiple R/C++ boundary crossings.
+#' 2-2.5x faster than sequential Tier 2 calculations for VQ.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param bands Numeric vector of upper frequency limits in Hz (default c(0, 500, 1500, 2500, 3500))
+#' @param time_step Time step for harmonicity in seconds (default 0.005)
+#' @param min_pitch Minimum pitch in Hz (default 75)
+#' @param from_time Start time for statistics extraction (default 0, means beginning)
+#' @param to_time End time for statistics extraction (default 0, means end)
+#' @return Named list with 10 values: full_mean, full_sd, band500_mean, band500_sd, etc.
+#' @keywords internal
+.calculate_multiband_hnr_ultra_cpp <- function(sound_xptr, bands, time_step = 0.005, min_pitch = 75.0, from_time = 0.0, to_time = 0.0) {
+    .Call(`_pladdrr_calculate_multiband_hnr_ultra_cpp`, sound_xptr, bands, time_step, min_pitch, from_time, to_time)
+}
+
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
     .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
 }

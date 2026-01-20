@@ -603,6 +603,64 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_cpps_ultra_cpp
+double calculate_cpps_ultra_cpp(SEXP sound_xptr, double time_averaging_window, double quefrency_averaging_window, double pitch_floor, double pitch_ceiling, bool subtract_trend, double time_step, double max_quefrency, double tolerance, int interpolation, double tilt_line_quefrency, int line_type, int fit_method);
+RcppExport SEXP _pladdrr_calculate_cpps_ultra_cpp(SEXP sound_xptrSEXP, SEXP time_averaging_windowSEXP, SEXP quefrency_averaging_windowSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP subtract_trendSEXP, SEXP time_stepSEXP, SEXP max_quefrencySEXP, SEXP toleranceSEXP, SEXP interpolationSEXP, SEXP tilt_line_quefrencySEXP, SEXP line_typeSEXP, SEXP fit_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_averaging_window(time_averaging_windowSEXP);
+    Rcpp::traits::input_parameter< double >::type quefrency_averaging_window(quefrency_averaging_windowSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< bool >::type subtract_trend(subtract_trendSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type max_quefrency(max_quefrencySEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    Rcpp::traits::input_parameter< double >::type tilt_line_quefrency(tilt_line_quefrencySEXP);
+    Rcpp::traits::input_parameter< int >::type line_type(line_typeSEXP);
+    Rcpp::traits::input_parameter< int >::type fit_method(fit_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_cpps_ultra_cpp(sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method));
+    return rcpp_result_gen;
+END_RCPP
+}
+// extract_voiced_segments_ultra_cpp
+SEXP extract_voiced_segments_ultra_cpp(SEXP sound_xptr, std::string version, double min_pitch, double silence_threshold_db, double min_silent_duration, double min_sounding_duration, double power_threshold_factor, double max_zcr, double window_width);
+RcppExport SEXP _pladdrr_extract_voiced_segments_ultra_cpp(SEXP sound_xptrSEXP, SEXP versionSEXP, SEXP min_pitchSEXP, SEXP silence_threshold_dbSEXP, SEXP min_silent_durationSEXP, SEXP min_sounding_durationSEXP, SEXP power_threshold_factorSEXP, SEXP max_zcrSEXP, SEXP window_widthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type version(versionSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold_db(silence_threshold_dbSEXP);
+    Rcpp::traits::input_parameter< double >::type min_silent_duration(min_silent_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type min_sounding_duration(min_sounding_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type power_threshold_factor(power_threshold_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_zcr(max_zcrSEXP);
+    Rcpp::traits::input_parameter< double >::type window_width(window_widthSEXP);
+    rcpp_result_gen = Rcpp::wrap(extract_voiced_segments_ultra_cpp(sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_multiband_hnr_ultra_cpp
+List calculate_multiband_hnr_ultra_cpp(SEXP sound_xptr, NumericVector bands, double time_step, double min_pitch, double from_time, double to_time);
+RcppExport SEXP _pladdrr_calculate_multiband_hnr_ultra_cpp(SEXP sound_xptrSEXP, SEXP bandsSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type bands(bandsSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_multiband_hnr_ultra_cpp(sound_xptr, bands, time_step, min_pitch, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cochleagram_create
 SEXP cochleagram_create(double tmin, double tmax, int nt, double dt, double t1, double df, int nf);
 RcppExport SEXP _pladdrr_cochleagram_create(SEXP tminSEXP, SEXP tmaxSEXP, SEXP ntSEXP, SEXP dtSEXP, SEXP t1SEXP, SEXP dfSEXP, SEXP nfSEXP) {
@@ -10129,6 +10187,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_calculate_f0_stats_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_f0_stats_ultra_cpp, 6},
     {"_pladdrr_calculate_minimum_intensity_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_minimum_intensity_ultra_cpp, 5},
     {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
+    {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 13},
+    {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 9},
+    {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},

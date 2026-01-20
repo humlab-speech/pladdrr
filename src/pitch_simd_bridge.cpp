@@ -243,7 +243,8 @@ void accumulate_power_spectrum_simd(
     // Complex pairs are stored as [Re, Im, Re, Im, ...]
     integer i = 2;
     for (; i + static_cast<integer>(simd_size * 2) <= nsampFFT; i += simd_size * 2) {
-        batch sum_batch(0.0);
+        // Accumulate power for each lane using scalar approach
+        alignas(32) double sum_array[8] = {0.0};
         
         for (integer channel = 1; channel <= ny; channel++) {
             // Load real and imaginary parts
@@ -251,13 +252,13 @@ void accumulate_power_spectrum_simd(
                 integer idx = i + k * 2;
                 double re = frame[channel][idx];
                 double im = frame[channel][idx + 1];
-                sum_batch[k] += re * re + im * im;
+                sum_array[k] += re * re + im * im;
             }
         }
         
         // Store power spectrum values (only even indices hold power)
         for (size_t k = 0; k < simd_size; ++k) {
-            ac[i + k * 2] = sum_batch[k];
+            ac[i + k * 2] = sum_array[k];
         }
     }
     

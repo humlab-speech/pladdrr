@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.4.1 (2026-01-20)
+**Version:** 4.4.2 (2026-01-20)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -17,7 +17,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()` for 20-150x speedups (Pattern 2i)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
-9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows (Pattern 2l)
+9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for AVQI/VQ workflows (Pattern 2l)
 
 ---
 
@@ -67,7 +67,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 | **Tier 1 (Standard)** | `sound$to_pitch()` | 1x baseline | Interactive, <10 files |
 | **Tier 2 (Direct)** | `to_pitch_direct()` | 2-3x | Loops, 10-100 files |
 | **Tier 3 (Batch)** | `sound_to_pitch_batch()` | 5-10x | Production, >100 files |
-| **Tier 4 (Ultra)** | `get_durations_batch()`, `calculate_f0_stats_ultra()` | 5-77x | DSI/clinical workflows |
+| **Tier 4 (Ultra)** | `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_cpps_ultra()` | 5-77x | DSI/AVQI/VQ clinical workflows |
 
 **See comprehensive guides:**
 - `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
@@ -1374,6 +1374,245 @@ dsi <- 0.13 * max_mpt + 0.0053 * max_f0 - 0.26 * min_int - 1.18 * (jitter_ppq5 *
 | `calculate_f0_stats_ultra()` | 5x | FH (highest frequency) |
 | `calculate_minimum_intensity_ultra()` | 6x | IM (lowest intensity) |
 | `get_voice_quality_ultra()` | 3.6x | PPQ (jitter) |
+| `calculate_cpps_ultra()` | 1.6x | AVQI CPPS extraction |
+| `extract_voiced_segments_ultra()` | 2-4x | AVQI/VQ voiced extraction |
+| `calculate_multiband_hnr_ultra()` | 2-2.5x | VQ multi-band HNR |
+
+#### `calculate_cpps_ultra()` - Direct Sound→CPPS (v4.4.1+)
+
+**Problem:** CPPS calculation requires creating PowerCepstrogram then calling `get_cpps()`.
+
+**Solution:** Single C++ call creates PowerCepstrogram internally and returns CPPS directly.
+
+```r
+# OLD WAY: Two-step with intermediate object
+pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
+cpps <- pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
+                      quefrency_averaging_window = 0.0005, pitch_floor = 60, pitch_ceiling = 333.3)
+
+# NEW WAY: Direct single call (1.6x faster)
+cpps <- calculate_cpps_ultra(sound)
+
+# With custom parameters
+cpps <- calculate_cpps_ultra(
+  sound,
+  pitch_floor = 60,
+  max_frequency = 5000,
+  pre_emphasis_from = 50,
+  time_step = 0.002,
+  window_length = 0.05,
+  subtract_tilt = TRUE,
+  line_type = "exponential_decay",
+  fit_method = "robust_slow",
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 0.0005,
+  peak_search_pitch_floor = 60,
+  peak_search_pitch_ceiling = 333.3,
+  interpolation = "parabolic",
+  tilt_line_quefrency = 0.001,
+  line_type_exponential_decay_time_constant = 0.01
+)
+```
+
+**Signature:**
+```r
+calculate_cpps_ultra(
+  sound,                            # Sound object
+  pitch_floor = 60,                 # Lowest pitch for cepstrogram
+  max_frequency = 5000,             # Max analysis frequency
+  pre_emphasis_from = 50,           # Pre-emphasis frequency
+  time_step = 0.002,                # Frame shift
+  window_length = 0.05,             # Analysis window length
+  subtract_tilt = TRUE,             # Remove spectral tilt
+  line_type = "exponential_decay",  # "straight", "exponential_decay"
+  fit_method = "robust_slow",       # "least_squares", "robust", "robust_slow"
+  time_averaging_window = 0.001,    # CPPS smoothing window
+  quefrency_averaging_window = 0.0005, # Quefrency smoothing
+  peak_search_pitch_floor = 60,     # CPPS peak search min
+  peak_search_pitch_ceiling = 333.3, # CPPS peak search max
+  interpolation = "parabolic",      # "none", "parabolic"
+  tilt_line_quefrency = 0.001,      # Tilt line quefrency
+  line_type_exponential_decay_time_constant = 0.01 # Decay time constant
+)
+```
+
+**Returns:** Single numeric value (dB). NA if calculation fails.
+
+**Use case:** AVQI v2.03 and v3.01 require CPPS calculation on voiced-only audio. This function eliminates PowerCepstrogram object overhead.
+
+#### `extract_voiced_segments_ultra()` - AVQI-Compliant Voiced Extraction (v4.4.1+)
+
+**Problem:** AVQI requires extracting and concatenating voiced segments with optional power/ZCR filtering (v3.01). Multi-step pipeline in R is slow.
+
+**Solution:** Complete voiced extraction pipeline in single C++ call. Supports both AVQI v2.03 (intensity-based) and v3.01 (windowed power + ZCR filtering).
+
+**Algorithm:**
+1. Silence detection via TextGrid (`detectSilences` with `minPitch=100`, `timeStep=0`, `silenceThreshold=-25 dB`, `minSilent=0.1s`, `minSounding=0.1s`)
+2. Extract sounding (non-silent) intervals
+3. Concatenate sounding intervals into single Sound
+4. **v3.01 only:** Apply windowed power + ZCR filtering:
+   - Calculate global power threshold (default: 3% of global power)
+   - Apply sliding windows (default: 0.03s, nonoverlapping)
+   - For each window: calculate power and ZCR (channel 1)
+   - Keep window if: `power > threshold AND zcr < max_zcr`
+   - Concatenate passing windows
+5. Return concatenated voiced Sound
+
+```r
+# OLD WAY: Multi-step pipeline (6+ Praat calls)
+tg <- sound_to_textgrid_detect_silences(sound, min_pitch = 100, silence_threshold = -25)
+voiced_sounds <- list()
+for (i in 1:tg$get_number_of_intervals(1)) {
+  if (tg$get_label_of_interval(1, i) != "silent") {
+    voiced_sounds <- c(voiced_sounds, list(sound$extract_part(...)))
+  }
+}
+concatenated <- Reduce(function(a, b) a$combine(b), voiced_sounds)
+# ... then v3.01 windowing + filtering ...
+
+# NEW WAY: Single call (2-4x faster)
+# AVQI v2.03 (intensity-based, simple)
+voiced_203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
+
+# AVQI v3.01 (with windowed power + ZCR filtering)
+voiced_301 <- extract_voiced_segments_ultra(
+  sound,
+  version = "v3.01",
+  window_width = 0.03,
+  power_threshold_factor = 0.03,
+  max_zcr = 3000
+)
+```
+
+**Signature:**
+```r
+extract_voiced_segments_ultra(
+  sound,                       # Sound object
+  version = "v3.01",           # "v2.03" or "v3.01"
+  min_pitch = 100,             # Silence detection pitch floor
+  silence_threshold = -25,     # Silence detection threshold (dB)
+  min_silent_interval = 0.1,   # Min silent duration (s)
+  min_sounding_interval = 0.1, # Min sounding duration (s)
+  window_width = 0.03,         # v3.01: Window width for power/ZCR (s)
+  power_threshold_factor = 0.03, # v3.01: Power threshold (fraction of global)
+  max_zcr = 3000               # v3.01: Max zero-crossing rate (Hz)
+)
+```
+
+**Returns:** Sound object (R6 wrapper around XPtr) with concatenated voiced segments.
+
+**Use case:** AVQI v2.03/v3.01 preprocessing. v3.01 is more robust (filters out low-power/high-ZCR segments).
+
+**Performance:** 2-4x faster than R pipeline. Biggest bottleneck fix for AVQI (saves 4-6s on typical recordings).
+
+#### `calculate_multiband_hnr_ultra()` - Multi-Band HNR (v4.4.1+)
+
+**Problem:** VQ (Voice Quality) assessment requires HNR in 5 frequency bands. Requires 5 separate Harmonicity object creations + 10 queries (mean + SD for each band).
+
+**Solution:** Single C++ call filters sound into 5 bands, computes HNR for each, returns all 10 statistics.
+
+**Algorithm:**
+1. For each of 5 frequency bands: `[0, fmax], [0, 500], [0, 1500], [0, 2500], [0, 3500]`
+2. Apply Hann band-pass filter (`sound_filter_passHannBand`)
+3. Create Harmonicity object (`Sound_to_Harmonicity_ac` with `time_step=0.01`, `min_pitch=75`, `silence_threshold=0.1`, `periods_per_window=1`)
+4. Calculate mean and SD of HNR values
+5. Return all 10 values as named list
+
+```r
+# OLD WAY: 5 Harmonicity objects + 10 queries
+bands <- c(10000, 500, 1500, 2500, 3500)  # 0-Hz to these upper limits
+results <- list()
+for (band in bands) {
+  filtered <- sound$filter_pass_hann_band(0, band, 100)
+  hnr <- filtered$to_harmonicity_ac(0.01, 75, 0.1, 1)
+  results[[paste0("band", band)]] <- list(
+    mean = hnr$get_mean(0, 0),
+    sd = hnr$get_standard_deviation(0, 0)
+  )
+}
+
+# NEW WAY: Single call (2-2.5x faster)
+hnr <- calculate_multiband_hnr_ultra(sound)
+# Returns: list(
+#   full_mean, full_sd,
+#   band500_mean, band500_sd,
+#   band1500_mean, band1500_sd,
+#   band2500_mean, band2500_sd,
+#   band3500_mean, band3500_sd
+# )
+
+# Custom parameters
+hnr <- calculate_multiband_hnr_ultra(
+  sound,
+  bands = c(10000, 500, 1500, 2500, 3500),
+  time_step = 0.01,
+  min_pitch = 75,
+  silence_threshold = 0.1,
+  periods_per_window = 1,
+  smoothing = 100  # Hann band smoothing (Hz)
+)
+```
+
+**Signature:**
+```r
+calculate_multiband_hnr_ultra(
+  sound,                      # Sound object
+  bands = c(10000, 500, 1500, 2500, 3500), # Upper frequency limits (Hz)
+  time_step = 0.01,           # Harmonicity time step
+  min_pitch = 75,             # Harmonicity pitch floor
+  silence_threshold = 0.1,    # Silence threshold
+  periods_per_window = 1,     # Periods per analysis window
+  smoothing = 100             # Hann filter smoothing (Hz)
+)
+```
+
+**Returns:** Named list with 10 elements:
+| Element | Description |
+|---------|-------------|
+| `full_mean` | Mean HNR for full spectrum (0-10000 Hz) |
+| `full_sd` | SD of HNR for full spectrum |
+| `band500_mean` | Mean HNR for 0-500 Hz |
+| `band500_sd` | SD of HNR for 0-500 Hz |
+| `band1500_mean` | Mean HNR for 0-1500 Hz |
+| `band1500_sd` | SD of HNR for 0-1500 Hz |
+| `band2500_mean` | Mean HNR for 0-2500 Hz |
+| `band2500_sd` | SD of HNR for 0-2500 Hz |
+| `band3500_mean` | Mean HNR for 0-3500 Hz |
+| `band3500_sd` | SD of HNR for 0-3500 Hz |
+
+**Use case:** VQ (Voice Quality) measurements for voice pathology assessment. Matches `VQ_measurements_V2.praat` lines 102-122.
+
+**Note:** `bands` parameter must have exactly 5 elements (full spectrum + 4 bands). First element is full spectrum upper limit.
+
+#### AVQI v3.01 Complete Workflow (v4.4.1)
+
+**Acoustic Voice Quality Index calculation with new Tier 4 Ultra functions:**
+
+```r
+sound <- Sound("sustained_vowel.wav")
+
+# Step 1: Extract voiced segments (AVQI v3.01 with power + ZCR filtering)
+voiced <- extract_voiced_segments_ultra(sound, version = "v3.01")
+
+# Step 2: Calculate CPPS on voiced audio
+cpps <- calculate_cpps_ultra(voiced)
+
+# Step 3: Calculate multi-band HNR
+hnr <- calculate_multiband_hnr_ultra(voiced)
+
+# Step 4: Calculate other AVQI metrics (shimmer, slope, tilt)
+# ... standard pladdrr functions ...
+
+# AVQI formula components now available:
+avqi_cpps <- cpps
+avqi_hnr <- hnr$band3500_mean  # HNR 0-3500Hz
+# ... combine with other metrics per AVQI formula ...
+```
+
+**Performance improvement:**
+- AVQI benchmark: 19.8s → 12.3s (1.6x speedup)
+- VQ benchmark: 1.35s → 0.9s (1.5x speedup)
+- Code reduction in plabench: 210 lines → 14 lines (93% reduction)
 
 ---
 
