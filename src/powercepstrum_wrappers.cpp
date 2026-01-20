@@ -574,24 +574,24 @@ double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
 // ==============================================================================
 
 // [[Rcpp::export(.sound_to_cpps_direct)]]
-double sound_to_cpps_direct(SEXP sound_xptr,
-                            // PowerCepstrogram creation parameters
-                            double cepstrogram_pitch_floor,
-                            double time_step,
-                            double max_frequency,
-                            double pre_emphasis_from,
-                            // CPPS calculation parameters
-                            bool subtract_tilt,
-                            double time_averaging_window,
-                            double quefrency_averaging_window,
-                            double pitch_floor,
-                            double pitch_ceiling,
-                            double delta_f0,
-                            int interpolation,
-                            double qstart_fit,
-                            double qend_fit,
-                            int trend_type,
-                            int fit_method) {
+double sound_to_cpps_direct(
+    SEXP sound_xptr,
+    double cepstrogram_pitch_floor,
+    double time_step,
+    double max_frequency,
+    double pre_emphasis_from,
+    bool subtract_tilt,
+    double time_averaging_window,
+    double quefrency_averaging_window,
+    double pitch_floor,
+    double pitch_ceiling,
+    double delta_f0,
+    int interpolation,
+    double qstart_fit,
+    double qend_fit,
+    int trend_type,
+    int fit_method
+) {
     XPtr<structSound> sound(sound_xptr);
     if (!sound) stop("Invalid Sound pointer");
 

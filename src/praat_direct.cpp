@@ -575,3 +575,79 @@ NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit 
     result.names() = CharacterVector::create("F1", "F2", "F3", "F4");
     return result;
 }
+
+// =============================================================================
+// PointProcess Direct Functions (NEW for VUV performance)
+// =============================================================================
+
+//' Get PointProcess mean period directly
+//' @param pp_xptr External pointer to PointProcess
+//' @param from_time Start time (0 = beginning)
+//' @param to_time End time (0 = end)
+//' @param period_floor Minimum period (default: 0.0001)
+//' @param period_ceiling Maximum period (default: 0.02)
+//' @param max_period_factor Maximum period factor (default: 1.3)
+//' @return Mean period in seconds
+//' @keywords internal
+// [[Rcpp::export]]
+double get_point_process_mean_period_direct(SEXP pp_xptr, 
+                                              double from_time = 0, 
+                                              double to_time = 0,
+                                              double period_floor = 0.0001, 
+                                              double period_ceiling = 0.02,
+                                              double max_period_factor = 1.3) {
+    XPtr<structPointProcess> pp(pp_xptr);
+    if (!pp || pp.get() == nullptr) {
+        stop("Invalid PointProcess pointer");
+    }
+    
+    if (from_time == 0 && to_time == 0) {
+        from_time = pp->xmin;
+        to_time = pp->xmax;
+    }
+    
+    try {
+        return PointProcess_getMeanPeriod(pp.get(), from_time, to_time,
+                                          period_floor, period_ceiling, 
+                                          max_period_factor);
+    } catch (MelderError) {
+        Melder_clearError();
+        return NA_REAL;
+    }
+}
+
+//' Get PointProcess standard deviation of periods directly
+//' @param pp_xptr External pointer to PointProcess
+//' @param from_time Start time (0 = beginning)
+//' @param to_time End time (0 = end)
+//' @param period_floor Minimum period
+//' @param period_ceiling Maximum period
+//' @param max_period_factor Maximum period factor
+//' @return Standard deviation of periods
+//' @keywords internal
+// [[Rcpp::export]]
+double get_point_process_stdev_period_direct(SEXP pp_xptr,
+                                               double from_time = 0,
+                                               double to_time = 0,
+                                               double period_floor = 0.0001,
+                                               double period_ceiling = 0.02,
+                                               double max_period_factor = 1.3) {
+    XPtr<structPointProcess> pp(pp_xptr);
+    if (!pp || pp.get() == nullptr) {
+        stop("Invalid PointProcess pointer");
+    }
+    
+    if (from_time == 0 && to_time == 0) {
+        from_time = pp->xmin;
+        to_time = pp->xmax;
+    }
+    
+    try {
+        return PointProcess_getStdevPeriod(pp.get(), from_time, to_time,
+                                           period_floor, period_ceiling,
+                                           max_period_factor);
+    } catch (MelderError) {
+        Melder_clearError();
+        return NA_REAL;
+    }
+}

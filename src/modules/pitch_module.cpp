@@ -811,41 +811,18 @@ public:
         }
     }
 
-    Rcpp::XPtr<structTextGrid> to_textgrid_vuv_ptr() {
+    Rcpp::XPtr<structTextGrid> to_textgrid_vuv_ptr(double max_period = 0.02, 
+                                                      double mean_period = 0.01) {
         VALIDATE_PTR(ptr, Pitch);
         try {
-            autoTextGrid tg = TextGrid_create(
-                ptr->xmin,
-                ptr->xmax,
-                U"vuv", U""
-            );
-
-            IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(tg.get(), 1);
-            tier->intervals.removeAllItems();
-
-            double start = ptr->xmin;
-            bool voiced = false;
-
-            for (integer i = 1; i <= ptr->nx; i++) {
-                double t = Sampled_indexToX(ptr.get(), i);
-                double f = Pitch_getValueAtTime(ptr.get(), t, kPitch_unit::HERTZ, false);
-                bool v = isdefined(f) && f > 0.0;
-
-                if (i == 1) {
-                    voiced = v;
-                } else if (v != voiced || i == ptr->nx) {
-                    double end = (i == ptr->nx) ? ptr->xmax : t;
-                    autoTextInterval iv = TextInterval_create(start, end, voiced ? U"V" : U"U");
-                    tier->intervals.addItem_move(iv.move());
-                    start = t;
-                    voiced = v;
-                }
-            }
-
+            // Use Praat's standard approach: Pitch -> PointProcess -> TextGrid
+            // This matches "PointProcess: To TextGrid (vuv)" command with parameters
+            autoPointProcess pp = Pitch_to_PointProcess(ptr.get());
+            autoTextGrid tg = PointProcess_to_TextGrid_vuv(pp.get(), max_period, mean_period);
             return create_xptr_from_auto<structTextGrid>(tg);
         } catch (MelderError) {
             Melder_clearError();
-            Rcpp::stop("Failed to create VUV TextGrid");
+            Rcpp::stop("Failed to create VUV TextGrid from Pitch");
         }
     }
 
