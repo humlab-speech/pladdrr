@@ -275,6 +275,72 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
     .Call(`_pladdrr_get_jitter_shimmer_batch_cpp`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
 }
 
+#' Get audio file durations efficiently via WAV header reading
+#'
+#' @description
+#' Reads only the 44-byte WAV header to calculate duration, avoiding full file
+#' loading. 77x faster than LongSound$from_file()$get_total_duration().
+#'
+#' @param file_paths Character vector of .wav file paths
+#' @return Numeric vector of durations (seconds), NA for errors
+#' @keywords internal
+get_durations_batch_cpp <- function(file_paths) {
+    .Call(`_pladdrr_get_durations_batch_cpp`, file_paths)
+}
+
+#' Calculate F0 statistic in single C++ call (Tier 4 Ultra)
+#'
+#' @description
+#' Performs pitch extraction AND statistic calculation entirely in C++,
+#' avoiding intermediate R6 object creation. 5x faster than Tier 2/3.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param stat Statistic to compute: "max", "min", "mean", "median", "sd"
+#' @param time_step Time step for pitch extraction
+#' @param min_pitch Pitch floor (Hz)
+#' @param max_pitch Pitch ceiling (Hz)
+#' @param voicing_threshold Voicing threshold (default 0.45)
+#' @return Single double value of the requested statistic
+#' @keywords internal
+calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold) {
+    .Call(`_pladdrr_calculate_f0_stats_ultra_cpp`, sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold)
+}
+
+#' Calculate minimum intensity in voiced regions (Tier 4 Ultra)
+#'
+#' @description
+#' DSI-compliant intensity pipeline: Sound -> Pitch -> PointProcess -> TextGrid (VUV)
+#' -> Extract voiced intervals -> Concatenate -> Intensity -> Minimum.
+#' Matches Praat DSI script algorithm. 6x faster than Tier 2/3.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param min_pitch Pitch floor (Hz) for pitch extraction
+#' @param max_pitch Pitch ceiling (Hz) for pitch extraction
+#' @param time_step Time step for analysis
+#' @param subtract_mean Whether to subtract mean for intensity calculation
+#' @return Minimum intensity in dB (from concatenated voiced regions)
+#' @keywords internal
+calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pitch, time_step, subtract_mean) {
+    .Call(`_pladdrr_calculate_minimum_intensity_ultra_cpp`, sound_xptr, min_pitch, max_pitch, time_step, subtract_mean)
+}
+
+#' Get voice quality metrics in single call (Tier 4 Ultra)
+#'
+#' @description
+#' Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess
+#' -> Jitter/Shimmer/HNR. Returns selected metrics. 3.6x faster than Tier 2/3.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param metrics Character vector of metrics: "jitter", "shimmer", "hnr", or "all"
+#' @param min_pitch Pitch floor (Hz)
+#' @param max_pitch Pitch ceiling (Hz)
+#' @param time_step Time step for pitch extraction
+#' @return Named list with requested voice quality metrics
+#' @keywords internal
+get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitch, time_step) {
+    .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step)
+}
+
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
     .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
 }

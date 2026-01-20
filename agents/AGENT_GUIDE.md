@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.3.1 (2026-01-20)
+**Version:** 4.4.1 (2026-01-20)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -17,6 +17,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()` for 20-150x speedups (Pattern 2i)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
+9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows (Pattern 2l)
 
 ---
 
@@ -60,12 +61,13 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Performance Tiers (v4.0.3):**
+**Performance Tiers (v4.4.0):**
 | Tier | API | Speedup | Use Case |
 |------|-----|---------|----------|
 | **Tier 1 (Standard)** | `sound$to_pitch()` | 1x baseline | Interactive, <10 files |
 | **Tier 2 (Direct)** | `to_pitch_direct()` | 2-3x | Loops, 10-100 files |
 | **Tier 3 (Batch)** | `sound_to_pitch_batch()` | 5-10x | Production, >100 files |
+| **Tier 4 (Ultra)** | `get_durations_batch()`, `calculate_f0_stats_ultra()` | 5-77x | DSI/clinical workflows |
 
 **See comprehensive guides:**
 - `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
@@ -1200,6 +1202,178 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 # NOT RECOMMENDED for voice quality (less accurate):
 pp <- sound$to_point_process_periodic_cc()  # Sound-only, no pitch guidance
 ```
+
+---
+
+### Pattern 2l: Tier 4 Ultra API (v4.4.0+)
+
+**Performance:** 5-77x faster for DSI and clinical voice workflows.
+
+Tier 4 "Ultra" functions keep entire analysis workflows in C++, returning only final scalars. Eliminates intermediate R6 object creation and R-side coordination.
+
+#### `get_durations_batch()` - Fast WAV Duration Reading
+
+**Problem:** Getting audio durations via `LongSound()` or `Sound()` loads entire file.
+
+**Solution:** Read only 44-byte WAV header for instant duration extraction.
+
+```r
+# OLD WAY: Load entire file (slow for many files)
+durations <- sapply(wav_files, function(f) {
+  sound <- Sound(f)
+  sound$get_xmax() - sound$get_xmin()
+})
+
+# NEW WAY: Header-only reading (77x faster)
+durations <- get_durations_batch(wav_files)
+```
+
+**Signature:**
+```r
+get_durations_batch(file_paths)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file_paths` | character | Vector of .wav file paths |
+
+**Returns:** Numeric vector of durations (seconds). NA for invalid/missing files.
+
+#### `calculate_f0_stats_ultra()` - Single-Call F0 Statistics
+
+**Problem:** Getting F0 statistics requires creating Pitch object, then calling stat method.
+
+**Solution:** Single C++ call returns statistic directly.
+
+```r
+# OLD WAY: Create intermediate Pitch object
+pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
+max_f0 <- pitch$get_maximum(0, 0, "hertz", TRUE)
+
+# NEW WAY: Direct statistic (5x faster)
+max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
+```
+
+**Signature:**
+```r
+calculate_f0_stats_ultra(
+  sound,                    # Sound object
+  stat = "max",             # "max", "min", "mean", "median", "sd"
+  time_step = 0,            # 0 = auto
+
+  min_pitch = 75,           # Pitch floor (Hz)
+  max_pitch = 600,          # Pitch ceiling (Hz)
+  voicing_threshold = 0.45  # Voicing detection threshold
+)
+```
+
+**Returns:** Single numeric value (Hz for pitch stats, NA if no voiced frames).
+
+#### `calculate_minimum_intensity_ultra()` - Voiced-Region Intensity
+
+**Problem:** DSI requires minimum intensity in voiced regions only—needs Pitch→PointProcess→TextGrid→Intensity pipeline.
+
+**Solution:** Complete DSI-compliant pipeline in single C++ call.
+
+**Algorithm (v4.4.1 - DSI compliant):**
+1. Extract pitch with DSI parameters (`voicing_threshold=0.8`, `very_accurate=FALSE`)
+2. Create PointProcess from Sound + Pitch
+3. Create TextGrid with VUV segmentation (`maxPeriod=0.02`, `meanPeriod=0.01`)
+4. Extract and **concatenate** all voiced intervals
+5. Calculate intensity on concatenated sound (`minimum_pitch=60`, DSI standard)
+6. Return minimum intensity from concatenated voiced regions
+
+```r
+# OLD WAY: Multi-step pipeline
+pitch <- sound$to_pitch_cc(pitch_floor = 70, voicing_threshold = 0.8)
+pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+tg <- pp$to_textgrid_vuv(0.02, 0.01)
+# ... extract voiced intervals, concatenate, calculate intensity ...
+
+# NEW WAY: Single call (6x faster, DSI-compliant)
+min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 70)
+```
+
+**Signature:**
+```r
+calculate_minimum_intensity_ultra(
+  sound,                 # Sound object
+  min_pitch = 70,        # Pitch floor (Hz) for pitch extraction
+  max_pitch = 600,       # Pitch ceiling (Hz) for pitch extraction
+  time_step = 0,         # 0 = auto
+  subtract_mean = TRUE   # Subtract mean for intensity calculation
+)
+```
+
+**Returns:** Minimum intensity (dB) from concatenated voiced regions. NA if no voiced frames.
+
+**Note:** Intensity calculation uses `minimum_pitch=60` internally (DSI standard), not the `min_pitch` parameter which is only for pitch extraction.
+
+#### `get_voice_quality_ultra()` - Complete Voice Quality Metrics
+
+**Problem:** Getting jitter/shimmer/HNR requires creating Pitch, PointProcess, then batch calls.
+
+**Solution:** All metrics from single C++ call with selective computation.
+
+```r
+# OLD WAY: Multi-object pipeline
+pitch <- sound$to_pitch_cc(pitch_floor = 75)
+pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+metrics <- get_jitter_shimmer_batch(pp, sound)
+
+# NEW WAY: Single call with selective metrics
+vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
+# Or request specific metrics:
+vq <- get_voice_quality_ultra(sound, metrics = "jitter", min_pitch = 75)
+```
+
+**Signature:**
+```r
+get_voice_quality_ultra(
+  sound,                 # Sound object
+  metrics = "all",       # "all", "jitter", "shimmer", "hnr", or vector
+  min_pitch = 75,        # Pitch floor (Hz)
+  max_pitch = 600,       # Pitch ceiling (Hz)
+  time_step = 0          # 0 = auto
+)
+```
+
+**Returns:** Named list with requested metrics:
+
+| Metric Group | Elements |
+|--------------|----------|
+| `jitter` | `jitter_local`, `jitter_rap`, `jitter_ppq5`, `jitter_ddp` |
+| `shimmer` | `shimmer_local`, `shimmer_local_db`, `shimmer_apq3`, `shimmer_apq5`, `shimmer_apq11`, `shimmer_dda` |
+| `hnr` | `hnr_mean`, `hnr_sd` |
+
+#### Complete DSI Workflow Example (v4.4.1)
+
+**Dysphonia Severity Index calculation with Tier 4 Ultra:**
+
+```r
+# Load test files
+mpt_file <- "maximum_phonation_time.wav"
+fh_file <- "highest_frequency.wav"
+im_file <- "lowest_intensity.wav"
+ppq_file <- "sustained_vowel.wav"
+
+# Tier 4 Ultra workflow (~195ms vs ~520ms with Tier 2/3)
+max_mpt <- max(get_durations_batch(mpt_file))
+max_f0 <- calculate_f0_stats_ultra(Sound(fh_file), "max", min_pitch = 70, max_pitch = 600)
+min_int <- calculate_minimum_intensity_ultra(Sound(im_file), min_pitch = 70)  # Uses DSI-compliant algorithm
+vq <- get_voice_quality_ultra(Sound(ppq_file), "jitter", min_pitch = 70)
+jitter_ppq5 <- vq$jitter_ppq5
+
+# DSI formula (add +10 dB calibration to min_int if needed)
+dsi <- 0.13 * max_mpt + 0.0053 * max_f0 - 0.26 * min_int - 1.18 * (jitter_ppq5 * 100) + 12.4
+```
+
+| Function | Target Speedup | Use Case |
+|----------|----------------|----------|
+| `get_durations_batch()` | 77x | MPT measurement |
+| `calculate_f0_stats_ultra()` | 5x | FH (highest frequency) |
+| `calculate_minimum_intensity_ultra()` | 6x | IM (lowest intensity) |
+| `get_voice_quality_ultra()` | 3.6x | PPQ (jitter) |
 
 ---
 

@@ -1,3 +1,66 @@
+# pladdrr 4.4.1 (2026-01-20)
+
+## Bug Fixes
+
+### `calculate_minimum_intensity_ultra()` Algorithm Fix
+- **FIXED:** Function now correctly implements DSI algorithm by concatenating voiced intervals before intensity calculation
+- Previously returned ~43 dB, now correctly returns ~66 dB for reference DSI test file
+- Key fixes:
+  - Extracts and concatenates voiced intervals (was calculating on entire sound)
+  - Uses correct VUV parameters: `maxPeriod=0.02`, `meanPeriod=0.01` (was using `sound->xmax`)
+  - Uses DSI-compliant pitch parameters: `voicing_threshold=0.8`, `very_accurate=FALSE`
+  - Uses `minimum_pitch=60` for intensity calculation (DSI standard)
+
+### Concatenated Sounds Handling
+- Added regression tests verifying Tier 2/4 functions work correctly with concatenated sounds
+- Tests cover `to_pitch_cc_direct()` and all Tier 4 Ultra functions with concatenated inputs
+
+---
+
+# pladdrr 4.4.0 (2026-01-20)
+
+## New Features - Tier 4 "Ultra" API
+
+Performance-optimized functions for DSI (Dysphonia Severity Index) calculations.
+These keep entire workflows in C++ to minimize R<->C++ boundary crossings.
+
+### `get_durations_batch()`
+Fast WAV header reading for MPT (Maximum Phonation Time):
+```r
+durations <- get_durations_batch(c("file1.wav", "file2.wav", "file3.wav"))
+max_mpt <- max(durations)
+# 77x faster than LongSound()$get_total_duration()
+```
+
+### `calculate_f0_stats_ultra()`
+Single-call F0 statistics for FH (Highest F0) component:
+```r
+max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
+# 5x faster than sound$to_pitch_cc()$get_maximum()
+```
+
+### `calculate_minimum_intensity_ultra()`
+Minimum intensity in voiced regions for IM component:
+```r
+min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
+# 6x faster than Tier 2/3 workflow
+```
+
+### `get_voice_quality_ultra()`
+Complete jitter/shimmer/HNR metrics for PPQ component:
+```r
+vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
+ppq5 <- vq$jitter_ppq5
+# 3.6x faster than get_jitter_shimmer_batch()
+```
+
+### Performance Impact
+- **Before:** R/pladdrr DSI ~520ms
+- **After:** R/pladdrr DSI ~195ms (2.2x slower than Python/Parselmouth)
+- Closes performance gap from 6.0x to 2.2x
+
+---
+
 # pladdrr 4.3.1 (2026-01-20)
 
 ## Bug Fixes

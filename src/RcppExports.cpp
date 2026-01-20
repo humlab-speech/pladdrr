@@ -546,6 +546,63 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_durations_batch_cpp
+NumericVector get_durations_batch_cpp(CharacterVector file_paths);
+RcppExport SEXP _pladdrr_get_durations_batch_cpp(SEXP file_pathsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type file_paths(file_pathsSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_durations_batch_cpp(file_paths));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_f0_stats_ultra_cpp
+double calculate_f0_stats_ultra_cpp(SEXP sound_xptr, std::string stat, double time_step, double min_pitch, double max_pitch, double voicing_threshold);
+RcppExport SEXP _pladdrr_calculate_f0_stats_ultra_cpp(SEXP sound_xptrSEXP, SEXP statSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP max_pitchSEXP, SEXP voicing_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type stat(statSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type max_pitch(max_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type voicing_threshold(voicing_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_f0_stats_ultra_cpp(sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_minimum_intensity_ultra_cpp
+double calculate_minimum_intensity_ultra_cpp(SEXP sound_xptr, double min_pitch, double max_pitch, double time_step, bool subtract_mean);
+RcppExport SEXP _pladdrr_calculate_minimum_intensity_ultra_cpp(SEXP sound_xptrSEXP, SEXP min_pitchSEXP, SEXP max_pitchSEXP, SEXP time_stepSEXP, SEXP subtract_meanSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type max_pitch(max_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< bool >::type subtract_mean(subtract_meanSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_minimum_intensity_ultra_cpp(sound_xptr, min_pitch, max_pitch, time_step, subtract_mean));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_voice_quality_ultra_cpp
+List get_voice_quality_ultra_cpp(SEXP sound_xptr, CharacterVector metrics, double min_pitch, double max_pitch, double time_step);
+RcppExport SEXP _pladdrr_get_voice_quality_ultra_cpp(SEXP sound_xptrSEXP, SEXP metricsSEXP, SEXP min_pitchSEXP, SEXP max_pitchSEXP, SEXP time_stepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type metrics(metricsSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type max_pitch(max_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_voice_quality_ultra_cpp(sound_xptr, metrics, min_pitch, max_pitch, time_step));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cochleagram_create
 SEXP cochleagram_create(double tmin, double tmax, int nt, double dt, double t1, double df, int nf);
 RcppExport SEXP _pladdrr_cochleagram_create(SEXP tminSEXP, SEXP tmaxSEXP, SEXP ntSEXP, SEXP dtSEXP, SEXP t1SEXP, SEXP dfSEXP, SEXP nfSEXP) {
@@ -10068,6 +10125,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_intensity_get_statistics_batch", (DL_FUNC) &_pladdrr_intensity_get_statistics_batch, 5},
     {"_pladdrr_intensity_get_minimum_with_time", (DL_FUNC) &_pladdrr_intensity_get_minimum_with_time, 3},
     {"_pladdrr_get_jitter_shimmer_batch_cpp", (DL_FUNC) &_pladdrr_get_jitter_shimmer_batch_cpp, 8},
+    {"_pladdrr_get_durations_batch_cpp", (DL_FUNC) &_pladdrr_get_durations_batch_cpp, 1},
+    {"_pladdrr_calculate_f0_stats_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_f0_stats_ultra_cpp, 6},
+    {"_pladdrr_calculate_minimum_intensity_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_minimum_intensity_ultra_cpp, 5},
+    {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
