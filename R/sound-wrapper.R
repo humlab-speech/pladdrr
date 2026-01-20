@@ -620,7 +620,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
     
     to_harmonicity_ac = function(time_step = 0.01, min_pitch = 75.0,
                                  silence_threshold = 0.1, periods_per_window = 1.0) {
-      hnr_ptr <- .harmonicity_to_sound_ac(
+      hnr_ptr <- .sound_to_harmonicity_ac(
         ptr, time_step, min_pitch,
         silence_threshold, periods_per_window
       )

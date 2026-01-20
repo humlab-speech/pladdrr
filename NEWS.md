@@ -1,3 +1,27 @@
+# pladdrr 4.3.1 (2026-01-20)
+
+## Bug Fixes
+
+### TextGrid and Spectrum Export
+- **FIXED:** `TextGrid()` constructor now properly exported (was missing from NAMESPACE)
+- **FIXED:** `Spectrum()` constructor now properly exported (was missing from NAMESPACE)
+- Users no longer need `asNamespace("pladdrr")$TextGrid` workaround
+
+### Harmonicity AC Method
+- **FIXED:** Added `.sound_to_harmonicity_ac()` C++ wrapper
+- `sound$to_harmonicity_ac()` now works correctly (was calling non-existent function)
+- Resolves "could not find function .harmonicity_to_sound_ac" error
+
+## Documentation
+
+### AGENT_GUIDE Pattern 2k Expanded
+- Added full parameter reference for `two_pass_adaptive_pitch()` with all defaults
+- Added complete return structure for `get_jitter_shimmer_batch()` with units
+- Added guidance on when to use `to_point_process_from_sound_and_pitch()` vs alternatives
+- Documented that jitter/shimmer metrics are returned as fractions (multiply by 100 for %)
+
+---
+
 # pladdrr 4.3.0 (2026-01-19)
 
 ## New Features - Pipeline Operations

@@ -540,10 +540,39 @@ XPtr<structHarmonicity> sound_to_harmonicity_cc(
         );
         
         return create_xptr_from_auto<structHarmonicity>(hnr);
-        
+
     } catch (MelderError) {
         Melder_clearError();
-        stop("Failed to extract harmonicity");
+        stop("Failed to extract harmonicity (cc)");
+    }
+}
+
+//' Convert Sound to Harmonicity using autocorrelation (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_harmonicity_ac)]]
+XPtr<structHarmonicity> sound_to_harmonicity_ac(
+    XPtr<structSound> sound_xptr,
+    double time_step,
+    double min_pitch,
+    double silence_threshold,
+    double periods_per_window
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+
+    try {
+        autoHarmonicity hnr = Sound_to_Harmonicity_ac(
+            sound,
+            time_step,
+            min_pitch,
+            silence_threshold,
+            periods_per_window
+        );
+
+        return create_xptr_from_auto<structHarmonicity>(hnr);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract harmonicity (ac)");
     }
 }
 

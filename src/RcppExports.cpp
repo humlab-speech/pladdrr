@@ -6340,6 +6340,44 @@ RcppExport SEXP _pladdrr_sound_to_harmonicity_cc(SEXP sound_xptrSEXP, SEXP time_
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_to_harmonicity_ac
+XPtr<structHarmonicity> sound_to_harmonicity_ac(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window);
+static SEXP _pladdrr_sound_to_harmonicity_ac_try(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP silence_thresholdSEXP, SEXP periods_per_windowSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type periods_per_window(periods_per_windowSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_harmonicity_ac(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_harmonicity_ac(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP silence_thresholdSEXP, SEXP periods_per_windowSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_harmonicity_ac_try(sound_xptrSEXP, time_stepSEXP, min_pitchSEXP, silence_thresholdSEXP, periods_per_windowSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // sound_to_harmonicity_gne
 XPtr<structMatrix> sound_to_harmonicity_gne(XPtr<structSound> sound_xptr, double fmin, double fmax, double bandwidth, double step);
 static SEXP _pladdrr_sound_to_harmonicity_gne_try(SEXP sound_xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP bandwidthSEXP, SEXP stepSEXP) {
@@ -9815,6 +9853,7 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structFormant>(*.sound_to_formant_burg)(XPtr<structSound>,double,double,double,double,double)");
         signatures.insert("XPtr<structIntensity>(*.sound_to_intensity)(XPtr<structSound>,double,double,bool)");
         signatures.insert("XPtr<structHarmonicity>(*.sound_to_harmonicity_cc)(XPtr<structSound>,double,double,double,double)");
+        signatures.insert("XPtr<structHarmonicity>(*.sound_to_harmonicity_ac)(XPtr<structSound>,double,double,double,double)");
         signatures.insert("XPtr<structMatrix>(*.sound_to_harmonicity_gne)(XPtr<structSound>,double,double,double,double)");
         signatures.insert("XPtr<structSpectrum>(*.sound_to_spectrum)(XPtr<structSound>,bool)");
         signatures.insert("SEXP(*.sound_to_ltas)(XPtr<structSound>,double)");
@@ -9930,6 +9969,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_burg", (DL_FUNC)_pladdrr_sound_to_formant_burg_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_intensity", (DL_FUNC)_pladdrr_sound_to_intensity_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_cc", (DL_FUNC)_pladdrr_sound_to_harmonicity_cc_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_ac", (DL_FUNC)_pladdrr_sound_to_harmonicity_ac_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_gne", (DL_FUNC)_pladdrr_sound_to_harmonicity_gne_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_spectrum", (DL_FUNC)_pladdrr_sound_to_spectrum_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_ltas", (DL_FUNC)_pladdrr_sound_to_ltas_try);
@@ -10380,6 +10420,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_to_formant_burg", (DL_FUNC) &_pladdrr_sound_to_formant_burg, 6},
     {"_pladdrr_sound_to_intensity", (DL_FUNC) &_pladdrr_sound_to_intensity, 4},
     {"_pladdrr_sound_to_harmonicity_cc", (DL_FUNC) &_pladdrr_sound_to_harmonicity_cc, 5},
+    {"_pladdrr_sound_to_harmonicity_ac", (DL_FUNC) &_pladdrr_sound_to_harmonicity_ac, 5},
     {"_pladdrr_sound_to_harmonicity_gne", (DL_FUNC) &_pladdrr_sound_to_harmonicity_gne, 5},
     {"_pladdrr_sound_to_spectrum", (DL_FUNC) &_pladdrr_sound_to_spectrum, 2},
     {"_pladdrr_sound_to_ltas", (DL_FUNC) &_pladdrr_sound_to_ltas, 2},

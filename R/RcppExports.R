@@ -2268,6 +2268,12 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
 
+#' Convert Sound to Harmonicity using autocorrelation (internal)
+#' @keywords internal
+.sound_to_harmonicity_ac <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
+    .Call(`_pladdrr_sound_to_harmonicity_ac`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
+}
+
 #' Convert Sound to Harmonicity (GNE - Glottal-to-Noise Excitation ratio)
 #' @keywords internal
 .sound_to_harmonicity_gne <- function(sound_xptr, fmin, fmax, bandwidth, step) {

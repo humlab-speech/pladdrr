@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.3.0 (2026-01-19)
+**Version:** 4.3.1 (2026-01-20)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -1109,6 +1109,97 @@ voice_quality <- c(
 |----------|---------|----------|
 | `two_pass_adaptive_pitch()` | 2x | Speaker-adaptive pitch extraction |
 | `get_jitter_shimmer_batch()` | 5-10x | All 11 voice quality metrics |
+
+#### API Reference: `two_pass_adaptive_pitch()`
+
+**Signature:**
+```r
+two_pass_adaptive_pitch(
+  sound,                      # Sound XPtr or R6 object
+  time_step = 0,              # 0 = auto (0.75 / initial_floor)
+  initial_floor = 50,         # Pass 1 pitch floor (Hz)
+  initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
+  voicing_threshold = 0.45,   # Voicing detection threshold
+  silence_threshold = 0.03,   # Silence detection threshold
+  octave_cost = 0.01,         # Cost of octave jumps
+  octave_jump_cost = 0.35,    # Cost of octave jump transitions
+  voiced_unvoiced_cost = 0.14,# Cost of V→U transitions
+  q1_factor = 0.75,           # min_pitch = Q1 * q1_factor
+  q3_factor = 1.5,            # max_pitch = Q3 * q3_factor
+  method = c("cc", "ac")      # "cc" (cross-correlation) or "ac" (autocorrelation)
+)
+```
+
+**Returns:** Named list with:
+| Element | Type | Description |
+|---------|------|-------------|
+| `pitch` | XPtr | Refined Pitch object from Pass 2 |
+| `min_pitch` | numeric | Adaptive floor (Q1 × q1_factor), in Hz |
+| `max_pitch` | numeric | Adaptive ceiling (Q3 × q3_factor), in Hz |
+| `q1` | numeric | 25th percentile of Pass 1 F0, in Hz |
+| `q3` | numeric | 75th percentile of Pass 1 F0, in Hz |
+
+**Note:** If no voiced frames detected, returns Pass 1 pitch with initial range.
+
+#### API Reference: `get_jitter_shimmer_batch()`
+
+**Signature:**
+```r
+get_jitter_shimmer_batch(
+  pointprocess,               # PointProcess XPtr or R6 object
+  sound,                      # Sound XPtr or R6 object
+  from_time = 0,              # Start time (0 = beginning)
+  to_time = 0,                # End time (0 = end)
+  period_floor = 0.0001,      # Min period (seconds)
+  period_ceiling = 0.02,      # Max period (seconds)
+  max_period_factor = 1.3,    # Jitter threshold
+  max_amplitude_factor = 1.6  # Shimmer threshold
+)
+```
+
+**Returns:** Named list with 11 metrics (all as **fractions**, not percentages):
+| Element | Unit | Description |
+|---------|------|-------------|
+| `jitter_local` | fraction | Local jitter (relative period variation) |
+| `jitter_local_abs` | seconds | Absolute local jitter |
+| `jitter_rap` | fraction | Relative average perturbation |
+| `jitter_ppq5` | fraction | 5-point period perturbation quotient |
+| `jitter_ddp` | fraction | Difference of differences of periods |
+| `shimmer_local` | fraction | Local shimmer (amplitude variation) |
+| `shimmer_local_db` | dB | Local shimmer in decibels |
+| `shimmer_apq3` | fraction | 3-point amplitude perturbation quotient |
+| `shimmer_apq5` | fraction | 5-point amplitude perturbation quotient |
+| `shimmer_apq11` | fraction | 11-point amplitude perturbation quotient |
+| `shimmer_dda` | fraction | Difference of differences of amplitudes |
+
+**To convert fractions to percentages:** Multiply by 100 (e.g., `jitter_local * 100`).
+
+#### API Reference: `to_point_process_from_sound_and_pitch()`
+
+**When to use this vs alternatives:**
+
+| Method | When to Use | Praat Equivalent |
+|--------|-------------|------------------|
+| `to_point_process_from_sound_and_pitch(sound, pitch)` | **Recommended** for jitter/shimmer. Uses pitch-guided peak detection. | Select Sound + Pitch → "To PointProcess (cc)" |
+| `sound$to_point_process_periodic_cc()` | Sound-only analysis. Less accurate for voice quality. | Select Sound → "To PointProcess (periodic, cc)" |
+| `to_point_process_direct(sound)` | Direct API version of above. | Same as above |
+
+**Why Sound+Pitch is better:**
+- Uses refined pitch information to guide glottal pulse detection
+- More accurate period identification for jitter/shimmer
+- Matches Praat's recommended workflow for voice quality analysis
+- Required for clinical voice assessment (DSI, AVQI, etc.)
+
+**Example:**
+```r
+# RECOMMENDED: Use Sound + Pitch (matches Praat best practice)
+pitch_result <- two_pass_adaptive_pitch(sound)
+pp <- to_point_process_from_sound_and_pitch(sound, pitch_result$pitch)
+metrics <- get_jitter_shimmer_batch(pp, sound)
+
+# NOT RECOMMENDED for voice quality (less accurate):
+pp <- sound$to_point_process_periodic_cc()  # Sound-only, no pitch guidance
+```
 
 ---
 
