@@ -177,10 +177,13 @@ bool should_use_simd_for_pitch() {
 // This avoids Rcpp overhead for maximum performance
 // ============================================================================
 
+#ifdef HAVE_XSIMD
+#include <xsimd/xsimd.hpp>
+#endif
+
 namespace simd_bridge_direct {
 
 #ifdef HAVE_XSIMD
-#include <xsimd/xsimd.hpp>
 
 // Direct SIMD autocorrelation without Rcpp conversion overhead
 void autocorrelation_direct(
