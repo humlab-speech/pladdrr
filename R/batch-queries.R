@@ -208,6 +208,87 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
   )
 }
 
+#' Get Multiple Pitch Quantiles in Single Call (NEW for VUV Performance)
+#'
+#' @description
+#' Extract multiple quantiles (e.g., Q1, Q3) from a Pitch object in a single
+#' C++ call. This is significantly faster than calling `get_quantile()` multiple
+#' times and is specifically designed for VUV analysis workflows where adaptive
+#' pitch ranges are calculated from quartiles.
+#'
+#' @param pitch A Pitch object
+#' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)
+#' @param from_time Start time (0 = beginning of pitch object)
+#' @param to_time End time (0 = end of pitch object)
+#' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
+#'   "semitones", or "erb"
+#'
+#' @return Named numeric vector with quantile values (names like "q0.25", "q0.75")
+#'
+#' @section Performance:
+#' Reduces R<->C++ boundary crossings from n separate calls to 1 call.
+#' Expected speedup: **2-3x** for VUV workflows that need Q1 and Q3.
+#'
+#' @section Use Case - VUV Analysis:
+#' ```r
+#' # Extract adaptive pitch range for refined pitch analysis
+#' quantiles <- get_pitch_quantiles_batch(pitch_rough, c(0.25, 0.75))
+#' pitch_refined <- to_pitch_cc_direct(
+#'   sound,
+#'   pitch_floor = quantiles["q0.25"] * 0.75,
+#'   pitch_ceiling = quantiles["q0.75"] * 1.5
+#' )
+#' ```
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' pitch <- sound$to_pitch()
+#'
+#' # Get Q1, median, Q3 in one call
+#' quartiles <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
+#' 
+#' # Access by name
+#' q1 <- quartiles["q0.25"]
+#' median <- quartiles["q0.5"]
+#' q3 <- quartiles["q0.75"]
+#' }
+#'
+#' @export
+get_pitch_quantiles_batch <- function(pitch, quantiles,
+                                       from_time = 0, to_time = 0,
+                                       unit = "hertz") {
+  if (!inherits(pitch, "Pitch")) {
+    stop("pitch must be a Pitch object")
+  }
+  
+  if (!is.numeric(quantiles) || length(quantiles) == 0) {
+    stop("quantiles must be a non-empty numeric vector")
+  }
+  
+  if (any(quantiles < 0 | quantiles > 1)) {
+    stop("quantiles must be between 0 and 1")
+  }
+  
+  unit_code <- switch(tolower(unit),
+    "hertz" = 0L,
+    "hz" = 0L,
+    "mel" = 1L,
+    "loghertz" = 2L,
+    "semitones" = 3L,
+    "erb" = 4L,
+    stop("Unknown unit: ", unit)
+  )
+  
+  pitch_get_quantiles_batch(
+    pitch$.xptr,
+    quantiles,
+    as.numeric(from_time),
+    as.numeric(to_time),
+    unit_code
+  )
+}
+
 #' Batch Query Intensity Values at Multiple Times
 #'
 #' Query intensity (amplitude in dB) at multiple time points in a single call.
@@ -341,10 +422,118 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
   if (!inherits(pointprocess, "PointProcess")) {
     stop("pointprocess must be a PointProcess object")
   }
-  
+
   if (!is.numeric(times) || length(times) == 0) {
     stop("times must be a non-empty numeric vector")
   }
-  
+
   pointprocess_get_nearest_indices(pointprocess$.xptr, times)
+}
+
+
+# =============================================================================
+# Voice Quality Batch Operations
+# =============================================================================
+
+#' Get All Jitter and Shimmer Measures in One Call
+#'
+#' @description
+#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single C++ call.
+#' Much faster than calling individual methods when you need multiple measures.
+#'
+#' **Jitter measures** (period perturbation):
+#' - `jitter_local`: Local jitter (relative, fraction)
+#' - `jitter_local_abs`: Local absolute jitter (seconds)
+#' - `jitter_rap`: Relative average perturbation
+#' - `jitter_ppq5`: 5-point period perturbation quotient
+#' - `jitter_ddp`: Difference of differences of periods
+#'
+#' **Shimmer measures** (amplitude perturbation):
+#' - `shimmer_local`: Local shimmer (relative, fraction)
+#' - `shimmer_local_db`: Local shimmer (dB)
+#' - `shimmer_apq3`: 3-point amplitude perturbation quotient
+#' - `shimmer_apq5`: 5-point amplitude perturbation quotient
+#' - `shimmer_apq11`: 11-point amplitude perturbation quotient
+#' - `shimmer_dda`: Difference of differences of amplitudes
+#'
+#' @param pointprocess PointProcess object or external pointer (glottal pulses)
+#' @param sound Sound object or external pointer (required for shimmer)
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period in seconds (default 0.0001 = 10000 Hz)
+#' @param period_ceiling Maximum period in seconds (default 0.02 = 50 Hz)
+#' @param max_period_factor Maximum period factor (default 1.3)
+#' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
+#'
+#' @return Named list with 11 voice quality measures
+#'
+#' @section Performance:
+#' This function reduces R<->C++ boundary crossings from 11 calls to 1 call.
+#' Expected speedup: **5-10x** for typical voice quality workflows.
+#'
+#' @section Workflow:
+#' For accurate voice quality analysis, use `to_point_process_from_sound_and_pitch()`
+#' which uses the refined pitch contour to guide period detection:
+#' ```r
+#' # Recommended workflow
+#' sound <- Sound("voice.wav")
+#' pitch <- sound$to_pitch_cc(voicing_threshold = 0.45)
+#' pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+#' metrics <- get_jitter_shimmer_batch(pp, sound)
+#' ```
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+#'
+#' # Two-pass adaptive pitch for robust extraction
+#' result <- two_pass_adaptive_pitch(sound)
+#' pitch <- Pitch(.xptr = result$pitch)
+#'
+#' # Accurate pulse detection using Sound+Pitch
+#' pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+#'
+#' # Get all voice quality measures at once
+#' metrics <- get_jitter_shimmer_batch(pp, sound)
+#'
+#' # Access individual measures
+#' cat("Jitter (local):", metrics$jitter_local * 100, "%\n")
+#' cat("Shimmer (local):", metrics$shimmer_local * 100, "%\n")
+#' cat("Shimmer (dB):", metrics$shimmer_local_db, "dB\n")
+#' }
+#'
+#' @seealso
+#' [two_pass_adaptive_pitch()] for robust pitch extraction
+#' [to_point_process_from_sound_and_pitch()] for accurate pulse detection
+#'
+#' @export
+get_jitter_shimmer_batch <- function(pointprocess, sound,
+                                      from_time = 0, to_time = 0,
+                                      period_floor = 0.0001,
+                                      period_ceiling = 0.02,
+                                      max_period_factor = 1.3,
+                                      max_amplitude_factor = 1.6) {
+  # Extract pointers
+  pp_ptr <- if (inherits(pointprocess, "PointProcess")) {
+    pointprocess$.xptr
+  } else if (inherits(pointprocess, "externalptr")) {
+    pointprocess
+  } else {
+    stop("pointprocess must be a PointProcess object or external pointer")
+  }
+
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  get_jitter_shimmer_batch_cpp(
+    pp_ptr, sound_ptr,
+    as.numeric(from_time), as.numeric(to_time),
+    as.numeric(period_floor), as.numeric(period_ceiling),
+    as.numeric(max_period_factor), as.numeric(max_amplitude_factor)
+  )
 }

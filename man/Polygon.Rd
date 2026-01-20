@@ -4,12 +4,14 @@
 \alias{Polygon}
 \title{Polygon Object}
 \usage{
-Polygon(x, y)
+Polygon(x, y, .xptr = NULL)
 }
 \arguments{
-\item{x}{Numeric vector of x coordinates}
+\item{x}{Numeric vector of x coordinates (required unless .xptr provided)}
 
-\item{y}{Numeric vector of y coordinates}
+\item{y}{Numeric vector of y coordinates (required unless .xptr provided)}
+
+\item{.xptr}{External pointer from C++ (internal use)}
 }
 \value{
 Polygon object with methods for geometry operations

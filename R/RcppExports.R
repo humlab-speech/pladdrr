@@ -153,6 +153,19 @@ pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpola
     .Call(`_pladdrr_pitch_get_strengths_at_times`, pitch_xptr, times, unit, interpolate)
 }
 
+#' Get multiple pitch quantiles in a single call (NEW for VUV performance)
+#' 
+#' @param pitch_xptr External pointer to Pitch object
+#' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param unit Integer code for unit (0=HERTZ, etc)
+#' @return Named numeric vector with quantile values
+#' @keywords internal
+pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_time = 0, unit = 0L) {
+    .Call(`_pladdrr_pitch_get_quantiles_batch`, pitch_xptr, quantiles, from_time, to_time, unit)
+}
+
 #' Get all point times from PointProcess as vector
 #' 
 #' @param pp_xptr External pointer to PointProcess object
@@ -240,6 +253,26 @@ intensity_get_statistics_batch <- function(intensity_xptr, from_times, to_times,
 #' @keywords internal
 intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_minimum_with_time`, intensity_xptr, from_time, to_time)
+}
+
+#' Get all jitter and shimmer measures in a single C++ call
+#'
+#' @description
+#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call.
+#' Much faster than calling individual methods when you need multiple measures.
+#'
+#' @param pp_xptr External pointer to PointProcess object
+#' @param sound_xptr External pointer to Sound object (required for shimmer)
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period in seconds (default 0.0001)
+#' @param period_ceiling Maximum period in seconds (default 0.02)
+#' @param max_period_factor Maximum period factor (default 1.3)
+#' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
+#' @return Named list with 11 voice quality measures
+#' @keywords internal
+get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+    .Call(`_pladdrr_get_jitter_shimmer_batch_cpp`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
 }
 
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
@@ -1510,12 +1543,12 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_powercepstrogram_get_cpps`, xptr, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
-.sound_to_cpps_direct <- function(sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
-    .Call(`_pladdrr_sound_to_cpps_direct`, sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
-}
-
 .powercepstrum_get_peak_prominence_cpps <- function(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
     .Call(`_pladdrr_powercepstrum_get_peak_prominence_cpps`, xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
+}
+
+.sound_to_cpps_direct <- function(sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
+    .Call(`_pladdrr_sound_to_cpps_direct`, sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
 .powercepstrum_get_peak_prominence_hillenbrand <- function(xptr, pitch_floor, pitch_ceiling) {
@@ -1830,6 +1863,32 @@ pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, u
 #' @keywords internal
 formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_f1_f4_direct`, formant_xptr, time, unit)
+}
+
+#' Get PointProcess mean period directly
+#' @param pp_xptr External pointer to PointProcess
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period (default: 0.0001)
+#' @param period_ceiling Maximum period (default: 0.02)
+#' @param max_period_factor Maximum period factor (default: 1.3)
+#' @return Mean period in seconds
+#' @keywords internal
+get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+    .Call(`_pladdrr_get_point_process_mean_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+}
+
+#' Get PointProcess standard deviation of periods directly
+#' @param pp_xptr External pointer to PointProcess
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period
+#' @param period_ceiling Maximum period
+#' @param max_period_factor Maximum period factor
+#' @return Standard deviation of periods
+#' @keywords internal
+get_point_process_stdev_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+    .Call(`_pladdrr_get_point_process_stdev_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
 
 #' Get Praat version information

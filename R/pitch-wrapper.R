@@ -245,8 +245,11 @@ Pitch <- function(.xptr = NULL) {
       PitchTier(.xptr = tier_ptr)
     },
     
-    to_textgrid_vuv = function() {
-      tg_ptr <- cpp_obj$to_textgrid_vuv_ptr()
+    to_textgrid_vuv = function(max_period = 0.02, mean_period = 0.01) {
+      tg_ptr <- cpp_obj$to_textgrid_vuv_ptr(
+        as.numeric(max_period),
+        as.numeric(mean_period)
+      )
       TextGrid(.xptr = tg_ptr)
     },
     

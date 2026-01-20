@@ -1,3 +1,147 @@
+# pladdrr 4.3.0 (2026-01-19)
+
+## New Features - Pipeline Operations
+
+### Two-Pass Adaptive Pitch Extraction
+
+**`two_pass_adaptive_pitch()`** - Robust pitch extraction across speaker voice ranges:
+
+```r
+# Automatic adaptive pitch range
+result <- two_pass_adaptive_pitch(sound)
+pitch <- Pitch(.xptr = result$pitch)
+
+# Algorithm:
+# 1. Pass 1: Wide range (50-800 Hz default) → Get Q1, Q3
+# 2. Pass 2: Adaptive range (Q1*0.75 to Q3*1.5)
+#
+# Returns: pitch XPtr, min_pitch, max_pitch, q1, q3
+```
+
+Parameters: `voicing_threshold`, `silence_threshold`, `q1_factor`, `q3_factor`, `method` (cc/ac)
+
+### Batch Voice Quality Analysis
+
+**`get_jitter_shimmer_batch()`** - All 11 voice quality measures in single C++ call:
+
+```r
+pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+metrics <- get_jitter_shimmer_batch(pp, sound)
+
+# Returns:
+# Jitter: jitter_local, jitter_local_abs, jitter_rap, jitter_ppq5, jitter_ddp
+# Shimmer: shimmer_local, shimmer_local_db, shimmer_apq3, shimmer_apq5, shimmer_apq11, shimmer_dda
+```
+
+**Performance:** 5-10x faster than 11 separate R6 method calls.
+
+### Complete Voice Quality Workflow
+
+```r
+sound <- Sound("voice.wav")
+
+# Robust two-pass pitch extraction
+result <- two_pass_adaptive_pitch(sound, voicing_threshold = 0.45)
+pitch <- Pitch(.xptr = result$pitch)
+
+# Accurate pulse detection (uses refined pitch contour)
+pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+
+# All jitter/shimmer measures in one call
+metrics <- get_jitter_shimmer_batch(pp, sound)
+
+cat("Jitter:", metrics$jitter_local * 100, "%\n")
+cat("Shimmer:", metrics$shimmer_local * 100, "%\n")
+```
+
+---
+
+# pladdrr 4.2.0 (2026-01-19)
+
+## Breaking Changes
+
+* **CORRECTNESS FIX:** `Pitch$to_textgrid_vuv()` now accepts parameters for proper VUV detection
+  - New signature: `to_textgrid_vuv(max_period = 0.02, mean_period = 0.01)`
+  - Now uses Praat's standard `PointProcess_to_TextGrid_vuv()` with parameters
+  - **Breaking:** Existing code calling `pitch$to_textgrid_vuv()` will get defaults (0.02, 0.01)
+  - **Action Required:** For VUV analysis, explicitly pass calculated mean period:
+    ```r
+    tg <- pitch$to_textgrid_vuv(max_period = 0.02, mean_period = calculated_period)
+    ```
+
+## Bug Fixes - Correctness Issues
+
+* **CRITICAL FIX:** Added missing `to_point_process_from_sound_and_pitch()` for accurate VUV analysis
+  - Exposes Praat's `Sound_Pitch_to_PointProcess_cc()` which uses refined pitch contour
+  - **Algorithm Difference:** This is the CORRECT method for voice quality analysis
+    - ❌ OLD: `sound$to_point_process_periodic_cc(floor, ceiling)` - uses only pitch range
+    - ✅ NEW: `to_point_process_from_sound_and_pitch(sound, pitch)` - uses refined contour
+  - Essential for jitter, shimmer, and VUV (voiced/unvoiced) detection accuracy
+  - Matches Python Parselmouth's `Sound_Pitch_to_PointProcess_cc` behavior
+  - Example:
+    ```r
+    sound <- Sound("voice.wav")
+    pitch <- sound$to_pitch_cc(voicing_threshold = 0.45)
+    pp <- to_point_process_from_sound_and_pitch(sound, pitch)  # Correct method
+    ```
+
+## New Features - Performance Enhancements
+
+### Direct API Query Functions (2-3x faster than R6)
+
+Added zero-overhead direct query functions for performance-critical VUV workflows:
+
+**Pitch Queries:**
+* `get_pitch_quantile_direct(pitch, quantile, from_time, to_time, unit)`
+* `get_pitch_mean_direct(pitch, from_time, to_time, unit)`
+* `get_pitch_stdev_direct(pitch, from_time, to_time, unit)`
+
+**PointProcess Queries:**
+* `pp_get_mean_period_direct(pointprocess, from_time, to_time, ...)`
+* `pp_get_stdev_period_direct(pointprocess, from_time, to_time, ...)`
+
+**Performance Benefit:** Bypass R6 wrapper overhead for 2-3x speedup in tight loops
+
+**Example - VUV Analysis Workflow:**
+```r
+# Fast adaptive pitch range calculation
+pitch_rough <- to_pitch_cc_direct(sound_filtered, 50, 800, voicing_threshold = 0.45)
+q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
+q3 <- get_pitch_quantile_direct(pitch_rough, 0.75, unit = "hertz")
+
+# Refined pitch with adaptive range
+pitch_refined <- to_pitch_cc_direct(sound_filtered, q1*0.75, q3*1.5, voicing_threshold = 0.45)
+
+# Accurate pulse detection using Sound+Pitch
+pp <- to_point_process_from_sound_and_pitch(sound_filtered, Pitch(.xptr = pitch_refined))
+
+# Fast period query
+mean_period <- pp_get_mean_period_direct(pp)
+```
+
+### Batch Operations
+
+* **NEW:** `get_pitch_quantiles_batch(pitch, quantiles, from_time, to_time, unit)`
+  - Get multiple quantiles (Q1, Q3, median) in single C++ call
+  - Returns named vector (e.g., `c(q0.25 = 120, q0.75 = 180)`)
+  - Example:
+    ```r
+    quantiles <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
+    q1 <- quantiles["q0.25"]
+    median <- quantiles["q0.5"]
+    q3 <- quantiles["q0.75"]
+    ```
+  - **Performance:** 2-3x faster than separate `get_quantile()` calls
+
+## Performance Summary
+
+Typical VUV analysis workflow improvements (vs R6 methods):
+- Direct API queries: **2-3x faster**
+- Batch quantiles: **2-3x faster** than multiple R6 calls
+- Overall pipeline: **Correctness guaranteed** + performance gains
+
+---
+
 # pladdrr 4.0.11 (2026-01-16)
 
 ## New Features

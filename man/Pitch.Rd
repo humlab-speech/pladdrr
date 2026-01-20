@@ -8,9 +8,27 @@ Pitch(.xptr = NULL)
 }
 \arguments{
 \item{.xptr}{External pointer to C++ Pitch object (internal use)}
+
+\item{unit}{Pitch unit ("hertz", "semitones", "mel", "erb")}
+
+\item{bandwidth}{Smoothing bandwidth in Hz (default: 10)}
 }
 \value{
 Pitch object with methods for querying pitch values and statistics
+
+New Pitch object with linear trend removed
+Get detrended F0 values directly as a vector
+
+Numeric vector of detrended F0 values (NA for unvoiced frames)
+Interpolate unvoiced frames
+
+New Pitch object with interpolated values
+Smooth pitch contour
+
+New Pitch object with smoothed values
+Kill octave jumps
+
+New Pitch object with octave jumps removed
 }
 \description{
 Fundamental frequency (F0) contour representation.

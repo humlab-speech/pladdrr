@@ -6,6 +6,39 @@
 \usage{
 Ltas(.xptr = NULL)
 }
+\arguments{
+\item{frequencies}{Numeric vector of frequencies}
+
+\item{fmins}{Numeric vector of minimum frequencies}
+
+\item{fmaxs}{Numeric vector of maximum frequencies}
+
+\item{unit}{Unit for averaging ("dB", "energy", "sones")}
+
+\item{fmin}{Minimum frequency}
+
+\item{fmax}{Maximum frequency}
+
+\item{interpolation}{Interpolation method}
+}
+\value{
+Data frame with fmin, fmax, peak_value, peak_frequency
+Get minima for multiple frequency ranges in a single call
+
+Data frame with fmin, fmax, min_value, min_frequency
+Get values at multiple frequencies in a single call
+
+Numeric vector of values at the specified frequencies
+Get means for multiple frequency ranges in a single call
+
+Numeric vector of mean values
+Get frequency of maximum for a frequency range
+
+Frequency of maximum value
+Get frequency of minimum for a frequency range
+
+Frequency of minimum value
+}
 \description{
 Praat Ltas object with direct C++ module binding for long-term spectral analysis.
 }

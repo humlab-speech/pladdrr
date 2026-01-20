@@ -6,6 +6,39 @@
 \usage{
 PointProcess(.xptr = NULL)
 }
+\arguments{
+\item{sound}{Sound object}
+
+\item{channel}{Channel number (default: 1)}
+
+\item{interpolation}{Interpolation method ("nearest", "linear", "cubic", "sinc70", "sinc700")}
+
+\item{min_period}{Minimum period (seconds)}
+
+\item{max_period}{Maximum period (seconds)}
+
+\item{from_time}{Start time (0 = beginning)}
+
+\item{to_time}{End time (0 = end)}
+
+\item{period_floor}{Minimum period}
+
+\item{period_ceiling}{Maximum period}
+
+\item{max_period_factor}{Maximum period factor}
+}
+\value{
+Numeric vector of values at point times
+Get all periods (inter-point intervals) as vector
+
+Numeric vector of periods
+Get periods within specified range
+
+Numeric vector of filtered periods
+Get all jitter measures in a single call
+
+List with local, local_absolute, rap, ppq5, ddp
+}
 \description{
 R6 class representing a Praat PointProcess object. A PointProcess is a sequence
 of time points, typically representing events such as glottal pulses, peaks,

@@ -420,6 +420,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pitch_get_quantiles_batch
+NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr, NumericVector quantiles, double from_time, double to_time, int unit);
+RcppExport SEXP _pladdrr_pitch_get_quantiles_batch(SEXP pitch_xptrSEXP, SEXP quantilesSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type quantiles(quantilesSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitch_get_quantiles_batch(pitch_xptr, quantiles, from_time, to_time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pointprocess_get_all_times
 NumericVector pointprocess_get_all_times(SEXP pp_xptr);
 RcppExport SEXP _pladdrr_pointprocess_get_all_times(SEXP pp_xptrSEXP) {
@@ -510,6 +525,24 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
     Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
     rcpp_result_gen = Rcpp::wrap(intensity_get_minimum_with_time(intensity_xptr, from_time, to_time));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_jitter_shimmer_batch_cpp
+List get_jitter_shimmer_batch_cpp(SEXP pp_xptr, SEXP sound_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor, double max_amplitude_factor);
+RcppExport SEXP _pladdrr_get_jitter_shimmer_batch_cpp(SEXP pp_xptrSEXP, SEXP sound_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP, SEXP max_amplitude_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_amplitude_factor(max_amplitude_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_jitter_shimmer_batch_cpp(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -4776,6 +4809,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// powercepstrum_get_peak_prominence_cpps
+double powercepstrum_get_peak_prominence_cpps(SEXP xptr, double pitch_floor, double pitch_ceiling, int interpolation, double qstart_fit, double qend_fit, int trend_type, int fit_method);
+RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence_cpps(SEXP xptrSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP interpolationSEXP, SEXP qstart_fitSEXP, SEXP qend_fitSEXP, SEXP trend_typeSEXP, SEXP fit_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
+    Rcpp::traits::input_parameter< double >::type qstart_fit(qstart_fitSEXP);
+    Rcpp::traits::input_parameter< double >::type qend_fit(qend_fitSEXP);
+    Rcpp::traits::input_parameter< int >::type trend_type(trend_typeSEXP);
+    Rcpp::traits::input_parameter< int >::type fit_method(fit_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence_cpps(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sound_to_cpps_direct
 double sound_to_cpps_direct(SEXP sound_xptr, double cepstrogram_pitch_floor, double time_step, double max_frequency, double pre_emphasis_from, bool subtract_tilt, double time_averaging_window, double quefrency_averaging_window, double pitch_floor, double pitch_ceiling, double delta_f0, int interpolation, double qstart_fit, double qend_fit, int trend_type, int fit_method);
 RcppExport SEXP _pladdrr_sound_to_cpps_direct(SEXP sound_xptrSEXP, SEXP cepstrogram_pitch_floorSEXP, SEXP time_stepSEXP, SEXP max_frequencySEXP, SEXP pre_emphasis_fromSEXP, SEXP subtract_tiltSEXP, SEXP time_averaging_windowSEXP, SEXP quefrency_averaging_windowSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP delta_f0SEXP, SEXP interpolationSEXP, SEXP qstart_fitSEXP, SEXP qend_fitSEXP, SEXP trend_typeSEXP, SEXP fit_methodSEXP) {
@@ -4799,24 +4850,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type trend_type(trend_typeSEXP);
     Rcpp::traits::input_parameter< int >::type fit_method(fit_methodSEXP);
     rcpp_result_gen = Rcpp::wrap(sound_to_cpps_direct(sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method));
-    return rcpp_result_gen;
-END_RCPP
-}
-// powercepstrum_get_peak_prominence_cpps
-double powercepstrum_get_peak_prominence_cpps(SEXP xptr, double pitch_floor, double pitch_ceiling, int interpolation, double qstart_fit, double qend_fit, int trend_type, int fit_method);
-RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence_cpps(SEXP xptrSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP interpolationSEXP, SEXP qstart_fitSEXP, SEXP qend_fitSEXP, SEXP trend_typeSEXP, SEXP fit_methodSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
-    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
-    Rcpp::traits::input_parameter< int >::type interpolation(interpolationSEXP);
-    Rcpp::traits::input_parameter< double >::type qstart_fit(qstart_fitSEXP);
-    Rcpp::traits::input_parameter< double >::type qend_fit(qend_fitSEXP);
-    Rcpp::traits::input_parameter< int >::type trend_type(trend_typeSEXP);
-    Rcpp::traits::input_parameter< int >::type fit_method(fit_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence_cpps(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -5326,6 +5359,38 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type time(timeSEXP);
     Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
     rcpp_result_gen = Rcpp::wrap(formant_get_f1_f4_direct(formant_xptr, time, unit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_point_process_mean_period_direct
+double get_point_process_mean_period_direct(SEXP pp_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _pladdrr_get_point_process_mean_period_direct(SEXP pp_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_point_process_mean_period_direct(pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_point_process_stdev_period_direct
+double get_point_process_stdev_period_direct(SEXP pp_xptr, double from_time, double to_time, double period_floor, double period_ceiling, double max_period_factor);
+RcppExport SEXP _pladdrr_get_point_process_stdev_period_direct(SEXP pp_xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP, SEXP period_floorSEXP, SEXP period_ceilingSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pp_xptr(pp_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
+    Rcpp::traits::input_parameter< double >::type period_floor(period_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type period_ceiling(period_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_point_process_stdev_period_direct(pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -9954,6 +10019,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_formant_get_multiple_formants_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_formants_at_times, 4},
     {"_pladdrr_formant_get_multiple_bandwidths_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_bandwidths_at_times, 4},
     {"_pladdrr_pitch_get_strengths_at_times", (DL_FUNC) &_pladdrr_pitch_get_strengths_at_times, 4},
+    {"_pladdrr_pitch_get_quantiles_batch", (DL_FUNC) &_pladdrr_pitch_get_quantiles_batch, 5},
     {"_pladdrr_pointprocess_get_all_times", (DL_FUNC) &_pladdrr_pointprocess_get_all_times, 1},
     {"_pladdrr_pointprocess_get_intervals", (DL_FUNC) &_pladdrr_pointprocess_get_intervals, 1},
     {"_pladdrr_pointprocess_get_nearest_indices", (DL_FUNC) &_pladdrr_pointprocess_get_nearest_indices, 2},
@@ -9961,6 +10027,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pitch_get_adaptive_range", (DL_FUNC) &_pladdrr_pitch_get_adaptive_range, 6},
     {"_pladdrr_intensity_get_statistics_batch", (DL_FUNC) &_pladdrr_intensity_get_statistics_batch, 5},
     {"_pladdrr_intensity_get_minimum_with_time", (DL_FUNC) &_pladdrr_intensity_get_minimum_with_time, 3},
+    {"_pladdrr_get_jitter_shimmer_batch_cpp", (DL_FUNC) &_pladdrr_get_jitter_shimmer_batch_cpp, 8},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
@@ -10232,8 +10299,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_powercepstrogram_as_matrix", (DL_FUNC) &_pladdrr_powercepstrogram_as_matrix, 1},
     {"_pladdrr_powercepstrogram_smooth", (DL_FUNC) &_pladdrr_powercepstrogram_smooth, 3},
     {"_pladdrr_powercepstrogram_get_cpps", (DL_FUNC) &_pladdrr_powercepstrogram_get_cpps, 12},
-    {"_pladdrr_sound_to_cpps_direct", (DL_FUNC) &_pladdrr_sound_to_cpps_direct, 16},
     {"_pladdrr_powercepstrum_get_peak_prominence_cpps", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence_cpps, 8},
+    {"_pladdrr_sound_to_cpps_direct", (DL_FUNC) &_pladdrr_sound_to_cpps_direct, 16},
     {"_pladdrr_powercepstrum_get_peak_prominence_hillenbrand", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence_hillenbrand, 3},
     {"_pladdrr_powercepstrum_get_rnr", (DL_FUNC) &_pladdrr_powercepstrum_get_rnr, 4},
     {"_pladdrr_powercepstrum_tabulate_rhamonics", (DL_FUNC) &_pladdrr_powercepstrum_tabulate_rhamonics, 4},
@@ -10272,6 +10339,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_to_harmonicity_direct", (DL_FUNC) &_pladdrr_sound_to_harmonicity_direct, 5},
     {"_pladdrr_pitch_get_all_stats_direct", (DL_FUNC) &_pladdrr_pitch_get_all_stats_direct, 4},
     {"_pladdrr_formant_get_f1_f4_direct", (DL_FUNC) &_pladdrr_formant_get_f1_f4_direct, 3},
+    {"_pladdrr_get_point_process_mean_period_direct", (DL_FUNC) &_pladdrr_get_point_process_mean_period_direct, 6},
+    {"_pladdrr_get_point_process_stdev_period_direct", (DL_FUNC) &_pladdrr_get_point_process_stdev_period_direct, 6},
     {"_pladdrr_praat_version", (DL_FUNC) &_pladdrr_praat_version, 0},
     {"_pladdrr_praat_initialize", (DL_FUNC) &_pladdrr_praat_initialize, 0},
     {"_pladdrr_test_class_registry", (DL_FUNC) &_pladdrr_test_class_registry, 0},

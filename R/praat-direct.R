@@ -430,6 +430,84 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 }
 
 
+#' Get Pitch Quantile Directly (Bypass R6)
+#'
+#' @description
+#' Get a specific quantile of pitch values without R6 wrapper overhead.
+#' Useful for VUV analysis workflows where you need Q1, Q3 for adaptive pitch range.
+#'
+#' @param pitch Pitch object or external pointer
+#' @param quantile Quantile value (0.25 for Q1, 0.75 for Q3, 0.5 for median)
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param unit Pitch unit ("hertz", "semitones", "mel", "erb", "loghertz")
+#'
+#' @return Quantile value in specified unit
+#'
+#' @examples
+#' \dontrun{
+#' pitch_ptr <- to_pitch_cc_direct(sound)
+#' q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
+#' q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
+#' }
+#'
+#' @seealso [get_pitch_quantiles_batch()] for getting multiple quantiles at once
+#' @export
+get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 0,
+                                       unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {
+  pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
+  unit <- match.arg(unit)
+  unit_code <- switch(unit,
+    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
+  )
+  pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code)
+}
+
+#' Get Pitch Mean Directly (Bypass R6)
+#'
+#' @description
+#' Get mean pitch value without R6 wrapper overhead.
+#'
+#' @param pitch Pitch object or external pointer
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param unit Pitch unit
+#'
+#' @return Mean pitch value
+#' @export
+get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
+                                   unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {
+  pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
+  unit <- match.arg(unit)
+  unit_code <- switch(unit,
+    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
+  )
+  pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code)
+}
+
+#' Get Pitch Standard Deviation Directly (Bypass R6)
+#'
+#' @description
+#' Get standard deviation of pitch values without R6 wrapper overhead.
+#'
+#' @param pitch Pitch object or external pointer
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param unit Pitch unit
+#'
+#' @return Standard deviation
+#' @export
+get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
+                                    unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {
+  pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
+  unit <- match.arg(unit)
+  unit_code <- switch(unit,
+    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
+  )
+  pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code)
+}
+
+
 # =============================================================================
 # Additional Conversion Functions (Phase 3)
 # =============================================================================
@@ -567,4 +645,288 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
   # Fallback
   .sound_to_point_process_periodic_cc(sound_ptr, pitch_floor, pitch_ceiling,
                                        max_period_factor, max_amplitude_factor)
+}
+
+
+#' Create PointProcess from Sound and Pitch (Cross-Correlation)
+#'
+#' @description
+#' Creates a PointProcess using BOTH Sound and refined Pitch contour.
+#' This matches Praat's "To PointProcess (cc)" command when both Sound and Pitch
+#' objects are selected.
+#'
+#' **IMPORTANT for VUV Analysis:** This function uses the refined pitch contour
+#' to guide period detection, which is more accurate than using pitch range
+#' parameters alone. This is the correct method for voice quality analysis (jitter,
+#' shimmer, VUV detection).
+#'
+#' **Algorithm Difference:**
+#' - `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch range
+#' - `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch contour (recommended)
+#'
+#' @param sound Sound object or external pointer
+#' @param pitch Pitch object or external pointer (from to_pitch_ac/cc)
+#'
+#' @return External pointer to PointProcess
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("voice.wav")
+#' 
+#' # Create refined pitch analysis
+#' pitch <- sound$to_pitch_cc(
+#'   time_step = 0,
+#'   pitch_floor = 75,
+#'   pitch_ceiling = 600,
+#'   voicing_threshold = 0.45
+#' )
+#' 
+#' # RECOMMENDED: Use both Sound and Pitch for accurate pulse detection
+#' pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+#' 
+#' # Now calculate jitter/shimmer with accurate pulse times
+#' pp_r6 <- PointProcess(.xptr = pp)
+#' jitter <- pp_r6$get_jitter_local(sound)
+#' }
+#'
+#' @seealso [to_point_process_direct()] for the single-object Sound method
+#' @export
+to_point_process_from_sound_and_pitch <- function(sound, pitch) {
+  sound_ptr <- extract_xptr(sound, "Sound")
+  pitch_ptr <- extract_xptr(pitch, "Pitch")
+  
+  .sound_pitch_to_pointprocess_cc(sound_ptr, pitch_ptr)
+}
+
+
+# =============================================================================
+# PointProcess Direct API Functions (NEW for VUV performance)
+# =============================================================================
+
+#' Get PointProcess Mean Period Directly (Bypass R6)
+#'
+#' @description
+#' Get mean period from PointProcess without R6 wrapper overhead.
+#' Critical for VUV analysis workflows.
+#'
+#' @param pointprocess PointProcess object or external pointer
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period (default: 0.0001)
+#' @param period_ceiling Maximum period (default: 0.02)
+#' @param max_period_factor Maximum period factor (default: 1.3)
+#'
+#' @return Mean period in seconds
+#'
+#' @examples
+#' \dontrun{
+#' pp_ptr <- to_point_process_from_sound_and_pitch(sound, pitch)
+#' mean_period <- pp_get_mean_period_direct(pp_ptr)
+#' }
+#'
+#' @export
+pp_get_mean_period_direct <- function(pointprocess,
+                                       from_time = 0,
+                                       to_time = 0,
+                                       period_floor = 0.0001,
+                                       period_ceiling = 0.02,
+                                       max_period_factor = 1.3) {
+  pp_ptr <- if (inherits(pointprocess, "PointProcess")) {
+    pointprocess$.xptr
+  } else {
+    pointprocess
+  }
+  
+  .Call("_pladdrr_get_point_process_mean_period_direct",
+    pp_ptr,
+    as.numeric(from_time),
+    as.numeric(to_time),
+    as.numeric(period_floor),
+    as.numeric(period_ceiling),
+    as.numeric(max_period_factor),
+    PACKAGE = "pladdrr"
+  )
+}
+
+#' Get PointProcess Period Standard Deviation Directly (Bypass R6)
+#'
+#' @description
+#' Get standard deviation of periods from PointProcess without R6 wrapper overhead.
+#'
+#' @param pointprocess PointProcess object or external pointer
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @param period_floor Minimum period
+#' @param period_ceiling Maximum period
+#' @param max_period_factor Maximum period factor
+#'
+#' @return Standard deviation of periods
+#' @export
+pp_get_stdev_period_direct <- function(pointprocess,
+                                        from_time = 0,
+                                        to_time = 0,
+                                        period_floor = 0.0001,
+                                        period_ceiling = 0.02,
+                                        max_period_factor = 1.3) {
+  pp_ptr <- if (inherits(pointprocess, "PointProcess")) {
+    pointprocess$.xptr
+  } else {
+    pointprocess
+  }
+
+  .Call("_pladdrr_get_point_process_stdev_period_direct",
+    pp_ptr,
+    as.numeric(from_time),
+    as.numeric(to_time),
+    as.numeric(period_floor),
+    as.numeric(period_ceiling),
+    as.numeric(max_period_factor),
+    PACKAGE = "pladdrr"
+  )
+}
+
+
+# =============================================================================
+# Pipeline Operations (Composite Functions)
+# =============================================================================
+
+#' Two-Pass Adaptive Pitch Extraction
+#'
+#' @description
+#' Performs a two-pass pitch extraction where the first pass uses a wide range
+#' (50-800 Hz by default) to estimate the speaker's pitch distribution, then
+#' the second pass uses an adaptive range based on quartiles (Q1*0.75 to Q3*1.5).
+#'
+#' This is a standard technique for robust pitch extraction across speakers with
+#' different voice ranges. Returns both the refined pitch contour and the
+#' computed range parameters for transparency.
+#'
+#' @param sound Sound object or external pointer
+#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @param initial_floor Initial pitch floor for pass 1 (default 50 Hz)
+#' @param initial_ceiling Initial pitch ceiling for pass 1 (default 800 Hz)
+#' @param voicing_threshold Voicing threshold (default 0.45)
+#' @param silence_threshold Silence threshold (default 0.03)
+#' @param octave_cost Octave cost (default 0.01)
+#' @param octave_jump_cost Octave jump cost (default 0.35)
+#' @param voiced_unvoiced_cost Voiced/unvoiced transition cost (default 0.14)
+#' @param q1_factor Factor to multiply Q1 for min_pitch (default 0.75)
+#' @param q3_factor Factor to multiply Q3 for max_pitch (default 1.5)
+#' @param method Pitch method: "cc" (cross-correlation, default) or "ac" (autocorrelation)
+#'
+#' @return Named list with:
+#'   - `pitch`: External pointer to the refined Pitch object
+#'   - `min_pitch`: Computed minimum pitch (Q1 * q1_factor)
+#'   - `max_pitch`: Computed maximum pitch (Q3 * q3_factor)
+#'   - `q1`: First quartile of pass 1 pitch values
+#'   - `q3`: Third quartile of pass 1 pitch values
+#'
+#' @section Algorithm:
+#' 1. Pass 1: Extract pitch with wide range (initial_floor to initial_ceiling)
+#' 2. Compute Q1 and Q3 from voiced frames
+
+#' 3. Pass 2: Re-extract with adaptive range (Q1*0.75 to Q3*1.5)
+#'
+#' @section Performance:
+#' This is a pure R wrapper calling existing direct functions. No C++ overhead
+#' beyond the two pitch extractions. Suitable for batch processing.
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("speech.wav")
+#'
+#' # Basic usage (returns XPtr)
+#' result <- two_pass_adaptive_pitch(sound)
+#' pitch_refined <- Pitch(.xptr = result$pitch)
+#' cat("Adaptive range:", result$min_pitch, "-", result$max_pitch, "Hz\n")
+#'
+#' # With custom parameters
+#' result <- two_pass_adaptive_pitch(sound,
+#'   voicing_threshold = 0.6,  # Stricter voicing
+#'   q1_factor = 0.7,          # Wider lower bound
+#'   q3_factor = 1.6           # Wider upper bound
+#' )
+#'
+#' # Use in voice quality analysis
+#' pp <- to_point_process_from_sound_and_pitch(sound, Pitch(.xptr = result$pitch))
+#' metrics <- get_jitter_shimmer_batch(pp, sound)
+#' }
+#'
+#' @seealso
+#' [to_pitch_cc_direct()], [to_pitch_ac_direct()] for single-pass extraction
+#' [get_pitch_quantile_direct()] for manual quartile extraction
+#'
+#' @export
+two_pass_adaptive_pitch <- function(sound,
+                                     time_step = 0,
+                                     initial_floor = 50,
+                                     initial_ceiling = 800,
+                                     voicing_threshold = 0.45,
+                                     silence_threshold = 0.03,
+                                     octave_cost = 0.01,
+                                     octave_jump_cost = 0.35,
+                                     voiced_unvoiced_cost = 0.14,
+                                     q1_factor = 0.75,
+                                     q3_factor = 1.5,
+                                     method = c("cc", "ac")) {
+  # Extract pointer from R6 or use directly
+  sound_ptr <- if (inherits(sound, "Sound")) sound$.xptr else sound
+
+  method <- match.arg(method)
+
+  # Choose pitch function based on method
+  pitch_fn <- if (method == "cc") to_pitch_cc_direct else to_pitch_ac_direct
+
+  # Pass 1: Wide range
+  pitch_rough <- pitch_fn(
+    sound_ptr,
+    time_step = time_step,
+    pitch_floor = initial_floor,
+    pitch_ceiling = initial_ceiling,
+    voicing_threshold = voicing_threshold,
+    silence_threshold = silence_threshold,
+    octave_cost = octave_cost,
+    octave_jump_cost = octave_jump_cost,
+    voiced_unvoiced_cost = voiced_unvoiced_cost
+  )
+
+  # Get quartiles from pass 1
+  q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
+  q3 <- get_pitch_quantile_direct(pitch_rough, 0.75, unit = "hertz")
+
+  # Handle case where no voiced frames found
+  if (is.na(q1) || is.na(q3) || q1 <= 0 || q3 <= 0) {
+    return(list(
+      pitch = pitch_rough,
+      min_pitch = initial_floor,
+      max_pitch = initial_ceiling,
+      q1 = NA_real_,
+      q3 = NA_real_
+    ))
+  }
+
+  # Compute adaptive range
+  min_pitch <- q1 * q1_factor
+  max_pitch <- q3 * q3_factor
+
+  # Pass 2: Refined range
+  pitch_refined <- pitch_fn(
+    sound_ptr,
+    time_step = time_step,
+    pitch_floor = min_pitch,
+    pitch_ceiling = max_pitch,
+    voicing_threshold = voicing_threshold,
+    silence_threshold = silence_threshold,
+    octave_cost = octave_cost,
+    octave_jump_cost = octave_jump_cost,
+    voiced_unvoiced_cost = voiced_unvoiced_cost
+  )
+
+  list(
+    pitch = pitch_refined,
+    min_pitch = min_pitch,
+    max_pitch = max_pitch,
+    q1 = q1,
+    q3 = q3
+  )
 }

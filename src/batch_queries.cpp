@@ -3,6 +3,7 @@
 // pladdrr v2.0.9
 
 #include <Rcpp.h>
+#include <sstream>
 #include "praat.github.io/fon/Formant.h"
 #include "praat.github.io/fon/Pitch.h"
 #include "praat.github.io/fon/Intensity.h"
@@ -149,6 +150,55 @@ NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
     }
     
     return strengths;
+}
+
+//' Get multiple pitch quantiles in a single call (NEW for VUV performance)
+//' 
+//' @param pitch_xptr External pointer to Pitch object
+//' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
+//' @param from_time Start time (0 = beginning)
+//' @param to_time End time (0 = end)
+//' @param unit Integer code for unit (0=HERTZ, etc)
+//' @return Named numeric vector with quantile values
+//' @keywords internal
+// [[Rcpp::export]]
+NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
+                                          NumericVector quantiles,
+                                          double from_time = 0,
+                                          double to_time = 0,
+                                          int unit = 0) {
+    XPtr<structPitch> pitch(pitch_xptr);
+    if (!pitch || pitch.get() == nullptr) {
+        stop("Invalid Pitch pointer");
+    }
+    
+    if (from_time == 0 && to_time == 0) {
+        from_time = pitch->xmin;
+        to_time = pitch->xmax;
+    }
+    
+    int n = quantiles.size();
+    NumericVector result(n);
+    CharacterVector names(n);
+    kPitch_unit p_unit = static_cast<kPitch_unit>(unit);
+    
+    try {
+        for (int i = 0; i < n; i++) {
+            result[i] = Pitch_getQuantile(pitch.get(), from_time, to_time,
+                                          quantiles[i], p_unit);
+            
+            // Create name like "q0.25", "q0.75"
+            std::ostringstream ss;
+            ss << "q" << quantiles[i];
+            names[i] = ss.str();
+        }
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to get pitch quantiles");
+    }
+    
+    result.names() = names;
+    return result;
 }
 
 // =============================================================================
@@ -509,7 +559,7 @@ List intensity_get_minimum_with_time(
             intensity.get(), from_time, to_time,
             kVector_peakInterpolation::PARABOLIC
         );
-        
+
         // To get time of minimum, use getMinimumAndX variant
         double time_of_min;
         Vector_getMinimumAndX(intensity.get(), from_time, to_time, 1,
@@ -523,5 +573,105 @@ List intensity_get_minimum_with_time(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to get intensity minimum");
+    }
+}
+
+
+// =============================================================================
+// Jitter/Shimmer Batch Operations (Voice Quality Analysis)
+// =============================================================================
+
+#include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/PointProcess_and_Sound.h"
+#include "praat.github.io/fon/VoiceAnalysis.h"
+
+//' Get all jitter and shimmer measures in a single C++ call
+//'
+//' @description
+//' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call.
+//' Much faster than calling individual methods when you need multiple measures.
+//'
+//' @param pp_xptr External pointer to PointProcess object
+//' @param sound_xptr External pointer to Sound object (required for shimmer)
+//' @param from_time Start time (0 = beginning)
+//' @param to_time End time (0 = end)
+//' @param period_floor Minimum period in seconds (default 0.0001)
+//' @param period_ceiling Maximum period in seconds (default 0.02)
+//' @param max_period_factor Maximum period factor (default 1.3)
+//' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
+//' @return Named list with 11 voice quality measures
+//' @keywords internal
+// [[Rcpp::export]]
+List get_jitter_shimmer_batch_cpp(
+    SEXP pp_xptr,
+    SEXP sound_xptr,
+    double from_time = 0,
+    double to_time = 0,
+    double period_floor = 0.0001,
+    double period_ceiling = 0.02,
+    double max_period_factor = 1.3,
+    double max_amplitude_factor = 1.6
+) {
+    XPtr<structPointProcess> pp(pp_xptr);
+    XPtr<structSound> sound(sound_xptr);
+
+    if (!pp || pp.get() == nullptr) {
+        stop("Invalid PointProcess pointer");
+    }
+    if (!sound || sound.get() == nullptr) {
+        stop("Invalid Sound pointer");
+    }
+
+    // Use object time range if not specified
+    if (from_time == 0 && to_time == 0) {
+        from_time = pp->xmin;
+        to_time = pp->xmax;
+    }
+
+    try {
+        // Jitter (5 measures)
+        double jitter_local = PointProcess_getJitter_local(
+            pp, from_time, to_time, period_floor, period_ceiling, max_period_factor
+        );
+        double jitter_local_abs = PointProcess_getJitter_local_absolute(
+            pp, from_time, to_time, period_floor, period_ceiling, max_period_factor
+        );
+        double jitter_rap = PointProcess_getJitter_rap(
+            pp, from_time, to_time, period_floor, period_ceiling, max_period_factor
+        );
+        double jitter_ppq5 = PointProcess_getJitter_ppq5(
+            pp, from_time, to_time, period_floor, period_ceiling, max_period_factor
+        );
+        double jitter_ddp = PointProcess_getJitter_ddp(
+            pp, from_time, to_time, period_floor, period_ceiling, max_period_factor
+        );
+
+        // Shimmer (6 measures) - use multi function for efficiency
+        double shimmer_local, shimmer_local_db, shimmer_apq3;
+        double shimmer_apq5, shimmer_apq11, shimmer_dda;
+
+        PointProcess_Sound_getShimmer_multi(
+            pp, sound, from_time, to_time, period_floor, period_ceiling,
+            max_period_factor, max_amplitude_factor,
+            &shimmer_local, &shimmer_local_db, &shimmer_apq3,
+            &shimmer_apq5, &shimmer_apq11, &shimmer_dda
+        );
+
+        return List::create(
+            Named("jitter_local") = jitter_local,
+            Named("jitter_local_abs") = jitter_local_abs,
+            Named("jitter_rap") = jitter_rap,
+            Named("jitter_ppq5") = jitter_ppq5,
+            Named("jitter_ddp") = jitter_ddp,
+            Named("shimmer_local") = shimmer_local,
+            Named("shimmer_local_db") = shimmer_local_db,
+            Named("shimmer_apq3") = shimmer_apq3,
+            Named("shimmer_apq5") = shimmer_apq5,
+            Named("shimmer_apq11") = shimmer_apq11,
+            Named("shimmer_dda") = shimmer_dda
+        );
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute jitter/shimmer measures");
     }
 }

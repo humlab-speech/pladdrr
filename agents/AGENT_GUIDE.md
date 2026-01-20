@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.1.1 (2026-01-19)
+**Version:** 4.3.0 (2026-01-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -16,6 +16,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 5. **Batch Operations**: Use batch query functions when extracting multiple values
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()` for 20-150x speedups (Pattern 2i)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
+8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
 
 ---
 
@@ -572,6 +573,11 @@ pitches <- sound_to_pitch_cc_batch(sounds, voicing_threshold = 0.6)
 - `to_spectrogram_direct(sound, ...)` → Spectrogram XPtr (v2.3.0)
 - `to_ltas_direct(sound, bandwidth)` → LTAS XPtr (v2.3.0)
 - `to_point_process_direct(sound, ...)` → PointProcess XPtr (v2.3.0)
+- `to_point_process_from_sound_and_pitch(sound, pitch)` → PointProcess XPtr (multi-object)
+
+**Pipeline functions (v4.3.0+):**
+- `two_pass_adaptive_pitch(sound, ...)` → list(pitch, min_pitch, max_pitch, q1, q3)
+- `get_jitter_shimmer_batch(pointprocess, sound, ...)` → list(11 voice quality metrics)
 
 **Direct API functions for queries (accepts string units):**
 - `get_pitch_value_direct(pitch_xptr, time, unit, interpolate)` - Single F0 value (unit: "hertz", "semitones", etc.)
@@ -980,6 +986,129 @@ powers <- spectrum$get_power_at_frequencies(freqs)
 | PointProcess | `get_periods_vector()` | 10x | Jitter period analysis |
 | PointProcess | `get_jitter_batch()` | 5x | All jitter measures at once |
 | Spectrum | `get_power_at_frequencies()` | 10x | Harmonic power extraction |
+
+---
+
+### Pattern 2k: Pipeline Operations (v4.3.0+)
+
+**Performance:** 5-10x faster for multi-step analysis workflows.
+
+Pipeline functions combine common multi-step workflows into single optimized calls.
+
+#### Two-Pass Adaptive Pitch Extraction
+
+**Problem:** Fixed pitch range often misses speaker's actual range (creaky voice = low, children = high).
+
+**Solution:** `two_pass_adaptive_pitch()` - Speaker-adaptive pitch extraction in one call.
+
+```r
+# OLD WAY: Manual two-pass implementation (5+ function calls)
+pitch_rough <- to_pitch_cc_direct(sound, pitch_floor = 50, pitch_ceiling = 800)
+q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
+q3 <- get_pitch_quantile_direct(pitch_rough, 0.75, unit = "hertz")
+min_pitch <- q1 * 0.75
+max_pitch <- q3 * 1.5
+pitch_refined <- to_pitch_cc_direct(sound, pitch_floor = min_pitch, pitch_ceiling = max_pitch)
+
+# NEW WAY: Single pipeline function (v4.3.0+)
+result <- two_pass_adaptive_pitch(sound)
+# Returns: list(pitch, min_pitch, max_pitch, q1, q3)
+
+pitch_ptr <- result$pitch          # Refined pitch XPtr
+speaker_range <- c(result$min_pitch, result$max_pitch)  # Speaker's pitch range
+
+# Customization options:
+result <- two_pass_adaptive_pitch(
+  sound,
+  initial_floor = 75,       # Start higher for known adult
+  initial_ceiling = 500,    # Start lower for known adult
+  voicing_threshold = 0.5,  # Stricter voicing detection
+  q1_factor = 0.80,         # Less aggressive low bound (default: 0.75)
+  q3_factor = 1.25,         # Less aggressive high bound (default: 1.5)
+  method = "ac"             # Use autocorrelation method (default: "cc")
+)
+```
+
+**Use cases:**
+- Speaker-adaptive pitch tracking (unknown speaker demographics)
+- Creaky voice analysis (needs lower floor detection)
+- Child speech analysis (needs higher ceiling detection)
+- Clinical voice analysis (abnormal pitch ranges)
+
+#### Batch Voice Quality Metrics
+
+**Problem:** Getting all jitter/shimmer measures requires 11 separate C++ calls.
+
+**Solution:** `get_jitter_shimmer_batch()` - All 11 metrics in one C++ call.
+
+```r
+# Create PointProcess from Sound + Pitch
+result <- two_pass_adaptive_pitch(sound)
+pp <- to_point_process_from_sound_and_pitch(sound, result$pitch)
+
+# OLD WAY: 11 separate calls
+jitter_local <- pp$get_jitter_local(0, 0, 0.0001, 0.02, 1.3)
+jitter_rap <- pp$get_jitter_rap(0, 0, 0.0001, 0.02, 1.3)
+shimmer_local <- pp$get_shimmer_local(sound, 0, 0, 0.0001, 0.02, 1.3, 1.6)
+# ... 8 more calls ...
+
+# NEW WAY: Single batch call (v4.3.0+)
+metrics <- get_jitter_shimmer_batch(pp, sound)
+# Returns named list with all 11 metrics:
+# $jitter_local, $jitter_local_abs, $jitter_rap, $jitter_ppq5, $jitter_ddp
+# $shimmer_local, $shimmer_local_db, $shimmer_apq3, $shimmer_apq5, $shimmer_apq11, $shimmer_dda
+
+# Extract what you need
+jitter_local <- metrics$jitter_local
+shimmer_apq3 <- metrics$shimmer_apq3
+
+# Custom parameters
+metrics <- get_jitter_shimmer_batch(
+  pp, sound,
+  from_time = 0.5, to_time = 1.5,   # Time range
+  period_floor = 0.0001,             # Min period (default)
+  period_ceiling = 0.02,             # Max period (default)
+  max_period_factor = 1.3,           # Jitter threshold (default)
+  max_amplitude_factor = 1.6         # Shimmer threshold (default)
+)
+```
+
+#### Complete Voice Quality Workflow (v4.3.0)
+
+**Combine both functions for optimal voice quality analysis:**
+
+```r
+# Load sound
+sound <- Sound("patient_vowel.wav")
+
+# Step 1: Adaptive pitch extraction (handles unknown speaker range)
+pitch_result <- two_pass_adaptive_pitch(sound)
+
+# Step 2: Create glottal pulses
+pp <- to_point_process_from_sound_and_pitch(sound, pitch_result$pitch)
+
+# Step 3: Get all voice quality metrics
+metrics <- get_jitter_shimmer_batch(pp, sound)
+
+# Step 4: Calculate additional measures
+mean_f0 <- get_pitch_mean_direct(pitch_result$pitch)
+stdev_f0 <- get_pitch_stdev_direct(pitch_result$pitch)
+hnr <- mean(to_harmonicity_direct(sound)$values, na.rm = TRUE)
+
+# Combine into report
+voice_quality <- c(
+  mean_f0 = mean_f0,
+  stdev_f0 = stdev_f0,
+  pitch_range = paste0(round(pitch_result$min_pitch), "-", round(pitch_result$max_pitch), " Hz"),
+  hnr = hnr,
+  metrics
+)
+```
+
+| Function | Speedup | Use Case |
+|----------|---------|----------|
+| `two_pass_adaptive_pitch()` | 2x | Speaker-adaptive pitch extraction |
+| `get_jitter_shimmer_batch()` | 5-10x | All 11 voice quality metrics |
 
 ---
 
@@ -2171,6 +2300,20 @@ When reimplementing Praat code that involves:
 ---
 
 ## Version History
+
+**v4.3.0 (2026-01-19):**
+- **NEW: Pipeline Operations** - Composite functions for common analysis workflows
+  - `two_pass_adaptive_pitch(sound, ...)` - Two-pass adaptive pitch extraction
+    - Pass 1: Wide range (50-800 Hz) to find speaker's actual range
+    - Pass 2: Refined range based on Q1/Q3 (default: Q1×0.75 to Q3×1.5)
+    - Returns: list(pitch, min_pitch, max_pitch, q1, q3)
+    - Handles unvoiced sounds gracefully (returns initial range)
+    - Supports both AC and CC methods via `method` parameter
+  - `get_jitter_shimmer_batch(pointprocess, sound, ...)` - All 11 voice quality metrics in single C++ call
+    - Jitter: local, local_abs, rap, ppq5, ddp
+    - Shimmer: local, local_db, apq3, apq5, apq11, dda
+    - 5-10x faster than calling individual methods
+- **Performance improvement:** Complete voice quality workflow in 3 function calls vs 15+
 
 **v4.0.14 (2026-01-18):**
 - **NEW: Batch API v4.0.14** - Targeted optimizations for voice quality analysis pipelines
