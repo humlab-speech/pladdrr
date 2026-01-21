@@ -321,8 +321,10 @@ void detect_formant_jumps_simd(
             
             auto mask = diff > max_jump_batch;
             
+            // Convert boolean mask to double (true->1.0, false->0.0) then check
+            batch mask_as_double = xsimd::select(mask, batch(1.0), batch(0.0));
             alignas(32) double mask_vals[simd_size];
-            xsimd::batch_bool_cast<double>(mask).store_aligned(mask_vals);
+            mask_as_double.store_aligned(mask_vals);
             
             for (size_t i = 0; i < simd_size; ++i) {
                 jump_detected[(t + i) * max_formants + f] = (mask_vals[i] != 0.0);
