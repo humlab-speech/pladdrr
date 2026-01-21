@@ -58,17 +58,19 @@ Track your SIMD optimization progress with this checklist.
 ---
 
 ### Task 1.3: Formant Extraction Integration
-**Owner**: ___________  
-**Started**: ___________  **Completed**: ___________
+**Owner**: Claude
+**Started**: 2026-01-21  **Completed**: 2026-01-21 (infrastructure)
 
-- [ ] Read Sound_to_Formant.cpp
-- [ ] Understand Burg algorithm flow
-- [ ] Create formant_simd_bridge.cpp
-- [ ] Integrate lpc_burg_simd
-- [ ] Integrate pre-emphasis SIMD filter
-- [ ] Integrate window SIMD
-- [ ] Add SIMD polynomial root finding
-- [ ] Compile successfully
+- [x] Read Sound_to_Formant.cpp
+- [x] Understand Burg algorithm flow
+- [x] Create formant_simd_bridge.cpp
+- [x] Integrate lpc_burg_simd (VECburg_simd_bridge)
+- [x] Add formant_lpc_simd.cpp and formant_simd_bridge.cpp to build system
+- [x] Integrate into Sound_to_Formant.cpp (conditional SIMD/scalar path)
+- [x] Compile successfully (syntax verified)
+- [ ] Integrate pre-emphasis SIMD filter (deferred - applied at Sound level)
+- [ ] Integrate window SIMD (already available from Task 1.4)
+- [ ] Add SIMD polynomial root finding (placeholder exists, complex implementation)
 - [ ] Test accuracy (formants within 5 Hz)
 - [ ] Benchmark performance
 - [ ] Achieved speedup: _____ x (target: 2-4x)
@@ -79,6 +81,33 @@ Track your SIMD optimization progress with this checklist.
 
 **Notes**:
 ```
+2026-01-21: Task 1.3 Infrastructure Complete
+- Created formant_simd_bridge.cpp with SIMD Burg's algorithm bridge
+- Implemented VECburg_simd_bridge() - direct SIMD replacement for VECburg()
+- Uses formant_simd_direct::burg_simd() for SIMD-accelerated LPC coefficient extraction
+- Added to build system (Makevars.in, Makevars)
+- Integrated into Sound_to_Formant.cpp with conditional compilation
+- Pre-emphasis: Sound_preEmphasize_inplace() called before Burg (at Sound object level)
+- Polynomial root finding: Placeholder exists in formant_lpc_simd.cpp, requires complex eigenvalue/iterative method
+
+Integration Status:
+- formant_lpc_simd.cpp: Contains autocorrelation_simd, lpc_burg_simd, estimate_bandwidths_simd
+- formant_simd_bridge.cpp: Bridges Praat VEC interface to SIMD implementations
+- Sound_to_Formant.cpp: Uses VECburg_simd_bridge() when HAVE_XSIMD && should_use_simd_for_formants()
+
+Technical Details:
+- Burg's algorithm: Forward/backward prediction errors updated with SIMD
+- Reflection coefficients (PARCOR): SIMD numerator/denominator accumulation
+- LPC update: SIMD coefficient updates with FMA operations
+- Expected 2-4x speedup for formant extraction (pending full benchmarks)
+
+Remaining Work:
+- Polynomial root finding SIMD optimization (complex, may defer to Phase 4)
+- Full integration testing with real audio
+- Benchmark against scalar VECburg()
+- Accuracy validation (formants should match within 5 Hz)
+
+Next: Full package build and benchmarking (Task 1.5)
 ```
 
 ---
