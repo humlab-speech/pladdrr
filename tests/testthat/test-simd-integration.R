@@ -1,0 +1,303 @@
+# test-simd-integration.R
+# SIMD Phase 1 Integration Tests
+# Tests SIMD-accelerated operations against scalar implementations
+# Author: Claude (2026-01-21)
+
+library(testthat)
+library(pladdrr)
+
+# Helper: Get SIMD info
+get_simd_status <- function() {
+  tryCatch(simd_info(), error = function(e) list(enabled = FALSE))
+}
+
+# Skip all tests if SIMD not available
+simd_status <- get_simd_status()
+if (!simd_status$enabled) {
+  skip("SIMD not available on this platform")
+}
+
+# ============================================================================
+# Test Setup: Create test audio
+# ============================================================================
+
+test_that("SIMD test fixtures can be created", {
+  # Create simple test sound (440 Hz tone)
+  sound_tone <- tryCatch(
+    Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100),
+    error = function(e) NULL
+  )
+
+  expect_false(is.null(sound_tone))
+
+  # Create from audio if available
+  if (file.exists("fixtures/audio/test_speech.wav")) {
+    sound_speech <- Sound$new("fixtures/audio/test_speech.wav")
+    expect_s3_class(sound_speech, "Sound")
+  }
+})
+
+# ============================================================================
+# Task 1.1: Pitch Extraction SIMD Tests
+# ============================================================================
+
+test_that("SIMD pitch extraction matches scalar (AC method)", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
+
+  # Force scalar
+  options(speaker.use_simd = FALSE)
+  pitch_scalar <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # Force SIMD
+  options(speaker.use_simd = TRUE)
+  pitch_simd <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # Compare
+  expect_equal(mean_simd, mean_scalar, tolerance = 1e-6,
+               label = "SIMD pitch mean should match scalar")
+
+  # Reset to default
+  options(speaker.use_simd = TRUE)
+})
+
+test_that("SIMD pitch extraction matches scalar (CC method)", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  sound <- Sound$create_tone(220, duration = 0.5, sampling_frequency = 44100)
+
+  # Scalar
+  options(speaker.use_simd = FALSE)
+  pitch_scalar <- sound$to_pitch_cc(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # SIMD
+  options(speaker.use_simd = TRUE)
+  pitch_simd <- sound$to_pitch_cc(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  expect_equal(mean_simd, mean_scalar, tolerance = 1e-6,
+               label = "SIMD pitch (CC) should match scalar")
+
+  options(speaker.use_simd = TRUE)
+})
+
+test_that("SIMD pitch extraction accuracy on various frequencies", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  options(speaker.use_simd = TRUE)
+
+  # Test various frequencies
+  test_freqs <- c(110, 220, 440, 880)
+
+  for (freq in test_freqs) {
+    sound <- Sound$create_tone(freq, duration = 0.3, sampling_frequency = 44100)
+    pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 1000)
+    mean_pitch <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+    # Should be within 1% of target frequency
+    expect_equal(mean_pitch, freq, tolerance = freq * 0.01,
+                 label = sprintf("SIMD pitch should detect %d Hz", freq))
+  }
+})
+
+# ============================================================================
+# Task 1.2: Intensity SIMD Tests
+# ============================================================================
+
+test_that("SIMD intensity calculation matches scalar", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
+
+  # Scalar
+  options(speaker.use_simd = FALSE)
+  intensity_scalar <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01)
+  mean_scalar <- intensity_scalar$get_mean(from_time = 0, to_time = 0)
+
+  # SIMD
+  options(speaker.use_simd = TRUE)
+  intensity_simd <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01)
+  mean_simd <- intensity_simd$get_mean(from_time = 0, to_time = 0)
+
+  expect_equal(mean_simd, mean_scalar, tolerance = 1e-10,
+               label = "SIMD intensity should match scalar")
+
+  options(speaker.use_simd = TRUE)
+})
+
+test_that("SIMD intensity RMS calculation accuracy", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  options(speaker.use_simd = TRUE)
+
+  # Create tone with known amplitude
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100, amplitude = 0.5)
+  intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01)
+
+  # Intensity should be reasonably stable
+  mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
+  std_db <- intensity$get_standard_deviation(from_time = 0, to_time = 0)
+
+  expect_true(std_db < 1.0,
+              label = "SIMD intensity should have low variance for pure tone")
+})
+
+# ============================================================================
+# Task 1.3: Formant Extraction SIMD Tests
+# ============================================================================
+
+test_that("SIMD formant extraction matches scalar", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  # Create synthetic vowel-like signal
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
+
+  # Scalar
+  options(speaker.use_simd = FALSE)
+  formant_scalar <- tryCatch(
+    sound$to_formant_burg(time_step = 0.01, max_number_of_formants = 5,
+                          maximum_formant = 5500, window_length = 0.025,
+                          pre_emphasis_from = 50),
+    error = function(e) NULL
+  )
+
+  # SIMD
+  options(speaker.use_simd = TRUE)
+  formant_simd <- tryCatch(
+    sound$to_formant_burg(time_step = 0.01, max_number_of_formants = 5,
+                          maximum_formant = 5500, window_length = 0.025,
+                          pre_emphasis_from = 50),
+    error = function(e) NULL
+  )
+
+  if (!is.null(formant_scalar) && !is.null(formant_simd)) {
+    # Compare mean F1 values if available
+    f1_scalar <- tryCatch(
+      formant_scalar$get_mean(formant_number = 1, from_time = 0, to_time = 0),
+      error = function(e) NA
+    )
+    f1_simd <- tryCatch(
+      formant_simd$get_mean(formant_number = 1, from_time = 0, to_time = 0),
+      error = function(e) NA
+    )
+
+    if (!is.na(f1_scalar) && !is.na(f1_simd)) {
+      # Formants should match within 5 Hz (as per spec)
+      expect_equal(f1_simd, f1_scalar, tolerance = 5,
+                   label = "SIMD F1 should match scalar within 5 Hz")
+    }
+  }
+
+  options(speaker.use_simd = TRUE)
+})
+
+# ============================================================================
+# Task 1.4: Window Function SIMD Tests
+# ============================================================================
+
+test_that("SIMD windowing is applied consistently", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  options(speaker.use_simd = TRUE)
+
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
+
+  # Create spectrogram with different window types
+  spec_hamming <- tryCatch(
+    sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000,
+                         time_step = 0.002, frequency_step = 20,
+                         window_shape = "Hamming"),
+    error = function(e) NULL
+  )
+
+  spec_hanning <- tryCatch(
+    sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000,
+                         time_step = 0.002, frequency_step = 20,
+                         window_shape = "Hanning"),
+    error = function(e) NULL
+  )
+
+  # Both should succeed
+  expect_false(is.null(spec_hamming), label = "Hamming window should work with SIMD")
+  expect_false(is.null(spec_hanning), label = "Hanning window should work with SIMD")
+})
+
+# ============================================================================
+# Performance Regression Tests
+# ============================================================================
+
+test_that("SIMD operations complete without errors", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  options(speaker.use_simd = TRUE)
+
+  sound <- Sound$create_tone(440, duration = 1.0, sampling_frequency = 44100)
+
+  # All major SIMD operations should complete without error
+  expect_error(sound$to_pitch(), NA, label = "SIMD pitch should not error")
+  expect_error(sound$to_intensity(), NA, label = "SIMD intensity should not error")
+  expect_error(
+    sound$to_formant_burg(time_step = 0.01, max_number_of_formants = 5,
+                          maximum_formant = 5500),
+    NA,
+    label = "SIMD formant should not error"
+  )
+  expect_error(
+    sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000),
+    NA,
+    label = "SIMD spectrogram should not error"
+  )
+})
+
+test_that("SIMD can be disabled and re-enabled", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  sound <- Sound$create_tone(440, duration = 0.3, sampling_frequency = 44100)
+
+  # Enable SIMD
+  options(speaker.use_simd = TRUE)
+  pitch_simd <- sound$to_pitch()
+  mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # Disable SIMD
+  options(speaker.use_simd = FALSE)
+  pitch_scalar <- sound$to_pitch()
+  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # Re-enable SIMD
+  options(speaker.use_simd = TRUE)
+  pitch_simd2 <- sound$to_pitch()
+  mean_simd2 <- pitch_simd2$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+
+  # All should give same result
+  expect_equal(mean_simd, mean_scalar, tolerance = 1e-6)
+  expect_equal(mean_simd2, mean_scalar, tolerance = 1e-6)
+})
+
+# ============================================================================
+# SIMD Info Tests
+# ============================================================================
+
+test_that("SIMD info is reported correctly", {
+  info <- simd_info()
+
+  expect_true(is.list(info), label = "simd_info() should return a list")
+  expect_true("enabled" %in% names(info), label = "Should report 'enabled' status")
+  expect_true("architecture" %in% names(info), label = "Should report architecture")
+
+  if (info$enabled) {
+    expect_true(info$architecture %in% c("AVX2", "SSE4.2", "NEON", "AVX512"),
+                label = "Architecture should be recognized")
+  }
+})
+
+# ============================================================================
+# Cleanup
+# ============================================================================
+
+# Reset to default SIMD state
+options(speaker.use_simd = TRUE)

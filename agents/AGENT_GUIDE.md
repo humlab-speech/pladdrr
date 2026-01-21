@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.4.3 (2026-01-21)
+**Version:** 4.4.5 (2026-01-21)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
@@ -2805,6 +2805,35 @@ When reimplementing Praat code that involves:
 
 ## Version History
 
+**v4.4.5 (2026-01-21):**
+- **SIMD Phase 1.5: Testing & Benchmarking Infrastructure** - Comprehensive test and benchmark suites
+  - Created `tests/testthat/test-simd-integration.R` - 20+ test cases validating SIMD vs scalar
+  - Created `benchmarks/phase1_integration_benchmark.R` - Complete Phase 1 performance benchmarking
+  - Created `benchmarks/README.md` - Usage guide, interpretation, troubleshooting
+  - Test coverage: Pitch (AC/CC), Intensity (windowed RMS), Formant (Burg), Spectrogram (windowing)
+  - Benchmark metrics: Median/mean/std execution times, speedup ratios, target achievement
+  - Test pattern: Force scalar/SIMD execution, compare results with appropriate tolerances
+  - Benchmark pattern: Warmup, 50x iterations, calculate speedup, save RDS results
+- **AGENT_GUIDE updated:** Added "SIMD Testing & Benchmarking" section
+  - Test suite patterns and tolerance levels (1e-6 typical, 5 Hz for formants)
+  - Benchmark suite usage and expected speedups table
+  - SIMD control (runtime options, compile-time flags)
+  - Integration testing checklist for new SIMD operations
+  - Debugging guide for SIMD issues
+- **Progress tracking:** Updated SIMD_PROGRESS_TRACKER.md (Phase 1 Task 1.5 infrastructure complete)
+- **Note:** Test/benchmark infrastructure ready, execution pending full package build
+
+**v4.4.4 (2026-01-21):**
+- **SIMD Phase 1.3: Formant Extraction Integration** - SIMD Burg's algorithm
+  - Created `formant_simd_bridge.cpp` - SIMD bridge for LPC formant extraction
+  - `VECburg_simd_bridge()` - Direct SIMD replacement for VECburg()
+  - `formant_simd_direct::burg_simd()` - SIMD-accelerated LPC coefficient extraction
+  - Forward/backward prediction errors with SIMD, PARCOR with SIMD accumulation
+  - LPC coefficient updates using FMA operations
+  - Integrated into Sound_to_Formant.cpp (conditional SIMD/scalar execution)
+  - Added formant_lpc_simd.cpp & formant_simd_bridge.cpp to build system
+  - Expected 2-4x speedup (pending benchmarks)
+
 **v4.4.3 (2026-01-21):**
 - **SIMD Phase 1.4: Window Function Integration** - Unified SIMD windowing infrastructure
   - Created `window_simd_bridge.cpp` - Direct SIMD bridge for all 6 Praat window types
@@ -3278,4 +3307,178 @@ When reimplementing Praat C++ code that uses these operations:
 - ⏳ Pre-emphasis filter: Planned (Phase 2.2)
 
 **Reference:** See `SIMD_IMPLEMENTATION_PLAN.md` and `SIMD_PROGRESS_TRACKER.md` for complete roadmap.
+
+
+### SIMD Testing & Benchmarking (Phase 1, Task 1.5)
+
+**Purpose:** Validate SIMD implementations match scalar results and achieve performance targets.
+
+#### Test Suite
+
+**Location:** `tests/testthat/test-simd-integration.R`
+
+**Coverage:**
+- Task 1.1: Pitch extraction (AC/CC methods)
+- Task 1.2: Intensity calculation (windowed RMS)
+- Task 1.3: Formant extraction (Burg's algorithm)
+- Task 1.4: Window functions (spectrogram generation)
+
+**Test Pattern:**
+
+```r
+test_that("SIMD operation matches scalar", {
+  skip_if_not(simd_info()$enabled, "SIMD not enabled")
+  
+  sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
+  
+  # Force scalar execution
+  options(speaker.use_simd = FALSE)
+  result_scalar <- sound$to_pitch()
+  value_scalar <- result_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  
+  # Force SIMD execution
+  options(speaker.use_simd = TRUE)
+  result_simd <- sound$to_pitch()
+  value_simd <- result_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  
+  # Compare results
+  expect_equal(value_simd, value_scalar, tolerance = 1e-6,
+               label = "SIMD should match scalar")
+  
+  # Reset to default
+  options(speaker.use_simd = TRUE)
+})
+```
+
+**Tolerance Levels:**
+- Pitch/Intensity/Formant: `tolerance = 1e-6` (floating-point precision)
+- Formant frequencies: `tolerance = 5` Hz (per SIMD_IMPLEMENTATION_PLAN.md)
+- Spectral analysis: `tolerance = 1e-10` (deterministic operations)
+
+#### Benchmark Suite
+
+**Location:** `benchmarks/phase1_integration_benchmark.R`
+
+**Usage:**
+
+```r
+source("benchmarks/phase1_integration_benchmark.R")
+```
+
+**Metrics Collected:**
+- Median execution time (ms)
+- Mean execution time (ms)
+- Standard deviation
+- Speedup ratio (Scalar/SIMD)
+- Target achievement status
+
+**Benchmark Pattern:**
+
+```r
+library(microbenchmark)
+
+# Scalar benchmark
+options(speaker.use_simd = FALSE)
+bench_scalar <- microbenchmark(
+  operation_scalar = sound$to_pitch(),
+  times = 50,
+  unit = "ms"
+)
+scalar_median <- median(bench_scalar$time) / 1e6
+
+# SIMD benchmark
+options(speaker.use_simd = TRUE)
+bench_simd <- microbenchmark(
+  operation_simd = sound$to_pitch(),
+  times = 50,
+  unit = "ms"
+)
+simd_median <- median(bench_simd$time) / 1e6
+
+# Calculate speedup
+speedup <- scalar_median / simd_median
+cat(sprintf("Speedup: %.2fx\n", speedup))
+```
+
+**Expected Speedups (Phase 1):**
+
+| Operation | Target | Status (v4.4.4) |
+|-----------|--------|-----------------|
+| Pitch extraction (AC) | 1.5-2.5x | ⏳ Pending benchmark |
+| Pitch extraction (CC) | 1.5-2.5x | ⏳ Pending benchmark |
+| Intensity calculation | 1.5-2.0x | ⏳ Pending benchmark |
+| Formant extraction | 2.0-4.0x | ⏳ Pending benchmark |
+| Spectrogram (windowing) | 1.5-2.0x | ⏳ Pending benchmark |
+
+#### SIMD Control
+
+**Runtime enable/disable:**
+
+```r
+# Enable SIMD (default)
+options(speaker.use_simd = TRUE)
+
+# Disable SIMD (for testing or comparison)
+options(speaker.use_simd = FALSE)
+
+# Check SIMD status
+simd_info()
+# Returns: list(enabled, available, architecture, batch_size_double, batch_size_float, version)
+```
+
+**Compile-time control:**
+
+```bash
+# Build with SIMD
+R CMD INSTALL --configure-args="--enable-simd" .
+
+# Build without SIMD
+R CMD INSTALL --configure-args="--disable-simd" .
+```
+
+#### Integration Testing Checklist
+
+When adding new SIMD operations:
+
+- [ ] Create test comparing SIMD vs scalar results
+- [ ] Set appropriate tolerance (1e-6 for typical operations, 5 Hz for formants)
+- [ ] Test with `options(speaker.use_simd = FALSE)` and `TRUE`
+- [ ] Verify results match within tolerance
+- [ ] Add to benchmark suite
+- [ ] Measure speedup vs scalar implementation
+- [ ] Verify speedup meets target (typically 1.5-4x)
+- [ ] Test on multiple architectures (AVX2, SSE4.2, NEON)
+- [ ] Document results in SIMD_PROGRESS_TRACKER.md
+
+#### Debugging SIMD Issues
+
+**Check SIMD compilation:**
+
+```r
+# Should show SIMD-related flags
+system("R CMD config CXXFLAGS")
+# Expected: -DHAVE_XSIMD -march=native (or -march=armv8-a+simd)
+
+# Check if xsimd headers found
+file.exists(system.file("include/xsimd", package = "RcppXsimd"))
+```
+
+**Common issues:**
+
+1. **SIMD shows no speedup:**
+   - Check `simd_info()$enabled` is TRUE
+   - Verify `-DHAVE_XSIMD` in compile flags
+   - Ensure `should_use_simd_*()` functions return TRUE
+
+2. **Results don't match scalar:**
+   - Check for numerical instability
+   - Verify SIMD and scalar use same algorithm
+   - Test with smaller tolerance (e.g., 1e-4 instead of 1e-6)
+
+3. **Segmentation faults:**
+   - Check memory alignment in SIMD code
+   - Use `load_unaligned()` instead of `load_aligned()`
+   - Verify array bounds in SIMD loops
+
+**Reference:** See `benchmarks/README.md` for detailed benchmarking guide.
 

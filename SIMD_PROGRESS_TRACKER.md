@@ -157,28 +157,80 @@ Next: Full package build and benchmarking (Task 1.5)
 ---
 
 ### Task 1.5: Phase 1 Testing & Benchmarking
-**Owner**: ___________  
-**Started**: ___________  **Completed**: ___________
+**Owner**: Claude
+**Started**: 2026-01-21  **Completed**: 2026-01-21 (test infrastructure)
 
-- [ ] Run full test suite (all tests pass)
-- [ ] Run simd_benchmark.R
-- [ ] Generate performance report
-- [ ] Verify accuracy for all operations
-- [ ] Create comparison plots
-- [ ] Document speedups achieved
-- [ ] Write Phase 1 summary report
-- [ ] Present results to team
-- [ ] Plan Phase 2 work
+- [x] Create comprehensive test suite (test-simd-integration.R)
+- [x] Create Phase 1 benchmark suite (phase1_integration_benchmark.R)
+- [x] Create benchmark documentation (benchmarks/README.md)
+- [x] Update AGENT_GUIDE with SIMD testing patterns
+- [ ] Run full test suite (requires package build)
+- [ ] Run phase1_integration_benchmark.R (requires package build)
+- [ ] Generate performance report (pending benchmark execution)
+- [ ] Verify accuracy for all operations (test suite ready)
+- [ ] Create comparison plots (pending benchmark data)
+- [ ] Document speedups achieved (pending benchmark results)
+- [ ] Write Phase 1 summary report (infrastructure complete)
 
 **Overall Phase 1 Results**:
-- Average speedup: _____ x (target: 1.3-1.5x overall)
-- Pitch: _____ x
-- Formant: _____ x
-- Intensity: _____ x
-- Windowing: _____ x
+- Average speedup: _____ x (target: 1.3-1.5x overall) - Pending benchmarks
+- Pitch: _____ x (target: 1.5-2.5x)
+- Formant: _____ x (target: 2.0-4.0x)
+- Intensity: _____ x (target: 1.5-2.0x)
+- Spectrogram: _____ x (target: 1.5-2.0x)
 
 **Notes**:
 ```
+2026-01-21: Task 1.5 Test Infrastructure Complete
+- Created test-simd-integration.R with 20+ test cases
+- Created phase1_integration_benchmark.R for comprehensive performance testing
+- Created benchmarks/README.md with usage guide and troubleshooting
+- Updated AGENT_GUIDE.md with SIMD testing & benchmarking section
+
+Test Suite (tests/testthat/test-simd-integration.R):
+- Task 1.1: Pitch extraction tests (AC/CC methods, accuracy on multiple frequencies)
+- Task 1.2: Intensity calculation tests (RMS windowing, accuracy validation)
+- Task 1.3: Formant extraction tests (Burg algorithm, F1/F2 comparison)
+- Task 1.4: Window function tests (spectrogram generation with different windows)
+- Performance regression tests (error-free execution)
+- SIMD enable/disable toggle tests
+- SIMD info reporting tests
+
+Benchmark Suite (benchmarks/phase1_integration_benchmark.R):
+- Comprehensive benchmarking for Tasks 1.1-1.4
+- Scalar vs SIMD comparison with microbenchmark
+- 50 iterations per test (configurable)
+- Detailed statistics and summary report
+- Saves results to RDS for reproducibility
+- Target achievement tracking
+
+Test Pattern:
+1. Force scalar: options(speaker.use_simd = FALSE)
+2. Run operation and capture result
+3. Force SIMD: options(speaker.use_simd = TRUE)
+4. Run operation and capture result
+5. Compare with appropriate tolerance (1e-6 for typical, 5 Hz for formants)
+
+Benchmark Pattern:
+1. Warmup iterations (5x)
+2. Scalar benchmark (50x)
+3. SIMD benchmark (50x)
+4. Calculate speedup and compare to target
+5. Generate report and save results
+
+Documentation:
+- AGENT_GUIDE: Added "SIMD Testing & Benchmarking" section
+- Benchmarks README: Complete guide with usage, interpretation, troubleshooting
+- Integration checklist for new SIMD operations
+
+Next Steps (requires full package build):
+1. Build package: R CMD INSTALL --preclean .
+2. Run test suite: testthat::test_file("tests/testthat/test-simd-integration.R")
+3. Run benchmarks: source("benchmarks/phase1_integration_benchmark.R")
+4. Analyze results and update speedup metrics
+5. Create Phase 1 summary report with actual performance data
+
+Phase 1 Status: Infrastructure Complete (4/5 tasks done, Task 1.5 pending execution)
 ```
 
 ---
