@@ -1,7 +1,39 @@
 # pladdrr Agent Guide
 
-**Version:** 4.4.5 (2026-01-21)
+**Version:** 4.4.6 (2026-01-21)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
+
+---
+
+## Recent Bug Fixes (v4.4.6)
+
+### SIMD Compilation Issues
+When working with xsimd boolean masks from comparison operations:
+- **WRONG:** `xsimd::batch_bool_cast<double>(mask).store_aligned(double_array)` - Type mismatch error
+- **CORRECT:** Use `xsimd::select(mask, batch(1.0), batch(0.0))` to convert boolean mask to double batch before storing
+
+### Rcpp Module Method Names
+The `sound_module` exposes methods with `_ptr` suffix but R wrappers should use clean names:
+- **Module method:** `cpp_snd$to_formant_burg_ptr()` or `cpp_snd$to_formant_burg()` (alias added in v4.4.6)
+- **R wrapper:** `sound$to_formant_burg()` calls the module method internally
+- **Parameter types:** Ensure correct types (e.g., `max_formants` expects `double` not `int`)
+
+### Error Handling Best Practices
+When catching `MelderError` in C++:
+```cpp
+try {
+    autoFormant formant = Sound_to_Formant_burg(...);
+    return create_xptr_from_auto<structFormant>(formant);
+} catch (MelderError) {
+    std::string error_msg = "Failed to create Formant: ";
+    conststring32 praat_error = Melder_getError();
+    if (praat_error) {
+        error_msg += Melder_peek32to8(praat_error);
+    }
+    Melder_clearError();
+    Rcpp::stop(error_msg);  // Show actual Praat error details
+}
+```
 
 ---
 
