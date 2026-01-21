@@ -355,11 +355,14 @@ Sound <- function(path = NULL, .xptr = NULL) {
     to_formant_burg = function(time_step = 0.005, max_formants = 5.0,
                                max_frequency = 5500.0, window_length = 0.025,
                                pre_emphasis_from = 50.0) {
-      formant_ptr <- cpp_snd$to_formant_burg_ptr(
-        as.numeric(time_step), as.numeric(max_formants),
+      formant_ptr <- cpp_snd$to_formant_burg(
+        as.numeric(time_step), as.integer(max_formants),
         as.numeric(max_frequency), as.numeric(window_length),
         as.numeric(pre_emphasis_from)
       )
+      if (is.null(formant_ptr) || !inherits(formant_ptr, "externalptr")) {
+        stop("Failed to create Formant from Sound")
+      }
       Formant(.xptr = formant_ptr)
     },
 
