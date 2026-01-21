@@ -272,8 +272,13 @@ public:
             Formant raw = result.releaseToAmbiguousOwner();
             return XPtr<structFormant>(raw, true);
         } catch (MelderError) {
+            std::string error_msg = "Failed to create Formant from Sound: ";
+            conststring32 praat_error = Melder_getError();
+            if (praat_error) {
+                error_msg += Melder_peek32to8(praat_error);
+            }
             Melder_clearError();
-            Rcpp::stop("Failed to create Formant from Sound");
+            Rcpp::stop(error_msg);
         }
     }
 
@@ -1057,6 +1062,7 @@ RCPP_MODULE(sound_module) {
         // Transform methods (return XPtrs)
         .method("to_pitch_ptr", &RSound::to_pitch_ptr, "Create Pitch from Sound")
         .method("to_formant_burg_ptr", &RSound::to_formant_burg_ptr, "Create Formant from Sound")
+        .method("to_formant_burg", &RSound::to_formant_burg_ptr, "Create Formant from Sound (alias)")
         .method("to_intensity_ptr", &RSound::to_intensity_ptr, "Create Intensity from Sound")
         .method("to_harmonicity_cc_ptr", &RSound::to_harmonicity_cc_ptr, "Create Harmonicity from Sound")
         .method("to_spectrum_ptr", &RSound::to_spectrum_ptr, "Create Spectrum from Sound")

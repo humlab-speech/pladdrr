@@ -356,7 +356,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
                                max_frequency = 5500.0, window_length = 0.025,
                                pre_emphasis_from = 50.0) {
       formant_ptr <- cpp_snd$to_formant_burg(
-        as.numeric(time_step), as.integer(max_formants),
+        as.numeric(time_step), as.numeric(max_formants),
         as.numeric(max_frequency), as.numeric(window_length),
         as.numeric(pre_emphasis_from)
       )

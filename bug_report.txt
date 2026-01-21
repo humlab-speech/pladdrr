@@ -1,0 +1,16 @@
+Bug Report
+Subject: extract_voiced_segments_ultra() accuracy regression in AVQI
+Body:
+Bug in pladdrr v4.4.2 extract_voiced_segments_ultra()
+Symptoms:
+- AVQI CPPS: 2.26 dB error vs Praat reference
+- AVQI Slope: 1.07 dB error
+- AVQI Tilt: 2.10 dB error
+Expected: Match Python/Parselmouth within 0.5 dB (Python is perfect)
+Test case: plabench AVQI v2.03 with 6 CS files + 4 SV files
+Workaround: Reverted to explicit R implementation, now accurate.
+The ultra function likely has bugs in:
+1. Zero-crossing rate calculation
+2. Power threshold filtering
+3. Window concatenation logic
+Recommendation: Compare C++ implementation against Python avqi.py lines 185-379.
