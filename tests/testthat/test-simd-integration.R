@@ -279,6 +279,91 @@ test_that("SIMD can be disabled and re-enabled", {
 })
 
 # ============================================================================
+# Phase 2, Task 2.1: Spectrogram Generation SIMD Tests
+# ============================================================================
+
+test_that("SIMD spectrogram generation matches scalar", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  sound <- Sound$create_tone(440, duration = 0.5)
+
+  # Force scalar
+  options(speaker.use_simd = FALSE)
+  spec_scalar <- tryCatch(
+    sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+                         time_step = 0.002, frequency_step = 20,
+                         window_shape = "Gaussian"),
+    error = function(e) NULL
+  )
+
+  # Force SIMD
+  options(speaker.use_simd = TRUE)
+  spec_simd <- tryCatch(
+    sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+                         time_step = 0.002, frequency_step = 20,
+                         window_shape = "Gaussian"),
+    error = function(e) NULL
+  )
+
+  # Both should succeed
+  expect_false(is.null(spec_scalar), label = "Scalar spectrogram should be created")
+  expect_false(is.null(spec_simd), label = "SIMD spectrogram should be created")
+
+  # Compare dimensions
+  if (!is.null(spec_scalar) && !is.null(spec_simd)) {
+    expect_equal(spec_simd$get_number_of_time_bins(), spec_scalar$get_number_of_time_bins(),
+                 label = "SIMD spectrogram should have same time frames as scalar")
+    expect_equal(spec_simd$get_number_of_frequency_bins(), spec_scalar$get_number_of_frequency_bins(),
+                 label = "SIMD spectrogram should have same frequency bins as scalar")
+
+    # Get matrix representation and compare values
+    # Allow small tolerance due to floating-point rounding in SIMD operations
+    mat_scalar <- tryCatch(spec_scalar$as_matrix(), error = function(e) NULL)
+    mat_simd <- tryCatch(spec_simd$as_matrix(), error = function(e) NULL)
+
+    if (!is.null(mat_scalar) && !is.null(mat_simd)) {
+      # Compare means (should be very close)
+      mean_scalar <- mean(mat_scalar, na.rm = TRUE)
+      mean_simd <- mean(mat_simd, na.rm = TRUE)
+      expect_equal(mean_simd, mean_scalar, tolerance = 1e-10,
+                   label = "SIMD spectrogram mean should match scalar")
+
+      # Compare max values
+      max_scalar <- max(mat_scalar, na.rm = TRUE)
+      max_simd <- max(mat_simd, na.rm = TRUE)
+      expect_equal(max_simd, max_scalar, tolerance = 1e-10,
+                   label = "SIMD spectrogram max should match scalar")
+    }
+  }
+
+  options(speaker.use_simd = TRUE)
+})
+
+test_that("SIMD spectrogram works with different window shapes", {
+  skip_if_not(simd_status$enabled, "SIMD not enabled")
+
+  options(speaker.use_simd = TRUE)
+  sound <- Sound$create_tone(880, duration = 0.3)
+
+  # Test multiple window shapes
+  window_shapes <- c("Hamming", "Hanning", "Gaussian", "Square", "Bartlett", "Welch")
+
+  for (shape in window_shapes) {
+    spec <- tryCatch(
+      sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+                           time_step = 0.002, frequency_step = 20,
+                           window_shape = shape),
+      error = function(e) NULL
+    )
+
+    expect_false(is.null(spec),
+                 label = paste("SIMD spectrogram should work with", shape, "window"))
+  }
+
+  options(speaker.use_simd = TRUE)
+})
+
+# ============================================================================
 # SIMD Info Tests
 # ============================================================================
 
