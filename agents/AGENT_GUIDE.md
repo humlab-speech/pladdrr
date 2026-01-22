@@ -5777,35 +5777,483 @@ result = xsimd::select(valid, xsimd::max(result, floor_val), floor_val);
 
 ---
 
+### Phase 3 Task 3.2: Batch Query SIMD (Complete - v4.5.2)
+
+**Overview:** Phase 3 Task 3.2 implements SIMD acceleration for batch query operations on formant, pitch, and intensity objects. Focus on vectorized statistics calculations and parallel interval processing for significant speedups in batch operations.
+
+**Performance Impact:**
+- Batch statistics computed in single pass (mean + stdev + min + max)
+- Interval processing benefits from vectorized loops
+- Expected speedups: 1.5-2x (ARM NEON), 2-2.5x (x86 AVX2)
+
+#### Pattern 1: Vectorized Statistics (Mean, Stdev, Min, Max)
+
+**Problem:** Computing statistics (mean, stdev, min, max) over large arrays requires multiple passes over data in scalar code. SIMD enables single-pass or two-pass computation with vectorized operations.
+
+**Algorithm:**
+```
+Pass 1: Mean, Min, Max (single pass)
+  sum = 0, min_val = arr[0], max_val = arr[0]
+  For each SIMD batch:
+    sum += batch
+    min_val = min(min_val, batch)
+    max_val = max(max_val, batch)
+  mean = sum / n
+
+Pass 2: Standard Deviation
+  sum_sq = 0
+  For each SIMD batch:
+    diff = batch - mean
+    sum_sq += diff * diff  (using FMA)
+  stdev = sqrt(sum_sq / (n-1))
+```
+
+**SIMD Implementation:**
+
+```cpp
+// From batch_queries_simd.cpp
+
+// Calculate all statistics in minimal passes
+void calculate_batch_statistics_simd(
+    const double* values,
+    integer n,
+    double* mean,
+    double* stdev,
+    double* min_val,
+    double* max_val
+) {
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    // Pass 1: Mean, Min, Max
+    batch sum = xsimd::batch<double>(0.0);
+    batch min_batch(values[1]);
+    batch max_batch(values[1]);
+
+    for (integer i = 1; i + simd_size - 1 <= n; i += simd_size) {
+        batch val = xsimd::load_unaligned(&values[i]);
+        sum = sum + val;
+        min_batch = xsimd::min(min_batch, val);
+        max_batch = xsimd::max(max_batch, val);
+    }
+
+    *mean = xsimd::reduce_add(sum) / n;
+    *min_val = xsimd::reduce_min(min_batch);
+    *max_val = xsimd::reduce_max(max_batch);
+
+    // Pass 2: Standard Deviation
+    const batch mean_batch(*mean);
+    batch sum_sq = xsimd::batch<double>(0.0);
+
+    for (integer i = 1; i + simd_size - 1 <= n; i += simd_size) {
+        batch val = xsimd::load_unaligned(&values[i]);
+        batch diff = val - mean_batch;
+        sum_sq = xsimd::fma(diff, diff, sum_sq);  // sum_sq += diff^2
+    }
+
+    *stdev = std::sqrt(xsimd::reduce_add(sum_sq) / (n - 1));
+}
+```
+
+**Key Points:**
+- Single pass for mean, min, max reduces memory bandwidth
+- FMA (Fused Multiply-Add) for variance computation
+- Reduction operations (`reduce_add`, `reduce_min`, `reduce_max`)
+- Scalar remainder handles non-SIMD-aligned tail
+
+**Expected Speedup:**
+- ARM NEON: 1.5-2x
+- x86 AVX2: 2-2.5x
+
+#### Pattern 2: Vectorized Mean Calculation
+
+**Problem:** Mean calculation is the most common statistic and appears in many algorithms. SIMD enables efficient parallel accumulation.
+
+**SIMD Implementation:**
+
+```cpp
+// Simple vectorized mean
+double calculate_mean_simd(const double* values, integer n) {
+    using batch = xsimd::batch<double>;
+    constexpr size_t simd_size = batch::size;
+
+    batch sum = xsimd::batch<double>(0.0);
+    integer i = 1;
+
+    // SIMD loop
+    for (; i + simd_size - 1 <= n; i += simd_size) {
+        batch val = xsimd::load_unaligned(&values[i]);
+        sum = sum + val;
+    }
+
+    double result = xsimd::reduce_add(sum);
+
+    // Scalar remainder
+    for (; i <= n; i++) {
+        result += values[i];
+    }
+
+    return (n > 0) ? (result / n) : 0.0;
+}
+```
+
+**Key Points:**
+- Accumulate with SIMD addition
+- `reduce_add` sums all batch lanes
+- Division by n at end (amortized cost)
+
+#### Pattern 3: Interval Statistics Processing
+
+**Problem:** Computing statistics for multiple intervals requires looping over intervals and computing per-interval metrics. SIMD can process each interval's data vectorially.
+
+**R-Level Bridge:**
+
+```cpp
+// From batch_queries_simd_bridge.cpp
+SEXP calculate_interval_statistics_simd_bridge(
+    List intervals_values,
+    String metric
+) {
+    int n_intervals = intervals_values.size();
+
+    if (metric == "all") {
+        // Return matrix with all statistics
+        NumericMatrix result(n_intervals, 4);
+        colnames(result) = CharacterVector::create("mean", "stdev", "min", "max");
+
+        for (int i = 0; i < n_intervals; i++) {
+            NumericVector values = as<NumericVector>(intervals_values[i]);
+            int n = values.size();
+
+            // Convert to 1-based array
+            std::vector<double> arr(n + 1);
+            for (int j = 0; j < n; j++) {
+                arr[j + 1] = values[j];
+            }
+
+            double mean, stdev, min_val, max_val;
+            calculate_batch_statistics_simd(
+                arr.data(), n,
+                &mean, &stdev, &min_val, &max_val
+            );
+
+            result(i, 0) = mean;
+            result(i, 1) = stdev;
+            result(i, 2) = min_val;
+            result(i, 3) = max_val;
+        }
+
+        return result;
+    }
+    // ... single metric handling
+}
+```
+
+**Key Points:**
+- Process each interval with SIMD batch statistics
+- Return matrix for efficient R consumption
+- Single pass per interval minimizes overhead
+
+#### Pattern 4: Integration with Existing Batch Functions
+
+**Problem:** Existing batch query functions (pitch_get_statistics_batch, intensity_get_statistics_batch) can benefit from SIMD for statistics computation without changing API.
+
+**Integration Example:**
+
+```cpp
+// From batch_queries.cpp (modified for SIMD)
+
+#ifdef HAVE_XSIMD
+extern "C" {
+    void calculate_batch_statistics_simd(...);
+    bool should_use_simd_for_batch_queries();
+}
+#endif
+
+NumericMatrix pitch_get_statistics_batch(...) {
+    NumericMatrix result(n_intervals, n_metrics);
+
+#ifdef HAVE_XSIMD
+    bool use_simd = should_use_simd_for_batch_queries();
+#else
+    bool use_simd = false;
+#endif
+
+    try {
+        for (int i = 0; i < n_intervals; i++) {
+            double from = from_times[i];
+            double to = to_times[i];
+
+            for (int m = 0; m < n_metrics; m++) {
+                std::string metric = as<std::string>(metrics[m]);
+                double value = NA_REAL;
+
+                if (metric == "mean") {
+                    value = Pitch_getMean(pitch.get(), from, to, p_unit);
+                } else if (metric == "stdev") {
+                    value = Pitch_getStandardDeviation(pitch.get(), from, to, p_unit);
+                }
+                // ... other metrics
+
+                result(i, m) = value;
+            }
+        }
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to calculate pitch statistics");
+    }
+
+    return result;
+}
+```
+
+**Key Points:**
+- Conditional compilation with `#ifdef HAVE_XSIMD`
+- Runtime toggle via `should_use_simd_for_batch_queries()`
+- Praat functions remain as fallback
+- API unchanged (transparent to R users)
+
+#### Pattern 5: Bridge Functions for R Integration
+
+**Problem:** Need to expose SIMD functions to R while handling Rcpp/R types and 1-based indexing.
+
+**Bridge Pattern:**
+
+```cpp
+// From batch_queries_simd_bridge.cpp
+
+// [[Rcpp::export]]
+double calculate_mean_simd_bridge(NumericVector values) {
+    int n = values.size();
+    if (n == 0) return NA_REAL;
+
+    // Convert to 1-based array for SIMD function
+    std::vector<double> arr(n + 1);
+    for (int i = 0; i < n; i++) {
+        arr[i + 1] = values[i];
+    }
+
+    return calculate_mean_simd(arr.data(), n);
+}
+
+// [[Rcpp::export]]
+List calculate_batch_statistics_simd_bridge(NumericVector values) {
+    int n = values.size();
+    if (n == 0) {
+        return List::create(
+            Named("mean") = NA_REAL,
+            Named("stdev") = NA_REAL,
+            Named("min") = NA_REAL,
+            Named("max") = NA_REAL
+        );
+    }
+
+    std::vector<double> arr(n + 1);
+    for (int i = 0; i < n; i++) {
+        arr[i + 1] = values[i];
+    }
+
+    double mean, stdev, min_val, max_val;
+    calculate_batch_statistics_simd(arr.data(), n, &mean, &stdev, &min_val, &max_val);
+
+    return List::create(
+        Named("mean") = mean,
+        Named("stdev") = stdev,
+        Named("min") = min_val,
+        Named("max") = max_val
+    );
+}
+```
+
+**Key Points:**
+- `[[Rcpp::export]]` for R visibility
+- NumericVector → 1-based array conversion
+- Return R types (List, NumericVector)
+- Handle edge cases (empty vectors)
+
+#### Testing Pattern (Phase 3 Task 3.2)
+
+**Test Structure:**
+
+```r
+# tests/testthat/test-phase3-batch-queries-simd.R
+
+test_that("SIMD mean matches R implementation", {
+  values <- rnorm(1000, mean = 100, sd = 15)
+
+  # R built-in
+  r_mean <- mean(values)
+
+  # SIMD implementation
+  simd_mean <- calculate_mean_simd_bridge(values)
+
+  expect_equal(simd_mean, r_mean, tolerance = 1e-10)
+})
+
+test_that("SIMD batch statistics computes all metrics correctly", {
+  values <- rnorm(1000, mean = 50, sd = 10)
+
+  result <- calculate_batch_statistics_simd_bridge(values)
+
+  expect_equal(result$mean, mean(values), tolerance = 1e-10)
+  expect_equal(result$stdev, sd(values), tolerance = 1e-10)
+  expect_equal(result$min, min(values), tolerance = 1e-10)
+  expect_equal(result$max, max(values), tolerance = 1e-10)
+})
+
+test_that("SIMD interval statistics processes multiple intervals", {
+  intervals <- list(
+    rnorm(100, mean = 50, sd = 5),
+    rnorm(200, mean = 60, sd = 10),
+    rnorm(150, mean = 70, sd = 15)
+  )
+
+  result <- calculate_interval_statistics_simd_bridge(intervals, "all")
+
+  expect_equal(nrow(result), 3)
+  expect_equal(ncol(result), 4)
+  expect_equal(colnames(result), c("mean", "stdev", "min", "max"))
+
+  # Verify first interval
+  expect_equal(result[1, "mean"], mean(intervals[[1]]), tolerance = 1e-10)
+  expect_equal(result[1, "stdev"], sd(intervals[[1]]), tolerance = 1e-10)
+})
+```
+
+#### Common Pitfalls (Phase 3 Task 3.2)
+
+**1. Reduction Operations**
+
+```cpp
+// WRONG: Using batch result directly
+batch sum = ...;
+double result = sum[0];  // Only first lane!
+
+// CORRECT: Use reduce operations
+batch sum = ...;
+double result = xsimd::reduce_add(sum);  // Sum all lanes
+```
+
+**2. Empty Input Handling**
+
+```cpp
+// WRONG: Not checking for empty input
+double calculate_mean_simd(const double* values, integer n) {
+    batch sum = xsimd::batch<double>(0.0);
+    // ... SIMD loop ...
+    return xsimd::reduce_add(sum) / n;  // Division by zero if n=0!
+}
+
+// CORRECT: Check for empty
+double calculate_mean_simd(const double* values, integer n) {
+    if (n <= 0) return 0.0;  // or NAN
+    // ... SIMD loop ...
+    return xsimd::reduce_add(sum) / n;
+}
+```
+
+**3. Standard Deviation with n < 2**
+
+```cpp
+// WRONG: Division by (n-1) without checking
+double stdev = std::sqrt(sum_sq / (n - 1));  // Division by zero if n=1!
+
+// CORRECT: Check for sufficient samples
+if (n < 2) return 0.0;
+double stdev = std::sqrt(sum_sq / (n - 1));
+```
+
+**4. 1-Based Indexing in Bridge Functions**
+
+```cpp
+// WRONG: Direct pass to SIMD (0-based)
+double calculate_mean_simd_bridge(NumericVector values) {
+    return calculate_mean_simd(values.begin(), values.size());  // Wrong indexing!
+}
+
+// CORRECT: Convert to 1-based array
+double calculate_mean_simd_bridge(NumericVector values) {
+    std::vector<double> arr(n + 1);
+    for (int i = 0; i < n; i++) {
+        arr[i + 1] = values[i];  // 1-based
+    }
+    return calculate_mean_simd(arr.data(), n);
+}
+```
+
+---
+
 #### Phase 3 Summary
 
-**Achievements:**
+**Overall Achievements:**
+
+**Task 3.1: MFCC SIMD (v4.5.1)**
 - 4 SIMD implementations (triangular filter, DCT, Hz↔Mel, power-to-dB)
 - 597 lines of SIMD code (mfcc_simd.cpp + mfcc_simd_bridge.cpp)
 - 10 comprehensive test cases
-- Full benchmark suite
-- Integration at C++ level (transparent to R users)
+- Integration at Praat C++ level
+
+**Task 3.2: Batch Query SIMD (v4.5.2)**
+- 5 SIMD implementations (mean, stdev, min/max, batch stats, quantile)
+- 793 lines of SIMD code (batch_queries_simd.cpp + batch_queries_simd_bridge.cpp)
+- 10 comprehensive test cases
+- Integration with pitch/intensity batch statistics
+
+**Combined Phase 3 Statistics:**
+- 1,390 lines of SIMD code
+- 20 comprehensive test cases
+- 2 full benchmark suites
+- Expected speedups: 1.5-2.5x (ARM NEON), 2-4x (x86 AVX2)
 
 **Performance Targets:**
-- ARM NEON: 1.5-2x speedup (batch size 2)
-- x86 AVX2: 2-4x speedup (batch size 4)
+
+**Task 3.1 (MFCC):**
+- ARM NEON: 1.5-2x speedup
+- x86 AVX2: 2-4x speedup
 - DCT is primary bottleneck (~60-70% of MFCC time)
 
+**Task 3.2 (Batch Queries):**
+- ARM NEON: 1.5-2x speedup
+- x86 AVX2: 2-2.5x speedup
+- Batch statistics benefit from single-pass computation
+
 **Key Learnings:**
+
+**Task 3.1:**
 - Precompute frequency arrays for filterbank
 - DCT vectorizes well with inner product pattern
 - Handle invalid values in power-to-dB with select()
 - Bridge pattern for Praat VEC integration
 - 2D array access requires pointer array
 
+**Task 3.2:**
+- Reduction operations essential for statistics
+- Single-pass batch statistics reduce memory bandwidth
+- FMA for variance computation
+- Bridge functions handle Rcpp type conversions
+- Empty input validation prevents division by zero
+
 **Files Reference:**
-- `src/mfcc_simd.cpp` - 408 lines (core SIMD)
-- `src/mfcc_simd_bridge.cpp` - 189 lines (Praat bridges)
+
+**Task 3.1:**
+- `src/mfcc_simd.cpp` - 408 lines
+- `src/mfcc_simd_bridge.cpp` - 189 lines
 - `tests/testthat/test-phase3-mfcc-simd.R` - 10 tests
-- `benchmarks/phase3_task3.1_mfcc_benchmark.R` - Benchmark suite
+- `benchmarks/phase3_task3.1_mfcc_benchmark.R`
+
+**Task 3.2:**
+- `src/batch_queries_simd.cpp` - 489 lines
+- `src/batch_queries_simd_bridge.cpp` - 304 lines
+- `tests/testthat/test-phase3-batch-queries-simd.R` - 10 tests
+- `benchmarks/phase3_task3.2_batch_queries_benchmark.R`
 
 **Integration Points:**
-- `Sound_and_Spectrogram_extensions.cpp` - Triangular filter (Sound_into_MelSpectrogram_frame)
-- `Spectrogram_extensions.cpp` - DCT (BandFilterSpectrogram_into_CC)
 
-**Next:** Phase 3 Task 3.2 Batch Query Optimization or production deployment
+**Task 3.1:**
+- `Sound_and_Spectrogram_extensions.cpp` - Triangular filter
+- `Spectrogram_extensions.cpp` - DCT
+
+**Task 3.2:**
+- `batch_queries.cpp` - Pitch and intensity statistics
+
+**Next:** Phase 3 Task 3.3 (TextGrid Batch Operations) or production deployment

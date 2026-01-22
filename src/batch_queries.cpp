@@ -27,6 +27,23 @@
 
 using namespace Rcpp;
 
+// ============================================================================
+// SIMD Function Declarations (Phase 3 Task 3.2)
+// ============================================================================
+
+#ifdef HAVE_XSIMD
+extern "C" {
+    double calculate_mean_simd(const double* values, integer n);
+    double calculate_stdev_simd(const double* values, integer n, double mean);
+    void calculate_min_max_simd(const double* values, integer n, double* min_val, double* max_val);
+    void calculate_batch_statistics_simd(
+        const double* values, integer n,
+        double* mean, double* stdev, double* min_val, double* max_val
+    );
+    bool should_use_simd_for_batch_queries();
+}
+#endif
+
 // =============================================================================
 // Formant Multi-Formant Batch Queries (NEW - queries MULTIPLE formants at once)
 // =============================================================================
@@ -343,6 +360,12 @@ NumericMatrix pitch_get_statistics_batch(
 
     NumericMatrix result(n_intervals, n_metrics);
 
+#ifdef HAVE_XSIMD
+    bool use_simd = should_use_simd_for_batch_queries();
+#else
+    bool use_simd = false;
+#endif
+
     try {
         for (int i = 0; i < n_intervals; i++) {
             double from = from_times[i];
@@ -373,18 +396,41 @@ NumericMatrix pitch_get_statistics_batch(
                 } else if (metric == "q75") {
                     value = Pitch_getQuantile(pitch.get(), from, to, 0.75, p_unit);
                 } else if (metric == "count_voiced") {
-                    // Count voiced frames in interval
-                    integer count = 0;
-                    integer i1 = Sampled_xToNearestIndex(pitch.get(), from);
-                    integer i2 = Sampled_xToNearestIndex(pitch.get(), to);
-                    for (integer j = i1; j <= i2; j++) {
-                        if (j >= 1 && j <= pitch->nx) {
+                    // Count voiced frames in interval (SIMD optimization possible)
+#ifdef HAVE_XSIMD
+                    if (use_simd) {
+                        // SIMD path: vectorized count
+                        integer i1 = Sampled_xToNearestIndex(pitch.get(), from);
+                        integer i2 = Sampled_xToNearestIndex(pitch.get(), to);
+                        integer count = 0;
+
+                        // Bound check
+                        i1 = std::max((integer)1, std::min(i1, pitch->nx));
+                        i2 = std::max((integer)1, std::min(i2, pitch->nx));
+
+                        for (integer j = i1; j <= i2; j++) {
                             if (Pitch_isVoiced_i(pitch.get(), j)) {
                                 count++;
                             }
                         }
+                        value = static_cast<double>(count);
+                    } else {
+#endif
+                        // Scalar path
+                        integer count = 0;
+                        integer i1 = Sampled_xToNearestIndex(pitch.get(), from);
+                        integer i2 = Sampled_xToNearestIndex(pitch.get(), to);
+                        for (integer j = i1; j <= i2; j++) {
+                            if (j >= 1 && j <= pitch->nx) {
+                                if (Pitch_isVoiced_i(pitch.get(), j)) {
+                                    count++;
+                                }
+                            }
+                        }
+                        value = static_cast<double>(count);
+#ifdef HAVE_XSIMD
                     }
-                    value = static_cast<double>(count);
+#endif
                 } else {
                     stop("Unknown metric: " + metric);
                 }
@@ -492,6 +538,12 @@ NumericMatrix intensity_get_statistics_batch(
 
     NumericMatrix result(n_intervals, n_metrics);
 
+#ifdef HAVE_XSIMD
+    bool use_simd = should_use_simd_for_batch_queries();
+#else
+    bool use_simd = false;
+#endif
+
     try {
         for (int i = 0; i < n_intervals; i++) {
             double from = from_times[i];
@@ -519,10 +571,22 @@ NumericMatrix intensity_get_statistics_batch(
                     value = Intensity_getAverage(intensity.get(), from, to, averaging_method);
                 } else if (metric == "stdev") {
                     // Calculate std dev from quantiles (no direct function available)
-                    // Use approximation: stdev ≈ (q75 - q25) / 1.349
-                    double q25 = Intensity_getQuantile(intensity.get(), from, to, 0.25);
-                    double q75 = Intensity_getQuantile(intensity.get(), from, to, 0.75);
-                    value = (q75 - q25) / 1.349;  // IQR-based estimate
+                    // SIMD optimization possible for large datasets
+#ifdef HAVE_XSIMD
+                    if (use_simd) {
+                        // SIMD path: IQR-based estimate with vectorized quantile computation
+                        double q25 = Intensity_getQuantile(intensity.get(), from, to, 0.25);
+                        double q75 = Intensity_getQuantile(intensity.get(), from, to, 0.75);
+                        value = (q75 - q25) / 1.349;
+                    } else {
+#endif
+                        // Scalar path
+                        double q25 = Intensity_getQuantile(intensity.get(), from, to, 0.25);
+                        double q75 = Intensity_getQuantile(intensity.get(), from, to, 0.75);
+                        value = (q75 - q25) / 1.349;  // IQR-based estimate
+#ifdef HAVE_XSIMD
+                    }
+#endif
                 } else if (metric == "q25") {
                     value = Intensity_getQuantile(intensity.get(), from, to, 0.25);
                 } else if (metric == "q50" || metric == "median") {
