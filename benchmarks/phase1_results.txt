@@ -1,0 +1,62 @@
+pladdrr v4.0: Now using data.table for high-performance data operations
+See ?pladdrr for an overview and citation information.
+Use citation('pladdrr') for citing this package in publications.
+
+====================================================================== 
+SIMD Phase 1 Integration Benchmark 
+====================================================================== 
+
+System Information:
+  R version: R version 4.4.2 (2024-10-31)
+  pladdrr version: 4.4.6
+  SIMD enabled: TRUE
+  SIMD architecture: NEON
+  SIMD batch size (double): 2
+
+Benchmark Configuration:
+  Test duration: 5.0 seconds
+  Sample rate: 44100 Hz
+  Iterations per test: 50
+
+Creating test audio... Done
+Warming up... Done
+
+====================================================================== 
+Task 1.1: Pitch Extraction (Autocorrelation SIMD) 
+====================================================================== 
+
+Benchmarking Sound$to_pitch_ac() ...
+Warning message:
+In microbenchmark(pitch_ac_scalar = test_sound$to_pitch_ac(time_step = 0.01,  :
+  less accurate nanosecond times to avoid potential integer overflows
+Pitch (AC method)             : 1.00x speedup (SIMD:   0.39 ms, Scalar:   0.39 ms)
+
+Benchmarking Sound$to_pitch_cc() ... SKIPPED (parameter issues)
+
+====================================================================== 
+Task 1.2: Intensity Calculation (Windowed RMS SIMD) 
+====================================================================== 
+
+Benchmarking Sound$to_intensity() ...
+Intensity (windowed RMS)      : 1.00x speedup (SIMD:   0.17 ms, Scalar:   0.17 ms)
+
+====================================================================== 
+Task 1.3: Formant Extraction (Burg's Algorithm SIMD) 
+====================================================================== 
+
+Benchmarking Sound$to_formant_burg() ... Formant (Burg LPC)            : 0.84x speedup (SIMD:  32.08 ms, Scalar:  27.00 ms)
+
+====================================================================== 
+Task 1.4: Spectrogram Generation (Window Functions SIMD) 
+====================================================================== 
+
+Benchmarking Sound$to_spectrogram() with Hamming window... SKIPPED (test signal incompatible)
+
+====================================================================== 
+Phase 1 Integration Summary 
+====================================================================== 
+
+Speedup Results:
+
+Error: object 'pitch_cc_scalar_median' not found
+Execution halted

@@ -1,0 +1,30 @@
+pladdrr v4.0: Now using data.table for high-performance data operations
+See ?pladdrr for an overview and citation information.
+Use citation('pladdrr') for citing this package in publications.
+
+=========================================================================== 
+SIMD Phase 2, Task 2.1: Spectrogram Generation Benchmark 
+=========================================================================== 
+
+System Information:
+  R version: R version 4.4.2 (2024-10-31)
+  pladdrr version: 4.4.7
+  SIMD enabled: TRUE
+  SIMD architecture: NEON
+  SIMD batch size: 2 doubles
+
+
+=========================================================================== 
+Testing with 1.0 second audio 
+=========================================================================== 
+
+Creating 1.0 second test signal... done
+
+Benchmark 1: Window shape performance
+--------------------------------------------------------------------------- 
+  Gaussian window                       : 1.07x speedup (SIMD:    2.29 ms, Scalar:    2.46 ms)
+Error: Failed to create Spectrogram from Sound
+In addition: Warning message:
+In microbenchmark(test_sound$to_spectrogram(window_length = 0.005,  :
+  less accurate nanosecond times to avoid potential integer overflows
+Execution halted
