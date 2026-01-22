@@ -568,25 +568,95 @@ Next: Phase 3 MFCC SIMD or continue with other Phase 2 refinements
 ## Phase 3: Batch & MFCC Operations (Weeks 9-11)
 
 ### Task 3.1: MFCC SIMD Implementation
-**Owner**: ___________  
-**Started**: ___________  **Completed**: ___________
+**Owner**: Claude
+**Started**: 2026-01-22  **Completed**: 2026-01-22 (C++ implementation)
 
-- [ ] Create mfcc_simd.cpp
-- [ ] Implement SIMD Mel-scale conversion
-- [ ] Implement SIMD Mel filterbank
-- [ ] Implement SIMD DCT
-- [ ] Integrate into Sound_to_MFCC
-- [ ] Compile successfully
-- [ ] Test accuracy
-- [ ] Benchmark performance
-- [ ] Achieved speedup: _____ x (target: 2-4x)
-- [ ] Write unit tests
+- [x] Create mfcc_simd.cpp
+- [x] Implement SIMD Mel-scale conversion
+- [x] Implement SIMD Mel filterbank
+- [x] Implement SIMD DCT
+- [x] Integrate into Sound_to_MelSpectrogram and MelSpectrogram_to_MFCC
+- [x] Compile successfully
+- [x] Create test and benchmark suites
+- [ ] Test accuracy (R module exposure pending)
+- [ ] Benchmark performance (R module exposure pending)
+- [ ] Achieved speedup: TBD (target: 2-4x)
+- [x] Write unit tests (test-phase3-mfcc-simd.R)
 - [ ] Update documentation
 - [ ] Code review completed
 - [ ] Merged to main branch
 
 **Notes**:
 ```
+2026-01-22: Task 3.1 C++ Implementation Complete - MFCC SIMD
+
+Implementation:
+- Created mfcc_simd.cpp (408 lines) with comprehensive SIMD optimizations
+- Created mfcc_simd_bridge.cpp (189 lines) for Praat VEC integration
+- Integrated into Sound_and_Spectrogram_extensions.cpp (triangular filter)
+- Integrated into Spectrogram_extensions.cpp (DCT)
+- Added to build system (Makevars.in, Makevars line 323)
+
+SIMD Optimizations Implemented:
+1. Hz ↔ Mel Conversion:
+   - Formula: mel = 2595 * log10(1 + hz/700)
+   - SIMD vectorizes log10 computation
+   - Uses FMA for scale operations
+
+2. Triangular Mel Filterbank:
+   - Vectorized accumulation: power_sum += amplitude * spectrum_power
+   - Rising/falling slope calculation with SIMD
+   - Conditional amplitude selection (below_fc)
+   - Expected 2-3x speedup on triangular filter loops
+
+3. Power-to-dB Conversion:
+   - Formula: dB = 10 * log10(power / reference)
+   - SIMD log10 with floor clamping
+   - Handles invalid values (power <= 0)
+
+4. DCT (Discrete Cosine Transform):
+   - Most compute-intensive operation in MFCC
+   - SIMD inner product: target[k] = sum(x[j] * cosinesTable[k][j])
+   - FMA accumulation with reduce_add
+   - Expected 2-3x speedup on DCT
+
+Technical Details:
+- All functions have scalar fallbacks (#ifndef HAVE_XSIMD)
+- Runtime control via should_use_simd_for_mfcc()
+- Proper extern "C" linkage for bridge functions
+- 1-based Praat VEC indexing handled correctly
+- Build successful (v4.5.1)
+
+Integration Points:
+- Sound_into_MelSpectrogram_frame(): Triangular filter SIMD path
+  * Precomputes frequency array for vectorization
+  * Calls triangular_filter_simd_bridge()
+- BandFilterSpectrogram_into_CC(): DCT SIMD path
+  * Calls dct_simd_bridge() for cepstral coefficient computation
+  * Replaces VECcosineTransform_preallocated with SIMD version
+
+Files Modified:
+- src/mfcc_simd.cpp (new, 408 lines)
+- src/mfcc_simd_bridge.cpp (new, 189 lines)
+- src/praat.github.io/dwtools/Sound_and_Spectrogram_extensions.cpp (SIMD integration)
+- src/praat.github.io/dwtools/Spectrogram_extensions.cpp (DCT SIMD integration)
+- src/Makevars.in, src/Makevars (added to build)
+- DESCRIPTION (v4.5.1)
+- tests/testthat/test-phase3-mfcc-simd.R (new, 10 test cases)
+- benchmarks/phase3_task3.1_mfcc_benchmark.R (new)
+
+Expected Performance:
+- ARM NEON (batch 2): 1.5-2.0x speedup on DCT and triangular filter
+- x86 AVX2 (batch 4): 2-4x speedup on MFCC pipeline
+- DCT dominates compute time, primary target for SIMD
+- Triangular filter benefits from accumulation vectorization
+
+Status:
+C++ implementation complete and compiled successfully. SIMD optimizations
+integrated at Praat C++ level. R module exposure (to_mfcc method) requires
+additional work in sound_module.cpp or sound_wrappers.cpp.
+
+Next: Expose MFCC functionality to R module level or verify internal usage
 ```
 
 ---
