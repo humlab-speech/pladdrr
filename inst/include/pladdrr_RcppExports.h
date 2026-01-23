@@ -2324,6 +2324,215 @@ namespace pladdrr {
         return Rcpp::as<SEXP >(rcpp_result_gen);
     }
 
+    inline void set_textgrid_simd_enabled_bridge(bool enabled) {
+        typedef SEXP(*Ptr_set_textgrid_simd_enabled_bridge)(SEXP);
+        static Ptr_set_textgrid_simd_enabled_bridge p_set_textgrid_simd_enabled_bridge = NULL;
+        if (p_set_textgrid_simd_enabled_bridge == NULL) {
+            validateSignature("void(*set_textgrid_simd_enabled_bridge)(bool)");
+            p_set_textgrid_simd_enabled_bridge = (Ptr_set_textgrid_simd_enabled_bridge)R_GetCCallable("pladdrr", "_pladdrr_set_textgrid_simd_enabled_bridge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_set_textgrid_simd_enabled_bridge(Shield<SEXP>(Rcpp::wrap(enabled)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+    }
+
+    inline bool textgrid_simd_enabled() {
+        typedef SEXP(*Ptr_textgrid_simd_enabled)();
+        static Ptr_textgrid_simd_enabled p_textgrid_simd_enabled = NULL;
+        if (p_textgrid_simd_enabled == NULL) {
+            validateSignature("bool(*textgrid_simd_enabled)()");
+            p_textgrid_simd_enabled = (Ptr_textgrid_simd_enabled)R_GetCCallable("pladdrr", "_pladdrr_textgrid_simd_enabled");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_simd_enabled();
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<bool >(rcpp_result_gen);
+    }
+
+    inline NumericVector calculate_durations_simd_bridge(NumericVector start_times, NumericVector end_times) {
+        typedef SEXP(*Ptr_calculate_durations_simd_bridge)(SEXP,SEXP);
+        static Ptr_calculate_durations_simd_bridge p_calculate_durations_simd_bridge = NULL;
+        if (p_calculate_durations_simd_bridge == NULL) {
+            validateSignature("NumericVector(*calculate_durations_simd_bridge)(NumericVector,NumericVector)");
+            p_calculate_durations_simd_bridge = (Ptr_calculate_durations_simd_bridge)R_GetCCallable("pladdrr", "_pladdrr_calculate_durations_simd_bridge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_calculate_durations_simd_bridge(Shield<SEXP>(Rcpp::wrap(start_times)), Shield<SEXP>(Rcpp::wrap(end_times)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericVector >(rcpp_result_gen);
+    }
+
+    inline List duration_statistics_simd_bridge(NumericVector durations) {
+        typedef SEXP(*Ptr_duration_statistics_simd_bridge)(SEXP);
+        static Ptr_duration_statistics_simd_bridge p_duration_statistics_simd_bridge = NULL;
+        if (p_duration_statistics_simd_bridge == NULL) {
+            validateSignature("List(*duration_statistics_simd_bridge)(NumericVector)");
+            p_duration_statistics_simd_bridge = (Ptr_duration_statistics_simd_bridge)R_GetCCallable("pladdrr", "_pladdrr_duration_statistics_simd_bridge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_duration_statistics_simd_bridge(Shield<SEXP>(Rcpp::wrap(durations)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
+    inline IntegerVector filter_by_duration_simd_bridge(NumericVector durations, double min_dur, double max_dur) {
+        typedef SEXP(*Ptr_filter_by_duration_simd_bridge)(SEXP,SEXP,SEXP);
+        static Ptr_filter_by_duration_simd_bridge p_filter_by_duration_simd_bridge = NULL;
+        if (p_filter_by_duration_simd_bridge == NULL) {
+            validateSignature("IntegerVector(*filter_by_duration_simd_bridge)(NumericVector,double,double)");
+            p_filter_by_duration_simd_bridge = (Ptr_filter_by_duration_simd_bridge)R_GetCCallable("pladdrr", "_pladdrr_filter_by_duration_simd_bridge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_filter_by_duration_simd_bridge(Shield<SEXP>(Rcpp::wrap(durations)), Shield<SEXP>(Rcpp::wrap(min_dur)), Shield<SEXP>(Rcpp::wrap(max_dur)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<IntegerVector >(rcpp_result_gen);
+    }
+
+    inline NumericVector calculate_midpoints_simd_bridge(NumericVector start_times, NumericVector end_times) {
+        typedef SEXP(*Ptr_calculate_midpoints_simd_bridge)(SEXP,SEXP);
+        static Ptr_calculate_midpoints_simd_bridge p_calculate_midpoints_simd_bridge = NULL;
+        if (p_calculate_midpoints_simd_bridge == NULL) {
+            validateSignature("NumericVector(*calculate_midpoints_simd_bridge)(NumericVector,NumericVector)");
+            p_calculate_midpoints_simd_bridge = (Ptr_calculate_midpoints_simd_bridge)R_GetCCallable("pladdrr", "_pladdrr_calculate_midpoints_simd_bridge");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_calculate_midpoints_simd_bridge(Shield<SEXP>(Rcpp::wrap(start_times)), Shield<SEXP>(Rcpp::wrap(end_times)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericVector >(rcpp_result_gen);
+    }
+
+    inline DataFrame textgrid_interval_pitch_batch(SEXP textgrid_xptr, SEXP pitch_xptr, int tier_number, std::string unit = "HERTZ") {
+        typedef SEXP(*Ptr_textgrid_interval_pitch_batch)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_textgrid_interval_pitch_batch p_textgrid_interval_pitch_batch = NULL;
+        if (p_textgrid_interval_pitch_batch == NULL) {
+            validateSignature("DataFrame(*textgrid_interval_pitch_batch)(SEXP,SEXP,int,std::string)");
+            p_textgrid_interval_pitch_batch = (Ptr_textgrid_interval_pitch_batch)R_GetCCallable("pladdrr", "_pladdrr_textgrid_interval_pitch_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_interval_pitch_batch(Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(pitch_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)), Shield<SEXP>(Rcpp::wrap(unit)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<DataFrame >(rcpp_result_gen);
+    }
+
+    inline DataFrame textgrid_interval_formant_batch(SEXP textgrid_xptr, SEXP formant_xptr, int tier_number, int formant_number = 1) {
+        typedef SEXP(*Ptr_textgrid_interval_formant_batch)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_textgrid_interval_formant_batch p_textgrid_interval_formant_batch = NULL;
+        if (p_textgrid_interval_formant_batch == NULL) {
+            validateSignature("DataFrame(*textgrid_interval_formant_batch)(SEXP,SEXP,int,int)");
+            p_textgrid_interval_formant_batch = (Ptr_textgrid_interval_formant_batch)R_GetCCallable("pladdrr", "_pladdrr_textgrid_interval_formant_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_interval_formant_batch(Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(formant_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)), Shield<SEXP>(Rcpp::wrap(formant_number)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<DataFrame >(rcpp_result_gen);
+    }
+
+    inline DataFrame textgrid_interval_intensity_batch(SEXP textgrid_xptr, SEXP intensity_xptr, int tier_number) {
+        typedef SEXP(*Ptr_textgrid_interval_intensity_batch)(SEXP,SEXP,SEXP);
+        static Ptr_textgrid_interval_intensity_batch p_textgrid_interval_intensity_batch = NULL;
+        if (p_textgrid_interval_intensity_batch == NULL) {
+            validateSignature("DataFrame(*textgrid_interval_intensity_batch)(SEXP,SEXP,int)");
+            p_textgrid_interval_intensity_batch = (Ptr_textgrid_interval_intensity_batch)R_GetCCallable("pladdrr", "_pladdrr_textgrid_interval_intensity_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_interval_intensity_batch(Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<DataFrame >(rcpp_result_gen);
+    }
+
+    inline DataFrame textgrid_interval_all_features_batch(SEXP textgrid_xptr, SEXP pitch_xptr = R_NilValue, SEXP formant_xptr = R_NilValue, SEXP intensity_xptr = R_NilValue, int tier_number = 1) {
+        typedef SEXP(*Ptr_textgrid_interval_all_features_batch)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_textgrid_interval_all_features_batch p_textgrid_interval_all_features_batch = NULL;
+        if (p_textgrid_interval_all_features_batch == NULL) {
+            validateSignature("DataFrame(*textgrid_interval_all_features_batch)(SEXP,SEXP,SEXP,SEXP,int)");
+            p_textgrid_interval_all_features_batch = (Ptr_textgrid_interval_all_features_batch)R_GetCCallable("pladdrr", "_pladdrr_textgrid_interval_all_features_batch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_textgrid_interval_all_features_batch(Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(pitch_xptr)), Shield<SEXP>(Rcpp::wrap(formant_xptr)), Shield<SEXP>(Rcpp::wrap(intensity_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<DataFrame >(rcpp_result_gen);
+    }
+
 }
 
 #endif // RCPP_pladdrr_RCPPEXPORTS_H_GEN_

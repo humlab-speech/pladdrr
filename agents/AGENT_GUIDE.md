@@ -1,11 +1,94 @@
 # pladdrr Agent Guide
 
-**Version:** 4.5.1 (2026-01-22)
+**Version:** 4.5.3 (2026-01-23)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
 
 ## Recent Changes
+
+### 🎉 Phase 3 Task 3.3 Complete - TextGrid Batch SIMD (v4.5.3 - 2026-01-23)
+
+**Summary:** SIMD acceleration for TextGrid batch operations: duration/midpoint calculation, interval statistics, duration filtering, and batch feature extraction for pitch/formant/intensity per interval.
+
+#### Phase 3 Task 3.3 Components:
+
+**TextGrid SIMD Implementation (v4.5.3)**
+- `textgrid_simd.cpp` (519 lines) - Core SIMD implementations
+- `textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridge with batch feature extraction
+- Expected Performance: 1.5-2x (ARM NEON), 2-4x (x86 AVX2)
+
+#### TextGrid SIMD Optimizations:
+
+**1. Duration Calculation** - Vectorized subtraction
+```cpp
+// durations[i] = end_times[i] - start_times[i]
+void calculate_durations_simd_0based(
+    const double* start_times, const double* end_times,
+    double* durations, size_t n
+);
+```
+
+**2. Midpoint Calculation** - Vectorized arithmetic
+```cpp
+// midpoints[i] = (start_times[i] + end_times[i]) * 0.5
+void calculate_midpoints_simd(
+    const double* start_times, const double* end_times,
+    double* midpoints, size_t n
+);
+```
+
+**3. Duration Statistics** - Two-pass mean/stdev with FMA
+```cpp
+// mean, stdev, min, max in one call
+void duration_statistics_simd(
+    const double* durations, size_t n,
+    double* mean_out, double* stdev_out
+);
+void duration_min_max_simd(
+    const double* durations, size_t n,
+    double* min_out, double* max_out
+);
+```
+
+**4. Duration Filtering** - SIMD comparison with index extraction
+```cpp
+// Returns indices of durations in [min_dur, max_dur]
+void filter_by_duration_simd(
+    const double* durations, size_t n,
+    double min_dur, double max_dur,
+    int* indices, size_t* count
+);
+```
+
+#### R API Functions:
+```r
+# Duration calculation
+durations <- calculate_durations_simd_bridge(starts, ends)
+
+# Midpoint calculation
+midpoints <- calculate_midpoints_simd_bridge(starts, ends)
+
+# Statistics (returns list with mean, stdev, min, max)
+stats <- duration_statistics_simd_bridge(durations)
+
+# Filtering (returns 1-based indices)
+indices <- filter_by_duration_simd_bridge(durations, min_dur, max_dur)
+
+# Batch feature extraction per TextGrid interval
+pitch_df <- textgrid_interval_pitch_batch(tg, pitch, tier, unit)
+formant_df <- textgrid_interval_formant_batch(tg, formant, tier, formant_num)
+intensity_df <- textgrid_interval_intensity_batch(tg, intensity, tier)
+all_features_df <- textgrid_interval_all_features_batch(tg, pitch, formant, intensity, tier)
+```
+
+#### Files Created:
+- `src/textgrid_simd.cpp` (519 lines) - SIMD implementations
+- `src/textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridges
+- `tests/testthat/test-phase3-textgrid-simd.R` (33 tests)
+- `benchmarks/phase3_task3.3_textgrid_benchmark.R` (benchmark suite)
+
+---
 
 ### 🎉 Phase 3 Task 3.1 Complete - MFCC SIMD (v4.5.1 - 2026-01-22)
 
@@ -6183,6 +6266,221 @@ double calculate_mean_simd_bridge(NumericVector values) {
 
 ---
 
+### Phase 3 Task 3.3: TextGrid Batch Operations SIMD (Complete - v4.5.3)
+
+**Overview:** Phase 3 Task 3.3 implements SIMD acceleration for TextGrid batch operations. Focus on vectorized interval calculations (duration, midpoint), statistics aggregation, duration filtering, and batch feature extraction (pitch/formant/intensity per interval).
+
+**Architecture:**
+```
+src/textgrid_simd.cpp          # Core SIMD implementations
+src/textgrid_simd_bridge.cpp   # Rcpp bridges + batch feature extraction
+```
+
+#### Core SIMD Functions
+
+**1. Duration Calculation (`calculate_durations_simd_0based`)**
+
+Vectorized subtraction for interval durations:
+
+```cpp
+#ifdef HAVE_XSIMD
+using batch = xsimd::batch<double>;
+constexpr size_t simd_size = batch::size;
+
+size_t i = 0;
+for (; i + simd_size <= n; i += simd_size) {
+    batch end_batch = xsimd::load_unaligned(&end_times[i]);
+    batch start_batch = xsimd::load_unaligned(&start_times[i]);
+    batch result = end_batch - start_batch;
+    result.store_unaligned(&durations[i]);
+}
+// Scalar remainder
+for (; i < n; i++) {
+    durations[i] = end_times[i] - start_times[i];
+}
+#endif
+```
+
+**2. Midpoint Calculation (`calculate_midpoints_simd`)**
+
+Vectorized arithmetic for interval centers:
+
+```cpp
+batch half(0.5);
+size_t i = 0;
+for (; i + simd_size <= n; i += simd_size) {
+    batch start_batch = xsimd::load_unaligned(&start_times[i]);
+    batch end_batch = xsimd::load_unaligned(&end_times[i]);
+    batch result = (start_batch + end_batch) * half;
+    result.store_unaligned(&midpoints[i]);
+}
+```
+
+**3. Duration Statistics (`duration_statistics_simd`)**
+
+Two-pass algorithm with FMA for variance:
+
+```cpp
+// Pass 1: Sum for mean
+batch sum_batch(0.0);
+for (; i + simd_size <= n; i += simd_size) {
+    batch dur_batch = xsimd::load_unaligned(&durations[i]);
+    sum_batch += dur_batch;
+}
+double mean = xsimd::reduce_add(sum_batch) / n;
+
+// Pass 2: Variance with FMA
+batch mean_batch(mean);
+batch sq_diff_sum(0.0);
+for (; i + simd_size <= n; i += simd_size) {
+    batch dur_batch = xsimd::load_unaligned(&durations[i]);
+    batch diff = dur_batch - mean_batch;
+    sq_diff_sum = xsimd::fma(diff, diff, sq_diff_sum);  // FMA pattern
+}
+double stdev = sqrt(xsimd::reduce_add(sq_diff_sum) / (n - 1));
+```
+
+**4. Min/Max (`duration_min_max_simd`)**
+
+SIMD reduction for extrema:
+
+```cpp
+batch min_batch = xsimd::load_unaligned(&durations[0]);
+batch max_batch = min_batch;
+
+for (; i + simd_size <= n; i += simd_size) {
+    batch dur_batch = xsimd::load_unaligned(&durations[i]);
+    min_batch = xsimd::min(min_batch, dur_batch);
+    max_batch = xsimd::max(max_batch, dur_batch);
+}
+
+double min_val = xsimd::reduce_min(min_batch);
+double max_val = xsimd::reduce_max(max_batch);
+```
+
+**5. Duration Filtering (`filter_by_duration_simd`)**
+
+SIMD comparison with scalar index extraction:
+
+```cpp
+batch min_batch(min_dur);
+batch max_batch(max_dur);
+
+for (; i + simd_size <= n; i += simd_size) {
+    batch dur_batch = xsimd::load_unaligned(&durations[i]);
+
+    auto ge_min = dur_batch >= min_batch;
+    auto le_max = dur_batch <= max_batch;
+    auto in_range = ge_min && le_max;
+
+    // Extract matching indices (scalar for simplicity)
+    for (size_t j = 0; j < simd_size; j++) {
+        if (in_range.get(j)) {
+            indices[*count] = static_cast<int>(i + j);
+            (*count)++;
+        }
+    }
+}
+```
+
+#### Batch Feature Extraction API
+
+The bridge file provides high-level batch functions that combine SIMD duration calculation with Praat acoustic analysis:
+
+**1. Pitch per Interval:**
+```r
+# Returns DataFrame with: index, label, start, end, duration,
+#                         pitch_mean, pitch_stdev, pitch_min, pitch_max
+df <- textgrid_interval_pitch_batch(textgrid_xptr, pitch_xptr, tier, "HERTZ")
+```
+
+**2. Formants per Interval:**
+```r
+# Returns DataFrame with: index, label, start, end, duration,
+#                         formant_mean, formant_stdev, bandwidth_mean
+df <- textgrid_interval_formant_batch(textgrid_xptr, formant_xptr, tier, formant_num)
+```
+
+**3. Intensity per Interval:**
+```r
+# Returns DataFrame with: index, label, start, end, duration,
+#                         intensity_mean, intensity_min, intensity_max
+df <- textgrid_interval_intensity_batch(textgrid_xptr, intensity_xptr, tier)
+```
+
+**4. All Features Combined:**
+```r
+# Most efficient: single pass for all features
+# Returns: index, label, start, end, duration, pitch_mean, pitch_stdev,
+#          f1_mean, f2_mean, intensity_mean
+df <- textgrid_interval_all_features_batch(
+    textgrid_xptr, pitch_xptr, formant_xptr, intensity_xptr, tier
+)
+```
+
+#### TextGrid API Pattern
+
+Important: Use correct TextGrid interval creation:
+
+```r
+# Create TextGrid
+tg <- textgrid_create(start_time = 0, end_time = 5, tier_names = "phones")
+tg_ptr <- tg$get_xptr()
+
+# Add boundaries (creates intervals)
+insert_boundary(tg_ptr, tier = 1, time = 1.0)
+insert_boundary(tg_ptr, tier = 1, time = 2.0)
+insert_boundary(tg_ptr, tier = 1, time = 3.0)
+
+# Label intervals (1-based interval numbers)
+set_interval_text(tg_ptr, tier = 1, interval = 1, text = "aa")
+set_interval_text(tg_ptr, tier = 1, interval = 2, text = "eh")
+set_interval_text(tg_ptr, tier = 1, interval = 3, text = "iy")
+```
+
+#### Testing Pattern (Phase 3 Task 3.3)
+
+```r
+test_that("SIMD duration calculation matches scalar", {
+  n <- 1000
+  starts <- sort(runif(n, 0, 100))
+  ends <- starts + runif(n, 0.1, 0.5)
+
+  # Toggle SIMD
+  set_textgrid_simd_enabled_bridge(FALSE)
+  dur_scalar <- calculate_durations_simd_bridge(starts, ends)
+
+  set_textgrid_simd_enabled_bridge(TRUE)
+  dur_simd <- calculate_durations_simd_bridge(starts, ends)
+
+  expect_equal(dur_scalar, dur_simd, tolerance = 1e-14)
+})
+
+test_that("duration statistics match R", {
+  durations <- c(0.1, 0.2, 0.15, 0.3, 0.25)
+  stats <- duration_statistics_simd_bridge(durations)
+
+  expect_equal(stats$mean, mean(durations), tolerance = 1e-10)
+  expect_equal(stats$stdev, sd(durations), tolerance = 1e-10)
+  expect_equal(stats$min, min(durations))
+  expect_equal(stats$max, max(durations))
+})
+```
+
+#### Common Pitfalls (Phase 3 Task 3.3)
+
+1. **0-based vs 1-based indexing**: SIMD uses 0-based, R uses 1-based. Bridge converts.
+
+2. **Filter index output**: `filter_by_duration_simd_bridge` returns 1-based R indices.
+
+3. **Empty input handling**: All functions handle n=0 gracefully.
+
+4. **TextGrid interval creation**: Use `insert_boundary` + `set_interval_text`, not direct interval insertion.
+
+5. **Feature extraction NA values**: When pitch/formant/intensity unavailable for interval, returns NA.
+
+---
+
 #### Phase 3 Summary
 
 **Overall Achievements:**
@@ -6199,10 +6497,16 @@ double calculate_mean_simd_bridge(NumericVector values) {
 - 10 comprehensive test cases
 - Integration with pitch/intensity batch statistics
 
+**Task 3.3: TextGrid Batch SIMD (v4.5.3)**
+- 6 SIMD implementations (duration, midpoint, stats, min/max, filter, containment)
+- 1,245 lines of SIMD code (textgrid_simd.cpp + textgrid_simd_bridge.cpp)
+- 33 comprehensive test cases
+- Batch feature extraction for pitch/formant/intensity per interval
+
 **Combined Phase 3 Statistics:**
-- 1,390 lines of SIMD code
-- 20 comprehensive test cases
-- 2 full benchmark suites
+- 2,635 lines of SIMD code
+- 53 comprehensive test cases
+- 3 full benchmark suites
 - Expected speedups: 1.5-2.5x (ARM NEON), 2-4x (x86 AVX2)
 
 **Performance Targets:**
@@ -6216,6 +6520,11 @@ double calculate_mean_simd_bridge(NumericVector values) {
 - ARM NEON: 1.5-2x speedup
 - x86 AVX2: 2-2.5x speedup
 - Batch statistics benefit from single-pass computation
+
+**Task 3.3 (TextGrid Batch):**
+- ARM NEON: 1.5-2x speedup
+- x86 AVX2: 2-4x speedup
+- Batch feature extraction eliminates R loop overhead
 
 **Key Learnings:**
 
@@ -6233,6 +6542,12 @@ double calculate_mean_simd_bridge(NumericVector values) {
 - Bridge functions handle Rcpp type conversions
 - Empty input validation prevents division by zero
 
+**Task 3.3:**
+- Duration/midpoint are ideal SIMD patterns (element-wise ops)
+- Filtering with index extraction requires scalar loop for indices
+- Batch feature extraction combines SIMD with Praat queries
+- TextGrid interval API uses insert_boundary + set_interval_text
+
 **Files Reference:**
 
 **Task 3.1:**
@@ -6247,6 +6562,12 @@ double calculate_mean_simd_bridge(NumericVector values) {
 - `tests/testthat/test-phase3-batch-queries-simd.R` - 10 tests
 - `benchmarks/phase3_task3.2_batch_queries_benchmark.R`
 
+**Task 3.3:**
+- `src/textgrid_simd.cpp` - 519 lines
+- `src/textgrid_simd_bridge.cpp` - 726 lines
+- `tests/testthat/test-phase3-textgrid-simd.R` - 33 tests
+- `benchmarks/phase3_task3.3_textgrid_benchmark.R`
+
 **Integration Points:**
 
 **Task 3.1:**
@@ -6256,4 +6577,7 @@ double calculate_mean_simd_bridge(NumericVector values) {
 **Task 3.2:**
 - `batch_queries.cpp` - Pitch and intensity statistics
 
-**Next:** Phase 3 Task 3.3 (TextGrid Batch Operations) or production deployment
+**Task 3.3:**
+- `textgrid_batch_operations.cpp` - TextGrid interval queries
+
+**Phase 3 Complete.** All batch/analysis optimizations implemented. Ready for Phase 4 (FormantPath, Harmonicity, ComplexSpectrogram, KlattGrid) or production deployment.

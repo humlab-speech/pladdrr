@@ -661,6 +661,97 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_mean_simd_bridge
+double calculate_mean_simd_bridge(NumericVector values);
+RcppExport SEXP _pladdrr_calculate_mean_simd_bridge(SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_mean_simd_bridge(values));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_stdev_simd_bridge
+double calculate_stdev_simd_bridge(NumericVector values, double mean);
+RcppExport SEXP _pladdrr_calculate_stdev_simd_bridge(SEXP valuesSEXP, SEXP meanSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    Rcpp::traits::input_parameter< double >::type mean(meanSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_stdev_simd_bridge(values, mean));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_min_max_simd_bridge
+List calculate_min_max_simd_bridge(NumericVector values);
+RcppExport SEXP _pladdrr_calculate_min_max_simd_bridge(SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_min_max_simd_bridge(values));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_quantile_simd_bridge
+double calculate_quantile_simd_bridge(NumericVector values, double quantile);
+RcppExport SEXP _pladdrr_calculate_quantile_simd_bridge(SEXP valuesSEXP, SEXP quantileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    Rcpp::traits::input_parameter< double >::type quantile(quantileSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_quantile_simd_bridge(values, quantile));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_batch_statistics_simd_bridge
+List calculate_batch_statistics_simd_bridge(NumericVector values);
+RcppExport SEXP _pladdrr_calculate_batch_statistics_simd_bridge(SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type values(valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_batch_statistics_simd_bridge(values));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_interval_statistics_simd_bridge
+SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String metric);
+RcppExport SEXP _pladdrr_calculate_interval_statistics_simd_bridge(SEXP intervals_valuesSEXP, SEXP metricSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type intervals_values(intervals_valuesSEXP);
+    Rcpp::traits::input_parameter< String >::type metric(metricSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_interval_statistics_simd_bridge(intervals_values, metric));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calculate_interval_quantiles_simd_bridge
+NumericMatrix calculate_interval_quantiles_simd_bridge(List intervals_values, NumericVector quantiles);
+RcppExport SEXP _pladdrr_calculate_interval_quantiles_simd_bridge(SEXP intervals_valuesSEXP, SEXP quantilesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type intervals_values(intervals_valuesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type quantiles(quantilesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_interval_quantiles_simd_bridge(intervals_values, quantiles));
+    return rcpp_result_gen;
+END_RCPP
+}
+// should_use_simd_for_batch_queries_bridge
+bool should_use_simd_for_batch_queries_bridge();
+RcppExport SEXP _pladdrr_should_use_simd_for_batch_queries_bridge() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(should_use_simd_for_batch_queries_bridge());
+    return rcpp_result_gen;
+END_RCPP
+}
 // cochleagram_create
 SEXP cochleagram_create(double tmin, double tmax, int nt, double dt, double t1, double df, int nf);
 RcppExport SEXP _pladdrr_cochleagram_create(SEXP tminSEXP, SEXP tmaxSEXP, SEXP ntSEXP, SEXP dtSEXP, SEXP t1SEXP, SEXP dfSEXP, SEXP nfSEXP) {
@@ -9157,6 +9248,360 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_textgrid_simd_enabled_bridge
+void set_textgrid_simd_enabled_bridge(bool enabled);
+static SEXP _pladdrr_set_textgrid_simd_enabled_bridge_try(SEXP enabledSEXP) {
+BEGIN_RCPP
+    Rcpp::traits::input_parameter< bool >::type enabled(enabledSEXP);
+    set_textgrid_simd_enabled_bridge(enabled);
+    return R_NilValue;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_set_textgrid_simd_enabled_bridge(SEXP enabledSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_set_textgrid_simd_enabled_bridge_try(enabledSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// textgrid_simd_enabled
+bool textgrid_simd_enabled();
+static SEXP _pladdrr_textgrid_simd_enabled_try() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    rcpp_result_gen = Rcpp::wrap(textgrid_simd_enabled());
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_simd_enabled() {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_simd_enabled_try());
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// calculate_durations_simd_bridge
+NumericVector calculate_durations_simd_bridge(NumericVector start_times, NumericVector end_times);
+static SEXP _pladdrr_calculate_durations_simd_bridge_try(SEXP start_timesSEXP, SEXP end_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type start_times(start_timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type end_times(end_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_durations_simd_bridge(start_times, end_times));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_calculate_durations_simd_bridge(SEXP start_timesSEXP, SEXP end_timesSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_calculate_durations_simd_bridge_try(start_timesSEXP, end_timesSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// duration_statistics_simd_bridge
+List duration_statistics_simd_bridge(NumericVector durations);
+static SEXP _pladdrr_duration_statistics_simd_bridge_try(SEXP durationsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type durations(durationsSEXP);
+    rcpp_result_gen = Rcpp::wrap(duration_statistics_simd_bridge(durations));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_duration_statistics_simd_bridge(SEXP durationsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_duration_statistics_simd_bridge_try(durationsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// filter_by_duration_simd_bridge
+IntegerVector filter_by_duration_simd_bridge(NumericVector durations, double min_dur, double max_dur);
+static SEXP _pladdrr_filter_by_duration_simd_bridge_try(SEXP durationsSEXP, SEXP min_durSEXP, SEXP max_durSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type durations(durationsSEXP);
+    Rcpp::traits::input_parameter< double >::type min_dur(min_durSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dur(max_durSEXP);
+    rcpp_result_gen = Rcpp::wrap(filter_by_duration_simd_bridge(durations, min_dur, max_dur));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_filter_by_duration_simd_bridge(SEXP durationsSEXP, SEXP min_durSEXP, SEXP max_durSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_filter_by_duration_simd_bridge_try(durationsSEXP, min_durSEXP, max_durSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// calculate_midpoints_simd_bridge
+NumericVector calculate_midpoints_simd_bridge(NumericVector start_times, NumericVector end_times);
+static SEXP _pladdrr_calculate_midpoints_simd_bridge_try(SEXP start_timesSEXP, SEXP end_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type start_times(start_timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type end_times(end_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_midpoints_simd_bridge(start_times, end_times));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_calculate_midpoints_simd_bridge(SEXP start_timesSEXP, SEXP end_timesSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_calculate_midpoints_simd_bridge_try(start_timesSEXP, end_timesSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// textgrid_interval_pitch_batch
+DataFrame textgrid_interval_pitch_batch(SEXP textgrid_xptr, SEXP pitch_xptr, int tier_number, std::string unit);
+static SEXP _pladdrr_textgrid_interval_pitch_batch_try(SEXP textgrid_xptrSEXP, SEXP pitch_xptrSEXP, SEXP tier_numberSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type textgrid_xptr(textgrid_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_interval_pitch_batch(textgrid_xptr, pitch_xptr, tier_number, unit));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_interval_pitch_batch(SEXP textgrid_xptrSEXP, SEXP pitch_xptrSEXP, SEXP tier_numberSEXP, SEXP unitSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_interval_pitch_batch_try(textgrid_xptrSEXP, pitch_xptrSEXP, tier_numberSEXP, unitSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// textgrid_interval_formant_batch
+DataFrame textgrid_interval_formant_batch(SEXP textgrid_xptr, SEXP formant_xptr, int tier_number, int formant_number);
+static SEXP _pladdrr_textgrid_interval_formant_batch_try(SEXP textgrid_xptrSEXP, SEXP formant_xptrSEXP, SEXP tier_numberSEXP, SEXP formant_numberSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type textgrid_xptr(textgrid_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_interval_formant_batch(textgrid_xptr, formant_xptr, tier_number, formant_number));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_interval_formant_batch(SEXP textgrid_xptrSEXP, SEXP formant_xptrSEXP, SEXP tier_numberSEXP, SEXP formant_numberSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_interval_formant_batch_try(textgrid_xptrSEXP, formant_xptrSEXP, tier_numberSEXP, formant_numberSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// textgrid_interval_intensity_batch
+DataFrame textgrid_interval_intensity_batch(SEXP textgrid_xptr, SEXP intensity_xptr, int tier_number);
+static SEXP _pladdrr_textgrid_interval_intensity_batch_try(SEXP textgrid_xptrSEXP, SEXP intensity_xptrSEXP, SEXP tier_numberSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type textgrid_xptr(textgrid_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_interval_intensity_batch(textgrid_xptr, intensity_xptr, tier_number));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_interval_intensity_batch(SEXP textgrid_xptrSEXP, SEXP intensity_xptrSEXP, SEXP tier_numberSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_interval_intensity_batch_try(textgrid_xptrSEXP, intensity_xptrSEXP, tier_numberSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// textgrid_interval_all_features_batch
+DataFrame textgrid_interval_all_features_batch(SEXP textgrid_xptr, SEXP pitch_xptr, SEXP formant_xptr, SEXP intensity_xptr, int tier_number);
+static SEXP _pladdrr_textgrid_interval_all_features_batch_try(SEXP textgrid_xptrSEXP, SEXP pitch_xptrSEXP, SEXP formant_xptrSEXP, SEXP intensity_xptrSEXP, SEXP tier_numberSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type textgrid_xptr(textgrid_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pitch_xptr(pitch_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type formant_xptr(formant_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type intensity_xptr(intensity_xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type tier_number(tier_numberSEXP);
+    rcpp_result_gen = Rcpp::wrap(textgrid_interval_all_features_batch(textgrid_xptr, pitch_xptr, formant_xptr, intensity_xptr, tier_number));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_textgrid_interval_all_features_batch(SEXP textgrid_xptrSEXP, SEXP pitch_xptrSEXP, SEXP formant_xptrSEXP, SEXP intensity_xptrSEXP, SEXP tier_numberSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_textgrid_interval_all_features_batch_try(textgrid_xptrSEXP, pitch_xptrSEXP, formant_xptrSEXP, intensity_xptrSEXP, tier_numberSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // textgrid_read_from_file
 Rcpp::XPtr<structTextGrid> textgrid_read_from_file(std::string path);
 RcppExport SEXP _pladdrr_textgrid_read_from_file(SEXP pathSEXP) {
@@ -10021,6 +10466,16 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("DataFrame(*textgrid_interval_statistics_batch)(SEXP,int)");
         signatures.insert("List(*textgrid_filter_xptr)(SEXP,int,SEXP,SEXP,bool)");
         signatures.insert("SEXP(*get_interval_predicate)(std::string,double)");
+        signatures.insert("void(*set_textgrid_simd_enabled_bridge)(bool)");
+        signatures.insert("bool(*textgrid_simd_enabled)()");
+        signatures.insert("NumericVector(*calculate_durations_simd_bridge)(NumericVector,NumericVector)");
+        signatures.insert("List(*duration_statistics_simd_bridge)(NumericVector)");
+        signatures.insert("IntegerVector(*filter_by_duration_simd_bridge)(NumericVector,double,double)");
+        signatures.insert("NumericVector(*calculate_midpoints_simd_bridge)(NumericVector,NumericVector)");
+        signatures.insert("DataFrame(*textgrid_interval_pitch_batch)(SEXP,SEXP,int,std::string)");
+        signatures.insert("DataFrame(*textgrid_interval_formant_batch)(SEXP,SEXP,int,int)");
+        signatures.insert("DataFrame(*textgrid_interval_intensity_batch)(SEXP,SEXP,int)");
+        signatures.insert("DataFrame(*textgrid_interval_all_features_batch)(SEXP,SEXP,SEXP,SEXP,int)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -10137,6 +10592,16 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC)_pladdrr_textgrid_interval_statistics_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_filter_xptr", (DL_FUNC)_pladdrr_textgrid_filter_xptr_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_get_interval_predicate", (DL_FUNC)_pladdrr_get_interval_predicate_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_set_textgrid_simd_enabled_bridge", (DL_FUNC)_pladdrr_set_textgrid_simd_enabled_bridge_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_simd_enabled", (DL_FUNC)_pladdrr_textgrid_simd_enabled_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_calculate_durations_simd_bridge", (DL_FUNC)_pladdrr_calculate_durations_simd_bridge_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_duration_statistics_simd_bridge", (DL_FUNC)_pladdrr_duration_statistics_simd_bridge_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_filter_by_duration_simd_bridge", (DL_FUNC)_pladdrr_filter_by_duration_simd_bridge_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_calculate_midpoints_simd_bridge", (DL_FUNC)_pladdrr_calculate_midpoints_simd_bridge_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_pitch_batch", (DL_FUNC)_pladdrr_textgrid_interval_pitch_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_formant_batch", (DL_FUNC)_pladdrr_textgrid_interval_formant_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_intensity_batch", (DL_FUNC)_pladdrr_textgrid_interval_intensity_batch_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_textgrid_interval_all_features_batch", (DL_FUNC)_pladdrr_textgrid_interval_all_features_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_RcppExport_validate", (DL_FUNC)_pladdrr_RcppExport_validate);
     return R_NilValue;
 }
@@ -10190,6 +10655,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 13},
     {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 9},
     {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
+    {"_pladdrr_calculate_mean_simd_bridge", (DL_FUNC) &_pladdrr_calculate_mean_simd_bridge, 1},
+    {"_pladdrr_calculate_stdev_simd_bridge", (DL_FUNC) &_pladdrr_calculate_stdev_simd_bridge, 2},
+    {"_pladdrr_calculate_min_max_simd_bridge", (DL_FUNC) &_pladdrr_calculate_min_max_simd_bridge, 1},
+    {"_pladdrr_calculate_quantile_simd_bridge", (DL_FUNC) &_pladdrr_calculate_quantile_simd_bridge, 2},
+    {"_pladdrr_calculate_batch_statistics_simd_bridge", (DL_FUNC) &_pladdrr_calculate_batch_statistics_simd_bridge, 1},
+    {"_pladdrr_calculate_interval_statistics_simd_bridge", (DL_FUNC) &_pladdrr_calculate_interval_statistics_simd_bridge, 2},
+    {"_pladdrr_calculate_interval_quantiles_simd_bridge", (DL_FUNC) &_pladdrr_calculate_interval_quantiles_simd_bridge, 2},
+    {"_pladdrr_should_use_simd_for_batch_queries_bridge", (DL_FUNC) &_pladdrr_should_use_simd_for_batch_queries_bridge, 0},
     {"_pladdrr_cochleagram_create", (DL_FUNC) &_pladdrr_cochleagram_create, 7},
     {"_pladdrr_sound_to_cochleagram", (DL_FUNC) &_pladdrr_sound_to_cochleagram, 5},
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
@@ -10660,6 +11133,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_filter_xptr", (DL_FUNC) &_pladdrr_textgrid_filter_xptr, 5},
     {"_pladdrr_get_interval_predicate", (DL_FUNC) &_pladdrr_get_interval_predicate, 2},
     {"_pladdrr_textgrid_merge", (DL_FUNC) &_pladdrr_textgrid_merge, 2},
+    {"_pladdrr_set_textgrid_simd_enabled_bridge", (DL_FUNC) &_pladdrr_set_textgrid_simd_enabled_bridge, 1},
+    {"_pladdrr_textgrid_simd_enabled", (DL_FUNC) &_pladdrr_textgrid_simd_enabled, 0},
+    {"_pladdrr_calculate_durations_simd_bridge", (DL_FUNC) &_pladdrr_calculate_durations_simd_bridge, 2},
+    {"_pladdrr_duration_statistics_simd_bridge", (DL_FUNC) &_pladdrr_duration_statistics_simd_bridge, 1},
+    {"_pladdrr_filter_by_duration_simd_bridge", (DL_FUNC) &_pladdrr_filter_by_duration_simd_bridge, 3},
+    {"_pladdrr_calculate_midpoints_simd_bridge", (DL_FUNC) &_pladdrr_calculate_midpoints_simd_bridge, 2},
+    {"_pladdrr_textgrid_interval_pitch_batch", (DL_FUNC) &_pladdrr_textgrid_interval_pitch_batch, 4},
+    {"_pladdrr_textgrid_interval_formant_batch", (DL_FUNC) &_pladdrr_textgrid_interval_formant_batch, 4},
+    {"_pladdrr_textgrid_interval_intensity_batch", (DL_FUNC) &_pladdrr_textgrid_interval_intensity_batch, 3},
+    {"_pladdrr_textgrid_interval_all_features_batch", (DL_FUNC) &_pladdrr_textgrid_interval_all_features_batch, 5},
     {"_pladdrr_textgrid_read_from_file", (DL_FUNC) &_pladdrr_textgrid_read_from_file, 1},
     {"_pladdrr_textgrid_create", (DL_FUNC) &_pladdrr_textgrid_create, 4},
     {"_pladdrr_textgrid_save", (DL_FUNC) &_pladdrr_textgrid_save, 2},

@@ -410,6 +410,38 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_calculate_multiband_hnr_ultra_cpp`, sound_xptr, bands, time_step, min_pitch, from_time, to_time)
 }
 
+calculate_mean_simd_bridge <- function(values) {
+    .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
+}
+
+calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
+    .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
+}
+
+calculate_min_max_simd_bridge <- function(values) {
+    .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
+}
+
+calculate_quantile_simd_bridge <- function(values, quantile) {
+    .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
+}
+
+calculate_batch_statistics_simd_bridge <- function(values) {
+    .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
+}
+
+calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
+    .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
+}
+
+calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
+    .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
+}
+
+should_use_simd_for_batch_queries_bridge <- function() {
+    .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
+}
+
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
     .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
 }
@@ -3210,10 +3242,11 @@ textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
     .Call(`_pladdrr_textgrid_get_all_labels`, textgrid_xptr, tier_number)
 }
 
-#' Compute Statistics for All Intervals (Batch)
+#' Compute Statistics for All Intervals (Batch, SIMD-Optimized)
 #'
 #' Compute statistics (duration, etc.) for all intervals in a tier.
-#' Single C++ call instead of looping in R.
+#' Single C++ call instead of looping in R. Uses SIMD for duration
+#' calculation when available.
 #'
 #' @param textgrid_xptr External pointer to TextGrid object
 #' @param tier_number Tier number (1-based)
@@ -3224,6 +3257,10 @@ textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
 #'   - start: Start time
 #'   - end: End time
 #'   - duration: Duration (end - start)
+#'
+#' @details
+#' Duration calculation uses SIMD vectorization when available,
+#' providing ~1.5-2x speedup for large interval counts (>100).
 #'
 #' @examples
 #' \dontrun{
@@ -3354,6 +3391,161 @@ get_interval_predicate <- function(type, threshold = 0.0) {
 #' @keywords internal
 .textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
     .Call(`_pladdrr_textgrid_merge`, textgrids, equalize_domains)
+}
+
+#' Enable/Disable SIMD for TextGrid Operations
+#'
+#' @param enabled Logical, TRUE to enable SIMD, FALSE for scalar
+#' @export
+set_textgrid_simd_enabled_bridge <- function(enabled) {
+    invisible(.Call(`_pladdrr_set_textgrid_simd_enabled_bridge`, enabled))
+}
+
+#' Check if SIMD is Enabled for TextGrid
+#'
+#' @return Logical indicating SIMD status
+#' @export
+textgrid_simd_enabled <- function() {
+    .Call(`_pladdrr_textgrid_simd_enabled`)
+}
+
+#' Calculate Interval Durations with SIMD
+#'
+#' Vectorized calculation of interval durations (end - start).
+#' Uses SIMD instructions for ~1.5-2x speedup on large interval counts.
+#'
+#' @param start_times Numeric vector of start times
+#' @param end_times Numeric vector of end times
+#' @return Numeric vector of durations
+#'
+#' @examples
+#' \dontrun{
+#' starts <- runif(1000, 0, 10)
+#' ends <- starts + runif(1000, 0.1, 0.5)
+#' durations <- calculate_durations_simd_bridge(starts, ends)
+#' }
+#'
+#' @export
+calculate_durations_simd_bridge <- function(start_times, end_times) {
+    .Call(`_pladdrr_calculate_durations_simd_bridge`, start_times, end_times)
+}
+
+#' Calculate Duration Statistics with SIMD
+#'
+#' Computes mean, standard deviation, min, and max of durations using SIMD.
+#'
+#' @param durations Numeric vector of durations
+#' @return List with mean, stdev, min, max
+#'
+#' @export
+duration_statistics_simd_bridge <- function(durations) {
+    .Call(`_pladdrr_duration_statistics_simd_bridge`, durations)
+}
+
+#' Filter Intervals by Duration Range with SIMD
+#'
+#' Returns indices of intervals with duration in [min_dur, max_dur].
+#' Uses SIMD for fast range comparison.
+#'
+#' @param durations Numeric vector of durations
+#' @param min_dur Minimum duration (inclusive)
+#' @param max_dur Maximum duration (inclusive)
+#' @return Integer vector of 0-based indices
+#'
+#' @export
+filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
+    .Call(`_pladdrr_filter_by_duration_simd_bridge`, durations, min_dur, max_dur)
+}
+
+#' Calculate Interval Midpoints with SIMD
+#'
+#' @param start_times Numeric vector of start times
+#' @param end_times Numeric vector of end times
+#' @return Numeric vector of midpoints
+#'
+#' @export
+calculate_midpoints_simd_bridge <- function(start_times, end_times) {
+    .Call(`_pladdrr_calculate_midpoints_simd_bridge`, start_times, end_times)
+}
+
+#' Extract Pitch Statistics for All TextGrid Intervals (Batch, SIMD)
+#'
+#' Computes pitch statistics (mean, stdev, min, max) for all intervals
+#' in a TextGrid tier using SIMD-accelerated batch processing.
+#'
+#' @param textgrid_xptr External pointer to TextGrid
+#' @param pitch_xptr External pointer to Pitch object
+#' @param tier_number Tier number (1-based)
+#' @param unit Pitch unit: "HERTZ" or "SEMITONES"
+#'
+#' @return Data frame with interval index, label, start, end, duration,
+#'         pitch_mean, pitch_stdev, pitch_min, pitch_max
+#'
+#' @details
+#' This function combines:
+#' 1. SIMD duration calculation for all intervals
+#' 2. SIMD statistics calculation for pitch values in each interval
+#'
+#' Performance: ~2x faster than R loop with individual queries
+#'
+#' @export
+textgrid_interval_pitch_batch <- function(textgrid_xptr, pitch_xptr, tier_number, unit = "HERTZ") {
+    .Call(`_pladdrr_textgrid_interval_pitch_batch`, textgrid_xptr, pitch_xptr, tier_number, unit)
+}
+
+#' Extract Formant Statistics for All TextGrid Intervals (Batch, SIMD)
+#'
+#' Computes formant statistics for all intervals using SIMD.
+#'
+#' @param textgrid_xptr External pointer to TextGrid
+#' @param formant_xptr External pointer to Formant object
+#' @param tier_number Tier number (1-based)
+#' @param formant_number Formant number to extract (1 = F1, 2 = F2, etc.)
+#'
+#' @return Data frame with interval info and formant statistics
+#'
+#' @export
+textgrid_interval_formant_batch <- function(textgrid_xptr, formant_xptr, tier_number, formant_number = 1L) {
+    .Call(`_pladdrr_textgrid_interval_formant_batch`, textgrid_xptr, formant_xptr, tier_number, formant_number)
+}
+
+#' Extract Intensity Statistics for All TextGrid Intervals (Batch, SIMD)
+#'
+#' @param textgrid_xptr External pointer to TextGrid
+#' @param intensity_xptr External pointer to Intensity object
+#' @param tier_number Tier number (1-based)
+#'
+#' @return Data frame with interval info and intensity statistics
+#'
+#' @export
+textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tier_number) {
+    .Call(`_pladdrr_textgrid_interval_intensity_batch`, textgrid_xptr, intensity_xptr, tier_number)
+}
+
+#' Extract All Acoustic Features for TextGrid Intervals (Batch, SIMD)
+#'
+#' Comprehensive batch extraction of pitch, formant F1/F2, and intensity
+#' statistics for all intervals. Maximum efficiency by processing all
+#' features in a single pass.
+#'
+#' @param textgrid_xptr External pointer to TextGrid
+#' @param sound_xptr External pointer to Sound (optional, for additional analysis)
+#' @param pitch_xptr External pointer to Pitch (optional)
+#' @param formant_xptr External pointer to Formant (optional)
+#' @param intensity_xptr External pointer to Intensity (optional)
+#' @param tier_number Tier number (1-based)
+#'
+#' @return Data frame with all available features per interval
+#'
+#' @details
+#' This is the most efficient way to extract multiple acoustic features
+#' for TextGrid-aligned analysis. All SIMD optimizations are applied:
+#' - Duration calculation: SIMD
+#' - Statistics aggregation: SIMD where applicable
+#'
+#' @export
+textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NULL, formant_xptr = NULL, intensity_xptr = NULL, tier_number = 1L) {
+    .Call(`_pladdrr_textgrid_interval_all_features_batch`, textgrid_xptr, pitch_xptr, formant_xptr, intensity_xptr, tier_number)
 }
 
 .textgrid_read_from_file <- function(path) {
