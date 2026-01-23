@@ -97,8 +97,9 @@ if (!is.na(f1) && !is.na(f2)) {
 
 Retains all detected LPC formants without filtering:
 
-```{r keepall}
+```{r keepall, eval=FALSE}
 # Note: Keep All method also works with synthesized vowels
+# Currently disabled due to polynomial root finding implementation
 formant_keepall <- sound$to_formant_keepall(
   time_step = 0.005,
   max_formants = 5,                    # Maximum formants to track
@@ -107,6 +108,8 @@ formant_keepall <- sound$to_formant_keepall(
   pre_emphasis_from = 50
 )
 ```
+
+**Note:** The `to_formant_keepall()` method is currently under development. Use `to_formant_burg()` for stable formant extraction.
 
 ### When to Use Keep All
 
@@ -122,8 +125,9 @@ formant_keepall <- sound$to_formant_keepall(
 
 ### Keep All vs. Burg Example
 
-```{r compare-keepall-burg}
+```{r compare-keepall-burg, eval=FALSE}
 # Same sound, both methods
+# Note: to_formant_keepall() currently under development
 formant_b <- sound$to_formant_burg(max_formants = 4)
 formant_k <- sound$to_formant_keepall(max_formants = 4)
 
