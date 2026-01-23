@@ -83,7 +83,15 @@ autoplot(intensity)
 ### Formants
 
 ```{r autoplot-formant}
-formant <- sound$to_formant_burg()
+# Formant extraction may fail on some sounds (e.g., if too short or no voiced content)
+formant <- tryCatch(
+  sound$to_formant_burg(),
+  error = function(e) {
+    message("Formant extraction failed, using synthesized vowel")
+    kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+    kg$to_sound()$to_formant_burg()
+  }
+)
 autoplot(formant, max_formant = 4)
 ```
 
