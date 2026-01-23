@@ -323,6 +323,7 @@ SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
            mfcc_simd.cpp mfcc_simd_bridge.cpp \
            batch_queries_simd.cpp batch_queries_simd_bridge.cpp \
            textgrid_simd.cpp textgrid_simd_bridge.cpp \
+           formantpath_simd.cpp \
            simd_info.cpp sound_zerocopy.cpp textgrid_batch_operations.cpp batch_queries.cpp
 
 # Rcpp Module sources (pladdrr 2.0 architecture)

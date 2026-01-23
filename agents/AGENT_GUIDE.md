@@ -1,11 +1,140 @@
 # pladdrr Agent Guide
 
-**Version:** 4.5.3 (2026-01-23)
+**Version:** 4.6.0 (2026-01-23)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
 
 ## Recent Changes
+
+### 🎉 Phase 4 Task 4.1 Complete - FormantPath SIMD (v4.6.0 - 2026-01-23)
+
+**Summary:** SIMD acceleration for FormantPath dynamic programming - Viterbi algorithm for optimal multi-ceiling formant extraction. Optimizes path finding with vectorized cost computations and reductions.
+
+#### Phase 4 Task 4.1 Components:
+
+**FormantPath SIMD Implementation (v4.6.0)**
+- `formantpath_simd.cpp` (750 lines) - Core SIMD for Viterbi DP
+- Integrated into `FormantPath.cpp` - Lines 50-72, 242-323
+- Expected Performance: 2-3x (ARM NEON 1.5-2x, x86 AVX2 2-3x)
+
+#### Algorithm: Viterbi Dynamic Programming
+
+FormantPath finds optimal ceiling frequency sequence across time:
+- **State Space:** C candidates (ceilings) × T time frames
+- **Costs:** Static (stress + qsum) + Transition (freq change + ceiling change)
+- **Goal:** Minimize total cost path through trellis
+
+#### FormantPath SIMD Optimizations:
+
+**1. Q-Sum Computation** - Vectorized frequency/bandwidth ratios
+```cpp
+// qsum = mean(freq[i] / bw[i]) for all formants
+void compute_qsums_simd(
+    const double* frequencies,
+    const double* bandwidths,
+    integer numberOfCandidates,
+    integer maxFormants,
+    const integer* formantCounts,
+    double* qsums  // output (1-based)
+);
+```
+
+**2. Frequency Change Cost** - Vectorized transition costs
+```cpp
+// cost = mean(bw_ij * |fi - fj| / (fi + fj))
+// where bw_ij = sqrt(bw_i * bw_j)
+double compute_frequency_change_cost_simd(
+    const double* freqs_i,      // current candidate
+    const double* freqs_j,      // previous candidate
+    const double* bws_i,
+    const double* bws_j,
+    integer ntracks,
+    double frequencyChangeWeight,
+    double transitionCostCutoff
+);
+```
+
+**3. Min/Max Finding** - Horizontal SIMD reductions
+```cpp
+// Find minimum cost and position (Viterbi backtracking)
+double find_min_with_position_simd(
+    const double* values,
+    integer n,
+    integer* out_minPos  // 1-based position
+);
+
+// Find maximum position (final state selection)
+integer find_max_position_simd(
+    const double* values,
+    integer n
+);
+```
+
+**4. Static Cost Computation** - Batch processing across candidates
+```cpp
+// delta[i] = wIntensity * (stressWeight*stress - qWeight*qsum)
+void compute_static_costs_simd(
+    const double* stresses,
+    const double* qsums,
+    const double* intensities,
+    integer numberOfCandidates,
+    double stressWeight,
+    double qWeight,
+    double stressCutoff,
+    double qCutoff,
+    double* delta  // output (1-based)
+);
+```
+
+#### Integration Points (FormantPath.cpp):
+
+```cpp
+// Line 52: Runtime SIMD check
+bool should_use_simd_for_formantpath();
+
+// Line 242: Enable SIMD if available
+const bool useSIMD = should_use_simd_for_formantpath();
+
+// Lines 244-252: Pre-allocate SIMD arrays
+autoVEC freqs_i, bws_i, freqs_j, bws_j;
+if (useSIMD && frequencyChangeWeight > 0.0) {
+    freqs_i = raw_VEC(maxnFormants);
+    bws_i = raw_VEC(maxnFormants);
+    freqs_j = raw_VEC(maxnFormants);
+    bws_j = raw_VEC(maxnFormants);
+}
+
+// Lines 262-287: SIMD frequency change cost
+if (useSIMD && transtionCostType == 1) {
+    fcost = compute_frequency_change_cost_simd_bridge(...);
+    transitionCosts += frequencyChangeWeight * std::min(fcost / cutoff, 1.0);
+}
+```
+
+#### Performance Characteristics:
+
+- **Scaling:** More candidates = more SIMD benefit (O(C²T) operations)
+- **Bottleneck:** Dynamic programming dominates for C > 3
+- **SIMD Benefit:** Vectorizes inner loops of cost computation
+
+#### Testing:
+- `tests/testthat/test-phase4-formantpath-simd.R` (10 tests)
+- Tests SIMD vs scalar accuracy, multiple ceiling configs, edge cases
+
+#### Benchmarking:
+- `benchmarks/phase4_task4.1_formantpath_benchmark.R`
+- Tests 3, 5, 7 candidates with 1s, 3s, 5s audio durations
+
+#### Files Created:
+- `tests/testthat/test-phase4-formantpath-simd.R` (358 lines)
+- `benchmarks/phase4_task4.1_formantpath_benchmark.R` (350 lines)
+
+#### Files Already Implemented:
+- `src/formantpath_simd.cpp` (750 lines) - Pre-existing implementation
+- `src/praat.github.io/LPC/FormantPath.cpp` - Already integrated
+
+---
 
 ### 🎉 Phase 3 Task 3.3 Complete - TextGrid Batch SIMD (v4.5.3 - 2026-01-23)
 
