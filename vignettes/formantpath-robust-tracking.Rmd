@@ -250,8 +250,14 @@ formant_optimal <- fp$extract_formant()
 df_optimal <- as.data.frame(formant_optimal)
 df_optimal$method <- "FormantPath (Optimal)"
 
-# Standard single-ceiling
-formant_standard <- sound$to_formant_burg(max_frequency = 5500)
+# Standard single-ceiling with full parameters
+formant_standard <- sound$to_formant_burg(
+  time_step = 0.005,
+  max_formants = 5,
+  max_frequency = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50
+)
 df_standard <- as.data.frame(formant_standard)
 df_standard$method <- "Standard (5500 Hz)"
 
