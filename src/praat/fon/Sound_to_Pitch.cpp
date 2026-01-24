@@ -36,6 +36,22 @@
 #include "NUM2.h"
 #include "Sound_and_Spectrum.h"
 
+// SIMD optimization for harmonicity/pitch (Phase 4.2)
+#ifdef HAVE_XSIMD
+extern "C" {
+    bool should_use_simd_for_harmonicity();
+    double compute_local_mean_simd_bridge(const double* data, int start, int end);
+    double cross_correlation_fcc_simd_bridge(const double* amp, double mean, int nsamp_window, int lag);
+    void apply_window_dc_removal_simd_bridge(const double* signal, int signal_start, double local_mean, const double* window, double* frame, int frame_length);
+    void apply_dc_removal_simd_bridge(const double* signal, int signal_start, double local_mean, double* frame, int frame_length);
+    double find_local_peak_simd_bridge(const double* data, int start, int end);
+    double compute_sum_of_squares_simd_bridge(const double* data, double mean, int start, int end);
+    void normalize_autocorrelation_simd_bridge(const double* ac, const double* windowR, double* r, int max_lag);
+    void zero_fill_simd_bridge(double* data, int start, int end);
+    void accumulate_power_spectrum_simd_bridge(const double* frame, double* ac, int n_fft);
+}
+#endif
+
 #define AC_HANNING  0
 #define AC_GAUSS  1
 #define FCC_NORMAL  2
@@ -123,20 +139,45 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		}
 		longdouble sumy2 = sumx2;   // at zero lag, these are still equal
 		r [0] = 1.0;
-		for (integer i = 1; i <= localMaximumLag; i ++) {
-			longdouble product = 0.0;
-			for (integer channel = 1; channel <= my ny; channel ++) {
-				const double *const amp = & my z [channel] [0] + offset;
-				const double y0 = amp [i] - localMean [channel];
-				const double yZ = amp [i + nsamp_window] - localMean [channel];
-				sumy2 += yZ * yZ - y0 * y0;
-				for (integer j = 1; j <= nsamp_window; j ++) {
-					const double x = amp [j] - localMean [channel];
-					const double y = amp [i + j] - localMean [channel];
-					product += x * y;
+#ifdef HAVE_XSIMD
+		if (should_use_simd_for_harmonicity()) {
+			// SIMD-optimized FCC cross-correlation (Phase 4.2)
+			for (integer i = 1; i <= localMaximumLag; i ++) {
+				longdouble product = 0.0;
+				for (integer channel = 1; channel <= my ny; channel ++) {
+					const double *const amp = & my z [channel] [0] + offset;
+					const double y0 = amp [i] - localMean [channel];
+					const double yZ = amp [i + nsamp_window] - localMean [channel];
+					sumy2 += yZ * yZ - y0 * y0;
+					// SIMD inner loop: cross-correlation at lag i
+					product += cross_correlation_fcc_simd_bridge(
+						amp + 1,  // Start at index 1 (0-indexed becomes amp[1..nsamp_window])
+						localMean [channel],
+						static_cast<int>(nsamp_window),
+						static_cast<int>(i)
+					);
 				}
+				r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
 			}
-			r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
+		} else
+#endif
+		{
+			// Scalar FCC cross-correlation
+			for (integer i = 1; i <= localMaximumLag; i ++) {
+				longdouble product = 0.0;
+				for (integer channel = 1; channel <= my ny; channel ++) {
+					const double *const amp = & my z [channel] [0] + offset;
+					const double y0 = amp [i] - localMean [channel];
+					const double yZ = amp [i + nsamp_window] - localMean [channel];
+					sumy2 += yZ * yZ - y0 * y0;
+					for (integer j = 1; j <= nsamp_window; j ++) {
+						const double x = amp [j] - localMean [channel];
+						const double y = amp [i + j] - localMean [channel];
+						product += x * y;
+					}
+				}
+				r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
+			}
 		}
 	} else {
 

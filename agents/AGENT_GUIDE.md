@@ -1,11 +1,38 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.1 (2026-01-24)
+**Version:** 4.6.2 (2026-01-24)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 
 ---
 
 ## Recent Changes
+
+### 🐛 Bug Fix: extract_voiced_segments_ultra() Crash & ZCR Accuracy (v4.6.2 - 2026-01-24)
+
+**Summary:** Fixed segfault crash in `extract_voiced_segments_ultra()` and corrected ZCR calculation to match AVQI standard.
+
+**Issue 1 - Crash:** Function crashed with segfault (address 0x68) when called. Root cause: `Sound_to_TextGrid_detectSilences()` internally calls `Sound_filter_passHannBand()` which has FFT-related issues in pladdrr.
+
+**Solution 1:** Replaced `Sound_to_TextGrid_detectSilences()` with direct intensity-based silence detection (matching approach in `sound_wrappers.cpp`). Fixed `Sound_create()` parameter errors.
+
+**Issue 2 - ZCR Accuracy:** ZCR calculation used naive sample-level zero crossing counting instead of AVQI-standard interpolated zero crossings.
+
+**Solution 2:** Replaced with Praat's `Sound_to_PointProcess_zeroes()` for interpolated zero crossing detection. Implements correct AVQI formula: `zcr = n_crossings / (last_crossing - first_crossing)`.
+
+**Files Modified:**
+- `src/batch_queries.cpp`:
+  - Lines 1262-1342: Replaced TextGrid-based silence detection with direct Intensity-based detection
+  - Lines 1418-1445: Replaced naive ZCR with `Sound_to_PointProcess_zeroes()`
+  - Fixed `Sound_create()` parameters for empty result case
+
+**Test Results:**
+- 22/22 tests pass in `test-extract-voiced-segments-ultra.R`
+- v3.01 preserves 99% of clean periodic signals (150 Hz tone)
+- 32/32 harmonicity SIMD tests still pass
+
+**Impact:** `extract_voiced_segments_ultra()` now works correctly for AVQI v2.03 and v3.01 workflows.
+
+---
 
 ### 🔧 Vignette Build Fixes (v4.6.1 - 2026-01-24)
 
@@ -2000,17 +2027,21 @@ calculate_cpps_ultra(
 
 **Solution:** Complete voiced extraction pipeline in single C++ call. Supports both AVQI v2.03 (intensity-based) and v3.01 (windowed power + ZCR filtering).
 
-**Algorithm:**
-1. Silence detection via TextGrid (`detectSilences` with `minPitch=100`, `timeStep=0`, `silenceThreshold=-25 dB`, `minSilent=0.1s`, `minSounding=0.1s`)
-2. Extract sounding (non-silent) intervals
-3. Concatenate sounding intervals into single Sound
-4. **v3.01 only:** Apply windowed power + ZCR filtering:
+**Algorithm (v4.6.2+):**
+1. Create Intensity object from Sound (`Sound_to_Intensity` with `minPitch`, `timeStep=0.003s`)
+2. Find maximum intensity; calculate threshold as `max_intensity + silence_threshold_db`
+3. Detect sounding intervals by scanning intensity values above threshold
+4. Extract and concatenate sounding intervals (min duration filtering applied)
+5. **v3.01 only:** Apply windowed power + ZCR filtering:
    - Calculate global power threshold (default: 3% of global power)
    - Apply sliding windows (default: 0.03s, nonoverlapping)
-   - For each window: calculate power and ZCR (channel 1)
+   - For each window: calculate power and ZCR using `Sound_to_PointProcess_zeroes()`
+   - ZCR formula (AVQI standard): `zcr = n_crossings / (last_crossing - first_crossing)`
    - Keep window if: `power > threshold AND zcr < max_zcr`
    - Concatenate passing windows
-5. Return concatenated voiced Sound
+6. Return concatenated voiced Sound
+
+**Note:** v4.6.2 changed from TextGrid-based silence detection to direct Intensity-based detection to avoid FFT crash in `Sound_to_TextGrid_detectSilences()`.
 
 ```r
 # OLD WAY: Multi-step pipeline (6+ Praat calls)

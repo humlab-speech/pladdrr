@@ -1265,31 +1265,74 @@ SEXP extract_voiced_segments_ultra_cpp(
     }
 
     try {
-        // Step 1: Detect silences and create TextGrid
-        // Matches AVQI301.praat line 155: to_textgrid_silences
-        autoTextGrid tg = Sound_to_TextGrid_detectSilences(
+        // Step 1: Detect silences using Intensity directly (avoids FFT-based filtering crash)
+        // This matches the approach in sound_wrappers.cpp sound_to_textgrid_silences
+        autoIntensity intensity = Sound_to_Intensity(
             sound.get(),
             min_pitch,
-            0.003,                      // time_step (standard)
-            silence_threshold_db,
-            min_silent_duration,
-            min_sounding_duration,
-            U"silent",
-            U"sounding"
+            0.003,  // time_step
+            true    // subtract mean pressure
         );
 
-        // Step 2: Extract sounding intervals into vector
-        // Matches AVQI301.praat lines 160-175
-        IntervalTier tier = static_cast<IntervalTier>(tg->tiers->at[1]);
-        autoSoundList sounding_sounds = SoundList_create();
+        if (!intensity) {
+            stop("Failed to create Intensity from Sound");
+        }
 
-        for (integer i = 1; i <= tier->intervals.size; i++) {
-            TextInterval interval = tier->intervals.at[i];
-            if (Melder_equ(interval->text.get(), U"sounding")) {
+        // Find maximum intensity
+        double max_intensity_db = -1000.0;
+        for (integer j = 1; j <= intensity->nx; j++) {
+            if (intensity->z[1][j] > max_intensity_db) {
+                max_intensity_db = intensity->z[1][j];
+            }
+        }
+
+        // Calculate threshold relative to maximum
+        double intensity_threshold = max_intensity_db + silence_threshold_db;
+
+        // Step 2: Detect sounding intervals and extract them
+        autoSoundList sounding_sounds = SoundList_create();
+        bool in_sounding = intensity->z[1][1] >= intensity_threshold;
+        double segment_start = sound->xmin;
+
+        for (integer j = 2; j <= intensity->nx; j++) {
+            bool current_is_sounding = intensity->z[1][j] >= intensity_threshold;
+            double current_time = intensity->x1 + (j - 1) * intensity->dx;
+
+            if (current_is_sounding != in_sounding) {
+                if (!in_sounding && current_is_sounding) {
+                    // Transition from silence to sounding
+                    segment_start = current_time;
+                } else {
+                    // Transition from sounding to silence
+                    double segment_end = current_time;
+                    double segment_duration = segment_end - segment_start;
+
+                    // Only extract if segment is long enough
+                    if (segment_duration >= min_sounding_duration) {
+                        autoSound part = Sound_extractPart(
+                            sound.get(),
+                            segment_start,
+                            segment_end,
+                            kSound_windowShape::RECTANGULAR,
+                            1.0,
+                            false
+                        );
+                        sounding_sounds->addItem_move(part.move());
+                    }
+                }
+                in_sounding = current_is_sounding;
+            }
+        }
+
+        // Handle final segment if it was sounding
+        if (in_sounding) {
+            double segment_end = sound->xmax;
+            double segment_duration = segment_end - segment_start;
+            if (segment_duration >= min_sounding_duration) {
                 autoSound part = Sound_extractPart(
                     sound.get(),
-                    interval->xmin,
-                    interval->xmax,
+                    segment_start,
+                    segment_end,
                     kSound_windowShape::RECTANGULAR,
                     1.0,
                     false
@@ -1301,13 +1344,17 @@ SEXP extract_voiced_segments_ultra_cpp(
         // No sounding regions found
         if (sounding_sounds->size == 0) {
             // Return minimal silence (standard Praat behavior)
+            // Sound_create(nChannels, xmin, xmax, nx, dx, x1)
+            double sr = 1.0 / sound->dx;  // Get sampling rate from input
+            integer nx_silence = Melder_iround(0.001 * sr);  // 1ms worth of samples
+            if (nx_silence < 1) nx_silence = 1;
             autoSound silence = Sound_create(
-                1,                  // nChannels
-                0.0,                // xmin
-                0.001,              // xmax (1ms)
-                static_cast<integer>(sound->ny > 0 ? sound->dx : 0.0001),
-                0.0,                // x1
-                1.0 / (sound->ny > 0 ? sound->dx : 10000)
+                1,                          // nChannels
+                0.0,                        // xmin
+                0.001,                      // xmax (1ms)
+                nx_silence,                 // nx (number of samples)
+                sound->dx,                  // dx (sample period from input)
+                sound->dx / 2.0             // x1 (center of first sample)
             );
             return create_xptr_from_auto<structSound>(silence);
         }
@@ -1368,24 +1415,31 @@ SEXP extract_voiced_segments_ultra_cpp(
             // Calculate window power
             double window_power = Sound_getPower(window.get(), window->xmin, window->xmax);
 
-            // Calculate ZCR for window (channel 1)
+            // Calculate ZCR for window using Praat's interpolated zero crossing detection
+            // This matches AVQI standard: zcr = n_crossings / (last_crossing - first_crossing)
             double zcr = 0.0;
             try {
-                // Sound_getZeroCrossingRate signature: (Sound, fromTime, toTime, channel)
-                // Note: ZCR calculation may fail for very short windows
-                integer nSamples = window->nx;
-                if (nSamples > 1) {
-                    integer nCrossings = 0;
-                    VEC samples = window->z.row(1);
-                    for (integer j = 2; j <= nSamples; j++) {
-                        if ((samples[j - 1] >= 0 && samples[j] < 0) ||
-                            (samples[j - 1] < 0 && samples[j] >= 0)) {
-                            nCrossings++;
-                        }
+                // Use Praat's Sound_to_PointProcess_zeroes for accurate interpolated zero crossings
+                // Include both raisers (negative to positive) and fallers (positive to negative)
+                autoPointProcess pp = Sound_to_PointProcess_zeroes(window.get(), 1, true, true);
+
+                if (pp->nt >= 2) {
+                    // AVQI formula: ZCR = number of crossings / (last_crossing_time - first_crossing_time)
+                    double first_crossing = pp->t[1];
+                    double last_crossing = pp->t[pp->nt];
+                    double afstand = last_crossing - first_crossing;
+
+                    if (afstand > 0.0) {
+                        zcr = static_cast<double>(pp->nt) / afstand;
                     }
-                    double windowDuration = to_time - from_time;
-                    zcr = nCrossings / windowDuration;
+                } else if (pp->nt == 1) {
+                    // Only one crossing - use window duration as fallback
+                    double windowDuration = window->xmax - window->xmin;
+                    if (windowDuration > 0.0) {
+                        zcr = 1.0 / windowDuration;
+                    }
                 }
+                // If no crossings (pp->nt == 0), zcr remains 0.0
             } catch (...) {
                 zcr = NAN;
             }
