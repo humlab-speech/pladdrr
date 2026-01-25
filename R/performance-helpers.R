@@ -563,18 +563,20 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @export
 calculate_cpps_ultra <- function(
   sound,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
+  time_averaging_window = 0.001,        # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.01)
+  quefrency_averaging_window = 0.0005,  # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.001)
   pitch_floor = 60,
-  pitch_ceiling = 330,
+  pitch_ceiling = 333.3,                # BUG FIX v4.6.4: match calculate_cpps_fast (was 330)
   subtract_trend = TRUE,
   time_step = 0.002,
   max_quefrency = 0.05,
   tolerance = 0.05,
   interpolation = "parabolic",
   tilt_line_quefrency = 0.001,
-  line_type = "exponential",
-  fit_method = "robust"
+  line_type = "straight",               # BUG FIX v4.6.4: match calculate_cpps_fast (was "exponential")
+  fit_method = "robust",
+  pre_emphasis_from = 50,
+  max_frequency = 5000
 ) {
   # Extract pointer if R6 object
   sound_ptr <- if (inherits(sound, "Sound")) {
@@ -598,6 +600,9 @@ calculate_cpps_ultra <- function(
   fit_method <- match.arg(fit_method, names(fit_map))
 
   # Single C++ call for entire CPPS calculation
+  # BUG FIX (v4.6.4): Added pre_emphasis_from and max_frequency parameters
+  # Previously the function used tilt_line_quefrency (0.001 sec) as pre-emphasis,
+  # which should be a frequency in Hz (50), not a quefrency in seconds.
   .calculate_cpps_ultra_cpp(
     sound_ptr,
     as.numeric(time_averaging_window),
@@ -611,7 +616,9 @@ calculate_cpps_ultra <- function(
     as.integer(interp_map[[interpolation]]),
     as.numeric(tilt_line_quefrency),
     as.integer(trend_map[[line_type]]),
-    as.integer(fit_map[[fit_method]])
+    as.integer(fit_map[[fit_method]]),
+    as.numeric(pre_emphasis_from),
+    as.numeric(max_frequency)
   )
 }
 

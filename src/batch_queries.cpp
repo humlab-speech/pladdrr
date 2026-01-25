@@ -1161,6 +1161,8 @@ List get_voice_quality_ultra_cpp(
 //' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
 //' @param line_type Trend line type (1=straight, 2=exponential decay)
 //' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
+//' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS
+//' @param max_frequency Maximum frequency for cepstrogram in Hz (default 5000.0)
 //' @return Single CPPS value in dB
 //' @keywords internal
 // [[Rcpp::export(.calculate_cpps_ultra_cpp)]]
@@ -1177,7 +1179,9 @@ double calculate_cpps_ultra_cpp(
     int interpolation = 1,
     double tilt_line_quefrency = 0.001,
     int line_type = 2,
-    int fit_method = 1
+    int fit_method = 1,
+    double pre_emphasis_from = 50.0,
+    double max_frequency = 5000.0
 ) {
     XPtr<structSound> sound(sound_xptr);
     if (!sound || sound.get() == nullptr) {
@@ -1187,20 +1191,20 @@ double calculate_cpps_ultra_cpp(
     try {
         // Step 1: Create PowerCepstrogram with consolidated parameters
         // Matches Sound_to_PowerCepstrogram signature from Praat
-        // Note: For CPPS calculation, we need reasonable defaults:
-        // - maximum_frequency: Use sampling rate / 2 (Nyquist) or a reasonable upper limit
-        // - pre_emphasis_frequency: Use tilt_line_quefrency parameter
-        
+        // BUG FIX (v4.6.4): Previously used tilt_line_quefrency (0.001) as pre-emphasis,
+        // which is a quefrency value in seconds, not a frequency in Hz!
+        // Now correctly uses pre_emphasis_from (default 50 Hz) to match calculate_cpps_fast()
+
         // Calculate reasonable maximum frequency (use Nyquist frequency as upper limit)
         double sampling_rate = 1.0 / sound->dx;
-        double max_frequency = std::min(5000.0, sampling_rate / 2.0); // 5000 Hz or Nyquist, whichever is lower
-        
+        double actual_max_freq = std::min(max_frequency, sampling_rate / 2.0);
+
         autoPowerCepstrogram cpp = Sound_to_PowerCepstrogram(
             sound.get(),
-            pitch_floor,        // pitch floor for cepstrogram
-            time_step,          // time step (dt)
-            max_frequency,      // maximum frequency for cepstrogram (fixed to reasonable value)
-            tilt_line_quefrency // pre-emphasis frequency
+            pitch_floor,         // pitch floor for cepstrogram
+            time_step,           // time step (dt)
+            actual_max_freq,     // maximum frequency for cepstrogram
+            pre_emphasis_from    // pre-emphasis frequency in Hz (FIXED: was tilt_line_quefrency)
         );
 
         // Check if cepstrogram was created successfully
@@ -1551,9 +1555,12 @@ List calculate_multiband_hnr_ultra_cpp(
                 );
             }
 
-            // Calculate Harmonicity for this band
-            // time_step=0.005, periods_per_window=1.0 (VQ standard)
-            autoHarmonicity harmonicity = Sound_to_Harmonicity_ac(
+            // Calculate Harmonicity for this band using cross-correlation (CC) method
+            // BUG FIX (v4.6.4): Changed from Sound_to_Harmonicity_ac to Sound_to_Harmonicity_cc
+            // to match to_harmonicity_direct() which uses the CC method.
+            // AC and CC methods give different results - VQ uses CC method.
+            // Parameters: time_step=0.005, periods_per_window=1.0 (VQ standard)
+            autoHarmonicity harmonicity = Sound_to_Harmonicity_cc(
                 filtered.get(),
                 time_step,
                 min_pitch,
