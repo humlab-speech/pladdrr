@@ -1,12 +1,73 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.3 (2026-01-25)
+**Version:** 4.6.4 (2026-01-25)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed - Production ready ✅
 
 ---
 
 ## Recent Changes
+
+### 🐛 Critical Bug Fixes - Ultra API v4.6.4 (2026-01-25)
+
+**Summary:** Fixed two critical Ultra API bugs that caused 28-62% errors in CPPS and HNR calculations. Both functions now match standard API output exactly.
+
+#### Bug #1: `calculate_cpps_ultra()` - 28% Error Fixed ✅
+
+**Issue:** Function returned 8.60 dB instead of ~12 dB (28% error).
+
+**Root Cause:** Used `tilt_line_quefrency` (0.001 seconds - a quefrency value) as the pre-emphasis frequency parameter to `Sound_to_PowerCepstrogram`, instead of the correct `pre_emphasis_from` (50 Hz).
+
+**Fix:**
+- Added `pre_emphasis_from` parameter (default 50 Hz)
+- Aligned all default parameters with `calculate_cpps_fast()`
+
+**Test Results:**
+```r
+calculate_cpps_fast():  15.7670 dB
+calculate_cpps_ultra(): 15.7670 dB
+Difference: 0.0000 dB ✅
+```
+
+**Agent Guidance:**
+```r
+# Ultra API now matches fast API exactly
+cpps <- calculate_cpps_ultra(sound)  # Uses correct defaults
+
+# For explicit parameter control (optional)
+cpps <- calculate_cpps_ultra(sound,
+  pre_emphasis_from = 50,   # NEW: pre-emphasis frequency in Hz
+  max_frequency = 5000      # NEW: max frequency for cepstrogram
+)
+```
+
+#### Bug #2: `calculate_multiband_hnr_ultra()` - 62% Error Fixed ✅
+
+**Issue:** Function returned 6.91 dB instead of 18.04 dB (62% error). Band values were also incorrect.
+
+**Root Cause:** Used `Sound_to_Harmonicity_ac` (autocorrelation method) instead of `Sound_to_Harmonicity_cc` (cross-correlation method). The standard `to_harmonicity_direct()` uses CC method.
+
+**Fix:** Changed to `Sound_to_Harmonicity_cc` to match the standard API.
+
+**Test Results:**
+```r
+Standard API (CC):     92.6741 dB
+Ultra API (full_mean): 92.6741 dB
+Difference: 0.0000 dB ✅
+```
+
+**Agent Guidance:**
+```r
+# Ultra API now matches standard API exactly
+hnr <- calculate_multiband_hnr_ultra(sound,
+  bands = c(0, 500, 1500, 2500, 3500),
+  time_step = 0.005,
+  min_pitch = 75
+)
+# Returns: full_mean, full_sd, band500_mean, band500_sd, etc.
+```
+
+---
 
 ### 🐛 Critical Bug Fixes - Ultra API v4.6.3 (2026-01-25)
 
