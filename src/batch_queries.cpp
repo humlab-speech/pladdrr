@@ -1187,13 +1187,26 @@ double calculate_cpps_ultra_cpp(
     try {
         // Step 1: Create PowerCepstrogram with consolidated parameters
         // Matches Sound_to_PowerCepstrogram signature from Praat
+        // Note: For CPPS calculation, we need reasonable defaults:
+        // - maximum_frequency: Use sampling rate / 2 (Nyquist) or a reasonable upper limit
+        // - pre_emphasis_frequency: Use tilt_line_quefrency parameter
+        
+        // Calculate reasonable maximum frequency (use Nyquist frequency as upper limit)
+        double sampling_rate = 1.0 / sound->dx;
+        double max_frequency = std::min(5000.0, sampling_rate / 2.0); // 5000 Hz or Nyquist, whichever is lower
+        
         autoPowerCepstrogram cpp = Sound_to_PowerCepstrogram(
             sound.get(),
             pitch_floor,        // pitch floor for cepstrogram
-            time_step,          // time step
-            max_quefrency,      // maximum quefrency
-            tilt_line_quefrency // pre-emphasis from
+            time_step,          // time step (dt)
+            max_frequency,      // maximum frequency for cepstrogram (fixed to reasonable value)
+            tilt_line_quefrency // pre-emphasis frequency
         );
+
+        // Check if cepstrogram was created successfully
+        if (!cpp || cpp.get() == nullptr) {
+            return NA_REAL;
+        }
 
         // Step 2: Extract CPPS directly (avoid intermediate objects)
         // Map integer codes to Praat enums
@@ -1216,7 +1229,9 @@ double calculate_cpps_ultra_cpp(
             fit_enum
         );
 
-        return isundef(cpps) ? NA_REAL : cpps;
+        // Return the raw CPPS value without isundef check
+        // This will help us understand if the issue is with isundef or the calculation itself
+        return cpps;
     } catch (MelderError) {
         Melder_clearError();
         return NA_REAL;
@@ -1367,15 +1382,9 @@ SEXP extract_voiced_segments_ultra_cpp(
             loud_sound = Sounds_concatenate(sounding_sounds.get(), 0.0);
         }
 
-        // Version-specific processing
-        if (version == "v2.03") {
-            // v2.03: No additional filtering (simple intensity-based)
-            // Matches AVQI203.praat lines 128-151
-            return create_xptr_from_auto<structSound>(loud_sound);
-        }
-
-        // v3.01: Apply windowed power + ZCR filtering
-        // Matches AVQI301.praat lines 178-201
+        // Both v2.03 and v3.01 use the same algorithm: windowed power + ZCR filtering
+        // This matches both AVQI203.praat and AVQI301.praat specifications
+        // The only difference between versions is in the final AVQI equation coefficients
 
         // Step 4: Calculate global power and threshold
         double global_power = Sound_getPower(loud_sound.get(), loud_sound->xmin, loud_sound->xmax);

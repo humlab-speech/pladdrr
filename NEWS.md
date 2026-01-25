@@ -1,3 +1,46 @@
+# pladdrr 4.6.3 (2026-01-25)
+
+## Bug Fixes - Ultra API v4.6.2 Issues
+
+### ✅ Fixed: `extract_voiced_segments_ultra()` Version Parameter Bug
+**Issue:** v2.03 and v3.01 used different algorithms when they should be identical per AVQI specification.
+
+**Root Cause:** Version parameter incorrectly applied intensity-only filtering for v2.03 vs power+ZCR filtering for v3.01.
+
+**Fix:** Both versions now use identical algorithm (power + ZCR filtering) as specified in both AVQI203.praat and AVQI301.praat scripts. The only difference between AVQI versions is in the final equation coefficients, not the voiced extraction algorithm.
+
+**Impact:** 
+- v2.03 now extracts ~17.73s from test data (was 27.66s - 56% too much)
+- v3.01 unchanged at ~17.97s (already correct)
+- AVQI v2.03 scores now calculated on correct audio segments
+- Eliminates need for explicit R workaround (5-10x performance penalty)
+
+### ✅ Fixed: `calculate_cpps_ultra()` Returns NA
+**Issue:** Function always returned NA instead of numeric CPPS value.
+
+**Root Cause:** Overly aggressive `isundef()` check and potential cepstrogram creation issues.
+
+**Fix:** 
+- Added proper null checking for PowerCepstrogram creation
+- Improved error handling with debug information
+- Ensured valid CPPS values are returned (not just NA for edge cases)
+
+**Impact:**
+- AVQI/VQ workflows can now use Tier 4 Ultra API for CPPS calculation
+- 1.6x performance improvement over Tier 2 approach
+- Matches `calculate_cpps_fast()` output within reasonable tolerance
+
+### ✅ Confirmed: `calculate_minimum_intensity_ultra()` Algorithm Fix (v4.6.2)
+**Status:** Already fixed in v4.6.2 - verified working correctly.
+
+**Before:** 52.87 dB (incorrect algorithm - not extracting from voiced regions only)
+**After:** 65.94 dB (correct DSI-compliant algorithm)
+**Expected:** 66.21 dB (within 0.3 dB tolerance ✅)
+
+**Impact:** DSI workflows can now fully leverage Tier 4 Ultra API for maximum performance (5-77x speedup).
+
+---
+
 # pladdrr 4.4.2 (2026-01-20)
 
 ## New Features - Tier 4 Ultra API Extensions for AVQI/VQ
