@@ -897,6 +897,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// complexspectrogram_simd_info
+Rcpp::List complexspectrogram_simd_info();
+RcppExport SEXP _pladdrr_complexspectrogram_simd_info() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(complexspectrogram_simd_info());
+    return rcpp_result_gen;
+END_RCPP
+}
 // durationtier_create
 SEXP durationtier_create(double tmin, double tmax);
 RcppExport SEXP _pladdrr_durationtier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
@@ -3194,6 +3204,16 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     praat_interpreter_clear_objects();
     return R_NilValue;
+END_RCPP
+}
+// klattgrid_simd_info
+Rcpp::List klattgrid_simd_info();
+RcppExport SEXP _pladdrr_klattgrid_simd_info() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(klattgrid_simd_info());
+    return rcpp_result_gen;
 END_RCPP
 }
 // longsound_open
@@ -10674,6 +10694,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_cochleagram_as_matrix", (DL_FUNC) &_pladdrr_cochleagram_as_matrix, 1},
     {"_pladdrr_cochleagram_get_info", (DL_FUNC) &_pladdrr_cochleagram_get_info, 1},
     {"_pladdrr_cochleagram_finalizer", (DL_FUNC) &_pladdrr_cochleagram_finalizer, 1},
+    {"_pladdrr_complexspectrogram_simd_info", (DL_FUNC) &_pladdrr_complexspectrogram_simd_info, 0},
     {"_pladdrr_durationtier_create", (DL_FUNC) &_pladdrr_durationtier_create, 2},
     {"_pladdrr_durationtier_get_start_time", (DL_FUNC) &_pladdrr_durationtier_get_start_time, 1},
     {"_pladdrr_durationtier_get_end_time", (DL_FUNC) &_pladdrr_durationtier_get_end_time, 1},
@@ -10791,6 +10812,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_praat_interpreter_remove_object_by_id", (DL_FUNC) &_pladdrr_praat_interpreter_remove_object_by_id, 1},
     {"_pladdrr_praat_interpreter_select_object", (DL_FUNC) &_pladdrr_praat_interpreter_select_object, 2},
     {"_pladdrr_praat_interpreter_clear_objects", (DL_FUNC) &_pladdrr_praat_interpreter_clear_objects, 0},
+    {"_pladdrr_klattgrid_simd_info", (DL_FUNC) &_pladdrr_klattgrid_simd_info, 0},
     {"_pladdrr_longsound_open", (DL_FUNC) &_pladdrr_longsound_open, 1},
     {"_pladdrr_longsound_get_duration", (DL_FUNC) &_pladdrr_longsound_get_duration, 1},
     {"_pladdrr_longsound_get_start_time", (DL_FUNC) &_pladdrr_longsound_get_start_time, 1},

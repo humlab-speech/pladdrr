@@ -486,6 +486,14 @@ should_use_simd_for_batch_queries_bridge <- function() {
     invisible(.Call(`_pladdrr_cochleagram_finalizer`, xptr))
 }
 
+#' Get ComplexSpectrogram SIMD implementation info
+#'
+#' @return List with SIMD availability and batch size
+#' @keywords internal
+.complexspectrogram_simd_info <- function() {
+    .Call(`_pladdrr_complexspectrogram_simd_info`)
+}
+
 .durationtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_durationtier_create`, tmin, tmax)
 }
@@ -1036,6 +1044,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @keywords internal
 .praat_interpreter_clear_objects <- function() {
     invisible(.Call(`_pladdrr_praat_interpreter_clear_objects`))
+}
+
+#' Get KlattGrid SIMD implementation info
+#'
+#' @return List with SIMD availability and batch size
+#' @keywords internal
+.klattgrid_simd_info <- function() {
+    .Call(`_pladdrr_klattgrid_simd_info`)
 }
 
 #' Open a LongSound from file
