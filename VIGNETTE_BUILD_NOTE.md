@@ -1,0 +1,1 @@
+Vignette build issue documented - the doc/formant-analysis.Rmd is a built version that differs from the source vignettes/formant-analysis.Rmd. The source already has proper error handling. This will resolve when package is rebuilt.
