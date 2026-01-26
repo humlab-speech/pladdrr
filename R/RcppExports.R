@@ -361,10 +361,12 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
 #' @param line_type Trend line type (1=straight, 2=exponential decay)
 #' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
+#' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS
+#' @param max_frequency Maximum frequency for cepstrogram in Hz (default 5000.0)
 #' @return Single CPPS value in dB
 #' @keywords internal
-.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.01, quefrency_averaging_window = 0.001, pitch_floor = 60.0, pitch_ceiling = 330.0, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 2L, fit_method = 1L) {
-    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method)
+.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.01, quefrency_averaging_window = 0.001, pitch_floor = 60.0, pitch_ceiling = 330.0, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 2L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
+    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency)
 }
 
 #' Extract voiced segments with AVQI-specific filtering (Tier 4 Ultra)

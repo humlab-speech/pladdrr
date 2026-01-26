@@ -604,8 +604,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // calculate_cpps_ultra_cpp
-double calculate_cpps_ultra_cpp(SEXP sound_xptr, double time_averaging_window, double quefrency_averaging_window, double pitch_floor, double pitch_ceiling, bool subtract_trend, double time_step, double max_quefrency, double tolerance, int interpolation, double tilt_line_quefrency, int line_type, int fit_method);
-RcppExport SEXP _pladdrr_calculate_cpps_ultra_cpp(SEXP sound_xptrSEXP, SEXP time_averaging_windowSEXP, SEXP quefrency_averaging_windowSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP subtract_trendSEXP, SEXP time_stepSEXP, SEXP max_quefrencySEXP, SEXP toleranceSEXP, SEXP interpolationSEXP, SEXP tilt_line_quefrencySEXP, SEXP line_typeSEXP, SEXP fit_methodSEXP) {
+double calculate_cpps_ultra_cpp(SEXP sound_xptr, double time_averaging_window, double quefrency_averaging_window, double pitch_floor, double pitch_ceiling, bool subtract_trend, double time_step, double max_quefrency, double tolerance, int interpolation, double tilt_line_quefrency, int line_type, int fit_method, double pre_emphasis_from, double max_frequency);
+RcppExport SEXP _pladdrr_calculate_cpps_ultra_cpp(SEXP sound_xptrSEXP, SEXP time_averaging_windowSEXP, SEXP quefrency_averaging_windowSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP subtract_trendSEXP, SEXP time_stepSEXP, SEXP max_quefrencySEXP, SEXP toleranceSEXP, SEXP interpolationSEXP, SEXP tilt_line_quefrencySEXP, SEXP line_typeSEXP, SEXP fit_methodSEXP, SEXP pre_emphasis_fromSEXP, SEXP max_frequencySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -622,7 +622,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tilt_line_quefrency(tilt_line_quefrencySEXP);
     Rcpp::traits::input_parameter< int >::type line_type(line_typeSEXP);
     Rcpp::traits::input_parameter< int >::type fit_method(fit_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculate_cpps_ultra_cpp(sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method));
+    Rcpp::traits::input_parameter< double >::type pre_emphasis_from(pre_emphasis_fromSEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_cpps_ultra_cpp(sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -10672,7 +10674,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_calculate_f0_stats_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_f0_stats_ultra_cpp, 6},
     {"_pladdrr_calculate_minimum_intensity_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_minimum_intensity_ultra_cpp, 5},
     {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
-    {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 13},
+    {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 15},
     {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 9},
     {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
     {"_pladdrr_calculate_mean_simd_bridge", (DL_FUNC) &_pladdrr_calculate_mean_simd_bridge, 1},
