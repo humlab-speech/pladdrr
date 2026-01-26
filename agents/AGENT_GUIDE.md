@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.4 (2026-01-25)
+**Version:** 4.6.5 (2026-01-26)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed - Production ready ✅
 
@@ -66,6 +66,39 @@ hnr <- calculate_multiband_hnr_ultra(sound,
 )
 # Returns: full_mean, full_sd, band500_mean, band500_sd, etc.
 ```
+
+---
+
+### 🐛 Critical Bug Fix - Formant SIMD v4.6.4 (2026-01-26)
+
+**Summary:** Fixed critical bug where SIMD-accelerated formant extraction returned values 35-60% too low.
+
+**Issue:** `to_formant_burg()` returned F1=570 Hz, F2=1144 Hz instead of F1=878 Hz, F2=2935 Hz (35-60% error).
+
+**Root Cause:** Bug in SIMD Burg's algorithm implementation (`formant_simd_bridge.cpp`). The SIMD version of `VECburg()` produces incorrect LPC coefficients, causing systematically low formant frequencies.
+
+**Fix:** Disabled SIMD for formant extraction by default. Changed option from `speaker.use_simd` to `speaker.use_simd_formants` with default `FALSE`.
+
+**Test Results:**
+```r
+# SIMD disabled (default now):
+F1: 877.81 Hz, F2: 2935.21 Hz ✅
+
+# SIMD enabled (buggy):
+F1: 569.71 Hz, F2: 1144.06 Hz ❌
+```
+
+**Agent Guidance:**
+```r
+# Formant extraction now works correctly by default
+formant <- sound$to_formant_burg()  # Uses standard Praat (SIMD disabled)
+
+# To explicitly enable SIMD (NOT RECOMMENDED until bug fixed):
+options(speaker.use_simd_formants = TRUE)
+```
+
+**Files Changed:**
+- `src/formant_simd_bridge.cpp`: Changed default from TRUE to FALSE for `should_use_simd_for_formants()`
 
 ---
 

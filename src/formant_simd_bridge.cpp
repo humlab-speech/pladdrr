@@ -267,13 +267,17 @@ extern "C" void apply_preemphasis_simd_bridge(
 
 // Utility: Check if SIMD should be used for formant extraction
 // This respects the R option speaker.use_simd
+// NOTE: Disabled by default (v4.6.4) - SIMD Burg algorithm has a bug that
+// causes formant frequencies to be ~35-60% too low. Use standard Praat
+// implementation until SIMD bug is fixed.
 bool should_use_simd_for_formants() {
 #ifdef HAVE_XSIMD
     try {
         Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
         Rcpp::Function getOption = base_env["getOption"];
 
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
+        // Default to FALSE - SIMD formant extraction has known accuracy issues
+        SEXP opt = getOption("speaker.use_simd_formants", Rcpp::LogicalVector::create(false));
 
         if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
             Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
@@ -282,9 +286,9 @@ bool should_use_simd_for_formants() {
             }
         }
     } catch (...) {
-        // If option check fails, default to true
+        // If option check fails, default to false (use standard Praat)
     }
-    return true;
+    return false;  // Default: use standard Praat implementation
 #else
     return false;
 #endif
