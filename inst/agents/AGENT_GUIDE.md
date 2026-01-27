@@ -1,12 +1,93 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.5 (2026-01-26)
+**Version:** 4.6.7 (2026-01-27)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed - Production ready ✅
+**Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API - Production ready ✅
 
 ---
 
 ## Recent Changes
+
+### ✨ PitchTier API Expansion v4.6.6 (2026-01-27)
+
+**Summary:** Full Praat method parity for PitchTier objects. Addresses user feedback about missing constructor and add_point() methods.
+
+#### New Methods Added:
+
+**Sound Synthesis:**
+```r
+# Create PitchTier and add pitch points
+pt <- PitchTier(0, 2)  # Create empty tier (tmin=0, tmax=2)
+pt$add_point(0.5, 120)  # Add 120 Hz at 0.5s
+pt$add_point(1.0, 150)  # Add 150 Hz at 1.0s
+pt$add_point(1.5, 100)  # Add 100 Hz at 1.5s
+
+# Synthesize sounds from pitch contour
+snd_sine <- pt$to_sound_sine(16000)           # Sine wave at 16kHz
+snd_pulse <- pt$to_sound_pulse_train(16000)   # Pulse train
+snd_phon <- pt$to_sound_phonation(16000)      # Phonation model
+```
+
+**Conversion Methods:**
+```r
+# Convert to Pitch object (sampled representation)
+pitch <- pt$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+
+# Extract time points as PointProcess
+pp <- pt$down_to_point_process()
+```
+
+**Query Methods:**
+```r
+pt$get_minimum()              # Min frequency in tier
+pt$get_maximum()              # Max frequency in tier
+pt$get_area()                 # Area under interpolated curve
+pt$get_standard_deviation()   # SD of interpolated curve
+pt$get_mean()                 # Mean frequency
+pt$get_value_at_time(0.75)    # Interpolated value at time
+```
+
+**Modification:**
+```r
+pt$multiply_frequencies(1.5)              # Scale all by 1.5x
+pt$shift_frequencies(50, "hertz")         # Add 50 Hz to all
+pt$interpolate_quadratically(4, FALSE)    # Smooth contour (4 pts/parabola)
+```
+
+**Export:**
+```r
+df <- pt$as_data_frame()   # data.table with time, frequency columns
+mat <- pt$as_matrix()      # Matrix (n x 2)
+pt$save("contour.PitchTier")
+```
+
+**Static Methods:**
+```r
+# Load from file
+pt <- PitchTier$new("contour.PitchTier")
+
+# Create empty (alternative syntax)
+pt <- PitchTier(tmin = 0, tmax = 2)
+```
+
+**Agent Guidance - Pitch Manipulation Workflow:**
+```r
+# Complete pitch modification workflow
+sound <- Sound("speech.wav")
+pitch <- sound$to_pitch()
+pt <- pitch$down_to_pitch_tier()
+
+# Modify pitch contour
+pt$multiply_frequencies(1.2)  # Raise pitch 20%
+pt$shift_frequencies(20, "hertz")  # Add 20 Hz
+
+# Apply to manipulation for resynthesis
+manip <- sound$to_manipulation()
+manip$replace_pitch_tier(pt)
+modified_sound <- manip$to_sound()
+```
+
+---
 
 ### 🐛 Critical Bug Fixes - Ultra API v4.6.4 (2026-01-25)
 
@@ -2523,17 +2604,48 @@ pitch_df <- pitch$as_data_frame(
 - In-place modification for memory efficiency
 - 5-15x faster for batch operations
 
-### Pattern 4: Tier Manipulation
+### Pattern 4: Tier Manipulation (PitchTier v4.6.6+)
 
 ```r
-# Extract editable tier from analysis
+# === CREATE AND POPULATE PITCHTIER ===
+pt <- PitchTier(0, 2)  # Empty tier from 0 to 2 seconds
+pt$add_point(0.5, 120)  # 120 Hz at 0.5s
+pt$add_point(1.0, 150)  # 150 Hz at 1.0s
+pt$add_point(1.5, 100)  # 100 Hz at 1.5s
+
+# === EXTRACT FROM PITCH ANALYSIS ===
+pitch <- sound$to_pitch()
 pitch_tier <- pitch$down_to_pitch_tier()
 
-# Add/modify points
-pitch_tier$add_point(time = 1.0, value = 150.0)
-pitch_tier$remove_point_near(time = 1.0)
+# === QUERY TIER ===
+n <- pitch_tier$get_number_of_points()
+f0_min <- pitch_tier$get_minimum()
+f0_max <- pitch_tier$get_maximum()
+f0_mean <- pitch_tier$get_mean()
+f0_at_1s <- pitch_tier$get_value_at_time(1.0)
 
-# Use in resynthesis
+# === MODIFY TIER ===
+pitch_tier$add_point(time = 1.0, value = 150.0)
+pitch_tier$remove_point(index = 1)
+pitch_tier$multiply_frequencies(1.2)  # +20%
+pitch_tier$shift_frequencies(10, "hertz")  # +10 Hz
+
+# === SMOOTHING ===
+pitch_tier$interpolate_quadratically(4, FALSE)  # 4 points per parabola
+
+# === SYNTHESIZE SOUND FROM PITCHTIER ===
+snd_sine <- pitch_tier$to_sound_sine(16000)
+snd_pulse <- pitch_tier$to_sound_pulse_train(16000)
+snd_phon <- pitch_tier$to_sound_phonation(16000)
+
+# === CONVERT PITCHTIER TO PITCH ===
+pitch_sampled <- pitch_tier$to_pitch(0.01, 75, 600)
+
+# === EXPORT DATA ===
+df <- pitch_tier$as_data_frame()  # data.table: time, frequency
+mat <- pitch_tier$as_matrix()     # matrix (n x 2)
+
+# === USE IN RESYNTHESIS (PSOLA) ===
 manipulation <- sound$to_manipulation(
   time_step = 0.01,
   pitch_floor = 75,
@@ -2541,6 +2653,10 @@ manipulation <- sound$to_manipulation(
 )
 manipulation$replace_pitch_tier(pitch_tier)
 new_sound <- manipulation$to_sound()
+
+# === LOAD/SAVE ===
+pitch_tier$save("modified.PitchTier")
+pt2 <- PitchTier$new("modified.PitchTier")
 ```
 
 ### Pattern 5: TextGrid Operations
