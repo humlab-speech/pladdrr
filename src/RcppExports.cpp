@@ -4446,6 +4446,79 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pitchtier_interpolate_quadratically
+void pitchtier_interpolate_quadratically(XPtr<structPitchTier> tier, int points_per_parabola, bool logarithmically);
+RcppExport SEXP _pladdrr_pitchtier_interpolate_quadratically(SEXP tierSEXP, SEXP points_per_parabolaSEXP, SEXP logarithmicallySEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structPitchTier> >::type tier(tierSEXP);
+    Rcpp::traits::input_parameter< int >::type points_per_parabola(points_per_parabolaSEXP);
+    Rcpp::traits::input_parameter< bool >::type logarithmically(logarithmicallySEXP);
+    pitchtier_interpolate_quadratically(tier, points_per_parabola, logarithmically);
+    return R_NilValue;
+END_RCPP
+}
+// pitchtier_to_sound_pulse_train
+SEXP pitchtier_to_sound_pulse_train(XPtr<structPitchTier> tier, double sampling_frequency, double adapt_factor, double adapt_time, int interpolation_depth);
+RcppExport SEXP _pladdrr_pitchtier_to_sound_pulse_train(SEXP tierSEXP, SEXP sampling_frequencySEXP, SEXP adapt_factorSEXP, SEXP adapt_timeSEXP, SEXP interpolation_depthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structPitchTier> >::type tier(tierSEXP);
+    Rcpp::traits::input_parameter< double >::type sampling_frequency(sampling_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type adapt_factor(adapt_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type adapt_time(adapt_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation_depth(interpolation_depthSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitchtier_to_sound_pulse_train(tier, sampling_frequency, adapt_factor, adapt_time, interpolation_depth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitchtier_to_sound_phonation
+SEXP pitchtier_to_sound_phonation(XPtr<structPitchTier> tier, double sampling_frequency, double adapt_factor, double maximum_period, double open_phase, double collision_phase, double power1, double power2);
+RcppExport SEXP _pladdrr_pitchtier_to_sound_phonation(SEXP tierSEXP, SEXP sampling_frequencySEXP, SEXP adapt_factorSEXP, SEXP maximum_periodSEXP, SEXP open_phaseSEXP, SEXP collision_phaseSEXP, SEXP power1SEXP, SEXP power2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structPitchTier> >::type tier(tierSEXP);
+    Rcpp::traits::input_parameter< double >::type sampling_frequency(sampling_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type adapt_factor(adapt_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type maximum_period(maximum_periodSEXP);
+    Rcpp::traits::input_parameter< double >::type open_phase(open_phaseSEXP);
+    Rcpp::traits::input_parameter< double >::type collision_phase(collision_phaseSEXP);
+    Rcpp::traits::input_parameter< double >::type power1(power1SEXP);
+    Rcpp::traits::input_parameter< double >::type power2(power2SEXP);
+    rcpp_result_gen = Rcpp::wrap(pitchtier_to_sound_phonation(tier, sampling_frequency, adapt_factor, maximum_period, open_phase, collision_phase, power1, power2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitchtier_to_sound_sine
+SEXP pitchtier_to_sound_sine(XPtr<structPitchTier> tier, double tmin, double tmax, double sampling_frequency);
+RcppExport SEXP _pladdrr_pitchtier_to_sound_sine(SEXP tierSEXP, SEXP tminSEXP, SEXP tmaxSEXP, SEXP sampling_frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structPitchTier> >::type tier(tierSEXP);
+    Rcpp::traits::input_parameter< double >::type tmin(tminSEXP);
+    Rcpp::traits::input_parameter< double >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type sampling_frequency(sampling_frequencySEXP);
+    rcpp_result_gen = Rcpp::wrap(pitchtier_to_sound_sine(tier, tmin, tmax, sampling_frequency));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pitchtier_to_pitch
+SEXP pitchtier_to_pitch(XPtr<structPitchTier> tier, double time_step, double pitch_floor, double pitch_ceiling);
+RcppExport SEXP _pladdrr_pitchtier_to_pitch(SEXP tierSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structPitchTier> >::type tier(tierSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    rcpp_result_gen = Rcpp::wrap(pitchtier_to_pitch(tier, time_step, pitch_floor, pitch_ceiling));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pointprocess_get_number_of_points
 int pointprocess_get_number_of_points(SEXP xptr);
 RcppExport SEXP _pladdrr_pointprocess_get_number_of_points(SEXP xptrSEXP) {
@@ -10917,6 +10990,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pitchtier_stylize", (DL_FUNC) &_pladdrr_pitchtier_stylize, 3},
     {"_pladdrr_pitchtier_save", (DL_FUNC) &_pladdrr_pitchtier_save, 2},
     {"_pladdrr_pitchtier_read", (DL_FUNC) &_pladdrr_pitchtier_read, 1},
+    {"_pladdrr_pitchtier_interpolate_quadratically", (DL_FUNC) &_pladdrr_pitchtier_interpolate_quadratically, 3},
+    {"_pladdrr_pitchtier_to_sound_pulse_train", (DL_FUNC) &_pladdrr_pitchtier_to_sound_pulse_train, 5},
+    {"_pladdrr_pitchtier_to_sound_phonation", (DL_FUNC) &_pladdrr_pitchtier_to_sound_phonation, 8},
+    {"_pladdrr_pitchtier_to_sound_sine", (DL_FUNC) &_pladdrr_pitchtier_to_sound_sine, 4},
+    {"_pladdrr_pitchtier_to_pitch", (DL_FUNC) &_pladdrr_pitchtier_to_pitch, 4},
     {"_pladdrr_pointprocess_get_number_of_points", (DL_FUNC) &_pladdrr_pointprocess_get_number_of_points, 1},
     {"_pladdrr_pointprocess_get_time_from_index", (DL_FUNC) &_pladdrr_pointprocess_get_time_from_index, 2},
     {"_pladdrr_pointprocess_get_nearest_index", (DL_FUNC) &_pladdrr_pointprocess_get_nearest_index, 2},

@@ -6,8 +6,79 @@
 \usage{
 PitchTier(tmin = NULL, tmax = NULL, .xptr = NULL)
 }
+\arguments{
+\item{shift}{Amount to shift (Hz or semitones)}
+
+\item{unit}{Unit: "hertz" (0), "mel" (1), "log_hertz" (2), "semitones" (3), "erb" (4)}
+}
 \description{
 Praat PitchTier object with direct C++ module binding for pitch manipulation.
+
+Get start time of tier domain
+
+Get end time of tier domain
+
+Get duration of tier domain
+
+Get number of pitch points
+
+Get time of point at index (1-based)
+
+Get frequency value at index (1-based)
+
+Get interpolated frequency at time
+
+Get minimum frequency value
+
+Get maximum frequency value
+
+Get mean frequency (curve interpolation)
+
+Get mean frequency (points only)
+
+Get standard deviation (curve interpolation)
+
+Get standard deviation (points only)
+
+Get area under interpolated curve
+
+Add a pitch point at time with frequency value (Hz)
+
+Remove point at index (1-based)
+
+Remove all points in time range
+
+Multiply all frequencies by factor
+
+Multiply frequencies in time range by factor
+
+Shift all frequencies by amount
+
+Shift frequencies in time range by amount
+
+Stylize (simplify) pitch contour
+
+Interpolate quadratically between points
+
+Convert to PointProcess (extract time points)
+
+Synthesize pulse train sound
+
+Synthesize phonation sound
+
+Synthesize sine wave sound
+
+Convert to Pitch object
+
+Convert to data.table with time and frequency columns
+
+Convert to matrix (n x 2: time, frequency)
+
+Save to file
+
+Get internal pointer
+
+Print summary
 }
 \details{
 PitchTiers are used in conjunction with Manipulation objects to modify the
@@ -16,6 +87,7 @@ PitchTiers contain discrete time-value pairs that can be edited.
 
 ## Creating PitchTier Objects
 
+- `PitchTier$new(path)` - Load from file
 - `PitchTier(tmin, tmax)` - Create empty PitchTier
 - `pitch$down_to_pitch_tier()` - Extract from Pitch object
 
@@ -25,24 +97,51 @@ PitchTiers contain discrete time-value pairs that can be edited.
 - `$get_value_at_time(time)` - Interpolated F0 at time
 - `$get_value_at_index(index)` - F0 of specific point
 - `$get_time_from_index(index)` - Time of specific point
+- `$get_minimum()` - Minimum F0 value
+- `$get_maximum()` - Maximum F0 value
+- `$get_mean(tmin, tmax)` - Mean F0 (interpolated curve)
+- `$get_standard_deviation(tmin, tmax)` - Standard deviation
+- `$get_area(tmin, tmax)` - Area under curve
 
 ## Modification
 
 - `$add_point(time, value)` - Add pitch point (Hz)
-- `$remove_point(index)` - Remove point
+- `$remove_point(index)` - Remove point by index
+- `$remove_points_between(tmin, tmax)` - Remove points in time range
 - `$multiply_frequencies(factor)` - Scale all frequencies
-- `$shift_frequencies(shift)` - Add to all frequencies (Hz)
-- `$stylize(frequency_resolution)` - Simplify contour
+- `$multiply_frequencies_in_range(tmin, tmax, factor)` - Scale in range
+- `$shift_frequencies(shift, unit)` - Add to all frequencies
+- `$shift_frequencies_in_range(tmin, tmax, shift, unit)` - Shift in range
+- `$stylize(frequency_resolution, use_semitones)` - Simplify contour
+- `$interpolate_quadratically(points_per_parabola, logarithmically)` - Smooth
+
+## Conversion
+
+- `$to_sound_pulse_train(sample_rate)` - Synthesize pulse train
+- `$to_sound_phonation(sample_rate)` - Synthesize phonation
+- `$to_sound_sine(sample_rate)` - Synthesize sine wave
+- `$down_to_point_process()` - Extract time points
+- `$to_pitch(time_step, pitch_floor, pitch_ceiling)` - Convert to Pitch
 
 ## Export
 
-- `$as_data_frame()` - Convert to data frame
+- `$as_data_frame()` - Convert to data.table
+- `$as_matrix()` - Convert to matrix
 - `$save(path)` - Write to file
 }
 \examples{
 \dontrun{
+# Create empty PitchTier and add points
+pt <- PitchTier(0, 1)
+pt$add_point(0.1, 120)
+pt$add_point(0.5, 150)
+pt$add_point(0.9, 100)
+
+# Load from file
+pt <- PitchTier$new("contour.PitchTier")
+
 # Create from Pitch
-sound <- Sound("audio.wav")
+sound <- Sound$new("audio.wav")
 pitch <- sound$to_pitch()
 pitch_tier <- pitch$down_to_pitch_tier()
 
@@ -53,6 +152,11 @@ pitch_tier$shift_frequencies(50)       # Add 50 Hz
 # Query
 f0_at_1s <- pitch_tier$get_value_at_time(1.0)
 n_points <- pitch_tier$get_number_of_points()
+f0_min <- pitch_tier$get_minimum()
+f0_max <- pitch_tier$get_maximum()
+
+# Synthesize
+synth <- pitch_tier$to_sound_sine(16000)
 
 # Export
 df <- pitch_tier$as_data_frame()

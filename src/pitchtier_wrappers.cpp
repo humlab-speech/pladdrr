@@ -9,6 +9,10 @@
 // Praat headers
 #include "fon/PitchTier.h"
 #include "fon/PitchTier_to_Sound.h"
+#include "fon/RealTier.h"
+#include "fon/Sound.h"
+#include "fon/Pitch.h"
+#include "dwtools/Pitch_extensions.h"
 
 using namespace Rcpp;
 
@@ -202,5 +206,129 @@ SEXP pitchtier_read(std::string path) {
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to read PitchTier");
+    }
+}
+
+// ============================================================================
+// ADVANCED MODIFICATION METHODS
+// ============================================================================
+
+// [[Rcpp::export(.pitchtier_interpolate_quadratically)]]
+void pitchtier_interpolate_quadratically(XPtr<structPitchTier> tier,
+                                          int points_per_parabola,
+                                          bool logarithmically) {
+    if (!tier) stop("Invalid PitchTier pointer");
+
+    try {
+        RealTier_interpolateQuadratically(tier.get(),
+                                          static_cast<integer>(points_per_parabola),
+                                          logarithmically);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to interpolate quadratically");
+    }
+}
+
+// ============================================================================
+// CONVERSION METHODS - Sound synthesis
+// ============================================================================
+
+// [[Rcpp::export(.pitchtier_to_sound_pulse_train)]]
+SEXP pitchtier_to_sound_pulse_train(XPtr<structPitchTier> tier,
+                                     double sampling_frequency,
+                                     double adapt_factor,
+                                     double adapt_time,
+                                     int interpolation_depth) {
+    if (!tier) stop("Invalid PitchTier pointer");
+
+    try {
+        autoSound sound = PitchTier_to_Sound_pulseTrain(
+            tier.get(),
+            sampling_frequency,
+            adapt_factor,
+            adapt_time,
+            static_cast<integer>(interpolation_depth),
+            false  // hum = false for pulse train
+        );
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PitchTier to pulse train sound");
+    }
+}
+
+// [[Rcpp::export(.pitchtier_to_sound_phonation)]]
+SEXP pitchtier_to_sound_phonation(XPtr<structPitchTier> tier,
+                                   double sampling_frequency,
+                                   double adapt_factor,
+                                   double maximum_period,
+                                   double open_phase,
+                                   double collision_phase,
+                                   double power1,
+                                   double power2) {
+    if (!tier) stop("Invalid PitchTier pointer");
+
+    try {
+        autoSound sound = PitchTier_to_Sound_phonation(
+            tier.get(),
+            sampling_frequency,
+            adapt_factor,
+            maximum_period,
+            open_phase,
+            collision_phase,
+            power1,
+            power2,
+            false  // hum = false
+        );
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PitchTier to phonation sound");
+    }
+}
+
+// [[Rcpp::export(.pitchtier_to_sound_sine)]]
+SEXP pitchtier_to_sound_sine(XPtr<structPitchTier> tier,
+                              double tmin,
+                              double tmax,
+                              double sampling_frequency) {
+    if (!tier) stop("Invalid PitchTier pointer");
+
+    try {
+        autoSound sound = PitchTier_to_Sound_sine(
+            tier.get(),
+            tmin,
+            tmax,
+            sampling_frequency
+        );
+        return create_xptr_from_auto<structSound>(sound);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PitchTier to sine sound");
+    }
+}
+
+// ============================================================================
+// CONVERSION METHODS - Pitch
+// ============================================================================
+
+// [[Rcpp::export(.pitchtier_to_pitch)]]
+SEXP pitchtier_to_pitch(XPtr<structPitchTier> tier,
+                         double time_step,
+                         double pitch_floor,
+                         double pitch_ceiling) {
+    if (!tier) stop("Invalid PitchTier pointer");
+
+    try {
+        autoPitch pitch = PitchTier_to_Pitch(
+            tier.get(),
+            time_step,
+            pitch_floor,
+            pitch_ceiling
+        );
+        return create_xptr_from_auto<structPitch>(pitch);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PitchTier to Pitch");
     }
 }

@@ -17,7 +17,9 @@
   interpolation = 1L,
   tilt_line_quefrency = 0.001,
   line_type = 2L,
-  fit_method = 1L
+  fit_method = 1L,
+  pre_emphasis_from = 50,
+  max_frequency = 5000
 )
 }
 \arguments{
@@ -46,6 +48,10 @@
 \item{line_type}{Trend line type (1=straight, 2=exponential decay)}
 
 \item{fit_method}{Fitting method (1=robust fast, 2=least squares, 3=robust slow)}
+
+\item{pre_emphasis_from}{Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS}
+
+\item{max_frequency}{Maximum frequency for cepstrogram in Hz (default 5000.0)}
 }
 \value{
 Single CPPS value in dB

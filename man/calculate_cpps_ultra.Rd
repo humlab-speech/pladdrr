@@ -6,18 +6,20 @@
 \usage{
 calculate_cpps_ultra(
   sound,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 5e-04,
   pitch_floor = 60,
-  pitch_ceiling = 330,
+  pitch_ceiling = 333.3,
   subtract_trend = TRUE,
   time_step = 0.002,
   max_quefrency = 0.05,
   tolerance = 0.05,
   interpolation = "parabolic",
   tilt_line_quefrency = 0.001,
-  line_type = "exponential",
-  fit_method = "robust"
+  line_type = "straight",
+  fit_method = "robust",
+  pre_emphasis_from = 50,
+  max_frequency = 5000
 )
 }
 \arguments{

@@ -1564,6 +1564,26 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitchtier_read`, path)
 }
 
+.pitchtier_interpolate_quadratically <- function(tier, points_per_parabola, logarithmically) {
+    invisible(.Call(`_pladdrr_pitchtier_interpolate_quadratically`, tier, points_per_parabola, logarithmically))
+}
+
+.pitchtier_to_sound_pulse_train <- function(tier, sampling_frequency, adapt_factor, adapt_time, interpolation_depth) {
+    .Call(`_pladdrr_pitchtier_to_sound_pulse_train`, tier, sampling_frequency, adapt_factor, adapt_time, interpolation_depth)
+}
+
+.pitchtier_to_sound_phonation <- function(tier, sampling_frequency, adapt_factor, maximum_period, open_phase, collision_phase, power1, power2) {
+    .Call(`_pladdrr_pitchtier_to_sound_phonation`, tier, sampling_frequency, adapt_factor, maximum_period, open_phase, collision_phase, power1, power2)
+}
+
+.pitchtier_to_sound_sine <- function(tier, tmin, tmax, sampling_frequency) {
+    .Call(`_pladdrr_pitchtier_to_sound_sine`, tier, tmin, tmax, sampling_frequency)
+}
+
+.pitchtier_to_pitch <- function(tier, time_step, pitch_floor, pitch_ceiling) {
+    .Call(`_pladdrr_pitchtier_to_pitch`, tier, time_step, pitch_floor, pitch_ceiling)
+}
+
 .pointprocess_get_number_of_points <- function(xptr) {
     .Call(`_pladdrr_pointprocess_get_number_of_points`, xptr)
 }
