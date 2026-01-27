@@ -37,8 +37,7 @@ get_module <- function(name) {
     "table_module", "textgrid_module", "manipulation_module",
     "polygon_module", "formantpath_module", "complexspectrogram_module",
     "klattgrid_module", "sound_operations_module", "interpreter_module",
-    "mfcc_module", "formantmodeler_module", "pca_module", "discriminant_module",
-    "dtw_module"
+    "mfcc_module"
   )
   
   for (mod in modules) {

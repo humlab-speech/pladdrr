@@ -1,12 +1,63 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.7 (2026-01-27)
+**Version:** 4.6.8 (2026-01-27)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API - Production ready ✅
+**Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API + MFCC/LFCC Module - Production ready ✅
 
 ---
 
 ## Recent Changes
+
+### ✨ MFCC/LFCC Module v4.6.8 (2026-01-27)
+
+**Summary:** Added full MFCC (Mel Frequency Cepstral Coefficients) and LFCC (Linear Frequency Cepstral Coefficients) support for speech/speaker recognition features.
+
+#### MFCC Extraction:
+```r
+# Extract MFCCs from sound (standard speech recognition features)
+sound <- generate_sine_wave(440, 1.0, sampling_rate = 16000)
+mfcc <- sound$to_mfcc(
+  num_coefficients = 13,    # 13 is standard for ASR
+  analysis_width = 0.025,   # 25ms window
+  time_step = 0.01,         # 10ms hop
+  f1_mel = 100.0,           # First filterbank center (mel)
+  fmax_mel = 7800.0,        # Max frequency (mel)
+  df_mel = 100.0            # Filterbank spacing (mel)
+)
+
+# Query MFCC properties
+n_frames <- mfcc$get_number_of_frames()
+n_coefs <- mfcc$get_max_num_coefficients()
+
+# Get coefficients
+c0 <- mfcc$get_c0_at_frame(1)           # C0 (energy) at frame 1
+c1 <- mfcc$get_value_in_frame(1, 1)     # C1 at frame 1
+all_coefs <- mfcc$get_coefficients_at_frame(1)  # All coefs at frame 1
+matrix <- mfcc$get_all_coefficients()   # All frames x coefficients
+```
+
+#### LFCC from LPC:
+```r
+# Alternative: Linear frequency cepstral coefficients from LPC
+lpc <- sound$to_lpc_burg(prediction_order = 16)
+lfcc <- lpc$to_lfcc(num_coefficients = 13)
+```
+
+**Agent Guidance - Speaker Recognition Features:**
+```r
+# Typical MFCC extraction for speaker recognition
+sound <- Sound("speaker.wav")
+mfcc <- sound$to_mfcc(num_coefficients = 13)
+
+# Get all C1 values (often most informative for speaker ID)
+c1_values <- sapply(1:mfcc$get_number_of_frames(),
+                    function(f) mfcc$get_value_in_frame(f, 1))
+
+# Full coefficient matrix for machine learning
+features <- mfcc$get_all_coefficients()
+```
+
+---
 
 ### ✨ PitchTier API Expansion v4.6.6 (2026-01-27)
 

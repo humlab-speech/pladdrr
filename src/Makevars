@@ -186,6 +186,12 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/KlattGrid.cpp \
               praat.github.io/dwtools/FormantGrid_extensions.cpp \
               praat.github.io/dwtools/Pitch_extensions.cpp \
+              praat.github.io/dwtools/CC.cpp \
+              praat.github.io/dwtools/Spectrogram_extensions.cpp \
+              praat.github.io/dwtools/Sound_and_Spectrogram_extensions.cpp \
+              praat.github.io/dwtools/MFCC.cpp \
+              praat.github.io/dwtools/LFCC.cpp \
+              praat.github.io/dwtools/Sound_to_MFCC.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources
@@ -249,7 +255,8 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/FormantModeler.cpp \
           praat.github.io/LPC/FormantModelerList.cpp \
           praat.github.io/LPC/FormantPath.cpp \
-          praat.github.io/LPC/Sound_to_Formant_mt.cpp
+          praat.github.io/LPC/Sound_to_Formant_mt.cpp \
+          praat.github.io/LPC/LPC_and_LFCC.cpp
 
 # FLAC library sources (for native FLAC file I/O)
 FLAC_SRC = praat/external/flac/flac_bitmath.c \
@@ -342,6 +349,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/manipulation_module.cpp modules/polygon_module.cpp \
              modules/formantpath_module.cpp modules/complexspectrogram_module.cpp \
              modules/klattgrid_module.cpp modules/sound_operations_module.cpp \
+             modules/mfcc_module.cpp \
              modules/interpreter_module.cpp module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
