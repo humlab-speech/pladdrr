@@ -1,8 +1,31 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.8 (2026-01-27)
+**Version:** 4.6.9 (2026-01-28)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API + MFCC/LFCC Module - Production ready ✅
+
+---
+
+## ⚠️ Modules Not Yet Enabled
+
+The following Praat modules have R wrappers but are **not compiled** due to complex C++ dependencies:
+
+| Module | Status | Workaround |
+|--------|--------|------------|
+| DTW (Dynamic Time Warping) | Not compiled | Use `sounds_to_dtw()` via interpreter |
+| PCA | Not compiled | Use `pca_from_matrix()` or interpreter |
+| Discriminant | Not compiled | Use interpreter for discriminant analysis |
+| FormantModeler | Partial (missing functions) | Use `FormantPath` for robust formant tracking |
+
+**Agent Guidance:** If users request DTW, PCA, or Discriminant analysis, recommend using the Praat interpreter interface:
+```r
+interp <- PraatInterpreter()
+interp$run_script('
+  Read from file: "sound1.wav"
+  To DTW: "other.wav", 0.015, 0.005, 0.0, 3
+  Write to binary file: "result.DTW"
+')
+```
 
 ---
 
