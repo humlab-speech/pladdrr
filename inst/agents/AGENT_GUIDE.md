@@ -1,35 +1,37 @@
 # pladdrr Agent Guide
 
-**Version:** 4.6.9 (2026-01-28)
+**Version:** 4.8.0 (2026-01-29)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API + MFCC/LFCC Module - Production ready ✅
 
 ---
 
-## ⚠️ Modules Not Yet Enabled
+## Recent Changes
 
-The following Praat modules have R wrappers but are **not compiled** due to complex C++ dependencies:
+### ✨ DTW, PCA, Discriminant, FormantModeler Modules v4.7.0 (2026-01-28)
 
-| Module | Status | Workaround |
-|--------|--------|------------|
-| DTW (Dynamic Time Warping) | Not compiled | Use `sounds_to_dtw()` via interpreter |
-| PCA | Not compiled | Use `pca_from_matrix()` or interpreter |
-| Discriminant | Not compiled | Use interpreter for discriminant analysis |
-| FormantModeler | Partial (missing functions) | Use `FormantPath` for robust formant tracking |
+**Summary:** Four statistical analysis modules now fully enabled with native R access.
 
-**Agent Guidance:** If users request DTW, PCA, or Discriminant analysis, recommend using the Praat interpreter interface:
+| Module | Key Features |
+|--------|--------------|
+| **DTW** | Dynamic Time Warping for sound/CC comparison, path extraction |
+| **PCA** | Principal Component Analysis from TableOfReal/Covariance |
+| **Discriminant** | Linear discriminant analysis with classification |
+| **FormantModeler** | Polynomial formant trajectory modeling, optimal ceiling |
+
+#### DTW Example:
 ```r
-interp <- PraatInterpreter()
-interp$run_script('
-  Read from file: "sound1.wav"
-  To DTW: "other.wav", 0.015, 0.005, 0.0, 3
-  Write to binary file: "result.DTW"
-')
+dtw_mod <- Rcpp::Module("dtw_module", PACKAGE = "pladdrr")
+# DTW alignment computed via interpreter or native functions
+```
+
+#### PCA Example:
+```r
+pca_mod <- Rcpp::Module("pca_module", PACKAGE = "pladdrr")
+# PCA from covariance matrices
 ```
 
 ---
-
-## Recent Changes
 
 ### ✨ MFCC/LFCC Module v4.6.8 (2026-01-27)
 
@@ -3319,6 +3321,72 @@ voiced_f0 <- pitch$get_values_vector()[voiced_mask]
 ```
 
 **Rule:** If you're writing a loop that calls the same method repeatedly, check for a vectorized `$get_*_windows()`, `$get_*_vector()`, or `$get_*_track()` method first.
+
+---
+
+## Deprecated API Migration
+
+⚠️ **Legacy S3 API functions are deprecated and will be removed in v5.0.0**
+
+The following S3-style functions have been replaced by the modern function factory (R6-like) API. While they still work, they emit deprecation warnings and should not be used in new code.
+
+### Deprecated Functions → Modern Replacements
+
+| Deprecated Function | Modern Replacement |
+|---------------------|-------------------|
+| `create_sound(values, sr)` | `Sound$from_values(values, sr)` |
+| `read_sound(file_path)` | `Sound$new(file_path)` |
+| `get_duration(sound)` | `sound$get_duration()` |
+| `get_sampling_rate(sound)` | `sound$get_sampling_frequency()` |
+| `get_n_channels(sound)` | `sound$get_number_of_channels()` |
+| `get_n_samples(sound)` | `sound$get_number_of_samples()` |
+| `extract_pitch(sound, ...)` | `sound$to_pitch(...)` |
+| `get_pitch_at_time(pitch, t)` | `pitch$get_value_at_time(t)` |
+| `get_mean_pitch(pitch)` | `pitch$get_mean()` |
+| `get_min_pitch(pitch)` | `pitch$get_minimum()` |
+| `get_max_pitch(pitch)` | `pitch$get_maximum()` |
+| `extract_intensity(sound, ...)` | `sound$to_intensity(...)` |
+| `get_intensity_at_time(int, t)` | `intensity$get_value_at_time(t)` |
+| `get_mean_intensity(int)` | `intensity$get_mean()` |
+| `get_min_intensity(int)` | `intensity$get_minimum()` |
+| `get_max_intensity(int)` | `intensity$get_maximum()` |
+| `get_sd_intensity(int)` | `intensity$get_standard_deviation()` |
+| `extract_formants(sound, ...)` | `sound$to_formant_burg(...)` |
+| `get_formant_at_time(f, n, t)` | `formant$get_value_at_time(n, t)` |
+| `get_mean_formant(f, n)` | `formant$get_mean(n)` |
+
+### Migration Example
+
+**Before (deprecated):**
+```r
+# Old S3-style workflow
+sound <- read_sound("speech.wav")
+duration <- get_duration(sound)
+pitch <- extract_pitch(sound, pitch_floor = 75)
+mean_f0 <- get_mean_pitch(pitch)
+```
+
+**After (modern):**
+```r
+# Modern function factory workflow
+sound <- Sound$new("speech.wav")
+duration <- sound$get_duration()
+pitch <- sound$to_pitch(pitch_floor = 75)
+mean_f0 <- pitch$get_mean()
+```
+
+### Benefits of Modern API
+
+1. **Method chaining** - Chain operations: `sound$to_pitch()$get_mean()`
+2. **Consistent interface** - All objects follow same pattern: `$to_*()`, `$get_*()`
+3. **Better performance** - Direct C++ module binding, no wrapper overhead
+4. **Full Praat parity** - More methods available than S3 functions
+5. **Type safety** - Built-in parameter validation
+
+### Removal Timeline
+
+- **v4.x**: Deprecated functions emit warnings
+- **v5.0.0**: Deprecated functions will be removed
 
 ---
 

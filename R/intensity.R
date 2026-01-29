@@ -15,7 +15,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
     "sound$to_intensity()",
     package = "pladdrr",
     msg = paste(
-      "extract_intensity() is deprecated and will be removed in v1.0.0.",
+      "extract_intensity() is deprecated and will be removed in v5.0.0.",
       "Use sound$to_intensity(minimum_pitch, time_step, subtract_mean) instead."
     )
   )

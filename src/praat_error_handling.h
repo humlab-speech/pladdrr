@@ -7,6 +7,7 @@
 
 #include <Rcpp.h>
 #include "melder/melder.h"
+#include "melder/melder_textencoding.h"
 #include <string>
 
 // Execute a Praat function and convert MelderError to R exception
@@ -22,10 +23,14 @@
 
 // Get current Melder error as string
 inline std::string get_melder_error() {
-    // MelderError captures the error message
-    // We need to get it before clearing
-    // For now, return generic message - can be enhanced later
-    return "Praat error occurred";
+    conststring32 msg = Melder_getError();
+    if (msg && msg[0] != U'\0') {
+        conststring8 msg8 = Melder_peek32to8(msg);
+        if (msg8) {
+            return std::string(msg8);
+        }
+    }
+    return "Unknown Praat error";
 }
 
 // Wrapper for Praat functions that might throw
@@ -34,8 +39,9 @@ void praat_try(Func&& func, const std::string& error_message) {
     try {
         func();
     } catch (MelderError) {
+        std::string praat_error = get_melder_error();
         Melder_clearError();
-        Rcpp::stop(error_message);
+        Rcpp::stop(error_message + ": " + praat_error);
     }
 }
 
@@ -45,8 +51,9 @@ auto praat_try_return(Func&& func, const std::string& error_message) -> decltype
     try {
         return func();
     } catch (MelderError) {
+        std::string praat_error = get_melder_error();
         Melder_clearError();
-        Rcpp::stop(error_message);
+        Rcpp::stop(error_message + ": " + praat_error);
     }
 }
 

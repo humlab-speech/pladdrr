@@ -29,7 +29,7 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
     "Sound$from_values()",
     package = "pladdrr",
     msg = paste(
-      "create_sound() is deprecated and will be removed in v1.0.0.",
+      "create_sound() is deprecated and will be removed in v5.0.0.",
       "Use Sound$from_values(values, sampling_rate) instead.",
       "The R6 interface provides better performance and more features."
     )
@@ -67,7 +67,7 @@ read_sound <- function(file_path, channel = 0) {
     "Sound$new()",
     package = "pladdrr",
     msg = paste(
-      "read_sound() is deprecated and will be removed in v1.0.0.",
+      "read_sound() is deprecated and will be removed in v5.0.0.",
       "Use Sound$new(file_path) instead.",
       "For channel extraction, use sound$extract_channel(channel)."
     )

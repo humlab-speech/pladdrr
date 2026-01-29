@@ -61,29 +61,62 @@
   )
 }
 
-# Praat Script Interpreter
-#
-# R6 class for executing Praat scripts with persistent interpreter state.
-# Allows running multiple scripts while maintaining variables and state between runs.
-# Provides bidirectional object transfer between R and Praat's object list.
-#
-# Methods:
-#   new() - Create new interpreter instance
-#   run(script) - Execute Praat script code
-#   get_variable(name) - Get variable value from interpreter
-#   set_variable(name, value) - Set variable value in interpreter
-#   eval(expression) - Evaluate expression and return result
-#   object_count() - Get count of objects in Praat object list
-#   list_objects() - List all objects in Praat object list
-#   get_object(name, type) - Get Praat object from interpreter's list
-#   get_object_by_id(id) - Get Praat object by ID
-#   set_object(name, object) - Add R object to Praat's object list
-#   remove_object(name) - Remove object by name
-#   remove_object_by_id(id) - Remove object by ID
-#   select_object(name, add) - Select object in Praat's list
-#   clear_objects() - Clear all objects from list
-#
-# @export
+#' Praat Script Interpreter
+#'
+#' R6 class for executing Praat scripts with persistent interpreter state.
+#' Allows running multiple scripts while maintaining variables and state between runs.
+#' Provides bidirectional object transfer between R and Praat's object list.
+#'
+#' @description
+#' The PraatInterpreter provides a persistent Praat scripting environment within R.
+#' Unlike one-shot script execution, the interpreter maintains state between calls,
+#' enabling incremental script development and interactive exploration.
+#'
+#' @section Methods:
+#' \describe{
+#'   \item{\code{new()}}{Create new interpreter instance with empty state}
+#'   \item{\code{run(script)}}{Execute Praat script code, returns self for chaining}
+#'   \item{\code{get_variable(name)}}{Get variable value from interpreter}
+#'   \item{\code{set_variable(name, value)}}{Set variable value in interpreter}
+#'   \item{\code{eval(expression)}}{Evaluate expression and return result}
+#'   \item{\code{object_count()}}{Get count of objects in Praat object list}
+#'   \item{\code{list_objects()}}{List all objects (returns data.frame)}
+#'   \item{\code{get_object(name, type)}}{Get Praat object from interpreter's list}
+#'   \item{\code{get_object_by_id(id)}}{Get Praat object by ID}
+#'   \item{\code{set_object(name, object)}}{Add R object to Praat's object list}
+#'   \item{\code{remove_object(name)}}{Remove object by name}
+#'   \item{\code{remove_object_by_id(id)}}{Remove object by ID}
+#'   \item{\code{select_object(name, add)}}{Select object in Praat's list}
+#'   \item{\code{clear_objects()}}{Clear all objects from list}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Create interpreter
+#' interp <- PraatInterpreter$new()
+#'
+#' # Execute script
+#' interp$run("
+#'   Create Sound as pure tone: \"tone\", 1, 0, 1, 44100, 440, 0.2, 0, 0
+#'   pitch = To Pitch: 0, 75, 600
+#' ")
+#'
+#' # Get objects
+#' interp$list_objects()
+#' sound <- interp$get_object("tone")
+#'
+#' # Set and get variables
+#' interp$set_variable("freq", 440)
+#' interp$get_variable("freq")
+#'
+#' # Evaluate expressions
+#' interp$eval("sqrt(2)")
+#' }
+#'
+#' @seealso
+#' \code{\link{Sound}}, \code{\link{Pitch}} for Praat object classes
+#'
+#' @export
 PraatInterpreter <- R6::R6Class(
   "PraatInterpreter",
 
