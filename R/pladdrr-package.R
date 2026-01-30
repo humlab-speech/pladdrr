@@ -11,7 +11,7 @@
 #' \strong{Sound Operations:}
 #' \itemize{
 #'   \item Create and manipulate sound objects
-#'   \item Read and write audio files (WAV, AIFF)
+#'   \item Read and write audio files (WAV, AIFF, FLAC, MP3, NIST via native Praat)
 #'   \item Extract basic sound properties (duration, sampling rate, etc.)
 #'   \item Generate synthetic sounds (sine waves, white noise)
 #' }

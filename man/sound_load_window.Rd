@@ -7,7 +7,7 @@
 sound_load_window(path, start, end, resample_to = NULL, preserve_times = FALSE)
 }
 \arguments{
-\item{path}{Path to sound file (WAV, AIFF, etc.)}
+\item{path}{Path to sound file (WAV, AIFF, FLAC, MP3, etc.)}
 
 \item{start}{Start time of window in seconds}
 

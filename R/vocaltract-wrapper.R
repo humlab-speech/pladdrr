@@ -183,7 +183,7 @@ vocaltract_create_from_phone <- function(phone) {
 .vocaltract_static_env$create_from_phone <- vocaltract_create_from_phone
 .vocaltract_static_env$new <- VocalTract
 
-#' @exportS3Method $ vocaltract_constructor
+#' @exportS3Method "$" vocaltract_constructor
 `$.vocaltract_constructor` <- function(x, name) {
   .vocaltract_static_env[[name]]
 }

@@ -505,7 +505,7 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' Optionally resamples the window to a target sampling rate.
 #' Uses LongSound for lazy loading - only the requested window is loaded from disk.
 #'
-#' @param path Path to sound file (WAV, AIFF, etc.)
+#' @param path Path to sound file (WAV, AIFF, FLAC, MP3, etc.)
 #' @param start Start time of window in seconds
 #' @param end End time of window in seconds
 #' @param resample_to Target sampling rate in Hz (optional). If NULL, no resampling.

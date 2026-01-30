@@ -390,7 +390,7 @@ pitchtier_from_file <- function(path) {
 #' @param x The PitchTier constructor function
 #' @param name Name of static method to access
 #' @return The requested static method function
-#' @exportS3Method $ pitchtier_constructor
+#' @exportS3Method "$" pitchtier_constructor
 `$.pitchtier_constructor` <- function(x, name) {
   val <- .pitchtier_static_env[[name]]
   if (is.null(val)) {

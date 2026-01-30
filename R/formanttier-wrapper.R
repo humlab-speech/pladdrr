@@ -176,7 +176,7 @@ formanttier_from_formant <- function(formant) {
 .formanttier_static_env$from_formant <- formanttier_from_formant
 .formanttier_static_env$new <- FormantTier
 
-#' @exportS3Method $ formanttier_constructor
+#' @exportS3Method "$" formanttier_constructor
 `$.formanttier_constructor` <- function(x, name) {
   .formanttier_static_env[[name]]
 }

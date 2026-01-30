@@ -7,7 +7,7 @@
 read_sound(file_path, channel = 0)
 }
 \arguments{
-\item{file_path}{Path to audio file (any format supported by av/FFmpeg)}
+\item{file_path}{Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via av fallback)}
 
 \item{channel}{Channel to read (0 = left, 1 = right) - ignored in R6}
 }

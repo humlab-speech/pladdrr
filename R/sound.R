@@ -43,7 +43,7 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' **DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
 #' \code{Sound$new(file_path)}
 #'
-#' @param file_path Path to audio file (any format supported by av/FFmpeg)
+#' @param file_path Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via av fallback)
 #' @param channel Channel to read (0 = left, 1 = right) - ignored in R6
 #'
 #' @return Sound R6 object

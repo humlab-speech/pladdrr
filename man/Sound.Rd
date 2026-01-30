@@ -7,7 +7,7 @@
 Sound(path = NULL, .xptr = NULL)
 }
 \arguments{
-\item{path}{Path to audio file (native: WAV/AIFF/NIST, fallback: any FFmpeg format)}
+\item{path}{Path to audio file (native: WAV/AIFF/FLAC/MP3/NIST, fallback: av for unsupported formats)}
 
 \item{.xptr}{Internal use only - external pointer to C++ Sound object}
 
@@ -48,8 +48,8 @@ This is the entry point for most acoustic analyses in pladdrr.
 \section{File I/O}{
 
 The Sound constructor reads audio files using:
-1. **Native Praat reader** (fast path): WAV, AIFF, NIST formats
-2. **av package fallback**: Any FFmpeg-supported format (MP3, OGG, FLAC, etc.)
+1. **Native Praat reader** (primary): WAV, AIFF, AIFC, FLAC, MP3, NIST, NeXT/Sun
+2. **av package fallback**: Only used for formats Praat doesn't support (OGG Vorbis, etc.)
 }
 
 \section{Usage}{

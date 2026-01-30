@@ -10,8 +10,8 @@
 #'
 #' @section File I/O:
 #' The Sound constructor reads audio files using:
-#' 1. **Native Praat reader** (fast path): WAV, AIFF, NIST formats
-#' 2. **av package fallback**: Any FFmpeg-supported format (MP3, OGG, FLAC, etc.)
+#' 1. **Native Praat reader** (primary): WAV, AIFF, AIFC, FLAC, MP3, NIST, NeXT/Sun
+#' 2. **av package fallback**: Only used for formats Praat doesn't support (OGG Vorbis, etc.)
 #'
 #' @section Usage:
 #' ```r
@@ -67,7 +67,7 @@
 #' - `as_data_frame()` - Export as data.frame
 #' - `save()` - Save to audio file
 #'
-#' @param path Path to audio file (native: WAV/AIFF/NIST, fallback: any FFmpeg format)
+#' @param path Path to audio file (native: WAV/AIFF/FLAC/MP3/NIST, fallback: av for unsupported formats)
 #' @param .xptr Internal use only - external pointer to C++ Sound object
 #' @return A Sound object (function wrapper with methods)
 #'
@@ -1010,7 +1010,7 @@ sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
 #' @param x The Sound constructor function
 #' @param name Name of static method to access
 #' @return The requested static method function
-#' @exportS3Method $ sound_constructor
+#' @exportS3Method "$" sound_constructor
 `$.sound_constructor` <- function(x, name) {
   val <- .sound_static_env[[name]]
   if (is.null(val)) {
