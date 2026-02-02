@@ -1,12 +1,28 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.5 (2026-02-02)
+**Version:** 4.8.6 (2026-02-02)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD formant bug FIXED + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### 🐛 to_ltas() Validation Fix v4.8.6 (2026-02-02)
+
+**Problem:** `spectrum$to_ltas(bandwidth)` failed with unhelpful error on short/windowed spectra.
+
+**Root Cause:** Praat requires `bandwidth > frequency_step`. For short extracts (25ms), `dx=31.25Hz`, so `to_ltas(1)` fails.
+
+**Fix:** Added R-level validation with helpful error:
+```
+bandwidth (1.00 Hz) must be > frequency step (31.25 Hz).
+Use bandwidth > 31.2 or to_ltas_1to1() for 1-to-1 mapping.
+```
+
+**Agent Guidance:** For windowed spectra, use `to_ltas_1to1()` or ensure `bandwidth > spectrum$get_frequency_step()`.
+
+---
 
 ### ✨ Praat-Compatible API Additions v4.8.5 (2026-02-02)
 

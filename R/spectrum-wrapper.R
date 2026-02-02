@@ -211,6 +211,13 @@ Spectrum <- function(.xptr = NULL) {
     
     # Praat-standard API: to_ltas(bandwidth) - converts Spectrum to LTAS
     to_ltas = function(bandwidth = 100.0) {
+      dx <- cpp_obj$get_df()
+      if (bandwidth <= dx) {
+        stop(sprintf(
+          "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas_1to1() for 1-to-1 mapping.",
+          bandwidth, dx, dx
+        ))
+      }
       ptr <- cpp_obj$to_ltas_ptr(as.numeric(bandwidth))
       Ltas(.xptr = ptr)
     },
