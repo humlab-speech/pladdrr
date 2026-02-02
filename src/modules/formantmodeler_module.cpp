@@ -106,7 +106,9 @@ public:
     double get_estimated_value_at_time(int track, double time) {
         VALIDATE_PTR(ptr, FormantModeler);
         try {
-            return FormantModeler_getEstimatedValueAtTime(ptr.get(), track, time);
+            // Note: Using getModelValueAtTime instead of getEstimatedValueAtTime
+            // because the latter is declared but not implemented in Praat source
+            return FormantModeler_getModelValueAtTime(ptr.get(), track, time);
         } catch (MelderError) {
             Melder_clearError();
             return NA_REAL;

@@ -83,7 +83,8 @@ void Graphics_textTop (Graphics, bool, conststring32) {}
 void Graphics_setInner (Graphics) {}
 void Graphics_unsetInner (Graphics) {}
 void Graphics_setViewport (Graphics, double, double, double, double) {}
-void Graphics_resetViewport (Graphics, int) {}
+void Graphics_resetViewport (Graphics, Graphics_Viewport) {}
+Graphics_Viewport Graphics_insetViewport (Graphics, double, double, double, double) { return {0, 0, 0, 0}; }
 void Graphics_setWindow (Graphics, double, double, double, double) {}
 
 void Graphics_setColour (Graphics, MelderColour) {}

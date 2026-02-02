@@ -1,12 +1,26 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.6 (2026-02-02)
+**Version:** 4.8.7 (2026-02-02)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD formant bug FIXED + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### ✨ Module Loading + FormantModeler Fix v4.8.7 (2026-02-02)
+
+**Changes:**
+1. **Module loader** - Added PCA, Discriminant, DTW, FormantModeler modules to `get_module()` loader
+2. **Graphics stubs** - Fixed `Graphics_resetViewport` signature and added `Graphics_insetViewport` stub
+3. **FormantModeler** - Fixed `get_estimated_value_at_time()` to use implemented `getModelValueAtTime` (Praat declares but doesn't implement `getEstimatedValueAtTime`)
+
+**Files:**
+- `R/zzz.R` - Module list update
+- `src/graphics_stubs_comprehensive.cpp` - Graphics API fixes
+- `src/modules/formantmodeler_module.cpp` - Method fix
+
+---
 
 ### 🐛 to_ltas() Validation Fix v4.8.6 (2026-02-02)
 
