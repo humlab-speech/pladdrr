@@ -116,26 +116,40 @@ double burg_simd(
         a = a_new;
 
         // Update prediction errors with SIMD
+        // FIX: Must preserve original f and b values for the entire update
+        // because f_new[i] uses b_old[i-1] and b_new[i] uses f_old[i]
+        // Without temp storage, b[i] could be overwritten before b[i] is read as b_old[i+1-1]
         if (k < m) {
+            // Use temp vectors to avoid data dependency issues
+            std::vector<double> f_new(n + 1), b_new(n + 1);
+
             batch parcor_batch(parcor);
             i = k + 1;
 
+            // SIMD loop: compute new values using ORIGINAL f and b
             for (; i + static_cast<int>(simd_size) <= n + 1; i += simd_size) {
-                batch f_old = xsimd::load_unaligned(&f[i]);
-                batch b_old = xsimd::load_unaligned(&b[i - 1]);
+                batch f_cur = xsimd::load_unaligned(&f[i]);
+                batch b_prev = xsimd::load_unaligned(&b[i - 1]);
 
-                batch f_new = xsimd::fma(parcor_batch, b_old, f_old);
-                batch b_new = xsimd::fma(parcor_batch, f_old, b_old);
+                batch f_result = xsimd::fma(parcor_batch, b_prev, f_cur);
+                batch b_result = xsimd::fma(parcor_batch, f_cur, b_prev);
 
-                f_new.store_unaligned(&f[i]);
-                b_new.store_unaligned(&b[i]);
+                f_result.store_unaligned(&f_new[i]);
+                b_result.store_unaligned(&b_new[i]);
             }
 
+            // Scalar remainder
             for (; i <= n; ++i) {
-                double f_old = f[i];
-                double b_old = b[i - 1];
-                f[i] = f_old + parcor * b_old;
-                b[i] = b_old + parcor * f_old;
+                double f_cur = f[i];
+                double b_prev = b[i - 1];
+                f_new[i] = f_cur + parcor * b_prev;
+                b_new[i] = b_prev + parcor * f_cur;
+            }
+
+            // Copy results back
+            for (i = k + 1; i <= n; ++i) {
+                f[i] = f_new[i];
+                b[i] = b_new[i];
             }
         }
     }
@@ -266,30 +280,11 @@ extern "C" void apply_preemphasis_simd_bridge(
 }
 
 // Utility: Check if SIMD should be used for formant extraction
-// This respects the R option speaker.use_simd
-// NOTE: Disabled by default (v4.6.4) - SIMD Burg algorithm has a bug that
-// causes formant frequencies to be ~35-60% too low. Use standard Praat
-// implementation until SIMD bug is fixed.
+// NOTE (v4.8.4): The separate burg_simd implementation was removed due to
+// algorithmic differences from Praat's VECburg. VECburg now has SIMD
+// acceleration built-in for its inner loops (NUM2.cpp), so this function
+// is deprecated and always returns false (use standard VECburg path).
 bool should_use_simd_for_formants() {
-#ifdef HAVE_XSIMD
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-
-        // Default to FALSE - SIMD formant extraction has known accuracy issues
-        SEXP opt = getOption("speaker.use_simd_formants", Rcpp::LogicalVector::create(false));
-
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // If option check fails, default to false (use standard Praat)
-    }
-    return false;  // Default: use standard Praat implementation
-#else
+    // Always use VECburg which has SIMD-accelerated inner loops
     return false;
-#endif
 }

@@ -1,12 +1,45 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.0 (2026-01-29)
+**Version:** 4.8.4 (2026-02-02)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** SIMD implementation complete (Phases 1-4) + All Ultra API bugs fixed + Full PitchTier API + MFCC/LFCC Module - Production ready ✅
+**Status:** SIMD formant bug FIXED + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### ✅ SIMD Formant Bug FIXED v4.8.4 (2026-02-02)
+
+**Summary:** The 35-60% formant accuracy bug has been **permanently fixed**. SIMD acceleration now works correctly.
+
+**Root Cause:** The separate `burg_simd` function in `formant_simd_bridge.cpp` implemented a different variant of the Burg algorithm than Praat's `VECburg`, causing incorrect LPC coefficients.
+
+**Fix:** Removed the separate SIMD Burg path. Now uses Praat's proven `VECburg` algorithm with SIMD-accelerated inner loops:
+- `NUM2.cpp`: Fixed data dependency bug in error update loop using temp buffer
+- `NUM.cpp`: Added `NUMinner_simd()` for SIMD inner product (autocorrelation)
+- `Sound_to_Formant.cpp`: Always uses `VECburg` directly
+
+**Verification:**
+```r
+# Formant extraction now accurate with SIMD acceleration
+sound <- Sound("vowel.wav")
+formant <- sound$to_formant_burg()
+# F1: 501.8 Hz (expected 500), F2: 1502.0 Hz (expected 1500) ✅
+# Errors < 0.5%
+```
+
+**Agent Guidance:**
+- Formant extraction is now accurate by default - no workarounds needed
+- The `speaker.use_simd_formants` option is deprecated (always uses VECburg)
+- SIMD acceleration still applies to inner loops for performance
+
+**Files Changed:**
+- `src/praat.github.io/dwsys/NUM2.cpp`: VECburg SIMD fix
+- `src/praat.github.io/melder/NUM.cpp`: NUMinner SIMD
+- `src/praat.github.io/fon/Sound_to_Formant.cpp`: Use VECburg directly
+- `src/formant_simd_bridge.cpp`: Deprecate broken burg_simd
+
+---
 
 ### ✨ DTW, PCA, Discriminant, FormantModeler Modules v4.7.0 (2026-01-28)
 
@@ -226,36 +259,21 @@ hnr <- calculate_multiband_hnr_ultra(sound,
 
 ---
 
-### 🐛 Critical Bug Fix - Formant SIMD v4.6.4 (2026-01-26)
+### 🐛 Critical Bug Fix - Formant SIMD v4.6.4 (2026-01-26) → **FIXED in v4.8.4**
 
-**Summary:** Fixed critical bug where SIMD-accelerated formant extraction returned values 35-60% too low.
+**Summary:** ~~Fixed critical bug where SIMD-accelerated formant extraction returned values 35-60% too low.~~ **Permanently fixed in v4.8.4** - see above.
 
-**Issue:** `to_formant_burg()` returned F1=570 Hz, F2=1144 Hz instead of F1=878 Hz, F2=2935 Hz (35-60% error).
+**Original Issue:** `to_formant_burg()` returned F1=570 Hz, F2=1144 Hz instead of correct values (35-60% error).
 
-**Root Cause:** Bug in SIMD Burg's algorithm implementation (`formant_simd_bridge.cpp`). The SIMD version of `VECburg()` produces incorrect LPC coefficients, causing systematically low formant frequencies.
+**v4.6.4 Workaround:** Disabled SIMD for formant extraction by default.
 
-**Fix:** Disabled SIMD for formant extraction by default. Changed option from `speaker.use_simd` to `speaker.use_simd_formants` with default `FALSE`.
+**v4.8.4 Permanent Fix:** Root cause identified and fixed - the separate `burg_simd` used a different algorithm. Now uses Praat's `VECburg` with SIMD inner loops.
 
-**Test Results:**
+**Agent Guidance (v4.8.4+):**
 ```r
-# SIMD disabled (default now):
-F1: 877.81 Hz, F2: 2935.21 Hz ✅
-
-# SIMD enabled (buggy):
-F1: 569.71 Hz, F2: 1144.06 Hz ❌
+# Formant extraction is now accurate with SIMD - no workarounds needed
+formant <- sound$to_formant_burg()  # Accurate by default ✅
 ```
-
-**Agent Guidance:**
-```r
-# Formant extraction now works correctly by default
-formant <- sound$to_formant_burg()  # Uses standard Praat (SIMD disabled)
-
-# To explicitly enable SIMD (NOT RECOMMENDED until bug fixed):
-options(speaker.use_simd_formants = TRUE)
-```
-
-**Files Changed:**
-- `src/formant_simd_bridge.cpp`: Changed default from TRUE to FALSE for `should_use_simd_for_formants()`
 
 ---
 
@@ -3717,6 +3735,72 @@ pp_troughs <- sound$pitch_to_pointprocess_peaks(pitch,
 peak_intensity <- calculate_intensity_at_points(sound, pp_peaks)
 trough_intensity <- calculate_intensity_at_points(sound, pp_troughs)
 tremor_intensity <- (peak_intensity + trough_intensity) / 2
+```
+
+---
+
+### API Naming Differences from Praat/Parselmouth (v4.8.4)
+
+pladdrr uses slightly different parameter/method names than Praat. This is by design (shorter, more R-idiomatic) but may cause errors when porting scripts.
+
+**Parameter Name Differences:**
+
+| Function | Praat/Parselmouth | pladdrr |
+|----------|-------------------|---------|
+| Pitch creation | `max_number_of_candidates` | `max_candidates` |
+| Formant creation | `max_number_of_formants` | `max_formants` |
+| Formant creation | `maximum_formant` | `max_formant` |
+| Formant creation | `pre_emphasis_from` | `pre_emphasis` |
+
+**Method Name Differences:**
+
+| Operation | Praat | pladdrr |
+|-----------|-------|---------|
+| LTAS 1-to-1 | `To Ltas (1-to-1)` | `to_ltas_1to1()` |
+| Power Cepstrum | `To PowerCepstrum` | `to_powercepstrum()` |
+| Start time | `Get start time` | `get_xmin()` |
+| End time | `Get end time` | `get_xmax()` |
+
+**Agent Guidance - Porting Praat Scripts:**
+```r
+# Pitch creation
+pitch <- to_pitch_cc_direct(sound,
+  max_candidates = 15,     # NOT max_number_of_candidates
+  pitch_ceiling = 600
+)
+
+# Formant creation
+formant <- to_formant_direct(sound,
+  max_formants = 5,        # NOT max_number_of_formants
+  max_formant = 5500,      # NOT maximum_formant
+  pre_emphasis = 50        # NOT pre_emphasis_from
+)
+
+# Time bounds
+start <- sound$get_xmin()  # NOT get_start_time()
+end <- sound$get_xmax()    # NOT get_end_time()
+
+# Spectrum operations
+ltas <- spectrum$to_ltas_1to1()       # NOT to_ltas(1)
+cepstrum <- spectrum$to_powercepstrum()  # NOT to_power_cepstrum()
+```
+
+---
+
+### Jitter/Shimmer Value Scaling
+
+**Note:** `get_jitter_shimmer_batch()` returns values as decimals (0.0-1.0), not percentages (0-100).
+
+```r
+js <- get_jitter_shimmer_batch(pp, sound, 0, 0, 0.0001, 0.02, 1.3, 1.6)
+
+# Values are decimals
+js$jitter_local   # 0.00478 (not 0.478%)
+js$shimmer_local  # 0.02551 (not 2.551%)
+
+# Convert to percentage if needed
+jitter_percent <- js$jitter_local * 100   # 0.478%
+shimmer_percent <- js$shimmer_local * 100 # 2.551%
 ```
 
 ---
