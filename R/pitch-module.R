@@ -193,7 +193,7 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   }
 
   if (name == "get_quantile") {
-    return(function(quantile, from_time = 0, to_time = 0, unit = "hertz") {
+    return(function(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
       obj$get_quantile(as.numeric(from_time), as.numeric(to_time),
                        as.numeric(quantile), pitch_unit_code(unit))
     })

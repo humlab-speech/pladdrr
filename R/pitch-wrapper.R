@@ -65,6 +65,11 @@ Pitch <- function(.xptr = NULL) {
     xmax = function() cpp_obj$get_xmax(),
     get_xmin = function() cpp_obj$get_xmin(),  # Alias for consistency
     get_xmax = function() cpp_obj$get_xmax(),  # Alias for consistency
+    # Praat-compatible aliases
+    get_start_time = function() cpp_obj$get_xmin(),
+    get_end_time = function() cpp_obj$get_xmax(),
+    get_total_duration = function() cpp_obj$get_duration(),
+    get_duration = function() cpp_obj$get_duration(),
     duration = function() cpp_obj$get_duration(),
     nx = function() cpp_obj$get_nx(),
     dx = function() cpp_obj$get_dx(),
@@ -101,8 +106,8 @@ Pitch <- function(.xptr = NULL) {
       cpp_obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time), unit_code(unit))
     },
     
-    get_quantile = function(quantile, from_time = 0, to_time = 0, unit = "hertz") {
-      cpp_obj$get_quantile(as.numeric(from_time), as.numeric(to_time), 
+    get_quantile = function(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
+      cpp_obj$get_quantile(as.numeric(from_time), as.numeric(to_time),
                           as.numeric(quantile), unit_code(unit))
     },
     

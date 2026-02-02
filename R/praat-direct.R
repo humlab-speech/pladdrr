@@ -213,7 +213,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' }
 #'
 #' @export
-to_pitch_ac_direct <- function(sound, 
+to_pitch_ac_direct <- function(sound,
                                 time_step = 0,
                                 pitch_floor = 75,
                                 pitch_ceiling = 600,
@@ -223,7 +223,9 @@ to_pitch_ac_direct <- function(sound,
                                 voicing_threshold = 0.45,
                                 octave_cost = 0.01,
                                 octave_jump_cost = 0.35,
-                                voiced_unvoiced_cost = 0.14) {
+                                voiced_unvoiced_cost = 0.14,
+                                # Praat-compatible aliases
+                                max_number_of_candidates = NULL) {
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -231,6 +233,9 @@ to_pitch_ac_direct <- function(sound,
   } else {
     stop("sound must be a Sound object or external pointer")
   }
+
+  # Apply aliases (Praat-compatible names take precedence if provided)
+  max_candidates <- max_number_of_candidates %||% max_candidates
 
   .sound_to_pitch_ac(sound_ptr, time_step, pitch_floor, pitch_ceiling,
                      as.integer(max_candidates), very_accurate,
@@ -277,7 +282,7 @@ to_pitch_ac_direct <- function(sound,
 #' }
 #'
 #' @export
-to_pitch_cc_direct <- function(sound, 
+to_pitch_cc_direct <- function(sound,
                                 time_step = 0,
                                 pitch_floor = 75,
                                 pitch_ceiling = 600,
@@ -287,7 +292,9 @@ to_pitch_cc_direct <- function(sound,
                                 voicing_threshold = 0.45,
                                 octave_cost = 0.01,
                                 octave_jump_cost = 0.35,
-                                voiced_unvoiced_cost = 0.14) {
+                                voiced_unvoiced_cost = 0.14,
+                                # Praat-compatible aliases
+                                max_number_of_candidates = NULL) {
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -295,6 +302,9 @@ to_pitch_cc_direct <- function(sound,
   } else {
     stop("sound must be a Sound object or external pointer")
   }
+
+  # Apply aliases (Praat-compatible names take precedence if provided)
+  max_candidates <- max_number_of_candidates %||% max_candidates
 
   .sound_to_pitch_cc(sound_ptr, time_step, pitch_floor, pitch_ceiling,
                      as.integer(max_candidates), very_accurate,
@@ -317,7 +327,11 @@ to_pitch_cc_direct <- function(sound,
 #' @export
 to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
                                max_formant = 5500, window_length = 0.025,
-                               pre_emphasis = 50) {
+                               pre_emphasis = 50,
+                               # Praat-compatible aliases
+                               max_number_of_formants = NULL,
+                               maximum_formant = NULL,
+                               pre_emphasis_from = NULL) {
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -325,6 +339,11 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
   } else {
     stop("sound must be a Sound object or external pointer")
   }
+
+  # Apply aliases (Praat-compatible names take precedence if provided)
+  max_formants <- max_number_of_formants %||% max_formants
+  max_formant <- maximum_formant %||% max_formant
+  pre_emphasis <- pre_emphasis_from %||% pre_emphasis
 
   sound_to_formant_direct(sound_ptr, time_step, max_formants, max_formant,
                            window_length, pre_emphasis)

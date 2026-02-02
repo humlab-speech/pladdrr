@@ -65,14 +65,21 @@ Formant <- function(.xptr = NULL) {
     get_min_num_formants = function() {
       cpp_obj$get_min_num_formants()
     },
-    
+    # Praat-compatible alias
+    get_minimum_number_of_formants = function() {
+      cpp_obj$get_min_num_formants()
+    },
+
     get_max_num_formants = function() {
       cpp_obj$get_max_num_formants()
     },
-    
+
     # Query methods - formant values
-    get_value_at_time = function(formant_number, time, unit = c("hertz", "bark")) {
+    get_value_at_time = function(formant_number, time, unit = c("hertz", "bark"),
+                                 interpolation = c("linear", "nearest")) {
       unit <- match.arg(unit)
+      interpolation <- match.arg(interpolation)
+      # Note: interpolation param is for API compatibility; Praat uses linear by default
       cpp_obj$get_value_at_time(as.integer(formant_number), time, unit_code(unit))
     },
     

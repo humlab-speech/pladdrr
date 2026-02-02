@@ -27,25 +27,32 @@
 #'
 #' ## Voice Quality Metrics
 #'
+#' **IMPORTANT: Jitter and shimmer values are returned as decimals (0-1), not
+#' percentages (0-100).** Multiply by 100 for percentage display:
+#' `jitter_percent <- jitter * 100`
+#'
+#' This differs from Praat's display convention but is more convenient for
+#' programmatic use (e.g., ratios, thresholds).
+#'
 #' **Comprehensive Voice Report** (NEW - for AVQI/DSI):
 #' - `$voice_report(sound, pitch, ...)` - Complete voice quality analysis with all
 #'   jitter, shimmer, and harmonicity measures in a single call. Essential for
 #'   computing AVQI and DSI voice quality indices.
 #'
 #' Individual Jitter measures (period perturbation):
-#' - `$get_jitter_local(...)` - Local jitter (relative)
-#' - `$get_jitter_local_absolute(...)` - Local jitter (absolute)
-#' - `$get_jitter_rap(...)` - Relative Average Perturbation
-#' - `$get_jitter_ppq5(...)` - Five-point Period Perturbation Quotient
-#' - `$get_jitter_ddp(...)` - Difference of Differences of Periods
+#' - `$get_jitter_local(...)` - Local jitter (relative, decimal 0-1)
+#' - `$get_jitter_local_absolute(...)` - Local jitter (absolute, seconds)
+#' - `$get_jitter_rap(...)` - Relative Average Perturbation (decimal 0-1)
+#' - `$get_jitter_ppq5(...)` - Five-point Period Perturbation Quotient (decimal 0-1)
+#' - `$get_jitter_ddp(...)` - Difference of Differences of Periods (decimal 0-1)
 #'
 #' Individual Shimmer measures (amplitude perturbation, require Sound object):
-#' - `$get_shimmer_local(sound, ...)` - Local shimmer (relative)
-#' - `$get_shimmer_local_db(sound, ...)` - Local shimmer (dB)
-#' - `$get_shimmer_apq3(sound, ...)` - 3-point Amplitude Perturbation Quotient
-#' - `$get_shimmer_apq5(sound, ...)` - 5-point Amplitude Perturbation Quotient
-#' - `$get_shimmer_apq11(sound, ...)` - 11-point Amplitude Perturbation Quotient
-#' - `$get_shimmer_dda(sound, ...)` - Difference of Differences of Amplitudes
+#' - `$get_shimmer_local(sound, ...)` - Local shimmer (relative, decimal 0-1)
+#' - `$get_shimmer_local_db(sound, ...)` - Local shimmer (dB, not decimal)
+#' - `$get_shimmer_apq3(sound, ...)` - 3-point Amplitude Perturbation Quotient (decimal 0-1)
+#' - `$get_shimmer_apq5(sound, ...)` - 5-point Amplitude Perturbation Quotient (decimal 0-1)
+#' - `$get_shimmer_apq11(sound, ...)` - 11-point Amplitude Perturbation Quotient (decimal 0-1)
+#' - `$get_shimmer_dda(sound, ...)` - Difference of Differences of Amplitudes (decimal 0-1)
 #'
 #' Period statistics:
 #' - `$get_mean_period(...)` - Mean period

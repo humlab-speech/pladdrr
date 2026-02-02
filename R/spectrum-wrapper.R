@@ -218,7 +218,12 @@ Spectrum <- function(.xptr = NULL) {
       ptr <- .spectrum_to_powercepstrum(.xptr)
       PowerCepstrum(.xptr = ptr)
     },
-    
+    # Praat-compatible alias (underscore variant)
+    to_power_cepstrum = function() {
+      ptr <- .spectrum_to_powercepstrum(.xptr)
+      PowerCepstrum(.xptr = ptr)
+    },
+
     to_cepstrum = function() {
       xptr <- .spectrum_to_cepstrum(.xptr)
       Cepstrum(.xptr = xptr)

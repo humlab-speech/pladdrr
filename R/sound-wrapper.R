@@ -154,6 +154,10 @@ Sound <- function(path = NULL, .xptr = NULL) {
     get_xptr = function() ptr,
     get_xmin = function() cpp_snd$get_xmin(),
     get_xmax = function() cpp_snd$get_xmax(),
+    # Praat-compatible aliases for time bounds
+    get_start_time = function() cpp_snd$get_xmin(),
+    get_end_time = function() cpp_snd$get_xmax(),
+    get_total_duration = function() cpp_snd$get_duration(),
     get_duration = function() cpp_snd$get_duration(),
     get_nx = function() cpp_snd$get_nx(),
     get_dx = function() cpp_snd$get_dx(),
@@ -354,7 +358,14 @@ Sound <- function(path = NULL, .xptr = NULL) {
     
     to_formant_burg = function(time_step = 0.005, max_formants = 5.0,
                                max_frequency = 5500.0, window_length = 0.025,
-                               pre_emphasis_from = 50.0) {
+                               pre_emphasis_from = 50.0,
+                               # Praat-compatible aliases
+                               max_number_of_formants = NULL,
+                               maximum_formant = NULL,
+                               pre_emphasis = NULL) {
+      max_formants <- max_number_of_formants %||% max_formants
+      max_frequency <- maximum_formant %||% max_frequency
+      pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
       formant_ptr <- cpp_snd$to_formant_burg(
         as.numeric(time_step), as.numeric(max_formants),
         as.numeric(max_frequency), as.numeric(window_length),
@@ -567,7 +578,10 @@ Sound <- function(path = NULL, .xptr = NULL) {
                           max_candidates = 15, very_accurate = FALSE,
                           silence_threshold = 0.03, voicing_threshold = 0.45,
                           octave_cost = 0.01, octave_jump_cost = 0.35,
-                          voiced_unvoiced_cost = 0.14) {
+                          voiced_unvoiced_cost = 0.14,
+                          # Praat-compatible aliases
+                          max_number_of_candidates = NULL) {
+      max_candidates <- max_number_of_candidates %||% max_candidates
       pitch_ptr <- .sound_to_pitch_ac(
         ptr, time_step, pitch_floor, pitch_ceiling,
         as.integer(max_candidates), very_accurate,
@@ -576,12 +590,15 @@ Sound <- function(path = NULL, .xptr = NULL) {
       )
       Pitch(.xptr = pitch_ptr)
     },
-    
+
     to_pitch_cc = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0,
                           max_candidates = 15, very_accurate = FALSE,
                           silence_threshold = 0.03, voicing_threshold = 0.45,
                           octave_cost = 0.01, octave_jump_cost = 0.35,
-                          voiced_unvoiced_cost = 0.14) {
+                          voiced_unvoiced_cost = 0.14,
+                          # Praat-compatible aliases
+                          max_number_of_candidates = NULL) {
+      max_candidates <- max_number_of_candidates %||% max_candidates
       pitch_ptr <- .sound_to_pitch_cc(
         ptr, time_step, pitch_floor, pitch_ceiling,
         as.integer(max_candidates), very_accurate,

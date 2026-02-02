@@ -150,17 +150,23 @@ void lpc_burg_simd(
 }
 
 // SIMD-accelerated polynomial root finding for formant extraction
+// WARNING: This function is UNIMPLEMENTED and should not be called.
+// Formant extraction uses Praat's Polynomial_to_Roots() instead.
+// The SIMD Burg algorithm (VECburg_simd_bridge) is also disabled by default
+// due to 35-60% accuracy errors. See formant_simd_bridge.cpp:should_use_simd_for_formants()
 void find_polynomial_roots_simd(
     const double* lpc_coeffs,
     int order,
     std::complex<double>* roots
 ) {
-    // Simplified: Use companion matrix eigenvalue approach
-    // Full implementation would use Laguerre's method or similar
-    // This is a placeholder showing where SIMD can help
-    
-    // For polynomial evaluation during root finding
-    // SIMD can accelerate the Horner's method iterations
+    // NOT IMPLEMENTED - This is a placeholder stub.
+    // Polynomial root finding for LPC->formant conversion is complex
+    // and currently delegated to Praat's Polynomial_to_Roots().
+    // SIMD could accelerate companion matrix eigenvalue decomposition
+    // but this requires a full linear algebra implementation.
+    (void)lpc_coeffs;
+    (void)order;
+    (void)roots;
 }
 
 // SIMD-accelerated formant bandwidth estimation
