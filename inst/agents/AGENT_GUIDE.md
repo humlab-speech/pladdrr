@@ -1,12 +1,39 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.4 (2026-02-02)
+**Version:** 4.8.5 (2026-02-02)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD formant bug FIXED + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### ✨ Praat-Compatible API Additions v4.8.5 (2026-02-02)
+
+**Summary:** Added Praat-standard method aliases for better compatibility when porting scripts.
+
+**New Methods:**
+| Class | New Method | Behavior |
+|-------|-----------|----------|
+| `Spectrum` | `to_ltas(bandwidth)` | LTAS with bandwidth parameter (Praat-standard) |
+| `Cepstrum` | `to_power_cepstrum()` | Underscore alias for `to_powercepstrum()` |
+
+**Usage:**
+```r
+# Spectrum to LTAS - now supports bandwidth parameter
+spectrum <- sound$to_spectrum()
+ltas <- spectrum$to_ltas(100)      # NEW: Praat-standard with bandwidth
+ltas <- spectrum$to_ltas_1to1()    # Still works (1-to-1 mapping)
+
+# Cepstrum to PowerCepstrum - underscore alias
+ceps <- spectrum$to_cepstrum()
+pc <- ceps$to_power_cepstrum()     # NEW: Praat-compatible
+pc <- ceps$to_powercepstrum()      # Still works
+```
+
+**Note:** `Pitch`, `Sound`, and other objects already had `get_start_time()`/`get_end_time()` aliases.
+
+---
 
 ### ✅ SIMD Formant Bug FIXED v4.8.4 (2026-02-02)
 
@@ -3739,7 +3766,7 @@ tremor_intensity <- (peak_intensity + trough_intensity) / 2
 
 ---
 
-### API Naming Differences from Praat/Parselmouth (v4.8.4)
+### API Naming Differences from Praat/Parselmouth (v4.8.5)
 
 pladdrr uses slightly different parameter/method names than Praat. This is by design (shorter, more R-idiomatic) but may cause errors when porting scripts.
 
@@ -3752,14 +3779,16 @@ pladdrr uses slightly different parameter/method names than Praat. This is by de
 | Formant creation | `maximum_formant` | `max_formant` |
 | Formant creation | `pre_emphasis_from` | `pre_emphasis` |
 
-**Method Name Differences:**
+**Method Name Differences (with v4.8.5 aliases):**
 
-| Operation | Praat | pladdrr |
-|-----------|-------|---------|
-| LTAS 1-to-1 | `To Ltas (1-to-1)` | `to_ltas_1to1()` |
-| Power Cepstrum | `To PowerCepstrum` | `to_powercepstrum()` |
-| Start time | `Get start time` | `get_xmin()` |
-| End time | `Get end time` | `get_xmax()` |
+| Operation | Praat | pladdrr (original) | pladdrr (v4.8.5 alias) |
+|-----------|-------|-------------------|------------------------|
+| LTAS with bandwidth | `To Ltas...` | N/A | ✅ `to_ltas(bandwidth)` |
+| LTAS 1-to-1 | `To Ltas (1-to-1)` | `to_ltas_1to1()` | same |
+| Power Cepstrum (Spectrum) | `To PowerCepstrum` | `to_powercepstrum()` | ✅ `to_power_cepstrum()` |
+| Power Cepstrum (Cepstrum) | `To PowerCepstrum` | `to_powercepstrum()` | ✅ `to_power_cepstrum()` |
+| Start time | `Get start time` | `get_xmin()` | ✅ `get_start_time()` |
+| End time | `Get end time` | `get_xmax()` | ✅ `get_end_time()` |
 
 **Agent Guidance - Porting Praat Scripts:**
 ```r
@@ -3776,13 +3805,18 @@ formant <- to_formant_direct(sound,
   pre_emphasis = 50        # NOT pre_emphasis_from
 )
 
-# Time bounds
-start <- sound$get_xmin()  # NOT get_start_time()
-end <- sound$get_xmax()    # NOT get_end_time()
+# Time bounds - BOTH work in v4.8.5+
+start <- sound$get_start_time()  # Praat-compatible (v4.8.5+)
+end <- sound$get_end_time()      # Praat-compatible (v4.8.5+)
+# OR legacy:
+start <- sound$get_xmin()
+end <- sound$get_xmax()
 
-# Spectrum operations
-ltas <- spectrum$to_ltas_1to1()       # NOT to_ltas(1)
-cepstrum <- spectrum$to_powercepstrum()  # NOT to_power_cepstrum()
+# Spectrum operations - BOTH work in v4.8.5+
+ltas <- spectrum$to_ltas(100)         # Praat-compatible with bandwidth (v4.8.5+)
+ltas <- spectrum$to_ltas_1to1()       # Legacy 1-to-1 mapping
+cepstrum <- spectrum$to_power_cepstrum()  # Praat-compatible (v4.8.5+)
+cepstrum <- spectrum$to_powercepstrum()   # Legacy
 ```
 
 ---

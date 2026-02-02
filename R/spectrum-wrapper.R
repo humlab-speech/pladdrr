@@ -209,6 +209,13 @@ Spectrum <- function(.xptr = NULL) {
       Sound(.xptr = ptr)
     },
     
+    # Praat-standard API: to_ltas(bandwidth) - converts Spectrum to LTAS
+    to_ltas = function(bandwidth = 100.0) {
+      ptr <- cpp_obj$to_ltas_ptr(as.numeric(bandwidth))
+      Ltas(.xptr = ptr)
+    },
+
+    # Legacy alias for backwards compatibility (1-to-1 mapping)
     to_ltas_1to1 = function() {
       ptr <- .spectrum_to_ltas_1to1(.xptr)
       Ltas(.xptr = ptr)

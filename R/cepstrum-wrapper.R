@@ -32,6 +32,11 @@ Cepstrum <- function(.xptr) {
       xptr <- .cepstrum_to_powercepstrum(.xptr)
       PowerCepstrum(.xptr = xptr)
     },
+    # Praat-compatible alias (underscore variant)
+    to_power_cepstrum = function() {
+      xptr <- .cepstrum_to_powercepstrum(.xptr)
+      PowerCepstrum(.xptr = xptr)
+    },
     
     # Utility
     get_xptr = function() .xptr,
