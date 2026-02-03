@@ -63,13 +63,13 @@ SEXP textgrid_merge(List textgrids, bool equalize_domains = false) {
         if (TYPEOF(first) == EXTPTRSXP) {
             return first;
         } else if (Rf_inherits(first, "TextGrid")) {
-            // R6 object - extract .xptr
-            Environment env(first);
-            if (env.exists(".xptr")) {
-                return env[".xptr"];
-            } else {
-                stop("TextGrid R6 object missing .xptr field");
+            // TextGrid wrapper (structured list) - extract .xptr
+            List tg_list(first);
+            SEXP xptr_val = tg_list[".xptr"];
+            if (xptr_val == R_NilValue || TYPEOF(xptr_val) != EXTPTRSXP) {
+                stop("TextGrid object missing .xptr field");
             }
+            return xptr_val;
         } else {
             stop("Invalid TextGrid object type");
         }
@@ -83,27 +83,28 @@ SEXP textgrid_merge(List textgrids, bool equalize_domains = false) {
         // Add all TextGrids to collection
         for (int i = 0; i < textgrids.size(); i++) {
             SEXP tg_sexp = textgrids[i];
-            
-            // Extract external pointer
-            XPtr<structTextGrid> tg_xptr(R_NilValue);
+
+            // Extract external pointer SEXP from various input types
+            SEXP xptr_sexp;
             if (TYPEOF(tg_sexp) == EXTPTRSXP) {
-                tg_xptr = XPtr<structTextGrid>(tg_sexp);
+                xptr_sexp = tg_sexp;
             } else if (Rf_inherits(tg_sexp, "TextGrid")) {
-                // R6 object - extract .xptr
-                Environment env(tg_sexp);
-                if (!env.exists(".xptr")) {
-                    stop("TextGrid R6 object at index " + std::to_string(i) + " missing .xptr field");
+                // TextGrid wrapper (structured list) - extract .xptr
+                List tg_list(tg_sexp);
+                xptr_sexp = tg_list[".xptr"];
+                if (xptr_sexp == R_NilValue || TYPEOF(xptr_sexp) != EXTPTRSXP) {
+                    stop("TextGrid object at index " + std::to_string(i) + " missing .xptr field");
                 }
-                tg_xptr = XPtr<structTextGrid>(env[".xptr"]);
             } else {
                 stop("Invalid TextGrid object at index " + std::to_string(i));
             }
-            
-            // Validate pointer
-            if (!tg_xptr || tg_xptr.get() == nullptr) {
+
+            // Wrap as typed pointer and validate
+            XPtr<structTextGrid> tg_xptr(xptr_sexp);
+            if (tg_xptr.get() == nullptr) {
                 stop("Null TextGrid pointer at index " + std::to_string(i));
             }
-            
+
             // Add reference to collection (no copy needed - Praat will copy internally)
             collection.addItem_ref(tg_xptr.get());
         }

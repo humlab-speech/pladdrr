@@ -53,7 +53,20 @@ Formant <- function(.xptr = NULL) {
     get_xmax = function() {
       cpp_obj$get_xmax()
     },
-    
+
+    # Praat-compatible aliases
+    get_start_time = function() {
+      cpp_obj$get_xmin()
+    },
+
+    get_end_time = function() {
+      cpp_obj$get_xmax()
+    },
+
+    get_duration = function() {
+      cpp_obj$get_xmax() - cpp_obj$get_xmin()
+    },
+
     get_number_of_frames = function() {
       cpp_obj$get_number_of_frames()
     },

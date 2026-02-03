@@ -1,12 +1,55 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.7 (2026-02-02)
+**Version:** 4.8.8 (2026-02-03)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** SIMD formant bug FIXED + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### 🐛 Shortcomings report fixes v4.8.8 (2026-02-03)
+
+**Summary:** Fixes for issues found during plabench v4.6.4→v4.8.7 migration.
+
+**Critical Fix:**
+- **`textgrid_merge()` crash fixed** - C++ used `Rcpp::Environment` to extract `.xptr` from TextGrid objects, but they are structured lists (`VECSXP`), not environments. Changed to `Rcpp::List`. Also fixed `XPtr<T>(R_NilValue)` crash in loop initialization.
+
+**Missing Exports:**
+- **`TextGrid()`, `Spectrum()`, `Ltas()` now exported** - Had `@export` roxygen tags but were missing from NAMESPACE.
+
+**API Improvements:**
+- **`Formant` time accessors** - Added `get_start_time()`, `get_end_time()`, `get_duration()` aliases (all other time-domain wrappers already had them).
+- **`Spectrum$to_ltas()` bandwidth optional** - `to_ltas()` with no args now delegates to `to_ltas_1to1()`, so it works on windowed/filtered spectra without needing to know about the 1-to-1 variant.
+- **`to_powercepstrum()` deprecated** - Now emits `.Deprecated()` warning pointing to `to_power_cepstrum()`.
+
+**Agent Guidance:**
+```r
+# TextGrid merge now works directly
+merged <- textgrid_merge(list(tg1, tg2))  # No more workarounds needed
+
+# TextGrid, Spectrum, Ltas are now exported - no namespace hack needed
+tg <- TextGrid("file.TextGrid")  # Works directly
+
+# Formant time accessors
+formant$get_start_time()  # Alias for get_xmin()
+formant$get_end_time()    # Alias for get_xmax()
+
+# to_ltas() without bandwidth = 1-to-1 mapping
+ltas <- spectrum$to_ltas()       # 1-to-1 (works on any spectrum)
+ltas <- spectrum$to_ltas(100)    # bandwidth averaging
+
+# Use to_power_cepstrum() (to_powercepstrum is deprecated)
+pc <- spectrum$to_power_cepstrum()
+```
+
+**Files:**
+- `src/textgrid_merge.cpp` - List-based xptr extraction
+- `NAMESPACE` - Added TextGrid, Spectrum, Ltas exports
+- `R/formant-wrapper.R` - Time accessor aliases
+- `R/spectrum-wrapper.R` - Optional bandwidth, deprecation warning
+
+---
 
 ### ✨ Module Loading + FormantModeler Fix v4.8.7 (2026-02-02)
 
@@ -34,7 +77,7 @@ bandwidth (1.00 Hz) must be > frequency step (31.25 Hz).
 Use bandwidth > 31.2 or to_ltas_1to1() for 1-to-1 mapping.
 ```
 
-**Agent Guidance:** For windowed spectra, use `to_ltas_1to1()` or ensure `bandwidth > spectrum$get_frequency_step()`.
+**Agent Guidance:** For windowed spectra, use `to_ltas()` with no args (v4.8.8+) or `to_ltas_1to1()`. When using bandwidth averaging, ensure `bandwidth > spectrum$get_frequency_step()`.
 
 ---
 

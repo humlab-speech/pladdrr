@@ -210,11 +210,17 @@ Spectrum <- function(.xptr = NULL) {
     },
     
     # Praat-standard API: to_ltas(bandwidth) - converts Spectrum to LTAS
-    to_ltas = function(bandwidth = 100.0) {
+    # If bandwidth is NULL, uses 1-to-1 mapping (no averaging)
+    to_ltas = function(bandwidth = NULL) {
+      if (is.null(bandwidth)) {
+        # 1-to-1 mapping - works on any spectrum including windowed/filtered
+        ptr <- .spectrum_to_ltas_1to1(.xptr)
+        return(Ltas(.xptr = ptr))
+      }
       dx <- cpp_obj$get_df()
       if (bandwidth <= dx) {
         stop(sprintf(
-          "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas_1to1() for 1-to-1 mapping.",
+          "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping.",
           bandwidth, dx, dx
         ))
       }
@@ -229,10 +235,12 @@ Spectrum <- function(.xptr = NULL) {
     },
     
     to_powercepstrum = function() {
+      .Deprecated("to_power_cepstrum", package = "pladdrr",
+                  msg = "to_powercepstrum() is deprecated. Use to_power_cepstrum() instead.")
       ptr <- .spectrum_to_powercepstrum(.xptr)
       PowerCepstrum(.xptr = ptr)
     },
-    # Praat-compatible alias (underscore variant)
+    # Preferred snake_case name
     to_power_cepstrum = function() {
       ptr <- .spectrum_to_powercepstrum(.xptr)
       PowerCepstrum(.xptr = ptr)
