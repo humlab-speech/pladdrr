@@ -348,6 +348,12 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' Eliminates R/C++ boundary crossings and reduces parameter overhead.
 #' 2-3x faster than calculate_cpps_fast() for AVQI applications.
 #'
+#' PERFORMANCE NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 4):
+#' CPPS computation takes 93% of AVQI runtime (~11.8s/12.7s). R/Python ratio is 1.57x,
+#' so current implementation is reasonable but could benefit from optimization.
+#' Possible improvements: Threading or SIMD in PowerCepstrogram computation.
+#' Priority: Low (algorithm-bound, not a bug).
+#'
 #' @param sound_xptr External pointer to Sound object
 #' @param time_averaging_window Time averaging window in seconds (default 0.01)
 #' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
@@ -377,6 +383,17 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' [v3.01 only: Window filtering by power + ZCR] -> Concatenate final.
 #' 2-4x faster than multi-step R pipeline. Supports both AVQI v2.03 and v3.01.
 #'
+#' ACCURACY NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 3):
+#' This Ultra API implementation forced a revert to manual R implementation
+#' in AVQI benchmarks due to accuracy differences from Praat's reference algorithm.
+#' The windowed power + ZCR filtering produces different results than expected.
+#' Issue: extract_windows_filtered() or equivalent Ultra API for windowed extraction.
+#'
+#' TODO: Debug and fix accuracy of windowed extraction to match Praat's 30ms sliding
+#' window with dual filtering (power threshold + ZCR < 3000 Hz). Compare ZCR calculation
+#' method (Sound_to_PointProcess_zeroes) against manual R vectorized implementation.
+#' Once fixed, AVQI R implementation will be ~1.2s faster.
+#'
 #' @param sound_xptr External pointer to Sound object
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)
 #' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
@@ -386,10 +403,11 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param power_threshold_factor Power threshold as fraction of global power (default 0.3)
 #' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
 #' @param window_width Window width for v3.01 filtering in seconds (default 0.03)
+#' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 #' @return External pointer to concatenated voiced Sound object
 #' @keywords internal
-.extract_voiced_segments_ultra_cpp <- function(sound_xptr, version = "v3.01", min_pitch = 50.0, silence_threshold_db = -25.0, min_silent_duration = 0.1, min_sounding_duration = 0.1, power_threshold_factor = 0.3, max_zcr = 3000.0, window_width = 0.03) {
-    .Call(`_pladdrr_extract_voiced_segments_ultra_cpp`, sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width)
+.extract_voiced_segments_ultra_cpp <- function(sound_xptr, version = "v3.01", min_pitch = 50.0, silence_threshold_db = -25.0, min_silent_duration = 0.1, min_sounding_duration = 0.1, power_threshold_factor = 0.3, max_zcr = 3000.0, window_width = 0.03, use_manual_zcr = FALSE) {
+    .Call(`_pladdrr_extract_voiced_segments_ultra_cpp`, sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width, use_manual_zcr)
 }
 
 #' Calculate multi-band HNR in single C++ call (Tier 4 Ultra)

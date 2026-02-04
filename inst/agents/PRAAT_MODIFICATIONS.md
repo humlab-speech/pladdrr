@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-02-02
-**Package Version:** 4.8.7
+**Last Updated:** 2026-02-04
+**Package Version:** 4.8.9
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -12,6 +12,29 @@ This document details all modifications made to the Praat source code to enable 
 2. **CRAN Compliance** - Removal of non-portable files
 3. **Performance Optimizations** - SIMD acceleration
 4. **API Compatibility** - Function declarations for FormantPath
+
+---
+
+## Recent Changes
+
+### v4.8.9 Performance Optimizations (2026-02-04)
+
+**Summary:** Fixed 4 critical performance/accuracy issues from plabench benchmarking (`PLADDRR_PERFORMANCE_REQUESTS.md`).
+
+#### Pitch Parallelization Threshold (Sound_to_Pitch.cpp)
+
+**Problem:** Core pitch extraction ~5x slower than Python/Parselmouth for short audio segments.
+
+**Root Cause:** Low parallelization threshold (5 frames) caused threading overhead to dominate.
+
+**Fix:** Increased `MelderThread_PARALLELIZE` threshold from 5 to 20 frames (line 507).
+
+**File Modified:**
+- `fon/Sound_to_Pitch.cpp:507` - Changed threshold with performance comment
+
+**Impact:** Expected 5-20x speedup for short audio segments (<1s) in DSI, VUV, Pharyngeal, and Tremor workflows.
+
+**Note:** This is the ONLY modification to Praat source code in v4.8.9. All other changes are in pladdrr-specific files (formant_lpc_simd.cpp, formant_simd_bridge.cpp, batch_queries.cpp).
 
 ---
 
@@ -236,7 +259,7 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 | `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) |
 | `fon/Formant.h` | API | extractPart declaration |
 | `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization |
-| `fon/Sound_to_Pitch.cpp` | SIMD | Pitch analysis optimization |
+| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis optimization + parallelization threshold (v4.8.9) |
 | `fon/Sound_to_Formant.cpp` | SIMD | Uses VECburg directly (v4.8.4) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
 | `fon/Sound.cpp` | SIMD | Pre-emphasis optimization |

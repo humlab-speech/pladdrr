@@ -189,6 +189,9 @@ void apply_preemphasis_simd(
 
 // SIMD-accelerated root finding for formant extraction
 // Finds formant frequencies and bandwidths from LPC coefficients
+//
+// FIXED (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 2):
+// Implemented complete polynomial root finding using Laguerre's method
 void find_formants_from_lpc_simd(
     const double* lpc_coeffs,    // LPC coefficients [0..order-1]
     int order,                   // LPC order
@@ -199,31 +202,43 @@ void find_formants_from_lpc_simd(
     double safety_margin         // Safety margin (Hz) - don't extract formants too close to 0 or Nyquist
 ) {
     const double nyquist = sampling_rate / 2.0;
-
-    // Build companion matrix for polynomial root finding
-    // Polynomial is: 1 - a[1]*z^-1 - a[2]*z^-2 - ... - a[m]*z^-m
-    // Companion matrix eigenvalues are the roots
-
-    // For now, use a simplified approach:
-    // Convert to polynomial coefficients (flip sign)
-    std::vector<double> poly_coeffs(order + 1);
-    poly_coeffs[order] = 1.0;  // Leading coefficient
-    for (int i = 0; i < order; ++i) {
-        poly_coeffs[order - 1 - i] = -lpc_coeffs[i];
-    }
-
-    // Placeholder: Root finding would go here
-    // In practice, this would use:
-    // 1. Laguerre's method (iterative)
-    // 2. Eigenvalue decomposition of companion matrix
-    // 3. Durand-Kerner method
-    // All can benefit from SIMD for matrix/vector operations
-
-    // For now, return 0 formants to indicate not yet implemented
+    
+    // Find polynomial roots (implemented in formant_lpc_simd.cpp)
+    std::vector<std::complex<double>> roots(order);
+    
+    // External declaration - implemented in formant_lpc_simd.cpp
+    extern void find_polynomial_roots_simd(
+        const double* lpc_coeffs,
+        int order,
+        std::complex<double>* roots
+    );
+    
+    find_polynomial_roots_simd(lpc_coeffs, order, roots.data());
+    
+    // Extract formants from roots
     *n_formants_out = 0;
-
-    // TODO: Implement polynomial root finding with SIMD
-    // This is complex and would require a separate implementation
+    
+    for (int i = 0; i < order; ++i) {
+        // Only consider roots in upper half-plane (positive imaginary part)
+        if (roots[i].imag() > 0) {
+            // Convert to frequency and bandwidth
+            double angle = std::atan2(roots[i].imag(), roots[i].real());
+            double radius = std::abs(roots[i]);
+            
+            // Frequency from angle
+            double freq = angle * sampling_rate / (2.0 * M_PI);
+            
+            // Bandwidth from radius
+            double bandwidth = -std::log(radius) * sampling_rate / M_PI;
+            
+            // Check if within valid range
+            if (freq > safety_margin && freq < nyquist - safety_margin && bandwidth > 0) {
+                formant_freqs[*n_formants_out] = freq;
+                formant_bandwidths[*n_formants_out] = bandwidth;
+                (*n_formants_out)++;
+            }
+        }
+    }
 }
 
 #endif // HAVE_XSIMD
@@ -280,11 +295,19 @@ extern "C" void apply_preemphasis_simd_bridge(
 }
 
 // Utility: Check if SIMD should be used for formant extraction
-// NOTE (v4.8.4): The separate burg_simd implementation was removed due to
-// algorithmic differences from Praat's VECburg. VECburg now has SIMD
-// acceleration built-in for its inner loops (NUM2.cpp), so this function
-// is deprecated and always returns false (use standard VECburg path).
+// NOTE (v4.8.9): The SIMD formant extraction path now has complete polynomial
+// root finding (Laguerre's method), but remains disabled pending validation.
+// VECburg now has SIMD acceleration built-in for its inner loops (NUM2.cpp).
+//
+// UPDATE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 2):
+// find_polynomial_roots_simd() is now IMPLEMENTED using Laguerre's method.
+// However, this function still returns false to maintain stability until:
+// 1. Root finding is validated against Praat's Polynomial_to_Roots()
+// 2. burg_simd() is validated against VECburg() for identical results
+// 3. Full end-to-end formant extraction is tested against reference values
+//
+// To enable SIMD formant path: Change return value to true and run validation tests.
 bool should_use_simd_for_formants() {
-    // Always use VECburg which has SIMD-accelerated inner loops
+    // Keep using standard VECburg path until SIMD implementation is validated
     return false;
 }

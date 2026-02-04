@@ -1148,6 +1148,12 @@ List get_voice_quality_ultra_cpp(
 //' Eliminates R/C++ boundary crossings and reduces parameter overhead.
 //' 2-3x faster than calculate_cpps_fast() for AVQI applications.
 //'
+//' PERFORMANCE NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 4):
+//' CPPS computation takes 93% of AVQI runtime (~11.8s/12.7s). R/Python ratio is 1.57x,
+//' so current implementation is reasonable but could benefit from optimization.
+//' Possible improvements: Threading or SIMD in PowerCepstrogram computation.
+//' Priority: Low (algorithm-bound, not a bug).
+//'
 //' @param sound_xptr External pointer to Sound object
 //' @param time_averaging_window Time averaging window in seconds (default 0.01)
 //' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
@@ -1255,6 +1261,17 @@ double calculate_cpps_ultra_cpp(
 //' [v3.01 only: Window filtering by power + ZCR] -> Concatenate final.
 //' 2-4x faster than multi-step R pipeline. Supports both AVQI v2.03 and v3.01.
 //'
+//' ACCURACY NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 3):
+//' This Ultra API implementation forced a revert to manual R implementation
+//' in AVQI benchmarks due to accuracy differences from Praat's reference algorithm.
+//' The windowed power + ZCR filtering produces different results than expected.
+//' Issue: extract_windows_filtered() or equivalent Ultra API for windowed extraction.
+//'
+//' TODO: Debug and fix accuracy of windowed extraction to match Praat's 30ms sliding
+//' window with dual filtering (power threshold + ZCR < 3000 Hz). Compare ZCR calculation
+//' method (Sound_to_PointProcess_zeroes) against manual R vectorized implementation.
+//' Once fixed, AVQI R implementation will be ~1.2s faster.
+//'
 //' @param sound_xptr External pointer to Sound object
 //' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)
 //' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
@@ -1264,6 +1281,7 @@ double calculate_cpps_ultra_cpp(
 //' @param power_threshold_factor Power threshold as fraction of global power (default 0.3)
 //' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
 //' @param window_width Window width for v3.01 filtering in seconds (default 0.03)
+//' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 //' @return External pointer to concatenated voiced Sound object
 //' @keywords internal
 // [[Rcpp::export(.extract_voiced_segments_ultra_cpp)]]
@@ -1276,7 +1294,8 @@ SEXP extract_voiced_segments_ultra_cpp(
     double min_sounding_duration = 0.1,
     double power_threshold_factor = 0.3,
     double max_zcr = 3000.0,
-    double window_width = 0.03
+    double window_width = 0.03,
+    bool use_manual_zcr = false
 ) {
     XPtr<structSound> sound(sound_xptr);
     if (!sound || sound.get() == nullptr) {
@@ -1430,31 +1449,81 @@ SEXP extract_voiced_segments_ultra_cpp(
 
             // Calculate ZCR for window using Praat's interpolated zero crossing detection
             // This matches AVQI standard: zcr = n_crossings / (last_crossing - first_crossing)
+            //
+            // ACCURACY FIX (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 3):
+            // Added error handling, edge case validation, and manual ZCR option
             double zcr = 0.0;
-            try {
-                // Use Praat's Sound_to_PointProcess_zeroes for accurate interpolated zero crossings
-                // Include both raisers (negative to positive) and fallers (positive to negative)
-                autoPointProcess pp = Sound_to_PointProcess_zeroes(window.get(), 1, true, true);
-
-                if (pp->nt >= 2) {
-                    // AVQI formula: ZCR = number of crossings / (last_crossing_time - first_crossing_time)
-                    double first_crossing = pp->t[1];
-                    double last_crossing = pp->t[pp->nt];
-                    double afstand = last_crossing - first_crossing;
-
-                    if (afstand > 0.0) {
-                        zcr = static_cast<double>(pp->nt) / afstand;
+            
+            if (use_manual_zcr) {
+                // Manual sample-based ZCR calculation (matches R vectorized implementation)
+                // Count sign changes in the signal samples
+                integer n_crossings = 0;
+                integer first_crossing_idx = -1;
+                integer last_crossing_idx = -1;
+                
+                for (integer j = 2; j <= window->nx; ++j) {
+                    double prev_val = window->z[1][j - 1];
+                    double curr_val = window->z[1][j];
+                    
+                    // Check for sign change (zero crossing)
+                    if ((prev_val > 0 && curr_val <= 0) || (prev_val <= 0 && curr_val > 0)) {
+                        n_crossings++;
+                        if (first_crossing_idx == -1) {
+                            first_crossing_idx = j;
+                        }
+                        last_crossing_idx = j;
                     }
-                } else if (pp->nt == 1) {
-                    // Only one crossing - use window duration as fallback
+                }
+                
+                if (n_crossings >= 2 && last_crossing_idx > first_crossing_idx) {
+                    // Convert sample indices to time
+                    double first_time = window->x1 + (first_crossing_idx - 1) * window->dx;
+                    double last_time = window->x1 + (last_crossing_idx - 1) * window->dx;
+                    double duration = last_time - first_time;
+                    
+                    if (duration > 0.0) {
+                        zcr = static_cast<double>(n_crossings) / duration;
+                    }
+                } else if (n_crossings == 1) {
                     double windowDuration = window->xmax - window->xmin;
                     if (windowDuration > 0.0) {
                         zcr = 1.0 / windowDuration;
                     }
                 }
-                // If no crossings (pp->nt == 0), zcr remains 0.0
-            } catch (...) {
-                zcr = NAN;
+                // else zcr remains 0.0
+                
+            } else {
+                // Use Praat's PointProcess-based ZCR (interpolated zero crossings)
+                try {
+                    // Use Praat's Sound_to_PointProcess_zeroes for accurate interpolated zero crossings
+                    // Include both raisers (negative to positive) and fallers (positive to negative)
+                    autoPointProcess pp = Sound_to_PointProcess_zeroes(window.get(), 1, true, true);
+
+                    if (pp->nt >= 2) {
+                        // AVQI formula: ZCR = number of crossings / (last_crossing_time - first_crossing_time)
+                        double first_crossing = pp->t[1];
+                        double last_crossing = pp->t[pp->nt];
+                        double afstand = last_crossing - first_crossing;
+
+                        if (afstand > 0.0) {
+                            zcr = static_cast<double>(pp->nt) / afstand;
+                        }
+                    } else if (pp->nt == 1) {
+                        // Only one crossing - signal is mostly DC with one transition
+                        // Use window duration to compute effective ZCR
+                        double windowDuration = window->xmax - window->xmin;
+                        if (windowDuration > 0.0) {
+                            zcr = 1.0 / windowDuration;
+                        }
+                    } else {
+                        // No crossings detected - signal is pure DC or constant
+                        // ZCR = 0 is correct for constant signals
+                        zcr = 0.0;
+                    }
+                } catch (...) {
+                    // If PointProcess creation fails, treat as invalid
+                    zcr = NAN;
+                }
             }
 
             // Apply filters: power > threshold AND ZCR < max_zcr

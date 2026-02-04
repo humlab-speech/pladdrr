@@ -629,8 +629,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // extract_voiced_segments_ultra_cpp
-SEXP extract_voiced_segments_ultra_cpp(SEXP sound_xptr, std::string version, double min_pitch, double silence_threshold_db, double min_silent_duration, double min_sounding_duration, double power_threshold_factor, double max_zcr, double window_width);
-RcppExport SEXP _pladdrr_extract_voiced_segments_ultra_cpp(SEXP sound_xptrSEXP, SEXP versionSEXP, SEXP min_pitchSEXP, SEXP silence_threshold_dbSEXP, SEXP min_silent_durationSEXP, SEXP min_sounding_durationSEXP, SEXP power_threshold_factorSEXP, SEXP max_zcrSEXP, SEXP window_widthSEXP) {
+SEXP extract_voiced_segments_ultra_cpp(SEXP sound_xptr, std::string version, double min_pitch, double silence_threshold_db, double min_silent_duration, double min_sounding_duration, double power_threshold_factor, double max_zcr, double window_width, bool use_manual_zcr);
+RcppExport SEXP _pladdrr_extract_voiced_segments_ultra_cpp(SEXP sound_xptrSEXP, SEXP versionSEXP, SEXP min_pitchSEXP, SEXP silence_threshold_dbSEXP, SEXP min_silent_durationSEXP, SEXP min_sounding_durationSEXP, SEXP power_threshold_factorSEXP, SEXP max_zcrSEXP, SEXP window_widthSEXP, SEXP use_manual_zcrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -643,7 +643,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type power_threshold_factor(power_threshold_factorSEXP);
     Rcpp::traits::input_parameter< double >::type max_zcr(max_zcrSEXP);
     Rcpp::traits::input_parameter< double >::type window_width(window_widthSEXP);
-    rcpp_result_gen = Rcpp::wrap(extract_voiced_segments_ultra_cpp(sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width));
+    Rcpp::traits::input_parameter< bool >::type use_manual_zcr(use_manual_zcrSEXP);
+    rcpp_result_gen = Rcpp::wrap(extract_voiced_segments_ultra_cpp(sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width, use_manual_zcr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -10748,7 +10749,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_calculate_minimum_intensity_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_minimum_intensity_ultra_cpp, 5},
     {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
     {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 15},
-    {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 9},
+    {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 10},
     {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
     {"_pladdrr_calculate_mean_simd_bridge", (DL_FUNC) &_pladdrr_calculate_mean_simd_bridge, 1},
     {"_pladdrr_calculate_stdev_simd_bridge", (DL_FUNC) &_pladdrr_calculate_stdev_simd_bridge, 2},
