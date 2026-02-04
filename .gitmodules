@@ -4,3 +4,6 @@
 [submodule "src/pffft"]
 	path = src/pffft
 	url = https://github.com/cpuimage/pffft.git
+[submodule "src/pocketfft"]
+	path = src/pocketfft
+	url = https://github.com/mreineck/pocketfft.git

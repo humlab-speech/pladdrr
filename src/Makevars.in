@@ -8,6 +8,7 @@ CXX_STD = CXX17
 # Note: xsimd from Homebrew for SIMD support
 PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -I/opt/homebrew/include \
+               -Ipocketfft \
                -Igsl-2.8 \
                -Igsl-2.8/gsl \
                -Ipraat.github.io \

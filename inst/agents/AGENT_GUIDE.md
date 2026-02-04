@@ -1,14 +1,28 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.10 (2026-02-04)
+**Version:** 4.8.12 (2026-02-04)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** SIMD PowerCepstrogram + Performance fixes + All modules production ready ✅
+**Status:** pocketfft FFT backend + SIMD PowerCepstrogram + All modules production ready
 
 ---
 
 ## Recent Changes
 
-### 🚀 CPPS/PowerCepstrogram SIMD Optimization v4.8.10 (2026-02-04)
+### pocketfft FFT Backend v4.8.12 (2026-02-04)
+
+**Summary:** Replaced Praat's 1996-era FFTPACK with pocketfft — header-only, double-precision, BSD-licensed. Same FFTPACK halfcomplex output format, so all existing code works unchanged.
+
+**What Changed:**
+- `NUMfft_forward`/`NUMfft_backward` now use `pocketfft::r2r_fftpack()` instead of `drftf1`/`drftb1`
+- `NUMfft_core.h` (1350 lines of FFTPACK C) no longer included
+- `NUMFourierTable_create` no longer precomputes trig caches (pocketfft manages plans internally)
+- Build system: added `-Ipocketfft` include path
+
+**Agent Guidance:** No API changes. All FFT-dependent operations (spectrum, spectrogram, pitch, CPPS, MFCC, etc.) work identically. The change is transparent to R-level code.
+
+---
+
+### CPPS/PowerCepstrogram SIMD Optimization v4.8.10 (2026-02-04)
 
 **Summary:** SIMD acceleration for PowerCepstrogram to optimize CPPS (93% of AVQI runtime).
 

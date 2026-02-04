@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-02-04
-**Package Version:** 4.8.10
+**Package Version:** 4.8.12
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,29 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.12 Replace Praat FFTPACK with pocketfft (2026-02-04)
+
+**Summary:** Replaced Praat's 1996-era FFTPACK FFT implementation with pocketfft (header-only, BSD, double-precision, C++11).
+
+**Motivation:** Code modernization — pocketfft supports more factors (2,3,4,5,7,8,11 + Bluestein fallback), has built-in plan caching, and is the same FFT backend used by NumPy/SciPy.
+
+**Files Modified:**
+- `dwsys/NUMFourier.cpp` — replaced `#include "NUMfft_core.h"` with `#include "pocketfft_hdronly.h"`, swapped `drftf1`/`drftb1` calls in `NUMfft_forward`/`NUMfft_backward` with `pocketfft::r2r_fftpack`, removed `NUMrffti` trig/split cache init from `NUMFourierTable_create`
+
+**Build System:**
+- `src/Makevars.in` + `src/Makevars` — added `-Ipocketfft` include path
+
+**Format Compatibility:** Both use FFTPACK halfcomplex format `[DC, Re(1), Im(1), ...]` — drop-in replacement, no data layout changes. All 13+ call sites through `NUMfft_forward`/`NUMfft_backward` benefit automatically.
+
+**New Dependencies:**
+- `src/pocketfft/pocketfft_hdronly.h` (header-only, no .cpp to compile)
+
+**Defines:** `POCKETFFT_NO_MULTITHREADING` (avoids std::thread on R toolchains), `POCKETFFT_CACHE_SIZE=16`
+
+**Dead Code:** `dwsys/NUMfft_core.h` is no longer included (1350 lines of FFTPACK C code).
+
+---
 
 ### v4.8.10 CPPS/PowerCepstrogram SIMD Optimization (2026-02-04)
 
@@ -301,6 +324,7 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 | `dwtools/Spectrogram_extensions.cpp` | SIMD | Mel-frequency SIMD |
 | `LPC/FormantPath.cpp` | SIMD | Path optimization |
 | `LPC/Sound_to_PowerCepstrogram.cpp` | SIMD | PowerCepstrogram frame processing (v4.8.10) |
+| `dwsys/NUMFourier.cpp` | FFT backend | Replaced FFTPACK with pocketfft (v4.8.12) |
 
 ---
 
