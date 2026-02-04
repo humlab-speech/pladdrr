@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-02-04
-**Package Version:** 4.8.9
+**Package Version:** 4.8.10
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,40 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.10 CPPS/PowerCepstrogram SIMD Optimization (2026-02-04)
+
+**Summary:** SIMD acceleration for PowerCepstrogram computation to optimize CPPS calculation (93% of AVQI runtime).
+
+#### PowerCepstrogram SIMD (Sound_to_PowerCepstrogram.cpp)
+
+**Problem:** CPPS calculation (primary AVQI bottleneck) 1.57x slower than Python/Parselmouth.
+
+**Solution:** Comprehensive SIMD optimization of PowerCepstrogram frame processing with 4 integration points:
+
+**File Modified:**
+- `LPC/Sound_to_PowerCepstrogram.cpp` - SIMD forward declarations + 4 conditional integration points
+
+**SIMD Integration Points:**
+1. **Frame extraction** (lines 102-114): Boundary-aware frame extraction with zero-padding
+2. **Window multiplication** (lines 119-127): In-place windowing
+3. **Log power spectrum** (lines 152-167): PRIMARY TARGET - `log(re² + im² + ε)` for Re/Im pairs
+4. **Final power** (lines 174-188): Power cepstrum values `(val * df)²`
+
+**New Files Created:**
+- `src/powercepstrogram_simd.cpp` (430 lines) - 4 core SIMD functions with scalar fallbacks
+- `tests/testthat/test-powercepstrogram-simd.R` (60 lines) - Accuracy and edge case tests
+- `benchmarks/powercepstrogram_simd_benchmark.R` (70 lines) - Performance measurement
+
+**Expected Performance:**
+- ARM NEON: 1.15-1.20x speedup
+- x86 AVX2: 1.25-1.35x speedup
+- AVQI improvement: R/Python ratio 1.58x → ~1.38x (13% improvement)
+- CPPS speedup: 11.8s → ~10.0s (15% faster)
+
+**Note:** All Praat modifications are conditional (`#ifdef HAVE_XSIMD`) with scalar fallbacks. No changes to threading or FFT operations.
+
+---
 
 ### v4.8.9 Performance Optimizations (2026-02-04)
 
@@ -266,6 +300,7 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 | `dwtools/Sound_and_Spectrogram_extensions.cpp` | SIMD | MFCC optimization |
 | `dwtools/Spectrogram_extensions.cpp` | SIMD | Mel-frequency SIMD |
 | `LPC/FormantPath.cpp` | SIMD | Path optimization |
+| `LPC/Sound_to_PowerCepstrogram.cpp` | SIMD | PowerCepstrogram frame processing (v4.8.10) |
 
 ---
 

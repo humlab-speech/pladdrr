@@ -1706,6 +1706,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     invisible(.Call(`_pladdrr_pointprocess_save`, xptr, path))
 }
 
+.should_use_simd_for_powercepstrogram_bridge <- function() {
+    .Call(`_pladdrr_should_use_simd_for_powercepstrogram_bridge`)
+}
+
 .sound_to_powercepstrogram <- function(sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency) {
     .Call(`_pladdrr_sound_to_powercepstrogram`, sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
 }

@@ -4901,6 +4901,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// should_use_simd_for_powercepstrogram_bridge
+bool should_use_simd_for_powercepstrogram_bridge();
+RcppExport SEXP _pladdrr_should_use_simd_for_powercepstrogram_bridge() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(should_use_simd_for_powercepstrogram_bridge());
+    return rcpp_result_gen;
+END_RCPP
+}
 // sound_to_powercepstrogram
 SEXP sound_to_powercepstrogram(SEXP sound_xptr, double pitch_floor, double time_step, double maximum_frequency, double pre_emphasis_frequency);
 RcppExport SEXP _pladdrr_sound_to_powercepstrogram(SEXP sound_xptrSEXP, SEXP pitch_floorSEXP, SEXP time_stepSEXP, SEXP maximum_frequencySEXP, SEXP pre_emphasis_frequencySEXP) {
@@ -11022,6 +11032,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pointprocess_to_textgrid_vuv", (DL_FUNC) &_pladdrr_pointprocess_to_textgrid_vuv, 3},
     {"_pladdrr_pointprocess_voice_report", (DL_FUNC) &_pladdrr_pointprocess_voice_report, 11},
     {"_pladdrr_pointprocess_save", (DL_FUNC) &_pladdrr_pointprocess_save, 2},
+    {"_pladdrr_should_use_simd_for_powercepstrogram_bridge", (DL_FUNC) &_pladdrr_should_use_simd_for_powercepstrogram_bridge, 0},
     {"_pladdrr_sound_to_powercepstrogram", (DL_FUNC) &_pladdrr_sound_to_powercepstrogram, 5},
     {"_pladdrr_spectrum_to_powercepstrum", (DL_FUNC) &_pladdrr_spectrum_to_powercepstrum, 1},
     {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 8},

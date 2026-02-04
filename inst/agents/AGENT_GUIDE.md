@@ -1,12 +1,43 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.9 (2026-02-04)
+**Version:** 4.8.10 (2026-02-04)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Performance fixes for formant/pitch/AVQI + All modules production ready ✅
+**Status:** SIMD PowerCepstrogram + Performance fixes + All modules production ready ✅
 
 ---
 
 ## Recent Changes
+
+### 🚀 CPPS/PowerCepstrogram SIMD Optimization v4.8.10 (2026-02-04)
+
+**Summary:** SIMD acceleration for PowerCepstrogram to optimize CPPS (93% of AVQI runtime).
+
+**Performance Improvements:**
+- Log power spectrum SIMD (primary target: `log(re² + im² + ε)`)
+- Frame extraction + window multiplication SIMD
+- Final power calculation SIMD
+
+**Expected Results:**
+- ARM NEON: 1.15-1.20x speedup
+- x86 AVX2: 1.25-1.35x speedup  
+- AVQI: R/Python ratio 1.58x → ~1.38x (13% improvement)
+- CPPS: 11.8s → ~10.0s (15% faster)
+
+**Agent Guidance:**
+```r
+# CPPS calculation now SIMD-accelerated (transparent to user)
+cpps <- calculate_cpps_ultra(sound)  # Faster by default
+
+# Disable SIMD if needed (debugging)
+Sys.setenv(PLADDRR_DISABLE_POWERCEPSTROGRAM_SIMD = "1")
+cpps <- calculate_cpps_ultra(sound)  # Uses scalar fallback
+```
+
+**Files:**
+- `src/powercepstrogram_simd.cpp`: Core SIMD implementation (430 lines)
+- `src/praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp`: 4 SIMD integration points
+- `tests/testthat/test-powercepstrogram-simd.R`: Accuracy tests
+- `benchmarks/powercepstrogram_simd_benchmark.R`: Performance benchmarks
 
 ### 🚀 Performance Fixes v4.8.9 (2026-02-04)
 
