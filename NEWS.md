@@ -1,3 +1,9 @@
+# pladdrr 4.8.13 (2026-02-04)
+
+## Optimization
+
+- `two_pass_adaptive_pitch()` now uses `pitch_get_adaptive_range()` for single C++ call instead of 2x `get_pitch_quantile_direct()` + manual factor math
+
 # pladdrr 4.6.3 (2026-01-25)
 
 ## Bug Fixes - Ultra API v4.6.2 Issues

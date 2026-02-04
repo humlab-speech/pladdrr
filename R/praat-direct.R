@@ -873,7 +873,8 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #'
 #' @seealso
 #' [to_pitch_cc_direct()], [to_pitch_ac_direct()] for single-pass extraction
-#' [get_pitch_quantile_direct()] for manual quartile extraction
+#' [pitch_get_adaptive_range()] for the single-call quartile + range computation
+#' [get_pitch_quantiles_batch()] for batch quartile extraction
 #'
 #' @export
 two_pass_adaptive_pitch <- function(sound,
@@ -909,9 +910,11 @@ two_pass_adaptive_pitch <- function(sound,
     voiced_unvoiced_cost = voiced_unvoiced_cost
   )
 
-  # Get quartiles from pass 1
-  q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
-  q3 <- get_pitch_quantile_direct(pitch_rough, 0.75, unit = "hertz")
+  # Get quartiles + adaptive range in single C++ call
+  range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,
+                                     q3_factor = q3_factor, unit = 0L)
+  q1 <- range$q1
+  q3 <- range$q3
 
   # Handle case where no voiced frames found
   if (is.na(q1) || is.na(q3) || q1 <= 0 || q3 <= 0) {
@@ -924,9 +927,8 @@ two_pass_adaptive_pitch <- function(sound,
     ))
   }
 
-  # Compute adaptive range
-  min_pitch <- q1 * q1_factor
-  max_pitch <- q3 * q3_factor
+  min_pitch <- range$min_pitch
+  max_pitch <- range$max_pitch
 
   # Pass 2: Refined range
   pitch_refined <- pitch_fn(

@@ -2267,11 +2267,8 @@ Pipeline functions combine common multi-step workflows into single optimized cal
 ```r
 # OLD WAY: Manual two-pass implementation (5+ function calls)
 pitch_rough <- to_pitch_cc_direct(sound, pitch_floor = 50, pitch_ceiling = 800)
-q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
-q3 <- get_pitch_quantile_direct(pitch_rough, 0.75, unit = "hertz")
-min_pitch <- q1 * 0.75
-max_pitch <- q3 * 1.5
-pitch_refined <- to_pitch_cc_direct(sound, pitch_floor = min_pitch, pitch_ceiling = max_pitch)
+range <- pitch_get_adaptive_range(pitch_rough, q1_factor = 0.75, q3_factor = 1.5, unit = 0L)
+pitch_refined <- to_pitch_cc_direct(sound, pitch_floor = range$min_pitch, pitch_ceiling = range$max_pitch)
 
 # NEW WAY: Single pipeline function (v4.3.0+)
 result <- two_pass_adaptive_pitch(sound)
@@ -4304,6 +4301,7 @@ When reimplementing Praat code that involves:
   - `two_pass_adaptive_pitch(sound, ...)` - Two-pass adaptive pitch extraction
     - Pass 1: Wide range (50-800 Hz) to find speaker's actual range
     - Pass 2: Refined range based on Q1/Q3 (default: Q1×0.75 to Q3×1.5)
+    - Uses `pitch_get_adaptive_range()` for single C++ call quartile+range computation (v4.8.13)
     - Returns: list(pitch, min_pitch, max_pitch, q1, q3)
     - Handles unvoiced sounds gracefully (returns initial range)
     - Supports both AC and CC methods via `method` parameter
