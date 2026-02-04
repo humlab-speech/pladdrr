@@ -17,6 +17,15 @@
 
 using namespace Rcpp;
 
+// Forward declaration of formant_lpc_simd namespace functions
+namespace formant_lpc_simd {
+    void find_polynomial_roots_simd(
+        const double* lpc_coeffs,
+        int order,
+        std::complex<double>* roots
+    );
+}
+
 // ============================================================================
 // Direct SIMD implementations for LPC/Formant extraction
 // ============================================================================
@@ -206,14 +215,8 @@ void find_formants_from_lpc_simd(
     // Find polynomial roots (implemented in formant_lpc_simd.cpp)
     std::vector<std::complex<double>> roots(order);
     
-    // External declaration - implemented in formant_lpc_simd.cpp
-    extern void find_polynomial_roots_simd(
-        const double* lpc_coeffs,
-        int order,
-        std::complex<double>* roots
-    );
-    
-    find_polynomial_roots_simd(lpc_coeffs, order, roots.data());
+    // Call function from formant_lpc_simd namespace
+    formant_lpc_simd::find_polynomial_roots_simd(lpc_coeffs, order, roots.data());
     
     // Extract formants from roots
     *n_formants_out = 0;

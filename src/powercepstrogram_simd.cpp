@@ -63,16 +63,19 @@ void extract_frame_simd(
 
     // SIMD loop - check if samples are within bounds
     for (; i + static_cast<integer>(simd_size) - 1 <= frame_size; i += simd_size) {
-        batch result = batch(0.0);
+        alignas(32) double result_vals[simd_size];
         
         // Check each element in the batch
         for (size_t j = 0; j < simd_size; j++) {
             integer sample_idx = start_sample + i - 1 + static_cast<integer>(j);
             if (sample_idx > 0 && sample_idx <= input_nx) {
-                result[j] = input_signal[sample_idx];
+                result_vals[j] = input_signal[sample_idx];
+            } else {
+                result_vals[j] = 0.0;
             }
         }
         
+        batch result = xsimd::load_aligned(result_vals);
         result.store_unaligned(&output_frame[i]);
     }
 
