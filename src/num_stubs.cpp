@@ -14,6 +14,7 @@
 #include "praat.github.io/fon/Vector.h"
 #include "praat.github.io/dwsys/NUMmachar.h"
 #include "praat.github.io/dwsys/NUMlapack.h"
+#include "praat.github.io/melder/NUMrandom.h"
 #include <atomic>
 
 #ifndef PLADDRR_FULL_PRAAT
@@ -162,39 +163,143 @@ double Vector_getNearestLevelCrossing (Vector, integer, double, double, kVectorS
 void Site_prefs () { /* No-op */ }
 void praat_show () { /* No-op */ }
 
-// Threading stubs
-#include <atomic>
+// =============================================================================
+// Real multi-threaded MelderThread implementation for pladdrr
+// Replaces single-threaded stubs - enables parallel PowerCepstrogram analysis
+// Based on praat.github.io/melder/MelderThread.cpp (Paul Boersma, 2025)
+// =============================================================================
+
+#include <thread>
+#include <vector>
 #include <functional>
 
-// Stub for long-based signature (single-threaded execution)
-void MelderThread_run (std::atomic<bool> *errorFlag, long numElements, long threshold, 
-                       const std::function<void(long, long, long)> &func) {
-    // Single-threaded execution: call function for all elements
-    try {
-        func(0, 1, numElements);  // thread 0, elements 1 to numElements
-    } catch (MelderError) {
-        if (errorFlag) *errorFlag = true;
-        Melder_throw(U"Error in parallel computation");
-    } catch (...) {
-        if (errorFlag) *errorFlag = true;
-        Melder_throw(U"Unknown exception in parallel computation");
-    }
-    if (errorFlag && *errorFlag) {
-        Melder_throw(U"Error flag set in parallel computation");
-    }
+static struct {
+    bool useMultithreading = true;
+    integer maximumNumberOfConcurrentThreads = 0;   // 0 = auto
+    integer minimumNumberOfElementsPerThread = 0;    // 0 = factory-tuned
+    bool traceThreads = false;
+} melderthread_prefs;
+
+integer MelderThread_getNumberOfProcessors () {
+    return Melder_clippedLeft (1_integer,
+        (integer) std::thread::hardware_concurrency ());
 }
 
-// Threading range functions
-void Melder_thisThread_setRange (long, long) { /* No-op */ }
+bool MelderThread_getUseMultithreading () {
+    return melderthread_prefs.useMultithreading;
+}
 
-bool MelderThread_getTraceThreads () { return false; }
+integer MelderThread_getMaximumNumberOfConcurrentThreads () {
+    if (! melderthread_prefs.useMultithreading)
+        return 1;
+    if (melderthread_prefs.maximumNumberOfConcurrentThreads <= 0)
+        return MelderThread_getNumberOfProcessors ();
+    return melderthread_prefs.maximumNumberOfConcurrentThreads;
+}
 
-integer Melder_thisThread_getUniqueID () { return 1; }
+integer MelderThread_getMinimumNumberOfElementsPerThread () {
+    if (! melderthread_prefs.useMultithreading)
+        return 1;
+    if (melderthread_prefs.minimumNumberOfElementsPerThread <= 0)
+        return 0;   // signals factory tuning
+    return melderthread_prefs.minimumNumberOfElementsPerThread;
+}
 
-void MelderThread_debugMultithreading (bool, long, long, bool) { /* No-op */ }
+bool MelderThread_getTraceThreads () {
+    return melderthread_prefs.traceThreads;
+}
 
-integer MelderThread_getNumberOfProcessors () { return 1; }
+void MelderThread_debugMultithreading (bool useMultithreading,
+    integer maximumNumberOfConcurrentThreads,
+    integer minimumNumberOfElementsPerThread, bool traceThreads)
+{
+    melderthread_prefs.useMultithreading = useMultithreading;
+    melderthread_prefs.maximumNumberOfConcurrentThreads = maximumNumberOfConcurrentThreads;
+    melderthread_prefs.minimumNumberOfElementsPerThread = minimumNumberOfElementsPerThread;
+    melderthread_prefs.traceThreads = traceThreads;
+}
 
-double Melder_thisThread_estimateProgress () { return 0.0; }
+integer MelderThread_computeNumberOfThreads (
+    integer numberOfElements,
+    integer thresholdNumberOfElementsPerThread)
+{
+    if (! MelderThread_getUseMultithreading ())
+        return 1;
+    integer minimumNumberOfElementsPerThread = MelderThread_getMinimumNumberOfElementsPerThread ();
+    if (minimumNumberOfElementsPerThread <= 0)
+        minimumNumberOfElementsPerThread = thresholdNumberOfElementsPerThread;
+    // macOS-style: round down, first spawned thread is costliest
+    integer numberOfThreads = Melder_iroundDown (
+        (double) numberOfElements / minimumNumberOfElementsPerThread);
+    Melder_clipRight (& numberOfThreads, MelderThread_getMaximumNumberOfConcurrentThreads ());
+    Melder_clipRight (& numberOfThreads, NUMrandom_maximumNumberOfParallelThreads);
+    Melder_clipLeft (1_integer, & numberOfThreads);
+    return numberOfThreads;
+}
 
-void Melder_thisThread_setCurrentElement (long) { /* No-op */ }
+integer Melder_thisThread_getUniqueID () {
+    static std::atomic <integer> uniqueID = 0;
+    static thread_local integer thisThread_uniqueID = uniqueID ++;
+    return thisThread_uniqueID;
+}
+
+static thread_local integer thisThread_firstElement { 0 },
+    thisThread_lastElement { 0 }, thisThread_currentElement { 0 };
+
+void Melder_thisThread_setRange (integer firstElement, integer lastElement) {
+    thisThread_firstElement = firstElement;
+    thisThread_lastElement = lastElement;
+}
+
+void Melder_thisThread_setCurrentElement (integer currentElement) {
+    thisThread_currentElement = currentElement;
+}
+
+double Melder_thisThread_estimateProgress () {
+    return (thisThread_currentElement - thisThread_firstElement + 0.5)
+        / (thisThread_lastElement - thisThread_firstElement + 1.0);
+}
+
+void MelderThread_run (
+    std::atomic <bool> *p_errorFlag,
+    integer numberOfElements,
+    integer thresholdNumberOfElementsPerThread,
+    std::function <void (integer, integer, integer)> const& threadFunction)
+{
+    const integer numberOfThreads = MelderThread_computeNumberOfThreads (
+        numberOfElements, thresholdNumberOfElementsPerThread);
+    if (numberOfThreads == 1) {
+        threadFunction (0, 1, numberOfElements);
+    } else {
+        const integer numberOfExtraThreads = numberOfThreads - 1;
+        std::vector <std::thread> spawns;
+        try {
+            spawns.resize ((size_t) numberOfExtraThreads);
+        } catch (...) {
+            Melder_throw (U"Out of memory creating thread vector.");
+        }
+        const integer base = numberOfElements / numberOfThreads;
+        const integer remainder = numberOfElements % numberOfThreads;
+        integer firstElement = 1;
+        try {
+            for (integer ispawn1 = 1; ispawn1 <= numberOfExtraThreads; ispawn1 ++) {
+                const integer lastElement = firstElement + base - 1 + ( ispawn1 <= remainder );
+                spawns [(size_t)(ispawn1 - 1)] = std::thread (threadFunction, ispawn1, firstElement, lastElement);
+                firstElement = lastElement + 1;
+            }
+        } catch (...) {
+            *p_errorFlag = true;
+            for (size_t i = 0; i < spawns.size(); i ++)
+                if (spawns [i].joinable ())
+                    spawns [i].join ();
+            Melder_throw (U"Couldn't start a thread.");
+        }
+        threadFunction (0, firstElement, numberOfElements);
+        for (size_t i = 0; i < spawns.size(); i ++)
+            spawns [i].join ();
+    }
+    if (*p_errorFlag) {
+        theMelder_error_threadId = Melder_thisThread_getUniqueID ();
+        throw MelderError ();
+    }
+}

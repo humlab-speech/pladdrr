@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-02-04
-**Package Version:** 4.8.12
+**Last Updated:** 2026-02-05
+**Package Version:** 4.8.14
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -10,12 +10,31 @@ This document details all modifications made to the Praat source code to enable 
 
 1. **Critical Bug Fixes** - Crashes and linkage issues
 2. **CRAN Compliance** - Removal of non-portable files
-3. **Performance Optimizations** - SIMD acceleration
+3. **Performance Optimizations** - SIMD acceleration, multi-threading
 4. **API Compatibility** - Function declarations for FormantPath
 
 ---
 
 ## Recent Changes
+
+### v4.8.14 Enable real multi-threading for Praat parallel operations (2026-02-05)
+
+**Summary:** Replaced single-threaded `MelderThread` stubs with a real multi-threaded implementation. All Praat operations that use `MelderThread_PARALLELIZE` (PowerCepstrogram, Pitch, FormantPath) now utilize all CPU cores.
+
+**Root Cause:** `num_stubs.cpp` contained stubs that forced `MelderThread_run()` to execute single-threaded (`threadFunction(0, 1, N)`) and `MelderThread_getNumberOfProcessors()` to return 1. These were originally needed when `MelderThread.cpp` couldn't compile without the `macintosh` platform macro, but they silently disabled all parallelism.
+
+**Files Modified:**
+- `src/num_stubs.cpp` — Replaced threading stubs (lines 165-200) with real `std::thread`-based `MelderThread_run()`, `MelderThread_computeNumberOfThreads()`, and all supporting functions. Implementation based on `praat.github.io/melder/MelderThread.cpp`.
+
+**Impact:** On 10-core Apple Silicon:
+- `Sound_to_PowerCepstrogram`: ~6-7x parallelism (4.7ms wall for 1s audio)
+- `PowerCepstrogram_to_Matrix_CPP`: multi-threaded via `SampledIntoSampled_mt`
+- `Sound_to_Pitch`: multi-threaded frame analysis
+- CPPS total: ~70-80ms for 1s audio (was ~800ms+ single-threaded)
+
+**Also fixed:** `to_point_process_direct()` in `R/praat-direct.R` — missing `time_step` parameter caused positional argument shift in fallback path.
+
+---
 
 ### v4.8.12 Replace Praat FFTPACK with pocketfft (2026-02-04)
 

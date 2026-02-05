@@ -645,25 +645,17 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 #' }
 #'
 #' @export
-to_point_process_direct <- function(sound, pitch_floor = 75.0, 
+to_point_process_direct <- function(sound, pitch_floor = 75.0,
                                      pitch_ceiling = 600.0,
+                                     time_step = 0.0,
                                      max_period_factor = 1.3,
                                      max_amplitude_factor = 1.6) {
   sound_ptr <- extract_xptr(sound, "Sound")
-  
-  # Use module method if available
-  if (inherits(sound, "Sound") && !is.null(sound$.cpp)) {
-    return(sound$.cpp$to_point_process_periodic_cc_ptr(
-      as.numeric(pitch_floor),
-      as.numeric(pitch_ceiling),
-      as.numeric(max_period_factor),
-      as.numeric(max_amplitude_factor)
-    ))
-  }
-  
-  # Fallback
-  .sound_to_point_process_periodic_cc(sound_ptr, pitch_floor, pitch_ceiling,
-                                       max_period_factor, max_amplitude_factor)
+
+  # Direct .Call path — bypasses R6 module dispatch
+  .sound_to_point_process_periodic_cc(sound_ptr, as.numeric(time_step),
+                                       as.numeric(pitch_floor), as.numeric(pitch_ceiling),
+                                       as.numeric(max_period_factor), as.numeric(max_amplitude_factor))
 }
 
 

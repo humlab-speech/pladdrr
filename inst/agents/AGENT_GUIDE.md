@@ -1,12 +1,45 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.12 (2026-02-04)
+**Version:** 4.8.14 (2026-02-05)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** pocketfft FFT backend + SIMD PowerCepstrogram + All modules production ready
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready
 
 ---
 
 ## Recent Changes
+
+### Multi-threaded Praat Operations v4.8.14 (2026-02-05)
+
+**Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count.
+
+**What Changed:**
+- `num_stubs.cpp`: Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
+- `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
+- `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
+
+**Performance Impact (10-core Apple Silicon, 1s audio):**
+- CPPS: ~70-80ms (was ~800ms+ single-threaded)
+- Cepstrogram creation: ~5ms (multi-threaded)
+- Pitch extraction: benefits from threading for longer audio
+
+**Agent Guidance:**
+```r
+# All compute-heavy operations now multi-threaded automatically
+cpps <- calculate_cpps_ultra(sound, time_step = 0.002, pitch_floor = 60)
+
+# Decomposed path for parameter exploration (reuse cepstrogram)
+pcep <- to_powercepstrogram_fast(sound, pitch_floor = 60, time_step = 0.002)
+cpps1 <- get_cpps_fast(pcep, pitch_floor = 60, pitch_ceiling = 330)
+cpps2 <- get_cpps_fast(pcep, pitch_floor = 80, pitch_ceiling = 400)
+
+# Direct PointProcess (fixed arg order)
+pp <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
+
+# Batch shimmer (all 6 metrics in one C++ call)
+metrics <- get_jitter_shimmer_batch(sound, pitch_floor = 75, pitch_ceiling = 300)
+```
+
+---
 
 ### pocketfft FFT Backend v4.8.12 (2026-02-04)
 

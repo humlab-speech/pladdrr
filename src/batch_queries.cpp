@@ -1196,10 +1196,7 @@ double calculate_cpps_ultra_cpp(
 
     try {
         // Step 1: Create PowerCepstrogram with consolidated parameters
-        // Matches Sound_to_PowerCepstrogram signature from Praat
-        // BUG FIX (v4.6.4): Previously used tilt_line_quefrency (0.001) as pre-emphasis,
-        // which is a quefrency value in seconds, not a frequency in Hz!
-        // Now correctly uses pre_emphasis_from (default 50 Hz) to match calculate_cpps_fast()
+        // BUG FIX (v4.6.4): Now correctly uses pre_emphasis_from (default 50 Hz)
 
         // Calculate reasonable maximum frequency (use Nyquist frequency as upper limit)
         double sampling_rate = 1.0 / sound->dx;
@@ -1210,7 +1207,7 @@ double calculate_cpps_ultra_cpp(
             pitch_floor,         // pitch floor for cepstrogram
             time_step,           // time step (dt)
             actual_max_freq,     // maximum frequency for cepstrogram
-            pre_emphasis_from    // pre-emphasis frequency in Hz (FIXED: was tilt_line_quefrency)
+            pre_emphasis_from    // pre-emphasis frequency in Hz
         );
 
         // Check if cepstrogram was created successfully
@@ -1239,8 +1236,6 @@ double calculate_cpps_ultra_cpp(
             fit_enum
         );
 
-        // Return the raw CPPS value without isundef check
-        // This will help us understand if the issue is with isundef or the calculation itself
         return cpps;
     } catch (MelderError) {
         Melder_clearError();
