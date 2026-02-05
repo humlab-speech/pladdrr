@@ -1,3 +1,21 @@
+/*
+ * Part of pladdrr: R interface to Praat
+ *
+ * Copyright (C) 2025 Fredrik Nylén
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 // pitch_simd_bridge.cpp - Bridge between SIMD autocorrelation and Praat pitch extraction
 // Part of Phase 1, Task 1.1: Pitch Extraction Integration
 // Updated: 2026-01-20 - Direct memory access for Sound_to_Pitch integration

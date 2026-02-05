@@ -1,0 +1,95 @@
+pladdrr Third-Party Component Licenses
+========================================
+
+This package includes code from the following third-party projects:
+
+1. Praat
+   -----
+   Copyright (C) 1992-2025 Paul Boersma & David Weenink
+   Location: src/praat.github.io/
+   License: GPL-2-or-later (most files), GPL-3-or-later (newer files)
+   Website: https://www.fon.hum.uva.nl/praat/
+   
+   Praat is a tool for doing phonetics by computer. Most Praat source files
+   are licensed under GPL-2-or-later, with newer files under GPL-3-or-later.
+   All GPL-2-or-later code is compatible with GPL-3 distribution.
+   
+   See src/praat.github.io/docs/LICENSE.txt for full Praat licensing details.
+
+2. GNU Scientific Library (GSL)
+   ----------------------------
+   Copyright (C) Free Software Foundation
+   Location: src/gsl-2.8/
+   License: GPL-3
+   Website: https://www.gnu.org/software/gsl/
+   
+   The GNU Scientific Library is a numerical library for C and C++ programmers.
+   Used for statistical analysis functions in pladdrr.
+   
+   Full license text: src/gsl-2.8/COPYING
+
+3. pocketfft
+   ---------
+   Copyright (C) 2010-2018 Max-Planck-Society
+   Author: Martin Reinecke
+   Location: src/pocketfft/
+   License: BSD-3-Clause (GPL-compatible)
+   Website: https://gitlab.mpcdf.mpg.de/mtr/pocketfft
+   
+   pocketfft is a header-only FFT library used as Praat's FFT backend.
+   Replaces legacy FFTPACK implementation with modern, efficient FFT.
+   
+   Full license text: src/pocketfft/LICENSE.md
+   
+   Redistribution and use permitted under BSD-3-Clause terms.
+   When distributed as part of pladdrr, pocketfft code is included
+   under the overall GPL-3 license (BSD is GPL-compatible).
+
+4. Vorbis/Ogg Audio Codecs
+   -----------------------
+   Copyright (C) 2002-2020 Xiph.org Foundation
+   Location: src/praat.github.io/external/vorbis/
+   License: BSD-3-Clause (GPL-compatible)
+   Website: https://xiph.org/vorbis/
+   
+   Vorbis is a free audio codec. Used by Praat for audio file I/O.
+   
+   Full license text: src/praat.github.io/external/vorbis/COPYING
+   
+   Redistribution and use permitted under BSD-3-Clause terms.
+   When distributed as part of pladdrr, Vorbis code is included
+   under the overall GPL-3 license (BSD is GPL-compatible).
+
+5. Opusfile
+   --------
+   Copyright (C) 2001-2011 Xiph.Org, Skype Limited, Octasic,
+                           Jean-Marc Valin, Timothy B. Terriberry,
+                           CSIRO, Gregory Maxwell, Mark Borgerding,
+                           Erik de Castro Lopo
+   Location: src/praat.github.io/external/opusfile/
+   License: BSD-3-Clause (GPL-compatible)
+   Website: https://opus-codec.org/
+   
+   Opusfile provides API for decoding Opus audio files.
+   Used by Praat for Opus format support.
+   
+   Full license text: src/praat.github.io/external/opusfile/COPYING
+   
+   Redistribution and use permitted under BSD-3-Clause terms.
+   When distributed as part of pladdrr, Opusfile code is included
+   under the overall GPL-3 license (BSD is GPL-compatible).
+
+========================================
+License Compatibility Summary
+========================================
+
+All third-party components are compatible with GPL-3:
+
+- GPL-2-or-later (Praat): Can be distributed under GPL-3
+- GPL-3 (GSL): Exact match
+- BSD-3-Clause (pocketfft, Vorbis, Opusfile): Permissive, GPL-compatible
+
+The pladdrr package as a whole is distributed under GPL-3.
+
+For the complete GPL-3 license text, see the COPYING file
+or visit: https://www.gnu.org/licenses/gpl-3.0.html
