@@ -67,7 +67,11 @@ public:
                 result = Sound_FormantTier_filter_noscale(sound_ptr.get(), ptr.get());
             }
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to filter Sound through FormantTier");

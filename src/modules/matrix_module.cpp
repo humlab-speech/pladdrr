@@ -150,7 +150,11 @@ public:
         try {
             autoMatrix matrix = Matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Matrix");
@@ -161,7 +165,11 @@ public:
         try {
             autoMatrix matrix = Matrix_createSimple(numberOfRows, numberOfColumns);
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create simple Matrix");
@@ -179,7 +187,11 @@ public:
                 }
             }
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Matrix from R matrix");

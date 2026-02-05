@@ -118,7 +118,11 @@ public:
                 ptr.get(), time, df_min, bandwidth_reduction, de_emphasis_frequency
             );
             structSpectrum* raw = spectrum.releaseToAmbiguousOwner();
-            return XPtr<structSpectrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSpectrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert LPC to Spectrum");
@@ -130,7 +134,11 @@ public:
         try {
             autoMatrix matrix = LPC_downto_Matrix_lpc(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert LPC to Matrix");
@@ -144,7 +152,11 @@ public:
         try {
             autoSound source = LPC_Sound_filterInverse(ptr.get(), sound.get());
             structSound* raw = source.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to perform LPC inverse filtering");
@@ -159,7 +171,11 @@ public:
                 ptr.get(), sound.get(), static_cast<integer>(channel), time
             );
             structSound* raw = source.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
@@ -221,7 +237,11 @@ static XPtr<structLPC> Module_Sound_to_LPC_burg(
             sound.get(), prediction_order, analysis_width, time_step, pre_emphasis_frequency
         );
         structLPC* raw = lpc.releaseToAmbiguousOwner();
-        return XPtr<structLPC>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structLPC* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structLPC>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute LPC (Burg method)");
@@ -237,7 +257,11 @@ static XPtr<structLPC> Module_Sound_to_LPC_auto(
             sound.get(), prediction_order, analysis_width, time_step, pre_emphasis_frequency
         );
         structLPC* raw = lpc.releaseToAmbiguousOwner();
-        return XPtr<structLPC>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structLPC* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structLPC>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute LPC (autocorrelation method)");
@@ -253,7 +277,11 @@ static XPtr<structLPC> Module_Sound_to_LPC_covar(
             sound.get(), prediction_order, analysis_width, time_step, pre_emphasis_frequency
         );
         structLPC* raw = lpc.releaseToAmbiguousOwner();
-        return XPtr<structLPC>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structLPC* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structLPC>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute LPC (covariance method)");
@@ -270,7 +298,11 @@ static XPtr<structLPC> Module_Sound_to_LPC_marple(
             pre_emphasis_frequency, tol1, tol2
         );
         structLPC* raw = lpc.releaseToAmbiguousOwner();
-        return XPtr<structLPC>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structLPC* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structLPC>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute LPC (Marple method)");

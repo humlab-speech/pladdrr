@@ -441,7 +441,11 @@ public:
                 ptr.get(), start_time, end_time, preserve_times
             );
             structTextGrid* raw = extracted.releaseToAmbiguousOwner();
-            return XPtr<structTextGrid>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structTextGrid* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structTextGrid>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract part");
@@ -460,7 +464,11 @@ public:
                 include_tier_names, include_empty_intervals
             );
             structTable* raw = table.releaseToAmbiguousOwner();
-            return XPtr<structTable>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structTable* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structTable>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert TextGrid to Table");
@@ -557,7 +565,11 @@ static XPtr<structTextGrid> Module_TextGrid_create(
             Melder_peek8to32(point_tiers.c_str())
         );
         structTextGrid* raw = tg.releaseToAmbiguousOwner();
-        return XPtr<structTextGrid>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structTextGrid* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structTextGrid>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create TextGrid");
@@ -574,7 +586,11 @@ static XPtr<structTextGrid> Module_TextGrid_read(std::string path) {
         }
         autoTextGrid tg = data.static_cast_move<structTextGrid>();
         structTextGrid* raw = tg.releaseToAmbiguousOwner();
-        return XPtr<structTextGrid>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structTextGrid* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structTextGrid>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to read TextGrid from file");

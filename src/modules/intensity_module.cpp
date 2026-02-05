@@ -148,7 +148,11 @@ public:
         try {
             autoIntensityTier result = Intensity_downto_IntensityTier(ptr.get());
             IntensityTier raw = result.releaseToAmbiguousOwner();
-            return XPtr<structIntensityTier>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structIntensityTier* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structIntensityTier>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to IntensityTier");

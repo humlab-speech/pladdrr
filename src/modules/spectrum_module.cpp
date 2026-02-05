@@ -236,7 +236,11 @@ public:
         try {
             autoSound result = Spectrum_to_Sound(ptr.get());
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Sound");
@@ -248,7 +252,11 @@ public:
         try {
             autoLtas result = Spectrum_to_Ltas(ptr.get(), bandwidth);
             Ltas raw = result.releaseToAmbiguousOwner();
-            return XPtr<structLtas>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structLtas* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structLtas>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Ltas");

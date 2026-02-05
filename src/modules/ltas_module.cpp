@@ -214,7 +214,11 @@ public:
         try {
             autoLtas result = Ltas_computeTrendLine(ptr.get(), fmin, fmax);
             Ltas raw = result.releaseToAmbiguousOwner();
-            return XPtr<structLtas>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structLtas* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structLtas>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute trend line");
@@ -226,7 +230,11 @@ public:
         try {
             autoLtas result = Ltas_subtractTrendLine(ptr.get(), fmin, fmax);
             Ltas raw = result.releaseToAmbiguousOwner();
-            return XPtr<structLtas>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structLtas* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structLtas>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to subtract trend line");
@@ -238,7 +246,11 @@ public:
         try {
             autoMatrix result = Ltas_to_Matrix(ptr.get());
             structMatrix* raw = result.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Matrix");

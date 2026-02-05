@@ -245,7 +245,11 @@ public:
                 pitch_ceiling
             );
             Pitch raw = result.releaseToAmbiguousOwner();
-            return XPtr<structPitch>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPitch* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPitch>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Pitch from Sound");
@@ -270,7 +274,11 @@ public:
                 pre_emphasis_from
             );
             Formant raw = result.releaseToAmbiguousOwner();
-            return XPtr<structFormant>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structFormant* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structFormant>(raw, deleter);
         } catch (MelderError) {
             std::string error_msg = "Failed to create Formant from Sound: ";
             conststring32 praat_error = Melder_getError();
@@ -292,7 +300,11 @@ public:
                 subtract_mean
             );
             Intensity raw = result.releaseToAmbiguousOwner();
-            return XPtr<structIntensity>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structIntensity* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structIntensity>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Intensity from Sound");
@@ -310,7 +322,11 @@ public:
                 periods_per_window
             );
             Harmonicity raw = result.releaseToAmbiguousOwner();
-            return XPtr<structHarmonicity>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structHarmonicity* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structHarmonicity>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Harmonicity from Sound");
@@ -322,7 +338,11 @@ public:
         try {
             autoSpectrum result = Sound_to_Spectrum(ptr.get(), fast);
             Spectrum raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSpectrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSpectrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Spectrum from Sound");
@@ -349,7 +369,13 @@ public:
                 8.0   // maximumFreqOversampling
             );
             Spectrogram raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSpectrogram>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrogram* thing) {
+                if (thing != nullptr) {
+                    forget(thing);
+                }
+            };
+            return XPtr<structSpectrogram>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Spectrogram from Sound");
@@ -365,7 +391,11 @@ public:
                 maximum_pitch
             );
             PointProcess raw = result.releaseToAmbiguousOwner();
-            return XPtr<structPointProcess>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPointProcess* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPointProcess>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create PointProcess from Sound");
@@ -384,7 +414,11 @@ public:
         try {
             autoSound result = Sound_extractChannel(ptr.get(), channel);
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract channel");
@@ -403,7 +437,11 @@ public:
                 preserve_times
             );
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract part");
@@ -454,7 +492,11 @@ public:
             }
 
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to apply window function");
@@ -491,7 +533,11 @@ public:
             }
 
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to apply transform function");
@@ -813,13 +859,21 @@ public:
                 // Create minimal silent sound
                 autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
                 Sound raw = empty.releaseToAmbiguousOwner();
-                return XPtr<structSound>(raw, true);
+                // Use proper deleter for Praat objects (calls forget() instead of delete)
+                auto deleter = [](structSound* thing) {
+                    if (thing != nullptr) forget(thing);
+                };
+                return XPtr<structSound>(raw, deleter);
             }
 
             // Concatenate all passing windows
             autoSound result = Sounds_concatenate(list.get(), overlap_time);
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
 
         } catch (MelderError) {
             Melder_clearError();
@@ -905,12 +959,20 @@ public:
                 // Create minimal silent sound
                 autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
                 Sound raw = empty.releaseToAmbiguousOwner();
-                return XPtr<structSound>(raw, true);
+                // Use proper deleter for Praat objects (calls forget() instead of delete)
+                auto deleter = [](structSound* thing) {
+                    if (thing != nullptr) forget(thing);
+                };
+                return XPtr<structSound>(raw, deleter);
             }
 
             autoSound result = Sounds_concatenate(list.get(), overlap_time);
             Sound raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
 
         } catch (MelderError) {
             Melder_clearError();

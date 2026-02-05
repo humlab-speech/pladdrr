@@ -200,7 +200,13 @@ public:
         try {
             autoSpectrum result = Spectrogram_to_Spectrum(ptr.get(), time);
             Spectrum raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSpectrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrum* thing) {
+                if (thing != nullptr) {
+                    forget(thing);
+                }
+            };
+            return XPtr<structSpectrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Spectrum");

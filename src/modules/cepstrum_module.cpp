@@ -65,7 +65,11 @@ public:
         try {
             autoSpectrum spectrum = Cepstrum_to_Spectrum(ptr.get());
             structSpectrum* raw = spectrum.releaseToAmbiguousOwner();
-            return XPtr<structSpectrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSpectrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert Cepstrum to Spectrum");
@@ -77,7 +81,11 @@ public:
         try {
             autoPowerCepstrum powercepstrum = Cepstrum_downto_PowerCepstrum(ptr.get());
             structPowerCepstrum* raw = powercepstrum.releaseToAmbiguousOwner();
-            return XPtr<structPowerCepstrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPowerCepstrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPowerCepstrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert Cepstrum to PowerCepstrum");
@@ -126,7 +134,11 @@ XPtr<structCepstrum> sound_to_cepstrum(XPtr<structSound> sound) {
     try {
         autoCepstrum cepstrum = Sound_to_Cepstrum(sound.get());
         structCepstrum* raw = cepstrum.releaseToAmbiguousOwner();
-        return XPtr<structCepstrum>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCepstrum* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCepstrum>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Cepstrum from Sound");
@@ -138,7 +150,11 @@ XPtr<structCepstrum> sound_to_cepstrum_bw(XPtr<structSound> sound) {
     try {
         autoCepstrum cepstrum = Sound_to_Cepstrum_bw(sound.get());
         structCepstrum* raw = cepstrum.releaseToAmbiguousOwner();
-        return XPtr<structCepstrum>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCepstrum* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCepstrum>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create bandwidth-weighted Cepstrum from Sound");
@@ -150,7 +166,11 @@ XPtr<structCepstrum> spectrum_to_cepstrum_hillenbrand(XPtr<structSpectrum> spect
     try {
         autoCepstrum cepstrum = Spectrum_to_Cepstrum_hillenbrand(spectrum.get());
         structCepstrum* raw = cepstrum.releaseToAmbiguousOwner();
-        return XPtr<structCepstrum>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCepstrum* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCepstrum>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Hillenbrand Cepstrum from Spectrum");

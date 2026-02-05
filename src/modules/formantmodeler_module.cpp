@@ -153,7 +153,11 @@ public:
         try {
             autoFormant formant = FormantModeler_to_Formant(ptr.get(), estimate, estimate_undefined);
             structFormant* raw = formant.releaseToAmbiguousOwner();
-            return XPtr<structFormant>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structFormant* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structFormant>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert FormantModeler to Formant");
@@ -166,7 +170,11 @@ public:
         try {
             autoFormantModeler result = FormantModeler_processOutliers(ptr.get(), num_sigmas);
             structFormantModeler* raw = result.releaseToAmbiguousOwner();
-            return XPtr<structFormantModeler>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structFormantModeler* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structFormantModeler>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to process outliers");
@@ -299,7 +307,11 @@ static XPtr<structFormantModeler> Module_Formant_to_FormantModeler(
             formant.get(), tmin, tmax, num_tracks, num_params_per_track
         );
         structFormantModeler* raw = fm.releaseToAmbiguousOwner();
-        return XPtr<structFormantModeler>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structFormantModeler* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structFormantModeler>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create FormantModeler from Formant");
@@ -336,8 +348,12 @@ static List Module_Sound_to_Formant_interval(
             &optimal_ceiling
         );
         structFormant* raw = formant.releaseToAmbiguousOwner();
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structFormant* thing) {
+            if (thing != nullptr) forget(thing);
+        };
         return List::create(
-            Named("formant_ptr") = XPtr<structFormant>(raw, true),
+            Named("formant_ptr") = XPtr<structFormant>(raw, deleter),
             Named("optimal_ceiling") = optimal_ceiling
         );
     } catch (MelderError) {
@@ -376,8 +392,12 @@ static List Module_Sound_to_Formant_interval_robust(
             &optimal_ceiling
         );
         structFormant* raw = formant.releaseToAmbiguousOwner();
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structFormant* thing) {
+            if (thing != nullptr) forget(thing);
+        };
         return List::create(
-            Named("formant_ptr") = XPtr<structFormant>(raw, true),
+            Named("formant_ptr") = XPtr<structFormant>(raw, deleter),
             Named("optimal_ceiling") = optimal_ceiling
         );
     } catch (MelderError) {

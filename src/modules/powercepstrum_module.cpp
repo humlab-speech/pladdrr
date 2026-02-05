@@ -157,7 +157,11 @@ public:
         try {
             autoPowerCepstrum smoothed = PowerCepstrum_smooth(ptr.get(), averaging_window, nsamples);
             structPowerCepstrum* raw = smoothed.releaseToAmbiguousOwner();
-            return XPtr<structPowerCepstrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPowerCepstrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPowerCepstrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to smooth PowerCepstrum");
@@ -174,7 +178,11 @@ public:
                 ptr.get(), qstart_fit, qend_fit, trend, fit
             );
             structPowerCepstrum* raw = detrended.releaseToAmbiguousOwner();
-            return XPtr<structPowerCepstrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPowerCepstrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPowerCepstrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to subtract trend");
@@ -199,7 +207,11 @@ public:
         try {
             autoSpectrum spectrum = PowerCepstrum_to_Spectrum(ptr.get(), random_phases);
             structSpectrum* raw = spectrum.releaseToAmbiguousOwner();
-            return XPtr<structSpectrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSpectrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSpectrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrum to Spectrum");
@@ -211,7 +223,11 @@ public:
         try {
             autoMatrix matrix = PowerCepstrum_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrum to Matrix");
@@ -340,7 +356,11 @@ public:
         try {
             autoPowerCepstrum slice = PowerCepstrogram_to_PowerCepstrum_slice(ptr.get(), time);
             structPowerCepstrum* raw = slice.releaseToAmbiguousOwner();
-            return XPtr<structPowerCepstrum>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPowerCepstrum* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPowerCepstrum>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to get PowerCepstrum slice");
@@ -356,7 +376,11 @@ public:
                 ptr.get(), time_averaging_window, quefrency_averaging_window
             );
             structPowerCepstrogram* raw = smoothed.releaseToAmbiguousOwner();
-            return XPtr<structPowerCepstrogram>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPowerCepstrogram* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPowerCepstrogram>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to smooth PowerCepstrogram");
@@ -369,7 +393,11 @@ public:
         try {
             autoMatrix matrix = PowerCepstrogram_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            return XPtr<structMatrix>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structMatrix* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structMatrix>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrogram to Matrix");
@@ -410,7 +438,11 @@ XPtr<structPowerCepstrum> spectrum_to_powercepstrum(XPtr<structSpectrum> spectru
     try {
         autoPowerCepstrum cepstrum = Spectrum_to_PowerCepstrum(spectrum.get());
         structPowerCepstrum* raw = cepstrum.releaseToAmbiguousOwner();
-        return XPtr<structPowerCepstrum>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structPowerCepstrum* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structPowerCepstrum>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create PowerCepstrum from Spectrum");
@@ -447,7 +479,11 @@ XPtr<structPowerCepstrogram> sound_to_powercepstrogram(
             sound.get(), pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency
         );
         structPowerCepstrogram* raw = cepstrogram.releaseToAmbiguousOwner();
-        return XPtr<structPowerCepstrogram>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structPowerCepstrogram* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structPowerCepstrogram>(raw, deleter);
     } catch (MelderError) {
         autostring32 err = Melder_dup(Melder_getError());
         Melder_clearError();

@@ -94,7 +94,11 @@ public:
         try {
             autoExcitation result = Cochleagram_to_Excitation(ptr.get(), time);
             structExcitation* raw = result.releaseToAmbiguousOwner();
-            return XPtr<structExcitation>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structExcitation* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structExcitation>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Excitation from Cochleagram");
@@ -187,7 +191,11 @@ static XPtr<structCochleagram> Module_Sound_to_Cochleagram(
             sound.get(), dt, df, window_length, forward_masking_time
         );
         structCochleagram* raw = result.releaseToAmbiguousOwner();
-        return XPtr<structCochleagram>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCochleagram* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCochleagram>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Cochleagram from Sound");
@@ -206,7 +214,11 @@ static XPtr<structCochleagram> Module_Sound_to_Cochleagram_edb(
             replenishment_rate, loss_rate, return_rate, reprocessing_rate
         );
         structCochleagram* raw = result.releaseToAmbiguousOwner();
-        return XPtr<structCochleagram>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCochleagram* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCochleagram>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Cochleagram (EDB method) from Sound");
@@ -220,7 +232,11 @@ static XPtr<structCochleagram> Module_Cochleagram_create(
     try {
         autoCochleagram result = Cochleagram_create(tmin, tmax, nt, dt, t1, df, nf);
         structCochleagram* raw = result.releaseToAmbiguousOwner();
-        return XPtr<structCochleagram>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structCochleagram* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structCochleagram>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Cochleagram");

@@ -85,7 +85,11 @@ public:
         try {
             autoFormant result = Excitation_to_Formant(ptr.get(), max_formants);
             structFormant* raw = result.releaseToAmbiguousOwner();
-            return XPtr<structFormant>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structFormant* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structFormant>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract formants from Excitation");
@@ -148,7 +152,11 @@ static XPtr<structExcitation> Module_Excitation_create(double freq_step, int n_f
     try {
         autoExcitation result = Excitation_create(freq_step, n_freqs);
         structExcitation* raw = result.releaseToAmbiguousOwner();
-        return XPtr<structExcitation>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structExcitation* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structExcitation>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Excitation");
@@ -160,7 +168,11 @@ static XPtr<structExcitation> Module_Spectrum_to_Excitation(XPtr<structSpectrum>
     try {
         autoExcitation result = Spectrum_to_Excitation(spectrum.get(), erb_density);
         structExcitation* raw = result.releaseToAmbiguousOwner();
-        return XPtr<structExcitation>(raw, true);
+        // Use proper deleter for Praat objects (calls forget() instead of delete)
+        auto deleter = [](structExcitation* thing) {
+            if (thing != nullptr) forget(thing);
+        };
+        return XPtr<structExcitation>(raw, deleter);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Excitation from Spectrum");

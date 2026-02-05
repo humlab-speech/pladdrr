@@ -109,7 +109,11 @@ public:
         try {
             autoPointProcess result = AnyTier_downto_PointProcess(ptr.get()->asConstAnyTier());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            return XPtr<structPointProcess>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structPointProcess* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structPointProcess>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to PointProcess");

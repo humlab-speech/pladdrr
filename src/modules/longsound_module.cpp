@@ -64,7 +64,11 @@ public:
         try {
             autoSound result = LongSound_extractPart(ptr.get(), tmin, tmax, preserve_times);
             structSound* raw = result.releaseToAmbiguousOwner();
-            return XPtr<structSound>(raw, true);
+            // Use proper deleter for Praat objects (calls forget() instead of delete)
+            auto deleter = [](structSound* thing) {
+                if (thing != nullptr) forget(thing);
+            };
+            return XPtr<structSound>(raw, deleter);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract part from LongSound");
