@@ -345,14 +345,7 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #'
 #' @description
 #' Consolidates PowerCepstrogram creation + CPPS extraction in a single C++ call.
-#' Eliminates R/C++ boundary crossings and reduces parameter overhead.
-#' 2-3x faster than calculate_cpps_fast() for AVQI applications.
-#'
-#' PERFORMANCE NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 4):
-#' CPPS computation takes 93% of AVQI runtime (~11.8s/12.7s). R/Python ratio is 1.57x,
-#' so current implementation is reasonable but could benefit from optimization.
-#' Possible improvements: Threading or SIMD in PowerCepstrogram computation.
-#' Priority: Low (algorithm-bound, not a bug).
+#' Multi-threaded smooth parallelized across rows and columns.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param time_averaging_window Time averaging window in seconds (default 0.01)
@@ -371,7 +364,7 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param max_frequency Maximum frequency for cepstrogram in Hz (default 5000.0)
 #' @return Single CPPS value in dB
 #' @keywords internal
-.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.01, quefrency_averaging_window = 0.001, pitch_floor = 60.0, pitch_ceiling = 330.0, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 2L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
+.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
     .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency)
 }
 

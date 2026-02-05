@@ -10,12 +10,14 @@
 
 ### Multi-threaded Praat Operations v4.8.14 (2026-02-05)
 
-**Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count.
+**Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count. Also added parallelized CPPS smooth and fixed critical C++ parameter defaults.
 
 **What Changed:**
 - `num_stubs.cpp`: Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
 - `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
 - `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
+- `batch_queries.cpp`: Added `PowerCepstrogram_smooth_fast()` — parallelized smooth using exact `Sampled_getMean` (bit-exact vs Praat). Added `PowerCepstrogram_getCPPS_fast()` wrapper pipeline.
+- `batch_queries.cpp`: Fixed `calculate_cpps_ultra_cpp` C++ defaults to match R6 `get_cpps()`: time_averaging_window 0.01→0.001, quefrency_averaging_window 0.001→0.0005, pitch_ceiling 330→333.3, line_type exponential(2)→straight(1). Previously the C++ and R defaults silently differed, but R wrapper already had correct values.
 
 **Performance Impact (10-core Apple Silicon, 1s audio):**
 - CPPS: ~70-80ms (was ~800ms+ single-threaded)

@@ -6,6 +6,10 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <thread>
+#include <vector>
+#include <algorithm>
+#include <cmath>
 
 #include "praat.github.io/fon/Formant.h"
 #include "praat.github.io/fon/Pitch.h"
@@ -19,8 +23,17 @@
 #include "praat.github.io/fon/Pitch_to_PointProcess.h"
 #include "praat.github.io/fon/TextGrid.h"
 #include "praat.github.io/fon/VoiceAnalysis.h"
+#include "praat.github.io/LPC/PowerCepstrum.h"
 #include "praat.github.io/LPC/PowerCepstrogram.h"
 #include "praat.github.io/LPC/Sound_to_PowerCepstrogram.h"
+#include "praat.github.io/dwtools/Matrix_extensions.h"
+
+// Forward declarations for Praat functions not in headers
+autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtracted,
+    double pitchFloor, double pitchCeiling, double deltaF0,
+    kVector_peakInterpolation peakInterpolationType,
+    double qminFit, double qmaxFit,
+    kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 #include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
 #include "praat.github.io/fon/Sound_and_Spectrum.h"
 #include "praat_xptr_utils.h"
@@ -1141,18 +1154,126 @@ List get_voice_quality_ultra_cpp(
 // Phase 4: calculate_cpps_ultra - Optimized CPPS Calculation (AVQI/VQ)
 // =============================================================================
 
+// Multi-threaded PowerCepstrogram smooth using Praat's exact Sampled_getMean.
+// Pass 1 (time): parallelize over quefrency rows (each row is independent)
+// Pass 2 (quefrency): parallelize over time columns (each column is independent)
+// Bit-exact results vs Praat's default smooth.
+static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
+    PowerCepstrogram me,
+    double timeAveragingWindow,
+    double quefrencyAveragingWindow
+) {
+    autoPowerCepstrogram thee = Data_copy(me);
+    const integer ny = me -> ny;
+    const integer nx = me -> nx;
+
+    unsigned int ncores = std::thread::hardware_concurrency();
+    if (ncores < 1) ncores = 1;
+
+    // Pass 1: average across time — parallelize over quefrency rows
+    const integer numberOfFrames = Melder_ifloor(timeAveragingWindow / me -> dx);
+    if (numberOfFrames > 1) {
+        const double halfWindow = 0.5 * timeAveragingWindow;
+        integer nthreads = std::min((integer)ncores, ny);
+        if (nthreads < 2 || ny < 16) nthreads = 1;
+
+        auto rowWorker = [&](integer row_start, integer row_end) {
+            autoVEC qout = raw_VEC(nx);
+            for (integer iq = row_start; iq <= row_end; iq++) {
+                for (integer iframe = 1; iframe <= nx; iframe++) {
+                    const double xmid = Sampled_indexToX(me, iframe);
+                    qout[iframe] = Sampled_getMean(me, xmid - halfWindow, xmid + halfWindow, iq, 0, true);
+                }
+                thy z.row(iq) <<= qout.all();
+            }
+        };
+
+        if (nthreads <= 1) {
+            rowWorker(1, ny);
+        } else {
+            std::vector<std::thread> threads;
+            threads.reserve((size_t)nthreads);
+            integer rows_per = ny / nthreads;
+            integer extra_rows = ny % nthreads;
+            integer start = 1;
+            for (integer t = 0; t < nthreads; t++) {
+                integer end = start + rows_per - 1 + (t < extra_rows ? 1 : 0);
+                threads.emplace_back(rowWorker, start, end);
+                start = end + 1;
+            }
+            for (auto& th : threads) th.join();
+        }
+    }
+
+    // Pass 2: average across quefrencies — parallelize over time columns
+    const integer numberOfQuefrencyBins = Melder_ifloor(quefrencyAveragingWindow / me -> dy);
+    if (numberOfQuefrencyBins > 1) {
+        integer nthreads = std::min((integer)ncores, nx);
+        if (nthreads < 2 || nx < 16) nthreads = 1;
+
+        auto colWorker = [&](integer col_start, integer col_end) {
+            autoPowerCepstrum smooth = PowerCepstrum_create(thy ymax, thy ny);
+            for (integer iframe = col_start; iframe <= col_end; iframe++) {
+                smooth -> z.row(1) <<= thy z.column(iframe);
+                PowerCepstrum_smooth_inplace(smooth.get(), quefrencyAveragingWindow, 1);
+                thy z.column(iframe) <<= smooth -> z.row(1);
+            }
+        };
+
+        if (nthreads <= 1) {
+            colWorker(1, nx);
+        } else {
+            std::vector<std::thread> threads;
+            threads.reserve((size_t)nthreads);
+            integer cols_per = nx / nthreads;
+            integer extra_cols = nx % nthreads;
+            integer start = 1;
+            for (integer t = 0; t < nthreads; t++) {
+                integer end = start + cols_per - 1 + (t < extra_cols ? 1 : 0);
+                threads.emplace_back(colWorker, start, end);
+                start = end + 1;
+            }
+            for (auto& th : threads) th.join();
+        }
+    }
+
+    return thee;
+}
+
+// Our CPPS pipeline: same as Praat's PowerCepstrogram_getCPPS but with threaded smooth
+static double PowerCepstrogram_getCPPS_fast(
+    PowerCepstrogram me,
+    bool subtractTrendBeforeSmoothing,
+    double timeAveragingWindow,
+    double quefrencyAveragingWindow,
+    double pitchFloor, double pitchCeiling, double deltaF0,
+    kVector_peakInterpolation peakInterpolationType,
+    double qminFit, double qmaxFit,
+    kCepstrum_trendType lineType,
+    kCepstrum_trendFit fitMethod
+) {
+    autoPowerCepstrogram flattened;
+    bool trendSubtracted = subtractTrendBeforeSmoothing;
+    if (subtractTrendBeforeSmoothing)
+        flattened = PowerCepstrogram_subtractTrend(me, qminFit, qmaxFit, lineType, fitMethod);
+
+    // Use our fast smooth instead of Praat's
+    autoPowerCepstrogram smooth = PowerCepstrogram_smooth_fast(
+        subtractTrendBeforeSmoothing ? flattened.get() : me,
+        timeAveragingWindow, quefrencyAveragingWindow);
+
+    autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP(smooth.get(), trendSubtracted,
+        pitchFloor, pitchCeiling, deltaF0,
+        peakInterpolationType, qminFit, qmaxFit, lineType, fitMethod);
+    const double cpps = Matrix_getMean(cpp.get(), cpp->xmin, cpp->xmax, 5.5, 6.5);
+    return cpps;
+}
+
 //' Calculate CPPS in single optimized C++ call (Tier 4 Ultra)
 //'
 //' @description
 //' Consolidates PowerCepstrogram creation + CPPS extraction in a single C++ call.
-//' Eliminates R/C++ boundary crossings and reduces parameter overhead.
-//' 2-3x faster than calculate_cpps_fast() for AVQI applications.
-//'
-//' PERFORMANCE NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 4):
-//' CPPS computation takes 93% of AVQI runtime (~11.8s/12.7s). R/Python ratio is 1.57x,
-//' so current implementation is reasonable but could benefit from optimization.
-//' Possible improvements: Threading or SIMD in PowerCepstrogram computation.
-//' Priority: Low (algorithm-bound, not a bug).
+//' Multi-threaded smooth parallelized across rows and columns.
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param time_averaging_window Time averaging window in seconds (default 0.01)
@@ -1174,17 +1295,17 @@ List get_voice_quality_ultra_cpp(
 // [[Rcpp::export(.calculate_cpps_ultra_cpp)]]
 double calculate_cpps_ultra_cpp(
     SEXP sound_xptr,
-    double time_averaging_window = 0.01,
-    double quefrency_averaging_window = 0.001,
+    double time_averaging_window = 0.001,
+    double quefrency_averaging_window = 0.0005,
     double pitch_floor = 60.0,
-    double pitch_ceiling = 330.0,
+    double pitch_ceiling = 333.3,
     bool subtract_trend = true,
     double time_step = 0.002,
     double max_quefrency = 0.05,
     double tolerance = 0.05,
     int interpolation = 1,
     double tilt_line_quefrency = 0.001,
-    int line_type = 2,
+    int line_type = 1,
     int fit_method = 1,
     double pre_emphasis_from = 50.0,
     double max_frequency = 5000.0
@@ -1195,43 +1316,36 @@ double calculate_cpps_ultra_cpp(
     }
 
     try {
-        // Step 1: Create PowerCepstrogram with consolidated parameters
-        // BUG FIX (v4.6.4): Now correctly uses pre_emphasis_from (default 50 Hz)
-
-        // Calculate reasonable maximum frequency (use Nyquist frequency as upper limit)
         double sampling_rate = 1.0 / sound->dx;
         double actual_max_freq = std::min(max_frequency, sampling_rate / 2.0);
 
         autoPowerCepstrogram cpp = Sound_to_PowerCepstrogram(
             sound.get(),
-            pitch_floor,         // pitch floor for cepstrogram
-            time_step,           // time step (dt)
-            actual_max_freq,     // maximum frequency for cepstrogram
-            pre_emphasis_from    // pre-emphasis frequency in Hz
+            pitch_floor,
+            time_step,
+            actual_max_freq,
+            pre_emphasis_from
         );
 
-        // Check if cepstrogram was created successfully
         if (!cpp || cpp.get() == nullptr) {
             return NA_REAL;
         }
 
-        // Step 2: Extract CPPS directly (avoid intermediate objects)
-        // Map integer codes to Praat enums
         kVector_peakInterpolation interp_enum = static_cast<kVector_peakInterpolation>(interpolation);
         kCepstrum_trendType trend_enum = static_cast<kCepstrum_trendType>(line_type);
         kCepstrum_trendFit fit_enum = static_cast<kCepstrum_trendFit>(fit_method);
 
-        double cpps = PowerCepstrogram_getCPPS(
+        double cpps = PowerCepstrogram_getCPPS_fast(
             cpp.get(),
             subtract_trend,
             time_averaging_window,
             quefrency_averaging_window,
             pitch_floor,
             pitch_ceiling,
-            tolerance,              // delta_f0 fractional precision
+            tolerance,
             interp_enum,
-            0.003,                  // qstart_fit (standard)
-            0.04,                   // qend_fit (standard)
+            0.003,
+            0.04,
             trend_enum,
             fit_enum
         );
