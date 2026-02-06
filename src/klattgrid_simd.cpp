@@ -28,6 +28,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 // =============================================================================
@@ -45,7 +46,7 @@ namespace klattgrid_simd {
 
 #ifdef HAVE_XSIMD
 
-using batch_double = xsimd::batch<double>;
+using batch_double = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch_double::size;
 
 /**
@@ -205,7 +206,7 @@ double find_extremum_simd(
     }
 
     // Reduce SIMD register to scalar
-    double max_val = xsimd::reduce_max(max_batch);
+    double max_val = xsimd_compat::reduce_max_compat(max_batch);
 
     // Scalar remainder
     for (; i < n; i++) {
@@ -559,7 +560,7 @@ Rcpp::List klattgrid_simd_info() {
 #ifdef HAVE_XSIMD
     return Rcpp::List::create(
         Rcpp::Named("simd_available") = true,
-        Rcpp::Named("batch_size") = static_cast<int>(xsimd::batch<double>::size),
+        Rcpp::Named("batch_size") = static_cast<int>(klattgrid_simd::batch_double::size),
         Rcpp::Named("architecture") = get_simd_arch(),
         Rcpp::Named("functions") = Rcpp::CharacterVector::create(
             "sounds_add_inplace_simd",

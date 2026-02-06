@@ -79,8 +79,8 @@ ChannelStatistics compute_channel_statistics_simd(constVEC const& data) {
     }
 
     // Reduce SIMD results
-    double min_val = xsimd::reduce_min(min_batch);
-    double max_val = xsimd::reduce_max(max_batch);
+    double min_val = xsimd_compat::reduce_min_compat(min_batch);
+    double max_val = xsimd_compat::reduce_max_compat(max_batch);
     double sum = xsimd_compat::reduce_add_compat(sum_batch);
     double sum_of_squares = xsimd_compat::reduce_add_compat(sum_sq_batch);
 

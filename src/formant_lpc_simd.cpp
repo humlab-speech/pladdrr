@@ -47,8 +47,8 @@ void autocorrelation_simd(
         
         // SIMD processing
         for (; i + simd_size <= n - lag; i += simd_size) {
-            batch x1 = batch::load_unaligned(&signal[i]);
-            batch x2 = batch::load_unaligned(&signal[i + lag]);
+            batch x1 = xsimd::load_unaligned(&signal[i]);
+            batch x2 = xsimd::load_unaligned(&signal[i + lag]);
             sum_batch += x1 * x2;
         }
         
@@ -78,7 +78,7 @@ void lpc_burg_simd(
     // Initialize with signal
     size_t i = 0;
     for (; i + simd_size <= n; i += simd_size) {
-        batch sig = batch::load_unaligned(&signal[i]);
+        batch sig = xsimd::load_unaligned(&signal[i]);
         sig.store_unaligned(&f[i]);
         sig.store_unaligned(&b[i]);
     }
@@ -94,7 +94,7 @@ void lpc_burg_simd(
     i = 0;
     batch sum_batch(0.0);
     for (; i + simd_size <= n; i += simd_size) {
-        batch sig = batch::load_unaligned(&signal[i]);
+        batch sig = xsimd::load_unaligned(&signal[i]);
         sum_batch += sig * sig;
     }
     error = xsimd_compat::reduce_add_compat(sum_batch);
@@ -108,8 +108,8 @@ void lpc_burg_simd(
         i = m + 1;
         
         for (; i + simd_size <= n; i += simd_size) {
-            batch f_batch = batch::load_unaligned(&f[i]);
-            batch b_batch = batch::load_unaligned(&b[i - 1]);
+            batch f_batch = xsimd::load_unaligned(&f[i]);
+            batch b_batch = xsimd::load_unaligned(&b[i - 1]);
             num_batch += f_batch * b_batch;
             den_batch += f_batch * f_batch + b_batch * b_batch;
         }
@@ -139,8 +139,8 @@ void lpc_burg_simd(
             i = m + 1;
             
             for (; i + simd_size <= n; i += simd_size) {
-                batch f_old = batch::load_unaligned(&f[i]);
-                batch b_old = batch::load_unaligned(&b[i - 1]);
+                batch f_old = xsimd::load_unaligned(&f[i]);
+                batch b_old = xsimd::load_unaligned(&b[i - 1]);
                 
                 batch f_new = f_old + k_batch * b_old;
                 batch b_new = b_old + k_batch * f_old;
@@ -438,8 +438,8 @@ void detect_formant_jumps_simd(
                 next[i] = formants[(t + i + 1) * max_formants + f];
             }
             
-            batch curr_batch = batch::load_aligned(curr);
-            batch next_batch = batch::load_aligned(next);
+            batch curr_batch = xsimd::load_aligned(curr);
+            batch next_batch = xsimd::load_aligned(next);
             batch diff = xsimd::abs(next_batch - curr_batch);
             
             auto mask = diff > max_jump_batch;

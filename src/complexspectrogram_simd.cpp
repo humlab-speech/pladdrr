@@ -27,6 +27,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 // =============================================================================
@@ -43,7 +44,7 @@ namespace complexspectrogram_simd {
 
 #ifdef HAVE_XSIMD
 
-using batch_double = xsimd::batch<double>;
+using batch_double = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch_double::size;
 
 /**
@@ -115,9 +116,9 @@ void polar_to_rectangular_simd(
         batch_double mag = xsimd::load_unaligned(&magnitudes[i]);
         batch_double phi = xsimd::load_unaligned(&phases[i]);
 
-        // Use sincos for efficiency (computes both at once)
-        // xsimd::sincos returns std::pair<batch, batch>
-        auto [sin_phi, cos_phi] = xsimd::sincos(phi);
+        // Compute sin and cos separately
+        batch_double sin_phi = xsimd::sin(phi);
+        batch_double cos_phi = xsimd::cos(phi);
 
         batch_double re = mag * cos_phi;
         batch_double im = mag * sin_phi;
@@ -491,7 +492,7 @@ Rcpp::List complexspectrogram_simd_info() {
 #ifdef HAVE_XSIMD
     return Rcpp::List::create(
         Rcpp::Named("simd_available") = true,
-        Rcpp::Named("batch_size") = static_cast<int>(xsimd::batch<double>::size),
+        Rcpp::Named("batch_size") = static_cast<int>(complexspectrogram_simd::batch_double::size),
         Rcpp::Named("architecture") = get_simd_arch(),
         Rcpp::Named("functions") = Rcpp::CharacterVector::create(
             "compute_power_and_phase_simd",

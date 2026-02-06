@@ -67,7 +67,7 @@ void apply_filters_simd(
         
         // SIMD processing (4-8 samples at once)
         for (; i + simd_size <= n_samples; i += simd_size) {
-            batch x_batch = batch::load_unaligned(&input[i]);
+            batch x_batch = xsimd::load_unaligned(&input[i]);
             
             // For each sample in batch (must be done sequentially for IIR)
             alignas(32) double temp[simd_size];
@@ -120,7 +120,7 @@ void apply_forward_masking_simd(
         batch mask_batch(0.0);
         
         for (; i + simd_size <= n_times; i += simd_size) {
-            batch signal = batch::load_unaligned(&channel[i]);
+            batch signal = xsimd::load_unaligned(&channel[i]);
             
             // Process sequentially for temporal dependency
             alignas(32) double sig_temp[simd_size];
@@ -131,7 +131,7 @@ void apply_forward_masking_simd(
                 sig_temp[j] = mask_level;
             }
             
-            batch result = batch::load_aligned(sig_temp);
+            batch result = xsimd::load_aligned(sig_temp);
             result.store_unaligned(&channel[i]);
         }
         
@@ -157,7 +157,7 @@ void hertz_to_bark_simd(
     batch c3(7.0);
     
     for (; i + simd_size <= n; i += simd_size) {
-        batch hz = batch::load_unaligned(&freqs_hz[i]);
+        batch hz = xsimd::load_unaligned(&freqs_hz[i]);
         // Bark = 26.81 * hz / (1960 + hz) - 0.53
         // Approximation: 7 * asinh(hz / 650)
         batch bark = c3 * xsimd::asinh(hz / 650.0);
@@ -181,7 +181,7 @@ double calculate_loudness_simd(
     
     // SIMD sum
     for (; i + simd_size <= n_freqs; i += simd_size) {
-        batch exc = batch::load_unaligned(&excitation[i]);
+        batch exc = xsimd::load_unaligned(&excitation[i]);
         sum_batch += exc;
     }
     
@@ -208,8 +208,8 @@ void cochleagram_difference_simd(
     
     // SIMD squared difference
     for (; i + simd_size <= n_elements; i += simd_size) {
-        batch c1 = batch::load_unaligned(&cochlea1[i]);
-        batch c2 = batch::load_unaligned(&cochlea2[i]);
+        batch c1 = xsimd::load_unaligned(&cochlea1[i]);
+        batch c2 = xsimd::load_unaligned(&cochlea2[i]);
         batch d = c1 - c2;
         sum_sq_batch += d * d;
     }

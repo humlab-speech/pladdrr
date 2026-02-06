@@ -47,7 +47,7 @@ void hertz_to_erb_simd(
     batch one(1.0);
     
     for (; i + simd_size <= n; i += simd_size) {
-        batch hz = batch::load_unaligned(&freqs_hz[i]);
+        batch hz = xsimd::load_unaligned(&freqs_hz[i]);
         batch erb = c1 * xsimd::log10(one + c2 * hz);
         erb.store_unaligned(&freqs_erb[i]);
     }
@@ -73,7 +73,7 @@ void erb_to_hertz_simd(
     batch ten(10.0);
     
     for (; i + simd_size <= n; i += simd_size) {
-        batch erb = batch::load_unaligned(&freqs_erb[i]);
+        batch erb = xsimd::load_unaligned(&freqs_erb[i]);
         batch hz = (xsimd::pow(ten, erb / c1) - one) / c2;
         hz.store_unaligned(&freqs_hz[i]);
     }
@@ -95,7 +95,7 @@ double calculate_loudness_simd(
     
     // SIMD integration
     for (; i + simd_size <= n_freqs; i += simd_size) {
-        batch exc = batch::load_unaligned(&excitation[i]);
+        batch exc = xsimd::load_unaligned(&excitation[i]);
         sum_batch += exc;
     }
     
@@ -121,8 +121,8 @@ double calculate_distance_simd(
     
     // SIMD Euclidean distance
     for (; i + simd_size <= n_freqs; i += simd_size) {
-        batch e1 = batch::load_unaligned(&excitation1[i]);
-        batch e2 = batch::load_unaligned(&excitation2[i]);
+        batch e1 = xsimd::load_unaligned(&excitation1[i]);
+        batch e2 = xsimd::load_unaligned(&excitation2[i]);
         batch diff = e1 - e2;
         sum_sq_batch += diff * diff;
     }
@@ -194,7 +194,7 @@ void spectral_smoothing_simd(
         
         // SIMD sum
         for (; j + (int)simd_size <= end; j += simd_size) {
-            batch val = batch::load_unaligned(&spectrum[j]);
+            batch val = xsimd::load_unaligned(&spectrum[j]);
             sum_batch += val;
         }
         
@@ -230,8 +230,8 @@ void spectrum_to_excitation_simd(
         size_t i = 0;
         
         for (; i + simd_size <= n_spectrum; i += simd_size) {
-            batch freq = batch::load_unaligned(&spectrum_freqs[i]);
-            batch power = batch::load_unaligned(&spectrum_power[i]);
+            batch freq = xsimd::load_unaligned(&spectrum_freqs[i]);
+            batch power = xsimd::load_unaligned(&spectrum_power[i]);
             
             // Rounded exponential filter
             batch diff = (freq - cf_hz) / erb_hz;

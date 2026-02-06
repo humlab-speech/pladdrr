@@ -321,8 +321,8 @@ void duration_min_max_simd(
     }
 
     // Reduce SIMD registers
-    double min_val = xsimd::reduce_min(min_batch);
-    double max_val = xsimd::reduce_max(max_batch);
+    double min_val = xsimd_compat::reduce_min_compat(min_batch);
+    double max_val = xsimd_compat::reduce_max_compat(max_batch);
 
     // Scalar remainder
     for (; i < n; i++) {
@@ -390,9 +390,11 @@ void filter_by_duration_simd(
         auto le_max = dur_batch <= max_batch;
         auto in_range = ge_min && le_max;
 
-        // Extract matching indices (scalar for simplicity)
+        // Extract matching indices - store batch and check manually
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double durs[simd_size];
+        dur_batch.store_aligned(durs);
         for (size_t j = 0; j < simd_size; j++) {
-            if (in_range.get(j)) {
+            if (durs[j] >= min_dur && durs[j] <= max_dur) {
                 indices[*count] = static_cast<int>(i + j);
                 (*count)++;
             }

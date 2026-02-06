@@ -164,7 +164,7 @@ double triangular_filter_simd(
     const batch rising_inv(1.0 / rising_denom);
     const batch falling_inv(1.0 / falling_denom);
 
-    batch power_sum = xsimd::batch<double>(0.0);
+    batch power_sum(0.0);
     integer i = ifrom;
 
     // SIMD loop
@@ -349,7 +349,7 @@ void dct_simd(
 
     for (integer k = 1; k <= size; k++) {
         const double* cosine_row = cosinesTable[k];
-        batch sum = xsimd::batch<double>(0.0);
+        batch sum(0.0);
 
         integer j = 1;
 

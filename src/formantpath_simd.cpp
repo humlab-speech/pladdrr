@@ -177,7 +177,7 @@ double find_min_with_position_simd(
             batch vals = xsimd::load_unaligned(&values[i]);
 
             // Find min in this batch using horizontal reduction
-            double batchMin = xsimd::reduce_min(vals);
+            double batchMin = xsimd_compat::reduce_min_compat(vals);
 
             if (batchMin < minVal) {
                 // Find which lane has the minimum
@@ -463,7 +463,7 @@ integer find_max_position_simd(const double* values, integer n) {
     integer i = 1;
     for (; i + static_cast<integer>(simd_size) - 1 <= n; i += simd_size) {
         batch vals = xsimd::load_unaligned(&values[i]);
-        double batchMax = xsimd::reduce_max(vals);
+        double batchMax = xsimd_compat::reduce_max_compat(vals);
 
         if (batchMax > maxVal) {
             // Find which lane

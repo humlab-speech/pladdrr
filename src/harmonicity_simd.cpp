@@ -29,6 +29,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <cmath>
@@ -40,7 +41,7 @@
 // ============================================================================
 
 #ifdef HAVE_XSIMD
-using batch_double = xsimd::batch<double>;
+using batch_double = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch_double::size;
 #endif
 
@@ -200,7 +201,7 @@ double cross_correlation_with_mean_simd(
         acc = xsimd::fma(x, y, acc);
     }
 
-    double product = xsimd::reduce_add(acc);
+    double product = xsimd_compat::reduce_add_compat(acc);
 
     // Scalar remainder
     for (; j < nsamp_window; ++j) {
@@ -252,7 +253,7 @@ double compute_local_mean_simd(
         acc += data_batch;
     }
 
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
 
     // Scalar remainder
     for (; i <= end; ++i) {
@@ -340,7 +341,7 @@ double find_local_peak_simd(
     }
 
     // Reduce SIMD max to scalar
-    double max_val = xsimd::reduce_max(max_batch);
+    double max_val = xsimd_compat::reduce_max_compat(max_batch);
 
     // Scalar remainder
     for (; i <= end; ++i) {
@@ -388,7 +389,7 @@ double compute_sum_of_squares_simd(
         acc = xsimd::fma(x, x, acc);  // acc += x²
     }
 
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
 
     for (; i <= end; ++i) {
         double x = data[i] - mean;

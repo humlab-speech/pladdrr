@@ -61,7 +61,7 @@ void apply_hamming_window_direct(
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
         // Create index vector [i, i+1, i+2, ...]
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
@@ -102,7 +102,7 @@ void apply_hanning_window_direct(
 
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
@@ -147,9 +147,9 @@ void apply_gaussian_window_direct(
 
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
-            indices[k] = static_cast<double>(i + 1);  // 1-based for Praat compatibility
+            indices[k] = static_cast<double>(i + k);
         }
         batch idx = xsimd::load_aligned(indices);
 
@@ -189,7 +189,7 @@ void apply_bartlett_window_direct(
 
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
@@ -229,7 +229,7 @@ void apply_welch_window_direct(
 
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }

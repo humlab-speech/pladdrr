@@ -45,7 +45,7 @@ double calculate_mean_simd(const double* values, integer n) {
     using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
-    batch sum = xsimd::batch<double>(0.0);
+    batch sum(0.0);
     integer i = 1;
 
     // SIMD loop
@@ -95,7 +95,7 @@ double calculate_stdev_simd(const double* values, integer n, double mean) {
     }
 
     const batch mean_batch(mean);
-    batch sum_sq = xsimd::batch<double>(0.0);
+    batch sum_sq(0.0);
     integer i = 1;
 
     // SIMD loop for squared deviations
@@ -165,8 +165,8 @@ void calculate_min_max_simd(const double* values, integer n, double* min_val, do
         max_batch = xsimd::max(max_batch, val);
     }
 
-    *min_val = xsimd::reduce_min(min_batch);
-    *max_val = xsimd::reduce_max(max_batch);
+    *min_val = xsimd_compat::reduce_min_compat(min_batch);
+    *max_val = xsimd_compat::reduce_max_compat(max_batch);
 
     // Scalar remainder
     for (; i <= n; i++) {
@@ -268,7 +268,7 @@ void calculate_batch_statistics_simd(
     }
 
     // Pass 1: Mean, Min, Max
-    batch sum = xsimd::batch<double>(0.0);
+    batch sum(0.0);
     batch min_batch(values[1]);
     batch max_batch(values[1]);
     integer i = 1;
@@ -281,8 +281,8 @@ void calculate_batch_statistics_simd(
     }
 
     double sum_scalar = xsimd_compat::reduce_add_compat(sum);
-    *min_val = xsimd::reduce_min(min_batch);
-    *max_val = xsimd::reduce_max(max_batch);
+    *min_val = xsimd_compat::reduce_min_compat(min_batch);
+    *max_val = xsimd_compat::reduce_max_compat(max_batch);
 
     // Scalar remainder
     for (; i <= n; i++) {
@@ -300,7 +300,7 @@ void calculate_batch_statistics_simd(
     }
 
     const batch mean_batch(*mean);
-    batch sum_sq = xsimd::batch<double>(0.0);
+    batch sum_sq(0.0);
     i = 1;
 
     for (; i + static_cast<integer>(simd_size) - 1 <= n; i += simd_size) {

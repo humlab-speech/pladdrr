@@ -61,6 +61,32 @@ namespace xsimd_compat {
         }
         return sum;
     }
+    
+    // reduce_min compatibility wrapper
+    template<typename T, size_t N>
+    inline T reduce_min_compat(const xsimd::batch<T, N>& b) {
+        alignas(XSIMD_DEFAULT_ALIGNMENT) T data[N];
+        b.store_aligned(data);
+        
+        T min_val = data[0];
+        for (size_t i = 1; i < N; ++i) {
+            if (data[i] < min_val) min_val = data[i];
+        }
+        return min_val;
+    }
+    
+    // reduce_max compatibility wrapper
+    template<typename T, size_t N>
+    inline T reduce_max_compat(const xsimd::batch<T, N>& b) {
+        alignas(XSIMD_DEFAULT_ALIGNMENT) T data[N];
+        b.store_aligned(data);
+        
+        T max_val = data[0];
+        for (size_t i = 1; i < N; ++i) {
+            if (data[i] > max_val) max_val = data[i];
+        }
+        return max_val;
+    }
 }
 
 #endif // HAVE_XSIMD
