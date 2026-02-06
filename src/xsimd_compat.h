@@ -49,14 +49,14 @@ namespace xsimd_compat {
 // reduce_add compatibility wrapper
 // RcppXsimd (xsimd v7) doesn't have reduce_add, so we implement it
 namespace xsimd_compat {
-    template<typename T>
-    inline T reduce_add_compat(const typename xsimd::simd_traits<T>::type& b) {
+    template<typename T, size_t N>
+    inline T reduce_add_compat(const xsimd::batch<T, N>& b) {
         // Extract elements and sum manually
-        alignas(XSIMD_DEFAULT_ALIGNMENT) T data[xsimd::simd_traits<T>::type::size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) T data[N];
         b.store_aligned(data);
         
         T sum = T(0);
-        for (size_t i = 0; i < xsimd::simd_traits<T>::type::size; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             sum += data[i];
         }
         return sum;

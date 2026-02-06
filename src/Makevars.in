@@ -5,9 +5,8 @@
 CXX_STD = CXX17
 
 # Include directories
-# Note: xsimd from Homebrew for SIMD support
+# Note: xsimd provided by RcppXsimd package (via LinkingTo in DESCRIPTION)
 PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
-               -I/opt/homebrew/include \
                -Ipocketfft \
                -Igsl-2.8 \
                -Igsl-2.8/gsl \

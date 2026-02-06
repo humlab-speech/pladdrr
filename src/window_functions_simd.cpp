@@ -60,7 +60,7 @@ NumericVector apply_hamming_window_simd(NumericVector data) {
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
         // Create index vector [i, i+1, i+2, ...]
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
@@ -115,7 +115,7 @@ NumericVector apply_hanning_window_simd(NumericVector data) {
     // Vectorized loop
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
@@ -169,7 +169,7 @@ NumericVector apply_gaussian_window_simd(NumericVector data, double sigma = 0.4)
     // Vectorized loop
     int i = 0;
     for (; i + static_cast<int>(simd_size) <= n; i += simd_size) {
-        alignas(batch::arch_type::alignment()) double indices[simd_size];
+        alignas(XSIMD_DEFAULT_ALIGNMENT) double indices[simd_size];
         for (size_t k = 0; k < simd_size; ++k) {
             indices[k] = static_cast<double>(i + k);
         }
