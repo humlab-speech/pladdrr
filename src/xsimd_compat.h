@@ -33,38 +33,33 @@
 #include <xsimd/xsimd.hpp>
 #include <functional>  // for std::plus
 
-// Detect xsimd version by checking if batch needs 2 template arguments
-// In xsimd v8+, batch<double> fails, batch<double, arch> works
-// In xsimd v7, batch<double> works
-
-// Create an alias that works with both versions
+// Compatibility layer for xsimd API differences
+// Uses simd_traits to get the correct batch type for the platform
 namespace xsimd_compat {
-    // Use default architecture batch type
+    // Get the default batch type for type T using simd_traits
+    // This works with both RcppXsimd (batch<T, N>) and modern xsimd (batch<T, Arch>)
     template<typename T>
-    using batch = xsimd::batch<T, xsimd::default_arch>;
-    
-    // For older xsimd that might not have default_arch, we can fallback
-    // but this should work for most cases since RcppXsimd provides modern xsimd
+    using batch = typename xsimd::simd_traits<T>::type;
 }
 
 // Compatibility macros for common operations
 #define XSIMD_BATCH(T) xsimd_compat::batch<T>
 #define XSIMD_BATCH_SIZE(batch_var) batch_var.size
 
-// reduce_add was renamed to reduce in newer versions, check both
+// reduce_add compatibility wrapper
+// RcppXsimd (xsimd v7) doesn't have reduce_add, so we implement it
 namespace xsimd_compat {
-    template<typename T, typename A>
-    inline T reduce_add_compat(const xsimd::batch<T, A>& b) {
-        #if defined(XSIMD_VERSION_MAJOR) && XSIMD_VERSION_MAJOR >= 8
-            return xsimd::reduce(b, std::plus<T>());
-        #else
-            // Try both names for compatibility
-            #ifdef XSIMD_HAS_REDUCE_ADD
-                return xsimd::reduce_add(b);
-            #else
-                return xsimd::reduce(b, std::plus<T>());
-            #endif
-        #endif
+    template<typename T>
+    inline T reduce_add_compat(const typename xsimd::simd_traits<T>::type& b) {
+        // Extract elements and sum manually
+        alignas(XSIMD_DEFAULT_ALIGNMENT) T data[xsimd::simd_traits<T>::type::size];
+        b.store_aligned(data);
+        
+        T sum = T(0);
+        for (size_t i = 0; i < xsimd::simd_traits<T>::type::size; ++i) {
+            sum += data[i];
+        }
+        return sum;
     }
 }
 
