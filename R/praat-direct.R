@@ -589,12 +589,15 @@ to_spectrogram_direct <- function(sound, window_length = 0.005,
   
   # Use module method if available
   if (inherits(sound, "Sound") && !is.null(sound$.cpp)) {
+    shape_code <- switch(tolower(window_shape),
+      "square" = 0L, "hamming" = 1L, "bartlett" = 2L,
+      "welch" = 3L, "hanning" = 4L, "gaussian" = 5L, 5L)
     return(sound$.cpp$to_spectrogram_ptr(
       as.numeric(window_length),
       as.numeric(max_frequency),
       as.numeric(time_step),
       as.numeric(frequency_step),
-      as.character(window_shape)
+      shape_code
     ))
   }
   

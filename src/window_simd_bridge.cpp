@@ -331,24 +331,10 @@ extern "C" void compute_window_simd_bridge(
 }
 
 // Utility: Check if SIMD should be used for windowing
-// This respects the R option speaker.use_simd
+// NOTE: This may be called from worker threads (MelderThread_PARALLELIZE).
+// R API calls are NOT thread-safe, so avoid Rcpp::Environment/getOption here.
 bool should_use_simd_for_windowing() {
 #ifdef HAVE_XSIMD
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
-
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // If option check fails, default to true
-    }
     return true;
 #else
     return false;

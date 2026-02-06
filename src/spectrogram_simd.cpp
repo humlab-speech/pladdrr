@@ -282,21 +282,10 @@ void zero_fft_tail_simd_bridge(
  */
 bool should_use_simd_for_spectrogram() {
 #ifdef HAVE_XSIMD
-    // Check R option for SIMD control
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
-
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // Default to true on error
-    }
+    // NOTE: This function is called from worker threads inside
+    // MelderThread_PARALLELIZE. R API calls (Rcpp::Environment,
+    // getOption) are NOT thread-safe and cause segfaults.
+    // Use a simple return like should_use_simd_for_pitch_filter().
     return true;
 #else
     return false;

@@ -1,12 +1,55 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.15 (2026-02-05)
+**Version:** 4.8.20 (2026-02-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed
 
 ---
 
 ## Recent Changes
+
+### 🐛 Spectrogram segfault fix v4.8.20 (2026-02-06)
+
+**Summary:** Fixed `Sound$to_spectrogram()` segfault and `to_spectrogram_direct()` type error. Both APIs now work correctly.
+
+**Root Causes:**
+1. **Segfault (R6 path):** `should_use_simd_for_spectrogram()` in `spectrogram_simd.cpp` called R API (`Rcpp::Environment`, `getOption`) from **worker threads** inside `MelderThread_PARALLELIZE`. R's C API is not thread-safe — this corrupted namespace resolution causing recursive errors then segfault at address 0x80.
+2. **Type error (direct path):** `to_spectrogram_direct()` passed `as.character(window_shape)` to C++ module expecting `int`.
+
+**Files Modified:**
+- `src/spectrogram_simd.cpp` — removed thread-unsafe R API from `should_use_simd_for_spectrogram()`
+- `src/window_simd_bridge.cpp` — same fix for `should_use_simd_for_windowing()`
+- `R/praat-direct.R` — added string→int window_shape conversion in `to_spectrogram_direct()`
+
+**Critical Rule for SIMD Bridge Functions:**
+> **NEVER call R API (Rcpp::Environment, getOption, Rf_eval, etc.) from `should_use_simd_*()` functions.** These are called from Praat worker threads via `MelderThread_PARALLELIZE`. R's API is single-threaded only. Use a global bool, `std::getenv()`, or just return `true`.
+
+**Safe patterns (thread-safe):**
+- `should_use_simd_for_harmonicity()` → uses `g_harmonicity_simd_enabled` global
+- `should_use_simd_for_pitch_filter()` → returns `true`
+- `should_use_simd_for_powercepstrogram()` → uses `std::getenv()`
+
+**Unsafe pattern (causes segfault from threads):**
+```cpp
+// BAD — do NOT use in should_use_simd_*() functions:
+Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
+Rcpp::Function getOption = base_env["getOption"];
+```
+
+**Agent Guidance:**
+```r
+# Spectrogram creation now works correctly
+sound <- Sound("audio.wav")
+spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
+spec_ptr <- to_spectrogram_direct(sound, window_shape = "Gaussian")
+
+# All window shapes work: Gaussian, Hamming, Bartlett, Welch, Hanning, square
+# Querying works:
+power <- spec$get_power_at(time = 0.5, frequency = 1000)
+spectrum <- spec$to_spectrum(time = 0.5)
+```
+
+---
 
 ### 🐛 Critical XPtr Memory Management Fix v4.8.15 (2026-02-05)
 
