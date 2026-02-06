@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-02-05
-**Package Version:** 4.8.14
+**Last Updated:** 2026-02-06
+**Package Version:** 4.8.19
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,38 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.19 xsimd v8+ API Compatibility (2026-02-06)
+
+**Summary:** Updated all SIMD code for compatibility with RcppXsimd's xsimd v8+ API. Fixes compilation errors from API changes between xsimd v7 and v8.
+
+**Root Cause:** xsimd v8+ changed core APIs:
+- `batch<T>` now requires two template params: `batch<T, Arch>`
+- Load functions moved from members to namespace: `batch::load_*()` → `xsimd::load_*()`
+- Reduce functions removed from namespace: `xsimd::reduce_add/min/max()` no longer exist
+- Alignment queries changed: `batch::arch_type::alignment()` removed
+
+**Changes to Praat Source (submodule commit 69a6ae069):**
+
+**Files Modified:**
+- `dwsys/NUM2.cpp` — Added `#include "../../../xsimd_compat.h"`, replaced `xsimd::batch<double>` with `XSIMD_BATCH(double)`, replaced `xsimd::reduce_add()` with `xsimd_compat::reduce_add_compat()` in Burg algorithm
+- `melder/NUM.cpp` — Added xsimd_compat.h, updated batch typedef and reduce_add in `NUMinner_simd()`
+- `fon/Sound_to_Intensity.cpp` — Added xsimd_compat.h, updated batch typedef and reduce_add in RMS computation
+
+**Changes to pladdrr SIMD Wrappers (NOT in Praat submodule):**
+- 12+ files updated with API compatibility fixes:
+  - `xsimd_compat.h` — Added `reduce_min_compat()` and `reduce_max_compat()` wrappers
+  - All `*_simd.cpp` files — Fixed batch initialization, load functions, reduce functions, alignment constants, namespace scoping
+  - See main commit for full list of wrapper changes
+
+**Build System:**
+- No Makevars changes required (already had xsimd support)
+
+**Impact:** Package now compiles successfully with RcppXsimd on all platforms. All SIMD optimizations remain functional.
+
+**Compatibility:** All changes use `#ifdef HAVE_XSIMD` with scalar fallbacks. No functional changes when SIMD disabled.
+
+---
 
 ### v4.8.14 Enable real multi-threading for Praat parallel operations (2026-02-05)
 
@@ -331,10 +363,10 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 | `melder/MelderThread.cpp` | Performance | Remove debug fprintf |
 | `dwsys/NUMmachar.h` | Bug fix | Extern NUMfpp |
 | `dwsys/NUMmachar.cpp` | Bug fix | NUMfpp definition |
-| `dwsys/NUM2.cpp` | Bug fix + SIMD | NULL check + Burg SIMD (v4.8.4 fix) |
-| `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) |
+| `dwsys/NUM2.cpp` | Bug fix + SIMD | NULL check + Burg SIMD (v4.8.4 fix) + xsimd v8+ compat (v4.8.19) |
+| `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) + xsimd v8+ compat (v4.8.19) |
 | `fon/Formant.h` | API | extractPart declaration |
-| `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization |
+| `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization + xsimd v8+ compat (v4.8.19) |
 | `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis optimization + parallelization threshold (v4.8.9) |
 | `fon/Sound_to_Formant.cpp` | SIMD | Uses VECburg directly (v4.8.4) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
@@ -393,6 +425,7 @@ Rscript -e "testthat::test_dir('tests/testthat')"
 
 | Commit | Description |
 |--------|-------------|
+| `69a6ae069` | xsimd v8+ API compatibility (v4.8.19) |
 | `f64063348` | TextGrid loading fix |
 | `e929a431f` | NUMfpp linkage fix |
 | `06b94b648` | NUMfpp NULL check |
