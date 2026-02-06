@@ -26,10 +26,11 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace excitation_simd {
 
-using batch = xsimd::batch<double>;
+using batch = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch::size;
 
 // SIMD-accelerated ERB scale conversion
@@ -98,7 +99,7 @@ double calculate_loudness_simd(
         sum_batch += exc;
     }
     
-    double sum = xsimd::reduce_add(sum_batch);
+    double sum = xsimd_compat::reduce_add_compat(sum_batch);
     
     // Scalar remainder
     for (; i < n_freqs; ++i) {
@@ -126,7 +127,7 @@ double calculate_distance_simd(
         sum_sq_batch += diff * diff;
     }
     
-    double sum_sq = xsimd::reduce_add(sum_sq_batch);
+    double sum_sq = xsimd_compat::reduce_add_compat(sum_sq_batch);
     
     // Scalar remainder
     for (; i < n_freqs; ++i) {
@@ -197,7 +198,7 @@ void spectral_smoothing_simd(
             sum_batch += val;
         }
         
-        double sum = xsimd::reduce_add(sum_batch);
+        double sum = xsimd_compat::reduce_add_compat(sum_batch);
         
         // Scalar remainder
         for (; j < end; ++j) {
@@ -239,7 +240,7 @@ void spectrum_to_excitation_simd(
             sum_batch += power * weight;
         }
         
-        double sum = xsimd::reduce_add(sum_batch);
+        double sum = xsimd_compat::reduce_add_compat(sum_batch);
         
         // Scalar remainder
         for (; i < n_spectrum; ++i) {

@@ -24,6 +24,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include "../praat_xptr_utils.h"
@@ -52,7 +53,7 @@ inline double autocorr_at_lag_scalar(const double* data, int n, int lag) {
 #ifdef HAVE_XSIMD
 // SIMD autocorrelation at a single lag
 inline double autocorr_at_lag_simd_impl(const double* data, int n, int lag) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const double* x1 = data;
@@ -69,7 +70,7 @@ inline double autocorr_at_lag_simd_impl(const double* data, int n, int lag) {
         acc = xsimd::fma(a, b, acc);  // acc += a * b (fused multiply-add)
     }
     
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
     
     // Scalar remainder
     for (; i < count; ++i) {
@@ -155,7 +156,7 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
     const double* y_ptr = REAL(y);
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     batch acc(0.0);
@@ -167,7 +168,7 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
         acc = xsimd::fma(a, b, acc);
     }
     
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
     
     // Remainder
     for (; i < n; ++i) {

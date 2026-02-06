@@ -25,13 +25,14 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
 // SIMD-optimized linear trend removal (detrending)
 // Steps: 1) Compute mean, 2) Compute slope, 3) Subtract linear fit
 void subtract_linear_trend_simd(double* frequencies, const double* times, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     // Step 1: Compute mean of frequencies
@@ -46,8 +47,8 @@ void subtract_linear_trend_simd(double* frequencies, const double* times, intege
         time_sum += t;
     }
     
-    double freq_mean = xsimd::reduce_add(freq_sum);
-    double time_mean = xsimd::reduce_add(time_sum);
+    double freq_mean = xsimd_compat::reduce_add_compat(freq_sum);
+    double time_mean = xsimd_compat::reduce_add_compat(time_sum);
     
     // Scalar remainder for sums
     for (; i < n; ++i) {
@@ -77,8 +78,8 @@ void subtract_linear_trend_simd(double* frequencies, const double* times, intege
         denominator = xsimd::fma(t_centered, t_centered, denominator);
     }
     
-    double num = xsimd::reduce_add(numerator);
-    double denom = xsimd::reduce_add(denominator);
+    double num = xsimd_compat::reduce_add_compat(numerator);
+    double denom = xsimd_compat::reduce_add_compat(denominator);
     
     // Scalar remainder
     for (; i < n; ++i) {
@@ -115,7 +116,7 @@ void subtract_linear_trend_simd(double* frequencies, const double* times, intege
 
 // SIMD-optimized mean removal (simple detrending)
 void subtract_mean_simd(double* data, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     // Step 1: Compute mean
@@ -127,7 +128,7 @@ void subtract_mean_simd(double* data, integer n) {
         sum += vals;
     }
     
-    double mean = xsimd::reduce_add(sum);
+    double mean = xsimd_compat::reduce_add_compat(sum);
     
     // Scalar remainder for sum
     for (; i < n; ++i) {
@@ -188,7 +189,7 @@ void subtract_quadratic_trend_simd(double* frequencies, const double* times, int
     double a = 0.0;  // Linear approximation for now
     
     // Apply quadratic fit subtraction with SIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     batch a_batch(a);

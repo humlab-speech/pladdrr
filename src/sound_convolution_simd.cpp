@@ -25,6 +25,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
@@ -32,7 +33,7 @@ namespace {
 // Input format: [real1, imag1, real2, imag2, ...]
 // Output: result[i] = complex_multiply(a[i], b[i])
 void complex_multiply_simd(double* result, const double* a, const double* b, integer n_complex) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     // Process complex pairs - each complex number takes 2 doubles: [real, imag]

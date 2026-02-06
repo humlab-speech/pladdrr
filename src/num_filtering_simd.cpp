@@ -25,13 +25,14 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
 // SIMD-optimized inverse IIR filter
 // Note: Main loop has loop-carried dependency (serial), but inner dot product is vectorizable
 void filter_inverse_inplace_simd(VEC const& s, constVEC const& filter, VEC const& filterMemory) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer filter_size = filter.size;
@@ -53,7 +54,7 @@ void filter_inverse_inplace_simd(VEC const& s, constVEC const& filter, VEC const
             acc = xsimd::fma(f, m, acc);
         }
         
-        double sum = xsimd::reduce_add(acc);
+        double sum = xsimd_compat::reduce_add_compat(acc);
         
         // Scalar remainder
         for (; j <= filter_size; ++j) {

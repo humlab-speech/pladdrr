@@ -20,6 +20,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <Rcpp.h>
@@ -62,7 +63,7 @@ double sound_get_rms_simd(
         
 #ifdef HAVE_XSIMD
         // SIMD sum of squares
-        using batch = xsimd::batch<double>;
+        using batch = XSIMD_BATCH(double);
         constexpr size_t simd_size = batch::size;
         
         batch acc(0.0);
@@ -74,7 +75,7 @@ double sound_get_rms_simd(
             acc = xsimd::fma(x, x, acc);  // acc += x * x
         }
         // Horizontal reduction using xsimd::reduce_add
-        sum_squares += xsimd::reduce_add(acc);
+        sum_squares += xsimd_compat::reduce_add_compat(acc);
         
         // Scalar remainder
         for (; i < n_samples; ++i) {
@@ -122,7 +123,7 @@ double sound_get_energy_simd(
         integer n_samples = i_end - i_start + 1;
         
 #ifdef HAVE_XSIMD
-        using batch = xsimd::batch<double>;
+        using batch = XSIMD_BATCH(double);
         constexpr size_t simd_size = batch::size;
         
         batch acc(0.0);
@@ -134,7 +135,7 @@ double sound_get_energy_simd(
             acc = xsimd::fma(x, x, acc);
         }
         // Horizontal reduction
-        sum_squares += xsimd::reduce_add(acc);
+        sum_squares += xsimd_compat::reduce_add_compat(acc);
         
         // Remainder
         for (; i < n_samples; ++i) {

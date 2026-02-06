@@ -31,6 +31,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 using namespace Rcpp;
@@ -60,7 +61,7 @@ double burg_simd(
     int n,                       // Number of samples
     int m                        // Number of LPC coefficients (order)
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n <= 2) {
@@ -94,7 +95,7 @@ double burg_simd(
         batch sig = xsimd::load_unaligned(&signal[i]);
         sum_batch = xsimd::fma(sig, sig, sum_batch);
     }
-    xms = xsimd::reduce_add(sum_batch);
+    xms = xsimd_compat::reduce_add_compat(sum_batch);
     for (; i <= n; ++i) {
         xms += signal[i] * signal[i];
     }
@@ -115,8 +116,8 @@ double burg_simd(
             den_batch = xsimd::fma(b_batch, b_batch, den_batch);
         }
 
-        double num = xsimd::reduce_add(num_batch);
-        double den = xsimd::reduce_add(den_batch);
+        double num = xsimd_compat::reduce_add_compat(num_batch);
+        double den = xsimd_compat::reduce_add_compat(den_batch);
 
         // Scalar remainder
         for (; i <= n; ++i) {
@@ -196,7 +197,7 @@ void apply_preemphasis_simd(
     int n,                       // Number of samples
     double alpha = 0.97          // Pre-emphasis coefficient
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Process in reverse to avoid temporary storage

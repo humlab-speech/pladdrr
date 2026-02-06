@@ -21,6 +21,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <Rcpp.h>
@@ -55,7 +56,7 @@ void extract_frame_simd(
     integer frame_size,            // Number of samples
     integer input_nx               // Input signal length
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Process each sample with boundary checking
@@ -102,7 +103,7 @@ void window_multiply_inplace_simd(
     const double* window,          // Actually window - 1 (for 1-based access)
     integer frame_size
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     integer i = 1;
@@ -140,7 +141,7 @@ void compute_log_power_spectrum_simd(
     double* fourier_samples,       // Actually samples - 1 (for 1-based access)
     integer num_fourier_samples
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     const batch epsilon(1e-300);
 
@@ -218,7 +219,7 @@ void compute_final_power_simd(
     integer nx,
     double df
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     const batch df_batch(df);
 

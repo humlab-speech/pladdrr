@@ -29,6 +29,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 using namespace Rcpp;
@@ -46,7 +47,7 @@ void apply_hamming_window_direct(
     double* data,
     int n
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const double two_pi = 2.0 * M_PI;
@@ -88,7 +89,7 @@ void apply_hanning_window_direct(
     double* data,
     int n
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const double two_pi = 2.0 * M_PI;
@@ -130,7 +131,7 @@ void apply_gaussian_window_direct(
     double* data,
     int n
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const double nSamplesPerWindow_f = static_cast<double>(n);
@@ -177,7 +178,7 @@ void apply_bartlett_window_direct(
     double* data,
     int n
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const double n_minus_1 = static_cast<double>(n - 1);
@@ -217,7 +218,7 @@ void apply_welch_window_direct(
     double* data,
     int n
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const double n_minus_1 = static_cast<double>(n - 1);

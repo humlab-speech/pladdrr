@@ -20,6 +20,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <Rcpp.h>
@@ -60,7 +61,7 @@ void sound_scale_peak_simd(
         double scale_factor = new_peak / current_max;
         
 #ifdef HAVE_XSIMD
-        using batch = xsimd::batch<double>;
+        using batch = XSIMD_BATCH(double);
         constexpr size_t simd_size = batch::size;
         batch scale_vec(scale_factor);
         
@@ -122,7 +123,7 @@ XPtr<structSound> sound_mix_simd(
         autoSound mixed = Sound_create(ny, xmin, xmax, nx, sound1->dx, sound1->x1);
         
 #ifdef HAVE_XSIMD
-        using batch = xsimd::batch<double>;
+        using batch = XSIMD_BATCH(double);
         constexpr size_t simd_size = batch::size;
 
         batch balance_vec(balance);

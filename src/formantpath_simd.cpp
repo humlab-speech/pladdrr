@@ -19,6 +19,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <cmath>
@@ -53,7 +54,7 @@ void compute_qsums_simd(
     const integer* formantCounts,   // actual formant count per candidate (1-based)
     double* qsums                   // output (1-based)
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Process candidates in SIMD batches
@@ -80,7 +81,7 @@ void compute_qsums_simd(
                 batch f = xsimd::load_unaligned(&freq[iformant]);
                 batch b_bw = xsimd::load_unaligned(&bw[iformant]);
                 batch ratio = f / b_bw;
-                qsum += xsimd::reduce_add(ratio);
+                qsum += xsimd_compat::reduce_add_compat(ratio);
             }
 
             // Scalar remainder
@@ -161,7 +162,7 @@ double find_min_with_position_simd(
         return std::numeric_limits<double>::infinity();
     }
 
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Initialize with first value
@@ -263,7 +264,7 @@ double compute_frequency_change_cost_simd(
     double frequencyChangeWeight,
     double transitionCostCutoff
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (frequencyChangeWeight <= 0.0 || ntracks <= 0) {
@@ -286,7 +287,7 @@ double compute_frequency_change_cost_simd(
 
         // cost = bw * |diff| / sum
         batch cost = bw_geom * diff / sum;
-        fcost += xsimd::reduce_add(cost);
+        fcost += xsimd_compat::reduce_add_compat(cost);
     }
 
     // Scalar remainder
@@ -358,7 +359,7 @@ void compute_static_costs_simd(
     double qCutoff,
     double* delta
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const batch stress_w(stressWeight);
@@ -451,7 +452,7 @@ void compute_static_costs_simd(
  */
 #ifdef HAVE_XSIMD
 integer find_max_position_simd(const double* values, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n <= 0) return 0;

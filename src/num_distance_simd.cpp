@@ -25,13 +25,14 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
 // SIMD-optimized matrix-vector product for Mahalanobis distance
 // Computes: sum_i sum_j (lowerInverse[i][j] * v[j])^2
 double mahalanobis_distance_squared_simd(constMAT const& lowerInverse, constVEC const& v) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = v.size;
@@ -49,7 +50,7 @@ double mahalanobis_distance_squared_simd(constMAT const& lowerInverse, constVEC 
             acc = xsimd::fma(mat, vec, acc);
         }
         
-        double rowSum = xsimd::reduce_add(acc);
+        double rowSum = xsimd_compat::reduce_add_compat(acc);
         
         // Scalar remainder
         for (; j <= n; ++j) {
@@ -65,7 +66,7 @@ double mahalanobis_distance_squared_simd(constMAT const& lowerInverse, constVEC 
 
 // SIMD-optimized Euclidean distance
 double euclidean_distance_simd(constVEC const& x, constVEC const& y) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = x.size;
@@ -80,7 +81,7 @@ double euclidean_distance_simd(constVEC const& x, constVEC const& y) {
         acc = xsimd::fma(diff, diff, acc);
     }
     
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
     
     // Scalar remainder
     for (; i <= n; ++i) {
@@ -93,7 +94,7 @@ double euclidean_distance_simd(constVEC const& x, constVEC const& y) {
 
 // SIMD-optimized cosine similarity
 double cosine_similarity_simd(constVEC const& x, constVEC const& y) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = x.size;
@@ -112,9 +113,9 @@ double cosine_similarity_simd(constVEC const& x, constVEC const& y) {
         norm_y_acc = xsimd::fma(b, b, norm_y_acc);
     }
     
-    double dot = xsimd::reduce_add(dot_acc);
-    double norm_x = xsimd::reduce_add(norm_x_acc);
-    double norm_y = xsimd::reduce_add(norm_y_acc);
+    double dot = xsimd_compat::reduce_add_compat(dot_acc);
+    double norm_x = xsimd_compat::reduce_add_compat(norm_x_acc);
+    double norm_y = xsimd_compat::reduce_add_compat(norm_y_acc);
     
     // Scalar remainder
     for (; i <= n; ++i) {

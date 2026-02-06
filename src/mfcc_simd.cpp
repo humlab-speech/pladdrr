@@ -19,6 +19,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <Rcpp.h>
@@ -41,7 +42,7 @@ extern "C" {
  */
 #ifdef HAVE_XSIMD
 void hz_to_mel_simd(const double* hz, double* mel, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const batch c1(2595.0);
@@ -86,7 +87,7 @@ void hz_to_mel_simd(const double* hz, double* mel, integer n) {
  */
 #ifdef HAVE_XSIMD
 void mel_to_hz_simd(const double* mel, double* hz, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const batch c1(700.0);
@@ -147,7 +148,7 @@ double triangular_filter_simd(
     double fc_hz,
     double fh_hz
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const batch fl(fl_hz);
@@ -193,7 +194,7 @@ double triangular_filter_simd(
         power_sum = xsimd::fma(amplitude, power, power_sum);
     }
 
-    double result = xsimd::reduce_add(power_sum);
+    double result = xsimd_compat::reduce_add_compat(power_sum);
 
     // Scalar remainder
     for (; i <= ito; i++) {
@@ -270,7 +271,7 @@ void power_to_db_simd(
     double reference = 4e-10,
     double floor_db = -300.0
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const batch c1(10.0);
@@ -343,7 +344,7 @@ void dct_simd(
     const double* const* cosinesTable,
     integer size
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     for (integer k = 1; k <= size; k++) {
@@ -359,7 +360,7 @@ void dct_simd(
             sum = xsimd::fma(x_val, cos_val, sum);  // sum += x * cos
         }
 
-        double result = xsimd::reduce_add(sum);
+        double result = xsimd_compat::reduce_add_compat(sum);
 
         // Scalar remainder
         for (; j <= size; j++) {

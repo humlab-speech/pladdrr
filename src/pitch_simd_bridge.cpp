@@ -197,6 +197,7 @@ bool should_use_simd_for_pitch() {
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 namespace simd_bridge_direct {
@@ -210,7 +211,7 @@ void autocorrelation_direct(
     int n,
     int max_lag
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     // Compute autocorrelation for each lag
@@ -229,7 +230,7 @@ void autocorrelation_direct(
             acc = xsimd::fma(a, b, acc);  // acc += a * b
         }
         
-        double sum = xsimd::reduce_add(acc);
+        double sum = xsimd_compat::reduce_add_compat(acc);
         
         // Scalar remainder
         for (; i < count; i++) {
@@ -248,7 +249,7 @@ void accumulate_power_spectrum_simd(
     integer nsampFFT,
     integer ny                // Number of channels
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     // DC component (line 154)
@@ -305,7 +306,7 @@ void compute_fcc_product_simd(
     integer nsamp_window,     // Window length
     longdouble& product       // Output accumulator
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     batch mean_batch(localMean);
@@ -322,7 +323,7 @@ void compute_fcc_product_simd(
         prod_acc = xsimd::fma(x, y, prod_acc);
     }
     
-    product += xsimd::reduce_add(prod_acc);
+    product += xsimd_compat::reduce_add_compat(prod_acc);
     
     // Scalar remainder
     for (; j <= nsamp_window; j++) {

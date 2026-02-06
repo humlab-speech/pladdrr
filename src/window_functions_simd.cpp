@@ -24,6 +24,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include "../praat_xptr_utils.h"
@@ -47,7 +48,7 @@ NumericVector apply_hamming_window_simd(NumericVector data) {
     const double n_minus_1 = static_cast<double>(n - 1);
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const batch alpha(0.54);
@@ -103,7 +104,7 @@ NumericVector apply_hanning_window_simd(NumericVector data) {
     const double n_minus_1 = static_cast<double>(n - 1);
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const batch half(0.5);
@@ -158,7 +159,7 @@ NumericVector apply_gaussian_window_simd(NumericVector data, double sigma = 0.4)
     const double denominator = sigma * center;
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const batch minus_half(-0.5);

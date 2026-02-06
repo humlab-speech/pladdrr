@@ -19,6 +19,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <Rcpp.h>
@@ -41,7 +42,7 @@ extern "C" {
  */
 #ifdef HAVE_XSIMD
 double calculate_mean_simd(const double* values, integer n) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     batch sum = xsimd::batch<double>(0.0);
@@ -53,7 +54,7 @@ double calculate_mean_simd(const double* values, integer n) {
         sum = sum + val;
     }
 
-    double result = xsimd::reduce_add(sum);
+    double result = xsimd_compat::reduce_add_compat(sum);
 
     // Scalar remainder
     for (; i <= n; i++) {
@@ -83,7 +84,7 @@ double calculate_mean_simd(const double* values, integer n) {
  */
 #ifdef HAVE_XSIMD
 double calculate_stdev_simd(const double* values, integer n, double mean) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n < 2) return 0.0;
@@ -104,7 +105,7 @@ double calculate_stdev_simd(const double* values, integer n, double mean) {
         sum_sq = xsimd::fma(diff, diff, sum_sq);  // sum_sq += diff^2
     }
 
-    double result = xsimd::reduce_add(sum_sq);
+    double result = xsimd_compat::reduce_add_compat(sum_sq);
 
     // Scalar remainder
     for (; i <= n; i++) {
@@ -143,7 +144,7 @@ double calculate_stdev_simd(const double* values, integer n, double mean) {
  */
 #ifdef HAVE_XSIMD
 void calculate_min_max_simd(const double* values, integer n, double* min_val, double* max_val) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n <= 0) {
@@ -255,7 +256,7 @@ void calculate_batch_statistics_simd(
     double* min_val,
     double* max_val
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n <= 0) {
@@ -279,7 +280,7 @@ void calculate_batch_statistics_simd(
         max_batch = xsimd::max(max_batch, val);
     }
 
-    double sum_scalar = xsimd::reduce_add(sum);
+    double sum_scalar = xsimd_compat::reduce_add_compat(sum);
     *min_val = xsimd::reduce_min(min_batch);
     *max_val = xsimd::reduce_max(max_batch);
 
@@ -308,7 +309,7 @@ void calculate_batch_statistics_simd(
         sum_sq = xsimd::fma(diff, diff, sum_sq);
     }
 
-    double sum_sq_scalar = xsimd::reduce_add(sum_sq);
+    double sum_sq_scalar = xsimd_compat::reduce_add_compat(sum_sq);
 
     for (; i <= n; i++) {
         double diff = values[i] - *mean;
@@ -385,7 +386,7 @@ void process_frames_simd(
     double* output,
     int stat_type
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Process each frame

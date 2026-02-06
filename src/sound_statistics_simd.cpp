@@ -25,6 +25,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 // Statistics structure - used by both SIMD and scalar implementations
@@ -50,7 +51,7 @@ struct ChannelStatistics {
 };
 
 ChannelStatistics compute_channel_statistics_simd(constVEC const& data) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const integer n = data.size;
@@ -80,8 +81,8 @@ ChannelStatistics compute_channel_statistics_simd(constVEC const& data) {
     // Reduce SIMD results
     double min_val = xsimd::reduce_min(min_batch);
     double max_val = xsimd::reduce_max(max_batch);
-    double sum = xsimd::reduce_add(sum_batch);
-    double sum_of_squares = xsimd::reduce_add(sum_sq_batch);
+    double sum = xsimd_compat::reduce_add_compat(sum_batch);
+    double sum_of_squares = xsimd_compat::reduce_add_compat(sum_sq_batch);
 
     // Process remainder scalar-wise
     for (; i <= n; ++i) {

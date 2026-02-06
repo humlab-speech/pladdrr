@@ -25,12 +25,13 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
 // SIMD-optimized stereo to mono conversion
 void convert_stereo_to_mono_simd(constVEC const& ch1, constVEC const& ch2, VEC output) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = ch1.size;
@@ -54,7 +55,7 @@ void convert_stereo_to_mono_simd(constVEC const& ch1, constVEC const& ch2, VEC o
 
 // SIMD-optimized multi-channel to mono conversion
 void convert_multichannel_to_mono_simd(constMAT const& channels, VEC output) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n_samples = channels.ncol;

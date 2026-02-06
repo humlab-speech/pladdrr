@@ -20,6 +20,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 #include <cmath>
@@ -79,7 +80,7 @@ void calculate_durations_simd(
     integer n
 ) {
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Process SIMD-width chunks (1-based indexing)
@@ -118,7 +119,7 @@ void calculate_durations_simd_0based(
     size_t n
 ) {
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     size_t i = 0;
@@ -153,7 +154,7 @@ void calculate_durations_simd_0based(
  */
 double sum_durations_simd(const double* durations, size_t n) {
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     batch sum_batch(0.0);
@@ -164,7 +165,7 @@ double sum_durations_simd(const double* durations, size_t n) {
         sum_batch += dur_batch;
     }
 
-    double sum = xsimd::reduce_add(sum_batch);
+    double sum = xsimd_compat::reduce_add_compat(sum_batch);
 
     // Scalar remainder
     for (; i < n; i++) {
@@ -206,7 +207,7 @@ void duration_statistics_simd(
     }
 
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Pass 1: Sum
@@ -218,7 +219,7 @@ void duration_statistics_simd(
         sum_batch += dur_batch;
     }
 
-    double sum = xsimd::reduce_add(sum_batch);
+    double sum = xsimd_compat::reduce_add_compat(sum_batch);
     for (; i < n; i++) {
         sum += durations[i];
     }
@@ -242,7 +243,7 @@ void duration_statistics_simd(
         sq_diff_sum = xsimd::fma(diff, diff, sq_diff_sum);
     }
 
-    double variance_sum = xsimd::reduce_add(sq_diff_sum);
+    double variance_sum = xsimd_compat::reduce_add_compat(sq_diff_sum);
     for (; i < n; i++) {
         double diff = durations[i] - mean;
         variance_sum += diff * diff;
@@ -293,7 +294,7 @@ void duration_min_max_simd(
     }
 
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     if (n < simd_size) {
@@ -374,7 +375,7 @@ void filter_by_duration_simd(
     // SIMD comparison creates bitmask, but gathering indices is complex
     // For filtering with index extraction, scalar is often faster due to branching
     // Use SIMD only for the comparison, then extract indices
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     batch min_batch(min_dur);
@@ -436,7 +437,7 @@ void calculate_midpoints_simd(
     size_t n
 ) {
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     batch half(0.5);
@@ -480,7 +481,7 @@ void check_time_containment_simd(
     size_t n
 ) {
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     batch query_batch(query_time);

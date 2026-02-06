@@ -25,13 +25,14 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace {
 
 // SIMD-optimized matrix row multiplication
 // Multiply each row of matrix x by corresponding element of vector v
 void matrix_multiply_rows_simd(MATVU const& x, constVECVU const& v) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     for (integer irow = 1; irow <= x.nrow; ++irow) {
@@ -54,7 +55,7 @@ void matrix_multiply_rows_simd(MATVU const& x, constVECVU const& v) {
 
 // SIMD-optimized dot product (used in filtering and distance calculations)
 double dot_product_simd(constVEC const& x, constVEC const& y) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = std::min(x.size, y.size);
@@ -68,7 +69,7 @@ double dot_product_simd(constVEC const& x, constVEC const& y) {
         acc = xsimd::fma(a, b, acc);
     }
     
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
     
     // Process remainder scalar-wise
     for (; i <= n; ++i) {
@@ -80,7 +81,7 @@ double dot_product_simd(constVEC const& x, constVEC const& y) {
 
 // SIMD-optimized AXPY operation: y = alpha * x + y
 void axpy_simd(double alpha, constVEC const& x, VEC const& y) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const integer n = std::min(x.size, y.size);
@@ -165,7 +166,7 @@ double r_dot_product(Rcpp::NumericVector x, Rcpp::NumericVector y) {
     }
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const int n = x.size();
@@ -179,7 +180,7 @@ double r_dot_product(Rcpp::NumericVector x, Rcpp::NumericVector y) {
         acc = xsimd::fma(a, b, acc);
     }
     
-    double sum = xsimd::reduce_add(acc);
+    double sum = xsimd_compat::reduce_add_compat(acc);
     
     // Process remainder scalar-wise
     for (; i < n; ++i) {
@@ -203,7 +204,7 @@ void r_axpy(double alpha, Rcpp::NumericVector x, Rcpp::NumericVector y) {
     }
     
 #ifdef HAVE_XSIMD
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
     
     const int n = x.size();

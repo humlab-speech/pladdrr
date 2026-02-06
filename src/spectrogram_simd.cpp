@@ -27,6 +27,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 // Direct SIMD namespace for Praat integration (no Rcpp overhead)
@@ -53,7 +54,7 @@ void extract_and_window_frame_simd(
     integer startSample,      // Praat 1-based index
     integer nsamp_window
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Convert to 0-based pointers for SIMD loop
@@ -103,7 +104,7 @@ void accumulate_power_spectrum_simd(
     integer half_nsampFFT,
     integer nsampFFT
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // DC component (line 183 in original)
@@ -161,7 +162,7 @@ void zero_fft_tail_simd(
     integer start_index,      // Praat 1-based index
     integer nsampFFT
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     const integer count = nsampFFT - start_index + 1;

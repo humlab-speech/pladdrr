@@ -26,10 +26,11 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace cochleagram_simd {
 
-using batch = xsimd::batch<double>;
+using batch = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch::size;
 
 // SIMD-accelerated filter bank processing for auditory filters
@@ -184,7 +185,7 @@ double calculate_loudness_simd(
         sum_batch += exc;
     }
     
-    double sum = xsimd::reduce_add(sum_batch);
+    double sum = xsimd_compat::reduce_add_compat(sum_batch);
     
     // Scalar remainder
     for (; i < n_freqs; ++i) {
@@ -213,7 +214,7 @@ void cochleagram_difference_simd(
         sum_sq_batch += d * d;
     }
     
-    double sum_sq = xsimd::reduce_add(sum_sq_batch);
+    double sum_sq = xsimd_compat::reduce_add_compat(sum_sq_batch);
     
     // Scalar remainder
     for (; i < n_elements; ++i) {

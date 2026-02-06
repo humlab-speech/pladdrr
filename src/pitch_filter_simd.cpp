@@ -24,6 +24,7 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 #endif
 
 // Direct SIMD namespace for Praat integration (no Rcpp overhead)
@@ -52,7 +53,7 @@ void apply_gaussian_lowpass_to_spectrum_simd(
     integer nx,
     double lowPassCutoff
 ) {
-    using batch = xsimd::batch<double>;
+    using batch = XSIMD_BATCH(double);
     constexpr size_t simd_size = batch::size;
 
     // Precompute constants

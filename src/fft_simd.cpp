@@ -26,10 +26,11 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace fft_simd {
 
-using batch = xsimd::batch<double>;
+using batch = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch::size;
 
 // SIMD-accelerated twiddle factor computation

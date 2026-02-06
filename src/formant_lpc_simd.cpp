@@ -27,10 +27,11 @@
 
 #ifdef HAVE_XSIMD
 #include <xsimd/xsimd.hpp>
+#include "xsimd_compat.h"
 
 namespace formant_lpc_simd {
 
-using batch = xsimd::batch<double>;
+using batch = XSIMD_BATCH(double);
 constexpr size_t simd_size = batch::size;
 
 // SIMD-accelerated autocorrelation for LPC (Burg's algorithm prerequisite)
@@ -51,7 +52,7 @@ void autocorrelation_simd(
             sum_batch += x1 * x2;
         }
         
-        double sum = xsimd::reduce_add(sum_batch);
+        double sum = xsimd_compat::reduce_add_compat(sum_batch);
         
         // Scalar remainder
         for (; i < n - lag; ++i) {
@@ -96,7 +97,7 @@ void lpc_burg_simd(
         batch sig = batch::load_unaligned(&signal[i]);
         sum_batch += sig * sig;
     }
-    error = xsimd::reduce_add(sum_batch);
+    error = xsimd_compat::reduce_add_compat(sum_batch);
     for (; i < n; ++i) {
         error += signal[i] * signal[i];
     }
@@ -113,8 +114,8 @@ void lpc_burg_simd(
             den_batch += f_batch * f_batch + b_batch * b_batch;
         }
         
-        double num = xsimd::reduce_add(num_batch);
-        double den = xsimd::reduce_add(den_batch);
+        double num = xsimd_compat::reduce_add_compat(num_batch);
+        double den = xsimd_compat::reduce_add_compat(den_batch);
         
         for (; i < n; ++i) {
             num += f[i] * b[i - 1];
