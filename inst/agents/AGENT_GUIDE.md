@@ -1,12 +1,76 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.20 (2026-02-06)
+**Version:** 4.8.21 (2026-02-07)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented
 
 ---
 
 ## Recent Changes
+
+### 📖 Window Shape Documentation v4.8.21 (2026-02-07)
+
+**Summary:** Documented full window shape support in `extract_part()` methods. Feature was already fully implemented but not well documented.
+
+**What Changed:**
+- Enhanced documentation in `sound_extract_part()`, `Sound$extract_part()`, and `sound_extract_parts()`
+- Added comprehensive examples for all 12 window shapes
+- Added reference to Praat manual: https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html
+- Added test suite with 10 comprehensive tests
+
+**Supported Window Shapes:**
+All 12 Praat window shapes are supported:
+1. **rectangular** - No tapering (default)
+2. **triangular** - Triangular/Bartlett window
+3. **parabolic** - Parabolic/Welch window
+4. **hanning** - Hanning window
+5. **hamming** - Hamming window
+6. **gaussian1** - Gaussian (σ=0.42466 relative to duration)
+7. **gaussian2** - Narrower Gaussian (σ=0.21233), use `relative_width=2.0`
+8. **gaussian3** - Even narrower (σ=0.14155), use `relative_width=3.0`
+9. **gaussian4** - Very narrow (σ=0.10616), use `relative_width=4.0`
+10. **gaussian5** - Extremely narrow (σ=0.08493), use `relative_width=5.0`
+11. **kaiser1** - Kaiser-Bessel (α=20.7)
+12. **kaiser2** - Narrower Kaiser-Bessel (α=40.5), use `relative_width=2.0`
+
+**Agent Guidance:**
+```r
+sound <- Sound("audio.wav")
+
+# Rectangular (no windowing) - default
+part <- sound$extract_part(1.0, 2.0)
+
+# Gaussian1 window (standard Gaussian)
+part <- sound$extract_part(1.0, 2.0, "gaussian1", 1.0)
+
+# Gaussian2 with wider extraction to maintain effective duration
+# This is Praat's recommendation for spectral analysis
+part <- sound$extract_part(1.0, 2.0, "gaussian2", 2.0)
+
+# Kaiser2 for spectral analysis (used in Praat's "Very accurate" pitch)
+part <- sound$extract_part(1.0, 2.0, "kaiser2", 2.0)
+
+# Batch extraction with window shapes
+parts <- sound_extract_parts(
+  sound, start_times, end_times,
+  window_shape = "gaussian2",
+  relative_width = 2.0
+)
+```
+
+**Key Parameter: relative_width**
+- Default: 1.0 (physical extraction matches [t1, t2])
+- For gaussian2/kaiser2: Use 2.0 to maintain effective window duration
+- For gaussian3-5: Use 3.0-5.0 respectively
+- Higher values extract longer physical segments with more aggressive tapering
+
+**Files Modified:**
+- `R/sound-operations.R` - Enhanced `sound_extract_part()` documentation
+- `R/sound-wrapper.R` - Enhanced `Sound$extract_part()` inline docs
+- `R/vad.R` - Enhanced `sound_extract_parts()` documentation
+- `tests/testthat/test-sound-extract-part-windows.R` - New test suite (10 tests)
+
+---
 
 ### 🐛 Spectrogram segfault fix v4.8.20 (2026-02-06)
 

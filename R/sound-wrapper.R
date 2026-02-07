@@ -50,7 +50,10 @@
 #'
 #' @section Extraction:
 #' - `extract_channel()` - Extract single channel
-#' - `extract_part()` - Extract time range
+#' - `extract_part(from, to, window_shape, relative_width, preserve_times)` - Extract time range with optional windowing
+#'   * Supports 12 window shapes: rectangular, triangular, parabolic, hanning, hamming,
+#'     gaussian1-5, kaiser1-2
+#'   * See \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @section Modification:
 #' - `scale_intensity()` - Scale to target dB level (in-place)
@@ -523,6 +526,35 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Sound(.xptr = ptr_result)
     },
     
+    # Extract part of Sound with optional windowing
+    # 
+    # Praat's "Sound: Extract part..." with full window shape support.
+    # 
+    # @param from_time Start time (seconds)
+    # @param to_time End time (seconds)
+    # @param window_shape Window shape name (string):
+    #   "rectangular", "triangular", "parabolic", "hanning", "hamming",
+    #   "gaussian1", "gaussian2", "gaussian3", "gaussian4", "gaussian5",
+    #   "kaiser1", "kaiser2"
+    # @param relative_width Relative width (default: 1.0).
+    #   For gaussian2/kaiser2, use 2.0 to maintain effective window duration.
+    #   For gaussian3, use 3.0. For gaussian4, use 4.0. For gaussian5, use 5.0.
+    # @param preserve_times If TRUE, preserve original time domain.
+    #   If FALSE, time-shift to start at 0.
+    # @return New Sound object
+    # 
+    # @details
+    # See: https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html
+    # 
+    # @examples
+    # # Rectangular (no windowing)
+    # part <- sound$extract_part(1.0, 2.0)
+    # 
+    # # Gaussian1 window
+    # part <- sound$extract_part(1.0, 2.0, "gaussian1", 1.0)
+    # 
+    # # Gaussian2 with wider extraction for same effective duration
+    # part <- sound$extract_part(1.0, 2.0, "gaussian2", 2.0)
     extract_part = function(from_time, to_time, window_shape = "rectangular",
                            relative_width = 1.0, preserve_times = FALSE) {
       # Map window shape strings to codes
