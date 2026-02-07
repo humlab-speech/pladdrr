@@ -3787,6 +3787,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ltas_report_spectral_trend
+List ltas_report_spectral_trend(XPtr<structLtas> xptr, double fmin, double fmax, std::string frequency_scale, std::string fit_method);
+RcppExport SEXP _pladdrr_ltas_report_spectral_trend(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP frequency_scaleSEXP, SEXP fit_methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<structLtas> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    Rcpp::traits::input_parameter< std::string >::type frequency_scale(frequency_scaleSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fit_method(fit_methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(ltas_report_spectral_trend(xptr, fmin, fmax, frequency_scale, fit_method));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ltas_as_data_frame
 DataFrame ltas_as_data_frame(Rcpp::XPtr<structLtas> ltas);
 RcppExport SEXP _pladdrr_ltas_as_data_frame(SEXP ltasSEXP) {
@@ -10944,6 +10959,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_ltas_get_slope", (DL_FUNC) &_pladdrr_ltas_get_slope, 6},
     {"_pladdrr_ltas_compute_trend_line", (DL_FUNC) &_pladdrr_ltas_compute_trend_line, 3},
     {"_pladdrr_ltas_subtract_trend_line", (DL_FUNC) &_pladdrr_ltas_subtract_trend_line, 3},
+    {"_pladdrr_ltas_report_spectral_trend", (DL_FUNC) &_pladdrr_ltas_report_spectral_trend, 5},
     {"_pladdrr_ltas_as_data_frame", (DL_FUNC) &_pladdrr_ltas_as_data_frame, 1},
     {"_pladdrr_ltas_as_matrix", (DL_FUNC) &_pladdrr_ltas_as_matrix, 1},
     {"_pladdrr_manipulation_from_sound", (DL_FUNC) &_pladdrr_manipulation_from_sound, 4},

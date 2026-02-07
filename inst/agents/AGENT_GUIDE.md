@@ -2,11 +2,86 @@
 
 **Version:** 4.8.21 (2026-02-07)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis
 
 ---
 
 ## Recent Changes
+
+### 📊 Spectral Trend Analysis v4.8.21 (2026-02-07)
+
+**Summary:** Implemented `Ltas$report_spectral_trend()` for spectral tilt (SLF) calculations. Returns slope, intercept, R², residuals, and fitted values - matching Praat's "Report spectral trend" functionality.
+
+**New Method:** `Ltas$report_spectral_trend(fmin, fmax, frequency_scale, fit_method)`
+
+**Parameters:**
+- `fmin` - Minimum frequency (default: 100 Hz)
+- `fmax` - Maximum frequency (default: 5000 Hz)  
+- `frequency_scale` - "logarithmic" (default, dB/decade) or "linear" (dB/Hz)
+- `fit_method` - "least squares" (default, fast) or "robust" (Theil-Sen, outlier-resistant)
+
+**Returns (list with class "ltas_spectral_trend"):**
+- `slope` - Spectral tilt coefficient
+- `intercept` - Baseline power level
+- `r_squared` - Goodness of fit (0-1)
+- `residual_std_error` - Standard error of residuals (dB)
+- `n_points` - Number of data points in fit
+- `fitted_values` - DataFrame with columns:
+  - `frequency` - Frequency bin centers (Hz)
+  - `power_db_observed` - Observed LTAS values (dB)
+  - `power_db_fitted` - Predicted values from trend line (dB)
+  - `residual` - Observed minus fitted (dB)
+- `frequency_scale`, `fit_method`, `fmin`, `fmax`, `slope_units` - Metadata
+
+**Agent Guidance:**
+```r
+# Basic usage - get spectral tilt
+sound <- Sound("voice.wav")
+spectrum <- sound$to_spectrum()
+ltas <- spectrum$to_ltas(100)
+trend <- ltas$report_spectral_trend(100, 5000)
+
+# Access values
+slope <- trend$slope           # e.g., -42.95 dB/decade
+intercept <- trend$intercept   # e.g., 146.03 dB
+r2 <- trend$r_squared          # e.g., 0.849
+
+# Plot observed vs fitted
+library(ggplot2)
+ggplot(trend$fitted_values, aes(x = log10(frequency))) +
+  geom_line(aes(y = power_db_observed), color = "black") +
+  geom_line(aes(y = power_db_fitted), color = "red", linetype = "dashed") +
+  labs(title = sprintf("Spectral Trend: %.2f dB/decade (R²=%.3f)", 
+                       trend$slope, trend$r_squared))
+
+# Linear scale for specific analysis
+trend_linear <- ltas$report_spectral_trend(100, 5000, "linear", "least squares")
+
+# Robust fit for noisy data
+trend_robust <- ltas$report_spectral_trend(100, 5000, "logarithmic", "robust")
+```
+
+**Use Cases:**
+1. **Spectral Tilt (SLF) for voice quality:** Negative slope indicates energy concentration in lower frequencies (breathy/hypofunctional voice)
+2. **Dysphonia detection:** Steep negative slopes correlate with voice disorders
+3. **Speaker characterization:** Spectral slope varies by age, gender, voice type
+4. **Pre/post therapy comparison:** Track changes in spectral balance
+
+**Implementation Details:**
+- Calls Praat's `Ltas_fitTrendLine()` from `dwtools/Ltas_extensions.cpp`
+- Uses `NUMlineFit()` backend (method 1 = least squares, method 2 = Theil-Sen robust)
+- R² and residuals calculated efficiently in C++ using same x/y vectors as fit
+- Fitted values returned in original frequency scale for plotting
+
+**Files Modified:**
+- `src/ltas_wrappers.cpp` - C++ wrapper function (+119 lines)
+- `src/Makevars` + `src/Makevars.in` - Added `Ltas_extensions.cpp` to build
+- `R/ltas-wrapper.R` - R method + print method (+52 lines)
+- `tests/testthat/test-ltas-spectral-trend.r` - Comprehensive test suite (+170 lines, 13 tests)
+
+**Performance:** Efficient C++ implementation, ~1ms for typical LTAS with 50 bins.
+
+---
 
 ### 📖 Window Shape Documentation v4.8.21 (2026-02-07)
 

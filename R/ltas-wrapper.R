@@ -181,6 +181,27 @@ Ltas <- function(.xptr = NULL) {
       Ltas(.xptr = ptr)
     },
     
+    report_spectral_trend = function(
+      fmin = 100, 
+      fmax = 5000,
+      frequency_scale = c("logarithmic", "linear"),
+      fit_method = c("least squares", "robust")
+    ) {
+      frequency_scale <- match.arg(frequency_scale)
+      fit_method <- match.arg(fit_method)
+      
+      result <- .ltas_report_spectral_trend(
+        .xptr, 
+        as.numeric(fmin), 
+        as.numeric(fmax),
+        frequency_scale, 
+        fit_method
+      )
+      
+      class(result) <- c("ltas_spectral_trend", "list")
+      result
+    },
+    
     # Export
     as_data_frame = function() {
       df <- cpp_obj$as_data_frame()
@@ -219,4 +240,32 @@ print.Ltas <- function(x, ...) {
 #' @export
 as.data.frame.Ltas <- function(x, ...) {
   x$as_data_frame()
+}
+
+#' @export
+print.ltas_spectral_trend <- function(x, ...) {
+  cat("Spectral Trend Analysis\n")
+  cat("=======================\n")
+  cat(sprintf("Frequency range: %.1f - %.1f Hz\n", x$fmin, x$fmax))
+  cat(sprintf("Frequency scale: %s\n", x$frequency_scale))
+  cat(sprintf("Fit method: %s\n", x$fit_method))
+  cat(sprintf("Data points: %d\n\n", x$n_points))
+  
+  cat("Trend Line Coefficients:\n")
+  cat(sprintf("  Slope:     %.6f %s\n", x$slope, x$slope_units))
+  cat(sprintf("  Intercept: %.4f dB\n\n", x$intercept))
+  
+  cat("Fit Quality:\n")
+  cat(sprintf("  R²:                    %.6f\n", x$r_squared))
+  cat(sprintf("  Residual Std Error:    %.4f dB\n\n", x$residual_std_error))
+  
+  if (x$frequency_scale == "logarithmic") {
+    cat("Model: power_dB = intercept + slope * log10(frequency_Hz)\n")
+  } else {
+    cat("Model: power_dB = intercept + slope * frequency_Hz\n")
+  }
+  
+  cat("\nNote: Use $fitted_values to access predicted values for plotting\n")
+  
+  invisible(x)
 }

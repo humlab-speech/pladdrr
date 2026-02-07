@@ -195,6 +195,7 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/KlattGrid.cpp \
               praat.github.io/dwtools/FormantGrid_extensions.cpp \
               praat.github.io/dwtools/Pitch_extensions.cpp \
+              praat.github.io/dwtools/Ltas_extensions.cpp \
               praat.github.io/dwtools/CC.cpp \
               praat.github.io/dwtools/Spectrogram_extensions.cpp \
               praat.github.io/dwtools/Sound_and_Spectrogram_extensions.cpp \

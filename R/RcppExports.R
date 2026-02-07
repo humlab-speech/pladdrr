@@ -1347,6 +1347,12 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_subtract_trend_line`, ltas, fmin, fmax)
 }
 
+#' Report spectral trend (slope and intercept with fit statistics)
+#' @keywords internal
+.ltas_report_spectral_trend <- function(xptr, fmin, fmax, frequency_scale, fit_method) {
+    .Call(`_pladdrr_ltas_report_spectral_trend`, xptr, fmin, fmax, frequency_scale, fit_method)
+}
+
 .ltas_as_data_frame <- function(ltas) {
     .Call(`_pladdrr_ltas_as_data_frame`, ltas)
 }
