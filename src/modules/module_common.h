@@ -54,6 +54,16 @@
         Rcpp::stop("Channel out of range [1, %d]: %d", ptr->ny, channel)
 
 // ============================================================================
+// NaN/NA Input Guards
+// ============================================================================
+
+// Return NA_REAL for scalar NaN/NA input (prevents C++ exceptions from Praat)
+#define GUARD_NAN_SCALAR(val) if (ISNAN(val)) return NA_REAL
+
+// Return NA_REAL for range queries with NaN/NA bounds
+#define GUARD_NAN_RANGE(a, b) if (ISNAN(a) || ISNAN(b)) return NA_REAL
+
+// ============================================================================
 // Unit Conversion Helpers
 // ============================================================================
 

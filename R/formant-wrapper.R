@@ -151,8 +151,12 @@ Formant <- function(.xptr = NULL) {
       cpp_obj$get_bandwidth_track(as.integer(formant_number), unit_code(unit))
     },
 
-    get_values_at_times = function(formant_number, times, unit = c("hertz", "bark")) {
+    get_values_at_times = function(formant_number, times, unit = c("hertz", "bark"),
+                                    interpolation = c("linear", "nearest")) {
       unit <- match.arg(unit)
+      interpolation <- match.arg(interpolation)
+      # interpolation param for API consistency; Praat's Formant_getValueAtTime
+      # internally uses linear interpolation
       cpp_obj$get_values_at_times(
         as.integer(formant_number),
         as.numeric(times),

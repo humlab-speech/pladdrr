@@ -146,6 +146,7 @@ public:
 
     double get_value_at_time(int formant_number, double time, int unit) {
         VALIDATE_PTR(ptr, Formant);
+        GUARD_NAN_SCALAR(time);
         return Formant_getValueAtTime(
             ptr.get(),
             formant_number,
@@ -156,6 +157,7 @@ public:
 
     double get_bandwidth_at_time(int formant_number, double time, int unit) {
         VALIDATE_PTR(ptr, Formant);
+        GUARD_NAN_SCALAR(time);
         return Formant_getBandwidthAtTime(
             ptr.get(),
             formant_number,
@@ -303,6 +305,7 @@ public:
         kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
 
         for (int i = 0; i < n; i++) {
+            if (ISNAN(times[i])) { values[i] = NA_REAL; continue; }
             double val = Formant_getValueAtTime(ptr.get(), formant_number, times[i], formant_unit);
             values[i] = isdefined(val) ? val : NA_REAL;
         }

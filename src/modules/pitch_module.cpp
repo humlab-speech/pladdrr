@@ -162,6 +162,7 @@ public:
 
     double get_value_at_time(double time, int unit, bool interpolate) {
         VALIDATE_PTR(ptr, Pitch);
+        GUARD_NAN_SCALAR(time);
         try {
             return Pitch_getValueAtTime(
                 ptr.get(),
@@ -545,6 +546,7 @@ public:
 
         try {
             for (int i = 0; i < n; i++) {
+                if (ISNAN(times[i])) { values[i] = NA_REAL; continue; }
                 double val = Pitch_getValueAtTime(ptr.get(), times[i], pitch_unit, interpolate);
                 values[i] = (val > 0 && val < ptr->ceiling) ? val : NA_REAL;
             }

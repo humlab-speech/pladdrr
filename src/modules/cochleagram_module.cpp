@@ -63,6 +63,7 @@ public:
     // Query methods
     double get_value_at_time_and_frequency(double time, double freq_bark) {
         VALIDATE_PTR(ptr, Cochleagram);
+        GUARD_NAN_RANGE(time, freq_bark);
         integer ifreq = Melder_iround((freq_bark - ptr->y1) / ptr->dy + 1);
         integer itime = Melder_iround((time - ptr->x1) / ptr->dx + 1);
 

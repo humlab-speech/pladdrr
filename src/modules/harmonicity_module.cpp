@@ -61,36 +61,43 @@ public:
     // Query methods
     double get_value_at_time(double time, int interpolation) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_SCALAR(time);
         return Vector_getValueAtX(ptr.get(), time, 1, (kVector_valueInterpolation)interpolation);
     }
 
     double get_mean(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Harmonicity_getMean(ptr.get(), from_time, to_time);
     }
 
     double get_minimum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_maximum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_time_of_minimum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getXOfMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_time_of_maximum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getXOfMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_standard_deviation(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Harmonicity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Harmonicity_getStandardDeviation(ptr.get(), from_time, to_time);
     }
 
@@ -181,6 +188,7 @@ public:
 
         try {
             for (int i = 0; i < n; i++) {
+                if (ISNAN(times[i])) { values[i] = NA_REAL; continue; }
                 values[i] = Vector_getValueAtX(ptr.get(), times[i], 1, interp);
             }
         } catch (MelderError) {

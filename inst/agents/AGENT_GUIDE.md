@@ -1,12 +1,73 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.21 (2026-02-07)
+**Version:** 4.8.22 (2026-02-08)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards
 
 ---
 
 ## Recent Changes
+
+### 🛡️ API Safety & Improvements v4.8.22 (2026-02-08)
+
+**Summary:** NaN/NA input guards across all C++ modules prevent crashes from invalid input. New batch method for Intensity, improved Formant and Spectrogram APIs.
+
+**1. NaN/NA Input Guards (all modules)**
+
+All scalar and batch query methods now return `NA` instead of crashing when given `NaN` or `NA` input. Affected modules: Ltas, Intensity, Formant, Pitch, Harmonicity, Cochleagram.
+
+```r
+# Previously crashed with unrecoverable C++ exception:
+ltas$get_value_at_frequency(NaN)  # now returns NA
+
+# Works element-wise in batch methods:
+vals <- ltas$get_values_at_frequencies(c(100, NaN, 440))
+# Returns: c(value, NA, value)
+```
+
+**Agent Guidance:** You no longer need to pre-filter NaN values before passing to pladdrr query methods. NaN/NA inputs safely propagate as NA outputs.
+
+**2. New: `Intensity$get_values_at_times(times, interpolation)`**
+
+Batch time-query method matching Pitch and Formant APIs.
+
+```r
+intensity <- sound$to_intensity(minimum_pitch = 100)
+times <- seq(0.1, 0.9, by = 0.1)
+values <- intensity$get_values_at_times(times, interpolation = "cubic")
+```
+
+**3. `Formant$get_values_at_times()` now accepts `interpolation` parameter**
+
+For API consistency with scalar `get_value_at_time()`. The parameter is accepted but Praat internally uses linear interpolation for formants.
+
+```r
+f1_vals <- formant$get_values_at_times(1, times, unit = "hertz", interpolation = "linear")
+```
+
+**4. `Spectrogram$as_matrix()` now includes dimnames**
+
+Rows labeled with frequencies (Hz), columns with times (s). Use `include_dimnames = FALSE` for raw matrix.
+
+```r
+mat <- spectrogram$as_matrix()                    # has row/col names
+mat_raw <- spectrogram$as_matrix(include_dimnames = FALSE)  # no names (faster)
+
+# Row/col names are numeric — use for axis labels:
+freqs <- as.numeric(rownames(mat))
+times <- as.numeric(colnames(mat))
+```
+
+**Files Modified:**
+- `src/modules/module_common.h` — `GUARD_NAN_SCALAR`, `GUARD_NAN_RANGE` macros
+- `src/modules/{ltas,intensity,formant,pitch,harmonicity,cochleagram}_module.cpp` — NaN guards
+- `src/modules/intensity_module.cpp` — new `get_values_at_times` C++ method
+- `R/intensity-wrapper.R` — R wrapper for `get_values_at_times`
+- `R/formant-wrapper.R` — `interpolation` param on `get_values_at_times`
+- `R/spectrogram-wrapper.R` — `include_dimnames` param on `as_matrix`
+- `tests/testthat/test-nan-guards.R` — 38 new tests
+
+---
 
 ### 📊 Spectral Trend Analysis v4.8.21 (2026-02-07)
 
@@ -1882,7 +1943,7 @@ intervals <- get_pointprocess_intervals(pointprocess)
 The following functions are deprecated and will be removed in v3.0.0. Use the recommended alternatives:
 - `pitch_get_values_at_times()` → use `get_pitch_at_times()` instead
 - `formant_get_values_at_times()` → use `get_formants_at_times()` instead
-- `intensity_get_values_at_times()` → use `get_intensity_at_times()` instead
+- `intensity_get_values_at_times()` → use `intensity$get_values_at_times()` instead (v4.8.22+)
 
 See `MIGRATION_GUIDE.md` for details.
 
@@ -2244,6 +2305,19 @@ query_times <- seq(0.5, 2.5, by = 0.1)
 f0_values <- pitch$get_values_at_times(query_times, unit = "hertz", interpolate = TRUE)
 ```
 
+#### Intensity Batch Queries (NEW in v4.8.22)
+
+```r
+intensity <- sound$to_intensity(minimum_pitch = 100)
+
+# SLOW: R loop
+times <- seq(0.1, 2.9, by = 0.01)
+values <- vapply(times, function(t) intensity$get_value_at_time(t), numeric(1))
+
+# FAST: Single C++ call (20x speedup)
+values <- intensity$get_values_at_times(times, interpolation = "cubic")
+```
+
 #### Harmonicity Batch Statistics
 
 ```r
@@ -2342,6 +2416,7 @@ tg$set_interval_texts_batch(tier_number = 1, intervals, texts)
 |--------|--------|---------|----------|
 | Sound | `get_power_windows()`, `get_rms_windows()`, `get_energy_windows()` | 100-150x | AVQI windowed analysis |
 | Sound | `get_values_at_times()`, `get_values_in_range()` | 20x | Tremor peak extraction |
+| Intensity | `get_values_at_times()` | 20x | Batch intensity queries (v4.8.22) |
 | Pitch | `get_voiced_mask()`, `get_strengths_vector()` | 5x | DSI voicing analysis |
 | Harmonicity | `get_statistics_batch()` | 10x | Multi-band HNR (VQ) |
 | Spectrum | `get_power_vector()`, `get_band_energies()` | 150x | Pharyngeal analysis |
@@ -3492,8 +3567,9 @@ options(speaker.use_simd = FALSE)
 
 | Method | Parameters | Return | Notes |
 |--------|------------|--------|-------|
-| `get_value_at_time(formant_number, time, unit)` | `int, double, string` | `numeric` | unit: "hertz", "bark" |
+| `get_value_at_time(formant_number, time, unit, interpolation)` | `int, double, string, string` | `numeric` | unit: "hertz", "bark" |
 | `get_bandwidth_at_time(formant_number, time, unit)` | `int, double, string` | `numeric` | |
+| `get_values_at_times(formant_number, times, unit, interpolation)` | `int, numeric vector, string, string` | `numeric vector` | interpolation param v4.8.22 |
 | `get_mean(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` | |
 | `get_standard_deviation(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` | |
 | `get_quantile(formant_number, quantile, from_time, to_time, unit)` | `int, double, double, double, string` | `numeric` | |
@@ -3504,7 +3580,8 @@ options(speaker.use_simd = FALSE)
 
 | Method | Parameters | Return | Notes |
 |--------|------------|--------|-------|
-| `get_value_at_time(time, interpolate)` | `double, string` | `numeric` | interpolate: "nearest", "linear", "cubic" |
+| `get_value_at_time(time, interpolation)` | `double, string` | `numeric` | interpolation: "nearest", "linear", "cubic" |
+| `get_values_at_times(times, interpolation)` | `numeric vector, string` | `numeric vector` | Batch query (v4.8.22) |
 | `get_mean(from_time, to_time, averaging_method)` | `double, double, string` | `numeric` | |
 | `get_minimum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
 | `get_maximum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
@@ -3753,6 +3830,10 @@ if (is.na(f0)) {
 
 # Formant returns NA for missing formants
 f5 <- formant$get_value_at_time(formant_number = 5, time = 1.0, unit = "hertz")
+
+# NaN/NA inputs safely return NA (v4.8.22+) — no need to pre-filter
+ltas$get_value_at_frequency(NaN)                # returns NA
+intensity$get_values_at_times(c(0.1, NaN, 0.3)) # returns c(val, NA, val)
 ```
 
 ### 6. Invalid Pointer Access

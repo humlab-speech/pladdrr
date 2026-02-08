@@ -62,42 +62,66 @@ public:
     // Query methods
     double get_value_at_time(double time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_SCALAR(time);
         return Sampled_getValueAtX(ptr.get(), time, 1, 0, interpolation);
     }
 
     double get_mean(double from_time, double to_time, int averaging_method) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Intensity_getAverage(ptr.get(), from_time, to_time, averaging_method);
     }
 
     double get_minimum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_maximum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_time_of_minimum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getXOfMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_time_of_maximum(double from_time, double to_time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getXOfMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation)interpolation);
     }
 
     double get_standard_deviation(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
         return Vector_getStandardDeviation(ptr.get(), from_time, to_time, 1);
     }
 
     double get_quantile(double from_time, double to_time, double quantile) {
         VALIDATE_PTR(ptr, Intensity);
+        GUARD_NAN_RANGE(from_time, to_time);
+        GUARD_NAN_SCALAR(quantile);
         return Intensity_getQuantile(ptr.get(), from_time, to_time, quantile);
+    }
+
+    // ========================================================================
+    // Batch Time Queries
+    // ========================================================================
+
+    NumericVector get_values_at_times(NumericVector times, int interpolation) {
+        VALIDATE_PTR(ptr, Intensity);
+        int n = times.size();
+        NumericVector values(n);
+        for (int i = 0; i < n; i++) {
+            if (ISNAN(times[i])) { values[i] = NA_REAL; continue; }
+            values[i] = Sampled_getValueAtX(ptr.get(), times[i], 1, 0, interpolation);
+        }
+        return values;
     }
 
     // ========================================================================
@@ -270,6 +294,7 @@ RCPP_MODULE(intensity_module) {
         .method("get_standard_deviation", &RIntensity::get_standard_deviation)
         .method("get_quantile", &RIntensity::get_quantile)
         .method("get_statistics", &RIntensity::get_statistics, "Get multiple statistics in one call")
+        .method("get_values_at_times", &RIntensity::get_values_at_times, "Get intensity at multiple times")
         .method("get_times_vector", &RIntensity::get_times_vector, "Get all frame times as vector")
         .method("get_values_vector", &RIntensity::get_values_vector, "Get all intensity values as vector")
         .method("down_to_intensity_tier_ptr", &RIntensity::down_to_intensity_tier_ptr)

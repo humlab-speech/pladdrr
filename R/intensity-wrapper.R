@@ -202,11 +202,16 @@ Intensity <- function(.xptr = NULL) {
       IntensityTier(.xptr = tier_ptr)
     },
     
+    # Batch time queries
+    get_values_at_times = function(times, interpolation = "cubic") {
+      cpp_obj$get_values_at_times(as.numeric(times), interpolation_code(interpolation))
+    },
+
     # Direct vector access (faster than as_data_frame when you only need one column)
     get_times_vector = function() {
       cpp_obj$get_times_vector()
     },
-    
+
     get_values_vector = function() {
       cpp_obj$get_values_vector()
     },

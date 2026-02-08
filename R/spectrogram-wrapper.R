@@ -143,8 +143,13 @@ Spectrogram <- function(.xptr = NULL) {
     },
 
     # Export
-    as_matrix = function() {
-      .spectrogram_as_matrix(.xptr)
+    as_matrix = function(include_dimnames = TRUE) {
+      mat <- .spectrogram_as_matrix(.xptr)
+      if (include_dimnames) {
+        rownames(mat) <- cpp_obj$get_frequencies_vector()
+        colnames(mat) <- cpp_obj$get_times_vector()
+      }
+      mat
     },
     
     as_data_frame = function() {

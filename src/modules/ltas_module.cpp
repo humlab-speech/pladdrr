@@ -57,12 +57,14 @@ public:
 
     int get_bin_from_frequency(double freq) {
         VALIDATE_PTR(ptr, Ltas);
+        if (ISNAN(freq)) return NA_INTEGER;
         return static_cast<int>(Matrix_xToNearestColumn(ptr.get(), freq));
     }
 
     // Query methods
     double get_value_at_frequency(double freq, int interpolation) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_SCALAR(freq);
         return Vector_getValueAtX(ptr.get(), freq, 1, (kVector_valueInterpolation)interpolation);
     }
 
@@ -74,36 +76,45 @@ public:
 
     double get_minimum(double fmin, double fmax, int interpolation) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Vector_getMinimum(ptr.get(), fmin, fmax, (kVector_peakInterpolation)interpolation);
     }
 
     double get_maximum(double fmin, double fmax, int interpolation) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Vector_getMaximum(ptr.get(), fmin, fmax, (kVector_peakInterpolation)interpolation);
     }
 
     double get_frequency_of_minimum(double fmin, double fmax, int interpolation) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Vector_getXOfMinimum(ptr.get(), fmin, fmax, (kVector_peakInterpolation)interpolation);
     }
 
     double get_frequency_of_maximum(double fmin, double fmax, int interpolation) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Vector_getXOfMaximum(ptr.get(), fmin, fmax, (kVector_peakInterpolation)interpolation);
     }
 
     double get_mean(double fmin, double fmax, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Sampled_getMean(ptr.get(), fmin, fmax, 0, averaging_units, true);
     }
 
     double get_slope(double f1min, double f1max, double f2min, double f2max, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(f1min, f1max);
+        GUARD_NAN_RANGE(f2min, f2max);
         return Ltas_getSlope(ptr.get(), f1min, f1max, f2min, f2max, averaging_units);
     }
 
     double get_local_peak_height(double env_min, double env_max, double peak_min, double peak_max, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(env_min, env_max);
+        GUARD_NAN_RANGE(peak_min, peak_max);
         return Ltas_getLocalPeakHeight(ptr.get(), env_min, env_max, peak_min, peak_max, averaging_units);
     }
 
@@ -129,6 +140,11 @@ public:
             for (int i = 0; i < n; i++) {
                 double fmin = fmins[i];
                 double fmax = fmaxs[i];
+                if (ISNAN(fmin) || ISNAN(fmax)) {
+                    peak_values[i] = NA_REAL;
+                    peak_frequencies[i] = NA_REAL;
+                    continue;
+                }
                 peak_values[i] = Vector_getMaximum(ptr.get(), fmin, fmax, interp);
                 peak_frequencies[i] = Vector_getXOfMaximum(ptr.get(), fmin, fmax, interp);
             }
@@ -162,6 +178,11 @@ public:
             for (int i = 0; i < n; i++) {
                 double fmin = fmins[i];
                 double fmax = fmaxs[i];
+                if (ISNAN(fmin) || ISNAN(fmax)) {
+                    min_values[i] = NA_REAL;
+                    min_frequencies[i] = NA_REAL;
+                    continue;
+                }
                 min_values[i] = Vector_getMinimum(ptr.get(), fmin, fmax, interp);
                 min_frequencies[i] = Vector_getXOfMinimum(ptr.get(), fmin, fmax, interp);
             }
@@ -188,6 +209,7 @@ public:
 
         try {
             for (int i = 0; i < n; i++) {
+                if (ISNAN(frequencies[i])) { values[i] = NA_REAL; continue; }
                 values[i] = Vector_getValueAtX(ptr.get(), frequencies[i], 1, interp);
             }
         } catch (MelderError) {
@@ -211,6 +233,7 @@ public:
 
         try {
             for (int i = 0; i < n; i++) {
+                if (ISNAN(fmins[i]) || ISNAN(fmaxs[i])) { means[i] = NA_REAL; continue; }
                 means[i] = Sampled_getMean(ptr.get(), fmins[i], fmaxs[i], 0, averaging_units, true);
             }
         } catch (MelderError) {
@@ -223,6 +246,7 @@ public:
 
     double get_standard_deviation(double fmin, double fmax, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
+        GUARD_NAN_RANGE(fmin, fmax);
         return Sampled_getStandardDeviation(ptr.get(), fmin, fmax, 0, averaging_units, true);
     }
 
