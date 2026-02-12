@@ -15,7 +15,8 @@ to_pitch_cc_direct(
   voicing_threshold = 0.45,
   octave_cost = 0.01,
   octave_jump_cost = 0.35,
-  voiced_unvoiced_cost = 0.14
+  voiced_unvoiced_cost = 0.14,
+  max_number_of_candidates = NULL
 )
 }
 \arguments{

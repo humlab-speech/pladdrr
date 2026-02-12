@@ -403,3 +403,31 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) 
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()
 }
+
+#' @describeIn as.data.frame.Pitch Convert PointProcess to data.frame
+#' @param x A PointProcess R6 object
+#' @export
+as.data.frame.PointProcess <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}
+
+#' @describeIn as.data.frame.Pitch Convert TextGrid to data.frame
+#' @param x A TextGrid R6 object
+#' @export
+as.data.frame.TextGrid <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}
+
+#' @describeIn as.data.frame.Pitch Convert MFCC to data.frame
+#' @param x An MFCC R6 object
+#' @export
+as.data.frame.MFCC <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}
+
+#' @describeIn as.data.frame.Pitch Convert LFCC to data.frame
+#' @param x An LFCC R6 object
+#' @export
+as.data.frame.LFCC <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}

@@ -6,17 +6,17 @@
 \usage{
 .calculate_cpps_ultra_cpp(
   sound_xptr,
-  time_averaging_window = 0.01,
-  quefrency_averaging_window = 0.001,
+  time_averaging_window = 0.001,
+  quefrency_averaging_window = 5e-04,
   pitch_floor = 60,
-  pitch_ceiling = 330,
+  pitch_ceiling = 333.3,
   subtract_trend = TRUE,
   time_step = 0.002,
   max_quefrency = 0.05,
   tolerance = 0.05,
   interpolation = 1L,
   tilt_line_quefrency = 0.001,
-  line_type = 2L,
+  line_type = 1L,
   fit_method = 1L,
   pre_emphasis_from = 50,
   max_frequency = 5000
@@ -58,7 +58,6 @@ Single CPPS value in dB
 }
 \description{
 Consolidates PowerCepstrogram creation + CPPS extraction in a single C++ call.
-Eliminates R/C++ boundary crossings and reduces parameter overhead.
-2-3x faster than calculate_cpps_fast() for AVQI applications.
+Multi-threaded smooth parallelized across rows and columns.
 }
 \keyword{internal}

@@ -25,13 +25,13 @@ calculate_cpps_ultra(
 \arguments{
 \item{sound}{Sound object or external pointer}
 
-\item{time_averaging_window}{Time averaging window in seconds (default 0.01)}
+\item{time_averaging_window}{Time averaging window in seconds (default 0.001)}
 
-\item{quefrency_averaging_window}{Quefrency averaging window in seconds (default 0.001)}
+\item{quefrency_averaging_window}{Quefrency averaging window in seconds (default 0.0005)}
 
 \item{pitch_floor}{Minimum F0 in Hz (default 60)}
 
-\item{pitch_ceiling}{Maximum F0 in Hz (default 330)}
+\item{pitch_ceiling}{Maximum F0 in Hz (default 333.3)}
 
 \item{subtract_trend}{Logical, subtract tilt before smoothing (default TRUE)}
 
@@ -45,7 +45,7 @@ calculate_cpps_ultra(
 
 \item{tilt_line_quefrency}{Quefrency for tilt line in seconds (default 0.001)}
 
-\item{line_type}{Trend line type: "straight" or "exponential" (default "exponential")}
+\item{line_type}{Trend line type: "straight" or "exponential" (default "straight")}
 
 \item{fit_method}{Fitting method: "robust", "least_squares", or "robust slow" (default "robust")}
 }
@@ -82,17 +82,11 @@ significantly faster than \code{calculate_cpps_fast()} by:
 \dontrun{
 sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
 
-# Tier 4 Ultra (fastest)
-cpps <- calculate_cpps_ultra(sound, 
-                              time_averaging_window = 0.01,
-                              quefrency_averaging_window = 0.001,
-                              pitch_floor = 60, 
-                              pitch_ceiling = 330)
+# Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
+cpps <- calculate_cpps_ultra(sound)
 
 # Should match calculate_cpps_fast() within 0.01 dB
-cpps_fast <- calculate_cpps_fast(sound,
-                                  time_averaging_window = 0.01,
-                                  quefrency_averaging_window = 0.001)
+cpps_fast <- calculate_cpps_fast(sound)
 all.equal(cpps, cpps_fast, tolerance = 0.01)
 }
 

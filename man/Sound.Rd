@@ -96,7 +96,10 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 \section{Extraction}{
 
 - `extract_channel()` - Extract single channel
-- `extract_part()` - Extract time range
+- `extract_part(from, to, window_shape, relative_width, preserve_times)` - Extract time range with optional windowing
+  * Supports 12 window shapes: rectangular, triangular, parabolic, hanning, hamming,
+    gaussian1-5, kaiser1-2
+  * See \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 }
 
 \section{Modification}{

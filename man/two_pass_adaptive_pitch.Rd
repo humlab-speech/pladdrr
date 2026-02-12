@@ -98,5 +98,6 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 }
 \seealso{
 [to_pitch_cc_direct()], [to_pitch_ac_direct()] for single-pass extraction
-[get_pitch_quantile_direct()] for manual quartile extraction
+[pitch_get_adaptive_range()] for the single-call quartile + range computation
+[get_pitch_quantiles_batch()] for batch quartile extraction
 }

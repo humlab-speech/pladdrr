@@ -4,7 +4,12 @@
 \alias{get_intensity_at_times}
 \title{Batch Query Intensity Values at Multiple Times}
 \usage{
-get_intensity_at_times(intensity, times, interpolate = "cubic")
+get_intensity_at_times(
+  intensity,
+  times,
+  interpolate = "cubic",
+  interpolation = NULL
+)
 }
 \arguments{
 \item{intensity}{An Intensity object}
@@ -12,7 +17,10 @@ get_intensity_at_times(intensity, times, interpolate = "cubic")
 \item{times}{Numeric vector of time points (in seconds)}
 
 \item{interpolate}{Interpolation method: "nearest", "linear", "cubic" (default),
-or "sinc70"}
+or "sinc70". Kept for backward compatibility; prefer `interpolation`.}
+
+\item{interpolation}{Alias for `interpolate` (consistent with R6 method naming).
+When provided, supersedes `interpolate`.}
 }
 \value{
 Numeric vector of intensity values (in dB) at the specified times

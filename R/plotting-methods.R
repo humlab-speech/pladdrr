@@ -950,18 +950,123 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
                          hjust = -0.1, size = 3, color = "red")
     }
   }
-  
+
   # Add garnish
   if (garnish) {
-    p <- p + 
+    p <- p +
       ggplot2::labs(
         title = title,
         x = "Quefrency (s)",
         y = "Power (dB)"
-      ) + 
+      ) +
       ggplot2::theme_minimal()
   }
-  
+
+  p
+}
+
+
+#' Plot TextGrid Annotations
+#'
+#' Visualize tier labels and boundaries as a standalone plot.
+#'
+#' @param x A TextGrid object
+#' @param tier Integer or character specifying which tier to plot (default: all tiers)
+#' @param from_time Start time in seconds (NULL = beginning)
+#' @param to_time End time in seconds (NULL = end)
+#' @param ... Additional arguments (ignored)
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' \dontrun{
+#' tg <- TextGrid("annotations.TextGrid")
+#' plot(tg)
+#' plot(tg, tier = 1)
+#' }
+#'
+#' @export
+plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...) {
+
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required for plotting. Please install it.")
+  }
+
+  if (!inherits(x, "TextGrid")) {
+    stop("x must be a TextGrid object")
+  }
+
+  n_tiers <- x$get_number_of_tiers()
+  if (n_tiers == 0) {
+    warning("TextGrid has no tiers to plot")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+
+  tier_names <- x$get_tier_names()
+
+  # Determine which tiers to plot
+  if (!is.null(tier)) {
+    if (is.character(tier)) {
+      tier_indices <- match(tier, tier_names)
+      tier_indices <- tier_indices[!is.na(tier_indices)]
+    } else {
+      tier_indices <- as.integer(tier)
+    }
+  } else {
+    tier_indices <- seq_len(n_tiers)
+  }
+
+  if (length(tier_indices) == 0) {
+    warning("No matching tiers found")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+
+  # Collect interval data across tiers
+  all_data <- list()
+  for (ti in tier_indices) {
+    intervals <- tryCatch(
+      x$get_all_intervals(ti),
+      error = function(e) NULL
+    )
+    if (!is.null(intervals) && nrow(intervals) > 0) {
+      intervals$tier <- tier_names[ti]
+      intervals$tier_y <- match(ti, tier_indices)
+      all_data[[length(all_data) + 1]] <- intervals
+    }
+  }
+
+  if (length(all_data) == 0) {
+    warning("No interval data found")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+
+  df <- do.call(rbind, all_data)
+
+  # Filter time range
+  if (!is.null(from_time)) df <- df[df$tmax > from_time, ]
+  if (!is.null(to_time)) df <- df[df$tmin < to_time, ]
+
+  df$mid <- (df$tmin + df$tmax) / 2
+
+  p <- ggplot2::ggplot(df) +
+    ggplot2::geom_rect(
+      ggplot2::aes(
+        xmin = .data$tmin, xmax = .data$tmax,
+        ymin = .data$tier_y - 0.4, ymax = .data$tier_y + 0.4
+      ),
+      fill = "grey90", color = "grey50", linewidth = 0.3
+    ) +
+    ggplot2::geom_text(
+      ggplot2::aes(x = .data$mid, y = .data$tier_y, label = .data$text),
+      size = 3, na.rm = TRUE
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = seq_along(tier_indices),
+      labels = tier_names[tier_indices]
+    ) +
+    ggplot2::labs(x = "Time (s)", y = "Tier", title = "TextGrid") +
+    ggplot2::theme_minimal()
+
   p
 }
 

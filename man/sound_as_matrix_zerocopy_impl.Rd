@@ -18,3 +18,4 @@ Numeric matrix with dimensions (n_samples × n_channels)
 Returns Sound data as a matrix (time × channels). For single-channel
 sounds, uses zero-copy. For multi-channel sounds, must copy.
 }
+\keyword{internal}

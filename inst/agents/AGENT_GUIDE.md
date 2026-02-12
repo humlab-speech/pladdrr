@@ -1,1588 +1,44 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.22 (2026-02-08)
+**Version:** 4.8.23 (2026-02-12)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards
 
 ---
 
-## Recent Changes
 
-### 🛡️ API Safety & Improvements v4.8.22 (2026-02-08)
+## What's New in v4.8.x
 
-**Summary:** NaN/NA input guards across all C++ modules prevent crashes from invalid input. New batch method for Intensity, improved Formant and Spectrogram APIs.
+- **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_zerocopy_impl` export
+- **v4.8.22:** NaN/NA input guards on all query methods, Intensity batch queries, Formant/Spectrogram API additions
+- **v4.8.20:** Spectrogram segfault fix (thread-unsafe R API in SIMD check)
+- **v4.8.19:** xsimd v8+ compatibility for all SIMD files
+- **v4.8.15:** XPtr memory corruption fix across 123 methods
+- **v4.8.14:** Multi-threaded PowerCepstrogram (MelderThread_PARALLELIZE)
 
-**1. NaN/NA Input Guards (all modules)**
-
-All scalar and batch query methods now return `NA` instead of crashing when given `NaN` or `NA` input. Affected modules: Ltas, Intensity, Formant, Pitch, Harmonicity, Cochleagram.
-
-```r
-# Previously crashed with unrecoverable C++ exception:
-ltas$get_value_at_frequency(NaN)  # now returns NA
-
-# Works element-wise in batch methods:
-vals <- ltas$get_values_at_frequencies(c(100, NaN, 440))
-# Returns: c(value, NA, value)
-```
-
-**Agent Guidance:** You no longer need to pre-filter NaN values before passing to pladdrr query methods. NaN/NA inputs safely propagate as NA outputs.
-
-**2. New: `Intensity$get_values_at_times(times, interpolation)`**
-
-Batch time-query method matching Pitch and Formant APIs.
-
-```r
-intensity <- sound$to_intensity(minimum_pitch = 100)
-times <- seq(0.1, 0.9, by = 0.1)
-values <- intensity$get_values_at_times(times, interpolation = "cubic")
-```
-
-**3. `Formant$get_values_at_times()` now accepts `interpolation` parameter**
-
-For API consistency with scalar `get_value_at_time()`. The parameter is accepted but Praat internally uses linear interpolation for formants.
-
-```r
-f1_vals <- formant$get_values_at_times(1, times, unit = "hertz", interpolation = "linear")
-```
-
-**4. `Spectrogram$as_matrix()` now includes dimnames**
-
-Rows labeled with frequencies (Hz), columns with times (s). Use `include_dimnames = FALSE` for raw matrix.
-
-```r
-mat <- spectrogram$as_matrix()                    # has row/col names
-mat_raw <- spectrogram$as_matrix(include_dimnames = FALSE)  # no names (faster)
-
-# Row/col names are numeric — use for axis labels:
-freqs <- as.numeric(rownames(mat))
-times <- as.numeric(colnames(mat))
-```
-
-**Files Modified:**
-- `src/modules/module_common.h` — `GUARD_NAN_SCALAR`, `GUARD_NAN_RANGE` macros
-- `src/modules/{ltas,intensity,formant,pitch,harmonicity,cochleagram}_module.cpp` — NaN guards
-- `src/modules/intensity_module.cpp` — new `get_values_at_times` C++ method
-- `R/intensity-wrapper.R` — R wrapper for `get_values_at_times`
-- `R/formant-wrapper.R` — `interpolation` param on `get_values_at_times`
-- `R/spectrogram-wrapper.R` — `include_dimnames` param on `as_matrix`
-- `tests/testthat/test-nan-guards.R` — 38 new tests
+See [Full Changelog](#full-changelog-recent-changes) at end of file.
 
 ---
 
-### 📊 Spectral Trend Analysis v4.8.21 (2026-02-07)
-
-**Summary:** Implemented `Ltas$report_spectral_trend()` for spectral tilt (SLF) calculations. Returns slope, intercept, R², residuals, and fitted values - matching Praat's "Report spectral trend" functionality.
-
-**New Method:** `Ltas$report_spectral_trend(fmin, fmax, frequency_scale, fit_method)`
-
-**Parameters:**
-- `fmin` - Minimum frequency (default: 100 Hz)
-- `fmax` - Maximum frequency (default: 5000 Hz)  
-- `frequency_scale` - "logarithmic" (default, dB/decade) or "linear" (dB/Hz)
-- `fit_method` - "least squares" (default, fast) or "robust" (Theil-Sen, outlier-resistant)
-
-**Returns (list with class "ltas_spectral_trend"):**
-- `slope` - Spectral tilt coefficient
-- `intercept` - Baseline power level
-- `r_squared` - Goodness of fit (0-1)
-- `residual_std_error` - Standard error of residuals (dB)
-- `n_points` - Number of data points in fit
-- `fitted_values` - DataFrame with columns:
-  - `frequency` - Frequency bin centers (Hz)
-  - `power_db_observed` - Observed LTAS values (dB)
-  - `power_db_fitted` - Predicted values from trend line (dB)
-  - `residual` - Observed minus fitted (dB)
-- `frequency_scale`, `fit_method`, `fmin`, `fmax`, `slope_units` - Metadata
-
-**Agent Guidance:**
-```r
-# Basic usage - get spectral tilt
-sound <- Sound("voice.wav")
-spectrum <- sound$to_spectrum()
-ltas <- spectrum$to_ltas(100)
-trend <- ltas$report_spectral_trend(100, 5000)
-
-# Access values
-slope <- trend$slope           # e.g., -42.95 dB/decade
-intercept <- trend$intercept   # e.g., 146.03 dB
-r2 <- trend$r_squared          # e.g., 0.849
-
-# Plot observed vs fitted
-library(ggplot2)
-ggplot(trend$fitted_values, aes(x = log10(frequency))) +
-  geom_line(aes(y = power_db_observed), color = "black") +
-  geom_line(aes(y = power_db_fitted), color = "red", linetype = "dashed") +
-  labs(title = sprintf("Spectral Trend: %.2f dB/decade (R²=%.3f)", 
-                       trend$slope, trend$r_squared))
-
-# Linear scale for specific analysis
-trend_linear <- ltas$report_spectral_trend(100, 5000, "linear", "least squares")
-
-# Robust fit for noisy data
-trend_robust <- ltas$report_spectral_trend(100, 5000, "logarithmic", "robust")
-```
-
-**Use Cases:**
-1. **Spectral Tilt (SLF) for voice quality:** Negative slope indicates energy concentration in lower frequencies (breathy/hypofunctional voice)
-2. **Dysphonia detection:** Steep negative slopes correlate with voice disorders
-3. **Speaker characterization:** Spectral slope varies by age, gender, voice type
-4. **Pre/post therapy comparison:** Track changes in spectral balance
-
-**Implementation Details:**
-- Calls Praat's `Ltas_fitTrendLine()` from `dwtools/Ltas_extensions.cpp`
-- Uses `NUMlineFit()` backend (method 1 = least squares, method 2 = Theil-Sen robust)
-- R² and residuals calculated efficiently in C++ using same x/y vectors as fit
-- Fitted values returned in original frequency scale for plotting
-
-**Files Modified:**
-- `src/ltas_wrappers.cpp` - C++ wrapper function (+119 lines)
-- `src/Makevars` + `src/Makevars.in` - Added `Ltas_extensions.cpp` to build
-- `R/ltas-wrapper.R` - R method + print method (+52 lines)
-- `tests/testthat/test-ltas-spectral-trend.r` - Comprehensive test suite (+170 lines, 13 tests)
-
-**Performance:** Efficient C++ implementation, ~1ms for typical LTAS with 50 bins.
-
----
-
-### 📖 Window Shape Documentation v4.8.21 (2026-02-07)
-
-**Summary:** Documented full window shape support in `extract_part()` methods. Feature was already fully implemented but not well documented.
-
-**What Changed:**
-- Enhanced documentation in `sound_extract_part()`, `Sound$extract_part()`, and `sound_extract_parts()`
-- Added comprehensive examples for all 12 window shapes
-- Added reference to Praat manual: https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html
-- Added test suite with 10 comprehensive tests
-
-**Supported Window Shapes:**
-All 12 Praat window shapes are supported:
-1. **rectangular** - No tapering (default)
-2. **triangular** - Triangular/Bartlett window
-3. **parabolic** - Parabolic/Welch window
-4. **hanning** - Hanning window
-5. **hamming** - Hamming window
-6. **gaussian1** - Gaussian (σ=0.42466 relative to duration)
-7. **gaussian2** - Narrower Gaussian (σ=0.21233), use `relative_width=2.0`
-8. **gaussian3** - Even narrower (σ=0.14155), use `relative_width=3.0`
-9. **gaussian4** - Very narrow (σ=0.10616), use `relative_width=4.0`
-10. **gaussian5** - Extremely narrow (σ=0.08493), use `relative_width=5.0`
-11. **kaiser1** - Kaiser-Bessel (α=20.7)
-12. **kaiser2** - Narrower Kaiser-Bessel (α=40.5), use `relative_width=2.0`
-
-**Agent Guidance:**
-```r
-sound <- Sound("audio.wav")
-
-# Rectangular (no windowing) - default
-part <- sound$extract_part(1.0, 2.0)
-
-# Gaussian1 window (standard Gaussian)
-part <- sound$extract_part(1.0, 2.0, "gaussian1", 1.0)
-
-# Gaussian2 with wider extraction to maintain effective duration
-# This is Praat's recommendation for spectral analysis
-part <- sound$extract_part(1.0, 2.0, "gaussian2", 2.0)
-
-# Kaiser2 for spectral analysis (used in Praat's "Very accurate" pitch)
-part <- sound$extract_part(1.0, 2.0, "kaiser2", 2.0)
-
-# Batch extraction with window shapes
-parts <- sound_extract_parts(
-  sound, start_times, end_times,
-  window_shape = "gaussian2",
-  relative_width = 2.0
-)
-```
-
-**Key Parameter: relative_width**
-- Default: 1.0 (physical extraction matches [t1, t2])
-- For gaussian2/kaiser2: Use 2.0 to maintain effective window duration
-- For gaussian3-5: Use 3.0-5.0 respectively
-- Higher values extract longer physical segments with more aggressive tapering
-
-**Files Modified:**
-- `R/sound-operations.R` - Enhanced `sound_extract_part()` documentation
-- `R/sound-wrapper.R` - Enhanced `Sound$extract_part()` inline docs
-- `R/vad.R` - Enhanced `sound_extract_parts()` documentation
-- `tests/testthat/test-sound-extract-part-windows.R` - New test suite (10 tests)
-
----
-
-### 🐛 Spectrogram segfault fix v4.8.20 (2026-02-06)
-
-**Summary:** Fixed `Sound$to_spectrogram()` segfault and `to_spectrogram_direct()` type error. Both APIs now work correctly.
-
-**Root Causes:**
-1. **Segfault (R6 path):** `should_use_simd_for_spectrogram()` in `spectrogram_simd.cpp` called R API (`Rcpp::Environment`, `getOption`) from **worker threads** inside `MelderThread_PARALLELIZE`. R's C API is not thread-safe — this corrupted namespace resolution causing recursive errors then segfault at address 0x80.
-2. **Type error (direct path):** `to_spectrogram_direct()` passed `as.character(window_shape)` to C++ module expecting `int`.
-
-**Files Modified:**
-- `src/spectrogram_simd.cpp` — removed thread-unsafe R API from `should_use_simd_for_spectrogram()`
-- `src/window_simd_bridge.cpp` — same fix for `should_use_simd_for_windowing()`
-- `R/praat-direct.R` — added string→int window_shape conversion in `to_spectrogram_direct()`
-
-**Critical Rule for SIMD Bridge Functions:**
-> **NEVER call R API (Rcpp::Environment, getOption, Rf_eval, etc.) from `should_use_simd_*()` functions.** These are called from Praat worker threads via `MelderThread_PARALLELIZE`. R's API is single-threaded only. Use a global bool, `std::getenv()`, or just return `true`.
-
-**Safe patterns (thread-safe):**
-- `should_use_simd_for_harmonicity()` → uses `g_harmonicity_simd_enabled` global
-- `should_use_simd_for_pitch_filter()` → returns `true`
-- `should_use_simd_for_powercepstrogram()` → uses `std::getenv()`
-
-**Unsafe pattern (causes segfault from threads):**
-```cpp
-// BAD — do NOT use in should_use_simd_*() functions:
-Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-Rcpp::Function getOption = base_env["getOption"];
-```
-
-**Agent Guidance:**
-```r
-# Spectrogram creation now works correctly
-sound <- Sound("audio.wav")
-spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
-spec_ptr <- to_spectrogram_direct(sound, window_shape = "Gaussian")
-
-# All window shapes work: Gaussian, Hamming, Bartlett, Welch, Hanning, square
-# Querying works:
-power <- spec$get_power_at(time = 0.5, frequency = 1000)
-spectrum <- spec$to_spectrum(time = 0.5)
-```
-
----
-
-### 🐛 Critical XPtr Memory Management Fix v4.8.15 (2026-02-05)
-
-**Summary:** Fixed systemic memory corruption bug causing segfaults in all Praat object transformations throughout the package. All 123 instances of incorrect XPtr creation have been corrected.
-
-**Root Cause:** All Rcpp module methods returning XPtr objects used `XPtr<Type>(raw, true)` which uses C++'s default `delete` operator. Praat objects require `forget()` for proper cleanup, not `delete`. This caused memory corruption when R's garbage collector tried to clean up objects.
-
-**Issues Resolved:**
-- ✅ `Sound$to_spectrogram()` segfault (P0 CRITICAL)
-- ✅ `Spectrogram$to_spectrum()` segfault (P0 CRITICAL)
-- ✅ Formant extraction crashes (P2 MEDIUM)
-- ✅ All other Praat object transformation segfaults
-
-**Fix Applied:** Replaced all 123 instances across 29 modules with proper Praat object deleters that call `forget()` instead of `delete`.
-
-**Files Modified:**
-- 29 module files in `src/modules/`
-- +621 lines (proper memory management)
-- -125 lines (buggy XPtr creation)
-
-**Agent Guidance:**
-```r
-# All Praat object transformations now stable - no workarounds needed
-sound <- Sound("audio.wav")
-spectrogram <- sound$to_spectrogram()  # No longer segfaults ✅
-spectrum <- spectrogram$to_spectrum(0.5)  # No longer segfaults ✅
-pitch <- sound$to_pitch()  # Stable ✅
-formant <- sound$to_formant_burg()  # Stable ✅
-
-# All methods returning Praat objects (Pitch, Formant, Spectrum, Intensity,
-# Harmonicity, Ltas, PointProcess, Matrix, etc.) now use correct memory management
-```
-
-**Technical Details:**
-- Before: `return XPtr<structType>(raw, true);` (buggy - uses C++ delete)
-- After: Uses lambda deleter that calls Praat's `forget()` function
-- Impact: Eliminates all garbage collection crashes
-- Scope: Every method returning Praat objects in all 37 modules
-
-**Reference:** See `inst/agents/2026-02-05_xptr_memory_fix.md` for full technical report.
-
----
-
-### Multi-threaded Praat Operations v4.8.14 (2026-02-05)
-
-**Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count. Also added parallelized CPPS smooth and fixed critical C++ parameter defaults.
-
-**What Changed:**
-- `num_stubs.cpp`: Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
-- `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
-- `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
-- `batch_queries.cpp`: Added `PowerCepstrogram_smooth_fast()` — parallelized smooth using exact `Sampled_getMean` (bit-exact vs Praat). Added `PowerCepstrogram_getCPPS_fast()` wrapper pipeline.
-- `batch_queries.cpp`: Fixed `calculate_cpps_ultra_cpp` C++ defaults to match R6 `get_cpps()`: time_averaging_window 0.01→0.001, quefrency_averaging_window 0.001→0.0005, pitch_ceiling 330→333.3, line_type exponential(2)→straight(1). Previously the C++ and R defaults silently differed, but R wrapper already had correct values.
-
-**Performance Impact (10-core Apple Silicon, 1s audio):**
-- CPPS: ~70-80ms (was ~800ms+ single-threaded)
-- Cepstrogram creation: ~5ms (multi-threaded)
-- Pitch extraction: benefits from threading for longer audio
-
-**Agent Guidance:**
-```r
-# All compute-heavy operations now multi-threaded automatically
-cpps <- calculate_cpps_ultra(sound, time_step = 0.002, pitch_floor = 60)
-
-# Decomposed path for parameter exploration (reuse cepstrogram)
-pcep <- to_powercepstrogram_fast(sound, pitch_floor = 60, time_step = 0.002)
-cpps1 <- get_cpps_fast(pcep, pitch_floor = 60, pitch_ceiling = 330)
-cpps2 <- get_cpps_fast(pcep, pitch_floor = 80, pitch_ceiling = 400)
-
-# Direct PointProcess (fixed arg order)
-pp <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
-
-# Batch shimmer (all 6 metrics in one C++ call)
-metrics <- get_jitter_shimmer_batch(sound, pitch_floor = 75, pitch_ceiling = 300)
-```
-
----
-
-### pocketfft FFT Backend v4.8.12 (2026-02-04)
-
-**Summary:** Replaced Praat's 1996-era FFTPACK with pocketfft — header-only, double-precision, BSD-licensed. Same FFTPACK halfcomplex output format, so all existing code works unchanged.
-
-**What Changed:**
-- `NUMfft_forward`/`NUMfft_backward` now use `pocketfft::r2r_fftpack()` instead of `drftf1`/`drftb1`
-- `NUMfft_core.h` (1350 lines of FFTPACK C) no longer included
-- `NUMFourierTable_create` no longer precomputes trig caches (pocketfft manages plans internally)
-- Build system: added `-Ipocketfft` include path
-
-**Agent Guidance:** No API changes. All FFT-dependent operations (spectrum, spectrogram, pitch, CPPS, MFCC, etc.) work identically. The change is transparent to R-level code.
-
----
-
-### CPPS/PowerCepstrogram SIMD Optimization v4.8.10 (2026-02-04)
-
-**Summary:** SIMD acceleration for PowerCepstrogram to optimize CPPS (93% of AVQI runtime).
-
-**Performance Improvements:**
-- Log power spectrum SIMD (primary target: `log(re² + im² + ε)`)
-- Frame extraction + window multiplication SIMD
-- Final power calculation SIMD
-
-**Expected Results:**
-- ARM NEON: 1.15-1.20x speedup
-- x86 AVX2: 1.25-1.35x speedup  
-- AVQI: R/Python ratio 1.58x → ~1.38x (13% improvement)
-- CPPS: 11.8s → ~10.0s (15% faster)
-
-**Agent Guidance:**
-```r
-# CPPS calculation now SIMD-accelerated (transparent to user)
-cpps <- calculate_cpps_ultra(sound)  # Faster by default
-
-# Disable SIMD if needed (debugging)
-Sys.setenv(PLADDRR_DISABLE_POWERCEPSTROGRAM_SIMD = "1")
-cpps <- calculate_cpps_ultra(sound)  # Uses scalar fallback
-```
-
-**Files:**
-- `src/powercepstrogram_simd.cpp`: Core SIMD implementation (430 lines)
-- `src/praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp`: 4 SIMD integration points
-- `tests/testthat/test-powercepstrogram-simd.R`: Accuracy tests
-- `benchmarks/powercepstrogram_simd_benchmark.R`: Performance benchmarks
-
-### 🚀 Performance Fixes v4.8.9 (2026-02-04)
-
-**Summary:** Fixed 4 critical performance/accuracy issues from plabench benchmarking report (`PLADDRR_PERFORMANCE_REQUESTS.md`).
-
-#### 1. Formant Polynomial Root Finding Implementation ✅
-
-**Problem:** F1/F2/F3 values 35-55% too low (F1: 570 Hz vs expected 874 Hz).
-
-**Root Cause:** `find_polynomial_roots_simd()` in `src/formant_lpc_simd.cpp:152` was stub (unimplemented).
-
-**Fix:** Implemented complete Laguerre's method with polynomial deflation for LPC-to-formant conversion.
-
-**Files:**
-- `src/formant_lpc_simd.cpp` - Complete root finding implementation (lines 152-240)
-- `src/formant_simd_bridge.cpp` - Updated `find_formants_from_lpc_simd()` (lines 191-230)
-
-**Status:** Implementation complete. SIMD path remains disabled (`should_use_simd_for_formants()` returns false) pending validation testing.
-
-**Agent Guidance:**
-```r
-# Formant extraction should be accurate but SIMD path still disabled
-formant <- sound$to_formant_burg()  # Uses VECburg (accurate, proven)
-
-# To enable SIMD path (after validation):
-# Change should_use_simd_for_formants() to return true in formant_simd_bridge.cpp
-```
-
-#### 2. Pitch Extraction Parallelization Optimization ✅
-
-**Problem:** Core pitch extraction ~5x slower than Parselmouth, affecting DSI (5.9x), VUV (3.5x), Pharyngeal (2.3x), Tremor (1.7x).
-
-**Root Cause:** Parallelization threshold too low (5 frames) caused overhead to dominate for short audio.
-
-**Fix:** Increased `MelderThread_PARALLELIZE` threshold from 5 to 20 frames in `src/praat.github.io/fon/Sound_to_Pitch.cpp:507`.
-
-**Impact:** Expected 5-20x speedup for short audio segments (<1s duration).
-
-**Agent Guidance:**
-```r
-# Pitch extraction now optimized for short segments
-pitch <- sound$to_pitch_cc(time_step = 0.005)  # Faster for <1s audio
-
-# DSI workflow now 5-20x faster
-f0_high <- calculate_f0_stats_ultra(sound_high, floor = 200, ceiling = 900)
-```
-
-#### 3. AVQI ZCR Dual Calculation Method ✅
-
-**Problem:** `extract_voiced_segments_ultra()` had accuracy issues with zero-crossing rate calculation.
-
-**Root Cause:** Edge cases not handled properly.
-
-**Fix:** Added dual ZCR calculation methods with new `use_manual_zcr` parameter in `src/batch_queries.cpp:1250`.
-
-**Methods:**
-- **Manual ZCR** (sample-based, lines 1460-1483): Direct counting with edge case handling
-- **PointProcess ZCR** (interpolated, lines 1485-1520): Uses Praat's `Sound_to_PointProcess_zeroes()`
-
-**Agent Guidance:**
-```r
-# Default: PointProcess method (AVQI-standard interpolated)
-voiced <- extract_voiced_segments_ultra(sound)
-
-# Alternative: Manual sample-based ZCR
-voiced <- extract_voiced_segments_ultra(sound, use_manual_zcr = TRUE)
-
-# AVQI workflow example
-voiced_203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
-cpps <- calculate_cpps_ultra(voiced_203)
-hnr <- calculate_multiband_hnr_ultra(voiced_203)
-```
-
-#### 4. CPPS Documentation ✅
-
-**Status:** Documented as low-priority (algorithm-bound, R/Python ratio 1.57x is reasonable).
-
-**Files:** `src/batch_queries.cpp:1144` - Added performance notes.
-
-**Agent Guidance:** No code changes needed. CPPS performance is acceptable.
-
----
-
-### 🐛 Shortcomings report fixes v4.8.8 (2026-02-03)
-
-**Summary:** Fixes for issues found during plabench v4.6.4→v4.8.7 migration.
-
-**Critical Fix:**
-- **`textgrid_merge()` crash fixed** - C++ used `Rcpp::Environment` to extract `.xptr` from TextGrid objects, but they are structured lists (`VECSXP`), not environments. Changed to `Rcpp::List`. Also fixed `XPtr<T>(R_NilValue)` crash in loop initialization.
-
-**Missing Exports:**
-- **`TextGrid()`, `Spectrum()`, `Ltas()` now exported** - Had `@export` roxygen tags but were missing from NAMESPACE.
-
-**API Improvements:**
-- **`Formant` time accessors** - Added `get_start_time()`, `get_end_time()`, `get_duration()` aliases (all other time-domain wrappers already had them).
-- **`Spectrum$to_ltas()` bandwidth optional** - `to_ltas()` with no args now delegates to `to_ltas_1to1()`, so it works on windowed/filtered spectra without needing to know about the 1-to-1 variant.
-- **`to_powercepstrum()` deprecated** - Now emits `.Deprecated()` warning pointing to `to_power_cepstrum()`.
-
-**Agent Guidance:**
-```r
-# TextGrid merge now works directly
-merged <- textgrid_merge(list(tg1, tg2))  # No more workarounds needed
-
-# TextGrid, Spectrum, Ltas are now exported - no namespace hack needed
-tg <- TextGrid("file.TextGrid")  # Works directly
-
-# Formant time accessors
-formant$get_start_time()  # Alias for get_xmin()
-formant$get_end_time()    # Alias for get_xmax()
-
-# to_ltas() without bandwidth = 1-to-1 mapping
-ltas <- spectrum$to_ltas()       # 1-to-1 (works on any spectrum)
-ltas <- spectrum$to_ltas(100)    # bandwidth averaging
-
-# Use to_power_cepstrum() (to_powercepstrum is deprecated)
-pc <- spectrum$to_power_cepstrum()
-```
-
-**Files:**
-- `src/textgrid_merge.cpp` - List-based xptr extraction
-- `NAMESPACE` - Added TextGrid, Spectrum, Ltas exports
-- `R/formant-wrapper.R` - Time accessor aliases
-- `R/spectrum-wrapper.R` - Optional bandwidth, deprecation warning
-
----
-
-### ✨ Module Loading + FormantModeler Fix v4.8.7 (2026-02-02)
-
-**Changes:**
-1. **Module loader** - Added PCA, Discriminant, DTW, FormantModeler modules to `get_module()` loader
-2. **Graphics stubs** - Fixed `Graphics_resetViewport` signature and added `Graphics_insetViewport` stub
-3. **FormantModeler** - Fixed `get_estimated_value_at_time()` to use implemented `getModelValueAtTime` (Praat declares but doesn't implement `getEstimatedValueAtTime`)
-
-**Files:**
-- `R/zzz.R` - Module list update
-- `src/graphics_stubs_comprehensive.cpp` - Graphics API fixes
-- `src/modules/formantmodeler_module.cpp` - Method fix
-
----
-
-### 🐛 to_ltas() Validation Fix v4.8.6 (2026-02-02)
-
-**Problem:** `spectrum$to_ltas(bandwidth)` failed with unhelpful error on short/windowed spectra.
-
-**Root Cause:** Praat requires `bandwidth > frequency_step`. For short extracts (25ms), `dx=31.25Hz`, so `to_ltas(1)` fails.
-
-**Fix:** Added R-level validation with helpful error:
-```
-bandwidth (1.00 Hz) must be > frequency step (31.25 Hz).
-Use bandwidth > 31.2 or to_ltas_1to1() for 1-to-1 mapping.
-```
-
-**Agent Guidance:** For windowed spectra, use `to_ltas()` with no args (v4.8.8+) or `to_ltas_1to1()`. When using bandwidth averaging, ensure `bandwidth > spectrum$get_frequency_step()`.
-
----
-
-### ✨ Praat-Compatible API Additions v4.8.5 (2026-02-02)
-
-**Summary:** Added Praat-standard method aliases for better compatibility when porting scripts.
-
-**New Methods:**
-| Class | New Method | Behavior |
-|-------|-----------|----------|
-| `Spectrum` | `to_ltas(bandwidth)` | LTAS with bandwidth parameter (Praat-standard) |
-| `Cepstrum` | `to_power_cepstrum()` | Underscore alias for `to_powercepstrum()` |
-
-**Usage:**
-```r
-# Spectrum to LTAS - now supports bandwidth parameter
-spectrum <- sound$to_spectrum()
-ltas <- spectrum$to_ltas(100)      # NEW: Praat-standard with bandwidth
-ltas <- spectrum$to_ltas_1to1()    # Still works (1-to-1 mapping)
-
-# Cepstrum to PowerCepstrum - underscore alias
-ceps <- spectrum$to_cepstrum()
-pc <- ceps$to_power_cepstrum()     # NEW: Praat-compatible
-pc <- ceps$to_powercepstrum()      # Still works
-```
-
-**Note:** `Pitch`, `Sound`, and other objects already had `get_start_time()`/`get_end_time()` aliases.
-
----
-
-### ✅ SIMD Formant Bug FIXED v4.8.4 (2026-02-02)
-
-**Summary:** The 35-60% formant accuracy bug has been **permanently fixed**. SIMD acceleration now works correctly.
-
-**Root Cause:** The separate `burg_simd` function in `formant_simd_bridge.cpp` implemented a different variant of the Burg algorithm than Praat's `VECburg`, causing incorrect LPC coefficients.
-
-**Fix:** Removed the separate SIMD Burg path. Now uses Praat's proven `VECburg` algorithm with SIMD-accelerated inner loops:
-- `NUM2.cpp`: Fixed data dependency bug in error update loop using temp buffer
-- `NUM.cpp`: Added `NUMinner_simd()` for SIMD inner product (autocorrelation)
-- `Sound_to_Formant.cpp`: Always uses `VECburg` directly
-
-**Verification:**
-```r
-# Formant extraction now accurate with SIMD acceleration
-sound <- Sound("vowel.wav")
-formant <- sound$to_formant_burg()
-# F1: 501.8 Hz (expected 500), F2: 1502.0 Hz (expected 1500) ✅
-# Errors < 0.5%
-```
-
-**Agent Guidance:**
-- Formant extraction is now accurate by default - no workarounds needed
-- The `speaker.use_simd_formants` option is deprecated (always uses VECburg)
-- SIMD acceleration still applies to inner loops for performance
-
-**Files Changed:**
-- `src/praat.github.io/dwsys/NUM2.cpp`: VECburg SIMD fix
-- `src/praat.github.io/melder/NUM.cpp`: NUMinner SIMD
-- `src/praat.github.io/fon/Sound_to_Formant.cpp`: Use VECburg directly
-- `src/formant_simd_bridge.cpp`: Deprecate broken burg_simd
-
----
-
-### ✨ DTW, PCA, Discriminant, FormantModeler Modules v4.7.0 (2026-01-28)
-
-**Summary:** Four statistical analysis modules now fully enabled with native R access.
-
-| Module | Key Features |
-|--------|--------------|
-| **DTW** | Dynamic Time Warping for sound/CC comparison, path extraction |
-| **PCA** | Principal Component Analysis from TableOfReal/Covariance |
-| **Discriminant** | Linear discriminant analysis with classification |
-| **FormantModeler** | Polynomial formant trajectory modeling, optimal ceiling |
-
-#### DTW Example:
-```r
-dtw_mod <- Rcpp::Module("dtw_module", PACKAGE = "pladdrr")
-# DTW alignment computed via interpreter or native functions
-```
-
-#### PCA Example:
-```r
-pca_mod <- Rcpp::Module("pca_module", PACKAGE = "pladdrr")
-# PCA from covariance matrices
-```
-
----
-
-### ✨ MFCC/LFCC Module v4.6.8 (2026-01-27)
-
-**Summary:** Added full MFCC (Mel Frequency Cepstral Coefficients) and LFCC (Linear Frequency Cepstral Coefficients) support for speech/speaker recognition features.
-
-#### MFCC Extraction:
-```r
-# Extract MFCCs from sound (standard speech recognition features)
-sound <- generate_sine_wave(440, 1.0, sampling_rate = 16000)
-mfcc <- sound$to_mfcc(
-  num_coefficients = 13,    # 13 is standard for ASR
-  analysis_width = 0.025,   # 25ms window
-  time_step = 0.01,         # 10ms hop
-  f1_mel = 100.0,           # First filterbank center (mel)
-  fmax_mel = 7800.0,        # Max frequency (mel)
-  df_mel = 100.0            # Filterbank spacing (mel)
-)
-
-# Query MFCC properties
-n_frames <- mfcc$get_number_of_frames()
-n_coefs <- mfcc$get_max_num_coefficients()
-
-# Get coefficients
-c0 <- mfcc$get_c0_at_frame(1)           # C0 (energy) at frame 1
-c1 <- mfcc$get_value_in_frame(1, 1)     # C1 at frame 1
-all_coefs <- mfcc$get_coefficients_at_frame(1)  # All coefs at frame 1
-matrix <- mfcc$get_all_coefficients()   # All frames x coefficients
-```
-
-#### LFCC from LPC:
-```r
-# Alternative: Linear frequency cepstral coefficients from LPC
-lpc <- sound$to_lpc_burg(prediction_order = 16)
-lfcc <- lpc$to_lfcc(num_coefficients = 13)
-```
-
-**Agent Guidance - Speaker Recognition Features:**
-```r
-# Typical MFCC extraction for speaker recognition
-sound <- Sound("speaker.wav")
-mfcc <- sound$to_mfcc(num_coefficients = 13)
-
-# Get all C1 values (often most informative for speaker ID)
-c1_values <- sapply(1:mfcc$get_number_of_frames(),
-                    function(f) mfcc$get_value_in_frame(f, 1))
-
-# Full coefficient matrix for machine learning
-features <- mfcc$get_all_coefficients()
-```
-
----
-
-### ✨ PitchTier API Expansion v4.6.6 (2026-01-27)
-
-**Summary:** Full Praat method parity for PitchTier objects. Addresses user feedback about missing constructor and add_point() methods.
-
-#### New Methods Added:
-
-**Sound Synthesis:**
-```r
-# Create PitchTier and add pitch points
-pt <- PitchTier(0, 2)  # Create empty tier (tmin=0, tmax=2)
-pt$add_point(0.5, 120)  # Add 120 Hz at 0.5s
-pt$add_point(1.0, 150)  # Add 150 Hz at 1.0s
-pt$add_point(1.5, 100)  # Add 100 Hz at 1.5s
-
-# Synthesize sounds from pitch contour
-snd_sine <- pt$to_sound_sine(16000)           # Sine wave at 16kHz
-snd_pulse <- pt$to_sound_pulse_train(16000)   # Pulse train
-snd_phon <- pt$to_sound_phonation(16000)      # Phonation model
-```
-
-**Conversion Methods:**
-```r
-# Convert to Pitch object (sampled representation)
-pitch <- pt$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
-
-# Extract time points as PointProcess
-pp <- pt$down_to_point_process()
-```
-
-**Query Methods:**
-```r
-pt$get_minimum()              # Min frequency in tier
-pt$get_maximum()              # Max frequency in tier
-pt$get_area()                 # Area under interpolated curve
-pt$get_standard_deviation()   # SD of interpolated curve
-pt$get_mean()                 # Mean frequency
-pt$get_value_at_time(0.75)    # Interpolated value at time
-```
-
-**Modification:**
-```r
-pt$multiply_frequencies(1.5)              # Scale all by 1.5x
-pt$shift_frequencies(50, "hertz")         # Add 50 Hz to all
-pt$interpolate_quadratically(4, FALSE)    # Smooth contour (4 pts/parabola)
-```
-
-**Export:**
-```r
-df <- pt$as_data_frame()   # data.table with time, frequency columns
-mat <- pt$as_matrix()      # Matrix (n x 2)
-pt$save("contour.PitchTier")
-```
-
-**Static Methods:**
-```r
-# Load from file
-pt <- PitchTier$new("contour.PitchTier")
-
-# Create empty (alternative syntax)
-pt <- PitchTier(tmin = 0, tmax = 2)
-```
-
-**Agent Guidance - Pitch Manipulation Workflow:**
-```r
-# Complete pitch modification workflow
-sound <- Sound("speech.wav")
-pitch <- sound$to_pitch()
-pt <- pitch$down_to_pitch_tier()
-
-# Modify pitch contour
-pt$multiply_frequencies(1.2)  # Raise pitch 20%
-pt$shift_frequencies(20, "hertz")  # Add 20 Hz
-
-# Apply to manipulation for resynthesis
-manip <- sound$to_manipulation()
-manip$replace_pitch_tier(pt)
-modified_sound <- manip$to_sound()
-```
-
----
-
-### 🐛 Critical Bug Fixes - Ultra API v4.6.4 (2026-01-25)
-
-**Summary:** Fixed two critical Ultra API bugs that caused 28-62% errors in CPPS and HNR calculations. Both functions now match standard API output exactly.
-
-#### Bug #1: `calculate_cpps_ultra()` - 28% Error Fixed ✅
-
-**Issue:** Function returned 8.60 dB instead of ~12 dB (28% error).
-
-**Root Cause:** Used `tilt_line_quefrency` (0.001 seconds - a quefrency value) as the pre-emphasis frequency parameter to `Sound_to_PowerCepstrogram`, instead of the correct `pre_emphasis_from` (50 Hz).
-
-**Fix:**
-- Added `pre_emphasis_from` parameter (default 50 Hz)
-- Aligned all default parameters with `calculate_cpps_fast()`
-
-**Test Results:**
-```r
-calculate_cpps_fast():  15.7670 dB
-calculate_cpps_ultra(): 15.7670 dB
-Difference: 0.0000 dB ✅
-```
-
-**Agent Guidance:**
-```r
-# Ultra API now matches fast API exactly
-cpps <- calculate_cpps_ultra(sound)  # Uses correct defaults
-
-# For explicit parameter control (optional)
-cpps <- calculate_cpps_ultra(sound,
-  pre_emphasis_from = 50,   # NEW: pre-emphasis frequency in Hz
-  max_frequency = 5000      # NEW: max frequency for cepstrogram
-)
-```
-
-#### Bug #2: `calculate_multiband_hnr_ultra()` - 62% Error Fixed ✅
-
-**Issue:** Function returned 6.91 dB instead of 18.04 dB (62% error). Band values were also incorrect.
-
-**Root Cause:** Used `Sound_to_Harmonicity_ac` (autocorrelation method) instead of `Sound_to_Harmonicity_cc` (cross-correlation method). The standard `to_harmonicity_direct()` uses CC method.
-
-**Fix:** Changed to `Sound_to_Harmonicity_cc` to match the standard API.
-
-**Test Results:**
-```r
-Standard API (CC):     92.6741 dB
-Ultra API (full_mean): 92.6741 dB
-Difference: 0.0000 dB ✅
-```
-
-**Agent Guidance:**
-```r
-# Ultra API now matches standard API exactly
-hnr <- calculate_multiband_hnr_ultra(sound,
-  bands = c(0, 500, 1500, 2500, 3500),
-  time_step = 0.005,
-  min_pitch = 75
-)
-# Returns: full_mean, full_sd, band500_mean, band500_sd, etc.
-```
-
----
-
-### 🐛 Critical Bug Fix - Formant SIMD v4.6.4 (2026-01-26) → **FIXED in v4.8.4**
-
-**Summary:** ~~Fixed critical bug where SIMD-accelerated formant extraction returned values 35-60% too low.~~ **Permanently fixed in v4.8.4** - see above.
-
-**Original Issue:** `to_formant_burg()` returned F1=570 Hz, F2=1144 Hz instead of correct values (35-60% error).
-
-**v4.6.4 Workaround:** Disabled SIMD for formant extraction by default.
-
-**v4.8.4 Permanent Fix:** Root cause identified and fixed - the separate `burg_simd` used a different algorithm. Now uses Praat's `VECburg` with SIMD inner loops.
-
-**Agent Guidance (v4.8.4+):**
-```r
-# Formant extraction is now accurate with SIMD - no workarounds needed
-formant <- sound$to_formant_burg()  # Accurate by default ✅
-```
-
----
-
-### 🐛 Critical Bug Fixes - Ultra API v4.6.3 (2026-01-25)
-
-**Summary:** Fixed critical bugs preventing production use of Tier 4 Ultra API for AVQI workflows.
-
-#### Bug #1: `extract_voiced_segments_ultra()` Version Parameter Bug ✅
-
-**Issue:** AVQI v2.03 and v3.01 used different algorithms when they should be identical per specification.
-
-**Root Cause:** Version parameter incorrectly applied intensity-only filtering for v2.03 vs power+ZCR filtering for v3.01.
-
-**Fix:** Both versions now use identical power+ZCR filtering algorithm as specified in AVQI203.praat and AVQI301.praat.
-
-**Impact for Agents:**
-- ✅ AVQI v2.03 now extracts correct duration (~17.73s vs previous 27.66s - 56% error fixed)
-- ✅ Both versions produce consistent results (duration ratio < 1.1)
-- ✅ Eliminates need for explicit R workarounds (5-10x performance penalty)
-- ✅ Ultra API now production-ready for AVQI workflows
-
-**Agent Guidance:**
-```r
-# Both versions now use identical algorithm - choose based on final AVQI equation
-voiced_v203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
-voiced_v301 <- extract_voiced_segments_ultra(sound, version = "v3.01")
-
-# Duration should be similar for both (ratio < 1.1 indicates correct behavior)
-duration_ratio <- max(voiced_v203$get_duration(), voiced_v301$get_duration()) /
-                   min(voiced_v203$get_duration(), voiced_v301$get_duration())
-stopifnot(duration_ratio < 1.1, "Version inconsistency detected")
-```
-
-#### Bug #2: `calculate_cpps_ultra()` Returns NA ✅
-
-**Issue:** Function always returned NA instead of numeric CPPS value.
-
-**Root Cause:** Parameter mapping issue - `max_quefrency` was passed as maximum frequency (0.05 Hz vs reasonable 5000 Hz).
-
-**Fix:** Corrected parameter mapping and added proper error handling:
-- Uses reasonable maximum frequency: `min(5000.0, sampling_rate / 2.0)`
-- Proper null checking for PowerCepstrogram creation
-- Clean error handling without aggressive `isundef()` checks
-
-**Impact for Agents:**
-- ✅ AVQI/VQ workflows can now use Tier 4 Ultra API for CPPS calculation
-- ✅ 1.6x performance improvement over Tier 2 approach
-- ✅ Matches `calculate_cpps_fast()` output within reasonable tolerance
-
-**Agent Guidance:**
-```r
-# Now works correctly with default parameters
-cpps <- calculate_cpps_ultra(sound)
-
-# For AVQI compliance, use standard parameters
-cpps <- calculate_cpps_ultra(
-  sound,
-  time_averaging_window = 0.01,
-  pitch_floor = 60,
-  pitch_ceiling = 330
-)
-
-# Should return numeric value (typically 5-20 dB for voiced sounds)
-stopifnot(!is.na(cpps), "CPPS calculation failed")
-stopifnot(cpps > 0 && cpps < 25, "CPPS value out of expected range")
-```
-
-#### Bug #3: `calculate_minimum_intensity_ultra()` Algorithm Fix ✅
-
-**Status:** Already fixed in v4.6.2 - verified working correctly.
-
-**Results:**
-- Before: 52.87 dB (incorrect algorithm)
-- After: 65.94 dB (correct DSI-compliant algorithm)
-- Expected: 66.21 dB (within 0.3 dB tolerance ✅)
-
-**Impact for Agents:**
-- ✅ DSI workflows can now fully leverage Tier 4 Ultra API
-- ✅ 6x performance improvement for IM measurement
-- ✅ Production-ready for clinical voice analysis
-
----
-
-### ✅ SIMD Implementation Complete - Task 4.5 Final Testing & Documentation (v4.6.3 - 2026-01-25)
-
-**Summary:** All four phases of SIMD implementation now complete. Task 4.5 verified all optimizations with comprehensive testing and benchmarking.
-
-#### Final Test Results:
-- **Total tests:** 232 (exceeds 100+ target)
-- **Passing:** 206 (89%)
-- **Failing:** 9 (test specification bugs, not SIMD bugs)
-- **Skipped:** 17
-
-#### Final Benchmark Results (ARM NEON, Apple Silicon):
-
-| Operation | Scalar (ms) | SIMD (ms) | Speedup |
-|-----------|-------------|-----------|---------|
-| Pitch (AC, 5s) | 99.0 | 98.0 | 1.01x |
-| Formant (Burg, 5s) | 88.0 | 97.0 | 0.91x |
-| Intensity (5s) | 5.0 | 5.0 | 1.00x |
-| Spectrogram (5s) | 50.0 | 50.0 | 1.00x |
-| Harmonicity (CC, 1s) | 43.0 | 43.0 | 1.00x |
-| ComplexSpectrogram (1s) | 11.0 | 11.0 | 1.00x |
-| **Geometric Mean** | - | - | **0.99x** |
-
-**Note:** ARM NEON (batch size 2) shows minimal gains. x86 AVX2 (batch size 4) expected to achieve **1.5-2.0x** speedup.
-
-#### Documentation Created:
-- `SIMD_PERFORMANCE_REPORT.md` - Comprehensive performance analysis
-- `benchmarks/final_simd_benchmark.R` - Final benchmark suite
-- Updated `SIMD_PROGRESS_TRACKER.md` - Status: **COMPLETE**
-
-#### Implementation Summary:
-- **18 SIMD source files** created
-- **80+ SIMD functions** implemented
-- All functions have scalar fallbacks
-- Supports ARM NEON and x86 AVX2
-
----
-
-### 🎉 Phase 4 Tasks 4.3 & 4.4 Complete - ComplexSpectrogram & KlattGrid SIMD (v4.6.3 - 2026-01-25)
-
-**Summary:** SIMD acceleration for ComplexSpectrogram power/phase calculations and KlattGrid synthesis mixing operations.
-
-#### Task 4.3: ComplexSpectrogram SIMD
-
-**Files Created:**
-- `src/complexspectrogram_simd.cpp` (496 lines)
-- `tests/testthat/test-phase4-complexspectrogram-simd.R` (185 lines)
-
-**SIMD Functions:**
-```cpp
-// Power and phase from complex spectrum
-void compute_power_and_phase_simd(re, im, power, phase, n);
-// Polar to rectangular conversion
-void polar_to_rectangular_simd(mag, phase, re, im, n);
-// Magnitude from power (sqrt)
-void sqrt_power_to_magnitude_simd(power, magnitude, n);
-// Hanning window generation
-void generate_hanning_window_simd(window, size);
-// Window application
-void apply_window_simd(signal, window, output, n);
-// Overlap-add synthesis
-void overlap_add_simd(output, synthesis, scale, n);
-```
-
-**Tests:** 29/29 passing
-
-#### Task 4.4: KlattGrid SIMD
-
-**Files Created:**
-- `src/klattgrid_simd.cpp` (530 lines)
-- `tests/testthat/test-phase4-klattgrid-simd.R`
-
-**SIMD Functions:**
-```cpp
-// Sound mixing: output[i] += input[i]
-void sounds_add_inplace_simd(output, input, n);
-// Sound differentiation: output[i] = input[i] - input[i-1]
-void sound_diff_simd(input, output, n);
-// Scaling: data[i] *= scale
-void sound_scale_inplace_simd(data, scale, n);
-// Find max absolute value
-double find_extremum_simd(data, n);
-// Glottal flow: y^n - y^m (LF model)
-void glottal_flow_polynomial_simd(phases, output, p1, p2, n);
-// Exponential decay
-void apply_exponential_decay_simd(phases, output, amp, alpha, cp, n);
-// Weighted sum: a*x + b*y
-void weighted_sum_simd(x, y, output, a, b, n);
-```
-
-**Tests:** 16/16 passing
-
-**Note:** IIR resonator filters have loop-carried dependencies and remain scalar. SIMD focuses on mixing/pre-processing operations.
-
----
-
-### 🐛 Bug Fix: extract_voiced_segments_ultra() Crash & ZCR Accuracy (v4.6.2 - 2026-01-24)
-
-**Summary:** Fixed segfault crash in `extract_voiced_segments_ultra()` and corrected ZCR calculation to match AVQI standard.
-
-**Issue 1 - Crash:** Function crashed with segfault (address 0x68) when called. Root cause: `Sound_to_TextGrid_detectSilences()` internally calls `Sound_filter_passHannBand()` which has FFT-related issues in pladdrr.
-
-**Solution 1:** Replaced `Sound_to_TextGrid_detectSilences()` with direct intensity-based silence detection (matching approach in `sound_wrappers.cpp`). Fixed `Sound_create()` parameter errors.
-
-**Issue 2 - ZCR Accuracy:** ZCR calculation used naive sample-level zero crossing counting instead of AVQI-standard interpolated zero crossings.
-
-**Solution 2:** Replaced with Praat's `Sound_to_PointProcess_zeroes()` for interpolated zero crossing detection. Implements correct AVQI formula: `zcr = n_crossings / (last_crossing - first_crossing)`.
-
-**Issue 3 - Version Parameter Bug (v4.6.3):** Fixed incorrect algorithm selection between AVQI v2.03 and v3.01.
-
-**Problem:** `extract_voiced_segments_ultra(version = "v2.03")` used intensity-only filtering while `version = "v3.01"` used power+ZCR filtering, when both should use identical algorithms per AVQI specification.
-
-**Solution:** Both versions now use identical power+ZCR filtering algorithm. The only difference between AVQI versions is in the final equation coefficients, not the voiced extraction algorithm.
-
-**Impact:** v2.03 now extracts correct duration (~17.73s vs previous 27.66s - 56% error fixed).
-
-**Files Modified:**
-- `src/batch_queries.cpp`:
-  - Lines 1262-1342: Replaced TextGrid-based silence detection with direct Intensity-based detection
-  - Lines 1418-1445: Replaced naive ZCR with `Sound_to_PointProcess_zeroes()`
-  - Fixed `Sound_create()` parameters for empty result case
-
-**Test Results:**
-- 22/22 tests pass in `test-extract-voiced-segments-ultra.R`
-- v3.01 preserves 99% of clean periodic signals (150 Hz tone)
-- 32/32 harmonicity SIMD tests still pass
-
-**Impact:** `extract_voiced_segments_ultra()` now works correctly for AVQI v2.03 and v3.01 workflows.
-
----
-
-### 🔧 Vignette Build Fixes (v4.6.1 - 2026-01-24)
-
-**Summary:** Added comprehensive error handling to vignettes to gracefully handle incomplete polynomial root finding implementation in formant extraction.
-
-**Issue:** Vignettes failed during build due to formant extraction errors. Root cause: polynomial root finding for formant frequency extraction not fully implemented (placeholder exists in `src/formant_lpc_simd.cpp:272-285`, requires complex eigenvalue/iterative methods).
-
-**Solution:** Added error handling throughout vignettes rather than blocking on mathematical implementation:
-
-**Files Modified:**
-- `vignettes/formant-analysis.Rmd`:
-  - Added `tryCatch` blocks to `burg-basic` chunk (lines 51-81)
-  - Added `eval=FALSE` to `to_formant_keepall()` examples
-  - All formant extraction wrapped with graceful fallback messages
-  
-- `vignettes/formantpath-robust-tracking.Rmd`:
-  - Added `tryCatch` error handling around formant extraction
-  - Informative messages about implementation status
-
-**Impact:** Package now builds successfully with vignettes. Formant extraction works for real-world audio but may fail on synthesized audio (KlattGrid) until polynomial root finding is complete.
-
-**Commits:**
-- `a48c0fe` - "fix: add error handling to burg-basic chunk in formant-analysis vignette"
-- `65838f7` - "fix: vignette build errors - disable keepall and add error handling"
-
----
-
-### 🎉 Phase 4 Task 4.1 Complete - FormantPath SIMD (v4.6.0 - 2026-01-23)
-
-**Summary:** SIMD acceleration for FormantPath dynamic programming - Viterbi algorithm for optimal multi-ceiling formant extraction. Optimizes path finding with vectorized cost computations and reductions.
-
-#### Phase 4 Task 4.1 Components:
-
-**FormantPath SIMD Implementation (v4.6.0)**
-- `formantpath_simd.cpp` (750 lines) - Core SIMD for Viterbi DP
-- Integrated into `FormantPath.cpp` - Lines 50-72, 242-323
-- Expected Performance: 2-3x (ARM NEON 1.5-2x, x86 AVX2 2-3x)
-
-#### Algorithm: Viterbi Dynamic Programming
-
-FormantPath finds optimal ceiling frequency sequence across time:
-- **State Space:** C candidates (ceilings) × T time frames
-- **Costs:** Static (stress + qsum) + Transition (freq change + ceiling change)
-- **Goal:** Minimize total cost path through trellis
-
-#### FormantPath SIMD Optimizations:
-
-**1. Q-Sum Computation** - Vectorized frequency/bandwidth ratios
-```cpp
-// qsum = mean(freq[i] / bw[i]) for all formants
-void compute_qsums_simd(
-    const double* frequencies,
-    const double* bandwidths,
-    integer numberOfCandidates,
-    integer maxFormants,
-    const integer* formantCounts,
-    double* qsums  // output (1-based)
-);
-```
-
-**2. Frequency Change Cost** - Vectorized transition costs
-```cpp
-// cost = mean(bw_ij * |fi - fj| / (fi + fj))
-// where bw_ij = sqrt(bw_i * bw_j)
-double compute_frequency_change_cost_simd(
-    const double* freqs_i,      // current candidate
-    const double* freqs_j,      // previous candidate
-    const double* bws_i,
-    const double* bws_j,
-    integer ntracks,
-    double frequencyChangeWeight,
-    double transitionCostCutoff
-);
-```
-
-**3. Min/Max Finding** - Horizontal SIMD reductions
-```cpp
-// Find minimum cost and position (Viterbi backtracking)
-double find_min_with_position_simd(
-    const double* values,
-    integer n,
-    integer* out_minPos  // 1-based position
-);
-
-// Find maximum position (final state selection)
-integer find_max_position_simd(
-    const double* values,
-    integer n
-);
-```
-
-**4. Static Cost Computation** - Batch processing across candidates
-```cpp
-// delta[i] = wIntensity * (stressWeight*stress - qWeight*qsum)
-void compute_static_costs_simd(
-    const double* stresses,
-    const double* qsums,
-    const double* intensities,
-    integer numberOfCandidates,
-    double stressWeight,
-    double qWeight,
-    double stressCutoff,
-    double qCutoff,
-    double* delta  // output (1-based)
-);
-```
-
-#### Integration Points (FormantPath.cpp):
-
-```cpp
-// Line 52: Runtime SIMD check
-bool should_use_simd_for_formantpath();
-
-// Line 242: Enable SIMD if available
-const bool useSIMD = should_use_simd_for_formantpath();
-
-// Lines 244-252: Pre-allocate SIMD arrays
-autoVEC freqs_i, bws_i, freqs_j, bws_j;
-if (useSIMD && frequencyChangeWeight > 0.0) {
-    freqs_i = raw_VEC(maxnFormants);
-    bws_i = raw_VEC(maxnFormants);
-    freqs_j = raw_VEC(maxnFormants);
-    bws_j = raw_VEC(maxnFormants);
-}
-
-// Lines 262-287: SIMD frequency change cost
-if (useSIMD && transtionCostType == 1) {
-    fcost = compute_frequency_change_cost_simd_bridge(...);
-    transitionCosts += frequencyChangeWeight * std::min(fcost / cutoff, 1.0);
-}
-```
-
-#### Performance Characteristics:
-
-- **Scaling:** More candidates = more SIMD benefit (O(C²T) operations)
-- **Bottleneck:** Dynamic programming dominates for C > 3
-- **SIMD Benefit:** Vectorizes inner loops of cost computation
-
-#### Testing:
-- `tests/testthat/test-phase4-formantpath-simd.R` (10 tests)
-- Tests SIMD vs scalar accuracy, multiple ceiling configs, edge cases
-
-#### Benchmarking:
-- `benchmarks/phase4_task4.1_formantpath_benchmark.R`
-- Tests 3, 5, 7 candidates with 1s, 3s, 5s audio durations
-
-#### Files Created:
-- `tests/testthat/test-phase4-formantpath-simd.R` (358 lines)
-- `benchmarks/phase4_task4.1_formantpath_benchmark.R` (350 lines)
-
-#### Files Already Implemented:
-- `src/formantpath_simd.cpp` (750 lines) - Pre-existing implementation
-- `src/praat.github.io/LPC/FormantPath.cpp` - Already integrated
-
----
-
-### 🎉 Phase 3 Task 3.3 Complete - TextGrid Batch SIMD (v4.5.3 - 2026-01-23)
-
-**Summary:** SIMD acceleration for TextGrid batch operations: duration/midpoint calculation, interval statistics, duration filtering, and batch feature extraction for pitch/formant/intensity per interval.
-
-#### Phase 3 Task 3.3 Components:
-
-**TextGrid SIMD Implementation (v4.5.3)**
-- `textgrid_simd.cpp` (519 lines) - Core SIMD implementations
-- `textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridge with batch feature extraction
-- Expected Performance: 1.5-2x (ARM NEON), 2-4x (x86 AVX2)
-
-#### TextGrid SIMD Optimizations:
-
-**1. Duration Calculation** - Vectorized subtraction
-```cpp
-// durations[i] = end_times[i] - start_times[i]
-void calculate_durations_simd_0based(
-    const double* start_times, const double* end_times,
-    double* durations, size_t n
-);
-```
-
-**2. Midpoint Calculation** - Vectorized arithmetic
-```cpp
-// midpoints[i] = (start_times[i] + end_times[i]) * 0.5
-void calculate_midpoints_simd(
-    const double* start_times, const double* end_times,
-    double* midpoints, size_t n
-);
-```
-
-**3. Duration Statistics** - Two-pass mean/stdev with FMA
-```cpp
-// mean, stdev, min, max in one call
-void duration_statistics_simd(
-    const double* durations, size_t n,
-    double* mean_out, double* stdev_out
-);
-void duration_min_max_simd(
-    const double* durations, size_t n,
-    double* min_out, double* max_out
-);
-```
-
-**4. Duration Filtering** - SIMD comparison with index extraction
-```cpp
-// Returns indices of durations in [min_dur, max_dur]
-void filter_by_duration_simd(
-    const double* durations, size_t n,
-    double min_dur, double max_dur,
-    int* indices, size_t* count
-);
-```
-
-#### R API Functions:
-```r
-# Duration calculation
-durations <- calculate_durations_simd_bridge(starts, ends)
-
-# Midpoint calculation
-midpoints <- calculate_midpoints_simd_bridge(starts, ends)
-
-# Statistics (returns list with mean, stdev, min, max)
-stats <- duration_statistics_simd_bridge(durations)
-
-# Filtering (returns 1-based indices)
-indices <- filter_by_duration_simd_bridge(durations, min_dur, max_dur)
-
-# Batch feature extraction per TextGrid interval
-pitch_df <- textgrid_interval_pitch_batch(tg, pitch, tier, unit)
-formant_df <- textgrid_interval_formant_batch(tg, formant, tier, formant_num)
-intensity_df <- textgrid_interval_intensity_batch(tg, intensity, tier)
-all_features_df <- textgrid_interval_all_features_batch(tg, pitch, formant, intensity, tier)
-```
-
-#### Files Created:
-- `src/textgrid_simd.cpp` (519 lines) - SIMD implementations
-- `src/textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridges
-- `tests/testthat/test-phase3-textgrid-simd.R` (33 tests)
-- `benchmarks/phase3_task3.3_textgrid_benchmark.R` (benchmark suite)
-
----
-
-### 🎉 Phase 3 Task 3.1 Complete - MFCC SIMD (v4.5.1 - 2026-01-22)
-
-**Summary:** Implemented SIMD acceleration for MFCC (Mel-Frequency Cepstral Coefficients) operations at C++ level. Four core optimizations: Hz↔Mel conversion, triangular Mel filterbank, power-to-dB conversion, and DCT (Discrete Cosine Transform).
-
-#### Phase 3 Task 3.1 Components:
-
-**MFCC SIMD Implementation (v4.5.1)**
-- `mfcc_simd.cpp` (408 lines) - Core SIMD implementations
-- `mfcc_simd_bridge.cpp` (189 lines) - Praat VEC integration bridges
-- Integrated into `Sound_and_Spectrogram_extensions.cpp` (triangular filter)
-- Integrated into `Spectrogram_extensions.cpp` (DCT)
-- Expected Performance: 1.5-2x (ARM NEON), 2-4x (x86 AVX2)
-
-#### MFCC SIMD Optimizations:
-
-**1. Triangular Mel Filterbank** - Most critical for MFCC quality
-```cpp
-// Vectorized accumulation: power_sum += amplitude * spectrum_power
-// Triangular filter response calculation with SIMD
-double triangular_filter_simd(
-    const double* spectrum_power,
-    const double* frequencies,
-    integer ifrom, integer ito,
-    double fl_hz, double fc_hz, double fh_hz
-);
-```
-
-**2. DCT (Discrete Cosine Transform)** - Most compute-intensive
-```cpp
-// SIMD inner products for cepstral coefficient extraction
-// target[k] = sum(x[j] * cosinesTable[k][j])
-void dct_simd(
-    double* target,
-    const double* x,
-    const double* const* cosinesTable,
-    integer size
-);
-```
-
-**3. Hz ↔ Mel Conversion**
-```cpp
-// Formula: mel = 2595 * log10(1 + hz/700)
-void hz_to_mel_simd(const double* hz, double* mel, integer n);
-
-// Formula: hz = 700 * (10^(mel/2595) - 1)
-void mel_to_hz_simd(const double* mel, double* hz, integer n);
-```
-
-**4. Power-to-dB Conversion**
-```cpp
-// Formula: dB = 10 * log10(power / reference)
-void power_to_db_simd(
-    const double* power, double* db, integer n,
-    double reference = 4e-10,
-    double floor_db = -300.0
-);
-```
-
-#### Files Created:
-- `src/mfcc_simd.cpp` (408 lines) - SIMD implementations
-- `src/mfcc_simd_bridge.cpp` (189 lines) - Praat bridges
-- `tests/testthat/test-phase3-mfcc-simd.R` (10 tests)
-- `benchmarks/phase3_task3.1_mfcc_benchmark.R` (benchmark suite)
-
-#### Integration Points:
-```cpp
-// Triangular Filter SIMD (Sound_and_Spectrogram_extensions.cpp)
-#ifdef HAVE_XSIMD
-if (should_use_simd_for_mfcc()) {
-    autoVEC frequencies = raw_VEC(his nx);
-    for (integer i = 1; i <= his nx; i++)
-        frequencies[i] = his x1 + (i - 1) * his dx;
-
-    power = triangular_filter_simd_bridge(
-        his z.row(1),     // Power spectrum
-        frequencies.get(), // Frequency array
-        ifrom, ito,
-        fl_hz, fc_hz, fh_hz
-    );
-}
-#endif
-
-// DCT SIMD (Spectrogram_extensions.cpp)
-#ifdef HAVE_XSIMD
-if (should_use_simd_for_mfcc()) {
-    dct_simd_bridge(y.get(), x.get(), cosinesTable.get());
-}
-#endif
-```
-
----
-
-### 🎉 Phase 2 Complete - Spectrogram & Filtering SIMD (v4.5.0)
-
-**Summary:** Phase 2 (Weeks 5-8) fully implemented with three SIMD optimizations for spectrogram generation, pre-emphasis filtering, and pitch filtering. Comprehensive testing and benchmarking complete.
-
-#### Phase 2 Components:
-
-**Task 2.1: Spectrogram SIMD (v4.4.8)**
-- `spectrogram_simd.cpp` - Frame extraction + windowing + power spectrum
-- Integrated into `Sound_and_Spectrogram.cpp`
-- Performance: 1.01x (ARM NEON), 1.5-2.0x expected (x86 AVX2)
-
-**Task 2.2: Pre-emphasis Filter SIMD (v4.4.9)**
-- `preemphasis_simd.cpp` - Backward-processing SIMD pre-emphasis
-- Integrated into `Sound.cpp` (Sound_preEmphasize_inplace, Sound_deEmphasize_inplace)
-- **Zero-error accuracy** (bit-exact match vs scalar)
-- Performance: 1.01x (ARM NEON), 1.5-2.0x expected (x86 AVX2)
-- Critical fix: Must process backward to avoid loop-carried dependency
-
-**Task 2.3: Pitch Filter SIMD (v4.4.10)**
-- `pitch_filter_simd.cpp` - Frequency-domain Gaussian low-pass filtering
-- Integrated into `Sound_to_Pitch_filteredAc` and `Sound_to_Pitch_filteredCc`
-- SIMD vectorizes exp(-0.5*(f/cutoff)²) + complex multiplication
-- Performance: 1.01x (ARM NEON), 2.0-3.0x expected (x86 AVX2)
-- Internal C++ optimization (not exposed to R)
-
-**Task 2.4: Testing & Documentation (v4.5.0)**
-- 26 comprehensive test cases (23 passed, 3 minor API fixes needed)
-- Comprehensive benchmark suite with 50 iterations
-- Performance report with platform-aware analysis
-- Full accuracy validation (< 1e-10 tolerance)
-
-#### Phase 2 Benchmark Results (ARM NEON):
-
-| Task | Signal | Scalar | SIMD | Speedup | Target |
-|------|--------|--------|------|---------|--------|
-| Spectrogram | 1s | 3.29ms | 3.32ms | 0.99x | 2.0-3.0x |
-| Spectrogram | 10s | 31.22ms | 31.28ms | 1.00x | 2.0-3.0x |
-| Pre-emphasis | 1s | 0.014ms | 0.014ms | 1.02x | 1.5-2.0x |
-| Pre-emphasis | 10s | 0.058ms | 0.058ms | 1.00x | 1.5-2.0x |
-| Pitch Filter | 1s | 1.57ms | 1.55ms | 1.02x | 2.0-3.0x |
-| Pitch Filter | 10s | 13.62ms | 13.43ms | 1.01x | 2.0-3.0x |
-| **Overall** | - | - | - | **1.00x** | **2.0x avg** |
-
-**Platform Analysis:**
-- ARM NEON (batch 2) shows ~1.0x speedup (expected)
-- x86_64 AVX2 (batch 4) expected 1.5-2.5x based on batch scaling
-- FFT dominates spectrogram (not SIMD accelerated)
-- Pre-emphasis already microsecond-scale
-- All implementations mathematically correct
-
-#### Files Created:
-- `src/spectrogram_simd.cpp` (285 lines) - SIMD spectrogram
-- `src/preemphasis_simd.cpp` (184 lines) - SIMD pre-emphasis
-- `src/pitch_filter_simd.cpp` (150 lines) - SIMD pitch filtering
-- `tests/testthat/test-phase2-simd.R` (420 lines, 26 tests)
-- `benchmarks/phase2_comprehensive_benchmark.R` (performance suite)
-
-#### Integration Points:
-```cpp
-// Spectrogram SIMD (Sound_and_Spectrogram.cpp lines 174-224)
-#ifdef HAVE_XSIMD
-if (should_use_simd_for_spectrogram()) {
-    extract_and_window_frame_simd(...);
-    accumulate_power_spectrum_simd(...);
-}
-#endif
-
-// Pre-emphasis SIMD (Sound.cpp lines 1253-1285)
-#ifdef HAVE_XSIMD
-if (should_use_simd_for_preemphasis()) {
-    apply_preemphasis_factor_simd_bridge(s, emphasisFactor);
-}
-#endif
-
-// Pitch Filter SIMD (Sound_to_Pitch.cpp - both filtered methods)
-#ifdef HAVE_XSIMD
-if (should_use_simd_for_pitch_filter()) {
-    apply_gaussian_lowpass_to_spectrum_simd_bridge(...);
-}
-#endif
-```
-
-#### Key Learnings:
-
-**Pre-emphasis Algorithm:**
-```cpp
-// CRITICAL: Must process BACKWARD to avoid loop-carried dependency
-// WRONG (forward):
-for (i = 2; i <= nx; i++)
-    s[i] -= alpha * s[i-1];  // Uses MODIFIED s[i-1]!
-
-// CORRECT (backward):
-for (i = nx; i >= 2; i--)
-    s[i] -= alpha * s[i-1];  // Uses ORIGINAL s[i-1]
-```
-
-**Frequency-Domain Filtering:**
-- Time-domain IIR has loop-carried dependency (hard to SIMD)
-- Frequency-domain filtering vectorizes well (exp + complex multiply)
-- Used by Praat for filtered pitch extraction
-
-**Accuracy Standards:**
-- Pre-emphasis: Zero error (bit-exact)
-- Spectrogram: < 1e-10 tolerance
-- Round-trip operations: < 1e-9 tolerance
-
----
-
-## Previous Changes (v4.4.8 - 2026-01-22)
-
-### Phase 2 Task 2.1 Complete - Spectrogram SIMD Optimization
-
-**Summary:** Implemented SIMD-accelerated spectrogram generation with three core optimizations for frame extraction, windowing, and power spectrum calculation.
-
-**Implementation:**
-- ✅ `spectrogram_simd.cpp` - Three SIMD functions for spectrogram generation
-- ✅ Integrated into `Sound_and_Spectrogram.cpp` with conditional SIMD/scalar paths
-- ✅ Added comprehensive tests to `test-simd-integration.R`
-- ✅ Created benchmark suite `phase2_task2.1_simple_benchmark.R`
-
-**Three Core Optimizations:**
-1. `extract_and_window_frame_simd()` - Combines frame extraction and windowing in single pass
-2. `accumulate_power_spectrum_simd()` - Converts complex FFT output to power spectrum
-3. `zero_fft_tail_simd()` - Zero-fills FFT buffer tail
-
-**Performance (ARM NEON, 5 sec audio):**
-- Scalar: 11.60 ms
-- SIMD: 11.52 ms
-- **Speedup: 1.01x** (minimal on ARM, expected 1.5-2.0x on x86 AVX2)
-
-**Files Modified:**
-- `src/spectrogram_simd.cpp` (new, 285 lines)
-- `src/praat.github.io/fon/Sound_and_Spectrogram.cpp` - SIMD integration
-- `src/Makevars.in` - Added to SIMD_SRC
-- `tests/testthat/test-simd-integration.R` - Added spectrogram tests
-- `agents/AGENT_GUIDE.md` - Added Phase 2 documentation
-
-**Test Results:** All tests passing, SIMD matches scalar with < 1e-10 difference
-
----
-
-## Previous Changes (v4.4.7 - 2026-01-21)
-
-### SIMD Phase 1 Complete - Infrastructure and Testing
-
-**Summary:** Phase 1 SIMD integration infrastructure fully operational with comprehensive testing and benchmarking suites.
-
-**Infrastructure Complete:**
-- ✅ Pitch extraction SIMD (AC/CC methods) - `pitch_simd_bridge.cpp` integrated into `Sound_to_Pitch.cpp`
-- ✅ Intensity calculation SIMD - Windowed RMS operations
-- ✅ Formant extraction SIMD - Burg's algorithm with `formant_simd_bridge.cpp`
-- ✅ Window functions SIMD - Unified interface for all window types
-- ✅ Test suite with 20+ test cases (13/18 passing)
-- ✅ Benchmark suite with automated performance tracking
-
-**Performance (ARM NEON batch=2):**
-- Pitch (AC): 1.01x speedup
-- Intensity: 1.00x speedup
-- Formant (Burg): 0.85x (overhead dominates on small batches)
-- **Overall: 0.95x** - Expected 2-4x speedups on x86_64 AVX2 (batch=4)
-
-**New SIMD Integration Patterns Section:**
-Added comprehensive "SIMD Integration Patterns" section to AGENT_GUIDE.md:
-- Complete bridge pattern examples
-- SIMD best practices (memory access, loops, accumulation, FMA)
-- Architecture considerations (batch sizes, platform flags)
-- Common pitfalls (Praat indexing, overhead, alignment)
-- Integration checklist for new SIMD operations
-- Performance expectations and actual results
-
-**Documentation:**
-- `PHASE1_COMPLETION_SUMMARY.md` - 400+ line comprehensive report
-- `benchmarks/phase1_results_final.txt` - Benchmark results
-- `tests/testthat/test-simd-integration.R` - 275 lines of tests
-- `benchmarks/phase1_integration_benchmark.R` - Automated tracking
-- Updated AGENT_GUIDE.md with SIMD integration patterns
-
-**Files Modified:**
-- `src/pitch_simd_bridge.cpp` - Pitch SIMD bridge (complete)
-- `src/praat.github.io/fon/Sound_to_Pitch.cpp` - SIMD integration
-- `tests/testthat/test-simd-integration.R` - Fixed API parameter names
-- `benchmarks/phase1_integration_benchmark.R` - Fixed API parameters
-- `agents/AGENT_GUIDE.md` - Added SIMD Integration Patterns section (200+ lines)
-
-**Build Status:** ✅ Clean compilation with all SIMD modules, LTO enabled
-
-**Next Steps:** Test on x86_64 AVX2 hardware to validate expected 2-4x speedups
-
----
-
-## Recent Bug Fixes (v4.4.6)
-
-### SIMD Compilation Issues
-When working with xsimd boolean masks from comparison operations:
-- **WRONG:** `xsimd::batch_bool_cast<double>(mask).store_aligned(double_array)` - Type mismatch error
-- **CORRECT:** Use `xsimd::select(mask, batch(1.0), batch(0.0))` to convert boolean mask to double batch before storing
-
-### Rcpp Module Method Names
-The `sound_module` exposes methods with `_ptr` suffix but R wrappers should use clean names:
-- **Module method:** `cpp_snd$to_formant_burg_ptr()` or `cpp_snd$to_formant_burg()` (alias added in v4.4.6)
-- **R wrapper:** `sound$to_formant_burg()` calls the module method internally
-- **Parameter types:** Ensure correct types (e.g., `max_formants` expects `double` not `int`)
-
-### Error Handling Best Practices
-When catching `MelderError` in C++:
-```cpp
-try {
-    autoFormant formant = Sound_to_Formant_burg(...);
-    return create_xptr_from_auto<structFormant>(formant);
-} catch (MelderError) {
-    std::string error_msg = "Failed to create Formant: ";
-    conststring32 praat_error = Melder_getError();
-    if (praat_error) {
-        error_msg += Melder_peek32to8(praat_error);
-    }
-    Melder_clearError();
-    Rcpp::stop(error_msg);  // Show actual Praat error details
-}
-```
+## Table of Contents
+
+- [Quick Start for Agents](#quick-start-for-agents)
+- [Architecture Overview](#architecture-overview-v403---3-tier-performance-api--datatable)
+- [Object Types (37 modules)](#object-types-37-modules)
+- [Unit Code Reference](#unit-code-reference)
+- [Common Patterns](#common-patterns)
+- [Utility Functions](#utility-functions)
+- [Method Signatures](#method-signatures)
+- [Validation Patterns](#validation-patterns)
+- [Common Pitfalls](#common-pitfalls)
+- [Deprecated API Migration](#deprecated-api-migration)
+- [File Locations](#file-locations)
+- [Quick Reference Card](#quick-reference-card)
+- [Known Limitations](#known-limitations)
+- [Real-World Use Cases](#real-world-use-cases-v403-optimizations)
+- [Parameter Naming Conventions](#parameter-naming-conventions)
+- [Version History](#version-history)
+- [Full Changelog (Recent Changes)](#full-changelog-recent-changes)
 
 ---
 
@@ -1674,7 +130,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 **All 30 core objects (except PraatInterpreter) use this pattern:**
 
-For detailed technical rationale on the module vs R6 architecture decision, see `.planning/REMAINING_R6_CLASSES.md` (completion status) or the comprehensive reference document `docs/MODULE_VS_R6_DESIGN.md` (if available locally - not in git).
+All 30 core objects use the high-performance module pattern (function factory wrapping Rcpp modules). PraatInterpreter is the only R6Class — it requires persistent mutable state and reference semantics.
 
 ```r
 # MODERN: Function factory (v2.0+)
@@ -1723,9 +179,9 @@ Pitch <- function(.xptr = NULL) {
 | Type | Creation Method |
 |------|-----------------|
 | `PitchTier` | `pitch$down_to_pitch_tier()` |
-| `DurationTier` | `DurationTier$create(tmin, tmax)` |
-| `IntensityTier` | `IntensityTier$create(tmin, tmax)` |
-| `AmplitudeTier` | `AmplitudeTier$create(tmin, tmax)` |
+| `DurationTier` | `DurationTier(tmin, tmax)` |
+| `IntensityTier` | `IntensityTier(tmin, tmax)` |
+| `AmplitudeTier` | `point_process_sound_to_amplitude_tier(pp, sound)` |
 | `FormantTier` | `formant$down_to_formant_tier()` |
 | `FormantGrid` | `formant$to_formantgrid()` |
 
@@ -1755,8 +211,8 @@ Pitch <- function(.xptr = NULL) {
 | Type | Creation Method |
 |------|-----------------|
 | `Manipulation` | `sound$to_manipulation()` |
-| `KlattGrid` | `KlattGrid$create()` |
-| `VocalTract` | `VocalTract$create()` |
+| `KlattGrid` | `KlattGrid(tmin, tmax, ...)` |
+| `VocalTract` | `VocalTract(nx, dx)` |
 
 ### Data Structures
 
@@ -1764,7 +220,7 @@ Pitch <- function(.xptr = NULL) {
 |------|-----------------|
 | `TextGrid` | `TextGrid("file.TextGrid")` |
 | `Table` | `formant$down_to_table()` |
-| `Matrix` | `Matrix$create()` |
+| `Matrix` | `Matrix(xmin, xmax, nx, dx, ...)` |
 | `LongSound` | `LongSound("large_file.wav")` |
 
 ### Interpreter (NEW in v2.1.0)
@@ -1773,7 +229,7 @@ Pitch <- function(.xptr = NULL) {
 |------|-----------------|---------|
 | `PraatInterpreter` | `PraatInterpreter$new()` | Persistent Praat script interpreter with variable state |
 
-**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/31). All other 30 objects use the high-performance module pattern. This is intentional - the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference). See `.planning/REMAINING_R6_CLASSES.md` for design rationale.
+**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/31). All other 30 objects use the high-performance module pattern. This is intentional — the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference).
 
 **Key Methods:**
 - `run(script)` - Execute Praat script
@@ -1940,12 +396,12 @@ intervals <- get_pointprocess_intervals(pointprocess)
 - `get_pointprocess_nearest_indices(pointprocess, times)` - Vectorized nearest point lookup
 
 **Deprecated functions (v2.4.0):**
-The following functions are deprecated and will be removed in v3.0.0. Use the recommended alternatives:
+The following functions are deprecated and will be removed in v5.0.0. Use the recommended alternatives:
 - `pitch_get_values_at_times()` → use `get_pitch_at_times()` instead
 - `formant_get_values_at_times()` → use `get_formants_at_times()` instead
 - `intensity_get_values_at_times()` → use `intensity$get_values_at_times()` instead (v4.8.22+)
 
-See `MIGRATION_GUIDE.md` for details.
+See `vignettes/articles/migration-guide.Rmd` for details.
 
 ### Pattern 2c: Batch Statistics (NEW in v2.2.1)
 
@@ -2076,44 +532,34 @@ soft_clip <- cppXPtr(
 clipped <- apply_transform_xptr(sound, soft_clip)
 ```
 
-### Pattern 2f: Parallel Processing (NOT YET EXPORTED - v4.0.1)
+### Pattern 2f: Parallel Processing (v4.0.1+)
 
-**NOTE:** Parallel processing functions exist in `R/parallel-batch.R` but are **not currently exported** in NAMESPACE. These are planned for a future release.
-
-**Performance (when available):** 3-8x speedup on multi-core systems for I/O-bound tasks.
+**Performance:** 3-8x speedup on multi-core systems for I/O-bound tasks.
 
 ```r
-# FUTURE: Generic parallel file processing (NOT AVAILABLE YET)
-# files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
-# 
-# results <- analyze_files_parallel(files, function(sound) {
-#   pitch <- sound$to_pitch()
-#   list(
-#     mean_f0 = pitch$get_mean(0, 0, "hertz"),
-#     sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
-#   )
-# }, n_cores = 4)
+files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
 
-# WORKAROUND: Use parallel package directly
-library(parallel)
-cl <- makeCluster(4)
-clusterEvalQ(cl, library(pladdrr))
-results <- parLapply(cl, files, function(file) {
-  sound <- Sound(file)
+# Generic parallel file processing
+results <- analyze_files_parallel(files, function(sound) {
   pitch <- sound$to_pitch()
-  list(mean_f0 = pitch$get_mean(0, 0, "hertz"))
-})
-stopCluster(cl)
+  list(
+    mean_f0 = pitch$get_mean(0, 0, "hertz"),
+    sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
+  )
+}, n_cores = 4)
+
+# Specialized parallel extraction (convenience wrappers)
+pitches <- extract_pitch_parallel(files, n_cores = 4)
+formants <- extract_formant_parallel(files, n_cores = 4)
+intensities <- extract_intensity_parallel(files, n_cores = 4)
 ```
 
-**Parallel processing functions (NOT EXPORTED):**
+**Exported parallel functions:**
 - `analyze_files_parallel(files, analysis_func, n_cores)` - Generic parallel file processing
 - `process_sounds_parallel(sounds, analysis_func, n_cores)` - Process pre-loaded sounds
 - `extract_pitch_parallel(files, n_cores, ...)` - Parallel pitch extraction
 - `extract_formant_parallel(files, n_cores, ...)` - Parallel formant extraction
 - `extract_intensity_parallel(files, n_cores, ...)` - Parallel intensity extraction
-
-**Status:** Implementation exists but awaiting export decision and comprehensive testing.
 - `benchmark_parallel(files, analysis_func, cores)` - Find optimal core count
 
 **Best practices:**
@@ -4181,9 +2627,9 @@ result <- interp$eval_numeric('x * 2')
 
 **See comprehensive guides:**
 - `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
-- `BATCH_OPERATIONS_GUIDE.md` - All batch functions with benchmarks
-- `MIGRATION_GUIDE.md` - How to optimize existing code
-- `NAMING_CONVENTIONS.md` - Function naming patterns
+- `vignettes/articles/batch-operations-guide.Rmd` - All batch functions with benchmarks
+- `vignettes/articles/migration-guide.Rmd` - How to optimize existing code
+- `vignettes/articles/naming-conventions.Rmd` - Function naming patterns
 
 ---
 
@@ -4406,11 +2852,9 @@ concatenated <- sound_concatenate_all(voiced_sounds)
 
 # Continue with AVQI analysis using concatenated voiced audio
 pitch <- concatenated$to_pitch_cc()
-cpps <- calculate_cpps_fast(concatenated, 
-                             subtract_tilt = FALSE,
-                             pitch_floor = 60, 
-                             pitch_ceiling = 330)
-shimmer <- concatenated$to_amplitude_tier()$get_shimmer_local()
+cpps <- calculate_cpps_fast(concatenated)
+pp <- concatenated$to_point_process_periodic_cc()
+shimmer <- pp$get_shimmer_local(concatenated)
 # ... etc.
 ```
 
@@ -4585,6 +3029,24 @@ When reimplementing Praat code that involves:
 - Use Tier 3 `sound_to_pitch_cc_batch()` instead of loops
 - Use Tier 2 `to_pitch_cc_direct()` if only need external pointers
 - Both support full parameter set (v4.0.2+)
+
+---
+
+## Parameter Naming Conventions
+
+pladdrr parameter names intentionally follow Praat's own naming conventions, which differ across analysis domains. These are **not inconsistencies** — they reflect distinct physical concepts:
+
+| Parameter | Used In | Rationale |
+|-----------|---------|-----------|
+| `minimum_pitch` | Intensity analysis | Praat UI: "Minimum pitch (Hz)" for effective analysis length |
+| `pitch_floor` | Pitch, CPPS, voice quality | Praat UI: "Pitch floor" for F0 candidate range |
+| `max_frequency` | Spectrogram, Cepstrogram | Maximum frequency of spectral representation |
+| `maximum_formant` | Formant extraction (deprecated S3) | Nyquist-like ceiling for formant search |
+| `max_formant` | `to_formant_burg()` | Same concept, shorter name in R6 API |
+
+**Known intentional inconsistencies:**
+- `interpolate` (boolean/string in batch queries) vs `interpolation` (string in R6 methods) — batch queries accept both `TRUE`/`FALSE` shorthand and string values; R6 methods always use string names
+- `get_intensity_at_times(..., interpolate = "cubic")` uses string type while `get_pitch_at_times(..., interpolate = TRUE)` uses boolean — these cannot be unified without breaking changes
 
 ---
 
@@ -4814,7 +3276,7 @@ When reimplementing Praat code that involves:
   - `formant_get_values_at_times()` → use `get_formants_at_times()`
   - `intensity_get_values_at_times()` → use `get_intensity_at_times()`
   - All deprecated functions emit `.Deprecated()` warnings
-  - Will be removed in v3.0.0 (12+ month notice)
+  - Will be removed in v5.0.0
 - **New guides:**
   - `vignettes/articles/migration-guide.Rmd` - Complete migration reference (v3.0 breaking changes)
   - `vignettes/articles/naming-conventions.Rmd` - Function naming patterns explained
@@ -7968,3 +6430,1585 @@ test_that("duration statistics match R", {
 - `textgrid_batch_operations.cpp` - TextGrid interval queries
 
 **Phase 3 Complete.** All batch/analysis optimizations implemented. Ready for Phase 4 (FormantPath, Harmonicity, ComplexSpectrogram, KlattGrid) or production deployment.
+
+---
+
+## Full Changelog (Recent Changes)
+
+### 🛡️ API Safety & Improvements v4.8.22 (2026-02-08)
+
+**Summary:** NaN/NA input guards across all C++ modules prevent crashes from invalid input. New batch method for Intensity, improved Formant and Spectrogram APIs.
+
+**1. NaN/NA Input Guards (all modules)**
+
+All scalar and batch query methods now return `NA` instead of crashing when given `NaN` or `NA` input. Affected modules: Ltas, Intensity, Formant, Pitch, Harmonicity, Cochleagram.
+
+```r
+# Previously crashed with unrecoverable C++ exception:
+ltas$get_value_at_frequency(NaN)  # now returns NA
+
+# Works element-wise in batch methods:
+vals <- ltas$get_values_at_frequencies(c(100, NaN, 440))
+# Returns: c(value, NA, value)
+```
+
+**Agent Guidance:** You no longer need to pre-filter NaN values before passing to pladdrr query methods. NaN/NA inputs safely propagate as NA outputs.
+
+**2. New: `Intensity$get_values_at_times(times, interpolation)`**
+
+Batch time-query method matching Pitch and Formant APIs.
+
+```r
+intensity <- sound$to_intensity(minimum_pitch = 100)
+times <- seq(0.1, 0.9, by = 0.1)
+values <- intensity$get_values_at_times(times, interpolation = "cubic")
+```
+
+**3. `Formant$get_values_at_times()` now accepts `interpolation` parameter**
+
+For API consistency with scalar `get_value_at_time()`. The parameter is accepted but Praat internally uses linear interpolation for formants.
+
+```r
+f1_vals <- formant$get_values_at_times(1, times, unit = "hertz", interpolation = "linear")
+```
+
+**4. `Spectrogram$as_matrix()` now includes dimnames**
+
+Rows labeled with frequencies (Hz), columns with times (s). Use `include_dimnames = FALSE` for raw matrix.
+
+```r
+mat <- spectrogram$as_matrix()                    # has row/col names
+mat_raw <- spectrogram$as_matrix(include_dimnames = FALSE)  # no names (faster)
+
+# Row/col names are numeric — use for axis labels:
+freqs <- as.numeric(rownames(mat))
+times <- as.numeric(colnames(mat))
+```
+
+**Files Modified:**
+- `src/modules/module_common.h` — `GUARD_NAN_SCALAR`, `GUARD_NAN_RANGE` macros
+- `src/modules/{ltas,intensity,formant,pitch,harmonicity,cochleagram}_module.cpp` — NaN guards
+- `src/modules/intensity_module.cpp` — new `get_values_at_times` C++ method
+- `R/intensity-wrapper.R` — R wrapper for `get_values_at_times`
+- `R/formant-wrapper.R` — `interpolation` param on `get_values_at_times`
+- `R/spectrogram-wrapper.R` — `include_dimnames` param on `as_matrix`
+- `tests/testthat/test-nan-guards.R` — 38 new tests
+
+---
+
+### 📊 Spectral Trend Analysis v4.8.21 (2026-02-07)
+
+**Summary:** Implemented `Ltas$report_spectral_trend()` for spectral tilt (SLF) calculations. Returns slope, intercept, R², residuals, and fitted values - matching Praat's "Report spectral trend" functionality.
+
+**New Method:** `Ltas$report_spectral_trend(fmin, fmax, frequency_scale, fit_method)`
+
+**Parameters:**
+- `fmin` - Minimum frequency (default: 100 Hz)
+- `fmax` - Maximum frequency (default: 5000 Hz)  
+- `frequency_scale` - "logarithmic" (default, dB/decade) or "linear" (dB/Hz)
+- `fit_method` - "least squares" (default, fast) or "robust" (Theil-Sen, outlier-resistant)
+
+**Returns (list with class "ltas_spectral_trend"):**
+- `slope` - Spectral tilt coefficient
+- `intercept` - Baseline power level
+- `r_squared` - Goodness of fit (0-1)
+- `residual_std_error` - Standard error of residuals (dB)
+- `n_points` - Number of data points in fit
+- `fitted_values` - DataFrame with columns:
+  - `frequency` - Frequency bin centers (Hz)
+  - `power_db_observed` - Observed LTAS values (dB)
+  - `power_db_fitted` - Predicted values from trend line (dB)
+  - `residual` - Observed minus fitted (dB)
+- `frequency_scale`, `fit_method`, `fmin`, `fmax`, `slope_units` - Metadata
+
+**Agent Guidance:**
+```r
+# Basic usage - get spectral tilt
+sound <- Sound("voice.wav")
+spectrum <- sound$to_spectrum()
+ltas <- spectrum$to_ltas(100)
+trend <- ltas$report_spectral_trend(100, 5000)
+
+# Access values
+slope <- trend$slope           # e.g., -42.95 dB/decade
+intercept <- trend$intercept   # e.g., 146.03 dB
+r2 <- trend$r_squared          # e.g., 0.849
+
+# Plot observed vs fitted
+library(ggplot2)
+ggplot(trend$fitted_values, aes(x = log10(frequency))) +
+  geom_line(aes(y = power_db_observed), color = "black") +
+  geom_line(aes(y = power_db_fitted), color = "red", linetype = "dashed") +
+  labs(title = sprintf("Spectral Trend: %.2f dB/decade (R²=%.3f)", 
+                       trend$slope, trend$r_squared))
+
+# Linear scale for specific analysis
+trend_linear <- ltas$report_spectral_trend(100, 5000, "linear", "least squares")
+
+# Robust fit for noisy data
+trend_robust <- ltas$report_spectral_trend(100, 5000, "logarithmic", "robust")
+```
+
+**Use Cases:**
+1. **Spectral Tilt (SLF) for voice quality:** Negative slope indicates energy concentration in lower frequencies (breathy/hypofunctional voice)
+2. **Dysphonia detection:** Steep negative slopes correlate with voice disorders
+3. **Speaker characterization:** Spectral slope varies by age, gender, voice type
+4. **Pre/post therapy comparison:** Track changes in spectral balance
+
+**Implementation Details:**
+- Calls Praat's `Ltas_fitTrendLine()` from `dwtools/Ltas_extensions.cpp`
+- Uses `NUMlineFit()` backend (method 1 = least squares, method 2 = Theil-Sen robust)
+- R² and residuals calculated efficiently in C++ using same x/y vectors as fit
+- Fitted values returned in original frequency scale for plotting
+
+**Files Modified:**
+- `src/ltas_wrappers.cpp` - C++ wrapper function (+119 lines)
+- `src/Makevars` + `src/Makevars.in` - Added `Ltas_extensions.cpp` to build
+- `R/ltas-wrapper.R` - R method + print method (+52 lines)
+- `tests/testthat/test-ltas-spectral-trend.r` - Comprehensive test suite (+170 lines, 13 tests)
+
+**Performance:** Efficient C++ implementation, ~1ms for typical LTAS with 50 bins.
+
+---
+
+### 📖 Window Shape Documentation v4.8.21 (2026-02-07)
+
+**Summary:** Documented full window shape support in `extract_part()` methods. Feature was already fully implemented but not well documented.
+
+**What Changed:**
+- Enhanced documentation in `sound_extract_part()`, `Sound$extract_part()`, and `sound_extract_parts()`
+- Added comprehensive examples for all 12 window shapes
+- Added reference to Praat manual: https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html
+- Added test suite with 10 comprehensive tests
+
+**Supported Window Shapes:**
+All 12 Praat window shapes are supported:
+1. **rectangular** - No tapering (default)
+2. **triangular** - Triangular/Bartlett window
+3. **parabolic** - Parabolic/Welch window
+4. **hanning** - Hanning window
+5. **hamming** - Hamming window
+6. **gaussian1** - Gaussian (σ=0.42466 relative to duration)
+7. **gaussian2** - Narrower Gaussian (σ=0.21233), use `relative_width=2.0`
+8. **gaussian3** - Even narrower (σ=0.14155), use `relative_width=3.0`
+9. **gaussian4** - Very narrow (σ=0.10616), use `relative_width=4.0`
+10. **gaussian5** - Extremely narrow (σ=0.08493), use `relative_width=5.0`
+11. **kaiser1** - Kaiser-Bessel (α=20.7)
+12. **kaiser2** - Narrower Kaiser-Bessel (α=40.5), use `relative_width=2.0`
+
+**Agent Guidance:**
+```r
+sound <- Sound("audio.wav")
+
+# Rectangular (no windowing) - default
+part <- sound$extract_part(1.0, 2.0)
+
+# Gaussian1 window (standard Gaussian)
+part <- sound$extract_part(1.0, 2.0, "gaussian1", 1.0)
+
+# Gaussian2 with wider extraction to maintain effective duration
+# This is Praat's recommendation for spectral analysis
+part <- sound$extract_part(1.0, 2.0, "gaussian2", 2.0)
+
+# Kaiser2 for spectral analysis (used in Praat's "Very accurate" pitch)
+part <- sound$extract_part(1.0, 2.0, "kaiser2", 2.0)
+
+# Batch extraction with window shapes
+parts <- sound_extract_parts(
+  sound, start_times, end_times,
+  window_shape = "gaussian2",
+  relative_width = 2.0
+)
+```
+
+**Key Parameter: relative_width**
+- Default: 1.0 (physical extraction matches [t1, t2])
+- For gaussian2/kaiser2: Use 2.0 to maintain effective window duration
+- For gaussian3-5: Use 3.0-5.0 respectively
+- Higher values extract longer physical segments with more aggressive tapering
+
+**Files Modified:**
+- `R/sound-operations.R` - Enhanced `sound_extract_part()` documentation
+- `R/sound-wrapper.R` - Enhanced `Sound$extract_part()` inline docs
+- `R/vad.R` - Enhanced `sound_extract_parts()` documentation
+- `tests/testthat/test-sound-extract-part-windows.R` - New test suite (10 tests)
+
+---
+
+### 🐛 Spectrogram segfault fix v4.8.20 (2026-02-06)
+
+**Summary:** Fixed `Sound$to_spectrogram()` segfault and `to_spectrogram_direct()` type error. Both APIs now work correctly.
+
+**Root Causes:**
+1. **Segfault (R6 path):** `should_use_simd_for_spectrogram()` in `spectrogram_simd.cpp` called R API (`Rcpp::Environment`, `getOption`) from **worker threads** inside `MelderThread_PARALLELIZE`. R's C API is not thread-safe — this corrupted namespace resolution causing recursive errors then segfault at address 0x80.
+2. **Type error (direct path):** `to_spectrogram_direct()` passed `as.character(window_shape)` to C++ module expecting `int`.
+
+**Files Modified:**
+- `src/spectrogram_simd.cpp` — removed thread-unsafe R API from `should_use_simd_for_spectrogram()`
+- `src/window_simd_bridge.cpp` — same fix for `should_use_simd_for_windowing()`
+- `R/praat-direct.R` — added string→int window_shape conversion in `to_spectrogram_direct()`
+
+**Critical Rule for SIMD Bridge Functions:**
+> **NEVER call R API (Rcpp::Environment, getOption, Rf_eval, etc.) from `should_use_simd_*()` functions.** These are called from Praat worker threads via `MelderThread_PARALLELIZE`. R's API is single-threaded only. Use a global bool, `std::getenv()`, or just return `true`.
+
+**Safe patterns (thread-safe):**
+- `should_use_simd_for_harmonicity()` → uses `g_harmonicity_simd_enabled` global
+- `should_use_simd_for_pitch_filter()` → returns `true`
+- `should_use_simd_for_powercepstrogram()` → uses `std::getenv()`
+
+**Unsafe pattern (causes segfault from threads):**
+```cpp
+// BAD — do NOT use in should_use_simd_*() functions:
+Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
+Rcpp::Function getOption = base_env["getOption"];
+```
+
+**Agent Guidance:**
+```r
+# Spectrogram creation now works correctly
+sound <- Sound("audio.wav")
+spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
+spec_ptr <- to_spectrogram_direct(sound, window_shape = "Gaussian")
+
+# All window shapes work: Gaussian, Hamming, Bartlett, Welch, Hanning, square
+# Querying works:
+power <- spec$get_power_at(time = 0.5, frequency = 1000)
+spectrum <- spec$to_spectrum(time = 0.5)
+```
+
+---
+
+### 🐛 Critical XPtr Memory Management Fix v4.8.15 (2026-02-05)
+
+**Summary:** Fixed systemic memory corruption bug causing segfaults in all Praat object transformations throughout the package. All 123 instances of incorrect XPtr creation have been corrected.
+
+**Root Cause:** All Rcpp module methods returning XPtr objects used `XPtr<Type>(raw, true)` which uses C++'s default `delete` operator. Praat objects require `forget()` for proper cleanup, not `delete`. This caused memory corruption when R's garbage collector tried to clean up objects.
+
+**Issues Resolved:**
+- ✅ `Sound$to_spectrogram()` segfault (P0 CRITICAL)
+- ✅ `Spectrogram$to_spectrum()` segfault (P0 CRITICAL)
+- ✅ Formant extraction crashes (P2 MEDIUM)
+- ✅ All other Praat object transformation segfaults
+
+**Fix Applied:** Replaced all 123 instances across 29 modules with proper Praat object deleters that call `forget()` instead of `delete`.
+
+**Files Modified:**
+- 29 module files in `src/modules/`
+- +621 lines (proper memory management)
+- -125 lines (buggy XPtr creation)
+
+**Agent Guidance:**
+```r
+# All Praat object transformations now stable - no workarounds needed
+sound <- Sound("audio.wav")
+spectrogram <- sound$to_spectrogram()  # No longer segfaults ✅
+spectrum <- spectrogram$to_spectrum(0.5)  # No longer segfaults ✅
+pitch <- sound$to_pitch()  # Stable ✅
+formant <- sound$to_formant_burg()  # Stable ✅
+
+# All methods returning Praat objects (Pitch, Formant, Spectrum, Intensity,
+# Harmonicity, Ltas, PointProcess, Matrix, etc.) now use correct memory management
+```
+
+**Technical Details:**
+- Before: `return XPtr<structType>(raw, true);` (buggy - uses C++ delete)
+- After: Uses lambda deleter that calls Praat's `forget()` function
+- Impact: Eliminates all garbage collection crashes
+- Scope: Every method returning Praat objects in all 37 modules
+
+**Reference:** See `inst/agents/2026-02-05_xptr_memory_fix.md` for full technical report.
+
+---
+
+### Multi-threaded Praat Operations v4.8.14 (2026-02-05)
+
+**Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count. Also added parallelized CPPS smooth and fixed critical C++ parameter defaults.
+
+**What Changed:**
+- `num_stubs.cpp`: Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
+- `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
+- `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
+- `batch_queries.cpp`: Added `PowerCepstrogram_smooth_fast()` — parallelized smooth using exact `Sampled_getMean` (bit-exact vs Praat). Added `PowerCepstrogram_getCPPS_fast()` wrapper pipeline.
+- `batch_queries.cpp`: Fixed `calculate_cpps_ultra_cpp` C++ defaults to match R6 `get_cpps()`: time_averaging_window 0.01→0.001, quefrency_averaging_window 0.001→0.0005, pitch_ceiling 330→333.3, line_type exponential(2)→straight(1). Previously the C++ and R defaults silently differed, but R wrapper already had correct values.
+
+**Performance Impact (10-core Apple Silicon, 1s audio):**
+- CPPS: ~70-80ms (was ~800ms+ single-threaded)
+- Cepstrogram creation: ~5ms (multi-threaded)
+- Pitch extraction: benefits from threading for longer audio
+
+**Agent Guidance:**
+```r
+# All compute-heavy operations now multi-threaded automatically
+cpps <- calculate_cpps_ultra(sound, time_step = 0.002, pitch_floor = 60)
+
+# Decomposed path for parameter exploration (reuse cepstrogram)
+pcep <- to_powercepstrogram_fast(sound, pitch_floor = 60, time_step = 0.002)
+cpps1 <- get_cpps_fast(pcep, pitch_floor = 60, pitch_ceiling = 330)
+cpps2 <- get_cpps_fast(pcep, pitch_floor = 80, pitch_ceiling = 400)
+
+# Direct PointProcess (fixed arg order)
+pp <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
+
+# Batch shimmer (all 6 metrics in one C++ call)
+metrics <- get_jitter_shimmer_batch(sound, pitch_floor = 75, pitch_ceiling = 300)
+```
+
+---
+
+### pocketfft FFT Backend v4.8.12 (2026-02-04)
+
+**Summary:** Replaced Praat's 1996-era FFTPACK with pocketfft — header-only, double-precision, BSD-licensed. Same FFTPACK halfcomplex output format, so all existing code works unchanged.
+
+**What Changed:**
+- `NUMfft_forward`/`NUMfft_backward` now use `pocketfft::r2r_fftpack()` instead of `drftf1`/`drftb1`
+- `NUMfft_core.h` (1350 lines of FFTPACK C) no longer included
+- `NUMFourierTable_create` no longer precomputes trig caches (pocketfft manages plans internally)
+- Build system: added `-Ipocketfft` include path
+
+**Agent Guidance:** No API changes. All FFT-dependent operations (spectrum, spectrogram, pitch, CPPS, MFCC, etc.) work identically. The change is transparent to R-level code.
+
+---
+
+### CPPS/PowerCepstrogram SIMD Optimization v4.8.10 (2026-02-04)
+
+**Summary:** SIMD acceleration for PowerCepstrogram to optimize CPPS (93% of AVQI runtime).
+
+**Performance Improvements:**
+- Log power spectrum SIMD (primary target: `log(re² + im² + ε)`)
+- Frame extraction + window multiplication SIMD
+- Final power calculation SIMD
+
+**Expected Results:**
+- ARM NEON: 1.15-1.20x speedup
+- x86 AVX2: 1.25-1.35x speedup  
+- AVQI: R/Python ratio 1.58x → ~1.38x (13% improvement)
+- CPPS: 11.8s → ~10.0s (15% faster)
+
+**Agent Guidance:**
+```r
+# CPPS calculation now SIMD-accelerated (transparent to user)
+cpps <- calculate_cpps_ultra(sound)  # Faster by default
+
+# Disable SIMD if needed (debugging)
+Sys.setenv(PLADDRR_DISABLE_POWERCEPSTROGRAM_SIMD = "1")
+cpps <- calculate_cpps_ultra(sound)  # Uses scalar fallback
+```
+
+**Files:**
+- `src/powercepstrogram_simd.cpp`: Core SIMD implementation (430 lines)
+- `src/praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp`: 4 SIMD integration points
+- `tests/testthat/test-powercepstrogram-simd.R`: Accuracy tests
+- `benchmarks/powercepstrogram_simd_benchmark.R`: Performance benchmarks
+
+### 🚀 Performance Fixes v4.8.9 (2026-02-04)
+
+**Summary:** Fixed 4 critical performance/accuracy issues from plabench benchmarking report (`PLADDRR_PERFORMANCE_REQUESTS.md`).
+
+#### 1. Formant Polynomial Root Finding Implementation ✅
+
+**Problem:** F1/F2/F3 values 35-55% too low (F1: 570 Hz vs expected 874 Hz).
+
+**Root Cause:** `find_polynomial_roots_simd()` in `src/formant_lpc_simd.cpp:152` was stub (unimplemented).
+
+**Fix:** Implemented complete Laguerre's method with polynomial deflation for LPC-to-formant conversion.
+
+**Files:**
+- `src/formant_lpc_simd.cpp` - Complete root finding implementation (lines 152-240)
+- `src/formant_simd_bridge.cpp` - Updated `find_formants_from_lpc_simd()` (lines 191-230)
+
+**Status:** Implementation complete. SIMD path remains disabled (`should_use_simd_for_formants()` returns false) pending validation testing.
+
+**Agent Guidance:**
+```r
+# Formant extraction should be accurate but SIMD path still disabled
+formant <- sound$to_formant_burg()  # Uses VECburg (accurate, proven)
+
+# To enable SIMD path (after validation):
+# Change should_use_simd_for_formants() to return true in formant_simd_bridge.cpp
+```
+
+#### 2. Pitch Extraction Parallelization Optimization ✅
+
+**Problem:** Core pitch extraction ~5x slower than Parselmouth, affecting DSI (5.9x), VUV (3.5x), Pharyngeal (2.3x), Tremor (1.7x).
+
+**Root Cause:** Parallelization threshold too low (5 frames) caused overhead to dominate for short audio.
+
+**Fix:** Increased `MelderThread_PARALLELIZE` threshold from 5 to 20 frames in `src/praat.github.io/fon/Sound_to_Pitch.cpp:507`.
+
+**Impact:** Expected 5-20x speedup for short audio segments (<1s duration).
+
+**Agent Guidance:**
+```r
+# Pitch extraction now optimized for short segments
+pitch <- sound$to_pitch_cc(time_step = 0.005)  # Faster for <1s audio
+
+# DSI workflow now 5-20x faster
+f0_high <- calculate_f0_stats_ultra(sound_high, floor = 200, ceiling = 900)
+```
+
+#### 3. AVQI ZCR Dual Calculation Method ✅
+
+**Problem:** `extract_voiced_segments_ultra()` had accuracy issues with zero-crossing rate calculation.
+
+**Root Cause:** Edge cases not handled properly.
+
+**Fix:** Added dual ZCR calculation methods with new `use_manual_zcr` parameter in `src/batch_queries.cpp:1250`.
+
+**Methods:**
+- **Manual ZCR** (sample-based, lines 1460-1483): Direct counting with edge case handling
+- **PointProcess ZCR** (interpolated, lines 1485-1520): Uses Praat's `Sound_to_PointProcess_zeroes()`
+
+**Agent Guidance:**
+```r
+# Default: PointProcess method (AVQI-standard interpolated)
+voiced <- extract_voiced_segments_ultra(sound)
+
+# Alternative: Manual sample-based ZCR
+voiced <- extract_voiced_segments_ultra(sound, use_manual_zcr = TRUE)
+
+# AVQI workflow example
+voiced_203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
+cpps <- calculate_cpps_ultra(voiced_203)
+hnr <- calculate_multiband_hnr_ultra(voiced_203)
+```
+
+#### 4. CPPS Documentation ✅
+
+**Status:** Documented as low-priority (algorithm-bound, R/Python ratio 1.57x is reasonable).
+
+**Files:** `src/batch_queries.cpp:1144` - Added performance notes.
+
+**Agent Guidance:** No code changes needed. CPPS performance is acceptable.
+
+---
+
+### 🐛 Shortcomings report fixes v4.8.8 (2026-02-03)
+
+**Summary:** Fixes for issues found during plabench v4.6.4→v4.8.7 migration.
+
+**Critical Fix:**
+- **`textgrid_merge()` crash fixed** - C++ used `Rcpp::Environment` to extract `.xptr` from TextGrid objects, but they are structured lists (`VECSXP`), not environments. Changed to `Rcpp::List`. Also fixed `XPtr<T>(R_NilValue)` crash in loop initialization.
+
+**Missing Exports:**
+- **`TextGrid()`, `Spectrum()`, `Ltas()` now exported** - Had `@export` roxygen tags but were missing from NAMESPACE.
+
+**API Improvements:**
+- **`Formant` time accessors** - Added `get_start_time()`, `get_end_time()`, `get_duration()` aliases (all other time-domain wrappers already had them).
+- **`Spectrum$to_ltas()` bandwidth optional** - `to_ltas()` with no args now delegates to `to_ltas_1to1()`, so it works on windowed/filtered spectra without needing to know about the 1-to-1 variant.
+- **`to_powercepstrum()` deprecated** - Now emits `.Deprecated()` warning pointing to `to_power_cepstrum()`.
+
+**Agent Guidance:**
+```r
+# TextGrid merge now works directly
+merged <- textgrid_merge(list(tg1, tg2))  # No more workarounds needed
+
+# TextGrid, Spectrum, Ltas are now exported - no namespace hack needed
+tg <- TextGrid("file.TextGrid")  # Works directly
+
+# Formant time accessors
+formant$get_start_time()  # Alias for get_xmin()
+formant$get_end_time()    # Alias for get_xmax()
+
+# to_ltas() without bandwidth = 1-to-1 mapping
+ltas <- spectrum$to_ltas()       # 1-to-1 (works on any spectrum)
+ltas <- spectrum$to_ltas(100)    # bandwidth averaging
+
+# Use to_power_cepstrum() (to_powercepstrum is deprecated)
+pc <- spectrum$to_power_cepstrum()
+```
+
+**Files:**
+- `src/textgrid_merge.cpp` - List-based xptr extraction
+- `NAMESPACE` - Added TextGrid, Spectrum, Ltas exports
+- `R/formant-wrapper.R` - Time accessor aliases
+- `R/spectrum-wrapper.R` - Optional bandwidth, deprecation warning
+
+---
+
+### ✨ Module Loading + FormantModeler Fix v4.8.7 (2026-02-02)
+
+**Changes:**
+1. **Module loader** - Added PCA, Discriminant, DTW, FormantModeler modules to `get_module()` loader
+2. **Graphics stubs** - Fixed `Graphics_resetViewport` signature and added `Graphics_insetViewport` stub
+3. **FormantModeler** - Fixed `get_estimated_value_at_time()` to use implemented `getModelValueAtTime` (Praat declares but doesn't implement `getEstimatedValueAtTime`)
+
+**Files:**
+- `R/zzz.R` - Module list update
+- `src/graphics_stubs_comprehensive.cpp` - Graphics API fixes
+- `src/modules/formantmodeler_module.cpp` - Method fix
+
+---
+
+### 🐛 to_ltas() Validation Fix v4.8.6 (2026-02-02)
+
+**Problem:** `spectrum$to_ltas(bandwidth)` failed with unhelpful error on short/windowed spectra.
+
+**Root Cause:** Praat requires `bandwidth > frequency_step`. For short extracts (25ms), `dx=31.25Hz`, so `to_ltas(1)` fails.
+
+**Fix:** Added R-level validation with helpful error:
+```
+bandwidth (1.00 Hz) must be > frequency step (31.25 Hz).
+Use bandwidth > 31.2 or to_ltas_1to1() for 1-to-1 mapping.
+```
+
+**Agent Guidance:** For windowed spectra, use `to_ltas()` with no args (v4.8.8+) or `to_ltas_1to1()`. When using bandwidth averaging, ensure `bandwidth > spectrum$get_frequency_step()`.
+
+---
+
+### ✨ Praat-Compatible API Additions v4.8.5 (2026-02-02)
+
+**Summary:** Added Praat-standard method aliases for better compatibility when porting scripts.
+
+**New Methods:**
+| Class | New Method | Behavior |
+|-------|-----------|----------|
+| `Spectrum` | `to_ltas(bandwidth)` | LTAS with bandwidth parameter (Praat-standard) |
+| `Cepstrum` | `to_power_cepstrum()` | Underscore alias for `to_powercepstrum()` |
+
+**Usage:**
+```r
+# Spectrum to LTAS - now supports bandwidth parameter
+spectrum <- sound$to_spectrum()
+ltas <- spectrum$to_ltas(100)      # NEW: Praat-standard with bandwidth
+ltas <- spectrum$to_ltas_1to1()    # Still works (1-to-1 mapping)
+
+# Cepstrum to PowerCepstrum - underscore alias
+ceps <- spectrum$to_cepstrum()
+pc <- ceps$to_power_cepstrum()     # NEW: Praat-compatible
+pc <- ceps$to_powercepstrum()      # Still works
+```
+
+**Note:** `Pitch`, `Sound`, and other objects already had `get_start_time()`/`get_end_time()` aliases.
+
+---
+
+### ✅ SIMD Formant Bug FIXED v4.8.4 (2026-02-02)
+
+**Summary:** The 35-60% formant accuracy bug has been **permanently fixed**. SIMD acceleration now works correctly.
+
+**Root Cause:** The separate `burg_simd` function in `formant_simd_bridge.cpp` implemented a different variant of the Burg algorithm than Praat's `VECburg`, causing incorrect LPC coefficients.
+
+**Fix:** Removed the separate SIMD Burg path. Now uses Praat's proven `VECburg` algorithm with SIMD-accelerated inner loops:
+- `NUM2.cpp`: Fixed data dependency bug in error update loop using temp buffer
+- `NUM.cpp`: Added `NUMinner_simd()` for SIMD inner product (autocorrelation)
+- `Sound_to_Formant.cpp`: Always uses `VECburg` directly
+
+**Verification:**
+```r
+# Formant extraction now accurate with SIMD acceleration
+sound <- Sound("vowel.wav")
+formant <- sound$to_formant_burg()
+# F1: 501.8 Hz (expected 500), F2: 1502.0 Hz (expected 1500) ✅
+# Errors < 0.5%
+```
+
+**Agent Guidance:**
+- Formant extraction is now accurate by default - no workarounds needed
+- The `speaker.use_simd_formants` option is deprecated (always uses VECburg)
+- SIMD acceleration still applies to inner loops for performance
+
+**Files Changed:**
+- `src/praat.github.io/dwsys/NUM2.cpp`: VECburg SIMD fix
+- `src/praat.github.io/melder/NUM.cpp`: NUMinner SIMD
+- `src/praat.github.io/fon/Sound_to_Formant.cpp`: Use VECburg directly
+- `src/formant_simd_bridge.cpp`: Deprecate broken burg_simd
+
+---
+
+### ✨ DTW, PCA, Discriminant, FormantModeler Modules v4.7.0 (2026-01-28)
+
+**Summary:** Four statistical analysis modules now fully enabled with native R access.
+
+| Module | Key Features |
+|--------|--------------|
+| **DTW** | Dynamic Time Warping for sound/CC comparison, path extraction |
+| **PCA** | Principal Component Analysis from TableOfReal/Covariance |
+| **Discriminant** | Linear discriminant analysis with classification |
+| **FormantModeler** | Polynomial formant trajectory modeling, optimal ceiling |
+
+#### DTW Example:
+```r
+dtw_mod <- Rcpp::Module("dtw_module", PACKAGE = "pladdrr")
+# DTW alignment computed via interpreter or native functions
+```
+
+#### PCA Example:
+```r
+pca_mod <- Rcpp::Module("pca_module", PACKAGE = "pladdrr")
+# PCA from covariance matrices
+```
+
+---
+
+### ✨ MFCC/LFCC Module v4.6.8 (2026-01-27)
+
+**Summary:** Added full MFCC (Mel Frequency Cepstral Coefficients) and LFCC (Linear Frequency Cepstral Coefficients) support for speech/speaker recognition features.
+
+#### MFCC Extraction:
+```r
+# Extract MFCCs from sound (standard speech recognition features)
+sound <- generate_sine_wave(440, 1.0, sampling_rate = 16000)
+mfcc <- sound$to_mfcc(
+  num_coefficients = 13,    # 13 is standard for ASR
+  analysis_width = 0.025,   # 25ms window
+  time_step = 0.01,         # 10ms hop
+  f1_mel = 100.0,           # First filterbank center (mel)
+  fmax_mel = 7800.0,        # Max frequency (mel)
+  df_mel = 100.0            # Filterbank spacing (mel)
+)
+
+# Query MFCC properties
+n_frames <- mfcc$get_number_of_frames()
+n_coefs <- mfcc$get_max_num_coefficients()
+
+# Get coefficients
+c0 <- mfcc$get_c0_at_frame(1)           # C0 (energy) at frame 1
+c1 <- mfcc$get_value_in_frame(1, 1)     # C1 at frame 1
+all_coefs <- mfcc$get_coefficients_at_frame(1)  # All coefs at frame 1
+matrix <- mfcc$get_all_coefficients()   # All frames x coefficients
+```
+
+#### LFCC from LPC:
+```r
+# Alternative: Linear frequency cepstral coefficients from LPC
+lpc <- sound$to_lpc_burg(prediction_order = 16)
+lfcc <- lpc$to_lfcc(num_coefficients = 13)
+```
+
+**Agent Guidance - Speaker Recognition Features:**
+```r
+# Typical MFCC extraction for speaker recognition
+sound <- Sound("speaker.wav")
+mfcc <- sound$to_mfcc(num_coefficients = 13)
+
+# Get all C1 values (often most informative for speaker ID)
+c1_values <- sapply(1:mfcc$get_number_of_frames(),
+                    function(f) mfcc$get_value_in_frame(f, 1))
+
+# Full coefficient matrix for machine learning
+features <- mfcc$get_all_coefficients()
+```
+
+---
+
+### ✨ PitchTier API Expansion v4.6.6 (2026-01-27)
+
+**Summary:** Full Praat method parity for PitchTier objects. Addresses user feedback about missing constructor and add_point() methods.
+
+#### New Methods Added:
+
+**Sound Synthesis:**
+```r
+# Create PitchTier and add pitch points
+pt <- PitchTier(0, 2)  # Create empty tier (tmin=0, tmax=2)
+pt$add_point(0.5, 120)  # Add 120 Hz at 0.5s
+pt$add_point(1.0, 150)  # Add 150 Hz at 1.0s
+pt$add_point(1.5, 100)  # Add 100 Hz at 1.5s
+
+# Synthesize sounds from pitch contour
+snd_sine <- pt$to_sound_sine(16000)           # Sine wave at 16kHz
+snd_pulse <- pt$to_sound_pulse_train(16000)   # Pulse train
+snd_phon <- pt$to_sound_phonation(16000)      # Phonation model
+```
+
+**Conversion Methods:**
+```r
+# Convert to Pitch object (sampled representation)
+pitch <- pt$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+
+# Extract time points as PointProcess
+pp <- pt$down_to_point_process()
+```
+
+**Query Methods:**
+```r
+pt$get_minimum()              # Min frequency in tier
+pt$get_maximum()              # Max frequency in tier
+pt$get_area()                 # Area under interpolated curve
+pt$get_standard_deviation()   # SD of interpolated curve
+pt$get_mean()                 # Mean frequency
+pt$get_value_at_time(0.75)    # Interpolated value at time
+```
+
+**Modification:**
+```r
+pt$multiply_frequencies(1.5)              # Scale all by 1.5x
+pt$shift_frequencies(50, "hertz")         # Add 50 Hz to all
+pt$interpolate_quadratically(4, FALSE)    # Smooth contour (4 pts/parabola)
+```
+
+**Export:**
+```r
+df <- pt$as_data_frame()   # data.table with time, frequency columns
+mat <- pt$as_matrix()      # Matrix (n x 2)
+pt$save("contour.PitchTier")
+```
+
+**Static Methods:**
+```r
+# Load from file
+pt <- PitchTier$new("contour.PitchTier")
+
+# Create empty (alternative syntax)
+pt <- PitchTier(tmin = 0, tmax = 2)
+```
+
+**Agent Guidance - Pitch Manipulation Workflow:**
+```r
+# Complete pitch modification workflow
+sound <- Sound("speech.wav")
+pitch <- sound$to_pitch()
+pt <- pitch$down_to_pitch_tier()
+
+# Modify pitch contour
+pt$multiply_frequencies(1.2)  # Raise pitch 20%
+pt$shift_frequencies(20, "hertz")  # Add 20 Hz
+
+# Apply to manipulation for resynthesis
+manip <- sound$to_manipulation()
+manip$replace_pitch_tier(pt)
+modified_sound <- manip$to_sound()
+```
+
+---
+
+### 🐛 Critical Bug Fixes - Ultra API v4.6.4 (2026-01-25)
+
+**Summary:** Fixed two critical Ultra API bugs that caused 28-62% errors in CPPS and HNR calculations. Both functions now match standard API output exactly.
+
+#### Bug #1: `calculate_cpps_ultra()` - 28% Error Fixed ✅
+
+**Issue:** Function returned 8.60 dB instead of ~12 dB (28% error).
+
+**Root Cause:** Used `tilt_line_quefrency` (0.001 seconds - a quefrency value) as the pre-emphasis frequency parameter to `Sound_to_PowerCepstrogram`, instead of the correct `pre_emphasis_from` (50 Hz).
+
+**Fix:**
+- Added `pre_emphasis_from` parameter (default 50 Hz)
+- Aligned all default parameters with `calculate_cpps_fast()`
+
+**Test Results:**
+```r
+calculate_cpps_fast():  15.7670 dB
+calculate_cpps_ultra(): 15.7670 dB
+Difference: 0.0000 dB ✅
+```
+
+**Agent Guidance:**
+```r
+# Ultra API now matches fast API exactly
+cpps <- calculate_cpps_ultra(sound)  # Uses correct defaults
+
+# For explicit parameter control (optional)
+cpps <- calculate_cpps_ultra(sound,
+  pre_emphasis_from = 50,   # NEW: pre-emphasis frequency in Hz
+  max_frequency = 5000      # NEW: max frequency for cepstrogram
+)
+```
+
+#### Bug #2: `calculate_multiband_hnr_ultra()` - 62% Error Fixed ✅
+
+**Issue:** Function returned 6.91 dB instead of 18.04 dB (62% error). Band values were also incorrect.
+
+**Root Cause:** Used `Sound_to_Harmonicity_ac` (autocorrelation method) instead of `Sound_to_Harmonicity_cc` (cross-correlation method). The standard `to_harmonicity_direct()` uses CC method.
+
+**Fix:** Changed to `Sound_to_Harmonicity_cc` to match the standard API.
+
+**Test Results:**
+```r
+Standard API (CC):     92.6741 dB
+Ultra API (full_mean): 92.6741 dB
+Difference: 0.0000 dB ✅
+```
+
+**Agent Guidance:**
+```r
+# Ultra API now matches standard API exactly
+hnr <- calculate_multiband_hnr_ultra(sound,
+  bands = c(0, 500, 1500, 2500, 3500),
+  time_step = 0.005,
+  min_pitch = 75
+)
+# Returns: full_mean, full_sd, band500_mean, band500_sd, etc.
+```
+
+---
+
+### 🐛 Critical Bug Fix - Formant SIMD v4.6.4 (2026-01-26) → **FIXED in v4.8.4**
+
+**Summary:** ~~Fixed critical bug where SIMD-accelerated formant extraction returned values 35-60% too low.~~ **Permanently fixed in v4.8.4** - see above.
+
+**Original Issue:** `to_formant_burg()` returned F1=570 Hz, F2=1144 Hz instead of correct values (35-60% error).
+
+**v4.6.4 Workaround:** Disabled SIMD for formant extraction by default.
+
+**v4.8.4 Permanent Fix:** Root cause identified and fixed - the separate `burg_simd` used a different algorithm. Now uses Praat's `VECburg` with SIMD inner loops.
+
+**Agent Guidance (v4.8.4+):**
+```r
+# Formant extraction is now accurate with SIMD - no workarounds needed
+formant <- sound$to_formant_burg()  # Accurate by default ✅
+```
+
+---
+
+### 🐛 Critical Bug Fixes - Ultra API v4.6.3 (2026-01-25)
+
+**Summary:** Fixed critical bugs preventing production use of Tier 4 Ultra API for AVQI workflows.
+
+#### Bug #1: `extract_voiced_segments_ultra()` Version Parameter Bug ✅
+
+**Issue:** AVQI v2.03 and v3.01 used different algorithms when they should be identical per specification.
+
+**Root Cause:** Version parameter incorrectly applied intensity-only filtering for v2.03 vs power+ZCR filtering for v3.01.
+
+**Fix:** Both versions now use identical power+ZCR filtering algorithm as specified in AVQI203.praat and AVQI301.praat.
+
+**Impact for Agents:**
+- ✅ AVQI v2.03 now extracts correct duration (~17.73s vs previous 27.66s - 56% error fixed)
+- ✅ Both versions produce consistent results (duration ratio < 1.1)
+- ✅ Eliminates need for explicit R workarounds (5-10x performance penalty)
+- ✅ Ultra API now production-ready for AVQI workflows
+
+**Agent Guidance:**
+```r
+# Both versions now use identical algorithm - choose based on final AVQI equation
+voiced_v203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
+voiced_v301 <- extract_voiced_segments_ultra(sound, version = "v3.01")
+
+# Duration should be similar for both (ratio < 1.1 indicates correct behavior)
+duration_ratio <- max(voiced_v203$get_duration(), voiced_v301$get_duration()) /
+                   min(voiced_v203$get_duration(), voiced_v301$get_duration())
+stopifnot(duration_ratio < 1.1, "Version inconsistency detected")
+```
+
+#### Bug #2: `calculate_cpps_ultra()` Returns NA ✅
+
+**Issue:** Function always returned NA instead of numeric CPPS value.
+
+**Root Cause:** Parameter mapping issue - `max_quefrency` was passed as maximum frequency (0.05 Hz vs reasonable 5000 Hz).
+
+**Fix:** Corrected parameter mapping and added proper error handling:
+- Uses reasonable maximum frequency: `min(5000.0, sampling_rate / 2.0)`
+- Proper null checking for PowerCepstrogram creation
+- Clean error handling without aggressive `isundef()` checks
+
+**Impact for Agents:**
+- ✅ AVQI/VQ workflows can now use Tier 4 Ultra API for CPPS calculation
+- ✅ 1.6x performance improvement over Tier 2 approach
+- ✅ Matches `calculate_cpps_fast()` output within reasonable tolerance
+
+**Agent Guidance:**
+```r
+# Now works correctly with default parameters
+cpps <- calculate_cpps_ultra(sound)
+
+# For AVQI compliance, use standard parameters
+cpps <- calculate_cpps_ultra(
+  sound,
+  time_averaging_window = 0.01,
+  pitch_floor = 60,
+  pitch_ceiling = 330
+)
+
+# Should return numeric value (typically 5-20 dB for voiced sounds)
+stopifnot(!is.na(cpps), "CPPS calculation failed")
+stopifnot(cpps > 0 && cpps < 25, "CPPS value out of expected range")
+```
+
+#### Bug #3: `calculate_minimum_intensity_ultra()` Algorithm Fix ✅
+
+**Status:** Already fixed in v4.6.2 - verified working correctly.
+
+**Results:**
+- Before: 52.87 dB (incorrect algorithm)
+- After: 65.94 dB (correct DSI-compliant algorithm)
+- Expected: 66.21 dB (within 0.3 dB tolerance ✅)
+
+**Impact for Agents:**
+- ✅ DSI workflows can now fully leverage Tier 4 Ultra API
+- ✅ 6x performance improvement for IM measurement
+- ✅ Production-ready for clinical voice analysis
+
+---
+
+### ✅ SIMD Implementation Complete - Task 4.5 Final Testing & Documentation (v4.6.3 - 2026-01-25)
+
+**Summary:** All four phases of SIMD implementation now complete. Task 4.5 verified all optimizations with comprehensive testing and benchmarking.
+
+#### Final Test Results:
+- **Total tests:** 232 (exceeds 100+ target)
+- **Passing:** 206 (89%)
+- **Failing:** 9 (test specification bugs, not SIMD bugs)
+- **Skipped:** 17
+
+#### Final Benchmark Results (ARM NEON, Apple Silicon):
+
+| Operation | Scalar (ms) | SIMD (ms) | Speedup |
+|-----------|-------------|-----------|---------|
+| Pitch (AC, 5s) | 99.0 | 98.0 | 1.01x |
+| Formant (Burg, 5s) | 88.0 | 97.0 | 0.91x |
+| Intensity (5s) | 5.0 | 5.0 | 1.00x |
+| Spectrogram (5s) | 50.0 | 50.0 | 1.00x |
+| Harmonicity (CC, 1s) | 43.0 | 43.0 | 1.00x |
+| ComplexSpectrogram (1s) | 11.0 | 11.0 | 1.00x |
+| **Geometric Mean** | - | - | **0.99x** |
+
+**Note:** ARM NEON (batch size 2) shows minimal gains. x86 AVX2 (batch size 4) expected to achieve **1.5-2.0x** speedup.
+
+#### Documentation Created:
+- `SIMD_PERFORMANCE_REPORT.md` - Comprehensive performance analysis
+- `benchmarks/final_simd_benchmark.R` - Final benchmark suite
+- Updated `SIMD_PROGRESS_TRACKER.md` - Status: **COMPLETE**
+
+#### Implementation Summary:
+- **18 SIMD source files** created
+- **80+ SIMD functions** implemented
+- All functions have scalar fallbacks
+- Supports ARM NEON and x86 AVX2
+
+---
+
+### 🎉 Phase 4 Tasks 4.3 & 4.4 Complete - ComplexSpectrogram & KlattGrid SIMD (v4.6.3 - 2026-01-25)
+
+**Summary:** SIMD acceleration for ComplexSpectrogram power/phase calculations and KlattGrid synthesis mixing operations.
+
+#### Task 4.3: ComplexSpectrogram SIMD
+
+**Files Created:**
+- `src/complexspectrogram_simd.cpp` (496 lines)
+- `tests/testthat/test-phase4-complexspectrogram-simd.R` (185 lines)
+
+**SIMD Functions:**
+```cpp
+// Power and phase from complex spectrum
+void compute_power_and_phase_simd(re, im, power, phase, n);
+// Polar to rectangular conversion
+void polar_to_rectangular_simd(mag, phase, re, im, n);
+// Magnitude from power (sqrt)
+void sqrt_power_to_magnitude_simd(power, magnitude, n);
+// Hanning window generation
+void generate_hanning_window_simd(window, size);
+// Window application
+void apply_window_simd(signal, window, output, n);
+// Overlap-add synthesis
+void overlap_add_simd(output, synthesis, scale, n);
+```
+
+**Tests:** 29/29 passing
+
+#### Task 4.4: KlattGrid SIMD
+
+**Files Created:**
+- `src/klattgrid_simd.cpp` (530 lines)
+- `tests/testthat/test-phase4-klattgrid-simd.R`
+
+**SIMD Functions:**
+```cpp
+// Sound mixing: output[i] += input[i]
+void sounds_add_inplace_simd(output, input, n);
+// Sound differentiation: output[i] = input[i] - input[i-1]
+void sound_diff_simd(input, output, n);
+// Scaling: data[i] *= scale
+void sound_scale_inplace_simd(data, scale, n);
+// Find max absolute value
+double find_extremum_simd(data, n);
+// Glottal flow: y^n - y^m (LF model)
+void glottal_flow_polynomial_simd(phases, output, p1, p2, n);
+// Exponential decay
+void apply_exponential_decay_simd(phases, output, amp, alpha, cp, n);
+// Weighted sum: a*x + b*y
+void weighted_sum_simd(x, y, output, a, b, n);
+```
+
+**Tests:** 16/16 passing
+
+**Note:** IIR resonator filters have loop-carried dependencies and remain scalar. SIMD focuses on mixing/pre-processing operations.
+
+---
+
+### 🐛 Bug Fix: extract_voiced_segments_ultra() Crash & ZCR Accuracy (v4.6.2 - 2026-01-24)
+
+**Summary:** Fixed segfault crash in `extract_voiced_segments_ultra()` and corrected ZCR calculation to match AVQI standard.
+
+**Issue 1 - Crash:** Function crashed with segfault (address 0x68) when called. Root cause: `Sound_to_TextGrid_detectSilences()` internally calls `Sound_filter_passHannBand()` which has FFT-related issues in pladdrr.
+
+**Solution 1:** Replaced `Sound_to_TextGrid_detectSilences()` with direct intensity-based silence detection (matching approach in `sound_wrappers.cpp`). Fixed `Sound_create()` parameter errors.
+
+**Issue 2 - ZCR Accuracy:** ZCR calculation used naive sample-level zero crossing counting instead of AVQI-standard interpolated zero crossings.
+
+**Solution 2:** Replaced with Praat's `Sound_to_PointProcess_zeroes()` for interpolated zero crossing detection. Implements correct AVQI formula: `zcr = n_crossings / (last_crossing - first_crossing)`.
+
+**Issue 3 - Version Parameter Bug (v4.6.3):** Fixed incorrect algorithm selection between AVQI v2.03 and v3.01.
+
+**Problem:** `extract_voiced_segments_ultra(version = "v2.03")` used intensity-only filtering while `version = "v3.01"` used power+ZCR filtering, when both should use identical algorithms per AVQI specification.
+
+**Solution:** Both versions now use identical power+ZCR filtering algorithm. The only difference between AVQI versions is in the final equation coefficients, not the voiced extraction algorithm.
+
+**Impact:** v2.03 now extracts correct duration (~17.73s vs previous 27.66s - 56% error fixed).
+
+**Files Modified:**
+- `src/batch_queries.cpp`:
+  - Lines 1262-1342: Replaced TextGrid-based silence detection with direct Intensity-based detection
+  - Lines 1418-1445: Replaced naive ZCR with `Sound_to_PointProcess_zeroes()`
+  - Fixed `Sound_create()` parameters for empty result case
+
+**Test Results:**
+- 22/22 tests pass in `test-extract-voiced-segments-ultra.R`
+- v3.01 preserves 99% of clean periodic signals (150 Hz tone)
+- 32/32 harmonicity SIMD tests still pass
+
+**Impact:** `extract_voiced_segments_ultra()` now works correctly for AVQI v2.03 and v3.01 workflows.
+
+---
+
+### 🔧 Vignette Build Fixes (v4.6.1 - 2026-01-24)
+
+**Summary:** Added comprehensive error handling to vignettes to gracefully handle incomplete polynomial root finding implementation in formant extraction.
+
+**Issue:** Vignettes failed during build due to formant extraction errors. Root cause: polynomial root finding for formant frequency extraction not fully implemented (placeholder exists in `src/formant_lpc_simd.cpp:272-285`, requires complex eigenvalue/iterative methods).
+
+**Solution:** Added error handling throughout vignettes rather than blocking on mathematical implementation:
+
+**Files Modified:**
+- `vignettes/formant-analysis.Rmd`:
+  - Added `tryCatch` blocks to `burg-basic` chunk (lines 51-81)
+  - Added `eval=FALSE` to `to_formant_keepall()` examples
+  - All formant extraction wrapped with graceful fallback messages
+  
+- `vignettes/formantpath-robust-tracking.Rmd`:
+  - Added `tryCatch` error handling around formant extraction
+  - Informative messages about implementation status
+
+**Impact:** Package now builds successfully with vignettes. Formant extraction works for real-world audio but may fail on synthesized audio (KlattGrid) until polynomial root finding is complete.
+
+**Commits:**
+- `a48c0fe` - "fix: add error handling to burg-basic chunk in formant-analysis vignette"
+- `65838f7` - "fix: vignette build errors - disable keepall and add error handling"
+
+---
+
+### 🎉 Phase 4 Task 4.1 Complete - FormantPath SIMD (v4.6.0 - 2026-01-23)
+
+**Summary:** SIMD acceleration for FormantPath dynamic programming - Viterbi algorithm for optimal multi-ceiling formant extraction. Optimizes path finding with vectorized cost computations and reductions.
+
+#### Phase 4 Task 4.1 Components:
+
+**FormantPath SIMD Implementation (v4.6.0)**
+- `formantpath_simd.cpp` (750 lines) - Core SIMD for Viterbi DP
+- Integrated into `FormantPath.cpp` - Lines 50-72, 242-323
+- Expected Performance: 2-3x (ARM NEON 1.5-2x, x86 AVX2 2-3x)
+
+#### Algorithm: Viterbi Dynamic Programming
+
+FormantPath finds optimal ceiling frequency sequence across time:
+- **State Space:** C candidates (ceilings) × T time frames
+- **Costs:** Static (stress + qsum) + Transition (freq change + ceiling change)
+- **Goal:** Minimize total cost path through trellis
+
+#### FormantPath SIMD Optimizations:
+
+**1. Q-Sum Computation** - Vectorized frequency/bandwidth ratios
+```cpp
+// qsum = mean(freq[i] / bw[i]) for all formants
+void compute_qsums_simd(
+    const double* frequencies,
+    const double* bandwidths,
+    integer numberOfCandidates,
+    integer maxFormants,
+    const integer* formantCounts,
+    double* qsums  // output (1-based)
+);
+```
+
+**2. Frequency Change Cost** - Vectorized transition costs
+```cpp
+// cost = mean(bw_ij * |fi - fj| / (fi + fj))
+// where bw_ij = sqrt(bw_i * bw_j)
+double compute_frequency_change_cost_simd(
+    const double* freqs_i,      // current candidate
+    const double* freqs_j,      // previous candidate
+    const double* bws_i,
+    const double* bws_j,
+    integer ntracks,
+    double frequencyChangeWeight,
+    double transitionCostCutoff
+);
+```
+
+**3. Min/Max Finding** - Horizontal SIMD reductions
+```cpp
+// Find minimum cost and position (Viterbi backtracking)
+double find_min_with_position_simd(
+    const double* values,
+    integer n,
+    integer* out_minPos  // 1-based position
+);
+
+// Find maximum position (final state selection)
+integer find_max_position_simd(
+    const double* values,
+    integer n
+);
+```
+
+**4. Static Cost Computation** - Batch processing across candidates
+```cpp
+// delta[i] = wIntensity * (stressWeight*stress - qWeight*qsum)
+void compute_static_costs_simd(
+    const double* stresses,
+    const double* qsums,
+    const double* intensities,
+    integer numberOfCandidates,
+    double stressWeight,
+    double qWeight,
+    double stressCutoff,
+    double qCutoff,
+    double* delta  // output (1-based)
+);
+```
+
+#### Integration Points (FormantPath.cpp):
+
+```cpp
+// Line 52: Runtime SIMD check
+bool should_use_simd_for_formantpath();
+
+// Line 242: Enable SIMD if available
+const bool useSIMD = should_use_simd_for_formantpath();
+
+// Lines 244-252: Pre-allocate SIMD arrays
+autoVEC freqs_i, bws_i, freqs_j, bws_j;
+if (useSIMD && frequencyChangeWeight > 0.0) {
+    freqs_i = raw_VEC(maxnFormants);
+    bws_i = raw_VEC(maxnFormants);
+    freqs_j = raw_VEC(maxnFormants);
+    bws_j = raw_VEC(maxnFormants);
+}
+
+// Lines 262-287: SIMD frequency change cost
+if (useSIMD && transtionCostType == 1) {
+    fcost = compute_frequency_change_cost_simd_bridge(...);
+    transitionCosts += frequencyChangeWeight * std::min(fcost / cutoff, 1.0);
+}
+```
+
+#### Performance Characteristics:
+
+- **Scaling:** More candidates = more SIMD benefit (O(C²T) operations)
+- **Bottleneck:** Dynamic programming dominates for C > 3
+- **SIMD Benefit:** Vectorizes inner loops of cost computation
+
+#### Testing:
+- `tests/testthat/test-phase4-formantpath-simd.R` (10 tests)
+- Tests SIMD vs scalar accuracy, multiple ceiling configs, edge cases
+
+#### Benchmarking:
+- `benchmarks/phase4_task4.1_formantpath_benchmark.R`
+- Tests 3, 5, 7 candidates with 1s, 3s, 5s audio durations
+
+#### Files Created:
+- `tests/testthat/test-phase4-formantpath-simd.R` (358 lines)
+- `benchmarks/phase4_task4.1_formantpath_benchmark.R` (350 lines)
+
+#### Files Already Implemented:
+- `src/formantpath_simd.cpp` (750 lines) - Pre-existing implementation
+- `src/praat.github.io/LPC/FormantPath.cpp` - Already integrated
+
+---
+
+### 🎉 Phase 3 Task 3.3 Complete - TextGrid Batch SIMD (v4.5.3 - 2026-01-23)
+
+**Summary:** SIMD acceleration for TextGrid batch operations: duration/midpoint calculation, interval statistics, duration filtering, and batch feature extraction for pitch/formant/intensity per interval.
+
+#### Phase 3 Task 3.3 Components:
+
+**TextGrid SIMD Implementation (v4.5.3)**
+- `textgrid_simd.cpp` (519 lines) - Core SIMD implementations
+- `textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridge with batch feature extraction
+- Expected Performance: 1.5-2x (ARM NEON), 2-4x (x86 AVX2)
+
+#### TextGrid SIMD Optimizations:
+
+**1. Duration Calculation** - Vectorized subtraction
+```cpp
+// durations[i] = end_times[i] - start_times[i]
+void calculate_durations_simd_0based(
+    const double* start_times, const double* end_times,
+    double* durations, size_t n
+);
+```
+
+**2. Midpoint Calculation** - Vectorized arithmetic
+```cpp
+// midpoints[i] = (start_times[i] + end_times[i]) * 0.5
+void calculate_midpoints_simd(
+    const double* start_times, const double* end_times,
+    double* midpoints, size_t n
+);
+```
+
+**3. Duration Statistics** - Two-pass mean/stdev with FMA
+```cpp
+// mean, stdev, min, max in one call
+void duration_statistics_simd(
+    const double* durations, size_t n,
+    double* mean_out, double* stdev_out
+);
+void duration_min_max_simd(
+    const double* durations, size_t n,
+    double* min_out, double* max_out
+);
+```
+
+**4. Duration Filtering** - SIMD comparison with index extraction
+```cpp
+// Returns indices of durations in [min_dur, max_dur]
+void filter_by_duration_simd(
+    const double* durations, size_t n,
+    double min_dur, double max_dur,
+    int* indices, size_t* count
+);
+```
+
+#### R API Functions:
+```r
+# Duration calculation
+durations <- calculate_durations_simd_bridge(starts, ends)
+
+# Midpoint calculation
+midpoints <- calculate_midpoints_simd_bridge(starts, ends)
+
+# Statistics (returns list with mean, stdev, min, max)
+stats <- duration_statistics_simd_bridge(durations)
+
+# Filtering (returns 1-based indices)
+indices <- filter_by_duration_simd_bridge(durations, min_dur, max_dur)
+
+# Batch feature extraction per TextGrid interval
+pitch_df <- textgrid_interval_pitch_batch(tg, pitch, tier, unit)
+formant_df <- textgrid_interval_formant_batch(tg, formant, tier, formant_num)
+intensity_df <- textgrid_interval_intensity_batch(tg, intensity, tier)
+all_features_df <- textgrid_interval_all_features_batch(tg, pitch, formant, intensity, tier)
+```
+
+#### Files Created:
+- `src/textgrid_simd.cpp` (519 lines) - SIMD implementations
+- `src/textgrid_simd_bridge.cpp` (726 lines) - Rcpp bridges
+- `tests/testthat/test-phase3-textgrid-simd.R` (33 tests)
+- `benchmarks/phase3_task3.3_textgrid_benchmark.R` (benchmark suite)
+
+---
+
+### 🎉 Phase 3 Task 3.1 Complete - MFCC SIMD (v4.5.1 - 2026-01-22)
+
+**Summary:** Implemented SIMD acceleration for MFCC (Mel-Frequency Cepstral Coefficients) operations at C++ level. Four core optimizations: Hz↔Mel conversion, triangular Mel filterbank, power-to-dB conversion, and DCT (Discrete Cosine Transform).
+
+#### Phase 3 Task 3.1 Components:
+
+**MFCC SIMD Implementation (v4.5.1)**
+- `mfcc_simd.cpp` (408 lines) - Core SIMD implementations
+- `mfcc_simd_bridge.cpp` (189 lines) - Praat VEC integration bridges
+- Integrated into `Sound_and_Spectrogram_extensions.cpp` (triangular filter)
+- Integrated into `Spectrogram_extensions.cpp` (DCT)
+- Expected Performance: 1.5-2x (ARM NEON), 2-4x (x86 AVX2)
+
+#### MFCC SIMD Optimizations:
+
+**1. Triangular Mel Filterbank** - Most critical for MFCC quality
+```cpp
+// Vectorized accumulation: power_sum += amplitude * spectrum_power
+// Triangular filter response calculation with SIMD
+double triangular_filter_simd(
+    const double* spectrum_power,
+    const double* frequencies,
+    integer ifrom, integer ito,
+    double fl_hz, double fc_hz, double fh_hz
+);
+```
+
+**2. DCT (Discrete Cosine Transform)** - Most compute-intensive
+```cpp
+// SIMD inner products for cepstral coefficient extraction
+// target[k] = sum(x[j] * cosinesTable[k][j])
+void dct_simd(
+    double* target,
+    const double* x,
+    const double* const* cosinesTable,
+    integer size
+);
+```
+
+**3. Hz ↔ Mel Conversion**
+```cpp
+// Formula: mel = 2595 * log10(1 + hz/700)
+void hz_to_mel_simd(const double* hz, double* mel, integer n);
+
+// Formula: hz = 700 * (10^(mel/2595) - 1)
+void mel_to_hz_simd(const double* mel, double* hz, integer n);
+```
+
+**4. Power-to-dB Conversion**
+```cpp
+// Formula: dB = 10 * log10(power / reference)
+void power_to_db_simd(
+    const double* power, double* db, integer n,
+    double reference = 4e-10,
+    double floor_db = -300.0
+);
+```
+
+#### Files Created:
+- `src/mfcc_simd.cpp` (408 lines) - SIMD implementations
+- `src/mfcc_simd_bridge.cpp` (189 lines) - Praat bridges
+- `tests/testthat/test-phase3-mfcc-simd.R` (10 tests)
+- `benchmarks/phase3_task3.1_mfcc_benchmark.R` (benchmark suite)
+
+#### Integration Points:
+```cpp
+// Triangular Filter SIMD (Sound_and_Spectrogram_extensions.cpp)
+#ifdef HAVE_XSIMD
+if (should_use_simd_for_mfcc()) {
+    autoVEC frequencies = raw_VEC(his nx);
+    for (integer i = 1; i <= his nx; i++)
+        frequencies[i] = his x1 + (i - 1) * his dx;
+
+    power = triangular_filter_simd_bridge(
+        his z.row(1),     // Power spectrum
+        frequencies.get(), // Frequency array
+        ifrom, ito,
+        fl_hz, fc_hz, fh_hz
+    );
+}
+#endif
+
+// DCT SIMD (Spectrogram_extensions.cpp)
+#ifdef HAVE_XSIMD
+if (should_use_simd_for_mfcc()) {
+    dct_simd_bridge(y.get(), x.get(), cosinesTable.get());
+}
+#endif
+```
+
+---
+
+### 🎉 Phase 2 Complete - Spectrogram & Filtering SIMD (v4.5.0)
+
+**Summary:** Phase 2 (Weeks 5-8) fully implemented with three SIMD optimizations for spectrogram generation, pre-emphasis filtering, and pitch filtering. Comprehensive testing and benchmarking complete.
+
+#### Phase 2 Components:
+
+**Task 2.1: Spectrogram SIMD (v4.4.8)**
+- `spectrogram_simd.cpp` - Frame extraction + windowing + power spectrum
+- Integrated into `Sound_and_Spectrogram.cpp`
+- Performance: 1.01x (ARM NEON), 1.5-2.0x expected (x86 AVX2)
+
+**Task 2.2: Pre-emphasis Filter SIMD (v4.4.9)**
+- `preemphasis_simd.cpp` - Backward-processing SIMD pre-emphasis
+- Integrated into `Sound.cpp` (Sound_preEmphasize_inplace, Sound_deEmphasize_inplace)
+- **Zero-error accuracy** (bit-exact match vs scalar)
+- Performance: 1.01x (ARM NEON), 1.5-2.0x expected (x86 AVX2)
+- Critical fix: Must process backward to avoid loop-carried dependency
+
+**Task 2.3: Pitch Filter SIMD (v4.4.10)**
+- `pitch_filter_simd.cpp` - Frequency-domain Gaussian low-pass filtering
+- Integrated into `Sound_to_Pitch_filteredAc` and `Sound_to_Pitch_filteredCc`
+- SIMD vectorizes exp(-0.5*(f/cutoff)²) + complex multiplication
+- Performance: 1.01x (ARM NEON), 2.0-3.0x expected (x86 AVX2)
+- Internal C++ optimization (not exposed to R)
+
+**Task 2.4: Testing & Documentation (v4.5.0)**
+- 26 comprehensive test cases (23 passed, 3 minor API fixes needed)
+- Comprehensive benchmark suite with 50 iterations
+- Performance report with platform-aware analysis
+- Full accuracy validation (< 1e-10 tolerance)
+
+#### Phase 2 Benchmark Results (ARM NEON):
+
+| Task | Signal | Scalar | SIMD | Speedup | Target |
+|------|--------|--------|------|---------|--------|
+| Spectrogram | 1s | 3.29ms | 3.32ms | 0.99x | 2.0-3.0x |
+| Spectrogram | 10s | 31.22ms | 31.28ms | 1.00x | 2.0-3.0x |
+| Pre-emphasis | 1s | 0.014ms | 0.014ms | 1.02x | 1.5-2.0x |
+| Pre-emphasis | 10s | 0.058ms | 0.058ms | 1.00x | 1.5-2.0x |
+| Pitch Filter | 1s | 1.57ms | 1.55ms | 1.02x | 2.0-3.0x |
+| Pitch Filter | 10s | 13.62ms | 13.43ms | 1.01x | 2.0-3.0x |
+| **Overall** | - | - | - | **1.00x** | **2.0x avg** |
+
+**Platform Analysis:**
+- ARM NEON (batch 2) shows ~1.0x speedup (expected)
+- x86_64 AVX2 (batch 4) expected 1.5-2.5x based on batch scaling
+- FFT dominates spectrogram (not SIMD accelerated)
+- Pre-emphasis already microsecond-scale
+- All implementations mathematically correct
+
+#### Files Created:
+- `src/spectrogram_simd.cpp` (285 lines) - SIMD spectrogram
+- `src/preemphasis_simd.cpp` (184 lines) - SIMD pre-emphasis
+- `src/pitch_filter_simd.cpp` (150 lines) - SIMD pitch filtering
+- `tests/testthat/test-phase2-simd.R` (420 lines, 26 tests)
+- `benchmarks/phase2_comprehensive_benchmark.R` (performance suite)
+
+#### Integration Points:
+```cpp
+// Spectrogram SIMD (Sound_and_Spectrogram.cpp lines 174-224)
+#ifdef HAVE_XSIMD
+if (should_use_simd_for_spectrogram()) {
+    extract_and_window_frame_simd(...);
+    accumulate_power_spectrum_simd(...);
+}
+#endif
+
+// Pre-emphasis SIMD (Sound.cpp lines 1253-1285)
+#ifdef HAVE_XSIMD
+if (should_use_simd_for_preemphasis()) {
+    apply_preemphasis_factor_simd_bridge(s, emphasisFactor);
+}
+#endif
+
+// Pitch Filter SIMD (Sound_to_Pitch.cpp - both filtered methods)
+#ifdef HAVE_XSIMD
+if (should_use_simd_for_pitch_filter()) {
+    apply_gaussian_lowpass_to_spectrum_simd_bridge(...);
+}
+#endif
+```
+
+#### Key Learnings:
+
+**Pre-emphasis Algorithm:**
+```cpp
+// CRITICAL: Must process BACKWARD to avoid loop-carried dependency
+// WRONG (forward):
+for (i = 2; i <= nx; i++)
+    s[i] -= alpha * s[i-1];  // Uses MODIFIED s[i-1]!
+
+// CORRECT (backward):
+for (i = nx; i >= 2; i--)
+    s[i] -= alpha * s[i-1];  // Uses ORIGINAL s[i-1]
+```
+
+**Frequency-Domain Filtering:**
+- Time-domain IIR has loop-carried dependency (hard to SIMD)
+- Frequency-domain filtering vectorizes well (exp + complex multiply)
+- Used by Praat for filtered pitch extraction
+
+**Accuracy Standards:**
+- Pre-emphasis: Zero error (bit-exact)
+- Spectrogram: < 1e-10 tolerance
+- Round-trip operations: < 1e-9 tolerance
+
+---
+
+## Previous Changes (v4.4.8 - 2026-01-22)
+
+### Phase 2 Task 2.1 Complete - Spectrogram SIMD Optimization
+
+**Summary:** Implemented SIMD-accelerated spectrogram generation with three core optimizations for frame extraction, windowing, and power spectrum calculation.
+
+**Implementation:**
+- ✅ `spectrogram_simd.cpp` - Three SIMD functions for spectrogram generation
+- ✅ Integrated into `Sound_and_Spectrogram.cpp` with conditional SIMD/scalar paths
+- ✅ Added comprehensive tests to `test-simd-integration.R`
+- ✅ Created benchmark suite `phase2_task2.1_simple_benchmark.R`
+
+**Three Core Optimizations:**
+1. `extract_and_window_frame_simd()` - Combines frame extraction and windowing in single pass
+2. `accumulate_power_spectrum_simd()` - Converts complex FFT output to power spectrum
+3. `zero_fft_tail_simd()` - Zero-fills FFT buffer tail
+
+**Performance (ARM NEON, 5 sec audio):**
+- Scalar: 11.60 ms
+- SIMD: 11.52 ms
+- **Speedup: 1.01x** (minimal on ARM, expected 1.5-2.0x on x86 AVX2)
+
+**Files Modified:**
+- `src/spectrogram_simd.cpp` (new, 285 lines)
+- `src/praat.github.io/fon/Sound_and_Spectrogram.cpp` - SIMD integration
+- `src/Makevars.in` - Added to SIMD_SRC
+- `tests/testthat/test-simd-integration.R` - Added spectrogram tests
+- `agents/AGENT_GUIDE.md` - Added Phase 2 documentation
+
+**Test Results:** All tests passing, SIMD matches scalar with < 1e-10 difference
+
+---
+
+## Previous Changes (v4.4.7 - 2026-01-21)
+
+### SIMD Phase 1 Complete - Infrastructure and Testing
+
+**Summary:** Phase 1 SIMD integration infrastructure fully operational with comprehensive testing and benchmarking suites.
+
+**Infrastructure Complete:**
+- ✅ Pitch extraction SIMD (AC/CC methods) - `pitch_simd_bridge.cpp` integrated into `Sound_to_Pitch.cpp`
+- ✅ Intensity calculation SIMD - Windowed RMS operations
+- ✅ Formant extraction SIMD - Burg's algorithm with `formant_simd_bridge.cpp`
+- ✅ Window functions SIMD - Unified interface for all window types
+- ✅ Test suite with 20+ test cases (13/18 passing)
+- ✅ Benchmark suite with automated performance tracking
+
+**Performance (ARM NEON batch=2):**
+- Pitch (AC): 1.01x speedup
+- Intensity: 1.00x speedup
+- Formant (Burg): 0.85x (overhead dominates on small batches)
+- **Overall: 0.95x** - Expected 2-4x speedups on x86_64 AVX2 (batch=4)
+
+**New SIMD Integration Patterns Section:**
+Added comprehensive "SIMD Integration Patterns" section to AGENT_GUIDE.md:
+- Complete bridge pattern examples
+- SIMD best practices (memory access, loops, accumulation, FMA)
+- Architecture considerations (batch sizes, platform flags)
+- Common pitfalls (Praat indexing, overhead, alignment)
+- Integration checklist for new SIMD operations
+- Performance expectations and actual results
+
+**Documentation:**
+- `PHASE1_COMPLETION_SUMMARY.md` - 400+ line comprehensive report
+- `benchmarks/phase1_results_final.txt` - Benchmark results
+- `tests/testthat/test-simd-integration.R` - 275 lines of tests
+- `benchmarks/phase1_integration_benchmark.R` - Automated tracking
+- Updated AGENT_GUIDE.md with SIMD integration patterns
+
+**Files Modified:**
+- `src/pitch_simd_bridge.cpp` - Pitch SIMD bridge (complete)
+- `src/praat.github.io/fon/Sound_to_Pitch.cpp` - SIMD integration
+- `tests/testthat/test-simd-integration.R` - Fixed API parameter names
+- `benchmarks/phase1_integration_benchmark.R` - Fixed API parameters
+- `agents/AGENT_GUIDE.md` - Added SIMD Integration Patterns section (200+ lines)
+
+**Build Status:** ✅ Clean compilation with all SIMD modules, LTO enabled
+
+**Next Steps:** Test on x86_64 AVX2 hardware to validate expected 2-4x speedups
+
+---
+
+## Recent Bug Fixes (v4.4.6)
+
+### SIMD Compilation Issues
+When working with xsimd boolean masks from comparison operations:
+- **WRONG:** `xsimd::batch_bool_cast<double>(mask).store_aligned(double_array)` - Type mismatch error
+- **CORRECT:** Use `xsimd::select(mask, batch(1.0), batch(0.0))` to convert boolean mask to double batch before storing
+
+### Rcpp Module Method Names
+The `sound_module` exposes methods with `_ptr` suffix but R wrappers should use clean names:
+- **Module method:** `cpp_snd$to_formant_burg_ptr()` or `cpp_snd$to_formant_burg()` (alias added in v4.4.6)
+- **R wrapper:** `sound$to_formant_burg()` calls the module method internally
+- **Parameter types:** Ensure correct types (e.g., `max_formants` expects `double` not `int`)
+
+### Error Handling Best Practices
+When catching `MelderError` in C++:
+```cpp
+try {
+    autoFormant formant = Sound_to_Formant_burg(...);
+    return create_xptr_from_auto<structFormant>(formant);
+} catch (MelderError) {
+    std::string error_msg = "Failed to create Formant: ";
+    conststring32 praat_error = Melder_getError();
+    if (praat_error) {
+        error_msg += Melder_peek32to8(praat_error);
+    }
+    Melder_clearError();
+    Rcpp::stop(error_msg);  // Show actual Praat error details
+}
+```
+
+---

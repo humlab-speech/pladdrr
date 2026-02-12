@@ -169,7 +169,7 @@ NumericVector sound_times_fast(SEXP sound_xptr) {
 //'
 //' @return Numeric matrix with dimensions (n_samples × n_channels)
 //'
-//' @export
+//' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix sound_as_matrix_zerocopy_impl(SEXP sound_xptr, bool zerocopy = false) {
     BEGIN_RCPP

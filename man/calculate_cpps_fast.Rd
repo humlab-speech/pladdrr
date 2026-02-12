@@ -26,23 +26,23 @@ calculate_cpps_fast(
 \arguments{
 \item{sound}{Sound object or external pointer}
 
-\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default FALSE)}
+\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default TRUE)}
 
-\item{time_averaging_window}{Numeric, time averaging window in seconds (default 0.01)}
+\item{time_averaging_window}{Numeric, time averaging window in seconds (default 0.001)}
 
-\item{quefrency_averaging_window}{Numeric, quefrency averaging window in seconds (default 0.001)}
+\item{quefrency_averaging_window}{Numeric, quefrency averaging window in seconds (default 0.0005)}
 
 \item{pitch_floor}{Numeric, minimum F0 in Hz (default 60)}
 
-\item{pitch_ceiling}{Numeric, maximum F0 in Hz (default 330)}
+\item{pitch_ceiling}{Numeric, maximum F0 in Hz (default 333.3)}
 
 \item{delta_f0}{Numeric, F0 fractional precision (default 0.05)}
 
 \item{interpolation}{Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700" (default "parabolic")}
 
-\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds (default 0.001)}
+\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds (default 0.003)}
 
-\item{qend_fit}{Numeric, quefrency range end in seconds (default 0, means auto)}
+\item{qend_fit}{Numeric, quefrency range end in seconds (default 0.04)}
 
 \item{trend_line_type}{Character, "straight" or "exponential" (default "straight")}
 
@@ -96,16 +96,13 @@ sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
 # Standard API
 cpps_standard <- {
   pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-  pcep$get_cpps(subtract_tilt = FALSE, time_averaging_window = 0.01,
-                quefrency_averaging_window = 0.001, pitch_floor = 60,
-                pitch_ceiling = 330)
+  pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
+                quefrency_averaging_window = 0.0005, pitch_floor = 60,
+                pitch_ceiling = 333.3)
 }
 
-# Fast API (1.5-2x faster)
-cpps_fast <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
-                                  time_averaging_window = 0.01,
-                                  quefrency_averaging_window = 0.001,
-                                  pitch_floor = 60, pitch_ceiling = 330)
+# Fast API (1.5-2x faster, same defaults)
+cpps_fast <- calculate_cpps_fast(sound)
 
 # Results should be identical
 all.equal(cpps_standard, cpps_fast)

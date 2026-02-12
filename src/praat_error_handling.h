@@ -1,7 +1,7 @@
 /*
  * Part of pladdrr: R interface to Praat
  *
- * Copyright (C) 2025 Fredrik Nylén
+ * Copyright (C) 2025-2026 Fredrik Nylén
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ auto praat_try_return(Func&& func, const std::string& error_message) -> decltype
         std::string praat_error = get_melder_error();
         Melder_clearError();
         Rcpp::stop(error_message + ": " + praat_error);
+        return decltype(func())(); // unreachable, silences -Wreturn-type
     }
 }
 

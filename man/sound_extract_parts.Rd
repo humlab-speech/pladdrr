@@ -21,9 +21,11 @@ sound_extract_parts(
 
 \item{end_times}{Numeric vector of interval end times (seconds)}
 
-\item{window_shape}{Character. Window shape for extraction (default: "rectangular")}
+\item{window_shape}{Character. Window shape for extraction (default: "rectangular").
+See details for all options.}
 
-\item{relative_width}{Numeric. Relative width of window (default: 1.0)}
+\item{relative_width}{Numeric. Relative width of window (default: 1.0).
+For gaussian2/kaiser2, use 2.0. For gaussian3-5, use 3.0-5.0 respectively.}
 
 \item{preserve_times}{Logical. Preserve original time stamps (default: FALSE)}
 
@@ -42,14 +44,19 @@ by voice activity detection.
 This function is vectorized to extract multiple intervals efficiently.
 Each extracted sound can then be concatenated or analyzed separately.
 
-Available window shapes:
-- "rectangular" (default)
-- "triangular"
-- "parabolic"
-- "hanning"
-- "hamming"
-- "gaussian1", "gaussian2", "gaussian3", "gaussian4", "gaussian5"
-- "kaiser1", "kaiser2"
+Available window shapes (see Praat manual for details):
+- "rectangular" (default) - No tapering
+- "triangular" - Triangular (Bartlett) taper
+- "parabolic" - Parabolic (Welch) taper
+- "hanning" - Hanning window
+- "hamming" - Hamming window
+- "gaussian1" - Gaussian window (sd=0.42466)
+- "gaussian2" - Narrower Gaussian (sd=0.21233), use relative_width=2.0
+- "gaussian3" - Even narrower (sd=0.14155), use relative_width=3.0
+- "gaussian4" - Very narrow (sd=0.10616), use relative_width=4.0
+- "gaussian5" - Extremely narrow (sd=0.08493), use relative_width=5.0
+- "kaiser1" - Kaiser-Bessel window (alpha=20.7)
+- "kaiser2" - Narrower Kaiser-Bessel (alpha=40.5), use relative_width=2.0
 }
 \examples{
 \dontrun{
@@ -71,4 +78,7 @@ for (i in seq_along(voiced_sounds)) {
 }
 }
 
+}
+\references{
+Praat documentation: \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 }

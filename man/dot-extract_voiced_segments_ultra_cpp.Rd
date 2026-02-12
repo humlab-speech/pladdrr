@@ -13,7 +13,8 @@
   min_sounding_duration = 0.1,
   power_threshold_factor = 0.3,
   max_zcr = 3000,
-  window_width = 0.03
+  window_width = 0.03,
+  use_manual_zcr = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@
 \item{max_zcr}{Maximum zero-crossing rate for voiced segments (default 3000)}
 
 \item{window_width}{Window width for v3.01 filtering in seconds (default 0.03)}
+
+\item{use_manual_zcr}{Use manual sample-based ZCR instead of PointProcess interpolation (default false)}
 }
 \value{
 External pointer to concatenated voiced Sound object
@@ -43,5 +46,16 @@ Complete AVQI voiced extraction pipeline in single C++ call:
 Sound -> TextGrid (silence detection) -> Extract sounding -> Concatenate ->
 [v3.01 only: Window filtering by power + ZCR] -> Concatenate final.
 2-4x faster than multi-step R pipeline. Supports both AVQI v2.03 and v3.01.
+
+ACCURACY NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 3):
+This Ultra API implementation forced a revert to manual R implementation
+in AVQI benchmarks due to accuracy differences from Praat's reference algorithm.
+The windowed power + ZCR filtering produces different results than expected.
+Issue: extract_windows_filtered() or equivalent Ultra API for windowed extraction.
+
+TODO: Debug and fix accuracy of windowed extraction to match Praat's 30ms sliding
+window with dual filtering (power threshold + ZCR < 3000 Hz). Compare ZCR calculation
+method (Sound_to_PointProcess_zeroes) against manual R vectorized implementation.
+Once fixed, AVQI R implementation will be ~1.2s faster.
 }
 \keyword{internal}

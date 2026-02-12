@@ -6,15 +6,15 @@
 #' method but requires manual parameter management.
 #'
 #' @param sound Sound object or external pointer
-#' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default FALSE)
-#' @param time_averaging_window Numeric, time averaging window in seconds (default 0.01)
-#' @param quefrency_averaging_window Numeric, quefrency averaging window in seconds (default 0.001)
+#' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default TRUE)
+#' @param time_averaging_window Numeric, time averaging window in seconds (default 0.001)
+#' @param quefrency_averaging_window Numeric, quefrency averaging window in seconds (default 0.0005)
 #' @param pitch_floor Numeric, minimum F0 in Hz (default 60)
-#' @param pitch_ceiling Numeric, maximum F0 in Hz (default 330)
+#' @param pitch_ceiling Numeric, maximum F0 in Hz (default 333.3)
 #' @param delta_f0 Numeric, F0 fractional precision (default 0.05)
 #' @param interpolation Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700" (default "parabolic")
-#' @param qstart_fit Numeric, quefrency range start for fitting in seconds (default 0.001)
-#' @param qend_fit Numeric, quefrency range end in seconds (default 0, means auto)
+#' @param qstart_fit Numeric, quefrency range start for fitting in seconds (default 0.003)
+#' @param qend_fit Numeric, quefrency range end in seconds (default 0.04)
 #' @param trend_line_type Character, "straight" or "exponential" (default "straight")
 #' @param fit_method Character, "robust", "least_squares", or "robust slow" (default "robust")
 #' @param cepstrogram_pitch_floor Numeric, pitch floor for cepstrogram creation (default 60)
@@ -56,16 +56,13 @@
 #' # Standard API
 #' cpps_standard <- {
 #'   pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-#'   pcep$get_cpps(subtract_tilt = FALSE, time_averaging_window = 0.01,
-#'                 quefrency_averaging_window = 0.001, pitch_floor = 60,
-#'                 pitch_ceiling = 330)
+#'   pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
+#'                 quefrency_averaging_window = 0.0005, pitch_floor = 60,
+#'                 pitch_ceiling = 333.3)
 #' }
 #'
-#' # Fast API (1.5-2x faster)
-#' cpps_fast <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
-#'                                   time_averaging_window = 0.01,
-#'                                   quefrency_averaging_window = 0.001,
-#'                                   pitch_floor = 60, pitch_ceiling = 330)
+#' # Fast API (1.5-2x faster, same defaults)
+#' cpps_fast <- calculate_cpps_fast(sound)
 #'
 #' # Results should be identical
 #' all.equal(cpps_standard, cpps_fast)
@@ -507,17 +504,17 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' \code{calculate_cpps_fast()} for AVQI applications.
 #'
 #' @param sound Sound object or external pointer
-#' @param time_averaging_window Time averaging window in seconds (default 0.01)
-#' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
+#' @param time_averaging_window Time averaging window in seconds (default 0.001)
+#' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.0005)
 #' @param pitch_floor Minimum F0 in Hz (default 60)
-#' @param pitch_ceiling Maximum F0 in Hz (default 330)
+#' @param pitch_ceiling Maximum F0 in Hz (default 333.3)
 #' @param subtract_trend Logical, subtract tilt before smoothing (default TRUE)
 #' @param time_step Time step for cepstrogram in seconds (default 0.002)
 #' @param max_quefrency Maximum quefrency in seconds (default 0.05)
 #' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")
 #' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
-#' @param line_type Trend line type: "straight" or "exponential" (default "exponential")
+#' @param line_type Trend line type: "straight" or "exponential" (default "straight")
 #' @param fit_method Fitting method: "robust", "least_squares", or "robust slow" (default "robust")
 #'
 #' @return Numeric CPPS value in dB
@@ -546,17 +543,11 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' \dontrun{
 #' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
 #'
-#' # Tier 4 Ultra (fastest)
-#' cpps <- calculate_cpps_ultra(sound, 
-#'                               time_averaging_window = 0.01,
-#'                               quefrency_averaging_window = 0.001,
-#'                               pitch_floor = 60, 
-#'                               pitch_ceiling = 330)
+#' # Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
+#' cpps <- calculate_cpps_ultra(sound)
 #'
 #' # Should match calculate_cpps_fast() within 0.01 dB
-#' cpps_fast <- calculate_cpps_fast(sound,
-#'                                   time_averaging_window = 0.01,
-#'                                   quefrency_averaging_window = 0.001)
+#' cpps_fast <- calculate_cpps_fast(sound)
 #' all.equal(cpps, cpps_fast, tolerance = 0.01)
 #' }
 #'

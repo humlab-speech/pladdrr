@@ -10,7 +10,10 @@ to_formant_direct(
   max_formants = 5,
   max_formant = 5500,
   window_length = 0.025,
-  pre_emphasis = 50
+  pre_emphasis = 50,
+  max_number_of_formants = NULL,
+  maximum_formant = NULL,
+  pre_emphasis_from = NULL
 )
 }
 \arguments{

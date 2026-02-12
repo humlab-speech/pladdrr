@@ -2953,7 +2953,7 @@ sound_times_fast <- function(sound_xptr) {
 #'
 #' @return Numeric matrix with dimensions (n_samples × n_channels)
 #'
-#' @export
+#' @keywords internal
 sound_as_matrix_zerocopy_impl <- function(sound_xptr, zerocopy = FALSE) {
     .Call(`_pladdrr_sound_as_matrix_zerocopy_impl`, sound_xptr, zerocopy)
 }

@@ -296,7 +296,9 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' @param intensity An Intensity object
 #' @param times Numeric vector of time points (in seconds)
 #' @param interpolate Interpolation method: "nearest", "linear", "cubic" (default),
-#'   or "sinc70"
+#'   or "sinc70". Kept for backward compatibility; prefer `interpolation`.
+#' @param interpolation Alias for `interpolate` (consistent with R6 method naming).
+#'   When provided, supersedes `interpolate`.
 #'
 #' @return Numeric vector of intensity values (in dB) at the specified times
 #'
@@ -312,15 +314,21 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' }
 #'
 #' @export
-get_intensity_at_times <- function(intensity, times, interpolate = "cubic") {
+get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
+                                   interpolation = NULL) {
   if (!inherits(intensity, "Intensity")) {
     stop("intensity must be an Intensity object")
   }
-  
+
   if (!is.numeric(times) || length(times) == 0) {
     stop("times must be a non-empty numeric vector")
   }
-  
+
+  # interpolation alias supersedes interpolate when provided
+  if (!is.null(interpolation)) {
+    interpolate <- interpolation
+  }
+
   interp_code <- switch(tolower(interpolate),
     "nearest" = 0L,
     "linear" = 1L,

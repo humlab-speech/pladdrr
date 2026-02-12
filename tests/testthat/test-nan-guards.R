@@ -140,9 +140,9 @@ test_that("Spectrogram$as_matrix includes dimnames by default", {
   expect_equal(length(rownames(mat)), nrow(mat))
   expect_equal(length(colnames(mat)), ncol(mat))
 
-  # Dimnames should be numeric frequency and time values
-  expect_true(is.numeric(as.numeric(rownames(mat))))
-  expect_true(is.numeric(as.numeric(colnames(mat))))
+  # Dimnames should be numeric frequency and time values (no NAs from conversion)
+  expect_false(anyNA(as.numeric(rownames(mat))))
+  expect_false(anyNA(as.numeric(colnames(mat))))
 })
 
 test_that("Spectrogram$as_matrix(include_dimnames=FALSE) omits names", {

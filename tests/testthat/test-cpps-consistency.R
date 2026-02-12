@@ -1,0 +1,36 @@
+test_that("calculate_cpps_fast and calculate_cpps_ultra produce matching results", {
+  skip_on_cran()
+
+  wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  skip_if(!file.exists(wav), "Test audio not found")
+  sound <- Sound(wav)
+
+  # Use identical parameters for both
+  cpps_fast <- calculate_cpps_fast(sound,
+    subtract_tilt = TRUE,
+    time_averaging_window = 0.001,
+    quefrency_averaging_window = 0.0005,
+    pitch_floor = 60,
+    pitch_ceiling = 333.3,
+    trend_line_type = "straight",
+    fit_method = "robust"
+  )
+
+  cpps_ultra <- calculate_cpps_ultra(sound,
+    subtract_trend = TRUE,
+    time_averaging_window = 0.001,
+    quefrency_averaging_window = 0.0005,
+    pitch_floor = 60,
+    pitch_ceiling = 333.3,
+    line_type = "straight",
+    fit_method = "robust"
+  )
+
+  expect_true(is.numeric(cpps_fast))
+  expect_true(is.numeric(cpps_ultra))
+  expect_true(is.finite(cpps_fast))
+  expect_true(is.finite(cpps_ultra))
+
+  # Should match within 0.1 dB
+  expect_equal(cpps_fast, cpps_ultra, tolerance = 0.1)
+})

@@ -2,12 +2,24 @@
 % Please edit documentation in R/s3-methods.R
 \name{as.data.frame.Pitch}
 \alias{as.data.frame.Pitch}
+\alias{as.data.frame.PointProcess}
+\alias{as.data.frame.TextGrid}
+\alias{as.data.frame.MFCC}
+\alias{as.data.frame.LFCC}
 \title{Convert R6 Pitch to data frame}
 \usage{
 \method{as.data.frame}{Pitch}(x, row.names = NULL, optional = FALSE, ...)
+
+\method{as.data.frame}{PointProcess}(x, row.names = NULL, optional = FALSE, ...)
+
+\method{as.data.frame}{TextGrid}(x, row.names = NULL, optional = FALSE, ...)
+
+\method{as.data.frame}{MFCC}(x, row.names = NULL, optional = FALSE, ...)
+
+\method{as.data.frame}{LFCC}(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
-\item{x}{A Pitch R6 object}
+\item{x}{An LFCC R6 object}
 
 \item{row.names}{Ignored}
 
@@ -22,3 +34,14 @@ A data.table (inherits from data.frame) with pitch measurements
 S3 method for converting R6 Pitch objects to data frames.
 Delegates to the R6 `$as_data_frame()` method.
 }
+\section{Functions}{
+\itemize{
+\item \code{as.data.frame(PointProcess)}: Convert PointProcess to data.frame
+
+\item \code{as.data.frame(TextGrid)}: Convert TextGrid to data.frame
+
+\item \code{as.data.frame(MFCC)}: Convert MFCC to data.frame
+
+\item \code{as.data.frame(LFCC)}: Convert LFCC to data.frame
+
+}}

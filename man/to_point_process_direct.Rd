@@ -8,6 +8,7 @@ to_point_process_direct(
   sound,
   pitch_floor = 75,
   pitch_ceiling = 600,
+  time_step = 0,
   max_period_factor = 1.3,
   max_amplitude_factor = 1.6
 )
