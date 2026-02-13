@@ -165,9 +165,9 @@ Spectrum <- function(.xptr = NULL) {
       )
     },
 
-    #' Get power values at specific frequencies
-    #' @param frequencies Numeric vector of frequencies to query
-    #' @return Numeric vector of power values at specified frequencies
+    # Get power values at specific frequencies
+    # @param frequencies Numeric vector of frequencies to query
+    # @return Numeric vector of power values at specified frequencies
     get_power_at_frequencies = function(frequencies) {
       cpp_obj$get_power_at_frequencies(as.numeric(frequencies))
     },

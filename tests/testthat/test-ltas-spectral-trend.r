@@ -3,7 +3,7 @@
 # R-squared, and fitted values
 
 test_that("report_spectral_trend returns correct structure", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -27,7 +27,7 @@ test_that("report_spectral_trend returns correct structure", {
 })
 
 test_that("logarithmic scale produces correct slope units", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -38,7 +38,7 @@ test_that("logarithmic scale produces correct slope units", {
 })
 
 test_that("linear scale produces correct slope units", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -49,7 +49,7 @@ test_that("linear scale produces correct slope units", {
 })
 
 test_that("R-squared is between 0 and 1", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -60,7 +60,7 @@ test_that("R-squared is between 0 and 1", {
 })
 
 test_that("fitted_values has correct number of rows", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -71,7 +71,7 @@ test_that("fitted_values has correct number of rows", {
 })
 
 test_that("residuals sum to approximately zero", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -82,7 +82,7 @@ test_that("residuals sum to approximately zero", {
 })
 
 test_that("logarithmic scale matches lm() workaround approximately", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -104,7 +104,7 @@ test_that("logarithmic scale matches lm() workaround approximately", {
 })
 
 test_that("robust method runs without error", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -116,7 +116,7 @@ test_that("robust method runs without error", {
 })
 
 test_that("default parameters work correctly", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -130,7 +130,7 @@ test_that("default parameters work correctly", {
 })
 
 test_that("print method works without error", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -143,7 +143,7 @@ test_that("print method works without error", {
 })
 
 test_that("fitted values can be used for plotting", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
@@ -159,7 +159,7 @@ test_that("fitted values can be used for plotting", {
 })
 
 test_that("fmin=0 and fmax=0 use full frequency range", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_frequency = 44100)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   

@@ -89,13 +89,13 @@ Electroglottogram <- function(.xptr = NULL) {
     get_sample_from_time = function(time) cpp_egg$get_sample_from_time(as.numeric(time)),
     is_valid = function() cpp_egg$is_valid(),
     
-    #' @description
-    #' Detect closed glottis intervals and return as TextGrid
-    #' @param pitch_floor Minimum pitch in Hz (default 75)
-    #' @param pitch_ceiling Maximum pitch in Hz (default 500)
-    #' @param closing_threshold Fraction of peak-valley range for closure (default 0.3)
-    #' @param peak_threshold Peak threshold fraction (default 0.05)
-    #' @return TextGrid object with closed glottis intervals marked
+    # @description
+    # Detect closed glottis intervals and return as TextGrid
+    # @param pitch_floor Minimum pitch in Hz (default 75)
+    # @param pitch_ceiling Maximum pitch in Hz (default 500)
+    # @param closing_threshold Fraction of peak-valley range for closure (default 0.3)
+    # @param peak_threshold Peak threshold fraction (default 0.05)
+    # @return TextGrid object with closed glottis intervals marked
     to_textgrid_closed_glottis = function(pitch_floor = 75,
                                           pitch_ceiling = 500,
                                           closing_threshold = 0.3,
@@ -109,12 +109,12 @@ Electroglottogram <- function(.xptr = NULL) {
       TextGrid(.xptr = ptr)
     },
     
-    #' @description
-    #' Extract amplitude level tiers (peak, valley, and closing levels)
-    #' @param pitch_floor Minimum pitch in Hz (default 75)
-    #' @param pitch_ceiling Maximum pitch in Hz (default 500)
-    #' @param closing_threshold Fraction of peak-valley range for closure (default 0.3)
-    #' @return List with three AmplitudeTier objects: levels, peaks, valleys
+    # @description
+    # Extract amplitude level tiers (peak, valley, and closing levels)
+    # @param pitch_floor Minimum pitch in Hz (default 75)
+    # @param pitch_ceiling Maximum pitch in Hz (default 500)
+    # @param closing_threshold Fraction of peak-valley range for closure (default 0.3)
+    # @return List with three AmplitudeTier objects: levels, peaks, valleys
     to_amplitude_tier_levels = function(pitch_floor = 75,
                                         pitch_ceiling = 500,
                                         closing_threshold = 0.3) {
@@ -131,12 +131,12 @@ Electroglottogram <- function(.xptr = NULL) {
       )
     },
     
-    #' @description
-    #' Calculate the derivative (DEGG) of the EGG signal
-    #' @param lowpass_freq Low-pass frequency in Hz (default 5000)
-    #' @param smoothing Smoothing frequency in Hz (default 100)
-    #' @param peak_amplitude New absolute peak value (0 = don't scale) (default 0)
-    #' @return Sound object containing the derivative
+    # @description
+    # Calculate the derivative (DEGG) of the EGG signal
+    # @param lowpass_freq Low-pass frequency in Hz (default 5000)
+    # @param smoothing Smoothing frequency in Hz (default 100)
+    # @param peak_amplitude New absolute peak value (0 = don't scale) (default 0)
+    # @return Sound object containing the derivative
     derivative = function(lowpass_freq = 5000,
                          smoothing = 100,
                          peak_amplitude = 0) {
@@ -148,20 +148,20 @@ Electroglottogram <- function(.xptr = NULL) {
       Sound(.xptr = ptr)
     },
     
-    #' @description
-    #' Calculate first central difference approximation of derivative
-    #' @param peak_amplitude New absolute peak value (0 = don't scale) (default 0)
-    #' @return Sound object containing the approximate derivative
+    # @description
+    # Calculate first central difference approximation of derivative
+    # @param peak_amplitude New absolute peak value (0 = don't scale) (default 0)
+    # @return Sound object containing the approximate derivative
     first_central_difference = function(peak_amplitude = 0) {
       ptr <- cpp_egg$first_central_difference_ptr(as.numeric(peak_amplitude))
       Sound(.xptr = ptr)
     },
     
-    #' @description
-    #' Apply high-pass filter to remove DC drift
-    #' @param from_freq Low frequency cutoff in Hz (default 100)
-    #' @param smoothing Smoothing frequency in Hz (default 100)
-    #' @return Filtered Electroglottogram object
+    # @description
+    # Apply high-pass filter to remove DC drift
+    # @param from_freq Low frequency cutoff in Hz (default 100)
+    # @param smoothing Smoothing frequency in Hz (default 100)
+    # @return Filtered Electroglottogram object
     high_pass_filter = function(from_freq = 100, smoothing = 100) {
       ptr <- cpp_egg$high_pass_filter_ptr(
         as.numeric(from_freq),
@@ -170,9 +170,9 @@ Electroglottogram <- function(.xptr = NULL) {
       Electroglottogram(.xptr = ptr)
     },
     
-    #' @description
-    #' Convert to generic Sound object
-    #' @return Sound object
+    # @description
+    # Convert to generic Sound object
+    # @return Sound object
     to_sound = function() {
       ptr <- cpp_egg$to_sound_ptr()
       Sound(.xptr = ptr)

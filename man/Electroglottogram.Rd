@@ -6,36 +6,6 @@
 \usage{
 Electroglottogram(.xptr = NULL)
 }
-\arguments{
-\item{peak_threshold}{Peak threshold fraction (default 0.05)}
-
-\item{pitch_floor}{Minimum pitch in Hz (default 75)}
-
-\item{pitch_ceiling}{Maximum pitch in Hz (default 500)}
-
-\item{closing_threshold}{Fraction of peak-valley range for closure (default 0.3)}
-
-\item{lowpass_freq}{Low-pass frequency in Hz (default 5000)}
-
-\item{peak_amplitude}{New absolute peak value (0 = don't scale) (default 0)}
-
-\item{from_freq}{Low frequency cutoff in Hz (default 100)}
-
-\item{smoothing}{Smoothing frequency in Hz (default 100)}
-}
-\value{
-TextGrid object with closed glottis intervals marked
-
-List with three AmplitudeTier objects: levels, peaks, valleys
-
-Sound object containing the derivative
-
-Sound object containing the approximate derivative
-
-Filtered Electroglottogram object
-
-Sound object
-}
 \description{
 R6 class representing a Praat Electroglottogram (EGG) object. An Electroglottogram
 measures the electrical impedance across the larynx, which varies with the degree
@@ -72,18 +42,6 @@ egg <- sound$extract_electroglottogram(channel = 2, invert = FALSE)
 The derivative of the EGG signal (DEGG) shows the rate of change of vocal fold
 contact. The negative peak in DEGG typically corresponds to the instant of
 glottal closure (GCI), which is important for voice source analysis.
-
-Detect closed glottis intervals and return as TextGrid
-
-Extract amplitude level tiers (peak, valley, and closing levels)
-
-Calculate the derivative (DEGG) of the EGG signal
-
-Calculate first central difference approximation of derivative
-
-Apply high-pass filter to remove DC drift
-
-Convert to generic Sound object
 }
 \examples{
 \dontrun{

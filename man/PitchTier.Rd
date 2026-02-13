@@ -6,79 +6,8 @@
 \usage{
 PitchTier(tmin = NULL, tmax = NULL, .xptr = NULL)
 }
-\arguments{
-\item{shift}{Amount to shift (Hz or semitones)}
-
-\item{unit}{Unit: "hertz" (0), "mel" (1), "log_hertz" (2), "semitones" (3), "erb" (4)}
-}
 \description{
 Praat PitchTier object with direct C++ module binding for pitch manipulation.
-
-Get start time of tier domain
-
-Get end time of tier domain
-
-Get duration of tier domain
-
-Get number of pitch points
-
-Get time of point at index (1-based)
-
-Get frequency value at index (1-based)
-
-Get interpolated frequency at time
-
-Get minimum frequency value
-
-Get maximum frequency value
-
-Get mean frequency (curve interpolation)
-
-Get mean frequency (points only)
-
-Get standard deviation (curve interpolation)
-
-Get standard deviation (points only)
-
-Get area under interpolated curve
-
-Add a pitch point at time with frequency value (Hz)
-
-Remove point at index (1-based)
-
-Remove all points in time range
-
-Multiply all frequencies by factor
-
-Multiply frequencies in time range by factor
-
-Shift all frequencies by amount
-
-Shift frequencies in time range by amount
-
-Stylize (simplify) pitch contour
-
-Interpolate quadratically between points
-
-Convert to PointProcess (extract time points)
-
-Synthesize pulse train sound
-
-Synthesize phonation sound
-
-Synthesize sine wave sound
-
-Convert to Pitch object
-
-Convert to data.table with time and frequency columns
-
-Convert to matrix (n x 2: time, frequency)
-
-Save to file
-
-Get internal pointer
-
-Print summary
 }
 \details{
 PitchTiers are used in conjunction with Manipulation objects to modify the

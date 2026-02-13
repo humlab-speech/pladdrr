@@ -6,12 +6,6 @@
 \usage{
 Spectrum(.xptr = NULL)
 }
-\arguments{
-\item{frequencies}{Numeric vector of frequencies to query}
-}
-\value{
-Numeric vector of power values at specified frequencies
-}
 \description{
 Praat Spectrum object with direct C++ module binding (complex FFT spectrum).
 Spectrum objects represent frequency-domain representations of sounds.

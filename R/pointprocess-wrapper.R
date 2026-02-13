@@ -243,11 +243,11 @@ PointProcess <- function(.xptr = NULL) {
     
     # === Batch Operations (10-20x speedup for shimmer/DSI analysis) ===
 
-    #' Get Sound values at all point times
-    #' @param sound Sound object
-    #' @param channel Channel number (default: 1)
-    #' @param interpolation Interpolation method ("nearest", "linear", "cubic", "sinc70", "sinc700")
-    #' @return Numeric vector of values at point times
+    # Get Sound values at all point times
+    # @param sound Sound object
+    # @param channel Channel number (default: 1)
+    # @param interpolation Interpolation method ("nearest", "linear", "cubic", "sinc70", "sinc700")
+    # @return Numeric vector of values at point times
     get_values_from_sound = function(sound, channel = 1, interpolation = "cubic") {
       if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
       interp_code <- switch(tolower(interpolation),
@@ -256,27 +256,27 @@ PointProcess <- function(.xptr = NULL) {
       cpp_pp$get_values_from_sound(sound$.xptr, as.integer(channel), interp_code)
     },
 
-    #' Get all periods (inter-point intervals) as vector
-    #' @return Numeric vector of periods
+    # Get all periods (inter-point intervals) as vector
+    # @return Numeric vector of periods
     get_periods_vector = function() {
       cpp_pp$get_periods_vector()
     },
 
-    #' Get periods within specified range
-    #' @param min_period Minimum period (seconds)
-    #' @param max_period Maximum period (seconds)
-    #' @return Numeric vector of filtered periods
+    # Get periods within specified range
+    # @param min_period Minimum period (seconds)
+    # @param max_period Maximum period (seconds)
+    # @return Numeric vector of filtered periods
     get_periods_filtered = function(min_period = 0.0001, max_period = 0.02) {
       cpp_pp$get_periods_filtered(as.numeric(min_period), as.numeric(max_period))
     },
 
-    #' Get all jitter measures in a single call
-    #' @param from_time Start time (0 = beginning)
-    #' @param to_time End time (0 = end)
-    #' @param period_floor Minimum period
-    #' @param period_ceiling Maximum period
-    #' @param max_period_factor Maximum period factor
-    #' @return List with local, local_absolute, rap, ppq5, ddp
+    # Get all jitter measures in a single call
+    # @param from_time Start time (0 = beginning)
+    # @param to_time End time (0 = end)
+    # @param period_floor Minimum period
+    # @param period_ceiling Maximum period
+    # @param max_period_factor Maximum period factor
+    # @return List with local, local_absolute, rap, ppq5, ddp
     get_jitter_batch = function(from_time = 0, to_time = 0,
                                  period_floor = 0.0001, period_ceiling = 0.02,
                                  max_period_factor = 1.3) {

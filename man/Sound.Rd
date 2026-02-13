@@ -3,38 +3,13 @@
 \name{Sound}
 \alias{Sound}
 \title{Add extract_electroglottogram method to Sound class}
-\usage{
-Sound(path = NULL, .xptr = NULL)
-}
 \arguments{
 \item{path}{Path to audio file (native: WAV/AIFF/FLAC/MP3/NIST, fallback: av for unsupported formats)}
 
 \item{.xptr}{Internal use only - external pointer to C++ Sound object}
-
-\item{window_shape}{Window shape ("rectangular", "hanning", etc.)}
-
-\item{window_starts}{Numeric vector of window start times}
-
-\item{window_ends}{Numeric vector of window end times}
-
-\item{min_power}{Minimum power threshold}
-
-\item{max_zcr}{Maximum zero-crossing rate (-1 to disable)}
-
-\item{sounds}{List of Sound objects to concatenate}
-
-\item{overlap_time}{Overlap time between sounds (default: 0)}
 }
 \value{
 A Sound object (function wrapper with methods)
-
-Sound object containing concatenated passing windows
-Check which windows pass power/ZCR filter without extraction
-
-Logical vector indicating which windows pass the filter
-Concatenate multiple Sound objects
-
-Sound object containing concatenated audio
 }
 \description{
 This is added as a method to the existing Sound R6 class during package load

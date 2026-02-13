@@ -1,14 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.23 (2026-02-12)
+**Version:** 4.8.24 (2026-02-13)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns
 
 ---
 
 
 ## What's New in v4.8.x
 
+- **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
 - **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_zerocopy_impl` export
 - **v4.8.22:** NaN/NA input guards on all query methods, Intensity batch queries, Formant/Spectrogram API additions
 - **v4.8.20:** Spectrogram segfault fix (thread-unsafe R API in SIMD check)
@@ -1667,6 +1668,69 @@ avqi_hnr <- hnr$band3500_mean  # HNR 0-3500Hz
 
 ---
 
+### Pattern 2m: Prosodic Analysis Workflows (v4.8.24+)
+
+**Use case:** Batch feature extraction at target times (INTSINT points, syllable nuclei, etc.) — common in prosodic analysis packages like dysprosody and superassp.
+
+#### Pre-extract all formants at target times (batch)
+
+```r
+sound <- Sound("utterance.wav")
+formant <- sound$to_formant_burg()
+targets <- c(0.15, 0.35, 0.52, 0.71)  # e.g., syllable nuclei
+
+# FAST: batch query per formant number
+f1 <- formant$get_values_at_times(1, targets)
+f2 <- formant$get_values_at_times(2, targets)
+f3 <- formant$get_values_at_times(3, targets)
+
+# Or get all formants at a single time point
+all_f <- formant$get_all_values_at_time(0.35, max_formants = 5)
+# Returns: numeric(5) with NA for missing formants
+```
+
+#### Intensity at target times (batch)
+
+```r
+intensity <- sound$to_intensity()
+int_vals <- intensity$get_values_at_times(targets)
+```
+
+#### LTAS spectral analysis
+
+```r
+ltas <- sound$to_ltas(100)
+
+# Spectral slope (convenience — returns scalar)
+slope <- ltas$get_spectral_slope(100, 5000)
+
+# Full trend report (slope, intercept, R², fitted values)
+trend <- ltas$report_spectral_trend(100, 5000)
+
+# Harmonic peaks in frequency bands
+peaks <- ltas$get_peaks_batch(
+  fmins = c(0, 1000, 2000, 3000),
+  fmaxs = c(1000, 2000, 3000, 4000)
+)
+
+# Values at specific frequencies
+vals <- ltas$get_values_at_frequencies(c(500, 1000, 2000, 4000))
+```
+
+#### Performance: loop vs batch
+
+```r
+# SLOW: loop per target per formant
+for (t in targets) {
+  for (fn in 1:5) formant$get_value_at_time(fn, t)  # N*5 C++ calls
+}
+
+# FAST: batch per formant (N calls total, vectorized in C++)
+for (fn in 1:5) formant$get_values_at_times(fn, targets)
+```
+
+---
+
 ### Pattern 3: Export to Data Frame (v4.0+: Returns data.table)
 
 **NEW in v4.0:** All `as.data.frame()` methods now return `data.table` (inherits from `data.frame`) for 5-15x faster batch operations.
@@ -3008,6 +3072,51 @@ results <- data.table(
 ```
 
 **Performance:** 5-10x faster than Tier 1 loop for batch processing.
+
+### Use Case 5: Prosodic Feature Extraction at Target Times
+
+**Challenge:** Extract F0, formants, intensity, and spectral features at predetermined analysis points (e.g., INTSINT targets, syllable nuclei) for prosodic research.
+
+**Solution:** Extract analysis objects once, use batch queries at all target times.
+
+```r
+# 1. Extract analysis objects once
+sound <- Sound("utterance.wav")
+pitch <- sound$to_pitch()
+formant <- sound$to_formant_burg()
+intensity <- sound$to_intensity()
+ltas <- sound$to_ltas(100)
+
+# 2. Define target times (e.g., from TextGrid or INTSINT)
+targets <- c(0.12, 0.34, 0.56, 0.78, 1.01)
+
+# 3. Batch extraction at all targets
+f0 <- pitch$get_values_at_times(targets)
+f1 <- formant$get_values_at_times(1, targets)
+f2 <- formant$get_values_at_times(2, targets)
+f3 <- formant$get_values_at_times(3, targets)
+int <- intensity$get_values_at_times(targets)
+
+# 4. Spectral measures (whole-utterance)
+spectral_slope <- ltas$get_spectral_slope(100, 5000)
+band_peaks <- ltas$get_peaks_batch(
+  fmins = c(0, 1000, 2000),
+  fmaxs = c(1000, 2000, 4000)
+)
+
+# 5. Assemble results
+library(data.table)
+results <- data.table(
+  time = targets,
+  f0 = f0, f1 = f1, f2 = f2, f3 = f3,
+  intensity = int,
+  spectral_slope = spectral_slope
+)
+```
+
+**Performance:** Batch queries avoid per-target C++ call overhead. For 100 targets: ~2ms batch vs ~50ms loop.
+
+---
 
 ### Migration Checklist for Agents
 

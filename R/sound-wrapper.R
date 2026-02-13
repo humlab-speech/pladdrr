@@ -280,14 +280,14 @@ Sound <- function(path = NULL, .xptr = NULL) {
 
     # === Batch/Filtered Window Extraction (AVQI 2.9x -> 1.5x speedup) ===
 
-    #' Extract windows, filter by power/ZCR, and concatenate
-    #' @param window_starts Numeric vector of window start times
-    #' @param window_ends Numeric vector of window end times
-    #' @param min_power Minimum power threshold (windows below this are excluded)
-    #' @param max_zcr Maximum zero-crossing rate (windows above this are excluded, -1 to disable)
-    #' @param overlap_time Overlap time for concatenation (default: 0)
-    #' @param window_shape Window shape ("rectangular", "hanning", etc.)
-    #' @return Sound object containing concatenated passing windows
+    # Extract windows, filter by power/ZCR, and concatenate
+    # @param window_starts Numeric vector of window start times
+    # @param window_ends Numeric vector of window end times
+    # @param min_power Minimum power threshold (windows below this are excluded)
+    # @param max_zcr Maximum zero-crossing rate (windows above this are excluded, -1 to disable)
+    # @param overlap_time Overlap time for concatenation (default: 0)
+    # @param window_shape Window shape ("rectangular", "hanning", etc.)
+    # @return Sound object containing concatenated passing windows
     extract_windows_filtered = function(window_starts, window_ends,
                                          min_power = 0.0, max_zcr = -1.0,
                                          overlap_time = 0.0, window_shape = "rectangular") {
@@ -309,12 +309,12 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Sound(.xptr = sound_ptr)
     },
 
-    #' Check which windows pass power/ZCR filter without extraction
-    #' @param window_starts Numeric vector of window start times
-    #' @param window_ends Numeric vector of window end times
-    #' @param min_power Minimum power threshold
-    #' @param max_zcr Maximum zero-crossing rate (-1 to disable)
-    #' @return Logical vector indicating which windows pass the filter
+    # Check which windows pass power/ZCR filter without extraction
+    # @param window_starts Numeric vector of window start times
+    # @param window_ends Numeric vector of window end times
+    # @param min_power Minimum power threshold
+    # @param max_zcr Maximum zero-crossing rate (-1 to disable)
+    # @return Logical vector indicating which windows pass the filter
     get_windows_passing_filter = function(window_starts, window_ends,
                                            min_power = 0.0, max_zcr = -1.0) {
       cpp_snd$get_windows_passing_filter(
@@ -325,10 +325,10 @@ Sound <- function(path = NULL, .xptr = NULL) {
       )
     },
 
-    #' Concatenate multiple Sound objects
-    #' @param sounds List of Sound objects to concatenate
-    #' @param overlap_time Overlap time between sounds (default: 0)
-    #' @return Sound object containing concatenated audio
+    # Concatenate multiple Sound objects
+    # @param sounds List of Sound objects to concatenate
+    # @param overlap_time Overlap time between sounds (default: 0)
+    # @return Sound object containing concatenated audio
     concatenate_sounds = function(sounds, overlap_time = 0.0) {
       if (!is.list(sounds)) {
         stop("sounds must be a list of Sound objects")

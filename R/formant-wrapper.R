@@ -164,6 +164,19 @@ Formant <- function(.xptr = NULL) {
       )
     },
 
+    # Get all formant values at a single time point
+    # @param time Time in seconds
+    # @param max_formants Maximum number of formants to query (default 5)
+    # @param unit "hertz" or "bark"
+    # @return Numeric vector of length max_formants (NA for missing formants)
+    get_all_values_at_time = function(time, max_formants = 5,
+                                       unit = c("hertz", "bark")) {
+      unit <- match.arg(unit)
+      vapply(seq_len(max_formants), function(i) {
+        cpp_obj$get_value_at_time(as.integer(i), as.numeric(time), unit_code(unit))
+      }, numeric(1))
+    },
+
     get_all_formant_tracks = function(max_formants = 5, unit = c("hertz", "bark")) {
       unit <- match.arg(unit)
       cpp_obj$get_all_formant_tracks(as.integer(max_formants), unit_code(unit))

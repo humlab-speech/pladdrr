@@ -3,18 +3,6 @@
 \name{TextGrid}
 \alias{TextGrid}
 \title{Praat TextGrid Object}
-\usage{
-TextGrid(path = NULL, .xptr = NULL)
-}
-\arguments{
-\item{tier}{Tier number (1-based) or name}
-}
-\value{
-data.table (inherits from data.frame) with start, end, text columns
-Get all points from a point tier in single C++ call
-
-data.table (inherits from data.frame) with time, text columns
-}
 \description{
 R6 class representing a Praat TextGrid object for linguistic annotation.
 A TextGrid contains multiple tiers (IntervalTier or TextTier/PointTier) for
