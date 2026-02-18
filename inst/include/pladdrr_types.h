@@ -24,5 +24,9 @@ struct structMatrix;
 struct structTable;
 struct structAmplitudeTier;
 struct structElectroglottogram;
+struct structMelSpectrogram;
+struct structBarkSpectrogram;
+struct structBandFilterSpectrogram;
+struct structMFCC;
 
 #endif // PLADDRR_TYPES_H

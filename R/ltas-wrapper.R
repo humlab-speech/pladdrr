@@ -255,6 +255,25 @@ as.data.frame.Ltas <- function(x, ...) {
   x$as_data_frame()
 }
 
+#' Average multiple Ltas objects
+#'
+#' @param ... Ltas objects to average
+#' @return A new Ltas object representing the average
+#' @export
+ltas_average <- function(...) {
+  ltas_list <- list(...)
+  if (length(ltas_list) == 1 && is.list(ltas_list[[1]]) && !inherits(ltas_list[[1]], "Ltas")) {
+    ltas_list <- ltas_list[[1]]
+  }
+  stopifnot("Need at least one Ltas object" = length(ltas_list) >= 1)
+  xptrs <- lapply(ltas_list, function(l) {
+    if (!inherits(l, "Ltas")) stop("All arguments must be Ltas objects")
+    l$.xptr
+  })
+  result_ptr <- .ltases_average(xptrs)
+  Ltas(.xptr = result_ptr)
+}
+
 #' @export
 print.ltas_spectral_trend <- function(x, ...) {
   cat("Spectral Trend Analysis\n")

@@ -100,9 +100,45 @@ Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
       invisible(obj)
     },
     
+    # Sort rows by columns
+    sort_rows = function(columns) {
+      .table_sort_rows(ptr, as.character(columns))
+      invisible(obj)
+    },
+
+    # Extract rows where column meets numeric criterion
+    # column: Column name or number
+    # which: 1=equal, 2=not_equal, 3=less_than,
+    #   4=less_than_or_equal, 5=greater_than, 6=greater_than_or_equal
+    # criterion: Numeric value to compare against
+    extract_rows_where_number = function(column, which, criterion) {
+      if (is.character(column)) {
+        column <- cpp_obj$get_column_index(column)
+      }
+      tbl_ptr <- .table_extract_rows_where_column_number(
+        ptr, as.integer(column), as.integer(which), as.numeric(criterion)
+      )
+      Table(.xptr = tbl_ptr)
+    },
+
+    # Extract rows where column meets string criterion
+    # column: Column name or number
+    # which: 1=is_equal_to, 2=is_not_equal_to,
+    #   3=contains, 4=does_not_contain, 5=starts_with, 6=ends_with
+    # criterion: String to compare against
+    extract_rows_where_string = function(column, which, criterion) {
+      if (is.character(column)) {
+        column <- cpp_obj$get_column_index(column)
+      }
+      tbl_ptr <- .table_extract_rows_where_column_string(
+        ptr, as.integer(column), as.integer(which), as.character(criterion)
+      )
+      Table(.xptr = tbl_ptr)
+    },
+
     # Utility
     get_xptr = function() ptr,
-    
+
     # Print
     print = function() {
       cat("<Praat Table>\n")

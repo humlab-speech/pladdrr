@@ -147,6 +147,14 @@ LPC <- function(.xptr = NULL) {
       Matrix(.xptr = matrix_ptr)
     },
 
+    to_spectrogram = function(df_min = 20.0, bandwidth_reduction = 0.0,
+                              de_emphasis_frequency = 50.0) {
+      spec_ptr <- .lpc_to_spectrogram(
+        .xptr, df_min, bandwidth_reduction, de_emphasis_frequency
+      )
+      Spectrogram(.xptr = spec_ptr)
+    },
+
     # LFCC extraction (Linear Frequency Cepstral Coefficients)
     to_lfcc = function(num_coefficients = 12) {
       mfcc_mod <- get_module("mfcc_module")

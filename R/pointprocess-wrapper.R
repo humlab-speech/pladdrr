@@ -421,7 +421,24 @@ PointProcess <- function(.xptr = NULL) {
       )
       TextGrid(.xptr = tg_ptr)
     },
-    
+
+    #' Convert to Sound (pulse train)
+    to_sound_pulse_train = function(sampling_frequency = 44100,
+                                    adapt_factor = 1.0, adapt_time = 0.05,
+                                    interpolation_depth = 30L) {
+      sound_ptr <- .pointprocess_to_sound_pulse_train(
+        .xptr, sampling_frequency, adapt_factor, adapt_time,
+        as.integer(interpolation_depth)
+      )
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Convert to Sound (hum)
+    to_sound_hum = function() {
+      sound_ptr <- .pointprocess_to_sound_hum(.xptr)
+      Sound(.xptr = sound_ptr)
+    },
+
     print = function() {
       cat("<Praat PointProcess>\n")
       cat(sprintf("  Time domain: [%.3f, %.3f] s (%.3f s)\n",

@@ -236,7 +236,20 @@ Intensity <- function(.xptr = NULL) {
         intensity_db = df$intensity
       )
     },
-    
+
+    # Detect silences and create TextGrid
+    to_textgrid_silences = function(silence_threshold = -25,
+                                    min_silence_duration = 0.3,
+                                    min_sounding_duration = 0.1,
+                                    silent_label = "silent",
+                                    sounding_label = "sounding") {
+      tg_ptr <- .intensity_to_textgrid_silences(
+        .xptr, silence_threshold, min_silence_duration,
+        min_sounding_duration, silent_label, sounding_label
+      )
+      TextGrid(.xptr = tg_ptr)
+    },
+
     # Display
     print = function(...) {
       cat("<Praat Intensity>\n")

@@ -46,7 +46,20 @@
 #' - `to_spectrum()` - Frequency spectrum
 #' - `to_spectrogram()` - Time-frequency representation
 #' - `to_ltas()` - Long-term average spectrum
+#' - `to_ltas_pitch_corrected()` - Pitch-corrected LTAS (voice quality)
+#' - `to_formant_robust()` - Outlier-resistant formant tracking
+#' - `to_mel_spectrogram()` - Mel-scale spectrogram
+#' - `to_bark_spectrogram()` - Bark-scale spectrogram
 #' - `to_point_process_periodic_cc()` - Extract glottal pulses
+#'
+#' @section Signal Processing:
+#' - `lengthen()` - Time-stretch using overlap-add
+#' - `autocorrelate()` - Autocorrelation function
+#' - `convolve()` - Convolve with another sound
+#' - `cross_correlate()` - Cross-correlate with another sound
+#' - `deepen_band_modulation()` - Hearing enhancement
+#' - `filter_by_formant()` - Filter with Formant object
+#' - `filter_by_formant_noscale()` - Filter without scaling
 #'
 #' @section Extraction:
 #' - `extract_channel()` - Extract single channel
@@ -953,14 +966,127 @@ Sound <- function(path = NULL, .xptr = NULL) {
       Sound(.xptr = sound_ptr)
     },
     
-    extract_intervals_where = function(textgrid, tier_number, criterion = "is equal to", 
+    extract_intervals_where = function(textgrid, tier_number, criterion = "is equal to",
                                       text = "", preserve_times = FALSE) {
       if (!inherits(textgrid, "TextGrid")) {
         stop("textgrid must be a TextGrid object")
       }
       textgrid$extract_intervals_where(snd, tier_number, criterion, text, preserve_times)
     },
-    
+
+    # === Tier 1: New methods from gap analysis ===
+
+    #' Lengthen (time-stretch) using overlap-add
+    lengthen = function(fmin = 75, fmax = 600, factor = 1.5) {
+      sound_ptr <- .sound_lengthen_ola(ptr, fmin, fmax, factor)
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Pitch-corrected LTAS (voice quality)
+    to_ltas_pitch_corrected = function(pitch_floor = 75, pitch_ceiling = 600,
+                                       max_frequency = 5000, bandwidth = 100,
+                                       shortest_period = 0.0001, longest_period = 0.02,
+                                       max_period_factor = 1.3) {
+      ltas_ptr <- .sound_to_ltas_pitch_corrected(
+        ptr, pitch_floor, pitch_ceiling,
+        max_frequency, bandwidth,
+        shortest_period, longest_period, max_period_factor
+      )
+      Ltas(.xptr = ltas_ptr)
+    },
+
+    #' Robust formant extraction (outlier-resistant)
+    to_formant_robust = function(time_step = 0.005, max_formants = 5.0,
+                                 max_frequency = 5500.0, window_length = 0.025,
+                                 pre_emphasis_from = 50.0,
+                                 num_std_dev = 1.5, max_iterations = 5L) {
+      formant_ptr <- .sound_to_formant_robust(
+        ptr, time_step, max_formants,
+        max_frequency, window_length, pre_emphasis_from,
+        num_std_dev, as.integer(max_iterations)
+      )
+      Formant(.xptr = formant_ptr)
+    },
+
+    #' Filter with Formant object (scales to preserve energy)
+    filter_by_formant = function(formant) {
+      if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+      sound_ptr <- .sound_formant_filter(ptr, formant$.xptr)
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Filter with Formant object (no scaling)
+    filter_by_formant_noscale = function(formant) {
+      if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+      sound_ptr <- .sound_formant_filter_noscale(ptr, formant$.xptr)
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Convert to MelSpectrogram
+    to_mel_spectrogram = function(window_length = 0.015, time_step = 0.005,
+                                  first_filter_frequency = 100,
+                                  max_frequency = 0, frequency_step = 100) {
+      mel_ptr <- .sound_to_mel_spectrogram(
+        ptr, window_length, time_step,
+        first_filter_frequency, max_frequency, frequency_step
+      )
+      MelSpectrogram(.xptr = mel_ptr)
+    },
+
+    #' Convert to BarkSpectrogram
+    to_bark_spectrogram = function(window_length = 0.015, time_step = 0.005,
+                                   first_filter_frequency = 1.0,
+                                   max_frequency = 0, frequency_step = 1.0) {
+      bark_ptr <- .sound_to_bark_spectrogram(
+        ptr, window_length, time_step,
+        first_filter_frequency, max_frequency, frequency_step
+      )
+      BarkSpectrogram(.xptr = bark_ptr)
+    },
+
+    #' Autocorrelate
+    autocorrelate = function(scaling = "peak_0.99", signal_outside = "zero") {
+      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+      so <- match.arg(signal_outside, c("zero", "similar"))
+      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+      so_code <- match(so, c("zero", "similar"))
+      sound_ptr <- .sound_autocorrelate(ptr, as.integer(sc_code), as.integer(so_code))
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Convolve with another sound
+    convolve = function(other_sound, scaling = "peak_0.99", signal_outside = "zero") {
+      if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+      so <- match.arg(signal_outside, c("zero", "similar"))
+      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+      so_code <- match(so, c("zero", "similar"))
+      sound_ptr <- .sounds_convolve_direct(ptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Cross-correlate with another sound
+    cross_correlate = function(other_sound, scaling = "peak_0.99", signal_outside = "zero") {
+      if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+      so <- match.arg(signal_outside, c("zero", "similar"))
+      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+      so_code <- match(so, c("zero", "similar"))
+      sound_ptr <- .sounds_cross_correlate_direct(ptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Deepen band modulation (hearing enhancement)
+    deepen_band_modulation = function(enhancement_db = 10, flow = 300, fhigh = 4000,
+                                      slow_modulation = 3, fast_modulation = 30,
+                                      band_smoothing = 100) {
+      sound_ptr <- .sound_deepen_band_mod(
+        ptr, enhancement_db, flow, fhigh,
+        slow_modulation, fast_modulation, band_smoothing
+      )
+      Sound(.xptr = sound_ptr)
+    },
+
     # === Print Method ===
     print = function() {
       if (!cpp_snd$is_valid()) {

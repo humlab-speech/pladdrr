@@ -41,10 +41,15 @@
 #include "fon/Sound_to_PointProcess.h"
 #include "fon/Pitch_to_PointProcess.h"
 #include "fon/Ltas.h"
+#include "fon/FormantGrid.h"
+#include "praat.github.io/LPC/Sound_to_Formant_mt.h"
+#include "praat.github.io/dwtools/Sound_and_Spectrogram_extensions.h"
+#include "praat.github.io/dwtools/Spectrogram_extensions.h"
 #include "fon/TextGrid.h"
 #include "fon/TextGrid_Sound.h"
 #include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
 #include "praat.github.io/dwtools/Intensity_extensions.h"
+#include "praat.github.io/dwtools/TextGrid_extensions.h"  // IntervalTier_cutIntervals_minimumDuration etc.
 #include "melder/melder.h"
 
 using namespace Rcpp;
@@ -2170,4 +2175,446 @@ NumericVector intensity_get_values_at_times(
     }
 
     return result;
+}
+
+// ============================================================================
+// Gap Analysis: New Wrappers (Tier 1 + Tier 2)
+// ============================================================================
+
+//' Sound: To Ltas (pitch-corrected) (internal)
+// [[Rcpp::export(.sound_to_ltas_pitch_corrected)]]
+XPtr<structLtas> sound_to_ltas_pitch_corrected(
+    XPtr<structSound> xptr,
+    double pitch_floor,
+    double pitch_ceiling,
+    double max_frequency,
+    double bandwidth,
+    double shortest_period,
+    double longest_period,
+    double max_period_factor
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoLtas ltas = Sound_to_Ltas_pitchCorrected(
+            sound, pitch_floor, pitch_ceiling,
+            max_frequency, bandwidth,
+            shortest_period, longest_period, max_period_factor
+        );
+        return create_xptr_from_auto<structLtas>(ltas);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create pitch-corrected LTAS");
+    }
+}
+
+//' Sound: To Formant (robust) (internal)
+// [[Rcpp::export(.sound_to_formant_robust)]]
+XPtr<structFormant> sound_to_formant_robust(
+    XPtr<structSound> xptr,
+    double time_step,
+    double max_formants,
+    double max_frequency,
+    double window_length,
+    double pre_emphasis_from,
+    double num_std_dev,
+    int max_iterations
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoFormant formant = Sound_to_Formant_robust(
+            sound,
+            time_step,
+            max_formants,
+            max_frequency,
+            window_length,
+            pre_emphasis_from,
+            50.0,   // safetyMargin (Praat default)
+            num_std_dev,
+            (integer) max_iterations,
+            1e-6,   // tolerance (Praat default)
+            0.0,    // location (Praat default)
+            false   // wantlocation (Praat default)
+        );
+        return create_xptr_from_auto<structFormant>(formant);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to extract robust formants");
+    }
+}
+
+//' Sound & Formant: Filter (internal)
+// [[Rcpp::export(.sound_formant_filter)]]
+XPtr<structSound> sound_formant_filter(
+    XPtr<structSound> sound_xptr,
+    XPtr<structFormant> formant_xptr
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structFormant* formant = get_ptr(formant_xptr, "Formant");
+
+    try {
+        autoSound result = Sound_Formant_filter(sound, formant);
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to filter sound with formant");
+    }
+}
+
+//' Sound & Formant: Filter (no scale) (internal)
+// [[Rcpp::export(.sound_formant_filter_noscale)]]
+XPtr<structSound> sound_formant_filter_noscale(
+    XPtr<structSound> sound_xptr,
+    XPtr<structFormant> formant_xptr
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structFormant* formant = get_ptr(formant_xptr, "Formant");
+
+    try {
+        autoSound result = Sound_Formant_filter_noscale(sound, formant);
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to filter sound with formant (no scale)");
+    }
+}
+
+//' Sound: To MelSpectrogram (internal)
+// [[Rcpp::export(.sound_to_mel_spectrogram)]]
+XPtr<structMelSpectrogram> sound_to_mel_spectrogram(
+    XPtr<structSound> xptr,
+    double window_length,
+    double time_step,
+    double first_filter_frequency,
+    double max_frequency,
+    double frequency_step
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoMelSpectrogram result = Sound_to_MelSpectrogram(
+            sound, window_length, time_step,
+            first_filter_frequency, max_frequency, frequency_step
+        );
+        return create_xptr_from_auto<structMelSpectrogram>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create MelSpectrogram");
+    }
+}
+
+//' Sound: To BarkSpectrogram (internal)
+// [[Rcpp::export(.sound_to_bark_spectrogram)]]
+XPtr<structBarkSpectrogram> sound_to_bark_spectrogram(
+    XPtr<structSound> xptr,
+    double window_length,
+    double time_step,
+    double first_filter_frequency,
+    double max_frequency,
+    double frequency_step
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoBarkSpectrogram result = Sound_to_BarkSpectrogram(
+            sound, window_length, time_step,
+            first_filter_frequency, max_frequency, frequency_step
+        );
+        return create_xptr_from_auto<structBarkSpectrogram>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create BarkSpectrogram");
+    }
+}
+
+//' MelSpectrogram: To MFCC (internal)
+// [[Rcpp::export(.mel_spectrogram_to_mfcc)]]
+XPtr<structMFCC> mel_spectrogram_to_mfcc(
+    XPtr<structMelSpectrogram> xptr,
+    int number_of_coefficients
+) {
+    structMelSpectrogram* mel = get_ptr(xptr, "MelSpectrogram");
+
+    try {
+        autoMFCC result = MelSpectrogram_to_MFCC(mel, (integer) number_of_coefficients);
+        return create_xptr_from_auto<structMFCC>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert MelSpectrogram to MFCC");
+    }
+}
+
+//' MFCC: To MelSpectrogram (internal)
+// [[Rcpp::export(.mfcc_to_mel_spectrogram)]]
+XPtr<structMelSpectrogram> mfcc_to_mel_spectrogram(
+    XPtr<structMFCC> xptr,
+    int first_coefficient,
+    int last_coefficient,
+    bool include_c0
+) {
+    structMFCC* mfcc = get_ptr(xptr, "MFCC");
+
+    try {
+        autoMelSpectrogram result = MFCC_to_MelSpectrogram(
+            mfcc, (integer) first_coefficient, (integer) last_coefficient, include_c0
+        );
+        return create_xptr_from_auto<structMelSpectrogram>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert MFCC to MelSpectrogram");
+    }
+}
+
+//' BandFilterSpectrogram: To Matrix (internal)
+// [[Rcpp::export(.band_filter_spectrogram_to_matrix)]]
+XPtr<structMatrix> band_filter_spectrogram_to_matrix(
+    SEXP xptr,
+    bool to_db
+) {
+    structBandFilterSpectrogram* bfs = static_cast<structBandFilterSpectrogram*>(R_ExternalPtrAddr(xptr));
+    if (!bfs) stop("Invalid BandFilterSpectrogram pointer");
+
+    try {
+        autoMatrix result = BandFilterSpectrogram_to_Matrix(bfs, to_db ? 1 : 0);
+        return create_xptr_from_auto<structMatrix>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert BandFilterSpectrogram to Matrix");
+    }
+}
+
+//' BandFilterSpectrogram: To Intensity (internal)
+// [[Rcpp::export(.band_filter_spectrogram_to_intensity)]]
+XPtr<structIntensity> band_filter_spectrogram_to_intensity(
+    SEXP xptr
+) {
+    structBandFilterSpectrogram* bfs = static_cast<structBandFilterSpectrogram*>(R_ExternalPtrAddr(xptr));
+    if (!bfs) stop("Invalid BandFilterSpectrogram pointer");
+
+    try {
+        autoIntensity result = BandFilterSpectrogram_to_Intensity(bfs);
+        return create_xptr_from_auto<structIntensity>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert BandFilterSpectrogram to Intensity");
+    }
+}
+
+//' Sound: Lengthen (overlap-add) (internal)
+// [[Rcpp::export(.sound_lengthen_ola)]]
+XPtr<structSound> sound_lengthen_ola(
+    XPtr<structSound> xptr,
+    double fmin,
+    double fmax,
+    double factor
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoSound result = Sound_lengthen_overlapAdd(
+            sound, fmin, fmax, factor
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to lengthen sound");
+    }
+}
+
+//' Sound: Autocorrelate (internal)
+// [[Rcpp::export(.sound_autocorrelate)]]
+XPtr<structSound> sound_autocorrelate(
+    XPtr<structSound> xptr,
+    int scaling,
+    int signal_outside
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoSound result = Sound_autoCorrelate(
+            sound,
+            static_cast<kSounds_convolve_scaling>(scaling),
+            static_cast<kSounds_convolve_signalOutsideTimeDomain>(signal_outside)
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to autocorrelate sound");
+    }
+}
+
+//' Sounds: Convolve (internal)
+// [[Rcpp::export(.sounds_convolve_direct)]]
+XPtr<structSound> sounds_convolve_export(
+    XPtr<structSound> xptr1,
+    XPtr<structSound> xptr2,
+    int scaling,
+    int signal_outside
+) {
+    structSound* sound1 = get_ptr(xptr1, "Sound");
+    structSound* sound2 = get_ptr(xptr2, "Sound");
+
+    try {
+        autoSound result = Sounds_convolve(
+            sound1, sound2,
+            static_cast<kSounds_convolve_scaling>(scaling),
+            static_cast<kSounds_convolve_signalOutsideTimeDomain>(signal_outside)
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convolve sounds");
+    }
+}
+
+//' Sounds: Cross-correlate (internal)
+// [[Rcpp::export(.sounds_cross_correlate_direct)]]
+XPtr<structSound> sounds_cross_correlate_export(
+    XPtr<structSound> xptr1,
+    XPtr<structSound> xptr2,
+    int scaling,
+    int signal_outside
+) {
+    structSound* sound1 = get_ptr(xptr1, "Sound");
+    structSound* sound2 = get_ptr(xptr2, "Sound");
+
+    try {
+        autoSound result = Sounds_crossCorrelate(
+            sound1, sound2,
+            static_cast<kSounds_convolve_scaling>(scaling),
+            static_cast<kSounds_convolve_signalOutsideTimeDomain>(signal_outside)
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to cross-correlate sounds");
+    }
+}
+
+//' Sound: Deepen band modulation (internal)
+// [[Rcpp::export(.sound_deepen_band_mod)]]
+XPtr<structSound> sound_deepen_band_mod(
+    XPtr<structSound> xptr,
+    double enhancement_db,
+    double flow,
+    double fhigh,
+    double slow_modulation,
+    double fast_modulation,
+    double band_smoothing
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+
+    try {
+        autoSound result = Sound_deepenBandModulation(
+            sound, enhancement_db,
+            flow, fhigh,
+            slow_modulation, fast_modulation,
+            band_smoothing
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to deepen band modulation");
+    }
+}
+
+//' Intensity: To TextGrid (silences) (internal)
+// [[Rcpp::export(.intensity_to_textgrid_silences)]]
+XPtr<structTextGrid> intensity_to_textgrid_silences(
+    XPtr<structIntensity> xptr,
+    double silence_threshold,
+    double min_silence_duration,
+    double min_sounding_duration,
+    std::string silent_label,
+    std::string sounding_label
+) {
+    structIntensity* intensity = get_ptr(xptr, "Intensity");
+
+    try {
+        autostring32 silentStr = Melder_8to32(silent_label.c_str());
+        autostring32 soundingStr = Melder_8to32(sounding_label.c_str());
+        conststring32 silenceLabel = silentStr.get();
+        conststring32 soundingLabel = soundingStr.get();
+
+        const double duration = intensity->xmax - intensity->xmin;
+        autoTextGrid thee = TextGrid_create(intensity->xmin, intensity->xmax, U"silences", U"");
+        const IntervalTier it = (IntervalTier) thee->tiers->at[1];
+        TextInterval_setText(it->intervals.at[1], soundingLabel);
+        if (min_silence_duration > duration)
+            return create_xptr_from_auto<structTextGrid>(thee);
+
+        double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
+        Vector_getMaximumAndX(intensity, 0.0, 0.0, 1, kVector_peakInterpolation::PARABOLIC, &intensity_max_db, &xOfMaximum);
+        Vector_getMinimumAndX(intensity, 0.0, 0.0, 1, kVector_peakInterpolation::PARABOLIC, &intensity_min_db, &xOfMinimum);
+
+        const double intensityThreshold = intensity_max_db - fabs(silence_threshold);
+        if (min_silence_duration > duration || intensityThreshold < intensity_min_db)
+            return create_xptr_from_auto<structTextGrid>(thee);
+
+        bool inSilenceInterval = intensity->z[1][1] < intensityThreshold;
+        integer iinterval = 1;
+        for (integer i = 2; i <= intensity->nx; i++) {
+            bool addBoundary = false;
+            conststring32 label = nullptr;
+            if (intensity->z[1][i] < intensityThreshold) {
+                if (!inSilenceInterval) {
+                    addBoundary = true;
+                    inSilenceInterval = true;
+                    label = soundingLabel;
+                }
+            } else {
+                if (inSilenceInterval) {
+                    addBoundary = true;
+                    inSilenceInterval = false;
+                    label = silenceLabel;
+                }
+            }
+            if (addBoundary) {
+                const double time = intensity->x1 + (i - 1) * intensity->dx;
+                if (time > intensity->xmin && time < intensity->xmax) {
+                    const TextInterval ti = it->intervals.at[iinterval];
+                    ti->xmax = time;
+                    TextInterval_setText(ti, label);
+                    autoTextInterval ti_new = TextInterval_create(time, intensity->xmax, U"");
+                    it->intervals.addItem_unsorted_move(ti_new.move());
+                    iinterval++;
+                }
+            }
+        }
+        // Relabel last interval
+        conststring32 lastLabel = inSilenceInterval ? silenceLabel : soundingLabel;
+        TextInterval_setText(it->intervals.at[iinterval], lastLabel);
+        it->intervals.sort();
+
+        if (min_sounding_duration > 0.0) {
+            IntervalTier_cutIntervals_minimumDuration(it, soundingLabel, min_sounding_duration);
+            IntervalTier_combineIntervalsOnLabelMatch(it, silenceLabel);
+        }
+        if (min_silence_duration > 0.0) {
+            IntervalTier_cutIntervals_minimumDuration(it, silenceLabel, min_silence_duration);
+            IntervalTier_combineIntervalsOnLabelMatch(it, soundingLabel);
+        }
+
+        return create_xptr_from_auto<structTextGrid>(thee);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create TextGrid from Intensity silences");
+    }
 }

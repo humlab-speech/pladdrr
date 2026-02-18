@@ -11,6 +11,14 @@ Table(
   .xptr = NULL
 )
 }
+\arguments{
+\item{column}{Column name or number}
+
+\item{which}{Comparison: 1=is_equal_to, 2=is_not_equal_to,
+3=contains, 4=does_not_contain, 5=starts_with, 6=ends_with}
+
+\item{criterion}{String to compare against}
+}
 \description{
 Praat Table object with direct C++ module binding for tabular data operations.
 }

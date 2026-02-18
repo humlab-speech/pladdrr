@@ -392,12 +392,34 @@ DataFrame ltas_as_data_frame(Rcpp::XPtr<structLtas> ltas) {
 // [[Rcpp::export(.ltas_as_matrix)]]
 NumericVector ltas_as_matrix(Rcpp::XPtr<structLtas> ltas) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");
-  
+
   NumericVector values(ltas->nx);
-  
+
   for (integer i = 1; i <= ltas->nx; i++) {
     values[i-1] = ltas->z[1][i];
   }
-  
+
   return values;
+}
+
+// [[Rcpp::export(.ltases_average)]]
+XPtr<structLtas> ltases_average(List ltas_list) {
+    if (ltas_list.size() < 1) {
+        stop("Need at least one Ltas object to average");
+    }
+
+    try {
+        autoLtasBag bag = LtasBag_create();
+        for (int i = 0; i < ltas_list.size(); i++) {
+            XPtr<structLtas> xptr = as<XPtr<structLtas>>(ltas_list[i]);
+            if (!xptr) stop("Invalid Ltas pointer at index %d", i + 1);
+            bag->addItem_ref(xptr.get());
+        }
+        autoLtas result = Ltases_average(bag.get());
+        return create_xptr_from_auto<structLtas>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to average Ltas objects");
+    }
 }

@@ -1291,6 +1291,11 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_lpc_sound_filter_inverse_at_time_r6`, lpc_xptr, sound_r6, channel, time)
 }
 
+#' LPC: To Spectrogram (internal)
+.lpc_to_spectrogram <- function(xptr, df_min, bandwidth_reduction, de_emphasis_frequency) {
+    .Call(`_pladdrr_lpc_to_spectrogram`, xptr, df_min, bandwidth_reduction, de_emphasis_frequency)
+}
+
 .ltas_get_bin_from_frequency <- function(ltas, frequency) {
     .Call(`_pladdrr_ltas_get_bin_from_frequency`, ltas, frequency)
 }
@@ -1359,6 +1364,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .ltas_as_matrix <- function(ltas) {
     .Call(`_pladdrr_ltas_as_matrix`, ltas)
+}
+
+.ltases_average <- function(ltas_list) {
+    .Call(`_pladdrr_ltases_average`, ltas_list)
 }
 
 .manipulation_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
@@ -1699,6 +1708,16 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .pointprocess_voice_report <- function(sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold) {
     .Call(`_pladdrr_pointprocess_voice_report`, sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold)
+}
+
+#' PointProcess: To Sound (pulse train) (internal)
+.pointprocess_to_sound_pulse_train <- function(xptr, sampling_frequency, adapt_factor, adapt_time, interpolation_depth) {
+    .Call(`_pladdrr_pointprocess_to_sound_pulse_train`, xptr, sampling_frequency, adapt_factor, adapt_time, interpolation_depth)
+}
+
+#' PointProcess: To Sound (hum) (internal)
+.pointprocess_to_sound_hum <- function(xptr) {
+    .Call(`_pladdrr_pointprocess_to_sound_hum`, xptr)
 }
 
 .pointprocess_save <- function(xptr, path) {
@@ -2877,6 +2896,86 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_intensity_get_values_at_times`, xptr, times, interpolation)
 }
 
+#' Sound: To Ltas (pitch-corrected) (internal)
+.sound_to_ltas_pitch_corrected <- function(xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth, shortest_period, longest_period, max_period_factor) {
+    .Call(`_pladdrr_sound_to_ltas_pitch_corrected`, xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth, shortest_period, longest_period, max_period_factor)
+}
+
+#' Sound: To Formant (robust) (internal)
+.sound_to_formant_robust <- function(xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from, num_std_dev, max_iterations) {
+    .Call(`_pladdrr_sound_to_formant_robust`, xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from, num_std_dev, max_iterations)
+}
+
+#' Sound & Formant: Filter (internal)
+.sound_formant_filter <- function(sound_xptr, formant_xptr) {
+    .Call(`_pladdrr_sound_formant_filter`, sound_xptr, formant_xptr)
+}
+
+#' Sound & Formant: Filter (no scale) (internal)
+.sound_formant_filter_noscale <- function(sound_xptr, formant_xptr) {
+    .Call(`_pladdrr_sound_formant_filter_noscale`, sound_xptr, formant_xptr)
+}
+
+#' Sound: To MelSpectrogram (internal)
+.sound_to_mel_spectrogram <- function(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step) {
+    .Call(`_pladdrr_sound_to_mel_spectrogram`, xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
+}
+
+#' Sound: To BarkSpectrogram (internal)
+.sound_to_bark_spectrogram <- function(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step) {
+    .Call(`_pladdrr_sound_to_bark_spectrogram`, xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
+}
+
+#' MelSpectrogram: To MFCC (internal)
+.mel_spectrogram_to_mfcc <- function(xptr, number_of_coefficients) {
+    .Call(`_pladdrr_mel_spectrogram_to_mfcc`, xptr, number_of_coefficients)
+}
+
+#' MFCC: To MelSpectrogram (internal)
+.mfcc_to_mel_spectrogram <- function(xptr, first_coefficient, last_coefficient, include_c0) {
+    .Call(`_pladdrr_mfcc_to_mel_spectrogram`, xptr, first_coefficient, last_coefficient, include_c0)
+}
+
+#' BandFilterSpectrogram: To Matrix (internal)
+.band_filter_spectrogram_to_matrix <- function(xptr, to_db) {
+    .Call(`_pladdrr_band_filter_spectrogram_to_matrix`, xptr, to_db)
+}
+
+#' BandFilterSpectrogram: To Intensity (internal)
+.band_filter_spectrogram_to_intensity <- function(xptr) {
+    .Call(`_pladdrr_band_filter_spectrogram_to_intensity`, xptr)
+}
+
+#' Sound: Lengthen (overlap-add) (internal)
+.sound_lengthen_ola <- function(xptr, fmin, fmax, factor) {
+    .Call(`_pladdrr_sound_lengthen_ola`, xptr, fmin, fmax, factor)
+}
+
+#' Sound: Autocorrelate (internal)
+.sound_autocorrelate <- function(xptr, scaling, signal_outside) {
+    .Call(`_pladdrr_sound_autocorrelate`, xptr, scaling, signal_outside)
+}
+
+#' Sounds: Convolve (internal)
+.sounds_convolve_direct <- function(xptr1, xptr2, scaling, signal_outside) {
+    .Call(`_pladdrr_sounds_convolve_export`, xptr1, xptr2, scaling, signal_outside)
+}
+
+#' Sounds: Cross-correlate (internal)
+.sounds_cross_correlate_direct <- function(xptr1, xptr2, scaling, signal_outside) {
+    .Call(`_pladdrr_sounds_cross_correlate_export`, xptr1, xptr2, scaling, signal_outside)
+}
+
+#' Sound: Deepen band modulation (internal)
+.sound_deepen_band_mod <- function(xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing) {
+    .Call(`_pladdrr_sound_deepen_band_mod`, xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing)
+}
+
+#' Intensity: To TextGrid (silences) (internal)
+.intensity_to_textgrid_silences <- function(xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label) {
+    .Call(`_pladdrr_intensity_to_textgrid_silences`, xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label)
+}
+
 #' Zero-Copy Sound Data Access (Read-Only View)
 #'
 #' Returns a read-only view of Sound sample data without copying memory.
@@ -3221,6 +3320,21 @@ is_zerocopy <- function(x) {
 
 .table_to_matrix <- function(xptr) {
     .Call(`_pladdrr_table_to_matrix`, xptr)
+}
+
+#' Table: Sort rows (internal)
+.table_sort_rows <- function(xptr, columns) {
+    invisible(.Call(`_pladdrr_table_sort_rows`, xptr, columns))
+}
+
+#' Table: Extract rows where column number (internal)
+.table_extract_rows_where_column_number <- function(xptr, column, which, criterion) {
+    .Call(`_pladdrr_table_extract_rows_where_column_number`, xptr, column, which, criterion)
+}
+
+#' Table: Extract rows where column string (internal)
+.table_extract_rows_where_column_string <- function(xptr, column, which, criterion) {
+    .Call(`_pladdrr_table_extract_rows_where_column_string`, xptr, column, which, criterion)
 }
 
 #' Extract TextGrid Intervals by Label (Batch)

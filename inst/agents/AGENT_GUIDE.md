@@ -1,14 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.24 (2026-02-13)
+**Version:** 4.8.25 (2026-02-18)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram
 
 ---
 
 
 ## What's New in v4.8.x
 
+- **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
 - **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
 - **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_zerocopy_impl` export
 - **v4.8.22:** NaN/NA input guards on all query methods, Intensity batch queries, Formant/Spectrogram API additions
@@ -157,8 +158,9 @@ Pitch <- function(.xptr = NULL) {
 
 ---
 
-## Object Types (37 modules)
+## Object Types (39 modules)
 
+**Update v4.8.25:** Added MelSpectrogram and BarkSpectrogram modules for psychoacoustic analysis.
 **Update v4.0.7:** Added MFCC, LFCC, FormantModeler, PCA, Discriminant modules for speaker recognition, robust formant tracking, and statistical analysis.
 
 ### Audio Analysis
@@ -172,6 +174,8 @@ Pitch <- function(.xptr = NULL) {
 | `Harmonicity` | `sound$to_harmonicity_cc()` | From Sound |
 | `Spectrum` | `sound$to_spectrum()` | From Sound |
 | `Spectrogram` | `sound$to_spectrogram()` | From Sound |
+| `MelSpectrogram` | `sound$to_mel_spectrogram()` | From Sound (v4.8.25) |
+| `BarkSpectrogram` | `sound$to_bark_spectrogram()` | From Sound (v4.8.25) |
 | `Ltas` | `sound$to_ltas()` | From Sound |
 | `PointProcess` | `sound$to_point_process_periodic_cc()` | From Sound |
 
@@ -1728,6 +1732,324 @@ for (t in targets) {
 # FAST: batch per formant (N calls total, vectorized in C++)
 for (fn in 1:5) formant$get_values_at_times(fn, targets)
 ```
+
+---
+
+### Pattern 2n: Advanced Audio Analysis (v4.8.25+)
+
+**New Tier 1 and Tier 2 methods for specialized audio processing.**
+
+#### Tier 1: High-Impact Audio Processing
+
+##### Time-Stretching with Overlap-Add
+
+**Use case:** Change playback speed without changing pitch (time compression/expansion).
+
+```r
+sound <- Sound("speech.wav")
+
+# Slow down by 50% (factor > 1)
+slower <- sound$lengthen(fmin = 75, fmax = 600, factor = 1.5)
+
+# Speed up by 20% (factor < 1)
+faster <- sound$lengthen(fmin = 75, fmax = 600, factor = 0.8)
+```
+
+**Parameters:**
+- `fmin`, `fmax`: Pitch range for analysis (Hz)
+- `factor`: Time stretch factor (1.5 = 50% slower, 0.5 = 50% faster)
+
+**Praat equivalent:** `Sound: Lengthen (overlap-add)...`
+
+##### Pitch-Corrected LTAS for Voice Quality
+
+**Use case:** LTAS that adapts to speaker's fundamental frequency, used in voice quality assessment.
+
+```r
+sound <- Sound("vowel.wav")
+
+# Standard LTAS (fixed frequency bins)
+ltas_std <- sound$to_ltas(bandwidth = 100)
+
+# Pitch-corrected LTAS (harmonic structure preserved)
+ltas_pc <- sound$to_ltas_pitch_corrected(
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  max_frequency = 5000,
+  bandwidth = 100,
+  shortest_period = 0.0001,
+  longest_period = 0.02,
+  max_period_factor = 1.3
+)
+```
+
+**Praat equivalent:** `Sound: To Ltas (pitch-corrected)...`
+
+##### Robust Formant Tracking (Outlier Removal)
+
+**Use case:** Formant tracking with automatic outlier detection and removal (iterative refinement).
+
+```r
+sound <- Sound("vowel.wav")
+
+# Standard formant tracking
+formant_std <- sound$to_formant_burg(
+  time_step = 0.005,
+  max_formants = 5,
+  max_frequency = 5500
+)
+
+# Robust formant tracking (removes outliers, iteratively refines)
+formant_robust <- sound$to_formant_robust(
+  time_step = 0.005,
+  max_formants = 5.0,
+  max_frequency = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50,
+  num_std_dev = 1.5,      # Outlier threshold (standard deviations)
+  max_iterations = 5       # Refinement iterations
+)
+```
+
+**Praat equivalent:** `Sound: To Formant (robust)...`
+
+**Use cases:**
+- Pathological voice (creaky, breathy) with irregular formants
+- Continuous speech with rapid formant transitions
+- Noisy recordings where Burg tracking fails
+
+##### Formant-Based Filtering
+
+**Use case:** Filter sound using formant structure (e.g., remove formants, inverse filter).
+
+```r
+sound <- Sound("vowel.wav")
+formant <- sound$to_formant_burg()
+
+# Filter by formant structure (with intensity scaling)
+filtered <- sound$filter_by_formant(formant)
+
+# Filter without intensity scaling
+filtered_noscale <- sound$filter_by_formant_noscale(formant)
+```
+
+**Praat equivalents:**
+- `Sound & Formant: Filter`
+- `Sound & Formant: Filter (no scale)`
+
+##### MelSpectrogram and BarkSpectrogram
+
+**Use case:** Psychoacoustic spectrograms for perceptual analysis, MFCC computation.
+
+```r
+sound <- Sound("speech.wav")
+
+# Create mel-scale spectrogram (common in speech recognition)
+mel_spec <- sound$to_mel_spectrogram(
+  window_length = 0.025,
+  time_step = 0.01,
+  position_of_first_filter = 100,
+  distance_between_filters = 100,
+  maximum_frequency = 0      # 0 = Nyquist
+)
+
+# Query MelSpectrogram
+mel_spec$get_value_at_time(time = 1.0, mel = 500)
+mel_spec$get_value_at_frequency(time = 1.0, freq = 1000)
+
+# Convert to MFCC
+mfcc <- mel_spec$to_mfcc(number_of_coefficients = 12)
+
+# Convert to Matrix for further processing
+matrix <- mel_spec$to_matrix()
+
+# Convert to Intensity (band energy over time)
+intensity <- mel_spec$to_intensity()
+
+# Create bark-scale spectrogram (auditory filter bank)
+bark_spec <- sound$to_bark_spectrogram(
+  window_length = 0.025,
+  time_step = 0.01,
+  position_of_first_filter = 1,   # Bark
+  distance_between_filters = 1,   # Bark
+  maximum_frequency = 0           # 0 = Nyquist
+)
+
+# Query BarkSpectrogram
+bark_spec$get_value_at_time(time = 1.0, bark = 5)
+bark_spec$get_value_at_frequency(time = 1.0, freq = 1000)
+
+# Convert to Matrix or Intensity
+bark_matrix <- bark_spec$to_matrix()
+bark_intensity <- bark_spec$to_intensity()
+```
+
+**Praat equivalents:**
+- `Sound: To MelSpectrogram...`
+- `Sound: To BarkSpectrogram...`
+
+#### Tier 2: Useful Signal Processing Additions
+
+##### Autocorrelation
+
+```r
+sound <- Sound("tone.wav")
+autocorr <- sound$autocorrelate()  # Returns new Sound with autocorrelation
+```
+
+**Praat equivalent:** `Sound: Autocorrelate...`
+
+##### Deep Band Modulation
+
+**Use case:** Enhance modulation in specific frequency band.
+
+```r
+sound <- Sound("speech.wav")
+enhanced <- sound$deepen_band_modulation(
+  enhancement = 1.5,
+  from_freq = 300,
+  to_freq = 8000,
+  slow_modulation = 3,
+  fast_modulation = 30,
+  band_smoothing = 100
+)
+```
+
+**Praat equivalent:** `Sound: Deepen band modulation...`
+
+##### Convolution and Cross-Correlation
+
+```r
+sound1 <- Sound("signal.wav")
+sound2 <- Sound("impulse.wav")
+
+# Convolve two sounds (impulse response, filtering)
+convolved <- sound1$convolve(sound2, scaling = "normalize", signal_outside = "zero")
+
+# Cross-correlate two sounds (similarity measure)
+xcorr <- sound1$cross_correlate(sound2, scaling = "normalize", signal_outside = "zero")
+```
+
+**Praat equivalents:**
+- `Sound & Sound: Convolve...`
+- `Sound & Sound: Cross-correlate...`
+
+##### MFCC ↔ MelSpectrogram Conversion
+
+```r
+sound <- Sound("speech.wav")
+mfcc <- sound$to_mfcc()
+
+# Reverse conversion: MFCC → MelSpectrogram
+mel_spec <- mfcc$to_mel_spectrogram()
+```
+
+**Praat equivalent:** `MFCC: To MelSpectrogram...`
+
+##### LPC to Spectrogram
+
+```r
+sound <- Sound("vowel.wav")
+lpc <- sound$to_lpc_burg(prediction_order = 16, window_length = 0.025, time_step = 0.005)
+
+# Convert LPC to Spectrogram for visualization
+spec <- lpc$to_spectrogram(
+  sampling_frequency = 10000,
+  window_length = 0.02,
+  maximum_frequency = 5000
+)
+```
+
+**Praat equivalent:** `LPC: To Spectrogram...`
+
+##### PointProcess Sound Generation
+
+```r
+pp <- PointProcess(xmin = 0, xmax = 1)
+pp$add_point(0.1)
+pp$add_point(0.2)
+pp$add_point(0.3)
+
+# Generate pulse train (Dirac deltas at pulse times)
+pulse_train <- pp$to_sound_pulse_train(
+  sampling_frequency = 44100,
+  adaptation_factor = 1.0,
+  adaptation_time = 0.0
+)
+
+# Generate harmonic hum (sum of sines at pulse frequencies)
+hum <- pp$to_sound_hum(
+  minimum_pitch = 75,
+  maximum_pitch = 600,
+  maximum_amplitude_factor = 0.99
+)
+```
+
+**Praat equivalents:**
+- `PointProcess: To Sound (pulse train)...`
+- `PointProcess: To Sound (hum)...`
+
+##### Intensity-Based Silence Detection
+
+**Use case:** Create TextGrid with silence/sounding intervals.
+
+```r
+sound <- Sound("speech.wav")
+intensity <- sound$to_intensity(minimum_pitch = 100)
+
+# Detect silences and create TextGrid
+tg <- intensity$to_textgrid_silences(
+  silence_threshold = -25,      # dB relative to max
+  min_silent_interval = 0.1,    # seconds
+  min_sounding_interval = 0.1,  # seconds
+  silent_label = "silent",
+  sounding_label = "sounding"
+)
+```
+
+**Praat equivalent:** `Intensity: To TextGrid (silences)...`
+
+##### Table Operations
+
+```r
+formant <- sound$to_formant_burg()
+table <- formant$down_to_table(include_frame_number = TRUE, 
+                                include_time = TRUE, 
+                                time_decimals = 6,
+                                include_intensity = FALSE,
+                                include_number_of_formants = TRUE,
+                                include_formants = TRUE,
+                                include_bandwidths = TRUE)
+
+# Sort by column
+sorted <- table$sort_rows("F1(Hz)")
+
+# Extract rows where numeric column matches condition
+high_f1 <- table$extract_rows_where_number("F1(Hz)", 0, 500)  # 0 = "greater than"
+
+# Extract rows where string column matches
+voiced <- table$extract_rows_where_string("label", 2, "voiced")  # 2 = "contains"
+```
+
+**Praat equivalents:**
+- `Table: Sort rows...`
+- `Table: Extract rows where column (number)...`
+- `Table: Extract rows where column (text)...`
+
+##### Average Multiple LTAS
+
+**Use case:** Combine LTAS from multiple speakers or recordings.
+
+```r
+ltas1 <- Sound("speaker1.wav")$to_ltas(100)
+ltas2 <- Sound("speaker2.wav")$to_ltas(100)
+ltas3 <- Sound("speaker3.wav")$to_ltas(100)
+
+# Average LTAS objects
+avg_ltas <- ltas_average(list(ltas1, ltas2, ltas3))
+```
+
+**Praat equivalent:** Select multiple Ltas → `Ltases: Average`
 
 ---
 

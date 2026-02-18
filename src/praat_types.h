@@ -47,5 +47,11 @@ struct structPitchTier;
 struct structFormantTier;
 struct structIntensityTier;
 struct structDurationTier;
+struct structMelSpectrogram;
+struct structBarkSpectrogram;
+struct structBandFilterSpectrogram;
+struct structMFCC;
+struct structMatrix;
+struct structAmplitudeTier;
 
 #endif // PRAAT_TYPES_H

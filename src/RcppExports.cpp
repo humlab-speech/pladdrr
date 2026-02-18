@@ -3606,6 +3606,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lpc_to_spectrogram
+Rcpp::XPtr<structSpectrogram> lpc_to_spectrogram(Rcpp::XPtr<structLPC> xptr, double df_min, double bandwidth_reduction, double de_emphasis_frequency);
+RcppExport SEXP _pladdrr_lpc_to_spectrogram(SEXP xptrSEXP, SEXP df_minSEXP, SEXP bandwidth_reductionSEXP, SEXP de_emphasis_frequencySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structLPC> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type df_min(df_minSEXP);
+    Rcpp::traits::input_parameter< double >::type bandwidth_reduction(bandwidth_reductionSEXP);
+    Rcpp::traits::input_parameter< double >::type de_emphasis_frequency(de_emphasis_frequencySEXP);
+    rcpp_result_gen = Rcpp::wrap(lpc_to_spectrogram(xptr, df_min, bandwidth_reduction, de_emphasis_frequency));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ltas_get_bin_from_frequency
 int ltas_get_bin_from_frequency(Rcpp::XPtr<structLtas> ltas, double frequency);
 RcppExport SEXP _pladdrr_ltas_get_bin_from_frequency(SEXP ltasSEXP, SEXP frequencySEXP) {
@@ -3821,6 +3835,17 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::XPtr<structLtas> >::type ltas(ltasSEXP);
     rcpp_result_gen = Rcpp::wrap(ltas_as_matrix(ltas));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ltases_average
+XPtr<structLtas> ltases_average(List ltas_list);
+RcppExport SEXP _pladdrr_ltases_average(SEXP ltas_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type ltas_list(ltas_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(ltases_average(ltas_list));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -4902,6 +4927,32 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
     Rcpp::traits::input_parameter< double >::type voicing_threshold(voicing_thresholdSEXP);
     rcpp_result_gen = Rcpp::wrap(pointprocess_voice_report(sound_xptr, pitch_xptr, pp_xptr, tmin, tmax, floor, ceiling, maximum_period_factor, maximum_amplitude_factor, silence_threshold, voicing_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_to_sound_pulse_train
+XPtr<structSound> pointprocess_to_sound_pulse_train(SEXP xptr, double sampling_frequency, double adapt_factor, double adapt_time, int interpolation_depth);
+RcppExport SEXP _pladdrr_pointprocess_to_sound_pulse_train(SEXP xptrSEXP, SEXP sampling_frequencySEXP, SEXP adapt_factorSEXP, SEXP adapt_timeSEXP, SEXP interpolation_depthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type sampling_frequency(sampling_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type adapt_factor(adapt_factorSEXP);
+    Rcpp::traits::input_parameter< double >::type adapt_time(adapt_timeSEXP);
+    Rcpp::traits::input_parameter< int >::type interpolation_depth(interpolation_depthSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_to_sound_pulse_train(xptr, sampling_frequency, adapt_factor, adapt_time, interpolation_depth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pointprocess_to_sound_hum
+XPtr<structSound> pointprocess_to_sound_hum(SEXP xptr);
+RcppExport SEXP _pladdrr_pointprocess_to_sound_hum(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(pointprocess_to_sound_hum(xptr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -8289,6 +8340,603 @@ RcppExport SEXP _pladdrr_intensity_get_values_at_times(SEXP xptrSEXP, SEXP times
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_to_ltas_pitch_corrected
+XPtr<structLtas> sound_to_ltas_pitch_corrected(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling, double max_frequency, double bandwidth, double shortest_period, double longest_period, double max_period_factor);
+static SEXP _pladdrr_sound_to_ltas_pitch_corrected_try(SEXP xptrSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_frequencySEXP, SEXP bandwidthSEXP, SEXP shortest_periodSEXP, SEXP longest_periodSEXP, SEXP max_period_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
+    Rcpp::traits::input_parameter< double >::type shortest_period(shortest_periodSEXP);
+    Rcpp::traits::input_parameter< double >::type longest_period(longest_periodSEXP);
+    Rcpp::traits::input_parameter< double >::type max_period_factor(max_period_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_ltas_pitch_corrected(xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth, shortest_period, longest_period, max_period_factor));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_ltas_pitch_corrected(SEXP xptrSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP max_frequencySEXP, SEXP bandwidthSEXP, SEXP shortest_periodSEXP, SEXP longest_periodSEXP, SEXP max_period_factorSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_ltas_pitch_corrected_try(xptrSEXP, pitch_floorSEXP, pitch_ceilingSEXP, max_frequencySEXP, bandwidthSEXP, shortest_periodSEXP, longest_periodSEXP, max_period_factorSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_formant_robust
+XPtr<structFormant> sound_to_formant_robust(XPtr<structSound> xptr, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from, double num_std_dev, int max_iterations);
+static SEXP _pladdrr_sound_to_formant_robust_try(SEXP xptrSEXP, SEXP time_stepSEXP, SEXP max_formantsSEXP, SEXP max_frequencySEXP, SEXP window_lengthSEXP, SEXP pre_emphasis_fromSEXP, SEXP num_std_devSEXP, SEXP max_iterationsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type max_formants(max_formantsSEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type pre_emphasis_from(pre_emphasis_fromSEXP);
+    Rcpp::traits::input_parameter< double >::type num_std_dev(num_std_devSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iterations(max_iterationsSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_formant_robust(xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from, num_std_dev, max_iterations));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_formant_robust(SEXP xptrSEXP, SEXP time_stepSEXP, SEXP max_formantsSEXP, SEXP max_frequencySEXP, SEXP window_lengthSEXP, SEXP pre_emphasis_fromSEXP, SEXP num_std_devSEXP, SEXP max_iterationsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_formant_robust_try(xptrSEXP, time_stepSEXP, max_formantsSEXP, max_frequencySEXP, window_lengthSEXP, pre_emphasis_fromSEXP, num_std_devSEXP, max_iterationsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_formant_filter
+XPtr<structSound> sound_formant_filter(XPtr<structSound> sound_xptr, XPtr<structFormant> formant_xptr);
+static SEXP _pladdrr_sound_formant_filter_try(SEXP sound_xptrSEXP, SEXP formant_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< XPtr<structFormant> >::type formant_xptr(formant_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_formant_filter(sound_xptr, formant_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_formant_filter(SEXP sound_xptrSEXP, SEXP formant_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_formant_filter_try(sound_xptrSEXP, formant_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_formant_filter_noscale
+XPtr<structSound> sound_formant_filter_noscale(XPtr<structSound> sound_xptr, XPtr<structFormant> formant_xptr);
+static SEXP _pladdrr_sound_formant_filter_noscale_try(SEXP sound_xptrSEXP, SEXP formant_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< XPtr<structFormant> >::type formant_xptr(formant_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_formant_filter_noscale(sound_xptr, formant_xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_formant_filter_noscale(SEXP sound_xptrSEXP, SEXP formant_xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_formant_filter_noscale_try(sound_xptrSEXP, formant_xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_mel_spectrogram
+XPtr<structMelSpectrogram> sound_to_mel_spectrogram(XPtr<structSound> xptr, double window_length, double time_step, double first_filter_frequency, double max_frequency, double frequency_step);
+static SEXP _pladdrr_sound_to_mel_spectrogram_try(SEXP xptrSEXP, SEXP window_lengthSEXP, SEXP time_stepSEXP, SEXP first_filter_frequencySEXP, SEXP max_frequencySEXP, SEXP frequency_stepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type first_filter_frequency(first_filter_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type frequency_step(frequency_stepSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_mel_spectrogram(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_mel_spectrogram(SEXP xptrSEXP, SEXP window_lengthSEXP, SEXP time_stepSEXP, SEXP first_filter_frequencySEXP, SEXP max_frequencySEXP, SEXP frequency_stepSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_mel_spectrogram_try(xptrSEXP, window_lengthSEXP, time_stepSEXP, first_filter_frequencySEXP, max_frequencySEXP, frequency_stepSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_bark_spectrogram
+XPtr<structBarkSpectrogram> sound_to_bark_spectrogram(XPtr<structSound> xptr, double window_length, double time_step, double first_filter_frequency, double max_frequency, double frequency_step);
+static SEXP _pladdrr_sound_to_bark_spectrogram_try(SEXP xptrSEXP, SEXP window_lengthSEXP, SEXP time_stepSEXP, SEXP first_filter_frequencySEXP, SEXP max_frequencySEXP, SEXP frequency_stepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type window_length(window_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type first_filter_frequency(first_filter_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type frequency_step(frequency_stepSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_bark_spectrogram(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_bark_spectrogram(SEXP xptrSEXP, SEXP window_lengthSEXP, SEXP time_stepSEXP, SEXP first_filter_frequencySEXP, SEXP max_frequencySEXP, SEXP frequency_stepSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_bark_spectrogram_try(xptrSEXP, window_lengthSEXP, time_stepSEXP, first_filter_frequencySEXP, max_frequencySEXP, frequency_stepSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// mel_spectrogram_to_mfcc
+XPtr<structMFCC> mel_spectrogram_to_mfcc(XPtr<structMelSpectrogram> xptr, int number_of_coefficients);
+static SEXP _pladdrr_mel_spectrogram_to_mfcc_try(SEXP xptrSEXP, SEXP number_of_coefficientsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structMelSpectrogram> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type number_of_coefficients(number_of_coefficientsSEXP);
+    rcpp_result_gen = Rcpp::wrap(mel_spectrogram_to_mfcc(xptr, number_of_coefficients));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_mel_spectrogram_to_mfcc(SEXP xptrSEXP, SEXP number_of_coefficientsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_mel_spectrogram_to_mfcc_try(xptrSEXP, number_of_coefficientsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// mfcc_to_mel_spectrogram
+XPtr<structMelSpectrogram> mfcc_to_mel_spectrogram(XPtr<structMFCC> xptr, int first_coefficient, int last_coefficient, bool include_c0);
+static SEXP _pladdrr_mfcc_to_mel_spectrogram_try(SEXP xptrSEXP, SEXP first_coefficientSEXP, SEXP last_coefficientSEXP, SEXP include_c0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structMFCC> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type first_coefficient(first_coefficientSEXP);
+    Rcpp::traits::input_parameter< int >::type last_coefficient(last_coefficientSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_c0(include_c0SEXP);
+    rcpp_result_gen = Rcpp::wrap(mfcc_to_mel_spectrogram(xptr, first_coefficient, last_coefficient, include_c0));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_mfcc_to_mel_spectrogram(SEXP xptrSEXP, SEXP first_coefficientSEXP, SEXP last_coefficientSEXP, SEXP include_c0SEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_mfcc_to_mel_spectrogram_try(xptrSEXP, first_coefficientSEXP, last_coefficientSEXP, include_c0SEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// band_filter_spectrogram_to_matrix
+XPtr<structMatrix> band_filter_spectrogram_to_matrix(SEXP xptr, bool to_db);
+static SEXP _pladdrr_band_filter_spectrogram_to_matrix_try(SEXP xptrSEXP, SEXP to_dbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< bool >::type to_db(to_dbSEXP);
+    rcpp_result_gen = Rcpp::wrap(band_filter_spectrogram_to_matrix(xptr, to_db));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_band_filter_spectrogram_to_matrix(SEXP xptrSEXP, SEXP to_dbSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_band_filter_spectrogram_to_matrix_try(xptrSEXP, to_dbSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// band_filter_spectrogram_to_intensity
+XPtr<structIntensity> band_filter_spectrogram_to_intensity(SEXP xptr);
+static SEXP _pladdrr_band_filter_spectrogram_to_intensity_try(SEXP xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(band_filter_spectrogram_to_intensity(xptr));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_band_filter_spectrogram_to_intensity(SEXP xptrSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_band_filter_spectrogram_to_intensity_try(xptrSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_lengthen_ola
+XPtr<structSound> sound_lengthen_ola(XPtr<structSound> xptr, double fmin, double fmax, double factor);
+static SEXP _pladdrr_sound_lengthen_ola_try(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type fmin(fminSEXP);
+    Rcpp::traits::input_parameter< double >::type fmax(fmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type factor(factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_lengthen_ola(xptr, fmin, fmax, factor));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_lengthen_ola(SEXP xptrSEXP, SEXP fminSEXP, SEXP fmaxSEXP, SEXP factorSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_lengthen_ola_try(xptrSEXP, fminSEXP, fmaxSEXP, factorSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_autocorrelate
+XPtr<structSound> sound_autocorrelate(XPtr<structSound> xptr, int scaling, int signal_outside);
+static SEXP _pladdrr_sound_autocorrelate_try(SEXP xptrSEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type scaling(scalingSEXP);
+    Rcpp::traits::input_parameter< int >::type signal_outside(signal_outsideSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_autocorrelate(xptr, scaling, signal_outside));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_autocorrelate(SEXP xptrSEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_autocorrelate_try(xptrSEXP, scalingSEXP, signal_outsideSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sounds_convolve_export
+XPtr<structSound> sounds_convolve_export(XPtr<structSound> xptr1, XPtr<structSound> xptr2, int scaling, int signal_outside);
+static SEXP _pladdrr_sounds_convolve_export_try(SEXP xptr1SEXP, SEXP xptr2SEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr1(xptr1SEXP);
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr2(xptr2SEXP);
+    Rcpp::traits::input_parameter< int >::type scaling(scalingSEXP);
+    Rcpp::traits::input_parameter< int >::type signal_outside(signal_outsideSEXP);
+    rcpp_result_gen = Rcpp::wrap(sounds_convolve_export(xptr1, xptr2, scaling, signal_outside));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sounds_convolve_export(SEXP xptr1SEXP, SEXP xptr2SEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sounds_convolve_export_try(xptr1SEXP, xptr2SEXP, scalingSEXP, signal_outsideSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sounds_cross_correlate_export
+XPtr<structSound> sounds_cross_correlate_export(XPtr<structSound> xptr1, XPtr<structSound> xptr2, int scaling, int signal_outside);
+static SEXP _pladdrr_sounds_cross_correlate_export_try(SEXP xptr1SEXP, SEXP xptr2SEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr1(xptr1SEXP);
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr2(xptr2SEXP);
+    Rcpp::traits::input_parameter< int >::type scaling(scalingSEXP);
+    Rcpp::traits::input_parameter< int >::type signal_outside(signal_outsideSEXP);
+    rcpp_result_gen = Rcpp::wrap(sounds_cross_correlate_export(xptr1, xptr2, scaling, signal_outside));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sounds_cross_correlate_export(SEXP xptr1SEXP, SEXP xptr2SEXP, SEXP scalingSEXP, SEXP signal_outsideSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sounds_cross_correlate_export_try(xptr1SEXP, xptr2SEXP, scalingSEXP, signal_outsideSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_deepen_band_mod
+XPtr<structSound> sound_deepen_band_mod(XPtr<structSound> xptr, double enhancement_db, double flow, double fhigh, double slow_modulation, double fast_modulation, double band_smoothing);
+static SEXP _pladdrr_sound_deepen_band_mod_try(SEXP xptrSEXP, SEXP enhancement_dbSEXP, SEXP flowSEXP, SEXP fhighSEXP, SEXP slow_modulationSEXP, SEXP fast_modulationSEXP, SEXP band_smoothingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type enhancement_db(enhancement_dbSEXP);
+    Rcpp::traits::input_parameter< double >::type flow(flowSEXP);
+    Rcpp::traits::input_parameter< double >::type fhigh(fhighSEXP);
+    Rcpp::traits::input_parameter< double >::type slow_modulation(slow_modulationSEXP);
+    Rcpp::traits::input_parameter< double >::type fast_modulation(fast_modulationSEXP);
+    Rcpp::traits::input_parameter< double >::type band_smoothing(band_smoothingSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_deepen_band_mod(xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_deepen_band_mod(SEXP xptrSEXP, SEXP enhancement_dbSEXP, SEXP flowSEXP, SEXP fhighSEXP, SEXP slow_modulationSEXP, SEXP fast_modulationSEXP, SEXP band_smoothingSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_deepen_band_mod_try(xptrSEXP, enhancement_dbSEXP, flowSEXP, fhighSEXP, slow_modulationSEXP, fast_modulationSEXP, band_smoothingSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// intensity_to_textgrid_silences
+XPtr<structTextGrid> intensity_to_textgrid_silences(XPtr<structIntensity> xptr, double silence_threshold, double min_silence_duration, double min_sounding_duration, std::string silent_label, std::string sounding_label);
+static SEXP _pladdrr_intensity_to_textgrid_silences_try(SEXP xptrSEXP, SEXP silence_thresholdSEXP, SEXP min_silence_durationSEXP, SEXP min_sounding_durationSEXP, SEXP silent_labelSEXP, SEXP sounding_labelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structIntensity> >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type silence_threshold(silence_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type min_silence_duration(min_silence_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type min_sounding_duration(min_sounding_durationSEXP);
+    Rcpp::traits::input_parameter< std::string >::type silent_label(silent_labelSEXP);
+    Rcpp::traits::input_parameter< std::string >::type sounding_label(sounding_labelSEXP);
+    rcpp_result_gen = Rcpp::wrap(intensity_to_textgrid_silences(xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_intensity_to_textgrid_silences(SEXP xptrSEXP, SEXP silence_thresholdSEXP, SEXP min_silence_durationSEXP, SEXP min_sounding_durationSEXP, SEXP silent_labelSEXP, SEXP sounding_labelSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_intensity_to_textgrid_silences_try(xptrSEXP, silence_thresholdSEXP, min_silence_durationSEXP, min_sounding_durationSEXP, silent_labelSEXP, sounding_labelSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // sound_values_zerocopy
 SEXP sound_values_zerocopy(SEXP sound_xptr, int channel);
 static SEXP _pladdrr_sound_values_zerocopy_try(SEXP sound_xptrSEXP, SEXP channelSEXP) {
@@ -9172,6 +9820,45 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
     rcpp_result_gen = Rcpp::wrap(table_to_matrix(xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// table_sort_rows
+void table_sort_rows(SEXP xptr, Rcpp::CharacterVector columns);
+RcppExport SEXP _pladdrr_table_sort_rows(SEXP xptrSEXP, SEXP columnsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type columns(columnsSEXP);
+    table_sort_rows(xptr, columns);
+    return R_NilValue;
+END_RCPP
+}
+// table_extract_rows_where_column_number
+SEXP table_extract_rows_where_column_number(SEXP xptr, int column, int which, double criterion);
+RcppExport SEXP _pladdrr_table_extract_rows_where_column_number(SEXP xptrSEXP, SEXP columnSEXP, SEXP whichSEXP, SEXP criterionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type column(columnSEXP);
+    Rcpp::traits::input_parameter< int >::type which(whichSEXP);
+    Rcpp::traits::input_parameter< double >::type criterion(criterionSEXP);
+    rcpp_result_gen = Rcpp::wrap(table_extract_rows_where_column_number(xptr, column, which, criterion));
+    return rcpp_result_gen;
+END_RCPP
+}
+// table_extract_rows_where_column_string
+SEXP table_extract_rows_where_column_string(SEXP xptr, int column, int which, std::string criterion);
+RcppExport SEXP _pladdrr_table_extract_rows_where_column_string(SEXP xptrSEXP, SEXP columnSEXP, SEXP whichSEXP, SEXP criterionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< int >::type column(columnSEXP);
+    Rcpp::traits::input_parameter< int >::type which(whichSEXP);
+    Rcpp::traits::input_parameter< std::string >::type criterion(criterionSEXP);
+    rcpp_result_gen = Rcpp::wrap(table_extract_rows_where_column_string(xptr, column, which, criterion));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -10578,6 +11265,22 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("NumericVector(*.pitch_get_values_at_times)(XPtr<structPitch>,NumericVector,int,bool)");
         signatures.insert("NumericVector(*.formant_get_values_at_times)(XPtr<structFormant>,NumericVector,int,int)");
         signatures.insert("NumericVector(*.intensity_get_values_at_times)(XPtr<structIntensity>,NumericVector,int)");
+        signatures.insert("XPtr<structLtas>(*.sound_to_ltas_pitch_corrected)(XPtr<structSound>,double,double,double,double,double,double,double)");
+        signatures.insert("XPtr<structFormant>(*.sound_to_formant_robust)(XPtr<structSound>,double,double,double,double,double,double,int)");
+        signatures.insert("XPtr<structSound>(*.sound_formant_filter)(XPtr<structSound>,XPtr<structFormant>)");
+        signatures.insert("XPtr<structSound>(*.sound_formant_filter_noscale)(XPtr<structSound>,XPtr<structFormant>)");
+        signatures.insert("XPtr<structMelSpectrogram>(*.sound_to_mel_spectrogram)(XPtr<structSound>,double,double,double,double,double)");
+        signatures.insert("XPtr<structBarkSpectrogram>(*.sound_to_bark_spectrogram)(XPtr<structSound>,double,double,double,double,double)");
+        signatures.insert("XPtr<structMFCC>(*.mel_spectrogram_to_mfcc)(XPtr<structMelSpectrogram>,int)");
+        signatures.insert("XPtr<structMelSpectrogram>(*.mfcc_to_mel_spectrogram)(XPtr<structMFCC>,int,int,bool)");
+        signatures.insert("XPtr<structMatrix>(*.band_filter_spectrogram_to_matrix)(SEXP,bool)");
+        signatures.insert("XPtr<structIntensity>(*.band_filter_spectrogram_to_intensity)(SEXP)");
+        signatures.insert("XPtr<structSound>(*.sound_lengthen_ola)(XPtr<structSound>,double,double,double)");
+        signatures.insert("XPtr<structSound>(*.sound_autocorrelate)(XPtr<structSound>,int,int)");
+        signatures.insert("XPtr<structSound>(*.sounds_convolve_direct)(XPtr<structSound>,XPtr<structSound>,int,int)");
+        signatures.insert("XPtr<structSound>(*.sounds_cross_correlate_direct)(XPtr<structSound>,XPtr<structSound>,int,int)");
+        signatures.insert("XPtr<structSound>(*.sound_deepen_band_mod)(XPtr<structSound>,double,double,double,double,double,double)");
+        signatures.insert("XPtr<structTextGrid>(*.intensity_to_textgrid_silences)(XPtr<structIntensity>,double,double,double,std::string,std::string)");
         signatures.insert("SEXP(*sound_values_zerocopy)(SEXP,int)");
         signatures.insert("NumericVector(*sound_times_fast)(SEXP)");
         signatures.insert("NumericMatrix(*sound_as_matrix_zerocopy_impl)(SEXP,bool)");
@@ -10704,6 +11407,22 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.pitch_get_values_at_times", (DL_FUNC)_pladdrr_pitch_get_values_at_times_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_values_at_times", (DL_FUNC)_pladdrr_formant_get_values_at_times_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.intensity_get_values_at_times", (DL_FUNC)_pladdrr_intensity_get_values_at_times_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_ltas_pitch_corrected", (DL_FUNC)_pladdrr_sound_to_ltas_pitch_corrected_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_robust", (DL_FUNC)_pladdrr_sound_to_formant_robust_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_formant_filter", (DL_FUNC)_pladdrr_sound_formant_filter_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_formant_filter_noscale", (DL_FUNC)_pladdrr_sound_formant_filter_noscale_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_mel_spectrogram", (DL_FUNC)_pladdrr_sound_to_mel_spectrogram_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_bark_spectrogram", (DL_FUNC)_pladdrr_sound_to_bark_spectrogram_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.mel_spectrogram_to_mfcc", (DL_FUNC)_pladdrr_mel_spectrogram_to_mfcc_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.mfcc_to_mel_spectrogram", (DL_FUNC)_pladdrr_mfcc_to_mel_spectrogram_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.band_filter_spectrogram_to_matrix", (DL_FUNC)_pladdrr_band_filter_spectrogram_to_matrix_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.band_filter_spectrogram_to_intensity", (DL_FUNC)_pladdrr_band_filter_spectrogram_to_intensity_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_lengthen_ola", (DL_FUNC)_pladdrr_sound_lengthen_ola_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_autocorrelate", (DL_FUNC)_pladdrr_sound_autocorrelate_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sounds_convolve_direct", (DL_FUNC)_pladdrr_sounds_convolve_export_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sounds_cross_correlate_direct", (DL_FUNC)_pladdrr_sounds_cross_correlate_export_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_deepen_band_mod", (DL_FUNC)_pladdrr_sound_deepen_band_mod_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.intensity_to_textgrid_silences", (DL_FUNC)_pladdrr_intensity_to_textgrid_silences_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_sound_values_zerocopy", (DL_FUNC)_pladdrr_sound_values_zerocopy_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_sound_times_fast", (DL_FUNC)_pladdrr_sound_times_fast_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_sound_as_matrix_zerocopy_impl", (DL_FUNC)_pladdrr_sound_as_matrix_zerocopy_impl_try);
@@ -10945,6 +11664,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_lpc_sound_filter_inverse_r6", (DL_FUNC) &_pladdrr_lpc_sound_filter_inverse_r6, 2},
     {"_pladdrr_lpc_sound_filter_inverse_at_time", (DL_FUNC) &_pladdrr_lpc_sound_filter_inverse_at_time, 4},
     {"_pladdrr_lpc_sound_filter_inverse_at_time_r6", (DL_FUNC) &_pladdrr_lpc_sound_filter_inverse_at_time_r6, 4},
+    {"_pladdrr_lpc_to_spectrogram", (DL_FUNC) &_pladdrr_lpc_to_spectrogram, 4},
     {"_pladdrr_ltas_get_bin_from_frequency", (DL_FUNC) &_pladdrr_ltas_get_bin_from_frequency, 2},
     {"_pladdrr_ltas_get_frequency_from_bin", (DL_FUNC) &_pladdrr_ltas_get_frequency_from_bin, 2},
     {"_pladdrr_ltas_get_number_of_bins", (DL_FUNC) &_pladdrr_ltas_get_number_of_bins, 1},
@@ -10962,6 +11682,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_ltas_report_spectral_trend", (DL_FUNC) &_pladdrr_ltas_report_spectral_trend, 5},
     {"_pladdrr_ltas_as_data_frame", (DL_FUNC) &_pladdrr_ltas_as_data_frame, 1},
     {"_pladdrr_ltas_as_matrix", (DL_FUNC) &_pladdrr_ltas_as_matrix, 1},
+    {"_pladdrr_ltases_average", (DL_FUNC) &_pladdrr_ltases_average, 1},
     {"_pladdrr_manipulation_from_sound", (DL_FUNC) &_pladdrr_manipulation_from_sound, 4},
     {"_pladdrr_manipulation_get_start_time", (DL_FUNC) &_pladdrr_manipulation_get_start_time, 1},
     {"_pladdrr_manipulation_get_end_time", (DL_FUNC) &_pladdrr_manipulation_get_end_time, 1},
@@ -11047,6 +11768,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pointprocess_remove_points_between", (DL_FUNC) &_pladdrr_pointprocess_remove_points_between, 3},
     {"_pladdrr_pointprocess_to_textgrid_vuv", (DL_FUNC) &_pladdrr_pointprocess_to_textgrid_vuv, 3},
     {"_pladdrr_pointprocess_voice_report", (DL_FUNC) &_pladdrr_pointprocess_voice_report, 11},
+    {"_pladdrr_pointprocess_to_sound_pulse_train", (DL_FUNC) &_pladdrr_pointprocess_to_sound_pulse_train, 5},
+    {"_pladdrr_pointprocess_to_sound_hum", (DL_FUNC) &_pladdrr_pointprocess_to_sound_hum, 1},
     {"_pladdrr_pointprocess_save", (DL_FUNC) &_pladdrr_pointprocess_save, 2},
     {"_pladdrr_should_use_simd_for_powercepstrogram_bridge", (DL_FUNC) &_pladdrr_should_use_simd_for_powercepstrogram_bridge, 0},
     {"_pladdrr_sound_to_powercepstrogram", (DL_FUNC) &_pladdrr_sound_to_powercepstrogram, 5},
@@ -11189,6 +11912,22 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pitch_get_values_at_times", (DL_FUNC) &_pladdrr_pitch_get_values_at_times, 4},
     {"_pladdrr_formant_get_values_at_times", (DL_FUNC) &_pladdrr_formant_get_values_at_times, 4},
     {"_pladdrr_intensity_get_values_at_times", (DL_FUNC) &_pladdrr_intensity_get_values_at_times, 3},
+    {"_pladdrr_sound_to_ltas_pitch_corrected", (DL_FUNC) &_pladdrr_sound_to_ltas_pitch_corrected, 8},
+    {"_pladdrr_sound_to_formant_robust", (DL_FUNC) &_pladdrr_sound_to_formant_robust, 8},
+    {"_pladdrr_sound_formant_filter", (DL_FUNC) &_pladdrr_sound_formant_filter, 2},
+    {"_pladdrr_sound_formant_filter_noscale", (DL_FUNC) &_pladdrr_sound_formant_filter_noscale, 2},
+    {"_pladdrr_sound_to_mel_spectrogram", (DL_FUNC) &_pladdrr_sound_to_mel_spectrogram, 6},
+    {"_pladdrr_sound_to_bark_spectrogram", (DL_FUNC) &_pladdrr_sound_to_bark_spectrogram, 6},
+    {"_pladdrr_mel_spectrogram_to_mfcc", (DL_FUNC) &_pladdrr_mel_spectrogram_to_mfcc, 2},
+    {"_pladdrr_mfcc_to_mel_spectrogram", (DL_FUNC) &_pladdrr_mfcc_to_mel_spectrogram, 4},
+    {"_pladdrr_band_filter_spectrogram_to_matrix", (DL_FUNC) &_pladdrr_band_filter_spectrogram_to_matrix, 2},
+    {"_pladdrr_band_filter_spectrogram_to_intensity", (DL_FUNC) &_pladdrr_band_filter_spectrogram_to_intensity, 1},
+    {"_pladdrr_sound_lengthen_ola", (DL_FUNC) &_pladdrr_sound_lengthen_ola, 4},
+    {"_pladdrr_sound_autocorrelate", (DL_FUNC) &_pladdrr_sound_autocorrelate, 3},
+    {"_pladdrr_sounds_convolve_export", (DL_FUNC) &_pladdrr_sounds_convolve_export, 4},
+    {"_pladdrr_sounds_cross_correlate_export", (DL_FUNC) &_pladdrr_sounds_cross_correlate_export, 4},
+    {"_pladdrr_sound_deepen_band_mod", (DL_FUNC) &_pladdrr_sound_deepen_band_mod, 7},
+    {"_pladdrr_intensity_to_textgrid_silences", (DL_FUNC) &_pladdrr_intensity_to_textgrid_silences, 6},
     {"_pladdrr_sound_values_zerocopy", (DL_FUNC) &_pladdrr_sound_values_zerocopy, 2},
     {"_pladdrr_sound_times_fast", (DL_FUNC) &_pladdrr_sound_times_fast, 1},
     {"_pladdrr_sound_as_matrix_zerocopy_impl", (DL_FUNC) &_pladdrr_sound_as_matrix_zerocopy_impl, 2},
@@ -11257,6 +11996,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_table_get_column_numbers", (DL_FUNC) &_pladdrr_table_get_column_numbers, 1},
     {"_pladdrr_table_get_column_names", (DL_FUNC) &_pladdrr_table_get_column_names, 1},
     {"_pladdrr_table_to_matrix", (DL_FUNC) &_pladdrr_table_to_matrix, 1},
+    {"_pladdrr_table_sort_rows", (DL_FUNC) &_pladdrr_table_sort_rows, 2},
+    {"_pladdrr_table_extract_rows_where_column_number", (DL_FUNC) &_pladdrr_table_extract_rows_where_column_number, 4},
+    {"_pladdrr_table_extract_rows_where_column_string", (DL_FUNC) &_pladdrr_table_extract_rows_where_column_string, 4},
     {"_pladdrr_textgrid_extract_intervals_batch", (DL_FUNC) &_pladdrr_textgrid_extract_intervals_batch, 6},
     {"_pladdrr_textgrid_get_all_labels", (DL_FUNC) &_pladdrr_textgrid_get_all_labels, 2},
     {"_pladdrr_textgrid_interval_statistics_batch", (DL_FUNC) &_pladdrr_textgrid_interval_statistics_batch, 2},

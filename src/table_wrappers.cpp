@@ -369,3 +369,74 @@ NumericMatrix table_to_matrix(SEXP xptr) {
     stop("Failed to convert table to matrix");
   }
 }
+
+//' Table: Sort rows (internal)
+// [[Rcpp::export(.table_sort_rows)]]
+void table_sort_rows(SEXP xptr, Rcpp::CharacterVector columns) {
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+
+    int n = columns.size();
+    autoSTRVEC col_names (n);
+    for (int i = 0; i < n; i++) {
+      col_names [i + 1] = Melder_dup(Melder_peek8to32(
+        Rcpp::as<std::string>(columns[i]).c_str()));
+    }
+    Table_sortRows(ptr.get(), col_names.get());
+
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to sort table rows");
+  }
+}
+
+//' Table: Extract rows where column number (internal)
+// [[Rcpp::export(.table_extract_rows_where_column_number)]]
+SEXP table_extract_rows_where_column_number(
+    SEXP xptr,
+    int column,
+    int which,
+    double criterion
+) {
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+
+    autoTable result = Table_extractRowsWhereColumn_number(
+      ptr.get(), (integer) column,
+      static_cast<kMelder_number>(which),
+      criterion
+    );
+    return Rcpp::XPtr<structTable>(result.releaseToAmbiguousOwner());
+
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to extract table rows");
+  }
+}
+
+//' Table: Extract rows where column string (internal)
+// [[Rcpp::export(.table_extract_rows_where_column_string)]]
+SEXP table_extract_rows_where_column_string(
+    SEXP xptr,
+    int column,
+    int which,
+    std::string criterion
+) {
+  try {
+    Rcpp::XPtr<structTable> ptr(xptr);
+    validate_xptr(ptr, "Table");
+
+    autoTable result = Table_extractRowsWhereColumn_string(
+      ptr.get(), (integer) column,
+      static_cast<kMelder_string>(which),
+      Melder_peek8to32(criterion.c_str())
+    );
+    return Rcpp::XPtr<structTable>(result.releaseToAmbiguousOwner());
+
+  } catch (MelderError) {
+    Melder_clearError();
+    stop("Failed to extract table rows");
+  }
+}

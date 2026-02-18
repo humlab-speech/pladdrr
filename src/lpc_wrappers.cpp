@@ -27,6 +27,7 @@
 // Praat headers for LPC
 #include "praat.github.io/LPC/LPC.h"
 #include "praat.github.io/LPC/Sound_and_LPC.h"
+#include "praat.github.io/LPC/LPC_to_Spectrogram.h"
 // #include "praat.github.io/LPC/LPC_and_Formant.h"  // Disabled - requires CLAPACK
 #include "praat.github.io/LPC/LPC_to_Spectrum.h"
 #include "praat.github.io/fon/Sound.h"
@@ -385,6 +386,28 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
         Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
     } catch (...) {
         Rcpp::stop("Failed to extract Sound pointer from R6 object");
+    }
+}
+
+//' LPC: To Spectrogram (internal)
+// [[Rcpp::export(.lpc_to_spectrogram)]]
+Rcpp::XPtr<structSpectrogram> lpc_to_spectrogram(
+    Rcpp::XPtr<structLPC> xptr,
+    double df_min,
+    double bandwidth_reduction,
+    double de_emphasis_frequency
+) {
+    structLPC* lpc = get_ptr(xptr, "LPC");
+
+    try {
+        autoSpectrogram result = LPC_to_Spectrogram(
+            lpc, df_min, bandwidth_reduction, de_emphasis_frequency
+        );
+        return create_xptr_from_auto<structSpectrogram>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to convert LPC to Spectrogram");
     }
 }
 

@@ -158,6 +158,16 @@ MFCC <- function(.xptr = NULL) {
       Matrix(.xptr = matrix_ptr)
     },
 
+    to_mel_spectrogram = function(first_coefficient = 1, last_coefficient = 0,
+                                  include_c0 = FALSE) {
+      if (last_coefficient == 0) last_coefficient <- obj$get_max_num_coefficients()
+      mel_ptr <- .mfcc_to_mel_spectrogram(
+        .xptr, as.integer(first_coefficient),
+        as.integer(last_coefficient), include_c0
+      )
+      MelSpectrogram(.xptr = mel_ptr)
+    },
+
     to_dtw = function(reference, coefficient_weight = 1.0,
                       log_energy_weight = 0.0,
                       coefficient_regression_weight = 0.0,

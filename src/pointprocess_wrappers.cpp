@@ -798,6 +798,47 @@ List pointprocess_voice_report(SEXP sound_xptr, SEXP pitch_xptr, SEXP pp_xptr,
 // I/O Methods
 // =============================================================================
 
+//' PointProcess: To Sound (pulse train) (internal)
+// [[Rcpp::export(.pointprocess_to_sound_pulse_train)]]
+XPtr<structSound> pointprocess_to_sound_pulse_train(
+    SEXP xptr,
+    double sampling_frequency,
+    double adapt_factor,
+    double adapt_time,
+    int interpolation_depth
+) {
+    XPtr<structPointProcess> pp(xptr);
+    if (!pp) stop("Invalid PointProcess pointer");
+
+    try {
+        autoSound result = PointProcess_to_Sound_pulseTrain(
+            pp, sampling_frequency, adapt_factor, adapt_time,
+            (integer) interpolation_depth
+        );
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PointProcess to Sound (pulse train)");
+    }
+}
+
+//' PointProcess: To Sound (hum) (internal)
+// [[Rcpp::export(.pointprocess_to_sound_hum)]]
+XPtr<structSound> pointprocess_to_sound_hum(SEXP xptr) {
+    XPtr<structPointProcess> pp(xptr);
+    if (!pp) stop("Invalid PointProcess pointer");
+
+    try {
+        autoSound result = PointProcess_to_Sound_hum(pp);
+        return create_xptr_from_auto<structSound>(result);
+
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to convert PointProcess to Sound (hum)");
+    }
+}
+
 // [[Rcpp::export(.pointprocess_save)]]
 void pointprocess_save(SEXP xptr, std::string path) {
     XPtr<structPointProcess> pp(xptr);

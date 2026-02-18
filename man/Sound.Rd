@@ -65,7 +65,22 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 - `to_spectrum()` - Frequency spectrum
 - `to_spectrogram()` - Time-frequency representation
 - `to_ltas()` - Long-term average spectrum
+- `to_ltas_pitch_corrected()` - Pitch-corrected LTAS (voice quality)
+- `to_formant_robust()` - Outlier-resistant formant tracking
+- `to_mel_spectrogram()` - Mel-scale spectrogram
+- `to_bark_spectrogram()` - Bark-scale spectrogram
 - `to_point_process_periodic_cc()` - Extract glottal pulses
+}
+
+\section{Signal Processing}{
+
+- `lengthen()` - Time-stretch using overlap-add
+- `autocorrelate()` - Autocorrelation function
+- `convolve()` - Convolve with another sound
+- `cross_correlate()` - Cross-correlate with another sound
+- `deepen_band_modulation()` - Hearing enhancement
+- `filter_by_formant()` - Filter with Formant object
+- `filter_by_formant_noscale()` - Filter without scaling
 }
 
 \section{Extraction}{
