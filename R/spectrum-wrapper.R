@@ -187,6 +187,13 @@ Spectrum <- function(.xptr = NULL) {
       ptr <- .spectrum_cepstral_smoothing(.xptr, as.numeric(bandwidth))
       Spectrum(.xptr = ptr)
     },
+
+    shift_frequencies = function(shift_by, new_maximum_frequency = 0, interpolation_depth = 50L) {
+      if (new_maximum_frequency <= 0) new_maximum_frequency <- obj$get_highest_frequency()
+      ptr <- .spectrum_shift_frequencies(.xptr, as.numeric(shift_by),
+        as.numeric(new_maximum_frequency), as.integer(interpolation_depth))
+      Spectrum(.xptr = ptr)
+    },
     
     formula = function(formula) {
       .spectrum_formula(.xptr, formula)

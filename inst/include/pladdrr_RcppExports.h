@@ -902,6 +902,48 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
+    inline XPtr<structSound> _sound_create_pure_tone(int channels, double starting_time, double end_time, double sample_rate, double frequency, double amplitude, double fade_in_duration, double fade_out_duration) {
+        typedef SEXP(*Ptr__sound_create_pure_tone)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_create_pure_tone p__sound_create_pure_tone = NULL;
+        if (p__sound_create_pure_tone == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_create_pure_tone)(int,double,double,double,double,double,double,double)");
+            p__sound_create_pure_tone = (Ptr__sound_create_pure_tone)R_GetCCallable("pladdrr", "_pladdrr__sound_create_pure_tone");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_create_pure_tone(Shield<SEXP>(Rcpp::wrap(channels)), Shield<SEXP>(Rcpp::wrap(starting_time)), Shield<SEXP>(Rcpp::wrap(end_time)), Shield<SEXP>(Rcpp::wrap(sample_rate)), Shield<SEXP>(Rcpp::wrap(frequency)), Shield<SEXP>(Rcpp::wrap(amplitude)), Shield<SEXP>(Rcpp::wrap(fade_in_duration)), Shield<SEXP>(Rcpp::wrap(fade_out_duration)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_create_tone_complex(double starting_time, double end_time, double sample_rate, int phase, double frequency_step, double first_frequency, double ceiling, int number_of_components) {
+        typedef SEXP(*Ptr__sound_create_tone_complex)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_create_tone_complex p__sound_create_tone_complex = NULL;
+        if (p__sound_create_tone_complex == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_create_tone_complex)(double,double,double,int,double,double,double,int)");
+            p__sound_create_tone_complex = (Ptr__sound_create_tone_complex)R_GetCCallable("pladdrr", "_pladdrr__sound_create_tone_complex");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_create_tone_complex(Shield<SEXP>(Rcpp::wrap(starting_time)), Shield<SEXP>(Rcpp::wrap(end_time)), Shield<SEXP>(Rcpp::wrap(sample_rate)), Shield<SEXP>(Rcpp::wrap(phase)), Shield<SEXP>(Rcpp::wrap(frequency_step)), Shield<SEXP>(Rcpp::wrap(first_frequency)), Shield<SEXP>(Rcpp::wrap(ceiling)), Shield<SEXP>(Rcpp::wrap(number_of_components)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
     inline double _sound_get_duration(XPtr<structSound> xptr) {
         typedef SEXP(*Ptr__sound_get_duration)(SEXP);
         static Ptr__sound_get_duration p__sound_get_duration = NULL;
@@ -2469,6 +2511,48 @@ namespace pladdrr {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structTextGrid> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_change_speaker(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling, double formant_multiplier, double pitch_multiplier, double pitch_range_multiplier, double duration_multiplier) {
+        typedef SEXP(*Ptr__sound_change_speaker)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_change_speaker p__sound_change_speaker = NULL;
+        if (p__sound_change_speaker == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_change_speaker)(XPtr<structSound>,double,double,double,double,double,double)");
+            p__sound_change_speaker = (Ptr__sound_change_speaker)R_GetCCallable("pladdrr", "_pladdrr__sound_change_speaker");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_change_speaker(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(formant_multiplier)), Shield<SEXP>(Rcpp::wrap(pitch_multiplier)), Shield<SEXP>(Rcpp::wrap(pitch_range_multiplier)), Shield<SEXP>(Rcpp::wrap(duration_multiplier)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structSound> _sound_pitch_change_speaker(XPtr<structSound> sound_xptr, XPtr<structPitch> pitch_xptr, double formant_multiplier, double pitch_multiplier, double pitch_range_multiplier, double duration_multiplier) {
+        typedef SEXP(*Ptr__sound_pitch_change_speaker)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_pitch_change_speaker p__sound_pitch_change_speaker = NULL;
+        if (p__sound_pitch_change_speaker == NULL) {
+            validateSignature("XPtr<structSound>(*_sound_pitch_change_speaker)(XPtr<structSound>,XPtr<structPitch>,double,double,double,double)");
+            p__sound_pitch_change_speaker = (Ptr__sound_pitch_change_speaker)R_GetCCallable("pladdrr", "_pladdrr__sound_pitch_change_speaker");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_pitch_change_speaker(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(pitch_xptr)), Shield<SEXP>(Rcpp::wrap(formant_multiplier)), Shield<SEXP>(Rcpp::wrap(pitch_multiplier)), Shield<SEXP>(Rcpp::wrap(pitch_range_multiplier)), Shield<SEXP>(Rcpp::wrap(duration_multiplier)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
     inline SEXP sound_values_zerocopy(SEXP sound_xptr, int channel = 1) {

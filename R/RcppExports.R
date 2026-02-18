@@ -2423,6 +2423,14 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_create_tone`, duration, sampling_rate, frequency, amplitude)
 }
 
+.sound_create_pure_tone <- function(channels, starting_time, end_time, sample_rate, frequency, amplitude, fade_in_duration, fade_out_duration) {
+    .Call(`_pladdrr_sound_create_pure_tone`, channels, starting_time, end_time, sample_rate, frequency, amplitude, fade_in_duration, fade_out_duration)
+}
+
+.sound_create_tone_complex <- function(starting_time, end_time, sample_rate, phase, frequency_step, first_frequency, ceiling, number_of_components) {
+    .Call(`_pladdrr_sound_create_tone_complex`, starting_time, end_time, sample_rate, phase, frequency_step, first_frequency, ceiling, number_of_components)
+}
+
 #' Get sound duration (internal)
 #' @keywords internal
 .sound_get_duration <- function(xptr) {
@@ -2976,6 +2984,14 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_intensity_to_textgrid_silences`, xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label)
 }
 
+.sound_change_speaker <- function(xptr, pitch_floor, pitch_ceiling, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier) {
+    .Call(`_pladdrr_sound_change_speaker`, xptr, pitch_floor, pitch_ceiling, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+}
+
+.sound_pitch_change_speaker <- function(sound_xptr, pitch_xptr, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier) {
+    .Call(`_pladdrr_sound_pitch_change_speaker`, sound_xptr, pitch_xptr, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+}
+
 #' Zero-Copy Sound Data Access (Read-Only View)
 #'
 #' Returns a read-only view of Sound sample data without copying memory.
@@ -3216,6 +3232,10 @@ is_zerocopy <- function(x) {
 
 .spectrum_to_cepstrum <- function(spectrum_xptr) {
     .Call(`_pladdrr_spectrum_to_cepstrum`, spectrum_xptr)
+}
+
+.spectrum_shift_frequencies <- function(xptr, shift_by, new_maximum_frequency, interpolation_depth = 50L) {
+    .Call(`_pladdrr_spectrum_shift_frequencies`, xptr, shift_by, new_maximum_frequency, interpolation_depth)
 }
 
 .table_create <- function(numberOfRows, numberOfColumns) {

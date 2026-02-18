@@ -1044,6 +1044,26 @@ Sound <- function(path = NULL, .xptr = NULL) {
       BarkSpectrogram(.xptr = bark_ptr)
     },
 
+    #' Change speaker characteristics (formant + pitch shift)
+    change_speaker = function(pitch_floor = 75, pitch_ceiling = 600,
+                              formant_multiplier = 1.0, pitch_multiplier = 1.0,
+                              pitch_range_multiplier = 1.0, duration_multiplier = 1.0) {
+      sound_ptr <- .sound_change_speaker(ptr, pitch_floor, pitch_ceiling,
+        formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+      Sound(.xptr = sound_ptr)
+    },
+
+    #' Change speaker using pre-computed Pitch
+    change_speaker_with_pitch = function(pitch, formant_multiplier = 1.0,
+                                          pitch_multiplier = 1.0,
+                                          pitch_range_multiplier = 1.0,
+                                          duration_multiplier = 1.0) {
+      if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object")
+      sound_ptr <- .sound_pitch_change_speaker(ptr, pitch$.xptr,
+        formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+      Sound(.xptr = sound_ptr)
+    },
+
     #' Autocorrelate
     autocorrelate = function(scaling = "peak_0.99", signal_outside = "zero") {
       sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
@@ -1173,12 +1193,75 @@ sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
   Sound(.xptr = ptr)
 }
 
+#' Create a pure tone with fade in/out
+#'
+#' Creates a sinusoidal pure tone with optional fade in/out envelopes.
+#'
+#' @param frequency Frequency in Hz (default: 440)
+#' @param duration Duration in seconds (default: 1.0)
+#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @param amplitude Peak amplitude (default: 0.99)
+#' @param fade_in_duration Fade-in duration in seconds (default: 0.01)
+#' @param fade_out_duration Fade-out duration in seconds (default: 0.01)
+#' @param channels Number of channels (default: 1)
+#' @return A Sound object
+#' @export
+#' @examples
+#' \dontrun{
+#' tone <- sound_create_pure_tone(frequency = 440, duration = 0.5)
+#' tone <- Sound$create_pure_tone(frequency = 880, fade_in_duration = 0.05)
+#' }
+sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
+                                    sampling_rate = 44100, amplitude = 0.99,
+                                    fade_in_duration = 0.01, fade_out_duration = 0.01,
+                                    channels = 1L) {
+  ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration, sampling_rate,
+    frequency, amplitude, fade_in_duration, fade_out_duration)
+  Sound(.xptr = ptr)
+}
+
+#' Create a tone complex (harmonic series)
+#'
+#' Creates a sound consisting of multiple sinusoids at equal frequency intervals.
+#'
+#' @param frequency_step Step between harmonics in Hz (default: 100)
+#' @param duration Duration in seconds (default: 1.0)
+#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @param phase Phase type: "sine" or "cosine" (default: "sine")
+#' @param first_frequency Lowest component frequency in Hz (default: 0, uses frequency_step)
+#' @param ceiling Maximum frequency to include in Hz (default: Nyquist)
+#' @param number_of_components Number of components (default: 0 = all up to ceiling)
+#' @return A Sound object
+#' @export
+#' @examples
+#' \dontrun{
+#' # Harmonic tone with 10 components at 100 Hz intervals
+#' tone <- sound_create_tone_complex(frequency_step = 100, number_of_components = 10)
+#' tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
+#' }
+sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
+                                       sampling_rate = 44100,
+                                       phase = c("sine", "cosine"),
+                                       first_frequency = 0.0,
+                                       ceiling = 0.0,
+                                       number_of_components = 0L) {
+  phase <- match.arg(phase)
+  phase_code <- if (phase == "sine") 0L else 1L
+  if (ceiling <= 0.0) ceiling <- sampling_rate / 2.0
+  if (first_frequency <= 0.0) first_frequency <- frequency_step
+  ptr <- .sound_create_tone_complex(0.0, duration, sampling_rate, phase_code,
+    frequency_step, first_frequency, ceiling, as.integer(number_of_components))
+  Sound(.xptr = ptr)
+}
+
 # Make Sound "class" support $ for static methods (backward compatibility)
 .sound_static_env <- new.env(parent = emptyenv())
 .sound_static_env$from_values <- sound_from_values
 .sound_static_env$from_matrix <- sound_from_values  # Alias
 .sound_static_env$new_from_values <- sound_from_values  # Alias
 .sound_static_env$create_tone <- sound_create_tone
+.sound_static_env$create_pure_tone <- sound_create_pure_tone
+.sound_static_env$create_tone_complex <- sound_create_tone_complex
 .sound_static_env$new <- Sound  # Allow Sound$new() as well as Sound()
 
 #' $ method for Sound constructor (enables Sound$create_tone(), etc.)
@@ -1189,7 +1272,7 @@ sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
 `$.sound_constructor` <- function(x, name) {
   val <- .sound_static_env[[name]]
   if (is.null(val)) {
-    stop("Sound has no static method '", name, "'. Available: from_values, create_tone, new")
+    stop("Sound has no static method '", name, "'. Available: from_values, create_tone, create_pure_tone, create_tone_complex, new")
   }
   val
 }

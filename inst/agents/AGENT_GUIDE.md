@@ -1,14 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.25 (2026-02-18)
+**Version:** 4.8.26 (2026-02-18)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting
 
 ---
 
 
 ## What's New in v4.8.x
 
+- **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
 - **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
 - **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
 - **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_zerocopy_impl` export
@@ -2050,6 +2051,119 @@ avg_ltas <- ltas_average(list(ltas1, ltas2, ltas3))
 ```
 
 **Praat equivalent:** Select multiple Ltas → `Ltases: Average`
+
+---
+
+### Pattern 2o: Tier 3 Audio Processing (v4.8.26+)
+
+#### Speaker Transformation (Change Gender / Change Speaker)
+
+**Use case:** Modify speaker characteristics by independently scaling formant frequencies (vocal tract length), pitch level, pitch range, and duration.
+
+```r
+sound <- Sound("speech.wav")
+
+# Change to higher-pitched speaker (e.g., female → child)
+transformed <- sound$change_speaker(
+  pitch_floor = 75,              # Min pitch for analysis
+  pitch_ceiling = 600,           # Max pitch for analysis
+  formant_multiplier = 1.2,      # Raise formants 20% (shorter vocal tract)
+  pitch_multiplier = 1.3,        # Raise pitch 30%
+  pitch_range_multiplier = 1.0,  # Keep pitch range
+  duration_multiplier = 1.0      # Keep duration
+)
+
+# Change gender (typical male → female)
+female <- sound$change_speaker(
+  formant_multiplier = 1.1,
+  pitch_multiplier = 1.8,
+  pitch_range_multiplier = 1.2,
+  duration_multiplier = 1.0
+)
+
+# Use existing Pitch object (more control)
+pitch <- sound$to_pitch_ac()
+modified <- sound$change_speaker_with_pitch(
+  pitch = pitch,
+  formant_multiplier = 1.1,
+  pitch_multiplier = 1.5,
+  pitch_range_multiplier = 1.0,
+  duration_multiplier = 0.9      # Slightly faster
+)
+```
+
+**Praat equivalents:**
+- `Sound & Pitch: Change speaker...`
+- `Sound: Change speaker...` (internal pitch extraction)
+
+**Parameters:**
+- `formant_multiplier`: Scales formant frequencies (> 1 = shorter vocal tract / higher formants)
+- `pitch_multiplier`: Scales median pitch up/down
+- `pitch_range_multiplier`: Scales excursion from median (> 1 = more melodic, < 1 = more monotone)
+- `duration_multiplier`: Combined with formant_multiplier for final duration
+
+#### Sound Creation from Scratch
+
+```r
+# Pure tone with fade in/out (avoids clicks)
+tone <- sound_create_pure_tone(
+  channels = 1,
+  starting_time = 0,
+  end_time = 0.5,
+  sample_rate = 44100,
+  frequency = 440,       # Hz (A4)
+  amplitude = 0.5,       # 0–1
+  fade_in_duration = 0.01,
+  fade_out_duration = 0.01
+)
+
+# Also available as static method
+tone <- Sound$create_pure_tone(440, amplitude = 0.7, end_time = 1.0)
+
+# Harmonic complex tone (sum of sines)
+# phase: 0 = sine, 1 = cosine, 2 = alternating sine/cosine
+complex <- sound_create_tone_complex(
+  starting_time = 0,
+  end_time = 0.5,
+  sample_rate = 44100,
+  phase = 0L,              # 0=sine, 1=cosine, 2=alternating
+  frequency_step = 100,    # Spacing between harmonics (Hz)
+  first_frequency = 100,   # Fundamental / first harmonic
+  ceiling = 10000,         # Max frequency to include
+  number_of_components = 0L  # 0 = determined by ceiling
+)
+
+# Also available as static method
+complex <- Sound$create_tone_complex(frequency_step = 200, first_frequency = 200)
+```
+
+**Praat equivalents:**
+- `Create Sound as pure tone...`
+- `Create Sound as tone complex...`
+
+#### Spectrum Frequency Shifting
+
+**Use case:** Shift all spectral energy by a fixed amount in Hz (useful for formant synthesis, frequency warping).
+
+```r
+sound <- Sound("vowel.wav")
+spectrum <- sound$to_spectrum()
+
+# Shift spectrum up by 200 Hz
+shifted_up <- spectrum$shift_frequencies(
+  shift_by = 200,                # Hz (positive = up, negative = down)
+  new_maximum_frequency = 5000,  # Output bandwidth (0 = same as input)
+  interpolation_depth = 50       # Sinc interpolation depth
+)
+
+# Shift down (frequency lowering)
+shifted_down <- spectrum$shift_frequencies(shift_by = -500)
+
+# Convert back to sound
+shifted_sound <- shifted_up$to_sound()
+```
+
+**Praat equivalent:** `Spectrum: Shift frequencies...`
 
 ---
 

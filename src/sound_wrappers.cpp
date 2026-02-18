@@ -51,11 +51,24 @@
 #include "praat.github.io/dwtools/Intensity_extensions.h"
 #include "praat.github.io/dwtools/TextGrid_extensions.h"  // IntervalTier_cutIntervals_minimumDuration etc.
 #include "melder/melder.h"
+#include "fon/Pitch_to_PitchTier.h"
+#include "fon/DurationTier.h"
+#include "fon/RealTier.h"
+#include "fon/Manipulation.h"
+#include "fon/Vector.h"
 
 using namespace Rcpp;
 
 // Forward declaration - NUMfpp initialization from NUMmachar.cpp
 extern void NUMmachar();
+
+// Forward declarations for functions in sound_extensions_minimal.cpp
+autoSound Sound_Pitch_changeSpeaker(Sound me, Pitch him,
+    double formantMultiplier, double pitchMultiplier,
+    double pitchRangeMultiplier, double durationMultiplier);
+autoSound Sound_changeSpeaker(Sound me, double pitchMin, double pitchMax,
+    double formantMultiplier, double pitchMultiplier,
+    double pitchRangeMultiplier, double durationMultiplier);
 extern void NUMrandom_initializeSafelyAndUnpredictably();  // RNG initialization
 
 // Helper function to ensure all numeric libraries are initialized
@@ -151,7 +164,7 @@ XPtr<structSound> sound_create_tone(
 ) {
     try {
         autoSound sound = Sound_createSimple(1, duration, sampling_rate);
-        
+
         // Generate tone
         double* dst = &sound->z[1][1];
         double t = sound->x1;
@@ -159,12 +172,60 @@ XPtr<structSound> sound_create_tone(
             dst[i] = amplitude * sin(2.0 * M_PI * frequency * t);
             t += sound->dx;
         }
-        
+
         return create_xptr_from_auto<structSound>(sound);
-        
+
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create tone");
+    }
+}
+
+// [[Rcpp::export(.sound_create_pure_tone)]]
+XPtr<structSound> sound_create_pure_tone(
+    int channels,
+    double starting_time,
+    double end_time,
+    double sample_rate,
+    double frequency,
+    double amplitude,
+    double fade_in_duration,
+    double fade_out_duration
+) {
+    try {
+        autoSound result = Sound_createAsPureTone(
+            (integer)channels, starting_time, end_time,
+            sample_rate, frequency, amplitude,
+            fade_in_duration, fade_out_duration
+        );
+        return create_xptr_from_auto<structSound>(result);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create pure tone");
+    }
+}
+
+// [[Rcpp::export(.sound_create_tone_complex)]]
+XPtr<structSound> sound_create_tone_complex(
+    double starting_time,
+    double end_time,
+    double sample_rate,
+    int phase,
+    double frequency_step,
+    double first_frequency,
+    double ceiling,
+    int number_of_components
+) {
+    try {
+        autoSound result = Sound_createAsToneComplex(
+            starting_time, end_time, sample_rate,
+            phase, frequency_step, first_frequency,
+            ceiling, (integer)number_of_components
+        );
+        return create_xptr_from_auto<structSound>(result);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to create tone complex");
     }
 }
 
@@ -2616,5 +2677,53 @@ XPtr<structTextGrid> intensity_to_textgrid_silences(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create TextGrid from Intensity silences");
+    }
+}
+
+// [[Rcpp::export(.sound_change_speaker)]]
+XPtr<structSound> sound_change_speaker(
+    XPtr<structSound> xptr,
+    double pitch_floor,
+    double pitch_ceiling,
+    double formant_multiplier,
+    double pitch_multiplier,
+    double pitch_range_multiplier,
+    double duration_multiplier
+) {
+    structSound* sound = get_ptr(xptr, "Sound");
+    try {
+        autoSound result = Sound_changeSpeaker(
+            sound, pitch_floor, pitch_ceiling,
+            formant_multiplier, pitch_multiplier,
+            pitch_range_multiplier, duration_multiplier
+        );
+        return create_xptr_from_auto<structSound>(result);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to change speaker characteristics");
+    }
+}
+
+// [[Rcpp::export(.sound_pitch_change_speaker)]]
+XPtr<structSound> sound_pitch_change_speaker(
+    XPtr<structSound> sound_xptr,
+    XPtr<structPitch> pitch_xptr,
+    double formant_multiplier,
+    double pitch_multiplier,
+    double pitch_range_multiplier,
+    double duration_multiplier
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+    structPitch* pitch = get_ptr(pitch_xptr, "Pitch");
+    try {
+        autoSound result = Sound_Pitch_changeSpeaker(
+            sound, pitch,
+            formant_multiplier, pitch_multiplier,
+            pitch_range_multiplier, duration_multiplier
+        );
+        return create_xptr_from_auto<structSound>(result);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to change speaker characteristics (with Pitch)");
     }
 }

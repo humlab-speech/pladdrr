@@ -31,6 +31,7 @@
 #include "fon/Matrix.h"
 #include "LPC/Cepstrum.h"
 #include "LPC/Cepstrum_and_Spectrum.h"
+#include "praat.github.io/dwtools/Spectrum_extensions.h"
 #include "sys/Interpreter.h"
 #include "sys/Interpreter.h"
 #include "melder/melder.h"
@@ -360,5 +361,25 @@ SEXP spectrum_to_cepstrum(SEXP spectrum_xptr) {
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to create Cepstrum from Spectrum");
+    }
+}
+
+// [[Rcpp::export(.spectrum_shift_frequencies)]]
+XPtr<structSpectrum> spectrum_shift_frequencies(
+    XPtr<structSpectrum> xptr,
+    double shift_by,
+    double new_maximum_frequency,
+    int interpolation_depth = 50
+) {
+    structSpectrum* spectrum = get_ptr(xptr, "Spectrum");
+    try {
+        autoSpectrum result = Spectrum_shiftFrequencies(
+            spectrum, shift_by, new_maximum_frequency,
+            (integer)interpolation_depth
+        );
+        return create_xptr_from_auto<structSpectrum>(result);
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to shift Spectrum frequencies");
     }
 }
