@@ -765,9 +765,11 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' @param sound A Sound object
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
 #'   "hnr", or "all" for all metrics
-#' @param min_pitch Pitch floor in Hz (default: 75)
+#' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).
+#'   Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
+#'   independent of this parameter.
 #' @param max_pitch Pitch ceiling in Hz (default: 600)
-#' @param time_step Time step for pitch extraction (0 = auto)
+#' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
 #'
 #' @return Named list with requested voice quality metrics:
 #' \describe{

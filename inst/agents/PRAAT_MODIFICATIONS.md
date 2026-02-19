@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-02-19
-**Package Version:** 4.8.28
+**Package Version:** 4.8.29
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -17,9 +17,99 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### v4.8.29 Revert broken SIMD blocks in Sound_to_Pitch.cpp; fix GNE threshold (2026-02-19)
+
+**Summary:** The v4.8.27 SIMD additions to `Sound_to_Pitch.cpp` caused ~16–29× performance regressions. Both `#ifdef HAVE_XSIMD` blocks are removed and the plain scalar code restored. GNE parallelization threshold raised from 1 to 4.
+
+**No submodule commit** — changes are in pladdrr's copy of `src/praat.github.io/fon/`.
+
+---
+
+#### `fon/Sound_to_Pitch.cpp` — Remove FCC SIMD block (Fix 5 reverted)
+
+The "Fix 5 (batched sqrt)" block inside `Sound_into_PitchFrame()` allocated two heap vectors per call:
+```cpp
+// REMOVED — caused ~29× regression:
+autoVEC sumy2_arr  = raw_VEC (localMaximumLag);
+autoVEC product_arr = raw_VEC (localMaximumLag);
+// ... two-pass loop with simd_bridge_direct::compute_fcc_product_simd() ...
+// ... xsimd normalization pass ...
+```
+`Sound_into_PitchFrame` is called for every pitch frame (hundreds per second). Two `raw_VEC` heap allocations × hundreds of calls = catastrophic malloc pressure.
+
+**Current state:** Only the scalar `#else` branch remains (no `#ifdef`/`#endif` wrapper):
+```cpp
+for (integer i = 1; i <= localMaximumLag; i ++) {
+    longdouble product = 0.0;
+    for (integer channel = 1; channel <= my ny; channel ++) {
+        const double *const amp = & my z [channel] [0] + offset;
+        const double y0 = amp [i] - localMean [channel];
+        const double yZ = amp [i + nsamp_window] - localMean [channel];
+        sumy2 += yZ * yZ - y0 * y0;
+        for (integer j = 1; j <= nsamp_window; j ++) {
+            const double x = amp [j] - localMean [channel];
+            const double y = amp [i + j] - localMean [channel];
+            product += x * y;
+        }
+    }
+    r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
+}
+```
+This auto-vectorizes under `-O3 -march=armv8-a+simd` without any heap allocation.
+
+---
+
+#### `fon/Sound_to_Pitch.cpp` — Remove AC power spectrum SIMD block (brace bug)
+
+The AC path had a structural brace bug in the `#ifdef HAVE_XSIMD` block:
+```cpp
+// REMOVED — brace closed channel for-loop inside #ifdef:
+for (integer channel = 1; channel <= my ny; channel ++) {
+    NUMfft_forward (...);
+#ifdef HAVE_XSIMD
+    simd_bridge_direct::accumulate_power_spectrum_simd(frame, ac, nsampFFT, my ny);
+}   // ← closes for-loop inside #ifdef! wrong for ny>1
+#else
+    // scalar accumulation ...
+}
+#endif
+```
+For stereo (`ny>1`): the loop was only entered for channel=1 but accumulated all channels (the SIMD function received `my ny`), producing wrong results. For mono: a non-inlined function call per frame was added with no benefit.
+
+**Current state:** Only the scalar accumulation remains:
+```cpp
+for (integer channel = 1; channel <= my ny; channel ++) {
+    NUMfft_forward (fftTable, VEC (& frame [channel] [1], fftTable->n));
+    ac [1] += frame [channel] [1] * frame [channel] [1];
+    for (integer i = 2; i < nsampFFT; i += 2)
+        ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];
+    ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];
+}
+```
+
+---
+
+#### `fon/Sound_to_Harmonicity_GNE.cpp` — Raise PARALLELIZE threshold 1→4
+
+```cpp
+// Before:
+MelderThread_PARALLELIZE (nenvelopes, 1)
+
+// After:
+MelderThread_PARALLELIZE (nenvelopes, 4)
+```
+
+With threshold=1 and nenvelopes=50 (fmax=4500, step=80), all 50 bands were scheduled concurrently. Each band allocates `Data_copy` + `Spectrum_to_Sound` + `Sound_extractPart`. Concurrent malloc pressure across ~10 threads caused ~4.6× overhead vs sequential. Threshold=4 limits concurrency to ~12 batches, substantially reducing allocator contention while retaining parallelism.
+
+The cross-correlation loop (Loop C, npairs=1225) retains threshold=5.
+
+---
+
 ### v4.8.27 GNE parallelization + Pitch CC batched sqrt (2026-02-19)
 
-**Summary:** Two embarrassingly parallel loops in `Sound_to_Harmonicity_GNE.cpp` are now dispatched via `MelderThread_PARALLELIZE`. Pitch CC normalization uses a two-pass batched `xsimd::sqrt` to eliminate per-lag scalar `sqrt()` calls. No R API or numeric output changes.
+**⚠ Partially reverted in v4.8.29:** GNE Loop B/C parallelization remains (threshold adjusted). Pitch CC "Fix 5" batched sqrt was reverted — see v4.8.29.
+
+**Summary:** Two embarrassingly parallel loops in `Sound_to_Harmonicity_GNE.cpp` are now dispatched via `MelderThread_PARALLELIZE`. Pitch CC normalization used a two-pass batched `xsimd::sqrt` (since reverted due to heap-alloc regression).
 
 **Submodule commit:** `4f52f5f07`
 
@@ -52,7 +142,7 @@ After:
 // nenvelopes precomputed (loop no longer increments ienvelope)
 nenvelopes = (integer) Melder_ifloor ((fmax - fmin) / step);  // moved up before Loop B
 // ...
-MelderThread_PARALLELIZE (nenvelopes, 1)
+MelderThread_PARALLELIZE (nenvelopes, 4)   // threshold raised to 4 in v4.8.29
 MelderThread_FOR (ienvelope) {
     const double fmid_local = fmin + (ienvelope - 1) * step;
     // identical per-band work, reads only shared read-only data,

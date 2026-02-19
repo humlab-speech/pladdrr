@@ -1,3 +1,15 @@
+# pladdrr 4.8.29 (2026-02-19)
+
+## Performance
+
+- Pitch CC: removed broken SIMD FCC block (two heap allocs per frame → ~29× regression vs v4.8.15); scalar loop auto-vectorizes under -O3
+- Pitch CC / HNR: removed SIMD AC power spectrum block with brace bug (broke stereo, added non-inlined overhead); restored scalar accumulation
+- GNE: raised `MelderThread_PARALLELIZE` threshold 1→4 to reduce allocator contention across 50 bands
+
+## Accuracy
+
+- `get_voice_quality_ultra(..., metrics="hnr")`: HNR now uses Praat's standard minimum pitch (75 Hz) and time step (0.01 s) instead of the pitch-extraction `min_pitch`; fixes ~1.31 dB underestimation in AVQI pipeline where `min_pitch=50` was passed
+
 # pladdrr 4.8.28 (2026-02-19)
 
 ## Documentation

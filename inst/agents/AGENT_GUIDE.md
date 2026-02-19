@@ -1,15 +1,16 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.28 (2026-02-19)
+**Version:** 4.8.29 (2026-02-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC batched sqrt SIMD
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Performance regressions fixed (Pitch CC, HNR, GNE) + HNR accuracy fixed in AVQI pipeline
 
 ---
 
 
 ## What's New in v4.8.x
 
-- **v4.8.27/4.8.28:** Internal C++ performance optimizations — no R API changes. `Sound$to_harmonicity_gne()`: Loop B (50-band Hilbert envelope) and Loop C (1225-pair cross-correlation matrix) are now parallelized via `MelderThread_PARALLELIZE`. `sound$to_pitch_cc()`: normalization now uses batched `xsimd::sqrt` (Fix 5), eliminating ~210 individual `sqrt()` calls per frame. Both functions produce identical numeric output; only throughput improves.
+- **v4.8.29:** Critical performance regression fixes and HNR accuracy fix. Pitch CC and HNR: removed broken `#ifdef HAVE_XSIMD` blocks in `Sound_to_Pitch.cpp` — the FCC SIMD block allocated 2 heap vectors per pitch frame causing ~29× slowdown; the AC SIMD block had a brace bug that closed the channel loop prematurely (breaking stereo) and added non-inlined call overhead. Both revert to scalar loops that auto-vectorize under `-O3`. GNE: raised `MelderThread_PARALLELIZE` threshold 1→4 to cut allocator contention. `get_voice_quality_ultra(..., metrics="hnr")`: HNR now uses Praat's standard minimum pitch 75 Hz / time step 0.01 s instead of the caller's `min_pitch`; fixes ~1.31 dB underestimation in AVQI pipeline.
+- **v4.8.27/4.8.28:** Internal C++ performance optimizations (later found to regress — see v4.8.29). `Sound$to_harmonicity_gne()`: Loop B/C parallelized via `MelderThread_PARALLELIZE`. `sound$to_pitch_cc()`: batched `xsimd::sqrt` normalization (Fix 5). Both superseded/reverted by v4.8.29.
 - **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
 - **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
 - **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
@@ -6980,6 +6981,47 @@ test_that("duration statistics match R", {
 ---
 
 ## Full Changelog (Recent Changes)
+
+### 🔧 Performance Regression Fixes + HNR Accuracy v4.8.29 (2026-02-19)
+
+**Summary:** Three performance regressions from v4.8.27 fixed; HNR accuracy in `get_voice_quality_ultra` corrected.
+
+**1. Pitch CC / HNR ~16–29× slowdown (was: all pitch-based tools)**
+
+Root cause: Two broken `#ifdef HAVE_XSIMD` blocks in `Sound_to_Pitch.cpp`:
+
+- **FCC block** allocated two `raw_VEC` heap vectors (`sumy2_arr`, `product_arr`) inside `Sound_into_PitchFrame()` — called hundreds of times per second of audio — causing catastrophic malloc pressure. Removed entirely; scalar inner loop auto-vectorizes under `-O3 -march=armv8-a+simd`.
+- **AC block** had a brace bug: the closing `}` of the per-channel `for` loop was inside the `#ifdef`, so with `ny > 1` (stereo) all channels were accumulated multiple times. For mono it added non-inlined `accumulate_power_spectrum_simd()` call overhead per frame. Removed; scalar accumulation restored.
+
+**Agent impact:** `to_pitch_cc_direct`, `to_harmonicity_direct`, `two_pass_adaptive_pitch` and all tools calling them (DSI, AVQI, VUV, Tremor, VQ, Pharyngeal) are back to Parselmouth-equivalent speed.
+
+**2. GNE ~4.6× slower than Parselmouth**
+
+`MelderThread_PARALLELIZE(nenvelopes, 1)` threshold=1 scheduled all 50 bands concurrently (for fmax=4500, step=80) → ~10 threads each doing `Data_copy` + `Spectrum_to_Sound` + `Sound_extractPart` → concurrent malloc contention. Raised to threshold=4 (≈12 concurrent threads).
+
+**3. `get_voice_quality_ultra(..., metrics="hnr")` — HNR −1.31 dB in AVQI pipeline**
+
+The function was passing the caller's `min_pitch` (50 for AVQI) to `Sound_to_Harmonicity_cc`. Praat's HNR uses `minimum_pitch` to set analysis window size (`0.75 × periodsPerWindow / minimumPitch`): with 50 Hz → 15 ms windows vs Praat's default 75 Hz → 10 ms windows. The wider window biases HNR low.
+
+Fix: HNR now always uses `hnr_min_pitch = 75.0` and `hnr_time_step = max(time_step, 0.01)` matching Praat's `To Harmonicity (cc)` defaults, independent of the pitch-extraction `min_pitch`.
+
+```r
+# Before fix — WRONG with min_pitch=50:
+vq <- get_voice_quality_ultra(avqi_sound, metrics = "hnr", min_pitch = 50)
+vq$hnr_mean  # ~12.70 dB  (Praat: 14.01 dB, error: −1.31 dB)
+
+# After fix — always uses 75 Hz / 0.01 s for HNR:
+vq$hnr_mean  # ~14.01 dB  ✓
+```
+
+**Note:** `get_voice_quality_ultra` `min_pitch` still controls pitch extraction (for jitter/shimmer PointProcess). Only HNR is pinned to 75 Hz.
+
+**Files modified:**
+- `src/praat.github.io/fon/Sound_to_Pitch.cpp` — removed FCC SIMD block + AC SIMD brace-bug block
+- `src/praat.github.io/fon/Sound_to_Harmonicity_GNE.cpp` — threshold 1→4
+- `src/batch_queries.cpp` — HNR uses fixed 75 Hz / 0.01 s defaults
+
+---
 
 ### 🛡️ API Safety & Improvements v4.8.22 (2026-02-08)
 

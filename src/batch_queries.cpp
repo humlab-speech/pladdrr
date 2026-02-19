@@ -1151,10 +1151,16 @@ List get_voice_quality_ultra_cpp(
             results["shimmer_dda"] = s_dda;
         }
 
-        // HNR metrics
+        // HNR metrics — use Praat's standard CC harmonicity defaults (75 Hz, 0.01 s)
+        // independent of the pitch extraction min_pitch.  Pitch and HNR are separate
+        // algorithms: HNR minimum_pitch controls window size (0.75/75 = 0.01 s), not
+        // the pitch floor used for voiced-frame detection.  Passing AVQI-style
+        // min_pitch=50 here shifts the window to 15 ms and biases HNR low by ~1.3 dB.
         if (compute_hnr) {
+            const double hnr_min_pitch = 75.0;   // Praat default for To Harmonicity (cc)
+            const double hnr_time_step = (time_step > 0.0) ? time_step : 0.01;
             autoHarmonicity hnr = Sound_to_Harmonicity_cc(
-                sound.get(), time_step, min_pitch, 0.1, 1.0
+                sound.get(), hnr_time_step, hnr_min_pitch, 0.1, 1.0
             );
             results["hnr_mean"] = Harmonicity_getMean(hnr.get(), 0, 0);
             results["hnr_sd"] = Harmonicity_getStandardDeviation(hnr.get(), 0, 0);
