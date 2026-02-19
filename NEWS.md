@@ -1,3 +1,17 @@
+# pladdrr 4.8.28 (2026-02-19)
+
+## Documentation
+
+- AGENT_GUIDE.md updated to v4.8.28 with GNE + Pitch CC performance notes
+
+# pladdrr 4.8.27 (2026-02-19)
+
+## Performance
+
+- GNE: parallelized 50-band Hilbert envelope loop (Loop B) via `MelderThread_PARALLELIZE`
+- GNE: parallelized 1225-pair cross-correlation loop (Loop C) via `MelderThread_PARALLELIZE`
+- Pitch CC: batched sqrt normalization (Fix 5) — accumulate all lag products then vectorized `xsimd::sqrt` pass, eliminating ~210 individual `sqrt()` calls per frame
+
 # pladdrr 4.8.13 (2026-02-04)
 
 ## Optimization

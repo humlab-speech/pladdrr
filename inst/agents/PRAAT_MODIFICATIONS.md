@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-02-06
-**Package Version:** 4.8.19
+**Last Updated:** 2026-02-19
+**Package Version:** 4.8.28
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,156 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.27 GNE parallelization + Pitch CC batched sqrt (2026-02-19)
+
+**Summary:** Two embarrassingly parallel loops in `Sound_to_Harmonicity_GNE.cpp` are now dispatched via `MelderThread_PARALLELIZE`. Pitch CC normalization uses a two-pass batched `xsimd::sqrt` to eliminate per-lag scalar `sqrt()` calls. No R API or numeric output changes.
+
+**Submodule commit:** `4f52f5f07`
+
+---
+
+#### `fon/Sound_to_Harmonicity_GNE.cpp`
+
+**Added headers:**
+```cpp
+#include <vector>
+#include <utility>
+```
+
+**Loop B — Hilbert envelope computation (was sequential `while` loop):**
+
+Before:
+```cpp
+double fmid = fmin;
+integer ienvelope = 1;
+while (fmid <= fmax) {
+    // ... per-band work ...
+    fmid += step;
+    ienvelope += 1;
+}
+nenvelopes = ienvelope - 1;
+```
+
+After:
+```cpp
+// nenvelopes precomputed (loop no longer increments ienvelope)
+nenvelopes = (integer) Melder_ifloor ((fmax - fmin) / step);  // moved up before Loop B
+// ...
+MelderThread_PARALLELIZE (nenvelopes, 1)
+MelderThread_FOR (ienvelope) {
+    const double fmid_local = fmin + (ienvelope - 1) * step;
+    // identical per-band work, reads only shared read-only data,
+    // writes only to envelope[ienvelope] (distinct per thread)
+} MelderThread_ENDFOR
+```
+
+**Key:** `nenvelopes` must be computed **before** Loop B (from `Melder_ifloor((fmax-fmin)/step)`) since `ienvelope` is no longer incremented by the loop.
+
+**Loop C — cross-correlation matrix (was nested `for row / for col`):**
+
+Before:
+```cpp
+nenvelopes = ienvelope - 1;
+autoMatrix cc = Matrix_createSimple (nenvelopes, nenvelopes);
+for (integer row = 2; row <= nenvelopes; row ++) {
+    for (integer col = 1; col <= row - 1; col ++) {
+        autoSound crossCorrelation = Sounds_crossCorrelate_short (...);
+        double ccmax = Vector_getMaximum (...);
+        cc -> z [row] [col] = ccmax;
+    }
+}
+```
+
+After:
+```cpp
+// nenvelopes already set above (from Melder_ifloor)
+autoMatrix cc = Matrix_createSimple (nenvelopes, nenvelopes);
+
+std::vector<std::pair<integer,integer>> pairs;
+pairs.reserve ((integer)(nenvelopes * (nenvelopes - 1) / 2));
+for (integer row = 2; row <= nenvelopes; row ++)
+    for (integer col = 1; col <= row - 1; col ++)
+        pairs.push_back ({row, col});
+
+const integer npairs = (integer) pairs.size ();
+MelderThread_PARALLELIZE (npairs, 5)
+MelderThread_FOR (ipair) {
+    const integer row = pairs [(size_t) (ipair - 1)].first;
+    const integer col = pairs [(size_t) (ipair - 1)].second;
+    autoSound crossCorrelation = Sounds_crossCorrelate_short (
+        envelope [row].get(), envelope [col].get(), -3.1e-4, 3.1e-4, true);
+    cc -> z [row] [col] = Vector_getMaximum (
+        crossCorrelation.get(), 0.0, 0.0, kVector_peakInterpolation :: NONE);
+} MelderThread_ENDFOR
+```
+
+**Safety:** each pair `(row, col)` is unique — each thread writes to a distinct `cc->z[row][col]` cell with no contention. `envelope[i]` objects are read-only after Loop B.
+
+---
+
+#### `fon/Sound_to_Pitch.cpp` — Fix 5: batched sqrt
+
+**Added header (at top of existing `#ifdef HAVE_XSIMD` block):**
+```cpp
+#include "../../xsimd_compat.h"
+```
+(`../../` resolves to `src/` from `src/praat.github.io/fon/`)
+
+**Restructured CC normalization inside `Sound_into_PitchFrame()`:**
+
+The original code (under `#ifdef HAVE_XSIMD`) called `compute_fcc_product_simd` for the inner product but still called `sqrt()` once per lag in the outer loop. Fix 5 splits into two passes:
+
+**Pass 1 — accumulate per-lag arrays (replaces the single combined loop):**
+```cpp
+autoVEC sumy2_arr  = raw_VEC (localMaximumLag);
+autoVEC product_arr = raw_VEC (localMaximumLag);
+
+for (integer i = 1; i <= localMaximumLag; i ++) {
+    longdouble product = 0.0;
+    for (integer channel = 1; channel <= my ny; channel ++) {
+        const double *const amp = & my z [channel] [0] + offset;
+        const double y0 = amp [i] - localMean [channel];
+        const double yZ = amp [i + nsamp_window] - localMean [channel];
+        sumy2 += yZ * yZ - y0 * y0;
+        simd_bridge_direct::compute_fcc_product_simd (
+            amp, localMean [channel], i, nsamp_window, product);
+    }
+    sumy2_arr  [i] = (double) sumy2;
+    product_arr [i] = (double) product;
+}
+```
+
+**Pass 2 — vectorized normalization:**
+```cpp
+const double sumx2_d = (double) sumx2;
+using batch_t = XSIMD_BATCH(double);
+constexpr std::size_t simd_w = batch_t::size;
+integer i = 1;
+for (; i + (integer)simd_w - 1 <= localMaximumLag; i += (integer)simd_w) {
+    auto sy2    = xsimd::load_unaligned (& sumy2_arr  [i]);
+    auto pr     = xsimd::load_unaligned (& product_arr [i]);
+    auto result = pr / xsimd::sqrt (sumx2_d * sy2);
+    xsimd::store_unaligned (& r [i], result);
+    for (std::size_t k = 0; k < simd_w; k ++)
+        r [- (i + (integer)k)] = r [i + (integer)k];
+}
+// scalar tail
+for (; i <= localMaximumLag; i ++) {
+    r [- i] = r [i] = product_arr [i] / sqrt (sumx2_d * sumy2_arr [i]);
+}
+```
+
+**`#else` branch** (no `HAVE_XSIMD`): retains original scalar loop (no SIMD dependency).
+
+**Key API notes for transplantation:**
+- Use `XSIMD_BATCH(double)` macro (from `xsimd_compat.h`) — NOT `xsimd::batch<double>`
+- Use `xsimd::load_unaligned()` / `xsimd::store_unaligned()` free functions — NOT `.load_unaligned()` static methods
+- `raw_VEC(n)` allocates an uninitialized heap `VEC` of length `n`
+
+**Impact:** Eliminates ~210 individual `sqrt()` calls per pitch frame (one per lag in localMaximumLag ≈ 210 for typical settings). SIMD width replaces them with ≈ 210/4 = 53 batched `xsimd::sqrt` operations.
+
+---
 
 ### v4.8.19 xsimd v8+ API Compatibility (2026-02-06)
 
@@ -367,7 +517,8 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 | `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) + xsimd v8+ compat (v4.8.19) |
 | `fon/Formant.h` | API | extractPart declaration |
 | `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization + xsimd v8+ compat (v4.8.19) |
-| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis optimization + parallelization threshold (v4.8.9) |
+| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27) |
+| `fon/Sound_to_Harmonicity_GNE.cpp` | Performance | Loop B + Loop C parallelized via MelderThread (v4.8.27) |
 | `fon/Sound_to_Formant.cpp` | SIMD | Uses VECburg directly (v4.8.4) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
 | `fon/Sound.cpp` | SIMD | Pre-emphasis optimization |
@@ -425,6 +576,7 @@ Rscript -e "testthat::test_dir('tests/testthat')"
 
 | Commit | Description |
 |--------|-------------|
+| `4f52f5f07` | GNE Loop B+C parallelized, Pitch CC batched sqrt Fix 5 (v4.8.27) |
 | `69a6ae069` | xsimd v8+ API compatibility (v4.8.19) |
 | `f64063348` | TextGrid loading fix |
 | `e929a431f` | NUMfpp linkage fix |

@@ -1,14 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.26 (2026-02-18)
+**Version:** 4.8.28 (2026-02-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC batched sqrt SIMD
 
 ---
 
 
 ## What's New in v4.8.x
 
+- **v4.8.27/4.8.28:** Internal C++ performance optimizations — no R API changes. `Sound$to_harmonicity_gne()`: Loop B (50-band Hilbert envelope) and Loop C (1225-pair cross-correlation matrix) are now parallelized via `MelderThread_PARALLELIZE`. `sound$to_pitch_cc()`: normalization now uses batched `xsimd::sqrt` (Fix 5), eliminating ~210 individual `sqrt()` calls per frame. Both functions produce identical numeric output; only throughput improves.
 - **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
 - **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
 - **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
