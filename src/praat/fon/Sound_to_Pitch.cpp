@@ -35,6 +35,9 @@
 #include "Sound_to_Pitch.h"
 #include "NUM2.h"
 #include "Sound_and_Spectrum.h"
+#ifdef HAVE_XSIMD
+#include "../../../xsimd_compat.h"
+#endif
 
 // SIMD optimization for harmonicity/pitch (Phase 4.2)
 #ifdef HAVE_XSIMD
@@ -76,10 +79,22 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		endSample = leftSample + nsamp_period;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
-		localMean [channel] = 0.0;
-		for (integer i = startSample; i <= endSample; i ++)
-			localMean [channel] += my z [channel] [i];
-		localMean [channel] /= 2 * nsamp_period;
+#ifdef HAVE_XSIMD
+		if (should_use_simd_for_harmonicity()) {
+			// SIMD Fix 1: vectorized local mean; bridge returns sum/count (mean)
+			localMean [channel] = compute_local_mean_simd_bridge (
+				& my z [channel] [0],   // 1-indexed Praat array (bridge does -1 adjust)
+				(int) startSample,
+				(int) endSample
+			);
+		} else
+#endif
+		{
+			localMean [channel] = 0.0;
+			for (integer i = startSample; i <= endSample; i ++)
+				localMean [channel] += my z [channel] [i];
+			localMean [channel] /= 2 * nsamp_period;
+		}
 
 		/*
 			Copy a window to a frame and subtract the local mean.
@@ -95,8 +110,22 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			for (integer j = nsamp_window + 1; j <= nsampFFT; j ++)
 				frame [channel] [j] = 0.0;
 		} else {
-			for (integer j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [channel] [j] = my z [channel] [i ++] - localMean [channel];
+#ifdef HAVE_XSIMD
+			if (should_use_simd_for_harmonicity()) {
+				// SIMD Fix 3: vectorized DC removal for FCC frame copy
+				apply_dc_removal_simd_bridge (
+					& my z [channel] [0],   // 1-indexed signal (bridge does -1 adjust)
+					(int) startSample,
+					localMean [channel],
+					& frame [channel] [0],  // 1-indexed frame (bridge does -1 adjust)
+					(int) nsamp_window
+				);
+			} else
+#endif
+			{
+				for (integer j = 1, i = startSample; j <= nsamp_window; j ++)
+					frame [channel] [j] = my z [channel] [i ++] - localMean [channel];
+			}
 		}
 	}
 
@@ -108,11 +137,27 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		startSample = 1;
 	if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window)
 		endSample = nsamp_window;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer j = startSample; j <= endSample; j ++) {
-			double value = fabs (frame [channel] [j]);
-			if (value > localPeak)
-				localPeak = value;
+#ifdef HAVE_XSIMD
+	if (should_use_simd_for_harmonicity()) {
+		// SIMD Fix 4: vectorized local peak (max |frame[channel][j]|)
+		for (integer channel = 1; channel <= my ny; channel ++) {
+			double channelPeak = find_local_peak_simd_bridge (
+				& frame [channel] [0],   // 1-indexed (bridge does -1 adjust)
+				(int) startSample,
+				(int) endSample
+			);
+			if (channelPeak > localPeak)
+				localPeak = channelPeak;
+		}
+	} else
+#endif
+	{
+		for (integer channel = 1; channel <= my ny; channel ++) {
+			for (integer j = startSample; j <= endSample; j ++) {
+				double value = fabs (frame [channel] [j]);
+				if (value > localPeak)
+					localPeak = value;
+			}
 		}
 	}
 	pitchFrame -> intensity = ( localPeak > globalPeak ? 1.0 : localPeak / globalPeak );
@@ -130,18 +175,44 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		const integer localMaximumLag = localSpan - nsamp_window;
 		const integer offset = startSample - 1;
 		longdouble sumx2 = 0.0;   // sum of squares
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			const double *const amp = & my z [channel] [0] + offset;
-			for (integer i = 1; i <= nsamp_window; i ++) {
-				const double x = amp [i] - localMean [channel];
-				sumx2 += x * x;
+#ifdef HAVE_XSIMD
+		if (should_use_simd_for_harmonicity()) {
+			// SIMD Fix 2: vectorized sum of squares for the reference window
+			for (integer channel = 1; channel <= my ny; channel ++) {
+				const double *const amp = & my z [channel] [0] + offset;
+				sumx2 += compute_sum_of_squares_simd_bridge (
+					amp,                // already offset; bridge expects 0-indexed base + 1-indexed range
+					localMean [channel],
+					1,                  // 1-indexed start within amp
+					(int) nsamp_window
+				);
+			}
+		} else
+#endif
+		{
+			for (integer channel = 1; channel <= my ny; channel ++) {
+				const double *const amp = & my z [channel] [0] + offset;
+				for (integer i = 1; i <= nsamp_window; i ++) {
+					const double x = amp [i] - localMean [channel];
+					sumx2 += x * x;
+				}
 			}
 		}
 		longdouble sumy2 = sumx2;   // at zero lag, these are still equal
 		r [0] = 1.0;
 #ifdef HAVE_XSIMD
 		if (should_use_simd_for_harmonicity()) {
-			// SIMD-optimized FCC cross-correlation (Phase 4.2)
+			// SIMD Fix 5 (batched sqrt): accumulate sumy2 and product for all lags first,
+			// then do a single vectorized normalization pass using xsimd::sqrt.
+			// This eliminates localMaximumLag individual sqrt() calls per frame.
+			//
+			// We reuse rbuffer's neighbour memory: sumy2_arr and product_arr are
+			// small stack VLAs (max ~nsamp_window elements).  Use Praat autoVEC so
+			// that memory is managed safely within this scope.
+			autoVEC sumy2_arr  = raw_VEC (localMaximumLag);
+			autoVEC product_arr = raw_VEC (localMaximumLag);
+
+			// Pass 1: accumulate sumy2[i] and product[i] for every lag
 			for (integer i = 1; i <= localMaximumLag; i ++) {
 				longdouble product = 0.0;
 				for (integer channel = 1; channel <= my ny; channel ++) {
@@ -149,20 +220,39 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 					const double y0 = amp [i] - localMean [channel];
 					const double yZ = amp [i + nsamp_window] - localMean [channel];
 					sumy2 += yZ * yZ - y0 * y0;
-					// SIMD inner loop: cross-correlation at lag i
-					product += cross_correlation_fcc_simd_bridge(
-						amp + 1,  // Start at index 1 (0-indexed becomes amp[1..nsamp_window])
+					product += cross_correlation_fcc_simd_bridge (
+						amp + 1,
 						localMean [channel],
 						static_cast<int>(nsamp_window),
 						static_cast<int>(i)
 					);
 				}
-				r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
+				sumy2_arr  [i] = (double) sumy2;
+				product_arr [i] = (double) product;
+			}
+
+			// Pass 2: vectorized normalization  r[i] = product[i] / sqrt(sumx2 * sumy2[i])
+			const double sumx2_d = (double) sumx2;
+			using batch_t = XSIMD_BATCH(double);
+			constexpr std::size_t simd_w = batch_t::size;
+			integer i = 1;
+			for (; i + (integer)simd_w - 1 <= localMaximumLag; i += (integer)simd_w) {
+				auto sy2 = xsimd::load_unaligned (& sumy2_arr  [i]);
+				auto pr  = xsimd::load_unaligned (& product_arr [i]);
+				auto result = pr / xsimd::sqrt (sumx2_d * sy2);
+				xsimd::store_unaligned (& r [i], result);
+				// mirror: r[-i] = r[i]  (must be done scalar — negative stride)
+				for (std::size_t k = 0; k < simd_w; k ++)
+					r [- (i + (integer)k)] = r [i + (integer)k];
+			}
+			// scalar tail
+			for (; i <= localMaximumLag; i ++) {
+				r [- i] = r [i] = product_arr [i] / sqrt (sumx2_d * sumy2_arr [i]);
 			}
 		} else
 #endif
 		{
-			// Scalar FCC cross-correlation
+			// Scalar FCC cross-correlation (original path, unchanged)
 			for (integer i = 1; i <= localMaximumLag; i ++) {
 				longdouble product = 0.0;
 				for (integer channel = 1; channel <= my ny; channel ++) {

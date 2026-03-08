@@ -1,14 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.29 (2026-02-19)
+**Version:** 4.8.30 (2026-03-08)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Performance regressions fixed (Pitch CC, HNR, GNE) + HNR accuracy fixed in AVQI pipeline
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline
 
 ---
 
 
 ## What's New in v4.8.x
 
+- **v4.8.30:** `Sound_to_Pitch.cpp`: SIMD optimizations re-enabled for FCC path — Fixes 1-5 (local mean, sum of squares, DC removal, local peak, batched `xsimd::sqrt` normalization over lags). Fixes earlier comment contradiction on `compute_local_mean_simd_bridge` (bridge returns mean, not sum). `Sound_to_Harmonicity_GNE.cpp`: Loop B (50-band Hilbert envelopes) and Loop C (1225-pair cross-correlation matrix) both parallelized via `MelderThread_PARALLELIZE`; upper-triangle pairs flattened into a linear index for even thread distribution.
 - **v4.8.29:** Critical performance regression fixes and HNR accuracy fix. Pitch CC and HNR: removed broken `#ifdef HAVE_XSIMD` blocks in `Sound_to_Pitch.cpp` — the FCC SIMD block allocated 2 heap vectors per pitch frame causing ~29× slowdown; the AC SIMD block had a brace bug that closed the channel loop prematurely (breaking stereo) and added non-inlined call overhead. Both revert to scalar loops that auto-vectorize under `-O3`. GNE: raised `MelderThread_PARALLELIZE` threshold 1→4 to cut allocator contention. `get_voice_quality_ultra(..., metrics="hnr")`: HNR now uses Praat's standard minimum pitch 75 Hz / time step 0.01 s instead of the caller's `min_pitch`; fixes ~1.31 dB underestimation in AVQI pipeline.
 - **v4.8.27/4.8.28:** Internal C++ performance optimizations (later found to regress — see v4.8.29). `Sound$to_harmonicity_gne()`: Loop B/C parallelized via `MelderThread_PARALLELIZE`. `sound$to_pitch_cc()`: batched `xsimd::sqrt` normalization (Fix 5). Both superseded/reverted by v4.8.29.
 - **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
