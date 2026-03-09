@@ -6,7 +6,7 @@
 #' @examples
 #' \dontrun{
 #' # Create formant object from sound
-#' sound <- Sound$new(system.file("extdata", "example.wav", package = "speaker"))
+#' sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
 #' formant <- sound$to_formant_burg(
 #'   time_step = 0.01,
 #'   max_number_of_formants = 5,

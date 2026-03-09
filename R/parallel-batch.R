@@ -79,8 +79,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
     
-    # Export necessary objects to cluster
-    parallel::clusterExport(cl, c("Sound"), envir = environment())
+    # Load pladdrr on workers and export necessary objects
+    parallel::clusterEvalQ(cl, library(pladdrr))
+    parallel::clusterExport(cl, c("analysis_func"), envir = environment())
     
     results <- parallel::parLapply(cl, files, function(f) {
       sound <- Sound(f)

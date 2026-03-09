@@ -16,7 +16,7 @@
 #' }
 #' 
 #' @details
-#' The speaker package uses SIMD acceleration for computationally intensive
+#' The pladdrr package uses SIMD acceleration for computationally intensive
 #' operations like autocorrelation, windowing, and statistical computations.
 #' 
 #' Common SIMD instruction sets:
@@ -27,7 +27,9 @@
 #' }
 #' 
 #' SIMD can be disabled at runtime by setting:
-#' \code{options(speaker.use_simd = FALSE)}
+#' \code{options(pladdrr.use_simd = FALSE)}
+#' and then calling \code{set_global_simd_enabled(FALSE)}, or by setting the
+#' option before loading the package (it is read during \code{.onLoad}).
 #' 
 #' @examples
 #' \dontrun{
@@ -41,9 +43,9 @@
 #' }
 #' 
 #' # Disable SIMD temporarily for testing
-#' options(speaker.use_simd = FALSE)
+#' set_global_simd_enabled(FALSE)
 #' # ... run tests ...
-#' options(speaker.use_simd = TRUE)
+#' set_global_simd_enabled(TRUE)
 #' }
 #' 
 #' @export

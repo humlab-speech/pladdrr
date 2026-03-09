@@ -166,25 +166,20 @@ extern "C" void NUMautocorrelation_frames_simd_bridge(
 }
 
 // Utility: Check if SIMD should be used
-// This respects the R option speaker.use_simd
+// Uses global bool toggle — set from R .onLoad()
+static bool g_pitch_simd_enabled = true;
+
+void set_pitch_simd_enabled(bool enabled) {
+    g_pitch_simd_enabled = enabled;
+}
+
+bool get_pitch_simd_enabled() {
+    return g_pitch_simd_enabled;
+}
+
 bool should_use_simd_for_pitch() {
 #ifdef HAVE_XSIMD
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-        
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
-        
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // If option check fails, default to true
-    }
-    return true;
+    return g_pitch_simd_enabled;
 #else
     return false;
 #endif

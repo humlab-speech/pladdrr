@@ -215,8 +215,4 @@ electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {
   Electroglottogram(.xptr = ptr)
 }
 
-#' Add extract_electroglottogram method to Sound class
-#'
-#' This is added as a method to the existing Sound R6 class during package load
-#' @name Sound
-NULL
+# extract_electroglottogram is added as a method to the Sound wrapper during package load

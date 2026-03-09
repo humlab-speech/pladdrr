@@ -376,16 +376,19 @@ extern "C" {
 /**
  * Check if SIMD should be used for KlattGrid operations
  */
+static bool g_klattgrid_simd_enabled = true;
+
+void set_klattgrid_simd_enabled(bool enabled) {
+    g_klattgrid_simd_enabled = enabled;
+}
+
+bool get_klattgrid_simd_enabled() {
+    return g_klattgrid_simd_enabled;
+}
+
 bool should_use_simd_for_klattgrid() {
 #ifdef HAVE_XSIMD
-    // Check R option
-    Rcpp::Environment base = Rcpp::Environment::base_env();
-    Rcpp::Function getOption = base["getOption"];
-    SEXP result = getOption("speaker.use_simd");
-    if (result != R_NilValue && Rcpp::as<bool>(result) == false) {
-        return false;
-    }
-    return true;
+    return g_klattgrid_simd_enabled;
 #else
     return false;
 #endif

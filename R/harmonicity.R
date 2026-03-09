@@ -87,6 +87,7 @@ Harmonicity <- function(.xptr = NULL) {
   
   obj <- structure(list(
     .cpp = cpp_obj,
+    .xptr = .xptr,
     
     # Query methods
     get_value_at_time = function(time, interpolation = "cubic") {

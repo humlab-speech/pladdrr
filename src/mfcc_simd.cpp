@@ -394,17 +394,26 @@ void dct_simd(
 // Runtime Control
 // ============================================================================
 
-extern "C" bool should_use_simd_for_mfcc() {
+static bool g_mfcc_simd_enabled = true;
+
+extern "C" {
+
+void set_mfcc_simd_enabled(bool enabled) {
+    g_mfcc_simd_enabled = enabled;
+}
+
+bool get_mfcc_simd_enabled() {
+    return g_mfcc_simd_enabled;
+}
+
+bool should_use_simd_for_mfcc() {
 #ifdef HAVE_XSIMD
-    Rcpp::Function getOption("getOption");
-    SEXP opt = getOption("speaker.use_simd", Rcpp::Named("default", true));
-    if (Rf_isLogical(opt) && Rf_length(opt) > 0) {
-        return LOGICAL(opt)[0];
-    }
-    return true;
+    return g_mfcc_simd_enabled;
 #else
     return false;
 #endif
 }
+
+} // extern "C"
 
 /* End of file mfcc_simd.cpp */

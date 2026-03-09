@@ -24,6 +24,13 @@ get_module <- function(name) {
     error = function(e) stop("Failed to initialize Praat library: ", e$message)
   )
   
+  # Sync global SIMD toggle from R option (default: TRUE)
+  simd_opt <- getOption("pladdrr.use_simd", TRUE)
+  tryCatch(
+    set_global_simd_enabled(isTRUE(simd_opt)),
+    error = function(e) NULL
+  )
+  
   # Preload all modules into cache
   modules <- c(
     "pitch_module", "sound_module", "formant_module",

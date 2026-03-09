@@ -2470,7 +2470,7 @@ info <- simd_info()
 # - NEON: 2 doubles/operation (ARM/Apple Silicon)
 
 # Disable SIMD for testing
-options(speaker.use_simd = FALSE)
+set_global_simd_enabled(FALSE)
 ```
 
 ---
@@ -4128,12 +4128,12 @@ test_that("SIMD operation matches scalar", {
   sound <- Sound$create_tone(440, duration = 0.5, sampling_frequency = 44100)
   
   # Force scalar execution
-  options(speaker.use_simd = FALSE)
+  set_global_simd_enabled(FALSE)
   result_scalar <- sound$to_pitch()
   value_scalar <- result_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
   # Force SIMD execution
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   result_simd <- sound$to_pitch()
   value_simd <- result_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
@@ -4142,7 +4142,7 @@ test_that("SIMD operation matches scalar", {
                label = "SIMD should match scalar")
   
   # Reset to default
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
 })
 ```
 
@@ -4174,7 +4174,7 @@ source("benchmarks/phase1_integration_benchmark.R")
 library(microbenchmark)
 
 # Scalar benchmark
-options(speaker.use_simd = FALSE)
+set_global_simd_enabled(FALSE)
 bench_scalar <- microbenchmark(
   operation_scalar = sound$to_pitch(),
   times = 50,
@@ -4183,7 +4183,7 @@ bench_scalar <- microbenchmark(
 scalar_median <- median(bench_scalar$time) / 1e6
 
 # SIMD benchmark
-options(speaker.use_simd = TRUE)
+set_global_simd_enabled(TRUE)
 bench_simd <- microbenchmark(
   operation_simd = sound$to_pitch(),
   times = 50,
@@ -4210,12 +4210,19 @@ cat(sprintf("Speedup: %.2fx\n", speedup))
 
 **Runtime enable/disable:**
 
-```r
-# Enable SIMD (default)
-options(speaker.use_simd = TRUE)
+SIMD is controlled via a C-level global bool set at package load from `R/zzz.R`.
+To toggle at runtime, use the exported C++ setter:
 
+```r
 # Disable SIMD (for testing or comparison)
-options(speaker.use_simd = FALSE)
+set_global_simd_enabled(FALSE)
+
+# Re-enable SIMD
+set_global_simd_enabled(TRUE)
+
+# Or set the option before loading the package:
+set_global_simd_enabled(FALSE)
+library(pladdrr)  # reads option in .onLoad()
 
 # Check SIMD status
 simd_info()
@@ -4238,7 +4245,7 @@ When adding new SIMD operations:
 
 - [ ] Create test comparing SIMD vs scalar results
 - [ ] Set appropriate tolerance (1e-6 for typical operations, 5 Hz for formants)
-- [ ] Test with `options(speaker.use_simd = FALSE)` and `TRUE`
+- [ ] Test with `set_global_simd_enabled(FALSE)` and `set_global_simd_enabled(TRUE)`
 - [ ] Verify results match within tolerance
 - [ ] Add to benchmark suite
 - [ ] Measure speedup vs scalar implementation
@@ -4405,37 +4412,41 @@ SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
 
 **4. Add Runtime Control**
 
-```cpp
-// Utility: Check if SIMD should be used
-bool should_use_simd_for_pitch() {
-#ifdef HAVE_XSIMD
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
+Each SIMD module uses a **global bool** toggle — never call R API from C++ SIMD check
+functions (thread-unsafe, causes segfaults from `MelderThread_PARALLELIZE` workers).
 
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // Default to true on error
-    }
-    return true;
+```cpp
+// In your_operation_simd.cpp:
+static bool g_myop_simd_enabled = true;
+
+extern "C" {
+
+void set_myop_simd_enabled(bool enabled) {
+    g_myop_simd_enabled = enabled;
+}
+
+bool should_use_simd_for_myop() {
+#ifdef HAVE_XSIMD
+    return g_myop_simd_enabled;
 #else
     return false;
 #endif
 }
 
+} // extern "C"
+
 // Then use in Praat code:
-if (should_use_simd_for_pitch()) {
+if (should_use_simd_for_myop()) {
     // SIMD path
 } else {
     // Scalar path
 }
 ```
+
+The master toggle `g_simd_enabled` (defined in `simd_utils.cpp`) is set once
+from `R/zzz.R` `.onLoad()` via `set_global_simd_enabled()`. It reads
+`getOption("pladdrr.use_simd", TRUE)`. The `use_simd()` inline in `simd_utils.h`
+returns this global (used by `sound_wrappers.cpp` and `simd_info.cpp`).
 
 #### SIMD Best Practices
 
@@ -4574,7 +4585,7 @@ When adding SIMD to a new operation:
 - [ ] Provide scalar fallback in `#else` block
 - [ ] Add runtime control via `should_use_simd_for_*()` function
 - [ ] Add to `SIMD_SRC` in `src/Makevars.in`
-- [ ] Test with `options(speaker.use_simd = FALSE/TRUE)`
+- [ ] Test with `set_global_simd_enabled(FALSE)` and `set_global_simd_enabled(TRUE)`
 - [ ] Verify results match scalar (tolerance 1e-6 or 5 Hz for formants)
 - [ ] Benchmark on both ARM NEON and x86_64 AVX2 if possible
 - [ ] Document in `SIMD_PROGRESS_TRACKER.md`
@@ -4846,23 +4857,16 @@ void zero_fft_tail_simd_bridge(
 #endif
 }
 
+// Runtime SIMD toggle — global bool, thread-safe
+static bool g_spectrogram_simd_enabled = true;
+
+void set_spectrogram_simd_enabled(bool enabled) {
+    g_spectrogram_simd_enabled = enabled;
+}
+
 bool should_use_simd_for_spectrogram() {
 #ifdef HAVE_XSIMD
-    try {
-        Rcpp::Environment base_env = Rcpp::Environment::namespace_env("base");
-        Rcpp::Function getOption = base_env["getOption"];
-        SEXP opt = getOption("speaker.use_simd", Rcpp::LogicalVector::create(true));
-
-        if (Rcpp::is<Rcpp::LogicalVector>(opt)) {
-            Rcpp::LogicalVector lv = Rcpp::as<Rcpp::LogicalVector>(opt);
-            if (lv.size() > 0 && !Rcpp::LogicalVector::is_na(lv[0])) {
-                return lv[0];
-            }
-        }
-    } catch (...) {
-        // Default to true on error
-    }
-    return true;
+    return g_spectrogram_simd_enabled;
 #else
     return false;
 #endif
@@ -4960,13 +4964,13 @@ test_that("SIMD spectrogram generation matches scalar", {
   sound <- Sound$create_tone(440, duration = 0.5)
 
   # Force scalar
-  options(speaker.use_simd = FALSE)
+  set_global_simd_enabled(FALSE)
   spec_scalar <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                                        time_step = 0.002, frequency_step = 20,
                                        window_shape = "Gaussian")
 
   # Force SIMD
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   spec_simd <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                                      time_step = 0.002, frequency_step = 20,
                                      window_shape = "Gaussian")
@@ -5000,7 +5004,7 @@ sound <- Sound$create_tone(440, duration = 5.0)
 TIMES <- 50
 
 # Scalar
-options(speaker.use_simd = FALSE)
+set_global_simd_enabled(FALSE)
 bench_scalar <- microbenchmark(
   sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                        time_step = 0.002, frequency_step = 20,
@@ -5009,7 +5013,7 @@ bench_scalar <- microbenchmark(
 )
 
 # SIMD
-options(speaker.use_simd = TRUE)
+set_global_simd_enabled(TRUE)
 bench_simd <- microbenchmark(
   sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                        time_step = 0.002, frequency_step = 20,
@@ -5408,7 +5412,7 @@ test_that("Pre-emphasis SIMD is exact (zero error)", {
   }
 
   # SIMD version
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   snd$pre_emphasize(50)
   result <- as.vector(snd$as_matrix()[1, ])
 
@@ -5420,7 +5424,7 @@ test_that("Pre-emphasis + de-emphasis round-trip", {
   signal <- generate_test_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   snd$pre_emphasize(50)
   snd$de_emphasize(50)
 
@@ -5436,11 +5440,11 @@ test_that("Spectrogram SIMD matches scalar (multiple windows)", {
 
   for (window_shape in c("Gaussian", "Hamming", "Hanning")) {
     # Scalar
-    options(speaker.use_simd = FALSE)
+    set_global_simd_enabled(FALSE)
     spec_scalar <- snd$to_spectrogram(window_shape = window_shape)
 
     # SIMD
-    options(speaker.use_simd = TRUE)
+    set_global_simd_enabled(TRUE)
     spec_simd <- snd$to_spectrogram(window_shape = window_shape)
 
     expect_equal(
@@ -5484,7 +5488,7 @@ for (test_data in test_signals) {
   scalar_times <- numeric(n_iterations)
   for (i in 1:n_iterations) {
     snd <- Sound$from_values(test_data$signal, test_data$sr)
-    options(speaker.use_simd = FALSE)
+    set_global_simd_enabled(FALSE)
     start_time <- Sys.time()
     snd$pre_emphasize(50)
     end_time <- Sys.time()
@@ -5496,7 +5500,7 @@ for (test_data in test_signals) {
   simd_times <- numeric(n_iterations)
   for (i in 1:n_iterations) {
     snd <- Sound$from_values(test_data$signal, test_data$sr)
-    options(speaker.use_simd = TRUE)
+    set_global_simd_enabled(TRUE)
     start_time <- Sys.time()
     snd$pre_emphasize(50)
     end_time <- Sys.time()
@@ -6122,14 +6126,14 @@ test_that("MFCC SIMD matches scalar implementation", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar MFCC
-  options(speaker.use_simd = FALSE)
+  set_global_simd_enabled(FALSE)
   mfcc_scalar <- snd$to_mfcc(
     numberOfCoefficients = 13,
     analysisWidth = 0.015
   )
 
   # SIMD MFCC
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   mfcc_simd <- snd$to_mfcc(
     numberOfCoefficients = 13,
     analysisWidth = 0.015
@@ -6154,7 +6158,7 @@ test_that("MFCC SIMD matches scalar implementation", {
 # Warm-up
 for (i in 1:n_warmup) {
   snd <- Sound$from_values(signal, sr)
-  options(speaker.use_simd = FALSE)
+  set_global_simd_enabled(FALSE)
   mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
   rm(snd, mfcc_scalar); gc(verbose = FALSE)
 }
@@ -6163,7 +6167,7 @@ for (i in 1:n_warmup) {
 scalar_times <- numeric(n_iterations)
 for (i in 1:n_iterations) {
   snd <- Sound$from_values(signal, sr)
-  options(speaker.use_simd = FALSE)
+  set_global_simd_enabled(FALSE)
   start_time <- Sys.time()
   mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
   end_time <- Sys.time()
@@ -6175,7 +6179,7 @@ for (i in 1:n_iterations) {
 simd_times <- numeric(n_iterations)
 for (i in 1:n_iterations) {
   snd <- Sound$from_values(signal, sr)
-  options(speaker.use_simd = TRUE)
+  set_global_simd_enabled(TRUE)
   start_time <- Sys.time()
   mfcc_simd <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
   end_time <- Sys.time()
@@ -7238,12 +7242,23 @@ parts <- sound_extract_parts(
 - `R/praat-direct.R` — added string→int window_shape conversion in `to_spectrogram_direct()`
 
 **Critical Rule for SIMD Bridge Functions:**
-> **NEVER call R API (Rcpp::Environment, getOption, Rf_eval, etc.) from `should_use_simd_*()` functions.** These are called from Praat worker threads via `MelderThread_PARALLELIZE`. R's API is single-threaded only. Use a global bool, `std::getenv()`, or just return `true`.
+> **NEVER call R API (Rcpp::Environment, getOption, Rf_eval, etc.) from `should_use_simd_*()` functions.** These are called from Praat worker threads via `MelderThread_PARALLELIZE`. R's API is single-threaded only. Use a static global bool set once at package load.
 
-**Safe patterns (thread-safe):**
-- `should_use_simd_for_harmonicity()` → uses `g_harmonicity_simd_enabled` global
-- `should_use_simd_for_pitch_filter()` → returns `true`
-- `should_use_simd_for_powercepstrogram()` → uses `std::getenv()`
+**Canonical pattern (all modules now use this):**
+```cpp
+static bool g_myop_simd_enabled = true;
+extern "C" void set_myop_simd_enabled(bool enabled) { g_myop_simd_enabled = enabled; }
+extern "C" bool should_use_simd_for_myop() {
+#ifdef HAVE_XSIMD
+    return g_myop_simd_enabled;
+#else
+    return false;
+#endif
+}
+```
+
+The master toggle `g_simd_enabled` is in `simd_utils.cpp`, set from `.onLoad()` in `R/zzz.R`
+via `set_global_simd_enabled(isTRUE(getOption("pladdrr.use_simd", TRUE)))`.
 
 **Unsafe pattern (causes segfault from threads):**
 ```cpp
@@ -7593,7 +7608,7 @@ formant <- sound$to_formant_burg()
 
 **Agent Guidance:**
 - Formant extraction is now accurate by default - no workarounds needed
-- The `speaker.use_simd_formants` option is deprecated (always uses VECburg)
+- The `pladdrr.use_simd_formants` option is deprecated (always uses VECburg)
 - SIMD acceleration still applies to inner loops for performance
 
 **Files Changed:**

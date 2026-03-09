@@ -42,7 +42,7 @@
 #' @examples
 #' \dontrun{
 #' # Create spectrum from sound
-#' sound <- Sound$new(system.file("extdata", "example.wav", package = "speaker"))
+#' sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
 #' spectrum <- sound$to_spectrum(fast = TRUE)
 #' 
 #' # Query spectral properties

@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-02-19
-**Package Version:** 4.8.29
+**Last Updated:** 2026-03-09
+**Package Version:** 4.8.30
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview

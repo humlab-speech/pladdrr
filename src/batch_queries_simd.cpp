@@ -439,17 +439,26 @@ void process_frames_simd(
 // Runtime Control
 // ============================================================================
 
-extern "C" bool should_use_simd_for_batch_queries() {
+static bool g_batch_queries_simd_enabled = true;
+
+extern "C" {
+
+void set_batch_queries_simd_enabled(bool enabled) {
+    g_batch_queries_simd_enabled = enabled;
+}
+
+bool get_batch_queries_simd_enabled() {
+    return g_batch_queries_simd_enabled;
+}
+
+bool should_use_simd_for_batch_queries() {
 #ifdef HAVE_XSIMD
-    Rcpp::Function getOption("getOption");
-    SEXP opt = getOption("speaker.use_simd", Rcpp::Named("default", true));
-    if (Rf_isLogical(opt) && Rf_length(opt) > 0) {
-        return LOGICAL(opt)[0];
-    }
-    return true;
+    return g_batch_queries_simd_enabled;
 #else
     return false;
 #endif
 }
+
+} // extern "C"
 
 /* End of file batch_queries_simd.cpp */
