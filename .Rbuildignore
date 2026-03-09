@@ -95,7 +95,6 @@ results/
 ^src/praat\.github\.io/\.git
 ^src/clapack/\.git
 ^src/pffft/\.git
-^src/gsl-2\.8/.*\.deps$
 ^src/.*\.o$
 ^src/.*\.so$
 ^src/.*\.la$
@@ -103,7 +102,6 @@ results/
 ^src/praat\.github\.io/test/fon ExperimentMFC/
 ^src/praat\.github\.io/test/sys/large PDF/
 ^src/praat\.github\.io/test/manually/external/Chris Darwin/
-^src/gsl-2\.8/.*\.libs$
 ^src/.*\.clang-format$
 ^GRAPHICS_IMPLEMENTATION_PLAN\.md$
 ^src/Makevars$
