@@ -1,28 +1,65 @@
 #!/bin/sh
 
-# Configure script for speaker package with SIMD support
+# Configure script for pladdrr package
+# Detects: RcppXsimd (SIMD support), GSL (GNU Scientific Library)
 
-# Default flags
-PKG_CPPFLAGS=""
-PKG_CXXFLAGS=""
-PKG_LIBS=""
+# ---- RcppXsimd detection ----
 
-# Check if RcppXsimd is available
+XSIMD_FLAG=""
 echo "Checking for RcppXsimd..."
-"${R_HOME}/bin/Rscript" -e "if (!requireNamespace('RcppXsimd', quietly = TRUE)) quit(status = 1)" 2>/dev/null
-
-if [ $? -eq 0 ]; then
-  echo "RcppXsimd found - enabling SIMD optimizations"
-  PKG_CPPFLAGS="${PKG_CPPFLAGS} -DHAVE_XSIMD"
+if "${R_HOME}/bin/Rscript" -e "if (!requireNamespace('RcppXsimd', quietly = TRUE)) quit(status = 1)" 2>/dev/null; then
+  echo "  RcppXsimd found — enabling SIMD optimizations"
+  XSIMD_FLAG="-DHAVE_XSIMD"
 else
-  echo "RcppXsimd not found - SIMD optimizations disabled"
-  echo "Install RcppXsimd for better performance: install.packages('RcppXsimd')"
+  echo "  RcppXsimd not found — SIMD optimizations disabled"
+  echo "  Install RcppXsimd for better performance: install.packages('RcppXsimd')"
 fi
 
-# Substitute variables in Makevars
-sed -e "s|@PKG_CPPFLAGS@|${PKG_CPPFLAGS}|" \
-    -e "s|@PKG_CXXFLAGS@|${PKG_CXXFLAGS}|" \
-    -e "s|@PKG_LIBS@|${PKG_LIBS}|" \
+# ---- GSL detection ----
+# Try gsl-config first (standard), then pkg-config, then fallback
+
+GSL_CFLAGS=""
+GSL_LIBS=""
+
+echo "Checking for GSL (GNU Scientific Library)..."
+
+if command -v gsl-config >/dev/null 2>&1; then
+  GSL_CFLAGS=$(gsl-config --cflags 2>/dev/null)
+  GSL_LIBS=$(gsl-config --libs 2>/dev/null)
+  GSL_VERSION=$(gsl-config --version 2>/dev/null)
+  echo "  Found GSL ${GSL_VERSION} via gsl-config"
+  echo "    CFLAGS: ${GSL_CFLAGS}"
+  echo "    LIBS:   ${GSL_LIBS}"
+elif command -v pkg-config >/dev/null 2>&1 && pkg-config --exists gsl 2>/dev/null; then
+  GSL_CFLAGS=$(pkg-config --cflags gsl 2>/dev/null)
+  GSL_LIBS=$(pkg-config --libs gsl 2>/dev/null)
+  GSL_VERSION=$(pkg-config --modversion gsl 2>/dev/null)
+  echo "  Found GSL ${GSL_VERSION} via pkg-config"
+  echo "    CFLAGS: ${GSL_CFLAGS}"
+  echo "    LIBS:   ${GSL_LIBS}"
+else
+  # Fallback: try standard -lgsl -lgslcblas (works if headers are in standard paths)
+  echo "  gsl-config and pkg-config not found, using fallback: -lgsl -lgslcblas"
+  echo "  If compilation fails, install GSL development package:"
+  echo "    macOS:   brew install gsl"
+  echo "    Ubuntu:  sudo apt-get install libgsl-dev"
+  echo "    Fedora:  sudo dnf install gsl-devel"
+  GSL_LIBS="-lgsl -lgslcblas"
+fi
+
+# Verify GSL is actually usable (optional — quick compile test)
+if [ -n "${GSL_LIBS}" ]; then
+  echo "  GSL configuration OK"
+else
+  echo "  WARNING: GSL not detected. Build may fail."
+  echo "  Install GSL: brew install gsl (macOS) or apt-get install libgsl-dev (Ubuntu)"
+fi
+
+# ---- Substitute into Makevars ----
+
+sed -e "s|@XSIMD_FLAG@|${XSIMD_FLAG}|" \
+    -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+    -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
     src/Makevars.in > src/Makevars
 
 echo "Configuration complete"

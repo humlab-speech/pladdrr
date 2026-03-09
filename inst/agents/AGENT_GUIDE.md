@@ -2910,6 +2910,23 @@ R CMD INSTALL .
 
 Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before committing.
 
+#### Build System Architecture (v4.8.33+)
+
+**configure** detects two things via `sed` substitution into `Makevars.in`:
+- **RcppXsimd** → `@XSIMD_FLAG@` (becomes `-DHAVE_XSIMD` or empty)
+- **GSL** → `@GSL_CFLAGS@` + `@GSL_LIBS@` (via gsl-config → pkg-config → fallback `-lgsl -lgslcblas`)
+
+**GSL is required.** ~19 GSL functions called from Praat's `NUMspecfunc.cpp`, `NUM2.cpp`, `melder.cpp`. Headers come from Praat's bundled GSL 1.10 at `praat.github.io/external/gsl/` and `praat/external/gsl/`, but implementations link against system GSL.
+
+**Windows:** `src/Makevars.win` is NOT generated — it's a static file with `-lgsl -lgslcblas` hardcoded (GSL via Rtools MSYS2/ucrt64: `pacman -S mingw-w64-ucrt-x86_64-gsl`). No `configure.win` exists.
+
+**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, or `-march=native` to Makevars.in — R provides its own optimization via `Makeconf`. The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
+
+**Bundled GSL copies (NOT compiled):**
+- `src/gsl-2.8/` — full GSL 2.8 source tree (never built, never in SOURCES)
+- `src/praat/external/gsl/` — 738 flattened `.c` files from Praat (never in SOURCES)
+- `src/build_gsl.sh` — unused build script
+
 ### 11. Shared Dispatch Table: `$.Type` S3 Methods
 
 Since v4.8.33, ALL 35 wrappers use shared dispatch tables instead of per-instance closures. Key implications:
@@ -4306,15 +4323,7 @@ simd_info()
 # Returns: list(enabled, available, architecture, batch_size_double, batch_size_float, version)
 ```
 
-**Compile-time control:**
-
-```bash
-# Build with SIMD
-R CMD INSTALL --configure-args="--enable-simd" .
-
-# Build without SIMD
-R CMD INSTALL --configure-args="--disable-simd" .
-```
+**Compile-time control:** SIMD is enabled at compile time when RcppXsimd is installed (configure detects it and sets `-DHAVE_XSIMD`). To build without SIMD, uninstall RcppXsimd before `R CMD INSTALL`.
 
 #### Integration Testing Checklist
 
@@ -4337,7 +4346,7 @@ When adding new SIMD operations:
 ```r
 # Should show SIMD-related flags
 system("R CMD config CXXFLAGS")
-# Expected: -DHAVE_XSIMD -march=native (or -march=armv8-a+simd)
+# Expected: -DHAVE_XSIMD (xsimd auto-detects best instruction set)
 
 # Check if xsimd headers found
 file.exists(system.file("include/xsimd", package = "RcppXsimd"))
@@ -4606,13 +4615,7 @@ batch result = a * b + c;  // (two roundings, less precise)
 | ARM | NEON (128-bit) | 2 | 1.0-1.5x (overhead issues) |
 
 **Platform-Specific Flags** (in `src/Makevars.in`):
-```makefile
-ifeq ($(UNAME_M),x86_64)
-  PKG_CXXFLAGS += -march=native -mtune=native  # Enables AVX2 if available
-else ifeq ($(UNAME_M),arm64)
-  PKG_CXXFLAGS += -march=armv8-a+simd  # NEON
-endif
-```
+No `-march=native` or architecture-specific flags are used (CRAN-forbidden). xsimd auto-detects the best SIMD instruction set at compile time when `-DHAVE_XSIMD` is set by `configure`.
 
 #### Common Pitfalls
 
