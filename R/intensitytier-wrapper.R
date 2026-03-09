@@ -6,10 +6,89 @@
 #' IntensityTiers contain discrete time-value pairs representing intensity in dB SPL.
 #' They can be used to modify the amplitude envelope of sounds.
 #'
+#' @name IntensityTier
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.intensitytier_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query
+.intensitytier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.intensitytier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.intensitytier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
+.intensitytier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
+.intensitytier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
+.intensitytier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+
+.intensitytier_methods$get_mean <- function(.self, tmin = NULL, tmax = NULL) {
+  if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
+  if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
+  .self$.cpp$get_mean_curve(as.numeric(tmin), as.numeric(tmax))
+}
+
+# Modification (self-returning)
+.intensitytier_methods$add_point <- function(.self, time, value) {
+  .self$.cpp$add_point(as.numeric(time), as.numeric(value))
+  invisible(.self)
+}
+.intensitytier_methods$remove_point <- function(.self, index) {
+  .self$.cpp$remove_point(as.integer(index))
+  invisible(.self)
+}
+
+# Export
+.intensitytier_methods$as_data_frame <- function(.self) {
+  df <- .self$.cpp$as_data_frame()
+  names(df) <- c("time", "intensity_db")
+  df
+}
+.intensitytier_methods$save <- function(.self, path) {
+  .self$.cpp$save(as.character(path))
+  invisible(.self)
+}
+
+# Utility
+.intensitytier_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.intensitytier_methods$print <- function(.self) {
+  cat("<Praat IntensityTier>\n")
+  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  n_points <- .self$.cpp$get_number_of_points()
+  cat(sprintf("  Number of points: %d\n", n_points))
+  if (n_points > 0) {
+    mean_int <- .self$.cpp$get_mean_curve(.self$.cpp$get_xmin(), .self$.cpp$get_xmax())
+    cat(sprintf("  Mean intensity: %.1f dB\n", mean_int))
+  }
+  invisible(.self)
+}
+
+.intensitytier_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.intensitytier_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ IntensityTier
+#' @export
+`$.IntensityTier` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .intensitytier_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 IntensityTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
-  
-  # Handle creation modes
   if (!is.null(.xptr)) {
     ptr <- .xptr
   } else if (!is.null(tmin) && !is.null(tmax)) {
@@ -17,67 +96,19 @@ IntensityTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   } else {
     stop("Must provide either (tmin, tmax) or .xptr")
   }
-  
+
   tier_mod <- get_module("intensitytier_module")
   cpp_obj <- tier_mod$RIntensityTier$new(ptr)
-  
-  obj <- structure(list(
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query
-    get_start_time = function() cpp_obj$get_xmin(),
-    get_end_time = function() cpp_obj$get_xmax(),
-    get_number_of_points = function() cpp_obj$get_number_of_points(),
-    get_time_from_index = function(index) cpp_obj$get_time(as.integer(index)),
-    get_value_at_index = function(index) cpp_obj$get_value(as.integer(index)),
-    get_value_at_time = function(time) cpp_obj$get_value_at_time(as.numeric(time)),
-    get_mean = function(tmin = NULL, tmax = NULL) {
-      if (is.null(tmin)) tmin <- cpp_obj$get_xmin()
-      if (is.null(tmax)) tmax <- cpp_obj$get_xmax()
-      cpp_obj$get_mean_curve(as.numeric(tmin), as.numeric(tmax))
-    },
-    
-    # Modification
-    add_point = function(time, value) {
-      cpp_obj$add_point(as.numeric(time), as.numeric(value))
-      invisible(obj)
-    },
-    remove_point = function(index) {
-      cpp_obj$remove_point(as.integer(index))
-      invisible(obj)
-    },
-    
-    # Export
-    as_data_frame = function() {
-      df <- cpp_obj$as_data_frame()
-      names(df) <- c("time", "intensity_db")
-      df
-    },
-    save = function(path) {
-      cpp_obj$save(as.character(path))
-      invisible(obj)
-    },
-    
-    # Utility
-    get_xptr = function() .xptr,
-    
-    # Print
-    print = function() {
-      cat("<Praat IntensityTier>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-      n_points <- cpp_obj$get_number_of_points()
-      cat(sprintf("  Number of points: %d\n", n_points))
-      if (n_points > 0) {
-        mean_int <- cpp_obj$get_mean_curve(cpp_obj$get_xmin(), cpp_obj$get_xmax())
-        cat(sprintf("  Mean intensity: %.1f dB\n", mean_int))
-      }
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("IntensityTier", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.IntensityTier <- function(x, ...) x$print()

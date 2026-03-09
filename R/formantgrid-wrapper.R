@@ -7,12 +7,100 @@
 #' over time for voice transformation and synthesis. This is the editable
 #' counterpart to the read-only Formant object.
 #'
+#' @name FormantGrid
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.formantgrid_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Time domain
+.formantgrid_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.formantgrid_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.formantgrid_methods$get_number_of_formants <- function(.self) .self$.cpp$get_number_of_formants()
+
+# Query - Values
+.formantgrid_methods$get_formant_at_time <- function(.self, formant_number, time) {
+  .self$.cpp$get_formant_at_time(as.integer(formant_number), as.numeric(time))
+}
+.formantgrid_methods$get_bandwidth_at_time <- function(.self, formant_number, time) {
+  .self$.cpp$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
+}
+
+# Modification (self-returning)
+.formantgrid_methods$add_formant_point <- function(.self, formant_number, time, value) {
+  .self$.cpp$add_formant_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
+  invisible(.self)
+}
+.formantgrid_methods$add_bandwidth_point <- function(.self, formant_number, time, value) {
+  .self$.cpp$add_bandwidth_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
+  invisible(.self)
+}
+.formantgrid_methods$remove_formant_points_between <- function(.self, formant_number, tmin, tmax) {
+  .self$.cpp$remove_formant_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
+  invisible(.self)
+}
+.formantgrid_methods$remove_bandwidth_points_between <- function(.self, formant_number, tmin, tmax) {
+  .self$.cpp$remove_bandwidth_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
+  invisible(.self)
+}
+
+# Conversion
+.formantgrid_methods$to_formant <- function(.self, time_step = 0.005, intensity = 1.0) {
+  ptr_out <- .formantgrid_to_formant(.self$.xptr, time_step, intensity)
+  Formant(.xptr = ptr_out)
+}
+
+# Export
+.formantgrid_methods$as_data_frame <- function(.self) {
+  df <- .self$.cpp$as_data_frame()
+  names(df) <- c("formant_number", "time", "frequency", "bandwidth")
+  df
+}
+.formantgrid_methods$save <- function(.self, path) {
+  .self$.cpp$save(as.character(path))
+  invisible(.self)
+}
+
+# Utility
+.formantgrid_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.formantgrid_methods$print <- function(.self) {
+  cat("<Praat FormantGrid>\n")
+  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(sprintf("  Number of formants: %d\n", .self$.cpp$get_number_of_formants()))
+  invisible(.self)
+}
+
+.formantgrid_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.formantgrid_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ FormantGrid
+#' @export
+`$.FormantGrid` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .formantgrid_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
                         initial_first_formant = 550, initial_formant_spacing = 1100,
                         initial_first_bandwidth = 60, initial_bandwidth_spacing = 50,
                         .xptr = NULL) {
-  
   if (!is.null(.xptr)) {
     ptr <- .xptr
   } else {
@@ -27,76 +115,19 @@ FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
       initial_first_bandwidth, initial_bandwidth_spacing
     )
   }
-  
+
   grid_mod <- get_module("formantgrid_module")
   cpp_obj <- grid_mod$RFormantGrid$new(ptr)
-  
-  obj <- structure(list(
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query - Time domain
-    get_start_time = function() cpp_obj$get_xmin(),
-    get_end_time = function() cpp_obj$get_xmax(),
-    get_number_of_formants = function() cpp_obj$get_number_of_formants(),
-    
-    # Query - Values
-    get_formant_at_time = function(formant_number, time) {
-      cpp_obj$get_formant_at_time(as.integer(formant_number), as.numeric(time))
-    },
-    get_bandwidth_at_time = function(formant_number, time) {
-      cpp_obj$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
-    },
-    
-    # Modification
-    add_formant_point = function(formant_number, time, value) {
-      cpp_obj$add_formant_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
-      invisible(obj)
-    },
-    add_bandwidth_point = function(formant_number, time, value) {
-      cpp_obj$add_bandwidth_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
-      invisible(obj)
-    },
-    remove_formant_points_between = function(formant_number, tmin, tmax) {
-      cpp_obj$remove_formant_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
-      invisible(obj)
-    },
-    remove_bandwidth_points_between = function(formant_number, tmin, tmax) {
-      cpp_obj$remove_bandwidth_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
-      invisible(obj)
-    },
-    
-    # Conversion
-    to_formant = function(time_step = 0.005, intensity = 1.0) {
-      ptr_out <- .formantgrid_to_formant(ptr, time_step, intensity)
-      Formant(.xptr = ptr_out)
-    },
-    
-    # Export
-    as_data_frame = function() {
-      df <- cpp_obj$as_data_frame()
-      names(df) <- c("formant_number", "time", "frequency", "bandwidth")
-      df
-    },
-    save = function(path) {
-      cpp_obj$save(as.character(path))
-      invisible(obj)
-    },
-    
-    # Utility
-    get_xptr = function() ptr,
-    
-    # Print
-    print = function() {
-      cat("<Praat FormantGrid>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-      cat(sprintf("  Number of formants: %d\n", cpp_obj$get_number_of_formants()))
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("FormantGrid", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.FormantGrid <- function(x, ...) x$print()

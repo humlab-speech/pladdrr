@@ -36,6 +36,119 @@
 #' # Synthesize
 #' sound <- kg$to_sound()
 #' }
+#'
+#' @name KlattGrid
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.klattgrid_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Validation
+.klattgrid_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+
+# Time domain
+.klattgrid_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
+.klattgrid_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
+.klattgrid_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+
+# Synthesis
+.klattgrid_methods$to_sound <- function(.self) {
+  sound_xptr <- .self$.cpp$to_sound()
+  Sound(.xptr = sound_xptr)
+}
+
+.klattgrid_methods$to_sound_phonation <- function(.self) {
+  sound_xptr <- .self$.cpp$to_sound_phonation()
+  Sound(.xptr = sound_xptr)
+}
+
+# Pitch manipulation
+.klattgrid_methods$get_pitch_at_time <- function(.self, t) .self$.cpp$get_pitch_at_time(t)
+
+.klattgrid_methods$add_pitch_point <- function(.self, t, value) {
+  .self$.cpp$add_pitch_point(t, value)
+  invisible(.self)
+}
+
+.klattgrid_methods$remove_pitch_points <- function(.self, t1, t2) {
+  .self$.cpp$remove_pitch_points(t1, t2)
+  invisible(.self)
+}
+
+# Voicing amplitude
+.klattgrid_methods$get_voicing_amplitude_at_time <- function(.self, t) {
+  .self$.cpp$get_voicing_amplitude_at_time(t)
+}
+
+.klattgrid_methods$add_voicing_amplitude_point <- function(.self, t, value) {
+  .self$.cpp$add_voicing_amplitude_point(t, value)
+  invisible(.self)
+}
+
+# Formant manipulation
+# formantType: 0=oral, 1=nasal, 2=frication, 3=tracheal, 4=nasal_anti, 5=tracheal_anti, 6=delta
+.klattgrid_methods$get_formant_at_time <- function(.self, formantType, iformant, t) {
+  .self$.cpp$get_formant_at_time(as.integer(formantType), as.integer(iformant), t)
+}
+
+.klattgrid_methods$add_formant_point <- function(.self, formantType, iformant, t, value) {
+  .self$.cpp$add_formant_point(as.integer(formantType), as.integer(iformant), t, value)
+  invisible(.self)
+}
+
+.klattgrid_methods$remove_formant_points <- function(.self, formantType, iformant, t1, t2) {
+  .self$.cpp$remove_formant_points(as.integer(formantType), as.integer(iformant), t1, t2)
+  invisible(.self)
+}
+
+# Bandwidth manipulation
+.klattgrid_methods$get_bandwidth_at_time <- function(.self, formantType, iformant, t) {
+  .self$.cpp$get_bandwidth_at_time(as.integer(formantType), as.integer(iformant), t)
+}
+
+.klattgrid_methods$add_bandwidth_point <- function(.self, formantType, iformant, t, value) {
+  .self$.cpp$add_bandwidth_point(as.integer(formantType), as.integer(iformant), t, value)
+  invisible(.self)
+}
+
+# File I/O
+.klattgrid_methods$save <- function(.self, path) {
+  .self$.cpp$save(path)
+  invisible(.self)
+}
+
+# Display
+.klattgrid_methods$print <- function(.self) {
+  cat("KlattGrid object\n")
+  cat("  Duration:", .self$.cpp$get_duration(), "s\n")
+  cat("  Time range: [", .self$.cpp$get_xmin(), ",", .self$.cpp$get_xmax(), "]\n")
+  invisible(.self)
+}
+
+lockEnvironment(.klattgrid_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ KlattGrid
+#' @export
+`$.KlattGrid` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .klattgrid_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructors
+# ============================================================================
+
+#' @export
 KlattGrid <- function(tmin = 0.0,
                       tmax = 1.0,
                       numberOfFormants = 6L,
@@ -45,115 +158,22 @@ KlattGrid <- function(tmin = 0.0,
                       numberOfTrachealAntiFormants = 1L,
                       numberOfFricationFormants = 6L,
                       numberOfDeltaFormants = 1L) {
-    
-    # Get module
-    mod <- get_module("klattgrid_module")
-    
-    # Create KlattGrid
-    xptr <- mod$klattgrid_create(
-        tmin, tmax,
-        as.integer(numberOfFormants),
-        as.integer(numberOfNasalFormants),
-        as.integer(numberOfNasalAntiFormants),
-        as.integer(numberOfTrachealFormants),
-        as.integer(numberOfTrachealAntiFormants),
-        as.integer(numberOfFricationFormants),
-        as.integer(numberOfDeltaFormants)
-    )
-    
-    # Wrap in RKlattGrid class
-    cpp_obj <- mod$RKlattGrid$new(xptr)
-    
-    # Create R object with methods
-    obj <- structure(list(
-        .cpp = cpp_obj,
-        
-        # Validation
-        is_valid = function() cpp_obj$is_valid(),
-        
-        # Time domain
-        get_xmin = function() cpp_obj$get_xmin(),
-        get_xmax = function() cpp_obj$get_xmax(),
-        get_duration = function() cpp_obj$get_duration(),
-        
-        # Synthesis
-        to_sound = function() {
-            sound_xptr <- cpp_obj$to_sound()
-            Sound(.xptr = sound_xptr)
-        },
-        
-        to_sound_phonation = function() {
-            sound_xptr <- cpp_obj$to_sound_phonation()
-            Sound(.xptr = sound_xptr)
-        },
-        
-        # Pitch manipulation
-        get_pitch_at_time = function(t) {
-            cpp_obj$get_pitch_at_time(t)
-        },
-        
-        add_pitch_point = function(t, value) {
-            cpp_obj$add_pitch_point(t, value)
-            invisible(obj)
-        },
-        
-        remove_pitch_points = function(t1, t2) {
-            cpp_obj$remove_pitch_points(t1, t2)
-            invisible(obj)
-        },
-        
-        # Voicing amplitude
-        get_voicing_amplitude_at_time = function(t) {
-            cpp_obj$get_voicing_amplitude_at_time(t)
-        },
-        
-        add_voicing_amplitude_point = function(t, value) {
-            cpp_obj$add_voicing_amplitude_point(t, value)
-            invisible(obj)
-        },
-        
-        # Formant manipulation
-        # formantType: 0=oral, 1=nasal, 2=frication, 3=tracheal, 4=nasal_anti, 5=tracheal_anti, 6=delta
-        get_formant_at_time = function(formantType, iformant, t) {
-            cpp_obj$get_formant_at_time(as.integer(formantType), as.integer(iformant), t)
-        },
-        
-        add_formant_point = function(formantType, iformant, t, value) {
-            cpp_obj$add_formant_point(as.integer(formantType), as.integer(iformant), t, value)
-            invisible(obj)
-        },
-        
-        remove_formant_points = function(formantType, iformant, t1, t2) {
-            cpp_obj$remove_formant_points(as.integer(formantType), as.integer(iformant), t1, t2)
-            invisible(obj)
-        },
-        
-        # Bandwidth manipulation
-        get_bandwidth_at_time = function(formantType, iformant, t) {
-            cpp_obj$get_bandwidth_at_time(as.integer(formantType), as.integer(iformant), t)
-        },
-        
-        add_bandwidth_point = function(formantType, iformant, t, value) {
-            cpp_obj$add_bandwidth_point(as.integer(formantType), as.integer(iformant), t, value)
-            invisible(obj)
-        },
-        
-        # File I/O
-        save = function(path) {
-            cpp_obj$save(path)
-            invisible(obj)
-        },
-        
-        # Print method
-        print = function() {
-            cat("KlattGrid object\n")
-            cat("  Duration:", cpp_obj$get_duration(), "s\n")
-            cat("  Time range: [", cpp_obj$get_xmin(), ",", cpp_obj$get_xmax(), "]\n")
-            invisible(obj)
-        }
-    ), class = c("KlattGrid", "PraatObject"))
-    
-    obj
+  mod <- get_module("klattgrid_module")
+  xptr <- mod$klattgrid_create(
+    tmin, tmax,
+    as.integer(numberOfFormants),
+    as.integer(numberOfNasalFormants),
+    as.integer(numberOfNasalAntiFormants),
+    as.integer(numberOfTrachealFormants),
+    as.integer(numberOfTrachealAntiFormants),
+    as.integer(numberOfFricationFormants),
+    as.integer(numberOfDeltaFormants)
+  )
+  cpp_obj <- mod$RKlattGrid$new(xptr)
+
+  structure(list(
+    .cpp = cpp_obj
+  ), class = c("KlattGrid", "PraatObject"))
 }
 
 #' Create KlattGrid from vowel parameters
@@ -183,76 +203,18 @@ KlattGrid_createFromVowel <- function(duration = 0.5,
                                       f4 = 3500.0,
                                       bandWidthFraction = 0.05,
                                       formantFrequencyInterval = 1000.0) {
-    
-    mod <- get_module("klattgrid_module")
-    
-    xptr <- mod$klattgrid_create_from_vowel(
-        duration, f0start,
-        f1, b1, f2, b2, f3, b3, f4,
-        bandWidthFraction,
-        formantFrequencyInterval
-    )
-    
-    cpp_obj <- mod$RKlattGrid$new(xptr)
-    
-    obj <- structure(list(
-        .cpp = cpp_obj,
-        is_valid = function() cpp_obj$is_valid(),
-        get_xmin = function() cpp_obj$get_xmin(),
-        get_xmax = function() cpp_obj$get_xmax(),
-        get_duration = function() cpp_obj$get_duration(),
-        to_sound = function() {
-            sound_xptr <- cpp_obj$to_sound()
-            Sound(.xptr = sound_xptr)
-        },
-        to_sound_phonation = function() {
-            sound_xptr <- cpp_obj$to_sound_phonation()
-            Sound(.xptr = sound_xptr)
-        },
-        get_pitch_at_time = function(t) cpp_obj$get_pitch_at_time(t),
-        add_pitch_point = function(t, value) {
-            cpp_obj$add_pitch_point(t, value)
-            invisible(obj)
-        },
-        remove_pitch_points = function(t1, t2) {
-            cpp_obj$remove_pitch_points(t1, t2)
-            invisible(obj)
-        },
-        get_voicing_amplitude_at_time = function(t) cpp_obj$get_voicing_amplitude_at_time(t),
-        add_voicing_amplitude_point = function(t, value) {
-            cpp_obj$add_voicing_amplitude_point(t, value)
-            invisible(obj)
-        },
-        get_formant_at_time = function(formantType, iformant, t) {
-            cpp_obj$get_formant_at_time(as.integer(formantType), as.integer(iformant), t)
-        },
-        add_formant_point = function(formantType, iformant, t, value) {
-            cpp_obj$add_formant_point(as.integer(formantType), as.integer(iformant), t, value)
-            invisible(obj)
-        },
-        remove_formant_points = function(formantType, iformant, t1, t2) {
-            cpp_obj$remove_formant_points(as.integer(formantType), as.integer(iformant), t1, t2)
-            invisible(obj)
-        },
-        get_bandwidth_at_time = function(formantType, iformant, t) {
-            cpp_obj$get_bandwidth_at_time(as.integer(formantType), as.integer(iformant), t)
-        },
-        add_bandwidth_point = function(formantType, iformant, t, value) {
-            cpp_obj$add_bandwidth_point(as.integer(formantType), as.integer(iformant), t, value)
-            invisible(obj)
-        },
-        save = function(path) {
-            cpp_obj$save(path)
-            invisible(obj)
-        },
-        print = function() {
-            cat("KlattGrid object (from vowel)\n")
-            cat("  Duration:", cpp_obj$get_duration(), "s\n")
-            invisible(obj)
-        }
-    ), class = c("KlattGrid", "PraatObject"))
-    
-    obj
+  mod <- get_module("klattgrid_module")
+  xptr <- mod$klattgrid_create_from_vowel(
+    duration, f0start,
+    f1, b1, f2, b2, f3, b3, f4,
+    bandWidthFraction,
+    formantFrequencyInterval
+  )
+  cpp_obj <- mod$RKlattGrid$new(xptr)
+
+  structure(list(
+    .cpp = cpp_obj
+  ), class = c("KlattGrid", "PraatObject"))
 }
 
 #' Create example KlattGrid
@@ -263,31 +225,18 @@ KlattGrid_createFromVowel <- function(duration = 0.5,
 #' @return KlattGrid example object
 #' @export
 KlattGrid_createExample <- function() {
-    mod <- get_module("klattgrid_module")
-    
-    xptr <- mod$klattgrid_create_example()
-    cpp_obj <- mod$RKlattGrid$new(xptr)
-    
-    obj <- structure(list(
-        .cpp = cpp_obj,
-        is_valid = function() cpp_obj$is_valid(),
-        get_xmin = function() cpp_obj$get_xmin(),
-        get_xmax = function() cpp_obj$get_xmax(),
-        get_duration = function() cpp_obj$get_duration(),
-        to_sound = function() {
-            sound_xptr <- cpp_obj$to_sound()
-            Sound(.xptr = sound_xptr)
-        },
-        to_sound_phonation = function() {
-            sound_xptr <- cpp_obj$to_sound_phonation()
-            Sound(.xptr = sound_xptr)
-        },
-        print = function() {
-            cat("KlattGrid example\n")
-            cat("  Duration:", cpp_obj$get_duration(), "s\n")
-            invisible(obj)
-        }
-    ), class = c("KlattGrid", "PraatObject"))
-    
-    obj
+  mod <- get_module("klattgrid_module")
+  xptr <- mod$klattgrid_create_example()
+  cpp_obj <- mod$RKlattGrid$new(xptr)
+
+  structure(list(
+    .cpp = cpp_obj
+  ), class = c("KlattGrid", "PraatObject"))
 }
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
+
+#' @export
+print.KlattGrid <- function(x, ...) x$print()

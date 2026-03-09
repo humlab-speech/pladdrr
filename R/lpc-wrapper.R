@@ -73,6 +73,119 @@
 #' glottal_flow_fixed <- lpc$filter_inverse_at_time(sound, time = midpoint)
 #' }
 #'
+#' @name LPC
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.lpc_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Basic properties
+.lpc_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.lpc_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
+.lpc_methods$get_sampling_period <- function(.self) .self$.cpp$get_sampling_period()
+.lpc_methods$get_max_num_coefficients <- function(.self) .self$.cpp$get_max_num_coefficients()
+
+# Query - LPC values
+.lpc_methods$get_gain_at_frame <- function(.self, frame_number) {
+  .self$.cpp$get_gain_at_frame(as.integer(frame_number))
+}
+.lpc_methods$get_coefficients_at_frame <- function(.self, frame_number) {
+  .self$.cpp$get_coefficients_at_frame(as.integer(frame_number))
+}
+.lpc_methods$get_all_gains <- function(.self) .self$.cpp$get_all_gains()
+.lpc_methods$get_all_coefficients <- function(.self) .self$.cpp$get_all_coefficients()
+
+# Conversion methods
+.lpc_methods$to_formant <- function(.self, margin = 50.0) {
+  stop("LPC$to_formant() is not available in this build (requires CLAPACK).\n",
+       "Use Sound$to_formant_burg() for formant extraction instead.")
+}
+
+.lpc_methods$to_spectrum <- function(.self, time, df_min = 20.0,
+                                      bandwidth_reduction = 0.0,
+                                      de_emphasis_frequency = 50.0) {
+  spectrum_ptr <- .lpc_to_spectrum(
+    .self$.xptr, time, df_min, bandwidth_reduction, de_emphasis_frequency
+  )
+  Spectrum(.xptr = spectrum_ptr)
+}
+
+.lpc_methods$to_matrix <- function(.self) {
+  matrix_ptr <- .lpc_to_matrix(.self$.xptr)
+  Matrix(.xptr = matrix_ptr)
+}
+
+.lpc_methods$to_spectrogram <- function(.self, df_min = 20.0, bandwidth_reduction = 0.0,
+                                         de_emphasis_frequency = 50.0) {
+  spec_ptr <- .lpc_to_spectrogram(
+    .self$.xptr, df_min, bandwidth_reduction, de_emphasis_frequency
+  )
+  Spectrogram(.xptr = spec_ptr)
+}
+
+# LFCC extraction
+.lpc_methods$to_lfcc <- function(.self, num_coefficients = 12) {
+  mfcc_mod <- get_module("mfcc_module")
+  lfcc_ptr <- mfcc_mod$LPC_to_LFCC(.self$.xptr, as.integer(num_coefficients))
+  LFCC(.xptr = lfcc_ptr)
+}
+
+# Inverse Filtering
+.lpc_methods$filter_inverse <- function(.self, sound) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  source_ptr <- .lpc_sound_filter_inverse_r6(.self$.xptr, sound)
+  Sound(.xptr = source_ptr)
+}
+
+.lpc_methods$filter_inverse_at_time <- function(.self, sound, time, channel = 1) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!is.numeric(time) || length(time) != 1) stop("time must be a single numeric value")
+  if (!is.numeric(channel) || length(channel) != 1 || channel < 1) {
+    stop("channel must be a positive integer")
+  }
+  source_ptr <- .lpc_sound_filter_inverse_at_time(
+    .self$.xptr, sound$get_xptr(), as.integer(channel), as.numeric(time)
+  )
+  Sound(.xptr = source_ptr)
+}
+
+# Utility
+.lpc_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.lpc_methods$print <- function(.self) {
+  cat("<Praat LPC>\n")
+  cat(sprintf("  Number of frames: %d\n", .self$.cpp$get_number_of_frames()))
+  cat(sprintf("  Time step: %.6f s\n", .self$.cpp$get_time_step()))
+  cat(sprintf("  Max coefficients: %d\n", .self$.cpp$get_max_num_coefficients()))
+  cat(sprintf("  Sampling period: %.6f s\n", .self$.cpp$get_sampling_period()))
+  invisible(.self)
+}
+
+.lpc_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.lpc_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ LPC
+#' @export
+`$.LPC` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .lpc_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 LPC <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
@@ -82,134 +195,10 @@ LPC <- function(.xptr = NULL) {
   lpc_mod <- get_module("lpc_module")
   cpp_obj <- lpc_mod$RLPC$new(.xptr)
   
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = .xptr,  # Keep for legacy exports
-    
-    # Query - Basic properties
-    get_number_of_frames = function() {
-      cpp_obj$get_number_of_frames()
-    },
-    
-    get_time_step = function() {
-      cpp_obj$get_time_step()
-    },
-    
-    get_sampling_period = function() {
-      cpp_obj$get_sampling_period()
-    },
-    
-    get_max_num_coefficients = function() {
-      cpp_obj$get_max_num_coefficients()
-    },
-    
-    # Query - LPC values
-    get_gain_at_frame = function(frame_number) {
-      cpp_obj$get_gain_at_frame(as.integer(frame_number))
-    },
-    
-    get_coefficients_at_frame = function(frame_number) {
-      cpp_obj$get_coefficients_at_frame(as.integer(frame_number))
-    },
-    
-    get_all_gains = function() {
-      cpp_obj$get_all_gains()
-    },
-    
-    get_all_coefficients = function() {
-      cpp_obj$get_all_coefficients()
-    },
-    
-    # Conversion methods
-    to_formant = function(margin = 50.0) {
-      stop("LPC$to_formant() is not available in this build (requires CLAPACK).\n",
-           "Use Sound$to_formant_burg() for formant extraction instead.")
-    },
-    
-    to_spectrum = function(
-      time,
-      df_min = 20.0,
-      bandwidth_reduction = 0.0,
-      de_emphasis_frequency = 50.0
-    ) {
-      spectrum_ptr <- .lpc_to_spectrum(
-        .xptr,
-        time,
-        df_min,
-        bandwidth_reduction,
-        de_emphasis_frequency
-      )
-      Spectrum(.xptr = spectrum_ptr)
-    },
-    
-    to_matrix = function() {
-      matrix_ptr <- .lpc_to_matrix(.xptr)
-      Matrix(.xptr = matrix_ptr)
-    },
-
-    to_spectrogram = function(df_min = 20.0, bandwidth_reduction = 0.0,
-                              de_emphasis_frequency = 50.0) {
-      spec_ptr <- .lpc_to_spectrogram(
-        .xptr, df_min, bandwidth_reduction, de_emphasis_frequency
-      )
-      Spectrogram(.xptr = spec_ptr)
-    },
-
-    # LFCC extraction (Linear Frequency Cepstral Coefficients)
-    to_lfcc = function(num_coefficients = 12) {
-      mfcc_mod <- get_module("mfcc_module")
-      lfcc_ptr <- mfcc_mod$LPC_to_LFCC(.xptr, as.integer(num_coefficients))
-      LFCC(.xptr = lfcc_ptr)
-    },
-
-    # Inverse Filtering - Voice Source Extraction
-    filter_inverse = function(sound) {
-      if (!inherits(sound, "Sound")) {
-        stop("sound must be a Sound object")
-      }
-      
-      source_ptr <- .lpc_sound_filter_inverse_r6(.xptr, sound)
-      Sound(.xptr = source_ptr)
-    },
-    
-    filter_inverse_at_time = function(sound, time, channel = 1) {
-      if (!inherits(sound, "Sound")) {
-        stop("sound must be a Sound object")
-      }
-      if (!is.numeric(time) || length(time) != 1) {
-        stop("time must be a single numeric value")
-      }
-      if (!is.numeric(channel) || length(channel) != 1 || channel < 1) {
-        stop("channel must be a positive integer")
-      }
-      
-      source_ptr <- .lpc_sound_filter_inverse_at_time(
-        .xptr,
-        sound$get_xptr(),
-        as.integer(channel),
-        as.numeric(time)
-      )
-      Sound(.xptr = source_ptr)
-    },
-    
-    # Utility methods
-    get_xptr = function() {
-      .xptr
-    },
-    
-    # Display
-    print = function() {
-      cat("<Praat LPC>\n")
-      cat(sprintf("  Number of frames: %d\n", cpp_obj$get_number_of_frames()))
-      cat(sprintf("  Time step: %.6f s\n", cpp_obj$get_time_step()))
-      cat(sprintf("  Max coefficients: %d\n", cpp_obj$get_max_num_coefficients()))
-      cat(sprintf("  Sampling period: %.6f s\n", cpp_obj$get_sampling_period()))
-      invisible(obj)
-    }
-    
+    .xptr = .xptr
   ), class = c("LPC", "PraatObject"))
-  
-  obj
 }
 
 #' @export

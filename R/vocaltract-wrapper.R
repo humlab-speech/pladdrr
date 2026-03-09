@@ -19,7 +19,7 @@
 #' - `$get_length()` - Total length in metres
 #' - `$get_number_of_sections()` - Number of sections
 #' - `$get_section_length()` - Section length in metres
-#' - `$get_area(section)` - Area at section (m²)
+#' - `$get_area(section)` - Area at section (m^2)
 #' - `$get_areas()` - All areas as vector
 #'
 #' ## Modification
@@ -45,109 +45,113 @@
 #' spectrum <- vt$to_spectrum()
 #' }
 #'
+#' @name VocalTract
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.vocaltract_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query
+.vocaltract_methods$get_length <- function(.self) .self$.cpp$get_length()
+.vocaltract_methods$get_number_of_sections <- function(.self) .self$.cpp$get_number_of_sections()
+.vocaltract_methods$get_section_length <- function(.self) .self$.cpp$get_section_length()
+.vocaltract_methods$get_area <- function(.self, section) .self$.cpp$get_area(as.integer(section))
+.vocaltract_methods$get_areas <- function(.self) .self$.cpp$get_areas()
+
+# Modification (self-returning)
+.vocaltract_methods$set_area <- function(.self, section, area) {
+  .self$.cpp$set_area(as.integer(section), as.numeric(area))
+  invisible(.self)
+}
+.vocaltract_methods$set_areas <- function(.self, areas) {
+  .self$.cpp$set_areas(as.numeric(areas))
+  invisible(.self)
+}
+
+# Transformation
+.vocaltract_methods$to_spectrum <- function(.self, number_of_frequencies = 4096L,
+                                             maximum_frequency = 5000.0,
+                                             glottal_damping = 0.1,
+                                             radiation_damping = TRUE,
+                                             internal_damping = TRUE) {
+  result_ptr <- .self$.cpp$to_spectrum_ptr(
+    as.integer(number_of_frequencies),
+    as.numeric(maximum_frequency),
+    as.numeric(glottal_damping),
+    radiation_damping,
+    internal_damping
+  )
+  Spectrum(.xptr = result_ptr)
+}
+
+.vocaltract_methods$to_matrix <- function(.self) {
+  result_ptr <- .self$.cpp$to_matrix_ptr()
+  Matrix(.xptr = result_ptr)
+}
+
+# Compatibility
+.vocaltract_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+.vocaltract_methods$get_ptr <- function(.self) .self$.xptr
+.vocaltract_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.vocaltract_methods$print <- function(.self) {
+  cat("<Praat VocalTract>\n")
+  if (!.self$.cpp$is_valid()) {
+    cat("  [Invalid or deleted object]\n")
+  } else {
+    cat("  Total length:", sprintf("%.3f", .self$.cpp$get_length() * 100), "cm\n")
+    cat("  Number of sections:", .self$.cpp$get_number_of_sections(), "\n")
+    cat("  Section length:", sprintf("%.1f", .self$.cpp$get_section_length() * 1000), "mm\n")
+    areas <- .self$.cpp$get_areas()
+    cat("  Area range:", sprintf("%.2f - %.2f", min(areas) * 1e4, max(areas) * 1e4), "cm^2\n")
+  }
+  invisible(.self)
+}
+
+lockEnvironment(.vocaltract_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ VocalTract
+#' @export
+`$.VocalTract` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .vocaltract_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 VocalTract <- function(nx = 17L, dx = 0.01, .xptr = NULL) {
-  
-  # Handle creation modes
   if (!is.null(.xptr)) {
-    # From existing C++ object
     ptr <- .xptr
   } else {
-    # Create new
     ptr <- .vocaltract_create(as.integer(nx), dx)
   }
-  
+
   vt_mod <- get_module("vocaltract_module")
   cpp_obj <- vt_mod$RVocalTract$new(ptr)
-  
-  obj <- structure(list(
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query Methods
-    get_length = function() {
-      cpp_obj$get_length()
-    },
-    
-    get_number_of_sections = function() {
-      cpp_obj$get_number_of_sections()
-    },
-    
-    get_section_length = function() {
-      cpp_obj$get_section_length()
-    },
-    
-    get_area = function(section) {
-      cpp_obj$get_area(as.integer(section))
-    },
-    
-    get_areas = function() {
-      cpp_obj$get_areas()
-    },
-    
-    # Modification
-    set_area = function(section, area) {
-      cpp_obj$set_area(as.integer(section), as.numeric(area))
-      invisible(obj)
-    },
-    
-    set_areas = function(areas) {
-      cpp_obj$set_areas(as.numeric(areas))
-      invisible(obj)
-    },
-    
-    # Transformation
-    to_spectrum = function(number_of_frequencies = 4096L,
-                          maximum_frequency = 5000.0,
-                          glottal_damping = 0.1,
-                          radiation_damping = TRUE,
-                          internal_damping = TRUE) {
-      result_ptr <- cpp_obj$to_spectrum_ptr(
-        as.integer(number_of_frequencies),
-        as.numeric(maximum_frequency),
-        as.numeric(glottal_damping),
-        radiation_damping,
-        internal_damping
-      )
-      Spectrum(.xptr = result_ptr)
-    },
-    
-    to_matrix = function() {
-      result_ptr <- cpp_obj$to_matrix_ptr()
-      Matrix(.xptr = result_ptr)
-    },
-    
-    # Compatibility
-    is_valid = function() {
-      cpp_obj$is_valid()
-    },
-    
-    get_ptr = function() {
-      ptr
-    },
-    
-    get_xptr = function() {
-      ptr
-    },
-    
-    # Print method
-    print = function() {
-      cat("<Praat VocalTract>\n")
-      if (!cpp_obj$is_valid()) {
-        cat("  [Invalid or deleted object]\n")
-      } else {
-        cat("  Total length:", sprintf("%.3f", cpp_obj$get_length() * 100), "cm\n")
-        cat("  Number of sections:", cpp_obj$get_number_of_sections(), "\n")
-        cat("  Section length:", sprintf("%.1f", cpp_obj$get_section_length() * 1000), "mm\n")
-        areas <- cpp_obj$get_areas()
-        cat("  Area range:", sprintf("%.2f - %.2f", min(areas) * 1e4, max(areas) * 1e4), "cm²\n")
-      }
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("VocalTract", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# Static Methods (backward compatibility: VocalTract$create_from_phone)
+# ============================================================================
 
 #' Create VocalTract from phone
 #' @param phone Phone name. Valid phones are:
@@ -173,12 +177,10 @@ vocaltract_create_from_phone <- function(phone) {
   if (!phone %in% valid_phones) {
     stop("Invalid phone '", phone, "'. Valid phones: ", paste(valid_phones, collapse = ", "))
   }
-
   ptr <- .vocaltract_create_from_phone(phone)
   VocalTract(.xptr = ptr)
 }
 
-# Static method support
 .vocaltract_static_env <- new.env(parent = emptyenv())
 .vocaltract_static_env$create_from_phone <- vocaltract_create_from_phone
 .vocaltract_static_env$new <- VocalTract
@@ -189,6 +191,10 @@ vocaltract_create_from_phone <- function(phone) {
 }
 
 class(VocalTract) <- c("vocaltract_constructor", "function")
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.VocalTract <- function(x, ...) {

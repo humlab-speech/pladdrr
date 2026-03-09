@@ -34,111 +34,121 @@
 #' df <- as.data.frame(poly)
 #' }
 #' 
+#' @name Polygon
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.polygon_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Properties
+.polygon_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+.polygon_methods$n_points <- function(.self) .self$.cpp$get_number_of_points()
+
+# Data access (1-based indexing)
+.polygon_methods$get_x <- function(.self, i) .self$.cpp$get_x(as.integer(i))
+.polygon_methods$get_y <- function(.self, i) .self$.cpp$get_y(as.integer(i))
+.polygon_methods$get_all_x <- function(.self) .self$.cpp$get_all_x()
+.polygon_methods$get_all_y <- function(.self) .self$.cpp$get_all_y()
+
+# Geometry
+.polygon_methods$get_perimeter <- function(.self) .self$.cpp$get_perimeter()
+.polygon_methods$randomize <- function(.self) {
+  .self$.cpp$randomize()
+  invisible(.self)
+}
+.polygon_methods$optimize_salesperson <- function(.self, iterations = 100) {
+  .self$.cpp$optimize_salesperson(as.integer(iterations))
+  invisible(.self)
+}
+
+# Export
+.polygon_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+.polygon_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
+.polygon_methods$save <- function(.self, path) {
+  .self$.cpp$save(as.character(path))
+  invisible(.self)
+}
+
+# Display
+.polygon_methods$print <- function(.self) {
+  cat("<Praat Polygon (Module)>\n")
+  if (.self$.cpp$is_valid()) {
+    n <- .self$.cpp$get_number_of_points()
+    cat(sprintf("  Points: %d\n", n))
+    tryCatch({
+      perim <- .self$.cpp$get_perimeter()
+      if (!is.na(perim)) {
+        cat(sprintf("  Perimeter: %.3f\n", perim))
+      }
+    }, error = function(e) {})
+    if (n > 0) {
+      show_n <- min(3, n)
+      cat("  First points:\n")
+      for (i in 1:show_n) {
+        x_val <- .self$.cpp$get_x(i)
+        y_val <- .self$.cpp$get_y(i)
+        cat(sprintf("    %d: (%.3f, %.3f)\n", i, x_val, y_val))
+      }
+      if (n > 3) {
+        cat(sprintf("    ... (%d more points)\n", n - 3))
+      }
+    }
+  } else {
+    cat("  [Invalid object]\n")
+  }
+  invisible(.self)
+}
+
+lockEnvironment(.polygon_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ Polygon
+#' @export
+`$.Polygon` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .polygon_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 Polygon <- function(x, y, .xptr = NULL) {
-  # Load Rcpp Module
   poly_mod <- get_module("polygon_module")
   if (is.null(poly_mod)) {
     stop("polygon_module not available - package installation may be incomplete")
   }
 
-  # If .xptr provided, use it directly (internal construction from C++)
   if (!is.null(.xptr)) {
     xptr <- .xptr
   } else {
-    # Normal construction from x, y coordinates
-    if (missing(x) || missing(y)) {
-      stop("Both x and y coordinates required")
-    }
-    if (length(x) != length(y)) {
-      stop("x and y must have same length")
-    }
-    if (length(x) < 1) {
-      stop("At least 1 point required")
-    }
-
-    # Create XPtr from coordinates
-    xptr <- poly_mod$polygon_create_xptr(
-      as.numeric(x),
-      as.numeric(y)
-    )
+    if (missing(x) || missing(y)) stop("Both x and y coordinates required")
+    if (length(x) != length(y)) stop("x and y must have same length")
+    if (length(x) < 1) stop("At least 1 point required")
+    xptr <- poly_mod$polygon_create_xptr(as.numeric(x), as.numeric(y))
   }
 
-  # Wrap in module class
   cpp_obj <- poly_mod$RPolygon$new(xptr)
-  
-  # Create wrapper object
-  obj <- structure(list(
+
+  structure(list(
     .xptr = xptr,
-    .cpp = cpp_obj,
-    
-    # Properties
-    is_valid = function() cpp_obj$is_valid(),
-    n_points = function() cpp_obj$get_number_of_points(),
-    
-    # Data access (1-based indexing for users, converted internally)
-    get_x = function(i) cpp_obj$get_x(as.integer(i)),
-    get_y = function(i) cpp_obj$get_y(as.integer(i)),
-    get_all_x = function() cpp_obj$get_all_x(),
-    get_all_y = function() cpp_obj$get_all_y(),
-    
-    # Geometry
-    get_perimeter = function() cpp_obj$get_perimeter(),
-    randomize = function() {
-      cpp_obj$randomize()
-      invisible(obj)
-    },
-    optimize_salesperson = function(iterations = 100) {
-      cpp_obj$optimize_salesperson(as.integer(iterations))
-      invisible(obj)
-    },
-    
-    # Export
-    as_data_frame = function() cpp_obj$as_data_frame(),
-    as_matrix = function() cpp_obj$as_matrix(),
-    save = function(path) {
-      cpp_obj$save(as.character(path))
-      invisible(obj)
-    },
-    
-    # Print method
-    print = function() {
-      cat("<Praat Polygon (Module)>\n")
-      
-      if (cpp_obj$is_valid()) {
-        n <- cpp_obj$get_number_of_points()
-        cat(sprintf("  Points: %d\n", n))
-        
-        tryCatch({
-          perim <- cpp_obj$get_perimeter()
-          if (!is.na(perim)) {
-            cat(sprintf("  Perimeter: %.3f\n", perim))
-          }
-        }, error = function(e) {})
-        
-        # Show first few points
-        if (n > 0) {
-          show_n <- min(3, n)
-          cat("  First points:\n")
-          for (i in 1:show_n) {
-            x_val <- cpp_obj$get_x(i)
-            y_val <- cpp_obj$get_y(i)
-            cat(sprintf("    %d: (%.3f, %.3f)\n", i, x_val, y_val))
-          }
-          if (n > 3) {
-            cat(sprintf("    ... (%d more points)\n", n - 3))
-          }
-        }
-      } else {
-        cat("  [Invalid object]\n")
-      }
-      
-      invisible(obj)
-    }
+    .cpp = cpp_obj
   ), class = c("Polygon", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.Polygon <- function(x, ...) {

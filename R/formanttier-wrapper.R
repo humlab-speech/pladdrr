@@ -45,112 +45,111 @@
 #' vowel <- ft$filter_sound(source)
 #' }
 #'
+#' @name FormantTier
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.formanttier_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query
+.formanttier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.formanttier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.formanttier_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.formanttier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
+.formanttier_methods$get_min_num_formants <- function(.self) .self$.cpp$get_min_num_formants()
+.formanttier_methods$get_max_num_formants <- function(.self) .self$.cpp$get_max_num_formants()
+
+.formanttier_methods$get_value_at_time <- function(.self, formant_number, time) {
+  .self$.cpp$get_value_at_time(as.integer(formant_number), as.numeric(time))
+}
+
+.formanttier_methods$get_bandwidth_at_time <- function(.self, formant_number, time) {
+  .self$.cpp$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
+}
+
+# Transformation
+.formanttier_methods$filter_sound <- function(.self, sound, scale = TRUE) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  result_ptr <- .self$.cpp$filter_sound_ptr(sound$.xptr, scale)
+  Sound(.xptr = result_ptr)
+}
+
+# Export
+.formanttier_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+
+.formanttier_methods$save <- function(.self, path) {
+  .self$.cpp$save(as.character(path))
+  invisible(.self)
+}
+
+# Compatibility
+.formanttier_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+.formanttier_methods$get_ptr <- function(.self) .self$.xptr
+.formanttier_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.formanttier_methods$print <- function(.self) {
+  cat("<Praat FormantTier>\n")
+  if (!.self$.cpp$is_valid()) {
+    cat("  [Invalid or deleted object]\n")
+  } else {
+    cat(sprintf("  Time domain: %.3f - %.3f seconds\n",
+                .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+    cat("  Number of points:", .self$.cpp$get_number_of_points(), "\n")
+    nf_min <- .self$.cpp$get_min_num_formants()
+    nf_max <- .self$.cpp$get_max_num_formants()
+    if (nf_min == nf_max) {
+      cat("  Formants per point:", nf_min, "\n")
+    } else {
+      cat("  Formants per point:", nf_min, "-", nf_max, "\n")
+    }
+  }
+  invisible(.self)
+}
+
+lockEnvironment(.formanttier_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ FormantTier
+#' @export
+`$.FormantTier` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .formanttier_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
-  
-  # Handle creation modes
   if (!is.null(.xptr)) {
-    # From existing C++ object
     ptr <- .xptr
   } else {
-    # Create new empty tier
     ptr <- .formanttier_create(as.numeric(tmin), as.numeric(tmax))
   }
-  
+
   tier_mod <- get_module("formanttier_module")
   cpp_obj <- tier_mod$RFormantTier$new(ptr)
-  
-  obj <- structure(list(
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query Methods
-    get_start_time = function() {
-      cpp_obj$get_xmin()
-    },
-    
-    get_end_time = function() {
-      cpp_obj$get_xmax()
-    },
-    
-    get_duration = function() {
-      cpp_obj$get_duration()
-    },
-    
-    get_number_of_points = function() {
-      cpp_obj$get_number_of_points()
-    },
-    
-    get_min_num_formants = function() {
-      cpp_obj$get_min_num_formants()
-    },
-    
-    get_max_num_formants = function() {
-      cpp_obj$get_max_num_formants()
-    },
-    
-    get_value_at_time = function(formant_number, time) {
-      cpp_obj$get_value_at_time(as.integer(formant_number), as.numeric(time))
-    },
-    
-    get_bandwidth_at_time = function(formant_number, time) {
-      cpp_obj$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
-    },
-    
-    # Transformation
-    filter_sound = function(sound, scale = TRUE) {
-      if (!inherits(sound, "Sound")) {
-        stop("sound must be a Sound object")
-      }
-      result_ptr <- cpp_obj$filter_sound_ptr(sound$.xptr, scale)
-      Sound(.xptr = result_ptr)
-    },
-    
-    # Export
-    as_data_frame = function() {
-      cpp_obj$as_data_frame()
-    },
-    
-    save = function(path) {
-      cpp_obj$save(as.character(path))
-    },
-    
-    # Compatibility
-    is_valid = function() {
-      cpp_obj$is_valid()
-    },
-    
-    get_ptr = function() {
-      ptr
-    },
-    
-    get_xptr = function() {
-      ptr
-    },
-    
-    # Print method
-    print = function() {
-      cat("<Praat FormantTier>\n")
-      if (!cpp_obj$is_valid()) {
-        cat("  [Invalid or deleted object]\n")
-      } else {
-        cat(sprintf("  Time domain: %.3f - %.3f seconds\n", 
-                    cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-        cat("  Number of points:", cpp_obj$get_number_of_points(), "\n")
-        nf_min <- cpp_obj$get_min_num_formants()
-        nf_max <- cpp_obj$get_max_num_formants()
-        if (nf_min == nf_max) {
-          cat("  Formants per point:", nf_min, "\n")
-        } else {
-          cat("  Formants per point:", nf_min, "-", nf_max, "\n")
-        }
-      }
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("FormantTier", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# Static Methods (backward compatibility: FormantTier$from_formant)
+# ============================================================================
 
 #' Create FormantTier from Formant
 #' @param formant Formant object to convert
@@ -164,14 +163,11 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
 #' print(ft)
 #' }
 formanttier_from_formant <- function(formant) {
-  if (!inherits(formant, "Formant")) {
-    stop("formant must be a Formant object")
-  }
+  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
   ptr <- .formanttier_from_formant(formant$.xptr)
   FormantTier(.xptr = ptr)
 }
 
-# Static method support
 .formanttier_static_env <- new.env(parent = emptyenv())
 .formanttier_static_env$from_formant <- formanttier_from_formant
 .formanttier_static_env$new <- FormantTier
@@ -182,6 +178,10 @@ formanttier_from_formant <- function(formant) {
 }
 
 class(FormantTier) <- c("formanttier_constructor", "function")
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.FormantTier <- function(x, ...) {

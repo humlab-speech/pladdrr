@@ -163,6 +163,7 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   x$.mod$as_data_frame(include_strength, include_intensity)
 }
 
+#' @method $ PitchModule
 #' @export
 `$.PitchModule` <- function(x, name) {
   # First check for direct module properties/methods

@@ -6,97 +6,130 @@
 #' AmplitudeTier represents sound pressure amplitude in Pascals as a function of time,
 #' stored as a sequence of (time, value) points with interpolation between points.
 #'
+#' @name AmplitudeTier
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.amplitudetier_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query
+.amplitudetier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.amplitudetier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.amplitudetier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
+.amplitudetier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
+.amplitudetier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
+.amplitudetier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+
+# Modification (self-returning)
+.amplitudetier_methods$add_point <- function(.self, time, value) {
+  .self$.cpp$add_point(as.numeric(time), as.numeric(value))
+  invisible(.self)
+}
+.amplitudetier_methods$remove_point <- function(.self, index) {
+  .self$.cpp$remove_point(as.integer(index))
+  invisible(.self)
+}
+
+# Conversion
+.amplitudetier_methods$to_intensity_tier <- function(.self, threshold_db = -200) {
+  ptr <- .amplitudetier_to_intensitytier(.self$.xptr, threshold_db)
+  IntensityTier(.xptr = ptr)
+}
+
+# Shimmer measures
+.amplitudetier_methods$get_shimmer_local <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_local(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+.amplitudetier_methods$get_shimmer_local_db <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_local_db(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+.amplitudetier_methods$get_shimmer_apq3 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_apq3(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+.amplitudetier_methods$get_shimmer_apq5 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_apq5(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+.amplitudetier_methods$get_shimmer_apq11 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_apq11(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+.amplitudetier_methods$get_shimmer_dda <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
+  .amplitudetier_get_shimmer_dda(.self$.xptr, period_floor, period_ceiling, max_period_factor)
+}
+
+# Export
+.amplitudetier_methods$as_data_frame <- function(.self) {
+  n_points <- .self$.cpp$get_number_of_points()
+  if (n_points == 0) {
+    return(data.frame(time = numeric(0), amplitude_pa = numeric(0)))
+  }
+  times <- numeric(n_points)
+  values <- numeric(n_points)
+  for (i in seq_len(n_points)) {
+    times[i] <- .self$.cpp$get_time(i)
+    values[i] <- .self$.cpp$get_value(i)
+  }
+  data.frame(time = times, amplitude_pa = values)
+}
+.amplitudetier_methods$save <- function(.self, path) {
+  .amplitudetier_save(.self$.xptr, as.character(path))
+  invisible(.self)
+}
+
+# Utility
+.amplitudetier_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.amplitudetier_methods$print <- function(.self) {
+  cat("<Praat AmplitudeTier>\n")
+  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(sprintf("  Number of points: %d\n", .self$.cpp$get_number_of_points()))
+  invisible(.self)
+}
+
+.amplitudetier_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.amplitudetier_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ AmplitudeTier
+#' @export
+`$.AmplitudeTier` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  # .pointer compat alias (used by factory functions)
+  if (name == ".pointer") return(.subset2(x, ".xptr"))
+  method <- .amplitudetier_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 AmplitudeTier <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop("AmplitudeTier objects must be created using amplitude_tier_create() or related functions")
   }
-  
+
   tier_mod <- get_module("amplitudetier_module")
   cpp_obj <- tier_mod$RAmplitudeTier$new(.xptr)
-  
-  obj <- structure(list(
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = .xptr,
-    
-    # Query
-    get_start_time = function() cpp_obj$get_xmin(),
-    get_end_time = function() cpp_obj$get_xmax(),
-    get_number_of_points = function() cpp_obj$get_number_of_points(),
-    get_time_from_index = function(index) cpp_obj$get_time(as.integer(index)),
-    get_value_at_index = function(index) cpp_obj$get_value(as.integer(index)),
-    get_value_at_time = function(time) cpp_obj$get_value_at_time(as.numeric(time)),
-    
-    # Modification
-    add_point = function(time, value) {
-      cpp_obj$add_point(as.numeric(time), as.numeric(value))
-      invisible(obj)
-    },
-    remove_point = function(index) {
-      cpp_obj$remove_point(as.integer(index))
-      invisible(obj)
-    },
-    
-    # Conversion
-    to_intensity_tier = function(threshold_db = -200) {
-      ptr <- .amplitudetier_to_intensitytier(.xptr, threshold_db)
-      IntensityTier(.xptr = ptr)
-    },
-    
-    # Shimmer measures
-    get_shimmer_local = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_local(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    get_shimmer_local_db = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_local_db(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    get_shimmer_apq3 = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_apq3(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    get_shimmer_apq5 = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_apq5(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    get_shimmer_apq11 = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_apq11(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    get_shimmer_dda = function(period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-      .amplitudetier_get_shimmer_dda(.xptr, period_floor, period_ceiling, max_period_factor)
-    },
-    
-    # Export
-    as_data_frame = function() {
-      n_points <- cpp_obj$get_number_of_points()
-      if (n_points == 0) {
-        return(data.frame(time = numeric(0), amplitude_pa = numeric(0)))
-      }
-      times <- numeric(n_points)
-      values <- numeric(n_points)
-      for (i in seq_len(n_points)) {
-        times[i] <- cpp_obj$get_time(i)
-        values[i] <- cpp_obj$get_value(i)
-      }
-      data.frame(time = times, amplitude_pa = values)
-    },
-    save = function(path) {
-      .amplitudetier_save(.xptr, as.character(path))
-      invisible(obj)
-    },
-    
-    # Utility
-    get_xptr = function() .xptr,
-    .pointer = .xptr,  # For legacy compatibility
-    
-    # Print
-    print = function() {
-      cat("<Praat AmplitudeTier>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-      cat(sprintf("  Number of points: %d\n", cpp_obj$get_number_of_points()))
-      invisible(obj)
-    }
+    .xptr = .xptr
   ), class = c("AmplitudeTier", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
 
 #' @export
 print.AmplitudeTier <- function(x, ...) x$print()
@@ -104,7 +137,9 @@ print.AmplitudeTier <- function(x, ...) x$print()
 #' @export
 as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()
 
-# Factory functions
+# ============================================================================
+# Factory Functions
+# ============================================================================
 
 #' Create an empty AmplitudeTier
 #'

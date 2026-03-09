@@ -1,8 +1,12 @@
+# spectrum-wrapper.R - Spectrum object using shared dispatch table (pladdrr 4.8.33)
+# Architecture: minimal list + $.Spectrum S3 dispatch → shared method env
+
 #' Spectrum Object
 #'
 #' @description
 #' Praat Spectrum object with direct C++ module binding (complex FFT spectrum).
 #' Spectrum objects represent frequency-domain representations of sounds.
+#' Uses shared dispatch table for minimal memory per object.
 #'
 #' @section Methods:
 #'
@@ -56,265 +60,224 @@
 #' spec_df <- spectrum$as_data_frame()
 #' }
 #'
+#' @name Spectrum
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.spectrum_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# --- Query: Basic info ---
+.spectrum_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_fmin()
+.spectrum_methods$get_highest_frequency <- function(.self) .self$.cpp$get_fmax()
+.spectrum_methods$get_number_of_bins <- function(.self) .self$.cpp$get_n_bins()
+.spectrum_methods$get_frequency_step <- function(.self) .self$.cpp$get_df()
+.spectrum_methods$get_frequency_from_bin <- function(.self, bin) {
+  .self$.cpp$get_frequency_from_bin(as.integer(bin))
+}
+.spectrum_methods$get_bin_from_frequency <- function(.self, frequency) {
+  .self$.cpp$get_bin_from_frequency(as.numeric(frequency))
+}
+
+# --- Query: Values ---
+.spectrum_methods$get_real_value_in_bin <- function(.self, bin) {
+  .self$.cpp$get_real_value_at_bin(as.integer(bin))
+}
+.spectrum_methods$get_imaginary_value_in_bin <- function(.self, bin) {
+  .self$.cpp$get_imaginary_value_at_bin(as.integer(bin))
+}
+
+# --- Query: Band statistics ---
+.spectrum_methods$get_band_density <- function(.self, fmin, fmax) {
+  .self$.cpp$get_band_density(as.numeric(fmin), as.numeric(fmax))
+}
+.spectrum_methods$get_band_energy <- function(.self, fmin, fmax) {
+  .self$.cpp$get_band_energy(as.numeric(fmin), as.numeric(fmax))
+}
+
+# --- Query: Spectral moments ---
+.spectrum_methods$get_centre_of_gravity <- function(.self, power = 2.0) {
+  .self$.cpp$get_centre_of_gravity(as.numeric(power))
+}
+.spectrum_methods$get_standard_deviation <- function(.self, power = 2.0) {
+  .self$.cpp$get_standard_deviation(as.numeric(power))
+}
+.spectrum_methods$get_skewness <- function(.self, power = 2.0) {
+  .self$.cpp$get_skewness(as.numeric(power))
+}
+.spectrum_methods$get_kurtosis <- function(.self, power = 2.0) {
+  .self$.cpp$get_kurtosis(as.numeric(power))
+}
+.spectrum_methods$get_central_moment <- function(.self, moment, power = 2.0) {
+  .self$.cpp$get_central_moment(as.numeric(moment), as.numeric(power))
+}
+
+# --- Batch/Vectorized ---
+.spectrum_methods$get_frequencies_vector <- function(.self) .self$.cpp$get_frequencies_vector()
+.spectrum_methods$get_power_vector <- function(.self) .self$.cpp$get_power_vector()
+.spectrum_methods$get_real_vector <- function(.self) .self$.cpp$get_real_vector()
+.spectrum_methods$get_imaginary_vector <- function(.self) .self$.cpp$get_imaginary_vector()
+.spectrum_methods$get_band_energies <- function(.self, fmins, fmaxs) {
+  .self$.cpp$get_band_energies(as.numeric(fmins), as.numeric(fmaxs))
+}
+.spectrum_methods$get_band_densities <- function(.self, fmins, fmaxs) {
+  .self$.cpp$get_band_densities(as.numeric(fmins), as.numeric(fmaxs))
+}
+.spectrum_methods$get_power_at_frequencies <- function(.self, frequencies) {
+  .self$.cpp$get_power_at_frequencies(as.numeric(frequencies))
+}
+
+# --- Modification (in-place, self-returning) ---
+.spectrum_methods$pass_hann_band <- function(.self, fmin, fmax, smooth = 100) {
+  .spectrum_pass_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+  invisible(.self)
+}
+.spectrum_methods$stop_hann_band <- function(.self, fmin, fmax, smooth = 100) {
+  .spectrum_stop_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+  invisible(.self)
+}
+.spectrum_methods$formula <- function(.self, formula) {
+  .spectrum_formula(.self$.xptr, formula)
+  invisible(.self)
+}
+.spectrum_methods$apply_pre_emphasis <- function(.self, from_frequency = 50) {
+  .spectrum_apply_pre_emphasis(.self$.xptr, as.numeric(from_frequency))
+  invisible(.self)
+}
+.spectrum_methods$multiply_by_frequency <- function(.self, power = 1.0) {
+  .spectrum_multiply_by_frequency(.self$.xptr, as.numeric(power))
+  invisible(.self)
+}
+
+# --- Modification (returns new object) ---
+.spectrum_methods$cepstral_smoothing <- function(.self, bandwidth) {
+  ptr <- .spectrum_cepstral_smoothing(.self$.xptr, as.numeric(bandwidth))
+  Spectrum(.xptr = ptr)
+}
+.spectrum_methods$shift_frequencies <- function(.self, shift_by, new_maximum_frequency = 0,
+                                                interpolation_depth = 50L) {
+  if (new_maximum_frequency <= 0) new_maximum_frequency <- .self$.cpp$get_fmax()
+  ptr <- .spectrum_shift_frequencies(.self$.xptr, as.numeric(shift_by),
+    as.numeric(new_maximum_frequency), as.integer(interpolation_depth))
+  Spectrum(.xptr = ptr)
+}
+
+# --- Transform ---
+.spectrum_methods$to_sound <- function(.self) {
+  ptr <- .spectrum_to_sound(.self$.xptr)
+  Sound(.xptr = ptr)
+}
+.spectrum_methods$to_ltas <- function(.self, bandwidth = NULL) {
+  if (is.null(bandwidth)) {
+    ptr <- .spectrum_to_ltas_1to1(.self$.xptr)
+    return(Ltas(.xptr = ptr))
+  }
+  dx <- .self$.cpp$get_df()
+  if (bandwidth <= dx) {
+    stop(sprintf(
+      "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping.",
+      bandwidth, dx, dx
+    ))
+  }
+  ptr <- .self$.cpp$to_ltas_ptr(as.numeric(bandwidth))
+  Ltas(.xptr = ptr)
+}
+.spectrum_methods$to_ltas_1to1 <- function(.self) {
+  ptr <- .spectrum_to_ltas_1to1(.self$.xptr)
+  Ltas(.xptr = ptr)
+}
+.spectrum_methods$to_powercepstrum <- function(.self) {
+  .Deprecated("to_power_cepstrum", package = "pladdrr",
+              msg = "to_powercepstrum() is deprecated. Use to_power_cepstrum() instead.")
+  ptr <- .spectrum_to_powercepstrum(.self$.xptr)
+  PowerCepstrum(.xptr = ptr)
+}
+.spectrum_methods$to_power_cepstrum <- function(.self) {
+  ptr <- .spectrum_to_powercepstrum(.self$.xptr)
+  PowerCepstrum(.xptr = ptr)
+}
+.spectrum_methods$to_cepstrum <- function(.self) {
+  xptr <- .spectrum_to_cepstrum(.self$.xptr)
+  Cepstrum(.xptr = xptr)
+}
+.spectrum_methods$to_cepstrum_hillenbrand <- function(.self) {
+  xptr <- .spectrum_to_cepstrum_hillenbrand(.self$.xptr)
+  Cepstrum(.xptr = xptr)
+}
+.spectrum_methods$to_excitation <- function(.self, erb_density = 0.1) {
+  stopifnot(
+    "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
+  )
+  ptr <- .spectrum_to_excitation(.self$.xptr, as.numeric(erb_density))
+  Excitation(.xptr = ptr)
+}
+
+# --- Export ---
+.spectrum_methods$as_matrix <- function(.self) .spectrum_as_matrix(.self$.xptr)
+.spectrum_methods$as_data_frame <- function(.self) {
+  mat <- .spectrum_as_matrix(.self$.xptr)
+  nbins <- ncol(mat)
+  freq <- vapply(seq_len(nbins), function(i) .self$.cpp$get_frequency_from_bin(i), numeric(1))
+  real_vals <- mat[1, ]
+  imag_vals <- mat[2, ]
+  power <- real_vals^2 + imag_vals^2
+  phase <- atan2(imag_vals, real_vals)
+  data.frame(
+    bin = seq_len(nbins),
+    frequency = freq,
+    real = real_vals,
+    imaginary = imag_vals,
+    power = power,
+    phase = phase,
+    stringsAsFactors = FALSE
+  )
+}
+
+# --- Print ---
+.spectrum_methods$print <- function(.self) {
+  cat("<Praat Spectrum>\n")
+  cat(sprintf("  Frequency range: %.2f - %.2f Hz\n",
+              .self$.cpp$get_fmin(),
+              .self$.cpp$get_fmax()))
+  cat(sprintf("  Number of bins: %d\n", .self$.cpp$get_n_bins()))
+  cat(sprintf("  Frequency step: %.2f Hz\n", .self$.cpp$get_df()))
+  invisible(.self)
+}
+
+.spectrum_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.spectrum_methods, bindings = TRUE)
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 Spectrum <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop("Spectrum objects must be created from Sound using to_spectrum()")
   }
-  
-  # Load module
   spectrum_mod <- get_module("spectrum_module")
   cpp_obj <- spectrum_mod$RSpectrum$new(.xptr)
-  
-  obj <- structure(list(
-    .cpp = cpp_obj,
-    .xptr = .xptr,  # Keep for legacy exports
-    
-    # Query: Basic info
-    get_lowest_frequency = function() {
-      cpp_obj$get_fmin()
-    },
-    
-    get_highest_frequency = function() {
-      cpp_obj$get_fmax()
-    },
-    
-    get_number_of_bins = function() {
-      cpp_obj$get_n_bins()
-    },
-    
-    get_frequency_step = function() {
-      cpp_obj$get_df()
-    },
-    
-    get_frequency_from_bin = function(bin) {
-      cpp_obj$get_frequency_from_bin(as.integer(bin))
-    },
-    
-    get_bin_from_frequency = function(frequency) {
-      cpp_obj$get_bin_from_frequency(as.numeric(frequency))
-    },
-    
-    # Query: Values
-    get_real_value_in_bin = function(bin) {
-      cpp_obj$get_real_value_at_bin(as.integer(bin))
-    },
-    
-    get_imaginary_value_in_bin = function(bin) {
-      cpp_obj$get_imaginary_value_at_bin(as.integer(bin))
-    },
-    
-    # Query: Band statistics
-    get_band_density = function(fmin, fmax) {
-      cpp_obj$get_band_density(as.numeric(fmin), as.numeric(fmax))
-    },
-    
-    get_band_energy = function(fmin, fmax) {
-      cpp_obj$get_band_energy(as.numeric(fmin), as.numeric(fmax))
-    },
-    
-    # Query: Spectral moments
-    get_centre_of_gravity = function(power = 2.0) {
-      cpp_obj$get_centre_of_gravity(as.numeric(power))
-    },
-    
-    get_standard_deviation = function(power = 2.0) {
-      cpp_obj$get_standard_deviation(as.numeric(power))
-    },
-    
-    get_skewness = function(power = 2.0) {
-      cpp_obj$get_skewness(as.numeric(power))
-    },
-    
-    get_kurtosis = function(power = 2.0) {
-      cpp_obj$get_kurtosis(as.numeric(power))
-    },
-    
-    get_central_moment = function(moment, power = 2.0) {
-      cpp_obj$get_central_moment(as.numeric(moment), as.numeric(power))
-    },
-
-    # === Batch/Vectorized Operations (150x speedup for Pharyngeal analysis) ===
-    get_frequencies_vector = function() {
-      cpp_obj$get_frequencies_vector()
-    },
-
-    get_power_vector = function() {
-      cpp_obj$get_power_vector()
-    },
-
-    get_real_vector = function() {
-      cpp_obj$get_real_vector()
-    },
-
-    get_imaginary_vector = function() {
-      cpp_obj$get_imaginary_vector()
-    },
-
-    get_band_energies = function(fmins, fmaxs) {
-      cpp_obj$get_band_energies(
-        as.numeric(fmins),
-        as.numeric(fmaxs)
-      )
-    },
-
-    get_band_densities = function(fmins, fmaxs) {
-      cpp_obj$get_band_densities(
-        as.numeric(fmins),
-        as.numeric(fmaxs)
-      )
-    },
-
-    # Get power values at specific frequencies
-    # @param frequencies Numeric vector of frequencies to query
-    # @return Numeric vector of power values at specified frequencies
-    get_power_at_frequencies = function(frequencies) {
-      cpp_obj$get_power_at_frequencies(as.numeric(frequencies))
-    },
-
-    # Modification
-    pass_hann_band = function(fmin, fmax, smooth = 100) {
-      .spectrum_pass_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
-      invisible(obj)
-    },
-    
-    stop_hann_band = function(fmin, fmax, smooth = 100) {
-      .spectrum_stop_hann_band(.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
-      invisible(obj)
-    },
-    
-    cepstral_smoothing = function(bandwidth) {
-      ptr <- .spectrum_cepstral_smoothing(.xptr, as.numeric(bandwidth))
-      Spectrum(.xptr = ptr)
-    },
-
-    shift_frequencies = function(shift_by, new_maximum_frequency = 0, interpolation_depth = 50L) {
-      if (new_maximum_frequency <= 0) new_maximum_frequency <- obj$get_highest_frequency()
-      ptr <- .spectrum_shift_frequencies(.xptr, as.numeric(shift_by),
-        as.numeric(new_maximum_frequency), as.integer(interpolation_depth))
-      Spectrum(.xptr = ptr)
-    },
-    
-    formula = function(formula) {
-      .spectrum_formula(.xptr, formula)
-      invisible(obj)
-    },
-    
-    apply_pre_emphasis = function(from_frequency = 50) {
-      .spectrum_apply_pre_emphasis(.xptr, as.numeric(from_frequency))
-      invisible(obj)
-    },
-    
-    multiply_by_frequency = function(power = 1.0) {
-      .spectrum_multiply_by_frequency(.xptr, as.numeric(power))
-      invisible(obj)
-    },
-    
-    # Transform
-    to_sound = function() {
-      ptr <- .spectrum_to_sound(.xptr)
-      Sound(.xptr = ptr)
-    },
-    
-    # Praat-standard API: to_ltas(bandwidth) - converts Spectrum to LTAS
-    # If bandwidth is NULL, uses 1-to-1 mapping (no averaging)
-    to_ltas = function(bandwidth = NULL) {
-      if (is.null(bandwidth)) {
-        # 1-to-1 mapping - works on any spectrum including windowed/filtered
-        ptr <- .spectrum_to_ltas_1to1(.xptr)
-        return(Ltas(.xptr = ptr))
-      }
-      dx <- cpp_obj$get_df()
-      if (bandwidth <= dx) {
-        stop(sprintf(
-          "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping.",
-          bandwidth, dx, dx
-        ))
-      }
-      ptr <- cpp_obj$to_ltas_ptr(as.numeric(bandwidth))
-      Ltas(.xptr = ptr)
-    },
-
-    # Legacy alias for backwards compatibility (1-to-1 mapping)
-    to_ltas_1to1 = function() {
-      ptr <- .spectrum_to_ltas_1to1(.xptr)
-      Ltas(.xptr = ptr)
-    },
-    
-    to_powercepstrum = function() {
-      .Deprecated("to_power_cepstrum", package = "pladdrr",
-                  msg = "to_powercepstrum() is deprecated. Use to_power_cepstrum() instead.")
-      ptr <- .spectrum_to_powercepstrum(.xptr)
-      PowerCepstrum(.xptr = ptr)
-    },
-    # Preferred snake_case name
-    to_power_cepstrum = function() {
-      ptr <- .spectrum_to_powercepstrum(.xptr)
-      PowerCepstrum(.xptr = ptr)
-    },
-
-    to_cepstrum = function() {
-      xptr <- .spectrum_to_cepstrum(.xptr)
-      Cepstrum(.xptr = xptr)
-    },
-    
-    to_cepstrum_hillenbrand = function() {
-      xptr <- .spectrum_to_cepstrum_hillenbrand(.xptr)
-      Cepstrum(.xptr = xptr)
-    },
-    
-    to_excitation = function(erb_density = 0.1) {
-      stopifnot(
-        "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
-      )
-      ptr <- .spectrum_to_excitation(.xptr, as.numeric(erb_density))
-      Excitation(.xptr = ptr)
-    },
-    
-    # Export
-    as_matrix = function() {
-      .spectrum_as_matrix(.xptr)
-    },
-    
-    as_data_frame = function() {
-      mat <- obj$as_matrix()
-      nbins <- ncol(mat)
-      
-      freq <- vapply(seq_len(nbins), function(i) obj$get_frequency_from_bin(i), numeric(1))
-      real_vals <- mat[1, ]
-      imag_vals <- mat[2, ]
-      
-      power <- real_vals^2 + imag_vals^2
-      phase <- atan2(imag_vals, real_vals)
-      
-      data.frame(
-        bin = seq_len(nbins),
-        frequency = freq,
-        real = real_vals,
-        imaginary = imag_vals,
-        power = power,
-        phase = phase,
-        stringsAsFactors = FALSE
-      )
-    },
-    
-    # Display
-    print = function() {
-      cat("<Praat Spectrum>\n")
-      cat(sprintf("  Frequency range: %.2f - %.2f Hz\n", 
-                  cpp_obj$get_fmin(), 
-                  cpp_obj$get_fmax()))
-      cat(sprintf("  Number of bins: %d\n", cpp_obj$get_n_bins()))
-      cat(sprintf("  Frequency step: %.2f Hz\n", cpp_obj$get_df()))
-      invisible(obj)
-    }
-    
-  ), class = c("Spectrum", "PraatObject"))
-  
-  obj
+  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Spectrum", "PraatObject"))
 }
 
-# S3 methods
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ Spectrum
+#' @export
+`$.Spectrum` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  if (name == ".pointer") return(.subset2(x, ".xptr"))
+  method <- .spectrum_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
 #' @export
 print.Spectrum <- function(x, ...) {
   x$print()

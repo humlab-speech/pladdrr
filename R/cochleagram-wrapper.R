@@ -6,6 +6,91 @@
 #' A Cochleagram represents the output of a bank of auditory filters arranged
 #' along the basilar membrane. Frequency is measured in Bark units (0-25.6 Bark).
 #'
+#' @name Cochleagram
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.cochleagram_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Time domain
+.cochleagram_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.cochleagram_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.cochleagram_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.cochleagram_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.cochleagram_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
+.cochleagram_methods$get_time_from_column <- function(.self, i_col) {
+  .self$.cpp$get_time_from_column(as.integer(i_col))
+}
+
+# Query - Frequency domain
+.cochleagram_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_ymin()
+.cochleagram_methods$get_highest_frequency <- function(.self) .self$.cpp$get_ymax()
+.cochleagram_methods$get_number_of_frequency_bands <- function(.self) {
+  .self$.cpp$get_number_of_frequency_bands()
+}
+.cochleagram_methods$get_frequency_step <- function(.self) .self$.cpp$get_frequency_step()
+.cochleagram_methods$get_frequency_from_row <- function(.self, i_row) {
+  .self$.cpp$get_frequency_from_row(as.integer(i_row))
+}
+
+# Query - Values
+.cochleagram_methods$get_value_at_time_and_frequency <- function(.self, time, freq_bark) {
+  .self$.cpp$get_value_at_time_and_frequency(as.numeric(time), as.numeric(freq_bark))
+}
+
+# Transformations
+.cochleagram_methods$to_excitation <- function(.self, time) {
+  xptr <- .cochleagram_to_excitation(.self$.xptr, as.numeric(time))
+  Excitation(.xptr = xptr)
+}
+
+.cochleagram_methods$get_difference <- function(.self, other, tmin = 0, tmax = 0) {
+  if (!inherits(other, "Cochleagram")) stop("other must be a Cochleagram object")
+  .self$.cpp$get_difference(other$.xptr, as.numeric(tmin), as.numeric(tmax))
+}
+
+# Export
+.cochleagram_methods$as_matrix <- function(.self) {
+  .self$.cpp$as_matrix()
+}
+
+# Utility
+.cochleagram_methods$get_xptr <- function(.self) .self$.xptr
+
+# Print
+.cochleagram_methods$print <- function(.self) {
+  cat("<Praat Cochleagram>\n")
+  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(sprintf("  Frequency range: %.2f to %.2f Bark\n", .self$.cpp$get_ymin(), .self$.cpp$get_ymax()))
+  cat(sprintf("  %d frames x %d frequency bands\n",
+              .self$.cpp$get_number_of_frames(), .self$.cpp$get_number_of_frequency_bands()))
+  invisible(.self)
+}
+
+.cochleagram_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.cochleagram_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ Cochleagram
+#' @export
+`$.Cochleagram` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .cochleagram_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 Cochleagram <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
@@ -15,66 +100,10 @@ Cochleagram <- function(.xptr) {
   coch_mod <- get_module("cochleagram_module")
   cpp_obj <- coch_mod$RCochleagram$new(.xptr)
   
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = .xptr,
-    
-    # Query - Time domain
-    get_start_time = function() cpp_obj$get_xmin(),
-    get_end_time = function() cpp_obj$get_xmax(),
-    get_duration = function() cpp_obj$get_duration(),
-    get_number_of_frames = function() cpp_obj$get_number_of_frames(),
-    get_time_step = function() cpp_obj$get_time_step(),
-    get_time_from_column = function(i_col) cpp_obj$get_time_from_column(as.integer(i_col)),
-    
-    # Query - Frequency domain
-    get_lowest_frequency = function() cpp_obj$get_ymin(),
-    get_highest_frequency = function() cpp_obj$get_ymax(),
-    get_number_of_frequency_bands = function() cpp_obj$get_number_of_frequency_bands(),
-    get_frequency_step = function() cpp_obj$get_frequency_step(),
-    get_frequency_from_row = function(i_row) cpp_obj$get_frequency_from_row(as.integer(i_row)),
-    
-    # Query - Values
-    get_value_at_time_and_frequency = function(time, freq_bark) {
-      cpp_obj$get_value_at_time_and_frequency(as.numeric(time), as.numeric(freq_bark))
-    },
-    
-    # Transformations
-    to_excitation = function(time) {
-      xptr <- .cochleagram_to_excitation(.xptr, as.numeric(time))
-      Excitation(.xptr = xptr)
-    },
-    
-    get_difference = function(other, tmin = 0, tmax = 0) {
-      if (!inherits(other, "Cochleagram")) stop("other must be a Cochleagram object")
-      cpp_obj$get_difference(other$.xptr, as.numeric(tmin), as.numeric(tmax))
-    },
-    
-    # Export
-    as_matrix = function() {
-      mat_list <- cpp_obj$as_matrix()
-      list(
-        values = mat_list$values,
-        times = mat_list$times,
-        frequencies = mat_list$frequencies
-      )
-    },
-    
-    # Utility
-    get_xptr = function() .xptr,
-    
-    # Print
-    print = function() {
-      cat("<Praat Cochleagram>\n")
-      cat(sprintf("  Time domain: %.3f to %.3f s\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-      cat(sprintf("  Frequency range: %.2f to %.2f Bark\n", cpp_obj$get_ymin(), cpp_obj$get_ymax()))
-      cat(sprintf("  %d frames × %d frequency bands\n", 
-                  cpp_obj$get_number_of_frames(), cpp_obj$get_number_of_frequency_bands()))
-      invisible(obj)
-    }
+    .xptr = .xptr
   ), class = c("Cochleagram", "PraatObject"))
-  
-  obj
 }
 
 #' @export

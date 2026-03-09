@@ -1,13 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.32 (2026-03-09)
+**Version:** 4.8.33 (2026-03-09)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + Sound shared dispatch table + Symbol registration fix
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix
 
 ---
 
 
 ## What's New in v4.8.x
+
+- **v4.8.33:** All 35 wrappers ported to shared dispatch table pattern. Every wrapper (34 new + Sound from v4.8.32) now uses a shared `.{type}_methods` environment + `$.Type` S3 dispatch instead of per-instance closures. Zero new test regressions. Eliminates ~832 closure definitions across the codebase. Also: added `is_valid` method to 22 wrappers that lost it during porting, fixed `cochleagram$as_matrix()` return type (was trying `mat_list$values` on plain matrix), fixed `cepstrum$to_sound()` R6 call `Sound$new(xptr)` → `Sound(.xptr = xptr)`, added `@method $ Type` roxygen tags to 13 files, bumped NAMESPACE to 44 `S3method("$", ...)` entries.
 
 - **v4.8.32:** Sound shared dispatch table + critical bugfixes. (1) `sound-wrapper.R`: replaced per-instance closure list (~107 closures/object, ~120KB) with shared `.sound_methods` environment + `$.Sound` S3 dispatch. Creation 9x faster (23μs→2.6μs), memory 160x less (120KB→0.7KB). Method call ~2.5x slower per-call (0.4μs→1.0μs), negligible vs Praat computation. (2) `module_init.cpp`/`RcppExports.cpp`: fixed `R_registerRoutines` overwrite bug — the `[[Rcpp::init]]` hook was calling `R_registerRoutines` a second time with only 38 module entries, replacing the 777 Rcpp-exported entries. Now builds a combined table (777 + 38 = 815 entries) in a single registration call. This was breaking package load since v4.8.30 (Phase 1 commit `d99be82`). (3) `Makevars.in`: added missing `simd_utils.cpp` — the `configure` script generates `src/Makevars` from `src/Makevars.in` on every install, so fixing `Makevars` directly never persisted. (4) `NAMESPACE`: registered `S3method("$", Sound)` for shared dispatch.
 
@@ -137,61 +139,42 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ### Object Structure (Function Factory Pattern)
 
-**All 30 core objects (except PraatInterpreter) use this pattern:**
+**All 35 wrappers use the Shared Dispatch Table pattern (v4.8.33):**
 
-All 30 core objects use the high-performance module pattern (function factory wrapping Rcpp modules). PraatInterpreter is the only R6Class — it requires persistent mutable state and reference semantics.
-
-**Sound uses the Shared Dispatch Table pattern (v4.8.32+):**
+All wrappers use a shared `.{type}_methods` environment + `$.Type` S3 dispatch. PraatInterpreter is the only R6Class — it requires persistent mutable state and reference semantics.
 
 ```r
-# Sound: shared method table + $.Sound S3 dispatch (v4.8.32+)
-# .sound_methods environment contains all ~107 methods (shared, not per-instance)
-# Each method takes .self as first arg: function(.self, ...) { ... }
-.sound_methods <- new.env(hash = TRUE, parent = emptyenv())
-.sound_methods$get_duration <- function(.self) .self$.cpp$get_duration()
-.sound_methods$to_pitch <- function(.self, ...) { ... }
-# ... 105 more methods
-lockEnvironment(.sound_methods, bindings = TRUE)
+# Shared method table (one per type, not per instance)
+.pitch_methods <- new.env(hash = TRUE, parent = emptyenv())
+.pitch_methods$get_mean <- function(.self, ...) .self$.cpp$get_mean(...)
+.pitch_methods$to_point_process <- function(.self, ...) { ... }
+# ... all methods take .self as first arg
+lockEnvironment(.pitch_methods, bindings = TRUE)
 
 # Constructor: minimal list, no closures
-Sound <- function(path = NULL, .xptr = NULL) {
-  # ... resolve ptr from path or .xptr ...
-  snd_mod <- get_module("sound_module")
-  cpp_snd <- snd_mod$RSound$new(ptr)
-  structure(list(.xptr = ptr, .cpp = cpp_snd), class = c("Sound", "PraatObject"))
+Pitch <- function(.xptr = NULL) {
+  pitch_mod <- get_module("pitch_module")
+  cpp_obj <- pitch_mod$RPitch$new(.xptr)
+  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Pitch", "PraatObject"))
 }
 
-# S3 dispatch: $.Sound intercepts field/method access
-`$.Sound` <- function(x, name) {
+# S3 dispatch: $.Pitch intercepts field/method access
+`$.Pitch` <- function(x, name) {
   val <- .subset2(x, name)       # Fast path: .xptr, .cpp
   if (!is.null(val)) return(val)
-  if (name == ".pointer") return(.subset2(x, ".xptr"))  # Compat alias
-  method <- .sound_methods[[name]]
+  method <- .pitch_methods[[name]]
   if (is.null(method)) return(NULL)
   function(...) method(x, ...)    # Bind self, return closure
 }
 ```
 
-**Other wrappers still use per-instance closure pattern:**
+**Special cases:** Some wrappers have additional fields or no `.xptr`:
+- **PowerCepstrogram, FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
+- **Electroglottogram**: triple class `c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compat alias
+- **AmplitudeTier**: `.pointer` compat alias in `$` dispatch (used by factory functions)
+- **PitchTier, FormantTier, LongSound, VocalTract**: static `$.{type}_constructor` for class methods
 
-```r
-# MODERN: Function factory (v2.0+) — used by Pitch, Formant, etc.
-Pitch <- function(.xptr = NULL) {
-  pitch_mod <- get_module("pitch_module")
-  cpp_obj <- pitch_mod$RPitch$new(.xptr)
-  
-  structure(list(
-    .xptr = .xptr,                              # External pointer
-    .cpp = cpp_obj,                              # C++ module object
-    get_mean = function(...) cpp_obj$get_mean(...),  # Direct C++ call
-    # ... all methods
-  ), class = c("Pitch", "PraatObject"))
-}
-```
-
-**Converted Objects (34/35):** Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram, Harmonicity, PointProcess, TextGrid, Ltas, PowerCepstrum, PowerCepstrogram, LPC, Cochleagram, Excitation, Cepstrum, Electroglottogram, Matrix, Table, VocalTract, PitchTier, FormantTier, FormantGrid, IntensityTier, AmplitudeTier, DurationTier, Manipulation, LongSound, KlattGrid, FormantPath, ComplexSpectrogram, Polygon, MFCC, LFCC, FormantModeler, PCA, Discriminant
-
-**Intentionally R6 (1/31):** PraatInterpreter (requires persistent mutable state for script execution)
+**Intentionally R6 (1/36):** PraatInterpreter (requires persistent mutable state for script execution)
 
 ---
 
@@ -271,7 +254,7 @@ Pitch <- function(.xptr = NULL) {
 |------|-----------------|---------|
 | `PraatInterpreter` | `PraatInterpreter$new()` | Persistent Praat script interpreter with variable state |
 
-**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/31). All other 30 objects use the high-performance module pattern. This is intentional — the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference).
+**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/36). All other 35 objects use the shared dispatch table pattern (v4.8.33). This is intentional — the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference).
 
 **Key Methods:**
 - `run(script)` - Execute Praat script

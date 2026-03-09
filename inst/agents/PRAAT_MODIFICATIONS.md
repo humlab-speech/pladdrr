@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-03-09
-**Package Version:** 4.8.32
+**Package Version:** 4.8.33
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,12 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.33 All 35 wrappers on shared dispatch tables (2026-03-09)
+
+**Summary:** No Praat C++ source changes. All 34 remaining wrappers (everything except Sound, which was done in v4.8.32) ported from per-instance closure pattern to shared dispatch table pattern. Also: 22 missing `is_valid` methods added, cochleagram `as_matrix()` return type fixed, cepstrum `Sound$new(xptr)` → `Sound(.xptr = xptr)` bug fixed, NAMESPACE updated (8→44 `S3method` entries), version bumped to 4.8.33.
+
+---
 
 ### v4.8.32 Sound shared dispatch + symbol registration fix + Makevars.in fix (2026-03-09)
 

@@ -6,8 +6,144 @@
 #' Table objects store tabular data with named columns and support various
 #' statistical operations.
 #'
+#' @name Table
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.table_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Structure
+.table_methods$get_number_of_rows <- function(.self) .self$.cpp$get_number_of_rows()
+.table_methods$get_number_of_columns <- function(.self) .self$.cpp$get_number_of_columns()
+.table_methods$get_column_label <- function(.self, col) .self$.cpp$get_column_label(as.integer(col))
+.table_methods$get_column_index <- function(.self, label) .self$.cpp$get_column_index(as.character(label))
+.table_methods$get_column_names <- function(.self) .self$.cpp$get_column_names()
+
+# Modification - Structure
+.table_methods$set_column_label <- function(.self, col, label) {
+  .self$.cpp$set_column_label(as.integer(col), as.character(label))
+  invisible(.self)
+}
+.table_methods$append_row <- function(.self) {
+  .self$.cpp$append_row()
+  invisible(.self)
+}
+.table_methods$append_column <- function(.self, label) {
+  .self$.cpp$append_column(as.character(label))
+  invisible(.self)
+}
+.table_methods$insert_row <- function(.self, row) {
+  .self$.cpp$insert_row(as.integer(row))
+  invisible(.self)
+}
+.table_methods$insert_column <- function(.self, col, label) {
+  .self$.cpp$insert_column(as.integer(col), as.character(label))
+  invisible(.self)
+}
+
+# Query/Set - Values
+.table_methods$get_numeric_value <- function(.self, row, column) {
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .self$.cpp$get_numeric_value(as.integer(row), col_idx)
+}
+.table_methods$get_string_value <- function(.self, row, column) {
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .self$.cpp$get_string_value(as.integer(row), col_idx)
+}
+.table_methods$set_numeric_value <- function(.self, row, column, value) {
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .self$.cpp$set_numeric_value(as.integer(row), col_idx, as.numeric(value))
+  invisible(.self)
+}
+.table_methods$set_string_value <- function(.self, row, column, value) {
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .self$.cpp$set_string_value(as.integer(row), col_idx, as.character(value))
+  invisible(.self)
+}
+
+# Statistics
+.table_methods$get_mean <- function(.self, column) {
+  .table_get_mean(.self$.xptr, as.character(column))
+}
+.table_methods$get_standard_deviation <- function(.self, column) {
+  .table_get_stdev(.self$.xptr, as.character(column))
+}
+
+# Export
+.table_methods$as_data_frame <- function(.self) .table_to_data_frame(.self$.xptr)
+.table_methods$save <- function(.self, path) {
+  .table_save(.self$.xptr, as.character(path))
+  invisible(.self)
+}
+
+# Sort
+.table_methods$sort_rows <- function(.self, columns) {
+  .table_sort_rows(.self$.xptr, as.character(columns))
+  invisible(.self)
+}
+
+# Row extraction
+.table_methods$extract_rows_where_number <- function(.self, column, which, criterion) {
+  if (is.character(column)) {
+    column <- .self$.cpp$get_column_index(column)
+  }
+  tbl_ptr <- .table_extract_rows_where_column_number(
+    .self$.xptr, as.integer(column), as.integer(which), as.numeric(criterion)
+  )
+  Table(.xptr = tbl_ptr)
+}
+
+.table_methods$extract_rows_where_string <- function(.self, column, which, criterion) {
+  if (is.character(column)) {
+    column <- .self$.cpp$get_column_index(column)
+  }
+  tbl_ptr <- .table_extract_rows_where_column_string(
+    .self$.xptr, as.integer(column), as.integer(which), as.character(criterion)
+  )
+  Table(.xptr = tbl_ptr)
+}
+
+# Utility
+.table_methods$get_xptr <- function(.self) .self$.xptr
+
+# Print
+.table_methods$print <- function(.self) {
+  cat("<Praat Table>\n")
+  cat(sprintf("  Dimensions: %d rows x %d columns\n",
+              .self$.cpp$get_number_of_rows(), .self$.cpp$get_number_of_columns()))
+  col_names <- .self$.cpp$get_column_names()
+  if (length(col_names) > 0) {
+    cat(sprintf("  Columns: %s\n", paste(col_names, collapse = ", ")))
+  }
+  invisible(.self)
+}
+
+.table_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.table_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ Table
 #' @export
-Table <- function(numberOfRows = NULL, numberOfColumns = NULL, 
+`$.Table` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .table_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
+#' @export
+Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
                   columnNames = NULL, .xptr = NULL) {
   
   if (!is.null(.xptr)) {
@@ -30,129 +166,10 @@ Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
   tbl_mod <- get_module("table_module")
   cpp_obj <- tbl_mod$RTable$new(ptr)
   
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query - Structure
-    get_number_of_rows = function() cpp_obj$get_number_of_rows(),
-    get_number_of_columns = function() cpp_obj$get_number_of_columns(),
-    get_column_label = function(col) cpp_obj$get_column_label(as.integer(col)),
-    get_column_index = function(label) cpp_obj$get_column_index(as.character(label)),
-    get_column_names = function() cpp_obj$get_column_names(),
-    
-    # Modification - Structure
-    set_column_label = function(col, label) {
-      cpp_obj$set_column_label(as.integer(col), as.character(label))
-      invisible(obj)
-    },
-    append_row = function() {
-      cpp_obj$append_row()
-      invisible(obj)
-    },
-    append_column = function(label) {
-      cpp_obj$append_column(as.character(label))
-      invisible(obj)
-    },
-    insert_row = function(row) {
-      cpp_obj$insert_row(as.integer(row))
-      invisible(obj)
-    },
-    insert_column = function(col, label) {
-      cpp_obj$insert_column(as.integer(col), as.character(label))
-      invisible(obj)
-    },
-    
-    # Query/Set - Values
-    get_numeric_value = function(row, column) {
-      col_idx <- if (is.character(column)) cpp_obj$get_column_index(column) else as.integer(column)
-      cpp_obj$get_numeric_value(as.integer(row), col_idx)
-    },
-    get_string_value = function(row, column) {
-      col_idx <- if (is.character(column)) cpp_obj$get_column_index(column) else as.integer(column)
-      cpp_obj$get_string_value(as.integer(row), col_idx)
-    },
-    set_numeric_value = function(row, column, value) {
-      col_idx <- if (is.character(column)) cpp_obj$get_column_index(column) else as.integer(column)
-      cpp_obj$set_numeric_value(as.integer(row), col_idx, as.numeric(value))
-      invisible(obj)
-    },
-    set_string_value = function(row, column, value) {
-      col_idx <- if (is.character(column)) cpp_obj$get_column_index(column) else as.integer(column)
-      cpp_obj$set_string_value(as.integer(row), col_idx, as.character(value))
-      invisible(obj)
-    },
-    
-    # Statistics
-    get_mean = function(column) {
-      .table_get_mean(ptr, as.character(column))
-    },
-    get_standard_deviation = function(column) {
-      .table_get_stdev(ptr, as.character(column))
-    },
-    
-    # Export
-    as_data_frame = function() {
-      .table_to_data_frame(ptr)
-    },
-    save = function(path) {
-      .table_save(ptr, as.character(path))
-      invisible(obj)
-    },
-    
-    # Sort rows by columns
-    sort_rows = function(columns) {
-      .table_sort_rows(ptr, as.character(columns))
-      invisible(obj)
-    },
-
-    # Extract rows where column meets numeric criterion
-    # column: Column name or number
-    # which: 1=equal, 2=not_equal, 3=less_than,
-    #   4=less_than_or_equal, 5=greater_than, 6=greater_than_or_equal
-    # criterion: Numeric value to compare against
-    extract_rows_where_number = function(column, which, criterion) {
-      if (is.character(column)) {
-        column <- cpp_obj$get_column_index(column)
-      }
-      tbl_ptr <- .table_extract_rows_where_column_number(
-        ptr, as.integer(column), as.integer(which), as.numeric(criterion)
-      )
-      Table(.xptr = tbl_ptr)
-    },
-
-    # Extract rows where column meets string criterion
-    # column: Column name or number
-    # which: 1=is_equal_to, 2=is_not_equal_to,
-    #   3=contains, 4=does_not_contain, 5=starts_with, 6=ends_with
-    # criterion: String to compare against
-    extract_rows_where_string = function(column, which, criterion) {
-      if (is.character(column)) {
-        column <- cpp_obj$get_column_index(column)
-      }
-      tbl_ptr <- .table_extract_rows_where_column_string(
-        ptr, as.integer(column), as.integer(which), as.character(criterion)
-      )
-      Table(.xptr = tbl_ptr)
-    },
-
-    # Utility
-    get_xptr = function() ptr,
-
-    # Print
-    print = function() {
-      cat("<Praat Table>\n")
-      cat(sprintf("  Dimensions: %d rows × %d columns\n", 
-                  cpp_obj$get_number_of_rows(), cpp_obj$get_number_of_columns()))
-      col_names <- cpp_obj$get_column_names()
-      if (length(col_names) > 0) {
-        cat(sprintf("  Columns: %s\n", paste(col_names, collapse = ", ")))
-      }
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("Table", "PraatObject"))
-  
-  obj
 }
 
 #' @export
@@ -174,7 +191,7 @@ as.data.frame.Table <- function(x, ...) x$as_data_frame()
 #' @seealso [Table] for object methods
 #' @export
 table_create <- function(numberOfRows, numberOfColumns = NULL, columnNames = NULL) {
-  Table(numberOfRows = numberOfRows, 
-        numberOfColumns = numberOfColumns, 
+  Table(numberOfRows = numberOfRows,
+        numberOfColumns = numberOfColumns,
         columnNames = columnNames)
 }

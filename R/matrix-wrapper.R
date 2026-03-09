@@ -5,6 +5,82 @@
 #' @details
 #' Matrix objects represent two-dimensional sampled data with x and y axes.
 #'
+#' @name Matrix
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.matrix_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Structure
+.matrix_methods$get_nx <- function(.self) .self$.cpp$get_nx()
+.matrix_methods$get_ny <- function(.self) .self$.cpp$get_ny()
+.matrix_methods$get_number_of_columns <- function(.self) .self$.cpp$get_ncol()
+.matrix_methods$get_number_of_rows <- function(.self) .self$.cpp$get_nrow()
+.matrix_methods$get_dx <- function(.self) .self$.cpp$get_dx()
+.matrix_methods$get_dy <- function(.self) .self$.cpp$get_dy()
+.matrix_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
+.matrix_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
+.matrix_methods$get_ymin <- function(.self) .self$.cpp$get_ymin()
+.matrix_methods$get_ymax <- function(.self) .self$.cpp$get_ymax()
+
+# Query - Values
+.matrix_methods$get_value <- function(.self, row, col) {
+  .self$.cpp$get_value(as.integer(row), as.integer(col))
+}
+.matrix_methods$set_value <- function(.self, row, col, value) {
+  .self$.cpp$set_value(as.integer(row), as.integer(col), as.numeric(value))
+  invisible(.self)
+}
+.matrix_methods$get_value_at_xy <- function(.self, x, y) {
+  .self$.cpp$get_value_at_xy(as.numeric(x), as.numeric(y))
+}
+
+# Statistics
+.matrix_methods$get_sum <- function(.self) .self$.cpp$get_sum()
+.matrix_methods$get_mean <- function(.self) .self$.cpp$get_mean()
+.matrix_methods$get_minimum <- function(.self) .self$.cpp$get_minimum()
+.matrix_methods$get_maximum <- function(.self) .self$.cpp$get_maximum()
+
+# Export
+.matrix_methods$as_matrix <- function(.self) .matrix_to_r(.self$.xptr)
+
+# Utility
+.matrix_methods$get_xptr <- function(.self) .self$.xptr
+
+# Print
+.matrix_methods$print <- function(.self) {
+  cat("<Praat Matrix>\n")
+  cat(sprintf("  Dimensions: %d rows x %d columns\n",
+              .self$.cpp$get_nrow(), .self$.cpp$get_ncol()))
+  cat(sprintf("  X domain: %.3f to %.3f\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(sprintf("  Y domain: %.3f to %.3f\n", .self$.cpp$get_ymin(), .self$.cpp$get_ymax()))
+  invisible(.self)
+}
+
+.matrix_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.matrix_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ Matrix
+#' @export
+`$.Matrix` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .matrix_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
                    ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
@@ -26,59 +102,10 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   mat_mod <- get_module("matrix_module")
   cpp_obj <- mat_mod$RMatrix$new(ptr)
   
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query - Structure
-    get_nx = function() cpp_obj$get_nx(),
-    get_ny = function() cpp_obj$get_ny(),
-    get_number_of_columns = function() cpp_obj$get_ncol(),
-    get_number_of_rows = function() cpp_obj$get_nrow(),
-    get_dx = function() cpp_obj$get_dx(),
-    get_dy = function() cpp_obj$get_dy(),
-    get_xmin = function() cpp_obj$get_xmin(),
-    get_xmax = function() cpp_obj$get_xmax(),
-    get_ymin = function() cpp_obj$get_ymin(),
-    get_ymax = function() cpp_obj$get_ymax(),
-    
-    # Query - Values
-    get_value = function(row, col) {
-      cpp_obj$get_value(as.integer(row), as.integer(col))
-    },
-    set_value = function(row, col, value) {
-      cpp_obj$set_value(as.integer(row), as.integer(col), as.numeric(value))
-      invisible(obj)
-    },
-    get_value_at_xy = function(x, y) {
-      cpp_obj$get_value_at_xy(as.numeric(x), as.numeric(y))
-    },
-    
-    # Statistics
-    get_sum = function() cpp_obj$get_sum(),
-    get_mean = function() cpp_obj$get_mean(),
-    get_minimum = function() cpp_obj$get_minimum(),
-    get_maximum = function() cpp_obj$get_maximum(),
-    
-    # Export
-    as_matrix = function() {
-      .matrix_to_r(ptr)
-    },
-    
-    # Utility
-    get_xptr = function() ptr,
-    
-    # Print
-    print = function() {
-      cat("<Praat Matrix>\n")
-      cat(sprintf("  Dimensions: %d rows × %d columns\n", cpp_obj$get_nrow(), cpp_obj$get_ncol()))
-      cat(sprintf("  X domain: %.3f to %.3f\n", cpp_obj$get_xmin(), cpp_obj$get_xmax()))
-      cat(sprintf("  Y domain: %.3f to %.3f\n", cpp_obj$get_ymin(), cpp_obj$get_ymax()))
-      invisible(obj)
-    }
+    .xptr = ptr
   ), class = c("Matrix", "PraatObject"))
-  
-  obj
 }
 
 #' @export

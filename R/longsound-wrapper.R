@@ -1,6 +1,5 @@
-# longsound-r6.R
+# longsound-wrapper.R
 # Function wrapper for Praat LongSound objects (streaming large audio files)
-# Converted from R6 to modules for pladdrr 2.0
 
 #' @title LongSound Class
 #' @description
@@ -29,102 +28,123 @@
 #' ls$save_part(60, 120, "minute_two.wav")
 #' }
 #'
+#' @name LongSound
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.longsound_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - duration and timing
+.longsound_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.longsound_methods$get_start_time <- function(.self) .self$.cpp$get_start_time()
+.longsound_methods$get_end_time <- function(.self) .self$.cpp$get_end_time()
+
+# Query - audio properties
+.longsound_methods$get_sample_rate <- function(.self) .self$.cpp$get_sample_rate()
+.longsound_methods$get_number_of_channels <- function(.self) .self$.cpp$get_number_of_channels()
+.longsound_methods$get_number_of_samples <- function(.self) .self$.cpp$get_number_of_samples()
+.longsound_methods$get_file_path <- function(.self) .self$.cpp$get_file_path()
+
+# Streaming - extract_part
+.longsound_methods$extract_part <- function(.self, tmin, tmax, preserve_times = FALSE) {
+  result_ptr <- .self$.cpp$extract_part_ptr(
+    as.numeric(tmin), as.numeric(tmax), preserve_times
+  )
+  Sound(.xptr = result_ptr)
+}
+
+# Streaming - have_window
+.longsound_methods$have_window <- function(.self, tmin, tmax) {
+  .self$.cpp$have_window(as.numeric(tmin), as.numeric(tmax))
+}
+
+# Streaming - get_window_extrema
+.longsound_methods$get_window_extrema <- function(.self, tmin, tmax, channel = 1L) {
+  .self$.cpp$get_window_extrema(as.numeric(tmin), as.numeric(tmax), as.integer(channel))
+}
+
+# Save methods
+.longsound_methods$save_part <- function(.self, tmin, tmax, path, format = "wav") {
+  type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L, wav24 = 1L)
+  bits_map <- c(wav = 16L, aiff = 16L, aifc = 16L, flac = 16L, wav24 = 24L)
+  if (!format %in% names(type_map)) {
+    stop("Unknown format: ", format, ". Use wav, aiff, aifc, flac, or wav24")
+  }
+  .longsound_save_part(.self$.xptr, type_map[[format]], tmin, tmax,
+                       path, bits_map[[format]])
+  invisible(.self)
+}
+
+.longsound_methods$save_channel <- function(.self, channel, path, format = "wav") {
+  type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L)
+  if (!format %in% names(type_map)) {
+    stop("Unknown format: ", format, ". Use wav, aiff, aifc, or flac")
+  }
+  .longsound_save_channel(.self$.xptr, type_map[[format]], as.integer(channel), path)
+  invisible(.self)
+}
+
+# Utility
+.longsound_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+.longsound_methods$get_ptr <- function(.self) .self$.xptr
+.longsound_methods$get_xptr <- function(.self) .self$.xptr
+
+# Display
+.longsound_methods$print <- function(.self) {
+  cat("<Praat LongSound>\n")
+  if (!.self$.cpp$is_valid()) {
+    cat("  [Invalid or deleted object]\n")
+  } else {
+    cat("  File:", .self$.cpp$get_file_path(), "\n")
+    cat("  Duration:", sprintf("%.3f", .self$.cpp$get_duration()), "seconds\n")
+    cat("  Sample rate:", .self$.cpp$get_sample_rate(), "Hz\n")
+    cat("  Channels:", .self$.cpp$get_number_of_channels(), "\n")
+    cat("  Samples:", .self$.cpp$get_number_of_samples(), "\n")
+  }
+  invisible(.self)
+}
+
+lockEnvironment(.longsound_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ LongSound
+#' @export
+`$.LongSound` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .longsound_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 LongSound <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop("Use LongSound$open() to create a LongSound from a file")
   }
-  
-  ptr <- .xptr
-  
-  # Get C++ module instance
+
   mod <- get_module("longsound_module")
-  cpp_obj <- mod$RLongSound$new(ptr)
-  
-  # Create object with methods
-  obj <- structure(list(
+  cpp_obj <- mod$RLongSound$new(.xptr)
+
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = ptr,
-    
-    # Query methods - duration and timing
-    get_duration = function() cpp_obj$get_duration(),
-    get_start_time = function() cpp_obj$get_start_time(),
-    get_end_time = function() cpp_obj$get_end_time(),
-    
-    # Query methods - audio properties
-    get_sample_rate = function() cpp_obj$get_sample_rate(),
-    get_number_of_channels = function() cpp_obj$get_number_of_channels(),
-    get_number_of_samples = function() cpp_obj$get_number_of_samples(),
-    get_file_path = function() cpp_obj$get_file_path(),
-    
-    # Streaming methods - extract_part
-    extract_part = function(tmin, tmax, preserve_times = FALSE) {
-      result_ptr <- cpp_obj$extract_part_ptr(
-        as.numeric(tmin), 
-        as.numeric(tmax), 
-        preserve_times
-      )
-      Sound(.xptr = result_ptr)
-    },
-    
-    # Streaming methods - have_window
-    have_window = function(tmin, tmax) {
-      cpp_obj$have_window(as.numeric(tmin), as.numeric(tmax))
-    },
-    
-    # Streaming methods - get_window_extrema
-    get_window_extrema = function(tmin, tmax, channel = 1L) {
-      cpp_obj$get_window_extrema(
-        as.numeric(tmin), 
-        as.numeric(tmax), 
-        as.integer(channel)
-      )
-    },
-    
-    # Save methods (use wrappers - involve file I/O)
-    save_part = function(tmin, tmax, path, format = "wav") {
-      type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L, wav24 = 1L)
-      bits_map <- c(wav = 16L, aiff = 16L, aifc = 16L, flac = 16L, wav24 = 24L)
-      if (!format %in% names(type_map)) {
-        stop("Unknown format: ", format, ". Use wav, aiff, aifc, flac, or wav24")
-      }
-      .longsound_save_part(ptr, type_map[[format]], tmin, tmax,
-                          path, bits_map[[format]])
-      invisible(obj)
-    },
-    
-    save_channel = function(channel, path, format = "wav") {
-      type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L)
-      if (!format %in% names(type_map)) {
-        stop("Unknown format: ", format, ". Use wav, aiff, aifc, or flac")
-      }
-      .longsound_save_channel(ptr, type_map[[format]], as.integer(channel), path)
-      invisible(obj)
-    },
-    
-    # Utility methods
-    is_valid = function() cpp_obj$is_valid(),
-    get_ptr = function() ptr,
-    get_xptr = function() ptr,
-    
-    # Print method
-    print = function() {
-      cat("<Praat LongSound>\n")
-      if (!cpp_obj$is_valid()) {
-        cat("  [Invalid or deleted object]\n")
-      } else {
-        cat("  File:", cpp_obj$get_file_path(), "\n")
-        cat("  Duration:", sprintf("%.3f", cpp_obj$get_duration()), "seconds\n")
-        cat("  Sample rate:", cpp_obj$get_sample_rate(), "Hz\n")
-        cat("  Channels:", cpp_obj$get_number_of_channels(), "\n")
-        cat("  Samples:", cpp_obj$get_number_of_samples(), "\n")
-      }
-      invisible(obj)
-    }
+    .xptr = .xptr
   ), class = c("LongSound", "PraatObject"))
-  
-  obj
 }
+
+# ============================================================================
+# Static Methods (backward compatibility: LongSound$open)
+# ============================================================================
 
 #' Open a LongSound from file
 #' @param path Path to audio file (WAV, AIFF, FLAC, MP3, etc.)
@@ -146,7 +166,6 @@ longsound_open <- function(path) {
   LongSound(.xptr = ptr)
 }
 
-# Static method environment for LongSound
 .longsound_static_env <- new.env(parent = emptyenv())
 .longsound_static_env$open <- longsound_open
 .longsound_static_env$new <- LongSound
@@ -156,5 +175,11 @@ longsound_open <- function(path) {
   .longsound_static_env[[name]]
 }
 
-# Make LongSound a constructor class
 class(LongSound) <- c("longsound_constructor", "function")
+
+# ============================================================================
+# S3 Methods
+# ============================================================================
+
+#' @export
+print.LongSound <- function(x, ...) x$print()

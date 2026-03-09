@@ -7,68 +7,136 @@
 #' It automatically identifies outliers and can find the optimal formant ceiling
 #' for a given sound, making it useful for robust formant analysis in noisy speech.
 #'
-#' ## Creating FormantModeler Objects
-#'
-#' FormantModeler objects are created from Formant objects:
-#' - `formant$to_formant_modeler()` - Create modeler from formant object
-#'
-#' Or directly from Sound with optimal ceiling:
-#' - `sound$to_formant_optimal()` - Extract formants with optimal ceiling
-#' - `sound$get_optimal_formant_ceiling()` - Get just the optimal ceiling
-#'
-#' ## Querying Properties
-#'
-#' - `$get_number_of_tracks()` - Number of formant tracks
-#' - `$get_number_of_data_points()` - Number of data points
-#' - `$get_number_of_parameters(track)` - Polynomial parameters for track
-#' - `$get_coefficient_of_determination(from, to)` - R-squared for tracks
-#' - `$get_standard_deviation(track)` - SD of residuals for track
-#' - `$get_stress(...)` - Overall stress measure
-#'
-#' ## Value Queries
-#'
-#' - `$get_model_value_at_time(track, time)` - Modeled formant value
-#' - `$get_data_point_value(track, index)` - Original measurement
-#' - `$get_track_model_values(track)` - All modeled values for track
-#'
-#' ## Operations
-#'
-#' - `$fit()` - (Re)fit the model
-#' - `$process_outliers(num_sigmas)` - Remove outliers beyond threshold
-#' - `$to_formant()` - Convert back to Formant object
-#'
 #' @examples
 #' \dontrun{
-#' # Method 1: Create from existing Formant object
 #' formant <- sound$to_formant_burg()
-#' modeler <- formant$to_formant_modeler(
-#'   tmin = 0, tmax = 0,
-#'   num_tracks = 4,
-#'   num_params = 5
-#' )
-#'
-#' # Check model quality
+#' modeler <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 4, num_params = 5)
 #' r2 <- modeler$get_coefficient_of_determination(1, 4)
-#' cat("R-squared:", r2, "\n")
-#'
-#' # Get smoothed formant values
 #' f1_modeled <- modeler$get_track_model_values(1)
-#' f2_modeled <- modeler$get_track_model_values(2)
-#'
-#' # Method 2: Direct with optimal ceiling search
-#' result <- sound$to_formant_optimal(
-#'   min_freq = 4500, max_freq = 6500,
-#'   num_freq_steps = 11
-#' )
-#' formant <- result$formant
-#' optimal_ceiling <- result$optimal_ceiling
-#' cat("Optimal ceiling:", optimal_ceiling, "Hz\n")
-#'
-#' # Process outliers
-#' cleaned <- modeler$process_outliers(num_sigmas = 3.0)
-#' smoothed_formant <- cleaned$to_formant()
 #' }
 #'
+#' @name FormantModeler
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.formantmodeler_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Basic properties
+.formantmodeler_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
+.formantmodeler_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
+.formantmodeler_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.formantmodeler_methods$get_number_of_tracks <- function(.self) .self$.cpp$get_number_of_tracks()
+.formantmodeler_methods$get_number_of_data_points <- function(.self) .self$.cpp$get_number_of_data_points()
+.formantmodeler_methods$get_number_of_parameters <- function(.self, track) {
+  .self$.cpp$get_number_of_parameters(as.integer(track))
+}
+.formantmodeler_methods$get_number_of_invalid_data_points <- function(.self, track) {
+  .self$.cpp$get_number_of_invalid_data_points(as.integer(track))
+}
+
+# Quality metrics
+.formantmodeler_methods$get_coefficient_of_determination <- function(.self, from_track = 1, to_track = 0) {
+  if (to_track == 0) to_track <- .self$.cpp$get_number_of_tracks()
+  .self$.cpp$get_coefficient_of_determination(as.integer(from_track), as.integer(to_track))
+}
+.formantmodeler_methods$get_r_squared <- function(.self, from_track = 1, to_track = 0) {
+  if (to_track == 0) to_track <- .self$.cpp$get_number_of_tracks()
+  .self$.cpp$get_coefficient_of_determination(as.integer(from_track), as.integer(to_track))
+}
+.formantmodeler_methods$get_standard_deviation <- function(.self, track) {
+  .self$.cpp$get_standard_deviation(as.integer(track))
+}
+.formantmodeler_methods$get_residual_sum_of_squares <- function(.self, track) {
+  .self$.cpp$get_residual_sum_of_squares(as.integer(track))
+}
+.formantmodeler_methods$get_stress <- function(.self, from_track = 1, to_track = 0,
+                                                num_params_per_track = 5, power = 1.25) {
+  if (to_track == 0) to_track <- .self$.cpp$get_number_of_tracks()
+  .self$.cpp$get_stress(as.integer(from_track), as.integer(to_track),
+                        as.integer(num_params_per_track), power)
+}
+.formantmodeler_methods$get_weighted_mean <- function(.self, track) {
+  .self$.cpp$get_weighted_mean(as.integer(track))
+}
+
+# Value queries
+.formantmodeler_methods$get_model_value_at_time <- function(.self, track, time) {
+  .self$.cpp$get_model_value_at_time(as.integer(track), as.numeric(time))
+}
+.formantmodeler_methods$get_estimated_value_at_time <- function(.self, track, time) {
+  .self$.cpp$get_estimated_value_at_time(as.integer(track), as.numeric(time))
+}
+.formantmodeler_methods$get_data_point_value <- function(.self, track, index) {
+  .self$.cpp$get_data_point_value(as.integer(track), as.integer(index))
+}
+.formantmodeler_methods$get_data_point_sigma <- function(.self, track, index) {
+  .self$.cpp$get_data_point_sigma(as.integer(track), as.integer(index))
+}
+.formantmodeler_methods$get_track_model_values <- function(.self, track) {
+  .self$.cpp$get_track_model_values(as.integer(track))
+}
+
+# Operations
+.formantmodeler_methods$fit <- function(.self) {
+  .self$.cpp$fit()
+  invisible(.self)
+}
+.formantmodeler_methods$to_formant <- function(.self, estimate = TRUE, estimate_undefined = TRUE) {
+  formant_ptr <- .self$.cpp$to_formant_ptr(estimate, estimate_undefined)
+  Formant(.xptr = formant_ptr)
+}
+.formantmodeler_methods$process_outliers <- function(.self, num_sigmas = 3.0) {
+  new_ptr <- .self$.cpp$process_outliers_ptr(num_sigmas)
+  FormantModeler(.xptr = new_ptr)
+}
+
+# Export
+.formantmodeler_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+.formantmodeler_methods$get_info <- function(.self) .self$.cpp$get_info()
+
+# Utility
+.formantmodeler_methods$get_xptr <- function(.self) .self$.xptr
+.formantmodeler_methods$save <- function(.self, path) {
+  .self$.cpp$save(path)
+  invisible(.self)
+}
+
+# Display
+.formantmodeler_methods$print <- function(.self) {
+  info <- .self$.cpp$get_info()
+  cat("<Praat FormantModeler>\n")
+  cat(sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax, info$xmax - info$xmin))
+  cat(sprintf("  Tracks: %d, Data points: %d\n", info$n_tracks, info$n_data_points))
+  cat("  Track R-squared: ")
+  cat(sprintf("%.3f", info$track_r2), sep = ", ")
+  cat("\n")
+  invisible(.self)
+}
+
+.formantmodeler_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.formantmodeler_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ FormantModeler
+#' @export
+`$.FormantModeler` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .formantmodeler_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 FormantModeler <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
@@ -78,119 +146,11 @@ FormantModeler <- function(.xptr = NULL) {
   fm_mod <- get_module("formantmodeler_module")
   cpp_obj <- fm_mod$RFormantModeler$new(.xptr)
 
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = .xptr,
-
-    # Query - Basic properties
-    get_xmin = function() cpp_obj$get_xmin(),
-    get_xmax = function() cpp_obj$get_xmax(),
-    get_duration = function() cpp_obj$get_duration(),
-    get_number_of_tracks = function() cpp_obj$get_number_of_tracks(),
-    get_number_of_data_points = function() cpp_obj$get_number_of_data_points(),
-    get_number_of_parameters = function(track) cpp_obj$get_number_of_parameters(as.integer(track)),
-    get_number_of_invalid_data_points = function(track) cpp_obj$get_number_of_invalid_data_points(as.integer(track)),
-
-    # Quality metrics
-    get_coefficient_of_determination = function(from_track = 1, to_track = 0) {
-      if (to_track == 0) to_track <- cpp_obj$get_number_of_tracks()
-      cpp_obj$get_coefficient_of_determination(as.integer(from_track), as.integer(to_track))
-    },
-
-    get_r_squared = function(from_track = 1, to_track = 0) {
-      obj$get_coefficient_of_determination(from_track, to_track)
-    },
-
-    get_standard_deviation = function(track) {
-      cpp_obj$get_standard_deviation(as.integer(track))
-    },
-
-    get_residual_sum_of_squares = function(track) {
-      cpp_obj$get_residual_sum_of_squares(as.integer(track))
-    },
-
-    get_stress = function(from_track = 1, to_track = 0, num_params_per_track = 5, power = 1.25) {
-      if (to_track == 0) to_track <- cpp_obj$get_number_of_tracks()
-      cpp_obj$get_stress(as.integer(from_track), as.integer(to_track),
-                         as.integer(num_params_per_track), power)
-    },
-
-    get_weighted_mean = function(track) {
-      cpp_obj$get_weighted_mean(as.integer(track))
-    },
-
-    # Value queries
-    get_model_value_at_time = function(track, time) {
-      cpp_obj$get_model_value_at_time(as.integer(track), as.numeric(time))
-    },
-
-    get_estimated_value_at_time = function(track, time) {
-      cpp_obj$get_estimated_value_at_time(as.integer(track), as.numeric(time))
-    },
-
-    get_data_point_value = function(track, index) {
-      cpp_obj$get_data_point_value(as.integer(track), as.integer(index))
-    },
-
-    get_data_point_sigma = function(track, index) {
-      cpp_obj$get_data_point_sigma(as.integer(track), as.integer(index))
-    },
-
-    get_track_model_values = function(track) {
-      cpp_obj$get_track_model_values(as.integer(track))
-    },
-
-    # Operations
-    fit = function() {
-      cpp_obj$fit()
-      invisible(obj)
-    },
-
-    to_formant = function(estimate = TRUE, estimate_undefined = TRUE) {
-      formant_ptr <- cpp_obj$to_formant_ptr(estimate, estimate_undefined)
-      Formant(.xptr = formant_ptr)
-    },
-
-    process_outliers = function(num_sigmas = 3.0) {
-      new_ptr <- cpp_obj$process_outliers_ptr(num_sigmas)
-      FormantModeler(.xptr = new_ptr)
-    },
-
-    # Export
-    as_data_frame = function() {
-      cpp_obj$as_data_frame()
-    },
-
-    get_info = function() {
-      cpp_obj$get_info()
-    },
-
-    # Utility
-    get_xptr = function() .xptr,
-
-    save = function(path) {
-      cpp_obj$save(path)
-      invisible(obj)
-    },
-
-    # Display
-    print = function() {
-      info <- cpp_obj$get_info()
-      cat("<Praat FormantModeler>\n")
-      cat(sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax, info$xmax - info$xmin))
-      cat(sprintf("  Tracks: %d, Data points: %d\n", info$n_tracks, info$n_data_points))
-      cat("  Track R-squared: ")
-      cat(sprintf("%.3f", info$track_r2), sep = ", ")
-      cat("\n")
-      invisible(obj)
-    }
-
+    .xptr = .xptr
   ), class = c("FormantModeler", "PraatObject"))
-
-  obj
 }
 
 #' @export
-print.FormantModeler <- function(x, ...) {
-  x$print()
-}
+print.FormantModeler <- function(x, ...) x$print()

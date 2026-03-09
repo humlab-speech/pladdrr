@@ -3,64 +3,114 @@
 #' PCA for dimensionality reduction and analysis of multivariate acoustic data.
 #'
 #' @details
-#' PCA is commonly used in phonetics for:
-#' - Vowel space analysis (F1/F2/F3 reduction)
-#' - Speaker normalization
-#' - Acoustic feature extraction
-#' - Data visualization
+#' PCA is commonly used in phonetics for vowel space analysis, speaker
+#' normalization, acoustic feature extraction, and data visualization.
 #'
-#' ## Creating PCA Objects
-#'
-#' PCA objects are created from numeric matrices or Matrix objects:
-#' - `pca_from_matrix(data)` - Create PCA from R matrix
-#' - `matrix$to_pca()` - Create PCA from pladdrr Matrix object
-#'
-#' ## Querying Properties
-#'
-#' - `$get_number_of_components()` - Number of principal components
-#' - `$get_dimension()` - Original data dimension
-#' - `$get_number_of_observations()` - Number of data points used
-#' - `$get_eigenvalues()` - Vector of eigenvalues
-#' - `$get_fraction_variance(from, to)` - Cumulative variance explained
-#' - `$get_dimension_of_fraction(frac)` - Components needed for fraction of variance
-#'
-#' ## Eigenvectors
-#'
-#' - `$get_eigenvector(i)` - Get i-th eigenvector (loadings)
-#' - `$get_eigenvectors()` - Matrix of all eigenvectors
-#' - `$get_centroid()` - Data centroid
-#'
-#' ## Projection
-#'
-#' - `$project(data, n_dim)` - Project new data onto principal components
-#'
-#' @examples
-#' \dontrun{
-#' # Create PCA from vowel formant data
-#' vowels <- matrix(c(
-#'   # F1    F2    F3
-#'   700,  1200, 2500,  # /a/
-#'   350,  2100, 2800,  # /i/
-#'   450,  700,  2400,  # /u/
-#'   550,  1800, 2600,  # /e/
-#'   600,  900,  2450   # /o/
-#' ), ncol = 3, byrow = TRUE)
-#'
-#' # Compute PCA
-#' pca <- pca_from_matrix(vowels)
-#'
-#' # Check variance explained
-#' pca$get_eigenvalues()
-#' pca$get_fraction_variance(1, 2)  # First 2 components
-#'
-#' # Get loadings
-#' pc1_loadings <- pca$get_eigenvector(1)
-#'
-#' # Project new data
-#' new_data <- matrix(c(680, 1150, 2480), ncol = 3)
-#' projected <- pca$project(new_data, num_dimensions = 2)
-#' }
-#'
+#' @name PCA
+NULL
+
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+
+.pca_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# Query - Properties
+.pca_methods$get_number_of_components <- function(.self) .self$.cpp$get_number_of_components()
+.pca_methods$get_dimension <- function(.self) .self$.cpp$get_dimension()
+.pca_methods$get_number_of_observations <- function(.self) .self$.cpp$get_number_of_observations()
+
+# Eigenvalues
+.pca_methods$get_eigenvalues <- function(.self) .self$.cpp$get_eigenvalues()
+.pca_methods$get_eigenvalue <- function(.self, component) {
+  .self$.cpp$get_eigenvalue(as.integer(component))
+}
+
+# Variance explained
+.pca_methods$get_fraction_variance <- function(.self, from = 1, to = 0) {
+  .self$.cpp$get_fraction_variance(as.integer(from), as.integer(to))
+}
+.pca_methods$get_variance_explained <- function(.self, from = 1, to = 0) {
+  .self$.cpp$get_fraction_variance(as.integer(from), as.integer(to))
+}
+.pca_methods$get_dimension_of_fraction <- function(.self, fraction) {
+  .self$.cpp$get_dimension_of_fraction(fraction)
+}
+
+# Eigenvectors
+.pca_methods$get_eigenvector <- function(.self, component) {
+  .self$.cpp$get_eigenvector(as.integer(component))
+}
+.pca_methods$get_eigenvectors <- function(.self) .self$.cpp$get_eigenvectors()
+.pca_methods$get_loadings <- function(.self) .self$.cpp$get_eigenvectors()
+
+# Other
+.pca_methods$get_centroid <- function(.self) .self$.cpp$get_centroid()
+.pca_methods$get_labels <- function(.self) .self$.cpp$get_labels()
+
+# Projection
+.pca_methods$project <- function(.self, data, num_dimensions = 0) {
+  if (!is.matrix(data)) data <- as.matrix(data)
+  .self$.cpp$project(data, as.integer(num_dimensions))
+}
+.pca_methods$transform <- function(.self, data, num_dimensions = 0) {
+  if (!is.matrix(data)) data <- as.matrix(data)
+  .self$.cpp$project(data, as.integer(num_dimensions))
+}
+
+# Export
+.pca_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+.pca_methods$get_info <- function(.self) .self$.cpp$get_info()
+
+# Utility
+.pca_methods$get_xptr <- function(.self) .self$.xptr
+.pca_methods$save <- function(.self, path) {
+  .self$.cpp$save(path)
+  invisible(.self)
+}
+
+# Display
+.pca_methods$print <- function(.self) {
+  info <- .self$.cpp$get_info()
+  eigenvals <- info$eigenvalues
+  total <- sum(eigenvals)
+  cum_var <- cumsum(eigenvals / total)
+
+  cat("<PCA>\n")
+  cat(sprintf("  Components: %d, Dimension: %d\n", info$n_components, info$dimension))
+  cat(sprintf("  Observations: %d\n", info$n_observations))
+  cat("  Variance explained:\n")
+  for (i in 1:min(5, length(eigenvals))) {
+    cat(sprintf("    PC%d: %.1f%% (cumulative: %.1f%%)\n",
+                i, 100 * eigenvals[i] / total, 100 * cum_var[i]))
+  }
+  if (length(eigenvals) > 5) {
+    cat(sprintf("    ... and %d more components\n", length(eigenvals) - 5))
+  }
+  invisible(.self)
+}
+
+.pca_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+lockEnvironment(.pca_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch
+# ============================================================================
+
+#' @method $ PCA
+#' @export
+`$.PCA` <- function(x, name) {
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  method <- .pca_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 PCA <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
@@ -70,96 +120,14 @@ PCA <- function(.xptr = NULL) {
   pca_mod <- get_module("pca_module")
   cpp_obj <- pca_mod$RPCA$new(.xptr)
 
-  obj <- structure(list(
+  structure(list(
     .cpp = cpp_obj,
-    .xptr = .xptr,
-
-    # Query - Properties
-    get_number_of_components = function() cpp_obj$get_number_of_components(),
-    get_dimension = function() cpp_obj$get_dimension(),
-    get_number_of_observations = function() cpp_obj$get_number_of_observations(),
-
-    # Eigenvalues
-    get_eigenvalues = function() cpp_obj$get_eigenvalues(),
-    get_eigenvalue = function(component) cpp_obj$get_eigenvalue(as.integer(component)),
-
-    # Variance explained
-    get_fraction_variance = function(from = 1, to = 0) {
-      cpp_obj$get_fraction_variance(as.integer(from), as.integer(to))
-    },
-
-    get_variance_explained = function(from = 1, to = 0) {
-      obj$get_fraction_variance(from, to)
-    },
-
-    get_dimension_of_fraction = function(fraction) {
-      cpp_obj$get_dimension_of_fraction(fraction)
-    },
-
-    # Eigenvectors
-    get_eigenvector = function(component) {
-      cpp_obj$get_eigenvector(as.integer(component))
-    },
-
-    get_eigenvectors = function() cpp_obj$get_eigenvectors(),
-    get_loadings = function() cpp_obj$get_eigenvectors(),
-
-    # Other
-    get_centroid = function() cpp_obj$get_centroid(),
-    get_labels = function() cpp_obj$get_labels(),
-
-    # Projection
-    project = function(data, num_dimensions = 0) {
-      if (!is.matrix(data)) data <- as.matrix(data)
-      cpp_obj$project(data, as.integer(num_dimensions))
-    },
-
-    transform = function(data, num_dimensions = 0) {
-      obj$project(data, num_dimensions)
-    },
-
-    # Export
-    as_data_frame = function() cpp_obj$as_data_frame(),
-    get_info = function() cpp_obj$get_info(),
-
-    # Utility
-    get_xptr = function() .xptr,
-
-    save = function(path) {
-      cpp_obj$save(path)
-      invisible(obj)
-    },
-
-    # Display
-    print = function() {
-      info <- cpp_obj$get_info()
-      eigenvals <- info$eigenvalues
-      total <- sum(eigenvals)
-      cum_var <- cumsum(eigenvals / total)
-
-      cat("<PCA>\n")
-      cat(sprintf("  Components: %d, Dimension: %d\n", info$n_components, info$dimension))
-      cat(sprintf("  Observations: %d\n", info$n_observations))
-      cat("  Variance explained:\n")
-      for (i in 1:min(5, length(eigenvals))) {
-        cat(sprintf("    PC%d: %.1f%% (cumulative: %.1f%%)\n",
-                    i, 100 * eigenvals[i] / total, 100 * cum_var[i]))
-      }
-      if (length(eigenvals) > 5) {
-        cat(sprintf("    ... and %d more components\n", length(eigenvals) - 5))
-      }
-      invisible(obj)
-    }
-
+    .xptr = .xptr
   ), class = c("PCA", "PraatObject"))
-
-  obj
 }
 
 #' @export
-print.PCA <- function(x, ...) {
-  x$print()
-}
+print.PCA <- function(x, ...) x$print()
 
 #' Create PCA from data matrix
 #'
@@ -167,20 +135,6 @@ print.PCA <- function(x, ...) {
 #'
 #' @param data Numeric matrix where rows are observations and columns are variables
 #' @return A PCA object
-#'
-#' @examples
-#' \dontrun{
-#' # Vowel formant data (F1, F2, F3)
-#' vowels <- matrix(c(
-#'   700, 1200, 2500,
-#'   350, 2100, 2800,
-#'   450, 700, 2400
-#' ), ncol = 3, byrow = TRUE)
-#'
-#' pca <- pca_from_matrix(vowels)
-#' pca$get_eigenvalues()
-#' }
-#'
 #' @export
 pca_from_matrix <- function(data) {
   if (!is.matrix(data)) data <- as.matrix(data)
