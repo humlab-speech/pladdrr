@@ -331,7 +331,7 @@ WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \
               formant_stubs.cpp formantmodeler_drawing_stubs.cpp r_lapack_wrapper.cpp utils.cpp RcppExports.cpp
 
 # SIMD sources (Phases 1-5: Comprehensive SIMD optimizations)
-SIMD_SRC = sound_mixing_simd.cpp intensity_simd.cpp \
+SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp intensity_simd.cpp \
            window_functions_simd.cpp window_simd_bridge.cpp autocorrelation_simd.cpp \
            formant_lpc_simd.cpp formant_simd_bridge.cpp \
            sound_statistics_simd.cpp sound_conversion_simd.cpp \

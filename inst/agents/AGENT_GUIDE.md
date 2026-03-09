@@ -1,13 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.31 (2026-03-09)
+**Version:** 4.8.32 (2026-03-09)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + Sound shared dispatch table + Symbol registration fix
 
 ---
 
 
 ## What's New in v4.8.x
+
+- **v4.8.32:** Sound shared dispatch table + critical bugfixes. (1) `sound-wrapper.R`: replaced per-instance closure list (~107 closures/object, ~120KB) with shared `.sound_methods` environment + `$.Sound` S3 dispatch. Creation 9x faster (23μs→2.6μs), memory 160x less (120KB→0.7KB). Method call ~2.5x slower per-call (0.4μs→1.0μs), negligible vs Praat computation. (2) `module_init.cpp`/`RcppExports.cpp`: fixed `R_registerRoutines` overwrite bug — the `[[Rcpp::init]]` hook was calling `R_registerRoutines` a second time with only 38 module entries, replacing the 777 Rcpp-exported entries. Now builds a combined table (777 + 38 = 815 entries) in a single registration call. This was breaking package load since v4.8.30 (Phase 1 commit `d99be82`). (3) `Makevars.in`: added missing `simd_utils.cpp` — the `configure` script generates `src/Makevars` from `src/Makevars.in` on every install, so fixing `Makevars` directly never persisted. (4) `NAMESPACE`: registered `S3method("$", Sound)` for shared dispatch.
 
 - **v4.8.31:** Phase 2 performance fixes — (1) `vad.R` `textgrid_get_intervals_where()`: replaced O(n²) vector growth (`c(x, val)` in loop) with pre-allocated vectors + counter + trim, (2) `textgrid-wrapper.R` `get_all_points()`: removed duplicate slow R-loop definition (line 409) that shadowed fast C++ version (line 300) due to R list duplicate-name semantics; fast version now uses `tier = 1L` default, (3) `batch-processing.R` `extract_measurements()`: replaced per-interval `lapply` with O(n) R→C++ calls with vectorized batch C++ calls — `textgrid_interval_statistics_batch()` for all intervals, `.pitch_get_values_at_times()` / `.formant_get_values_at_times()` / `.intensity_get_values_at_times()` for measurements; reduces ~10n R→C++ boundary crossings to ~(3 + max_formants) total calls.
 - **v4.8.30:** `Sound_to_Pitch.cpp`: SIMD optimizations re-enabled for FCC path — Fixes 1-5 (local mean, sum of squares, DC removal, local peak, batched `xsimd::sqrt` normalization over lags). Fixes earlier comment contradiction on `compute_local_mean_simd_bridge` (bridge returns mean, not sum). `Sound_to_Harmonicity_GNE.cpp`: Loop B (50-band Hilbert envelopes) and Loop C (1225-pair cross-correlation matrix) both parallelized via `MelderThread_PARALLELIZE`; upper-triangle pairs flattened into a linear index for even thread distribution.
@@ -139,8 +141,41 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 All 30 core objects use the high-performance module pattern (function factory wrapping Rcpp modules). PraatInterpreter is the only R6Class — it requires persistent mutable state and reference semantics.
 
+**Sound uses the Shared Dispatch Table pattern (v4.8.32+):**
+
 ```r
-# MODERN: Function factory (v2.0+)
+# Sound: shared method table + $.Sound S3 dispatch (v4.8.32+)
+# .sound_methods environment contains all ~107 methods (shared, not per-instance)
+# Each method takes .self as first arg: function(.self, ...) { ... }
+.sound_methods <- new.env(hash = TRUE, parent = emptyenv())
+.sound_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.sound_methods$to_pitch <- function(.self, ...) { ... }
+# ... 105 more methods
+lockEnvironment(.sound_methods, bindings = TRUE)
+
+# Constructor: minimal list, no closures
+Sound <- function(path = NULL, .xptr = NULL) {
+  # ... resolve ptr from path or .xptr ...
+  snd_mod <- get_module("sound_module")
+  cpp_snd <- snd_mod$RSound$new(ptr)
+  structure(list(.xptr = ptr, .cpp = cpp_snd), class = c("Sound", "PraatObject"))
+}
+
+# S3 dispatch: $.Sound intercepts field/method access
+`$.Sound` <- function(x, name) {
+  val <- .subset2(x, name)       # Fast path: .xptr, .cpp
+  if (!is.null(val)) return(val)
+  if (name == ".pointer") return(.subset2(x, ".xptr"))  # Compat alias
+  method <- .sound_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)    # Bind self, return closure
+}
+```
+
+**Other wrappers still use per-instance closure pattern:**
+
+```r
+# MODERN: Function factory (v2.0+) — used by Pitch, Formant, etc.
 Pitch <- function(.xptr = NULL) {
   pitch_mod <- get_module("pitch_module")
   cpp_obj <- pitch_mod$RPitch$new(.xptr)
@@ -152,9 +187,6 @@ Pitch <- function(.xptr = NULL) {
     # ... all methods
   ), class = c("Pitch", "PraatObject"))
 }
-
-# OLD: R6::R6Class (deprecated, only PraatInterpreter & legacy)
-# DON'T USE - Much slower due to environment traversal
 ```
 
 **Converted Objects (34/35):** Sound, Pitch, Formant, Intensity, Spectrum, Spectrogram, Harmonicity, PointProcess, TextGrid, Ltas, PowerCepstrum, PowerCepstrogram, LPC, Cochleagram, Excitation, Cepstrum, Electroglottogram, Matrix, Table, VocalTract, PitchTier, FormantTier, FormantGrid, IntensityTier, AmplitudeTier, DurationTier, Manipulation, LongSound, KlattGrid, FormantPath, ComplexSpectrogram, Polygon, MFCC, LFCC, FormantModeler, PCA, Discriminant
@@ -2879,6 +2911,41 @@ voiced_f0 <- pitch$get_values_vector()[voiced_mask]
 ```
 
 **Rule:** If you're writing a loop that calls the same method repeatedly, check for a vectorized `$get_*_windows()`, `$get_*_vector()`, or `$get_*_track()` method first.
+
+### 10. Build System: Never Edit `src/Makevars` Directly
+
+`src/Makevars` is **generated** by the `configure` script from `src/Makevars.in` via `sed` on every `R CMD INSTALL`. Any manual edit to `src/Makevars` will be silently overwritten.
+
+```bash
+# WRONG: editing Makevars directly (changes lost on next install)
+vim src/Makevars
+
+# CORRECT: edit the template, then rebuild
+vim src/Makevars.in
+R CMD INSTALL .
+```
+
+Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before committing.
+
+### 11. Sound Shared Dispatch: `$.Sound` S3 Method
+
+Since v4.8.32, Sound uses a shared dispatch table instead of per-instance closures. Key implications:
+
+```r
+# Methods work identically from the user's perspective:
+sound$to_pitch()     # Works — $.Sound dispatches to .sound_methods
+
+# BUT: do.call still works because $.Sound returns a bound closure:
+do.call(sound$to_pitch, list())  # Works — returns function(...) method(x, ...)
+
+# Field access (.xptr, .cpp) is a fast path via .subset2:
+sound$.xptr          # Direct list access, no method lookup
+
+# .pointer is a compat alias for .xptr:
+sound$.pointer       # Returns .xptr
+```
+
+When adding new methods to Sound, add them to `.sound_methods` in `R/sound-wrapper.R`, not inside the constructor. Other wrappers (Pitch, Formant, etc.) still use per-instance closures.
 
 ---
 

@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-03-09
-**Package Version:** 4.8.31
+**Package Version:** 4.8.32
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,54 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.32 Sound shared dispatch + symbol registration fix + Makevars.in fix (2026-03-09)
+
+**Summary:** Three critical fixes plus the Sound wrapper rewrite. Two changes touch C++ source files.
+
+#### `src/RcppExports.cpp` — `CallEntries` visibility change
+
+Changed `CallEntries` from `static const R_CallMethodDef[]` to `extern const R_CallMethodDef[]` so `module_init.cpp` can reference it. This is the only change to the Rcpp-generated file and must be re-applied if `Rcpp::compileAttributes()` regenerates it.
+
+```cpp
+// BEFORE:
+static const R_CallMethodDef CallEntries[] = { ... };
+// AFTER:
+extern const R_CallMethodDef CallEntries[] = { ... };
+```
+
+#### `src/module_init.cpp` — Combined `R_registerRoutines` table
+
+The `[[Rcpp::init]]` hook `register_module_entries()` was calling `R_registerRoutines(dll, NULL, ModuleEntries, NULL, NULL)` which **replaced** the 777 Rcpp-exported `CallEntries` with only 38 module boot entries. Now builds a combined table:
+
+```cpp
+extern const R_CallMethodDef CallEntries[];  // from RcppExports.cpp
+
+void register_module_entries(DllInfo *dll) {
+    // Count CallEntries
+    int n_call = 0;
+    while (CallEntries[n_call].name != NULL) n_call++;
+    int n_mod = sizeof(ModuleEntries)/sizeof(ModuleEntries[0]) - 1;
+    
+    // Build combined table
+    std::vector<R_CallMethodDef> combined;
+    combined.reserve(n_call + n_mod + 1);
+    for (int i = 0; i < n_call; i++) combined.push_back(CallEntries[i]);
+    for (int i = 0; i < n_mod; i++) combined.push_back(ModuleEntries[i]);
+    combined.push_back({NULL, NULL, 0});
+    
+    R_registerRoutines(dll, NULL, combined.data(), NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}
+```
+
+#### `src/Makevars.in` — Added `simd_utils.cpp` to SIMD_SRC
+
+The `configure` script generates `src/Makevars` from `src/Makevars.in` via `sed`. The file was missing `simd_utils.cpp` from the `SIMD_SRC` variable, causing the `_g_simd_enabled` symbol to be missing at load time. This was the root cause of persistent build failures after Phase 1 — fixing `Makevars` directly never persisted because `configure` overwrites it.
+
+**No Praat submodule changes** — all modifications are in pladdrr wrapper code.
+
+---
 
 ### v4.8.31 Phase 2 R-level performance fixes (2026-03-09)
 

@@ -1,5 +1,6 @@
-# sound-r6-new.R - Sound object using Rcpp Modules (pladdrr 2.0)
-# Converted from R6 to function wrapper for 5-10x faster method dispatch
+# sound-wrapper.R - Sound object using shared dispatch table (pladdrr 4.8.32)
+# Architecture: minimal list + $.Sound S3 dispatch → shared method env
+# ~160x less memory per Sound, ~9x faster construction vs per-instance closures
 
 #' Sound
 #'
@@ -109,6 +110,772 @@
 #' @name Sound
 NULL
 
+# ============================================================================
+# Shared Method Dispatch Table
+# ============================================================================
+# All Sound methods defined once, shared across all instances.
+# Each method receives .self (the Sound object) as first arg via $.Sound.
+# Access fields: .self$.cpp (Rcpp module), .self$.xptr (external pointer).
+
+.sound_methods <- new.env(hash = TRUE, parent = emptyenv())
+
+# --- Helpers (package-level, not per-instance) ---
+.interp_code <- function(interpolation) {
+  switch(tolower(interpolation),
+    "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
+    "sinc70" = 3L, "sinc700" = 4L, 1L)
+}
+
+.peak_interp_code <- function(interpolation) {
+  switch(tolower(interpolation),
+    "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
+    "sinc70" = 3L, "sinc700" = 4L, 1L)
+}
+
+.window_shape_code <- function(window_shape) {
+  switch(tolower(window_shape),
+    "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
+    "hanning" = 3L, "hamming" = 4L,
+    "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
+    "gaussian4" = 8L, "gaussian5" = 9L,
+    "kaiser1" = 10L, "kaiser2" = 11L, 0L)
+}
+
+# --- Query Methods ---
+.sound_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+.sound_methods$get_xptr <- function(.self) .self$.xptr
+.sound_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
+.sound_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
+.sound_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
+.sound_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
+.sound_methods$get_total_duration <- function(.self) .self$.cpp$get_duration()
+.sound_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.sound_methods$get_nx <- function(.self) .self$.cpp$get_nx()
+.sound_methods$get_dx <- function(.self) .self$.cpp$get_dx()
+.sound_methods$get_x1 <- function(.self) .self$.cpp$get_x1()
+.sound_methods$get_sampling_frequency <- function(.self) .self$.cpp$get_sampling_frequency()
+.sound_methods$get_number_of_samples <- function(.self) .self$.cpp$get_number_of_samples()
+.sound_methods$get_number_of_channels <- function(.self) .self$.cpp$get_number_of_channels()
+.sound_methods$get_time_from_sample <- function(.self, sample) .self$.cpp$get_time_from_sample(as.integer(sample))
+.sound_methods$get_sample_from_time <- function(.self, time) .self$.cpp$get_sample_from_time(as.numeric(time))
+
+.sound_methods$get_value_at_time <- function(.self, time, channel = 1, interpolation = "linear") {
+  .self$.cpp$get_value_at_time(as.numeric(time), as.integer(channel), .interp_code(interpolation))
+}
+
+.sound_methods$get_rms <- function(.self, from_time = 0.0, to_time = 0.0) {
+  .self$.cpp$get_rms(as.numeric(from_time), as.numeric(to_time))
+}
+
+.sound_methods$get_energy <- function(.self, from_time = 0.0, to_time = 0.0) {
+  .self$.cpp$get_energy(as.numeric(from_time), as.numeric(to_time))
+}
+
+.sound_methods$get_power <- function(.self, from_time = 0.0, to_time = 0.0) {
+  .self$.cpp$get_power(as.numeric(from_time), as.numeric(to_time))
+}
+
+.sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()
+
+.sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
+  .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time), .peak_interp_code(interpolation))
+}
+
+.sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
+  .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time), .peak_interp_code(interpolation))
+}
+
+.sound_methods$get_mean <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1) {
+  .self$.cpp$get_mean(as.numeric(from_time), as.numeric(to_time), as.integer(channel))
+}
+
+# --- Direct Data Access ---
+.sound_methods$get_values <- function(.self, channel = 1) {
+  .self$.cpp$get_values(as.integer(channel))
+}
+
+.sound_methods$get_sample_times <- function(.self) {
+  .self$.cpp$get_sample_times()
+}
+
+# --- Batch/Vectorized Window Operations ---
+.sound_methods$get_power_windows <- function(.self, window_starts, window_ends) {
+  .self$.cpp$get_power_windows(as.numeric(window_starts), as.numeric(window_ends))
+}
+
+.sound_methods$get_rms_windows <- function(.self, window_starts, window_ends) {
+  .self$.cpp$get_rms_windows(as.numeric(window_starts), as.numeric(window_ends))
+}
+
+.sound_methods$get_energy_windows <- function(.self, window_starts, window_ends) {
+  .self$.cpp$get_energy_windows(as.numeric(window_starts), as.numeric(window_ends))
+}
+
+.sound_methods$get_zcr_windows <- function(.self, window_starts, window_ends, channel = 1) {
+  .self$.cpp$get_zcr_windows(as.numeric(window_starts), as.numeric(window_ends), as.integer(channel))
+}
+
+# --- Batch/Vectorized Value Extraction ---
+.sound_methods$get_values_at_times <- function(.self, times, channel = 1, interpolation = "linear") {
+  .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel), .interp_code(interpolation))
+}
+
+.sound_methods$get_values_in_range <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1) {
+  .self$.cpp$get_values_in_range(as.numeric(from_time), as.numeric(to_time), as.integer(channel))
+}
+
+.sound_methods$get_times_in_range <- function(.self, from_time = 0.0, to_time = 0.0) {
+  .self$.cpp$get_times_in_range(as.numeric(from_time), as.numeric(to_time))
+}
+
+# --- Batch/Filtered Window Extraction ---
+.sound_methods$extract_windows_filtered <- function(.self, window_starts, window_ends,
+                                                     min_power = 0.0, max_zcr = -1.0,
+                                                     overlap_time = 0.0, window_shape = "rectangular") {
+  sound_ptr <- .self$.cpp$extract_windows_filtered_ptr(
+    as.numeric(window_starts), as.numeric(window_ends),
+    as.numeric(min_power), as.numeric(max_zcr),
+    as.numeric(overlap_time), .window_shape_code(window_shape))
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$get_windows_passing_filter <- function(.self, window_starts, window_ends,
+                                                       min_power = 0.0, max_zcr = -1.0) {
+  .self$.cpp$get_windows_passing_filter(
+    as.numeric(window_starts), as.numeric(window_ends),
+    as.numeric(min_power), as.numeric(max_zcr))
+}
+
+.sound_methods$concatenate_sounds <- function(.self, sounds, overlap_time = 0.0) {
+  if (!is.list(sounds)) stop("sounds must be a list of Sound objects")
+  sound_ptrs <- lapply(sounds, function(s) {
+    if (!inherits(s, "Sound")) stop("All elements must be Sound objects")
+    s$.xptr
+  })
+  sound_ptr <- .self$.cpp$concatenate_parts_ptr(sound_ptrs, as.numeric(overlap_time))
+  Sound(.xptr = sound_ptr)
+}
+
+# --- Analysis Methods (module-based) ---
+.sound_methods$to_pitch <- function(.self, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+  pitch_ptr <- .self$.cpp$to_pitch_ptr(as.numeric(time_step), as.numeric(pitch_floor), as.numeric(pitch_ceiling))
+  Pitch(.xptr = pitch_ptr)
+}
+
+.sound_methods$to_formant_burg <- function(.self, time_step = 0.005, max_formants = 5.0,
+                                            max_frequency = 5500.0, window_length = 0.025,
+                                            pre_emphasis_from = 50.0,
+                                            max_number_of_formants = NULL,
+                                            maximum_formant = NULL,
+                                            pre_emphasis = NULL) {
+  max_formants <- max_number_of_formants %||% max_formants
+  max_frequency <- maximum_formant %||% max_frequency
+  pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
+  formant_ptr <- .self$.cpp$to_formant_burg(
+    as.numeric(time_step), as.numeric(max_formants),
+    as.numeric(max_frequency), as.numeric(window_length),
+    as.numeric(pre_emphasis_from))
+  if (is.null(formant_ptr) || !inherits(formant_ptr, "externalptr")) {
+    stop("Failed to create Formant from Sound")
+  }
+  Formant(.xptr = formant_ptr)
+}
+
+.sound_methods$to_formant_optimal <- function(.self,
+    start_time = 0.0, end_time = 0.0,
+    window_length = 0.025, time_step = 0.005,
+    min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
+    preemphasis_freq = 50.0,
+    num_formant_tracks = 4, num_params_per_track = 5,
+    weigh_formants = "bandwidth",
+    num_sigmas = 1.0, power = 1.25,
+    use_constraints = FALSE,
+    min_f1 = 0.0, max_f1 = 0.0,
+    min_f2 = 0.0, max_f2 = 0.0,
+    min_f3 = 0.0) {
+  weigh_code <- switch(tolower(weigh_formants),
+    "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
+  fm_mod <- get_module("formantmodeler_module")
+  result <- fm_mod$Sound_to_Formant_interval(
+    .self$.xptr, start_time, end_time,
+    window_length, time_step,
+    min_freq, max_freq, as.integer(num_freq_steps),
+    preemphasis_freq,
+    as.integer(num_formant_tracks), as.integer(num_params_per_track),
+    weigh_code,
+    num_sigmas, power,
+    use_constraints, min_f1, max_f1, min_f2, max_f2, min_f3)
+  list(formant = Formant(.xptr = result$formant_ptr), optimal_ceiling = result$optimal_ceiling)
+}
+
+.sound_methods$get_optimal_formant_ceiling <- function(.self,
+    start_time = 0.0, end_time = 0.0,
+    window_length = 0.025, time_step = 0.005,
+    min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
+    preemphasis_freq = 50.0,
+    num_formant_tracks = 4, num_params_per_track = 5,
+    weigh_formants = "bandwidth",
+    num_sigmas = 1.0, power = 1.25) {
+  weigh_code <- switch(tolower(weigh_formants),
+    "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
+  fm_mod <- get_module("formantmodeler_module")
+  fm_mod$Sound_get_optimal_formant_ceiling(
+    .self$.xptr, start_time, end_time,
+    window_length, time_step,
+    min_freq, max_freq, as.integer(num_freq_steps),
+    preemphasis_freq,
+    as.integer(num_formant_tracks), as.integer(num_params_per_track),
+    weigh_code, num_sigmas, power)
+}
+
+.sound_methods$to_intensity <- function(.self, minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
+  intensity_ptr <- .self$.cpp$to_intensity_ptr(as.numeric(minimum_pitch), as.numeric(time_step), as.logical(subtract_mean))
+  Intensity(.xptr = intensity_ptr)
+}
+
+.sound_methods$to_harmonicity_cc <- function(.self, time_step = 0.01, min_pitch = 75.0,
+                                              silence_threshold = 0.1, periods_per_window = 1.0) {
+  harm_ptr <- .self$.cpp$to_harmonicity_cc_ptr(
+    as.numeric(time_step), as.numeric(min_pitch),
+    as.numeric(silence_threshold), as.numeric(periods_per_window))
+  Harmonicity(.xptr = harm_ptr)
+}
+
+.sound_methods$to_harmonicity_gne <- function(.self, fmin = 500, fmax = 4500, bandwidth = 1000, step = 80) {
+  gne_ptr <- .sound_to_harmonicity_gne(
+    .self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(bandwidth), as.numeric(step))
+  Matrix(.xptr = gne_ptr)
+}
+
+.sound_methods$to_spectrum <- function(.self, fast = TRUE) {
+  spec_ptr <- .self$.cpp$to_spectrum_ptr(as.logical(fast))
+  Spectrum(.xptr = spec_ptr)
+}
+
+.sound_methods$to_spectrogram <- function(.self, window_length = 0.005, max_frequency = 5000.0,
+                                           time_step = 0.002, frequency_step = 20.0,
+                                           window_shape = "Gaussian") {
+  shape_code <- switch(tolower(window_shape),
+    "square" = 0L, "hamming" = 1L, "bartlett" = 2L,
+    "welch" = 3L, "hanning" = 4L, "gaussian" = 5L, 5L)
+  spec_ptr <- .self$.cpp$to_spectrogram_ptr(
+    as.numeric(window_length), as.numeric(max_frequency),
+    as.numeric(time_step), as.numeric(frequency_step), shape_code)
+  Spectrogram(.xptr = spec_ptr)
+}
+
+.sound_methods$to_point_process_periodic_cc <- function(.self, pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                                         time_step = NULL, max_period_factor = NULL,
+                                                         max_amplitude_factor = NULL) {
+  if (!is.null(time_step) || !is.null(max_period_factor) || !is.null(max_amplitude_factor)) {
+    warning("time_step, max_period_factor, and max_amplitude_factor are not used by ",
+            "Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.",
+            call. = FALSE)
+  }
+  pp_ptr <- .self$.cpp$to_point_process_periodic_cc_ptr(as.numeric(pitch_floor), as.numeric(pitch_ceiling))
+  PointProcess(.xptr = pp_ptr)
+}
+
+.sound_methods$pitch_to_pointprocess_peaks <- function(.self, pitch, include_maxima = TRUE, include_minima = FALSE) {
+  if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object (created with sound$to_pitch())")
+  if (!pitch$is_valid()) stop("Invalid Pitch object")
+  pp_ptr <- .sound_pitch_to_pointprocess_peaks(
+    .self$.xptr, pitch$.xptr, as.logical(include_maxima), as.logical(include_minima))
+  PointProcess(.xptr = pp_ptr)
+}
+
+# --- Extraction ---
+.sound_methods$extract_channel <- function(.self, channel) {
+  ptr_result <- .self$.cpp$extract_channel_ptr(as.integer(channel))
+  Sound(.xptr = ptr_result)
+}
+
+.sound_methods$extract_part <- function(.self, from_time, to_time, window_shape = "rectangular",
+                                         relative_width = 1.0, preserve_times = FALSE) {
+  ptr_result <- .self$.cpp$extract_part_ptr(
+    as.numeric(from_time), as.numeric(to_time),
+    .window_shape_code(window_shape), as.numeric(relative_width), as.logical(preserve_times))
+  Sound(.xptr = ptr_result)
+}
+
+.sound_methods$extract_parts_batch <- function(.self, from_times, to_times, window_shape = "rectangular",
+                                                relative_width = 1.0, preserve_times = FALSE) {
+  xptrs <- .sound_extract_parts_batch(
+    .self$.xptr, as.numeric(from_times), as.numeric(to_times),
+    .window_shape_code(window_shape), as.numeric(relative_width), as.logical(preserve_times))
+  lapply(xptrs, function(xptr) Sound(.xptr = xptr))
+}
+
+# --- Export ---
+.sound_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
+.sound_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+
+.sound_methods$save <- function(.self, path, format = "WAV", bits_per_sample = 16) {
+  format_code <- switch(toupper(format),
+    "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
+    "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
+    "FLAC" = 6L, "MP3" = 7L, 3L)
+  .self$.cpp$save(as.character(path), as.integer(format_code))
+  invisible(NULL)
+}
+
+# --- Advanced Analysis (standalone Rcpp functions) ---
+.sound_methods$to_pitch_ac <- function(.self, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                        max_candidates = 15, very_accurate = FALSE,
+                                        silence_threshold = 0.03, voicing_threshold = 0.45,
+                                        octave_cost = 0.01, octave_jump_cost = 0.35,
+                                        voiced_unvoiced_cost = 0.14,
+                                        max_number_of_candidates = NULL) {
+  max_candidates <- max_number_of_candidates %||% max_candidates
+  pitch_ptr <- .sound_to_pitch_ac(
+    .self$.xptr, time_step, pitch_floor, pitch_ceiling,
+    as.integer(max_candidates), very_accurate,
+    silence_threshold, voicing_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+  Pitch(.xptr = pitch_ptr)
+}
+
+.sound_methods$to_pitch_cc <- function(.self, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                        max_candidates = 15, very_accurate = FALSE,
+                                        silence_threshold = 0.03, voicing_threshold = 0.45,
+                                        octave_cost = 0.01, octave_jump_cost = 0.35,
+                                        voiced_unvoiced_cost = 0.14,
+                                        max_number_of_candidates = NULL) {
+  max_candidates <- max_number_of_candidates %||% max_candidates
+  pitch_ptr <- .sound_to_pitch_cc(
+    .self$.xptr, time_step, pitch_floor, pitch_ceiling,
+    as.integer(max_candidates), very_accurate,
+    silence_threshold, voicing_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+  Pitch(.xptr = pitch_ptr)
+}
+
+.sound_methods$to_formant_keepall <- function(.self, time_step = 0.005, max_formants = 5.0,
+                                               max_frequency = 5500.0, window_length = 0.025,
+                                               pre_emphasis_from = 50.0) {
+  formant_ptr <- .formant_from_sound_keepall(
+    .self$.xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
+  Formant(.xptr = formant_ptr)
+}
+
+.sound_methods$to_formant_willems <- function(.self, time_step = 0.005, number_of_formants = 5.0,
+                                               max_frequency = 5500.0, window_length = 0.025,
+                                               pre_emphasis_from = 50.0) {
+  formant_ptr <- .formant_from_sound_willems(
+    .self$.xptr, time_step, number_of_formants, max_frequency, window_length, pre_emphasis_from)
+  Formant(.xptr = formant_ptr)
+}
+
+.sound_methods$to_formant_sl <- function(.self, time_step = 0.005, number_of_poles = 10L,
+                                          max_frequency = 5500.0, window_length = 0.025,
+                                          pre_emphasis_from = 50.0) {
+  formant_ptr <- .formant_from_sound_sl(
+    .self$.xptr, time_step, as.integer(number_of_poles), max_frequency, window_length, pre_emphasis_from)
+  Formant(.xptr = formant_ptr)
+}
+
+.sound_methods$to_harmonicity_ac <- function(.self, time_step = 0.01, min_pitch = 75.0,
+                                              silence_threshold = 0.1, periods_per_window = 1.0) {
+  hnr_ptr <- .sound_to_harmonicity_ac(.self$.xptr, time_step, min_pitch, silence_threshold, periods_per_window)
+  Harmonicity(.xptr = hnr_ptr)
+}
+
+.sound_methods$to_ltas <- function(.self, bandwidth = 100.0) {
+  ltas_ptr <- .sound_to_ltas(.self$.xptr, bandwidth)
+  Ltas(.xptr = ltas_ptr)
+}
+
+.sound_methods$to_formant_path <- function(.self, time_step = 0.005,
+                                            max_num_formants = 5.0,
+                                            formant_ceiling = 5500.0,
+                                            window_length = 0.025,
+                                            preemphasis_from = 50.0,
+                                            ceiling_step_fraction = 0.05,
+                                            num_steps_up_down = 4L) {
+  FormantPath(.self, time_step, max_num_formants, formant_ceiling,
+              window_length, preemphasis_from, ceiling_step_fraction, num_steps_up_down)
+}
+
+.sound_methods$to_complex_spectrogram <- function(.self, window_length = 0.005, maximum_frequency = 5000.0) {
+  ComplexSpectrogram(.self, window_length, maximum_frequency)
+}
+
+.sound_methods$to_textgrid_silences <- function(.self, min_pitch = 100.0, time_step = 0.0,
+                                                 silence_threshold = -25.0,
+                                                 min_silent_duration = 0.1,
+                                                 min_sounding_duration = 0.1,
+                                                 silent_label = "silent",
+                                                 sounding_label = "sounding") {
+  tg_ptr <- .sound_to_textgrid_silences(
+    .self$.xptr, min_pitch, time_step, silence_threshold,
+    min_silent_duration, min_sounding_duration, silent_label, sounding_label)
+  TextGrid(.xptr = tg_ptr)
+}
+
+.sound_methods$to_cochleagram <- function(.self, dt = 0.01, df = 0.1, window_length = 0.03,
+                                           forward_masking_time = 0.03) {
+  stopifnot(
+    "dt must be a positive number" = is.numeric(dt) && length(dt) == 1 && dt > 0,
+    "df must be a positive number" = is.numeric(df) && length(df) == 1 && df > 0,
+    "window_length must be a positive number" = is.numeric(window_length) && length(window_length) == 1 && window_length > 0,
+    "forward_masking_time must be a non-negative number" = is.numeric(forward_masking_time) && length(forward_masking_time) == 1 && forward_masking_time >= 0)
+  cochleagram_ptr <- .sound_to_cochleagram(.self$.xptr, dt, df, window_length, forward_masking_time)
+  Cochleagram(.xptr = cochleagram_ptr)
+}
+
+.sound_methods$to_cochleagram_edb <- function(.self, dtime = 0.01, dfreq = 0.1, has_synapse = TRUE,
+                                               replenishment_rate = 0.01, loss_rate = 0.1,
+                                               return_rate = 0.05, reprocessing_rate = 0.01) {
+  sampling_rate <- .self$.cpp$get_sampling_frequency()
+  if (sampling_rate < 44100) {
+    stop("Cochleagram EDB algorithm is unstable with sampling rates < 44.1kHz\n",
+         sprintf("  Current rate: %.0f Hz\n", sampling_rate),
+         "  Recommendation: Use $to_cochleagram() instead, which is more stable.",
+         call. = FALSE)
+  }
+  cochleagram_ptr <- .sound_to_cochleagram_edb(
+    .self$.xptr, dtime, dfreq, has_synapse,
+    replenishment_rate, loss_rate, return_rate, reprocessing_rate)
+  Cochleagram(.xptr = cochleagram_ptr)
+}
+
+.sound_methods$to_powercepstrogram <- function(.self, pitch_floor = 60.0, time_step = 0.002,
+                                                maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {
+  pcep_ptr <- .sound_to_powercepstrogram(.self$.xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
+  PowerCepstrogram(.xptr = pcep_ptr)
+}
+
+.sound_methods$to_cepstrum <- function(.self) {
+  xptr <- .sound_to_cepstrum(.self$.xptr)
+  Cepstrum(.xptr = xptr)
+}
+
+.sound_methods$to_cepstrum_bw <- function(.self) {
+  xptr <- .sound_to_cepstrum_bw(.self$.xptr)
+  Cepstrum(.xptr = xptr)
+}
+
+.sound_methods$to_manipulation <- function(.self, time_step = 0.01, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+  manip_ptr <- .manipulation_from_sound(.self$.xptr, time_step, pitch_floor, pitch_ceiling)
+  Manipulation(.xptr = manip_ptr)
+}
+
+.sound_methods$to_lpc_burg <- function(.self, prediction_order = 16, analysis_width = 0.025,
+                                        time_step = 0.005, pre_emphasis_frequency = 50.0) {
+  lpc_ptr <- .sound_to_lpc_burg(
+    .self$.xptr, as.integer(prediction_order), analysis_width, time_step, pre_emphasis_frequency)
+  LPC(.xptr = lpc_ptr)
+}
+
+.sound_methods$to_lpc_auto <- function(.self, prediction_order = 16, analysis_width = 0.025,
+                                        time_step = 0.005, pre_emphasis_frequency = 50.0) {
+  lpc_ptr <- .sound_to_lpc_auto(
+    .self$.xptr, as.integer(prediction_order), analysis_width, time_step, pre_emphasis_frequency)
+  LPC(.xptr = lpc_ptr)
+}
+
+.sound_methods$to_lpc_covariance <- function(.self, prediction_order = 16, analysis_width = 0.025,
+                                              time_step = 0.005, pre_emphasis_frequency = 50.0) {
+  lpc_ptr <- .sound_to_lpc_covariance(
+    .self$.xptr, as.integer(prediction_order), analysis_width, time_step, pre_emphasis_frequency)
+  LPC(.xptr = lpc_ptr)
+}
+
+.sound_methods$to_lpc_marple <- function(.self, prediction_order = 16, analysis_width = 0.025,
+                                          time_step = 0.005, pre_emphasis_frequency = 50.0,
+                                          tol1 = 1e-6, tol2 = 1e-6) {
+  lpc_ptr <- .sound_to_lpc_marple(
+    .self$.xptr, as.integer(prediction_order), analysis_width,
+    time_step, pre_emphasis_frequency, tol1, tol2)
+  LPC(.xptr = lpc_ptr)
+}
+
+.sound_methods$to_mfcc <- function(.self, num_coefficients = 13, analysis_width = 0.025,
+                                    time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0,
+                                    df_mel = 100.0) {
+  mfcc_mod <- get_module("mfcc_module")
+  mfcc_ptr <- mfcc_mod$Sound_to_MFCC(
+    .self$.xptr, as.integer(num_coefficients), analysis_width, time_step, f1_mel, fmax_mel, df_mel)
+  MFCC(.xptr = mfcc_ptr)
+}
+
+.sound_methods$to_dtw <- function(.self, reference, analysis_width = 0.015, time_step = 0.005,
+                                   band = 0.0, slope = 3) {
+  if (!inherits(reference, "Sound")) stop("reference must be a Sound object")
+  sounds_to_dtw(reference, .self, analysis_width, time_step, band, slope)
+}
+
+.sound_methods$to_point_process_extrema <- function(.self, channel = 1, include_maxima = TRUE,
+                                                     include_minima = FALSE,
+                                                     interpolation = c("None", "Parabolic", "Cubic", "Sinc70", "Sinc700")) {
+  interpolation <- match.arg(interpolation)
+  interpolation_int <- switch(interpolation,
+    "None" = 0, "Parabolic" = 1, "Cubic" = 2, "Sinc70" = 3, "Sinc700" = 4, 1)
+  pp_ptr <- .sound_to_point_process_extrema(
+    .self$.xptr, as.integer(channel), as.logical(include_maxima),
+    as.logical(include_minima), interpolation_int)
+  PointProcess(.xptr = pp_ptr)
+}
+
+.sound_methods$to_point_process_zeros <- function(.self, channel = 1, include_raisers = TRUE,
+                                                   include_fallers = FALSE) {
+  pp_ptr <- .sound_to_point_process_zeros(
+    .self$.xptr, as.integer(channel), as.logical(include_raisers), as.logical(include_fallers))
+  PointProcess(.xptr = pp_ptr)
+}
+
+.sound_methods$to_point_process_periodic_peaks <- function(.self, pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                                            include_maxima = TRUE, include_minima = FALSE) {
+  pp_ptr <- .sound_to_pointprocess_periodic_peaks(
+    .self$.xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima)
+  PointProcess(.xptr = pp_ptr)
+}
+
+# Backward-compat aliases (delegate to canonical names)
+.sound_methods$to_pointprocess_periodic_cc <- function(.self, time_step = 0.0, pitch_floor = 75.0,
+                                                        pitch_ceiling = 600.0, max_period_factor = 1.3,
+                                                        max_amplitude_factor = 1.6) {
+  .self$to_point_process_periodic_cc(pitch_floor = pitch_floor, pitch_ceiling = pitch_ceiling,
+    time_step = time_step, max_period_factor = max_period_factor,
+    max_amplitude_factor = max_amplitude_factor)
+}
+
+.sound_methods$to_pointprocess_periodic_peaks <- function(.self, pitch_floor = 75.0, pitch_ceiling = 600.0,
+                                                           include_maxima = TRUE, include_minima = FALSE) {
+  .self$to_point_process_periodic_peaks(pitch_floor, pitch_ceiling, include_maxima, include_minima)
+}
+
+# --- Modification Methods (in-place, return self) ---
+.sound_methods$scale_intensity <- function(.self, new_intensity_db) {
+  .sound_scale_intensity(.self$.xptr, new_intensity_db)
+  invisible(.self)
+}
+
+.sound_methods$scale_peak <- function(.self, new_peak = 0.99) {
+  .sound_scale_peak(.self$.xptr, new_peak)
+  invisible(.self)
+}
+
+.sound_methods$pre_emphasize <- function(.self, from_frequency = 50.0) {
+  .sound_pre_emphasize(.self$.xptr, from_frequency)
+  invisible(.self)
+}
+
+.sound_methods$de_emphasize <- function(.self, from_frequency = 50.0) {
+  .sound_de_emphasize(.self$.xptr, from_frequency)
+  invisible(.self)
+}
+
+.sound_methods$filter_pass_hann_band <- function(.self, fmin, fmax, smooth = 100.0) {
+  if (fmin < 0 || fmax <= fmin) stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+  sound_ptr <- .sound_filter_pass_hann_band(.self$.xptr, fmin, fmax, smooth)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$filter_stop_hann_band <- function(.self, fmin, fmax, smooth = 100.0) {
+  if (fmin < 0 || fmax <= fmin) stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+  sound_ptr <- .sound_filter_stop_hann_band(.self$.xptr, fmin, fmax, smooth)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$resample <- function(.self, new_frequency, precision = 50) {
+  if (new_frequency <= 0) stop("new_frequency must be positive")
+  sound_ptr <- .sound_resample(.self$.xptr, new_frequency, as.integer(precision))
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$convert_to_mono <- function(.self) {
+  if (.self$.cpp$get_number_of_channels() == 1) message("Sound is already mono, returning copy")
+  sound_ptr <- .sound_convert_to_mono(.self$.xptr)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$convert_to_stereo <- function(.self) {
+  if (.self$.cpp$get_number_of_channels() > 1) {
+    warning("Sound is already multi-channel, returning as-is")
+    sound_ptr <- .sound_copy(.self$.xptr)
+  } else {
+    sound_ptr <- .sound_convert_to_stereo(.self$.xptr)
+  }
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$concatenate <- function(.self, other_sound, overlap = 0) {
+  if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+  sound_ptr <- .sound_concatenate(.self$.xptr, other_sound$.xptr, overlap)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$mix <- function(.self, other_sound, balance = 1.0) {
+  if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+  sound_ptr <- .sound_mix(.self$.xptr, other_sound$.xptr, balance)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$extract_intervals_where <- function(.self, textgrid, tier_number, criterion = "is equal to",
+                                                    text = "", preserve_times = FALSE) {
+  if (!inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+  textgrid$extract_intervals_where(.self, tier_number, criterion, text, preserve_times)
+}
+
+# --- Tier 1: Advanced audio methods ---
+.sound_methods$lengthen <- function(.self, fmin = 75, fmax = 600, factor = 1.5) {
+  sound_ptr <- .sound_lengthen_ola(.self$.xptr, fmin, fmax, factor)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$to_ltas_pitch_corrected <- function(.self, pitch_floor = 75, pitch_ceiling = 600,
+                                                    max_frequency = 5000, bandwidth = 100,
+                                                    shortest_period = 0.0001, longest_period = 0.02,
+                                                    max_period_factor = 1.3) {
+  ltas_ptr <- .sound_to_ltas_pitch_corrected(
+    .self$.xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth,
+    shortest_period, longest_period, max_period_factor)
+  Ltas(.xptr = ltas_ptr)
+}
+
+.sound_methods$to_formant_robust <- function(.self, time_step = 0.005, max_formants = 5.0,
+                                              max_frequency = 5500.0, window_length = 0.025,
+                                              pre_emphasis_from = 50.0,
+                                              num_std_dev = 1.5, max_iterations = 5L) {
+  formant_ptr <- .sound_to_formant_robust(
+    .self$.xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from,
+    num_std_dev, as.integer(max_iterations))
+  Formant(.xptr = formant_ptr)
+}
+
+.sound_methods$filter_by_formant <- function(.self, formant) {
+  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  sound_ptr <- .sound_formant_filter(.self$.xptr, formant$.xptr)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$filter_by_formant_noscale <- function(.self, formant) {
+  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  sound_ptr <- .sound_formant_filter_noscale(.self$.xptr, formant$.xptr)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$to_mel_spectrogram <- function(.self, window_length = 0.015, time_step = 0.005,
+                                               first_filter_frequency = 100,
+                                               max_frequency = 0, frequency_step = 100) {
+  mel_ptr <- .sound_to_mel_spectrogram(
+    .self$.xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
+  MelSpectrogram(.xptr = mel_ptr)
+}
+
+.sound_methods$to_bark_spectrogram <- function(.self, window_length = 0.015, time_step = 0.005,
+                                                first_filter_frequency = 1.0,
+                                                max_frequency = 0, frequency_step = 1.0) {
+  bark_ptr <- .sound_to_bark_spectrogram(
+    .self$.xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
+  BarkSpectrogram(.xptr = bark_ptr)
+}
+
+.sound_methods$change_speaker <- function(.self, pitch_floor = 75, pitch_ceiling = 600,
+                                           formant_multiplier = 1.0, pitch_multiplier = 1.0,
+                                           pitch_range_multiplier = 1.0, duration_multiplier = 1.0) {
+  sound_ptr <- .sound_change_speaker(.self$.xptr, pitch_floor, pitch_ceiling,
+    formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$change_speaker_with_pitch <- function(.self, pitch, formant_multiplier = 1.0,
+                                                      pitch_multiplier = 1.0,
+                                                      pitch_range_multiplier = 1.0,
+                                                      duration_multiplier = 1.0) {
+  if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object")
+  sound_ptr <- .sound_pitch_change_speaker(.self$.xptr, pitch$.xptr,
+    formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$autocorrelate <- function(.self, scaling = "peak_0.99", signal_outside = "zero") {
+  sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+  so <- match.arg(signal_outside, c("zero", "similar"))
+  sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+  so_code <- match(so, c("zero", "similar"))
+  sound_ptr <- .sound_autocorrelate(.self$.xptr, as.integer(sc_code), as.integer(so_code))
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$convolve <- function(.self, other_sound, scaling = "peak_0.99", signal_outside = "zero") {
+  if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+  sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+  so <- match.arg(signal_outside, c("zero", "similar"))
+  sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+  so_code <- match(so, c("zero", "similar"))
+  sound_ptr <- .sounds_convolve_direct(.self$.xptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$cross_correlate <- function(.self, other_sound, scaling = "peak_0.99", signal_outside = "zero") {
+  if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+  sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
+  so <- match.arg(signal_outside, c("zero", "similar"))
+  sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
+  so_code <- match(so, c("zero", "similar"))
+  sound_ptr <- .sounds_cross_correlate_direct(.self$.xptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
+  Sound(.xptr = sound_ptr)
+}
+
+.sound_methods$deepen_band_modulation <- function(.self, enhancement_db = 10, flow = 300, fhigh = 4000,
+                                                   slow_modulation = 3, fast_modulation = 30,
+                                                   band_smoothing = 100) {
+  sound_ptr <- .sound_deepen_band_mod(
+    .self$.xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing)
+  Sound(.xptr = sound_ptr)
+}
+
+# --- Print ---
+.sound_methods$print <- function(.self) {
+  if (!.self$.cpp$is_valid()) {
+    cat("<Sound [invalid]>\n")
+    return(invisible(.self))
+  }
+  cat("<Praat Sound>\n")
+  cat(sprintf("  Duration: %.3f s\n", .self$.cpp$get_duration()))
+  cat(sprintf("  Sampling frequency: %.0f Hz\n", .self$.cpp$get_sampling_frequency()))
+  cat(sprintf("  Number of samples: %d\n", .self$.cpp$get_number_of_samples()))
+  cat(sprintf("  Number of channels: %d\n", .self$.cpp$get_number_of_channels()))
+  intensity_db <- tryCatch(.self$.cpp$get_intensity_db(), error = function(e) NA)
+  if (!is.na(intensity_db)) {
+    cat(sprintf("  Intensity: %.1f dB\n", intensity_db))
+  }
+  invisible(.self)
+}
+
+# Lock the method environment to prevent accidental modification
+lockEnvironment(.sound_methods, bindings = TRUE)
+
+# ============================================================================
+# S3 Dispatch for Sound objects
+# ============================================================================
+# $.Sound intercepts method calls and dispatches to the shared table.
+# Field access (.xptr, .cpp) goes through .subset2 (fast path).
+# Method calls create a lightweight closure binding .self.
+
+#' @method $ Sound
+#' @export
+`$.Sound` <- function(x, name) {
+  # Fast path: direct field access (.xptr, .cpp stored in the list)
+  val <- .subset2(x, name)
+  if (!is.null(val)) return(val)
+  # Compatibility alias
+  if (name == ".pointer") return(.subset2(x, ".xptr"))
+  # Method lookup in shared table
+  method <- .sound_methods[[name]]
+  if (is.null(method)) return(NULL)
+  # Return bound method — creates one lightweight closure per $ access
+  function(...) method(x, ...)
+}
+
+# ============================================================================
+# Constructor
+# ============================================================================
+
 #' @export
 Sound <- function(path = NULL, .xptr = NULL) {
   # Handle initialization
@@ -118,7 +885,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
     if (!file.exists(path)) {
       stop("Sound file not found: ", path)
     }
-    
+
     # Try native Praat reader first (fast path for common formats)
     ptr <- tryCatch({
       .sound_read_from_file_native(path)
@@ -129,24 +896,24 @@ Sound <- function(path = NULL, .xptr = NULL) {
              "Install av: remotes::install_github('humlab-speech/av')\n",
              "Native error: ", e$message)
       }
-      
+
       # Read audio using av
       audio_info <- av::av_media_info(path)
       audio_data <- av::read_audio_bin(path)
-      
+
       # Normalize PCM integers to [-1, 1] range
       max_value <- max(abs(audio_data))
       if (max_value > 0) {
         audio_data <- audio_data / max_value
       }
-      
-      # av returns samples × channels matrix, we need channels × samples
+
+      # av returns samples x channels matrix, we need channels x samples
       if (is.matrix(audio_data)) {
         audio_data <- t(audio_data)
       } else {
         audio_data <- matrix(audio_data, nrow = 1)
       }
-      
+
       # Create Sound from matrix
       sampling_rate <- audio_info$audio$sample_rate
       .sound_create_from_values(audio_data, sampling_rate)
@@ -154,982 +921,13 @@ Sound <- function(path = NULL, .xptr = NULL) {
   } else {
     stop("Must provide either path or .xptr")
   }
-  
-  # Load Rcpp Module
+
+  # Load Rcpp Module and create C++ wrapper
   snd_mod <- get_module("sound_module")
   cpp_snd <- snd_mod$RSound$new(ptr)
-  
-  # Create wrapper
-  snd <- structure(list(
-    .cpp = cpp_snd,
-    .xptr = ptr,
-    .pointer = ptr,  # Compatibility
-    
-    # === Query Methods (from module - FAST) ===
-    is_valid = function() cpp_snd$is_valid(),
-    get_xptr = function() ptr,
-    get_xmin = function() cpp_snd$get_xmin(),
-    get_xmax = function() cpp_snd$get_xmax(),
-    # Praat-compatible aliases for time bounds
-    get_start_time = function() cpp_snd$get_xmin(),
-    get_end_time = function() cpp_snd$get_xmax(),
-    get_total_duration = function() cpp_snd$get_duration(),
-    get_duration = function() cpp_snd$get_duration(),
-    get_nx = function() cpp_snd$get_nx(),
-    get_dx = function() cpp_snd$get_dx(),
-    get_x1 = function() cpp_snd$get_x1(),
-    get_sampling_frequency = function() cpp_snd$get_sampling_frequency(),
-    get_number_of_samples = function() cpp_snd$get_number_of_samples(),
-    get_number_of_channels = function() cpp_snd$get_number_of_channels(),
-    get_time_from_sample = function(sample) cpp_snd$get_time_from_sample(as.integer(sample)),
-    get_sample_from_time = function(time) cpp_snd$get_sample_from_time(as.numeric(time)),
-    
-    get_value_at_time = function(time, channel = 1, interpolation = "linear") {
-      interp_code <- switch(tolower(interpolation),
-        "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
-        "sinc70" = 3L, "sinc700" = 4L, 1L)
-      cpp_snd$get_value_at_time(as.numeric(time), as.integer(channel), interp_code)
-    },
-    
-    get_rms = function(from_time = 0.0, to_time = 0.0) {
-      cpp_snd$get_rms(as.numeric(from_time), as.numeric(to_time))
-    },
-    
-    get_energy = function(from_time = 0.0, to_time = 0.0) {
-      cpp_snd$get_energy(as.numeric(from_time), as.numeric(to_time))
-    },
-    
-    get_power = function(from_time = 0.0, to_time = 0.0) {
-      cpp_snd$get_power(as.numeric(from_time), as.numeric(to_time))
-    },
-    
-    get_intensity_db = function() cpp_snd$get_intensity_db(),
-    
-    get_minimum = function(from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
-      interp_code <- switch(tolower(interpolation),
-        "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
-        "sinc70" = 3L, "sinc700" = 4L, 1L)
-      cpp_snd$get_minimum(as.numeric(from_time), as.numeric(to_time), interp_code)
-    },
-    
-    get_maximum = function(from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
-      interp_code <- switch(tolower(interpolation),
-        "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
-        "sinc70" = 3L, "sinc700" = 4L, 1L)
-      cpp_snd$get_maximum(as.numeric(from_time), as.numeric(to_time), interp_code)
-    },
-    
-    get_mean = function(from_time = 0.0, to_time = 0.0, channel = 1) {
-      cpp_snd$get_mean(as.numeric(from_time), as.numeric(to_time), as.integer(channel))
-    },
-    
-    # === Direct Data Access (NEW - FAST, no data frame overhead) ===
-    get_values = function(channel = 1) {
-      cpp_snd$get_values(as.integer(channel))
-    },
 
-    get_sample_times = function() {
-      cpp_snd$get_sample_times()
-    },
-
-    # === Batch/Vectorized Window Operations (50-150x faster than R loops) ===
-    # AVQI windowed analysis: 1.7s -> ~0.05s
-    get_power_windows = function(window_starts, window_ends) {
-      cpp_snd$get_power_windows(
-        as.numeric(window_starts),
-        as.numeric(window_ends)
-      )
-    },
-
-    get_rms_windows = function(window_starts, window_ends) {
-      cpp_snd$get_rms_windows(
-        as.numeric(window_starts),
-        as.numeric(window_ends)
-      )
-    },
-
-    get_energy_windows = function(window_starts, window_ends) {
-      cpp_snd$get_energy_windows(
-        as.numeric(window_starts),
-        as.numeric(window_ends)
-      )
-    },
-
-    get_zcr_windows = function(window_starts, window_ends, channel = 1) {
-      cpp_snd$get_zcr_windows(
-        as.numeric(window_starts),
-        as.numeric(window_ends),
-        as.integer(channel)
-      )
-    },
-
-    # === Batch/Vectorized Value Extraction (20x faster than R loops) ===
-    # Tremor peak extraction: 40ms -> 2ms
-    get_values_at_times = function(times, channel = 1, interpolation = "linear") {
-      interp_code <- switch(tolower(interpolation),
-        "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
-        "sinc70" = 3L, "sinc700" = 4L, 1L)
-      cpp_snd$get_values_at_times(
-        as.numeric(times),
-        as.integer(channel),
-        interp_code
-      )
-    },
-
-    get_values_in_range = function(from_time = 0.0, to_time = 0.0, channel = 1) {
-      cpp_snd$get_values_in_range(
-        as.numeric(from_time),
-        as.numeric(to_time),
-        as.integer(channel)
-      )
-    },
-
-    get_times_in_range = function(from_time = 0.0, to_time = 0.0) {
-      cpp_snd$get_times_in_range(
-        as.numeric(from_time),
-        as.numeric(to_time)
-      )
-    },
-
-    # === Batch/Filtered Window Extraction (AVQI 2.9x -> 1.5x speedup) ===
-
-    # Extract windows, filter by power/ZCR, and concatenate
-    # @param window_starts Numeric vector of window start times
-    # @param window_ends Numeric vector of window end times
-    # @param min_power Minimum power threshold (windows below this are excluded)
-    # @param max_zcr Maximum zero-crossing rate (windows above this are excluded, -1 to disable)
-    # @param overlap_time Overlap time for concatenation (default: 0)
-    # @param window_shape Window shape ("rectangular", "hanning", etc.)
-    # @return Sound object containing concatenated passing windows
-    extract_windows_filtered = function(window_starts, window_ends,
-                                         min_power = 0.0, max_zcr = -1.0,
-                                         overlap_time = 0.0, window_shape = "rectangular") {
-      shape_code <- switch(tolower(window_shape),
-        "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
-        "hanning" = 3L, "hamming" = 4L,
-        "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
-        "gaussian4" = 8L, "gaussian5" = 9L,
-        "kaiser1" = 10L, "kaiser2" = 11L, 0L)
-
-      sound_ptr <- cpp_snd$extract_windows_filtered_ptr(
-        as.numeric(window_starts),
-        as.numeric(window_ends),
-        as.numeric(min_power),
-        as.numeric(max_zcr),
-        as.numeric(overlap_time),
-        shape_code
-      )
-      Sound(.xptr = sound_ptr)
-    },
-
-    # Check which windows pass power/ZCR filter without extraction
-    # @param window_starts Numeric vector of window start times
-    # @param window_ends Numeric vector of window end times
-    # @param min_power Minimum power threshold
-    # @param max_zcr Maximum zero-crossing rate (-1 to disable)
-    # @return Logical vector indicating which windows pass the filter
-    get_windows_passing_filter = function(window_starts, window_ends,
-                                           min_power = 0.0, max_zcr = -1.0) {
-      cpp_snd$get_windows_passing_filter(
-        as.numeric(window_starts),
-        as.numeric(window_ends),
-        as.numeric(min_power),
-        as.numeric(max_zcr)
-      )
-    },
-
-    # Concatenate multiple Sound objects
-    # @param sounds List of Sound objects to concatenate
-    # @param overlap_time Overlap time between sounds (default: 0)
-    # @return Sound object containing concatenated audio
-    concatenate_sounds = function(sounds, overlap_time = 0.0) {
-      if (!is.list(sounds)) {
-        stop("sounds must be a list of Sound objects")
-      }
-
-      # Extract pointers from Sound objects
-      sound_ptrs <- lapply(sounds, function(s) {
-        if (!inherits(s, "Sound")) {
-          stop("All elements must be Sound objects")
-        }
-        s$.xptr
-      })
-
-      sound_ptr <- cpp_snd$concatenate_parts_ptr(
-        sound_ptrs,
-        as.numeric(overlap_time)
-      )
-      Sound(.xptr = sound_ptr)
-    },
-
-    # === Time/Sample Conversion ===
-    to_pitch = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
-      pitch_ptr <- cpp_snd$to_pitch_ptr(
-        as.numeric(time_step),
-        as.numeric(pitch_floor),
-        as.numeric(pitch_ceiling)
-      )
-      Pitch(.xptr = pitch_ptr)
-    },
-    
-    to_formant_burg = function(time_step = 0.005, max_formants = 5.0,
-                               max_frequency = 5500.0, window_length = 0.025,
-                               pre_emphasis_from = 50.0,
-                               # Praat-compatible aliases
-                               max_number_of_formants = NULL,
-                               maximum_formant = NULL,
-                               pre_emphasis = NULL) {
-      max_formants <- max_number_of_formants %||% max_formants
-      max_frequency <- maximum_formant %||% max_frequency
-      pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
-      formant_ptr <- cpp_snd$to_formant_burg(
-        as.numeric(time_step), as.numeric(max_formants),
-        as.numeric(max_frequency), as.numeric(window_length),
-        as.numeric(pre_emphasis_from)
-      )
-      if (is.null(formant_ptr) || !inherits(formant_ptr, "externalptr")) {
-        stop("Failed to create Formant from Sound")
-      }
-      Formant(.xptr = formant_ptr)
-    },
-
-    # Robust formant extraction with optimal ceiling search
-    to_formant_optimal = function(
-      start_time = 0.0, end_time = 0.0,
-      window_length = 0.025, time_step = 0.005,
-      min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
-      preemphasis_freq = 50.0,
-      num_formant_tracks = 4, num_params_per_track = 5,
-      weigh_formants = "bandwidth",
-      num_sigmas = 1.0, power = 1.25,
-      use_constraints = FALSE,
-      min_f1 = 0.0, max_f1 = 0.0,
-      min_f2 = 0.0, max_f2 = 0.0,
-      min_f3 = 0.0
-    ) {
-      weigh_code <- switch(tolower(weigh_formants),
-        "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
-      fm_mod <- get_module("formantmodeler_module")
-      result <- fm_mod$Sound_to_Formant_interval(
-        ptr, start_time, end_time,
-        window_length, time_step,
-        min_freq, max_freq, as.integer(num_freq_steps),
-        preemphasis_freq,
-        as.integer(num_formant_tracks), as.integer(num_params_per_track),
-        weigh_code,
-        num_sigmas, power,
-        use_constraints, min_f1, max_f1, min_f2, max_f2, min_f3
-      )
-      list(
-        formant = Formant(.xptr = result$formant_ptr),
-        optimal_ceiling = result$optimal_ceiling
-      )
-    },
-
-    get_optimal_formant_ceiling = function(
-      start_time = 0.0, end_time = 0.0,
-      window_length = 0.025, time_step = 0.005,
-      min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
-      preemphasis_freq = 50.0,
-      num_formant_tracks = 4, num_params_per_track = 5,
-      weigh_formants = "bandwidth",
-      num_sigmas = 1.0, power = 1.25
-    ) {
-      weigh_code <- switch(tolower(weigh_formants),
-        "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
-      fm_mod <- get_module("formantmodeler_module")
-      fm_mod$Sound_get_optimal_formant_ceiling(
-        ptr, start_time, end_time,
-        window_length, time_step,
-        min_freq, max_freq, as.integer(num_freq_steps),
-        preemphasis_freq,
-        as.integer(num_formant_tracks), as.integer(num_params_per_track),
-        weigh_code,
-        num_sigmas, power
-      )
-    },
-
-    to_intensity = function(minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
-      intensity_ptr <- cpp_snd$to_intensity_ptr(
-        as.numeric(minimum_pitch),
-        as.numeric(time_step),
-        as.logical(subtract_mean)
-      )
-      Intensity(.xptr = intensity_ptr)
-    },
-    
-    to_harmonicity_cc = function(time_step = 0.01, min_pitch = 75.0,
-                                 silence_threshold = 0.1, periods_per_window = 1.0) {
-      harm_ptr <- cpp_snd$to_harmonicity_cc_ptr(
-        as.numeric(time_step), as.numeric(min_pitch),
-        as.numeric(silence_threshold), as.numeric(periods_per_window)
-      )
-      Harmonicity(.xptr = harm_ptr)
-    },
-    
-    to_harmonicity_gne = function(fmin = 500, fmax = 4500, bandwidth = 1000, step = 80) {
-      gne_ptr <- .sound_to_harmonicity_gne(
-        ptr,  # Use ptr from parent scope instead of .xptr
-        as.numeric(fmin),
-        as.numeric(fmax),
-        as.numeric(bandwidth),
-        as.numeric(step)
-      )
-      Matrix(.xptr = gne_ptr)
-    },
-    
-    to_spectrum = function(fast = TRUE) {
-      spec_ptr <- cpp_snd$to_spectrum_ptr(as.logical(fast))
-      Spectrum(.xptr = spec_ptr)
-    },
-    
-    to_spectrogram = function(window_length = 0.005, max_frequency = 5000.0,
-                             time_step = 0.002, frequency_step = 20.0,
-                             window_shape = "Gaussian") {
-      shape_code <- switch(tolower(window_shape),
-        "square" = 0L, "hamming" = 1L, "bartlett" = 2L,
-        "welch" = 3L, "hanning" = 4L, "gaussian" = 5L, 5L)
-      
-      spec_ptr <- cpp_snd$to_spectrogram_ptr(
-        as.numeric(window_length), as.numeric(max_frequency),
-        as.numeric(time_step), as.numeric(frequency_step),
-        shape_code
-      )
-      Spectrogram(.xptr = spec_ptr)
-    },
-    
-    # Note: time_step, max_period_factor, max_amplitude_factor are accepted for API
-    # compatibility with Praat GUI but are NOT used by the underlying C function
-    # Sound_to_PointProcess_periodic_cc() which only takes pitch_floor and pitch_ceiling
-    to_point_process_periodic_cc = function(pitch_floor = 75.0, pitch_ceiling = 600.0,
-                                            time_step = NULL, max_period_factor = NULL,
-                                            max_amplitude_factor = NULL) {
-      # Warn if unused parameters are specified
-      if (!is.null(time_step) || !is.null(max_period_factor) || !is.null(max_amplitude_factor)) {
-        warning("time_step, max_period_factor, and max_amplitude_factor are not used by ",
-                "Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.",
-                call. = FALSE)
-      }
-      pp_ptr <- cpp_snd$to_point_process_periodic_cc_ptr(
-        as.numeric(pitch_floor),
-        as.numeric(pitch_ceiling)
-      )
-      PointProcess(.xptr = pp_ptr)
-    },
-    
-    pitch_to_pointprocess_peaks = function(pitch, include_maxima = TRUE, include_minima = FALSE) {
-      if (!inherits(pitch, "Pitch")) {
-        stop("pitch must be a Pitch object (created with sound$to_pitch())")
-      }
-      if (!pitch$is_valid()) {
-        stop("Invalid Pitch object")
-      }
-      pp_ptr <- .sound_pitch_to_pointprocess_peaks(
-        ptr,
-        pitch$.xptr,
-        as.logical(include_maxima),
-        as.logical(include_minima)
-      )
-      PointProcess(.xptr = pp_ptr)
-    },
-    
-    # === Extraction (from module - FAST) ===
-    extract_channel = function(channel) {
-      ptr_result <- cpp_snd$extract_channel_ptr(as.integer(channel))
-      Sound(.xptr = ptr_result)
-    },
-    
-    # Extract part of Sound with optional windowing
-    # 
-    # Praat's "Sound: Extract part..." with full window shape support.
-    # 
-    # @param from_time Start time (seconds)
-    # @param to_time End time (seconds)
-    # @param window_shape Window shape name (string):
-    #   "rectangular", "triangular", "parabolic", "hanning", "hamming",
-    #   "gaussian1", "gaussian2", "gaussian3", "gaussian4", "gaussian5",
-    #   "kaiser1", "kaiser2"
-    # @param relative_width Relative width (default: 1.0).
-    #   For gaussian2/kaiser2, use 2.0 to maintain effective window duration.
-    #   For gaussian3, use 3.0. For gaussian4, use 4.0. For gaussian5, use 5.0.
-    # @param preserve_times If TRUE, preserve original time domain.
-    #   If FALSE, time-shift to start at 0.
-    # @return New Sound object
-    # 
-    # @details
-    # See: https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html
-    # 
-    # @examples
-    # # Rectangular (no windowing)
-    # part <- sound$extract_part(1.0, 2.0)
-    # 
-    # # Gaussian1 window
-    # part <- sound$extract_part(1.0, 2.0, "gaussian1", 1.0)
-    # 
-    # # Gaussian2 with wider extraction for same effective duration
-    # part <- sound$extract_part(1.0, 2.0, "gaussian2", 2.0)
-    extract_part = function(from_time, to_time, window_shape = "rectangular",
-                           relative_width = 1.0, preserve_times = FALSE) {
-      # Map window shape strings to codes
-      shape_code <- switch(tolower(window_shape),
-        "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
-        "hanning" = 3L, "hamming" = 4L, 
-        "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
-        "gaussian4" = 8L, "gaussian5" = 9L,
-        "kaiser1" = 10L, "kaiser2" = 11L, 0L)
-      
-      ptr_result <- cpp_snd$extract_part_ptr(
-        as.numeric(from_time), as.numeric(to_time),
-        shape_code, as.numeric(relative_width),
-        as.logical(preserve_times)
-      )
-      Sound(.xptr = ptr_result)
-    },
-    
-    extract_parts_batch = function(from_times, to_times, window_shape = "rectangular",
-                                    relative_width = 1.0, preserve_times = FALSE) {
-      # Map window shape strings to codes
-      shape_code <- switch(tolower(window_shape),
-        "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
-        "hanning" = 3L, "hamming" = 4L,
-        "gaussian1" = 5L, "gaussian2" = 6L, "gaussian3" = 7L,
-        "gaussian4" = 8L, "gaussian5" = 9L,
-        "kaiser1" = 10L, "kaiser2" = 11L, 0L)
-      
-      xptrs <- .sound_extract_parts_batch(
-        ptr,
-        as.numeric(from_times), as.numeric(to_times),
-        shape_code, as.numeric(relative_width),
-        as.logical(preserve_times)
-      )
-      lapply(xptrs, function(xptr) Sound(.xptr = xptr))
-    },
-    
-    # === Export (from module - FAST) ===
-    as_matrix = function() cpp_snd$as_matrix(),
-    as_data_frame = function() cpp_snd$as_data_frame(),
-    save = function(path, format = "WAV", bits_per_sample = 16) {
-      # Praat Melder audio file type constants (melder_audiofiles.h)
-      format_code <- switch(toupper(format),
-        "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
-        "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
-        "FLAC" = 6L, "MP3" = 7L, 3L)  # Default to WAV
-      cpp_snd$save(as.character(path), as.integer(format_code))
-      invisible(NULL)
-    },
-    
-    # === Advanced Transformations (old wrappers - COMPLEX) ===
-    to_pitch_ac = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0,
-                          max_candidates = 15, very_accurate = FALSE,
-                          silence_threshold = 0.03, voicing_threshold = 0.45,
-                          octave_cost = 0.01, octave_jump_cost = 0.35,
-                          voiced_unvoiced_cost = 0.14,
-                          # Praat-compatible aliases
-                          max_number_of_candidates = NULL) {
-      max_candidates <- max_number_of_candidates %||% max_candidates
-      pitch_ptr <- .sound_to_pitch_ac(
-        ptr, time_step, pitch_floor, pitch_ceiling,
-        as.integer(max_candidates), very_accurate,
-        silence_threshold, voicing_threshold,
-        octave_cost, octave_jump_cost, voiced_unvoiced_cost
-      )
-      Pitch(.xptr = pitch_ptr)
-    },
-
-    to_pitch_cc = function(time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0,
-                          max_candidates = 15, very_accurate = FALSE,
-                          silence_threshold = 0.03, voicing_threshold = 0.45,
-                          octave_cost = 0.01, octave_jump_cost = 0.35,
-                          voiced_unvoiced_cost = 0.14,
-                          # Praat-compatible aliases
-                          max_number_of_candidates = NULL) {
-      max_candidates <- max_number_of_candidates %||% max_candidates
-      pitch_ptr <- .sound_to_pitch_cc(
-        ptr, time_step, pitch_floor, pitch_ceiling,
-        as.integer(max_candidates), very_accurate,
-        silence_threshold, voicing_threshold,
-        octave_cost, octave_jump_cost, voiced_unvoiced_cost
-      )
-      Pitch(.xptr = pitch_ptr)
-    },
-    
-    to_formant_keepall = function(time_step = 0.005, max_formants = 5.0,
-                                  max_frequency = 5500.0, window_length = 0.025,
-                                  pre_emphasis_from = 50.0) {
-      formant_ptr <- .formant_from_sound_keepall(
-        ptr, time_step, max_formants, max_frequency,
-        window_length, pre_emphasis_from
-      )
-      Formant(.xptr = formant_ptr)
-    },
-    
-    to_formant_willems = function(time_step = 0.005, number_of_formants = 5.0,
-                                  max_frequency = 5500.0, window_length = 0.025,
-                                  pre_emphasis_from = 50.0) {
-      formant_ptr <- .formant_from_sound_willems(
-        ptr, time_step, number_of_formants, max_frequency,
-        window_length, pre_emphasis_from
-      )
-      Formant(.xptr = formant_ptr)
-    },
-    
-    to_formant_sl = function(time_step = 0.005, number_of_poles = 10L,
-                             max_frequency = 5500.0, window_length = 0.025,
-                             pre_emphasis_from = 50.0) {
-      formant_ptr <- .formant_from_sound_sl(
-        ptr, time_step, as.integer(number_of_poles),
-        max_frequency, window_length, pre_emphasis_from
-      )
-      Formant(.xptr = formant_ptr)
-    },
-    
-    to_harmonicity_ac = function(time_step = 0.01, min_pitch = 75.0,
-                                 silence_threshold = 0.1, periods_per_window = 1.0) {
-      hnr_ptr <- .sound_to_harmonicity_ac(
-        ptr, time_step, min_pitch,
-        silence_threshold, periods_per_window
-      )
-      Harmonicity(.xptr = hnr_ptr)
-    },
-    
-    to_ltas = function(bandwidth = 100.0) {
-      ltas_ptr <- .sound_to_ltas(ptr, bandwidth)
-      Ltas(.xptr = ltas_ptr)
-    },
-    
-    to_formant_path = function(time_step = 0.005,
-                               max_num_formants = 5.0,
-                               formant_ceiling = 5500.0,
-                               window_length = 0.025,
-                               preemphasis_from = 50.0,
-                               ceiling_step_fraction = 0.05,
-                               num_steps_up_down = 4L) {
-      FormantPath(snd, time_step, max_num_formants, formant_ceiling,
-                 window_length, preemphasis_from, ceiling_step_fraction,
-                 num_steps_up_down)
-    },
-    
-    to_complex_spectrogram = function(window_length = 0.005, maximum_frequency = 5000.0) {
-      ComplexSpectrogram(snd, window_length, maximum_frequency)
-    },
-    
-    to_textgrid_silences = function(min_pitch = 100.0, time_step = 0.0,
-                                    silence_threshold = -25.0,
-                                    min_silent_duration = 0.1,
-                                    min_sounding_duration = 0.1,
-                                    silent_label = "silent",
-                                    sounding_label = "sounding") {
-      tg_ptr <- .sound_to_textgrid_silences(
-        ptr, min_pitch, time_step, silence_threshold,
-        min_silent_duration, min_sounding_duration,
-        silent_label, sounding_label
-      )
-      TextGrid(.xptr = tg_ptr)
-    },
-    
-    to_cochleagram = function(dt = 0.01, df = 0.1, window_length = 0.03,
-                              forward_masking_time = 0.03) {
-      stopifnot(
-        "dt must be a positive number" = is.numeric(dt) && length(dt) == 1 && dt > 0,
-        "df must be a positive number" = is.numeric(df) && length(df) == 1 && df > 0,
-        "window_length must be a positive number" = is.numeric(window_length) && length(window_length) == 1 && window_length > 0,
-        "forward_masking_time must be a non-negative number" = is.numeric(forward_masking_time) && length(forward_masking_time) == 1 && forward_masking_time >= 0
-      )
-      cochleagram_ptr <- .sound_to_cochleagram(ptr, dt, df, window_length, forward_masking_time)
-      Cochleagram(.xptr = cochleagram_ptr)
-    },
-    
-    to_cochleagram_edb = function(dtime = 0.01, dfreq = 0.1, has_synapse = TRUE,
-                                   replenishment_rate = 0.01, loss_rate = 0.1,
-                                   return_rate = 0.05, reprocessing_rate = 0.01) {
-      sampling_rate <- cpp_snd$get_sampling_frequency()
-      if (sampling_rate < 44100) {
-        stop(
-          "Cochleagram EDB algorithm is unstable with sampling rates < 44.1kHz\n",
-          sprintf("  Current rate: %.0f Hz\n", sampling_rate),
-          "  Recommendation: Use $to_cochleagram() instead, which is more stable.",
-          call. = FALSE
-        )
-      }
-      cochleagram_ptr <- .sound_to_cochleagram_edb(
-        ptr, dtime, dfreq, has_synapse,
-        replenishment_rate, loss_rate, return_rate, reprocessing_rate
-      )
-      Cochleagram(.xptr = cochleagram_ptr)
-    },
-    
-    to_powercepstrogram = function(pitch_floor = 60.0, time_step = 0.002,
-                                   maximum_frequency = 5000.0, pre_emphasis_frequency = 50.0) {
-      pcep_ptr <- .sound_to_powercepstrogram(ptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
-      PowerCepstrogram(.xptr = pcep_ptr)
-    },
-    
-    to_cepstrum = function() {
-      xptr <- .sound_to_cepstrum(ptr)
-      Cepstrum(.xptr = xptr)
-    },
-    
-    to_cepstrum_bw = function() {
-      xptr <- .sound_to_cepstrum_bw(ptr)
-      Cepstrum(.xptr = xptr)
-    },
-    
-    to_manipulation = function(time_step = 0.01, pitch_floor = 75.0, pitch_ceiling = 600.0) {
-      manip_ptr <- .manipulation_from_sound(ptr, time_step, pitch_floor, pitch_ceiling)
-      Manipulation(.xptr = manip_ptr)
-    },
-    
-    to_lpc_burg = function(prediction_order = 16, analysis_width = 0.025,
-                           time_step = 0.005, pre_emphasis_frequency = 50.0) {
-      lpc_ptr <- .sound_to_lpc_burg(
-        ptr, as.integer(prediction_order), analysis_width,
-        time_step, pre_emphasis_frequency
-      )
-      LPC(.xptr = lpc_ptr)
-    },
-    
-    to_lpc_auto = function(prediction_order = 16, analysis_width = 0.025,
-                           time_step = 0.005, pre_emphasis_frequency = 50.0) {
-      lpc_ptr <- .sound_to_lpc_auto(
-        ptr, as.integer(prediction_order), analysis_width,
-        time_step, pre_emphasis_frequency
-      )
-      LPC(.xptr = lpc_ptr)
-    },
-    
-    to_lpc_covariance = function(prediction_order = 16, analysis_width = 0.025,
-                                 time_step = 0.005, pre_emphasis_frequency = 50.0) {
-      lpc_ptr <- .sound_to_lpc_covariance(
-        ptr, as.integer(prediction_order), analysis_width,
-        time_step, pre_emphasis_frequency
-      )
-      LPC(.xptr = lpc_ptr)
-    },
-    
-    to_lpc_marple = function(prediction_order = 16, analysis_width = 0.025,
-                             time_step = 0.005, pre_emphasis_frequency = 50.0,
-                             tol1 = 1e-6, tol2 = 1e-6) {
-      lpc_ptr <- .sound_to_lpc_marple(
-        ptr, as.integer(prediction_order), analysis_width,
-        time_step, pre_emphasis_frequency, tol1, tol2
-      )
-      LPC(.xptr = lpc_ptr)
-    },
-
-    # MFCC extraction (speech/speaker recognition features)
-    to_mfcc = function(num_coefficients = 13, analysis_width = 0.025,
-                       time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0,
-                       df_mel = 100.0) {
-      mfcc_mod <- get_module("mfcc_module")
-      mfcc_ptr <- mfcc_mod$Sound_to_MFCC(
-        ptr, as.integer(num_coefficients), analysis_width,
-        time_step, f1_mel, fmax_mel, df_mel
-      )
-      MFCC(.xptr = mfcc_ptr)
-    },
-
-    to_dtw = function(reference, analysis_width = 0.015, time_step = 0.005,
-                      band = 0.0, slope = 3) {
-      if (!inherits(reference, "Sound")) {
-        stop("reference must be a Sound object")
-      }
-      sounds_to_dtw(reference, snd, analysis_width, time_step, band, slope)
-    },
-
-    to_point_process_extrema = function(channel = 1, include_maxima = TRUE,
-                                        include_minima = FALSE,
-                                        interpolation = c("None", "Parabolic", "Cubic", "Sinc70", "Sinc700")) {
-      interpolation <- match.arg(interpolation)
-      interpolation_int <- switch(interpolation,
-        "None" = 0, "Parabolic" = 1, "Cubic" = 2,
-        "Sinc70" = 3, "Sinc700" = 4, 1)
-      
-      pp_ptr <- .sound_to_point_process_extrema(
-        ptr, as.integer(channel), as.logical(include_maxima),
-        as.logical(include_minima), interpolation_int
-      )
-      PointProcess(.xptr = pp_ptr)
-    },
-    
-    to_point_process_zeros = function(channel = 1, include_raisers = TRUE,
-                                      include_fallers = FALSE) {
-      pp_ptr <- .sound_to_point_process_zeros(
-        ptr, as.integer(channel),
-        as.logical(include_raisers), as.logical(include_fallers)
-      )
-      PointProcess(.xptr = pp_ptr)
-    },
-    
-    to_point_process_periodic_peaks = function(pitch_floor = 75.0, pitch_ceiling = 600.0,
-                                               include_maxima = TRUE, include_minima = FALSE) {
-      pp_ptr <- .sound_to_pointprocess_periodic_peaks(
-        ptr, pitch_floor, pitch_ceiling, include_maxima, include_minima
-      )
-      PointProcess(.xptr = pp_ptr)
-    },
-    
-    # Aliases for backward compatibility
-    to_pointprocess_periodic_cc = function(time_step = 0.0, pitch_floor = 75.0,
-                                          pitch_ceiling = 600.0, max_period_factor = 1.3,
-                                          max_amplitude_factor = 1.6) {
-      snd$to_point_process_periodic_cc(time_step, pitch_floor, pitch_ceiling, 
-                                       max_period_factor, max_amplitude_factor)
-    },
-    
-    to_pointprocess_periodic_peaks = function(pitch_floor = 75.0, pitch_ceiling = 600.0,
-                                             include_maxima = TRUE, include_minima = FALSE) {
-      snd$to_point_process_periodic_peaks(pitch_floor, pitch_ceiling, include_maxima, include_minima)
-    },
-    
-    # === Modification Methods (old wrappers) ===
-    scale_intensity = function(new_intensity_db) {
-      .sound_scale_intensity(ptr, new_intensity_db)
-      invisible(snd)
-    },
-    
-    scale_peak = function(new_peak = 0.99) {
-      .sound_scale_peak(ptr, new_peak)
-      invisible(snd)
-    },
-    
-    pre_emphasize = function(from_frequency = 50.0) {
-      .sound_pre_emphasize(ptr, from_frequency)
-      invisible(snd)
-    },
-    
-    de_emphasize = function(from_frequency = 50.0) {
-      .sound_de_emphasize(ptr, from_frequency)
-      invisible(snd)
-    },
-    
-    filter_pass_hann_band = function(fmin, fmax, smooth = 100.0) {
-      if (fmin < 0 || fmax <= fmin) {
-        stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
-      }
-      sound_ptr <- .sound_filter_pass_hann_band(ptr, fmin, fmax, smooth)
-      Sound(.xptr = sound_ptr)
-    },
-    
-    filter_stop_hann_band = function(fmin, fmax, smooth = 100.0) {
-      if (fmin < 0 || fmax <= fmin) {
-        stop("Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
-      }
-      sound_ptr <- .sound_filter_stop_hann_band(ptr, fmin, fmax, smooth)
-      Sound(.xptr = sound_ptr)
-    },
-    
-    resample = function(new_frequency, precision = 50) {
-      if (new_frequency <= 0) {
-        stop("new_frequency must be positive")
-      }
-      sound_ptr <- .sound_resample(ptr, new_frequency, as.integer(precision))
-      Sound(.xptr = sound_ptr)
-    },
-    
-    convert_to_mono = function() {
-      if (cpp_snd$get_number_of_channels() == 1) {
-        message("Sound is already mono, returning copy")
-      }
-      sound_ptr <- .sound_convert_to_mono(ptr)
-      Sound(.xptr = sound_ptr)
-    },
-    
-    convert_to_stereo = function() {
-      if (cpp_snd$get_number_of_channels() > 1) {
-        warning("Sound is already multi-channel, returning as-is")
-        sound_ptr <- .sound_copy(ptr)
-      } else {
-        sound_ptr <- .sound_convert_to_stereo(ptr)
-      }
-      Sound(.xptr = sound_ptr)
-    },
-    
-    concatenate = function(other_sound, overlap = 0) {
-      if (!inherits(other_sound, "Sound")) {
-        stop("other_sound must be a Sound object")
-      }
-      if (!other_sound$is_valid()) {
-        stop("other_sound is not a valid Sound object")
-      }
-      sound_ptr <- .sound_concatenate(ptr, other_sound$.xptr, overlap)
-      Sound(.xptr = sound_ptr)
-    },
-    
-    mix = function(other_sound, balance = 1.0) {
-      if (!inherits(other_sound, "Sound")) {
-        stop("other_sound must be a Sound object")
-      }
-      if (!other_sound$is_valid()) {
-        stop("other_sound is not a valid Sound object")
-      }
-      sound_ptr <- .sound_mix(ptr, other_sound$.xptr, balance)
-      Sound(.xptr = sound_ptr)
-    },
-    
-    extract_intervals_where = function(textgrid, tier_number, criterion = "is equal to",
-                                      text = "", preserve_times = FALSE) {
-      if (!inherits(textgrid, "TextGrid")) {
-        stop("textgrid must be a TextGrid object")
-      }
-      textgrid$extract_intervals_where(snd, tier_number, criterion, text, preserve_times)
-    },
-
-    # === Tier 1: New methods from gap analysis ===
-
-    #' Lengthen (time-stretch) using overlap-add
-    lengthen = function(fmin = 75, fmax = 600, factor = 1.5) {
-      sound_ptr <- .sound_lengthen_ola(ptr, fmin, fmax, factor)
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Pitch-corrected LTAS (voice quality)
-    to_ltas_pitch_corrected = function(pitch_floor = 75, pitch_ceiling = 600,
-                                       max_frequency = 5000, bandwidth = 100,
-                                       shortest_period = 0.0001, longest_period = 0.02,
-                                       max_period_factor = 1.3) {
-      ltas_ptr <- .sound_to_ltas_pitch_corrected(
-        ptr, pitch_floor, pitch_ceiling,
-        max_frequency, bandwidth,
-        shortest_period, longest_period, max_period_factor
-      )
-      Ltas(.xptr = ltas_ptr)
-    },
-
-    #' Robust formant extraction (outlier-resistant)
-    to_formant_robust = function(time_step = 0.005, max_formants = 5.0,
-                                 max_frequency = 5500.0, window_length = 0.025,
-                                 pre_emphasis_from = 50.0,
-                                 num_std_dev = 1.5, max_iterations = 5L) {
-      formant_ptr <- .sound_to_formant_robust(
-        ptr, time_step, max_formants,
-        max_frequency, window_length, pre_emphasis_from,
-        num_std_dev, as.integer(max_iterations)
-      )
-      Formant(.xptr = formant_ptr)
-    },
-
-    #' Filter with Formant object (scales to preserve energy)
-    filter_by_formant = function(formant) {
-      if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
-      sound_ptr <- .sound_formant_filter(ptr, formant$.xptr)
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Filter with Formant object (no scaling)
-    filter_by_formant_noscale = function(formant) {
-      if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
-      sound_ptr <- .sound_formant_filter_noscale(ptr, formant$.xptr)
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Convert to MelSpectrogram
-    to_mel_spectrogram = function(window_length = 0.015, time_step = 0.005,
-                                  first_filter_frequency = 100,
-                                  max_frequency = 0, frequency_step = 100) {
-      mel_ptr <- .sound_to_mel_spectrogram(
-        ptr, window_length, time_step,
-        first_filter_frequency, max_frequency, frequency_step
-      )
-      MelSpectrogram(.xptr = mel_ptr)
-    },
-
-    #' Convert to BarkSpectrogram
-    to_bark_spectrogram = function(window_length = 0.015, time_step = 0.005,
-                                   first_filter_frequency = 1.0,
-                                   max_frequency = 0, frequency_step = 1.0) {
-      bark_ptr <- .sound_to_bark_spectrogram(
-        ptr, window_length, time_step,
-        first_filter_frequency, max_frequency, frequency_step
-      )
-      BarkSpectrogram(.xptr = bark_ptr)
-    },
-
-    #' Change speaker characteristics (formant + pitch shift)
-    change_speaker = function(pitch_floor = 75, pitch_ceiling = 600,
-                              formant_multiplier = 1.0, pitch_multiplier = 1.0,
-                              pitch_range_multiplier = 1.0, duration_multiplier = 1.0) {
-      sound_ptr <- .sound_change_speaker(ptr, pitch_floor, pitch_ceiling,
-        formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Change speaker using pre-computed Pitch
-    change_speaker_with_pitch = function(pitch, formant_multiplier = 1.0,
-                                          pitch_multiplier = 1.0,
-                                          pitch_range_multiplier = 1.0,
-                                          duration_multiplier = 1.0) {
-      if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object")
-      sound_ptr <- .sound_pitch_change_speaker(ptr, pitch$.xptr,
-        formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Autocorrelate
-    autocorrelate = function(scaling = "peak_0.99", signal_outside = "zero") {
-      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
-      so <- match.arg(signal_outside, c("zero", "similar"))
-      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
-      so_code <- match(so, c("zero", "similar"))
-      sound_ptr <- .sound_autocorrelate(ptr, as.integer(sc_code), as.integer(so_code))
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Convolve with another sound
-    convolve = function(other_sound, scaling = "peak_0.99", signal_outside = "zero") {
-      if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
-      so <- match.arg(signal_outside, c("zero", "similar"))
-      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
-      so_code <- match(so, c("zero", "similar"))
-      sound_ptr <- .sounds_convolve_direct(ptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Cross-correlate with another sound
-    cross_correlate = function(other_sound, scaling = "peak_0.99", signal_outside = "zero") {
-      if (!inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-      sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
-      so <- match.arg(signal_outside, c("zero", "similar"))
-      sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
-      so_code <- match(so, c("zero", "similar"))
-      sound_ptr <- .sounds_cross_correlate_direct(ptr, other_sound$.xptr, as.integer(sc_code), as.integer(so_code))
-      Sound(.xptr = sound_ptr)
-    },
-
-    #' Deepen band modulation (hearing enhancement)
-    deepen_band_modulation = function(enhancement_db = 10, flow = 300, fhigh = 4000,
-                                      slow_modulation = 3, fast_modulation = 30,
-                                      band_smoothing = 100) {
-      sound_ptr <- .sound_deepen_band_mod(
-        ptr, enhancement_db, flow, fhigh,
-        slow_modulation, fast_modulation, band_smoothing
-      )
-      Sound(.xptr = sound_ptr)
-    },
-
-    # === Print Method ===
-    print = function() {
-      if (!cpp_snd$is_valid()) {
-        cat("<Sound [invalid]>\n")
-        return(invisible(snd))
-      }
-      
-      cat("<Praat Sound>\n")
-      cat(sprintf("  Duration: %.3f s\n", cpp_snd$get_duration()))
-      cat(sprintf("  Sampling frequency: %.0f Hz\n", cpp_snd$get_sampling_frequency()))
-      cat(sprintf("  Number of samples: %d\n", cpp_snd$get_number_of_samples()))
-      cat(sprintf("  Number of channels: %d\n", cpp_snd$get_number_of_channels()))
-      
-      intensity_db <- tryCatch(cpp_snd$get_intensity_db(), error = function(e) NA)
-      if (!is.na(intensity_db)) {
-        cat(sprintf("  Intensity: %.1f dB\n", intensity_db))
-      }
-      
-      invisible(snd)
-    }
-  ), class = c("Sound", "PraatObject"))
-  
-  snd
+  # Minimal object: just fields, no closures. Methods via $.Sound dispatch.
+  structure(list(.xptr = ptr, .cpp = cpp_snd), class = c("Sound", "PraatObject"))
 }
 
 # ============================================================================
@@ -1137,10 +935,10 @@ Sound <- function(path = NULL, .xptr = NULL) {
 # ============================================================================
 
 #' Create Sound from numeric values
-#' 
+#'
 #' Factory function to create a Sound object from a numeric vector or matrix.
 #' Use `Sound$from_values()` for backward compatibility (calls this function).
-#' 
+#'
 #' @param values Numeric matrix with channels as rows, samples as columns (or vector for mono)
 #' @param sampling_rate Sampling rate in Hz (default: 44100)
 #' @param start_time Start time of the sound in seconds (default: 0.0)
@@ -1151,7 +949,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' # Create from vector (mono)
 #' values <- sin(2 * pi * 440 * seq(0, 1, length.out = 44100))
 #' sound <- sound_from_values(values, 44100)
-#' 
+#'
 #' # Or using Sound$from_values() (same thing)
 #' sound <- Sound$from_values(values, 44100)
 #' }
@@ -1159,20 +957,20 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   if (is.vector(values)) {
     values <- matrix(values, nrow = 1)
   }
-  
+
   if (!is.matrix(values)) {
     stop("values must be a numeric vector or matrix")
   }
-  
+
   ptr <- .sound_create_from_values(values, sampling_rate, start_time)
   Sound(.xptr = ptr)
 }
 
 #' Create a pure tone Sound
-#' 
+#'
 #' Factory function to generate a pure sine wave tone.
 #' Use `Sound$create_tone()` for backward compatibility (calls this function).
-#' 
+#'
 #' @param duration Duration in seconds (default: 1.0)
 #' @param sampling_rate Sampling rate in Hz (default: 44100)
 #' @param frequency Frequency in Hz (default: 440)
@@ -1183,7 +981,7 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' \dontrun{
 #' # Create 440 Hz tone
 #' sound <- sound_create_tone(frequency = 440, duration = 1.0)
-#' 
+#'
 #' # Or using Sound$create_tone() (same thing)
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 #' }
