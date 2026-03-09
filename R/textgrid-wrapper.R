@@ -297,7 +297,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
       tier_num <- resolve_tier_number(tier)
       cpp_tg$get_point_text(tier_num, as.integer(point_number))
     },
-    get_all_points = function(tier) {
+    get_all_points = function(tier = 1L) {
       tier_num <- resolve_tier_number(tier)
       .textgrid_get_all_points(ptr, tier_num)
     },
@@ -401,28 +401,6 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
         text = df$label,
         stringsAsFactors = FALSE
       )
-    },
-
-    # Get all points from a point tier in single C++ call
-    # @param tier Tier number (1-based) or name
-    # @return data.table (inherits from data.frame) with time, text columns
-    get_all_points = function(tier = 1L) {
-      tier_num <- resolve_tier_number(tier)
-      if (!cpp_tg$is_point_tier(tier_num)) {
-        stop("Tier ", tier, " is an interval tier, not a point tier")
-      }
-      n <- cpp_tg$get_number_of_points(tier_num)
-      if (n == 0) {
-        return(data.frame(time = numeric(0), text = character(0), stringsAsFactors = FALSE))
-      }
-      # Build vectors in single pass using C++ module methods
-      times <- numeric(n)
-      texts <- character(n)
-      for (i in seq_len(n)) {
-        times[i] <- cpp_tg$get_point_time(tier_num, i)
-        texts[i] <- cpp_tg$get_point_text(tier_num, i)
-      }
-      data.frame(time = times, text = texts, stringsAsFactors = FALSE)
     },
 
     print = function() {

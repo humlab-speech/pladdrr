@@ -573,63 +573,55 @@ extract_measurements <- function(sound,
     intensity_obj <- do.call(sound$to_intensity, intensity_params)
   }
   
-  # Get intervals
-  n_intervals <- textgrid$get_number_of_intervals(tier_number = tier)
+  # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
+  intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
   
-  # Extract measurements
-  results <- lapply(seq_len(n_intervals), function(i) {
-    label <- textgrid$get_label_of_interval(tier_number = tier, interval_number = i)
-    
-    # Skip empty labels
-    if (label == "") {
-      return(NULL)
-    }
-    
-    start <- textgrid$get_start_time(tier_number = tier, interval_number = i)
-    end <- textgrid$get_end_time(tier_number = tier, interval_number = i)
-    
-    # Determine measurement time
-    meas_time <- switch(time_point,
-                       midpoint = (start + end) / 2,
-                       start = start,
-                       end = end,
-                       mean = (start + end) / 2)  # mean is same as midpoint for time
-    
-    row <- data.frame(
-      interval = i,
-      label = label,
-      start = start,
-      end = end,
-      duration = end - start,
-      stringsAsFactors = FALSE
-    )
-    
-    # Add pitch
-    if (!is.null(pitch_obj)) {
-      f0 <- pitch_obj$get_value_at_time(time = meas_time, unit = "hertz", interpolation = "linear")
-      row$f0 <- f0
-    }
-    
-    # Add formants
-    if (!is.null(formant_obj)) {
-      for (f_num in 1:formant_params$max_formants) {
-        f_val <- formant_obj$get_value_at_time(formant_number = f_num, time = meas_time,
-                                                unit = "hertz", interpolation = "linear")
-        row[[paste0("F", f_num)]] <- f_val
-      }
-    }
-    
-    # Add intensity
-    if (!is.null(intensity_obj)) {
-      int_val <- intensity_obj$get_value_at_time(time = meas_time, interpolation = "cubic")
-      row$intensity <- int_val
-    }
-    
-    row
-  })
+  # Filter non-empty labels (vectorized)
+  keep <- nzchar(intervals$label)
+  if (!any(keep)) {
+    return(NULL)
+  }
+  intervals <- intervals[keep, , drop = FALSE]
+  n <- nrow(intervals)
   
-  # Combine results
-  do.call(rbind, Filter(Negate(is.null), results))
+  # Compute measurement times (vectorized)
+  meas_times <- switch(time_point,
+    midpoint = (intervals$start + intervals$end) / 2,
+    start = intervals$start,
+    end = intervals$end,
+    mean = (intervals$start + intervals$end) / 2
+  )
+  
+  # Build base result data.frame
+  results <- data.frame(
+    interval = intervals$index,
+    label = intervals$label,
+    start = intervals$start,
+    end = intervals$end,
+    duration = intervals$duration,
+    stringsAsFactors = FALSE
+  )
+  
+  # Batch pitch: single C++ call for all time points
+  if (!is.null(pitch_obj)) {
+    results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times, unit = 0L, interpolate = TRUE)
+  }
+  
+  # Batch formants: one C++ call per formant number
+  if (!is.null(formant_obj)) {
+    for (f_num in seq_len(formant_params$max_formants)) {
+      results[[paste0("F", f_num)]] <- .formant_get_values_at_times(
+        formant_obj$.xptr, meas_times, formant_number = as.integer(f_num), unit = 0L
+      )
+    }
+  }
+  
+  # Batch intensity: single C++ call for all time points
+  if (!is.null(intensity_obj)) {
+    results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr, meas_times, interpolation = 1L)
+  }
+  
+  results
 }
 
 

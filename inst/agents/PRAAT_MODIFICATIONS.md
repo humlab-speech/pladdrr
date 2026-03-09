@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-03-09
-**Package Version:** 4.8.30
+**Package Version:** 4.8.31
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,15 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.31 Phase 2 R-level performance fixes (2026-03-09)
+
+**Summary:** No Praat C++ source changes. Three R-level performance fixes:
+- `vad.R`: O(n²) → O(n) vector growth in `textgrid_get_intervals_where()`
+- `textgrid-wrapper.R`: removed duplicate slow `get_all_points()` that shadowed fast C++ version
+- `batch-processing.R`: `extract_measurements()` now uses batch C++ calls instead of per-interval R loops
+
+---
 
 ### v4.8.29 Revert broken SIMD blocks in Sound_to_Pitch.cpp; fix GNE threshold (2026-02-19)
 

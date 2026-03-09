@@ -164,10 +164,11 @@ textgrid_get_intervals_where <- function(textgrid,
                 text = character(0), count = 0L))
   }
 
-  # Collect matching intervals
-  xmin <- numeric(0)
-  xmax <- numeric(0)
-  labels <- character(0)
+  # Pre-allocate to max possible size, then trim
+  xmin <- numeric(n_intervals)
+  xmax <- numeric(n_intervals)
+  labels <- character(n_intervals)
+  k <- 0L
 
   for (i in seq_len(n_intervals)) {
     interval_text <- textgrid$get_interval_text(tier, i)
@@ -183,17 +184,19 @@ textgrid_get_intervals_where <- function(textgrid,
     )
 
     if (match) {
-      xmin <- c(xmin, textgrid$get_interval_start_time(tier, i))
-      xmax <- c(xmax, textgrid$get_interval_end_time(tier, i))
-      labels <- c(labels, interval_text)
+      k <- k + 1L
+      xmin[k] <- textgrid$get_interval_start_time(tier, i)
+      xmax[k] <- textgrid$get_interval_end_time(tier, i)
+      labels[k] <- interval_text
     }
   }
 
+  # Trim to actual count
   list(
-    xmin = xmin,
-    xmax = xmax,
-    text = labels,
-    count = length(xmin)
+    xmin = xmin[seq_len(k)],
+    xmax = xmax[seq_len(k)],
+    text = labels[seq_len(k)],
+    count = k
   )
 }
 
