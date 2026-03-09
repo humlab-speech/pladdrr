@@ -125,19 +125,19 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 
 ### Data Flow Example: `sound$to_pitch_cc()`
 
-**NEW: Module-Based Architecture (v2.0+)**
+**Shared Dispatch Table Architecture (v4.8.33)**
 
 1. User calls: `pitch <- sound$to_pitch_cc(75, 600)`
-2. R wrapper (function factory) extracts `.cpp` module object
-3. **Direct C++ call:** `cpp_obj$to_pitch_cc_ptr(75, 600)` (NO R6 lookup)
+2. `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
+3. Method calls `.self$.cpp$to_pitch_cc_ptr(75, 600)` (direct C++ module call)
 4. C++ module calls `Sound_to_Pitch_cc()` (Praat function)
 5. Result wrapped in `XPtr<structPitch>` with custom deleter
 6. R wrapper creates new `Pitch()` from pointer via factory function
-7. Returns: `structure(list(.xptr = ptr, .cpp = module, ...), class = "Pitch")`
+7. Returns: `structure(list(.xptr = ptr, .cpp = module), class = c("Pitch", "PraatObject"))`
 
-**Key Performance Improvement:** Direct module calls eliminate R6 method dispatch overhead (2-3x faster).
+**Key Performance Improvement:** Shared dispatch tables eliminate per-instance closure allocation (9x faster creation, 160x less memory).
 
-### Object Structure (Function Factory Pattern)
+### Object Structure (Shared Dispatch Table Pattern)
 
 **All 35 wrappers use the Shared Dispatch Table pattern (v4.8.33):**
 
@@ -466,7 +466,7 @@ stats <- pitch_get_statistics_batch(
 
 **v4.1.0 Major Performance Fix:** Removed debug output from Praat threading code, achieving **3x speedup** for CPPS and all multi-threaded operations. AVQI benchmark improved from 8x slower to **2.67x slower** than Python/Parselmouth.
 
-**PowerCepstrogram converted to modules in v2.2.1** for 1.5-2x speedup in AVQI v3.01. By v2.2.3, all 30 analysis objects use modules.
+**PowerCepstrogram converted to modules in v2.2.1** for 1.5-2x speedup in AVQI v3.01. By v4.8.33, all 35 wrappers use shared dispatch tables.
 
 For voice quality analysis, use the module-based API (now default) or fast helper functions:
 
@@ -478,14 +478,14 @@ cpps <- calculate_cpps_fast(sound)  # Uses optimized defaults matching get_cpps(
 # With custom parameters:
 cpps <- calculate_cpps_fast(
   sound,
-  subtract_tilt = TRUE,              # Default: TRUE (matches R6 get_cpps)
+   subtract_tilt = TRUE,              # Default: TRUE (matches get_cpps)
   time_averaging_window = 0.001,     # Default: 0.001
   quefrency_averaging_window = 0.0005, # Default: 0.0005
   pitch_floor = 60,
   pitch_ceiling = 333.3              # Default: 333.3
 )
 
-# STANDARD API: Two-step with R6 object (same performance, returns reusable object)
+# STANDARD API: Two-step with wrapper object (same performance, returns reusable object)
 pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
 cpps <- pcep$get_cpps(
   subtract_tilt = TRUE,
@@ -510,7 +510,7 @@ cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
 
 **Key v4.1.0 changes:**
 - `calculate_cpps_fast()` now uses direct C++ path (Sound→CPPS in single call)
-- Defaults aligned with R6 `get_cpps()` method for identical output
+- Defaults aligned with `get_cpps()` method for identical output
 - Threading debug output removed from Praat's `MelderThread.cpp`
 - Benefits ALL multi-threaded Praat operations (Pitch, Formant, CPPS, etc.)
 
@@ -599,7 +599,7 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 **NEW in v4.0.2:** Full-parameter Direct API pitch functions now available! Use `to_pitch_ac_direct()` or `to_pitch_cc_direct()` for custom voicing parameters with Direct API performance.
 
 ```r
-# TIER 1: Standard (baseline, full features, R6 object)
+# TIER 1: Standard (baseline, full features)
 pitch <- sound$to_pitch_cc(voicing_threshold = 0.6)
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
 
@@ -990,7 +990,7 @@ passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.03, max_z
 
 # Concatenate multiple sounds efficiently
 sounds_list <- list(sound1, sound2, sound3)
-concatenated <- Sound$concatenate_sounds(sounds_list, overlap_time = 0.01)
+concatenated <- sound1$concatenate_sounds(sounds_list, overlap_time = 0.01)
 ```
 
 #### PointProcess Batch Operations (DSI/Shimmer: 10-20x speedup)
@@ -1180,7 +1180,7 @@ voice_quality <- c(
 **Signature:**
 ```r
 two_pass_adaptive_pitch(
-  sound,                      # Sound XPtr or R6 object
+  sound,                      # Sound XPtr or wrapper object
   time_step = 0,              # 0 = auto (0.75 / initial_floor)
   initial_floor = 50,         # Pass 1 pitch floor (Hz)
   initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
@@ -1211,8 +1211,8 @@ two_pass_adaptive_pitch(
 **Signature:**
 ```r
 get_jitter_shimmer_batch(
-  pointprocess,               # PointProcess XPtr or R6 object
-  sound,                      # Sound XPtr or R6 object
+  pointprocess,               # PointProcess XPtr or wrapper object
+  sound,                      # Sound XPtr or wrapper object
   from_time = 0,              # Start time (0 = beginning)
   to_time = 0,                # End time (0 = end)
   period_floor = 0.0001,      # Min period (seconds)
@@ -1274,7 +1274,7 @@ pp <- sound$to_point_process_periodic_cc()  # Sound-only, no pitch guidance
 
 **Status:** All critical bugs fixed - production ready for AVQI and DSI workflows!
 
-Tier 4 "Ultra" functions keep entire analysis workflows in C++, returning only final scalars. Eliminates intermediate R6 object creation and R-side coordination.
+Tier 4 "Ultra" functions keep entire analysis workflows in C++, returning only final scalars. Eliminates intermediate object creation and R-side coordination.
 
 **Bug Fix Summary (v4.6.3):**
 - ✅ `extract_voiced_segments_ultra()`: Fixed v2.03/v3.01 algorithm inconsistency
@@ -1575,7 +1575,7 @@ extract_voiced_segments_ultra(
 )
 ```
 
-**Returns:** Sound object (R6 wrapper around XPtr) with concatenated voiced segments.
+**Returns:** Sound object (shared dispatch wrapper around XPtr) with concatenated voiced segments.
 
 **Use case:** AVQI v2.03/v3.01 preprocessing. v3.01 is more robust (filters out low-power/high-ZCR segments).
 
@@ -2273,7 +2273,7 @@ new_sound <- manipulation$to_sound()
 
 # === LOAD/SAVE ===
 pitch_tier$save("modified.PitchTier")
-pt2 <- PitchTier$new("modified.PitchTier")
+pt2 <- PitchTier("modified.PitchTier")
 ```
 
 ### Pattern 5: TextGrid Operations
@@ -2910,25 +2910,25 @@ R CMD INSTALL .
 
 Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before committing.
 
-### 11. Sound Shared Dispatch: `$.Sound` S3 Method
+### 11. Shared Dispatch Table: `$.Type` S3 Methods
 
-Since v4.8.32, Sound uses a shared dispatch table instead of per-instance closures. Key implications:
+Since v4.8.33, ALL 35 wrappers use shared dispatch tables instead of per-instance closures. Key implications:
 
 ```r
 # Methods work identically from the user's perspective:
 sound$to_pitch()     # Works — $.Sound dispatches to .sound_methods
 
-# BUT: do.call still works because $.Sound returns a bound closure:
+# BUT: do.call still works because $.Type returns a bound closure:
 do.call(sound$to_pitch, list())  # Works — returns function(...) method(x, ...)
 
 # Field access (.xptr, .cpp) is a fast path via .subset2:
 sound$.xptr          # Direct list access, no method lookup
 
-# .pointer is a compat alias for .xptr:
+# .pointer is a compat alias for .xptr (Sound, Electroglottogram, AmplitudeTier):
 sound$.pointer       # Returns .xptr
 ```
 
-When adding new methods to Sound, add them to `.sound_methods` in `R/sound-wrapper.R`, not inside the constructor. Other wrappers (Pitch, Formant, etc.) still use per-instance closures.
+When adding new methods to any wrapper, add them to the `.{type}_methods` env in the corresponding `R/*-wrapper.R` file, not inside the constructor.
 
 ---
 
@@ -2936,14 +2936,14 @@ When adding new methods to Sound, add them to `.sound_methods` in `R/sound-wrapp
 
 ⚠️ **Legacy S3 API functions are deprecated and will be removed in v5.0.0**
 
-The following S3-style functions have been replaced by the modern function factory (R6-like) API. While they still work, they emit deprecation warnings and should not be used in new code.
+The following S3-style functions have been replaced by the modern shared dispatch API. While they still work, they emit deprecation warnings and should not be used in new code.
 
 ### Deprecated Functions → Modern Replacements
 
 | Deprecated Function | Modern Replacement |
 |---------------------|-------------------|
-| `create_sound(values, sr)` | `Sound$from_values(values, sr)` |
-| `read_sound(file_path)` | `Sound$new(file_path)` |
+| `create_sound(values, sr)` | `sound_n(values, sr)` |
+| `read_sound(file_path)` | `Sound(file_path)` |
 | `get_duration(sound)` | `sound$get_duration()` |
 | `get_sampling_rate(sound)` | `sound$get_sampling_frequency()` |
 | `get_n_channels(sound)` | `sound$get_number_of_channels()` |
@@ -2976,8 +2976,8 @@ mean_f0 <- get_mean_pitch(pitch)
 
 **After (modern):**
 ```r
-# Modern function factory workflow
-sound <- Sound$new("speech.wav")
+# Modern shared dispatch workflow
+sound <- Sound("speech.wav")
 duration <- sound$get_duration()
 pitch <- sound$to_pitch(pitch_floor = 75)
 mean_f0 <- pitch$get_mean()
@@ -3033,7 +3033,7 @@ R/
 └── RcppExports.R          # Auto-generated (don't edit)
 ```
 
-**File Naming Convention (v4.0.7):** All R wrapper files use `-wrapper.R` suffix (not `-r6.R`) to accurately reflect the function-wrapper pattern used instead of R6 classes.
+**File Naming Convention (v4.0.7):** All R wrapper files use `-wrapper.R` suffix (not `-r6.R`) to accurately reflect the shared dispatch table pattern used instead of R6 classes.
 
 ---
 
@@ -3244,9 +3244,9 @@ pitch_ptr <- to_pitch_cc_direct(
 **API Tier Comparison for Custom Parameters:**
 
 ```r
-# Tier 1: Standard API (R6 object returned)
+# Tier 1: Standard API (wrapper object returned)
 pitch <- sound$to_pitch_cc(voicing_threshold = 0.6)
-# Speed: Medium | Returns: R6 Pitch object
+# Speed: Medium | Returns: Pitch wrapper object
 
 # Tier 2: Direct API (external pointer returned) ⭐ NEW
 pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)
@@ -3667,10 +3667,10 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 | `pitch_floor` | Pitch, CPPS, voice quality | Praat UI: "Pitch floor" for F0 candidate range |
 | `max_frequency` | Spectrogram, Cepstrogram | Maximum frequency of spectral representation |
 | `maximum_formant` | Formant extraction (deprecated S3) | Nyquist-like ceiling for formant search |
-| `max_formant` | `to_formant_burg()` | Same concept, shorter name in R6 API |
+| `max_formant` | `to_formant_burg()` | Same concept, shorter name in wrapper API |
 
 **Known intentional inconsistencies:**
-- `interpolate` (boolean/string in batch queries) vs `interpolation` (string in R6 methods) — batch queries accept both `TRUE`/`FALSE` shorthand and string values; R6 methods always use string names
+- `interpolate` (boolean/string in batch queries) vs `interpolation` (string in wrapper methods) — batch queries accept both `TRUE`/`FALSE` shorthand and string values; wrapper methods always use string names
 - `get_intensity_at_times(..., interpolate = "cubic")` uses string type while `get_pitch_at_times(..., interpolate = TRUE)` uses boolean — these cannot be unified without breaking changes
 
 ---
@@ -3793,7 +3793,7 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
     - Use case: Vowel classification, speaker identification
 - **File naming standardization:**
   - Renamed 30 R wrapper files: `*-r6.R` → `*-wrapper.R`
-  - Reflects actual function-wrapper pattern (not R6 classes)
+  - Reflects actual shared dispatch table pattern (not R6 classes)
   - No breaking changes to API - only internal file names changed
 - **Sound methods added:**
   - `sound$to_mfcc()` - Extract MFCC from audio
@@ -3943,7 +3943,7 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 - **New direct CPPS API:** `sound_to_cpps_direct()` C++ function
   - Single C++ call: Sound → CPPS (PowerCepstrogram kept internal, no R/C++ boundary)
   - `calculate_cpps_fast()` now uses this optimized path
-- **Default alignment:** `calculate_cpps_fast()` defaults now match R6 `get_cpps()` method
+- **Default alignment:** `calculate_cpps_fast()` defaults now match `get_cpps()` method
   - `subtract_tilt = TRUE`, `time_averaging_window = 0.001`, `quefrency_averaging_window = 0.0005`
   - `pitch_ceiling = 333.3`, `qstart_fit = 0.003`, `qend_fit = 0.04`
   - Output verified identical (difference = 0.0 dB)
@@ -3968,9 +3968,9 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 - **LTO (Link-Time Optimization)** enabled by default for 5-15% overall speedup
 
 **v2.2.3 (2026-01-09):**
-- **Architecture documentation complete** - Comprehensive investigation confirmed 30/31 objects use module pattern
+- **Architecture documentation complete** - Comprehensive investigation confirmed 35/36 objects use shared dispatch table pattern
 - Added comprehensive technical reference: `docs/MODULE_VS_R6_DESIGN.md` (400+ lines, local only)
-- Updated `.planning/REMAINING_R6_CLASSES.md` - marked conversion work complete (97% coverage)
+- Updated `.planning/REMAINING_R6_CLASSES.md` - marked conversion work complete (100% coverage except PraatInterpreter)
 - Documented PraatInterpreter R6 rationale - intentionally kept as R6 for stateful design
 - Verified performance achievements: AVQI 2.1-2.4x faster, CPPS 1.5-2.0x faster
 
@@ -4011,11 +4011,11 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 
 ---
 
-**Guide Version:** 4.1.1
-**Last Updated:** 2026-01-19
-**Package Version:** 4.1.1
-**Modules:** 37 (34/35 objects use modules, PraatInterpreter uses R6)
-**Major Features:** 3-tier performance API (Standard/Direct/Batch), data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler), **v4.1.0 threading performance fix (3x speedup for multi-threaded ops)**
+**Guide Version:** 4.8.33
+**Last Updated:** 2026-03-09
+**Package Version:** 4.8.33
+**Modules:** 37 C++ modules; 35 wrappers use shared dispatch tables, PraatInterpreter uses R6
+**Major Features:** 4-tier performance API (Standard/Direct/Batch/Ultra), shared dispatch table architecture, data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler), threading performance fix (3x speedup for multi-threaded ops)
 
 ### SIMD Bridge Functions (Phase 1.1-1.4)
 
@@ -5479,7 +5479,7 @@ void accumulate_power_spectrum_simd(
 
 test_that("Pre-emphasis SIMD is exact (zero error)", {
   signal <- generate_test_signal(duration = 0.5, sr = 16000)
-  snd <- Sound$from_values(signal, 16000)
+  snd <- sound_n(signal, 16000)
 
   # Manual calculation
   emphasis_factor <- exp(-2 * pi * 50 / 16000)
@@ -5499,7 +5499,7 @@ test_that("Pre-emphasis SIMD is exact (zero error)", {
 
 test_that("Pre-emphasis + de-emphasis round-trip", {
   signal <- generate_test_signal(duration = 0.5, sr = 16000)
-  snd <- Sound$from_values(signal, 16000)
+  snd <- sound_n(signal, 16000)
 
   set_global_simd_enabled(TRUE)
   snd$pre_emphasize(50)
@@ -5513,7 +5513,7 @@ test_that("Pre-emphasis + de-emphasis round-trip", {
 
 test_that("Spectrogram SIMD matches scalar (multiple windows)", {
   signal <- generate_test_signal(duration = 0.5, sr = 16000)
-  snd <- Sound$from_values(signal, 16000)
+  snd <- sound_n(signal, 16000)
 
   for (window_shape in c("Gaussian", "Hamming", "Hanning")) {
     # Scalar
@@ -5564,7 +5564,7 @@ for (test_data in test_signals) {
   # Scalar benchmark
   scalar_times <- numeric(n_iterations)
   for (i in 1:n_iterations) {
-    snd <- Sound$from_values(test_data$signal, test_data$sr)
+    snd <- sound_n(test_data$signal, test_data$sr)
     set_global_simd_enabled(FALSE)
     start_time <- Sys.time()
     snd$pre_emphasize(50)
@@ -5576,7 +5576,7 @@ for (test_data in test_signals) {
   # SIMD benchmark
   simd_times <- numeric(n_iterations)
   for (i in 1:n_iterations) {
-    snd <- Sound$from_values(test_data$signal, test_data$sr)
+    snd <- sound_n(test_data$signal, test_data$sr)
     set_global_simd_enabled(TRUE)
     start_time <- Sys.time()
     snd$pre_emphasize(50)
@@ -6200,7 +6200,7 @@ test_that("MFCC SIMD matches scalar implementation", {
   skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
-  snd <- Sound$from_values(signal, 16000)
+  snd <- sound_n(signal, 16000)
 
   # Scalar MFCC
   set_global_simd_enabled(FALSE)
@@ -6234,7 +6234,7 @@ test_that("MFCC SIMD matches scalar implementation", {
 
 # Warm-up
 for (i in 1:n_warmup) {
-  snd <- Sound$from_values(signal, sr)
+  snd <- sound_n(signal, sr)
   set_global_simd_enabled(FALSE)
   mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
   rm(snd, mfcc_scalar); gc(verbose = FALSE)
@@ -6243,7 +6243,7 @@ for (i in 1:n_warmup) {
 # Scalar benchmark
 scalar_times <- numeric(n_iterations)
 for (i in 1:n_iterations) {
-  snd <- Sound$from_values(signal, sr)
+  snd <- sound_n(signal, sr)
   set_global_simd_enabled(FALSE)
   start_time <- Sys.time()
   mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
@@ -6255,7 +6255,7 @@ for (i in 1:n_iterations) {
 # SIMD benchmark
 simd_times <- numeric(n_iterations)
 for (i in 1:n_iterations) {
-  snd <- Sound$from_values(signal, sr)
+  snd <- sound_n(signal, sr)
   set_global_simd_enabled(TRUE)
   start_time <- Sys.time()
   mfcc_simd <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
@@ -7310,7 +7310,7 @@ parts <- sound_extract_parts(
 **Summary:** Fixed `Sound$to_spectrogram()` segfault and `to_spectrogram_direct()` type error. Both APIs now work correctly.
 
 **Root Causes:**
-1. **Segfault (R6 path):** `should_use_simd_for_spectrogram()` in `spectrogram_simd.cpp` called R API (`Rcpp::Environment`, `getOption`) from **worker threads** inside `MelderThread_PARALLELIZE`. R's C API is not thread-safe — this corrupted namespace resolution causing recursive errors then segfault at address 0x80.
+1. **Segfault (wrapper path):** `should_use_simd_for_spectrogram()` in `spectrogram_simd.cpp` called R API (`Rcpp::Environment`, `getOption`) from **worker threads** inside `MelderThread_PARALLELIZE`. R's C API is not thread-safe — this corrupted namespace resolution causing recursive errors then segfault at address 0x80.
 2. **Type error (direct path):** `to_spectrogram_direct()` passed `as.character(window_shape)` to C++ module expecting `int`.
 
 **Files Modified:**
@@ -7410,7 +7410,7 @@ formant <- sound$to_formant_burg()  # Stable ✅
 - `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
 - `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
 - `batch_queries.cpp`: Added `PowerCepstrogram_smooth_fast()` — parallelized smooth using exact `Sampled_getMean` (bit-exact vs Praat). Added `PowerCepstrogram_getCPPS_fast()` wrapper pipeline.
-- `batch_queries.cpp`: Fixed `calculate_cpps_ultra_cpp` C++ defaults to match R6 `get_cpps()`: time_averaging_window 0.01→0.001, quefrency_averaging_window 0.001→0.0005, pitch_ceiling 330→333.3, line_type exponential(2)→straight(1). Previously the C++ and R defaults silently differed, but R wrapper already had correct values.
+- `batch_queries.cpp`: Fixed `calculate_cpps_ultra_cpp` C++ defaults to match `get_cpps()`: time_averaging_window 0.01→0.001, quefrency_averaging_window 0.001→0.0005, pitch_ceiling 330→333.3, line_type exponential(2)→straight(1). Previously the C++ and R defaults silently differed, but R wrapper already had correct values.
 
 **Performance Impact (10-core Apple Silicon, 1s audio):**
 - CPPS: ~70-80ms (was ~800ms+ single-threaded)
