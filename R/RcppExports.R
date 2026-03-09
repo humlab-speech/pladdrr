@@ -2224,12 +2224,98 @@ get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_simd_info`)
 }
 
+set_global_simd_enabled <- function(enabled) {
+    invisible(.Call(`_pladdrr_set_global_simd_enabled`, enabled))
+}
+
+get_global_simd_enabled <- function() {
+    .Call(`_pladdrr_get_global_simd_enabled`)
+}
+
 .sound_convert_to_mono_simd <- function(xptr) {
     .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
 
 .complex_multiply_simd <- function(a, b) {
     .Call(`_pladdrr_complex_multiply`, a, b)
+}
+
+#' Fast Sound Sample Access
+#'
+#' Copies Sound sample data via direct pointer access — faster than
+#' `get_values()` which goes through Praat's per-sample accessor.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param channel Channel number (1-based, default 1)
+#'
+#' @return Numeric vector (independent copy of sample data).
+#'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
+#'   for backward compatibility with code that checked these.
+#'
+#' @details
+#' **Performance:** ~2-5x faster than `get_values()` for large sounds
+#' because it copies directly from Praat's contiguous sample array
+#' rather than calling the per-sample accessor in a loop.
+#'
+#' The returned vector is an independent R copy — safe to modify,
+#' store, or use after the Sound object is garbage collected.
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("large_file.wav")
+#'
+#' # Fast copy — for read-only analysis
+#' samples <- sound_values_fast(sound$get_xptr(), channel = 1)
+#' rms <- sqrt(mean(samples^2))
+#'
+#' # Regular copy — equivalent, slightly slower
+#' samples2 <- sound$get_values(channel = 1)
+#' }
+#'
+#' @export
+sound_values_fast <- function(sound_xptr, channel = 1L) {
+    .Call(`_pladdrr_sound_values_fast`, sound_xptr, channel)
+}
+
+#' Fast Sound Time Vector
+#'
+#' Returns time values for each sample via optimized computation.
+#'
+#' @param sound_xptr External pointer to Sound object
+#'
+#' @return Numeric vector of sample times
+#'
+#' @details
+#' Computes sample times directly from Sound metadata (t0 + i*dt)
+#' rather than going through Praat's accessor functions.
+#'
+#' @export
+sound_times_fast <- function(sound_xptr) {
+    .Call(`_pladdrr_sound_times_fast`, sound_xptr)
+}
+
+#' Get Sound Data as Matrix (Fast Copy)
+#'
+#' Copies Sound data into a matrix (samples x channels) via direct
+#' pointer access.
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param zerocopy Ignored (kept for backward compatibility). All paths copy.
+#'
+#' @return Numeric matrix with dimensions (n_samples x n_channels)
+#'
+#' @keywords internal
+sound_as_matrix_fast_impl <- function(sound_xptr, zerocopy = FALSE) {
+    .Call(`_pladdrr_sound_as_matrix_fast_impl`, sound_xptr, zerocopy)
+}
+
+#' Check if Vector is a Fast-Access Vector
+#'
+#' @param x Numeric vector
+#' @return TRUE if x has the fast_vector or zerocopy_vector class
+#' @export
+is_fast_access <- function(x) {
+    .Call(`_pladdrr_is_fast_access`, x)
 }
 
 #' Load sound window from file with optional resampling (internal)
@@ -2990,96 +3076,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 .sound_pitch_change_speaker <- function(sound_xptr, pitch_xptr, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier) {
     .Call(`_pladdrr_sound_pitch_change_speaker`, sound_xptr, pitch_xptr, formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
-}
-
-#' Zero-Copy Sound Data Access (Read-Only View)
-#'
-#' Returns a read-only view of Sound sample data without copying memory.
-#' This is **significantly faster** than `get_values()` but returned
-#' data cannot be modified and is only valid while the Sound object exists.
-#'
-#' @param sound_xptr External pointer to Sound object  
-#' @param channel Channel number (1-based, default 1)
-#'
-#' @return Numeric vector pointing to Praat's internal sample array
-#'
-#' @details
-#' **Performance:** This function is 5-10x faster than `get_values()` for
-#' large sounds because it avoids memory allocation and copying.
-#'
-#' **Safety:**
-#' - Returned vector is READ-ONLY (modifying will corrupt Praat data)
-#' - Data is only valid while Sound object exists
-#' - If Sound is deleted, accessing this vector will crash R
-#'
-#' **Use Cases:**
-#' - Reading large audio files for analysis (no modification needed)
-#' - Windowing operations (extract views, compute stats)
-#' - Signal processing that doesn't modify original
-#'
-#' **When to avoid:**
-#' - If you need to modify the data
-#' - If you're storing the result long-term
-#' - If the Sound object might be garbage collected
-#'
-#' @examples
-#' \dontrun{
-#' sound <- Sound("large_file.wav")
-#'
-#' # Zero-copy (fast) - for read-only operations
-#' samples_view <- sound_values_zerocopy(sound$get_xptr(), channel = 1)
-#' rms <- sqrt(mean(samples_view^2))  # Safe - read-only
-#'
-#' # Regular copy (safe) - if you need to modify
-#' samples_copy <- sound$get_values(channel = 1)
-#' samples_copy[1] <- 0  # Safe - independent copy
-#' }
-#'
-#' @export
-sound_values_zerocopy <- function(sound_xptr, channel = 1L) {
-    .Call(`_pladdrr_sound_values_zerocopy`, sound_xptr, channel)
-}
-
-#' Zero-Copy Sound Time Vector (Read-Only View)
-#'
-#' Returns time values for each sample. Unlike `get_sample_times()`, this
-#' version computes times on-the-fly without allocating memory for storage.
-#'
-#' @param sound_xptr External pointer to Sound object
-#'
-#' @return Numeric vector of sample times
-#'
-#' @details
-#' This function still allocates a vector (times must be computed),
-#' but is faster than the standard version due to optimized computation.
-#'
-#' @export
-sound_times_fast <- function(sound_xptr) {
-    .Call(`_pladdrr_sound_times_fast`, sound_xptr)
-}
-
-#' Get Sound Sample Data as Matrix (Zero-Copy for Single Channel)
-#'
-#' Returns Sound data as a matrix (time × channels). For single-channel
-#' sounds, uses zero-copy. For multi-channel sounds, must copy.
-#'
-#' @param sound_xptr External pointer to Sound object
-#' @param zerocopy If TRUE and single-channel, return zero-copy view (default FALSE for safety)
-#'
-#' @return Numeric matrix with dimensions (n_samples × n_channels)
-#'
-#' @keywords internal
-sound_as_matrix_zerocopy_impl <- function(sound_xptr, zerocopy = FALSE) {
-    .Call(`_pladdrr_sound_as_matrix_zerocopy_impl`, sound_xptr, zerocopy)
-}
-
-#' Check if Vector is Zero-Copy
-#'
-#' @param x Numeric vector
-#' @return TRUE if x is a zero-copy view, FALSE otherwise
-#' @export
-is_zerocopy <- function(x) {
-    .Call(`_pladdrr_is_zerocopy`, x)
 }
 
 .spectrogram_get_start_time <- function(spectrogram) {

@@ -255,21 +255,21 @@ Does it use parallel processing?
 
 ## Special Function Categories
 
-### Zero-Copy Access
+### Fast Data Access
 
-**Naming:** `*_zerocopy` or `get_*_fast` (legacy)
+**Naming:** `*_fast` (preferred), `*_zerocopy` (deprecated aliases)
 
-**Purpose:** Direct memory access without copying
+**Purpose:** Fast data access via direct pointer copy
 
 **Examples:**
 ```r
-values <- get_sound_values_zerocopy(sound)
-matrix <- sound_as_matrix_zerocopy(sound)
+values <- get_sound_values_fast(sound)
+matrix <- sound_as_matrix_fast(sound)
 ```
 
 **Characteristics:**
-- No data copying
-- Maximum performance
+- Direct pointer access (faster than per-sample accessor)
+- Returns independent R copies (safe to modify)
 - For advanced users
 
 ### Combined Operations
@@ -298,7 +298,7 @@ formants <- sound_extract_and_formant(sound, starts, ends)
 | `batch-ops.R` | `*_batch`, `*_and_*` | Tier 3 | `sound_to_pitch_batch()` |
 | `batch-queries.R` | `get_*_at_times` | Tier 3 | `get_pitch_at_times()` |
 | `parallel-batch.R` | `*_parallel` | Tier 3 | `analyze_files_parallel()` |
-| `zerocopy-access.R` | `*_zerocopy` | Tier 3+ | `get_sound_values_zerocopy()` |
+| `fast-access.R` | `*_fast` | Tier 3+ | `get_sound_values_fast()` |
 
 ---
 

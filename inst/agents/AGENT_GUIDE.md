@@ -20,7 +20,7 @@
 - **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
 - **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
 - **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
-- **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_zerocopy_impl` export
+- **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_fast_impl` export (was `sound_as_matrix_zerocopy_impl`)
 - **v4.8.22:** NaN/NA input guards on all query methods, Intensity batch queries, Formant/Spectrogram API additions
 - **v4.8.20:** Spectrogram segfault fix (thread-unsafe R API in SIMD check)
 - **v4.8.19:** xsimd v8+ compatibility for all SIMD files
@@ -2450,27 +2450,29 @@ xcorr <- sounds_cross_correlate(sound1, sound2, scaling = 4L)
 convolved <- sounds_convolve(sound1, sound2, scaling = 4L)
 ```
 
-### Zero-Copy Data Access
+### Fast Data Access
 
-5-10x faster read-only access to Sound samples:
+2-5x faster access to Sound samples via direct pointer copy:
 
 ```r
-# Fast zero-copy access (READ-ONLY - do not modify!)
-samples <- get_sound_values_zerocopy(sound, channel = 1)
-rms <- sqrt(mean(samples^2))  # Safe
-peak <- max(abs(samples))      # Safe
+# Fast sample access (independent copy — safe to modify)
+samples <- get_sound_values_fast(sound, channel = 1)
+rms <- sqrt(mean(samples^2))
+peak <- max(abs(samples))
 
-# Check if vector is zero-copy
-is_zerocopy_vector(samples)  # TRUE
+# Check if vector came from fast access
+is_fast_vector(samples)  # TRUE
 
-# Matrix access (mono sounds only for zerocopy)
-mat <- sound_as_matrix_zerocopy(sound, zerocopy = TRUE)
+# Matrix access (all channels)
+mat <- sound_as_matrix_fast(sound)
 
 # Fast time vector computation
 times <- get_sound_times_fast(sound)
 ```
 
-**Warning:** Zero-copy vectors are READ-ONLY views into Praat memory. Modifying them corrupts data!
+**Note:** Despite the legacy "zerocopy" name, these functions always return independent R copies.
+The old names (`get_sound_values_zerocopy`, `sound_as_matrix_zerocopy`, `is_zerocopy_vector`) still
+work but are deprecated — use the `_fast` variants instead.
 
 ### Batch Processing
 
