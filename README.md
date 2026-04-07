@@ -13,19 +13,47 @@
 
 ## Overview
 
-`pladdrr` provides **direct, high-performance** access to Praat's phonetic analysis functionality from R using Rcpp Modules. Designed for phonetic researchers who need fast, reliable acoustic and statistical analysis.
+The `pladdrr` package aims to provide efficient R users with efficient access the functionalities of [Praat](https://praat.org) through a consistent Object Oriented interface so that conversion of praat scripts to self-contained and efficient R re-implmentations are afforded. 
 
-### Key Features
+Direct access to Praat's C code base from R is achieved though Rcpp Modules and generated methods assocated with Praat Objects of several types (35 i Rcpp Modules in total):
 
-- **35 Rcpp Modules**: Direct C++ method dispatch with ~8-12µs overhead per call
-- **Comprehensive Analysis**: Pitch, formants, intensity, harmonicity, spectral analysis
-- **Statistical Analysis**: PCA, Discriminant Analysis, DTW (Dynamic Time Warping)
-- **Speech Features**: MFCC/LFCC extraction for speech/speaker recognition
-- **Robust Formant Tracking**: FormantPath and FormantModeler for optimal ceiling estimation
-- **Speech Synthesis**: KlattGrid parametric synthesizer
+### Speech Signal Analysis
+
+- **Pitch extraction**: F0 tracking with autocorrelation and cross-correlation algorithms
+- **Formant analysis**: Burg's algorithm, **FormantPath** (robust multi-ceiling tracking), **FormantModeler** (polynomial trajectory modeling)
+- **Speech features**: **MFCC/LFCC** extraction for speech and speaker recognition
+- **Speech synthesis**: **KlattGrid** parametric synthesizer for vowel generation and voice morphing
+- **Voice quality**: Harmonicity-to-Noise Ratio (HNR), jitter, shimmer measurements
+- **Spectral analysis**: Spectrogram, **ComplexSpectrogram** (phase), Spectrum, LTAS
+- **Intensity**: Intensity contours and measurements
+- **TextGrid support**: Full read/write with comprehensive annotation workflows
+- **Sound operations**: Concatenation, filtering, convolution, time-stretching (9 operations)
+
+### Statistical Analysis
+
+- **DTW**: Dynamic Time Warping for sound and cepstral coefficient alignment
+- **PCA**: Principal Component Analysis from TableOfReal or Covariance matrices
+- **Discriminant**: Linear discriminant analysis with classification tables
+- **FormantModeler**: Polynomial modeling with outlier detection and optimal ceiling estimation
+
+
+We have extended the media handling capabilities substantially to include all formats supported by the [libav C library](https://github.com/libav/libav) (using the [av](https://cran.r-project.org/web/packages/av/index.html) R package), which is most audio and video formats and containers in mainstream use today. Media loading will default to using Praats own routines for higher efficiency. However, if the format is not nativelly supported by Praat, it will be loaded and converted to a supported format in memory using the flexible but less efficient libav path.
+
+
+To achieve the most efficient processing, we use as much of the optimizations introduced by our C/C++ code bases, including
+
 - **SIMD Vectorization**: Optimized autocorrelation, FFT, formant detection
 - **Zero-copy operations**: Efficient memory management for large files
 - **Streaming support**: Process files too large for memory with LongSound
+
+The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 provides effocient batch and parallell processing of for common use cases, with coding agent friendly documentation in [agents/AGENT_GUIDE.md]. 
+
+## Limitations and caveats
+
+The `pladdrr` package is developed to fill our own internal needs primarily is fundamentally thought to provide the best support making efficient re-implmentations of Praat scripts available to R scripts and users. The package exposes all modules we have found a use for in our re-implmetations efforts, but extensions to new Object type will require separate develoment effort. 
+
+We do not expose a fully working interpreter that has been extensively tested. Further, we have optied to not expose the full graphics system of Praat to the user to avoid inclusion of platform specicif graphics libraries that are not the core functionality uniquly contributed by Praat. Instead, we plan to make use of the already excellent plotting functionality of R for vizualization.
+
 
 ## Documentation
 
@@ -33,7 +61,7 @@
 - [Full Documentation](https://humlab-speech.github.io/pladdrr/) - Complete package documentation
 - [Function Reference](https://humlab-speech.github.io/pladdrr/reference/) - All available functions
 - [Performance Optimization](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.html) - Speed up your analyses
-- [Migration Guide (v3.0)](https://humlab-speech.github.io/pladdrr/articles/migration-guide.html) - Upgrading from v2.x
+
 
 ## Installation
 
@@ -43,7 +71,7 @@
 # Install devtools if needed
 if (!require("devtools")) install.packages("devtools")
 
-# Install the humlab-speech fork of av (required for audio I/O)
+# Install the 'av' pacckage for audio I/O. Our fork is recommnended for all users who also want to use reindeer 
 devtools::install_github("humlab-speech/av")
 
 # Install pladdrr from GitHub
@@ -62,14 +90,6 @@ devtools::install_github("humlab-speech/pladdrr")
   - Ubuntu/Debian: `sudo apt-get install libavfilter-dev`
   - Windows: Included with av package
 
-### Audio I/O
-
-The `pladdrr` package uses the [humlab-speech/av](https://github.com/humlab-speech/av) fork for all audio file operations. This provides:
-
-- Support for **any audio/video format** via FFmpeg (MP3, WAV, FLAC, OGG, AAC, M4A, etc.)
-- Fast, efficient audio reading and writing
-- No external Praat installation required
-- Cross-platform compatibility
 
 ### Optional Dependencies
 
@@ -84,36 +104,6 @@ install.packages("dplyr")
 
 ```
 
-## Features
-
-### Comprehensive Phonetic Analysis
-
-- **Pitch extraction**: F0 tracking with autocorrelation and cross-correlation algorithms
-- **Formant analysis**: Burg's algorithm, **FormantPath** (robust multi-ceiling tracking), **FormantModeler** (polynomial trajectory modeling)
-- **Speech features**: **MFCC/LFCC** extraction for speech and speaker recognition
-- **Speech synthesis**: **KlattGrid** parametric synthesizer for vowel generation and voice morphing
-- **Voice quality**: Harmonicity-to-Noise Ratio (HNR), jitter, shimmer measurements
-- **Spectral analysis**: Spectrogram, **ComplexSpectrogram** (phase), Spectrum, LTAS
-- **Intensity**: Intensity contours and measurements
-- **TextGrid support**: Full read/write with comprehensive annotation workflows
-- **Sound operations**: Concatenation, filtering, convolution, time-stretching (9 operations)
-
-### Statistical Analysis (v4.7.0)
-
-- **DTW**: Dynamic Time Warping for sound and cepstral coefficient alignment
-- **PCA**: Principal Component Analysis from TableOfReal or Covariance matrices
-- **Discriminant**: Linear discriminant analysis with classification tables
-- **FormantModeler**: Polynomial modeling with outlier detection and optimal ceiling estimation
-
-### Research Workflows
-
-See `inst/examples/` for complete, real-world workflows:
-
-- **Vowel space analysis** (F1-F2 plots with Lobanov normalization)
-- **Large-scale corpus processing** (batch analysis with performance benchmarking)
-- **TextGrid-guided analysis** (segmentation + acoustic feature extraction)
-- **Voice quality profiling** (HNR, jitter, shimmer, spectral moments)
-- **Complete phonetic pipelines** (integrated analysis combining multiple measures)
 
 
 ## Quick Start
@@ -122,7 +112,7 @@ See `inst/examples/` for complete, real-world workflows:
 library(pladdrr)
 
 # Create a Sound object with a pure tone
-sound <- Sound$create_tone(440, duration = 1.0, sampling_frequency = 44100)
+sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 44100)
 
 # Extract pitch
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
@@ -142,7 +132,7 @@ f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
 f2 <- formant$get_value_at_time(formant_number = 2, time = 0.5, unit = "hertz")
 
 # Voice quality analysis
-harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, minimum_pitch = 75)
+harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75)
 hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
 ```
 
@@ -183,7 +173,7 @@ All Praat objects are R6 classes with methods that mirror Praat's native command
 
 ```r
 # Create Sound objects
-sound <- Sound$create_tone(440, duration = 2.0, sampling_frequency = 44100)
+sound <- Sound$create_tone(frequency = 440, duration = 2.0, sampling_rate = 44100)
 
 # Praat: "To Pitch..." → R: to_pitch()
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
@@ -247,28 +237,19 @@ results <- lapply(wav_files, process_file)
 corpus_data <- do.call(rbind, results)
 ```
 
-## Architecture
+### More specialized research workflows
 
-**Object-Oriented Design**: R6 classes with external pointers to Praat C++ objects
+See `inst/examples/` for complete, real-world workflows:
 
-```
-R User Code
-    ↓
-R6 Classes (Sound, Pitch, Formant, TextGrid, etc.)
-    ↓
-External Pointers (Rcpp XPtr - zero-copy)
-    ↓
-C++ Wrappers (src/*_wrappers.cpp)
-    ↓
-Praat C++ Objects (src/praat/ - native Praat code)
-```
+- **Vowel space analysis** (F1-F2 plots with Lobanov normalization)
+- **Large-scale corpus processing** (batch analysis with performance benchmarking)
+- **TextGrid-guided analysis** (segmentation + acoustic feature extraction)
+- **Voice quality profiling** (HNR, jitter, shimmer, spectral moments)
+- **Complete phonetic pipelines** (integrated analysis combining multiple measures)
 
-**Benefits**:
-- Type-safe method calls with autocomplete support
-- Automatic memory management (XPtr finalizers)
-- No Python dependency (unlike Parselmouth)
-- Direct C++ performance
-- Familiar syntax for Praat users
+
+
+# Implmentation details
 
 ## Implemented Objects
 
