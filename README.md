@@ -26,7 +26,7 @@ Direct access to Praat's C code base from R is achieved though Rcpp Modules and 
 - **Voice quality**: Harmonicity-to-Noise Ratio (HNR), jitter, shimmer measurements
 - **Spectral analysis**: Spectrogram, **ComplexSpectrogram** (phase), Spectrum, LTAS
 - **Intensity**: Intensity contours and measurements
-- **TextGrid support**: Full read/write with comprehensive annotation workflows
+- **TextGrid support**: Read/write with comprehensive annotation workflows
 - **Sound operations**: Concatenation, filtering, convolution, time-stretching (9 operations)
 
 ### Statistical Analysis
@@ -46,7 +46,7 @@ To achieve the most efficient processing, we use as much of the optimizations in
 - **Zero-copy operations**: Efficient memory management for large files
 - **Streaming support**: Process files too large for memory with LongSound
 
-The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 provides effocient batch and parallell processing of for common use cases, with coding agent friendly documentation in [agents/AGENT_GUIDE.md]. 
+The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 provides effocient batch and parallell processing of for common use cases. Tier 4 provides some abilities for parallell / batch processing of files, if benefixial. We provide coding agent friendly documentation of the package's capabilities in [agents/AGENT_GUIDE.md]. 
 
 ## Limitations and caveats
 
@@ -54,6 +54,12 @@ The `pladdrr` package is developed to fill our own internal needs primarily is f
 
 We do not expose a fully working interpreter that has been extensively tested. Further, we have optied to not expose the full graphics system of Praat to the user to avoid inclusion of platform specicif graphics libraries that are not the core functionality uniquly contributed by Praat. Instead, we plan to make use of the already excellent plotting functionality of R for vizualization.
 
+## Other similar packages
+
+This package was developed to serve our specific needs and does not suit everyone. If our needs do not overlap with yours, please consider these alternative routes to do what you want:
+
+- [parselmouth](https://github.com/YannickJadoul/Parselmouth) is a Python package which directly exposes the abilities of the Praat C code base and also lets you run a full script. It is usually almost as fast as pladdrr code, and may be faster in some instances, and can be called in R using the `reticulate` package. It provides all funcitonality of Praat as far as we can tell, but cannot produce for instance PDF versions of a Praat drawing.
+- [speakr](https://github.com/stefanocoretta/speakr) makes the functionality of Praat available to R users by using the Praat executable as a DSP engine. As such it can be used to do all that Praat could do, but may struggle with parallellism and relies of callouts to the shell that can be inefficient and sensitive to errors in expectations at the handoff between R and Praat.
 
 ## Documentation
 
