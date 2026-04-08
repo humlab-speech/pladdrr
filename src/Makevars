@@ -1,15 +1,15 @@
 # Makevars.in for Unix/Linux/macOS builds
-# Processed by configure script
+# Processed by configure script to generate Makevars
 
 # Use C++17 standard
 CXX_STD = CXX17
 
 # Include directories
 # Note: xsimd provided by RcppXsimd package (via LinkingTo in DESCRIPTION)
-PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
+# GSL headers detected by configure via gsl-config / pkg-config
+PKG_CPPFLAGS = -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipocketfft \
-               -Igsl-2.8 \
-               -Igsl-2.8/gsl \
+               -I/opt/homebrew/Cellar/gsl/2.8/include \
                -Ipraat.github.io \
                -Ipraat.github.io/kar \
                -Ipraat.github.io/melder \
@@ -34,7 +34,9 @@ PKG_CPPFLAGS =  -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Iclapack/INCLUDE
 
 # Compiler flags
-PKG_CXXFLAGS =  -DPRAAT_LIB \
+# Note: R's own Makeconf provides optimization flags (-O2 typically).
+# Do NOT add -O3, -flto, or -march=native — these violate CRAN policy.
+PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_GUI \
                -DNO_AUDIO \
                -DNO_GRAPHICS \
@@ -54,46 +56,11 @@ PKG_CXXFLAGS =  -DPRAAT_LIB \
                -Wno-unused-const-variable \
                -Wno-c++11-narrowing
 
-# Performance optimization flags
-PKG_CXXFLAGS += -O3
+# C flags for vendored C sources (FLAC, MP3, GSL stubs)
+PKG_CFLAGS = -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable
 
-# Link-Time Optimization (LTO) for 5-15% speedup
-# Enables cross-file inlining and dead code elimination
-PKG_CXXFLAGS += -flto
-PKG_LDFLAGS = -flto
-
-# Platform-specific SIMD flags
-# Detect platform and set appropriate flags
-UNAME_M := $(shell uname -m 2>/dev/null || echo unknown)
-
-# Platform-specific optimizations (enabled for local builds)
-# NOTE: Comment these out before CRAN submission
-ifeq ($(UNAME_M),x86_64)
-  PKG_CXXFLAGS += -march=native -mtune=native -mfpmath=sse
-else
-  ifeq ($(UNAME_M),aarch64)
-    PKG_CXXFLAGS += -march=armv8-a+simd
-  else
-    ifeq ($(UNAME_M),arm64)
-      PKG_CXXFLAGS += -march=armv8-a+simd
-    endif
-  endif
-endif
-
-# Linker flags - link against GSL, R's LAPACK and BLAS
-# Override FLIBS to use Homebrew gfortran if /opt/gfortran doesn't exist
-HOMEBREW_GCC := $(shell brew --prefix gcc 2>/dev/null)
-ifneq ($(HOMEBREW_GCC),)
-  ifeq ($(wildcard /opt/gfortran),)
-    # Use Homebrew gfortran location
-    FLIBS_OVERRIDE = -L$(HOMEBREW_GCC)/lib/gcc/current -lgfortran -lquadmath
-    PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS_OVERRIDE) -pthread
-  else
-    PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
-  endif
-else
-  PKG_LIBS = -L. -L/opt/homebrew/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
-endif
+# Linker flags — GSL detected by configure, LAPACK/BLAS from R
+PKG_LIBS = -L/opt/homebrew/Cellar/gsl/2.8/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread
 
 # ============================================================================
 # SOURCE FILES
@@ -343,7 +310,7 @@ SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp intensity_simd.cpp \
            batch_queries_simd.cpp batch_queries_simd_bridge.cpp \
            textgrid_simd.cpp textgrid_simd_bridge.cpp \
            formantpath_simd.cpp harmonicity_simd.cpp complexspectrogram_simd.cpp \
-           klattgrid_simd.cpp powercepstrogram_simd.cpp simd_info.cpp sound_zerocopy.cpp textgrid_batch_operations.cpp batch_queries.cpp
+           klattgrid_simd.cpp powercepstrogram_simd.cpp simd_info.cpp sound_fast_access.cpp textgrid_batch_operations.cpp batch_queries.cpp
 
 # Rcpp Module sources (pladdrr 2.0 architecture)
 MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_module.cpp \
