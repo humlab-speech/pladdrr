@@ -1,7 +1,7 @@
 # Basic Phonetic Analysis with speaker
 # R implementation replacing praat_pitch.py, praat_formant_burg.py, praat_intensity.py
 
-library(speaker)
+library(pladdrr)
 
 # Example 1: Basic Pitch Extraction ==========================================
 # Replaces: praat_pitch.py / praat_pitch_from_sound()

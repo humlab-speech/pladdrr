@@ -1,7 +1,7 @@
 # Spectral Analysis with speaker
 # R implementation to replace praat_spectral_moments.py
 
-library(speaker)
+library(pladdrr)
 
 # NOTE: This example shows the INTENDED API for spectral analysis.
 # spectral_moments() function is planned for Phase 2.5 implementation.

@@ -1,7 +1,7 @@
 # Voice Quality Analysis with speaker
 # R implementation to replace praat_voice_report_memory.py
 
-library(speaker)
+library(pladdrr)
 
 # NOTE: This example shows the INTENDED API for voice quality analysis.
 # These functions are planned for Phase 2.5 implementation.
