@@ -162,6 +162,10 @@ DWTOOLS_SRC = praat.github.io/dwtools/SoundFrames.cpp \
               praat.github.io/dwtools/MFCC.cpp \
               praat.github.io/dwtools/LFCC.cpp \
               praat.github.io/dwtools/Sound_to_MFCC.cpp \
+              praat.github.io/dwtools/Sound_to_Pitch2.cpp \
+              praat.github.io/dwtools/SPINET.cpp \
+              praat.github.io/dwtools/Sound_to_SPINET.cpp \
+              praat.github.io/dwtools/SPINET_to_Pitch.cpp \
               sound_extensions_minimal.cpp
 
 # Stat sources

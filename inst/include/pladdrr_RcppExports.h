@@ -1280,6 +1280,48 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
     }
 
+    inline XPtr<structPitch> _sound_to_pitch_shs(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double max_frequency, double pitch_ceiling, int max_subharmonics, int max_candidates, double compression_factor, int n_points_per_octave) {
+        typedef SEXP(*Ptr__sound_to_pitch_shs)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_shs p__sound_to_pitch_shs = NULL;
+        if (p__sound_to_pitch_shs == NULL) {
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_shs)(XPtr<structSound>,double,double,double,double,int,int,double,int)");
+            p__sound_to_pitch_shs = (Ptr__sound_to_pitch_shs)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_shs");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_shs(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(max_frequency)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_subharmonics)), Shield<SEXP>(Rcpp::wrap(max_candidates)), Shield<SEXP>(Rcpp::wrap(compression_factor)), Shield<SEXP>(Rcpp::wrap(n_points_per_octave)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
+    }
+
+    inline XPtr<structPitch> _sound_to_pitch_spinet(XPtr<structSound> sound_xptr, double time_step, double window_duration, double min_frequency, double max_frequency, int n_filters, double pitch_ceiling, int max_candidates) {
+        typedef SEXP(*Ptr__sound_to_pitch_spinet)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr__sound_to_pitch_spinet p__sound_to_pitch_spinet = NULL;
+        if (p__sound_to_pitch_spinet == NULL) {
+            validateSignature("XPtr<structPitch>(*_sound_to_pitch_spinet)(XPtr<structSound>,double,double,double,double,int,double,int)");
+            p__sound_to_pitch_spinet = (Ptr__sound_to_pitch_spinet)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pitch_spinet");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__sound_to_pitch_spinet(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(window_duration)), Shield<SEXP>(Rcpp::wrap(min_frequency)), Shield<SEXP>(Rcpp::wrap(max_frequency)), Shield<SEXP>(Rcpp::wrap(n_filters)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)), Shield<SEXP>(Rcpp::wrap(max_candidates)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
+    }
+
     inline XPtr<structFormant> _sound_to_formant_burg(XPtr<structSound> sound_xptr, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from) {
         typedef SEXP(*Ptr__sound_to_formant_burg)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_formant_burg p__sound_to_formant_burg = NULL;

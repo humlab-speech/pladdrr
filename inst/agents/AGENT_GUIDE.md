@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.33 (2026-03-09)
+**Version:** 4.8.34 (2026-04-08)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix
 
@@ -8,6 +8,8 @@
 
 
 ## What's New in v4.8.x
+
+- **v4.8.34:** SHS and SPINET pitch methods across all 3 API tiers. Tier 1: `sound$to_pitch_shs()`, `sound$to_pitch_spinet()`. Tier 2: `to_pitch_shs_direct()`, `to_pitch_spinet_direct()`. Tier 3: `sound_to_pitch_shs_batch()`, `sound_to_pitch_spinet_batch()`. Compiles 4 new Praat sources (`Sound_to_Pitch2.cpp`, `SPINET.cpp`, `Sound_to_SPINET.cpp`, `SPINET_to_Pitch.cpp`) plus extracted helper functions (`Sound_createGammaTone`, `Sound_power`, `Sound_correlateParts`, `Sound_localPeak`) in `sound_create_gaussian.cpp`. Build system updated (`Makevars.in`, `Makevars`, `Makevars.win`).
 
 - **v4.8.33:** All 35 wrappers ported to shared dispatch table pattern. Every wrapper (34 new + Sound from v4.8.32) now uses a shared `.{type}_methods` environment + `$.Type` S3 dispatch instead of per-instance closures. Zero new test regressions. Eliminates ~832 closure definitions across the codebase. Also: added `is_valid` method to 22 wrappers that lost it during porting, fixed `cochleagram$as_matrix()` return type (was trying `mat_list$values` on plain matrix), fixed `cepstrum$to_sound()` R6 call `Sound$new(xptr)` → `Sound(.xptr = xptr)`, added `@method $ Type` roxygen tags to 13 files, bumped NAMESPACE to 44 `S3method("$", ...)` entries.
 
@@ -620,6 +622,8 @@ pitches <- sound_to_pitch_cc_batch(sounds, voicing_threshold = 0.6)
 - `to_pitch_direct(sound, time_step, pitch_floor, pitch_ceiling)` → Pitch XPtr (legacy, basic params)
 - `to_pitch_ac_direct(sound, ...)` → Pitch XPtr ✅ **Full params (v4.0.2+)**
 - `to_pitch_cc_direct(sound, ...)` → Pitch XPtr ✅ **Full params (v4.0.2+)**
+- `to_pitch_shs_direct(sound, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave)` → Pitch XPtr ✅ **v4.8.34+**
+- `to_pitch_spinet_direct(sound, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates)` → Pitch XPtr ✅ **v4.8.34+**
 - `to_formant_direct(sound, time_step, max_formants, max_formant, window_length, pre_emphasis)` → Formant XPtr ✅ **Full params**
 - `to_intensity_direct(sound, minimum_pitch, time_step, subtract_mean)` → Intensity XPtr ✅ **Full params**
 - `to_harmonicity_direct(sound, time_step, minimum_pitch, silence_threshold, periods_per_window)` → Harmonicity XPtr ✅ **Full params**
@@ -686,6 +690,8 @@ results <- sound_extract_and_formant(sound, start_times, end_times)
 - `sound_to_pitch_batch(sounds, ...)` - Batch pitch extraction
 - `sound_to_pitch_ac_batch(sounds, ...)` - Batch autocorrelation pitch
 - `sound_to_pitch_cc_batch(sounds, ...)` - Batch cross-correlation pitch
+- `sound_to_pitch_shs_batch(sounds, ...)` - Batch subharmonic summation pitch ✅ **v4.8.34+**
+- `sound_to_pitch_spinet_batch(sounds, ...)` - Batch SPINET pitch ✅ **v4.8.34+**
 - `sound_to_formant_batch(sounds, ...)` - Batch formant extraction
 - `sound_to_intensity_batch(sounds, ...)` - Batch intensity extraction
 - `sound_extract_and_pitch(sound, starts, ends)` - Extract parts + pitch

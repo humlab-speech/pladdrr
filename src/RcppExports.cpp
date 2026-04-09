@@ -6844,6 +6844,89 @@ RcppExport SEXP _pladdrr_sound_to_pitch_cc(SEXP sound_xptrSEXP, SEXP time_stepSE
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// sound_to_pitch_shs
+XPtr<structPitch> sound_to_pitch_shs(XPtr<structSound> sound_xptr, double time_step, double pitch_floor, double max_frequency, double pitch_ceiling, int max_subharmonics, int max_candidates, double compression_factor, int n_points_per_octave);
+static SEXP _pladdrr_sound_to_pitch_shs_try(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP max_frequencySEXP, SEXP pitch_ceilingSEXP, SEXP max_subharmonicsSEXP, SEXP max_candidatesSEXP, SEXP compression_factorSEXP, SEXP n_points_per_octaveSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< int >::type max_subharmonics(max_subharmonicsSEXP);
+    Rcpp::traits::input_parameter< int >::type max_candidates(max_candidatesSEXP);
+    Rcpp::traits::input_parameter< double >::type compression_factor(compression_factorSEXP);
+    Rcpp::traits::input_parameter< int >::type n_points_per_octave(n_points_per_octaveSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch_shs(sound_xptr, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_pitch_shs(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP pitch_floorSEXP, SEXP max_frequencySEXP, SEXP pitch_ceilingSEXP, SEXP max_subharmonicsSEXP, SEXP max_candidatesSEXP, SEXP compression_factorSEXP, SEXP n_points_per_octaveSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_pitch_shs_try(sound_xptrSEXP, time_stepSEXP, pitch_floorSEXP, max_frequencySEXP, pitch_ceilingSEXP, max_subharmonicsSEXP, max_candidatesSEXP, compression_factorSEXP, n_points_per_octaveSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// sound_to_pitch_spinet
+XPtr<structPitch> sound_to_pitch_spinet(XPtr<structSound> sound_xptr, double time_step, double window_duration, double min_frequency, double max_frequency, int n_filters, double pitch_ceiling, int max_candidates);
+static SEXP _pladdrr_sound_to_pitch_spinet_try(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP window_durationSEXP, SEXP min_frequencySEXP, SEXP max_frequencySEXP, SEXP n_filtersSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< XPtr<structSound> >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type window_duration(window_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type min_frequency(min_frequencySEXP);
+    Rcpp::traits::input_parameter< double >::type max_frequency(max_frequencySEXP);
+    Rcpp::traits::input_parameter< int >::type n_filters(n_filtersSEXP);
+    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
+    Rcpp::traits::input_parameter< int >::type max_candidates(max_candidatesSEXP);
+    rcpp_result_gen = Rcpp::wrap(sound_to_pitch_spinet(sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_sound_to_pitch_spinet(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP window_durationSEXP, SEXP min_frequencySEXP, SEXP max_frequencySEXP, SEXP n_filtersSEXP, SEXP pitch_ceilingSEXP, SEXP max_candidatesSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_sound_to_pitch_spinet_try(sound_xptrSEXP, time_stepSEXP, window_durationSEXP, min_frequencySEXP, max_frequencySEXP, n_filtersSEXP, pitch_ceilingSEXP, max_candidatesSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // sound_to_formant_burg
 XPtr<structFormant> sound_to_formant_burg(XPtr<structSound> sound_xptr, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from);
 static SEXP _pladdrr_sound_to_formant_burg_try(SEXP sound_xptrSEXP, SEXP time_stepSEXP, SEXP max_formantsSEXP, SEXP max_frequencySEXP, SEXP window_lengthSEXP, SEXP pre_emphasis_fromSEXP) {
@@ -11419,6 +11502,8 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("XPtr<structPitch>(*.sound_to_pitch)(XPtr<structSound>,double,double,double)");
         signatures.insert("XPtr<structPitch>(*.sound_to_pitch_ac)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
         signatures.insert("XPtr<structPitch>(*.sound_to_pitch_cc)(XPtr<structSound>,double,double,double,int,bool,double,double,double,double,double)");
+        signatures.insert("XPtr<structPitch>(*.sound_to_pitch_shs)(XPtr<structSound>,double,double,double,double,int,int,double,int)");
+        signatures.insert("XPtr<structPitch>(*.sound_to_pitch_spinet)(XPtr<structSound>,double,double,double,double,int,double,int)");
         signatures.insert("XPtr<structFormant>(*.sound_to_formant_burg)(XPtr<structSound>,double,double,double,double,double)");
         signatures.insert("XPtr<structIntensity>(*.sound_to_intensity)(XPtr<structSound>,double,double,bool)");
         signatures.insert("XPtr<structHarmonicity>(*.sound_to_harmonicity_cc)(XPtr<structSound>,double,double,double,double)");
@@ -11565,6 +11650,8 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch", (DL_FUNC)_pladdrr_sound_to_pitch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_ac", (DL_FUNC)_pladdrr_sound_to_pitch_ac_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_cc", (DL_FUNC)_pladdrr_sound_to_pitch_cc_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_shs", (DL_FUNC)_pladdrr_sound_to_pitch_shs_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_pitch_spinet", (DL_FUNC)_pladdrr_sound_to_pitch_spinet_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_burg", (DL_FUNC)_pladdrr_sound_to_formant_burg_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_intensity", (DL_FUNC)_pladdrr_sound_to_intensity_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_harmonicity_cc", (DL_FUNC)_pladdrr_sound_to_harmonicity_cc_try);
@@ -11649,7 +11736,6 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     return R_NilValue;
 }
 
-// Non-static so module_init.cpp can build a combined registration table
 extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_amplitude_tier_create_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_create_cpp, 2},
     {"_pladdrr_amplitude_tier_add_point_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_add_point_cpp, 3},
@@ -12077,6 +12163,8 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_to_pitch", (DL_FUNC) &_pladdrr_sound_to_pitch, 4},
     {"_pladdrr_sound_to_pitch_ac", (DL_FUNC) &_pladdrr_sound_to_pitch_ac, 11},
     {"_pladdrr_sound_to_pitch_cc", (DL_FUNC) &_pladdrr_sound_to_pitch_cc, 11},
+    {"_pladdrr_sound_to_pitch_shs", (DL_FUNC) &_pladdrr_sound_to_pitch_shs, 9},
+    {"_pladdrr_sound_to_pitch_spinet", (DL_FUNC) &_pladdrr_sound_to_pitch_spinet, 8},
     {"_pladdrr_sound_to_formant_burg", (DL_FUNC) &_pladdrr_sound_to_formant_burg, 6},
     {"_pladdrr_sound_to_intensity", (DL_FUNC) &_pladdrr_sound_to_intensity, 4},
     {"_pladdrr_sound_to_harmonicity_cc", (DL_FUNC) &_pladdrr_sound_to_harmonicity_cc, 5},

@@ -20,7 +20,9 @@
 // Extracted from praat.github.io/dwtools/Sound_extensions.cpp
 
 #include "praat.github.io/fon/Sound.h"
+#include "praat.github.io/fon/Vector.h"
 #include "praat.github.io/melder/NUM.h"
+#include "praat.github.io/fon/Sound_and_Spectrum.h"
 
 // Fill window with window shape values
 void windowShape_into_VEC (kSound_windowShape windowShape, VEC inout_window) {
@@ -158,4 +160,90 @@ void Sound_into_Sound (Sound me, Sound to, double startTime) {
 		const integer j = index - 1 + i;
 		to -> z [1] [i] = (j < 1 || j > my nx ? 0.0 : my z [1] [j]);
 	}
+}
+
+// Helper: create a Sound from minimumTime/maximumTime/samplingFrequency
+// (replicated from Sound_extensions.cpp where it is static)
+static autoSound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency) {
+	return Sound_create (1, minimumTime, maximumTime, Melder_iround ( (maximumTime - minimumTime) * samplingFrequency),
+		1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
+}
+
+// Create a gamma-tone sound (needed for SPINET)
+autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency, double gamma, double frequency, double bandwidth, double initialPhase, double addition, bool scaleAmplitudes) {
+	try {
+		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
+		for (integer i = 1; i <= my nx; i ++) {
+			const double t = (i - 0.5) * my dx;
+			const double f = frequency + addition / (NUM2pi * t);
+			if (f > 0 && f < samplingFrequency / 2)
+				my z [1] [i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) *
+					cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
+		}
+		if (scaleAmplitudes)
+			Vector_scale (me.get(), 0.99996948);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not created from gammatone function.");
+	}
+}
+
+// Sound power (RMS-like measure, needed for SPINET)
+double Sound_power (Sound me) {
+	const double sumSq = NUMsum2 (my z.row (1));
+	return sqrt (sumSq) * my dx / (my xmax - my xmin);
+}
+
+// Correlate two parts of a sound (needed for SHS)
+double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
+	if (ty < tx)
+		std::swap (tx, ty);
+	const integer nbx = Sampled_xToNearestIndex (me, tx);
+	const integer nby = Sampled_xToNearestIndex (me, ty);
+	const integer ney = Sampled_xToNearestIndex (me, ty + duration);
+	const integer increment = nbx < 1 ? 1 - nbx : 0;
+	const integer decrement = ney > my nx ? ney - my nx : 0;
+	const integer ns = Melder_ifloor (duration / my dx) - increment - decrement;
+	if (ns < 1)
+		return 0.0;
+
+	const double *x = & my z [1] [nbx + increment - 1];
+	const double *y = & my z [1] [nby + increment - 1];
+	double xm = 0.0, ym = 0.0;
+	for (integer i = 1; i <= ns; i ++) {
+		xm += x [i];
+		ym += y [i];
+	}
+	xm /= ns;
+	ym /= ns;
+	double sxx = 0.0, syy = 0.0, sxy = 0.0;
+	for (integer i = 1; i <= ns; i ++) {
+		const double xt = x [i] - xm, yt = y [i] - ym;
+		sxx += xt * xt;
+		syy += yt * yt;
+		sxy += xt * yt;
+	}
+	const double denum = sxx * syy;
+	const double rxy = ( denum > 0.0 ? sxy / sqrt (denum) : 0.0 );
+	return rxy;
+}
+
+// Local peak of sound relative to reference (needed for SHS)
+double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
+	integer n1 = Sampled_xToNearestIndex (me, fromTime);
+	integer n2 = Sampled_xToNearestIndex (me, toTime);
+	const double *s = & my z [1] [0];
+	double peak = -1e308;
+	if (fromTime <= toTime) {
+		if (n1 < 1)
+			n1 = 1;
+		if (n2 > my nx)
+			n2 = my nx;
+		for (integer i = n1; i <= n2; i ++) {
+			const double ds = fabs (s [i] - reference);
+			if (ds > peak)
+				peak = ds;
+		}
+	}
+	return peak;
 }

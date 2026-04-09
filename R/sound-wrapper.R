@@ -450,6 +450,28 @@ NULL
   Pitch(.xptr = pitch_ptr)
 }
 
+.sound_methods$to_pitch_shs <- function(.self, time_step = 0.01, pitch_floor = 50.0,
+                                         max_frequency = 1250.0, pitch_ceiling = 500.0,
+                                         max_subharmonics = 15L, max_candidates = 15L,
+                                         compression_factor = 0.84,
+                                         n_points_per_octave = 48L) {
+  pitch_ptr <- .sound_to_pitch_shs(
+    .self$.xptr, time_step, pitch_floor, max_frequency, pitch_ceiling,
+    as.integer(max_subharmonics), as.integer(max_candidates),
+    compression_factor, as.integer(n_points_per_octave))
+  Pitch(.xptr = pitch_ptr)
+}
+
+.sound_methods$to_pitch_spinet <- function(.self, time_step = 0.005, window_duration = 0.04,
+                                            min_frequency = 70.0, max_frequency = 5000.0,
+                                            n_filters = 250L, pitch_ceiling = 500.0,
+                                            max_candidates = 15L) {
+  pitch_ptr <- .sound_to_pitch_spinet(
+    .self$.xptr, time_step, window_duration, min_frequency, max_frequency,
+    as.integer(n_filters), pitch_ceiling, as.integer(max_candidates))
+  Pitch(.xptr = pitch_ptr)
+}
+
 .sound_methods$to_formant_keepall <- function(.self, time_step = 0.005, max_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {

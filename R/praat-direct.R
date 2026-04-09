@@ -313,6 +313,96 @@ to_pitch_cc_direct <- function(sound,
 }
 
 
+#' Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param time_step Time step in seconds (default 0.01)
+#' @param pitch_floor Minimum pitch (Hz, default 50)
+#' @param max_frequency Maximum frequency for analysis (Hz, default 1250)
+#' @param pitch_ceiling Maximum pitch (Hz, default 500)
+#' @param max_subharmonics Number of subharmonics to sum (default 15)
+#' @param max_candidates Maximum number of pitch candidates per frame (default 15)
+#' @param compression_factor Compression factor for subharmonic weighting (default 0.84)
+#' @param n_points_per_octave Number of frequency points per octave (default 48)
+#'
+#' @return External pointer to Pitch (NOT R6 object)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("speech.wav")
+#' pitch_ptr <- to_pitch_shs_direct(sound)
+#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+#' }
+#'
+#' @export
+to_pitch_shs_direct <- function(sound,
+                                 time_step = 0.01,
+                                 pitch_floor = 50,
+                                 max_frequency = 1250,
+                                 pitch_ceiling = 500,
+                                 max_subharmonics = 15L,
+                                 max_candidates = 15L,
+                                 compression_factor = 0.84,
+                                 n_points_per_octave = 48L) {
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  .sound_to_pitch_shs(sound_ptr, time_step, pitch_floor, max_frequency,
+                       pitch_ceiling, as.integer(max_subharmonics),
+                       as.integer(max_candidates), compression_factor,
+                       as.integer(n_points_per_octave))
+}
+
+
+#' Create Pitch from Sound using SPINET Directly (returns XPtr)
+#'
+#' @param sound Sound object or external pointer
+#' @param time_step Time step in seconds (default 0.005)
+#' @param window_duration Analysis window duration (default 0.04)
+#' @param min_frequency Minimum frequency (Hz, default 70)
+#' @param max_frequency Maximum frequency (Hz, default 5000)
+#' @param n_filters Number of gamma-tone filters (default 250)
+#' @param pitch_ceiling Maximum pitch (Hz, default 500)
+#' @param max_candidates Maximum number of pitch candidates per frame (default 15)
+#'
+#' @return External pointer to Pitch (NOT R6 object)
+#'
+#' @examples
+#' \dontrun{
+#' sound <- Sound("speech.wav")
+#' pitch_ptr <- to_pitch_spinet_direct(sound)
+#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+#' }
+#'
+#' @export
+to_pitch_spinet_direct <- function(sound,
+                                    time_step = 0.005,
+                                    window_duration = 0.04,
+                                    min_frequency = 70,
+                                    max_frequency = 5000,
+                                    n_filters = 250L,
+                                    pitch_ceiling = 500,
+                                    max_candidates = 15L) {
+  sound_ptr <- if (inherits(sound, "Sound")) {
+    sound$.xptr
+  } else if (inherits(sound, "externalptr")) {
+    sound
+  } else {
+    stop("sound must be a Sound object or external pointer")
+  }
+
+  .sound_to_pitch_spinet(sound_ptr, time_step, window_duration,
+                          min_frequency, max_frequency,
+                          as.integer(n_filters), pitch_ceiling,
+                          as.integer(max_candidates))
+}
+
+
 #' Create Formant from Sound Directly (returns XPtr)
 #'
 #' @param sound Sound object or external pointer

@@ -33,6 +33,7 @@
 // Praat headers
 #include "fon/Sound.h"
 #include "fon/Sound_to_Pitch.h"
+#include "praat.github.io/dwtools/Sound_to_Pitch2.h"
 #include "fon/Sound_to_Formant.h"
 #include "fon/Sound_to_Intensity.h"
 #include "fon/Sound_to_Harmonicity.h"
@@ -533,6 +534,82 @@ XPtr<structPitch> sound_to_pitch_cc(
         Melder_clearError();
         std::string error_str = Melder_peek32to8(error_message.get());
         stop("Failed to extract pitch using cross-correlation. Praat error: " + error_str);
+    }
+}
+
+//' Convert Sound to Pitch using Subharmonic Summation (SHS) (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_shs)]]
+XPtr<structPitch> sound_to_pitch_shs(
+    XPtr<structSound> sound_xptr,
+    double time_step,
+    double pitch_floor,
+    double max_frequency,
+    double pitch_ceiling,
+    int max_subharmonics,
+    int max_candidates,
+    double compression_factor,
+    int n_points_per_octave
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+
+    try {
+        autoPitch pitch = Sound_to_Pitch_shs(
+            sound,
+            time_step,
+            pitch_floor,
+            max_frequency,
+            pitch_ceiling,
+            static_cast<integer>(max_subharmonics),
+            static_cast<integer>(max_candidates),
+            compression_factor,
+            static_cast<integer>(n_points_per_octave)
+        );
+
+        return create_xptr_from_auto<structPitch>(pitch);
+
+    } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
+        Melder_clearError();
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to extract pitch using SHS. Praat error: " + error_str);
+    }
+}
+
+//' Convert Sound to Pitch using SPINET (internal)
+//' @keywords internal
+// [[Rcpp::export(.sound_to_pitch_spinet)]]
+XPtr<structPitch> sound_to_pitch_spinet(
+    XPtr<structSound> sound_xptr,
+    double time_step,
+    double window_duration,
+    double min_frequency,
+    double max_frequency,
+    int n_filters,
+    double pitch_ceiling,
+    int max_candidates
+) {
+    structSound* sound = get_ptr(sound_xptr, "Sound");
+
+    try {
+        autoPitch pitch = Sound_to_Pitch_SPINET(
+            sound,
+            time_step,
+            window_duration,
+            min_frequency,
+            max_frequency,
+            static_cast<integer>(n_filters),
+            pitch_ceiling,
+            max_candidates
+        );
+
+        return create_xptr_from_auto<structPitch>(pitch);
+
+    } catch (MelderError) {
+        autostring32 error_message = Melder_dup(Melder_getError());
+        Melder_clearError();
+        std::string error_str = Melder_peek32to8(error_message.get());
+        stop("Failed to extract pitch using SPINET. Praat error: " + error_str);
     }
 }
 

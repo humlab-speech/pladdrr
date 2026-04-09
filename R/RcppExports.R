@@ -2589,6 +2589,18 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_to_pitch_cc`, sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
 
+#' Convert Sound to Pitch using Subharmonic Summation (SHS) (internal)
+#' @keywords internal
+.sound_to_pitch_shs <- function(sound_xptr, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave) {
+    .Call(`_pladdrr_sound_to_pitch_shs`, sound_xptr, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave)
+}
+
+#' Convert Sound to Pitch using SPINET (internal)
+#' @keywords internal
+.sound_to_pitch_spinet <- function(sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates) {
+    .Call(`_pladdrr_sound_to_pitch_spinet`, sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates)
+}
+
 #' Convert Sound to Formant via Burg (internal)
 #' @keywords internal
 .sound_to_formant_burg <- function(sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from) {

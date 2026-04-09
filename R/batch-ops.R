@@ -239,6 +239,116 @@ sound_to_pitch_cc_batch <- function(sounds,
 }
 
 
+#' Extract Pitch (SHS) from Multiple Sounds
+#'
+#' Batch version of to_pitch_shs using Subharmonic Summation.
+#'
+#' @param sounds List of Sound objects (R6) or external pointers
+#' @param time_step Numeric. Time step (default: 0.01)
+#' @param pitch_floor Numeric. Pitch floor in Hz (default: 50)
+#' @param max_frequency Numeric. Maximum frequency in Hz (default: 1250)
+#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
+#' @param max_subharmonics Integer. Number of subharmonics (default: 15)
+#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @param compression_factor Numeric. Compression factor (default: 0.84)
+#' @param n_points_per_octave Integer. Points per octave (default: 48)
+#' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
+#'
+#' @return List of Pitch objects (R6 or xptr depending on return_r6)
+#'
+#' @export
+sound_to_pitch_shs_batch <- function(sounds,
+                                     time_step = 0.01,
+                                     pitch_floor = 50,
+                                     max_frequency = 1250,
+                                     pitch_ceiling = 500,
+                                     max_subharmonics = 15L,
+                                     max_candidates = 15L,
+                                     compression_factor = 0.84,
+                                     n_points_per_octave = 48L,
+                                     return_r6 = TRUE) {
+  xptrs <- lapply(sounds, function(s) {
+    if (inherits(s, "Sound")) {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
+      s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
+    }
+  })
+
+  result_ptrs <- lapply(xptrs, function(ptr) {
+    .sound_to_pitch_shs(ptr, time_step, pitch_floor, max_frequency,
+                         pitch_ceiling, as.integer(max_subharmonics),
+                         as.integer(max_candidates), compression_factor,
+                         as.integer(n_points_per_octave))
+  })
+
+  if (return_r6) {
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
+  } else {
+    result_ptrs
+  }
+}
+
+
+#' Extract Pitch (SPINET) from Multiple Sounds
+#'
+#' Batch version of to_pitch_spinet using spectral integration.
+#'
+#' @param sounds List of Sound objects (R6) or external pointers
+#' @param time_step Numeric. Time step (default: 0.005)
+#' @param window_duration Numeric. Analysis window (default: 0.04)
+#' @param min_frequency Numeric. Minimum frequency in Hz (default: 70)
+#' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
+#' @param n_filters Integer. Number of gamma-tone filters (default: 250)
+#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
+#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
+#'
+#' @return List of Pitch objects (R6 or xptr depending on return_r6)
+#'
+#' @export
+sound_to_pitch_spinet_batch <- function(sounds,
+                                        time_step = 0.005,
+                                        window_duration = 0.04,
+                                        min_frequency = 70,
+                                        max_frequency = 5000,
+                                        n_filters = 250L,
+                                        pitch_ceiling = 500,
+                                        max_candidates = 15L,
+                                        return_r6 = TRUE) {
+  xptrs <- lapply(sounds, function(s) {
+    if (inherits(s, "Sound")) {
+      ptr <- s$.xptr
+      if (is.null(ptr)) ptr <- s$get_xptr()
+      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      ptr
+    } else if (inherits(s, "externalptr")) {
+      s
+    } else {
+      stop("Invalid input type: expected Sound or externalptr")
+    }
+  })
+
+  result_ptrs <- lapply(xptrs, function(ptr) {
+    .sound_to_pitch_spinet(ptr, time_step, window_duration,
+                            min_frequency, max_frequency,
+                            as.integer(n_filters), pitch_ceiling,
+                            as.integer(max_candidates))
+  })
+
+  if (return_r6) {
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
+  } else {
+    result_ptrs
+  }
+}
+
+
 #' Extract Formants from Multiple Sounds in Single C++ Call
 #'
 #' @param sounds List of Sound objects (R6) or external pointers
