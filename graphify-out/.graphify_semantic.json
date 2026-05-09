@@ -1,0 +1,3219 @@
+{
+  "nodes": [
+    {
+      "id": "analysis_resynthesis_workflow",
+      "label": "Analysis-Resynthesis Workflow: FormantPath + KlattGrid",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/vignettes/analysis-resynthesis-workflow.html",
+      "source_location": null
+    },
+    {
+      "id": "speech_synthesis_klattgrid",
+      "label": "Speech Synthesis with KlattGrid",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/vignettes/speech-synthesis-klattgrid.html",
+      "source_location": null
+    },
+    {
+      "id": "unicode_standard_16_0",
+      "label": "The Unicode Standard, Version 16.0 \u2013 Core Specification",
+      "file_type": "paper",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/src/praat.github.io/generate/Unicode/UnicodeStandard-16.0.pdf",
+      "source_location": null
+    },
+    {
+      "id": "iso_iec_30112_wd10",
+      "label": "ISO/IEC 30112 WD10: Specification methods for cultural conventions",
+      "file_type": "paper",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/src/praat.github.io/generate/Unicode/ISO-IEC 30112 wd10.pdf",
+      "source_location": null
+    },
+    {
+      "id": "pladdrr_logo",
+      "label": "pladdrr logo",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/pladdrr_logo.svg",
+      "source_location": null
+    },
+    {
+      "id": "link_icon",
+      "label": "link icon",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/link.svg",
+      "source_location": null
+    },
+    {
+      "id": "formantpath_plot_comparison_1",
+      "label": "plot-comparison-1",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formantpath-robust-tracking_files/figure-html/plot-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "formantpath_plot_candidates_1",
+      "label": "plot-candidates-1",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formantpath-robust-tracking_files/figure-html/plot-candidates-1.png",
+      "source_location": null
+    },
+    {
+      "id": "analysis_resynthesis_morph_viz_1",
+      "label": "Voice Morphing: Male \u2192 Female Continuum",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/morph-viz-1.png",
+      "source_location": null
+    },
+    {
+      "id": "analysis_resynthesis_compare_spectrograms_1",
+      "label": "Original vs Resynthesized Formant Tracks",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/compare-spectrograms-1.png",
+      "source_location": null
+    },
+    {
+      "id": "mfcc_post_processing_1",
+      "label": "MFCC post-processing",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/mfcc-post-processing-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cochleagram_comparison_1",
+      "label": "Cochleagram comparison",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/cochleagram-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "time_frequency_1",
+      "label": "Time-frequency view",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/time-frequency-1.png",
+      "source_location": null
+    },
+    {
+      "id": "f0_comparison_1",
+      "label": "F0 comparison",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/f0-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "accuracy_comparison_1",
+      "label": "Accuracy comparison",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/accuracy-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "voiced_distribution_1",
+      "label": "Voiced distribution",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/voiced-distribution-1.png",
+      "source_location": null
+    },
+    {
+      "id": "silence_detection_1",
+      "label": "Silence detection",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/silence-detection-1.png",
+      "source_location": null
+    },
+    {
+      "id": "modulation_freq_1",
+      "label": "Modulation frequency",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-freq-1.png",
+      "source_location": null
+    },
+    {
+      "id": "modulation_energy_1",
+      "label": "Modulation energy",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-energy-1.png",
+      "source_location": null
+    },
+    {
+      "id": "annotation_structure_1",
+      "label": "Annotation structure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/annotation-structure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "tier_manipulation_1",
+      "label": "Tier manipulation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/tier-manipulation-1.png",
+      "source_location": null
+    },
+    {
+      "id": "shimmer_components_1",
+      "label": "Shimmer components",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/shimmer-components-1.png",
+      "source_location": null
+    },
+    {
+      "id": "jitter_effects_1",
+      "label": "Jitter effects",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/jitter-effects-1.png",
+      "source_location": null
+    },
+    {
+      "id": "distortion_measure_1",
+      "label": "Distortion measure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/distortion-measure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "noise_floor_1",
+      "label": "Noise floor",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/noise-floor-1.png",
+      "source_location": null
+    },
+    {
+      "id": "dtw_path_1",
+      "label": "DTW path",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/dtw-path-1.png",
+      "source_location": null
+    },
+    {
+      "id": "alignment_cost_1",
+      "label": "Alignment cost",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/alignment-cost-1.png",
+      "source_location": null
+    },
+    {
+      "id": "envelope_extraction_1",
+      "label": "Envelope extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/envelope-extraction-1.png",
+      "source_location": null
+    },
+    {
+      "id": "dft_output_1",
+      "label": "DFT output",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/dft-output-1.png",
+      "source_location": null
+    },
+    {
+      "id": "formant_path_1",
+      "label": "Formant path",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/formant-path-1.png",
+      "source_location": null
+    },
+    {
+      "id": "lpc_coefficients_1",
+      "label": "LPC coefficients",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/lpc-coefficients-1.png",
+      "source_location": null
+    },
+    {
+      "id": "parallel_speedup_1",
+      "label": "Parallel speedup",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/parallel-speedup-1.png",
+      "source_location": null
+    },
+    {
+      "id": "mfcc_analysis",
+      "label": "MFCC analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/mfcc-post-processing-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cochleagram_analysis",
+      "label": "Cochleagram analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/cochleagram-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "f0_estimation_alternatives",
+      "label": "F0 estimation alternatives",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/f0-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "duration_analysis",
+      "label": "Duration analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/voiced-distribution-1.png",
+      "source_location": null
+    },
+    {
+      "id": "modulation_spectrum",
+      "label": "Modulation spectrum",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-freq-1.png",
+      "source_location": null
+    },
+    {
+      "id": "textgrid_operations",
+      "label": "TextGrid operations",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/annotation-structure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "voice_quality_metrics",
+      "label": "Voice quality metrics",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/shimmer-components-1.png",
+      "source_location": null
+    },
+    {
+      "id": "sound_quality_analysis",
+      "label": "Sound quality analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/distortion-measure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "time_warping",
+      "label": "Time warping",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/dtw-path-1.png",
+      "source_location": null
+    },
+    {
+      "id": "spectral_envelope",
+      "label": "Spectral envelope",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/envelope-extraction-1.png",
+      "source_location": null
+    },
+    {
+      "id": "formant_tracking",
+      "label": "Formant tracking",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/formant-path-1.png",
+      "source_location": null
+    },
+    {
+      "id": "batch_processing",
+      "label": "Batch processing",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/parallel-speedup-1.png",
+      "source_location": null
+    },
+    {
+      "id": "speedup_comparison_1",
+      "label": "Speedup Comparison",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/speedup-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "scaling_behavior_1",
+      "label": "Scaling Behavior",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/scaling-behavior-1.png",
+      "source_location": null
+    },
+    {
+      "id": "pitch_extraction",
+      "label": "Pitch Extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/pitch-extraction.png",
+      "source_location": null
+    },
+    {
+      "id": "spectrogram_analysis",
+      "label": "Spectrogram Analysis",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/spectrogram-analysis.png",
+      "source_location": null
+    },
+    {
+      "id": "waveform_display",
+      "label": "Waveform Display",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/waveform-display.png",
+      "source_location": null
+    },
+    {
+      "id": "sound_object_methods",
+      "label": "Sound Object Methods",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/sound-object-methods.png",
+      "source_location": null
+    },
+    {
+      "id": "sound_audio_io",
+      "label": "Sound Audio I/O",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/sound-audio-io.png",
+      "source_location": null
+    },
+    {
+      "id": "batch_query_architecture",
+      "label": "Batch Query Architecture",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/batch-query-architecture.png",
+      "source_location": null
+    },
+    {
+      "id": "cache_hierarchy",
+      "label": "Cache Hierarchy",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/cache-hierarchy.png",
+      "source_location": null
+    },
+    {
+      "id": "thread_pool_design",
+      "label": "Thread Pool Design",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/thread-pool-design.png",
+      "source_location": null
+    },
+    {
+      "id": "simd_optimization",
+      "label": "SIMD Optimization",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/simd-optimization.png",
+      "source_location": null
+    },
+    {
+      "id": "rcpp_bridge",
+      "label": "Rcpp Bridge",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/rcpp-bridge.png",
+      "source_location": null
+    },
+    {
+      "id": "praat_wrapper_layer",
+      "label": "Praat Wrapper Layer",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/praat-wrapper-layer.png",
+      "source_location": null
+    },
+    {
+      "id": "error_handling_flow",
+      "label": "Error Handling Flow",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/error-handling-flow.png",
+      "source_location": null
+    },
+    {
+      "id": "object_lifecycle",
+      "label": "Object Lifecycle",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/object-lifecycle.png",
+      "source_location": null
+    },
+    {
+      "id": "r6_class_hierarchy",
+      "label": "R6 Class Hierarchy",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/r6-class-hierarchy.png",
+      "source_location": null
+    },
+    {
+      "id": "data_structure_example",
+      "label": "Data Structure Example",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/data-structure-example.png",
+      "source_location": null
+    },
+    {
+      "id": "type_conversion_chart",
+      "label": "Type Conversion Chart",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/type-conversion-chart.png",
+      "source_location": null
+    },
+    {
+      "id": "performance_profile",
+      "label": "Performance Profile",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/performance-profile.png",
+      "source_location": null
+    },
+    {
+      "id": "build_system_flow",
+      "label": "Build System Flow",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/build-system-flow.png",
+      "source_location": null
+    },
+    {
+      "id": "installation_options",
+      "label": "Installation Options",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/installation-options.png",
+      "source_location": null
+    },
+    {
+      "id": "dependencies_graph",
+      "label": "Dependencies Graph",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/dependencies-graph.png",
+      "source_location": null
+    },
+    {
+      "id": "api_reference_layout",
+      "label": "API Reference Layout",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/api-reference-layout.png",
+      "source_location": null
+    },
+    {
+      "id": "example_workflow",
+      "label": "Example Workflow",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/example-workflow.png",
+      "source_location": null
+    },
+    {
+      "id": "benchmark_results",
+      "label": "Benchmark Results",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/benchmark-results.png",
+      "source_location": null
+    },
+    {
+      "id": "memory_usage",
+      "label": "Memory Usage",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/memory-usage.png",
+      "source_location": null
+    },
+    {
+      "id": "f0_track_candidates_1",
+      "label": "F0 Track Candidates",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/f0-track-candidates-1.png",
+      "source_location": null
+    },
+    {
+      "id": "hz_to_log_1",
+      "label": "Hz to Log",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/hz-to-log-1.png",
+      "source_location": null
+    },
+    {
+      "id": "smoothing_effect_1",
+      "label": "Smoothing Effect",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/smoothing-effect-1.png",
+      "source_location": null
+    },
+    {
+      "id": "dynamics_range_1",
+      "label": "Dynamics Range",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/dynamics-range-1.png",
+      "source_location": null
+    },
+    {
+      "id": "period_extraction_1",
+      "label": "Period Extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/period-extraction-1.png",
+      "source_location": null
+    },
+    {
+      "id": "amplitude_tracking_1",
+      "label": "Amplitude Tracking",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/amplitude-tracking-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cepstrum_display_1",
+      "label": "Cepstrum Display",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/cepstrum-display-1.png",
+      "source_location": null
+    },
+    {
+      "id": "quefrency_scale_1",
+      "label": "Quefrency Scale",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/quefrency-scale-1.png",
+      "source_location": null
+    },
+    {
+      "id": "bandwidth_estimation_1",
+      "label": "Bandwidth Estimation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/bandwidth-estimation-1.png",
+      "source_location": null
+    },
+    {
+      "id": "resonance_peaks_1",
+      "label": "Resonance Peaks",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/resonance-peaks-1.png",
+      "source_location": null
+    },
+    {
+      "id": "mel_scale_1",
+      "label": "Mel Scale",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/mel-scale-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cepstral_coefficients_1",
+      "label": "Cepstral Coefficients",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/cepstral-coefficients-1.png",
+      "source_location": null
+    },
+    {
+      "id": "basilar_membrane_1",
+      "label": "Basilar Membrane",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/basilar-membrane-1.png",
+      "source_location": null
+    },
+    {
+      "id": "gammatone_filterbank_1",
+      "label": "Gammatone Filterbank",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/gammatone-filterbank-1.png",
+      "source_location": null
+    },
+    {
+      "id": "f0_error_1",
+      "label": "F0 Error",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/f0-error-1.png",
+      "source_location": null
+    },
+    {
+      "id": "candidate_tracking_1",
+      "label": "Candidate Tracking",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/candidate-tracking-1.png",
+      "source_location": null
+    },
+    {
+      "id": "phoneme_duration_1",
+      "label": "Phoneme Duration",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/phoneme-duration-1.png",
+      "source_location": null
+    },
+    {
+      "id": "package_architecture",
+      "label": "Package Architecture",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/DESCRIPTION",
+      "source_location": null
+    },
+    {
+      "id": "reference_site_structure",
+      "label": "Reference Site Structure",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/_pkgdown.yml",
+      "source_location": null
+    },
+    {
+      "id": "analysis_workflow",
+      "label": "Analysis Workflow",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/vignettes/analysis-resynthesis-workflow.Rmd",
+      "source_location": null
+    },
+    {
+      "id": "performance_optimization",
+      "label": "Performance Optimization",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/vignettes/performance-optimization.Rmd",
+      "source_location": null
+    },
+    {
+      "id": "pitch_detection",
+      "label": "Pitch Detection",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/Pitch.html",
+      "source_location": null
+    },
+    {
+      "id": "intensity_processing",
+      "label": "Intensity Processing",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "voice_quality_analysis",
+      "label": "Voice Quality Analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/PointProcess.html",
+      "source_location": null
+    },
+    {
+      "id": "cepstral_analysis",
+      "label": "Cepstral Analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/PowerCepstrogram.html",
+      "source_location": null
+    },
+    {
+      "id": "spectral_analysis",
+      "label": "Spectral Analysis",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/Spectrum.html",
+      "source_location": null
+    },
+    {
+      "id": "auditory_modeling",
+      "label": "Auditory Modeling",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/vignettes/auditory-modeling.Rmd",
+      "source_location": null
+    },
+    {
+      "id": "duration_histogram_1",
+      "label": "Duration histogram",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/duration-histogram-1.png",
+      "source_location": null
+    },
+    {
+      "id": "modulation_peaks_1",
+      "label": "Modulation peaks",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-peaks-1.png",
+      "source_location": null
+    },
+    {
+      "id": "temporal_modulation_1",
+      "label": "Temporal modulation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/temporal-modulation-1.png",
+      "source_location": null
+    },
+    {
+      "id": "annotation_layers_1",
+      "label": "Annotation layers",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/annotation-layers-1.png",
+      "source_location": null
+    },
+    {
+      "id": "point_event_grid_1",
+      "label": "Point event grid",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/point-event-grid-1.png",
+      "source_location": null
+    },
+    {
+      "id": "periodicity_measure_1",
+      "label": "Periodicity measure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/periodicity-measure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "spectral_harmonics_1",
+      "label": "Spectral harmonics",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/spectral-harmonics-1.png",
+      "source_location": null
+    },
+    {
+      "id": "snr_estimate_1",
+      "label": "SNR estimate",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/snr-estimate-1.png",
+      "source_location": null
+    },
+    {
+      "id": "quality_score_1",
+      "label": "Quality score",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/quality-score-1.png",
+      "source_location": null
+    },
+    {
+      "id": "dtw_distance_1",
+      "label": "DTW distance",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/dtw-distance-1.png",
+      "source_location": null
+    },
+    {
+      "id": "feature_alignment_1",
+      "label": "Feature alignment",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/feature-alignment-1.png",
+      "source_location": null
+    },
+    {
+      "id": "lpmodel_envelope_1",
+      "label": "LP model envelope",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/lpmodel-envelope-1.png",
+      "source_location": null
+    },
+    {
+      "id": "all_poles_model_1",
+      "label": "All-poles model",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/all-poles-model-1.png",
+      "source_location": null
+    },
+    {
+      "id": "lpc_spectrum_1",
+      "label": "LPC spectrum",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/lpc-spectrum-1.png",
+      "source_location": null
+    },
+    {
+      "id": "bandwidth_correction_1",
+      "label": "Bandwidth correction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/bandwidth-correction-1.png",
+      "source_location": null
+    },
+    {
+      "id": "vt_resonance_1",
+      "label": "VT resonance",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/vt-resonance-1.png",
+      "source_location": null
+    },
+    {
+      "id": "io_throughput_1",
+      "label": "I/O throughput",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/io-throughput-1.png",
+      "source_location": null
+    },
+    {
+      "id": "queue_depth_1",
+      "label": "Queue depth",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/queue-depth-1.png",
+      "source_location": null
+    },
+    {
+      "id": "workload_distribution_1",
+      "label": "Workload distribution",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/workload-distribution-1.png",
+      "source_location": null
+    },
+    {
+      "id": "path_costs_1",
+      "label": "Path costs",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formantpath-robust-tracking_files/figure-html/path-costs-1.png",
+      "source_location": null
+    },
+    {
+      "id": "transition_matrix_1",
+      "label": "Transition matrix",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formantpath-robust-tracking_files/figure-html/transition-matrix-1.png",
+      "source_location": null
+    },
+    {
+      "id": "synthesis_quality_1",
+      "label": "Synthesis quality",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/synthesis-quality-1.png",
+      "source_location": null
+    },
+    {
+      "id": "formantpath_robust_tracking",
+      "label": "FormantPath robust tracking",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formantpath-robust-tracking_files/figure-html/path-costs-1.png",
+      "source_location": null
+    },
+    {
+      "id": "filter_response_1",
+      "label": "Filter Response Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/filter-response-1.png",
+      "source_location": null
+    },
+    {
+      "id": "pitch_shift_result_1",
+      "label": "Pitch Shift Result Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/pitch-shift-result-1.png",
+      "source_location": null
+    },
+    {
+      "id": "voiced_voiceless_1",
+      "label": "Voiced Voiceless Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/voiced-voiceless-1.png",
+      "source_location": null
+    },
+    {
+      "id": "spectral_emphasis_1",
+      "label": "Spectral Emphasis Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/analysis-resynthesis-workflow_files/figure-html/spectral-emphasis-1.png",
+      "source_location": null
+    },
+    {
+      "id": "klatt_model_1",
+      "label": "Klatt Model Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/speech-synthesis-klattgrid_files/figure-html/klatt-model-1.png",
+      "source_location": null
+    },
+    {
+      "id": "klatt_output_1",
+      "label": "Klatt Output Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/speech-synthesis-klattgrid_files/figure-html/klatt-output-1.png",
+      "source_location": null
+    },
+    {
+      "id": "synthesis_comparison_1",
+      "label": "Synthesis Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/speech-synthesis-klattgrid_files/figure-html/synthesis-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "parameter_sweep_1",
+      "label": "Parameter Sweep Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/speech-synthesis-klattgrid_files/figure-html/parameter-sweep-1.png",
+      "source_location": null
+    },
+    {
+      "id": "noise_robustness_1",
+      "label": "Noise Robustness Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/robustness-evaluation_files/figure-html/noise-robustness-1.png",
+      "source_location": null
+    },
+    {
+      "id": "degradation_curve_1",
+      "label": "Degradation Curve Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/robustness-evaluation_files/figure-html/degradation-curve-1.png",
+      "source_location": null
+    },
+    {
+      "id": "validation_vs_baseline_1",
+      "label": "Validation Vs Baseline Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/algorithm-validation_files/figure-html/validation-vs-baseline-1.png",
+      "source_location": null
+    },
+    {
+      "id": "error_distribution_1",
+      "label": "Error Distribution Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/algorithm-validation_files/figure-html/error-distribution-1.png",
+      "source_location": null
+    },
+    {
+      "id": "optimization_gains_1",
+      "label": "Optimization Gains Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/performance-tuning_files/figure-html/optimization-gains-1.png",
+      "source_location": null
+    },
+    {
+      "id": "profile_hotspots_1",
+      "label": "Profile Hotspots Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/performance-tuning_files/figure-html/profile-hotspots-1.png",
+      "source_location": null
+    },
+    {
+      "id": "pipeline_example_1",
+      "label": "Pipeline Example Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/integration-workflows_files/figure-html/pipeline-example-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cross_tool_comparison_1",
+      "label": "Cross Tool Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/integration-workflows_files/figure-html/cross-tool-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "vocal_health_1",
+      "label": "Vocal Health Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/case-studies_files/figure-html/vocal-health-1.png",
+      "source_location": null
+    },
+    {
+      "id": "speaker_recognition_1",
+      "label": "Speaker Recognition Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/case-studies_files/figure-html/speaker-recognition-1.png",
+      "source_location": null
+    },
+    {
+      "id": "reference_code_example_1",
+      "label": "Reference Code Example Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/reference-implementation_files/figure-html/reference-code-example-1.png",
+      "source_location": null
+    },
+    {
+      "id": "benchmark_reference_1",
+      "label": "Benchmark Reference Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/reference-implementation_files/figure-html/benchmark-reference-1.png",
+      "source_location": null
+    },
+    {
+      "id": "common_error_1",
+      "label": "Common Error Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/faq-troubleshooting_files/figure-html/common-error-1.png",
+      "source_location": null
+    },
+    {
+      "id": "debugging_workflow_1",
+      "label": "Debugging Workflow Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/faq-troubleshooting_files/figure-html/debugging-workflow-1.png",
+      "source_location": null
+    },
+    {
+      "id": "readme_pladdrr",
+      "label": "pladdrr",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_praat",
+      "label": "Praat",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_rcpp_modules",
+      "label": "Rcpp Modules",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_libav",
+      "label": "libav C library",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_av_package",
+      "label": "av R package",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_media_loading",
+      "label": "Extended Media Handling",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_simd",
+      "label": "SIMD Vectorization",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_zero_copy",
+      "label": "Zero-copy operations",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_longsound",
+      "label": "LongSound",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_tiered_access",
+      "label": "Tiered Access Model",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_graphics_omission",
+      "label": "Graphics System Omission Rationale",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_r_plotting",
+      "label": "R Plotting Functionality",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_parselmouth",
+      "label": "parselmouth",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_speakr",
+      "label": "speakr",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_ffmpeg",
+      "label": "FFmpeg libraries",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_gpl3",
+      "label": "GPL-3 License",
+      "file_type": "document",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/README.md",
+      "source_location": null
+    },
+    {
+      "id": "intensity_comparison_1",
+      "label": "Intensity Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "intensity_plot_combined_1",
+      "label": "Intensity Plot Combined Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/plot-combined-1.png",
+      "source_location": null
+    },
+    {
+      "id": "jitter_shimmer_metrics_comparison_1",
+      "label": "Jitter Shimmer Metrics Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/metrics-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "jitter_shimmer_comparison_display_1",
+      "label": "Jitter Shimmer Comparison Display Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/comparison-display-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cpps_tracking_1",
+      "label": "CPPS Tracking Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/cpps-tracking-1.png",
+      "source_location": null
+    },
+    {
+      "id": "avqi_smoothing_1",
+      "label": "AVQI Smoothing Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/avqi-smoothing-1.png",
+      "source_location": null
+    },
+    {
+      "id": "spectral_plot_formants_1",
+      "label": "Spectral Plot Formants Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/plot-formants-1.png",
+      "source_location": null
+    },
+    {
+      "id": "spectral_plot_spectrum_1",
+      "label": "Spectral Plot Spectrum Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/plot-spectrum-1.png",
+      "source_location": null
+    },
+    {
+      "id": "pitch_autocorr_comparison_1",
+      "label": "Pitch Autocorrelation Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/autocorr-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "pitch_estimates_1",
+      "label": "Pitch Estimates Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/pitch-estimates-1.png",
+      "source_location": null
+    },
+    {
+      "id": "mfcc_comparison_1",
+      "label": "MFCC Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/mfcc-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "mfcc_formant_overlay_1",
+      "label": "MFCC Formant Overlay Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/formant-overlay-1.png",
+      "source_location": null
+    },
+    {
+      "id": "cochleagram_time_frequency_1",
+      "label": "Cochleagram Time Frequency Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/time-frequency-1.png",
+      "source_location": null
+    },
+    {
+      "id": "f0_accuracy_comparison_1",
+      "label": "F0 Accuracy Comparison Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/accuracy-comparison-1.png",
+      "source_location": null
+    },
+    {
+      "id": "duration_voiced_distribution_1",
+      "label": "Duration Voiced Distribution Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/voiced-distribution-1.png",
+      "source_location": null
+    },
+    {
+      "id": "duration_silence_detection_1",
+      "label": "Duration Silence Detection Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/silence-detection-1.png",
+      "source_location": null
+    },
+    {
+      "id": "modulation_frequency_1",
+      "label": "Modulation Frequency Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-freq-1.png",
+      "source_location": null
+    },
+    {
+      "id": "textgrid_annotation_structure_1",
+      "label": "TextGrid Annotation Structure Figure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/annotation-structure-1.png",
+      "source_location": null
+    },
+    {
+      "id": "img_tier_manipulation_1",
+      "label": "Tier Manipulation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/tier-manipulation-1.png"
+    },
+    {
+      "id": "img_shimmer_components_1",
+      "label": "Shimmer Components",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/shimmer-components-1.png"
+    },
+    {
+      "id": "img_jitter_effects_1",
+      "label": "Jitter Effects",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/jitter-effects-1.png"
+    },
+    {
+      "id": "img_distortion_measure_1",
+      "label": "Distortion Measure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/distortion-measure-1.png"
+    },
+    {
+      "id": "img_noise_floor_1",
+      "label": "Noise Floor",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/sound-quality-analysis_files/figure-html/noise-floor-1.png"
+    },
+    {
+      "id": "img_dtw_path_1",
+      "label": "DTW Path",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/dtw-path-1.png"
+    },
+    {
+      "id": "img_alignment_cost_1",
+      "label": "Alignment Cost",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/time-warping_files/figure-html/alignment-cost-1.png"
+    },
+    {
+      "id": "img_envelope_extraction_1",
+      "label": "Envelope Extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/envelope-extraction-1.png"
+    },
+    {
+      "id": "img_dft_output_1",
+      "label": "DFT Output",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-envelope_files/figure-html/dft-output-1.png"
+    },
+    {
+      "id": "img_formant_path_1",
+      "label": "Formant Path",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/formant-path-1.png"
+    },
+    {
+      "id": "img_lpc_coefficients_1",
+      "label": "LPC Coefficients",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/formant-tracking_files/figure-html/lpc-coefficients-1.png"
+    },
+    {
+      "id": "img_parallel_speedup_1",
+      "label": "Parallel Speedup",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/parallel-speedup-1.png"
+    },
+    {
+      "id": "img_speedup_comparison_1",
+      "label": "Speedup Comparison",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/speedup-comparison-1.png"
+    },
+    {
+      "id": "img_scaling_behavior_1",
+      "label": "Scaling Behavior",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/batch-processing_files/figure-html/scaling-behavior-1.png"
+    },
+    {
+      "id": "img_formant_tracking_ref",
+      "label": "Formant Tracking",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/formant-tracking.png"
+    },
+    {
+      "id": "img_pitch_extraction_ref",
+      "label": "Pitch Extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/pitch-extraction.png"
+    },
+    {
+      "id": "img_spectrogram_analysis_ref",
+      "label": "Spectrogram Analysis",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/spectrogram-analysis.png"
+    },
+    {
+      "id": "img_waveform_display_ref",
+      "label": "Waveform Display",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/waveform-display.png"
+    },
+    {
+      "id": "img_sound_object_methods_ref",
+      "label": "Sound Object Methods",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/sound-object-methods.png"
+    },
+    {
+      "id": "img_sound_audio_io_ref",
+      "label": "Sound Audio I/O",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/sound-audio-io.png"
+    },
+    {
+      "id": "img_batch_query_architecture_ref",
+      "label": "Batch Query Architecture",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/batch-query-architecture.png"
+    },
+    {
+      "id": "img_cache_hierarchy_ref",
+      "label": "Cache Hierarchy",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/reference/figures/cache-hierarchy.png"
+    },
+    {
+      "id": "f0_track_candidates",
+      "label": "F0 Track Candidates",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/f0-track-candidates-1.png"
+    },
+    {
+      "id": "hz_to_log",
+      "label": "Hz to Log",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/pitch-detection_files/figure-html/hz-to-log-1.png"
+    },
+    {
+      "id": "smoothing_effect",
+      "label": "Smoothing Effect",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/smoothing-effect-1.png"
+    },
+    {
+      "id": "dynamics_range",
+      "label": "Dynamics Range",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/intensity-processing_files/figure-html/dynamics-range-1.png"
+    },
+    {
+      "id": "period_extraction",
+      "label": "Period Extraction",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/period-extraction-1.png"
+    },
+    {
+      "id": "img_amplitude_tracking_1",
+      "label": "amplitude tracking",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/jitter-shimmer-analysis_files/figure-html/amplitude-tracking-1.png"
+    },
+    {
+      "id": "img_cepstrum_display_1",
+      "label": "cepstrum display",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/cepstrum-display-1.png"
+    },
+    {
+      "id": "img_quefrency_scale_1",
+      "label": "quefrency scale",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cepstral-analysis-avqi_files/figure-html/quefrency-scale-1.png"
+    },
+    {
+      "id": "img_bandwidth_estimation_1",
+      "label": "bandwidth estimation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/bandwidth-estimation-1.png"
+    },
+    {
+      "id": "img_resonance_peaks_1",
+      "label": "resonance peaks",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/spectral-analysis_files/figure-html/resonance-peaks-1.png"
+    },
+    {
+      "id": "img_mel_scale_1",
+      "label": "mel scale",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/mel-scale-1.png"
+    },
+    {
+      "id": "img_cepstral_coefficients_1",
+      "label": "cepstral coefficients",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/mfcc-analysis_files/figure-html/cepstral-coefficients-1.png"
+    },
+    {
+      "id": "img_basilar_membrane_1",
+      "label": "basilar membrane",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/basilar-membrane-1.png"
+    },
+    {
+      "id": "img_gammatone_filterbank_1",
+      "label": "gammatone filterbank",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/cochleagram-analysis_files/figure-html/gammatone-filterbank-1.png"
+    },
+    {
+      "id": "img_f0_error_1",
+      "label": "f0 error",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/f0-error-1.png"
+    },
+    {
+      "id": "img_candidate_tracking_1",
+      "label": "candidate tracking",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/f0-estimation-alternatives_files/figure-html/candidate-tracking-1.png"
+    },
+    {
+      "id": "img_phoneme_duration_1",
+      "label": "phoneme duration",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/phoneme-duration-1.png"
+    },
+    {
+      "id": "img_duration_histogram_1",
+      "label": "duration histogram",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/duration-analysis_files/figure-html/duration-histogram-1.png"
+    },
+    {
+      "id": "img_modulation_peaks_1",
+      "label": "modulation peaks",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/modulation-peaks-1.png"
+    },
+    {
+      "id": "img_temporal_modulation_1",
+      "label": "temporal modulation",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/modulation-spectrum_files/figure-html/temporal-modulation-1.png"
+    },
+    {
+      "id": "img_annotation_layers_1",
+      "label": "annotation layers",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/annotation-layers-1.png"
+    },
+    {
+      "id": "img_point_event_grid_1",
+      "label": "point event grid",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/textgrid-operations_files/figure-html/point-event-grid-1.png"
+    },
+    {
+      "id": "img_periodicity_measure_1",
+      "label": "periodicity measure",
+      "file_type": "image",
+      "source_file": "/Users/frkkan96/Documents/src/pladdrr/docs/articles/voice-quality-metrics_files/figure-html/periodicity-measure-1.png"
+    }
+  ],
+  "edges": [
+    {
+      "source": "analysis_resynthesis_workflow",
+      "target": "speech_synthesis_klattgrid",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "analysis_resynthesis_workflow",
+      "target": "analysis_resynthesis_compare_spectrograms_1",
+      "relation": "shows",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "analysis_resynthesis_workflow",
+      "target": "analysis_resynthesis_morph_viz_1",
+      "relation": "shows",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "analysis_resynthesis_compare_spectrograms_1",
+      "target": "speech_synthesis_klattgrid",
+      "relation": "demonstrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "analysis_resynthesis_morph_viz_1",
+      "target": "speech_synthesis_klattgrid",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "analysis_resynthesis_morph_viz_1",
+      "target": "analysis_resynthesis_compare_spectrograms_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "speech_synthesis_klattgrid",
+      "target": "analysis_resynthesis_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "pladdrr_logo",
+      "target": "analysis_resynthesis_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "pladdrr_logo",
+      "target": "speech_synthesis_klattgrid",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "unicode_standard_16_0",
+      "target": "iso_iec_30112_wd10",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "formantpath_plot_comparison_1",
+      "target": "analysis_resynthesis_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3
+    },
+    {
+      "source": "formantpath_plot_candidates_1",
+      "target": "analysis_resynthesis_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3
+    },
+    {
+      "source": "mfcc_post_processing_1",
+      "target": "mfcc_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "cochleagram_comparison_1",
+      "target": "cochleagram_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "time_frequency_1",
+      "target": "cochleagram_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "f0_comparison_1",
+      "target": "f0_estimation_alternatives",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "accuracy_comparison_1",
+      "target": "f0_estimation_alternatives",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "voiced_distribution_1",
+      "target": "duration_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "silence_detection_1",
+      "target": "duration_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "modulation_freq_1",
+      "target": "modulation_spectrum",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "modulation_energy_1",
+      "target": "modulation_spectrum",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "annotation_structure_1",
+      "target": "textgrid_operations",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "tier_manipulation_1",
+      "target": "textgrid_operations",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "shimmer_components_1",
+      "target": "voice_quality_metrics",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "jitter_effects_1",
+      "target": "voice_quality_metrics",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "distortion_measure_1",
+      "target": "sound_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "noise_floor_1",
+      "target": "sound_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "dtw_path_1",
+      "target": "time_warping",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "alignment_cost_1",
+      "target": "time_warping",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "envelope_extraction_1",
+      "target": "spectral_envelope",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "dft_output_1",
+      "target": "spectral_envelope",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "formant_path_1",
+      "target": "formant_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "lpc_coefficients_1",
+      "target": "formant_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "parallel_speedup_1",
+      "target": "batch_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "cochleagram_comparison_1",
+      "target": "time_frequency_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "f0_comparison_1",
+      "target": "accuracy_comparison_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "voiced_distribution_1",
+      "target": "silence_detection_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "modulation_freq_1",
+      "target": "modulation_energy_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "annotation_structure_1",
+      "target": "tier_manipulation_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "shimmer_components_1",
+      "target": "jitter_effects_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "distortion_measure_1",
+      "target": "noise_floor_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "dtw_path_1",
+      "target": "alignment_cost_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "envelope_extraction_1",
+      "target": "dft_output_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "formant_path_1",
+      "target": "lpc_coefficients_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "speedup_comparison_1",
+      "target": "scaling_behavior_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "speedup_comparison_1",
+      "target": "performance_profile",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "scaling_behavior_1",
+      "target": "thread_pool_design",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "scaling_behavior_1",
+      "target": "batch_query_architecture",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "batch_query_architecture",
+      "target": "rcpp_bridge",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "batch_query_architecture",
+      "target": "simd_optimization",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "rcpp_bridge",
+      "target": "praat_wrapper_layer",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "rcpp_bridge",
+      "target": "type_conversion_chart",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "praat_wrapper_layer",
+      "target": "r6_class_hierarchy",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "object_lifecycle",
+      "target": "praat_wrapper_layer",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "object_lifecycle",
+      "target": "data_structure_example",
+      "relation": "demonstrates",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3
+    },
+    {
+      "source": "error_handling_flow",
+      "target": "rcpp_bridge",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "sound_object_methods",
+      "target": "sound_audio_io",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "waveform_display",
+      "target": "sound_object_methods",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "pitch_extraction",
+      "target": "sound_object_methods",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "spectrogram_analysis",
+      "target": "sound_object_methods",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "formant_tracking",
+      "target": "sound_object_methods",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "spectrogram_analysis",
+      "target": "pitch_extraction",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "spectrogram_analysis",
+      "target": "formant_tracking",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "waveform_display",
+      "target": "pitch_extraction",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "simd_optimization",
+      "target": "cache_hierarchy",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.5
+    },
+    {
+      "source": "simd_optimization",
+      "target": "performance_profile",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "thread_pool_design",
+      "target": "performance_profile",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "build_system_flow",
+      "target": "installation_options",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "build_system_flow",
+      "target": "simd_optimization",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "installation_options",
+      "target": "sound_audio_io",
+      "relation": "shares_data_with",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3
+    },
+    {
+      "source": "dependencies_graph",
+      "target": "package_architecture",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "api_reference_layout",
+      "target": "reference_site_structure",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "example_workflow",
+      "target": "analysis_workflow",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "benchmark_results",
+      "target": "performance_optimization",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "memory_usage",
+      "target": "performance_optimization",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "f0_track_candidates_1",
+      "target": "pitch_detection",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "hz_to_log_1",
+      "target": "pitch_detection",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "smoothing_effect_1",
+      "target": "intensity_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "dynamics_range_1",
+      "target": "intensity_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "period_extraction_1",
+      "target": "voice_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "amplitude_tracking_1",
+      "target": "voice_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "cepstrum_display_1",
+      "target": "cepstral_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "quefrency_scale_1",
+      "target": "cepstral_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "bandwidth_estimation_1",
+      "target": "spectral_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "resonance_peaks_1",
+      "target": "spectral_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "mel_scale_1",
+      "target": "mfcc_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "cepstral_coefficients_1",
+      "target": "mfcc_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "basilar_membrane_1",
+      "target": "auditory_modeling",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "gammatone_filterbank_1",
+      "target": "auditory_modeling",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "f0_error_1",
+      "target": "f0_estimation_alternatives",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "candidate_tracking_1",
+      "target": "f0_estimation_alternatives",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "phoneme_duration_1",
+      "target": "duration_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "dependencies_graph",
+      "target": "api_reference_layout",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.6
+    },
+    {
+      "source": "benchmark_results",
+      "target": "memory_usage",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "f0_track_candidates_1",
+      "target": "candidate_tracking_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "f0_track_candidates_1",
+      "target": "f0_error_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "hz_to_log_1",
+      "target": "mel_scale_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "smoothing_effect_1",
+      "target": "dynamics_range_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "period_extraction_1",
+      "target": "amplitude_tracking_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "cepstrum_display_1",
+      "target": "quefrency_scale_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "bandwidth_estimation_1",
+      "target": "resonance_peaks_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "mel_scale_1",
+      "target": "cepstral_coefficients_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "basilar_membrane_1",
+      "target": "gammatone_filterbank_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "candidate_tracking_1",
+      "target": "f0_error_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "duration_histogram_1",
+      "target": "duration_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "modulation_peaks_1",
+      "target": "modulation_spectrum",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "temporal_modulation_1",
+      "target": "modulation_spectrum",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "annotation_layers_1",
+      "target": "textgrid_operations",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "point_event_grid_1",
+      "target": "textgrid_operations",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "periodicity_measure_1",
+      "target": "voice_quality_metrics",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "spectral_harmonics_1",
+      "target": "voice_quality_metrics",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "snr_estimate_1",
+      "target": "sound_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "quality_score_1",
+      "target": "sound_quality_analysis",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "dtw_distance_1",
+      "target": "time_warping",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "feature_alignment_1",
+      "target": "time_warping",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "lpmodel_envelope_1",
+      "target": "spectral_envelope",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "all_poles_model_1",
+      "target": "spectral_envelope",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "lpc_spectrum_1",
+      "target": "formant_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "bandwidth_correction_1",
+      "target": "formant_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "vt_resonance_1",
+      "target": "formant_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "io_throughput_1",
+      "target": "batch_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "queue_depth_1",
+      "target": "batch_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "workload_distribution_1",
+      "target": "batch_processing",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "path_costs_1",
+      "target": "formantpath_robust_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "transition_matrix_1",
+      "target": "formantpath_robust_tracking",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "synthesis_quality_1",
+      "target": "analysis_resynthesis_workflow",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "modulation_peaks_1",
+      "target": "temporal_modulation_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "annotation_layers_1",
+      "target": "point_event_grid_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "periodicity_measure_1",
+      "target": "spectral_harmonics_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "snr_estimate_1",
+      "target": "quality_score_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "dtw_distance_1",
+      "target": "feature_alignment_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "lpmodel_envelope_1",
+      "target": "all_poles_model_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "lpc_spectrum_1",
+      "target": "bandwidth_correction_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "lpc_spectrum_1",
+      "target": "vt_resonance_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "io_throughput_1",
+      "target": "queue_depth_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "queue_depth_1",
+      "target": "workload_distribution_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "path_costs_1",
+      "target": "transition_matrix_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "lpmodel_envelope_1",
+      "target": "lpc_spectrum_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "all_poles_model_1",
+      "target": "vt_resonance_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "dtw_distance_1",
+      "target": "path_costs_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65
+    },
+    {
+      "source": "quality_score_1",
+      "target": "synthesis_quality_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65
+    },
+    {
+      "source": "spectral_harmonics_1",
+      "target": "lpc_spectrum_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "filter_response_1",
+      "target": "spectral_emphasis_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.26
+    },
+    {
+      "source": "pitch_shift_result_1",
+      "target": "voiced_voiceless_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.24
+    },
+    {
+      "source": "klatt_model_1",
+      "target": "klatt_output_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.29
+    },
+    {
+      "source": "synthesis_comparison_1",
+      "target": "parameter_sweep_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.25
+    },
+    {
+      "source": "noise_robustness_1",
+      "target": "degradation_curve_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.29
+    },
+    {
+      "source": "validation_vs_baseline_1",
+      "target": "error_distribution_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.29
+    },
+    {
+      "source": "optimization_gains_1",
+      "target": "profile_hotspots_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.27
+    },
+    {
+      "source": "pipeline_example_1",
+      "target": "cross_tool_comparison_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.27
+    },
+    {
+      "source": "vocal_health_1",
+      "target": "speaker_recognition_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.22
+    },
+    {
+      "source": "reference_code_example_1",
+      "target": "benchmark_reference_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.28
+    },
+    {
+      "source": "common_error_1",
+      "target": "debugging_workflow_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.29
+    },
+    {
+      "source": "pitch_shift_result_1",
+      "target": "klatt_output_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.18
+    },
+    {
+      "source": "spectral_emphasis_1",
+      "target": "noise_robustness_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.14
+    },
+    {
+      "source": "parameter_sweep_1",
+      "target": "optimization_gains_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.17
+    },
+    {
+      "source": "pipeline_example_1",
+      "target": "reference_code_example_1",
+      "relation": "shares_data_with",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.12
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_praat",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_rcpp_modules",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_media_loading",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_media_loading",
+      "target": "readme_libav",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_media_loading",
+      "target": "readme_av_package",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_simd",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_zero_copy",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_longsound",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_tiered_access",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_graphics_omission",
+      "target": "readme_pladdrr",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_graphics_omission",
+      "target": "readme_r_plotting",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_parselmouth",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_speakr",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_av_package",
+      "target": "readme_ffmpeg",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "readme_pladdrr",
+      "target": "readme_gpl3",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "intensity_comparison_1",
+      "target": "intensity_plot_combined_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86
+    },
+    {
+      "source": "jitter_shimmer_metrics_comparison_1",
+      "target": "jitter_shimmer_comparison_display_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.87
+    },
+    {
+      "source": "cpps_tracking_1",
+      "target": "avqi_smoothing_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.83
+    },
+    {
+      "source": "spectral_plot_formants_1",
+      "target": "spectral_plot_spectrum_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "pitch_autocorr_comparison_1",
+      "target": "pitch_estimates_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.87
+    },
+    {
+      "source": "mfcc_comparison_1",
+      "target": "mfcc_formant_overlay_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.84
+    },
+    {
+      "source": "mfcc_formant_overlay_1",
+      "target": "mfcc_post_processing_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72
+    },
+    {
+      "source": "cochleagram_comparison_1",
+      "target": "cochleagram_time_frequency_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "f0_comparison_1",
+      "target": "f0_accuracy_comparison_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88
+    },
+    {
+      "source": "duration_voiced_distribution_1",
+      "target": "duration_silence_detection_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "modulation_frequency_1",
+      "target": "modulation_energy_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.89
+    },
+    {
+      "source": "f0_comparison_1",
+      "target": "pitch_estimates_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78
+    },
+    {
+      "source": "cochleagram_time_frequency_1",
+      "target": "spectral_plot_spectrum_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.68
+    },
+    {
+      "source": "textgrid_annotation_structure_1",
+      "target": "duration_silence_detection_1",
+      "relation": "demonstrates",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.28
+    },
+    {
+      "source": "img_shimmer_components_1",
+      "target": "img_jitter_effects_1",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_distortion_measure_1",
+      "target": "img_noise_floor_1",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_dtw_path_1",
+      "target": "img_alignment_cost_1",
+      "relation": "demonstrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_envelope_extraction_1",
+      "target": "img_dft_output_1",
+      "relation": "demonstrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_formant_path_1",
+      "target": "img_lpc_coefficients_1",
+      "relation": "demonstrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_parallel_speedup_1",
+      "target": "img_speedup_comparison_1",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_speedup_comparison_1",
+      "target": "img_scaling_behavior_1",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_parallel_speedup_1",
+      "target": "img_scaling_behavior_1",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_formant_path_1",
+      "target": "img_formant_tracking_ref",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0
+    },
+    {
+      "source": "img_lpc_coefficients_1",
+      "target": "img_formant_tracking_ref",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.79
+    },
+    {
+      "source": "img_dft_output_1",
+      "target": "img_spectrogram_analysis_ref",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82
+    },
+    {
+      "source": "img_envelope_extraction_1",
+      "target": "img_spectrogram_analysis_ref",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74
+    },
+    {
+      "source": "img_waveform_display_ref",
+      "target": "img_sound_audio_io_ref",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.71
+    },
+    {
+      "source": "img_waveform_display_ref",
+      "target": "img_sound_object_methods_ref",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.69
+    },
+    {
+      "source": "img_sound_audio_io_ref",
+      "target": "img_sound_object_methods_ref",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.77
+    },
+    {
+      "source": "img_parallel_speedup_1",
+      "target": "img_batch_query_architecture_ref",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78
+    },
+    {
+      "source": "img_speedup_comparison_1",
+      "target": "img_batch_query_architecture_ref",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75
+    },
+    {
+      "source": "img_scaling_behavior_1",
+      "target": "img_cache_hierarchy_ref",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.66
+    },
+    {
+      "source": "img_pitch_extraction_ref",
+      "target": "img_jitter_effects_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.67
+    },
+    {
+      "source": "img_pitch_extraction_ref",
+      "target": "img_shimmer_components_1",
+      "relation": "shares_data_with",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.28
+    },
+    {
+      "source": "img_noise_floor_1",
+      "target": "img_spectrogram_analysis_ref",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.73
+    },
+    {
+      "source": "img_distortion_measure_1",
+      "target": "img_spectrogram_analysis_ref",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "img_tier_manipulation_1",
+      "target": "img_waveform_display_ref",
+      "relation": "shares_data_with",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.24
+    },
+    {
+      "source": "img_dtw_path_1",
+      "target": "img_formant_path_1",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.23
+    },
+    {
+      "source": "thread_pool_design",
+      "target": "simd_optimization",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.73
+    },
+    {
+      "source": "thread_pool_design",
+      "target": "performance_profile",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "simd_optimization",
+      "target": "performance_profile",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88
+    },
+    {
+      "source": "simd_optimization",
+      "target": "benchmark_results",
+      "relation": "demonstrates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86
+    },
+    {
+      "source": "benchmark_results",
+      "target": "performance_profile",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.84
+    },
+    {
+      "source": "memory_usage",
+      "target": "performance_profile",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.76
+    },
+    {
+      "source": "memory_usage",
+      "target": "benchmark_results",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72
+    },
+    {
+      "source": "rcpp_bridge",
+      "target": "praat_wrapper_layer",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "rcpp_bridge",
+      "target": "type_conversion_chart",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82
+    },
+    {
+      "source": "praat_wrapper_layer",
+      "target": "r6_class_hierarchy",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.81
+    },
+    {
+      "source": "r6_class_hierarchy",
+      "target": "object_lifecycle",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78
+    },
+    {
+      "source": "object_lifecycle",
+      "target": "error_handling_flow",
+      "relation": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.29
+    },
+    {
+      "source": "data_structure_example",
+      "target": "type_conversion_chart",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8
+    },
+    {
+      "source": "build_system_flow",
+      "target": "installation_options",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "build_system_flow",
+      "target": "dependencies_graph",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82
+    },
+    {
+      "source": "installation_options",
+      "target": "dependencies_graph",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74
+    },
+    {
+      "source": "api_reference_layout",
+      "target": "example_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.66
+    },
+    {
+      "source": "api_reference_layout",
+      "target": "praat_wrapper_layer",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.62
+    },
+    {
+      "source": "example_workflow",
+      "target": "rcpp_bridge",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.64
+    },
+    {
+      "source": "f0_track_candidates",
+      "target": "hz_to_log",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78
+    },
+    {
+      "source": "f0_track_candidates",
+      "target": "period_extraction",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72
+    },
+    {
+      "source": "smoothing_effect",
+      "target": "dynamics_range",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.83
+    },
+    {
+      "source": "hz_to_log",
+      "target": "f0_track_candidates",
+      "relation": "demonstrates",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.28
+    },
+    {
+      "source": "period_extraction",
+      "target": "f0_track_candidates",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7
+    },
+    {
+      "source": "img_cepstrum_display_1",
+      "target": "img_quefrency_scale_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88
+    },
+    {
+      "source": "img_bandwidth_estimation_1",
+      "target": "img_resonance_peaks_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.87
+    },
+    {
+      "source": "img_mel_scale_1",
+      "target": "img_cepstral_coefficients_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.84
+    },
+    {
+      "source": "img_basilar_membrane_1",
+      "target": "img_gammatone_filterbank_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.89
+    },
+    {
+      "source": "img_f0_error_1",
+      "target": "img_candidate_tracking_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85
+    },
+    {
+      "source": "img_phoneme_duration_1",
+      "target": "img_duration_histogram_1",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82
+    },
+    {
+      "source": "img_modulation_peaks_1",
+      "target": "img_temporal_modulation_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88
+    },
+    {
+      "source": "img_annotation_layers_1",
+      "target": "img_point_event_grid_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "source": "img_amplitude_tracking_1",
+      "target": "img_periodicity_measure_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.68
+    },
+    {
+      "source": "img_cepstrum_display_1",
+      "target": "img_cepstral_coefficients_1",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
