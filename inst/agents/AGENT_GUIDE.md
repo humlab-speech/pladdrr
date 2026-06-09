@@ -37,6 +37,20 @@ validate every pointer and time/range param, and emit `WARN_DATA_LOSS` when
 the result contains NA from out-of-range / undefined inputs. Lock the
 behavior in `tests/testthat/test-error-reporting.R`.
 
+## Performance Audit
+
+Static SIMD + threading inventory: `tools/perf_inventory.sh` walks `src/` and
+the Praat submodule and emits `inst/agents/PERFORMANCE_INVENTORY.md`. Use it
+to find wrappers that lack an accompanying `*_simd.cpp` (Phase F SIMD
+candidates) and to enumerate every `MelderThread_PARALLELIZE` call site.
+
+Runtime benchmark: `inst/benchmarks/run_audit_benchmarks.R` times each
+faithfulness-registry routine against Praat-native execution and writes
+`inst/benchmarks/RESULTS.md` with a `speedup_vs_praat` column. Praat startup
+is intentionally part of the timing — that cost is real for the
+"shell out to Praat" alternative the package replaces. Requires
+`R CMD INSTALL .` first.
+
 ## Faithfulness Audit
 
 Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
