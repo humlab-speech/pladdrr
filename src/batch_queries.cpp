@@ -55,6 +55,7 @@ autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtra
 #include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
 #include "praat.github.io/fon/Sound_and_Spectrum.h"
 #include "praat_xptr_utils.h"
+#include "pladdrr_errors.h"
 
 using namespace Rcpp;
 
@@ -88,43 +89,66 @@ extern "C" {
 //' @return List with one element per formant number, each containing a numeric vector
 //' @keywords internal
 // [[Rcpp::export]]
-List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times, 
+List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times,
                                              IntegerVector formant_numbers, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
-    if (!formant || formant.get() == nullptr) {
-        stop("Invalid Formant pointer");
-    }
-    
+    PLADDRR_REQUIRE_PTR("formant_get_multiple_formants_at_times", formant, "formant_xptr");
+
     int n_times = times.size();
     int n_formants = formant_numbers.size();
+    if (n_formants <= 0) {
+        PLADDRR_STOP_INPUT("formant_get_multiple_formants_at_times",
+                           "formant_numbers", "must be non-empty");
+    }
+    for (int f = 0; f < n_formants; f++) {
+        if (formant_numbers[f] < 1) {
+            PLADDRR_STOP_INPUT("formant_get_multiple_formants_at_times",
+                               "formant_numbers",
+                               "formant index must be >= 1 (F1, F2, ...)");
+        }
+    }
     kFormant_unit f_unit = static_cast<kFormant_unit>(unit);
-    
+
     List result;
-    
+    int n_undef = 0;
+
     try {
-        // For each formant number, query all times
         for (int f = 0; f < n_formants; f++) {
             int formant_num = formant_numbers[f];
             NumericVector values(n_times);
-            
+
             for (int i = 0; i < n_times; i++) {
-                values[i] = Formant_getValueAtTime(
-                    formant.get(), 
-                    formant_num, 
-                    times[i], 
+                if (!R_finite(times[i])) {
+                    values[i] = NA_REAL;
+                    n_undef++;
+                    continue;
+                }
+                double v = Formant_getValueAtTime(
+                    formant.get(),
+                    formant_num,
+                    times[i],
                     f_unit
                 );
+                if (!R_finite(v)) { values[i] = NA_REAL; n_undef++; }
+                else values[i] = v;
             }
-            
-            // Use formant label (F1, F2, etc)
+
             std::string name = "F" + std::to_string(formant_num);
             result[name] = values;
         }
     } catch (MelderError) {
         Melder_clearError();
-        stop("Failed to query formant values");
+        PLADDRR_STOP_PRAAT("formant_get_multiple_formants_at_times",
+                           "Praat raised an error while querying formant values");
     }
-    
+
+    if (n_undef > 0) {
+        std::ostringstream msg;
+        msg << n_undef << " of " << (n_times * n_formants)
+            << " queried formant values were undefined (NA returned)";
+        PLADDRR_WARN_DATA_LOSS("formant_get_multiple_formants_at_times", msg.str());
+    }
+
     return result;
 }
 
@@ -191,28 +215,42 @@ List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector t
 NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
                                             int unit = 0, bool interpolate = true) {
     XPtr<structPitch> pitch(pitch_xptr);
-    if (!pitch || pitch.get() == nullptr) {
-        stop("Invalid Pitch pointer");
-    }
-    
+    PLADDRR_REQUIRE_PTR("pitch_get_strengths_at_times", pitch, "pitch_xptr");
+
     int n = times.size();
     NumericVector strengths(n);
     kPitch_unit p_unit = static_cast<kPitch_unit>(unit);
-    
+    int n_undef = 0;
+
     try {
         for (int i = 0; i < n; i++) {
-            strengths[i] = Pitch_getStrengthAtTime(
-                pitch.get(), 
-                times[i], 
-                p_unit, 
+            if (!R_finite(times[i])) {
+                strengths[i] = NA_REAL;
+                n_undef++;
+                continue;
+            }
+            double v = Pitch_getStrengthAtTime(
+                pitch.get(),
+                times[i],
+                p_unit,
                 interpolate
             );
+            if (!R_finite(v)) { strengths[i] = NA_REAL; n_undef++; }
+            else strengths[i] = v;
         }
     } catch (MelderError) {
         Melder_clearError();
-        stop("Failed to query pitch strengths");
+        PLADDRR_STOP_PRAAT("pitch_get_strengths_at_times",
+                           "Praat raised an error while querying pitch strengths");
     }
-    
+
+    if (n_undef > 0) {
+        std::ostringstream msg;
+        msg << n_undef << " of " << n
+            << " queried pitch strengths were undefined (NA returned)";
+        PLADDRR_WARN_DATA_LOSS("pitch_get_strengths_at_times", msg.str());
+    }
+
     return strengths;
 }
 

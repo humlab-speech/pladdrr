@@ -7,6 +7,36 @@
 ---
 
 
+## Typed Errors (design principle 6)
+
+C++ wrappers report errors and data-loss with structured tags via the macros
+in `src/pladdrr_errors.h`:
+
+```cpp
+PLADDRR_REQUIRE_PTR("routine_name", xptr, "xptr_param_name");
+PLADDRR_REQUIRE_FINITE("routine_name", "param_name", value);
+PLADDRR_STOP_INPUT("routine_name", "param", "human-readable reason");
+PLADDRR_STOP_PRAAT("routine_name", "Praat raised an error doing X");
+PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
+```
+
+R-side, `with_pladdrr_errors(expr)` (`R/error-classes.R`) reclassifies tagged
+conditions into:
+
+| Class                 | Meaning                              |
+|-----------------------|--------------------------------------|
+| `pladdrr_input_error` | invalid argument / precondition fail |
+| `pladdrr_praat_error` | Praat internal failure               |
+| `pladdrr_data_loss`   | output incomplete vs request         |
+
+All inherit from `pladdrr_error` → `error` → `condition`. Data-loss results
+carry `attr(., "pladdrr_data_loss")` listing every routine that flagged it.
+
+When porting a new wrapper: replace bare `stop("...")` with the macros above,
+validate every pointer and time/range param, and emit `WARN_DATA_LOSS` when
+the result contains NA from out-of-range / undefined inputs. Lock the
+behavior in `tests/testthat/test-error-reporting.R`.
+
 ## Faithfulness Audit
 
 Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
