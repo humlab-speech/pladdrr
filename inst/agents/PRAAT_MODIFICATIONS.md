@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-03-09
-**Package Version:** 4.8.33
+**Last Updated:** 2026-05-06
+**Package Version:** 4.8.35
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,62 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.8.35 SPINET gammatone arg-swap fix (2026-05-06)
+
+#### `src/praat.github.io/fon/Sound_to_SPINET.cpp` — gammatone filter args
+
+Upstream Praat call `Sound_createGammaTone(..., b, f[i], ...)` passed `b=1.02`
+(the ERB bandwidth constant) as the frequency argument and the center
+frequency `f[i]` as the bandwidth — every cochlear filter was actually built
+at 1.02 Hz. Speech has no energy near DC, so the filter outputs were ≈0, the
+on-center / off-surround interaction yielded an all-zero SPINET matrix, and
+`SPINET_to_Pitch` aborted with "The sound should not have all amplitudes
+equal to zero."
+
+```cpp
+// BEFORE (upstream):
+Sound_createGammaTone(..., /*frequency*/ b, /*bandwidth*/ f[i], ...);
+// AFTER:
+Sound_createGammaTone(..., /*frequency*/ f[i], /*bandwidth*/ bw[i] / NUM2pi, ...);
+```
+
+`bw[i]` is already computed by Praat as `2π · b · ERB(f[i])` in rad/s, so
+dividing by `NUM2pi` recovers the ERB bandwidth in Hz that
+`Sound_createGammaTone` expects.
+
+This is a pure correctness fix; no perf impact. Required for `sound$to_pitch_spinet()`
+to return non-empty results on real speech.
+
+---
+
+### v4.8.34 SHS & SPINET pitch methods (2026-04-08)
+
+**Summary:** Add SHS (Subharmonic Summation) and SPINET (Seneff Periodic Network)
+pitch extractors across all three API tiers. Compiles four new Praat sources and
+adds four extracted helper functions.
+
+#### `src/Makevars.in` / `src/Makevars` / `src/Makevars.win` — new sources
+
+Added to `PRAAT_FON_SRC`:
+- `Sound_to_Pitch2.cpp` (SHS pitch)
+- `SPINET.cpp` (SPINET data class)
+- `Sound_to_SPINET.cpp` (SPINET extraction)
+- `SPINET_to_Pitch.cpp` (SPINET → Pitch)
+
+#### `src/sound_create_gaussian.cpp` — extracted helpers
+
+Hosted four helper functions previously embedded in Praat private TUs so the
+SPINET path can link without dragging in the full upstream object:
+
+- `Sound_createGammaTone`
+- `Sound_power`
+- `Sound_correlateParts`
+- `Sound_localPeak`
+
+**No Praat C++ source changes** — the SPINET correctness fix follows in v4.8.35.
+
+---
 
 ### v4.8.33 All 35 wrappers on shared dispatch tables (2026-03-09)
 

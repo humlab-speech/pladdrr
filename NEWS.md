@@ -1,3 +1,65 @@
+# pladdrr 4.8.35 (2026-05-06)
+
+## Bug Fixes
+
+- `src/praat.github.io/fon/Sound_to_SPINET.cpp`: gammatone arg-swap fix. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as the frequency argument and `f[i]` as bandwidth, so every cochlear filter was built at 1.02 Hz and SPINET produced an all-zero matrix on speech. Fixed to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi`. Required for `sound$to_pitch_spinet()` to return non-empty results. Logged in `inst/agents/PRAAT_MODIFICATIONS.md`.
+
+# pladdrr 4.8.34 (2026-04-08)
+
+## New Features
+
+- SHS (Subharmonic Summation) and SPINET (Seneff Periodic Network) pitch extractors across all 3 API tiers
+  - Tier 1: `sound$to_pitch_shs()`, `sound$to_pitch_spinet()`
+  - Tier 2: `to_pitch_shs_direct()`, `to_pitch_spinet_direct()`
+  - Tier 3: `sound_to_pitch_shs_batch()`, `sound_to_pitch_spinet_batch()`
+- Build system: 4 new Praat sources (`Sound_to_Pitch2.cpp`, `SPINET.cpp`, `Sound_to_SPINET.cpp`, `SPINET_to_Pitch.cpp`) and 4 extracted helpers (`Sound_createGammaTone`, `Sound_power`, `Sound_correlateParts`, `Sound_localPeak`) in `sound_create_gaussian.cpp`
+
+# pladdrr 4.8.33 (2026-03-09)
+
+## Performance
+
+- All 34 remaining wrappers ported from per-instance closure pattern to shared `.{type}_methods` env + `$.Type` S3 dispatch (Sound was done in v4.8.32)
+- Eliminates ~832 closure definitions; same architectural win as Sound: ~9x faster creation, ~160x less memory per object
+- Zero new test regressions
+
+## Bug Fixes
+
+- 22 wrappers had lost `is_valid` during porting — restored
+- `cochleagram$as_matrix()` return type fixed (was indexing `mat_list$values` on a plain matrix)
+- `cepstrum$to_sound()` fixed: `Sound$new(xptr)` → `Sound(.xptr = xptr)`
+
+## Internals
+
+- 13 wrapper files gained `@method $ Type` roxygen tags
+- NAMESPACE bumped to 44 `S3method("$", ...)` entries
+
+# pladdrr 4.8.32 (2026-03-09)
+
+## Critical Fixes
+
+- **Symbol registration**: `module_init.cpp` was calling `R_registerRoutines(dll, NULL, ModuleEntries, NULL, NULL)` which replaced the 777 Rcpp-exported `CallEntries` with only 38 module boot entries. Now builds a combined table (777 + 38 = 815 entries) in a single registration call. This broke package load from v4.8.30.
+- `src/RcppExports.cpp`: `CallEntries[]` changed from `static const` to `extern const` so `module_init.cpp` can read it. Must be re-applied if `Rcpp::compileAttributes()` regenerates the file — `tools/check_callentries.sh` guards this.
+- `src/Makevars.in`: added missing `simd_utils.cpp` to `SIMD_SRC` (the `configure` script regenerates `src/Makevars` from `src/Makevars.in`, so editing `Makevars` directly never persisted; this was the root cause of build failures since v4.8.30).
+
+## Performance
+
+- Sound wrapper: per-instance closure list (~107 closures/object, ~120KB) replaced with shared `.sound_methods` env + `$.Sound` S3 dispatch. Creation 9× faster (23μs → 2.6μs), memory 160× less (120KB → 0.7KB). Method-call dispatch ~2.5× slower per call (0.4μs → 1.0μs); negligible vs Praat computation.
+
+# pladdrr 4.8.31 (2026-03-09)
+
+## Performance
+
+- `vad.R::textgrid_get_intervals_where()`: O(n²) vector growth (`c(x, val)` in loop) replaced with pre-allocated vectors + counter + trim.
+- `textgrid-wrapper.R::get_all_points()`: removed duplicate slow R-loop definition that shadowed the fast C++ version (R list duplicate-name semantics). Fast version now uses `tier = 1L` default.
+- `batch-processing.R::extract_measurements()`: per-interval `lapply` replaced with vectorized batch C++ calls (`textgrid_interval_statistics_batch()`, `.pitch_get_values_at_times()`, `.formant_get_values_at_times()`, `.intensity_get_values_at_times()`). Reduces ~10n R→C++ boundary crossings to ~(3 + max_formants) total.
+
+# pladdrr 4.8.30 (2026-02-19)
+
+## Performance
+
+- `Sound_to_Pitch.cpp`: SIMD optimizations re-enabled for FCC path — Fixes 1–5 (local mean, sum of squares, DC removal, local peak, batched `xsimd::sqrt` normalization over lags). Fixes earlier comment contradiction on `compute_local_mean_simd_bridge` (bridge returns mean, not sum).
+- `Sound_to_Harmonicity_GNE.cpp`: Loop B (50-band Hilbert envelopes) and Loop C (1225-pair cross-correlation matrix) parallelized via `MelderThread_PARALLELIZE`; upper-triangle pairs flattened into a linear index for even thread distribution.
+
 # pladdrr 4.8.29 (2026-02-19)
 
 ## Performance

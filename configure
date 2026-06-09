@@ -62,5 +62,15 @@ sed -e "s|@XSIMD_FLAG@|${XSIMD_FLAG}|" \
     -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
     src/Makevars.in > src/Makevars
 
+# ---- Build integrity guards (non-fatal warnings) ----
+
+if [ -x tools/check_callentries.sh ]; then
+  tools/check_callentries.sh || echo "  WARNING: CallEntries patch missing — pladdrr will fail to load. See PRAAT_MODIFICATIONS v4.8.32."
+fi
+
+if [ -x tools/check_doc_version.sh ]; then
+  tools/check_doc_version.sh || echo "  WARNING: agent-facing docs lag DESCRIPTION version (design principle 5)."
+fi
+
 echo "Configuration complete"
 exit 0

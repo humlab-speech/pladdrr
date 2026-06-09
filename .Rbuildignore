@@ -99,6 +99,21 @@ results/
 ^src/.*\.so$
 ^src/.*\.la$
 ^src/.*\.exe$
+^src/.*\.before.*$
+^src/.*\.backup.*$
+^src/.*\.bak.*$
+^src/.*\.tmp.*$
+^src/.*\.beforesed$
+^src/.*\.dup$
+^src/.*\.fix$
+^src/.*\.future$
+^src/.*\.rcpp$
+^src/.*\.static$
+^src/.*\.init$
+^src/.*\.with_duplicate$
+^src/.*\.o\.tmp$
+^pladdrr_.*\.tar\.gz$
+^graphify-out$
 ^src/praat\.github\.io/test/fon ExperimentMFC/
 ^src/praat\.github\.io/test/sys/large PDF/
 ^src/praat\.github\.io/test/manually/external/Chris Darwin/

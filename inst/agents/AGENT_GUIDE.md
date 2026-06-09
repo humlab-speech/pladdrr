@@ -1,13 +1,28 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.34 (2026-04-08)
+**Version:** 4.8.35 (2026-05-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix
 
 ---
 
 
+## Faithfulness Audit
+
+Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
+`tests/testthat/test-praat-faithfulness.R`, which invokes
+`/Applications/Praat.app/Contents/MacOS/Praat --run` against an extensible
+registry of routines in `tests/testthat/faithfulness/routines.R`, compares the
+output to the matching pladdrr call at a per-routine tolerance, and emits
+`inst/agents/FAITHFULNESS_REPORT.md`.
+
+When porting a new Praat routine into pladdrr, add a registry row. Default
+tolerance is `0` for exact-arithmetic routines; looser tolerances require a
+written rationale in the row. Failing rows are first-class regressions.
+
 ## What's New in v4.8.x
+
+- **v4.8.35:** SPINET gammatone arg-swap fix in `src/praat.github.io/fon/Sound_to_SPINET.cpp`. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as frequency and `f[i]` as bandwidth — every filter was built at 1.02 Hz, so SPINET output was all zero on real speech and `SPINET_to_Pitch` aborted with *"The sound should not have all amplitudes equal to zero."* Corrected to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi` (bw already encodes `2π·b·ERB(f)`). Logged in `inst/agents/PRAAT_MODIFICATIONS.md` v4.8.35.
 
 - **v4.8.34:** SHS and SPINET pitch methods across all 3 API tiers. Tier 1: `sound$to_pitch_shs()`, `sound$to_pitch_spinet()`. Tier 2: `to_pitch_shs_direct()`, `to_pitch_spinet_direct()`. Tier 3: `sound_to_pitch_shs_batch()`, `sound_to_pitch_spinet_batch()`. Compiles 4 new Praat sources (`Sound_to_Pitch2.cpp`, `SPINET.cpp`, `Sound_to_SPINET.cpp`, `SPINET_to_Pitch.cpp`) plus extracted helper functions (`Sound_createGammaTone`, `Sound_power`, `Sound_correlateParts`, `Sound_localPeak`) in `sound_create_gaussian.cpp`. Build system updated (`Makevars.in`, `Makevars`, `Makevars.win`).
 
