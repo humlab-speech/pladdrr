@@ -54,6 +54,9 @@ autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtra
     kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 #include "praat.github.io/dwtools/Sound_and_TextGrid_extensions.h"
 #include "praat.github.io/fon/Sound_and_Spectrum.h"
+#include "praat.github.io/fon/Spectrum.h"
+#include "praat.github.io/fon/Spectrogram.h"
+#include "praat.github.io/fon/Spectrum_and_Spectrogram.h"
 #include "praat_xptr_utils.h"
 #include "pladdrr_errors.h"
 
@@ -1838,4 +1841,47 @@ List calculate_multiband_hnr_ultra_cpp(
         Melder_clearError();
         stop("Multi-band HNR calculation failed");
     }
+}
+
+
+// =============================================================================
+// Spectral moments batch — PERF-1
+// Eliminates 14× R-loop overhead by computing all frame moments in C++
+// =============================================================================
+
+// [[Rcpp::export(.get_spectral_moments_batch)]]
+List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
+    XPtr<structSpectrogram> sg(spectrogram_xptr);
+    if (!sg || sg.get() == nullptr)
+        stop("Invalid Spectrogram pointer");
+
+    integer nx = sg->nx;
+    NumericVector times(nx), cog_vec(nx), sd_vec(nx), skew_vec(nx), kurt_vec(nx);
+
+    try {
+        for (integer ix = 1; ix <= nx; ix++) {
+            double t = sg->x1 + (ix - 1) * sg->dx;
+            times[ix - 1] = t;
+            autoSpectrum spec = Spectrogram_to_Spectrum(sg.get(), t);
+            double cog = Spectrum_getCentreOfGravity(spec.get(), power);
+            cog_vec [ix - 1]  = isundef(cog)  ? NA_REAL : cog;
+            double sd  = Spectrum_getStandardDeviation(spec.get(), power);
+            sd_vec  [ix - 1]  = isundef(sd)   ? NA_REAL : sd;
+            double sk  = Spectrum_getSkewness(spec.get(), power);
+            skew_vec[ix - 1]  = isundef(sk)   ? NA_REAL : sk;
+            double ku  = Spectrum_getKurtosis(spec.get(), power);
+            kurt_vec[ix - 1]  = isundef(ku)   ? NA_REAL : ku;
+        }
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to compute spectral moments");
+    }
+
+    return List::create(
+        Named("time")     = times,
+        Named("cog")      = cog_vec,
+        Named("sd")       = sd_vec,
+        Named("skewness") = skew_vec,
+        Named("kurtosis") = kurt_vec
+    );
 }

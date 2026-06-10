@@ -697,25 +697,24 @@ to_spectrogram_direct <- function(sound, window_length = 0.005,
 }
 
 
-#' Create LTAS from Sound Directly (returns XPtr)
+#' Create LTAS from Sound Directly
 #'
 #' @param sound Sound object or external pointer
 #' @param bandwidth Numeric. Bandwidth in Hz (default: 100)
 #'
-#' @return External pointer to Ltas
+#' @return A wrapped \code{Ltas} object
 #'
 #' @examples
 #' \dontrun{
 #' sound <- Sound("voice.wav")
-#' # Fast direct conversion
-#' ltas_ptr <- to_ltas_direct(sound, bandwidth = 100)
-#' ltas <- Ltas(.xptr = ltas_ptr)
+#' ltas <- to_ltas_direct(sound, bandwidth = 100)
+#' ltas$get_slope(0, 1000, 1000, 10000, "energy")
 #' }
 #'
 #' @export
 to_ltas_direct <- function(sound, bandwidth = 100.0) {
   sound_ptr <- extract_xptr(sound, "Sound")
-  .sound_to_ltas(sound_ptr, as.numeric(bandwidth))
+  Ltas(.xptr = .sound_to_ltas(sound_ptr, as.numeric(bandwidth)))
 }
 
 

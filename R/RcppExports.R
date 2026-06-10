@@ -423,6 +423,10 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_calculate_multiband_hnr_ultra_cpp`, sound_xptr, bands, time_step, min_pitch, from_time, to_time)
 }
 
+.get_spectral_moments_batch <- function(spectrogram_xptr, power = 2.0) {
+    .Call(`_pladdrr_get_spectral_moments_batch_cpp`, spectrogram_xptr, power)
+}
+
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
 }

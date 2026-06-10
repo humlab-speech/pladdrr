@@ -664,6 +664,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_spectral_moments_batch_cpp
+List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power);
+RcppExport SEXP _pladdrr_get_spectral_moments_batch_cpp(SEXP spectrogram_xptrSEXP, SEXP powerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type spectrogram_xptr(spectrogram_xptrSEXP);
+    Rcpp::traits::input_parameter< double >::type power(powerSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_spectral_moments_batch_cpp(spectrogram_xptr, power));
+    return rcpp_result_gen;
+END_RCPP
+}
 // calculate_mean_simd_bridge
 double calculate_mean_simd_bridge(NumericVector values);
 RcppExport SEXP _pladdrr_calculate_mean_simd_bridge(SEXP valuesSEXP) {
@@ -11785,6 +11797,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 15},
     {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 10},
     {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
+    {"_pladdrr_get_spectral_moments_batch_cpp", (DL_FUNC) &_pladdrr_get_spectral_moments_batch_cpp, 2},
     {"_pladdrr_calculate_mean_simd_bridge", (DL_FUNC) &_pladdrr_calculate_mean_simd_bridge, 1},
     {"_pladdrr_calculate_stdev_simd_bridge", (DL_FUNC) &_pladdrr_calculate_stdev_simd_bridge, 2},
     {"_pladdrr_calculate_min_max_simd_bridge", (DL_FUNC) &_pladdrr_calculate_min_max_simd_bridge, 1},

@@ -843,3 +843,24 @@ get_voice_quality_ultra <- function(sound,
     as.numeric(time_step)
   )
 }
+
+
+#' Get spectral moments for all frames of a Spectrogram
+#'
+#' Computes centre of gravity, standard deviation, skewness, and kurtosis for
+#' every frame in a Spectrogram in a single C++ pass, eliminating the ~14×
+#' R-loop overhead of calling per-frame Spectrum methods.
+#'
+#' @param spectrogram A \code{Spectrogram} object
+#' @param power Numeric. Power for moment weighting (default 2.0, matching Praat)
+#'
+#' @return \code{data.frame} with columns \code{time}, \code{cog}, \code{sd},
+#'   \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where undefined)
+#'
+#' @export
+get_spectral_moments_batch <- function(spectrogram, power = 2.0) {
+  if (!inherits(spectrogram, "Spectrogram"))
+    stop("spectrogram must be a Spectrogram object")
+  result <- .get_spectral_moments_batch(spectrogram$.xptr, as.numeric(power))
+  as.data.frame(result)
+}

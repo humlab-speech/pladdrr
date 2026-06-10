@@ -238,3 +238,52 @@ test_that("Spectrum batch band operations work", {
   expect_true(is.numeric(energies))
   expect_true(is.numeric(densities))
 })
+
+# BUG-2 regression: parabolic interpolation must not produce impossible values
+test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values", {
+  skip_on_cran()
+
+  # Tone with flat spectrum regions — creates the near-zero d2y condition
+  sr     <- 44100
+  dur    <- 0.04  # 40ms window (same context as pharyngeal pipeline)
+  t      <- seq(0, dur - 1/sr, by = 1/sr)
+  f0     <- 120
+  signal <- sin(2 * pi * f0 * t) + 0.8 * sin(2 * pi * 2 * f0 * t)
+  signal <- signal / max(abs(signal)) * 0.5
+  snd    <- Sound$from_values(signal, sampling_rate = sr)
+
+  window <- snd$extract_part(0, dur, "Kaiser2", 1, FALSE)
+  spec   <- window$to_spectrum(TRUE)
+  ltas   <- spec$to_ltas_1to1()
+
+  fmins <- c(f0 * 0.9, f0 * 1.8)
+  fmaxs <- c(f0 * 1.1, f0 * 2.2)
+
+  peaks_para <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "parabolic")
+  peaks_none <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "none")
+
+  # No physically impossible values (hard limit: nothing > 200 dB in any spectrum)
+  expect_true(all(peaks_para$peak_value < 200),
+    info = paste("Parabolic peaks:", paste(round(peaks_para$peak_value, 1), collapse = ", ")))
+
+  # Parabolic result must be within 50 dB of no-interpolation result
+  diff_db <- abs(peaks_para$peak_value - peaks_none$peak_value)
+  expect_true(all(diff_db < 50),
+    info = paste("Parabolic vs none diff:", paste(round(diff_db, 1), collapse = ", ")))
+})
+
+# API-1 regression: to_ltas_direct() must return a wrapped Ltas, not externalptr
+test_that("API-1: to_ltas_direct() returns usable Ltas object without manual wrapping", {
+  skip_on_cran()
+
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5)
+  ltas  <- to_ltas_direct(sound, bandwidth = 100)
+
+  expect_true(inherits(ltas, "Ltas"),
+    info = paste("class:", paste(class(ltas), collapse = ", ")))
+  expect_false(inherits(ltas, "externalptr"))
+
+  # Must be directly usable — no manual Ltas(.xptr = ...) wrapping needed
+  slope <- ltas$get_slope(0, 1000, 1000, 10000, "energy")
+  expect_true(is.numeric(slope))
+})

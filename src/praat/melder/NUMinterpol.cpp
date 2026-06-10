@@ -366,8 +366,11 @@ double NUMimproveExtremum (constVEC const& y, integer ixmid, integer interpolati
 	if (interpolationDepth == NUM_PEAK_INTERPOLATE_PARABOLIC) {
 		const double dy = 0.5 * (y [ixmid + 1] - y [ixmid - 1]);
 		const double d2y = 2 * y [ixmid] - y [ixmid - 1] - y [ixmid + 1];
-		*ixmid_real = ixmid + dy / d2y;
-		return y [ixmid] + 0.5 * dy * dy / d2y;
+		if (d2y <= 0.0) { *ixmid_real = ixmid; return y [ixmid]; }   // flat or concave-up peak
+		const double offset = dy / d2y;
+		if (fabs (offset) >= 1.0) { *ixmid_real = ixmid; return y [ixmid]; }   // extrapolation out of range
+		*ixmid_real = ixmid + offset;
+		return y [ixmid] + 0.5 * dy * offset;
 	}
 	/*
 		Cubic or sinc interpolation.

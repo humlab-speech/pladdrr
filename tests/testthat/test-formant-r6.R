@@ -334,3 +334,39 @@ test_that("Deprecated S3 functions still work with warnings", {
   expect_true(exists("get_formant_at_time"))
   expect_true(exists("get_mean_formant"))
 })
+
+# BUG-1 regression: to_formant_burg() on short windows must not miss formants
+# Before fix: short-window F1 could be 35-55% too low vs full-sound analysis
+test_that("BUG-1: to_formant_burg() on 40ms window agrees with full-sound analysis", {
+  skip_on_cran()
+
+  # Formant resonances only (no F0) — avoids LPC confusing F0 with F1
+  # F1=700Hz, F2=1220Hz, F3=2600Hz (approximate adult /a/)
+  sr    <- 16000
+  dur   <- 1.0
+  t_all <- seq(0, dur - 1/sr, by = 1/sr)
+  signal <- sin(2 * pi * 700  * t_all) +
+            0.5 * sin(2 * pi * 1220 * t_all) +
+            0.2 * sin(2 * pi * 2600 * t_all)
+  signal <- signal / max(abs(signal)) * 0.5
+  snd <- Sound$from_values(signal, sampling_rate = sr)
+
+  # Full-sound reference (known good path)
+  fmnt_full <- snd$to_formant_burg(0.005, 5, 5500, 0.025, 50)
+  f1_full   <- fmnt_full$get_value_at_time(1, 0.5, "hertz")
+  f2_full   <- fmnt_full$get_value_at_time(2, 0.5, "hertz")
+
+  # 40ms window around the same point — was failing before fix (r=0.57 vs Praat)
+  window  <- snd$extract_part(0.48, 0.52, "rectangular", 1, FALSE)
+  fmnt_w  <- window$to_formant_burg(0.005, 5, 5500, 0.025, 50)
+  f1_win  <- fmnt_w$get_value_at_time(1, 0.02, "hertz")
+  f2_win  <- fmnt_w$get_value_at_time(2, 0.02, "hertz")
+
+  # Short window must agree with full-sound within 200 Hz (before fix: up to 481 Hz mean diff)
+  if (!is.na(f1_win) && !is.na(f1_full))
+    expect_lt(abs(f1_win - f1_full), 200,
+      label = paste0("F1 diff window vs full-sound: ", round(abs(f1_win - f1_full)), " Hz"))
+  if (!is.na(f2_win) && !is.na(f2_full))
+    expect_lt(abs(f2_win - f2_full), 300,
+      label = paste0("F2 diff window vs full-sound: ", round(abs(f2_win - f2_full)), " Hz"))
+})

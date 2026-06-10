@@ -72,6 +72,9 @@ NULL
 .spectrogram_methods$get_band_power <- function(.self, fmin, fmax) {
   .self$.cpp$get_band_power(as.numeric(fmin), as.numeric(fmax))
 }
+.spectrogram_methods$get_spectral_moments_batch <- function(.self, power = 2.0) {
+  get_spectral_moments_batch(.self, as.numeric(power))
+}
 
 # --- Transform ---
 .spectrogram_methods$to_spectrum <- function(.self, time) {
