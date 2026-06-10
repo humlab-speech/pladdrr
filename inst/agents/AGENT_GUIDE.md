@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 4.8.35 (2026-05-06)
+**Version:** 4.9.1 (2026-06-10)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix
 
 ---
 
@@ -64,6 +64,18 @@ When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
+## What's New in v4.9.x
+
+- **v4.9.1 — PERF-1:** `get_spectral_moments_batch(spectrogram, power=2.0)` — new API returns a `data.frame(time, cog, sd, skewness, kurtosis)` for every frame in a single C++ pass. Eliminates the 14× R-loop penalty (400 per-frame `autoSpectrum` allocations + 1600 R→C++ boundary crossings per file). Available as standalone function and as `spectrogram$get_spectral_moments_batch()`. See [Pattern 2p](#pattern-2p-spectral-moments-batch-v491).
+
+- **v4.9.1 — BUG-2:** Parabolic peak interpolation in `NUMimproveExtremum()` (`praat.github.io/melder/NUMinterpol.cpp`) now guards against division by near-zero `d2y` (flat or concave-up peak) and clamps `|offset| ≥ 1.0` (parabola cannot extrapolate beyond one bin). Fixes 500–1200 dB physically impossible values from `ltas$get_peaks_batch(interpolation="parabolic")`. Both `praat.github.io/` (macOS/Linux) and `praat/` (Windows) copies patched. See [Pitfall 13](#13-parabolic-interpolation-with-flat-ltas-peaks-fixed-v491).
+
+- **v4.9.1 — BUG-1:** Burg LPC formant extraction on short windows (≤100ms) now has a Laguerre-method fallback (`src/polynomial_roots_laguerre.h`) that activates when LAPACK `dhseqr_` fails to converge on all eigenvalues of the ill-conditioned companion matrix. Before this fix: F1 r=0.57, F2 r=0.38 vs Praat on 40ms windows; Python/Parselmouth achieved r>0.9999 on the same algorithm, confirming the bug was in pladdrr alone. Normal long-window audio is unaffected. See [Pitfall 14](#14-short-window-formant-extraction-fixed-v491).
+
+- **v4.9.1 — API-1:** `to_ltas_direct()` now returns a wrapped `Ltas` object, consistent with every other `*_direct()` constructor. Previously returned a raw `externalptr`, making it unusable without `Ltas(.xptr = to_ltas_direct(snd, bw))`. See [Pitfall 15](#15-to_ltas_direct-returned-raw-externalptr-fixed-v491).
+
+---
+
 ## What's New in v4.8.x
 
 - **v4.8.35:** SPINET gammatone arg-swap fix in `src/praat.github.io/fon/Sound_to_SPINET.cpp`. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as frequency and `f[i]` as bandwidth — every filter was built at 1.02 Hz, so SPINET output was all zero on real speech and `SPINET_to_Pitch` aborted with *"The sound should not have all amplitudes equal to zero."* Corrected to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi` (bw already encodes `2π·b·ERB(f)`). Logged in `inst/agents/PRAAT_MODIFICATIONS.md` v4.8.35.
@@ -99,6 +111,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 - [Object Types (37 modules)](#object-types-37-modules)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
+- [**Re-implementing a Praat Procedure**](#re-implementing-a-praat-procedure) ← start here for new ports
 - [Utility Functions](#utility-functions)
 - [Method Signatures](#method-signatures)
 - [Validation Patterns](#validation-patterns)
@@ -123,10 +136,11 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 3. **Units**: Specify as strings: `"hertz"`, `"bark"`, `"db"` (converted internally to codes)
 4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names)
 5. **Batch Operations**: Use batch query functions when extracting multiple values
-6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()` for 20-150x speedups (Pattern 2i)
+6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()`, `$get_spectral_moments_batch()` for 14-150x speedups (Patterns 2i, 2p)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
 9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for AVQI/VQ workflows (Pattern 2l)
+10. **Fidelity target**: Every re-implemented Praat procedure must achieve r > 0.95 vs Praat on ≥50 real files before shipping. Use `algobench assess` (see [Re-implementing a Praat Procedure](#re-implementing-a-praat-procedure)).
 
 ---
 
@@ -958,6 +972,7 @@ tg$set_interval_texts_batch(tier_number = 1, intervals, texts)
 | Spectrum | `get_power_vector()`, `get_band_energies()` | 150x | Pharyngeal analysis |
 | Formant | `get_formant_track()`, `get_all_formant_tracks()` | 20x | Vowel space analysis |
 | Spectrogram | `get_frame()`, `get_band_power()` | 50x | Time-frequency analysis |
+| Spectrogram | `get_spectral_moments_batch()` | 14x | CoG/SD/skewness/kurtosis all frames (v4.9.1) |
 | TextGrid | `get_labels_at_times()` | 60x | VUV segmentation |
 
 ---
@@ -984,6 +999,9 @@ for (i in seq_along(fmins)) {
 # FAST: Single batch call (18x speedup)
 peaks <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "parabolic")
 # Returns: data.frame(fmin, fmax, peak_value, peak_frequency)
+# NOTE (v4.9.1): parabolic interpolation is now numerically safe for flat peaks.
+# Before v4.9.1, near-zero d2y produced values up to 1231 dB (physically impossible).
+# The guard is in NUMimproveExtremum() in praat.github.io/melder/NUMinterpol.cpp.
 
 # Also available:
 minima <- ltas$get_minima_batch(fmins, fmaxs, interpolation = "parabolic")
@@ -2251,6 +2269,59 @@ shifted_sound <- shifted_up$to_sound()
 
 ---
 
+### Pattern 2p: Spectral Moments Batch (v4.9.1+)
+
+**Performance:** 14× faster than per-frame R loop. Before this API existed, spectral moments
+required ~2000 R→C++ round-trips per file (400 frames × 5 calls); Praat ran identical logic
+14× faster in compiled C++. The batch API closes that gap by computing all frames in one C++
+pass with no R-level iteration.
+
+**Praat equivalent:** Loop over `Spectrum: Get centre of gravity...`, `...standard deviation...`,
+`...skewness...`, `...kurtosis...` for every frame of a Spectrogram.
+
+#### Spectral Moments (CoG, SD, Skewness, Kurtosis)
+
+```r
+spectrogram <- sound$to_spectrogram(
+  window_length  = 0.005,
+  max_frequency  = 5000,
+  time_step      = 0.002,
+  frequency_step = 20,
+  window_shape   = "Gaussian"
+)
+
+# SLOW: Per-frame R loop — was 14× slower than Praat (0.514s vs 0.037s per file)
+# Anti-pattern: 400 autoSpectrum C++ allocations + 1600 R→C++ crossings per file
+moments_slow <- do.call(rbind, lapply(seq_len(spectrogram$.cpp$get_number_of_frames()), function(ix) {
+  t    <- spectrogram$.cpp$get_time_from_frame(ix)
+  spec <- spectrogram$to_spectrum(t)          # C++ object allocation per frame
+  data.frame(
+    time     = t,
+    cog      = spec$get_centre_of_gravity(2.0),
+    sd       = spec$get_standard_deviation(2.0),
+    skewness = spec$get_skewness(2.0),
+    kurtosis = spec$get_kurtosis(2.0)
+  )
+}))
+
+# FAST: Single C++ pass (v4.9.1+) — no R-level iteration, no per-frame allocation
+moments <- get_spectral_moments_batch(spectrogram, power = 2.0)
+# Returns: data.frame(time, cog, sd, skewness, kurtosis) — one row per frame
+# NA where CoG is undefined (zero-power frames)
+
+# Also accessible as a method on the Spectrogram object:
+moments <- spectrogram$get_spectral_moments_batch(power = 2.0)
+```
+
+**`power` parameter:** Matches Praat's "power" argument in spectral moment functions.
+- `power = 2.0` (default): energy-weighted moments — standard Praat default
+- `power = 1.0`: amplitude-weighted moments
+
+**NA handling:** Frames with zero total power return `NA` for all four moments, matching
+Praat's behaviour when the spectrum is silent.
+
+---
+
 ### Pattern 3: Export to Data Frame (v4.0+: Returns data.table)
 
 **NEW in v4.0:** All `as.data.frame()` methods now return `data.table` (inherits from `data.frame`) for 5-15x faster batch operations.
@@ -2445,6 +2516,171 @@ concatenated <- sound_concatenate_all(voiced_sounds)
 - **Silence:** Variable (depends on noise floor)
 
 **AVQI threshold:** `zcr_threshold = 3000` rejects unvoiced segments (fricatives, aspiration).
+
+---
+
+## Re-implementing a Praat Procedure
+
+This section is a step-by-step guide for agents porting a new Praat analysis procedure into
+pladdrr. It distils lessons from the 2026 developer report and prior SIMD/threading work.
+
+### Step 1 — Find the Praat source
+
+Every Praat menu action maps to a C++ function in the submodule:
+
+```
+src/praat.github.io/fon/          ← core audio analysis (Pitch, Formant, Intensity, etc.)
+src/praat.github.io/LPC/          ← LPC, Cepstrum, PowerCepstrogram
+src/praat.github.io/dwtools/      ← advanced (KlattGrid, DTW, MFCC, CC, SSCP, PCA)
+src/praat.github.io/dwsys/        ← numerical utilities (Polynomial, Roots, SVD, etc.)
+src/praat.github.io/melder/       ← signal math (NUMinterpol, NUMfilter, FFT, etc.)
+src/praat/                        ← Windows mirror (identical content, different path prefix)
+```
+
+Map from Praat menu name to file:
+
+| Praat menu action | Source file |
+|------------------|------------|
+| `Sound: To Formant (burg)...` | `fon/Sound_to_Formant.cpp` |
+| `Sound: To Pitch (cc)...` | `fon/Sound_to_Pitch.cpp` |
+| `Sound: To Spectrogram...` | `fon/Sound_and_Spectrogram.cpp` |
+| `Spectrum: Get centre of gravity...` | `fon/Spectrum.cpp` |
+| `Sound: To PowerCepstrogram...` | `LPC/Sound_to_PowerCepstrogram.cpp` |
+| `LTAS: Get maximum...` | `fon/Vector.cpp` → `melder/NUMinterpol.cpp` |
+
+To locate any function: `grep -r "FunctionName" src/praat.github.io/fon/ --include="*.h"`.
+
+### Step 2 — Choose the right API tier
+
+| Tier | When to use | What it returns | Relative speed |
+|------|------------|----------------|----------------|
+| **Tier 1** (object method `sound$to_X()`) | Interactive / exploratory; full API surface | Wrapped R object | 1× |
+| **Tier 2** (`to_X_direct()`) | Chaining: result goes straight into another Praat call | `externalptr` | ~2× |
+| **Tier 3** (batch `sound_to_X_batch()`) | ≥10 files; loops over a corpus | List of results | 5–10× |
+| **Tier 4** (ultra `calculate_X_ultra()`) | Complete pipeline that never needs to surface R objects | Named list of scalars | 10–30× |
+
+**Critical rule for Tier 2:** Always wrap the returned pointer before returning it to user
+code. Every `*_direct()` function **must** return a wrapped object (e.g. `Ltas(.xptr = ...)`),
+not a raw `externalptr`. `to_ltas_direct()` returned a raw pointer until v4.9.1 — that was a
+bug, not a feature. See [Pitfall 15](#15-to_ltas_direct-returned-raw-externalptr-fixed-v491).
+
+### Step 3 — Avoid per-frame R loops (the #1 performance anti-pattern)
+
+Any R loop that calls a Praat object method once per audio frame is an anti-pattern.
+The canonical example from the 2026 developer report:
+
+```r
+# ANTI-PATTERN: 1600 R→C++ crossings for a 400-frame spectrogram
+for (frame in seq_len(n_frames)) {
+  t    <- spectrogram$get_time_from_frame(frame)   # C++ round-trip
+  spec <- spectrogram$to_spectrum(t)               # C++ object allocation
+  cog  <- spec$get_centre_of_gravity(power)        # C++ round-trip
+  sd   <- spec$get_standard_deviation(power)       # C++ round-trip
+  ...
+}
+# Result: 14× slower than Praat on the same algorithm.
+
+# CORRECT: implement as a C++ batch function (see src/batch_queries.cpp)
+moments <- get_spectral_moments_batch(spectrogram, power = 2.0)
+```
+
+**Recipe for a new batch function:**
+
+1. Add `// [[Rcpp::export(.my_batch_fn)]]` to `src/batch_queries.cpp`
+2. Accept the object as `SEXP xptr`, cast to `XPtr<structType>`
+3. Loop in C++, call Praat functions directly
+4. Return `List::create(Named("col1") = vec1, ...)`
+5. Run `Rcpp::compileAttributes(".")` to regenerate `src/RcppExports.cpp`
+6. **After `compileAttributes`:** verify `src/RcppExports.cpp` has `extern const R_CallMethodDef CallEntries[]` (NOT `static`) — `compileAttributes` resets it to `static`, which breaks the `module_init.cpp` link. Fix if needed before building.
+7. Add R wrapper in `R/batch-queries.R` + entry in `NAMESPACE`
+8. Add delegating method to the object's `R/*-wrapper.R`
+
+### Step 4 — Numerical traps in Praat DSP
+
+Three classes of traps discovered during the 2026 benchmarking cycle:
+
+#### Trap A: Division by near-zero in interpolation
+
+`NUMimproveExtremum()` in `melder/NUMinterpol.cpp` (and all callers using parabolic
+interpolation) is vulnerable to near-zero denominators when adjacent bins have nearly equal
+power. **Fixed in v4.9.1** for the `NUM_PEAK_INTERPOLATE_PARABOLIC` path.
+
+**Rule for new interpolation code:** Always guard `|denominator| > epsilon` before dividing,
+and clamp the result to a physically plausible range (e.g., `|offset| < 1.0` for one-bin
+parabolic interpolation).
+
+#### Trap B: Silent partial convergence in eigenvalue solvers
+
+LAPACK `NUMlapack_dhseqr_()` (called by `Polynomial_to_Roots()` in `dwsys/Roots.cpp`) may
+return `info > 0`, indicating it only found `n - info` of the `n` eigenvalues. The code
+silently uses the partial set — producing fewer formants than expected from short-window LPC.
+
+**Fixed in v4.9.1** with a Laguerre-method fallback in `Sound_to_Formant.cpp`.
+
+**Rule for new LPC-based procedures:** After calling `Polynomial_to_Roots`, assert
+`roots->numberOfRoots == expected_order`. If the assertion can fail, add a robust fallback.
+`src/polynomial_roots_laguerre.h` provides a self-contained Laguerre + deflation
+implementation that does not depend on LAPACK conditioning.
+
+#### Trap C: dB-domain vs energy-domain averaging
+
+Praat's `Intensity: Get mean` averages in the **energy domain** (Pa²), then converts to dB:
+```
+mean_dB = 10 * log10( mean(energy_i) )
+```
+Averaging in the dB domain directly gives a systematically lower result (Jensen's inequality).
+This is a known 1–3 dB bias if the wrong domain is used. Always verify the domain in the
+Praat source before implementing a mean-intensity wrapper.
+
+### Step 5 — Faithfulness testing
+
+Every new procedure must have a faithfulness registry entry in
+`tests/testthat/faithfulness/routines.R` and must pass at r > 0.95 vs Praat on ≥50 real files.
+
+```r
+# In faithfulness/routines.R, add a row like:
+list(
+  name       = "spectral_moments_cog",
+  pladdrr_fn = function(snd) {
+    spg <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
+    get_spectral_moments_batch(spg)$cog
+  },
+  praat_script = "spectral_moments_cog.praat",
+  tolerance    = 1.0,   # Hz; requires written rationale if > 0
+  n_min        = 50
+)
+```
+
+Run the full benchmark suite with:
+```bash
+cd /path/to/algobench
+algobench assess
+```
+
+Target metrics per fix category:
+- Bug fix: r > 0.95 (was typically < 0.60 before fix)
+- New API: r > 0.99 vs the R-loop reference implementation
+- Performance: speedup ≥ 0.80× Praat (within 20% of Praat's native speed)
+
+### Step 6 — Log Praat source modifications
+
+Whenever `src/praat.github.io/` (or `src/praat/`) is modified, add an entry to
+`inst/agents/PRAAT_MODIFICATIONS.md` in this format:
+
+```markdown
+## v4.9.1 — NUMinterpol.cpp parabolic guard (2026-06-10)
+
+**File:** `src/praat.github.io/melder/NUMinterpol.cpp`
+**Function:** `NUMimproveExtremum()`
+**Change:** Added `d2y <= 0` guard and `|offset| >= 1.0` clamp to prevent division by
+near-zero denominator in parabolic peak interpolation. Mirrors fix in `src/praat/melder/`.
+**Reason:** 500–1231 dB physically impossible values from LTAS get_peaks_batch.
+**Upstream:** Not reported upstream (Praat's own parabolic path may not be called with
+flat LTAS peaks in normal Praat GUI use).
+```
+
+This log is the authoritative record of divergences between pladdrr's Praat source and
+upstream Praat. It must be updated before committing any change to `src/praat.github.io/`.
 
 ---
 
@@ -3013,6 +3249,91 @@ sound$.pointer       # Returns .xptr
 ```
 
 When adding new methods to any wrapper, add them to the `.{type}_methods` env in the corresponding `R/*-wrapper.R` file, not inside the constructor.
+
+### 12. Per-frame R loops over Spectrogram frames
+
+Any R-level loop that calls `spectrogram$to_spectrum(t)` per frame is an anti-pattern.
+Each iteration allocates a `structSpectrum` in C++, wraps it in R, calls the moment
+function, and GC-collects it — ~5 R→C++ boundary crossings per frame.
+
+```r
+# WRONG (anti-pattern): per-frame loop — 14× slower than Praat
+for (ix in seq_len(n_frames)) {
+  t    <- spectrogram$.cpp$get_time_from_frame(ix)
+  spec <- spectrogram$to_spectrum(t)              # C++ alloc per frame
+  cog  <- spec$get_centre_of_gravity(2.0)         # R→C++ per frame
+}
+
+# CORRECT (v4.9.1+): single C++ pass
+moments <- get_spectral_moments_batch(spectrogram, power = 2.0)
+```
+
+The general rule: **if you are iterating over frames and calling the same per-frame
+method each time, there should be a C++ batch function for it.** If one doesn't exist
+yet, add it to `src/batch_queries.cpp` following the `get_jitter_shimmer_batch_cpp`
+pattern (lines 754–826 as of v4.9.1).
+
+### 13. Parabolic interpolation with flat LTAS peaks (fixed v4.9.1) {#13-parabolic-interpolation-with-flat-ltas-peaks-fixed-v491}
+
+Before v4.9.1, `ltas$get_peaks_batch(interpolation="parabolic")` could return values in
+the range 500–1231 dB — physically impossible for any acoustic spectrum. The cause was a
+division by near-zero `d2y` in `NUMimproveExtremum()` when adjacent LTAS bins had nearly
+equal power (flat peak). The benchmark saw h1_onset r ≈ −0.08 vs Praat (random noise).
+
+**Fixed in v4.9.1:** `d2y ≤ 0` guard returns the bin peak unchanged; `|offset| ≥ 1.0`
+clamp prevents extrapolation beyond one bin. Safe to use `interpolation="parabolic"` in
+v4.9.1+.
+
+**When implementing new Praat procedures that use parabolic interpolation:**
+Always test with a flat-spectrum signal (white noise LTAS) and a pure tone (sharp peak)
+to confirm the interpolated values are within ±50 dB of the surrounding bins.
+
+### 14. Short-window formant extraction (fixed v4.9.1) {#14-short-window-formant-extraction-fixed-v491}
+
+Before v4.9.1, `to_formant_burg()` on windows ≤100ms returned severely wrong F1/F2/F3
+(r=0.57/0.38 vs Praat; Python/Parselmouth achieved r>0.9999 on the same algorithm).
+
+**Root cause:** LAPACK `dhseqr_` silently returns only the eigenvalues it converged on
+when the LPC companion matrix is ill-conditioned (short windows → fewer samples →
+ill-conditioned autocorrelation). Missing eigenvalues = missing formants.
+
+**Fixed in v4.9.1:** `burg()` in `Sound_to_Formant.cpp` now detects
+`roots->numberOfRoots < coefficients.size` and retries with Laguerre's method
+(`src/polynomial_roots_laguerre.h`), which is robust to ill-conditioned matrices.
+Long-window audio is unaffected (fallback never triggers when `dhseqr_` converges).
+
+```r
+# This now works correctly on short windows (v4.9.1+)
+window <- snd$extract_part(0.48, 0.52, "rectangular", 1, FALSE)  # 40ms
+fmnt   <- window$to_formant_burg(0.005, 5, 5500, 0.025, 50)
+f1     <- fmnt$get_value_at_time(1, 0.02, "hertz")               # now correct
+
+# If you need to verify: compare against full-sound analysis at the same time
+fmnt_full <- snd$to_formant_burg(0.005, 5, 5500, 0.025, 50)
+f1_ref    <- fmnt_full$get_value_at_time(1, 0.50, "hertz")
+stopifnot(abs(f1 - f1_ref) < 200)  # should pass
+```
+
+**When implementing any LPC-based procedure:** if the procedure operates on
+user-supplied audio windows of unknown length, verify accuracy on both 40ms and 500ms
+windows and add both to the faithfulness registry.
+
+### 15. `to_ltas_direct()` returned raw externalptr (fixed v4.9.1) {#15-to_ltas_direct-returned-raw-externalptr-fixed-v491}
+
+Before v4.9.1, `to_ltas_direct()` returned a raw `externalptr` instead of a wrapped `Ltas`
+object, making it unusable without manual construction:
+
+```r
+# OLD workaround (pre-v4.9.1) — no longer needed
+ltas <- Ltas(.xptr = to_ltas_direct(snd, 1))
+
+# CORRECT (v4.9.1+) — returns wrapped Ltas directly
+ltas <- to_ltas_direct(snd, bandwidth = 100)
+ltas$get_slope(0, 1000, 1000, 10000, "energy")  # works immediately
+```
+
+The underlying C++ `.sound_to_ltas()` was always correct; only the R wrapper was missing
+the `Ltas(.xptr = ...)` wrap. All other `*_direct()` functions were already correct.
 
 ---
 
