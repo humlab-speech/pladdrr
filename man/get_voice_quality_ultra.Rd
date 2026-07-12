@@ -18,11 +18,13 @@ get_voice_quality_ultra(
 \item{metrics}{Character vector of metrics to compute: "jitter", "shimmer",
 "hnr", or "all" for all metrics}
 
-\item{min_pitch}{Pitch floor in Hz (default: 75)}
+\item{min_pitch}{Pitch floor in Hz for pitch extraction (default: 75).
+Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
+independent of this parameter.}
 
 \item{max_pitch}{Pitch ceiling in Hz (default: 600)}
 
-\item{time_step}{Time step for pitch extraction (0 = auto)}
+\item{time_step}{Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)}
 }
 \value{
 Named list with requested voice quality metrics:

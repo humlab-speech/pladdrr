@@ -3,9 +3,6 @@
 \name{Cepstrum}
 \alias{Cepstrum}
 \title{Praat Cepstrum Object}
-\usage{
-Cepstrum(.xptr)
-}
 \description{
 Praat Cepstrum object with direct C++ module binding.
 }

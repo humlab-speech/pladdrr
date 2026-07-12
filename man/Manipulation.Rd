@@ -3,9 +3,6 @@
 \name{Manipulation}
 \alias{Manipulation}
 \title{Praat Manipulation Object}
-\usage{
-Manipulation(.xptr)
-}
 \description{
 Praat Manipulation object with direct C++ module binding for PSOLA-based
 pitch and duration modification.

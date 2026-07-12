@@ -77,3 +77,21 @@ test_that("retrofitted formant wrapper raises classed input error on null xptr",
   expect_equal(err$routine, "formant_get_multiple_formants_at_times")
   expect_equal(err$param, "formant_xptr")
 })
+
+test_that("options(pladdrr.data_loss=) controls reaction to data loss", {
+  loss_expr <- quote(with_pladdrr_errors({
+    warning("[pladdrr_data_loss:probe:-] 3 of 5 values undefined")
+    "result"
+  }))
+
+  withr_opts <- options(pladdrr.data_loss = "error")
+  on.exit(options(withr_opts), add = TRUE)
+  expect_error(eval(loss_expr), class = "pladdrr_data_loss")
+
+  options(pladdrr.data_loss = "silent")
+  expect_silent(res <- eval(loss_expr))
+  expect_length(attr(res, "pladdrr_data_loss"), 1L)
+
+  options(pladdrr.data_loss = "warn")
+  expect_warning(eval(loss_expr), class = "pladdrr_data_loss")
+})

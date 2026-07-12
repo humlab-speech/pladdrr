@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{sound_as_matrix_fast_impl}
 \alias{sound_as_matrix_fast_impl}
-\title{Get Sound Data as Matrix (Fast Copy) -- Internal}
+\title{Get Sound Data as Matrix (Fast Copy)}
 \usage{
 sound_as_matrix_fast_impl(sound_xptr, zerocopy = FALSE)
 }
@@ -12,11 +12,10 @@ sound_as_matrix_fast_impl(sound_xptr, zerocopy = FALSE)
 \item{zerocopy}{Ignored (kept for backward compatibility). All paths copy.}
 }
 \value{
-Numeric matrix with dimensions (n_samples x n_channels).
+Numeric matrix with dimensions (n_samples x n_channels)
 }
 \description{
 Copies Sound data into a matrix (samples x channels) via direct
-pointer access. This is the internal C++ implementation;
-use \code{\link{sound_as_matrix_fast}} instead.
+pointer access.
 }
 \keyword{internal}

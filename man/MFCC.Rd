@@ -3,11 +3,9 @@
 \name{MFCC}
 \alias{MFCC}
 \title{Praat MFCC Object}
-\usage{
-MFCC(.xptr = NULL)
-}
 \description{
 Mel Frequency Cepstral Coefficients for speech/speaker recognition.
+Uses shared dispatch table for minimal memory per object.
 }
 \details{
 MFCCs are widely used features in speech and speaker recognition systems.
@@ -42,10 +40,7 @@ MFCC objects are created from Sound objects:
 }
 \examples{
 \dontrun{
-# Load sound
 sound <- Sound("audio.wav")
-
-# Extract MFCCs (13 coefficients typical for speech recognition)
 mfcc <- sound$to_mfcc(
   num_coefficients = 13,
   analysis_width = 0.025,
@@ -54,18 +49,9 @@ mfcc <- sound$to_mfcc(
   fmax_mel = 7800,
   df_mel = 100
 )
-
-# Query properties
 n_frames <- mfcc$get_number_of_frames()
 coefs <- mfcc$get_all_coefficients()
-
-# Get coefficients for specific frame
-frame_coefs <- mfcc$get_coefficients_at_frame(10)
-
-# Apply liftering for feature normalization
 mfcc$lifter(22)
-
-# Export to data.frame
 df <- mfcc$as_data_frame(include_c0 = TRUE)
 }
 

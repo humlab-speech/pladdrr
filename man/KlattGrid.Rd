@@ -3,19 +3,6 @@
 \name{KlattGrid}
 \alias{KlattGrid}
 \title{Create a KlattGrid object}
-\usage{
-KlattGrid(
-  tmin = 0,
-  tmax = 1,
-  numberOfFormants = 6L,
-  numberOfNasalFormants = 1L,
-  numberOfNasalAntiFormants = 1L,
-  numberOfTrachealFormants = 1L,
-  numberOfTrachealAntiFormants = 1L,
-  numberOfFricationFormants = 6L,
-  numberOfDeltaFormants = 1L
-)
-}
 \arguments{
 \item{tmin}{Start time in seconds}
 
@@ -58,4 +45,5 @@ kg$add_formant_point(0, 2, 0.5, 1500) # F2 = 1500 Hz
 # Synthesize
 sound <- kg$to_sound()
 }
+
 }

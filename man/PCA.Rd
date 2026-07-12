@@ -3,69 +3,10 @@
 \name{PCA}
 \alias{PCA}
 \title{Principal Component Analysis (PCA)}
-\usage{
-PCA(.xptr = NULL)
-}
 \description{
 PCA for dimensionality reduction and analysis of multivariate acoustic data.
 }
 \details{
-PCA is commonly used in phonetics for:
-- Vowel space analysis (F1/F2/F3 reduction)
-- Speaker normalization
-- Acoustic feature extraction
-- Data visualization
-
-## Creating PCA Objects
-
-PCA objects are created from numeric matrices or Matrix objects:
-- `pca_from_matrix(data)` - Create PCA from R matrix
-- `matrix$to_pca()` - Create PCA from pladdrr Matrix object
-
-## Querying Properties
-
-- `$get_number_of_components()` - Number of principal components
-- `$get_dimension()` - Original data dimension
-- `$get_number_of_observations()` - Number of data points used
-- `$get_eigenvalues()` - Vector of eigenvalues
-- `$get_fraction_variance(from, to)` - Cumulative variance explained
-- `$get_dimension_of_fraction(frac)` - Components needed for fraction of variance
-
-## Eigenvectors
-
-- `$get_eigenvector(i)` - Get i-th eigenvector (loadings)
-- `$get_eigenvectors()` - Matrix of all eigenvectors
-- `$get_centroid()` - Data centroid
-
-## Projection
-
-- `$project(data, n_dim)` - Project new data onto principal components
-}
-\examples{
-\dontrun{
-# Create PCA from vowel formant data
-vowels <- matrix(c(
-  # F1    F2    F3
-  700,  1200, 2500,  # /a/
-  350,  2100, 2800,  # /i/
-  450,  700,  2400,  # /u/
-  550,  1800, 2600,  # /e/
-  600,  900,  2450   # /o/
-), ncol = 3, byrow = TRUE)
-
-# Compute PCA
-pca <- pca_from_matrix(vowels)
-
-# Check variance explained
-pca$get_eigenvalues()
-pca$get_fraction_variance(1, 2)  # First 2 components
-
-# Get loadings
-pc1_loadings <- pca$get_eigenvector(1)
-
-# Project new data
-new_data <- matrix(c(680, 1150, 2480), ncol = 3)
-projected <- pca$project(new_data, num_dimensions = 2)
-}
-
+PCA is commonly used in phonetics for vowel space analysis, speaker
+normalization, acoustic feature extraction, and data visualization.
 }

@@ -52,7 +52,7 @@ NULL
                                                          interpolation = c("parabolic", "none", "cubic"),
                                                          qmin = 0.003, qmax = 0.04) {
   interpolation <- match.arg(interpolation)
-  interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2)
+  interp_map <- .interp_map
   .self$.cpp$get_quefrency_of_peak(as.integer(interp_map[[interpolation]]),
                                    as.numeric(qmin), as.numeric(qmax))
 }
@@ -81,7 +81,7 @@ NULL
 .powercepstrum_methods$tabulate_rhamonics <- function(.self, pitch_floor = 60, pitch_ceiling = 333.3,
                                                       interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700")) {
   interpolation <- match.arg(interpolation)
-  interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2, "sinc70" = 3, "sinc700" = 4)
+  interp_map <- .interp_map
   xptr <- .powercepstrum_tabulate_rhamonics(.self$.xptr, pitch_floor = pitch_floor,
                                             pitch_ceiling = pitch_ceiling,
                                             interpolation = interp_map[[interpolation]])
@@ -93,8 +93,8 @@ NULL
                                                   fit_method = c("least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
-  trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-  fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
+  trend_map <- .trend_line_map
+  fit_map <- .trend_fit_map
   .self$.cpp$fit_trend_line(as.numeric(qmin), as.numeric(qmax),
                             as.integer(trend_map[[trend_type]]),
                             as.integer(fit_map[[fit_method]]))
@@ -106,8 +106,8 @@ NULL
                                                         fit_method = c("least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
-  trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-  fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
+  trend_map <- .trend_line_map
+  fit_map <- .trend_fit_map
   .self$.cpp$get_trend_line_value(as.numeric(quefrency), as.numeric(qstart_fit),
                                   as.numeric(qend_fit),
                                   as.integer(trend_map[[trend_type]]),
@@ -124,8 +124,8 @@ NULL
                                                   fit_method = c("least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
-  trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-  fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
+  trend_map <- .trend_line_map
+  fit_map <- .trend_fit_map
   xptr <- .self$.cpp$subtract_trend_ptr(as.numeric(qstart_fit), as.numeric(qend_fit),
                                         as.integer(trend_map[[trend_type]]),
                                         as.integer(fit_map[[fit_method]]))
@@ -136,8 +136,8 @@ NULL
                                                           fit_method = c("least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
-  trend_map <- c("straight" = 1, "exponential decay" = 2, "parabolic" = 3)
-  fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
+  trend_map <- .trend_line_map
+  fit_map <- .trend_fit_map
   .self$.cpp$subtract_trend_inplace(as.numeric(qstart_fit), as.numeric(qend_fit),
                                     as.integer(trend_map[[trend_type]]),
                                     as.integer(fit_map[[fit_method]]))
@@ -273,9 +273,9 @@ NULL
   interpolation <- match.arg(interpolation)
   trend_line_type <- match.arg(trend_line_type)
   fit_method <- match.arg(fit_method)
-  interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2, "sinc70" = 3, "sinc700" = 4)
-  trend_map <- c("straight" = 1, "exponential decay" = 2)
-  fit_map <- c("robust" = 1, "least squares" = 2, "robust slow" = 3)
+  interp_map <- .interp_map
+  trend_map <- .cpps_trend_map
+  fit_map <- .trend_fit_map
   .powercepstrogram_get_cpps(.self$.xptr, subtract_tilt = subtract_tilt,
                              time_averaging_window = time_averaging_window,
                              quefrency_averaging_window = quefrency_averaging_window,

@@ -1,0 +1,6 @@
+"name","status","praat","pladdrr","diff","tolerance"
+"Sound$get_total_duration","pass",1,1,0,0
+"Sound$get_number_of_samples","pass",44100,44100,0,0
+"Sound -> Pitch (cc) -> mean F0 (Hz)","pass",440.010213241028,440.010213241019,8.64019966684282e-12,1e-04
+"Sound -> Intensity -> mean (dB)","pass",84.9480334306012,84.9480337385013,3.07900094753677e-07,1e-06
+"Sound -> Formant (burg) -> F1@0.5s (Hz)","pass",420.668436998929,420.668436998875,5.3603343985742e-11,0.001

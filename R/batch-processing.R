@@ -607,12 +607,13 @@ extract_measurements <- function(sound,
     results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times, unit = 0L, interpolate = TRUE)
   }
   
-  # Batch formants: one C++ call per formant number
+  # Batch formants: all formant numbers in a single C++ call
   if (!is.null(formant_obj)) {
-    for (f_num in seq_len(formant_params$max_formants)) {
-      results[[paste0("F", f_num)]] <- .formant_get_values_at_times(
-        formant_obj$.xptr, meas_times, formant_number = as.integer(f_num), unit = 0L
-      )
+    formant_values <- formant_get_multiple_formants_at_times(
+      formant_obj$.xptr, meas_times, seq_len(formant_params$max_formants), 0L
+    )
+    for (nm in names(formant_values)) {
+      results[[nm]] <- formant_values[[nm]]
     }
   }
   

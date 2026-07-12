@@ -17,18 +17,3 @@ A Discriminant object
 \description{
 Performs Linear Discriminant Analysis on a labeled numeric matrix.
 }
-\examples{
-\dontrun{
-# Vowel formant data with labels
-vowels <- matrix(c(
-  700, 1200, 2500,  # /a/
-  350, 2100, 2800,  # /i/
-  450, 700, 2400    # /u/
-), ncol = 3, byrow = TRUE)
-
-labels <- c("a", "i", "u")
-lda <- discriminant_from_matrix(vowels, labels)
-lda$get_wilks_lambda(1)
-}
-
-}

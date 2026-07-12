@@ -2,49 +2,17 @@
 % Please edit documentation in R/powercepstrum.R
 \name{PowerCepstrogram}
 \alias{PowerCepstrogram}
-\title{PowerCepstrogram Class (Function Wrapper)}
-\usage{
-PowerCepstrogram(.xptr = NULL)
-}
+\title{PowerCepstrogram Class}
 \description{
 Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
-Allows analysis of CPP (Cepstral Peak Prominence) over time.
-}
-\details{
-A PowerCepstrogram is a time-frequency representation of the power cepstrum,
-similar to how a Spectrogram represents time-varying spectra. It allows
-tracking of voice quality measures like CPP across time.
-
-## Creating PowerCepstrogram Objects
-
-PowerCepstrogram objects are created from Sound objects:
-- `sound$to_powercepstrogram()` - Compute time-varying power cepstrum
-
-## Query Methods
-
-- `$get_cpp_at_time()` - Get CPP at specific time
-- `$get_mean_cpp()` - Get mean CPP over time range
-- `$get_power_cepstrum_at_time()` - Extract PowerCepstrum slice at time
-
-## Modification
-
-- `$smooth()` - Smooth in time and quefrency dimensions
-
-## Export
-
-- `$to_matrix()` - Convert to Matrix object
-- `$as_matrix()` - Export as R numeric matrix (quefrency × time)
+Uses shared dispatch table for minimal memory per object.
+Note: No Rcpp module — uses direct Rcpp function calls.
 }
 \examples{
 \dontrun{
-# Analyze CPP over time
 sound <- Sound("voice.wav")
 cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 mean_cpp <- cepstrogram$get_mean_cpp()
-print(paste("Mean CPP:", round(mean_cpp, 2), "dB"))
-
-# Get CPP at specific time
-cpp_at_1s <- cepstrogram$get_cpp_at_time(time = 1.0)
 }
 
 }

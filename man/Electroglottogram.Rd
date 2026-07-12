@@ -3,63 +3,20 @@
 \name{Electroglottogram}
 \alias{Electroglottogram}
 \title{Praat Electroglottogram Object}
-\usage{
-Electroglottogram(.xptr = NULL)
-}
 \description{
-R6 class representing a Praat Electroglottogram (EGG) object. An Electroglottogram
-measures the electrical impedance across the larynx, which varies with the degree
-of vocal fold contact during phonation.
+Praat Electroglottogram (EGG) object. Measures electrical impedance across
+the larynx, varying with vocal fold contact during phonation.
 
 Electroglottogram inherits from Sound and represents a specialized single-channel
-sound that records vocal fold contact area. The EGG signal is used for:
-- Determining glottal closure/opening instants
-- Measuring closed quotient and open quotient
-- Analyzing voice quality and phonation types
-- Synchronizing with acoustic signals
-
-## Creating Electroglottogram Objects
-
-Electroglottograms are typically extracted from a recorded channel:
-
-```r
-# Extract EGG from a specific channel of a recording
-sound <- praat_read("recording_with_egg.wav")
-egg <- sound$extract_electroglottogram(channel = 2, invert = FALSE)
-```
-
-## Analysis Methods
-
-- `$to_textgrid_closed_glottis()` - Detect closed glottis intervals
-- `$to_amplitude_tier_levels()` - Extract peak/valley amplitude levels
-- `$derivative()` - Calculate derivative (DEGG)
-- `$first_central_difference()` - Simple derivative approximation
-- `$high_pass_filter()` - Remove DC drift
-- `$to_sound()` - Convert back to generic Sound object
-
-## The Derivative (DEGG)
-
-The derivative of the EGG signal (DEGG) shows the rate of change of vocal fold
-contact. The negative peak in DEGG typically corresponds to the instant of
-glottal closure (GCI), which is important for voice source analysis.
+sound that records vocal fold contact area.
 }
 \examples{
 \dontrun{
-# Extract EGG from channel 2
 sound <- praat_read("recording_with_egg.wav")
-egg <- sound$extract_electroglottogram(2)
+egg <- sound$extract_electroglottogram(channel = 2, invert = FALSE)
 
-# Remove DC drift
 egg_filtered <- egg$high_pass_filter(from_freq = 100, smoothing = 100)
-
-# Get closed glottis intervals
-tg <- egg_filtered$to_textgrid_closed_glottis(
-  pitch_floor = 75,
-  pitch_ceiling = 300,
-  closing_threshold = 0.3
-)
-
-# Calculate derivative (DEGG) for finding closure instants
+tg <- egg_filtered$to_textgrid_closed_glottis(pitch_floor = 75, pitch_ceiling = 300)
 degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
 }
 

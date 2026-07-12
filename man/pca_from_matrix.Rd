@@ -15,17 +15,3 @@ A PCA object
 \description{
 Performs Principal Component Analysis on a numeric matrix.
 }
-\examples{
-\dontrun{
-# Vowel formant data (F1, F2, F3)
-vowels <- matrix(c(
-  700, 1200, 2500,
-  350, 2100, 2800,
-  450, 700, 2400
-), ncol = 3, byrow = TRUE)
-
-pca <- pca_from_matrix(vowels)
-pca$get_eigenvalues()
-}
-
-}

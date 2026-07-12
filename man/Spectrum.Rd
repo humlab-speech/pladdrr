@@ -3,12 +3,10 @@
 \name{Spectrum}
 \alias{Spectrum}
 \title{Spectrum Object}
-\usage{
-Spectrum(.xptr = NULL)
-}
 \description{
 Praat Spectrum object with direct C++ module binding (complex FFT spectrum).
 Spectrum objects represent frequency-domain representations of sounds.
+Uses shared dispatch table for minimal memory per object.
 }
 \section{Methods}{
 

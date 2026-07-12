@@ -10,28 +10,26 @@ get_sound_values_fast(sound, channel = 1)
 # Deprecated: use get_sound_values_fast() instead
 }
 \arguments{
-\item{sound}{A Sound object created with \code{Sound()}}
+\item{sound}{A Sound object created with `Sound()`}
 
 \item{channel}{Channel number (1-based, default 1)}
 }
 \value{
 Numeric vector (independent copy of sample data).
-  Has class \code{c("fast_vector", "numeric")} and a \code{readonly} attribute
+  Has class `c("fast_vector", "numeric")` and a `readonly` attribute
   for backward compatibility.
 }
 \description{
-Copies Sound sample data via direct pointer access -- faster than
-\code{sound$get_values()} which goes through Praat's per-sample accessor.
+Copies Sound sample data via direct pointer access — faster than
+`sound$get_values()` which goes through Praat's per-sample accessor.
 }
 \section{Performance}{
 
 Direct pointer-range copy is faster than per-sample access:
-\itemize{
-  \item Small files (< 1 MB): ~2x faster
-  \item Large files (> 10 MB): ~3-5x faster
-}
+- Small files (< 1 MB): ~2x faster
+- Large files (> 10 MB): ~3-5x faster
 
-The returned vector is an independent R copy -- safe to modify,
+The returned vector is an independent R copy — safe to modify,
 store, or use after the Sound object is garbage collected.
 }
 
@@ -44,14 +42,12 @@ samples <- get_sound_values_fast(sound, channel = 1)
 rms <- sqrt(mean(samples^2))
 peak <- max(abs(samples))
 
-# Equivalent (slightly slower) -- also a copy
+# Equivalent (slightly slower) — also a copy
 samples2 <- sound$get_values(channel = 1)
 }
 
 }
 \seealso{
-\itemize{
-  \item \code{\link{is_fast_vector}} to check if vector was created by fast access
-  \item \code{\link{sound_as_matrix_fast}} for matrix output
-}
+- [is_fast_vector()] to check if vector was created by fast access
+- [sound_as_matrix_fast()] for matrix output
 }

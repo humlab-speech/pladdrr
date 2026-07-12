@@ -3,9 +3,6 @@
 \name{PitchTier}
 \alias{PitchTier}
 \title{Praat PitchTier Object}
-\usage{
-PitchTier(tmin = NULL, tmax = NULL, .xptr = NULL)
-}
 \description{
 Praat PitchTier object with direct C++ module binding for pitch manipulation.
 }

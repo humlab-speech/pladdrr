@@ -3917,6 +3917,24 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
     .Call(`_pladdrr_textgrid_sound_extract_intervals_where`, textgrid, sound, tier_number, which_criterion, text, preserve_times)
 }
 
+#' Set MelderThread parallelization preferences (internal)
+#'
+#' @param use_multithreading Enable/disable all MelderThread parallelism
+#' @param max_threads Maximum concurrent threads; 0 = auto (all processors)
+#' @param min_elements_per_thread Minimum elements per thread; 0 = per-function factory tuning
+#' @keywords internal
+.pladdrr_set_threads_cpp <- function(use_multithreading, max_threads, min_elements_per_thread) {
+    invisible(.Call(`_pladdrr_pladdrr_set_threads_cpp`, use_multithreading, max_threads, min_elements_per_thread))
+}
+
+#' Get MelderThread parallelization state (internal)
+#'
+#' @return List with processors, enabled, max_threads, min_elements_per_thread
+#' @keywords internal
+.pladdrr_get_threads_cpp <- function() {
+    .Call(`_pladdrr_pladdrr_get_threads_cpp`)
+}
+
 #' Safe error wrapper for Praat calls
 #'
 #' Provides a consistent error handling pattern for Praat operations

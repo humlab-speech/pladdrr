@@ -3,9 +3,6 @@
 \name{Excitation}
 \alias{Excitation}
 \title{Praat Excitation Object}
-\usage{
-Excitation(.xptr)
-}
 \description{
 Praat Excitation object with direct C++ module binding for auditory modeling.
 }

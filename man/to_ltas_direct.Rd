@@ -2,7 +2,7 @@
 % Please edit documentation in R/praat-direct.R
 \name{to_ltas_direct}
 \alias{to_ltas_direct}
-\title{Create LTAS from Sound Directly (returns XPtr)}
+\title{Create LTAS from Sound Directly}
 \usage{
 to_ltas_direct(sound, bandwidth = 100)
 }
@@ -12,17 +12,16 @@ to_ltas_direct(sound, bandwidth = 100)
 \item{bandwidth}{Numeric. Bandwidth in Hz (default: 100)}
 }
 \value{
-External pointer to Ltas
+A wrapped \code{Ltas} object
 }
 \description{
-Create LTAS from Sound Directly (returns XPtr)
+Create LTAS from Sound Directly
 }
 \examples{
 \dontrun{
 sound <- Sound("voice.wav")
-# Fast direct conversion
-ltas_ptr <- to_ltas_direct(sound, bandwidth = 100)
-ltas <- Ltas(.xptr = ltas_ptr)
+ltas <- to_ltas_direct(sound, bandwidth = 100)
+ltas$get_slope(0, 1000, 1000, 10000, "energy")
 }
 
 }

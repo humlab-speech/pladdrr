@@ -3,9 +3,6 @@
 \name{Cochleagram}
 \alias{Cochleagram}
 \title{Praat Cochleagram Object}
-\usage{
-Cochleagram(.xptr)
-}
 \description{
 Praat Cochleagram object with direct C++ module binding for auditory modeling.
 }

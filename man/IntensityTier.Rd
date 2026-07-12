@@ -3,9 +3,6 @@
 \name{IntensityTier}
 \alias{IntensityTier}
 \title{Praat IntensityTier Object}
-\usage{
-IntensityTier(tmin = NULL, tmax = NULL, .xptr = NULL)
-}
 \description{
 Praat IntensityTier object with direct C++ module binding for intensity manipulation.
 }

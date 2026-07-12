@@ -3,9 +3,6 @@
 \name{VocalTract}
 \alias{VocalTract}
 \title{Praat VocalTract Object}
-\usage{
-VocalTract(nx = 17L, dx = 0.01, .xptr = NULL)
-}
 \description{
 Praat VocalTract object with direct C++ module binding for articulatory synthesis.
 }
@@ -26,7 +23,7 @@ glottis to lips, divided into sections. This can be used for:
 - `$get_length()` - Total length in metres
 - `$get_number_of_sections()` - Number of sections
 - `$get_section_length()` - Section length in metres
-- `$get_area(section)` - Area at section (m²)
+- `$get_area(section)` - Area at section (m^2)
 - `$get_areas()` - All areas as vector
 
 ## Modification

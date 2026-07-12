@@ -16,7 +16,7 @@ is_fast_vector(x)
 Logical. TRUE if vector has fast_vector/zerocopy_vector class.
 }
 \description{
-Tests whether a numeric vector was created by \code{\link{get_sound_values_fast}}.
+Tests whether a numeric vector was created by [get_sound_values_fast()].
 }
 \examples{
 \dontrun{

@@ -3,18 +3,6 @@
 \name{FormantPath}
 \alias{FormantPath}
 \title{Create a FormantPath object from a Sound}
-\usage{
-FormantPath(
-  sound,
-  time_step = 0.005,
-  max_num_formants = 5,
-  formant_ceiling = 5500,
-  window_length = 0.025,
-  preemphasis_from = 50,
-  ceiling_step_fraction = 0.05,
-  num_steps_up_down = 4L
-)
-}
 \arguments{
 \item{sound}{A Sound object or path to audio file}
 
@@ -39,19 +27,4 @@ FormantPath object with S3 class
 A FormantPath object represents multiple formant tracking candidates with
 different ceiling frequencies, allowing for robust formant analysis by
 automatically selecting the optimal tracking path.
-}
-\examples{
-\dontrun{
-sound <- Sound("vowel.wav")
-fp <- FormantPath(sound, max_num_formants = 5, formant_ceiling = 5500)
-
-# Get number of candidate tracks
-fp$get_number_of_candidates()
-
-# Extract optimal formant
-formant <- fp$extract_formant()
-
-# Export to data frame
-df <- as.data.frame(fp)
-}
 }

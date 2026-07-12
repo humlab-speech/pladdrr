@@ -11208,6 +11208,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pladdrr_set_threads_cpp
+void pladdrr_set_threads_cpp(bool use_multithreading, int max_threads, int min_elements_per_thread);
+RcppExport SEXP _pladdrr_pladdrr_set_threads_cpp(SEXP use_multithreadingSEXP, SEXP max_threadsSEXP, SEXP min_elements_per_threadSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type use_multithreading(use_multithreadingSEXP);
+    Rcpp::traits::input_parameter< int >::type max_threads(max_threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type min_elements_per_thread(min_elements_per_threadSEXP);
+    pladdrr_set_threads_cpp(use_multithreading, max_threads, min_elements_per_thread);
+    return R_NilValue;
+END_RCPP
+}
+// pladdrr_get_threads_cpp
+List pladdrr_get_threads_cpp();
+RcppExport SEXP _pladdrr_pladdrr_get_threads_cpp() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(pladdrr_get_threads_cpp());
+    return rcpp_result_gen;
+END_RCPP
+}
 // praat_error_to_r
 void praat_error_to_r(const std::string& error_msg);
 RcppExport SEXP _pladdrr_praat_error_to_r(SEXP error_msgSEXP) {
@@ -12368,6 +12390,8 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_extend_time", (DL_FUNC) &_pladdrr_textgrid_extend_time, 3},
     {"_pladdrr_textgrid_to_table", (DL_FUNC) &_pladdrr_textgrid_to_table, 5},
     {"_pladdrr_textgrid_sound_extract_intervals_where", (DL_FUNC) &_pladdrr_textgrid_sound_extract_intervals_where, 6},
+    {"_pladdrr_pladdrr_set_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_set_threads_cpp, 3},
+    {"_pladdrr_pladdrr_get_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_get_threads_cpp, 0},
     {"_pladdrr_praat_error_to_r", (DL_FUNC) &_pladdrr_praat_error_to_r, 1},
     {"_pladdrr_vocaltract_create", (DL_FUNC) &_pladdrr_vocaltract_create, 2},
     {"_pladdrr_vocaltract_create_from_phone", (DL_FUNC) &_pladdrr_vocaltract_create_from_phone, 1},

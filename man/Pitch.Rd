@@ -3,9 +3,6 @@
 \name{Pitch}
 \alias{Pitch}
 \title{Pitch Object}
-\usage{
-Pitch(.xptr = NULL)
-}
 \arguments{
 \item{.xptr}{External pointer to C++ Pitch object (internal use)}
 }
@@ -14,14 +11,11 @@ Pitch object with methods for querying pitch values and statistics
 }
 \description{
 Fundamental frequency (F0) contour representation.
-Uses Rcpp Modules for high-performance access to Praat's Pitch object.
-
-**Architecture:** Direct C++ method calls via Rcpp Modules, eliminating
-R6 dispatch overhead for 2-3x performance improvement.
+Uses shared dispatch table for minimal memory per object.
 }
 \examples{
 \dontrun{
-sound <- Sound$new("voice.wav")
+sound <- Sound("voice.wav")
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 
 # Query methods

@@ -1073,8 +1073,8 @@ double calculate_minimum_intensity_ultra_cpp(
         // Step 5: Concatenate all voiced parts
         autoSound concatenated;
         if (voiced_sounds->size == 1) {
-            // Single voiced region - just use it directly
-            concatenated = Data_copy(voiced_sounds->at[1]);
+            // Single voiced region - take ownership directly, no copy
+            concatenated = voiced_sounds->subtractItem_move(1);
         } else {
             // Multiple voiced regions - concatenate them
             concatenated = Sounds_concatenate(voiced_sounds.get(), 0.0);
@@ -1574,7 +1574,7 @@ SEXP extract_voiced_segments_ultra_cpp(
         // Step 3: Concatenate sounding intervals
         autoSound loud_sound;
         if (sounding_sounds->size == 1) {
-            loud_sound = Data_copy(sounding_sounds->at[1]);
+            loud_sound = sounding_sounds->subtractItem_move(1);
         } else {
             loud_sound = Sounds_concatenate(sounding_sounds.get(), 0.0);
         }
@@ -1717,7 +1717,7 @@ SEXP extract_voiced_segments_ultra_cpp(
         // Step 7: Concatenate passing windows
         autoSound only_voice;
         if (passing_windows->size == 1) {
-            only_voice = Data_copy(passing_windows->at[1]);
+            only_voice = passing_windows->subtractItem_move(1);
         } else {
             only_voice = Sounds_concatenate(passing_windows.get(), 0.0);
         }
@@ -1783,12 +1783,10 @@ List calculate_multiband_hnr_ultra_cpp(
         for (int i = 0; i < bands.size(); i++) {
             double upper_freq = bands[i];
 
-            // Create band-limited sound (or use full spectrum if band == 0)
+            // Create band-limited sound (or use full spectrum if band == 0);
+            // full-spectrum case reads the input directly, no copy needed
             autoSound filtered;
-            if (upper_freq == 0.0) {
-                // Full spectrum - just copy the sound
-                filtered = Data_copy(sound.get());
-            } else {
+            if (upper_freq != 0.0) {
                 // Band-pass filter: 0 to upper_freq with 100 Hz smoothing
                 filtered = Sound_filter_passHannBand(
                     sound.get(),
@@ -1797,6 +1795,7 @@ List calculate_multiband_hnr_ultra_cpp(
                     100.0           // smoothing (Praat standard)
                 );
             }
+            Sound band_sound = ( upper_freq == 0.0 ? sound.get() : filtered.get() );
 
             // Calculate Harmonicity for this band using cross-correlation (CC) method
             // BUG FIX (v4.6.4): Changed from Sound_to_Harmonicity_ac to Sound_to_Harmonicity_cc
@@ -1804,7 +1803,7 @@ List calculate_multiband_hnr_ultra_cpp(
             // AC and CC methods give different results - VQ uses CC method.
             // Parameters: time_step=0.005, periods_per_window=1.0 (VQ standard)
             autoHarmonicity harmonicity = Sound_to_Harmonicity_cc(
-                filtered.get(),
+                band_sound,
                 time_step,
                 min_pitch,
                 0.1,    // silence_threshold

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{sound_times_fast}
 \alias{sound_times_fast}
-\title{Zero-Copy Sound Time Vector (Read-Only View)}
+\title{Fast Sound Time Vector}
 \usage{
 sound_times_fast(sound_xptr)
 }
@@ -13,10 +13,9 @@ sound_times_fast(sound_xptr)
 Numeric vector of sample times
 }
 \description{
-Returns time values for each sample. Unlike `get_sample_times()`, this
-version computes times on-the-fly without allocating memory for storage.
+Returns time values for each sample via optimized computation.
 }
 \details{
-This function still allocates a vector (times must be computed),
-but is faster than the standard version due to optimized computation.
+Computes sample times directly from Sound metadata (t0 + i*dt)
+rather than going through Praat's accessor functions.
 }

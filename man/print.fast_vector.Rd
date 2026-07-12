@@ -9,12 +9,8 @@
 \arguments{
 \item{x}{A fast_vector}
 
-\item{...}{Additional arguments passed to \code{print}}
-}
-\value{
-\code{x} (invisibly).
+\item{...}{Additional arguments passed to print}
 }
 \description{
-Prints a summary of a fast-access vector including length, range,
-and the first 10 values.
+Print Method for Fast-Access Vectors
 }

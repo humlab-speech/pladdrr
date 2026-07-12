@@ -3,9 +3,6 @@
 \name{FormantTier}
 \alias{FormantTier}
 \title{Praat FormantTier Object}
-\usage{
-FormantTier(tmin = 0, tmax = 1, .xptr = NULL)
-}
 \description{
 Praat FormantTier object with direct C++ module binding for formant manipulation.
 }

@@ -3,9 +3,6 @@
 \name{DurationTier}
 \alias{DurationTier}
 \title{Praat DurationTier Object}
-\usage{
-DurationTier(tmin = NULL, tmax = NULL, .xptr = NULL)
-}
 \description{
 Praat DurationTier object with direct C++ module binding for duration manipulation.
 }

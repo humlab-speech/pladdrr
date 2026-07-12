@@ -3,14 +3,7 @@
 \name{Ltas}
 \alias{Ltas}
 \title{Praat Ltas (Long-term Average Spectrum) Object}
-\usage{
-Ltas(.xptr = NULL)
-}
 \description{
-Praat Ltas object with direct C++ module binding for long-term spectral analysis.
-}
-\details{
-An Ltas (Long-term Average Spectrum) represents the average spectral energy
-distribution of a sound over its entire duration. Useful for voice quality
-analysis and speaker characterization.
+Praat Ltas object for long-term spectral analysis.
+Uses shared dispatch table for minimal memory per object.
 }

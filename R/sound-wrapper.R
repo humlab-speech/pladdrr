@@ -258,6 +258,7 @@ NULL
 
 # --- Analysis Methods (module-based) ---
 .sound_methods$to_pitch <- function(.self, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   pitch_ptr <- .self$.cpp$to_pitch_ptr(as.numeric(time_step), as.numeric(pitch_floor), as.numeric(pitch_ceiling))
   Pitch(.xptr = pitch_ptr)
 }
@@ -367,6 +368,7 @@ NULL
 .sound_methods$to_point_process_periodic_cc <- function(.self, pitch_floor = 75.0, pitch_ceiling = 600.0,
                                                          time_step = NULL, max_period_factor = NULL,
                                                          max_amplitude_factor = NULL) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   if (!is.null(time_step) || !is.null(max_period_factor) || !is.null(max_amplitude_factor)) {
     warning("time_step, max_period_factor, and max_amplitude_factor are not used by ",
             "Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.",
@@ -426,6 +428,7 @@ NULL
                                         octave_cost = 0.01, octave_jump_cost = 0.35,
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_ac(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,
@@ -441,6 +444,7 @@ NULL
                                         octave_cost = 0.01, octave_jump_cost = 0.35,
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_cc(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,
@@ -455,6 +459,7 @@ NULL
                                          max_subharmonics = 15L, max_candidates = 15L,
                                          compression_factor = 0.84,
                                          n_points_per_octave = 48L) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   pitch_ptr <- .sound_to_pitch_shs(
     .self$.xptr, time_step, pitch_floor, max_frequency, pitch_ceiling,
     as.integer(max_subharmonics), as.integer(max_candidates),
@@ -483,6 +488,7 @@ NULL
 .sound_methods$to_formant_willems <- function(.self, time_step = 0.005, number_of_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {
+  .check_positive_count(number_of_formants, "number_of_formants")
   formant_ptr <- .formant_from_sound_willems(
     .self$.xptr, time_step, number_of_formants, max_frequency, window_length, pre_emphasis_from)
   Formant(.xptr = formant_ptr)
@@ -491,6 +497,7 @@ NULL
 .sound_methods$to_formant_sl <- function(.self, time_step = 0.005, number_of_poles = 10L,
                                           max_frequency = 5500.0, window_length = 0.025,
                                           pre_emphasis_from = 50.0) {
+  .check_positive_count(number_of_poles, "number_of_poles")
   formant_ptr <- .formant_from_sound_sl(
     .self$.xptr, time_step, as.integer(number_of_poles), max_frequency, window_length, pre_emphasis_from)
   Formant(.xptr = formant_ptr)
@@ -578,6 +585,7 @@ NULL
 }
 
 .sound_methods$to_manipulation <- function(.self, time_step = 0.01, pitch_floor = 75.0, pitch_ceiling = 600.0) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   manip_ptr <- .manipulation_from_sound(.self$.xptr, time_step, pitch_floor, pitch_ceiling)
   Manipulation(.xptr = manip_ptr)
 }
@@ -648,6 +656,7 @@ NULL
 
 .sound_methods$to_point_process_periodic_peaks <- function(.self, pitch_floor = 75.0, pitch_ceiling = 600.0,
                                                             include_maxima = TRUE, include_minima = FALSE) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   pp_ptr <- .sound_to_pointprocess_periodic_peaks(
     .self$.xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima)
   PointProcess(.xptr = pp_ptr)
@@ -752,6 +761,7 @@ NULL
                                                     max_frequency = 5000, bandwidth = 100,
                                                     shortest_period = 0.0001, longest_period = 0.02,
                                                     max_period_factor = 1.3) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   ltas_ptr <- .sound_to_ltas_pitch_corrected(
     .self$.xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth,
     shortest_period, longest_period, max_period_factor)
@@ -799,6 +809,7 @@ NULL
 .sound_methods$change_speaker <- function(.self, pitch_floor = 75, pitch_ceiling = 600,
                                            formant_multiplier = 1.0, pitch_multiplier = 1.0,
                                            pitch_range_multiplier = 1.0, duration_multiplier = 1.0) {
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   sound_ptr <- .sound_change_speaker(.self$.xptr, pitch_floor, pitch_ceiling,
     formant_multiplier, pitch_multiplier, pitch_range_multiplier, duration_multiplier)
   Sound(.xptr = sound_ptr)

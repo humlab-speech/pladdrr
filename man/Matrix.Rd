@@ -3,23 +3,6 @@
 \name{Matrix}
 \alias{Matrix}
 \title{Praat Matrix Object}
-\usage{
-Matrix(
-  xmin = NULL,
-  xmax = NULL,
-  nx = NULL,
-  dx = NULL,
-  x1 = NULL,
-  ymin = NULL,
-  ymax = NULL,
-  ny = NULL,
-  dy = NULL,
-  y1 = NULL,
-  numberOfRows = NULL,
-  numberOfColumns = NULL,
-  .xptr = NULL
-)
-}
 \description{
 Praat Matrix object with direct C++ module binding for matrix operations.
 }

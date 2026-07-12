@@ -3,9 +3,6 @@
 \name{ComplexSpectrogram}
 \alias{ComplexSpectrogram}
 \title{ComplexSpectrogram Constructor}
-\usage{
-ComplexSpectrogram(sound, window_length = 0.005, maximum_frequency = 5000)
-}
 \arguments{
 \item{sound}{Sound object}
 

@@ -3,9 +3,6 @@
 \name{LongSound}
 \alias{LongSound}
 \title{LongSound Class}
-\usage{
-LongSound(.xptr = NULL)
-}
 \arguments{
 \item{.xptr}{External pointer to LongSound (for internal use)}
 }

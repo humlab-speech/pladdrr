@@ -272,7 +272,7 @@ sound_extract_parts <- function(sound,
 
   # Accept both R6 and xptr
   if (inherits(sound, "Sound")) {
-    xptr <- sound$.__enclos_env__$private$ptr
+    xptr <- sound$.xptr   # dispatch-table wrapper exposes the pointer as $.xptr
   } else if (inherits(sound, "externalptr")) {
     xptr <- sound
   } else {

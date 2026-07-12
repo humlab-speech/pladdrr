@@ -4,9 +4,8 @@
 \alias{TextGrid}
 \title{Praat TextGrid Object}
 \description{
-R6 class representing a Praat TextGrid object for linguistic annotation.
-A TextGrid contains multiple tiers (IntervalTier or TextTier/PointTier) for
-time-aligned transcription and segmentation.
+R wrapper for a Praat TextGrid object for linguistic annotation.
+Uses shared dispatch table for minimal memory per object.
 }
 \details{
 TextGrids are the primary tool for linguistic annotation in Praat. They contain

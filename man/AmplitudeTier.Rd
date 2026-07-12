@@ -3,9 +3,6 @@
 \name{AmplitudeTier}
 \alias{AmplitudeTier}
 \title{Praat AmplitudeTier Object}
-\usage{
-AmplitudeTier(.xptr = NULL)
-}
 \description{
 Praat AmplitudeTier object with direct C++ module binding for amplitude analysis.
 }

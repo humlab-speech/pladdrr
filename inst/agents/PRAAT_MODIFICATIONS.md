@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-05-06
-**Package Version:** 4.8.35
+**Last Updated:** 2026-07-12
+**Package Version:** 4.9.3
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,35 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.3 Melder_casual null-stream guard (Willems/split-Levinson segfault) (2026-07-12)
+
+#### `src/praat.github.io/melder/melder_console.cpp` — `MelderConsole::write`
+
+**Problem:** `Sound_to_Formant_willems()` / `to_formant_sl()` crashed with SIGSEGV
+at address 0x68 (same signature as §1.1) whenever the split-Levinson root-finder
+emitted a casual diagnostic ("There is no zero between ...", "Degree N not
+completed"). Pure tones and silence trigger this on every frame.
+
+**Root Cause:** In the embedded (no-GUI) build, the lazy init that assigns
+`Melder_stdout`/`Melder_stderr` never runs, so both globals are `nullptr`.
+`MelderConsole::write()` did `fputc(kar, f)` with `f == nullptr` →
+`flockfile(NULL)` derefs the FILE `_lock` field at offset 0x68. The formant
+frame loop is `MelderThread_PARALLELIZE`d, so the casual write also fired from
+worker threads, but the null stream — not threading — is the crash cause; it
+would crash single-threaded too.
+
+**Fix:** Fall back to the real libc `stderr`/`stdout` when the Melder globals are
+null, and no-op if even those are null:
+```cpp
+FILE *f = useStderr ? Melder_stderr : Melder_stdout;
+if (! f) f = useStderr ? stderr : stdout;   // pladdrr: embedded null-stream guard
+if (! f) return;
+```
+Bit-exact: formant values are unchanged; only the previously-crashing diagnostic
+text now reaches stderr (matching Praat's own behaviour). R-level wrappers
+`to_formant_willems()`/`to_formant_sl()` additionally reject `number_of_formants`/
+`number_of_poles < 1` before the C++ call (`.check_positive_count`).
 
 ### v4.8.35 SPINET gammatone arg-swap fix (2026-05-06)
 

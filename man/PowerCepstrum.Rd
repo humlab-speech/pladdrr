@@ -3,47 +3,16 @@
 \name{PowerCepstrum}
 \alias{PowerCepstrum}
 \title{PowerCepstrum Class}
-\usage{
-PowerCepstrum(.xptr = NULL)
-}
 \description{
 Represents a power cepstrum object from Praat.
-Implemented as list wrapper around Rcpp module for performance.
-Used for voice quality analysis, particularly Cepstral Peak Prominence (CPP).
-}
-\details{
-The power cepstrum is the power spectrum of the logarithmic power spectrum.
-It's used in voice quality analysis to compute CPP (Cepstral Peak Prominence),
-a measure of periodicity in the voice signal.
-
-## Creating PowerCepstrum Objects
-
-PowerCepstrum objects are created from Spectrum objects:
-- `spectrum$to_powercepstrum()` - Convert Spectrum to PowerCepstrum
-
-## Query Methods
-
-- `$get_peak_prominence()` - Get CPP (Cepstral Peak Prominence) in dB
-- `$get_quefrency_of_peak()` - Get quefrency of the cepstral peak
-- `$get_value_at_quefrency()` - Get cepstral value at specific quefrency
-
-## Modification
-
-- `$smooth()` - Smooth the cepstrum
-
-## Export
-
-- `$to_matrix()` - Convert to Matrix object
-- `$as_matrix()` - Export as R numeric matrix
+Uses shared dispatch table for minimal memory per object.
 }
 \examples{
 \dontrun{
-# Extract CPP from a sound
 sound <- Sound$new("voice.wav")
 spectrum <- sound$to_spectrum()
 cepstrum <- spectrum$to_powercepstrum()
 cpp <- cepstrum$get_peak_prominence()
-print(paste("CPP:", round(cpp, 2), "dB"))
 }
 
 }

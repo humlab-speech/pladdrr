@@ -857,17 +857,15 @@ Rcpp::List textgrid_sound_extract_intervals_where(
             Melder_peek8to32(text.c_str()),
             preserve_times
         );
-        Rcpp::Rcout << "Praat function returned, got " << sounds->size << " sounds" << std::endl;
-        
-        // Convert SoundList to R list of Sound XPtrs
-        Rcpp::List result(sounds->size);
-        for (integer i = 1; i <= sounds->size; i++) {
-            Sound extracted = sounds->at[i];
-            // Create copy to avoid ownership issues
-            autoSound copy = Data_copy(extracted);
-            result[i-1] = create_xptr_from_auto<structSound>(copy);
+        // Convert SoundList to R list of Sound XPtrs, moving ownership out of
+        // the list (back-to-front so subtractItem_move never shifts elements)
+        const integer n = sounds->size;
+        Rcpp::List result(n);
+        for (integer i = n; i >= 1; i--) {
+            autoSound extracted = sounds->subtractItem_move(i);
+            result[i-1] = create_xptr_from_auto<structSound>(extracted);
         }
-        
+
         return result;
         
     } catch (MelderError) {

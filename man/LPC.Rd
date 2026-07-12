@@ -3,9 +3,6 @@
 \name{LPC}
 \alias{LPC}
 \title{Praat LPC Object}
-\usage{
-LPC(.xptr = NULL)
-}
 \description{
 Praat LPC object with direct C++ module binding for linear predictive coding analysis.
 }

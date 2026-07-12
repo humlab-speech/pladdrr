@@ -2,22 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{is_fast_access}
 \alias{is_fast_access}
-\title{Check if Vector is a Fast-Access Vector (C++)}
+\title{Check if Vector is a Fast-Access Vector}
 \usage{
 is_fast_access(x)
 }
 \arguments{
-\item{x}{Any R object}
+\item{x}{Numeric vector}
 }
 \value{
-Logical. TRUE if \code{x} has class \code{fast_vector}, \code{fast_matrix},
-  \code{zerocopy_vector}, or \code{zerocopy_matrix}.
+TRUE if x has the fast_vector or zerocopy_vector class
 }
 \description{
-C++ implementation that checks whether a numeric vector was created by
-\code{\link{sound_values_fast}} or \code{\link{sound_as_matrix_fast}}.
-Prefer the R wrapper \code{\link{is_fast_vector}} for user code.
-}
-\seealso{
-\code{\link{is_fast_vector}}
+Check if Vector is a Fast-Access Vector
 }

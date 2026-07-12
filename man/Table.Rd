@@ -3,14 +3,6 @@
 \name{Table}
 \alias{Table}
 \title{Praat Table Object}
-\usage{
-Table(
-  numberOfRows = NULL,
-  numberOfColumns = NULL,
-  columnNames = NULL,
-  .xptr = NULL
-)
-}
 \description{
 Praat Table object with direct C++ module binding for tabular data operations.
 }

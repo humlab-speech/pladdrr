@@ -3,49 +3,21 @@
 \name{LFCC}
 \alias{LFCC}
 \title{Praat LFCC Object}
-\usage{
-LFCC(.xptr = NULL)
-}
 \description{
 Linear Frequency Cepstral Coefficients for speaker recognition.
+Uses shared dispatch table for minimal memory per object.
 }
 \details{
 LFCCs are similar to MFCCs but use a linear frequency scale instead of
 the mel scale. They are derived from LPC analysis and are useful for
 speaker recognition tasks.
-
-## Creating LFCC Objects
-
-LFCC objects are created from LPC objects:
-- `lpc$to_lfcc()` - Extract LFCCs from LPC
-
-## Querying LFCC Properties
-
-- `$get_number_of_frames()` - Number of analysis frames
-- `$get_max_num_coefficients()` - Maximum number of coefficients
-- `$get_c0_at_frame(frame)` - C0 for specific frame
-- `$get_coefficients_at_frame(frame)` - All coefficients for frame
-- `$get_all_coefficients()` - Matrix of all coefficients
-
-## Conversion
-
-- `$to_lpc(num_coefficients)` - Convert back to LPC
-- `$to_matrix()` - Convert to Matrix
-- `$as_data_frame()` - Export to data.frame
 }
 \examples{
 \dontrun{
-# Load sound and compute LPC
 sound <- Sound("audio.wav")
 lpc <- sound$to_lpc_burg(prediction_order = 16)
-
-# Extract LFCCs
 lfcc <- lpc$to_lfcc(num_coefficients = 12)
-
-# Query properties
 coefs <- lfcc$get_all_coefficients()
-
-# Convert back to LPC
 lpc2 <- lfcc$to_lpc(num_coefficients = 16)
 }
 

@@ -23,7 +23,10 @@
 .pladdrr_tag_re <- "^\\[pladdrr_([a-z_]+):([^:]*):([^\\]]*)\\] (.*)$"
 
 .parse_pladdrr_tag <- function(msg) {
-  m <- regmatches(msg, regexec(.pladdrr_tag_re, msg))[[1]]
+  # perl=TRUE required: the pattern uses \] inside a bracket expression, which
+  # only parses correctly under PCRE (TRE never matches, silently disabling the
+  # whole typed-error contract).
+  m <- regmatches(msg, regexec(.pladdrr_tag_re, msg, perl = TRUE))[[1]]
   if (length(m) != 5L) return(NULL)
   list(class = paste0("pladdrr_", m[2L]),
        routine = m[3L],
@@ -68,6 +71,11 @@ pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call
 #' \code{attr(., "pladdrr_data_loss")} to the result, listing every routine
 #' that reported missing values during the call.
 #'
+#' The reaction to data loss is controlled by
+#' \code{options(pladdrr.data_loss = )}: \code{"warn"} (default) raises a
+#' classed warning per incident, \code{"error"} stops at the first incident,
+#' \code{"silent"} only records the attribute.
+#'
 #' @param expr expression to evaluate
 #' @return value of \code{expr}, possibly with a \code{pladdrr_data_loss}
 #'   attribute.
@@ -98,9 +106,16 @@ with_pladdrr_errors <- function(expr) {
       if (is.null(tag)) return(invisible())
       collected_loss[[length(collected_loss) + 1L]] <<-
         list(routine = tag$routine, message = tag$message)
-      # Surface as a classed warning but keep going.
-      warning(pladdrr_warning_cond(tag$class, tag$routine, tag$param, tag$message,
-                                   call = conditionCall(w)))
+      mode <- getOption("pladdrr.data_loss", "warn")
+      if (identical(mode, "error")) {
+        stop(pladdrr_error_cond(tag$class, tag$routine, tag$param, tag$message,
+                                call = conditionCall(w)))
+      }
+      if (!identical(mode, "silent")) {
+        # Surface as a classed warning but keep going.
+        warning(pladdrr_warning_cond(tag$class, tag$routine, tag$param, tag$message,
+                                     call = conditionCall(w)))
+      }
       invokeRestart("muffleWarning")
     }
   )

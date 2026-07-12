@@ -3,32 +3,19 @@
 \name{Formant}
 \alias{Formant}
 \title{Formant Class}
-\usage{
-Formant(.xptr = NULL)
-}
 \description{
 Praat Formant object with direct C++ module binding. Formant objects represent
 the resonance frequencies of the vocal tract over time.
 }
 \examples{
 \dontrun{
-# Create formant object from sound
-sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
+sound <- Sound("example.wav")
 formant <- sound$to_formant_burg(
-  time_step = 0.01,
-  max_number_of_formants = 5,
-  maximum_formant = 5500,
-  window_length = 0.025,
-  pre_emphasis_from = 50
+  time_step = 0.01, max_number_of_formants = 5,
+  maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 )
-
-# Query formant values
-f1_at_1s <- formant$get_value_at_time(formant_number = 1, time = 1.0, unit = "Hertz")
-f2_at_1s <- formant$get_value_at_time(formant_number = 2, time = 1.0, unit = "Hertz")
-
-# Get mean formant values
-mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "Hertz")
-mean_f2 <- formant$get_mean(formant_number = 2, from_time = 0, to_time = 0, unit = "Hertz")
+f1_at_1s <- formant$get_value_at_time(formant_number = 1, time = 1.0, unit = "hertz")
+mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "hertz")
 }
 
 }

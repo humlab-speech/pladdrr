@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.1 (2026-06-10)
+**Version:** 4.9.3 (2026-07-12)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix
 
@@ -65,6 +65,17 @@ tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
 ## What's New in v4.9.x
+
+- **v4.9.3 — Willems/split-Levinson crash fixed:** `Sound$to_formant_willems()` and `to_formant_sl()` no longer segfault on pure tones or silence. Root cause was a null console stream in the embedded build (`MelderConsole::write` → `fputc(NULL)`); guarded to fall back to libc `stderr`/`stdout` (see `PRAAT_MODIFICATIONS.md` v4.9.3). Formant values are unchanged. Both methods now reject `number_of_formants`/`number_of_poles < 1` with a clear R-level error. Also fixed `sound_extract_parts()` (was passing a dead R6 private pointer → NULL; now uses `$.xptr`).
+- **v4.9.2 — Thread control:** `pladdrr_threads(n)` caps or disables Praat's multi-threaded analyses at runtime. `pladdrr_threads(1)` forces single-threaded (use inside `parallel::mclapply()` workers so cores aren't oversubscribed); `pladdrr_threads(0)` restores automatic (all cores); `pladdrr_threads()` with no argument returns the current state (`processors`, `enabled`, `max_threads`, `min_elements_per_thread`). Threading never changes results — threads only partition analysis frames.
+
+- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that return NA for undefined values react: `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`). Set `"error"` in batch pipelines where silent NA truncation would corrupt aggregates.
+
+- **v4.9.2 — Input validation:** `Sound$to_pitch*/to_manipulation/to_ltas_pitch_corrected/change_speaker/to_point_process_periodic_*` now reject `pitch_floor <= 0` or `pitch_ceiling <= pitch_floor` with a clear R-level error instead of a generic "Failed to create ..." from C++.
+
+- **v4.9.2 — CPPS profiles:** the three CPPS parameter sets are now centralized in `R/constants.R` (`.cpps_profiles$r6`, `$avqi`, `$praat_gui`). `PowerCepstrogram$get_cpps()`/`calculate_cpps_fast()`/`calculate_cpps_ultra()` use the **r6** profile (0.001 s smoothing, ceiling 333.3 Hz); `get_cpps_fast()` uses the **avqi** profile (Maryn & Weenink: `subtract_tilt=FALSE`, 0.01/0.001 smoothing, ceiling 330 Hz). Neither equals the Praat GUI form defaults (**praat_gui**), which pladdrr reproduces exactly only when those values are passed explicitly. `test-cpps-defaults.R` fails if any signature drifts from its profile.
+
+- **v4.9.2 — Perf (no fidelity change):** eliminated redundant per-interval `Data_copy(sound)` in TextGrid interval extraction and concatenation paths (`sound_wrappers.cpp`, `textgrid_wrappers.cpp`, `batch_queries.cpp`) — inputs are now referenced or moved rather than deep-copied. `extract_measurements()` now pulls all formant numbers in a single `formant_get_multiple_formants_at_times()` call.
 
 - **v4.9.1 — PERF-1:** `get_spectral_moments_batch(spectrogram, power=2.0)` — new API returns a `data.frame(time, cog, sd, skewness, kurtosis)` for every frame in a single C++ pass. Eliminates the 14× R-loop penalty (400 per-frame `autoSpectrum` allocations + 1600 R→C++ boundary crossings per file). Available as standalone function and as `spectrogram$get_spectral_moments_batch()`. See [Pattern 2p](#pattern-2p-spectral-moments-batch-v491).
 

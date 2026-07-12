@@ -3,9 +3,6 @@
 \name{Polygon}
 \alias{Polygon}
 \title{Polygon Object}
-\usage{
-Polygon(x, y, .xptr = NULL)
-}
 \arguments{
 \item{x}{Numeric vector of x coordinates (required unless .xptr provided)}
 

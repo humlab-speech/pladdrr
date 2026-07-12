@@ -1464,10 +1464,10 @@ XPtr<structSound> sound_concatenate(
     structSound* sound2 = get_ptr(xptr2, "Sound");
     
     try {
-        // Create SoundList and add both sounds
+        // Create SoundList referencing the inputs; Sounds_concatenate only reads
         autoSoundList list = SoundList_create();
-        list->addItem_move(Data_copy(sound1));
-        list->addItem_move(Data_copy(sound2));
+        list->addItem_ref(sound1);
+        list->addItem_ref(sound2);
         
         // Concatenate with overlap
         autoSound concatenated = Sounds_concatenate(list.get(), overlap);
@@ -1684,15 +1684,15 @@ Rcpp::List sound_extract_intervals_where(
             false  // preserveTimes
         );
         
-        // Convert to R list of Sound XPtrs
-        Rcpp::List result(sounds->size);
-        for (integer i = 1; i <= sounds->size; i++) {
-            Sound extracted = sounds->at[i];
-            // Create copy to avoid ownership issues
-            autoSound copy = Data_copy(extracted);
-            result[i-1] = create_xptr_from_auto<structSound>(copy);
+        // Convert to R list of Sound XPtrs, moving ownership out of the list
+        // (back-to-front so subtractItem_move never shifts elements)
+        const integer n = sounds->size;
+        Rcpp::List result(n);
+        for (integer i = n; i >= 1; i--) {
+            autoSound extracted = sounds->subtractItem_move(i);
+            result[i-1] = create_xptr_from_auto<structSound>(extracted);
         }
-        
+
         return result;
     } catch (MelderError) {
         Melder_clearError();
@@ -1758,10 +1758,11 @@ XPtr<structSound> sound_concatenate_all(
         // Create SoundList and add all sounds
         autoSoundList list = SoundList_create();
 
+        // Reference the inputs instead of copying; Sounds_concatenate only reads
         for (int i = 0; i < sound_list.size(); i++) {
             XPtr<structSound> xptr = extract_xptr(sound_list[i]);
             structSound* sound = get_ptr(xptr, "Sound");
-            list->addItem_move(Data_copy(sound));
+            list->addItem_ref(sound);
         }
 
         // Concatenate all at once with overlap

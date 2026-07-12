@@ -3,129 +3,20 @@
 \name{PointProcess}
 \alias{PointProcess}
 \title{Praat PointProcess Object}
-\usage{
-PointProcess(.xptr = NULL)
-}
 \description{
-R6 class representing a Praat PointProcess object. A PointProcess is a sequence
-of time points, typically representing events such as glottal pulses, peaks,
-zero crossings, or other temporal landmarks in a sound.
+A PointProcess is a sequence of time points, typically representing glottal pulses.
+Essential for voice quality analysis (jitter, shimmer).
 }
 \details{
-PointProcess objects are essential for voice quality analysis. They represent
-discrete time points and are used to calculate voice quality measures like
-jitter (period perturbation) and shimmer (amplitude perturbation).
-
-## Creating PointProcess Objects
-
-PointProcess objects are typically created from Sound or Pitch objects:
-- `sound$to_point_process_periodic_cc(...)` - Extract glottal pulses
-- `sound$to_point_process_extrema(...)` - Extract peaks/valleys
-- `pitch$to_point_process()` - Convert pitch candidates to points
-
-## Querying Points
-
-- `$get_number_of_points()` - Number of points
-- `$get_time_from_index(i)` - Time of point i
-- `$get_nearest_index(time)` - Find nearest point to time
-- `$get_low_index(time)` - Find point before or at time
-- `$get_high_index(time)` - Find point after or at time
-- `$get_interval(time)` - Duration between points around time
-
-## Voice Quality Metrics
-
-**IMPORTANT: Jitter and shimmer values are returned as decimals (0-1), not
-percentages (0-100).** Multiply by 100 for percentage display:
-`jitter_percent <- jitter * 100`
-
-This differs from Praat's display convention but is more convenient for
-programmatic use (e.g., ratios, thresholds).
-
-**Comprehensive Voice Report** (NEW - for AVQI/DSI):
-- `$voice_report(sound, pitch, ...)` - Complete voice quality analysis with all
-  jitter, shimmer, and harmonicity measures in a single call. Essential for
-  computing AVQI and DSI voice quality indices.
-
-Individual Jitter measures (period perturbation):
-- `$get_jitter_local(...)` - Local jitter (relative, decimal 0-1)
-- `$get_jitter_local_absolute(...)` - Local jitter (absolute, seconds)
-- `$get_jitter_rap(...)` - Relative Average Perturbation (decimal 0-1)
-- `$get_jitter_ppq5(...)` - Five-point Period Perturbation Quotient (decimal 0-1)
-- `$get_jitter_ddp(...)` - Difference of Differences of Periods (decimal 0-1)
-
-Individual Shimmer measures (amplitude perturbation, require Sound object):
-- `$get_shimmer_local(sound, ...)` - Local shimmer (relative, decimal 0-1)
-- `$get_shimmer_local_db(sound, ...)` - Local shimmer (dB, not decimal)
-- `$get_shimmer_apq3(sound, ...)` - 3-point Amplitude Perturbation Quotient (decimal 0-1)
-- `$get_shimmer_apq5(sound, ...)` - 5-point Amplitude Perturbation Quotient (decimal 0-1)
-- `$get_shimmer_apq11(sound, ...)` - 11-point Amplitude Perturbation Quotient (decimal 0-1)
-- `$get_shimmer_dda(sound, ...)` - Difference of Differences of Amplitudes (decimal 0-1)
-
-Period statistics:
-- `$get_mean_period(...)` - Mean period
-- `$get_stdev_period(...)` - Standard deviation of periods
-
-## Modification
-
-- `$add_point(time)` - Add time point
-- `$remove_point(index)` - Remove point by index
-- `$remove_point_near(time)` - Remove nearest point to time
-- `$remove_points_between(t1, t2)` - Remove all points in range
-
-## Conversion
-
-- `$to_textgrid_vuv(max_voiced_period, max_unvoiced_period)` - Create voiced/unvoiced TextGrid
-  (required for DSI calculation with soft phonation)
-
-## Export
-
-- `$as_data_frame()` - Export points to data frame
-- `$save(path)` - Write to file
+**IMPORTANT:** Jitter/shimmer values are returned as decimals (0-1), not percentages.
+Multiply by 100 for percentage display.
 }
 \examples{
 \dontrun{
-# Extract glottal pulses from sound
-sound <- Sound$new("voice.wav")
-pp <- sound$to_point_process_periodic_cc(
-  pitch_floor = 75,
-  pitch_ceiling = 600
-)
-
-# Query points
-n_points <- pp$get_number_of_points()
-first_time <- pp$get_time_from_index(1)
-
-# Calculate jitter (period perturbation)
-jitter_local <- pp$get_jitter_local(
-  from_time = 0,
-  to_time = 0,  # 0 means entire duration
-  period_floor = 0.0001,
-  period_ceiling = 0.02,
-  max_period_factor = 1.3
-)
-
-# Calculate shimmer (amplitude perturbation)
-shimmer_local <- pp$get_shimmer_local(
-  sound = sound,
-  from_time = 0,
-  to_time = 0,
-  period_floor = 0.0001,
-  period_ceiling = 0.02,
-  max_period_factor = 1.3,
-  max_amplitude_factor = 1.6
-)
-
-# Get period statistics
-mean_period <- pp$get_mean_period(
-  from_time = 0,
-  to_time = 0,
-  period_floor = 0.0001,
-  period_ceiling = 0.02,
-  max_period_factor = 1.3
-)
-
-# Export to R
-df <- pp$as_data_frame()
+sound <- Sound("voice.wav")
+pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+jitter <- pp$get_jitter_local()
+shimmer <- pp$get_shimmer_local(sound)
 }
 
 }
