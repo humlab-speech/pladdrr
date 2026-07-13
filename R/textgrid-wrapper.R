@@ -31,6 +31,7 @@
 #' - `$get_label_at_time(tier, time)` - Get label at specific time
 #' - `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
 #' - `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
+#' - `$extract_intervals_where(sound, tier, criterion, text, preserve_times)` - Extract Sound intervals matching a text criterion
 #' - `$set_interval_text(tier, n, text)` - Set label of interval n
 #' - `$insert_boundary(tier, time)` - Insert new boundary
 #' - `$remove_boundary(tier, time)` - Remove boundary
@@ -225,6 +226,32 @@ NULL
     result$sounds <- lapply(result$sounds, function(xptr) Sound(.xptr = xptr))
   }
   return(result)
+}
+.textgrid_methods$extract_intervals_where <- function(.self, sound, tier_number,
+                                                       criterion = "is equal to",
+                                                       text = "", preserve_times = FALSE) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+
+  criterion_map <- c(
+    "is equal to" = 1L, "is not equal to" = 2L, "contains" = 3L,
+    "does not contain" = 4L, "starts with" = 5L, "does not start with" = 6L,
+    "ends with" = 7L, "does not end with" = 8L,
+    "contains a word equal to" = 9L, "does not contain a word equal to" = 10L,
+    "matches regex" = 21L
+  )
+  which_criterion <- criterion_map[[criterion]]
+  if (is.null(which_criterion)) {
+    stop("Invalid criterion: '", criterion, "'. Must be one of: ",
+         paste(names(criterion_map), collapse = ", "))
+  }
+
+  tier_num <- .textgrid_resolve_tier(.self$.cpp, tier_number)
+
+  result <- .textgrid_sound_extract_intervals_where(
+    .self$.xptr, sound$.xptr, tier_num, which_criterion, text, preserve_times
+  )
+
+  lapply(result, function(xptr) Sound(.xptr = xptr))
 }
 
 # --- Batch/Vectorized ---
