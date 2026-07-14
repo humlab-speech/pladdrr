@@ -1786,6 +1786,7 @@ List calculate_multiband_hnr_ultra_cpp(
             // Create band-limited sound (or use full spectrum if band == 0);
             // full-spectrum case reads the input directly, no copy needed
             autoSound filtered;
+            Sound band_sound = sound.get();
             if (upper_freq != 0.0) {
                 // Band-pass filter: 0 to upper_freq with 100 Hz smoothing
                 filtered = Sound_filter_passHannBand(
@@ -1794,8 +1795,8 @@ List calculate_multiband_hnr_ultra_cpp(
                     upper_freq,     // to_freq
                     100.0           // smoothing (Praat standard)
                 );
+                band_sound = filtered.get();
             }
-            Sound band_sound = ( upper_freq == 0.0 ? sound.get() : filtered.get() );
 
             // Calculate Harmonicity for this band using cross-correlation (CC) method
             // BUG FIX (v4.6.4): Changed from Sound_to_Harmonicity_ac to Sound_to_Harmonicity_cc

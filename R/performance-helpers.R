@@ -97,13 +97,9 @@ calculate_cpps_fast <- function(
   }
 
   # Map string arguments to integer codes (Praat convention)
-  interp_map <- .interp_map
-  trend_map <- .cpps_trend_map
-  fit_map <- .trend_fit_map
-
-  interpolation <- match.arg(interpolation, names(interp_map))
-  trend_line_type <- match.arg(trend_line_type, names(trend_map))
-  fit_method <- match.arg(fit_method, names(fit_map))
+  interpolation <- match.arg(interpolation, names(.interp_map))
+  trend_line_type <- match.arg(trend_line_type, names(.cpps_trend_map))
+  fit_method <- match.arg(fit_method, names(.trend_fit_map))
 
   # Direct Sound → CPPS path (v4.1.0 optimization)
   # Keeps PowerCepstrogram entirely in C++, no R/C++ boundary crossing
@@ -121,11 +117,11 @@ calculate_cpps_fast <- function(
     as.numeric(pitch_floor),
     as.numeric(pitch_ceiling),
     as.numeric(delta_f0),
-    as.integer(interp_map[[interpolation]]),
+    as.integer(.interp_map[[interpolation]]),
     as.numeric(qstart_fit),
     as.numeric(qend_fit),
-    as.integer(trend_map[[trend_line_type]]),
-    as.integer(fit_map[[fit_method]])
+    as.integer(.cpps_trend_map[[trend_line_type]]),
+    as.integer(.trend_fit_map[[fit_method]])
   )
 
   return(cpps)
@@ -247,13 +243,9 @@ get_cpps_fast <- function(
   }
 
   # Map string arguments to integer codes
-  interp_map <- .interp_map
-  trend_map <- .cpps_trend_map
-  fit_map <- .trend_fit_map
-
-  interpolation <- match.arg(interpolation, names(interp_map))
-  trend_line_type <- match.arg(trend_line_type, names(trend_map))
-  fit_method <- match.arg(fit_method, names(fit_map))
+  interpolation <- match.arg(interpolation, names(.interp_map))
+  trend_line_type <- match.arg(trend_line_type, names(.cpps_trend_map))
+  fit_method <- match.arg(fit_method, names(.trend_fit_map))
 
   .powercepstrogram_get_cpps(
     powercepstrogram,
@@ -263,11 +255,11 @@ get_cpps_fast <- function(
     as.numeric(pitch_floor),
     as.numeric(pitch_ceiling),
     as.numeric(delta_f0),
-    as.integer(interp_map[[interpolation]]),
+    as.integer(.interp_map[[interpolation]]),
     as.numeric(qstart_fit),
     as.numeric(qend_fit),
-    as.integer(trend_map[[trend_line_type]]),
-    as.integer(fit_map[[fit_method]])
+    as.integer(.cpps_trend_map[[trend_line_type]]),
+    as.integer(.trend_fit_map[[fit_method]])
   )
 }
 
@@ -573,13 +565,9 @@ calculate_cpps_ultra <- function(
   }
 
   # Map string arguments to integer codes (Praat convention)
-  interp_map <- .interp_map
-  trend_map <- .cpps_trend_map
-  fit_map <- .trend_fit_map
-
-  interpolation <- match.arg(interpolation, names(interp_map))
-  line_type <- match.arg(line_type, names(trend_map))
-  fit_method <- match.arg(fit_method, names(fit_map))
+  interpolation <- match.arg(interpolation, names(.interp_map))
+  line_type <- match.arg(line_type, names(.cpps_trend_map))
+  fit_method <- match.arg(fit_method, names(.trend_fit_map))
 
   # Single C++ call for entire CPPS calculation
   # BUG FIX (v4.6.4): Added pre_emphasis_from and max_frequency parameters
@@ -595,10 +583,10 @@ calculate_cpps_ultra <- function(
     as.numeric(time_step),
     as.numeric(max_quefrency),
     as.numeric(tolerance),
-    as.integer(interp_map[[interpolation]]),
+    as.integer(.interp_map[[interpolation]]),
     as.numeric(tilt_line_quefrency),
-    as.integer(trend_map[[line_type]]),
-    as.integer(fit_map[[fit_method]]),
+    as.integer(.cpps_trend_map[[line_type]]),
+    as.integer(.trend_fit_map[[fit_method]]),
     as.numeric(pre_emphasis_from),
     as.numeric(max_frequency)
   )

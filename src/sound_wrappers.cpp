@@ -1684,16 +1684,7 @@ Rcpp::List sound_extract_intervals_where(
             false  // preserveTimes
         );
         
-        // Convert to R list of Sound XPtrs, moving ownership out of the list
-        // (back-to-front so subtractItem_move never shifts elements)
-        const integer n = sounds->size;
-        Rcpp::List result(n);
-        for (integer i = n; i >= 1; i--) {
-            autoSound extracted = sounds->subtractItem_move(i);
-            result[i-1] = create_xptr_from_auto<structSound>(extracted);
-        }
-
-        return result;
+        return move_collection_to_xptr_list(sounds);
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to extract sound intervals");

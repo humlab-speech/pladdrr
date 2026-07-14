@@ -31,10 +31,10 @@
 #   avqi  — get_cpps_fast(): the AVQI protocol parameters (Maryn & Weenink),
 #           subtract_tilt = FALSE, 0.01/0.001 smoothing, ceiling 330 Hz,
 #           trend fit from 0.001 s to frame end (qend_fit = 0).
-#   praat_gui — what the Praat application's "PowerCepstrogram: Get CPPS..."
-#           form pre-fills (praat.github.io/LPC/praat_LPC_init.cpp:759-775).
-#           Listed for reference; pladdrr reproduces these values exactly
-#           when passed explicitly.
+# For reference, the Praat GUI's "PowerCepstrogram: Get CPPS..." form
+# pre-fills yet another set of values — see
+# praat.github.io/LPC/praat_LPC_init.cpp:759-775. pladdrr reproduces those
+# exactly when passed explicitly, but no profile ships for them.
 .cpps_profiles <- list(
   r6 = list(
     subtract_tilt = TRUE,
@@ -59,19 +59,6 @@
     interpolation = "parabolic",
     qstart_fit = 0.001,
     qend_fit = 0,
-    trend_line_type = "straight",
-    fit_method = "robust"
-  ),
-  praat_gui = list(
-    subtract_tilt = TRUE,
-    time_averaging_window = 0.02,
-    quefrency_averaging_window = 0.0005,
-    pitch_floor = 60,
-    pitch_ceiling = 330,
-    delta_f0 = 0.05,
-    interpolation = "parabolic",
-    qstart_fit = 0.001,
-    qend_fit = 0.05,
     trend_line_type = "straight",
     fit_method = "robust"
   )

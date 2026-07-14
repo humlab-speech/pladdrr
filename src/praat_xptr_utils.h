@@ -25,6 +25,7 @@
 #define PRAAT_XPTR_UTILS_H
 
 #include <Rcpp.h>
+#include <type_traits>
 #include "sys/Thing.h"
 #include "melder/melder.h"
 
@@ -57,6 +58,21 @@ template<typename T>
 T* get_ptr(const Rcpp::XPtr<T>& xptr, const char* object_type = "Praat object") {
     validate_xptr(xptr, object_type);
     return xptr.get();
+}
+
+// Move every element of a Praat collection (e.g. autoSoundList) into an
+// R list of XPtrs. Iterates back-to-front so subtractItem_move never
+// shifts remaining elements.
+template<typename AutoCollection>
+Rcpp::List move_collection_to_xptr_list(AutoCollection& items) {
+    const integer n = items->size;
+    Rcpp::List result(n);
+    for (integer i = n; i >= 1; i--) {
+        auto extracted = items->subtractItem_move(i);
+        using ElemT = std::remove_pointer_t<decltype(extracted.get())>;
+        result[i - 1] = create_xptr_from_auto<ElemT>(extracted);
+    }
+    return result;
 }
 
 #endif // PRAAT_XPTR_UTILS_H

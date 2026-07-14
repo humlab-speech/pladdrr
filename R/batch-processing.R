@@ -612,9 +612,7 @@ extract_measurements <- function(sound,
     formant_values <- formant_get_multiple_formants_at_times(
       formant_obj$.xptr, meas_times, seq_len(formant_params$max_formants), 0L
     )
-    for (nm in names(formant_values)) {
-      results[[nm]] <- formant_values[[nm]]
-    }
+    results[names(formant_values)] <- formant_values
   }
   
   # Batch intensity: single C++ call for all time points
