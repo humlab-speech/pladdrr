@@ -109,3 +109,4 @@ src/Makevars
 /Meta/
 
 /.quarto/
+build.log
