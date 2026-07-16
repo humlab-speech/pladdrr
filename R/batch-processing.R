@@ -87,7 +87,13 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
     if (is.null(ncores)) {
       ncores <- parallel::detectCores() - 1
     }
-    results <- parallel::mclapply(files, process_file, mc.cores = ncores)
+    # Cap each worker's C++ threads to avoid oversubscription: N workers each
+    # running all-core Praat kernels would spawn ~ncores^2 threads.
+    tpw <- .pladdrr_worker_thread_budget(ncores)
+    results <- parallel::mclapply(files, function(f) {
+      pladdrr_threads(tpw)
+      process_file(f)
+    }, mc.cores = ncores)
   } else {
     if (progress && requireNamespace("utils", quietly = TRUE)) {
       pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)

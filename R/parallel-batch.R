@@ -1,6 +1,22 @@
 # Parallel batch processing functions
 # pladdrr v2.3.0 - Phase 3 Performance Enhancement
 
+# Per-worker C++ thread budget for nested parallelism.
+#
+# When N R workers each run Praat kernels that themselves spawn threads across
+# all cores, the machine sees ~N*cores threads and thrashes (context-switch
+# storms, higher power draw, often slower than either level alone). Divide the
+# cores among the workers so total concurrency ~= detectCores(). NULL means
+# auto; an explicit value is passed through unchanged.
+.pladdrr_worker_thread_budget <- function(n_cores, threads_per_worker = NULL) {
+  if (!is.null(threads_per_worker)) {
+    return(max(1L, as.integer(threads_per_worker)))
+  }
+  total <- tryCatch(parallel::detectCores(), error = function(e) NA_integer_)
+  if (is.na(total) || total < 1L) total <- n_cores
+  max(1L, total %/% max(1L, as.integer(n_cores)))
+}
+
 #' Process Audio Files in Parallel
 #'
 #' @description
@@ -11,6 +27,10 @@
 #' @param analysis_func Function. Analysis function to apply to each file.
 #'   Should accept a Sound object and return results.
 #' @param n_cores Integer. Number of CPU cores to use (default: parallel::detectCores() - 1)
+#' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
+#'   for Praat kernels. `NULL` (default) auto-divides cores among workers so
+#'   total concurrency stays near the machine's core count, preventing
+#'   oversubscription. Set `1` to force strictly single-threaded workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
 #' @return List of results from analysis_func, one per file
@@ -46,16 +66,17 @@
 #' }
 #'
 #' @export
-analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
+analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
+                                   threads_per_worker = NULL, ...) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("parallel package required. Install with: install.packages('parallel')")
   }
-  
+
   # Default to n-1 cores
   if (is.null(n_cores)) {
     n_cores <- max(1, parallel::detectCores() - 1)
   }
-  
+
   # Single core fallback
   if (n_cores == 1) {
     message("Using single core (set n_cores > 1 for parallel processing)")
@@ -64,13 +85,17 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
       analysis_func(sound, ...)
     }))
   }
-  
-  # Parallel processing
-  message(sprintf("Processing %d files using %d cores", length(files), n_cores))
-  
+
+  # Parallel processing. Cap each worker's C++ threads so N workers x cores
+  # threads don't oversubscribe the machine (see .pladdrr_worker_thread_budget).
+  tpw <- .pladdrr_worker_thread_budget(n_cores, threads_per_worker)
+  message(sprintf("Processing %d files using %d cores (%d thread(s)/worker)",
+                  length(files), n_cores, tpw))
+
   # Use mclapply on Unix-like systems, parLapply on Windows
   if (.Platform$OS.type == "unix") {
     results <- parallel::mclapply(files, function(f) {
+      pladdrr_threads(tpw)
       sound <- Sound(f)
       analysis_func(sound, ...)
     }, mc.cores = n_cores)
@@ -78,17 +103,18 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
     # Windows: use PSOCK cluster
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
-    
+
     # Load pladdrr on workers and export necessary objects
     parallel::clusterEvalQ(cl, library(pladdrr))
-    parallel::clusterExport(cl, c("analysis_func"), envir = environment())
-    
+    parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
+
     results <- parallel::parLapply(cl, files, function(f) {
+      pladdrr_threads(tpw)
       sound <- Sound(f)
       analysis_func(sound, ...)
     })
   }
-  
+
   results
 }
 
@@ -103,6 +129,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
 #' @param analysis_func Function. Analysis function to apply.
 #'   Should accept a Sound object/pointer and return results.
 #' @param n_cores Integer. Number of CPU cores (default: auto)
+#' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
+#'   for Praat kernels. `NULL` (default) auto-divides cores among workers to
+#'   avoid oversubscription; set `1` to force single-threaded workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
 #' @return List of results
@@ -120,27 +149,39 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL, ...) {
 #' }
 #'
 #' @export
-process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL, ...) {
+process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
+                                    threads_per_worker = NULL, ...) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("parallel package required")
   }
-  
+
   if (is.null(n_cores)) {
     n_cores <- max(1, parallel::detectCores() - 1)
   }
-  
+
   if (n_cores == 1) {
     return(lapply(sounds, analysis_func, ...))
   }
-  
-  message(sprintf("Processing %d sounds using %d cores", length(sounds), n_cores))
-  
+
+  # Cap each worker's C++ threads to avoid oversubscription (see
+  # .pladdrr_worker_thread_budget). Wrap analysis_func so the cap is applied
+  # inside each worker before any Praat kernel runs.
+  tpw <- .pladdrr_worker_thread_budget(n_cores, threads_per_worker)
+  capped_func <- function(s, ...) {
+    pladdrr_threads(tpw)
+    analysis_func(s, ...)
+  }
+  message(sprintf("Processing %d sounds using %d cores (%d thread(s)/worker)",
+                  length(sounds), n_cores, tpw))
+
   if (.Platform$OS.type == "unix") {
-    parallel::mclapply(sounds, analysis_func, mc.cores = n_cores, ...)
+    parallel::mclapply(sounds, capped_func, mc.cores = n_cores, ...)
   } else {
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
-    parallel::parLapply(cl, sounds, analysis_func, ...)
+    parallel::clusterEvalQ(cl, library(pladdrr))
+    parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
+    parallel::parLapply(cl, sounds, capped_func, ...)
   }
 }
 

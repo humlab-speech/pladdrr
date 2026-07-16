@@ -1232,7 +1232,10 @@ static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
     const integer ny = me -> ny;
     const integer nx = me -> nx;
 
-    unsigned int ncores = std::thread::hardware_concurrency();
+    // Respect the user's pladdrr_threads() cap (MelderThread prefs), not the
+    // raw core count — otherwise a worker pinned to 1 thread still spawns all
+    // cores here, causing oversubscription inside mclapply pipelines.
+    integer ncores = MelderThread_getMaximumNumberOfConcurrentThreads();
     if (ncores < 1) ncores = 1;
 
     // Pass 1: average across time — parallelize over quefrency rows
