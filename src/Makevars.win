@@ -23,11 +23,8 @@ PKG_CPPFLAGS = -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipraat.github.io/external/mp3 \
                -Ipraat.github.io/external/espeak \
                -Ipraat.github.io/external/gsl \
-               -Ipraat/external/gsl \
                -Ipraat.github.io/external/glpk \
-               -Ipraat/external/glpk \
                -Ipraat.github.io/external/num \
-               -Ipraat/external/num \
                -Iclapack/INCLUDE
 
 # Compiler flags (Windows-specific)

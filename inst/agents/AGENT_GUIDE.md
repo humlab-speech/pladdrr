@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.4 (2026-07-17)
+**Version:** 4.9.5 (2026-07-17)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix
 

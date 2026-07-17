@@ -1,3 +1,20 @@
+# pladdrr 4.9.5 (2026-07-17)
+
+## Packaging / CRAN
+
+- Source tarball reduced from ~52 MB to ~9 MB by removing dead weight, without
+  any change to compiled code or behaviour:
+  - Removed a redundant duplicate Praat tree (`src/praat/`, ~107 MB) that was
+    formerly shipped for the Windows build; Windows now compiles from the same
+    `praat.github.io/` prefix as Unix (the `-Ipraat/external/*` include paths
+    were byte-identical duplicates and were dropped from `Makevars.in`/`.win`).
+  - Excluded bundled external-library **sources** (espeak, flac, mp3,
+    portaudio, vorbis, opusfile, lame, clapack, gsl, glpk) from the tarball —
+    they are stubbed at build time, so only the referenced headers are kept.
+  - Excluded non-compiled Praat subtrees and `manual_*.cpp` documentation
+    sources, plus editor caches and dev-only benchmark scripts.
+- Added `cran-comments.md` justifying the remaining vendored Praat source.
+
 # pladdrr 4.9.4 (2026-07-17)
 
 ## Performance & power
