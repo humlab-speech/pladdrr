@@ -4,7 +4,13 @@
 \alias{process_sounds_parallel}
 \title{Batch Process Sounds in Parallel}
 \usage{
-process_sounds_parallel(sounds, analysis_func, n_cores = NULL, ...)
+process_sounds_parallel(
+  sounds,
+  analysis_func,
+  n_cores = NULL,
+  threads_per_worker = NULL,
+  ...
+)
 }
 \arguments{
 \item{sounds}{List of Sound objects or external pointers}
@@ -13,6 +19,10 @@ process_sounds_parallel(sounds, analysis_func, n_cores = NULL, ...)
 Should accept a Sound object/pointer and return results.}
 
 \item{n_cores}{Integer. Number of CPU cores (default: auto)}
+
+\item{threads_per_worker}{Integer or `NULL`. C++ threads each worker may use
+for Praat kernels. `NULL` (default) auto-divides cores among workers to
+avoid oversubscription; set `1` to force single-threaded workers.}
 
 \item{...}{Additional arguments passed to analysis_func}
 }

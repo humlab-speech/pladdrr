@@ -2,7 +2,7 @@
 % Please edit documentation in R/performance-helpers.R
 \name{calculate_cpps_fast}
 \alias{calculate_cpps_fast}
-\title{Fast CPPS Calculation (Advanced Performance API)}
+\title{Smoothed Cepstral Peak Prominence (CPPS) in one call}
 \usage{
 calculate_cpps_fast(
   sound,
@@ -57,55 +57,37 @@ calculate_cpps_fast(
 \item{pre_emphasis_from}{Numeric, pre-emphasis frequency in Hz (default 50)}
 }
 \value{
-Numeric CPPS value in dB
+A single numeric CPPS value in dB.
 }
 \description{
-Bypass R6 method dispatch for maximum performance in CPPS calculation.
-This function is 1.5-2x faster than the standard PowerCepstrogram$get_cpps()
-method but requires manual parameter management.
+Computes the smoothed cepstral peak prominence (CPPS, in dB) of a `Sound` —
+a widely used acoustic measure of voice quality/breathiness. It performs the
+whole PowerCepstrogram-then-CPPS pipeline in a single call and returns the
+same value as `sound$to_powercepstrogram(...)$get_cpps(...)` with matching
+parameters, but faster (roughly 1.5-2x), which matters when analysing many
+files. You supply the analysis parameters directly and are responsible for
+passing valid values (see the arguments below).
 }
 \details{
-**ADVANCED API - Use with caution!**
-
-This function bypasses R6 method dispatch by calling internal C++ functions
-directly. It's 1.5-2x faster than the standard API but:
-- Direct pointer access (must ensure valid Sound object)
-- Less forgiving of invalid parameters
-- No automatic validation beyond basic type checking
-
-**When to use:**
-- Batch processing >100 files
-- Performance-critical applications (e.g., AVQI v3.01)
-- Real-time analysis scenarios
-
-**Standard API (slower, user-friendly):**
-```r
-pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-cpps <- pcep$get_cpps(subtract_tilt = FALSE, ...)
-```
-
-**Fast API (this function):**
-```r
-cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE, ...)
-```
+Use this when analysing many files or in performance-critical pipelines
+(e.g. AVQI). For interactive or one-off use, the object API
+(`sound$to_powercepstrogram(...)$get_cpps(...)`) is equivalent and validates
+its inputs more forgivingly; this function trades that leniency for speed, so
+pass well-formed parameters.
 }
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# Standard API
-cpps_standard <- {
-  pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-  pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
-                quefrency_averaging_window = 0.0005, pitch_floor = 60,
-                pitch_ceiling = 333.3)
-}
+# One-call CPPS with the default parameters
+cpps <- calculate_cpps_fast(sound)
 
-# Fast API (1.5-2x faster, same defaults)
-cpps_fast <- calculate_cpps_fast(sound)
-
-# Results should be identical
-all.equal(cpps_standard, cpps_fast)
+# Equivalent object-API result (same value, slower)
+pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
+cpps_obj <- pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
+                          quefrency_averaging_window = 0.0005,
+                          pitch_floor = 60, pitch_ceiling = 333.3)
+all.equal(cpps, cpps_obj)
 }
 
 }

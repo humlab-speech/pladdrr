@@ -10,7 +10,13 @@
 #' @keywords internal
 get_module <- function(name) {
   if (!exists(name, envir = .module_cache)) {
-    .module_cache[[name]] <- Rcpp::Module(name, PACKAGE = "pladdrr")
+    .module_cache[[name]] <- tryCatch(
+      Rcpp::Module(name, PACKAGE = "pladdrr"),
+      error = function(e) {
+        stop("pladdrr: failed to load Rcpp module '", name, "' - ",
+             conditionMessage(e), call. = FALSE)
+      }
+    )
   }
   .module_cache[[name]]
 }
@@ -31,27 +37,8 @@ get_module <- function(name) {
     error = function(e) NULL
   )
   
-  # Preload all modules into cache
-  modules <- c(
-    "pitch_module", "sound_module", "formant_module",
-    "intensity_module", "spectrum_module", "spectrogram_module",
-    "harmonicity_module", "pitchtier_module", "intensitytier_module",
-    "durationtier_module", "amplitudetier_module", "pointprocess_module",
-    "ltas_module", "matrix_module", "cepstrum_module",
-    "powercepstrum_module", "cochleagram_module", "excitation_module",
-    "electroglottogram_module", "formantgrid_module", "formanttier_module",
-    "vocaltract_module", "longsound_module", "lpc_module",
-    "table_module", "textgrid_module", "manipulation_module",
-    "polygon_module", "formantpath_module", "complexspectrogram_module",
-    "klattgrid_module", "sound_operations_module", "interpreter_module",
-    "mfcc_module", "pca_module", "formantmodeler_module",
-    "discriminant_module", "dtw_module"
-  )
-  
-  for (mod in modules) {
-    tryCatch(
-      get_module(mod),
-      error = function(e) warning("Failed to load module: ", mod, " - ", e$message)
-    )
-  }
+  # Modules load lazily on first use via get_module() (which caches them).
+  # No eager preload: it slowed every library(pladdrr) — including each PSOCK
+  # batch worker that runs library(pladdrr) — by loading all ~38 modules
+  # whether or not they were needed.
 }

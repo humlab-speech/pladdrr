@@ -32,6 +32,7 @@ one or more tiers, where each tier can be:
 - `$get_label_at_time(tier, time)` - Get label at specific time
 - `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
 - `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
+- `$extract_intervals_where(sound, tier, criterion, text, preserve_times)` - Extract Sound intervals matching a text criterion
 - `$set_interval_text(tier, n, text)` - Set label of interval n
 - `$insert_boundary(tier, time)` - Insert new boundary
 - `$remove_boundary(tier, time)` - Remove boundary

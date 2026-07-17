@@ -1219,6 +1219,32 @@ List get_voice_quality_ultra_cpp(
 // Phase 4: calculate_cpps_ultra - Optimized CPPS Calculation (AVQI/VQ)
 // =============================================================================
 
+// Split [1, numberOfElements] into `nthreads` contiguous 1-based ranges and run
+// `worker(first, last)` (inclusive) on each, spawning nthreads-1 helper threads
+// and running the last range on the calling thread. nthreads <= 1 runs inline.
+template <typename Worker>
+static void parallel_for_range(integer numberOfElements, integer nthreads, Worker&& worker) {
+    if (nthreads <= 1) {
+        worker(1, numberOfElements);
+        return;
+    }
+    std::vector<std::thread> threads;
+    threads.reserve((size_t)(nthreads - 1));
+    const integer per = numberOfElements / nthreads;
+    const integer extra = numberOfElements % nthreads;
+    integer start = 1;
+    for (integer t = 0; t < nthreads; t++) {
+        const integer end = start + per - 1 + (t < extra ? 1 : 0);
+        if (t < nthreads - 1) {
+            threads.emplace_back(worker, start, end);
+        } else {
+            worker(start, end);   // last range on the calling thread
+        }
+        start = end + 1;
+    }
+    for (auto& th : threads) th.join();
+}
+
 // Multi-threaded PowerCepstrogram smooth using Praat's exact Sampled_getMean.
 // Pass 1 (time): parallelize over quefrency rows (each row is independent)
 // Pass 2 (quefrency): parallelize over time columns (each column is independent)
@@ -1256,21 +1282,7 @@ static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
             }
         };
 
-        if (nthreads <= 1) {
-            rowWorker(1, ny);
-        } else {
-            std::vector<std::thread> threads;
-            threads.reserve((size_t)nthreads);
-            integer rows_per = ny / nthreads;
-            integer extra_rows = ny % nthreads;
-            integer start = 1;
-            for (integer t = 0; t < nthreads; t++) {
-                integer end = start + rows_per - 1 + (t < extra_rows ? 1 : 0);
-                threads.emplace_back(rowWorker, start, end);
-                start = end + 1;
-            }
-            for (auto& th : threads) th.join();
-        }
+        parallel_for_range(ny, nthreads, rowWorker);
     }
 
     // Pass 2: average across quefrencies — parallelize over time columns
@@ -1288,21 +1300,7 @@ static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
             }
         };
 
-        if (nthreads <= 1) {
-            colWorker(1, nx);
-        } else {
-            std::vector<std::thread> threads;
-            threads.reserve((size_t)nthreads);
-            integer cols_per = nx / nthreads;
-            integer extra_cols = nx % nthreads;
-            integer start = 1;
-            for (integer t = 0; t < nthreads; t++) {
-                integer end = start + cols_per - 1 + (t < extra_cols ? 1 : 0);
-                threads.emplace_back(colWorker, start, end);
-                start = end + 1;
-            }
-            for (auto& th : threads) th.join();
-        }
+        parallel_for_range(nx, nthreads, colWorker);
     }
 
     return thee;

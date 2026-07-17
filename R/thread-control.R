@@ -4,9 +4,13 @@
 #'
 #' Praat's compute kernels (pitch, formant, spectrogram, CPPS, ...) run
 #' multi-threaded by default, using all available processor cores. Use this
-#' function to cap or disable threading (e.g. inside a parallel `mclapply()`
-#' pipeline where each worker should stay single-threaded), or to restore the
-#' default.
+#' function to cap or disable threading, or to restore the default.
+#'
+#' The package's own batch helpers (`analyze_files_parallel()`,
+#' `process_sounds_parallel()`, `batch_process()`) already cap each
+#' worker's threads automatically, so you only need this when running your own
+#' parallel loop (e.g. a hand-written `mclapply()` where each worker should stay
+#' single-threaded).
 #'
 #' Threading never changes results: threads partition analysis frames and each
 #' frame is computed exactly as in single-threaded mode.

@@ -4,7 +4,13 @@
 \alias{analyze_files_parallel}
 \title{Process Audio Files in Parallel}
 \usage{
-analyze_files_parallel(files, analysis_func, n_cores = NULL, ...)
+analyze_files_parallel(
+  files,
+  analysis_func,
+  n_cores = NULL,
+  threads_per_worker = NULL,
+  ...
+)
 }
 \arguments{
 \item{files}{Character vector. Paths to audio files}
@@ -13,6 +19,11 @@ analyze_files_parallel(files, analysis_func, n_cores = NULL, ...)
 Should accept a Sound object and return results.}
 
 \item{n_cores}{Integer. Number of CPU cores to use (default: parallel::detectCores() - 1)}
+
+\item{threads_per_worker}{Integer or `NULL`. C++ threads each worker may use
+for Praat kernels. `NULL` (default) auto-divides cores among workers so
+total concurrency stays near the machine's core count, preventing
+oversubscription. Set `1` to force strictly single-threaded workers.}
 
 \item{...}{Additional arguments passed to analysis_func}
 }
