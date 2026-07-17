@@ -1,3 +1,30 @@
+# pladdrr 4.9.4 (2026-07-17)
+
+## Performance & power
+
+- Batch helpers (`analyze_files_parallel()`, `process_sounds_parallel()`,
+  `batch_process()`) now cap each parallel worker's C++ thread count so N R
+  workers running all-core Praat kernels no longer oversubscribe the machine
+  (~N^2 threads on N cores). Total concurrency stays near the core count.
+  `analyze_files_parallel()` / `process_sounds_parallel()` gain a
+  `threads_per_worker` argument (`NULL` = auto-divide, `1` = single-threaded
+  workers). Numeric output is unchanged.
+- `PowerCepstrogram_smooth_fast` now honours the `pladdrr_threads()` cap
+  instead of always spawning across all cores (`std::thread::hardware_concurrency()`).
+- Modules now load lazily on first use instead of all ~38 being eagerly loaded
+  in `.onLoad` on every `library(pladdrr)` (including in each batch worker).
+
+## Maintainability
+
+- Extracted a shared `parallel_for_range()` helper in `batch_queries.cpp`,
+  removing duplicated thread partition/join logic across the two smooth passes.
+
+## Documentation
+
+- Rewrote `calculate_cpps_fast()` docs to focus on usage and expected output;
+  fixed a dead example path. Noted automatic worker-thread capping in
+  `pladdrr_threads()`.
+
 # pladdrr 4.8.35 (2026-05-06)
 
 ## Bug Fixes
