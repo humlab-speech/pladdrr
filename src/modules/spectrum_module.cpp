@@ -20,6 +20,7 @@
 // Rcpp Module exposing Spectrum functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Spectrum.h"
@@ -254,11 +255,7 @@ public:
         try {
             autoSound result = Spectrum_to_Sound(ptr.get());
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Sound");
@@ -270,11 +267,7 @@ public:
         try {
             autoLtas result = Spectrum_to_Ltas(ptr.get(), bandwidth);
             Ltas raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structLtas* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structLtas>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Ltas");

@@ -20,6 +20,7 @@
 // Rcpp Module exposing Sound functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -42,12 +43,6 @@
 #include "praat.github.io/fon/Sound_to_PointProcess.h"
 
 using namespace Rcpp;
-
-// Custom deleter for Praat objects
-template<typename T>
-void praat_deleter(T* obj) {
-    if (obj) forget(obj);
-}
 
 // =============================================================================
 // RSound Class - Wraps Sound XPtr with methods
@@ -263,11 +258,7 @@ public:
                 pitch_ceiling
             );
             Pitch raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPitch* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPitch>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Pitch from Sound");
@@ -292,11 +283,7 @@ public:
                 pre_emphasis_from
             );
             Formant raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structFormant* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structFormant>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             std::string error_msg = "Failed to create Formant from Sound: ";
             conststring32 praat_error = Melder_getError();
@@ -318,11 +305,7 @@ public:
                 subtract_mean
             );
             Intensity raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structIntensity* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structIntensity>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Intensity from Sound");
@@ -340,11 +323,7 @@ public:
                 periods_per_window
             );
             Harmonicity raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structHarmonicity* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structHarmonicity>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Harmonicity from Sound");
@@ -356,11 +335,7 @@ public:
         try {
             autoSpectrum result = Sound_to_Spectrum(ptr.get(), fast);
             Spectrum raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSpectrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSpectrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Spectrum from Sound");
@@ -387,13 +362,7 @@ public:
                 8.0   // maximumFreqOversampling
             );
             Spectrogram raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSpectrogram* thing) {
-                if (thing != nullptr) {
-                    forget(thing);
-                }
-            };
-            return XPtr<structSpectrogram>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Spectrogram from Sound");
@@ -409,11 +378,7 @@ public:
                 maximum_pitch
             );
             PointProcess raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create PointProcess from Sound");
@@ -432,11 +397,7 @@ public:
         try {
             autoSound result = Sound_extractChannel(ptr.get(), channel);
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract channel");
@@ -455,11 +416,7 @@ public:
                 preserve_times
             );
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract part");
@@ -510,11 +467,7 @@ public:
             }
 
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to apply window function");
@@ -551,11 +504,7 @@ public:
             }
 
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to apply transform function");
@@ -877,21 +826,13 @@ public:
                 // Create minimal silent sound
                 autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
                 Sound raw = empty.releaseToAmbiguousOwner();
-                // Use proper deleter for Praat objects (calls forget() instead of delete)
-                auto deleter = [](structSound* thing) {
-                    if (thing != nullptr) forget(thing);
-                };
-                return XPtr<structSound>(raw, deleter);
+                return make_praat_xptr(raw);
             }
 
             // Concatenate all passing windows
             autoSound result = Sounds_concatenate(list.get(), overlap_time);
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
 
         } catch (MelderError) {
             Melder_clearError();
@@ -977,20 +918,12 @@ public:
                 // Create minimal silent sound
                 autoSound empty = Sound_create(ptr->ny, 0.0, 0.001, 1, ptr->dx, 0.0005);
                 Sound raw = empty.releaseToAmbiguousOwner();
-                // Use proper deleter for Praat objects (calls forget() instead of delete)
-                auto deleter = [](structSound* thing) {
-                    if (thing != nullptr) forget(thing);
-                };
-                return XPtr<structSound>(raw, deleter);
+                return make_praat_xptr(raw);
             }
 
             autoSound result = Sounds_concatenate(list.get(), overlap_time);
             Sound raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
 
         } catch (MelderError) {
             Melder_clearError();

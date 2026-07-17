@@ -22,6 +22,7 @@
 // Table: generic tabular data structure with rows and columns
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "praat.github.io/stat/Table.h"
 #include "praat.github.io/stat/TableOfReal.h"
@@ -311,11 +312,7 @@ static XPtr<structTable> Module_Table_create(int n_rows, int n_columns) {
     try {
         autoTable table = Table_create(n_rows, n_columns);
         structTable* raw = table.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structTable* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structTable>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Table");
@@ -333,11 +330,7 @@ static XPtr<structTable> Module_Table_create_with_column_names(
             Table_renameColumn_e(table.get(), i+1, name);
         }
         structTable* raw = table.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structTable* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structTable>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Table with column names");
@@ -385,11 +378,7 @@ static XPtr<structTable> Module_Table_from_data_frame(DataFrame df) {
         }
 
         structTable* raw = table.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structTable* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structTable>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Table from data.frame");

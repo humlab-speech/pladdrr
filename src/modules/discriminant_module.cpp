@@ -26,6 +26,7 @@
 // - Phoneme recognition
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 
 // Praat headers
@@ -334,11 +335,7 @@ static XPtr<structDiscriminant> Module_Discriminant_from_labeled_matrix(
         // Create Discriminant from TableOfReal
         autoDiscriminant discriminant = TableOfReal_to_Discriminant(table.get());
         structDiscriminant* raw = discriminant.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDiscriminant* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDiscriminant>(raw, deleter);
+        return make_praat_xptr(raw);
 
     } catch (MelderError) {
         Melder_clearError();
@@ -355,11 +352,7 @@ static XPtr<structDiscriminant> Module_TableOfReal_to_Discriminant(
     try {
         autoDiscriminant discriminant = TableOfReal_to_Discriminant(table.get());
         structDiscriminant* raw = discriminant.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDiscriminant* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDiscriminant>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Discriminant from TableOfReal");

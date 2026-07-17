@@ -23,6 +23,7 @@
 // LFCC: Linear Frequency Cepstral Coefficients - alternative representation
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -163,11 +164,7 @@ public:
         try {
             autoMatrix matrix = CC_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert MFCC to Matrix");
@@ -350,11 +347,7 @@ public:
         try {
             autoLPC lpc = LFCC_to_LPC(ptr.get(), num_coefficients);
             structLPC* raw = lpc.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structLPC* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structLPC>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert LFCC to LPC");
@@ -367,11 +360,7 @@ public:
         try {
             autoMatrix matrix = CC_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert LFCC to Matrix");
@@ -476,11 +465,7 @@ static XPtr<structMFCC> Module_Sound_to_MFCC(
             df_mel
         );
         structMFCC* raw = mfcc.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structMFCC* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structMFCC>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute MFCC from Sound");
@@ -496,11 +481,7 @@ static XPtr<structLFCC> Module_LPC_to_LFCC(
     try {
         autoLFCC lfcc = LPC_to_LFCC(lpc.get(), num_coefficients);
         structLFCC* raw = lfcc.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structLFCC* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structLFCC>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to convert LPC to LFCC");

@@ -23,6 +23,7 @@
 // speaker normalization, and other multivariate acoustic data.
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -249,11 +250,7 @@ static XPtr<structPCA> Module_Matrix_to_PCA_byRows(XPtr<structMatrix> matrix) {
     try {
         autoPCA pca = Matrix_to_PCA_byRows(matrix.get());
         structPCA* raw = pca.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structPCA* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structPCA>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute PCA from Matrix");
@@ -280,11 +277,7 @@ static XPtr<structPCA> Module_PCA_from_matrix(NumericMatrix data) {
         // Compute PCA
         autoPCA pca = Matrix_to_PCA_byRows(matrix.get());
         structPCA* raw = pca.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structPCA* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structPCA>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to compute PCA from data matrix");

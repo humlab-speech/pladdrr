@@ -20,6 +20,7 @@
 // Rcpp Module exposing AmplitudeTier functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/AmplitudeTier.h"
@@ -128,11 +129,7 @@ public:
         try {
             autoIntensityTier result = AmplitudeTier_to_IntensityTier(ptr.get(), threshold);
             IntensityTier raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structIntensityTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structIntensityTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to IntensityTier");
@@ -145,11 +142,7 @@ public:
         try {
             autoPointProcess result = AnyTier_downto_PointProcess(ptr.get()->asConstAnyTier());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to PointProcess");

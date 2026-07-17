@@ -20,6 +20,7 @@
 // Rcpp Module exposing PointProcess functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/PointProcess.h"
@@ -156,11 +157,7 @@ public:
         try {
             autoPointProcess result = PointProcesses_union(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute union");
@@ -174,11 +171,7 @@ public:
         try {
             autoPointProcess result = PointProcesses_intersection(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute intersection");
@@ -192,11 +185,7 @@ public:
         try {
             autoPointProcess result = PointProcesses_difference(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute difference");
@@ -208,11 +197,7 @@ public:
         try {
             autoPitchTier result = PointProcess_upto_PitchTier(ptr.get(), frequency);
             PitchTier raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPitchTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPitchTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to PitchTier");
@@ -224,11 +209,7 @@ public:
         try {
             autoIntensityTier result = PointProcess_upto_IntensityTier(ptr.get(), intensity);
             IntensityTier raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structIntensityTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structIntensityTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to IntensityTier");

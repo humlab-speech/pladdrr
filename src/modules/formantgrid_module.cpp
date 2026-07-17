@@ -22,6 +22,7 @@
 // FormantGrid: time-varying formant trajectories for synthesis/modification
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/FormantGrid.h"
@@ -124,11 +125,7 @@ public:
         try {
             autoFormant formant = FormantGrid_to_Formant(ptr.get(), time_step, intensity);
             structFormant* raw = formant.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structFormant* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structFormant>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert FormantGrid to Formant");
@@ -153,11 +150,7 @@ public:
                 power1, power2
             );
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to synthesize sound from FormantGrid");
@@ -171,11 +164,7 @@ public:
         try {
             autoSound filtered = Sound_FormantGrid_filter(sound.get(), ptr.get());
             structSound* raw = filtered.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to filter sound with FormantGrid");
@@ -188,11 +177,7 @@ public:
         try {
             autoSound filtered = Sound_FormantGrid_filter_noscale(sound.get(), ptr.get());
             structSound* raw = filtered.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to filter sound with FormantGrid (no scale)");
@@ -266,11 +251,7 @@ static XPtr<structFormantGrid> Module_FormantGrid_create(
             initial_first_bandwidth, initial_bandwidth_spacing
         );
         structFormantGrid* raw = grid.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structFormantGrid* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structFormantGrid>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create FormantGrid");
@@ -282,11 +263,7 @@ static XPtr<structFormantGrid> Module_FormantGrid_create_empty(
     try {
         autoFormantGrid grid = FormantGrid_createEmpty(tmin, tmax, number_of_formants);
         structFormantGrid* raw = grid.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structFormantGrid* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structFormantGrid>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create empty FormantGrid");
@@ -298,11 +275,7 @@ static XPtr<structFormantGrid> Module_Formant_to_FormantGrid(XPtr<structFormant>
     try {
         autoFormantGrid grid = Formant_downto_FormantGrid(formant.get());
         structFormantGrid* raw = grid.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structFormantGrid* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structFormantGrid>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to convert Formant to FormantGrid");

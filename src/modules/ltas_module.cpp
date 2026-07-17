@@ -20,6 +20,7 @@
 // Rcpp Module exposing Ltas (Long-Term Average Spectrum) functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Ltas.h"
@@ -256,11 +257,7 @@ public:
         try {
             autoLtas result = Ltas_computeTrendLine(ptr.get(), fmin, fmax);
             Ltas raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structLtas* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structLtas>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute trend line");
@@ -272,11 +269,7 @@ public:
         try {
             autoLtas result = Ltas_subtractTrendLine(ptr.get(), fmin, fmax);
             Ltas raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structLtas* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structLtas>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to subtract trend line");
@@ -288,11 +281,7 @@ public:
         try {
             autoMatrix result = Ltas_to_Matrix(ptr.get());
             structMatrix* raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Matrix");

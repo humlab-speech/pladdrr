@@ -20,6 +20,7 @@
 // Rcpp Module exposing VocalTract functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "praat.github.io/fon/VocalTract.h"
 #include "praat.github.io/fon/VocalTract_to_Spectrum.h"
@@ -108,11 +109,7 @@ public:
                 internal_damping
             );
             Spectrum raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSpectrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSpectrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert VocalTract to Spectrum");
@@ -125,11 +122,7 @@ public:
         try {
             autoMatrix result = VocalTract_to_Matrix(ptr.get());
             structMatrix* raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert VocalTract to Matrix");

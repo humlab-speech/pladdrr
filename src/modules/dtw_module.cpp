@@ -25,6 +25,7 @@
 // - Time mapping between signals
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -187,11 +188,7 @@ public:
         try {
             autoDTW swapped = DTW_swapAxes(ptr.get());
             structDTW* raw = swapped.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structDTW* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structDTW>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to swap DTW axes");
@@ -203,11 +200,7 @@ public:
         try {
             autoPolygon poly = DTW_to_Polygon(ptr.get(), band, slope);
             structPolygon* raw = poly.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPolygon* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPolygon>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Polygon from DTW");
@@ -219,11 +212,7 @@ public:
         try {
             autoMatrix mat = DTW_to_Matrix_distances(ptr.get());
             structMatrix* raw = mat.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert DTW to distance Matrix");
@@ -235,11 +224,7 @@ public:
         try {
             autoMatrix mat = DTW_to_Matrix_cumulativeDistances(ptr.get(), band, slope);
             structMatrix* raw = mat.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert DTW to cumulative distance Matrix");
@@ -251,11 +236,7 @@ public:
         try {
             autoDurationTier tier = DTW_to_DurationTier(ptr.get());
             structDurationTier* raw = tier.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structDurationTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structDurationTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert DTW to DurationTier");
@@ -269,11 +250,7 @@ public:
         try {
             autoTextGrid warped = DTW_TextGrid_to_TextGrid(ptr.get(), textgrid.get(), precision);
             structTextGrid* raw = warped.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structTextGrid* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structTextGrid>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to warp TextGrid using DTW");
@@ -352,11 +329,7 @@ static XPtr<structDTW> Module_Sounds_to_DTW(
             analysis_width, dt, band, slope
         );
         structDTW* raw = dtw.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDTW* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDTW>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create DTW from Sounds");
@@ -385,11 +358,7 @@ static XPtr<structDTW> Module_MFCCs_to_DTW(
             regression_window_length
         );
         structDTW* raw = dtw.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDTW* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDTW>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create DTW from MFCCs");
@@ -413,11 +382,7 @@ static XPtr<structDTW> Module_Spectrograms_to_DTW(
             match_start, match_end, slope, metric
         );
         structDTW* raw = dtw.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDTW* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDTW>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create DTW from Spectrograms");
@@ -443,11 +408,7 @@ static XPtr<structDTW> Module_Pitches_to_DTW(
             match_start, match_end, slope
         );
         structDTW* raw = dtw.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structDTW* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structDTW>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create DTW from Pitches");

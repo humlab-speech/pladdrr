@@ -22,6 +22,7 @@
 // Electroglottogram (EGG): measurement of vocal fold contact area during phonation
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/sensors/Electroglottogram.h"
@@ -87,11 +88,7 @@ public:
                 ptr.get(), lowpass_freq, smoothing, peak_amplitude
             );
             structSound* raw = degg.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to calculate EGG derivative");
@@ -103,11 +100,7 @@ public:
         try {
             autoSound degg = Electroglottogram_firstCentralDifference(ptr.get(), peak_amplitude);
             structSound* raw = degg.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to calculate first central difference");
@@ -122,11 +115,7 @@ public:
                 ptr.get(), from_freq, smoothing
             );
             structElectroglottogram* raw = filtered.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structElectroglottogram* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structElectroglottogram>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to high-pass filter Electroglottogram");
@@ -143,11 +132,7 @@ public:
                 ptr.get(), pitch_floor, pitch_ceiling, closing_threshold, peak_threshold
             );
             structTextGrid* raw = tg.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structTextGrid* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structTextGrid>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract closed glottis TextGrid");
@@ -164,14 +149,10 @@ public:
                 ptr.get(), pitch_floor, pitch_ceiling, closing_threshold,
                 &peaks, &valleys
             );
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structAmplitudeTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
             return List::create(
-                Named("levels") = XPtr<structAmplitudeTier>(levels.releaseToAmbiguousOwner(), deleter),
-                Named("peaks") = XPtr<structAmplitudeTier>(peaks.releaseToAmbiguousOwner(), deleter),
-                Named("valleys") = XPtr<structAmplitudeTier>(valleys.releaseToAmbiguousOwner(), deleter)
+                Named("levels") = make_praat_xptr(levels.releaseToAmbiguousOwner()),
+                Named("peaks") = make_praat_xptr(peaks.releaseToAmbiguousOwner()),
+                Named("valleys") = make_praat_xptr(valleys.releaseToAmbiguousOwner())
             );
         } catch (MelderError) {
             Melder_clearError();
@@ -185,11 +166,7 @@ public:
         try {
             autoSound sound = Electroglottogram_to_Sound(ptr.get());
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert Electroglottogram to Sound");
@@ -250,11 +227,7 @@ XPtr<structElectroglottogram> electroglottogram_create(
     try {
         autoElectroglottogram egg = Electroglottogram_create(xmin, xmax, nx, dx, x1);
         structElectroglottogram* raw = egg.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structElectroglottogram* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structElectroglottogram>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Electroglottogram");
@@ -269,11 +242,7 @@ XPtr<structElectroglottogram> sound_extract_electroglottogram(
             sound.get(), channel, invert
         );
         structElectroglottogram* raw = egg.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structElectroglottogram* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structElectroglottogram>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to extract Electroglottogram from Sound");

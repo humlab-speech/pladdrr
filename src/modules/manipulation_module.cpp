@@ -22,6 +22,7 @@
 // Manipulation: pitch/duration modification via PSOLA
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "praat.github.io/fon/Manipulation.h"
 #include "praat.github.io/fon/PitchTier.h"
@@ -74,11 +75,7 @@ public:
         try {
             autoPitchTier tier = Data_copy(ptr->pitch.get());
             structPitchTier* raw = tier.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPitchTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPitchTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract PitchTier");
@@ -91,11 +88,7 @@ public:
         try {
             autoDurationTier tier = Data_copy(ptr->duration.get());
             structDurationTier* raw = tier.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structDurationTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structDurationTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract DurationTier");
@@ -108,11 +101,7 @@ public:
         try {
             autoPointProcess pp = Data_copy(ptr->pulses.get());
             structPointProcess* raw = pp.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPointProcess* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPointProcess>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract pulses");
@@ -125,11 +114,7 @@ public:
         try {
             autoSound sound = Data_copy(ptr->sound.get());
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract original sound");
@@ -179,11 +164,7 @@ public:
         try {
             autoSound sound = Manipulation_to_Sound(ptr.get(), Manipulation_OVERLAPADD);
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to resynthesize sound (overlap-add)");
@@ -195,11 +176,7 @@ public:
         try {
             autoSound sound = Manipulation_to_Sound(ptr.get(), Manipulation_PULSES);
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to resynthesize sound (pulses)");
@@ -211,11 +188,7 @@ public:
         try {
             autoSound sound = Manipulation_to_Sound(ptr.get(), Manipulation_PULSES_HUM);
             structSound* raw = sound.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to resynthesize sound (pulses hum)");
@@ -258,11 +231,7 @@ static XPtr<structManipulation> Module_Sound_to_Manipulation(
             sound.get(), time_step, pitch_floor, pitch_ceiling
         );
         structManipulation* raw = manip.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structManipulation* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structManipulation>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Manipulation from Sound");
@@ -274,11 +243,7 @@ static XPtr<structManipulation> Module_Manipulation_create(
     try {
         autoManipulation manip = Manipulation_create(tmin, tmax);
         structManipulation* raw = manip.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structManipulation* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structManipulation>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create Manipulation");

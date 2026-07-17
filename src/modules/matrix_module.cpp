@@ -20,6 +20,7 @@
 // Rcpp Module exposing Praat Matrix functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Matrix.h"
@@ -168,11 +169,7 @@ public:
         try {
             autoMatrix matrix = Matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Matrix");
@@ -183,11 +180,7 @@ public:
         try {
             autoMatrix matrix = Matrix_createSimple(numberOfRows, numberOfColumns);
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create simple Matrix");
@@ -205,11 +198,7 @@ public:
                 }
             }
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to create Matrix from R matrix");

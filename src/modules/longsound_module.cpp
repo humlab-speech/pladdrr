@@ -20,6 +20,7 @@
 // Rcpp Module exposing LongSound functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "praat.github.io/fon/LongSound.h"
 #include "praat.github.io/fon/Sound.h"
@@ -70,7 +71,7 @@ public:
 
     std::string get_file_path() {
         VALIDATE_PTR(ptr, LongSound);
-        if (!ptr->file.path || !ptr->file.path[0]) {
+        if (!ptr->file.path[0]) {   // path is a fixed-size array; test emptiness via first char
             return "";
         }
         return Melder_peek32to8(ptr->file.path);
@@ -82,11 +83,7 @@ public:
         try {
             autoSound result = LongSound_extractPart(ptr.get(), tmin, tmax, preserve_times);
             structSound* raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSound* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSound>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to extract part from LongSound");

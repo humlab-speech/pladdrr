@@ -656,14 +656,8 @@ SEXP praat_interpreter_get_object(std::string name, std::string expected_type) {
         // Note: Daata is already a pointer type (structDaata*)
         structDaata* rawPtr = copy.releaseToAmbiguousOwner();
 
-        auto deleter = [](structDaata* thing) {
-            if (thing != nullptr) {
-                forget(thing);
-            }
-        };
-
         // Add class name as attribute for R to dispatch correctly
-        Rcpp::XPtr<structDaata> xptr(rawPtr, deleter);
+        Rcpp::XPtr<structDaata> xptr = make_praat_xptr(rawPtr);
         xptr.attr("praat_class") = Melder_peek32to8(actualClass);
 
         return xptr;
@@ -699,13 +693,7 @@ SEXP praat_interpreter_get_object_by_id(int id) {
         autoDaata copy = _Data_copy(original);
         structDaata* rawPtr = copy.releaseToAmbiguousOwner();
 
-        auto deleter = [](structDaata* thing) {
-            if (thing != nullptr) {
-                forget(thing);
-            }
-        };
-
-        Rcpp::XPtr<structDaata> xptr(rawPtr, deleter);
+        Rcpp::XPtr<structDaata> xptr = make_praat_xptr(rawPtr);
         xptr.attr("praat_class") = Melder_peek32to8(actualClass);
 
         return xptr;

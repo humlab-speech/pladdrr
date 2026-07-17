@@ -23,6 +23,7 @@
 // PowerCepstrogram: time-varying cepstral representation for CPPS
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/LPC/PowerCepstrum.h"
@@ -175,11 +176,7 @@ public:
         try {
             autoPowerCepstrum smoothed = PowerCepstrum_smooth(ptr.get(), averaging_window, nsamples);
             structPowerCepstrum* raw = smoothed.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPowerCepstrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPowerCepstrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to smooth PowerCepstrum");
@@ -196,11 +193,7 @@ public:
                 ptr.get(), qstart_fit, qend_fit, trend, fit
             );
             structPowerCepstrum* raw = detrended.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPowerCepstrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPowerCepstrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to subtract trend");
@@ -225,11 +218,7 @@ public:
         try {
             autoSpectrum spectrum = PowerCepstrum_to_Spectrum(ptr.get(), random_phases);
             structSpectrum* raw = spectrum.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSpectrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structSpectrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrum to Spectrum");
@@ -241,11 +230,7 @@ public:
         try {
             autoMatrix matrix = PowerCepstrum_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrum to Matrix");
@@ -374,11 +359,7 @@ public:
         try {
             autoPowerCepstrum slice = PowerCepstrogram_to_PowerCepstrum_slice(ptr.get(), time);
             structPowerCepstrum* raw = slice.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPowerCepstrum* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPowerCepstrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to get PowerCepstrum slice");
@@ -394,11 +375,7 @@ public:
                 ptr.get(), time_averaging_window, quefrency_averaging_window
             );
             structPowerCepstrogram* raw = smoothed.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structPowerCepstrogram* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structPowerCepstrogram>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to smooth PowerCepstrogram");
@@ -411,11 +388,7 @@ public:
         try {
             autoMatrix matrix = PowerCepstrogram_to_Matrix(ptr.get());
             structMatrix* raw = matrix.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structMatrix* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structMatrix>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert PowerCepstrogram to Matrix");
@@ -456,11 +429,7 @@ XPtr<structPowerCepstrum> spectrum_to_powercepstrum(XPtr<structSpectrum> spectru
     try {
         autoPowerCepstrum cepstrum = Spectrum_to_PowerCepstrum(spectrum.get());
         structPowerCepstrum* raw = cepstrum.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structPowerCepstrum* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structPowerCepstrum>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to create PowerCepstrum from Spectrum");
@@ -497,11 +466,7 @@ XPtr<structPowerCepstrogram> sound_to_powercepstrogram(
             sound.get(), pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency
         );
         structPowerCepstrogram* raw = cepstrogram.releaseToAmbiguousOwner();
-        // Use proper deleter for Praat objects (calls forget() instead of delete)
-        auto deleter = [](structPowerCepstrogram* thing) {
-            if (thing != nullptr) forget(thing);
-        };
-        return XPtr<structPowerCepstrogram>(raw, deleter);
+        return make_praat_xptr(raw);
     } catch (MelderError) {
         autostring32 err = Melder_dup(Melder_getError());
         Melder_clearError();

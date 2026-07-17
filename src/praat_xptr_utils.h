@@ -29,20 +29,30 @@
 #include "sys/Thing.h"
 #include "melder/melder.h"
 
-// Create an XPtr from an auto* Praat object with proper finalizer
-// Uses a custom deleter that wraps Praat's forget() function
+// R finalizer that releases a Praat object with forget() (not C++ delete).
+// Registered explicitly via R_RegisterCFinalizerEx so there is no ambiguity
+// with Rcpp::XPtr's `bool set_delete_finalizer` overload — passing a lambda
+// there silently decays to `true` and installs Rcpp's default `delete`
+// finalizer instead of ours, which is wrong for Praat Thing objects.
+template<typename T>
+void praat_xptr_finalizer(SEXP xp) {
+    T* p = static_cast<T*>(R_ExternalPtrAddr(xp));
+    if (p != nullptr) forget(p);
+    R_ClearExternalPtr(xp);
+}
+
+// Wrap a raw Praat object pointer in an XPtr whose finalizer calls forget().
+template<typename T>
+Rcpp::XPtr<T> make_praat_xptr(T* raw) {
+    Rcpp::XPtr<T> xp(raw, false);   // false: do not install the default delete finalizer
+    R_RegisterCFinalizerEx(xp, praat_xptr_finalizer<T>, TRUE);
+    return xp;
+}
+
+// Create an XPtr from an auto* Praat object with a proper forget() finalizer.
 template<typename T, typename AutoType>
 Rcpp::XPtr<T> create_xptr_from_auto(AutoType& auto_obj) {
-    T* ptr = auto_obj.releaseToAmbiguousOwner();
-    
-    // Custom deleter as lambda that calls forget()
-    auto deleter = [](T* thing) {
-        if (thing != nullptr) {
-            forget(thing);
-        }
-    };
-    
-    return Rcpp::XPtr<T>(ptr, deleter);
+    return make_praat_xptr<T>(auto_obj.releaseToAmbiguousOwner());
 }
 
 // Validate XPtr before use

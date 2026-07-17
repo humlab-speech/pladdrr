@@ -20,6 +20,7 @@
 // Rcpp Module exposing Intensity functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Intensity.h"
@@ -190,11 +191,7 @@ public:
         try {
             autoIntensityTier result = Intensity_downto_IntensityTier(ptr.get());
             IntensityTier raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structIntensityTier* thing) {
-                if (thing != nullptr) forget(thing);
-            };
-            return XPtr<structIntensityTier>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to IntensityTier");

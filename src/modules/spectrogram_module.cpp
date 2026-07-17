@@ -20,6 +20,7 @@
 // Rcpp Module exposing Spectrogram functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "../praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Spectrogram.h"
@@ -218,13 +219,7 @@ public:
         try {
             autoSpectrum result = Spectrogram_to_Spectrum(ptr.get(), time);
             Spectrum raw = result.releaseToAmbiguousOwner();
-            // Use proper deleter for Praat objects (calls forget() instead of delete)
-            auto deleter = [](structSpectrum* thing) {
-                if (thing != nullptr) {
-                    forget(thing);
-                }
-            };
-            return XPtr<structSpectrum>(raw, deleter);
+            return make_praat_xptr(raw);
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to convert to Spectrum");
