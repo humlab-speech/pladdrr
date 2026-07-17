@@ -150,3 +150,7 @@ results/
 ^src/praat\.github\.io/external/.*\.(c|cc|cpp)$
 # Praat manual/documentation sources (compiled nowhere in this package)
 manual_.*\.cpp$
+# Submodule gitlink files and non-package top-level assets
+^src/pocketfft/\.git$
+^src/pffft/\.git$
+^pladdrr_logo\.svg$
