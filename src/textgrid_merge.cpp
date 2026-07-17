@@ -69,6 +69,7 @@ using namespace Rcpp;
 //'     Empty intervals added at edges if needed.
 //'
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.textgrid_merge)]]
 SEXP textgrid_merge(List textgrids, bool equalize_domains = false) {
     if (textgrids.size() == 0) {

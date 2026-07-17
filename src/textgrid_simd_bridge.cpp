@@ -584,7 +584,6 @@ DataFrame textgrid_interval_intensity_batch(
 //' features in a single pass.
 //'
 //' @param textgrid_xptr External pointer to TextGrid
-//' @param sound_xptr External pointer to Sound (optional, for additional analysis)
 //' @param pitch_xptr External pointer to Pitch (optional)
 //' @param formant_xptr External pointer to Formant (optional)
 //' @param intensity_xptr External pointer to Intensity (optional)

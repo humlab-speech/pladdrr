@@ -38,6 +38,7 @@ using namespace Rcpp;
 //' @param dx Section length in metres
 //' @return External pointer to VocalTract
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_create)]]
 SEXP vocaltract_create(int nx, double dx) {
     if (nx < 1) stop("nx must be >= 1");
@@ -58,6 +59,7 @@ SEXP vocaltract_create(int nx, double dx) {
 //' @param phone Phone name (a, e, i, o, u, y1, y2, y3, jery, p, t, k, x, pa, ta, ka, pi, ti, ki, pu, tu, ku)
 //' @return External pointer to VocalTract
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_create_from_phone)]]
 SEXP vocaltract_create_from_phone(std::string phone) {
     try {
@@ -80,6 +82,7 @@ SEXP vocaltract_create_from_phone(std::string phone) {
 //' @param xptr External pointer to VocalTract
 //' @return Total length in metres
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_get_length)]]
 double vocaltract_get_length(SEXP xptr) {
     XPtr<structVocalTract> vt(xptr);
@@ -91,6 +94,7 @@ double vocaltract_get_length(SEXP xptr) {
 //' @param xptr External pointer to VocalTract
 //' @return Number of sections
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_get_number_of_sections)]]
 int vocaltract_get_number_of_sections(SEXP xptr) {
     XPtr<structVocalTract> vt(xptr);
@@ -102,6 +106,7 @@ int vocaltract_get_number_of_sections(SEXP xptr) {
 //' @param xptr External pointer to VocalTract
 //' @return Section length in metres
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_get_section_length)]]
 double vocaltract_get_section_length(SEXP xptr) {
     XPtr<structVocalTract> vt(xptr);
@@ -114,6 +119,7 @@ double vocaltract_get_section_length(SEXP xptr) {
 //' @param section Section index (1-based)
 //' @return Area in square metres
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_get_area)]]
 double vocaltract_get_area(SEXP xptr, int section) {
     XPtr<structVocalTract> vt(xptr);
@@ -129,6 +135,7 @@ double vocaltract_get_area(SEXP xptr, int section) {
 //' @param section Section index (1-based)
 //' @param area Area in square metres
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_set_area)]]
 void vocaltract_set_area(SEXP xptr, int section, double area) {
     XPtr<structVocalTract> vt(xptr);
@@ -144,6 +151,7 @@ void vocaltract_set_area(SEXP xptr, int section, double area) {
 //' @param xptr External pointer to VocalTract
 //' @return Numeric vector of areas
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_get_areas)]]
 NumericVector vocaltract_get_areas(SEXP xptr) {
     XPtr<structVocalTract> vt(xptr);
@@ -160,6 +168,7 @@ NumericVector vocaltract_get_areas(SEXP xptr) {
 //' @param xptr External pointer to VocalTract
 //' @param areas Numeric vector of areas
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_set_areas)]]
 void vocaltract_set_areas(SEXP xptr, NumericVector areas) {
     XPtr<structVocalTract> vt(xptr);
@@ -188,6 +197,7 @@ void vocaltract_set_areas(SEXP xptr, NumericVector areas) {
 //' @param internal_damping Include internal damping
 //' @return External pointer to Spectrum
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_to_spectrum)]]
 SEXP vocaltract_to_spectrum(SEXP xptr, int number_of_frequencies,
                             double maximum_frequency, double glottal_damping,
@@ -213,6 +223,7 @@ SEXP vocaltract_to_spectrum(SEXP xptr, int number_of_frequencies,
 //' @param xptr External pointer to VocalTract
 //' @return External pointer to Matrix
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.vocaltract_to_matrix)]]
 SEXP vocaltract_to_matrix(SEXP xptr) {
     XPtr<structVocalTract> vt(xptr);

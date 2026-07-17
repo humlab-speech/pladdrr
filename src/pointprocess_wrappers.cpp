@@ -799,6 +799,7 @@ List pointprocess_voice_report(SEXP sound_xptr, SEXP pitch_xptr, SEXP pp_xptr,
 // =============================================================================
 
 //' PointProcess: To Sound (pulse train) (internal)
+//' @noRd
 // [[Rcpp::export(.pointprocess_to_sound_pulse_train)]]
 XPtr<structSound> pointprocess_to_sound_pulse_train(
     SEXP xptr,
@@ -824,6 +825,7 @@ XPtr<structSound> pointprocess_to_sound_pulse_train(
 }
 
 //' PointProcess: To Sound (hum) (internal)
+//' @noRd
 // [[Rcpp::export(.pointprocess_to_sound_hum)]]
 XPtr<structSound> pointprocess_to_sound_hum(SEXP xptr) {
     XPtr<structPointProcess> pp(xptr);

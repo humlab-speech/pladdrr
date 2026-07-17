@@ -558,6 +558,7 @@ double find_extremum_simd_bridge(
 //'
 //' @return List with SIMD availability and batch size
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.klattgrid_simd_info)]]
 Rcpp::List klattgrid_simd_info() {
 #ifdef HAVE_XSIMD

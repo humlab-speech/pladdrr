@@ -2,11 +2,11 @@
 
 **Direct Access to Praat C Functionality from R**
 
-[![Version](https://img.shields.io/badge/version-4.8.0-blue)]()
-[![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)]()
-[![Rcpp Modules](https://img.shields.io/badge/modules-35-blue)]()
-[![Coverage](https://img.shields.io/badge/Praat%20coverage-35%25-orange)]()
-[![SIMD](https://img.shields.io/badge/SIMD-enabled-orange)]()
+![Version](https://img.shields.io/badge/version-4.8.0-blue)
+![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)
+![Rcpp Modules](https://img.shields.io/badge/modules-35-blue)
+![Coverage](https://img.shields.io/badge/Praat%20coverage-35%25-orange)
+![SIMD](https://img.shields.io/badge/SIMD-enabled-orange)
 
 <!-- badges: start -->
 <!-- badges: end -->

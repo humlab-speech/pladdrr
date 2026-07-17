@@ -20,6 +20,8 @@ to_point_process_direct(
 
 \item{pitch_ceiling}{Numeric. Maximum pitch in Hz (default: 600)}
 
+\item{time_step}{Numeric. Time step in seconds (0 = auto)}
+
 \item{max_period_factor}{Numeric. Max period factor (default: 1.3)}
 
 \item{max_amplitude_factor}{Numeric. Max amplitude factor (default: 1.6)}

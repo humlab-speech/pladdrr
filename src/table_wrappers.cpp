@@ -371,6 +371,7 @@ NumericMatrix table_to_matrix(SEXP xptr) {
 }
 
 //' Table: Sort rows (internal)
+//' @noRd
 // [[Rcpp::export(.table_sort_rows)]]
 void table_sort_rows(SEXP xptr, Rcpp::CharacterVector columns) {
   try {
@@ -392,6 +393,7 @@ void table_sort_rows(SEXP xptr, Rcpp::CharacterVector columns) {
 }
 
 //' Table: Extract rows where column number (internal)
+//' @noRd
 // [[Rcpp::export(.table_extract_rows_where_column_number)]]
 SEXP table_extract_rows_where_column_number(
     SEXP xptr,
@@ -417,6 +419,7 @@ SEXP table_extract_rows_where_column_number(
 }
 
 //' Table: Extract rows where column string (internal)
+//' @noRd
 // [[Rcpp::export(.table_extract_rows_where_column_string)]]
 SEXP table_extract_rows_where_column_string(
     SEXP xptr,

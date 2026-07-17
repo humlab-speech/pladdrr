@@ -41,6 +41,8 @@ to_pitch_ac_direct(
 \item{octave_jump_cost}{Cost for octave jumps (default 0.35)}
 
 \item{voiced_unvoiced_cost}{Cost for voicing transitions (default 0.14)}
+
+\item{max_number_of_candidates}{Maximum number of pitch candidates per frame}
 }
 \value{
 External pointer to Pitch (NOT R6 object)

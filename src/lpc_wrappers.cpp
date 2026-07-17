@@ -272,6 +272,7 @@ Rcpp::XPtr<structMatrix> lpc_to_matrix(Rcpp::XPtr<structLPC> lpc) {
 //' @param sound_xptr External pointer to Sound object
 //' @return External pointer to new Sound object containing the voice source
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.lpc_sound_filter_inverse)]]
 Rcpp::XPtr<structSound> lpc_sound_filter_inverse(
     Rcpp::XPtr<structLPC> lpc_xptr,
@@ -294,6 +295,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse(
 //' @param sound_r6 R6 Sound object
 //' @return External pointer to new Sound object containing the voice source
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.lpc_sound_filter_inverse_r6)]]
 Rcpp::XPtr<structSound> lpc_sound_filter_inverse_r6(
     Rcpp::XPtr<structLPC> lpc_xptr,
@@ -332,6 +334,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_r6(
 //' @param time Time point (seconds) at which to extract LPC filter
 //' @return External pointer to new Sound object containing the voice source
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.lpc_sound_filter_inverse_at_time)]]
 Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time(
     Rcpp::XPtr<structLPC> lpc_xptr,
@@ -360,6 +363,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time(
 //' @param time Time point (seconds)
 //' @return External pointer to new Sound object containing the voice source
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.lpc_sound_filter_inverse_at_time_r6)]]
 Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
     Rcpp::XPtr<structLPC> lpc_xptr,
@@ -390,6 +394,7 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
 }
 
 //' LPC: To Spectrogram (internal)
+//' @noRd
 // [[Rcpp::export(.lpc_to_spectrogram)]]
 Rcpp::XPtr<structSpectrogram> lpc_to_spectrogram(
     Rcpp::XPtr<structLPC> xptr,

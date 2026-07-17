@@ -48,6 +48,10 @@ calculate_cpps_ultra(
 \item{line_type}{Trend line type: "straight" or "exponential" (default "straight")}
 
 \item{fit_method}{Fitting method: "robust", "least_squares", or "robust slow" (default "robust")}
+
+\item{pre_emphasis_from}{Pre-emphasis frequency in Hz for the cepstrogram (default 50).}
+
+\item{max_frequency}{Maximum frequency in Hz for the cepstrogram (default 5000).}
 }
 \value{
 Numeric CPPS value in dB

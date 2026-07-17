@@ -22,8 +22,6 @@ textgrid_interval_all_features_batch(
 \item{intensity_xptr}{External pointer to Intensity (optional)}
 
 \item{tier_number}{Tier number (1-based)}
-
-\item{sound_xptr}{External pointer to Sound (optional, for additional analysis)}
 }
 \value{
 Data frame with all available features per interval

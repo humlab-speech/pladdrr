@@ -7,8 +7,6 @@ Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
     )
-Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
-Author: Fredrik Nylén <fredrik.nylen@umu.se>
 Description: Provides direct, efficient access to Praat C implemented
     functionality from R using Rcpp modules. Similar in concept to the
     Parselmouth package for Python, this package allows R users to leverage
@@ -30,6 +28,7 @@ Imports:
     Rcpp (>= 1.0.0),
     R6 (>= 2.5.0),
     ggplot2,
+    rlang,
     data.table (>= 1.14.0)
 LinkingTo: Rcpp, RcppXsimd
 Suggests:
@@ -43,7 +42,10 @@ Suggests:
     scales,
     RcppSimdJson,
     RcppXPtrUtils,
-    av
+    av,
+    bench,
+    microbenchmark,
+    speakr
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017),
     GNU Scientific Library (GSL >= 1.10)
 URL: https://humlab-speech.github.io/pladdrr, https://github.com/humlab-speech/pladdrr

@@ -29,6 +29,7 @@
 
 //' Get SIMD capabilities (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.simd_info)]]
 Rcpp::List simd_info() {
 #ifdef HAVE_XSIMD

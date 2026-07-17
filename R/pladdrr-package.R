@@ -103,12 +103,18 @@
 #' @aliases pladdrr
 #' @useDynLib pladdrr, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom R6 R6Class
+#' @importFrom rlang .data
 #' @importFrom data.table data.table as.data.table is.data.table setDT setkeyv rbindlist
 #' @importFrom stats aggregate approx fitted lm median predict quantile rnorm sd time
 #' @importFrom utils head
 #' @rawNamespace export(PraatInterpreter)
 #' @keywords internal
 "_PACKAGE"
+
+# Declare NSE globals used by data.table/ggplot2 aes() to silence R CMD check's
+# "no visible binding for global variable" notes.
+utils::globalVariables(c(".data", "formant_number"))
 
 ## Package initialization
 

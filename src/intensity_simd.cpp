@@ -36,6 +36,7 @@ using namespace Rcpp;
 
 //' SIMD-optimized RMS calculation
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_rms_simd)]]
 double sound_get_rms_simd(
     XPtr<structSound> xptr,
@@ -98,6 +99,7 @@ double sound_get_rms_simd(
 
 //' SIMD-optimized energy calculation
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_energy_simd)]]
 double sound_get_energy_simd(
     XPtr<structSound> xptr,
@@ -155,6 +157,7 @@ double sound_get_energy_simd(
 
 //' SIMD-optimized power calculation
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_power_simd)]]
 double sound_get_power_simd(
     XPtr<structSound> xptr,

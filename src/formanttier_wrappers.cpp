@@ -39,6 +39,7 @@ using namespace Rcpp;
 //' @param tmax End time
 //' @return External pointer to FormantTier
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_create)]]
 SEXP formanttier_create(double tmin, double tmax) {
     if (tmax <= tmin) stop("tmax must be greater than tmin");
@@ -58,6 +59,7 @@ SEXP formanttier_create(double tmin, double tmax) {
 //' @param xptr External pointer to Formant
 //' @return External pointer to FormantTier
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_from_formant)]]
 SEXP formanttier_from_formant(SEXP xptr) {
     XPtr<structFormant> formant(xptr);
@@ -82,6 +84,7 @@ SEXP formanttier_from_formant(SEXP xptr) {
 //' @param xptr External pointer to FormantTier
 //' @return Start time in seconds
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_start_time)]]
 double formanttier_get_start_time(SEXP xptr) {
     XPtr<structFormantTier> ft(xptr);
@@ -93,6 +96,7 @@ double formanttier_get_start_time(SEXP xptr) {
 //' @param xptr External pointer to FormantTier
 //' @return End time in seconds
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_end_time)]]
 double formanttier_get_end_time(SEXP xptr) {
     XPtr<structFormantTier> ft(xptr);
@@ -104,6 +108,7 @@ double formanttier_get_end_time(SEXP xptr) {
 //' @param xptr External pointer to FormantTier
 //' @return Number of points
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_number_of_points)]]
 int formanttier_get_number_of_points(SEXP xptr) {
     XPtr<structFormantTier> ft(xptr);
@@ -115,6 +120,7 @@ int formanttier_get_number_of_points(SEXP xptr) {
 //' @param xptr External pointer to FormantTier
 //' @return Minimum number of formants across points
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_min_num_formants)]]
 int formanttier_get_min_num_formants(SEXP xptr) {
     XPtr<structFormantTier> ft(xptr);
@@ -126,6 +132,7 @@ int formanttier_get_min_num_formants(SEXP xptr) {
 //' @param xptr External pointer to FormantTier
 //' @return Maximum number of formants across points
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_max_num_formants)]]
 int formanttier_get_max_num_formants(SEXP xptr) {
     XPtr<structFormantTier> ft(xptr);
@@ -139,6 +146,7 @@ int formanttier_get_max_num_formants(SEXP xptr) {
 //' @param time Time in seconds
 //' @return Formant frequency in Hz
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_value_at_time)]]
 double formanttier_get_value_at_time(SEXP xptr, int formant_number, double time) {
     XPtr<structFormantTier> ft(xptr);
@@ -152,6 +160,7 @@ double formanttier_get_value_at_time(SEXP xptr, int formant_number, double time)
 //' @param time Time in seconds
 //' @return Bandwidth in Hz
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_get_bandwidth_at_time)]]
 double formanttier_get_bandwidth_at_time(SEXP xptr, int formant_number, double time) {
     XPtr<structFormantTier> ft(xptr);
@@ -168,6 +177,7 @@ double formanttier_get_bandwidth_at_time(SEXP xptr, int formant_number, double t
 //' @param ft_xptr External pointer to FormantTier
 //' @return External pointer to filtered Sound
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_filter_sound)]]
 SEXP formanttier_filter_sound(SEXP sound_xptr, SEXP ft_xptr) {
     XPtr<structSound> sound(sound_xptr);
@@ -191,6 +201,7 @@ SEXP formanttier_filter_sound(SEXP sound_xptr, SEXP ft_xptr) {
 //' @param ft_xptr External pointer to FormantTier
 //' @return External pointer to filtered Sound
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formanttier_filter_sound_noscale)]]
 SEXP formanttier_filter_sound_noscale(SEXP sound_xptr, SEXP ft_xptr) {
     XPtr<structSound> sound(sound_xptr);

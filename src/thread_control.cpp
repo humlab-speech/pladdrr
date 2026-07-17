@@ -32,6 +32,7 @@ using namespace Rcpp;
 //' @param max_threads Maximum concurrent threads; 0 = auto (all processors)
 //' @param min_elements_per_thread Minimum elements per thread; 0 = per-function factory tuning
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.pladdrr_set_threads_cpp)]]
 void pladdrr_set_threads_cpp(bool use_multithreading, int max_threads,
                              int min_elements_per_thread) {
@@ -43,6 +44,7 @@ void pladdrr_set_threads_cpp(bool use_multithreading, int max_threads,
 //'
 //' @return List with processors, enabled, max_threads, min_elements_per_thread
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.pladdrr_get_threads_cpp)]]
 List pladdrr_get_threads_cpp() {
     return List::create(

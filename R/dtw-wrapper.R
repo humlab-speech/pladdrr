@@ -81,6 +81,7 @@
 #' warped_tg <- dtw$warp_textgrid(tg)
 #' }
 #'
+#' @param .xptr Internal external pointer to wrap an existing DTW object; not for direct use.
 #' @export
 DTW <- function(.xptr = NULL) {
   if (is.null(.xptr)) {

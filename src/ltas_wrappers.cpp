@@ -259,6 +259,7 @@ Rcpp::XPtr<structLtas> ltas_subtract_trend_line(Rcpp::XPtr<structLtas> ltas, dou
 
 //' Report spectral trend (slope and intercept with fit statistics)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.ltas_report_spectral_trend)]]
 List ltas_report_spectral_trend(
     XPtr<structLtas> xptr,

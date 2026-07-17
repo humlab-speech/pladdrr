@@ -6,6 +6,9 @@
 \usage{
 DTW(.xptr = NULL)
 }
+\arguments{
+\item{.xptr}{Internal external pointer to wrap an existing DTW object; not for direct use.}
+}
 \description{
 Temporal alignment between two acoustic signals.
 

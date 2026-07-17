@@ -1358,6 +1358,7 @@ static double PowerCepstrogram_getCPPS_fast(
 //' @param max_frequency Maximum frequency for cepstrogram in Hz (default 5000.0)
 //' @return Single CPPS value in dB
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.calculate_cpps_ultra_cpp)]]
 double calculate_cpps_ultra_cpp(
     SEXP sound_xptr,
@@ -1459,6 +1460,7 @@ double calculate_cpps_ultra_cpp(
 //' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 //' @return External pointer to concatenated voiced Sound object
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.extract_voiced_segments_ultra_cpp)]]
 SEXP extract_voiced_segments_ultra_cpp(
     SEXP sound_xptr,
@@ -1751,6 +1753,7 @@ SEXP extract_voiced_segments_ultra_cpp(
 //' @param to_time End time for statistics extraction (default 0, means end)
 //' @return Named list with 10 values: full_mean, full_sd, band500_mean, band500_sd, etc.
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.calculate_multiband_hnr_ultra_cpp)]]
 List calculate_multiband_hnr_ultra_cpp(
     SEXP sound_xptr,

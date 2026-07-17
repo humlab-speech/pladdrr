@@ -78,6 +78,7 @@ using namespace Rcpp;
 //'   - With multiple windows: 27x overall speedup (as measured)
 //'
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_load_window)]]
 SEXP sound_load_window(
     std::string path,

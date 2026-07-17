@@ -89,6 +89,7 @@ static void ensure_numeric_libs_initialized() {
 
 //' Read Sound from file using native Praat readers (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_read_from_file_native)]]
 XPtr<structSound> sound_read_from_file_native(std::string path) {
     try {
@@ -114,6 +115,7 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
 
 //' Create Sound from values (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_create_from_values)]]
 XPtr<structSound> sound_create_from_values(
     NumericMatrix values,
@@ -156,6 +158,7 @@ XPtr<structSound> sound_create_from_values(
 
 //' Create simple tone (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_create_tone)]]
 XPtr<structSound> sound_create_tone(
     double duration,
@@ -236,6 +239,7 @@ XPtr<structSound> sound_create_tone_complex(
 
 //' Get sound duration (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_duration)]]
 double sound_get_duration(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -244,6 +248,7 @@ double sound_get_duration(XPtr<structSound> xptr) {
 
 //' Get sampling frequency (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_sampling_frequency)]]
 double sound_get_sampling_frequency(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -252,6 +257,7 @@ double sound_get_sampling_frequency(XPtr<structSound> xptr) {
 
 //' Get number of samples (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_number_of_samples)]]
 int sound_get_number_of_samples(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -260,6 +266,7 @@ int sound_get_number_of_samples(XPtr<structSound> xptr) {
 
 //' Get number of channels (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_number_of_channels)]]
 int sound_get_number_of_channels(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -268,6 +275,7 @@ int sound_get_number_of_channels(XPtr<structSound> xptr) {
 
 //' Get value at time (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_value_at_time)]]
 double sound_get_value_at_time(
     XPtr<structSound> xptr,
@@ -321,6 +329,7 @@ extern double sound_get_power_simd(XPtr<structSound>, double, double);
 
 //' Get RMS (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_rms)]]
 double sound_get_rms(
     XPtr<structSound> xptr,
@@ -353,6 +362,7 @@ double sound_get_rms(
 
 //' Get energy (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_energy)]]
 double sound_get_energy(
     XPtr<structSound> xptr,
@@ -380,6 +390,7 @@ double sound_get_energy(
 
 //' Get power (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_power)]]
 double sound_get_power(
     XPtr<structSound> xptr,
@@ -407,6 +418,7 @@ double sound_get_power(
 
 //' Get intensity in dB (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_get_intensity_db)]]
 double sound_get_intensity_db(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -427,6 +439,7 @@ double sound_get_intensity_db(XPtr<structSound> xptr) {
 
 //' Convert Sound to Pitch (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch)]]
 XPtr<structPitch> sound_to_pitch(
     XPtr<structSound> sound_xptr,
@@ -453,6 +466,7 @@ XPtr<structPitch> sound_to_pitch(
 
 //' Convert Sound to Pitch using autocorrelation with full voicing parameters (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_ac)]]
 XPtr<structPitch> sound_to_pitch_ac(
     XPtr<structSound> sound_xptr,
@@ -496,6 +510,7 @@ XPtr<structPitch> sound_to_pitch_ac(
 
 //' Convert Sound to Pitch using cross-correlation with full voicing parameters (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_cc)]]
 XPtr<structPitch> sound_to_pitch_cc(
     XPtr<structSound> sound_xptr,
@@ -539,6 +554,7 @@ XPtr<structPitch> sound_to_pitch_cc(
 
 //' Convert Sound to Pitch using Subharmonic Summation (SHS) (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_shs)]]
 XPtr<structPitch> sound_to_pitch_shs(
     XPtr<structSound> sound_xptr,
@@ -578,6 +594,7 @@ XPtr<structPitch> sound_to_pitch_shs(
 
 //' Convert Sound to Pitch using SPINET (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_spinet)]]
 XPtr<structPitch> sound_to_pitch_spinet(
     XPtr<structSound> sound_xptr,
@@ -615,6 +632,7 @@ XPtr<structPitch> sound_to_pitch_spinet(
 
 //' Convert Sound to Formant via Burg (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_formant_burg)]]
 XPtr<structFormant> sound_to_formant_burg(
     XPtr<structSound> sound_xptr,
@@ -654,6 +672,7 @@ XPtr<structFormant> sound_to_formant_burg(
 
 //' Convert Sound to Intensity (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_intensity)]]
 XPtr<structIntensity> sound_to_intensity(
     XPtr<structSound> sound_xptr,
@@ -681,6 +700,7 @@ XPtr<structIntensity> sound_to_intensity(
 
 //' Convert Sound to Harmonicity (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_harmonicity_cc)]]
 XPtr<structHarmonicity> sound_to_harmonicity_cc(
     XPtr<structSound> sound_xptr,
@@ -710,6 +730,7 @@ XPtr<structHarmonicity> sound_to_harmonicity_cc(
 
 //' Convert Sound to Harmonicity using autocorrelation (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_harmonicity_ac)]]
 XPtr<structHarmonicity> sound_to_harmonicity_ac(
     XPtr<structSound> sound_xptr,
@@ -739,6 +760,7 @@ XPtr<structHarmonicity> sound_to_harmonicity_ac(
 
 //' Convert Sound to Harmonicity (GNE - Glottal-to-Noise Excitation ratio)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_harmonicity_gne)]]
 XPtr<structMatrix> sound_to_harmonicity_gne(
     XPtr<structSound> sound_xptr,
@@ -768,6 +790,7 @@ XPtr<structMatrix> sound_to_harmonicity_gne(
 
 //' Convert Sound to Spectrum (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_spectrum)]]
 XPtr<structSpectrum> sound_to_spectrum(
     XPtr<structSound> sound_xptr,
@@ -787,6 +810,7 @@ XPtr<structSpectrum> sound_to_spectrum(
 
 //' Convert Sound to Ltas (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_ltas)]]
 SEXP sound_to_ltas(
     XPtr<structSound> sound_xptr,
@@ -806,6 +830,7 @@ SEXP sound_to_ltas(
 
 //' Convert Sound to Spectrogram (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_spectrogram)]]
 XPtr<structSpectrogram> sound_to_spectrogram(
     XPtr<structSound> sound_xptr,
@@ -863,6 +888,7 @@ XPtr<structSpectrogram> sound_to_spectrogram(
 
 //' Write Sound to file using native Praat writers (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_write_to_file_native)]]
 void sound_write_to_file_native(
     XPtr<structSound> sound_xptr,
@@ -918,6 +944,7 @@ void sound_write_to_file_native(
 
 //' Export Sound as data frame (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_as_data_frame)]]
 DataFrame sound_as_data_frame(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -949,6 +976,7 @@ DataFrame sound_as_data_frame(XPtr<structSound> xptr) {
 
 //' Export Sound as matrix (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_as_matrix)]]
 NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -967,6 +995,7 @@ NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
 
 //' Save Sound to file (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_save)]]
 void sound_save(
     XPtr<structSound> xptr,
@@ -1000,6 +1029,7 @@ void sound_save(
 //' Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
 //' 
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_pitch_to_pointprocess_cc)]]
 XPtr<structPointProcess> sound_pitch_to_pointprocess_cc(
     XPtr<structSound> sound_xptr,
@@ -1025,6 +1055,7 @@ XPtr<structPointProcess> sound_pitch_to_pointprocess_cc(
 //' Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
 //' 
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_pitch_to_pointprocess_peaks)]]
 XPtr<structPointProcess> sound_pitch_to_pointprocess_peaks(
     XPtr<structSound> sound_xptr,
@@ -1050,6 +1081,7 @@ XPtr<structPointProcess> sound_pitch_to_pointprocess_peaks(
 
 //' Extract glottal pulses from sound using cross-correlation (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_point_process_periodic_cc)]]
 XPtr<structPointProcess> sound_to_point_process_periodic_cc(
     XPtr<structSound> xptr,
@@ -1078,6 +1110,7 @@ XPtr<structPointProcess> sound_to_point_process_periodic_cc(
 
 //' Extract extrema (peaks) from sound (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_point_process_extrema)]]
 XPtr<structPointProcess> sound_to_point_process_extrema(
     XPtr<structSound> xptr,
@@ -1110,6 +1143,7 @@ XPtr<structPointProcess> sound_to_point_process_extrema(
 
 //' Extract zero crossings from sound (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_point_process_zeros)]]
 XPtr<structPointProcess> sound_to_point_process_zeros(
     XPtr<structSound> xptr,
@@ -1137,6 +1171,7 @@ XPtr<structPointProcess> sound_to_point_process_zeros(
 
 //' Extract periodic pulses using cross-correlation (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pointprocess_periodic_cc)]]
 XPtr<structPointProcess> sound_to_pointprocess_periodic_cc(
     XPtr<structSound> xptr,
@@ -1162,6 +1197,7 @@ XPtr<structPointProcess> sound_to_pointprocess_periodic_cc(
 
 //' Extract periodic pulses using peak detection (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pointprocess_periodic_peaks)]]
 XPtr<structPointProcess> sound_to_pointprocess_periodic_peaks(
     XPtr<structSound> xptr,
@@ -1195,6 +1231,7 @@ XPtr<structPointProcess> sound_to_pointprocess_periodic_peaks(
 
 //' Extract a specific channel from Sound (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_extract_channel)]]
 XPtr<structSound> sound_extract_channel(
     XPtr<structSound> xptr,
@@ -1218,6 +1255,7 @@ XPtr<structSound> sound_extract_channel(
 
 //' Extract part of Sound by time (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_extract_part)]]
 XPtr<structSound> sound_extract_part(
     XPtr<structSound> xptr,
@@ -1255,6 +1293,7 @@ XPtr<structSound> sound_extract_part(
 
 //' Scale intensity of Sound to target dB level (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_scale_intensity)]]
 void sound_scale_intensity(
     XPtr<structSound> xptr,
@@ -1278,6 +1317,7 @@ extern XPtr<structSound> sound_mix_simd(XPtr<structSound>, XPtr<structSound>, do
 
 //' Scale peak amplitude of Sound (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_scale_peak)]]
 void sound_scale_peak(
     XPtr<structSound> xptr,
@@ -1303,6 +1343,7 @@ void sound_scale_peak(
 
 //' Pre-emphasize Sound (high-pass filter) (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_pre_emphasize)]]
 void sound_pre_emphasize(
     XPtr<structSound> xptr,
@@ -1321,6 +1362,7 @@ void sound_pre_emphasize(
 
 //' De-emphasize Sound (low-pass filter) (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_de_emphasize)]]
 void sound_de_emphasize(
     XPtr<structSound> xptr,
@@ -1339,6 +1381,7 @@ void sound_de_emphasize(
 
 //' Filter Sound - pass Hann band (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_filter_pass_hann_band)]]
 XPtr<structSound> sound_filter_pass_hann_band(
     XPtr<structSound> xptr,
@@ -1360,6 +1403,7 @@ XPtr<structSound> sound_filter_pass_hann_band(
 
 //' Filter Sound - stop Hann band (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_filter_stop_hann_band)]]
 XPtr<structSound> sound_filter_stop_hann_band(
     XPtr<structSound> xptr,
@@ -1386,6 +1430,7 @@ XPtr<structSound> sound_filter_stop_hann_band(
 
 //' Resample Sound to new sampling frequency (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_resample)]]
 XPtr<structSound> sound_resample(
     XPtr<structSound> xptr,
@@ -1406,6 +1451,7 @@ XPtr<structSound> sound_resample(
 
 //' Convert Sound to mono by averaging channels (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_convert_to_mono)]]
 XPtr<structSound> sound_convert_to_mono(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -1422,6 +1468,7 @@ XPtr<structSound> sound_convert_to_mono(XPtr<structSound> xptr) {
 
 //' Convert mono Sound to stereo by duplicating channel (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_convert_to_stereo)]]
 XPtr<structSound> sound_convert_to_stereo(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -1438,6 +1485,7 @@ XPtr<structSound> sound_convert_to_stereo(XPtr<structSound> xptr) {
 
 //' Copy Sound object (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_copy)]]
 XPtr<structSound> sound_copy(XPtr<structSound> xptr) {
     structSound* sound = get_ptr(xptr, "Sound");
@@ -1454,6 +1502,7 @@ XPtr<structSound> sound_copy(XPtr<structSound> xptr) {
 
 //' Concatenate two Sound objects (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_concatenate)]]
 XPtr<structSound> sound_concatenate(
     XPtr<structSound> xptr1,
@@ -1481,6 +1530,7 @@ XPtr<structSound> sound_concatenate(
 
 //' Mix two Sound objects (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_mix)]]
 XPtr<structSound> sound_mix(
     XPtr<structSound> xptr1,
@@ -1554,6 +1604,7 @@ XPtr<structSound> sound_mix(
 
 //' Detect silences in Sound and create TextGrid (internal)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_textgrid_silences)]]
 XPtr<structTextGrid> sound_to_textgrid_silences(
     XPtr<structSound> sound_xptr,
@@ -1705,6 +1756,7 @@ Rcpp::List sound_extract_intervals_where(
 //' @param overlap Overlap duration in seconds between consecutive sounds
 //' @return Single concatenated Sound external pointer
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_concatenate_all)]]
 XPtr<structSound> sound_concatenate_all(
     Rcpp::List sound_list,
@@ -1779,6 +1831,7 @@ XPtr<structSound> sound_concatenate_all(
 //' @param preserve_times Whether to preserve original times
 //' @return List of Sound external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_extract_parts_batch)]]
 Rcpp::List sound_extract_parts_batch(
     XPtr<structSound> xptr,
@@ -1831,6 +1884,7 @@ Rcpp::List sound_extract_parts_batch(
 //' @param pitch_ceiling Pitch ceiling in Hz
 //' @return List of Pitch external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_batch)]]
 Rcpp::List sound_to_pitch_batch(
     Rcpp::List sound_list,
@@ -1881,6 +1935,7 @@ Rcpp::List sound_to_pitch_batch(
 //' @param voiced_unvoiced_cost Voiced/unvoiced cost
 //' @return List of Pitch external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_ac_batch)]]
 Rcpp::List sound_to_pitch_ac_batch(
     Rcpp::List sound_list,
@@ -1945,6 +2000,7 @@ Rcpp::List sound_to_pitch_ac_batch(
 //' @param voiced_unvoiced_cost Voiced/unvoiced cost
 //' @return List of Pitch external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_pitch_cc_batch)]]
 Rcpp::List sound_to_pitch_cc_batch(
     Rcpp::List sound_list,
@@ -2001,6 +2057,7 @@ Rcpp::List sound_to_pitch_cc_batch(
 //' @param pre_emphasis_from Pre-emphasis from frequency
 //' @return List of Formant external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_formant_batch)]]
 Rcpp::List sound_to_formant_batch(
     Rcpp::List sound_list,
@@ -2047,6 +2104,7 @@ Rcpp::List sound_to_formant_batch(
 //' @param subtract_mean Whether to subtract mean
 //' @return List of Intensity external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_to_intensity_batch)]]
 Rcpp::List sound_to_intensity_batch(
     Rcpp::List sound_list,
@@ -2092,6 +2150,7 @@ Rcpp::List sound_to_intensity_batch(
 //' @param pitch_ceiling Pitch ceiling in Hz
 //' @return List of Pitch external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_extract_and_pitch_batch)]]
 Rcpp::List sound_extract_and_pitch_batch(
     XPtr<structSound> xptr,
@@ -2152,6 +2211,7 @@ Rcpp::List sound_extract_and_pitch_batch(
 //' @param pre_emphasis_from Pre-emphasis frequency
 //' @return List of Formant external pointers
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.sound_extract_and_formant_batch)]]
 Rcpp::List sound_extract_and_formant_batch(
     XPtr<structSound> xptr,
@@ -2215,6 +2275,7 @@ Rcpp::List sound_extract_and_formant_batch(
 //' @param interpolate Whether to interpolate
 //' @return Numeric vector of pitch values
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.pitch_get_values_at_times)]]
 NumericVector pitch_get_values_at_times(
     XPtr<structPitch> xptr,
@@ -2249,6 +2310,7 @@ NumericVector pitch_get_values_at_times(
 //' @param unit Unit (0=Hertz, 1=Bark)
 //' @return Numeric vector of formant values
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.formant_get_values_at_times)]]
 NumericVector formant_get_values_at_times(
     XPtr<structFormant> xptr,
@@ -2282,6 +2344,7 @@ NumericVector formant_get_values_at_times(
 //' @param interpolation Interpolation type
 //' @return Numeric vector of intensity values
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.intensity_get_values_at_times)]]
 NumericVector intensity_get_values_at_times(
     XPtr<structIntensity> xptr,
@@ -2312,6 +2375,7 @@ NumericVector intensity_get_values_at_times(
 // ============================================================================
 
 //' Sound: To Ltas (pitch-corrected) (internal)
+//' @noRd
 // [[Rcpp::export(.sound_to_ltas_pitch_corrected)]]
 XPtr<structLtas> sound_to_ltas_pitch_corrected(
     XPtr<structSound> xptr,
@@ -2340,6 +2404,7 @@ XPtr<structLtas> sound_to_ltas_pitch_corrected(
 }
 
 //' Sound: To Formant (robust) (internal)
+//' @noRd
 // [[Rcpp::export(.sound_to_formant_robust)]]
 XPtr<structFormant> sound_to_formant_robust(
     XPtr<structSound> xptr,
@@ -2377,6 +2442,7 @@ XPtr<structFormant> sound_to_formant_robust(
 }
 
 //' Sound & Formant: Filter (internal)
+//' @noRd
 // [[Rcpp::export(.sound_formant_filter)]]
 XPtr<structSound> sound_formant_filter(
     XPtr<structSound> sound_xptr,
@@ -2396,6 +2462,7 @@ XPtr<structSound> sound_formant_filter(
 }
 
 //' Sound & Formant: Filter (no scale) (internal)
+//' @noRd
 // [[Rcpp::export(.sound_formant_filter_noscale)]]
 XPtr<structSound> sound_formant_filter_noscale(
     XPtr<structSound> sound_xptr,
@@ -2415,6 +2482,7 @@ XPtr<structSound> sound_formant_filter_noscale(
 }
 
 //' Sound: To MelSpectrogram (internal)
+//' @noRd
 // [[Rcpp::export(.sound_to_mel_spectrogram)]]
 XPtr<structMelSpectrogram> sound_to_mel_spectrogram(
     XPtr<structSound> xptr,
@@ -2440,6 +2508,7 @@ XPtr<structMelSpectrogram> sound_to_mel_spectrogram(
 }
 
 //' Sound: To BarkSpectrogram (internal)
+//' @noRd
 // [[Rcpp::export(.sound_to_bark_spectrogram)]]
 XPtr<structBarkSpectrogram> sound_to_bark_spectrogram(
     XPtr<structSound> xptr,
@@ -2465,6 +2534,7 @@ XPtr<structBarkSpectrogram> sound_to_bark_spectrogram(
 }
 
 //' MelSpectrogram: To MFCC (internal)
+//' @noRd
 // [[Rcpp::export(.mel_spectrogram_to_mfcc)]]
 XPtr<structMFCC> mel_spectrogram_to_mfcc(
     XPtr<structMelSpectrogram> xptr,
@@ -2483,6 +2553,7 @@ XPtr<structMFCC> mel_spectrogram_to_mfcc(
 }
 
 //' MFCC: To MelSpectrogram (internal)
+//' @noRd
 // [[Rcpp::export(.mfcc_to_mel_spectrogram)]]
 XPtr<structMelSpectrogram> mfcc_to_mel_spectrogram(
     XPtr<structMFCC> xptr,
@@ -2505,6 +2576,7 @@ XPtr<structMelSpectrogram> mfcc_to_mel_spectrogram(
 }
 
 //' BandFilterSpectrogram: To Matrix (internal)
+//' @noRd
 // [[Rcpp::export(.band_filter_spectrogram_to_matrix)]]
 XPtr<structMatrix> band_filter_spectrogram_to_matrix(
     SEXP xptr,
@@ -2524,6 +2596,7 @@ XPtr<structMatrix> band_filter_spectrogram_to_matrix(
 }
 
 //' BandFilterSpectrogram: To Intensity (internal)
+//' @noRd
 // [[Rcpp::export(.band_filter_spectrogram_to_intensity)]]
 XPtr<structIntensity> band_filter_spectrogram_to_intensity(
     SEXP xptr
@@ -2542,6 +2615,7 @@ XPtr<structIntensity> band_filter_spectrogram_to_intensity(
 }
 
 //' Sound: Lengthen (overlap-add) (internal)
+//' @noRd
 // [[Rcpp::export(.sound_lengthen_ola)]]
 XPtr<structSound> sound_lengthen_ola(
     XPtr<structSound> xptr,
@@ -2564,6 +2638,7 @@ XPtr<structSound> sound_lengthen_ola(
 }
 
 //' Sound: Autocorrelate (internal)
+//' @noRd
 // [[Rcpp::export(.sound_autocorrelate)]]
 XPtr<structSound> sound_autocorrelate(
     XPtr<structSound> xptr,
@@ -2587,6 +2662,7 @@ XPtr<structSound> sound_autocorrelate(
 }
 
 //' Sounds: Convolve (internal)
+//' @noRd
 // [[Rcpp::export(.sounds_convolve_direct)]]
 XPtr<structSound> sounds_convolve_export(
     XPtr<structSound> xptr1,
@@ -2612,6 +2688,7 @@ XPtr<structSound> sounds_convolve_export(
 }
 
 //' Sounds: Cross-correlate (internal)
+//' @noRd
 // [[Rcpp::export(.sounds_cross_correlate_direct)]]
 XPtr<structSound> sounds_cross_correlate_export(
     XPtr<structSound> xptr1,
@@ -2637,6 +2714,7 @@ XPtr<structSound> sounds_cross_correlate_export(
 }
 
 //' Sound: Deepen band modulation (internal)
+//' @noRd
 // [[Rcpp::export(.sound_deepen_band_mod)]]
 XPtr<structSound> sound_deepen_band_mod(
     XPtr<structSound> xptr,
@@ -2665,6 +2743,7 @@ XPtr<structSound> sound_deepen_band_mod(
 }
 
 //' Intensity: To TextGrid (silences) (internal)
+//' @noRd
 // [[Rcpp::export(.intensity_to_textgrid_silences)]]
 XPtr<structTextGrid> intensity_to_textgrid_silences(
     XPtr<structIntensity> xptr,

@@ -625,6 +625,7 @@ static int find_object_by_id(integer id) {
 //' @param expected_type Expected class name (e.g., "Sound"), or empty for any
 //' @return External pointer to the Praat object (copy)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_get_object)]]
 SEXP praat_interpreter_get_object(std::string name, std::string expected_type) {
     if (!praat_interpreter_initialized) {
@@ -675,6 +676,7 @@ SEXP praat_interpreter_get_object(std::string name, std::string expected_type) {
 //' @param id Object ID number
 //' @return External pointer to the Praat object (copy)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_get_object_by_id)]]
 SEXP praat_interpreter_get_object_by_id(int id) {
     if (!praat_interpreter_initialized) {
@@ -713,6 +715,7 @@ SEXP praat_interpreter_get_object_by_id(int id) {
 //' @param class_name Class name (e.g., "Sound", "Pitch")
 //' @return ID of the newly added object
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_set_object)]]
 int praat_interpreter_set_object(SEXP xptr, std::string name, std::string class_name) {
     if (!praat_interpreter_initialized) {
@@ -751,6 +754,7 @@ int praat_interpreter_set_object(SEXP xptr, std::string name, std::string class_
 //' Remove object from Praat object list by name
 //' @param name Object name
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_remove_object)]]
 void praat_interpreter_remove_object(std::string name) {
     if (!praat_interpreter_initialized) {
@@ -775,6 +779,7 @@ void praat_interpreter_remove_object(std::string name) {
 //' Remove object from Praat object list by ID
 //' @param id Object ID
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_remove_object_by_id)]]
 void praat_interpreter_remove_object_by_id(int id) {
     if (!praat_interpreter_initialized) {
@@ -800,6 +805,7 @@ void praat_interpreter_remove_object_by_id(int id) {
 //' @param name Object name
 //' @param add If TRUE, add to selection; if FALSE, replace selection
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_select_object)]]
 void praat_interpreter_select_object(std::string name, bool add = false) {
     if (!praat_interpreter_initialized) {
@@ -838,6 +844,7 @@ void praat_interpreter_select_object(std::string name, bool add = false) {
 
 //' Clear all objects from Praat object list
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.praat_interpreter_clear_objects)]]
 void praat_interpreter_clear_objects() {
     if (!praat_interpreter_initialized) {

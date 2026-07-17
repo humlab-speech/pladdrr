@@ -195,6 +195,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' @param octave_cost Cost per octave in path finding (default 0.01)
 #' @param octave_jump_cost Cost for octave jumps (default 0.35)
 #' @param voiced_unvoiced_cost Cost for voicing transitions (default 0.14)
+#' @param max_number_of_candidates Maximum number of pitch candidates per frame
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
@@ -264,6 +265,7 @@ to_pitch_ac_direct <- function(sound,
 #' @param octave_cost Cost per octave in path finding (default 0.01)
 #' @param octave_jump_cost Cost for octave jumps (default 0.35)
 #' @param voiced_unvoiced_cost Cost for voicing transitions (default 0.14)
+#' @param max_number_of_candidates Maximum number of pitch candidates per frame
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
@@ -411,6 +413,9 @@ to_pitch_spinet_direct <- function(sound,
 #' @param max_formant Maximum formant frequency (Hz)
 #' @param window_length Window length (seconds)
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
+#' @param max_number_of_formants Alias for `max_formants` (maximum number of formants)
+#' @param maximum_formant Alias for `max_formant` (maximum formant frequency, Hz)
+#' @param pre_emphasis_from Alias for `pre_emphasis` (pre-emphasis frequency, Hz)
 #'
 #' @return External pointer to Formant
 #'
@@ -725,6 +730,7 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
 #' @param max_period_factor Numeric. Max period factor (default: 1.3)
 #' @param max_amplitude_factor Numeric. Max amplitude factor (default: 1.6)
+#' @param time_step Numeric. Time step in seconds (0 = auto)
 #'
 #' @return External pointer to PointProcess
 #'

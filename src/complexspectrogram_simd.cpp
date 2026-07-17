@@ -490,6 +490,7 @@ void overlap_add_simd_bridge(
 //'
 //' @return List with SIMD availability and batch size
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.complexspectrogram_simd_info)]]
 Rcpp::List complexspectrogram_simd_info() {
 #ifdef HAVE_XSIMD

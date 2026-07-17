@@ -36,6 +36,7 @@ using namespace Rcpp;
 //' @param path Path to audio file
 //' @return External pointer to LongSound
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_open)]]
 SEXP longsound_open(std::string path) {
     try {
@@ -59,6 +60,7 @@ SEXP longsound_open(std::string path) {
 //' @param xptr External pointer to LongSound
 //' @return Duration in seconds
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_duration)]]
 double longsound_get_duration(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -70,6 +72,7 @@ double longsound_get_duration(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return Start time in seconds
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_start_time)]]
 double longsound_get_start_time(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -81,6 +84,7 @@ double longsound_get_start_time(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return End time in seconds
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_end_time)]]
 double longsound_get_end_time(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -92,6 +96,7 @@ double longsound_get_end_time(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return Sample rate in Hz
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_sample_rate)]]
 double longsound_get_sample_rate(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -103,6 +108,7 @@ double longsound_get_sample_rate(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return Number of channels
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_number_of_channels)]]
 int longsound_get_number_of_channels(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -114,6 +120,7 @@ int longsound_get_number_of_channels(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return Number of samples
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_number_of_samples)]]
 int longsound_get_number_of_samples(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -125,6 +132,7 @@ int longsound_get_number_of_samples(SEXP xptr) {
 //' @param xptr External pointer to LongSound
 //' @return File path
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_file_path)]]
 std::string longsound_get_file_path(SEXP xptr) {
     XPtr<structLongSound> ls(xptr);
@@ -143,6 +151,7 @@ std::string longsound_get_file_path(SEXP xptr) {
 //' @param preserve_times If TRUE, keep original time domain
 //' @return External pointer to Sound
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_extract_part)]]
 SEXP longsound_extract_part(SEXP xptr, double tmin, double tmax, bool preserve_times) {
     XPtr<structLongSound> ls(xptr);
@@ -165,6 +174,7 @@ SEXP longsound_extract_part(SEXP xptr, double tmin, double tmax, bool preserve_t
 //' @param tmax End time
 //' @return TRUE if window is in buffer
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_have_window)]]
 bool longsound_have_window(SEXP xptr, double tmin, double tmax) {
     XPtr<structLongSound> ls(xptr);
@@ -179,6 +189,7 @@ bool longsound_have_window(SEXP xptr, double tmin, double tmax) {
 //' @param channel Channel number (1-based)
 //' @return Named vector with minimum and maximum
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_get_window_extrema)]]
 NumericVector longsound_get_window_extrema(SEXP xptr, double tmin, double tmax, int channel) {
     XPtr<structLongSound> ls(xptr);
@@ -206,6 +217,7 @@ NumericVector longsound_get_window_extrema(SEXP xptr, double tmin, double tmax, 
 //' @param path Output file path
 //' @param bits_per_sample Bits per sample (16 or 24)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_save_part)]]
 void longsound_save_part(SEXP xptr, int audio_file_type, double tmin, double tmax,
                          std::string path, int bits_per_sample) {
@@ -229,6 +241,7 @@ void longsound_save_part(SEXP xptr, int audio_file_type, double tmin, double tma
 //' @param channel Channel number (1-based)
 //' @param path Output file path
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export(.longsound_save_channel)]]
 void longsound_save_channel(SEXP xptr, int audio_file_type, int channel, std::string path) {
     XPtr<structLongSound> ls(xptr);

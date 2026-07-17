@@ -1,5 +1,5 @@
 # ltas-wrapper.R - Ltas object using shared dispatch table (pladdrr 4.8.33)
-# Architecture: minimal list + $.Ltas S3 dispatch → shared method env
+# Architecture: minimal list + $.Ltas S3 dispatch -> shared method env
 
 #' @title Praat Ltas (Long-term Average Spectrum) Object
 #' @description
@@ -207,7 +207,7 @@ print.ltas_spectral_trend <- function(x, ...) {
   cat(sprintf("  Slope:     %.6f %s\n", x$slope, x$slope_units))
   cat(sprintf("  Intercept: %.4f dB\n\n", x$intercept))
   cat("Fit Quality:\n")
-  cat(sprintf("  R²:                    %.6f\n", x$r_squared))
+  cat(sprintf("  R^2:                   %.6f\n", x$r_squared))
   cat(sprintf("  Residual Std Error:    %.4f dB\n\n", x$residual_std_error))
   if (x$frequency_scale == "logarithmic") {
     cat("Model: power_dB = intercept + slope * log10(frequency_Hz)\n")

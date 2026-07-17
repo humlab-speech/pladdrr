@@ -519,6 +519,8 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' all.equal(cpps, cpps_fast, tolerance = 0.01)
 #' }
 #'
+#' @param pre_emphasis_from Pre-emphasis frequency in Hz for the cepstrogram (default 50).
+#' @param max_frequency Maximum frequency in Hz for the cepstrogram (default 5000).
 #' @export
 calculate_cpps_ultra <- function(
   sound,

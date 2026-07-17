@@ -364,6 +364,7 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param max_frequency Maximum frequency for cepstrogram in Hz (default 5000.0)
 #' @return Single CPPS value in dB
 #' @keywords internal
+#' @noRd
 .calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.05, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.001, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
     .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency)
 }
@@ -399,6 +400,7 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 #' @return External pointer to concatenated voiced Sound object
 #' @keywords internal
+#' @noRd
 .extract_voiced_segments_ultra_cpp <- function(sound_xptr, version = "v3.01", min_pitch = 50.0, silence_threshold_db = -25.0, min_silent_duration = 0.1, min_sounding_duration = 0.1, power_threshold_factor = 0.3, max_zcr = 3000.0, window_width = 0.03, use_manual_zcr = FALSE) {
     .Call(`_pladdrr_extract_voiced_segments_ultra_cpp`, sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width, use_manual_zcr)
 }
@@ -419,6 +421,7 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param to_time End time for statistics extraction (default 0, means end)
 #' @return Named list with 10 values: full_mean, full_sd, band500_mean, band500_sd, etc.
 #' @keywords internal
+#' @noRd
 .calculate_multiband_hnr_ultra_cpp <- function(sound_xptr, bands, time_step = 0.005, min_pitch = 75.0, from_time = 0.0, to_time = 0.0) {
     .Call(`_pladdrr_calculate_multiband_hnr_ultra_cpp`, sound_xptr, bands, time_step, min_pitch, from_time, to_time)
 }
@@ -507,6 +510,7 @@ should_use_simd_for_batch_queries_bridge <- function() {
 #'
 #' @return List with SIMD availability and batch size
 #' @keywords internal
+#' @noRd
 .complexspectrogram_simd_info <- function() {
     .Call(`_pladdrr_complexspectrogram_simd_info`)
 }
@@ -776,6 +780,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param tmax End time
 #' @return External pointer to FormantTier
 #' @keywords internal
+#' @noRd
 .formanttier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_formanttier_create`, tmin, tmax)
 }
@@ -784,6 +789,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to Formant
 #' @return External pointer to FormantTier
 #' @keywords internal
+#' @noRd
 .formanttier_from_formant <- function(xptr) {
     .Call(`_pladdrr_formanttier_from_formant`, xptr)
 }
@@ -792,6 +798,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to FormantTier
 #' @return Start time in seconds
 #' @keywords internal
+#' @noRd
 .formanttier_get_start_time <- function(xptr) {
     .Call(`_pladdrr_formanttier_get_start_time`, xptr)
 }
@@ -800,6 +807,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to FormantTier
 #' @return End time in seconds
 #' @keywords internal
+#' @noRd
 .formanttier_get_end_time <- function(xptr) {
     .Call(`_pladdrr_formanttier_get_end_time`, xptr)
 }
@@ -808,6 +816,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to FormantTier
 #' @return Number of points
 #' @keywords internal
+#' @noRd
 .formanttier_get_number_of_points <- function(xptr) {
     .Call(`_pladdrr_formanttier_get_number_of_points`, xptr)
 }
@@ -816,6 +825,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to FormantTier
 #' @return Minimum number of formants across points
 #' @keywords internal
+#' @noRd
 .formanttier_get_min_num_formants <- function(xptr) {
     .Call(`_pladdrr_formanttier_get_min_num_formants`, xptr)
 }
@@ -824,6 +834,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to FormantTier
 #' @return Maximum number of formants across points
 #' @keywords internal
+#' @noRd
 .formanttier_get_max_num_formants <- function(xptr) {
     .Call(`_pladdrr_formanttier_get_max_num_formants`, xptr)
 }
@@ -834,6 +845,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param time Time in seconds
 #' @return Formant frequency in Hz
 #' @keywords internal
+#' @noRd
 .formanttier_get_value_at_time <- function(xptr, formant_number, time) {
     .Call(`_pladdrr_formanttier_get_value_at_time`, xptr, formant_number, time)
 }
@@ -844,6 +856,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param time Time in seconds
 #' @return Bandwidth in Hz
 #' @keywords internal
+#' @noRd
 .formanttier_get_bandwidth_at_time <- function(xptr, formant_number, time) {
     .Call(`_pladdrr_formanttier_get_bandwidth_at_time`, xptr, formant_number, time)
 }
@@ -853,6 +866,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param ft_xptr External pointer to FormantTier
 #' @return External pointer to filtered Sound
 #' @keywords internal
+#' @noRd
 .formanttier_filter_sound <- function(sound_xptr, ft_xptr) {
     .Call(`_pladdrr_formanttier_filter_sound`, sound_xptr, ft_xptr)
 }
@@ -862,24 +876,28 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param ft_xptr External pointer to FormantTier
 #' @return External pointer to filtered Sound
 #' @keywords internal
+#' @noRd
 .formanttier_filter_sound_noscale <- function(sound_xptr, ft_xptr) {
     .Call(`_pladdrr_formanttier_filter_sound_noscale`, sound_xptr, ft_xptr)
 }
 
 #' SIMD-optimized RMS calculation
 #' @keywords internal
+#' @noRd
 .sound_get_rms_simd <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_rms_simd`, xptr, from_time, to_time)
 }
 
 #' SIMD-optimized energy calculation
 #' @keywords internal
+#' @noRd
 .sound_get_energy_simd <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_energy_simd`, xptr, from_time, to_time)
 }
 
 #' SIMD-optimized power calculation
 #' @keywords internal
+#' @noRd
 .sound_get_power_simd <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_power_simd`, xptr, from_time, to_time)
 }
@@ -1013,6 +1031,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param expected_type Expected class name (e.g., "Sound"), or empty for any
 #' @return External pointer to the Praat object (copy)
 #' @keywords internal
+#' @noRd
 .praat_interpreter_get_object <- function(name, expected_type) {
     .Call(`_pladdrr_praat_interpreter_get_object`, name, expected_type)
 }
@@ -1021,6 +1040,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param id Object ID number
 #' @return External pointer to the Praat object (copy)
 #' @keywords internal
+#' @noRd
 .praat_interpreter_get_object_by_id <- function(id) {
     .Call(`_pladdrr_praat_interpreter_get_object_by_id`, id)
 }
@@ -1031,6 +1051,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param class_name Class name (e.g., "Sound", "Pitch")
 #' @return ID of the newly added object
 #' @keywords internal
+#' @noRd
 .praat_interpreter_set_object <- function(xptr, name, class_name) {
     .Call(`_pladdrr_praat_interpreter_set_object`, xptr, name, class_name)
 }
@@ -1038,6 +1059,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' Remove object from Praat object list by name
 #' @param name Object name
 #' @keywords internal
+#' @noRd
 .praat_interpreter_remove_object <- function(name) {
     invisible(.Call(`_pladdrr_praat_interpreter_remove_object`, name))
 }
@@ -1045,6 +1067,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' Remove object from Praat object list by ID
 #' @param id Object ID
 #' @keywords internal
+#' @noRd
 .praat_interpreter_remove_object_by_id <- function(id) {
     invisible(.Call(`_pladdrr_praat_interpreter_remove_object_by_id`, id))
 }
@@ -1053,12 +1076,14 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param name Object name
 #' @param add If TRUE, add to selection; if FALSE, replace selection
 #' @keywords internal
+#' @noRd
 .praat_interpreter_select_object <- function(name, add = FALSE) {
     invisible(.Call(`_pladdrr_praat_interpreter_select_object`, name, add))
 }
 
 #' Clear all objects from Praat object list
 #' @keywords internal
+#' @noRd
 .praat_interpreter_clear_objects <- function() {
     invisible(.Call(`_pladdrr_praat_interpreter_clear_objects`))
 }
@@ -1067,6 +1092,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #'
 #' @return List with SIMD availability and batch size
 #' @keywords internal
+#' @noRd
 .klattgrid_simd_info <- function() {
     .Call(`_pladdrr_klattgrid_simd_info`)
 }
@@ -1075,6 +1101,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param path Path to audio file
 #' @return External pointer to LongSound
 #' @keywords internal
+#' @noRd
 .longsound_open <- function(path) {
     .Call(`_pladdrr_longsound_open`, path)
 }
@@ -1083,6 +1110,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return Duration in seconds
 #' @keywords internal
+#' @noRd
 .longsound_get_duration <- function(xptr) {
     .Call(`_pladdrr_longsound_get_duration`, xptr)
 }
@@ -1091,6 +1119,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return Start time in seconds
 #' @keywords internal
+#' @noRd
 .longsound_get_start_time <- function(xptr) {
     .Call(`_pladdrr_longsound_get_start_time`, xptr)
 }
@@ -1099,6 +1128,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return End time in seconds
 #' @keywords internal
+#' @noRd
 .longsound_get_end_time <- function(xptr) {
     .Call(`_pladdrr_longsound_get_end_time`, xptr)
 }
@@ -1107,6 +1137,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return Sample rate in Hz
 #' @keywords internal
+#' @noRd
 .longsound_get_sample_rate <- function(xptr) {
     .Call(`_pladdrr_longsound_get_sample_rate`, xptr)
 }
@@ -1115,6 +1146,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return Number of channels
 #' @keywords internal
+#' @noRd
 .longsound_get_number_of_channels <- function(xptr) {
     .Call(`_pladdrr_longsound_get_number_of_channels`, xptr)
 }
@@ -1123,6 +1155,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return Number of samples
 #' @keywords internal
+#' @noRd
 .longsound_get_number_of_samples <- function(xptr) {
     .Call(`_pladdrr_longsound_get_number_of_samples`, xptr)
 }
@@ -1131,6 +1164,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param xptr External pointer to LongSound
 #' @return File path
 #' @keywords internal
+#' @noRd
 .longsound_get_file_path <- function(xptr) {
     .Call(`_pladdrr_longsound_get_file_path`, xptr)
 }
@@ -1142,6 +1176,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param preserve_times If TRUE, keep original time domain
 #' @return External pointer to Sound
 #' @keywords internal
+#' @noRd
 .longsound_extract_part <- function(xptr, tmin, tmax, preserve_times) {
     .Call(`_pladdrr_longsound_extract_part`, xptr, tmin, tmax, preserve_times)
 }
@@ -1152,6 +1187,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param tmax End time
 #' @return TRUE if window is in buffer
 #' @keywords internal
+#' @noRd
 .longsound_have_window <- function(xptr, tmin, tmax) {
     .Call(`_pladdrr_longsound_have_window`, xptr, tmin, tmax)
 }
@@ -1163,6 +1199,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param channel Channel number (1-based)
 #' @return Named vector with minimum and maximum
 #' @keywords internal
+#' @noRd
 .longsound_get_window_extrema <- function(xptr, tmin, tmax, channel) {
     .Call(`_pladdrr_longsound_get_window_extrema`, xptr, tmin, tmax, channel)
 }
@@ -1175,6 +1212,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param path Output file path
 #' @param bits_per_sample Bits per sample (16 or 24)
 #' @keywords internal
+#' @noRd
 .longsound_save_part <- function(xptr, audio_file_type, tmin, tmax, path, bits_per_sample) {
     invisible(.Call(`_pladdrr_longsound_save_part`, xptr, audio_file_type, tmin, tmax, path, bits_per_sample))
 }
@@ -1185,6 +1223,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param channel Channel number (1-based)
 #' @param path Output file path
 #' @keywords internal
+#' @noRd
 .longsound_save_channel <- function(xptr, audio_file_type, channel, path) {
     invisible(.Call(`_pladdrr_longsound_save_channel`, xptr, audio_file_type, channel, path))
 }
@@ -1255,6 +1294,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param sound_xptr External pointer to Sound object
 #' @return External pointer to new Sound object containing the voice source
 #' @keywords internal
+#' @noRd
 .lpc_sound_filter_inverse <- function(lpc_xptr, sound_xptr) {
     .Call(`_pladdrr_lpc_sound_filter_inverse`, lpc_xptr, sound_xptr)
 }
@@ -1264,6 +1304,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param sound_r6 R6 Sound object
 #' @return External pointer to new Sound object containing the voice source
 #' @keywords internal
+#' @noRd
 .lpc_sound_filter_inverse_r6 <- function(lpc_xptr, sound_r6) {
     .Call(`_pladdrr_lpc_sound_filter_inverse_r6`, lpc_xptr, sound_r6)
 }
@@ -1280,6 +1321,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param time Time point (seconds) at which to extract LPC filter
 #' @return External pointer to new Sound object containing the voice source
 #' @keywords internal
+#' @noRd
 .lpc_sound_filter_inverse_at_time <- function(lpc_xptr, sound_xptr, channel, time) {
     .Call(`_pladdrr_lpc_sound_filter_inverse_at_time`, lpc_xptr, sound_xptr, channel, time)
 }
@@ -1291,11 +1333,13 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param time Time point (seconds)
 #' @return External pointer to new Sound object containing the voice source
 #' @keywords internal
+#' @noRd
 .lpc_sound_filter_inverse_at_time_r6 <- function(lpc_xptr, sound_r6, channel, time) {
     .Call(`_pladdrr_lpc_sound_filter_inverse_at_time_r6`, lpc_xptr, sound_r6, channel, time)
 }
 
 #' LPC: To Spectrogram (internal)
+#' @noRd
 .lpc_to_spectrogram <- function(xptr, df_min, bandwidth_reduction, de_emphasis_frequency) {
     .Call(`_pladdrr_lpc_to_spectrogram`, xptr, df_min, bandwidth_reduction, de_emphasis_frequency)
 }
@@ -1358,6 +1402,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 #' Report spectral trend (slope and intercept with fit statistics)
 #' @keywords internal
+#' @noRd
 .ltas_report_spectral_trend <- function(xptr, fmin, fmax, frequency_scale, fit_method) {
     .Call(`_pladdrr_ltas_report_spectral_trend`, xptr, fmin, fmax, frequency_scale, fit_method)
 }
@@ -1715,11 +1760,13 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 }
 
 #' PointProcess: To Sound (pulse train) (internal)
+#' @noRd
 .pointprocess_to_sound_pulse_train <- function(xptr, sampling_frequency, adapt_factor, adapt_time, interpolation_depth) {
     .Call(`_pladdrr_pointprocess_to_sound_pulse_train`, xptr, sampling_frequency, adapt_factor, adapt_time, interpolation_depth)
 }
 
 #' PointProcess: To Sound (hum) (internal)
+#' @noRd
 .pointprocess_to_sound_hum <- function(xptr) {
     .Call(`_pladdrr_pointprocess_to_sound_hum`, xptr)
 }
@@ -2224,6 +2271,7 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 #' Get SIMD capabilities (internal)
 #' @keywords internal
+#' @noRd
 .simd_info <- function() {
     .Call(`_pladdrr_simd_info`)
 }
@@ -2359,18 +2407,21 @@ is_fast_access <- function(x) {
 #'   - With multiple windows: 27x overall speedup (as measured)
 #'
 #' @keywords internal
+#' @noRd
 .sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {
     .Call(`_pladdrr_sound_load_window`, path, start, end, resample_to, preserve_times)
 }
 
 #' SIMD-optimized sound scaling (peak amplitude)
 #' @keywords internal
+#' @noRd
 .sound_scale_peak_simd <- function(xptr, new_peak) {
     invisible(.Call(`_pladdrr_sound_scale_peak_simd`, xptr, new_peak))
 }
 
 #' SIMD-optimized sound mixing with balance
 #' @keywords internal
+#' @noRd
 .sound_mix_simd <- function(xptr1, xptr2, balance) {
     .Call(`_pladdrr_sound_mix_simd`, xptr1, xptr2, balance)
 }
@@ -2497,18 +2548,21 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 #' Read Sound from file using native Praat readers (internal)
 #' @keywords internal
+#' @noRd
 .sound_read_from_file_native <- function(path) {
     .Call(`_pladdrr_sound_read_from_file_native`, path)
 }
 
 #' Create Sound from values (internal)
 #' @keywords internal
+#' @noRd
 .sound_create_from_values <- function(values, sampling_rate, start_time = 0.0) {
     .Call(`_pladdrr_sound_create_from_values`, values, sampling_rate, start_time)
 }
 
 #' Create simple tone (internal)
 #' @keywords internal
+#' @noRd
 .sound_create_tone <- function(duration, sampling_rate, frequency, amplitude) {
     .Call(`_pladdrr_sound_create_tone`, duration, sampling_rate, frequency, amplitude)
 }
@@ -2523,156 +2577,182 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 #' Get sound duration (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_duration <- function(xptr) {
     .Call(`_pladdrr_sound_get_duration`, xptr)
 }
 
 #' Get sampling frequency (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_sampling_frequency <- function(xptr) {
     .Call(`_pladdrr_sound_get_sampling_frequency`, xptr)
 }
 
 #' Get number of samples (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_number_of_samples <- function(xptr) {
     .Call(`_pladdrr_sound_get_number_of_samples`, xptr)
 }
 
 #' Get number of channels (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_number_of_channels <- function(xptr) {
     .Call(`_pladdrr_sound_get_number_of_channels`, xptr)
 }
 
 #' Get value at time (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_value_at_time <- function(xptr, time, channel, interpolation = "linear") {
     .Call(`_pladdrr_sound_get_value_at_time`, xptr, time, channel, interpolation)
 }
 
 #' Get RMS (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_rms <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_rms`, xptr, from_time, to_time)
 }
 
 #' Get energy (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_energy <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_energy`, xptr, from_time, to_time)
 }
 
 #' Get power (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_power <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_power`, xptr, from_time, to_time)
 }
 
 #' Get intensity in dB (internal)
 #' @keywords internal
+#' @noRd
 .sound_get_intensity_db <- function(xptr) {
     .Call(`_pladdrr_sound_get_intensity_db`, xptr)
 }
 
 #' Convert Sound to Pitch (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pitch <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling) {
     .Call(`_pladdrr_sound_to_pitch`, sound_xptr, time_step, pitch_floor, pitch_ceiling)
 }
 
 #' Convert Sound to Pitch using autocorrelation with full voicing parameters (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_ac <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost) {
     .Call(`_pladdrr_sound_to_pitch_ac`, sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
 
 #' Convert Sound to Pitch using cross-correlation with full voicing parameters (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_cc <- function(sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost) {
     .Call(`_pladdrr_sound_to_pitch_cc`, sound_xptr, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
 
 #' Convert Sound to Pitch using Subharmonic Summation (SHS) (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_shs <- function(sound_xptr, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave) {
     .Call(`_pladdrr_sound_to_pitch_shs`, sound_xptr, time_step, pitch_floor, max_frequency, pitch_ceiling, max_subharmonics, max_candidates, compression_factor, n_points_per_octave)
 }
 
 #' Convert Sound to Pitch using SPINET (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_spinet <- function(sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates) {
     .Call(`_pladdrr_sound_to_pitch_spinet`, sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates)
 }
 
 #' Convert Sound to Formant via Burg (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_formant_burg <- function(sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from) {
     .Call(`_pladdrr_sound_to_formant_burg`, sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
 }
 
 #' Convert Sound to Intensity (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_intensity <- function(sound_xptr, minimum_pitch, time_step, subtract_mean) {
     .Call(`_pladdrr_sound_to_intensity`, sound_xptr, minimum_pitch, time_step, subtract_mean)
 }
 
 #' Convert Sound to Harmonicity (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_harmonicity_cc <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_pladdrr_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
 
 #' Convert Sound to Harmonicity using autocorrelation (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_harmonicity_ac <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
     .Call(`_pladdrr_sound_to_harmonicity_ac`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
 
 #' Convert Sound to Harmonicity (GNE - Glottal-to-Noise Excitation ratio)
 #' @keywords internal
+#' @noRd
 .sound_to_harmonicity_gne <- function(sound_xptr, fmin, fmax, bandwidth, step) {
     .Call(`_pladdrr_sound_to_harmonicity_gne`, sound_xptr, fmin, fmax, bandwidth, step)
 }
 
 #' Convert Sound to Spectrum (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_spectrum <- function(sound_xptr, fast) {
     .Call(`_pladdrr_sound_to_spectrum`, sound_xptr, fast)
 }
 
 #' Convert Sound to Ltas (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_ltas <- function(sound_xptr, bandwidth) {
     .Call(`_pladdrr_sound_to_ltas`, sound_xptr, bandwidth)
 }
 
 #' Convert Sound to Spectrogram (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_spectrogram <- function(sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape) {
     .Call(`_pladdrr_sound_to_spectrogram`, sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape)
 }
 
 #' Write Sound to file using native Praat writers (internal)
 #' @keywords internal
+#' @noRd
 .sound_write_to_file_native <- function(sound_xptr, path, format, bits_per_sample) {
     invisible(.Call(`_pladdrr_sound_write_to_file_native`, sound_xptr, path, format, bits_per_sample))
 }
 
 #' Export Sound as data frame (internal)
 #' @keywords internal
+#' @noRd
 .sound_as_data_frame <- function(xptr) {
     .Call(`_pladdrr_sound_as_data_frame`, xptr)
 }
 
 #' Export Sound as matrix (internal)
 #' @keywords internal
+#' @noRd
 .sound_as_matrix <- function(xptr) {
     .Call(`_pladdrr_sound_as_matrix`, xptr)
 }
 
 #' Save Sound to file (internal)
 #' @keywords internal
+#' @noRd
 .sound_save <- function(xptr, path, file_type) {
     invisible(.Call(`_pladdrr_sound_save`, xptr, path, file_type))
 }
@@ -2683,6 +2763,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Praat equivalent: Select Sound and Pitch, then "To PointProcess (cc)"
 #' 
 #' @keywords internal
+#' @noRd
 .sound_pitch_to_pointprocess_cc <- function(sound_xptr, pitch_xptr) {
     .Call(`_pladdrr_sound_pitch_to_pointprocess_cc`, sound_xptr, pitch_xptr)
 }
@@ -2693,126 +2774,147 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Praat equivalent: Select Sound and Pitch, then "To PointProcess (peaks)..."
 #' 
 #' @keywords internal
+#' @noRd
 .sound_pitch_to_pointprocess_peaks <- function(sound_xptr, pitch_xptr, include_maxima, include_minima) {
     .Call(`_pladdrr_sound_pitch_to_pointprocess_peaks`, sound_xptr, pitch_xptr, include_maxima, include_minima)
 }
 
 #' Extract glottal pulses from sound using cross-correlation (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_point_process_periodic_cc <- function(xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor) {
     .Call(`_pladdrr_sound_to_point_process_periodic_cc`, xptr, time_step, pitch_floor, pitch_ceiling, max_period_factor, max_amplitude_factor)
 }
 
 #' Extract extrema (peaks) from sound (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_point_process_extrema <- function(xptr, channel, include_maxima, include_minima, interpolation) {
     .Call(`_pladdrr_sound_to_point_process_extrema`, xptr, channel, include_maxima, include_minima, interpolation)
 }
 
 #' Extract zero crossings from sound (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_point_process_zeros <- function(xptr, channel, include_raisers, include_fallers) {
     .Call(`_pladdrr_sound_to_point_process_zeros`, xptr, channel, include_raisers, include_fallers)
 }
 
 #' Extract periodic pulses using cross-correlation (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pointprocess_periodic_cc <- function(xptr, pitch_floor, pitch_ceiling) {
     .Call(`_pladdrr_sound_to_pointprocess_periodic_cc`, xptr, pitch_floor, pitch_ceiling)
 }
 
 #' Extract periodic pulses using peak detection (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_pointprocess_periodic_peaks <- function(xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima) {
     .Call(`_pladdrr_sound_to_pointprocess_periodic_peaks`, xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima)
 }
 
 #' Extract a specific channel from Sound (internal)
 #' @keywords internal
+#' @noRd
 .sound_extract_channel <- function(xptr, channel) {
     .Call(`_pladdrr_sound_extract_channel`, xptr, channel)
 }
 
 #' Extract part of Sound by time (internal)
 #' @keywords internal
+#' @noRd
 .sound_extract_part <- function(xptr, from_time, to_time, window_shape, relative_width, preserve_times) {
     .Call(`_pladdrr_sound_extract_part`, xptr, from_time, to_time, window_shape, relative_width, preserve_times)
 }
 
 #' Scale intensity of Sound to target dB level (internal)
 #' @keywords internal
+#' @noRd
 .sound_scale_intensity <- function(xptr, new_intensity_db) {
     invisible(.Call(`_pladdrr_sound_scale_intensity`, xptr, new_intensity_db))
 }
 
 #' Scale peak amplitude of Sound (internal)
 #' @keywords internal
+#' @noRd
 .sound_scale_peak <- function(xptr, new_peak) {
     invisible(.Call(`_pladdrr_sound_scale_peak`, xptr, new_peak))
 }
 
 #' Pre-emphasize Sound (high-pass filter) (internal)
 #' @keywords internal
+#' @noRd
 .sound_pre_emphasize <- function(xptr, from_frequency) {
     invisible(.Call(`_pladdrr_sound_pre_emphasize`, xptr, from_frequency))
 }
 
 #' De-emphasize Sound (low-pass filter) (internal)
 #' @keywords internal
+#' @noRd
 .sound_de_emphasize <- function(xptr, from_frequency) {
     invisible(.Call(`_pladdrr_sound_de_emphasize`, xptr, from_frequency))
 }
 
 #' Filter Sound - pass Hann band (internal)
 #' @keywords internal
+#' @noRd
 .sound_filter_pass_hann_band <- function(xptr, fmin, fmax, smooth) {
     .Call(`_pladdrr_sound_filter_pass_hann_band`, xptr, fmin, fmax, smooth)
 }
 
 #' Filter Sound - stop Hann band (internal)
 #' @keywords internal
+#' @noRd
 .sound_filter_stop_hann_band <- function(xptr, fmin, fmax, smooth) {
     .Call(`_pladdrr_sound_filter_stop_hann_band`, xptr, fmin, fmax, smooth)
 }
 
 #' Resample Sound to new sampling frequency (internal)
 #' @keywords internal
+#' @noRd
 .sound_resample <- function(xptr, new_frequency, precision) {
     .Call(`_pladdrr_sound_resample`, xptr, new_frequency, precision)
 }
 
 #' Convert Sound to mono by averaging channels (internal)
 #' @keywords internal
+#' @noRd
 .sound_convert_to_mono <- function(xptr) {
     .Call(`_pladdrr_sound_convert_to_mono`, xptr)
 }
 
 #' Convert mono Sound to stereo by duplicating channel (internal)
 #' @keywords internal
+#' @noRd
 .sound_convert_to_stereo <- function(xptr) {
     .Call(`_pladdrr_sound_convert_to_stereo`, xptr)
 }
 
 #' Copy Sound object (internal)
 #' @keywords internal
+#' @noRd
 .sound_copy <- function(xptr) {
     .Call(`_pladdrr_sound_copy`, xptr)
 }
 
 #' Concatenate two Sound objects (internal)
 #' @keywords internal
+#' @noRd
 .sound_concatenate <- function(xptr1, xptr2, overlap) {
     .Call(`_pladdrr_sound_concatenate`, xptr1, xptr2, overlap)
 }
 
 #' Mix two Sound objects (internal)
 #' @keywords internal
+#' @noRd
 .sound_mix <- function(xptr1, xptr2, balance) {
     .Call(`_pladdrr_sound_mix`, xptr1, xptr2, balance)
 }
 
 #' Detect silences in Sound and create TextGrid (internal)
 #' @keywords internal
+#' @noRd
 .sound_to_textgrid_silences <- function(sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label) {
     .Call(`_pladdrr_sound_to_textgrid_silences`, sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label)
 }
@@ -2830,6 +2932,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param overlap Overlap duration in seconds between consecutive sounds
 #' @return Single concatenated Sound external pointer
 #' @keywords internal
+#' @noRd
 .sound_concatenate_all <- function(sound_list, overlap = 0.0) {
     .Call(`_pladdrr_sound_concatenate_all`, sound_list, overlap)
 }
@@ -2847,6 +2950,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param preserve_times Whether to preserve original times
 #' @return List of Sound external pointers
 #' @keywords internal
+#' @noRd
 .sound_extract_parts_batch <- function(xptr, from_times, to_times, window_shape = 0L, relative_width = 1.0, preserve_times = FALSE) {
     .Call(`_pladdrr_sound_extract_parts_batch`, xptr, from_times, to_times, window_shape, relative_width, preserve_times)
 }
@@ -2862,6 +2966,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pitch_ceiling Pitch ceiling in Hz
 #' @return List of Pitch external pointers
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
     .Call(`_pladdrr_sound_to_pitch_batch`, sound_list, time_step, pitch_floor, pitch_ceiling)
 }
@@ -2884,6 +2989,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param voiced_unvoiced_cost Voiced/unvoiced cost
 #' @return List of Pitch external pointers
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_ac_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0, max_candidates = 15L, very_accurate = FALSE, silence_threshold = 0.03, voicing_threshold = 0.45, octave_cost = 0.01, octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14) {
     .Call(`_pladdrr_sound_to_pitch_ac_batch`, sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
@@ -2906,6 +3012,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param voiced_unvoiced_cost Voiced/unvoiced cost
 #' @return List of Pitch external pointers
 #' @keywords internal
+#' @noRd
 .sound_to_pitch_cc_batch <- function(sound_list, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0, max_candidates = 15L, very_accurate = FALSE, silence_threshold = 0.03, voicing_threshold = 0.45, octave_cost = 0.01, octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14) {
     .Call(`_pladdrr_sound_to_pitch_cc_batch`, sound_list, time_step, pitch_floor, pitch_ceiling, max_candidates, very_accurate, silence_threshold, voicing_threshold, octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 }
@@ -2920,6 +3027,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pre_emphasis_from Pre-emphasis from frequency
 #' @return List of Formant external pointers
 #' @keywords internal
+#' @noRd
 .sound_to_formant_batch <- function(sound_list, time_step = 0.005, max_formants = 5.0, max_frequency = 5500.0, window_length = 0.025, pre_emphasis_from = 50.0) {
     .Call(`_pladdrr_sound_to_formant_batch`, sound_list, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
 }
@@ -2932,6 +3040,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param subtract_mean Whether to subtract mean
 #' @return List of Intensity external pointers
 #' @keywords internal
+#' @noRd
 .sound_to_intensity_batch <- function(sound_list, minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
     .Call(`_pladdrr_sound_to_intensity_batch`, sound_list, minimum_pitch, time_step, subtract_mean)
 }
@@ -2949,6 +3058,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pitch_ceiling Pitch ceiling in Hz
 #' @return List of Pitch external pointers
 #' @keywords internal
+#' @noRd
 .sound_extract_and_pitch_batch <- function(xptr, from_times, to_times, time_step = 0.0, pitch_floor = 75.0, pitch_ceiling = 600.0) {
     .Call(`_pladdrr_sound_extract_and_pitch_batch`, xptr, from_times, to_times, time_step, pitch_floor, pitch_ceiling)
 }
@@ -2965,6 +3075,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pre_emphasis_from Pre-emphasis frequency
 #' @return List of Formant external pointers
 #' @keywords internal
+#' @noRd
 .sound_extract_and_formant_batch <- function(xptr, from_times, to_times, time_step = 0.005, max_formants = 5.0, max_frequency = 5500.0, window_length = 0.025, pre_emphasis_from = 50.0) {
     .Call(`_pladdrr_sound_extract_and_formant_batch`, xptr, from_times, to_times, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
 }
@@ -2979,6 +3090,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param interpolate Whether to interpolate
 #' @return Numeric vector of pitch values
 #' @keywords internal
+#' @noRd
 .pitch_get_values_at_times <- function(xptr, times, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_values_at_times`, xptr, times, unit, interpolate)
 }
@@ -2991,6 +3103,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param unit Unit (0=Hertz, 1=Bark)
 #' @return Numeric vector of formant values
 #' @keywords internal
+#' @noRd
 .formant_get_values_at_times <- function(xptr, times, formant_number = 1L, unit = 0L) {
     .Call(`_pladdrr_formant_get_values_at_times`, xptr, times, formant_number, unit)
 }
@@ -3002,86 +3115,103 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param interpolation Interpolation type
 #' @return Numeric vector of intensity values
 #' @keywords internal
+#' @noRd
 .intensity_get_values_at_times <- function(xptr, times, interpolation = 1L) {
     .Call(`_pladdrr_intensity_get_values_at_times`, xptr, times, interpolation)
 }
 
 #' Sound: To Ltas (pitch-corrected) (internal)
+#' @noRd
 .sound_to_ltas_pitch_corrected <- function(xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth, shortest_period, longest_period, max_period_factor) {
     .Call(`_pladdrr_sound_to_ltas_pitch_corrected`, xptr, pitch_floor, pitch_ceiling, max_frequency, bandwidth, shortest_period, longest_period, max_period_factor)
 }
 
 #' Sound: To Formant (robust) (internal)
+#' @noRd
 .sound_to_formant_robust <- function(xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from, num_std_dev, max_iterations) {
     .Call(`_pladdrr_sound_to_formant_robust`, xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from, num_std_dev, max_iterations)
 }
 
 #' Sound & Formant: Filter (internal)
+#' @noRd
 .sound_formant_filter <- function(sound_xptr, formant_xptr) {
     .Call(`_pladdrr_sound_formant_filter`, sound_xptr, formant_xptr)
 }
 
 #' Sound & Formant: Filter (no scale) (internal)
+#' @noRd
 .sound_formant_filter_noscale <- function(sound_xptr, formant_xptr) {
     .Call(`_pladdrr_sound_formant_filter_noscale`, sound_xptr, formant_xptr)
 }
 
 #' Sound: To MelSpectrogram (internal)
+#' @noRd
 .sound_to_mel_spectrogram <- function(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step) {
     .Call(`_pladdrr_sound_to_mel_spectrogram`, xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
 }
 
 #' Sound: To BarkSpectrogram (internal)
+#' @noRd
 .sound_to_bark_spectrogram <- function(xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step) {
     .Call(`_pladdrr_sound_to_bark_spectrogram`, xptr, window_length, time_step, first_filter_frequency, max_frequency, frequency_step)
 }
 
 #' MelSpectrogram: To MFCC (internal)
+#' @noRd
 .mel_spectrogram_to_mfcc <- function(xptr, number_of_coefficients) {
     .Call(`_pladdrr_mel_spectrogram_to_mfcc`, xptr, number_of_coefficients)
 }
 
 #' MFCC: To MelSpectrogram (internal)
+#' @noRd
 .mfcc_to_mel_spectrogram <- function(xptr, first_coefficient, last_coefficient, include_c0) {
     .Call(`_pladdrr_mfcc_to_mel_spectrogram`, xptr, first_coefficient, last_coefficient, include_c0)
 }
 
 #' BandFilterSpectrogram: To Matrix (internal)
+#' @noRd
 .band_filter_spectrogram_to_matrix <- function(xptr, to_db) {
     .Call(`_pladdrr_band_filter_spectrogram_to_matrix`, xptr, to_db)
 }
 
 #' BandFilterSpectrogram: To Intensity (internal)
+#' @noRd
 .band_filter_spectrogram_to_intensity <- function(xptr) {
     .Call(`_pladdrr_band_filter_spectrogram_to_intensity`, xptr)
 }
 
 #' Sound: Lengthen (overlap-add) (internal)
+#' @noRd
 .sound_lengthen_ola <- function(xptr, fmin, fmax, factor) {
     .Call(`_pladdrr_sound_lengthen_ola`, xptr, fmin, fmax, factor)
 }
 
 #' Sound: Autocorrelate (internal)
+#' @noRd
 .sound_autocorrelate <- function(xptr, scaling, signal_outside) {
     .Call(`_pladdrr_sound_autocorrelate`, xptr, scaling, signal_outside)
 }
 
 #' Sounds: Convolve (internal)
+#' @noRd
 .sounds_convolve_direct <- function(xptr1, xptr2, scaling, signal_outside) {
     .Call(`_pladdrr_sounds_convolve_export`, xptr1, xptr2, scaling, signal_outside)
 }
 
 #' Sounds: Cross-correlate (internal)
+#' @noRd
 .sounds_cross_correlate_direct <- function(xptr1, xptr2, scaling, signal_outside) {
     .Call(`_pladdrr_sounds_cross_correlate_export`, xptr1, xptr2, scaling, signal_outside)
 }
 
 #' Sound: Deepen band modulation (internal)
+#' @noRd
 .sound_deepen_band_mod <- function(xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing) {
     .Call(`_pladdrr_sound_deepen_band_mod`, xptr, enhancement_db, flow, fhigh, slow_modulation, fast_modulation, band_smoothing)
 }
 
 #' Intensity: To TextGrid (silences) (internal)
+#' @noRd
 .intensity_to_textgrid_silences <- function(xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label) {
     .Call(`_pladdrr_intensity_to_textgrid_silences`, xptr, silence_threshold, min_silence_duration, min_sounding_duration, silent_label, sounding_label)
 }
@@ -3355,16 +3485,19 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 }
 
 #' Table: Sort rows (internal)
+#' @noRd
 .table_sort_rows <- function(xptr, columns) {
     invisible(.Call(`_pladdrr_table_sort_rows`, xptr, columns))
 }
 
 #' Table: Extract rows where column number (internal)
+#' @noRd
 .table_extract_rows_where_column_number <- function(xptr, column, which, criterion) {
     .Call(`_pladdrr_table_extract_rows_where_column_number`, xptr, column, which, criterion)
 }
 
 #' Table: Extract rows where column string (internal)
+#' @noRd
 .table_extract_rows_where_column_string <- function(xptr, column, which, criterion) {
     .Call(`_pladdrr_table_extract_rows_where_column_string`, xptr, column, which, criterion)
 }
@@ -3594,6 +3727,7 @@ get_interval_predicate <- function(type, threshold = 0.0) {
 #'     Empty intervals added at edges if needed.
 #'
 #' @keywords internal
+#' @noRd
 .textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
     .Call(`_pladdrr_textgrid_merge`, textgrids, equalize_domains)
 }
@@ -3734,7 +3868,6 @@ textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tie
 #' features in a single pass.
 #'
 #' @param textgrid_xptr External pointer to TextGrid
-#' @param sound_xptr External pointer to Sound (optional, for additional analysis)
 #' @param pitch_xptr External pointer to Pitch (optional)
 #' @param formant_xptr External pointer to Formant (optional)
 #' @param intensity_xptr External pointer to Intensity (optional)
@@ -3923,6 +4056,7 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
 #' @param max_threads Maximum concurrent threads; 0 = auto (all processors)
 #' @param min_elements_per_thread Minimum elements per thread; 0 = per-function factory tuning
 #' @keywords internal
+#' @noRd
 .pladdrr_set_threads_cpp <- function(use_multithreading, max_threads, min_elements_per_thread) {
     invisible(.Call(`_pladdrr_pladdrr_set_threads_cpp`, use_multithreading, max_threads, min_elements_per_thread))
 }
@@ -3931,6 +4065,7 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
 #'
 #' @return List with processors, enabled, max_threads, min_elements_per_thread
 #' @keywords internal
+#' @noRd
 .pladdrr_get_threads_cpp <- function() {
     .Call(`_pladdrr_pladdrr_get_threads_cpp`)
 }
@@ -4033,6 +4168,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param dx Section length in metres
 #' @return External pointer to VocalTract
 #' @keywords internal
+#' @noRd
 .vocaltract_create <- function(nx, dx) {
     .Call(`_pladdrr_vocaltract_create`, nx, dx)
 }
@@ -4041,6 +4177,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param phone Phone name (a, e, i, o, u, y1, y2, y3, jery, p, t, k, x, pa, ta, ka, pi, ti, ki, pu, tu, ku)
 #' @return External pointer to VocalTract
 #' @keywords internal
+#' @noRd
 .vocaltract_create_from_phone <- function(phone) {
     .Call(`_pladdrr_vocaltract_create_from_phone`, phone)
 }
@@ -4049,6 +4186,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @return Total length in metres
 #' @keywords internal
+#' @noRd
 .vocaltract_get_length <- function(xptr) {
     .Call(`_pladdrr_vocaltract_get_length`, xptr)
 }
@@ -4057,6 +4195,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @return Number of sections
 #' @keywords internal
+#' @noRd
 .vocaltract_get_number_of_sections <- function(xptr) {
     .Call(`_pladdrr_vocaltract_get_number_of_sections`, xptr)
 }
@@ -4065,6 +4204,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @return Section length in metres
 #' @keywords internal
+#' @noRd
 .vocaltract_get_section_length <- function(xptr) {
     .Call(`_pladdrr_vocaltract_get_section_length`, xptr)
 }
@@ -4074,6 +4214,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param section Section index (1-based)
 #' @return Area in square metres
 #' @keywords internal
+#' @noRd
 .vocaltract_get_area <- function(xptr, section) {
     .Call(`_pladdrr_vocaltract_get_area`, xptr, section)
 }
@@ -4083,6 +4224,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param section Section index (1-based)
 #' @param area Area in square metres
 #' @keywords internal
+#' @noRd
 .vocaltract_set_area <- function(xptr, section, area) {
     invisible(.Call(`_pladdrr_vocaltract_set_area`, xptr, section, area))
 }
@@ -4091,6 +4233,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @return Numeric vector of areas
 #' @keywords internal
+#' @noRd
 .vocaltract_get_areas <- function(xptr) {
     .Call(`_pladdrr_vocaltract_get_areas`, xptr)
 }
@@ -4099,6 +4242,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @param areas Numeric vector of areas
 #' @keywords internal
+#' @noRd
 .vocaltract_set_areas <- function(xptr, areas) {
     invisible(.Call(`_pladdrr_vocaltract_set_areas`, xptr, areas))
 }
@@ -4112,6 +4256,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param internal_damping Include internal damping
 #' @return External pointer to Spectrum
 #' @keywords internal
+#' @noRd
 .vocaltract_to_spectrum <- function(xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping) {
     .Call(`_pladdrr_vocaltract_to_spectrum`, xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping)
 }
@@ -4120,6 +4265,7 @@ praat_error_to_r <- function(error_msg) {
 #' @param xptr External pointer to VocalTract
 #' @return External pointer to Matrix
 #' @keywords internal
+#' @noRd
 .vocaltract_to_matrix <- function(xptr) {
     .Call(`_pladdrr_vocaltract_to_matrix`, xptr)
 }
