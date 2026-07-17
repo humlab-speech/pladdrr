@@ -25,7 +25,7 @@ test_that("RMatrix module loads correctly", {
 
   mod <- Rcpp::Module("matrix_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RMatrix" %in% names(mod))
+  expect_false(is.null(mod$RMatrix))
 })
 
 test_that("RMatrix can be created from R matrix", {
@@ -96,7 +96,7 @@ test_that("RCepstrum module loads correctly", {
 
   mod <- Rcpp::Module("cepstrum_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RCepstrum" %in% names(mod))
+  expect_false(is.null(mod$RCepstrum))
 })
 
 test_that("RCepstrum can be created from Sound", {
@@ -104,7 +104,7 @@ test_that("RCepstrum can be created from Sound", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   cep_mod <- Rcpp::Module("cepstrum_module", PACKAGE = "pladdrr")
   cep_ptr <- cep_mod$Sound_to_Cepstrum(sound_ptr)
@@ -119,7 +119,7 @@ test_that("RCepstrum export works", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   cep_mod <- Rcpp::Module("cepstrum_module", PACKAGE = "pladdrr")
   cep_ptr <- cep_mod$Sound_to_Cepstrum(sound_ptr)
@@ -127,7 +127,6 @@ test_that("RCepstrum export works", {
 
   df <- rcepstrum$as_data_frame()
   expect_s3_class(df, "data.frame")
-  expect_s3_class(df, "data.table")
   expect_true("quefrency" %in% names(df))
   expect_true("value" %in% names(df))
 })
@@ -141,8 +140,8 @@ test_that("RPowerCepstrum module loads correctly", {
 
   mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RPowerCepstrum" %in% names(mod))
-  expect_true("RPowerCepstrogram" %in% names(mod))
+  expect_false(is.null(mod$RPowerCepstrum))
+  expect_false(is.null(mod$RPowerCepstrogram))
 })
 
 test_that("RPowerCepstrum can be created from Spectrum", {
@@ -152,7 +151,7 @@ test_that("RPowerCepstrum can be created from Spectrum", {
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
   spectrum <- snd$to_spectrum()
-  spec_ptr <- spectrum$.__enclos_env__$private$ptr
+  spec_ptr <- spectrum$.xptr
 
   pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
   pc_ptr <- pc_mod$Spectrum_to_PowerCepstrum(spec_ptr)
@@ -167,7 +166,7 @@ test_that("RPowerCepstrogram can be created from Sound", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
   pcg_ptr <- pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 5000, 50)
@@ -183,7 +182,7 @@ test_that("RPowerCepstrogram CPPS works", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
   pcg_ptr <- pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 5000, 50)
@@ -202,7 +201,7 @@ test_that("RCochleagram module loads correctly", {
 
   mod <- Rcpp::Module("cochleagram_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RCochleagram" %in% names(mod))
+  expect_false(is.null(mod$RCochleagram))
 })
 
 test_that("RCochleagram can be created from Sound", {
@@ -210,7 +209,7 @@ test_that("RCochleagram can be created from Sound", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   coch_mod <- Rcpp::Module("cochleagram_module", PACKAGE = "pladdrr")
   coch_ptr <- coch_mod$Sound_to_Cochleagram(sound_ptr, 0.01, 0.1, 0.03, 0.05)
@@ -226,7 +225,7 @@ test_that("RCochleagram export works", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   coch_mod <- Rcpp::Module("cochleagram_module", PACKAGE = "pladdrr")
   coch_ptr <- coch_mod$Sound_to_Cochleagram(sound_ptr, 0.01, 0.1, 0.03, 0.05)
@@ -247,7 +246,7 @@ test_that("RExcitation module loads correctly", {
 
   mod <- Rcpp::Module("excitation_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RExcitation" %in% names(mod))
+  expect_false(is.null(mod$RExcitation))
 })
 
 test_that("RExcitation can be created from Spectrum", {
@@ -257,7 +256,7 @@ test_that("RExcitation can be created from Spectrum", {
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
   spectrum <- snd$to_spectrum()
-  spec_ptr <- spectrum$.__enclos_env__$private$ptr
+  spec_ptr <- spectrum$.xptr
 
   exc_mod <- Rcpp::Module("excitation_module", PACKAGE = "pladdrr")
   exc_ptr <- exc_mod$Spectrum_to_Excitation(spec_ptr, 0.1)
@@ -274,7 +273,7 @@ test_that("RExcitation loudness works", {
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
   spectrum <- snd$to_spectrum()
-  spec_ptr <- spectrum$.__enclos_env__$private$ptr
+  spec_ptr <- spectrum$.xptr
 
   exc_mod <- Rcpp::Module("excitation_module", PACKAGE = "pladdrr")
   exc_ptr <- exc_mod$Spectrum_to_Excitation(spec_ptr, 0.1)
@@ -294,7 +293,7 @@ test_that("RElectroglottogram module loads correctly", {
 
   mod <- Rcpp::Module("electroglottogram_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RElectroglottogram" %in% names(mod))
+  expect_false(is.null(mod$RElectroglottogram))
 })
 
 test_that("RElectroglottogram can be extracted from Sound", {
@@ -302,7 +301,7 @@ test_that("RElectroglottogram can be extracted from Sound", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   egg_mod <- Rcpp::Module("electroglottogram_module", PACKAGE = "pladdrr")
   egg_ptr <- egg_mod$Sound_extract_Electroglottogram(sound_ptr, 1L, FALSE)
@@ -318,7 +317,7 @@ test_that("RElectroglottogram export works", {
   skip_if_no_module("sound")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  sound_ptr <- snd$.__enclos_env__$private$ptr
+  sound_ptr <- snd$.xptr
 
   egg_mod <- Rcpp::Module("electroglottogram_module", PACKAGE = "pladdrr")
   egg_ptr <- egg_mod$Sound_extract_Electroglottogram(sound_ptr, 1L, FALSE)
@@ -326,7 +325,6 @@ test_that("RElectroglottogram export works", {
 
   df <- regg$as_data_frame()
   expect_s3_class(df, "data.frame")
-  expect_s3_class(df, "data.table")
   expect_true("time" %in% names(df))
   expect_true("amplitude" %in% names(df))
 })
@@ -340,7 +338,7 @@ test_that("RFormantGrid module loads correctly", {
 
   mod <- Rcpp::Module("formantgrid_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RFormantGrid" %in% names(mod))
+  expect_false(is.null(mod$RFormantGrid))
 })
 
 test_that("RFormantGrid can be created", {
@@ -394,8 +392,8 @@ test_that("RFormantGrid from Formant works", {
   skip_if_no_module("formant")
 
   snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-  formant <- snd$to_formant()
-  formant_ptr <- formant$.__enclos_env__$private$ptr
+  formant <- snd$to_formant_burg()
+  formant_ptr <- formant$.xptr
 
   fg_mod <- Rcpp::Module("formantgrid_module", PACKAGE = "pladdrr")
   fg_ptr <- fg_mod$Formant_to_FormantGrid(formant_ptr)

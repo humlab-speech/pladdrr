@@ -20,12 +20,12 @@ test_that("PowerCepstrogram creation works with SIMD", {
   pc <- sound$to_powercepstrogram(
     pitch_floor = 60,
     time_step = 0.002,
-    max_frequency = 5000,
-    pre_emphasis_from = 50
+    maximum_frequency = 5000,
+    pre_emphasis_frequency = 50
   )
   
   expect_s3_class(pc, "PowerCepstrogram")
-  expect_gt(pc$get_number_of_frames(), 0)
+  expect_gt(nrow(pc$as_matrix()), 0)
 })
 
 test_that("CPPS calculation with SIMD matches scalar", {

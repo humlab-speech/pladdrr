@@ -11770,7 +11770,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     return R_NilValue;
 }
 
-extern const R_CallMethodDef CallEntries[] = {
+static const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_amplitude_tier_create_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_create_cpp, 2},
     {"_pladdrr_amplitude_tier_add_point_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_add_point_cpp, 3},
     {"_pladdrr_amplitude_tier_get_value_at_time_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_get_value_at_time_cpp, 2},

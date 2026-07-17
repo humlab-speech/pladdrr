@@ -28,7 +28,7 @@ create_test_vowel <- function(duration = 0.5, sr = 16000) {
   # Normalize
   signal <- signal / max(abs(signal)) * 0.9
   
-  Sound$create(signal, sampling_rate = sr)
+  Sound$from_values(signal, sampling_rate = sr)
 }
 
 
@@ -44,20 +44,20 @@ test_that("FormantPath: SIMD vs scalar produce same structure", {
   options(speaker.use_simd = FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2  # 5 candidates total
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2  # 5 candidates total
   )
   
   # SIMD path
   options(speaker.use_simd = TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2
   )
   
   # Check structure
@@ -69,9 +69,9 @@ test_that("FormantPath: SIMD vs scalar produce same structure", {
                fp_simd$get_number_of_candidates())
   
   # Should have same time domain
-  expect_equal(fp_scalar$xmin(), fp_simd$xmin(), tolerance = 1e-10)
-  expect_equal(fp_scalar$xmax(), fp_simd$xmax(), tolerance = 1e-10)
-  expect_equal(fp_scalar$nx(), fp_simd$nx())
+  expect_equal(fp_scalar$get_xmin(), fp_simd$get_xmin(), tolerance = 1e-10)
+  expect_equal(fp_scalar$get_xmax(), fp_simd$get_xmax(), tolerance = 1e-10)
+  expect_equal(fp_scalar$get_nx(), fp_simd$get_nx())
 })
 
 
@@ -87,10 +87,10 @@ test_that("FormantPath: Extracted formants match SIMD vs scalar", {
   options(speaker.use_simd = FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2
   )
   formant_scalar <- fp_scalar$extract_formant()
   
@@ -98,15 +98,15 @@ test_that("FormantPath: Extracted formants match SIMD vs scalar", {
   options(speaker.use_simd = TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2
   )
   formant_simd <- fp_simd$extract_formant()
   
   # Compare F1, F2, F3 at midpoint
-  t_mid <- sound$xmax() / 2
+  t_mid <- sound$get_xmax() / 2
   
   f1_scalar <- formant_scalar$get_value_at_time(1, t_mid)
   f1_simd <- formant_simd$get_value_at_time(1, t_mid)
@@ -139,10 +139,10 @@ test_that("FormantPath: Path finding works with different weights", {
   # High frequency change weight (smooth paths)
   fp_smooth <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2
   )
   
   # Should successfully extract formants
@@ -172,10 +172,10 @@ test_that("FormantPath: Multiple ceiling candidates work", {
   for (n_steps in c(1, 2, 3)) {
     fp <- sound$to_formant_path(
       time_step = 0.01,
-      max_formants = 5.0,
-      middle_ceiling = 5500,
-      ceiling_step_size = 0.05,
-      number_of_steps = n_steps
+      max_num_formants = 5.0,
+      formant_ceiling = 5500,
+      ceiling_step_fraction = 0.05,
+      num_steps_up_down = n_steps
     )
     
     expected_candidates <- 2 * n_steps + 1
@@ -200,20 +200,20 @@ test_that("FormantPath: qSums matrix computation (SIMD vs scalar)", {
   options(speaker.use_simd = FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 1
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 1
   )
   
   # SIMD
   options(speaker.use_simd = TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 1
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 1
   )
   
   # Both should successfully create FormantPath
@@ -225,7 +225,7 @@ test_that("FormantPath: qSums matrix computation (SIMD vs scalar)", {
   f_simd <- fp_simd$extract_formant()
   
   # Should have same number of frames
-  expect_equal(f_scalar$nx(), f_simd$nx())
+  expect_equal(f_scalar$get_number_of_frames(), f_simd$get_number_of_frames())
 })
 
 
@@ -241,10 +241,10 @@ test_that("FormantPath: SIMD can be toggled on/off", {
   options(speaker.use_simd = FALSE)
   fp1 <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 1
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 1
   )
   expect_s3_class(fp1, "FormantPath")
   
@@ -252,10 +252,10 @@ test_that("FormantPath: SIMD can be toggled on/off", {
   options(speaker.use_simd = TRUE)
   fp2 <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 1
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 1
   )
   expect_s3_class(fp2, "FormantPath")
   
@@ -281,10 +281,10 @@ test_that("FormantPath: No performance regression", {
   start_time <- Sys.time()
   fp <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 2
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 2
   )
   end_time <- Sys.time()
   
@@ -311,10 +311,10 @@ test_that("FormantPath: Edge cases handled correctly", {
   sound_short <- create_test_vowel(duration = 0.1, sr = 16000)
   fp_short <- sound_short$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 1
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 1
   )
   expect_s3_class(fp_short, "FormantPath")
   
@@ -322,10 +322,10 @@ test_that("FormantPath: Edge cases handled correctly", {
   sound <- create_test_vowel(duration = 0.3, sr = 16000)
   fp_single <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 0  # Only 1 candidate
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 0  # Only 1 candidate
   )
   expect_s3_class(fp_single, "FormantPath")
   expect_equal(fp_single$get_number_of_candidates(), 1)
@@ -358,10 +358,10 @@ test_that("FormantPath: Works with real audio", {
     options(speaker.use_simd = TRUE)
     fp <- sound$to_formant_path(
       time_step = 0.01,
-      max_formants = 5.0,
-      middle_ceiling = 5500,
-      ceiling_step_size = 0.05,
-      number_of_steps = 2
+      max_num_formants = 5.0,
+      formant_ceiling = 5500,
+      ceiling_step_fraction = 0.05,
+      num_steps_up_down = 2
     )
     
     expect_s3_class(fp, "FormantPath")
@@ -385,24 +385,24 @@ test_that("FormantPath: Results comparable to standard Formant", {
   formant_standard <- sound$to_formant_burg(
     time_step = 0.01,
     max_formants = 5.0,
-    ceiling = 5500,
+    max_frequency = 5500,
     window_length = 0.025,
-    preemphasis_from = 50
+    pre_emphasis_from = 50
   )
   
   # FormantPath with single ceiling (should be similar)
   options(speaker.use_simd = TRUE)
   fp <- sound$to_formant_path(
     time_step = 0.01,
-    max_formants = 5.0,
-    middle_ceiling = 5500,
-    ceiling_step_size = 0.05,
-    number_of_steps = 0  # Single ceiling
+    max_num_formants = 5.0,
+    formant_ceiling = 5500,
+    ceiling_step_fraction = 0.05,
+    num_steps_up_down = 0  # Single ceiling
   )
   formant_path <- fp$extract_formant()
   
   # Compare means
-  t_mid <- sound$xmax() / 2
+  t_mid <- sound$get_xmax() / 2
   
   f1_standard <- formant_standard$get_value_at_time(1, t_mid)
   f1_path <- formant_path$get_value_at_time(1, t_mid)

@@ -1,6 +1,13 @@
 # Test SIMD matrix operations
 # Validates numerical accuracy of SIMD-accelerated matrix functions
 
+# Build a Matrix object from an R matrix (the old praat_matrix_from_matrix()
+# helper was removed; the conversion now lives in the internal
+# .matrix_from_r_matrix()).
+praat_matrix_from_matrix <- function(mat) {
+  Matrix(.xptr = pladdrr:::.matrix_from_r_matrix(mat))
+}
+
 test_that("SIMD matrix sum matches scalar result", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
