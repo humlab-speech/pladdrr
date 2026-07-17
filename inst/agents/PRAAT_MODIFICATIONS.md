@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-07-17
-**Package Version:** 4.9.4
+**Package Version:** 4.9.5
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
 
 ## Overview
@@ -16,6 +16,25 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.5 CRAN tarball slimming — single Praat source tree (2026-07-17)
+
+No Praat C++ source changes. Packaging only:
+
+- Deleted `src/praat/`, a git-tracked ~107 MB partial duplicate of the Praat
+  tree that existed solely to provide `-Ipraat/external/{gsl,glpk,num}` header
+  paths for the Windows build. Those directories are byte-identical to
+  `praat.github.io/external/{gsl,glpk,num}`, which are already on the include
+  path, so the duplicate and the 3 `-Ipraat/external/*` lines in `Makevars.in`
+  and `Makevars.win` were pure redundancy. **Both platforms now compile from a
+  single `praat.github.io/` prefix.** When updating the Praat submodule, no
+  second tree needs to be kept in sync.
+- The built tarball now excludes (via `.Rbuildignore`) all non-compiled Praat
+  source: external-library `.c/.cpp` (espeak/flac/mp3/portaudio/vorbis/opusfile/
+  lame/clapack/gsl/glpk — stubbed at build time; only their headers are kept),
+  the non-compiled subtrees (artsynth/EEG/FFNet/gram/main/makefiles/dwtest/
+  docs/generate/test), and `manual_*.cpp`. These are dev-tree-only exclusions;
+  the compiled source set (243 `.cpp`) and all reachable headers still ship.
 
 ### v4.9.3 Melder_casual null-stream guard (Willems/split-Levinson segfault) (2026-07-12)
 

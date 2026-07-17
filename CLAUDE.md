@@ -12,7 +12,7 @@ R CMD INSTALL --no-docs .
 
 **Always edit both `src/Makevars` AND `src/Makevars.in`** for build changes — `configure` regenerates `Makevars` from `Makevars.in` on every install.
 
-- Windows: `src/Makevars.win` uses `praat/` prefix (not `praat.github.io/`)
+- `src/Makevars.win` compiles from the same `praat.github.io/` prefix as Unix (the old `src/praat/` duplicate tree was removed in the CRAN slimming)
 - `-DPLADDRR_FULL_PRAAT` #ifdef's out stubs in `praat_stubs.cpp`
 - Praat uses `macintosh` macro (not `__APPLE__`) — never define globally (triggers ObjC includes)
 

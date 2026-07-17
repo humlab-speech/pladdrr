@@ -132,3 +132,21 @@ results/
 ^Meta$
 ^docs-archive$
 ^TODO\.md$
+
+# --- CRAN tarball slimming (keeps the dev tree intact; only the built tarball shrinks) ---
+# Editor/tooling caches, generated site, and dev-only benchmark scripts
+^\.ruff_cache$
+^docs$
+^inst/benchmarks$
+# Praat subtrees that are neither compiled nor on any -I include path
+^src/praat\.github\.io/artsynth/
+^src/praat\.github\.io/dwtest/
+^src/praat\.github\.io/EEG/
+^src/praat\.github\.io/FFNet/
+^src/praat\.github\.io/gram/
+^src/praat\.github\.io/main/
+^src/praat\.github\.io/makefiles/
+# Bundled external libraries: keep the referenced headers, drop the (stubbed) sources
+^src/praat\.github\.io/external/.*\.(c|cc|cpp)$
+# Praat manual/documentation sources (compiled nowhere in this package)
+manual_.*\.cpp$
