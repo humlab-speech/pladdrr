@@ -33,6 +33,10 @@ PKG_CPPFLAGS = -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
 # Compiler flags
 # Note: R's own Makeconf provides optimization flags (-O2 typically).
 # Do NOT add -O3, -flto, or -march=native — these violate CRAN policy.
+# -ffp-contract=off is deliberate and required: it disables FMA contraction so
+# the DSP output is bit-exact with the reference Praat application (the package's
+# primary correctness guarantee). It is the one intentional non-portable flag;
+# see cran-comments.md. All -Wno-* warning suppressions were removed for CRAN.
 PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_GUI \
                -DNO_AUDIO \
@@ -41,20 +45,7 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
                -DUNIX \
                -DPLADDRR_NO_DEBUG \
                -pthread \
-               -ffp-contract=off \
-               -Wno-unused-parameter \
-               -Wno-sign-compare \
-               -Wno-unused-variable \
-               -Wno-deprecated-declarations \
-               -Wno-trigraphs \
-               -Wno-logical-op-parentheses \
-               -Wno-shift-op-parentheses \
-               -Wno-mismatched-tags \
-               -Wno-unused-const-variable \
-               -Wno-c++11-narrowing
-
-# C flags for vendored C sources (FLAC, MP3, GSL stubs)
-PKG_CFLAGS = -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable
+               -ffp-contract=off
 
 # Linker flags — GSL detected by configure, LAPACK/BLAS from R
 PKG_LIBS = -L/opt/homebrew/Cellar/gsl/2.8/lib -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread

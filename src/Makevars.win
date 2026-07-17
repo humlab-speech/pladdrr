@@ -36,16 +36,7 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_NETWORK \
                -DWIN32 \
                -DPLADDRR_NO_DEBUG \
-               -ffp-contract=off \
-               -Wno-unused-parameter \
-               -Wno-sign-compare \
-               -Wno-unused-variable \
-               -Wno-deprecated-declarations \
-               -Wno-trigraphs \
-               -Wno-c++11-narrowing
-
-# C flags for vendored C sources
-PKG_CFLAGS = -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable
+               -ffp-contract=off
 
 # Linker flags — GSL via Rtools MSYS2/ucrt64, LAPACK/BLAS from R
 # GSL is available in Rtools 4.x via: pacman -S mingw-w64-ucrt-x86_64-gsl
