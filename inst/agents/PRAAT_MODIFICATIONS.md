@@ -17,6 +17,22 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### v4.9.6 CRAN significant-warning fixes (2026-07-17)
+
+Two edits so `R CMD check` reports no significant compiler warnings (needed
+after removing the `-Wno-*` suppressions from `Makevars`):
+
+- `sys/praat.cpp` (`praat_run`): the startup self-test that records how
+  different compilers order function arguments uses `++i`/`i++` unsequenced in a
+  single `snprintf`/`trace` call (undefined behaviour, `-Wunsequenced`). Wrapped
+  the whole `{ ... }` self-test block in `#ifndef PRAAT_LIB ... #endif` — it is
+  Praat-application diagnostic code, not needed in the embedded library, so it
+  now compiles out. No behavioural change to any DSP routine.
+- `fon/PitchTier.cpp` (`PitchTier_shiftFrequencies`): the `switch (unit)` over
+  `kPitch_unit` did not handle every enum value (`-Wswitch`). Added a
+  `default: {}` case that leaves the frequency unchanged, matching the prior
+  fall-through behaviour.
+
 ### v4.9.5 CRAN tarball slimming — single Praat source tree (2026-07-17)
 
 No Praat C++ source changes. Packaging only:
