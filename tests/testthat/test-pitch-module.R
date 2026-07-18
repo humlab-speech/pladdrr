@@ -16,7 +16,7 @@ skip_if_no_pitch_module <- function() {
 # Helper to get RPitch from R6 Pitch
 get_rpitch <- function(pitch_r6) {
   mod <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
-  pitch_xptr <- pitch_r6$.__enclos_env__$private$ptr
+  pitch_xptr <- pitch_r6$.xptr
   new(mod$RPitch, pitch_xptr)
 }
 
@@ -25,7 +25,7 @@ test_that("RPitch module loads correctly", {
 
   mod <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
   expect_s4_class(mod, "Module")
-  expect_true("RPitch" %in% names(mod))
+  expect_false(is.null(mod$RPitch))
   expect_s4_class(mod$RPitch, "C++Class")
 })
 

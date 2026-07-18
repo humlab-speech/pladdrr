@@ -1,9 +1,11 @@
 # Test Batch/Vectorized Operations
+sound_generate_tone <- function(frequency, duration, sample_rate) Sound$create_tone(frequency = frequency, duration = duration, sampling_rate = sample_rate)
+module_available <- function(name) !is.null(tryCatch(pladdrr:::get_module(name), error = function(e) NULL))
 # These tests verify that batch operations produce the same results as
 # individual calls, while being significantly faster.
 
 test_that("Sound window operations are vectorized", {
-  skip_if_not(pladdrr:::module_available("sound_module"))
+  skip_if_not(module_available("sound_module"))
 
   # Create a test sound (1 second, 16kHz)
   sound <- sound_generate_tone(440, duration = 1.0, sample_rate = 16000)
@@ -41,7 +43,7 @@ test_that("Sound window operations are vectorized", {
 })
 
 test_that("Sound value extraction is vectorized", {
-  skip_if_not(pladdrr:::module_available("sound_module"))
+  skip_if_not(module_available("sound_module"))
 
   sound <- sound_generate_tone(440, duration = 0.5, sample_rate = 16000)
 
@@ -61,7 +63,7 @@ test_that("Sound value extraction is vectorized", {
 })
 
 test_that("Pitch batch operations work", {
-  skip_if_not(pladdrr:::module_available("pitch_module"))
+  skip_if_not(module_available("pitch_module"))
 
   sound <- sound_generate_tone(200, duration = 0.5, sample_rate = 16000)
   pitch <- sound$to_pitch(0.01, 75, 500)
@@ -79,7 +81,7 @@ test_that("Pitch batch operations work", {
 })
 
 test_that("Harmonicity batch stats work", {
-  skip_if_not(pladdrr:::module_available("harmonicity_module"))
+  skip_if_not(module_available("harmonicity_module"))
 
   sound <- sound_generate_tone(200, duration = 0.5, sample_rate = 16000)
   hnr <- sound$to_harmonicity_ac(0.01, 75)
@@ -103,7 +105,7 @@ test_that("Harmonicity batch stats work", {
 })
 
 test_that("TextGrid batch labels work", {
-  skip_if_not(pladdrr:::module_available("textgrid_module"))
+  skip_if_not(module_available("textgrid_module"))
 
   # Create a TextGrid with an interval tier
   tg <- textgrid_create(0, 2, "words", "")
@@ -130,7 +132,7 @@ test_that("TextGrid batch labels work", {
 })
 
 test_that("Spectrum vector operations work", {
-  skip_if_not(pladdrr:::module_available("spectrum_module"))
+  skip_if_not(module_available("spectrum_module"))
 
   sound <- sound_generate_tone(440, duration = 0.1, sample_rate = 16000)
   spectrum <- sound$to_spectrum()
@@ -159,7 +161,7 @@ test_that("Spectrum vector operations work", {
 })
 
 test_that("Formant track extraction works", {
-  skip_if_not(pladdrr:::module_available("formant_module"))
+  skip_if_not(module_available("formant_module"))
 
   sound <- sound_generate_tone(200, duration = 0.3, sample_rate = 16000)
   formant <- sound$to_formant_burg(0.01, 5, 5500)
@@ -180,7 +182,7 @@ test_that("Formant track extraction works", {
 })
 
 test_that("Spectrogram batch queries work", {
-  skip_if_not(pladdrr:::module_available("spectrogram_module"))
+  skip_if_not(module_available("spectrogram_module"))
 
   sound <- sound_generate_tone(440, duration = 0.2, sample_rate = 16000)
   spectrogram <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
