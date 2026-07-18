@@ -18,22 +18,22 @@ test_that("generate_sine_wave() creates mathematically correct waveform", {
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
-  expect_equal(sound$n_samples, expected_samples)
-  expect_equal(sound$sampling_rate, sampling_rate)
-  expect_equal(sound$duration, duration, tolerance = 1e-6)
+  expect_equal(sound$get_number_of_samples(), expected_samples)
+  expect_equal(sound$get_sampling_frequency(), sampling_rate)
+  expect_equal(sound$get_total_duration(), duration, tolerance = 1e-6)
 
   # Check amplitude range
-  expect_true(all(sound$values >= -amplitude))
-  expect_true(all(sound$values <= amplitude))
-  expect_true(max(abs(sound$values)) >= amplitude * 0.99)  # Should reach near amplitude
+  expect_true(all(sound$get_values() >= -amplitude))
+  expect_true(all(sound$get_values() <= amplitude))
+  expect_true(max(abs(sound$get_values())) >= amplitude * 0.99)  # Should reach near amplitude
 
   # Check sine wave properties
   # At t=0, sin(2*pi*f*0) = 0, so first value should be near 0
-  expect_equal(sound$values[1], 0, tolerance = 0.01)
+  expect_equal(sound$get_values()[1], 0, tolerance = 0.01)
 
   # Check frequency by counting zero crossings
   # A sine wave should have 2 * frequency zero crossings per second
-  zero_crossings <- sum(diff(sign(sound$values)) != 0)
+  zero_crossings <- sum(diff(sign(sound$get_values())) != 0)
   expected_crossings <- 2 * frequency * duration
   expect_equal(zero_crossings, expected_crossings, tolerance = 10)
 })
@@ -43,10 +43,10 @@ test_that("generate_sine_wave() uses default parameters correctly", {
   sound <- generate_sine_wave(440, 0.1)
 
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$sampling_rate, 44100)  # Default
+  expect_equal(sound$get_sampling_frequency(), 44100)  # Default
   # Default amplitude should create values in [-1, 1] range
-  expect_true(all(sound$values >= -1.0))
-  expect_true(all(sound$values <= 1.0))
+  expect_true(all(sound$get_values() >= -1.0))
+  expect_true(all(sound$get_values() <= 1.0))
 })
 
 test_that("generate_sine_wave() validates parameters", {
@@ -75,7 +75,7 @@ test_that("generate_sine_wave() creates phase-coherent waveform", {
   sound2 <- generate_sine_wave(440, 0.1, sampling_rate = 44100)
 
   # They should be identical (deterministic, no phase offset)
-  expect_equal(sound1$values, sound2$values)
+  expect_equal(sound1$get_values(), sound2$get_values())
 })
 
 test_that("generate_noise() creates random noise with correct properties", {
@@ -92,21 +92,21 @@ test_that("generate_noise() creates random noise with correct properties", {
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
-  expect_equal(sound$n_samples, expected_samples)
-  expect_equal(sound$sampling_rate, sampling_rate)
+  expect_equal(sound$get_number_of_samples(), expected_samples)
+  expect_equal(sound$get_sampling_frequency(), sampling_rate)
 
   # Check values are numeric
-  expect_type(sound$values, "double")
-  expect_length(sound$values, expected_samples)
+  expect_type(sound$get_values(), "double")
+  expect_length(sound$get_values(), expected_samples)
 
   # Check no NAs or infinite values
-  expect_false(any(is.na(sound$values)))
-  expect_false(any(is.infinite(sound$values)))
+  expect_false(any(is.na(sound$get_values())))
+  expect_false(any(is.infinite(sound$get_values())))
 
   # Check amplitude scaling (noise should be roughly within amplitude range)
   # For Gaussian noise, ~99.7% should be within 3 standard deviations
   # If amplitude scales the standard deviation, most values should be within amplitude range
-  expect_true(mean(abs(sound$values)) < amplitude)
+  expect_true(mean(abs(sound$get_values())) < amplitude)
 })
 
 test_that("generate_noise() with seed produces reproducible results", {
@@ -117,7 +117,7 @@ test_that("generate_noise() with seed produces reproducible results", {
   sound2 <- generate_noise(duration, seed = seed)
 
   # With same seed, should get identical noise
-  expect_equal(sound1$values, sound2$values)
+  expect_equal(sound1$get_values(), sound2$get_values())
 })
 
 test_that("generate_noise() without seed produces different results", {
@@ -128,16 +128,16 @@ test_that("generate_noise() without seed produces different results", {
 
   # Without seed, should get different noise
   # (very unlikely to be equal, but check a subset to be safe)
-  expect_false(all(sound1$values == sound2$values))
-  expect_false(identical(sound1$values[1:100], sound2$values[1:100]))
+  expect_false(all(sound1$get_values() == sound2$get_values()))
+  expect_false(identical(sound1$get_values()[1:100], sound2$get_values()[1:100]))
 })
 
 test_that("generate_noise() uses default parameters correctly", {
   sound <- generate_noise(0.1)
 
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$sampling_rate, 44100)  # Default
-  expect_equal(sound$duration, 0.1, tolerance = 1e-6)
+  expect_equal(sound$get_sampling_frequency(), 44100)  # Default
+  expect_equal(sound$get_total_duration(), 0.1, tolerance = 1e-6)
 })
 
 test_that("generate_noise() validates parameters", {
@@ -167,12 +167,12 @@ test_that("generate_noise() creates white noise (flat spectrum)", {
   # Very basic check: variance should be roughly constant over time
   # Split into chunks and check variance doesn't vary too much
   chunk_size <- 1000
-  n_chunks <- floor(length(sound$values) / chunk_size)
+  n_chunks <- floor(length(sound$get_values()) / chunk_size)
 
   variances <- sapply(1:n_chunks, function(i) {
     start_idx <- (i-1) * chunk_size + 1
     end_idx <- i * chunk_size
-    var(sound$values[start_idx:end_idx])
+    var(sound$get_values()[start_idx:end_idx])
   })
 
   # Coefficient of variation should be relatively small for white noise
