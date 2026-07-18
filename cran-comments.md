@@ -42,6 +42,23 @@ GCC and Clang. All warning-suppressing `-Wno-*` flags have been removed; the
 remaining build warnings originate in the vendored Praat C++ sources and are
 non-significant.
 
+### Compiled-code diagnostics
+
+The 'checking compiled code' NOTE may report `stderr`/`stdout`/`_exit` in the
+vendored Praat objects. The widespread `abort` and the app-shutdown `_Exit`
+have been removed (Praat assertions/fatals now throw and propagate to R). The
+remainder are legitimate and cannot be replaced without regressions:
+
+- `melder_console.cpp` writes casual diagnostics to `stderr`/`stdout` as a
+  fallback. Praat runs DSP frame loops on worker threads that can emit these
+  messages, and R's `REprintf`/`Rprintf` are only safe on the main thread, so
+  routing them through R would be unsafe.
+- `melder_sysenv.cpp` uses `_exit` in the child of a `fork()` (the correct
+  POSIX idiom — the child must not run `atexit`/flush handlers).
+- The remaining `exit`/`isatty`/`fprintf(stderr)` live in Praat's interactive
+  `main`/CLI and self-test code, which is compiled but never entered from the
+  embedded library (`-DPRAAT_LIB -DNO_GUI`).
+
 ### Test environments
 
 - local macOS (aarch64), R 4.4 — `R CMD check`

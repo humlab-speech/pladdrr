@@ -17,6 +17,32 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### v4.9.6 CRAN compiled-code cleanup: remove abort()/_Exit() (2026-07-18)
+
+`R CMD check` flags direct `abort`/`exit`/`_exit`/`stderr`/`stdout` in compiled
+code. Eliminated the two that appeared in many objects, both via central
+definitions so no per-call-site edits were needed:
+
+- `melder/melder_assert.h`, `melder/melder_error.h`: the `Melder_assert` and
+  `Melder_fatal` macros ended in `abort()`. But `Melder_assert_` and
+  `Melder_fatal_` (melder_error.cpp) already unconditionally `throw MelderError`
+  — the `abort()` was unreachable. Marked both functions `[[noreturn]]` and
+  dropped `abort()` from the macros, so the `abort` symbol disappears from every
+  object. Assertion/fatal failures now propagate to the R boundary as errors
+  instead of crashing R.
+- `melder/melder_error.cpp` (`Melder_flushError` crash branch): replaced the one
+  direct `abort()` with `throw MelderError()`.
+- `sys/praat.cpp` (`praat_exit`): wrapped the `_Exit()/exit()` app-shutdown in
+  `#ifndef PRAAT_LIB`; in the embedded library it throws instead of terminating
+  the host R process.
+
+**Residual (justified, not patched — see cran-comments.md):** `stderr`/`stdout`
+remain in `melder_console.cpp` as a libc fallback because Praat's DSP worker
+threads emit casual diagnostics and R's `REprintf`/`Rprintf` are main-thread
+only; `_exit` remains in `melder_sysenv.cpp` as the correct POSIX fork-child
+idiom; and unreachable Praat `main`/CLI/self-test code (`exit`, `isatty`,
+`fprintf(stderr)`) is compiled but never entered from the library.
+
 ### v4.9.6 CRAN significant-warning fixes (2026-07-17)
 
 Two edits so `R CMD check` reports no significant compiler warnings (needed
