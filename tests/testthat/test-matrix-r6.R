@@ -1,6 +1,6 @@
 test_that("Matrix R6 class basic operations work", {
   # Create a simple matrix
-  mat <- Matrix$new(numberOfRows = 5, numberOfColumns = 3)
+  mat <- Matrix(numberOfRows = 5, numberOfColumns = 3)
   
   expect_s3_class(mat, "Matrix")
   expect_s3_class(mat, "R6")
@@ -18,7 +18,7 @@ test_that("Matrix R6 class basic operations work", {
 })
 
 test_that("Matrix R6 class full parameter creation works", {
-  mat <- Matrix$new(
+  mat <- Matrix(
     xmin = 0.0, xmax = 1.0, nx = 10, dx = 0.1, x1 = 0.05,
     ymin = 0.0, ymax = 2.0, ny = 20, dy = 0.1, y1 = 0.05
   )
@@ -33,7 +33,7 @@ test_that("Matrix R6 class full parameter creation works", {
 })
 
 test_that("Matrix R6 class formula evaluation works", {
-  mat <- Matrix$new(numberOfRows = 3, numberOfColumns = 3)
+  mat <- Matrix(numberOfRows = 3, numberOfColumns = 3)
   
   # Set formula (simple example)
   mat$formula("1")  # Set all values to 1
@@ -48,19 +48,19 @@ test_that("Matrix R6 class formula evaluation works", {
 })
 
 test_that("Matrix R6 class error handling works", {
-  mat <- Matrix$new(numberOfRows = 3, numberOfColumns = 3)
+  mat <- Matrix(numberOfRows = 3, numberOfColumns = 3)
   
   # Out of bounds access
   expect_error(mat$get_value(row = 10, col = 1))
   expect_error(mat$get_value(row = 1, col = 10))
   
   # Invalid initialization
-  expect_error(Matrix$new())  # No parameters
-  expect_error(Matrix$new(numberOfRows = 3))  # Missing numberOfColumns
+  expect_error(Matrix())  # No parameters
+  expect_error(Matrix(numberOfRows = 3))  # Missing numberOfColumns
 })
 
 test_that("Matrix R6 class sum and mean work", {
-  mat <- Matrix$new(numberOfRows = 2, numberOfColumns = 2)
+  mat <- Matrix(numberOfRows = 2, numberOfColumns = 2)
   
   # Set known values
   mat$set_value(row = 1, col = 1, value = 1.0)
