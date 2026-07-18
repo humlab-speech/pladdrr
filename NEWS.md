@@ -1,3 +1,22 @@
+# pladdrr 4.9.6 (2026-07-18)
+
+## CRAN compliance (R CMD check warnings/notes)
+
+- **Fixed an XPtr finalizer bug**: module wrappers built external pointers as
+  `XPtr<T>(ptr, deleter)` where the lambda deleter silently bound Rcpp's
+  `bool set_delete_finalizer` overload, so Praat objects were freed with `delete`
+  instead of `forget()`. Now registered explicitly via `R_RegisterCFinalizerEx`.
+  Removes ~70 `-Wpointer-bool-conversion` warnings and corrects object cleanup.
+- Removed all `-Wno-*` warning suppressions from `Makevars`. Kept
+  `-ffp-contract=off` (required for bit-exact fidelity with Praat; documented).
+- Patched the vendored Praat sources so compiled code no longer calls `abort()`
+  or `_Exit()` (assertions/fatals now throw and propagate to R as errors);
+  fixed the `-Wunsequenced` and `-Wswitch` significant warnings.
+- R-level cleanups: non-ASCII removed; `Authors@R` only; `R6`/`rlang` imports and
+  `globalVariables` declared; test-only `Suggests` added; 147 internal `.Call`
+  wrappers marked `@noRd`; all exported `@param` completed; README/vignette
+  hygiene.
+
 # pladdrr 4.9.5 (2026-07-17)
 
 ## Packaging / CRAN
