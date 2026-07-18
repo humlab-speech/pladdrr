@@ -114,7 +114,8 @@
 
 # Declare NSE globals used by data.table/ggplot2 aes() to silence R CMD check's
 # "no visible binding for global variable" notes.
-utils::globalVariables(c(".data", "formant_number"))
+utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
+                         "power_db", ".matrix_read"))
 
 ## Package initialization
 
