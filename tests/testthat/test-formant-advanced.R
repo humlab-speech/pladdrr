@@ -23,7 +23,7 @@ test_that("Sound can create formant using Split-Levinson method", {
   formant <- sound$to_formant_sl(
     time_step = 0.005,
     number_of_poles = 10,
-    maximum_frequency = 5500,
+    max_frequency = 5500,
     window_length = 0.025,
     pre_emphasis_from = 50
   )
@@ -59,7 +59,7 @@ test_that("Split-Levinson method produces valid formant values", {
   formant <- sound$to_formant_sl(
     time_step = 0.01,
     number_of_poles = 10,
-    maximum_frequency = 5000
+    max_frequency = 5000
   )
   
   # Query formant values
@@ -79,7 +79,7 @@ test_that("Different formant methods produce comparable results", {
   # Same parameters for all methods
   params <- list(
     time_step = 0.01,
-    maximum_frequency = 5000,
+    max_frequency = 5000,
     window_length = 0.025,
     pre_emphasis_from = 50
   )
@@ -139,7 +139,7 @@ test_that("Formant methods validate parameters", {
   
   # Invalid frequency range
   expect_error(sound$to_formant_willems(maximum_formant_frequency = -1000))
-  expect_error(sound$to_formant_sl(maximum_frequency = -1000))
+  expect_error(sound$to_formant_sl(max_frequency = -1000))
 })
 
 test_that("Willems method number_of_formants parameter works", {
@@ -181,7 +181,7 @@ test_that("Formant methods handle high sampling rates", {
   )
   
   formant_sl <- sound_hifi$to_formant_sl(
-    maximum_frequency = 8000
+    max_frequency = 8000
   )
   
   expect_s3_class(formant_willems, "Formant")

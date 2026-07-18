@@ -185,7 +185,7 @@ test_that("Spectrogram batch queries work", {
   skip_if_not(module_available("spectrogram_module"))
 
   sound <- sound_generate_tone(440, duration = 0.2, sample_rate = 16000)
-  spectrogram <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  spectrogram <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 
   # Get vectors
   times <- spectrogram$get_times_vector()
