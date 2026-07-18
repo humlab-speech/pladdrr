@@ -29,3 +29,11 @@
   }
   invisible(TRUE)
 }
+
+.check_positive_number <- function(value, name) {
+  if (!is.numeric(value) || length(value) != 1L || is.na(value) || value <= 0) {
+    stop(name, " must be a single positive number, got: ", deparse(value),
+         call. = FALSE)
+  }
+  invisible(TRUE)
+}

@@ -698,7 +698,7 @@ FormantPath dominates computation (proportional to number of candidates).
 - `vignette("formantpath-robust-tracking")` - FormantPath details
 - `vignette("speech-synthesis-klattgrid")` - KlattGrid synthesis
 - `vignette("formant-analysis")` - Standard formant extraction
-- Praat manual: [Sound synthesis](http://www.fon.hum.uva.nl/praat/manual/Sound__Synthesis___.html)
+- Praat manual: [Manual index](https://www.fon.hum.uva.nl/praat/manual/)
 
 ## Session Info
 

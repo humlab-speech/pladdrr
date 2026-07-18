@@ -1,7 +1,9 @@
+test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+
 test_that("Sound$to_textgrid_silences() works with all parameters", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   # Test with default parameters
   tg <- sound$to_textgrid_silences(
@@ -33,9 +35,9 @@ test_that("Sound$to_textgrid_silences() works with all parameters", {
 })
 
 test_that("Sound$to_textgrid_silences() respects custom labels", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   tg <- sound$to_textgrid_silences(
     min_pitch = 100,
@@ -57,9 +59,9 @@ test_that("Sound$to_textgrid_silences() respects custom labels", {
 })
 
 test_that("Sound$to_textgrid_silences() threshold affects detection", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   # Stricter threshold (more silence detected)
   tg_strict <- sound$to_textgrid_silences(
@@ -91,9 +93,9 @@ test_that("Sound$to_textgrid_silences() threshold affects detection", {
 })
 
 test_that("PointProcess$to_textgrid_vuv() creates voiced/unvoiced intervals", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   # Get pitch first
   pitch <- sound$to_pitch()
@@ -124,9 +126,9 @@ test_that("PointProcess$to_textgrid_vuv() creates voiced/unvoiced intervals", {
 })
 
 test_that("PointProcess$to_textgrid_vuv() parameters affect detection", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
   
@@ -160,9 +162,9 @@ test_that("PointProcess$to_textgrid_vuv() parameters affect detection", {
 })
 
 test_that("New methods integrate in DSI workflow", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   # Step 1: Detect silences
   tg_silences <- sound$to_textgrid_silences(
@@ -186,9 +188,9 @@ test_that("New methods integrate in DSI workflow", {
 })
 
 test_that("New methods integrate in AVQI workflow", {
-  skip_if_not(file.exists("../../inst/extdata/test.wav"), "Test audio file not found")
+  skip_if_not(file.exists(test_wav), "Test audio file not found")
   
-  sound <- Sound$new("../../inst/extdata/test.wav")
+  sound <- Sound$new(test_wav)
   
   # Step 1: Accurate silence detection (critical for AVQI)
   tg_silences <- sound$to_textgrid_silences(

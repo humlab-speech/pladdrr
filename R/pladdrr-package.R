@@ -96,7 +96,7 @@
 #' Praat:
 #'
 #' Boersma, Paul & Weenink, David (2023). Praat: doing phonetics by computer
-#' [Computer program]. Version 6.3.x, retrieved from http://www.praat.org/
+#' [Computer program]. Version 6.3.x, retrieved from https://praat.org/
 #'
 #' @docType package
 #' @name pladdrr-package

@@ -52,6 +52,30 @@ NULL
   ptr_out <- .formantgrid_to_formant(.self$.xptr, time_step, intensity)
   Formant(.xptr = ptr_out)
 }
+.formantgrid_methods$to_sound <- function(.self, sampling_frequency = 44100,
+                                          t_start = .self$get_start_time(),
+                                          f0_start = 140,
+                                          t_mid = (.self$get_start_time() + .self$get_end_time()) / 2,
+                                          f0_mid = f0_start,
+                                          t_end = .self$get_end_time(),
+                                          f0_end = f0_mid,
+                                          adapt_factor = 1.0,
+                                          maximum_period = 0.05,
+                                          open_phase = 0.7,
+                                          collision_phase = 0.03,
+                                          power1 = 3.0,
+                                          power2 = 4.0) {
+  ptr_out <- .formantgrid_to_sound(
+    .self$.xptr, as.numeric(sampling_frequency),
+    as.numeric(t_start), as.numeric(f0_start),
+    as.numeric(t_mid), as.numeric(f0_mid),
+    as.numeric(t_end), as.numeric(f0_end),
+    as.numeric(adapt_factor), as.numeric(maximum_period),
+    as.numeric(open_phase), as.numeric(collision_phase),
+    as.numeric(power1), as.numeric(power2)
+  )
+  Sound(.xptr = ptr_out)
+}
 
 # Export
 .formantgrid_methods$as_data_frame <- function(.self) {

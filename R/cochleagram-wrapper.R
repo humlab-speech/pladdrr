@@ -40,6 +40,9 @@ NULL
 .cochleagram_methods$get_value_at_time_and_frequency <- function(.self, time, freq_bark) {
   .self$.cpp$get_value_at_time_and_frequency(as.numeric(time), as.numeric(freq_bark))
 }
+.cochleagram_methods$get_loudness_at_time <- function(.self, time) {
+  .self$to_excitation(as.numeric(time))$get_loudness()
+}
 
 # Transformations
 .cochleagram_methods$to_excitation <- function(.self, time) {

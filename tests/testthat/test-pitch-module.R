@@ -117,7 +117,7 @@ test_that("RPitch get_value_at_time works", {
 
   # Test different units
   f0_hz <- rpitch$get_value_at_time(0.5, 0, FALSE)
-  f0_st <- rpitch$get_value_at_time(0.5, 4, FALSE)  # semitones re 100 Hz
+  f0_st <- rpitch$get_value_at_time(0.5, 5, FALSE)  # semitones re 100 Hz
 
   # Semitones = 12 * log2(f0 / 100)
   expected_st <- 12 * log2(440 / 100)
@@ -177,10 +177,11 @@ test_that("RPitch get_all_candidates returns list", {
   rpitch <- get_rpitch(pitch_r6)
 
   cands <- rpitch$get_all_candidates()
-  expect_type(cands, "list")
+  expect_s3_class(cands, "data.frame")
+  expect_s3_class(cands, "data.table")
   # First candidate should have frequency ~440 Hz
-  if (length(cands) > 0 && length(cands[[1]]) > 0) {
-    expect_equal(cands[[1]][[1]]$frequency, 440, tolerance = 1)
+  if (nrow(cands) > 0) {
+    expect_equal(cands$frequency[1], 440, tolerance = 1)
   }
 })
 
@@ -192,15 +193,15 @@ test_that("RPitch conversion methods return valid XPtrs", {
 
   # to_point_process_ptr
   pp_ptr <- rpitch$to_point_process_ptr()
-  expect_s4_class(pp_ptr, "externalptr")
+  expect_true(inherits(pp_ptr, "externalptr"))
 
   # down_to_pitch_tier_ptr
   pt_ptr <- rpitch$down_to_pitch_tier_ptr()
-  expect_s4_class(pt_ptr, "externalptr")
+  expect_true(inherits(pt_ptr, "externalptr"))
 
   # to_textgrid_vuv_ptr
-  tg_ptr <- rpitch$to_textgrid_vuv_ptr()
-  expect_s4_class(tg_ptr, "externalptr")
+  tg_ptr <- rpitch$to_textgrid_vuv_ptr(0.02, 0.01)
+  expect_true(inherits(tg_ptr, "externalptr"))
 })
 
 test_that("RPitch matches R6 Pitch values", {
@@ -214,7 +215,7 @@ test_that("RPitch matches R6 Pitch values", {
   expect_equal(rpitch$count_voiced_frames(), pitch_r6$count_voiced_frames())
 
   # Compare query results
-  r6_mean <- pitch_r6$get_mean(0, 0, 0)
+  r6_mean <- pitch_r6$get_mean(0, 0, "hertz")
   mod_mean <- rpitch$get_mean(0, 0, 0)
   expect_equal(mod_mean, r6_mean, tolerance = 1e-10)
 })

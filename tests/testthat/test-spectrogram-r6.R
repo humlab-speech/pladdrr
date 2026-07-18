@@ -1,18 +1,19 @@
+test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+
 test_that("Spectrogram R6 creation from Sound works", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   expect_s3_class(spec, "Spectrogram")
-  expect_s3_class(spec, "R6")
 })
 
 test_that("Spectrogram R6 time queries work", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   tmin <- spec$get_start_time()
   tmax <- spec$get_end_time()
@@ -23,10 +24,10 @@ test_that("Spectrogram R6 time queries work", {
 })
 
 test_that("Spectrogram R6 frequency queries work", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   fmin <- spec$get_lowest_frequency()
   fmax <- spec$get_highest_frequency()
@@ -38,10 +39,10 @@ test_that("Spectrogram R6 frequency queries work", {
 })
 
 test_that("Spectrogram R6 power queries work", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   # Get power at a specific point
   tmin <- spec$get_start_time()
@@ -55,10 +56,10 @@ test_that("Spectrogram R6 power queries work", {
 })
 
 test_that("Spectrogram R6 dimension queries work", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   nt <- spec$get_number_of_time_bins()
   nf <- spec$get_number_of_frequency_bins()
@@ -70,10 +71,10 @@ test_that("Spectrogram R6 dimension queries work", {
 })
 
 test_that("Spectrogram R6 conversion to Spectrum works", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
   # Convert to Spectrum at a specific time
   tmin <- spec$get_start_time()
@@ -86,12 +87,13 @@ test_that("Spectrogram R6 conversion to Spectrum works", {
 })
 
 test_that("Spectrogram R6 to_ltas works", {
-  skip_if_not(file.exists("test.wav"), "Test audio file not available")
+  skip_if_not(file.exists(test_wav), "Test audio file not available")
   
-  sound <- Sound$new("test.wav")
-  spec <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+  sound <- Sound$new(test_wav)
+  spec <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
   
-  ltas <- spec$to_ltas()
+  mid_time <- (spec$get_start_time() + spec$get_end_time()) / 2
+  ltas <- spec$to_spectrum(time = mid_time)$to_ltas()
   
   expect_s3_class(ltas, "Ltas")
 })

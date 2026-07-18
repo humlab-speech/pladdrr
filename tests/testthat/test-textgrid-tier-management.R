@@ -50,7 +50,7 @@ test_that("duplicate_tier() works for IntervalTier", {
 })
 
 test_that("duplicate_tier() works for PointTier", {
-  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "", point_tiers = "events")
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "events", point_tiers = "events")
   
   # Add some points
   tg$insert_point(1, 0.3, "tone1")
@@ -128,10 +128,11 @@ test_that("Error handling for invalid tier", {
 })
 
 test_that("Integration with existing benchmark TextGrid", {
-  skip_if_not(file.exists("inst/extdata/benchmarkdata60min.TextGrid"),
+  benchmark_tg <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
+  skip_if_not(file.exists(benchmark_tg),
               "Benchmark TextGrid file not found")
   
-  tg <- TextGrid$new("inst/extdata/benchmarkdata60min.TextGrid")
+  tg <- TextGrid$new(benchmark_tg)
   
   initial_tiers <- tg$get_number_of_tiers()
   initial_names <- tg$get_tier_names()

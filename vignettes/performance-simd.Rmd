@@ -620,7 +620,7 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 
 ## Further Reading
 
-- Intel Intrinsics Guide: https://software.intel.com/sites/landingpage/IntrinsicsGuide/
+- Intel Intrinsics Guide: https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html
 - ARM NEON Programming Guide
 - RcppXPtrUtils: https://github.com/Enchufa2/RcppXPtrUtils
 - RcppXsimd documentation

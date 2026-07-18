@@ -562,7 +562,7 @@ fp <- sound$to_formant_path(
 
 ## Further Reading
 
-- Praat manual: [FormantPath](http://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
+- Praat manual: [FormantPath](https://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
 - Weenink, D. (2015). "Improved formant frequency measurements of short segments"
 - pladdrr documentation: `?to_formant_path`
 

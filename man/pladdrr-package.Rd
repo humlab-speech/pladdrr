@@ -72,7 +72,7 @@
 }
 \references{
   Boersma, P., & Weenink, D. (2023). Praat: doing phonetics by computer 
-  [Computer program]. Version 6.3, retrieved from \url{https://www.praat.org/}
+  [Computer program]. Version 6.3, retrieved from \url{https://praat.org/}
 }
 \seealso{
   \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, 

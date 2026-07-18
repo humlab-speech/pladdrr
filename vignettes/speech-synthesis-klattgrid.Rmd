@@ -710,7 +710,7 @@ Existing R packages (e.g., `phonTools`) use simpler synthesis methods. KlattGrid
 ## Further Reading
 
 - Klatt, D. H. (1980). "Software for a cascade/parallel formant synthesizer". *JASA*, 67(3), 971-995.
-- Praat manual: [KlattGrid](http://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
+- Praat manual: [KlattGrid](https://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
 - pladdrr documentation: `?KlattGrid_createFromVowel`
 - See also: `vignette("formantpath-robust-tracking")` for formant extraction
 

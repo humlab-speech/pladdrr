@@ -7,7 +7,7 @@ test_that("Sound can create formant using Willems method", {
   formant <- sound$to_formant_willems(
     time_step = 0.005,
     number_of_formants = 5,
-    maximum_formant_frequency = 5500,
+    max_frequency = 5500,
     window_length = 0.025,
     pre_emphasis_from = 50
   )
@@ -34,12 +34,12 @@ test_that("Sound can create formant using Split-Levinson method", {
 
 test_that("Willems method produces valid formant values", {
   # Create a sound with clear formant structure (vowel-like)
-  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_willems(
     time_step = 0.01,
     number_of_formants = 4,
-    maximum_formant_frequency = 5000
+    max_frequency = 5000
   )
   
   # Query first formant at middle of sound
@@ -54,7 +54,7 @@ test_that("Willems method produces valid formant values", {
 })
 
 test_that("Split-Levinson method produces valid formant values", {
-  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   formant <- sound$to_formant_sl(
     time_step = 0.01,
@@ -87,7 +87,7 @@ test_that("Different formant methods produce comparable results", {
   formant_burg <- sound$to_formant_burg(
     time_step = params$time_step,
     max_number_of_formants = 5,
-    maximum_formant_frequency = params$maximum_frequency,
+    max_frequency = params$max_frequency,
     window_length = params$window_length,
     pre_emphasis_from = params$pre_emphasis_from
   )
@@ -95,7 +95,7 @@ test_that("Different formant methods produce comparable results", {
   formant_willems <- sound$to_formant_willems(
     time_step = params$time_step,
     number_of_formants = 5,
-    maximum_formant_frequency = params$maximum_frequency,
+    max_frequency = params$max_frequency,
     window_length = params$window_length,
     pre_emphasis_from = params$pre_emphasis_from
   )
@@ -121,7 +121,7 @@ test_that("Formant methods handle edge cases", {
   expect_s3_class(formant_short, "Formant")
   
   # Silence
-  sound_silence <- Sound(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
+  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
   formant_silence <- sound_silence$to_formant_sl()
   expect_s3_class(formant_silence, "Formant")
 })
@@ -138,12 +138,12 @@ test_that("Formant methods validate parameters", {
   expect_error(sound$to_formant_sl(number_of_poles = 0))
   
   # Invalid frequency range
-  expect_error(sound$to_formant_willems(maximum_formant_frequency = -1000))
+  expect_error(sound$to_formant_willems(max_frequency = -1000))
   expect_error(sound$to_formant_sl(max_frequency = -1000))
 })
 
 test_that("Willems method number_of_formants parameter works", {
-  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # Request 3 formants
   formant_3 <- sound$to_formant_willems(number_of_formants = 3)
@@ -161,7 +161,7 @@ test_that("Willems method number_of_formants parameter works", {
 })
 
 test_that("Split-Levinson poles parameter affects results", {
-  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # Different number of poles
   formant_10 <- sound$to_formant_sl(number_of_poles = 10)
@@ -177,7 +177,7 @@ test_that("Formant methods handle high sampling rates", {
   sound_hifi <- generate_sine_wave(440, 0.2, sampling_rate = 48000)
   
   formant_willems <- sound_hifi$to_formant_willems(
-    maximum_formant_frequency = 8000
+    max_frequency = 8000
   )
   
   formant_sl <- sound_hifi$to_formant_sl(
@@ -189,7 +189,7 @@ test_that("Formant methods handle high sampling rates", {
 })
 
 test_that("Pre-emphasis affects formant extraction", {
-  sound <- Sound(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
   
   # No pre-emphasis
   formant_no_preemph <- sound$to_formant_willems(pre_emphasis_from = 0)

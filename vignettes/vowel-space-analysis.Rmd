@@ -580,5 +580,5 @@ For related workflows, see:
 
 - Lobanov, B. M. (1971). Classification of Russian vowels spoken by different speakers. *The Journal of the Acoustical Society of America*, 49(2B), 606-608.
 - Thomas, E. R., & Kendall, T. (2007). NORM: The vowel normalization and plotting suite.
-- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. http://www.praat.org/
+- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. https://praat.org/
 - Nearey, T. M. (1978). *Phonetic feature systems for vowels*. Indiana University Linguistics Club.

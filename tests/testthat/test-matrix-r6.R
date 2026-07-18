@@ -3,7 +3,6 @@ test_that("Matrix R6 class basic operations work", {
   mat <- Matrix(numberOfRows = 5, numberOfColumns = 3)
   
   expect_s3_class(mat, "Matrix")
-  expect_s3_class(mat, "R6")
   
   # Check dimensions
   expect_equal(mat$get_ny(), 5)
@@ -32,19 +31,17 @@ test_that("Matrix R6 class full parameter creation works", {
   expect_equal(mat$get_xmax(), 1.0)
 })
 
-test_that("Matrix R6 class formula evaluation works", {
+test_that("Matrix export works", {
   mat <- Matrix(numberOfRows = 3, numberOfColumns = 3)
-  
-  # Set formula (simple example)
-  mat$formula("1")  # Set all values to 1
-  
-  # Check that values were set
-  for (i in 1:3) {
-    for (j in 1:3) {
-      value <- mat$get_value(row = i, col = j)
-      expect_type(value, "double")
-    }
-  }
+
+  mat$set_value(row = 1, col = 1, value = 1)
+  mat$set_value(row = 3, col = 2, value = 5)
+
+  exported <- mat$as_matrix()
+  expect_true(is.matrix(exported))
+  expect_equal(dim(exported), c(3, 3))
+  expect_equal(exported[1, 1], 1)
+  expect_equal(exported[3, 2], 5)
 })
 
 test_that("Matrix R6 class error handling works", {

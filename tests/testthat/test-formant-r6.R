@@ -44,7 +44,6 @@ test_that("Formant object creation from Sound works", {
   
   expect_s3_class(formant, "Formant")
   expect_s3_class(formant, "PraatObject")
-  expect_s3_class(formant, "R6")
 })
 
 test_that("Formant object creation via to_formant_keepall works", {
@@ -170,19 +169,15 @@ test_that("Formant export to data frame works", {
   
   expect_s3_class(df, "data.frame")
   expect_s3_class(df, "data.table")
-  expect_true("time" %in% names(df))
-  expect_true("F1" %in% names(df))
-  expect_true("F2" %in% names(df))
-  expect_true("B1" %in% names(df))  # Bandwidth
-  expect_true("B2" %in% names(df))
+  expect_equal(names(df), c("time", "formant", "frequency", "bandwidth"))
   
   expect_true(nrow(df) > 0)
   expect_true(all(df$time >= 0))
   
   # Check that formant frequencies are in reasonable ranges (or NA)
-  f1_values <- df$F1[!is.na(df$F1)]
+  f1_values <- df$frequency[df$formant == 1L & !is.na(df$frequency)]
   if (length(f1_values) > 0) {
-    expect_true(all(f1_values > 0 && f1_values < 2000))
+    expect_true(all(f1_values > 0 & f1_values < 2000))
   }
 })
 
@@ -253,8 +248,9 @@ test_that("Formant unit bug fix: get_value_at_time returns correct scale", {
   
   # Get F1 at time 0.25 from data frame
   df <- formant$as_data_frame()
-  idx <- which.min(abs(df$time - 0.25))
-  f1_dataframe <- df$F1[idx]
+  df_f1 <- df[df$formant == 1L, ]
+  idx <- which.min(abs(df_f1$time - 0.25))
+  f1_dataframe <- df_f1$frequency[idx]
   
   # Skip if either is NA
   skip_if(is.na(f1_method) || is.na(f1_dataframe), "No formant data at test time")

@@ -8,13 +8,11 @@ bibentry(
                     comment = c(ORCID = "0000-0003-3373-0934")),
   year     = 2026,
   note     = "R package version 4.8.14",
-  url      = "https://github.com/humlab-speech/pladdrr",
 
   textVersion = paste(
     "Nylén, Fredrik (2026).",
     "pladdrr: High-Performance Phonetic Analysis in R via Praat.",
-    "R package version 4.8.14.",
-    "https://github.com/humlab-speech/pladdrr"
+    "R package version 4.8.14."
   )
 )
 
@@ -26,11 +24,11 @@ bibentry(
   author   = c(person("Paul", "Boersma"), person("David", "Weenink")),
   year     = 2024,
   note     = "Version 6.4",
-  url      = "https://www.praat.org/",
+  url      = "https://praat.org/",
 
   textVersion = paste(
     "Boersma, Paul & Weenink, David (2024).",
     "Praat: doing phonetics by computer [Computer program].",
-    "Version 6.4, retrieved from https://www.praat.org/"
+    "Version 6.4, retrieved from https://praat.org/"
   )
 )

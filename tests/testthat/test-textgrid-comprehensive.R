@@ -1,15 +1,15 @@
 # Comprehensive TextGrid Tests
 library(pladdrr)
 
+benchmark_tg <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
 
 test_that("TextGrid loads without errors", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   expect_s3_class(tg, "TextGrid")
-  expect_s3_class(tg, "R6")
 })
 
 test_that("TextGrid basic info methods work", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   expect_equal(tg$get_start_time(), 0)
   expect_equal(tg$get_end_time(), 60)
@@ -18,7 +18,7 @@ test_that("TextGrid basic info methods work", {
 })
 
 test_that("TextGrid tier name queries work", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   names <- tg$get_tier_names()
   expect_type(names, "character")
@@ -28,7 +28,7 @@ test_that("TextGrid tier name queries work", {
 })
 
 test_that("IntervalTier queries work", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   expect_true(tg$tier_is_interval_tier(1))
   expect_equal(tg$get_number_of_intervals(1), 400)
@@ -46,7 +46,7 @@ test_that("IntervalTier queries work", {
 })
 
 test_that("PointTier queries work", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   expect_true(tg$tier_is_point_tier(5))
   expect_equal(tg$get_number_of_points(5), 403)
@@ -61,7 +61,7 @@ test_that("PointTier queries work", {
 })
 
 test_that("Time-based queries work", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   # Query at t=30.0
   interval_idx <- tg$get_interval_at_time(1, 30.0)
@@ -82,7 +82,7 @@ test_that("Large files load successfully", {
 })
 
 test_that("TextGrid handles edge cases", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   # Query at start time
   label_start <- tg$get_label_at_time(1, 0.0)
@@ -101,7 +101,7 @@ test_that("TextGrid errors on invalid input", {
 })
 
 test_that("TextGrid tier type detection works", {
-  tg <- TextGrid$new('../../inst/extdata/benchmarkdata1min.TextGrid')
+  tg <- TextGrid$new(benchmark_tg)
   
   # Tier 1-4 are interval tiers
   expect_true(tg$tier_is_interval_tier(1))

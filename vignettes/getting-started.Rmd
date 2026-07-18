@@ -366,7 +366,7 @@ citation("pladdrr")
 
 ## See Also
 
-- Praat: <https://www.praat.org>
+- Praat: <https://praat.org>
 - Package documentation: `help(package = "pladdrr")`
 - Function reference: `?extract_pitch`, `?extract_formants`, `?extract_intensity`
 

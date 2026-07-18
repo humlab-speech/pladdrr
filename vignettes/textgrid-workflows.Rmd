@@ -641,6 +641,6 @@ For related workflows, see:
 
 ## References
 
-- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. http://www.praat.org/
+- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. https://praat.org/
 - McAuliffe, M., Socolof, M., Mihuc, S., Wagner, M., & Sonderegger, M. (2017). Montreal Forced Aligner: Trainable text-speech alignment using Kaldi. *Interspeech 2017*.
 - Kisler, T., Reichel, U., & Schiel, F. (2017). Multilingual processing of speech via web services. *Computer Speech & Language*, 45, 326-347.

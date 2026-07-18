@@ -480,6 +480,9 @@ NULL
 .sound_methods$to_formant_keepall <- function(.self, time_step = 0.005, max_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {
+  .check_positive_number(time_step, "time_step")
+  .check_positive_number(max_frequency, "max_frequency")
+  .check_positive_number(window_length, "window_length")
   formant_ptr <- .formant_from_sound_keepall(
     .self$.xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
   Formant(.xptr = formant_ptr)
@@ -488,7 +491,10 @@ NULL
 .sound_methods$to_formant_willems <- function(.self, time_step = 0.005, number_of_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {
+  .check_positive_number(time_step, "time_step")
   .check_positive_count(number_of_formants, "number_of_formants")
+  .check_positive_number(max_frequency, "max_frequency")
+  .check_positive_number(window_length, "window_length")
   formant_ptr <- .formant_from_sound_willems(
     .self$.xptr, time_step, number_of_formants, max_frequency, window_length, pre_emphasis_from)
   Formant(.xptr = formant_ptr)
@@ -497,7 +503,10 @@ NULL
 .sound_methods$to_formant_sl <- function(.self, time_step = 0.005, number_of_poles = 10L,
                                           max_frequency = 5500.0, window_length = 0.025,
                                           pre_emphasis_from = 50.0) {
+  .check_positive_number(time_step, "time_step")
   .check_positive_count(number_of_poles, "number_of_poles")
+  .check_positive_number(max_frequency, "max_frequency")
+  .check_positive_number(window_length, "window_length")
   formant_ptr <- .formant_from_sound_sl(
     .self$.xptr, time_step, as.integer(number_of_poles), max_frequency, window_length, pre_emphasis_from)
   Formant(.xptr = formant_ptr)

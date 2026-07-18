@@ -421,7 +421,7 @@ See: [data.table introduction](https://rdatatable.gitlab.io/data.table/)
 
 ### Q: What if I find a bug?
 
-**A:** Report it on GitHub: https://github.com/humlab-speech/pladdrr/issues
+**A:** Report it to the maintainer: fredrik.nylen@umu.se
 
 ---
 
@@ -430,7 +430,7 @@ See: [data.table introduction](https://rdatatable.gitlab.io/data.table/)
 - **data.table Introduction:** `vignette("datatable-intro")`
 - **data.table Cheatsheet:** https://github.com/Rdatatable/data.table/wiki/Getting-started
 - **pladdrr Documentation:** https://humlab-speech.github.io/pladdrr
-- **GitHub Issues:** https://github.com/humlab-speech/pladdrr/issues
+- **Maintainer:** fredrik.nylen@umu.se
 
 ---
 

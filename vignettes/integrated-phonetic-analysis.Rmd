@@ -485,5 +485,5 @@ For more examples, see:
 
 ## References
 
-- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. http://www.praat.org/
-- Thomas, E. R., & Kendall, T. (2007). NORM: The vowel normalization and plotting suite. http://ncslaap.lib.ncsu.edu/tools/norm/
+- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by computer*. https://praat.org/
+- Thomas, E. R., & Kendall, T. (2007). *NORM: The vowel normalization and plotting suite*.

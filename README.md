@@ -37,7 +37,7 @@ Direct access to Praat's C code base from R is achieved though Rcpp Modules and 
 - **FormantModeler**: Polynomial modeling with outlier detection and optimal ceiling estimation
 
 
-We have extended the media handling capabilities substantially to include all formats supported by the [libav C library](https://github.com/libav/libav) (using the [av](https://cran.r-project.org/web/packages/av/index.html) R package), which is most audio and video formats and containers in mainstream use today. Media loading will default to using Praats own routines for higher efficiency. However, if the format is not nativelly supported by Praat, it will be loaded and converted to a supported format in memory using the flexible but less efficient libav path.
+We have extended the media handling capabilities substantially to include all formats supported by the [libav C library](https://github.com/libav/libav) (using the [av](https://CRAN.R-project.org/package=av) R package), which is most audio and video formats and containers in mainstream use today. Media loading will default to using Praats own routines for higher efficiency. However, if the format is not nativelly supported by Praat, it will be loaded and converted to a supported format in memory using the flexible but less efficient libav path.
 
 
 To achieve the most efficient processing, we use as much of the optimizations introduced by our C/C++ code bases, including
@@ -63,10 +63,9 @@ This package was developed to serve our specific needs and does not suit everyon
 
 ## Documentation
 
-- [Getting Started Guide](https://humlab-speech.github.io/pladdrr/articles/getting-started.html) - Your first steps with pladdrr
-- [Full Documentation](https://humlab-speech.github.io/pladdrr/) - Complete package documentation
-- [Function Reference](https://humlab-speech.github.io/pladdrr/reference/) - All available functions
-- [Performance Optimization](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.html) - Speed up your analyses
+- Run `browseVignettes("pladdrr")` after installation for packaged articles
+- See `inst/examples/` for end-to-end workflows
+- Use `help(package = "pladdrr")` for the installed reference index
 
 
 ## Installation
@@ -400,7 +399,7 @@ sound_segment <- longsound$extract_part(from_time = 0, to_time = 10)
 ### Getting Help
 
 - Check the [Agent Guide](inst/agents/AGENT_GUIDE.md) for detailed API reference
-- Open an issue at [GitHub Issues](https://github.com/humlab-speech/pladdrr/issues)
+- Contact the maintainer at `fredrik.nylen@umu.se`
 
 ## Contributing
 

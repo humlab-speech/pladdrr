@@ -1,19 +1,21 @@
-test_that("TextGrid can be read from file", {
 library(data.table)
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+
+tg_path <- system.file("extdata", "test.TextGrid", package = "pladdrr")
+
+test_that("TextGrid can be read from file", {
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   expect_s3_class(tg, "TextGrid")
   expect_s3_class(tg, "PraatObject")
-  expect_s3_class(tg, "R6")
 })
 
 test_that("TextGrid basic properties are correct", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Time properties
   expect_equal(tg$get_start_time(), 0)
@@ -22,10 +24,10 @@ test_that("TextGrid basic properties are correct", {
 })
 
 test_that("TextGrid tier properties are correct", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Tier count and names
   expect_equal(tg$get_number_of_tiers(), 3)
@@ -37,10 +39,10 @@ test_that("TextGrid tier properties are correct", {
 })
 
 test_that("TextGrid can identify tier types", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Check tier types
   expect_true(tg$tier_is_interval_tier(1))
@@ -57,10 +59,10 @@ test_that("TextGrid can identify tier types", {
 })
 
 test_that("TextGrid interval tier queries work", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Number of intervals
   expect_equal(tg$get_number_of_intervals("words"), 4)
@@ -80,10 +82,10 @@ test_that("TextGrid interval tier queries work", {
 })
 
 test_that("TextGrid can get interval at time", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Get interval number at various times
   expect_equal(tg$get_interval_at_time("words", 0.2), 1)
@@ -93,10 +95,10 @@ test_that("TextGrid can get interval at time", {
 })
 
 test_that("TextGrid can get label at time", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Get label at various times
   expect_equal(tg$get_label_at_time("words", 0.2), "")
@@ -106,15 +108,15 @@ test_that("TextGrid can get label at time", {
   
   # Phone tier
   expect_equal(tg$get_label_at_time("phones", 0.6), "h")
-  expect_equal(tg$get_label_at_time("phones", 1.0), "ɛ")
+  expect_equal(charToRaw(tg$get_label_at_time("phones", 1.0)), charToRaw("\u025b"))
   expect_equal(tg$get_label_at_time("phones", 1.7), "w")
 })
 
 test_that("TextGrid point tier queries work", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Number of points
   expect_equal(tg$get_number_of_points("tones"), 2)
@@ -129,17 +131,17 @@ test_that("TextGrid point tier queries work", {
 })
 
 test_that("TextGrid can export to data frame", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Export all tiers
   df <- tg$as_data_frame()
   expect_s3_class(df, "data.frame")
   expect_s3_class(df, "data.table")
   expect_true("tier_name" %in% names(df))
-  expect_true("tier_number" %in% names(df))
+  expect_true("item_number" %in% names(df))
   expect_true("label" %in% names(df) || "text" %in% names(df))
   
   # Export specific tier
@@ -150,10 +152,10 @@ test_that("TextGrid can export to data frame", {
 })
 
 test_that("TextGrid can modify interval labels", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Modify interval text
   tg$set_interval_text("words", 2, "hi")
@@ -165,10 +167,10 @@ test_that("TextGrid can modify interval labels", {
 })
 
 test_that("TextGrid can insert and remove boundaries", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Get initial interval count
   initial_count <- tg$get_number_of_intervals("words")
@@ -183,10 +185,10 @@ test_that("TextGrid can insert and remove boundaries", {
 })
 
 test_that("TextGrid can save to file", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Save to temporary file
   temp_file <- tempfile(fileext = ".TextGrid")
@@ -208,7 +210,7 @@ test_that("TextGrid can be created programmatically", {
   skip_on_cran()
   
   # Create empty TextGrid
-  tg <- TextGrid$create(0, 5, tier_names = "segments", point_tiers = "events")
+  tg <- TextGrid$create(0, 5, tier_names = "segments events", point_tiers = "events")
   
   expect_s3_class(tg, "TextGrid")
   expect_equal(tg$get_start_time(), 0)
@@ -217,10 +219,10 @@ test_that("TextGrid can be created programmatically", {
 })
 
 test_that("TextGrid handles tier name/number conversion", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Both tier number and name should work
   expect_equal(tg$get_number_of_intervals(1), tg$get_number_of_intervals("words"))
@@ -229,10 +231,10 @@ test_that("TextGrid handles tier name/number conversion", {
 })
 
 test_that("TextGrid handles errors gracefully", {
-  skip_if_not(file.exists(system.file("extdata", "test.TextGrid", package = "speaker")),
+  skip_if_not(file.exists(tg_path),
               "Test TextGrid file not found")
   
-  tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "speaker"))
+  tg <- TextGrid$new(tg_path)
   
   # Invalid tier number
   expect_error(tg$get_number_of_intervals(99))

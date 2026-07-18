@@ -61,6 +61,19 @@
   )
 }
 
+.praat_object_xptr <- function(object) {
+  xptr <- .subset2(object, ".xptr")
+  if (!is.null(xptr)) return(xptr)
+
+  getter <- object$get_xptr
+  if (is.function(getter)) return(getter())
+
+  getter <- object$get_ptr
+  if (is.function(getter)) return(getter())
+
+  stop("Could not extract Praat external pointer from object")
+}
+
 #' Praat Script Interpreter
 #'
 #' R6 class for executing Praat scripts with persistent interpreter state.
@@ -228,8 +241,7 @@ PraatInterpreter <- R6::R6Class(
       if (!inherits(object, "PraatObject")) {
         stop("object must be a PraatObject (Sound, Pitch, etc.)")
       }
-      # Get the raw pointer from the R6 object
-      xptr <- object$get_ptr()
+      xptr <- .praat_object_xptr(object)
       class_name <- class(object)[1]
       id <- .praat_interpreter_set_object(xptr, name, class_name)
       invisible(id)

@@ -46,7 +46,8 @@ non-significant.
 
 The 'checking compiled code' NOTE may report `stderr`/`stdout`/`_exit` in the
 vendored Praat objects. The widespread `abort` and the app-shutdown `_Exit`
-have been removed (Praat assertions/fatals now throw and propagate to R). The
+have been removed, and the remaining `printf`/`rand`/`sprintf` call sites that
+were under package control have been removed or replaced. The
 remainder are legitimate and cannot be replaced without regressions:
 
 - `melder_console.cpp` writes casual diagnostics to `stderr`/`stdout` as a
@@ -59,11 +60,41 @@ remainder are legitimate and cannot be replaced without regressions:
   `main`/CLI and self-test code, which is compiled but never entered from the
   embedded library (`-DPRAAT_LIB -DNO_GUI`).
 
+### URLs
+
+Broken package-site and private-repository URLs were removed from package
+metadata and replaced in the vignettes with public canonical links or plain
+citations/contact details.
+
 ### Test environments
 
-- local macOS (aarch64), R 4.4 — `R CMD check`
+- local macOS (aarch64), R 4.4 — `R CMD check --as-cran --no-manual pladdrr_4.9.6.tar.gz`
 - (to be completed: win-builder devel/release, R-hub)
 
 ### R CMD check results
 
-0 errors | 0 warnings | (notes: installed size, justified above).
+Local tarball check currently finishes with:
+
+- 0 errors
+- 4 warnings
+- 3 notes
+
+Warnings are:
+
+- Apple clang reports warnings from vendored Praat / RcppXsimd headers during
+  installation.
+- `checkbashisms` is not installed in the local environment, so the top-level
+  files check cannot run to completion.
+- `PKG_CXXFLAGS` contains `-ffp-contract=off` for bit-for-bit Praat
+  faithfulness (justified above).
+- The compiled-code check still reports the residual vendored Praat
+  `stderr`/`stdout`/`_exit` symbols described above.
+
+Notes are:
+
+- new submission
+- installed size
+- local clock verification unavailable during check
+
+On this machine, the full manual build is additionally blocked by a missing TeX
+package (`inconsolata.sty`), so the validation run above uses `--no-manual`.

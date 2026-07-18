@@ -314,7 +314,7 @@ Typical execution times on MacBook Pro M1:
 ## Support
 
 For test-related issues:
-- Check [GitHub Issues](https://github.com/humlab-speech/pladdrr/issues)
+- Contact the maintainer at `fredrik.nylen@umu.se`
 - Review troubleshooting section above
 - Consult CROSS_VALIDATION_GUIDE.md
 

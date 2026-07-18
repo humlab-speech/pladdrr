@@ -292,7 +292,7 @@ pitch$get_mean(unit = "Hertz")
 - Package documentation: `help(package = "pladdrr")`
 - Class methods: `?Sound`, `?Pitch`, `?Formant`, etc.
 - Vignettes: `vignette(package = "pladdrr")`
-- GitHub issues: https://github.com/humlab-speech/pladdrr/issues
+- Maintainer: fredrik.nylen@umu.se
 
 ## Conclusion
 

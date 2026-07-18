@@ -45,7 +45,7 @@ NULL
 .matrix_methods$get_maximum <- function(.self) .self$.cpp$get_maximum()
 
 # Export
-.matrix_methods$as_matrix <- function(.self) .matrix_to_r(.self$.xptr)
+.matrix_methods$as_matrix <- function(.self) .matrix_to_r_matrix(.self$.xptr)
 
 # Utility
 .matrix_methods$get_xptr <- function(.self) .self$.xptr

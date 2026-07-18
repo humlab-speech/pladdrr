@@ -14,10 +14,7 @@ test_that("extract_part accepts all window shape names", {
   )
   
   for (shape in window_shapes) {
-    expect_no_error(
-      sound$extract_part(0.2, 0.8, window_shape = shape),
-      info = paste("Window shape:", shape)
-    )
+    expect_no_error(sound$extract_part(0.2, 0.8, window_shape = shape))
   }
 })
 

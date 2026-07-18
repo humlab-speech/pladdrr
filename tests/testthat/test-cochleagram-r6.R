@@ -87,14 +87,12 @@ test_that("Cochleagram can be exported as matrix", {
   sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   cochlea <- sound$to_cochleagram(dt = 0.01, df = 0.2)
   
-  # Export to R list with matrix and metadata
+  # Export to numeric matrix
   result <- cochlea$as_matrix()
   
-  expect_type(result, "list")
-  expect_true("values" %in% names(result))
-  expect_true(is.matrix(result$values))
-  expect_true(nrow(result$values) > 0)
-  expect_true(ncol(result$values) > 0)
+  expect_true(is.matrix(result))
+  expect_true(nrow(result) > 0)
+  expect_true(ncol(result) > 0)
 })
 
 test_that("Cochleagram difference can be computed", {

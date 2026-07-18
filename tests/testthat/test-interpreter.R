@@ -65,7 +65,7 @@ test_that("praat_eval_string_array() evaluates string array expressions correctl
 test_that("PraatInterpreter$new() creates valid interpreter instance", {
   interp <- PraatInterpreter$new()
   expect_s3_class(interp, "PraatInterpreter")
-  expect_true(!is.null(interp$.__enclos_env__$private$ptr))
+  expect_equal(interp$eval("1 + 1"), 2)
 })
 
 test_that("PraatInterpreter$eval() evaluates expressions in interpreter context", {

@@ -95,8 +95,8 @@ test_that("logarithmic scale matches lm() workaround approximately", {
   lm_result <- lm(power_db ~ log10(frequency), data = ltas_sub)
   
   # Should be close but not exact (Praat uses specific bin selection)
-  expect_equal(result$slope, coef(lm_result)[2], tolerance = 0.1)
-  expect_equal(result$intercept, coef(lm_result)[1], tolerance = 1.0)
+  expect_equal(unname(result$slope), unname(coef(lm_result)[2]), tolerance = 0.1)
+  expect_equal(unname(result$intercept), unname(coef(lm_result)[1]), tolerance = 1.0)
   
   # Check R² matches
   lm_r_squared <- summary(lm_result)$r.squared
@@ -139,7 +139,7 @@ test_that("print method works without error", {
   # Should print without error
   expect_output(print(result), "Spectral Trend Analysis")
   expect_output(print(result), "Slope:")
-  expect_output(print(result), "R²:")
+  expect_output(print(result), "R\\^2:")
 })
 
 test_that("fitted values can be used for plotting", {

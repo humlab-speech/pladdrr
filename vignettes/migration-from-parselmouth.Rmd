@@ -399,7 +399,7 @@ Processing 100 audio files:
 
 - Package documentation: `help(package = "pladdrr")`
 - Vignettes: `vignette(package = "pladdrr")`
-- GitHub: https://github.com/humlab-speech/pladdrr
+- Maintainer: fredrik.nylen@umu.se
 - Compare with Praat manual: https://www.fon.hum.uva.nl/praat/manual/
 
 ## Conclusion
