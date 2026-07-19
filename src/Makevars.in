@@ -7,7 +7,11 @@ CXX_STD = CXX17
 # Include directories
 # Note: xsimd provided by RcppXsimd package (via LinkingTo in DESCRIPTION)
 # GSL headers detected by configure via gsl-config / pkg-config
-PKG_CPPFLAGS = @XSIMD_FLAG@ -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
+# -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS: silences libc++'s C++17
+# allocator-member deprecation attributes triggered inside the RcppXsimd
+# headers (third-party, not patchable here); inert on libstdc++.
+PKG_CPPFLAGS = @XSIMD_FLAG@ -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT \
+               -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS -I. \
                -Ipocketfft \
                @GSL_CFLAGS@ \
                -Ipraat.github.io \
