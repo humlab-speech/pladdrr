@@ -185,7 +185,7 @@ void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements,
     // Single-threaded execution for library mode
     // Call the function once for all elements (thread 0, elements 1 to numberOfElements)
 #ifndef PLADDRR_NO_DEBUG
-    fprintf(stderr, "STUB MelderThread_run: calling threadFunction(0, 1, %ld)\n", (long)numberOfElements); fflush(stderr);
+    fprintf(stderr, "STUB MelderThread_run: calling threadFunction(0, 1, %ld)\n", (integer)numberOfElements); fflush(stderr);
 #endif
     try {
         threadFunction(0, 1, numberOfElements);
@@ -217,7 +217,7 @@ void MelderThread_run (std::atomic<bool> *p_errorFlag, integer numberOfElements,
     }
 }
 
-void praat_runNotebook (const char32_t *, long, structStackel *, structEditor *) {
+void praat_runNotebook (const char32_t *, integer, structStackel *, structEditor *) {
     // Notebook execution not supported in library mode
 }
 
@@ -503,7 +503,7 @@ void praat_uvafon_Eeg_init () { /* No-op */ }
 void praat_uvafon_formant_init () { /* No-op */ }
 void praat_uvafon_FFNet_init () { /* No-op */ }
 
-void Preferences_addInteger (const char32 *name, long *value, long defaultValue) { /* No-op */ }
+void Preferences_addInteger (const char32 *name, integer *value, integer defaultValue) { /* No-op */ }
 void Preferences_addReal (const char32 *name, double *value, double defaultValue) { /* No-op */ }
 void Preferences_addString (const char32 *name, char32 **value, const char32 *defaultValue) { /* No-op */ }
 void Preferences_addBool (const char32 *name, bool *value, bool defaultValue) { /* No-op */ }

@@ -50,7 +50,7 @@ typedef struct structInterpreter *Interpreter;
 
 // Getter functions (return empty values in library mode)
 conststring32 UiForm_getString (UiForm, conststring32) { return U""; }
-long UiForm_getInteger (UiForm, conststring32) { return 0; }
+integer UiForm_getInteger (UiForm, conststring32) { return 0; }
 double UiForm_getReal (UiForm, conststring32) { return 0.0; }
 double UiForm_getReal_check (UiForm, conststring32) { return 0.0; }
 bool UiForm_getBoolean (UiForm, conststring32) { return false; }
@@ -85,10 +85,10 @@ void Demo_show () {}
 enum kUi_realVectorFormat { kUi_realVectorFormat_WHITESPACE_SEPARATED = 1 };
 enum kUi_integerVectorFormat { kUi_integerVectorFormat_WHITESPACE_SEPARATED = 1 };
 
-void UiPause_realvector (conststring32, kUi_realVectorFormat, conststring32, long) {}
-void UiPause_positivevector (conststring32, kUi_realVectorFormat, conststring32, long) {}
-void UiPause_integervector (conststring32, kUi_integerVectorFormat, conststring32, long) {}
-void UiPause_naturalvector (conststring32, kUi_integerVectorFormat, conststring32, long) {}
+void UiPause_realvector (conststring32, kUi_realVectorFormat, conststring32, integer) {}
+void UiPause_positivevector (conststring32, kUi_realVectorFormat, conststring32, integer) {}
+void UiPause_integervector (conststring32, kUi_integerVectorFormat, conststring32, integer) {}
+void UiPause_naturalvector (conststring32, kUi_integerVectorFormat, conststring32, integer) {}
 
 void UiPause_begin (GuiWindow, Editor, conststring32, Interpreter) {
     Melder_throw (U"UiPause_begin (pause command) not available in library mode.");
@@ -104,11 +104,11 @@ double UiPause_real (conststring32, conststring32) {
     Melder_throw (U"UiPause_real not available in library mode.");
 }
 
-conststring32 UiPause_text (conststring32, conststring32, long) {
+conststring32 UiPause_text (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_text not available in library mode.");
 }
 
-integer UiPause_integer (conststring32, conststring32, long) {
+integer UiPause_integer (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_integer not available in library mode.");
 }
 
@@ -126,29 +126,29 @@ conststring32 UiPause_word (conststring32, conststring32) {
     Melder_throw (U"UiPause_word not available in library mode.");
 }
 
-conststring32 UiPause_folder (conststring32, conststring32, long) {
+conststring32 UiPause_folder (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_folder not available in library mode.");
 }
 
-conststring32 UiPause_infile (conststring32, conststring32, long) {
+conststring32 UiPause_infile (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_infile not available in library mode.");
 }
 
-conststring32 UiPause_outfile (conststring32, conststring32, long) {
+conststring32 UiPause_outfile (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_outfile not available in library mode.");
 }
 
-conststring32 UiPause_word (conststring32, conststring32, long) {
+conststring32 UiPause_word (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_word not available in library mode.");
 }
 
-conststring32 UiPause_sentence (conststring32, conststring32, long) {
+conststring32 UiPause_sentence (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_sentence not available in library mode.");
 }
 
 void UiPause_optionmenu (conststring32, int) {}
 void UiPause_radio (conststring32, int) {}
-void UiPause_list (conststring32, long) {}
+void UiPause_list (conststring32, integer) {}
 void UiPause_label (conststring32) {}
 void UiPause_option (conststring32) {}
 
@@ -156,11 +156,11 @@ bool UiPause_boolean (conststring32, bool) {
     Melder_throw (U"UiPause_boolean not available in library mode.");
 }
 
-long UiPause_natural (conststring32, conststring32, long) {
+integer UiPause_natural (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_natural not available in library mode.");
 }
 
-double UiPause_positive (conststring32, conststring32, long) {
+double UiPause_positive (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_positive not available in library mode.");
 }
 
@@ -168,31 +168,31 @@ conststring32 UiPause_heading (conststring32) { return U""; }
 conststring32 UiPause_caption (conststring32) { return U""; }
 void UiPause_choice (conststring32) {}
 
-double UiPause_real_check (conststring32, conststring32, long) {
+double UiPause_real_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_real_check not available in library mode.");
 }
 
-integer UiPause_natural_check (conststring32, conststring32, long) {
+integer UiPause_natural_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_natural_check not available in library mode.");
 }
 
-integer UiPause_integer_check (conststring32, conststring32, long) {
+integer UiPause_integer_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_integer_check not available in library mode.");
 }
 
-double UiPause_positive_check (conststring32, conststring32, long) {
+double UiPause_positive_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_positive_check not available in library mode.");
 }
 
-conststring32 UiPause_word_check (conststring32, conststring32, long) {
+conststring32 UiPause_word_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_word_check not available in library mode.");
 }
 
-conststring32 UiPause_sentence_check (conststring32, conststring32, long) {
+conststring32 UiPause_sentence_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_sentence_check not available in library mode.");
 }
 
-conststring32 UiPause_text_check (conststring32, conststring32, long) {
+conststring32 UiPause_text_check (conststring32, conststring32, integer) {
     Melder_throw (U"UiPause_text_check not available in library mode.");
 }
 
@@ -200,7 +200,7 @@ integer UiPause_integer (conststring32, conststring32) {
     Melder_throw (U"UiPause_integer not available in library mode.");
 }
 
-long UiPause_natural (conststring32, conststring32) {
+integer UiPause_natural (conststring32, conststring32) {
     Melder_throw (U"UiPause_natural not available in library mode.");
 }
 
@@ -343,13 +343,13 @@ void UiInfile_do (UiForm) {}
 void UiFile_addHistory (conststring32) {}
 
 UiForm UiInfile_create (GuiWindow, Editor, conststring32,
-    void (*)(UiForm, long, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor),
+    void (*)(UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor),
     void *, conststring32, conststring32, bool) {
     return nullptr;
 }
 
 void UiOutfile_create (structGuiWindow *, structEditor *, conststring32,
-                       void (*)(structUiForm*, long, structStackel*, conststring32,
+                       void (*)(structUiForm*, integer, structStackel*, conststring32,
                                structInterpreter*, conststring32, bool, void*, structEditor*),
                        void *, conststring32, conststring32) {}
 
@@ -359,7 +359,7 @@ void UiOutfile_create (structGuiWindow *, structEditor *, conststring32,
 
 void UiForm_setReal (structUiForm *, double *, double) {}
 void UiForm_setBoolean (structUiForm *, bool *, bool) {}
-void UiForm_setInteger (structUiForm *, long *, long) {}
+void UiForm_setInteger (structUiForm *, integer *, integer) {}
 void UiForm_setOption (structUiForm *, int *, int) {}
 void UiForm_setOptionMenuStr (structUiForm *, const char32 *, const char32 *) {}
-void UiForm_addIntegerOrLabeledRadioButtons (structUiForm *, long *, const char32 *, const char32 *, long, const char32 *) {}
+void UiForm_addIntegerOrLabeledRadioButtons (structUiForm *, integer *, const char32 *, const char32 *, integer, const char32 *) {}

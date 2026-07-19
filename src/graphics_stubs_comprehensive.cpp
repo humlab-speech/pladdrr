@@ -200,7 +200,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double xmin, double xmax, double ymi
     Melder_throw (U"Sound_draw_btlr: Graphics functions are not available in this build.");
 }
 
-void Graphics_WCtoDC (Graphics, double, double, long *, long *) { /* No-op */ }
+void Graphics_WCtoDC (Graphics, double, double, integer *, integer *) { /* No-op */ }
 
 // Screen graphics creation (for GUI)
 autoGraphics Graphics_create_screen (void *, void *, int) {

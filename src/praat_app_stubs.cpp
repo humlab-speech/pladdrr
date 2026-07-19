@@ -241,7 +241,16 @@ int praat_selection (void *) { return 0; }
 // REMOVED: praat_actions_show - now in praat_actions.cpp
 void ScriptEditors_dirty () { /* No-op */ }
 // REMOVED: praat_doMenuCommand - now provided by praat_menuCommands.cpp
-void Editor_doMenuCommand (Editor, conststring32, long, Stackel, conststring32, Interpreter) { /* No-op */ }
+void Editor_doMenuCommand (Editor, conststring32, integer, Stackel, conststring32, Interpreter) { /* No-op */ }
+
+// FunctionEditor GUI entry point; referenced but never called in library mode.
+struct structFunctionEditor;
+typedef struct structFunctionEditor *FunctionEditor;
+struct structFunction;
+typedef struct structFunction *Function;
+void FunctionEditor_init (FunctionEditor, conststring32, Function) {
+	Melder_throw (U"FunctionEditor not available in library mode.");
+}
 
 // Preferences functions (for enums and other types)
 void _Preferences_addEnum (conststring32, int *, int, int, 

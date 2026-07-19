@@ -71,7 +71,7 @@ extern "C" {
     };
 }
 
-void MelderAudio_play16 (short *, long, long, long, bool (*)(void*, long), void*) {
+void MelderAudio_play16 (short *, integer, integer, integer, bool (*)(void*, integer), void*) {
     // No-op - audio playback not supported
 }
 
@@ -123,7 +123,7 @@ double MelderAudio_getOutputSilenceBefore () { return 0.0; }
 void MelderAudio_setOutputSilenceBefore (double) {}
 
 double SoundRecorder_getBufferSizePref_MB () { return 20.0; }
-void SoundRecorder_setBufferSizePref_MB (long) {}
+void SoundRecorder_setBufferSizePref_MB (integer) {}
 
 integer MelderAudio_getOutputBestSampleRate (integer) { return 44100; }
 integer MelderAudio_getSamplingPrecision () { return 16; }

@@ -46,7 +46,9 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
 
 # Linker flags — GSL via Rtools MSYS2/ucrt64, LAPACK/BLAS from R
 # GSL is available in Rtools 4.x via: pacman -S mingw-w64-ucrt-x86_64-gsl
-PKG_LIBS = -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+# -lgdiplus: Praat's Photo/GraphicsScreen use the GDI+ flat API on Windows
+# (guarded by _WIN32, not NO_GRAPHICS); mingw ships the import library.
+PKG_LIBS = -lgsl -lgslcblas $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -lgdiplus
 
 # ============================================================================
 # SOURCE FILES (synced with Makevars.in)
