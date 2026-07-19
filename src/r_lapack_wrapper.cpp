@@ -18,8 +18,17 @@
  */
 /* Wrapper functions for R's LAPACK that match Praat's expected signatures */
 
+/* Opt in to Fortran hidden character-length arguments so the declarations
+   (and our explicit trailing length args below) are identical on all
+   supported R versions; R-devel makes this the default. */
+#ifndef USE_FC_LEN_T
+#define USE_FC_LEN_T
+#endif
 #include <R_ext/BLAS.h>
 #include <R_ext/Lapack.h>
+#ifndef FCONE
+#define FCONE
+#endif
 
 extern "C" {
 

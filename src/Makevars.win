@@ -5,7 +5,14 @@
 CXX_STD = CXX17
 
 # Include directories (same as Makevars.in)
-PKG_CPPFLAGS = -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
+# -DUNICODE/-D_UNICODE: Praat's Windows code calls generic Win32 macros
+# (GetEnvironmentVariable, DeleteFile, ...) with wide-char buffers; without
+# UNICODE they resolve to the ANSI ...A variants and fail to compile.
+# Praat's own mingw makefiles build with -municode; plain defines are the
+# portable equivalent for an R package. -D_FILE_OFFSET_BITS=64 also mirrors
+# Praat's makefile.defs.msys-mingw64.
+PKG_CPPFLAGS = -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64 \
+               -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipocketfft \
                -Ipraat.github.io \
                -Ipraat.github.io/kar \
@@ -24,8 +31,7 @@ PKG_CPPFLAGS = -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipraat.github.io/external/espeak \
                -Ipraat.github.io/external/gsl \
                -Ipraat.github.io/external/glpk \
-               -Ipraat.github.io/external/num \
-               -Iclapack/INCLUDE
+               -Ipraat.github.io/external/num
 
 # Compiler flags (Windows-specific)
 # Note: R's own Makeconf provides optimization flags. Do NOT add -O3, -flto, -march=native.
