@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.6 (2026-07-18)
+**Version:** 4.9.6 (2026-07-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix
+**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix + CRAN-prep: tarball slimmed 52→9 MB (`src/praat/` Windows mirror removed — Windows builds from `praat.github.io/`), all `-Wno-*` suppressions removed, `abort()`/`_Exit()` patched out of vendored Praat, XPtr finalizers registered explicitly (`make_praat_xptr`)
 
 ---
 
@@ -66,6 +66,14 @@ written rationale in the row. Failing rows are first-class regressions.
 
 ## What's New in v4.9.x
 
+- **Unreleased (branch `cran-warnings-fix`) — CRAN build fixes + wrapper alignment:** `Makevars.win` now defines `UNICODE`/`_UNICODE` (Praat calls generic Win32 macros with wide buffers; without it they resolve to `...A` variants and fail on mingw) and `_FILE_OFFSET_BITS=64`, and drops the stale `-Iclapack/INCLUDE`; `r_lapack_wrapper.cpp` opts in to `USE_FC_LEN_T` (R-devel FCLEN compatibility); `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` added to `PKG_CPPFLAGS` (silences C++17 allocator deprecations from RcppXsimd under `--as-cran`; inert on libstdc++). New methods: `formantgrid$to_sound()` (KlattGrid-style synthesis from formant tracks) and `cochleagram$get_loudness_at_time()`. Fixes: `to_formant_keepall/willems/sl()` now validate `time_step`/`max_frequency`/`window_length` at R level; `PraatInterpreter$set_object()` extracts `.xptr` from current S3 wrappers (was calling the removed R6 `get_ptr()`); `matrix$as_matrix()` calls the correct `.matrix_to_r_matrix()` export.
+
+- **v4.9.6 — CRAN compliance:** (1) **XPtr finalizer bug fixed** — module wrappers built pointers as `XPtr<T>(ptr, lambda)`, where the lambda silently bound Rcpp's `bool set_delete_finalizer` overload, so Praat objects were freed with `delete` instead of `forget()`. All construction now goes through `make_praat_xptr()` / `make_praat_xptr_from_auto()` (`src/praat_xptr_utils.h`), which register the finalizer explicitly via `R_RegisterCFinalizerEx`. **Never construct `XPtr<T>(ptr, deleter)` in new code.** (2) All `-Wno-*` warning suppressions removed from `Makevars`; `-ffp-contract=off` kept (required for bit-exact fidelity with Praat). (3) Vendored Praat patched so compiled code no longer calls `abort()`/`_Exit()` — assertions/fatals now throw and propagate to R as errors; `-Wunsequenced`/`-Wswitch` warnings fixed. (4) R-level cleanups: 147 internal `.Call` wrappers `@noRd`, `globalVariables` declared, non-ASCII removed.
+
+- **v4.9.5 — Source tarball slimmed 52 MB → 9 MB (no behaviour change):** the duplicate `src/praat/` tree (~107 MB, formerly the Windows build prefix) was **removed** — Windows now compiles from the same `praat.github.io/` prefix as Unix. Bundled external-library sources (espeak, flac, mp3, portaudio, vorbis, opusfile, lame, clapack, gsl, glpk) excluded from the tarball (stubbed at build time; only referenced headers kept). Any doc or script that references `src/praat/...` paths is stale.
+
+- **v4.9.4 — Nested-parallelism fix + lazy module load:** batch helpers (`analyze_files_parallel()`, `process_sounds_parallel()`, `batch_process()`) cap each parallel worker's C++ thread count so N R workers no longer spawn ~N² threads; new `threads_per_worker` argument (`NULL` = auto-divide, `1` = single-threaded workers). `PowerCepstrogram_smooth_fast` honours the `pladdrr_threads()` cap instead of always using all cores. Modules load lazily on first use instead of all ~38 eagerly in `.onLoad`. Numeric output unchanged.
+
 - **v4.9.3 — Willems/split-Levinson crash fixed:** `Sound$to_formant_willems()` and `to_formant_sl()` no longer segfault on pure tones or silence. Root cause was a null console stream in the embedded build (`MelderConsole::write` → `fputc(NULL)`); guarded to fall back to libc `stderr`/`stdout` (see `PRAAT_MODIFICATIONS.md` v4.9.3). Formant values are unchanged. Both methods now reject `number_of_formants`/`number_of_poles < 1` with a clear R-level error. Also fixed `sound_extract_parts()` (was passing a dead R6 private pointer → NULL; now uses `$.xptr`).
 - **v4.9.2 — Thread control:** `pladdrr_threads(n)` caps or disables Praat's multi-threaded analyses at runtime. `pladdrr_threads(1)` forces single-threaded (use inside `parallel::mclapply()` workers so cores aren't oversubscribed); `pladdrr_threads(0)` restores automatic (all cores); `pladdrr_threads()` with no argument returns the current state (`processors`, `enabled`, `max_threads`, `min_elements_per_thread`). Threading never changes results — threads only partition analysis frames.
 
@@ -119,7 +127,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 
 - [Quick Start for Agents](#quick-start-for-agents)
 - [Architecture Overview](#architecture-overview-v403---3-tier-performance-api--datatable)
-- [Object Types (37 modules)](#object-types-37-modules)
+- [Object Types (38 modules)](#object-types-38-modules)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
 - [**Re-implementing a Praat Procedure**](#re-implementing-a-praat-procedure) ← start here for new ports
@@ -264,7 +272,7 @@ Pitch <- function(.xptr = NULL) {
 
 ---
 
-## Object Types (39 modules)
+## Object Types (38 modules)
 
 **Update v4.8.25:** Added MelSpectrogram and BarkSpectrogram modules for psychoacoustic analysis.
 **Update v4.0.7:** Added MFCC, LFCC, FormantModeler, PCA, Discriminant modules for speaker recognition, robust formant tracking, and statistical analysis.
@@ -280,6 +288,7 @@ Pitch <- function(.xptr = NULL) {
 | `Harmonicity` | `sound$to_harmonicity_cc()` | From Sound |
 | `Spectrum` | `sound$to_spectrum()` | From Sound |
 | `Spectrogram` | `sound$to_spectrogram()` | From Sound |
+| `ComplexSpectrogram` | `ComplexSpectrogram(sound)` | From Sound (phase-preserving) |
 | `MelSpectrogram` | `sound$to_mel_spectrogram()` | From Sound (v4.8.25) |
 | `BarkSpectrogram` | `sound$to_bark_spectrogram()` | From Sound (v4.8.25) |
 | `Ltas` | `sound$to_ltas()` | From Sound |
@@ -302,6 +311,7 @@ Pitch <- function(.xptr = NULL) {
 |------|-----------------|
 | `Cepstrum` | `spectrum$to_cepstrum()` |
 | `PowerCepstrum` | `spectrum$to_power_cepstrum()` |
+| `PowerCepstrogram` | `sound$to_powercepstrogram()` |
 | `Cochleagram` | `sound$to_cochleagram()` |
 | `Excitation` | `cochleagram$to_excitation()` |
 | `LPC` | `sound$to_lpc_burg()` |
@@ -355,7 +365,7 @@ Pitch <- function(.xptr = NULL) {
 interp <- PraatInterpreter$new()
 interp$run('x = 42')
 interp$run('y = x * 2')
-result <- interp$eval_numeric('y')  # 84
+result <- interp$eval('y')  # 84 (numeric tried first, then string)
 ```
 
 ---
@@ -937,7 +947,7 @@ f1_at_times <- formant$get_values_at_times(1, query_times, unit = "hertz")
 #### Spectrogram Batch Queries
 
 ```r
-spectrogram <- sound$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+spectrogram <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 
 # Get dimension vectors
 times <- spectrogram$get_times_vector()
@@ -945,7 +955,7 @@ freqs <- spectrogram$get_frequencies_vector()
 
 # Get frames and slices (50x speedup)
 frame <- spectrogram$get_frame(time = 1.0)           # All freqs at one time
-slice <- spectrogram$get_frequency_slice(freq = 1000) # One freq across all times
+slice <- spectrogram$get_frequency_slice(frequency = 1000) # One freq across all times
 
 # Get multiple frames at once
 query_times <- c(0.5, 1.0, 1.5, 2.0)
@@ -963,12 +973,12 @@ tg <- TextGrid("annotations.TextGrid")
 
 # Get labels at multiple times (60x speedup for VUV analysis)
 times <- seq(0.1, 9.9, by = 0.1)
-labels <- tg$get_labels_at_times(tier_number = 1, times)
+labels <- tg$get_labels_at_times(tier = 1, times)
 
 # Batch set interval texts
 intervals <- c(1, 2, 3, 4)
 texts <- c("hello", "world", "test", "end")
-tg$set_interval_texts_batch(tier_number = 1, intervals, texts)
+tg$set_interval_texts_batch(tier = 1, intervals, texts)
 ```
 
 **Summary of vectorized methods:**
@@ -1023,7 +1033,7 @@ freqs <- c(100, 440, 880, 1000)
 values <- ltas$get_values_at_frequencies(freqs, interpolation = "cubic")
 
 # Get mean values in multiple bands
-means <- ltas$get_means_batch(fmins, fmaxs, averaging_units = "energy")
+means <- ltas$get_means_batch(fmins, fmaxs, unit = "energy")
 ```
 
 #### Pitch Detrending (Tremor: 10x → 4x)
@@ -1061,12 +1071,12 @@ voiced_sounds <- list()
 for (i in seq_along(starts)) {
   part <- sound$extract_part(starts[i], ends[i])
   power <- part$get_power()
-  zcr <- part$get_zcr()
+  zcr <- part$get_zcr_windows(0, part$get_total_duration())
   if (power > 0.03 && zcr < 3000) {
     voiced_sounds <- c(voiced_sounds, list(part))
   }
 }
-result <- Reduce(function(a, b) a$combine(b), voiced_sounds)
+result <- Reduce(function(a, b) a$concatenate(b), voiced_sounds)
 
 # FAST: Single C++ call filters and concatenates (10x speedup)
 result <- sound$extract_windows_filtered(
@@ -1633,11 +1643,11 @@ calculate_cpps_ultra(
 tg <- sound_to_textgrid_detect_silences(sound, min_pitch = 100, silence_threshold = -25)
 voiced_sounds <- list()
 for (i in 1:tg$get_number_of_intervals(1)) {
-  if (tg$get_label_of_interval(1, i) != "silent") {
+  if (tg$get_interval_text(1, i) != "silent") {
     voiced_sounds <- c(voiced_sounds, list(sound$extract_part(...)))
   }
 }
-concatenated <- Reduce(function(a, b) a$combine(b), voiced_sounds)
+concatenated <- Reduce(function(a, b) a$concatenate(b), voiced_sounds)
 # ... then v3.01 windowing + filtering ...
 
 # NEW WAY: Single call (2-4x faster)
@@ -1962,14 +1972,13 @@ sound <- Sound("speech.wav")
 mel_spec <- sound$to_mel_spectrogram(
   window_length = 0.025,
   time_step = 0.01,
-  position_of_first_filter = 100,
-  distance_between_filters = 100,
-  maximum_frequency = 0      # 0 = Nyquist
+  first_filter_frequency = 100,  # mel
+  frequency_step = 100,          # mel (distance between filters)
+  max_frequency = 0              # 0 = Nyquist
 )
 
-# Query MelSpectrogram
-mel_spec$get_value_at_time(time = 1.0, mel = 500)
-mel_spec$get_value_at_frequency(time = 1.0, freq = 1000)
+# Inspect values via matrix export (no per-cell query methods on MelSpectrogram)
+mel_mat <- mel_spec$as_matrix(to_db = TRUE)
 
 # Convert to MFCC
 mfcc <- mel_spec$to_mfcc(number_of_coefficients = 12)
@@ -1984,14 +1993,13 @@ intensity <- mel_spec$to_intensity()
 bark_spec <- sound$to_bark_spectrogram(
   window_length = 0.025,
   time_step = 0.01,
-  position_of_first_filter = 1,   # Bark
-  distance_between_filters = 1,   # Bark
-  maximum_frequency = 0           # 0 = Nyquist
+  first_filter_frequency = 1,  # Bark
+  frequency_step = 1,          # Bark (distance between filters)
+  max_frequency = 0            # 0 = Nyquist
 )
 
-# Query BarkSpectrogram
-bark_spec$get_value_at_time(time = 1.0, bark = 5)
-bark_spec$get_value_at_frequency(time = 1.0, freq = 1000)
+# Inspect values via matrix export (no per-cell query methods on BarkSpectrogram)
+bark_mat <- bark_spec$as_matrix(to_db = TRUE)
 
 # Convert to Matrix or Intensity
 bark_matrix <- bark_spec$to_matrix()
@@ -2020,9 +2028,9 @@ autocorr <- sound$autocorrelate()  # Returns new Sound with autocorrelation
 ```r
 sound <- Sound("speech.wav")
 enhanced <- sound$deepen_band_modulation(
-  enhancement = 1.5,
-  from_freq = 300,
-  to_freq = 8000,
+  enhancement_db = 10,
+  flow = 300,
+  fhigh = 4000,
   slow_modulation = 3,
   fast_modulation = 30,
   band_smoothing = 100
@@ -2064,13 +2072,13 @@ mel_spec <- mfcc$to_mel_spectrogram()
 
 ```r
 sound <- Sound("vowel.wav")
-lpc <- sound$to_lpc_burg(prediction_order = 16, window_length = 0.025, time_step = 0.005)
+lpc <- sound$to_lpc_burg(prediction_order = 16, analysis_width = 0.025, time_step = 0.005)
 
 # Convert LPC to Spectrogram for visualization
 spec <- lpc$to_spectrogram(
-  sampling_frequency = 10000,
-  window_length = 0.02,
-  maximum_frequency = 5000
+  df_min = 20.0,                 # minimum frequency resolution (Hz)
+  bandwidth_reduction = 0.0,
+  de_emphasis_frequency = 50.0
 )
 ```
 
@@ -2087,16 +2095,13 @@ pp$add_point(0.3)
 # Generate pulse train (Dirac deltas at pulse times)
 pulse_train <- pp$to_sound_pulse_train(
   sampling_frequency = 44100,
-  adaptation_factor = 1.0,
-  adaptation_time = 0.0
+  adapt_factor = 1.0,
+  adapt_time = 0.05,
+  interpolation_depth = 30L
 )
 
-# Generate harmonic hum (sum of sines at pulse frequencies)
-hum <- pp$to_sound_hum(
-  minimum_pitch = 75,
-  maximum_pitch = 600,
-  maximum_amplitude_factor = 0.99
-)
+# Generate harmonic hum (sum of sines at pulse frequencies) — takes no parameters
+hum <- pp$to_sound_hum()
 ```
 
 **Praat equivalents:**
@@ -2113,9 +2118,9 @@ intensity <- sound$to_intensity(minimum_pitch = 100)
 
 # Detect silences and create TextGrid
 tg <- intensity$to_textgrid_silences(
-  silence_threshold = -25,      # dB relative to max
-  min_silent_interval = 0.1,    # seconds
-  min_sounding_interval = 0.1,  # seconds
+  silence_threshold = -25,       # dB relative to max
+  min_silence_duration = 0.3,    # seconds
+  min_sounding_duration = 0.1,   # seconds
   silent_label = "silent",
   sounding_label = "sounding"
 )
@@ -2127,12 +2132,11 @@ tg <- intensity$to_textgrid_silences(
 
 ```r
 formant <- sound$to_formant_burg()
-table <- formant$down_to_table(include_frame_number = TRUE, 
-                                include_time = TRUE, 
+table <- formant$down_to_table(include_frame_numbers = TRUE,
+                                include_time = TRUE,
                                 time_decimals = 6,
                                 include_intensity = FALSE,
                                 include_number_of_formants = TRUE,
-                                include_formants = TRUE,
                                 include_bandwidths = TRUE)
 
 # Sort by column
@@ -2432,13 +2436,13 @@ tg <- TextGrid("annotations.TextGrid")
 # Query structure
 n_tiers <- tg$get_number_of_tiers()
 tier_name <- tg$get_tier_name(tier_number = 1)
-is_interval <- tg$is_interval_tier(tier_number = 1)
+is_interval <- tg$tier_is_interval_tier(tier = 1)
 
 # Query intervals
-n_intervals <- tg$get_number_of_intervals(tier_number = 1)
-label <- tg$get_label_of_interval(tier_number = 1, interval_number = 5)
-start <- tg$get_start_time_of_interval(tier_number = 1, interval_number = 5)
-end <- tg$get_end_time_of_interval(tier_number = 1, interval_number = 5)
+n_intervals <- tg$get_number_of_intervals(tier = 1)
+label <- tg$get_interval_text(tier = 1, interval_number = 5)
+start <- tg$get_interval_start_time(tier = 1, interval_number = 5)
+end <- tg$get_interval_end_time(tier = 1, interval_number = 5)
 
 # Extract Sound for interval
 sound_segment <- sound$extract_part(start, end)
@@ -2545,8 +2549,10 @@ src/praat.github.io/LPC/          ← LPC, Cepstrum, PowerCepstrogram
 src/praat.github.io/dwtools/      ← advanced (KlattGrid, DTW, MFCC, CC, SSCP, PCA)
 src/praat.github.io/dwsys/        ← numerical utilities (Polynomial, Roots, SVD, etc.)
 src/praat.github.io/melder/       ← signal math (NUMinterpol, NUMfilter, FFT, etc.)
-src/praat/                        ← Windows mirror (identical content, different path prefix)
 ```
+
+All platforms (including Windows via `Makevars.win`) compile from the `praat.github.io/`
+prefix. The former `src/praat/` Windows mirror was removed in v4.9.5 — never reference it.
 
 Map from Praat menu name to file:
 
@@ -2600,7 +2606,7 @@ moments <- get_spectral_moments_batch(spectrogram, power = 2.0)
 1. Add `// [[Rcpp::export(.my_batch_fn)]]` to `src/batch_queries.cpp`
 2. Accept the object as `SEXP xptr`, cast to `XPtr<structType>`
 3. Loop in C++, call Praat functions directly
-4. Return `List::create(Named("col1") = vec1, ...)`
+4. Return `List::create(Named("col1") = vec1, ...)`. If returning a **new Praat object**, wrap it with `make_praat_xptr()` / `make_praat_xptr_from_auto()` from `src/praat_xptr_utils.h` — NEVER construct `XPtr<T>(ptr, deleter)` with a lambda: the lambda silently binds Rcpp's `bool set_delete_finalizer` overload, so the object is freed with `delete` instead of Praat's `forget()` (the v4.9.6 finalizer bug)
 5. Run `Rcpp::compileAttributes(".")` to regenerate `src/RcppExports.cpp`
 6. **After `compileAttributes`:** verify `src/RcppExports.cpp` has `extern const R_CallMethodDef CallEntries[]` (NOT `static`) — `compileAttributes` resets it to `static`, which breaks the `module_init.cpp` link. Fix if needed before building.
 7. Add R wrapper in `R/batch-queries.R` + entry in `NAMESPACE`
@@ -2675,7 +2681,7 @@ Target metrics per fix category:
 
 ### Step 6 — Log Praat source modifications
 
-Whenever `src/praat.github.io/` (or `src/praat/`) is modified, add an entry to
+Whenever `src/praat.github.io/` is modified, add an entry to
 `inst/agents/PRAAT_MODIFICATIONS.md` in this format:
 
 ```markdown
@@ -2684,7 +2690,7 @@ Whenever `src/praat.github.io/` (or `src/praat/`) is modified, add an entry to
 **File:** `src/praat.github.io/melder/NUMinterpol.cpp`
 **Function:** `NUMimproveExtremum()`
 **Change:** Added `d2y <= 0` guard and `|offset| >= 1.0` clamp to prevent division by
-near-zero denominator in parabolic peak interpolation. Mirrors fix in `src/praat/melder/`.
+near-zero denominator in parabolic peak interpolation.
 **Reason:** 500–1231 dB physically impossible values from LTAS get_peaks_batch.
 **Upstream:** Not reported upstream (Praat's own parabolic path may not be called with
 flat LTAS peaks in normal Praat GUI use).
@@ -2975,7 +2981,7 @@ vowels <- matrix(c(
 
 pca <- pca_from_matrix(vowels)
 pca$get_fraction_variance(1, 2)  # Variance in first 2 PCs
-projected <- pca$project(new_vowels, num_dim = 2)  # Project to 2D
+projected <- pca$project(new_vowels, num_dimensions = 2)  # Project to 2D
 ```
 
 ### Discriminant Methods (NEW in v4.0.7)
@@ -3111,7 +3117,7 @@ first_frame <- pitch$get_time_from_frame(1)    # Correct
 first_frame <- pitch$get_time_from_frame(0)    # Error!
 
 # Interval numbers are also 1-based
-label <- tg$get_label_of_interval(tier_number = 1, interval_number = 1)
+label <- tg$get_interval_text(tier = 1, interval_number = 1)
 ```
 
 ### 4. Time Range 0,0 Means "Entire Duration"
@@ -3224,22 +3230,21 @@ R CMD INSTALL .
 
 Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before committing.
 
-#### Build System Architecture (v4.8.33+)
+#### Build System Architecture (v4.9.5+)
 
 **configure** detects two things via `sed` substitution into `Makevars.in`:
 - **RcppXsimd** → `@XSIMD_FLAG@` (becomes `-DHAVE_XSIMD` or empty)
 - **GSL** → `@GSL_CFLAGS@` + `@GSL_LIBS@` (via gsl-config → pkg-config → fallback `-lgsl -lgslcblas`)
 
-**GSL is required.** ~19 GSL functions called from Praat's `NUMspecfunc.cpp`, `NUM2.cpp`, `melder.cpp`. Headers come from Praat's bundled GSL 1.10 at `praat.github.io/external/gsl/` and `praat/external/gsl/`, but implementations link against system GSL.
+**GSL is required.** ~19 GSL functions called from Praat's `NUMspecfunc.cpp`, `NUM2.cpp`, `melder.cpp`. Headers come from Praat's bundled GSL 1.10 at `praat.github.io/external/gsl/`, but implementations link against system GSL.
 
-**Windows:** `src/Makevars.win` is NOT generated — it's a static file with `-lgsl -lgslcblas` hardcoded (GSL via Rtools MSYS2/ucrt64: `pacman -S mingw-w64-ucrt-x86_64-gsl`). No `configure.win` exists.
+**Windows:** `src/Makevars.win` is NOT generated — it's a static file (no `configure.win`) that compiles from the same `praat.github.io/` prefix as Unix (the old `src/praat/` mirror is gone). It hardcodes `-lgsl -lgslcblas` (GSL via Rtools MSYS2/ucrt64: `pacman -S mingw-w64-ucrt-x86_64-gsl`) and must keep defining `UNICODE`/`_UNICODE` (Praat calls generic Win32 macros with wide buffers — without these they resolve to `...A` variants and fail on mingw) and `_FILE_OFFSET_BITS=64`, mirroring Praat's own mingw makefiles.
 
-**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, or `-march=native` to Makevars.in — R provides its own optimization via `Makeconf`. The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
+**libc++ note:** `PKG_CPPFLAGS` in `Makevars.in` carries `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` — silences C++17 allocator-member deprecations inside RcppXsimd's `xsimd_aligned_allocator.hpp` under `--as-cran`; portable define, inert on libstdc++ (so not needed in `Makevars.win`).
 
-**Bundled GSL copies (NOT compiled):**
-- `src/gsl-2.8/` — full GSL 2.8 source tree (never built, never in SOURCES)
-- `src/praat/external/gsl/` — 738 flattened `.c` files from Praat (never in SOURCES)
-- `src/build_gsl.sh` — unused build script
+**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, or `-march=native` to Makevars.in — R provides its own optimization via `Makeconf`. Do NOT re-add `-Wno-*` suppressions (all were removed in v4.9.6; the only justified non-standard flag is `-ffp-contract=off`, required for bit-exact fidelity with Praat). The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
+
+The former bundled GSL trees (`src/gsl-2.8/`, `src/praat/external/gsl/`, `src/build_gsl.sh`) were removed in the v4.9.5 slimming — only Praat's GSL 1.10 *headers* under `praat.github.io/external/gsl/` remain in the tarball.
 
 ### 11. Shared Dispatch Table: `$.Type` S3 Methods
 
@@ -3580,7 +3585,7 @@ lfcc <- lpc$to_lfcc(num_coefficients = 12)
 # === PCA (v4.0.7 - Dimensionality Reduction) ===
 vowels <- matrix(c(700, 1200, 350, 2100, 450, 700), ncol = 2, byrow = TRUE)
 pca <- pca_from_matrix(vowels)
-projected <- pca$project(new_data, num_dim = 2)
+projected <- pca$project(new_data, num_dimensions = 2)
 
 # === DISCRIMINANT (v4.0.7 - Classification) ===
 lda <- discriminant_from_matrix(vowels, labels = c("a", "i", "u"))
@@ -3611,7 +3616,7 @@ if (inherits(pitch, "Pitch")) {
 # === INTERPRETER (persistent state) ===
 interp <- PraatInterpreter$new()
 interp$run('x = 42')
-result <- interp$eval_numeric('x * 2')
+result <- interp$eval('x * 2')
 ```
 
 **Performance Decision Tree:**
@@ -3712,7 +3717,7 @@ pp_peaks <- sound$pitch_to_pointprocess_peaks(pitch,
                                                include_minima = FALSE)
 
 # Step 3: Get timestamps and amplitudes at peaks
-peak_times <- pp_peaks$get_times()
+peak_times <- get_pointprocess_times(pp_peaks)
 peak_amplitudes <- sapply(peak_times, function(t) {
   sound$get_value_at_time(time = t, channel = 1, interpolation = 2)
 })
@@ -3830,7 +3835,7 @@ This section demonstrates how v4.0.3 batch operations enable efficient implement
 
 ```r
 # Extract voiced segments from recording
-voiced_intervals <- textgrid$get_intervals_where(tier = "voicing", label = "voiced")
+voiced_intervals <- textgrid$get_intervals_where(tier = "voicing", text = "voiced")
 
 # Extract each voiced segment as a Sound object
 voiced_sounds <- lapply(voiced_intervals, function(interval) {
@@ -3887,8 +3892,8 @@ for (i in 2:length(pitch_values)) {
 
 # Set labels for each interval
 for (j in 1:vuv_tg$get_number_of_intervals(1)) {
-  start <- vuv_tg$get_start_time_of_interval(1, j)
-  mid <- (start + vuv_tg$get_end_time_of_interval(1, j)) / 2
+  start <- vuv_tg$get_interval_start_time(1, j)
+  mid <- (start + vuv_tg$get_interval_end_time(1, j)) / 2
   f0 <- pitch$get_value_at_time(mid, "hertz")
   label <- if (!is.na(f0)) "voiced" else "unvoiced"
   vuv_tg$set_interval_text(1, j, label)
@@ -6607,15 +6612,15 @@ test_that("MFCC SIMD matches scalar implementation", {
   # Scalar MFCC
   set_global_simd_enabled(FALSE)
   mfcc_scalar <- snd$to_mfcc(
-    numberOfCoefficients = 13,
-    analysisWidth = 0.015
+    num_coefficients = 13,
+    analysis_width = 0.015
   )
 
   # SIMD MFCC
   set_global_simd_enabled(TRUE)
   mfcc_simd <- snd$to_mfcc(
-    numberOfCoefficients = 13,
-    analysisWidth = 0.015
+    num_coefficients = 13,
+    analysis_width = 0.015
   )
 
   # Check structure
@@ -6638,7 +6643,7 @@ test_that("MFCC SIMD matches scalar implementation", {
 for (i in 1:n_warmup) {
   snd <- sound_n(signal, sr)
   set_global_simd_enabled(FALSE)
-  mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
+  mfcc_scalar <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015)
   rm(snd, mfcc_scalar); gc(verbose = FALSE)
 }
 
@@ -6648,7 +6653,7 @@ for (i in 1:n_iterations) {
   snd <- sound_n(signal, sr)
   set_global_simd_enabled(FALSE)
   start_time <- Sys.time()
-  mfcc_scalar <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
+  mfcc_scalar <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015)
   end_time <- Sys.time()
   scalar_times[i] <- as.numeric(end_time - start_time) * 1000
   rm(snd, mfcc_scalar); gc(verbose = FALSE)
@@ -6660,7 +6665,7 @@ for (i in 1:n_iterations) {
   snd <- sound_n(signal, sr)
   set_global_simd_enabled(TRUE)
   start_time <- Sys.time()
-  mfcc_simd <- snd$to_mfcc(numberOfCoefficients = 13, analysisWidth = 0.015)
+  mfcc_simd <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015)
   end_time <- Sys.time()
   simd_times[i] <- as.numeric(end_time - start_time) * 1000
   rm(snd, mfcc_simd); gc(verbose = FALSE)
@@ -7796,6 +7801,7 @@ formant <- sound$to_formant_burg()  # Stable ✅
 **Technical Details:**
 - Before: `return XPtr<structType>(raw, true);` (buggy - uses C++ delete)
 - After: Uses lambda deleter that calls Praat's `forget()` function
+- **Superseded in v4.9.6:** the lambda-deleter pattern itself was buggy (bound the `bool` overload → `delete`); all construction now goes through `make_praat_xptr()` in `src/praat_xptr_utils.h`
 - Impact: Eliminates all garbage collection crashes
 - Scope: Every method returning Praat objects in all 37 modules
 

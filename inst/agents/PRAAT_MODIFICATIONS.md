@@ -1,8 +1,9 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-07-18
-**Package Version:** 4.9.6
-**Praat Base Version:** 6.4.x (submodule at src/praat.github.io)
+**Last Updated:** 2026-07-19
+**Package Version:** 4.9.6 (branch `cran-warnings-fix`)
+**Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
+**Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
 ## Overview
 
@@ -16,6 +17,42 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### Unreleased (`cran-warnings-fix`) — NO_GUI Win32 gate + NUMlapack.h R-header removal (2026-07-19)
+
+Submodule commit `a17add655`. Two build repairs for CRAN's Windows and R-devel checks:
+
+- **`sys/praat.cpp`:** `GuiWin_initialize1()` and `motif_win_setUserMessageCallback()`
+  are not compiled in the NO_GUI edition, but the two `#if defined (_WIN32)` call
+  sites in `praat_init`/`praat_run` referenced them unconditionally → undefined
+  symbols at link on mingw. Both call sites are now additionally gated on
+  `#if ! defined (NO_GRAPHICS)` (pure GUI initialization; never needed by the
+  embedded library).
+- **`dwsys/NUMlapack.h`:** stopped including `R_ext/BLAS.h` + `R_ext/Lapack.h`.
+  Since R-devel these headers declare Fortran hidden-length (`FCLEN`) arguments
+  unconditionally, conflicting with this header's CLAPACK-style inline shims that
+  reuse the `dgeev_`/`dlamch_`/… names. R's LAPACK is reached only via the
+  package's `src/r_lapack_wrapper.cpp` (which defines `USE_FC_LEN_T`); Praat
+  code sees only the shim declarations.
+
+### v4.9.6+ CRAN forbidden-function cleanup: rand()/sprintf()/printf() (2026-07-18)
+
+Submodule commit `600ee49ec` (branch `cran-warnings-fix`). `R CMD check` flags
+`rand`, `sprintf`, and `printf` in compiled code. All call sites patched:
+
+- **`dwtools/KlattTable.cpp`** (`KlattFrame_flutter`): `rand() % …` noise source
+  replaced with Praat's own `NUMrandomInteger (-8191, 8191)`. Praat's RNG is
+  seeded deterministically per Melder init, so this also removes hidden global
+  state; numeric character of the flutter noise is equivalent (uniform ±8191).
+- **`melder/melder_ftoa.cpp`**: all 24 `sprintf` calls in the `Melder8_*`
+  formatters (`bigInteger`, `dcomplex`, `scomplex`, `naturalLogarithm`,
+  `colour`) replaced with bounds-checked `snprintf` against
+  `MAXIMUM_NUMERIC_STRING_LENGTH + 1 - <offset>`. Output strings identical for
+  all in-range values.
+- **`sys/praat_script.cpp`** (`praat_executeCommandFromStandardInput`): the one
+  `printf` prompt replaced with `Melder_casual` (routes through MelderConsole,
+  which has the v4.9.3 null-stream guard). This is interactive-CLI code, never
+  reached from the library, but the symbol had to go.
 
 ### v4.9.6 CRAN compiled-code cleanup: remove abort()/_Exit() (2026-07-18)
 
@@ -106,6 +143,41 @@ Bit-exact: formant values are unchanged; only the previously-crashing diagnostic
 text now reaches stderr (matching Praat's own behaviour). R-level wrappers
 `to_formant_willems()`/`to_formant_sl()` additionally reject `number_of_formants`/
 `number_of_poles < 1` before the C++ call (`.check_positive_count`).
+
+### v4.9.1 BUG-1/BUG-2: Laguerre LPC fallback + parabolic interpolation guard (2026-06-10)
+
+Submodule commit `dc9a63eab`, from the 2026 developer report (pladdrr commit `c600e287`).
+
+#### `fon/Sound_to_Formant.cpp` — Laguerre fallback when dhseqr_ drops eigenvalues (BUG-1)
+
+**Problem:** formant extraction on short analysis windows (≤100 ms) could return
+fewer roots than the LPC order: LAPACK's `dhseqr_` fails to converge on all
+eigenvalues of the ill-conditioned companion/Hessenberg matrix, and Praat
+silently proceeded with the truncated root set → missing formants.
+
+**Fix:** after `Polynomial_to_Roots`, if `roots->numberOfRoots < coefficients.size`,
+re-solve the polynomial with Laguerre's method (`polynomial_roots_laguerre`,
+implemented in pladdrr's `src/polynomial_roots_laguerre.h`, included via relative
+path) and polish with `Roots_Polynomial_polish`. Primary path unchanged; the
+fallback only runs when LAPACK under-delivers, so results are bit-exact for all
+well-conditioned frames.
+
+#### `melder/NUMinterpol.cpp` — `NUMimproveExtremum()` near-zero-denominator guard (BUG-2)
+
+**Problem:** the `NUM_PEAK_INTERPOLATE_PARABOLIC` path computed
+`y[ixmid] + 0.5 * dy * dy / d2y` without checking `d2y`. Flat LTAS peaks give
+near-zero `d2y` → division blow-up; `get_peaks_batch` returned physically
+impossible 500–1231 dB values.
+
+**Fix:**
+```cpp
+if (d2y <= 0.0)               { *ixmid_real = ixmid; return y [ixmid]; }  // flat or concave-up
+const double offset = dy / d2y;
+if (fabs (offset) >= 1.0)     { *ixmid_real = ixmid; return y [ixmid]; }  // extrapolation out of range
+```
+Degenerate peaks now return the bin value unchanged; genuine parabolic peaks are
+unaffected. **Upstream:** not reported (Praat's GUI may never hit this path with
+flat LTAS peaks).
 
 ### v4.8.35 SPINET gammatone arg-swap fix (2026-05-06)
 
@@ -802,30 +874,53 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 
 ## Summary of Modified Files
 
+Authoritative list: `git diff --name-status b1b3199a3..HEAD` in the submodule
+(39 modified source files as of 2026-07-19). Grouped by purpose:
+
 | File | Category | Changes |
 |------|----------|---------|
 | `sys/Thing.h` | Bug fix | Extern class registry |
 | `sys/Thing.cpp` | Bug fix | Extern linkage, null checks |
 | `sys/Data.cpp` | Bug fix | cstdio header |
+| `sys/praat.cpp` | CRAN + build | `_Exit()/exit()` gated behind `#ifndef PRAAT_LIB` (v4.9.6); unsequenced self-test compiled out (v4.9.6); NO_GUI gate on Win32 GUI init (unreleased) |
+| `sys/praat_script.cpp` | CRAN | `printf` prompt → `Melder_casual` (v4.9.6+) |
 | `melder/MelderReadText.cpp` | Bug fix | cstdio header |
-| `melder/NUMinterpol.cpp` | Bug fix | Remove debug output |
-| `melder/MelderThread.cpp` | Performance | Remove debug fprintf |
+| `melder/melder_assert.h`, `melder/melder_error.h`, `melder/melder_error.cpp` | CRAN | `abort()` removed from `Melder_assert`/`Melder_fatal`; `[[noreturn]]` + throw (v4.9.6) |
+| `melder/melder_console.cpp` | Bug fix | Null-stream guard in `MelderConsole::write` (v4.9.3) |
+| `melder/melder_ftoa.cpp` | CRAN | 24× `sprintf` → bounds-checked `snprintf` (v4.9.6+) |
+| `melder/NUMinterpol.cpp` | Bug fix | Debug-output removal (early); `NUMimproveExtremum` parabolic guard (v4.9.1) |
+| `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) + xsimd v8+ compat (v4.8.19) |
+| `melder/melder.cpp`, `melder/NUMspecfunc.cpp`, `melder/MAT.cpp` | Build plumbing | GSL includes stubbed/re-pathed (system GSL linked instead of vendored sources) |
 | `dwsys/NUMmachar.h` | Bug fix | Extern NUMfpp |
 | `dwsys/NUMmachar.cpp` | Bug fix | NUMfpp definition |
 | `dwsys/NUM2.cpp` | Bug fix + SIMD | NULL check + Burg SIMD (v4.8.4 fix) + xsimd v8+ compat (v4.8.19) |
-| `melder/NUM.cpp` | SIMD | NUMinner SIMD (v4.8.4) + xsimd v8+ compat (v4.8.19) |
+| `dwsys/NUMFourier.cpp` | FFT backend | Replaced FFTPACK with pocketfft (v4.8.12) |
+| `dwsys/NUMlapack.h` | Build | R BLAS/LAPACK headers dropped (FCLEN conflict with CLAPACK shims; unreleased) |
+| `dwsys/NUMselect.h` | Build plumbing | Include path flattened |
 | `fon/Formant.h` | API | extractPart declaration |
+| `fon/PitchTier.cpp` | CRAN | `-Wswitch` default case in `PitchTier_shiftFrequencies` (v4.9.6) |
 | `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization + xsimd v8+ compat (v4.8.19) |
-| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27) |
+| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27); broken SIMD blocks reverted (v4.8.29) |
 | `fon/Sound_to_Harmonicity_GNE.cpp` | Performance | Loop B + Loop C parallelized via MelderThread (v4.8.27) |
-| `fon/Sound_to_Formant.cpp` | SIMD | Uses VECburg directly (v4.8.4) |
+| `fon/Sound_to_Formant.cpp` | SIMD + Bug fix | Uses VECburg directly (v4.8.4); Laguerre root-finding fallback (v4.9.1) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
 | `fon/Sound.cpp` | SIMD | Pre-emphasis optimization |
 | `dwtools/Sound_and_Spectrogram_extensions.cpp` | SIMD | MFCC optimization |
 | `dwtools/Spectrogram_extensions.cpp` | SIMD | Mel-frequency SIMD |
+| `dwtools/Sound_to_SPINET.cpp` | Bug fix | Gammatone frequency/bandwidth arg swap (v4.8.35) |
+| `dwtools/KlattTable.cpp` | CRAN | `rand()` → `NUMrandomInteger` (v4.9.6+) |
+| `dwtools/Intensity_extensions.h`, `dwtools/Sound_and_TextGrid_extensions.{h,cpp}` | Build plumbing | Include paths made explicit (`../fon/...`) |
 | `LPC/FormantPath.cpp` | SIMD | Path optimization |
 | `LPC/Sound_to_PowerCepstrogram.cpp` | SIMD | PowerCepstrogram frame processing (v4.8.10) |
-| `dwsys/NUMFourier.cpp` | FFT backend | Replaced FFTPACK with pocketfft (v4.8.12) |
+
+Note: `melder/MelderThread.cpp` has **zero net diff** vs upstream (the old
+debug-fprintf edit was superseded); pladdrr's real multi-threaded MelderThread
+implementation lives on the package side in `src/num_stubs.cpp`, not in the
+submodule. Also diverged vs upstream: deleted external-library sources
+(flac/mp3/…, CRAN slimming), `fon/Sound_files.cpp` moved to
+`excluded_sources/Sound_files.cpp` (still compiled — see `SOURCES` in
+`Makevars.in`), added flattened header copies (`fon/Table.h` etc.) and
+`.disabled`/`.backup` files (never compiled).
 
 ---
 
@@ -875,8 +970,20 @@ Rscript -e "testthat::test_dir('tests/testthat')"
 
 | Commit | Description |
 |--------|-------------|
+| `a17add655` | NO_GUI-gate Win32 GUI init; drop R headers from NUMlapack.h (unreleased) |
+| `600ee49ec` | rand()/sprintf()/printf() removal (v4.9.6+) |
+| `fc0ee4d97` | abort()/_Exit() removal (v4.9.6) |
+| `45cf303fd` | -Wunsequenced + -Wswitch fixes (v4.9.6) |
+| `43a731ed6` | MelderConsole null-stream guard (v4.9.3 — commit titled "Init code for use in pladdrr") |
+| `dc9a63eab` | Laguerre LPC fallback + NUMimproveExtremum guard (v4.9.1) |
+| `9d7817260` | SPINET gammatone arg-swap fix (v4.8.35) |
+| `51912e676` | Remove broken SIMD blocks from Pitch CC + GNE threshold (v4.8.29) |
 | `4f52f5f07` | GNE Loop B+C parallelized, Pitch CC batched sqrt Fix 5 (v4.8.27) |
 | `69a6ae069` | xsimd v8+ API compatibility (v4.8.19) |
+| `e0ac128c9` | FFTPACK → pocketfft in NUMFourier (v4.8.12) |
+| `38f99c1d1` | PowerCepstrogram SIMD (v4.8.10) |
+| `fadf66fbc` | Pitch parallelization threshold 5→20 frames (v4.8.9) |
+| `9bfd77e19` | SIMD formant fix — VECburg with SIMD inner loops (v4.8.4) |
 | `f64063348` | TextGrid loading fix |
 | `e929a431f` | NUMfpp linkage fix |
 | `06b94b648` | NUMfpp NULL check |
