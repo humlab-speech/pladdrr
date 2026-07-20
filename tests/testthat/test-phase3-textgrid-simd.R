@@ -80,6 +80,7 @@ test_that("duration filtering returns correct indices", {
 
 test_that("SIMD toggle functions work", {
   skip_if_not_installed("pladdrr")
+  skip_if_not(pladdrr::simd_info()$available, "SIMD not available")
 
   # Enable SIMD
   .set_simd(TRUE)

@@ -17,7 +17,7 @@ Calculates the RMS amplitude of a sound object. RMS is a measure of the
 signal's power and is computed as sqrt(mean(x^2)).
 }
 \details{
-For a sine wave with amplitude A, the RMS value is A/sqrt(2) ≈ 0.707*A.
+For a sine wave with amplitude A, the RMS value is A/sqrt(2) ~ 0.707*A.
 RMS is useful for comparing signal levels and measuring acoustic intensity.
 }
 \examples{

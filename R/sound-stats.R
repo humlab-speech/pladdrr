@@ -94,7 +94,7 @@ sound_max <- function(sound) {
 #' @return RMS amplitude (numeric scalar)
 #'
 #' @details
-#' For a sine wave with amplitude A, the RMS value is A/sqrt(2) ≈ 0.707*A.
+#' For a sine wave with amplitude A, the RMS value is A/sqrt(2) ~ 0.707*A.
 #' RMS is useful for comparing signal levels and measuring acoustic intensity.
 #'
 #' @examples
