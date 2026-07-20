@@ -68,33 +68,51 @@ citations/contact details.
 
 ### Test environments
 
-- local macOS (aarch64), R 4.4 — `R CMD check --as-cran --no-manual pladdrr_4.9.6.tar.gz`
-- (to be completed: win-builder devel/release, R-hub)
+- local macOS (aarch64), R 4.4 — `R CMD check --as-cran pladdrr_4.9.6.tar.gz`
+- win-builder, R-devel (x86_64-w64-mingw32, Windows Server 2022) — clean
+- win-builder, R-release — pending
+- (to be completed: R-hub)
 
 ### R CMD check results
 
 Local tarball check currently finishes with:
 
 - 0 errors
-- 4 warnings
-- 3 notes
+- 2 warnings
+- notes as listed below
+
+The previously reported install-time compiler warnings have been resolved: an
+unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
+source, and the deprecation warnings emitted by libc++ inside the RcppXsimd
+headers are silenced with the portable define
+`-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS`; the install step now completes with
+no significant warnings.
 
 Warnings are:
 
-- Apple clang reports warnings from vendored Praat / RcppXsimd headers during
-  installation.
-- `checkbashisms` is not installed in the local environment, so the top-level
-  files check cannot run to completion.
 - `PKG_CXXFLAGS` contains `-ffp-contract=off` for bit-for-bit Praat
   faithfulness (justified above).
-- The compiled-code check still reports the residual vendored Praat
+- The compiled-code check reports the residual vendored Praat
   `stderr`/`stdout`/`_exit` symbols described above.
 
 Notes are:
 
 - new submission
 - installed size
-- local clock verification unavailable during check
+- local clock verification unavailable during check (local-environment only)
+- HTML manual validation messages from the outdated HTML Tidy shipped with
+  macOS, which predates HTML5 (`<main>` unrecognized); not reproducible with a
+  current Tidy.
 
-On this machine, the full manual build is additionally blocked by a missing TeX
-package (`inconsolata.sty`), so the validation run above uses `--no-manual`.
+win-builder R-devel finishes with **0 errors, 4 warnings, 1 note**:
+
+- Install-time significant-warnings WARNING: cosmetic vendored-Praat noise
+  under mingw/gcc 14 (C++20 template-id-cdtor, class-memaccess,
+  uninitialized-var, array-bounds, return-type) — not package code, does not
+  block install or affect correctness.
+- S3-registration WARNING: `as.matrix.Matrix` intentionally overridden.
+- Makevars-flags WARNING: `-ffp-contract=off`, justified above.
+- Compiled-code WARNING: residual vendored `exit` symbol, justified above.
+- CRAN-incoming-feasibility NOTE: new submission + possibly-misspelled
+  DESCRIPTION words that are real domain/product terms (Cochleagram,
+  FormantModeler, KlattGrid, Praat, Rcpp, TextGrid, etc.).
