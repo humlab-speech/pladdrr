@@ -1,3 +1,19 @@
+# pladdrr 4.9.7 (2026-07-20)
+
+## CRAN compliance (win-builder R-devel rounds 4-5)
+
+- Fixed a Windows COMDAT collision for `FormantGridEditor_create` that broke
+  win-builder R-devel install.
+- Added missing `skip_if_not(pladdrr::simd_info()$available, ...)` guard to
+  the "SIMD toggle functions work" test (`test-phase3-textgrid-simd.R`), so
+  it skips cleanly on mingw/gcc toolchains without `HAVE_XSIMD`.
+- Replaced a LaTeX-unsafe Unicode character (`≈`, U+2248) in the `sound_rms()`
+  roxygen docs with ASCII `~`, fixing a PDF-manual build ERROR.
+- win-builder R-devel now passes clean: 0 errors, 4 warnings (all justified:
+  vendored Praat compiler noise, intentional `as.matrix.Matrix` S3 override,
+  `-ffp-contract=off`, residual `exit` symbol), 1 note (new-submission
+  boilerplate).
+
 # pladdrr 4.9.6 (2026-07-18)
 
 ## CRAN compliance (R CMD check warnings/notes)
