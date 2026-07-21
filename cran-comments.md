@@ -70,7 +70,7 @@ citations/contact details.
 
 - local macOS (aarch64), R 4.4 — `R CMD check --as-cran pladdrr_4.9.6.tar.gz`
 - win-builder, R-devel (x86_64-w64-mingw32, Windows Server 2022) — clean
-- win-builder, R-release — pending
+- win-builder, R-release (x86_64-w64-mingw32, R 4.6.1, Windows Server 2022) — clean
 - (to be completed: R-hub)
 
 ### R CMD check results
@@ -116,3 +116,6 @@ win-builder R-devel finishes with **0 errors, 4 warnings, 1 note**:
 - CRAN-incoming-feasibility NOTE: new submission + possibly-misspelled
   DESCRIPTION words that are real domain/product terms (Cochleagram,
   FormantModeler, KlattGrid, Praat, Rcpp, TextGrid, etc.).
+
+win-builder R-release finishes with the identical **0 errors, 4 warnings,
+1 note** as R-devel above (same warnings/note, same justifications).
