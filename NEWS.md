@@ -1,3 +1,13 @@
+# pladdrr 4.9.8 (2026-07-21)
+
+## CRAN compliance
+
+- win-builder R-release confirmed clean: 0 errors, 4 warnings, 1 note —
+  identical justified floor as R-devel (vendored Praat compiler noise,
+  intentional `as.matrix.Matrix` S3 override, `-ffp-contract=off`,
+  residual `exit` symbol, new-submission NOTE). Both win-builder
+  environments now pass.
+
 # pladdrr 4.9.7 (2026-07-20)
 
 ## CRAN compliance (win-builder R-devel rounds 4-5)
