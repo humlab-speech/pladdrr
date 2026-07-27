@@ -376,3 +376,70 @@ test_that("Tier 4 functions work with extracted and concatenated parts", {
     vq <- get_voice_quality_ultra(concatenated, "jitter", min_pitch = 75)
   })
 })
+
+# =============================================================================
+# Reusable multiband HNR path
+# =============================================================================
+
+test_that("build_multiband_harmonicity returns named Harmonicity objects", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+  built <- build_multiband_harmonicity(sound)
+
+  expect_equal(names(built), c("full", "band500", "band1500", "band2500", "band3500"))
+  expect_true(all(vapply(built, inherits, logical(1), "Harmonicity")))
+})
+
+test_that("multiband_hnr_stats matches the one-shot API", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+  built <- build_multiband_harmonicity(sound)
+
+  reused <- multiband_hnr_stats(built)
+  one_shot <- calculate_multiband_hnr_ultra(sound)
+
+  expect_equal(reused, one_shot, tolerance = 1e-10)
+})
+
+test_that("reusable multiband HNR objects work across intervals", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+  midpoint <- sound$get_xmax() / 2
+  built <- build_multiband_harmonicity(sound)
+
+  first_half <- multiband_hnr_stats(built, 0, midpoint)
+  second_half <- multiband_hnr_stats(built, midpoint, sound$get_xmax())
+
+  expect_equal(
+    first_half,
+    calculate_multiband_hnr_ultra(sound, from_time = 0, to_time = midpoint),
+    tolerance = 1e-10
+  )
+  expect_equal(
+    second_half,
+    calculate_multiband_hnr_ultra(sound, from_time = midpoint, to_time = sound$get_xmax()),
+    tolerance = 1e-10
+  )
+})
+
+test_that("reusable multiband HNR helpers validate input", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+
+  expect_error(
+    build_multiband_harmonicity(sound, bands = c(0, 500)),
+    "bands parameter must have exactly 5 elements"
+  )
+  expect_error(
+    multiband_hnr_stats(list(full = 1)),
+    "named list of 5 Harmonicity objects"
+  )
+})

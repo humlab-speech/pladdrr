@@ -1,3 +1,13 @@
+# pladdrr 4.9.9 (2026-07-27)
+
+## Optimization follow-ups
+
+- Added `pladdrr_simd(enabled = NULL)` as the public runtime SIMD toggle. User-facing docs now point to it instead of the internal `set_global_simd_enabled()`.
+- `PowerCepstrum$get_peak_prominence()` now accepts the trend-fit argument separately and no longer warns on the Praat-style `"robust slow"` call path.
+- Documented the current NEON reality from the 2026-07 assessment: pitch gets little to no SIMD help on arm64, cepstrogram/CPPS gets a modest gain, and threading remains the main speed lever.
+- Clarified the CPP-vs-CPPS API split and refreshed the stale pitch-performance note in the vendored Praat source comments.
+- Added `build_multiband_harmonicity()` + `multiband_hnr_stats()` so multi-interval callers can reuse the expensive 5-band HNR compute while keeping `calculate_multiband_hnr_ultra()` as the simple one-shot path.
+
 # pladdrr 4.9.8 (2026-07-21)
 
 ## CRAN compliance

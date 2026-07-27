@@ -34,3 +34,33 @@ test_that("calculate_cpps_fast and calculate_cpps_ultra produce matching results
   # Should match within 0.1 dB
   expect_equal(cpps_fast, cpps_ultra, tolerance = 0.1)
 })
+
+test_that("PowerCepstrum get_peak_prominence accepts Praat-style trend fit without warning", {
+  wav <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(wav), "Test audio not found")
+
+  sound <- Sound(wav)
+  cepstrum <- sound$to_spectrum()$to_power_cepstrum()
+
+  cpp <- expect_no_warning(
+    cepstrum$get_peak_prominence(
+      60, 333.3, "parabolic", 0.001, 0.05, "exponential decay", "robust slow"
+    )
+  )
+
+  expect_true(is.numeric(cpp))
+  expect_true(is.finite(cpp))
+})
+
+test_that("PowerCepstrum get_peak_prominence validates trend fit", {
+  wav <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(wav), "Test audio not found")
+
+  sound <- Sound(wav)
+  cepstrum <- sound$to_spectrum()$to_power_cepstrum()
+
+  expect_error(
+    cepstrum$get_peak_prominence(trend_type = "straight", fit_method = "bogus"),
+    "should be one of"
+  )
+})

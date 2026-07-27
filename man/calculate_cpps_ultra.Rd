@@ -77,6 +77,12 @@ significantly faster than \code{calculate_cpps_fast()} by:
 - Tier 3 (calculate_cpps_fast()): ~2000ms
 - Tier 4 (calculate_cpps_ultra()): ~1500ms (2.7x speedup)
 
+This is still a \strong{CPPS} helper. For a single-interval \strong{CPP}
+measurement, use the segment's \code{Spectrum -> PowerCepstrum ->
+get_peak_prominence()} path instead of \code{calculate_cpps_ultra()}. It is
+both cheaper and closer to the Praat workflow used by voice-quality scripts
+that query one interval at a time.
+
 **Use Cases:**
 - AVQI v2.03/v3.01 implementation
 - High-throughput voice quality analysis

@@ -37,14 +37,21 @@ NULL
                                                        pitch_ceiling = 333.3,
                                                        interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
                                                        qmin = 0.001, qmax = 0.05,
-                                                       fit_method = c("exponential decay", "straight"),
+                                                       trend_type = c("exponential decay", "straight"),
+                                                       fit_method = c("robust slow", "robust", "least squares", "least_squares"),
                                                        tolerance = 0.05) {
   interpolation <- match.arg(interpolation)
+  if (missing(trend_type) && !missing(fit_method) &&
+      length(fit_method) == 1L && fit_method %in% names(.trend_line_map)) {
+    trend_type <- fit_method
+    fit_method <- "robust slow"
+  }
+  trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
   .powercepstrum_get_peak_prominence(
     .self$.xptr, as.character(interpolation), as.numeric(pitch_floor),
     as.numeric(pitch_ceiling), as.numeric(qmin), as.numeric(qmax),
-    as.character(fit_method), as.numeric(tolerance)
+    as.character(trend_type), as.character(fit_method), as.numeric(tolerance)
   )
 }
 

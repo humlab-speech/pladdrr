@@ -405,6 +405,19 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_extract_voiced_segments_ultra_cpp`, sound_xptr, version, min_pitch, silence_threshold_db, min_silent_duration, min_sounding_duration, power_threshold_factor, max_zcr, window_width, use_manual_zcr)
 }
 
+#' Build reusable multiband Harmonicity objects in one C++ call
+#'
+#' @param sound_xptr External pointer to Sound object
+#' @param bands Numeric vector of upper frequency limits in Hz (default c(0, 500, 1500, 2500, 3500))
+#' @param time_step Time step for harmonicity in seconds (default 0.005)
+#' @param min_pitch Minimum pitch in Hz (default 75)
+#' @return Named list of Harmonicity external pointers (`full`, `band500`, ...)
+#' @keywords internal
+#' @noRd
+.build_multiband_harmonicity_cpp <- function(sound_xptr, bands, time_step = 0.005, min_pitch = 75.0) {
+    .Call(`_pladdrr_build_multiband_harmonicity_cpp`, sound_xptr, bands, time_step, min_pitch)
+}
+
 #' Calculate multi-band HNR in single C++ call (Tier 4 Ultra)
 #'
 #' @description
@@ -1787,8 +1800,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_spectrum_to_powercepstrum`, spectrum_xptr)
 }
 
-.powercepstrum_get_peak_prominence <- function(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance) {
-    .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance)
+.powercepstrum_get_peak_prominence <- function(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance) {
+    .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance)
 }
 
 .powercepstrum_get_quefrency_of_peak <- function(xptr, interpolation, qmin, qmax) {

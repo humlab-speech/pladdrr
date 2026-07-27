@@ -394,6 +394,7 @@ sound_segment <- longsound$extract_part(from_time = 0, to_time = 10)
 
 - Use Tier 4 "Ultra" functions for batch processing (2-5x faster)
 - Use vectorized methods (`$get_values_vector()`) instead of loops
+- For single-interval CPP, use `to_power_cepstrum()$get_peak_prominence()`; reserve `calculate_cpps_ultra()` for smoothed CPPS
 - For >100 files, consider `calculate_cpps_ultra()` over standard API
 
 ### Getting Help

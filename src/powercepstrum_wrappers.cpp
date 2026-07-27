@@ -163,7 +163,8 @@ SEXP spectrum_to_powercepstrum(SEXP spectrum_xptr) {
 double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
                                          double pitch_floor, double pitch_ceiling,
                                          double qmin, double qmax,
-                                         std::string fit_method, double tolerance) {
+                                         std::string trend_type, std::string fit_method,
+                                         double tolerance) {
     XPtr<structPowerCepstrum> cepstrum(xptr);
     if (!cepstrum) stop("Invalid PowerCepstrum pointer");
     
@@ -176,13 +177,21 @@ double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
     else if (interpolation == "sinc700") interp_type = kVector_peakInterpolation::SINC700;
     else stop("Invalid interpolation type");
     
-    // Convert fit method string to enum
-    kCepstrum_trendType trend_type = kCepstrum_trendType::EXPONENTIAL_DECAY;
-    if (fit_method == "straight") trend_type = kCepstrum_trendType::LINEAR;
-    else if (fit_method == "exponential decay") trend_type = kCepstrum_trendType::EXPONENTIAL_DECAY;
-    else stop("Invalid fit method");
-    
+    // tolerance is unused by Praat's PowerCepstrum_getPeakProminence(), but we
+    // keep the argument for API compatibility with the existing R wrapper.
+    (void) tolerance;
+
+    kCepstrum_trendType trend_type_enum = kCepstrum_trendType::EXPONENTIAL_DECAY;
+    if (trend_type == "straight") trend_type_enum = kCepstrum_trendType::LINEAR;
+    else if (trend_type == "exponential decay") trend_type_enum = kCepstrum_trendType::EXPONENTIAL_DECAY;
+    else stop("Invalid trend type");
+
     kCepstrum_trendFit fit_type = kCepstrum_trendFit::ROBUST_SLOW;
+    if (fit_method == "robust") fit_type = kCepstrum_trendFit::ROBUST_FAST;
+    else if (fit_method == "least squares" || fit_method == "least_squares")
+        fit_type = kCepstrum_trendFit::LEAST_SQUARES;
+    else if (fit_method == "robust slow") fit_type = kCepstrum_trendFit::ROBUST_SLOW;
+    else stop("Invalid fit method");
     
     // Handle qmax = 0 (use default)
     if (qmax == 0) {
@@ -200,7 +209,7 @@ double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
             interp_type,
             qmin,  // Quefrency start for trend line fit (e.g., 0.001 s)
             qmax,  // Quefrency end for trend line fit (e.g., 0.05 s)
-            trend_type,
+            trend_type_enum,
             fit_type,
             qpeak
         );

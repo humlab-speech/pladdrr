@@ -408,6 +408,17 @@ test_that("SIMD info is reported correctly", {
   }
 })
 
+test_that("pladdrr_simd toggles runtime state", {
+  original <- simd_info()$enabled
+  on.exit(pladdrr_simd(original), add = TRUE)
+
+  pladdrr_simd(FALSE)
+  expect_false(simd_info()$enabled)
+
+  pladdrr_simd(TRUE)
+  expect_true(simd_info()$enabled)
+})
+
 # ============================================================================
 # Cleanup
 # ============================================================================

@@ -27,6 +27,10 @@ for performance tuning and debugging.
 The pladdrr package uses SIMD acceleration for computationally intensive
 operations like autocorrelation, windowing, and statistical computations.
 
+On Apple Silicon / NEON, the measured gains on the hottest paths are modest:
+pitch is often near-neutral, while the cepstrogram/CPPS path gains roughly
+10-15 percent. Threading is usually the bigger lever.
+
 Common SIMD instruction sets:
 \itemize{
   \item \strong{AVX2}: 256-bit vectors (4 doubles or 8 floats) - Intel/AMD x86_64
@@ -34,10 +38,9 @@ Common SIMD instruction sets:
   \item \strong{NEON}: 128-bit vectors (2 doubles or 4 floats) - ARM (Apple Silicon)
 }
 
-SIMD can be disabled at runtime by setting:
-\code{options(pladdrr.use_simd = FALSE)}
-and then calling \code{set_global_simd_enabled(FALSE)}, or by setting the
-option before loading the package (it is read during \code{.onLoad}).
+Set \code{options(pladdrr.use_simd = FALSE)} before loading the package to
+start in scalar mode, or use \code{\link{pladdrr_simd}()} after load for
+runtime A/B checks. The option is read during \code{.onLoad}.
 }
 \examples{
 \dontrun{
@@ -51,9 +54,9 @@ if (info$architecture == "AVX2") {
 }
 
 # Disable SIMD temporarily for testing
-set_global_simd_enabled(FALSE)
+pladdrr_simd(FALSE)
 # ... run tests ...
-set_global_simd_enabled(TRUE)
+pladdrr_simd(TRUE)
 }
 
 }

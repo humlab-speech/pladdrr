@@ -1737,6 +1737,96 @@ SEXP extract_voiced_segments_ultra_cpp(
 // Phase 6: calculate_multiband_hnr_ultra - Multi-Band HNR Calculation (VQ)
 // =============================================================================
 
+static void validate_multiband_hnr_bands(const NumericVector& bands) {
+    if (bands.size() != 5) {
+        stop("bands parameter must have exactly 5 elements (0, 500, 1500, 2500, 3500)");
+    }
+}
+
+static std::string multiband_hnr_name(double upper_freq, int index) {
+    if (index == 0) {
+        return "full";
+    }
+    return "band" + std::to_string(static_cast<int>(upper_freq));
+}
+
+static std::vector<autoHarmonicity> build_multiband_harmonicities(
+    Sound sound,
+    const NumericVector& bands,
+    double time_step,
+    double min_pitch
+) {
+    validate_multiband_hnr_bands(bands);
+
+    std::vector<autoHarmonicity> harmonicities;
+    harmonicities.reserve(static_cast<size_t>(bands.size()));
+
+    for (int i = 0; i < bands.size(); i++) {
+        double upper_freq = bands[i];
+
+        autoSound filtered;
+        Sound band_sound = sound;
+        if (upper_freq != 0.0) {
+            filtered = Sound_filter_passHannBand(
+                sound,
+                0.0,
+                upper_freq,
+                100.0
+            );
+            band_sound = filtered.get();
+        }
+
+        harmonicities.emplace_back(Sound_to_Harmonicity_cc(
+            band_sound,
+            time_step,
+            min_pitch,
+            0.1,
+            1.0
+        ));
+    }
+
+    return harmonicities;
+}
+
+//' Build reusable multiband Harmonicity objects in one C++ call
+//'
+//' @param sound_xptr External pointer to Sound object
+//' @param bands Numeric vector of upper frequency limits in Hz (default c(0, 500, 1500, 2500, 3500))
+//' @param time_step Time step for harmonicity in seconds (default 0.005)
+//' @param min_pitch Minimum pitch in Hz (default 75)
+//' @return Named list of Harmonicity external pointers (`full`, `band500`, ...)
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.build_multiband_harmonicity_cpp)]]
+List build_multiband_harmonicity_cpp(
+    SEXP sound_xptr,
+    NumericVector bands,
+    double time_step = 0.005,
+    double min_pitch = 75.0
+) {
+    XPtr<structSound> sound(sound_xptr);
+    if (!sound || sound.get() == nullptr) {
+        stop("Invalid Sound pointer");
+    }
+
+    try {
+        auto harmonicities = build_multiband_harmonicities(sound.get(), bands, time_step, min_pitch);
+        List results(harmonicities.size());
+        CharacterVector names(harmonicities.size());
+
+        for (int i = 0; i < bands.size(); i++) {
+            names[i] = multiband_hnr_name(bands[i], i);
+            results[i] = create_xptr_from_auto<structHarmonicity>(harmonicities[i]);
+        }
+
+        results.attr("names") = names;
+        return results;
+    } catch (MelderError) {
+        Melder_clearError();
+        stop("Failed to build multiband Harmonicity objects");
+    }
+}
+
 //' Calculate multi-band HNR in single C++ call (Tier 4 Ultra)
 //'
 //' @description
@@ -1768,10 +1858,7 @@ List calculate_multiband_hnr_ultra_cpp(
         stop("Invalid Sound pointer");
     }
 
-    // Validate bands parameter
-    if (bands.size() != 5) {
-        stop("bands parameter must have exactly 5 elements (0, 500, 1500, 2500, 3500)");
-    }
+    validate_multiband_hnr_bands(bands);
 
     try {
         // Auto-adjust time range if not specified
@@ -1780,61 +1867,26 @@ List calculate_multiband_hnr_ultra_cpp(
             to_time = sound->xmax;
         }
 
+        auto harmonicities = build_multiband_harmonicities(sound.get(), bands, time_step, min_pitch);
         List results;
 
         // Process each band
         // Matches VQ_measurements_V2.praat lines 102-122
         for (int i = 0; i < bands.size(); i++) {
-            double upper_freq = bands[i];
-
-            // Create band-limited sound (or use full spectrum if band == 0);
-            // full-spectrum case reads the input directly, no copy needed
-            autoSound filtered;
-            Sound band_sound = sound.get();
-            if (upper_freq != 0.0) {
-                // Band-pass filter: 0 to upper_freq with 100 Hz smoothing
-                filtered = Sound_filter_passHannBand(
-                    sound.get(),
-                    0.0,            // from_freq
-                    upper_freq,     // to_freq
-                    100.0           // smoothing (Praat standard)
-                );
-                band_sound = filtered.get();
-            }
-
-            // Calculate Harmonicity for this band using cross-correlation (CC) method
-            // BUG FIX (v4.6.4): Changed from Sound_to_Harmonicity_ac to Sound_to_Harmonicity_cc
-            // to match to_harmonicity_direct() which uses the CC method.
-            // AC and CC methods give different results - VQ uses CC method.
-            // Parameters: time_step=0.005, periods_per_window=1.0 (VQ standard)
-            autoHarmonicity harmonicity = Sound_to_Harmonicity_cc(
-                band_sound,
-                time_step,
-                min_pitch,
-                0.1,    // silence_threshold
-                1.0     // periods_per_window
-            );
-
             // Extract statistics for time range
             double mean = Harmonicity_getMean(
-                harmonicity.get(),
+                harmonicities[i].get(),
                 from_time,
                 to_time
             );
 
             double sd = Harmonicity_getStandardDeviation(
-                harmonicity.get(),
+                harmonicities[i].get(),
                 from_time,
                 to_time
             );
 
-            // Store in result list with descriptive names
-            std::string band_name;
-            if (i == 0) {
-                band_name = "full";
-            } else {
-                band_name = "band" + std::to_string(static_cast<int>(upper_freq));
-            }
+            std::string band_name = multiband_hnr_name(bands[i], i);
 
             results[band_name + "_mean"] = isundef(mean) ? NA_REAL : mean;
             results[band_name + "_sd"] = isundef(sd) ? NA_REAL : sd;

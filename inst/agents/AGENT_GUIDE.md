@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.6 (2026-07-19)
+**Version:** 4.9.9 guide refresh (2026-07-27)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Multi-threaded Praat + pocketfft FFT + SIMD PowerCepstrogram + All modules production ready + XPtr memory fixed + Spectrogram fixed + Window shapes documented + Spectral trend analysis + NaN/NA input guards + Prosodic workflow patterns + Advanced audio processing (time-stretch, pitch-corrected LTAS, robust formant tracking, formant filtering) + MelSpectrogram & BarkSpectrogram + Speaker transformation + Sound creation + Spectrum frequency shifting + GNE parallelized + Pitch CC SIMD re-enabled (Fixes 1-5) + HNR accuracy fixed in AVQI pipeline + Phase 2 performance fixes + All 35 wrappers on shared dispatch tables + Symbol registration fix + Spectral moments batch API + Parabolic interpolation guard + Laguerre LPC fallback + to_ltas_direct wrapper fix + CRAN-prep: tarball slimmed 52→9 MB (`src/praat/` Windows mirror removed — Windows builds from `praat.github.io/`), all `-Wno-*` suppressions removed, `abort()`/`_Exit()` patched out of vendored Praat, XPtr finalizers registered explicitly (`make_praat_xptr`)
+**Status:** Current through package 4.9.9. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
 
 ---
 
@@ -66,6 +66,8 @@ written rationale in the row. Failing rows are first-class regressions.
 
 ## What's New in v4.9.x
 
+- **v4.9.9 — optimization follow-ups from the 2026-07 assessment:** added public `pladdrr_simd(enabled = NULL)` for runtime SIMD A/B checks; `PowerCepstrum$get_peak_prominence()` now accepts the Praat-style trend-fit argument without coercion warnings; documented the measured arm64 reality that pitch gets little SIMD help while cepstrogram/CPPS gets a modest gain, so threading remains the main speed lever. Also clarified when to use single-interval CPP (`Spectrum -> PowerCepstrum`) versus smoothed CPPS (`PowerCepstrogram` helpers), and added the reusable `build_multiband_harmonicity()` + `multiband_hnr_stats()` path for repeated-interval VQ workflows.
+
 - **Unreleased (branch `cran-warnings-fix`) — CRAN build fixes + wrapper alignment:** `Makevars.win` now defines `UNICODE`/`_UNICODE` (Praat calls generic Win32 macros with wide buffers; without it they resolve to `...A` variants and fail on mingw) and `_FILE_OFFSET_BITS=64`, and drops the stale `-Iclapack/INCLUDE`; `r_lapack_wrapper.cpp` opts in to `USE_FC_LEN_T` (R-devel FCLEN compatibility); `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` added to `PKG_CPPFLAGS` (silences C++17 allocator deprecations from RcppXsimd under `--as-cran`; inert on libstdc++). New methods: `formantgrid$to_sound()` (KlattGrid-style synthesis from formant tracks) and `cochleagram$get_loudness_at_time()`. Fixes: `to_formant_keepall/willems/sl()` now validate `time_step`/`max_frequency`/`window_length` at R level; `PraatInterpreter$set_object()` extracts `.xptr` from current S3 wrappers (was calling the removed R6 `get_ptr()`); `matrix$as_matrix()` calls the correct `.matrix_to_r_matrix()` export.
 
 - **v4.9.6 — CRAN compliance:** (1) **XPtr finalizer bug fixed** — module wrappers built pointers as `XPtr<T>(ptr, lambda)`, where the lambda silently bound Rcpp's `bool set_delete_finalizer` overload, so Praat objects were freed with `delete` instead of `forget()`. All construction now goes through `make_praat_xptr()` / `make_praat_xptr_from_auto()` (`src/praat_xptr_utils.h`), which register the finalizer explicitly via `R_RegisterCFinalizerEx`. **Never construct `XPtr<T>(ptr, deleter)` in new code.** (2) All `-Wno-*` warning suppressions removed from `Makevars`; `-ffp-contract=off` kept (required for bit-exact fidelity with Praat). (3) Vendored Praat patched so compiled code no longer calls `abort()`/`_Exit()` — assertions/fatals now throw and propagate to R as errors; `-Wunsequenced`/`-Wswitch` warnings fixed. (4) R-level cleanups: 147 internal `.Call` wrappers `@noRd`, `globalVariables` declared, non-ASCII removed.
@@ -126,7 +128,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 ## Table of Contents
 
 - [Quick Start for Agents](#quick-start-for-agents)
-- [Architecture Overview](#architecture-overview-v403---3-tier-performance-api--datatable)
+- [Architecture Overview](#architecture-overview-current-shared-dispatch--4-tier-performance-api)
 - [Object Types (38 modules)](#object-types-38-modules)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
@@ -158,12 +160,12 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()`, `$get_spectral_moments_batch()` for 14-150x speedups (Patterns 2i, 2p)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
-9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for AVQI/VQ workflows (Pattern 2l)
-10. **Fidelity target**: Every re-implemented Praat procedure must achieve r > 0.95 vs Praat on ≥50 real files before shipping. Use `algobench assess` (see [Re-implementing a Praat Procedure](#re-implementing-a-praat-procedure)).
+9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for simple AVQI/VQ workflows. For repeated intervals on the same sound, build once with `build_multiband_harmonicity()` and query with `multiband_hnr_stats()` (Pattern 2l)
+10. **Fidelity target**: Every re-implemented Praat procedure must achieve r > 0.95 vs Praat on ≥50 real files before shipping. Use the in-repo Praat faithfulness registry and audit benchmark runner (see [Re-implementing a Praat Procedure](#re-implementing-a-praat-procedure)).
 
 ---
 
-## Architecture Overview (v4.0.3 - 3-Tier Performance API + data.table)
+## Architecture Overview (current shared-dispatch + 4-tier performance API)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -188,7 +190,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Rcpp Module Layer (src/modules/*.cpp)                       │
-│   - 37 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc.            │
+│   - 38 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc. │
 │   - XPtr<structPitch> wrapping Praat objects               │
 │   - Batch queries: batch_queries.cpp (vectorized)          │
 │   - Parallel processing: R/parallel-batch.R (multi-core)   │
@@ -199,11 +201,16 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 │ Praat C++ Layer (src/praat.github.io/)                      │
 │   - 1,254 headers from Praat codebase                      │
 │   - Direct calls: Sound_to_Pitch(), Formant_getValueAtTime()│
-│   - LTO optimization: -flto for cross-file inlining        │
+│   - Build flags come from R Makeconf; pladdrr keeps        │
+│     `-ffp-contract=off` and optional xsimd detection       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Performance Tiers (v4.4.0):**
+Tier 4 Ultra is a specialized one-call layer that sits alongside the tiered
+APIs above; the diagram shows the shared object/direct/batch structure, while
+the table below lists the current public tiers.
+
+**Performance Tiers (current):**
 | Tier | API | Speedup | Use Case |
 |------|-----|---------|----------|
 | **Tier 1 (Standard)** | `sound$to_pitch()` | 1x baseline | Interactive, <10 files |
@@ -212,7 +219,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 | **Tier 4 (Ultra)** | `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_cpps_ultra()` | 5-77x | DSI/AVQI/VQ clinical workflows |
 
 **See comprehensive guides:**
-- `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
+- `vignettes/performance-optimization.Rmd` - Complete performance API guide
 - `vignettes/articles/batch-operations-guide.Rmd` - High-performance batch processing
 - `vignettes/articles/migration-guide.Rmd` - v3.0 breaking changes guide
 - `vignettes/articles/naming-conventions.Rmd` - API organization and patterns
@@ -595,7 +602,18 @@ cpps <- pcep$get_cpps(
 pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
 cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
 cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
+
+# Single-interval CPP is a different, cheaper path
+segment <- sound$extract_part(0, 0.5)
+cpp <- segment$to_spectrum()$to_power_cepstrum()$get_peak_prominence(
+  60, 333.3, "parabolic", 0.001, 0.05, "exponential decay", "robust slow"
+)
 ```
+
+Use the PowerCepstrum path above when you need a single interval's **CPP**.
+Use `calculate_cpps_fast()` / `calculate_cpps_ultra()` when you need smoothed
+whole-sound **CPPS**. They are not interchangeable, and CPPS is much more
+expensive because it builds a full PowerCepstrogram first.
 
 **Performance comparison (verified v4.1.0):**
 | Version | AVQI Benchmark | vs Python |
@@ -1685,33 +1703,27 @@ extract_voiced_segments_ultra(
 
 **Performance:** 2-4x faster than R pipeline. Biggest bottleneck fix for AVQI (saves 4-6s on typical recordings).
 
-#### `calculate_multiband_hnr_ultra()` - Multi-Band HNR (v4.4.1+)
+#### `calculate_multiband_hnr_ultra()` / reusable multiband HNR path
 
-**Problem:** VQ (Voice Quality) assessment requires HNR in 5 frequency bands. Requires 5 separate Harmonicity object creations + 10 queries (mean + SD for each band).
+**Problem:** VQ (Voice Quality) assessment needs HNR in 5 frequency bands. The
+one-shot path is fine for one interval, but repeated intervals on the same
+`Sound` should not rebuild the same 5 Harmonicity objects every time.
 
-**Solution:** Single C++ call filters sound into 5 bands, computes HNR for each, returns all 10 statistics.
+**Solution:**
+- Use `calculate_multiband_hnr_ultra(sound, ...)` for one-shot / whole-sound summaries
+- Use `build_multiband_harmonicity(sound, ...)` once, then
+  `multiband_hnr_stats(...)` for repeated interval queries
 
 **Algorithm:**
-1. For each of 5 frequency bands: `[0, fmax], [0, 500], [0, 1500], [0, 2500], [0, 3500]`
-2. Apply Hann band-pass filter (`sound_filter_passHannBand`)
-3. Create Harmonicity object (`Sound_to_Harmonicity_ac` with `time_step=0.01`, `min_pitch=75`, `silence_threshold=0.1`, `periods_per_window=1`)
-4. Calculate mean and SD of HNR values
-5. Return all 10 values as named list
+1. For each of 5 bands: `full`, `0-500`, `0-1500`, `0-2500`, `0-3500`
+2. Apply the Hann band filter for the non-full bands
+3. Create CC Harmonicity (`time_step=0.005`, `min_pitch=75`, `silence_threshold=0.1`, `periods_per_window=1`)
+4. Either:
+   - return mean + SD immediately (one-shot), or
+   - keep the 5 Harmonicity objects for later interval queries
 
 ```r
-# OLD WAY: 5 Harmonicity objects + 10 queries
-bands <- c(10000, 500, 1500, 2500, 3500)  # 0-Hz to these upper limits
-results <- list()
-for (band in bands) {
-  filtered <- sound$filter_pass_hann_band(0, band, 100)
-  hnr <- filtered$to_harmonicity_ac(0.01, 75, 0.1, 1)
-  results[[paste0("band", band)]] <- list(
-    mean = hnr$get_mean(0, 0),
-    sd = hnr$get_standard_deviation(0, 0)
-  )
-}
-
-# NEW WAY: Single call (2-2.5x faster)
+# One-shot path
 hnr <- calculate_multiband_hnr_ultra(sound)
 # Returns: list(
 #   full_mean, full_sd,
@@ -1721,35 +1733,42 @@ hnr <- calculate_multiband_hnr_ultra(sound)
 #   band3500_mean, band3500_sd
 # )
 
-# Custom parameters
-hnr <- calculate_multiband_hnr_ultra(
-  sound,
-  bands = c(10000, 500, 1500, 2500, 3500),
-  time_step = 0.01,
-  min_pitch = 75,
-  silence_threshold = 0.1,
-  periods_per_window = 1,
-  smoothing = 100  # Hann band smoothing (Hz)
-)
+# Reusable path for multiple intervals on the same sound
+built <- build_multiband_harmonicity(sound)
+hnr_i1 <- multiband_hnr_stats(built, 0, 0.5)
+hnr_i2 <- multiband_hnr_stats(built, 0.5, 1.0)
 ```
 
-**Signature:**
+**Signatures:**
 ```r
 calculate_multiband_hnr_ultra(
   sound,                      # Sound object
-  bands = c(10000, 500, 1500, 2500, 3500), # Upper frequency limits (Hz)
-  time_step = 0.01,           # Harmonicity time step
-  min_pitch = 75,             # Harmonicity pitch floor
-  silence_threshold = 0.1,    # Silence threshold
-  periods_per_window = 1,     # Periods per analysis window
-  smoothing = 100             # Hann filter smoothing (Hz)
+  bands = c(0, 500, 1500, 2500, 3500),
+  time_step = 0.005,
+  min_pitch = 75,
+  from_time = 0,
+  to_time = 0
+)
+
+build_multiband_harmonicity(
+  sound,
+  bands = c(0, 500, 1500, 2500, 3500),
+  time_step = 0.005,
+  min_pitch = 75
+)
+
+multiband_hnr_stats(
+  multiband,
+  from_time = 0,
+  to_time = 0
 )
 ```
 
-**Returns:** Named list with 10 elements:
+**Returns:**
+- `calculate_multiband_hnr_ultra()` -> named list with 10 elements:
 | Element | Description |
 |---------|-------------|
-| `full_mean` | Mean HNR for full spectrum (0-10000 Hz) |
+| `full_mean` | Mean HNR for full spectrum |
 | `full_sd` | SD of HNR for full spectrum |
 | `band500_mean` | Mean HNR for 0-500 Hz |
 | `band500_sd` | SD of HNR for 0-500 Hz |
@@ -1760,9 +1779,14 @@ calculate_multiband_hnr_ultra(
 | `band3500_mean` | Mean HNR for 0-3500 Hz |
 | `band3500_sd` | SD of HNR for 0-3500 Hz |
 
-**Use case:** VQ (Voice Quality) measurements for voice pathology assessment. Matches `VQ_measurements_V2.praat` lines 102-122.
+- `build_multiband_harmonicity()` -> named list of 5 `Harmonicity` objects:
+  `full`, `band500`, `band1500`, `band2500`, `band3500`
 
-**Note:** `bands` parameter must have exactly 5 elements (full spectrum + 4 bands). First element is full spectrum upper limit.
+**Use case:** simple one-shot VQ summaries vs repeated-interval VQ workflows on
+the same sound. Matches `VQ_measurements_V2.praat` lines 102-122.
+
+**Note:** `bands` must have exactly 5 elements. The first element uses `0` as
+the full-spectrum sentinel in the current API.
 
 #### AVQI v3.01 Complete Workflow (v4.4.1)
 
@@ -2668,10 +2692,10 @@ list(
 )
 ```
 
-Run the full benchmark suite with:
+Run the package-local validation commands with:
 ```bash
-cd /path/to/algobench
-algobench assess
+Rscript tests/testthat/test-praat-faithfulness.R
+Rscript inst/benchmarks/run_audit_benchmarks.R
 ```
 
 Target metrics per fix category:
@@ -2832,7 +2856,7 @@ info <- simd_info()
 # - NEON: 2 doubles/operation (ARM/Apple Silicon)
 
 # Disable SIMD for testing
-set_global_simd_enabled(FALSE)
+pladdrr_simd(FALSE)
 ```
 
 ---
@@ -3460,7 +3484,7 @@ R/
 
 ## Quick Reference Card
 
-**Updated for v4.0.14 - 3-Tier Performance API + data.table + ZCR + Batch API v4.0.14**
+**Updated for the current shared-dispatch + 4-tier performance API**
 
 ```r
 # === LOAD AUDIO ===
@@ -3623,11 +3647,12 @@ result <- interp$eval('x * 2')
 - **< 10 files, interactive:** Use Tier 1 (Standard API)
 - **10-100 files, loops:** Use Tier 2 (Direct API)
 - **> 100 files, production:** Use Tier 3 (Batch/Parallel)
+- **DSI/AVQI/VQ one-call helpers:** Use Tier 4 (Ultra)
 - **Many values from one object:** Use Vectorized Methods (`$get_*_vector()`, `$get_*_windows()`)
 - **Need statistics from many intervals:** Use Tier 3 (Batch Statistics)
 
 **See comprehensive guides:**
-- `vignettes/performance-optimization.Rmd` - Complete 3-tier API guide
+- `vignettes/performance-optimization.Rmd` - Complete performance API guide
 - `vignettes/articles/batch-operations-guide.Rmd` - All batch functions with benchmarks
 - `vignettes/articles/migration-guide.Rmd` - How to optimize existing code
 - `vignettes/articles/naming-conventions.Rmd` - Function naming patterns
@@ -4096,7 +4121,13 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 
 ---
 
-## Version History
+## Version History (historical archive)
+
+The entries below preserve older release notes, benchmark targets, file paths,
+and implementation roadmaps. Treat them as history, not as current guidance.
+For the current package surface, prefer the header, `What's New in v4.9.x`,
+`Quick Start for Agents`, `Performance Audit`, and the current runtime/build
+docs in `R/simd_info.R`, `NEWS.md`, and `src/Makevars*`.
 
 **v4.4.5 (2026-01-21):**
 - **SIMD Phase 1.5: Testing & Benchmarking Infrastructure** - Comprehensive test and benchmark suites
@@ -4432,11 +4463,18 @@ pladdrr parameter names intentionally follow Praat's own naming conventions, whi
 
 ---
 
-**Guide Version:** 4.8.33
-**Last Updated:** 2026-03-09
-**Package Version:** 4.8.33
-**Modules:** 37 C++ modules; 35 wrappers use shared dispatch tables, PraatInterpreter uses R6
-**Major Features:** 4-tier performance API (Standard/Direct/Batch/Ultra), shared dispatch table architecture, data.table integration, LTO optimization, AVQI-compatible VAD with ZCR, specialized workflow functions, statistical analysis (PCA, Discriminant), cepstral coefficients (MFCC, LFCC), robust formant tracking (FormantModeler), threading performance fix (3x speedup for multi-threaded ops)
+## Historical SIMD and performance archive (superseded)
+
+The material below preserves older SIMD implementation notes, benchmark targets,
+and bug-fix timelines from earlier package phases. Keep it as historical
+context, not as current guidance.
+
+Paths, helper names, benchmark expectations, and build claims in this archive
+may be historical snapshots. For current truth, prefer the header, `What's New
+in v4.9.x`, `Quick Start for Agents`, `Performance Audit`, `R/simd_info.R`,
+`NEWS.md`, and `src/Makevars*`. In particular, `set_global_simd_enabled()`
+references below are historical; current runtime guidance uses
+`pladdrr_simd()`.
 
 ### SIMD Bridge Functions (Phase 1.1-1.4)
 

@@ -648,6 +648,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// build_multiband_harmonicity_cpp
+List build_multiband_harmonicity_cpp(SEXP sound_xptr, NumericVector bands, double time_step, double min_pitch);
+RcppExport SEXP _pladdrr_build_multiband_harmonicity_cpp(SEXP sound_xptrSEXP, SEXP bandsSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sound_xptr(sound_xptrSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type bands(bandsSEXP);
+    Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_multiband_harmonicity_cpp(sound_xptr, bands, time_step, min_pitch));
+    return rcpp_result_gen;
+END_RCPP
+}
 // calculate_multiband_hnr_ultra_cpp
 List calculate_multiband_hnr_ultra_cpp(SEXP sound_xptr, NumericVector bands, double time_step, double min_pitch, double from_time, double to_time);
 RcppExport SEXP _pladdrr_calculate_multiband_hnr_ultra_cpp(SEXP sound_xptrSEXP, SEXP bandsSEXP, SEXP time_stepSEXP, SEXP min_pitchSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
@@ -5016,8 +5030,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // powercepstrum_get_peak_prominence
-double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation, double pitch_floor, double pitch_ceiling, double qmin, double qmax, std::string fit_method, double tolerance);
-RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence(SEXP xptrSEXP, SEXP interpolationSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP qminSEXP, SEXP qmaxSEXP, SEXP fit_methodSEXP, SEXP toleranceSEXP) {
+double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation, double pitch_floor, double pitch_ceiling, double qmin, double qmax, std::string trend_type, std::string fit_method, double tolerance);
+RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence(SEXP xptrSEXP, SEXP interpolationSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP qminSEXP, SEXP qmaxSEXP, SEXP trend_typeSEXP, SEXP fit_methodSEXP, SEXP toleranceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -5027,9 +5041,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
     Rcpp::traits::input_parameter< double >::type qmin(qminSEXP);
     Rcpp::traits::input_parameter< double >::type qmax(qmaxSEXP);
+    Rcpp::traits::input_parameter< std::string >::type trend_type(trend_typeSEXP);
     Rcpp::traits::input_parameter< std::string >::type fit_method(fit_methodSEXP);
     Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
-    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, fit_method, tolerance));
+    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -11818,6 +11833,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
     {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 15},
     {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 10},
+    {"_pladdrr_build_multiband_harmonicity_cpp", (DL_FUNC) &_pladdrr_build_multiband_harmonicity_cpp, 4},
     {"_pladdrr_calculate_multiband_hnr_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_multiband_hnr_ultra_cpp, 6},
     {"_pladdrr_get_spectral_moments_batch_cpp", (DL_FUNC) &_pladdrr_get_spectral_moments_batch_cpp, 2},
     {"_pladdrr_calculate_mean_simd_bridge", (DL_FUNC) &_pladdrr_calculate_mean_simd_bridge, 1},
@@ -12099,7 +12115,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_should_use_simd_for_powercepstrogram_bridge", (DL_FUNC) &_pladdrr_should_use_simd_for_powercepstrogram_bridge, 0},
     {"_pladdrr_sound_to_powercepstrogram", (DL_FUNC) &_pladdrr_sound_to_powercepstrogram, 5},
     {"_pladdrr_spectrum_to_powercepstrum", (DL_FUNC) &_pladdrr_spectrum_to_powercepstrum, 1},
-    {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 8},
+    {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 9},
     {"_pladdrr_powercepstrum_get_quefrency_of_peak", (DL_FUNC) &_pladdrr_powercepstrum_get_quefrency_of_peak, 4},
     {"_pladdrr_powercepstrum_get_value_at_quefrency", (DL_FUNC) &_pladdrr_powercepstrum_get_value_at_quefrency, 4},
     {"_pladdrr_powercepstrum_smooth", (DL_FUNC) &_pladdrr_powercepstrum_smooth, 3},

@@ -74,6 +74,11 @@ For each band:
 - Full spectrum: 14-16 dB (mean), 2-3 dB (SD)
 - Lower bands (500-1500 Hz): slightly lower HNR
 - Higher bands (2500-3500 Hz): slightly higher HNR
+
+Use this when you only need one interval or whole-sound summary. For repeated
+interval queries on the same \code{Sound}, use
+\code{\link{build_multiband_harmonicity}()} once and then
+\code{\link{multiband_hnr_stats}()} for each interval.
 }
 \examples{
 \dontrun{
@@ -97,4 +102,8 @@ hnr_results$band3500_sd     # 0-3500 Hz SD
 \references{
 - VQ_measurements_V2.praat (Voice Quality measurements)
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
+}
+\seealso{
+\code{\link{build_multiband_harmonicity}()},
+\code{\link{multiband_hnr_stats}()}
 }
