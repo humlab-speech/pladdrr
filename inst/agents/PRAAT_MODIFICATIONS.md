@@ -18,7 +18,29 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
-### Unreleased (`cran-warnings-fix`) — NO_GUI Win32 gate + NUMlapack.h R-header removal (2026-07-19)
+### v4.9.9 — Refresh stale pitch-performance note (2026-07-27)
+
+Submodule commit `9cd0e87c0`. Comment-only edit to `fon/Sound_to_Pitch.cpp`'s
+header doc-comment — no DSP/behavioral change. Replaces the old "~5x slower
+than Parselmouth / 95ms" claim with the 2026-07 assessment numbers:
+`to_pitch_cc_direct()` is ~52ms single-threaded and ~9ms with the default
+threaded path, i.e. roughly at parity with Parselmouth once threading is
+on; NEON SIMD moves pitch little on this kernel. See
+`dev/OPTIMIZATION_ASSESSMENT_2026-07.md` and the NEWS 4.9.9 entry
+("Documented current NEON reality... refreshed stale pitch-performance note").
+
+### v4.9.7 — Fix Windows COMDAT collision for FormantGridEditor_create (2026-07-20)
+
+Submodule commit `42414e1d4`, file `fon/praat_Tiers.cpp` (+8 lines). The
+header-inline `FormantGridEditor_create` emits a COMDAT in `praat_Tiers.o`
+that collides with the library-mode stub's strong definition at link time on
+COFF (mingw); ELF/Mach-O linkers let the strong symbol win silently, which
+masked the issue on macOS/Linux. Editors cannot be opened in library mode, so
+the NO_GUI branch now throws instead of linking a dead editor path. Matches
+the NEWS 4.9.7 bullet "Fixed a Windows COMDAT collision for
+`FormantGridEditor_create`".
+
+### v4.9.7 — NO_GUI Win32 gate + NUMlapack.h R-header removal (2026-07-19)
 
 Submodule commit `a17add655`. Two build repairs for CRAN's Windows and R-devel checks:
 
@@ -875,14 +897,14 @@ All SIMD changes use conditional compilation (`#ifdef HAVE_XSIMD`) with scalar f
 ## Summary of Modified Files
 
 Authoritative list: `git diff --name-status b1b3199a3..HEAD` in the submodule
-(39 modified source files as of 2026-07-19). Grouped by purpose:
+(40 modified source files as of 2026-07-27). Grouped by purpose:
 
 | File | Category | Changes |
 |------|----------|---------|
 | `sys/Thing.h` | Bug fix | Extern class registry |
 | `sys/Thing.cpp` | Bug fix | Extern linkage, null checks |
 | `sys/Data.cpp` | Bug fix | cstdio header |
-| `sys/praat.cpp` | CRAN + build | `_Exit()/exit()` gated behind `#ifndef PRAAT_LIB` (v4.9.6); unsequenced self-test compiled out (v4.9.6); NO_GUI gate on Win32 GUI init (unreleased) |
+| `sys/praat.cpp` | CRAN + build | `_Exit()/exit()` gated behind `#ifndef PRAAT_LIB` (v4.9.6); unsequenced self-test compiled out (v4.9.6); NO_GUI gate on Win32 GUI init (v4.9.7) |
 | `sys/praat_script.cpp` | CRAN | `printf` prompt → `Melder_casual` (v4.9.6+) |
 | `melder/MelderReadText.cpp` | Bug fix | cstdio header |
 | `melder/melder_assert.h`, `melder/melder_error.h`, `melder/melder_error.cpp` | CRAN | `abort()` removed from `Melder_assert`/`Melder_fatal`; `[[noreturn]]` + throw (v4.9.6) |
@@ -895,12 +917,13 @@ Authoritative list: `git diff --name-status b1b3199a3..HEAD` in the submodule
 | `dwsys/NUMmachar.cpp` | Bug fix | NUMfpp definition |
 | `dwsys/NUM2.cpp` | Bug fix + SIMD | NULL check + Burg SIMD (v4.8.4 fix) + xsimd v8+ compat (v4.8.19) |
 | `dwsys/NUMFourier.cpp` | FFT backend | Replaced FFTPACK with pocketfft (v4.8.12) |
-| `dwsys/NUMlapack.h` | Build | R BLAS/LAPACK headers dropped (FCLEN conflict with CLAPACK shims; unreleased) |
+| `dwsys/NUMlapack.h` | Build | R BLAS/LAPACK headers dropped (FCLEN conflict with CLAPACK shims; v4.9.7) |
 | `dwsys/NUMselect.h` | Build plumbing | Include path flattened |
 | `fon/Formant.h` | API | extractPart declaration |
 | `fon/PitchTier.cpp` | CRAN | `-Wswitch` default case in `PitchTier_shiftFrequencies` (v4.9.6) |
 | `fon/Sound_to_Intensity.cpp` | SIMD | RMS optimization + xsimd v8+ compat (v4.8.19) |
-| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27); broken SIMD blocks reverted (v4.8.29) |
+| `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27); broken SIMD blocks reverted (v4.8.29); pitch-performance doc-comment refreshed, no behavior change (v4.9.9) |
+| `fon/praat_Tiers.cpp` | Bug fix | NO_GUI-gate `FormantGridEditor_create` instantiation — Windows COMDAT collision (v4.9.7) |
 | `fon/Sound_to_Harmonicity_GNE.cpp` | Performance | Loop B + Loop C parallelized via MelderThread (v4.8.27) |
 | `fon/Sound_to_Formant.cpp` | SIMD + Bug fix | Uses VECburg directly (v4.8.4); Laguerre root-finding fallback (v4.9.1) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
@@ -970,7 +993,9 @@ Rscript -e "testthat::test_dir('tests/testthat')"
 
 | Commit | Description |
 |--------|-------------|
-| `a17add655` | NO_GUI-gate Win32 GUI init; drop R headers from NUMlapack.h (unreleased) |
+| `9cd0e87c0` | Refresh stale pitch-performance note, comment-only (v4.9.9) |
+| `42414e1d4` | NO_GUI-gate FormantGridEditor_create — fix Windows COMDAT collision (v4.9.7) |
+| `a17add655` | NO_GUI-gate Win32 GUI init; drop R headers from NUMlapack.h (v4.9.7) |
 | `600ee49ec` | rand()/sprintf()/printf() removal (v4.9.6+) |
 | `fc0ee4d97` | abort()/_Exit() removal (v4.9.6) |
 | `45cf303fd` | -Wunsequenced + -Wswitch fixes (v4.9.6) |
