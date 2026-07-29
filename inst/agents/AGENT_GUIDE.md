@@ -1,8 +1,9 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.9 guide refresh (2026-07-27)
+**Version:** 4.9.10 guide refresh (2026-07-29)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 4.9.9. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
+**Status:** Current through package 4.9.10. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
+- **v4.9.10 — `calculate_cpps_ultra()` trend-fit quefrency window fix:** `tilt_line_quefrency`/`max_quefrency` were declared but silently ignored by the C++ core (hardcoded `[0.003, 0.04]`); now threaded through correctly. R-level defaults changed `0.001`/`0.05` → `0.003`/`0.04` to match prior actual behavior (no change for default callers).
 
 ---
 

@@ -491,10 +491,18 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @param pitch_ceiling Maximum F0 in Hz (default 333.3)
 #' @param subtract_trend Logical, subtract tilt before smoothing (default TRUE)
 #' @param time_step Time step for cepstrogram in seconds (default 0.002)
-#' @param max_quefrency Maximum quefrency in seconds (default 0.05)
+#' @param max_quefrency End of the trend-fit quefrency window in seconds (default
+#'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
+#'   BUG FIX v4.9.10: previously declared but silently ignored by the C++ core,
+#'   which hardcoded the fit window to [0.003, 0.04] regardless of this and
+#'   tilt_line_quefrency -- e.g. AVQI's needed [0.001, 0] window was never
+#'   applied, pulling CPPS off Praat by ~0.3 dB. Now honored; pass explicit
+#'   qstart/qend to reproduce a specific Praat "Get CPPS" call, same as
+#'   \code{calculate_cpps_fast()}'s qstart_fit/qend_fit.
 #' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")
-#' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
+#' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
+#'   (default 0.003). BUG FIX v4.9.10: see max_quefrency.
 #' @param line_type Trend line type: "straight" or "exponential" (default "straight")
 #' @param fit_method Fitting method: "robust", "least_squares", or "robust slow" (default "robust")
 #'
@@ -548,10 +556,10 @@ calculate_cpps_ultra <- function(
   pitch_ceiling = 333.3,                # BUG FIX v4.6.4: match calculate_cpps_fast (was 330)
   subtract_trend = TRUE,
   time_step = 0.002,
-  max_quefrency = 0.05,
+  max_quefrency = 0.04,                 # BUG FIX v4.9.10: was 0.05, C++ ignored it and hardcoded 0.04
   tolerance = 0.05,
   interpolation = "parabolic",
-  tilt_line_quefrency = 0.001,
+  tilt_line_quefrency = 0.003,          # BUG FIX v4.9.10: was 0.001, C++ ignored it and hardcoded 0.003
   line_type = "straight",               # BUG FIX v4.6.4: match calculate_cpps_fast (was "exponential")
   fit_method = "robust",
   pre_emphasis_from = 50,

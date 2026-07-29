@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-07-27
-**Package Version:** 4.9.9 (branch `cran-warnings-fix`)
+**Last Updated:** 2026-07-29
+**Package Version:** 4.9.10 (branch `cran-warnings-fix`)
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -17,6 +17,19 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.10 — Fix dead quefrency-window params in `calculate_cpps_ultra_cpp` (2026-07-29)
+
+`src/batch_queries.cpp`'s `calculate_cpps_ultra_cpp` declared `tilt_line_quefrency`
+(default `0.001`) and `max_quefrency` (default `0.05`) but never passed them into its
+`PowerCepstrogram_getCPPS_fast(...)` call — the trend-fit quefrency window was
+hardcoded to `[0.003, 0.04]` regardless of caller input. Callers needing a different
+window (e.g. AVQI's Praat-matching `[0.001, 0]`, `0` = autowindow to full range) got a
+silently wrong CPPS with no error — plabench's AVQI R measured 0.31 dB off Praat
+(11.91 vs 12.22 dB) as a result. Fixed: params now threaded through; R-level defaults in
+`calculate_cpps_ultra()` changed `0.001`/`0.05` → `0.003`/`0.04` to match the value that
+was actually being applied before, so default-argument callers see no behavior change.
+See NEWS.md 4.9.10 entry.
 
 ### v4.9.9 — Refresh stale pitch-performance note (2026-07-27)
 

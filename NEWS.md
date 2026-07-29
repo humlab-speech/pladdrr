@@ -1,3 +1,25 @@
+# pladdrr 4.9.10 (2026-07-29)
+
+## Bug fix
+
+- **`calculate_cpps_ultra()` trend-fit quefrency window was silently ignored.**
+  `calculate_cpps_ultra_cpp()` (the Tier-4 C++ core) declared `tilt_line_quefrency`
+  and `max_quefrency` parameters but never passed them into
+  `PowerCepstrogram_getCPPS_fast()` — the trend-fit window was hardcoded to
+  `[0.003, 0.04]` regardless of what callers requested. Any caller needing a
+  different window (e.g. AVQI's Praat-matching `[0.001, 0]`, where `0` means
+  autowindow to the full quefrency range) silently got the wrong CPPS value with
+  no error. Downstream impact: plabench's `avqi.R` measured R CPPS 0.31 dB off
+  Praat's reference (11.91 vs 12.22 dB) and had to route around this tier
+  entirely via `calculate_cpps_fast()` (Tier 3) as a workaround.
+  Now `tilt_line_quefrency`/`max_quefrency` are threaded through correctly, and
+  `calculate_cpps_ultra()`'s R-level defaults changed from `0.001`/`0.05` to
+  `0.003`/`0.04` to match the value that was actually being applied before (and
+  to match `calculate_cpps_fast()`'s own defaults), so default-argument callers
+  see no behavior change — only callers passing explicit
+  `tilt_line_quefrency`/`max_quefrency` values (previously silently dropped) are
+  affected, and now get what they asked for.
+
 # pladdrr 4.9.9 (2026-07-27)
 
 ## Optimization follow-ups

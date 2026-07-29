@@ -1348,10 +1348,14 @@ static double PowerCepstrogram_getCPPS_fast(
 //' @param pitch_ceiling Maximum F0 in Hz (default 330)
 //' @param subtract_trend Subtract tilt before smoothing (default TRUE)
 //' @param time_step Time step for cepstrogram in seconds (default 0.002)
-//' @param max_quefrency Maximum quefrency in seconds (default 0.05)
+//' @param max_quefrency End of the trend-fit quefrency window in seconds (default
+//'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
+//'   BUG FIX v4.9.10: previously declared but silently ignored -- the fit window
+//'   was hardcoded to [0.003, 0.04] regardless of this and tilt_line_quefrency.
 //' @param tolerance Tolerance for peak detection (default 0.05)
 //' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
-//' @param tilt_line_quefrency Quefrency for tilt line in seconds (default 0.001)
+//' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
+//'   (default 0.003). BUG FIX v4.9.10: see max_quefrency.
 //' @param line_type Trend line type (1=straight, 2=exponential decay)
 //' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
 //' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS
@@ -1368,10 +1372,10 @@ double calculate_cpps_ultra_cpp(
     double pitch_ceiling = 333.3,
     bool subtract_trend = true,
     double time_step = 0.002,
-    double max_quefrency = 0.05,
+    double max_quefrency = 0.04,
     double tolerance = 0.05,
     int interpolation = 1,
-    double tilt_line_quefrency = 0.001,
+    double tilt_line_quefrency = 0.003,
     int line_type = 1,
     int fit_method = 1,
     double pre_emphasis_from = 50.0,
@@ -1411,8 +1415,8 @@ double calculate_cpps_ultra_cpp(
             pitch_ceiling,
             tolerance,
             interp_enum,
-            0.003,
-            0.04,
+            tilt_line_quefrency,
+            max_quefrency,
             trend_enum,
             fit_enum
         );
