@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 4.9.10
+Version: 4.9.11
 Date: 2026-07-29
 Author: Fredrik Nylén [aut, cre] (<https://orcid.org/0000-0003-3373-0934>)
 Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
