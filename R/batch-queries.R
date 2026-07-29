@@ -762,6 +762,12 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' batch DSI (Dysphonia Severity Index) calculations where jitter PPQ5 is
 #' the PPQ component.
 #'
+#' By default, this keeps the existing Tier 4 pitch path
+#' (`pitch_method = "cc"`, `very_accurate = TRUE`). If your reference workflow
+#' uses Praat's plain `To Pitch...` command before `To PointProcess (cc)` (for
+#' example the DSI jitter block), call this with
+#' `pitch_method = "ac", very_accurate = FALSE`.
+#'
 #' @param sound A Sound object
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
 #'   "hnr", or "all" for all metrics
@@ -770,6 +776,12 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   independent of this parameter.
 #' @param max_pitch Pitch ceiling in Hz (default: 600)
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
+#' @param pitch_method Pitch algorithm for the jitter/shimmer pitch object:
+#'   `"cc"` (default, preserves existing Tier 4 behaviour) or `"ac"`.
+#' @param very_accurate Logical; whether to use Praat's very accurate pitch
+#'   path for jitter/shimmer pitch extraction (default: `TRUE` to preserve the
+#'   existing Tier 4 output). Use `FALSE` with `pitch_method = "ac"` to match
+#'   Praat's plain `To Pitch...` command.
 #'
 #' @return Named list with requested voice quality metrics:
 #' \describe{
@@ -804,11 +816,19 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' vq <- get_voice_quality_ultra(sound, metrics = "jitter")
 #' ppq5 <- vq$jitter_ppq5
 #'
+#' # Match Praat's plain To Pitch... + To PointProcess (cc) DSI path
+#' vq_praat <- get_voice_quality_ultra(
+#'   sound,
+#'   metrics = "jitter",
+#'   pitch_method = "ac",
+#'   very_accurate = FALSE
+#' )
+#'
 #' # Compare with traditional approach
 #' bench::mark(
 #'   tier4 = get_voice_quality_ultra(sound, "jitter"),
 #'   tier2 = {
-#'     pitch <- sound$to_pitch_cc()
+#'     pitch <- sound$to_pitch_cc(very_accurate = TRUE)
 #'     pp <- to_point_process_from_sound_and_pitch(sound, pitch)
 #'     get_jitter_shimmer_batch(pp, sound)
 #'   }
@@ -825,7 +845,9 @@ get_voice_quality_ultra <- function(sound,
                                      metrics = "all",
                                      min_pitch = 75,
                                      max_pitch = 600,
-                                     time_step = 0) {
+                                     time_step = 0,
+                                     pitch_method = c("cc", "ac"),
+                                     very_accurate = TRUE) {
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
   }
@@ -835,12 +857,16 @@ get_voice_quality_ultra <- function(sound,
     stop("metrics must be one or more of: ", paste(valid_metrics, collapse = ", "))
   }
 
+  pitch_method <- match.arg(pitch_method)
+
   get_voice_quality_ultra_cpp(
     sound$.xptr,
     as.character(metrics),
     as.numeric(min_pitch),
     as.numeric(max_pitch),
-    as.numeric(time_step)
+    as.numeric(time_step),
+    pitch_method,
+    as.logical(very_accurate)
   )
 }
 

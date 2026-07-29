@@ -335,10 +335,12 @@ calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pit
 #' @param min_pitch Pitch floor (Hz)
 #' @param max_pitch Pitch ceiling (Hz)
 #' @param time_step Time step for pitch extraction
+#' @param pitch_method Pitch algorithm for jitter/shimmer pitch extraction: "cc" or "ac"
+#' @param very_accurate Whether to use Praat's very accurate pitch path for jitter/shimmer
 #' @return Named list with requested voice quality metrics
 #' @keywords internal
-get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitch, time_step) {
-    .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step)
+get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate) {
+    .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate)
 }
 
 #' Calculate CPPS in single optimized C++ call (Tier 4 Ultra)

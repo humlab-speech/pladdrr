@@ -65,7 +65,7 @@ sed -e "s|@XSIMD_FLAG@|${XSIMD_FLAG}|" \
 # ---- Build integrity guards (non-fatal warnings) ----
 
 if [ -x tools/check_callentries.sh ]; then
-  tools/check_callentries.sh || echo "  WARNING: CallEntries patch missing — pladdrr will fail to load. See PRAAT_MODIFICATIONS v4.8.32."
+  tools/check_callentries.sh || { echo "  ERROR: CallEntries patch could not be applied — pladdrr would fail to load. See PRAAT_MODIFICATIONS v4.8.32."; exit 1; }
 fi
 
 if [ -x tools/check_doc_version.sh ]; then

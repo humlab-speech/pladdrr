@@ -282,7 +282,9 @@ SPINET path can link without dragging in the full upstream object:
 
 #### `src/RcppExports.cpp` — `CallEntries` visibility change
 
-Changed `CallEntries` from `static const R_CallMethodDef[]` to `extern const R_CallMethodDef[]` so `module_init.cpp` can reference it. This is the only change to the Rcpp-generated file and must be re-applied if `Rcpp::compileAttributes()` regenerates it.
+Changed `CallEntries` from `static const R_CallMethodDef[]` to `extern const R_CallMethodDef[]` so `module_init.cpp` can reference it. This is the only change to the Rcpp-generated file.
+
+**Update (v4.9.11, 2026-07-29):** `Rcpp::compileAttributes()` regenerates this file with `static` every time, silently reverting the patch and reintroducing a `dlopen`/`symbol not found: _CallEntries` load failure — this happened again in v4.9.11 when `compileAttributes()` ran to add `get_voice_quality_ultra()`'s new args. `tools/check_callentries.sh` is now wired into `configure` and self-heals: it `sed`-patches `static` back to `extern` automatically before every build, so this no longer requires manual re-application. Manual re-application is only needed if `CallEntries[]`'s declaration shape changes entirely (the script fails loudly in that case).
 
 ```cpp
 // BEFORE:

@@ -1,3 +1,10 @@
+# pladdrr 4.9.11 (2026-07-29)
+
+## Bug fix
+
+- **`get_voice_quality_ultra()` can now follow Praat's plain `To Pitch...` path for DSI-style jitter.**
+  The Tier-4 voice-quality fast path previously hardcoded `Sound_to_Pitch_rawCc(..., veryAccurate = true)` for every jitter/shimmer request, so callers whose reference workflow used Praat's plain `To Pitch...` command could not reproduce that algorithm through this API. The function now keeps its existing backward-compatible default (`pitch_method = "cc"`, `very_accurate = TRUE`) but adds opt-in `pitch_method` / `very_accurate` arguments, so DSI-style callers can request `pitch_method = "ac", very_accurate = FALSE` while existing callers keep the same output shape. The HNR branch remains on Praat's CC harmonicity path and now skips the extra pitch/PointProcess work when only HNR is requested.
+
 # pladdrr 4.9.10 (2026-07-29)
 
 ## Bug fix

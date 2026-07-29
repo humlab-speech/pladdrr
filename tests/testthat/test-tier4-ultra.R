@@ -231,7 +231,7 @@ test_that("get_voice_quality_ultra returns all metrics with 'all'", {
   expect_true("hnr_mean" %in% names(vq))
 })
 
-test_that("get_voice_quality_ultra matches existing batch API", {
+test_that("get_voice_quality_ultra defaults match the CC + very accurate pipeline", {
   sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
@@ -240,12 +240,33 @@ test_that("get_voice_quality_ultra matches existing batch API", {
   # Get via Tier 4 Ultra
   vq <- get_voice_quality_ultra(sound, metrics = "jitter", min_pitch = 75)
 
-  # Get via existing Tier 2/3 API
-  pitch <- sound$to_pitch_cc(pitch_floor = 75)
+  # Get via matching Tier 2/3 API
+  pitch <- sound$to_pitch_cc(time_step = 0, pitch_floor = 75, pitch_ceiling = 600, very_accurate = TRUE)
   pp <- to_point_process_from_sound_and_pitch(sound, pitch)
   existing <- get_jitter_shimmer_batch(pp, sound)
 
   # Compare jitter_ppq5
+  expect_equal(vq$jitter_ppq5, existing$jitter_ppq5, tolerance = 0.0001)
+})
+
+test_that("get_voice_quality_ultra can match Praat plain To Pitch for jitter", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+
+  vq <- get_voice_quality_ultra(
+    sound,
+    metrics = "jitter",
+    min_pitch = 75,
+    pitch_method = "ac",
+    very_accurate = FALSE
+  )
+
+  pitch <- sound$to_pitch(time_step = 0, pitch_floor = 75, pitch_ceiling = 600)
+  pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+  existing <- get_jitter_shimmer_batch(pp, sound)
+
   expect_equal(vq$jitter_ppq5, existing$jitter_ppq5, tolerance = 0.0001)
 })
 
@@ -270,6 +291,27 @@ test_that("get_voice_quality_ultra supports selective metrics", {
 
 test_that("get_voice_quality_ultra validates input", {
   expect_error(get_voice_quality_ultra("not_a_sound"))
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+  expect_error(get_voice_quality_ultra(Sound(sound_path), pitch_method = "bad"))
+})
+
+test_that("get_voice_quality_ultra HNR output does not depend on pitch settings", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  skip_if(!file.exists(sound_path), "Test WAV file not found")
+
+  sound <- Sound(sound_path)
+
+  default_hnr <- get_voice_quality_ultra(sound, metrics = "hnr", min_pitch = 75)
+  ac_hnr <- get_voice_quality_ultra(
+    sound,
+    metrics = "hnr",
+    min_pitch = 75,
+    pitch_method = "ac",
+    very_accurate = FALSE
+  )
+
+  expect_equal(default_hnr, ac_hnr)
 })
 
 

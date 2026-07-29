@@ -9,7 +9,9 @@ get_voice_quality_ultra_cpp(
   metrics,
   min_pitch,
   max_pitch,
-  time_step
+  time_step,
+  pitch_method,
+  very_accurate
 )
 }
 \arguments{
@@ -22,6 +24,12 @@ get_voice_quality_ultra_cpp(
 \item{max_pitch}{Pitch ceiling (Hz)}
 
 \item{time_step}{Time step for pitch extraction}
+
+\item{pitch_method}{Pitch algorithm for jitter/shimmer pitch extraction:
+\code{"cc"} or \code{"ac"}.}
+
+\item{very_accurate}{Whether to use Praat's very accurate pitch path for
+jitter/shimmer.}
 }
 \value{
 Named list with requested voice quality metrics

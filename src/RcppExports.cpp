@@ -589,8 +589,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_voice_quality_ultra_cpp
-List get_voice_quality_ultra_cpp(SEXP sound_xptr, CharacterVector metrics, double min_pitch, double max_pitch, double time_step);
-RcppExport SEXP _pladdrr_get_voice_quality_ultra_cpp(SEXP sound_xptrSEXP, SEXP metricsSEXP, SEXP min_pitchSEXP, SEXP max_pitchSEXP, SEXP time_stepSEXP) {
+List get_voice_quality_ultra_cpp(SEXP sound_xptr, CharacterVector metrics, double min_pitch, double max_pitch, double time_step, std::string pitch_method, bool very_accurate);
+RcppExport SEXP _pladdrr_get_voice_quality_ultra_cpp(SEXP sound_xptrSEXP, SEXP metricsSEXP, SEXP min_pitchSEXP, SEXP max_pitchSEXP, SEXP time_stepSEXP, SEXP pitch_methodSEXP, SEXP very_accurateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -599,7 +599,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type min_pitch(min_pitchSEXP);
     Rcpp::traits::input_parameter< double >::type max_pitch(max_pitchSEXP);
     Rcpp::traits::input_parameter< double >::type time_step(time_stepSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_voice_quality_ultra_cpp(sound_xptr, metrics, min_pitch, max_pitch, time_step));
+    Rcpp::traits::input_parameter< std::string >::type pitch_method(pitch_methodSEXP);
+    Rcpp::traits::input_parameter< bool >::type very_accurate(very_accurateSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_voice_quality_ultra_cpp(sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -11830,7 +11832,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_get_durations_batch_cpp", (DL_FUNC) &_pladdrr_get_durations_batch_cpp, 1},
     {"_pladdrr_calculate_f0_stats_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_f0_stats_ultra_cpp, 6},
     {"_pladdrr_calculate_minimum_intensity_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_minimum_intensity_ultra_cpp, 5},
-    {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 5},
+    {"_pladdrr_get_voice_quality_ultra_cpp", (DL_FUNC) &_pladdrr_get_voice_quality_ultra_cpp, 7},
     {"_pladdrr_calculate_cpps_ultra_cpp", (DL_FUNC) &_pladdrr_calculate_cpps_ultra_cpp, 15},
     {"_pladdrr_extract_voiced_segments_ultra_cpp", (DL_FUNC) &_pladdrr_extract_voiced_segments_ultra_cpp, 10},
     {"_pladdrr_build_multiband_harmonicity_cpp", (DL_FUNC) &_pladdrr_build_multiband_harmonicity_cpp, 4},

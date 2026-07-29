@@ -9,7 +9,9 @@ get_voice_quality_ultra(
   metrics = "all",
   min_pitch = 75,
   max_pitch = 600,
-  time_step = 0
+  time_step = 0,
+  pitch_method = c("cc", "ac"),
+  very_accurate = TRUE
 )
 }
 \arguments{
@@ -25,6 +27,15 @@ independent of this parameter.}
 \item{max_pitch}{Pitch ceiling in Hz (default: 600)}
 
 \item{time_step}{Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)}
+
+\item{pitch_method}{Pitch algorithm for the jitter/shimmer pitch object:
+\code{"cc"} (default, preserves existing Tier 4 behaviour) or \code{"ac"}.}
+
+\item{very_accurate}{Logical; whether to use Praat's very accurate pitch
+path for jitter/shimmer pitch extraction (default: \code{TRUE} to preserve the
+existing Tier 4 output). Use \code{FALSE} with
+\code{pitch_method = "ac"} to match Praat's plain \code{To Pitch...}
+command.}
 }
 \value{
 Named list with requested voice quality metrics:
@@ -52,6 +63,12 @@ Tier 2/3 workflow using separate function calls.
 This is a **Tier 4 "Ultra"** function designed for maximum performance in
 batch DSI (Dysphonia Severity Index) calculations where jitter PPQ5 is
 the PPQ component.
+
+By default, this keeps the existing Tier 4 pitch path
+(\code{pitch_method = "cc"}, \code{very_accurate = TRUE}). If your reference
+workflow uses Praat's plain \code{To Pitch...} command before
+\code{To PointProcess (cc)} (for example the DSI jitter block), call this with
+\code{pitch_method = "ac"}, \code{very_accurate = FALSE}.
 }
 \section{API Tier}{
 
@@ -71,11 +88,19 @@ vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
 vq <- get_voice_quality_ultra(sound, metrics = "jitter")
 ppq5 <- vq$jitter_ppq5
 
+# Match Praat's plain To Pitch... + To PointProcess (cc) DSI path
+vq_praat <- get_voice_quality_ultra(
+  sound,
+  metrics = "jitter",
+  pitch_method = "ac",
+  very_accurate = FALSE
+)
+
 # Compare with traditional approach
 bench::mark(
   tier4 = get_voice_quality_ultra(sound, "jitter"),
   tier2 = {
-    pitch <- sound$to_pitch_cc()
+    pitch <- sound$to_pitch_cc(very_accurate = TRUE)
     pp <- to_point_process_from_sound_and_pitch(sound, pitch)
     get_jitter_shimmer_batch(pp, sound)
   }

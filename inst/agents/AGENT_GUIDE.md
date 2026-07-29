@@ -1520,6 +1520,9 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
 # Or request specific metrics:
 vq <- get_voice_quality_ultra(sound, metrics = "jitter", min_pitch = 75)
+# Or match Praat's plain To Pitch... + PointProcess (cc) DSI path:
+vq <- get_voice_quality_ultra(sound, metrics = "jitter",
+                              pitch_method = "ac", very_accurate = FALSE)
 ```
 
 **Signature:**
@@ -1529,7 +1532,9 @@ get_voice_quality_ultra(
   metrics = "all",       # "all", "jitter", "shimmer", "hnr", or vector
   min_pitch = 75,        # Pitch floor (Hz)
   max_pitch = 600,       # Pitch ceiling (Hz)
-  time_step = 0          # 0 = auto
+  time_step = 0,         # 0 = auto
+  pitch_method = "cc",   # default keeps existing Tier 4 behaviour
+  very_accurate = TRUE   # use FALSE with pitch_method="ac" for Praat parity
 )
 ```
 

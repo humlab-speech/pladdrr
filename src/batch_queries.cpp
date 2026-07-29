@@ -1123,6 +1123,8 @@ static bool has_metric(CharacterVector metrics, const std::string& target) {
 //' @param min_pitch Pitch floor (Hz)
 //' @param max_pitch Pitch ceiling (Hz)
 //' @param time_step Time step for pitch extraction
+//' @param pitch_method Pitch algorithm for jitter/shimmer pitch extraction: "cc" or "ac"
+//' @param very_accurate Whether to use Praat's very accurate pitch path for jitter/shimmer
 //' @return Named list with requested voice quality metrics
 //' @keywords internal
 // [[Rcpp::export]]
@@ -1131,7 +1133,9 @@ List get_voice_quality_ultra_cpp(
     CharacterVector metrics,
     double min_pitch,
     double max_pitch,
-    double time_step
+    double time_step,
+    std::string pitch_method,
+    bool very_accurate
 ) {
     XPtr<structSound> sound(sound_xptr);
     if (!sound || sound.get() == nullptr) {
@@ -1139,17 +1143,11 @@ List get_voice_quality_ultra_cpp(
     }
 
     try {
-        // Single pitch + pointprocess in C++
-        autoPitch pitch = Sound_to_Pitch_rawCc(
-            sound.get(), time_step, min_pitch, max_pitch, 15, true,
-            0.03, 0.45, 0.01, 0.35, 0.14
-        );
-        autoPointProcess pp = Sound_Pitch_to_PointProcess_cc(sound.get(), pitch.get());
-
         List results;
         bool compute_jitter = has_metric(metrics, "jitter");
         bool compute_shimmer = has_metric(metrics, "shimmer");
         bool compute_hnr = has_metric(metrics, "hnr");
+        bool needs_pulses = compute_jitter || compute_shimmer;
 
         // Standard analysis parameters
         double period_floor = 0.0001;
@@ -1157,39 +1155,57 @@ List get_voice_quality_ultra_cpp(
         double max_period_factor = 1.3;
         double max_amplitude_factor = 1.6;
 
-        // Jitter metrics
-        if (compute_jitter) {
-            results["jitter_local"] = PointProcess_getJitter_local(
-                pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
-            );
-            results["jitter_local_abs"] = PointProcess_getJitter_local_absolute(
-                pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
-            );
-            results["jitter_rap"] = PointProcess_getJitter_rap(
-                pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
-            );
-            results["jitter_ppq5"] = PointProcess_getJitter_ppq5(
-                pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
-            );
-            results["jitter_ddp"] = PointProcess_getJitter_ddp(
-                pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
-            );
+        if (pitch_method != "cc" && pitch_method != "ac") {
+            stop("pitch_method must be one of: cc, ac");
         }
 
-        // Shimmer metrics (use multi function for efficiency)
-        if (compute_shimmer) {
-            double s_local, s_local_db, s_apq3, s_apq5, s_apq11, s_dda;
-            PointProcess_Sound_getShimmer_multi(
-                pp.get(), sound.get(), 0, 0, period_floor, period_ceiling,
-                max_period_factor, max_amplitude_factor,
-                &s_local, &s_local_db, &s_apq3, &s_apq5, &s_apq11, &s_dda
-            );
-            results["shimmer_local"] = s_local;
-            results["shimmer_local_db"] = s_local_db;
-            results["shimmer_apq3"] = s_apq3;
-            results["shimmer_apq5"] = s_apq5;
-            results["shimmer_apq11"] = s_apq11;
-            results["shimmer_dda"] = s_dda;
+        if (needs_pulses) {
+            autoPitch pitch;
+            if (pitch_method == "ac") {
+                pitch = Sound_to_Pitch_rawAc(
+                    sound.get(), time_step, min_pitch, max_pitch, 15, very_accurate,
+                    0.03, 0.45, 0.01, 0.35, 0.14
+                );
+            } else {
+                pitch = Sound_to_Pitch_rawCc(
+                    sound.get(), time_step, min_pitch, max_pitch, 15, very_accurate,
+                    0.03, 0.45, 0.01, 0.35, 0.14
+                );
+            }
+            autoPointProcess pp = Sound_Pitch_to_PointProcess_cc(sound.get(), pitch.get());
+
+            if (compute_jitter) {
+                results["jitter_local"] = PointProcess_getJitter_local(
+                    pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
+                );
+                results["jitter_local_abs"] = PointProcess_getJitter_local_absolute(
+                    pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
+                );
+                results["jitter_rap"] = PointProcess_getJitter_rap(
+                    pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
+                );
+                results["jitter_ppq5"] = PointProcess_getJitter_ppq5(
+                    pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
+                );
+                results["jitter_ddp"] = PointProcess_getJitter_ddp(
+                    pp.get(), 0, 0, period_floor, period_ceiling, max_period_factor
+                );
+            }
+
+            if (compute_shimmer) {
+                double s_local, s_local_db, s_apq3, s_apq5, s_apq11, s_dda;
+                PointProcess_Sound_getShimmer_multi(
+                    pp.get(), sound.get(), 0, 0, period_floor, period_ceiling,
+                    max_period_factor, max_amplitude_factor,
+                    &s_local, &s_local_db, &s_apq3, &s_apq5, &s_apq11, &s_dda
+                );
+                results["shimmer_local"] = s_local;
+                results["shimmer_local_db"] = s_local_db;
+                results["shimmer_apq3"] = s_apq3;
+                results["shimmer_apq5"] = s_apq5;
+                results["shimmer_apq11"] = s_apq11;
+                results["shimmer_dda"] = s_dda;
+            }
         }
 
         // HNR metrics — use Praat's standard CC harmonicity defaults (75 Hz, 0.01 s)
