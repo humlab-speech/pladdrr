@@ -209,14 +209,15 @@ NULL
 .pp_methods$voice_report <- function(.self, sound, pitch,
                                      from_time = 0, to_time = 0,
                                      pitch_floor = 75, pitch_ceiling = 600,
-                                     period_floor = 0.0001, period_ceiling = 0.02,
-                                     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+                                     max_period_factor = 1.3, max_amplitude_factor = 1.6,
+                                     silence_threshold = 0.03, voicing_threshold = 0.45) {
   if (!inherits(sound, "Sound")) stop("sound argument must be a Sound object")
   if (!inherits(pitch, "Pitch")) stop("pitch argument must be a Pitch object")
   .pointprocess_voice_report(
-    .self$.xptr, sound$.xptr, pitch$.xptr,
+    sound$.xptr, pitch$.xptr, .self$.xptr,
     from_time, to_time, pitch_floor, pitch_ceiling,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor
+    max_period_factor, max_amplitude_factor,
+    silence_threshold, voicing_threshold
   )
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/performance-helpers.R
 \name{calculate_multiband_hnr_ultra}
 \alias{calculate_multiband_hnr_ultra}
-\title{Calculate Multi-Band HNR in Single Call (Tier 4 Ultra)}
+\title{Calculate multi-band HNR in a single call}
 \usage{
 calculate_multiband_hnr_ultra(
   sound,
@@ -16,86 +16,45 @@ calculate_multiband_hnr_ultra(
 \arguments{
 \item{sound}{Sound object or external pointer}
 
-\item{bands}{Numeric vector of upper frequency limits in Hz 
-(default c(0, 500, 1500, 2500, 3500), where 0 = full spectrum)}
+\item{bands}{Numeric vector of upper frequency limits in Hz
+(default `c(0, 500, 1500, 2500, 3500)`, where `0` = full spectrum)}
 
-\item{time_step}{Time step for harmonicity in seconds (default 0.005)}
+\item{time_step}{Time step for harmonicity in seconds (default `0.005`)}
 
-\item{min_pitch}{Minimum pitch in Hz (default 75)}
+\item{min_pitch}{Minimum pitch in Hz (default `75`)}
 
-\item{from_time}{Start time for statistics extraction (default 0, means beginning)}
+\item{from_time}{Start time for statistics extraction (default `0`)}
 
-\item{to_time}{End time for statistics extraction (default 0, means end)}
+\item{to_time}{End time for statistics extraction (default `0`)}
 }
 \value{
-Named list with 10 values:
-\itemize{
-  \item \code{full_mean} - Mean HNR for full spectrum (dB)
-  \item \code{full_sd} - Standard deviation for full spectrum (dB)
-  \item \code{band500_mean} - Mean HNR for 0-500 Hz band (dB)
-  \item \code{band500_sd} - SD for 0-500 Hz band (dB)
-  \item \code{band1500_mean} - Mean HNR for 0-1500 Hz band (dB)
-  \item \code{band1500_sd} - SD for 0-1500 Hz band (dB)
-  \item \code{band2500_mean} - Mean HNR for 0-2500 Hz band (dB)
-  \item \code{band2500_sd} - SD for 0-2500 Hz band (dB)
-  \item \code{band3500_mean} - Mean HNR for 0-3500 Hz band (dB)
-  \item \code{band3500_sd} - SD for 0-3500 Hz band (dB)
-}
+Named list with `*_mean` and `*_sd` values for each band.
 }
 \description{
 Optimized multi-band HNR calculation for VQ (Voice Quality) measurements.
 Computes HNR (mean + standard deviation) for 5 frequency bands in a single
-C++ call: full spectrum, 0-500 Hz, 0-1500 Hz, 0-2500 Hz, 0-3500 Hz.
-Eliminates R loops and multiple boundary crossings. 2-2.5x faster than
-sequential Tier 2 calculations.
+call: full spectrum, 0-500 Hz, 0-1500 Hz, 0-2500 Hz, 0-3500 Hz.
 }
 \details{
-**TIER 4 ULTRA API - Maximum Performance for VQ**
-
-This function implements the multi-band HNR calculation used in VQ
-(Voice Quality) measurements. It processes all 5 bands in a single C++
-call, eliminating the overhead of:
-- 5 separate Sound filtering operations
-- 5 separate Harmonicity calculations
-- 10 R6 method calls for statistics extraction
-
-**Algorithm (VQ_measurements_V2.praat lines 102-122):**
-For each band:
-1. Filter sound to 0-N Hz (or use full spectrum if band=0)
-2. Calculate Harmonicity with time_step=0.005, periods_per_window=1.0
-3. Extract mean and standard deviation
-
-**Performance Impact:**
-- Standard approach: ~800ms (5 filters + 5 HNR + 10 stats calls)
-- Tier 4 Ultra: ~350ms (2.3x speedup)
-- VQ total: 1.35s -> 0.9s (already faster than Python 1.84s)
-
-**Typical Values (sustained vowel):**
-- Full spectrum: 14-16 dB (mean), 2-3 dB (SD)
-- Lower bands (500-1500 Hz): slightly lower HNR
-- Higher bands (2500-3500 Hz): slightly higher HNR
-
-Use this when you only need one interval or whole-sound summary. For repeated
-interval queries on the same \code{Sound}, use
-\code{\link{build_multiband_harmonicity}()} once and then
-\code{\link{multiband_hnr_stats}()} for each interval.
+Use this when you only need one interval or whole-sound summary. For
+repeated interval queries on the same `Sound`, use
+[build_multiband_harmonicity()] once and then
+[multiband_hnr_stats()] for each interval.
 }
+\section{Algorithm choice}{
+
+Harmonicity is always computed with `Sound_to_Harmonicity_cc()` (the CC
+method) for every band — there is no AC alternative and no way to
+configure it. This matches VQ_measurements_V2.praat lines 102-122. See the
+Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
+}
+
 \examples{
 \dontrun{
 sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
 
-# Calculate all 5 bands in single call
-hnr_results <- calculate_multiband_hnr_ultra(
-  sound,
-  bands = c(0, 500, 1500, 2500, 3500),
-  time_step = 0.005,
-  min_pitch = 75
-)
-
-# Access individual results
-hnr_results$full_mean       # Full spectrum mean HNR
-hnr_results$band500_mean    # 0-500 Hz mean HNR
-hnr_results$band3500_sd     # 0-3500 Hz SD
+hnr_results <- calculate_multiband_hnr_ultra(sound)
+hnr_results$full_mean
 }
 
 }
@@ -104,6 +63,6 @@ hnr_results$band3500_sd     # 0-3500 Hz SD
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-\code{\link{build_multiband_harmonicity}()},
-\code{\link{multiband_hnr_stats}()}
+[build_multiband_harmonicity()] and [multiband_hnr_stats()] for
+  the reusable multi-interval path
 }

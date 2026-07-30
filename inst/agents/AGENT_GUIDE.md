@@ -130,7 +130,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 
 - [Quick Start for Agents](#quick-start-for-agents)
 - [Architecture Overview](#architecture-overview-current-shared-dispatch--4-tier-performance-api)
-- [Object Types (38 modules)](#object-types-38-modules)
+- [Object Types](#object-types)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
 - [**Re-implementing a Praat Procedure**](#re-implementing-a-praat-procedure) ← start here for new ports
@@ -225,6 +225,31 @@ the table below lists the current public tiers.
 - `vignettes/articles/migration-guide.Rmd` - v3.0 breaking changes guide
 - `vignettes/articles/naming-conventions.Rmd` - API organization and patterns
 
+### Tier 4 Ultra: Hardcoded Algorithm Choices
+
+Every Tier 4 "Ultra" function that touches pitch/harmonicity picks one Praat
+algorithm internally (raw AC vs. raw CC, `veryAccurate` true/false, fixed
+threshold constants) so the whole pipeline can run in one C++ call. Some of
+that choice is exposed as an R parameter, some is hardcoded to match a
+specific reference Praat script. Check this table before assuming an Ultra
+function is configurable, or before porting a Praat script that expects a
+different algorithm — the alternative is discovering the mismatch via a
+Praat-vs-R diff test (see `get_voice_quality_ultra()`'s AC-vs-CC history) or
+reading the C++ source directly.
+
+| Function | Pitch/harmonicity algorithm | Configurable | Matches |
+|---|---|---|---|
+| `calculate_f0_stats_ultra()` | `Sound_to_Pitch_rawCc`, `veryAccurate = TRUE`, `silenceThreshold = 0.03` | `voicing_threshold` only | DSI201.praat `To Pitch (cc)...` |
+| `calculate_minimum_intensity_ultra()` | `Sound_to_Pitch_rawCc`, `veryAccurate = FALSE`, `silenceThreshold = 0.03`, `voicingThreshold = 0.8` (hardcoded, not exposed) | none | DSI201.praat IM component (stricter voicing threshold than the jitter block) |
+| `get_voice_quality_ultra()` | `Sound_to_Pitch_rawCc` or `rawAc` via `pitch_method` (`"cc"`/`"ac"`), `very_accurate` | `pitch_method`, `very_accurate` | DSI201.praat (default `"cc"`); `pitch_method = "periodic_cc"` is an alias for `"ac"` + `very_accurate = FALSE`, which is byte-for-byte Praat's `Sound: To PointProcess (periodic, cc)...` (see `Sound_to_PointProcess.cpp`: that command is defined as `Sound_to_Pitch()` + `Sound_Pitch_to_PointProcess_cc`, and `Sound_to_Pitch()` is `Sound_to_Pitch_rawAc(..., veryAccurate=false, 0.03,0.45,0.01,0.35,0.14)`) |
+| `calculate_multiband_hnr_ultra()` | `Sound_to_Harmonicity_cc` (no AC option) | none | VQ_measurements_V2.praat lines 102-122 |
+| `calculate_cpps_ultra()` | n/a — pitch-independent, built on `Sound_to_PowerCepstrogram` | see CPPS parameter table in `/CLAUDE.md` | — |
+| `extract_voiced_segments_ultra()` | n/a — voiced/silence split is Intensity-threshold based, not pitch-based | `silence_threshold_db`, `min_pitch` (controls the Intensity window, not a pitch algorithm choice) | — |
+
+Each function's own `?function_name` help has a matching `@section Algorithm
+choice:` block with the same fact, so this table and the roxygen never need
+to be read in isolation.
+
 ### Data Flow Example: `sound$to_pitch_cc()`
 
 **Shared Dispatch Table Architecture (v4.8.33)**
@@ -271,7 +296,8 @@ Pitch <- function(.xptr = NULL) {
 ```
 
 **Special cases:** Some wrappers have additional fields or no `.xptr`:
-- **PowerCepstrogram, FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
+- **FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
+- **PowerCepstrogram**: opposite of the above — pure `.xptr`, no `.cpp` module at all
 - **Electroglottogram**: triple class `c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compat alias
 - **AmplitudeTier**: `.pointer` compat alias in `$` dispatch (used by factory functions)
 - **PitchTier, FormantTier, LongSound, VocalTract**: static `$.{type}_constructor` for class methods
@@ -280,7 +306,11 @@ Pitch <- function(.xptr = NULL) {
 
 ---
 
-## Object Types (38 modules)
+## Object Types
+
+**Note:** ~40 distinct object types are wrapped in R, backed by 38 `src/modules/*.cpp` files (not a 1:1 mapping —
+some types like MelSpectrogram/BarkSpectrogram/LFCC/PowerCepstrogram share or lack a dedicated module file, while
+some modules like Electroglottogram/DTW/Polygon aren't broken out as separate rows below).
 
 **Update v4.8.25:** Added MelSpectrogram and BarkSpectrogram modules for psychoacoustic analysis.
 **Update v4.0.7:** Added MFCC, LFCC, FormantModeler, PCA, Discriminant modules for speaker recognition, robust formant tracking, and statistical analysis.
@@ -309,8 +339,8 @@ Pitch <- function(.xptr = NULL) {
 | `PitchTier` | `pitch$down_to_pitch_tier()` |
 | `DurationTier` | `DurationTier(tmin, tmax)` |
 | `IntensityTier` | `IntensityTier(tmin, tmax)` |
-| `AmplitudeTier` | `point_process_sound_to_amplitude_tier(pp, sound)` |
-| `FormantTier` | `formant$down_to_formant_tier()` |
+| `AmplitudeTier` | `amplitude_tier_from_point_process(point_process, sound)` |
+| `FormantTier` | `FormantTier$from_formant(formant)` |
 | `FormantGrid` | `formant$to_formantgrid()` |
 
 ### Advanced Analysis
@@ -350,7 +380,7 @@ Pitch <- function(.xptr = NULL) {
 | `TextGrid` | `TextGrid("file.TextGrid")` |
 | `Table` | `formant$down_to_table()` |
 | `Matrix` | `Matrix(xmin, xmax, nx, dx, ...)` |
-| `LongSound` | `LongSound("large_file.wav")` |
+| `LongSound` | `LongSound$open("large_file.wav")` |
 
 ### Interpreter (NEW in v2.1.0)
 
@@ -358,7 +388,7 @@ Pitch <- function(.xptr = NULL) {
 |------|-----------------|---------|
 | `PraatInterpreter` | `PraatInterpreter$new()` | Persistent Praat script interpreter with variable state |
 
-**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class** (1/36). All other 35 objects use the shared dispatch table pattern (v4.8.33). This is intentional — the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference).
+**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class**. All other ~40 object types use the shared dispatch table pattern (v4.8.33). This is intentional — the interpreter requires persistent mutable state, reference semantics, and method chaining (`self` reference).
 
 **Key Methods:**
 - `run(script)` - Execute Praat script
@@ -382,13 +412,17 @@ result <- interp$eval('y')  # 84 (numeric tried first, then string)
 
 ### Frequency Units (Pitch, Formant)
 
-| R String | Code | Praat Enum |
-|----------|------|------------|
-| `"hertz"` / `"hz"` | `0` | `kPitch_unit::HERTZ` |
-| `"semitones"` | `1` | `kPitch_unit::SEMITONES` |
-| `"mel"` | `2` | `kPitch_unit::MEL` |
-| `"erb"` | `3` | `kPitch_unit::ERB` |
-| `"loghertz"` | `4` | `kPitch_unit::LOG_HERTZ` |
+**WARNING:** Frequency/pitch unit codes are NOT consistent across the codebase — there are 4 different,
+mutually-incompatible int-code schemes depending on which R file the call goes through. Always use the
+string API (`"hertz"`, `"semitones"`, etc.) rather than passing raw integer codes, and if you must know the
+integer value, check the specific call site below.
+
+| Call site | `hertz` | `semitones` | `mel` | `erb` | `loghertz` |
+|-----------|---------|--------------|-------|-------|------------|
+| `R/pitch-wrapper.R` (`Pitch$` methods) | `0` | `1` | `2` | `3` | not supported |
+| `R/batch-queries.R`, `R/pitchtier-wrapper.R` | `0` | `3` | `1` | `4` | `2` |
+| `R/praat-direct.R` | `0` | `1` | `2` | `3` | `4` |
+| `R/utils-internal.R` (`unit_to_code`, matches Praat's `kPitch_unit` enum) | `0` | `1` | `2` | `3` | `4` |
 
 ### Formant Units
 
@@ -399,11 +433,15 @@ result <- interp$eval('y')  # 84 (numeric tried first, then string)
 
 ### Intensity Units
 
-| R String | Code | Praat Enum |
-|----------|------|------------|
-| `"db"` | `0` | dB SPL |
-| `"energy"` | `1` | Energy (Pa²·s) |
-| `"sones"` | `2` | Sones |
+There is no general-purpose "intensity unit" code. The only related parameter is `averaging_method`
+on `Intensity$get_mean(from_time, to_time, averaging_method)`, internally mapped by `.intensity_avg_code`
+(`R/intensity-wrapper.R:38`):
+
+| R String | Code |
+|----------|------|
+| `"energy"` | `0` |
+| `"sones"` | `1` |
+| `"db"` | `2` |
 
 ### LTAS Units (FIXED in v4.0.4)
 
@@ -1486,14 +1524,14 @@ tg <- pp$to_textgrid_vuv(0.02, 0.01)
 # ... extract voiced intervals, concatenate, calculate intensity ...
 
 # NEW WAY: Single call (6x faster, DSI-compliant)
-min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 70)
+min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 70)  # explicit override; see default below
 ```
 
 **Signature:**
 ```r
 calculate_minimum_intensity_ultra(
   sound,                 # Sound object
-  min_pitch = 70,        # Pitch floor (Hz) for pitch extraction
+  min_pitch = 75,        # Pitch floor (Hz) for pitch extraction
   max_pitch = 600,       # Pitch ceiling (Hz) for pitch extraction
   time_step = 0,         # 0 = auto
   subtract_mean = TRUE   # Subtract mean for intensity calculation
@@ -1596,45 +1634,47 @@ cpps <- calculate_cpps_ultra(sound)
 # With custom parameters
 cpps <- calculate_cpps_ultra(
   sound,
-  pitch_floor = 60,
-  max_frequency = 5000,
-  pre_emphasis_from = 50,
-  time_step = 0.002,
-  window_length = 0.05,
-  subtract_tilt = TRUE,
-  line_type = "exponential_decay",
-  fit_method = "robust_slow",
   time_averaging_window = 0.001,
   quefrency_averaging_window = 0.0005,
-  peak_search_pitch_floor = 60,
-  peak_search_pitch_ceiling = 333.3,
+  pitch_floor = 60,
+  pitch_ceiling = 333.3,
+  subtract_trend = TRUE,
+  time_step = 0.002,
+  max_quefrency = 0.04,
+  tolerance = 0.05,
   interpolation = "parabolic",
-  tilt_line_quefrency = 0.001,
-  line_type_exponential_decay_time_constant = 0.01
+  tilt_line_quefrency = 0.003,
+  line_type = "straight",
+  fit_method = "robust",
+  pre_emphasis_from = 50,
+  max_frequency = 5000
 )
 ```
 
 **Signature:**
 ```r
 calculate_cpps_ultra(
-  sound,                            # Sound object
-  pitch_floor = 60,                 # Lowest pitch for cepstrogram
-  max_frequency = 5000,             # Max analysis frequency
-  pre_emphasis_from = 50,           # Pre-emphasis frequency
-  time_step = 0.002,                # Frame shift
-  window_length = 0.05,             # Analysis window length
-  subtract_tilt = TRUE,             # Remove spectral tilt
-  line_type = "exponential_decay",  # "straight", "exponential_decay"
-  fit_method = "robust_slow",       # "least_squares", "robust", "robust_slow"
-  time_averaging_window = 0.001,    # CPPS smoothing window
-  quefrency_averaging_window = 0.0005, # Quefrency smoothing
-  peak_search_pitch_floor = 60,     # CPPS peak search min
-  peak_search_pitch_ceiling = 333.3, # CPPS peak search max
-  interpolation = "parabolic",      # "none", "parabolic"
-  tilt_line_quefrency = 0.001,      # Tilt line quefrency
-  line_type_exponential_decay_time_constant = 0.01 # Decay time constant
+  sound,                                 # Sound object
+  time_averaging_window = 0.001,         # CPPS smoothing window
+  quefrency_averaging_window = 0.0005,   # Quefrency smoothing
+  pitch_floor = 60,                      # Lowest pitch for cepstrogram
+  pitch_ceiling = 333.3,                 # Highest pitch for cepstrogram
+  subtract_trend = TRUE,                 # Remove spectral tilt/trend
+  time_step = 0.002,                     # Frame shift
+  max_quefrency = 0.04,                  # Max quefrency for trend fit
+  tolerance = 0.05,                      # Peak-picking tolerance
+  interpolation = "parabolic",           # "none", "parabolic"
+  tilt_line_quefrency = 0.003,           # Trend-line start quefrency
+  line_type = "straight",                # "straight", "exponential_decay"
+  fit_method = "robust",                 # "least_squares", "robust"
+  pre_emphasis_from = 50,                # Pre-emphasis frequency
+  max_frequency = 5000                   # Max analysis frequency
 )
 ```
+
+**Note:** `line_type = "straight"` and `tilt_line_quefrency = 0.003` are the correct current defaults
+(fixed in v4.6.4 and v4.9.10 respectively, from earlier broken defaults `"exponential_decay"` / `0.001` —
+see `R/performance-helpers.R:551` and CLAUDE.md's CPPS parameter-default warning). Do not revert to the old values.
 
 **Returns:** Single numeric value (dB). NA if calculation fails.
 
@@ -1682,24 +1722,24 @@ voiced_203 <- extract_voiced_segments_ultra(sound, version = "v2.03")
 voiced_301 <- extract_voiced_segments_ultra(
   sound,
   version = "v3.01",
-  window_width = 0.03,
-  power_threshold_factor = 0.03,
-  max_zcr = 3000
+  power_threshold_factor = 0.3,
+  max_zcr = 3000,
+  window_width = 0.03
 )
 ```
 
 **Signature:**
 ```r
 extract_voiced_segments_ultra(
-  sound,                       # Sound object
-  version = "v3.01",           # "v2.03" or "v3.01"
-  min_pitch = 100,             # Silence detection pitch floor
-  silence_threshold = -25,     # Silence detection threshold (dB)
-  min_silent_interval = 0.1,   # Min silent duration (s)
-  min_sounding_interval = 0.1, # Min sounding duration (s)
-  window_width = 0.03,         # v3.01: Window width for power/ZCR (s)
-  power_threshold_factor = 0.03, # v3.01: Power threshold (fraction of global)
-  max_zcr = 3000               # v3.01: Max zero-crossing rate (Hz)
+  sound,                          # Sound object
+  version = "v3.01",              # "v2.03" or "v3.01"
+  min_pitch = 50,                 # Silence detection pitch floor
+  silence_threshold_db = -25,     # Silence detection threshold (dB)
+  min_silent_duration = 0.1,      # Min silent duration (s)
+  min_sounding_duration = 0.1,    # Min sounding duration (s)
+  power_threshold_factor = 0.3,   # v3.01: Power threshold (fraction of global)
+  max_zcr = 3000,                 # v3.01: Max zero-crossing rate (Hz)
+  window_width = 0.03             # v3.01: Window width for power/ZCR (s)
 )
 ```
 
@@ -2877,18 +2917,18 @@ pladdrr_simd(FALSE)
 | `get_sampling_frequency()` | - | `numeric` | `1.0 / sound->dx` |
 | `get_number_of_samples()` | - | `integer` | `sound->nx` |
 | `get_number_of_channels()` | - | `integer` | `sound->ny` |
-| `get_value_at_time(time, channel, interpolation)` | `double, int, int` | `numeric` | `Vector_getValueAtX()` |
-| `get_rms(from_time, to_time, channel)` | `double, double, int` | `numeric` | `Sound_getRootMeanSquare()` |
+| `get_value_at_time(time, channel, interpolation)` | `double, int, string` | `numeric` | `Vector_getValueAtX()`; `interpolation` is a string (e.g. `"linear"`), not an int |
+| `get_rms(from_time, to_time)` | `double, double` | `numeric` | `Sound_getRootMeanSquare()`; no `channel` param |
 | `get_energy(from_time, to_time)` | `double, double` | `numeric` | `Sound_getEnergy()` |
 | `get_power(from_time, to_time)` | `double, double` | `numeric` | `Sound_getPower()` |
-| `get_intensity_db(from_time, to_time)` | `double, double` | `numeric` | `Sound_getIntensity_dB()` |
+| `get_intensity_db()` | - | `numeric` | `Sound_getIntensity_dB()`; takes NO arguments |
 | `to_pitch(time_step, pitch_floor, pitch_ceiling)` | `double, double, double` | `Pitch` | `Sound_to_Pitch()` |
 | `to_formant_burg(...)` | multiple | `Formant` | `Sound_to_Formant_burg()` |
 | `to_intensity(minimum_pitch, time_step, subtract_mean)` | `double, double, bool` | `Intensity` | `Sound_to_Intensity()` |
 | `to_spectrum(fast)` | `bool` | `Spectrum` | `Sound_to_Spectrum()` |
 | `to_spectrogram(window_length, max_freq, time_step, freq_step, window_shape)` | multiple | `Spectrogram` | `Sound_to_Spectrogram()` |
 | `pitch_to_pointprocess_peaks(pitch, include_maxima, include_minima)` | `Pitch, bool, bool` | `PointProcess` | `Sound_Pitch_to_PointProcess_peaks()` (NEW v4.0.9) |
-| `extract_part(start_time, end_time)` | `double, double` | `Sound` | `Sound_extractPart()` |
+| `extract_part(from_time, to_time, window_shape, relative_width, preserve_times)` | `double, double, string, double, bool` | `Sound` | `Sound_extractPart()`; `window_shape = "rectangular"`, `relative_width = 1.0`, `preserve_times = FALSE` |
 | `extract_channel(channel)` | `int` | `Sound` | `Sound_extractChannel()` |
 
 ### Pitch Methods
@@ -2927,7 +2967,7 @@ pladdrr_simd(FALSE)
 | `get_minimum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
 | `get_maximum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` | |
 | `get_standard_deviation(from_time, to_time)` | `double, double` | `numeric` | |
-| `get_quantile(from_time, to_time, quantile)` | `double, double, double` | `numeric` | |
+| `get_quantile(from_time, to_time, quantile, unit)` | `double, double, double, string` | `numeric` | |
 
 ### MFCC Methods (NEW in v4.0.7)
 
@@ -2944,7 +2984,7 @@ MFCC (Mel-Frequency Cepstral Coefficients) for speaker recognition and speech an
 | `lifter(from, to)` | `int, int` | `MFCC` | Apply liftering to coefficient range |
 | `as_data_frame()` | - | `data.table` | Export to data.table |
 
-**Creation:** `sound$to_mfcc(num_coefficients = 12, window_length = 0.015, time_step = 0.005, first_filter_freq = 100, filter_freq_delta = 100, max_freq = 0)`
+**Creation:** `sound$to_mfcc(num_coefficients = 13, analysis_width = 0.025, time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0, df_mel = 100.0)`
 
 ### LFCC Methods (NEW in v4.0.7)
 
@@ -2995,7 +3035,7 @@ Principal Component Analysis for vowel space analysis and dimensionality reducti
 | `get_eigenvector(component)` | `int` | `numeric vector` | PC loadings |
 | `get_eigenvectors()` | - | `matrix` | All PC loadings |
 | `get_centroid()` | - | `numeric vector` | Data centroid |
-| `project(data, num_dim)` | `matrix, int` | `matrix` | Project new data |
+| `project(data, num_dimensions)` | `matrix, int` | `matrix` | Project new data |
 | `as_data_frame()` | - | `data.table` | Component summary |
 
 **Creation:** `pca_from_matrix(data)` where rows are observations, columns are variables.
@@ -3196,9 +3236,12 @@ if (pitch$is_valid()) {
 formant <- sound$to_formant_burg()      # Burg's method (standard)
 pitch <- sound$to_pitch_cc()            # Cross-correlation method
 
-# DEPRECATED: Generic methods (still work via dispatch, but use specific names)
-formant <- sound$to_formant()           # Deprecated, use to_formant_burg()
-pitch <- sound$to_pitch()               # Deprecated, use to_pitch_cc()
+# WRONG: sound$to_formant() does NOT exist — dispatch returns NULL, next call errors
+formant <- sound$to_formant()           # Error: use to_formant_burg() (or _robust/_willems)
+
+# sound$to_pitch() IS a first-class, non-deprecated method — both are valid
+pitch1 <- sound$to_pitch()              # Praat's default AC method
+pitch2 <- sound$to_pitch_cc()           # Cross-correlation method
 ```
 
 ### 8. Property Access (Fast Path)
@@ -3453,7 +3496,7 @@ mean_f0 <- pitch$get_mean()
 
 ```
 src/
-├── modules/               # Rcpp Module C++ code (37 modules)
+├── modules/               # Rcpp Module C++ code (38 modules)
 │   ├── module_common.h    # Unit codes, validation macros
 │   ├── sound_module.cpp   # RSound class
 │   ├── pitch_module.cpp   # RPitch class
@@ -3479,7 +3522,7 @@ R/
 ├── discriminant-wrapper.R # Discriminant R wrapper (v4.0.7)
 ├── formantmodeler-wrapper.R # FormantModeler R wrapper (v4.0.7)
 ├── datatable-utils.R      # R data.table helpers (v4.0+)
-├── parallel-batch.R       # Parallel processing (not exported)
+├── parallel-batch.R       # Parallel processing (exported: analyze_files_parallel, process_sounds_parallel, extract_pitch_parallel, extract_formant_parallel, extract_intensity_parallel, benchmark_parallel)
 ├── zzz.R                  # Module loading
 └── RcppExports.R          # Auto-generated (don't edit)
 ```
@@ -3773,11 +3816,17 @@ pp_troughs <- sound$pitch_to_pointprocess_peaks(pitch,
                                                  include_maxima = FALSE, 
                                                  include_minima = TRUE)
 
-# Calculate separate intensities
-peak_intensity <- calculate_intensity_at_points(sound, pp_peaks)
-trough_intensity <- calculate_intensity_at_points(sound, pp_troughs)
-tremor_intensity <- (peak_intensity + trough_intensity) / 2
+# Calculate separate intensities (no batch helper exists — sample at each point time)
+intensity <- sound$to_intensity()
+peak_times <- vapply(seq_len(pp_peaks$get_number_of_points()), pp_peaks$get_time, numeric(1))
+trough_times <- vapply(seq_len(pp_troughs$get_number_of_points()), pp_troughs$get_time, numeric(1))
+peak_intensity <- vapply(peak_times, intensity$get_value_at_time, numeric(1))
+trough_intensity <- vapply(trough_times, intensity$get_value_at_time, numeric(1))
+tremor_intensity <- (mean(peak_intensity) + mean(trough_intensity)) / 2
 ```
+
+**Note:** `calculate_intensity_at_points()` does not exist in this package — there is no dedicated batch
+helper for this. Sample `Intensity$get_value_at_time()` per `PointProcess` timestamp as shown above.
 
 ---
 
@@ -4232,7 +4281,7 @@ docs in `R/simd_info.R`, `NEWS.md`, and `src/Makevars*`.
 **v4.0.7 (2026-01-15):**
 - **NEW: 4 statistical/cepstral modules** (37 total modules)
   - `MFCC` - Mel-Frequency Cepstral Coefficients for speaker recognition
-    - `sound$to_mfcc(num_coefficients, window_length, time_step, ...)`
+    - `sound$to_mfcc(num_coefficients, analysis_width, time_step, ...)`
     - Methods: `get_coefficients_at_frame()`, `get_all_coefficients()`, `lifter()`
   - `LFCC` - Linear-Frequency Cepstral Coefficients (alternative to MFCC)
     - `lpc$to_lfcc(num_coefficients)` - Create from LPC object
@@ -7847,7 +7896,7 @@ formant <- sound$to_formant_burg()  # Stable ✅
 - After: Uses lambda deleter that calls Praat's `forget()` function
 - **Superseded in v4.9.6:** the lambda-deleter pattern itself was buggy (bound the `bool` overload → `delete`); all construction now goes through `make_praat_xptr()` in `src/praat_xptr_utils.h`
 - Impact: Eliminates all garbage collection crashes
-- Scope: Every method returning Praat objects in all 37 modules
+- Scope: Every method returning Praat objects in all 38 modules
 
 **Reference:** See `inst/agents/2026-02-05_xptr_memory_fix.md` for full technical report.
 

@@ -12,10 +12,10 @@ calculate_cpps_ultra(
   pitch_ceiling = 333.3,
   subtract_trend = TRUE,
   time_step = 0.002,
-  max_quefrency = 0.05,
+  max_quefrency = 0.04,
   tolerance = 0.05,
   interpolation = "parabolic",
-  tilt_line_quefrency = 0.001,
+  tilt_line_quefrency = 0.003,
   line_type = "straight",
   fit_method = "robust",
   pre_emphasis_from = 50,
@@ -37,13 +37,21 @@ calculate_cpps_ultra(
 
 \item{time_step}{Time step for cepstrogram in seconds (default 0.002)}
 
-\item{max_quefrency}{Maximum quefrency in seconds (default 0.05)}
+\item{max_quefrency}{End of the trend-fit quefrency window in seconds (default
+0.04); 0 means autowindow to the full quefrency range (Praat convention).
+BUG FIX v4.9.10: previously declared but silently ignored by the C++ core,
+which hardcoded the fit window to [0.003, 0.04] regardless of this and
+tilt_line_quefrency -- e.g. AVQI's needed [0.001, 0] window was never
+applied, pulling CPPS off Praat by ~0.3 dB. Now honored; pass explicit
+qstart/qend to reproduce a specific Praat "Get CPPS" call, same as
+\code{calculate_cpps_fast()}'s qstart_fit/qend_fit.}
 
 \item{tolerance}{Tolerance for peak detection (default 0.05)}
 
 \item{interpolation}{Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")}
 
-\item{tilt_line_quefrency}{Quefrency for tilt line in seconds (default 0.001)}
+\item{tilt_line_quefrency}{Start of the trend-fit quefrency window in seconds
+(default 0.003). BUG FIX v4.9.10: see max_quefrency.}
 
 \item{line_type}{Trend line type: "straight" or "exponential" (default "straight")}
 
@@ -77,17 +85,28 @@ significantly faster than \code{calculate_cpps_fast()} by:
 - Tier 3 (calculate_cpps_fast()): ~2000ms
 - Tier 4 (calculate_cpps_ultra()): ~1500ms (2.7x speedup)
 
-This is still a \strong{CPPS} helper. For a single-interval \strong{CPP}
-measurement, use the segment's \code{Spectrum -> PowerCepstrum ->
-get_peak_prominence()} path instead of \code{calculate_cpps_ultra()}. It is
-both cheaper and closer to the Praat workflow used by voice-quality scripts
-that query one interval at a time.
+This is still a **CPPS** helper. For a single-interval **CPP** measurement,
+use the segment's `Spectrum -> PowerCepstrum -> get_peak_prominence()` path
+instead of `calculate_cpps_ultra()`. It is both cheaper and closer to the
+Praat workflow used by voice-quality scripts that query one interval at a time.
 
 **Use Cases:**
 - AVQI v2.03/v3.01 implementation
 - High-throughput voice quality analysis
 - Real-time CPPS monitoring
 }
+\section{Algorithm choice}{
+
+Not applicable — this function is pitch-independent. It builds a
+`PowerCepstrogram` directly from the Sound (`Sound_to_PowerCepstrogram()`)
+and never extracts a `Pitch` object, so there is no AC/CC or
+`veryAccurate` choice to document here. See the CPPS parameter default
+table in `/CLAUDE.md` for the (non-pitch) parameters that do vary by
+caller, and the Tier 4 Ultra algorithm table in
+`inst/agents/AGENT_GUIDE.md` for how this compares to the pitch-based
+Ultra functions.
+}
+
 \examples{
 \dontrun{
 sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))

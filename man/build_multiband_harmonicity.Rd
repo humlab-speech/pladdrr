@@ -15,27 +15,26 @@ build_multiband_harmonicity(
 \item{sound}{Sound object or external pointer}
 
 \item{bands}{Numeric vector of upper frequency limits in Hz (default
-\code{c(0, 500, 1500, 2500, 3500)}).}
+`c(0, 500, 1500, 2500, 3500)`)}
 
-\item{time_step}{Time step for harmonicity in seconds (default \code{0.005}).}
+\item{time_step}{Time step for harmonicity in seconds (default `0.005`)}
 
-\item{min_pitch}{Minimum pitch in Hz (default \code{75}).}
+\item{min_pitch}{Minimum pitch in Hz (default `75`)}
 }
 \value{
-Named list of 5 \code{Harmonicity} objects: \code{full}, \code{band500},
-\code{band1500}, \code{band2500}, \code{band3500} (or names derived from
-custom bands).
+Named list of 5 `Harmonicity` objects: `full`, `band500`,
+  `band1500`, `band2500`, `band3500` (or names derived from custom bands).
 }
 \description{
 Compute the 5 Harmonicity objects used by VQ's multiband HNR workflow once,
 then reuse them across repeated interval queries with
-\code{\link{multiband_hnr_stats}()}.
+[multiband_hnr_stats()].
 }
 \details{
-Use this when the same \code{Sound} is queried over many
-\code{[from_time, to_time]} windows, e.g. a TextGrid with multiple voiced
-intervals. The expensive band-pass filtering and Harmonicity computation are
-done once; only the summary stats are repeated.
+Use this when the same `Sound` is queried over many `[from_time, to_time]`
+windows, e.g. a TextGrid with multiple voiced intervals. The expensive
+band-pass filtering and Harmonicity computation are done once; only the
+summary stats are repeated.
 }
 \examples{
 \dontrun{
@@ -51,6 +50,5 @@ hnr_full <- multiband_hnr_stats(built)
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-\code{\link{multiband_hnr_stats}()},
-\code{\link{calculate_multiband_hnr_ultra}()}
+[multiband_hnr_stats()] and [calculate_multiband_hnr_ultra()]
 }

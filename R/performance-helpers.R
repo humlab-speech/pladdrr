@@ -533,6 +533,16 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' - High-throughput voice quality analysis
 #' - Real-time CPPS monitoring
 #'
+#' @section Algorithm choice:
+#' Not applicable — this function is pitch-independent. It builds a
+#' `PowerCepstrogram` directly from the Sound (`Sound_to_PowerCepstrogram()`)
+#' and never extracts a `Pitch` object, so there is no AC/CC or
+#' `veryAccurate` choice to document here. See the CPPS parameter default
+#' table in `/CLAUDE.md` for the (non-pitch) parameters that do vary by
+#' caller, and the Tier 4 Ultra algorithm table in
+#' `inst/agents/AGENT_GUIDE.md` for how this compares to the pitch-based
+#' Ultra functions.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
@@ -650,6 +660,15 @@ calculate_cpps_ultra <- function(
 #' **Version Differences:**
 #' - v2.03: Simpler, keeps most voiced content (~37s from 37s input)
 #' - v3.01: Aggressive ZCR filtering, removes fricatives (~25-30s from 37s input)
+#'
+#' @section Algorithm choice:
+#' No pitch algorithm is used here — voiced/silence segmentation is
+#' Intensity-threshold based (`Sound_to_Intensity()` + `silence_threshold_db`
+#' relative to the maximum), not derived from a `Pitch` object. `min_pitch`
+#' only controls the Intensity analysis window length (via
+#' `Sound_to_Intensity`'s own floor parameter), not a pitch-detection
+#' algorithm choice. See the Tier 4 Ultra algorithm table in
+#' `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
 #' \dontrun{
@@ -867,6 +886,12 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' repeated interval queries on the same `Sound`, use
 #' [build_multiband_harmonicity()] once and then
 #' [multiband_hnr_stats()] for each interval.
+#'
+#' @section Algorithm choice:
+#' Harmonicity is always computed with `Sound_to_Harmonicity_cc()` (the CC
+#' method) for every band — there is no AC alternative and no way to
+#' configure it. This matches VQ_measurements_V2.praat lines 102-122. See the
+#' Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
 #' \dontrun{

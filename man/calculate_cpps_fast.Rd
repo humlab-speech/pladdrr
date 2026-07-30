@@ -75,11 +75,11 @@ Use this when analysing many files or in performance-critical pipelines
 its inputs more forgivingly; this function trades that leniency for speed, so
 pass well-formed parameters.
 
-This is a \strong{CPPS} helper: it builds a whole-sound PowerCepstrogram and
-then computes a smoothed peak-prominence summary. If you need a single-interval
-\strong{CPP} value that matches Praat's "To PowerCepstrum" workflow, extract
-the interval, convert it to a Spectrum, and call
-\code{to_power_cepstrum()$get_peak_prominence()} instead. That path is much
+This is a **CPPS** helper: it builds a whole-sound PowerCepstrogram and then
+computes a smoothed peak-prominence summary. If you need a single-interval
+**CPP** value that matches Praat's `To PowerCepstrum` workflow, extract the
+interval, convert it to a Spectrum, and call
+`to_power_cepstrum()$get_peak_prominence()` instead. That path is much
 cheaper and is not the same metric.
 }
 \examples{

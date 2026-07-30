@@ -72,6 +72,17 @@ Steps 1-3 only (no window filtering)
 - v2.03: Simpler, keeps most voiced content (~37s from 37s input)
 - v3.01: Aggressive ZCR filtering, removes fricatives (~25-30s from 37s input)
 }
+\section{Algorithm choice}{
+
+No pitch algorithm is used here — voiced/silence segmentation is
+Intensity-threshold based (`Sound_to_Intensity()` + `silence_threshold_db`
+relative to the maximum), not derived from a `Pitch` object. `min_pitch`
+only controls the Intensity analysis window length (via
+`Sound_to_Intensity`'s own floor parameter), not a pitch-detection
+algorithm choice. See the Tier 4 Ultra algorithm table in
+`inst/agents/AGENT_GUIDE.md`.
+}
+
 \examples{
 \dontrun{
 sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))

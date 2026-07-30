@@ -41,12 +41,12 @@ the predicate executes entirely in C++ without any R boundary crossings.
 \details{
 **Compiling a custom predicate (requires RcppXPtrUtils):**
 
-\preformatted{
+```r
 # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 my_pred <- RcppXPtrUtils::cppXPtr(
-  "bool pred(const char* label, double start, double end) {\n
-     double dur = end - start;\n
-     return dur > 0.1 && label[0] == 'V';\n
+  "bool pred(const char* label, double start, double end) {
+     double dur = end - start;
+     return dur > 0.1 && label[0] == 'V';
    }",
   signature = "bool(const char*, double, double)"
 )
@@ -56,7 +56,7 @@ result <- textgrid_filter_xptr(
   tier = 1,
   predicate_xptr = my_pred
 )
-}
+```
 
 **Performance comparison (1000 intervals):**
 - R function callback: ~100ms (1000 R<->C++ calls)

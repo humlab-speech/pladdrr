@@ -1,3 +1,45 @@
+# pladdrr 4.9.12 (2026-07-30)
+
+## Bug fix
+
+- **`PointProcess$voice_report()` silently returned wrong numbers due to an argument-order bug.**
+  The R6 method passed its `.self`/`sound`/`pitch` external pointers to the compiled
+  `.pointprocess_voice_report()` in the wrong order (`pp, sound, pitch` instead of
+  `sound, pitch, pp`), and its `period_floor`/`period_ceiling` parameters didn't correspond to
+  anything in the C++ signature at all — the compiled function derives its period bounds
+  internally from the pitch floor/ceiling, and instead has `silence_threshold`/
+  `voicing_threshold` parameters the R6 method never exposed. Because both mismatches involve
+  the same argument count, every call silently fed `max_period_factor` (1.3) and
+  `max_amplitude_factor` (1.6) into `silence_threshold`/`voicing_threshold` — both well outside
+  their valid `[0, 1]` range — corrupting `fraction_unvoiced_frames`, voice-break counts, and
+  every jitter/shimmer value in the report, with no error. The method's signature is corrected
+  (`period_floor`/`period_ceiling` removed since they never had any effect; `silence_threshold`
+  = 0.03 and `voicing_threshold` = 0.45 added, matching the defaults used everywhere else in the
+  package) and the xptr order fixed. No other code in the package called this method, so there
+  is no other call site to update; a regression test (`test-voice-report.R`) now checks the
+  affected fields land in their valid range.
+
+## Documentation
+
+- **`get_voice_quality_ultra()` gains a `pitch_method = "periodic_cc"` alias.**
+  Tracing Praat's own source confirmed that `Sound: To PointProcess (periodic, cc)...` is
+  exactly `Sound_to_Pitch()` (i.e. `Sound_to_Pitch_rawAc` with `veryAccurate = FALSE` and
+  Praat's raw defaults) followed by `Sound_Pitch_to_PointProcess_cc` — which is byte-for-byte
+  what this function already computed via `pitch_method = "ac", very_accurate = FALSE` (added in
+  4.9.11). That combination didn't need a new C++ path, just a name: `pitch_method =
+  "periodic_cc"` is now a pure alias for it, so callers porting a Praat script that uses
+  `To PointProcess (periodic, cc)...` can request the matching Tier 4 fast path directly instead
+  of having to independently discover the equivalence.
+- **Documented which Praat pitch/harmonicity algorithm every Tier 4 "Ultra" function hardcodes.**
+  Added a consolidated table to `inst/agents/AGENT_GUIDE.md` (new "Tier 4 Ultra: Hardcoded
+  Algorithm Choices" section) and a matching `@section Algorithm choice:` to each of the 6 Ultra
+  functions' roxygen (`calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`,
+  `get_voice_quality_ultra()`, `calculate_multiband_hnr_ultra()`, `calculate_cpps_ultra()`,
+  `extract_voiced_segments_ultra()`), stating which algorithm/constants are fixed, which params
+  are configurable, and which reference Praat script (if any) each one matches. No algorithm
+  changes — an audit of all 6 found the other hardcoded choices already correct against their
+  reference scripts; this closes the "how would a caller find out without reading C++" gap.
+
 # pladdrr 4.9.11 (2026-07-29)
 
 ## Bug fix

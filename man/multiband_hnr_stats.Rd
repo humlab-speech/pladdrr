@@ -7,23 +7,21 @@
 multiband_hnr_stats(multiband, from_time = 0, to_time = 0)
 }
 \arguments{
-\item{multiband}{Named list of 5 \code{Harmonicity} objects (or Harmonicity
-external pointers), typically returned by
-\code{\link{build_multiband_harmonicity}()}.}
+\item{multiband}{Named list of 5 `Harmonicity` objects (or Harmonicity
+external pointers), typically returned by [build_multiband_harmonicity()].}
 
-\item{from_time}{Start time for statistics extraction (default \code{0}).}
+\item{from_time}{Start time for statistics extraction (default `0`)}
 
-\item{to_time}{End time for statistics extraction (default \code{0}).}
+\item{to_time}{End time for statistics extraction (default `0`)}
 }
 \value{
-Named list with the same \code{*_mean} / \code{*_sd} fields as
-\code{\link{calculate_multiband_hnr_ultra}()}.
+Named list with the same `*_mean` / `*_sd` fields as
+  [calculate_multiband_hnr_ultra()].
 }
 \description{
 Extract mean and standard deviation from a reusable set of multiband
-\code{Harmonicity} objects built by
-\code{\link{build_multiband_harmonicity}()}. This is the cheap query step for
-repeated interval workflows.
+`Harmonicity` objects built by [build_multiband_harmonicity()]. This is the
+cheap query step for repeated interval workflows.
 }
 \examples{
 \dontrun{
@@ -34,8 +32,4 @@ hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)
 hnr_interval2 <- multiband_hnr_stats(built, 0.5, 1.0)
 }
 
-}
-\seealso{
-\code{\link{build_multiband_harmonicity}()},
-\code{\link{calculate_multiband_hnr_ultra}()}
 }

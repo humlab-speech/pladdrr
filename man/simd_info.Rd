@@ -26,7 +26,6 @@ for performance tuning and debugging.
 \details{
 The pladdrr package uses SIMD acceleration for computationally intensive
 operations like autocorrelation, windowing, and statistical computations.
-
 On Apple Silicon / NEON, the measured gains on the hottest paths are modest:
 pitch is often near-neutral, while the cepstrogram/CPPS path gains roughly
 10-15 percent. Threading is usually the bigger lever.
@@ -39,8 +38,8 @@ Common SIMD instruction sets:
 }
 
 Set \code{options(pladdrr.use_simd = FALSE)} before loading the package to
-start in scalar mode, or use \code{\link{pladdrr_simd}()} after load for
-runtime A/B checks. The option is read during \code{.onLoad}.
+start in scalar mode, or use [pladdrr_simd()] after load for runtime A/B
+checks. The option is read during \code{.onLoad}.
 }
 \examples{
 \dontrun{

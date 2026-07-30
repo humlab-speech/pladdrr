@@ -633,6 +633,14 @@ get_durations_batch <- function(file_paths) {
 #' This is a **Tier 4 "Ultra"** function. The entire pitch extraction and
 #' statistic computation happens in C++ with no intermediate R6 objects.
 #'
+#' @section Algorithm choice:
+#' Pitch is always extracted with `Sound_to_Pitch_rawCc()`,
+#' `veryAccurate = TRUE`, `silenceThreshold = 0.03` (matching DSI201.praat's
+#' `To Pitch (cc)...` step). Only `voicing_threshold` is configurable; the
+#' AC/CC choice and `veryAccurate` are not. See the Tier 4 Ultra algorithm
+#' table in `inst/agents/AGENT_GUIDE.md` for how this compares to the other
+#' Ultra functions.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound("voice.wav")
@@ -706,6 +714,15 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' PointProcess creation, VUV segmentation, intensity calculation, and minimum
 #' finding in voiced regions) happens in C++ with no intermediate R objects.
 #'
+#' @section Algorithm choice:
+#' Pitch is always extracted with `Sound_to_Pitch_rawCc()`,
+#' `veryAccurate = FALSE`, `silenceThreshold = 0.03`,
+#' `voicingThreshold = 0.8` — matching DSI201.praat's IM component, which
+#' uses a stricter voicing threshold than the jitter block. None of these are
+#' exposed as parameters (including `voicing_threshold`, unlike
+#' `calculate_f0_stats_ultra()`). See the Tier 4 Ultra algorithm table in
+#' `inst/agents/AGENT_GUIDE.md`.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound("voice.wav")
@@ -766,7 +783,22 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' (`pitch_method = "cc"`, `very_accurate = TRUE`). If your reference workflow
 #' uses Praat's plain `To Pitch...` command before `To PointProcess (cc)` (for
 #' example the DSI jitter block), call this with
-#' `pitch_method = "ac", very_accurate = FALSE`.
+#' `pitch_method = "ac", very_accurate = FALSE` — or the equivalent shorthand
+#' `pitch_method = "periodic_cc"` (see below).
+#'
+#' @section Algorithm choice — \code{pitch_method = "periodic_cc"}:
+#' Praat's `Sound: To PointProcess (periodic, cc)...` command is, per Praat's
+#' own source (`Sound_to_PointProcess.cpp`) and manual, exactly
+#' `Sound_to_Pitch(sound, 0, floor, ceiling)` (i.e. `Sound_to_Pitch_rawAc`
+#' with `veryAccurate = FALSE` and Praat's raw defaults
+#' `0.03, 0.45, 0.01, 0.35, 0.14`) followed by `Sound_Pitch_to_PointProcess_cc`.
+#' That is byte-for-byte what this function already computes when called with
+#' `pitch_method = "ac", very_accurate = FALSE`. `pitch_method = "periodic_cc"`
+#' is a pure alias for that combination (it forces `very_accurate = FALSE`
+#' regardless of the `very_accurate` argument), so callers porting a Praat
+#' script that uses `To PointProcess (periodic, cc)...` can request the
+#' matching Tier 4 fast path by name instead of having to know the two are
+#' equivalent.
 #'
 #' @param sound A Sound object
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
@@ -777,11 +809,15 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' @param max_pitch Pitch ceiling in Hz (default: 600)
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
 #' @param pitch_method Pitch algorithm for the jitter/shimmer pitch object:
-#'   `"cc"` (default, preserves existing Tier 4 behaviour) or `"ac"`.
+#'   `"cc"` (default, preserves existing Tier 4 behaviour), `"ac"`, or
+#'   `"periodic_cc"` — an alias for `"ac"` with `very_accurate` forced to
+#'   `FALSE`, matching Praat's `To PointProcess (periodic, cc)...` command
+#'   (see Algorithm choice section below).
 #' @param very_accurate Logical; whether to use Praat's very accurate pitch
 #'   path for jitter/shimmer pitch extraction (default: `TRUE` to preserve the
 #'   existing Tier 4 output). Use `FALSE` with `pitch_method = "ac"` to match
-#'   Praat's plain `To Pitch...` command.
+#'   Praat's plain `To Pitch...` command. Ignored (forced `FALSE`) when
+#'   `pitch_method = "periodic_cc"`.
 #'
 #' @return Named list with requested voice quality metrics:
 #' \describe{
@@ -824,6 +860,13 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   very_accurate = FALSE
 #' )
 #'
+#' # Equivalent shorthand for Praat's `To PointProcess (periodic, cc)...`
+#' vq_periodic_cc <- get_voice_quality_ultra(
+#'   sound,
+#'   metrics = "jitter",
+#'   pitch_method = "periodic_cc"
+#' )
+#'
 #' # Compare with traditional approach
 #' bench::mark(
 #'   tier4 = get_voice_quality_ultra(sound, "jitter"),
@@ -846,7 +889,7 @@ get_voice_quality_ultra <- function(sound,
                                      min_pitch = 75,
                                      max_pitch = 600,
                                      time_step = 0,
-                                     pitch_method = c("cc", "ac"),
+                                     pitch_method = c("cc", "ac", "periodic_cc"),
                                      very_accurate = TRUE) {
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
@@ -858,6 +901,13 @@ get_voice_quality_ultra <- function(sound,
   }
 
   pitch_method <- match.arg(pitch_method)
+  if (pitch_method == "periodic_cc") {
+    # Praat's `To PointProcess (periodic, cc)...` == Sound_to_Pitch (rawAc,
+    # veryAccurate = FALSE) + Sound_Pitch_to_PointProcess_cc. See the
+    # "Algorithm choice" roxygen section above for the source-level proof.
+    pitch_method <- "ac"
+    very_accurate <- FALSE
+  }
 
   get_voice_quality_ultra_cpp(
     sound$.xptr,

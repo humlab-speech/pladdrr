@@ -8,14 +8,13 @@ pladdrr_simd(enabled = NULL)
 }
 \arguments{
 \item{enabled}{Logical scalar to enable or disable SIMD at runtime.
-Use \code{NULL} (default) to query the current state without changing it.}
+Use `NULL` (default) to query the current state without changing it.}
 }
 \value{
-Invisibly, the same list returned by \code{\link{simd_info}()}.
+Invisibly, the same list returned by [simd_info()].
 }
 \description{
-Query or change pladdrr's runtime SIMD toggle without touching the internal
-\code{set_global_simd_enabled()} helper directly.
+Get or set runtime SIMD usage
 }
 \examples{
 \dontrun{

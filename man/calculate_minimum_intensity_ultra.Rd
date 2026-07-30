@@ -43,6 +43,17 @@ PointProcess creation, VUV segmentation, intensity calculation, and minimum
 finding in voiced regions) happens in C++ with no intermediate R objects.
 }
 
+\section{Algorithm choice}{
+
+Pitch is always extracted with `Sound_to_Pitch_rawCc()`,
+`veryAccurate = FALSE`, `silenceThreshold = 0.03`,
+`voicingThreshold = 0.8` — matching DSI201.praat's IM component, which
+uses a stricter voicing threshold than the jitter block. None of these are
+exposed as parameters (including `voicing_threshold`, unlike
+`calculate_f0_stats_ultra()`). See the Tier 4 Ultra algorithm table in
+`inst/agents/AGENT_GUIDE.md`.
+}
+
 \examples{
 \dontrun{
 sound <- Sound("voice.wav")
