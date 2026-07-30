@@ -1,4 +1,31 @@
-# pladdrr 4.9.12 (2026-07-30)
+# pladdrr 4.9.14 (2026-07-30)
+
+## Bug fix
+
+- **8 `*_simd_bridge` batch-query functions (`calculate_mean_simd_bridge`,
+  `calculate_stdev_simd_bridge`, `calculate_min_max_simd_bridge`,
+  `calculate_quantile_simd_bridge`, `calculate_batch_statistics_simd_bridge`,
+  `calculate_interval_statistics_simd_bridge`,
+  `calculate_interval_quantiles_simd_bridge`,
+  `should_use_simd_for_batch_queries_bridge`) were unreachable from the public
+  API.** They were implemented and compiled correctly in
+  `batch_queries_simd_bridge.cpp`, but their `// [[Rcpp::export]]` tags lacked
+  the `//' @export` roxygen comment needed for `roxygen2::document()` to add
+  them to `NAMESPACE`, so `roxygen2::document()` silently omitted them.
+  `tests/testthat/test-phase3-batch-queries-simd.R` failed with "could not
+  find function" for all 8. Added the missing `@export` tags and regenerated
+  `NAMESPACE`/`RcppExports.R`.
+- **`tests/testthat/test-cpps-defaults.R` asserted stale `calculate_cpps_ultra()`
+  defaults.** The test still expected the pre-v4.9.10 `max_quefrency = 0.05` /
+  `tilt_line_quefrency = 0.001` values; updated to the corrected `0.04` /
+  `0.003` defaults introduced in that release.
+
+## Documentation
+
+- Synced `inst/agents/AGENT_GUIDE.md` and `inst/agents/PRAAT_MODIFICATIONS.md`
+  version headers, which had drifted behind `DESCRIPTION` since 4.9.10.
+
+# pladdrr 4.9.13 (2026-07-30)
 
 ## Bug fix
 

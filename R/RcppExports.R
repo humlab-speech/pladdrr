@@ -449,34 +449,42 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_get_spectral_moments_batch_cpp`, spectrogram_xptr, power)
 }
 
+#' @export
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
 }
 
+#' @export
 calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
     .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
 }
 
+#' @export
 calculate_min_max_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
 }
 
+#' @export
 calculate_quantile_simd_bridge <- function(values, quantile) {
     .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
 }
 
+#' @export
 calculate_batch_statistics_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
 }
 
+#' @export
 calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
     .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
 }
 
+#' @export
 calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
     .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
 }
 
+#' @export
 should_use_simd_for_batch_queries_bridge <- function() {
     .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
 }

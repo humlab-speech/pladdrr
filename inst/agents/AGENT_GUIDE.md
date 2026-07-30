@@ -1,8 +1,11 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.10 guide refresh (2026-07-29)
+**Version:** 4.9.14 guide refresh (2026-07-30)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 4.9.10. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
+**Status:** Current through package 4.9.14. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
+- **v4.9.14 — SIMD batch-query bridge functions restored to public API; stale CPPS test fixed:** 8 `*_simd_bridge` functions in `batch_queries_simd_bridge.cpp` (`calculate_mean_simd_bridge` etc.) were implemented and compiled correctly but missing from `NAMESPACE` — `// [[Rcpp::export]]` tags had no `//' @export` roxygen comment, so `roxygen2::document()` silently dropped them. Added the missing tags and regenerated `NAMESPACE`/`RcppExports.R`. Also fixed `tests/testthat/test-cpps-defaults.R`, which still asserted the pre-v4.9.10 `max_quefrency`/`tilt_line_quefrency` defaults.
+- **v4.9.13 — `voice_report()` arg-order bug fixed; Tier 4 Ultra algorithm choices documented:** `PointProcess$voice_report()` passed xptrs in the wrong order and exposed `period_floor`/`period_ceiling` params with no C++ counterpart, silently corrupting jitter/shimmer/voice-break output; signature corrected to `silence_threshold`/`voicing_threshold`. `get_voice_quality_ultra()` gains `pitch_method = "periodic_cc"` as an alias for `pitch_method = "ac", very_accurate = FALSE`. See "Tier 4 Ultra: Hardcoded Algorithm Choices" below for the full per-function algorithm audit.
+- **v4.9.11 — `get_voice_quality_ultra()` gains `pitch_method`/`very_accurate`:** opt-in args let callers request Praat's `Sound_to_Pitch_rawAc` path instead of the hardcoded `Sound_to_Pitch_rawCc(veryAccurate=TRUE)`. Also fixes a `CallEntries[]` regression where `Rcpp::compileAttributes()` reverts `extern`→`static`, breaking dynamic symbol lookup; `tools/check_callentries.sh` now self-heals this in `configure`.
 - **v4.9.10 — `calculate_cpps_ultra()` trend-fit quefrency window fix:** `tilt_line_quefrency`/`max_quefrency` were declared but silently ignored by the C++ core (hardcoded `[0.003, 0.04]`); now threaded through correctly. R-level defaults changed `0.001`/`0.05` → `0.003`/`0.04` to match prior actual behavior (no change for default callers).
 
 ---

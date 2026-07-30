@@ -43,6 +43,7 @@ using namespace Rcpp;
  * @param values NumericVector
  * @return Mean value
  */
+//' @export
 // [[Rcpp::export]]
 double calculate_mean_simd_bridge(NumericVector values) {
     int n = values.size();
@@ -64,6 +65,7 @@ double calculate_mean_simd_bridge(NumericVector values) {
  * @param mean Pre-computed mean (optional, default 0.0 computes it)
  * @return Standard deviation
  */
+//' @export
 // [[Rcpp::export]]
 double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
     int n = values.size();
@@ -83,6 +85,7 @@ double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
  * @param values NumericVector
  * @return List with min and max
  */
+//' @export
 // [[Rcpp::export]]
 List calculate_min_max_simd_bridge(NumericVector values) {
     int n = values.size();
@@ -108,6 +111,7 @@ List calculate_min_max_simd_bridge(NumericVector values) {
  * @param quantile Quantile value (0.0 to 1.0)
  * @return Quantile value
  */
+//' @export
 // [[Rcpp::export]]
 double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
     int n = values.size();
@@ -127,6 +131,7 @@ double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
  * @param values NumericVector
  * @return List with mean, stdev, min, max
  */
+//' @export
 // [[Rcpp::export]]
 List calculate_batch_statistics_simd_bridge(NumericVector values) {
     int n = values.size();
@@ -167,6 +172,7 @@ List calculate_batch_statistics_simd_bridge(NumericVector values) {
  * @param metric String: "mean", "stdev", "min", "max", or "all"
  * @return NumericVector or NumericMatrix depending on metric
  */
+//' @export
 // [[Rcpp::export]]
 SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String metric) {
     int n_intervals = intervals_values.size();
@@ -251,6 +257,7 @@ SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String met
  * @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
  * @return NumericMatrix with intervals as rows, quantiles as columns
  */
+//' @export
 // [[Rcpp::export]]
 NumericMatrix calculate_interval_quantiles_simd_bridge(
     List intervals_values,
@@ -299,6 +306,7 @@ NumericMatrix calculate_interval_quantiles_simd_bridge(
  *
  * @return Logical value
  */
+//' @export
 // [[Rcpp::export]]
 bool should_use_simd_for_batch_queries_bridge() {
     return should_use_simd_for_batch_queries();
