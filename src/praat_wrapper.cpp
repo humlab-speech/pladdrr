@@ -80,6 +80,11 @@ String praat_version() {
 //' @keywords internal
 // [[Rcpp::export]]
 bool praat_initialize() {
+    // pladdrr is always headless (no GUI, no progress display registered).
+    // Melder_batch signals this to Praat's own code (progress reporting,
+    // error message wording, menu/editor gating) — set once at load time.
+    Melder_batch = true;
+
     // Initialize Praat numerical library (must come BEFORE Melder_alloc_init)
     // This sets up machine precision constants and random number generator
     NUMmachar();
