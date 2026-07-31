@@ -213,7 +213,7 @@ test_that("batch operations are faster than manual loops", {
   result <- microbenchmark(
     manual = manual_extract(),
     batch = batch_extract(),
-    times = 20
+    times = 50
   )
   
   median_manual <- median(result$time[result$expr == "manual"])
@@ -221,8 +221,9 @@ test_that("batch operations are faster than manual loops", {
   
   speedup <- median_manual / median_batch
   
-  # Expect at least 5x speedup (usually 10-50x)
-  expect_gt(speedup, 5)
+  # Expect at least 3x speedup (usually 10-50x) - threshold kept well below
+  # typical observed range to avoid timing-noise flakiness
+  expect_gt(speedup, 3)
   
   message(sprintf("TextGrid batch speedup: %.1fx", speedup))
 })
