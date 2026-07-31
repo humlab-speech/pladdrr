@@ -48,3 +48,24 @@ print(timing)
 
 elapsed_s <- summary(timing)$mean / 1000  # ms -> s
 cat(sprintf("\nMean warm elapsed: %.3f s (target <= 0.5s, stretch <= 0.35s)\n", elapsed_s))
+
+# --- Long-signal case (regression guard for the slopeselector SIMD gate) --------
+# The short ppq1 case above hid the v4.9.15 arm64 SIMD regression: the per-frame
+# Siegel trend fit only dominates on many-frame (long) signals. Concatenate ppq1
+# to ~8x length so the trend-fit hot path is exercised at scale. The default gate
+# is scalar on arm64 (see slopeselector_simd.cpp); force-enable via
+# PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1 in a *separate* R process to A/B (the gate is
+# read once at static init, so it cannot be toggled mid-session).
+cat("\n=== Long-signal case (~8x ppq1) ===\n")
+long <- sound_concatenate_all(rep(list(s), 8))
+cat(sprintf("Long signal duration: %.2f s\n", long$get_end_time() - long$get_start_time()))
+long_timing <- microbenchmark(
+  calculate_cpps_ultra(long, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002),
+  times = 10
+)
+print(long_timing)
+long_elapsed_s <- summary(long_timing)$mean / 1000
+simd_state <- Sys.getenv("PLADDRR_ENABLE_SLOPESELECTOR_SIMD", "0")
+cat(sprintf("\nLong-signal mean warm elapsed: %.3f s (slopeselector SIMD force-enable=%s)\n",
+            long_elapsed_s, simd_state))
+cat("Compare across pladdrr versions / arches; a >20%% jump here is a trend-fit regression.\n")

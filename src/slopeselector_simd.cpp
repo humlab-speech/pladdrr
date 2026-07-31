@@ -122,14 +122,28 @@ void intercept_terms_simd(
 extern "C" {
 
 /*
- * Runtime SIMD gate. Can be disabled via PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1
- * for A/B diagnostics, matching the convention of the other _simd.cpp files.
+ * Runtime SIMD gate (evaluated once at static init in SlopeSelector.cpp).
+ * Default ON: on a clean rebuild the vectorized Siegel trend fit is ~25%
+ * faster than scalar even on arm64/NEON (CPPS ppq1.wav: SIMD 0.92s vs scalar
+ * 1.23s), bit-identical output -- the commit's measured win holds.
+ *
+ * IMPORTANT (2026-07-31): a stale/mis-optimized `slopeselector_simd.o` in a
+ * released .so can be ~2x slower than a clean recompile (observed SIMD 2.14s
+ * vs 0.92s for identical source). If CPPS timing regresses, force a clean
+ * rebuild of this TU before suspecting the algorithm.
+ *
+ * A/B overrides:
+ *   PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1  force scalar
+ *   PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1   force SIMD (redundant with default)
  */
 bool should_use_simd_for_slopeselector () {
 #ifdef HAVE_XSIMD
     const char* disable_env = std::getenv ("PLADDRR_DISABLE_SLOPESELECTOR_SIMD");
     if (disable_env && std::atoi (disable_env) == 1)
         return false;
+    const char* enable_env = std::getenv ("PLADDRR_ENABLE_SLOPESELECTOR_SIMD");
+    if (enable_env && std::atoi (enable_env) == 1)
+        return true;
     return true;
 #else
     return false;
