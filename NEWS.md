@@ -1,3 +1,43 @@
+# pladdrr 4.9.15 (2026-07-31)
+
+## Bug fix
+
+- `sound_to_pitch_batch()`, `sound_to_pitch_ac_batch()`, `sound_to_pitch_cc_batch()`,
+  and `sound_extract_and_pitch()` (`R/batch-ops.R`) called `Pitch$new(.xptr = ptr)`
+  under their default `return_r6 = TRUE`, but `Pitch` is a plain constructor
+  function, not an R6 generator — `$new` threw `notSubsettableError`, silently
+  breaking these functions. Fixed to `Pitch(.xptr = ptr)`.
+- `sound$to_formant()` (no default algorithm alias) didn't exist — only
+  suffixed variants (`to_formant_burg`, `_optimal`, `_robust`, ...) were
+  registered. This silently broke `extract_formant_parallel()` in
+  `R/parallel-batch.R`, which called the unsuffixed form. Added
+  `to_formant` as an alias for `to_formant_burg` (matching the existing
+  `to_pitch` default-algorithm pattern).
+
+## Test fixes
+
+Fixed 16 pre-existing test failures across 5 files (test-only, no other
+production code affected):
+
+- `test-phase3-mfcc-simd.R` (10 failures): stale argument names
+  (`n_coefficients`/`dt` → `num_coefficients`/`time_step`) and stale method
+  names (`get_maximum_number_of_coefficients` → `get_max_num_coefficients`,
+  `as_matrix` → `get_all_coefficients`) left over from an earlier API
+  revision; a semantically incorrect assertion comparing
+  `get_max_num_coefficients()` (a filterbank-capacity constant) against the
+  requested coefficient count; and an overly tight coefficient-magnitude
+  sanity bound (verified via an amplitude-invariance check that the
+  underlying DCT computation is correct — AC coefficient magnitude
+  legitimately scales with per-band spectral contrast).
+- `test-performance-enhancements.R` (1 failure): removed two
+  `expect_s3_class(df, "data.table")` assertions left behind by a mechanical
+  repo-wide edit that referenced an undefined `df` in this file.
+- `test-batch-queries.R` (1 failure): updated `get_value_at_time()` calls to
+  pass `"hertz"` instead of the old numeric unit code `0`.
+- `test-tier4-ultra.R` (1 failure): fixed `LongSound(f)` (constructor
+  misuse) and nonexistent `$get_total_duration()` to
+  `LongSound$open(f)$get_duration()`.
+
 # pladdrr 4.9.14 (2026-07-30)
 
 ## Bug fix

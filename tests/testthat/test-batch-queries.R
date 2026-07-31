@@ -249,10 +249,10 @@ test_that("Batch queries are faster than loops", {
   benchmark_result <- microbenchmark::microbenchmark(
     batch = get_formants_at_times(formant, times, 1:4),
     loop = {
-      f1 <- sapply(times, function(t) formant$get_value_at_time(1, t, 0))
-      f2 <- sapply(times, function(t) formant$get_value_at_time(2, t, 0))
-      f3 <- sapply(times, function(t) formant$get_value_at_time(3, t, 0))
-      f4 <- sapply(times, function(t) formant$get_value_at_time(4, t, 0))
+      f1 <- sapply(times, function(t) formant$get_value_at_time(1, t, "hertz"))
+      f2 <- sapply(times, function(t) formant$get_value_at_time(2, t, "hertz"))
+      f3 <- sapply(times, function(t) formant$get_value_at_time(3, t, "hertz"))
+      f4 <- sapply(times, function(t) formant$get_value_at_time(4, t, "hertz"))
       list(F1 = f1, F2 = f2, F3 = f3, F4 = f4)
     },
     times = 10

@@ -100,7 +100,7 @@ sound_to_pitch_batch <- function(sounds,
   result_ptrs <- .sound_to_pitch_batch(xptrs, time_step, pitch_floor, pitch_ceiling)
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
   } else {
     result_ptrs
   }
@@ -161,7 +161,7 @@ sound_to_pitch_ac_batch <- function(sounds,
   )
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
   } else {
     result_ptrs
   }
@@ -232,7 +232,7 @@ sound_to_pitch_cc_batch <- function(sounds,
   )
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
   } else {
     result_ptrs
   }
@@ -483,7 +483,7 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
   )
 
   if (return_r6) {
-    lapply(result_ptrs, function(ptr) Pitch$new(.xptr = ptr))
+    lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
   } else {
     result_ptrs
   }

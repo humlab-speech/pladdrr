@@ -282,6 +282,8 @@ NULL
   Formant(.xptr = formant_ptr)
 }
 
+.sound_methods$to_formant <- .sound_methods$to_formant_burg
+
 .sound_methods$to_formant_optimal <- function(.self,
     start_time = 0.0, end_time = 0.0,
     window_length = 0.025, time_step = 0.005,

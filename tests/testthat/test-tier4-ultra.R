@@ -86,7 +86,7 @@ test_that("get_durations_batch is faster than LongSound loop", {
   # Benchmark
   result <- bench::mark(
     tier4 = get_durations_batch(files),
-    longsound = sapply(files, function(f) LongSound(f)$get_total_duration()),
+    longsound = sapply(files, function(f) LongSound$open(f)$get_duration()),
     check = FALSE,
     min_iterations = 3
   )
