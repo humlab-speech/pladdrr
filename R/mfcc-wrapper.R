@@ -37,6 +37,7 @@
 #' - `$as_data_frame(include_c0)` - Convert to data.frame/data.table
 #' - `$to_matrix()` - Convert to Matrix object
 #'
+#' @seealso \code{\link{Sound}}, \code{\link{MelSpectrogram}}
 #' @return An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
 #'
 #' @examples
@@ -208,6 +209,7 @@ print.MFCC <- function(x, ...) {
 #' the mel scale. They are derived from LPC analysis and are useful for
 #' speaker recognition tasks.
 #'
+#' @seealso \code{\link{Sound}}, \code{\link{LPC}}
 #' @return An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
 #'
 #' @examples

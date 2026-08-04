@@ -2,12 +2,40 @@
 # Architecture: minimal list + $.Intensity S3 dispatch → shared method env
 
 #' @title Praat Intensity Object
-#' @description
-#' Praat Intensity object (sound power/loudness) with direct C++ module binding.
 #'
-#' @details
-#' An Intensity object represents the sound power or loudness in a sound over time,
-#' measured in decibels (dB) relative to the auditory threshold.
+#' @description
+#' Intensity objects represent sound power (loudness) over time, measured in
+#' decibels (dB) relative to the auditory threshold. Created from a Sound using
+#' intensity contour extraction.
+#'
+#' @section Methods:
+#'
+#' **Information:**
+#' * `get_duration()` — Duration of the intensity contour (s)
+#' * `get_time_step()` — Time step between frames (s)
+#'
+#' **Point queries:**
+#' * `get_value_at_time(time, interpolation)` — Intensity at time point (dB)
+#' * `get_values_at_times(times, interpolation)` — Intensity at vector of times (batch)
+#'
+#' **Statistics (over time range):**
+#' * `get_mean(from_time, to_time, averaging_method)` — Mean intensity (dB)
+#' * `get_standard_deviation(from_time, to_time)` — Standard deviation (dB)
+#' * `get_minimum(from_time, to_time, interpolation)` — Minimum intensity
+#' * `get_maximum(from_time, to_time, interpolation)` — Maximum intensity
+#' * `get_quantile(quantile, from_time, to_time)` — Quantile
+#' * `get_time_of_minimum(...)` / `get_time_of_maximum(...)` — Time of extremum
+#'
+#' **Export:**
+#' * `as_vector()` — Raw intensity values (dB)
+#' * `as_data_frame()` — Export as data.frame (time, intensity)
+#' * `save(filepath)` — Save to Praat binary file
+#'
+#' @section Interpolation:
+#' Codes: `"nearest"` (0), `"linear"` (1), `"cubic"` (2, default), `"sinc70"` (3), `"sinc700"` (4).
+#' Averaging methods: `"energy"` (0, default), `"sones"` (1), `"db"` (2).
+#'
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{IntensityTier}}
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)

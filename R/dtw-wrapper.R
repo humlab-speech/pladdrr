@@ -81,6 +81,7 @@
 #' warped_tg <- dtw$warp_textgrid(tg)
 #' }
 #'
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
 #' @param .xptr Internal external pointer to wrap an existing DTW object; not for direct use.
 #' @export
 DTW <- function(.xptr = NULL) {

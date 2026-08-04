@@ -4,8 +4,44 @@
 #' Spectrogram Object
 #'
 #' @description
-#' Praat Spectrogram object for time-frequency representations.
-#' Uses shared dispatch table for minimal memory per object.
+#' A Spectrogram is a time-frequency representation of sound — a matrix of
+#' power values indexed by time (columns) and frequency (rows). Created from a
+#' Sound via short-time Fourier transform (STFT).
+#'
+#' @section Methods:
+#'
+#' **Information:**
+#' * `get_start_time()` / `get_end_time()` — Time range (s)
+#' * `get_time_step()` — Time between frames (s)
+#' * `get_number_of_time_bins()` — Number of time frames
+#' * `get_lowest_frequency()` / `get_highest_frequency()` — Frequency range (Hz)
+#' * `get_frequency_step()` — Frequency resolution (Hz)
+#' * `get_number_of_frequency_bins()` — Number of frequency bins
+#'
+#' **Index mapping:**
+#' * `get_time_from_frame(frame)` — Time for frame index
+#' * `get_frame_from_time(time)` — Frame index for time
+#' * `get_frequency_from_bin(bin)` — Frequency for bin index
+#' * `get_bin_from_frequency(freq)` — Bin index for frequency
+#'
+#' **Power queries:**
+#' * `get_power_at(time, frequency)` — Power at time×frequency point
+#' * `get_power_at_points(times, frequencies)` — Power at vector of points (batch)
+#' * `get_frame(time)` — Full frequency spectrum at one time
+#' * `get_frequency_slice(frequency)` — Time series at one frequency
+#' * `get_frames(times)` — Matrix of frames at multiple times
+#' * `get_band_power(fmin, fmax)` — Integrated power in frequency band
+#' * `get_spectral_moments_batch(power)` — Center of gravity, SD, skewness, kurtosis per frame (single C++ call)
+#'
+#' **Export:**
+#' * `as_matrix(include_dimnames)` — Export as numeric matrix
+#' * `as_data_frame()` — Export as data.frame
+#'
+#' **Transform:**
+#' * `to_spectrum(time)` — Extract spectrum at one time point
+#' * `to_dtw(reference)` — Dynamic Time Warping between spectrograms
+#'
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{DTW}}, \code{\link{ComplexSpectrogram}}
 #'
 #' @return A \code{Spectrogram} object with methods for time-frequency spectral analysis.
 #'

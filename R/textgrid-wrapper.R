@@ -458,6 +458,7 @@ print.TextGrid <- function(x, ...) x$print()
 #' @param tmax End time in seconds
 #' @param tier_names Space-separated tier names (e.g., "phones words syllables")
 #' @param point_tiers Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}
 #' @return TextGrid object
 #' @export
 #'

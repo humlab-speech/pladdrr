@@ -45,6 +45,8 @@
 #'
 #' @return A \code{Spectrum} object with methods for frequency-domain spectral analysis.
 #'
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrogram}}, \code{\link{Ltas}}, \code{\link{PowerCepstrum}}
+#'
 #' @examples
 #' sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
 #' spectrum <- sound$to_spectrum(fast = FALSE)

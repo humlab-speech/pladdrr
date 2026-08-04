@@ -2,13 +2,57 @@
 # Architecture: minimal list + $.PointProcess S3 dispatch → shared method env
 
 #' @title Praat PointProcess Object
-#' @description
-#' A PointProcess is a sequence of time points, typically representing glottal pulses.
-#' Essential for voice quality analysis (jitter, shimmer).
 #'
-#' @details
-#' **IMPORTANT:** Jitter/shimmer values are returned as decimals (0-1), not percentages.
-#' Multiply by 100 for percentage display.
+#' @description
+#' A PointProcess is a sequence of time points, typically representing glottal
+#' pulse boundaries (moments of vocal fold closure). Essential for voice quality
+#' analysis: jitter (period perturbation) and shimmer (amplitude perturbation).
+#'
+#' @section Methods:
+#'
+#' **Information:**
+#' * `get_number_of_points()` — Total number of time points
+#' * `get_time(index)` — Time of point at index
+#' * `get_nearest_index(time)` — Index of point nearest to specified time
+#' * `get_low_index(time)` / `get_high_index(time)` — Index bounding a time
+#' * `get_interval(time)` — Time between surrounding points
+#' * `get_mean_period(from_time, to_time, ...)` — Mean glottal period
+#' * `get_stdev_period(from_time, to_time, ...)` — SD of glottal period
+#' * `get_number_of_periods(from_time, to_time, ...)` — Number of periods in range
+#' * `get_voice_breaks(from_time, to_time, ...)` — Number of voice breaks
+#'
+#' **Jitter (period perturbation, returned as decimals 0-1):**
+#' * `get_jitter_local(from_time, to_time, ...)` — Local jitter (Jloc)
+#' * `get_jitter_local_absolute(from_time, to_time, ...)` — Local absolute jitter
+#' * `get_jitter_rap(from_time, to_time, ...)` — Relative Average Perturbation
+#' * `get_jitter_ppq5(from_time, to_time, ...)` — 5-period Perturbation Quotient
+#' * `get_jitter_ddp(from_time, to_time, ...)` — Difference of Differences of Periods
+#'
+#' **Shimmer (amplitude perturbation, requires a Sound, returned as decimals 0-1):**
+#' * `get_shimmer_local(sound, from_time, to_time, ...)` — Local shimmer (Shim)
+#' * `get_shimmer_local_db(sound, from_time, to_time, ...)` — Local shimmer in dB
+#' * `get_shimmer_apq3(sound, from_time, to_time, ...)` — 3-period Amplitude Perturbation Quotient
+#' * `get_shimmer_apq5(sound, from_time, to_time, ...)` — 5-period APQ
+#' * `get_shimmer_apq11(sound, from_time, to_time, ...)` — 11-period APQ
+#' * `get_shimmer_dda(sound, from_time, to_time, ...)` — Difference of Differences of Amplitude
+#'
+#' **Batch voice quality (computes all 11 metrics in one C++ call):**
+#' * `get_jitter_shimmer_batch(pointprocess, sound, ...)` — Returns named list of all jitter + shimmer values. Cache-aware: subsequent calls with same parameters return instantly.
+#' * `voice_report(sound, pitch, ...)` — Combined voice report (jitter, shimmer, HNR)
+#'
+#' **Export / Transform:**
+#' * `as_vector()` / `as_data_frame()` — Export as vector or data.frame
+#' * `to_textgrid_vuv(max_voiced_period, ...)` — Create voiced/unvoiced TextGrid
+#' * `to_pitch_tier()` — Convert to PitchTier
+#' * `to_sound_pulse_train(...)` — Create pulse train Sound
+#'
+#' @section Note:
+#' Jitter/shimmer values are returned as **decimals** (0-1), not percentages.
+#' Multiply by 100 for percentage display. First shimmer call caches all 11
+#' metrics — subsequent jitter or shimmer calls with matching parameters
+#' return from cache (no additional C++ call).
+#'
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{AmplitudeTier}}
 #'
 #' @return A \code{PointProcess} object with methods for glottal pulse analysis including jitter and shimmer.
 #'

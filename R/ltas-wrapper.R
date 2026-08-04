@@ -6,6 +6,7 @@
 #' Praat Ltas object for long-term spectral analysis.
 #' Uses shared dispatch table for minimal memory per object.
 #'
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{Spectrogram}}
 #' @name Ltas
 NULL
 

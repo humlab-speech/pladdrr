@@ -6,6 +6,7 @@
 #' PCA is commonly used in phonetics for vowel space analysis, speaker
 #' normalization, acoustic feature extraction, and data visualization.
 #'
+#' @seealso \code{\link{Discriminant}}, \code{\link{TableOfReal}}
 #' @name PCA
 NULL
 
