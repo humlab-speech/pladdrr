@@ -60,26 +60,26 @@ NULL
 .spectrogram_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Time domain ---
-.spectrogram_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
-.spectrogram_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.spectrogram_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
-.spectrogram_methods$get_number_of_time_bins <- function(.self) .self$.cpp$get_number_of_frames()
+.spectrogram_methods$get_start_time <- function(.self) .spectrogram_get_start_time(.self$.xptr)
+.spectrogram_methods$get_end_time <- function(.self) .spectrogram_get_end_time(.self$.xptr)
+.spectrogram_methods$get_time_step <- function(.self) .spectrogram_get_time_step(.self$.xptr)
+.spectrogram_methods$get_number_of_time_bins <- function(.self) .spectrogram_get_number_of_time_bins(.self$.xptr)
 
 # --- Frequency domain ---
-.spectrogram_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_ymin()
-.spectrogram_methods$get_highest_frequency <- function(.self) .self$.cpp$get_ymax()
-.spectrogram_methods$get_frequency_step <- function(.self) .self$.cpp$get_frequency_step()
-.spectrogram_methods$get_number_of_frequency_bins <- function(.self) .self$.cpp$get_number_of_frequency_bins()
+.spectrogram_methods$get_lowest_frequency <- function(.self) .spectrogram_get_lowest_frequency(.self$.xptr)
+.spectrogram_methods$get_highest_frequency <- function(.self) .spectrogram_get_highest_frequency(.self$.xptr)
+.spectrogram_methods$get_frequency_step <- function(.self) .spectrogram_get_frequency_step(.self$.xptr)
+.spectrogram_methods$get_number_of_frequency_bins <- function(.self) .spectrogram_get_number_of_frequency_bins(.self$.xptr)
 
 # --- Conversion ---
 .spectrogram_methods$get_time_from_frame <- function(.self, frame) {
-  .self$.cpp$get_time_from_frame(as.integer(frame))
+  .spectrogram_get_time_from_frame(.self$.xptr, as.integer(frame))
 }
 .spectrogram_methods$get_frame_from_time <- function(.self, time) {
   .self$.cpp$get_frame_from_time(as.numeric(time))
 }
 .spectrogram_methods$get_frequency_from_bin <- function(.self, bin) {
-  .self$.cpp$get_frequency_from_bin(as.integer(bin))
+  .spectrogram_get_frequency_from_bin(.self$.xptr, as.integer(bin))
 }
 .spectrogram_methods$get_bin_from_frequency <- function(.self, frequency) {
   .self$.cpp$get_bin_from_frequency(as.numeric(frequency))
@@ -87,7 +87,7 @@ NULL
 
 # --- Query ---
 .spectrogram_methods$get_power_at <- function(.self, time, frequency) {
-  .self$.cpp$get_power_at(as.numeric(time), as.numeric(frequency))
+  .spectrogram_get_power_at(.self$.xptr, as.numeric(time), as.numeric(frequency))
 }
 
 # --- Batch/Vectorized ---

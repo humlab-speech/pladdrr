@@ -148,31 +148,31 @@ NULL
 .sound_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
 .sound_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .sound_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.sound_methods$get_total_duration <- function(.self) .self$.cpp$get_duration()
-.sound_methods$get_duration <- function(.self) .self$.cpp$get_duration()
+.sound_methods$get_total_duration <- function(.self) .sound_get_duration(.self$.xptr)
+.sound_methods$get_duration <- function(.self) .sound_get_duration(.self$.xptr)
 .sound_methods$get_nx <- function(.self) .self$.cpp$get_nx()
 .sound_methods$get_dx <- function(.self) .self$.cpp$get_dx()
 .sound_methods$get_x1 <- function(.self) .self$.cpp$get_x1()
-.sound_methods$get_sampling_frequency <- function(.self) .self$.cpp$get_sampling_frequency()
-.sound_methods$get_number_of_samples <- function(.self) .self$.cpp$get_number_of_samples()
+.sound_methods$get_sampling_frequency <- function(.self) .sound_get_sampling_frequency(.self$.xptr)
+.sound_methods$get_number_of_samples <- function(.self) .sound_get_number_of_samples(.self$.xptr)
 .sound_methods$get_number_of_channels <- function(.self) .self$.cpp$get_number_of_channels()
 .sound_methods$get_time_from_sample <- function(.self, sample) .self$.cpp$get_time_from_sample(as.integer(sample))
 .sound_methods$get_sample_from_time <- function(.self, time) .self$.cpp$get_sample_from_time(as.numeric(time))
 
 .sound_methods$get_value_at_time <- function(.self, time, channel = 1, interpolation = "linear") {
-  .self$.cpp$get_value_at_time(as.numeric(time), as.integer(channel), .interp_code(interpolation))
+  .sound_get_value_at_time(.self$.xptr, as.numeric(time), as.integer(channel), interpolation)
 }
 
 .sound_methods$get_rms <- function(.self, from_time = 0.0, to_time = 0.0) {
-  .self$.cpp$get_rms(as.numeric(from_time), as.numeric(to_time))
+  .sound_get_rms(.self$.xptr, as.numeric(from_time), as.numeric(to_time))
 }
 
 .sound_methods$get_energy <- function(.self, from_time = 0.0, to_time = 0.0) {
-  .self$.cpp$get_energy(as.numeric(from_time), as.numeric(to_time))
+  .sound_get_energy(.self$.xptr, as.numeric(from_time), as.numeric(to_time))
 }
 
 .sound_methods$get_power <- function(.self, from_time = 0.0, to_time = 0.0) {
-  .self$.cpp$get_power(as.numeric(from_time), as.numeric(to_time))
+  .sound_get_power(.self$.xptr, as.numeric(from_time), as.numeric(to_time))
 }
 
 .sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()

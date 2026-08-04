@@ -69,48 +69,48 @@ NULL
 .spectrum_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Query: Basic info ---
-.spectrum_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_fmin()
-.spectrum_methods$get_highest_frequency <- function(.self) .self$.cpp$get_fmax()
-.spectrum_methods$get_number_of_bins <- function(.self) .self$.cpp$get_n_bins()
-.spectrum_methods$get_frequency_step <- function(.self) .self$.cpp$get_df()
+.spectrum_methods$get_lowest_frequency <- function(.self) .spectrum_get_lowest_frequency(.self$.xptr)
+.spectrum_methods$get_highest_frequency <- function(.self) .spectrum_get_highest_frequency(.self$.xptr)
+.spectrum_methods$get_number_of_bins <- function(.self) .spectrum_get_number_of_bins(.self$.xptr)
+.spectrum_methods$get_frequency_step <- function(.self) .spectrum_get_frequency_step(.self$.xptr)
 .spectrum_methods$get_frequency_from_bin <- function(.self, bin) {
-  .self$.cpp$get_frequency_from_bin(as.integer(bin))
+  .spectrum_get_frequency_from_bin(.self$.xptr, as.integer(bin))
 }
 .spectrum_methods$get_bin_from_frequency <- function(.self, frequency) {
-  .self$.cpp$get_bin_from_frequency(as.numeric(frequency))
+  .spectrum_get_bin_from_frequency(.self$.xptr, as.numeric(frequency))
 }
 
 # --- Query: Values ---
 .spectrum_methods$get_real_value_in_bin <- function(.self, bin) {
-  .self$.cpp$get_real_value_at_bin(as.integer(bin))
+  .spectrum_get_real_value_in_bin(.self$.xptr, as.integer(bin))
 }
 .spectrum_methods$get_imaginary_value_in_bin <- function(.self, bin) {
-  .self$.cpp$get_imaginary_value_at_bin(as.integer(bin))
+  .spectrum_get_imaginary_value_in_bin(.self$.xptr, as.integer(bin))
 }
 
 # --- Query: Band statistics ---
 .spectrum_methods$get_band_density <- function(.self, fmin, fmax) {
-  .self$.cpp$get_band_density(as.numeric(fmin), as.numeric(fmax))
+  .spectrum_get_band_density(.self$.xptr, as.numeric(fmin), as.numeric(fmax))
 }
 .spectrum_methods$get_band_energy <- function(.self, fmin, fmax) {
-  .self$.cpp$get_band_energy(as.numeric(fmin), as.numeric(fmax))
+  .spectrum_get_band_energy(.self$.xptr, as.numeric(fmin), as.numeric(fmax))
 }
 
 # --- Query: Spectral moments ---
 .spectrum_methods$get_centre_of_gravity <- function(.self, power = 2.0) {
-  .self$.cpp$get_centre_of_gravity(as.numeric(power))
+  .spectrum_get_centre_of_gravity(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_standard_deviation <- function(.self, power = 2.0) {
-  .self$.cpp$get_standard_deviation(as.numeric(power))
+  .spectrum_get_standard_deviation(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_skewness <- function(.self, power = 2.0) {
-  .self$.cpp$get_skewness(as.numeric(power))
+  .spectrum_get_skewness(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_kurtosis <- function(.self, power = 2.0) {
-  .self$.cpp$get_kurtosis(as.numeric(power))
+  .spectrum_get_kurtosis(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_central_moment <- function(.self, moment, power = 2.0) {
-  .self$.cpp$get_central_moment(as.numeric(moment), as.numeric(power))
+  .spectrum_get_central_moment(.self$.xptr, as.numeric(moment), as.numeric(power))
 }
 
 # --- Batch/Vectorized ---

@@ -89,56 +89,55 @@ NULL
 .formant_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .formant_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .formant_methods$get_duration <- function(.self) .self$.cpp$get_xmax() - .self$.cpp$get_xmin()
-.formant_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
-.formant_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
-.formant_methods$get_min_num_formants <- function(.self) .self$.cpp$get_min_num_formants()
-.formant_methods$get_minimum_number_of_formants <- function(.self) .self$.cpp$get_min_num_formants()
-.formant_methods$get_max_num_formants <- function(.self) .self$.cpp$get_max_num_formants()
+.formant_methods$get_number_of_frames <- function(.self) .formant_get_number_of_frames(.self$.xptr)
+.formant_methods$get_time_step <- function(.self) .formant_get_time_step(.self$.xptr)
+.formant_methods$get_min_num_formants <- function(.self) .formant_get_min_num_formants(.self$.xptr)
+.formant_methods$get_max_num_formants <- function(.self) .formant_get_max_num_formants(.self$.xptr)
 
 # --- Query ---
 .formant_methods$get_value_at_time <- function(.self, formant_number, time, unit = c("hertz", "bark"),
                                                interpolation = c("linear", "nearest")) {
   unit <- match.arg(unit)
   interpolation <- match.arg(interpolation)
-  .self$.cpp$get_value_at_time(as.integer(formant_number), time, .formant_unit_code(unit))
+  .formant_get_value_at_time(.self$.xptr, as.integer(formant_number), time, .formant_unit_code(unit))
 }
 .formant_methods$get_bandwidth_at_time <- function(.self, formant_number, time, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
-  .self$.cpp$get_bandwidth_at_time(as.integer(formant_number), time, .formant_unit_code(unit))
+  .formant_get_bandwidth_at_time(.self$.xptr, as.integer(formant_number), time, .formant_unit_code(unit))
 }
 .formant_methods$get_mean <- function(.self, formant_number, from_time = 0, to_time = 0, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
-  .self$.cpp$get_mean(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit))
+  .formant_get_mean(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit))
 }
 .formant_methods$get_standard_deviation <- function(.self, formant_number, from_time = 0, to_time = 0,
                                                     unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
-  .self$.cpp$get_standard_deviation(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit))
+  .formant_get_standard_deviation(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit))
 }
 .formant_methods$get_quantile <- function(.self, formant_number, quantile, from_time = 0, to_time = 0,
                                           unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
-  .self$.cpp$get_quantile(as.integer(formant_number), quantile, from_time, to_time, .formant_unit_code(unit))
+  .formant_get_quantile(.self$.xptr, as.integer(formant_number), quantile, from_time, to_time, .formant_unit_code(unit))
 }
 .formant_methods$get_minimum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                          unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .self$.cpp$get_minimum(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_minimum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_maximum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                          unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .self$.cpp$get_maximum(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_maximum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_time_of_minimum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                                   unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .self$.cpp$get_time_of_minimum(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_time_of_minimum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_time_of_maximum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                                   unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .self$.cpp$get_time_of_maximum(as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_time_of_maximum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
 }
 
 # --- Batch/Vectorized ---
@@ -169,10 +168,10 @@ NULL
 
 # --- Export ---
 .formant_methods$as_data_frame <- function(.self, max_formants = 5) {
-  .self$.cpp$as_data_frame(as.integer(max_formants))
+  .formant_as_data_frame(.self$.xptr, as.integer(max_formants))
 }
 .formant_methods$save <- function(.self, filepath) {
-  .self$.cpp$save(filepath)
+  .formant_save(.self$.xptr, filepath)
   invisible(.self)
 }
 
