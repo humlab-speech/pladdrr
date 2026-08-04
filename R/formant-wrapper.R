@@ -120,9 +120,7 @@ NULL
 .formant_methods$get_all_values_at_time <- function(.self, time, max_formants = 5, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
   uc <- .formant_unit_code(unit)
-  vapply(seq_len(max_formants), function(i) {
-    .self$.cpp$get_value_at_time(as.integer(i), as.numeric(time), uc)
-  }, numeric(1))
+  .formant_get_all_values_at_time(.self$.xptr, as.numeric(time), as.integer(max_formants), uc)
 }
 .formant_methods$get_all_formant_tracks <- function(.self, max_formants = 5, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)

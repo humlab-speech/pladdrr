@@ -11,17 +11,15 @@
 #' @return Pitch object with methods for querying pitch values and statistics
 #' 
 #' @examples
+#' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
+#' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+#' mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+#' min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz")
+#' df <- as.data.frame(pitch)
 #' \dontrun{
 #' sound <- Sound("voice.wav")
 #' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
-#' 
-#' # Query methods
-#' mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
-#' min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz")
 #' n_voiced <- pitch$count_voiced_frames()
-#' 
-#' # Export
-#' df <- as.data.frame(pitch)
 #' }
 #' 
 #' @name Pitch

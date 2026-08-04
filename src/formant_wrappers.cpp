@@ -244,6 +244,32 @@ double formant_get_value_at_time(
     }
 }
 
+// [[Rcpp::export(.formant_get_all_values_at_time)]]
+Rcpp::NumericVector formant_get_all_values_at_time(
+    Rcpp::XPtr<structFormant> formant,
+    double time,
+    int max_formants,
+    int unit
+) {
+    if (!formant) Rcpp::stop("Invalid Formant pointer");
+
+    try {
+        Rcpp::NumericVector out(max_formants);
+        for (int i = 0; i < max_formants; i++) {
+            out[i] = Formant_getValueAtTime(
+                formant.get(),
+                i + 1,
+                time,
+                static_cast<kFormant_unit>(unit)
+            );
+        }
+        return out;
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to get all formant values at time");
+    }
+}
+
 // [[Rcpp::export(.formant_get_bandwidth_at_time)]]
 double formant_get_bandwidth_at_time(
     Rcpp::XPtr<structFormant> formant,

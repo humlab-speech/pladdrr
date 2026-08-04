@@ -690,6 +690,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_formant_get_value_at_time`, formant, formant_number, time, unit)
 }
 
+.formant_get_all_values_at_time <- function(formant, time, max_formants, unit) {
+    .Call(`_pladdrr_formant_get_all_values_at_time`, formant, time, max_formants, unit)
+}
+
 .formant_get_bandwidth_at_time <- function(formant, formant_number, time, unit) {
     .Call(`_pladdrr_formant_get_bandwidth_at_time`, formant, formant_number, time, unit)
 }

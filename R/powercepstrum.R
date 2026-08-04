@@ -10,11 +10,14 @@
 #' @return A \code{PowerCepstrum} object with methods for power cepstrum analysis including CPP measurement.
 #'
 #' @examples
+#' sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate = 44100)
+#' spectrum <- sound$to_spectrum()
+#' cepstrum <- spectrum$to_powercepstrum()
+#' cpp <- cepstrum$get_peak_prominence()
 #' \dontrun{
 #' sound <- Sound$new("voice.wav")
 #' spectrum <- sound$to_spectrum()
 #' cepstrum <- spectrum$to_powercepstrum()
-#' cpp <- cepstrum$get_peak_prominence()
 #' }
 #'
 #' @name PowerCepstrum

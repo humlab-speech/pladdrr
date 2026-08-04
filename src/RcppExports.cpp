@@ -1603,6 +1603,43 @@ RcppExport SEXP _pladdrr_formant_get_value_at_time(SEXP formantSEXP, SEXP forman
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// formant_get_all_values_at_time
+Rcpp::NumericVector formant_get_all_values_at_time(Rcpp::XPtr<structFormant> formant, double time, int max_formants, int unit);
+static SEXP _pladdrr_formant_get_all_values_at_time_try(SEXP formantSEXP, SEXP timeSEXP, SEXP max_formantsSEXP, SEXP unitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structFormant> >::type formant(formantSEXP);
+    Rcpp::traits::input_parameter< double >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< int >::type max_formants(max_formantsSEXP);
+    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
+    rcpp_result_gen = Rcpp::wrap(formant_get_all_values_at_time(formant, time, max_formants, unit));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _pladdrr_formant_get_all_values_at_time(SEXP formantSEXP, SEXP timeSEXP, SEXP max_formantsSEXP, SEXP unitSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_pladdrr_formant_get_all_values_at_time_try(formantSEXP, timeSEXP, max_formantsSEXP, unitSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // formant_get_bandwidth_at_time
 double formant_get_bandwidth_at_time(Rcpp::XPtr<structFormant> formant, int formant_number, double time, int unit);
 static SEXP _pladdrr_formant_get_bandwidth_at_time_try(SEXP formantSEXP, SEXP formant_numberSEXP, SEXP timeSEXP, SEXP unitSEXP) {
@@ -11502,6 +11539,7 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("int(*.formant_get_min_num_formants)(Rcpp::XPtr<structFormant>)");
         signatures.insert("int(*.formant_get_max_num_formants)(Rcpp::XPtr<structFormant>)");
         signatures.insert("double(*.formant_get_value_at_time)(Rcpp::XPtr<structFormant>,int,double,int)");
+        signatures.insert("Rcpp::NumericVector(*.formant_get_all_values_at_time)(Rcpp::XPtr<structFormant>,double,int,int)");
         signatures.insert("double(*.formant_get_bandwidth_at_time)(Rcpp::XPtr<structFormant>,int,double,int)");
         signatures.insert("double(*.formant_get_mean)(Rcpp::XPtr<structFormant>,int,double,double,int)");
         signatures.insert("double(*.formant_get_standard_deviation)(Rcpp::XPtr<structFormant>,int,double,double,int)");
@@ -11650,6 +11688,7 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_min_num_formants", (DL_FUNC)_pladdrr_formant_get_min_num_formants_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_max_num_formants", (DL_FUNC)_pladdrr_formant_get_max_num_formants_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_value_at_time", (DL_FUNC)_pladdrr_formant_get_value_at_time_try);
+    R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_all_values_at_time", (DL_FUNC)_pladdrr_formant_get_all_values_at_time_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_bandwidth_at_time", (DL_FUNC)_pladdrr_formant_get_bandwidth_at_time_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_mean", (DL_FUNC)_pladdrr_formant_get_mean_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_standard_deviation", (DL_FUNC)_pladdrr_formant_get_standard_deviation_try);
@@ -11895,6 +11934,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_formant_get_min_num_formants", (DL_FUNC) &_pladdrr_formant_get_min_num_formants, 1},
     {"_pladdrr_formant_get_max_num_formants", (DL_FUNC) &_pladdrr_formant_get_max_num_formants, 1},
     {"_pladdrr_formant_get_value_at_time", (DL_FUNC) &_pladdrr_formant_get_value_at_time, 4},
+    {"_pladdrr_formant_get_all_values_at_time", (DL_FUNC) &_pladdrr_formant_get_all_values_at_time, 4},
     {"_pladdrr_formant_get_bandwidth_at_time", (DL_FUNC) &_pladdrr_formant_get_bandwidth_at_time, 4},
     {"_pladdrr_formant_get_mean", (DL_FUNC) &_pladdrr_formant_get_mean, 5},
     {"_pladdrr_formant_get_standard_deviation", (DL_FUNC) &_pladdrr_formant_get_standard_deviation, 5},

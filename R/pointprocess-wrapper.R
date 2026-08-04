@@ -16,6 +16,7 @@
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
 #' pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 #' jitter <- pp$get_jitter_local()
+#' shimmer <- pp$get_shimmer_local(sound)
 #'
 #' @name PointProcess
 NULL
@@ -134,74 +135,128 @@ NULL
 .pp_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Voice quality (jitter) ---
+# --- Jitter/Shimmer with batch caching ---
+# First call fetches all 11 metrics in one C++ call; subsequent calls return
+# from cache when parameters match.  Shimmer cache includes sound identity.
+
+.pp_methods$._bust_cache <- function(.self) {
+  .self$.jscache <- NULL
+}
+
+.pp_methods$._get_js_batch <- function(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
+  ckey <- paste(from_time, to_time, period_floor, period_ceiling,
+                max_period_factor, max_amplitude_factor,
+                format(sound$.xptr))
+  if (!is.null(.self$.jscache) && .self$.jscache$key == ckey) {
+    return(.self$.jscache$data)
+  }
+  res <- get_jitter_shimmer_batch_cpp(.self$.xptr, sound$.xptr,
+    from_time, to_time, period_floor, period_ceiling,
+    max_period_factor, max_amplitude_factor)
+  .self$.jscache <- list(key = ckey, data = res)
+  res
+}
+
 .pp_methods$get_jitter_local <- function(.self, from_time = 0, to_time = 0,
-                                         period_floor = 0.0001, period_ceiling = 0.02,
-                                         max_period_factor = 1.3) {
-  .pointprocess_get_jitter_local(.self$.xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3) {
+  if (!is.null(.self$.my_scache)) {
+    res <- .pp_methods$._get_js_batch(.self, .self$.my_scache$sound,
+      from_time, to_time, period_floor, period_ceiling, max_period_factor, 1.6)
+    return(res$jitter_local)
+  }
+  .pointprocess_get_jitter_local(.self$.xptr, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor)
 }
 .pp_methods$get_jitter_local_absolute <- function(.self, from_time = 0, to_time = 0,
-                                                   period_floor = 0.0001, period_ceiling = 0.02,
-                                                   max_period_factor = 1.3) {
-  .pointprocess_get_jitter_local_absolute(.self$.xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3) {
+  if (!is.null(.self$.my_scache)) {
+    res <- .pp_methods$._get_js_batch(.self, .self$.my_scache$sound,
+      from_time, to_time, period_floor, period_ceiling, max_period_factor, 1.6)
+    return(res$jitter_local_abs)
+  }
+  .pointprocess_get_jitter_local_absolute(.self$.xptr, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor)
 }
 .pp_methods$get_jitter_rap <- function(.self, from_time = 0, to_time = 0,
-                                       period_floor = 0.0001, period_ceiling = 0.02,
-                                       max_period_factor = 1.3) {
-  .pointprocess_get_jitter_rap(.self$.xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3) {
+  if (!is.null(.self$.my_scache)) {
+    res <- .pp_methods$._get_js_batch(.self, .self$.my_scache$sound,
+      from_time, to_time, period_floor, period_ceiling, max_period_factor, 1.6)
+    return(res$jitter_rap)
+  }
+  .pointprocess_get_jitter_rap(.self$.xptr, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor)
 }
 .pp_methods$get_jitter_ppq5 <- function(.self, from_time = 0, to_time = 0,
-                                        period_floor = 0.0001, period_ceiling = 0.02,
-                                        max_period_factor = 1.3) {
-  .pointprocess_get_jitter_ppq5(.self$.xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3) {
+  if (!is.null(.self$.my_scache)) {
+    res <- .pp_methods$._get_js_batch(.self, .self$.my_scache$sound,
+      from_time, to_time, period_floor, period_ceiling, max_period_factor, 1.6)
+    return(res$jitter_ppq5)
+  }
+  .pointprocess_get_jitter_ppq5(.self$.xptr, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor)
 }
 .pp_methods$get_jitter_ddp <- function(.self, from_time = 0, to_time = 0,
-                                       period_floor = 0.0001, period_ceiling = 0.02,
-                                       max_period_factor = 1.3) {
-  .pointprocess_get_jitter_ddp(.self$.xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3) {
+  if (!is.null(.self$.my_scache)) {
+    res <- .pp_methods$._get_js_batch(.self, .self$.my_scache$sound,
+      from_time, to_time, period_floor, period_ceiling, max_period_factor, 1.6)
+    return(res$jitter_ddp)
+  }
+  .pointprocess_get_jitter_ddp(.self$.xptr, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor)
 }
 
 # --- Voice quality (shimmer) ---
 .pp_methods$get_shimmer_local <- function(.self, sound, from_time = 0, to_time = 0,
-                                          period_floor = 0.0001, period_ceiling = 0.02,
-                                          max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_local(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .self$.my_scache <- list(sound = sound)
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_local
 }
 .pp_methods$get_shimmer_local_db <- function(.self, sound, from_time = 0, to_time = 0,
-                                              period_floor = 0.0001, period_ceiling = 0.02,
-                                              max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_local_db(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_local_db
 }
 .pp_methods$get_shimmer_apq3 <- function(.self, sound, from_time = 0, to_time = 0,
-                                          period_floor = 0.0001, period_ceiling = 0.02,
-                                          max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_apq3(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq3
 }
 .pp_methods$get_shimmer_apq5 <- function(.self, sound, from_time = 0, to_time = 0,
-                                          period_floor = 0.0001, period_ceiling = 0.02,
-                                          max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_apq5(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq5
 }
 .pp_methods$get_shimmer_apq11 <- function(.self, sound, from_time = 0, to_time = 0,
-                                           period_floor = 0.0001, period_ceiling = 0.02,
-                                           max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_apq11(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq11
 }
 .pp_methods$get_shimmer_dda <- function(.self, sound, from_time = 0, to_time = 0,
-                                        period_floor = 0.0001, period_ceiling = 0.02,
-                                        max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("First argument must be a Sound object")
-  .pointprocess_get_shimmer_dda(.self$.xptr, sound$.xptr, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
+    period_floor = 0.0001, period_ceiling = 0.02,
+    max_period_factor = 1.3, max_amplitude_factor = 1.6) {
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
+    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_dda
 }
 
 # --- Voice report ---

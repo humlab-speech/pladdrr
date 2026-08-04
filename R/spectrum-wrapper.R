@@ -46,19 +46,14 @@
 #' @return A \code{Spectrum} object with methods for frequency-domain spectral analysis.
 #'
 #' @examples
+#' sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
+#' spectrum <- sound$to_spectrum(fast = FALSE)
+#' cog <- spectrum$get_centre_of_gravity(power = 2.0)
+#' energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
 #' \dontrun{
-#' # Create spectrum from sound
+#' # Create spectrum from external file
 #' sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
 #' spectrum <- sound$to_spectrum(fast = TRUE)
-#' 
-#' # Query spectral properties
-#' cog <- spectrum$get_centre_of_gravity(power = 2.0)
-#' sd <- spectrum$get_standard_deviation(power = 2.0)
-#' 
-#' # Get energy in frequency band
-#' energy_500_2000 <- spectrum$get_band_energy(fmin = 500, fmax = 2000)
-#' 
-#' # Export to data frame
 #' spec_df <- spectrum$as_data_frame()
 #' }
 #'

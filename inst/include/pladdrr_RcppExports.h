@@ -214,6 +214,27 @@ namespace pladdrr {
         return Rcpp::as<double >(rcpp_result_gen);
     }
 
+    inline Rcpp::NumericVector _formant_get_all_values_at_time(Rcpp::XPtr<structFormant> formant, double time, int max_formants, int unit) {
+        typedef SEXP(*Ptr__formant_get_all_values_at_time)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr__formant_get_all_values_at_time p__formant_get_all_values_at_time = NULL;
+        if (p__formant_get_all_values_at_time == NULL) {
+            validateSignature("Rcpp::NumericVector(*_formant_get_all_values_at_time)(Rcpp::XPtr<structFormant>,double,int,int)");
+            p__formant_get_all_values_at_time = (Ptr__formant_get_all_values_at_time)R_GetCCallable("pladdrr", "_pladdrr__formant_get_all_values_at_time");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p__formant_get_all_values_at_time(Shield<SEXP>(Rcpp::wrap(formant)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(max_formants)), Shield<SEXP>(Rcpp::wrap(unit)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::NumericVector >(rcpp_result_gen);
+    }
+
     inline double _formant_get_bandwidth_at_time(Rcpp::XPtr<structFormant> formant, int formant_number, double time, int unit) {
         typedef SEXP(*Ptr__formant_get_bandwidth_at_time)(SEXP,SEXP,SEXP,SEXP);
         static Ptr__formant_get_bandwidth_at_time p__formant_get_bandwidth_at_time = NULL;
