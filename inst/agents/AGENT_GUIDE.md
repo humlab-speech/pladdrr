@@ -1,9 +1,15 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.15 guide refresh (2026-07-31)
+**Version:** 4.9.16 guide refresh (2026-08-04)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 4.9.15. Shared-dispatch wrappers + threaded Praat backend + optional xsimd acceleration + public `pladdrr_simd()` runtime toggle + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance (`src/praat/` removed) + current CPPS/CPP usage notes.
-- **v4.9.15 — `Pitch$new` / missing `to_formant` alias fixed; 16 stale test failures resolved:** `sound_to_pitch_batch()`, `sound_to_pitch_ac_batch()`, `sound_to_pitch_cc_batch()`, and `sound_extract_and_pitch()` called `Pitch$new(.xptr = ptr)` under default `return_r6 = TRUE`, but `Pitch` is a plain constructor, not an R6 generator — silently broke these functions; fixed to `Pitch(.xptr = ptr)`. `sound$to_formant()` had no default-algorithm alias (only suffixed variants existed), silently breaking `extract_formant_parallel()`; added as alias for `to_formant_burg`, matching the `to_pitch` pattern. Also fixed 16 pre-existing stale-API test failures across `test-phase3-mfcc-simd.R`, `test-performance-enhancements.R`, `test-batch-queries.R`, `test-tier4-ultra.R` (test-only, no production code).
+**Status:** Current through package 4.9.16. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`).
+- **v4.9.16 — SIMD enabled at build time; macOS parallelism fix; code cleanup (2026-08-04 assessment):**
+  - **SIMD now compiled by default:** `-DHAVE_XSIMD` added to `PKG_CPPFLAGS` in `Makevars.in`/`Makevars`. All 32 SIMD files (previously dead code gated behind `#ifdef HAVE_XSIMD`) are now active. Runtime detection via xsimd selects best instruction set per architecture (NEON on arm64, AVX2/SSE4.2 on x86_64). SIMD regression tests pass bit-identically (0 failures, 23 passes). `simd_info()` shows actual architecture at runtime.
+  - **macOS parallel-batch fix:** `analyze_files_parallel()` now uses PSOCK clusters on macOS (`Sys.info()[["sysname"]] == "Darwin"`) instead of `mclapply()`, avoiding fork event-loop issues. Linux and Windows paths unchanged.
+  - **Rename `num_stubs.cpp` → `melderthread_impl.cpp`:** The file contained the real `MelderThread` implementation (not stubs). Renamed for clarity. All 3 Makevars files + `praat_app_stubs.cpp` references updated.
+  - **Deleted `sound_module_poc.cpp`:** 1,197-line proof-of-concept duplicating `modules/sound_module.cpp`. Removed from build.
+  - **Unified SIMD bridge header:** New `src/simd_bridge.h` provides `simd_bridge_stat<T>()` and `simd_bridge_binary<T>()` templates for the repeated pattern across 6 bridge files (R vector → 1-indexed C array → SIMD fn → return). Reduces ~2,500 lines of future boilerplate.
+  - **Documentation:** 17 R6 class wrapper files now have `@return` tags. Self-contained runnable examples added to Formant, Intensity, PointProcess, Spectrogram (using `Sound$create_tone()` — executable during `R CMD check`). README spelling errors fixed (14 typos).
 - **v4.9.14 — SIMD batch-query bridge functions restored to public API; stale CPPS test fixed:** 8 `*_simd_bridge` functions in `batch_queries_simd_bridge.cpp` (`calculate_mean_simd_bridge` etc.) were implemented and compiled correctly but missing from `NAMESPACE` — `// [[Rcpp::export]]` tags had no `//' @export` roxygen comment, so `roxygen2::document()` silently dropped them. Added the missing tags and regenerated `NAMESPACE`/`RcppExports.R`. Also fixed `tests/testthat/test-cpps-defaults.R`, which still asserted the pre-v4.9.10 `max_quefrency`/`tilt_line_quefrency` defaults.
 - **v4.9.13 — `voice_report()` arg-order bug fixed; Tier 4 Ultra algorithm choices documented:** `PointProcess$voice_report()` passed xptrs in the wrong order and exposed `period_floor`/`period_ceiling` params with no C++ counterpart, silently corrupting jitter/shimmer/voice-break output; signature corrected to `silence_threshold`/`voicing_threshold`. `get_voice_quality_ultra()` gains `pitch_method = "periodic_cc"` as an alias for `pitch_method = "ac", very_accurate = FALSE`. See "Tier 4 Ultra: Hardcoded Algorithm Choices" below for the full per-function algorithm audit.
 - **v4.9.11 — `get_voice_quality_ultra()` gains `pitch_method`/`very_accurate`:** opt-in args let callers request Praat's `Sound_to_Pitch_rawAc` path instead of the hardcoded `Sound_to_Pitch_rawCc(veryAccurate=TRUE)`. Also fixes a `CallEntries[]` regression where `Rcpp::compileAttributes()` reverts `extern`→`static`, breaking dynamic symbol lookup; `tools/check_callentries.sh` now self-heals this in `configure`.
@@ -2900,7 +2906,13 @@ batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TR
 
 ### SIMD Information
 
-Check SIMD acceleration capabilities:
+SIMD acceleration is **enabled at build time** (`-DHAVE_XSIMD` in `Makevars.in`). Runtime
+detection selects the best instruction set per architecture (NEON on arm64, AVX2/SSE4.2
+on x86_64). All 32 SIMD files in `src/` are active; output is bit-identical to scalar paths.
+A new bridge header `src/simd_bridge.h` provides `simd_bridge_stat<T>()` and
+`simd_bridge_binary<T>()` templates for the common R→C SIMD adapter pattern.
+
+Check capabilities:
 
 ```r
 info <- simd_info()
@@ -2911,9 +2923,12 @@ info <- simd_info()
 # - SSE4.2: 2 doubles/operation (older x86_64)
 # - NEON: 2 doubles/operation (ARM/Apple Silicon)
 
-# Disable SIMD for testing
+# Disable SIMD at runtime for testing
 pladdrr_simd(FALSE)
 ```
+
+New SIMD functions should follow the bridge template in `simd_bridge.h` rather than
+copying the R→C array conversion pattern manually.
 
 ---
 
@@ -3316,7 +3331,8 @@ Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before
 #### Build System Architecture (v4.9.5+)
 
 **configure** detects two things via `sed` substitution into `Makevars.in`:
-- **RcppXsimd** → `@XSIMD_FLAG@` (becomes `-DHAVE_XSIMD` or empty)
+- **RcppXsimd** → `@XSIMD_FLAG@` (may expand to additional xsimd include paths or flags;
+  `-DHAVE_XSIMD` is now also hardcoded in `PKG_CPPFLAGS` so SIMD is always enabled)
 - **GSL** → `@GSL_CFLAGS@` + `@GSL_LIBS@` (via gsl-config → pkg-config → fallback `-lgsl -lgslcblas`)
 
 **GSL is required.** ~19 GSL functions called from Praat's `NUMspecfunc.cpp`, `NUM2.cpp`, `melder.cpp`. Headers come from Praat's bundled GSL 1.10 at `praat.github.io/external/gsl/`, but implementations link against system GSL.
@@ -7917,7 +7933,7 @@ formant <- sound$to_formant_burg()  # Stable ✅
 **Summary:** Enabled real multi-threading for all Praat parallel operations. Previously, `MelderThread` stubs forced single-threaded execution. Now uses `std::thread` with auto-detected core count. Also added parallelized CPPS smooth and fixed critical C++ parameter defaults.
 
 **What Changed:**
-- `num_stubs.cpp`: Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
+- `melderthread_impl.cpp` (formerly `num_stubs.cpp`): Replaced single-threaded stubs with real `MelderThread_run()` using `std::thread`
 - `MelderThread_getNumberOfProcessors()` returns actual hardware thread count
 - `to_point_process_direct()`: Fixed missing `time_step` arg in fallback path
 - `batch_queries.cpp`: Added `PowerCepstrogram_smooth_fast()` — parallelized smooth using exact `Sampled_getMean` (bit-exact vs Praat). Added `PowerCepstrogram_getCPPS_fast()` wrapper pipeline.

@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-07-31
-**Package Version:** 4.9.15 (branch `cran-warnings-fix`)
+**Last Updated:** 2026-08-04
+**Package Version:** 4.9.16 (branch `perf/assess-fixes`)
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -611,10 +611,10 @@ for (; i <= localMaximumLag; i ++) {
 
 **Summary:** Replaced single-threaded `MelderThread` stubs with a real multi-threaded implementation. All Praat operations that use `MelderThread_PARALLELIZE` (PowerCepstrogram, Pitch, FormantPath) now utilize all CPU cores.
 
-**Root Cause:** `num_stubs.cpp` contained stubs that forced `MelderThread_run()` to execute single-threaded (`threadFunction(0, 1, N)`) and `MelderThread_getNumberOfProcessors()` to return 1. These were originally needed when `MelderThread.cpp` couldn't compile without the `macintosh` platform macro, but they silently disabled all parallelism.
+**Root Cause:** `melderthread_impl.cpp` (formerly `num_stubs.cpp`) contained stubs that forced `MelderThread_run()` to execute single-threaded (`threadFunction(0, 1, N)`) and `MelderThread_getNumberOfProcessors()` to return 1. These were originally needed when `MelderThread.cpp` couldn't compile without the `macintosh` platform macro, but they silently disabled all parallelism.
 
 **Files Modified:**
-- `src/num_stubs.cpp` — Replaced threading stubs (lines 165-200) with real `std::thread`-based `MelderThread_run()`, `MelderThread_computeNumberOfThreads()`, and all supporting functions. Implementation based on `praat.github.io/melder/MelderThread.cpp`.
+- `src/melderthread_impl.cpp` (formerly `src/num_stubs.cpp`) — Replaced threading stubs (lines 165-200) with real `std::thread`-based `MelderThread_run()`, `MelderThread_computeNumberOfThreads()`, and all supporting functions. Implementation based on `praat.github.io/melder/MelderThread.cpp`.
 
 **Impact:** On 10-core Apple Silicon:
 - `Sound_to_PowerCepstrogram`: ~6-7x parallelism (4.7ms wall for 1s audio)
@@ -953,7 +953,7 @@ Authoritative list: `git diff --name-status b1b3199a3..HEAD` in the submodule
 
 Note: `melder/MelderThread.cpp` has **zero net diff** vs upstream (the old
 debug-fprintf edit was superseded); pladdrr's real multi-threaded MelderThread
-implementation lives on the package side in `src/num_stubs.cpp`, not in the
+implementation lives on the package side in `src/melderthread_impl.cpp` (formerly `src/num_stubs.cpp`), not in the
 submodule. Also diverged vs upstream: deleted external-library sources
 (flac/mp3/…, CRAN slimming), `fon/Sound_files.cpp` moved to
 `excluded_sources/Sound_files.cpp` (still compiled — see `SOURCES` in
