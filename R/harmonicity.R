@@ -10,6 +10,8 @@
 #' A Harmonicity object represents the degree of acoustic periodicity (HNR)
 #' in a sound over time, measured in decibels.
 #'
+#' @return A \code{Harmonicity} object with methods for harmonics-to-noise ratio (HNR) analysis.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound$new("recording.wav")

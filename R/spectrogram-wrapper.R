@@ -7,12 +7,12 @@
 #' Praat Spectrogram object for time-frequency representations.
 #' Uses shared dispatch table for minimal memory per object.
 #'
+#' @return A \code{Spectrogram} object with methods for time-frequency spectral analysis.
+#'
 #' @examples
-#' \dontrun{
-#' snd <- Sound$new("audio.wav")
+#' snd <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
 #' spec <- snd$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
-#' power <- spec$get_power_at(time = 0.5, frequency = 1000)
-#' }
+#' power <- spec$get_power_at(time = 0.25, frequency = 440)
 #'
 #' @name Spectrogram
 NULL

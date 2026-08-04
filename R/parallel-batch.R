@@ -92,8 +92,10 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   message(sprintf("Processing %d files using %d cores (%d thread(s)/worker)",
                   length(files), n_cores, tpw))
 
-  # Use mclapply on Unix-like systems, parLapply on Windows
-  if (.Platform$OS.type == "unix") {
+  # Use mclapply on Linux, parLapply on macOS/Windows
+  # macOS fork has known issues with R's event loop; PSOCK is safer
+  is_macos <- Sys.info()[["sysname"]] == "Darwin"
+  if (.Platform$OS.type == "unix" && !is_macos) {
     results <- parallel::mclapply(files, function(f) {
       pladdrr_threads(tpw)
       sound <- Sound(f)

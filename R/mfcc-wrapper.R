@@ -37,6 +37,8 @@
 #' - `$as_data_frame(include_c0)` - Convert to data.frame/data.table
 #' - `$to_matrix()` - Convert to Matrix object
 #'
+#' @return An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound("audio.wav")
@@ -205,6 +207,8 @@ print.MFCC <- function(x, ...) {
 #' LFCCs are similar to MFCCs but use a linear frequency scale instead of
 #' the mel scale. They are derived from LPC analysis and are useful for
 #' speaker recognition tasks.
+#'
+#' @return An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
 #'
 #' @examples
 #' \dontrun{

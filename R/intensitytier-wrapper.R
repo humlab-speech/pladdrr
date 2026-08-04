@@ -6,6 +6,8 @@
 #' IntensityTiers contain discrete time-value pairs representing intensity in dB SPL.
 #' They can be used to modify the amplitude envelope of sounds.
 #'
+#' @return An \code{IntensityTier} object with methods for intensity (dB SPL) manipulation via time-value points.
+#'
 #' @name IntensityTier
 NULL
 

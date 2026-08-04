@@ -41,6 +41,8 @@
 #' These methods remove vocal tract resonances to reveal the voice source (glottal
 #' flow waveform). Essential for voice quality research and vocal fold dynamics.
 #'
+#' @return An \code{LPC} object with methods for linear predictive coding analysis and inverse filtering.
+#'
 #' @examples
 #' \dontrun{
 #' # Load sound

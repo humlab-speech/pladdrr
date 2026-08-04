@@ -6,8 +6,19 @@
 #' Praat Formant object with direct C++ module binding. Formant objects represent
 #' the resonance frequencies of the vocal tract over time.
 #'
+#' @return A \code{Formant} object with methods for querying formant frequencies
+#'   and bandwidths at time points or across the full contour.
+#'
 #' @examples
+#' # Self-contained example with generated tone
+#' sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
+#' formant <- sound$to_formant_burg(
+#'   time_step = 0.01, max_number_of_formants = 5,
+#'   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
+#' )
+#' f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
 #' \dontrun{
+#' # Example with external file
 #' sound <- Sound("example.wav")
 #' formant <- sound$to_formant_burg(
 #'   time_step = 0.01, max_number_of_formants = 5,

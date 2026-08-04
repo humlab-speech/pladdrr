@@ -6,6 +6,8 @@
 #' The cepstrum is the inverse Fourier transform of the logarithm of the spectrum.
 #' Unlike PowerCepstrum, it preserves phase information.
 #'
+#' @return A \code{Cepstrum} object with methods for cepstral analysis and quefrency-domain processing.
+#'
 #' @name Cepstrum
 NULL
 

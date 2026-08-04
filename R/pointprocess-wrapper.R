@@ -10,13 +10,12 @@
 #' **IMPORTANT:** Jitter/shimmer values are returned as decimals (0-1), not percentages.
 #' Multiply by 100 for percentage display.
 #'
+#' @return A \code{PointProcess} object with methods for glottal pulse analysis including jitter and shimmer.
+#'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
 #' pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
 #' jitter <- pp$get_jitter_local()
-#' shimmer <- pp$get_shimmer_local(sound)
-#' }
 #'
 #' @name PointProcess
 NULL

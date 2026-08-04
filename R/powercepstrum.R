@@ -7,6 +7,8 @@
 #' Represents a power cepstrum object from Praat.
 #' Uses shared dispatch table for minimal memory per object.
 #'
+#' @return A \code{PowerCepstrum} object with methods for power cepstrum analysis including CPP measurement.
+#'
 #' @examples
 #' \dontrun{
 #' sound <- Sound$new("voice.wav")
@@ -218,6 +220,8 @@ print.PowerCepstrum <- function(x, ...) x$print()
 #' Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
 #' Uses shared dispatch table for minimal memory per object.
 #' Note: No Rcpp module — uses direct Rcpp function calls.
+#'
+#' @return A \code{PowerCepstrogram} object with methods for time-varying power cepstrum analysis.
 #'
 #' @examples
 #' \dontrun{

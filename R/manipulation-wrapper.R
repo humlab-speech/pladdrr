@@ -7,6 +7,8 @@
 #' The Manipulation object is Praat's main tool for modifying pitch and duration
 #' of speech sounds using PSOLA (Pitch-Synchronous Overlap-Add) resynthesis.
 #'
+#' @return A \code{Manipulation} object with methods for PSOLA-based pitch and duration modification.
+#'
 #' @name Manipulation
 NULL
 

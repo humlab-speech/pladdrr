@@ -6,6 +6,8 @@
 #' A Cochleagram represents the output of a bank of auditory filters arranged
 #' along the basilar membrane. Frequency is measured in Bark units (0-25.6 Bark).
 #'
+#' @return A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
+#'
 #' @name Cochleagram
 NULL
 

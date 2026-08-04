@@ -7,6 +7,8 @@
 #' It automatically identifies outliers and can find the optimal formant ceiling
 #' for a given sound, making it useful for robust formant analysis in noisy speech.
 #'
+#' @return A \code{FormantModeler} object with methods for polynomial modeling of formant trajectories with outlier detection.
+#'
 #' @examples
 #' \dontrun{
 #' formant <- sound$to_formant_burg()

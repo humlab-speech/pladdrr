@@ -43,6 +43,8 @@
 #' * `as_data_frame()` - Export as data.frame (freq, real, imag, power)
 #' * `save(path)` - Save to file
 #'
+#' @return A \code{Spectrum} object with methods for frequency-domain spectral analysis.
+#'
 #' @examples
 #' \dontrun{
 #' # Create spectrum from sound

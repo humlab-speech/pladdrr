@@ -22,8 +22,8 @@
  * but not actually used in library mode.
  * 
  * REMOVED DUPLICATES (2025-12-20):
- * - Site_prefs() - already in num_stubs.cpp
- * - praat_show() - already in num_stubs.cpp
+ * - Site_prefs() - already in melderthread_impl.cpp
+ * - praat_show() - already in melderthread_impl.cpp
  * - UiForm_do(), UiForm_finish(), UiForm_addComment() - already in uiform_stubs.cpp  
  * - folderNames_STRVEC() - provided by real Praat (STRVEC.o)
  * - quote_doubleSTR() - provided by real Praat (STR.o)
@@ -44,14 +44,14 @@ struct structGuiForm;
 struct structStackel;
 struct structEditor;
 
-// REMOVED: Site_prefs() - already in num_stubs.cpp
+// REMOVED: Site_prefs() - already in melderthread_impl.cpp
 
 // Graphics preferences
 void Graphics_prefs () { /* No-op */ }
 void Printer_prefs () { /* No-op */ }
 
 // App control
-// REMOVED: praat_show() - already in num_stubs.cpp
+// REMOVED: praat_show() - already in melderthread_impl.cpp
 // REMOVED: praat_background, praat_foreground - now in praat_actions.cpp
 
 // Picture functions
@@ -163,7 +163,7 @@ void ScriptEditors_reload () { /* No-op */ }
 // Preferences functions not yet added
 void TextEditor_prefs () { /* No-op */ }
 
-// Demo/GUI window functions (Demo_open/Demo_close already in num_stubs.cpp)
+// Demo/GUI window functions (Demo_open/Demo_close already in melderthread_impl.cpp)
 
 // Object list/browser functions  
 void praat_list_renameObject () {

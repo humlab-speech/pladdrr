@@ -7,6 +7,8 @@
 #' over time for voice transformation and synthesis. This is the editable
 #' counterpart to the read-only Formant object.
 #'
+#' @return A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
+#'
 #' @name FormantGrid
 NULL
 

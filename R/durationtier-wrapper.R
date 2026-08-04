@@ -9,6 +9,8 @@
 #' - 2.0 = half speed (doubled duration)
 #' - 0.5 = double speed (halved duration)
 #'
+#' @return A \code{DurationTier} object with methods for duration and tempo manipulation via time-value points.
+#'
 #' @name DurationTier
 NULL
 

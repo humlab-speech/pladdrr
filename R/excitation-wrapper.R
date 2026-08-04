@@ -6,6 +6,8 @@
 #' An Excitation pattern represents the perceptual loudness distribution across
 #' the auditory frequency range, measured in Bark scale.
 #'
+#' @return An \code{Excitation} object with methods for auditory excitation pattern analysis.
+#'
 #' @name Excitation
 NULL
 
