@@ -18,8 +18,14 @@ if (!interactive() && !identical(Sys.getenv("NOT_CRAN"), "true")) {
 }
 
 # Test configuration
-PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
-PLABENCH_DIR <- "/Users/frkkan96/Documents/src/plabench"
+PRAAT_EXEC <- Sys.getenv("PLADDRR_PRAAT_EXEC", unset = NA_character_)
+if (is.na(PRAAT_EXEC)) {
+  skip("Set PLADDRR_PRAAT_EXEC env var to run Praat cross-validation tests")
+}
+PLABENCH_DIR <- Sys.getenv("PLADDRR_PLABENCH_DIR", unset = NA_character_)
+if (is.na(PLABENCH_DIR)) {
+  skip("Set PLADDRR_PLABENCH_DIR env var to run cross-validation tests")
+}
 PRAAT_SCRIPTS_DIR <- file.path(PLABENCH_DIR)
 TEST_DATA_DIR <- file.path(PLABENCH_DIR, "signalfiles")
 

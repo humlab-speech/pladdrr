@@ -14,7 +14,11 @@ cat("QUICK SMOKE TEST\n")
 cat("=============================================================\n\n")
 
 # Configuration
-PLABENCH_DIR <- "/Users/frkkan96/Documents/src/plabench"
+PLABENCH_DIR <- Sys.getenv("PLADDRR_PLABENCH_DIR", unset = NA_character_)
+if (is.na(PLABENCH_DIR)) {
+  cat("SKIP: Set PLADDRR_PLABENCH_DIR env var to run cross-validation tests\n")
+  quit(save = "no", status = 0)
+}
 TEST_DATA_DIR <- file.path(PLABENCH_DIR, "signalfiles")
 
 test_passed <- 0

@@ -13,7 +13,7 @@
 
 library(testthat)
 
-PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
+PRAAT_EXEC <- Sys.getenv("PLADDRR_PRAAT_EXEC", unset = "/Applications/Praat.app/Contents/MacOS/Praat")
 
 skip_if_no_praat <- function() {
   testthat::skip_if_not(file.exists(PRAAT_EXEC),
