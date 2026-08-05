@@ -3,6 +3,9 @@
 \name{Cochleagram}
 \alias{Cochleagram}
 \title{Praat Cochleagram Object}
+\value{
+A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
+}
 \description{
 Praat Cochleagram object with direct C++ module binding for auditory modeling.
 }

@@ -11,3 +11,6 @@ and other multivariate acoustic classification tasks.
 Discriminant analysis is commonly used in phonetics for vowel classification,
 speaker identification, dialect/accent classification, and phoneme recognition.
 }
+\seealso{
+\code{\link{PCA}}, \code{\link{TableOfReal}}
+}

@@ -11,7 +11,7 @@ test_that("SIMD autocorrelation is symmetric", {
   
   # Check if SIMD autocorrelation function is exported
   if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
-    acf_result <- .autocorrelation_simd(data, max_lag = 50)
+    acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 50)
     
     # Lag-0 should be maximum (variance)
     expect_true(acf_result[1] >= max(acf_result[-1]))
@@ -33,7 +33,7 @@ test_that("SIMD autocorrelation handles periodic signals", {
   data <- sin(2 * pi * freq * t)
   
   if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
-    acf_result <- .autocorrelation_simd(data, max_lag = 200)
+    acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 200)
     
     # For periodic signal, autocorrelation should also be periodic
     # Peak at lag 0
@@ -57,7 +57,7 @@ test_that("SIMD normalized autocorrelation is in [-1, 1]", {
   data <- rnorm(1000)
   
   if (exists(".autocorrelation_normalized_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
-    acf_norm <- .autocorrelation_normalized_simd(data, max_lag = 100)
+    acf_norm <- pladdrr:::.autocorrelation_normalized_simd(data, max_lag = 100)
     
     # All values should be in [-1, 1]
     expect_true(all(acf_norm >= -1.0 - 1e-10))
@@ -78,13 +78,13 @@ test_that("SIMD autocorrelation handles edge cases", {
     # Constant signal. This is the *raw* (unnormalized) autocorrelation, so
     # lag k = number of overlapping samples = N - k, i.e. 100, 99, ..., 90.
     data <- rep(1.0, 100)
-    acf_result <- .autocorrelation_simd(data, max_lag = 10)
+    acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 10)
 
     expect_equal(acf_result, as.numeric(100 - (0:10)), tolerance = 1e-10)
     
     # Zero signal
     data <- rep(0.0, 100)
-    acf_result <- .autocorrelation_simd(data, max_lag = 10)
+    acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 10)
     
     # All should be zero
     expect_true(all(abs(acf_result) < 1e-10))
@@ -106,7 +106,7 @@ test_that("SIMD autocorrelation performance scales reasonably", {
     data_small <- rnorm(1000)
     time_small <- system.time({
       for (i in 1:10) {
-        acf_small <- .autocorrelation_simd(data_small, max_lag = 100)
+        acf_small <- pladdrr:::.autocorrelation_simd(data_small, max_lag = 100)
       }
     })["elapsed"]
     
@@ -114,7 +114,7 @@ test_that("SIMD autocorrelation performance scales reasonably", {
     data_medium <- rnorm(10000)
     time_medium <- system.time({
       for (i in 1:10) {
-        acf_medium <- .autocorrelation_simd(data_medium, max_lag = 100)
+        acf_medium <- pladdrr:::.autocorrelation_simd(data_medium, max_lag = 100)
       }
     })["elapsed"]
     

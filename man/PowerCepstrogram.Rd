@@ -3,6 +3,9 @@
 \name{PowerCepstrogram}
 \alias{PowerCepstrogram}
 \title{PowerCepstrogram Class}
+\value{
+A \code{PowerCepstrogram} object with methods for time-varying power cepstrum analysis.
+}
 \description{
 Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
 Uses shared dispatch table for minimal memory per object.

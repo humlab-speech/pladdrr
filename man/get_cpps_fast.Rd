@@ -42,7 +42,12 @@ get_cpps_fast(
 
 \item{trend_line_type}{Character, "straight" or "exponential" (default "straight")}
 
-\item{fit_method}{Character, "robust", "least_squares", or "robust slow" (default "robust")}
+\item{fit_method}{Character, "robust" (Siegel repeated median), "least_squares",
+or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+reproducible**: it samples randomly inside Praat's slope selection, so repeated
+runs on the same input differ (~0.8 dB observed) and can return values on the
+order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
+pladdrr warns once per session when you select it.}
 }
 \value{
 Numeric CPPS value in dB
@@ -58,7 +63,7 @@ from the same PowerCepstrogram object.
 }
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Create cepstrogram once
 pcep_ptr <- to_powercepstrogram_fast(sound)

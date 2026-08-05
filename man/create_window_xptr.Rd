@@ -30,7 +30,7 @@ library(RcppXPtrUtils)
 hamming <- create_window_xptr("hamming")
 
 # Apply to sound
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 windowed <- apply_window_xptr(sound, hamming)
 }
 

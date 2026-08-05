@@ -41,7 +41,7 @@
 #' @examples
 #' \dontrun{
 #' # Load sound and create TextGrid
-#' sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' pitch <- sound$to_pitch()
 #' pp <- pitch$to_point_process()
 #' tg <- pp$to_textgrid_vuv(0.02, 0.01)

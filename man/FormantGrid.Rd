@@ -3,6 +3,9 @@
 \name{FormantGrid}
 \alias{FormantGrid}
 \title{Praat FormantGrid Object}
+\value{
+A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
+}
 \description{
 Praat FormantGrid object with direct C++ module binding for formant manipulation.
 }

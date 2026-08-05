@@ -46,7 +46,12 @@ calculate_cpps_fast(
 
 \item{trend_line_type}{Character, "straight" or "exponential" (default "straight")}
 
-\item{fit_method}{Character, "robust", "least_squares", or "robust slow" (default "robust")}
+\item{fit_method}{Character, "robust" (Siegel repeated median), "least_squares",
+or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+reproducible**: it samples randomly inside Praat's slope selection, so repeated
+runs on the same input differ (~0.8 dB observed) and can return values on the
+order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
+pladdrr warns once per session when you select it.}
 
 \item{cepstrogram_pitch_floor}{Numeric, pitch floor for cepstrogram creation (default 60)}
 
@@ -64,9 +69,8 @@ Computes the smoothed cepstral peak prominence (CPPS, in dB) of a `Sound` —
 a widely used acoustic measure of voice quality/breathiness. It performs the
 whole PowerCepstrogram-then-CPPS pipeline in a single call and returns the
 same value as `sound$to_powercepstrogram(...)$get_cpps(...)` with matching
-parameters, but faster (roughly 1.5-2x), which matters when analysing many
-files. You supply the analysis parameters directly and are responsible for
-passing valid values (see the arguments below).
+parameters. You supply the analysis parameters directly and are responsible
+for passing valid values (see the arguments below).
 }
 \details{
 Use this when analysing many files or in performance-critical pipelines
@@ -82,20 +86,48 @@ interval, convert it to a Spectrum, and call
 `to_power_cepstrum()$get_peak_prominence()` instead. That path is much
 cheaper and is not the same metric.
 }
+\section{Defaults differ from Praat's}{
+
+These defaults follow the AVQI/clinical convention, **not** the defaults of
+Praat's `PowerCepstrogram: Get CPPS...` dialog. On a 1 s test signal the two
+parameter sets give 9.92 dB and 4.82 dB respectively — a different
+measurement, not a rounding difference. Pass the Praat values explicitly to
+reproduce a Praat run:
+
+| parameter | Praat default | pladdrr default |
+|---|---|---|
+| `time_averaging_window` | 0.02 | 0.001 |
+| `quefrency_averaging_window` | 0.0005 | 0.0005 |
+| `pitch_floor` | 60 | 60 |
+| `pitch_ceiling` | 330 | 333.3 |
+| `qstart_fit` | 0.001 | 0.003 |
+| `qend_fit` | 0.05 | 0.04 |
+| `trend_line_type` | `"exponential"` | `"straight"` |
+| `fit_method` | `"robust slow"` | `"robust"` |
+
+The `fit_method` difference is deliberate beyond convention: Praat's
+`"robust slow"` (Theil-Sen) is not reproducible — see the `fit_method`
+argument.
+}
+
 \examples{
-\dontrun{
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# One-call CPPS with the default parameters
-cpps <- calculate_cpps_fast(sound)
+# One-call CPPS with the default (AVQI-convention) parameters
+calculate_cpps_fast(sound)
 
-# Equivalent object-API result (same value, slower)
+# The object API gives the identical value
 pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-cpps_obj <- pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
-                          quefrency_averaging_window = 0.0005,
-                          pitch_floor = 60, pitch_ceiling = 333.3)
-all.equal(cpps, cpps_obj)
+pcep$get_cpps()
 
+# Reproduce Praat's own "Get CPPS..." defaults
+calculate_cpps_fast(sound,
+  time_averaging_window = 0.02, pitch_ceiling = 330,
+  qstart_fit = 0.001, qend_fit = 0.05,
+  trend_line_type = "exponential", fit_method = "least_squares"
+)
+
+\dontrun{
 # Single-interval CPP is a different, cheaper path
 segment <- sound$extract_part(0, 0.5)
 cpp <- segment$to_spectrum()$to_power_cepstrum()$get_peak_prominence(

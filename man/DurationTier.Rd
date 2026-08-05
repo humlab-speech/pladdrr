@@ -3,6 +3,9 @@
 \name{DurationTier}
 \alias{DurationTier}
 \title{Praat DurationTier Object}
+\value{
+A \code{DurationTier} object with methods for duration and tempo manipulation via time-value points.
+}
 \description{
 Praat DurationTier object with direct C++ module binding for duration manipulation.
 }

@@ -57,7 +57,19 @@ SIMD is particularly effective for:
 
 ### Automatic Detection
 
-pladdrr automatically detects and uses SIMD capabilities at **compile time**:
+pladdrr selects its SIMD instruction set at **compile time**, and this is the
+single most important thing to understand about the numbers below:
+
+CRAN policy forbids `-march=native` and `-mavx2`, and pladdrr contains no
+runtime CPU dispatch. A binary built the ordinary way therefore uses only what
+the compiler guarantees for the target ABI:
+
+- **arm64 (Apple Silicon, aarch64 Linux):** NEON, 2 doubles per vector.
+- **x86_64:** SSE2, 2 doubles per vector. **AVX2 and AVX-512 code paths are
+  never reached**, whatever the CPU supports, unless you rebuild from source
+  with your own `~/.R/Makevars` adding `-march=native`.
+
+Check what your installation actually built with:
 
 ```{r simd-info}
 # Get SIMD information
@@ -65,14 +77,43 @@ info <- simd_info()
 print(info)
 ```
 
-### Supported CPU Extensions
+### What you actually get
 
-| Extension | Platform | Year | Typical Speedup |
-|-----------|----------|------|-----------------|
-| **AVX2** | Intel/AMD x86_64 | 2013+ | 2-4x |
-| **AVX-512** | Intel Xeon/AMD EPYC | 2016+ | 4-8x |
-| **NEON** | ARM (Apple Silicon M1/M2/M3) | All | 2-4x |
-| **SSE4.2** | Older Intel/AMD | 2008+ | 1.5-2x |
+| Extension | Reached by a stock CRAN build? | Doubles per vector |
+|-----------|-------------------------------|--------------------|
+| **NEON** | Yes, on all arm64 | 2 |
+| **SSE2** | Yes, on all x86_64 | 2 |
+| **AVX2** | No — needs a source rebuild with `-march=` | 4 |
+| **AVX-512** | No — needs a source rebuild with `-march=` | 8 |
+
+### How much does it help?
+
+Honestly: on arm64, not much. Measured on an M1 Pro (1 s signal,
+single-threaded), toggling `pladdrr_simd()` moves whole-routine wall time by
+between -1% and +6%:
+
+| Routine | SIMD off | SIMD on | Gain |
+|---|---:|---:|---:|
+| `to_pitch()` | 5.73 ms | 5.80 ms | 0.99x |
+| `to_formant_burg()` | 7.64 ms | 7.76 ms | 0.98x |
+| `to_intensity()` | 0.55 ms | 0.52 ms | 1.06x |
+| `to_spectrogram()` | 2.05 ms | 2.00 ms | 1.03x |
+| `to_mfcc()` | 2.91 ms | 2.90 ms | 1.00x |
+| `calculate_cpps_fast()` | 974 ms | 970 ms | 1.00x |
+
+The reason is that whole-analysis runtime is dominated by work SIMD does not
+touch — for CPPS, roughly 94% is the per-frame robust trend fit, which is
+branchy selection code. SIMD pays off in the narrow kernels it covers
+(vector statistics, window application), not in end-to-end analysis time.
+
+Where it *is* visible is in the batch statistics bridges, which operate on
+long plain vectors:
+
+| Operation (1e6 doubles) | base R | pladdrr bridge | Gain |
+|---|---:|---:|---:|
+| mean | 1.98 ms | 0.48 ms | 4.1x |
+| range | 5.15 ms | 0.33 ms | 15.6x |
+| sd | 3.35 ms | 1.16 ms | 2.9x |
 
 ### What Operations Use SIMD?
 
@@ -121,10 +162,9 @@ result <- microbenchmark(
 print(result)
 ```
 
-**Expected results**:
-- **Scalar**: ~10-15 ms per FFT (44100 samples)
-- **SIMD (AVX2)**: ~4-6 ms per FFT (2-3x faster)
-- **SIMD (AVX-512)**: ~2-4 ms per FFT (3-5x faster)
+The FFT itself is pocketfft, not a pladdrr SIMD kernel, so the
+`pladdrr_simd()` toggle does not affect it. Run the chunk above on your own
+hardware rather than relying on a quoted figure.
 
 ### Formant Extraction Performance
 

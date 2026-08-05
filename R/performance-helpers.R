@@ -5,9 +5,30 @@
 #' a widely used acoustic measure of voice quality/breathiness. It performs the
 #' whole PowerCepstrogram-then-CPPS pipeline in a single call and returns the
 #' same value as `sound$to_powercepstrogram(...)$get_cpps(...)` with matching
-#' parameters, but faster (roughly 1.5-2x), which matters when analysing many
-#' files. You supply the analysis parameters directly and are responsible for
-#' passing valid values (see the arguments below).
+#' parameters. You supply the analysis parameters directly and are responsible
+#' for passing valid values (see the arguments below).
+#'
+#' @section Defaults differ from Praat's:
+#' These defaults follow the AVQI/clinical convention, **not** the defaults of
+#' Praat's `PowerCepstrogram: Get CPPS...` dialog. On a 1 s test signal the two
+#' parameter sets give 9.92 dB and 4.82 dB respectively — a different
+#' measurement, not a rounding difference. Pass the Praat values explicitly to
+#' reproduce a Praat run:
+#'
+#' | parameter | Praat default | pladdrr default |
+#' |---|---|---|
+#' | `time_averaging_window` | 0.02 | 0.001 |
+#' | `quefrency_averaging_window` | 0.0005 | 0.0005 |
+#' | `pitch_floor` | 60 | 60 |
+#' | `pitch_ceiling` | 330 | 333.3 |
+#' | `qstart_fit` | 0.001 | 0.003 |
+#' | `qend_fit` | 0.05 | 0.04 |
+#' | `trend_line_type` | `"exponential"` | `"straight"` |
+#' | `fit_method` | `"robust slow"` | `"robust"` |
+#'
+#' The `fit_method` difference is deliberate beyond convention: Praat's
+#' `"robust slow"` (Theil-Sen) is not reproducible — see the `fit_method`
+#' argument.
 #'
 #' @param sound Sound object or external pointer
 #' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default TRUE)
@@ -20,7 +41,12 @@
 #' @param qstart_fit Numeric, quefrency range start for fitting in seconds (default 0.003)
 #' @param qend_fit Numeric, quefrency range end in seconds (default 0.04)
 #' @param trend_line_type Character, "straight" or "exponential" (default "straight")
-#' @param fit_method Character, "robust", "least_squares", or "robust slow" (default "robust")
+#' @param fit_method Character, "robust" (Siegel repeated median), "least_squares",
+#'   or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+#'   reproducible**: it samples randomly inside Praat's slope selection, so repeated
+#'   runs on the same input differ (~0.8 dB observed) and can return values on the
+#'   order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
+#'   pladdrr warns once per session when you select it.
 #' @param cepstrogram_pitch_floor Numeric, pitch floor for cepstrogram creation (default 60)
 #' @param time_step Numeric, time step for cepstrogram in seconds (default 0.002)
 #' @param max_frequency Numeric, max frequency for cepstrogram in Hz (default 5000)
@@ -43,19 +69,23 @@
 #' cheaper and is not the same metric.
 #'
 #' @examples
-#' \dontrun{
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
-#' # One-call CPPS with the default parameters
-#' cpps <- calculate_cpps_fast(sound)
+#' # One-call CPPS with the default (AVQI-convention) parameters
+#' calculate_cpps_fast(sound)
 #'
-#' # Equivalent object-API result (same value, slower)
+#' # The object API gives the identical value
 #' pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
-#' cpps_obj <- pcep$get_cpps(subtract_tilt = TRUE, time_averaging_window = 0.001,
-#'                           quefrency_averaging_window = 0.0005,
-#'                           pitch_floor = 60, pitch_ceiling = 333.3)
-#' all.equal(cpps, cpps_obj)
+#' pcep$get_cpps()
 #'
+#' # Reproduce Praat's own "Get CPPS..." defaults
+#' calculate_cpps_fast(sound,
+#'   time_averaging_window = 0.02, pitch_ceiling = 330,
+#'   qstart_fit = 0.001, qend_fit = 0.05,
+#'   trend_line_type = "exponential", fit_method = "least_squares"
+#' )
+#'
+#' \dontrun{
 #' # Single-interval CPP is a different, cheaper path
 #' segment <- sound$extract_part(0, 0.5)
 #' cpp <- segment$to_spectrum()$to_power_cepstrum()$get_peak_prominence(
@@ -95,6 +125,8 @@ calculate_cpps_fast <- function(
   interpolation <- match.arg(interpolation, names(.interp_map))
   trend_line_type <- match.arg(trend_line_type, names(.cpps_trend_map))
   fit_method <- match.arg(fit_method, names(.trend_fit_map))
+  .check_trend_fit_method(fit_method)
+  .check_quefrency_range(qstart_fit, qend_fit)
 
   # Direct Sound → CPPS path (v4.1.0 optimization)
   # Keeps PowerCepstrogram entirely in C++, no R/C++ boundary crossing
@@ -146,15 +178,14 @@ calculate_cpps_fast <- function(
 #' - Wrapped in R6 PowerCepstrogram object if needed
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
-#' # Fast path: returns external pointer
+#' # Fast path: returns an external pointer, no wrapper object built
 #' pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
 #'
-#' # Can wrap in R6 object if needed
-#' pcep <- PowerCepstrogram$new(xptr = pcep_ptr)
-#' }
+#' # Wrap it when you want the method API
+#' pcep <- PowerCepstrogram(.xptr = pcep_ptr)
+#' pcep$get_cpps()
 #'
 #' @export
 to_powercepstrogram_fast <- function(sound,
@@ -196,7 +227,12 @@ to_powercepstrogram_fast <- function(sound,
 #' @param qstart_fit Numeric, quefrency range start for fitting in seconds (default 0.001)
 #' @param qend_fit Numeric, quefrency range end in seconds (default 0, means auto)
 #' @param trend_line_type Character, "straight" or "exponential" (default "straight")
-#' @param fit_method Character, "robust", "least_squares", or "robust slow" (default "robust")
+#' @param fit_method Character, "robust" (Siegel repeated median), "least_squares",
+#'   or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+#'   reproducible**: it samples randomly inside Praat's slope selection, so repeated
+#'   runs on the same input differ (~0.8 dB observed) and can return values on the
+#'   order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
+#'   pladdrr warns once per session when you select it.
 #'
 #' @return Numeric CPPS value in dB
 #'
@@ -208,7 +244,7 @@ to_powercepstrogram_fast <- function(sound,
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' # Create cepstrogram once
 #' pcep_ptr <- to_powercepstrogram_fast(sound)
@@ -241,6 +277,8 @@ get_cpps_fast <- function(
   interpolation <- match.arg(interpolation, names(.interp_map))
   trend_line_type <- match.arg(trend_line_type, names(.cpps_trend_map))
   fit_method <- match.arg(fit_method, names(.trend_fit_map))
+  .check_trend_fit_method(fit_method)
+  .check_quefrency_range(qstart_fit, qend_fit)
 
   .powercepstrogram_get_cpps(
     powercepstrogram,
@@ -305,7 +343,7 @@ get_cpps_fast <- function(
 #' checkXPtr(gauss_window, "double", "double")
 #'
 #' # Apply to sound (70x faster than R function)
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' windowed <- apply_window_xptr(sound, gauss_window)
 #' }
 #'
@@ -373,7 +411,7 @@ apply_window_xptr <- function(sound, window_func) {
 #' )
 #'
 #' # Apply to sound (70x faster than R function)
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' clipped <- apply_transform_xptr(sound, soft_clip)
 #' }
 #'
@@ -426,7 +464,7 @@ apply_transform_xptr <- function(sound, transform_func) {
 #' hamming <- create_window_xptr("hamming")
 #'
 #' # Apply to sound
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' windowed <- apply_window_xptr(sound, hamming)
 #' }
 #'
@@ -479,10 +517,14 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' Calculate CPPS with Optimized Single-Call (Tier 4 Ultra)
 #'
 #' @description
-#' Optimized CPPS calculation that consolidates PowerCepstrogram creation and
-#' CPPS extraction in a single C++ call. Eliminates intermediate R6 object
-#' creation and reduces R/C++ boundary crossings. 2-3x faster than 
-#' \code{calculate_cpps_fast()} for AVQI applications.
+#' Computes CPPS from a `Sound` in a single C++ call, building the
+#' PowerCepstrogram internally so no intermediate R object is created.
+#'
+#' Returns the same value as \code{calculate_cpps_fast()} and as
+#' \code{sound$to_powercepstrogram(...)$get_cpps(...)}. Measured on a 1 s
+#' signal the three paths are within 2% of each other (~170 ms each): the
+#' R/C++ boundary costs microseconds while the trend fit dominates, so pick
+#' whichever reads best at the call site.
 #'
 #' @param sound Sound object or external pointer
 #' @param time_averaging_window Time averaging window in seconds (default 0.001)
@@ -498,28 +540,26 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
 #'   (default 0.003).
 #' @param line_type Trend line type: "straight" or "exponential" (default "straight")
-#' @param fit_method Fitting method: "robust", "least_squares", or "robust slow" (default "robust")
-#' @param fused Logical, use fused CPPS pipeline that reuses per-frame trends
-#'   for ~2x faster computation. Only active when fit_method="robust" and
-#'   subtract_trend=TRUE. Falls back to standard two-pass path otherwise.
-#'   Default FALSE (bit-exact with Praat); TRUE trades bit-exactness for speed.
+#' @param fit_method Fitting method: "robust" (Siegel repeated median),
+#'   "least_squares", or "robust slow" (Theil-Sen). Default "robust".
+#'   **"robust slow" is not reproducible** — see `calculate_cpps_fast()`.
 #'
 #' @return Numeric CPPS value in dB
 #'
 #' @details
-#' **TIER 4 ULTRA API - Maximum Performance**
+#' Implements the complete CPPS pipeline in one C++ call, following the approach
+#' used in AVQI v2.03 and v3.01: PowerCepstrogram creation and CPPS extraction
+#' are consolidated, and no intermediate R object is allocated.
 #'
-#' This function implements the complete CPPS calculation pipeline in a single
-#' C++ call, following the approach used in AVQI v2.03 and v3.01. It is 
-#' significantly faster than \code{calculate_cpps_fast()} by:
-#' - Consolidating PowerCepstrogram creation + CPPS extraction
-#' - Reducing parameter validation overhead
-#' - Eliminating intermediate object allocations
+#' This does **not** make it meaningfully faster than the other CPPS entry
+#' points. Roughly 94% of CPPS runtime is the per-frame robust trend fit
+#' (`SlopeSelector::getSlope_Siegel`), which every path shares; the boundary
+#' crossings the consolidation removes cost microseconds. Treat the choice as a
+#' matter of call-site convenience, not performance.
 #'
-#' **Performance Comparison:**
-#' - Standard API (Sound$to_powercepstrogram() + get_cpps()): ~4000ms
-#' - Tier 3 (calculate_cpps_fast()): ~2000ms
-#' - Tier 4 (calculate_cpps_ultra()): ~1500ms (2.7x speedup)
+#' The defaults here match \code{calculate_cpps_fast()} and therefore also
+#' deviate from Praat's dialog defaults — see the "Defaults differ from Praat's"
+#' section of \code{\link{calculate_cpps_fast}}.
 #'
 #' This is still a **CPPS** helper. For a single-interval **CPP** measurement,
 #' use the segment's `Spectrum -> PowerCepstrum -> get_peak_prominence()` path
@@ -543,7 +583,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' # Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
 #' cpps <- calculate_cpps_ultra(sound)
@@ -567,12 +607,11 @@ calculate_cpps_ultra <- function(
   max_quefrency = 0.04,                 # BUG FIX v4.9.10: was 0.05, C++ ignored it and hardcoded 0.04
   tolerance = 0.05,
   interpolation = "parabolic",
-  tilt_line_quefrency = 0.003,          # BUG FIX v4.9.10: was 0.001, C++ ignored it and hardcoded 0.003
-  line_type = "straight",               # BUG FIX v4.6.4: match calculate_cpps_fast (was "exponential")
+  tilt_line_quefrency = 0.003,
+  line_type = "straight",
   fit_method = "robust",
   pre_emphasis_from = 50,
-  max_frequency = 5000,
-  fused = FALSE
+  max_frequency = 5000
 ) {
   # Extract pointer if R6 object
   sound_ptr <- if (inherits(sound, "Sound")) {
@@ -587,6 +626,9 @@ calculate_cpps_ultra <- function(
   interpolation <- match.arg(interpolation, names(.interp_map))
   line_type <- match.arg(line_type, names(.cpps_trend_map))
   fit_method <- match.arg(fit_method, names(.trend_fit_map))
+  .check_trend_fit_method(fit_method)
+  .check_quefrency_range(tilt_line_quefrency, max_quefrency,
+                         "tilt_line_quefrency", "max_quefrency")
 
   # Single C++ call for entire CPPS calculation
   # BUG FIX (v4.6.4): Added pre_emphasis_from and max_frequency parameters
@@ -607,8 +649,7 @@ calculate_cpps_ultra <- function(
     as.integer(.cpps_trend_map[[line_type]]),
     as.integer(.trend_fit_map[[fit_method]]),
     as.numeric(pre_emphasis_from),
-    as.numeric(max_frequency),
-    as.logical(fused)
+    as.numeric(max_frequency)
   )
 }
 
@@ -654,7 +695,6 @@ calculate_cpps_ultra <- function(
 #'
 #' **Performance Impact:**
 #' - Standard R approach: ~8000ms (5-20 interval loops + 50-200 window loops)
-#' - Tier 4 Ultra: ~2000-4000ms (2-4x speedup)
 #' - Moves AVQI from 1.94x to 1.2x vs Python (competitive)
 #'
 #' **Version Differences:**
@@ -672,7 +712,7 @@ calculate_cpps_ultra <- function(
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' # AVQI v3.01 (default, with ZCR filtering)
 #' voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")
@@ -754,7 +794,7 @@ extract_voiced_segments_ultra <- function(
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_full <- multiband_hnr_stats(built)
@@ -825,7 +865,7 @@ build_multiband_harmonicity <- function(
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)
@@ -895,7 +935,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' hnr_results <- calculate_multiband_hnr_ultra(sound)
 #' hnr_results$full_mean

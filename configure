@@ -3,17 +3,18 @@
 # Configure script for pladdrr package
 # Detects: RcppXsimd (SIMD support), GSL (GNU Scientific Library)
 
-# ---- RcppXsimd detection ----
+# ---- RcppXsimd check ----
+# RcppXsimd is a LinkingTo dependency, so its headers must be present for the
+# build to run at all; -DHAVE_XSIMD is set unconditionally in Makevars.in. This
+# check exists only to turn a wall of missing-header errors into one clear message.
 
-XSIMD_FLAG=""
 echo "Checking for RcppXsimd..."
-if "${R_HOME}/bin/Rscript" -e "if (!requireNamespace('RcppXsimd', quietly = TRUE)) quit(status = 1)" 2>/dev/null; then
-  echo "  RcppXsimd found — enabling SIMD optimizations"
-  XSIMD_FLAG="-DHAVE_XSIMD"
-else
-  echo "  RcppXsimd not found — SIMD optimizations disabled"
-  echo "  Install RcppXsimd for better performance: install.packages('RcppXsimd')"
+if ! "${R_HOME}/bin/Rscript" -e "if (!requireNamespace('RcppXsimd', quietly = TRUE)) quit(status = 1)" 2>/dev/null; then
+  echo "  ERROR: RcppXsimd not found, but it is a LinkingTo dependency."
+  echo "  Install it first: install.packages('RcppXsimd')"
+  exit 1
 fi
+echo "  RcppXsimd found"
 
 # ---- GSL detection ----
 # Try gsl-config first (standard), then pkg-config, then fallback
@@ -57,8 +58,7 @@ fi
 
 # ---- Substitute into Makevars ----
 
-sed -e "s|@XSIMD_FLAG@|${XSIMD_FLAG}|" \
-    -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+sed -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
     -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
     src/Makevars.in > src/Makevars
 

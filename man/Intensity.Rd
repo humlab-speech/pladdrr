@@ -3,20 +3,58 @@
 \name{Intensity}
 \alias{Intensity}
 \title{Praat Intensity Object}
+\value{
+An \code{Intensity} object with methods for querying intensity values
+  (in dB) at time points or across the full contour.
+}
 \description{
-Praat Intensity object (sound power/loudness) with direct C++ module binding.
+Intensity objects represent sound power (loudness) over time, measured in
+decibels (dB) relative to the auditory threshold. Created from a Sound using
+intensity contour extraction.
 }
-\details{
-An Intensity object represents the sound power or loudness in a sound over time,
-measured in decibels (dB) relative to the auditory threshold.
+\section{Methods}{
+
+
+**Information:**
+* `get_duration()` — Duration of the intensity contour (s)
+* `get_time_step()` — Time step between frames (s)
+
+**Point queries:**
+* `get_value_at_time(time, interpolation)` — Intensity at time point (dB)
+* `get_values_at_times(times, interpolation)` — Intensity at vector of times (batch)
+
+**Statistics (over time range):**
+* `get_mean(from_time, to_time, averaging_method)` — Mean intensity (dB)
+* `get_standard_deviation(from_time, to_time)` — Standard deviation (dB)
+* `get_minimum(from_time, to_time, interpolation)` — Minimum intensity
+* `get_maximum(from_time, to_time, interpolation)` — Maximum intensity
+* `get_quantile(quantile, from_time, to_time)` — Quantile
+* `get_time_of_minimum(...)` / `get_time_of_maximum(...)` — Time of extremum
+
+**Export:**
+* `as_vector()` — Raw intensity values (dB)
+* `as_data_frame()` — Export as data.frame (time, intensity)
+* `save(filepath)` — Save to Praat binary file
 }
+
+\section{Interpolation}{
+
+Codes: `"nearest"` (0), `"linear"` (1), `"cubic"` (2, default), `"sinc70"` (3), `"sinc700"` (4).
+Averaging methods: `"energy"` (0, default), `"sones"` (1), `"db"` (2).
+}
+
 \examples{
+sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
+intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
+mean_int <- intensity$get_mean()
+df <- intensity$as_data_frame()
 \dontrun{
 sound <- Sound("recording.wav")
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
-mean_int <- intensity$get_mean()
 int_at_1s <- intensity$get_value_at_time(1.0)
-df <- intensity$as_data_frame()
 }
 
+}
+\seealso{
+\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{IntensityTier}}
 }

@@ -51,7 +51,7 @@ Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
 
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 hnr_results <- calculate_multiband_hnr_ultra(sound)
 hnr_results$full_mean

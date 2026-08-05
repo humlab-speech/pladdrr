@@ -182,8 +182,9 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
   if (!inherits(pitch, "Pitch")) {
     stop("pitch must be a Pitch object")
   }
-  
-  
+
+  unit_code <- unit_to_code(unit, "pitch")
+
   pitch_get_strengths_at_times(
     pitch$.xptr,
     times,

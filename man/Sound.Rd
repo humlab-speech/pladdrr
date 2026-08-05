@@ -4,7 +4,8 @@
 \alias{Sound}
 \title{Sound}
 \arguments{
-\item{path}{Path to audio file (native: WAV/AIFF/FLAC/MP3/NIST, fallback: av for unsupported formats)}
+\item{path}{Path to an audio file. Read natively for WAV/AIFF/AIFC/NIST/NeXT;
+FLAC, MP3 and other formats are read through the suggested `av` package.}
 
 \item{.xptr}{Internal use only - external pointer to C++ Sound object}
 }
@@ -20,9 +21,17 @@ This is the entry point for most acoustic analyses in pladdrr.
 }
 \section{File I/O}{
 
-The Sound constructor reads audio files using:
-1. **Native Praat reader** (primary): WAV, AIFF, AIFC, FLAC, MP3, NIST, NeXT/Sun
-2. **av package fallback**: Only used for formats Praat doesn't support (OGG Vorbis, etc.)
+The Sound constructor tries two readers in order:
+
+1. **Native Praat reader** — WAV, AIFF, AIFC, NIST, NeXT/Sun. No extra
+   packages needed, and the fastest path.
+2. **`av` package fallback** — everything else, including **FLAC, MP3** and
+   OGG Vorbis. The FLAC and MP3 decoder sources were dropped from the
+   vendored Praat tree in v4.9.5 to keep the CRAN tarball within limits, so
+   those formats need `av` installed (`install.packages("av")`). Without it,
+   reading a FLAC or MP3 file raises an error naming the missing package.
+
+Convert to WAV up front if you want to avoid the dependency entirely.
 }
 
 \section{Usage}{

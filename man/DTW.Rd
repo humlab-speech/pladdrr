@@ -94,3 +94,6 @@ warped_tg <- dtw$warp_textgrid(tg)
 }
 
 }
+\seealso{
+\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
+}

@@ -3,6 +3,9 @@
 \name{IntensityTier}
 \alias{IntensityTier}
 \title{Praat IntensityTier Object}
+\value{
+An \code{IntensityTier} object with methods for intensity (dB SPL) manipulation via time-value points.
+}
 \description{
 Praat IntensityTier object with direct C++ module binding for intensity manipulation.
 }

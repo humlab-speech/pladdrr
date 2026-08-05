@@ -38,24 +38,20 @@ calculate_cpps_ultra(
 \item{time_step}{Time step for cepstrogram in seconds (default 0.002)}
 
 \item{max_quefrency}{End of the trend-fit quefrency window in seconds (default
-0.04); 0 means autowindow to the full quefrency range (Praat convention).
-BUG FIX v4.9.10: previously declared but silently ignored by the C++ core,
-which hardcoded the fit window to [0.003, 0.04] regardless of this and
-tilt_line_quefrency -- e.g. AVQI's needed [0.001, 0] window was never
-applied, pulling CPPS off Praat by ~0.3 dB. Now honored; pass explicit
-qstart/qend to reproduce a specific Praat "Get CPPS" call, same as
-\code{calculate_cpps_fast()}'s qstart_fit/qend_fit.}
+0.04); 0 means autowindow to the full quefrency range (Praat convention).}
 
 \item{tolerance}{Tolerance for peak detection (default 0.05)}
 
 \item{interpolation}{Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")}
 
 \item{tilt_line_quefrency}{Start of the trend-fit quefrency window in seconds
-(default 0.003). BUG FIX v4.9.10: see max_quefrency.}
+(default 0.003).}
 
 \item{line_type}{Trend line type: "straight" or "exponential" (default "straight")}
 
-\item{fit_method}{Fitting method: "robust", "least_squares", or "robust slow" (default "robust")}
+\item{fit_method}{Fitting method: "robust" (Siegel repeated median),
+"least_squares", or "robust slow" (Theil-Sen). Default "robust".
+**"robust slow" is not reproducible** — see `calculate_cpps_fast()`.}
 
 \item{pre_emphasis_from}{Pre-emphasis frequency in Hz for the cepstrogram (default 50).}
 
@@ -65,25 +61,29 @@ qstart/qend to reproduce a specific Praat "Get CPPS" call, same as
 Numeric CPPS value in dB
 }
 \description{
-Optimized CPPS calculation that consolidates PowerCepstrogram creation and
-CPPS extraction in a single C++ call. Eliminates intermediate R6 object
-creation and reduces R/C++ boundary crossings. 2-3x faster than 
-\code{calculate_cpps_fast()} for AVQI applications.
+Computes CPPS from a `Sound` in a single C++ call, building the
+PowerCepstrogram internally so no intermediate R object is created.
+
+Returns the same value as \code{calculate_cpps_fast()} and as
+\code{sound$to_powercepstrogram(...)$get_cpps(...)}. Measured on a 1 s
+signal the three paths are within 2% of each other (~170 ms each): the
+R/C++ boundary costs microseconds while the trend fit dominates, so pick
+whichever reads best at the call site.
 }
 \details{
-**TIER 4 ULTRA API - Maximum Performance**
+Implements the complete CPPS pipeline in one C++ call, following the approach
+used in AVQI v2.03 and v3.01: PowerCepstrogram creation and CPPS extraction
+are consolidated, and no intermediate R object is allocated.
 
-This function implements the complete CPPS calculation pipeline in a single
-C++ call, following the approach used in AVQI v2.03 and v3.01. It is 
-significantly faster than \code{calculate_cpps_fast()} by:
-- Consolidating PowerCepstrogram creation + CPPS extraction
-- Reducing parameter validation overhead
-- Eliminating intermediate object allocations
+This does **not** make it meaningfully faster than the other CPPS entry
+points. Roughly 94% of CPPS runtime is the per-frame robust trend fit
+(`SlopeSelector::getSlope_Siegel`), which every path shares; the boundary
+crossings the consolidation removes cost microseconds. Treat the choice as a
+matter of call-site convenience, not performance.
 
-**Performance Comparison:**
-- Standard API (Sound$to_powercepstrogram() + get_cpps()): ~4000ms
-- Tier 3 (calculate_cpps_fast()): ~2000ms
-- Tier 4 (calculate_cpps_ultra()): ~1500ms (2.7x speedup)
+The defaults here match \code{calculate_cpps_fast()} and therefore also
+deviate from Praat's dialog defaults — see the "Defaults differ from Praat's"
+section of \code{\link{calculate_cpps_fast}}.
 
 This is still a **CPPS** helper. For a single-interval **CPP** measurement,
 use the segment's `Spectrum -> PowerCepstrum -> get_peak_prominence()` path
@@ -109,7 +109,7 @@ Ultra functions.
 
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
 cpps <- calculate_cpps_ultra(sound)

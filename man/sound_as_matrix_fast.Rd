@@ -23,7 +23,7 @@ pointer access.
 }
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 mat <- sound_as_matrix_fast(sound)
 }
 

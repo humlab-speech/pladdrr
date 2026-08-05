@@ -9,7 +9,7 @@ test_that("SIMD Hamming window has correct properties", {
     n <- 256
     data <- rep(1.0, n)  # Unit signal
     
-    windowed <- .apply_hamming_window_simd(data)
+    windowed <- pladdrr:::.apply_hamming_window_simd(data)
     
     # Window should have correct length
     expect_equal(length(windowed), n)
@@ -37,7 +37,7 @@ test_that("SIMD Hanning window has correct properties", {
     n <- 256
     data <- rep(1.0, n)
     
-    windowed <- .apply_hanning_window_simd(data)
+    windowed <- pladdrr:::.apply_hanning_window_simd(data)
     
     # Window should have correct length
     expect_equal(length(windowed), n)
@@ -66,7 +66,7 @@ test_that("SIMD Gaussian window has correct shape", {
     data <- rep(1.0, n)
     alpha <- 2.5
     
-    windowed <- .apply_gaussian_window_simd(data, alpha)
+    windowed <- pladdrr:::.apply_gaussian_window_simd(data, alpha)
     
     # Gaussian window properties
     expect_equal(length(windowed), n)
@@ -93,7 +93,7 @@ test_that("SIMD Blackman window has correct properties", {
     n <- 256
     data <- rep(1.0, n)
     
-    windowed <- .apply_blackman_window_simd(data)
+    windowed <- pladdrr:::.apply_blackman_window_simd(data)
     
     # Blackman window endpoints near zero
     expect_true(windowed[1] < 0.01)
@@ -119,7 +119,7 @@ test_that("SIMD window functions preserve DC component correctly", {
     amplitude <- 2.5
     data <- rep(amplitude, n)
     
-    windowed <- .apply_hamming_window_simd(data)
+    windowed <- pladdrr:::.apply_hamming_window_simd(data)
     
     # Windowed signal should have values scaled by window
     expect_true(max(windowed) <= amplitude)
@@ -139,22 +139,22 @@ test_that("SIMD window functions handle different sizes", {
   if (exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
     # Small window
     data_small <- rep(1.0, 32)
-    windowed_small <- .apply_hamming_window_simd(data_small)
+    windowed_small <- pladdrr:::.apply_hamming_window_simd(data_small)
     expect_equal(length(windowed_small), 32)
     
     # Medium window
     data_medium <- rep(1.0, 512)
-    windowed_medium <- .apply_hamming_window_simd(data_medium)
+    windowed_medium <- pladdrr:::.apply_hamming_window_simd(data_medium)
     expect_equal(length(windowed_medium), 512)
     
     # Large window
     data_large <- rep(1.0, 4096)
-    windowed_large <- .apply_hamming_window_simd(data_large)
+    windowed_large <- pladdrr:::.apply_hamming_window_simd(data_large)
     expect_equal(length(windowed_large), 4096)
     
     # Odd size
     data_odd <- rep(1.0, 511)
-    windowed_odd <- .apply_hamming_window_simd(data_odd)
+    windowed_odd <- pladdrr:::.apply_hamming_window_simd(data_odd)
     expect_equal(length(windowed_odd), 511)
   } else {
     skip("SIMD Hamming window function not exported")
@@ -170,7 +170,7 @@ test_that("SIMD window functions handle real signals", {
     t <- seq(0, 1, length.out = 512)
     signal <- sin(2 * pi * 50 * t)
     
-    windowed <- .apply_hamming_window_simd(signal)
+    windowed <- pladdrr:::.apply_hamming_window_simd(signal)
     
     # Should taper signal at edges
     expect_true(abs(windowed[1]) < abs(signal[256]))

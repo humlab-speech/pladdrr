@@ -25,7 +25,7 @@ cheap query step for repeated interval workflows.
 }
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 built <- build_multiband_harmonicity(sound)
 hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)

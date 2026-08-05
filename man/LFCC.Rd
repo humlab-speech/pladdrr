@@ -3,6 +3,9 @@
 \name{LFCC}
 \alias{LFCC}
 \title{Praat LFCC Object}
+\value{
+An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
+}
 \description{
 Linear Frequency Cepstral Coefficients for speaker recognition.
 Uses shared dispatch table for minimal memory per object.
@@ -21,4 +24,7 @@ coefs <- lfcc$get_all_coefficients()
 lpc2 <- lfcc$to_lpc(num_coefficients = 16)
 }
 
+}
+\seealso{
+\code{\link{Sound}}, \code{\link{LPC}}
 }

@@ -209,27 +209,34 @@ double calculate_quantile_simd(const double* values, integer n, double quantile)
     if (n <= 0) return NAN;
     if (quantile < 0.0 || quantile > 1.0) return NAN;
 
-    // Copy values to temporary array (skip 1-based indexing)
-    std::vector<double> sorted_values(n);
+    // Copy values to a mutable temporary (kernel takes a const 1-based array)
+    std::vector<double> work(n);
     for (integer i = 0; i < n; i++) {
-        sorted_values[i] = values[i + 1];
+        work[i] = values[i + 1];
     }
 
-    // Sort using std::sort (compiler may auto-vectorize)
-    std::sort(sorted_values.begin(), sorted_values.end());
-
-    // Calculate quantile position
+    // Calculate quantile position (type-7, as in R's quantile())
     double pos = quantile * (n - 1);
     integer lower = static_cast<integer>(std::floor(pos));
     integer upper = static_cast<integer>(std::ceil(pos));
 
+    // Only the `lower` and `upper` order statistics are needed, so select them
+    // instead of fully sorting (v4.9.19). std::nth_element leaves every element
+    // after `lower` >= work[lower], so the second selection only has to search
+    // the tail, and both values are identical to what std::sort would have put
+    // at those positions.
+    std::nth_element(work.begin(), work.begin() + lower, work.end());
+    const double lowerValue = work[lower];
+
     if (lower == upper || upper >= n) {
-        return sorted_values[lower];
+        return lowerValue;
     }
+
+    const double upperValue = *std::min_element(work.begin() + lower + 1, work.end());
 
     // Linear interpolation
     double fraction = pos - lower;
-    return sorted_values[lower] * (1.0 - fraction) + sorted_values[upper] * fraction;
+    return lowerValue * (1.0 - fraction) + upperValue * fraction;
 }
 
 // ============================================================================

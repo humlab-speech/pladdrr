@@ -1,3 +1,99 @@
+# pladdrr 4.9.19
+
+Follow-up to the v4.9.18 assessment (`dev/ASSESSMENT_2026-08-05.md`).
+
+## Build fixes (v4.9.18 did not compile or load)
+
+* `src/batch_queries.cpp`: corrected `MelderThread_PARALLELIZE` / `MelderThread_FOR`
+  / `MelderThread_ENDFOR` brace usage. The macros open their own scope; the extra
+  braces made the file fail to compile.
+* Regenerated `src/RcppExports.cpp`, which was stale relative to
+  `calculate_cpps_ultra_cpp`'s new signature and caused
+  `symbol not found in flat namespace` at load.
+
+## Correctness
+
+* **`Spectrogram$get_power_at()` now matches Praat.** It performed a
+  nearest-cell lookup; Praat's "Get power at (time, frequency)" is
+  `Matrix_getValueAtXY`, i.e. bilinear interpolation. The old result differed
+  from Praat by up to ~24% at a point, and disagreed with this class's own
+  `get_power_at_points()`. Values outside the domain now return `NA` rather than
+  a clamped edge cell.
+* **Removed `calculate_cpps_ultra(fused = )`.** The fused pipeline reused the
+  trend fitted on the raw cepstrum as the baseline for the peak measured on the
+  smoothed, trend-subtracted cepstrum. Praat fits twice deliberately; the reuse
+  returned -47.169 dB where the correct value is 9.9205 dB, and was 3.1x slower.
+* **`Formant$get_value_at_time()` returns `NA` for a non-finite time** instead of
+  raising "Failed to get formant value at time".
+* **Fixed `get_pitch_strengths_at_times()`**, which errored with
+  `object 'unit_code' not found` (regression from the v4.9.18 unit-code refactor).
+* **`to_formant_keepall()`, `to_formant_willems()`, `to_formant_sl()` accept
+  `time_step = 0`** again. Praat treats 0 as "auto"; rejecting it made a
+  documented Praat idiom unusable.
+
+## Faithfulness
+
+* Faithfulness registry expanded from 10 routines to 14, and the four broken
+  entries added in v4.9.18 now run: the CPPS oracle script was missing its
+  leading boolean argument, the SHS oracle passed a time step Praat rejects, the
+  duplicated intensity row had an unachievable tolerance, and the keep-all
+  formant row called a method name that does not exist. New rows cover
+  harmonicity, spectrogram, jitter and MFCC. **All 14 pass.**
+* The faithfulness suite no longer writes into the source tree. Reports go to
+  `tempdir()`; set `PLADDRR_FAITHFULNESS_OUTDIR` to regenerate the committed
+  copies deliberately.
+
+## Robustness (design principle 6)
+
+* Argument validators now raise classed `pladdrr_input_error` conditions, so the
+  typed-error contract documented in `AGENT_GUIDE.md` holds for argument
+  validation whether or not the call goes through `with_pladdrr_errors()`.
+* `extract_part()` and `extract_parts_batch()` emit a `pladdrr_data_loss`
+  warning when the requested window runs past the signal. Praat zero-pads the
+  excess silently; pladdrr still returns Praat's value but says so. Controlled by
+  `options(pladdrr.data_loss = "warn" | "error" | "silent")`.
+* Reversed quefrency ranges (`qstart_fit > qend_fit`) now error instead of
+  silently returning a different measurement. `qend = 0` still means "autowindow".
+* Selecting `fit_method = "robust slow"` warns once per session: Praat's
+  Theil-Sen trend fit samples randomly and is not reproducible (~0.8 dB spread
+  observed; Praat itself occasionally returns values around 1e290). Upstream
+  defect, reproduced faithfully, now flagged.
+
+## Performance
+
+* **SIMD batch-statistics bridges no longer copy the input.** They passed R's
+  vector through a fresh `std::vector<double>(n + 1)` to get 1-based indexing.
+  Against base R on 1e6 doubles: mean 0.87x -> **4.1x**, sd 1.10x -> **2.8x**,
+  range 2.33x -> **15.4x**.
+* `calculate_quantile_simd()` selects the two needed order statistics with
+  `std::nth_element` instead of fully sorting: 0.47x -> **1.8x** vs base R.
+* `MelderThread_computeNumberOfThreads()` mirrors upstream's platform-dependent
+  divisors instead of hardcoding the macOS branch, which oversubscribed Windows
+  by ~2x and Linux by ~1.5x.
+
+## Housekeeping
+
+* Deleted six `*_simd.cpp` files (1,174 lines) with no referenced symbols:
+  `num_distance`, `num_filtering`, `num_matrix`, `pitch_processing`,
+  `sound_convolution`, `sound_statistics`.
+* `configure` no longer computes a `@XSIMD_FLAG@` that `Makevars.in` overrode;
+  removed the dead `FLAC_SRC`/`MP3_SRC` variables pointing at the `praat/` tree
+  deleted in v4.9.5.
+* Corrected the FLAC/MP3 documentation: those formats are read through the
+  suggested `av` package, not natively. The decoder sources were removed in the
+  v4.9.5 CRAN slimming.
+* `AGENT_GUIDE.md` cut from 9,240 to 4,233 lines (366 KB -> 191 KB); the version
+  history and superseded SIMD archive moved verbatim into `HISTORY.md`.
+* Removed unverifiable speedup claims from the reference docs and the
+  performance/SIMD vignettes, replacing them with measured figures and an
+  explanation that stock CRAN builds reach SSE2 on x86_64 and NEON on arm64 —
+  never AVX2 or AVX-512.
+* Fixed broken example fixture paths (`signalfiles/sound.wav`,
+  `signalfiles/helloworld.wav` do not exist) and made the CPPS examples runnable.
+* Test-suite repairs: unexported internals are now called via `pladdrr:::`, and
+  S3 method existence is checked in the namespace rather than on the search path.
+  Suite went from 28 failures + 15 errors to 7 failures + 0 errors.
+
 # pladdrr 4.9.15 (2026-07-31)
 
 ## Bug fix

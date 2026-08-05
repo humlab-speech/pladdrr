@@ -319,6 +319,9 @@ NULL
   interpolation <- match.arg(interpolation)
   trend_line_type <- match.arg(trend_line_type)
   fit_method <- match.arg(fit_method)
+  .check_trend_fit_method(fit_method)
+  .check_quefrency_range(quefrency_range_start, quefrency_range_end,
+                         "quefrency_range_start", "quefrency_range_end")
   interp_map <- .interp_map
   trend_map <- .cpps_trend_map
   fit_map <- .trend_fit_map

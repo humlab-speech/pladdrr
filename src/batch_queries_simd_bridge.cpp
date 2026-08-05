@@ -18,6 +18,15 @@
 #include <Rcpp.h>
 #include "praat.github.io/melder/melder.h"
 
+// pladdrr v4.9.19: the bridges below pass R's own vector storage straight to the
+// 1-based SIMD kernels via `values.begin() - 1` instead of copying into a fresh
+// std::vector<double>(n + 1) first. Every kernel here takes `const double*` and
+// none writes through it (calculate_quantile_simd makes its own sortable copy),
+// so this is safe, and it removes one full allocation + memcpy + cache pass per
+// call. `ptr - 1` to obtain a 1-based view is the same idiom Praat uses in
+// asArgumentToFunctionThatExpectsOneBasedArray().
+
+
 // Forward declarations from batch_queries_simd.cpp
 extern "C" {
     double calculate_mean_simd(const double* values, integer n);
@@ -49,13 +58,7 @@ double calculate_mean_simd_bridge(NumericVector values) {
     int n = values.size();
     if (n == 0) return NA_REAL;
 
-    // Create 1-based array
-    std::vector<double> arr(n + 1);
-    for (int i = 0; i < n; i++) {
-        arr[i + 1] = values[i];
-    }
-
-    return calculate_mean_simd(arr.data(), n);
+    return calculate_mean_simd(values.begin() - 1, n);
 }
 
 /**
@@ -71,12 +74,7 @@ double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
     int n = values.size();
     if (n < 2) return 0.0;
 
-    std::vector<double> arr(n + 1);
-    for (int i = 0; i < n; i++) {
-        arr[i + 1] = values[i];
-    }
-
-    return calculate_stdev_simd(arr.data(), n, mean);
+    return calculate_stdev_simd(values.begin() - 1, n, mean);
 }
 
 /**
@@ -93,13 +91,8 @@ List calculate_min_max_simd_bridge(NumericVector values) {
         return List::create(Named("min") = NA_REAL, Named("max") = NA_REAL);
     }
 
-    std::vector<double> arr(n + 1);
-    for (int i = 0; i < n; i++) {
-        arr[i + 1] = values[i];
-    }
-
     double min_val, max_val;
-    calculate_min_max_simd(arr.data(), n, &min_val, &max_val);
+    calculate_min_max_simd(values.begin() - 1, n, &min_val, &max_val);
 
     return List::create(Named("min") = min_val, Named("max") = max_val);
 }
@@ -117,12 +110,7 @@ double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
     int n = values.size();
     if (n == 0) return NA_REAL;
 
-    std::vector<double> arr(n + 1);
-    for (int i = 0; i < n; i++) {
-        arr[i + 1] = values[i];
-    }
-
-    return calculate_quantile_simd(arr.data(), n, quantile);
+    return calculate_quantile_simd(values.begin() - 1, n, quantile);
 }
 
 /**
@@ -144,13 +132,8 @@ List calculate_batch_statistics_simd_bridge(NumericVector values) {
         );
     }
 
-    std::vector<double> arr(n + 1);
-    for (int i = 0; i < n; i++) {
-        arr[i + 1] = values[i];
-    }
-
     double mean, stdev, min_val, max_val;
-    calculate_batch_statistics_simd(arr.data(), n, &mean, &stdev, &min_val, &max_val);
+    calculate_batch_statistics_simd(values.begin() - 1, n, &mean, &stdev, &min_val, &max_val);
 
     return List::create(
         Named("mean") = mean,

@@ -65,7 +65,6 @@ Steps 1-3 only (no window filtering)
 
 **Performance Impact:**
 - Standard R approach: ~8000ms (5-20 interval loops + 50-200 window loops)
-- Tier 4 Ultra: ~2000-4000ms (2-4x speedup)
 - Moves AVQI from 1.94x to 1.2x vs Python (competitive)
 
 **Version Differences:**
@@ -85,7 +84,7 @@ algorithm choice. See the Tier 4 Ultra algorithm table in
 
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # AVQI v3.01 (default, with ZCR filtering)
 voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")

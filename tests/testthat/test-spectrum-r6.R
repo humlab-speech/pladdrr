@@ -90,8 +90,11 @@ test_that("Spectrum R6 get bin number from frequency works", {
   
   # Get bin for 1000 Hz
   bin <- spectrum$get_bin_from_frequency(frequency = 1000)
-  
-  expect_type(bin, "integer")
+
+  # Praat's "Get bin number from frequency" is Sampled_xToIndex, which returns a
+  # REAL (fractional) bin index, not an integer - 1 + (f - x1)/dx. Expecting an
+  # integer here was a test bug, not an implementation bug.
+  expect_type(bin, "double")
   expect_gt(bin, 0)
 })
 

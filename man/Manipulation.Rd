@@ -3,6 +3,9 @@
 \name{Manipulation}
 \alias{Manipulation}
 \title{Praat Manipulation Object}
+\value{
+A \code{Manipulation} object with methods for PSOLA-based pitch and duration modification.
+}
 \description{
 Praat Manipulation object with direct C++ module binding for PSOLA-based
 pitch and duration modification.

@@ -167,16 +167,16 @@ test_that("extract_xptr utility works correctly", {
   sound <- Sound$from_values(sin(seq(0, 2*pi, length.out = 44100)), 44100)
   
   # Extract pointer
-  ptr <- extract_xptr(sound, "Sound")
+  ptr <- pladdrr:::extract_xptr(sound, "Sound")
   expect_true(inherits(ptr, "externalptr"))
   
   # Should accept pointer directly
-  ptr2 <- extract_xptr(ptr, "Sound")
+  ptr2 <- pladdrr:::extract_xptr(ptr, "Sound")
   expect_identical(ptr, ptr2)
   
   # Should fail on wrong class
   expect_error({
-    extract_xptr(list(a = 1), "Sound")
+    pladdrr:::extract_xptr(list(a = 1), "Sound")
   })
 })
 
@@ -185,15 +185,15 @@ test_that("unit_to_code utility provides consistent mapping", {
   skip_on_cran()
   
   # Pitch units
-  expect_equal(unit_to_code("hertz", "pitch"), 0L)
-  expect_equal(unit_to_code("Hz", "pitch"), 0L)
-  expect_equal(unit_to_code("mel", "pitch"), 2L)
-  expect_equal(unit_to_code("erb", "pitch"), 8L)
+  expect_equal(pladdrr:::unit_to_code("hertz", "pitch"), 0L)
+  expect_equal(pladdrr:::unit_to_code("Hz", "pitch"), 0L)
+  expect_equal(pladdrr:::unit_to_code("mel", "pitch"), 2L)
+  expect_equal(pladdrr:::unit_to_code("erb", "pitch"), 8L)
   
   # Formant units
-  expect_equal(unit_to_code("hertz", "formant"), 0L)
-  expect_equal(unit_to_code("bark", "formant"), 1L)
+  expect_equal(pladdrr:::unit_to_code("hertz", "formant"), 0L)
+  expect_equal(pladdrr:::unit_to_code("bark", "formant"), 1L)
   
   # Default fallback
-  expect_equal(unit_to_code("unknown", "pitch"), 0L)
+  expect_equal(pladdrr:::unit_to_code("unknown", "pitch"), 0L)
 })

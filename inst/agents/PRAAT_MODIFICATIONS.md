@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-08-04
-**Package Version:** 4.9.18
+**Last Updated:** 2026-08-05
+**Package Version:** 4.9.19
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -17,6 +17,47 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.19 — No new Praat-tree changes; two rejected experiments recorded (2026-08-05)
+
+**Summary:** This release changes pladdrr-owned sources only. The vendored
+`praat.github.io/` tree is untouched. Two candidate modifications were built,
+measured and reverted; they are recorded here so they are not re-attempted.
+
+**Rejected 1 — replace `num::NUMquantile_e` with `std::nth_element` in
+`dwsys/SlopeSelector.cpp:getSlope_Siegel`.**
+Motivation: profiling put ~94% of CPPS runtime in that selection
+(`expandPartition` 39%, `medianOfNinthers` 22%, `adaptiveQuickselect` 21%).
+Result: bit-exact (9.9205293139915 unchanged) but **25% slower** — 200.8 ms vs
+172.6 ms multi-threaded, 1190 ms vs 957 ms single-threaded on a 1 s signal.
+Siegel slopes are heavily clustered, which is exactly the input on which
+median-of-3 introselect degrades and Alexandrescu's median-of-ninthers wins.
+Praat's choice is correct; leave it alone. The remaining avenue is an
+O(n log n) repeated-median estimator (Matousek/Mount/Netanyahu 1998), which is a
+research-grade change, not a local edit.
+
+**Rejected 2 — "fused" CPPS pipeline (added in v4.9.18, removed in v4.9.19).**
+It fitted the trend once per frame and reused it for the peak computation.
+Praat fits twice on purpose: once on the raw cepstrum for `subtractTrend`, once
+on the *smoothed, trend-subtracted* cepstrum inside
+`PowerCepstrogram_to_Matrix_CPP`. Reusing the first fit measured every frame's
+CPP against the wrong baseline: **-47.169 dB where Praat gives 9.920 dB**. It
+was also 3.1x slower, because it replaced a threaded path with a serial
+per-frame loop. Removed; see the note at the former call site in
+`src/batch_queries.cpp`.
+
+**Related pladdrr-side fixes in this release (no Praat tree involvement):**
+- `src/spectrogram_wrappers.cpp` — `.spectrogram_get_power_at` now calls
+  `Matrix_getValueAtXY`, matching Praat's `Spectrogram: Get power at (time,
+  frequency)` action. It previously returned the nearest cell, differing from
+  Praat by ~24% at a point and disagreeing with the class's own
+  `get_power_at_points()`.
+- `src/melderthread_impl.cpp` — `MelderThread_computeNumberOfThreads` now
+  mirrors upstream's platform-dependent divisors (`__APPLE__` / `_WIN32` /
+  else) instead of hardcoding the macOS branch, which oversubscribed Windows
+  ~2x and Linux ~1.5x.
+
+---
 
 ### v4.9.10 — Fix dead quefrency-window params in `calculate_cpps_ultra_cpp` (2026-07-29)
 

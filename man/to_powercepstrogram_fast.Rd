@@ -39,14 +39,13 @@ and want to minimize R6 overhead. The returned pointer can be:
 - Wrapped in R6 PowerCepstrogram object if needed
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# Fast path: returns external pointer
+# Fast path: returns an external pointer, no wrapper object built
 pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
 
-# Can wrap in R6 object if needed
-pcep <- PowerCepstrogram$new(xptr = pcep_ptr)
-}
+# Wrap it when you want the method API
+pcep <- PowerCepstrogram(.xptr = pcep_ptr)
+pcep$get_cpps()
 
 }

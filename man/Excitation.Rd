@@ -3,6 +3,9 @@
 \name{Excitation}
 \alias{Excitation}
 \title{Praat Excitation Object}
+\value{
+An \code{Excitation} object with methods for auditory excitation pattern analysis.
+}
 \description{
 Praat Excitation object with direct C++ module binding for auditory modeling.
 }

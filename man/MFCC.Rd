@@ -3,6 +3,9 @@
 \name{MFCC}
 \alias{MFCC}
 \title{Praat MFCC Object}
+\value{
+An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
+}
 \description{
 Mel Frequency Cepstral Coefficients for speech/speaker recognition.
 Uses shared dispatch table for minimal memory per object.
@@ -55,4 +58,7 @@ mfcc$lifter(22)
 df <- mfcc$as_data_frame(include_c0 = TRUE)
 }
 
+}
+\seealso{
+\code{\link{Sound}}, \code{\link{MelSpectrogram}}
 }

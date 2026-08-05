@@ -25,6 +25,7 @@
 #include "praat_error_handling.h"
 
 // Praat headers
+#include "fon/Matrix.h"
 #include "fon/Spectrogram.h"
 #include "fon/Spectrum.h"
 #include "fon/Sound_and_Spectrogram.h"
@@ -115,16 +116,17 @@ double spectrogram_get_power_at(XPtr<structSpectrogram> spectrogram, double time
     if (!spectrogram) stop("Invalid Spectrogram pointer");
     
     try {
-        // Find the frame and bin indices
-        integer iframe = Sampled_xToNearestIndex(spectrogram.get(), time);
-        if (iframe < 1) iframe = 1;
-        if (iframe > spectrogram->nx) iframe = spectrogram->nx;
-        
-        integer ifreq = SampledXY_yToNearestIndex(spectrogram.get(), frequency);
-        if (ifreq < 1) ifreq = 1;
-        if (ifreq > spectrogram->ny) ifreq = spectrogram->ny;
-        
-        return spectrogram->z[ifreq][iframe];
+        /*
+            Praat's "Spectrogram: Get power at (time, frequency)" is
+            Matrix_getValueAtXY (praat_uvafon_init.cpp), i.e. bilinear
+            interpolation between the four surrounding cells, undefined outside
+            the domain. Before v4.9.19 this returned the nearest cell instead,
+            which differed from Praat by up to ~24% at a single point and also
+            disagreed with this class's own get_power_at_points(), which has
+            always used Matrix_getValueAtXY.
+        */
+        const double value = Matrix_getValueAtXY(spectrogram.get(), time, frequency);
+        return isdefined(value) ? value : NA_REAL;
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to get power");

@@ -3,6 +3,9 @@
 \name{LPC}
 \alias{LPC}
 \title{Praat LPC Object}
+\value{
+An \code{LPC} object with methods for linear predictive coding analysis and inverse filtering.
+}
 \description{
 Praat LPC object with direct C++ module binding for linear predictive coding analysis.
 }
@@ -77,4 +80,7 @@ midpoint <- sound$get_duration() / 2
 glottal_flow_fixed <- lpc$filter_inverse_at_time(sound, time = midpoint)
 }
 
+}
+\seealso{
+\code{\link{Sound}}, \code{\link{Formant}}, \code{\link{Spectrum}}, \code{\link{LFCC}}
 }

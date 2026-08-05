@@ -48,7 +48,7 @@ gauss_window <- cppXPtr(
 checkXPtr(gauss_window, "double", "double")
 
 # Apply to sound (70x faster than R function)
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 windowed <- apply_window_xptr(sound, gauss_window)
 }
 

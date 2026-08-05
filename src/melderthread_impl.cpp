@@ -246,9 +246,26 @@ integer MelderThread_computeNumberOfThreads (
     integer minimumNumberOfElementsPerThread = MelderThread_getMinimumNumberOfElementsPerThread ();
     if (minimumNumberOfElementsPerThread <= 0)
         minimumNumberOfElementsPerThread = thresholdNumberOfElementsPerThread;
-    // macOS-style: round down, first spawned thread is costliest
-    integer numberOfThreads = Melder_iroundDown (
-        (double) numberOfElements / minimumNumberOfElementsPerThread);
+    /*
+        Mirror the platform-tuned divisors of praat.github.io/melder/MelderThread.cpp.
+        Praat selects on `macintosh` / `_WIN32` / `linux`; pladdrr cannot define the
+        `macintosh` macro globally (it pulls in Objective-C headers), so switch on the
+        compiler's own platform macros instead. Before v4.9.19 this file hardcoded the
+        macOS branch, which oversubscribed Windows by ~2x and Linux by ~1.5x relative
+        to what upstream intends.
+    */
+    #if defined (__APPLE__)
+        // round down, assuming that the first spawned thread is the costliest
+        integer numberOfThreads = Melder_iroundDown (
+            (double) numberOfElements / minimumNumberOfElementsPerThread);
+    #elif defined (_WIN32)
+        integer numberOfThreads = Melder_iroundDown (
+            (double) numberOfElements / 2.0 / minimumNumberOfElementsPerThread);
+    #else
+        // linux and other unices: round to nearest, all spawned threads equally costly
+        integer numberOfThreads = Melder_iround (
+            (double) numberOfElements / 1.5 / minimumNumberOfElementsPerThread);
+    #endif
     Melder_clipRight (& numberOfThreads, MelderThread_getMaximumNumberOfConcurrentThreads ());
     Melder_clipRight (& numberOfThreads, NUMrandom_maximumNumberOfParallelThreads);
     Melder_clipLeft (1_integer, & numberOfThreads);

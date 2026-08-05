@@ -35,7 +35,7 @@ store, or use after the Sound object is garbage collected.
 
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Fast copy for analysis
 samples <- get_sound_values_fast(sound, channel = 1)

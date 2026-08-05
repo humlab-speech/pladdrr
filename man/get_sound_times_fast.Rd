@@ -18,7 +18,7 @@ Faster than `sound$get_sample_times()` but still allocates memory.
 }
 \examples{
 \dontrun{
-sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 times <- get_sound_times_fast(sound)
 }
 

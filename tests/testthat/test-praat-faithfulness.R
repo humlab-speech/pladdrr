@@ -6,8 +6,10 @@
 # compares against the pladdrr equivalent at a per-routine tolerance.
 #
 # Output side-effects (only when the suite actually runs end-to-end):
-#   tests/faithfulness_report.csv
-#   inst/agents/FAITHFULNESS_REPORT.md  (regenerated each run)
+#   <tempdir>/faithfulness_report.csv
+#   <tempdir>/FAITHFULNESS_REPORT.md
+# Set PLADDRR_FAITHFULNESS_OUTDIR=<repo root> to regenerate the committed
+# tests/faithfulness_report.csv and inst/agents/FAITHFULNESS_REPORT.md instead.
 #
 # Skipped on CRAN and whenever Praat is not installed locally.
 
@@ -90,11 +92,28 @@ audit_routine <- function(r) {
 
 write_reports <- function(rows) {
   df <- do.call(rbind, lapply(rows, as.data.frame, stringsAsFactors = FALSE))
-  csv_path <- file.path("..", "..", "tests", "faithfulness_report.csv")
+  # Never write into the source tree from a test run: that makes `R CMD check`
+  # mutate tracked files and shows up as spurious VCS churn. Default to
+  # tempdir(); set PLADDRR_FAITHFULNESS_OUTDIR to regenerate the committed
+  # report deliberately, e.g.
+  #   PLADDRR_FAITHFULNESS_OUTDIR=$PWD Rscript -e 'testthat::test_file(...)'
+  out_dir <- Sys.getenv("PLADDRR_FAITHFULNESS_OUTDIR", unset = "")
+  writing_to_repo <- nzchar(out_dir)
+  if (!writing_to_repo) out_dir <- tempdir()
+
+  csv_path <- if (writing_to_repo) {
+    file.path(out_dir, "tests", "faithfulness_report.csv")
+  } else {
+    file.path(out_dir, "faithfulness_report.csv")
+  }
   dir.create(dirname(csv_path), recursive = TRUE, showWarnings = FALSE)
   write.csv(df, csv_path, row.names = FALSE)
 
-  md_path <- file.path("..", "..", "inst", "agents", "FAITHFULNESS_REPORT.md")
+  md_path <- if (writing_to_repo) {
+    file.path(out_dir, "inst", "agents", "FAITHFULNESS_REPORT.md")
+  } else {
+    file.path(out_dir, "FAITHFULNESS_REPORT.md")
+  }
   if (dir.exists(dirname(md_path))) {
     lines <- c(
       "# Faithfulness Report (pladdrr vs Praat)",

@@ -26,7 +26,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' # Fast copy for analysis
 #' samples <- get_sound_values_fast(sound, channel = 1)
@@ -62,7 +62,7 @@ get_sound_values_fast <- function(sound, channel = 1) {
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' times <- get_sound_times_fast(sound)
 #' }
 #'
@@ -88,7 +88,7 @@ get_sound_times_fast <- function(sound) {
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' mat <- sound_as_matrix_fast(sound)
 #' }
 #'
@@ -112,7 +112,7 @@ sound_as_matrix_fast <- function(sound, zerocopy = FALSE) {
 #'
 #' @examples
 #' \dontrun{
-#' sound <- Sound(system.file("signalfiles/helloworld.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
 #' fast_vec <- get_sound_values_fast(sound, 1)
 #' regular_vec <- sound$get_values(1)

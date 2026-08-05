@@ -29,23 +29,47 @@ pladdrr provides three API tiers with increasing performance:
 │ - Full object-oriented interface                        │
 │ - Method chaining: sound$to_pitch()$get_mean()         │
 │ - Best for: Interactive analysis, small datasets        │
-│ - Speed: Baseline (1x)                                  │
+│ - Cost: ~3-10 us of R dispatch per call                  │
 └─────────────────────────────────────────────────────────┘
            ↓
 ┌─────────────────────────────────────────────────────────┐
 │ TIER 2: Direct API (*_direct functions)                 │
 │ - Accept XPtr directly, skip object dispatch            │
 │ - Best for: Tight loops, repeated queries               │
-│ - Speed: 2-3x faster than Tier 1                        │
+│ - Saves: the per-call dispatch, not the analysis itself  │
 └─────────────────────────────────────────────────────────┘
            ↓
 ┌─────────────────────────────────────────────────────────┐
 │ TIER 3: Batch/Parallel API (*_batch, *_parallel)        │
 │ - Maximum performance for bulk operations               │
 │ - Best for: Large datasets, production workflows        │
-│ - Speed: 5-20x faster for batch processing              │
+│ - Saves: one R->C crossing per item instead of per query │
 └─────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## How much do the tiers actually buy you?
+
+Less than the labels suggest, and it depends entirely on how much work each call
+does. The R-to-C++ boundary costs roughly 3-10 microseconds per call (measured:
+`Sound$get_total_duration()` 3.0 us, `Pitch$get_mean()` 9.5 us, an empty R
+closure 1.5 us). So:
+
+- **Querying in a tight loop** — thousands of cheap point queries — is where the
+  batch and direct APIs win, because the boundary cost is the whole cost. Going
+  from one crossing per query to one per vector is a real order-of-magnitude
+  change.
+- **A single analysis call** — `to_pitch()`, `to_formant_burg()`,
+  `calculate_cpps_fast()` — is dominated by the DSP, and the tier makes no
+  measurable difference. The three CPPS entry points
+  (`sound$to_powercepstrogram()$get_cpps()`, `calculate_cpps_fast()`,
+  `calculate_cpps_ultra()`) all return the identical value in ~170 ms on a 1 s
+  signal, within 2% of each other, because ~94% of that time is the per-frame
+  robust trend fit they share.
+
+Rule of thumb: reach for a batch function when you are about to write a loop over
+query points or files. Do not switch analysis entry points hoping for a speedup.
 
 ---
 
@@ -80,7 +104,7 @@ formants <- sound$to_formant()$smooth()
 
 ---
 
-## Tier 2: Direct API (2-3x Faster)
+## Tier 2: Direct API
 
 **When to use:** Processing >100 files, tight loops, production code
 
@@ -120,7 +144,7 @@ mean_f0 <- pitch$get_mean(0, 0, "hertz")
 # ... 5 more calls
 
 # FAST: 1 boundary crossing
-stats <- get_pitch_stats_direct(pitch)  # 2-3x faster
+stats <- get_pitch_stats_direct(pitch)  # one crossing instead of four
 ```
 
 ### Available Direct Functions
@@ -144,7 +168,7 @@ stats <- get_pitch_stats_direct(pitch)  # 2-3x faster
 
 ---
 
-## Tier 3: Batch & Parallel API (5-20x Faster)
+## Tier 3: Batch & Parallel API
 
 **When to use:** Large datasets (>100 files), production pipelines
 
@@ -160,7 +184,7 @@ sounds <- lapply(files, Sound)
 pitches <- lapply(sounds, function(s) s$to_pitch())  # n R→C crossings
 
 # FAST: Batch operation
-pitches <- sound_to_pitch_batch(sounds)  # 1 R→C crossing, 5-10x faster
+pitches <- sound_to_pitch_batch(sounds)  # 1 R->C crossing for the whole list
 ```
 
 **Available batch functions:**
@@ -182,7 +206,7 @@ f0_values <- sapply(times, function(t) {
 })
 
 # FAST: Vectorized query (1 R→C crossing)
-f0_values <- get_pitch_at_times(pitch, times)  # 10x faster
+f0_values <- get_pitch_at_times(pitch, times)  # 1 crossing instead of length(times)
 ```
 
 **Vectorized query functions:**
@@ -238,14 +262,14 @@ system.time({
   min_f0 <- pitch$get_minimum(0, 0, "hertz")
   max_f0 <- pitch$get_maximum(0, 0, "hertz")
 })
-# ~50ms (baseline)
+# baseline: one R->C crossing per query
 
 # Tier 2: Direct API
 system.time({
   pitch_ptr <- to_pitch_direct(sound$.xptr)
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
-# ~20ms (2.5x faster)
+# fewer crossings; measure on your data
 ```
 
 ### Example 2: Batch Processing (100 files)
@@ -265,13 +289,13 @@ system.time({
   sounds <- lapply(files, Sound)
   pitches <- sound_to_pitch_batch(sounds)
 })
-# ~3 seconds (5x faster)
+# scales with cores; measure on your data
 
 # Tier 3: Parallel (4 cores)
 system.time({
   pitches <- extract_pitch_parallel(files, n_cores = 4)
 })
-# ~4 seconds (3.75x faster, includes file I/O)
+# includes file I/O; measure on your data
 ```
 
 ### Example 3: Formant Tracking Over Time
@@ -287,13 +311,13 @@ system.time({
     formant$get_value_at_time(1, t, "hertz")
   })
 })
-# ~800ms (400 R→C crossings)
+# 400 R->C crossings
 
 # Tier 3: Vectorized
 system.time({
   f1_values <- get_formants_at_times(formant, times, formant_number = 1)
 })
-# ~40ms (20x faster)
+# 1 crossing - this is where batching genuinely pays
 ```
 
 ---

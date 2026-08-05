@@ -4285,88 +4285,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// euclidean_distance
-double euclidean_distance(Rcpp::NumericVector x, Rcpp::NumericVector y);
-RcppExport SEXP _pladdrr_euclidean_distance(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(euclidean_distance(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cosine_similarity
-double cosine_similarity(Rcpp::NumericVector x, Rcpp::NumericVector y);
-RcppExport SEXP _pladdrr_cosine_similarity(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(cosine_similarity(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// r_matrix_multiply_rows
-void r_matrix_multiply_rows(Rcpp::NumericMatrix x, Rcpp::NumericVector v);
-RcppExport SEXP _pladdrr_r_matrix_multiply_rows(SEXP xSEXP, SEXP vSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type v(vSEXP);
-    r_matrix_multiply_rows(x, v);
-    return R_NilValue;
-END_RCPP
-}
-// r_dot_product
-double r_dot_product(Rcpp::NumericVector x, Rcpp::NumericVector y);
-RcppExport SEXP _pladdrr_r_dot_product(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(r_dot_product(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// r_axpy
-void r_axpy(double alpha, Rcpp::NumericVector x, Rcpp::NumericVector y);
-RcppExport SEXP _pladdrr_r_axpy(SEXP alphaSEXP, SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    r_axpy(alpha, x, y);
-    return R_NilValue;
-END_RCPP
-}
-// subtract_linear_trend
-Rcpp::NumericVector subtract_linear_trend(Rcpp::NumericVector frequencies, Rcpp::NumericVector times);
-RcppExport SEXP _pladdrr_subtract_linear_trend(SEXP frequenciesSEXP, SEXP timesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type frequencies(frequenciesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type times(timesSEXP);
-    rcpp_result_gen = Rcpp::wrap(subtract_linear_trend(frequencies, times));
-    return rcpp_result_gen;
-END_RCPP
-}
-// subtract_mean
-Rcpp::NumericVector subtract_mean(Rcpp::NumericVector data);
-RcppExport SEXP _pladdrr_subtract_mean(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(subtract_mean(data));
-    return rcpp_result_gen;
-END_RCPP
-}
 // pitchtier_create
 SEXP pitchtier_create(double tmin, double tmax);
 RcppExport SEXP _pladdrr_pitchtier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
@@ -5989,18 +5907,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// complex_multiply
-Rcpp::NumericVector complex_multiply(Rcpp::NumericVector a, Rcpp::NumericVector b);
-RcppExport SEXP _pladdrr_complex_multiply(SEXP aSEXP, SEXP bSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(complex_multiply(a, b));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sound_values_fast
 SEXP sound_values_fast(SEXP sound_xptr, int channel);
 static SEXP _pladdrr_sound_values_fast_try(SEXP sound_xptrSEXP, SEXP channelSEXP) {
@@ -6267,17 +6173,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type end_times(end_timesSEXP);
     Rcpp::traits::input_parameter< bool >::type use_pool(use_poolSEXP);
     rcpp_result_gen = Rcpp::wrap(sound_extract_parts_pooled(sound_xptr, start_times, end_times, use_pool));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sound_get_statistics
-Rcpp::List sound_get_statistics(SEXP xptr);
-RcppExport SEXP _pladdrr_sound_get_statistics(SEXP xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_get_statistics(xptr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -12098,13 +11993,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_matrix_get_mean", (DL_FUNC) &_pladdrr_matrix_get_mean, 1},
     {"_pladdrr_matrix_get_minimum", (DL_FUNC) &_pladdrr_matrix_get_minimum, 1},
     {"_pladdrr_matrix_get_maximum", (DL_FUNC) &_pladdrr_matrix_get_maximum, 1},
-    {"_pladdrr_euclidean_distance", (DL_FUNC) &_pladdrr_euclidean_distance, 2},
-    {"_pladdrr_cosine_similarity", (DL_FUNC) &_pladdrr_cosine_similarity, 2},
-    {"_pladdrr_r_matrix_multiply_rows", (DL_FUNC) &_pladdrr_r_matrix_multiply_rows, 2},
-    {"_pladdrr_r_dot_product", (DL_FUNC) &_pladdrr_r_dot_product, 2},
-    {"_pladdrr_r_axpy", (DL_FUNC) &_pladdrr_r_axpy, 3},
-    {"_pladdrr_subtract_linear_trend", (DL_FUNC) &_pladdrr_subtract_linear_trend, 2},
-    {"_pladdrr_subtract_mean", (DL_FUNC) &_pladdrr_subtract_mean, 1},
     {"_pladdrr_pitchtier_create", (DL_FUNC) &_pladdrr_pitchtier_create, 2},
     {"_pladdrr_pitchtier_get_start_time", (DL_FUNC) &_pladdrr_pitchtier_get_start_time, 1},
     {"_pladdrr_pitchtier_get_end_time", (DL_FUNC) &_pladdrr_pitchtier_get_end_time, 1},
@@ -12224,7 +12112,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_set_global_simd_enabled", (DL_FUNC) &_pladdrr_set_global_simd_enabled, 1},
     {"_pladdrr_get_global_simd_enabled", (DL_FUNC) &_pladdrr_get_global_simd_enabled, 0},
     {"_pladdrr_sound_convert_to_mono_simd", (DL_FUNC) &_pladdrr_sound_convert_to_mono_simd, 1},
-    {"_pladdrr_complex_multiply", (DL_FUNC) &_pladdrr_complex_multiply, 2},
     {"_pladdrr_sound_values_fast", (DL_FUNC) &_pladdrr_sound_values_fast, 2},
     {"_pladdrr_sound_times_fast", (DL_FUNC) &_pladdrr_sound_times_fast, 1},
     {"_pladdrr_sound_as_matrix_fast_impl", (DL_FUNC) &_pladdrr_sound_as_matrix_fast_impl, 2},
@@ -12238,7 +12125,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_pool_acquire", (DL_FUNC) &_pladdrr_sound_pool_acquire, 6},
     {"_pladdrr_sound_pool_release", (DL_FUNC) &_pladdrr_sound_pool_release, 1},
     {"_pladdrr_sound_extract_parts_pooled", (DL_FUNC) &_pladdrr_sound_extract_parts_pooled, 4},
-    {"_pladdrr_sound_get_statistics", (DL_FUNC) &_pladdrr_sound_get_statistics, 1},
     {"_pladdrr_sound_read_from_file_native", (DL_FUNC) &_pladdrr_sound_read_from_file_native, 1},
     {"_pladdrr_sound_create_from_values", (DL_FUNC) &_pladdrr_sound_create_from_values, 3},
     {"_pladdrr_sound_create_tone", (DL_FUNC) &_pladdrr_sound_create_tone, 4},

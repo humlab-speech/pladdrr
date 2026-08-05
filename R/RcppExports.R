@@ -358,12 +358,12 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param time_step Time step for cepstrogram in seconds (default 0.002)
 #' @param max_quefrency End of the trend-fit quefrency window in seconds (default
 #'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
-#'   BUG FIX v4.9.10: previously declared but silently ignored -- the fit window
+#'   (Fixed in v4.9.10: was previously ignored.)
 #'   was hardcoded to [0.003, 0.04] regardless of this and tilt_line_quefrency.
 #' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
 #' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
-#'   (default 0.003). BUG FIX v4.9.10: see max_quefrency.
+#'   (default 0.003).
 #' @param line_type Trend line type (1=straight, 2=exponential decay)
 #' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS
@@ -371,8 +371,8 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @return Single CPPS value in dB
 #' @keywords internal
 #' @noRd
-.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.04, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.003, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0, fused = FALSE) {
-    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency, fused)
+.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.04, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.003, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
+    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency)
 }
 
 #' Extract voiced segments with AVQI-specific filtering (Tier 4 Ultra)
@@ -449,44 +449,44 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_get_spectral_moments_batch_cpp`, spectrogram_xptr, power)
 }
 
-#' @keywords internal
+#' @export
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
 }
 
-#' @keywords internal
+#' @export
 calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
     .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
 }
 
-#' @keywords internal
+#' @export
 calculate_min_max_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
 }
 
-#' @keywords internal
+#' @export
 calculate_quantile_simd_bridge <- function(values, quantile) {
     .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
 }
 
-#' @keywords internal
+#' @export
 calculate_batch_statistics_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
 }
 
-#' @keywords internal
-calculate_durations_simd_bridge <- function(values, start_times, end_times) {
-    .Call(`_pladdrr_calculate_durations_simd_bridge`, values, start_times, end_times)
+#' @export
+calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
+    .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
 }
 
-#' @keywords internal
-calculate_interval_statistics_simd_bridge <- function(interval_start, interval_end, interval_labels, tier_names) {
-    .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, interval_start, interval_end, interval_labels, tier_names)
+#' @export
+calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
+    .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
 }
 
-#' @keywords internal
-calculate_interval_quantiles_simd_bridge <- function(interval_start, interval_end, interval_labels, tier_names) {
-    .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, interval_start, interval_end, interval_labels, tier_names)
+#' @export
+should_use_simd_for_batch_queries_bridge <- function() {
+    .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
 }
 
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
@@ -1578,34 +1578,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_matrix_get_maximum`, xptr)
 }
 
-.euclidean_distance_simd <- function(x, y) {
-    .Call(`_pladdrr_euclidean_distance`, x, y)
-}
-
-.cosine_similarity_simd <- function(x, y) {
-    .Call(`_pladdrr_cosine_similarity`, x, y)
-}
-
-.matrix_multiply_rows_simd <- function(x, v) {
-    invisible(.Call(`_pladdrr_r_matrix_multiply_rows`, x, v))
-}
-
-.dot_product_simd <- function(x, y) {
-    .Call(`_pladdrr_r_dot_product`, x, y)
-}
-
-.axpy_simd <- function(alpha, x, y) {
-    invisible(.Call(`_pladdrr_r_axpy`, alpha, x, y))
-}
-
-.subtract_linear_trend_simd <- function(frequencies, times) {
-    .Call(`_pladdrr_subtract_linear_trend`, frequencies, times)
-}
-
-.subtract_mean_simd <- function(data) {
-    .Call(`_pladdrr_subtract_mean`, data)
-}
-
 .pitchtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_pitchtier_create`, tmin, tmax)
 }
@@ -2319,10 +2291,6 @@ get_global_simd_enabled <- function() {
     .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
 
-.complex_multiply_simd <- function(a, b) {
-    .Call(`_pladdrr_complex_multiply`, a, b)
-}
-
 #' Fast Sound Sample Access
 #'
 #' Copies Sound sample data via direct pointer access — faster than
@@ -2571,10 +2539,6 @@ sound_pool_release <- function(sound_xptr) {
 #' @export
 sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_pool = TRUE) {
     .Call(`_pladdrr_sound_extract_parts_pooled`, sound_xptr, start_times, end_times, use_pool)
-}
-
-.sound_get_statistics_simd <- function(xptr) {
-    .Call(`_pladdrr_sound_get_statistics`, xptr)
 }
 
 #' Read Sound from file using native Praat readers (internal)
@@ -3766,7 +3730,7 @@ get_interval_predicate <- function(type, threshold = 0.0) {
 #' Enable/Disable SIMD for TextGrid Operations
 #'
 #' @param enabled Logical, TRUE to enable SIMD, FALSE for scalar
-#' @keywords internal
+#' @export
 set_textgrid_simd_enabled_bridge <- function(enabled) {
     invisible(.Call(`_pladdrr_set_textgrid_simd_enabled_bridge`, enabled))
 }
@@ -3795,7 +3759,7 @@ textgrid_simd_enabled <- function() {
 #' durations <- calculate_durations_simd_bridge(starts, ends)
 #' }
 #'
-#' @keywords internal
+#' @export
 calculate_durations_simd_bridge <- function(start_times, end_times) {
     .Call(`_pladdrr_calculate_durations_simd_bridge`, start_times, end_times)
 }
@@ -3807,7 +3771,7 @@ calculate_durations_simd_bridge <- function(start_times, end_times) {
 #' @param durations Numeric vector of durations
 #' @return List with mean, stdev, min, max
 #'
-#' @keywords internal
+#' @export
 duration_statistics_simd_bridge <- function(durations) {
     .Call(`_pladdrr_duration_statistics_simd_bridge`, durations)
 }
@@ -3822,7 +3786,7 @@ duration_statistics_simd_bridge <- function(durations) {
 #' @param max_dur Maximum duration (inclusive)
 #' @return Integer vector of 0-based indices
 #'
-#' @keywords internal
+#' @export
 filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
     .Call(`_pladdrr_filter_by_duration_simd_bridge`, durations, min_dur, max_dur)
 }
@@ -3833,7 +3797,7 @@ filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
 #' @param end_times Numeric vector of end times
 #' @return Numeric vector of midpoints
 #'
-#' @keywords internal
+#' @export
 calculate_midpoints_simd_bridge <- function(start_times, end_times) {
     .Call(`_pladdrr_calculate_midpoints_simd_bridge`, start_times, end_times)
 }

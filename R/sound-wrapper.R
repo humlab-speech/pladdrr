@@ -10,9 +10,17 @@
 #' This is the entry point for most acoustic analyses in pladdrr.
 #'
 #' @section File I/O:
-#' The Sound constructor reads audio files using:
-#' 1. **Native Praat reader** (primary): WAV, AIFF, AIFC, FLAC, MP3, NIST, NeXT/Sun
-#' 2. **av package fallback**: Only used for formats Praat doesn't support (OGG Vorbis, etc.)
+#' The Sound constructor tries two readers in order:
+#'
+#' 1. **Native Praat reader** — WAV, AIFF, AIFC, NIST, NeXT/Sun. No extra
+#'    packages needed, and the fastest path.
+#' 2. **`av` package fallback** — everything else, including **FLAC, MP3** and
+#'    OGG Vorbis. The FLAC and MP3 decoder sources were dropped from the
+#'    vendored Praat tree in v4.9.5 to keep the CRAN tarball within limits, so
+#'    those formats need `av` installed (`install.packages("av")`). Without it,
+#'    reading a FLAC or MP3 file raises an error naming the missing package.
+#'
+#' Convert to WAV up front if you want to avoid the dependency entirely.
 #'
 #' @section Usage:
 #' ```r
@@ -84,7 +92,8 @@
 #' - `as_data_frame()` - Export as data.frame
 #' - `save()` - Save to audio file
 #'
-#' @param path Path to audio file (native: WAV/AIFF/FLAC/MP3/NIST, fallback: av for unsupported formats)
+#' @param path Path to an audio file. Read natively for WAV/AIFF/AIFC/NIST/NeXT;
+#'   FLAC, MP3 and other formats are read through the suggested `av` package.
 #' @param .xptr Internal use only - external pointer to C++ Sound object
 #' @return A Sound object (function wrapper with methods)
 #'
@@ -396,6 +405,10 @@ NULL
 
 .sound_methods$extract_part <- function(.self, from_time, to_time, window_shape = "rectangular",
                                          relative_width = 1.0, preserve_times = FALSE) {
+  # Praat pads with silence when the requested window runs past the signal, and
+  # returns it without comment. That is the behaviour to reproduce, but design
+  # principle 6 requires telling the user that part of the result is fabricated.
+  .check_extract_range(.self, from_time, to_time)
   ptr_result <- .self$.cpp$extract_part_ptr(
     as.numeric(from_time), as.numeric(to_time),
     .window_shape_code(window_shape), as.numeric(relative_width), as.logical(preserve_times))
@@ -404,6 +417,7 @@ NULL
 
 .sound_methods$extract_parts_batch <- function(.self, from_times, to_times, window_shape = "rectangular",
                                                 relative_width = 1.0, preserve_times = FALSE) {
+  .check_extract_range(.self, from_times, to_times)
   xptrs <- .sound_extract_parts_batch(
     .self$.xptr, as.numeric(from_times), as.numeric(to_times),
     .window_shape_code(window_shape), as.numeric(relative_width), as.logical(preserve_times))
@@ -482,7 +496,7 @@ NULL
 .sound_methods$to_formant_keepall <- function(.self, time_step = 0.005, max_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {
-  .check_positive_number(time_step, "time_step")
+  .check_time_step(time_step)
   .check_positive_number(max_frequency, "max_frequency")
   .check_positive_number(window_length, "window_length")
   formant_ptr <- .formant_from_sound_keepall(
@@ -493,7 +507,7 @@ NULL
 .sound_methods$to_formant_willems <- function(.self, time_step = 0.005, number_of_formants = 5.0,
                                                max_frequency = 5500.0, window_length = 0.025,
                                                pre_emphasis_from = 50.0) {
-  .check_positive_number(time_step, "time_step")
+  .check_time_step(time_step)
   .check_positive_count(number_of_formants, "number_of_formants")
   .check_positive_number(max_frequency, "max_frequency")
   .check_positive_number(window_length, "window_length")
@@ -505,7 +519,7 @@ NULL
 .sound_methods$to_formant_sl <- function(.self, time_step = 0.005, number_of_poles = 10L,
                                           max_frequency = 5500.0, window_length = 0.025,
                                           pre_emphasis_from = 50.0) {
-  .check_positive_number(time_step, "time_step")
+  .check_time_step(time_step)
   .check_positive_count(number_of_poles, "number_of_poles")
   .check_positive_number(max_frequency, "max_frequency")
   .check_positive_number(window_length, "window_length")

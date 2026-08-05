@@ -5,12 +5,13 @@
 CXX_STD = CXX17
 
 # Include directories
-# Note: xsimd provided by RcppXsimd package (via LinkingTo in DESCRIPTION)
+# Note: xsimd provided by RcppXsimd package (via LinkingTo in DESCRIPTION),
+# so -DHAVE_XSIMD is unconditional: without RcppXsimd the build cannot run at all.
 # GSL headers detected by configure via gsl-config / pkg-config
 # -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS: silences libc++'s C++17
 # allocator-member deprecation attributes triggered inside the RcppXsimd
 # headers (third-party, not patchable here); inert on libstdc++.
-PKG_CPPFLAGS = -DHAVE_XSIMD -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT \
+PKG_CPPFLAGS = -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT \
                -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS -I. \
                -Ipocketfft \
                -I/opt/homebrew/Cellar/gsl/2.8/include \
@@ -232,39 +233,12 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/Sound_to_Formant_mt.cpp \
           praat.github.io/LPC/LPC_and_LFCC.cpp
 
-# FLAC library sources (for native FLAC file I/O)
-FLAC_SRC = praat/external/flac/flac_bitmath.c \
-           praat/external/flac/flac_bitreader.c \
-           praat/external/flac/flac_bitwriter.c \
-           praat/external/flac/flac_cpu.c \
-           praat/external/flac/flac_crc.c \
-           praat/external/flac/flac_fixed.c \
-           praat/external/flac/flac_float.c \
-           praat/external/flac/flac_format.c \
-           praat/external/flac/flac_lpc.c \
-           praat/external/flac/flac_md5.c \
-           praat/external/flac/flac_memory.c \
-           praat/external/flac/flac_metadata_iterators.c \
-           praat/external/flac/flac_metadata_object.c \
-           praat/external/flac/flac_stream_decoder.c \
-           praat/external/flac/flac_stream_encoder.c \
-           praat/external/flac/flac_stream_encoder_framing.c \
-           praat/external/flac/flac_window.c
-
-# MP3 library sources (MAD decoder for native MP3 file I/O)
-MP3_SRC = praat/external/mp3/mp3.cpp \
-          praat/external/mp3/mad_bit.c \
-          praat/external/mp3/mad_decoder.c \
-          praat/external/mp3/mad_fixed.c \
-          praat/external/mp3/mad_frame.c \
-          praat/external/mp3/mad_header.c \
-          praat/external/mp3/mad_huffman.c \
-          praat/external/mp3/mad_layer12.c \
-          praat/external/mp3/mad_layer3.c \
-          praat/external/mp3/mad_stream.c \
-          praat/external/mp3/mad_synth.c \
-          praat/external/mp3/mad_timer.c \
-          praat/external/mp3/mad_version.c
+# NOTE: FLAC/MP3 decoding is not compiled in. The upstream implementation
+# sources were dropped in the v4.9.5 CRAN slimming (only headers remain under
+# praat.github.io/external/{flac,mp3}), so flac_stubs.cpp is linked instead and
+# Sound() falls back to the 'av' package for those formats. The former
+# FLAC_SRC/MP3_SRC variables were dead: they named a praat/ prefix that no
+# longer exists and were never referenced by SOURCES.
 
 # Action dispatch (library-mode implementation)
 ACTION_SRC = praat_actions_libmode.cpp
@@ -297,10 +271,10 @@ WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \
 SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp intensity_simd.cpp \
            window_functions_simd.cpp window_simd_bridge.cpp autocorrelation_simd.cpp \
            formant_lpc_simd.cpp formant_simd_bridge.cpp \
-           sound_statistics_simd.cpp sound_conversion_simd.cpp \
-           num_matrix_simd.cpp num_filtering_simd.cpp \
-           num_distance_simd.cpp sound_convolution_simd.cpp \
-           pitch_processing_simd.cpp pitch_simd_bridge.cpp spectrogram_simd.cpp \
+           sound_conversion_simd.cpp \
+           \
+           \
+           pitch_simd_bridge.cpp spectrogram_simd.cpp \
            preemphasis_simd.cpp pitch_filter_simd.cpp \
            mfcc_simd.cpp mfcc_simd_bridge.cpp \
            batch_queries_simd.cpp batch_queries_simd_bridge.cpp \

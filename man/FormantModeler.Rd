@@ -3,6 +3,9 @@
 \name{FormantModeler}
 \alias{FormantModeler}
 \title{Praat FormantModeler Object}
+\value{
+A \code{FormantModeler} object with methods for polynomial modeling of formant trajectories with outlier detection.
+}
 \description{
 Robust formant trajectory modeling using polynomial fits with outlier detection.
 }

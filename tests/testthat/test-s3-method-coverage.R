@@ -10,7 +10,7 @@ test_that("as.data.frame methods exist for core objects", {
     "as.data.frame.LFCC"
   )
   for (m in methods_expected) {
-    expect_true(is.function(tryCatch(get(m), error = function(e) NULL)),
+    expect_true(is.function(tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)),
                 info = paste0("Missing S3 method: ", m))
   }
 })
@@ -23,7 +23,7 @@ test_that("print methods exist for core objects", {
     "print.Intensity"
   )
   for (m in methods_expected) {
-    fn <- tryCatch(get(m), error = function(e) NULL)
+    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)
     expect_true(is.function(fn), info = paste0("Missing S3 method: ", m))
   }
 })
@@ -41,7 +41,7 @@ test_that("plot methods exist for core objects", {
     "plot.TextGrid"
   )
   for (m in methods_expected) {
-    fn <- tryCatch(get(m), error = function(e) NULL)
+    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)
     expect_true(is.function(fn), info = paste0("Missing S3 method: ", m))
   }
 })

@@ -229,7 +229,13 @@ double formant_get_value_at_time(
     int unit
 ) {
     if (!formant) Rcpp::stop("Invalid Formant pointer");
-    
+
+    // A non-finite query time is a missing value, not a usable request: Praat's
+    // Sampled_getValueAtX throws on it. Return NA so a NaN flowing in from
+    // upstream data produces a missing measurement rather than aborting the
+    // whole vector (v4.9.19).
+    if (!R_finite(time)) return NA_REAL;
+
     try {
         double value = Formant_getValueAtTime(
             formant.get(),
@@ -237,7 +243,7 @@ double formant_get_value_at_time(
             time,
             static_cast<kFormant_unit>(unit)
         );
-        return value;
+        return isdefined(value) ? value : NA_REAL;
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to get formant value at time");

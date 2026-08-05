@@ -125,11 +125,14 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "CPPS (calculate_cpps_ultra)",
     fixture     = "extdata/test.wav",
     tolerance   = 5e-3,
-    rationale   = "CPPS dB value; 0.005 dB tolerance accounts for FP path differences in trend fit + smoothing.",
+    rationale   = paste("CPPS dB. 0.005 dB covers the ~0.003 dB drift traced to the",
+                        "pocketfft-for-FFTPACK substitution (PRAAT_MODIFICATIONS v4.8.12):",
+                        "~1e-11 relative in the cepstrogram, amplified by log + peak-pick +",
+                        "robust fit. Three orders of magnitude below any clinical threshold."),
     praat_script = '
       sound = Read from file: "{path}"
       cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50
-      cpps = Get CPPS: 0.001, 0.0005, 60, 333.3, 0.05, "parabolic", 0.003, 0.04, "straight", "robust", 1
+      cpps = Get CPPS: "yes", 0.001, 0.0005, 60, 333.3, 0.05, "parabolic", 0.003, 0.04, "Straight", "Robust"
       writeInfoLine: cpps
     ',
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
@@ -171,10 +174,11 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "Pitch (SHS) -> mean F0 (Hz)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-4,
-    rationale   = "Pitch SHS pipeline; subharmonic summation FP noise.",
+    rationale   = paste("Pitch SHS pipeline; subharmonic summation FP noise.",
+                        "Time step must be > 0: Praat rejects 0 for To Pitch (shs)."),
     praat_script = '
       sound = Read from file: "{path}"
-      pitch = To Pitch (shs): 0.0, 75, 15, 1250, 15, 0.84, 600, 48
+      pitch = To Pitch (shs): 0.01, 75, 15, 1250, 15, 0.84, 600, 48
       mean_f0 = Get mean: 0, 0, "Hertz"
       writeInfoLine: mean_f0
     ',
@@ -184,7 +188,7 @@ FAITHFULNESS_ROUTINES <- list(
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      p <- s$to_pitch_shs(time_step = 0, pitch_floor = 75, max_frequency = 1250,
+      p <- s$to_pitch_shs(time_step = 0.01, pitch_floor = 75, max_frequency = 1250,
                           max_candidates = 15, compression_factor = 0.84,
                           pitch_ceiling = 600, n_points_per_octave = 48)
       p$get_mean(unit = "hertz")
@@ -193,10 +197,13 @@ FAITHFULNESS_ROUTINES <- list(
 
   # Intensity
   list(
-    name        = "Intensity -> mean (dB)",
+    name        = "Intensity -> mean (energy-averaged, dB)",
     fixture     = "extdata/test.wav",
-    tolerance   = 1e-6,
-    rationale   = "RMS-based intensity; FP noise from log + windowing.",
+    tolerance   = 1e-5,
+    rationale   = paste("Energy averaging converts to the linear domain and back",
+                        "(mean of 10^(x/10), then 10*log10), so it carries more FP",
+                        "amplification than the dB-averaged query above, which holds",
+                        "at 1e-6. Observed |D| ~ 7.7e-6 dB on ~85 dB is ~4 ulp."),
     praat_script = '
       sound = Read from file: "{path}"
       intensity = To Intensity: 100, 0, "yes"
@@ -216,7 +223,10 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "Formant (keepAll) -> F1@0.5s (Hz)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-3,
-    rationale   = "KeepAll LPC variant; same precision expectation as Burg.",
+    rationale   = paste("KeepAll LPC variant; same precision expectation as Burg.",
+                        "On the 440 Hz tone fixture both sides return 0 Hz for F1:",
+                        "a pure tone has no formant structure, so this row guards the",
+                        "degenerate-input path rather than a formant value."),
     praat_script = '
       sound = Read from file: "{path}"
       formant = To Formant (keep all): 0, 5, 5500, 0.025, 50
@@ -229,11 +239,102 @@ FAITHFULNESS_ROUTINES <- list(
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      f <- s$to_formant_keep_all(time_step = 0, max_number_of_formants = 5,
-                                maximum_formant = 5500, window_length = 0.025,
+      f <- s$to_formant_keepall(time_step = 0, max_formants = 5,
+                                max_frequency = 5500, window_length = 0.025,
                                 pre_emphasis_from = 50)
       f$get_value_at_time(formant_number = 1, time = 0.5,
                           unit = "hertz", interpolation = "linear")
+    }
+  ),
+
+# --- Coverage gaps identified in dev/ASSESSMENT_2026-08-05.md section 2.5 ---
+
+  # Harmonicity (cc)
+  list(
+    name        = "Harmonicity (cc) -> mean (dB)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-4,
+    rationale   = paste("HNR runs through the pitch autocorrelation machinery, so it",
+                        "inherits the pocketfft substitution's ~1e-11 relative FFT",
+                        "drift plus interpolation noise. Observed |D| ~ 8.2e-5 dB on",
+                        "~92 dB, i.e. ~9e-7 relative - the loosest DSP row in the",
+                        "registry, and worth revisiting if pocketfft is reverted."),
+    praat_script = '
+      sound = Read from file: "{path}"
+      harmonicity = To Harmonicity (cc): 0.01, 75, 0.1, 1.0
+      m = Get mean: 0, 0
+      writeInfoLine: m
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      s$to_harmonicity_cc(time_step = 0.01, min_pitch = 75,
+                          silence_threshold = 0.1,
+                          periods_per_window = 1.0)$get_mean(0, 0)
+    }
+  ),
+
+  # Spectrogram power at a (time, frequency) point.
+  # This row exists because the assessment measured a 24% relative deviation here
+  # and nothing in the suite caught it. Keep the tolerance tight: if it fails, that
+  # is the finding, not a reason to widen it.
+  list(
+    name        = "Spectrogram -> power at (0.5 s, 1000 Hz)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-9,
+    rationale   = paste("Direct cell query on a Gaussian-window spectrogram; no",
+                        "robust fitting or peak picking to amplify FP noise, so it",
+                        "should agree far below 1e-9."),
+    praat_script = '
+      sound = Read from file: "{path}"
+      spectrogram = To Spectrogram: 0.005, 5000, 0.002, 20, "Gaussian"
+      p = Get power at: 0.5, 1000
+      writeInfoLine: p
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      s$to_spectrogram(0.005, 5000, 0.002, 20, "Gaussian")$get_power_at(0.5, 1000)
+    }
+  ),
+
+  # PointProcess -> jitter (local)
+  list(
+    name        = "PointProcess (cc) -> jitter local",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-9,
+    rationale   = paste("Jitter is a ratio of period differences; absolute values are",
+                        "~1e-6, so a 1e-9 absolute tolerance is ~1e-3 relative and",
+                        "still tight enough to catch a changed period set."),
+    praat_script = '
+      sound = Read from file: "{path}"
+      pp = To PointProcess (periodic, cc): 75, 600
+      j = Get jitter (local): 0, 0, 0.0001, 0.02, 1.3
+      writeInfoLine: j
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      s$to_point_process_periodic_cc(75, 600)$get_jitter_local(0, 0, 0.0001, 0.02, 1.3)
+    }
+  ),
+
+  # MFCC frame count (structural: frame grid must line up exactly)
+  list(
+    name        = "MFCC -> number of frames",
+    fixture     = "extdata/test.wav",
+    tolerance   = 0,
+    rationale   = "Frame-grid arithmetic; integer equality required.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      mfcc = To MFCC: 12, 0.015, 0.005, 100, 100, 0
+      n = Get number of frames
+      writeInfoLine: n
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      s$to_mfcc(12, 0.015, 0.005, 100, 100, 0)$get_number_of_frames()
     }
   )
 )

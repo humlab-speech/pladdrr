@@ -30,3 +30,6 @@ tg <- textgrid_create(0, 10, "phones words syllables")
 tg <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 }
 }
+\seealso{
+\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}
+}

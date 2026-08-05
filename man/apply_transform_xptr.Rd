@@ -42,7 +42,7 @@ soft_clip <- cppXPtr(
 )
 
 # Apply to sound (70x faster than R function)
-sound <- Sound(system.file("signalfiles", "sound.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 clipped <- apply_transform_xptr(sound, soft_clip)
 }
 
