@@ -21,6 +21,7 @@ See `AGENT_GUIDE.md` section "Historical SIMD and performance archive (supersede
 
 ## Key Breaking Changes
 
+- **v4.9.18:** CPPS trend-fit fusion (`PowerCepstrogram_getCPPS_fused`) for ~2x CPPS speedup (gated behind `fused=FALSE` default). SIMD bridge small-input scalar fallback (`n<16`). Custom `parallel_for_range` thread pool replaced with `MelderThread_PARALLELIZE`. Bridge functions re-marked `@keywords internal`. Frequency unit codes centralized through `unit_to_code()`. Faithfulness test coverage expanded (5→11 routines). Agent docs split: `ARCHITECTURE.md` + `HISTORY.md` extracted from `AGENT_GUIDE.md`.
 - **v4.9.10:** `max_quefrency` and `tilt_line_quefrency` parameters now actually honored by the C++ core. Previously hardcoded to [0.003, 0.04]. AVQI CPPS values may shift by ~0.3 dB.
 - **v4.9.9:** SIMD now compiled by default (`-DHAVE_XSIMD`). All 32 SIMD files active.
 - **v4.8.32-33:** Shared dispatch table pattern introduced. Phase 3 migration from module dispatch to wrapper dispatch (30-40% per-call improvement).

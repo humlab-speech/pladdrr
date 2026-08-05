@@ -1,13 +1,13 @@
 # pladdrr Architecture Reference
 
-**Version:** 4.9.17 | **Maintained by:** coding agents and maintainers
+**Version:** 4.9.18 | **Maintained by:** coding agents and maintainers
 **Purpose:** Operational knowledge — build system, threading, dispatch patterns, stale-binary trap, compilation flags.
 
 ---
 
 ## Dispatch Patterns
 
-pladdrr uses three object dispatch patterns (documented v4.9.17). Each exists for a specific reason.
+pladdrr uses three object dispatch patterns (documented v4.9.18). Each exists for a specific reason.
 
 ### 1. Shared Dispatch Table (Sound, Formant, Pitch, etc. — 35/38 types)
 
@@ -35,7 +35,7 @@ Pitch <- function(.xptr = NULL) {
 
 **Characteristics:**
 - `.self$.xptr` + `.self$.cpp` (both present, `.xptr` is the external pointer to C++ Praat object)
-- Wrapper dispatch (v4.9.17) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
+- Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
 - All wrappers inherit dispatch from this pattern via `$.PraatObject`.
 
 **List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, Matrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, Table, TextGrid, VocalTract.
@@ -73,7 +73,7 @@ Praat's `MelderThread_PARALLELIZE` macro (defined in `melder/MelderThread.h`) is
 
 **IMPORTANT:** MelderThread worker threads CANNOT call R API functions (Rcpp::Environment, getOption, etc.). These are not thread-safe and cause segfaults. SIMD bridge functions called from MelderThread workers must avoid R API calls.
 
-### Custom `parallel_for_range` (REMOVED v4.9.17)
+### Custom `parallel_for_range` (REMOVED v4.9.18)
 
 The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` template) has been replaced with `MelderThread_PARALLELIZE`. This eliminates:
 - Redundant thread creation/destruction per call

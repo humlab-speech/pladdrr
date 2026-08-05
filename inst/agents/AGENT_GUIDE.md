@@ -1,15 +1,24 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.17 guide refresh (2026-08-04)
+**Version:** 4.9.18 guide refresh (2026-08-05)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 4.9.17. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage.
-- **v4.9.17 — Performance + docs + CI (2026-08-04 assessment, Phases 1-4):**
+**Status:** Current through package 4.9.18. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage.
+- **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
   - **Runnable examples:** Spectrum, Harmonicity, PowerCepstrum, Pitch, PointProcess now have self-contained examples using `Sound$create_tone()` — executable during `R CMD check`.
   - **Phase 2 — class documentation overhaul:** All 15 R6 class wrapper files expanded with full method listings grouped by category, `@seealso` cross-references, and improved `@description` text (Formant, Pitch, Intensity, PointProcess, Spectrum, Spectrogram, Harmonicity, PowerCepstrum, LPC, TextGrid, Ltas, MFCC/LFCC, PCA, Discriminant, DTW).
   - **Phase 3 — dispatch migration from module to wrapper calls:** Sound (7 query methods), Formant (14), Spectrum (16), Spectrogram (12) migrated from `.self$.cpp$method()` (Rcpp Module dispatch, 3 layers: R→Module→C++) to `.Call("_pladdrr_*", .self$.xptr, args)` (direct wrapper, 2 layers: R→C++). ~30-40% less per-call overhead. Remaining module calls: simple getters without wrapper equivalents (xmin/xmax), print methods, and object-creation transforms.
   - **Phase 4 — CI infrastructure:** `.github/workflows/R-CMD-check.yaml` (ubuntu release/devel, macOS) with system deps. `.github/workflows/test-coverage.yaml` (covr + Codecov). Hardcoded developer paths in tests replaced with `PLADDRR_PRAAT_EXEC` / `PLADDRR_PLABENCH_DIR` env vars.
+- **v4.9.18 — Assessment-driven fixes (2026-08-05):**
+  - **CPPS trend-fit fusion:** `calculate_cpps_ultra(fused=TRUE)` reuses per-frame trends, eliminating duplicate trend fit (~2x speedup for CPPS-heavy pipelines). Default `fused=FALSE` preserves bit-exact Praat output.
+  - **SIMD small-input gating:** `simd_bridge.h` scalar fallback for `n < 16` avoids dispatch overhead on tiny vectors. `simd_bridge_stat_direct()` zero-copy overload for 0-based SIMD functions.
+  - **Thread pool consolidation:** Removed custom `parallel_for_range` pool in `batch_queries.cpp`; `PowerCepstrogram_smooth_fast` now uses `MelderThread_PARALLELIZE`, respecting `pladdrr_threads()` cap.
+  - **Frequency unit code fix:** `get_pitch_at_times()`, `get_pitch_quantiles_batch()`, and pitchtier wrapper now route through centralized `unit_to_code()` instead of inline `switch()` blocks with wrong `semitones=3` (Praat enum: `semitones=1`). String API users unaffected.
+  - **Bridge function visibility:** 13 `*_simd_bridge` functions re-marked `@keywords internal` (were erroneously `@export` in v4.9.14). Not part of the public API.
+  - **Faithfulness test expansion:** 5 → 11 Praat oracle routines (added CPPS, Pitch AC, Pitch SHS, Intensity, Formant KeepAll, Pitch quantile).
+  - **Documentation:** `inst/agents/ARCHITECTURE.md` (dispatch patterns, threading, build system) and `inst/agents/HISTORY.md` extracted from AGENT_GUIDE.
+
 - **v4.9.16 — SIMD enabled at build time; macOS parallelism fix; code cleanup (2026-08-04 assessment):**
   - **SIMD now compiled by default:** `-DHAVE_XSIMD` added to `PKG_CPPFLAGS` in `Makevars.in`/`Makevars`. All 32 SIMD files (previously dead code gated behind `#ifdef HAVE_XSIMD`) are now active. Runtime detection via xsimd selects best instruction set per architecture (NEON on arm64, AVX2/SSE4.2 on x86_64). SIMD regression tests pass bit-identically (0 failures, 23 passes). `simd_info()` shows actual architecture at runtime.
   - **macOS parallel-batch fix:** `analyze_files_parallel()` now uses PSOCK clusters on macOS (`Sys.info()[["sysname"]] == "Darwin"`) instead of `mclapply()`, avoiding fork event-loop issues. Linux and Windows paths unchanged.
@@ -275,11 +284,11 @@ to be read in isolation.
 
 ### Data Flow Example: `sound$to_pitch_cc()`
 
-**Shared Dispatch Table Architecture (v4.8.33, optimized v4.9.17)**
+**Shared Dispatch Table Architecture (v4.8.33, optimized v4.9.18)**
 
 1. User calls: `pitch <- sound$to_pitch_cc(75, 600)`
 2. `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
-3. Method calls **either** `.self$.cpp$method()` (module, for transforms/complex ops) **or** `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent queries). As of v4.9.17: Sound (7 methods), Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper path (~30-40% less overhead).
+3. Method calls **either** `.self$.cpp$method()` (module, for transforms/complex ops) **or** `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper path (~30-40% less overhead).
 4. C++ calls Praat function (`Sound_to_Pitch_cc()`, `Formant_getValueAtTime()`, etc.)
 5. Result wrapped in `XPtr<structPitch>` with custom deleter
 6. R wrapper creates new `Pitch()` from pointer via factory function
@@ -287,7 +296,7 @@ to be read in isolation.
 
 **Key Performance Improvements:**
 - Shared dispatch tables eliminate per-instance closure allocation (9x faster creation, 160x less memory, v4.8.32).
-- Wrapper dispatch (v4.9.17) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
+- Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
 
 ### Object Structure (Shared Dispatch Table Pattern)
 
