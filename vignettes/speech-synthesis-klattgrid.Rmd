@@ -392,9 +392,9 @@ sound_real <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 formant_real <- sound_real$to_formant_burg()
 df_real <- as.data.frame(formant_real)
 
-f1_mean <- mean(df_real[df_real$formant == 1, "frequency"], na.rm = TRUE)
-f2_mean <- mean(df_real[df_real$formant == 2, "frequency"], na.rm = TRUE)
-f3_mean <- mean(df_real[df_real$formant == 3, "frequency"], na.rm = TRUE)
+f1_mean <- mean(df_real$frequency[df_real$formant == 1], na.rm = TRUE)
+f2_mean <- mean(df_real$frequency[df_real$formant == 2], na.rm = TRUE)
+f3_mean <- mean(df_real$frequency[df_real$formant == 3], na.rm = TRUE)
 
 cat("Extracted formants from real speech:\n")
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
@@ -468,9 +468,9 @@ frm_result <- fp$extract_formant()
 
 # 3. Get mean formant values
 df <- as.data.frame(frm_result)
-f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
-f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
-f3_mean <- mean(df[df$formant == 3, "frequency"], na.rm = TRUE)
+f1_mean <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+f2_mean <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
+f3_mean <- mean(df$frequency[df$formant == 3], na.rm = TRUE)
 
 # 4. Extract pitch
 pitch <- sound_orig$to_pitch()

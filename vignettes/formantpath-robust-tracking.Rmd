@@ -391,8 +391,8 @@ results <- lapply(vowels, function(v) {
   df <- as.data.frame(frm_result)
   list(
     vowel = v$text,
-    f1 = mean(df[df$formant == 1, "frequency"], na.rm = TRUE),
-    f2 = mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+    f1 = mean(df$frequency[df$formant == 1], na.rm = TRUE),
+    f2 = mean(df$frequency[df$formant == 2], na.rm = TRUE)
   )
 })
 

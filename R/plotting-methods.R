@@ -220,16 +220,17 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
     stop("x must be a Formant object")
   }
   
-  # Convert to data frame with max_formants parameter
+  # Convert to data frame with max_formants parameter. Long format: one row
+  # per (frame, formant number), columns time/formant/frequency/bandwidth.
   df <- x$as_data_frame(max_formants = max_formant)
-  
+
   # Check if data frame is empty
   if (nrow(df) == 0) {
     warning("Formant object has no data to plot")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
-  
+
   # Filter time range
   if (!is.null(from_time)) {
     df <- df[df$time >= from_time, ]
@@ -237,27 +238,27 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
   if (!is.null(to_time)) {
     df <- df[df$time <= to_time, ]
   }
-  
-  # Filter formant number
-  df <- df[df$formant_number <= max_formant, ]
-  
+
+  # Filter formant number and undefined frequencies
+  df <- df[df$formant <= max_formant & !is.na(df$frequency), ]
+
   # Check if we have formant data
   if (nrow(df) == 0) {
     warning("Formant object has no data to plot")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
-  
+
   # Default colors
   if (is.null(colors)) {
     colors <- c("red", "green4", "blue", "purple", "orange")[1:max_formant]
   }
-  
+
   # Create formant label
-  df$formant_label <- paste0("F", df$formant_number)
-  
+  df$formant_label <- paste0("F", df$formant)
+
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency_hz, 
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
                                         color = .data$formant_label)) +
     ggplot2::geom_line(linewidth = 0.8) +
     ggplot2::scale_color_manual(values = colors, name = "Formant")

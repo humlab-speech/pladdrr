@@ -538,35 +538,30 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   p <- plot(spectrogram, from_time = from_time, to_time = to_time,
            dynamic_range = dynamic_range, title = title, ...)
   
-  # Get formant data
+  # Get formant data. Long format: one row per (frame, formant number),
+  # columns time/formant/frequency/bandwidth.
   formant_df <- formant$as_data_frame(max_formants = max_formant)
   formant_df <- formant_df[formant_df$time >= from_time & formant_df$time <= to_time, ]
-  formant_df <- formant_df[formant_df$formant_number <= max_formant, ]
-  
+  formant_df <- formant_df[formant_df$formant <= max_formant & !is.na(formant_df$frequency), ]
+
   # Check if we have formant data
   if (nrow(formant_df) == 0) {
     warning("No formant data available in the specified time range")
     return(p)
   }
-  
+
   # Add formant label
-  formant_df$formant_label <- paste0("F", formant_df$formant_number)
-  
-  # Check if we have formant data
-  if (nrow(formant_df) == 0) {
-    warning("No formant data available in the specified time range")
-    return(p)
-  }
-  
+  formant_df$formant_label <- paste0("F", formant_df$formant)
+
   # Default formant colors
   if (is.null(formant_colors)) {
     formant_colors <- c("red", "yellow", "cyan", "magenta", "white")[1:max_formant]
   }
-  
+
   # Overlay formant tracks
   p <- p +
     ggplot2::geom_line(data = formant_df,
-                      ggplot2::aes(x = .data$time, y = .data$frequency_hz,
+                      ggplot2::aes(x = .data$time, y = .data$frequency,
                                   color = .data$formant_label),
                       linewidth = 1.2, alpha = 0.8) +
     ggplot2::scale_color_manual(values = formant_colors, name = "Formant")

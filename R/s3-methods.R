@@ -368,7 +368,11 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE,
 #' @param row.names Ignored
 #' @param optional Ignored
 #' @param ... Additional arguments passed to `$as_data_frame()`
-#' @return A data.table (inherits from data.frame) with formant measurements
+#'   (e.g. `max_formants`)
+#' @return A data.table (inherits from data.frame) in long format, one row per
+#'   (frame, formant number): columns `time`, `formant` (1-based formant
+#'   number), `frequency` (Hz), `bandwidth` (Hz). Matches
+#'   `as.data.frame.FormantPath()`.
 #' @export
 as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame(...)

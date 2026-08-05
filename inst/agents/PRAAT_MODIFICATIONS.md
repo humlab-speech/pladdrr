@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-08-05
-**Package Version:** 4.9.19
+**Package Version:** 4.9.20
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -17,6 +17,27 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.20 — No Praat-tree changes; Formant data-frame shape fixed (2026-08-05)
+
+**Summary:** `src/formant_wrappers.cpp`'s `.formant_as_data_frame()` returned a
+wide `time, F1, B1, F2, B2, ...` layout — the only export in the package that
+did. Its sibling, `FormantPath`'s `as_data_frame()`
+(`src/modules/formantpath_module.cpp`), already used long format (one row per
+frame × formant number: `time, formant, frequency, bandwidth`), and that is
+what the test suite and most vignettes assumed. Rewrote `Formant`'s version to
+match `FormantPath`'s exactly — same columns, same per-frame iteration over
+`frame->formant[i]` instead of `Formant_getValueAtTime` queries, same
+`create_datatable(..., key = c("time", "formant"))`. Surfaced by `R CMD
+build`'s vignette rebuild (`build.log`): two vignettes failed with "column not
+found: [frequency]". See `NEWS.md` v4.9.20 for the full list of downstream
+fixes (`plot.Formant()`, `autoplot.Formant()`, the spectrogram+formant overlay
+— all three were already broken independently, referencing columns that
+existed in neither the old wide nor the new long format).
+
+No Praat-tree code touched.
+
+---
 
 ### v4.9.19 — No new Praat-tree changes; two rejected experiments recorded (2026-08-05)
 

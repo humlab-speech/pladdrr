@@ -99,9 +99,9 @@ cat("  Formant frames:", frm_result$get_number_of_frames(), "\n")
 df <- as.data.frame(frm_result)
 
 # Calculate mean F1, F2, F3 across all frames
-f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
-f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
-f3_mean <- mean(df[df$formant == 3, "frequency"], na.rm = TRUE)
+f1_mean <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+f2_mean <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
+f3_mean <- mean(df$frequency[df$formant == 3], na.rm = TRUE)
 
 cat("Mean formant values:\n")
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
@@ -320,8 +320,8 @@ for (v_name in names(vowels)) {
   
   # Get mean formants
   df <- as.data.frame(frm_result)
-  f1_mean <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
-  f2_mean <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+  f1_mean <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+  f2_mean <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
   
   vowel_results[[v_name]] <- data.frame(
     vowel = v_name,
@@ -578,8 +578,8 @@ accuracy <- apply(test_vowels, 1, function(params) {
   
   # Compare
   df <- as.data.frame(frm_result)
-  f1_extracted <- mean(df[df$formant == 1, "frequency"], na.rm = TRUE)
-  f2_extracted <- mean(df[df$formant == 2, "frequency"], na.rm = TRUE)
+  f1_extracted <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+  f2_extracted <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
   
   data.frame(
     target_f1 = params[1],

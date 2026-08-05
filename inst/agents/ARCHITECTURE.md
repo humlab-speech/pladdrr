@@ -1,6 +1,6 @@
 # pladdrr Architecture Reference
 
-**Version:** 4.9.19 | **Maintained by:** coding agents and maintainers
+**Version:** 4.9.20 | **Maintained by:** coding agents and maintainers
 **Purpose:** Operational knowledge — build system, threading, dispatch patterns, stale-binary trap, compilation flags.
 
 ---

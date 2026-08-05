@@ -13,10 +13,14 @@
 
 \item{optional}{Ignored}
 
-\item{...}{Additional arguments passed to `$as_data_frame()`}
+\item{...}{Additional arguments passed to `$as_data_frame()`
+(e.g. `max_formants`)}
 }
 \value{
-A data.table (inherits from data.frame) with formant measurements
+A data.table (inherits from data.frame) in long format, one row per
+  (frame, formant number): columns `time`, `formant` (1-based formant
+  number), `frequency` (Hz), `bandwidth` (Hz). Matches
+  `as.data.frame.FormantPath()`.
 }
 \description{
 S3 method for converting R6 Formant objects to data frames.

@@ -1,3 +1,44 @@
+# pladdrr 4.9.20
+
+Fixes surfaced by `R CMD build`'s vignette re-rendering (`build.log`): two
+vignettes failed with "column not found: [frequency]", which traced to
+`Formant$as_data_frame()` returning the wrong shape.
+
+## Correctness
+
+* **`Formant$as_data_frame()` / `as.data.frame.Formant()` now return long
+  format**, matching the documented and tested contract: one row per (frame,
+  formant number), columns `time`, `formant`, `frequency` (Hz), `bandwidth`
+  (Hz). It previously returned a wide `time, F1, B1, F2, B2, ...` layout that
+  only this one function produced — the sibling `FormantPath$as_data_frame()`
+  was already long format, the test suite already asserted long format
+  (`test-formant-r6.R`, `test-formant.R`), and most vignettes already assumed
+  long format. This was the one function out of sync with its own contract.
+  **This changes the columns of `as.data.frame(formant_object)` for any
+  existing code that read `$F1`/`$F2`/etc. from it.**
+* Removed a duplicate `as.data.frame.Formant` definition
+  (`R/formant-wrapper.R` and `R/s3-methods.R` both defined it identically;
+  kept the better-documented one in `R/s3-methods.R`).
+* `plot.Formant()` and the spectrogram+formant overlay
+  (`plot_spectrogram_formants()`) were already broken before this release —
+  they filtered on `df$formant_number`/`df$frequency_hz`, columns that never
+  existed in either the old wide or new long format. Fixed to use
+  `formant`/`frequency`.
+* `autoplot.Formant()`/`autolayer.Formant()` no longer reshape wide-to-long
+  internally (`stats::reshape()`); the data is long already.
+* Vignette fix, and worth knowing generally: **`df[cond, "colname"]` does not
+  drop to a vector on a `data.table`** the way it does on a `data.frame` — it
+  returns a one-column `data.table`, so `mean(df[df$formant == 1, "frequency"])`
+  silently returns `NA` with a warning instead of erroring. Every pladdrr
+  `as_data_frame()`/`as.data.frame()` method returns a `data.table`. Use
+  `df$frequency[df$formant == 1]` (or `df[cond, ]$frequency`), which works
+  identically on both. Fixed in `analysis-resynthesis-workflow.Rmd`,
+  `formantpath-robust-tracking.Rmd` and `speech-synthesis-klattgrid.Rmd`.
+
+## Documentation
+
+* `?Formant`: `as_data_frame()` documents its return shape.
+
 # pladdrr 4.9.19
 
 Follow-up to the v4.9.18 assessment (`dev/ASSESSMENT_2026-08-05.md`).

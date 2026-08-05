@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.19 guide refresh (2026-08-05)
+**Version:** 4.9.20 guide refresh (2026-08-05)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Current through package 4.9.18. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage.
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
@@ -124,6 +124,12 @@ tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
 ## What's New in v4.9.x
+
+- **v4.9.20 — `Formant$as_data_frame()` shape fixed (build.log triage). Read this before writing any code that consumes `as.data.frame(formant_object)`.**
+  - **BREAKING: `Formant$as_data_frame()` / `as.data.frame.Formant()` now return long format** — one row per (frame, formant number), columns `time`, `formant`, `frequency`, `bandwidth` — instead of a wide `time, F1, B1, F2, B2, ...` layout. This matches `FormantPath$as_data_frame()`, which was already long format; `Formant`'s wide layout was the one thing in the package out of sync with its own tests. If you have code reading `$F1`/`$F2`/`$B1` off a `Formant` data frame, it will now get `NULL`. Filter instead: `df$frequency[df$formant == 1]`.
+  - **`df[cond, "colname"]` does not drop to a vector on a `data.table`** the way it does on a base `data.frame` — it returns a one-column `data.table`, and `mean()` on that silently returns `NA` with a warning rather than erroring. Every pladdrr `as_data_frame()` returns a `data.table`. Always write `df$colname[cond]`, never `df[cond, "colname"]`, when extracting a single column by name — this bit three vignettes (`analysis-resynthesis-workflow.Rmd`, `formantpath-robust-tracking.Rmd`, `speech-synthesis-klattgrid.Rmd`) and would not have shown up as an R CMD check ERROR, only a silently wrong NA.
+  - `plot.Formant()` and `plot_spectrogram_formants()` (`R/plotting-methods.R`, `R/plotting-combined.R`) were independently broken before this release, filtering on `formant_number`/`frequency_hz` — columns that existed in neither the old wide format nor the new long one. Fixed alongside.
+  - `autoplot.Formant()`/`autolayer.Formant()` no longer reshape internally; the data is long already.
 
 - **v4.9.19 — assessment follow-up (see `dev/ASSESSMENT_2026-08-05.md`). Read this before writing CPPS, spectrogram or formant code.**
   - **BREAKING: `calculate_cpps_ultra(fused = )` removed.** It was added in v4.9.18 and was wrong: it reused the trend fitted on the *raw* cepstrum as the baseline for the peak measured on the *smoothed, trend-subtracted* cepstrum. Praat fits twice deliberately (`PowerCepstrogram_subtractTrend`, then again inside `PowerCepstrogram_to_Matrix_CPP`). Result was **-47.169 dB where the correct value is 9.9205 dB**, and 3.1x slower. Do not reintroduce this "optimisation".

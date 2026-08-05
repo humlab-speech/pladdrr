@@ -491,57 +491,47 @@ double formant_get_time_of_maximum(
 // [[Rcpp::export(.formant_as_data_frame)]]
 Rcpp::DataFrame formant_as_data_frame(Rcpp::XPtr<structFormant> formant, int max_formants) {
     if (!formant) Rcpp::stop("Invalid Formant pointer");
-    
-    integer nx = formant->nx;
-    
-    Rcpp::NumericVector time(nx);
-    Rcpp::NumericMatrix frequencies(nx, max_formants);
-    Rcpp::NumericMatrix bandwidths(nx, max_formants);
-    
-    for (integer i = 1; i <= nx; i++) {
-        double t = Sampled_indexToX(formant.get(), i);
-        time[i-1] = t;
-        
-        for (int f = 1; f <= max_formants; f++) {
-            double freq = Formant_getValueAtTime(formant.get(), f, t, kFormant_unit::HERTZ);
-            double bw = Formant_getBandwidthAtTime(formant.get(), f, t, kFormant_unit::HERTZ);
-            
-            frequencies(i-1, f-1) = (freq > 0) ? freq : NA_REAL;
-            bandwidths(i-1, f-1) = (bw > 0) ? bw : NA_REAL;
+
+    // Long format: one row per (frame, formant number), columns
+    // time/formant/frequency/bandwidth. This mirrors FormantPath::as_data_frame
+    // (src/modules/formantpath_module.cpp) exactly, which is the shape the test
+    // suite and every non-eval=FALSE vignette assume. Before v4.9.20 this
+    // returned a wide time/F1/B1/F2/B2/... layout that only this one function
+    // produced, silently diverging from its own tests and from the sibling
+    // FormantPath class (fixed as part of the build.log triage in
+    // dev/ASSESSMENT_2026-08-05.md).
+    //
+    // Frame values are read directly (frame->formant[i]) rather than via
+    // Formant_getValueAtTime, matching FormantPath's convention: only the
+    // numberOfFormants actually present in a frame are emitted, capped at
+    // max_formants, with no NA padding for slots beyond what that frame has.
+    std::vector<double> times;
+    std::vector<int> formant_nums;
+    std::vector<double> frequencies;
+    std::vector<double> bandwidths;
+
+    for (integer iframe = 1; iframe <= formant->nx; iframe++) {
+        double t = Sampled_indexToX(formant.get(), iframe);
+        Formant_Frame frame = &formant->frames[iframe];
+
+        integer nFormants = std::min(frame->numberOfFormants, (integer) max_formants);
+        for (integer iformant = 1; iformant <= nFormants; iformant++) {
+            times.push_back(t);
+            formant_nums.push_back((int) iformant);
+            frequencies.push_back(frame->formant[iformant].frequency);
+            bandwidths.push_back(frame->formant[iformant].bandwidth);
         }
     }
-    
-    // Create column names
-    Rcpp::CharacterVector freq_names(max_formants);
-    Rcpp::CharacterVector bw_names(max_formants);
-    for (int f = 0; f < max_formants; f++) {
-        freq_names[f] = "F" + std::to_string(f+1);
-        bw_names[f] = "B" + std::to_string(f+1);
-    }
-    
-    // Build data.table
-    Rcpp::List df_list;
-    df_list.push_back(time, "time");
-    
-    for (int f = 0; f < max_formants; f++) {
-        df_list.push_back(frequencies(Rcpp::_, f), std::string(freq_names[f]));
-    }
-    for (int f = 0; f < max_formants; f++) {
-        df_list.push_back(bandwidths(Rcpp::_, f), std::string(bw_names[f]));
-    }
-    
-    // Create column name vector
-    Rcpp::CharacterVector all_names(1 + 2*max_formants);
-    all_names[0] = "time";
-    for (int f = 0; f < max_formants; f++) {
-        all_names[1 + f] = freq_names[f];
-        all_names[1 + max_formants + f] = bw_names[f];
-    }
-    
+
     return pladdrr::dt::create_datatable(
-        df_list,
-        all_names,
-        Rcpp::CharacterVector::create("time")  // Key on time
+        Rcpp::List::create(
+            Rcpp::Named("time") = times,
+            Rcpp::Named("formant") = formant_nums,
+            Rcpp::Named("frequency") = frequencies,
+            Rcpp::Named("bandwidth") = bandwidths
+        ),
+        Rcpp::CharacterVector::create("time", "formant", "frequency", "bandwidth"),
+        Rcpp::CharacterVector::create("time", "formant")
     );
 }
 

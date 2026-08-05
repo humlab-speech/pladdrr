@@ -41,7 +41,9 @@ correlates of vowel quality in speech.
 * `get_all_formant_tracks(max_formants, unit)` — All formants as matrix
 
 **Export:**
-* `as_data_frame(max_formants)` — Export as data.frame
+* `as_data_frame(max_formants)` — Export as data.frame, long format: one row
+  per (frame, formant number), columns `time`, `formant`, `frequency` (Hz),
+  `bandwidth` (Hz). Matches `FormantPath$as_data_frame()`.
 * `save(filepath)` — Save to Praat binary file
 
 **Transform:**

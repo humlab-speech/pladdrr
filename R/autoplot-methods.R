@@ -149,7 +149,9 @@ autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
     stop("Package 'ggplot2' is required. Please install it.")
   }
 
-  df <- object$as_data_frame()
+  # object$as_data_frame() is already long format (time, formant, frequency,
+  # bandwidth), one row per (frame, formant number) - no reshape needed.
+  df <- object$as_data_frame(max_formants = max_formant)
   if (nrow(df) == 0) {
     warning("Formant object has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -157,38 +159,23 @@ autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
+  df <- df[df$formant <= max_formant & !is.na(df$frequency), ]
 
-  # Reshape from wide (F1, F2, F3...) to long format
-  formant_cols <- paste0("F", 1:min(max_formant, 5))
-  formant_cols <- formant_cols[formant_cols %in% names(df)]
-
-  if (length(formant_cols) == 0) {
-    warning("No formant columns found")
-    return(ggplot2::ggplot() + ggplot2::theme_void())
-  }
-
-  df_long <- stats::reshape(
-    df[, c("time", formant_cols), drop = FALSE],
-    direction = "long",
-    varying = formant_cols,
-    v.names = "frequency",
-    timevar = "formant",
-    times = formant_cols
-  )
-  df_long <- df_long[!is.na(df_long$frequency), ]
-
-  if (nrow(df_long) == 0) {
+  if (nrow(df) == 0) {
     warning("No formant data after filtering")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
 
+  df$formant_label <- paste0("F", df$formant)
+  formant_labels <- paste0("F", sort(unique(df$formant)))
+
   if (is.null(colors)) {
-    colors <- c("red", "green4", "blue", "purple", "orange")[1:length(formant_cols)]
-    names(colors) <- formant_cols
+    colors <- c("red", "green4", "blue", "purple", "orange")[seq_along(formant_labels)]
+    names(colors) <- formant_labels
   }
 
-  ggplot2::ggplot(df_long, ggplot2::aes(x = .data$time, y = .data$frequency,
-                                         color = .data$formant)) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
+                                    color = .data$formant_label)) +
     ggplot2::geom_line(linewidth = 0.8, ...) +
     ggplot2::scale_color_manual(values = colors, name = "Formant") +
     ggplot2::labs(title = "Formant", x = "Time (s)", y = "Frequency (Hz)") +
@@ -199,39 +186,27 @@ autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autolayer.Formant <- function(object, from_time = NULL, to_time = NULL,
                               max_formant = 3, colors = NULL, ...) {
-  df <- object$as_data_frame()
+  df <- object$as_data_frame(max_formants = max_formant)
   if (nrow(df) == 0) return(NULL)
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
+  df <- df[df$formant <= max_formant & !is.na(df$frequency), ]
 
-  # Reshape from wide (F1, F2, F3...) to long format
-  formant_cols <- paste0("F", 1:min(max_formant, 5))
-  formant_cols <- formant_cols[formant_cols %in% names(df)]
+  if (nrow(df) == 0) return(NULL)
 
-  if (length(formant_cols) == 0) return(NULL)
-
-  df_long <- stats::reshape(
-    df[, c("time", formant_cols), drop = FALSE],
-    direction = "long",
-    varying = formant_cols,
-    v.names = "frequency",
-    timevar = "formant",
-    times = formant_cols
-  )
-  df_long <- df_long[!is.na(df_long$frequency), ]
-
-  if (nrow(df_long) == 0) return(NULL)
+  df$formant_label <- paste0("F", df$formant)
+  formant_labels <- paste0("F", sort(unique(df$formant)))
 
   if (is.null(colors)) {
-    colors <- c("red", "yellow", "cyan", "magenta", "white")[1:length(formant_cols)]
-    names(colors) <- formant_cols
+    colors <- c("red", "yellow", "cyan", "magenta", "white")[seq_along(formant_labels)]
+    names(colors) <- formant_labels
   }
 
   list(
     ggplot2::geom_line(
-      data = df_long,
-      ggplot2::aes(x = .data$time, y = .data$frequency, color = .data$formant),
+      data = df,
+      ggplot2::aes(x = .data$time, y = .data$frequency, color = .data$formant_label),
       linewidth = 1.2, alpha = 0.8, inherit.aes = FALSE, ...
     ),
     ggplot2::scale_color_manual(values = colors, name = "Formant")

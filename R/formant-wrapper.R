@@ -36,7 +36,9 @@
 #' * `get_all_formant_tracks(max_formants, unit)` — All formants as matrix
 #'
 #' **Export:**
-#' * `as_data_frame(max_formants)` — Export as data.frame
+#' * `as_data_frame(max_formants)` — Export as data.frame, long format: one row
+#'   per (frame, formant number), columns `time`, `formant`, `frequency` (Hz),
+#'   `bandwidth` (Hz). Matches `FormantPath$as_data_frame()`.
 #' * `save(filepath)` — Save to Praat binary file
 #'
 #' **Transform:**
@@ -260,7 +262,4 @@ Formant <- function(.xptr = NULL) {
 #' @export
 print.Formant <- function(x, ...) x$print()
 
-#' @export
-as.data.frame.Formant <- function(x, ..., max_formants = 5) {
-  x$as_data_frame(max_formants)
-}
+# as.data.frame.Formant is defined once, in R/s3-methods.R.
