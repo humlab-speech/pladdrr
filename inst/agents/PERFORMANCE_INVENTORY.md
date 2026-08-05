@@ -11,6 +11,10 @@
 > - **The SIMD toggle moves whole-routine time by -1% to +6% on arm64.** SIMD pays
 >   in the batch-statistics bridges (mean 4.1x, range 15.4x vs base R), not in
 >   end-to-end analysis.
+> - **Exception, worse than neutral: the SlopeSelector kernels.** Default-off since
+>   v4.9.21 — they made CPPS 1.7x and AVQI 2.4x *slower* with bit-identical output,
+>   because they vectorize the ~6% of `getSlope_Siegel` that is divides and leave
+>   the ~94% that is `NUMquantile_e` untouched, while losing cross-TU inlining.
 > - **Stock CRAN builds reach SSE2 on x86_64 and NEON on arm64 — never AVX2 or
 >   AVX-512.** No `-march=` (CRAN policy) and no runtime dispatch.
 > - Six `*_simd.cpp` files listed in earlier revisions of this inventory were

@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-08-05
-**Package Version:** 4.9.20
+**Package Version:** 4.9.21
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -17,6 +17,28 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.9.21 — SlopeSelector SIMD hooks made inert by default (2026-08-05)
+
+**Summary:** The `#ifdef HAVE_XSIMD` hooks in
+`dwsys/SlopeSelector.cpp:getSlope_Siegel` / `getIntercept` are still compiled in,
+but `should_use_simd_for_slopeselector()` in `src/slopeselector_simd.cpp` now
+returns `false` by default, so the scalar upstream loops run. No Praat-tree code
+was edited in this release.
+
+**Why:** the hooks were shipped default-on claiming "~25% faster". Measured on
+M1 Pro / ppq1.wav with the Praat script's CPPS parameter profile, they are a
+**1.7–2.4x slowdown with bit-identical output** (`calculate_cpps_ultra` 4.06 s vs
+2.35 s; AVQI v2.03 6.87 s vs 2.84 s; CPPS 19.36722538 dB and AVQI 3.471873 in
+both cases). `sample` profiling explains it: ~94% of `getSlope_Siegel` is the
+median selection (`num::NUMquantile_e` → `adaptiveQuickselect`), the same
+selection the v4.9.19 `nth_element` experiment already probed — the vectorized
+pairwise-slope kernels cover only the other ~6%, and as out-of-line `extern "C"`
+calls they lose cross-TU inlining while NEON f64 divide gains nothing over
+scalar `fdiv` on Apple silicon.
+
+**Do not re-enable.** `PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1` forces the old path
+for A/B only. Any future SIMD work on this fit must target `NUMquantile_e`.
 
 ### v4.9.20 — No Praat-tree changes; Formant data-frame shape fixed (2026-08-05)
 

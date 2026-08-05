@@ -1,3 +1,95 @@
+# pladdrr 4.9.21
+
+## Correctness
+
+* **`extract_voiced_segments_ultra()` now reproduces AVQI203.praat's PART 1
+  exactly.** It previously approximated the procedure in four places, and the
+  function's own documentation carried a standing "TODO: Debug and fix accuracy"
+  note. Measured against Praat 6.4.47 on the six-file continuous-speech fixture
+  (cs1-cs6 concatenated, stop-Hann filtered): Praat keeps **591 windows /
+  17.731000 s**; pladdrr kept 599 / 17.970000 s before this release and keeps
+  591 / 17.731000 s after it.
+
+  The four deviations:
+
+  1. **Silence detection skipped Praat's pre-filter.** It hand-rolled interval
+     detection from a raw `Sound_to_Intensity`, with a comment about avoiding an
+     "FFT-based filtering crash". Praat's `Sound_to_TextGrid_detectSilences`
+     applies an 80-8000 Hz pass-Hann band filter *before* measuring intensity,
+     so the sounding/silent boundaries did not agree. It also ignored
+     `min_silent_duration` entirely. Now calls Praat's own function, followed by
+     `TextGrid_Sound_extractIntervalsWhere`.
+  2. **The window loop walked one window too far.** It used
+     `floor(duration / 0.03)`; the script stops at
+     `windowBorderRight < signalEnd - windowWidth`. It also clamped the final
+     window against `xmax`, feeding a short window into the power/ZCR test.
+  3. **The ZCR was a different statistic.** It ran
+     `Sound_to_PointProcess_zeroes` over the whole 30 ms window and took
+     `nt / (last - first)`. The script's `checkZeros` walks crossings only from
+     the one nearest 0.0025 s until it passes 0.0275 s and divides the number of
+     steps by (last reached - first) -- a different numerator over a different
+     span. This alone accounted for most of the 8 extra windows.
+  4. **The 1 ms leading silence was dropped.** The script accumulates kept
+     windows onto `Create Sound: "onlyVoice", 0, 0.001, samplingRate, "0"`, so
+     the result carries 1 ms of leading silence and is 1 ms longer than the sum
+     of its windows. This shifted every downstream frame grid.
+
+  Downstream (plabench 3-way validation, R vs Praat): AVQI v3.01 score delta
+  0.06 -> **0.00**, shimmer 0.329% -> **0.002%**, shimmer(dB) 0.024 -> **0.005**,
+  tilt 0.16 -> **0.00**, HNR 0.10 -> **0.00**.
+
+  **Behaviour change on synthetic input.** For a constant-amplitude tone whose
+  period divides 30 ms evenly (e.g. 150 Hz), every zero-crossing walk runs off
+  the window edge, `checkZeros` returns undefined, and *no* window is kept --
+  Praat returns just the 1 ms seed, and now so does pladdrr. The old
+  approximation returned most of the signal. Tests asserting "preserves > 70% of
+  a pure tone" were encoding the approximation and have been replaced with
+  Praat-verified expectations (including a 137 Hz case, which does exercise the
+  keep path: Praat keeps 45 of 65 windows / 1.350998 s).
+
+* **`Sound$get_power()`, `$get_rms()` and `$get_energy()` are bit-exact with
+  Praat again.** Each dispatched to a SIMD reduction when SIMD was enabled (the
+  default), and a vectorised summation rounds differently from Praat's own
+  `Sound_getPower` / `Sound_getEnergy` / `Sound_getRootMeanSquare`. The
+  single-window queries therefore disagreed both with Praat and with this
+  package's own `get_power_windows()` / `get_rms_windows()` /
+  `get_energy_windows()`, which always called Praat directly -- by up to
+  4.6e-06 absolute on the repo's own fixture. That is what had been failing
+  `test-batch-vectorized-ops.R` at its 1e-10 tolerance. The SIMD path measured
+  1.41x faster on a 30 s signal; bit-exactness with Praat is the package's
+  stated primary correctness guarantee (it is why `-ffp-contract=off` is set at
+  all -- see `src/Makevars.in`) and outranks a 1.4x win on a cheap query. The
+  kernels remain exported as `.sound_get_power_simd` and friends for explicit
+  benchmarking.
+
+## Performance
+
+* **The SlopeSelector SIMD kernels are now off by default.** They were shipped
+  default-on claiming "~25% faster than scalar". That claim did not survive
+  measurement: on the CPPS robust trend fit they are a 1.7-2.4x *slowdown*, with
+  bit-identical output. Measured on M1 Pro / ppq1.wav (2.92 s) with the Praat
+  script's parameter profile, `-O3 -march=native`:
+
+  |                        | SIMD on          | SIMD off         |
+  |------------------------|------------------|------------------|
+  | `calculate_cpps_ultra` | 4.06 s / 31.2 s CPU | 2.35 s / 17.6 s CPU |
+  | AVQI v2.03 (R)         | 6.87 s / 35.3 s CPU | 2.84 s / 20.3 s CPU |
+
+  CPPS 19.36722538 dB and AVQI 3.471873 either way, so nothing was traded for
+  the cost. `sample`-based profiling shows ~94% of `getSlope_Siegel` is the
+  median selection (`num::NUMquantile_e` -> `adaptiveQuickselect`), not the
+  pairwise slope divides the kernels vectorize; as out-of-line `extern "C"`
+  calls (no cross-TU inlining, and NEON f64 divide has no throughput edge over
+  scalar `fdiv` on Apple silicon) they ran far slower than the inlined scalar
+  loop they replaced. Any future SIMD work here must target `NUMquantile_e`.
+
+  Set `PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1` to force the old path for A/B
+  comparison; `PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1` remains accepted and is now
+  the default behaviour.
+
+  Downstream effect: plabench's R CPP benchmark drops 3.56 s -> 2.20 s and R
+  AVQI v2.03 roughly 4.26 s -> 2.8 s, with unchanged values.
+
 # pladdrr 4.9.20
 
 Fixes surfaced by `R CMD build`'s vignette re-rendering (`build.log`): two

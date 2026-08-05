@@ -336,12 +336,16 @@ double sound_get_rms(
     double from_time,
     double to_time
 ) {
-#ifdef HAVE_XSIMD
-    if (use_simd()) {
-        return sound_get_rms_simd(xptr, from_time, to_time);
-    }
-#endif
-    
+    // FAITHFULNESS FIX (v4.9.21): the SIMD reduction used to shadow Praat here.
+    // Its vectorised summation has a different rounding order, so `get_rms()`
+    // disagreed with Praat's own Sound_getRootMeanSquare -- and with this
+    // package's `get_rms_windows()`, which always called Praat. Measured on the
+    // repo's own fixture that mismatch reached 4.6e-06 absolute, which is what
+    // made test-batch-vectorized-ops.R fail at its 1e-10 tolerance. The SIMD
+    // path was 1.41x faster; bit-exactness with Praat is the package's stated
+    // primary correctness guarantee (see the -ffp-contract=off rationale in
+    // src/Makevars.in) and outranks that. `sound_get_rms_simd()` remains
+    // exported as .sound_get_rms_simd for explicit opt-in benchmarking.
     structSound* sound = get_ptr(xptr, "Sound");
     
     if (from_time == 0.0) from_time = sound->xmin;
@@ -369,11 +373,8 @@ double sound_get_energy(
     double from_time,
     double to_time
 ) {
-#ifdef HAVE_XSIMD
-    if (use_simd()) {
-        return sound_get_energy_simd(xptr, from_time, to_time);
-    }
-#endif
+    // FAITHFULNESS FIX (v4.9.21): see the note in sound_get_rms above -- the
+    // SIMD reduction is not bit-exact with Praat's Sound_getEnergy.
     
     structSound* sound = get_ptr(xptr, "Sound");
     
@@ -397,17 +398,13 @@ double sound_get_power(
     double from_time,
     double to_time
 ) {
-#ifdef HAVE_XSIMD
-    if (use_simd()) {
-        return sound_get_power_simd(xptr, from_time, to_time);
-    }
-#endif
-    
+    // FAITHFULNESS FIX (v4.9.21): see the note in sound_get_rms above -- the
+    // SIMD reduction is not bit-exact with Praat's Sound_getPower.
     structSound* sound = get_ptr(xptr, "Sound");
-    
+
     if (from_time == 0.0) from_time = sound->xmin;
     if (to_time == 0.0) to_time = sound->xmax;
-    
+
     try {
         return Sound_getPower(sound, from_time, to_time);
     } catch (MelderError) {

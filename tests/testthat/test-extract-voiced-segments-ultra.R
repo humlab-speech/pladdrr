@@ -42,24 +42,27 @@ test_that("extract_voiced_segments_ultra v3.01 returns valid sound", {
     expect_true(result$get_duration() >= 0)
 })
 
-test_that("extract_voiced_segments_ultra v2.03 and v3.01 produce reasonable results", {
+test_that("extract_voiced_segments_ultra matches Praat on a constant-amplitude tone", {
+    # Praat reference (6.4.47), AVQI203.praat PART 1 run verbatim on
+    #   Create Sound from formula: "cs", 1, 0, 2.0, 44100, ~ 0.5*sin(2*pi*150*x)
+    # -> onlyLoud 2.000000, 65 windows examined, **0 kept**, result 0.001000 s
+    #    (just the 1 ms `Create Sound: "onlyVoice", 0, 0.001, ...` seed).
+    #
+    # A constant-amplitude tone is a degenerate input for this algorithm: every
+    # 30 ms window's zero-crossing walk runs off the window edge, so `checkZeros`
+    # returns undefined and the window is rejected. Praat keeps nothing, and so
+    # must we. Earlier revisions of this test asserted "> 1.5s preserved", which
+    # described pladdrr's pre-v4.9.21 hand-rolled approximation, not Praat.
     sound <- create_voiced_signal(duration = 2.0, f0 = 150)
 
-    # Get results from both versions
     v203_result <- extract_voiced_segments_ultra(sound, version = "v2.03")
     v301_result <- extract_voiced_segments_ultra(sound, version = "v3.01")
 
-    # Both should return Sound objects
     expect_s3_class(v203_result, "Sound")
     expect_s3_class(v301_result, "Sound")
 
-    # v2.03 should preserve most of the signal
-    v203_dur <- v203_result$get_duration()
-    expect_true(v203_dur > 1.5, label = sprintf("v2.03 duration %.2f should be > 1.5s", v203_dur))
-
-    # v3.01 should also preserve most of a clean periodic signal
-    v301_dur <- v301_result$get_duration()
-    expect_true(v301_dur > 1.5, label = sprintf("v3.01 duration %.2f should be > 1.5s", v301_dur))
+    expect_equal(v203_result$get_total_duration(), 0.001, tolerance = 1e-9)
+    expect_equal(v301_result$get_total_duration(), 0.001, tolerance = 1e-9)
 })
 
 test_that("ZCR calculation uses interpolated zero crossings", {
@@ -80,20 +83,16 @@ test_that("ZCR calculation uses interpolated zero crossings", {
                 label = sprintf("ZCR %.1f should be ~%.1f Hz", mean_zcr, expected_zcr))
 })
 
-test_that("extract_voiced_segments_ultra preserves voiced content", {
-    # Create a clear voiced signal
+test_that("extract_voiced_segments_ultra always returns at least Praat's 1 ms seed", {
+    # AVQI203.praat builds its result by concatenating kept windows onto
+    # `Create Sound: "onlyVoice", 0, 0.001, samplingRate, "0"`, so the returned
+    # sound is never empty and is always 1 ms longer than the kept windows.
     sound <- create_voiced_signal(duration = 2.0, f0 = 150)
 
-    # Extract voiced segments with v3.01 (most aggressive filtering)
     result <- extract_voiced_segments_ultra(sound, version = "v3.01")
 
-    # Should preserve most of the signal for a clear voiced tone
-    original_dur <- sound$get_duration()
-    result_dur <- result$get_duration()
-
-    # At least 50% should be preserved for a pure tone
-    expect_true(result_dur / original_dur > 0.5,
-                label = sprintf("Preserved %.0f%% of signal", 100 * result_dur / original_dur))
+    expect_s3_class(result, "Sound")
+    expect_gte(result$get_total_duration(), 0.001)
 })
 
 test_that("extract_voiced_segments_ultra works with different sampling rates", {
@@ -151,23 +150,23 @@ test_that("v2.03 and v3.01 produce different results", {
 # Regression Tests for Bug Fix
 # =============================================================================
 
-test_that("ZCR filtering doesn't over-reject voiced content", {
-    # This is the key test for the bug fix
-    # The old code was over-rejecting voiced content due to incorrect ZCR
-
-    sound <- create_voiced_signal(duration = 2.0, f0 = 150)
+test_that("windows are kept, and the kept count matches Praat, at 137 Hz", {
+    # 150 Hz is degenerate here: its period divides the 30 ms window exactly, so
+    # every zero-crossing walk runs off the window edge and Praat keeps nothing
+    # (see the test above). 137 Hz does not divide evenly, the walk terminates
+    # inside the window, and windows are actually kept -- which is what exercises
+    # the keep path of the power + ZCR filter.
+    #
+    # Praat reference (6.4.47), AVQI203.praat PART 1 verbatim on
+    #   Create Sound from formula: "cs", 1, 0, 2.0, 44100, ~ 0.5*sin(2*pi*137*x)
+    # -> onlyLoud 2.000000, 65 windows examined, 45 kept, result 1.350998 s.
+    sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100,
+                               frequency = 137, amplitude = 0.5)
 
     result <- extract_voiced_segments_ultra(sound, version = "v3.01")
 
-    # With correct ZCR, a pure tone should have ZCR ~300 Hz (2*150)
-    # which is well below typical max_zcr threshold (3000 Hz)
-    # So most of the signal should be preserved
-
-    preservation_ratio <- result$get_duration() / sound$get_duration()
-
-    # Should preserve at least 70% for a clean periodic signal
-    expect_true(preservation_ratio > 0.7,
-                label = sprintf("Preservation %.0f%% should be >70%%", 100 * preservation_ratio))
+    expect_s3_class(result, "Sound")
+    expect_equal(result$get_total_duration(), 1.350998, tolerance = 1e-6)
 })
 
 test_that("CPPS calculation on ultra-extracted segments is reasonable", {

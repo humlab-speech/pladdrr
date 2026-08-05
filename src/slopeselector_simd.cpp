@@ -130,18 +130,33 @@ extern "C" {
 
 /*
  * Runtime SIMD gate (evaluated once at static init in SlopeSelector.cpp).
- * Default ON: on a clean rebuild the vectorized Siegel trend fit is ~25%
- * faster than scalar even on arm64/NEON (CPPS ppq1.wav: SIMD 0.92s vs scalar
- * 1.23s), bit-identical output -- the commit's measured win holds.
  *
- * IMPORTANT (2026-07-31): a stale/mis-optimized `slopeselector_simd.o` in a
- * released .so can be ~2x slower than a clean recompile (observed SIMD 2.14s
- * vs 0.92s for identical source). If CPPS timing regresses, force a clean
- * rebuild of this TU before suspecting the algorithm.
+ * Default OFF since 2026-08-05. The earlier "~25% faster" claim did not
+ * survive measurement against the scalar path on the real CPPS workload.
+ * Measured on M1 Pro, ppq1.wav (2.92 s), Praat-script parameter profile
+ * (time_avg 0.02, quefrency_avg 0.0005, trend fit [0.001, 0.05],
+ * exponential decay, Robust), pladdrr 4.9.20, -O3 -march=native:
+ *
+ *   calculate_cpps_ultra()  SIMD 4.06 s wall / 31.2 s CPU
+ *                           scalar 2.35 s wall / 17.6 s CPU
+ *   AVQI v2.03 (R)          SIMD 6.87 s wall / 35.3 s CPU
+ *                           scalar 2.84 s wall / 20.3 s CPU
+ *
+ * Output is bit-identical either way (CPPS 19.36722538 dB, AVQI 3.471873),
+ * so the SIMD path bought nothing and cost 1.7-2.4x.
+ *
+ * Why: `sample`-based profiling shows ~94% of getSlope_Siegel is the median
+ * selection (num::NUMquantile_e -> adaptiveQuickselect), not the pairwise
+ * slope divides these kernels vectorize. The kernels cover ~6% of the fit,
+ * and as out-of-line extern "C" calls (no cross-TU inlining, NEON f64 divide
+ * has no throughput edge over scalar fdiv on Apple silicon) they run far
+ * slower than the inlined scalar loop they replace.
+ *
+ * Any future SIMD work here must target NUMquantile_e, not the slope loop.
  *
  * A/B overrides:
- *   PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1  force scalar
- *   PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1   force SIMD (redundant with default)
+ *   PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1   force SIMD (slower; A/B only)
+ *   PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1  force scalar (redundant with default)
  */
 bool should_use_simd_for_slopeselector () {
 #ifdef HAVE_XSIMD
@@ -151,7 +166,7 @@ bool should_use_simd_for_slopeselector () {
     const char* enable_env = std::getenv ("PLADDRR_ENABLE_SLOPESELECTOR_SIMD");
     if (enable_env && std::atoi (enable_env) == 1)
         return true;
-    return true;
+    return false;
 #else
     return false;
 #endif
