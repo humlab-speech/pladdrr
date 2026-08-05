@@ -2,7 +2,7 @@
 #'
 #' The pladdrr package provides direct access to Praat's C phonetic analysis
 #' functionality from R. Praat is a widely-used tool for speech analysis in
-#' phonetics research. This package wraps Praat's core C library using Rcpp,
+#' phonetics research and this package wraps Praat's core C library using Rcpp,
 #' providing efficient, native access to Praat's analysis capabilities without
 #' requiring external Praat installation or scripting.
 #'
@@ -135,7 +135,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    "pladdrr v4.0: Now using data.table for high-performance data operations\n",
+    "The pladdrr package provides direct access to Praat's DSP capabilities to R users",
     "See ?pladdrr for an overview and citation information.\n",
     "Use citation('pladdrr') for citing this package in publications."
   )
