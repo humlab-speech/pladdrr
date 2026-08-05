@@ -1,3 +1,56 @@
+# pladdrr 4.9.22
+
+## Performance
+
+* **Root cause found for the long-standing "pladdrr is 2.5x slower than the
+  Praat binary at CPPS" gap — it was never the code.** The `.so` being measured
+  had been compiled *without* `NDEBUG` and *without* optimisation.
+  `pkgbuild::compile_dll()` (i.e. `devtools::load_all()`) forces
+  `-UNDEBUG -Wall -pedantic -g -O0`, and a subsequent `R CMD INSTALL` silently
+  reuses those objects — `make` sees the `.o` files as current, so it only
+  relinks. The installed package is then unoptimised with nothing to show for it.
+
+  In the shipped binary this made `constvector<double>::operator[]` an
+  out-of-line, stack-framed function reached through a dyld PLT stub **four
+  times per iteration** of the O(n^2) Siegel loop, and left `ninther`,
+  `medianIndex` and `std::swap` un-inlined. The same routines are fully inlined
+  in the Praat 6.4.47 binary; that profile difference is the diagnostic.
+
+  Rebuilding with `R CMD INSTALL --preclean .` — no source change — made every
+  routine **2.1-7.0x faster** with byte-identical output (downstream plabench,
+  15/15 three-way Praat-parity tests unchanged): CPPS 3.72s -> 0.91s,
+  AVQI v2.03 2.65s -> 0.84s, VQ 1.97s -> 0.46s, DSI 0.28s -> 0.06s,
+  voice report 0.088s -> 0.019s, formant 0.099s -> 0.030s. pladdrr went from
+  losing 9 of 14 benchmarks to winning 11 of 15, and now matches the Praat
+  6.4.47 binary on the identical `Get CPPS` call (0.95-1.08s vs 0.95-1.04s).
+
+* **New: `simd_info()$debug_build`, plus a startup NOTE**, so this cannot happen
+  silently again. `library(pladdrr)` now says so when the loaded shared object
+  was compiled without `NDEBUG`. Never benchmark after `load_all()`.
+
+* **Correction to the v4.9.15 build-flag guidance: `-O3 -march=native` buys
+  nothing.** That entry claimed "3-7x on nearly every routine" for a local
+  rebuild with those flags; the 3-7x was in fact the debug-build penalty above,
+  misattributed. Measured properly (two interleaved clean rebuilds, six timed
+  reps each, machine settled between): CPPS is 0.922/0.853s min at CRAN's `-O2`
+  and 0.868/0.870s min at `-O3 -march=native` — indistinguishable. The generated
+  code agrees: `getSlope_Siegel` compiles to a byte-identical object at `-O2`,
+  `-O3` and `-O3 -march=native`, with the whole quickselect chain already
+  inlined at `-O2`. **CRAN's stock `-O2` build is full speed; embedders do not
+  need custom flags.** `-fvisibility-inlines-hidden` was also measured and is a
+  no-op here.
+
+* No further optimisation is available without changing results. Re-profiled on
+  an optimised build, ~84% of CPPS is Praat's own median-of-ninthers quickselect
+  (`expandPartition`, `medianOfNinthers`, `adaptiveQuickselect`, `NUMquantile_e`)
+  and only ~16% the Siegel pairwise divisions that the SIMD kernels target —
+  which is why `PLADDRR_ENABLE_SLOPESELECTOR_SIMD` stays off (re-measured
+  interleaved, within noise). FFT, cepstrogram creation and smoothing are each
+  <1%. Thread scaling on CPPS is 8.42s -> 1.55s from 1 to 10 threads (5.4x);
+  8 threads already gives 5.39x, so the two efficiency cores contribute ~1% and
+  a dynamic scheduler is not worth adding. Praat's own parallel efficiency
+  measures 4.85 effective cores on the same workload, i.e. below pladdrr's.
+
 # pladdrr 4.9.21
 
 ## Correctness

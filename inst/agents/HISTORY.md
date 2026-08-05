@@ -7,7 +7,7 @@
 
 ## Recent Changes
 
-See `AGENT_GUIDE.md` sections "What's New in v4.9.x" (line 85) and "What's New in v4.8.x" (line 124) for recent feature additions and breaking changes.
+See `AGENT_GUIDE.md` sections "What's New in v4.9.x" (line 133) and "What's New in v4.8.x" (line 207) for recent feature additions and breaking changes.
 
 ## Historical Archive
 

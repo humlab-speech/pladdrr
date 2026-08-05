@@ -13,6 +13,12 @@
 #'   \item{batch_size_double}{Integer number of doubles processed per SIMD operation}
 #'   \item{batch_size_float}{Integer number of floats processed per SIMD operation}
 #'   \item{version}{Character string describing the SIMD library in use}
+#'   \item{debug_build}{Logical indicating the shared object was compiled
+#'     without \code{NDEBUG}, i.e. by \code{devtools::load_all()} /
+#'     \code{pkgbuild::compile_dll()}, which force
+#'     \code{-UNDEBUG -Wall -pedantic -g -O0}. Such a build is several times
+#'     slower and must never be benchmarked; reinstall with
+#'     \code{R CMD INSTALL --preclean .} to get optimised objects.}
 #' }
 #' 
 #' @details

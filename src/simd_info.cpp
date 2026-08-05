@@ -32,6 +32,19 @@
 //' @noRd
 // [[Rcpp::export(.simd_info)]]
 Rcpp::List simd_info() {
+  /*
+    A debug build is one compiled without NDEBUG, which is what
+    pkgbuild::compile_dll() / devtools::load_all() force
+    ("-UNDEBUG -Wall -pedantic -g -O0").  Such objects are also -O0, and a
+    later `R CMD INSTALL` silently reuses them (make sees the .o as current)
+    and just relinks, so the installed package can be unoptimised without any
+    outward sign.  Measured cost of that on the CPPS path: 4x.
+  */
+#ifdef NDEBUG
+  const bool debug_build = false;
+#else
+  const bool debug_build = true;
+#endif
 #ifdef HAVE_XSIMD
   // Use default batch types via XSIMD_BATCH macro
   using batch_double = XSIMD_BATCH(double);
@@ -45,7 +58,8 @@ Rcpp::List simd_info() {
     Rcpp::Named("architecture") = get_simd_arch(),
     Rcpp::Named("batch_size_double") = (int)batch_size_double,
     Rcpp::Named("batch_size_float") = (int)batch_size_float,
-    Rcpp::Named("version") = "xsimd"
+    Rcpp::Named("version") = "xsimd",
+    Rcpp::Named("debug_build") = debug_build
   );
 #else
   return Rcpp::List::create(
@@ -54,7 +68,8 @@ Rcpp::List simd_info() {
     Rcpp::Named("architecture") = "None",
     Rcpp::Named("batch_size_double") = 1,
     Rcpp::Named("batch_size_float") = 1,
-    Rcpp::Named("version") = "Scalar fallback"
+    Rcpp::Named("version") = "Scalar fallback",
+    Rcpp::Named("debug_build") = debug_build
   );
 #endif
 }

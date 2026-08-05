@@ -383,16 +383,11 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' [v3.01 only: Window filtering by power + ZCR] -> Concatenate final.
 #' 2-4x faster than multi-step R pipeline. Supports both AVQI v2.03 and v3.01.
 #'
-#' ACCURACY NOTE (PLADDRR_PERFORMANCE_REQUESTS.md - Issue 3):
-#' This Ultra API implementation forced a revert to manual R implementation
-#' in AVQI benchmarks due to accuracy differences from Praat's reference algorithm.
-#' The windowed power + ZCR filtering produces different results than expected.
-#' Issue: extract_windows_filtered() or equivalent Ultra API for windowed extraction.
-#'
-#' TODO: Debug and fix accuracy of windowed extraction to match Praat's 30ms sliding
-#' window with dual filtering (power threshold + ZCR < 3000 Hz). Compare ZCR calculation
-#' method (Sound_to_PointProcess_zeroes) against manual R vectorized implementation.
-#' Once fixed, AVQI R implementation will be ~1.2s faster.
+#' FAITHFULNESS NOTE (2026-08-05): this now transcribes AVQI203.praat PART 1
+#' literally. Three deviations were measured and fixed; see the inline comments
+#' at each site. Reference check (Praat 6.4.47, cs1-cs6 concatenated, stop-Hann
+#' filtered): Praat keeps 591 windows / 17.731000 s, and so does this function.
+#' Before the fix it kept 599 windows / 17.970000 s.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)

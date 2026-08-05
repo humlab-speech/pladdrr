@@ -139,4 +139,14 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
     "See ?pladdrr for an overview and citation information.\n",
     "Use citation('pladdrr') for citing this package in publications."
   )
+  # A -O0/-UNDEBUG shared object (devtools::load_all(), pkgbuild::compile_dll())
+  # survives a later `R CMD INSTALL` because make keeps the stale .o files. It is
+  # ~4x slower on the CPPS path with no other symptom, so say so out loud.
+  if (isTRUE(tryCatch(.simd_info()$debug_build, error = function(e) FALSE))) {
+    packageStartupMessage(
+      "NOTE: pladdrr was compiled as a debug build (no NDEBUG, -O0). It is ",
+      "several times slower than an optimised build and must not be used for ",
+      "benchmarking. Reinstall with: R CMD INSTALL --preclean ."
+    )
+  }
 }
