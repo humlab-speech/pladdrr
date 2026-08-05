@@ -37,6 +37,13 @@ namespace slopeselector_simd_direct {
 
 #ifdef HAVE_XSIMD
 
+// Profiling note (2026-08-05): SIMD only covers the pairwise slope computation
+// (step 1 of 5 in SlopeSelector_getQuantile). The remaining steps are random
+// sampling, NUMsort2 (merge sort), dual-space line intersection counting,
+// and interval narrowing — all scalar. Profile with Instruments/perf to
+// confirm the bottleneck distribution. If sorting/dual-space sweep dominates,
+// SIMD there would help more than further optimizing pairwise slopes.
+
 /*
  * Computes, for row `irow` (1-based), the n-1 pairwise Siegel slopes
  *   (yp[irow] - yp[j]) / (xp[irow] - xp[j])   for all j != irow, j = 1..n

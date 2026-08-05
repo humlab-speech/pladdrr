@@ -92,16 +92,6 @@ NULL
 # Helpers
 # ============================================================================
 
-.pitchtier_unit_code <- function(unit) {
-  switch(tolower(unit),
-    "hertz" = 0L, "hz" = 0L,
-    "mel" = 1L,
-    "log_hertz" = 2L, "loghertz" = 2L,
-    "semitones" = 3L, "st" = 3L,
-    "erb" = 4L,
-    0L  # default to Hertz
-  )
-}
 
 # ============================================================================
 # Shared Method Dispatch Table

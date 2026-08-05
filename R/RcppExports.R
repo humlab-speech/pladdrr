@@ -371,8 +371,8 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @return Single CPPS value in dB
 #' @keywords internal
 #' @noRd
-.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.04, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.003, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0) {
-    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency)
+.calculate_cpps_ultra_cpp <- function(sound_xptr, time_averaging_window = 0.001, quefrency_averaging_window = 0.0005, pitch_floor = 60.0, pitch_ceiling = 333.3, subtract_trend = TRUE, time_step = 0.002, max_quefrency = 0.04, tolerance = 0.05, interpolation = 1L, tilt_line_quefrency = 0.003, line_type = 1L, fit_method = 1L, pre_emphasis_from = 50.0, max_frequency = 5000.0, fused = FALSE) {
+    .Call(`_pladdrr_calculate_cpps_ultra_cpp`, sound_xptr, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, subtract_trend, time_step, max_quefrency, tolerance, interpolation, tilt_line_quefrency, line_type, fit_method, pre_emphasis_from, max_frequency, fused)
 }
 
 #' Extract voiced segments with AVQI-specific filtering (Tier 4 Ultra)
@@ -449,44 +449,44 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_get_spectral_moments_batch_cpp`, spectrogram_xptr, power)
 }
 
-#' @export
+#' @keywords internal
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
 }
 
-#' @export
+#' @keywords internal
 calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
     .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
 }
 
-#' @export
+#' @keywords internal
 calculate_min_max_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
 }
 
-#' @export
+#' @keywords internal
 calculate_quantile_simd_bridge <- function(values, quantile) {
     .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
 }
 
-#' @export
+#' @keywords internal
 calculate_batch_statistics_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
 }
 
-#' @export
-calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
-    .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
+#' @keywords internal
+calculate_durations_simd_bridge <- function(values, start_times, end_times) {
+    .Call(`_pladdrr_calculate_durations_simd_bridge`, values, start_times, end_times)
 }
 
-#' @export
-calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
-    .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
+#' @keywords internal
+calculate_interval_statistics_simd_bridge <- function(interval_start, interval_end, interval_labels, tier_names) {
+    .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, interval_start, interval_end, interval_labels, tier_names)
 }
 
-#' @export
-should_use_simd_for_batch_queries_bridge <- function() {
-    .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
+#' @keywords internal
+calculate_interval_quantiles_simd_bridge <- function(interval_start, interval_end, interval_labels, tier_names) {
+    .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, interval_start, interval_end, interval_labels, tier_names)
 }
 
 .cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
@@ -3766,7 +3766,7 @@ get_interval_predicate <- function(type, threshold = 0.0) {
 #' Enable/Disable SIMD for TextGrid Operations
 #'
 #' @param enabled Logical, TRUE to enable SIMD, FALSE for scalar
-#' @export
+#' @keywords internal
 set_textgrid_simd_enabled_bridge <- function(enabled) {
     invisible(.Call(`_pladdrr_set_textgrid_simd_enabled_bridge`, enabled))
 }
@@ -3795,7 +3795,7 @@ textgrid_simd_enabled <- function() {
 #' durations <- calculate_durations_simd_bridge(starts, ends)
 #' }
 #'
-#' @export
+#' @keywords internal
 calculate_durations_simd_bridge <- function(start_times, end_times) {
     .Call(`_pladdrr_calculate_durations_simd_bridge`, start_times, end_times)
 }
@@ -3807,7 +3807,7 @@ calculate_durations_simd_bridge <- function(start_times, end_times) {
 #' @param durations Numeric vector of durations
 #' @return List with mean, stdev, min, max
 #'
-#' @export
+#' @keywords internal
 duration_statistics_simd_bridge <- function(durations) {
     .Call(`_pladdrr_duration_statistics_simd_bridge`, durations)
 }
@@ -3822,7 +3822,7 @@ duration_statistics_simd_bridge <- function(durations) {
 #' @param max_dur Maximum duration (inclusive)
 #' @return Integer vector of 0-based indices
 #'
-#' @export
+#' @keywords internal
 filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
     .Call(`_pladdrr_filter_by_duration_simd_bridge`, durations, min_dur, max_dur)
 }
@@ -3833,7 +3833,7 @@ filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
 #' @param end_times Numeric vector of end times
 #' @return Numeric vector of midpoints
 #'
-#' @export
+#' @keywords internal
 calculate_midpoints_simd_bridge <- function(start_times, end_times) {
     .Call(`_pladdrr_calculate_midpoints_simd_bridge`, start_times, end_times)
 }

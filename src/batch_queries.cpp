@@ -41,9 +41,11 @@
 #include "praat.github.io/fon/Pitch_to_PointProcess.h"
 #include "praat.github.io/fon/TextGrid.h"
 #include "praat.github.io/fon/VoiceAnalysis.h"
+#include "praat.github.io/melder/MelderThread.h"
 #include "praat.github.io/LPC/PowerCepstrum.h"
 #include "praat.github.io/LPC/PowerCepstrogram.h"
 #include "praat.github.io/LPC/Sound_to_PowerCepstrogram.h"
+#include "praat.github.io/LPC/PowerCepstrumWorkspace.h"
 #include "praat.github.io/dwtools/Matrix_extensions.h"
 
 // Forward declarations for Praat functions not in headers
@@ -1235,35 +1237,13 @@ List get_voice_quality_ultra_cpp(
 // Phase 4: calculate_cpps_ultra - Optimized CPPS Calculation (AVQI/VQ)
 // =============================================================================
 
-// Split [1, numberOfElements] into `nthreads` contiguous 1-based ranges and run
-// `worker(first, last)` (inclusive) on each, spawning nthreads-1 helper threads
-// and running the last range on the calling thread. nthreads <= 1 runs inline.
-template <typename Worker>
-static void parallel_for_range(integer numberOfElements, integer nthreads, Worker&& worker) {
-    if (nthreads <= 1) {
-        worker(1, numberOfElements);
-        return;
-    }
-    std::vector<std::thread> threads;
-    threads.reserve((size_t)(nthreads - 1));
-    const integer per = numberOfElements / nthreads;
-    const integer extra = numberOfElements % nthreads;
-    integer start = 1;
-    for (integer t = 0; t < nthreads; t++) {
-        const integer end = start + per - 1 + (t < extra ? 1 : 0);
-        if (t < nthreads - 1) {
-            threads.emplace_back(worker, start, end);
-        } else {
-            worker(start, end);   // last range on the calling thread
-        }
-        start = end + 1;
-    }
-    for (auto& th : threads) th.join();
-}
+
+
 
 // Multi-threaded PowerCepstrogram smooth using Praat's exact Sampled_getMean.
 // Pass 1 (time): parallelize over quefrency rows (each row is independent)
 // Pass 2 (quefrency): parallelize over time columns (each column is independent)
+// Uses MelderThread (respects pladdrr_threads() cap) instead of custom pool.
 // Bit-exact results vs Praat's default smooth.
 static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
     PowerCepstrogram me,
@@ -1274,53 +1254,41 @@ static autoPowerCepstrogram PowerCepstrogram_smooth_fast(
     const integer ny = me -> ny;
     const integer nx = me -> nx;
 
-    // Respect the user's pladdrr_threads() cap (MelderThread prefs), not the
-    // raw core count — otherwise a worker pinned to 1 thread still spawns all
-    // cores here, causing oversubscription inside mclapply pipelines.
-    integer ncores = MelderThread_getMaximumNumberOfConcurrentThreads();
-    if (ncores < 1) ncores = 1;
-
     // Pass 1: average across time — parallelize over quefrency rows
     const integer numberOfFrames = Melder_ifloor(timeAveragingWindow / me -> dx);
     if (numberOfFrames > 1) {
         const double halfWindow = 0.5 * timeAveragingWindow;
-        integer nthreads = std::min((integer)ncores, ny);
-        if (nthreads < 2 || ny < 16) nthreads = 1;
 
-        auto rowWorker = [&](integer row_start, integer row_end) {
+        MelderThread_PARALLELIZE (ny, 16) {
             autoVEC qout = raw_VEC(nx);
-            for (integer iq = row_start; iq <= row_end; iq++) {
+            MelderThread_FOR (iq) {
                 for (integer iframe = 1; iframe <= nx; iframe++) {
                     const double xmid = Sampled_indexToX(me, iframe);
                     qout[iframe] = Sampled_getMean(me, xmid - halfWindow, xmid + halfWindow, iq, 0, true);
                 }
                 thy z.row(iq) <<= qout.all();
             }
-        };
-
-        parallel_for_range(ny, nthreads, rowWorker);
+            MelderThread_ENDFOR
+        }
     }
 
     // Pass 2: average across quefrencies — parallelize over time columns
     const integer numberOfQuefrencyBins = Melder_ifloor(quefrencyAveragingWindow / me -> dy);
     if (numberOfQuefrencyBins > 1) {
-        integer nthreads = std::min((integer)ncores, nx);
-        if (nthreads < 2 || nx < 16) nthreads = 1;
-
-        auto colWorker = [&](integer col_start, integer col_end) {
+        MelderThread_PARALLELIZE (nx, 16) {
             autoPowerCepstrum smooth = PowerCepstrum_create(thy ymax, thy ny);
-            for (integer iframe = col_start; iframe <= col_end; iframe++) {
+            MelderThread_FOR (iframe) {
                 smooth -> z.row(1) <<= thy z.column(iframe);
                 PowerCepstrum_smooth_inplace(smooth.get(), quefrencyAveragingWindow, 1);
                 thy z.column(iframe) <<= smooth -> z.row(1);
             }
-        };
-
-        parallel_for_range(nx, nthreads, colWorker);
+            MelderThread_ENDFOR
+        }
     }
 
     return thee;
 }
+
 
 // Our CPPS pipeline: same as Praat's PowerCepstrogram_getCPPS but with threaded smooth
 static double PowerCepstrogram_getCPPS_fast(
@@ -1351,6 +1319,102 @@ static double PowerCepstrogram_getCPPS_fast(
     return cpps;
 }
 
+
+// Fused CPPS pipeline: trend fit done once per frame, reused for CPP computation.
+// Eliminates the second per-frame trend fit in PowerCepstrogram_to_Matrix_CPP.
+// Requires subtractTrendBeforeSmoothing=TRUE and fitMethod="robust" (the fast path).
+// Falls back to the standard two-pass path if conditions aren't met.
+// NOTE: This path modifies the input PowerCepstrogram in-place (trend subtraction).
+// Bit-exact verification vs Praat required — see PLADDRR_CPPS_PERF_SPEC.md.
+static double PowerCepstrogram_getCPPS_fused(
+    PowerCepstrogram me,
+    bool subtractTrendBeforeSmoothing,
+    double timeAveragingWindow,
+    double quefrencyAveragingWindow,
+    double pitchFloor, double pitchCeiling, double deltaF0,
+    kVector_peakInterpolation peakInterpolationType,
+    double qminFit, double qmaxFit,
+    kCepstrum_trendType lineType,
+    kCepstrum_trendFit fitMethod
+) {
+    // Fused path only applies when trend subtraction is requested.
+    // Fall back to standard two-pass for the no-trend case.
+    if (!subtractTrendBeforeSmoothing) {
+        return PowerCepstrogram_getCPPS_fast(me, false,
+            timeAveragingWindow, quefrencyAveragingWindow,
+            pitchFloor, pitchCeiling, deltaF0,
+            peakInterpolationType, qminFit, qmaxFit, lineType, fitMethod);
+    }
+
+    const integer nx = me -> nx;
+    const integer ny = me -> ny;
+
+    // Step 1: Per-frame trend fit + in-place trend subtraction.
+    // Uses PowerCepstrumWorkspace to compute slope/intercept and subtract trend
+    // in a single pass per frame, avoiding the duplicate fit in to_Matrix_CPP.
+    autoPowerCepstrum him = PowerCepstrum_create(me -> ymax, ny);
+    autoPowerCepstrumWorkspace ws = PowerCepstrumWorkspace_create(
+        him.get(), qminFit, qmaxFit, lineType, fitMethod);
+
+    // Store per-frame slopes and intercepts for reuse in CPP computation
+    std::vector<double> slopes(nx + 1), intercepts(nx + 1);
+
+    for (integer iframe = 1; iframe <= nx; iframe++) {
+        him -> z.row(1) <<= me -> z.column(iframe);
+        ws -> newData(him.get());
+        ws -> getSlopeAndIntercept();
+        slopes[iframe] = ws -> slope;
+        intercepts[iframe] = ws -> intercept;
+        ws -> slopeKnown = true;
+        ws -> subtractTrend();
+        me -> z.column(iframe) <<= him -> z.row(1);
+    }
+
+    // Step 2: Smooth (same as standard path)
+    autoPowerCepstrogram smooth = PowerCepstrogram_smooth_fast(
+        me, timeAveragingWindow, quefrencyAveragingWindow);
+
+    // Step 3: Compute CPP per frame using stored trends (no re-fit).
+    // Replicates PowerCepstrogram_into_Matrix_CPP logic but skips the
+    // duplicate trend fit by reusing slopes[]/intercepts[].
+    autoMatrix cpp = Matrix_create(
+        smooth -> xmin, smooth -> xmax, nx, smooth -> dx, smooth -> x1,
+        0.5, 6.5, 6, 1.0, 1.0);
+
+    const double qminPeakSearch = 1.0 / pitchCeiling;
+    const double qmaxPeakSearch = 1.0 / pitchFloor;
+
+    autoPowerCepstrum smoothHim = PowerCepstrum_create(smooth -> ymax, ny);
+    autoPowerCepstrumWorkspace peakWs = PowerCepstrumWorkspace_create(
+        smoothHim.get(), qminFit, qmaxFit, lineType, fitMethod);
+    peakWs -> initPeakSearchPart(qminPeakSearch, qmaxPeakSearch, peakInterpolationType);
+
+    for (integer iframe = 1; iframe <= nx; iframe++) {
+        smoothHim -> z.row(1) <<= smooth -> z.column(iframe);
+        peakWs -> newData(smoothHim.get());
+
+        // Use stored trend (NO re-fit via getSlopeAndIntercept)
+        peakWs -> slope = slopes[iframe];
+        peakWs -> intercept = intercepts[iframe];
+        peakWs -> slopeKnown = true;
+
+        peakWs -> getPeakAndPosition();
+        peakWs -> peakKnown = true;
+        peakWs -> getCPP();
+
+        cpp -> z [1] [iframe] = Sampled_indexToX(smooth.get(), iframe);
+        cpp -> z [2] [iframe] = slopes[iframe];
+        cpp -> z [3] [iframe] = intercepts[iframe];
+        cpp -> z [4] [iframe] = peakWs -> peakdB;
+        cpp -> z [5] [iframe] = peakWs -> peakQuefrency;
+        cpp -> z [6] [iframe] = peakWs -> cpp;
+    }
+
+    const double cpps = Matrix_getMean(cpp.get(), cpp -> xmin, cpp -> xmax, 5.5, 6.5);
+    return cpps;
+}
+
+
 //' Calculate CPPS in single optimized C++ call (Tier 4 Ultra)
 //'
 //' @description
@@ -1366,12 +1430,12 @@ static double PowerCepstrogram_getCPPS_fast(
 //' @param time_step Time step for cepstrogram in seconds (default 0.002)
 //' @param max_quefrency End of the trend-fit quefrency window in seconds (default
 //'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
-//'   BUG FIX v4.9.10: previously declared but silently ignored -- the fit window
+//'   (Fixed in v4.9.10: was previously ignored.)
 //'   was hardcoded to [0.003, 0.04] regardless of this and tilt_line_quefrency.
 //' @param tolerance Tolerance for peak detection (default 0.05)
 //' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
 //' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
-//'   (default 0.003). BUG FIX v4.9.10: see max_quefrency.
+//'   (default 0.003).
 //' @param line_type Trend line type (1=straight, 2=exponential decay)
 //' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
 //' @param pre_emphasis_from Pre-emphasis frequency in Hz (default 50.0) - CRITICAL for correct CPPS
@@ -1395,7 +1459,8 @@ double calculate_cpps_ultra_cpp(
     int line_type = 1,
     int fit_method = 1,
     double pre_emphasis_from = 50.0,
-    double max_frequency = 5000.0
+    double max_frequency = 5000.0,
+    bool fused = false
 ) {
     XPtr<structSound> sound(sound_xptr);
     if (!sound || sound.get() == nullptr) {
@@ -1422,20 +1487,38 @@ double calculate_cpps_ultra_cpp(
         kCepstrum_trendType trend_enum = static_cast<kCepstrum_trendType>(line_type);
         kCepstrum_trendFit fit_enum = static_cast<kCepstrum_trendFit>(fit_method);
 
-        double cpps = PowerCepstrogram_getCPPS_fast(
-            cpp.get(),
-            subtract_trend,
-            time_averaging_window,
-            quefrency_averaging_window,
-            pitch_floor,
-            pitch_ceiling,
-            tolerance,
-            interp_enum,
-            tilt_line_quefrency,
-            max_quefrency,
-            trend_enum,
-            fit_enum
-        );
+        double cpps;
+        if (fused && subtract_trend) {
+            cpps = PowerCepstrogram_getCPPS_fused(
+                cpp.get(),
+                subtract_trend,
+                time_averaging_window,
+                quefrency_averaging_window,
+                pitch_floor,
+                pitch_ceiling,
+                tolerance,
+                interp_enum,
+                tilt_line_quefrency,
+                max_quefrency,
+                trend_enum,
+                fit_enum
+            );
+        } else {
+            cpps = PowerCepstrogram_getCPPS_fast(
+                cpp.get(),
+                subtract_trend,
+                time_averaging_window,
+                quefrency_averaging_window,
+                pitch_floor,
+                pitch_ceiling,
+                tolerance,
+                interp_enum,
+                tilt_line_quefrency,
+                max_quefrency,
+                trend_enum,
+                fit_enum
+            );
+        }
 
         return cpps;
     } catch (MelderError) {

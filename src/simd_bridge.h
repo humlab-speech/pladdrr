@@ -44,8 +44,30 @@ template <typename F>
 double simd_bridge_stat(const Rcpp::NumericVector& values, F simd_fn) {
     int n = values.size();
     if (n == 0) return NA_REAL;
+    // Small inputs: scalar fallback avoids SIMD dispatch overhead (allocation + copy).
+    // NEON gains are modest on arm64; below 16 elements the overhead dominates.
+    if (n < 16) {
+        double sum = 0.0;
+        for (int i = 0; i < n; i++) sum += values[i];
+        return sum / n;
+    }
     std::vector<double> arr = rvec_to_indexed(values);
     return simd_fn(arr.data(), n);
+}
+
+// Direct unary bridge: pass R vector raw pointer (0-based) without copying.
+// Only use with SIMD functions that accept 0-based arrays (not 1-based Praat).
+// Avoids the allocation + memcpy of rvec_to_indexed for large vectors.
+template <typename F>
+double simd_bridge_stat_direct(const Rcpp::NumericVector& values, F simd_fn) {
+    int n = values.size();
+    if (n == 0) return NA_REAL;
+    if (n < 16) {
+        double sum = 0.0;
+        for (int i = 0; i < n; i++) sum += values[i];
+        return sum / n;
+    }
+    return simd_fn(&values[0], n);
 }
 
 // Binary op bridge: two vectors → SIMD → double
@@ -53,6 +75,12 @@ template <typename F>
 double simd_bridge_binary(const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, F simd_fn) {
     int n = a.size();
     if (n == 0 || b.size() != n) return NA_REAL;
+    // Small inputs: scalar fallback avoids 2× allocation + copy overhead
+    if (n < 16) {
+        double sum = 0.0;
+        for (int i = 0; i < n; i++) sum += a[i] * b[i];
+        return sum;
+    }
     std::vector<double> arr_a = rvec_to_indexed(a);
     std::vector<double> arr_b = rvec_to_indexed(b);
     return simd_fn(arr_a.data(), arr_b.data(), n);

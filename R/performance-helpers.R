@@ -493,18 +493,16 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @param time_step Time step for cepstrogram in seconds (default 0.002)
 #' @param max_quefrency End of the trend-fit quefrency window in seconds (default
 #'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
-#'   BUG FIX v4.9.10: previously declared but silently ignored by the C++ core,
-#'   which hardcoded the fit window to [0.003, 0.04] regardless of this and
-#'   tilt_line_quefrency -- e.g. AVQI's needed [0.001, 0] window was never
-#'   applied, pulling CPPS off Praat by ~0.3 dB. Now honored; pass explicit
-#'   qstart/qend to reproduce a specific Praat "Get CPPS" call, same as
-#'   \code{calculate_cpps_fast()}'s qstart_fit/qend_fit.
 #' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")
 #' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
-#'   (default 0.003). BUG FIX v4.9.10: see max_quefrency.
+#'   (default 0.003).
 #' @param line_type Trend line type: "straight" or "exponential" (default "straight")
 #' @param fit_method Fitting method: "robust", "least_squares", or "robust slow" (default "robust")
+#' @param fused Logical, use fused CPPS pipeline that reuses per-frame trends
+#'   for ~2x faster computation. Only active when fit_method="robust" and
+#'   subtract_trend=TRUE. Falls back to standard two-pass path otherwise.
+#'   Default FALSE (bit-exact with Praat); TRUE trades bit-exactness for speed.
 #'
 #' @return Numeric CPPS value in dB
 #'
@@ -573,7 +571,8 @@ calculate_cpps_ultra <- function(
   line_type = "straight",               # BUG FIX v4.6.4: match calculate_cpps_fast (was "exponential")
   fit_method = "robust",
   pre_emphasis_from = 50,
-  max_frequency = 5000
+  max_frequency = 5000,
+  fused = FALSE
 ) {
   # Extract pointer if R6 object
   sound_ptr <- if (inherits(sound, "Sound")) {
@@ -608,7 +607,8 @@ calculate_cpps_ultra <- function(
     as.integer(.cpps_trend_map[[line_type]]),
     as.integer(.trend_fit_map[[fit_method]]),
     as.numeric(pre_emphasis_from),
-    as.numeric(max_frequency)
+    as.numeric(max_frequency),
+    as.logical(fused)
   )
 }
 

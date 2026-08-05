@@ -65,6 +65,7 @@ unit_to_code <- function(unit, type = "pitch") {
       hertz = 0L,
       hz = 0L,
       hertz_logarithmic = 1L,
+      semitones = 1L, st = 1L,
       mel = 2L,
       loghertz = 3L,
       semitones_re_1hz = 4L,

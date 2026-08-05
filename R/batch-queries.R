@@ -147,16 +147,8 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
     stop("times must be a non-empty numeric vector")
   }
   
-  unit_code <- switch(tolower(unit),
-    "hertz" = 0L,
-    "hz" = 0L,
-    "mel" = 1L,
-    "loghertz" = 2L,
-    "semitones" = 3L,
-    "erb" = 4L,
-    stop("Unknown unit: ", unit)
-  )
   
+  unit_code <- unit_to_code(unit, "pitch")
   # Use existing optimized function from sound_wrappers.cpp
   .pitch_get_values_at_times(
     pitch$.xptr,
@@ -191,14 +183,6 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
     stop("pitch must be a Pitch object")
   }
   
-  unit_code <- switch(tolower(unit),
-    "hertz" = 0L,
-    "mel" = 1L,
-    "loghertz" = 2L,
-    "semitones" = 3L,
-    "erb" = 4L,
-    stop("Unknown unit: ", unit)
-  )
   
   pitch_get_strengths_at_times(
     pitch$.xptr,
@@ -270,16 +254,8 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
     stop("quantiles must be between 0 and 1")
   }
   
-  unit_code <- switch(tolower(unit),
-    "hertz" = 0L,
-    "hz" = 0L,
-    "mel" = 1L,
-    "loghertz" = 2L,
-    "semitones" = 3L,
-    "erb" = 4L,
-    stop("Unknown unit: ", unit)
-  )
-  
+  unit_code <- unit_to_code(unit, "pitch")
+
   pitch_get_quantiles_batch(
     pitch$.xptr,
     quantiles,
@@ -288,7 +264,6 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
     unit_code
   )
 }
-
 #' Batch Query Intensity Values at Multiple Times
 #'
 #' Query intensity (amplitude in dB) at multiple time points in a single call.

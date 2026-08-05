@@ -117,5 +117,123 @@ FAITHFULNESS_ROUTINES <- list(
       f$get_value_at_time(formant_number = 1, time = 0.5,
                           unit = "hertz", interpolation = "linear")
     }
+  ),
+# --- Expanded coverage (v4.9.17 assessment) ---
+
+  # CPPS via calculate_cpps_ultra
+  list(
+    name        = "CPPS (calculate_cpps_ultra)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 5e-3,
+    rationale   = "CPPS dB value; 0.005 dB tolerance accounts for FP path differences in trend fit + smoothing.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50
+      cpps = Get CPPS: 0.001, 0.0005, 60, 333.3, 0.05, "parabolic", 0.003, 0.04, "straight", "robust", 1
+      writeInfoLine: cpps
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr     = function(path) {
+      s <- pladdrr::Sound(path)
+      pladdrr::calculate_cpps_ultra(s)
+    }
+  ),
+
+  # Pitch AC algorithm
+  list(
+    name        = "Pitch (AC) -> mean F0 (Hz)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-4,
+    rationale   = "Pitch AC pipeline; FP noise from autocorrelation + interpolation.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      pitch = To Pitch (ac): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+      mean_f0 = Get mean: 0, 0, "Hertz"
+      writeInfoLine: mean_f0
+    ',
+    parse_praat = function(lines) {
+      v <- as.numeric(tail(lines, 1))
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+    },
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      p <- s$to_pitch_ac(time_step = 0, pitch_floor = 75, max_candidates = 15,
+                         very_accurate = FALSE, silence_threshold = 0.03,
+                         voicing_threshold = 0.45, octave_cost = 0.01,
+                         octave_jump_cost = 0.35, voiced_unvoiced_cost = 0.14,
+                         pitch_ceiling = 600)
+      p$get_mean(unit = "hertz")
+    }
+  ),
+
+  # Pitch SHS algorithm
+  list(
+    name        = "Pitch (SHS) -> mean F0 (Hz)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-4,
+    rationale   = "Pitch SHS pipeline; subharmonic summation FP noise.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      pitch = To Pitch (shs): 0.0, 75, 15, 1250, 15, 0.84, 600, 48
+      mean_f0 = Get mean: 0, 0, "Hertz"
+      writeInfoLine: mean_f0
+    ',
+    parse_praat = function(lines) {
+      v <- as.numeric(tail(lines, 1))
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+    },
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      p <- s$to_pitch_shs(time_step = 0, pitch_floor = 75, max_frequency = 1250,
+                          max_candidates = 15, compression_factor = 0.84,
+                          pitch_ceiling = 600, n_points_per_octave = 48)
+      p$get_mean(unit = "hertz")
+    }
+  ),
+
+  # Intensity
+  list(
+    name        = "Intensity -> mean (dB)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-6,
+    rationale   = "RMS-based intensity; FP noise from log + windowing.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      intensity = To Intensity: 100, 0, "yes"
+      mean_db = Get mean: 0, 0, "energy"
+      writeInfoLine: mean_db
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      i <- s$to_intensity(minimum_pitch = 100, time_step = 0, subtract_mean = TRUE)
+      i$get_mean(averaging_method = "energy")
+    }
+  ),
+
+  # Formant (KeepAll) at time point
+  list(
+    name        = "Formant (keepAll) -> F1@0.5s (Hz)",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-3,
+    rationale   = "KeepAll LPC variant; same precision expectation as Burg.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      formant = To Formant (keep all): 0, 5, 5500, 0.025, 50
+      f1 = Get value at time: 1, 0.5, "Hertz", "Linear"
+      writeInfoLine: f1
+    ',
+    parse_praat = function(lines) {
+      v <- as.numeric(tail(lines, 1))
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+    },
+    pladdrr = function(path) {
+      s <- pladdrr::Sound(path)
+      f <- s$to_formant_keep_all(time_step = 0, max_number_of_formants = 5,
+                                maximum_formant = 5500, window_length = 0.025,
+                                pre_emphasis_from = 50)
+      f$get_value_at_time(formant_number = 1, time = 0.5,
+                          unit = "hertz", interpolation = "linear")
+    }
   )
 )
