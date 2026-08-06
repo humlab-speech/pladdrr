@@ -110,3 +110,4 @@ src/Makevars
 
 /.quarto/
 build.log
+/.pi
