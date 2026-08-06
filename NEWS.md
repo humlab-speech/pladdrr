@@ -1,4 +1,17 @@
-# pladdrr 4.9.22
+# pladdrr 4.9.23
+
+## Build verification
+
+* **Confirmed clean-rebuild fix.** The `.so` installed by `R CMD INSTALL` after
+  removing stale `.o` files now reports `simd_info()$debug_build == FALSE`.
+  All 15 plabench cross-validation tests pass, and the performance benchmarks
+  now match the Praat 6.4.47 binary (e.g. CPPS 0.97s R vs 1.16s Praat, AVQI
+  v2.03 0.95s R vs 3.28s Praat). The debug-build guard added in v4.9.22
+  worked as designed — the package detected its own unoptimised state and
+  reported it at startup. No code changes beyond the version bump.
+
+## Previous (v4.9.22)
+
 
 ## Performance
 
