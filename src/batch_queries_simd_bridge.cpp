@@ -46,12 +46,13 @@ using namespace Rcpp;
 // Bridge: NumericVector to C-style array for SIMD
 // ============================================================================
 
-/**
- * Calculate mean of NumericVector with SIMD
- *
- * @param values NumericVector
- * @return Mean value
- */
+//' Calculate mean of NumericVector with SIMD
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param values NumericVector
+//' @return Mean value
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 double calculate_mean_simd_bridge(NumericVector values) {
@@ -61,13 +62,14 @@ double calculate_mean_simd_bridge(NumericVector values) {
     return calculate_mean_simd(values.begin() - 1, n);
 }
 
-/**
- * Calculate standard deviation with SIMD
- *
- * @param values NumericVector
- * @param mean Pre-computed mean (optional, default 0.0 computes it)
- * @return Standard deviation
- */
+//' Calculate standard deviation with SIMD
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param values NumericVector
+//' @param mean Pre-computed mean (optional, default 0.0 computes it)
+//' @return Standard deviation
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
@@ -77,12 +79,13 @@ double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
     return calculate_stdev_simd(values.begin() - 1, n, mean);
 }
 
-/**
- * Calculate min and max with SIMD
- *
- * @param values NumericVector
- * @return List with min and max
- */
+//' Calculate min and max with SIMD
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param values NumericVector
+//' @return List with min and max
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List calculate_min_max_simd_bridge(NumericVector values) {
@@ -97,13 +100,14 @@ List calculate_min_max_simd_bridge(NumericVector values) {
     return List::create(Named("min") = min_val, Named("max") = max_val);
 }
 
-/**
- * Calculate quantile with SIMD-optimized sorting
- *
- * @param values NumericVector
- * @param quantile Quantile value (0.0 to 1.0)
- * @return Quantile value
- */
+//' Calculate quantile with SIMD-optimized sorting
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param values NumericVector
+//' @param quantile Quantile value (0.0 to 1.0)
+//' @return Quantile value
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
@@ -113,12 +117,13 @@ double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
     return calculate_quantile_simd(values.begin() - 1, n, quantile);
 }
 
-/**
- * Calculate all basic statistics in one pass with SIMD
- *
- * @param values NumericVector
- * @return List with mean, stdev, min, max
- */
+//' Calculate all basic statistics in one pass with SIMD
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param values NumericVector
+//' @return List with mean, stdev, min, max
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List calculate_batch_statistics_simd_bridge(NumericVector values) {
@@ -147,14 +152,15 @@ List calculate_batch_statistics_simd_bridge(NumericVector values) {
 // Bridge: Batch Interval Statistics
 // ============================================================================
 
-/**
- * Calculate statistics for multiple intervals with SIMD
- * Optimized for batch processing of interval-based metrics
- *
- * @param intervals_values List of NumericVectors, one per interval
- * @param metric String: "mean", "stdev", "min", "max", or "all"
- * @return NumericVector or NumericMatrix depending on metric
- */
+//' Calculate statistics for multiple intervals with SIMD
+//'
+//' Optimized for batch processing of interval-based metrics. Internal SIMD
+//' dispatch helper; not part of the public API.
+//'
+//' @param intervals_values List of NumericVectors, one per interval
+//' @param metric String: "mean", "stdev", "min", "max", or "all"
+//' @return NumericVector or NumericMatrix depending on metric
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String metric) {
@@ -233,13 +239,14 @@ SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String met
     }
 }
 
-/**
- * Calculate multiple quantiles for multiple intervals with SIMD
- *
- * @param intervals_values List of NumericVectors
- * @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
- * @return NumericMatrix with intervals as rows, quantiles as columns
- */
+//' Calculate multiple quantiles for multiple intervals with SIMD
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @param intervals_values List of NumericVectors
+//' @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
+//' @return NumericMatrix with intervals as rows, quantiles as columns
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 NumericMatrix calculate_interval_quantiles_simd_bridge(
@@ -284,11 +291,12 @@ NumericMatrix calculate_interval_quantiles_simd_bridge(
     return result;
 }
 
-/**
- * Check if SIMD should be used for batch queries
- *
- * @return Logical value
- */
+//' Check if SIMD should be used for batch queries
+//'
+//' Internal SIMD dispatch helper; not part of the public API.
+//'
+//' @return Logical value
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 bool should_use_simd_for_batch_queries_bridge() {

@@ -14,6 +14,7 @@
 ^\.specify$
 ^\.serena$
 ^\.claude$
+^\.pi$
 ^specs$
 ^CLAUDE\.md$
 ^NEWS\.md$

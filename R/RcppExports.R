@@ -444,41 +444,101 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
     .Call(`_pladdrr_get_spectral_moments_batch_cpp`, spectrogram_xptr, power)
 }
 
+#' Calculate mean of NumericVector with SIMD
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param values NumericVector
+#' @return Mean value
+#' @keywords internal
 #' @export
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
 }
 
+#' Calculate standard deviation with SIMD
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param values NumericVector
+#' @param mean Pre-computed mean (optional, default 0.0 computes it)
+#' @return Standard deviation
+#' @keywords internal
 #' @export
 calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
     .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
 }
 
+#' Calculate min and max with SIMD
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param values NumericVector
+#' @return List with min and max
+#' @keywords internal
 #' @export
 calculate_min_max_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
 }
 
+#' Calculate quantile with SIMD-optimized sorting
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param values NumericVector
+#' @param quantile Quantile value (0.0 to 1.0)
+#' @return Quantile value
+#' @keywords internal
 #' @export
 calculate_quantile_simd_bridge <- function(values, quantile) {
     .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
 }
 
+#' Calculate all basic statistics in one pass with SIMD
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param values NumericVector
+#' @return List with mean, stdev, min, max
+#' @keywords internal
 #' @export
 calculate_batch_statistics_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
 }
 
+#' Calculate statistics for multiple intervals with SIMD
+#'
+#' Optimized for batch processing of interval-based metrics. Internal SIMD
+#' dispatch helper; not part of the public API.
+#'
+#' @param intervals_values List of NumericVectors, one per interval
+#' @param metric String: "mean", "stdev", "min", "max", or "all"
+#' @return NumericVector or NumericMatrix depending on metric
+#' @keywords internal
 #' @export
 calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
     .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
 }
 
+#' Calculate multiple quantiles for multiple intervals with SIMD
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @param intervals_values List of NumericVectors
+#' @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
+#' @return NumericMatrix with intervals as rows, quantiles as columns
+#' @keywords internal
 #' @export
 calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
     .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
 }
 
+#' Check if SIMD should be used for batch queries
+#'
+#' Internal SIMD dispatch helper; not part of the public API.
+#'
+#' @return Logical value
+#' @keywords internal
 #' @export
 should_use_simd_for_batch_queries_bridge <- function() {
     .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
@@ -3628,10 +3688,10 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #' ```r
 #' # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 #' my_pred <- RcppXPtrUtils::cppXPtr(
-#'   "bool pred(const char* label, double start, double end) {
+#'   "bool pred(const char* label, double start, double end) \{
 #'      double dur = end - start;
 #'      return dur > 0.1 && label[0] == 'V';
-#'    }",
+#'    \}",
 #'   signature = "bool(const char*, double, double)"
 #' )
 #'

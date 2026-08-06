@@ -47,7 +47,7 @@
 #'
 #' @examples
 #' snd <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
-#' spec <- snd$to_spectrogram(window_length = 0.005, maximum_frequency = 5000)
+#' spec <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 #' power <- spec$get_power_at(time = 0.25, frequency = 440)
 #'
 #' @name Spectrogram

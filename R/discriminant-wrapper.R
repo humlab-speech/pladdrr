@@ -7,7 +7,7 @@
 #' Discriminant analysis is commonly used in phonetics for vowel classification,
 #' speaker identification, dialect/accent classification, and phoneme recognition.
 #'
-#' @seealso \code{\link{PCA}}, \code{\link{TableOfReal}}
+#' @seealso \code{\link{PCA}}
 #' @name Discriminant
 NULL
 

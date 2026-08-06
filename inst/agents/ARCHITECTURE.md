@@ -1,6 +1,6 @@
 # pladdrr Architecture Reference
 
-**Version:** 4.9.23 | **Maintained by:** coding agents and maintainers
+**Version:** 4.9.24 | **Maintained by:** coding agents and maintainers
 **Purpose:** Operational knowledge — build system, threading, dispatch patterns, stale-binary trap, compilation flags.
 
 ---
@@ -113,11 +113,21 @@ The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` templ
 ### Compilation Flags
 
 ```
--O2 (CRAN floor) — default
--O3 -march=native (embedder option) — 3-7× speedup
+-O2 (CRAN floor) — default, full speed
+-O3 -march=native (embedder option) — byte-identical objects, no measurable gain (see v4.9.22 in AGENT_GUIDE.md)
 -ffp-contract=off — required for CPPS bit-exactness with Praat
 -DHAVE_XSIMD — unconditional; RcppXsimd is a LinkingTo dependency
 ```
+
+**`-O3 -march=native` does not speed this package up.** A 3–7x gap was measured
+pre-2026-08-05, but it was the `-UNDEBUG -O0` debug-build penalty from
+`devtools::load_all()`/`pkgbuild::compile_dll()` (see "Stale-Binary Trap"
+below), not the optimisation level. On a clean build, `-O2` and
+`-O3 -march=native` produce byte-identical objects for the hot translation
+unit and are indistinguishable in wall time. Confirmed again 2026-08-06 via a
+clean-tarball `R CMD check --as-cran` with only local toolchain path-fixes (no
+`-O3`/`-march=native`): 0 install/check errors. **Do not recommend custom
+flags to embedders; CRAN's stock `-O2` is full speed.**
 
 `configure` no longer computes a `@XSIMD_FLAG@` substitution: `Makevars.in` set
 `-DHAVE_XSIMD` unconditionally anyway, so the detection was dead code that would

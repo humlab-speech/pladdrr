@@ -19,14 +19,16 @@ This package includes code from the following third-party projects:
 2. GNU Scientific Library (GSL)
    ----------------------------
    Copyright (C) Free Software Foundation
-   Location: src/gsl-2.8/
    License: GPL-3
    Website: https://www.gnu.org/software/gsl/
-   
+
    The GNU Scientific Library is a numerical library for C and C++ programmers.
-   Used for statistical analysis functions in pladdrr.
-   
-   Full license text: src/gsl-2.8/COPYING
+   Used for statistical analysis functions in pladdrr. GSL is a system
+   SystemRequirements dependency (see DESCRIPTION): pladdrr's configure
+   script locates and dynamically links an installed GSL via gsl-config or
+   pkg-config. No GSL source is vendored in this package.
+
+   Full license text: https://www.gnu.org/licenses/gpl-3.0.html
 
 3. pocketfft
    ---------

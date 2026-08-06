@@ -382,10 +382,10 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //' ```r
 //' # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 //' my_pred <- RcppXPtrUtils::cppXPtr(
-//'   "bool pred(const char* label, double start, double end) {
+//'   "bool pred(const char* label, double start, double end) \{
 //'      double dur = end - start;
 //'      return dur > 0.1 && label[0] == 'V';
-//'    }",
+//'    \}",
 //'   signature = "bool(const char*, double, double)"
 //' )
 //'

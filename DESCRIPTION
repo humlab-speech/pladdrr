@@ -1,10 +1,8 @@
 Package: pladdrr
 Type: Package
 Title: Object-Oriented Interface to Praat Phonetic Analysis
-Version: 4.9.23
+Version: 4.9.24
 Date: 2026-08-06
-Author: Fredrik Nylén [aut, cre] (<https://orcid.org/0000-0003-3373-0934>)
-Maintainer: Fredrik Nylén <fredrik.nylen@umu.se>
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
@@ -19,9 +17,7 @@ Description: Provides direct, efficient access to Praat C implemented
     cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant),
     auditory modeling (Cochleagram, Excitation), TextGrid annotation, voice
     quality assessment, geometric operations (Polygon), and a persistent Praat
-    script interpreter with bidirectional R-Praat object transfer. Version 4.0.7
-    adds MFCC/LFCC for speaker recognition, PCA/Discriminant for vowel analysis,
-    and FormantModeler for robust formant estimation. 
+    script interpreter with bidirectional R-Praat object transfer.
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 Depends:
