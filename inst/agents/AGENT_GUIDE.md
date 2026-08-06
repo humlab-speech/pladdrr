@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.21 guide refresh (2026-08-05)
+**Version:** 4.9.23 guide refresh (2026-08-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Current through package 4.9.18. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage.
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**

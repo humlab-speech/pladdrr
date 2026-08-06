@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
 **Last Updated:** 2026-08-05
-**Package Version:** 4.9.21
+**Package Version:** 4.9.23
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
