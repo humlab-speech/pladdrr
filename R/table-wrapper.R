@@ -20,6 +20,37 @@
 NULL
 
 # ============================================================================
+# Helpers
+# ============================================================================
+
+# Helper: Table xptr -> data.frame
+#
+# Praat Table cells are stored as strings internally. A column is treated as
+# numeric in the resulting data.frame only if every cell's string parses as
+# an R number via as.numeric(). Note: .table_get_numeric_value() (Praat's
+# Table_getNumericValue_a) is NOT used for this test — for non-numeric text
+# it does not return NA/NaN, it returns a categorical level index (cells are
+# enumerated alphabetically, e.g. "bird"/"cat"/"dog" -> 1/2/3), which would
+# silently corrupt string columns into bogus integers.
+.table_to_data_frame <- function(xptr) {
+  n_rows <- .table_get_number_of_rows(xptr)
+  n_cols <- .table_get_number_of_columns(xptr)
+  col_names <- .table_get_column_names(xptr)
+
+  columns <- vector("list", n_cols)
+  for (j in seq_len(n_cols)) {
+    str_vals <- vapply(seq_len(n_rows),
+                        function(i) .table_get_string_value(xptr, i, j),
+                        character(1))
+    num_vals <- suppressWarnings(as.numeric(str_vals))
+    columns[[j]] <- if (!anyNA(num_vals)) num_vals else str_vals
+  }
+  names(columns) <- as.character(col_names)
+
+  as.data.frame(columns, stringsAsFactors = FALSE, check.names = FALSE)
+}
+
+# ============================================================================
 # Shared Method Dispatch Table
 # ============================================================================
 
