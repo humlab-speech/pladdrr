@@ -1870,13 +1870,13 @@ List calculate_multiband_hnr_ultra_cpp(
 // Eliminates 14× R-loop overhead by computing all frame moments in C++
 // =============================================================================
 
-// [[Rcpp::export(.get_spectral_moments_batch)]]
-// PERF (v4.10): Direct spectrogram z-matrix computation — bit-exact equivalent of
+// PERF (v4.10): Direct spectrogram z-matrix computation, bit-exact equivalent of
 // Spectrogram_to_Spectrum + Spectrum_getCentreOfGravity etc. Spectrogram_to_Spectrum
 // sets re=sqrt(z[iy][ix]), im=0, so energy in the Spectrum moment formulas is just
 // z[iy][ix] directly. Eliminates per-frame Spectrum allocation/deallocation and
 // fuses all four moment computations into a single pass over the frequency bins,
 // reducing memory bandwidth ~4x vs separate CoG/SD/skewness/kurtosis loops.
+// [[Rcpp::export(.get_spectral_moments_batch)]]
 List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
     XPtr<structSpectrogram> sg(spectrogram_xptr);
     if (!sg || sg.get() == nullptr)
