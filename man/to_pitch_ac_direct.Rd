@@ -49,7 +49,7 @@ External pointer to Pitch (NOT R6 object)
 }
 \description{
 Create Pitch analysis using autocorrelation method with full control over
-all voicing parameters. Returns raw external pointer for maximum performance.
+all voicing parameters. Returns a raw external pointer instead of an R6 object.
 
 **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 available in Tier 1 (Standard) API.

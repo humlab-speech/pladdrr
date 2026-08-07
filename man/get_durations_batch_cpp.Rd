@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_durations_batch_cpp}
 \alias{get_durations_batch_cpp}
-\title{Get audio file durations efficiently via WAV header reading}
+\title{Get audio file durations via WAV header reading}
 \usage{
 get_durations_batch_cpp(file_paths)
 }

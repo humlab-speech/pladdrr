@@ -2,7 +2,7 @@
 % Please edit documentation in R/batch-ops.R
 \name{textgrid_merge}
 \alias{textgrid_merge}
-\title{Merge Multiple TextGrid Objects Efficiently}
+\title{Merge Multiple TextGrid Objects}
 \usage{
 textgrid_merge(textgrids, equalize_domains = FALSE)
 }

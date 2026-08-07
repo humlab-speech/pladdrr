@@ -2,7 +2,7 @@
 % Please edit documentation in R/batch-queries.R
 \name{get_durations_batch}
 \alias{get_durations_batch}
-\title{Get Audio File Durations Efficiently via WAV Header Reading}
+\title{Get Audio File Durations via WAV Header Reading}
 \usage{
 get_durations_batch(file_paths)
 }
@@ -17,9 +17,9 @@ Numeric vector of durations (seconds). Returns `NA` for files that
 Reads only the 44-byte WAV header to calculate duration, avoiding full file
 loading via `LongSound$from_file()$get_total_duration()`.
 
-This is a **Tier 4 "Ultra"** function designed for maximum performance in
-batch DSI (Dysphonia Severity Index) calculations where file duration is the
-MPT (Maximum Phonation Time) component.
+This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+Index) calculations where file duration is the MPT (Maximum Phonation
+Time) component.
 }
 \section{Performance}{
 
@@ -47,11 +47,6 @@ duration <- get_durations_batch("voice.wav")
 mpt_files <- c("sustained_a_1.wav", "sustained_a_2.wav", "sustained_a_3.wav")
 durations <- get_durations_batch(mpt_files)
 max_mpt <- max(durations, na.rm = TRUE)
-
-bench::mark(
-  tier4 = get_durations_batch(files),
-  longsound = sapply(files, function(f) LongSound(f)$get_total_duration())
-)
 }
 
 }

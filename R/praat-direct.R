@@ -175,7 +175,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #'
 #' @description
 #' Create Pitch analysis using autocorrelation method with full control over
-#' all voicing parameters. Returns raw external pointer for maximum performance.
+#' all voicing parameters. Returns a raw external pointer instead of an R6 object.
 #'
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
@@ -245,7 +245,7 @@ to_pitch_ac_direct <- function(sound,
 #'
 #' @description
 #' Create Pitch analysis using cross-correlation method with full control over
-#' all voicing parameters. Returns raw external pointer for maximum performance.
+#' all voicing parameters. Returns a raw external pointer instead of an R6 object.
 #'
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.

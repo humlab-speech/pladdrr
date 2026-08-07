@@ -537,7 +537,7 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 }
 
 
-#' Merge Multiple TextGrid Objects Efficiently
+#' Merge Multiple TextGrid Objects
 #'
 #' Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier copying.
 #' Manual merge requires save/reload + insert_boundary for each interval (each insert shifts

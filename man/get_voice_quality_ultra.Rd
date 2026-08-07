@@ -63,9 +63,8 @@ Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess ->
 Jitter/Shimmer/HNR metrics, in one call instead of the equivalent
 Tier 2/3 workflow using separate function calls.
 
-This is a **Tier 4 "Ultra"** function designed for maximum performance in
-batch DSI (Dysphonia Severity Index) calculations where jitter PPQ5 is
-the PPQ component.
+This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+Index) calculations where jitter PPQ5 is the PPQ component.
 
 By default, this keeps the existing Tier 4 pitch path
 (`pitch_method = "cc"`, `very_accurate = TRUE`). If your reference workflow
@@ -86,7 +85,7 @@ That is byte-for-byte what this function already computes when called with
 is a pure alias for that combination (it forces `very_accurate = FALSE`
 regardless of the `very_accurate` argument), so callers porting a Praat
 script that uses `To PointProcess (periodic, cc)...` can request the
-matching Tier 4 fast path by name instead of having to know the two are
+matching Tier 4 path by name instead of having to know the two are
 equivalent.
 }
 
@@ -121,15 +120,6 @@ vq_periodic_cc <- get_voice_quality_ultra(
   sound,
   metrics = "jitter",
   pitch_method = "periodic_cc"
-)
-
-bench::mark(
-  tier4 = get_voice_quality_ultra(sound, "jitter"),
-  tier2 = {
-    pitch <- sound$to_pitch_cc(very_accurate = TRUE)
-    pp <- to_point_process_from_sound_and_pitch(sound, pitch)
-    get_jitter_shimmer_batch(pp, sound)
-  }
 )
 }
 

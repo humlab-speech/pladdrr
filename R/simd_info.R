@@ -1,8 +1,7 @@
 #' Get SIMD Capabilities
 #' 
 #' Reports the SIMD (Single Instruction Multiple Data) capabilities
-#' available in the current installation. This information is useful
-#' for performance tuning and debugging.
+#' available in the current installation, for diagnostics and debugging.
 #' 
 #' @return A list with the following components:
 #' \describe{

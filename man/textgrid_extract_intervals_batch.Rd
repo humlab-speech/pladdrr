@@ -35,11 +35,11 @@ List with components:
   - sounds: List of Sound xptrs (if extract_sounds = TRUE)
 }
 \description{
-Efficiently extract multiple intervals from a TextGrid tier that match
-specified criteria, using:
-- Single C++ call instead of 4n R<->C++ calls (n = number of intervals)
-- Comparisons done at C++ level
-- Efficient memory allocation
+Extract multiple intervals from a TextGrid tier that match specified
+criteria, using:
+- A single C++ call instead of 4n R<->C++ calls (n = number of intervals)
+- Comparisons done at the C++ level
+- A single memory allocation for the result
 }
 \details{
 **Comparison types:**

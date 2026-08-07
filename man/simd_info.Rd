@@ -27,8 +27,7 @@ A list with the following components:
 }
 \description{
 Reports the SIMD (Single Instruction Multiple Data) capabilities
-available in the current installation. This information is useful
-for performance tuning and debugging.
+available in the current installation, for diagnostics and debugging.
 }
 \details{
 The pladdrr package uses SIMD acceleration for computationally intensive

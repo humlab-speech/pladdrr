@@ -9,7 +9,7 @@
 The pladdrr package provides direct access to Praat's C phonetic analysis
 functionality from R. Praat is a widely-used tool for speech analysis in
 phonetics research and this package wraps Praat's core C library using Rcpp,
-providing efficient, native access to Praat's analysis capabilities without
+providing native access to Praat's analysis capabilities without
 requiring external Praat installation or scripting.
 }
 \section{Core Features}{
@@ -57,8 +57,8 @@ The pladdrr package follows these core principles:
         within 0.1\% relative error tolerance
   \item \strong{R Package Standards}: Full compliance with CRAN requirements
         and R package best practices
-  \item \strong{Efficient C++ Integration}: Direct C++ access via Rcpp for
-        performance
+  \item \strong{Direct C++ Integration}: Direct C++ access via Rcpp, avoiding
+        intermediate R-level translation layers
   \item \strong{Test-Driven Development}: Comprehensive test coverage with
         reference validation
   \item \strong{Comprehensive Documentation}: All functions fully documented

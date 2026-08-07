@@ -276,7 +276,7 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
     .Call(`_pladdrr_get_jitter_shimmer_batch_cpp`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
 }
 
-#' Get audio file durations efficiently via WAV header reading
+#' Get audio file durations via WAV header reading
 #'
 #' @description
 #' Reads only the 44-byte WAV header to calculate duration, avoiding full file
@@ -3550,11 +3550,11 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 #' Extract TextGrid Intervals by Label (Batch)
 #'
-#' Efficiently extract multiple intervals from a TextGrid tier that match
-#' specified criteria, using:
-#' - Single C++ call instead of 4n R<->C++ calls (n = number of intervals)
-#' - Comparisons done at C++ level
-#' - Efficient memory allocation
+#' Extract multiple intervals from a TextGrid tier that match specified
+#' criteria, using:
+#' - A single C++ call instead of 4n R<->C++ calls (n = number of intervals)
+#' - Comparisons done at the C++ level
+#' - A single memory allocation for the result
 #'
 #' @param textgrid_xptr External pointer to TextGrid object
 #' @param sound_xptr External pointer to Sound object (optional, can be NULL)

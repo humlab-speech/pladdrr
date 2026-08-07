@@ -521,15 +521,15 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 # Tier 4 "Ultra" API - DSI Performance Optimization (v4.4.0)
 # =============================================================================
 
-#' Get Audio File Durations Efficiently via WAV Header Reading
+#' Get Audio File Durations via WAV Header Reading
 #'
 #' @description
 #' Reads only the 44-byte WAV header to calculate duration, avoiding full file
 #' loading via `LongSound$from_file()$get_total_duration()`.
 #'
-#' This is a **Tier 4 "Ultra"** function designed for maximum performance in
-#' batch DSI (Dysphonia Severity Index) calculations where file duration is the
-#' MPT (Maximum Phonation Time) component.
+#' This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+#' Index) calculations where file duration is the MPT (Maximum Phonation
+#' Time) component.
 #'
 #' @param file_paths Character vector of .wav file paths
 #'
@@ -558,11 +558,6 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' mpt_files <- c("sustained_a_1.wav", "sustained_a_2.wav", "sustained_a_3.wav")
 #' durations <- get_durations_batch(mpt_files)
 #' max_mpt <- max(durations, na.rm = TRUE)
-#'
-#' bench::mark(
-#'   tier4 = get_durations_batch(files),
-#'   longsound = sapply(files, function(f) LongSound(f)$get_total_duration())
-#' )
 #' }
 #'
 #' @seealso
@@ -584,9 +579,9 @@ get_durations_batch <- function(file_paths) {
 #' avoiding intermediate R6 object creation and the separate `to_pitch_cc()`
 #' and `get_maximum()` calls.
 #'
-#' This is a **Tier 4 "Ultra"** function designed for maximum performance in
-#' batch DSI (Dysphonia Severity Index) calculations where maximum F0 is
-#' the FH (Highest Frequency) component.
+#' This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+#' Index) calculations where maximum F0 is the FH (Highest Frequency)
+#' component.
 #'
 #' @param sound A Sound object
 #' @param stat Statistic to compute: "max", "min", "mean", "median", or "sd"
@@ -618,11 +613,6 @@ get_durations_batch <- function(file_paths) {
 #'
 #' # Get mean F0
 #' mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
-#'
-#' bench::mark(
-#'   tier4 = calculate_f0_stats_ultra(sound, "max"),
-#'   tier2 = sound$to_pitch_cc()$get_maximum(0, 0, "hertz", TRUE)
-#' )
 #' }
 #'
 #' @seealso
@@ -662,9 +652,9 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' TextGrid (VUV) -> Intensity -> Minimum in voiced regions, in one call
 #' instead of the equivalent Tier 2/3 workflow.
 #'
-#' This is a **Tier 4 "Ultra"** function designed for maximum performance in
-#' batch DSI (Dysphonia Severity Index) calculations where minimum intensity
-#' is the IM (Intensity Minimum) component.
+#' This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+#' Index) calculations where minimum intensity is the IM (Intensity
+#' Minimum) component.
 #'
 #' @param sound A Sound object
 #' @param min_pitch Pitch floor in Hz (default: 75)
@@ -695,17 +685,6 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #'
 #' # Get minimum intensity in voiced regions (DSI IM component)
 #' min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
-#'
-#' bench::mark(
-#'   tier4 = calculate_minimum_intensity_ultra(sound),
-#'   tier2 = {
-#'     pitch <- sound$to_pitch_cc()
-#'     pp <- to_point_process_from_sound_and_pitch(sound, pitch)
-#'     tg <- pp$to_textgrid_vuv()
-#'     intensity <- sound$to_intensity()
-#'     # ... find min in voiced regions
-#'   }
-#' )
 #' }
 #'
 #' @seealso
@@ -739,9 +718,8 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' Jitter/Shimmer/HNR metrics, in one call instead of the equivalent
 #' Tier 2/3 workflow using separate function calls.
 #'
-#' This is a **Tier 4 "Ultra"** function designed for maximum performance in
-#' batch DSI (Dysphonia Severity Index) calculations where jitter PPQ5 is
-#' the PPQ component.
+#' This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
+#' Index) calculations where jitter PPQ5 is the PPQ component.
 #'
 #' By default, this keeps the existing Tier 4 pitch path
 #' (`pitch_method = "cc"`, `very_accurate = TRUE`). If your reference workflow
@@ -761,7 +739,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' is a pure alias for that combination (it forces `very_accurate = FALSE`
 #' regardless of the `very_accurate` argument), so callers porting a Praat
 #' script that uses `To PointProcess (periodic, cc)...` can request the
-#' matching Tier 4 fast path by name instead of having to know the two are
+#' matching Tier 4 path by name instead of having to know the two are
 #' equivalent.
 #'
 #' @param sound A Sound object
@@ -829,15 +807,6 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   sound,
 #'   metrics = "jitter",
 #'   pitch_method = "periodic_cc"
-#' )
-#'
-#' bench::mark(
-#'   tier4 = get_voice_quality_ultra(sound, "jitter"),
-#'   tier2 = {
-#'     pitch <- sound$to_pitch_cc(very_accurate = TRUE)
-#'     pp <- to_point_process_from_sound_and_pitch(sound, pitch)
-#'     get_jitter_shimmer_batch(pp, sound)
-#'   }
 #' )
 #' }
 #'
