@@ -29,14 +29,13 @@ Named numeric vector with quantile values (names like "q0.25", "q0.75")
 }
 \description{
 Extract multiple quantiles (e.g., Q1, Q3) from a Pitch object in a single
-C++ call. This is significantly faster than calling `get_quantile()` multiple
-times and is specifically designed for VUV analysis workflows where adaptive
-pitch ranges are calculated from quartiles.
+C++ call instead of calling `get_quantile()` multiple times. Specifically
+designed for VUV analysis workflows where adaptive pitch ranges are
+calculated from quartiles.
 }
 \section{Performance}{
 
 Reduces R<->C++ boundary crossings from n separate calls to 1 call.
-Expected speedup: **2-3x** for VUV workflows that need Q1 and Q3.
 }
 
 \section{Use Case - VUV Analysis}{

@@ -13,8 +13,8 @@ get_sound_times_fast(sound)
 Numeric vector of sample times (in seconds)
 }
 \description{
-Returns time values for each sample using optimized computation.
-Faster than `sound$get_sample_times()` but still allocates memory.
+Returns time values for each sample using a direct computation, instead of
+`sound$get_sample_times()`. Still allocates memory for the result.
 }
 \examples{
 \dontrun{

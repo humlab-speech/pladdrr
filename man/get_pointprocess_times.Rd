@@ -13,13 +13,12 @@ get_pointprocess_times(pointprocess)
 Numeric vector of all point times (in seconds)
 }
 \description{
-Extract all point times from a PointProcess object as a numeric vector.
-This is faster than calling `get_time(i)` in a loop.
+Extract all point times from a PointProcess object as a numeric vector,
+in a single call instead of calling `get_time(i)` in a loop.
 }
 \section{Performance}{
 
-Reduces R<->C++ calls from `n` to 1. Expected speedup: **5-10x** for
-large PointProcess objects.
+Reduces R<->C++ calls from `n` to 1.
 }
 
 \examples{

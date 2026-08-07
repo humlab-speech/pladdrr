@@ -40,16 +40,13 @@ List with components:
   - `sounds`: List of Sound objects (if extract_sounds = TRUE)
 }
 \description{
-Efficiently extract all intervals from a TextGrid tier that match specified
-text criteria. This is **10-50x faster** than manual R loops.
+Extract all intervals from a TextGrid tier that match specified text
+criteria, in a single call instead of a manual R loop.
 }
-\section{Performance}{
+\section{How It Works}{
 
-For a TextGrid with 100 intervals:
-- **Manual R loop:** ~400 R<->C++ calls, ~50-100ms
-- **This function:** 1 call, ~1-2ms (25-50x faster)
-
-The speedup increases with more intervals.
+A manual R loop makes one R<->C++ call per interval; this function does
+the whole tier scan in a single C++ call.
 }
 
 \section{Comparison Types}{
@@ -68,34 +65,28 @@ pitch <- sound$to_pitch()
 pp <- pitch$to_point_process()
 tg <- pp$to_textgrid_vuv(0.02, 0.01)
 
-# Extract all voiced intervals (old way - SLOW)
-system.time({
-  n <- tg$get_number_of_intervals(1)
-  voiced_old <- list()
-  for (i in 1:n) {
-    if (tg$get_interval_text(1, i) == "V") {
-      start <- tg$get_interval_start_time(1, i)
-      end <- tg$get_interval_end_time(1, i)
-      voiced_old <- c(voiced_old, list(sound$extract_part(start, end)))
-    }
+# Extract all voiced intervals (manual loop)
+n <- tg$get_number_of_intervals(1)
+voiced_old <- list()
+for (i in 1:n) {
+  if (tg$get_interval_text(1, i) == "V") {
+    start <- tg$get_interval_start_time(1, i)
+    end <- tg$get_interval_end_time(1, i)
+    voiced_old <- c(voiced_old, list(sound$extract_part(start, end)))
   }
-})
+}
 
-# Extract all voiced intervals (new way - FAST)
-system.time({
-  result <- extract_textgrid_intervals(
-    textgrid = tg,
-    sound = sound,
-    tier = 1,
-    text_equals = "V",
-    extract_sounds = TRUE
-  )
-  voiced_new <- result$sounds
-})
+# Extract all voiced intervals (batch)
+result <- extract_textgrid_intervals(
+  textgrid = tg,
+  sound = sound,
+  tier = 1,
+  text_equals = "V",
+  extract_sounds = TRUE
+)
+voiced_new <- result$sounds
 
-# Typical speedup: 25-50x faster!
-
-# Get interval durations without extracting sounds (even faster)
+# Get interval durations without extracting sounds
 result <- extract_textgrid_intervals(
   textgrid = tg,
   tier = 1,

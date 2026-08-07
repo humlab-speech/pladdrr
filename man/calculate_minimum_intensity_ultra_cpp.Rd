@@ -29,6 +29,6 @@ Minimum intensity in dB (from concatenated voiced regions)
 \description{
 DSI-compliant intensity pipeline: Sound -> Pitch -> PointProcess -> TextGrid (VUV)
 -> Extract voiced intervals -> Concatenate -> Intensity -> Minimum.
-Matches Praat DSI script algorithm. 6x faster than Tier 2/3.
+Matches Praat DSI script algorithm.
 }
 \keyword{internal}

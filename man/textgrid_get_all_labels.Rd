@@ -15,8 +15,8 @@ textgrid_get_all_labels(textgrid_xptr, tier_number)
 Character vector of all interval labels
 }
 \description{
-Extract all interval labels from a tier in a single call.
-Much faster than calling `get_interval_text()` n times.
+Extract all interval labels from a tier in a single call, instead of
+calling `get_interval_text()` n times.
 }
 \examples{
 \dontrun{

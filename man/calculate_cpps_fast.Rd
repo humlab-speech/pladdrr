@@ -73,11 +73,10 @@ parameters. You supply the analysis parameters directly and are responsible
 for passing valid values (see the arguments below).
 }
 \details{
-Use this when analysing many files or in performance-critical pipelines
-(e.g. AVQI). For interactive or one-off use, the object API
-(`sound$to_powercepstrogram(...)$get_cpps(...)`) is equivalent and validates
-its inputs more forgivingly; this function trades that leniency for speed, so
-pass well-formed parameters.
+Use this when analysing many files in a loop. For interactive or one-off
+use, the object API (`sound$to_powercepstrogram(...)$get_cpps(...)`) is
+equivalent and validates its inputs more forgivingly; this function skips
+that validation, so pass well-formed parameters.
 
 This is a **CPPS** helper: it builds a whole-sound PowerCepstrogram and then
 computes a smoothed peak-prominence summary. If you need a single-interval

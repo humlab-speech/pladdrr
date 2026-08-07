@@ -42,15 +42,15 @@ Sound object containing only voiced segments (concatenated)
 Complete AVQI voiced segment extraction pipeline in a single C++ call.
 Supports both AVQI v2.03 (simple intensity-based) and v3.01 (with ZCR filtering).
 Performs: Sound -> TextGrid (silence) -> Extract sounding -> Concatenate ->
-[v3.01: Window power/ZCR filtering] -> Final concatenation.
-2-4x faster than multi-step R implementation.
+[v3.01: Window power/ZCR filtering] -> Final concatenation, in a single
+C++ call instead of a multi-step R implementation.
 }
 \details{
-**TIER 4 ULTRA API - Maximum Performance for AVQI**
+**TIER 4 ULTRA API**
 
 This function implements the exact AVQI voiced extraction algorithm in a
-single optimized C++ call. It eliminates R loops and multiple boundary
-crossings that occur in the standard multi-step approach.
+single C++ call. It replaces the R loops and multiple boundary crossings
+of the standard multi-step approach.
 
 **Algorithm (AVQI v3.01):**
 1. Detect silences using intensity-based TextGrid creation
@@ -62,10 +62,6 @@ crossings that occur in the standard multi-step approach.
 
 **Algorithm (AVQI v2.03):**
 Steps 1-3 only (no window filtering)
-
-**Performance Impact:**
-- Standard R approach: ~8000ms (5-20 interval loops + 50-200 window loops)
-- Moves AVQI from 1.94x to 1.2x vs Python (competitive)
 
 **Version Differences:**
 - v2.03: Simpler, keeps most voiced content (~37s from 37s input)

@@ -26,31 +26,17 @@ Optionally resamples the window to a target sampling rate.
 Uses LongSound for lazy loading - only the requested window is loaded from disk.
 }
 \details{
-**Performance:**
-
-Traditional workflow (slow):
-1. Load entire file: 10s @ 44.1kHz = 441,000 samples
-2. Resample entire file: 10s @ 10kHz = 100,000 samples
-3. Extract window: 40ms = 400 samples
-Waste: 100,000 / 400 = 250x overhead
-
-Window-first workflow (fast):
-1. Open as LongSound (lazy - just reads header)
-2. Extract window from disk: 40ms = only loads 1,764 samples
-3. Resample small window: 400 samples
-Memory: 400 vs 100,000 samples (250x reduction)
-CPU: Resample 400 vs 100,000 samples (250x reduction)
-
-**Speedup scales with file_duration / window_duration:**
-- 10s file, 40ms window: 250x
-- 60s file, 100ms window: 600x
-- 300s file, 50ms window: 6000x
+A traditional workflow loads the entire file, resamples the entire file,
+and then extracts the window of interest — reading and processing far more
+samples than needed. This function instead opens the file as a `LongSound`
+(lazily, reading only the header), extracts just the requested window from
+disk, and resamples only that window.
 
 **Use cases:**
-- Pharyngeal analysis: Extracting 40ms vowel windows from long recordings (27x speedup)
-- Formant tracking: Analyzing specific time points
-- Batch extraction: Processing windows from multiple files
-- Large file processing: Working with hours-long recordings
+- Pharyngeal analysis: extracting short vowel windows from long recordings
+- Formant tracking: analyzing specific time points
+- Batch extraction: processing windows from multiple files
+- Large file processing: working with hours-long recordings
 }
 \examples{
 \dontrun{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/praat-direct.R
 \name{get_formants_direct}
 \alias{get_formants_direct}
-\title{Get Formant F1-F4 at Time Directly (2-3x faster)}
+\title{Get Formant F1-F4 at Time Directly}
 \usage{
 get_formants_direct(formant, time, unit = c("hertz", "bark"))
 }
@@ -24,10 +24,10 @@ Get F1, F2, F3, F4 at a single time point in one call.
 sound <- Sound("speech.wav")
 formant <- sound$to_formant_burg()
 
-# FAST: Get all 4 formants in one call
+# Get all 4 formants in one call
 f1_f4 <- get_formants_direct(formant, time = 0.5)
 
-# Equivalent R6 calls (4x slower):
+# Equivalent R6 calls (4 separate boundary crossings):
 f1 <- formant$get_value_at_time(1, 0.5, "hertz")
 f2 <- formant$get_value_at_time(2, 0.5, "hertz")
 # ... etc

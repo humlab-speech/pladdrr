@@ -20,8 +20,6 @@ sound_pool_resize(max_size)
 Memory optimization for batch operations that extract many Sound segments.
 Reuses Sound object allocations instead of creating/destroying each time.
 
-**Performance Impact:** 20-30% speedup for batch segment extraction
-
 **Numerical Impact:** None - output is identical to non-pooled version
 }
 \details{

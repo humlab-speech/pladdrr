@@ -31,8 +31,8 @@ Single numeric value of the requested statistic in Hz
 }
 \description{
 Performs pitch extraction AND statistic calculation entirely in C++,
-avoiding intermediate R6 object creation. This is **5x faster** than
-using separate `to_pitch_cc()` and `get_maximum()` calls.
+avoiding intermediate R6 object creation and the separate `to_pitch_cc()`
+and `get_maximum()` calls.
 
 This is a **Tier 4 "Ultra"** function designed for maximum performance in
 batch DSI (Dysphonia Severity Index) calculations where maximum F0 is
@@ -64,12 +64,10 @@ max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitc
 # Get mean F0
 mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
 
-# Compare with traditional approach
 bench::mark(
   tier4 = calculate_f0_stats_ultra(sound, "max"),
   tier2 = sound$to_pitch_cc()$get_maximum(0, 0, "hertz", TRUE)
 )
-# Expected: tier4 ~5x faster
 }
 
 }

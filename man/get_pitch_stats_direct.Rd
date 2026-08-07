@@ -2,7 +2,7 @@
 % Please edit documentation in R/praat-direct.R
 \name{get_pitch_stats_direct}
 \alias{get_pitch_stats_direct}
-\title{Get Pitch Statistics Directly (2-3x faster)}
+\title{Get Pitch Statistics Directly}
 \usage{
 get_pitch_stats_direct(
   pitch,
@@ -31,10 +31,10 @@ Get all common pitch statistics in a single call, bypassing R6 dispatch.
 sound <- Sound("speech.wav")
 pitch <- sound$to_pitch_cc()
 
-# FAST: Direct call (2-3x faster)
+# Direct call
 stats <- get_pitch_stats_direct(pitch)
 
-# Equivalent R6 calls (slower, 8 separate boundary crossings):
+# Equivalent R6 calls (8 separate boundary crossings):
 min_val <- pitch$get_minimum(0, 0, "hertz")
 max_val <- pitch$get_maximum(0, 0, "hertz")
 # ... etc

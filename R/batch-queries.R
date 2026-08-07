@@ -5,7 +5,7 @@
 #' Batch Query Formant Frequencies at Multiple Times
 #'
 #' Query formant frequencies (F1, F2, F3, F4, etc.) at multiple time points
-#' in a single function call. This is significantly faster than calling
+#' in a single function call, instead of calling
 #' `get_value_at_time()` repeatedly in a loop.
 #'
 #' @param formant A Formant object
@@ -19,8 +19,7 @@
 #'
 #' @section Performance:
 #' This function reduces R<->C++ boundary crossings from `4n` calls
-#' (for 4 formants at n times) to just 1 call. Expected speedup: **3-5x** for
-#' typical vowel analysis workflows.
+#' (for 4 formants at n times) to just 1 call.
 #'
 #' @examples
 #' \dontrun{
@@ -114,8 +113,8 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 
 #' Batch Query Pitch Values at Multiple Times
 #'
-#' Query pitch (F0) values at multiple time points in a single function call.
-#' Significantly faster than repeated calls to `get_value_at_time()`.
+#' Query pitch (F0) values at multiple time points in a single function call,
+#' instead of repeated calls to `get_value_at_time()`.
 #'
 #' @param pitch A Pitch object
 #' @param times Numeric vector of time points (in seconds)
@@ -126,8 +125,7 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' @return Numeric vector of pitch values at the specified times
 #'
 #' @section Performance:
-#' This function uses existing optimized C++ code. Expected speedup: **2-3x** 
-#' for pitch contour extraction compared to R loops.
+#' This function uses existing optimized C++ code.
 #'
 #' @examples
 #' \dontrun{
@@ -197,9 +195,9 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #'
 #' @description
 #' Extract multiple quantiles (e.g., Q1, Q3) from a Pitch object in a single
-#' C++ call. This is significantly faster than calling `get_quantile()` multiple
-#' times and is specifically designed for VUV analysis workflows where adaptive
-#' pitch ranges are calculated from quartiles.
+#' C++ call instead of calling `get_quantile()` multiple times. Specifically
+#' designed for VUV analysis workflows where adaptive pitch ranges are
+#' calculated from quartiles.
 #'
 #' @param pitch A Pitch object
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)
@@ -212,7 +210,6 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #'
 #' @section Performance:
 #' Reduces R<->C++ boundary crossings from n separate calls to 1 call.
-#' Expected speedup: **2-3x** for VUV workflows that need Q1 and Q3.
 #'
 #' @section Use Case - VUV Analysis:
 #' ```r
@@ -279,7 +276,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' @return Numeric vector of intensity values (in dB) at the specified times
 #'
 #' @section Performance:
-#' Uses existing optimized C++ code. Expected speedup: **2-3x** compared to R loops.
+#' Uses existing optimized C++ code.
 #'
 #' @examples
 #' \dontrun{
@@ -324,16 +321,15 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 
 #' Get All Point Times from PointProcess
 #'
-#' Extract all point times from a PointProcess object as a numeric vector.
-#' This is faster than calling `get_time(i)` in a loop.
+#' Extract all point times from a PointProcess object as a numeric vector,
+#' in a single call instead of calling `get_time(i)` in a loop.
 #'
 #' @param pointprocess A PointProcess object
 #'
 #' @return Numeric vector of all point times (in seconds)
 #'
 #' @section Performance:
-#' Reduces R<->C++ calls from `n` to 1. Expected speedup: **5-10x** for
-#' large PointProcess objects.
+#' Reduces R<->C++ calls from `n` to 1.
 #'
 #' @examples
 #' \dontrun{
@@ -362,8 +358,7 @@ get_pointprocess_times <- function(pointprocess) {
 #' @return Numeric vector of intervals (in seconds). Length is `n_points - 1`.
 #'
 #' @section Performance:
-#' Computes all intervals in C++ without R<->C++ overhead. Expected speedup:
-#' **5-10x** compared to R-based loops.
+#' Computes all intervals in C++ without R<->C++ overhead.
 #'
 #' @examples
 #' \dontrun{
@@ -422,8 +417,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #' Get All Jitter and Shimmer Measures in One Call
 #'
 #' @description
-#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single C++ call.
-#' Much faster than calling individual methods when you need multiple measures.
+#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single C++ call,
+#' instead of calling individual methods separately for each measure.
 #'
 #' **Jitter measures** (period perturbation):
 #' - `jitter_local`: Local jitter (relative, fraction)
@@ -453,7 +448,6 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #'
 #' @section Performance:
 #' This function reduces R<->C++ boundary crossings from 11 calls to 1 call.
-#' Expected speedup: **5-10x** for typical voice quality workflows.
 #'
 #' @section Workflow:
 #' For accurate voice quality analysis, use `to_point_process_from_sound_and_pitch()`
@@ -531,7 +525,7 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #'
 #' @description
 #' Reads only the 44-byte WAV header to calculate duration, avoiding full file
-#' loading. This is **77x faster** than `LongSound$from_file()$get_total_duration()`.
+#' loading via `LongSound$from_file()$get_total_duration()`.
 #'
 #' This is a **Tier 4 "Ultra"** function designed for maximum performance in
 #' batch DSI (Dysphonia Severity Index) calculations where file duration is the
@@ -543,7 +537,7 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #'   cannot be read or are not valid WAV files.
 #'
 #' @section Performance:
-#' This function achieves 77x speedup over the standard LongSound approach by:
+#' This function avoids the overhead of the standard LongSound approach by:
 #' \itemize{
 #'   \item Reading only the first 44-100 bytes of the WAV header
 #'   \item Avoiding memory allocation for audio samples
@@ -565,12 +559,10 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' durations <- get_durations_batch(mpt_files)
 #' max_mpt <- max(durations, na.rm = TRUE)
 #'
-#' # Benchmark comparison
 #' bench::mark(
 #'   tier4 = get_durations_batch(files),
 #'   longsound = sapply(files, function(f) LongSound(f)$get_total_duration())
 #' )
-#' # Expected: tier4 ~77x faster
 #' }
 #'
 #' @seealso
@@ -589,8 +581,8 @@ get_durations_batch <- function(file_paths) {
 #'
 #' @description
 #' Performs pitch extraction AND statistic calculation entirely in C++,
-#' avoiding intermediate R6 object creation. This is **5x faster** than
-#' using separate `to_pitch_cc()` and `get_maximum()` calls.
+#' avoiding intermediate R6 object creation and the separate `to_pitch_cc()`
+#' and `get_maximum()` calls.
 #'
 #' This is a **Tier 4 "Ultra"** function designed for maximum performance in
 #' batch DSI (Dysphonia Severity Index) calculations where maximum F0 is
@@ -627,12 +619,10 @@ get_durations_batch <- function(file_paths) {
 #' # Get mean F0
 #' mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
 #'
-#' # Compare with traditional approach
 #' bench::mark(
 #'   tier4 = calculate_f0_stats_ultra(sound, "max"),
 #'   tier2 = sound$to_pitch_cc()$get_maximum(0, 0, "hertz", TRUE)
 #' )
-#' # Expected: tier4 ~5x faster
 #' }
 #'
 #' @seealso
@@ -669,8 +659,8 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #'
 #' @description
 #' Complete intensity pipeline in C++: Sound -> Pitch -> PointProcess ->
-#' TextGrid (VUV) -> Intensity -> Minimum in voiced regions. This is **6x
-#' faster** than the equivalent Tier 2/3 workflow.
+#' TextGrid (VUV) -> Intensity -> Minimum in voiced regions, in one call
+#' instead of the equivalent Tier 2/3 workflow.
 #'
 #' This is a **Tier 4 "Ultra"** function designed for maximum performance in
 #' batch DSI (Dysphonia Severity Index) calculations where minimum intensity
@@ -706,7 +696,6 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' # Get minimum intensity in voiced regions (DSI IM component)
 #' min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
 #'
-#' # Compare with traditional approach
 #' bench::mark(
 #'   tier4 = calculate_minimum_intensity_ultra(sound),
 #'   tier2 = {
@@ -717,7 +706,6 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #'     # ... find min in voiced regions
 #'   }
 #' )
-#' # Expected: tier4 ~6x faster
 #' }
 #'
 #' @seealso
@@ -748,7 +736,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'
 #' @description
 #' Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess ->
-#' Jitter/Shimmer/HNR metrics. This is **3.6x faster** than the equivalent
+#' Jitter/Shimmer/HNR metrics, in one call instead of the equivalent
 #' Tier 2/3 workflow using separate function calls.
 #'
 #' This is a **Tier 4 "Ultra"** function designed for maximum performance in
@@ -843,7 +831,6 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   pitch_method = "periodic_cc"
 #' )
 #'
-#' # Compare with traditional approach
 #' bench::mark(
 #'   tier4 = get_voice_quality_ultra(sound, "jitter"),
 #'   tier2 = {
@@ -852,7 +839,6 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'     get_jitter_shimmer_batch(pp, sound)
 #'   }
 #' )
-#' # Expected: tier4 ~3.6x faster
 #' }
 #'
 #' @seealso

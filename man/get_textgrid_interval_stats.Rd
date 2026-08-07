@@ -20,16 +20,10 @@ Data frame with columns:
   - `duration`: Duration (seconds)
 }
 \description{
-Compute statistics (start, end, duration, label) for all intervals in a tier.
-Returns a data frame ready for analysis. Much faster than manual loops.
+Compute statistics (start, end, duration, label) for all intervals in a
+tier in a single call, instead of a manual loop. Returns a data frame
+ready for analysis.
 }
-\section{Performance}{
-
-For 100 intervals:
-- Manual loop: ~300 R<->C++ calls, ~30-50ms
-- This function: 1 call, ~1ms (30-50x faster)
-}
-
 \examples{
 \dontrun{
 tg <- TextGrid("example.TextGrid")

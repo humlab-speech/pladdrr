@@ -18,21 +18,14 @@ get_sound_values_fast(sound, channel = 1)
 Numeric vector (independent copy of sample data).
   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
   for backward compatibility.
-}
-\description{
-Copies Sound sample data via direct pointer access — faster than
-`sound$get_values()` which goes through Praat's per-sample accessor.
-}
-\section{Performance}{
-
-Direct pointer-range copy is faster than per-sample access:
-- Small files (< 1 MB): ~2x faster
-- Large files (> 10 MB): ~3-5x faster
 
 The returned vector is an independent R copy — safe to modify,
 store, or use after the Sound object is garbage collected.
 }
-
+\description{
+Copies Sound sample data via direct pointer access, instead of going
+through Praat's per-sample accessor as `sound$get_values()` does.
+}
 \examples{
 \dontrun{
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -42,7 +35,7 @@ samples <- get_sound_values_fast(sound, channel = 1)
 rms <- sqrt(mean(samples^2))
 peak <- max(abs(samples))
 
-# Equivalent (slightly slower) — also a copy
+# Equivalent — also a copy
 samples2 <- sound$get_values(channel = 1)
 }
 

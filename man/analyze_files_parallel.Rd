@@ -31,17 +31,15 @@ oversubscription. Set `1` to force strictly single-threaded workers.}
 List of results from analysis_func, one per file
 }
 \description{
-Process multiple audio files in parallel using multiple CPU cores.
-Significantly speeds up batch analysis workflows.
+Process multiple audio files in parallel across multiple CPU cores,
+instead of processing them sequentially.
 }
 \details{
-This function uses parallel processing to speed up batch analysis.
+This function distributes batch analysis across worker processes.
 Each file is:
 1. Loaded as a Sound object
 2. Processed by analysis_func
 3. Results collected and returned
-
-**Performance:** 3-8x speedup on multi-core systems for I/O-bound tasks.
 }
 \examples{
 \dontrun{

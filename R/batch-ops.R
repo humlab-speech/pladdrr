@@ -172,7 +172,7 @@ sound_to_pitch_ac_batch <- function(sounds,
 #'
 #' Batch version of to_pitch_cc with full voicing parameters.
 #' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
-#' Use this for maximum performance when processing many sound segments.
+#' Use this when processing many sound segments in a loop.
 #'
 #' @param sounds List of Sound objects (R6) or external pointers
 #' @param time_step Numeric. Time step (0 = automatic)
@@ -191,10 +191,10 @@ sound_to_pitch_ac_batch <- function(sounds,
 #'
 #' @examples
 #' \dontrun{
-#' # Instead of slow loop:
+#' # Instead of a loop:
 #' # pitches <- lapply(sounds, function(s) s$to_pitch_cc())
 #'
-#' # Use batch operation (much faster for many sounds):
+#' # Use the batch operation:
 #' pitches <- sound_to_pitch_cc_batch(sounds)
 #' }
 #'
@@ -550,10 +550,9 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #' @return TextGrid object (external pointer)
 #'
 #' @details
-#' **Performance:**
-#' - Manual merge: Save/reload + O(n²) insert_boundary calls + O(n) label setting
-#' - Batch merge: Single-pass O(n) with proper interval handling
-#' - Speedup: ~17x for 100 intervals (VUV use case)
+#' Manual merge requires save/reload plus an O(n²) sequence of
+#' `insert_boundary` calls (each insert shifts all later intervals); batch
+#' merge does a single O(n) pass with proper interval handling.
 #'
 #' **Domain handling:**
 #' - If `equalize_domains = FALSE` (default):
@@ -582,7 +581,7 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #' tg2$add_point_tier("events")
 #' tg2$add_point(1, 0.25, "click")
 #'
-#' # Batch merge (fast)
+#' # Batch merge
 #' merged <- textgrid_merge(list(tg1, tg2))
 #' # Result has 2 tiers: "words" (interval) + "events" (point)
 #'
@@ -624,31 +623,17 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' @return Sound object containing the windowed (and optionally resampled) audio
 #'
 #' @details
-#' **Performance:**
-#'
-#' Traditional workflow (slow):
-#' 1. Load entire file: 10s @ 44.1kHz = 441,000 samples
-#' 2. Resample entire file: 10s @ 10kHz = 100,000 samples
-#' 3. Extract window: 40ms = 400 samples
-#' Waste: 100,000 / 400 = 250x overhead
-#'
-#' Window-first workflow (fast):
-#' 1. Open as LongSound (lazy - just reads header)
-#' 2. Extract window from disk: 40ms = only loads 1,764 samples
-#' 3. Resample small window: 400 samples
-#' Memory: 400 vs 100,000 samples (250x reduction)
-#' CPU: Resample 400 vs 100,000 samples (250x reduction)
-#'
-#' **Speedup scales with file_duration / window_duration:**
-#' - 10s file, 40ms window: 250x
-#' - 60s file, 100ms window: 600x
-#' - 300s file, 50ms window: 6000x
+#' A traditional workflow loads the entire file, resamples the entire file,
+#' and then extracts the window of interest — reading and processing far more
+#' samples than needed. This function instead opens the file as a `LongSound`
+#' (lazily, reading only the header), extracts just the requested window from
+#' disk, and resamples only that window.
 #'
 #' **Use cases:**
-#' - Pharyngeal analysis: Extracting 40ms vowel windows from long recordings (27x speedup)
-#' - Formant tracking: Analyzing specific time points
-#' - Batch extraction: Processing windows from multiple files
-#' - Large file processing: Working with hours-long recordings
+#' - Pharyngeal analysis: extracting short vowel windows from long recordings
+#' - Formant tracking: analyzing specific time points
+#' - Batch extraction: processing windows from multiple files
+#' - Large file processing: working with hours-long recordings
 #'
 #' @examples
 #' \dontrun{

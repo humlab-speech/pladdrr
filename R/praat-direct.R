@@ -10,21 +10,17 @@
 #'
 #' @description
 #' These functions provide direct access to Praat operations without R6
-#' class dispatch overhead. Use them in performance-critical code where
-#' you need maximum speed and are comfortable working with external pointers.
-#'
-#' **Performance:** 2-3x faster than R6 method calls due to:
-#' - No R6 environment lookup
-#' - No named parameter matching
-#' - No result wrapping
+#' class dispatch overhead — no R6 environment lookup, no named parameter
+#' matching, no result wrapping. Use them in tight loops where you are
+#' comfortable working with external pointers instead of R6 objects.
 #'
 #' **Output:** Numerically identical to R6 methods.
 #'
 #' @section When to Use:
-#' - Processing >100 files in batch
-#' - Real-time analysis
+#' - Processing many files in a batch loop
+#' - Latency-sensitive analysis pipelines
 #' - Tight loops with many queries
-#' - When profiling shows R6 overhead as bottleneck
+#' - When profiling shows R6 dispatch overhead as a bottleneck
 #'
 #' @section When NOT to Use:
 #' - Interactive exploration (use R6 for convenience)
@@ -37,7 +33,7 @@ NULL
 # Pitch Direct API
 # =============================================================================
 
-#' Get Pitch Statistics Directly (2-3x faster)
+#' Get Pitch Statistics Directly
 #'
 #' @description
 #' Get all common pitch statistics in a single call, bypassing R6 dispatch.
@@ -54,10 +50,10 @@ NULL
 #' sound <- Sound("speech.wav")
 #' pitch <- sound$to_pitch_cc()
 #'
-#' # FAST: Direct call (2-3x faster)
+#' # Direct call
 #' stats <- get_pitch_stats_direct(pitch)
 #'
-#' # Equivalent R6 calls (slower, 8 separate boundary crossings):
+#' # Equivalent R6 calls (8 separate boundary crossings):
 #' min_val <- pitch$get_minimum(0, 0, "hertz")
 #' max_val <- pitch$get_maximum(0, 0, "hertz")
 #' # ... etc
@@ -85,7 +81,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 }
 
 
-#' Get Formant F1-F4 at Time Directly (2-3x faster)
+#' Get Formant F1-F4 at Time Directly
 #'
 #' @description
 #' Get F1, F2, F3, F4 at a single time point in one call.
@@ -101,10 +97,10 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 #' sound <- Sound("speech.wav")
 #' formant <- sound$to_formant_burg()
 #'
-#' # FAST: Get all 4 formants in one call
+#' # Get all 4 formants in one call
 #' f1_f4 <- get_formants_direct(formant, time = 0.5)
 #'
-#' # Equivalent R6 calls (4x slower):
+#' # Equivalent R6 calls (4 separate boundary crossings):
 #' f1 <- formant$get_value_at_time(1, 0.5, "hertz")
 #' f2 <- formant$get_value_at_time(2, 0.5, "hertz")
 #' # ... etc

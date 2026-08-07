@@ -20,13 +20,12 @@ get_pitch_at_times(pitch, times, unit = "hertz", interpolate = TRUE)
 Numeric vector of pitch values at the specified times
 }
 \description{
-Query pitch (F0) values at multiple time points in a single function call.
-Significantly faster than repeated calls to `get_value_at_time()`.
+Query pitch (F0) values at multiple time points in a single function call,
+instead of repeated calls to `get_value_at_time()`.
 }
 \section{Performance}{
 
-This function uses existing optimized C++ code. Expected speedup: **2-3x** 
-for pitch contour extraction compared to R loops.
+This function uses existing optimized C++ code.
 }
 
 \examples{

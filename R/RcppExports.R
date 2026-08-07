@@ -198,8 +198,8 @@ pointprocess_get_nearest_indices <- function(pp_xptr, times) {
 #'
 #' @description
 #' Calculate multiple pitch statistics (min, max, mean, stdev, quantiles) over
-#' multiple time intervals in a single C++ call. 10-50x faster than repeated
-#' R method calls.
+#' multiple time intervals in a single C++ call, avoiding repeated R method
+#' calls.
 #'
 #' @param pitch_xptr External pointer to Pitch object
 #' @param from_times Numeric vector of interval start times
@@ -258,8 +258,9 @@ intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_ti
 #' Get all jitter and shimmer measures in a single C++ call
 #'
 #' @description
-#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call.
-#' Much faster than calling individual methods when you need multiple measures.
+#' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call,
+#' for when you need multiple measures at once instead of calling individual
+#' methods separately.
 #'
 #' @param pp_xptr External pointer to PointProcess object
 #' @param sound_xptr External pointer to Sound object (required for shimmer)
@@ -279,7 +280,7 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
 #'
 #' @description
 #' Reads only the 44-byte WAV header to calculate duration, avoiding full file
-#' loading. 77x faster than LongSound$from_file()$get_total_duration().
+#' loading.
 #'
 #' @param file_paths Character vector of .wav file paths
 #' @return Numeric vector of durations (seconds), NA for errors
@@ -292,7 +293,7 @@ get_durations_batch_cpp <- function(file_paths) {
 #'
 #' @description
 #' Performs pitch extraction AND statistic calculation entirely in C++,
-#' avoiding intermediate R6 object creation. 5x faster than Tier 2/3.
+#' avoiding intermediate R6 object creation.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param stat Statistic to compute: "max", "min", "mean", "median", "sd"
@@ -311,7 +312,7 @@ calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch,
 #' @description
 #' DSI-compliant intensity pipeline: Sound -> Pitch -> PointProcess -> TextGrid (VUV)
 #' -> Extract voiced intervals -> Concatenate -> Intensity -> Minimum.
-#' Matches Praat DSI script algorithm. 6x faster than Tier 2/3.
+#' Matches Praat DSI script algorithm.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param min_pitch Pitch floor (Hz) for pitch extraction
@@ -328,7 +329,7 @@ calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pit
 #'
 #' @description
 #' Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess
-#' -> Jitter/Shimmer/HNR. Returns selected metrics. 3.6x faster than Tier 2/3.
+#' -> Jitter/Shimmer/HNR. Returns selected metrics.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param metrics Character vector of metrics: "jitter", "shimmer", "hnr", or "all"
@@ -2348,8 +2349,9 @@ get_global_simd_enabled <- function() {
 
 #' Fast Sound Sample Access
 #'
-#' Copies Sound sample data via direct pointer access — faster than
-#' `get_values()` which goes through Praat's per-sample accessor.
+#' Copies Sound sample data via direct pointer access into Praat's
+#' contiguous sample array, rather than going through the per-sample
+#' accessor in a loop.
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param channel Channel number (1-based, default 1)
@@ -2359,10 +2361,6 @@ get_global_simd_enabled <- function() {
 #'   for backward compatibility with code that checked these.
 #'
 #' @details
-#' **Performance:** ~2-5x faster than `get_values()` for large sounds
-#' because it copies directly from Praat's contiguous sample array
-#' rather than calling the per-sample accessor in a loop.
-#'
 #' The returned vector is an independent R copy — safe to modify,
 #' store, or use after the Sound object is garbage collected.
 #'
@@ -2370,11 +2368,11 @@ get_global_simd_enabled <- function() {
 #' \dontrun{
 #' sound <- Sound("large_file.wav")
 #'
-#' # Fast copy — for read-only analysis
+#' # Copy for read-only analysis
 #' samples <- sound_values_fast(sound$get_xptr(), channel = 1)
 #' rms <- sqrt(mean(samples^2))
 #'
-#' # Regular copy — equivalent, slightly slower
+#' # Regular copy — equivalent output
 #' samples2 <- sound$get_values(channel = 1)
 #' }
 #'
@@ -2486,8 +2484,6 @@ is_fast_access <- function(x) {
 #' Memory optimization for batch operations that extract many Sound segments.
 #' Reuses Sound object allocations instead of creating/destroying each time.
 #'
-#' **Performance Impact:** 20-30% speedup for batch segment extraction
-#'
 #' **Numerical Impact:** None - output is identical to non-pooled version
 #'
 #' @details
@@ -2557,8 +2553,8 @@ sound_pool_release <- function(sound_xptr) {
 #' Extract multiple Sound parts using object pool
 #'
 #' @description
-#' Batch extraction with memory reuse. 20-30% faster than individual
-#' Sound_extractPart calls for large numbers of segments.
+#' Batch extraction using pooled memory reuse, for large numbers of
+#' segments.
 #'
 #' @param sound_xptr External pointer to source Sound
 #' @param start_times Numeric vector of start times
@@ -2580,7 +2576,7 @@ sound_pool_release <- function(sound_xptr) {
 #' starts <- c(0.1, 0.5, 1.0)
 #' ends <- c(0.3, 0.7, 1.2)
 #'
-#' # Fast batch extraction with pooling
+#' # Batch extraction with pooling
 #' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 #'
 #' # Process segments...
@@ -3555,7 +3551,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Extract TextGrid Intervals by Label (Batch)
 #'
 #' Efficiently extract multiple intervals from a TextGrid tier that match
-#' specified criteria. This is **10-50x faster** than R loops because:
+#' specified criteria, using:
 #' - Single C++ call instead of 4n R<->C++ calls (n = number of intervals)
 #' - Comparisons done at C++ level
 #' - Efficient memory allocation
@@ -3580,11 +3576,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' - "contains": Substring match (strstr)
 #' - "starts_with": Prefix match
 #' - "regex": Regular expression (future)
-#'
-#' **Performance:**
-#' For 100 intervals:
-#' - R loop: ~400 R<->C++ calls, ~50-100ms
-#' - This function: 1 call, ~1-2ms (25-50x faster)
 #'
 #' @examples
 #' \dontrun{
@@ -3611,8 +3602,8 @@ textgrid_extract_intervals_batch <- function(textgrid_xptr, sound_xptr, tier_num
 
 #' Get All Labels from TextGrid Tier (Batch)
 #'
-#' Extract all interval labels from a tier in a single call.
-#' Much faster than calling `get_interval_text()` n times.
+#' Extract all interval labels from a tier in a single call, instead of
+#' calling `get_interval_text()` n times.
 #'
 #' @param textgrid_xptr External pointer to TextGrid object
 #' @param tier_number Tier number (1-based)
@@ -3647,8 +3638,8 @@ textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
 #'   - duration: Duration (end - start)
 #'
 #' @details
-#' Duration calculation uses SIMD vectorization when available,
-#' providing ~1.5-2x speedup for large interval counts (>100).
+#' Duration calculation uses SIMD vectorization when available, for
+#' large interval counts (>100).
 #'
 #' @examples
 #' \dontrun{
@@ -3661,11 +3652,10 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
     .Call(`_pladdrr_textgrid_interval_statistics_batch`, textgrid_xptr, tier_number)
 }
 
-#' Extract TextGrid Intervals Using Custom XPtr Predicate (50-70x faster)
+#' Extract TextGrid Intervals Using Custom XPtr Predicate
 #'
 #' Filter intervals using a user-compiled C++ predicate function.
-#' This provides **50-70x speedup** over R function callbacks because
-#' the predicate executes entirely in C++ without any R boundary crossings.
+#' The predicate executes entirely in C++ without any R boundary crossings.
 #'
 #' @param textgrid_xptr External pointer to TextGrid object
 #' @param tier_number Tier number (1-based)
@@ -3701,11 +3691,6 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #'   predicate_xptr = my_pred
 #' )
 #' ```
-#'
-#' **Performance comparison (1000 intervals):**
-#' - R function callback: ~100ms (1000 R<->C++ calls)
-#' - XPtr predicate: ~1.5ms (0 R<->C++ calls during filter)
-#' - Speedup: ~67x
 #'
 #' @seealso [textgrid_extract_intervals_batch()] for simpler string matching
 #'
@@ -3801,7 +3786,7 @@ textgrid_simd_enabled <- function() {
 #' Calculate Interval Durations with SIMD
 #'
 #' Vectorized calculation of interval durations (end - start).
-#' Uses SIMD instructions for ~1.5-2x speedup on large interval counts.
+#' Uses SIMD instructions on large interval counts.
 #'
 #' @param start_times Numeric vector of start times
 #' @param end_times Numeric vector of end times
@@ -3874,8 +3859,6 @@ calculate_midpoints_simd_bridge <- function(start_times, end_times) {
 #' This function combines:
 #' 1. SIMD duration calculation for all intervals
 #' 2. SIMD statistics calculation for pitch values in each interval
-#'
-#' Performance: ~2x faster than R loop with individual queries
 #'
 #' @export
 textgrid_interval_pitch_batch <- function(textgrid_xptr, pitch_xptr, tier_number, unit = "HERTZ") {

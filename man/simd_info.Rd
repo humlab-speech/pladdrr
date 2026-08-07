@@ -19,9 +19,10 @@ A list with the following components:
   \item{debug_build}{Logical indicating the shared object was compiled
     without \code{NDEBUG}, i.e. by \code{devtools::load_all()} /
     \code{pkgbuild::compile_dll()}, which force
-    \code{-UNDEBUG -Wall -pedantic -g -O0}. Such a build is several times
-    slower and must never be benchmarked; reinstall with
-    \code{R CMD INSTALL --preclean .} to get optimised objects.}
+    \code{-UNDEBUG -Wall -pedantic -g -O0}. Such a build is not
+    representative of normal operation and must not be used for timing
+    comparisons; reinstall with \code{R CMD INSTALL --preclean .} to get
+    optimised objects.}
 }
 }
 \description{
@@ -32,9 +33,8 @@ for performance tuning and debugging.
 \details{
 The pladdrr package uses SIMD acceleration for computationally intensive
 operations like autocorrelation, windowing, and statistical computations.
-On Apple Silicon / NEON, the measured gains on the hottest paths are modest:
-pitch is often near-neutral, while the cepstrogram/CPPS path gains roughly
-10-15 percent. Threading is usually the bigger lever.
+The effect varies by code path and platform; use [pladdrr_simd()] to
+toggle SIMD at runtime and compare a given workload directly.
 
 Common SIMD instruction sets:
 \itemize{
@@ -53,9 +53,8 @@ checks. The option is read during \code{.onLoad}.
 info <- simd_info()
 print(info)
 
-# Expected ~2-4x speedup on AVX2 systems
 if (info$architecture == "AVX2") {
-  message("Excellent SIMD support!")
+  message("AVX2 SIMD support detected")
 }
 
 # Disable SIMD temporarily for testing

@@ -22,14 +22,13 @@ A list with one element per formant number (e.g., `F1`, `F2`, ...),
 }
 \description{
 Query formant frequencies (F1, F2, F3, F4, etc.) at multiple time points
-in a single function call. This is significantly faster than calling
+in a single function call, instead of calling
 `get_value_at_time()` repeatedly in a loop.
 }
 \section{Performance}{
 
 This function reduces R<->C++ boundary crossings from `4n` calls
-(for 4 formants at n times) to just 1 call. Expected speedup: **3-5x** for
-typical vowel analysis workflows.
+(for 4 formants at n times) to just 1 call.
 }
 
 \examples{

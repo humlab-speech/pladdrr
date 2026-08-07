@@ -36,7 +36,8 @@ get_jitter_shimmer_batch_cpp(
 Named list with 11 voice quality measures
 }
 \description{
-Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call.
-Much faster than calling individual methods when you need multiple measures.
+Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call,
+for when you need multiple measures at once instead of calling individual
+methods separately.
 }
 \keyword{internal}

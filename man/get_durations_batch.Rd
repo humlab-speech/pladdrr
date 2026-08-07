@@ -15,7 +15,7 @@ Numeric vector of durations (seconds). Returns `NA` for files that
 }
 \description{
 Reads only the 44-byte WAV header to calculate duration, avoiding full file
-loading. This is **77x faster** than `LongSound$from_file()$get_total_duration()`.
+loading via `LongSound$from_file()$get_total_duration()`.
 
 This is a **Tier 4 "Ultra"** function designed for maximum performance in
 batch DSI (Dysphonia Severity Index) calculations where file duration is the
@@ -23,7 +23,7 @@ MPT (Maximum Phonation Time) component.
 }
 \section{Performance}{
 
-This function achieves 77x speedup over the standard LongSound approach by:
+This function avoids the overhead of the standard LongSound approach by:
 \itemize{
   \item Reading only the first 44-100 bytes of the WAV header
   \item Avoiding memory allocation for audio samples
@@ -48,12 +48,10 @@ mpt_files <- c("sustained_a_1.wav", "sustained_a_2.wav", "sustained_a_3.wav")
 durations <- get_durations_batch(mpt_files)
 max_mpt <- max(durations, na.rm = TRUE)
 
-# Benchmark comparison
 bench::mark(
   tier4 = get_durations_batch(files),
   longsound = sapply(files, function(f) LongSound(f)$get_total_duration())
 )
-# Expected: tier4 ~77x faster
 }
 
 }

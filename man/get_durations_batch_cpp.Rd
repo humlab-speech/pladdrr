@@ -14,6 +14,6 @@ Numeric vector of durations (seconds), NA for errors
 }
 \description{
 Reads only the 44-byte WAV header to calculate duration, avoiding full file
-loading. 77x faster than LongSound$from_file()$get_total_duration().
+loading.
 }
 \keyword{internal}

@@ -5,22 +5,18 @@
 \title{Direct Function Dispatch API}
 \description{
 These functions provide direct access to Praat operations without R6
-class dispatch overhead. Use them in performance-critical code where
-you need maximum speed and are comfortable working with external pointers.
-
-**Performance:** 2-3x faster than R6 method calls due to:
-- No R6 environment lookup
-- No named parameter matching
-- No result wrapping
+class dispatch overhead — no R6 environment lookup, no named parameter
+matching, no result wrapping. Use them in tight loops where you are
+comfortable working with external pointers instead of R6 objects.
 
 **Output:** Numerically identical to R6 methods.
 }
 \section{When to Use}{
 
-- Processing >100 files in batch
-- Real-time analysis
+- Processing many files in a batch loop
+- Latency-sensitive analysis pipelines
 - Tight loops with many queries
-- When profiling shows R6 overhead as bottleneck
+- When profiling shows R6 dispatch overhead as a bottleneck
 }
 
 \section{When NOT to Use}{

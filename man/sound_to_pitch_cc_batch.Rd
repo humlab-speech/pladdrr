@@ -50,14 +50,14 @@ List of Pitch objects (R6 or xptr depending on return_r6)
 \description{
 Batch version of to_pitch_cc with full voicing parameters.
 Avoids O(n) R→C boundary crossings for VUV analysis workflows.
-Use this for maximum performance when processing many sound segments.
+Use this when processing many sound segments in a loop.
 }
 \examples{
 \dontrun{
-# Instead of slow loop:
+# Instead of a loop:
 # pitches <- lapply(sounds, function(s) s$to_pitch_cc())
 
-# Use batch operation (much faster for many sounds):
+# Use the batch operation:
 pitches <- sound_to_pitch_cc_batch(sounds)
 }
 

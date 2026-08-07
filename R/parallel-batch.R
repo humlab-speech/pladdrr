@@ -20,8 +20,8 @@
 #' Process Audio Files in Parallel
 #'
 #' @description
-#' Process multiple audio files in parallel using multiple CPU cores.
-#' Significantly speeds up batch analysis workflows.
+#' Process multiple audio files in parallel across multiple CPU cores,
+#' instead of processing them sequentially.
 #'
 #' @param files Character vector. Paths to audio files
 #' @param analysis_func Function. Analysis function to apply to each file.
@@ -36,13 +36,11 @@
 #' @return List of results from analysis_func, one per file
 #'
 #' @details
-#' This function uses parallel processing to speed up batch analysis.
+#' This function distributes batch analysis across worker processes.
 #' Each file is:
 #' 1. Loaded as a Sound object
 #' 2. Processed by analysis_func
 #' 3. Results collected and returned
-#'
-#' **Performance:** 3-8x speedup on multi-core systems for I/O-bound tasks.
 #'
 #' @examples
 #' \dontrun{

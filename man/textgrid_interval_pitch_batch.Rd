@@ -32,6 +32,4 @@ in a TextGrid tier using SIMD-accelerated batch processing.
 This function combines:
 1. SIMD duration calculation for all intervals
 2. SIMD statistics calculation for pitch values in each interval
-
-Performance: ~2x faster than R loop with individual queries
 }

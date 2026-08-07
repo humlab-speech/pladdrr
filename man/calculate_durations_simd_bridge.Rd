@@ -16,7 +16,7 @@ Numeric vector of durations
 }
 \description{
 Vectorized calculation of interval durations (end - start).
-Uses SIMD instructions for ~1.5-2x speedup on large interval counts.
+Uses SIMD instructions on large interval counts.
 }
 \examples{
 \dontrun{

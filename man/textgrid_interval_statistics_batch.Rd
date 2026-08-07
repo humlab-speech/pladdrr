@@ -25,8 +25,8 @@ Single C++ call instead of looping in R. Uses SIMD for duration
 calculation when available.
 }
 \details{
-Duration calculation uses SIMD vectorization when available,
-providing ~1.5-2x speedup for large interval counts (>100).
+Duration calculation uses SIMD vectorization when available, for
+large interval counts (>100).
 }
 \examples{
 \dontrun{

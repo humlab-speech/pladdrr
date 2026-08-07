@@ -15,8 +15,9 @@ apply_window_xptr(sound, window_func)
 Sound object with window function applied
 }
 \description{
-Apply a user-defined C++ window function to a Sound object with 70x speedup
-over R function callbacks. Requires the RcppXPtrUtils package.
+Apply a user-defined C++ window function to a Sound object, compiled via
+RcppXPtrUtils, instead of calling an R callback per sample. Requires the
+RcppXPtrUtils package.
 }
 \details{
 **ADVANCED API** - Requires RcppXPtrUtils package.
@@ -47,7 +48,7 @@ gauss_window <- cppXPtr(
 # Verify signature (optional but recommended)
 checkXPtr(gauss_window, "double", "double")
 
-# Apply to sound (70x faster than R function)
+# Apply to sound
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 windowed <- apply_window_xptr(sound, gauss_window)
 }

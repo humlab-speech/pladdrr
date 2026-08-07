@@ -17,14 +17,11 @@ Numeric vector (independent copy of sample data).
   for backward compatibility with code that checked these.
 }
 \description{
-Copies Sound sample data via direct pointer access — faster than
-`get_values()` which goes through Praat's per-sample accessor.
+Copies Sound sample data via direct pointer access into Praat's
+contiguous sample array, rather than going through the per-sample
+accessor in a loop.
 }
 \details{
-**Performance:** ~2-5x faster than `get_values()` for large sounds
-because it copies directly from Praat's contiguous sample array
-rather than calling the per-sample accessor in a loop.
-
 The returned vector is an independent R copy — safe to modify,
 store, or use after the Sound object is garbage collected.
 }
@@ -32,11 +29,11 @@ store, or use after the Sound object is garbage collected.
 \dontrun{
 sound <- Sound("large_file.wav")
 
-# Fast copy — for read-only analysis
+# Copy for read-only analysis
 samples <- sound_values_fast(sound$get_xptr(), channel = 1)
 rms <- sqrt(mean(samples^2))
 
-# Regular copy — equivalent, slightly slower
+# Regular copy — equivalent output
 samples2 <- sound$get_values(channel = 1)
 }
 

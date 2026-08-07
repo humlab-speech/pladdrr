@@ -65,21 +65,21 @@ Computes CPPS from a `Sound` in a single C++ call, building the
 PowerCepstrogram internally so no intermediate R object is created.
 
 Returns the same value as \code{calculate_cpps_fast()} and as
-\code{sound$to_powercepstrogram(...)$get_cpps(...)}. Measured on a 1 s
-signal the three paths are within 2% of each other (~170 ms each): the
-R/C++ boundary costs microseconds while the trend fit dominates, so pick
-whichever reads best at the call site.
+\code{sound$to_powercepstrogram(...)$get_cpps(...)}. The three paths cost
+about the same: the R/C++ boundary crossing is negligible next to the
+per-frame trend fit, so pick whichever reads best at the call site.
 }
 \details{
 Implements the complete CPPS pipeline in one C++ call, following the approach
 used in AVQI v2.03 and v3.01: PowerCepstrogram creation and CPPS extraction
 are consolidated, and no intermediate R object is allocated.
 
-This does **not** make it meaningfully faster than the other CPPS entry
-points. Roughly 94% of CPPS runtime is the per-frame robust trend fit
-(`SlopeSelector::getSlope_Siegel`), which every path shares; the boundary
-crossings the consolidation removes cost microseconds. Treat the choice as a
-matter of call-site convenience, not performance.
+This does **not** make it meaningfully cheaper than the other CPPS entry
+points: the per-frame robust trend fit (`SlopeSelector::getSlope_Siegel`)
+dominates CPPS runtime and is shared by every path; consolidating the
+PowerCepstrogram creation only removes the R/C++ boundary crossing, which
+is a small fraction of the total cost. Treat the choice as a matter of
+call-site convenience, not performance.
 
 The defaults here match \code{calculate_cpps_fast()} and therefore also
 deviate from Praat's dialog defaults — see the "Defaults differ from Praat's"
@@ -93,7 +93,7 @@ Praat workflow used by voice-quality scripts that query one interval at a time.
 **Use Cases:**
 - AVQI v2.03/v3.01 implementation
 - High-throughput voice quality analysis
-- Real-time CPPS monitoring
+- CPPS monitoring in latency-sensitive pipelines
 }
 \section{Algorithm choice}{
 
@@ -111,7 +111,7 @@ Ultra functions.
 \dontrun{
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
+# Tier 4 Ultra (same defaults as calculate_cpps_fast)
 cpps <- calculate_cpps_ultra(sound)
 
 # Should match calculate_cpps_fast() within 0.01 dB

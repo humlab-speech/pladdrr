@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{textgrid_filter_xptr}
 \alias{textgrid_filter_xptr}
-\title{Extract TextGrid Intervals Using Custom XPtr Predicate (50-70x faster)}
+\title{Extract TextGrid Intervals Using Custom XPtr Predicate}
 \usage{
 textgrid_filter_xptr(
   textgrid_xptr,
@@ -35,8 +35,7 @@ List with components:
 }
 \description{
 Filter intervals using a user-compiled C++ predicate function.
-This provides **50-70x speedup** over R function callbacks because
-the predicate executes entirely in C++ without any R boundary crossings.
+The predicate executes entirely in C++ without any R boundary crossings.
 }
 \details{
 **Compiling a custom predicate (requires RcppXPtrUtils):**
@@ -57,11 +56,6 @@ result <- textgrid_filter_xptr(
   predicate_xptr = my_pred
 )
 ```
-
-**Performance comparison (1000 intervals):**
-- R function callback: ~100ms (1000 R<->C++ calls)
-- XPtr predicate: ~1.5ms (0 R<->C++ calls during filter)
-- Speedup: ~67x
 }
 \seealso{
 [textgrid_extract_intervals_batch()] for simpler string matching

@@ -19,8 +19,8 @@ sound_extract_parts_pooled(sound_xptr, start_times, end_times, use_pool = TRUE)
 List of external pointers to extracted Sound segments
 }
 \description{
-Batch extraction with memory reuse. 20-30% faster than individual
-Sound_extractPart calls for large numbers of segments.
+Batch extraction using pooled memory reuse, for large numbers of
+segments.
 }
 \details{
 When use_pool is TRUE, Sound objects are acquired from a pool and
@@ -35,7 +35,7 @@ sound <- Sound("speech.wav")
 starts <- c(0.1, 0.5, 1.0)
 ends <- c(0.3, 0.7, 1.2)
 
-# Fast batch extraction with pooling
+# Batch extraction with pooling
 segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 
 # Process segments...

@@ -18,8 +18,7 @@ Useful for jitter analysis and prosody studies.
 }
 \section{Performance}{
 
-Computes all intervals in C++ without R<->C++ overhead. Expected speedup:
-**5-10x** compared to R-based loops.
+Computes all intervals in C++ without R<->C++ overhead.
 }
 
 \examples{

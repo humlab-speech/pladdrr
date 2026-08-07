@@ -6,8 +6,8 @@
 
 #' Get Sound Values (Fast Copy)
 #'
-#' Copies Sound sample data via direct pointer access — faster than
-#' `sound$get_values()` which goes through Praat's per-sample accessor.
+#' Copies Sound sample data via direct pointer access, instead of going
+#' through Praat's per-sample accessor as `sound$get_values()` does.
 #'
 #' @param sound A Sound object created with `Sound()`
 #' @param channel Channel number (1-based, default 1)
@@ -15,11 +15,6 @@
 #' @return Numeric vector (independent copy of sample data).
 #'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
 #'   for backward compatibility.
-#'
-#' @section Performance:
-#' Direct pointer-range copy is faster than per-sample access:
-#' - Small files (< 1 MB): ~2x faster
-#' - Large files (> 10 MB): ~3-5x faster
 #'
 #' The returned vector is an independent R copy — safe to modify,
 #' store, or use after the Sound object is garbage collected.
@@ -33,7 +28,7 @@
 #' rms <- sqrt(mean(samples^2))
 #' peak <- max(abs(samples))
 #'
-#' # Equivalent (slightly slower) — also a copy
+#' # Equivalent — also a copy
 #' samples2 <- sound$get_values(channel = 1)
 #' }
 #'
@@ -53,8 +48,8 @@ get_sound_values_fast <- function(sound, channel = 1) {
 
 #' Get Sound Sample Times (Fast Computation)
 #'
-#' Returns time values for each sample using optimized computation.
-#' Faster than `sound$get_sample_times()` but still allocates memory.
+#' Returns time values for each sample using a direct computation, instead of
+#' `sound$get_sample_times()`. Still allocates memory for the result.
 #'
 #' @param sound A Sound object
 #'

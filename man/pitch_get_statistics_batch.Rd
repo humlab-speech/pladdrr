@@ -29,7 +29,7 @@ NumericMatrix with intervals as rows, metrics as columns
 }
 \description{
 Calculate multiple pitch statistics (min, max, mean, stdev, quantiles) over
-multiple time intervals in a single C++ call. 10-50x faster than repeated
-R method calls.
+multiple time intervals in a single C++ call, avoiding repeated R method
+calls.
 }
 \keyword{internal}

@@ -36,8 +36,8 @@ get_jitter_shimmer_batch(
 Named list with 11 voice quality measures
 }
 \description{
-Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single C++ call.
-Much faster than calling individual methods when you need multiple measures.
+Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single C++ call,
+instead of calling individual methods separately for each measure.
 
 **Jitter measures** (period perturbation):
 - `jitter_local`: Local jitter (relative, fraction)
@@ -57,7 +57,6 @@ Much faster than calling individual methods when you need multiple measures.
 \section{Performance}{
 
 This function reduces R<->C++ boundary crossings from 11 calls to 1 call.
-Expected speedup: **5-10x** for typical voice quality workflows.
 }
 
 \section{Workflow}{

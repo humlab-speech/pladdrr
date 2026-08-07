@@ -29,8 +29,8 @@ Minimum intensity in dB (in voiced regions only). Returns `NA` if
 }
 \description{
 Complete intensity pipeline in C++: Sound -> Pitch -> PointProcess ->
-TextGrid (VUV) -> Intensity -> Minimum in voiced regions. This is **6x
-faster** than the equivalent Tier 2/3 workflow.
+TextGrid (VUV) -> Intensity -> Minimum in voiced regions, in one call
+instead of the equivalent Tier 2/3 workflow.
 
 This is a **Tier 4 "Ultra"** function designed for maximum performance in
 batch DSI (Dysphonia Severity Index) calculations where minimum intensity
@@ -61,7 +61,6 @@ sound <- Sound("voice.wav")
 # Get minimum intensity in voiced regions (DSI IM component)
 min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
 
-# Compare with traditional approach
 bench::mark(
   tier4 = calculate_minimum_intensity_ultra(sound),
   tier2 = {
@@ -72,7 +71,6 @@ bench::mark(
     # ... find min in voiced regions
   }
 )
-# Expected: tier4 ~6x faster
 }
 
 }

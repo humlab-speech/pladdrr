@@ -36,7 +36,7 @@ List with components:
 }
 \description{
 Efficiently extract multiple intervals from a TextGrid tier that match
-specified criteria. This is **10-50x faster** than R loops because:
+specified criteria, using:
 - Single C++ call instead of 4n R<->C++ calls (n = number of intervals)
 - Comparisons done at C++ level
 - Efficient memory allocation
@@ -47,11 +47,6 @@ specified criteria. This is **10-50x faster** than R loops because:
 - "contains": Substring match (strstr)
 - "starts_with": Prefix match
 - "regex": Regular expression (future)
-
-**Performance:**
-For 100 intervals:
-- R loop: ~400 R<->C++ calls, ~50-100ms
-- This function: 1 call, ~1-2ms (25-50x faster)
 }
 \examples{
 \dontrun{

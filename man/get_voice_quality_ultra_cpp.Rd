@@ -34,6 +34,6 @@ Named list with requested voice quality metrics
 }
 \description{
 Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess
--> Jitter/Shimmer/HNR. Returns selected metrics. 3.6x faster than Tier 2/3.
+-> Jitter/Shimmer/HNR. Returns selected metrics.
 }
 \keyword{internal}

@@ -15,16 +15,9 @@ get_textgrid_labels_all(textgrid, tier)
 Character vector of all interval labels
 }
 \description{
-Extract all interval labels from a tier in a single operation.
-Much faster than calling `textgrid$get_interval_text()` repeatedly.
+Extract all interval labels from a tier in a single operation, instead of
+calling `textgrid$get_interval_text()` repeatedly.
 }
-\section{Performance}{
-
-For 100 intervals:
-- Manual loop: ~100 R<->C++ calls, ~10-20ms
-- This function: 1 call, ~0.5ms (20-40x faster)
-}
-
 \examples{
 \dontrun{
 tg <- TextGrid("example.TextGrid")

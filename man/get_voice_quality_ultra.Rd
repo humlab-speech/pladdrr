@@ -60,7 +60,7 @@ Named list with requested voice quality metrics:
 }
 \description{
 Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess ->
-Jitter/Shimmer/HNR metrics. This is **3.6x faster** than the equivalent
+Jitter/Shimmer/HNR metrics, in one call instead of the equivalent
 Tier 2/3 workflow using separate function calls.
 
 This is a **Tier 4 "Ultra"** function designed for maximum performance in
@@ -123,7 +123,6 @@ vq_periodic_cc <- get_voice_quality_ultra(
   pitch_method = "periodic_cc"
 )
 
-# Compare with traditional approach
 bench::mark(
   tier4 = get_voice_quality_ultra(sound, "jitter"),
   tier2 = {
@@ -132,7 +131,6 @@ bench::mark(
     get_jitter_shimmer_batch(pp, sound)
   }
 )
-# Expected: tier4 ~3.6x faster
 }
 
 }

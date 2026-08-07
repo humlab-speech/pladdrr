@@ -21,10 +21,9 @@ Manual merge requires save/reload + insert_boundary for each interval (each inse
 all later intervals). Batch merge is single-pass.
 }
 \details{
-**Performance:**
-- Manual merge: Save/reload + O(n²) insert_boundary calls + O(n) label setting
-- Batch merge: Single-pass O(n) with proper interval handling
-- Speedup: ~17x for 100 intervals (VUV use case)
+Manual merge requires save/reload plus an O(n²) sequence of
+`insert_boundary` calls (each insert shifts all later intervals); batch
+merge does a single O(n) pass with proper interval handling.
 
 **Domain handling:**
 - If `equalize_domains = FALSE` (default):
@@ -53,7 +52,7 @@ tg2 <- TextGrid(0, 1)
 tg2$add_point_tier("events")
 tg2$add_point(1, 0.25, "click")
 
-# Batch merge (fast)
+# Batch merge
 merged <- textgrid_merge(list(tg1, tg2))
 # Result has 2 tiers: "words" (interval) + "events" (point)
 

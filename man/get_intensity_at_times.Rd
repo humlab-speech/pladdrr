@@ -30,7 +30,7 @@ Query intensity (amplitude in dB) at multiple time points in a single call.
 }
 \section{Performance}{
 
-Uses existing optimized C++ code. Expected speedup: **2-3x** compared to R loops.
+Uses existing optimized C++ code.
 }
 
 \examples{

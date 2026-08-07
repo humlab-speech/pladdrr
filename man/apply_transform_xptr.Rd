@@ -15,8 +15,9 @@ apply_transform_xptr(sound, transform_func)
 Sound object with transform function applied
 }
 \description{
-Apply a user-defined C++ transform function to sample values with 70x speedup
-over R function callbacks. Requires the RcppXPtrUtils package.
+Apply a user-defined C++ transform function to sample values, compiled via
+RcppXPtrUtils, instead of calling an R callback per sample. Requires the
+RcppXPtrUtils package.
 }
 \details{
 **ADVANCED API** - Requires RcppXPtrUtils package.
@@ -41,7 +42,7 @@ soft_clip <- cppXPtr(
   depends = character()
 )
 
-# Apply to sound (70x faster than R function)
+# Apply to sound
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 clipped <- apply_transform_xptr(sound, soft_clip)
 }

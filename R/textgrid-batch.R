@@ -5,8 +5,8 @@
 
 #' Extract Intervals Matching Criteria (Batch)
 #'
-#' Efficiently extract all intervals from a TextGrid tier that match specified
-#' text criteria. This is **10-50x faster** than manual R loops.
+#' Extract all intervals from a TextGrid tier that match specified text
+#' criteria, in a single call instead of a manual R loop.
 #'
 #' @param textgrid A TextGrid object
 #' @param sound A Sound object (optional, required if extract_sounds = TRUE)
@@ -25,12 +25,9 @@
 #'   - `n_matched`: Number of matching intervals
 #'   - `sounds`: List of Sound objects (if extract_sounds = TRUE)
 #'
-#' @section Performance:
-#' For a TextGrid with 100 intervals:
-#' - **Manual R loop:** ~400 R<->C++ calls, ~50-100ms
-#' - **This function:** 1 call, ~1-2ms (25-50x faster)
-#'
-#' The speedup increases with more intervals.
+#' @section How It Works:
+#' A manual R loop makes one R<->C++ call per interval; this function does
+#' the whole tier scan in a single C++ call.
 #'
 #' @section Comparison Types:
 #' Specify exactly ONE comparison criterion:
@@ -46,34 +43,28 @@
 #' pp <- pitch$to_point_process()
 #' tg <- pp$to_textgrid_vuv(0.02, 0.01)
 #'
-#' # Extract all voiced intervals (old way - SLOW)
-#' system.time({
-#'   n <- tg$get_number_of_intervals(1)
-#'   voiced_old <- list()
-#'   for (i in 1:n) {
-#'     if (tg$get_interval_text(1, i) == "V") {
-#'       start <- tg$get_interval_start_time(1, i)
-#'       end <- tg$get_interval_end_time(1, i)
-#'       voiced_old <- c(voiced_old, list(sound$extract_part(start, end)))
-#'     }
+#' # Extract all voiced intervals (manual loop)
+#' n <- tg$get_number_of_intervals(1)
+#' voiced_old <- list()
+#' for (i in 1:n) {
+#'   if (tg$get_interval_text(1, i) == "V") {
+#'     start <- tg$get_interval_start_time(1, i)
+#'     end <- tg$get_interval_end_time(1, i)
+#'     voiced_old <- c(voiced_old, list(sound$extract_part(start, end)))
 #'   }
-#' })
+#' }
 #'
-#' # Extract all voiced intervals (new way - FAST)
-#' system.time({
-#'   result <- extract_textgrid_intervals(
-#'     textgrid = tg,
-#'     sound = sound,
-#'     tier = 1,
-#'     text_equals = "V",
-#'     extract_sounds = TRUE
-#'   )
-#'   voiced_new <- result$sounds
-#' })
+#' # Extract all voiced intervals (batch)
+#' result <- extract_textgrid_intervals(
+#'   textgrid = tg,
+#'   sound = sound,
+#'   tier = 1,
+#'   text_equals = "V",
+#'   extract_sounds = TRUE
+#' )
+#' voiced_new <- result$sounds
 #'
-#' # Typical speedup: 25-50x faster!
-#'
-#' # Get interval durations without extracting sounds (even faster)
+#' # Get interval durations without extracting sounds
 #' result <- extract_textgrid_intervals(
 #'   textgrid = tg,
 #'   tier = 1,
@@ -163,18 +154,13 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
 
 #' Get All Labels from TextGrid Tier (Batch)
 #'
-#' Extract all interval labels from a tier in a single operation.
-#' Much faster than calling `textgrid$get_interval_text()` repeatedly.
+#' Extract all interval labels from a tier in a single operation, instead of
+#' calling `textgrid$get_interval_text()` repeatedly.
 #'
 #' @param textgrid A TextGrid object
 #' @param tier Tier number (1-based) or tier name
 #'
 #' @return Character vector of all interval labels
-#'
-#' @section Performance:
-#' For 100 intervals:
-#' - Manual loop: ~100 R<->C++ calls, ~10-20ms
-#' - This function: 1 call, ~0.5ms (20-40x faster)
 #'
 #' @examples
 #' \dontrun{
@@ -199,8 +185,9 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 
 #' Get Interval Statistics for All Intervals (Batch)
 #'
-#' Compute statistics (start, end, duration, label) for all intervals in a tier.
-#' Returns a data frame ready for analysis. Much faster than manual loops.
+#' Compute statistics (start, end, duration, label) for all intervals in a
+#' tier in a single call, instead of a manual loop. Returns a data frame
+#' ready for analysis.
 #'
 #' @param textgrid A TextGrid object
 #' @param tier Tier number (1-based) or tier name
@@ -211,11 +198,6 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 #'   - `start`: Start time (seconds)
 #'   - `end`: End time (seconds)
 #'   - `duration`: Duration (seconds)
-#'
-#' @section Performance:
-#' For 100 intervals:
-#' - Manual loop: ~300 R<->C++ calls, ~30-50ms
-#' - This function: 1 call, ~1ms (30-50x faster)
 #'
 #' @examples
 #' \dontrun{

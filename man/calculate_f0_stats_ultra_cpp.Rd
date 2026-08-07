@@ -31,6 +31,6 @@ Single double value of the requested statistic
 }
 \description{
 Performs pitch extraction AND statistic calculation entirely in C++,
-avoiding intermediate R6 object creation. 5x faster than Tier 2/3.
+avoiding intermediate R6 object creation.
 }
 \keyword{internal}

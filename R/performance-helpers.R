@@ -55,11 +55,10 @@
 #' @return A single numeric CPPS value in dB.
 #'
 #' @details
-#' Use this when analysing many files or in performance-critical pipelines
-#' (e.g. AVQI). For interactive or one-off use, the object API
-#' (`sound$to_powercepstrogram(...)$get_cpps(...)`) is equivalent and validates
-#' its inputs more forgivingly; this function trades that leniency for speed, so
-#' pass well-formed parameters.
+#' Use this when analysing many files in a loop. For interactive or one-off
+#' use, the object API (`sound$to_powercepstrogram(...)$get_cpps(...)`) is
+#' equivalent and validates its inputs more forgivingly; this function skips
+#' that validation, so pass well-formed parameters.
 #'
 #' This is a **CPPS** helper: it builds a whole-sound PowerCepstrogram and then
 #' computes a smoothed peak-prominence summary. If you need a single-interval
@@ -305,8 +304,9 @@ get_cpps_fast <- function(
 #' Apply Compiled Window Function (Advanced Performance API)
 #'
 #' @description
-#' Apply a user-defined C++ window function to a Sound object with 70x speedup
-#' over R function callbacks. Requires the RcppXPtrUtils package.
+#' Apply a user-defined C++ window function to a Sound object, compiled via
+#' RcppXPtrUtils, instead of calling an R callback per sample. Requires the
+#' RcppXPtrUtils package.
 #'
 #' @param sound Sound object or external pointer
 #' @param window_func External pointer from RcppXPtrUtils::cppXPtr()
@@ -342,7 +342,7 @@ get_cpps_fast <- function(
 #' # Verify signature (optional but recommended)
 #' checkXPtr(gauss_window, "double", "double")
 #'
-#' # Apply to sound (70x faster than R function)
+#' # Apply to sound
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' windowed <- apply_window_xptr(sound, gauss_window)
 #' }
@@ -379,8 +379,9 @@ apply_window_xptr <- function(sound, window_func) {
 #' Apply Compiled Transform Function (Advanced Performance API)
 #'
 #' @description
-#' Apply a user-defined C++ transform function to sample values with 70x speedup
-#' over R function callbacks. Requires the RcppXPtrUtils package.
+#' Apply a user-defined C++ transform function to sample values, compiled via
+#' RcppXPtrUtils, instead of calling an R callback per sample. Requires the
+#' RcppXPtrUtils package.
 #'
 #' @param sound Sound object or external pointer
 #' @param transform_func External pointer from RcppXPtrUtils::cppXPtr()
@@ -410,7 +411,7 @@ apply_window_xptr <- function(sound, window_func) {
 #'   depends = character()
 #' )
 #'
-#' # Apply to sound (70x faster than R function)
+#' # Apply to sound
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' clipped <- apply_transform_xptr(sound, soft_clip)
 #' }
@@ -521,10 +522,9 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' PowerCepstrogram internally so no intermediate R object is created.
 #'
 #' Returns the same value as \code{calculate_cpps_fast()} and as
-#' \code{sound$to_powercepstrogram(...)$get_cpps(...)}. Measured on a 1 s
-#' signal the three paths are within 2% of each other (~170 ms each): the
-#' R/C++ boundary costs microseconds while the trend fit dominates, so pick
-#' whichever reads best at the call site.
+#' \code{sound$to_powercepstrogram(...)$get_cpps(...)}. The three paths cost
+#' about the same: the R/C++ boundary crossing is negligible next to the
+#' per-frame trend fit, so pick whichever reads best at the call site.
 #'
 #' @param sound Sound object or external pointer
 #' @param time_averaging_window Time averaging window in seconds (default 0.001)
@@ -551,11 +551,12 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' used in AVQI v2.03 and v3.01: PowerCepstrogram creation and CPPS extraction
 #' are consolidated, and no intermediate R object is allocated.
 #'
-#' This does **not** make it meaningfully faster than the other CPPS entry
-#' points. Roughly 94% of CPPS runtime is the per-frame robust trend fit
-#' (`SlopeSelector::getSlope_Siegel`), which every path shares; the boundary
-#' crossings the consolidation removes cost microseconds. Treat the choice as a
-#' matter of call-site convenience, not performance.
+#' This does **not** make it meaningfully cheaper than the other CPPS entry
+#' points: the per-frame robust trend fit (`SlopeSelector::getSlope_Siegel`)
+#' dominates CPPS runtime and is shared by every path; consolidating the
+#' PowerCepstrogram creation only removes the R/C++ boundary crossing, which
+#' is a small fraction of the total cost. Treat the choice as a matter of
+#' call-site convenience, not performance.
 #'
 #' The defaults here match \code{calculate_cpps_fast()} and therefore also
 #' deviate from Praat's dialog defaults — see the "Defaults differ from Praat's"
@@ -569,7 +570,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' **Use Cases:**
 #' - AVQI v2.03/v3.01 implementation
 #' - High-throughput voice quality analysis
-#' - Real-time CPPS monitoring
+#' - CPPS monitoring in latency-sensitive pipelines
 #'
 #' @section Algorithm choice:
 #' Not applicable — this function is pitch-independent. It builds a
@@ -585,7 +586,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' \dontrun{
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #'
-#' # Tier 4 Ultra (fastest, same defaults as calculate_cpps_fast)
+#' # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 #' cpps <- calculate_cpps_ultra(sound)
 #'
 #' # Should match calculate_cpps_fast() within 0.01 dB
@@ -660,8 +661,8 @@ calculate_cpps_ultra <- function(
 #' Complete AVQI voiced segment extraction pipeline in a single C++ call.
 #' Supports both AVQI v2.03 (simple intensity-based) and v3.01 (with ZCR filtering).
 #' Performs: Sound -> TextGrid (silence) -> Extract sounding -> Concatenate ->
-#' [v3.01: Window power/ZCR filtering] -> Final concatenation.
-#' 2-4x faster than multi-step R implementation.
+#' [v3.01: Window power/ZCR filtering] -> Final concatenation, in a single
+#' C++ call instead of a multi-step R implementation.
 #'
 #' @param sound Sound object or external pointer
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering, default)
@@ -676,11 +677,11 @@ calculate_cpps_ultra <- function(
 #' @return Sound object containing only voiced segments (concatenated)
 #'
 #' @details
-#' **TIER 4 ULTRA API - Maximum Performance for AVQI**
+#' **TIER 4 ULTRA API**
 #'
 #' This function implements the exact AVQI voiced extraction algorithm in a
-#' single optimized C++ call. It eliminates R loops and multiple boundary
-#' crossings that occur in the standard multi-step approach.
+#' single C++ call. It replaces the R loops and multiple boundary crossings
+#' of the standard multi-step approach.
 #'
 #' **Algorithm (AVQI v3.01):**
 #' 1. Detect silences using intensity-based TextGrid creation
@@ -692,10 +693,6 @@ calculate_cpps_ultra <- function(
 #'
 #' **Algorithm (AVQI v2.03):**
 #' Steps 1-3 only (no window filtering)
-#'
-#' **Performance Impact:**
-#' - Standard R approach: ~8000ms (5-20 interval loops + 50-200 window loops)
-#' - Moves AVQI from 1.94x to 1.2x vs Python (competitive)
 #'
 #' **Version Differences:**
 #' - v2.03: Simpler, keeps most voiced content (~37s from 37s input)
