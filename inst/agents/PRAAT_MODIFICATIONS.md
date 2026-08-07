@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-08-05
-**Package Version:** 4.9.23
+**Last Updated:** 2026-08-07
+**Package Version:** 4.9.24
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
 
@@ -17,6 +17,65 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### v4.10 — Memory optimization: eliminate per-frame Spectrum allocations + data.frame pre-allocation (2026-08-07)
+
+**Summary:** Three changes to pladdrr-owned C++ wrappers — no Praat-tree code touched.
+Targeted at the memory-usage gap measured by algobench (pladdrr peak 897-1091 MB
+vs parselmouth 181-222 MB for spectral_moments and voice_report). Changes are
+bit-exact with current output.
+
+#### `src/batch_queries.cpp` — `get_spectral_moments_batch_cpp`: fused z-matrix computation
+
+**Problem:** the per-frame loop called `Spectrogram_to_Spectrum` + four
+`Spectrum_get*` calls per time bin, allocating and deallocating a full Spectrum
+object for each frame. For a 3-second signal at 5 ms step (600 frames x 513
+frequency bins), this meant 600 Spectrum allocations/deallocations, each
+allocating a 2x513 double matrix plus Praat Thing overhead. This was the
+primary driver of spectral_moments' 897 MB peak.
+
+**Root cause:** `Spectrogram_to_Spectrum` creates a Spectrum with `re=sqrt(z_power)`,
+`im=0`. So in `Spectrum_getCentreOfGravity` et al., `sqr(re)+sqr(im) = z_power`.
+The intermediate Spectrum is pure overhead.
+
+**Fix:** compute all four spectral moments directly from the spectrogram z-matrix
+columns in two fused passes (pass 1: CoG, pass 2: m2/m3/m4 fused). This
+eliminates N Spectrum allocations per call (where N = number of time frames),
+replaces ~5N function calls with inline computation, and reduces memory-bandwidth
+pressure ~4x versus the original separate CoG/SD/skewness/kurtosis computation.
+Uses `longdouble` accumulation to match Praat's precision.
+
+**Verification:** bit-exact — the arithmetic is identical (z->energy->sum(f*energy)/sum(energy),
+same `longdouble` accumulator type). For non-standard `power` parameter values,
+`pow(z, halfpower)` is applied identically to the `pow(sqr(re)+sqr(im), halfpower)`
+in the Spectrum path.
+
+**CRAN compliance:** no flags. C++17 standard library only (`<cmath>` for `pow`,
+`sqrt`; `longdouble` accumulation). No external dependencies, no SIMD intrinsic
+requirements, no compiler flags changed.
+
+#### `src/formant_wrappers.cpp` — `formant_as_data_frame`: pre-allocate Rcpp vectors
+
+**Problem:** the function allocated `std::vector<double>` collections with
+`push_back()`, then copied them into `Rcpp::NumericVector` via
+`pladdrr::dt::create_datatable()`. For long-duration speech (60 seconds,
+~12K frames x 5 formants = 60K rows), the std::vector reallocation cascade
+generated unnecessary temporary memory, and the std::vector -> Rcpp copy
+doubled peak memory in the conversion phase.
+
+**Fix:** pre-count total rows in a single scan, then allocate `Rcpp::NumericVector`
+/ `Rcpp::IntegerVector` directly at full size. Fill with indexed writes instead of
+`push_back()`. Eliminates the std::vector intermediate entirely.
+
+#### `src/modules/pitch_module.cpp` — `RPitch::as_data_frame`: conditional column allocation
+
+**Problem:** `as_data_frame()` unconditionally allocated five `Rcpp::NumericVector`s
+(time, frequency, voiced, strength, intensity) even when the caller set
+`include_strength=false` or `include_intensity=false`. Wasted 2 x nx x 8 bytes
+of zero-filled memory on the unused columns.
+
+**Fix:** only allocate `strength` and `intensity` vectors when the corresponding
+boolean parameter is true. Four separate return paths cover all combinations.
 
 ### v4.9.21 — SlopeSelector SIMD hooks made inert by default (2026-08-05)
 

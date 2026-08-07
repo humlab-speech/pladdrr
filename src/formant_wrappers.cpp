@@ -493,33 +493,36 @@ Rcpp::DataFrame formant_as_data_frame(Rcpp::XPtr<structFormant> formant, int max
     if (!formant) Rcpp::stop("Invalid Formant pointer");
 
     // Long format: one row per (frame, formant number), columns
-    // time/formant/frequency/bandwidth. This mirrors FormantPath::as_data_frame
-    // (src/modules/formantpath_module.cpp) exactly, which is the shape the test
-    // suite and every non-eval=FALSE vignette assume. Before v4.9.20 this
-    // returned a wide time/F1/B1/F2/B2/... layout that only this one function
-    // produced, silently diverging from its own tests and from the sibling
-    // FormantPath class (fixed as part of the build.log triage in
-    // dev/ASSESSMENT_2026-08-05.md).
+    // time/formant/frequency/bandwidth.
     //
-    // Frame values are read directly (frame->formant[i]) rather than via
-    // Formant_getValueAtTime, matching FormantPath's convention: only the
-    // numberOfFormants actually present in a frame are emitted, capped at
-    // max_formants, with no NA padding for slots beyond what that frame has.
-    std::vector<double> times;
-    std::vector<int> formant_nums;
-    std::vector<double> frequencies;
-    std::vector<double> bandwidths;
+    // PERF (v4.10): Pre-count total rows, pre-allocate Rcpp vectors directly
+    // instead of std::vector push_back — avoids reallocation cascades and the
+    // intermediate std::vector → Rcpp copy. On 60-second speech with 5 ms step
+    // (~12K frames × 5 formants = 60K rows), saves ~480 KB of std::vector
+    // overhead and one full copy per column.
+    integer total_rows = 0;
+    for (integer iframe = 1; iframe <= formant->nx; iframe++) {
+        Formant_Frame frame = &formant->frames[iframe];
+        total_rows += std::min(frame->numberOfFormants, (integer) max_formants);
+    }
 
+    Rcpp::NumericVector times(total_rows);
+    Rcpp::IntegerVector formant_nums(total_rows);
+    Rcpp::NumericVector frequencies(total_rows);
+    Rcpp::NumericVector bandwidths(total_rows);
+
+    integer row = 0;
     for (integer iframe = 1; iframe <= formant->nx; iframe++) {
         double t = Sampled_indexToX(formant.get(), iframe);
         Formant_Frame frame = &formant->frames[iframe];
 
         integer nFormants = std::min(frame->numberOfFormants, (integer) max_formants);
         for (integer iformant = 1; iformant <= nFormants; iformant++) {
-            times.push_back(t);
-            formant_nums.push_back((int) iformant);
-            frequencies.push_back(frame->formant[iformant].frequency);
-            bandwidths.push_back(frame->formant[iformant].bandwidth);
+            times[row] = t;
+            formant_nums[row] = (int) iformant;
+            frequencies[row] = frame->formant[iformant].frequency;
+            bandwidths[row] = frame->formant[iformant].bandwidth;
+            row++;
         }
     }
 
@@ -534,6 +537,7 @@ Rcpp::DataFrame formant_as_data_frame(Rcpp::XPtr<structFormant> formant, int max
         Rcpp::CharacterVector::create("time", "formant")
     );
 }
+
 
 // [[Rcpp::export(.formant_save)]]
 void formant_save(Rcpp::XPtr<structFormant> formant, std::string path) {

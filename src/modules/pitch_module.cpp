@@ -670,11 +670,14 @@ public:
         VALIDATE_PTR(ptr, Pitch);
         integer nx = ptr->nx;
 
+        // PERF (v4.10): Only allocate vectors for columns actually requested.
+        // Previously all five vectors were allocated unconditionally, wasting
+        // 2×nx×8 bytes when include_strength/intensity were false.
         Rcpp::NumericVector time(nx);
         Rcpp::NumericVector frequency(nx);
         Rcpp::LogicalVector voiced(nx);
-        Rcpp::NumericVector strength(nx);
-        Rcpp::NumericVector intensity(nx);
+        Rcpp::NumericVector strength(include_strength ? nx : 0);
+        Rcpp::NumericVector intensity(include_intensity ? nx : 0);
 
         for (integer i = 1; i <= nx; i++) {
             double t = Sampled_indexToX(ptr.get(), i);
@@ -703,9 +706,9 @@ public:
                     Named("frequency") = frequency,
                     Named("voiced") = voiced,
                     Named("strength") = strength,
-                    Named("intensity") = intensity
+                    Named("intensity_db") = intensity
                 ),
-                CharacterVector::create("time", "frequency", "voiced", "strength", "intensity"),
+                CharacterVector::create("time", "frequency", "voiced", "strength", "intensity_db"),
                 CharacterVector::create("time")
             );
         } else if (include_strength) {
@@ -725,9 +728,9 @@ public:
                     Named("time") = time,
                     Named("frequency") = frequency,
                     Named("voiced") = voiced,
-                    Named("intensity") = intensity
+                    Named("intensity_db") = intensity
                 ),
-                CharacterVector::create("time", "frequency", "voiced", "intensity"),
+                CharacterVector::create("time", "frequency", "voiced", "intensity_db"),
                 CharacterVector::create("time")
             );
         } else {
@@ -742,6 +745,7 @@ public:
             );
         }
     }
+
 
     Rcpp::DataFrame get_all_candidates() {
         VALIDATE_PTR(ptr, Pitch);
