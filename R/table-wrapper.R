@@ -39,6 +39,13 @@ NULL
 
   columns <- vector("list", n_cols)
   for (j in seq_len(n_cols)) {
+    if (n_rows == 0) {
+      # No cells to inspect -> real column type is unknown; don't guess
+      # numeric (anyNA(as.numeric(character(0))) is FALSE, which would
+      # otherwise misclassify every empty column as numeric).
+      columns[[j]] <- character(0)
+      next
+    }
     str_vals <- vapply(seq_len(n_rows),
                         function(i) .table_get_string_value(xptr, i, j),
                         character(1))
