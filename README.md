@@ -13,7 +13,7 @@
 
 ## Overview
 
-The `pladdrr` package aims to provide efficient R users with efficient access the functionalities of [Praat](https://praat.org) through a consistent Object Oriented interface so that conversion of praat scripts to self-contained and efficient R re-implementations are afforded. 
+The `pladdrr` package provides R users with direct access to the functionalities of [Praat](https://praat.org) through a consistent Object Oriented interface, enabling conversion of Praat scripts to self-contained R implementations. 
 
 Direct access to Praat's C code base from R is achieved through Rcpp Modules and generated methods associated with Praat Objects of several types (35 Rcpp Modules in total):
 
@@ -37,20 +37,20 @@ Direct access to Praat's C code base from R is achieved through Rcpp Modules and
 - **FormantModeler**: Polynomial modeling with outlier detection and optimal ceiling estimation
 
 
-We have extended the media handling capabilities substantially to include all formats supported by the [libav C library](https://github.com/libav/libav) (using the [av](https://CRAN.R-project.org/package=av) R package), which is most audio and video formats and containers in mainstream use today. Media loading will default to using Praats own routines for higher efficiency. However, if the format is not natively supported by Praat, it will be loaded and converted to a supported format in memory using the flexible but less efficient libav path.
+We have extended the media handling capabilities substantially to include all formats supported by the [libav C library](https://github.com/libav/libav) (using the [av](https://CRAN.R-project.org/package=av) R package), which is most audio and video formats and containers in mainstream use today. Media loading defaults to using Praat's native routines. However, if the format is not natively supported by Praat, the package falls back to the libav library, loading and converting formats in memory.
 
 
-To achieve the most efficient processing, we use as much of the optimizations introduced by our C/C++ code bases, including
+To provide optimized processing, the package leverages optimizations from the C/C++ code bases, including
 
 - **SIMD Vectorization**: Optimized autocorrelation, FFT, formant detection
-- **Zero-copy operations**: Efficient memory management for large files
+- **Zero-copy operations**: Avoid unnecessary data copying when processing large files
 - **Streaming support**: Process files too large for memory with LongSound
 
-The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 provides efficient batch and parallel processing of for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [agents/AGENT_GUIDE.md]. 
+The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 offers batch and parallel processing for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [agents/AGENT_GUIDE.md]. 
 
 ## Limitations and caveats
 
-The `pladdrr` package is developed to fill our own internal needs primarily is fundamentally thought to provide the best support making efficient re-implementations of Praat scripts available to R scripts and users. The package exposes all modules we have found a use for in our re-implementation efforts, but extensions to new Object type will require separate development effort. 
+The `pladdrr` package is developed to fill our own internal needs and is designed to support the development of R-based implementations of Praat scripts for use in R workflows and scripts. The package exposes all modules we have found a use for in our re-implementation efforts, but extensions to new Object type will require separate development effort. 
 
 We do not expose a fully working interpreter that has been extensively tested. Further, we have opted to not expose the full graphics system of Praat to the user to avoid inclusion of platform specific graphics libraries that are not the core functionality uniquely contributed by Praat. Instead, we plan to make use of the already excellent plotting functionality of R for visualization.
 
