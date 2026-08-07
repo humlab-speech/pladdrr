@@ -462,7 +462,7 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 
 ### ✗ DON'T
 
-1. **Don't use FormantPath for all analyses** - standard method is faster for known speakers
+1. **Don't use FormantPath for all analyses** - use the standard method when the speaker's formant range is already known
 2. **Don't use too many candidates** (`num_steps_up_down > 4`) unless necessary
 3. **Don't forget to extract** - FormantPath itself isn't directly usable
 4. **Don't assume optimal = perfect** - always inspect difficult cases
