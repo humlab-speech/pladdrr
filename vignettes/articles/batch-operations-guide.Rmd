@@ -8,7 +8,7 @@ description: |
 
 **pladdrr v3.0.0** - High-Performance Batch Processing
 
-This guide explains how to use batch operations in pladdrr for maximum performance when processing multiple files or querying multiple time points.
+This guide explains how to use batch operations in pladdrr when processing multiple files or querying multiple time points.
 
 ---
 
@@ -17,7 +17,7 @@ This guide explains how to use batch operations in pladdrr for maximum performan
 **Problem:** Traditional loops cross the R↔C++ boundary repeatedly, adding overhead.
 
 ```r
-# SLOW: 100 R→C crossings for 100 time points
+# 100 R→C crossings for 100 time points
 times <- seq(0.1, 1.0, by = 0.01)
 f1_values <- numeric(length(times))
 for (i in seq_along(times)) {
@@ -28,7 +28,7 @@ for (i in seq_along(times)) {
 **Solution:** Batch operations process everything in a single C++ call.
 
 ```r
-# FAST: 1 R→C crossing for 100 time points (10-20x faster)
+# 1 R→C crossing for 100 time points
 f1_values <- formant_get_values_at_times(formant, times, formant_number = 1)
 ```
 
@@ -54,10 +54,10 @@ Convert multiple sounds to analysis objects in one call.
 files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
 sounds <- lapply(files, Sound)
 
-# SLOW: Loop approach
+# Loop approach
 pitches <- lapply(sounds, function(s) s$to_pitch())  # n R→C crossings
 
-# FAST: Batch approach (5-10x faster)
+# Batch approach
 pitches <- sound_to_pitch_batch(sounds)  # 1 R→C crossing
 ```
 
@@ -81,13 +81,13 @@ intervals <- textgrid$get_all_intervals(tier = 1)
 from_times <- intervals$start
 to_times <- intervals$end
 
-# SLOW: Extract then analyze (2n R→C crossings)
+# Extract then analyze (2n R→C crossings)
 parts <- lapply(seq_along(from_times), function(i) {
   sound$extract_part(from_times[i], to_times[i])
 })
 pitches <- lapply(parts, function(p) p$to_pitch())
 
-# FAST: Combined operation (1 R→C crossing, 5-10x faster)
+# Combined operation (1 R→C crossing)
 pitches <- sound_extract_and_pitch(sound, from_times, to_times)
 ```
 
@@ -112,12 +112,12 @@ formant <- sound$to_formant()
 # Define time points
 times <- seq(0.1, 0.5, by = 0.001)  # 400 points
 
-# SLOW: Loop (400 R→C crossings, ~800ms)
+# Loop: 400 R→C crossings
 f1_values <- sapply(times, function(t) {
   formant$get_value_at_time(1, t, "hertz")
 })
 
-# FAST: Vectorized (1 R→C crossing, ~40ms, 20x faster)
+# Vectorized: 1 R→C crossing for the whole vector
 f1_values <- formant_get_values_at_times(formant, times, formant_number = 1)
 
 # EVEN BETTER: Get all formants at once
@@ -141,10 +141,10 @@ Get multiple measurements in a single call.
 # Concatenate multiple recordings
 sounds <- lapply(files, Sound)
 
-# SLOW: Sequential concatenation (O(n) operations)
+# Sequential concatenation: O(n) operations
 result <- Reduce(function(a, b) a$concatenate(b), sounds)
 
-# FAST: Batch concatenation (O(1) operation)
+# Batch concatenation: O(1) operation
 result <- sound_concatenate_all(sounds)
 ```
 
@@ -266,22 +266,6 @@ write.csv(results_df, "corpus_analysis_results.csv", row.names = FALSE)
 
 ---
 
-## Performance Benchmarks
-
-Real-world performance improvements from batch operations:
-
-| Operation | Traditional Loop | Batch Operation | Speedup |
-|-----------|------------------|-----------------|---------|
-| Extract pitch (100 sounds) | 15.0s | 3.0s | **5x** |
-| Get F1 at 400 time points | 0.8s | 0.04s | **20x** |
-| Extract + analyze 50 intervals | 12.0s | 1.5s | **8x** |
-| Get F1-F4 at 100 times | 1.6s | 0.12s | **13x** |
-| Concatenate 20 sounds | 2.5s | 0.3s | **8x** |
-
-System: Apple M1, macOS, pladdrr v2.3.0
-
----
-
 ## Best Practices
 
 ### 1. Always Vectorize Time Queries
@@ -326,10 +310,10 @@ formants <- sound_extract_and_formant(
 
 ```r
 # Batch functions support return_r6 parameter
-# Set to FALSE to get raw pointers (fastest)
+# Set to FALSE to get raw pointers instead of wrapped R6 objects
 pitch_ptrs <- sound_to_pitch_batch(sounds, return_r6 = FALSE)
 
-# Use with Direct API for maximum speed
+# Use with Direct API to avoid re-wrapping each result
 stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
 ```
 

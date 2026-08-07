@@ -661,16 +661,6 @@ Analysis-resynthesis stores multiple objects:
 
 **Tip**: Extract formant values and discard FormantPath object to save memory.
 
-### Computation Time
-
-Approximate times for 1-minute audio:
-
-- FormantPath analysis: 5-10 seconds
-- KlattGrid synthesis: 1-2 seconds
-- Total round-trip: 6-12 seconds
-
-FormantPath dominates computation (proportional to number of candidates).
-
 ## Summary
 
 **The analysis-resynthesis workflow enables**:

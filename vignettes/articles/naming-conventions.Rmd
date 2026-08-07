@@ -42,7 +42,7 @@ Three functions use `_fast` suffix instead of `_direct`:
 
 These functions were created before the Direct API naming convention was established. They remain as `_fast` for backward compatibility.
 
-**Should you use them?** Yes! They're equivalent to Direct API functions and provide the same 2-3x speedup.
+**Should you use them?** Yes! They're equivalent to Direct API functions and skip the same R6 dispatch overhead.
 
 **Equivalence:**
 ```r
@@ -108,7 +108,6 @@ cpps <- calculate_cpps_fast(sound)
 **Characteristics:**
 - Accept/return external pointers
 - Skip R6 dispatch overhead
-- 2-3x faster than Tier 1
 - Require pointer management
 
 ---
@@ -139,7 +138,6 @@ combined <- sound_concatenate_all(sounds)
 
 **Characteristics:**
 - Process multiple items in single C++ call
-- 5-10x faster than loops
 - Minimize R↔C++ boundary crossings
 
 #### 3b. Vectorized Queries
@@ -163,8 +161,7 @@ f1_values <- formant_get_values_at_times(formant, times, 1)  # Use get_formants_
 ```
 
 **Characteristics:**
-- Query multiple time points efficiently
-- 10-20x faster than loops
+- Query multiple time points in a single call
 - Single C++ call for all queries
 
 #### 3c. Parallel Processing
@@ -189,7 +186,6 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 
 **Characteristics:**
 - Use multiple CPU cores
-- 3-8x faster on multi-core systems
 - Automatic platform detection
 
 ---
@@ -268,7 +264,7 @@ matrix <- sound_as_matrix_fast(sound)
 ```
 
 **Characteristics:**
-- Direct pointer access (faster than per-sample accessor)
+- Direct pointer access instead of a per-sample accessor call
 - Returns independent R copies (safe to modify)
 - For advanced users
 
@@ -342,15 +338,15 @@ formants <- sound_extract_and_formant(sound, starts, ends)
 
 ## Summary Table
 
-| Pattern | Purpose | Speed | Examples |
-|---------|---------|-------|----------|
-| `$method()` | Standard API | 1x | `sound$to_pitch()` |
-| `*_direct()` | Skip dispatch | 2-3x | `to_pitch_direct()` |
-| `*_fast()` | Legacy direct | 2-3x | `calculate_cpps_fast()` |
-| `*_batch()` | Multi-item | 5-10x | `sound_to_pitch_batch()` |
-| `get_*_at_times()` | Vectorized query | 10-20x | `get_pitch_at_times()` |
-| `*_parallel()` | Multi-core | 3-8x | `extract_pitch_parallel()` |
-| `*_and_*()` | Combined ops | 5-10x | `sound_extract_and_pitch()` |
+| Pattern | Purpose | Examples |
+|---------|---------|----------|
+| `$method()` | Standard API | `sound$to_pitch()` |
+| `*_direct()` | Skip dispatch | `to_pitch_direct()` |
+| `*_fast()` | Legacy direct | `calculate_cpps_fast()` |
+| `*_batch()` | Multi-item | `sound_to_pitch_batch()` |
+| `get_*_at_times()` | Vectorized query | `get_pitch_at_times()` |
+| `*_parallel()` | Multi-core | `extract_pitch_parallel()` |
+| `*_and_*()` | Combined ops | `sound_extract_and_pitch()` |
 
 ---
 
@@ -363,4 +359,4 @@ If the naming is unclear:
 3. Look at examples in the batch operations guide: `BATCH_OPERATIONS_GUIDE.md`
 4. Follow the pattern of similar functions
 
-**General rule:** If a function has a performance-related suffix (`_direct`, `_fast`, `_batch`, `_parallel`, `_at_times`), it's optimized for speed and follows the patterns described in this document.
+**General rule:** If a function has a performance-related suffix (`_direct`, `_fast`, `_batch`, `_parallel`, `_at_times`), it reduces R/C++ boundary crossings and follows the patterns described in this document.

@@ -334,32 +334,13 @@ results <- tibble(
   unnest_wider(analysis)
 ```
 
-## Performance Comparison
-
-pladdrr offers several performance advantages:
-
-1. **Direct C++ Binding**: No Python interpreter overhead
-2. **SIMD Optimization**: 2-4x speedup for certain operations
-3. **Memory Efficiency**: R's copy-on-write semantics
-4. **Vectorization**: Native R vectorization for batch operations
-
-### Benchmark Example
-
-Processing 100 audio files:
-
-- **Parselmouth**: ~45 seconds
-- **pladdrr**: ~15-20 seconds (2-3x faster)
-
-(Performance varies by operation and CPU architecture)
-
 ## Advantages of pladdrr
 
 1. **No Python Dependency**: Pure R package
 2. **Better IDE Support**: Full autocomplete and documentation
 3. **Type Safety**: Named parameters prevent errors
-4. **Performance**: Direct C++ binding + SIMD
-5. **R Ecosystem**: Integration with tidyverse, ggplot2, etc.
-6. **Self-Documenting**: Method names describe functionality
+4. **R Ecosystem**: Integration with tidyverse, ggplot2, etc.
+5. **Self-Documenting**: Method names describe functionality
 
 ## When to Use Each
 
@@ -370,8 +351,7 @@ Processing 100 audio files:
 
 ### Use pladdrr if:
 - You're working in R
-- You need statistical analysis (R's strength)
-- You want better performance
+- You need R-native tooling for statistics and visualization
 - You need advanced visualizations (ggplot2)
 - You prefer type-safe, self-documenting code
 

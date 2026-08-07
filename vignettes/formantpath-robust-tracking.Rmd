@@ -435,19 +435,16 @@ fp <- sound$to_formant_path(num_steps_up_down = 2L)  # 5 candidates
 - Extract and discard FormantPath after getting optimal Formant
 - Process files individually rather than loading all in memory
 
-### Computation Time
+### Computation Cost
 
-FormantPath is slower than standard extraction:
+FormantPath fits `num_candidates` formant tracks per call instead of one, so
+expect its cost to scale roughly with the number of candidates requested.
+Measure on your own data:
 
 ```{r timing, eval=FALSE}
-# Standard: ~0.3s for 1s audio
 system.time(frm_result <- sound$to_formant_burg())
-
-# FormantPath with 5 candidates: ~1.5s for 1s audio
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 ```
-
-Roughly **N× slower** where N = number of candidates.
 
 ## Best Practices
 

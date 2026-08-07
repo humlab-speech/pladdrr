@@ -105,7 +105,6 @@ smooth_pcg <- pcg$smooth(0.001, 0.0005)
 ### Why This Change?
 
 - **Consistency:** Matches Sound, Pitch, Formant, etc.
-- **Performance:** Slightly faster object creation
 - **Simplicity:** One less dependency on R6
 
 ---
@@ -154,7 +153,7 @@ results <- lapply(files, function(f) {
   pitch$get_mean(0, 0, "hertz")
 })
 
-# NEW: Parallel processing (3-8x faster)
+# NEW: Parallel processing
 results <- analyze_files_parallel(files, function(sound) {
   pitch <- sound$to_pitch()
   pitch$get_mean(0, 0, "hertz")
@@ -168,7 +167,7 @@ results <- analyze_files_parallel(files, function(sound) {
 
 ### New Direct API Functions (v2.3.0)
 
-Four new direct conversion functions for 2-3x speedup:
+Four new direct conversion functions that skip R6 object dispatch:
 
 ```r
 # OLD: Standard API
@@ -177,7 +176,7 @@ spg <- sound$to_spectrogram()
 ltas <- sound$to_ltas()
 pp <- sound$to_point_process_periodic_cc()
 
-# NEW: Direct API (2-3x faster)
+# NEW: Direct API
 spec_ptr <- to_spectrum_direct(sound)
 spg_ptr <- to_spectrogram_direct(sound)
 ltas_ptr <- to_ltas_direct(sound)
@@ -230,7 +229,7 @@ results <- lapply(corpus_files, function(file) {
   # ... analysis code ...
 })
 
-# After: Parallel (3-8x faster)
+# After: Parallel
 results <- analyze_files_parallel(corpus_files, function(sound) {
   # ... same analysis code ...
 }, n_cores = 4)
@@ -253,7 +252,7 @@ for (i in 1:length(sounds)) {
   # ... use stats ...
 }
 
-# After: Direct API (2-3x faster)
+# After: Direct API
 for (i in 1:length(sounds)) {
   pitch_ptr <- to_pitch_direct(sounds[[i]]$.xptr)
   stats <- get_pitch_stats_direct(pitch_ptr)  # All stats in one call
@@ -311,22 +310,6 @@ new_result <- get_pitch_at_times(pitch, times)
 all.equal(old_result, new_result)
 ```
 
-### Step 3: Benchmark Performance
-
-If you implemented parallel or direct API changes, measure the improvement:
-
-```r
-# Before
-system.time({
-  # ... old code ...
-})
-
-# After
-system.time({
-  # ... new code ...
-})
-```
-
 ---
 
 ## Common Migration Scenarios
@@ -347,7 +330,7 @@ intervals <- lapply(1:n_intervals, function(i) {
   )
 })
 
-# Extract and analyze (slow)
+# Extract and analyze, one interval at a time
 results <- lapply(intervals, function(int) {
   part <- sound$extract_part(int$start, int$end)
   formant <- part$to_formant()
@@ -363,7 +346,7 @@ intervals <- tg$get_all_intervals(1)
 start_times <- intervals$start
 end_times <- intervals$end
 
-# Combined extract + analyze (5-10x faster)
+# Combined extract + analyze in one call
 formants <- sound_extract_and_formant(sound, start_times, end_times)
 ```
 
@@ -395,8 +378,6 @@ results <- analyze_files_parallel(files, function(sound) {
     sd_f0 = stats$stdev
   )
 }, n_cores = 4)
-
-# 6-12x faster overall!
 ```
 
 ### Scenario 3: Formant Tracking
@@ -407,15 +388,13 @@ sound <- Sound("vowel.wav")
 formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
 
-# Slow loop
+# One R->C crossing per time point
 f1_values <- sapply(times, function(t) {
   formant$get_value_at_time(1, t, "hertz")
 })
 
-# After (v2.3.0) - Vectorized
+# After (v2.3.0) - Vectorized, one R->C crossing for the whole vector
 f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)$F1
-
-# 20x faster!
 ```
 
 ---
@@ -433,7 +412,7 @@ If you encounter issues during migration:
 
 3. **Test with small datasets first** - Verify changes work before running on full corpus
 
-4. **Benchmark** - Measure performance to ensure optimizations are effective
+4. **Measure your own workload** - Use `system.time()`/`microbenchmark` to see whether a change helps your pipeline
 
 ---
 
@@ -461,12 +440,12 @@ If you encounter issues during migration:
 
 ### New Features to Adopt
 
-| Feature | Function | Benefit |
-|---------|----------|---------|
-| Parallel processing | `analyze_files_parallel()` | 3-8x faster |
-| Direct API | `to_*_direct()` | 2-3x faster |
-| Batch stats | `get_pitch_stats_direct()` | 2-3x faster |
-| Combined ops | `sound_extract_and_pitch()` | 5-10x faster |
+| Feature | Function | What It Does |
+|---------|----------|--------------|
+| Parallel processing | `analyze_files_parallel()` | Distributes file-level work across cores |
+| Direct API | `to_*_direct()` | Skips R6 object dispatch |
+| Batch stats | `get_pitch_stats_direct()` | Returns all statistics in one call |
+| Combined ops | `sound_extract_and_pitch()` | Combines extraction and analysis in one call |
 
 ---
 

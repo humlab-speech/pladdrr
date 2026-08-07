@@ -290,14 +290,6 @@ cat("Renamed tier 3 to 'segments'\n")
 
 ### Loading Large TextGrids
 
-**Performance Note (v1.2.8+):** TextGrid loading has been significantly optimized. Benchmark results:
-
-- **Small files (1 min, 1.2 MB)**: ~0.012 seconds
-- **Medium files (10 min, 12 MB)**: ~0.057 seconds  
-- **Large files (30 min, 37 MB)**: ~0.163 seconds
-
-The package efficiently handles TextGrid files of all sizes, including hour-long recordings.
-
 ```{r large_textgrid, eval=FALSE}
 # Example with 1min file (large files removed to reduce package size)
 tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")

@@ -15,7 +15,10 @@ knitr::opts_chunk$set(
 
 # Overview
 
-**pladdrr v4.0** introduces a major performance enhancement by migrating from `data.frame` to `data.table` for all data outputs. This migration delivers **5-15x speedup** for batch operations while maintaining **full backward compatibility** for most use cases.
+**pladdrr v4.0** migrates from `data.frame` to `data.table` for all data
+outputs, changing some operations from quadratic to log-linear or linear
+algorithmic complexity, while maintaining **full backward compatibility**
+for most use cases.
 
 ## What Changed
 
@@ -35,14 +38,14 @@ class(df)
 # [1] "data.table" "data.frame"
 ```
 
-### Key Performance Improvements
+### Algorithmic Complexity Changes
 
-| Operation | v3.0 | v4.0 | Speedup |
-|-----------|------|------|---------|
-| Formant extraction | O(n²) | O(n) | **~8x** |
-| File pairing | O(n²) | O(n) | **~8x** |
-| TextGrid filtering | O(n log n) | O(log n) | **10-50x** |
-| Batch operations | baseline | optimized | **5-15x** |
+| Operation | v3.0 | v4.0 |
+|-----------|------|------|
+| Formant extraction | O(n²) | O(n) |
+| File pairing | O(n²) | O(n) |
+| TextGrid filtering | O(n log n) | O(log n) |
+| Batch operations | unkeyed | keyed |
 
 ---
 
@@ -322,17 +325,17 @@ results[, .(
 
 ### 1. Avoid Growing data.frames in Loops
 
-**SLOW (v3.0 pattern):**
+**Avoid (v3.0 pattern):**
 ```{r}
 # Don't do this!
 results <- data.frame()
 for (file in files) {
   df <- process_file(file)
-  results <- rbind(results, df)  # Slow!
+  results <- rbind(results, df)  # Grows a copy every iteration
 }
 ```
 
-**FAST (v4.0 pattern):**
+**Prefer (v4.0 pattern):**
 ```{r}
 library(data.table)
 
@@ -359,10 +362,10 @@ for (t in time_points) {
 ```{r}
 library(data.table)
 
-# Slow: Creates copy
+# Creates a copy of the column
 df$new_col <- transform(df$old_col)
 
-# Fast: Updates in-place
+# Updates in-place
 df[, new_col := transform(old_col)]
 ```
 
@@ -436,9 +439,9 @@ See: [data.table introduction](https://rdatatable.gitlab.io/data.table/)
 
 ## Summary
 
-✅ **Most code works unchanged** - data.table inherits from data.frame  
-✅ **5-15x performance improvement** for batch operations  
-⚠️ **Update class checks** - Use `inherits()` instead of `==`  
-💡 **Optional:** Learn data.table syntax for even more performance
+✅ **Most code works unchanged** - data.table inherits from data.frame
+✅ **Lower algorithmic complexity** for several batch operations
+⚠️ **Update class checks** - Use `inherits()` instead of `==`
+💡 **Optional:** Learn data.table syntax for additional keyed-operation features
 
 **Need help?** Open an issue on GitHub or consult the data.table documentation.
