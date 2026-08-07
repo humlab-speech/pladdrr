@@ -116,6 +116,14 @@ Boersma, Paul & Weenink, David (2023). Praat: doing phonetics by computer
 [Computer program]. Version 6.3.x, retrieved from https://praat.org/
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/humlab-speech/pladdrr}
+  \item Report bugs at \url{https://github.com/humlab-speech/pladdrr/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Fredrik Nylén \email{fredrik.nylen@umu.se} (\href{https://orcid.org/0000-0003-3373-0934}{ORCID})
 

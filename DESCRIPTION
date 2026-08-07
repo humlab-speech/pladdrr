@@ -19,6 +19,8 @@ Description: Provides direct access to Praat C implemented
     quality assessment, geometric operations (Polygon), and a persistent Praat
     script interpreter with bidirectional R-Praat object transfer.
 License: GPL-3 + file LICENSE
+URL: https://github.com/humlab-speech/pladdrr
+BugReports: https://github.com/humlab-speech/pladdrr/issues
 Encoding: UTF-8
 Depends:
     R (>= 4.0.0)
@@ -27,7 +29,12 @@ Imports:
     R6 (>= 2.5.0),
     ggplot2,
     rlang,
-    data.table (>= 1.14.0)
+    data.table (>= 1.14.0),
+    methods,
+    tools,
+    utils,
+    parallel,
+    grid
 LinkingTo: Rcpp, RcppXsimd
 Suggests:
     testthat (>= 3.0.0),
