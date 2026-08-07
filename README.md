@@ -58,7 +58,7 @@ We do not expose a fully working interpreter that has been extensively tested. F
 
 This package was developed to serve our specific needs and does not suit everyone. If our needs do not overlap with yours, please consider these alternative routes to do what you want:
 
-- [parselmouth](https://github.com/YannickJadoul/Parselmouth) is a Python package which directly exposes the abilities of the Praat C code base and also lets you run a full script. It is usually almost as fast as pladdrr code, and may be faster in some instances, and can be called in R using the `reticulate` package. It provides all functionality of Praat as far as we can tell, but cannot produce for instance PDF versions of a Praat drawing.
+- [parselmouth](https://github.com/YannickJadoul/Parselmouth) is a Python package which directly exposes the abilities of the Praat C code base and also lets you run a full script. As a Python package, it can be called in R using the `reticulate` package. It provides all functionality of Praat as far as we can tell, but cannot produce for instance PDF versions of a Praat drawing.
 - [speakr](https://github.com/stefanocoretta/speakr) makes the functionality of Praat available to R users by using the Praat executable as a DSP engine. As such it can be used to do all that Praat could do, but may struggle with parallelism and relies on callouts to the shell that can be inefficient and sensitive to errors in expectations at the handoff between R and Praat.
 
 ## Documentation
@@ -392,7 +392,7 @@ sound_segment <- longsound$extract_part(from_time = 0, to_time = 10)
 
 ### Performance Tips
 
-- Use Tier 4 "Ultra" functions for batch processing (2-5x faster)
+- Use Tier 4 "Ultra" functions for batch processing
 - Use vectorized methods (`$get_values_vector()`) instead of loops
 - For single-interval CPP, use `to_power_cepstrum()$get_peak_prominence()`; reserve `calculate_cpps_ultra()` for smoothed CPPS
 - For >100 files, consider `calculate_cpps_ultra()` over standard API

@@ -7,7 +7,7 @@ Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934"))
     )
-Description: Provides direct, efficient access to Praat C implemented
+Description: Provides direct access to Praat C implemented
     functionality from R using Rcpp modules. Similar in concept to the
     Parselmouth package for Python, this package allows R users to leverage
     Praat's powerful phonetic analysis capabilities directly from R. Includes
