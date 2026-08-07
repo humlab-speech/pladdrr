@@ -17,8 +17,7 @@ Praat MelSpectrogram: mel-scale spectrogram commonly used in speech
 technology (ASR, speaker identification).
 }
 \examples{
-\dontrun{
-snd <- Sound("speech.wav")
+snd <- Sound$create_tone(frequency = 150, duration = 0.3)
 mel <- snd$to_mel_spectrogram()
 
 # Convert to MFCC
@@ -26,6 +25,5 @@ mfcc <- mel$to_mfcc(number_of_coefficients = 12)
 
 # Export as matrix
 mat <- mel$as_matrix()
-}
 
 }

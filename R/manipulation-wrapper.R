@@ -9,6 +9,12 @@
 #'
 #' @return A \code{Manipulation} object with methods for PSOLA-based pitch and duration modification.
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+#' manip <- sound$to_manipulation(pitch_floor = 75, pitch_ceiling = 300)
+#' manip$has_pitch_tier()
+#' pt <- manip$extract_pitch_tier()
+#'
 #' @name Manipulation
 NULL
 

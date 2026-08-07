@@ -32,8 +32,9 @@
 #' - `$to_spectrum(...)` - Convert to Spectrum for synthesis
 #' - `$to_matrix()` - Convert to Matrix
 #'
+#' @return A \code{VocalTract} object with methods for articulatory tube-model access.
+#'
 #' @examples
-#' \dontrun{
 #' # Create from phone
 #' vt <- VocalTract$create_from_phone("a")
 #' print(vt)
@@ -43,7 +44,6 @@
 #'
 #' # Convert to spectrum for synthesis
 #' spectrum <- vt$to_spectrum()
-#' }
 #'
 #' @name VocalTract
 NULL

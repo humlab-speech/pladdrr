@@ -119,9 +119,8 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 }
 
 \examples{
-\dontrun{
-# Basic workflow
-sound <- Sound(path = "audio.wav")
+# Basic workflow (synthetic tone, no external file needed)
+sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 pitch <- sound$to_pitch()
 formants <- sound$to_formant_burg()
 
@@ -130,11 +129,9 @@ cat("Duration:", sound$get_duration(), "s\n")
 cat("Sample rate:", sound$get_sampling_frequency(), "Hz\n")
 
 # Extract portion
-part <- sound$extract_part(1.0, 2.0)
+part <- sound$extract_part(0.2, 0.5)
 
-# Create synthetic tone
-tone <- Sound$create_tone(frequency = 440, duration = 1.0)
-}
+# Sound(path = "audio.wav") reads from a WAV/AIFF/etc. file the same way
 
 }
 \seealso{

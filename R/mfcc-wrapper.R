@@ -41,8 +41,7 @@
 #' @return An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("audio.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' mfcc <- sound$to_mfcc(
 #'   num_coefficients = 13,
 #'   analysis_width = 0.025,
@@ -55,7 +54,6 @@
 #' coefs <- mfcc$get_all_coefficients()
 #' mfcc$lifter(22)
 #' df <- mfcc$as_data_frame(include_c0 = TRUE)
-#' }
 #'
 #' @name MFCC
 NULL
@@ -213,13 +211,11 @@ print.MFCC <- function(x, ...) {
 #' @return An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("audio.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' lpc <- sound$to_lpc_burg(prediction_order = 16)
 #' lfcc <- lpc$to_lfcc(num_coefficients = 12)
 #' coefs <- lfcc$get_all_coefficients()
 #' lpc2 <- lfcc$to_lpc(num_coefficients = 16)
-#' }
 #'
 #' @name LFCC
 NULL

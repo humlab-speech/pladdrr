@@ -21,10 +21,17 @@
 \item{num_steps_up_down}{Number of steps above/below ceiling (typically 2-4)}
 }
 \value{
-FormantPath object with S3 class
+An object of class \code{FormantPath} wrapping the set of candidate
+  formant tracks (list with methods; dispatched via the shared \code{PraatObject} pattern).
 }
 \description{
 A FormantPath object represents multiple formant tracking candidates with
 different ceiling frequencies, allowing for robust formant analysis by
 automatically selecting the optimal tracking path.
+}
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+fp <- FormantPath(sound)
+fp$get_duration()
+
 }

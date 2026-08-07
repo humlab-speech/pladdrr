@@ -8,6 +8,12 @@
 #'
 #' @return A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 44100)
+#' cochleagram <- sound$to_cochleagram()
+#' cochleagram$get_duration()
+#' cochleagram$get_loudness_at_time(0.15)
+#'
 #' @name Cochleagram
 NULL
 

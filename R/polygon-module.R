@@ -19,20 +19,18 @@
 #' @return Polygon object with methods for geometry operations
 #' 
 #' @examples
-#' \dontrun{
 #' # Create polygon from formant data
 #' poly <- Polygon(x = c(730, 1090, 2440), y = c(1090, 1220, 2440))
-#' 
+#'
 #' # Geometry queries
 #' perimeter <- poly$get_perimeter()
-#' n_points <- poly$get_number_of_points()
-#' 
+#' n_points <- poly$n_points()
+#'
 #' # Optimize path (traveling salesman)
 #' poly$optimize_salesperson(iterations = 100)
-#' 
+#'
 #' # Export
 #' df <- as.data.frame(poly)
-#' }
 #' 
 #' @name Polygon
 NULL

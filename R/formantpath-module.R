@@ -17,7 +17,14 @@
 #' @param ceiling_step_fraction Step size for ceiling frequency variation (0.05-0.1)
 #' @param num_steps_up_down Number of steps above/below ceiling (typically 2-4)
 #'
-#' @return FormantPath object with S3 class
+#' @return An object of class \code{FormantPath} wrapping the set of candidate
+#'   formant tracks (list with methods; dispatched via the shared \code{PraatObject} pattern).
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' fp <- FormantPath(sound)
+#' fp$get_duration()
+#'
 #' @name FormantPath
 NULL
 

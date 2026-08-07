@@ -14,3 +14,10 @@ FormantGrid objects allow manipulation of formant frequencies and bandwidths
 over time for voice transformation and synthesis. This is the editable
 counterpart to the read-only Formant object.
 }
+\examples{
+fg <- FormantGrid(0, 1, number_of_formants = 3)
+fg$add_formant_point(1, 0.5, 700)
+fg$get_formant_at_time(1, 0.5)
+fg$get_number_of_formants()
+
+}

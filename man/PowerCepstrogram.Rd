@@ -12,10 +12,8 @@ Uses shared dispatch table for minimal memory per object.
 Note: No Rcpp module — uses direct Rcpp function calls.
 }
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 mean_cpp <- cepstrogram$get_mean_cpp()
-}
 
 }

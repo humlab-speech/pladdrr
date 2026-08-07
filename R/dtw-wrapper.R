@@ -56,11 +56,13 @@
 #'   \item 4: 2/3 < slope < 3/2 (strict)
 #' }
 #'
+#' @return An object of class \code{DTW} wrapping the alignment path and distance
+#'   matrix (list with methods; dispatched via the shared \code{PraatObject} pattern).
+#'
 #' @examples
-#' \dontrun{
 #' # Basic alignment workflow
-#' reference <- Sound("template.wav")
-#' candidate <- Sound("test.wav")
+#' reference <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' candidate <- Sound$create_tone(frequency = 160, duration = 0.3)
 #'
 #' # Create DTW alignment
 #' dtw <- sounds_to_dtw(reference, candidate,
@@ -74,12 +76,7 @@
 #' cat("Distance:", dtw$get_weighted_distance(), "\n")
 #'
 #' # Map time point from candidate to reference
-#' ref_time <- dtw$get_y_time_from_x_time(1.5)
-#'
-#' # Warp annotations
-#' tg <- TextGrid("template.TextGrid")
-#' warped_tg <- dtw$warp_textgrid(tg)
-#' }
+#' ref_time <- dtw$get_y_time_from_x_time(0.1)
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
 #' @param .xptr Internal external pointer to wrap an existing DTW object; not for direct use.

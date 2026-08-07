@@ -31,16 +31,17 @@ It allows detailed control over phonation, vocal tract resonances, frication,
 and other articulatory parameters.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create empty KlattGrid
 kg <- KlattGrid(0, 1, numberOfFormants = 6)
 
-# Set pitch contour
-kg$add_pitch_point(0.5, 100)  # 100 Hz at 0.5s
+# Set pitch contour and voicing amplitude (both required for synthesis)
+kg$add_pitch_point(0.5, 100)      # 100 Hz at 0.5s
+kg$add_voicing_amplitude_point(0.5, 90)
 
-# Set formant frequencies
-kg$add_formant_point(0, 1, 0.5, 500)  # F1 = 500 Hz
-kg$add_formant_point(0, 2, 0.5, 1500) # F2 = 1500 Hz
+# Set oral formant frequencies (formantType 1 = ORAL)
+kg$add_formant_point(1, 1, 0.5, 500)  # F1 = 500 Hz
+kg$add_formant_point(1, 2, 0.5, 1500) # F2 = 1500 Hz
 
 # Synthesize
 sound <- kg$to_sound()

@@ -6,6 +6,16 @@
 #' PCA is commonly used in phonetics for vowel space analysis, speaker
 #' normalization, acoustic feature extraction, and data visualization.
 #'
+#' @return A \code{PCA} object with methods for querying components, eigenvalues,
+#'   and projections.
+#'
+#' @examples
+#' set.seed(1)
+#' data <- cbind(f1 = rnorm(20, 500, 50), f2 = rnorm(20, 1500, 100))
+#' pca <- pca_from_matrix(data)
+#' pca$get_number_of_components()
+#' pca$get_eigenvalues()
+#'
 #' @seealso \code{\link{Discriminant}}
 #' @name PCA
 NULL

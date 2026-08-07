@@ -5,6 +5,15 @@
 #' @details
 #' Matrix objects represent two-dimensional sampled data with x and y axes.
 #'
+#' @return A \code{Matrix} object with methods for two-dimensional sampled data access.
+#'
+#' @examples
+#' m <- Matrix(numberOfRows = 3, numberOfColumns = 4)
+#' m$set_value(1, 1, 5.0)
+#' m$get_value(1, 1)
+#' m$get_number_of_rows()
+#' as.matrix(m)
+#'
 #' @name Matrix
 NULL
 

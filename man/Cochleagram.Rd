@@ -13,3 +13,10 @@ Praat Cochleagram object with direct C++ module binding for auditory modeling.
 A Cochleagram represents the output of a bank of auditory filters arranged
 along the basilar membrane. Frequency is measured in Bark units (0-25.6 Bark).
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 44100)
+cochleagram <- sound$to_cochleagram()
+cochleagram$get_duration()
+cochleagram$get_loudness_at_time(0.15)
+
+}

@@ -259,11 +259,9 @@ print.PowerCepstrum <- function(x, ...) x$print()
 #' @return A \code{PowerCepstrogram} object with methods for time-varying power cepstrum analysis.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #' mean_cpp <- cepstrogram$get_mean_cpp()
-#' }
 #'
 #' @name PowerCepstrogram
 NULL

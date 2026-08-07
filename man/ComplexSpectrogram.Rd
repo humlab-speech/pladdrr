@@ -11,8 +11,15 @@
 \item{maximum_frequency}{Maximum frequency to analyze in Hz (default: 5000)}
 }
 \value{
-ComplexSpectrogram object
+An object of class \code{ComplexSpectrogram} wrapping a phase-preserving
+  spectrogram (list with methods; dispatched via the shared \code{PraatObject} pattern).
 }
 \description{
 Create a ComplexSpectrogram object from a Sound
+}
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+cs <- ComplexSpectrogram(sound)
+cs$get_amplitude(0.15, 150)
+
 }

@@ -3,12 +3,24 @@
 \name{PCA}
 \alias{PCA}
 \title{Principal Component Analysis (PCA)}
+\value{
+A \code{PCA} object with methods for querying components, eigenvalues,
+  and projections.
+}
 \description{
 PCA for dimensionality reduction and analysis of multivariate acoustic data.
 }
 \details{
 PCA is commonly used in phonetics for vowel space analysis, speaker
 normalization, acoustic feature extraction, and data visualization.
+}
+\examples{
+set.seed(1)
+data <- cbind(f1 = rnorm(20, 500, 50), f2 = rnorm(20, 1500, 100))
+pca <- pca_from_matrix(data)
+pca$get_number_of_components()
+pca$get_eigenvalues()
+
 }
 \seealso{
 \code{\link{Discriminant}}

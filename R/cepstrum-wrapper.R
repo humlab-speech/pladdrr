@@ -8,6 +8,11 @@
 #'
 #' @return A \code{Cepstrum} object with methods for cepstral analysis and quefrency-domain processing.
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' cepstrum <- sound$to_cepstrum()
+#' spectrum <- cepstrum$to_spectrum()
+#'
 #' @name Cepstrum
 NULL
 

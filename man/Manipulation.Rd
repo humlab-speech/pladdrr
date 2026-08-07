@@ -14,3 +14,10 @@ pitch and duration modification.
 The Manipulation object is Praat's main tool for modifying pitch and duration
 of speech sounds using PSOLA (Pitch-Synchronous Overlap-Add) resynthesis.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+manip <- sound$to_manipulation(pitch_floor = 75, pitch_ceiling = 300)
+manip$has_pitch_tier()
+pt <- manip$extract_pitch_tier()
+
+}

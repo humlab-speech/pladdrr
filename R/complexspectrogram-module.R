@@ -8,7 +8,13 @@
 #' @param sound Sound object
 #' @param window_length Window length in seconds (default: 0.005)
 #' @param maximum_frequency Maximum frequency to analyze in Hz (default: 5000)
-#' @return ComplexSpectrogram object
+#' @return An object of class \code{ComplexSpectrogram} wrapping a phase-preserving
+#'   spectrogram (list with methods; dispatched via the shared \code{PraatObject} pattern).
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' cs <- ComplexSpectrogram(sound)
+#' cs$get_amplitude(0.15, 150)
 #'
 #' @name ComplexSpectrogram
 NULL

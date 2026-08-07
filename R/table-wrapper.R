@@ -6,6 +6,16 @@
 #' Table objects store tabular data with named columns and support various
 #' statistical operations.
 #'
+#' @return A \code{Table} object with methods for tabular data access and statistics.
+#'
+#' @examples
+#' tbl <- Table(numberOfRows = 3, columnNames = c("word", "duration"))
+#' tbl$set_string_value(1, "word", "cat")
+#' tbl$set_numeric_value(1, "duration", 0.42)
+#' tbl$get_number_of_rows()
+#' tbl$get_string_value(1, "word")
+#' tbl$get_numeric_value(1, "duration")
+#'
 #' @name Table
 NULL
 

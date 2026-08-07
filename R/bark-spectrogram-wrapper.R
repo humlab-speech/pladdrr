@@ -8,13 +8,11 @@
 #' @return A BarkSpectrogram object
 #'
 #' @examples
-#' \dontrun{
-#' snd <- Sound("speech.wav")
+#' snd <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' bark <- snd$to_bark_spectrogram()
 #'
 #' # Export as matrix
 #' mat <- bark$as_matrix()
-#' }
 #'
 #' @export
 BarkSpectrogram <- function(.xptr = NULL) {

@@ -13,3 +13,10 @@ Praat Excitation object with direct C++ module binding for auditory modeling.
 An Excitation pattern represents the perceptual loudness distribution across
 the auditory frequency range, measured in Bark scale.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+spectrum <- sound$to_spectrum()
+excitation <- spectrum$to_excitation()
+excitation$get_loudness()
+
+}

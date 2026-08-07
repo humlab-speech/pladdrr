@@ -16,13 +16,11 @@ the mel scale. They are derived from LPC analysis and are useful for
 speaker recognition tasks.
 }
 \examples{
-\dontrun{
-sound <- Sound("audio.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 lpc <- sound$to_lpc_burg(prediction_order = 16)
 lfcc <- lpc$to_lfcc(num_coefficients = 12)
 coefs <- lfcc$get_all_coefficients()
 lpc2 <- lfcc$to_lpc(num_coefficients = 16)
-}
 
 }
 \seealso{

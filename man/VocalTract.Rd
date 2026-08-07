@@ -3,6 +3,9 @@
 \name{VocalTract}
 \alias{VocalTract}
 \title{Praat VocalTract Object}
+\value{
+A \code{VocalTract} object with methods for articulatory tube-model access.
+}
 \description{
 Praat VocalTract object with direct C++ module binding for articulatory synthesis.
 }
@@ -37,7 +40,6 @@ glottis to lips, divided into sections. This can be used for:
 - `$to_matrix()` - Convert to Matrix
 }
 \examples{
-\dontrun{
 # Create from phone
 vt <- VocalTract$create_from_phone("a")
 print(vt)
@@ -47,6 +49,5 @@ areas <- vt$get_areas()
 
 # Convert to spectrum for synthesis
 spectrum <- vt$to_spectrum()
-}
 
 }

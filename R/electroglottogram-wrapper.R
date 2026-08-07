@@ -7,15 +7,14 @@
 #' Electroglottogram inherits from Sound and represents a specialized single-channel
 #' sound that records vocal fold contact area.
 #'
-#' @examples
-#' \dontrun{
-#' sound <- praat_read("recording_with_egg.wav")
-#' egg <- sound$extract_electroglottogram(channel = 2, invert = FALSE)
+#' @return An \code{Electroglottogram} object (triple-class \code{c("Electroglottogram",
+#'   "Sound", "PraatObject")}) that inherits Sound's methods in addition to its own.
 #'
-#' egg_filtered <- egg$high_pass_filter(from_freq = 100, smoothing = 100)
-#' tg <- egg_filtered$to_textgrid_closed_glottis(pitch_floor = 75, pitch_ceiling = 300)
-#' degg <- egg$derivative(lowpass_freq = 5000, smoothing = 100)
-#' }
+#' @examples
+#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+#' egg$get_duration()
+#' egg$get_number_of_samples()
+#' egg$is_valid()
 #'
 #' @name Electroglottogram
 NULL

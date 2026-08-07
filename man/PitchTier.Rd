@@ -3,6 +3,10 @@
 \name{PitchTier}
 \alias{PitchTier}
 \title{Praat PitchTier Object}
+\value{
+A \code{PitchTier} object with methods for pitch-contour manipulation
+  via time-value points.
+}
 \description{
 Praat PitchTier object with direct C++ module binding for pitch manipulation.
 }
@@ -56,27 +60,22 @@ PitchTiers contain discrete time-value pairs that can be edited.
 - `$save(path)` - Write to file
 }
 \examples{
-\dontrun{
 # Create empty PitchTier and add points
 pt <- PitchTier(0, 1)
 pt$add_point(0.1, 120)
 pt$add_point(0.5, 150)
 pt$add_point(0.9, 100)
 
-# Load from file
-pt <- PitchTier$new("contour.PitchTier")
-
 # Create from Pitch
-sound <- Sound$new("audio.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 pitch <- sound$to_pitch()
 pitch_tier <- pitch$down_to_pitch_tier()
 
 # Modify pitch
 pitch_tier$multiply_frequencies(1.5)  # Raise pitch 50\%
-pitch_tier$shift_frequencies(50)       # Add 50 Hz
 
 # Query
-f0_at_1s <- pitch_tier$get_value_at_time(1.0)
+f0_at_mid <- pitch_tier$get_value_at_time(0.25)
 n_points <- pitch_tier$get_number_of_points()
 f0_min <- pitch_tier$get_minimum()
 f0_max <- pitch_tier$get_maximum()
@@ -86,7 +85,5 @@ synth <- pitch_tier$to_sound_sine(16000)
 
 # Export
 df <- pitch_tier$as_data_frame()
-pitch_tier$save("modified.PitchTier")
-}
 
 }

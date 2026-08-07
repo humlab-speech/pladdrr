@@ -8,6 +8,12 @@
 #'
 #' @return An \code{Excitation} object with methods for auditory excitation pattern analysis.
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' spectrum <- sound$to_spectrum()
+#' excitation <- spectrum$to_excitation()
+#' excitation$get_loudness()
+#'
 #' @name Excitation
 NULL
 

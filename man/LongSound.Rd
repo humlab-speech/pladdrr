@@ -20,16 +20,16 @@ This allows working with files that would be too large to load into memory.
 Use `extract_part()` to get a Sound object for a specific time window.
 }
 \examples{
-\dontrun{
-# Open a large audio file
-ls <- LongSound$open("recording.wav")
+# LongSound streams from disk, so the example writes a small WAV file first
+tmp <- tempfile(fileext = ".wav")
+Sound$create_tone(frequency = 150, duration = 1.0)$save(tmp)
+
+ls <- LongSound$open(tmp)
 print(ls)
 
-# Extract first 10 seconds as Sound
-sound <- ls$extract_part(0, 10)
+# Extract first 0.5 seconds as Sound
+sound <- ls$extract_part(0, 0.5)
 
-# Save a portion to a new file
-ls$save_part(60, 120, "minute_two.wav")
-}
+unlink(tmp)
 
 }

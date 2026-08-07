@@ -8,6 +8,13 @@
 #'
 #' @return An \code{IntensityTier} object with methods for intensity (dB SPL) manipulation via time-value points.
 #'
+#' @examples
+#' it <- IntensityTier(0, 1)
+#' it$add_point(0.25, 70)
+#' it$add_point(0.75, 60)
+#' it$get_number_of_points()
+#' it$get_value_at_time(0.5)
+#'
 #' @name IntensityTier
 NULL
 

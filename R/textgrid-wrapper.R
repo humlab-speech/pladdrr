@@ -58,57 +58,31 @@
 #' - `$save(path)` - Write to file
 #' - `$extract_part(start, end)` - Extract time range
 #'
+#' @return A \code{TextGrid} object with methods for tier and interval/point
+#'   annotation access.
+#'
 #' @examples
-#' \dontrun{
-#' # Read existing TextGrid
-#' tg <- TextGrid("annotation.TextGrid")
+#' # Create new TextGrid with one interval tier and one point tier
+#' # (tier_names lists all tiers; point_tiers names the subset that are point tiers)
+#' tg <- textgrid_create(0, 1, "words tones", "tones")
 #' tg$get_tier_names()
-#' tg$get_number_of_intervals("words")
-#'
-#' # Query specific intervals
-#' label <- tg$get_label_at_time("words", 1.5)
-#' word_text <- tg$get_interval_text("words", 5)
-#'
-#' # Create new TextGrid
-#' tg <- textgrid_create(0, 10, "phones words", "tones")
 #'
 #' # Add boundaries and labels (IntervalTier)
-#' tg$insert_boundary("words", 1.5)
-#' tg$insert_boundary("words", 3.2)
+#' tg$insert_boundary("words", 0.4)
+#' tg$insert_boundary("words", 0.7)
 #' tg$set_interval_text("words", 1, "hello")
 #' tg$set_interval_text("words", 2, "world")
 #'
 #' # Add points and labels (PointTier)
-#' tg$insert_point("tones", 0.5, "H*")
-#' tg$insert_point("tones", 2.3, "L-L%")
+#' tg$insert_point("tones", 0.2, "H*")
+#' tg$insert_point("tones", 0.8, "L-L%")
+#'
+#' # Query
+#' tg$get_number_of_intervals("words")
+#' label <- tg$get_label_at_time("words", 0.5)
 #'
 #' # Export to R
 #' df <- tg$as_data_frame()
-#' df <- tg$as_data_frame(tiers = c(1, 3))  # Only tiers 1 and 3
-#'
-#' # Integration with Sound
-#' sound <- Sound("audio.wav")
-#' words <- tg$as_data_frame(tiers = "words")
-#' for (i in 1:nrow(words)) {
-#'   if (words$label[i] != "") {
-#'     segment <- sound$extract_part(words$start_time[i], words$end_time[i])
-#'     segment$save(paste0("word_", i, ".wav"))
-#'   }
-#' }
-#' 
-#' # Fast batch extraction of matching intervals
-#' result <- tg$extract_intervals_batch(
-#'   tier = "words",
-#'   comparison_type = "equals",
-#'   target_value = "hello",
-#'   sound = sound,
-#'   extract_sounds = TRUE
-#' )
-#' # Access results: result$indices, result$start_times, result$sounds
-#'
-#' # Save TextGrid
-#' tg$save("output.TextGrid")
-#' }
 #'
 #' @name TextGrid
 NULL

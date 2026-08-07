@@ -46,8 +46,7 @@ statistics, and conversions.
 }
 
 \examples{
-\dontrun{
-sound <- Sound$new("speech.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 pitch <- sound$to_pitch()
 
 # Properties
@@ -55,11 +54,10 @@ pitch$duration
 pitch$nx
 
 # Query methods
-pitch$get_mean(0, 0, 0L)  # Mean F0 in Hz
+pitch$get_mean(0, 0, "hertz")  # Mean F0 in Hz
 pitch$count_voiced_frames()
 
 # Export
 df <- pitch$as_data_frame(FALSE, FALSE)
-}
 
 }

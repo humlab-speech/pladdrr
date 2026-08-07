@@ -49,9 +49,8 @@ These methods remove vocal tract resonances to reveal the voice source (glottal
 flow waveform). Essential for voice quality research and vocal fold dynamics.
 }
 \examples{
-\dontrun{
 # Load sound
-sound <- Sound("audio.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 
 # Compute LPC (Burg method is recommended)
 lpc <- sound$to_lpc_burg(
@@ -66,19 +65,15 @@ n_frames <- lpc$get_number_of_frames()
 gains <- lpc$get_all_gains()
 coeffs <- lpc$get_all_coefficients()
 
-# Get coefficients for specific frame
-coef_frame10 <- lpc$get_coefficients_at_frame(10)
+# Get coefficients for a specific frame
+coef_frame1 <- lpc$get_coefficients_at_frame(1)
 
 # Convert to other representations
-spectrum <- lpc$to_spectrum(time = 0.5, df_min = 20)
+spectrum <- lpc$to_spectrum(time = 0.15, df_min = 20)
 
-# Extract voice source (glottal flow) via inverse filtering
-glottal_flow <- lpc$filter_inverse(sound)
-
-# Or use filter from a specific time (e.g., vowel midpoint)
+# Extract voice source (glottal flow) via inverse filtering at a given time
 midpoint <- sound$get_duration() / 2
-glottal_flow_fixed <- lpc$filter_inverse_at_time(sound, time = midpoint)
-}
+glottal_flow <- lpc$filter_inverse_at_time(sound, time = midpoint)
 
 }
 \seealso{

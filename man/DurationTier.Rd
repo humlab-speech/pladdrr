@@ -16,3 +16,11 @@ duration/tempo of sounds. Values represent duration multiplication factors:
 - 2.0 = half speed (doubled duration)
 - 0.5 = double speed (halved duration)
 }
+\examples{
+dt <- DurationTier(0, 1)
+dt$add_point(0.25, 1.0)
+dt$add_point(0.75, 1.5)
+dt$get_number_of_points()
+dt$get_value_at_time(0.5)
+
+}

@@ -42,8 +42,7 @@ MFCC objects are created from Sound objects:
 - `$to_matrix()` - Convert to Matrix object
 }
 \examples{
-\dontrun{
-sound <- Sound("audio.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 mfcc <- sound$to_mfcc(
   num_coefficients = 13,
   analysis_width = 0.025,
@@ -56,7 +55,6 @@ n_frames <- mfcc$get_number_of_frames()
 coefs <- mfcc$get_all_coefficients()
 mfcc$lifter(22)
 df <- mfcc$as_data_frame(include_c0 = TRUE)
-}
 
 }
 \seealso{

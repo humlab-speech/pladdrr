@@ -6,6 +6,14 @@
 #' Praat Ltas object for long-term spectral analysis.
 #' Uses shared dispatch table for minimal memory per object.
 #'
+#' @return An \code{Ltas} object with methods for long-term average spectrum analysis.
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+#' ltas <- sound$to_ltas(bandwidth = 100)
+#' ltas$get_mean()
+#' ltas$get_number_of_bins()
+#'
 #' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{Spectrogram}}
 #' @name Ltas
 NULL

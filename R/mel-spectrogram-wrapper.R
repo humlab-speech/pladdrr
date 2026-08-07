@@ -8,8 +8,7 @@
 #' @return A MelSpectrogram object
 #'
 #' @examples
-#' \dontrun{
-#' snd <- Sound("speech.wav")
+#' snd <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' mel <- snd$to_mel_spectrogram()
 #'
 #' # Convert to MFCC
@@ -17,7 +16,6 @@
 #'
 #' # Export as matrix
 #' mat <- mel$as_matrix()
-#' }
 #'
 #' @export
 MelSpectrogram <- function(.xptr = NULL) {

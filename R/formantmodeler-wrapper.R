@@ -10,12 +10,11 @@
 #' @return A \code{FormantModeler} object with methods for polynomial modeling of formant trajectories with outlier detection.
 #'
 #' @examples
-#' \dontrun{
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' formant <- sound$to_formant_burg()
-#' modeler <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 4, num_params = 5)
-#' r2 <- modeler$get_coefficient_of_determination(1, 4)
+#' modeler <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 3, num_params = 3)
+#' r2 <- modeler$get_coefficient_of_determination(1, 3)
 #' f1_modeled <- modeler$get_track_model_values(1)
-#' }
 #'
 #' @name FormantModeler
 NULL
