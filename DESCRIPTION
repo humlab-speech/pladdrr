@@ -11,7 +11,7 @@ Description: Provides direct, efficient access to Praat C implemented
     functionality from R using Rcpp modules. Similar in concept to the
     Parselmouth package for Python, this package allows R users to leverage
     Praat's powerful phonetic analysis capabilities directly from R. Includes
-    37 Praat modules with 500+ methods for sound manipulation, robust formant
+    38 Praat modules with 500+ methods for sound manipulation, robust formant
     tracking (FormantPath, FormantModeler), speech synthesis (KlattGrid), pitch
     analysis, intensity measurements, spectral analysis (ComplexSpectrogram),
     cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant),
