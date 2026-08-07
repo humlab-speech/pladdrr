@@ -204,8 +204,6 @@ static SoundPool g_sound_pool(100);
 //' Memory optimization for batch operations that extract many Sound segments.
 //' Reuses Sound object allocations instead of creating/destroying each time.
 //'
-//' **Performance Impact:** 20-30% speedup for batch segment extraction
-//'
 //' **Numerical Impact:** None - output is identical to non-pooled version
 //'
 //' @details
@@ -313,8 +311,8 @@ void sound_pool_release(SEXP sound_xptr) {
 //' Extract multiple Sound parts using object pool
 //'
 //' @description
-//' Batch extraction with memory reuse. 20-30% faster than individual
-//' Sound_extractPart calls for large numbers of segments.
+//' Batch extraction using pooled memory reuse, for large numbers of
+//' segments.
 //'
 //' @param sound_xptr External pointer to source Sound
 //' @param start_times Numeric vector of start times
@@ -336,7 +334,7 @@ void sound_pool_release(SEXP sound_xptr) {
 //' starts <- c(0.1, 0.5, 1.0)
 //' ends <- c(0.3, 0.7, 1.2)
 //'
-//' # Fast batch extraction with pooling
+//' # Batch extraction with pooling
 //' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 //'
 //' # Process segments...

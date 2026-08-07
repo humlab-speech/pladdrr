@@ -39,8 +39,9 @@ using namespace Rcpp;
 
 //' Fast Sound Sample Access
 //'
-//' Copies Sound sample data via direct pointer access — faster than
-//' `get_values()` which goes through Praat's per-sample accessor.
+//' Copies Sound sample data via direct pointer access into Praat's
+//' contiguous sample array, rather than going through the per-sample
+//' accessor in a loop.
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param channel Channel number (1-based, default 1)
@@ -50,10 +51,6 @@ using namespace Rcpp;
 //'   for backward compatibility with code that checked these.
 //'
 //' @details
-//' **Performance:** ~2-5x faster than `get_values()` for large sounds
-//' because it copies directly from Praat's contiguous sample array
-//' rather than calling the per-sample accessor in a loop.
-//'
 //' The returned vector is an independent R copy — safe to modify,
 //' store, or use after the Sound object is garbage collected.
 //'
@@ -61,11 +58,11 @@ using namespace Rcpp;
 //' \dontrun{
 //' sound <- Sound("large_file.wav")
 //'
-//' # Fast copy — for read-only analysis
+//' # Copy for read-only analysis
 //' samples <- sound_values_fast(sound$get_xptr(), channel = 1)
 //' rms <- sqrt(mean(samples^2))
 //'
-//' # Regular copy — equivalent, slightly slower
+//' # Regular copy — equivalent output
 //' samples2 <- sound$get_values(channel = 1)
 //' }
 //'

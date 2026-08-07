@@ -92,7 +92,7 @@ bool textgrid_simd_enabled() {
 //' Calculate Interval Durations with SIMD
 //'
 //' Vectorized calculation of interval durations (end - start).
-//' Uses SIMD instructions for ~1.5-2x speedup on large interval counts.
+//' Uses SIMD instructions on large interval counts.
 //'
 //' @param start_times Numeric vector of start times
 //' @param end_times Numeric vector of end times
@@ -292,8 +292,6 @@ NumericVector calculate_midpoints_simd_bridge(
 //' This function combines:
 //' 1. SIMD duration calculation for all intervals
 //' 2. SIMD statistics calculation for pitch values in each interval
-//'
-//' Performance: ~2x faster than R loop with individual queries
 //'
 //' @export
 // [[Rcpp::export]]

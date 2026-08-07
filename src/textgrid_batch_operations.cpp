@@ -50,11 +50,11 @@ extern "C" {
 
 //' Extract TextGrid Intervals by Label (Batch)
 //'
-//' Efficiently extract multiple intervals from a TextGrid tier that match
-//' specified criteria. This is **10-50x faster** than R loops because:
-//' - Single C++ call instead of 4n R<->C++ calls (n = number of intervals)
-//' - Comparisons done at C++ level
-//' - Efficient memory allocation
+//' Extract multiple intervals from a TextGrid tier that match specified
+//' criteria, using:
+//' - A single C++ call instead of 4n R<->C++ calls (n = number of intervals)
+//' - Comparisons done at the C++ level
+//' - A single memory allocation for the result
 //'
 //' @param textgrid_xptr External pointer to TextGrid object
 //' @param sound_xptr External pointer to Sound object (optional, can be NULL)
@@ -76,11 +76,6 @@ extern "C" {
 //' - "contains": Substring match (strstr)
 //' - "starts_with": Prefix match
 //' - "regex": Regular expression (future)
-//'
-//' **Performance:**
-//' For 100 intervals:
-//' - R loop: ~400 R<->C++ calls, ~50-100ms
-//' - This function: 1 call, ~1-2ms (25-50x faster)
 //'
 //' @examples
 //' \dontrun{
@@ -219,8 +214,8 @@ List textgrid_extract_intervals_batch(
 
 //' Get All Labels from TextGrid Tier (Batch)
 //'
-//' Extract all interval labels from a tier in a single call.
-//' Much faster than calling `get_interval_text()` n times.
+//' Extract all interval labels from a tier in a single call, instead of
+//' calling `get_interval_text()` n times.
 //'
 //' @param textgrid_xptr External pointer to TextGrid object
 //' @param tier_number Tier number (1-based)
@@ -277,8 +272,8 @@ CharacterVector textgrid_get_all_labels(SEXP textgrid_xptr, int tier_number) {
 //'   - duration: Duration (end - start)
 //'
 //' @details
-//' Duration calculation uses SIMD vectorization when available,
-//' providing ~1.5-2x speedup for large interval counts (>100).
+//' Duration calculation uses SIMD vectorization when available, for
+//' large interval counts (>100).
 //'
 //' @examples
 //' \dontrun{
@@ -355,11 +350,10 @@ DataFrame textgrid_interval_statistics_batch(SEXP textgrid_xptr, int tier_number
 // Signature: bool predicate(const char* label, double start_time, double end_time)
 typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 
-//' Extract TextGrid Intervals Using Custom XPtr Predicate (50-70x faster)
+//' Extract TextGrid Intervals Using Custom XPtr Predicate
 //'
 //' Filter intervals using a user-compiled C++ predicate function.
-//' This provides **50-70x speedup** over R function callbacks because
-//' the predicate executes entirely in C++ without any R boundary crossings.
+//' The predicate executes entirely in C++ without any R boundary crossings.
 //'
 //' @param textgrid_xptr External pointer to TextGrid object
 //' @param tier_number Tier number (1-based)
@@ -395,11 +389,6 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //'   predicate_xptr = my_pred
 //' )
 //' ```
-//'
-//' **Performance comparison (1000 intervals):**
-//' - R function callback: ~100ms (1000 R<->C++ calls)
-//' - XPtr predicate: ~1.5ms (0 R<->C++ calls during filter)
-//' - Speedup: ~67x
 //'
 //' @seealso [textgrid_extract_intervals_batch()] for simpler string matching
 //'

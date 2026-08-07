@@ -401,8 +401,8 @@ IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times
 //'
 //' @description
 //' Calculate multiple pitch statistics (min, max, mean, stdev, quantiles) over
-//' multiple time intervals in a single C++ call. 10-50x faster than repeated
-//' R method calls.
+//' multiple time intervals in a single C++ call, avoiding repeated R method
+//' calls.
 //'
 //' @param pitch_xptr External pointer to Pitch object
 //' @param from_times Numeric vector of interval start times
@@ -743,8 +743,9 @@ List intensity_get_minimum_with_time(
 //' Get all jitter and shimmer measures in a single C++ call
 //'
 //' @description
-//' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call.
-//' Much faster than calling individual methods when you need multiple measures.
+//' Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call,
+//' for when you need multiple measures at once instead of calling individual
+//' methods separately.
 //'
 //' @param pp_xptr External pointer to PointProcess object
 //' @param sound_xptr External pointer to Sound object (required for shimmer)
@@ -837,11 +838,11 @@ List get_jitter_shimmer_batch_cpp(
 // Keeps entire workflows in C++ layer, returning only final scalars
 // =============================================================================
 
-//' Get audio file durations efficiently via WAV header reading
+//' Get audio file durations via WAV header reading
 //'
 //' @description
 //' Reads only the 44-byte WAV header to calculate duration, avoiding full file
-//' loading. 77x faster than LongSound$from_file()$get_total_duration().
+//' loading.
 //'
 //' @param file_paths Character vector of .wav file paths
 //' @return Numeric vector of durations (seconds), NA for errors
@@ -939,7 +940,7 @@ NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
 //'
 //' @description
 //' Performs pitch extraction AND statistic calculation entirely in C++,
-//' avoiding intermediate R6 object creation. 5x faster than Tier 2/3.
+//' avoiding intermediate R6 object creation.
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param stat Statistic to compute: "max", "min", "mean", "median", "sd"
@@ -1015,7 +1016,7 @@ double calculate_f0_stats_ultra_cpp(
 //' @description
 //' DSI-compliant intensity pipeline: Sound -> Pitch -> PointProcess -> TextGrid (VUV)
 //' -> Extract voiced intervals -> Concatenate -> Intensity -> Minimum.
-//' Matches Praat DSI script algorithm. 6x faster than Tier 2/3.
+//' Matches Praat DSI script algorithm.
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param min_pitch Pitch floor (Hz) for pitch extraction
@@ -1119,7 +1120,7 @@ static bool has_metric(CharacterVector metrics, const std::string& target) {
 //'
 //' @description
 //' Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess
-//' -> Jitter/Shimmer/HNR. Returns selected metrics. 3.6x faster than Tier 2/3.
+//' -> Jitter/Shimmer/HNR. Returns selected metrics.
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param metrics Character vector of metrics: "jitter", "shimmer", "hnr", or "all"
