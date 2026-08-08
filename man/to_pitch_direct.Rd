@@ -27,15 +27,13 @@ voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
 instead.
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 
-# FAST: Returns raw pointer (basic parameters)
+# Returns raw pointer (basic parameters)
 pitch_ptr <- to_pitch_direct(sound)
 
-# Use with other direct functions
-stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
-}
+# Use with other direct query functions
+stats <- get_pitch_stats_direct(pitch_ptr)
 
 }
 \seealso{

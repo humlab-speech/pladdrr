@@ -18,10 +18,8 @@ A wrapped \code{Ltas} object
 Create LTAS from Sound Directly
 }
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 ltas <- to_ltas_direct(sound, bandwidth = 100)
 ltas$get_slope(0, 1000, 1000, 10000, "energy")
-}
 
 }

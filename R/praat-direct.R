@@ -147,15 +147,13 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #' @seealso [to_pitch_ac_direct()], [to_pitch_cc_direct()] for full parameter control
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #'
-#' # FAST: Returns raw pointer (basic parameters)
+#' # Returns raw pointer (basic parameters)
 #' pitch_ptr <- to_pitch_direct(sound)
 #'
-#' # Use with other direct functions
-#' stats <- pitch_get_all_stats_direct(pitch_ptr, 0, 0, 0L)
-#' }
+#' # Use with other direct query functions
+#' stats <- get_pitch_stats_direct(pitch_ptr)
 #'
 #' @export
 to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceiling = 600) {
@@ -196,18 +194,13 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' @return External pointer to Pitch (NOT R6 object)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #'
 #' # With custom voicing threshold (stricter voicing detection)
 #' pitch_ptr <- to_pitch_ac_direct(sound, voicing_threshold = 0.6)
 #'
-#' # With custom silence threshold (more sensitive)
-#' pitch_ptr <- to_pitch_ac_direct(sound, silence_threshold = 0.01)
-#'
 #' # Use with query functions
-#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-#' }
+#' f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 #'
 #' @export
 to_pitch_ac_direct <- function(sound,
@@ -266,18 +259,13 @@ to_pitch_ac_direct <- function(sound,
 #' @return External pointer to Pitch (NOT R6 object)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #'
 #' # With custom voicing threshold (stricter voicing detection)
 #' pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)
 #'
-#' # With custom silence threshold (more sensitive)
-#' pitch_ptr <- to_pitch_cc_direct(sound, silence_threshold = 0.01)
-#'
 #' # Use with query functions
-#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-#' }
+#' f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 #'
 #' @export
 to_pitch_cc_direct <- function(sound,
@@ -326,11 +314,9 @@ to_pitch_cc_direct <- function(sound,
 #' @return External pointer to Pitch (NOT R6 object)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' pitch_ptr <- to_pitch_shs_direct(sound)
-#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-#' }
+#' f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 #'
 #' @export
 to_pitch_shs_direct <- function(sound,
@@ -371,11 +357,9 @@ to_pitch_shs_direct <- function(sound,
 #' @return External pointer to Pitch (NOT R6 object)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' pitch_ptr <- to_pitch_spinet_direct(sound)
-#' f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-#' }
+#' f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 #'
 #' @export
 to_pitch_spinet_direct <- function(sound,
@@ -415,6 +399,11 @@ to_pitch_spinet_direct <- function(sound,
 #'
 #' @return External pointer to Formant
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+#' formant_ptr <- to_formant_direct(sound)
+#' f1 <- get_formant_value_direct(formant_ptr, 1, 0.25, "hertz")
+#'
 #' @export
 to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
                                max_formant = 5500, window_length = 0.025,
@@ -450,6 +439,11 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
 #'
 #' @return External pointer to Intensity
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+#' intensity_ptr <- to_intensity_direct(sound)
+#' db <- get_intensity_value_direct(intensity_ptr, 0.25)
+#'
 #' @export
 to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
                                  subtract_mean = TRUE) {
@@ -474,6 +468,12 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 #' @param periods_per_window Periods per window
 #'
 #' @return External pointer to Harmonicity
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+#' hnr_ptr <- to_harmonicity_direct(sound)
+#' hnr <- Harmonicity(.xptr = hnr_ptr)
+#' hnr$get_mean(0, 0)
 #'
 #' @export
 to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
@@ -630,12 +630,10 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
 #' @return External pointer to Spectrum
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
-#' # Fast direct conversion
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' spec_ptr <- to_spectrum_direct(sound)
 #' spec <- Spectrum(.xptr = spec_ptr)
-#' }
+#' spec$get_number_of_bins()
 #'
 #' @export
 to_spectrum_direct <- function(sound, fast = TRUE) {
@@ -663,15 +661,13 @@ to_spectrum_direct <- function(sound, fast = TRUE) {
 #' @return External pointer to Spectrogram
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
-#' # Fast direct conversion
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' spg_ptr <- to_spectrogram_direct(sound, window_length = 0.005)
 #' spg <- Spectrogram(.xptr = spg_ptr)
-#' }
+#' spg$get_number_of_time_bins()
 #'
 #' @export
-to_spectrogram_direct <- function(sound, window_length = 0.005, 
+to_spectrogram_direct <- function(sound, window_length = 0.005,
                                    max_frequency = 5000.0,
                                    time_step = 0.002, 
                                    frequency_step = 20.0,
@@ -706,11 +702,9 @@ to_spectrogram_direct <- function(sound, window_length = 0.005,
 #' @return A wrapped \code{Ltas} object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' ltas <- to_ltas_direct(sound, bandwidth = 100)
 #' ltas$get_slope(0, 1000, 1000, 10000, "energy")
-#' }
 #'
 #' @export
 to_ltas_direct <- function(sound, bandwidth = 100.0) {
@@ -731,12 +725,11 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 #' @return External pointer to PointProcess
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' # Extract glottal pulses
 #' pp_ptr <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
 #' pp <- PointProcess(.xptr = pp_ptr)
-#' }
+#' pp$get_number_of_points()
 #'
 #' @export
 to_point_process_direct <- function(sound, pitch_floor = 75.0,
@@ -775,9 +768,8 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' @return External pointer to PointProcess
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
-#' 
+#' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+#'
 #' # Create refined pitch analysis
 #' pitch <- sound$to_pitch_cc(
 #'   time_step = 0,
@@ -785,14 +777,13 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #'   pitch_ceiling = 600,
 #'   voicing_threshold = 0.45
 #' )
-#' 
+#'
 #' # RECOMMENDED: Use both Sound and Pitch for accurate pulse detection
 #' pp <- to_point_process_from_sound_and_pitch(sound, pitch)
-#' 
-#' # Now calculate jitter/shimmer with accurate pulse times
+#'
+#' # Now calculate jitter with accurate pulse times
 #' pp_r6 <- PointProcess(.xptr = pp)
-#' jitter <- pp_r6$get_jitter_local(sound)
-#' }
+#' jitter <- pp_r6$get_jitter_local()
 #'
 #' @seealso [to_point_process_direct()] for the single-object Sound method
 #' @export

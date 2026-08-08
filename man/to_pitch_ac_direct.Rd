@@ -55,17 +55,12 @@ all voicing parameters. Returns a raw external pointer instead of an R6 object.
 available in Tier 1 (Standard) API.
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 
 # With custom voicing threshold (stricter voicing detection)
 pitch_ptr <- to_pitch_ac_direct(sound, voicing_threshold = 0.6)
 
-# With custom silence threshold (more sensitive)
-pitch_ptr <- to_pitch_ac_direct(sound, silence_threshold = 0.01)
-
 # Use with query functions
-f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-}
+f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 
 }

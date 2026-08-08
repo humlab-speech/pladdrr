@@ -29,3 +29,10 @@ External pointer to Harmonicity
 \description{
 Create Harmonicity from Sound Directly (returns XPtr)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+hnr_ptr <- to_harmonicity_direct(sound)
+hnr <- Harmonicity(.xptr = hnr_ptr)
+hnr$get_mean(0, 0)
+
+}

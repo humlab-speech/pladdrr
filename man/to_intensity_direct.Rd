@@ -26,3 +26,9 @@ External pointer to Intensity
 \description{
 Create Intensity from Sound Directly (returns XPtr)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+intensity_ptr <- to_intensity_direct(sound)
+db <- get_intensity_value_direct(intensity_ptr, 0.25)
+
+}

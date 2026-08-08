@@ -41,3 +41,9 @@ External pointer to Formant
 \description{
 Create Formant from Sound Directly (returns XPtr)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
+formant_ptr <- to_formant_direct(sound)
+f1 <- get_formant_value_direct(formant_ptr, 1, 0.25, "hertz")
+
+}

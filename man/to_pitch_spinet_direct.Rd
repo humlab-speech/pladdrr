@@ -39,10 +39,8 @@ External pointer to Pitch (NOT R6 object)
 Create Pitch from Sound using SPINET Directly (returns XPtr)
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 pitch_ptr <- to_pitch_spinet_direct(sound)
-f0 <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
-}
+f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 
 }

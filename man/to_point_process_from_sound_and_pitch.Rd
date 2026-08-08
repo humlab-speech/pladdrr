@@ -29,8 +29,7 @@ shimmer, VUV detection).
 - `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch contour (recommended)
 }
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 
 # Create refined pitch analysis
 pitch <- sound$to_pitch_cc(
@@ -43,10 +42,9 @@ pitch <- sound$to_pitch_cc(
 # RECOMMENDED: Use both Sound and Pitch for accurate pulse detection
 pp <- to_point_process_from_sound_and_pitch(sound, pitch)
 
-# Now calculate jitter/shimmer with accurate pulse times
+# Now calculate jitter with accurate pulse times
 pp_r6 <- PointProcess(.xptr = pp)
-jitter <- pp_r6$get_jitter_local(sound)
-}
+jitter <- pp_r6$get_jitter_local()
 
 }
 \seealso{

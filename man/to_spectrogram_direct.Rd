@@ -33,11 +33,9 @@ External pointer to Spectrogram
 Create Spectrogram from Sound Directly (returns XPtr)
 }
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
-# Fast direct conversion
+sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 spg_ptr <- to_spectrogram_direct(sound, window_length = 0.005)
 spg <- Spectrogram(.xptr = spg_ptr)
-}
+spg$get_number_of_time_bins()
 
 }
