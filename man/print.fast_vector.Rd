@@ -11,6 +11,14 @@
 
 \item{...}{Additional arguments passed to print}
 }
+\value{
+\code{x}, invisibly.
+}
 \description{
 Print Method for Fast-Access Vectors
+}
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+samples <- get_sound_values_fast(sound, channel = 1)
+print(samples)
 }

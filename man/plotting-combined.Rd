@@ -3,8 +3,17 @@
 \name{plotting-combined}
 \alias{plotting-combined}
 \title{Combined Visualization Functions}
+\value{
+This is a documentation-only overview; see the individual
+  functions (e.g. \code{\link{plot_sound_pitch}},
+  \code{\link{plot_textgrid_sound}}) for their return values.
+}
 \description{
 Convenience functions for common multi-object visualizations that combine
 multiple Praat objects in a single plot. These replicate common Praat
 plotting patterns using ggplot2 and patchwork/gridExtra.
+}
+\examples{
+# See individual functions, e.g. ?plot_sound_pitch
+
 }

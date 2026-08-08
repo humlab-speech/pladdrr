@@ -134,15 +134,17 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
 #' @return List of results
 #'
 #' @examples
-#' \dontrun{
-#' # Load sounds first
-#' sounds <- lapply(files, Sound)
+#' \donttest{
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 220, duration = 0.2),
+#'   Sound$create_tone(frequency = 440, duration = 0.2)
+#' )
 #'
-#' # Process in parallel
+#' # Process using at most 2 cores (CRAN example policy)
 #' results <- process_sounds_parallel(sounds, function(s) {
 #'   pitch <- s$to_pitch()
 #'   pitch$get_mean(0, 0, "hertz")
-#' })
+#' }, n_cores = 2)
 #' }
 #'
 #' @export

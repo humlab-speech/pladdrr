@@ -13,7 +13,5 @@ Integer count of objects
 Get count of objects in Praat object list
 }
 \examples{
-\dontrun{
 count <- praat_object_count()
-}
 }

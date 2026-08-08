@@ -312,6 +312,16 @@ validate_file_extension <- function(path, extensions,
 #' (Constitution Principle I: User should be warned about quality issues)
 #'
 #' @param message Warning message
+#' @return The result of the underlying \code{warning()} call, invisibly;
+#'   called for the side effect of issuing a warning.
+#' @examples
+#' withCallingHandlers(
+#'   pladdrr:::quality_warning("example quality issue"),
+#'   warning = function(w) {
+#'     message("caught: ", conditionMessage(w))
+#'     invokeRestart("muffleWarning")
+#'   }
+#' )
 #' @keywords internal
 quality_warning <- function(message) {
   warning(message, call. = FALSE, immediate. = TRUE)

@@ -13,13 +13,11 @@
 #' @return Sound object (R6 or xptr depending on return_r6)
 #'
 #' @examples
-#' \dontrun{
-#' # Instead of slow R6 approach:
-#' # result <- Reduce(function(a, b) a$concatenate(b), sound_list)
-#'
-#' # Use fast batch operation:
+#' sound_list <- list(
+#'   Sound$create_tone(frequency = 440, duration = 0.2),
+#'   Sound$create_tone(frequency = 880, duration = 0.2)
+#' )
 #' result <- sound_concatenate_all(sound_list)
-#' }
 #'
 #' @export
 sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {

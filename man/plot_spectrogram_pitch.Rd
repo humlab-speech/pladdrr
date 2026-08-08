@@ -46,8 +46,7 @@ Creates a combined visualization showing a spectrogram with pitch contour
 overlaid. This is one of the most common Praat visualizations for voice analysis.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrogram <- sound$to_spectrogram()
 pitch <- sound$to_pitch()
 
@@ -58,6 +57,5 @@ plot_spectrogram_pitch(spectrogram, pitch)
 plot_spectrogram_pitch(spectrogram, pitch,
                       pitch_floor = 75, pitch_ceiling = 500,
                       pitch_color = "red")
-}
 
 }

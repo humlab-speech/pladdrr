@@ -34,9 +34,9 @@ Get mean period from PointProcess without R6 wrapper overhead.
 Critical for VUV analysis workflows.
 }
 \examples{
-\dontrun{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
 pp_ptr <- to_point_process_from_sound_and_pitch(sound, pitch)
 mean_period <- pp_get_mean_period_direct(pp_ptr)
-}
 
 }

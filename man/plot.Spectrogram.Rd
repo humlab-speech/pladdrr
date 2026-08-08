@@ -45,8 +45,7 @@ A ggplot2 object
 Creates a time-frequency heatmap visualization of a Spectrogram.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrogram <- sound$to_spectrogram()
 
 # Basic plot
@@ -54,6 +53,5 @@ plot(spectrogram)
 
 # Focus on speech range
 plot(spectrogram, to_freq = 5000)
-}
 
 }

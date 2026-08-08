@@ -103,8 +103,9 @@
 #'   \item{\code{clear_objects()}}{Clear all objects from list}
 #' }
 #'
+#' @return An R6 object of class \code{PraatInterpreter}.
+#'
 #' @examples
-#' \dontrun{
 #' # Create interpreter
 #' interp <- PraatInterpreter$new()
 #'
@@ -124,7 +125,6 @@
 #'
 #' # Evaluate expressions
 #' interp$eval("sqrt(2)")
-#' }
 #'
 #' @seealso
 #' \code{\link{Sound}}, \code{\link{Pitch}} for Praat object classes

@@ -5,6 +5,13 @@
 #' multiple Praat objects in a single plot. These replicate common Praat
 #' plotting patterns using ggplot2 and patchwork/gridExtra.
 #'
+#' @return This is a documentation-only overview; see the individual
+#'   functions (e.g. \code{\link{plot_sound_pitch}},
+#'   \code{\link{plot_textgrid_sound}}) for their return values.
+#'
+#' @examples
+#' # See individual functions, e.g. ?plot_sound_pitch
+#'
 #' @name plotting-combined
 NULL
 
@@ -27,16 +34,18 @@ NULL
 #' @return A combined ggplot object (requires patchwork or gridExtra)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' textgrid <- TextGrid$new("recording.TextGrid")
-#' 
-#' # Basic combined plot
-#' plot_textgrid_sound(textgrid, sound)
-#' 
-#' # Single tier with time range
-#' plot_textgrid_sound(textgrid, sound, tier = 1, 
-#'                    from_time = 1.0, to_time = 2.0)
+#' if (requireNamespace("patchwork", quietly = TRUE) ||
+#'     requireNamespace("gridExtra", quietly = TRUE)) {
+#'   sound <- Sound$create_tone(frequency = 440, duration = 1.0)
+#'   textgrid <- TextGrid$create(0, 1, "words")
+#'   textgrid$set_interval_text("words", 1, "tone")
+#'
+#'   # Basic combined plot
+#'   plot_textgrid_sound(textgrid, sound)
+#'
+#'   # Single tier with time range
+#'   plot_textgrid_sound(textgrid, sound, tier = 1,
+#'                      from_time = 0.2, to_time = 0.8)
 #' }
 #'
 #' @export
@@ -213,16 +222,18 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' @return A combined ggplot object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' pitch <- sound$to_pitch()
-#' textgrid <- TextGrid$new("recording.TextGrid")
-#' 
-#' # Combined pitch + TextGrid
-#' plot_textgrid_pitch(textgrid, pitch)
-#' 
-#' # Single tier
-#' plot_textgrid_pitch(textgrid, pitch, tier = "phonemes")
+#' if (requireNamespace("patchwork", quietly = TRUE) ||
+#'     requireNamespace("gridExtra", quietly = TRUE)) {
+#'   sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+#'   pitch <- sound$to_pitch()
+#'   textgrid <- TextGrid$create(0, 1, "phonemes")
+#'   textgrid$set_interval_text("phonemes", 1, "a")
+#'
+#'   # Combined pitch + TextGrid
+#'   plot_textgrid_pitch(textgrid, pitch)
+#'
+#'   # Single tier
+#'   plot_textgrid_pitch(textgrid, pitch, tier = "phonemes")
 #' }
 #'
 #' @export
@@ -383,18 +394,16 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' @return A ggplot object with dual y-axes
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' pitch <- sound$to_pitch()
 #' intensity <- sound$to_intensity()
-#' 
+#'
 #' # Combined plot
 #' plot_pitch_intensity(pitch, intensity)
-#' 
+#'
 #' # Time range
-#' plot_pitch_intensity(pitch, intensity, 
-#'                     from_time = 1.0, to_time = 2.0)
-#' }
+#' plot_pitch_intensity(pitch, intensity,
+#'                     from_time = 0.2, to_time = 0.8)
 #'
 #' @export
 plot_pitch_intensity <- function(pitch, intensity,
@@ -491,17 +500,15 @@ plot_pitch_intensity <- function(pitch, intensity,
 #' @return A ggplot object with formant tracks overlaid on spectrogram
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrogram <- sound$to_spectrogram()
 #' formant <- sound$to_formant_burg()
-#' 
+#'
 #' # Combined plot
 #' plot_spectrogram_formants(spectrogram, formant)
-#' 
+#'
 #' # Show F1-F5
 #' plot_spectrogram_formants(spectrogram, formant, max_formant = 5)
-#' }
 #'
 #' @export
 plot_spectrogram_formants <- function(spectrogram, formant,
@@ -590,19 +597,17 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrogram <- sound$to_spectrogram()
 #' pitch <- sound$to_pitch()
-#' 
+#'
 #' # Basic combined plot
 #' plot_spectrogram_pitch(spectrogram, pitch)
-#' 
+#'
 #' # Customize pitch range
 #' plot_spectrogram_pitch(spectrogram, pitch,
 #'                       pitch_floor = 75, pitch_ceiling = 500,
 #'                       pitch_color = "red")
-#' }
 #'
 #' @export
 plot_spectrogram_pitch <- function(spectrogram, pitch,
@@ -689,18 +694,19 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' @return A combined plot object (requires patchwork or gridExtra)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' pitch <- sound$to_pitch()
-#' 
-#' # Basic two-panel plot
-#' plot_sound_pitch(sound, pitch)
-#' 
-#' # Time range and custom colors
-#' plot_sound_pitch(sound, pitch,
-#'                 from_time = 1.0, to_time = 2.0,
-#'                 waveform_color = "black",
-#'                 pitch_color = "red")
+#' if (requireNamespace("patchwork", quietly = TRUE) ||
+#'     requireNamespace("gridExtra", quietly = TRUE)) {
+#'   sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+#'   pitch <- sound$to_pitch()
+#'
+#'   # Basic two-panel plot
+#'   plot_sound_pitch(sound, pitch)
+#'
+#'   # Time range and custom colors
+#'   plot_sound_pitch(sound, pitch,
+#'                   from_time = 0.2, to_time = 0.8,
+#'                   waveform_color = "black",
+#'                   pitch_color = "red")
 #' }
 #'
 #' @export

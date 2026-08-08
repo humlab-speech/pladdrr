@@ -11,6 +11,18 @@
 
 \item{...}{Additional arguments (unused)}
 }
+\value{
+\code{x}, invisibly.
+}
 \description{
 Print method for praat_intensity objects
+}
+\examples{
+x <- list(
+  n_frames = 2, time_step = 0.01, minimum_pitch = 100,
+  window_length = 0.032, subtract_mean = TRUE,
+  values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1))
+)
+class(x) <- "praat_intensity"
+print(x)
 }

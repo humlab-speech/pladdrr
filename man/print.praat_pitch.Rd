@@ -17,3 +17,9 @@ The object x, invisibly
 \description{
 Provides a concise display of a pitch contour.
 }
+\examples{
+x <- data.frame(time = c(0.1, 0.2, 0.3), frequency = c(120, 125, NA))
+class(x) <- c("praat_pitch", "data.frame")
+print(x)
+
+}

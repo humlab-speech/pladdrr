@@ -3,6 +3,9 @@
 \name{PraatInterpreter}
 \alias{PraatInterpreter}
 \title{Praat Script Interpreter}
+\value{
+An R6 object of class \code{PraatInterpreter}.
+}
 \description{
 The PraatInterpreter provides a persistent Praat scripting environment within R.
 Unlike one-shot script execution, the interpreter maintains state between calls,
@@ -34,7 +37,6 @@ Provides bidirectional object transfer between R and Praat's object list.
 }
 
 \examples{
-\dontrun{
 # Create interpreter
 interp <- PraatInterpreter$new()
 
@@ -54,7 +56,6 @@ interp$get_variable("freq")
 
 # Evaluate expressions
 interp$eval("sqrt(2)")
-}
 
 }
 \seealso{

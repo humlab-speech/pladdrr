@@ -6,7 +6,17 @@
 \usage{
 pladdrr_warning_cond(klass, routine, param, message, call = sys.call(-1L))
 }
+\value{
+A condition object with class \code{c(klass, "pladdrr_warning", "warning", "condition")}
+  and elements \code{message}, \code{call}, \code{routine}, \code{param}.
+}
 \description{
 Build a classed pladdrr warning condition
+}
+\examples{
+cond <- pladdrr:::pladdrr_warning_cond(
+  "pladdrr_data_loss", "example_routine", "x", "value out of range"
+)
+conditionMessage(cond)
 }
 \keyword{internal}

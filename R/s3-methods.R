@@ -147,6 +147,11 @@ as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
 #'
 #' @return The object x, invisibly
 #'
+#' @examples
+#' x <- data.frame(time = c(0.1, 0.2, 0.3), frequency = c(120, 125, NA))
+#' class(x) <- c("praat_pitch", "data.frame")
+#' print(x)
+#'
 #' @export
 print.praat_pitch <- function(x, ...) {
   cat("Praat Pitch Object\n")
@@ -235,6 +240,18 @@ summary.praat_pitch <- function(object, ...) {
 #'
 #' @param x A praat_formant object
 #' @param ... Additional arguments (unused)
+#' @return \code{x}, invisibly.
+#' @examples
+#' x <- list(
+#'   n_frames = 2, n_formants = 1, time_step = 0.01,
+#'   max_formant = 5000, window_length = 0.025,
+#'   values = data.frame(
+#'     time = c(0.1, 0.2), formant_number = c(1, 1),
+#'     frequency = c(500, 520), bandwidth = c(80, 82)
+#'   )
+#' )
+#' class(x) <- "praat_formant"
+#' print(x)
 #' @export
 print.praat_formant <- function(x, ...) {
   cat("Praat Formant Object\n")
@@ -310,6 +327,15 @@ as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, .
 #'
 #' @param x A praat_intensity object
 #' @param ... Additional arguments (unused)
+#' @return \code{x}, invisibly.
+#' @examples
+#' x <- list(
+#'   n_frames = 2, time_step = 0.01, minimum_pitch = 100,
+#'   window_length = 0.032, subtract_mean = TRUE,
+#'   values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1))
+#' )
+#' class(x) <- "praat_intensity"
+#' print(x)
 #' @export
 print.praat_intensity <- function(x, ...) {
   cat("Praat Intensity Object\n")

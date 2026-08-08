@@ -36,15 +36,13 @@ A ggplot2 object
 Creates a visualization of PointProcess events (e.g., glottal pulses).
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 pulses <- sound$to_pointprocess_periodic_cc()
 
 # Basic plot
 plot(pulses)
 
 # Time range
-plot(pulses, from_time = 1.0, to_time = 1.5)
-}
+plot(pulses, from_time = 0.2, to_time = 0.5)
 
 }

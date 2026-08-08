@@ -36,6 +36,14 @@ using namespace Rcpp;
 //' Wraps Praat function calls and converts Praat's error system to R exceptions
 //'
 //' @param error_msg Error message from Praat
+//' @return This function never returns; it always raises an R error via
+//'   \code{stop()}.
+//' @examples
+//' result <- tryCatch(
+//'   praat_error_to_r("example failure"),
+//'   error = function(e) conditionMessage(e)
+//' )
+//' result
 //' @keywords internal
 // [[Rcpp::export]]
 void praat_error_to_r(const std::string& error_msg) {

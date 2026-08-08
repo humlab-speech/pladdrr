@@ -21,4 +21,9 @@ Standard deviation
 \description{
 Get pitch standard deviation directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+pitch_get_stdev_direct(pitch$.xptr)
+}
 \keyword{internal}

@@ -36,15 +36,13 @@ A ggplot2 object
 Creates an intensity (loudness) contour visualization.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 intensity <- sound$to_intensity()
 
 # Basic plot
 plot(intensity)
 
 # Time range
-plot(intensity, from_time = 1.0, to_time = 2.0)
-}
+plot(intensity, from_time = 0.2, to_time = 0.8)
 
 }

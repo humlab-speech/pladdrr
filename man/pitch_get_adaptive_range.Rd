@@ -33,4 +33,10 @@ List with q1, q3, min_pitch, max_pitch
 Calculate Q1, Q3, and adaptive min/max pitch range in single C++ call.
 Used for VUV two-pass pitch analysis.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+range_info <- pitch_get_adaptive_range(pitch$.xptr)
+str(range_info)
+}
 \keyword{internal}

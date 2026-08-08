@@ -95,6 +95,10 @@ double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_tim
 //' @param unit 0=Hertz, 1=Hertz_log, 2=mel, 3=logHertz, 4=semitones
 //' @param interpolate Whether to interpolate
 //' @return Pitch value
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_value_direct(pitch$.xptr, 0.5)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool interpolate = true) {
@@ -112,6 +116,10 @@ double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool i
 //' @param to_time End time (0 = end)
 //' @param unit Unit code
 //' @return Mean pitch
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_mean_direct(pitch$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_mean_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {
@@ -133,6 +141,10 @@ double pitch_get_mean_direct(SEXP pitch_xptr, double from_time = 0, double to_ti
 //' @param to_time End time
 //' @param unit Unit code
 //' @return Standard deviation
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_stdev_direct(pitch$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {
@@ -155,6 +167,10 @@ double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_t
 //' @param unit Unit code
 //' @param interpolate Whether to interpolate
 //' @return Minimum pitch
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_minimum_direct(pitch$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0,
@@ -178,6 +194,10 @@ double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' @param unit Unit code
 //' @param interpolate Whether to interpolate
 //' @return Maximum pitch
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_maximum_direct(pitch$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0,
@@ -201,6 +221,10 @@ double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' @param to_time End time
 //' @param unit Unit code
 //' @return Quantile value
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_quantile_direct(pitch$.xptr, 0.5)
 //' @keywords internal
 // [[Rcpp::export]]
 double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile,
@@ -582,6 +606,11 @@ SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step = 0.01,
 //' @param to_time End time
 //' @param unit Unit code
 //' @return List with min, max, mean, stdev, median, q25, q75
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' stats <- pitch_get_all_stats_direct(pitch$.xptr)
+//' str(stats)
 //' @keywords internal
 // [[Rcpp::export]]
 List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {

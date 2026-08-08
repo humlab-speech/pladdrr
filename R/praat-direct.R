@@ -26,6 +26,13 @@
 #' - Interactive exploration (use R6 for convenience)
 #' - Small datasets (overhead is negligible)
 #' - When you need method chaining
+#'
+#' @return This is a documentation-only overview; see the individual
+#'   functions (e.g. \code{\link{to_point_process_direct}},
+#'   \code{\link{pp_get_mean_period_direct}}) for their return values.
+#'
+#' @examples
+#' # See individual functions, e.g. ?pp_get_mean_period_direct
 NULL
 
 
@@ -838,10 +845,10 @@ to_point_process_from_sound_and_pitch <- function(sound, pitch) {
 #' @return Mean period in seconds
 #'
 #' @examples
-#' \dontrun{
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
 #' pp_ptr <- to_point_process_from_sound_and_pitch(sound, pitch)
 #' mean_period <- pp_get_mean_period_direct(pp_ptr)
-#' }
 #'
 #' @export
 pp_get_mean_period_direct <- function(pointprocess,
@@ -880,6 +887,11 @@ pp_get_mean_period_direct <- function(pointprocess,
 #' @param max_period_factor Maximum period factor
 #'
 #' @return Standard deviation of periods
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pp_ptr <- to_point_process_from_sound_and_pitch(sound, pitch)
+#' sd_period <- pp_get_stdev_period_direct(pp_ptr)
 #' @export
 pp_get_stdev_period_direct <- function(pointprocess,
                                         from_time = 0,

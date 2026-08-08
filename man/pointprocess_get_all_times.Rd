@@ -15,4 +15,9 @@ Numeric vector of all point times
 \description{
 Get all point times from PointProcess as vector
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pp <- sound$to_pointprocess_periodic_cc()
+pointprocess_get_all_times(pp$.xptr)
+}
 \keyword{internal}

@@ -16,6 +16,13 @@
 #' - Axis labels and titles via `garnish` parameter
 #' - ggplot2 object return for further customization
 #'
+#' @return This is a documentation-only overview; see the individual
+#'   methods (e.g. \code{\link{plot.Sound}}, \code{\link{plot.Pitch}}) for
+#'   their return values.
+#'
+#' @examples
+#' # See individual methods, e.g. ?plot.Sound
+#'
 #' @name plotting-methods
 NULL
 
@@ -35,22 +42,20 @@ NULL
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' 
+#' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
+#'
 #' # Basic plot
 #' plot(sound)
-#' 
+#'
 #' # Time range
-#' plot(sound, from_time = 1.0, to_time = 2.0)
-#' 
+#' plot(sound, from_time = 0.2, to_time = 0.8)
+#'
 #' # Customize
 #' plot(sound, color = "darkblue", title = "Speech Recording") +
 #'   ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5)
-#' }
 #'
 #' @export
-plot.Sound <- function(x, from_time = NULL, to_time = NULL, 
+plot.Sound <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Sound", 
                       color = "steelblue", ...) {
   
@@ -108,20 +113,18 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' 
+#'
 #' # Basic plot
 #' plot(pitch)
-#' 
+#'
 #' # Time range
-#' plot(pitch, from_time = 0.5, to_time = 2.0)
-#' 
+#' plot(pitch, from_time = 0.2, to_time = 0.8)
+#'
 #' # Customize
 #' plot(pitch, show_voicing = FALSE, color = "blue") +
 #'   ggplot2::geom_hline(yintercept = 120, linetype = "dashed")
-#' }
 #'
 #' @export
 plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
@@ -192,20 +195,18 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' formant <- sound$to_formant_burg()
-#' 
+#'
 #' # Basic plot
 #' plot(formant)
-#' 
+#'
 #' # Show first 5 formants
 #' plot(formant, max_formant = 5)
-#' 
+#'
 #' # Customize
-#' plot(formant, max_formant = 2, 
+#' plot(formant, max_formant = 2,
 #'      colors = c("red", "blue"))
-#' }
 #'
 #' @export
 plot.Formant <- function(x, from_time = NULL, to_time = NULL,
@@ -293,16 +294,14 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' intensity <- sound$to_intensity()
-#' 
+#'
 #' # Basic plot
 #' plot(intensity)
-#' 
+#'
 #' # Time range
-#' plot(intensity, from_time = 1.0, to_time = 2.0)
-#' }
+#' plot(intensity, from_time = 0.2, to_time = 0.8)
 #'
 #' @export
 plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
@@ -365,16 +364,14 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrogram <- sound$to_spectrogram()
-#' 
+#'
 #' # Basic plot
 #' plot(spectrogram)
-#' 
+#'
 #' # Focus on speech range
 #' plot(spectrogram, to_freq = 5000)
-#' }
 #'
 #' @export
 plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
@@ -466,16 +463,14 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
-#' 
+#'
 #' # Basic plot
 #' plot(spectrum)
-#' 
+#'
 #' # Logarithmic frequency
 #' plot(spectrum, log_freq = TRUE)
-#' }
 #'
 #' @export
 plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
@@ -546,16 +541,14 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' ltas <- sound$to_ltas()
-#' 
+#'
 #' # Basic plot
 #' plot(ltas)
-#' 
+#'
 #' # Speech frequency range
 #' plot(ltas, to_freq = 5000)
-#' }
 #'
 #' @export
 plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
@@ -620,16 +613,14 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' harmonicity <- sound$to_harmonicity_cc()
-#' 
+#'
 #' # Basic plot
 #' plot(harmonicity)
-#' 
+#'
 #' # Time range
-#' plot(harmonicity, from_time = 1.0, to_time = 2.0)
-#' }
+#' plot(harmonicity, from_time = 0.2, to_time = 0.8)
 #'
 #' @export
 plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
@@ -690,16 +681,14 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' pulses <- sound$to_pointprocess_periodic_cc()
-#' 
+#'
 #' # Basic plot
 #' plot(pulses)
-#' 
+#'
 #' # Time range
-#' plot(pulses, from_time = 1.0, to_time = 1.5)
-#' }
+#' plot(pulses, from_time = 0.2, to_time = 0.5)
 #'
 #' @export
 plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
@@ -781,18 +770,13 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' matrix <- Matrix$new(...)  # Create or load matrix
-#' 
+#' m <- matrix_create_simple(3, 4)
+#'
 #' # Basic heatmap
-#' plot(matrix)
-#' 
+#' plot(m)
+#'
 #' # Custom color scale
-#' plot(matrix, color_scale = "magma", title = "My Matrix")
-#' 
-#' # Range selection
-#' plot(matrix, from_x = 0, to_x = 1, from_y = 0, to_y = 5000)
-#' }
+#' plot(m, color_scale = "magma", title = "My Matrix")
 #'
 #' @export
 plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
@@ -887,19 +871,18 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' pc <- sound$to_powercepstrum(pitch_floor = 75)
-#' 
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' spectrum <- sound$to_spectrum()
+#' pc <- spectrum$to_powercepstrum()
+#'
 #' # Basic plot
 #' plot(pc)
-#' 
+#'
 #' # Focus on vocal range (60-500 Hz = 0.002-0.0167 s quefrency)
 #' plot(pc, from_quefrency = 0.002, to_quefrency = 0.017)
-#' 
+#'
 #' # Customize
 #' plot(pc, color = "red", title = "Cepstral Analysis")
-#' }
 #'
 #' @export
 plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
@@ -980,11 +963,10 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' tg <- TextGrid("annotations.TextGrid")
+#' tg <- TextGrid$create(0, 1, "words")
+#' tg$set_interval_text("words", 1, "hello")
 #' plot(tg)
 #' plot(tg, tier = 1)
-#' }
 #'
 #' @export
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...) {

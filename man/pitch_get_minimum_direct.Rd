@@ -29,4 +29,9 @@ Minimum pitch
 \description{
 Get pitch minimum directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+pitch_get_minimum_direct(pitch$.xptr)
+}
 \keyword{internal}

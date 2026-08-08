@@ -39,8 +39,7 @@ A ggplot2 object
 Creates a formant trajectory visualization showing F1, F2, F3, etc.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 formant <- sound$to_formant_burg()
 
 # Basic plot
@@ -50,8 +49,7 @@ plot(formant)
 plot(formant, max_formant = 5)
 
 # Customize
-plot(formant, max_formant = 2, 
+plot(formant, max_formant = 2,
      colors = c("red", "blue"))
-}
 
 }

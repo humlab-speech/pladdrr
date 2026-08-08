@@ -13,3 +13,6 @@ Invisibly returns NULL
 Manually initialize the Praat interpreter. Normally called automatically
 when needed, but can be called explicitly to control timing.
 }
+\examples{
+praat_init()
+}

@@ -16,8 +16,6 @@ Numeric value
 Evaluate a numeric Praat expression
 }
 \examples{
-\dontrun{
 # Calculate value
 result <- praat_eval_numeric("sqrt(16) + 2^3")
-}
 }

@@ -36,15 +36,13 @@ A ggplot2 object
 Creates a harmonics-to-noise ratio contour visualization.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 harmonicity <- sound$to_harmonicity_cc()
 
 # Basic plot
 plot(harmonicity)
 
 # Time range
-plot(harmonicity, from_time = 1.0, to_time = 2.0)
-}
+plot(harmonicity, from_time = 0.2, to_time = 0.8)
 
 }

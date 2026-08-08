@@ -15,4 +15,8 @@ Integer unit code for Praat API
 \description{
 Convert unit string to integer code
 }
+\examples{
+pladdrr:::pitch_unit_code("hertz")
+pladdrr:::pitch_unit_code("semitones")
+}
 \keyword{internal}

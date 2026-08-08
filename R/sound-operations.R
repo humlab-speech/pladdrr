@@ -217,6 +217,9 @@ sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside 
 #' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
 #' @param signal_outside Signal outside time domain: 1=zero, 2=similar
 #' @return New Sound object (auto-correlation function)
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' ac <- sound_auto_correlate(sound)
 #' @export
 sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")

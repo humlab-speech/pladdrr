@@ -32,4 +32,14 @@ Calculate multiple pitch statistics (min, max, mean, stdev, quantiles) over
 multiple time intervals in a single C++ call, avoiding repeated R method
 calls.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+pitch_get_statistics_batch(
+  pitch$.xptr,
+  from_times = c(0, 0.5),
+  to_times = c(0.5, 1.0),
+  metrics = c("min", "max", "mean")
+)
+}
 \keyword{internal}

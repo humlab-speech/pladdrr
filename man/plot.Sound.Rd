@@ -36,18 +36,16 @@ A ggplot2 object
 Creates a waveform visualization of a Sound object.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 
 # Basic plot
 plot(sound)
 
 # Time range
-plot(sound, from_time = 1.0, to_time = 2.0)
+plot(sound, from_time = 0.2, to_time = 0.8)
 
 # Customize
 plot(sound, color = "darkblue", title = "Speech Recording") +
   ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5)
-}
 
 }

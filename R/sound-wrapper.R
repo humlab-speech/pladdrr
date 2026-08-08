@@ -1060,10 +1060,8 @@ sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
 #' @return A Sound object
 #' @export
 #' @examples
-#' \dontrun{
 #' tone <- sound_create_pure_tone(frequency = 440, duration = 0.5)
 #' tone <- Sound$create_pure_tone(frequency = 880, fade_in_duration = 0.05)
-#' }
 sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     sampling_rate = 44100, amplitude = 0.99,
                                     fade_in_duration = 0.01, fade_out_duration = 0.01,

@@ -12,3 +12,6 @@ Character string with version information
 \description{
 Returns the version string for the Praat library integration
 }
+\examples{
+praat_version()
+}

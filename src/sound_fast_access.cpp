@@ -152,6 +152,10 @@ NumericVector sound_times_fast(SEXP sound_xptr) {
 //'
 //' @return Numeric matrix with dimensions (n_samples x n_channels)
 //'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+//' mat <- sound_as_matrix_fast_impl(sound$get_xptr())
+//'
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix sound_as_matrix_fast_impl(SEXP sound_xptr, bool zerocopy = false) {

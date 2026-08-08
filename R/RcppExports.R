@@ -154,43 +154,59 @@ formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, forman
 }
 
 #' Batch query pitch strengths at multiple time points
-#' 
+#'
 #' @param pitch_xptr External pointer to Pitch object
 #' @param times Numeric vector of time points
 #' @param unit Integer code for unit
 #' @param interpolate Logical, whether to interpolate
 #' @return Numeric vector of pitch strengths
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
 pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_strengths_at_times`, pitch_xptr, times, unit, interpolate)
 }
 
-#' Get multiple pitch quantiles in a single call (NEW for VUV performance)
-#' 
+#' Get multiple pitch quantiles in a single call (used by VUV analysis)
+#'
 #' @param pitch_xptr External pointer to Pitch object
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
 #' @param unit Integer code for unit (0=HERTZ, etc)
 #' @return Named numeric vector with quantile values
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 #' @keywords internal
 pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantiles_batch`, pitch_xptr, quantiles, from_time, to_time, unit)
 }
 
 #' Get all point times from PointProcess as vector
-#' 
+#'
 #' @param pp_xptr External pointer to PointProcess object
 #' @return Numeric vector of all point times
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pp <- sound$to_pointprocess_periodic_cc()
+#' pointprocess_get_all_times(pp$.xptr)
 #' @keywords internal
 pointprocess_get_all_times <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_all_times`, pp_xptr)
 }
 
 #' Get inter-point intervals from PointProcess
-#' 
+#'
 #' @param pp_xptr External pointer to PointProcess object
 #' @return Numeric vector of intervals (length = n_points - 1)
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pp <- sound$to_pointprocess_periodic_cc()
+#' pointprocess_get_intervals(pp$.xptr)
 #' @keywords internal
 pointprocess_get_intervals <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_intervals`, pp_xptr)
@@ -201,6 +217,10 @@ pointprocess_get_intervals <- function(pp_xptr) {
 #' @param pp_xptr External pointer to PointProcess object
 #' @param times Numeric vector of query times
 #' @return Integer vector of nearest point indices (1-based)
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pp <- sound$to_pointprocess_periodic_cc()
+#' pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
 pointprocess_get_nearest_indices <- function(pp_xptr, times) {
     .Call(`_pladdrr_pointprocess_get_nearest_indices`, pp_xptr, times)
@@ -220,6 +240,15 @@ pointprocess_get_nearest_indices <- function(pp_xptr, times) {
 #'   "q25", "q50" (median), "q75", "count_voiced"
 #' @param unit Integer code for unit (0=HERTZ, 1=HERTZ_LOGARITHMIC, etc)
 #' @return NumericMatrix with intervals as rows, metrics as columns
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_statistics_batch(
+#'   pitch$.xptr,
+#'   from_times = c(0, 0.5),
+#'   to_times = c(0.5, 1.0),
+#'   metrics = c("min", "max", "mean")
+#' )
 #' @keywords internal
 pitch_get_statistics_batch <- function(pitch_xptr, from_times, to_times, metrics, unit = 0L) {
     .Call(`_pladdrr_pitch_get_statistics_batch`, pitch_xptr, from_times, to_times, metrics, unit)
@@ -238,6 +267,11 @@ pitch_get_statistics_batch <- function(pitch_xptr, from_times, to_times, metrics
 #' @param q3_factor Factor to multiply Q3 for max_pitch (e.g., 1.5)
 #' @param unit Integer code for unit
 #' @return List with q1, q3, min_pitch, max_pitch
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' range_info <- pitch_get_adaptive_range(pitch$.xptr)
+#' str(range_info)
 #' @keywords internal
 pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_factor = 0.75, q3_factor = 1.5, unit = 0L) {
     .Call(`_pladdrr_pitch_get_adaptive_range`, pitch_xptr, from_time, to_time, q1_factor, q3_factor, unit)
@@ -598,6 +632,8 @@ calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles
 #' Internal SIMD dispatch helper; not part of the public API.
 #'
 #' @return Logical value
+#' @examples
+#' should_use_simd_for_batch_queries_bridge()
 #' @keywords internal
 #' @export
 should_use_simd_for_batch_queries_bridge <- function() {
@@ -2045,6 +2081,10 @@ sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
 #' @param unit 0=Hertz, 1=Hertz_log, 2=mel, 3=logHertz, 4=semitones
 #' @param interpolate Whether to interpolate
 #' @return Pitch value
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_value_direct(pitch$.xptr, 0.5)
 #' @keywords internal
 pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_value_direct`, pitch_xptr, time, unit, interpolate)
@@ -2056,6 +2096,10 @@ pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TR
 #' @param to_time End time (0 = end)
 #' @param unit Unit code
 #' @return Mean pitch
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_mean_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_mean_direct`, pitch_xptr, from_time, to_time, unit)
@@ -2067,6 +2111,10 @@ pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit =
 #' @param to_time End time
 #' @param unit Unit code
 #' @return Standard deviation
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_stdev_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_stdev_direct`, pitch_xptr, from_time, to_time, unit)
@@ -2079,6 +2127,10 @@ pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit 
 #' @param unit Unit code
 #' @param interpolate Whether to interpolate
 #' @return Minimum pitch
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_minimum_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_minimum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
@@ -2091,6 +2143,10 @@ pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' @param unit Unit code
 #' @param interpolate Whether to interpolate
 #' @return Maximum pitch
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_maximum_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_maximum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
@@ -2103,6 +2159,10 @@ pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' @param to_time End time
 #' @param unit Unit code
 #' @return Quantile value
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' pitch_get_quantile_direct(pitch$.xptr, 0.5)
 #' @keywords internal
 pitch_get_quantile_direct <- function(pitch_xptr, quantile, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantile_direct`, pitch_xptr, quantile, from_time, to_time, unit)
@@ -2304,6 +2364,11 @@ sound_to_harmonicity_direct <- function(sound_xptr, time_step = 0.01, minimum_pi
 #' @param to_time End time
 #' @param unit Unit code
 #' @return List with min, max, mean, stdev, median, q25, q75
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' stats <- pitch_get_all_stats_direct(pitch$.xptr)
+#' str(stats)
 #' @keywords internal
 pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_all_stats_direct`, pitch_xptr, from_time, to_time, unit)
@@ -2362,6 +2427,8 @@ get_point_process_stdev_period_direct <- function(pp_xptr, from_time = 0, to_tim
 #' Returns the version string for the Praat library integration
 #'
 #' @return Character string with version information
+#' @examples
+#' praat_version()
 #' @export
 praat_version <- function() {
     .Call(`_pladdrr_praat_version`)
@@ -2373,6 +2440,8 @@ praat_version <- function() {
 #' This should be called when the package is loaded
 #'
 #' @return Logical indicating success
+#' @examples
+#' praat_initialize()
 #' @keywords internal
 praat_initialize <- function() {
     .Call(`_pladdrr_praat_initialize`)
@@ -2533,6 +2602,10 @@ sound_times_fast <- function(sound_xptr) {
 #' @param zerocopy Ignored (kept for backward compatibility). All paths copy.
 #'
 #' @return Numeric matrix with dimensions (n_samples x n_channels)
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+#' mat <- sound_as_matrix_fast_impl(sound$get_xptr())
 #'
 #' @keywords internal
 sound_as_matrix_fast_impl <- function(sound_xptr, zerocopy = FALSE) {
@@ -3902,6 +3975,11 @@ get_interval_predicate <- function(type, threshold = 0.0) {
 #' Enable/Disable SIMD for TextGrid Operations
 #'
 #' @param enabled Logical, TRUE to enable SIMD, FALSE for scalar
+#' @return Invisibly returns \code{NULL}.
+#' @examples
+#' set_textgrid_simd_enabled_bridge(TRUE)
+#' textgrid_simd_enabled()
+#' set_textgrid_simd_enabled_bridge(FALSE)
 #' @export
 set_textgrid_simd_enabled_bridge <- function(enabled) {
     invisible(.Call(`_pladdrr_set_textgrid_simd_enabled_bridge`, enabled))
@@ -4331,6 +4409,14 @@ NULL
 #' Wraps Praat function calls and converts Praat's error system to R exceptions
 #'
 #' @param error_msg Error message from Praat
+#' @return This function never returns; it always raises an R error via
+#'   \code{stop()}.
+#' @examples
+#' result <- tryCatch(
+#'   praat_error_to_r("example failure"),
+#'   error = function(e) conditionMessage(e)
+#' )
+#' result
 #' @keywords internal
 praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_pladdrr_praat_error_to_r`, error_msg))

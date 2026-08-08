@@ -35,3 +35,11 @@ A DTW object
 \description{
 Create DTW from two Pitch objects
 }
+\examples{
+sound1 <- Sound$create_tone(frequency = 220, duration = 0.5)
+sound2 <- Sound$create_tone(frequency = 440, duration = 0.5)
+pitch1 <- sound1$to_pitch()
+pitch2 <- sound2$to_pitch()
+dtw <- pitches_to_dtw(pitch1, pitch2)
+
+}

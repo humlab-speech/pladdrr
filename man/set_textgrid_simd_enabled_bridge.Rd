@@ -9,6 +9,14 @@ set_textgrid_simd_enabled_bridge(enabled)
 \arguments{
 \item{enabled}{Logical, TRUE to enable SIMD, FALSE for scalar}
 }
+\value{
+Invisibly returns \code{NULL}.
+}
 \description{
 Enable/Disable SIMD for TextGrid Operations
+}
+\examples{
+set_textgrid_simd_enabled_bridge(TRUE)
+textgrid_simd_enabled()
+set_textgrid_simd_enabled_bridge(FALSE)
 }

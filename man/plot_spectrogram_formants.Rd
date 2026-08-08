@@ -43,8 +43,7 @@ Creates a spectrogram heatmap with formant trajectories overlaid.
 This is a common visualization pattern in Praat for vowel analysis.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrogram <- sound$to_spectrogram()
 formant <- sound$to_formant_burg()
 
@@ -53,6 +52,5 @@ plot_spectrogram_formants(spectrogram, formant)
 
 # Show F1-F5
 plot_spectrogram_formants(spectrogram, formant, max_formant = 5)
-}
 
 }

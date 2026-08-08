@@ -47,7 +47,6 @@ start in scalar mode, or use [pladdrr_simd()] after load for runtime A/B
 checks. The option is read during \code{.onLoad}.
 }
 \examples{
-\dontrun{
 # Check SIMD capabilities
 info <- simd_info()
 print(info)
@@ -60,6 +59,5 @@ if (info$architecture == "AVX2") {
 pladdrr_simd(FALSE)
 # ... run tests ...
 pladdrr_simd(TRUE)
-}
 
 }

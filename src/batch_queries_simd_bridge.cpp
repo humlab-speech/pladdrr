@@ -314,6 +314,8 @@ NumericMatrix calculate_interval_quantiles_simd_bridge(
 //' Internal SIMD dispatch helper; not part of the public API.
 //'
 //' @return Logical value
+//' @examples
+//' should_use_simd_for_batch_queries_bridge()
 //' @keywords internal
 //' @export
 // [[Rcpp::export]]

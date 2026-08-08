@@ -40,8 +40,7 @@ Creates a dual-axis visualization showing pitch and intensity contours together.
 This replicates Praat's Pitch_Intensity_draw() function.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 pitch <- sound$to_pitch()
 intensity <- sound$to_intensity()
 
@@ -49,8 +48,7 @@ intensity <- sound$to_intensity()
 plot_pitch_intensity(pitch, intensity)
 
 # Time range
-plot_pitch_intensity(pitch, intensity, 
-                    from_time = 1.0, to_time = 2.0)
-}
+plot_pitch_intensity(pitch, intensity,
+                    from_time = 0.2, to_time = 0.8)
 
 }

@@ -9,7 +9,18 @@ praat_error_to_r(error_msg)
 \arguments{
 \item{error_msg}{Error message from Praat}
 }
+\value{
+This function never returns; it always raises an R error via
+  \code{stop()}.
+}
 \description{
 Wraps Praat function calls and converts Praat's error system to R exceptions
+}
+\examples{
+result <- tryCatch(
+  praat_error_to_r("example failure"),
+  error = function(e) conditionMessage(e)
+)
+result
 }
 \keyword{internal}

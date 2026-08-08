@@ -63,6 +63,8 @@ using namespace Rcpp;
 //' Returns the version string for the Praat library integration
 //'
 //' @return Character string with version information
+//' @examples
+//' praat_version()
 //' @export
 // [[Rcpp::export]]
 String praat_version() {
@@ -77,6 +79,8 @@ String praat_version() {
 //' This should be called when the package is loaded
 //'
 //' @return Logical indicating success
+//' @examples
+//' praat_initialize()
 //' @keywords internal
 // [[Rcpp::export]]
 bool praat_initialize() {

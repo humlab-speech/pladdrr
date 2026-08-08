@@ -3,6 +3,11 @@
 \name{plotting-methods}
 \alias{plotting-methods}
 \title{S3 Plot Methods for pladdrr Objects}
+\value{
+This is a documentation-only overview; see the individual
+  methods (e.g. \code{\link{plot.Sound}}, \code{\link{plot.Pitch}}) for
+  their return values.
+}
 \description{
 Convenient S3 plot methods for Praat objects. These are ggplot2-based
 wrappers that provide sensible defaults while allowing full customization.
@@ -18,4 +23,8 @@ All plot methods support:
 - Time range filtering via `from_time` and `to_time` parameters
 - Axis labels and titles via `garnish` parameter
 - ggplot2 object return for further customization
+}
+\examples{
+# See individual methods, e.g. ?plot.Sound
+
 }

@@ -46,8 +46,7 @@ Creates a visualization of a power cepstrum showing the cepstral values
 across quefrencies, with optional peak and trend line annotations.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("voice.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrum <- sound$to_spectrum()
 cepstrum <- spectrum$to_powercepstrum()
 
@@ -55,11 +54,10 @@ cepstrum <- spectrum$to_powercepstrum()
 plot_powercepstrum(cepstrum)
 
 # Customized plot
-plot_powercepstrum(cepstrum, 
+plot_powercepstrum(cepstrum,
                   show_peak = TRUE,
                   show_trendline = TRUE,
                   quefrency_range = c(0.001, 0.02),
                   title = "Voice Quality Analysis")
-}
 
 }

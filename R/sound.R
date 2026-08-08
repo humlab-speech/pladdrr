@@ -47,17 +47,15 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' @return Sound R6 object
 #'
 #' @examples
-#' \dontrun{
+#' tmp <- tempfile(fileext = ".wav")
+#' Sound$create_tone(frequency = 440, duration = 0.2)$save(tmp)
+#'
 #' # Old S3 approach (DEPRECATED)
-#' sound <- read_sound("audio.wav")
+#' sound <- read_sound(tmp)
 #'
 #' # New R6 approach (RECOMMENDED)
-#' sound <- Sound$new("audio.wav")
-#' 
-#' # For specific channel, extract after loading
-#' sound <- Sound$new("stereo.wav")
-#' sound_right <- sound$extract_channel(2)
-#' }
+#' sound <- Sound$new(tmp)
+#' unlink(tmp)
 #'
 #' @export
 read_sound <- function(file_path, channel = 0) {

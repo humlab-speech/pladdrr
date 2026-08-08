@@ -29,13 +29,9 @@
 #'   }
 #'
 #' @examples
-#' \dontrun{
 #' pladdrr_threads()      # query current state
-#' #> $processors [1] 10 ; $enabled [1] TRUE ; $max_threads [1] 10 ...
 #' pladdrr_threads(1)     # single-threaded (e.g. inside mclapply workers)
-#' pladdrr_threads(4)     # cap at 4 threads
 #' pladdrr_threads(0)     # back to automatic (all cores)
-#' }
 #' @export
 pladdrr_threads <- function(n = NULL) {
   if (!is.null(n)) {

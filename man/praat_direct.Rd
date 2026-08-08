@@ -3,6 +3,11 @@
 \name{praat_direct}
 \alias{praat_direct}
 \title{Direct Function Dispatch API}
+\value{
+This is a documentation-only overview; see the individual
+  functions (e.g. \code{\link{to_point_process_direct}},
+  \code{\link{pp_get_mean_period_direct}}) for their return values.
+}
 \description{
 These functions provide direct access to Praat operations without R6
 class dispatch overhead — no R6 environment lookup, no named parameter
@@ -26,3 +31,6 @@ comfortable working with external pointers instead of R6 objects.
 - When you need method chaining
 }
 
+\examples{
+# See individual functions, e.g. ?pp_get_mean_period_direct
+}

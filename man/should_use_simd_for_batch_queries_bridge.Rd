@@ -12,4 +12,7 @@ Logical value
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+should_use_simd_for_batch_queries_bridge()
+}
 \keyword{internal}

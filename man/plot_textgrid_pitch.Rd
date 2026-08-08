@@ -43,16 +43,18 @@ Creates a combined visualization showing a pitch contour with TextGrid
 annotation tiers. This replicates Praat's TextGrid_Pitch_draw() function.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
-pitch <- sound$to_pitch()
-textgrid <- TextGrid$new("recording.TextGrid")
+if (requireNamespace("patchwork", quietly = TRUE) ||
+    requireNamespace("gridExtra", quietly = TRUE)) {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+  pitch <- sound$to_pitch()
+  textgrid <- TextGrid$create(0, 1, "phonemes")
+  textgrid$set_interval_text("phonemes", 1, "a")
 
-# Combined pitch + TextGrid
-plot_textgrid_pitch(textgrid, pitch)
+  # Combined pitch + TextGrid
+  plot_textgrid_pitch(textgrid, pitch)
 
-# Single tier
-plot_textgrid_pitch(textgrid, pitch, tier = "phonemes")
+  # Single tier
+  plot_textgrid_pitch(textgrid, pitch, tier = "phonemes")
 }
 
 }

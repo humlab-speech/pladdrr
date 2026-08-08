@@ -13,8 +13,6 @@ Data frame with columns: id, name, class, selected
 List all objects in Praat object list
 }
 \examples{
-\dontrun{
 objects <- praat_list_objects()
 print(objects)
-}
 }

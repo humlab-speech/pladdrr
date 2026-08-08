@@ -16,8 +16,6 @@ Numeric vector
 Evaluate a vector Praat expression
 }
 \examples{
-\dontrun{
 # Create vector
 vec <- praat_eval_vector("{ 1, 2, 3, 4, 5 }")
-}
 }

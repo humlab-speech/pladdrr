@@ -46,17 +46,16 @@ Creates a line plot of Cepstral Peak Prominence (CPP) values over time
 from a PowerCepstrogram object. Useful for tracking voice quality variation.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("voice.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
 
 # CPP time series
-plot_cpp_timeseries(cepstrogram)
+plot_cpp_timeseries(cepstrogram, n_samples = 20)
 
 # With smoothing and reference lines
-plot_cpp_timeseries(cepstrogram, 
+plot_cpp_timeseries(cepstrogram,
+                   n_samples = 20,
                    smooth = TRUE,
                    reference_lines = c(5, 10, 15))
-}
 
 }

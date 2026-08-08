@@ -32,3 +32,9 @@ Standard deviation of periods
 \description{
 Get standard deviation of periods from PointProcess without R6 wrapper overhead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+pp_ptr <- to_point_process_from_sound_and_pitch(sound, pitch)
+sd_period <- pp_get_stdev_period_direct(pp_ptr)
+}

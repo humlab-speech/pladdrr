@@ -16,8 +16,6 @@ Numeric matrix
 Evaluate a matrix Praat expression
 }
 \examples{
-\dontrun{
 # Create matrix
 mat <- praat_eval_matrix("{{ 1, 2 }, { 3, 4 }}")
-}
 }

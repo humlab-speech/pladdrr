@@ -32,6 +32,9 @@ get_pitch_module <- function() {
 #' Convert unit string to integer code
 #' @param unit Unit string: "hertz", "hz", "semitones", "mel", "erb"
 #' @return Integer unit code for Praat API
+#' @examples
+#' pladdrr:::pitch_unit_code("hertz")
+#' pladdrr:::pitch_unit_code("semitones")
 #' @keywords internal
 pitch_unit_code <- function(unit) {
   switch(tolower(unit),
@@ -295,6 +298,8 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 #' Check if Pitch Modules are Available
 #'
 #' @return TRUE if modules are loaded successfully
+#' @examples
+#' pladdrr:::pitch_modules_available()
 #' @keywords internal
 pitch_modules_available <- function() {
   tryCatch({

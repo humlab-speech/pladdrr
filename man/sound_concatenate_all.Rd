@@ -21,12 +21,10 @@ Concatenates a list of Sound objects at the C++ level, avoiding the O(n)
 R→C boundary crossings that occur with `Reduce(function(a,b) a$concatenate(b), sounds)`.
 }
 \examples{
-\dontrun{
-# Instead of slow R6 approach:
-# result <- Reduce(function(a, b) a$concatenate(b), sound_list)
-
-# Use fast batch operation:
+sound_list <- list(
+  Sound$create_tone(frequency = 440, duration = 0.2),
+  Sound$create_tone(frequency = 880, duration = 0.2)
+)
 result <- sound_concatenate_all(sound_list)
-}
 
 }

@@ -12,3 +12,7 @@ Logical; TRUE if initialized, FALSE otherwise
 \description{
 Check if Praat interpreter is initialized
 }
+\examples{
+praat_init()
+praat_initialized()
+}

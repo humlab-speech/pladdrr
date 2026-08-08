@@ -41,9 +41,9 @@ coefficients as a function of quefrency. Optionally highlights the peak
 related to pitch.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
-pc <- sound$to_powercepstrum(pitch_floor = 75)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+spectrum <- sound$to_spectrum()
+pc <- spectrum$to_powercepstrum()
 
 # Basic plot
 plot(pc)
@@ -53,6 +53,5 @@ plot(pc, from_quefrency = 0.002, to_quefrency = 0.017)
 
 # Customize
 plot(pc, color = "red", title = "Cepstral Analysis")
-}
 
 }

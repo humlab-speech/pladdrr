@@ -16,8 +16,6 @@ Character vector
 Evaluate a string array Praat expression
 }
 \examples{
-\dontrun{
 # Create string array
 arr <- praat_eval_string_array('{ "hello", "world" }')
-}
 }

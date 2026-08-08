@@ -47,18 +47,19 @@ and pitch contour in the bottom panel, aligned by time. This is a common
 Praat visualization pattern.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
-pitch <- sound$to_pitch()
+if (requireNamespace("patchwork", quietly = TRUE) ||
+    requireNamespace("gridExtra", quietly = TRUE)) {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+  pitch <- sound$to_pitch()
 
-# Basic two-panel plot
-plot_sound_pitch(sound, pitch)
+  # Basic two-panel plot
+  plot_sound_pitch(sound, pitch)
 
-# Time range and custom colors
-plot_sound_pitch(sound, pitch,
-                from_time = 1.0, to_time = 2.0,
-                waveform_color = "black",
-                pitch_color = "red")
+  # Time range and custom colors
+  plot_sound_pitch(sound, pitch,
+                  from_time = 0.2, to_time = 0.8,
+                  waveform_color = "black",
+                  pitch_color = "red")
 }
 
 }

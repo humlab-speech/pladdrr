@@ -35,6 +35,13 @@
 }
 
 #' Build a classed pladdrr error condition
+#' @return A condition object with class \code{c(klass, "pladdrr_error", "error", "condition")}
+#'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
+#' @examples
+#' cond <- pladdrr:::pladdrr_error_cond(
+#'   "pladdrr_input_error", "example_routine", "x", "bad value"
+#' )
+#' conditionMessage(cond)
 #' @keywords internal
 pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
   structure(
@@ -44,6 +51,13 @@ pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-
 }
 
 #' Build a classed pladdrr warning condition
+#' @return A condition object with class \code{c(klass, "pladdrr_warning", "warning", "condition")}
+#'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
+#' @examples
+#' cond <- pladdrr:::pladdrr_warning_cond(
+#'   "pladdrr_data_loss", "example_routine", "x", "value out of range"
+#' )
+#' conditionMessage(cond)
 #' @keywords internal
 pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
   structure(

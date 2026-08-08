@@ -11,6 +11,21 @@
 
 \item{...}{Additional arguments (unused)}
 }
+\value{
+\code{x}, invisibly.
+}
 \description{
 Print method for praat_formant objects
+}
+\examples{
+x <- list(
+  n_frames = 2, n_formants = 1, time_step = 0.01,
+  max_formant = 5000, window_length = 0.025,
+  values = data.frame(
+    time = c(0.1, 0.2), formant_number = c(1, 1),
+    frequency = c(500, 520), bandwidth = c(80, 82)
+  )
+)
+class(x) <- "praat_formant"
+print(x)
 }

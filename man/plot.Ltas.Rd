@@ -39,8 +39,7 @@ A ggplot2 object
 Creates a LTAS (long-term average spectrum) visualization.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 ltas <- sound$to_ltas()
 
 # Basic plot
@@ -48,6 +47,5 @@ plot(ltas)
 
 # Speech frequency range
 plot(ltas, to_freq = 5000)
-}
 
 }

@@ -34,15 +34,17 @@ Apply analysis to pre-loaded Sound objects in parallel.
 Use when sounds are already in memory.
 }
 \examples{
-\dontrun{
-# Load sounds first
-sounds <- lapply(files, Sound)
+\donttest{
+sounds <- list(
+  Sound$create_tone(frequency = 220, duration = 0.2),
+  Sound$create_tone(frequency = 440, duration = 0.2)
+)
 
-# Process in parallel
+# Process using at most 2 cores (CRAN example policy)
 results <- process_sounds_parallel(sounds, function(s) {
   pitch <- s$to_pitch()
   pitch$get_mean(0, 0, "hertz")
-})
+}, n_cores = 2)
 }
 
 }

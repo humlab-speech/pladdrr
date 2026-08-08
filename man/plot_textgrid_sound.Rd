@@ -43,16 +43,18 @@ Creates a combined visualization showing a waveform with TextGrid annotation
 tiers overlaid. This replicates Praat's TextGrid_Sound_draw() function.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
-textgrid <- TextGrid$new("recording.TextGrid")
+if (requireNamespace("patchwork", quietly = TRUE) ||
+    requireNamespace("gridExtra", quietly = TRUE)) {
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0)
+  textgrid <- TextGrid$create(0, 1, "words")
+  textgrid$set_interval_text("words", 1, "tone")
 
-# Basic combined plot
-plot_textgrid_sound(textgrid, sound)
+  # Basic combined plot
+  plot_textgrid_sound(textgrid, sound)
 
-# Single tier with time range
-plot_textgrid_sound(textgrid, sound, tier = 1, 
-                   from_time = 1.0, to_time = 2.0)
+  # Single tier with time range
+  plot_textgrid_sound(textgrid, sound, tier = 1,
+                     from_time = 0.2, to_time = 0.8)
 }
 
 }

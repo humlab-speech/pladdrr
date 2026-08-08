@@ -335,6 +335,13 @@ spectrograms_to_dtw <- function(spectrogram1, spectrogram2,
 #' @param slope Slope constraint (1-4)
 #' @return A DTW object
 #'
+#' @examples
+#' sound1 <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' sound2 <- Sound$create_tone(frequency = 440, duration = 0.5)
+#' pitch1 <- sound1$to_pitch()
+#' pitch2 <- sound2$to_pitch()
+#' dtw <- pitches_to_dtw(pitch1, pitch2)
+#'
 #' @export
 pitches_to_dtw <- function(pitch1, pitch2,
                            vuv_costs = 24.0,

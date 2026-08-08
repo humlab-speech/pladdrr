@@ -9,8 +9,21 @@ quality_warning(message)
 \arguments{
 \item{message}{Warning message}
 }
+\value{
+The result of the underlying \code{warning()} call, invisibly;
+  called for the side effect of issuing a warning.
+}
 \description{
 Issues a warning about potentially poor analysis quality
 (Constitution Principle I: User should be warned about quality issues)
+}
+\examples{
+withCallingHandlers(
+  pladdrr:::quality_warning("example quality issue"),
+  warning = function(w) {
+    message("caught: ", conditionMessage(w))
+    invokeRestart("muffleWarning")
+  }
+)
 }
 \keyword{internal}

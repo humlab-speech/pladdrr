@@ -16,8 +16,6 @@ Character string
 Evaluate a string Praat expression
 }
 \examples{
-\dontrun{
 # String operations
 result <- praat_eval_string('"Hello" + " " + "World"')
-}
 }

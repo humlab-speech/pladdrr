@@ -6,7 +6,17 @@
 \usage{
 pladdrr_error_cond(klass, routine, param, message, call = sys.call(-1L))
 }
+\value{
+A condition object with class \code{c(klass, "pladdrr_error", "error", "condition")}
+  and elements \code{message}, \code{call}, \code{routine}, \code{param}.
+}
 \description{
 Build a classed pladdrr error condition
+}
+\examples{
+cond <- pladdrr:::pladdrr_error_cond(
+  "pladdrr_input_error", "example_routine", "x", "bad value"
+)
+conditionMessage(cond)
 }
 \keyword{internal}

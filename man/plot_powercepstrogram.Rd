@@ -43,17 +43,15 @@ Creates a heatmap visualization of a power cepstrogram showing how
 the cepstral spectrum varies over time, similar to a spectrogram.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("voice.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
 
 # Basic plot
 plot_powercepstrogram(cepstrogram)
 
 # With CPP contour
-plot_powercepstrogram(cepstrogram, 
+plot_powercepstrogram(cepstrogram,
                      show_cpp_contour = TRUE,
                      quefrency_range = c(0.001, 0.02))
-}
 
 }

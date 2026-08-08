@@ -50,17 +50,12 @@ Creates a heatmap visualization of a Matrix object. Supports any Matrix-derived
 objects including generic matrices, spectrograms, etc.
 }
 \examples{
-\dontrun{
-matrix <- Matrix$new(...)  # Create or load matrix
+m <- matrix_create_simple(3, 4)
 
 # Basic heatmap
-plot(matrix)
+plot(m)
 
 # Custom color scale
-plot(matrix, color_scale = "magma", title = "My Matrix")
-
-# Range selection
-plot(matrix, from_x = 0, to_x = 1, from_y = 0, to_y = 5000)
-}
+plot(m, color_scale = "magma", title = "My Matrix")
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{pitch_get_quantiles_batch}
 \alias{pitch_get_quantiles_batch}
-\title{Get multiple pitch quantiles in a single call (NEW for VUV performance)}
+\title{Get multiple pitch quantiles in a single call (used by VUV analysis)}
 \usage{
 pitch_get_quantiles_batch(
   pitch_xptr,
@@ -27,6 +27,11 @@ pitch_get_quantiles_batch(
 Named numeric vector with quantile values
 }
 \description{
-Get multiple pitch quantiles in a single call (NEW for VUV performance)
+Get multiple pitch quantiles in a single call (used by VUV analysis)
+}
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 }
 \keyword{internal}

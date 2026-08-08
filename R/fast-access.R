@@ -78,10 +78,8 @@ get_sound_times_fast <- function(sound) {
 #' @return Numeric matrix (samples x channels)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' mat <- sound_as_matrix_fast(sound)
-#' }
 #'
 #' @export
 sound_as_matrix_fast <- function(sound, zerocopy = FALSE) {
@@ -120,7 +118,11 @@ is_fast_vector <- function(x) {
 #'
 #' @param x A fast_vector
 #' @param ... Additional arguments passed to print
-#'
+#' @return \code{x}, invisibly.
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+#' samples <- get_sound_values_fast(sound, channel = 1)
+#' print(samples)
 #' @export
 print.fast_vector <- function(x, ...) {
   cat("Fast-Access Vector\n")
@@ -166,6 +168,11 @@ is_zerocopy_vector <- function(x) {
 #' Print method for legacy zerocopy_vector class (deprecated)
 #' @param x A zerocopy_vector
 #' @param ... Additional arguments
+#' @return \code{x}, invisibly.
+#' @examples
+#' # zerocopy_vector is a deprecated class name; fast_vector is current.
+#' legacy_vec <- structure(c(0.1, 0.2, 0.3), class = c("zerocopy_vector", "numeric"))
+#' print(legacy_vec)
 #' @export
 print.zerocopy_vector <- function(x, ...) {
   print.fast_vector(x, ...)

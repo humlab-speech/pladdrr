@@ -222,12 +222,16 @@ List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector t
 // =============================================================================
 
 //' Batch query pitch strengths at multiple time points
-//' 
+//'
 //' @param pitch_xptr External pointer to Pitch object
 //' @param times Numeric vector of time points
 //' @param unit Integer code for unit
 //' @param interpolate Logical, whether to interpolate
 //' @return Numeric vector of pitch strengths
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
@@ -272,14 +276,18 @@ NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
     return strengths;
 }
 
-//' Get multiple pitch quantiles in a single call (NEW for VUV performance)
-//' 
+//' Get multiple pitch quantiles in a single call (used by VUV analysis)
+//'
 //' @param pitch_xptr External pointer to Pitch object
 //' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
 //' @param from_time Start time (0 = beginning)
 //' @param to_time End time (0 = end)
 //' @param unit Integer code for unit (0=HERTZ, etc)
 //' @return Named numeric vector with quantile values
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
@@ -326,9 +334,13 @@ NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
 // =============================================================================
 
 //' Get all point times from PointProcess as vector
-//' 
+//'
 //' @param pp_xptr External pointer to PointProcess object
 //' @return Numeric vector of all point times
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pp <- sound$to_pointprocess_periodic_cc()
+//' pointprocess_get_all_times(pp$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
@@ -349,9 +361,13 @@ NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
 }
 
 //' Get inter-point intervals from PointProcess
-//' 
+//'
 //' @param pp_xptr External pointer to PointProcess object
 //' @return Numeric vector of intervals (length = n_points - 1)
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pp <- sound$to_pointprocess_periodic_cc()
+//' pointprocess_get_intervals(pp$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
@@ -379,6 +395,10 @@ NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
 //' @param pp_xptr External pointer to PointProcess object
 //' @param times Numeric vector of query times
 //' @return Integer vector of nearest point indices (1-based)
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pp <- sound$to_pointprocess_periodic_cc()
+//' pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
 // [[Rcpp::export]]
 IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times) {
@@ -423,6 +443,15 @@ IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times
 //'   "q25", "q50" (median), "q75", "count_voiced"
 //' @param unit Integer code for unit (0=HERTZ, 1=HERTZ_LOGARITHMIC, etc)
 //' @return NumericMatrix with intervals as rows, metrics as columns
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' pitch_get_statistics_batch(
+//'   pitch$.xptr,
+//'   from_times = c(0, 0.5),
+//'   to_times = c(0.5, 1.0),
+//'   metrics = c("min", "max", "mean")
+//' )
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix pitch_get_statistics_batch(
@@ -550,6 +579,11 @@ NumericMatrix pitch_get_statistics_batch(
 //' @param q3_factor Factor to multiply Q3 for max_pitch (e.g., 1.5)
 //' @param unit Integer code for unit
 //' @return List with q1, q3, min_pitch, max_pitch
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' range_info <- pitch_get_adaptive_range(pitch$.xptr)
+//' str(range_info)
 //' @keywords internal
 // [[Rcpp::export]]
 List pitch_get_adaptive_range(

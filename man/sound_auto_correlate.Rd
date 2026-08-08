@@ -19,3 +19,7 @@ New Sound object (auto-correlation function)
 \description{
 Auto-correlate a sound with itself
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+ac <- sound_auto_correlate(sound)
+}

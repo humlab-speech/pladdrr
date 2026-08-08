@@ -39,8 +39,7 @@ A ggplot2 object
 Creates a frequency spectrum visualization.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrum <- sound$to_spectrum()
 
 # Basic plot
@@ -48,6 +47,5 @@ plot(spectrum)
 
 # Logarithmic frequency
 plot(spectrum, log_freq = TRUE)
-}
 
 }

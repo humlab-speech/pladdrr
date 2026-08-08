@@ -36,8 +36,6 @@ A Sound object
 Creates a sinusoidal pure tone with optional fade in/out envelopes.
 }
 \examples{
-\dontrun{
 tone <- sound_create_pure_tone(frequency = 440, duration = 0.5)
 tone <- Sound$create_pure_tone(frequency = 880, fade_in_duration = 0.05)
-}
 }

@@ -24,10 +24,9 @@ A ggplot2 object
 Visualize tier labels and boundaries as a standalone plot.
 }
 \examples{
-\dontrun{
-tg <- TextGrid("annotations.TextGrid")
+tg <- TextGrid$create(0, 1, "words")
+tg$set_interval_text("words", 1, "hello")
 plot(tg)
 plot(tg, tier = 1)
-}
 
 }

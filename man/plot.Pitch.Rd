@@ -39,19 +39,17 @@ A ggplot2 object
 Creates a pitch (F0) contour visualization of a Pitch object.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("recording.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 pitch <- sound$to_pitch()
 
 # Basic plot
 plot(pitch)
 
 # Time range
-plot(pitch, from_time = 0.5, to_time = 2.0)
+plot(pitch, from_time = 0.2, to_time = 0.8)
 
 # Customize
 plot(pitch, show_voicing = FALSE, color = "blue") +
   ggplot2::geom_hline(yintercept = 120, linetype = "dashed")
-}
 
 }

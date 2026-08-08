@@ -70,6 +70,11 @@ extern "C" {
 //' Enable/Disable SIMD for TextGrid Operations
 //'
 //' @param enabled Logical, TRUE to enable SIMD, FALSE for scalar
+//' @return Invisibly returns \code{NULL}.
+//' @examples
+//' set_textgrid_simd_enabled_bridge(TRUE)
+//' textgrid_simd_enabled()
+//' set_textgrid_simd_enabled_bridge(FALSE)
 //' @export
 // [[Rcpp::export]]
 void set_textgrid_simd_enabled_bridge(bool enabled) {

@@ -39,21 +39,19 @@
 #' checks. The option is read during \code{.onLoad}.
 #' 
 #' @examples
-#' \dontrun{
 #' # Check SIMD capabilities
 #' info <- simd_info()
 #' print(info)
-#' 
+#'
 #' if (info$architecture == "AVX2") {
 #'   message("AVX2 SIMD support detected")
 #' }
-#' 
+#'
 #' # Disable SIMD temporarily for testing
 #' pladdrr_simd(FALSE)
 #' # ... run tests ...
 #' pladdrr_simd(TRUE)
-#' }
-#' 
+#'
 #' @export
 simd_info <- function() {
   .simd_info()
@@ -67,11 +65,9 @@ simd_info <- function() {
 #' @return Invisibly, the same list returned by [simd_info()].
 #'
 #' @examples
-#' \dontrun{
 #' pladdrr_simd()      # query current state
 #' pladdrr_simd(FALSE) # force scalar fallbacks when available
 #' pladdrr_simd(TRUE)  # restore SIMD
-#' }
 #'
 #' @export
 pladdrr_simd <- function(enabled = NULL) {

@@ -34,21 +34,19 @@ NULL
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("voice.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
 #' cepstrum <- spectrum$to_powercepstrum()
-#' 
+#'
 #' # Basic plot
 #' plot_powercepstrum(cepstrum)
-#' 
+#'
 #' # Customized plot
-#' plot_powercepstrum(cepstrum, 
+#' plot_powercepstrum(cepstrum,
 #'                   show_peak = TRUE,
 #'                   show_trendline = TRUE,
 #'                   quefrency_range = c(0.001, 0.02),
 #'                   title = "Voice Quality Analysis")
-#' }
 #'
 #' @export
 plot_powercepstrum <- function(cepstrum,
@@ -204,18 +202,16 @@ plot_powercepstrum <- function(cepstrum,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("voice.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
-#' 
+#'
 #' # Basic plot
 #' plot_powercepstrogram(cepstrogram)
-#' 
+#'
 #' # With CPP contour
-#' plot_powercepstrogram(cepstrogram, 
+#' plot_powercepstrogram(cepstrogram,
 #'                      show_cpp_contour = TRUE,
 #'                      quefrency_range = c(0.001, 0.02))
-#' }
 #'
 #' @export
 plot_powercepstrogram <- function(cepstrogram,
@@ -377,18 +373,17 @@ plot_powercepstrogram <- function(cepstrogram,
 #' @return A ggplot2 object
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("voice.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
-#' 
+#'
 #' # CPP time series
-#' plot_cpp_timeseries(cepstrogram)
-#' 
+#' plot_cpp_timeseries(cepstrogram, n_samples = 20)
+#'
 #' # With smoothing and reference lines
-#' plot_cpp_timeseries(cepstrogram, 
+#' plot_cpp_timeseries(cepstrogram,
+#'                    n_samples = 20,
 #'                    smooth = TRUE,
 #'                    reference_lines = c(5, 10, 15))
-#' }
 #'
 #' @export
 plot_cpp_timeseries <- function(cepstrogram,

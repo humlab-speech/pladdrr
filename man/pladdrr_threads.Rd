@@ -37,11 +37,7 @@ Threading never changes results: threads partition analysis frames and each
 frame is computed exactly as in single-threaded mode.
 }
 \examples{
-\dontrun{
 pladdrr_threads()      # query current state
-#> $processors [1] 10 ; $enabled [1] TRUE ; $max_threads [1] 10 ...
 pladdrr_threads(1)     # single-threaded (e.g. inside mclapply workers)
-pladdrr_threads(4)     # cap at 4 threads
 pladdrr_threads(0)     # back to automatic (all cores)
-}
 }

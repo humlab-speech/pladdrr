@@ -17,10 +17,8 @@ Invisibly, the same list returned by [simd_info()].
 Get or set runtime SIMD usage
 }
 \examples{
-\dontrun{
 pladdrr_simd()      # query current state
 pladdrr_simd(FALSE) # force scalar fallbacks when available
 pladdrr_simd(TRUE)  # restore SIMD
-}
 
 }

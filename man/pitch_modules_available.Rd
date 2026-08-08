@@ -12,4 +12,7 @@ TRUE if modules are loaded successfully
 \description{
 Check if Pitch Modules are Available
 }
+\examples{
+pladdrr:::pitch_modules_available()
+}
 \keyword{internal}
