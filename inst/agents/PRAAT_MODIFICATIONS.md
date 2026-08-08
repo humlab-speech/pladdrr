@@ -18,7 +18,7 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
-### v4.10 — Memory optimization: eliminate per-frame Spectrum allocations + data.frame pre-allocation (2026-08-07)
+### v5.0.0 — Memory optimization: eliminate per-frame Spectrum allocations + data.frame pre-allocation (2026-08-07)
 
 **Summary:** Three changes to pladdrr-owned C++ wrappers — no Praat-tree code touched.
 Targeted at the memory-usage gap measured by algobench (pladdrr peak 897-1091 MB
