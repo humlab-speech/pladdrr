@@ -46,18 +46,15 @@ NULL
 #' @return Named list with: min, max, mean, stdev, median, q25, q75, count_voiced
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch_cc()
 #'
 #' # Direct call
 #' stats <- get_pitch_stats_direct(pitch)
 #'
-#' # Equivalent R6 calls (8 separate boundary crossings):
+#' # Equivalent R6 calls, one boundary crossing per statistic:
 #' min_val <- pitch$get_minimum(0, 0, "hertz")
 #' max_val <- pitch$get_maximum(0, 0, "hertz")
-#' # ... etc
-#' }
 #'
 #' @export
 get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
@@ -93,18 +90,15 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 #' @return Named numeric vector: F1, F2, F3, F4
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #'
 #' # Get all 4 formants in one call
-#' f1_f4 <- get_formants_direct(formant, time = 0.5)
+#' f1_f4 <- get_formants_direct(formant, time = 0.25)
 #'
-#' # Equivalent R6 calls (4 separate boundary crossings):
-#' f1 <- formant$get_value_at_time(1, 0.5, "hertz")
-#' f2 <- formant$get_value_at_time(2, 0.5, "hertz")
-#' # ... etc
-#' }
+#' # Equivalent R6 calls, one boundary crossing per formant:
+#' f1 <- formant$get_value_at_time(1, 0.25, "hertz")
+#' f2 <- formant$get_value_at_time(2, 0.25, "hertz")
 #'
 #' @export
 get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
@@ -503,6 +497,12 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 #' @param interpolate Whether to interpolate
 #'
 #' @return Pitch value
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch_ptr <- to_pitch_cc_direct(sound)
+#' get_pitch_value_direct(pitch_ptr, 0.25)
+#'
 #' @export
 get_pitch_value_direct <- function(pitch, time, unit = "hertz", interpolate = TRUE) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
@@ -517,6 +517,12 @@ get_pitch_value_direct <- function(pitch, time, unit = "hertz", interpolate = TR
 #' @param interpolation Interpolation method
 #'
 #' @return Intensity in dB
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity_ptr <- to_intensity_direct(sound)
+#' get_intensity_value_direct(intensity_ptr, 0.25)
+#'
 #' @export
 get_intensity_value_direct <- function(intensity, time, interpolation = "cubic") {
   intensity_ptr <- if (inherits(intensity, "Intensity")) intensity$.xptr else intensity
@@ -532,6 +538,12 @@ get_intensity_value_direct <- function(intensity, time, interpolation = "cubic")
 #' @param unit Unit string
 #'
 #' @return Formant frequency
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' formant_ptr <- to_formant_direct(sound)
+#' get_formant_value_direct(formant_ptr, 1, 0.25)
+#'
 #' @export
 get_formant_value_direct <- function(formant, formant_number, time, unit = "hertz") {
   formant_ptr <- if (inherits(formant, "Formant")) formant$.xptr else formant
@@ -555,11 +567,10 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 #' @return Quantile value in specified unit
 #'
 #' @examples
-#' \dontrun{
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch_ptr <- to_pitch_cc_direct(sound)
 #' q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
 #' q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
-#' }
 #'
 #' @seealso [get_pitch_quantiles_batch()] for getting multiple quantiles at once
 #' @export
@@ -584,6 +595,12 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 
 #' @param unit Pitch unit
 #'
 #' @return Mean pitch value
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch_ptr <- to_pitch_cc_direct(sound)
+#' get_pitch_mean_direct(pitch_ptr)
+#'
 #' @export
 get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
                                    unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {
@@ -606,6 +623,12 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
 #' @param unit Pitch unit
 #'
 #' @return Standard deviation
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch_ptr <- to_pitch_cc_direct(sound)
+#' get_pitch_stdev_direct(pitch_ptr)
+#'
 #' @export
 get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
                                     unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {

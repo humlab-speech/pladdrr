@@ -15,3 +15,8 @@ TRUE if x has the fast_vector or zerocopy_vector class
 \description{
 Check if Vector is a Fast-Access Vector
 }
+\examples{
+is_fast_access(1:10)
+sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+is_fast_access(get_sound_values_fast(sound))
+}

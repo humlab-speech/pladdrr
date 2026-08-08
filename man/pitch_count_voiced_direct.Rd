@@ -15,4 +15,9 @@ Number of voiced frames
 \description{
 Count voiced frames directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pitch <- sound$to_pitch()
+pladdrr:::pitch_count_voiced_direct(pitch$.xptr)
+}
 \keyword{internal}

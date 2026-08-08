@@ -32,4 +32,9 @@ Mean period in seconds
 \description{
 Get PointProcess mean period directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
+pladdrr:::get_point_process_mean_period_direct(pp$.xptr)
+}
 \keyword{internal}

@@ -141,6 +141,11 @@ as.matrix.Matrix <- function(x, ...) x$as_matrix()
 #' @param y1 Y value of first row
 #' @return A Matrix object
 #' @seealso [matrix_create_simple()] for simpler creation, [Matrix] for object methods
+#' @examples
+#' m <- matrix_create(xmin = 0, xmax = 2, nx = 2, dx = 1, x1 = 0.5,
+#'                     ymin = 0, ymax = 1, ny = 1, dy = 1, y1 = 0.5)
+#' m$get_number_of_rows()
+#' m$get_number_of_columns()
 #' @export
 matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
   Matrix(xmin = xmin, xmax = xmax, nx = nx, dx = dx, x1 = x1,
@@ -155,6 +160,10 @@ matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
 #' @param numberOfColumns Number of columns
 #' @return A Matrix object
 #' @seealso [matrix_create()] for full parameter control, [Matrix] for object methods
+#' @examples
+#' m <- matrix_create_simple(3, 4)
+#' m$set_value(1, 1, 5.0)
+#' m$get_value(1, 1)
 #' @export
 matrix_create_simple <- function(numberOfRows, numberOfColumns) {
   Matrix(numberOfRows = numberOfRows, numberOfColumns = numberOfColumns)
@@ -167,6 +176,36 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 #' @param path Path to the Matrix file
 #' @return A Matrix object
 #' @seealso [matrix_create()], [matrix_create_simple()]
+#' @examples
+#' \donttest{
+#' # NOTE: currently errors — matrix_read() calls an internal .matrix_read()
+#' # binding that does not exist in this version of pladdrr (see
+#' # utils::globalVariables() entry in pladdrr-package.R). Use matrix_create()
+#' # or matrix_create_simple() to build a Matrix object programmatically
+#' # instead.
+#' mat_file <- tempfile(fileext = ".Matrix")
+#' writeLines(c(
+#'   "File type = \"ooTextFile\"",
+#'   "Object class = \"Matrix\"",
+#'   "",
+#'   "xmin = 0",
+#'   "xmax = 2",
+#'   "ymin = 0",
+#'   "ymax = 1",
+#'   "nx = 2",
+#'   "ny = 1",
+#'   "dx = 1",
+#'   "dy = 1",
+#'   "x1 = 0.5",
+#'   "y1 = 0.5",
+#'   "z [] []:",
+#'   "    z [1] []:",
+#'   "        z [1] [1] = 1",
+#'   "        z [1] [2] = 2"
+#' ), mat_file)
+#' m <- matrix_read(mat_file)
+#' m$get_number_of_rows()
+#' }
 #' @export
 matrix_read <- function(path) {
   xptr <- .matrix_read(path)

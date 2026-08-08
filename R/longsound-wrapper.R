@@ -151,13 +151,14 @@ LongSound <- function(.xptr = NULL) {
 #' @return LongSound object
 #' @export
 #' @examples
-#' \dontrun{
-#' ls <- LongSound$open("recording.wav")
+#' wav <- tempfile(fileext = ".wav")
+#' Sound$create_tone(frequency = 220, duration = 1, sampling_rate = 16000)$save(wav)
+#'
+#' ls <- longsound_open(wav)
 #' print(ls)
 #'
 #' # Extract portion
-#' sound <- ls$extract_part(0, 10)
-#' }
+#' sound <- ls$extract_part(0, 0.5)
 longsound_open <- function(path) {
   if (!file.exists(path)) {
     stop("File not found: ", path)

@@ -33,6 +33,12 @@ A Matrix object
 \description{
 Creates a new Matrix object with explicit domain and sampling parameters.
 }
+\examples{
+m <- matrix_create(xmin = 0, xmax = 2, nx = 2, dx = 1, x1 = 0.5,
+                    ymin = 0, ymax = 1, ny = 1, dy = 1, y1 = 0.5)
+m$get_number_of_rows()
+m$get_number_of_columns()
+}
 \seealso{
 [matrix_create_simple()] for simpler creation, [Matrix] for object methods
 }

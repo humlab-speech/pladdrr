@@ -22,11 +22,8 @@ Reduces R<->C++ calls from `n` to 1.
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-pitch <- sound$to_pitch()
-pp <- pitch$to_point_process()
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
 times <- get_pointprocess_times(pp)
-}
 
 }

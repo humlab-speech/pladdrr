@@ -22,11 +22,9 @@ Numeric vector of pitch strengths (0-1) at the specified times
 Query pitch strength (voicing confidence) at multiple time points.
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- sound$to_pitch()
-times <- seq(pitch$get_xmin(), pitch$get_xmax(), length.out = 100)
+times <- seq(0.05, 0.45, length.out = 10)
 strengths <- get_pitch_strengths_at_times(pitch, times)
-}
 
 }

@@ -29,11 +29,9 @@ This function uses existing optimized C++ code.
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- sound$to_pitch()
-times <- seq(pitch$get_xmin(), pitch$get_xmax(), length.out = 100)
+times <- seq(0.05, 0.45, length.out = 10)
 f0_contour <- get_pitch_at_times(pitch, times)
-}
 
 }

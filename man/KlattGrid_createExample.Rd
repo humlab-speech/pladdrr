@@ -13,3 +13,7 @@ KlattGrid example object
 Creates a demonstration KlattGrid with pre-configured parameters
 for testing the synthesizer.
 }
+\examples{
+kg <- KlattGrid_createExample()
+sound <- kg$to_sound()
+}

@@ -12,4 +12,7 @@ The loaded pitch module
 \description{
 Get Pitch Module Reference
 }
+\examples{
+mod <- pladdrr:::get_pitch_module()
+}
 \keyword{internal}

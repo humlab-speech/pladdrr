@@ -32,4 +32,9 @@ Standard deviation of periods
 \description{
 Get PointProcess standard deviation of periods directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
+pladdrr:::get_point_process_stdev_period_direct(pp$.xptr)
+}
 \keyword{internal}

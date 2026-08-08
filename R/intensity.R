@@ -35,6 +35,10 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #' @param time Time in seconds
 #' @param interpolate Whether to interpolate
 #' @return Intensity in dB
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' get_intensity_at_time(intensity, 0.25)
 #' @export
 get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
   .Deprecated("intensity$get_value_at_time()", package = "pladdrr")
@@ -48,6 +52,10 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #' @param intensity An Intensity R6 object
 #' @param time_range Optional time range c(start, end)
 #' @return Mean intensity in dB
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' get_mean_intensity(intensity)
 #' @export
 get_mean_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_mean()", package = "pladdrr")
@@ -65,6 +73,10 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #' @param intensity An Intensity R6 object
 #' @param time_range Optional time range
 #' @return Minimum intensity in dB
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' get_min_intensity(intensity)
 #' @export
 get_min_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_minimum()", package = "pladdrr")
@@ -82,6 +94,10 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #' @param intensity An Intensity R6 object
 #' @param time_range Optional time range
 #' @return Maximum intensity in dB
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' get_max_intensity(intensity)
 #' @export
 get_max_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_maximum()", package = "pladdrr")
@@ -99,6 +115,10 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #' @param intensity An Intensity R6 object
 #' @param time_range Optional time range
 #' @return Standard deviation in dB
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' get_sd_intensity(intensity)
 #' @export
 get_sd_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_standard_deviation()", package = "pladdrr")

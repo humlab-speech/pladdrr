@@ -104,6 +104,9 @@ unit_to_code <- function(unit, type = "pitch") {
 #'
 #' @return Integer interpolation code
 #' @keywords internal
+#' @examples
+#' pladdrr:::interpolation_to_code("cubic")
+#' pladdrr:::interpolation_to_code("linear")
 interpolation_to_code <- function(interpolation) {
   switch(tolower(interpolation),
     nearest = 0L,

@@ -28,11 +28,9 @@ A list with one element per formant number (e.g., `B1`, `B2`, ...),
 Query formant bandwidths at multiple time points in a single function call.
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-formant <- sound$to_formant()
-times <- seq(1, 2, length.out = 5)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+times <- seq(0.1, 0.4, length.out = 5)
 bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)
-}
 
 }

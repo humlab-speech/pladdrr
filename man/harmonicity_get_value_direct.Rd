@@ -19,4 +19,9 @@ HNR in dB
 \description{
 Get harmonicity value at time directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+harmonicity <- sound$to_harmonicity_cc()
+pladdrr:::harmonicity_get_value_direct(harmonicity$.xptr, 0.25)
+}
 \keyword{internal}

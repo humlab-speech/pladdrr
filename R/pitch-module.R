@@ -19,6 +19,8 @@
 #'
 #' @return The loaded pitch module
 #' @keywords internal
+#' @examples
+#' mod <- pladdrr:::get_pitch_module()
 get_pitch_module <- function() {
   .load_pitch_module()
 }

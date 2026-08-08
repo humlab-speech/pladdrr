@@ -16,4 +16,9 @@ Numeric vector of durations (seconds), NA for errors
 Reads only the 44-byte WAV header to calculate duration, avoiding full file
 loading.
 }
+\examples{
+wav <- tempfile(fileext = ".wav")
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav)
+pladdrr:::get_durations_batch_cpp(wav)
+}
 \keyword{internal}

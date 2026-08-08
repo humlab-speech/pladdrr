@@ -146,6 +146,11 @@ print.PCA <- function(x, ...) x$print()
 #'
 #' @param data Numeric matrix where rows are observations and columns are variables
 #' @return A PCA object
+#' @examples
+#' set.seed(1)
+#' data <- matrix(rnorm(50), nrow = 10, ncol = 5)
+#' pca <- pca_from_matrix(data)
+#' print(pca)
 #' @export
 pca_from_matrix <- function(data) {
   if (!is.matrix(data)) data <- as.matrix(data)

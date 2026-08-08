@@ -39,15 +39,14 @@ scalar or simple vector results.
 }
 
 \examples{
-\dontrun{
-# Single file
-duration <- get_durations_batch("voice.wav")
+wav1 <- tempfile(fileext = ".wav")
+wav2 <- tempfile(fileext = ".wav")
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav1)
+Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)$save(wav2)
 
 # Multiple files (DSI workflow)
-mpt_files <- c("sustained_a_1.wav", "sustained_a_2.wav", "sustained_a_3.wav")
-durations <- get_durations_batch(mpt_files)
+durations <- get_durations_batch(c(wav1, wav2))
 max_mpt <- max(durations, na.rm = TRUE)
-}
 
 }
 \seealso{

@@ -25,18 +25,13 @@ tier in a single call, instead of a manual loop. Returns a data frame
 ready for analysis.
 }
 \examples{
-\dontrun{
-tg <- TextGrid("example.TextGrid")
+tg <- TextGrid$create(0, 1, "words")
+tg$insert_boundary(1, 0.5)
+tg$set_interval_text(1, 2, "hello")
 stats <- get_textgrid_interval_stats(tg, tier = 1)
 
-# Analysis
-library(dplyr)
-stats \%>\%
-  filter(label == "V") \%>\%
-  summarize(
-    mean_duration = mean(duration),
-    n_intervals = n()
-  )
-}
+# Analysis with base R
+voiced <- stats[stats$label == "hello", ]
+mean(voiced$duration)
 
 }

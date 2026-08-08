@@ -18,12 +18,9 @@ Integer vector of nearest point indices (1-based)
 Find the nearest point index for each of multiple query times.
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-pitch <- sound$to_pitch()
-pp <- pitch$to_point_process()
-query_times <- seq(1, 2, by = 0.1)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
+query_times <- seq(0.1, 0.4, by = 0.05)
 indices <- get_pointprocess_nearest_indices(pp, query_times)
-}
 
 }

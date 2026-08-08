@@ -15,4 +15,7 @@ The loaded Rcpp Module
 \description{
 Get a loaded Rcpp Module by name
 }
+\examples{
+mod <- pladdrr:::get_module("pitch_module")
+}
 \keyword{internal}

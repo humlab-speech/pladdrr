@@ -221,6 +221,10 @@ double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile,
 //' @param pitch_xptr External pointer to Pitch
 //' @return Number of voiced frames
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' pitch <- sound$to_pitch()
+//' pladdrr:::pitch_count_voiced_direct(pitch$.xptr)
 // [[Rcpp::export]]
 int pitch_count_voiced_direct(SEXP pitch_xptr) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -313,6 +317,10 @@ double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
 //' @param interpolation 0=nearest, 1=linear, 2=cubic, 3=sinc70, 4=sinc700
 //' @return Intensity in dB
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_value_direct(intensity$.xptr, 0.25)
 // [[Rcpp::export]]
 double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpolation = 2) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -330,6 +338,10 @@ double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpol
 //' @param averaging_method 0=energy, 1=sones, 2=dB
 //' @return Mean intensity
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_mean_direct(intensity$.xptr)
 // [[Rcpp::export]]
 double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0,
                                   int averaging_method = 0) {
@@ -350,6 +362,10 @@ double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, doub
 //' @param to_time End time
 //' @return Minimum intensity in dB
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_minimum_direct(intensity$.xptr)
 // [[Rcpp::export]]
 double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -369,6 +385,10 @@ double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, d
 //' @param to_time End time
 //' @return Maximum intensity in dB
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_maximum_direct(intensity$.xptr)
 // [[Rcpp::export]]
 double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -392,6 +412,10 @@ double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, d
 //' @param interpolation Interpolation method
 //' @return HNR in dB
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' harmonicity <- sound$to_harmonicity_cc()
+//' pladdrr:::harmonicity_get_value_direct(harmonicity$.xptr, 0.25)
 // [[Rcpp::export]]
 double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int interpolation = 2) {
     XPtr<structHarmonicity> harmonicity(harmonicity_xptr);
@@ -408,6 +432,10 @@ double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int inte
 //' @param to_time End time
 //' @return Mean HNR in dB
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' harmonicity <- sound$to_harmonicity_cc()
+//' pladdrr:::harmonicity_get_mean_direct(harmonicity$.xptr)
 // [[Rcpp::export]]
 double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structHarmonicity> harmonicity(harmonicity_xptr);
@@ -623,8 +651,12 @@ NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit 
 //' @param max_period_factor Maximum period factor (default: 1.3)
 //' @return Mean period in seconds
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' pp <- sound$to_point_process_periodic_cc(75, 600)
+//' pladdrr:::get_point_process_mean_period_direct(pp$.xptr)
 // [[Rcpp::export]]
-double get_point_process_mean_period_direct(SEXP pp_xptr, 
+double get_point_process_mean_period_direct(SEXP pp_xptr,
                                               double from_time = 0, 
                                               double to_time = 0,
                                               double period_floor = 0.0001, 
@@ -659,6 +691,10 @@ double get_point_process_mean_period_direct(SEXP pp_xptr,
 //' @param max_period_factor Maximum period factor
 //' @return Standard deviation of periods
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' pp <- sound$to_point_process_periodic_cc(75, 600)
+//' pladdrr:::get_point_process_stdev_period_direct(pp$.xptr)
 // [[Rcpp::export]]
 double get_point_process_stdev_period_direct(SEXP pp_xptr,
                                                double from_time = 0,

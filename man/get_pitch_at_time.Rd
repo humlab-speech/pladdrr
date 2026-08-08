@@ -21,3 +21,8 @@ Pitch value or NA
 \description{
 **DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pitch <- sound$to_pitch()
+get_pitch_at_time(pitch, 0.25)
+}

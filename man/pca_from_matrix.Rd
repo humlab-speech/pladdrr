@@ -15,3 +15,9 @@ A PCA object
 \description{
 Performs Principal Component Analysis on a numeric matrix.
 }
+\examples{
+set.seed(1)
+data <- matrix(rnorm(50), nrow = 10, ncol = 5)
+pca <- pca_from_matrix(data)
+print(pca)
+}

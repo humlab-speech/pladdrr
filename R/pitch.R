@@ -47,6 +47,10 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #' @param unit Unit: "Hz" or "semitones"
 #' @param interpolate Whether to interpolate
 #' @return Pitch value or NA
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' get_pitch_at_time(pitch, 0.25)
 #' @export
 get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
   .Deprecated("pitch$get_value_at_time()", package = "pladdrr")
@@ -64,6 +68,10 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' @param unit Unit: "Hz" or "semitones"
 #' @param time_range Optional time range c(start, end)
 #' @return Mean pitch value
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' get_mean_pitch(pitch)
 #' @export
 get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_mean()", package = "pladdrr")
@@ -83,6 +91,16 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @param unit Unit: "Hz" or "semitones"
 #' @param time_range Optional time range
 #' @return Minimum pitch value
+#' @examples
+#' \dontrun{
+#' # NOTE: currently errors — get_min_pitch() calls the R6 method with a
+#' # stale `interpolation` argument name; the current Pitch$get_minimum()
+#' # signature takes `interpolate` (logical). Use pitch$get_minimum()
+#' # directly instead.
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' get_min_pitch(pitch)
+#' }
 #' @export
 get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_minimum()", package = "pladdrr")
@@ -102,6 +120,16 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @param unit Unit: "Hz" or "semitones"
 #' @param time_range Optional time range
 #' @return Maximum pitch value
+#' @examples
+#' \dontrun{
+#' # NOTE: currently errors — get_max_pitch() calls the R6 method with a
+#' # stale `interpolation` argument name; the current Pitch$get_maximum()
+#' # signature takes `interpolate` (logical). Use pitch$get_maximum()
+#' # directly instead.
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' get_max_pitch(pitch)
+#' }
 #' @export
 get_max_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_maximum()", package = "pladdrr")

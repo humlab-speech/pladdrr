@@ -19,4 +19,9 @@ List with value (dB) and time
 \description{
 Get minimum intensity with time information
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
+}
 \keyword{internal}

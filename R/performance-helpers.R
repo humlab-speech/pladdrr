@@ -858,13 +858,11 @@ build_multiband_harmonicity <- function(
 #'   [calculate_multiband_hnr_ultra()].
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)
 #' hnr_interval2 <- multiband_hnr_stats(built, 0.5, 1.0)
-#' }
 #'
 #' @export
 multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {

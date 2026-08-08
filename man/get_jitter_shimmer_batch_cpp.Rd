@@ -40,4 +40,9 @@ Returns 11 voice quality measures (5 jitter, 6 shimmer) in a single call,
 for when you need multiple measures at once instead of calling individual
 methods separately.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
+pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, sound$.xptr)
+}
 \keyword{internal}

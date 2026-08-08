@@ -97,8 +97,7 @@ with no intermediate R objects.
 }
 
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 
 # Get all voice quality metrics
 vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
@@ -107,21 +106,20 @@ vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
 vq <- get_voice_quality_ultra(sound, metrics = "jitter")
 ppq5 <- vq$jitter_ppq5
 
-# Match Praat's plain To Pitch... + To PointProcess (cc) DSI path
-vq_praat <- get_voice_quality_ultra(
+# Match a plain pitch extraction + PointProcess (cc) DSI path
+vq_ac <- get_voice_quality_ultra(
   sound,
   metrics = "jitter",
   pitch_method = "ac",
   very_accurate = FALSE
 )
 
-# Equivalent shorthand for Praat's `To PointProcess (periodic, cc)...`
+# Equivalent shorthand for the periodic-cc PointProcess path
 vq_periodic_cc <- get_voice_quality_ultra(
   sound,
   metrics = "jitter",
   pitch_method = "periodic_cc"
 )
-}
 
 }
 \seealso{

@@ -149,6 +149,10 @@ validate_logical <- function(x, name = deparse(substitute(x))) {
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' is_praat_sound(sound)
+#' is_praat_sound(42)
 #' @export
 is_praat_sound <- function(x) {
   # Check for R6 Sound object first (preferred)
@@ -210,6 +214,11 @@ validate_sound_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' is_praat_pitch(pitch)
+#' is_praat_pitch(42)
 #' @export
 is_praat_pitch <- function(x) {
   # Check for R6 Pitch object first (preferred)
@@ -352,6 +361,11 @@ validate_pitch_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' is_praat_formant(formant)
+#' is_praat_formant(42)
 #' @export
 is_praat_formant <- function(x) {
   # Check for R6 Formant object first (preferred)
@@ -411,6 +425,11 @@ validate_formant_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' @param x Object to check
 #' @return Logical indicating validity
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' is_praat_intensity(intensity)
+#' is_praat_intensity(42)
 #' @export
 is_praat_intensity <- function(x) {
   # Check for R6 Intensity object first (preferred)

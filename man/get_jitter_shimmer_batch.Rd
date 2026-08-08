@@ -73,15 +73,8 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-
-# Two-pass adaptive pitch for robust extraction
-result <- two_pass_adaptive_pitch(sound)
-pitch <- Pitch(.xptr = result$pitch)
-
-# Accurate pulse detection using Sound+Pitch
-pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
 
 # Get all voice quality measures at once
 metrics <- get_jitter_shimmer_batch(pp, sound)
@@ -90,7 +83,6 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 cat("Jitter (local):", metrics$jitter_local * 100, "\%\n")
 cat("Shimmer (local):", metrics$shimmer_local * 100, "\%\n")
 cat("Shimmer (dB):", metrics$shimmer_local_db, "dB\n")
-}
 
 }
 \seealso{

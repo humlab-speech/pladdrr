@@ -102,6 +102,9 @@ get_duration <- function(sound) {
 #'
 #' @param sound A Sound R6 object
 #' @return Sampling rate in Hz
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' get_sampling_rate(sound)
 #' @export
 get_sampling_rate <- function(sound) {
   .Deprecated("sound$get_sampling_frequency()", package = "pladdrr")
@@ -114,6 +117,9 @@ get_sampling_rate <- function(sound) {
 #'
 #' @param sound A Sound R6 object
 #' @return Number of channels
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' get_n_channels(sound)
 #' @export
 get_n_channels <- function(sound) {
   .Deprecated("sound$get_number_of_channels()", package = "pladdrr")
@@ -126,6 +132,9 @@ get_n_channels <- function(sound) {
 #'
 #' @param sound A Sound R6 object
 #' @return Number of samples
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' get_n_samples(sound)
 #' @export
 get_n_samples <- function(sound) {
   .Deprecated("sound$get_number_of_samples()", package = "pladdrr")

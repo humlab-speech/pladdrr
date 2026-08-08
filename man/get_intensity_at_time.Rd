@@ -19,3 +19,8 @@ Intensity in dB
 \description{
 **DEPRECATED:** Use \code{intensity$get_value_at_time(time)} instead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+get_intensity_at_time(intensity, 0.25)
+}

@@ -183,6 +183,10 @@ NumericMatrix sound_as_matrix_fast_impl(SEXP sound_xptr, bool zerocopy = false) 
 //'
 //' @param x Numeric vector
 //' @return TRUE if x has the fast_vector or zerocopy_vector class
+//' @examples
+//' is_fast_access(1:10)
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+//' is_fast_access(get_sound_values_fast(sound))
 //' @export
 // [[Rcpp::export]]
 bool is_fast_access(SEXP x) {

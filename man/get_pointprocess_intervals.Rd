@@ -22,12 +22,9 @@ Computes all intervals in C++ without R<->C++ overhead.
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-pitch <- sound$to_pitch()
-pp <- pitch$to_point_process()
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pp <- sound$to_point_process_periodic_cc(75, 600)
 intervals <- get_pointprocess_intervals(pp)
 jitter <- sd(intervals) / mean(intervals)
-}
 
 }

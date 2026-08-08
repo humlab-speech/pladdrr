@@ -31,11 +31,10 @@ Get a specific quantile of pitch values without R6 wrapper overhead.
 Useful for VUV analysis workflows where you need Q1, Q3 for adaptive pitch range.
 }
 \examples{
-\dontrun{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch_ptr <- to_pitch_cc_direct(sound)
 q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
 q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
-}
 
 }
 \seealso{

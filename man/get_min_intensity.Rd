@@ -17,3 +17,8 @@ Minimum intensity in dB
 \description{
 **DEPRECATED:** Use \code{intensity$get_minimum()} instead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+get_min_intensity(intensity)
+}

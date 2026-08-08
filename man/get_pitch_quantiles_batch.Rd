@@ -52,8 +52,7 @@ pitch_refined <- to_pitch_cc_direct(
 }
 
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- sound$to_pitch()
 
 # Get Q1, median, Q3 in one call
@@ -63,6 +62,5 @@ quartiles <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
 q1 <- quartiles["q0.25"]
 median <- quartiles["q0.5"]
 q3 <- quartiles["q0.75"]
-}
 
 }

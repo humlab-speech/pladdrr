@@ -19,3 +19,8 @@ Mean pitch value
 \description{
 **DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pitch <- sound$to_pitch()
+get_mean_pitch(pitch)
+}

@@ -195,6 +195,9 @@ KlattGrid <- function(tmin = 0.0,
 #' @param formantFrequencyInterval Formant spacing interval in Hz (default 1000)
 #'
 #' @return KlattGrid object configured for vowel
+#' @examples
+#' kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+#' sound <- kg$to_sound()
 #' @export
 KlattGrid_createFromVowel <- function(duration = 0.5,
                                       f0start = 100.0,
@@ -224,6 +227,9 @@ KlattGrid_createFromVowel <- function(duration = 0.5,
 #' for testing the synthesizer.
 #'
 #' @return KlattGrid example object
+#' @examples
+#' kg <- KlattGrid_createExample()
+#' sound <- kg$to_sound()
 #' @export
 KlattGrid_createExample <- function() {
   mod <- get_module("klattgrid_module")

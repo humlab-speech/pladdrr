@@ -269,6 +269,11 @@ sounds_to_dtw <- function(reference, candidate,
 #' @param regression_window_length Window for regression calculation (default: 0.0)
 #' @return A DTW object
 #'
+#' @examples
+#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
+#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' dtw <- mfccs_to_dtw(s1$to_mfcc(), s2$to_mfcc())
+#'
 #' @export
 mfccs_to_dtw <- function(mfcc1, mfcc2,
                          coefficient_weight = 1.0,

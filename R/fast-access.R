@@ -20,8 +20,7 @@
 #' store, or use after the Sound object is garbage collected.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #'
 #' # Fast copy for analysis
 #' samples <- get_sound_values_fast(sound, channel = 1)
@@ -30,7 +29,6 @@
 #'
 #' # Equivalent — also a copy
 #' samples2 <- sound$get_values(channel = 1)
-#' }
 #'
 #' @seealso
 #' - [is_fast_vector()] to check if vector was created by fast access
@@ -56,10 +54,8 @@ get_sound_values_fast <- function(sound, channel = 1) {
 #' @return Numeric vector of sample times (in seconds)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' times <- get_sound_times_fast(sound)
-#' }
 #'
 #' @export
 get_sound_times_fast <- function(sound) {
@@ -106,15 +102,13 @@ sound_as_matrix_fast <- function(sound, zerocopy = FALSE) {
 #' @return Logical. TRUE if vector has fast_vector/zerocopy_vector class.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #'
 #' fast_vec <- get_sound_values_fast(sound, 1)
 #' regular_vec <- sound$get_values(1)
 #'
 #' is_fast_vector(fast_vec)     # TRUE
 #' is_fast_vector(regular_vec)  # FALSE
-#' }
 #'
 #' @export
 is_fast_vector <- function(x) {

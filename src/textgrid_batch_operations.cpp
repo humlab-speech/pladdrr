@@ -522,7 +522,10 @@ List textgrid_filter_xptr(
 //' - "max_duration": Matches intervals with duration <= threshold
 //'
 //' @examples
-//' \dontrun{
+//' tg <- TextGrid$create(0, 1, "words")
+//' tg$insert_boundary(1, 0.5)
+//' tg$set_interval_text(1, 2, "hello")
+//'
 //' # Get all non-empty intervals
 //' pred <- get_interval_predicate("non_empty")
 //' result <- textgrid_filter_xptr(tg$.xptr, 1, pred)
@@ -530,7 +533,6 @@ List textgrid_filter_xptr(
 //' # Get intervals longer than 100ms
 //' pred <- get_interval_predicate("min_duration", 0.1)
 //' result <- textgrid_filter_xptr(tg$.xptr, 1, pred)
-//' }
 //'
 //' @export
 // [[Rcpp::export]]

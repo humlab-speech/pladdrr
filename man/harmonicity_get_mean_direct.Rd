@@ -19,4 +19,9 @@ Mean HNR in dB
 \description{
 Get harmonicity mean directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+harmonicity <- sound$to_harmonicity_cc()
+pladdrr:::harmonicity_get_mean_direct(harmonicity$.xptr)
+}
 \keyword{internal}

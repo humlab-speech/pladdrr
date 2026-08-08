@@ -48,3 +48,7 @@ KlattGrid object configured for vowel
 Creates a KlattGrid pre-configured for synthesizing a vowel sound
 with specified formant frequencies and bandwidths.
 }
+\examples{
+kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+sound <- kg$to_sound()
+}

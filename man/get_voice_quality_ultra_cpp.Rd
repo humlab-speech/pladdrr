@@ -36,4 +36,10 @@ Named list with requested voice quality metrics
 Complete voice quality pipeline in C++: Sound -> Pitch -> PointProcess
 -> Jitter/Shimmer/HNR. Returns selected metrics.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+pladdrr:::get_voice_quality_ultra_cpp(
+  sound$.xptr, "jitter", 75, 600, 0, "cc", TRUE
+)
+}
 \keyword{internal}

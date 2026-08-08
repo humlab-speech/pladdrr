@@ -29,4 +29,11 @@ NumericMatrix with intervals as rows, metrics as columns
 \description{
 Batch get intensity statistics over multiple time intervals
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+pladdrr:::intensity_get_statistics_batch(
+  intensity$.xptr, c(0.1, 0.3), c(0.2, 0.4), c("mean", "max")
+)
+}
 \keyword{internal}

@@ -15,3 +15,7 @@ Sampling rate in Hz
 \description{
 **DEPRECATED:** Use \code{sound$get_sampling_frequency()} instead.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+get_sampling_rate(sound)
+}

@@ -32,17 +32,15 @@ This function reduces R<->C++ boundary crossings from `4n` calls
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-formant <- sound$to_formant()
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
 
 # Extract F1-F4 at 5 time points
-times <- seq(1, 2, length.out = 5)
+times <- seq(0.1, 0.4, length.out = 5)
 result <- get_formants_at_times(formant, times, formant_numbers = 1:4)
 
 # Access individual formants
 f1_vals <- result$F1
 f2_vals <- result$F2
-}
 
 }

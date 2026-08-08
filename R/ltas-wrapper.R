@@ -189,6 +189,10 @@ as.data.frame.Ltas <- function(x, ...) {
 #'
 #' @param ... Ltas objects to average
 #' @return A new Ltas object representing the average
+#' @examples
+#' s1 <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate = 16000)
+#' s2 <- Sound$create_tone(frequency = 240, duration = 0.5, sampling_rate = 16000)
+#' avg <- ltas_average(s1$to_ltas(), s2$to_ltas())
 #' @export
 ltas_average <- function(...) {
   ltas_list <- list(...)

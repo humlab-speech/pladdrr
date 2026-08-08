@@ -15,4 +15,8 @@ Integer interpolation code
 \description{
 Maps interpolation method names to integer codes.
 }
+\examples{
+pladdrr:::interpolation_to_code("cubic")
+pladdrr:::interpolation_to_code("linear")
+}
 \keyword{internal}

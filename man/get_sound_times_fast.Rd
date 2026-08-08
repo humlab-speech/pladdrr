@@ -17,9 +17,7 @@ Returns time values for each sample using a direct computation, instead of
 `sound$get_sample_times()`. Still allocates memory for the result.
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 times <- get_sound_times_fast(sound)
-}
 
 }

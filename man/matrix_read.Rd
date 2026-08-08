@@ -15,6 +15,37 @@ A Matrix object
 \description{
 Reads a Praat Matrix object from a text or binary file.
 }
+\examples{
+\donttest{
+# NOTE: currently errors — matrix_read() calls an internal .matrix_read()
+# binding that does not exist in this version of pladdrr (see
+# utils::globalVariables() entry in pladdrr-package.R). Use matrix_create()
+# or matrix_create_simple() to build a Matrix object programmatically
+# instead.
+mat_file <- tempfile(fileext = ".Matrix")
+writeLines(c(
+  "File type = \"ooTextFile\"",
+  "Object class = \"Matrix\"",
+  "",
+  "xmin = 0",
+  "xmax = 2",
+  "ymin = 0",
+  "ymax = 1",
+  "nx = 2",
+  "ny = 1",
+  "dx = 1",
+  "dy = 1",
+  "x1 = 0.5",
+  "y1 = 0.5",
+  "z [] []:",
+  "    z [1] []:",
+  "        z [1] [1] = 1",
+  "        z [1] [2] = 2"
+), mat_file)
+m <- matrix_read(mat_file)
+m$get_number_of_rows()
+}
+}
 \seealso{
 [matrix_create()], [matrix_create_simple()]
 }

@@ -35,19 +35,22 @@ Find matching Sound and TextGrid files in directories. This replaces Praat's
 pattern of manually pairing files based on naming conventions.
 }
 \examples{
-\dontrun{
-# Find all matching pairs
-pairs <- pair_sound_textgrid(
-  sound_dir = "audio/",
-  textgrid_dir = "annotations/"
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+  file.path(audio_dir, "utt1.wav")
 )
+tg <- TextGrid$create(0, 0.3, "words")
+tg$save(file.path(audio_dir, "utt1.TextGrid"))
+
+# Find all matching pairs
+pairs <- pair_sound_textgrid(sound_dir = audio_dir)
 
 # Process each pair
-for (i in 1:nrow(pairs)) {
-  sound <- Sound$new(pairs$sound_file[i])
-  tg <- TextGrid$new(pairs$textgrid_file[i])
+for (i in seq_len(nrow(pairs))) {
+  sound <- Sound(pairs$sound_file[i])
+  textgrid <- TextGrid(pairs$textgrid_file[i])
   # ... process ...
-}
 }
 
 }

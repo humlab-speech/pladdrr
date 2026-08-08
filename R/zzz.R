@@ -8,6 +8,8 @@
 #' @param name Module name (e.g., "pitch_module")
 #' @return The loaded Rcpp Module
 #' @keywords internal
+#' @examples
+#' mod <- pladdrr:::get_module("pitch_module")
 get_module <- function(name) {
   if (!exists(name, envir = .module_cache)) {
     .module_cache[[name]] <- tryCatch(

@@ -197,6 +197,12 @@ amplitude_tier_from_point_process <- function(point_process, sound) {
 #'
 #' @param intensity_tier An IntensityTier object
 #' @return An AmplitudeTier object
+#' @examples
+#' it <- IntensityTier(0, 1)
+#' it$add_point(0.25, 70)
+#' it$add_point(0.75, 60)
+#' at <- intensity_tier_to_amplitude_tier(it)
+#' at$get_number_of_points()
 #' @export
 intensity_tier_to_amplitude_tier <- function(intensity_tier) {
   if (!inherits(intensity_tier, "IntensityTier")) {

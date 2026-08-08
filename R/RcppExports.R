@@ -252,6 +252,12 @@ pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_
 #' @param averaging_method Integer (0=ENERGY, 1=SONES, 2=DB)
 #' @return NumericMatrix with intervals as rows, metrics as columns
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_statistics_batch(
+#'   intensity$.xptr, c(0.1, 0.3), c(0.2, 0.4), c("mean", "max")
+#' )
 intensity_get_statistics_batch <- function(intensity_xptr, from_times, to_times, metrics, averaging_method = 0L) {
     .Call(`_pladdrr_intensity_get_statistics_batch`, intensity_xptr, from_times, to_times, metrics, averaging_method)
 }
@@ -263,6 +269,10 @@ intensity_get_statistics_batch <- function(intensity_xptr, from_times, to_times,
 #' @param to_time End time
 #' @return List with value (dB) and time
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
 intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_minimum_with_time`, intensity_xptr, from_time, to_time)
 }
@@ -284,6 +294,10 @@ intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_ti
 #' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
 #' @return Named list with 11 voice quality measures
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
+#' pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, sound$.xptr)
 get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3, max_amplitude_factor = 1.6) {
     .Call(`_pladdrr_get_jitter_shimmer_batch_cpp`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
 }
@@ -297,6 +311,10 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
 #' @param file_paths Character vector of .wav file paths
 #' @return Numeric vector of durations (seconds), NA for errors
 #' @keywords internal
+#' @examples
+#' wav <- tempfile(fileext = ".wav")
+#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav)
+#' pladdrr:::get_durations_batch_cpp(wav)
 get_durations_batch_cpp <- function(file_paths) {
     .Call(`_pladdrr_get_durations_batch_cpp`, file_paths)
 }
@@ -358,6 +376,11 @@ calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pit
 #' @param very_accurate Whether to use Praat's very accurate pitch path for jitter/shimmer
 #' @return Named list with requested voice quality metrics
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pladdrr:::get_voice_quality_ultra_cpp(
+#'   sound$.xptr, "jitter", 75, 600, 0, "cc", TRUE
+#' )
 get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate) {
     .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate)
 }
@@ -2089,6 +2112,10 @@ pitch_get_quantile_direct <- function(pitch_xptr, quantile, from_time = 0, to_ti
 #' @param pitch_xptr External pointer to Pitch
 #' @return Number of voiced frames
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' pladdrr:::pitch_count_voiced_direct(pitch$.xptr)
 pitch_count_voiced_direct <- function(pitch_xptr) {
     .Call(`_pladdrr_pitch_count_voiced_direct`, pitch_xptr)
 }
@@ -2145,6 +2172,10 @@ formant_get_mean_direct <- function(formant_xptr, formant_number, from_time = 0,
 #' @param interpolation 0=nearest, 1=linear, 2=cubic, 3=sinc70, 4=sinc700
 #' @return Intensity in dB
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_value_direct(intensity$.xptr, 0.25)
 intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L) {
     .Call(`_pladdrr_intensity_get_value_direct`, intensity_xptr, time, interpolation)
 }
@@ -2156,6 +2187,10 @@ intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L)
 #' @param averaging_method 0=energy, 1=sones, 2=dB
 #' @return Mean intensity
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_mean_direct(intensity$.xptr)
 intensity_get_mean_direct <- function(intensity_xptr, from_time = 0, to_time = 0, averaging_method = 0L) {
     .Call(`_pladdrr_intensity_get_mean_direct`, intensity_xptr, from_time, to_time, averaging_method)
 }
@@ -2166,6 +2201,10 @@ intensity_get_mean_direct <- function(intensity_xptr, from_time = 0, to_time = 0
 #' @param to_time End time
 #' @return Minimum intensity in dB
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_minimum_direct(intensity$.xptr)
 intensity_get_minimum_direct <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_minimum_direct`, intensity_xptr, from_time, to_time)
 }
@@ -2176,6 +2215,10 @@ intensity_get_minimum_direct <- function(intensity_xptr, from_time = 0, to_time 
 #' @param to_time End time
 #' @return Maximum intensity in dB
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::intensity_get_maximum_direct(intensity$.xptr)
 intensity_get_maximum_direct <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_maximum_direct`, intensity_xptr, from_time, to_time)
 }
@@ -2186,6 +2229,10 @@ intensity_get_maximum_direct <- function(intensity_xptr, from_time = 0, to_time 
 #' @param interpolation Interpolation method
 #' @return HNR in dB
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' harmonicity <- sound$to_harmonicity_cc()
+#' pladdrr:::harmonicity_get_value_direct(harmonicity$.xptr, 0.25)
 harmonicity_get_value_direct <- function(harmonicity_xptr, time, interpolation = 2L) {
     .Call(`_pladdrr_harmonicity_get_value_direct`, harmonicity_xptr, time, interpolation)
 }
@@ -2196,6 +2243,10 @@ harmonicity_get_value_direct <- function(harmonicity_xptr, time, interpolation =
 #' @param to_time End time
 #' @return Mean HNR in dB
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' harmonicity <- sound$to_harmonicity_cc()
+#' pladdrr:::harmonicity_get_mean_direct(harmonicity$.xptr)
 harmonicity_get_mean_direct <- function(harmonicity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_harmonicity_get_mean_direct`, harmonicity_xptr, from_time, to_time)
 }
@@ -2281,6 +2332,10 @@ formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
 #' @param max_period_factor Maximum period factor (default: 1.3)
 #' @return Mean period in seconds
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
+#' pladdrr:::get_point_process_mean_period_direct(pp$.xptr)
 get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
     .Call(`_pladdrr_get_point_process_mean_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
@@ -2294,6 +2349,10 @@ get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time
 #' @param max_period_factor Maximum period factor
 #' @return Standard deviation of periods
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
+#' pladdrr:::get_point_process_stdev_period_direct(pp$.xptr)
 get_point_process_stdev_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
     .Call(`_pladdrr_get_point_process_stdev_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
@@ -2357,6 +2416,10 @@ create_sound_from_values <- function(values, sampling_rate = 44100.0, start_time
 #' @param sound_obj List representing a praat_sound object
 #' @return Numeric value representing duration in seconds
 #' @keywords internal
+#' @examples
+#' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+#' snd <- create_sound_from_values(values, sampling_rate = 10000)
+#' pladdrr:::get_sound_duration_cpp(snd)
 get_sound_duration_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_duration_cpp`, sound_obj)
 }
@@ -2368,6 +2431,10 @@ get_sound_duration_cpp <- function(sound_obj) {
 #' @param sound_obj List representing a praat_sound object
 #' @return Numeric value representing sampling rate in Hz
 #' @keywords internal
+#' @examples
+#' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+#' snd <- create_sound_from_values(values, sampling_rate = 10000)
+#' pladdrr:::get_sound_sampling_rate_cpp(snd)
 get_sound_sampling_rate_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_sampling_rate_cpp`, sound_obj)
 }
@@ -2379,6 +2446,10 @@ get_sound_sampling_rate_cpp <- function(sound_obj) {
 #' @param sound_obj List representing a praat_sound object
 #' @return Integer number of samples
 #' @keywords internal
+#' @examples
+#' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+#' snd <- create_sound_from_values(values, sampling_rate = 10000)
+#' pladdrr:::get_sound_n_samples_cpp(snd)
 get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_n_samples_cpp`, sound_obj)
 }
@@ -2472,6 +2543,10 @@ sound_as_matrix_fast_impl <- function(sound_xptr, zerocopy = FALSE) {
 #'
 #' @param x Numeric vector
 #' @return TRUE if x has the fast_vector or zerocopy_vector class
+#' @examples
+#' is_fast_access(1:10)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+#' is_fast_access(get_sound_values_fast(sound))
 #' @export
 is_fast_access <- function(x) {
     .Call(`_pladdrr_is_fast_access`, x)
@@ -3771,7 +3846,10 @@ textgrid_filter_xptr <- function(textgrid_xptr, tier_number, predicate_xptr, sou
 #' - "max_duration": Matches intervals with duration <= threshold
 #'
 #' @examples
-#' \dontrun{
+#' tg <- TextGrid$create(0, 1, "words")
+#' tg$insert_boundary(1, 0.5)
+#' tg$set_interval_text(1, 2, "hello")
+#'
 #' # Get all non-empty intervals
 #' pred <- get_interval_predicate("non_empty")
 #' result <- textgrid_filter_xptr(tg$.xptr, 1, pred)
@@ -3779,7 +3857,6 @@ textgrid_filter_xptr <- function(textgrid_xptr, tier_number, predicate_xptr, sou
 #' # Get intervals longer than 100ms
 #' pred <- get_interval_predicate("min_duration", 0.1)
 #' result <- textgrid_filter_xptr(tg$.xptr, 1, pred)
-#' }
 #'
 #' @export
 get_interval_predicate <- function(type, threshold = 0.0) {

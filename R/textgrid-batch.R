@@ -149,11 +149,11 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
 #' @return Character vector of all interval labels
 #'
 #' @examples
-#' \dontrun{
-#' tg <- TextGrid("example.TextGrid")
+#' tg <- TextGrid$create(0, 1, "words")
+#' tg$insert_boundary(1, 0.5)
+#' tg$set_interval_text(1, 2, "hello")
 #' labels <- get_textgrid_labels_all(tg, tier = 1)
 #' table(labels)  # Frequency table of labels
-#' }
 #'
 #' @export
 get_textgrid_labels_all <- function(textgrid, tier) {
@@ -186,19 +186,14 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 #'   - `duration`: Duration (seconds)
 #'
 #' @examples
-#' \dontrun{
-#' tg <- TextGrid("example.TextGrid")
+#' tg <- TextGrid$create(0, 1, "words")
+#' tg$insert_boundary(1, 0.5)
+#' tg$set_interval_text(1, 2, "hello")
 #' stats <- get_textgrid_interval_stats(tg, tier = 1)
 #'
-#' # Analysis
-#' library(dplyr)
-#' stats %>%
-#'   filter(label == "V") %>%
-#'   summarize(
-#'     mean_duration = mean(duration),
-#'     n_intervals = n()
-#'   )
-#' }
+#' # Analysis with base R
+#' voiced <- stats[stats$label == "hello", ]
+#' mean(voiced$duration)
 #'
 #' @export
 get_textgrid_interval_stats <- function(textgrid, tier) {

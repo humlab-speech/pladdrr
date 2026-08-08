@@ -603,6 +603,12 @@ List pitch_get_adaptive_range(
 //' @param averaging_method Integer (0=ENERGY, 1=SONES, 2=DB)
 //' @return NumericMatrix with intervals as rows, metrics as columns
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_statistics_batch(
+//'   intensity$.xptr, c(0.1, 0.3), c(0.2, 0.4), c("mean", "max")
+//' )
 // [[Rcpp::export]]
 NumericMatrix intensity_get_statistics_batch(
     SEXP intensity_xptr,
@@ -704,6 +710,10 @@ NumericMatrix intensity_get_statistics_batch(
 //' @param to_time End time
 //' @return List with value (dB) and time
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' intensity <- sound$to_intensity()
+//' pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
 // [[Rcpp::export]]
 List intensity_get_minimum_with_time(
     SEXP intensity_xptr,
@@ -769,6 +779,10 @@ List intensity_get_minimum_with_time(
 //' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
 //' @return Named list with 11 voice quality measures
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' pp <- sound$to_point_process_periodic_cc(75, 600)
+//' pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, sound$.xptr)
 // [[Rcpp::export]]
 List get_jitter_shimmer_batch_cpp(
     SEXP pp_xptr,
@@ -859,6 +873,10 @@ List get_jitter_shimmer_batch_cpp(
 //' @param file_paths Character vector of .wav file paths
 //' @return Numeric vector of durations (seconds), NA for errors
 //' @keywords internal
+//' @examples
+//' wav <- tempfile(fileext = ".wav")
+//' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav)
+//' pladdrr:::get_durations_batch_cpp(wav)
 // [[Rcpp::export]]
 NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
     int n = file_paths.size();
@@ -1149,6 +1167,11 @@ static bool has_metric(CharacterVector metrics, const std::string& target) {
 //' @param very_accurate Whether to use Praat's very accurate pitch path for jitter/shimmer
 //' @return Named list with requested voice quality metrics
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+//' pladdrr:::get_voice_quality_ultra_cpp(
+//'   sound$.xptr, "jitter", 75, 600, 0, "cc", TRUE
+//' )
 // [[Rcpp::export]]
 List get_voice_quality_ultra_cpp(
     SEXP sound_xptr,

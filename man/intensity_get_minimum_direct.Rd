@@ -19,4 +19,9 @@ Minimum intensity in dB
 \description{
 Get intensity minimum directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+pladdrr:::intensity_get_minimum_direct(intensity$.xptr)
+}
 \keyword{internal}

@@ -19,4 +19,9 @@ Intensity in dB
 \description{
 Get intensity value at time directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+intensity <- sound$to_intensity()
+pladdrr:::intensity_get_value_direct(intensity$.xptr, 0.25)
+}
 \keyword{internal}

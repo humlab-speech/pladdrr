@@ -19,3 +19,21 @@ Mean formant frequency in Hz, or NA if undefined
 \description{
 **DEPRECATED:** Use the R6 interface instead: `formant$get_mean()`
 }
+\examples{
+# A legacy praat_formant object (the structure extract_formants() used
+# to return); built directly here for a self-contained example.
+formant <- structure(
+  list(
+    values = data.frame(
+      time = c(0.1, 0.1, 0.2, 0.2),
+      formant_number = c(1, 2, 1, 2),
+      frequency = c(500, 1500, 520, 1480),
+      bandwidth = c(80, 120, 85, 110)
+    ),
+    n_frames = 2,
+    n_formants = 2
+  ),
+  class = "praat_formant"
+)
+get_mean_formant(formant, formant_number = 1)
+}

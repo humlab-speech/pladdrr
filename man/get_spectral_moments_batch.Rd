@@ -17,6 +17,13 @@ get_spectral_moments_batch(spectrogram, power = 2)
 }
 \description{
 Computes centre of gravity, standard deviation, skewness, and kurtosis for
-every frame in a Spectrogram in a single C++ pass, eliminating the ~14×
-R-loop overhead of calling per-frame Spectrum methods.
+every frame in a Spectrogram in a single C++ pass, instead of calling the
+per-frame Spectrum methods in an R loop.
+}
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+spectrogram <- sound$to_spectrogram()
+moments <- get_spectral_moments_batch(spectrogram)
+head(moments)
+
 }

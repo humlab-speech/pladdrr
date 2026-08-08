@@ -22,18 +22,16 @@
 #' (for 4 formants at n times) to just 1 call.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#' formant <- sound$to_formant()
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
 #'
 #' # Extract F1-F4 at 5 time points
-#' times <- seq(1, 2, length.out = 5)
+#' times <- seq(0.1, 0.4, length.out = 5)
 #' result <- get_formants_at_times(formant, times, formant_numbers = 1:4)
 #'
 #' # Access individual formants
 #' f1_vals <- result$F1
 #' f2_vals <- result$F2
-#' }
 #'
 #' @export
 get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
@@ -79,12 +77,10 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
 #'   each containing a numeric vector of bandwidths.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#' formant <- sound$to_formant()
-#' times <- seq(1, 2, length.out = 5)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' times <- seq(0.1, 0.4, length.out = 5)
 #' bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)
-#' }
 #'
 #' @export
 get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
@@ -128,12 +124,10 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' This function uses existing optimized C++ code.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' times <- seq(pitch$get_xmin(), pitch$get_xmax(), length.out = 100)
+#' times <- seq(0.05, 0.45, length.out = 10)
 #' f0_contour <- get_pitch_at_times(pitch, times)
-#' }
 #'
 #' @export
 get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
@@ -168,12 +162,10 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #' @return Numeric vector of pitch strengths (0-1) at the specified times
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' times <- seq(pitch$get_xmin(), pitch$get_xmax(), length.out = 100)
+#' times <- seq(0.05, 0.45, length.out = 10)
 #' strengths <- get_pitch_strengths_at_times(pitch, times)
-#' }
 #'
 #' @export
 get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
@@ -223,18 +215,16 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #' ```
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
 #'
 #' # Get Q1, median, Q3 in one call
 #' quartiles <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
-#' 
+#'
 #' # Access by name
 #' q1 <- quartiles["q0.25"]
 #' median <- quartiles["q0.5"]
 #' q3 <- quartiles["q0.75"]
-#' }
 #'
 #' @export
 get_pitch_quantiles_batch <- function(pitch, quantiles,
@@ -279,12 +269,10 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' Uses existing optimized C++ code.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' times <- seq(intensity$get_xmin(), intensity$get_xmax(), length.out = 100)
+#' times <- seq(0.05, 0.45, length.out = 10)
 #' intensities <- get_intensity_at_times(intensity, times)
-#' }
 #'
 #' @export
 get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
@@ -332,12 +320,9 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #' Reduces R<->C++ calls from `n` to 1.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#' pitch <- sound$to_pitch()
-#' pp <- pitch$to_point_process()
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' times <- get_pointprocess_times(pp)
-#' }
 #'
 #' @export
 get_pointprocess_times <- function(pointprocess) {
@@ -361,13 +346,10 @@ get_pointprocess_times <- function(pointprocess) {
 #' Computes all intervals in C++ without R<->C++ overhead.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#' pitch <- sound$to_pitch()
-#' pp <- pitch$to_point_process()
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' intervals <- get_pointprocess_intervals(pp)
 #' jitter <- sd(intervals) / mean(intervals)
-#' }
 #'
 #' @export
 get_pointprocess_intervals <- function(pointprocess) {
@@ -388,13 +370,10 @@ get_pointprocess_intervals <- function(pointprocess) {
 #' @return Integer vector of nearest point indices (1-based)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#' pitch <- sound$to_pitch()
-#' pp <- pitch$to_point_process()
-#' query_times <- seq(1, 2, by = 0.1)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
+#' query_times <- seq(0.1, 0.4, by = 0.05)
 #' indices <- get_pointprocess_nearest_indices(pp, query_times)
-#' }
 #'
 #' @export
 get_pointprocess_nearest_indices <- function(pointprocess, times) {
@@ -461,15 +440,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #' ```
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr"))
-#'
-#' # Two-pass adaptive pitch for robust extraction
-#' result <- two_pass_adaptive_pitch(sound)
-#' pitch <- Pitch(.xptr = result$pitch)
-#'
-#' # Accurate pulse detection using Sound+Pitch
-#' pp <- to_point_process_from_sound_and_pitch(sound, pitch)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
 #'
 #' # Get all voice quality measures at once
 #' metrics <- get_jitter_shimmer_batch(pp, sound)
@@ -478,7 +450,6 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #' cat("Jitter (local):", metrics$jitter_local * 100, "%\n")
 #' cat("Shimmer (local):", metrics$shimmer_local * 100, "%\n")
 #' cat("Shimmer (dB):", metrics$shimmer_local_db, "dB\n")
-#' }
 #'
 #' @seealso
 #' [two_pass_adaptive_pitch()] for robust pitch extraction
@@ -550,15 +521,14 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' scalar or simple vector results.
 #'
 #' @examples
-#' \dontrun{
-#' # Single file
-#' duration <- get_durations_batch("voice.wav")
+#' wav1 <- tempfile(fileext = ".wav")
+#' wav2 <- tempfile(fileext = ".wav")
+#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav1)
+#' Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)$save(wav2)
 #'
 #' # Multiple files (DSI workflow)
-#' mpt_files <- c("sustained_a_1.wav", "sustained_a_2.wav", "sustained_a_3.wav")
-#' durations <- get_durations_batch(mpt_files)
+#' durations <- get_durations_batch(c(wav1, wav2))
 #' max_mpt <- max(durations, na.rm = TRUE)
-#' }
 #'
 #' @seealso
 #' [LongSound()] for full audio file access when you need more than duration
@@ -780,8 +750,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' with no intermediate R objects.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #'
 #' # Get all voice quality metrics
 #' vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
@@ -790,21 +759,20 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' vq <- get_voice_quality_ultra(sound, metrics = "jitter")
 #' ppq5 <- vq$jitter_ppq5
 #'
-#' # Match Praat's plain To Pitch... + To PointProcess (cc) DSI path
-#' vq_praat <- get_voice_quality_ultra(
+#' # Match a plain pitch extraction + PointProcess (cc) DSI path
+#' vq_ac <- get_voice_quality_ultra(
 #'   sound,
 #'   metrics = "jitter",
 #'   pitch_method = "ac",
 #'   very_accurate = FALSE
 #' )
 #'
-#' # Equivalent shorthand for Praat's `To PointProcess (periodic, cc)...`
+#' # Equivalent shorthand for the periodic-cc PointProcess path
 #' vq_periodic_cc <- get_voice_quality_ultra(
 #'   sound,
 #'   metrics = "jitter",
 #'   pitch_method = "periodic_cc"
 #' )
-#' }
 #'
 #' @seealso
 #' [Sound] for creating Sound objects
@@ -851,14 +819,20 @@ get_voice_quality_ultra <- function(sound,
 #' Get spectral moments for all frames of a Spectrogram
 #'
 #' Computes centre of gravity, standard deviation, skewness, and kurtosis for
-#' every frame in a Spectrogram in a single C++ pass, eliminating the ~14×
-#' R-loop overhead of calling per-frame Spectrum methods.
+#' every frame in a Spectrogram in a single C++ pass, instead of calling the
+#' per-frame Spectrum methods in an R loop.
 #'
 #' @param spectrogram A \code{Spectrogram} object
 #' @param power Numeric. Power for moment weighting (default 2.0, matching Praat)
 #'
 #' @return \code{data.frame} with columns \code{time}, \code{cog}, \code{sd},
 #'   \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where undefined)
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' spectrogram <- sound$to_spectrogram()
+#' moments <- get_spectral_moments_batch(spectrogram)
+#' head(moments)
 #'
 #' @export
 get_spectral_moments_batch <- function(spectrogram, power = 2.0) {
