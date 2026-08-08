@@ -19,11 +19,12 @@ Provides a statistical summary of a praat_sound object, including amplitude
 statistics and metadata.
 }
 \examples{
-\dontrun{
-# DEPRECATED - generate_sine_wave now returns R6 Sound objects
-# This S3 method is only for legacy praat_sound objects
-sound <- generate_sine_wave(440, 0.5)
+sound <- list(
+  duration = 0.5, sampling_rate = 8000, n_samples = 4000, n_channels = 1,
+  start_time = 0, end_time = 0.5,
+  values = sin(2 * pi * 150 * seq(0, 0.5, length.out = 4000))
+)
+class(sound) <- "praat_sound"
 summary(sound)
-}
 
 }

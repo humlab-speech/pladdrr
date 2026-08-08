@@ -19,4 +19,7 @@ The validated path (invisibly)
 \description{
 Ensures a file path has one of the expected extensions
 }
+\examples{
+pladdrr:::validate_file_extension("speech.wav", c("wav", "WAV"))
+}
 \keyword{internal}

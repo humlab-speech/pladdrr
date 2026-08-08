@@ -33,3 +33,15 @@ This function combines:
 1. SIMD duration calculation for all intervals
 2. SIMD statistics calculation for pitch values in each interval
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+pitch <- sound$to_pitch()
+tg <- TextGrid(0, 1)
+tg$add_interval_tier("phones")
+tg$insert_boundary("phones", 0.5)
+tg$set_interval_text("phones", 1, "a")
+tg$set_interval_text("phones", 2, "b")
+
+stats <- textgrid_interval_pitch_batch(tg$.xptr, pitch$.xptr, tier_number = 1, unit = "HERTZ")
+
+}

@@ -19,3 +19,9 @@ Returns time values for each sample via optimized computation.
 Computes sample times directly from Sound metadata (t0 + i*dt)
 rather than going through Praat's accessor functions.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.1)
+times <- sound_times_fast(sound$.xptr)
+head(times)
+
+}

@@ -35,3 +35,7 @@ New Sound object
 \description{
 Deepen band modulation (hearing enhancement)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+enhanced <- sound_deepen_band_modulation(sound, enhancement_db = 10)
+}

@@ -22,9 +22,7 @@ New Sound object
 Time-stretch a sound using overlap-add
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
-slower <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 1.5)  # 50\% slower
-faster <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 0.8)  # 20\% faster
-}
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+slower <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 1.5)
+faster <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 0.8)
 }

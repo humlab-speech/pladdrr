@@ -17,4 +17,7 @@ The validated value (invisibly)
 \description{
 Ensures a parameter is a logical value
 }
+\examples{
+pladdrr:::validate_logical(TRUE)
+}
 \keyword{internal}

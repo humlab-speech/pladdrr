@@ -53,12 +53,11 @@ Avoids O(n) R→C boundary crossings for VUV analysis workflows.
 Use this when processing many sound segments in a loop.
 }
 \examples{
-\dontrun{
-# Instead of a loop:
-# pitches <- lapply(sounds, function(s) s$to_pitch_cc())
-
-# Use the batch operation:
+sounds <- list(
+  Sound$create_tone(frequency = 150, duration = 0.5),
+  Sound$create_tone(frequency = 200, duration = 0.5)
+)
+# Instead of a loop (pitches <- lapply(sounds, function(s) s$to_pitch_cc())):
 pitches <- sound_to_pitch_cc_batch(sounds)
-}
 
 }

@@ -17,4 +17,10 @@ The validated path (invisibly)
 \description{
 Ensures a file path points to an existing file
 }
+\examples{
+path <- tempfile(fileext = ".wav")
+file.create(path)
+pladdrr:::validate_file_exists(path)
+unlink(path)
+}
 \keyword{internal}

@@ -29,3 +29,11 @@ List of Intensity objects (R6 or xptr depending on return_r6)
 \description{
 Extract Intensity from Multiple Sounds in Single C++ Call
 }
+\examples{
+sounds <- list(
+  Sound$create_tone(frequency = 150, duration = 0.5),
+  Sound$create_tone(frequency = 200, duration = 0.5)
+)
+intensities <- sound_to_intensity_batch(sounds)
+
+}

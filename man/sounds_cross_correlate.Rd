@@ -21,3 +21,8 @@ New Sound object (cross-correlation function)
 \description{
 Cross-correlate two sounds
 }
+\examples{
+s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+s2 <- Sound$create_tone(frequency = 220, duration = 0.2)
+xcorr <- sounds_cross_correlate(s1, s2)
+}

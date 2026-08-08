@@ -28,11 +28,9 @@ Factory function to generate a pure sine wave tone.
 Use `Sound$create_tone()` for backward compatibility (calls this function).
 }
 \examples{
-\dontrun{
 # Create 440 Hz tone
 sound <- sound_create_tone(frequency = 440, duration = 1.0)
 
 # Or using Sound$create_tone() (same thing)
 sound <- Sound$create_tone(frequency = 440, duration = 1.0)
-}
 }

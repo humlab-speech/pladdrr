@@ -15,4 +15,8 @@ Duration in seconds
 \description{
 Get Sound duration directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+pladdrr:::sound_get_duration_direct(sound$.xptr)
+}
 \keyword{internal}

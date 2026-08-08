@@ -30,7 +30,7 @@ For gaussian2/kaiser2, use 2.0. For gaussian3-5, use 3.0-5.0 respectively.}
 \item{preserve_times}{Logical. Preserve original time stamps (default: FALSE)}
 
 \item{return_r6}{Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
-Using FALSE avoids R6 wrapper overhead for maximum performance.}
+Using FALSE skips R6 wrapper construction.}
 }
 \value{
 List of Sound objects, one for each extracted interval
@@ -59,8 +59,11 @@ Available window shapes (see Praat manual for details):
 - "kaiser2" - Narrower Kaiser-Bessel (alpha=40.5), use relative_width=2.0
 }
 \examples{
-\dontrun{
-# Extract voiced segments
+sound <- sounds_append(
+  Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+  Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+)
+vad_grid <- sound_to_textgrid_silences(sound)
 voiced_intervals <- textgrid_get_intervals_where(vad_grid, 1, "equals", "sounding")
 
 voiced_sounds <- sound_extract_parts(
@@ -69,13 +72,9 @@ voiced_sounds <- sound_extract_parts(
   voiced_intervals$xmax
 )
 
-# Concatenate all voiced segments
-voiced_concatenated <- Sound$concatenate(voiced_sounds)
-
-# Or analyze each segment separately
+# Analyze each segment separately
 for (i in seq_along(voiced_sounds)) {
   cat("Segment", i, "duration:", voiced_sounds[[i]]$get_total_duration(), "s\n")
-}
 }
 
 }

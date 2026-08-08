@@ -39,32 +39,26 @@ disk, and resamples only that window.
 - Large file processing: working with hours-long recordings
 }
 \examples{
-\dontrun{
-# Extract 100ms window starting at 2.5 seconds
-window <- sound_load_window("long_recording.wav", start = 2.5, end = 2.6)
+# Write a short synthetic recording, then load only part of it
+sound <- Sound$create_tone(frequency = 220, duration = 2.0)
+path <- tempfile(fileext = ".wav")
+sound$save(path)
 
-# Extract and resample to 10 kHz (for spectral analysis)
-window_10k <- sound_load_window(
-  "recording.wav",
-  start = 1.0,
-  end = 1.05,
-  resample_to = 10000
-)
+window <- sound_load_window(path, start = 0.5, end = 0.6)
 
-# Preserve original time domain (window starts at 1.0, not 0.0)
-window_timed <- sound_load_window(
-  "recording.wav",
-  start = 1.0,
-  end = 1.05,
-  preserve_times = TRUE
-)
-}
+# Extract and resample (for spectral analysis)
+window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 10000)
+
+# Preserve original time domain (window starts at 0.5, not 0.0)
+window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+
+unlink(path)
 
 }
 \seealso{
 [Sound], [LongSound]
 
-Other performance: 
+Other batch-ops: 
 \code{\link{textgrid_merge}()}
 }
-\concept{performance}
+\concept{batch-ops}

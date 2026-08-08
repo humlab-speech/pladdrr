@@ -36,9 +36,7 @@ A Sound object
 Creates a sound consisting of multiple sinusoids at equal frequency intervals.
 }
 \examples{
-\dontrun{
 # Harmonic tone with 10 components at 100 Hz intervals
 tone <- sound_create_tone_complex(frequency_step = 100, number_of_components = 10)
 tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
-}
 }

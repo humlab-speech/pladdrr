@@ -22,8 +22,6 @@ New Sound object
 Apply Hann band-pass filter
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 filtered <- sound_filter_pass_hann_band(sound, fmin = 300, fmax = 3000, smooth = 100)
-}
 }

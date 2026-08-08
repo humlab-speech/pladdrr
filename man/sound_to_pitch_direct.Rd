@@ -26,4 +26,9 @@ External pointer to Pitch
 \description{
 Create Pitch from Sound directly (no R6 wrapping)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+pitch_xptr <- pladdrr:::sound_to_pitch_direct(sound$.xptr)
+pitch <- Pitch(.xptr = pitch_xptr)
+}
 \keyword{internal}

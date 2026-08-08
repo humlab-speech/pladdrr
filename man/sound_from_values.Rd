@@ -21,12 +21,10 @@ Factory function to create a Sound object from a numeric vector or matrix.
 Use `Sound$from_values()` for backward compatibility (calls this function).
 }
 \examples{
-\dontrun{
 # Create from vector (mono)
-values <- sin(2 * pi * 440 * seq(0, 1, length.out = 44100))
-sound <- sound_from_values(values, 44100)
+values <- sin(2 * pi * 440 * seq(0, 1, length.out = 4410))
+sound <- sound_from_values(values, 4410)
 
 # Or using Sound$from_values() (same thing)
-sound <- Sound$from_values(values, 44100)
-}
+sound <- Sound$from_values(values, 4410)
 }

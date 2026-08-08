@@ -33,18 +33,14 @@ sound_extract_and_pitch(
 List of Pitch objects (R6 or xptr depending on return_r6)
 }
 \description{
-The most efficient way to analyze multiple intervals from a sound.
-Combines extraction and analysis in a single C++ call, avoiding all
-intermediate R6 object creation.
+Combines interval extraction and pitch analysis in a single C++ call,
+avoiding intermediate R6 object creation, as an alternative to
+extracting each part and calling `$to_pitch()` on it in a loop.
 }
 \examples{
-\dontrun{
-# Instead of the slow pattern:
-# parts <- lapply(1:n, function(i) sound$extract_part(from[i], to[i]))
-# pitches <- lapply(parts, function(p) p$to_pitch())
-
-# Use combined operation:
+sound <- Sound$create_tone(frequency = 150, duration = 2.0)
+from_times <- c(0.2, 1.0)
+to_times <- c(0.6, 1.4)
 pitches <- sound_extract_and_pitch(sound, from_times, to_times)
-}
 
 }

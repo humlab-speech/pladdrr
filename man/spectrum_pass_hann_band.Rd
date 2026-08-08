@@ -22,10 +22,8 @@ NULL (modifies spectrum in place)
 Apply Hann band-pass filter to spectrum (in-place)
 }
 \examples{
-\dontrun{
-sound <- Sound("vowel.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 spectrum <- sound$to_spectrum()
 spectrum_pass_hann_band(spectrum, fmin = 300, fmax = 3000, smooth = 100)
 # spectrum is now modified
-}
 }

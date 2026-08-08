@@ -237,6 +237,9 @@ as.data.frame.Table <- function(x, ...) x$as_data_frame()
 #' @param columnNames Character vector of column names (optional)
 #' @return A Table object
 #' @seealso [Table] for object methods
+#' @examples
+#' tbl <- table_create(numberOfRows = 3, columnNames = c("speaker", "f0"))
+#' tbl2 <- table_create(numberOfRows = 3, numberOfColumns = 2)
 #' @export
 table_create <- function(numberOfRows, numberOfColumns = NULL, columnNames = NULL) {
   Table(numberOfRows = numberOfRows,

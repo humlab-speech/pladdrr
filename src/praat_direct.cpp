@@ -57,6 +57,9 @@ extern void NUMmachar();
 //' @param sound_xptr External pointer to Sound
 //' @return Duration in seconds
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+//' pladdrr:::sound_get_duration_direct(sound$.xptr)
 // [[Rcpp::export]]
 double sound_get_duration_direct(SEXP sound_xptr) {
     XPtr<structSound> sound(sound_xptr);
@@ -72,6 +75,9 @@ double sound_get_duration_direct(SEXP sound_xptr) {
 //' @param to_time End time (0 = end)
 //' @return RMS value
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+//' pladdrr:::sound_get_rms_direct(sound$.xptr)
 // [[Rcpp::export]]
 double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structSound> sound(sound_xptr);
@@ -484,6 +490,10 @@ double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, 
 //' @param pitch_ceiling Maximum pitch (Hz)
 //' @return External pointer to Pitch
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+//' pitch_xptr <- pladdrr:::sound_to_pitch_direct(sound$.xptr)
+//' pitch <- Pitch(.xptr = pitch_xptr)
 // [[Rcpp::export]]
 SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
                             double pitch_floor = 75, double pitch_ceiling = 600) {
@@ -513,6 +523,10 @@ SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
 //' @param pre_emphasis Pre-emphasis frequency (Hz)
 //' @return External pointer to Formant
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+//' formant_xptr <- pladdrr:::sound_to_formant_direct(sound$.xptr)
+//' formant <- Formant(.xptr = formant_xptr)
 // [[Rcpp::export]]
 SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
                               double max_formants = 5, double max_formant = 5500,
@@ -543,6 +557,10 @@ SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
 //' @param subtract_mean Whether to subtract mean
 //' @return External pointer to Intensity
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+//' intensity_xptr <- pladdrr:::sound_to_intensity_direct(sound$.xptr)
+//' intensity <- Intensity(.xptr = intensity_xptr)
 // [[Rcpp::export]]
 SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
                                 double time_step = 0, bool subtract_mean = true) {
@@ -573,6 +591,10 @@ SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
 //' @param periods_per_window Periods per window
 //' @return External pointer to Harmonicity
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+//' harm_xptr <- pladdrr:::sound_to_harmonicity_direct(sound$.xptr)
+//' harmonicity <- Harmonicity(.xptr = harm_xptr)
 // [[Rcpp::export]]
 SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step = 0.01,
                                   double minimum_pitch = 75, double silence_threshold = 0.1,

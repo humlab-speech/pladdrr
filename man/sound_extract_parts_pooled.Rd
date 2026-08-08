@@ -30,20 +30,16 @@ should be released back with sound_pool_release() when done.
 may be reused. Copy if modification is needed.
 }
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 200, duration = 2.0)
 starts <- c(0.1, 0.5, 1.0)
 ends <- c(0.3, 0.7, 1.2)
 
 # Batch extraction with pooling
 segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 
-# Process segments...
-
 # Release back to pool when done
 for (seg in segments) {
   sound_pool_release(seg)
-}
 }
 
 }

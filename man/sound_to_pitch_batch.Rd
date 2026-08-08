@@ -30,3 +30,11 @@ List of Pitch objects (R6 or xptr depending on return_r6)
 Processes multiple Sound objects and extracts Pitch at the C++ level,
 avoiding O(n) R→C boundary crossings from calling `$to_pitch()` in a loop.
 }
+\examples{
+sounds <- list(
+  Sound$create_tone(frequency = 150, duration = 0.5),
+  Sound$create_tone(frequency = 200, duration = 0.5)
+)
+pitches <- sound_to_pitch_batch(sounds)
+
+}

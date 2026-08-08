@@ -26,15 +26,12 @@ The returned vector is an independent R copy — safe to modify,
 store, or use after the Sound object is garbage collected.
 }
 \examples{
-\dontrun{
-sound <- Sound("large_file.wav")
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 
-# Copy for read-only analysis
-samples <- sound_values_fast(sound$get_xptr(), channel = 1)
+samples <- sound_values_fast(sound$.xptr, channel = 1)
 rms <- sqrt(mean(samples^2))
 
 # Regular copy — equivalent output
 samples2 <- sound$get_values(channel = 1)
-}
 
 }

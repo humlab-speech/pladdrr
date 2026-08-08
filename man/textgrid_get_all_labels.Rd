@@ -19,9 +19,13 @@ Extract all interval labels from a tier in a single call, instead of
 calling `get_interval_text()` n times.
 }
 \examples{
-\dontrun{
-labels <- textgrid_get_all_labels(textgrid$get_xptr(), tier = 1)
+tg <- TextGrid(0, 1)
+tg$add_interval_tier("phones")
+tg$insert_boundary("phones", 0.4)
+tg$set_interval_text("phones", 1, "sil")
+tg$set_interval_text("phones", 2, "V")
+
+labels <- textgrid_get_all_labels(tg$.xptr, tier_number = 1)
 table(labels)  # Frequency of each label
-}
 
 }

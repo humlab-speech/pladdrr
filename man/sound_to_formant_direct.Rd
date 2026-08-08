@@ -32,4 +32,9 @@ External pointer to Formant
 \description{
 Create Formant from Sound directly (Burg method)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+formant_xptr <- pladdrr:::sound_to_formant_direct(sound$.xptr)
+formant <- Formant(.xptr = formant_xptr)
+}
 \keyword{internal}

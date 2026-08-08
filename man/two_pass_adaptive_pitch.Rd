@@ -75,8 +75,7 @@ beyond the two pitch extractions. Suitable for batch processing.
 }
 
 \examples{
-\dontrun{
-sound <- Sound("speech.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 
 # Basic usage (returns XPtr)
 result <- two_pass_adaptive_pitch(sound)
@@ -89,11 +88,6 @@ result <- two_pass_adaptive_pitch(sound,
   q1_factor = 0.7,          # Wider lower bound
   q3_factor = 1.6           # Wider upper bound
 )
-
-# Use in voice quality analysis
-pp <- to_point_process_from_sound_and_pitch(sound, Pitch(.xptr = result$pitch))
-metrics <- get_jitter_shimmer_batch(pp, sound)
-}
 
 }
 \seealso{

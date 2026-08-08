@@ -84,6 +84,8 @@ void set_textgrid_simd_enabled_bridge(bool enabled) {
 //' Check if SIMD is Enabled for TextGrid
 //'
 //' @return Logical indicating SIMD status
+//' @examples
+//' textgrid_simd_enabled()
 //' @export
 // [[Rcpp::export]]
 bool textgrid_simd_enabled() {
@@ -306,6 +308,17 @@ NumericVector calculate_midpoints_simd_bridge(
 //' 1. SIMD duration calculation for all intervals
 //' 2. SIMD statistics calculation for pitch values in each interval
 //'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.5)
+//' tg$set_interval_text("phones", 1, "a")
+//' tg$set_interval_text("phones", 2, "b")
+//'
+//' stats <- textgrid_interval_pitch_batch(tg$.xptr, pitch$.xptr, tier_number = 1, unit = "HERTZ")
+//'
 //' @export
 // [[Rcpp::export]]
 DataFrame textgrid_interval_pitch_batch(
@@ -414,6 +427,17 @@ DataFrame textgrid_interval_pitch_batch(
 //'
 //' @return Data frame with interval info and formant statistics
 //'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+//' formant <- sound$to_formant_burg()
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.5)
+//' tg$set_interval_text("phones", 1, "a")
+//' tg$set_interval_text("phones", 2, "b")
+//'
+//' stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr, tier_number = 1, formant_number = 1)
+//'
 //' @export
 // [[Rcpp::export]]
 DataFrame textgrid_interval_formant_batch(
@@ -504,6 +528,17 @@ DataFrame textgrid_interval_formant_batch(
 //'
 //' @return Data frame with interval info and intensity statistics
 //'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+//' intensity <- sound$to_intensity()
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.5)
+//' tg$set_interval_text("phones", 1, "a")
+//' tg$set_interval_text("phones", 2, "b")
+//'
+//' stats <- textgrid_interval_intensity_batch(tg$.xptr, intensity$.xptr, tier_number = 1)
+//'
 //' @export
 // [[Rcpp::export]]
 DataFrame textgrid_interval_intensity_batch(
@@ -591,8 +626,9 @@ DataFrame textgrid_interval_intensity_batch(
 //' Extract All Acoustic Features for TextGrid Intervals (Batch, SIMD)
 //'
 //' Comprehensive batch extraction of pitch, formant F1/F2, and intensity
-//' statistics for all intervals. Maximum efficiency by processing all
-//' features in a single pass.
+//' statistics for all intervals in a single call, as an alternative to
+//' calling `textgrid_interval_pitch_batch()`, `textgrid_interval_formant_batch()`,
+//' and `textgrid_interval_intensity_batch()` separately.
 //'
 //' @param textgrid_xptr External pointer to TextGrid
 //' @param pitch_xptr External pointer to Pitch (optional)
@@ -603,10 +639,23 @@ DataFrame textgrid_interval_intensity_batch(
 //' @return Data frame with all available features per interval
 //'
 //' @details
-//' This is the most efficient way to extract multiple acoustic features
-//' for TextGrid-aligned analysis. All SIMD optimizations are applied:
-//' - Duration calculation: SIMD
-//' - Statistics aggregation: SIMD where applicable
+//' Duration calculation and statistics aggregation use SIMD where
+//' applicable.
+//'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 180, duration = 1.0)
+//' pitch <- sound$to_pitch()
+//' formant <- sound$to_formant_burg()
+//' intensity <- sound$to_intensity()
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.5)
+//' tg$set_interval_text("phones", 1, "a")
+//' tg$set_interval_text("phones", 2, "b")
+//'
+//' stats <- textgrid_interval_all_features_batch(
+//'   tg$.xptr, pitch$.xptr, formant$.xptr, intensity$.xptr, tier_number = 1
+//' )
 //'
 //' @export
 // [[Rcpp::export]]

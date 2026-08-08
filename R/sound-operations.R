@@ -10,11 +10,9 @@
 #' @return New Sound object containing sound1, silence, and sound2
 #' @export
 #' @examples
-#' \dontrun{
-#' s1 <- Sound("vowel1.wav")
-#' s2 <- Sound("vowel2.wav")
+#' s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+#' s2 <- Sound$create_tone(frequency = 440, duration = 0.2)
 #' combined <- sounds_append(s1, s2, silence_duration = 0.1)
-#' }
 sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
     mod <- get_module("sound_operations_module")
     sound_mod <- get_module("sound_module")
@@ -75,21 +73,19 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #' Praat documentation: \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 3.0)
 #'
 #' # Rectangular window (no tapering)
-#' rect <- sound_extract_part(sound, 1.0, 2.0)
+#' rect <- sound_extract_part(sound, 1.0, 2.0, window_shape = 0L)
 #'
 #' # Gaussian1 window (standard)
-#' gauss1 <- sound_extract_part(sound, 1.0, 2.0, "gaussian1", 1.0)
+#' gauss1 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 5L, relative_width = 1.0)
 #'
 #' # Gaussian2 with wider physical extraction
-#' gauss2 <- sound_extract_part(sound, 1.0, 2.0, "gaussian2", 2.0)
+#' gauss2 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 6L, relative_width = 2.0)
 #'
 #' # Kaiser2 for spectral analysis
-#' kaiser <- sound_extract_part(sound, 1.0, 2.0, "kaiser2", 2.0)
-#' }
+#' kaiser <- sound_extract_part(sound, 1.0, 2.0, window_shape = 11L, relative_width = 2.0)
 #' @export
 sound_extract_part <- function(sound, t1, t2, window_shape = 1L, 
                                relative_width = 1.0, preserve_times = FALSE) {
@@ -117,11 +113,9 @@ sound_extract_part <- function(sound, t1, t2, window_shape = 1L,
 #' @return New Sound object
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
-#' slower <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 1.5)  # 50% slower
-#' faster <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 0.8)  # 20% faster
-#' }
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' slower <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 1.5)
+#' faster <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 0.8)
 sound_lengthen <- function(sound, fmin = 75, fmax = 600, factor = 1.5) {
     mod <- get_module("sound_operations_module")
     sound_mod <- get_module("sound_module")
@@ -146,6 +140,9 @@ sound_lengthen <- function(sound, fmin = 75, fmax = 600, factor = 1.5) {
 #' @param band_smoothing Band smoothing (Hz)
 #' @return New Sound object
 #' @export
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' enhanced <- sound_deepen_band_modulation(sound, enhancement_db = 10)
 sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
                                          flow = 300, fhigh = 4000,
                                          slow_modulation = 3, fast_modulation = 30,
@@ -173,6 +170,10 @@ sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
 #' @param signal_outside Signal outside time domain: 1=zero, 2=similar
 #' @return New Sound object
 #' @export
+#' @examples
+#' s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+#' s2 <- Sound$create_tone(frequency = 440, duration = 0.05)
+#' conv <- sounds_convolve(s1, s2)
 sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")
     sound_mod <- get_module("sound_module")
@@ -196,6 +197,10 @@ sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
 #' @param signal_outside Signal outside time domain: 1=zero, 2=similar
 #' @return New Sound object (cross-correlation function)
 #' @export
+#' @examples
+#' s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+#' s2 <- Sound$create_tone(frequency = 220, duration = 0.2)
+#' xcorr <- sounds_cross_correlate(s1, s2)
 sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")
     sound_mod <- get_module("sound_module")
@@ -244,10 +249,8 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 #' @return New Sound object
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 #' filtered <- sound_filter_pass_hann_band(sound, fmin = 300, fmax = 3000, smooth = 100)
-#' }
 sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
     sound_mod <- get_module("sound_module")
     
@@ -269,6 +272,9 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 #' @param smooth Smoothing bandwidth (Hz)
 #' @return New Sound object
 #' @export
+#' @examples
+#' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
+#' filtered <- sound_filter_stop_hann_band(sound, fmin = 300, fmax = 3000, smooth = 100)
 sound_filter_stop_hann_band <- function(sound, fmin, fmax, smooth = 100) {
     sound_mod <- get_module("sound_module")
     

@@ -9,11 +9,9 @@
 #' @return New Spectrum object with smoothing applied
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound("vowel.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
 #' smoothed <- spectrum_cepstral_smoothing(spectrum, bandwidth = 500)
-#' }
 spectrum_cepstral_smoothing <- function(spectrum, bandwidth = 500) {
     # Use existing .spectrum_cepstral_smoothing from spectrum_wrappers.cpp
     xptr <- .spectrum_cepstral_smoothing(
@@ -34,12 +32,10 @@ spectrum_cepstral_smoothing <- function(spectrum, bandwidth = 500) {
 #' @return NULL (modifies spectrum in place)
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound("vowel.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
 #' spectrum_pass_hann_band(spectrum, fmin = 300, fmax = 3000, smooth = 100)
 #' # spectrum is now modified
-#' }
 spectrum_pass_hann_band <- function(spectrum, fmin, fmax, smooth = 100) {
     # Use existing .spectrum_pass_hann_band from spectrum_wrappers.cpp
     # This modifies the spectrum in place
@@ -60,12 +56,10 @@ spectrum_pass_hann_band <- function(spectrum, fmin, fmax, smooth = 100) {
 #' @return NULL (modifies spectrum in place)
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound("vowel.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
 #' spectrum_stop_hann_band(spectrum, fmin = 50, fmax = 100, smooth = 50)
 #' # spectrum is now modified
-#' }
 spectrum_stop_hann_band <- function(spectrum, fmin, fmax, smooth = 100) {
     # Use existing .spectrum_stop_hann_band from spectrum_wrappers.cpp
     # This modifies the spectrum in place

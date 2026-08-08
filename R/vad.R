@@ -42,10 +42,15 @@ NULL
 #' - `min_sounding_interval = 0.1`
 #'
 #' @examples
-#' \dontrun{
-#' # Detect voiced segments for AVQI
-#' sound <- Sound$new("continuous_speech.wav")
-#' 
+#' # Synthetic speech-like sound: loud / near-silent / loud
+#' sound <- sounds_append(
+#'   sounds_append(
+#'     Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+#'     Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+#'   ),
+#'   Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8)
+#' )
+#'
 #' # Create TextGrid with voice activity detection
 #' vad_grid <- sound_to_textgrid_silences(
 #'   sound,
@@ -55,7 +60,7 @@ NULL
 #'   min_silent_interval = 0.1,
 #'   min_sounding_interval = 0.1
 #' )
-#' 
+#'
 #' # Extract voiced intervals
 #' voiced_intervals <- textgrid_get_intervals_where(
 #'   vad_grid,
@@ -63,8 +68,8 @@ NULL
 #'   condition = "equals",
 #'   text = "sounding"
 #' )
-#' 
-#' # Extract and concatenate voiced parts
+#'
+#' # Extract voiced parts
 #' voiced_sounds <- sound_extract_parts(
 #'   sound,
 #'   voiced_intervals$xmin,
@@ -73,10 +78,6 @@ NULL
 #'   relative_width = 1.0,
 #'   preserve_times = FALSE
 #' )
-#' 
-#' # Concatenate all voiced segments
-#' voiced_concatenated <- Sound$concatenate(voiced_sounds)
-#' }
 #'
 #' @export
 sound_to_textgrid_silences <- function(sound,
@@ -129,7 +130,12 @@ sound_to_textgrid_silences <- function(sound,
 #'   - `count`: Integer number of matching intervals
 #'
 #' @examples
-#' \dontrun{
+#' sound <- sounds_append(
+#'   Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+#'   Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+#' )
+#' vad_grid <- sound_to_textgrid_silences(sound)
+#'
 #' # Get all "sounding" intervals
 #' voiced <- textgrid_get_intervals_where(
 #'   vad_grid,
@@ -137,10 +143,9 @@ sound_to_textgrid_silences <- function(sound,
 #'   condition = "equals",
 #'   text = "sounding"
 #' )
-#' 
+#'
 #' cat("Found", voiced$count, "voiced segments\n")
 #' cat("Total voiced duration:", sum(voiced$xmax - voiced$xmin), "s\n")
-#' }
 #'
 #' @export
 textgrid_get_intervals_where <- function(textgrid,
@@ -240,27 +245,26 @@ textgrid_get_intervals_where <- function(textgrid,
 #' Praat documentation: \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @examples
-#' \dontrun{
-#' # Extract voiced segments
+#' sound <- sounds_append(
+#'   Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+#'   Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+#' )
+#' vad_grid <- sound_to_textgrid_silences(sound)
 #' voiced_intervals <- textgrid_get_intervals_where(vad_grid, 1, "equals", "sounding")
-#' 
+#'
 #' voiced_sounds <- sound_extract_parts(
 #'   sound,
 #'   voiced_intervals$xmin,
 #'   voiced_intervals$xmax
 #' )
-#' 
-#' # Concatenate all voiced segments
-#' voiced_concatenated <- Sound$concatenate(voiced_sounds)
-#' 
-#' # Or analyze each segment separately
+#'
+#' # Analyze each segment separately
 #' for (i in seq_along(voiced_sounds)) {
 #'   cat("Segment", i, "duration:", voiced_sounds[[i]]$get_total_duration(), "s\n")
 #' }
-#' }
 #'
 #' @param return_r6 Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
-#'   Using FALSE avoids R6 wrapper overhead for maximum performance.
+#'   Using FALSE skips R6 wrapper construction.
 #' @export
 sound_extract_parts <- function(sound,
                                start_times,
@@ -536,15 +540,9 @@ extract_voiced_segments <- function(sound,
 #' For AVQI, segments with ZCR > 3000 Hz are typically rejected as unvoiced.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("speech.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' zcr_data <- sound_get_zcr(sound, window_duration = 0.03)
-#'
-#' # Plot ZCR over time
-#' plot(zcr_data$times, zcr_data$zcr, type = "l",
-#'      xlab = "Time (s)", ylab = "ZCR (crossings/s)")
-#' abline(h = 3000, col = "red", lty = 2)  # Voiced/unvoiced threshold
-#' }
+#' str(zcr_data)
 #'
 #' @export
 sound_get_zcr <- function(sound,

@@ -169,6 +169,8 @@ int test_class_registry() {
 //' @param sound_data Numeric vector containing sound amplitude values
 //' @return List containing mean, min, max, and length statistics
 //' @keywords internal
+//' @examples
+//' pladdrr:::sound_stats(sin(2 * pi * 150 * seq(0, 1, length.out = 1000)))
 // [[Rcpp::export]]
 List sound_stats(NumericVector sound_data) {
     if (sound_data.size() == 0) {

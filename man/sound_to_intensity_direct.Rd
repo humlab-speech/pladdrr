@@ -26,4 +26,9 @@ External pointer to Intensity
 \description{
 Create Intensity from Sound directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+intensity_xptr <- pladdrr:::sound_to_intensity_direct(sound$.xptr)
+intensity <- Intensity(.xptr = intensity_xptr)
+}
 \keyword{internal}

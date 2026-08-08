@@ -437,13 +437,11 @@ print.TextGrid <- function(x, ...) x$print()
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Create TextGrid with 3 interval tiers
 #' tg <- textgrid_create(0, 10, "phones words syllables")
 #'
 #' # Create TextGrid with mixed tier types
-#' tg <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
-#' }
+#' tg2 <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
   ptr <- .textgrid_create(
     as.numeric(tmin), as.numeric(tmax),

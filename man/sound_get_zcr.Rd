@@ -52,14 +52,8 @@ Typical ZCR values:
 For AVQI, segments with ZCR > 3000 Hz are typically rejected as unvoiced.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("speech.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 zcr_data <- sound_get_zcr(sound, window_duration = 0.03)
-
-# Plot ZCR over time
-plot(zcr_data$times, zcr_data$zcr, type = "l",
-     xlab = "Time (s)", ylab = "ZCR (crossings/s)")
-abline(h = 3000, col = "red", lty = 2)  # Voiced/unvoiced threshold
-}
+str(zcr_data)
 
 }

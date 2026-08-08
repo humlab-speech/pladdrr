@@ -21,4 +21,7 @@ The validated value (invisibly)
 \description{
 Ensures a numeric parameter falls within a specified range
 }
+\examples{
+pladdrr:::validate_range(5, min = 0, max = 10)
+}
 \keyword{internal}

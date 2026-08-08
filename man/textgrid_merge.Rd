@@ -40,7 +40,6 @@ merge does a single O(n) pass with proper interval handling.
 - Workflow: Adding automatic tiers to manual annotations
 }
 \examples{
-\dontrun{
 # Create test TextGrids
 tg1 <- TextGrid(0, 1)
 tg1$add_interval_tier("words")
@@ -58,13 +57,12 @@ merged <- textgrid_merge(list(tg1, tg2))
 
 # With domain equalization
 merged_eq <- textgrid_merge(list(tg1, tg2), equalize_domains = TRUE)
-}
 
 }
 \seealso{
 [TextGrid] for TextGrid object creation
 
-Other performance: 
+Other batch-ops: 
 \code{\link{sound_load_window}()}
 }
-\concept{performance}
+\concept{batch-ops}

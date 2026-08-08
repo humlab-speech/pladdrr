@@ -45,12 +45,13 @@ print.praat_sound <- function(x, ...) {
 #' @return The object, invisibly
 #'
 #' @examples
-#' \dontrun{
-#' # DEPRECATED - generate_sine_wave now returns R6 Sound objects
-#' # This S3 method is only for legacy praat_sound objects
-#' sound <- generate_sine_wave(440, 0.5)
+#' sound <- list(
+#'   duration = 0.5, sampling_rate = 8000, n_samples = 4000, n_channels = 1,
+#'   start_time = 0, end_time = 0.5,
+#'   values = sin(2 * pi * 150 * seq(0, 0.5, length.out = 4000))
+#' )
+#' class(sound) <- "praat_sound"
 #' summary(sound)
-#' }
 #'
 #' @export
 summary.praat_sound <- function(object, ...) {
@@ -190,6 +191,11 @@ print.praat_pitch <- function(x, ...) {
 #'
 #' @return The object, invisibly
 #'
+#' @examples
+#' x <- data.frame(time = c(0.1, 0.2, 0.3), frequency = c(120, 125, NA))
+#' class(x) <- c("praat_pitch", "data.frame")
+#' summary(x)
+#'
 #' @export
 summary.praat_pitch <- function(object, ...) {
   cat("Praat Pitch Object - Summary\n")
@@ -270,6 +276,18 @@ print.praat_formant <- function(x, ...) {
 #'
 #' @param object A praat_formant object
 #' @param ... Additional arguments (unused)
+#' @return \code{object}, invisibly.
+#' @examples
+#' x <- list(
+#'   n_frames = 2, n_formants = 1, time_step = 0.01,
+#'   max_formant = 5000, window_length = 0.025,
+#'   values = data.frame(
+#'     time = c(0.1, 0.2), formant_number = c(1, 1),
+#'     frequency = c(500, 520), bandwidth = c(80, 82)
+#'   )
+#' )
+#' class(x) <- "praat_formant"
+#' summary(x)
 #' @export
 summary.praat_formant <- function(object, ...) {
   cat("Praat Formant Object\n")
@@ -354,6 +372,14 @@ print.praat_intensity <- function(x, ...) {
 #'
 #' @param object A praat_intensity object
 #' @param ... Additional arguments (unused)
+#' @return \code{object}, invisibly.
+#' @examples
+#' x <- list(
+#'   n_frames = 2, time_step = 0.01, minimum_pitch = 100,
+#'   values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1))
+#' )
+#' class(x) <- "praat_intensity"
+#' summary(x)
 #' @export
 summary.praat_intensity <- function(object, ...) {
   cat("Praat Intensity Object\n")

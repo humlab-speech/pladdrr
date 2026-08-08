@@ -34,11 +34,9 @@ Aligns a candidate sound to a reference sound using MFCC-based
 dynamic time warping.
 }
 \examples{
-\dontrun{
-ref <- Sound("reference.wav")
-test <- Sound("test.wav")
+ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
+test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 dtw <- sounds_to_dtw(ref, test)
 print(dtw$get_weighted_distance())
-}
 
 }

@@ -17,4 +17,9 @@ The validated object (invisibly)
 \description{
 Ensures an object is a valid praat_intensity, throwing an error if not
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.2)
+intensity <- sound$to_intensity()
+pladdrr:::validate_intensity_object(intensity)
+}
 \keyword{internal}

@@ -18,9 +18,7 @@ New Spectrum object with smoothing applied
 Apply cepstral smoothing to spectrum
 }
 \examples{
-\dontrun{
-sound <- Sound("vowel.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 spectrum <- sound$to_spectrum()
 smoothed <- spectrum_cepstral_smoothing(spectrum, bandwidth = 500)
-}
 }

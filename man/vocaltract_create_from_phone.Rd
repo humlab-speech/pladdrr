@@ -20,12 +20,10 @@ VocalTract object
 Create VocalTract from phone
 }
 \examples{
-\dontrun{
 vt_a <- VocalTract$create_from_phone("a")
 vt_i <- VocalTract$create_from_phone("i")
 
 # Compare spectra
 spec_a <- vt_a$to_spectrum()
 spec_i <- vt_i$to_spectrum()
-}
 }

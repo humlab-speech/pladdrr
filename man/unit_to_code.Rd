@@ -18,4 +18,8 @@ Integer unit code for Praat C++ layer
 Standardized mapping from unit names to Praat integer codes.
 Ensures consistency across all APIs (Tier 1, 2, and 3).
 }
+\examples{
+pladdrr:::unit_to_code("semitones", type = "pitch")
+pladdrr:::unit_to_code("bark", type = "formant")
+}
 \keyword{internal}

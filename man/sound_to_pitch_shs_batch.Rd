@@ -44,3 +44,11 @@ List of Pitch objects (R6 or xptr depending on return_r6)
 \description{
 Batch version of to_pitch_shs using Subharmonic Summation.
 }
+\examples{
+sounds <- list(
+  Sound$create_tone(frequency = 150, duration = 0.5),
+  Sound$create_tone(frequency = 200, duration = 0.5)
+)
+pitches <- sound_to_pitch_shs_batch(sounds)
+
+}

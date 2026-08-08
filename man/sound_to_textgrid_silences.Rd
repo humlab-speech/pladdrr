@@ -56,9 +56,14 @@ For AVQI, use these parameters (matching Praat AVQI script):
 - `min_sounding_interval = 0.1`
 }
 \examples{
-\dontrun{
-# Detect voiced segments for AVQI
-sound <- Sound$new("continuous_speech.wav")
+# Synthetic speech-like sound: loud / near-silent / loud
+sound <- sounds_append(
+  sounds_append(
+    Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+    Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+  ),
+  Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8)
+)
 
 # Create TextGrid with voice activity detection
 vad_grid <- sound_to_textgrid_silences(
@@ -78,7 +83,7 @@ voiced_intervals <- textgrid_get_intervals_where(
   text = "sounding"
 )
 
-# Extract and concatenate voiced parts
+# Extract voiced parts
 voiced_sounds <- sound_extract_parts(
   sound,
   voiced_intervals$xmin,
@@ -87,9 +92,5 @@ voiced_sounds <- sound_extract_parts(
   relative_width = 1.0,
   preserve_times = FALSE
 )
-
-# Concatenate all voiced segments
-voiced_concatenated <- Sound$concatenate(voiced_sounds)
-}
 
 }

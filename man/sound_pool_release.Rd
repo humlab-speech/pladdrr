@@ -9,7 +9,15 @@ sound_pool_release(sound_xptr)
 \arguments{
 \item{sound_xptr}{External pointer to Sound}
 }
+\value{
+Invisibly returns \code{NULL}.
+}
 \description{
 Release pooled Sound back to pool
+}
+\examples{
+xptr <- pladdrr:::sound_pool_acquire(0, 0.1, 4410, 1 / 44100, 0, 1)
+pladdrr:::sound_pool_release(xptr)
+
 }
 \keyword{internal}

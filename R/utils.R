@@ -16,6 +16,8 @@
 #' @param name Parameter name for error messages
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_positive(2.5)
 validate_positive <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
     stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
@@ -37,6 +39,8 @@ validate_positive <- function(x, name = deparse(substitute(x))) {
 #' @param name Parameter name for error messages
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_non_negative(0)
 validate_non_negative <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
     stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
@@ -60,6 +64,8 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
 #' @param name Parameter name for error messages
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_range(5, min = 0, max = 10)
 validate_range <- function(x, min, max, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
     stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
@@ -82,6 +88,8 @@ validate_range <- function(x, min, max, name = deparse(substitute(x))) {
 #' @param name Parameter name for error messages
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_positive_int(3)
 validate_positive_int <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
     stop(sprintf("'%s' must be a single integer value", name), call. = FALSE)
@@ -105,6 +113,8 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 #' @param allow_na Allow NA values (default: FALSE)
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_string("hello")
 validate_string <- function(x, name = deparse(substitute(x)),
                            allow_na = FALSE) {
   if (!is.character(x) || length(x) != 1) {
@@ -128,6 +138,8 @@ validate_string <- function(x, name = deparse(substitute(x)),
 #' @param name Parameter name for error messages
 #' @return The validated value (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_logical(TRUE)
 validate_logical <- function(x, name = deparse(substitute(x))) {
   if (!is.logical(x) || length(x) != 1) {
     stop(sprintf("'%s' must be a single logical value (TRUE/FALSE)", name),
@@ -197,6 +209,9 @@ is_praat_sound <- function(x) {
 #' @param name Parameter name for error messages
 #' @return The validated object (invisibly)
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.2)
+#' pladdrr:::validate_sound_object(sound)
 validate_sound_object <- function(x, name = deparse(substitute(x))) {
   if (!is_praat_sound(x)) {
     stop(sprintf("'%s' must be a praat_sound object", name), call. = FALSE)
@@ -251,6 +266,10 @@ is_praat_pitch <- function(x) {
 #' @param name Parameter name for error messages
 #' @return The validated object (invisibly)
 #' @keywords internal
+#' @examples
+#' pitch_df <- data.frame(time = c(0.1, 0.2), frequency = c(120, 130))
+#' class(pitch_df) <- c("praat_pitch", "data.frame")
+#' validate_pitch_object(pitch_df)
 validate_pitch_object <- function(x, name = deparse(substitute(x))) {
   if (!is_praat_pitch(x)) {
     stop(sprintf("'%s' must be a praat_pitch object", name), call. = FALSE)
@@ -270,6 +289,11 @@ validate_pitch_object <- function(x, name = deparse(substitute(x))) {
 #' @param name Parameter name for error messages
 #' @return The validated path (invisibly)
 #' @keywords internal
+#' @examples
+#' path <- tempfile(fileext = ".wav")
+#' file.create(path)
+#' pladdrr:::validate_file_exists(path)
+#' unlink(path)
 validate_file_exists <- function(path, name = deparse(substitute(path))) {
   validate_string(path, name)
   if (!file.exists(path)) {
@@ -290,6 +314,8 @@ validate_file_exists <- function(path, name = deparse(substitute(path))) {
 #' @param name Parameter name for error messages
 #' @return The validated path (invisibly)
 #' @keywords internal
+#' @examples
+#' pladdrr:::validate_file_extension("speech.wav", c("wav", "WAV"))
 validate_file_extension <- function(path, extensions,
                                    name = deparse(substitute(path))) {
   validate_string(path, name)
@@ -335,30 +361,16 @@ quality_warning <- function(message) {
 #' @param message Reason for NA
 #' @return NA_real_
 #' @keywords internal
+#' @examples
+#' withCallingHandlers(
+#'   pladdrr:::undefined_to_na("pitch could not be determined"),
+#'   warning = function(w) invokeRestart("muffleWarning")
+#' )
 undefined_to_na <- function(message = NULL) {
   if (!is.null(message)) {
     quality_warning(paste("Undefined value:", message))
   }
   NA_real_
-}
-
-# ==============================================================================
-# Pitch Object Validation (already defined above, keeping for reference)
-# ==============================================================================
-
-#' Validate praat_pitch object
-#'
-#' Ensures an object is a valid praat_pitch, throwing an error if not
-#'
-#' @param x Object to validate
-#' @param name Parameter name for error messages
-#' @return The validated object (invisibly)
-#' @keywords internal
-validate_pitch_object <- function(x, name = deparse(substitute(x))) {
-  if (!is_praat_pitch(x)) {
-    stop(sprintf("'%s' must be a praat_pitch object", name), call. = FALSE)
-  }
-  invisible(x)
 }
 
 # ==============================================================================
@@ -418,6 +430,10 @@ is_praat_formant <- function(x) {
 #' @param name Parameter name for error messages
 #' @return The validated object (invisibly)
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::validate_formant_object(formant)
 validate_formant_object <- function(x, name = deparse(substitute(x))) {
   if (!is_praat_formant(x)) {
     stop(sprintf("'%s' must be a praat_formant object", name), call. = FALSE)
@@ -482,6 +498,10 @@ is_praat_intensity <- function(x) {
 #' @param name Parameter name for error messages
 #' @return The validated object (invisibly)
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.2)
+#' intensity <- sound$to_intensity()
+#' pladdrr:::validate_intensity_object(intensity)
 validate_intensity_object <- function(x, name = deparse(substitute(x))) {
   if (!is_praat_intensity(x)) {
     stop(sprintf("'%s' must be a praat_intensity object", name), call. = FALSE)

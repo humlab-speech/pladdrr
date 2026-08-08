@@ -12,3 +12,6 @@ Logical indicating SIMD status
 \description{
 Check if SIMD is Enabled for TextGrid
 }
+\examples{
+textgrid_simd_enabled()
+}

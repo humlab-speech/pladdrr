@@ -17,4 +17,7 @@ The validated value (invisibly)
 \description{
 Ensures a numeric parameter is non-negative (>= 0)
 }
+\examples{
+pladdrr:::validate_non_negative(0)
+}
 \keyword{internal}

@@ -41,3 +41,10 @@ List of Formant objects (R6 or xptr depending on return_r6)
 \description{
 Extract Parts and Analyze Formants in Single C++ Call
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 2.0)
+from_times <- c(0.2, 1.0)
+to_times <- c(0.6, 1.4)
+formants <- sound_extract_and_formant(sound, from_times, to_times)
+
+}

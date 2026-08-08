@@ -16,4 +16,10 @@ NA_real_
 Converts undefined analysis values to NA and issues a warning
 (Per clarification: return NA for undefined values)
 }
+\examples{
+withCallingHandlers(
+  pladdrr:::undefined_to_na("pitch could not be determined"),
+  warning = function(w) invokeRestart("muffleWarning")
+)
+}
 \keyword{internal}

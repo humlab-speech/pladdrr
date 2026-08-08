@@ -75,6 +75,13 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' pitches <- sound_to_pitch_batch(sounds)
+#'
 #' @export
 sound_to_pitch_batch <- function(sounds,
                                  time_step = 0,
@@ -124,6 +131,13 @@ sound_to_pitch_batch <- function(sounds,
 #' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
+#'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' pitches <- sound_to_pitch_ac_batch(sounds)
 #'
 #' @export
 sound_to_pitch_ac_batch <- function(sounds,
@@ -188,13 +202,12 @@ sound_to_pitch_ac_batch <- function(sounds,
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
 #' @examples
-#' \dontrun{
-#' # Instead of a loop:
-#' # pitches <- lapply(sounds, function(s) s$to_pitch_cc())
-#'
-#' # Use the batch operation:
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' # Instead of a loop (pitches <- lapply(sounds, function(s) s$to_pitch_cc())):
 #' pitches <- sound_to_pitch_cc_batch(sounds)
-#' }
 #'
 #' @export
 sound_to_pitch_cc_batch <- function(sounds,
@@ -254,6 +267,13 @@ sound_to_pitch_cc_batch <- function(sounds,
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' pitches <- sound_to_pitch_shs_batch(sounds)
+#'
 #' @export
 sound_to_pitch_shs_batch <- function(sounds,
                                      time_step = 0.01,
@@ -309,6 +329,13 @@ sound_to_pitch_shs_batch <- function(sounds,
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' pitches <- sound_to_pitch_spinet_batch(sounds)
+#'
 #' @export
 sound_to_pitch_spinet_batch <- function(sounds,
                                         time_step = 0.005,
@@ -359,6 +386,13 @@ sound_to_pitch_spinet_batch <- function(sounds,
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
 #'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' formants <- sound_to_formant_batch(sounds)
+#'
 #' @export
 sound_to_formant_batch <- function(sounds,
                                    time_step = 0.005,
@@ -403,6 +437,13 @@ sound_to_formant_batch <- function(sounds,
 #'
 #' @return List of Intensity objects (R6 or xptr depending on return_r6)
 #'
+#' @examples
+#' sounds <- list(
+#'   Sound$create_tone(frequency = 150, duration = 0.5),
+#'   Sound$create_tone(frequency = 200, duration = 0.5)
+#' )
+#' intensities <- sound_to_intensity_batch(sounds)
+#'
 #' @export
 sound_to_intensity_batch <- function(sounds,
                                      minimum_pitch = 100,
@@ -434,9 +475,9 @@ sound_to_intensity_batch <- function(sounds,
 
 #' Extract Parts and Analyze Pitch in Single C++ Call
 #'
-#' The most efficient way to analyze multiple intervals from a sound.
-#' Combines extraction and analysis in a single C++ call, avoiding all
-#' intermediate R6 object creation.
+#' Combines interval extraction and pitch analysis in a single C++ call,
+#' avoiding intermediate R6 object creation, as an alternative to
+#' extracting each part and calling `$to_pitch()` on it in a loop.
 #'
 #' @param sound Sound object (R6) or external pointer
 #' @param from_times Numeric vector of start times
@@ -449,14 +490,10 @@ sound_to_intensity_batch <- function(sounds,
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
 #' @examples
-#' \dontrun{
-#' # Instead of the slow pattern:
-#' # parts <- lapply(1:n, function(i) sound$extract_part(from[i], to[i]))
-#' # pitches <- lapply(parts, function(p) p$to_pitch())
-#'
-#' # Use combined operation:
+#' sound <- Sound$create_tone(frequency = 150, duration = 2.0)
+#' from_times <- c(0.2, 1.0)
+#' to_times <- c(0.6, 1.4)
 #' pitches <- sound_extract_and_pitch(sound, from_times, to_times)
-#' }
 #'
 #' @export
 sound_extract_and_pitch <- function(sound, from_times, to_times,
@@ -501,6 +538,12 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
 #' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs (FALSE)
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 2.0)
+#' from_times <- c(0.2, 1.0)
+#' to_times <- c(0.6, 1.4)
+#' formants <- sound_extract_and_formant(sound, from_times, to_times)
 #'
 #' @export
 sound_extract_and_formant <- function(sound, from_times, to_times,
@@ -567,7 +610,6 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #' - Workflow: Adding automatic tiers to manual annotations
 #'
 #' @examples
-#' \dontrun{
 #' # Create test TextGrids
 #' tg1 <- TextGrid(0, 1)
 #' tg1$add_interval_tier("words")
@@ -585,9 +627,8 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #'
 #' # With domain equalization
 #' merged_eq <- textgrid_merge(list(tg1, tg2), equalize_domains = TRUE)
-#' }
 #'
-#' @family performance
+#' @family batch-ops
 #' @seealso [TextGrid] for TextGrid object creation
 #' @export
 textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
@@ -634,28 +675,22 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' - Large file processing: working with hours-long recordings
 #'
 #' @examples
-#' \dontrun{
-#' # Extract 100ms window starting at 2.5 seconds
-#' window <- sound_load_window("long_recording.wav", start = 2.5, end = 2.6)
+#' # Write a short synthetic recording, then load only part of it
+#' sound <- Sound$create_tone(frequency = 220, duration = 2.0)
+#' path <- tempfile(fileext = ".wav")
+#' sound$save(path)
 #'
-#' # Extract and resample to 10 kHz (for spectral analysis)
-#' window_10k <- sound_load_window(
-#'   "recording.wav",
-#'   start = 1.0,
-#'   end = 1.05,
-#'   resample_to = 10000
-#' )
+#' window <- sound_load_window(path, start = 0.5, end = 0.6)
 #'
-#' # Preserve original time domain (window starts at 1.0, not 0.0)
-#' window_timed <- sound_load_window(
-#'   "recording.wav",
-#'   start = 1.0,
-#'   end = 1.05,
-#'   preserve_times = TRUE
-#' )
-#' }
+#' # Extract and resample (for spectral analysis)
+#' window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 10000)
 #'
-#' @family performance
+#' # Preserve original time domain (window starts at 0.5, not 0.0)
+#' window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+#'
+#' unlink(path)
+#'
+#' @family batch-ops
 #' @seealso [Sound], [LongSound]
 #' @export
 sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {

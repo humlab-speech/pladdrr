@@ -60,6 +60,9 @@ extract_xptr <- function(obj, class_name) {
 #'
 #' @return Integer unit code for Praat C++ layer
 #' @keywords internal
+#' @examples
+#' pladdrr:::unit_to_code("semitones", type = "pitch")
+#' pladdrr:::unit_to_code("bark", type = "formant")
 unit_to_code <- function(unit, type = "pitch") {
   unit <- tolower(unit)
   

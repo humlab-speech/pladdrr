@@ -162,14 +162,12 @@ VocalTract <- function(nx = 17L, dx = 0.01, .xptr = NULL) {
 #' @return VocalTract object
 #' @export
 #' @examples
-#' \dontrun{
 #' vt_a <- VocalTract$create_from_phone("a")
 #' vt_i <- VocalTract$create_from_phone("i")
 #'
 #' # Compare spectra
 #' spec_a <- vt_a$to_spectrum()
 #' spec_i <- vt_i$to_spectrum()
-#' }
 vocaltract_create_from_phone <- function(phone) {
   valid_phones <- c("a", "e", "i", "o", "u", "y1", "y2", "y3", "jery",
                     "p", "t", "k", "x",

@@ -20,9 +20,7 @@ New Sound object containing sound1, silence, and sound2
 Append two sounds with optional silence
 }
 \examples{
-\dontrun{
-s1 <- Sound("vowel1.wav")
-s2 <- Sound("vowel2.wav")
+s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+s2 <- Sound$create_tone(frequency = 440, duration = 0.2)
 combined <- sounds_append(s1, s2, silence_duration = 0.1)
-}
 }

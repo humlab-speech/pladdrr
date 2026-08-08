@@ -206,6 +206,10 @@ static SoundPool g_sound_pool(100);
 //'
 //' **Numerical Impact:** None - output is identical to non-pooled version
 //'
+//' @return \code{sound_pool_stats()} returns a named list with elements
+//'   \code{hits}, \code{misses}, \code{hit_rate}, \code{pool_size}, and
+//'   \code{in_use}.
+//'
 //' @details
 //' The pool automatically manages Sound object reuse:
 //' - `sound_pool_acquire()` - get a Sound from pool (or create new)
@@ -215,17 +219,16 @@ static SoundPool g_sound_pool(100);
 //' - `sound_pool_resize()` - change pool capacity
 //'
 //' @examples
-//' \dontrun{
 //' # Pool is used automatically by batch extraction functions
 //' # For manual control:
 //'
-//' # Check pool efficiency
+//' # Check pool statistics
 //' stats <- sound_pool_stats()
-//' cat("Hit rate:", stats$hits / (stats$hits + stats$misses) * 100, "%\n")
+//' stats$hits
+//' stats$misses
 //'
 //' # Clear pool to free memory
 //' sound_pool_clear()
-//' }
 //'
 //' @export
 // [[Rcpp::export]]
@@ -245,6 +248,7 @@ List sound_pool_stats() {
 }
 
 //' @rdname sound_pool
+//' @return Invisibly returns \code{NULL}.
 //' @export
 // [[Rcpp::export]]
 void sound_pool_clear() {
@@ -253,6 +257,7 @@ void sound_pool_clear() {
 
 //' @rdname sound_pool
 //' @param max_size Maximum number of Sound objects to keep in pool
+//' @return Invisibly returns \code{NULL}.
 //' @export
 // [[Rcpp::export]]
 void sound_pool_resize(int max_size) {
@@ -277,6 +282,10 @@ void sound_pool_resize(int max_size) {
 //'
 //' @return External pointer to Sound
 //'
+//' @examples
+//' xptr <- pladdrr:::sound_pool_acquire(0, 0.1, 4410, 1 / 44100, 0, 1)
+//' pladdrr:::sound_pool_release(xptr)
+//'
 //' @keywords internal
 // [[Rcpp::export]]
 SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, int ny) {
@@ -292,6 +301,12 @@ SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, 
 //' Release pooled Sound back to pool
 //'
 //' @param sound_xptr External pointer to Sound
+//'
+//' @return Invisibly returns \code{NULL}.
+//'
+//' @examples
+//' xptr <- pladdrr:::sound_pool_acquire(0, 0.1, 4410, 1 / 44100, 0, 1)
+//' pladdrr:::sound_pool_release(xptr)
 //'
 //' @keywords internal
 // [[Rcpp::export]]
@@ -329,20 +344,16 @@ void sound_pool_release(SEXP sound_xptr) {
 //' may be reused. Copy if modification is needed.
 //'
 //' @examples
-//' \dontrun{
-//' sound <- Sound("speech.wav")
+//' sound <- Sound$create_tone(frequency = 200, duration = 2.0)
 //' starts <- c(0.1, 0.5, 1.0)
 //' ends <- c(0.3, 0.7, 1.2)
 //'
 //' # Batch extraction with pooling
 //' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 //'
-//' # Process segments...
-//'
 //' # Release back to pool when done
 //' for (seg in segments) {
 //'   sound_pool_release(seg)
-//' }
 //' }
 //'
 //' @export

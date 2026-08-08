@@ -22,13 +22,11 @@ TextGrid object
 Create a new empty TextGrid with specified tiers
 }
 \examples{
-\dontrun{
 # Create TextGrid with 3 interval tiers
 tg <- textgrid_create(0, 10, "phones words syllables")
 
 # Create TextGrid with mixed tier types
-tg <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
-}
+tg2 <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 }
 \seealso{
 \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}

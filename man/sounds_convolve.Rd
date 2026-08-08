@@ -21,3 +21,8 @@ New Sound object
 \description{
 Convolve two sounds
 }
+\examples{
+s1 <- Sound$create_tone(frequency = 220, duration = 0.2)
+s2 <- Sound$create_tone(frequency = 440, duration = 0.05)
+conv <- sounds_convolve(s1, s2)
+}

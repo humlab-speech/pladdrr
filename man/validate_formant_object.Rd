@@ -17,4 +17,9 @@ The validated object (invisibly)
 \description{
 Ensures an object is a valid praat_formant, throwing an error if not
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+pladdrr:::validate_formant_object(formant)
+}
 \keyword{internal}

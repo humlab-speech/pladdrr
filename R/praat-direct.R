@@ -963,8 +963,7 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' beyond the two pitch extractions. Suitable for batch processing.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #'
 #' # Basic usage (returns XPtr)
 #' result <- two_pass_adaptive_pitch(sound)
@@ -977,11 +976,6 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #'   q1_factor = 0.7,          # Wider lower bound
 #'   q3_factor = 1.6           # Wider upper bound
 #' )
-#'
-#' # Use in voice quality analysis
-#' pp <- to_point_process_from_sound_and_pitch(sound, Pitch(.xptr = result$pitch))
-#' metrics <- get_jitter_shimmer_batch(pp, sound)
-#' }
 #'
 #' @seealso
 #' [to_pitch_cc_direct()], [to_pitch_ac_direct()] for single-pass extraction

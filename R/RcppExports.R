@@ -2061,6 +2061,9 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @param sound_xptr External pointer to Sound
 #' @return Duration in seconds
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' pladdrr:::sound_get_duration_direct(sound$.xptr)
 sound_get_duration_direct <- function(sound_xptr) {
     .Call(`_pladdrr_sound_get_duration_direct`, sound_xptr)
 }
@@ -2071,6 +2074,9 @@ sound_get_duration_direct <- function(sound_xptr) {
 #' @param to_time End time (0 = end)
 #' @return RMS value
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' pladdrr:::sound_get_rms_direct(sound$.xptr)
 sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_sound_get_rms_direct`, sound_xptr, from_time, to_time)
 }
@@ -2318,6 +2324,10 @@ harmonicity_get_mean_direct <- function(harmonicity_xptr, from_time = 0, to_time
 #' @param pitch_ceiling Maximum pitch (Hz)
 #' @return External pointer to Pitch
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+#' pitch_xptr <- pladdrr:::sound_to_pitch_direct(sound$.xptr)
+#' pitch <- Pitch(.xptr = pitch_xptr)
 sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, pitch_ceiling = 600) {
     .Call(`_pladdrr_sound_to_pitch_direct`, sound_xptr, time_step, pitch_floor, pitch_ceiling)
 }
@@ -2331,6 +2341,10 @@ sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, p
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
 #' @return External pointer to Formant
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' formant_xptr <- pladdrr:::sound_to_formant_direct(sound$.xptr)
+#' formant <- Formant(.xptr = formant_xptr)
 sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5, max_formant = 5500, window_length = 0.025, pre_emphasis = 50) {
     .Call(`_pladdrr_sound_to_formant_direct`, sound_xptr, time_step, max_formants, max_formant, window_length, pre_emphasis)
 }
@@ -2342,6 +2356,10 @@ sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5,
 #' @param subtract_mean Whether to subtract mean
 #' @return External pointer to Intensity
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+#' intensity_xptr <- pladdrr:::sound_to_intensity_direct(sound$.xptr)
+#' intensity <- Intensity(.xptr = intensity_xptr)
 sound_to_intensity_direct <- function(sound_xptr, minimum_pitch = 100, time_step = 0, subtract_mean = TRUE) {
     .Call(`_pladdrr_sound_to_intensity_direct`, sound_xptr, minimum_pitch, time_step, subtract_mean)
 }
@@ -2354,6 +2372,10 @@ sound_to_intensity_direct <- function(sound_xptr, minimum_pitch = 100, time_step
 #' @param periods_per_window Periods per window
 #' @return External pointer to Harmonicity
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+#' harm_xptr <- pladdrr:::sound_to_harmonicity_direct(sound$.xptr)
+#' harmonicity <- Harmonicity(.xptr = harm_xptr)
 sound_to_harmonicity_direct <- function(sound_xptr, time_step = 0.01, minimum_pitch = 75, silence_threshold = 0.1, periods_per_window = 1.0) {
     .Call(`_pladdrr_sound_to_harmonicity_direct`, sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window)
 }
@@ -2458,6 +2480,8 @@ praat_initialize <- function() {
 #' @param sound_data Numeric vector containing sound amplitude values
 #' @return List containing mean, min, max, and length statistics
 #' @keywords internal
+#' @examples
+#' pladdrr:::sound_stats(sin(2 * pi * 150 * seq(0, 1, length.out = 1000)))
 sound_stats <- function(sound_data) {
     .Call(`_pladdrr_sound_stats`, sound_data)
 }
@@ -2560,16 +2584,13 @@ get_global_simd_enabled <- function() {
 #' store, or use after the Sound object is garbage collected.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("large_file.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #'
-#' # Copy for read-only analysis
-#' samples <- sound_values_fast(sound$get_xptr(), channel = 1)
+#' samples <- sound_values_fast(sound$.xptr, channel = 1)
 #' rms <- sqrt(mean(samples^2))
 #'
 #' # Regular copy — equivalent output
 #' samples2 <- sound$get_values(channel = 1)
-#' }
 #'
 #' @export
 sound_values_fast <- function(sound_xptr, channel = 1L) {
@@ -2587,6 +2608,11 @@ sound_values_fast <- function(sound_xptr, channel = 1L) {
 #' @details
 #' Computes sample times directly from Sound metadata (t0 + i*dt)
 #' rather than going through Praat's accessor functions.
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.1)
+#' times <- sound_times_fast(sound$.xptr)
+#' head(times)
 #'
 #' @export
 sound_times_fast <- function(sound_xptr) {
@@ -2689,6 +2715,10 @@ is_fast_access <- function(x) {
 #'
 #' **Numerical Impact:** None - output is identical to non-pooled version
 #'
+#' @return \code{sound_pool_stats()} returns a named list with elements
+#'   \code{hits}, \code{misses}, \code{hit_rate}, \code{pool_size}, and
+#'   \code{in_use}.
+#'
 #' @details
 #' The pool automatically manages Sound object reuse:
 #' - `sound_pool_acquire()` - get a Sound from pool (or create new)
@@ -2698,17 +2728,16 @@ is_fast_access <- function(x) {
 #' - `sound_pool_resize()` - change pool capacity
 #'
 #' @examples
-#' \dontrun{
 #' # Pool is used automatically by batch extraction functions
 #' # For manual control:
 #'
-#' # Check pool efficiency
+#' # Check pool statistics
 #' stats <- sound_pool_stats()
-#' cat("Hit rate:", stats$hits / (stats$hits + stats$misses) * 100, "%\n")
+#' stats$hits
+#' stats$misses
 #'
 #' # Clear pool to free memory
 #' sound_pool_clear()
-#' }
 #'
 #' @export
 sound_pool_stats <- function() {
@@ -2716,6 +2745,7 @@ sound_pool_stats <- function() {
 }
 
 #' @rdname sound_pool
+#' @return Invisibly returns \code{NULL}.
 #' @export
 sound_pool_clear <- function() {
     invisible(.Call(`_pladdrr_sound_pool_clear`))
@@ -2723,6 +2753,7 @@ sound_pool_clear <- function() {
 
 #' @rdname sound_pool
 #' @param max_size Maximum number of Sound objects to keep in pool
+#' @return Invisibly returns \code{NULL}.
 #' @export
 sound_pool_resize <- function(max_size) {
     invisible(.Call(`_pladdrr_sound_pool_resize`, max_size))
@@ -2739,6 +2770,10 @@ sound_pool_resize <- function(max_size) {
 #'
 #' @return External pointer to Sound
 #'
+#' @examples
+#' xptr <- pladdrr:::sound_pool_acquire(0, 0.1, 4410, 1 / 44100, 0, 1)
+#' pladdrr:::sound_pool_release(xptr)
+#'
 #' @keywords internal
 sound_pool_acquire <- function(xmin, xmax, nx, dx, x1, ny) {
     .Call(`_pladdrr_sound_pool_acquire`, xmin, xmax, nx, dx, x1, ny)
@@ -2747,6 +2782,12 @@ sound_pool_acquire <- function(xmin, xmax, nx, dx, x1, ny) {
 #' Release pooled Sound back to pool
 #'
 #' @param sound_xptr External pointer to Sound
+#'
+#' @return Invisibly returns \code{NULL}.
+#'
+#' @examples
+#' xptr <- pladdrr:::sound_pool_acquire(0, 0.1, 4410, 1 / 44100, 0, 1)
+#' pladdrr:::sound_pool_release(xptr)
 #'
 #' @keywords internal
 sound_pool_release <- function(sound_xptr) {
@@ -2774,20 +2815,16 @@ sound_pool_release <- function(sound_xptr) {
 #' may be reused. Copy if modification is needed.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("speech.wav")
+#' sound <- Sound$create_tone(frequency = 200, duration = 2.0)
 #' starts <- c(0.1, 0.5, 1.0)
 #' ends <- c(0.3, 0.7, 1.2)
 #'
 #' # Batch extraction with pooling
 #' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 #'
-#' # Process segments...
-#'
 #' # Release back to pool when done
 #' for (seg in segments) {
 #'   sound_pool_release(seg)
-#' }
 #' }
 #'
 #' @export
@@ -3781,11 +3818,19 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' - "regex": Regular expression (future)
 #'
 #' @examples
-#' \dontrun{
+#' sound <- Sound$create_tone(frequency = 200, duration = 1.0)
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.4)
+#' tg$insert_boundary("phones", 0.7)
+#' tg$set_interval_text("phones", 1, "sil")
+#' tg$set_interval_text("phones", 2, "V")
+#' tg$set_interval_text("phones", 3, "sil")
+#'
 #' # Extract all "V" (voiced) intervals
 #' result <- textgrid_extract_intervals_batch(
-#'   textgrid$get_xptr(),
-#'   sound$get_xptr(),
+#'   tg$.xptr,
+#'   sound$.xptr,
 #'   tier_number = 1,
 #'   comparison_type = "equals",
 #'   target_value = "V",
@@ -3795,8 +3840,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' # Access results
 #' n_voiced <- length(result$indices)
 #' voiced_durations <- result$end_times - result$start_times
-#' voiced_sounds <- result$sounds  # List of Sound objects
-#' }
+#' voiced_sounds <- result$sounds  # List of Sound xptrs
 #'
 #' @export
 textgrid_extract_intervals_batch <- function(textgrid_xptr, sound_xptr, tier_number, comparison_type = "equals", target_value = "", extract_sounds = FALSE) {
@@ -3814,10 +3858,14 @@ textgrid_extract_intervals_batch <- function(textgrid_xptr, sound_xptr, tier_num
 #' @return Character vector of all interval labels
 #'
 #' @examples
-#' \dontrun{
-#' labels <- textgrid_get_all_labels(textgrid$get_xptr(), tier = 1)
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.4)
+#' tg$set_interval_text("phones", 1, "sil")
+#' tg$set_interval_text("phones", 2, "V")
+#'
+#' labels <- textgrid_get_all_labels(tg$.xptr, tier_number = 1)
 #' table(labels)  # Frequency of each label
-#' }
 #'
 #' @export
 textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
@@ -3845,10 +3893,14 @@ textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
 #' large interval counts (>100).
 #'
 #' @examples
-#' \dontrun{
-#' stats <- textgrid_interval_statistics_batch(textgrid$get_xptr(), tier = 1)
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.4)
+#' tg$set_interval_text("phones", 1, "sil")
+#' tg$set_interval_text("phones", 2, "V")
+#'
+#' stats <- textgrid_interval_statistics_batch(tg$.xptr, tier_number = 1)
 #' mean(stats$duration[stats$label == "V"])  # Mean voiced interval duration
-#' }
 #'
 #' @export
 textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
@@ -3896,6 +3948,29 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #' ```
 #'
 #' @seealso [textgrid_extract_intervals_batch()] for simpler string matching
+#'
+#' @examples
+#' \donttest{
+#' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+#'   tg <- TextGrid(0, 1)
+#'   tg$add_interval_tier("phones")
+#'   tg$insert_boundary("phones", 0.4)
+#'   tg$insert_boundary("phones", 0.7)
+#'   tg$set_interval_text("phones", 1, "sil")
+#'   tg$set_interval_text("phones", 2, "V")
+#'   tg$set_interval_text("phones", 3, "sil")
+#'
+#'   my_pred <- RcppXPtrUtils::cppXPtr(
+#'     "bool pred(const char* label, double start, double end) {
+#'        double dur = end - start;
+#'        return dur > 0.1 && label[0] == 'V';
+#'      }",
+#'     signature = "bool(const char*, double, double)"
+#'   )
+#'
+#'   result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)
+#' }
+#' }
 #'
 #' @export
 textgrid_filter_xptr <- function(textgrid_xptr, tier_number, predicate_xptr, sound_xptr = NULL, extract_sounds = FALSE) {
@@ -3988,6 +4063,8 @@ set_textgrid_simd_enabled_bridge <- function(enabled) {
 #' Check if SIMD is Enabled for TextGrid
 #'
 #' @return Logical indicating SIMD status
+#' @examples
+#' textgrid_simd_enabled()
 #' @export
 textgrid_simd_enabled <- function() {
     .Call(`_pladdrr_textgrid_simd_enabled`)
@@ -4078,6 +4155,17 @@ calculate_midpoints_simd_bridge <- function(start_times, end_times) {
 #' 1. SIMD duration calculation for all intervals
 #' 2. SIMD statistics calculation for pitch values in each interval
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.5)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "b")
+#'
+#' stats <- textgrid_interval_pitch_batch(tg$.xptr, pitch$.xptr, tier_number = 1, unit = "HERTZ")
+#'
 #' @export
 textgrid_interval_pitch_batch <- function(textgrid_xptr, pitch_xptr, tier_number, unit = "HERTZ") {
     .Call(`_pladdrr_textgrid_interval_pitch_batch`, textgrid_xptr, pitch_xptr, tier_number, unit)
@@ -4094,6 +4182,17 @@ textgrid_interval_pitch_batch <- function(textgrid_xptr, pitch_xptr, tier_number
 #'
 #' @return Data frame with interval info and formant statistics
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
+#' formant <- sound$to_formant_burg()
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.5)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "b")
+#'
+#' stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr, tier_number = 1, formant_number = 1)
+#'
 #' @export
 textgrid_interval_formant_batch <- function(textgrid_xptr, formant_xptr, tier_number, formant_number = 1L) {
     .Call(`_pladdrr_textgrid_interval_formant_batch`, textgrid_xptr, formant_xptr, tier_number, formant_number)
@@ -4107,6 +4206,17 @@ textgrid_interval_formant_batch <- function(textgrid_xptr, formant_xptr, tier_nu
 #'
 #' @return Data frame with interval info and intensity statistics
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+#' intensity <- sound$to_intensity()
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.5)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "b")
+#'
+#' stats <- textgrid_interval_intensity_batch(tg$.xptr, intensity$.xptr, tier_number = 1)
+#'
 #' @export
 textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tier_number) {
     .Call(`_pladdrr_textgrid_interval_intensity_batch`, textgrid_xptr, intensity_xptr, tier_number)
@@ -4115,8 +4225,9 @@ textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tie
 #' Extract All Acoustic Features for TextGrid Intervals (Batch, SIMD)
 #'
 #' Comprehensive batch extraction of pitch, formant F1/F2, and intensity
-#' statistics for all intervals. Maximum efficiency by processing all
-#' features in a single pass.
+#' statistics for all intervals in a single call, as an alternative to
+#' calling `textgrid_interval_pitch_batch()`, `textgrid_interval_formant_batch()`,
+#' and `textgrid_interval_intensity_batch()` separately.
 #'
 #' @param textgrid_xptr External pointer to TextGrid
 #' @param pitch_xptr External pointer to Pitch (optional)
@@ -4127,10 +4238,23 @@ textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tie
 #' @return Data frame with all available features per interval
 #'
 #' @details
-#' This is the most efficient way to extract multiple acoustic features
-#' for TextGrid-aligned analysis. All SIMD optimizations are applied:
-#' - Duration calculation: SIMD
-#' - Statistics aggregation: SIMD where applicable
+#' Duration calculation and statistics aggregation use SIMD where
+#' applicable.
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 180, duration = 1.0)
+#' pitch <- sound$to_pitch()
+#' formant <- sound$to_formant_burg()
+#' intensity <- sound$to_intensity()
+#' tg <- TextGrid(0, 1)
+#' tg$add_interval_tier("phones")
+#' tg$insert_boundary("phones", 0.5)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "b")
+#'
+#' stats <- textgrid_interval_all_features_batch(
+#'   tg$.xptr, pitch$.xptr, formant$.xptr, intensity$.xptr, tier_number = 1
+#' )
 #'
 #' @export
 textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NULL, formant_xptr = NULL, intensity_xptr = NULL, tier_number = 1L) {

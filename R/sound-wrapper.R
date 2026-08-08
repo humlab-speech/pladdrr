@@ -1000,14 +1000,12 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' @return A Sound object
 #' @export
 #' @examples
-#' \dontrun{
 #' # Create from vector (mono)
-#' values <- sin(2 * pi * 440 * seq(0, 1, length.out = 44100))
-#' sound <- sound_from_values(values, 44100)
+#' values <- sin(2 * pi * 440 * seq(0, 1, length.out = 4410))
+#' sound <- sound_from_values(values, 4410)
 #'
 #' # Or using Sound$from_values() (same thing)
-#' sound <- Sound$from_values(values, 44100)
-#' }
+#' sound <- Sound$from_values(values, 4410)
 sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   if (is.vector(values)) {
     values <- matrix(values, nrow = 1)
@@ -1033,13 +1031,11 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' @return A Sound object
 #' @export
 #' @examples
-#' \dontrun{
 #' # Create 440 Hz tone
 #' sound <- sound_create_tone(frequency = 440, duration = 1.0)
 #'
 #' # Or using Sound$create_tone() (same thing)
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
-#' }
 sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
                               frequency = 440.0, amplitude = 0.99) {
   ptr <- .sound_create_tone(duration, sampling_rate, frequency, amplitude)
@@ -1085,11 +1081,9 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
 #' @return A Sound object
 #' @export
 #' @examples
-#' \dontrun{
 #' # Harmonic tone with 10 components at 100 Hz intervals
 #' tone <- sound_create_tone_complex(frequency_step = 100, number_of_components = 10)
 #' tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
-#' }
 sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
                                        sampling_rate = 44100,
                                        phase = c("sine", "cosine"),

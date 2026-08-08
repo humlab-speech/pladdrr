@@ -16,6 +16,15 @@ sound_pool_resize(max_size)
 \arguments{
 \item{max_size}{Maximum number of Sound objects to keep in pool}
 }
+\value{
+\code{sound_pool_stats()} returns a named list with elements
+  \code{hits}, \code{misses}, \code{hit_rate}, \code{pool_size}, and
+  \code{in_use}.
+
+Invisibly returns \code{NULL}.
+
+Invisibly returns \code{NULL}.
+}
 \description{
 Memory optimization for batch operations that extract many Sound segments.
 Reuses Sound object allocations instead of creating/destroying each time.
@@ -31,16 +40,15 @@ The pool automatically manages Sound object reuse:
 - `sound_pool_resize()` - change pool capacity
 }
 \examples{
-\dontrun{
 # Pool is used automatically by batch extraction functions
 # For manual control:
 
-# Check pool efficiency
+# Check pool statistics
 stats <- sound_pool_stats()
-cat("Hit rate:", stats$hits / (stats$hits + stats$misses) * 100, "\%\n")
+stats$hits
+stats$misses
 
 # Clear pool to free memory
 sound_pool_clear()
-}
 
 }

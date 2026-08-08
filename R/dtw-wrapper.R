@@ -230,12 +230,10 @@ print.DTW <- function(x, ...) x$print()
 #' @return A DTW object
 #'
 #' @examples
-#' \dontrun{
-#' ref <- Sound("reference.wav")
-#' test <- Sound("test.wav")
+#' ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
+#' test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 #' dtw <- sounds_to_dtw(ref, test)
 #' print(dtw$get_weighted_distance())
-#' }
 #'
 #' @export
 sounds_to_dtw <- function(reference, candidate,
@@ -305,6 +303,11 @@ mfccs_to_dtw <- function(mfcc1, mfcc2,
 #' @param slope Slope constraint (1-4)
 #' @param metric Distance metric power (default: 2 = Euclidean)
 #' @return A DTW object
+#'
+#' @examples
+#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
+#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' dtw <- spectrograms_to_dtw(s1$to_spectrogram(), s2$to_spectrogram())
 #'
 #' @export
 spectrograms_to_dtw <- function(spectrogram1, spectrogram2,

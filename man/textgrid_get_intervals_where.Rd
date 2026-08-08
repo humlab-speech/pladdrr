@@ -37,7 +37,12 @@ Extracts intervals from a TextGrid tier that match a specified criterion.
 Returns time boundaries and labels of matching intervals.
 }
 \examples{
-\dontrun{
+sound <- sounds_append(
+  Sound$create_tone(frequency = 200, duration = 0.5, amplitude = 0.8),
+  Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
+)
+vad_grid <- sound_to_textgrid_silences(sound)
+
 # Get all "sounding" intervals
 voiced <- textgrid_get_intervals_where(
   vad_grid,
@@ -48,6 +53,5 @@ voiced <- textgrid_get_intervals_where(
 
 cat("Found", voiced$count, "voiced segments\n")
 cat("Total voiced duration:", sum(voiced$xmax - voiced$xmin), "s\n")
-}
 
 }

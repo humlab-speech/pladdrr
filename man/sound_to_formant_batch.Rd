@@ -35,3 +35,11 @@ List of Formant objects (R6 or xptr depending on return_r6)
 \description{
 Extract Formants from Multiple Sounds in Single C++ Call
 }
+\examples{
+sounds <- list(
+  Sound$create_tone(frequency = 150, duration = 0.5),
+  Sound$create_tone(frequency = 200, duration = 0.5)
+)
+formants <- sound_to_formant_batch(sounds)
+
+}

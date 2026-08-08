@@ -29,4 +29,9 @@ External pointer to Harmonicity
 \description{
 Create Harmonicity from Sound directly (cross-correlation)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 0.5)
+harm_xptr <- pladdrr:::sound_to_harmonicity_direct(sound$.xptr)
+harmonicity <- Harmonicity(.xptr = harm_xptr)
+}
 \keyword{internal}

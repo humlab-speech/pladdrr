@@ -17,4 +17,7 @@ The validated value (invisibly)
 \description{
 Ensures a numeric parameter is positive (> 0)
 }
+\examples{
+pladdrr:::validate_positive(2.5)
+}
 \keyword{internal}

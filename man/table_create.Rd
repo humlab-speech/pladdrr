@@ -19,6 +19,10 @@ A Table object
 \description{
 Creates a new Table object with specified dimensions.
 }
+\examples{
+tbl <- table_create(numberOfRows = 3, columnNames = c("speaker", "f0"))
+tbl2 <- table_create(numberOfRows = 3, numberOfColumns = 2)
+}
 \seealso{
 [Table] for object methods
 }

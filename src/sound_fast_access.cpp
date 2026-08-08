@@ -55,16 +55,13 @@ using namespace Rcpp;
 //' store, or use after the Sound object is garbage collected.
 //'
 //' @examples
-//' \dontrun{
-//' sound <- Sound("large_file.wav")
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 //'
-//' # Copy for read-only analysis
-//' samples <- sound_values_fast(sound$get_xptr(), channel = 1)
+//' samples <- sound_values_fast(sound$.xptr, channel = 1)
 //' rms <- sqrt(mean(samples^2))
 //'
 //' # Regular copy — equivalent output
 //' samples2 <- sound$get_values(channel = 1)
-//' }
 //'
 //' @export
 // [[Rcpp::export]]
@@ -114,6 +111,11 @@ SEXP sound_values_fast(SEXP sound_xptr, int channel = 1) {
 //' @details
 //' Computes sample times directly from Sound metadata (t0 + i*dt)
 //' rather than going through Praat's accessor functions.
+//'
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.1)
+//' times <- sound_times_fast(sound$.xptr)
+//' head(times)
 //'
 //' @export
 // [[Rcpp::export]]

@@ -78,11 +78,19 @@ extern "C" {
 //' - "regex": Regular expression (future)
 //'
 //' @examples
-//' \dontrun{
+//' sound <- Sound$create_tone(frequency = 200, duration = 1.0)
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.4)
+//' tg$insert_boundary("phones", 0.7)
+//' tg$set_interval_text("phones", 1, "sil")
+//' tg$set_interval_text("phones", 2, "V")
+//' tg$set_interval_text("phones", 3, "sil")
+//'
 //' # Extract all "V" (voiced) intervals
 //' result <- textgrid_extract_intervals_batch(
-//'   textgrid$get_xptr(),
-//'   sound$get_xptr(),
+//'   tg$.xptr,
+//'   sound$.xptr,
 //'   tier_number = 1,
 //'   comparison_type = "equals",
 //'   target_value = "V",
@@ -92,8 +100,7 @@ extern "C" {
 //' # Access results
 //' n_voiced <- length(result$indices)
 //' voiced_durations <- result$end_times - result$start_times
-//' voiced_sounds <- result$sounds  # List of Sound objects
-//' }
+//' voiced_sounds <- result$sounds  # List of Sound xptrs
 //'
 //' @export
 // [[Rcpp::export]]
@@ -223,10 +230,14 @@ List textgrid_extract_intervals_batch(
 //' @return Character vector of all interval labels
 //'
 //' @examples
-//' \dontrun{
-//' labels <- textgrid_get_all_labels(textgrid$get_xptr(), tier = 1)
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.4)
+//' tg$set_interval_text("phones", 1, "sil")
+//' tg$set_interval_text("phones", 2, "V")
+//'
+//' labels <- textgrid_get_all_labels(tg$.xptr, tier_number = 1)
 //' table(labels)  # Frequency of each label
-//' }
 //'
 //' @export
 // [[Rcpp::export]]
@@ -276,10 +287,14 @@ CharacterVector textgrid_get_all_labels(SEXP textgrid_xptr, int tier_number) {
 //' large interval counts (>100).
 //'
 //' @examples
-//' \dontrun{
-//' stats <- textgrid_interval_statistics_batch(textgrid$get_xptr(), tier = 1)
+//' tg <- TextGrid(0, 1)
+//' tg$add_interval_tier("phones")
+//' tg$insert_boundary("phones", 0.4)
+//' tg$set_interval_text("phones", 1, "sil")
+//' tg$set_interval_text("phones", 2, "V")
+//'
+//' stats <- textgrid_interval_statistics_batch(tg$.xptr, tier_number = 1)
 //' mean(stats$duration[stats$label == "V"])  # Mean voiced interval duration
-//' }
 //'
 //' @export
 // [[Rcpp::export]]
@@ -391,6 +406,29 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //' ```
 //'
 //' @seealso [textgrid_extract_intervals_batch()] for simpler string matching
+//'
+//' @examples
+//' \donttest{
+//' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+//'   tg <- TextGrid(0, 1)
+//'   tg$add_interval_tier("phones")
+//'   tg$insert_boundary("phones", 0.4)
+//'   tg$insert_boundary("phones", 0.7)
+//'   tg$set_interval_text("phones", 1, "sil")
+//'   tg$set_interval_text("phones", 2, "V")
+//'   tg$set_interval_text("phones", 3, "sil")
+//'
+//'   my_pred <- RcppXPtrUtils::cppXPtr(
+//'     "bool pred(const char* label, double start, double end) {
+//'        double dur = end - start;
+//'        return dur > 0.1 && label[0] == 'V';
+//'      }",
+//'     signature = "bool(const char*, double, double)"
+//'   )
+//'
+//'   result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)
+//' }
+//' }
 //'
 //' @export
 // [[Rcpp::export]]

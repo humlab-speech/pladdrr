@@ -19,4 +19,8 @@ RMS value
 \description{
 Get Sound RMS directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+pladdrr:::sound_get_rms_direct(sound$.xptr)
+}
 \keyword{internal}

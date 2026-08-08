@@ -19,4 +19,7 @@ The validated value (invisibly)
 \description{
 Ensures a parameter is a non-empty character string
 }
+\examples{
+pladdrr:::validate_string("hello")
+}
 \keyword{internal}

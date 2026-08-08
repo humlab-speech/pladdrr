@@ -57,6 +57,30 @@ result <- textgrid_filter_xptr(
 )
 ```
 }
+\examples{
+\donttest{
+if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+  tg <- TextGrid(0, 1)
+  tg$add_interval_tier("phones")
+  tg$insert_boundary("phones", 0.4)
+  tg$insert_boundary("phones", 0.7)
+  tg$set_interval_text("phones", 1, "sil")
+  tg$set_interval_text("phones", 2, "V")
+  tg$set_interval_text("phones", 3, "sil")
+
+  my_pred <- RcppXPtrUtils::cppXPtr(
+    "bool pred(const char* label, double start, double end) {
+       double dur = end - start;
+       return dur > 0.1 && label[0] == 'V';
+     }",
+    signature = "bool(const char*, double, double)"
+  )
+
+  result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)
+}
+}
+
+}
 \seealso{
 [textgrid_extract_intervals_batch()] for simpler string matching
 }

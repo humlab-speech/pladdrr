@@ -49,11 +49,19 @@ criteria, using:
 - "regex": Regular expression (future)
 }
 \examples{
-\dontrun{
+sound <- Sound$create_tone(frequency = 200, duration = 1.0)
+tg <- TextGrid(0, 1)
+tg$add_interval_tier("phones")
+tg$insert_boundary("phones", 0.4)
+tg$insert_boundary("phones", 0.7)
+tg$set_interval_text("phones", 1, "sil")
+tg$set_interval_text("phones", 2, "V")
+tg$set_interval_text("phones", 3, "sil")
+
 # Extract all "V" (voiced) intervals
 result <- textgrid_extract_intervals_batch(
-  textgrid$get_xptr(),
-  sound$get_xptr(),
+  tg$.xptr,
+  sound$.xptr,
   tier_number = 1,
   comparison_type = "equals",
   target_value = "V",
@@ -63,7 +71,6 @@ result <- textgrid_extract_intervals_batch(
 # Access results
 n_voiced <- length(result$indices)
 voiced_durations <- result$end_times - result$start_times
-voiced_sounds <- result$sounds  # List of Sound objects
-}
+voiced_sounds <- result$sounds  # List of Sound xptrs
 
 }

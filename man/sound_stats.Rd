@@ -15,4 +15,7 @@ List containing mean, min, max, and length statistics
 \description{
 Calculates basic statistics for a sound vector
 }
+\examples{
+pladdrr:::sound_stats(sin(2 * pi * 150 * seq(0, 1, length.out = 1000)))
+}
 \keyword{internal}

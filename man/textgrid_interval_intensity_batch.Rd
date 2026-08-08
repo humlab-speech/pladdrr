@@ -19,3 +19,15 @@ Data frame with interval info and intensity statistics
 \description{
 Extract Intensity Statistics for All TextGrid Intervals (Batch, SIMD)
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1.0)
+intensity <- sound$to_intensity()
+tg <- TextGrid(0, 1)
+tg$add_interval_tier("phones")
+tg$insert_boundary("phones", 0.5)
+tg$set_interval_text("phones", 1, "a")
+tg$set_interval_text("phones", 2, "b")
+
+stats <- textgrid_interval_intensity_batch(tg$.xptr, intensity$.xptr, tier_number = 1)
+
+}
