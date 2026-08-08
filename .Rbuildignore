@@ -156,3 +156,4 @@ manual_.*\.cpp$
 ^src/pffft/\.git$
 ^pladdrr_logo\.svg$
 ^vignettes/articles$
+^\.superpowers$
