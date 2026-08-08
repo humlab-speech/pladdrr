@@ -15,4 +15,7 @@ List with mean, stdev, min, max
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+calculate_batch_statistics_simd_bridge(c(1, 2, 3, 4, 5))
+}
 \keyword{internal}

@@ -29,4 +29,9 @@ Mean formant frequency
 \description{
 Get formant mean directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+pladdrr:::formant_get_mean_direct(formant$.xptr, 1)
+}
 \keyword{internal}

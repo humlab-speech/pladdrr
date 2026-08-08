@@ -41,14 +41,18 @@ High-level function to extract acoustic measurements aligned with TextGrid inter
 Automates the common Praat workflow of measuring formants/pitch at interval midpoints.
 }
 \examples{
-\dontrun{
+sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+tg <- textgrid_create(0, 0.6, "phones")
+tg$insert_boundary("phones", 0.3)
+tg$set_interval_text("phones", 1, "a")
+tg$set_interval_text("phones", 2, "e")
+
 results <- extract_measurements(
-  sound = "audio.wav",
-  textgrid = "audio.TextGrid",
+  sound = sound,
+  textgrid = tg,
   tier = 1,
   measurements = c("pitch", "formants"),
   time_point = "midpoint"
 )
-}
 
 }

@@ -15,3 +15,7 @@ List with mean, stdev, min, max
 \description{
 Computes mean, standard deviation, min, and max of durations using SIMD.
 }
+\examples{
+duration_statistics_simd_bridge(c(0.5, 0.8, 1.2, 0.3))
+
+}

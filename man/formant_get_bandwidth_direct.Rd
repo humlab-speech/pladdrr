@@ -21,4 +21,9 @@ Bandwidth
 \description{
 Get formant bandwidth at time directly
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+pladdrr:::formant_get_bandwidth_direct(formant$.xptr, 1, 0.15, 0)
+}
 \keyword{internal}

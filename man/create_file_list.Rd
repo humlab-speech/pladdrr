@@ -28,15 +28,12 @@ Create a file list similar to Praat's "Create Strings as file list".
 Returns a simple character vector of file paths.
 }
 \examples{
-\dontrun{
-# Equivalent to: Create Strings as file list: "list", "*.wav"
-wav_files <- create_file_list("audio/", pattern = "\\\\.wav$")
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
 
-# Process each file
-for (filepath in wav_files) {
-  sound <- Sound$new(filepath)
-  # ... process ...
-}
-}
+# Equivalent to: Create Strings as file list: "list", "*.wav"
+wav_files <- create_file_list(audio_dir, pattern = "\\\\.wav$")
 
 }

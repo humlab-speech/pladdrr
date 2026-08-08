@@ -3,8 +3,18 @@
 \name{datatable-utils}
 \alias{datatable-utils}
 \title{data.table Utility Functions for pladdrr}
+\value{
+This is a documentation-only overview; see the individual functions
+  (\code{\link{ensure_datatable}}, \code{\link{df_to_dt}},
+  \code{\link{dt_empty}}, \code{\link{dt_rbindlist}},
+  \code{\link{dt_setkey}}, \code{\link{dt_create}}) for their return values.
+}
 \description{
 Internal helper functions for data.table operations.
 These functions provide consistent data.table handling across the package.
+}
+\examples{
+# See individual functions, e.g. ?dt_create
+
 }
 \keyword{internal}

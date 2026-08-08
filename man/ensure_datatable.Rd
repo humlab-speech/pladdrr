@@ -15,4 +15,8 @@ data.table (invisibly)
 \description{
 Converts to data.table if not already one (modifies in place).
 }
+\examples{
+df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+pladdrr:::ensure_datatable(df)
+}
 \keyword{internal}

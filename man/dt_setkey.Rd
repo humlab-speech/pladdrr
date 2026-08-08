@@ -18,9 +18,7 @@ data.table (invisibly, modified by reference)
 Sets key for fast operations (modifies in place).
 }
 \examples{
-\dontrun{
-dt <- data.table::data.table(time=1:100, formant=rep(1:4, 25), freq=rnorm(100))
-dt_setkey(dt, time, formant)  # Fast lookups on time+formant
-}
+dt <- data.table::data.table(time = 1:100, formant = rep(1:4, 25), freq = rnorm(100))
+pladdrr:::dt_setkey(dt, time, formant)  # sorted/indexed lookups on time+formant
 }
 \keyword{internal}

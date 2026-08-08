@@ -19,6 +19,13 @@
 #'   autolayer(pitch, color = "blue")
 #' }
 #'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' p <- ggplot2::autoplot(sound)
+#'
+#' pitch <- sound$to_pitch()
+#' p2 <- ggplot2::autoplot(pitch)
+#'
 #' @name autoplot-methods
 #' @importFrom ggplot2 autoplot autolayer
 NULL

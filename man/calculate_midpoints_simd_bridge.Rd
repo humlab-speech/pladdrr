@@ -17,3 +17,7 @@ Numeric vector of midpoints
 \description{
 Calculate Interval Midpoints with SIMD
 }
+\examples{
+calculate_midpoints_simd_bridge(c(0, 1, 2.5), c(0.8, 2, 3.2))
+
+}

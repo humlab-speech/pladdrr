@@ -241,6 +241,10 @@ int pitch_count_voiced_direct(SEXP pitch_xptr) {
 //' @param unit 0=Hertz, 1=Bark
 //' @return Formant frequency
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_value_direct(formant$.xptr, 1, 0.15, 0)
 // [[Rcpp::export]]
 double formant_get_value_direct(SEXP formant_xptr, int formant_number, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
@@ -258,6 +262,10 @@ double formant_get_value_direct(SEXP formant_xptr, int formant_number, double ti
 //' @param unit Unit code
 //' @return Bandwidth
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_bandwidth_direct(formant$.xptr, 1, 0.15, 0)
 // [[Rcpp::export]]
 double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
@@ -276,6 +284,10 @@ double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, doubl
 //' @param unit Unit code
 //' @return Mean formant frequency
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_mean_direct(formant$.xptr, 1)
 // [[Rcpp::export]]
 double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
                                 double from_time = 0, double to_time = 0, int unit = 0) {
@@ -575,6 +587,10 @@ List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' @param unit Unit code (0=Hertz, 1=Bark)
 //' @return NumericVector with F1, F2, F3, F4
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_f1_f4_direct(formant$.xptr, 0.15, 0)
 // [[Rcpp::export]]
 NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);

@@ -21,3 +21,8 @@ The values data.table (inherits from data.frame) from the intensity object
 \description{
 Convert praat_intensity to data.frame
 }
+\examples{
+x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1)))
+class(x) <- "praat_intensity"
+as.data.frame(x)
+}

@@ -21,14 +21,18 @@ Compare performance of parallel vs sequential processing.
 Useful for determining optimal core count for your workload.
 }
 \examples{
-\dontrun{
-files <- list.files("audio/", pattern = "\\\\.wav$", full.names = TRUE)[1:10]
+\donttest{
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
 
-# Test different core counts
+# CRAN examples should use at most 2 cores
 results <- benchmark_parallel(
   files,
   function(s) s$to_pitch()$get_mean(0, 0, "hertz"),
-  core_counts = c(1, 2, 4, 8)
+  core_counts = c(1, 2)
 )
 print(results)
 }

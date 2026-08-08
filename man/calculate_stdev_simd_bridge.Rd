@@ -17,4 +17,8 @@ Standard deviation
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+x <- c(1, 2, 3, 4, 5)
+calculate_stdev_simd_bridge(x, mean(x))
+}
 \keyword{internal}

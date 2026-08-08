@@ -42,11 +42,12 @@ Each file is:
 3. Results collected and returned
 }
 \examples{
-\dontrun{
-# Analyze pitch for multiple files in parallel
-files <- list.files("audio/", pattern = "\\\\.wav$", full.names = TRUE)
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
 
-# Define analysis function
 analyze_pitch <- function(sound) {
   pitch <- sound$to_pitch()
   list(
@@ -55,11 +56,7 @@ analyze_pitch <- function(sound) {
   )
 }
 
-# Run in parallel (uses n-1 cores by default)
-results <- analyze_files_parallel(files, analyze_pitch)
-
-# With custom core count
-results <- analyze_files_parallel(files, analyze_pitch, n_cores = 4)
-}
+# n_cores = 1 keeps this a single-process example (CRAN-safe)
+results <- analyze_files_parallel(files, analyze_pitch, n_cores = 1)
 
 }

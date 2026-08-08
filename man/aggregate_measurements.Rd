@@ -25,12 +25,14 @@ Aggregate extracted measurements by interval label (e.g., phoneme, word).
 Common workflow after extract_measurements().
 }
 \examples{
-\dontrun{
+results <- data.frame(
+  label = c("a", "a", "e", "e"),
+  f0 = c(150, 155, 210, 205)
+)
 vowel_stats <- aggregate_measurements(
   measurements = results,
   by = "label",
   stats = c("mean", "sd", "n")
 )
-}
 
 }

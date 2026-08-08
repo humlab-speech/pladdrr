@@ -41,11 +41,15 @@ Process multiple audio files with a custom function. This replaces Praat's
 pattern of creating Strings objects and looping over files.
 }
 \examples{
-\dontrun{
-# Extract pitch statistics from all WAV files
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+
 results <- batch_process(
-  directory = "audio_files/",
+  directory = audio_dir,
   pattern = "\\\\.wav$",
+  progress = FALSE,
   func = function(sound) {
     pitch <- sound$to_pitch()
     list(
@@ -54,6 +58,5 @@ results <- batch_process(
     )
   }
 )
-}
 
 }

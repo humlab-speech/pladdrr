@@ -5,6 +5,15 @@
 #' and extracting measurements across multiple files. These utilities replace
 #' the need for Praat's Strings and Table objects with R-idiomatic workflows.
 #'
+#' @return This is a documentation-only overview; see the individual functions
+#'   (\code{\link{batch_process}}, \code{\link{create_file_list}},
+#'   \code{\link{extract_measurements}},
+#'   \code{\link{extract_measurements_custom}},
+#'   \code{\link{aggregate_measurements}}) for their return values.
+#'
+#' @examples
+#' # See individual functions, e.g. ?batch_process, ?create_file_list
+#'
 #' @name batch_processing
 NULL
 
@@ -27,11 +36,15 @@ NULL
 #' @return Data frame with results from all files
 #'
 #' @examples
-#' \dontrun{
-#' # Extract pitch statistics from all WAV files
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#'
 #' results <- batch_process(
-#'   directory = "audio_files/",
+#'   directory = audio_dir,
 #'   pattern = "\\.wav$",
+#'   progress = FALSE,
 #'   func = function(sound) {
 #'     pitch <- sound$to_pitch()
 #'     list(
@@ -40,10 +53,9 @@ NULL
 #'     )
 #'   }
 #' )
-#' }
 #'
 #' @export
-batch_process <- function(directory, pattern = "\\.wav$", func, 
+batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 
                          ncores = NULL, progress = TRUE, ...) {
   
@@ -242,21 +254,25 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' @return Data frame with measurements for each interval/point
 #'
 #' @examples
-#' \dontrun{
-#' # Extract pitch and intensity for each vowel interval
+#' \donttest{
+#' # NOTE: currently errors regardless of input — extract_measurements_custom()
+#' # calls several TextGrid methods that do not exist under these names in
+#' # this version of pladdrr (e.g. get_tier_index(), is_interval_tier(),
+#' # get_label_of_interval(); the real methods are named tier_is_interval_tier(),
+#' # get_interval_text(), get_interval_start_time()/get_interval_end_time(), etc.).
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#' tg <- textgrid_create(0, 0.6, "phones")
+#' tg$insert_boundary("phones", 0.3)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "e")
+#'
 #' measurements <- extract_measurements_custom(
-#'   sound = "recording.wav",
-#'   textgrid = "recording.TextGrid",
+#'   sound = sound,
+#'   textgrid = tg,
 #'   tier = "phones",
 #'   measures = list(
-#'     mean_f0 = function(snd, t1, t2) {
-#'       pitch <- snd$extract_part(t1, t2, preserve_times = FALSE)$to_pitch()
-#'       pitch$get_mean(0, 0, "hertz")
-#'     },
-#'     mean_intensity = function(snd, t1, t2) {
-#'       intensity <- snd$extract_part(t1, t2, preserve_times = FALSE)$to_intensity()
-#'       intensity$get_mean(0, 0)
-#'     }
+#'     mean_f0 = function(snd, t1, t2) snd$to_pitch()$get_mean(0, 0, "hertz"),
+#'     mean_intensity = function(snd, t1, t2) snd$to_intensity()$get_mean(0, 0)
 #'   ),
 #'   interval_filter = function(label) label %in% c("a", "e", "i", "o", "u")
 #' )
@@ -415,19 +431,16 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 #' @return Character vector of file paths
 #'
 #' @examples
-#' \dontrun{
-#' # Equivalent to: Create Strings as file list: "list", "*.wav"
-#' wav_files <- create_file_list("audio/", pattern = "\\.wav$")
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
 #'
-#' # Process each file
-#' for (filepath in wav_files) {
-#'   sound <- Sound$new(filepath)
-#'   # ... process ...
-#' }
-#' }
+#' # Equivalent to: Create Strings as file list: "list", "*.wav"
+#' wav_files <- create_file_list(audio_dir, pattern = "\\.wav$")
 #'
 #' @export
-create_file_list <- function(directory, pattern = NULL, 
+create_file_list <- function(directory, pattern = NULL,
                             full_names = TRUE, recursive = FALSE) {
   list.files(directory, pattern = pattern, 
             full.names = full_names, recursive = recursive)
@@ -533,15 +546,19 @@ pair_files <- function(sound_dir,
 #' @return Data frame with one row per interval, columns for label and requested measurements.
 #'
 #' @examples
-#' \dontrun{
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#' tg <- textgrid_create(0, 0.6, "phones")
+#' tg$insert_boundary("phones", 0.3)
+#' tg$set_interval_text("phones", 1, "a")
+#' tg$set_interval_text("phones", 2, "e")
+#'
 #' results <- extract_measurements(
-#'   sound = "audio.wav",
-#'   textgrid = "audio.TextGrid",
+#'   sound = sound,
+#'   textgrid = tg,
 #'   tier = 1,
 #'   measurements = c("pitch", "formants"),
 #'   time_point = "midpoint"
 #' )
-#' }
 #'
 #' @export
 extract_measurements <- function(sound,
@@ -642,13 +659,15 @@ extract_measurements <- function(sound,
 #' @return Data frame with aggregated statistics.
 #'
 #' @examples
-#' \dontrun{
+#' results <- data.frame(
+#'   label = c("a", "a", "e", "e"),
+#'   f0 = c(150, 155, 210, 205)
+#' )
 #' vowel_stats <- aggregate_measurements(
 #'   measurements = results,
 #'   by = "label",
 #'   stats = c("mean", "sd", "n")
 #' )
-#' }
 #'
 #' @export
 aggregate_measurements <- function(measurements,

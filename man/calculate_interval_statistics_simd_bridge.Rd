@@ -18,4 +18,9 @@ NumericVector or NumericMatrix depending on metric
 Optimized for batch processing of interval-based metrics. Internal SIMD
 dispatch helper; not part of the public API.
 }
+\examples{
+intervals <- list(c(1, 2, 3), c(4, 5, 6, 7))
+calculate_interval_statistics_simd_bridge(intervals, "mean")
+calculate_interval_statistics_simd_bridge(intervals, "all")
+}
 \keyword{internal}

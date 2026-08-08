@@ -172,6 +172,9 @@ print.Electroglottogram <- function(x, ...) x$print()
 #' @param dx Sampling period in seconds
 #' @param x1 Time of first sample in seconds
 #' @return Electroglottogram object
+#' @examples
+#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+#' egg$get_duration()
 #' @export
 electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {
   ptr <- electroglottogram_create_cpp(xmin, xmax, nx, dx, x1)

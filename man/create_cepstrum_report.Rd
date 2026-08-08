@@ -31,12 +31,12 @@ Creates a multi-panel diagnostic plot combining power cepstrum,
 cepstrogram, and CPP time series for comprehensive analysis.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("voice.wav")
-cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
+if (requireNamespace("gridExtra", quietly = TRUE)) {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+  cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 
-# Create comprehensive report
-create_cepstrum_report(cepstrogram, save_path = "cepstrum_report.png")
+  # Create comprehensive report at t = 0.3s (mid-signal)
+  create_cepstrum_report(cepstrogram, time_slice = 0.3)
 }
 
 }

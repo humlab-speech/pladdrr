@@ -14,9 +14,14 @@ filter_by_duration_simd_bridge(durations, min_dur, max_dur)
 \item{max_dur}{Maximum duration (inclusive)}
 }
 \value{
-Integer vector of 0-based indices
+Integer vector of 1-based indices into \code{durations} whose
+  value falls within \verb{[min_dur, max_dur]}
 }
 \description{
 Returns indices of intervals with duration in [min_dur, max_dur].
 Uses SIMD for fast range comparison.
+}
+\examples{
+filter_by_duration_simd_bridge(c(0.1, 0.5, 1.2, 0.3), 0.2, 0.8)
+
 }

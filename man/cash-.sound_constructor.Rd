@@ -17,3 +17,7 @@ The requested static method function
 \description{
 $ method for Sound constructor (enables Sound$create_tone(), etc.)
 }
+\examples{
+tone_fn <- Sound$create_tone
+sound <- tone_fn(frequency = 220, duration = 0.2, sampling_rate = 8000)
+}

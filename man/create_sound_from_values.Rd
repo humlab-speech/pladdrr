@@ -19,3 +19,7 @@ List representing a praat_sound object with values and metadata
 \description{
 Creates a praat_sound object structure from R numeric data
 }
+\examples{
+values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+snd <- create_sound_from_values(values, sampling_rate = 10000)
+}

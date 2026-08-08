@@ -31,4 +31,8 @@ DSI-compliant intensity pipeline: Sound -> Pitch -> PointProcess -> TextGrid (VU
 -> Extract voiced intervals -> Concatenate -> Intensity -> Minimum.
 Matches Praat DSI script algorithm.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+pladdrr:::calculate_minimum_intensity_ultra_cpp(sound$.xptr, 75, 600, 0, TRUE)
+}
 \keyword{internal}

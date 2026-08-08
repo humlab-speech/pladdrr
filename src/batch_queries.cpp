@@ -94,6 +94,12 @@ extern "C" {
 //' @param unit Integer code for unit (0=HERTZ, 1=BARK)
 //' @return List with one element per formant number, each containing a numeric vector
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_multiple_formants_at_times(
+//'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
+//' )
 // [[Rcpp::export]]
 List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times,
                                              IntegerVector formant_numbers, int unit = 0) {
@@ -166,8 +172,14 @@ List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector tim
 //' @param unit Integer code for unit
 //' @return List with bandwidth vectors for each formant
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+//' formant <- sound$to_formant_burg()
+//' pladdrr:::formant_get_multiple_bandwidths_at_times(
+//'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
+//' )
 // [[Rcpp::export]]
-List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector times, 
+List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector times,
                                                 IntegerVector formant_numbers, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
     if (!formant || formant.get() == nullptr) {
@@ -950,6 +962,9 @@ NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
 //' @param voicing_threshold Voicing threshold (default 0.45)
 //' @return Single double value of the requested statistic
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+//' pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "mean", 0, 75, 600, 0.45)
 // [[Rcpp::export]]
 double calculate_f0_stats_ultra_cpp(
     SEXP sound_xptr,
@@ -1025,6 +1040,9 @@ double calculate_f0_stats_ultra_cpp(
 //' @param subtract_mean Whether to subtract mean for intensity calculation
 //' @return Minimum intensity in dB (from concatenated voiced regions)
 //' @keywords internal
+//' @examples
+//' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+//' pladdrr:::calculate_minimum_intensity_ultra_cpp(sound$.xptr, 75, 600, 0, TRUE)
 // [[Rcpp::export]]
 double calculate_minimum_intensity_ultra_cpp(
     SEXP sound_xptr,

@@ -19,10 +19,8 @@ Vectorized calculation of interval durations (end - start).
 Uses SIMD instructions on large interval counts.
 }
 \examples{
-\dontrun{
-starts <- runif(1000, 0, 10)
-ends <- starts + runif(1000, 0.1, 0.5)
-durations <- calculate_durations_simd_bridge(starts, ends)
-}
+starts <- c(0, 1, 2.5)
+ends <- c(0.8, 2, 3.2)
+calculate_durations_simd_bridge(starts, ends)
 
 }

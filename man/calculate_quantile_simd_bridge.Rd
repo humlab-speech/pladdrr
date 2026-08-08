@@ -17,4 +17,7 @@ Quantile value
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+calculate_quantile_simd_bridge(c(1, 2, 3, 4, 5), 0.5)
+}
 \keyword{internal}

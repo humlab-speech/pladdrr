@@ -18,8 +18,6 @@ An AmplitudeTier object
 Creates a new AmplitudeTier object with no points.
 }
 \examples{
-\dontrun{
 tier <- amplitude_tier_create(0, 1)
 tier$add_point(0.5, 0.8)
-}
 }

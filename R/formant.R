@@ -26,16 +26,13 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
-#' # Old S3 approach (DEPRECATED)
-#' sound <- read_sound("vowel.wav")
+#' # Old S3 approach (DEPRECATED, shown for reference)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' formants <- extract_formants(sound, max_formant = 5500)
-#' 
+#'
 #' # New R6 approach (RECOMMENDED)
-#' sound <- Sound$new("vowel.wav")
-#' formants <- sound$to_formant_burg(max_frequency = 5500)
-#' f1_mean <- formants$get_mean(formant_number = 1)
-#' }
+#' formants2 <- sound$to_formant_burg(max_frequency = 5500)
+#' f1_mean <- formants2$get_mean(formant_number = 1)
 extract_formants <- function(sound,
                              time_step = 0.0,
                              max_formant = 5500,
@@ -107,7 +104,22 @@ extract_formants <- function(sound,
 
 #' Internal formant detection using Burg's method
 #'
+#' @param signal Numeric vector, the audio samples
+#' @param sr Sampling rate in Hz
+#' @param time_step Time between analysis frames in seconds
+#' @param max_formant Maximum formant frequency (Hz)
+#' @param n_formants Number of formants to detect per frame
+#' @param window_length Analysis window length in seconds
+#' @param pre_emphasis_from Pre-emphasis frequency in Hz
+#' @return A data.table with columns \code{time}, \code{formant_number},
+#'   \code{frequency}, \code{bandwidth} (one row per formant per frame)
 #' @keywords internal
+#' @examples
+#' set.seed(1)
+#' signal <- sin(2 * pi * 500 * seq(0, 0.5, by = 1 / 16000)) + rnorm(8001, sd = 0.01)
+#' pladdrr:::.detect_formants_burg(signal, sr = 16000, time_step = 0.05,
+#'                                  max_formant = 5500, n_formants = 4,
+#'                                  window_length = 0.025, pre_emphasis_from = 50)
 .detect_formants_burg <- function(signal, sr, time_step, max_formant,
                                   n_formants, window_length, pre_emphasis_from) {
   
@@ -193,7 +205,20 @@ extract_formants <- function(sound,
 
 #' Convert LPC coefficients to formants
 #'
+#' @param frame Numeric vector, one windowed analysis frame
+#' @param sr Sampling rate in Hz
+#' @param lpc_order LPC order (number of coefficients)
+#' @param n_formants Number of formants to return
+#' @param max_formant Maximum formant frequency (Hz)
+#' @return A data.frame with columns \code{frequency} and \code{bandwidth},
+#'   one row per formant, padded with \code{NA} if fewer roots were found
+#'   than \code{n_formants}
 #' @keywords internal
+#' @examples
+#' set.seed(1)
+#' frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd = 0.01)
+#' pladdrr:::.lpc_to_formants(frame, sr = 16000, lpc_order = 12,
+#'                             n_formants = 4, max_formant = 5500)
 .lpc_to_formants <- function(frame, sr, lpc_order, n_formants, max_formant) {
   
   # Burg's method for LPC estimation
@@ -253,7 +278,16 @@ extract_formants <- function(sound,
 
 #' Burg's algorithm for LPC estimation
 #'
+#' @param x Numeric vector, the input signal frame
+#' @param order Integer, the LPC order
+#' @return A list with \code{coefficients} (numeric vector of LPC
+#'   coefficients) and \code{error} (prediction error power), or \code{NULL}
+#'   if \code{x} is too short or has no variation
 #' @keywords internal
+#' @examples
+#' set.seed(1)
+#' x <- sin(2 * pi * 5 * seq(0, 1, length.out = 100)) + rnorm(100, sd = 0.01)
+#' pladdrr:::.burg_algorithm(x, order = 8)
 .burg_algorithm <- function(x, order) {
   
   n <- length(x)

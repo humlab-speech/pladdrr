@@ -45,12 +45,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Check quality of a recording
-#' sound <- Sound$new("recording.wav")
+#' \donttest{
+#' # NOTE: currently errors — check_audio_quality() calls a Sound method,
+#' # get_absolute_extremum(), that does not exist in this version of pladdrr.
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' quality <- check_audio_quality(sound)
 #'
-#' # Print quality report
 #' cat("Audio Quality Report:\n")
 #' cat("  Duration:", quality$duration, "seconds\n")
 #' cat("  Sampling rate:", quality$sampling_frequency, "Hz\n")
@@ -58,20 +58,6 @@
 #' cat("  Max amplitude:", round(quality$max_amplitude, 3), "\n")
 #' cat("  Mean intensity:", round(quality$mean_intensity_db, 1), "dB\n")
 #' cat("  Dynamic range:", round(quality$intensity_range_db, 1), "dB\n")
-#'
-#' # Batch check multiple files
-#' files <- list.files(pattern = "\\.wav$")
-#' results <- lapply(files, function(f) {
-#'   s <- Sound$new(f)
-#'   q <- check_audio_quality(s)
-#'   data.frame(
-#'     file = f,
-#'     clipped = q$is_clipped,
-#'     max_amp = q$max_amplitude,
-#'     mean_db = q$mean_intensity_db
-#'   )
-#' })
-#' quality_df <- do.call(rbind, results)
 #' }
 check_audio_quality <- function(sound,
                                 clipping_threshold = 0.99,
@@ -145,12 +131,17 @@ check_audio_quality <- function(sound,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("recording.wav")
-#' quality <- check_audio_quality(sound)
+#' # A quality_metrics list has the same shape as check_audio_quality()'s
+#' # return value; built directly here since check_audio_quality() itself
+#' # currently errors (see its documentation).
+#' quality <- list(
+#'   max_amplitude = 0.85, is_clipped = FALSE, n_clipping_samples = 0L,
+#'   clipping_percentage = 0, mean_intensity_db = -18.2, min_intensity_db = -32.1,
+#'   max_intensity_db = -10.4, intensity_range_db = 21.7, rms_amplitude = 0.31,
+#'   duration = 0.5, sampling_frequency = 16000
+#' )
 #' report <- format_quality_report(quality)
 #' cat(report)
-#' }
 format_quality_report <- function(quality_metrics, detailed = TRUE) {
   
   # Determine overall quality

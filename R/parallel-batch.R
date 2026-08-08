@@ -43,11 +43,12 @@
 #' 3. Results collected and returned
 #'
 #' @examples
-#' \dontrun{
-#' # Analyze pitch for multiple files in parallel
-#' files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
-#' # Define analysis function
 #' analyze_pitch <- function(sound) {
 #'   pitch <- sound$to_pitch()
 #'   list(
@@ -56,12 +57,8 @@
 #'   )
 #' }
 #'
-#' # Run in parallel (uses n-1 cores by default)
-#' results <- analyze_files_parallel(files, analyze_pitch)
-#'
-#' # With custom core count
-#' results <- analyze_files_parallel(files, analyze_pitch, n_cores = 4)
-#' }
+#' # n_cores = 1 keeps this a single-process example (CRAN-safe)
+#' results <- analyze_files_parallel(files, analyze_pitch, n_cores = 1)
 #'
 #' @export
 analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
@@ -201,10 +198,14 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 #' @return List of Pitch objects
 #'
 #' @examples
-#' \dontrun{
-#' files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
-#' pitches <- extract_pitch_parallel(files, n_cores = 4)
-#' }
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
+#'
+#' # n_cores = 1 keeps this a single-process example (CRAN-safe)
+#' pitches <- extract_pitch_parallel(files, n_cores = 1)
 #'
 #' @export
 extract_pitch_parallel <- function(files, n_cores = NULL,
@@ -232,10 +233,14 @@ extract_pitch_parallel <- function(files, n_cores = NULL,
 #' @return List of Formant objects
 #'
 #' @examples
-#' \dontrun{
-#' files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
-#' formants <- extract_formant_parallel(files, n_cores = 4)
-#' }
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
+#'
+#' # n_cores = 1 keeps this a single-process example (CRAN-safe)
+#' formants <- extract_formant_parallel(files, n_cores = 1)
 #'
 #' @export
 extract_formant_parallel <- function(files, n_cores = NULL,
@@ -262,6 +267,16 @@ extract_formant_parallel <- function(files, n_cores = NULL,
 #'
 #' @return List of Intensity objects
 #'
+#' @examples
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
+#'
+#' # n_cores = 1 keeps this a single-process example (CRAN-safe)
+#' intensities <- extract_intensity_parallel(files, n_cores = 1)
+#'
 #' @export
 extract_intensity_parallel <- function(files, n_cores = NULL,
                                         minimum_pitch = 100,
@@ -286,20 +301,24 @@ extract_intensity_parallel <- function(files, n_cores = NULL,
 #' @return Data frame with timing results
 #'
 #' @examples
-#' \dontrun{
-#' files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)[1:10]
-#' 
-#' # Test different core counts
+#' \donttest{
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
+#'
+#' # CRAN examples should use at most 2 cores
 #' results <- benchmark_parallel(
 #'   files,
 #'   function(s) s$to_pitch()$get_mean(0, 0, "hertz"),
-#'   core_counts = c(1, 2, 4, 8)
+#'   core_counts = c(1, 2)
 #' )
 #' print(results)
 #' }
 #'
 #' @export
-benchmark_parallel <- function(files, analysis_func, 
+benchmark_parallel <- function(files, analysis_func,
                                 core_counts = c(1, 2, 4)) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("parallel package required")

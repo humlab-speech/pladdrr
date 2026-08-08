@@ -53,6 +53,8 @@ using namespace Rcpp;
 //' @param values NumericVector
 //' @return Mean value
 //' @keywords internal
+//' @examples
+//' calculate_mean_simd_bridge(c(1, 2, 3, 4, 5))
 //' @export
 // [[Rcpp::export]]
 double calculate_mean_simd_bridge(NumericVector values) {
@@ -70,6 +72,9 @@ double calculate_mean_simd_bridge(NumericVector values) {
 //' @param mean Pre-computed mean (optional, default 0.0 computes it)
 //' @return Standard deviation
 //' @keywords internal
+//' @examples
+//' x <- c(1, 2, 3, 4, 5)
+//' calculate_stdev_simd_bridge(x, mean(x))
 //' @export
 // [[Rcpp::export]]
 double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
@@ -86,6 +91,8 @@ double calculate_stdev_simd_bridge(NumericVector values, double mean = 0.0) {
 //' @param values NumericVector
 //' @return List with min and max
 //' @keywords internal
+//' @examples
+//' calculate_min_max_simd_bridge(c(3, 1, 4, 1, 5, 9))
 //' @export
 // [[Rcpp::export]]
 List calculate_min_max_simd_bridge(NumericVector values) {
@@ -108,6 +115,8 @@ List calculate_min_max_simd_bridge(NumericVector values) {
 //' @param quantile Quantile value (0.0 to 1.0)
 //' @return Quantile value
 //' @keywords internal
+//' @examples
+//' calculate_quantile_simd_bridge(c(1, 2, 3, 4, 5), 0.5)
 //' @export
 // [[Rcpp::export]]
 double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
@@ -124,6 +133,8 @@ double calculate_quantile_simd_bridge(NumericVector values, double quantile) {
 //' @param values NumericVector
 //' @return List with mean, stdev, min, max
 //' @keywords internal
+//' @examples
+//' calculate_batch_statistics_simd_bridge(c(1, 2, 3, 4, 5))
 //' @export
 // [[Rcpp::export]]
 List calculate_batch_statistics_simd_bridge(NumericVector values) {
@@ -161,6 +172,10 @@ List calculate_batch_statistics_simd_bridge(NumericVector values) {
 //' @param metric String: "mean", "stdev", "min", "max", or "all"
 //' @return NumericVector or NumericMatrix depending on metric
 //' @keywords internal
+//' @examples
+//' intervals <- list(c(1, 2, 3), c(4, 5, 6, 7))
+//' calculate_interval_statistics_simd_bridge(intervals, "mean")
+//' calculate_interval_statistics_simd_bridge(intervals, "all")
 //' @export
 // [[Rcpp::export]]
 SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String metric) {
@@ -247,6 +262,9 @@ SEXP calculate_interval_statistics_simd_bridge(List intervals_values, String met
 //' @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
 //' @return NumericMatrix with intervals as rows, quantiles as columns
 //' @keywords internal
+//' @examples
+//' intervals <- list(c(1, 2, 3, 4), c(5, 6, 7, 8, 9))
+//' calculate_interval_quantiles_simd_bridge(intervals, c(0.25, 0.5, 0.75))
 //' @export
 // [[Rcpp::export]]
 NumericMatrix calculate_interval_quantiles_simd_bridge(

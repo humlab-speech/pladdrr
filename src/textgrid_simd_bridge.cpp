@@ -99,11 +99,9 @@ bool textgrid_simd_enabled() {
 //' @return Numeric vector of durations
 //'
 //' @examples
-//' \dontrun{
-//' starts <- runif(1000, 0, 10)
-//' ends <- starts + runif(1000, 0.1, 0.5)
-//' durations <- calculate_durations_simd_bridge(starts, ends)
-//' }
+//' starts <- c(0, 1, 2.5)
+//' ends <- c(0.8, 2, 3.2)
+//' calculate_durations_simd_bridge(starts, ends)
 //'
 //' @export
 // [[Rcpp::export]]
@@ -137,6 +135,9 @@ NumericVector calculate_durations_simd_bridge(NumericVector start_times, Numeric
 //'
 //' @param durations Numeric vector of durations
 //' @return List with mean, stdev, min, max
+//'
+//' @examples
+//' duration_statistics_simd_bridge(c(0.5, 0.8, 1.2, 0.3))
 //'
 //' @export
 // [[Rcpp::export]]
@@ -197,7 +198,11 @@ List duration_statistics_simd_bridge(NumericVector durations) {
 //' @param durations Numeric vector of durations
 //' @param min_dur Minimum duration (inclusive)
 //' @param max_dur Maximum duration (inclusive)
-//' @return Integer vector of 0-based indices
+//' @return Integer vector of 1-based indices into \code{durations} whose
+//'   value falls within \verb{[min_dur, max_dur]}
+//'
+//' @examples
+//' filter_by_duration_simd_bridge(c(0.1, 0.5, 1.2, 0.3), 0.2, 0.8)
 //'
 //' @export
 // [[Rcpp::export]]
@@ -241,6 +246,9 @@ IntegerVector filter_by_duration_simd_bridge(
 //' @param start_times Numeric vector of start times
 //' @param end_times Numeric vector of end times
 //' @return Numeric vector of midpoints
+//'
+//' @examples
+//' calculate_midpoints_simd_bridge(c(0, 1, 2.5), c(0.8, 2, 3.2))
 //'
 //' @export
 // [[Rcpp::export]]

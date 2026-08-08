@@ -125,6 +125,12 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
 #' @param unit Integer code for unit (0=HERTZ, 1=BARK)
 #' @return List with one element per formant number, each containing a numeric vector
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_multiple_formants_at_times(
+#'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
+#' )
 formant_get_multiple_formants_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
     .Call(`_pladdrr_formant_get_multiple_formants_at_times`, formant_xptr, times, formant_numbers, unit)
 }
@@ -137,6 +143,12 @@ formant_get_multiple_formants_at_times <- function(formant_xptr, times, formant_
 #' @param unit Integer code for unit
 #' @return List with bandwidth vectors for each formant
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_multiple_bandwidths_at_times(
+#'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
+#' )
 formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
     .Call(`_pladdrr_formant_get_multiple_bandwidths_at_times`, formant_xptr, times, formant_numbers, unit)
 }
@@ -303,6 +315,9 @@ get_durations_batch_cpp <- function(file_paths) {
 #' @param voicing_threshold Voicing threshold (default 0.45)
 #' @return Single double value of the requested statistic
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "mean", 0, 75, 600, 0.45)
 calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold) {
     .Call(`_pladdrr_calculate_f0_stats_ultra_cpp`, sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold)
 }
@@ -321,6 +336,9 @@ calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch,
 #' @param subtract_mean Whether to subtract mean for intensity calculation
 #' @return Minimum intensity in dB (from concatenated voiced regions)
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' pladdrr:::calculate_minimum_intensity_ultra_cpp(sound$.xptr, 75, 600, 0, TRUE)
 calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pitch, time_step, subtract_mean) {
     .Call(`_pladdrr_calculate_minimum_intensity_ultra_cpp`, sound_xptr, min_pitch, max_pitch, time_step, subtract_mean)
 }
@@ -452,6 +470,8 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param values NumericVector
 #' @return Mean value
 #' @keywords internal
+#' @examples
+#' calculate_mean_simd_bridge(c(1, 2, 3, 4, 5))
 #' @export
 calculate_mean_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_mean_simd_bridge`, values)
@@ -465,6 +485,9 @@ calculate_mean_simd_bridge <- function(values) {
 #' @param mean Pre-computed mean (optional, default 0.0 computes it)
 #' @return Standard deviation
 #' @keywords internal
+#' @examples
+#' x <- c(1, 2, 3, 4, 5)
+#' calculate_stdev_simd_bridge(x, mean(x))
 #' @export
 calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
     .Call(`_pladdrr_calculate_stdev_simd_bridge`, values, mean)
@@ -477,6 +500,8 @@ calculate_stdev_simd_bridge <- function(values, mean = 0.0) {
 #' @param values NumericVector
 #' @return List with min and max
 #' @keywords internal
+#' @examples
+#' calculate_min_max_simd_bridge(c(3, 1, 4, 1, 5, 9))
 #' @export
 calculate_min_max_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_min_max_simd_bridge`, values)
@@ -490,6 +515,8 @@ calculate_min_max_simd_bridge <- function(values) {
 #' @param quantile Quantile value (0.0 to 1.0)
 #' @return Quantile value
 #' @keywords internal
+#' @examples
+#' calculate_quantile_simd_bridge(c(1, 2, 3, 4, 5), 0.5)
 #' @export
 calculate_quantile_simd_bridge <- function(values, quantile) {
     .Call(`_pladdrr_calculate_quantile_simd_bridge`, values, quantile)
@@ -502,6 +529,8 @@ calculate_quantile_simd_bridge <- function(values, quantile) {
 #' @param values NumericVector
 #' @return List with mean, stdev, min, max
 #' @keywords internal
+#' @examples
+#' calculate_batch_statistics_simd_bridge(c(1, 2, 3, 4, 5))
 #' @export
 calculate_batch_statistics_simd_bridge <- function(values) {
     .Call(`_pladdrr_calculate_batch_statistics_simd_bridge`, values)
@@ -516,6 +545,10 @@ calculate_batch_statistics_simd_bridge <- function(values) {
 #' @param metric String: "mean", "stdev", "min", "max", or "all"
 #' @return NumericVector or NumericMatrix depending on metric
 #' @keywords internal
+#' @examples
+#' intervals <- list(c(1, 2, 3), c(4, 5, 6, 7))
+#' calculate_interval_statistics_simd_bridge(intervals, "mean")
+#' calculate_interval_statistics_simd_bridge(intervals, "all")
 #' @export
 calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) {
     .Call(`_pladdrr_calculate_interval_statistics_simd_bridge`, intervals_values, metric)
@@ -529,6 +562,9 @@ calculate_interval_statistics_simd_bridge <- function(intervals_values, metric) 
 #' @param quantiles NumericVector of quantile values (e.g., c(0.25, 0.50, 0.75))
 #' @return NumericMatrix with intervals as rows, quantiles as columns
 #' @keywords internal
+#' @examples
+#' intervals <- list(c(1, 2, 3, 4), c(5, 6, 7, 8, 9))
+#' calculate_interval_quantiles_simd_bridge(intervals, c(0.25, 0.5, 0.75))
 #' @export
 calculate_interval_quantiles_simd_bridge <- function(intervals_values, quantiles) {
     .Call(`_pladdrr_calculate_interval_quantiles_simd_bridge`, intervals_values, quantiles)
@@ -2064,6 +2100,10 @@ pitch_count_voiced_direct <- function(pitch_xptr) {
 #' @param unit 0=Hertz, 1=Bark
 #' @return Formant frequency
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_value_direct(formant$.xptr, 1, 0.15, 0)
 formant_get_value_direct <- function(formant_xptr, formant_number, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_value_direct`, formant_xptr, formant_number, time, unit)
 }
@@ -2075,6 +2115,10 @@ formant_get_value_direct <- function(formant_xptr, formant_number, time, unit = 
 #' @param unit Unit code
 #' @return Bandwidth
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_bandwidth_direct(formant$.xptr, 1, 0.15, 0)
 formant_get_bandwidth_direct <- function(formant_xptr, formant_number, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_bandwidth_direct`, formant_xptr, formant_number, time, unit)
 }
@@ -2087,6 +2131,10 @@ formant_get_bandwidth_direct <- function(formant_xptr, formant_number, time, uni
 #' @param unit Unit code
 #' @return Mean formant frequency
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_mean_direct(formant$.xptr, 1)
 formant_get_mean_direct <- function(formant_xptr, formant_number, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_formant_get_mean_direct`, formant_xptr, formant_number, from_time, to_time, unit)
 }
@@ -2216,6 +2264,10 @@ pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, u
 #' @param unit Unit code (0=Hertz, 1=Bark)
 #' @return NumericVector with F1, F2, F3, F4
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' pladdrr:::formant_get_f1_f4_direct(formant$.xptr, 0.15, 0)
 formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_f1_f4_direct`, formant_xptr, time, unit)
 }
@@ -2290,6 +2342,9 @@ sound_stats <- function(sound_data) {
 #' @param sampling_rate Sampling rate in Hz (default: 44100)
 #' @param start_time Start time in seconds (default: 0.0)
 #' @return List representing a praat_sound object with values and metadata
+#' @examples
+#' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+#' snd <- create_sound_from_values(values, sampling_rate = 10000)
 #' @export
 create_sound_from_values <- function(values, sampling_rate = 44100.0, start_time = 0.0) {
     .Call(`_pladdrr_create_sound_from_values`, values, sampling_rate, start_time)
@@ -3793,11 +3848,9 @@ textgrid_simd_enabled <- function() {
 #' @return Numeric vector of durations
 #'
 #' @examples
-#' \dontrun{
-#' starts <- runif(1000, 0, 10)
-#' ends <- starts + runif(1000, 0.1, 0.5)
-#' durations <- calculate_durations_simd_bridge(starts, ends)
-#' }
+#' starts <- c(0, 1, 2.5)
+#' ends <- c(0.8, 2, 3.2)
+#' calculate_durations_simd_bridge(starts, ends)
 #'
 #' @export
 calculate_durations_simd_bridge <- function(start_times, end_times) {
@@ -3810,6 +3863,9 @@ calculate_durations_simd_bridge <- function(start_times, end_times) {
 #'
 #' @param durations Numeric vector of durations
 #' @return List with mean, stdev, min, max
+#'
+#' @examples
+#' duration_statistics_simd_bridge(c(0.5, 0.8, 1.2, 0.3))
 #'
 #' @export
 duration_statistics_simd_bridge <- function(durations) {
@@ -3824,7 +3880,11 @@ duration_statistics_simd_bridge <- function(durations) {
 #' @param durations Numeric vector of durations
 #' @param min_dur Minimum duration (inclusive)
 #' @param max_dur Maximum duration (inclusive)
-#' @return Integer vector of 0-based indices
+#' @return Integer vector of 1-based indices into \code{durations} whose
+#'   value falls within \verb{[min_dur, max_dur]}
+#'
+#' @examples
+#' filter_by_duration_simd_bridge(c(0.1, 0.5, 1.2, 0.3), 0.2, 0.8)
 #'
 #' @export
 filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
@@ -3836,6 +3896,9 @@ filter_by_duration_simd_bridge <- function(durations, min_dur, max_dur) {
 #' @param start_times Numeric vector of start times
 #' @param end_times Numeric vector of end times
 #' @return Numeric vector of midpoints
+#'
+#' @examples
+#' calculate_midpoints_simd_bridge(c(0, 1, 2.5), c(0.8, 2, 3.2))
 #'
 #' @export
 calculate_midpoints_simd_bridge <- function(start_times, end_times) {

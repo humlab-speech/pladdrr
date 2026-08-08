@@ -157,12 +157,10 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
 #' @return FormantTier object
 #' @export
 #' @examples
-#' \dontrun{
-#' sound <- Sound$read("vowel.wav")
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #' ft <- FormantTier$from_formant(formant)
 #' print(ft)
-#' }
 formanttier_from_formant <- function(formant) {
   if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
   ptr <- .formanttier_from_formant(formant$.xptr)

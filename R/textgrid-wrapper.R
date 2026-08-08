@@ -461,6 +461,9 @@ textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
 #' @param x The TextGrid constructor function
 #' @param name Name of static method to access
 #' @return The requested static method function
+#' @examples
+#' create_fn <- TextGrid$create
+#' tg <- create_fn(0, 1, "words")
 #' @exportS3Method "$" textgrid_constructor
 `$.textgrid_constructor` <- function(x, name) {
   val <- .textgrid_static_env[[name]]

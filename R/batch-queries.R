@@ -605,15 +605,13 @@ get_durations_batch <- function(file_paths) {
 #' Ultra functions.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #'
 #' # Get maximum F0 (DSI FH component)
 #' max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
 #'
 #' # Get mean F0
 #' mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
-#' }
 #'
 #' @seealso
 #' [Sound] for creating Sound objects
@@ -680,12 +678,10 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound("voice.wav")
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #'
 #' # Get minimum intensity in voiced regions (DSI IM component)
 #' min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
-#' }
 #'
 #' @seealso
 #' [Sound] for creating Sound objects

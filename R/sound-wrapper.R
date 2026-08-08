@@ -1121,6 +1121,9 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 #' @param x The Sound constructor function
 #' @param name Name of static method to access
 #' @return The requested static method function
+#' @examples
+#' tone_fn <- Sound$create_tone
+#' sound <- tone_fn(frequency = 220, duration = 0.2, sampling_rate = 8000)
 #' @exportS3Method "$" sound_constructor
 `$.sound_constructor` <- function(x, name) {
   val <- .sound_static_env[[name]]

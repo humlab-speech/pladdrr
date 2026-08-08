@@ -3,6 +3,14 @@
 #' Internal helper functions for data.table operations.
 #' These functions provide consistent data.table handling across the package.
 #' 
+#' @return This is a documentation-only overview; see the individual functions
+#'   (\code{\link{ensure_datatable}}, \code{\link{df_to_dt}},
+#'   \code{\link{dt_empty}}, \code{\link{dt_rbindlist}},
+#'   \code{\link{dt_setkey}}, \code{\link{dt_create}}) for their return values.
+#'
+#' @examples
+#' # See individual functions, e.g. ?dt_create
+#'
 #' @keywords internal
 #' @name datatable-utils
 NULL
@@ -14,6 +22,9 @@ NULL
 #' @param df A data.frame or data.table
 #' @return data.table (invisibly)
 #' @keywords internal
+#' @examples
+#' df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+#' pladdrr:::ensure_datatable(df)
 ensure_datatable <- function(df) {
   if (!data.table::is.data.table(df)) {
     data.table::setDT(df)
@@ -28,6 +39,9 @@ ensure_datatable <- function(df) {
 #' @param df A data.frame
 #' @return data.table
 #' @keywords internal
+#' @examples
+#' df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+#' pladdrr:::df_to_dt(df)
 df_to_dt <- function(df) {
   data.table::as.data.table(df)
 }
@@ -41,11 +55,9 @@ df_to_dt <- function(df) {
 #' @keywords internal
 #' 
 #' @examples
-#' \dontrun{
 #' # Before: results <- data.frame(time=numeric(), value=numeric())
-#' # After:  results <- dt_empty(time=numeric(), value=numeric())
-#' results <- dt_empty(time=numeric(), formant=integer(), frequency=numeric())
-#' }
+#' # After:  results <- pladdrr:::dt_empty(time=numeric(), value=numeric())
+#' results <- pladdrr:::dt_empty(time=numeric(), formant=integer(), frequency=numeric())
 dt_empty <- function(...) {
   data.table::data.table(...)
 }
@@ -60,16 +72,9 @@ dt_empty <- function(...) {
 #' @keywords internal
 #' 
 #' @examples
-#' \dontrun{
-#' # Before: 
-#' # results <- data.frame()
-#' # for (i in 1:100) results <- rbind(results, data.frame(x=i, y=i^2))
-#' 
-#' # After:
-#' # results_list <- vector("list", 100)
-#' # for (i in 1:100) results_list[[i]] <- list(x=i, y=i^2)
-#' # results <- dt_rbindlist(results_list)
-#' }
+#' results_list <- vector("list", 5)
+#' for (i in 1:5) results_list[[i]] <- list(x = i, y = i^2)
+#' results <- pladdrr:::dt_rbindlist(results_list)
 dt_rbindlist <- function(l, fill = TRUE) {
   data.table::rbindlist(l, fill = fill)
 }
@@ -84,10 +89,8 @@ dt_rbindlist <- function(l, fill = TRUE) {
 #' @keywords internal
 #' 
 #' @examples
-#' \dontrun{
-#' dt <- data.table::data.table(time=1:100, formant=rep(1:4, 25), freq=rnorm(100))
-#' dt_setkey(dt, time, formant)  # Fast lookups on time+formant
-#' }
+#' dt <- data.table::data.table(time = 1:100, formant = rep(1:4, 25), freq = rnorm(100))
+#' pladdrr:::dt_setkey(dt, time, formant)  # sorted/indexed lookups on time+formant
 dt_setkey <- function(dt, ...) {
   data.table::setkeyv(dt, as.character(substitute(list(...)))[-1L])
   invisible(dt)
@@ -101,6 +104,9 @@ dt_setkey <- function(dt, ...) {
 #' @param dt A data.table
 #' @return data.table or data.frame depending on options
 #' @keywords internal
+#' @examples
+#' dt <- data.table::data.table(x = 1:3)
+#' pladdrr:::.finalize_dataframe(dt)
 .finalize_dataframe <- function(dt) {
   # Check if user explicitly wants data.frame (deprecated)
   if (isFALSE(getOption("pladdrr.return_datatable", default = TRUE))) {
@@ -129,6 +135,8 @@ dt_setkey <- function(dt, ...) {
 #' @param key Character vector of key column names (optional)
 #' @return data.table
 #' @keywords internal
+#' @examples
+#' pladdrr:::dt_create(time = 1:3, value = c(1.1, 2.2, 3.3), key = "time")
 dt_create <- function(..., key = NULL) {
   dt <- data.table::data.table(...)
   

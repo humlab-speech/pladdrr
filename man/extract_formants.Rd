@@ -47,14 +47,11 @@ Analyzes formant frequencies (vocal tract resonances) from a sound object
 using Praat's Burg algorithm.
 }
 \examples{
-\dontrun{
-# Old S3 approach (DEPRECATED)
-sound <- read_sound("vowel.wav")
+# Old S3 approach (DEPRECATED, shown for reference)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 formants <- extract_formants(sound, max_formant = 5500)
 
 # New R6 approach (RECOMMENDED)
-sound <- Sound$new("vowel.wav")
-formants <- sound$to_formant_burg(max_frequency = 5500)
-f1_mean <- formants$get_mean(formant_number = 1)
-}
+formants2 <- sound$to_formant_burg(max_frequency = 5500)
+f1_mean <- formants2$get_mean(formant_number = 1)
 }

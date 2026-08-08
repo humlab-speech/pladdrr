@@ -108,8 +108,7 @@ Ultra functions.
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 
 # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 cpps <- calculate_cpps_ultra(sound)
@@ -117,6 +116,5 @@ cpps <- calculate_cpps_ultra(sound)
 # Should match calculate_cpps_fast() within 0.01 dB
 cpps_fast <- calculate_cpps_fast(sound)
 all.equal(cpps, cpps_fast, tolerance = 0.01)
-}
 
 }

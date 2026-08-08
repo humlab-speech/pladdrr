@@ -23,15 +23,17 @@ Convenience function to create pre-defined window functions as compiled XPtrs.
 Requires the RcppXPtrUtils package.
 }
 \examples{
-\dontrun{
-library(RcppXPtrUtils)
+\donttest{
+# NOTE: currently errors — create_window_xptr() prepends #include lines
+# before the function body, which breaks RcppXPtrUtils::cppXPtr()'s own
+# function-signature detection ("isFunction(code) is not TRUE").
+# Compiling a C++ window function takes a few seconds
+if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+  hamming <- create_window_xptr("hamming")
 
-# Create Hamming window (pre-compiled)
-hamming <- create_window_xptr("hamming")
-
-# Apply to sound
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-windowed <- apply_window_xptr(sound, hamming)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  windowed <- apply_window_xptr(sound, hamming)
+}
 }
 
 }

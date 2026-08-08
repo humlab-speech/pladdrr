@@ -18,4 +18,7 @@ data.table
 Convenience function similar to data.frame() but returns data.table.
 Automatically sets appropriate key columns.
 }
+\examples{
+pladdrr:::dt_create(time = 1:3, value = c(1.1, 2.2, 3.3), key = "time")
+}
 \keyword{internal}

@@ -33,24 +33,25 @@ multiplier. Common window functions:
 }
 }
 \examples{
-\dontrun{
-library(RcppXPtrUtils)
+\donttest{
+# NOTE: currently errors — apply_window_xptr() looks up the internal
+# Sound Rcpp module incorrectly ("attempt to apply non-function").
+# Compiling a C++ window function takes a few seconds
+if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+  gauss_window <- RcppXPtrUtils::cppXPtr(
+    "double gauss(double t) {
+      double x = t - 0.5;
+      return exp(-18.0 * x * x);
+    }",
+    depends = character()
+  )
 
-# Create compiled Gaussian window function
-gauss_window <- cppXPtr(
-  "double gauss(double t) {
-    double x = t - 0.5;
-    return exp(-18.0 * x * x);
-  }",
-  depends = character()
-)
+  # Verify signature (optional but recommended)
+  RcppXPtrUtils::checkXPtr(gauss_window, "double", "double")
 
-# Verify signature (optional but recommended)
-checkXPtr(gauss_window, "double", "double")
-
-# Apply to sound
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-windowed <- apply_window_xptr(sound, gauss_window)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  windowed <- apply_window_xptr(sound, gauss_window)
+}
 }
 
 }

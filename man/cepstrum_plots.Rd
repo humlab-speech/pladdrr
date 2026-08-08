@@ -3,7 +3,16 @@
 \name{cepstrum_plots}
 \alias{cepstrum_plots}
 \title{PowerCepstrum and PowerCepstrogram Visualization Functions}
+\value{
+This is a documentation-only overview; see the individual functions
+  (\code{\link{plot_powercepstrum}}, \code{\link{create_cepstrum_report}})
+  for their return values.
+}
 \description{
 ggplot2-based visualizations for power cepstrum objects, replacing
 Praat's native graphics system with R's powerful plotting capabilities.
+}
+\examples{
+# See individual functions, e.g. ?plot_powercepstrum
+
 }

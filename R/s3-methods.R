@@ -90,11 +90,10 @@ summary.praat_sound <- function(object, ...) {
 #'   }
 #'
 #' @examples
-#' \dontrun{
-#' # DEPRECATED - Use R6 interface instead:
-#' sound <- Sound$new("audio.wav")
-#' df <- sound$as_data_frame()
-#' }
+#' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+#' snd <- create_sound_from_values(values, sampling_rate = 10000)
+#' df <- as.data.frame(snd)
+#' head(df)
 #'
 #' @export
 as.data.frame.praat_sound <- function(x, ...) {
@@ -125,6 +124,10 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time, channel, and value columns
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+#' df <- as.data.frame(sound)
+#' head(df)
 #' @export
 as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
   # R6 Sound object - delegate to R6 method
@@ -287,6 +290,13 @@ summary.praat_formant <- function(object, ...) {
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
 #' @return The values data.table (inherits from data.frame) from the formant object
+#' @examples
+#' x <- list(values = data.frame(
+#'   time = c(0.1, 0.2), formant_number = c(1, 1),
+#'   frequency = c(500, 520), bandwidth = c(80, 82)
+#' ))
+#' class(x) <- "praat_formant"
+#' as.data.frame(x)
 #' @export
 as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
@@ -350,6 +360,10 @@ summary.praat_intensity <- function(object, ...) {
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
 #' @return The values data.table (inherits from data.frame) from the intensity object
+#' @examples
+#' x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1)))
+#' class(x) <- "praat_intensity"
+#' as.data.frame(x)
 #' @export
 as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$values
@@ -373,6 +387,11 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE,
 #'   (frame, formant number): columns `time`, `formant` (1-based formant
 #'   number), `frequency` (Hz), `bandwidth` (Hz). Matches
 #'   `as.data.frame.FormantPath()`.
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' formant <- sound$to_formant_burg()
+#' df <- as.data.frame(formant)
+#' head(df)
 #' @export
 as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame(...)
@@ -388,6 +407,11 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time and intensity columns
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' intensity <- sound$to_intensity()
+#' df <- as.data.frame(intensity)
+#' head(df)
 #' @export
 as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()
@@ -403,6 +427,11 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) 
 #' @param optional Ignored
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with pitch measurements
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' pitch <- sound$to_pitch()
+#' df <- as.data.frame(pitch)
+#' head(df)
 #' @export
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()

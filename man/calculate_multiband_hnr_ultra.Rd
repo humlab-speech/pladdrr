@@ -50,12 +50,10 @@ Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 
 hnr_results <- calculate_multiband_hnr_ultra(sound)
 hnr_results$full_mean
-}
 
 }
 \references{

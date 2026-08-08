@@ -26,4 +26,11 @@ List with one element per formant number, each containing a numeric vector
 \description{
 Batch query MULTIPLE formant frequencies at multiple time points
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+pladdrr:::formant_get_multiple_formants_at_times(
+  formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
+)
+}
 \keyword{internal}

@@ -22,3 +22,8 @@ A data.table (inherits from data.frame) with time, channel, and value columns
 S3 method for converting R6 Sound objects to data frames.
 Delegates to the R6 `$as_data_frame()` method.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+df <- as.data.frame(sound)
+head(df)
+}

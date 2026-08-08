@@ -19,4 +19,9 @@ NumericVector with F1, F2, F3, F4
 \description{
 Get F1-F4 at single time point
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+formant <- sound$to_formant_burg()
+pladdrr:::formant_get_f1_f4_direct(formant$.xptr, 0.15, 0)
+}
 \keyword{internal}

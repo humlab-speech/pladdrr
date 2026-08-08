@@ -23,15 +23,12 @@ Pitch R6 object
 \code{sound$to_pitch(time_step, pitch_floor, pitch_ceiling)}
 }
 \examples{
-\dontrun{
-# Old S3 approach (DEPRECATED)
-sound <- read_sound("speech.wav")
+# Old S3 approach (DEPRECATED, shown for reference)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 
 # New R6 approach (RECOMMENDED)
-sound <- Sound$new("speech.wav")
-pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
-mean_f0 <- pitch$get_mean()
-}
+pitch2 <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+mean_f0 <- pitch2$get_mean()
 
 }

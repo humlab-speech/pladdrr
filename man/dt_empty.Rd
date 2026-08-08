@@ -16,10 +16,8 @@ Empty data.table with specified columns
 Replacement for data.frame() constructor.
 }
 \examples{
-\dontrun{
 # Before: results <- data.frame(time=numeric(), value=numeric())
-# After:  results <- dt_empty(time=numeric(), value=numeric())
-results <- dt_empty(time=numeric(), formant=integer(), frequency=numeric())
-}
+# After:  results <- pladdrr:::dt_empty(time=numeric(), value=numeric())
+results <- pladdrr:::dt_empty(time=numeric(), formant=integer(), frequency=numeric())
 }
 \keyword{internal}

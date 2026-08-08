@@ -36,25 +36,12 @@
 #' - `text_starts_with`: Prefix match
 #'
 #' @examples
-#' \dontrun{
-#' # Load sound and create TextGrid
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' # Create sound and a voiced/unvoiced TextGrid
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' pp <- pitch$to_point_process()
-#' tg <- pp$to_textgrid_vuv(0.02, 0.01)
+#' tg <- pitch$to_textgrid_vuv(0.02, 0.01)
 #'
-#' # Extract all voiced intervals (manual loop)
-#' n <- tg$get_number_of_intervals(1)
-#' voiced_old <- list()
-#' for (i in 1:n) {
-#'   if (tg$get_interval_text(1, i) == "V") {
-#'     start <- tg$get_interval_start_time(1, i)
-#'     end <- tg$get_interval_end_time(1, i)
-#'     voiced_old <- c(voiced_old, list(sound$extract_part(start, end)))
-#'   }
-#' }
-#'
-#' # Extract all voiced intervals (batch)
+#' # Extract all voiced intervals (batch), with the matching Sound parts
 #' result <- extract_textgrid_intervals(
 #'   textgrid = tg,
 #'   sound = sound,
@@ -62,17 +49,16 @@
 #'   text_equals = "V",
 #'   extract_sounds = TRUE
 #' )
-#' voiced_new <- result$sounds
+#' voiced_sounds <- result$sounds
 #'
 #' # Get interval durations without extracting sounds
-#' result <- extract_textgrid_intervals(
+#' result2 <- extract_textgrid_intervals(
 #'   textgrid = tg,
 #'   tier = 1,
 #'   text_equals = "V",
 #'   extract_sounds = FALSE
 #' )
-#' voiced_durations <- result$end_times - result$start_times
-#' }
+#' voiced_durations <- result2$end_times - result2$start_times
 #'
 #' @seealso
 #' - [get_textgrid_labels_all()] to get all labels from a tier

@@ -236,14 +236,14 @@ to_powercepstrogram_fast <- function(sound,
 #' @return Numeric CPPS value in dB
 #'
 #' @details
-#' **ADVANCED API** - Use with `to_powercepstrogram_fast()` for maximum performance.
+#' **ADVANCED API** - Takes the external pointer returned by
+#' `to_powercepstrogram_fast()` instead of a `PowerCepstrogram` R6 object.
 #'
 #' Useful when you need to calculate CPPS multiple times with different parameters
 #' from the same PowerCepstrogram object.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #'
 #' # Create cepstrogram once
 #' pcep_ptr <- to_powercepstrogram_fast(sound)
@@ -251,7 +251,6 @@ to_powercepstrogram_fast <- function(sound,
 #' # Calculate CPPS with different parameters
 #' cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
 #' cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
-#' }
 #'
 #' @export
 get_cpps_fast <- function(
@@ -327,24 +326,25 @@ get_cpps_fast <- function(
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(RcppXPtrUtils)
+#' \donttest{
+#' # NOTE: currently errors — apply_window_xptr() looks up the internal
+#' # Sound Rcpp module incorrectly ("attempt to apply non-function").
+#' # Compiling a C++ window function takes a few seconds
+#' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+#'   gauss_window <- RcppXPtrUtils::cppXPtr(
+#'     "double gauss(double t) {
+#'       double x = t - 0.5;
+#'       return exp(-18.0 * x * x);
+#'     }",
+#'     depends = character()
+#'   )
 #'
-#' # Create compiled Gaussian window function
-#' gauss_window <- cppXPtr(
-#'   "double gauss(double t) {
-#'     double x = t - 0.5;
-#'     return exp(-18.0 * x * x);
-#'   }",
-#'   depends = character()
-#' )
+#'   # Verify signature (optional but recommended)
+#'   RcppXPtrUtils::checkXPtr(gauss_window, "double", "double")
 #'
-#' # Verify signature (optional but recommended)
-#' checkXPtr(gauss_window, "double", "double")
-#'
-#' # Apply to sound
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-#' windowed <- apply_window_xptr(sound, gauss_window)
+#'   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#'   windowed <- apply_window_xptr(sound, gauss_window)
+#' }
 #' }
 #'
 #' @export
@@ -402,18 +402,19 @@ apply_window_xptr <- function(sound, window_func) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(RcppXPtrUtils)
+#' \donttest{
+#' # NOTE: currently errors — apply_transform_xptr() looks up the internal
+#' # Sound Rcpp module incorrectly ("attempt to apply non-function").
+#' # Compiling a C++ transform function takes a few seconds
+#' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+#'   soft_clip <- RcppXPtrUtils::cppXPtr(
+#'     "double softclip(double x) { return tanh(x * 2.0); }",
+#'     depends = character()
+#'   )
 #'
-#' # Create compiled soft clipping function
-#' soft_clip <- cppXPtr(
-#'   "double softclip(double x) { return tanh(x * 2.0); }",
-#'   depends = character()
-#' )
-#'
-#' # Apply to sound
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-#' clipped <- apply_transform_xptr(sound, soft_clip)
+#'   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#'   clipped <- apply_transform_xptr(sound, soft_clip)
+#' }
 #' }
 #'
 #' @export
@@ -458,15 +459,17 @@ apply_transform_xptr <- function(sound, transform_func) {
 #' @return External pointer to compiled window function
 #'
 #' @examples
-#' \dontrun{
-#' library(RcppXPtrUtils)
+#' \donttest{
+#' # NOTE: currently errors — create_window_xptr() prepends #include lines
+#' # before the function body, which breaks RcppXPtrUtils::cppXPtr()'s own
+#' # function-signature detection ("isFunction(code) is not TRUE").
+#' # Compiling a C++ window function takes a few seconds
+#' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+#'   hamming <- create_window_xptr("hamming")
 #'
-#' # Create Hamming window (pre-compiled)
-#' hamming <- create_window_xptr("hamming")
-#'
-#' # Apply to sound
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-#' windowed <- apply_window_xptr(sound, hamming)
+#'   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#'   windowed <- apply_window_xptr(sound, hamming)
+#' }
 #' }
 #'
 #' @export
@@ -583,8 +586,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' Ultra functions.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #'
 #' # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 #' cpps <- calculate_cpps_ultra(sound)
@@ -592,7 +594,6 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' # Should match calculate_cpps_fast() within 0.01 dB
 #' cpps_fast <- calculate_cpps_fast(sound)
 #' all.equal(cpps, cpps_fast, tolerance = 0.01)
-#' }
 #'
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz for the cepstrogram (default 50).
 #' @param max_frequency Maximum frequency in Hz for the cepstrogram (default 5000).
@@ -708,8 +709,7 @@ calculate_cpps_ultra <- function(
 #' `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #'
 #' # AVQI v3.01 (default, with ZCR filtering)
 #' voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")
@@ -717,9 +717,8 @@ calculate_cpps_ultra <- function(
 #' # AVQI v2.03 (simple intensity-based)
 #' voiced_v2 <- extract_voiced_segments_ultra(sound, version = "v2.03")
 #'
-#' # v3.01 should be shorter due to ZCR filtering
-#' voiced_v3$get_total_duration() < voiced_v2$get_total_duration()
-#' }
+#' voiced_v3$get_total_duration()
+#' voiced_v2$get_total_duration()
 #'
 #' @references
 #' - AVQI v3.01: Maryn et al. (2017) - with ZCR filtering
@@ -790,12 +789,10 @@ extract_voiced_segments_ultra <- function(
 #' summary stats are repeated.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_full <- multiband_hnr_stats(built)
-#' }
 #'
 #' @references
 #' - VQ_measurements_V2.praat (Voice Quality measurements)
@@ -931,12 +928,10 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #'
 #' hnr_results <- calculate_multiband_hnr_ultra(sound)
 #' hnr_results$full_mean
-#' }
 #'
 #' @references
 #' - VQ_measurements_V2.praat (Voice Quality measurements)

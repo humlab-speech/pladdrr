@@ -21,3 +21,11 @@ The values data.table (inherits from data.frame) from the formant object
 \description{
 Convert praat_formant to data.frame
 }
+\examples{
+x <- list(values = data.frame(
+  time = c(0.1, 0.2), formant_number = c(1, 1),
+  frequency = c(500, 520), bandwidth = c(80, 82)
+))
+class(x) <- "praat_formant"
+as.data.frame(x)
+}

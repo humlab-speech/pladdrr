@@ -21,12 +21,10 @@ Sound R6 object
 \code{Sound$from_values(values, sampling_rate)}
 }
 \examples{
-\dontrun{
-# Old S3 approach (DEPRECATED)
+# Old S3 approach (DEPRECATED, shown for reference)
 sound <- create_sound(c(0.1, 0.2), sampling_rate = 1000)
 
 # New R6 approach (RECOMMENDED)
-sound <- Sound$from_values(c(0.1, 0.2), sampling_rate = 1000)
-}
+sound2 <- Sound$from_values(c(0.1, 0.2), sampling_rate = 1000)
 
 }

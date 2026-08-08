@@ -18,15 +18,8 @@ data.table
 Replacement for repeated rbind() calls in loops.
 }
 \examples{
-\dontrun{
-# Before: 
-# results <- data.frame()
-# for (i in 1:100) results <- rbind(results, data.frame(x=i, y=i^2))
-
-# After:
-# results_list <- vector("list", 100)
-# for (i in 1:100) results_list[[i]] <- list(x=i, y=i^2)
-# results <- dt_rbindlist(results_list)
-}
+results_list <- vector("list", 5)
+for (i in 1:5) results_list[[i]] <- list(x = i, y = i^2)
+results <- pladdrr:::dt_rbindlist(results_list)
 }
 \keyword{internal}

@@ -23,10 +23,9 @@ Converts a praat_sound object to a data frame with time and amplitude columns.
 This is useful for plotting and further analysis in R.
 }
 \examples{
-\dontrun{
-# DEPRECATED - Use R6 interface instead:
-sound <- Sound$new("audio.wav")
-df <- sound$as_data_frame()
-}
+values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
+snd <- create_sound_from_values(values, sampling_rate = 10000)
+df <- as.data.frame(snd)
+head(df)
 
 }

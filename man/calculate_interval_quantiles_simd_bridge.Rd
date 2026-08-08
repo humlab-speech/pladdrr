@@ -17,4 +17,8 @@ NumericMatrix with intervals as rows, quantiles as columns
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+intervals <- list(c(1, 2, 3, 4), c(5, 6, 7, 8, 9))
+calculate_interval_quantiles_simd_bridge(intervals, c(0.25, 0.5, 0.75))
+}
 \keyword{internal}

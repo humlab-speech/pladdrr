@@ -56,14 +56,14 @@ Numeric CPPS value in dB
 Calculate CPPS from a PowerCepstrogram external pointer, bypassing R6 dispatch.
 }
 \details{
-**ADVANCED API** - Use with `to_powercepstrogram_fast()` for maximum performance.
+**ADVANCED API** - Takes the external pointer returned by
+`to_powercepstrogram_fast()` instead of a `PowerCepstrogram` R6 object.
 
 Useful when you need to calculate CPPS multiple times with different parameters
 from the same PowerCepstrogram object.
 }
 \examples{
-\dontrun{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 
 # Create cepstrogram once
 pcep_ptr <- to_powercepstrogram_fast(sound)
@@ -71,6 +71,5 @@ pcep_ptr <- to_powercepstrogram_fast(sound)
 # Calculate CPPS with different parameters
 cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
 cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
-}
 
 }

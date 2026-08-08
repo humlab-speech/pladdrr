@@ -23,3 +23,7 @@ Electroglottogram object
 \description{
 Create an Electroglottogram object
 }
+\examples{
+egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+egg$get_duration()
+}

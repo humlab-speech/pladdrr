@@ -159,10 +159,8 @@ as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()
 #' @param tmax End time in seconds
 #' @return An AmplitudeTier object
 #' @examples
-#' \dontrun{
 #' tier <- amplitude_tier_create(0, 1)
 #' tier$add_point(0.5, 0.8)
-#' }
 #' @export
 amplitude_tier_create <- function(tmin, tmax) {
   ptr <- amplitude_tier_create_cpp(tmin, tmax)
@@ -176,6 +174,11 @@ amplitude_tier_create <- function(tmin, tmax) {
 #' @param point_process A PointProcess object
 #' @param sound A Sound object
 #' @return An AmplitudeTier object with amplitudes at each point time
+#' @examples
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' pp <- sound$to_point_process_periodic_cc(75, 600)
+#' tier <- amplitude_tier_from_point_process(pp, sound)
+#' tier$get_number_of_points()
 #' @export
 amplitude_tier_from_point_process <- function(point_process, sound) {
   if (!inherits(point_process, "PointProcess")) {

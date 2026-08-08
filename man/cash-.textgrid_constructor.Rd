@@ -17,3 +17,7 @@ The requested static method function
 \description{
 $ method for TextGrid constructor (enables TextGrid$new(), TextGrid$create())
 }
+\examples{
+create_fn <- TextGrid$create
+tg <- create_fn(0, 1, "words")
+}

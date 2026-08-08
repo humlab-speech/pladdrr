@@ -15,4 +15,8 @@ data.table
 \description{
 Creates a copy as data.table (does not modify original).
 }
+\examples{
+df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+pladdrr:::df_to_dt(df)
+}
 \keyword{internal}

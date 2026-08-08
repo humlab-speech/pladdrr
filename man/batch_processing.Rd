@@ -3,8 +3,19 @@
 \name{batch_processing}
 \alias{batch_processing}
 \title{Batch Processing Utilities for Speaker Package}
+\value{
+This is a documentation-only overview; see the individual functions
+  (\code{\link{batch_process}}, \code{\link{create_file_list}},
+  \code{\link{extract_measurements}},
+  \code{\link{extract_measurements_custom}},
+  \code{\link{aggregate_measurements}}) for their return values.
+}
 \description{
 Functions for batch processing audio files, pairing Sound/TextGrid files,
 and extracting measurements across multiple files. These utilities replace
 the need for Praat's Strings and Table objects with R-idiomatic workflows.
+}
+\examples{
+# See individual functions, e.g. ?batch_process, ?create_file_list
+
 }

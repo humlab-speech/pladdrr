@@ -33,18 +33,19 @@ amplitude. Common transforms:
 }
 }
 \examples{
-\dontrun{
-library(RcppXPtrUtils)
+\donttest{
+# NOTE: currently errors — apply_transform_xptr() looks up the internal
+# Sound Rcpp module incorrectly ("attempt to apply non-function").
+# Compiling a C++ transform function takes a few seconds
+if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+  soft_clip <- RcppXPtrUtils::cppXPtr(
+    "double softclip(double x) { return tanh(x * 2.0); }",
+    depends = character()
+  )
 
-# Create compiled soft clipping function
-soft_clip <- cppXPtr(
-  "double softclip(double x) { return tanh(x * 2.0); }",
-  depends = character()
-)
-
-# Apply to sound
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-clipped <- apply_transform_xptr(sound, soft_clip)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  clipped <- apply_transform_xptr(sound, soft_clip)
+}
 }
 
 }

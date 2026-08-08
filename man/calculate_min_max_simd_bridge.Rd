@@ -15,4 +15,7 @@ List with min and max
 \description{
 Internal SIMD dispatch helper; not part of the public API.
 }
+\examples{
+calculate_min_max_simd_bridge(c(3, 1, 4, 1, 5, 9))
+}
 \keyword{internal}

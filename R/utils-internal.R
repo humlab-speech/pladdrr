@@ -10,6 +10,9 @@
 #'
 #' @return External pointer
 #' @keywords internal
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 8000)
+#' pladdrr:::extract_xptr(sound, "Sound")
 extract_xptr <- function(obj, class_name) {
   if (inherits(obj, class_name)) {
     # Try function-wrapper style first (.xptr field)

@@ -4,6 +4,13 @@
 #' ggplot2-based visualizations for power cepstrum objects, replacing
 #' Praat's native graphics system with R's powerful plotting capabilities.
 #'
+#' @return This is a documentation-only overview; see the individual functions
+#'   (\code{\link{plot_powercepstrum}}, \code{\link{create_cepstrum_report}})
+#'   for their return values.
+#'
+#' @examples
+#' # See individual functions, e.g. ?plot_powercepstrum
+#'
 #' @name cepstrum_plots
 NULL
 
@@ -535,12 +542,12 @@ plot_cpp_timeseries <- function(cepstrogram,
 #' @return A combined plot object (invisibly)
 #'
 #' @examples
-#' \dontrun{
-#' sound <- Sound$new("voice.wav")
-#' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
-#' 
-#' # Create comprehensive report
-#' create_cepstrum_report(cepstrogram, save_path = "cepstrum_report.png")
+#' if (requireNamespace("gridExtra", quietly = TRUE)) {
+#'   sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#'   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
+#'
+#'   # Create comprehensive report at t = 0.3s (mid-signal)
+#'   create_cepstrum_report(cepstrogram, time_slice = 0.3)
 #' }
 #'
 #' @export

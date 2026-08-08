@@ -55,12 +55,10 @@ exposed as parameters (including `voicing_threshold`, unlike
 }
 
 \examples{
-\dontrun{
-sound <- Sound("voice.wav")
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 
 # Get minimum intensity in voiced regions (DSI IM component)
 min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
-}
 
 }
 \seealso{

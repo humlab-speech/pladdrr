@@ -31,9 +31,13 @@ Extract pitch from multiple files in parallel.
 Convenience wrapper around analyze_files_parallel.
 }
 \examples{
-\dontrun{
-files <- list.files("audio/", pattern = "\\\\.wav$", full.names = TRUE)
-pitches <- extract_pitch_parallel(files, n_cores = 4)
-}
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
+
+# n_cores = 1 keeps this a single-process example (CRAN-safe)
+pitches <- extract_pitch_parallel(files, n_cores = 1)
 
 }

@@ -33,4 +33,8 @@ Single double value of the requested statistic
 Performs pitch extraction AND statistic calculation entirely in C++,
 avoiding intermediate R6 object creation.
 }
+\examples{
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "mean", 0, 75, 600, 0.45)
+}
 \keyword{internal}

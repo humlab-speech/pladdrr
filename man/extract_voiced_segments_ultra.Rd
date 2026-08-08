@@ -79,8 +79,7 @@ algorithm choice. See the Tier 4 Ultra algorithm table in
 }
 
 \examples{
-\dontrun{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 
 # AVQI v3.01 (default, with ZCR filtering)
 voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")
@@ -88,9 +87,8 @@ voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")
 # AVQI v2.03 (simple intensity-based)
 voiced_v2 <- extract_voiced_segments_ultra(sound, version = "v2.03")
 
-# v3.01 should be shorter due to ZCR filtering
-voiced_v3$get_total_duration() < voiced_v2$get_total_duration()
-}
+voiced_v3$get_total_duration()
+voiced_v2$get_total_duration()
 
 }
 \references{

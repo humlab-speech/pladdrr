@@ -10,6 +10,10 @@
 #' @param subtract_mean Subtract mean intensity
 #' @return Intensity R6 object
 #' @export
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' intensity <- extract_intensity(sound)
+#' intensity$get_mean(from_time = 0, to_time = 0)
 extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtract_mean = TRUE) {
   .Deprecated(
     "sound$to_intensity()",

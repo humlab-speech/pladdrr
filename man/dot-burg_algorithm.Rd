@@ -6,7 +6,22 @@
 \usage{
 .burg_algorithm(x, order)
 }
+\arguments{
+\item{x}{Numeric vector, the input signal frame}
+
+\item{order}{Integer, the LPC order}
+}
+\value{
+A list with \code{coefficients} (numeric vector of LPC
+  coefficients) and \code{error} (prediction error power), or \code{NULL}
+  if \code{x} is too short or has no variation
+}
 \description{
 Burg's algorithm for LPC estimation
+}
+\examples{
+set.seed(1)
+x <- sin(2 * pi * 5 * seq(0, 1, length.out = 100)) + rnorm(100, sd = 0.01)
+pladdrr:::.burg_algorithm(x, order = 8)
 }
 \keyword{internal}

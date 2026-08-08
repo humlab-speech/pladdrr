@@ -30,9 +30,13 @@ List of Formant objects
 Extract formants from multiple files in parallel.
 }
 \examples{
-\dontrun{
-files <- list.files("audio/", pattern = "\\\\.wav$", full.names = TRUE)
-formants <- extract_formant_parallel(files, n_cores = 4)
-}
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
+
+# n_cores = 1 keeps this a single-process example (CRAN-safe)
+formants <- extract_formant_parallel(files, n_cores = 1)
 
 }

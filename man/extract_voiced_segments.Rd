@@ -56,8 +56,12 @@ AVQI uses both intensity AND ZCR filtering. Set `use_zcr = FALSE` for
 intensity-only detection.
 }
 \examples{
-\dontrun{
-sound <- Sound$new("speech.wav")
+\donttest{
+# NOTE: currently errors whenever at least one voiced segment is found
+# (i.e. for almost any real input) — the final concatenation step calls
+# Sound$concatenate(), which is not a registered static method (the
+# instance method is $concatenate_sounds()).
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 
 # Full AVQI-compatible extraction (default)
 voiced <- extract_voiced_segments(sound)
