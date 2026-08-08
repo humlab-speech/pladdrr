@@ -7,20 +7,22 @@
 
 ## Recent Changes
 
-See `AGENT_GUIDE.md` sections "What's New in v4.9.x" (line 133) and "What's New in v4.8.x" (line 207) for recent feature additions and breaking changes.
+See `AGENT_GUIDE.md` sections "What's New in v5.0.0" (line 133), "What's New in v4.9.x" (line 144), and "What's New in v4.8.x" (line 229) for recent feature additions and breaking changes.
 
 ## Historical Archive
 
-See `AGENT_GUIDE.md` section "Version History (historical archive)" (line 4214) for the full version history from v1.0 through v4.7.x.
+See this file's section "Version History (historical archive)" (line 39) for the full version history from v1.0 through v4.7.x.
 
 ## Superseded SIMD Patterns
 
-See `AGENT_GUIDE.md` section "Historical SIMD and performance archive (superseded)" (line 4556) for documentation of SIMD implementation patterns that are no longer the recommended approach.
+See this file's section "Historical SIMD and performance archive (superseded)" (line 381) for documentation of SIMD implementation patterns that are no longer the recommended approach.
 
 ---
 
 ## Key Breaking Changes
 
+- **v5.0.0:** Spectral moments batch calculation reworked to compute centre of gravity, standard deviation, skewness, and kurtosis directly from spectrogram data, removing per-frame `Spectrum` allocations (was the primary driver of `spectral_moments`' 897 MB peak); `formant`/`pitch` data-frame construction now pre-allocates output vectors and skips unrequested columns. Bit-exact — memory/allocation change, not an algorithm change. Also, doc-only: performance claims removed from `DESCRIPTION`/`README.md` (moved to `NEWS-archive.md`, not shipped in the tarball) per CRAN submission review; Praat module count reconciled 37→38; full `man/` `\value`/`\examples` coverage; `URL`/`BugReports`/`Imports` metadata fixes.
+- **v4.9.24:** CRAN pre-submission fixes — two stale-arg-name example errors (`Harmonicity.Rd`, `Spectrogram.Rd`) that would have failed CRAN's automated check; 8 `*_simd_bridge` functions re-documented after falling out of roxygen2's parser again; dangling `\link{TableOfReal}` and a Rd "Lost braces" NOTE fixed; tarball hygiene (`.pi/` excluded, stale GSL license note corrected); `DESCRIPTION` cleanup. 1 ERROR/6 WARNINGs/7 NOTEs → 0/4/4.
 - **v4.9.18:** CPPS trend-fit fusion (`PowerCepstrogram_getCPPS_fused`) for ~2x CPPS speedup (gated behind `fused=FALSE` default). SIMD bridge small-input scalar fallback (`n<16`). Custom `parallel_for_range` thread pool replaced with `MelderThread_PARALLELIZE`. Bridge functions re-marked `@keywords internal`. Frequency unit codes centralized through `unit_to_code()`. Faithfulness test coverage expanded (5→11 routines). Agent docs split: `ARCHITECTURE.md` + `HISTORY.md` extracted from `AGENT_GUIDE.md`.
 - **v4.9.10:** `max_quefrency` and `tilt_line_quefrency` parameters now actually honored by the C++ core. Previously hardcoded to [0.003, 0.04]. AVQI CPPS values may shift by ~0.3 dB.
 - **v4.9.9:** SIMD now compiled by default (`-DHAVE_XSIMD`). All 32 SIMD files active.

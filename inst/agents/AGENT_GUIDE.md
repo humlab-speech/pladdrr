@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 4.9.24 guide refresh (2026-08-06)
+**Version:** 5.0.0 guide refresh (2026-08-07)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 4.9.18. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage.
+**Status:** Current through package 5.0.0. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -129,6 +129,17 @@ output to the matching pladdrr call at a per-routine tolerance, and emits
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.0.0
+
+- **v5.0.0 — Spectral-moments/data-frame memory rework; CRAN perf-claim sweep; full `man/` `\value`/`\examples` coverage (2026-08-07).**
+  - **`get_spectral_moments_batch_cpp` no longer allocates a `Spectrum` per frame.** Centre of gravity, standard deviation, skewness, and kurtosis are now computed directly from the spectrogram's z-matrix in two fused passes — bit-exact, because `Spectrogram_to_Spectrum` sets `re=sqrt(z)`, `im=0`, so `sqr(re)+sqr(im) = z`; the intermediate Spectrum was pure overhead. Removes N per-frame allocations for an N-frame spectrogram (was the primary driver of `spectral_moments`' 897 MB peak per algobench). Numerically identical to prior versions — a memory/allocation change, not an algorithm change; no new timing number is claimed here. See `PRAAT_MODIFICATIONS.md`.
+  - **`formant_as_data_frame`/`pitch_as_data_frame` pre-allocate output vectors.** `formant_as_data_frame` counts rows up front and allocates Rcpp vectors directly instead of `std::vector` push_back + copy; `pitch_as_data_frame` conditionally allocates the strength/intensity columns only when `include_strength`/`include_intensity` are requested, instead of always. Output unchanged.
+  - **BREAKING for embedders reading `DESCRIPTION`/`README.md` for numbers: all absolute and relative performance claims removed** (including Parselmouth comparisons), per CRAN submission review. Historical changelog entries carrying benchmark data moved to `NEWS-archive.md`, which is excluded from the package tarball. `NEWS.md` is now claim-free by policy — this file and `PERFORMANCE_INVENTORY.md` remain the place for agent-facing perf detail, since neither ships as CRAN-facing prose.
+  - **Praat module count reconciled 37→38** in `DESCRIPTION`'s `Description:` field, matching the actual number of exposed Rcpp modules under `src/modules/*.cpp`.
+  - **Full `man/` `\value`/`\examples` coverage.** Added missing `@return`/`@examples` roxygen blocks across Tier 1 (R6 object classes), Tier 2 (conversion functions), and Tier 3 (batch-query functions) — four Tier 3 batches plus two follow-up bugfixes surfaced by writing runnable examples: `.pitchtier_unit_code`/`.table_to_data_frame` were referenced but never defined, and 0-row `Table` columns were misdetected as numeric. All fixed alongside the doc sweep.
+  - **CRAN metadata hygiene:** added `URL`/`BugReports` fields; declared `methods`/`tools`/`utils`/`parallel`/`grid` as explicit `Imports`; un-excluded `NEWS.md` from the tarball (it was in `.Rbuildignore`, which would have hidden the changelog from CRAN's own listing).
+  - Also fixed: a malformed comment in `batch_queries.cpp` that broke `Rcpp::compileAttributes()` — introduced while stripping perf claims from roxygen source, caught before it reached a release.
 
 ## What's New in v4.9.x
 

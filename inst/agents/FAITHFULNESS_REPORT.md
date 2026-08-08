@@ -22,3 +22,15 @@ tolerance, `fail` = drift (open an issue or document the rationale).
 | Spectrogram -> power at (0.5 s, 1000 Hz) | pass | 3.131686e-05 | 3.131686e-05 | 2.236167e-19 | 1e-09 |
 | PointProcess (cc) -> jitter local | pass | 8.023673e-07 | 8.023673e-07 | 1.787663e-18 | 1e-09 |
 | MFCC -> number of frames | pass | 195 | 195 | 0 | 0 |
+
+**Non-determinism caveat (CPPS row above):** the tolerance reported for
+`CPPS (calculate_cpps_ultra)` reflects the deterministic fast/default
+trend-fit path (`fit_method = "robust"`, Siegel). Praat's own
+`fit_method = "robust slow"` (Theil-Sen) trend fit is **not**
+deterministic — a documented upstream Praat defect — and samples
+randomly: ~0.8 dB spread across identical runs of the same input, with
+occasional extreme outliers around `1e290`. pladdrr reproduces that
+non-determinism faithfully when `"robust slow"` is requested (see
+`AGENT_GUIDE.md` v4.9.19 entry and `PRAAT_MODIFICATIONS.md` v4.9.19).
+Do not read the row above as evidence that the robust-slow path is
+bit-reproducible — it is not, in Praat or in pladdrr.
