@@ -111,7 +111,7 @@
 #'
 #' # Execute script
 #' interp$run("
-#'   Create Sound as pure tone: \"tone\", 1, 0, 1, 44100, 440, 0.2, 0, 0
+#'   Create Sound as pure tone: \"tone\", 1, 0, 1, 44100, 440, 0.2, 0.01, 0.01
 #'   pitch = To Pitch: 0, 75, 600
 #' ")
 #'
