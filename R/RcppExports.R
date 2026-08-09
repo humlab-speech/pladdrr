@@ -1709,6 +1709,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_matrix_from_r_matrix`, rmatrix)
 }
 
+.matrix_read <- function(path) {
+    .Call(`_pladdrr_matrix_read`, path)
+}
+
 .matrix_formula <- function(xptr, formula) {
     invisible(.Call(`_pladdrr_matrix_formula`, xptr, formula))
 }

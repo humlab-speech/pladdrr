@@ -20,13 +20,7 @@ Minimum pitch value
 **DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.
 }
 \examples{
-\dontrun{
-# NOTE: currently errors — get_min_pitch() calls the R6 method with a
-# stale `interpolation` argument name; the current Pitch$get_minimum()
-# signature takes `interpolate` (logical). Use pitch$get_minimum()
-# directly instead.
 sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- sound$to_pitch()
 get_min_pitch(pitch)
-}
 }

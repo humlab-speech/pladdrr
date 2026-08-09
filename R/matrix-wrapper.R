@@ -14,6 +14,12 @@
 #' m$get_number_of_rows()
 #' as.matrix(m)
 #'
+#' # Save and read back
+#' mat_file <- tempfile(fileext = ".Matrix")
+#' m$save(mat_file)
+#' m2 <- matrix_read(mat_file)
+#' m2$get_value(1, 1)
+#'
 #' @name Matrix
 NULL
 
@@ -55,6 +61,12 @@ NULL
 
 # Export
 .matrix_methods$as_matrix <- function(.self) .matrix_to_r_matrix(.self$.xptr)
+
+# I/O
+.matrix_methods$save <- function(.self, path) {
+  .self$.cpp$save(as.character(path))
+  invisible(.self)
+}
 
 # Utility
 .matrix_methods$get_xptr <- function(.self) .self$.xptr
@@ -177,35 +189,15 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 #' @return A Matrix object
 #' @seealso [matrix_create()], [matrix_create_simple()]
 #' @examples
-#' \donttest{
-#' # NOTE: currently errors — matrix_read() calls an internal .matrix_read()
-#' # binding that does not exist in this version of pladdrr (see
-#' # utils::globalVariables() entry in pladdrr-package.R). Use matrix_create()
-#' # or matrix_create_simple() to build a Matrix object programmatically
-#' # instead.
 #' mat_file <- tempfile(fileext = ".Matrix")
-#' writeLines(c(
-#'   "File type = \"ooTextFile\"",
-#'   "Object class = \"Matrix\"",
-#'   "",
-#'   "xmin = 0",
-#'   "xmax = 2",
-#'   "ymin = 0",
-#'   "ymax = 1",
-#'   "nx = 2",
-#'   "ny = 1",
-#'   "dx = 1",
-#'   "dy = 1",
-#'   "x1 = 0.5",
-#'   "y1 = 0.5",
-#'   "z [] []:",
-#'   "    z [1] []:",
-#'   "        z [1] [1] = 1",
-#'   "        z [1] [2] = 2"
-#' ), mat_file)
-#' m <- matrix_read(mat_file)
-#' m$get_number_of_rows()
-#' }
+#' m <- matrix_create_simple(1, 2)
+#' m$set_value(1, 1, 1)
+#' m$set_value(1, 2, 2)
+#' m$save(mat_file)
+#'
+#' m2 <- matrix_read(mat_file)
+#' m2$get_number_of_rows()
+#' m2$get_value(1, 1)
 #' @export
 matrix_read <- function(path) {
   xptr <- .matrix_read(path)

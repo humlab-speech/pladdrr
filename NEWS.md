@@ -1,5 +1,28 @@
 # pladdrr 5.0.0
 
+## Bug fixes
+
+* `matrix_read()` called an internal `.matrix_read()` binding that did not
+  exist, so every call failed with `could not find function ".matrix_read"`
+  (silently masked by an `R CMD check` NOTE-suppression entry in
+  `utils::globalVariables()`, not by a real implementation). Added the
+  missing C++ binding (mirroring the existing `PitchTier`/`IntensityTier`/
+  `TextGrid` read pattern) and wired up `Matrix$save()` to the C++ save
+  method that already existed but was never exposed to R.
+* `get_max_pitch()`/`get_min_pitch()` (deprecated legacy wrappers) called
+  `Pitch$get_maximum()`/`get_minimum()` with a stale `interpolation =`
+  argument; the current method signature takes `interpolate =` (logical).
+  Every call failed with `unused argument (interpolation = "none")`. Fixed
+  to pass `interpolate = FALSE`.
+* `get_formant_at_time()`/`get_mean_formant()`'s documentation pointed
+  users to `extract_formants()` as the source of a compatible object, but
+  `extract_formants()` no longer produces one when given an R6 `Sound`
+  object (it delegates to `sound$to_formant_burg()`, returning an R6
+  `Formant` object instead) — a stale cross-reference left over from the
+  package's S3-to-R6 migration. No behavior changed; documentation now
+  describes the actual expected input and `extract_formants()`'s actual
+  return value on both its code paths.
+
 ## Documentation
 
 * Removed performance claims (absolute and relative) from `DESCRIPTION` and

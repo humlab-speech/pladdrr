@@ -4230,6 +4230,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// matrix_read
+SEXP matrix_read(std::string path);
+RcppExport SEXP _pladdrr_matrix_read(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(matrix_read(path));
+    return rcpp_result_gen;
+END_RCPP
+}
 // matrix_formula
 void matrix_formula(SEXP xptr, std::string formula);
 RcppExport SEXP _pladdrr_matrix_formula(SEXP xptrSEXP, SEXP formulaSEXP) {
@@ -11988,6 +11999,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_matrix_set_value", (DL_FUNC) &_pladdrr_matrix_set_value, 4},
     {"_pladdrr_matrix_to_r_matrix", (DL_FUNC) &_pladdrr_matrix_to_r_matrix, 1},
     {"_pladdrr_matrix_from_r_matrix", (DL_FUNC) &_pladdrr_matrix_from_r_matrix, 1},
+    {"_pladdrr_matrix_read", (DL_FUNC) &_pladdrr_matrix_read, 1},
     {"_pladdrr_matrix_formula", (DL_FUNC) &_pladdrr_matrix_formula, 2},
     {"_pladdrr_matrix_get_sum", (DL_FUNC) &_pladdrr_matrix_get_sum, 1},
     {"_pladdrr_matrix_get_mean", (DL_FUNC) &_pladdrr_matrix_get_mean, 1},

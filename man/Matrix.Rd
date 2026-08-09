@@ -19,4 +19,10 @@ m$get_value(1, 1)
 m$get_number_of_rows()
 as.matrix(m)
 
+# Save and read back
+mat_file <- tempfile(fileext = ".Matrix")
+m$save(mat_file)
+m2 <- matrix_read(mat_file)
+m2$get_value(1, 1)
+
 }

@@ -92,24 +92,18 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @param time_range Optional time range
 #' @return Minimum pitch value
 #' @examples
-#' \dontrun{
-#' # NOTE: currently errors — get_min_pitch() calls the R6 method with a
-#' # stale `interpolation` argument name; the current Pitch$get_minimum()
-#' # signature takes `interpolate` (logical). Use pitch$get_minimum()
-#' # directly instead.
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
 #' get_min_pitch(pitch)
-#' }
 #' @export
 get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_minimum()", package = "pladdrr")
-  
+
   from_time <- if (!is.null(time_range)) time_range[1] else 0.0
   to_time <- if (!is.null(time_range)) time_range[2] else 0.0
   r6_unit <- if (tolower(unit) == "hz") "hertz" else tolower(unit)
-  
-  pitch$get_minimum(from_time, to_time, r6_unit, interpolation = "none")
+
+  pitch$get_minimum(from_time, to_time, r6_unit, interpolate = FALSE)
 }
 
 #' Get maximum pitch (DEPRECATED)
@@ -121,22 +115,16 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @param time_range Optional time range
 #' @return Maximum pitch value
 #' @examples
-#' \dontrun{
-#' # NOTE: currently errors — get_max_pitch() calls the R6 method with a
-#' # stale `interpolation` argument name; the current Pitch$get_maximum()
-#' # signature takes `interpolate` (logical). Use pitch$get_maximum()
-#' # directly instead.
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
 #' get_max_pitch(pitch)
-#' }
 #' @export
 get_max_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_maximum()", package = "pladdrr")
-  
+
   from_time <- if (!is.null(time_range)) time_range[1] else 0.0
   to_time <- if (!is.null(time_range)) time_range[2] else 0.0
   r6_unit <- if (tolower(unit) == "hz") "hertz" else tolower(unit)
-  
-  pitch$get_maximum(from_time, to_time, r6_unit, interpolation = "none")
+
+  pitch$get_maximum(from_time, to_time, r6_unit, interpolate = FALSE)
 }

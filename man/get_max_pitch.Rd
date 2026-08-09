@@ -20,13 +20,7 @@ Maximum pitch value
 **DEPRECATED:** Use \code{pitch$get_maximum(unit)} instead.
 }
 \examples{
-\dontrun{
-# NOTE: currently errors — get_max_pitch() calls the R6 method with a
-# stale `interpolation` argument name; the current Pitch$get_maximum()
-# signature takes `interpolate` (logical). Use pitch$get_maximum()
-# directly instead.
 sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 pitch <- sound$to_pitch()
 get_max_pitch(pitch)
-}
 }

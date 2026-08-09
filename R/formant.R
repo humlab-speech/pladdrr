@@ -15,24 +15,38 @@
 #' @param window_length Analysis window length in seconds (default: 0.025)
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz (default: 50)
 #'
-#' @return A praat_formant object (S3 class) with:
+#' @return Depends on the class of \code{sound}:
 #'   \itemize{
-#'     \item \code{values}: data.frame with columns time, formant_number, frequency, bandwidth
-#'     \item \code{n_frames}: number of analysis frames
-#'     \item \code{time_step}: actual time step used
-#'     \item \code{max_formant}: maximum formant frequency setting
-#'     \item \code{n_formants}: number of formants tracked
+#'     \item If \code{sound} is an R6 \code{Sound} object (the normal case —
+#'       \code{Sound()}/\code{Sound$create_tone()} always create one), this
+#'       function delegates entirely to \code{sound$to_formant_burg()} and
+#'       returns an R6 \code{Formant} object. \emph{This is what
+#'       \code{\link{get_formant_at_time}}/\code{\link{get_mean_formant}}
+#'       do NOT accept} — those two expect the legacy list below.
+#'     \item If \code{sound} is a legacy (pre-R6) \code{praat_sound} list,
+#'       returns a plain, \strong{unclassed} list with elements
+#'       \code{values} (a data.frame with columns \code{time},
+#'       \code{formant_number}, \code{frequency}, \code{bandwidth}),
+#'       \code{n_frames}, \code{time_step}, \code{max_formant}, and
+#'       \code{n_formants}. This list is no longer given a
+#'       \code{"praat_formant"} class (removed when the package's S3 object
+#'       system was fully migrated to R6), so it will not satisfy
+#'       \code{\link{is_praat_formant}()} / \code{\link{get_formant_at_time}}
+#'       / \code{\link{get_mean_formant}} without manually adding
+#'       \code{class(x) <- "praat_formant"} first.
 #'   }
 #'
 #' @export
 #' @examples
-#' # Old S3 approach (DEPRECATED, shown for reference)
+#' # sound is an R6 Sound object here, so this delegates to to_formant_burg()
+#' # and returns an R6 Formant object (see the second value's \\value above).
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' formants <- extract_formants(sound, max_formant = 5500)
+#' f1_mean <- formants$get_mean(formant_number = 1)
 #'
-#' # New R6 approach (RECOMMENDED)
+#' # Equivalent, and the recommended way to spell it directly:
 #' formants2 <- sound$to_formant_burg(max_frequency = 5500)
-#' f1_mean <- formants2$get_mean(formant_number = 1)
+#' f1_mean2 <- formants2$get_mean(formant_number = 1)
 extract_formants <- function(sound,
                              time_step = 0.0,
                              max_formant = 5500,
@@ -367,15 +381,23 @@ extract_formants <- function(sound,
 #'
 #' **DEPRECATED:** Use the R6 interface instead: `formant$get_value_at_time()`
 #'
-#' @param formant A praat_formant object from \code{\link{extract_formants}}
+#' @param formant A legacy \code{praat_formant}-shaped list: a plain list
+#'   with a \code{values} element (a data.frame with columns \code{time},
+#'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
+#'   \code{class} attribute of \code{"praat_formant"}. \code{\link{extract_formants}()}
+#'   no longer produces this (it now returns an R6 \code{Formant} object
+#'   instead — see its \code{\link{extract_formants}} documentation); build
+#'   one by hand for this legacy function, or use
+#'   \code{formant$get_value_at_time()} on an R6 \code{Formant} object
+#'   directly instead of this deprecated wrapper.
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
 #' @param time Time in seconds
 #' @param interpolate Logical; if TRUE, interpolate between frames
 #'
 #' @return Formant frequency in Hz, or NA if undefined
 #' @examples
-#' # A legacy praat_formant object (the structure extract_formants() used
-#' # to return); built directly here for a self-contained example.
+#' # A praat_formant-shaped list (see the @param formant description
+#' # above); built directly here for a self-contained example.
 #' formant <- structure(
 #'   list(
 #'     values = data.frame(
@@ -437,14 +459,22 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
 #'
 #' **DEPRECATED:** Use the R6 interface instead: `formant$get_mean()`
 #'
-#' @param formant A praat_formant object from \code{\link{extract_formants}}
+#' @param formant A legacy \code{praat_formant}-shaped list: a plain list
+#'   with a \code{values} element (a data.frame with columns \code{time},
+#'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
+#'   \code{class} attribute of \code{"praat_formant"}. \code{\link{extract_formants}()}
+#'   no longer produces this (it now returns an R6 \code{Formant} object
+#'   instead — see its \code{\link{extract_formants}} documentation); build
+#'   one by hand for this legacy function, or use
+#'   \code{formant$get_mean()} on an R6 \code{Formant} object directly
+#'   instead of this deprecated wrapper.
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
 #' @param time_range Optional numeric vector c(start, end) in seconds
 #'
 #' @return Mean formant frequency in Hz, or NA if undefined
 #' @examples
-#' # A legacy praat_formant object (the structure extract_formants() used
-#' # to return); built directly here for a self-contained example.
+#' # A praat_formant-shaped list (see the @param formant description
+#' # above); built directly here for a self-contained example.
 #' formant <- structure(
 #'   list(
 #'     values = data.frame(
