@@ -163,7 +163,7 @@ formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, forman
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
+#' pladdrr:::pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
 pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_strengths_at_times`, pitch_xptr, times, unit, interpolate)
@@ -180,7 +180,7 @@ pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpola
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
+#' pladdrr:::pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 #' @keywords internal
 pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantiles_batch`, pitch_xptr, quantiles, from_time, to_time, unit)
@@ -193,7 +193,7 @@ pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_t
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pp <- sound$to_pointprocess_periodic_cc()
-#' pointprocess_get_all_times(pp$.xptr)
+#' pladdrr:::pointprocess_get_all_times(pp$.xptr)
 #' @keywords internal
 pointprocess_get_all_times <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_all_times`, pp_xptr)
@@ -206,7 +206,7 @@ pointprocess_get_all_times <- function(pp_xptr) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pp <- sound$to_pointprocess_periodic_cc()
-#' pointprocess_get_intervals(pp$.xptr)
+#' pladdrr:::pointprocess_get_intervals(pp$.xptr)
 #' @keywords internal
 pointprocess_get_intervals <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_intervals`, pp_xptr)
@@ -220,7 +220,7 @@ pointprocess_get_intervals <- function(pp_xptr) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pp <- sound$to_pointprocess_periodic_cc()
-#' pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
+#' pladdrr:::pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
 pointprocess_get_nearest_indices <- function(pp_xptr, times) {
     .Call(`_pladdrr_pointprocess_get_nearest_indices`, pp_xptr, times)
@@ -243,7 +243,7 @@ pointprocess_get_nearest_indices <- function(pp_xptr, times) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_statistics_batch(
+#' pladdrr:::pitch_get_statistics_batch(
 #'   pitch$.xptr,
 #'   from_times = c(0, 0.5),
 #'   to_times = c(0.5, 1.0),
@@ -270,7 +270,7 @@ pitch_get_statistics_batch <- function(pitch_xptr, from_times, to_times, metrics
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' range_info <- pitch_get_adaptive_range(pitch$.xptr)
+#' range_info <- pladdrr:::pitch_get_adaptive_range(pitch$.xptr)
 #' str(range_info)
 #' @keywords internal
 pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_factor = 0.75, q3_factor = 1.5, unit = 0L) {
@@ -2094,7 +2094,7 @@ sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_value_direct(pitch$.xptr, 0.5)
+#' pladdrr:::pitch_get_value_direct(pitch$.xptr, 0.5)
 #' @keywords internal
 pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_value_direct`, pitch_xptr, time, unit, interpolate)
@@ -2109,7 +2109,7 @@ pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TR
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_mean_direct(pitch$.xptr)
+#' pladdrr:::pitch_get_mean_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_mean_direct`, pitch_xptr, from_time, to_time, unit)
@@ -2124,7 +2124,7 @@ pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit =
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_stdev_direct(pitch$.xptr)
+#' pladdrr:::pitch_get_stdev_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_stdev_direct`, pitch_xptr, from_time, to_time, unit)
@@ -2140,7 +2140,7 @@ pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit 
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_minimum_direct(pitch$.xptr)
+#' pladdrr:::pitch_get_minimum_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_minimum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
@@ -2156,7 +2156,7 @@ pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_maximum_direct(pitch$.xptr)
+#' pladdrr:::pitch_get_maximum_direct(pitch$.xptr)
 #' @keywords internal
 pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_maximum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
@@ -2172,7 +2172,7 @@ pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' pitch_get_quantile_direct(pitch$.xptr, 0.5)
+#' pladdrr:::pitch_get_quantile_direct(pitch$.xptr, 0.5)
 #' @keywords internal
 pitch_get_quantile_direct <- function(pitch_xptr, quantile, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantile_direct`, pitch_xptr, quantile, from_time, to_time, unit)
@@ -2393,7 +2393,7 @@ sound_to_harmonicity_direct <- function(sound_xptr, time_step = 0.01, minimum_pi
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' stats <- pitch_get_all_stats_direct(pitch$.xptr)
+#' stats <- pladdrr:::pitch_get_all_stats_direct(pitch$.xptr)
 #' str(stats)
 #' @keywords internal
 pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
@@ -2467,7 +2467,7 @@ praat_version <- function() {
 #'
 #' @return Logical indicating success
 #' @examples
-#' praat_initialize()
+#' pladdrr:::praat_initialize()
 #' @keywords internal
 praat_initialize <- function() {
     .Call(`_pladdrr_praat_initialize`)
@@ -2635,7 +2635,7 @@ sound_times_fast <- function(sound_xptr) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
-#' mat <- sound_as_matrix_fast_impl(sound$get_xptr())
+#' mat <- pladdrr:::sound_as_matrix_fast_impl(sound$get_xptr())
 #'
 #' @keywords internal
 sound_as_matrix_fast_impl <- function(sound_xptr, zerocopy = FALSE) {
@@ -2828,7 +2828,7 @@ sound_pool_release <- function(sound_xptr) {
 #'
 #' # Release back to pool when done
 #' for (seg in segments) {
-#'   sound_pool_release(seg)
+#'   pladdrr:::sound_pool_release(seg)
 #' }
 #'
 #' @export
@@ -3823,8 +3823,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 200, duration = 1.0)
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.4)
 #' tg$insert_boundary("phones", 0.7)
 #' tg$set_interval_text("phones", 1, "sil")
@@ -3862,8 +3861,7 @@ textgrid_extract_intervals_batch <- function(textgrid_xptr, sound_xptr, tier_num
 #' @return Character vector of all interval labels
 #'
 #' @examples
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.4)
 #' tg$set_interval_text("phones", 1, "sil")
 #' tg$set_interval_text("phones", 2, "V")
@@ -3897,8 +3895,7 @@ textgrid_get_all_labels <- function(textgrid_xptr, tier_number) {
 #' large interval counts (>100).
 #'
 #' @examples
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.4)
 #' tg$set_interval_text("phones", 1, "sil")
 #' tg$set_interval_text("phones", 2, "V")
@@ -3937,11 +3934,11 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #' ```r
 #' # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 #' my_pred <- RcppXPtrUtils::cppXPtr(
-#'   "bool pred(const char* label, double start, double end) \{
+#'   "bool pred(cstr label, double start, double end) \{
 #'      double dur = end - start;
 #'      return dur > 0.1 && label[0] == 'V';
 #'    \}",
-#'   signature = "bool(const char*, double, double)"
+#'   includes = "typedef const char* cstr;"
 #' )
 #'
 #' result <- textgrid_filter_xptr(
@@ -3956,8 +3953,7 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #' @examples
 #' \donttest{
 #' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
-#'   tg <- TextGrid(0, 1)
-#'   tg$add_interval_tier("phones")
+#'   tg <- textgrid_create(0, 1, "phones")
 #'   tg$insert_boundary("phones", 0.4)
 #'   tg$insert_boundary("phones", 0.7)
 #'   tg$set_interval_text("phones", 1, "sil")
@@ -3965,11 +3961,11 @@ textgrid_interval_statistics_batch <- function(textgrid_xptr, tier_number) {
 #'   tg$set_interval_text("phones", 3, "sil")
 #'
 #'   my_pred <- RcppXPtrUtils::cppXPtr(
-#'     "bool pred(const char* label, double start, double end) {
+#'     "bool pred(cstr label, double start, double end) {
 #'        double dur = end - start;
 #'        return dur > 0.1 && label[0] == 'V';
 #'      }",
-#'     signature = "bool(const char*, double, double)"
+#'     includes = "typedef const char* cstr;"
 #'   )
 #'
 #'   result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)
@@ -4162,8 +4158,7 @@ calculate_midpoints_simd_bridge <- function(start_times, end_times) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' pitch <- sound$to_pitch()
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.5)
 #' tg$set_interval_text("phones", 1, "a")
 #' tg$set_interval_text("phones", 2, "b")
@@ -4189,13 +4184,13 @@ textgrid_interval_pitch_batch <- function(textgrid_xptr, pitch_xptr, tier_number
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 #' formant <- sound$to_formant_burg()
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.5)
 #' tg$set_interval_text("phones", 1, "a")
 #' tg$set_interval_text("phones", 2, "b")
 #'
-#' stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr, tier_number = 1, formant_number = 1)
+#' stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr,
+#'   tier_number = 1, formant_number = 1)
 #'
 #' @export
 textgrid_interval_formant_batch <- function(textgrid_xptr, formant_xptr, tier_number, formant_number = 1L) {
@@ -4213,8 +4208,7 @@ textgrid_interval_formant_batch <- function(textgrid_xptr, formant_xptr, tier_nu
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 #' intensity <- sound$to_intensity()
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.5)
 #' tg$set_interval_text("phones", 1, "a")
 #' tg$set_interval_text("phones", 2, "b")
@@ -4250,8 +4244,7 @@ textgrid_interval_intensity_batch <- function(textgrid_xptr, intensity_xptr, tie
 #' pitch <- sound$to_pitch()
 #' formant <- sound$to_formant_burg()
 #' intensity <- sound$to_intensity()
-#' tg <- TextGrid(0, 1)
-#' tg$add_interval_tier("phones")
+#' tg <- textgrid_create(0, 1, "phones")
 #' tg$insert_boundary("phones", 0.5)
 #' tg$set_interval_text("phones", 1, "a")
 #' tg$set_interval_text("phones", 2, "b")
@@ -4541,7 +4534,7 @@ NULL
 #'   \code{stop()}.
 #' @examples
 #' result <- tryCatch(
-#'   praat_error_to_r("example failure"),
+#'   pladdrr:::praat_error_to_r("example failure"),
 #'   error = function(e) conditionMessage(e)
 #' )
 #' result

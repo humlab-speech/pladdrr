@@ -24,6 +24,6 @@ Batch query pitch strengths at multiple time points
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
+pladdrr:::pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 }
 \keyword{internal}

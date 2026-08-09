@@ -38,11 +38,6 @@ This replaces complex Praat scripts that loop over TextGrid intervals.
 }
 \examples{
 \donttest{
-# NOTE: currently errors regardless of input — extract_measurements_custom()
-# calls several TextGrid methods that do not exist under these names in
-# this version of pladdrr (e.g. get_tier_index(), is_interval_tier(),
-# get_label_of_interval(); the real methods are named tier_is_interval_tier(),
-# get_interval_text(), get_interval_start_time()/get_interval_end_time(), etc.).
 sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
 tg <- textgrid_create(0, 0.6, "phones")
 tg$insert_boundary("phones", 0.3)

@@ -327,8 +327,6 @@ get_cpps_fast <- function(
 #'
 #' @examples
 #' \donttest{
-#' # NOTE: currently errors — apply_window_xptr() looks up the internal
-#' # Sound Rcpp module incorrectly ("attempt to apply non-function").
 #' # Compiling a C++ window function takes a few seconds
 #' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
 #'   gauss_window <- RcppXPtrUtils::cppXPtr(
@@ -364,8 +362,7 @@ apply_window_xptr <- function(sound, window_func) {
   }
 
   # Get internal RSound module
-  ns <- asNamespace("pladdrr")
-  sound_module <- ns$sound_module
+  sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
   rsound <- sound_module$RSound$new(sound_ptr)
@@ -403,8 +400,6 @@ apply_window_xptr <- function(sound, window_func) {
 #'
 #' @examples
 #' \donttest{
-#' # NOTE: currently errors — apply_transform_xptr() looks up the internal
-#' # Sound Rcpp module incorrectly ("attempt to apply non-function").
 #' # Compiling a C++ transform function takes a few seconds
 #' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
 #'   soft_clip <- RcppXPtrUtils::cppXPtr(
@@ -434,8 +429,7 @@ apply_transform_xptr <- function(sound, transform_func) {
   }
 
   # Get internal RSound module
-  ns <- asNamespace("pladdrr")
-  sound_module <- ns$sound_module
+  sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
   rsound <- sound_module$RSound$new(sound_ptr)
@@ -460,9 +454,6 @@ apply_transform_xptr <- function(sound, transform_func) {
 #'
 #' @examples
 #' \donttest{
-#' # NOTE: currently errors — create_window_xptr() prepends #include lines
-#' # before the function body, which breaks RcppXPtrUtils::cppXPtr()'s own
-#' # function-signature detection ("isFunction(code) is not TRUE").
 #' # Compiling a C++ window function takes a few seconds
 #' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
 #'   hamming <- create_window_xptr("hamming")
@@ -507,10 +498,11 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
     }"
   )
 
-  # Add required includes
-  full_code <- paste0("#include <cmath>\n#ifndef M_PI\n#define M_PI 3.14159265358979323846\n#endif\n", window_code)
-
-  RcppXPtrUtils::cppXPtr(full_code, depends = character())
+  RcppXPtrUtils::cppXPtr(
+    window_code,
+    depends = character(),
+    includes = "#include <cmath>\n#ifndef M_PI\n#define M_PI 3.14159265358979323846\n#endif"
+  )
 }
 
 

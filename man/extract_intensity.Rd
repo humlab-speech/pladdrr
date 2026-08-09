@@ -28,6 +28,6 @@ Intensity R6 object
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-intensity <- extract_intensity(sound)
+intensity <- suppressWarnings(extract_intensity(sound))
 intensity$get_mean(from_time = 0, to_time = 0)
 }

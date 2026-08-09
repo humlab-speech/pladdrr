@@ -108,6 +108,7 @@
 #' @importFrom data.table data.table as.data.table is.data.table setDT setkeyv rbindlist
 #' @importFrom stats aggregate approx fitted lm median predict quantile rnorm sd time
 #' @importFrom utils head
+#' @importFrom methods setLoadAction
 #' @rawNamespace export(PraatInterpreter)
 #' @keywords internal
 "_PACKAGE"

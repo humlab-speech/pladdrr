@@ -14,6 +14,6 @@ Performs any necessary initialization for Praat components
 This should be called when the package is loaded
 }
 \examples{
-praat_initialize()
+pladdrr:::praat_initialize()
 }
 \keyword{internal}

@@ -24,7 +24,7 @@ Get all common pitch statistics in single call
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-stats <- pitch_get_all_stats_direct(pitch$.xptr)
+stats <- pladdrr:::pitch_get_all_stats_direct(pitch$.xptr)
 str(stats)
 }
 \keyword{internal}

@@ -20,6 +20,6 @@ Query PointProcess at multiple times to get nearest indices
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pp <- sound$to_pointprocess_periodic_cc()
-pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
+pladdrr:::pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 }
 \keyword{internal}

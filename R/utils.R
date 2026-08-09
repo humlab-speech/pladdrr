@@ -269,7 +269,7 @@ is_praat_pitch <- function(x) {
 #' @examples
 #' pitch_df <- data.frame(time = c(0.1, 0.2), frequency = c(120, 130))
 #' class(pitch_df) <- c("praat_pitch", "data.frame")
-#' validate_pitch_object(pitch_df)
+#' pladdrr:::validate_pitch_object(pitch_df)
 validate_pitch_object <- function(x, name = deparse(substitute(x))) {
   if (!is_praat_pitch(x)) {
     stop(sprintf("'%s' must be a praat_pitch object", name), call. = FALSE)

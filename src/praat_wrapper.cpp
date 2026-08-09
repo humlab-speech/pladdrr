@@ -46,6 +46,9 @@
 #include "praat.github.io/fon/Ltas.h"
 #include "praat.github.io/LPC/LPC.h"
 #include "praat.github.io/stat/Table.h"
+#include "praat.github.io/fon/PitchTier.h"
+#include "praat.github.io/fon/DurationTier.h"
+#include "praat.github.io/fon/IntensityTier.h"
 
 #include <Rcpp.h>
 using namespace Rcpp;
@@ -80,7 +83,7 @@ String praat_version() {
 //'
 //' @return Logical indicating success
 //' @examples
-//' praat_initialize()
+//' pladdrr:::praat_initialize()
 //' @keywords internal
 // [[Rcpp::export]]
 bool praat_initialize() {
@@ -123,6 +126,9 @@ bool praat_initialize() {
                                   classLtas,
                                   classLPC,
                                   classTable,
+                                  classPitchTier,
+                                  classDurationTier,
+                                  classIntensityTier,
                                   nullptr);   // nullptr terminates the list
     
     // Register additional TextGrid-related classes

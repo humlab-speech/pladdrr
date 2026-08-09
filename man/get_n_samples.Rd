@@ -17,5 +17,5 @@ Number of samples
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-get_n_samples(sound)
+suppressWarnings(get_n_samples(sound))
 }

@@ -40,7 +40,7 @@ using namespace Rcpp;
 //'   \code{stop()}.
 //' @examples
 //' result <- tryCatch(
-//'   praat_error_to_r("example failure"),
+//'   pladdrr:::praat_error_to_r("example failure"),
 //'   error = function(e) conditionMessage(e)
 //' )
 //' result

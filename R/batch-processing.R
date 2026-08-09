@@ -258,11 +258,6 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #'
 #' @examples
 #' \donttest{
-#' # NOTE: currently errors regardless of input — extract_measurements_custom()
-#' # calls several TextGrid methods that do not exist under these names in
-#' # this version of pladdrr (e.g. get_tier_index(), is_interval_tier(),
-#' # get_label_of_interval(); the real methods are named tier_is_interval_tier(),
-#' # get_interval_text(), get_interval_start_time()/get_interval_end_time(), etc.).
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
 #' tg <- textgrid_create(0, 0.6, "phones")
 #' tg$insert_boundary("phones", 0.3)
@@ -294,35 +289,28 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
     textgrid <- TextGrid(path = textgrid)
   }
   
-  # Get tier
-  if (is.character(tier)) {
-    tier_idx <- textgrid$get_tier_index(tier)
-    if (tier_idx == 0) {
-      stop("Tier '", tier, "' not found in TextGrid")
-    }
-  } else {
-    tier_idx <- tier
-  }
-  
+  # Tier can be a name or number; TextGrid methods resolve either.
+  tier_idx <- tier
+
   # Check tier type
-  is_interval_tier <- textgrid$is_interval_tier(tier_idx)
-  
+  is_interval_tier <- textgrid$tier_is_interval_tier(tier_idx)
+
   # Get intervals/points
   if (is_interval_tier) {
     n_items <- textgrid$get_number_of_intervals(tier_idx)
-    
+
     # Extract measurements
     results <- list()
     for (i in 1:n_items) {
-      label <- textgrid$get_label_of_interval(tier_idx, i)
-      
+      label <- textgrid$get_interval_text(tier_idx, i)
+
       # Filter if needed
       if (!is.null(interval_filter) && !interval_filter(label)) {
         next
       }
-      
-      tmin <- textgrid$get_start_time_of_interval(tier_idx, i)
-      tmax <- textgrid$get_end_time_of_interval(tier_idx, i)
+
+      tmin <- textgrid$get_interval_start_time(tier_idx, i)
+      tmax <- textgrid$get_interval_end_time(tier_idx, i)
       
       # Extract part
       part <- sound$extract_part(tmin, tmax, preserve_times = FALSE)
@@ -357,14 +345,14 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
     
     results <- list()
     for (i in 1:n_items) {
-      label <- textgrid$get_label_of_point(tier_idx, i)
-      
+      label <- textgrid$get_point_text(tier_idx, i)
+
       # Filter if needed
       if (!is.null(interval_filter) && !interval_filter(label)) {
         next
       }
-      
-      time <- textgrid$get_time_of_point(tier_idx, i)
+
+      time <- textgrid$get_point_time(tier_idx, i)
       
       # Apply measurements at point
       row <- list(

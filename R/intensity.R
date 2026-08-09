@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-#' intensity <- extract_intensity(sound)
+#' intensity <- suppressWarnings(extract_intensity(sound))
 #' intensity$get_mean(from_time = 0, to_time = 0)
 extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtract_mean = TRUE) {
   .Deprecated(
@@ -38,7 +38,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' get_intensity_at_time(intensity, 0.25)
+#' suppressWarnings(get_intensity_at_time(intensity, 0.25))
 #' @export
 get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
   .Deprecated("intensity$get_value_at_time()", package = "pladdrr")
@@ -55,7 +55,7 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' get_mean_intensity(intensity)
+#' suppressWarnings(get_mean_intensity(intensity))
 #' @export
 get_mean_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_mean()", package = "pladdrr")
@@ -76,7 +76,7 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' get_min_intensity(intensity)
+#' suppressWarnings(get_min_intensity(intensity))
 #' @export
 get_min_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_minimum()", package = "pladdrr")
@@ -97,7 +97,7 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' get_max_intensity(intensity)
+#' suppressWarnings(get_max_intensity(intensity))
 #' @export
 get_max_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_maximum()", package = "pladdrr")
@@ -118,7 +118,7 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
-#' get_sd_intensity(intensity)
+#' suppressWarnings(get_sd_intensity(intensity))
 #' @export
 get_sd_intensity <- function(intensity, time_range = NULL) {
   .Deprecated("intensity$get_standard_deviation()", package = "pladdrr")

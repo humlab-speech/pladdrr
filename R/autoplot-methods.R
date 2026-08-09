@@ -567,14 +567,14 @@ autoplot.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency =
   if (!is.null(from_quefrency)) df <- df[df$quefrency >= from_quefrency, ]
   if (!is.null(to_quefrency)) df <- df[df$quefrency <= to_quefrency, ]
 
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$value)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_dB)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
 
   if (mark_peak && nrow(df) > 0) {
-    peak_idx <- which.max(df$value)
+    peak_idx <- which.max(df$power_dB)
     if (length(peak_idx) > 0) {
       peak_q <- df$quefrency[peak_idx]
-      peak_v <- df$value[peak_idx]
+      peak_v <- df$power_dB[peak_idx]
 
       p <- p +
         ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed",
@@ -601,7 +601,7 @@ autolayer.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency 
 
   ggplot2::geom_line(
     data = df,
-    ggplot2::aes(x = .data$quefrency, y = .data$value),
+    ggplot2::aes(x = .data$quefrency, y = .data$power_dB),
     color = color, linewidth = 0.8, inherit.aes = FALSE, ...
   )
 }

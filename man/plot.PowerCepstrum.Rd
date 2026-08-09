@@ -43,7 +43,7 @@ related to pitch.
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 spectrum <- sound$to_spectrum()
-pc <- spectrum$to_powercepstrum()
+pc <- spectrum$to_power_cepstrum()
 
 # Basic plot
 plot(pc)

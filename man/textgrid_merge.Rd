@@ -41,15 +41,13 @@ merge does a single O(n) pass with proper interval handling.
 }
 \examples{
 # Create test TextGrids
-tg1 <- TextGrid(0, 1)
-tg1$add_interval_tier("words")
+tg1 <- textgrid_create(0, 1, "words")
 tg1$insert_boundary(1, 0.5)
 tg1$set_interval_text(1, 1, "hello")
 tg1$set_interval_text(1, 2, "world")
 
-tg2 <- TextGrid(0, 1)
-tg2$add_point_tier("events")
-tg2$add_point(1, 0.25, "click")
+tg2 <- textgrid_create(0, 1, "events", "events")
+tg2$insert_point(1, 0.25, "click")
 
 # Batch merge
 merged <- textgrid_merge(list(tg1, tg2))

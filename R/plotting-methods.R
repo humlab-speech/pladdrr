@@ -79,17 +79,17 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$amplitude)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$value)) +
     ggplot2::geom_line(color = color, linewidth = 0.5)
-  
+
   # Add garnish
   if (garnish) {
-    p <- p + 
+    p <- p +
       ggplot2::labs(
         title = title,
         x = "Time (s)",
         y = "Amplitude"
-      ) + 
+      ) +
       ggplot2::theme_minimal()
   }
   
@@ -153,14 +153,14 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
   # Create plot
   if (show_voicing && "voicing_strength" %in% names(df)) {
     # Color by voicing strength
-    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency_hz, 
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency, 
                                           color = .data$voicing_strength)) +
       ggplot2::geom_line(linewidth = 0.8) +
       ggplot2::scale_color_gradient(low = "gray70", high = color, 
                                     name = "Voicing")
   } else {
     # Single color
-    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency_hz)) +
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency)) +
       ggplot2::geom_line(color = color, linewidth = 0.8)
   }
   
@@ -792,10 +792,16 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
   if (!inherits(x, "Matrix")) {
     stop("x must be a Matrix object")
   }
-  
-  # Convert to data frame
-  df <- x$as_data_frame()
-  
+
+  # Convert to long-format data frame (Matrix has no as_data_frame(); build
+  # it from the raw matrix plus its axis metadata)
+  mat <- x$as_matrix()
+  nx <- x$get_number_of_columns()
+  ny <- x$get_number_of_rows()
+  xs <- x$get_xmin() + (seq_len(nx) - 0.5) * x$get_dx()
+  ys <- x$get_ymin() + (seq_len(ny) - 0.5) * x$get_dy()
+  df <- data.frame(x = rep(xs, each = ny), y = rep(ys, times = nx), value = as.vector(mat))
+
   if (nrow(df) == 0) {
     warning("Matrix contains no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -873,7 +879,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
-#' pc <- spectrum$to_powercepstrum()
+#' pc <- spectrum$to_power_cepstrum()
 #'
 #' # Basic plot
 #' plot(pc)
@@ -914,16 +920,16 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$value)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_dB)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
-  
+
   # Optionally mark peak
   if (mark_peak && nrow(df) > 0) {
     # Find peak in visible range
-    peak_idx <- which.max(df$value)
+    peak_idx <- which.max(df$power_dB)
     if (length(peak_idx) > 0) {
       peak_q <- df$quefrency[peak_idx]
-      peak_v <- df$value[peak_idx]
+      peak_v <- df$power_dB[peak_idx]
       
       p <- p +
         ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed", 
@@ -1026,15 +1032,15 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
   df <- do.call(rbind, all_data)
 
   # Filter time range
-  if (!is.null(from_time)) df <- df[df$tmax > from_time, ]
-  if (!is.null(to_time)) df <- df[df$tmin < to_time, ]
+  if (!is.null(from_time)) df <- df[df$end > from_time, ]
+  if (!is.null(to_time)) df <- df[df$start < to_time, ]
 
-  df$mid <- (df$tmin + df$tmax) / 2
+  df$mid <- (df$start + df$end) / 2
 
   p <- ggplot2::ggplot(df) +
     ggplot2::geom_rect(
       ggplot2::aes(
-        xmin = .data$tmin, xmax = .data$tmax,
+        xmin = .data$start, xmax = .data$end,
         ymin = .data$tier_y - 0.4, ymax = .data$tier_y + 0.4
       ),
       fill = "grey90", color = "grey50", linewidth = 0.3

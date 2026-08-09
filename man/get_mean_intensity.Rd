@@ -20,5 +20,5 @@ Mean intensity in dB
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 intensity <- sound$to_intensity()
-get_mean_intensity(intensity)
+suppressWarnings(get_mean_intensity(intensity))
 }

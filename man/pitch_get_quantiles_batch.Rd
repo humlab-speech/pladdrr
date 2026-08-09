@@ -32,6 +32,6 @@ Get multiple pitch quantiles in a single call (used by VUV analysis)
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
+pladdrr:::pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 }
 \keyword{internal}

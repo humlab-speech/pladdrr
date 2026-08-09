@@ -29,12 +29,12 @@ Computes formant statistics for all intervals using SIMD.
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 1.0)
 formant <- sound$to_formant_burg()
-tg <- TextGrid(0, 1)
-tg$add_interval_tier("phones")
+tg <- textgrid_create(0, 1, "phones")
 tg$insert_boundary("phones", 0.5)
 tg$set_interval_text("phones", 1, "a")
 tg$set_interval_text("phones", 2, "b")
 
-stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr, tier_number = 1, formant_number = 1)
+stats <- textgrid_interval_formant_batch(tg$.xptr, formant$.xptr,
+  tier_number = 1, formant_number = 1)
 
 }

@@ -17,5 +17,5 @@ Number of channels
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-get_n_channels(sound)
+suppressWarnings(get_n_channels(sound))
 }

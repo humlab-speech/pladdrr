@@ -79,8 +79,7 @@ extern "C" {
 //'
 //' @examples
 //' sound <- Sound$create_tone(frequency = 200, duration = 1.0)
-//' tg <- TextGrid(0, 1)
-//' tg$add_interval_tier("phones")
+//' tg <- textgrid_create(0, 1, "phones")
 //' tg$insert_boundary("phones", 0.4)
 //' tg$insert_boundary("phones", 0.7)
 //' tg$set_interval_text("phones", 1, "sil")
@@ -230,8 +229,7 @@ List textgrid_extract_intervals_batch(
 //' @return Character vector of all interval labels
 //'
 //' @examples
-//' tg <- TextGrid(0, 1)
-//' tg$add_interval_tier("phones")
+//' tg <- textgrid_create(0, 1, "phones")
 //' tg$insert_boundary("phones", 0.4)
 //' tg$set_interval_text("phones", 1, "sil")
 //' tg$set_interval_text("phones", 2, "V")
@@ -287,8 +285,7 @@ CharacterVector textgrid_get_all_labels(SEXP textgrid_xptr, int tier_number) {
 //' large interval counts (>100).
 //'
 //' @examples
-//' tg <- TextGrid(0, 1)
-//' tg$add_interval_tier("phones")
+//' tg <- textgrid_create(0, 1, "phones")
 //' tg$insert_boundary("phones", 0.4)
 //' tg$set_interval_text("phones", 1, "sil")
 //' tg$set_interval_text("phones", 2, "V")
@@ -391,11 +388,11 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //' ```r
 //' # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 //' my_pred <- RcppXPtrUtils::cppXPtr(
-//'   "bool pred(const char* label, double start, double end) \{
+//'   "bool pred(cstr label, double start, double end) \{
 //'      double dur = end - start;
 //'      return dur > 0.1 && label[0] == 'V';
 //'    \}",
-//'   signature = "bool(const char*, double, double)"
+//'   includes = "typedef const char* cstr;"
 //' )
 //'
 //' result <- textgrid_filter_xptr(
@@ -410,8 +407,7 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //' @examples
 //' \donttest{
 //' if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
-//'   tg <- TextGrid(0, 1)
-//'   tg$add_interval_tier("phones")
+//'   tg <- textgrid_create(0, 1, "phones")
 //'   tg$insert_boundary("phones", 0.4)
 //'   tg$insert_boundary("phones", 0.7)
 //'   tg$set_interval_text("phones", 1, "sil")
@@ -419,11 +415,11 @@ typedef bool (*IntervalPredicateFunc)(const char*, double, double);
 //'   tg$set_interval_text("phones", 3, "sil")
 //'
 //'   my_pred <- RcppXPtrUtils::cppXPtr(
-//'     "bool pred(const char* label, double start, double end) {
+//'     "bool pred(cstr label, double start, double end) {
 //'        double dur = end - start;
 //'        return dur > 0.1 && label[0] == 'V';
 //'      }",
-//'     signature = "bool(const char*, double, double)"
+//'     includes = "typedef const char* cstr;"
 //'   )
 //'
 //'   result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)

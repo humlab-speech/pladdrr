@@ -36,7 +36,7 @@ Used for VUV two-pass pitch analysis.
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-range_info <- pitch_get_adaptive_range(pitch$.xptr)
+range_info <- pladdrr:::pitch_get_adaptive_range(pitch$.xptr)
 str(range_info)
 }
 \keyword{internal}

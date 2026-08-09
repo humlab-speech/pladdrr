@@ -36,7 +36,7 @@ NULL
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' spectrum <- sound$to_spectrum()
-#' cepstrum <- spectrum$to_powercepstrum()
+#' cepstrum <- spectrum$to_power_cepstrum()
 #'
 #' # Basic plot
 #' plot_powercepstrum(cepstrum)

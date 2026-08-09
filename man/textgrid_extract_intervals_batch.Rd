@@ -50,8 +50,7 @@ criteria, using:
 }
 \examples{
 sound <- Sound$create_tone(frequency = 200, duration = 1.0)
-tg <- TextGrid(0, 1)
-tg$add_interval_tier("phones")
+tg <- textgrid_create(0, 1, "phones")
 tg$insert_boundary("phones", 0.4)
 tg$insert_boundary("phones", 0.7)
 tg$set_interval_text("phones", 1, "sil")

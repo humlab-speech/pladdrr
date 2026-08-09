@@ -20,7 +20,7 @@ pointer access.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
-mat <- sound_as_matrix_fast_impl(sound$get_xptr())
+mat <- pladdrr:::sound_as_matrix_fast_impl(sound$get_xptr())
 
 }
 \keyword{internal}

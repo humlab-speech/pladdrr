@@ -24,9 +24,6 @@ Requires the RcppXPtrUtils package.
 }
 \examples{
 \donttest{
-# NOTE: currently errors — create_window_xptr() prepends #include lines
-# before the function body, which breaks RcppXPtrUtils::cppXPtr()'s own
-# function-signature detection ("isFunction(code) is not TRUE").
 # Compiling a C++ window function takes a few seconds
 if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   hamming <- create_window_xptr("hamming")

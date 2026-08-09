@@ -18,7 +18,7 @@ Wraps Praat function calls and converts Praat's error system to R exceptions
 }
 \examples{
 result <- tryCatch(
-  praat_error_to_r("example failure"),
+  pladdrr:::praat_error_to_r("example failure"),
   error = function(e) conditionMessage(e)
 )
 result

@@ -35,7 +35,7 @@ calls.
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-pitch_get_statistics_batch(
+pladdrr:::pitch_get_statistics_batch(
   pitch$.xptr,
   from_times = c(0, 0.5),
   to_times = c(0.5, 1.0),

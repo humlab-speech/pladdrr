@@ -32,6 +32,6 @@ Get pitch maximum directly
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 pitch <- sound$to_pitch()
-pitch_get_maximum_direct(pitch$.xptr)
+pladdrr:::pitch_get_maximum_direct(pitch$.xptr)
 }
 \keyword{internal}

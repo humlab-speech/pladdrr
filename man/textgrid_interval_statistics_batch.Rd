@@ -29,8 +29,7 @@ Duration calculation uses SIMD vectorization when available, for
 large interval counts (>100).
 }
 \examples{
-tg <- TextGrid(0, 1)
-tg$add_interval_tier("phones")
+tg <- textgrid_create(0, 1, "phones")
 tg$insert_boundary("phones", 0.4)
 tg$set_interval_text("phones", 1, "sil")
 tg$set_interval_text("phones", 2, "V")

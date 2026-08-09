@@ -34,8 +34,6 @@ amplitude. Common transforms:
 }
 \examples{
 \donttest{
-# NOTE: currently errors — apply_transform_xptr() looks up the internal
-# Sound Rcpp module incorrectly ("attempt to apply non-function").
 # Compiling a C++ transform function takes a few seconds
 if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   soft_clip <- RcppXPtrUtils::cppXPtr(

@@ -39,7 +39,7 @@ segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 
 # Release back to pool when done
 for (seg in segments) {
-  sound_pool_release(seg)
+  pladdrr:::sound_pool_release(seg)
 }
 
 }

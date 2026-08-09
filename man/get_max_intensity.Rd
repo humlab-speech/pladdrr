@@ -20,5 +20,5 @@ Maximum intensity in dB
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 intensity <- sound$to_intensity()
-get_max_intensity(intensity)
+suppressWarnings(get_max_intensity(intensity))
 }

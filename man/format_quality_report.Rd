@@ -18,15 +18,10 @@ Character string with formatted report
 Creates a human-readable text report from audio quality metrics.
 }
 \examples{
-# A quality_metrics list has the same shape as check_audio_quality()'s
-# return value; built directly here since check_audio_quality() itself
-# currently errors (see its documentation).
-quality <- list(
-  max_amplitude = 0.85, is_clipped = FALSE, n_clipping_samples = 0L,
-  clipping_percentage = 0, mean_intensity_db = -18.2, min_intensity_db = -32.1,
-  max_intensity_db = -10.4, intensity_range_db = 21.7, rms_amplitude = 0.31,
-  duration = 0.5, sampling_frequency = 16000
-)
+\donttest{
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+quality <- check_audio_quality(sound)
 report <- format_quality_report(quality)
 cat(report)
+}
 }

@@ -19,8 +19,7 @@ Extract all interval labels from a tier in a single call, instead of
 calling `get_interval_text()` n times.
 }
 \examples{
-tg <- TextGrid(0, 1)
-tg$add_interval_tier("phones")
+tg <- textgrid_create(0, 1, "phones")
 tg$insert_boundary("phones", 0.4)
 tg$set_interval_text("phones", 1, "sil")
 tg$set_interval_text("phones", 2, "V")

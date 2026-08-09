@@ -87,7 +87,7 @@ read_sound <- function(file_path, channel = 0) {
 #' @return Duration in seconds
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-#' get_duration(sound)
+#' suppressWarnings(get_duration(sound))
 #' @export
 get_duration <- function(sound) {
   .Deprecated("sound$get_duration()", package = "pladdrr")
@@ -117,7 +117,7 @@ get_sampling_rate <- function(sound) {
 #' @return Number of channels
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-#' get_n_channels(sound)
+#' suppressWarnings(get_n_channels(sound))
 #' @export
 get_n_channels <- function(sound) {
   .Deprecated("sound$get_number_of_channels()", package = "pladdrr")
@@ -132,7 +132,7 @@ get_n_channels <- function(sound) {
 #' @return Number of samples
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-#' get_n_samples(sound)
+#' suppressWarnings(get_n_samples(sound))
 #' @export
 get_n_samples <- function(sound) {
   .Deprecated("sound$get_number_of_samples()", package = "pladdrr")

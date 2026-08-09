@@ -34,8 +34,6 @@ multiplier. Common window functions:
 }
 \examples{
 \donttest{
-# NOTE: currently errors — apply_window_xptr() looks up the internal
-# Sound Rcpp module incorrectly ("attempt to apply non-function").
 # Compiling a C++ window function takes a few seconds
 if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   gauss_window <- RcppXPtrUtils::cppXPtr(

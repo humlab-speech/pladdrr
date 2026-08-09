@@ -353,7 +353,7 @@ void sound_pool_release(SEXP sound_xptr) {
 //'
 //' # Release back to pool when done
 //' for (seg in segments) {
-//'   sound_pool_release(seg)
+//'   pladdrr:::sound_pool_release(seg)
 //' }
 //'
 //' @export

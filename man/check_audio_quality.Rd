@@ -61,8 +61,6 @@ identify recordings with poor signal-to-noise ratio or excessive compression.
 }
 \examples{
 \donttest{
-# NOTE: currently errors — check_audio_quality() calls a Sound method,
-# get_absolute_extremum(), that does not exist in this version of pladdrr.
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 quality <- check_audio_quality(sound)
 

@@ -15,7 +15,6 @@
 #' combined <- sounds_append(s1, s2, silence_duration = 0.1)
 sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sounds_append(
         sound1$get_xptr(),
@@ -24,8 +23,7 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
     )
     
     # Wrap in Sound object
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Extract part of Sound with optional windowing
@@ -89,7 +87,6 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #' @export
 sound_extract_part <- function(sound, t1, t2, window_shape = 1L, 
                                relative_width = 1.0, preserve_times = FALSE) {
-    sound_mod <- get_module("sound_module")
     
     # Use existing .sound_extract_part from sound_wrappers.cpp
     xptr <- .sound_extract_part(
@@ -100,8 +97,7 @@ sound_extract_part <- function(sound, t1, t2, window_shape = 1L,
         preserve_times
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Time-stretch a sound using overlap-add
@@ -118,15 +114,13 @@ sound_extract_part <- function(sound, t1, t2, window_shape = 1L,
 #' faster <- sound_lengthen(sound, fmin = 75, fmax = 600, factor = 0.8)
 sound_lengthen <- function(sound, fmin = 75, fmax = 600, factor = 1.5) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sound_lengthen(
         sound$get_xptr(),
         fmin, fmax, factor
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Deepen band modulation (hearing enhancement)
@@ -148,7 +142,6 @@ sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
                                          slow_modulation = 3, fast_modulation = 30,
                                          band_smoothing = 100) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sound_deepen_band_modulation(
         sound$get_xptr(),
@@ -158,8 +151,7 @@ sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
         band_smoothing
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Convolve two sounds
@@ -176,7 +168,6 @@ sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
 #' conv <- sounds_convolve(s1, s2)
 sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sounds_convolve(
         sound1$get_xptr(),
@@ -185,8 +176,7 @@ sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
         as.integer(signal_outside)
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Cross-correlate two sounds
@@ -203,7 +193,6 @@ sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
 #' xcorr <- sounds_cross_correlate(s1, s2)
 sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sounds_cross_correlate(
         sound1$get_xptr(),
@@ -212,8 +201,7 @@ sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside 
         as.integer(signal_outside)
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Auto-correlate a sound with itself
@@ -228,7 +216,6 @@ sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside 
 #' @export
 sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
     mod <- get_module("sound_operations_module")
-    sound_mod <- get_module("sound_module")
     
     xptr <- mod$sound_auto_correlate(
         sound$get_xptr(),
@@ -236,8 +223,7 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
         as.integer(signal_outside)
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Apply Hann band-pass filter
@@ -252,7 +238,6 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 #' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 #' filtered <- sound_filter_pass_hann_band(sound, fmin = 300, fmax = 3000, smooth = 100)
 sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
-    sound_mod <- get_module("sound_module")
     
     # Use existing .sound_filter_pass_hann_band from sound_wrappers.cpp
     xptr <- .sound_filter_pass_hann_band(
@@ -260,8 +245,7 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
         fmin, fmax, smooth
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
 #' Apply Hann band-stop filter
@@ -276,7 +260,6 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 #' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 #' filtered <- sound_filter_stop_hann_band(sound, fmin = 300, fmax = 3000, smooth = 100)
 sound_filter_stop_hann_band <- function(sound, fmin, fmax, smooth = 100) {
-    sound_mod <- get_module("sound_module")
     
     # Use existing .sound_filter_stop_hann_band from sound_wrappers.cpp
     xptr <- .sound_filter_stop_hann_band(
@@ -284,22 +267,6 @@ sound_filter_stop_hann_band <- function(sound, fmin, fmax, smooth = 100) {
         fmin, fmax, smooth
     )
     
-    cpp_obj <- sound_mod$RSound$new(xptr)
-    sound_mod_construct_sound_object(cpp_obj)
+    Sound(.xptr = xptr)
 }
 
-# Helper function to construct Sound object (reused from sound-module.R pattern)
-sound_mod_construct_sound_object <- function(cpp_obj) {
-    obj <- structure(list(
-        .cpp = cpp_obj,
-        get_xmin = function() cpp_obj$get_xmin(),
-        get_xmax = function() cpp_obj$get_xmax(),
-        get_duration = function() cpp_obj$get_duration(),
-        get_number_of_channels = function() cpp_obj$get_number_of_channels(),
-        get_number_of_samples = function() cpp_obj$get_nx(),
-        get_sampling_frequency = function() cpp_obj$get_sampling_frequency(),
-        as_matrix = function() cpp_obj$as_matrix(),
-        save = function(path) cpp_obj$save(path)
-    ), class = c("Sound", "PraatObject"))
-    obj
-}

@@ -71,7 +71,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' get_mean_pitch(pitch)
+#' suppressWarnings(get_mean_pitch(pitch))
 #' @export
 get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_mean()", package = "pladdrr")
@@ -94,7 +94,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' get_min_pitch(pitch)
+#' suppressWarnings(get_min_pitch(pitch))
 #' @export
 get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_minimum()", package = "pladdrr")
@@ -117,7 +117,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
-#' get_max_pitch(pitch)
+#' suppressWarnings(get_max_pitch(pitch))
 #' @export
 get_max_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
   .Deprecated("pitch$get_maximum()", package = "pladdrr")

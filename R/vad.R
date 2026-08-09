@@ -347,10 +347,6 @@ sound_extract_parts <- function(sound,
 #'
 #' @examples
 #' \donttest{
-#' # NOTE: currently errors whenever at least one voiced segment is found
-#' # (i.e. for almost any real input) — the final concatenation step calls
-#' # Sound$concatenate(), which is not a registered static method (the
-#' # instance method is $concatenate_sounds()).
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #'
 #' # Full AVQI-compatible extraction (default)
@@ -495,7 +491,7 @@ extract_voiced_segments <- function(sound,
     preserve_times = FALSE
   )
 
-  voiced_concatenated <- Sound$concatenate(voiced_sounds)
+  voiced_concatenated <- sound$concatenate_sounds(voiced_sounds)
 
   if (return_textgrid) {
     list(sound = voiced_concatenated, textgrid = vad_grid)

@@ -20,7 +20,7 @@ tier <- PitchTier(0, 1)
 tier$add_point(0.5, 150)
 tmp <- tempfile(fileext = ".PitchTier")
 tier$save(tmp)
-loaded <- pitchtier_from_file(tmp)
+loaded <- pladdrr:::pitchtier_from_file(tmp)
 unlink(tmp)
 }
 \keyword{internal}

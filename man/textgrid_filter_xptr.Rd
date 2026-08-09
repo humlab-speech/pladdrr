@@ -43,11 +43,11 @@ The predicate executes entirely in C++ without any R boundary crossings.
 ```r
 # Example: Filter intervals with duration > 0.1s and label starting with 'V'
 my_pred <- RcppXPtrUtils::cppXPtr(
-  "bool pred(const char* label, double start, double end) \{
+  "bool pred(cstr label, double start, double end) \{
      double dur = end - start;
      return dur > 0.1 && label[0] == 'V';
    \}",
-  signature = "bool(const char*, double, double)"
+  includes = "typedef const char* cstr;"
 )
 
 result <- textgrid_filter_xptr(
@@ -60,8 +60,7 @@ result <- textgrid_filter_xptr(
 \examples{
 \donttest{
 if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
-  tg <- TextGrid(0, 1)
-  tg$add_interval_tier("phones")
+  tg <- textgrid_create(0, 1, "phones")
   tg$insert_boundary("phones", 0.4)
   tg$insert_boundary("phones", 0.7)
   tg$set_interval_text("phones", 1, "sil")
@@ -69,11 +68,11 @@ if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   tg$set_interval_text("phones", 3, "sil")
 
   my_pred <- RcppXPtrUtils::cppXPtr(
-    "bool pred(const char* label, double start, double end) {
+    "bool pred(cstr label, double start, double end) {
        double dur = end - start;
        return dur > 0.1 && label[0] == 'V';
      }",
-    signature = "bool(const char*, double, double)"
+    includes = "typedef const char* cstr;"
   )
 
   result <- textgrid_filter_xptr(tg$.xptr, 1, my_pred)

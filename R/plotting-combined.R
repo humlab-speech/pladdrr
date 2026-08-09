@@ -442,7 +442,7 @@ plot_pitch_intensity <- function(pitch, intensity,
   intensity_df <- intensity_df[intensity_df$time >= from_time & intensity_df$time <= to_time, ]
   
   # Normalize intensity to pitch scale for dual axis
-  pitch_range <- range(pitch_df$frequency_hz, na.rm = TRUE)
+  pitch_range <- range(pitch_df$frequency, na.rm = TRUE)
   intensity_range <- range(intensity_df$intensity_db, na.rm = TRUE)
   
   # Scale factor for intensity to match pitch range
@@ -454,7 +454,7 @@ plot_pitch_intensity <- function(pitch, intensity,
   # Create combined plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(data = pitch_df,
-                      ggplot2::aes(x = .data$time, y = .data$frequency_hz),
+                      ggplot2::aes(x = .data$time, y = .data$frequency),
                       color = pitch_color, linewidth = 0.8) +
     ggplot2::geom_line(data = intensity_df,
                       ggplot2::aes(x = .data$time, y = .data$scaled_intensity),
@@ -570,7 +570,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
     ggplot2::geom_line(data = formant_df,
                       ggplot2::aes(x = .data$time, y = .data$frequency,
                                   color = .data$formant_label),
-                      linewidth = 1.2, alpha = 0.8) +
+                      linewidth = 1.2, alpha = 0.8, inherit.aes = FALSE) +
     ggplot2::scale_color_manual(values = formant_colors, name = "Formant")
   
   p
@@ -638,22 +638,22 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   
   # Filter time range
   if (!is.null(from_time)) {
-    pitch_df <- pitch_df[pitch_df$time_s >= from_time, ]
+    pitch_df <- pitch_df[pitch_df$time >= from_time, ]
   }
   if (!is.null(to_time)) {
-    pitch_df <- pitch_df[pitch_df$time_s <= to_time, ]
+    pitch_df <- pitch_df[pitch_df$time <= to_time, ]
   }
   
   # Filter pitch range
   if (!is.null(pitch_floor)) {
-    pitch_df <- pitch_df[pitch_df$frequency_hz >= pitch_floor, ]
+    pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
   }
   if (!is.null(pitch_ceiling)) {
-    pitch_df <- pitch_df[pitch_df$frequency_hz <= pitch_ceiling, ]
+    pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
   }
   
   # Remove unvoiced frames
-  pitch_df <- pitch_df[!is.na(pitch_df$frequency_hz) & pitch_df$frequency_hz > 0, ]
+  pitch_df <- pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
   
   if (nrow(pitch_df) == 0) {
     warning("No pitch data available in the specified range")
@@ -663,11 +663,13 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   # Overlay pitch track
   p <- p +
     ggplot2::geom_line(data = pitch_df,
-                      ggplot2::aes(x = .data$time_s, y = .data$frequency_hz),
-                      color = pitch_color, linewidth = 1.5, alpha = 0.9) +
+                      ggplot2::aes(x = .data$time, y = .data$frequency),
+                      color = pitch_color, linewidth = 1.5, alpha = 0.9,
+                      inherit.aes = FALSE) +
     ggplot2::geom_point(data = pitch_df,
-                       ggplot2::aes(x = .data$time_s, y = .data$frequency_hz),
-                       color = pitch_color, size = 1, alpha = 0.6)
+                       ggplot2::aes(x = .data$time, y = .data$frequency),
+                       color = pitch_color, size = 1, alpha = 0.6,
+                       inherit.aes = FALSE)
   
   p
 }

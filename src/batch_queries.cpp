@@ -231,7 +231,7 @@ List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector t
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pitch <- sound$to_pitch()
-//' pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
+//' pladdrr:::pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
@@ -287,7 +287,7 @@ NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pitch <- sound$to_pitch()
-//' pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
+//' pladdrr:::pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
@@ -340,7 +340,7 @@ NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pp <- sound$to_pointprocess_periodic_cc()
-//' pointprocess_get_all_times(pp$.xptr)
+//' pladdrr:::pointprocess_get_all_times(pp$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
@@ -367,7 +367,7 @@ NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pp <- sound$to_pointprocess_periodic_cc()
-//' pointprocess_get_intervals(pp$.xptr)
+//' pladdrr:::pointprocess_get_intervals(pp$.xptr)
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
@@ -398,7 +398,7 @@ NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pp <- sound$to_pointprocess_periodic_cc()
-//' pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
+//' pladdrr:::pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
 // [[Rcpp::export]]
 IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times) {
@@ -446,7 +446,7 @@ IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pitch <- sound$to_pitch()
-//' pitch_get_statistics_batch(
+//' pladdrr:::pitch_get_statistics_batch(
 //'   pitch$.xptr,
 //'   from_times = c(0, 0.5),
 //'   to_times = c(0.5, 1.0),
@@ -582,7 +582,7 @@ NumericMatrix pitch_get_statistics_batch(
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
 //' pitch <- sound$to_pitch()
-//' range_info <- pitch_get_adaptive_range(pitch$.xptr)
+//' range_info <- pladdrr:::pitch_get_adaptive_range(pitch$.xptr)
 //' str(range_info)
 //' @keywords internal
 // [[Rcpp::export]]
