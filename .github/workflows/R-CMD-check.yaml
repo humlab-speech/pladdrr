@@ -63,3 +63,8 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual")'
+          # error-on: "error" not the r-lib default "warning" — this package
+          # vendors Praat C++ and deliberately sets -ffp-contract=off for
+          # bit-exact DSP output, both of which are permanent, CRAN-documented
+          # WARNINGs (see cran-comments.md), not regressions to gate CI on.
+          error-on: '"error"'

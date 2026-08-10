@@ -2,6 +2,12 @@
 
 ## Bug fixes
 
+* `intensity_tier_to_amplitude_tier()` and `amplitude_tier_from_point_process()`
+  read `$.pointer` off `IntensityTier`/`PointProcess`/`Sound` objects, but
+  those classes store their external pointer under `$.xptr` (`$.pointer` is
+  only an alias on `AmplitudeTier`). The mismatch resolved to `NULL` and
+  failed deep in the C++ layer with `R_ExternalPtrAddr: argument of type
+  NILSXP is not an external pointer`. Fixed both call sites to use `$.xptr`.
 * `matrix_read()` called an internal `.matrix_read()` binding that did not
   exist, so every call failed with `could not find function ".matrix_read"`
   (silently masked by an `R CMD check` NOTE-suppression entry in

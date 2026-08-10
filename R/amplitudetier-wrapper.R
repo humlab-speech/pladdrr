@@ -187,7 +187,7 @@ amplitude_tier_from_point_process <- function(point_process, sound) {
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
   }
-  ptr <- point_process_sound_to_amplitude_tier_point_cpp(point_process$.pointer, sound$.pointer)
+  ptr <- point_process_sound_to_amplitude_tier_point_cpp(point_process$.xptr, sound$.xptr)
   AmplitudeTier(.xptr = ptr)
 }
 
@@ -208,6 +208,6 @@ intensity_tier_to_amplitude_tier <- function(intensity_tier) {
   if (!inherits(intensity_tier, "IntensityTier")) {
     stop("intensity_tier must be an IntensityTier object")
   }
-  ptr <- intensity_tier_to_amplitude_tier_cpp(intensity_tier$.pointer)
+  ptr <- intensity_tier_to_amplitude_tier_cpp(intensity_tier$.xptr)
   AmplitudeTier(.xptr = ptr)
 }

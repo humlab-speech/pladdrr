@@ -133,6 +133,7 @@ results/
 ^Meta$
 ^docs-archive$
 ^TODO\.md$
+^plans$
 
 # --- CRAN tarball slimming (keeps the dev tree intact; only the built tarball shrinks) ---
 # Editor/tooling caches, generated site, and dev-only benchmark scripts
