@@ -39,16 +39,18 @@ jobs:
 
       - name: Test coverage
         run: |
-          covr::package_coverage()
+          cov <- covr::package_coverage(quiet = FALSE)
+          covr::to_cobertura(cov)
         shell: Rscript {0}
 
-      - name: Show coverage
-        run: |
-          covr::package_coverage()
-        shell: Rscript {0}
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - uses: codecov/codecov-action@v4
         with:
-          upload-snapshots: true
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
+          file: ./cobertura.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Show testthat output
+        if: always()
+        run: |
+          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
