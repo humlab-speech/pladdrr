@@ -67,19 +67,24 @@ public:
 
         integer bin = (integer) floor(index);
         double fraction = index - bin;
+
+        // z[1][.] stores linear power (Praat convention, see
+        // structPowerCepstrum::v_getValueAtSample). Convert to the requested
+        // unit per-sample, then interpolate — matching Praat's todBs()/
+        // getPeakAndPosition(), which interpolate in dB space, not linear.
+        double near_value = ptr->z[1][bin];
+        if (unit == "dB") near_value = 10.0 * log10(near_value + 1e-30);
+
         double value;
-
         if (interpolation == "linear" && bin < ptr->nx) {
-            value = (1.0 - fraction) * ptr->z[1][bin] + fraction * ptr->z[1][bin + 1];
+            double far_value = ptr->z[1][bin + 1];
+            if (unit == "dB") far_value = 10.0 * log10(far_value + 1e-30);
+            value = (1.0 - fraction) * near_value + fraction * far_value;
         } else {
-            value = ptr->z[1][bin];
+            value = near_value;
         }
 
-        if (unit == "dB") {
-            return value;
-        } else {
-            return pow(10.0, value / 10.0);
-        }
+        return value;
     }
 
     double get_quefrency_of_peak(std::string interpolation, double qmin, double qmax) {

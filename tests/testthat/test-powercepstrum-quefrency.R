@@ -32,3 +32,21 @@ test_that("get_value_at_quefrency works for all interpolation/unit combinations"
     }
   }
 })
+
+test_that("get_value_at_quefrency dB and linear units agree and are plausible", {
+  # z[1][.] stores linear power; dB = 10*log10(power). A cepstral peak is
+  # typically tens of dB, not the ~2e8 (or Inf) produced when the unit
+  # branches were swapped. Query an exact grid point (q1) so interpolation
+  # is a no-op and dB/linear must match bit-exactly; away from grid points
+  # they legitimately diverge because dB and linear interpolate in
+  # different domains (Praat's own convention, see todBs()).
+  cepstrum <- make_test_cepstrum()
+  q1 <- cepstrum$get_q1()
+
+  db_value <- cepstrum$get_value_at_quefrency(q1, interpolation = "linear", unit = "dB")
+  linear_value <- cepstrum$get_value_at_quefrency(q1, interpolation = "linear", unit = "linear")
+
+  expect_true(db_value > -300 && db_value < 300)
+  expect_true(linear_value >= 0)
+  expect_equal(db_value, 10 * log10(linear_value + 1e-30), tolerance = 1e-9)
+})
