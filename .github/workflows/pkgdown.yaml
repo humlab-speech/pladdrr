@@ -48,19 +48,24 @@ jobs:
 
       - name: Build site
         run: |
-          # Work around r-lib/pkgdown bug: navbar_links_haystack() returns NULL
-          # (not a 0-row tibble) when a page's navbar has zero matching
-          # nav-items, which crashes activate_navbar()'s
-          # haystack[haystack$similar > 0, ] with "incorrect number of
-          # dimensions". activate_navbar() already handles nrow(haystack)==0
-          # fine, so this only restores that guarantee.
+          # Work around r-lib/pkgdown bug: when a page's navbar has zero
+          # matching nav-items, navbar_links_haystack()'s
+          # `do.call(rbind, lapply(nav_items, ...))` returns NULL, and the
+          # following `haystack$similar <- ...` turns that NULL into a plain
+          # list (not a data.frame). The function's own final
+          # `haystack[haystack$similar > 0, ]` then crashes with "incorrect
+          # number of dimensions" *inside* navbar_links_haystack itself, so
+          # wrapping it and inspecting its return value (the previous fix)
+          # never runs - the error fires before orig() returns. Catch the
+          # error instead.
           orig <- pkgdown:::navbar_links_haystack
           patched <- function(html, pkg, path) {
-            out <- orig(html, pkg, path)
-            if (is.null(out) || !is.data.frame(out)) {
-              return(tibble::tibble(nav_item = list(), links = character(), similar = numeric()))
-            }
-            out
+            tryCatch(
+              orig(html, pkg, path),
+              error = function(e) {
+                tibble::tibble(nav_item = list(), links = character(), similar = numeric())
+              }
+            )
           }
           assignInNamespace("navbar_links_haystack", patched, ns = "pkgdown")
           pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
