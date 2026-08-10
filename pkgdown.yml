@@ -1,0 +1,28 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  analysis-resynthesis-workflow: analysis-resynthesis-workflow.html
+  auditory-modeling: auditory-modeling.html
+  autoplot-autolayer: autoplot-autolayer.html
+  articles/batch-operations-guide: batch-operations-guide.html
+  formant-analysis: formant-analysis.html
+  formantpath-robust-tracking: formantpath-robust-tracking.html
+  getting-started: getting-started.html
+  integrated-phonetic-analysis: integrated-phonetic-analysis.html
+  migration-from-parselmouth: migration-from-parselmouth.html
+  migration-from-praat: migration-from-praat.html
+  articles/migration-guide: migration-guide.html
+  articles/naming-conventions: naming-conventions.html
+  performance-optimization: performance-optimization.html
+  performance-simd: performance-simd.html
+  praat-interpreter: praat-interpreter.html
+  speech-synthesis-klattgrid: speech-synthesis-klattgrid.html
+  textgrid-workflows: textgrid-workflows.html
+  articles/v4-migration-guide: v4-migration-guide.html
+  visualization: visualization.html
+  vowel-space-analysis: vowel-space-analysis.html
+last_built: 2026-08-10T17:49Z
+urls:
+  reference: https://humlab-speech.github.io/pladdrr/reference
+  article: https://humlab-speech.github.io/pladdrr/articles

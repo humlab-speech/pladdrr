@@ -1,0 +1,106 @@
+# Get CPPS from PowerCepstrogram Pointer (Advanced Performance API)
+
+Calculate CPPS from a PowerCepstrogram external pointer, bypassing R6
+dispatch.
+
+## Usage
+
+``` r
+get_cpps_fast(
+  powercepstrogram,
+  subtract_tilt = FALSE,
+  time_averaging_window = 0.01,
+  quefrency_averaging_window = 0.001,
+  pitch_floor = 60,
+  pitch_ceiling = 330,
+  delta_f0 = 0.05,
+  interpolation = "parabolic",
+  qstart_fit = 0.001,
+  qend_fit = 0,
+  trend_line_type = "straight",
+  fit_method = "robust"
+)
+```
+
+## Arguments
+
+- powercepstrogram:
+
+  External pointer to PowerCepstrogram object
+
+- subtract_tilt:
+
+  Logical, subtract tilt before calculating CPPS (default FALSE)
+
+- time_averaging_window:
+
+  Numeric, time averaging window in seconds (default 0.01)
+
+- quefrency_averaging_window:
+
+  Numeric, quefrency averaging window in seconds (default 0.001)
+
+- pitch_floor:
+
+  Numeric, minimum F0 in Hz (default 60)
+
+- pitch_ceiling:
+
+  Numeric, maximum F0 in Hz (default 330)
+
+- delta_f0:
+
+  Numeric, F0 fractional precision (default 0.05)
+
+- interpolation:
+
+  Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700"
+  (default "parabolic")
+
+- qstart_fit:
+
+  Numeric, quefrency range start for fitting in seconds (default 0.001)
+
+- qend_fit:
+
+  Numeric, quefrency range end in seconds (default 0, means auto)
+
+- trend_line_type:
+
+  Character, "straight" or "exponential" (default "straight")
+
+- fit_method:
+
+  Character, "robust" (Siegel repeated median), "least_squares", or
+  "robust slow" (Theil-Sen). Default "robust". \*\*"robust slow" is not
+  reproducible\*\*: it samples randomly inside Praat's slope selection,
+  so repeated runs on the same input differ (~0.8 dB observed) and can
+  return values on the order of 1e290. That is an upstream Praat defect,
+  reproduced faithfully here; pladdrr warns once per session when you
+  select it.
+
+## Value
+
+Numeric CPPS value in dB
+
+## Details
+
+\*\*ADVANCED API\*\* - Takes the external pointer returned by
+\`to_powercepstrogram_fast()\` instead of a \`PowerCepstrogram\` R6
+object.
+
+Useful when you need to calculate CPPS multiple times with different
+parameters from the same PowerCepstrogram object.
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+
+# Create cepstrogram once
+pcep_ptr <- to_powercepstrogram_fast(sound)
+
+# Calculate CPPS with different parameters
+cpps1 <- get_cpps_fast(pcep_ptr, subtract_tilt = FALSE, pitch_floor = 60)
+cpps2 <- get_cpps_fast(pcep_ptr, subtract_tilt = TRUE, pitch_floor = 80)
+```

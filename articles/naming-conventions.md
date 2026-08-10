@@ -1,0 +1,378 @@
+# Naming Conventions and API Organization
+
+## pladdrr Naming Conventions and API Organization
+
+**Version 5.0.0 - August 2026**
+
+This document explains the naming conventions used in pladdrr and
+clarifies the purpose of different function suffixes.
+
+------------------------------------------------------------------------
+
+### Function Naming Patterns
+
+#### Standard Suffixes
+
+| Suffix | Purpose | Example | API Tier |
+|----|----|----|----|
+| None | Standard high-level API | `sound$to_pitch()` | Tier 1 |
+| `_direct` | XPtr input, skip R6 dispatch | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) | Tier 2 |
+| `_batch` | Multi-item processing | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | Tier 3 |
+| `_parallel` | Multi-core processing | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | Tier 3 |
+| `_at_times` | Vectorized time queries | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Tier 3 |
+
+#### Special Cases
+
+##### `*_fast` Functions
+
+**Status:** Legacy naming, kept for backward compatibility.
+
+Three functions use `_fast` suffix instead of `_direct`:
+
+| Function | Purpose | API Tier | Note |
+|----|----|----|----|
+| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) | One-shot CPPS calculation | Tier 2 | Combines create + query |
+| [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md) | Create PowerCepstrogram XPtr | Tier 2 | Direct conversion |
+| [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md) | Query CPPS from XPtr | Tier 2 | Direct query |
+
+**Why `_fast` instead of `_direct`?**
+
+These functions were created before the Direct API naming convention was
+established. They remain as `_fast` for backward compatibility.
+
+**Should you use them?** They’re equivalent to Direct API functions and
+skip the same R6 dispatch overhead.
+
+**Equivalence:**
+
+``` r
+
+# calculate_cpps_fast() is a one-shot call combining the two-step form:
+
+# Pattern 1: one-shot
+cpps <- calculate_cpps_fast(sound)
+
+# Pattern 2: broken into steps (still _fast naming, not _direct)
+pcg_ptr <- to_powercepstrogram_fast(sound)
+cpps <- get_cpps_fast(pcg_ptr)
+```
+
+------------------------------------------------------------------------
+
+### API Organization
+
+#### Tier 1: High-Level API (Standard Methods)
+
+**Naming:** Object methods with natural language names
+
+**Pattern:** `object$method(args)`
+
+**Examples:**
+
+``` r
+
+pitch <- sound$to_pitch()
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+formant <- sound$to_formant()
+spec <- sound$to_spectrum()
+```
+
+**Characteristics:** - Full R6 object interface - Method chaining
+supported - Complete validation - Slowest but easiest to use
+
+------------------------------------------------------------------------
+
+#### Tier 2: Direct API (Performance Functions)
+
+**Naming:** `operation_direct()` or `get_*_direct()`
+
+**Pattern:** `result <- function_direct(xptr, args)`
+
+**Location:** `R/praat-direct.R`, `R/performance-helpers.R`
+
+**Examples:**
+
+``` r
+
+# Conversions
+pitch_ptr <- to_pitch_direct(sound_ptr)
+formant_ptr <- to_formant_direct(sound_ptr)
+spec_ptr <- to_spectrum_direct(sound_ptr)
+
+# Queries
+stats <- get_pitch_stats_direct(pitch_ptr)
+formants <- get_formants_direct(formant_ptr, time = 0.5)
+
+# CPPS (uses _fast naming)
+cpps <- calculate_cpps_fast(sound)
+```
+
+**Characteristics:** - Accept/return external pointers - Skip R6
+dispatch overhead - Require pointer management
+
+------------------------------------------------------------------------
+
+#### Tier 3: Batch & Parallel API
+
+##### 3a. Batch Operations
+
+**Naming:** `*_batch()` or `*_and_*()` for combined operations
+
+**Pattern:** `results <- function_batch(list_of_objects, args)`
+
+**Location:** `R/batch-ops.R`
+
+**Examples:**
+
+``` r
+
+# Batch conversions
+pitches <- sound_to_pitch_batch(sounds)
+formants <- sound_to_formant_batch(sounds)
+
+# Combined operations
+pitches <- sound_extract_and_pitch(sound, from_times, to_times)
+formants <- sound_extract_and_formant(sound, from_times, to_times)
+
+# Aggregation
+combined <- sound_concatenate_all(sounds)
+```
+
+**Characteristics:** - Process multiple items in single C++ call -
+Minimize R↔︎C++ boundary crossings
+
+##### 3b. Vectorized Queries
+
+**Naming:** `get_*_at_times()`
+
+**Pattern:** `values <- get_property_at_times(object, times)`
+
+**Location:** `R/batch-queries.R`
+
+**Examples:**
+
+``` r
+
+f0_values <- get_pitch_at_times(pitch, times)
+all_formants <- get_formants_at_times(formant, times, formant_numbers = 1:4)
+int_values <- get_intensity_at_times(intensity, times)
+```
+
+The older `*_get_values_at_times()` functions
+(`pitch_get_values_at_times()`, `formant_get_values_at_times()`,
+`intensity_get_values_at_times()`) were removed; use the
+`get_*_at_times()` functions above.
+
+**Characteristics:** - Query multiple time points in a single call -
+Single C++ call for all queries
+
+##### 3c. Parallel Processing
+
+**Naming:** `*_parallel()` or `analyze_*_parallel()`
+
+**Pattern:** `results <- function_parallel(items, func, n_cores)`
+
+**Location:** `R/parallel-batch.R`
+
+**Examples:**
+
+``` r
+
+# Generic parallel processing
+results <- analyze_files_parallel(files, analysis_func, n_cores = 4)
+results <- process_sounds_parallel(sounds, analysis_func, n_cores = 4)
+
+# Convenience functions
+pitches <- extract_pitch_parallel(files, n_cores = 4)
+formants <- extract_formant_parallel(files, n_cores = 4)
+intensities <- extract_intensity_parallel(files, n_cores = 4)
+```
+
+**Characteristics:** - Use multiple CPU cores - Automatic platform
+detection
+
+------------------------------------------------------------------------
+
+### Naming Rationale
+
+#### Why Different Conventions?
+
+The API evolved over time:
+
+1.  **Early pladdrr (\< v2.0):** R6 methods only
+2.  **v2.0-v2.2:** Added batch operations, performance helpers
+3.  **v2.2:** Introduced Direct API with `_direct` convention
+4.  **v2.3:** Standardized batch queries, deprecated inconsistent names
+
+#### Historical Naming
+
+    Timeline of function naming:
+
+    2024: sound$to_pitch()                           # Tier 1 established
+    2024: sound_to_pitch_batch()                     # Tier 3 batch
+    2025: calculate_cpps_fast()                      # Special-case _fast
+    2025: to_pitch_direct()                          # Tier 2 Direct API
+    2026: pitch_get_values_at_times() → deprecated   # Consistency cleanup
+    2026: get_pitch_at_times()                       # Standardized batch query
+    2026: pitch_get_values_at_times() removed        # v5.0.0
+
+#### Current Status
+
+- **Standard:** Tier 1 methods, Tier 2 `_direct`, Tier 3
+  `_batch/_parallel/_at_times`
+- **Legacy:** `_fast` functions (kept for compatibility)
+- **Removed:** `*_get_values_at_times()` functions (use
+  `get_*_at_times()`)
+
+------------------------------------------------------------------------
+
+### Naming Decision Tree
+
+**When naming a new function:**
+
+    Is it a standard object method?
+    ├─ YES → Use descriptive name: object$method_name()
+    └─ NO ↓
+
+    Does it accept external pointers for performance?
+    ├─ YES → Use *_direct suffix: to_pitch_direct()
+    └─ NO ↓
+
+    Does it process multiple items?
+    ├─ YES → Use *_batch suffix: sound_to_pitch_batch()
+    └─ NO ↓
+
+    Does it query multiple time points?
+    ├─ YES → Use get_*_at_times: get_pitch_at_times()
+    └─ NO ↓
+
+    Does it use parallel processing?
+    └─ YES → Use *_parallel suffix: extract_pitch_parallel()
+
+------------------------------------------------------------------------
+
+### Special Function Categories
+
+#### Fast Data Access
+
+**Naming:** `*_fast` (preferred), `*_zerocopy` (deprecated aliases)
+
+**Purpose:** Fast data access via direct pointer copy
+
+**Examples:**
+
+``` r
+
+values <- get_sound_values_fast(sound)
+matrix <- sound_as_matrix_fast(sound)
+```
+
+**Characteristics:** - Direct pointer access instead of a per-sample
+accessor call - Returns independent R copies (safe to modify) - For
+advanced users
+
+#### Combined Operations
+
+**Naming:** `*_and_*` pattern
+
+**Purpose:** Combine multiple operations in single C++ call
+
+**Examples:**
+
+``` r
+
+pitches <- sound_extract_and_pitch(sound, starts, ends)
+formants <- sound_extract_and_formant(sound, starts, ends)
+```
+
+**Rationale:** Name clearly describes what operations are combined.
+
+------------------------------------------------------------------------
+
+### Function Organization by File
+
+| File | Primary Pattern | API Tier | Examples |
+|----|----|----|----|
+| `sound-wrapper.R` | Object methods | Tier 1 | `$to_pitch()`, `$to_formant()` |
+| `praat-direct.R` | `*_direct` | Tier 2 | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) |
+| `performance-helpers.R` | `*_fast` (legacy) | Tier 2 | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) |
+| `batch-ops.R` | `*_batch`, `*_and_*` | Tier 3 | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) |
+| `batch-queries.R` | `get_*_at_times` | Tier 3 | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) |
+| `parallel-batch.R` | `*_parallel` | Tier 3 | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) |
+| `fast-access.R` | `*_fast` | Tier 3+ | [`get_sound_values_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md) |
+
+------------------------------------------------------------------------
+
+### Status
+
+**Done (as of v5.0.0):**
+
+- `pitch_get_values_at_times()`, `formant_get_values_at_times()`, and
+  `intensity_get_values_at_times()` have been removed; use
+  `get_*_at_times()`.
+
+**Under consideration (not yet done):**
+
+- [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)
+  → `calculate_cpps_direct()`?
+- [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md)
+  → `to_powercepstrogram_direct()`?
+- [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md)
+  → `get_cpps_direct()`?
+
+Current plan is to keep the `_fast` names for backward compatibility
+unless user feedback demands change.
+
+------------------------------------------------------------------------
+
+### Recommendations
+
+#### For Package Users
+
+1.  **New code:** Use Tier 1 (standard methods) unless you need
+    performance
+2.  **Performance-critical:** Use Tier 2 (`_direct`) or Tier 3
+    (`_batch`, `_parallel`)
+3.  **Ignore `_fast` vs `_direct`:** They’re functionally equivalent,
+    use whichever fits your code
+4.  **Update deprecated functions:** Switch to `get_*_at_times()` to
+    avoid warnings
+
+#### For Contributors
+
+1.  **New functions:** Follow the decision tree above
+2.  **Conversions:** Use `to_*_direct()` pattern
+3.  **Batch operations:** Use `*_batch()` pattern
+4.  **Queries:** Use `get_*_at_times()` pattern
+5.  **Parallel:** Use `*_parallel()` pattern
+6.  **Document:** Clearly indicate API tier in roxygen comments
+
+------------------------------------------------------------------------
+
+### Summary Table
+
+| Pattern | Purpose | Examples |
+|----|----|----|
+| `$method()` | Standard API | `sound$to_pitch()` |
+| `*_direct()` | Skip dispatch | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) |
+| `*_fast()` | Legacy direct | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) |
+| `*_batch()` | Multi-item | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) |
+| `get_*_at_times()` | Vectorized query | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) |
+| `*_parallel()` | Multi-core | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) |
+| `*_and_*()` | Combined ops | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) |
+
+------------------------------------------------------------------------
+
+### Questions?
+
+If the naming is unclear:
+
+1.  Check function documentation: `?function_name`
+2.  Read the performance guide:
+    [`vignette("performance-optimization")`](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.md)
+3.  Follow the pattern of similar functions
+
+**General rule:** If a function has a performance-related suffix
+(`_direct`, `_fast`, `_batch`, `_parallel`, `_at_times`), it reduces
+R/C++ boundary crossings and follows the patterns described in this
+document.

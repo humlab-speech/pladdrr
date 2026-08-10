@@ -1,0 +1,45 @@
+# Compute Statistics for All Intervals (Batch, SIMD-Optimized)
+
+Compute statistics (duration, etc.) for all intervals in a tier. Single
+C++ call instead of looping in R. Uses SIMD for duration calculation
+when available.
+
+## Usage
+
+``` r
+textgrid_interval_statistics_batch(textgrid_xptr, tier_number)
+```
+
+## Arguments
+
+- textgrid_xptr:
+
+  External pointer to TextGrid object
+
+- tier_number:
+
+  Tier number (1-based)
+
+## Value
+
+Data frame with columns: - index: Interval index - label: Interval
+label - start: Start time - end: End time - duration: Duration (end -
+start)
+
+## Details
+
+Duration calculation uses SIMD vectorization when available, for large
+interval counts (\>100).
+
+## Examples
+
+``` r
+tg <- textgrid_create(0, 1, "phones")
+tg$insert_boundary("phones", 0.4)
+tg$set_interval_text("phones", 1, "sil")
+tg$set_interval_text("phones", 2, "V")
+
+stats <- textgrid_interval_statistics_batch(tg$.xptr, tier_number = 1)
+mean(stats$duration[stats$label == "V"])  # Mean voiced interval duration
+#> [1] 0.6
+```

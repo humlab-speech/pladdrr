@@ -1,0 +1,410 @@
+# Migration Guide: From Parselmouth (Python) to pladdrr
+
+## Introduction
+
+This guide helps Python users familiar with Parselmouth transition to
+pladdrr for R. Both packages provide access to Praat’s functionality,
+but pladdrr offers a more direct, object-oriented interface.
+
+## Key Differences
+
+### Architecture
+
+**Parselmouth (Python):** - Generic `praat.call()` dispatcher -
+String-based command names - Python wrapper around Praat C++ code
+
+**pladdrr (R):** - Direct R6 method calls - Type-safe parameters -
+Direct C++ binding (Rcpp)
+
+### Syntax Comparison
+
+| Feature         | Parselmouth                           | pladdrr             |
+|-----------------|---------------------------------------|---------------------|
+| Object creation | `pm.Sound(file)`                      | `Sound$new(file)`   |
+| Method calls    | `pm.praat.call(obj, "Command", args)` | `obj$command(args)` |
+| Parameter style | Positional                            | Named               |
+| Autocomplete    | Limited                               | Full IDE support    |
+
+## Common Operations
+
+### Loading Sound Files
+
+**Parselmouth:**
+
+``` python
+import parselmouth as pm
+
+sound = pm.Sound("audio.wav")
+```
+
+**pladdrr:**
+
+``` r
+
+library(pladdrr)
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+```
+
+### Pitch Extraction
+
+**Parselmouth:**
+
+``` python
+import parselmouth as pm
+
+sound = pm.Sound("audio.wav")
+pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+```
+
+**pladdrr:**
+
+``` r
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+```
+
+### Formant Analysis
+
+**Parselmouth:**
+
+``` python
+sound = pm.Sound("vowel.wav")
+formant = pm.praat.call(sound, "To Formant (burg)", 0.01, 5, 5500, 0.025, 50)
+f1 = pm.praat.call(formant, "Get value at time", 1, 0.5, "Hertz", "Linear")
+f2 = pm.praat.call(formant, "Get value at time", 2, 0.5, "Hertz", "Linear")
+```
+
+**pladdrr:**
+
+``` r
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+formant <- sound$to_formant_burg(
+  time_step = 0.01,
+  max_number_of_formants = 5,
+  maximum_formant = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50
+)
+f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
+f2 <- formant$get_value_at_time(formant_number = 2, time = 0.5, unit = "hertz")
+```
+
+### Intensity Measurements
+
+**Parselmouth:**
+
+``` python
+sound = pm.Sound("audio.wav")
+intensity = pm.praat.call(sound, "To Intensity", 100, 0.01, True)
+mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
+```
+
+**pladdrr:**
+
+``` r
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01, subtract_mean = TRUE)
+mean_int <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
+```
+
+### Spectral Analysis
+
+**Parselmouth:**
+
+``` python
+sound = pm.Sound("audio.wav")
+spectrum = pm.praat.call(sound, "To Spectrum", True)
+cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
+```
+
+**pladdrr:**
+
+``` r
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+spectrum <- sound$to_spectrum(fast = TRUE)
+cog <- spectrum$get_centre_of_gravity(power = 2.0)
+```
+
+## Batch Processing
+
+### Parselmouth Approach
+
+``` python
+import parselmouth as pm
+import os
+import pandas as pd
+
+results = []
+for filename in os.listdir('.'):
+    if filename.endswith('.wav'):
+        sound = pm.Sound(filename)
+        pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+        mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+        
+        results.append({
+            'file': filename,
+            'mean_f0': mean_f0
+        })
+
+df = pd.DataFrame(results)
+df.to_csv('results.csv', index=False)
+```
+
+### pladdrr Approach
+
+``` r
+
+library(pladdrr)
+
+files <- list.files(system.file("extdata", package = "pladdrr"),
+                    pattern = "\\.wav$", full.names = TRUE)
+
+results <- lapply(files, function(filepath) {
+  sound <- Sound$new(filepath)
+  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  
+  data.frame(
+    file = basename(filepath),
+    mean_f0 = mean_f0
+  )
+})
+
+results_df <- do.call(rbind, results)
+write.csv(results_df, "results.csv", row.names = FALSE)
+```
+
+## Working with Data Frames
+
+### Extracting Time Series Data
+
+**Parselmouth:**
+
+``` python
+sound = pm.Sound("audio.wav")
+pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+
+# Extract values manually
+times = []
+frequencies = []
+for i in range(pitch.n_frames):
+    time = pitch.xs[i]
+    f0 = pm.praat.call(pitch, "Get value at time", time, "Hertz", "Linear")
+    times.append(time)
+    frequencies.append(f0)
+
+df = pd.DataFrame({'time': times, 'frequency': frequencies})
+```
+
+**pladdrr:**
+
+``` r
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+
+# Direct conversion to data frame
+pitch_data <- pitch$as_data_frame()
+# Returns data.frame with 'time' and 'frequency' columns
+```
+
+## Visualization
+
+### Parselmouth with matplotlib
+
+``` python
+import matplotlib.pyplot as plt
+
+sound = pm.Sound("audio.wav")
+pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+
+# Manual extraction
+times = [pitch.xs[i] for i in range(pitch.n_frames)]
+f0s = [pm.praat.call(pitch, "Get value at time", t, "Hertz", "Linear") 
+       for t in times]
+
+plt.figure(figsize=(10, 4))
+plt.plot(times, f0s)
+plt.xlabel('Time (s)')
+plt.ylabel('Frequency (Hz)')
+plt.title('Pitch Contour')
+plt.show()
+```
+
+### pladdrr with ggplot2
+
+``` r
+
+library(pladdrr)
+library(ggplot2)
+
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+pitch_data <- pitch$as_data_frame()
+
+ggplot(pitch_data, aes(x = time, y = frequency)) +
+  geom_line() +
+  labs(title = "Pitch Contour", x = "Time (s)", y = "Frequency (Hz)") +
+  theme_minimal()
+```
+
+## Advanced Workflows
+
+### Voice Analysis Pipeline
+
+**Parselmouth:**
+
+``` python
+def analyze_voice(filename):
+    sound = pm.Sound(filename)
+    
+    pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
+    mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
+    
+    harmonicity = pm.praat.call(sound, "To Harmonicity (cc)", 0.01, 75, 0.1, 1.0)
+    mean_hnr = pm.praat.call(harmonicity, "Get mean", 0, 0)
+    
+    pointprocess = pm.praat.call(sound, "To PointProcess (periodic, cc)", 75, 600)
+    jitter = pm.praat.call(pointprocess, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)
+    
+    return {
+        'mean_f0': mean_f0,
+        'mean_hnr': mean_hnr,
+        'jitter': jitter
+    }
+```
+
+**pladdrr:**
+
+``` r
+
+analyze_voice <- function(filename) {
+  sound <- Sound$new(filename)
+  
+  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  
+  harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75,
+                                         silence_threshold = 0.1, periods_per_window = 1.0)
+  mean_hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
+  
+  pointprocess <- sound$to_pointprocess_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  jitter <- pointprocess$get_jitter_local(from_time = 0, to_time = 0,
+                                          period_floor = 0.0001, period_ceiling = 0.02,
+                                          max_period_factor = 1.3)
+  
+  list(
+    mean_f0 = mean_f0,
+    mean_hnr = mean_hnr,
+    jitter = jitter
+  )
+}
+```
+
+## Integration with Data Science Tools
+
+### Parselmouth + pandas/numpy
+
+``` python
+import numpy as np
+import pandas as pd
+
+files = ['file1.wav', 'file2.wav', 'file3.wav']
+results = [analyze_voice(f) for f in files]
+df = pd.DataFrame(results)
+df['speaker'] = ['A', 'B', 'C']
+```
+
+### pladdrr + tidyverse
+
+``` r
+
+# Requires the dplyr, purrr, and tidyr packages (not pladdrr dependencies;
+# install separately if needed)
+library(pladdrr)
+library(dplyr)
+library(purrr)
+library(tidyr)
+
+wav <- system.file("extdata", "test.wav", package = "pladdrr")
+results <- tibble(
+  file = c(wav, wav, wav),
+  speaker = c('A', 'B', 'C')
+) %>%
+  mutate(
+    analysis = map(file, analyze_voice)
+  ) %>%
+  unnest_wider(analysis)
+```
+
+## Advantages of pladdrr
+
+1.  **No Python Dependency**: Pure R package
+2.  **Better IDE Support**: Full autocomplete and documentation
+3.  **Type Safety**: Named parameters prevent errors
+4.  **R Ecosystem**: Integration with tidyverse, ggplot2, etc.
+5.  **Self-Documenting**: Method names describe functionality
+
+## When to Use Each
+
+### Use Parselmouth if:
+
+- You’re already working in Python
+- You need Python-specific libraries (scipy, scikit-learn)
+- Your team uses Python
+
+### Use pladdrr if:
+
+- You’re working in R
+- You need R-native tooling for statistics and visualization
+- You need advanced visualizations (ggplot2)
+- You prefer type-safe, self-documenting code
+
+## Common Issues and Solutions
+
+### Issue 1: String-based commands
+
+**Problem**: In Parselmouth, you must remember exact command strings.
+
+**Solution**: pladdrr provides method autocomplete in RStudio/VS Code.
+
+### Issue 2: Positional parameters
+
+**Problem**: Easy to mix up parameter order in Parselmouth.
+
+**Solution**: pladdrr uses named parameters for clarity.
+
+### Issue 3: Documentation
+
+**Problem**: Parselmouth refers to Praat documentation.
+
+**Solution**: pladdrr has R help docs:
+[`?Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+[`?Pitch`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md),
+etc.
+
+## Getting Help
+
+- Package documentation:
+  [`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man)
+- Vignettes: `vignette(package = "pladdrr")`
+- Maintainer: <fredrik.nylen@umu.se>
+- Compare with Praat manual: <https://www.fon.hum.uva.nl/praat/manual/>
+
+## Conclusion
+
+Both Parselmouth and pladdrr provide access to Praat’s functionality.
+pladdrr differs in offering a direct, object-oriented (R6) interface
+with named parameters, instead of a string-based `praat.call()`
+dispatcher, and integrates with the R ecosystem (tidyverse, ggplot2).
+
+The transition from Parselmouth to pladdrr mainly involves replacing
+`praat.call()` calls with direct method calls, using the naming
+conventions shown above.

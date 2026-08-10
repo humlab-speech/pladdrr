@@ -1,0 +1,444 @@
+# Batch Operations Guide
+
+## Batch Operations Guide
+
+**pladdrr v5.0.0**
+
+This guide explains how to use batch operations in pladdrr when
+processing multiple files or querying multiple time points.
+
+------------------------------------------------------------------------
+
+### Why Use Batch Operations?
+
+**Problem:** Traditional loops cross the R/C++ boundary repeatedly,
+adding overhead.
+
+``` r
+
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+formant <- sound$to_formant()
+
+# 100 R->C crossings for 100 time points
+times <- seq(0.1, 0.5, by = 0.004)
+f1_values <- numeric(length(times))
+for (i in seq_along(times)) {
+  f1_values[i] <- formant$get_value_at_time(1, times[i], "hertz")  # R->C
+}
+```
+
+**Solution:** Batch operations process everything in a single C++ call.
+
+``` r
+
+# 1 R->C crossing for the whole vector of time points
+f1_values <- formant$get_values_at_times(formant_number = 1, times = times)
+```
+
+------------------------------------------------------------------------
+
+### Types of Batch Operations
+
+#### 1. Batch Conversions
+
+Convert multiple sounds to analysis objects in one call.
+
+**Functions:** - `sound_to_pitch_batch(sounds, ...)` - Extract pitch
+from multiple sounds - `sound_to_pitch_ac_batch(sounds, ...)` -
+Autocorrelation pitch (batch) - `sound_to_pitch_cc_batch(sounds, ...)` -
+Cross-correlation pitch (batch) -
+`sound_to_formant_batch(sounds, ...)` - Extract formants (batch) -
+`sound_to_intensity_batch(sounds, ...)` - Extract intensity (batch)
+
+**Example:**
+
+``` r
+
+# Load multiple sounds (here, the bundled test file repeated;
+# point list.files() at your own directory of WAV files in practice)
+files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
+sounds <- lapply(files, Sound)
+
+# Loop approach
+pitches <- lapply(sounds, function(s) s$to_pitch())  # n R->C crossings
+
+# Batch approach
+pitches <- sound_to_pitch_batch(sounds)  # 1 R->C crossing
+```
+
+#### 2. Extract-and-Analyze Combinations
+
+Extract segments from a sound and analyze them in a single call.
+
+**Functions:** -
+`sound_extract_and_pitch(sound, from_times, to_times, ...)` - Extract +
+pitch - `sound_extract_and_formant(sound, from_times, to_times, ...)` -
+Extract + formant
+
+**Example:**
+
+``` r
+
+# Analyze multiple intervals from a recording, using its TextGrid annotation
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+
+# Get interval times (non-empty intervals that fall within the sound's duration)
+intervals <- textgrid$get_all_intervals(tier = "phones")
+intervals <- intervals[nzchar(intervals$text), ]
+intervals <- intervals[intervals$end <= sound$get_total_duration(), ]
+from_times <- intervals$start
+to_times <- intervals$end
+
+# Extract then analyze (2n R->C crossings)
+parts <- lapply(seq_along(from_times), function(i) {
+  sound$extract_part(from_times[i], to_times[i])
+})
+pitches <- lapply(parts, function(p) p$to_pitch())
+
+# Combined operation (1 R->C crossing)
+pitches <- sound_extract_and_pitch(sound, from_times, to_times)
+```
+
+#### 3. Vectorized Queries
+
+Extract values at multiple time points in one call.
+
+**Functions and methods:** - `pitch$get_values_at_times(times, ...)` -
+Pitch at multiple times (R6 method) -
+`formant$get_values_at_times(formant_number, times, ...)` - Single
+formant at multiple times (R6 method) -
+`get_formants_at_times(formant, times, ...)` - All formants (F1-F4) at
+multiple times - `intensity$get_values_at_times(times, ...)` - Intensity
+at multiple times (R6 method) -
+`get_formant_bandwidths_at_times(formant, times, ...)` - Bandwidths at
+multiple times - `get_pitch_strengths_at_times(pitch, times, ...)` -
+Pitch strength at multiple times
+
+**Example: Formant Tracking**
+
+``` r
+
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+formant <- sound$to_formant()
+
+# Define time points
+times <- seq(0.1, 0.5, by = 0.001)  # 400 points
+
+# Loop: 400 R->C crossings
+f1_values <- sapply(times, function(t) {
+  formant$get_value_at_time(1, t, "hertz")
+})
+
+# Vectorized: 1 R->C crossing for the whole vector
+f1_values <- formant$get_values_at_times(formant_number = 1, times = times)
+
+# Get all formants at once
+all_formants <- get_formants_at_times(formant, times, formant_numbers = 1:4)
+f1_values <- all_formants$F1
+f2_values <- all_formants$F2
+f3_values <- all_formants$F3
+f4_values <- all_formants$F4
+```
+
+#### 4. Batch Aggregation
+
+Get multiple measurements in a single call.
+
+**Functions:** - `sound_concatenate_all(sounds, ...)` - Concatenate
+multiple sounds
+
+**Example:**
+
+``` r
+
+# Concatenate multiple recordings
+sounds <- lapply(files, Sound)
+
+# Sequential concatenation: O(n) operations
+result <- Reduce(function(a, b) a$concatenate_sounds(list(b)), sounds)
+
+# Batch concatenation: O(1) operation
+result <- sound_concatenate_all(sounds)
+```
+
+------------------------------------------------------------------------
+
+### Complete Workflow Examples
+
+#### Example 1: Formant Trajectories from TextGrid Segments
+
+Extracting formant trajectories for a set of labeled segments (e.g. for
+voice-quality or vowel-space measurements) is a typical use of the
+extract-and-analyze batch functions.
+
+``` r
+
+library(pladdrr)
+
+# Load recording and its TextGrid
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+
+# Non-empty segments that fall within the sound's duration
+segment_intervals <- tg$get_all_intervals(tier = "phones")
+segment_intervals <- segment_intervals[nzchar(segment_intervals$text), ]
+segment_intervals <- segment_intervals[
+  segment_intervals$end <= sound$get_total_duration(), ]
+
+# Extract segment portions and analyze in batch
+segment_formants <- sound_extract_and_formant(
+  sound,
+  segment_intervals$start,
+  segment_intervals$end,
+  time_step = 0.005
+)
+
+# Get F1-F4 trajectories for all segments
+segment_trajectories <- lapply(segment_formants, function(f) {
+  times <- seq(f$get_start_time(), f$get_end_time(), by = 0.001)
+  get_formants_at_times(f, times, formant_numbers = 1:4)
+})
+
+# Process results
+all_f1 <- unlist(lapply(segment_trajectories, function(x) x$F1))
+mean_f1 <- mean(all_f1, na.rm = TRUE)
+```
+
+#### Example 2: Tremor Analysis
+
+Analyze voice tremor by tracking pitch and intensity modulation.
+
+``` r
+
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# Extract pitch and intensity
+pitch <- sound$to_pitch()
+intensity <- sound$to_intensity()
+
+# Define high-resolution time grid
+times <- seq(pitch$get_start_time(),
+             pitch$get_end_time(),
+             by = 0.001)  # 1ms resolution
+
+# Get values at all time points (vectorized R6 methods)
+f0_values <- pitch$get_values_at_times(times, unit = "hertz")
+int_values <- intensity$get_values_at_times(times)
+
+# Analyze modulation
+f0_range <- diff(range(f0_values, na.rm = TRUE))
+f0_sd <- sd(f0_values, na.rm = TRUE)
+
+# Spectral analysis of modulation
+f0_clean <- na.omit(f0_values)
+f0_detrended <- f0_clean - mean(f0_clean)
+tremor_spectrum <- stats::spectrum(f0_detrended, plot = FALSE)
+
+# spectrum() reports frequency as cycles per sample of the modulation
+# series (sampled at 1 ms steps here, i.e. 1000 Hz), not the audio's
+# sampling rate
+modulation_sampling_rate <- 1 / 0.001
+tremor_freq_hz <- tremor_spectrum$freq * modulation_sampling_rate
+
+# Identify tremor frequency (typically 4-7 Hz)
+tremor_freq_idx <- which(tremor_freq_hz >= 4 & tremor_freq_hz <= 7)
+tremor_power <- max(tremor_spectrum$spec[tremor_freq_idx])
+```
+
+#### Example 3: Large-Scale Corpus Analysis
+
+Process many files efficiently.
+
+``` r
+
+# Get all files (here, the package's bundled extdata directory;
+# point this at your own corpus directory in practice)
+corpus_files <- list.files(system.file("extdata", package = "pladdrr"),
+                           pattern = "\\.wav$", full.names = TRUE)
+cat(sprintf("Processing %d files\n", length(corpus_files)))
+
+# Parallel batch processing
+library(parallel)
+
+results <- analyze_files_parallel(corpus_files, function(sound) {
+  # Extract pitch
+  pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+
+  # Get comprehensive statistics in one call (Tier 2 Direct API)
+  pitch_stats <- get_pitch_stats_direct(pitch)
+
+  # Extract formants
+  formant <- sound$to_formant()
+
+  # Get formants at 10 evenly-spaced time points
+  duration <- sound$get_total_duration()
+  times <- seq(0.1 * duration, 0.9 * duration, length.out = 10)
+  formant_values <- get_formants_at_times(formant, times, formant_numbers = 1:4)
+
+  # Return aggregated results (analysis_func only receives the Sound,
+  # not its file path, so the file name is attached afterwards)
+  list(
+    duration = duration,
+    pitch_mean = pitch_stats$mean,
+    pitch_sd = pitch_stats$stdev,
+    f1_mean = mean(formant_values$F1, na.rm = TRUE),
+    f2_mean = mean(formant_values$F2, na.rm = TRUE),
+    f3_mean = mean(formant_values$F3, na.rm = TRUE)
+  )
+}, n_cores = 1)
+
+# Convert to data frame, attaching file names by position
+results_df <- do.call(rbind, Map(function(f, r) {
+  data.frame(file = basename(f), as.data.frame(r))
+}, corpus_files, results))
+write.csv(results_df, "corpus_analysis_results.csv", row.names = FALSE)
+```
+
+------------------------------------------------------------------------
+
+### Best Practices
+
+#### 1. Always Vectorize Time Queries
+
+``` r
+
+# Avoid: one R->C crossing per query
+for (t in times) {
+  val <- pitch$get_value_at_time(t, "hertz")
+}
+
+# Prefer: a single vectorized call
+values <- pitch$get_values_at_times(times, unit = "hertz")
+```
+
+#### 2. Combine Batch Operations
+
+``` r
+
+starts <- c(0.1, 0.4, 0.7)
+ends <- c(0.3, 0.6, 0.9)
+
+# Separate operations
+parts <- sound$extract_parts_batch(starts, ends)
+pitches <- lapply(parts, function(p) p$to_pitch())
+
+# Combined operation (one C++ call instead of two)
+pitches <- sound_extract_and_pitch(sound, starts, ends)
+```
+
+#### 3. Use Batch for TextGrid Workflows
+
+``` r
+
+# Extract intervals from TextGrid
+tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+intervals <- tg$get_all_intervals(tier = "words")
+intervals <- intervals[nzchar(intervals$text), ]
+
+# Batch extract and analyze
+formants <- sound_extract_and_formant(
+  sound,
+  intervals$start,
+  intervals$end
+)
+```
+
+#### 4. Leverage Return Types
+
+``` r
+
+# Batch functions support return_r6 parameter
+# Set to FALSE to get raw pointers instead of wrapped R6 objects
+pitch_ptrs <- sound_to_pitch_batch(sounds, return_r6 = FALSE)
+
+# Use with Direct API to avoid re-wrapping each result
+stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
+```
+
+------------------------------------------------------------------------
+
+### Function Reference Table
+
+| Function | Input | Output | Use Case |
+|----|----|----|----|
+| [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | List of Sounds | List of Pitch | Batch pitch extraction |
+| [`sound_to_formant_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_formant_batch.md) | List of Sounds | List of Formant | Batch formant extraction |
+| [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Sound + times | List of Pitch | Interval analysis |
+| `pitch$get_values_at_times()` | Pitch + times | Numeric vector | F0 tracking (R6 method) |
+| [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Formant + times | List (F1,F2,F3,F4) | Formant tracking |
+| `formant$get_values_at_times()` | Formant + times | Numeric vector | Single formant tracking (R6 method) |
+| [`sound_concatenate_all()`](https://humlab-speech.github.io/pladdrr/reference/sound_concatenate_all.md) | List of Sounds | Sound | Concatenation |
+
+------------------------------------------------------------------------
+
+### Troubleshooting
+
+#### “Could not extract pointer from Sound object” Error
+
+Both `Sound$new(path)` and `Sound(path)` construct equivalent objects
+and work interchangeably. This error is raised by batch functions (e.g.
+[`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md))
+when an element of the input list is neither a `Sound` object nor a raw
+external pointer:
+
+``` r
+
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# Fails: batch functions expect a list of Sound objects, not a bare path
+# pitches <- sound_to_pitch_batch("test.wav")
+
+# Works
+pitches <- sound_to_pitch_batch(list(sound))
+```
+
+#### NA Values in Results
+
+Batch query functions return NA when measurements fail (e.g., pitch
+unvoiced):
+
+``` r
+
+# Handle NA values appropriately
+f0_values <- pitch$get_values_at_times(times, unit = "hertz")
+f0_clean <- na.omit(f0_values)
+mean_f0 <- mean(f0_values, na.rm = TRUE)
+```
+
+#### Memory Issues with Large Batches
+
+Process in chunks if you run out of memory:
+
+``` r
+
+# files and analysis_func come from your own workflow, e.g. the
+# corpus_files list and analysis function from Example 3 above
+files <- corpus_files
+analysis_func <- function(sound) list(duration = sound$get_total_duration())
+
+chunk_size <- 100
+n_chunks <- ceiling(length(files) / chunk_size)
+
+results <- list()
+for (i in seq_len(n_chunks)) {
+  idx_start <- (i - 1) * chunk_size + 1
+  idx_end <- min(i * chunk_size, length(files))
+  chunk_files <- files[idx_start:idx_end]
+  
+  results[[i]] <- analyze_files_parallel(chunk_files, analysis_func)
+}
+
+all_results <- unlist(results, recursive = FALSE)
+```
+
+------------------------------------------------------------------------
+
+### See Also
+
+- [`vignette("performance-optimization")`](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.md) -
+  performance guide
+- [`?analyze_files_parallel`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) -
+  parallel processing documentation
+- [`?get_pitch_stats_direct`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_stats_direct.md) -
+  Direct API reference

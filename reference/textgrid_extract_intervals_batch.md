@@ -1,0 +1,85 @@
+# Extract TextGrid Intervals by Label (Batch)
+
+Extract multiple intervals from a TextGrid tier that match specified
+criteria, using: - A single C++ call instead of 4n R\<-\>C++ calls (n =
+number of intervals) - Comparisons done at the C++ level - A single
+memory allocation for the result
+
+## Usage
+
+``` r
+textgrid_extract_intervals_batch(
+  textgrid_xptr,
+  sound_xptr,
+  tier_number,
+  comparison_type = "equals",
+  target_value = "",
+  extract_sounds = FALSE
+)
+```
+
+## Arguments
+
+- textgrid_xptr:
+
+  External pointer to TextGrid object
+
+- sound_xptr:
+
+  External pointer to Sound object (optional, can be NULL)
+
+- tier_number:
+
+  Tier number (1-based)
+
+- comparison_type:
+
+  Type of comparison: "equals", "contains", "starts_with", "regex"
+
+- target_value:
+
+  Value to match against interval labels
+
+- extract_sounds:
+
+  If TRUE and sound_xptr provided, extract Sound parts
+
+## Value
+
+List with components: - indices: Integer vector of matching interval
+indices - labels: Character vector of matching labels - start_times:
+Numeric vector of start times - end_times: Numeric vector of end times -
+sounds: List of Sound xptrs (if extract_sounds = TRUE)
+
+## Details
+
+\*\*Comparison types:\*\* - "equals": Exact match (strcmp) - "contains":
+Substring match (strstr) - "starts_with": Prefix match - "regex":
+Regular expression (future)
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(frequency = 200, duration = 1.0)
+tg <- textgrid_create(0, 1, "phones")
+tg$insert_boundary("phones", 0.4)
+tg$insert_boundary("phones", 0.7)
+tg$set_interval_text("phones", 1, "sil")
+tg$set_interval_text("phones", 2, "V")
+tg$set_interval_text("phones", 3, "sil")
+
+# Extract all "V" (voiced) intervals
+result <- textgrid_extract_intervals_batch(
+  tg$.xptr,
+  sound$.xptr,
+  tier_number = 1,
+  comparison_type = "equals",
+  target_value = "V",
+  extract_sounds = TRUE
+)
+
+# Access results
+n_voiced <- length(result$indices)
+voiced_durations <- result$end_times - result$start_times
+voiced_sounds <- result$sounds  # List of Sound xptrs
+```

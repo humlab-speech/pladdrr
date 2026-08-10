@@ -1,0 +1,63 @@
+# Apply Compiled Window Function (Advanced Performance API)
+
+Apply a user-defined C++ window function to a Sound object, compiled via
+RcppXPtrUtils, instead of calling an R callback per sample. Requires the
+RcppXPtrUtils package.
+
+## Usage
+
+``` r
+apply_window_xptr(sound, window_func)
+```
+
+## Arguments
+
+- sound:
+
+  Sound object or external pointer
+
+- window_func:
+
+  External pointer from RcppXPtrUtils::cppXPtr()
+
+## Value
+
+Sound object with window function applied
+
+## Details
+
+\*\*ADVANCED API\*\* - Requires RcppXPtrUtils package.
+
+The window function receives normalized time (0 to 1) and returns a
+multiplier. Common window functions:
+
+- Hamming: \`0.54 - 0.46 \* cos(2 \* M_PI \* t)\`
+
+- Hanning: \`0.5 \* (1 - cos(2 \* M_PI \* t))\`
+
+- Gaussian: \`exp(-18 \* (t - 0.5)^2)\`
+
+- Triangular: \`1 - fabs(2\*t - 1)\`
+
+## Examples
+
+``` r
+# \donttest{
+# Compiling a C++ window function takes a few seconds
+if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
+  gauss_window <- RcppXPtrUtils::cppXPtr(
+    "double gauss(double t) {
+      double x = t - 0.5;
+      return exp(-18.0 * x * x);
+    }",
+    depends = character()
+  )
+
+  # Verify signature (optional but recommended)
+  RcppXPtrUtils::checkXPtr(gauss_window, "double", "double")
+
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  windowed <- apply_window_xptr(sound, gauss_window)
+}
+# }
+```

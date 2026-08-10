@@ -1,0 +1,50 @@
+# Get Sound Values (Fast Copy)
+
+Copies Sound sample data via direct pointer access, instead of going
+through Praat's per-sample accessor as \`sound\$get_values()\` does.
+
+## Usage
+
+``` r
+get_sound_values_fast(sound, channel = 1)
+
+# Deprecated: use get_sound_values_fast() instead
+```
+
+## Arguments
+
+- sound:
+
+  A Sound object created with \`Sound()\`
+
+- channel:
+
+  Channel number (1-based, default 1)
+
+## Value
+
+Numeric vector (independent copy of sample data). Has class
+\`c("fast_vector", "numeric")\` and a \`readonly\` attribute for
+backward compatibility.
+
+The returned vector is an independent R copy — safe to modify, store, or
+use after the Sound object is garbage collected.
+
+## See also
+
+\- \[is_fast_vector()\] to check if vector was created by fast access -
+\[sound_as_matrix_fast()\] for matrix output
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+
+# Fast copy for analysis
+samples <- get_sound_values_fast(sound, channel = 1)
+rms <- sqrt(mean(samples^2))
+peak <- max(abs(samples))
+
+# Equivalent — also a copy
+samples2 <- sound$get_values(channel = 1)
+```

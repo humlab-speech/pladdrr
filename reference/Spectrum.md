@@ -1,0 +1,64 @@
+# Spectrum Object
+
+Praat Spectrum object with direct C++ module binding (complex FFT
+spectrum). Spectrum objects represent frequency-domain representations
+of sounds. Uses shared dispatch table for minimal memory per object.
+
+## Value
+
+A `Spectrum` object with methods for frequency-domain spectral analysis.
+
+## Methods
+
+\*\*Query Methods:\*\* \* \`get_lowest_frequency()\` - Get lowest
+frequency (Hz) \* \`get_highest_frequency()\` - Get highest frequency
+(Hz) \* \`get_number_of_bins()\` - Get number of frequency bins \*
+\`get_frequency_step()\` - Get frequency step (Hz) \*
+\`get_real_value_in_bin(bin)\` - Get real part at bin \*
+\`get_imaginary_value_in_bin(bin)\` - Get imaginary part at bin \*
+\`get_frequency_from_bin(bin)\` - Get frequency for bin number \*
+\`get_bin_from_frequency(freq)\` - Get bin number for frequency \*
+\`get_band_density(fmin, fmax)\` - Get power density in band (Pa²/Hz²)
+\* \`get_band_energy(fmin, fmax)\` - Get energy in band (Pa²·s) \*
+\`get_centre_of_gravity(power = 2.0)\` - Get spectral center of gravity
+\* \`get_standard_deviation(power = 2.0)\` - Get spectral standard
+deviation \* \`get_skewness(power = 2.0)\` - Get spectral skewness \*
+\`get_kurtosis(power = 2.0)\` - Get spectral kurtosis \*
+\`get_central_moment(moment, power = 2.0)\` - Get central moment
+
+\*\*Modification Methods:\*\* \* \`pass_hann_band(fmin, fmax, smooth =
+100)\` - Apply Hann band-pass filter \* \`stop_hann_band(fmin, fmax,
+smooth = 100)\` - Apply Hann band-stop filter \*
+\`cepstral_smoothing(bandwidth)\` - Smooth using cepstral method
+
+\*\*Transform Methods:\*\* \* \`to_sound()\` - Convert to Sound (inverse
+FFT) \* \`to_ltas(bandwidth)\` - Convert to long-term average spectrum
+\* \`to_spectrogram(...)\` - Convert to Spectrogram \*
+\`to_excitation(erb_density)\` - Convert to Excitation (auditory
+representation)
+
+\*\*Export Methods:\*\* \* \`as_matrix()\` - Export as numeric matrix
+(real + imaginary) \* \`as_data_frame()\` - Export as data.frame (freq,
+real, imag, power) \* \`save(path)\` - Save to file
+
+## See also
+
+[`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+[`Spectrogram`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md),
+[`Ltas`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md),
+[`PowerCepstrum`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.md)
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
+spectrum <- sound$to_spectrum(fast = FALSE)
+cog <- spectrum$get_centre_of_gravity(power = 2.0)
+energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
+if (FALSE) { # \dontrun{
+# Create spectrum from external file
+sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
+spectrum <- sound$to_spectrum(fast = TRUE)
+spec_df <- spectrum$as_data_frame()
+} # }
+```

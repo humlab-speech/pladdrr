@@ -1,0 +1,66 @@
+# Fast PowerCepstrogram Creation (Advanced Performance API)
+
+Create a PowerCepstrogram object bypassing R6 method dispatch for
+maximum performance. Returns an external pointer that can be used with
+other fast path functions.
+
+## Usage
+
+``` r
+to_powercepstrogram_fast(
+  sound,
+  pitch_floor = 60,
+  time_step = 0.002,
+  max_frequency = 5000,
+  pre_emphasis_from = 50
+)
+```
+
+## Arguments
+
+- sound:
+
+  Sound object or external pointer
+
+- pitch_floor:
+
+  Numeric, minimum pitch in Hz (default 60)
+
+- time_step:
+
+  Numeric, time step in seconds (default 0.002)
+
+- max_frequency:
+
+  Numeric, maximum frequency in Hz (default 5000)
+
+- pre_emphasis_from:
+
+  Numeric, pre-emphasis frequency in Hz (default 50)
+
+## Value
+
+External pointer to PowerCepstrogram object
+
+## Details
+
+\*\*ADVANCED API\*\* - Returns raw external pointer, not R6 object.
+
+Use this when you need to create multiple PowerCepstrogram objects in a
+loop and want to minimize R6 overhead. The returned pointer can be: -
+Passed to other fast path functions - Wrapped in R6 PowerCepstrogram
+object if needed
+
+## Examples
+
+``` r
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+# Fast path: returns an external pointer, no wrapper object built
+pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
+
+# Wrap it when you want the method API
+pcep <- PowerCepstrogram(.xptr = pcep_ptr)
+pcep$get_cpps()
+#> [1] 9.920529
+```

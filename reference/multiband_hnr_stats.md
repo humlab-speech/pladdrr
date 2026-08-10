@@ -1,0 +1,41 @@
+# Query reusable multiband HNR statistics
+
+Extract mean and standard deviation from a reusable set of multiband
+\`Harmonicity\` objects built by \[build_multiband_harmonicity()\]. This
+is the cheap query step for repeated interval workflows.
+
+## Usage
+
+``` r
+multiband_hnr_stats(multiband, from_time = 0, to_time = 0)
+```
+
+## Arguments
+
+- multiband:
+
+  Named list of 5 \`Harmonicity\` objects (or Harmonicity external
+  pointers), typically returned by \[build_multiband_harmonicity()\].
+
+- from_time:
+
+  Start time for statistics extraction (default \`0\`)
+
+- to_time:
+
+  End time for statistics extraction (default \`0\`)
+
+## Value
+
+Named list with the same \`\*\_mean\` / \`\*\_sd\` fields as
+\[calculate_multiband_hnr_ultra()\].
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+
+built <- build_multiband_harmonicity(sound)
+hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)
+hnr_interval2 <- multiband_hnr_stats(built, 0.5, 1.0)
+```

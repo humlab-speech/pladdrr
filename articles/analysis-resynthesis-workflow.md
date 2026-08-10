@@ -1,0 +1,757 @@
+# Analysis-Resynthesis Workflow: FormantPath + KlattGrid
+
+## Introduction
+
+This vignette demonstrates the complete **analysis-resynthesis
+workflow** in pladdrr, combining:
+
+1.  **FormantPath** - Robust formant extraction with multiple ceiling
+    candidates
+2.  **KlattGrid** - Parametric speech synthesis from formant
+    specifications
+
+This workflow supports several speech research applications:
+
+- **Voice morphing** - Transform speaker characteristics
+- **Perceptual experiments** - Manipulate acoustic parameters
+  systematically
+- **Quality assessment** - Verify formant tracking accuracy via
+  resynthesis
+- **Speech restoration** - Clean and regenerate degraded audio
+
+``` r
+
+library(pladdrr)
+library(ggplot2)
+```
+
+## Why Analysis-Resynthesis?
+
+### The Perceptual Loop
+
+The analysis-resynthesis cycle closes the loop between acoustic analysis
+and perceptual reality:
+
+    Real Speech → FormantPath Analysis → Formant Parameters
+          ↑                                        ↓
+    Perceptual Validation ← KlattGrid Synthesis ← Modified Parameters
+
+**Benefits**:
+
+1.  **Validation** - If resynthesis sounds similar, analysis is accurate
+2.  **Manipulation** - Systematically modify acoustic parameters
+3.  **Understanding** - Bridge between measurements and perception
+4.  **Control** - Create impossible stimuli (e.g., male formants +
+    female pitch)
+
+### Applications
+
+- **Phonetics research**: Vowel space mapping, coarticulation studies
+- **Speech technology**: Voice conversion, synthesis evaluation
+- **Clinical**: Voice disorder assessment and therapy
+- **Education**: Teaching formant-perception relationships
+
+## Workflow 1: Basic Analysis → Synthesis
+
+### Step 1: Load and Analyze Audio
+
+``` r
+
+# Load audio file
+sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+
+cat("Original audio:\n")
+#> Original audio:
+cat("  Duration:", sound_orig$get_duration(), "s\n")
+#>   Duration: 1 s
+cat("  Samples:", sound_orig$get_number_of_samples(), "\n")
+#>   Samples: 44100
+
+# Extract formants with FormantPath (robust multi-ceiling)
+fp <- sound_orig$to_formant_path(
+  time_step = 0.005,
+  max_num_formants = 5,
+  formant_ceiling = 5500,
+  num_steps_up_down = 2L  # Test 5 different ceilings
+)
+
+cat("\nFormantPath analysis:\n")
+#> 
+#> FormantPath analysis:
+cat("  Candidates tested:", fp$get_number_of_candidates(), "\n")
+#>   Candidates tested: 5
+cat("  Ceiling range:", 
+    round(min(fp$get_all_ceiling_frequencies())), "-",
+    round(max(fp$get_all_ceiling_frequencies())), "Hz\n")
+#>   Ceiling range: 4977 - 6078 Hz
+
+# Extract optimal formant track
+frm_result <- fp$extract_formant()
+cat("  Formant frames:", frm_result$get_number_of_frames(), "\n")
+#>   Formant frames: 190
+```
+
+### Step 2: Extract Mean Formant Values
+
+``` r
+
+# Convert to data frame for easy manipulation
+df <- as.data.frame(frm_result)
+
+# Calculate mean F1, F2, F3 across all frames
+f1_mean <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+f2_mean <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
+f3_mean <- mean(df$frequency[df$formant == 3], na.rm = TRUE)
+
+cat("Mean formant values:\n")
+#> Mean formant values:
+cat(sprintf("  F1: %.0f Hz\n", f1_mean))
+#>   F1: 421 Hz
+cat(sprintf("  F2: %.0f Hz\n", f2_mean))
+#>   F2: 465 Hz
+cat(sprintf("  F3: %.0f Hz\n", f3_mean))
+#>   F3: 3080 Hz
+
+# Also extract pitch for realistic resynthesis
+pitch <- sound_orig$to_pitch()
+f0_mean <- mean(as.data.frame(pitch)$frequency, na.rm = TRUE)
+
+cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
+#>   F0 (pitch): 440 Hz
+```
+
+### Step 3: Resynthesize with KlattGrid
+
+``` r
+
+# Create KlattGrid with extracted parameters
+kg <- KlattGrid_createFromVowel(
+  duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
+  f0start = f0_mean,
+  f1 = f1_mean, b1 = 80,    # Use typical bandwidths
+  f2 = f2_mean, b2 = 120,
+  f3 = f3_mean, b3 = 150
+)
+
+# Synthesize audio
+sound_resynth <- kg$to_sound()
+
+cat("Resynthesized audio:\n")
+cat("  Duration:", sound_resynth$get_duration(), "s\n")
+cat("  Samples:", sound_resynth$get_number_of_samples(), "\n")
+```
+
+### Step 4: Compare Original vs Resynthesized
+
+``` r
+
+# Create spectrograms for comparison
+spec_orig <- sound_orig$to_spectrogram(
+  window_length = 0.005,
+  max_frequency = 5000
+)
+
+spec_resynth <- sound_resynth$to_spectrogram(
+  window_length = 0.005,
+  max_frequency = 5000
+)
+
+# Extract formants for overlay
+formant_orig <- sound_orig$to_formant_burg(max_frequency = 5500)
+formant_resynth <- sound_resynth$to_formant_burg(max_frequency = 5500)
+
+df_orig <- as.data.frame(formant_orig)
+df_orig <- df_orig[df_orig$formant %in% 1:3, ]
+df_orig$source <- "Original"
+
+df_resynth <- as.data.frame(formant_resynth)
+df_resynth <- df_resynth[df_resynth$formant %in% 1:3, ]
+df_resynth$source <- "Resynthesized"
+
+# Combine for plotting
+df_combined <- rbind(df_orig, df_resynth)
+df_combined$formant_num <- df_combined$formant
+
+# Plot formant tracks comparison
+ggplot(df_combined, aes(time, frequency, color = factor(formant_num))) +
+  geom_line(alpha = 0.7, linewidth = 0.8) +
+  facet_wrap(~ source, ncol = 1) +
+  scale_color_manual(
+    values = c("1" = "#E41A1C", "2" = "#377EB8", "3" = "#4DAF4A"),
+    labels = c("F1", "F2", "F3")
+  ) +
+  labs(
+    title = "Original vs Resynthesized Formant Tracks",
+    subtitle = "FormantPath analysis → KlattGrid synthesis",
+    x = "Time (s)",
+    y = "Frequency (Hz)",
+    color = "Formant"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+## Workflow 2: Vowel Round-Trip Validation
+
+### Create Synthetic Vowel with Known Parameters
+
+``` r
+
+# Define target /a/ vowel parameters
+target_f1 <- 730
+target_f2 <- 1090
+target_f3 <- 2440
+
+cat("Target vowel: /a/\n")
+cat(sprintf("  F1: %d Hz\n", target_f1))
+cat(sprintf("  F2: %d Hz\n", target_f2))
+cat(sprintf("  F3: %d Hz\n", target_f3))
+
+# Synthesize
+kg_vowel <- KlattGrid_createFromVowel(
+  duration = 0.5,
+  f0start = 120,
+  f1 = target_f1, b1 = 80,
+  f2 = target_f2, b2 = 120,
+  f3 = target_f3, b3 = 150
+)
+
+sound_vowel <- kg_vowel$to_sound()
+```
+
+### Analyze Synthetic Vowel
+
+``` r
+
+# Analyze with FormantPath
+fp_vowel <- sound_vowel$to_formant_path(
+  time_step = 0.005,
+  formant_ceiling = 5500,
+  num_steps_up_down = 2L
+)
+
+frm_result <- fp_vowel$extract_formant()
+
+# Extract values at midpoint
+mid_time <- sound_vowel$get_duration() / 2
+
+f1_extracted <- frm_result$get_value_at_time(1, mid_time, "hertz")
+f2_extracted <- frm_result$get_value_at_time(2, mid_time, "hertz")
+f3_extracted <- frm_result$get_value_at_time(3, mid_time, "hertz")
+
+cat("\nExtracted formants (at midpoint):\n")
+cat(sprintf("  F1: %.0f Hz\n", f1_extracted))
+cat(sprintf("  F2: %.0f Hz\n", f2_extracted))
+cat(sprintf("  F3: %.0f Hz\n", f3_extracted))
+
+# Calculate errors
+f1_error <- abs(f1_extracted - target_f1) / target_f1 * 100
+f2_error <- abs(f2_extracted - target_f2) / target_f2 * 100
+f3_error <- abs(f3_extracted - target_f3) / target_f3 * 100
+
+cat("\nExtraction accuracy:\n")
+cat(sprintf("  F1 error: %.1f%%\n", f1_error))
+cat(sprintf("  F2 error: %.1f%%\n", f2_error))
+cat(sprintf("  F3 error: %.1f%%\n", f3_error))
+```
+
+### Visualize Round-Trip
+
+``` r
+
+# Create comparison data frame
+df_comparison <- data.frame(
+  Formant = rep(c("F1", "F2", "F3"), 2),
+  Frequency = c(target_f1, target_f2, target_f3,
+                f1_extracted, f2_extracted, f3_extracted),
+  Type = rep(c("Target", "Extracted"), each = 3)
+)
+
+ggplot(df_comparison, aes(Formant, Frequency, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_text(aes(label = sprintf("%.0f Hz", Frequency)), 
+            position = position_dodge(width = 0.8),
+            vjust = -0.5, size = 3) +
+  scale_fill_manual(values = c("Target" = "#377EB8", "Extracted" = "#E41A1C")) +
+  labs(
+    title = "Round-Trip Validation: Target vs Extracted Formants",
+    subtitle = "Synthesis → Analysis cycle for /a/ vowel",
+    y = "Frequency (Hz)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+## Workflow 3: Vowel Space Mapping
+
+### Synthesize Vowel Triangle
+
+``` r
+
+# Define cardinal vowels
+vowels <- list(
+  i = list(label = "/i/ (beet)", f1 = 280, f2 = 2250, f3 = 2890),
+  a = list(label = "/a/ (father)", f1 = 730, f2 = 1090, f3 = 2440),
+  u = list(label = "/u/ (boot)", f1 = 310, f2 = 870, f3 = 2250)
+)
+
+# Synthesize each vowel
+vowel_sounds <- list()
+vowel_results <- list()
+
+for (v_name in names(vowels)) {
+  v <- vowels[[v_name]]
+  
+  # Synthesize
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.3,
+    f0start = 150,
+    f1 = v$f1, b1 = 60,
+    f2 = v$f2, b2 = 100,
+    f3 = v$f3, b3 = 140
+  )
+  
+  vowel_sounds[[v_name]] <- kg$to_sound()
+  
+  cat(sprintf("Synthesized %s: F1=%d, F2=%d, F3=%d Hz\n",
+              v$label, v$f1, v$f2, v$f3))
+}
+```
+
+### Analyze Vowel Triangle
+
+``` r
+
+# Analyze each synthetic vowel
+for (v_name in names(vowels)) {
+  sound <- vowel_sounds[[v_name]]
+  
+  # Robust formant tracking
+  fp <- sound$to_formant_path(num_steps_up_down = 1L)
+  frm_result <- fp$extract_formant()
+  
+  # Get mean formants
+  df <- as.data.frame(frm_result)
+  f1_mean <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+  f2_mean <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
+  
+  vowel_results[[v_name]] <- data.frame(
+    vowel = v_name,
+    label = vowels[[v_name]]$label,
+    target_f1 = vowels[[v_name]]$f1,
+    target_f2 = vowels[[v_name]]$f2,
+    extracted_f1 = f1_mean,
+    extracted_f2 = f2_mean
+  )
+  
+  cat(sprintf("Analyzed %s: F1=%.0f, F2=%.0f Hz\n",
+              vowels[[v_name]]$label, f1_mean, f2_mean))
+}
+
+# Combine results
+vowel_space <- do.call(rbind, vowel_results)
+```
+
+### Plot Vowel Space
+
+``` r
+
+# Create vowel space plot (F1 vs F2)
+vowel_space_long <- rbind(
+  data.frame(
+    vowel = vowel_space$vowel,
+    label = vowel_space$label,
+    F1 = vowel_space$target_f1,
+    F2 = vowel_space$target_f2,
+    type = "Target"
+  ),
+  data.frame(
+    vowel = vowel_space$vowel,
+    label = vowel_space$label,
+    F1 = vowel_space$extracted_f1,
+    F2 = vowel_space$extracted_f2,
+    type = "Extracted"
+  )
+)
+
+ggplot(vowel_space_long, aes(F2, F1, color = type, shape = vowel)) +
+  geom_point(size = 5, alpha = 0.8) +
+  geom_line(aes(group = vowel), color = "gray50", linetype = "dashed") +
+  geom_text(aes(label = vowel), vjust = -1.5, size = 5, fontface = "bold") +
+  scale_x_reverse() +  # Traditional vowel space orientation
+  scale_y_reverse() +
+  scale_color_manual(values = c("Target" = "#377EB8", "Extracted" = "#E41A1C")) +
+  scale_shape_manual(values = c("i" = 16, "a" = 17, "u" = 15)) +
+  labs(
+    title = "Vowel Space: Synthesis-Analysis Round Trip",
+    subtitle = "Target (blue) vs Extracted (red) formant values",
+    x = "F2 (Hz)",
+    y = "F1 (Hz)",
+    color = "Type",
+    shape = "Vowel"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    panel.grid.major = element_line(color = "gray90")
+  )
+```
+
+### Verify Vowel Space Relationships
+
+``` r
+
+# Check phonetic relationships are preserved
+cat("Vowel space relationships:\n\n")
+
+# F1: /a/ should be highest (lowest vowel)
+cat("F1 ordering (high to low vowel height):\n")
+cat(sprintf("  /a/: %.0f Hz (low vowel, high F1)\n", 
+            vowel_space[vowel_space$vowel == "a", "extracted_f1"]))
+cat(sprintf("  /i/: %.0f Hz (high vowel, low F1)\n", 
+            vowel_space[vowel_space$vowel == "i", "extracted_f1"]))
+cat(sprintf("  /u/: %.0f Hz (high vowel, low F1)\n", 
+            vowel_space[vowel_space$vowel == "u", "extracted_f1"]))
+
+f1_a <- vowel_space[vowel_space$vowel == "a", "extracted_f1"]
+f1_i <- vowel_space[vowel_space$vowel == "i", "extracted_f1"]
+f1_u <- vowel_space[vowel_space$vowel == "u", "extracted_f1"]
+
+cat(sprintf("  /a/ F1 > /i/ F1: %s\n", f1_a > f1_i))
+cat(sprintf("  /a/ F1 > /u/ F1: %s\n", f1_a > f1_u))
+
+# F2: /i/ (front) > /a/ (central) > /u/ (back)
+cat("\nF2 ordering (front to back):\n")
+cat(sprintf("  /i/: %.0f Hz (front, high F2)\n", 
+            vowel_space[vowel_space$vowel == "i", "extracted_f2"]))
+cat(sprintf("  /a/: %.0f Hz (central, mid F2)\n", 
+            vowel_space[vowel_space$vowel == "a", "extracted_f2"]))
+cat(sprintf("  /u/: %.0f Hz (back, low F2)\n", 
+            vowel_space[vowel_space$vowel == "u", "extracted_f2"]))
+
+f2_i <- vowel_space[vowel_space$vowel == "i", "extracted_f2"]
+f2_a <- vowel_space[vowel_space$vowel == "a", "extracted_f2"]
+f2_u <- vowel_space[vowel_space$vowel == "u", "extracted_f2"]
+
+cat(sprintf("  /i/ F2 > /a/ F2: %s\n", f2_i > f2_a))
+cat(sprintf("  /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
+```
+
+## Advanced: Voice Morphing
+
+### Morph Between Two Speakers
+
+``` r
+
+# Define two speaker profiles
+speaker_male <- list(
+  f1 = 730, f2 = 1090, f3 = 2440,
+  f0 = 100, label = "Male"
+)
+
+speaker_female <- list(
+  f1 = 850, f2 = 1300, f3 = 2800,
+  f0 = 220, label = "Female"
+)
+
+# Create morph continuum (5 steps)
+morph_alphas <- seq(0, 1, length.out = 5)
+
+morph_results <- data.frame()
+
+for (i in seq_along(morph_alphas)) {
+  alpha <- morph_alphas[i]
+  
+  # Linear interpolation between speakers
+  f1 <- speaker_male$f1 + alpha * (speaker_female$f1 - speaker_male$f1)
+  f2 <- speaker_male$f2 + alpha * (speaker_female$f2 - speaker_male$f2)
+  f3 <- speaker_male$f3 + alpha * (speaker_female$f3 - speaker_male$f3)
+  f0 <- speaker_male$f0 + alpha * (speaker_female$f0 - speaker_male$f0)
+  
+  # Synthesize
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.4,
+    f0start = f0,
+    f1 = f1, b1 = 80,
+    f2 = f2, b2 = 120,
+    f3 = f3, b3 = 150
+  )
+  
+  sound <- kg$to_sound()
+  
+  morph_results <- rbind(morph_results, data.frame(
+    step = i,
+    alpha = alpha,
+    f0 = f0,
+    f1 = f1,
+    f2 = f2,
+    f3 = f3,
+    label = sprintf("%.0f%% Female", alpha * 100)
+  ))
+  
+  cat(sprintf("Step %d (%.0f%% Female): F0=%.0f, F1=%.0f, F2=%.0f Hz\n",
+              i, alpha * 100, f0, f1, f2))
+}
+```
+
+### Visualize Morph Continuum
+
+``` r
+
+# Plot formant trajectories across morph
+morph_long <- tidyr::pivot_longer(
+  morph_results,
+  cols = c(f0, f1, f2, f3),
+  names_to = "parameter",
+  values_to = "frequency"
+)
+
+ggplot(morph_long, aes(alpha, frequency, color = parameter)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  scale_color_manual(
+    values = c("f0" = "#984EA3", "f1" = "#E41A1C", 
+               "f2" = "#377EB8", "f3" = "#4DAF4A"),
+    labels = c("F0 (pitch)", "F1", "F2", "F3")
+  ) +
+  labs(
+    title = "Voice Morphing: Male → Female Continuum",
+    subtitle = "Linear interpolation of formant and pitch parameters",
+    x = "Morph Parameter (0 = Male, 1 = Female)",
+    y = "Frequency (Hz)",
+    color = "Parameter"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+## Use Cases
+
+### 1. Formant Manipulation Experiments
+
+Systematically vary one formant while holding others constant:
+
+``` r
+
+# Create F1 continuum (F2/F3 constant)
+f1_values <- seq(400, 800, by = 50)  # Low to high
+
+stimuli <- lapply(f1_values, function(f1) {
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.5, f0start = 120,
+    f1 = f1, b1 = 80,        # VARIED
+    f2 = 1500, b2 = 120,      # CONSTANT
+    f3 = 2500, b3 = 150       # CONSTANT
+  )
+  
+  sound <- kg$to_sound()
+  sound$save(sprintf("f1_%04d.wav", f1), "WAV")
+  
+  sound
+})
+```
+
+### 2. Pitch-Formant Decoupling
+
+Test perception with impossible voice combinations:
+
+``` r
+
+# Male formants + Female pitch (impossible in nature)
+kg_impossible <- KlattGrid_createFromVowel(
+  duration = 0.5,
+  f0start = 220,              # Female pitch
+  f1 = 730, b1 = 80,          # Male formants
+  f2 = 1090, b2 = 120,
+  f3 = 2440, b3 = 150
+)
+
+sound_impossible <- kg_impossible$to_sound()
+```
+
+### 3. Quality Assessment
+
+Verify formant tracking accuracy on known stimuli:
+
+``` r
+
+# Generate test vowels with known formants
+test_vowels <- expand.grid(
+  f1 = seq(300, 800, by = 100),
+  f2 = seq(900, 2400, by = 300)
+)
+
+accuracy <- apply(test_vowels, 1, function(params) {
+  # Synthesize
+  kg <- KlattGrid_createFromVowel(
+    duration = 0.5, f0start = 120,
+    f1 = params[1], b1 = 80,
+    f2 = params[2], b2 = 120,
+    f3 = 2500, b3 = 150
+  )
+  sound <- kg$to_sound()
+  
+  # Analyze
+  fp <- sound$to_formant_path(num_steps_up_down = 2L)
+  frm_result <- fp$extract_formant()
+  
+  # Compare
+  df <- as.data.frame(frm_result)
+  f1_extracted <- mean(df$frequency[df$formant == 1], na.rm = TRUE)
+  f2_extracted <- mean(df$frequency[df$formant == 2], na.rm = TRUE)
+  
+  data.frame(
+    target_f1 = params[1],
+    target_f2 = params[2],
+    extracted_f1 = f1_extracted,
+    extracted_f2 = f2_extracted,
+    error_f1 = abs(f1_extracted - params[1]),
+    error_f2 = abs(f2_extracted - params[2])
+  )
+})
+
+# Analyze accuracy across vowel space
+accuracy_df <- do.call(rbind, accuracy)
+mean(accuracy_df$error_f1, na.rm = TRUE)  # Mean F1 error in Hz
+```
+
+## Best Practices
+
+### DO
+
+1.  **Use FormantPath for analysis** - More robust than single-ceiling
+    methods
+2.  **Extract pitch from original** - Use `to_pitch()` for realistic F0
+3.  **Match bandwidths to formant frequency** - Higher formants = wider
+    bandwidths
+4.  **Validate on synthetic vowels first** - Test round-trip accuracy
+5.  **Save intermediate results** - Keep formant data and KlattGrid
+    parameters
+6.  **Compare spectrograms** - Visual inspection reveals synthesis
+    quality
+7.  **Document parameters** - Record all synthesis settings for
+    reproducibility
+
+### DON’T
+
+1.  **Don’t use single ceiling for diverse speakers** - Use FormantPath
+    instead
+2.  **Don’t ignore bandwidth** - Critical for natural synthesis
+3.  **Don’t expect perfect reconstruction** - Some loss is inherent
+4.  **Don’t synthesize consonants** - KlattGrid is vowel-focused
+5.  **Don’t skip validation** - Always check round-trip accuracy
+6.  **Don’t use extreme formant values** - Stay within natural ranges
+
+## Troubleshooting
+
+### Poor Resynthesis Quality
+
+**Symptoms**: Synthetic speech sounds unnatural, buzzy, or robotic
+
+**Solutions**: - Verify F1 \< F2 \< F3 relationship - Check bandwidth
+values (B1 ≈ 80, B2 ≈ 120, B3 ≈ 150 Hz) - Ensure pitch is realistic
+(80-300 Hz) - Use mean formants rather than single time point
+
+### High Round-Trip Error
+
+**Symptoms**: Extracted formants differ greatly from target (\>20%
+error)
+
+**Solutions**: - Increase FormantPath candidates
+(`num_steps_up_down = 3L`) - Adjust formant ceiling based on speaker -
+Check for formant tracking errors (visual inspection) - Use longer vowel
+duration (\>300 ms)
+
+### Segfault During Synthesis
+
+**Symptoms**: R crashes when calling `kg$to_sound()`
+
+**Solutions**: - Always use
+[`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md)
+(not empty constructor) - Verify all formant values are positive and
+finite - Check F1 \< F2 \< F3 constraint
+
+## Performance Notes
+
+### Memory Usage
+
+Analysis-resynthesis stores multiple objects:
+
+- Original Sound: ~1 MB per minute
+- FormantPath: ~5× Formant size (5 candidates)
+- KlattGrid: Small (\<1 KB)
+- Synthetic Sound: ~1 MB per minute
+
+**Tip**: Extract formant values and discard FormantPath object to save
+memory.
+
+## Summary
+
+**The analysis-resynthesis workflow enables**: - Validation of formant
+tracking accuracy - Systematic acoustic parameter manipulation - Voice
+morphing and transformation - Perceptual experiment stimulus generation
+
+**Key functions**: - `sound$to_formant_path()` - Robust analysis -
+`fp$extract_formant()` - Get optimal track -
+[`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md) -
+Safe synthesis -
+[`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) - Extract
+formant values
+
+**Typical pipeline**: 1. Load audio: `Sound("file.wav")` 2. Analyze:
+`fp <- sound$to_formant_path(num_steps_up_down=2L)` 3. Extract:
+`frm_result <- fp$extract_formant()` 4. Get values:
+`df <- as.data.frame(frm_result)` 5. Synthesize:
+`kg <- KlattGrid_createFromVowel(...)` 6. Compare: Visual/perceptual
+validation
+
+## Further Reading
+
+- [`vignette("formantpath-robust-tracking")`](https://humlab-speech.github.io/pladdrr/articles/formantpath-robust-tracking.md) -
+  FormantPath details
+- [`vignette("speech-synthesis-klattgrid")`](https://humlab-speech.github.io/pladdrr/articles/speech-synthesis-klattgrid.md) -
+  KlattGrid synthesis
+- [`vignette("formant-analysis")`](https://humlab-speech.github.io/pladdrr/articles/formant-analysis.md) -
+  Standard formant extraction
+- Praat manual: [Manual index](https://www.fon.hum.uva.nl/praat/manual/)
+
+## Session Info
+
+``` r
+
+sessionInfo()
+#> R version 4.6.1 (2026-06-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: UTC
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] ggplot2_4.0.3 pladdrr_5.0.0
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] vctrs_0.7.3        cli_3.6.6          knitr_1.51         rlang_1.3.0       
+#>  [5] xfun_0.60          otel_0.2.0         S7_0.2.2           textshaping_1.0.5 
+#>  [9] jsonlite_2.0.0     data.table_1.18.4  glue_1.8.1         htmltools_0.5.9   
+#> [13] ragg_1.5.2         sass_0.4.10        scales_1.4.0       rmarkdown_2.31    
+#> [17] grid_4.6.1         evaluate_1.0.5     jquerylib_0.1.4    fastmap_1.2.0     
+#> [21] yaml_2.3.12        lifecycle_1.0.5    compiler_4.6.1     codetools_0.2-20  
+#> [25] RColorBrewer_1.1-3 fs_2.1.0           Rcpp_1.1.2         farver_2.1.2      
+#> [29] systemfonts_1.3.2  digest_0.6.39      R6_2.6.1           bslib_0.12.0      
+#> [33] withr_3.0.3        gtable_0.3.6       tools_4.6.1        pkgdown_2.2.1     
+#> [37] cachem_1.1.0       desc_1.4.3
+```

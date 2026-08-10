@@ -1,0 +1,75 @@
+# Process Audio Files in Parallel
+
+Process multiple audio files in parallel across multiple CPU cores,
+instead of processing them sequentially.
+
+## Usage
+
+``` r
+analyze_files_parallel(
+  files,
+  analysis_func,
+  n_cores = NULL,
+  threads_per_worker = NULL,
+  ...
+)
+```
+
+## Arguments
+
+- files:
+
+  Character vector. Paths to audio files
+
+- analysis_func:
+
+  Function. Analysis function to apply to each file. Should accept a
+  Sound object and return results.
+
+- n_cores:
+
+  Integer. Number of CPU cores to use (default:
+  parallel::detectCores() - 1)
+
+- threads_per_worker:
+
+  Integer or \`NULL\`. C++ threads each worker may use for Praat
+  kernels. \`NULL\` (default) auto-divides cores among workers so total
+  concurrency stays near the machine's core count, preventing
+  oversubscription. Set \`1\` to force strictly single-threaded workers.
+
+- ...:
+
+  Additional arguments passed to analysis_func
+
+## Value
+
+List of results from analysis_func, one per file
+
+## Details
+
+This function distributes batch analysis across worker processes. Each
+file is: 1. Loaded as a Sound object 2. Processed by analysis_func 3.
+Results collected and returned
+
+## Examples
+
+``` r
+audio_dir <- tempfile("audio_")
+dir.create(audio_dir)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone$save(file.path(audio_dir, "tone1.wav"))
+files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
+
+analyze_pitch <- function(sound) {
+  pitch <- sound$to_pitch()
+  list(
+    mean_f0 = pitch$get_mean(0, 0, "hertz"),
+    sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
+  )
+}
+
+# n_cores = 1 keeps this a single-process example (CRAN-safe)
+results <- analyze_files_parallel(files, analyze_pitch, n_cores = 1)
+#> Using single core (set n_cores > 1 for parallel processing)
+```
