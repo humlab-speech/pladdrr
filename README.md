@@ -191,23 +191,22 @@ mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
 ### TextGrid Workflows
 
 ```r
-# Create a TextGrid
-tg <- TextGrid$create(tmin = 0, tmax = 2.0)
+# Create a TextGrid with one interval tier (tiers must exist at creation time)
+tg <- TextGrid$create(tmin = 0, tmax = 2.0, tier_names = "words")
 
-# Add interval tier
-tg$insert_interval_tier(position = 1, name = "words")
+# Add boundaries
 tg$insert_boundary(tier = 1, time = 0.5)
 tg$insert_boundary(tier = 1, time = 1.0)
 tg$insert_boundary(tier = 1, time = 1.5)
 
 # Set labels
-tg$set_label(tier = 1, index = 1, text = "the")
-tg$set_label(tier = 1, index = 2, text = "quick")
-tg$set_label(tier = 1, index = 3, text = "brown")
+tg$set_interval_text(tier = 1, interval_number = 1, text = "the")
+tg$set_interval_text(tier = 1, interval_number = 2, text = "quick")
+tg$set_interval_text(tier = 1, interval_number = 3, text = "brown")
 
 # Query intervals
 n_intervals <- tg$get_number_of_intervals(tier = 1)
-label <- tg$get_label_of_interval(tier = 1, interval_number = 2)
+label <- tg$get_interval_text(tier = 1, interval_number = 2)
 ```
 
 ### Batch Processing
@@ -385,9 +384,9 @@ mean(pitch$get_values_vector(), na.rm = TRUE)
 
 Use `LongSound` for files too large for memory:
 ```r
-longsound <- LongSound$new("large_file.wav")
+longsound <- LongSound$open("large_file.wav")
 # Extract only the portion you need
-sound_segment <- longsound$extract_part(from_time = 0, to_time = 10)
+sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 ```
 
 ### Performance Tips
