@@ -55,7 +55,14 @@ remainder are legitimate and cannot be replaced without regressions:
   messages, and R's `REprintf`/`Rprintf` are only safe on the main thread, so
   routing them through R would be unsafe.
 - `melder_sysenv.cpp` uses `_exit` in the child of a `fork()` (the correct
-  POSIX idiom — the child must not run `atexit`/flush handlers).
+  POSIX idiom — the child must not run `atexit`/flush handlers). This
+  fork/exec path is defined but disabled: Praat's `system`/`system$`/
+  `runSystem`/`runSubprocess` script commands, which pladdrr's
+  `PraatInterpreter` exposes to arbitrary R-supplied script text, now throw
+  immediately instead of forking a shell (see `melder_sysenv.cpp`,
+  `runAny_STR`). This closes the shell-exec surface entirely; the fork/exec/
+  `_exit` code below the throw is unreachable and kept only because removing
+  it would require restructuring `melder_sysenv.cpp`'s upstream body.
 - The remaining `exit`/`isatty`/`fprintf(stderr)` live in Praat's interactive
   `main`/CLI and self-test code, which is compiled but never entered from the
   embedded library (`-DPRAAT_LIB -DNO_GUI`).

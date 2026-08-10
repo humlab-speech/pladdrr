@@ -18,6 +18,31 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### Unreleased — Disable Praat script shell-exec (2026-08-10)
+
+**Summary:** `PraatInterpreter` runs arbitrary Praat script text supplied from
+R, and Praat's script language exposes `system`, `system$`, `runSystem`,
+`runSubprocess` (and their `$`-suffixed output-capturing variants), which
+fork+exec a shell command. That's a live shell-exec surface reachable from any
+R string passed to the interpreter — a security liability, not something
+pladdrr's DSP-wrapping purpose needs.
+
+#### `src/praat.github.io/melder/melder_sysenv.cpp` — `runAny_STR`
+
+**Fix:** `runAny_STR`, the single choke point behind all four public entry
+points (`Melder_runSystem`, `Melder_runSubprocess`, `runSystem_STR`,
+`runSubprocess_STR`), now `Melder_throw`s immediately before touching the
+fork/exec/pipe machinery below it. `system_nocheck` swallows the thrown error
+silently by its existing designed semantics (ignore command failures); `system`
+and the `$`-capturing variants surface it as a normal Praat script error. No
+shell is ever forked either way.
+
+**Also fixes:** the `checking compiled code` `WARNING` for the
+`stderr`/`stdout`/`_exit` symbols in `melder_sysenv.o`/`melder_console.o` —
+see rationale in cran-comments.md (the fork/exec/`_exit` code is now
+unreachable, kept only because excising it would mean restructuring upstream
+Praat's `runAny_STR` body).
+
 ### v5.0.0 — Memory optimization: eliminate per-frame Spectrum allocations + data.frame pre-allocation (2026-08-07)
 
 **Summary:** Three changes to pladdrr-owned C++ wrappers — no Praat-tree code touched.
