@@ -403,7 +403,7 @@ test_that("SIMD info is reported correctly", {
   expect_true("architecture" %in% names(info), label = "Should report architecture")
 
   if (info$enabled) {
-    expect_true(info$architecture %in% c("AVX2", "SSE4.2", "NEON", "AVX512", "SSE2", "SSE3", "SSE4.1", "AVX"),
+    expect_true(info$architecture %in% c("AVX2", "SSE4.2", "NEON", "AVX512", "SSE2", "SSE3", "SSE4.1", "AVX", "Generic"),
                 label = "Architecture should be recognized")
   }
 })

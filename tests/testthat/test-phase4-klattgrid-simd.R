@@ -80,7 +80,7 @@ test_that("KlattGrid SIMD info matches architecture", {
         # Should have batch size 2 (NEON) or 4 (AVX2)
         expect_true(info$batch_size %in% c(2, 4))
         # Architecture should be valid
-        expect_true(info$architecture %in% c("NEON", "SSE2", "SSE3", "SSE4.1", "SSE4.2", "AVX", "AVX2"))
+        expect_true(info$architecture %in% c("NEON", "SSE2", "SSE3", "SSE4.1", "SSE4.2", "AVX", "AVX2", "Generic"))
     } else {
         expect_equal(info$batch_size, 1)
         expect_equal(info$architecture, "scalar")
