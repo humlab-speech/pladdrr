@@ -22,6 +22,7 @@
 \alias{autolayer.PointProcess}
 \alias{autoplot.PowerCepstrum}
 \alias{autolayer.PowerCepstrum}
+\alias{autoplot.TextGrid}
 \alias{autolayer.TextGrid}
 \title{Autoplot and Autolayer Methods for pladdrr Objects}
 \usage{
@@ -143,6 +144,8 @@
   color = "darkblue",
   ...
 )
+
+\method{autoplot}{TextGrid}(object, ...)
 
 \method{autolayer}{TextGrid}(
   object,

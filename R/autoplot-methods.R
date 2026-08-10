@@ -607,8 +607,14 @@ autolayer.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency 
 }
 
 # ============================================================================
-# TextGrid (autolayer only - overlays annotations)
+# TextGrid
 # ============================================================================
+
+#' @rdname autoplot-methods
+#' @export
+autoplot.TextGrid <- function(object, ...) {
+  plot.TextGrid(object, ...)
+}
 
 #' @rdname autoplot-methods
 #' @param object TextGrid object
