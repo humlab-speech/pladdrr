@@ -24,17 +24,16 @@ library(ggplot2)
 
 ## Overview
 
-pladdrr provides `autoplot()` and `autolayer()` methods following the ggplot2 convention for creating composable, publication-quality visualizations of acoustic data.
+pladdrr provides `autoplot()` and `autolayer()` methods following the ggplot2 convention for visualizing acoustic data.
 
 - **`autoplot(object)`** - Creates a complete ggplot for a single Praat object
 - **`autolayer(object)`** - Returns layers to add to an existing plot
 
-This pattern enables flexible multi-object visualizations:
+This pattern allows combining multiple objects in one plot:
 
-```{r concept, eval=FALSE}
-autoplot(spectrogram) +
-
-autolayer(pitch) +
+```r
+autoplot(spec) +
+  autolayer(pitch) +
   autolayer(formant)
 ```
 
@@ -97,7 +96,7 @@ autoplot(formant, max_formant = 4)
 
 ## Composing Multi-Layer Plots
 
-The real power comes from combining objects using `autolayer()`.
+Combine objects using `autolayer()`.
 
 ### Spectrogram with Pitch Overlay
 
@@ -128,7 +127,7 @@ Overlay pitch points on waveform (useful for seeing voicing):
 ```{r sound-pitch}
 # Scale pitch to amplitude range for overlay
 pitch_df <- pitch$as_data_frame()
-pitch_df <- pitch_df[!is.na(pitch_df$frequency_hz) & pitch_df$frequency_hz > 0, ]
+pitch_df <- pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
 
 autoplot(sound) +
   geom_point(

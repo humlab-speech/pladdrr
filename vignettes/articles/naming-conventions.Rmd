@@ -6,7 +6,7 @@ description: |
 
 # pladdrr Naming Conventions and API Organization
 
-**Version 3.0.0 - January 2026**
+**Version 5.0.0 - August 2026**
 
 This document explains the naming conventions used in pladdrr and clarifies the purpose of different function suffixes.
 
@@ -42,18 +42,18 @@ Three functions use `_fast` suffix instead of `_direct`:
 
 These functions were created before the Direct API naming convention was established. They remain as `_fast` for backward compatibility.
 
-**Should you use them?** Yes! They're equivalent to Direct API functions and skip the same R6 dispatch overhead.
+**Should you use them?** They're equivalent to Direct API functions and skip the same R6 dispatch overhead.
 
 **Equivalence:**
 ```r
-# These are functionally equivalent patterns:
+# calculate_cpps_fast() is a one-shot call combining the two-step form:
 
-# Pattern 1: Using _fast functions
+# Pattern 1: one-shot
 cpps <- calculate_cpps_fast(sound)
 
-# Pattern 2: Using _direct equivalent
-pcg_ptr <- to_powercepstrogram_fast(sound, ...)
-cpps <- get_cpps_fast(pcg_ptr, ...)
+# Pattern 2: broken into steps (still _fast naming, not _direct)
+pcg_ptr <- to_powercepstrogram_fast(sound)
+cpps <- get_cpps_fast(pcg_ptr)
 ```
 
 ---
@@ -142,23 +142,20 @@ combined <- sound_concatenate_all(sounds)
 
 #### 3b. Vectorized Queries
 
-**Naming:** `get_*_at_times()` or `*_get_values_at_times()` (deprecated)
+**Naming:** `get_*_at_times()`
 
 **Pattern:** `values <- get_property_at_times(object, times)`
 
-**Location:** `R/batch-queries.R`, `R/batch-ops.R` (deprecated versions)
+**Location:** `R/batch-queries.R`
 
 **Examples:**
 ```r
-# Preferred (batch-queries.R)
 f0_values <- get_pitch_at_times(pitch, times)
 all_formants <- get_formants_at_times(formant, times, formant_numbers = 1:4)
 int_values <- get_intensity_at_times(intensity, times)
-
-# Deprecated (batch-ops.R) - shows warnings
-f0_values <- pitch_get_values_at_times(pitch, times)  # Use get_pitch_at_times()
-f1_values <- formant_get_values_at_times(formant, times, 1)  # Use get_formants_at_times()
 ```
+
+The older `*_get_values_at_times()` functions (`pitch_get_values_at_times()`, `formant_get_values_at_times()`, `intensity_get_values_at_times()`) were removed; use the `get_*_at_times()` functions above.
 
 **Characteristics:**
 - Query multiple time points in a single call
@@ -212,13 +209,14 @@ Timeline of function naming:
 2025: to_pitch_direct()                          # Tier 2 Direct API
 2026: pitch_get_values_at_times() → deprecated   # Consistency cleanup
 2026: get_pitch_at_times()                       # Standardized batch query
+2026: pitch_get_values_at_times() removed        # v5.0.0
 ```
 
 ### Current Status
 
 - **Standard:** Tier 1 methods, Tier 2 `_direct`, Tier 3 `_batch/_parallel/_at_times`
 - **Legacy:** `_fast` functions (kept for compatibility)
-- **Deprecated:** `*_get_values_at_times()` functions (use `get_*_at_times()`)
+- **Removed:** `*_get_values_at_times()` functions (use `get_*_at_times()`)
 
 ---
 
@@ -288,7 +286,7 @@ formants <- sound_extract_and_formant(sound, starts, ends)
 
 | File | Primary Pattern | API Tier | Examples |
 |------|----------------|----------|----------|
-| `sound-r6-new.R` | Object methods | Tier 1 | `$to_pitch()`, `$to_formant()` |
+| `sound-wrapper.R` | Object methods | Tier 1 | `$to_pitch()`, `$to_formant()` |
 | `praat-direct.R` | `*_direct` | Tier 2 | `to_pitch_direct()` |
 | `performance-helpers.R` | `*_fast` (legacy) | Tier 2 | `calculate_cpps_fast()` |
 | `batch-ops.R` | `*_batch`, `*_and_*` | Tier 3 | `sound_to_pitch_batch()` |
@@ -298,21 +296,19 @@ formants <- sound_extract_and_formant(sound, starts, ends)
 
 ---
 
-## Future Plans
+## Status
 
-### v3.0.0 (Planned)
+**Done (as of v5.0.0):**
 
-1. **Remove deprecated functions**
-   - `pitch_get_values_at_times()` removed
-   - `formant_get_values_at_times()` removed
-   - `intensity_get_values_at_times()` removed
+- `pitch_get_values_at_times()`, `formant_get_values_at_times()`, and `intensity_get_values_at_times()` have been removed; use `get_*_at_times()`.
 
-2. **Possible renaming (under consideration)**
-   - `calculate_cpps_fast()` → `calculate_cpps_direct()`?
-   - `to_powercepstrogram_fast()` → `to_powercepstrogram_direct()`?
-   - `get_cpps_fast()` → `get_cpps_direct()`?
-   
-   **Decision:** Likely keep `_fast` for backward compatibility unless user feedback demands change.
+**Under consideration (not yet done):**
+
+- `calculate_cpps_fast()` → `calculate_cpps_direct()`?
+- `to_powercepstrogram_fast()` → `to_powercepstrogram_direct()`?
+- `get_cpps_fast()` → `get_cpps_direct()`?
+
+Current plan is to keep the `_fast` names for backward compatibility unless user feedback demands change.
 
 ---
 
@@ -356,7 +352,6 @@ If the naming is unclear:
 
 1. Check function documentation: `?function_name`
 2. Read the performance guide: `vignette("performance-optimization")`
-3. Look at examples in the batch operations guide: `BATCH_OPERATIONS_GUIDE.md`
-4. Follow the pattern of similar functions
+3. Follow the pattern of similar functions
 
 **General rule:** If a function has a performance-related suffix (`_direct`, `_fast`, `_batch`, `_parallel`, `_at_times`), it reduces R/C++ boundary crossings and follows the patterns described in this document.

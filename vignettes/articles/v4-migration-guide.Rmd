@@ -30,7 +30,7 @@ All 26 Rcpp modules that previously returned `data.frame` now return `data.table
 library(pladdrr)
 
 # Example: Pitch extraction
-snd <- Sound$new("path/to/audio.wav")
+snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- snd$to_pitch()
 df <- pitch$as_data_frame()
 
@@ -51,9 +51,9 @@ class(df)
 
 ## Do You Need to Update Your Code?
 
-### ✅ Most Code Works Unchanged
+### Most Code Works Unchanged
 
-**Good news:** If your code uses standard data.frame operations, it continues to work without changes!
+If your code uses standard data.frame operations, it continues to work without changes.
 
 ```{r}
 # All of these work exactly as before:
@@ -61,28 +61,33 @@ df$time              # Column access
 df[df$frequency > 100, ]  # Row filtering
 df[, c("time", "frequency")]  # Column selection
 subset(df, time > 1.0)  # Filtering
+df1 <- df
+df2 <- df
 merge(df1, df2, by = "time")  # Joining
+library(ggplot2)
 ggplot(df, aes(time, frequency))  # Plotting
 ```
 
 **Why?** Because `data.table` **inherits from** `data.frame`:
 
 ```{r}
+library(data.table)
 is.data.frame(df)  # TRUE
 is.data.table(df)  # TRUE (requires library(data.table))
 ```
 
 ---
 
-### ⚠️ Code That May Break
+### Code That May Break
 
 #### 1. Exact Class Comparison
 
 **BREAKS:**
-```{r}
+```{r, eval = FALSE}
 if (class(df) == "data.frame") {
-  # This returns FALSE in v4.0!
-  # class(df) is now c("data.table", "data.frame")
+  # class(df) is now c("data.table", "data.frame") - a length-2 vector.
+  # On current R this raises "the condition has length > 1"
+  # instead of comparing to a single string.
 }
 ```
 
@@ -97,7 +102,7 @@ if (inherits(df, "data.frame")) {
 #### 2. Expecting Single Class String
 
 **BREAKS:**
-```{r}
+```{r, eval = FALSE}
 stopifnot(class(df) == "data.frame")  # Fails
 ```
 
@@ -130,7 +135,7 @@ some_function(as.data.frame(df))
 
 ### Fast Operations with `data.table` Syntax
 
-Once you have `data.table` loaded, you can use its powerful syntax:
+Once you have `data.table` loaded, you can use its syntax directly:
 
 ```{r}
 library(data.table)
@@ -156,6 +161,7 @@ library(data.table)
 
 # Fast rbind for multiple files
 file_list <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+# (in this example, "audio/" is a directory of your own .wav files)
 
 results <- rbindlist(lapply(file_list, function(f) {
   snd <- Sound$new(f)
@@ -194,9 +200,9 @@ Replace with `inherits(x, "data.frame")`.
 
 ```{r}
 # Install v4.0
-# install.packages("pladdrr")  # When released
+# install.packages("pladdrr")
 
-# Run your existing tests
+# Run your existing tests (path is your own tests/ directory)
 testthat::test_dir("tests/")
 
 # Or test interactively
@@ -217,7 +223,9 @@ If you encounter errors:
 2. **Check class comparisons:**
    ```{r}
    # Use inherits() instead of ==
-   if (inherits(df, "data.frame")) { ... }
+   if (inherits(df, "data.frame")) {
+     # your code here
+   }
    ```
 
 ### Step 4: (Optional) Optimize with data.table
@@ -235,7 +243,7 @@ setkey(df, time)
 df[J(1.0)]  # Fast time lookup
 
 # Use .SD for grouped operations
-df[, lapply(.SD, mean), by = group_col]
+df[, lapply(.SD, mean), by = voiced]
 ```
 
 ---
@@ -249,7 +257,7 @@ library(pladdrr)
 library(data.table)
 
 # Extract formants
-snd <- Sound$new("audio.wav")
+snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- snd$to_formant_burg()
 df <- formant$as_data_frame(max_formants = 4)
 
@@ -269,11 +277,11 @@ library(pladdrr)
 library(data.table)
 
 # Load TextGrid
-tg <- TextGrid$new("annotation.TextGrid")
+tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 intervals <- tg$as_data_frame()
 
 # Fast filtering by tier and label
-vowels <- intervals[tier_name == "phones" & label %in% c("AA", "IY", "UW")]
+vowels <- intervals[tier_name == "phones" & label %in% c("ɛ", "ɔ")]
 
 # Calculate durations
 vowels[, duration := end_time - start_time]
@@ -292,6 +300,7 @@ library(pladdrr)
 library(data.table)
 
 # Pair sound files with TextGrids
+# (in this example, "audio/" and "annotations/" are your own directories)
 pairs <- pair_sound_textgrid(
   sound_dir = "audio/",
   textgrid_dir = "annotations/",
@@ -352,8 +361,9 @@ library(data.table)
 setkey(df, time)
 
 # Fast repeated lookups
+time_points <- head(df$time, 3)
 for (t in time_points) {
-  value <- df[J(t), frequency]  # Binary search!
+  value <- df[J(t), frequency]  # Binary search
 }
 ```
 
@@ -396,12 +406,12 @@ options(pladdrr.return_datatable = FALSE)
 
 ### Q: Will my ggplot2 code still work?
 
-**A:** Yes! ggplot2 works seamlessly with data.table.
+**A:** Yes, ggplot2 works with data.table because it inherits from data.frame.
 
 ```{r}
 library(ggplot2)
 df <- pitch$as_data_frame()
-ggplot(df, aes(time, frequency)) + geom_line()  # Works!
+ggplot(df, aes(time, frequency)) + geom_line()
 ```
 
 ### Q: Can I convert back to data.frame?
@@ -439,9 +449,9 @@ See: [data.table introduction](https://rdatatable.gitlab.io/data.table/)
 
 ## Summary
 
-✅ **Most code works unchanged** - data.table inherits from data.frame
-✅ **Lower algorithmic complexity** for several batch operations
-⚠️ **Update class checks** - Use `inherits()` instead of `==`
-💡 **Optional:** Learn data.table syntax for additional keyed-operation features
+- **Most code works unchanged** - data.table inherits from data.frame
+- **Lower algorithmic complexity** for several batch operations
+- **Update class checks** - Use `inherits()` instead of `==`
+- **Optional:** Learn data.table syntax for additional keyed-operation features
 
 **Need help?** Open an issue on GitHub or consult the data.table documentation.

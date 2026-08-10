@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The `pladdrr` package provides direct access to Praat's phonetic analysis capabilities from R, without requiring Python. It implements core phonetic analysis objects (Sound, Pitch, Formant, Intensity) with a modern R6 object-oriented interface that follows Praat's conventions.
+The `pladdrr` package provides direct access to Praat's phonetic analysis capabilities from R, without requiring Python. It implements core phonetic analysis objects (Sound, Pitch, Formant, Intensity) with an R6 object-oriented interface that follows Praat's conventions.
 
 ## Installation
 
@@ -60,13 +60,14 @@ print(noise)
 
 ### Load Audio Files
 
-```{r eval = FALSE}
-# Load a WAV file using R6 interface
-speech <- Sound$new("path/to/speech.wav")
+```{r}
+# Load a WAV file using the R6 interface
+speech <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+speech
 
-# Load specific channel from stereo file (1-indexed)
-speech_left <- Sound$new("path/to/stereo.wav", channel = 1)
-speech_right <- Sound$new("path/to/stereo.wav", channel = 2)
+# For a stereo file, select a channel (1-indexed):
+# speech_left <- Sound$new("stereo.wav", channel = 1)
+# speech_right <- Sound$new("stereo.wav", channel = 2)
 ```
 
 ## Basic Sound Properties
@@ -121,25 +122,27 @@ Extract fundamental frequency (F0) from speech or sustained tones using R6 metho
 
 ### Pitch Parameters
 
-```{r eval = FALSE}
+```{r}
 # Male voice
-pitch_male <- sound$to_pitch(pitch_floor = 50, pitch_ceiling = 300)
+pitch_male <- speech$to_pitch(pitch_floor = 50, pitch_ceiling = 300)
 
-# Female voice  
-pitch_female <- sound$to_pitch(pitch_floor = 100, pitch_ceiling = 600)
+# Female voice
+pitch_female <- speech$to_pitch(pitch_floor = 100, pitch_ceiling = 600)
 
 # Child voice
-pitch_child <- sound$to_pitch(pitch_floor = 150, pitch_ceiling = 800)
+pitch_child <- speech$to_pitch(pitch_floor = 150, pitch_ceiling = 800)
 ```
 
 ### Querying Pitch Values
 
-```{r eval = FALSE}
+```{r}
+pitch <- speech$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
+
 # Get F0 at specific time point
-f0_at_1s <- pitch$get_value_at_time(time = 1.0)
+f0_at_1s <- pitch$get_value_at_time(time = 0.5)
 
 # Get mean F0 over time range
-mean_f0_range <- pitch$get_mean(from_time = 0.5, to_time = 1.5)
+mean_f0_range <- pitch$get_mean(from_time = 0.1, to_time = 0.5)
 
 # Get minimum and maximum
 min_f0 <- pitch$get_minimum()
@@ -160,15 +163,15 @@ formants
 
 ### Speaker-Specific Settings
 
-```{r eval = FALSE}
+```{r}
 # Adult male
-formants_male <- sound$to_formant_burg(max_frequency = 5000, max_formants = 5)
+formants_male <- speech$to_formant_burg(max_frequency = 5000, max_formants = 5)
 
 # Adult female
-formants_female <- sound$to_formant_burg(max_frequency = 5500, max_formants = 5)
+formants_female <- speech$to_formant_burg(max_frequency = 5500, max_formants = 5)
 
 # Child
-formants_child <- sound$to_formant_burg(max_frequency = 8000, max_formants = 5)
+formants_child <- speech$to_formant_burg(max_frequency = 8000, max_formants = 5)
 ```
 
 ### Querying Formant Values
@@ -251,7 +254,7 @@ head(intensity_df)
 
 ## Visualization
 
-The `pladdrr` package provides comprehensive ggplot2-based visualization functions for all analysis types. For detailed examples of creating publication-quality plots, see `vignette("visualization")`, which covers:
+The `pladdrr` package provides ggplot2-based visualization functions (`autoplot()`/`autolayer()` methods, see `vignette("autoplot-autolayer")`) for its analysis objects. For detailed examples of creating plots, see `vignette("visualization")`, which covers:
 
 - Voice quality visualization (AVQI, DSI, CPP)
 - Formant analysis (vowel spaces, trajectories)
@@ -264,9 +267,9 @@ The `pladdrr` package provides comprehensive ggplot2-based visualization functio
 
 Here's a complete analysis workflow using R6:
 
-```{r eval = FALSE}
+```{r}
 # 1. Load sound
-sound <- Sound$new("vowel.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # 2. Extract all analyses
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -307,10 +310,10 @@ f0 = Get mean: 0, 0, "Hertz"
 ```
 
 ### pladdrr Equivalent (R6)
-```{r eval = FALSE}
+```{r}
 # R with pladdrr (R6 interface)
-sound <- Sound$new("sound.wav")
-pitch <- sound$to_pitch(time_step = 0.01, 
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+pitch <- sound$to_pitch(time_step = 0.01,
                        pitch_floor = 75, pitch_ceiling = 600)
 f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ```
@@ -319,7 +322,7 @@ f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
 ### Custom Analysis Parameters
 
-```{r eval = FALSE}
+```{r}
 # Fine-tune formant detection
 formants <- sound$to_formant_burg(
   time_step = 0.005,           # 5 ms steps
@@ -339,11 +342,12 @@ intensity <- sound$to_intensity(
 
 ### Handling NA Values
 
-All analysis functions gracefully handle undefined values:
+Analysis methods return `NA` for undefined values (e.g. unvoiced pitch frames)
+rather than erroring:
 
-```{r eval = FALSE}
+```{r}
 # Pitch may be NA for unvoiced segments
-f0 <- pitch$get_value_at_time(time = 1.0)
+f0 <- pitch$get_value_at_time(time = 0.5)
 if (is.na(f0)) {
   cat("Unvoiced at this time point\n")
 } else {
@@ -372,12 +376,10 @@ citation("pladdrr")
 
 ## Conclusion
 
-The `pladdrr` package provides a comprehensive toolkit for phonetic analysis in R, with:
-
-- **4 core analysis objects**: Sound, Pitch, Formant, Intensity
-- **45+ functions**: Complete analysis capabilities
-- **Praat compatibility**: Easy translation from Praat scripts
-- **Clean S3 interface**: Familiar R programming patterns
-- **Robust error handling**: Graceful handling of edge cases
+This vignette covered the core `pladdrr` analysis objects: Sound, Pitch,
+Formant, and Intensity. The package exposes 38 Praat modules with 500+
+methods in total (see `DESCRIPTION` and `help(package = "pladdrr")` for the
+full list), including auditory modeling, TextGrid annotation, voice quality
+assessment, and a persistent Praat script interpreter.
 
 For more information, see the individual function documentation and the package README.

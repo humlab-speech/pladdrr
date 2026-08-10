@@ -88,8 +88,8 @@ if (!is.null(formant_standard) && !is.null(formant_path)) {
       round(min(formant_path$get_all_ceiling_frequencies())), " - ",
       round(max(formant_path$get_all_ceiling_frequencies())), " Hz\n", sep = "")
 } else {
-  cat("Note: Formant extraction requires valid audio input.\n")
-  cat("This vignette uses synthetic examples for demonstration.\n")
+  cat("Note: Formant extraction requires readable audio input.\n")
+  cat("Check that inst/extdata/test.wav is present and readable.\n")
 }
 ```
 
@@ -209,7 +209,8 @@ cat("  F3:", round(f3), "Hz\n")
 
 ### Manual Path Selection
 
-You can manually override the automatic selection:
+`set_path()` and `set_optimal_path()` let you override the automatically
+selected candidate for a time range:
 
 ```{r manual-path, eval=FALSE}
 # Set candidate 3 for time range 0.2-0.4s
@@ -226,6 +227,13 @@ fp$set_optimal_path(
 # Then extract
 frm_result <- fp$extract_formant()
 ```
+
+**Known issue**: in pladdrr 5.0.0, calling `extract_formant()` on a
+`FormantPath` object after calling `set_path()` or `set_optimal_path()`
+crashes the R session in this build (verified by direct testing, not just an
+R-level error). Until this is fixed upstream, avoid extracting from a path
+you have manually edited this way. `path_finder()` (below), which also
+rewrites the path, does not exhibit this problem.
 
 ## Visualizing FormantPath Results
 
@@ -366,45 +374,49 @@ fp <- sound$to_formant_path(
 cat("Using", fp$get_number_of_candidates(), "candidates for robustness\n")
 ```
 
-### 3. Vowel-Specific Analysis
+### 3. Segment-Specific Analysis
 
-Compare formants across different vowels:
+Compare formants across time-aligned segments using a TextGrid:
 
 ```{r use-case-vowels, eval=FALSE}
-# Assuming you have time-aligned TextGrid
 textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
-# Extract vowel segments
-intervals <- textgrid$get_tier(1)$get_intervals()
-vowels <- intervals[intervals$text %in% c("i", "a", "u")]
+# Get labelled intervals from the phone tier
+intervals <- textgrid$get_all_intervals("phones")
+intervals <- intervals[intervals$text != "", ]
 
-# Analyze each vowel with FormantPath
-results <- lapply(vowels, function(v) {
-  # Extract vowel segment
-  vowel_sound <- sound$extract_part(v$xmin, v$xmax)
-  
-  # Robust formant tracking
-  fp <- vowel_sound$to_formant_path(num_steps_up_down = 2L)
+# test.TextGrid spans 3s but test.wav is only 1s - clip segment
+# boundaries to the sound's actual duration before extracting
+intervals$end <- pmin(intervals$end, sound$get_duration())
+intervals <- intervals[intervals$start < intervals$end, ]
+
+# Analyze each segment with FormantPath
+results <- lapply(seq_len(nrow(intervals)), function(i) {
+  seg <- intervals[i, ]
+  segment_sound <- sound$extract_part(seg$start, seg$end)
+
+  fp <- segment_sound$to_formant_path(num_steps_up_down = 2L)
   frm_result <- fp$extract_formant()
-  
-  # Get mean F1/F2
+
   df <- as.data.frame(frm_result)
-  list(
-    vowel = v$text,
+  data.frame(
+    phone = seg$text,
     f1 = mean(df$frequency[df$formant == 1], na.rm = TRUE),
     f2 = mean(df$frequency[df$formant == 2], na.rm = TRUE)
   )
 })
 
-vowel_space <- do.call(rbind, lapply(results, as.data.frame))
-print(vowel_space)
+phone_formants <- do.call(rbind, results)
+print(phone_formants)
 ```
 
 ### 4. Batch Processing Multiple Files
 
 ```{r batch-processing, eval=FALSE}
-# Process multiple speakers with unknown characteristics
-files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
+# Process multiple recordings with unknown speaker characteristics.
+# Replace `files` with your own vector of file paths; here we reuse the
+# bundled example file to show the pattern.
+files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
 
 formants <- lapply(files, function(file) {
   sound <- Sound(file)
@@ -448,7 +460,7 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 
 ## Best Practices
 
-### ✓ DO
+### DO
 
 1. **Use FormantPath when speaker characteristics are unknown**
 2. **Start with `num_steps_up_down = 2`** (5 candidates) as default
@@ -460,7 +472,7 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 5. **Use wider step fractions (0.10)** for diverse speakers
 6. **Document which method you used** for reproducibility
 
-### ✗ DON'T
+### DON'T
 
 1. **Don't use FormantPath for all analyses** - use the standard method when the speaker's formant range is already known
 2. **Don't use too many candidates** (`num_steps_up_down > 4`) unless necessary
@@ -476,12 +488,12 @@ pladdrr provides direct R access to Praat's FormantPath algorithm:
 
 | Feature | pladdrr | Praat GUI |
 |---------|---------|-----------|
-| Multiple candidates | ✅ | ✅ |
-| Automatic path selection | ✅ | ✅ |
-| Manual path override | ✅ | ✅ |
-| Data export | ✅ (data.frame) | ✅ (text file) |
-| Batch processing | ✅ (R loops) | ❌ (manual) |
-| Visualization | ✅ (ggplot2) | ✅ (built-in) |
+| Multiple candidates | Yes | Yes |
+| Automatic path selection | Yes | Yes |
+| Manual path override | Yes, but see the known crash noted above | Yes |
+| Data export | Yes (data.frame) | Yes (text file) |
+| Batch processing | Yes (R loops) | No (manual) |
+| Visualization | Yes (ggplot2) | Yes (built-in) |
 
 ### vs Parselmouth
 

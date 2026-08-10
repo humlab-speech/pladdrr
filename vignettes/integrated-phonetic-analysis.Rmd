@@ -14,8 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
-  fig.height = 5,
-  eval = FALSE  # Disable evaluation due to complex dependencies
+  fig.height = 5
 )
 ```
 
@@ -118,6 +117,16 @@ for (i in seq_along(phone_labels)) {
 }
 
 cat("TextGrid created with", tg$get_number_of_tiers(), "tiers\n")
+```
+
+### Plotting the TextGrid
+
+`autoplot()` and `autolayer()` methods let you compose TextGrid tier displays with ggplot2:
+
+```{r plot_textgrid}
+p <- ggplot2::autoplot(tg)
+p2 <- p + ggplot2::autolayer(tg, tier = 2, color = "darkred")
+class(p2)
 ```
 
 ## Part 2: TextGrid Queries
@@ -286,7 +295,8 @@ cat(sprintf("Mean HNR: %.1f dB\n", hnr_mean))
 Process all vowel segments systematically:
 
 ```{r batch_processing}
-# Identify vowel intervals (uppercase labels)
+# Identify vowel intervals: labels containing an uppercase vowel letter
+# (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in "world")
 vowel_intervals <- which(grepl("[AEIOUY3]", phone_data$label, ignore.case = FALSE))
 
 # Extract acoustic features for each vowel
@@ -311,12 +321,12 @@ for (idx in vowel_intervals) {
   midpoint <- start + (end - start) / 2
   
   # Extract features at vowel midpoint
-  f0 <- pitch$get_value_at_time(time = midpoint, unit = "hertz", interpolate = "linear")
+  f0 <- pitch$get_value_at_time(time = midpoint, unit = "hertz", interpolate = TRUE)
   f1 <- formant$get_value_at_time(1, midpoint, "hertz")
   f2 <- formant$get_value_at_time(2, midpoint, "hertz")
   f3 <- formant$get_value_at_time(3, midpoint, "hertz")
-  int <- intensity$get_value_at_time(midpoint, interpolate = "cubic")
-  hnr <- harmonicity$get_value_at_time(midpoint, interpolate = "linear")
+  int <- intensity$get_value_at_time(midpoint, interpolation = "cubic")
+  hnr <- harmonicity$get_value_at_time(midpoint, interpolation = "linear")
   
   vowel_features <- rbind(vowel_features, data.frame(
     phone = label,
@@ -346,7 +356,7 @@ write.csv(vowel_features, "vowel_acoustic_features.csv", row.names = FALSE)
 
 ### Visualization
 
-The `pladdrr` package provides comprehensive plotting functions for all analysis types. For detailed visualization examples including vowel spaces, formant trajectories, pitch/intensity contours, spectrograms, and voice quality reports, see `vignette("visualization")`.
+`pladdrr` provides `autoplot()`/`autolayer()` methods (shown above for `TextGrid`) plus `plot()` methods for Sound, Pitch, Formant, Intensity, and other analysis objects. For vowel spaces, formant trajectories, pitch/intensity contours, spectrograms, and voice quality reports, see `vignette("visualization")`.
 
 ## Real-World Applications
 
@@ -389,19 +399,20 @@ sessions <- c("session1.wav", "session2.wav", "session3.wav")
 Multi-dimensional voice profiling:
 
 ```r
-# Extract comprehensive voice quality metrics
+# Extract voice quality metrics
+pointprocess <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 300)
 voice_profile <- data.frame(
   f0_mean = pitch$get_mean(),
   f0_sd = pitch$get_standard_deviation(),
   jitter = pointprocess$get_jitter_local(),
-  shimmer = pointprocess_sound$get_shimmer_local(),
+  shimmer = pointprocess$get_shimmer_local(sound),
   hnr = harmonicity$get_mean(),
   intensity_mean = intensity$get_mean()
 )
 
 # Add cepstral peak prominence smoothed (CPPS)
-# CPPS is highly sensitive to parameter choice - see example for details
-cepstrogram <- intensity$to_power_cepstrogram(
+# CPPS is sensitive to parameter choice - see example for details
+cepstrogram <- sound$to_powercepstrogram(
   pitch_floor = 60,
   time_step = 0.002
 )
@@ -414,7 +425,7 @@ voice_profile$cpps <- cepstrogram$get_cpps(
 )
 ```
 
-**Note:** CPPS values are highly sensitive to parameters. See `system.file("examples", "10_cpps_analysis.R", package = "pladdrr")` for a comprehensive guide on parameter effects and clinical interpretation.
+**Note:** CPPS values are sensitive to parameters. See `system.file("examples", "10_cpps_analysis.R", package = "pladdrr")` for parameter effects and clinical interpretation.
 
 ## Best Practices
 
@@ -450,7 +461,7 @@ formant <- sound$to_formant_burg(max_frequency = 8000)
 Acoustic measurements may fail:
 
 ```r
-f0 <- pitch$get_value_at_time(time, "hertz", interpolate = "linear")
+f0 <- pitch$get_value_at_time(time, "hertz", interpolate = TRUE)
 if (is.na(f0)) {
   # Handle voiceless segments or tracking failures
   cat("Warning: No F0 at time", time, "\n")
@@ -472,10 +483,10 @@ if (nrow(data) > 10000) {
 
 The **pladdrr** package enables:
 
-- **Flexible annotation workflows** with TextGrid creation and manipulation
-- **Comprehensive sound processing** (segmentation, resampling, filtering)
+- **Annotation workflows** with TextGrid creation and manipulation
+- **Sound processing** (segmentation, resampling, filtering)
 - **Multi-dimensional acoustic analysis** (prosody, voice quality, spectral features)
-- **Seamless R integration** for statistical analysis and visualization
+- **R integration** for statistical analysis and visualization via `data.frame` output and `autoplot()`/`autolayer()` methods
 
 For more examples, see:
 

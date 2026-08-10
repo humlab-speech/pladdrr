@@ -23,13 +23,13 @@ This guide helps existing pladdrr users migrate to the latest API improvements, 
 - **Added:** Parallel processing API
 - **Added:** Complete Direct API coverage
 - **Deprecated:** Duplicate batch query functions
-- **Enhanced:** Comprehensive performance documentation
+- **Enhanced:** Performance documentation
 
 ---
 
 ## Breaking Changes (None)
 
-**Good news:** All changes are backward compatible. Your existing code will continue to work.
+All changes are backward compatible. Existing code continues to work.
 
 However, some functions are now deprecated and will show warnings. Update your code to use the preferred alternatives.
 
@@ -93,7 +93,7 @@ pcg <- PowerCepstrogram(.xptr = some_ptr)
 
 **If you use PowerCepstrogram methods:**
 
-No changes needed! All methods work identically:
+No changes needed. All methods work identically:
 
 ```r
 # These work exactly the same in both versions
@@ -117,14 +117,14 @@ If you work with external pointers directly, the extraction pattern has been sta
 
 ```r
 # This relied on R6 private environment
-ptr <- obj$.__enclos_env__$private$ptr  # ❌ Fails with new objects
+ptr <- obj$.__enclos_env__$private$ptr  # Fails with new objects
 ```
 
 ### New Pattern (Always Works)
 
 ```r
-# Use the standardized utility
-ptr <- extract_xptr(obj, "Sound")
+# Use the standardized utility (internal, not exported - call with :::)
+ptr <- pladdrr:::extract_xptr(obj, "Sound")
 
 # Or access .xptr field directly
 ptr <- obj$.xptr
@@ -160,8 +160,8 @@ results <- analyze_files_parallel(files, function(sound) {
 }, n_cores = 4)
 ```
 
-**Benefits:**
-- Easy to use (just wrap your existing code)
+**Notes:**
+- Wraps your existing per-file analysis code with no other changes
 - Automatic platform detection (Unix/Windows)
 - Auto-detects optimal core count
 
@@ -206,7 +206,7 @@ f1_vals <- get_formants_at_times(formant, times, formant_numbers = 1)$F1
 int_vals <- get_intensity_at_times(intensity, times)
 ```
 
-**Note:** `get_formants_at_times()` returns a list with F1, F2, F3, F4, which is more powerful:
+**Note:** `get_formants_at_times()` returns a list with F1, F2, F3, F4:
 
 ```r
 # Get all formants at once
@@ -268,16 +268,16 @@ all_stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
 
 ## Unit Code Standardization
 
-If you work with Praat unit codes directly, use the new `unit_to_code()` utility:
+If you work with Praat unit codes directly, use the new `unit_to_code()` utility (internal, not exported - call with `pladdrr:::`):
 
 ```r
 # Before: Inconsistent mappings in different files
 unit_code <- switch(unit, hertz = 0L, mel = 2L, erb = 3L)  # Different files had different codes!
 
 # After: Standardized utility
-unit_code <- unit_to_code("hertz", "pitch")  # Returns 0L
-unit_code <- unit_to_code("mel", "pitch")     # Returns 2L
-unit_code <- unit_to_code("bark", "formant")  # Returns 1L
+unit_code <- pladdrr:::unit_to_code("hertz", "pitch")  # Returns 0L
+unit_code <- pladdrr:::unit_to_code("mel", "pitch")     # Returns 2L
+unit_code <- pladdrr:::unit_to_code("bark", "formant")  # Returns 1L
 ```
 
 ---
@@ -318,15 +318,15 @@ all.equal(old_result, new_result)
 
 ```r
 # Before (v2.2.6)
-sound <- Sound("patient_voice.wav")
-tg <- TextGrid("annotations.TextGrid")
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Extract intervals
 n_intervals <- tg$get_number_of_intervals(1)
 intervals <- lapply(1:n_intervals, function(i) {
   list(
-    start = tg$get_start_time_of_interval(1, i),
-    end = tg$get_end_time_of_interval(1, i)
+    start = tg$get_interval_start_time(1, i),
+    end = tg$get_interval_end_time(1, i)
   )
 })
 
@@ -338,8 +338,8 @@ results <- lapply(intervals, function(int) {
 })
 
 # After (v2.3.0)
-sound <- Sound("patient_voice.wav")
-tg <- TextGrid("annotations.TextGrid")
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Batch extraction
 intervals <- tg$get_all_intervals(1)
@@ -368,23 +368,25 @@ results <- lapply(files, function(f) {
 })
 
 # After (v2.3.0) - Parallel + Direct API
+# analysis_func receives only a Sound object, not its source path, so pair
+# the results back up with `files` afterwards (or with names(results)).
 results <- analyze_files_parallel(files, function(sound) {
   pitch_ptr <- to_pitch_direct(sound$.xptr)
   stats <- get_pitch_stats_direct(pitch_ptr)
-  
+
   list(
-    file = basename(sound$get_name()),
     mean_f0 = stats$mean,
     sd_f0 = stats$stdev
   )
 }, n_cores = 4)
+names(results) <- basename(files)
 ```
 
 ### Scenario 3: Formant Tracking
 
 ```r
 # Before (v2.2.6)
-sound <- Sound("vowel.wav")
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
 
@@ -451,11 +453,7 @@ If you encounter issues during migration:
 
 ## Summary
 
-The migration is straightforward:
-
-1. ✅ **No breaking changes** - existing code works
-2. ⚠️ **Update deprecated functions** - simple renames
-3. 🚀 **Adopt new APIs** - significant performance gains
-4. 📚 **Read new docs** - comprehensive guides available
-
-Most users can migrate in <1 hour. The performance benefits are worth it!
+1. **No breaking changes** - existing code works
+2. **Update deprecated functions** - simple renames
+3. **Adopt new APIs** - parallel processing and Direct API skip R6 dispatch overhead
+4. **Read new docs** - see `vignette("performance-optimization")`

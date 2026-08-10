@@ -13,20 +13,20 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.width = 7,
   fig.height = 5,
-  eval = FALSE  # Disable execution to prevent KlattGrid segfault during build
+  eval = FALSE  # Disable execution during package build; chunks are verified manually
 )
 ```
 
 ## Introduction
 
-KlattGrid is pladdrr's implementation of the Klatt cascade/parallel formant synthesizer - a powerful tool for generating synthetic speech from parametric descriptions. Unlike recording or playing back audio, KlattGrid lets you **create speech from scratch** by specifying:
+KlattGrid is pladdrr's implementation of the Klatt cascade/parallel formant synthesizer, for generating synthetic speech from parametric descriptions. Unlike recording or playing back audio, KlattGrid creates speech from parameters by specifying:
 
 - **Pitch contours** (fundamental frequency)
 - **Formant frequencies** (F1, F2, F3, ...)
 - **Formant bandwidths** (spectral width)
 - **Voicing amplitude** (phonation intensity)
 
-This approach is invaluable for:
+This approach is used for:
 
 - Voice manipulation research
 - Perceptual experiments with controlled stimuli
@@ -42,22 +42,22 @@ library(ggplot2)
 
 ### Research Applications
 
-**KlattGrid enables experiments that natural speech cannot provide:**
+KlattGrid enables experiments that natural speech cannot provide:
 
-1. **Perfect control** - Change F1 independently of F2, impossible in human speech
+1. **Independent control** - Change F1 independently of F2, not possible in human speech
 2. **Parametric variation** - Generate continua (e.g., /i/ to /u/ in 10 steps)
-3. **Impossible voices** - Male formants + female pitch
+3. **Non-natural voices** - Male formants + female pitch
 4. **Reproducibility** - Exact same stimulus across sessions
 
 ### The Klatt Synthesizer
 
-Dennis Klatt's 1980 formant synthesizer remains the gold standard for parametric speech synthesis. It models the vocal tract as a cascade of resonant filters (formants) excited by a periodic source (voicing) or noise.
+Dennis Klatt's 1980 formant synthesizer is a cascade/parallel model of parametric speech synthesis. It models the vocal tract as a cascade of resonant filters (formants) excited by a periodic source (voicing) or noise.
 
-**pladdrr provides direct R access to Praat's KlattGrid implementation.**
+pladdrr provides direct R access to Praat's KlattGrid implementation.
 
 ## Basic Usage
 
-### ✅ RECOMMENDED: Pre-configured Vowels
+### Recommended: Pre-configured Vowels
 
 The safest way to create a KlattGrid is with `KlattGrid_createFromVowel()`:
 
@@ -90,14 +90,14 @@ sound$save("vowel_a.wav", "WAV")
 kg$save("vowel_a.KlattGrid")
 ```
 
-### ⚠️ WARNING: Avoid Empty Grids
+### Avoid Empty Grids
 
-**DO NOT use the empty constructor for synthesis:**
+Do not use the empty constructor for synthesis:
 
 ```{r empty-grid-warning, eval=FALSE}
-# ❌ THIS WILL SEGFAULT
+# THIS WILL ERROR
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()  # CRASH
+sound <- kg$to_sound()  # errors: "Pitch tier should not be empty."
 ```
 
 **Why?** Empty grids need complete initialization:
@@ -281,10 +281,10 @@ kg <- KlattGrid_createFromVowel(
   f3 = 2440, b3 = 140
 )
 
-# Transition to /i/ at end
-kg$add_formant_point(0, 1, 0.5, 280)   # F1: 730 → 280 Hz
-kg$add_formant_point(0, 2, 0.5, 2250)  # F2: 1090 → 2250 Hz
-kg$add_formant_point(0, 3, 0.5, 2890)  # F3: 2440 → 2890 Hz
+# Transition to /i/ at end (formantType 1 = oral formants)
+kg$add_formant_point(1, 1, 0.5, 280)   # F1: 730 → 280 Hz
+kg$add_formant_point(1, 2, 0.5, 2250)  # F2: 1090 → 2250 Hz
+kg$add_formant_point(1, 3, 0.5, 2890)  # F3: 2440 → 2890 Hz
 
 sound <- kg$to_sound()
 
@@ -368,7 +368,7 @@ autoplot(spec) +
   geom_line(
     data = formant_df,
     aes(time, frequency, color = factor(formant_num)),
-    linewidth = 1.5, alpha = 0.8
+    linewidth = 1.5, alpha = 0.8, inherit.aes = FALSE
   ) +
   scale_color_manual(
     values = c("1" = "red", "2" = "yellow", "3" = "white"),
@@ -585,26 +585,26 @@ synthesize_vowel(310, 870, "u")
 
 ## Known Limitations
 
-### 1. Empty Grid Segfault
+### 1. Empty Grid Errors on Synthesis
 
-**Issue**: Direct synthesis from empty `KlattGrid()` crashes
+**Issue**: Direct synthesis from an empty `KlattGrid()` errors (`"Pitch tier should not be empty."`)
 
 **Workaround**: Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()`
 
-**Example of SAFE usage:**
+**Example of safe usage:**
 ```{r safe-usage, eval=FALSE}
-# ✓ SAFE
+# safe
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 120,
   f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
 )
 
-# ✓ SAFE
+# safe
 kg <- KlattGrid_createExample()
 
-# ✗ UNSAFE - will crash
+# unsafe - errors, uninitialized tiers
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()  # SEGFAULT
+sound <- kg$to_sound()  # errors
 ```
 
 ### 2. Limited Tier Manipulation
@@ -625,7 +625,7 @@ sound <- kg$to_sound()  # SEGFAULT
 
 ## Best Practices
 
-### ✓ DO
+### Do
 
 1. **Always use `KlattGrid_createFromVowel()`** for vowel synthesis
 2. **Start with known formant values** from the reference table
@@ -635,9 +635,9 @@ sound <- kg$to_sound()  # SEGFAULT
 6. **Test with short durations** (0.3-0.5s) before scaling up
 7. **Export to WAV** for analysis in other tools
 
-### ✗ DON'T
+### Don't
 
-1. **Don't use empty `KlattGrid()` constructor** (segfault risk)
+1. **Don't use empty `KlattGrid()` constructor** (errors on synthesis)
 2. **Don't violate F1 < F2 < F3** (unnatural synthesis)
 3. **Don't use zero bandwidth** (causes artifacts)
 4. **Don't expect consonant synthesis** (formants only, no articulation model)
@@ -645,7 +645,7 @@ sound <- kg$to_sound()  # SEGFAULT
 
 ## Troubleshooting
 
-### Segfault on `to_sound()`
+### Error on `to_sound()`
 
 **Cause**: Incomplete grid initialization
 
@@ -672,11 +672,11 @@ sound <- kg$to_sound()  # SEGFAULT
 
 | Feature | pladdrr KlattGrid | Praat GUI |
 |---------|-------------------|-----------|
-| Vowel synthesis | ✅ `createFromVowel()` | ✅ Manual setup |
-| Pitch contours | ✅ `add_pitch_point()` | ✅ PitchTier editor |
-| Batch synthesis | ✅ R loops | ❌ Manual |
-| Parametric experiments | ✅ Easy continua | ❌ Tedious |
-| Visualization | ✅ ggplot2 | ✅ Built-in |
+| Vowel synthesis | `createFromVowel()` | Manual setup |
+| Pitch contours | `add_pitch_point()` | PitchTier editor |
+| Batch synthesis | R loops | Manual, one at a time |
+| Parametric experiments | Scriptable continua | Repeated manual steps |
+| Visualization | ggplot2 | Built-in |
 
 ### vs Parselmouth
 
@@ -684,11 +684,11 @@ Parselmouth does not currently expose KlattGrid - pladdrr is the only R package 
 
 ### vs Other R Synthesis
 
-Existing R packages (e.g., `phonTools`) use simpler synthesis methods. KlattGrid provides research-grade formant synthesis matching Praat's quality.
+Existing R packages (e.g., `phonTools`) use simpler synthesis methods. pladdrr's KlattGrid wraps Praat's own cascade/parallel Klatt synthesizer C++ code directly, rather than reimplementing it.
 
 ## Summary
 
-**KlattGrid is ideal for:**
+**KlattGrid is used for:**
 - Perceptual experiments requiring controlled stimuli
 - Voice manipulation research
 - Teaching phonetic concepts

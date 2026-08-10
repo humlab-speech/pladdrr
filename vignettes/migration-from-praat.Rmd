@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-This guide helps you translate Praat scripts into R code using pladdrr. The package provides a direct object-oriented interface to Praat's functionality, making translation straightforward and systematic.
+This guide helps you translate Praat scripts into R code using pladdrr. The package provides a direct object-oriented interface to Praat's functionality.
 
 ## Key Principles
 
@@ -33,7 +33,7 @@ sound = Read from file: "audio.wav"
 **pladdrr:**
 ```{r}
 library(pladdrr)
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
 
 ### 2. Method Calls
@@ -75,7 +75,7 @@ std_f0 = Get standard deviation: 0, 0, "Hertz"
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 std_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
@@ -93,7 +93,7 @@ f2 = Get value at time: 2, 0.5, "Hertz", "Linear"
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("vowel.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
   max_number_of_formants = 5,
@@ -117,7 +117,7 @@ max_intensity = Get maximum: 0, 0, "Parabolic"
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01, subtract_mean = TRUE)
 mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
 max_intensity <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "parabolic")
@@ -134,7 +134,7 @@ cog = Get centre of gravity: 2.0
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
 ```
@@ -150,9 +150,9 @@ Set interval text: 1, 1, "hello"
 
 **pladdrr:**
 ```{r}
-textgrid <- TextGrid$new(xmin = 0, xmax = 1, tier_names = "words phones", point_tiers = "phones")
-textgrid$insert_boundary(tier_number = 1, time = 0.5)
-textgrid$set_interval_text(tier_number = 1, interval_number = 1, text = "hello")
+textgrid <- TextGrid$create(tmin = 0, tmax = 1, tier_names = "words phones", point_tiers = "phones")
+textgrid$insert_boundary(tier = 1, time = 0.5)
+textgrid$set_interval_text(tier = 1, interval_number = 1, text = "hello")
 ```
 
 ## Batch Processing
@@ -227,7 +227,7 @@ results <- tibble(file = list.files(pattern = "\\.wav$")) %>%
 library(ggplot2)
 
 # Extract pitch contour
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 pitch_data <- pitch$as_data_frame()
 
@@ -242,7 +242,7 @@ ggplot(pitch_data, aes(x = time, y = frequency)) +
 
 1. **Type Safety**: R catches type errors at runtime
 2. **Code Completion**: RStudio provides autocomplete for all methods
-3. **Integration**: Seamless integration with R's data analysis ecosystem
+3. **Integration**: Works with R's data analysis ecosystem (dplyr, purrr, ggplot2, etc.)
 4. **Reproducibility**: Version control and package management
 5. **Performance**: Direct C++ binding (no scripting overhead)
 6. **Memory Management**: Automatic cleanup of Praat objects
@@ -260,7 +260,7 @@ removeObject: sound
 **pladdrr** uses R's garbage collection (automatic):
 ```{r}
 # Objects are automatically cleaned up when no longer referenced
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 # 'sound' is freed when it goes out of scope or is reassigned
 ```
 
@@ -296,6 +296,6 @@ pitch$get_mean(unit = "Hertz")
 
 ## Conclusion
 
-The systematic naming conventions in pladdrr make migration from Praat scripts straightforward. Most translations follow a simple pattern: convert Praat commands to lowercase method names with underscores, and use named parameters.
+Most translations follow a simple pattern: convert Praat commands to lowercase method names with underscores, and use named parameters.
 
-For complex workflows, pladdrr offers additional advantages through R's data manipulation and visualization capabilities.
+For complex workflows, pladdrr can be combined with R's data manipulation and visualization packages (e.g. dplyr, purrr, ggplot2).

@@ -106,7 +106,7 @@ your own workload:
 ```{r simd-toggle, eval=FALSE}
 library(microbenchmark)
 
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 pladdrr_simd(FALSE)
 scalar_time <- microbenchmark(sound$to_pitch(), times = 50)
@@ -124,25 +124,25 @@ you actually care about.
 
 ### What Operations Use SIMD?
 
-#### Phase 1: Matrix and Data Operations ✅
+#### Phase 1: Matrix and Data Operations
 - Matrix multiplication
 - Element-wise operations
 - Data type conversions
 - Transpose operations
 
-#### Phase 2: Intensity Analysis ✅
+#### Phase 2: Intensity Analysis
 - RMS (Root Mean Square) calculation
 - Energy and power computation
 - Sound mixing and addition
 - Amplitude scaling
 
-#### Phase 3: Correlation and Windowing ✅
+#### Phase 3: Correlation and Windowing
 - Autocorrelation (crucial for pitch detection)
 - Cross-correlation
 - Window function application (Hamming, Hanning, Gaussian)
 - Pitch candidates computation
 
-#### Phase 4: FFT and Formant Extraction ✅
+#### Phase 4: FFT and Formant Extraction
 - **FFT operations** (Radix-2, Real FFT, Inverse FFT)
 - **LPC coefficient calculation** (Burg's algorithm)
 - **Formant frequency estimation**
@@ -156,7 +156,7 @@ you actually care about.
 
 ```{r fft-benchmark, eval=FALSE}
 # Create test sound
-sound <- Sound$new(440, duration = 1.0, sampling_frequency = 44100)
+sound <- Sound$create_pure_tone(frequency = 440, duration = 1.0, sampling_rate = 44100)
 
 # Benchmark FFT (used in Spectrum creation)
 library(microbenchmark)
@@ -176,7 +176,7 @@ hardware rather than relying on a quoted figure.
 ### Formant Extraction Performance
 
 ```{r formant-benchmark, eval=FALSE}
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 result <- microbenchmark(
   burg = sound$to_formant_burg(),
@@ -194,7 +194,8 @@ cost depends on formant order, time step, and signal length.
 ### Cochleagram Performance
 
 ```{r cochleagram-benchmark, eval=FALSE}
-sound <- Sound$new(440, duration = 2.0, sampling_frequency = 22050)
+# The EDB algorithm requires a sampling rate of at least 44.1 kHz
+sound <- Sound$create_pure_tone(frequency = 440, duration = 2.0, sampling_rate = 44100)
 
 result <- microbenchmark(
   standard = sound$to_cochleagram(dt = 0.01, df = 0.1),
@@ -215,12 +216,14 @@ the ratio on your own hardware if it matters for your pipeline.
 Higher sample rates mean more samples to process:
 
 ```{r sample-rate, eval=FALSE}
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+
 # For speech analysis, 16-22 kHz is often sufficient
-sound_22k <- Sound$new("speech.wav", sampling_frequency = 22050)
+sound_22k <- sound$resample(22050)
 formant_22k <- sound_22k$to_formant_burg()
 
 # 48 kHz only needed for music/high-quality audio
-sound_48k <- Sound$new("music.wav", sampling_frequency = 48000)
+sound_48k <- sound$resample(48000)
 formant_48k <- sound_48k$to_formant_burg()
 ```
 
@@ -246,7 +249,7 @@ frames to compute without necessarily adding useful information.
 
 ```{r batch-processing, eval=FALSE}
 # Load all sounds first
-sound_files <- list.files("data/", pattern = "\.wav$", full.names = TRUE)
+sound_files <- list.files("data/", pattern = "\\.wav$", full.names = TRUE)
 sounds <- lapply(sound_files, Sound$new)
 
 # Process as a batch
@@ -266,16 +269,18 @@ f1_f2 <- do.call(rbind, lapply(formants, function(f) {
 ### 4. Reuse Objects When Possible
 
 ```{r reuse-objects, eval=FALSE}
+wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
+
 # Good: Reuse sound object
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(wav_path)
 pitch <- sound$to_pitch()
 formant <- sound$to_formant_burg()
 intensity <- sound$to_intensity()
 
 # Avoid: Reloading and re-decoding the file for every analysis
-pitch <- Sound$new("speech.wav")$to_pitch()
-formant <- Sound$new("speech.wav")$to_formant_burg()
-intensity <- Sound$new("speech.wav")$to_intensity()
+pitch <- Sound$new(wav_path)$to_pitch()
+formant <- Sound$new(wav_path)$to_formant_burg()
+intensity <- Sound$new(wav_path)$to_intensity()
 ```
 
 ### 5. FFT Sizes
@@ -335,7 +340,7 @@ library(profvis)
 
 profvis({
   # Load sound
-  sound <- Sound$new("speech.wav")
+  sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
   # Perform analysis
   pitch <- sound$to_pitch()
@@ -354,7 +359,7 @@ profvis({
 ```{r benchmark-methods, eval=FALSE}
 library(microbenchmark)
 
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Compare formant extraction methods
 result <- microbenchmark(
@@ -373,7 +378,7 @@ boxplot(result)
 SIMD operations in pladdrr are **numerically equivalent** to scalar operations:
 
 ```{r simd-accuracy, eval=FALSE}
-sound <- Sound$new(440, duration = 0.5, sampling_frequency = 22050)
+sound <- Sound$create_pure_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
 
 # Run same analysis twice
 formant1 <- sound$to_formant_burg()
@@ -434,7 +439,7 @@ CRAN binary packages are compiled per the capability table above:
 
 ```{r troubleshoot, eval=FALSE}
 # Check SIMD availability
-pladdrr:::.has_simd()
+simd_info()$available
 
 # If FALSE, possible reasons:
 # 1. Binary package not compiled with SIMD
@@ -449,7 +454,7 @@ pladdrr:::.has_simd()
 
 ### Not Sure Where Time Is Going?
 
-1. **Check what your build supports**: `pladdrr:::.get_simd_info()`
+1. **Check what your build supports**: `simd_info()`
 2. **Profile your code**: Use `profvis()` to find where time is actually spent
 3. **Review your parameters**: time step, sample rate, and formant order all affect frame count
 4. **Consider batching**: process multiple files together when your pipeline allows it
@@ -480,11 +485,12 @@ When calculating statistics over multiple time intervals, use batch functions in
 
 ```{r batch-statistics, eval=FALSE}
 # Create pitch object
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch_cc()
 
-# Define 100 time intervals
-from_times <- seq(0, 9, length.out = 100)
+# Define 100 time intervals covering the file's duration
+# (adjust the upper bound to your own recording's length)
+from_times <- seq(0, sound$get_total_duration() - 0.1, length.out = 100)
 to_times <- from_times + 0.1
 metrics <- c("min", "max", "mean", "stdev", "q25", "q75")
 
@@ -495,8 +501,9 @@ for (i in 1:100) {
   # ... etc
 }
 
-# Single C++ call (1 boundary crossing)
-stats_matrix <- pitch_get_statistics_batch(
+# Single C++ call (1 boundary crossing); pitch_get_statistics_batch()
+# is an internal function, accessed with the ::: operator
+stats_matrix <- pladdrr:::pitch_get_statistics_batch(
   pitch$.xptr,
   from_times,
   to_times,
@@ -510,7 +517,7 @@ Similar functions exist for Intensity:
 
 ```{r intensity-batch, eval=FALSE}
 intensity <- sound$to_intensity()
-intensity_stats <- intensity_get_statistics_batch(
+intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   intensity$.xptr,
   from_times,
   to_times,
@@ -550,7 +557,8 @@ For two-pass pitch analysis, get quartiles and adaptive range in a single call:
 pitch <- sound$to_pitch_cc(pitch_floor = 50, pitch_ceiling = 800)
 
 # Get Q1, Q3, and adaptive range in one call
-adaptive <- pitch_get_adaptive_range(
+# pitch_get_adaptive_range() is an internal function, accessed with :::
+adaptive <- pladdrr:::pitch_get_adaptive_range(
   pitch$.xptr,
   from_time = 0,
   to_time = 0,  # 0 = full duration
@@ -577,11 +585,11 @@ library(RcppXPtrUtils)
 
 # Create compiled Gaussian window function
 gauss_window <- cppXPtr(
-  "#include <cmath>
-   double window(double t) {
+  "double window(double t) {
      double x = t - 0.5;
      return exp(-18.0 * x * x);
    }",
+  includes = "#include <cmath>",
   depends = character()
 )
 
@@ -598,8 +606,8 @@ Custom transforms work similarly:
 ```{r xptr-transforms, eval=FALSE}
 # Create soft clipping function
 soft_clip <- cppXPtr(
-  "#include <cmath>
-   double clip(double x) { return tanh(x * 2.0); }",
+  "double clip(double x) { return tanh(x * 2.0); }",
+  includes = "#include <cmath>",
   depends = character()
 )
 

@@ -23,12 +23,9 @@ library(ggplot2)
 
 # Introduction
 
-The `pladdrr` package provides comprehensive visualization capabilities using R's `ggplot2` graphics system. This approach offers several advantages over Praat's native Picture window:
+`pladdrr` returns data as data frames (`as_data_frame()` methods) and matrices (`as_matrix()` methods) that plot directly with `ggplot2`, and it also ships a few `ggplot2`-based helper functions (`plot_powercepstrum()`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`) and `autoplot`/`autolayer` methods for common object types (`Sound`, `Pitch`, `Intensity`, `Formant`, `Spectrum`, `Spectrogram`, `Ltas`, `TextGrid`, `Harmonicity`, `PointProcess`, `PowerCepstrum`).
 
-- **Publication-quality output** - Vector graphics (PDF, SVG) and high-resolution raster formats
-- **Reproducible workflows** - All plots generated programmatically from R scripts
-- **Customization** - Full control over colors, themes, annotations, and layouts
-- **Integration** - Works seamlessly with R Markdown, tidyverse, and other R packages
+Plots produced this way are ordinary `ggplot2` objects: they can be saved as PDF/SVG/PNG with `ggsave()`, themed and recolored with standard `ggplot2` calls, and combined with `gridExtra::grid.arrange()` or `patchwork`.
 
 This vignette demonstrates the plotting functions available in `pladdrr`, organized by analysis type.
 
@@ -41,12 +38,9 @@ Cepstral analysis is essential for voice quality assessment, particularly for me
 Visualize a single power cepstrum with peak detection:
 
 ```{r cepstrum-basic, eval=FALSE}
-# Create PowerCepstrum object
-sound <- Sound$new("voice.wav")
-cepstrum <- sound$to_power_cepstrum(
-  pitch_floor = 60,
-  time_step = 0.002
-)
+# Create a PowerCepstrum object (Sound -> Spectrum -> PowerCepstrum)
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+cepstrum <- sound$to_spectrum()$to_power_cepstrum()
 
 # Plot with peak annotation
 plot_powercepstrum(
@@ -73,11 +67,11 @@ Time-varying cepstral analysis (heatmap):
 
 ```{r cepstrogram, eval=FALSE}
 # Create PowerCepstrogram
-cepstrogram <- sound$to_power_cepstrogram(
+cepstrogram <- sound$to_powercepstrogram(
   pitch_floor = 60,
   time_step = 0.002,
-  max_frequency = 5000,
-  pre_emphasis_from = 50
+  maximum_frequency = 5000,
+  pre_emphasis_frequency = 50
 )
 
 # Heatmap visualization
@@ -85,15 +79,14 @@ plot_powercepstrogram(
   cepstrogram,
   quefrency_range = c(0.001, 0.05),
   db_range = c(20, 80),
-  palette = "viridis"
+  color_scale = "viridis"
 )
 ```
 
-**Color palettes**:
+**Color scales** (`color_scale` argument):
 
 - "viridis" (default) - Perceptually uniform, colorblind-friendly
 - "magma", "inferno", "plasma" - Alternative viridis variants
-- "Blues", "Reds", "Greys" - Sequential single-hue palettes
 
 ## CPP Time Series
 
@@ -104,54 +97,46 @@ Track Cepstral Peak Prominence over time:
 plot_cpp_timeseries(
   cepstrogram,
   smooth = TRUE,
-  trend_line = TRUE,
   title = "CPP Over Time"
 )
 ```
 
 **Features**:
 
-- Individual CPP values (points)
-- Optional smoothing (loess)
-- Linear trend line
-- Mean CPP reference line
+- CPP values sampled across the cepstrogram's time range
+- Optional loess smoothing (`smooth = TRUE`)
+- Mean CPP reference line (always drawn)
+- Optional horizontal reference lines (`reference_lines` argument)
 
 ## Comprehensive Cepstrum Report
 
 Multi-panel diagnostic figure combining all cepstral visualizations:
 
 ```{r cepstrum-report, eval=FALSE}
-# Complete cepstral analysis report
-report_plot <- create_cepstrum_report(
-  cepstrogram = cepstrogram,
-  width = 12,
-  height = 10,
-  pitch_floor = 60,
-  pitch_ceiling = 300
-)
+# Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
+report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
 
 ggsave("cepstrum_report.pdf", report_plot, width = 12, height = 10)
 ```
 
-**Report panels**:
+**Report panels** (stacked with `gridExtra::grid.arrange()`):
 
-1. **PowerCepstrum** (averaged) - With peak and trendline
-2. **PowerCepstrogram** - Time-quefrency heatmap
-3. **CPP Time Series** - CPP values over time with smoothing
-4. **CPP Distribution** - Histogram with statistics
+1. **PowerCepstrum** at a single time slice - with peak and trendline
+2. **PowerCepstrogram** - time-quefrency heatmap
+3. **CPP Time Series** - CPP values over time
 
 # Formant Visualization
 
-## Vowel Space Plots
+## F1-F2 Formant Space
 
-Classic F1-F2 vowel space visualization:
+F1-F2 plots by segment label (the pattern is the same for vowel-only data; the
+bundled `test.TextGrid` has phone labels, not exclusively vowels):
 
 ```{r vowel-space, eval=FALSE}
-# Extract formants from vowel sounds
-sound <- Sound$new("vowels.wav")
-textgrid <- TextGrid$new("vowels.TextGrid")
+# Extract formants at the midpoint of each labeled interval on the "phones" tier
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+textgrid <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
-# Get formants at vowel midpoints
 formant_data <- data.frame(
   vowel = character(),
   F1 = numeric(),
@@ -159,15 +144,16 @@ formant_data <- data.frame(
   F3 = numeric()
 )
 
-tier <- textgrid$get_tier(1)
-for (i in 1:tier$get_number_of_intervals()) {
-  label <- tier$get_label(i)
-  if (label %in% c("i", "e", "a", "o", "u")) {
-    t_start <- tier$get_start_time(i)
-    t_end <- tier$get_end_time(i)
+tier <- 2  # "phones" tier
+formant <- sound$to_formant_burg()
+n_intervals <- textgrid$get_number_of_intervals(tier)
+for (i in seq_len(n_intervals)) {
+  label <- textgrid$get_interval_text(tier, i)
+  if (label != "") {
+    t_start <- textgrid$get_interval_start_time(tier, i)
+    t_end <- textgrid$get_interval_end_time(tier, i)
     t_mid <- (t_start + t_end) / 2
 
-    formant <- sound$to_formant_burg()
     f1 <- formant$get_value_at_time(1, t_mid, "hertz")
     f2 <- formant$get_value_at_time(2, t_mid, "hertz")
     f3 <- formant$get_value_at_time(3, t_mid, "hertz")
@@ -188,7 +174,7 @@ ggplot(formant_data, aes(x = F2, y = F1, color = vowel, label = vowel)) +
   scale_x_reverse() +  # F2 decreases left to right
   scale_y_reverse() +  # F1 decreases bottom to top
   labs(
-    title = "Vowel Space (F1-F2)",
+    title = "Formant Space (F1-F2) by Segment",
     x = "F2 (Hz)",
     y = "F1 (Hz)"
   ) +
@@ -208,11 +194,15 @@ formant <- sound$to_formant_burg(
   maximum_formant = 5500
 )
 
-# Convert to data frame
+# as_data_frame() returns long format: one row per (time, formant number).
+# Keep F1-F3 and reshape to wide for a multi-line plot.
 formant_df <- formant$as_data_frame()
+formant_df <- formant_df[formant_df$formant <= 3, ]
+formant_wide <- data.table::dcast(formant_df, time ~ formant, value.var = "frequency")
+data.table::setnames(formant_wide, c("1", "2", "3"), c("F1", "F2", "F3"))
 
 # Plot F1-F3 over time
-ggplot(formant_df, aes(x = time)) +
+ggplot(formant_wide, aes(x = time)) +
   geom_line(aes(y = F1, color = "F1"), linewidth = 1) +
   geom_line(aes(y = F2, color = "F2"), linewidth = 1) +
   geom_line(aes(y = F3, color = "F3"), linewidth = 1) +
@@ -228,13 +218,16 @@ ggplot(formant_df, aes(x = time)) +
   theme_minimal()
 ```
 
+`autoplot(formant)` and `ggplot() + autolayer(formant)` provide the same F1-F3
+trajectory plot without manual reshaping.
+
 # Pitch and Intensity Visualization
 
 ## Pitch Contour
 
 ```{r pitch-contour, eval=FALSE}
 # Extract pitch
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch()
 
 # Convert to data frame
@@ -262,7 +255,7 @@ intensity <- sound$to_intensity()
 intensity_df <- intensity$as_data_frame()
 
 # Plot intensity contour
-ggplot(intensity_df, aes(x = time, y = intensity)) +
+ggplot(intensity_df, aes(x = time, y = intensity_db)) +
   geom_line(color = "#ff7f0e", linewidth = 0.8) +
   geom_area(fill = "#ff7f0e", alpha = 0.3) +
   labs(
@@ -275,16 +268,22 @@ ggplot(intensity_df, aes(x = time, y = intensity)) +
 
 ## Combined Pitch and Intensity
 
+Pitch and intensity are extracted on different time grids, so intensity is
+interpolated onto the pitch time points with `stats::approx()` before
+plotting:
+
 ```{r pitch-intensity-combined, eval=FALSE}
-# Merge data frames
-library(dplyr)
-combined <- pitch_df %>%
-  left_join(intensity_df, by = "time")
+combined <- data.frame(
+  time = pitch_df$time,
+  frequency = pitch_df$frequency,
+  intensity_db = approx(intensity_df$time, intensity_df$intensity_db,
+                         xout = pitch_df$time)$y
+)
 
 # Dual-axis plot
 ggplot(combined, aes(x = time)) +
   geom_line(aes(y = frequency, color = "F0"), linewidth = 0.8) +
-  geom_line(aes(y = intensity * 3, color = "Intensity"), linewidth = 0.8) +
+  geom_line(aes(y = intensity_db * 3, color = "Intensity"), linewidth = 0.8) +
   scale_y_continuous(
     name = "Frequency (Hz)",
     sec.axis = sec_axis(~./3, name = "Intensity (dB)")
@@ -303,59 +302,47 @@ ggplot(combined, aes(x = time)) +
 
 # TextGrid Visualization
 
+`pladdrr` provides `autoplot.TextGrid()` and `autolayer.TextGrid()` methods,
+so plotting a tier does not require manually looping over intervals and
+building `geom_rect()`/`geom_text()` calls.
+
 ## Annotation Tier Display
 
 ```{r textgrid-tiers, eval=FALSE}
 # Load TextGrid
-tg <- TextGrid$new("annotations.TextGrid")
+tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
-# Extract tier 1 intervals
-tier1 <- tg$get_tier(1)
-n_intervals <- tier1$get_number_of_intervals()
+# autoplot() draws the whole TextGrid (all tiers stacked), delegating to the
+# base plot.TextGrid() method
+autoplot(tg)
 
-tier_data <- data.frame(
-  start = numeric(n_intervals),
-  end = numeric(n_intervals),
-  label = character(n_intervals)
-)
+# autolayer() returns a list of geoms for a single tier, for use inside a
+# ggplot2 pipeline (e.g. layered over a Sound waveform or spectrogram)
+ggplot() +
+  autolayer(tg, tier = "words", color = "steelblue") +
+  labs(title = "Word Tier", x = "Time (s)", y = "") +
+  theme_minimal()
 
-for (i in 1:n_intervals) {
-  tier_data$start[i] <- tier1$get_start_time(i)
-  tier_data$end[i] <- tier1$get_end_time(i)
-  tier_data$label[i] <- tier1$get_label(i)
-}
-
-# Plot intervals
-ggplot(tier_data, aes(xmin = start, xmax = end, ymin = 0, ymax = 1)) +
-  geom_rect(aes(fill = label), alpha = 0.5, color = "black") +
-  geom_text(aes(x = (start + end) / 2, y = 0.5, label = label), size = 3) +
-  scale_x_continuous(expand = c(0, 0)) +
-  labs(
-    title = "TextGrid Annotations",
-    x = "Time (s)",
-    y = ""
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    legend.position = "none"
-  )
+ggplot() +
+  autolayer(tg, tier = "phones", color = "darkgreen", alpha = 0.4) +
+  labs(title = "Phone Tier", x = "Time (s)", y = "") +
+  theme_minimal()
 ```
 
 ## Duration Analysis
 
 ```{r duration-histogram, eval=FALSE}
-# Calculate interval durations
+# Interval durations for the "phones" tier, via get_all_intervals()
+tier_data <- tg$get_all_intervals("phones")
 tier_data$duration <- tier_data$end - tier_data$start
 
-# Filter out empty intervals
-tier_data_labeled <- tier_data[tier_data$label != "", ]
+# Filter out empty (unlabeled) intervals
+tier_data_labeled <- tier_data[tier_data$text != "", ]
 
 # Duration histogram by label
-ggplot(tier_data_labeled, aes(x = duration, fill = label)) +
-  geom_histogram(bins = 30, alpha = 0.7, color = "black") +
-  facet_wrap(~label, scales = "free_y") +
+ggplot(tier_data_labeled, aes(x = duration, fill = text)) +
+  geom_histogram(bins = 10, alpha = 0.7, color = "black") +
+  facet_wrap(~text, scales = "free_y") +
   labs(
     title = "Interval Duration Distribution",
     x = "Duration (s)",
@@ -371,29 +358,23 @@ ggplot(tier_data_labeled, aes(x = duration, fill = label)) +
 
 ```{r spectrogram, eval=FALSE}
 # Create spectrogram
-sound <- Sound$new("speech.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrogram <- sound$to_spectrogram(
   window_length = 0.005,
-  maximum_frequency = 5000,
+  max_frequency = 5000,
   time_step = 0.002,
   frequency_step = 20,
   window_shape = "Gaussian"
 )
 
-# Convert to matrix for plotting
+# Convert to matrix for plotting (rows = frequency, columns = time)
 spec_matrix <- spectrogram$as_matrix()
 time_vec <- seq(0, sound$get_total_duration(), length.out = ncol(spec_matrix))
 freq_vec <- seq(0, 5000, length.out = nrow(spec_matrix))
 
-# Create data frame for ggplot2
-library(tidyr)
-spec_df <- as.data.frame(spec_matrix)
-colnames(spec_df) <- time_vec
-spec_df$frequency <- freq_vec
-
-spec_long <- spec_df %>%
-  pivot_longer(-frequency, names_to = "time", values_to = "power") %>%
-  mutate(time = as.numeric(time))
+# Long-format data frame for ggplot2 (base R, no reshape dependency)
+spec_long <- expand.grid(time = time_vec, frequency = freq_vec)
+spec_long$power <- as.vector(t(spec_matrix))
 
 # Plot spectrogram
 ggplot(spec_long, aes(x = time, y = frequency, fill = power)) +
@@ -437,7 +418,7 @@ ltas <- sound$to_ltas(bandwidth = 100)
 ltas_df <- ltas$as_data_frame()
 
 # Plot LTAS
-ggplot(ltas_df, aes(x = frequency, y = power)) +
+ggplot(ltas_df, aes(x = frequency, y = power_db)) +
   geom_line(color = "#d62728", linewidth = 0.8) +
   geom_area(fill = "#d62728", alpha = 0.3) +
   labs(
@@ -502,12 +483,12 @@ p1 <- ggplot(pitch_df, aes(x = time, y = frequency)) +
   labs(title = "Pitch", x = "Time (s)", y = "F0 (Hz)") +
   theme_minimal()
 
-p2 <- ggplot(intensity_df, aes(x = time, y = intensity)) +
+p2 <- ggplot(intensity_df, aes(x = time, y = intensity_db)) +
   geom_line() +
   labs(title = "Intensity", x = "Time (s)", y = "dB") +
   theme_minimal()
 
-p3 <- ggplot(formant_df, aes(x = time)) +
+p3 <- ggplot(formant_wide, aes(x = time)) +
   geom_line(aes(y = F1, color = "F1")) +
   geom_line(aes(y = F2, color = "F2")) +
   labs(title = "Formants", x = "Time (s)", y = "Hz") +
@@ -554,19 +535,19 @@ for (name in names(plots)) {
 
 # Summary
 
-The `pladdrr` package provides a comprehensive suite of visualization functions leveraging R's `ggplot2` ecosystem. Key advantages include:
+This vignette covered:
 
-- **Voice quality metrics**: AVQI and DSI with multi-panel diagnostic reports
-- **Cepstral analysis**: PowerCepstrum, PowerCepstrogram, and CPP time series
-- **Formant analysis**: Vowel spaces and formant trajectories
-- **Prosodic features**: Pitch and intensity contours
-- **Annotation**: TextGrid tier visualization
-- **Spectral analysis**: Spectrograms, spectra, and LTAS
+- **Cepstral analysis**: `plot_powercepstrum()`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`
+- **Formant analysis**: F1-F2 formant space and F1-F3 trajectories from `Formant$as_data_frame()`
+- **Prosodic features**: pitch and intensity contours from `Pitch$as_data_frame()` and `Intensity$as_data_frame()`
+- **Annotation**: TextGrid tier display via `autoplot.TextGrid()` and `autolayer.TextGrid()`
+- **Spectral analysis**: spectrograms, spectra, and LTAS from the corresponding `as_matrix()`/`as_data_frame()` methods
 
-All plots are fully customizable using standard `ggplot2` syntax and can be saved in publication-quality formats.
+All examples produce ordinary `ggplot2` objects that can be themed, combined with `gridExtra::grid.arrange()`, and saved with `ggsave()`.
 
 For more information on specific acoustic analyses, see:
 
 - `vignette("getting-started")` - Basic workflow
 - `vignette("integrated-phonetic-analysis")` - Multi-parameter analysis
 - `vignette("textgrid-workflows")` - Annotation-based analysis
+- `vignette("autoplot-autolayer")` - Full reference for the `autoplot`/`autolayer` methods

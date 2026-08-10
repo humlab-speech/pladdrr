@@ -23,7 +23,7 @@ This vignette demonstrates the complete **analysis-resynthesis workflow** in pla
 1. **FormantPath** - Robust formant extraction with multiple ceiling candidates
 2. **KlattGrid** - Parametric speech synthesis from formant specifications
 
-This workflow enables powerful speech research applications:
+This workflow supports several speech research applications:
 
 - **Voice morphing** - Transform speaker characteristics
 - **Perceptual experiments** - Manipulate acoustic parameters systematically
@@ -403,8 +403,8 @@ f1_a <- vowel_space[vowel_space$vowel == "a", "extracted_f1"]
 f1_i <- vowel_space[vowel_space$vowel == "i", "extracted_f1"]
 f1_u <- vowel_space[vowel_space$vowel == "u", "extracted_f1"]
 
-cat(sprintf("  ✓ /a/ F1 > /i/ F1: %s\n", f1_a > f1_i))
-cat(sprintf("  ✓ /a/ F1 > /u/ F1: %s\n", f1_a > f1_u))
+cat(sprintf("  /a/ F1 > /i/ F1: %s\n", f1_a > f1_i))
+cat(sprintf("  /a/ F1 > /u/ F1: %s\n", f1_a > f1_u))
 
 # F2: /i/ (front) > /a/ (central) > /u/ (back)
 cat("\nF2 ordering (front to back):\n")
@@ -419,8 +419,8 @@ f2_i <- vowel_space[vowel_space$vowel == "i", "extracted_f2"]
 f2_a <- vowel_space[vowel_space$vowel == "a", "extracted_f2"]
 f2_u <- vowel_space[vowel_space$vowel == "u", "extracted_f2"]
 
-cat(sprintf("  ✓ /i/ F2 > /a/ F2: %s\n", f2_i > f2_a))
-cat(sprintf("  ✓ /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
+cat(sprintf("  /i/ F2 > /a/ F2: %s\n", f2_i > f2_a))
+cat(sprintf("  /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
 ```
 
 ## Advanced: Voice Morphing
@@ -598,7 +598,7 @@ mean(accuracy_df$error_f1, na.rm = TRUE)  # Mean F1 error in Hz
 
 ## Best Practices
 
-### ✓ DO
+### DO
 
 1. **Use FormantPath for analysis** - More robust than single-ceiling methods
 2. **Extract pitch from original** - Use `to_pitch()` for realistic F0
@@ -608,7 +608,7 @@ mean(accuracy_df$error_f1, na.rm = TRUE)  # Mean F1 error in Hz
 6. **Compare spectrograms** - Visual inspection reveals synthesis quality
 7. **Document parameters** - Record all synthesis settings for reproducibility
 
-### ✗ DON'T
+### DON'T
 
 1. **Don't use single ceiling for diverse speakers** - Use FormantPath instead
 2. **Don't ignore bandwidth** - Critical for natural synthesis

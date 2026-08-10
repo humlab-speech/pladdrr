@@ -59,7 +59,7 @@ sound = pm.Sound("audio.wav")
 ```{r}
 library(pladdrr)
 
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
 
 ### Pitch Extraction
@@ -75,7 +75,7 @@ mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ```
@@ -92,7 +92,7 @@ f2 = pm.praat.call(formant, "Get value at time", 2, 0.5, "Hertz", "Linear")
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("vowel.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
   max_number_of_formants = 5,
@@ -115,7 +115,7 @@ mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01, subtract_mean = TRUE)
 mean_int <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
 ```
@@ -131,7 +131,7 @@ cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
 ```
@@ -166,7 +166,8 @@ df.to_csv('results.csv', index=False)
 ```{r}
 library(pladdrr)
 
-files <- list.files(pattern = "\\.wav$", full.names = TRUE)
+files <- list.files(system.file("extdata", package = "pladdrr"),
+                    pattern = "\\.wav$", full.names = TRUE)
 
 results <- lapply(files, function(filepath) {
   sound <- Sound$new(filepath)
@@ -206,7 +207,7 @@ df = pd.DataFrame({'time': times, 'frequency': frequencies})
 
 **pladdrr:**
 ```{r}
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 
 # Direct conversion to data frame
@@ -243,7 +244,7 @@ plt.show()
 library(pladdrr)
 library(ggplot2)
 
-sound <- Sound$new("audio.wav")
+sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 pitch_data <- pitch$as_data_frame()
 
@@ -286,14 +287,14 @@ analyze_voice <- function(filename) {
   pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
   mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
-  harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, minimum_pitch = 75, 
+  harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75,
                                          silence_threshold = 0.1, periods_per_window = 1.0)
   mean_hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
   
-  pointprocess <- sound$to_pointprocess_periodic_cc(minimum_pitch = 75, maximum_pitch = 600)
-  jitter <- pointprocess$get_jitter_local(from_time = 0, to_time = 0, 
-                                          period_floor = 0.0001, period_ceiling = 0.02, 
-                                          maximum_period_factor = 1.3)
+  pointprocess <- sound$to_pointprocess_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  jitter <- pointprocess$get_jitter_local(from_time = 0, to_time = 0,
+                                          period_floor = 0.0001, period_ceiling = 0.02,
+                                          max_period_factor = 1.3)
   
   list(
     mean_f0 = mean_f0,
@@ -320,12 +321,16 @@ df['speaker'] = ['A', 'B', 'C']
 ### pladdrr + tidyverse
 
 ```{r}
+# Requires the dplyr, purrr, and tidyr packages (not pladdrr dependencies;
+# install separately if needed)
 library(pladdrr)
 library(dplyr)
 library(purrr)
+library(tidyr)
 
+wav <- system.file("extdata", "test.wav", package = "pladdrr")
 results <- tibble(
-  file = c('file1.wav', 'file2.wav', 'file3.wav'),
+  file = c(wav, wav, wav),
   speaker = c('A', 'B', 'C')
 ) %>%
   mutate(
@@ -384,10 +389,9 @@ results <- tibble(
 
 ## Conclusion
 
-While both Parselmouth and pladdrr provide access to Praat's functionality, pladdrr offers:
-- More direct, object-oriented interface
-- Better IDE support and documentation
-- Superior performance
-- Seamless R ecosystem integration
+Both Parselmouth and pladdrr provide access to Praat's functionality.
+pladdrr differs in offering a direct, object-oriented (R6) interface with
+named parameters, instead of a string-based `praat.call()` dispatcher, and
+integrates with the R ecosystem (tidyverse, ggplot2).
 
-The transition from Parselmouth to pladdrr is straightforward: replace `praat.call()` with direct method calls using consistent naming conventions.
+The transition from Parselmouth to pladdrr mainly involves replacing `praat.call()` calls with direct method calls, using the naming conventions shown above.

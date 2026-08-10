@@ -147,7 +147,7 @@ interp$get_variable("names$#")
 
 ### Using Variables in Expressions
 
-The real power comes from using variables in expressions:
+Variables can be used directly in expressions:
 
 ```{r variables-in-expressions}
 # Set some variables
@@ -265,7 +265,7 @@ stats$set_variable("sd", stdev)
 
 - **Standalone functions** (`praat_eval_*`) create temporary interpreters - use for one-off calculations
 - **Persistent interpreters** (`PraatInterpreter$new()`) reuse state - use for workflows with multiple related operations
-- **Variable overhead** is minimal - Praat's interpreter is highly optimized
+- **Variable overhead** is minimal
 - **Type conversion** between R and Praat is automatic and efficient
 
 ## Best Practices
@@ -284,14 +284,14 @@ stats$set_variable("sd", stdev)
 
 The Praat interpreter integration provides:
 
-- ✅ Full access to Praat's expression evaluation
-- ✅ All 5 variable types supported
-- ✅ Persistent state management
-- ✅ Automatic type detection and conversion
-- ✅ Object list queries
-- ✅ Clean R6 and functional APIs
+- Access to Praat's expression evaluation
+- All 5 variable types (numeric, string, vector, matrix, string array)
+- Persistent state management via `PraatInterpreter`
+- Automatic type detection and conversion between R and Praat
+- Object list queries
+- R6 and standalone functional APIs
 
-For phonetic analysis workflows, combine the interpreter with pladdrr's direct API functions for maximum flexibility.
+The interpreter can be combined with pladdrr's other API functions for phonetic analysis workflows.
 
 ## See Also
 

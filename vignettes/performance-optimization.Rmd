@@ -86,8 +86,10 @@ a single call is not expected to help — measure your own workload with
 ```{r tier1}
 library(pladdrr)
 
+wav_file <- system.file("extdata", "test.wav", package = "pladdrr")
+
 # Load sound
-sound <- Sound("voice.wav")
+sound <- Sound(wav_file)
 
 # Extract pitch (returns Pitch object)
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
@@ -97,7 +99,7 @@ mean_f0 <- pitch$get_mean(0, 0, "hertz")
 sd_f0 <- pitch$get_standard_deviation(0, 0, "hertz")
 
 # Method chaining
-formants <- sound$to_formant()$smooth()
+mean_f1 <- sound$to_formant()$get_mean(1, 0, 0, "hertz")
 ```
 
 Adequate for most use cases. Only reach for Tier 2/3 if profiling your own
@@ -178,6 +180,11 @@ stats <- get_pitch_stats_direct(pitch)
 Process multiple sounds in a single C++ call:
 
 ```{r tier3_batch}
+# In practice `files` would be a vector of paths to distinct recordings, e.g.
+# list.files("audio/", pattern = "\\.wav$", full.names = TRUE). This example
+# repeats the bundled test file to keep the vignette self-contained.
+files <- rep(wav_file, 3)
+
 # Load multiple sounds
 sounds <- lapply(files, Sound)
 
@@ -220,8 +227,10 @@ f0_values <- get_pitch_at_times(pitch, times)
 Distribute file-level work across multiple CPU cores:
 
 ```{r parallel}
-# Analyze files in parallel
-files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
+# Analyze files in parallel. In practice `files` is a vector of paths to
+# distinct recordings, e.g. list.files("audio/", pattern = "\\.wav$",
+# full.names = TRUE); this example repeats the bundled test file.
+files <- rep(wav_file, 4)
 
 # Simple parallel analysis
 results <- analyze_files_parallel(files, function(sound) {
@@ -230,12 +239,12 @@ results <- analyze_files_parallel(files, function(sound) {
     mean_f0 = pitch$get_mean(0, 0, "hertz"),
     sd_f0 = pitch$get_standard_deviation(0, 0, "hertz")
   )
-}, n_cores = 4)
+}, n_cores = 2)
 
 # Convenience functions
-pitches <- extract_pitch_parallel(files, n_cores = 4)
-formants <- extract_formant_parallel(files, n_cores = 4)
-intensities <- extract_intensity_parallel(files, n_cores = 4)
+pitches <- extract_pitch_parallel(files, n_cores = 2)
+formants <- extract_formant_parallel(files, n_cores = 2)
+intensities <- extract_intensity_parallel(files, n_cores = 2)
 ```
 
 **Parallel functions:**
@@ -257,7 +266,7 @@ file size, and workload to be worth quoting here.
 ### Example 1: Single File Analysis
 
 ```{r example1}
-sound <- Sound("voice.wav")
+sound <- Sound(wav_file)
 
 # Tier 1: Standard API
 system.time({
@@ -280,7 +289,10 @@ system.time({
 ### Example 2: Batch Processing
 
 ```{r example2}
-files <- list.files("audio/", full.names = TRUE)[1:100]
+# In practice `files` is a vector of paths to distinct recordings, e.g.
+# list.files("audio/", full.names = TRUE)[1:100]; this example repeats the
+# bundled test file to keep the vignette self-contained and fast to build.
+files <- rep(wav_file, 20)
 
 # Tier 1: Sequential
 system.time({
@@ -296,9 +308,9 @@ system.time({
 })
 # scales with cores; measure on your own data
 
-# Tier 3: Parallel (4 cores)
+# Tier 3: Parallel (2 cores)
 system.time({
-  pitches <- extract_pitch_parallel(files, n_cores = 4)
+  pitches <- extract_pitch_parallel(files, n_cores = 2)
 })
 # includes file I/O; measure on your own data
 ```
@@ -306,7 +318,7 @@ system.time({
 ### Example 3: Formant Tracking Over Time
 
 ```{r example3}
-sound <- Sound("vowel.wav")
+sound <- Sound(wav_file)
 formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
 
@@ -320,7 +332,7 @@ system.time({
 
 # Tier 3: Vectorized
 system.time({
-  f1_values <- get_formants_at_times(formant, times, formant_number = 1)
+  f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)
 })
 # one R->C crossing for the whole vector — this is where batching pays off
 ```
@@ -378,14 +390,15 @@ formants <- get_formants_direct(formant, time = 0.5)
 ### 3. Reuse Pointers in Loops
 
 ```{r best_practice3}
-# Avoid: Extract pointer every iteration
+# Avoid: Repeated single-value queries in a loop
 for (time in times) {
   val <- get_pitch_value_direct(pitch, time)
 }
 
-# Prefer: Extract once, use a vectorized query
-pitch_ptr <- pitch$.xptr
-values <- get_pitch_at_times(pitch_ptr, times)
+# Prefer: One call for the whole vector of times
+# (get_pitch_at_times() takes the Pitch object itself, not an XPtr — it
+# extracts the pointer internally)
+values <- get_pitch_at_times(pitch, times)
 ```
 
 ### 4. Choose a Core Count That Fits Your Workload
@@ -398,9 +411,9 @@ before committing to a setting for a full run:
 ```{r best_practice4}
 # Test different core counts on a subset
 benchmark_results <- benchmark_parallel(
-  files[1:20],  # Use subset for a quick test
+  files[1:10],  # Use subset for a quick test
   function(s) s$to_pitch()$get_mean(0, 0, "hertz"),
-  core_counts = c(1, 2, 4, 8)
+  core_counts = c(1, 2)  # extend to c(1, 2, 4, 8) etc. up to your machine's cores
 )
 
 print(benchmark_results)
@@ -410,8 +423,19 @@ print(benchmark_results)
 ### 5. Combine Batch and Parallel Processing
 
 ```{r best_practice5}
-# Parallel processing with batch operations inside each worker
+# Define the per-file constants *inside* the worker function rather than
+# capturing them from the enclosing environment. On Windows (and on macOS,
+# where analyze_files_parallel() also uses a PSOCK cluster to avoid known
+# fork/event-loop issues), each worker is a separate R process that only
+# receives the function and file path — free variables referenced from the
+# calling environment are not automatically exported and would error with
+# "object not found" unless passed via clusterExport() or defined locally
+# like this.
 analyze_files_parallel(files, function(sound) {
+  start_times <- c(0.1, 0.3)
+  end_times <- c(0.2, 0.4)
+  analysis_times <- seq(0.01, 0.05, by = 0.01)
+
   # Use batch operations within each worker
   parts <- sound$extract_parts_batch(start_times, end_times)
   formants <- sound_to_formant_batch(parts)
@@ -420,7 +444,7 @@ analyze_files_parallel(files, function(sound) {
   lapply(formants, function(f) {
     get_formants_at_times(f, analysis_times)
   })
-}, n_cores = 4)
+}, n_cores = 2)
 ```
 
 ---

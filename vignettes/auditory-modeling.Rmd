@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-pladdrr provides comprehensive auditory modeling capabilities through the **Cochleagram** and **Excitation** objects. These tools allow you to analyze sounds from a perceptual perspective, modeling how the human auditory system processes acoustic information.
+pladdrr provides auditory modeling through the **Cochleagram** and **Excitation** objects. These model how the human auditory system processes acoustic information, as opposed to a purely physical (spectral) analysis.
 
 ### Key Concepts
 
@@ -40,7 +40,7 @@ The cochleagram represents sound on a frequency scale that matches the human coc
 
 ```{r cochleagram-basic}
 # Load or create a sound
-sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
+sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 44100)
 
 # Create cochleagram
 cochlea <- sound$to_cochleagram(
@@ -81,14 +81,15 @@ print(paste("Excitation at 440 Hz:", round(excitation_440hz, 4)))
 
 ### Visualizing Cochleagrams
 
-```{r cochleagram-plot, eval=FALSE}
+```{r cochleagram-plot}
 # Export to matrix for plotting
-cochlea_matrix <- cochlea$as_matrix()
+cochlea_matrix <- as.matrix(cochlea$as_matrix())
 
-# Convert to long format for ggplot2
-library(reshape2)
-df_long <- melt(as.matrix(cochlea_matrix))
-names(df_long) <- c("Time", "Bark", "Excitation")
+# Convert to long format for ggplot2 (rows = frequency bands, columns = time frames)
+times <- sapply(seq_len(cochlea$get_number_of_frames()), cochlea$get_time_from_column)
+barks <- sapply(seq_len(cochlea$get_number_of_frequency_bands()), cochlea$get_frequency_from_row)
+df_long <- expand.grid(Bark = barks, Time = times)
+df_long$Excitation <- as.vector(cochlea_matrix)
 
 # Plot
 ggplot(df_long, aes(x = Time, y = Bark, fill = Excitation)) +
@@ -107,7 +108,7 @@ ggplot(df_long, aes(x = Time, y = Bark, fill = Excitation)) +
 
 For more realistic auditory modeling, use the EDB (Ear-Drum-Brain) method which includes synaptic processing:
 
-```{r cochleagram-edb, eval=FALSE}
+```{r cochleagram-edb}
 cochlea_edb <- sound$to_cochleagram_edb(
   dtime = 0.01,
   dfreq = 0.1,
@@ -179,14 +180,14 @@ Higher distance values indicate sounds that are more perceptually different.
 
 Compare cochleagrams of normal and impaired hearing:
 
-```{r hearing-loss, eval=FALSE}
+```{r hearing-loss}
 # Original speech sound
-sound_original <- Sound$new("speech.wav")
+sound_original <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# Simulate high-frequency hearing loss by filtering
-sound_filtered <- sound_original$clone()
-# Apply low-pass filter to simulate hearing loss
-# (filter implementation would go here)
+# In practice, apply a low-pass filter to sound_filtered here to simulate
+# high-frequency hearing loss (Sound objects have no clone() method, so
+# start from a fresh load rather than copying sound_original)
+sound_filtered <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Create cochleagrams
 cochlea_normal <- sound_original$to_cochleagram()
@@ -202,16 +203,22 @@ difference <- cochlea_normal$get_difference(
 print(paste("Hearing loss impact (distance):", round(difference, 4)))
 ```
 
+Without an actual filtering step, `sound_original` and `sound_filtered` are
+identical here, so `difference` is 0; apply a real low-pass filter to
+`sound_filtered` to get a non-zero result.
+
 ### Speech Intelligibility Prediction
 
-Excitation patterns can predict speech intelligibility:
+Excitation patterns can predict speech intelligibility. This requires two
+recordings of the same material (clean and noisy); the pattern below uses
+the bundled test file for both, so `distance` will be 0.
 
-```{r intelligibility, eval=FALSE}
+```{r intelligibility}
 # Clean speech
-speech_clean <- Sound$new("clean_speech.wav")
+speech_clean <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
-# Noisy speech
-speech_noisy <- Sound$new("noisy_speech.wav")
+# Noisy speech (in practice, a separate recording made in noise)
+speech_noisy <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Get excitation patterns
 exc_clean <- speech_clean$to_spectrum()$to_excitation()
@@ -221,21 +228,24 @@ exc_noisy <- speech_noisy$to_spectrum()$to_excitation()
 distance <- exc_clean$get_distance(exc_noisy)
 
 # Lower distance = better preserved intelligibility
+distance
 ```
 
 ### Loudness Recruitment Assessment
 
 Track loudness perception across intensity levels:
 
-```{r loudness-recruitment, eval=FALSE}
-# Create sounds at different levels
-intensities <- seq(40, 80, by = 10)  # dB SPL
+```{r loudness-recruitment}
+# Create sounds at different relative levels by scaling tone amplitude
+intensities <- seq(40, 80, by = 10)  # relative dB SPL
 loudnesses <- numeric(length(intensities))
 
 for (i in seq_along(intensities)) {
-  # Create sound at specific level
-  sound <- create_calibrated_sound(intensities[i])
-  
+  # Approximate a level in dB by scaling amplitude (20*log10(amplitude))
+  amplitude <- min(0.99, 10 ^ ((intensities[i] - 80) / 20))
+  sound <- Sound$create_tone(frequency = 1000, duration = 0.3,
+                             amplitude = amplitude, sampling_rate = 44100)
+
   # Measure perceptual loudness
   excitation <- sound$to_spectrum()$to_excitation()
   loudnesses[i] <- excitation$get_loudness()
@@ -304,11 +314,11 @@ This method can be more robust than LPC for:
 
 ### Performance Considerations
 
-```{r performance, eval=FALSE}
+```{r performance}
 # For batch processing, reuse objects when possible
-sounds <- list(sound1, sound2, sound3)
+sounds <- list(sound1, sound2, sound_vowel)
 
-# Good: vectorized approach
+# Vectorized approach: build the cochleagrams once, then query all of them
 cochleagrams <- lapply(sounds, function(s) {
   s$to_cochleagram(dt = 0.01, df = 0.1)
 })
@@ -323,7 +333,7 @@ loudnesses <- sapply(cochleagrams, function(c) {
 
 Cochleagrams and excitation patterns can be large. Clean up when done:
 
-```{r memory, eval=FALSE}
+```{r memory}
 # Process and extract only what you need
 cochlea <- sound$to_cochleagram()
 loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {

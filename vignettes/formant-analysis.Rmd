@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-pladdrr provides multiple methods for formant extraction, each with different strengths and optimal use cases. This vignette explains when to use each method, how to troubleshoot formant detection issues, and best practices for robust formant analysis.
+pladdrr provides multiple methods for formant extraction. This vignette covers when to use each method, how to troubleshoot formant detection issues, and parameter tuning for formant analysis.
 
 ```{r setup}
 library(pladdrr)
@@ -29,12 +29,12 @@ library(ggplot2)
 
 ### Available Methods
 
-1. **Burg** (`to_formant_burg`) - Most common, recommended for general use
+1. **Burg** (`to_formant_burg`) - LPC-based, recommended for general use
 2. **Keep All** (`to_formant_keepall`) - Retains all LPC formants without filtering
-3. **From Excitation** (`excitation$to_formant`) - Perceptual-based extraction
-
-**Note**: Willems and Split-Levinson methods are currently not supported due to 
-threading infrastructure limitations.
+3. **Robust** (`to_formant_robust`) - Outlier-resistant iterative refit of Burg
+4. **Willems** (`to_formant_willems`) - Alternative LPC formant tracker
+5. **Split-Levinson** (`to_formant_sl`) - LPC via split-Levinson recursion
+6. **From Excitation** (`excitation$to_formant`) - Perceptual-based extraction, via `Spectrum$to_excitation()` or `Cochleagram$to_excitation()`
 
 ### Method Comparison
 
@@ -42,6 +42,7 @@ threading infrastructure limitations.
 |--------|-------|----------|----------|
 | **Burg** | Fast | Good | General speech analysis (recommended) |
 | **Keep All** | Fast | Variable | Research, exploration, comparison |
+| **Robust** | Slower | Good | Recordings with occasional outlier frames |
 | **Excitation** | Slow | Good | Noisy/breathy speech |
 
 ## 1. Burg's Method (Standard)
@@ -49,9 +50,9 @@ threading infrastructure limitations.
 The most commonly used method, based on the Burg algorithm for LPC analysis:
 
 ```{r burg-basic, error=TRUE}
-# Create a synthesized vowel sound (pure tones don't have formants!)
-# KlattGrid synthesizes speech with realistic formant structure
-# Use longer duration (1s) for robust analysis
+# Create a synthesized vowel sound (pure tones don't have formants)
+# KlattGrid synthesizes speech with formant structure
+# Use a longer duration (1s) for stable analysis
 kg <- tryCatch({
   KlattGrid_createFromVowel(
     duration = 1.0,          # Longer duration for stable analysis
@@ -102,24 +103,21 @@ if (!is.null(kg)) {
 
 ### When to Use Burg
 
-✅ **Use Burg for**:
-- Standard speech analysis (recommended)
-- When you need fast processing
+Use Burg for:
+- Standard speech analysis (recommended default)
+- Fast processing
 - General vowel formant tracking
 - Batch processing of many files
-- Production pipelines
 
-❌ **Consider alternatives for**:
+Consider alternatives for:
 - Very noisy recordings (try Excitation-based method)
-- Exploratory research (consider Keep All to see all formants)
+- Exploratory research (consider Keep All to see all detected formants)
 
 ## 2. Keep All Method
 
 Retains all detected LPC formants without filtering:
 
-```{r keepall, eval=FALSE}
-# Note: Keep All method also works with synthesized vowels
-# Currently disabled due to polynomial root finding implementation
+```{r keepall}
 formant_keepall <- sound$to_formant_keepall(
   time_step = 0.005,
   max_formants = 5,                    # Maximum formants to track
@@ -127,27 +125,23 @@ formant_keepall <- sound$to_formant_keepall(
   window_length = 0.025,
   pre_emphasis_from = 50
 )
+formant_keepall
 ```
-
-**Note:** The `to_formant_keepall()` method is currently under development. Use `to_formant_burg()` for stable formant extraction.
 
 ### When to Use Keep All
 
-✅ **Use Keep All for**:
+Use Keep All for:
 - Exploratory analysis
 - Research applications
-- When you want all detected formants
-- Comparison with standard Burg method
+- Comparison with the Burg method
 
-❌ **Avoid Keep All for**:
-- Production pipelines (less stable)
-- When you need only specific formants
+Avoid Keep All for:
+- Cases where you need only specific formants filtered out
 
 ### Keep All vs. Burg Example
 
-```{r compare-keepall-burg, eval=FALSE}
+```{r compare-keepall-burg}
 # Same sound, both methods
-# Note: to_formant_keepall() currently under development
 formant_b <- sound$to_formant_burg(max_formants = 4)
 formant_k <- sound$to_formant_keepall(max_formants = 4)
 
@@ -172,9 +166,23 @@ if (!any(is.na(c(f1_burg, f1_keep, f2_burg, f2_keep)))) {
 
 ## 3. Alternative Methods (Advanced)
 
-**Note**: Some alternative formant extraction methods (Willems, Split-Levinson) are 
-currently not supported due to threading infrastructure limitations. Use Burg method
-(recommended) or Keep All method instead.
+`to_formant_willems()` and `to_formant_sl()` (split-Levinson) provide alternative
+LPC-based extraction. `to_formant_robust()` iteratively refits Burg while down-weighting
+outlier frames (`num_std_dev`, `max_iterations`). Burg (recommended) or Keep All cover
+most use cases; these are for comparison or specific research needs.
+
+```{r robust-basic}
+formant_robust <- sound$to_formant_robust(
+  time_step = 0.005,
+  max_formants = 5,
+  max_frequency = 5500,
+  window_length = 0.025,
+  pre_emphasis_from = 50,
+  num_std_dev = 1.5,       # outlier threshold in standard deviations
+  max_iterations = 5
+)
+formant_robust
+```
 
 ## Choosing Formant Ceiling
 
@@ -349,7 +357,7 @@ formant <- sound$to_formant_burg(window_length = 0.050)
 3. **Check if sound is silent**:
 ```{r check-silent, eval=FALSE}
 intensity <- sound$to_intensity()
-mean_intensity <- intensity$get_mean(0, 0, unit = "dB")
+mean_intensity <- intensity$get_mean(0, 0)  # in dB
 # If < 30 dB, may be too quiet
 ```
 
@@ -361,11 +369,11 @@ mean_intensity <- intensity$get_mean(0, 0, unit = "dB")
 
 **Solutions**:
 
-1. **Use robust tracking** (if available):
+1. **Use robust tracking**:
 ```{r robust, eval=FALSE}
 formant <- sound$to_formant_robust(
-  smoothing_window = 0.05,      # Smooth over 50 ms
-  max_formant_jump = 200        # Max 200 Hz jump
+  num_std_dev = 1.5,       # outlier threshold in standard deviations
+  max_iterations = 5       # refit iterations
 )
 ```
 
@@ -408,15 +416,17 @@ bandwidth <- formant$get_bandwidth_at_time(2, 0.1, unit = "hertz")
 
 ### Extracting F1-F2 for Vowel Plot
 
-```{r vowel-space, eval=FALSE}
-# Analyze multiple vowel tokens
-vowels <- c("vowel_a.wav", "vowel_e.wav", "vowel_i.wav",
-            "vowel_o.wav", "vowel_u.wav")
+```{r vowel-space}
+# Analyze multiple vowel tokens. In practice, pass paths to your own
+# recordings of each vowel; the test file is reused here for illustration.
+wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
+vowels <- rep(wav_path, 3)
+vowel_labels <- c("token1", "token2", "token3")
 
 vowel_data <- data.frame()
 
-for (file in vowels) {
-  sound <- Sound$new(file)
+for (i in seq_along(vowels)) {
+  sound <- Sound$new(vowels[i])
   formant <- sound$to_formant_burg()
   
   # Extract at vowel midpoint
@@ -427,7 +437,7 @@ for (file in vowels) {
   f2 <- formant$get_value_at_time(2, midpoint, unit = "hertz")
   
   vowel_data <- rbind(vowel_data, data.frame(
-    vowel = tools::file_path_sans_ext(basename(file)),
+    vowel = vowel_labels[i],
     F1 = f1,
     F2 = f2
   ))
@@ -446,8 +456,8 @@ ggplot(vowel_data, aes(x = F2, y = F1, label = vowel)) +
 
 ### Formant Tracking Over Time
 
-```{r formant-tracking, eval=FALSE}
-sound <- Sound$new("diphthong.wav")
+```{r formant-tracking}
+sound <- Sound$new(wav_path)
 formant <- sound$to_formant_burg(time_step = 0.005)
 
 # Extract F1 and F2 across time
@@ -467,7 +477,7 @@ df <- data.frame(
 )
 
 ggplot(df, aes(x = Time, y = Frequency, color = Formant)) +
-  geom_line(size = 1) +
+  geom_line(linewidth = 1) +
   labs(title = "Formant Tracks",
        x = "Time (s)", y = "Frequency (Hz)") +
   theme_minimal()
@@ -475,12 +485,11 @@ ggplot(df, aes(x = Time, y = Frequency, color = Formant)) +
 
 ## Advanced: Formant from Excitation
 
-For noisy or breathy speech, excitation-based formant extraction can be more robust:
+For noisy or breathy speech, excitation-based formant extraction is an alternative:
 
-```{r excitation-formant, eval=FALSE}
+```{r excitation-formant}
 # For noisy recordings, use excitation-based formant extraction
-# Load your sound file:
-# sound <- Sound$new("noisy_speech.wav")
+sound <- Sound$new(wav_path)
 
 # Method 1: Via Spectrum
 spectrum <- sound$to_spectrum()

@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-This vignette demonstrates a complete vowel acoustics research workflow using the **pladdrr** package. Topics covered:
+This vignette demonstrates a vowel acoustics research workflow using the **pladdrr** package. Topics covered:
 
 - **Formant extraction** with optimal parameters
 - **Multi-point measurements** (onset, midpoint, offset)
@@ -30,7 +30,7 @@ This vignette demonstrates a complete vowel acoustics research workflow using th
 - **F1-F2 plotting** preparation
 - **Integration with ggplot2** for publication-quality graphics
 
-This workflow is essential for sociolinguistic variation studies, L2 acquisition research, and dialectology.
+This workflow is used in sociolinguistic variation studies, L2 acquisition research, and dialectology.
 
 **Note:** For comprehensive visualization examples including additional plot types (spectrograms, voice quality reports, cepstral analysis), see `vignette("visualization")`.
 
@@ -73,34 +73,75 @@ Speaker-intrinsic differences (vocal tract length, physiology) require normaliza
 
 ### Loading Audio and Annotations
 
-For this demonstration, we'll use synthetic data. In real research, load actual recordings:
+For this demonstration we synthesize each vowel token with `KlattGrid_createFromVowel()`,
+using typical American English formant targets, rather than loading a recording. In real
+research, load an actual recording with `Sound$new("path/to/recording.wav")` and its
+annotation with `TextGrid$new("path/to/recording.TextGrid")`. The package ships one example
+pair for experimentation: `system.file("extdata", "test.wav", package = "pladdrr")` and
+`system.file("extdata", "test.TextGrid", package = "pladdrr")`.
 
 ```{r load_data}
 library(pladdrr)
+library(ggplot2)
 
-# Create synthetic audio (in real research: Sound$new("recording.wav"))
-sound <- Sound$create_tone(
-  duration = 10.0,
-  frequency = 100,
-  sampling_rate = 16000,
-  amplitude = 0.3
-)
-
-# Create TextGrid with vowel annotations
-# In real research: TextGrid$new("annotation.TextGrid")
-tg <- TextGrid$create(
-  tmin = 0,
-  tmax = 10,
-  tier_names = "vowels context",
-  point_tiers = ""  # Both are interval tiers
-)
+sampling_rate <- 44100
 
 # Define vowel segments (start, end, label, word context)
 vowel_segments <- data.frame(
   start = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5),
   end = c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
   vowel = c("i", "e", "a", "o", "u", "i", "a", "e", "u"),
-  word = c("beet", "bait", "bat", "boat", "boot", "beat", "father", "bet", "boot")
+  word = c("beet", "bait", "bat", "boat", "boot", "beat", "father", "bet", "boot"),
+  stringsAsFactors = FALSE
+)
+
+# Approximate formant targets (Hz) used only to synthesize distinguishable
+# demonstration tokens
+vowel_targets <- list(
+  i = c(f1 = 280, f2 = 2250, f3 = 3000),
+  e = c(f1 = 400, f2 = 2100, f3 = 2700),
+  a = c(f1 = 700, f2 = 1200, f3 = 2600),
+  o = c(f1 = 500, f2 =  900, f3 = 2600),
+  u = c(f1 = 300, f2 =  850, f3 = 2500)
+)
+
+make_silence <- function(duration) {
+  Sound$from_values(rep(0, round(duration * sampling_rate)), sampling_rate = sampling_rate)
+}
+
+# Build a single Sound by concatenating silence and synthesized vowels so
+# that the segment times in vowel_segments line up with the audio
+parts <- list(make_silence(vowel_segments$start[1]))
+for (i in seq_len(nrow(vowel_segments))) {
+  target <- vowel_targets[[vowel_segments$vowel[i]]]
+  duration <- vowel_segments$end[i] - vowel_segments$start[i]
+  kg <- KlattGrid_createFromVowel(
+    duration = duration, f0start = 150,
+    f1 = unname(target["f1"]), b1 = 50,
+    f2 = unname(target["f2"]), b2 = 100,
+    f3 = unname(target["f3"]), b3 = 150
+  )
+  parts[[length(parts) + 1]] <- kg$to_sound()
+
+  gap <- if (i < nrow(vowel_segments)) {
+    vowel_segments$start[i + 1] - vowel_segments$end[i]
+  } else {
+    0.5
+  }
+  parts[[length(parts) + 1]] <- make_silence(gap)
+}
+
+sound <- parts[[1]]
+for (i in 2:length(parts)) {
+  sound <- sound$concatenate(parts[[i]])
+}
+
+# Create TextGrid with vowel annotations
+tg <- TextGrid$create(
+  tmin = 0,
+  tmax = sound$get_total_duration(),
+  tier_names = "vowels context",
+  point_tiers = ""  # Both are interval tiers
 )
 
 # Add boundaries and labels
@@ -114,6 +155,13 @@ for (i in 1:nrow(vowel_segments)) {
 }
 
 cat("Prepared", nrow(vowel_segments), "vowel tokens\n")
+```
+
+The `autoplot()`/`autolayer()` methods for `TextGrid` (see `vignette("autoplot-autolayer")`)
+give a quick view of the annotation tier:
+
+```{r plot_textgrid, fig.height=3}
+autoplot(tg)
 ```
 
 ## Part 2: Formant Extraction
@@ -439,12 +487,14 @@ TukeyHSD(f1_model)
 
 ### Mixed-Effects Models
 
-For multi-speaker data with repeated measures:
+For multi-speaker data with repeated measures, add a `speaker` column and fit a random
+intercept (requires the `lme4` package, not a pladdrr dependency):
 
 ```{r mixed_effects, eval=FALSE}
 library(lme4)
 
-# Random intercept for speaker
+# vowel_features here must include a speaker column, e.g.
+# vowel_features$speaker <- ...
 model <- lmer(f1_50 ~ vowel + (1 | speaker), data = vowel_features)
 summary(model)
 ```
@@ -512,11 +562,17 @@ cat("Expansion ratio:", clear_area / casual_area, "\n")
 - Too low: Missing formants, tracking failures
 - Test with known tokens and adjust iteratively
 
-```{r parameter_testing, eval=FALSE}
+```{r parameter_testing}
 # Test multiple ceilings
 ceilings <- c(5000, 5500, 6000, 6500)
 for (ceiling in ceilings) {
-  formant <- sound$to_formant_burg(max_frequency = ceiling, ...)
+  formant <- sound$to_formant_burg(
+    time_step = time_step,
+    max_formants = 5,
+    max_frequency = ceiling,
+    window_length = window_length,
+    pre_emphasis_from = pre_emphasis
+  )
   # Manually check F1-F2 values for sanity
 }
 ```
@@ -562,13 +618,14 @@ vowel_features_clean <- vowel_features[
 
 ## Summary
 
-The **pladdrr** package provides a complete vowel acoustics pipeline:
+This vignette covered a vowel acoustics workflow built on pladdrr:
 
-- **Flexible formant extraction** with validated Praat algorithms
-- **Multi-point measurements** for trajectory analysis
-- **Built-in normalization** (or bring your own)
-- **Vowel space metrics** (area, dispersion)
-- **Seamless R integration** for analysis and visualization
+- Formant extraction with `to_formant_burg()` (Praat's Burg algorithm)
+- Multi-point measurement (onset/midpoint/offset) for trajectory analysis
+- Lobanov z-score normalization, implemented in R (not a pladdrr function)
+- Vowel space area via convex hull (`chull()`) and the shoelace formula, implemented in R
+- ggplot2-based plotting of the resulting data frame, plus `autoplot()`/`autolayer()`
+  for the `TextGrid` annotation tier
 
 For related workflows, see:
 
