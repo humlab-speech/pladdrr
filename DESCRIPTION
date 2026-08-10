@@ -18,7 +18,7 @@ Description: Provides direct access to Praat C implemented
     quality assessment, geometric operations (Polygon), and a persistent Praat
     script interpreter with bidirectional R-Praat object transfer.
 License: GPL-3 + file LICENSE
-URL: https://github.com/humlab-speech/pladdrr
+URL: https://github.com/humlab-speech/pladdrr, https://humlab-speech.github.io/pladdrr
 BugReports: https://github.com/humlab-speech/pladdrr/issues
 Encoding: UTF-8
 Depends:

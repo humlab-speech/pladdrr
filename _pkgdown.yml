@@ -80,6 +80,8 @@ navbar:
       - text: Developer Documentation
       - text: Migration Guide (v3.0)
         href: articles/migration-guide.html
+      - text: Migration Guide (v4.0)
+        href: articles/v4-migration-guide.html
       - text: Naming Conventions
         href: articles/naming-conventions.html
       - text: Batch Operations Guide
@@ -303,5 +305,6 @@ articles:
   desc: Package development and migration information
   contents:
   - articles/migration-guide
+  - articles/v4-migration-guide
   - articles/naming-conventions
   - articles/batch-operations-guide
