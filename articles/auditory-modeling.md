@@ -357,7 +357,7 @@ rm(cochlea)
 gc()  # Force garbage collection
 #>           used (Mb) gc trigger  (Mb) max used  (Mb)
 #> Ncells 1826500 97.6    3056454 163.3  3056454 163.3
-#> Vcells 3138697 24.0    8388608  64.0  8155550  62.3
+#> Vcells 3138697 24.0    8388608  64.0  8155546  62.3
 ```
 
 ## Comparison with Traditional Analysis
