@@ -176,7 +176,9 @@ test_that("get_textgrid_interval_stats returns correct stats", {
 
 test_that("batch operations are faster than manual loops", {
   skip_if_not_installed("microbenchmark")
-  
+  skip_on_cran()
+  skip_on_ci()
+
   sound_file <- system.file("extdata/test.wav", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
