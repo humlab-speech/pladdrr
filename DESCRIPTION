@@ -1,6 +1,6 @@
 Package: pladdrr
 Type: Package
-Title: Object-Oriented Direct Access to the Core Algorithms of Praat
+Title: Direct Access to the Core Algorithms of Praat in R
 Version: 5.0.0
 Date: 2026-08-07
 Authors@R: c(

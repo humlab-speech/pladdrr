@@ -2,11 +2,8 @@
 
 **Direct Access to Praat C Functionality from R**
 
-![Version](https://img.shields.io/badge/version-4.8.0-blue)
-![Performance](https://img.shields.io/badge/performance-optimized-brightgreen)
-![Rcpp Modules](https://img.shields.io/badge/modules-35-blue)
-![Coverage](https://img.shields.io/badge/Praat%20coverage-35%25-orange)
-![SIMD](https://img.shields.io/badge/SIMD-enabled-orange)
+![Version](https://img.shields.io/badge/version-5.0.0-blue)
+![Rcpp Modules](https://img.shields.io/badge/modules-38-blue)
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -15,7 +12,7 @@
 
 The `pladdrr` package provides R users with direct access to the functionalities of [Praat](https://praat.org) through a consistent Object Oriented interface, enabling conversion of Praat scripts to self-contained R implementations. 
 
-Direct access to Praat's C code base from R is achieved through Rcpp Modules and generated methods associated with Praat Objects of several types (35 Rcpp Modules in total):
+Direct access to Praat's C code base from R is achieved through Rcpp Modules and generated methods associated with Praat Objects of several types (38 Rcpp Modules in total):
 
 ### Speech Signal Analysis
 
@@ -46,7 +43,7 @@ To provide optimized processing, the package leverages optimizations from the C/
 - **Zero-copy operations**: Avoid unnecessary data copying when processing large files
 - **Streaming support**: Process files too large for memory with LongSound
 
-The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 offers batch and parallel processing for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [agents/AGENT_GUIDE.md]. 
+The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 offers batch and parallel processing for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [inst/agents/AGENT_GUIDE.md](inst/agents/AGENT_GUIDE.md). 
 
 ## Limitations and caveats
 
@@ -258,7 +255,7 @@ See `inst/examples/` for complete, real-world workflows:
 
 ## Implemented Objects
 
-The package includes 35 Rcpp modules covering 20+ Praat object types with 400+ methods:
+The package includes 38 Rcpp modules covering 20+ Praat object types with 500+ methods:
 
 ### Core Analysis
 - **Sound** (~50 methods) - Audio I/O, manipulation, filtering
@@ -299,7 +296,7 @@ See `vignette("integrated-phonetic-analysis")` for complete workflow examples.
 
 ### Vignettes
 
-Three comprehensive guides are available:
+16 vignettes are available covering analysis workflows, resynthesis, formant tracking, speech synthesis, and migration guides. Highlights:
 
 ```r
 # Complete phonetic analysis workflow
@@ -312,9 +309,11 @@ vignette("vowel-space-analysis", package = "pladdrr")
 vignette("textgrid-workflows", package = "pladdrr")
 ```
 
+Run `browseVignettes("pladdrr")` for the full list.
+
 ### Examples
 
-Nine complete, real-world examples in `inst/examples/`:
+Ten complete, real-world examples in `inst/examples/`:
 
 1. **Basic Analysis** - Pitch, formant, intensity extraction
 2. **Voice Quality** - HNR, jitter, shimmer measurements
@@ -323,8 +322,9 @@ Nine complete, real-world examples in `inst/examples/`:
 5. **Complete Workflow** - Multi-measure feature extraction
 6. **TextGrid Analysis** - Annotation-guided segmentation
 7. **Comprehensive Phonetic Analysis** - Integrated TextGrid + acoustics
-8. **Corpus Processing** - Large-scale batch analysis with benchmarking
+8. **TextGrid Corpus Analysis** - Large-scale batch analysis over annotated corpora
 9. **Vowel Space Analysis** - F1-F2 trajectories with normalization
+10. **CPPS Analysis** - Cepstral peak prominence smoothed workflows
 
 Run examples:
 ```r
