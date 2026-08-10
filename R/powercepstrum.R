@@ -96,9 +96,7 @@ NULL
                                                          interpolation = c("parabolic", "none", "cubic"),
                                                          qmin = 0.003, qmax = 0.04) {
   interpolation <- match.arg(interpolation)
-  interp_map <- .interp_map
-  .self$.cpp$get_quefrency_of_peak(as.integer(interp_map[[interpolation]]),
-                                   as.numeric(qmin), as.numeric(qmax))
+  .self$.cpp$get_quefrency_of_peak(interpolation, as.numeric(qmin), as.numeric(qmax))
 }
 
 .powercepstrum_methods$get_value_at_quefrency <- function(.self, quefrency,
@@ -106,9 +104,7 @@ NULL
                                                           unit = c("dB", "linear")) {
   interpolation <- match.arg(interpolation)
   unit <- match.arg(unit)
-  interp_code <- if (interpolation == "linear") 0L else 1L
-  unit_code <- if (unit == "dB") 0L else 1L
-  .self$.cpp$get_value_at_quefrency(as.numeric(quefrency), interp_code, unit_code)
+  .self$.cpp$get_value_at_quefrency(as.numeric(quefrency), interpolation, unit)
 }
 
 .powercepstrum_methods$get_peak_prominence_hillenbrand <- function(.self, pitch_floor = 60,
