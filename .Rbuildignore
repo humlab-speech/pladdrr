@@ -155,5 +155,4 @@ manual_.*\.cpp$
 ^src/pocketfft/\.git$
 ^src/pffft/\.git$
 ^pladdrr_logo\.svg$
-^vignettes/articles$
 ^\.superpowers$

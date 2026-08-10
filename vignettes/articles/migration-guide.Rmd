@@ -2,6 +2,11 @@
 title: "Migration Guide (v3.0)"
 description: |
   Complete migration guide for pladdrr v3.0 breaking changes and deprecated functions.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Migration Guide (v3.0)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # pladdrr Migration Guide

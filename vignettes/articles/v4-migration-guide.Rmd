@@ -3,6 +3,10 @@ title: "Migration Guide: pladdrr v4.0 (data.table)"
 author: "pladdrr Development Team"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Migration Guide: pladdrr v4.0 (data.table)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}

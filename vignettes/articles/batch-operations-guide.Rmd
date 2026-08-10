@@ -2,6 +2,11 @@
 title: "Batch Operations Guide"
 description: |
   Complete guide to high-performance batch processing in pladdrr.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Batch Operations Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Batch Operations Guide
