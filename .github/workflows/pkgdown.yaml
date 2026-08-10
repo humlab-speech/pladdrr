@@ -47,7 +47,23 @@ jobs:
           needs: website
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          # Work around r-lib/pkgdown bug: navbar_links_haystack() returns NULL
+          # (not a 0-row tibble) when a page's navbar has zero matching
+          # nav-items, which crashes activate_navbar()'s
+          # haystack[haystack$similar > 0, ] with "incorrect number of
+          # dimensions". activate_navbar() already handles nrow(haystack)==0
+          # fine, so this only restores that guarantee.
+          orig <- pkgdown:::navbar_links_haystack
+          patched <- function(html, pkg, path) {
+            out <- orig(html, pkg, path)
+            if (is.null(out) || !is.data.frame(out)) {
+              return(tibble::tibble(nav_item = list(), links = character(), similar = numeric()))
+            }
+            out
+          }
+          assignInNamespace("navbar_links_haystack", patched, ns = "pkgdown")
+          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
