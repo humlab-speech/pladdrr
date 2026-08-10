@@ -212,7 +212,7 @@ cat("  F3:", round(f3), "Hz\n")
 `set_path()` and `set_optimal_path()` let you override the automatically
 selected candidate for a time range:
 
-```{r manual-path, eval=FALSE}
+```{r manual-path}
 # Set candidate 3 for time range 0.2-0.4s
 fp$set_path(tmin = 0.2, tmax = 0.4, selected_candidate = 3)
 
@@ -227,13 +227,6 @@ fp$set_optimal_path(
 # Then extract
 frm_result <- fp$extract_formant()
 ```
-
-**Known issue**: in pladdrr 5.0.0, calling `extract_formant()` on a
-`FormantPath` object after calling `set_path()` or `set_optimal_path()`
-crashes the R session in this build (verified by direct testing, not just an
-R-level error). Until this is fixed upstream, avoid extracting from a path
-you have manually edited this way. `path_finder()` (below), which also
-rewrites the path, does not exhibit this problem.
 
 ## Visualizing FormantPath Results
 
