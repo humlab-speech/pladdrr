@@ -204,7 +204,6 @@ FON_SRC = praat.github.io/fon/Transition.cpp praat.github.io/fon/Distributions_a
           praat.github.io/fon/WordList.cpp praat.github.io/fon/SpellingChecker.cpp praat.github.io/fon/Corpus.cpp \
           praat.github.io/fon/Movie.cpp praat.github.io/fon/Photo.cpp praat.github.io/fon/LongSound.cpp \
           praat.github.io/fon/SoundSet.cpp \
-          praat.github.io/fon/Praat_tests.cpp \
           praat.github.io/fon/praat_Sound.cpp praat.github.io/fon/praat_Matrix.cpp praat.github.io/fon/praat_Tiers.cpp \
           praat.github.io/fon/praat_TextGrid_init.cpp praat.github.io/fon/praat_uvafon_init.cpp
 
