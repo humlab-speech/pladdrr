@@ -1,7 +1,6 @@
 # pladdrr
 
 **Direct Access to Praat C Functionality from R**
-
 ![Version](https://img.shields.io/badge/version-5.0.0-blue)![Rcpp
 Modules](https://img.shields.io/badge/modules-38-blue)[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg)](https://doi.org/10.5281/zenodo.21884218)
 
