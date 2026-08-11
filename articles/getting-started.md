@@ -486,7 +486,8 @@ citation("pladdrr")
 #> To cite pladdrr in publications use:
 #> 
 #>   Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms
-#>   of Praat in R R package version 5.0.0
+#>   of Praat in R. R package version 5.0.0.
+#>   https://doi.org/10.5281/zenodo.21884218
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by
 #>   computer [Computer program]. Version 6.4, retrieved from
@@ -503,7 +504,7 @@ citation("pladdrr")
 
 - Praat: <https://praat.org>
 - Package documentation:
-  [`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man)
+  [`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
 - Function reference:
   [`?extract_pitch`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch.md),
   [`?extract_formants`](https://humlab-speech.github.io/pladdrr/reference/extract_formants.md),
@@ -514,9 +515,9 @@ citation("pladdrr")
 This vignette covered the core `pladdrr` analysis objects: Sound, Pitch,
 Formant, and Intensity. The package exposes 38 Praat modules with 500+
 methods in total (see `DESCRIPTION` and
-[`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man) for the
-full list), including auditory modeling, TextGrid annotation, voice
-quality assessment, and a persistent Praat script interpreter.
+[`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
+for the full list), including auditory modeling, TextGrid annotation,
+voice quality assessment, and a persistent Praat script interpreter.
 
 For more information, see the individual function documentation and the
 package README.
