@@ -8,7 +8,7 @@ bibentry(
                     comment = c(ORCID = "0000-0003-3373-0934")),
   year     = 2026,
   note     = "R package version 5.0.0",
-  doi = {10.5281/zenodo.21884218},
+  doi = "10.5281/zenodo.21884218",
 
   textVersion = paste(
     "Nylén, Fredrik (2026).",
