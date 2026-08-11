@@ -28,5 +28,5 @@ External pointer
 ``` r
 sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 8000)
 pladdrr:::extract_xptr(sound, "Sound")
-#> <pointer: 0x5582d2df2c40>
+#> <pointer: 0x5650e1616c90>
 ```

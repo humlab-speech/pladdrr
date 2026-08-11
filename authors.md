@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/v5.0.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/main/inst/CITATION)
 
 Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms of
 Praat in R R package version 5.0.0
