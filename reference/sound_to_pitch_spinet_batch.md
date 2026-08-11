@@ -68,7 +68,4 @@ sounds <- list(
   Sound$create_tone(frequency = 200, duration = 0.5)
 )
 pitches <- sound_to_pitch_spinet_batch(sounds)
-#> Error in .sound_to_pitch_spinet(ptr, time_step, window_duration, min_frequency,     max_frequency, as.integer(n_filters), pitch_ceiling, as.integer(max_candidates)): Failed to extract pitch using SPINET. Praat error: The sound should not have all amplitudes equal to zero.
-#> SPINET: no Pitch created.
-#> Sound: no Pitch (SPINET) created.
 ```
