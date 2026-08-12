@@ -28,6 +28,16 @@
 }
 
 #' @rdname autoplot-methods
+#' @param garnish Whether to add a title and axis labels (default TRUE).
+#' @param quefrency_range Optional `c(min, max)` quefrency range to display
+#'   (PowerCepstrogram); NULL shows the full range.
+#' @param fill_color Fill color for closed shapes (Polygon); distinct from
+#'   `fill_col`, which selects a data column to map to a continuous fill scale.
+#' @param plot_type Plot style selector (VocalTract).
+#' @param from_track,to_track Track index range to display (FormantModeler).
+#' @param power If TRUE, use the power/dB variant of the quantity instead of
+#'   the raw linear default (Cepstrum).
+#' @param style Speckle vs. line rendering style, where applicable (FormantTier).
 #' @export
 autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkred", garnish = TRUE, ...) {
@@ -1398,7 +1408,7 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
 
 #' @rdname autoplot-methods
 #' @param formant_type Type of formant to plot: "oral", "nasal", "frication",
-#'   "tracheal", "delta", or "all".
+#'   "tracheal", "delta", or (autoplot.KlattGrid only) "all".
 #' @export
 autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     formant_type = c("all", "oral", "nasal", "frication", "tracheal", "delta"),

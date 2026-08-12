@@ -1,29 +1,53 @@
 # as-data-frame-missing.R — as.data.frame S3 methods for classes missing them
 
+#' as.data.frame Methods for pladdrr Objects
+#'
+#' @description
+#' `as.data.frame()` methods for Praat object classes that expose their data
+#' as flat data frames (long format for 2-D matrix-like objects, one row per
+#' sample/point/frame for 1-D tiers and tracks).
+#'
+#' @param x A pladdrr R6 object (Discriminant, Electroglottogram, FormantModeler,
+#'   PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
+#'   KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).
+#' @param ... Passed to methods; currently unused except `power` on `Cepstrum`.
+#' @return A data.frame. Column names vary by class; see each class's
+#'   \code{$as_data_frame()} method or the corresponding `autoplot.*` method
+#'   for the exact columns used.
+#' @name as-data-frame-missing
+NULL
+
 # ---- Classes WITH $as_data_frame() internally ----
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.Discriminant <- function(x, ...) x$as_data_frame()
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.Electroglottogram <- function(x, ...) x$as_data_frame()
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.FormantModeler <- function(x, ...) x$as_data_frame()
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.PCA <- function(x, ...) x$as_data_frame()
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.PowerCepstrogram <- function(x, ...) x$as_data_frame()
 
 # ---- Classes WITHOUT $as_data_frame() ----
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.BarkSpectrogram <- function(x, ...) {
   as.data.frame(x$to_matrix(to_db = TRUE))
 }
 
+#' @rdname as-data-frame-missing
 #' @param power If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
 #'   Praat's default raw signed cepstrum view. Default FALSE matches
 #'   `Cepstrum_drawLinear`, Praat's default "Draw..." command.
@@ -36,6 +60,7 @@ as.data.frame.Cepstrum <- function(x, power = FALSE, ...) {
   x$as_data_frame()
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.Cochleagram <- function(x, ...) {
   m <- x$as_matrix()
@@ -47,6 +72,7 @@ as.data.frame.Cochleagram <- function(x, ...) {
   df[, c("time", "frequency", "excitation")]
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.DTW <- function(x, ...) {
   path <- x$get_path()
@@ -56,6 +82,7 @@ as.data.frame.DTW <- function(x, ...) {
   path
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.KlattGrid <- function(x, ...) {
   tmin <- x$get_xmin()
@@ -81,6 +108,7 @@ as.data.frame.KlattGrid <- function(x, ...) {
   do.call(rbind, rows)
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.LPC <- function(x, ...) {
   gains <- x$get_all_gains()
@@ -102,11 +130,13 @@ as.data.frame.LPC <- function(x, ...) {
   do.call(rbind, rows)
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.LongSound <- function(x, ...) {
   stop("LongSound streams from disk. Use x$extract_part(from, to) to get a Sound, then as.data.frame().")
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.Matrix <- function(x, ...) {
   mat <- x$as_matrix()
@@ -120,11 +150,13 @@ as.data.frame.Matrix <- function(x, ...) {
   df
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.MelSpectrogram <- function(x, ...) {
   as.data.frame(x$to_matrix(to_db = TRUE))
 }
 
+#' @rdname as-data-frame-missing
 #' @export
 as.data.frame.VocalTract <- function(x, ...) {
   areas <- x$get_areas()
