@@ -2,7 +2,7 @@ citHeader("To cite pladdrr in publications use:")
 
 bibentry(
   bibtype  = "Manual",
-  title    = "pladdrr: Direct Access to the Core Algorithms of Praat in R",
+  title    = "pladdrr: Direct Access to the Core Algorithms of Praat",
   author   = person("Fredrik", "Nylén", email = "fredrik.nylen@umu.se",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-3373-0934")),
@@ -12,7 +12,7 @@ bibentry(
 
   textVersion = paste(
     "Nylén, Fredrik (2026).",
-    "pladdrr: Direct Access to the Core Algorithms of Praat in R.",
+    "pladdrr: Direct Access to the Core Algorithms of Praat.",
     "R package version 5.0.0.",
     "https://doi.org/10.5281/zenodo.21884218"
   )

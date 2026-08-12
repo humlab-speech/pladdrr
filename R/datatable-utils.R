@@ -107,18 +107,22 @@ dt_setkey <- function(dt, ...) {
 #' @examples
 #' dt <- data.table::data.table(x = 1:3)
 #' pladdrr:::.finalize_dataframe(dt)
+# Session state internal to the package. Held here rather than in options() so
+# that pladdrr never mutates the user's global R options.
+.pladdrr_state <- new.env(parent = emptyenv())
+
 .finalize_dataframe <- function(dt) {
   # Check if user explicitly wants data.frame (deprecated)
   if (isFALSE(getOption("pladdrr.return_datatable", default = TRUE))) {
     # Warning only shown once per session
-    if (is.null(getOption("pladdrr.dataframe_warning_shown"))) {
+    if (!isTRUE(.pladdrr_state$dataframe_warning_shown)) {
       warning(
         "Returning data.frame instead of data.table is deprecated.\n",
         "Set options(pladdrr.return_datatable = TRUE) or remove the option.\n",
         "data.frame mode will be removed in pladdrr v5.0.0",
         call. = FALSE
       )
-      options(pladdrr.dataframe_warning_shown = TRUE)
+      .pladdrr_state$dataframe_warning_shown <- TRUE
     }
     return(as.data.frame(dt, stringsAsFactors = FALSE))
   }

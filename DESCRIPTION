@@ -1,11 +1,21 @@
 Package: pladdrr
 Type: Package
-Title: Direct Access to the Core Algorithms of Praat in R
+Title: Direct Access to the Core Algorithms of Praat
 Version: 5.0.0
 Date: 2026-08-07
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-3373-0934"))
+           comment = c(ORCID = "0000-0003-3373-0934")),
+    person("Paul", "Boersma", role = "cph",
+           comment = "Author of the bundled Praat sources in src/praat.github.io"),
+    person("David", "Weenink", role = "cph",
+           comment = "Author of the bundled Praat sources in src/praat.github.io"),
+    person("Max-Planck-Society", role = "cph",
+           comment = "Copyright holder of the bundled pocketfft headers in src/pocketfft"),
+    person("Xiph.Org Foundation", role = "cph",
+           comment = "Copyright holder of the bundled Vorbis/Ogg and Opusfile sources"),
+    person("Free Software Foundation", role = "cph",
+           comment = "Copyright holder of the GNU Scientific Library, linked but not bundled")
     )
 Description: Provides direct access to Praat C implemented
     functionality from R. This package allows R users to leverage

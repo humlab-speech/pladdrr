@@ -120,18 +120,11 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 
 ## Package initialization
 
-#' @keywords internal
-.onLoad <- function(libname, pkgname) {
-  # Initialize Praat library components
-  praat_initialize()
-  
-  # Set default to return data.table (v4.0.0+)
-  # Users can opt out with: options(pladdrr.return_datatable = FALSE)
-  # but this is deprecated and will be removed in v5.0
-  if (is.null(getOption("pladdrr.return_datatable"))) {
-    options(pladdrr.return_datatable = TRUE)
-  }
-}
+# .onLoad lives in R/zzz.R. A second definition used to sit here; with no
+# Collate field, files collate alphabetically, so zzz.R always overwrote it and
+# this copy never ran. Its only extra effect was seeding
+# options(pladdrr.return_datatable = TRUE), which is redundant: the sole reader,
+# .finalize_dataframe(), already defaults the option to TRUE.
 
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {

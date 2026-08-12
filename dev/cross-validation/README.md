@@ -1,6 +1,19 @@
-# pladdrr Test Suite
+# pladdrr Cross-Validation Suite
 
 This directory contains comprehensive cross-validation tests for AVQI, DSI, and tremor analysis implementations.
+
+> **Why this lives in `dev/` and not `tests/`**
+>
+> `R CMD check` executes every `.R` file directly under `tests/`. These scripts
+> need an external Praat installation, the `plabench` Python package, and the
+> `PLADDRR_PLABENCH_DIR` environment variable, none of which exist on CRAN or
+> in CI, and one of them calls `library(speakr)` unconditionally. Keeping them
+> here (excluded from the built package via `.Rbuildignore`) means they are run
+> deliberately, by a human, rather than accidentally by the check harness.
+>
+> `quarantined-tests/` holds expectations extracted from
+> `tests/testthat/test-cochleagram-r6.R`; they are not part of the automated
+> suite.
 
 ## Quick Start
 
@@ -10,7 +23,7 @@ Quick verification that all implementations work:
 
 ```bash
 cd /Users/frkkan96/Documents/src/pladdrr
-Rscript tests/quick_smoke_test.R
+Rscript dev/cross-validation/quick_smoke_test.R
 ```
 
 Expected output:
@@ -59,7 +72,7 @@ Compare R, Python, and Praat implementations:
 ```r
 # In R console
 setwd("/Users/frkkan96/Documents/src/pladdrr")
-source("tests/test_cross_validation.R")
+source("dev/cross-validation/test_cross_validation.R")
 run_cross_validation()
 ```
 
@@ -287,10 +300,10 @@ jobs:
         Rscript -e 'devtools::install(".")'
 
     - name: Run smoke tests
-      run: Rscript tests/quick_smoke_test.R
+      run: Rscript dev/cross-validation/quick_smoke_test.R
 
     - name: Run cross-validation tests
-      run: Rscript -e 'testthat::test_file("tests/test_cross_validation.R")'
+      run: Rscript -e 'testthat::test_file("dev/cross-validation/test_cross_validation.R")'
 ```
 
 ## Performance Benchmarks

@@ -410,7 +410,7 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or use:
 
 > Nylén, Fredrik (2026). *pladdrr: Direct Access to the Core Algorithms of
-> Praat in R*. R package version 5.0.0. <https://doi.org/10.5281/zenodo.21884218>
+> Praat*. R package version 5.0.0. <https://doi.org/10.5281/zenodo.21884218>
 
 Please also cite Praat itself:
 
@@ -440,7 +440,7 @@ This package includes components from several third-party projects:
 
 All third-party components are compatible with GPL-3. For full licensing details, see:
 - `LICENSE` - Copyright and GPL-3 license declaration
-- `LICENSE.note` - Third-party component attributions  
+- `inst/COPYRIGHTS` - Third-party component attributions
 - `COPYING` - Complete GPL-3 license text
 
 ## References

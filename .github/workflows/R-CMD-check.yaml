@@ -78,4 +78,39 @@ jobs:
           # vendors Praat C++ and deliberately sets -ffp-contract=off for
           # bit-exact DSP output, both of which are permanent, CRAN-documented
           # WARNINGs (see cran-comments.md), not regressions to gate CI on.
+          # The step below re-imposes the gate for every *other* warning, so
+          # that "error-on: error" cannot silently absorb a new one.
           error-on: '"error"'
+
+      # The four WARNINGs below are documented and justified in cran-comments.md
+      # and are inherent to vendoring Praat. Any WARNING outside that set is a
+      # regression and fails the build.
+      - name: Fail on unexpected R CMD check WARNINGs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          log=$(find check -name 00check.log 2>/dev/null | head -n 1 || true)
+          if [ -z "$log" ]; then
+            echo "No 00check.log found; nothing to inspect."
+            exit 0
+          fi
+
+          # Check names whose WARNING status is known, justified and permanent.
+          allowed='checking compiled code|checking compilation flags used|checking whether package .* can be installed|checking S3 generic/method consistency'
+
+          unexpected=$(grep -E '^\* checking .*\.\.\. WARNING' "$log" | grep -Ev "$allowed" || true)
+
+          echo "--- all WARNINGs reported ---"
+          grep -E '^\* checking .*\.\.\. WARNING' "$log" || echo "(none)"
+
+          if [ -n "$unexpected" ]; then
+            echo
+            echo "::error::R CMD check reported WARNINGs that are not on the justified list:"
+            echo "$unexpected"
+            echo
+            echo "Either fix the warning, or — if it is genuinely permanent — document it"
+            echo "in cran-comments.md and add its check name to the allowlist in this workflow."
+            exit 1
+          fi
+          echo "All reported WARNINGs are on the justified list."

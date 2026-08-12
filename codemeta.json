@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "identifier": "pladdrr",
   "description": "Provides direct access to Praat C implemented functionality from R. This package allows R users to leverage Praat's powerful phonetic analysis capabilities directly from R. The package exposes 38 Praat modules with 500+ methods for sound manipulation, robust formant tracking (FormantPath, FormantModeler), speech synthesis (KlattGrid), pitch analysis, intensity measurements, spectral analysis (ComplexSpectrogram), cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant), auditory modeling (Cochleagram, Excitation), TextGrid annotation, voice quality assessment, geometric operations (Polygon), and a persistent Praat script interpreter with bidirectional R-Praat object transfer.",
-  "name": "pladdrr: Direct Access to the Core Algorithms of Praat in R",
+  "name": "pladdrr: Direct Access to the Core Algorithms of Praat",
   "codeRepository": "https://github.com/humlab-speech/pladdrr",
   "issueTracker": "https://github.com/humlab-speech/pladdrr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0-or-later",
@@ -37,6 +37,14 @@
       "email": "fredrik.nylen@umu.se",
       "@id": "https://orcid.org/0000-0003-3373-0934"
     }
+  ],
+  "copyrightHolder": [
+    {"@type": "Person", "givenName": "Fredrik", "familyName": "Nylén", "@id": "https://orcid.org/0000-0003-3373-0934"},
+    {"@type": "Person", "givenName": "Paul", "familyName": "Boersma"},
+    {"@type": "Person", "givenName": "David", "familyName": "Weenink"},
+    {"@type": "Organization", "name": "Max-Planck-Society"},
+    {"@type": "Organization", "name": "Xiph.Org Foundation"},
+    {"@type": "Organization", "name": "Free Software Foundation"}
   ],
   "softwareSuggestions": [
     {"@type": "SoftwareApplication", "identifier": "testthat", "name": "testthat", "version": ">= 3.0.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=testthat"},

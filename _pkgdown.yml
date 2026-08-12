@@ -13,7 +13,7 @@ home:
   title: "pladdrr: Direct Access to Praat C Functionality from R"
   description: |
     High-performance phonetic analysis in R with direct C++ access to Praat.
-    31 Rcpp modules, SIMD optimization, zero-copy operations.
+    38 Rcpp modules, SIMD optimization, zero-copy operations.
   
   links:
   - text: Browse source code

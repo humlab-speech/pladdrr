@@ -81,6 +81,14 @@ This package includes code from the following third-party projects:
    When distributed as part of pladdrr, Opusfile code is included
    under the overall GPL-3 license (BSD is GPL-compatible).
 
+Not distributed
+---------------
+src/pffft/ is present in the development repository as a git submodule
+(pffft, Copyright (C) 2011 Julien Pommier; derived from FFTPACK by
+Paul N. Swarztrauber), but it is not compiled, not on any include path,
+and not referenced by any source file. It is excluded from the built
+package via .Rbuildignore, so no pffft code is distributed.
+
 ========================================
 License Compatibility Summary
 ========================================

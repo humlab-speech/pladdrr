@@ -160,3 +160,13 @@ manual_.*\.cpp$
 # Repository metadata: recognised by GitHub/Zenodo, non-standard at package top level
 ^codemeta\.json$
 ^CITATION\.cff$
+# pffft: submodule that is not compiled, not on any -I path, and referenced by
+# no source file. Shipping it would distribute unattributed, unused C sources.
+^src/pffft/
+# pocketfft: only pocketfft_hdronly.h is used (by dwsys/NUMFourier.cpp);
+# the demo and build files are not. LICENSE.md and README.md are kept.
+^src/pocketfft/pocketfft_demo\.cc$
+^src/pocketfft/meson\.build$
+# Cross-validation harness: needs an external Praat install and the plabench
+# Python package, so it cannot run under R CMD check. Lives in dev/ instead.
+^dev/

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use pladdrr in your research, please cite it as below, and cite Praat itself."
-title: "pladdrr: Direct Access to the Core Algorithms of Praat in R"
+title: "pladdrr: Direct Access to the Core Algorithms of Praat"
 abstract: >-
   An object-oriented R interface to the phonetic-analysis algorithms of Praat.
   pladdrr compiles a curated subset of the Praat C++ sources and exposes them

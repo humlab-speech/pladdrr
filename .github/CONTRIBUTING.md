@@ -121,8 +121,8 @@ Subsequent builds only recompile what changed.
 Changes under `src/praat.github.io/`, `src/pffft/`, and `src/pocketfft/` are
 vendored upstream sources. Patches there must be recorded in
 `inst/PRAAT_MODIFICATIONS.md` so the delta against upstream stays auditable, and
-any new bundled component must be added to `LICENSE.note` and
-`inst/COPYRIGHTS`.
+any new bundled component must be added to `inst/COPYRIGHTS` **and** to the
+`cph` entries in `Authors@R`.
 
 ## Release checklist
 
