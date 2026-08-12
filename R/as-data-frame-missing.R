@@ -105,8 +105,8 @@ as.data.frame.LongSound <- function(x, ...) {
 as.data.frame.Matrix <- function(x, ...) {
   mat <- x$as_matrix()
   n_row <- x$get_ny(); n_col <- x$get_nx()
-  y1 <- x$get_ymin() + x$get_dy() / 2
-  x1 <- x$get_xmin() + x$get_dx() / 2
+  y1 <- x$get_y1()
+  x1 <- x$get_x1()
   df <- expand.grid(row = seq_len(n_row), col = seq_len(n_col))
   df$value <- as.vector(mat)
   df$col <- x1 + (df$col - 1) * x$get_dx()

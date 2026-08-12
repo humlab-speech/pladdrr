@@ -40,6 +40,8 @@ NULL
 .matrix_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
 .matrix_methods$get_ymin <- function(.self) .self$.cpp$get_ymin()
 .matrix_methods$get_ymax <- function(.self) .self$.cpp$get_ymax()
+.matrix_methods$get_x1 <- function(.self) .self$.cpp$get_x1()
+.matrix_methods$get_y1 <- function(.self) .self$.cpp$get_y1()
 
 # Query - Values
 .matrix_methods$get_value <- function(.self, row, col) {
