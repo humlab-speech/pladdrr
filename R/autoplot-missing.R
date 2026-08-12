@@ -454,15 +454,21 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL, to_time = NULL
     warning("ComplexSpectrogram has no data in range")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  amp_col <- if ("amplitude_db" %in% names(df)) "amplitude_db"
-             else if ("amplitude" %in% names(df)) "amplitude"
-             else stop("ComplexSpectrogram data frame missing amplitude column")
+  amp_col <- "amplitude_dB"
+  if (!"amplitude_dB" %in% names(df)) {
+    if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
+    ref <- max(df$amplitude, 1e-300)
+    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)  # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    floor_dB <- -dynamic_range
+    df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
+  }
   p_amp <- ggplot2::ggplot(df,
             ggplot2::aes(x = .data$time, y = .data$frequency,
                          fill = .data[[amp_col]])) +
     ggplot2::geom_raster(...) +
     ggplot2::scale_fill_gradient(low = "white", high = "black",
-                                  name = "Amplitude (dB)")
+                                  name = "Amplitude (dB)",
+                                  limits = c(-dynamic_range, 0))
   if (garnish) {
     p_amp <- p_amp + ggplot2::labs(title = "ComplexSpectrogram",
                                     x = "Time (s)", y = "Frequency (Hz)")
