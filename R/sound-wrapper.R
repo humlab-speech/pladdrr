@@ -52,6 +52,7 @@
 #' - `to_intensity()` - Extract intensity contour
 #' - `to_harmonicity_cc()` - Harmonics-to-noise ratio
 #' - `to_harmonicity_gne()` - Glottal-to-Noise Excitation ratio (GNE)
+#' - `extract_electroglottogram(channel, invert)` - Extract Electroglottogram (EGG) from a channel
 #' - `to_spectrum()` - Frequency spectrum
 #' - `to_spectrogram()` - Time-frequency representation
 #' - `to_ltas()` - Long-term average spectrum
@@ -354,6 +355,12 @@ NULL
   gne_ptr <- .sound_to_harmonicity_gne(
     .self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(bandwidth), as.numeric(step))
   Matrix(.xptr = gne_ptr)
+}
+
+.sound_methods$extract_electroglottogram <- function(.self, channel = 1L, invert = FALSE) {
+  egg_ptr <- sound_extract_electroglottogram_cpp(
+    .self$.xptr, as.integer(channel), as.logical(invert))
+  Electroglottogram(.xptr = egg_ptr)
 }
 
 .sound_methods$to_spectrum <- function(.self, fast = TRUE) {
