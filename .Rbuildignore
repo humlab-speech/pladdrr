@@ -157,3 +157,6 @@ manual_.*\.cpp$
 ^src/pffft/\.git$
 ^pladdrr_logo\.svg$
 ^\.superpowers$
+# Repository metadata: recognised by GitHub/Zenodo, non-standard at package top level
+^codemeta\.json$
+^CITATION\.cff$

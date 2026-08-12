@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use pladdrr in your research, please cite it as below, and cite Praat itself."
+title: "pladdrr: Direct Access to the Core Algorithms of Praat in R"
+abstract: >-
+  An object-oriented R interface to the phonetic-analysis algorithms of Praat.
+  pladdrr compiles a curated subset of the Praat C++ sources and exposes them
+  through Rcpp modules, so Praat's pitch, formant, intensity, spectral,
+  cepstral, voice-quality and synthesis routines can be called directly from R
+  without an external Praat installation.
+type: software
+version: 5.0.0
+date-released: "2026-08-07"
+doi: 10.5281/zenodo.21884218
+license: GPL-3.0-or-later
+repository-code: "https://github.com/humlab-speech/pladdrr"
+url: "https://humlab-speech.github.io/pladdrr/"
+keywords:
+  - R
+  - phonetics
+  - speech-analysis
+  - praat
+  - signal-processing
+  - voice-quality
+authors:
+  - family-names: "Nylén"
+    given-names: "Fredrik"
+    email: "fredrik.nylen@umu.se"
+    orcid: "https://orcid.org/0000-0003-3373-0934"
+references:
+  - type: software
+    title: "Praat: doing phonetics by computer"
+    version: "6.4"
+    year: 2024
+    url: "https://praat.org/"
+    authors:
+      - family-names: "Boersma"
+        given-names: "Paul"
+      - family-names: "Weenink"
+        given-names: "David"

@@ -2,6 +2,10 @@
 
 **Direct Access to Praat C Functionality from R**
 <!-- badges: start -->
+[![Project Status: Active – the project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/humlab-speech/pladdrr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/humlab-speech/pladdrr/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/humlab-speech/pladdrr/graph/badge.svg)](https://app.codecov.io/gh/humlab-speech/pladdrr)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Version](https://img.shields.io/badge/version-5.0.0-blue)
 ![Rcpp Modules](https://img.shields.io/badge/modules-38-blue)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg)](https://doi.org/10.5281/zenodo.21884218)
@@ -401,9 +405,27 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 - Check the [Agent Guide](inst/agents/AGENT_GUIDE.md) for detailed API reference
 - Contact the maintainer at `fredrik.nylen@umu.se`
 
+## Citation
+
+To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or use:
+
+> Nylén, Fredrik (2026). *pladdrr: Direct Access to the Core Algorithms of
+> Praat in R*. R package version 5.0.0. <https://doi.org/10.5281/zenodo.21884218>
+
+Please also cite Praat itself:
+
+> Boersma, Paul & Weenink, David (2024). *Praat: doing phonetics by computer*
+> [Computer program]. Version 6.4, retrieved from <https://praat.org/>
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for
+how to get a working build (the vendored Praat sources are git submodules, and
+GSL is required) and what a good pull request looks like.
+
+Please note that this project is released with a
+[Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating in
+this project you agree to abide by its terms.
 
 ## License
 

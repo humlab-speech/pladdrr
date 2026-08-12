@@ -1,0 +1,78 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "pladdrr",
+  "description": "Provides direct access to Praat C implemented functionality from R. This package allows R users to leverage Praat's powerful phonetic analysis capabilities directly from R. The package exposes 38 Praat modules with 500+ methods for sound manipulation, robust formant tracking (FormantPath, FormantModeler), speech synthesis (KlattGrid), pitch analysis, intensity measurements, spectral analysis (ComplexSpectrogram), cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant), auditory modeling (Cochleagram, Excitation), TextGrid annotation, voice quality assessment, geometric operations (Polygon), and a persistent Praat script interpreter with bidirectional R-Praat object transfer.",
+  "name": "pladdrr: Direct Access to the Core Algorithms of Praat in R",
+  "codeRepository": "https://github.com/humlab-speech/pladdrr",
+  "issueTracker": "https://github.com/humlab-speech/pladdrr/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0-or-later",
+  "version": "5.0.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R (>= 4.0.0)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Fredrik",
+      "familyName": "Nylén",
+      "email": "fredrik.nylen@umu.se",
+      "@id": "https://orcid.org/0000-0003-3373-0934"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Fredrik",
+      "familyName": "Nylén",
+      "email": "fredrik.nylen@umu.se",
+      "@id": "https://orcid.org/0000-0003-3373-0934"
+    }
+  ],
+  "softwareSuggestions": [
+    {"@type": "SoftwareApplication", "identifier": "testthat", "name": "testthat", "version": ">= 3.0.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=testthat"},
+    {"@type": "SoftwareApplication", "identifier": "roxygen2", "name": "roxygen2", "version": ">= 7.0.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=roxygen2"},
+    {"@type": "SoftwareApplication", "identifier": "covr", "name": "covr", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=covr"},
+    {"@type": "SoftwareApplication", "identifier": "knitr", "name": "knitr", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=knitr"},
+    {"@type": "SoftwareApplication", "identifier": "rmarkdown", "name": "rmarkdown", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=rmarkdown"},
+    {"@type": "SoftwareApplication", "identifier": "gridExtra", "name": "gridExtra", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=gridExtra"},
+    {"@type": "SoftwareApplication", "identifier": "patchwork", "name": "patchwork", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=patchwork"},
+    {"@type": "SoftwareApplication", "identifier": "scales", "name": "scales", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=scales"},
+    {"@type": "SoftwareApplication", "identifier": "RcppSimdJson", "name": "RcppSimdJson", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=RcppSimdJson"},
+    {"@type": "SoftwareApplication", "identifier": "RcppXPtrUtils", "name": "RcppXPtrUtils", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=RcppXPtrUtils"},
+    {"@type": "SoftwareApplication", "identifier": "av", "name": "av", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=av"},
+    {"@type": "SoftwareApplication", "identifier": "bench", "name": "bench", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=bench"},
+    {"@type": "SoftwareApplication", "identifier": "microbenchmark", "name": "microbenchmark", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=microbenchmark"},
+    {"@type": "SoftwareApplication", "identifier": "speakr", "name": "speakr", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=speakr"}
+  ],
+  "softwareRequirements": {
+    "1": {"@type": "SoftwareApplication", "identifier": "R", "name": "R", "version": ">= 4.0.0"},
+    "2": {"@type": "SoftwareApplication", "identifier": "Rcpp", "name": "Rcpp", "version": ">= 1.0.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=Rcpp"},
+    "3": {"@type": "SoftwareApplication", "identifier": "R6", "name": "R6", "version": ">= 2.5.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=R6"},
+    "4": {"@type": "SoftwareApplication", "identifier": "ggplot2", "name": "ggplot2", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=ggplot2"},
+    "5": {"@type": "SoftwareApplication", "identifier": "rlang", "name": "rlang", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=rlang"},
+    "6": {"@type": "SoftwareApplication", "identifier": "data.table", "name": "data.table", "version": ">= 1.14.0", "provider": {"@id": "https://cran.r-project.org"}, "sameAs": "https://CRAN.R-project.org/package=data.table"},
+    "7": {"@type": "SoftwareApplication", "identifier": "methods", "name": "methods"},
+    "8": {"@type": "SoftwareApplication", "identifier": "tools", "name": "tools"},
+    "9": {"@type": "SoftwareApplication", "identifier": "utils", "name": "utils"},
+    "10": {"@type": "SoftwareApplication", "identifier": "parallel", "name": "parallel"},
+    "11": {"@type": "SoftwareApplication", "identifier": "grid", "name": "grid"},
+    "SystemRequirements": "C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017), GNU Scientific Library (GSL >= 1.10)"
+  },
+  "applicationCategory": "Phonetics",
+  "isPartOf": "https://humlab.se",
+  "keywords": ["r", "phonetics", "speech-analysis", "praat", "signal-processing", "voice-quality", "rcpp"],
+  "readme": "https://github.com/humlab-speech/pladdrr/blob/main/README.md",
+  "relatedLink": ["https://humlab-speech.github.io/pladdrr/"],
+  "releaseNotes": "https://github.com/humlab-speech/pladdrr/blob/main/NEWS.md",
+  "fileSize": "9600KB"
+}
