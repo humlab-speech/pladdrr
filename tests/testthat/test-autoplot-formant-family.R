@@ -69,3 +69,22 @@ test_that("FormantModeler autoplot/autolayer work with from_track/to_track", {
   expect_true(nrow(p$data) > 0)
   expect_setequal(unique(p$data$formant_number), c(1, 2))
 })
+
+test_that(".formant_modeler_long_df degrades gracefully on edge-case inputs", {
+  # 0-row wide frame must not error -- must degrade to an empty long df,
+  # which downstream triggers the "no data" warning + empty-plot path.
+  wide_empty <- data.frame(time = numeric(0), F1_modeled = numeric(0),
+                            F2_modeled = numeric(0))
+  res_empty <- pladdrr:::.formant_modeler_long_df(wide_empty, 1, 0, 2)
+  expect_equal(nrow(res_empty), 0)
+  expect_setequal(names(res_empty), c("time", "formant_number", "frequency"))
+
+  # from_track > to_track must not count backward (R's `:` operator would);
+  # it must produce 0 rows, matching the pre-refactor subsetting behavior.
+  sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
+  formant <- sound$to_formant_burg()
+  fm <- formant$to_formant_modeler()
+  wide <- as.data.frame(fm)
+  res_backwards <- pladdrr:::.formant_modeler_long_df(wide, 3, 1, 3)
+  expect_equal(nrow(res_backwards), 0)
+})

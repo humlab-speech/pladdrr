@@ -1147,15 +1147,19 @@ autolayer.Discriminant <- function(object, ...) {
 #' range; this reshapes on the *_modeled columns (the fitted/smoothed track,
 #' the point of a Modeler).
 .formant_modeler_long_df <- function(wide, from_track, to_track, n_tracks) {
+  empty <- data.frame(time = numeric(0), formant_number = integer(0),
+                       frequency = numeric(0))
+  if (nrow(wide) == 0) return(empty)
   if (to_track == 0L) to_track <- n_tracks
-  tracks <- seq.int(from_track, to_track)
+  if (from_track > to_track) return(empty)
+  tracks <- from_track:to_track
   rows <- lapply(tracks, function(tr) {
     col <- paste0("F", tr, "_modeled")
     if (!col %in% names(wide)) return(NULL)
     data.frame(time = wide$time, formant_number = tr, frequency = wide[[col]])
   })
   rows <- rows[!vapply(rows, is.null, logical(1))]
-  if (length(rows) == 0) return(wide[0, c("time"), drop = FALSE])
+  if (length(rows) == 0) return(empty)
   do.call(rbind, rows)
 }
 
