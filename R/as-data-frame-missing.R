@@ -37,7 +37,19 @@ as.data.frame.PCA <- function(x, ...) x$as_data_frame()
 
 #' @rdname as-data-frame-missing
 #' @export
-as.data.frame.PowerCepstrogram <- function(x, ...) x$as_data_frame()
+as.data.frame.PowerCepstrogram <- function(x, ...) {
+  # PowerCepstrogram has no $as_data_frame() (unlike its sibling
+  # PowerCepstrum) -- only $to_matrix()/$as_matrix(). Build the data frame
+  # from the Matrix representation instead, same approach as
+  # BarkSpectrogram/MelSpectrogram below. Matrix's x-axis is time,
+  # y-axis is quefrency (Praat's PowerCepstrogram layout).
+  m <- x$to_matrix()
+  df <- as.data.frame(m)
+  names(df)[names(df) == "col"] <- "time"
+  names(df)[names(df) == "row"] <- "quefrency"
+  names(df)[names(df) == "value"] <- "power_dB"
+  df
+}
 
 # ---- Classes WITHOUT $as_data_frame() ----
 
