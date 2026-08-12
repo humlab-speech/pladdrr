@@ -87,7 +87,7 @@ NULL
 
 # Export
 .formantgrid_methods$as_data_frame <- function(.self) {
-  df <- .self$.cpp$as_data_frame()
+  df <- .self$.cpp$as_data_frame(0.005)
   names(df) <- c("formant_number", "time", "frequency", "bandwidth")
   df
 }

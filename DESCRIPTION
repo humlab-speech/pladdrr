@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Direct Access to the Core Algorithms of Praat
-Version: 5.0.0
+Version: 5.0.1
 Date: 2026-08-07
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),

@@ -1,3 +1,14 @@
+# pladdrr 5.0.1
+
+## New features
+
+* Added `autoplot()` and `autolayer()` S3 methods for 27 previously unsupported Praat object classes: AmplitudeTier, DurationTier, IntensityTier, PitchTier, FormantTier, FormantGrid, FormantPath, Excitation, ComplexSpectrogram, Cepstrum, Cochleagram, PowerCepstrogram, MFCC, LFCC, BarkSpectrogram, MelSpectrogram, Matrix, PCA, Discriminant, FormantModeler, Electroglottogram, LongSound, DTW, Polygon, VocalTract, LPC, KlattGrid.
+* Added `as.data.frame()` S3 methods for 15 classes that lacked them.
+
+## Bug fixes
+
+* Fixed `FormantGrid$as_data_frame()` missing required `time_step` argument.
+
 # pladdrr 5.0.0
 
 ## Bug fixes
