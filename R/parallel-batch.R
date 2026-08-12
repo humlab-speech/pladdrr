@@ -63,6 +63,14 @@
 #' @export
 analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
                                    threads_per_worker = NULL, ...) {
+  # analysis_func is a lazily-evaluated argument (R promise). The worker
+  # closures below capture it by lexical reference and get serialized to
+  # PSOCK workers on Windows/macOS; an unforced promise doesn't survive
+  # that serialization correctly ("attempt to apply non-function" on the
+  # worker). Force it here, in the caller's environment, before any
+  # closure captures it.
+  force(analysis_func)
+
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("parallel package required. Install with: install.packages('parallel')")
   }
@@ -155,6 +163,10 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
 #' @export
 process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
                                     threads_per_worker = NULL, ...) {
+  # See the matching comment in analyze_files_parallel(): force the promise
+  # before any closure captures it for shipping to a PSOCK worker.
+  force(analysis_func)
+
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("parallel package required")
   }
