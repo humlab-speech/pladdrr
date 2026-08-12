@@ -30,12 +30,13 @@ This reduced the source tarball from ~52 MB to ~9 MB. The remaining size is
 inherent to faithfully wrapping Praat's DSP core, consistent with other CRAN
 packages that vendor substantial upstream C/C++ (e.g. duckdb, arrow, V8).
 
-Installed size is ~31 Mb, broken down as: `libs` 22.8 Mb (the compiled DSP
+Installed size is ~34 Mb, broken down as: `libs` 22.7 Mb (the compiled DSP
 core — object code for 243 Praat translation units plus the vendored Unicode
-tables, statically linked into one shared object), `doc` 1.6 Mb (vignettes,
+tables, statically linked into one shared object), `doc` 4.3 Mb (vignettes,
 built as part of the CRAN-required vignette re-build), `extdata` 1.3 Mb and
-`signalfiles` 3.2 Mb (small WAV/TextGrid fixtures exercised by the
-faithfulness-test suite and vignettes — kept intentionally small; see
+`signalfiles` 1.7 Mb (small WAV/TextGrid fixtures exercised by the
+`get_durations_batch()`/Tier-4 batch tests — kept intentionally small; an
+unused AVQI fixture subset was removed. See
 `tests/testthat/faithfulness/`). None of this is reducible without either
 dropping DSP coverage or dropping the bit-exact regression fixtures that
 back the package's core correctness claim.

@@ -1,146 +1,77 @@
+# Editor/VCS/OS metadata
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README\.Rmd$
-^LICENSE\.md$
-^\.github$
 ^\.git$
 ^\.gitignore$
+^\.github$
 ^\.Rhistory$
 ^\.RData$
 ^\.Ruserdata$
 ^\.DS_Store$
 ^\.vscode$
 ^\.idea$
+^\.claude$
 ^\.specify$
 ^\.serena$
-^\.claude$
 ^\.pi$
-^specs$
-^CLAUDE\.md$
-^NEWS-archive\.md$
-^cran-comments\.md$
-^revdep$
-^pkgdown$
-^_pkgdown\.yml$
-^docs$
+^\.superpowers$
+^\.ruff_cache$
+
+# CI configs not used by R CMD check
 ^\.travis\.yml$
 ^\.gitlab-ci\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
-dev/
-results/
+
+# Dev-only trees: notes, planning docs, benchmark/cross-validation harnesses.
+# The Praat cross-validation harness needs an external Praat install and the
+# plabench Python package, so it cannot run under R CMD check.
+^dev/
+^results$
+^plans$
+^specs$
+^inst/benchmarks$
+^docs$
+^docs-archive$
+^pkgdown$
+^_pkgdown\.yml$
+^revdep$
+
+# Repo docs not meant for the built package
+^README\.Rmd$
+^LICENSE\.md$
+^CLAUDE\.md$
+^NEWS-archive\.md$
+^cran-comments\.md$
+^TODO\.md$
+
+# Repository metadata: recognised by GitHub/Zenodo, non-standard at package top level
+^codemeta\.json$
+^CITATION\.cff$
+^pladdrr_logo\.svg$
+
+# Stray dev-scratch scripts/output that occasionally land at top level
 ^.*\.sh$
 ^.*\.log$
-^.*\.tar\.gz$
-^.*\.txt$
 ^.*\.py$
 ^test_.*\.R$
+^verify_.*\.R$
+^final_.*\.R$
 ^create_test_audio\.R$
-^1$
-^SESSION_.*\.md$
-^BUILD_.*\.md$
-^IMPLEMENTATION_.*\.md$
-^OOP_.*\.md$
-^SIMD_.*\.md$
-^PHASE.*\.md$
-^NEXT_STEPS.*\.md$
-^BENCHMARKING_.*\.md$
-^BENCHMARK_.*\.md$
-^PROGRESS_.*\.md$
-^CURRENT_.*\.md$
-^FINAL_.*\.md$
-^COMPREHENSIVE_.*\.md$
-^COMPLETION_.*\.md$
-^AMENDMENT_.*\.md$
-^PROJECT_.*\.md$
-^WORK_.*\.md$
-^GAPS_.*\.md$
-^PRAAT_.*\.md$
-^AV_.*\.md$
-^SENSORS_.*\.md$
-^INTERPRETER_.*\.md$
-^GRAPHICS_.*\.md$
-^LPC_.*\.md$
-^SPECTROGRAM_.*\.md$
-^TABLE_.*\.md$
-^INTENSITY_.*\.md$
-^CRITICAL_.*\.md$
-^INTEGRATION_.*\.md$
-^MISSING_.*\.md$
-^POTENTIAL_.*\.md$
-^REVISED_.*\.md$
-^TODO_.*\.md$
-^VIGNETTE_.*\.md$
-^VERSION_.*\.md$
-^CHANGES_.*\.md$
-^SPEAKER_.*\.md$
-^COMMIT_.*\.md$
-^speaker$
-^speaker_1$
-^pladdrr$
+^graphify-out$
+
+# Build artefacts
+^doc$
+^Meta$
+^\.Rcheck$
+^pladdrr\.Rcheck$
+^pladdrr_.*\.tar\.gz$
+^src/Makevars$
+
+# --- src/praat.github.io: keep only what's compiled or on an -I include path ---
 ^src/praat\.github\.io/docs/
 ^src/praat\.github\.io/generate/
 ^src/praat\.github\.io/test/
-^speaker_1/src/praat\.github\.io/
-^\.Rcheck$
-^..Rcheck$
-^verify_.*\.R$
-^final_.*\.R$
-^.*\.log$
-^.*TEXTGRID.*\.md$
-^.*DEBUG.*\.md$
-^.*QUICK.*\.md$
-^.*DOCUMENTATION.*\.md$
-^.*PLADDRR.*\.md$
-^src/praat\.github\.io/test/
-^src/praat\.github\.io/\.git
-^src/clapack/\.git
-^src/pffft/\.git
-^src/.*\.o$
-^src/.*\.so$
-^src/.*\.la$
-^src/.*\.exe$
-^src/.*\.before.*$
-^src/.*\.backup.*$
-^src/.*\.bak.*$
-^src/.*\.tmp.*$
-^src/.*\.beforesed$
-^src/.*\.dup$
-^src/.*\.fix$
-^src/.*\.future$
-^src/.*\.rcpp$
-^src/.*\.static$
-^src/.*\.init$
-^src/.*\.with_duplicate$
-^src/.*\.o\.tmp$
-^pladdrr_.*\.tar\.gz$
-^graphify-out$
-^src/praat\.github\.io/test/fon ExperimentMFC/
-^src/praat\.github\.io/test/sys/large PDF/
-^src/praat\.github\.io/test/manually/external/Chris Darwin/
-^src/.*\.clang-format$
-^GRAPHICS_IMPLEMENTATION_PLAN\.md$
-^src/Makevars$
-^src/Makevars\.backup$
-^src/Makevars\.backup2$
-^src/Makevars\.bak2$
-^src/Makevars\.in\.backup$
-^src/Makevars\.in\.bak3$
-^src/Makevars\.in\.bak4$
-^src/Makevars\.in\.pre-opt$
-^src/Makevars\.pre-opt$
-^doc$
-^Meta$
-^docs-archive$
-^TODO\.md$
-^plans$
-
-# --- CRAN tarball slimming (keeps the dev tree intact; only the built tarball shrinks) ---
-# Editor/tooling caches, generated site, and dev-only benchmark scripts
-^\.ruff_cache$
-^docs$
-^inst/benchmarks$
-# Praat subtrees that are neither compiled nor on any -I include path
 ^src/praat\.github\.io/artsynth/
 ^src/praat\.github\.io/dwtest/
 ^src/praat\.github\.io/EEG/
@@ -148,25 +79,23 @@ results/
 ^src/praat\.github\.io/gram/
 ^src/praat\.github\.io/main/
 ^src/praat\.github\.io/makefiles/
+^src/praat\.github\.io/\.git
+manual_.*\.cpp$
+
 # Bundled external libraries: keep the referenced headers, drop the (stubbed) sources
 ^src/praat\.github\.io/external/.*\.(c|cc|cpp)$
-# Praat manual/documentation sources (compiled nowhere in this package)
-manual_.*\.cpp$
-# Submodule gitlink files and non-package top-level assets
-^src/pocketfft/\.git$
-^src/pffft/\.git$
-^pladdrr_logo\.svg$
-^\.superpowers$
-# Repository metadata: recognised by GitHub/Zenodo, non-standard at package top level
-^codemeta\.json$
-^CITATION\.cff$
+
 # pffft: submodule that is not compiled, not on any -I path, and referenced by
 # no source file. Shipping it would distribute unattributed, unused C sources.
 ^src/pffft/
+
 # pocketfft: only pocketfft_hdronly.h is used (by dwsys/NUMFourier.cpp);
 # the demo and build files are not. LICENSE.md and README.md are kept.
+^src/pocketfft/\.git$
 ^src/pocketfft/pocketfft_demo\.cc$
 ^src/pocketfft/meson\.build$
-# Cross-validation harness: needs an external Praat install and the plabench
-# Python package, so it cannot run under R CMD check. Lives in dev/ instead.
-^dev/
+
+^src/clapack/\.git$
+
+# Compiled/editor-junk build artefacts anywhere under src/
+^src/.*\.(o|o\.tmp|so|la|exe|backup.*|bak.*|tmp.*|before.*|beforesed|dup|fix|future|rcpp|static|init|with_duplicate|clang-format)$
