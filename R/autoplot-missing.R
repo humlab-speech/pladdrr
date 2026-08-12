@@ -195,29 +195,54 @@ autolayer.PitchTier <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @param max_formant Maximum formant number to display (default: 3).
 #' @param colors Colors for each formant track (default: auto).
-#' @param time_step Sampling interval in seconds (default: 0.005).
+#' @param time_step Sampling interval in seconds, only used when style="line" (default: 0.005).
+#' @param style "speckle" (default, matches Praat's FormantTier_speckle: plots the
+#'   tier's own stored points, unconnected) or "line" (interpolates on a
+#'   time_step grid and connects with a line — not Praat's default view).
 #' @export
 autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
                                   max_formant = 3L, colors = NULL,
-                                  time_step = 0.005, garnish = TRUE, ...) {
+                                  time_step = 0.005,
+                                  style = c("speckle", "line"),
+                                  garnish = TRUE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
+  style <- match.arg(style)
   tmin <- if (is.null(from_time)) object$get_start_time() else from_time
   tmax <- if (is.null(to_time)) object$get_end_time() else to_time
   n_max <- min(object$get_max_num_formants(), max_formant)
-  times <- seq(tmin, tmax, by = time_step)
-  rows <- list()
-  for (f in seq_len(n_max)) {
-    for (t in times) {
-      freq <- tryCatch(object$get_value_at_time(f, t),
-                       error = function(e) NA_real_)
-      if (!is.na(freq)) {
-        rows[[length(rows) + 1]] <- data.frame(
-          time = t, formant_number = f, frequency = freq,
-          bandwidth = NA_real_, stringsAsFactors = FALSE)
+
+  if (style == "speckle") {
+    point_info <- object$as_data_frame()  # time, num_formants per stored point
+    rows <- list()
+    for (i in seq_len(nrow(point_info))) {
+      t <- point_info$time[i]
+      if (t < tmin || t > tmax) next
+      nf <- min(point_info$num_formants[i], n_max)
+      for (f in seq_len(nf)) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) {
+          rows[[length(rows) + 1]] <- data.frame(
+            time = t, formant_number = f, frequency = freq,
+            bandwidth = NA_real_, stringsAsFactors = FALSE)
+        }
+      }
+    }
+  } else {
+    times <- seq(tmin, tmax, by = time_step)
+    rows <- list()
+    for (f in seq_len(n_max)) {
+      for (t in times) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) {
+          rows[[length(rows) + 1]] <- data.frame(
+            time = t, formant_number = f, frequency = freq,
+            bandwidth = NA_real_, stringsAsFactors = FALSE)
+        }
       }
     }
   }
+
   if (length(rows) == 0) {
     warning("FormantTier has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -230,10 +255,13 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
   colors <- .formant_colors(df, max_formant, colors)
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data$time, y = .data$frequency,
-                     color = .data$formant_label)) +
-    ggplot2::geom_line(linewidth = 0.8, ...) +
-    ggplot2::geom_point(size = 1.5, ...) +
-    ggplot2::scale_color_manual(values = colors, name = "Formant")
+                     color = .data$formant_label))
+  p <- if (style == "speckle") {
+    p + ggplot2::geom_point(size = 1.5, ...)
+  } else {
+    p + ggplot2::geom_line(linewidth = 0.8, ...) + ggplot2::geom_point(size = 1.5, ...)
+  }
+  p <- p + ggplot2::scale_color_manual(values = colors, name = "Formant")
   if (garnish) {
     p <- p + ggplot2::labs(title = "FormantTier", x = "Time (s)",
                             y = "Frequency (Hz)")
@@ -245,38 +273,69 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autolayer.FormantTier <- function(object, from_time = NULL, to_time = NULL,
                                    max_formant = 3L, colors = NULL,
-                                   time_step = 0.005, ...) {
+                                   time_step = 0.005,
+                                   style = c("speckle", "line"), ...) {
+  style <- match.arg(style)
   tmin <- if (is.null(from_time)) object$get_start_time() else from_time
   tmax <- if (is.null(to_time)) object$get_end_time() else to_time
   n_max <- min(object$get_max_num_formants(), max_formant)
-  times <- seq(tmin, tmax, by = time_step)
-  rows <- list()
-  for (f in seq_len(n_max)) {
-    for (t in times) {
-      freq <- tryCatch(object$get_value_at_time(f, t),
-                       error = function(e) NA_real_)
-      if (!is.na(freq)) {
-        rows[[length(rows) + 1]] <- data.frame(
-          time = t, formant_number = f, frequency = freq,
-          bandwidth = NA_real_, stringsAsFactors = FALSE)
+
+  if (style == "speckle") {
+    point_info <- object$as_data_frame()  # time, num_formants per stored point
+    rows <- list()
+    for (i in seq_len(nrow(point_info))) {
+      t <- point_info$time[i]
+      if (t < tmin || t > tmax) next
+      nf <- min(point_info$num_formants[i], n_max)
+      for (f in seq_len(nf)) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) {
+          rows[[length(rows) + 1]] <- data.frame(
+            time = t, formant_number = f, frequency = freq,
+            bandwidth = NA_real_, stringsAsFactors = FALSE)
+        }
+      }
+    }
+  } else {
+    times <- seq(tmin, tmax, by = time_step)
+    rows <- list()
+    for (f in seq_len(n_max)) {
+      for (t in times) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) {
+          rows[[length(rows) + 1]] <- data.frame(
+            time = t, formant_number = f, frequency = freq,
+            bandwidth = NA_real_, stringsAsFactors = FALSE)
+        }
       }
     }
   }
+
   if (length(rows) == 0) return(NULL)
   df <- .prep_formant_df(do.call(rbind, rows), NULL, NULL, max_formant)
   if (nrow(df) == 0) return(NULL)
   colors <- .formant_colors(df, max_formant, colors)
-  list(
-    ggplot2::geom_line(data = df,
-      ggplot2::aes(x = .data$time, y = .data$frequency,
-                   color = .data$formant_label),
-      linewidth = 0.8, ...),
-    ggplot2::geom_point(data = df,
-      ggplot2::aes(x = .data$time, y = .data$frequency,
-                   color = .data$formant_label),
-      size = 1.5, ...),
-    ggplot2::scale_color_manual(values = colors, name = "Formant")
-  )
+  if (style == "speckle") {
+    list(
+      ggplot2::geom_point(data = df,
+        ggplot2::aes(x = .data$time, y = .data$frequency,
+                     color = .data$formant_label),
+        size = 1.5, ...),
+      ggplot2::scale_color_manual(values = colors, name = "Formant")
+    )
+  } else {
+    list(
+      ggplot2::geom_line(data = df,
+        ggplot2::aes(x = .data$time, y = .data$frequency,
+                     color = .data$formant_label),
+        linewidth = 0.8, ...),
+      ggplot2::geom_point(data = df,
+        ggplot2::aes(x = .data$time, y = .data$frequency,
+                     color = .data$formant_label),
+        size = 1.5, ...),
+      ggplot2::scale_color_manual(values = colors, name = "Formant")
+    )
+  }
 }
 
 #' @rdname autoplot-methods
