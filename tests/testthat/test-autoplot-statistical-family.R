@@ -40,16 +40,16 @@ test_that("Polygon autoplot/autolayer render, fill_color vs fill_col are distinc
   expect_s3_class(p, "ggplot")
 })
 
-test_that("PCA autoplot renders for scree/scores/both plot_type", {
+test_that("PCA autoplot renders for scree/scores/both type", {
   set.seed(1)
   x <- matrix(rnorm(200), nrow = 20)
   pca <- pca_from_matrix(x)  # R/pca-wrapper.R:155
-  expect_s3_class(ggplot2::autoplot(pca, plot_type = "scree"), "ggplot")
-  expect_s3_class(ggplot2::autoplot(pca, plot_type = "scores"), "ggplot")
+  expect_s3_class(ggplot2::autoplot(pca, type = "scree"), "ggplot")
+  expect_s3_class(ggplot2::autoplot(pca, type = "scores"), "ggplot")
   # "both" requires patchwork (Suggests); skip cleanly if not installed,
   # matching the package's own requireNamespace("patchwork") guard.
   if (requireNamespace("patchwork", quietly = TRUE)) {
-    expect_s3_class(ggplot2::autoplot(pca, plot_type = "both"), "ggplot")
+    expect_s3_class(ggplot2::autoplot(pca, type = "both"), "ggplot")
   }
 })
 
