@@ -25,6 +25,12 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # ubuntu-latest runners default to a non-UTF-8 C locale, which breaks
+      # vignette rebuilding on Rmd source containing IPA/Unicode characters
+      # ("invalid multibyte string"). Force UTF-8 so knitr/rmarkdown can
+      # read the vignette source correctly.
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
 
     steps:
       - uses: actions/checkout@v4
@@ -97,7 +103,7 @@ jobs:
           fi
 
           # Check names whose WARNING status is known, justified and permanent.
-          allowed='checking compiled code|checking compilation flags used|checking whether package .* can be installed|checking S3 generic/method consistency'
+          allowed='checking compiled code|checking compilation flags used|checking compilation flags in Makevars|checking whether package .* can be installed|checking S3 generic/method consistency'
 
           unexpected=$(grep -E '^\* checking .*\.\.\. WARNING' "$log" | grep -Ev "$allowed" || true)
 

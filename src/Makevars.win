@@ -199,7 +199,6 @@ FON_SRC = praat.github.io/fon/Transition.cpp praat.github.io/fon/Distributions_a
           praat.github.io/fon/WordList.cpp praat.github.io/fon/SpellingChecker.cpp praat.github.io/fon/Corpus.cpp \
           praat.github.io/fon/Movie.cpp praat.github.io/fon/Photo.cpp praat.github.io/fon/LongSound.cpp \
           praat.github.io/fon/SoundSet.cpp \
-          praat.github.io/fon/Praat_tests.cpp \
           praat.github.io/fon/praat_Sound.cpp praat.github.io/fon/praat_Matrix.cpp praat.github.io/fon/praat_Tiers.cpp \
           praat.github.io/fon/praat_TextGrid_init.cpp praat.github.io/fon/praat_uvafon_init.cpp
 
@@ -258,16 +257,16 @@ WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \
 SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp intensity_simd.cpp \
            window_functions_simd.cpp window_simd_bridge.cpp autocorrelation_simd.cpp \
            formant_lpc_simd.cpp formant_simd_bridge.cpp \
-           sound_statistics_simd.cpp sound_conversion_simd.cpp \
-           num_matrix_simd.cpp num_filtering_simd.cpp \
-           num_distance_simd.cpp sound_convolution_simd.cpp \
-           pitch_processing_simd.cpp pitch_simd_bridge.cpp spectrogram_simd.cpp \
+           sound_conversion_simd.cpp \
+           \
+           \
+           pitch_simd_bridge.cpp spectrogram_simd.cpp \
            preemphasis_simd.cpp pitch_filter_simd.cpp \
            mfcc_simd.cpp mfcc_simd_bridge.cpp \
            batch_queries_simd.cpp batch_queries_simd_bridge.cpp \
            textgrid_simd.cpp textgrid_simd_bridge.cpp \
            formantpath_simd.cpp harmonicity_simd.cpp complexspectrogram_simd.cpp \
-           klattgrid_simd.cpp powercepstrogram_simd.cpp simd_info.cpp sound_fast_access.cpp textgrid_batch_operations.cpp batch_queries.cpp thread_control.cpp
+           klattgrid_simd.cpp powercepstrogram_simd.cpp slopeselector_simd.cpp simd_info.cpp sound_fast_access.cpp textgrid_batch_operations.cpp batch_queries.cpp thread_control.cpp
 
 # Rcpp Module sources
 MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_module.cpp \
