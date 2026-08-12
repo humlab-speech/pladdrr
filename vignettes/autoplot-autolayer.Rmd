@@ -93,6 +93,64 @@ formant <- tryCatch(
 autoplot(formant, max_formant = 4)
 ```
 
+### Pitch Tier
+
+A `PitchTier` stores sparse, hand-editable F0 points (as opposed to `Pitch`'s
+dense per-frame contour) — it's what you get from `pitch$down_to_pitch_tier()`,
+and it's the object type Praat scripts manipulate when resynthesizing prosody.
+
+```{r autoplot-pitchtier, eval = requireNamespace("ggplot2", quietly = TRUE)}
+pitch_tier <- pitch$down_to_pitch_tier()
+autoplot(pitch_tier)
+```
+
+Overlay the sparse tier points on the dense pitch contour with `autolayer()`:
+
+```{r pitch-pitchtier-overlay, eval = requireNamespace("ggplot2", quietly = TRUE)}
+autoplot(pitch) +
+  autolayer(pitch_tier, color = "red")
+```
+
+### Formant Grid and Formant Tier Styles
+
+A `FormantGrid` holds formant frequency points directly (the editable
+structure behind Klatt synthesis), while a `FormantTier` is a downsampled
+view of a `Formant` object. `FormantTier`'s `style` argument switches between
+`"speckle"` (default, one point per Praat-selected candidate) and `"line"`
+(one interpolated point per fixed time step).
+
+```{r autoplot-formantgrid, eval = requireNamespace("ggplot2", quietly = TRUE)}
+grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
+grid$add_formant_point(1, 0.5, 500)
+grid$add_formant_point(2, 0.5, 1500)
+grid$add_formant_point(3, 0.5, 2500)
+autoplot(grid)
+```
+
+```{r autoplot-formanttier-styles, eval = requireNamespace("ggplot2", quietly = TRUE)}
+formant_tier <- FormantTier$from_formant(formant)
+autoplot(formant_tier)                  # style = "speckle" (default)
+autoplot(formant_tier, style = "line")  # interpolated at a fixed time step
+```
+
+### Cepstral Analysis
+
+`Cepstrum` supports two views of the same data via its `power` argument: the
+default raw (signed) cepstrum, and a `power = TRUE` dB view used for peak
+picking. `PowerCepstrogram` extends this over time and underlies CPPS-based
+voice-quality measures.
+
+```{r autoplot-cepstrum-power, eval = requireNamespace("ggplot2", quietly = TRUE)}
+cepstrum <- sound$to_cepstrum()
+autoplot(cepstrum)                # raw view
+autoplot(cepstrum, power = TRUE)  # power (dB) view
+```
+
+```{r autoplot-powercepstrogram, eval = requireNamespace("ggplot2", quietly = TRUE)}
+power_cepstrogram <- sound$to_powercepstrogram()
+autoplot(power_cepstrogram)
+```
+
 ## Composing Multi-Layer Plots
 
 Combine objects using `autolayer()`.
@@ -167,6 +225,47 @@ autoplot(intensity) +
   geom_hline(yintercept = c(50, 60, 70), linetype = "dashed", alpha = 0.3) +
   annotate("text", x = 0, y = 70, label = "Loud", hjust = 0, size = 3) +
   annotate("text", x = 0, y = 50, label = "Quiet", hjust = 0, size = 3)
+```
+
+## Statistical and Alignment Tools
+
+pladdrr also wraps a few non-acoustic-domain Praat objects used in analysis
+pipelines: PCA for dimensionality reduction, and DTW for aligning two sounds.
+
+### PCA: Scree, Scores, and Combined Plots
+
+`autoplot.PCA()`'s `type` argument selects a scree plot (variance explained
+per component), a scores plot (observations projected onto the first two
+components), or `"both"` combined side-by-side via the optional patchwork
+package.
+
+```{r autoplot-pca, eval = requireNamespace("ggplot2", quietly = TRUE)}
+set.seed(1)
+formant_matrix <- matrix(rnorm(200), nrow = 20)
+pca <- pca_from_matrix(formant_matrix)
+autoplot(pca, type = "scree")
+autoplot(pca, type = "scores")
+```
+
+```{r autoplot-pca-both, eval = requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("patchwork", quietly = TRUE)}
+autoplot(pca, type = "both")
+```
+
+### DTW Warping Path
+
+Dynamic Time Warping aligns two sounds (or feature sequences) that differ in
+timing — `autoplot.DTW()` plots the resulting warping path, and
+`autolayer.DTW()` overlays it on an existing plot.
+
+```{r autoplot-dtw, eval = requireNamespace("ggplot2", quietly = TRUE)}
+dtw_sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
+dtw <- sounds_to_dtw(dtw_sound, dtw_sound)
+autoplot(dtw)
+```
+
+```{r autolayer-dtw, eval = requireNamespace("ggplot2", quietly = TRUE)}
+autoplot(dtw) +
+  autolayer(dtw, color = "orange")
 ```
 
 ## Parameter Reference
