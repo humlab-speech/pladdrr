@@ -101,7 +101,12 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
 
-    # Load pladdrr on workers and export necessary objects
+    # Workers are fresh R sessions and don't inherit the calling session's
+    # .libPaths(), so pladdrr can be invisible to them even though it's
+    # loaded here (e.g. installed to a non-default library, or a temp
+    # install location during R CMD build's vignette pass). Propagate the
+    # library path before loading the package.
+    parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
     parallel::clusterEvalQ(cl, library(pladdrr))
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
 
@@ -178,6 +183,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
   } else {
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
+    parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
     parallel::clusterEvalQ(cl, library(pladdrr))
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
     parallel::parLapply(cl, sounds, capped_func, ...)
