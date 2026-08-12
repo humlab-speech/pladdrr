@@ -494,23 +494,29 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL, to_time = NULL
 #' @rdname autoplot-methods
 #' @export
 autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
-    to_time = NULL, from_freq = NULL, to_freq = NULL, ...) {
+    to_time = NULL, from_freq = NULL, to_freq = NULL, dynamic_range = 70, ...) {
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
   if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
   if (!is.null(to_freq))   df <- df[df$frequency <= to_freq, ]
   if (nrow(df) == 0) return(NULL)
-  amp_col <- if ("amplitude_db" %in% names(df)) "amplitude_db"
-             else if ("amplitude" %in% names(df)) "amplitude"
-             else stop("ComplexSpectrogram data frame missing amplitude column")
+  amp_col <- "amplitude_dB"
+  if (!"amplitude_dB" %in% names(df)) {
+    if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
+    ref <- max(df$amplitude, 1e-300)
+    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)  # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    floor_dB <- -dynamic_range
+    df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
+  }
   list(
     ggplot2::geom_raster(data = df,
       ggplot2::aes(x = .data$time, y = .data$frequency,
                    fill = .data[[amp_col]]),
       ...),
     ggplot2::scale_fill_gradient(low = "white", high = "black",
-                                  name = "Amplitude (dB)")
+                                  name = "Amplitude (dB)",
+                                  limits = c(-dynamic_range, 0))
   )
 }
 
