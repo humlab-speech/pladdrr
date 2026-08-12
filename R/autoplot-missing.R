@@ -1296,8 +1296,8 @@ autoplot.LPC <- function(object, frame = 1L, garnish = TRUE,
     stop("Package 'ggplot2' is required. Please install it.")
   spectrum <- object$to_spectrum(frame)
   df <- spectrum$as_data_frame()
-  if (!"power_db" %in% names(df) && "power" %in% names(df))
-    df$power_db <- 10 * log10(pmax(df$power, 1e-20))
+  if (!"power_dB" %in% names(df) && "power" %in% names(df))
+    df$power_dB <- 10 * log10(pmax(df$power, 1e-20))
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data$frequency, y = .data$power_dB)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
@@ -1313,8 +1313,8 @@ autoplot.LPC <- function(object, frame = 1L, garnish = TRUE,
 autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
   spectrum <- object$to_spectrum(frame)
   df <- spectrum$as_data_frame()
-  if (!"power_db" %in% names(df) && "power" %in% names(df))
-    df$power_db <- 10 * log10(pmax(df$power, 1e-20))
+  if (!"power_dB" %in% names(df) && "power" %in% names(df))
+    df$power_dB <- 10 * log10(pmax(df$power, 1e-20))
   ggplot2::geom_line(data = df,
     ggplot2::aes(x = .data$frequency, y = .data$power_dB),
     color = color, linewidth = 0.8, ...)
