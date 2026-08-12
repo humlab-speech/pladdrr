@@ -21,10 +21,7 @@ as.data.frame.PowerCepstrogram <- function(x, ...) x$as_data_frame()
 
 #' @export
 as.data.frame.BarkSpectrogram <- function(x, ...) {
-  mat <- x$as_matrix(to_db = TRUE)
-  m <- as.matrix(mat)
-  expand.grid(row = seq_len(nrow(m)), col = seq_len(ncol(m))) |>
-    transform(value = as.vector(m))
+  as.data.frame(x$to_matrix(to_db = TRUE))
 }
 
 #' @export
@@ -107,28 +104,19 @@ as.data.frame.LongSound <- function(x, ...) {
 #' @export
 as.data.frame.Matrix <- function(x, ...) {
   mat <- x$as_matrix()
-  if (is.null(colnames(mat))) {
-    colnames(mat) <- paste0("col", seq_len(ncol(mat)))
-  }
-  if (is.null(rownames(mat))) {
-    rownames(mat) <- paste0("row", seq_len(nrow(mat)))
-  }
-  df <- expand.grid(row = seq_len(nrow(mat)), col = seq_len(ncol(mat)))
+  n_row <- x$get_ny(); n_col <- x$get_nx()
+  y1 <- x$get_ymin() + x$get_dy() / 2
+  x1 <- x$get_xmin() + x$get_dx() / 2
+  df <- expand.grid(row = seq_len(n_row), col = seq_len(n_col))
   df$value <- as.vector(mat)
-  rn <- suppressWarnings(as.numeric(rownames(mat)))
-  cn <- suppressWarnings(as.numeric(colnames(mat)))
-  if (!anyNA(rn)) df$row <- rn[df$row]
-  if (!anyNA(cn)) df$col <- cn[df$col]
+  df$col <- x1 + (df$col - 1) * x$get_dx()
+  df$row <- y1 + (df$row - 1) * x$get_dy()
   df
 }
 
 #' @export
 as.data.frame.MelSpectrogram <- function(x, ...) {
-  mat <- x$as_matrix(to_db = TRUE)
-  m <- as.matrix(mat)
-  df <- expand.grid(row = seq_len(nrow(m)), col = seq_len(ncol(m)))
-  df$value <- as.vector(m)
-  df
+  as.data.frame(x$to_matrix(to_db = TRUE))
 }
 
 #' @export
