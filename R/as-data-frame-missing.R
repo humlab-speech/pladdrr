@@ -35,8 +35,13 @@ as.data.frame.Cepstrum <- function(x, ...) {
 
 #' @export
 as.data.frame.Cochleagram <- function(x, ...) {
-  exc <- x$to_excitation()
-  exc$as_data_frame()
+  m <- x$as_matrix()
+  n_row <- nrow(m); n_col <- ncol(m)
+  df <- expand.grid(row = seq_len(n_row), col = seq_len(n_col))
+  df$frequency <- vapply(df$row, x$get_frequency_from_row, numeric(1))
+  df$time <- vapply(df$col, x$get_time_from_column, numeric(1))
+  df$excitation <- as.vector(m)
+  df[, c("time", "frequency", "excitation")]
 }
 
 #' @export
