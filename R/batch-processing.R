@@ -301,7 +301,7 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 
     # Extract measurements
     results <- list()
-    for (i in 1:n_items) {
+    for (i in seq_len(n_items)) {
       label <- textgrid$get_interval_text(tier_idx, i)
 
       # Filter if needed
@@ -342,9 +342,9 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
   } else {
     # Point tier
     n_items <- textgrid$get_number_of_points(tier_idx)
-    
+
     results <- list()
-    for (i in 1:n_items) {
+    for (i in seq_len(n_items)) {
       label <- textgrid$get_point_text(tier_idx, i)
 
       # Filter if needed

@@ -58,11 +58,11 @@ pladdrr provides direct R access to Praat's KlattGrid implementation.
 
 ### Recommended: Pre-configured Vowels
 
-The safest way to create a KlattGrid is with `KlattGrid_createFromVowel()`:
+The safest way to create a KlattGrid is with `klattgrid_create_from_vowel()`:
 
 ```{r basic-vowel}
 # Synthesize /a/ vowel (low central)
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.5,           # 500 ms
   f0start = 120,            # Pitch: 120 Hz (adult male)
   f1 = 800, b1 = 80,        # First formant + bandwidth
@@ -105,7 +105,7 @@ sound <- kg$to_sound()
 - All formant frequency tiers (F1, F2, F3, ...)
 - All formant bandwidth tiers (B1, B2, B3, ...)
 
-**Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()` instead.**
+**Always use `klattgrid_create_from_vowel()` or `klattgrid_create_example()` instead.**
 
 ## Vowel Synthesis
 
@@ -115,7 +115,7 @@ The three corner vowels (/i/, /a/, /u/) define the vowel space:
 
 ```{r vowel-triangle}
 # /i/ - high front vowel (English "beet")
-kg_i <- KlattGrid_createFromVowel(
+kg_i <- klattgrid_create_from_vowel(
   duration = 0.3, f0start = 200,
   f1 = 280, b1 = 50,
   f2 = 2250, b2 = 100,
@@ -123,7 +123,7 @@ kg_i <- KlattGrid_createFromVowel(
 )
 
 # /a/ - low central vowel (English "father")
-kg_a <- KlattGrid_createFromVowel(
+kg_a <- klattgrid_create_from_vowel(
   duration = 0.3, f0start = 200,
   f1 = 730, b1 = 80,
   f2 = 1090, b2 = 120,
@@ -131,7 +131,7 @@ kg_a <- KlattGrid_createFromVowel(
 )
 
 # /u/ - high back vowel (English "boot")
-kg_u <- KlattGrid_createFromVowel(
+kg_u <- klattgrid_create_from_vowel(
   duration = 0.3, f0start = 200,
   f1 = 310, b1 = 60,
   f2 = 870, b2 = 90,
@@ -172,7 +172,7 @@ Different speakers require different formant and pitch values:
 
 ```{r voice-types}
 # Male voice (low pitch, lower formants)
-kg_male <- KlattGrid_createFromVowel(
+kg_male <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 100,
   f1 = 750, b1 = 80,
   f2 = 1100, b2 = 120,
@@ -180,7 +180,7 @@ kg_male <- KlattGrid_createFromVowel(
 )
 
 # Female voice (higher pitch, higher formants)
-kg_female <- KlattGrid_createFromVowel(
+kg_female <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 220,
   f1 = 850, b1 = 70,
   f2 = 1300, b2 = 110,
@@ -188,7 +188,7 @@ kg_female <- KlattGrid_createFromVowel(
 )
 
 # Child voice (very high pitch)
-kg_child <- KlattGrid_createFromVowel(
+kg_child <- klattgrid_create_from_vowel(
   duration = 0.4, f0start = 300,
   f1 = 900, b1 = 60,
   f2 = 1400, b2 = 100,
@@ -209,7 +209,7 @@ Add pitch points to create dynamic intonation patterns:
 
 ```{r pitch-contour}
 # Start with base vowel
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.6, f0start = 120,
   f1 = 500, b1 = 50,
   f2 = 1500, b2 = 100,
@@ -244,21 +244,21 @@ ggplot(df, aes(time, frequency)) +
 
 ```{r pitch-patterns}
 # Flat pitch (citation form)
-kg_flat <- KlattGrid_createFromVowel(
+kg_flat <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
   f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
 )
 # No additional points needed
 
 # Falling pitch (statement)
-kg_fall <- KlattGrid_createFromVowel(
+kg_fall <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 150,
   f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
 )
 kg_fall$add_pitch_point(0.5, 100)  # Fall from 150 to 100 Hz
 
 # Rising pitch (question)
-kg_rise <- KlattGrid_createFromVowel(
+kg_rise <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 100,
   f1 = 500, b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150
 )
@@ -273,7 +273,7 @@ Create smooth vowel-to-vowel transitions:
 
 ```{r diphthong}
 # /ai/ diphthong: /a/ → /i/ (as in "buy")
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 150,
   f1 = 730, b1 = 80,      # Start: /a/
   f2 = 1090, b2 = 120,
@@ -320,7 +320,7 @@ f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) → 310 (/u/)
 f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 → 870
 
 vowel_continuum <- lapply(1:10, function(i) {
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.3, f0start = 200,
     f1 = f1_seq[i], b1 = 50,
     f2 = f2_seq[i], b2 = 100,
@@ -341,7 +341,7 @@ for (i in 1:10) {
 
 ```{r spectrogram, eval=FALSE, fig.width=8, fig.height=5}
 # Synthesize /a/ vowel
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
   f1 = 730, b1 = 80,
   f2 = 1090, b2 = 120,
@@ -401,7 +401,7 @@ cat(sprintf("  F2: %.0f Hz\n", f2_mean))
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
 
 # Resynthesize with extracted formants
-kg_synth <- KlattGrid_createFromVowel(
+kg_synth <- klattgrid_create_from_vowel(
   duration = min(sound_real$get_duration(), 1.0),
   f0start = 120,
   f1 = f1_mean, b1 = 80,
@@ -425,7 +425,7 @@ cat("\nSynthetic sound matches real speech formant averages\n")
 Manipulate voicing amplitude for breathiness or creaky voice:
 
 ```{r voice-quality}
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
   f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
 )
@@ -443,7 +443,7 @@ Use the pre-configured example for complex synthesis:
 
 ```{r complex-example}
 # Pre-configured grid with multiple tiers
-kg_complex <- KlattGrid_createExample()
+kg_complex <- klattgrid_create_example()
 
 # Synthesize full signal
 sound_complex <- kg_complex$to_sound()
@@ -482,7 +482,7 @@ cat(sprintf("  F2: %.0f Hz\n", f2_mean))
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
 
 # 5. Resynthesize
-kg_resynth <- KlattGrid_createFromVowel(
+kg_resynth <- klattgrid_create_from_vowel(
   duration = min(sound_orig$get_duration(), 1.0),
   f0start = f0_mean,
   f1 = f1_mean, b1 = 80,
@@ -509,7 +509,7 @@ vot_values <- seq(0, 60, by = 10)  # 0-60 ms VOT
 
 stimuli <- lapply(vot_values, function(vot_ms) {
   # Voicing delay = VOT
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = 730, b1 = 80, f2 = 1090, b2 = 120, f3 = 2440, b3 = 140
   )
@@ -548,7 +548,7 @@ morphed_voices <- lapply(morph_steps, function(alpha) {
   f2 <- f2_male + alpha * (f2_female - f2_male)
   f0 <- f0_male + alpha * (f0_female - f0_male)
   
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = f0,
     f1 = f1, b1 = 80, f2 = f2, b2 = 120, f3 = 2500, b3 = 150
   )
@@ -564,7 +564,7 @@ Demonstrate formant-vowel relationships interactively:
 ```{r teaching-demo}
 # Function to synthesize any vowel from F1/F2
 synthesize_vowel <- function(f1, f2, label = "") {
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = f1, b1 = 80, f2 = f2, b2 = 120, f3 = 2500, b3 = 150
   )
@@ -588,18 +588,18 @@ synthesize_vowel(310, 870, "u")
 
 **Issue**: Direct synthesis from an empty `KlattGrid()` errors (`"Pitch tier should not be empty."`)
 
-**Workaround**: Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()`
+**Workaround**: Always use `klattgrid_create_from_vowel()` or `klattgrid_create_example()`
 
 **Example of safe usage:**
 ```{r safe-usage, error=TRUE}
 # safe
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
   f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
 )
 
 # safe
-kg <- KlattGrid_createExample()
+kg <- klattgrid_create_example()
 
 # unsafe - errors, uninitialized tiers
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
@@ -626,7 +626,7 @@ sound <- kg$to_sound()  # errors
 
 ### Do
 
-1. **Always use `KlattGrid_createFromVowel()`** for vowel synthesis
+1. **Always use `klattgrid_create_from_vowel()`** for vowel synthesis
 2. **Start with known formant values** from the reference table
 3. **Adjust formants gradually** (±50-100 Hz steps)
 4. **Keep bandwidths proportional**: B1 < B2 < B3 (typically 50-80-120 Hz)
@@ -648,7 +648,7 @@ sound <- kg$to_sound()  # errors
 
 **Cause**: Incomplete grid initialization
 
-**Solution**: Use `KlattGrid_createFromVowel()` instead of empty grid
+**Solution**: Use `klattgrid_create_from_vowel()` instead of empty grid
 
 ### Unnatural sounding synthesis
 
@@ -694,7 +694,7 @@ Existing R packages (e.g., `phonTools`) use simpler synthesis methods. pladdrr's
 - Speech resynthesis with modified parameters
 
 **Key functions:**
-- `KlattGrid_createFromVowel()` - Safe vowel synthesis
+- `klattgrid_create_from_vowel()` - Safe vowel synthesis
 - `add_pitch_point()` - Dynamic intonation
 - `add_formant_point()` - Formant transitions
 - `to_sound()` - Generate audio
@@ -710,7 +710,7 @@ Existing R packages (e.g., `phonTools`) use simpler synthesis methods. pladdrr's
 
 - Klatt, D. H. (1980). "Software for a cascade/parallel formant synthesizer". *JASA*, 67(3), 971-995.
 - Praat manual: [KlattGrid](https://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
-- pladdrr documentation: `?KlattGrid_createFromVowel`
+- pladdrr documentation: `?klattgrid_create_from_vowel`
 - See also: `vignette("formantpath-robust-tracking")` for formant extraction
 
 ## Session Info

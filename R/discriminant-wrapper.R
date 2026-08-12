@@ -104,7 +104,7 @@ NULL
   cat(sprintf("  Total observations: %d\n", info$n_observations))
   cat(sprintf("  Group labels: %s\n", paste(info$group_labels, collapse = ", ")))
   cat("  Discriminant functions:\n")
-  for (i in 1:min(5, length(eigenvals))) {
+  for (i in seq_len(min(5, length(eigenvals)))) {
     wilks <- .self$.cpp$get_wilks_lambda(i)
     cat(sprintf("    DF%d: eigenvalue=%.3f (%.1f%%), Wilks' Lambda=%.4f\n",
                 i, eigenvals[i], 100 * cum_var[i], wilks))

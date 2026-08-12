@@ -1,5 +1,4 @@
 test_that("batch functions work with function-wrapper Sound", {
-  skip_on_cran()
   
   # Create test sounds using function wrapper
   sounds <- lapply(1:3, function(i) {
@@ -39,7 +38,6 @@ test_that("batch functions work with function-wrapper Sound", {
 
 
 test_that("batch results match individual calls", {
-  skip_on_cran()
   
   # Use test audio file if available
   test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
@@ -74,7 +72,6 @@ test_that("batch results match individual calls", {
 
 
 test_that("batch extract-and-analyze functions work", {
-  skip_on_cran()
   
   test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
   if (!file.exists(test_file)) {
@@ -103,7 +100,6 @@ test_that("batch extract-and-analyze functions work", {
 
 
 test_that("vectorized query functions work", {
-  skip_on_cran()
   
   test_file <- system.file("signalfiles", "KA.wav", package = "pladdrr")
   if (!file.exists(test_file)) {
@@ -143,7 +139,6 @@ test_that("vectorized query functions work", {
 
 
 test_that("batch functions accept external pointers", {
-  skip_on_cran()
   
   # Create sounds and extract pointers
   sounds <- lapply(1:2, function(i) {
@@ -162,7 +157,6 @@ test_that("batch functions accept external pointers", {
 
 
 test_that("extract_xptr utility works correctly", {
-  skip_on_cran()
   
   sound <- Sound$from_values(sin(seq(0, 2*pi, length.out = 44100)), 44100)
   
@@ -182,7 +176,6 @@ test_that("extract_xptr utility works correctly", {
 
 
 test_that("unit_to_code utility provides consistent mapping", {
-  skip_on_cran()
   
   # Pitch units
   expect_equal(pladdrr:::unit_to_code("hertz", "pitch"), 0L)

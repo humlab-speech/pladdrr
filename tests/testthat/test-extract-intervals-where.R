@@ -1,5 +1,4 @@
 test_that("Sound$extract_intervals_where works with matching intervals", {
-  skip_on_cran()
   
   s <- Sound$new(test_path("fixtures/speech_sample.wav"))
   p <- s$to_pitch()
@@ -13,7 +12,6 @@ test_that("Sound$extract_intervals_where works with matching intervals", {
 })
 
 test_that("Sound$extract_intervals_where handles no matches without crashing", {
-  skip_on_cran()
   
   s <- Sound$new(test_path("fixtures/speech_sample.wav"))
   p <- s$to_pitch()
@@ -28,7 +26,6 @@ test_that("Sound$extract_intervals_where handles no matches without crashing", {
 })
 
 test_that("Sound$extract_intervals_where works with different criteria", {
-  skip_on_cran()
   
   s <- Sound$new(test_path("fixtures/speech_sample.wav"))
   p <- s$to_pitch()

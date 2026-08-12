@@ -298,7 +298,7 @@ summary.praat_formant <- function(object, ...) {
   cat(sprintf("Maximum formant: %.0f Hz\n", object$max_formant))
   
   # Calculate statistics for each formant
-  for (f in 1:object$n_formants) {
+  for (f in seq_len(object$n_formants)) {
     formant_data <- object$values[object$values$formant_number == f, ]
     valid_freqs <- formant_data$frequency[!is.na(formant_data$frequency)]
     

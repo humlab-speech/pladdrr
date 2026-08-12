@@ -72,7 +72,7 @@ Speaker-intrinsic differences (vocal tract length, physiology) require normaliza
 
 ### Loading Audio and Annotations
 
-For this demonstration we synthesize each vowel token with `KlattGrid_createFromVowel()`,
+For this demonstration we synthesize each vowel token with `klattgrid_create_from_vowel()`,
 using typical American English formant targets, rather than loading a recording. In real
 research, load an actual recording with `Sound$new("path/to/recording.wav")` and its
 annotation with `TextGrid$new("path/to/recording.TextGrid")`. The package ships one example
@@ -114,7 +114,7 @@ parts <- list(make_silence(vowel_segments$start[1]))
 for (i in seq_len(nrow(vowel_segments))) {
   target <- vowel_targets[[vowel_segments$vowel[i]]]
   duration <- vowel_segments$end[i] - vowel_segments$start[i]
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = duration, f0start = 150,
     f1 = unname(target["f1"]), b1 = 50,
     f2 = unname(target["f2"]), b2 = 100,

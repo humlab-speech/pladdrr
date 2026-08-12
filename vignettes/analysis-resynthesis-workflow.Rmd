@@ -119,7 +119,7 @@ cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
 
 ```{r resynthesize}
 # Create KlattGrid with extracted parameters
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
   f0start = f0_mean,
   f1 = f1_mean, b1 = 80,    # Use typical bandwidths
@@ -200,7 +200,7 @@ cat(sprintf("  F2: %d Hz\n", target_f2))
 cat(sprintf("  F3: %d Hz\n", target_f3))
 
 # Synthesize
-kg_vowel <- KlattGrid_createFromVowel(
+kg_vowel <- klattgrid_create_from_vowel(
   duration = 0.5,
   f0start = 120,
   f1 = target_f1, b1 = 80,
@@ -292,7 +292,7 @@ for (v_name in names(vowels)) {
   v <- vowels[[v_name]]
   
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.3,
     f0start = 150,
     f1 = v$f1, b1 = 60,
@@ -454,7 +454,7 @@ for (i in seq_along(morph_alphas)) {
   f0 <- speaker_male$f0 + alpha * (speaker_female$f0 - speaker_male$f0)
   
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.4,
     f0start = f0,
     f1 = f1, b1 = 80,
@@ -520,7 +520,7 @@ Systematically vary one formant while holding others constant:
 f1_values <- seq(400, 800, by = 50)  # Low to high
 
 stimuli <- lapply(f1_values, function(f1) {
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = f1, b1 = 80,        # VARIED
     f2 = 1500, b2 = 120,      # CONSTANT
@@ -540,7 +540,7 @@ Test perception with impossible voice combinations:
 
 ```{r pitch-formant-decouple}
 # Male formants + Female pitch (impossible in nature)
-kg_impossible <- KlattGrid_createFromVowel(
+kg_impossible <- klattgrid_create_from_vowel(
   duration = 0.5,
   f0start = 220,              # Female pitch
   f1 = 730, b1 = 80,          # Male formants
@@ -564,7 +564,7 @@ test_vowels <- expand.grid(
 
 accuracy <- apply(test_vowels, 1, function(params) {
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = params[1], b1 = 80,
     f2 = params[2], b2 = 120,
@@ -644,7 +644,7 @@ mean(accuracy_df$error_f1, na.rm = TRUE)  # Mean F1 error in Hz
 **Symptoms**: R crashes when calling `kg$to_sound()`
 
 **Solutions**:
-- Always use `KlattGrid_createFromVowel()` (not empty constructor)
+- Always use `klattgrid_create_from_vowel()` (not empty constructor)
 - Verify all formant values are positive and finite
 - Check F1 < F2 < F3 constraint
 
@@ -672,7 +672,7 @@ Analysis-resynthesis stores multiple objects:
 **Key functions**:
 - `sound$to_formant_path()` - Robust analysis
 - `fp$extract_formant()` - Get optimal track
-- `KlattGrid_createFromVowel()` - Safe synthesis
+- `klattgrid_create_from_vowel()` - Safe synthesis
 - `as.data.frame()` - Extract formant values
 
 **Typical pipeline**:
@@ -680,7 +680,7 @@ Analysis-resynthesis stores multiple objects:
 2. Analyze: `fp <- sound$to_formant_path(num_steps_up_down=2L)`
 3. Extract: `frm_result <- fp$extract_formant()`
 4. Get values: `df <- as.data.frame(frm_result)`
-5. Synthesize: `kg <- KlattGrid_createFromVowel(...)`
+5. Synthesize: `kg <- klattgrid_create_from_vowel(...)`
 6. Compare: Visual/perceptual validation
 
 ## Further Reading

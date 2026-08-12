@@ -91,7 +91,7 @@ NULL
   cat(sprintf("  Components: %d, Dimension: %d\n", info$n_components, info$dimension))
   cat(sprintf("  Observations: %d\n", info$n_observations))
   cat("  Variance explained:\n")
-  for (i in 1:min(5, length(eigenvals))) {
+  for (i in seq_len(min(5, length(eigenvals)))) {
     cat(sprintf("    PC%d: %.1f%% (cumulative: %.1f%%)\n",
                 i, 100 * eigenvals[i] / total, 100 * cum_var[i]))
   }

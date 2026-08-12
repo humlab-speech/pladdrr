@@ -280,8 +280,8 @@ extract_formants <- function(sound,
     freqs <- c(freqs, rep(NA_real_, n_formants - length(freqs)))
     bandwidths <- c(bandwidths, rep(NA_real_, n_formants - length(bandwidths)))
   } else if (length(freqs) > n_formants) {
-    freqs <- freqs[1:n_formants]
-    bandwidths <- bandwidths[1:n_formants]
+    freqs <- freqs[seq_len(n_formants)]
+    bandwidths <- bandwidths[seq_len(n_formants)]
   }
   
   return(data.frame(
@@ -324,7 +324,7 @@ extract_formants <- function(sound,
     return(NULL)
   }
   
-  for (k in 1:order) {
+  for (k in seq_len(order)) {
     # Calculate reflection coefficient
     num <- sum(f[(k+1):n] * b[k:(n-1)])
     den <- sum(f[(k+1):n]^2) + sum(b[k:(n-1)]^2)
@@ -345,7 +345,7 @@ extract_formants <- function(sound,
     # Update coefficients
     a_new <- numeric(k + 1)
     a_new[1] <- 1
-    for (i in 1:k) {
+    for (i in seq_len(k)) {
       a_new[i + 1] <- a[i + 1] + rc * a[k - i + 1]
     }
     a <- a_new

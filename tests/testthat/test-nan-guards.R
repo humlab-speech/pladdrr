@@ -2,7 +2,6 @@
 # Tests for NaN/NA input guards and new API methods
 
 test_that("Ltas NaN guards return NA instead of crashing", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
@@ -25,7 +24,6 @@ test_that("Ltas NaN guards return NA instead of crashing", {
 })
 
 test_that("Intensity NaN guards return NA instead of crashing", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   intensity <- sound$to_intensity(minimum_pitch = 100)
@@ -38,7 +36,6 @@ test_that("Intensity NaN guards return NA instead of crashing", {
 })
 
 test_that("Formant NaN guards return NA instead of crashing", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
@@ -52,7 +49,6 @@ test_that("Formant NaN guards return NA instead of crashing", {
 })
 
 test_that("Pitch NaN guard returns NA", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate = 16000)
   pitch <- sound$to_pitch()
@@ -61,7 +57,6 @@ test_that("Pitch NaN guard returns NA", {
 })
 
 test_that("Harmonicity NaN guards return NA", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate = 16000)
   hnr <- sound$to_harmonicity_cc()
@@ -80,7 +75,6 @@ test_that("Harmonicity NaN guards return NA", {
 # ========================================================================
 
 test_that("Intensity$get_values_at_times works correctly", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   intensity <- sound$to_intensity(minimum_pitch = 100)
@@ -107,7 +101,6 @@ test_that("Intensity$get_values_at_times works correctly", {
 # ========================================================================
 
 test_that("Formant$get_values_at_times accepts interpolation param", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
@@ -127,7 +120,6 @@ test_that("Formant$get_values_at_times accepts interpolation param", {
 # ========================================================================
 
 test_that("Spectrogram$as_matrix includes dimnames by default", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   spec <- sound$to_spectrogram()
@@ -146,7 +138,6 @@ test_that("Spectrogram$as_matrix includes dimnames by default", {
 })
 
 test_that("Spectrogram$as_matrix(include_dimnames=FALSE) omits names", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   spec <- sound$to_spectrogram()

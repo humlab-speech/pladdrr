@@ -85,7 +85,7 @@ NULL
     if (n > 0) {
       show_n <- min(3, n)
       cat("  First points:\n")
-      for (i in 1:show_n) {
+      for (i in seq_len(show_n)) {
         x_val <- .self$.cpp$get_x(i)
         y_val <- .self$.cpp$get_y(i)
         cat(sprintf("    %d: (%.3f, %.3f)\n", i, x_val, y_val))

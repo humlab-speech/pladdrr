@@ -54,7 +54,7 @@ The most commonly used method, based on the Burg algorithm for LPC analysis:
 # KlattGrid synthesizes speech with formant structure
 # Use a longer duration (1s) for stable analysis
 kg <- tryCatch({
-  KlattGrid_createFromVowel(
+  klattgrid_create_from_vowel(
     duration = 1.0,          # Longer duration for stable analysis
     f0start = 120,           # Fundamental frequency
     f1 = 730, b1 = 90,       # F1 for /a/ vowel

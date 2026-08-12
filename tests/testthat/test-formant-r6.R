@@ -334,7 +334,6 @@ test_that("Deprecated S3 functions still work with warnings", {
 # BUG-1 regression: to_formant_burg() on short windows must not miss formants
 # Before fix: short-window F1 could be 35-55% too low vs full-sound analysis
 test_that("BUG-1: to_formant_burg() on 40ms window agrees with full-sound analysis", {
-  skip_on_cran()
 
   # Formant resonances only (no F0) — avoids LPC confusing F0 with F1
   # F1=700Hz, F2=1220Hz, F3=2600Hz (approximate adult /a/)

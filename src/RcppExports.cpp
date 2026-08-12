@@ -10741,7 +10741,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // textgrid_get_tier_name
-std::string textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number);
+Rcpp::String textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number);
 RcppExport SEXP _pladdrr_textgrid_get_tier_name(SEXP xptrSEXP, SEXP tier_numberSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -10753,7 +10753,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // textgrid_get_tier_names
-std::vector<std::string> textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr);
+Rcpp::CharacterVector textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr);
 RcppExport SEXP _pladdrr_textgrid_get_tier_names(SEXP xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -10826,7 +10826,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // textgrid_get_interval_text
-std::string textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number);
+Rcpp::String textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number);
 RcppExport SEXP _pladdrr_textgrid_get_interval_text(SEXP xptrSEXP, SEXP tier_numberSEXP, SEXP interval_numberSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -10852,7 +10852,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // textgrid_get_label_at_time
-std::string textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time);
+Rcpp::String textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time);
 RcppExport SEXP _pladdrr_textgrid_get_label_at_time(SEXP xptrSEXP, SEXP tier_numberSEXP, SEXP timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -10939,7 +10939,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // textgrid_get_point_text
-std::string textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number);
+Rcpp::String textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number);
 RcppExport SEXP _pladdrr_textgrid_get_point_text(SEXP xptrSEXP, SEXP tier_numberSEXP, SEXP point_numberSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

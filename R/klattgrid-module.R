@@ -196,10 +196,10 @@ KlattGrid <- function(tmin = 0.0,
 #'
 #' @return KlattGrid object configured for vowel
 #' @examples
-#' kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+#' kg <- klattgrid_create_from_vowel(duration = 0.3, f0start = 120)
 #' sound <- kg$to_sound()
 #' @export
-KlattGrid_createFromVowel <- function(duration = 0.5,
+klattgrid_create_from_vowel <- function(duration = 0.5,
                                       f0start = 100.0,
                                       f1 = 500.0, b1 = 50.0,
                                       f2 = 1500.0, b2 = 100.0,
@@ -228,10 +228,10 @@ KlattGrid_createFromVowel <- function(duration = 0.5,
 #'
 #' @return KlattGrid example object
 #' @examples
-#' kg <- KlattGrid_createExample()
+#' kg <- klattgrid_create_example()
 #' sound <- kg$to_sound()
 #' @export
-KlattGrid_createExample <- function() {
+klattgrid_create_example <- function() {
   mod <- get_module("klattgrid_module")
   xptr <- mod$klattgrid_create_example()
   cpp_obj <- mod$RKlattGrid$new(xptr)
@@ -239,6 +239,34 @@ KlattGrid_createExample <- function() {
   structure(list(
     .cpp = cpp_obj
   ), class = c("KlattGrid", "PraatObject"))
+}
+
+# ============================================================================
+# Deprecated aliases — forward to new names with a deprecation warning
+# ============================================================================
+
+#' @rdname klattgrid_create_from_vowel
+#' @usage # Deprecated: use klattgrid_create_from_vowel() instead
+#' @export
+KlattGrid_createFromVowel <- function(duration = 0.5,
+                                      f0start = 100.0,
+                                      f1 = 500.0, b1 = 50.0,
+                                      f2 = 1500.0, b2 = 100.0,
+                                      f3 = 2500.0, b3 = 150.0,
+                                      f4 = 3500.0,
+                                      bandWidthFraction = 0.05,
+                                      formantFrequencyInterval = 1000.0) {
+  .Deprecated("klattgrid_create_from_vowel")
+  klattgrid_create_from_vowel(duration, f0start, f1, b1, f2, b2, f3, b3, f4,
+                               bandWidthFraction, formantFrequencyInterval)
+}
+
+#' @rdname klattgrid_create_example
+#' @usage # Deprecated: use klattgrid_create_example() instead
+#' @export
+KlattGrid_createExample <- function() {
+  .Deprecated("klattgrid_create_example")
+  klattgrid_create_example()
 }
 
 # ============================================================================

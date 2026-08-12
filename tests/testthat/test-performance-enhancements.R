@@ -4,7 +4,6 @@ library(data.table)
 
 
 test_that("sound_concatenate_all works with Sound objects", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sounds using synthetic tones
@@ -33,7 +32,6 @@ test_that("sound_concatenate_all works with Sound objects", {
 })
 
 test_that("Sound$get_values returns correct data", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound
@@ -103,7 +101,6 @@ test_that("Sound$get_values is faster than as_data_frame", {
 })
 
 test_that("Pitch$get_statistics returns all metrics", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound and pitch
@@ -146,7 +143,6 @@ test_that("Pitch$get_statistics returns all metrics", {
 })
 
 test_that("Intensity$get_statistics returns all metrics", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound and intensity
@@ -188,7 +184,6 @@ test_that("Intensity$get_statistics returns all metrics", {
 })
 
 test_that("TextGrid$get_all_intervals works correctly", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   tg <- tryCatch({
@@ -217,7 +212,6 @@ test_that("TextGrid$get_all_intervals works correctly", {
 })
 
 test_that("TextGrid$get_all_points works correctly", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   tg <- tryCatch({
@@ -238,7 +232,6 @@ test_that("TextGrid$get_all_points works correctly", {
 })
 
 test_that("TextGrid$extract_intervals_batch works correctly", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test TextGrid with mixed labels
@@ -281,7 +274,6 @@ test_that("TextGrid$extract_intervals_batch works correctly", {
 })
 
 test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound
@@ -325,7 +317,6 @@ test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
 })
 
 test_that("Pitch$get_adaptive_range works correctly", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound and pitch
@@ -364,7 +355,6 @@ test_that("Pitch$get_adaptive_range works correctly", {
 })
 
 test_that("Pitch$get_adaptive_range with custom factors works", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
   
   # Create test sound and pitch
@@ -495,7 +485,6 @@ test_that("create_window_xptr creates valid window functions", {
 # =============================================================================
 
 test_that("pitch_get_statistics_batch returns correct matrix", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
 
   # Create test sound and pitch
@@ -538,7 +527,6 @@ test_that("pitch_get_statistics_batch returns correct matrix", {
 })
 
 test_that("intensity_get_statistics_batch returns correct matrix", {
-  skip_on_cran()
   skip_if_not_installed("pladdrr")
 
   # Create test sound and intensity

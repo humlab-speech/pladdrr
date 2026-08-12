@@ -86,7 +86,7 @@ formant <- tryCatch(
   sound$to_formant_burg(),
   error = function(e) {
     message("Formant extraction failed, using synthesized vowel")
-    kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+    kg <- klattgrid_create_from_vowel(duration = 0.3, f0start = 120)
     kg$to_sound()$to_formant_burg()
   }
 )

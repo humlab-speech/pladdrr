@@ -92,12 +92,12 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   
   # Determine which tiers to plot
   if (is.null(tier)) {
-    tiers_to_plot <- 1:n_tiers
+    tiers_to_plot <- seq_len(n_tiers)
   } else if (is.numeric(tier)) {
     tiers_to_plot <- tier
   } else {
     # Find tier by name
-    tier_names <- sapply(1:n_tiers, function(i) textgrid$get_tier_name(i))
+    tier_names <- sapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i))
     tiers_to_plot <- which(tier_names == tier)
     if (length(tiers_to_plot) == 0) {
       stop("Tier '", tier, "' not found in TextGrid")
@@ -126,7 +126,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
         stringsAsFactors = FALSE
       )
       
-      for (j in 1:n_intervals) {
+      for (j in seq_len(n_intervals)) {
         tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
         tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
         tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
@@ -158,7 +158,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
         stringsAsFactors = FALSE
       )
       
-      for (j in 1:n_points) {
+      for (j in seq_len(n_points)) {
         tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
         tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
       }
@@ -275,11 +275,11 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   n_tiers <- textgrid$get_number_of_tiers()
   
   if (is.null(tier)) {
-    tiers_to_plot <- 1:n_tiers
+    tiers_to_plot <- seq_len(n_tiers)
   } else if (is.numeric(tier)) {
     tiers_to_plot <- tier
   } else {
-    tier_names <- sapply(1:n_tiers, function(i) textgrid$get_tier_name(i))
+    tier_names <- sapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i))
     tiers_to_plot <- which(tier_names == tier)
     if (length(tiers_to_plot) == 0) {
       stop("Tier '", tier, "' not found in TextGrid")
@@ -306,7 +306,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
         stringsAsFactors = FALSE
       )
       
-      for (j in 1:n_intervals) {
+      for (j in seq_len(n_intervals)) {
         tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
         tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
         tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
@@ -335,7 +335,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
         stringsAsFactors = FALSE
       )
       
-      for (j in 1:n_points) {
+      for (j in seq_len(n_points)) {
         tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
         tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
       }
@@ -562,7 +562,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 
   # Default formant colors
   if (is.null(formant_colors)) {
-    formant_colors <- c("red", "yellow", "cyan", "magenta", "white")[1:max_formant]
+    formant_colors <- c("red", "yellow", "cyan", "magenta", "white")[seq_len(max_formant)]
   }
 
   # Overlay formant tracks

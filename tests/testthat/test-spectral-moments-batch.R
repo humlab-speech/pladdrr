@@ -2,7 +2,6 @@
 # Regression tests for PERF-1: get_spectral_moments_batch()
 
 test_that("get_spectral_moments_batch() returns correct shape", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20, window_shape = "Gaussian")
@@ -20,7 +19,6 @@ test_that("get_spectral_moments_batch() returns correct shape", {
 })
 
 test_that("get_spectral_moments_batch() matches per-frame Spectrum calls", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.2)
   spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20, window_shape = "Gaussian")
@@ -48,7 +46,6 @@ test_that("get_spectral_moments_batch() matches per-frame Spectrum calls", {
 })
 
 test_that("get_spectral_moments_batch() accessible as Spectrogram method", {
-  skip_on_cran()
 
   sound  <- Sound$create_tone(frequency = 440, duration = 0.2)
   spg    <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
@@ -59,7 +56,6 @@ test_that("get_spectral_moments_batch() accessible as Spectrogram method", {
 })
 
 test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
-  skip_on_cran()
 
   # 1 kHz tone: CoG should cluster around 1000 Hz
   sound <- Sound$create_tone(frequency = 1000, duration = 0.3)

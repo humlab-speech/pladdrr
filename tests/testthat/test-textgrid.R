@@ -207,7 +207,6 @@ test_that("TextGrid can save to file", {
 })
 
 test_that("TextGrid can be created programmatically", {
-  skip_on_cran()
   
   # Create empty TextGrid
   tg <- TextGrid$create(0, 5, tier_names = "segments events", point_tiers = "events")

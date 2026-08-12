@@ -47,7 +47,6 @@ test_that("plot methods exist for core objects", {
 })
 
 test_that("as.data.frame.PointProcess works", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   pp <- sound$to_point_process_periodic_cc()
@@ -56,7 +55,6 @@ test_that("as.data.frame.PointProcess works", {
 })
 
 test_that("as.data.frame.TextGrid works", {
-  skip_on_cran()
 
   tg <- textgrid_create(0, 1, "words")
   df <- as.data.frame(tg)

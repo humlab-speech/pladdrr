@@ -252,7 +252,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Default colors
   if (is.null(colors)) {
-    colors <- c("red", "green4", "blue", "purple", "orange")[1:max_formant]
+    colors <- c("red", "green4", "blue", "purple", "orange")[seq_len(max_formant)]
   }
 
   # Create formant label
@@ -712,7 +712,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
   }
   
   times <- numeric(n_points)
-  for (i in 1:n_points) {
+  for (i in seq_len(n_points)) {
     times[i] <- x$get_time_from_index(i)
   }
   

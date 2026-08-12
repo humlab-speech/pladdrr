@@ -1,5 +1,4 @@
 test_that("calculate_cpps_fast and calculate_cpps_ultra produce matching results", {
-  skip_on_cran()
 
   wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
   skip_if(!file.exists(wav), "Test audio not found")

@@ -28,7 +28,6 @@ generate_speech_signal <- function(duration = 1.0, sr = 16000) {
 # ============================================================================
 
 test_that("MFCC SIMD matches scalar implementation", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -73,7 +72,6 @@ test_that("MFCC SIMD matches scalar implementation", {
 # ============================================================================
 
 test_that("MFCC SIMD works with various signal lengths", {
-  skip_on_cran()
 
   test_durations <- c(0.1, 0.5, 1.0, 2.0)
 
@@ -94,7 +92,6 @@ test_that("MFCC SIMD works with various signal lengths", {
 # ============================================================================
 
 test_that("MFCC SIMD works with different coefficient counts", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -115,7 +112,6 @@ test_that("MFCC SIMD works with different coefficient counts", {
 # ============================================================================
 
 test_that("MFCC SIMD works with different analysis widths", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -136,7 +132,6 @@ test_that("MFCC SIMD works with different analysis widths", {
 # ============================================================================
 
 test_that("MFCC SIMD can be toggled on/off", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.3, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -160,7 +155,6 @@ test_that("MFCC SIMD can be toggled on/off", {
 # ============================================================================
 
 test_that("MFCC SIMD works with different sampling rates", {
-  skip_on_cran()
 
   test_srs <- c(8000, 16000, 22050, 44100)
 
@@ -181,7 +175,6 @@ test_that("MFCC SIMD works with different sampling rates", {
 # ============================================================================
 
 test_that("MFCC coefficients are in reasonable range", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -211,7 +204,6 @@ test_that("MFCC coefficients are in reasonable range", {
 # ============================================================================
 
 test_that("MFCC SIMD works with custom Mel frequency ranges", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -252,7 +244,6 @@ test_that("MFCC SIMD works with custom Mel frequency ranges", {
 # ============================================================================
 
 test_that("MFCC frames are consistent across SIMD/scalar", {
-  skip_on_cran()
 
   signal <- generate_speech_signal(duration = 0.3, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
@@ -281,7 +272,6 @@ test_that("MFCC frames are consistent across SIMD/scalar", {
 # ============================================================================
 
 test_that("MFCC SIMD works with real audio (if available)", {
-  skip_on_cran()
 
   # Try to load a real audio file
   test_file <- system.file("extdata", "test.wav", package = "pladdrr")
@@ -308,7 +298,6 @@ test_that("MFCC SIMD works with real audio (if available)", {
 # ============================================================================
 
 test_that("MFCC full pipeline works end-to-end with SIMD", {
-  skip_on_cran()
 
   # Generate a complex signal
   sr <- 16000

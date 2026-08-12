@@ -44,7 +44,7 @@ generate_sine_wave <- function(frequency, duration,
   values <- amplitude * sin(2 * pi * frequency * t)
 
   # Create sound object
-  sound <- create_sound(values, sampling_rate = sampling_rate, start_time = 0.0)
+  sound <- Sound$from_values(values, sampling_rate, start_time = 0.0)
 
   return(sound)
 }
@@ -101,7 +101,7 @@ generate_noise <- function(duration, sampling_rate = 44100,
   values <- rnorm(n_samples, mean = 0, sd = amplitude)
 
   # Create sound object
-  sound <- create_sound(values, sampling_rate = sampling_rate, start_time = 0.0)
+  sound <- Sound$from_values(values, sampling_rate, start_time = 0.0)
 
   return(sound)
 }

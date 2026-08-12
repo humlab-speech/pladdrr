@@ -2,7 +2,6 @@
 # Tests for Phase 1-3 batch API operations (performance optimization)
 
 test_that("LTAS get_peaks_batch matches individual calls", {
-  skip_on_cran()
 
   # Create test sound with known harmonics
   sr <- 44100
@@ -30,7 +29,6 @@ test_that("LTAS get_peaks_batch matches individual calls", {
 })
 
 test_that("LTAS get_minima_batch matches individual calls", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   ltas <- sound$to_ltas(bandwidth = 100)
@@ -45,7 +43,6 @@ test_that("LTAS get_minima_batch matches individual calls", {
 })
 
 test_that("LTAS get_values_at_frequencies returns correct values", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   ltas <- sound$to_ltas(bandwidth = 100)
@@ -58,7 +55,6 @@ test_that("LTAS get_values_at_frequencies returns correct values", {
 })
 
 test_that("LTAS get_means_batch returns correct means", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   ltas <- sound$to_ltas(bandwidth = 100)
@@ -73,7 +69,6 @@ test_that("LTAS get_means_batch returns correct means", {
 })
 
 test_that("Pitch get_values_detrended produces valid output", {
-  skip_on_cran()
 
   # Create sound with pitch
   sound <- Sound$create_tone(frequency = 200, duration = 1.0)
@@ -87,7 +82,6 @@ test_that("Pitch get_values_detrended produces valid output", {
 })
 
 test_that("Pitch subtract_linear_fit returns new Pitch object", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 1.0)
   pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -100,7 +94,6 @@ test_that("Pitch subtract_linear_fit returns new Pitch object", {
 })
 
 test_that("Pitch interpolate returns new Pitch object", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 1.0)
   pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -112,7 +105,6 @@ test_that("Pitch interpolate returns new Pitch object", {
 })
 
 test_that("Pitch smooth returns new Pitch object", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 1.0)
   pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -124,7 +116,6 @@ test_that("Pitch smooth returns new Pitch object", {
 })
 
 test_that("Sound extract_windows_filtered works correctly", {
-  skip_on_cran()
 
   # Create test sound
   sound <- Sound$create_tone(frequency = 440, duration = 1.0)
@@ -142,7 +133,6 @@ test_that("Sound extract_windows_filtered works correctly", {
 })
 
 test_that("Sound get_windows_passing_filter returns logical vector", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 
@@ -156,7 +146,6 @@ test_that("Sound get_windows_passing_filter returns logical vector", {
 })
 
 test_that("PointProcess get_values_from_sound returns correct values", {
-  skip_on_cran()
 
   # Create sound and extract pulses
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
@@ -171,7 +160,6 @@ test_that("PointProcess get_values_from_sound returns correct values", {
 })
 
 test_that("PointProcess get_periods_vector returns inter-point intervals", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
   pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
@@ -187,7 +175,6 @@ test_that("PointProcess get_periods_vector returns inter-point intervals", {
 })
 
 test_that("PointProcess get_jitter_batch returns all jitter measures", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
   pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
@@ -207,7 +194,6 @@ test_that("PointProcess get_jitter_batch returns all jitter measures", {
 })
 
 test_that("Spectrum get_power_at_frequencies works correctly", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   spectrum <- sound$to_spectrum()
@@ -222,7 +208,6 @@ test_that("Spectrum get_power_at_frequencies works correctly", {
 })
 
 test_that("Spectrum batch band operations work", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   spectrum <- sound$to_spectrum()
@@ -241,7 +226,6 @@ test_that("Spectrum batch band operations work", {
 
 # BUG-2 regression: parabolic interpolation must not produce impossible values
 test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values", {
-  skip_on_cran()
 
   # Tone with flat spectrum regions — creates the near-zero d2y condition
   sr     <- 44100
@@ -274,7 +258,6 @@ test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values
 
 # API-1 regression: to_ltas_direct() must return a wrapped Ltas, not externalptr
 test_that("API-1: to_ltas_direct() returns usable Ltas object without manual wrapping", {
-  skip_on_cran()
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   ltas  <- to_ltas_direct(sound, bandwidth = 100)
