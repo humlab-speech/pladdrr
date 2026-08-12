@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5
 )
+# CRAN's vignette-rebuild pass runs under a non-UTF-8 locale; force ASCII-only
+# console decorations so any tidyverse warning/message text stays ASCII-safe.
+options(cli.unicode = FALSE)
 ```
 
 ## Overview
@@ -443,7 +446,7 @@ ggplot(vowel_features) +
   scale_x_reverse() +
   scale_y_reverse() +
   labs(
-    title = "Vowel Trajectories (20% → 80%)",
+    title = "Vowel Trajectories (20% -> 80%)",
     x = "F2 (Hz)",
     y = "F1 (Hz)"
   ) +

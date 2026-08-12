@@ -93,10 +93,16 @@ kg$save(file.path(tempdir(), "vowel_a.KlattGrid"))
 
 Do not use the empty constructor for synthesis:
 
-```{r empty-grid-warning, error=TRUE}
-# THIS WILL ERROR -- the error below is the point of the example
+```{r empty-grid-warning}
+# THIS WILL ERROR -- the error below is the point of the example.
+# Praat's own error text uses typographic quotes, which can break the
+# CRAN vignette-rebuild pass under a non-UTF-8 locale, so it's caught and
+# re-printed here as plain ASCII rather than let through raw.
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()
+tryCatch(
+  kg$to_sound(),
+  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+)
 ```
 
 **Why?** Empty grids need complete initialization:
@@ -156,14 +162,14 @@ Adult male (~120 Hz pitch):
 | Vowel | IPA | F1 (Hz) | F2 (Hz) | F3 (Hz) | Example Word |
 |-------|-----|---------|---------|---------|--------------|
 | beet  | /i/ | 280     | 2250    | 2890    | "beet"       |
-| bit   | /ɪ/ | 400     | 2000    | 2550    | "bit"        |
+| bit   | /ih/ | 400     | 2000    | 2550    | "bit"        |
 | bait  | /e/ | 550     | 1770    | 2490    | "bait"       |
-| bet   | /ɛ/ | 660     | 1720    | 2410    | "bet"        |
-| bat   | /æ/ | 860     | 1760    | 2390    | "bat"        |
+| bet   | /eh/ | 660     | 1720    | 2410    | "bet"        |
+| bat   | /ae/ | 860     | 1760    | 2390    | "bat"        |
 | father| /a/ | 730     | 1090    | 2440    | "father"     |
-| bought| /ɔ/ | 570     | 840     | 2410    | "bought"     |
+| bought| /ao/ | 570     | 840     | 2410    | "bought"     |
 | boat  | /o/ | 500     | 700     | 2410    | "boat"       |
-| book  | /ʊ/ | 440     | 1020    | 2240    | "book"       |
+| book  | /uh/ | 440     | 1020    | 2240    | "book"       |
 | boot  | /u/ | 310     | 870     | 2250    | "boot"       |
 
 ### Voice Types
@@ -233,7 +239,7 @@ ggplot(df, aes(time, frequency)) +
   geom_point(color = "#E41A1C", size = 2, alpha = 0.5) +
   labs(
     title = "Question Intonation Pattern",
-    subtitle = "Rising pitch contour: 120 → 105 → 150 Hz",
+    subtitle = "Rising pitch contour: 120 -> 105 -> 150 Hz",
     x = "Time (s)",
     y = "Frequency (Hz)"
   ) +
@@ -272,7 +278,7 @@ kg_rise$add_pitch_point(0.5, 180)  # Rise from 100 to 180 Hz
 Create smooth vowel-to-vowel transitions:
 
 ```{r diphthong}
-# /ai/ diphthong: /a/ → /i/ (as in "buy")
+# /ai/ diphthong: /a/ -> /i/ (as in "buy")
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 150,
   f1 = 730, b1 = 80,      # Start: /a/
@@ -281,9 +287,9 @@ kg <- klattgrid_create_from_vowel(
 )
 
 # Transition to /i/ at end (formantType 1 = oral formants)
-kg$add_formant_point(1, 1, 0.5, 280)   # F1: 730 → 280 Hz
-kg$add_formant_point(1, 2, 0.5, 2250)  # F2: 1090 → 2250 Hz
-kg$add_formant_point(1, 3, 0.5, 2890)  # F3: 2440 → 2890 Hz
+kg$add_formant_point(1, 1, 0.5, 280)   # F1: 730 -> 280 Hz
+kg$add_formant_point(1, 2, 0.5, 2250)  # F2: 1090 -> 2250 Hz
+kg$add_formant_point(1, 3, 0.5, 2890)  # F3: 2440 -> 2890 Hz
 
 sound <- kg$to_sound()
 
@@ -301,7 +307,7 @@ ggplot(df, aes(time, frequency, color = factor(formant_number))) +
   ) +
   labs(
     title = "Diphthong /ai/ Formant Transitions",
-    subtitle = "/a/ → /i/ transition over 500 ms",
+    subtitle = "/a/ -> /i/ transition over 500 ms",
     x = "Time (s)",
     y = "Frequency (Hz)",
     color = "Formant"
@@ -316,8 +322,8 @@ Generate perceptual continua for experiments:
 
 ```{r vowel-continuum}
 # Create /i/ to /u/ continuum (10 steps)
-f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) → 310 (/u/)
-f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 → 870
+f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) -> 310 (/u/)
+f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 -> 870
 
 vowel_continuum <- lapply(1:10, function(i) {
   kg <- klattgrid_create_from_vowel(
@@ -453,7 +459,7 @@ cat("  Duration:", sound_complex$get_duration(), "s\n")
 cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
 ```
 
-## Analysis → Synthesis Workflow
+## Analysis -> Synthesis Workflow
 
 ### Complete Pipeline
 
@@ -591,7 +597,7 @@ synthesize_vowel(310, 870, "u")
 **Workaround**: Always use `klattgrid_create_from_vowel()` or `klattgrid_create_example()`
 
 **Example of safe usage:**
-```{r safe-usage, error=TRUE}
+```{r safe-usage}
 # safe
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
@@ -603,7 +609,10 @@ kg <- klattgrid_create_example()
 
 # unsafe - errors, uninitialized tiers
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()  # errors
+tryCatch(
+  kg$to_sound(),
+  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+)
 ```
 
 ### 2. Limited Tier Manipulation
@@ -628,7 +637,7 @@ sound <- kg$to_sound()  # errors
 
 1. **Always use `klattgrid_create_from_vowel()`** for vowel synthesis
 2. **Start with known formant values** from the reference table
-3. **Adjust formants gradually** (±50-100 Hz steps)
+3. **Adjust formants gradually** (+/-50-100 Hz steps)
 4. **Keep bandwidths proportional**: B1 < B2 < B3 (typically 50-80-120 Hz)
 5. **Match pitch to speaker type**: male ~100-120 Hz, female ~200-220 Hz
 6. **Test with short durations** (0.3-0.5s) before scaling up
@@ -656,7 +665,7 @@ sound <- kg$to_sound()  # errors
 
 **Solution**: 
 - Check F1 < F2 < F3 relationship
-- Use bandwidth ratio B1:B2:B3 ≈ 1:1.5:2
+- Use bandwidth ratio B1:B2:B3 ~ 1:1.5:2
 - Verify pitch is in 80-300 Hz range
 
 ### No sound output
