@@ -247,7 +247,7 @@ public:
         }
     }
     
-    // Formant frequency manipulation (formantType: 0=oral, 1=nasal, etc.)
+    // Formant frequency manipulation (formantType: 1=oral, 2=nasal, etc.)
     double get_formant_at_time(int formantType, int iformant, double t) {
         if (!is_valid()) Rcpp::stop("Invalid KlattGrid");
         try {

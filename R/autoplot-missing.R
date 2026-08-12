@@ -1375,7 +1375,9 @@ autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @export
 autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
-    formant_type = "oral", max_formant = 6L, ...) {
+    formant_type = c("oral", "nasal", "frication", "tracheal", "delta"),
+    max_formant = 6L, ...) {
+  formant_type <- match.arg(formant_type)
   tmin <- if (is.null(from_time)) object$get_xmin() else from_time
   tmax <- if (is.null(to_time)) object$get_xmax() else to_time
   times <- seq(tmin, tmax, length.out = 100)
