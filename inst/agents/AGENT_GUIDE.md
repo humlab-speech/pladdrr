@@ -1,6 +1,6 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.0 guide refresh (2026-08-07)
+**Version:** 5.0.1 guide refresh (2026-08-12)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
 **Status:** Current through package 5.0.0. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
@@ -129,6 +129,14 @@ output to the matching pladdrr call at a per-routine tolerance, and emits
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.0.1
+
+- **v5.0.1 — ggplot2 autoplot/autolayer coverage for all drawable Praat types (2026-08-12).**
+  - Added `autoplot()` + `autolayer()` S3 methods for 27 previously unsupported classes: AmplitudeTier, DurationTier, IntensityTier, PitchTier, FormantTier (sampled), FormantGrid, FormantPath (candidate paths), Excitation, ComplexSpectrogram, Cepstrum (via PowerCepstrum), Cochleagram, PowerCepstrogram, MFCC, LFCC (wide-to-long reshape), BarkSpectrogram, MelSpectrogram, Matrix, PCA, Discriminant (scree/scores/both), FormantModeler, Electroglottogram, LongSound (streaming extract), DTW (warping path), Polygon, VocalTract, LPC (spectrum envelope), KlattGrid. All methods return ggplot2 objects compatible with `+ autolayer()` composition.
+  - Added `as.data.frame()` S3 methods for 15 classes lacking data export: BarkSpectrogram, Cepstrum, Cochleagram, Discriminant, DTW, Electroglottogram, FormantModeler, KlattGrid, LPC, LongSound (errors with guidance), Matrix, MelSpectrogram, PCA, PowerCepstrogram, VocalTract.
+  - Fixed `FormantGrid$as_data_frame()` pre-existing bug: C++ method `as_data_frame(time_step)` was called without the required argument, producing "could not find valid method". Now passes `time_step = 0.005`.
+  - New files: `R/autoplot-missing.R`, `R/as-data-frame-missing.R`. NAMESPACE now registers 42 `as.data.frame`, 38 `autoplot`, 38 `autolayer` S3 methods.
 
 ## What's New in v5.0.0
 
