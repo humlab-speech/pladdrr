@@ -54,6 +54,10 @@ NULL
 }
 
 .cepstrum_methods$is_valid <- function(.self) .self$.cpp$is_valid()
+
+# Export
+.cepstrum_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+.cepstrum_methods$as_vector <- function(.self) .self$.cpp$as_vector()
 lockEnvironment(.cepstrum_methods, bindings = TRUE)
 
 # ============================================================================

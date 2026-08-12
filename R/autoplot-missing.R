@@ -509,33 +509,36 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
 }
 
 #' @rdname autoplot-methods
+#' @param power If TRUE, plot as PowerCepstrum (dB). Default FALSE matches
+#'   Praat's default `Cepstrum_drawLinear` (raw signed cepstrum, linear scale).
 #' @export
-autoplot.Cepstrum <- function(object, garnish = TRUE, color = "darkblue", ...) {
+autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE, color = "darkblue", ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
-  # as.data.frame converts to PowerCepstrum, giving quefrency + power_db columns
-  df <- as.data.frame(object)
+  df <- as.data.frame(object, power = power)
   if (nrow(df) == 0) {
     warning("Cepstrum has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
+  y_col <- if (power) "power_dB" else "value"
+  y_lab <- if (power) "Power (dB)" else "Amplitude"
   p <- ggplot2::ggplot(df,
-        ggplot2::aes(x = .data$quefrency, y = .data$power_dB)) +
+        ggplot2::aes(x = .data$quefrency, y = .data[[y_col]])) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
   if (garnish) {
-    p <- p + ggplot2::labs(title = "Cepstrum", x = "Quefrency (s)",
-                            y = "Power (dB)")
+    p <- p + ggplot2::labs(title = "Cepstrum", x = "Quefrency (s)", y = y_lab)
   }
   p + ggplot2::theme_minimal()
 }
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.Cepstrum <- function(object, color = "darkblue", ...) {
-  df <- as.data.frame(object)
+autolayer.Cepstrum <- function(object, power = FALSE, color = "darkblue", ...) {
+  df <- as.data.frame(object, power = power)
   if (nrow(df) == 0) return(NULL)
+  y_col <- if (power) "power_dB" else "value"
   ggplot2::geom_line(data = df,
-    ggplot2::aes(x = .data$quefrency, y = .data$power_dB),
+    ggplot2::aes(x = .data$quefrency, y = .data[[y_col]]),
     color = color, linewidth = 0.8, ...)
 }
 

@@ -24,10 +24,16 @@ as.data.frame.BarkSpectrogram <- function(x, ...) {
   as.data.frame(x$to_matrix(to_db = TRUE))
 }
 
+#' @param power If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
+#'   Praat's default raw signed cepstrum view. Default FALSE matches
+#'   `Cepstrum_drawLinear`, Praat's default "Draw..." command.
 #' @export
-as.data.frame.Cepstrum <- function(x, ...) {
-  pc <- x$to_powercepstrum()
-  pc$as_data_frame()
+as.data.frame.Cepstrum <- function(x, power = FALSE, ...) {
+  if (power) {
+    pc <- x$to_powercepstrum()
+    return(pc$as_data_frame())
+  }
+  x$as_data_frame()
 }
 
 #' @export
