@@ -138,6 +138,9 @@
 <span class="r-in"><span>  <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pitches</span> <span class="op">&lt;-</span> <span class="fu">sound_to_pitch_spinet_batch</span><span class="op">(</span><span class="va">sounds</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .sound_to_pitch_spinet(ptr, time_step, window_duration, min_frequency,     max_frequency, as.integer(n_filters), pitch_ceiling, as.integer(max_candidates)):</span> Failed to extract pitch using SPINET. Praat error: The sound should not have all amplitudes equal to zero.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> SPINET: no Pitch created.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> Sound: no Pitch (SPINET) created.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
