@@ -59,7 +59,10 @@ Suggests:
     av,
     bench,
     microbenchmark,
-    speakr
+    speakr,
+    dplyr,
+    purrr,
+    tidyr
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017),
     GNU Scientific Library (GSL >= 1.10)
 VignetteBuilder: knitr
