@@ -1174,7 +1174,7 @@ autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   path <- object$get_path()
-  if (nrow(path) == 0) {
+  if (is.null(path) || nrow(path) == 0) {
     warning("DTW has no path data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
@@ -1196,13 +1196,15 @@ autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
 #' @export
 autolayer.DTW <- function(object, alpha_path = 0.8, ...) {
   path <- object$get_path()
-  if (nrow(path) == 0) return(NULL)
+  if (is.null(path) || nrow(path) == 0) return(NULL)
+  xc <- if ("x_time" %in% names(path)) "x_time" else if ("x" %in% names(path)) "x" else names(path)[1]
+  yc <- if ("y_time" %in% names(path)) "y_time" else if ("y" %in% names(path)) "y" else names(path)[2]
   list(
     ggplot2::geom_path(data = path,
-      ggplot2::aes(x = .data$x, y = .data$y),
+      ggplot2::aes(x = .data[[xc]], y = .data[[yc]]),
       color = "darkred", linewidth = 0.8, alpha = alpha_path, ...),
     ggplot2::geom_point(data = path,
-      ggplot2::aes(x = .data$x, y = .data$y),
+      ggplot2::aes(x = .data[[xc]], y = .data[[yc]]),
       color = "darkred", size = 1, alpha = 0.6)
   )
 }
