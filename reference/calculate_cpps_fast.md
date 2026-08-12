@@ -164,11 +164,9 @@ calculate_cpps_fast(sound,
 )
 #> [1] 5.671056
 
-if (FALSE) { # \dontrun{
 # Single-interval CPP is a different, cheaper path
 segment <- sound$extract_part(0, 0.5)
 cpp <- segment$to_spectrum()$to_power_cepstrum()$get_peak_prominence(
   60, 333.3, "parabolic", 0.001, 0.05, "exponential decay", "robust slow"
 )
-} # }
 ```

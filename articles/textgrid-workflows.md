@@ -50,6 +50,8 @@ Manual correction in Praat - Batch analysis in R
 ``` r
 
 library(pladdrr)
+#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
+#> Use citation('pladdrr') for citing this package in publications.
 
 # Create a TextGrid with multiple tiers.
 # tier_names lists ALL tiers to create; point_tiers is the subset of those
@@ -63,7 +65,9 @@ tg <- TextGrid$create(
 )
 
 cat("Created TextGrid with", tg$get_number_of_tiers(), "tiers\n")
+#> Created TextGrid with 4 tiers
 cat("Duration:", tg$get_total_duration(), "seconds\n")
+#> Duration: 10 seconds
 ```
 
 ### Adding Interval Boundaries
@@ -89,6 +93,7 @@ tg$set_interval_text(word_tier, 5, "is")
 tg$set_interval_text(word_tier, 6, "test")
 
 cat("Added", tg$get_number_of_intervals(word_tier), "intervals to words tier\n")
+#> Added 6 intervals to words tier
 ```
 
 ### Adding Point Annotations
@@ -103,6 +108,7 @@ tg$insert_point(events_tier, time = 5.0, mark = "sentence_boundary")
 tg$insert_point(events_tier, time = 9.5, mark = "recording_end")
 
 cat("Added", tg$get_number_of_points(events_tier), "points to events tier\n")
+#> Added 3 points to events tier
 ```
 
 ### Loading from File
@@ -141,6 +147,10 @@ for (i in 1:n_tiers) {
   cat(sprintf("Tier %d: %s (%s) - %d items\n", 
               i, tier_names[i], tier_type, n_items))
 }
+#> Tier 1: utterances (IntervalTier) - 1 items
+#> Tier 2: words (IntervalTier) - 6 items
+#> Tier 3: phones (IntervalTier) - 1 items
+#> Tier 4: events (PointTier) - 3 items
 ```
 
 ### Extracting Interval Information
@@ -169,6 +179,13 @@ for (i in 1:n_intervals) {
 }
 
 print(intervals_df)
+#>   index start  end duration label
+#> 1     1   0.0  1.0      1.0      
+#> 2     2   1.0  2.5      1.5 hello
+#> 3     3   2.5  4.0      1.5 world
+#> 4     4   4.0  6.5      2.5  this
+#> 5     5   6.5  8.0      1.5    is
+#> 6     6   8.0 10.0      2.0  test
 ```
 
 ### Time-Based Queries
@@ -187,6 +204,7 @@ if (!is.na(interval_idx)) {
   cat(sprintf("At time %.2f s: '%s' [%.2f - %.2f]\n", 
               query_time, label, start, end))
 }
+#> At time 3.00 s: 'world' [2.50 - 4.00]
 
 # Find interval by label
 target_label <- "world"
@@ -196,6 +214,7 @@ for (i in 1:n_intervals) {
     break
   }
 }
+#> Found 'world' at interval 3
 ```
 
 ### Point Tier Queries
@@ -211,6 +230,9 @@ for (i in seq_len(n_points)) {
   mark <- tg$get_point_text(points_tier, i)
   cat(sprintf("Point %d: %.3f s - '%s'\n", i, time, mark))
 }
+#> Point 1: 0.500 s - 'recording_start'
+#> Point 2: 5.000 s - 'sentence_boundary'
+#> Point 3: 9.500 s - 'recording_end'
 ```
 
 ## Part 3: Modifying TextGrids
@@ -230,6 +252,7 @@ tg$set_interval_text(tier_idx, new_interval, "new")
 
 cat("Inserted boundary, now have", 
     tg$get_number_of_intervals(tier_idx), "intervals\n")
+#> Inserted boundary, now have 7 intervals
 
 # Remove a boundary (merges adjacent intervals)
 # tg$remove_boundary(tier_idx, time = 3.25)
@@ -249,6 +272,7 @@ points_tier <- 4
 tg$set_point_text(points_tier, 2, "BOUNDARY")
 
 cat("Updated labels\n")
+#> Updated labels
 ```
 
 ### Adding and Removing Tiers
@@ -258,10 +282,12 @@ cat("Updated labels\n")
 # Add a new interval tier
 tg$add_interval_tier(name = "syllables")
 cat("Added 'syllables' tier, now have", tg$get_number_of_tiers(), "tiers\n")
+#> Added 'syllables' tier, now have 5 tiers
 
 # Add a new point tier
 tg$add_point_tier(name = "landmarks")
 cat("Added 'landmarks' tier, now have", tg$get_number_of_tiers(), "tiers\n")
+#> Added 'landmarks' tier, now have 6 tiers
 
 # Remove a tier (use with caution!)
 # tg$remove_tier(tier = 6)
@@ -269,6 +295,7 @@ cat("Added 'landmarks' tier, now have", tg$get_number_of_tiers(), "tiers\n")
 # Rename a tier
 tg$set_tier_name(tier = 3, new_name = "segments")
 cat("Renamed tier 3 to 'segments'\n")
+#> Renamed tier 3 to 'segments'
 ```
 
 ### Duplicating Tiers
@@ -295,8 +322,11 @@ tg <- TextGrid$new(tg_file)
 load_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
 
 cat(sprintf("Loaded in %.3f seconds\n", load_time))
+#> Loaded in 0.010 seconds
 cat(sprintf("Duration: %.2f minutes\n", tg$get_total_duration() / 60))
+#> Duration: 1.00 minutes
 cat(sprintf("File size: %.1f MB\n", file.size(tg_file) / 1024^2))
+#> File size: 1.2 MB
 ```
 
 ### Efficient Data Extraction
@@ -314,7 +344,24 @@ tg_df <- tg$as_data_frame(tiers = tier_names_subset)
 
 # Now use standard R operations
 summary(tg_df)
+#>      tier_name       tier_type    item_number    start_time       end_time     
+#>  Length   :802   Length   :802   Min.   :  1   Min.   : 0.00   Min.   : 0.105  
+#>  N.unique :  2   N.unique :  1   1st Qu.:101   1st Qu.:14.79   1st Qu.:14.976  
+#>  N.blank  :  0   N.blank  :  0   Median :201   Median :29.83   Median :29.999  
+#>  Min.nchar:  8   Min.nchar:  8   Mean   :201   Mean   :29.97   Mean   :30.118  
+#>  Max.nchar:  8   Max.nchar:  8   3rd Qu.:301   3rd Qu.:44.95   3rd Qu.:45.071  
+#>                                  Max.   :402   Max.   :59.98   Max.   :60.000  
+#>        label    
+#>  Length   :802  
+#>  N.unique :793  
+#>  N.blank  :  0  
+#>  Min.nchar:  1  
+#>  Max.nchar:290  
+#> 
 table(tg_df$tier_name)
+#> 
+#> Tier_1_1 Tier_1_2 
+#>      400      402
 ```
 
 ### Sampling Large Datasets
@@ -381,10 +428,17 @@ for (tg_file in tg_files) {
     ))
   }
 }
+#> Processing: test.TextGrid 
+#> Processing: benchmarkdata1min.TextGrid
 
 # Analyze corpus-wide
 summary(all_data$duration)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>  0.0210  0.1268  0.1515  0.1559  0.1740  1.0000
 table(all_data$file)
+#> 
+#> benchmarkdata1min.TextGrid              test.TextGrid 
+#>                        400                          4
 ```
 
 ## Part 5: Integration with Forced Alignment
@@ -423,8 +477,25 @@ for (i in 1:n_phones) {
   phone_durations$duration[i] <- end - start
 }
 
+# IPA symbols (e.g. the open-mid vowels MFA/Praat produce) are multi-byte
+# UTF-8. Some build environments render vignettes under a non-UTF-8 locale,
+# where R can't line-wrap multi-byte text for printing and errors out —
+# so escape non-ASCII phone labels to their Unicode code points for display.
+phone_durations$phone <- vapply(phone_durations$phone, function(s) {
+  codepoints <- utf8ToInt(enc2utf8(s))
+  if (all(codepoints < 128L)) return(s)
+  paste0(sprintf("\\u%04x", codepoints), collapse = "")
+}, character(1))
+
 # Analyze by phone class
 aggregate(duration ~ phone, data = phone_durations, FUN = mean)
+#>     phone duration
+#> 1              0.5
+#> 2 \\u0254      0.5
+#> 3 \\u025b      0.4
+#> 4       h      0.3
+#> 5       l      0.3
+#> 6       w      0.5
 ```
 
 ### Quality Control for Forced Alignment
@@ -441,8 +512,11 @@ short_intervals <- phone_durations$duration < min_duration
 long_intervals <- phone_durations$duration > max_duration
 
 cat("Intervals needing review:\n")
+#> Intervals needing review:
 cat("  Too short:", sum(short_intervals), "\n")
+#>   Too short: 0
 cat("  Too long:", sum(long_intervals), "\n")
+#>   Too long: 0
 
 # Export for manual correction
 flagged <- phone_durations[short_intervals | long_intervals, ]
@@ -495,11 +569,19 @@ tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # All tiers in one ggplot
 autoplot(tg)
+```
+
+![](textgrid-workflows_files/figure-html/visualize_textgrid-1.png)
+
+``` r
+
 
 # One tier as a layer on top of a waveform
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 autoplot(sound) + autolayer(tg, tier = "words")
 ```
+
+![](textgrid-workflows_files/figure-html/visualize_textgrid-2.png)
 
 For further examples (interval duration distributions, label frequency
 plots, multi-tier layouts), see
@@ -528,6 +610,11 @@ for (i in 1:n_intervals) {
     cat("Non-standard label at interval", i, ":", label, "\n")
   }
 }
+#> Non-standard label at interval 2 : h 
+#> Non-standard label at interval 3 : ɛ 
+#> Non-standard label at interval 4 : l 
+#> Non-standard label at interval 5 : w 
+#> Non-standard label at interval 6 : ɔ
 ```
 
 ### 2. Handle Empty Intervals
@@ -542,6 +629,7 @@ non_empty <- intervals_df[intervals_df$label != "", ]
 # Or analyze empty intervals separately
 empty_intervals <- intervals_df[intervals_df$label == "", ]
 cat("Mean silence duration:", mean(empty_intervals$duration), "s\n")
+#> Mean silence duration: 1 s
 ```
 
 ### 3. Time Precision
@@ -559,6 +647,7 @@ boundary2 <- 1.0009
 if (abs(boundary1 - boundary2) < time_precision) {
   cat("Boundaries are effectively identical\n")
 }
+#> Boundaries are effectively identical
 ```
 
 ### 4. Backup Before Editing
@@ -601,6 +690,10 @@ for (i in 1:n_phrases) {
   f0_mean <- pitch$get_mean(from_time = start, to_time = end, unit = "hertz")
   cat(sprintf("Phrase %d: Mean F0 = %.1f Hz\n", i, f0_mean))
 }
+#> Phrase 1: Mean F0 = 440.0 Hz
+#> Phrase 2: Mean F0 = 440.0 Hz
+#> Phrase 3: Mean F0 = NaN Hz
+#> Phrase 4: Mean F0 = NaN Hz
 ```
 
 ### 2. Voice Onset Time (VOT) Measurement
@@ -632,6 +725,7 @@ for (i in seq_len(n_points)) {
 # Calculate VOTs (assumes paired marks)
 vots <- voicing_times - burst_times
 cat("Mean VOT:", mean(vots) * 1000, "ms\n")
+#> Mean VOT: 65 ms
 ```
 
 ### 3. Automated Tier Creation
@@ -669,7 +763,8 @@ pladdrr’s TextGrid support covers:
 - Creation, from scratch or from a file
 - Querying (intervals, points, time-based lookup)
 - Editing (insert, delete, relabel, manage tiers)
-- Corpus-scale processing (batch loading, sampling, `as_data_frame()`
+- Corpus-scale processing (batch loading, sampling,
+  [`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
   export)
 - Loading forced-alignment output (e.g. Montreal Forced Aligner)
 - Export to CSV/data frame for downstream analysis

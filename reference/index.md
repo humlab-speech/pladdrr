@@ -164,9 +164,9 @@ Parametric speech synthesis with KlattGrid
 
 - [`KlattGrid`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
   : Create a KlattGrid object
-- [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createExample.md)
+- [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
   : Create example KlattGrid
-- [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md)
+- [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
   : Create KlattGrid from vowel parameters
 - [`VocalTract`](https://humlab-speech.github.io/pladdrr/reference/VocalTract.md)
   : Praat VocalTract Object
@@ -525,10 +525,6 @@ Helper functions and S3 methods
   : Praat IntensityTier Object
 - [`KlattGrid`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
   : Create a KlattGrid object
-- [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createExample.md)
-  : Create example KlattGrid
-- [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md)
-  : Create KlattGrid from vowel parameters
 - [`LFCC`](https://humlab-speech.github.io/pladdrr/reference/LFCC.md) :
   Praat LFCC Object
 - [`LPC`](https://humlab-speech.github.io/pladdrr/reference/LPC.md) :
@@ -788,6 +784,10 @@ Helper functions and S3 methods
   : Check if object is a valid Pitch (R6 or legacy S3)
 - [`is_praat_sound()`](https://humlab-speech.github.io/pladdrr/reference/is_praat_sound.md)
   : Check if object is a valid Sound (R6 or legacy S3)
+- [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
+  : Create example KlattGrid
+- [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
+  : Create KlattGrid from vowel parameters
 - [`longsound_open()`](https://humlab-speech.github.io/pladdrr/reference/longsound_open.md)
   : Open a LongSound from file
 - [`ltas_average()`](https://humlab-speech.github.io/pladdrr/reference/ltas_average.md)

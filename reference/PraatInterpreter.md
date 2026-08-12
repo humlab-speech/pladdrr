@@ -84,7 +84,7 @@ for Praat object classes
 
 ### Public methods
 
-- [`PraatInterpreter$new()`](#method-PraatInterpreter-new)
+- [`PraatInterpreter$new()`](#method-PraatInterpreter-initialize)
 
 - [`PraatInterpreter$run()`](#method-PraatInterpreter-run)
 
@@ -118,7 +118,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `PraatInterpreter$new()`
 
 #### Usage
 
@@ -126,7 +126,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `run()`
+### `PraatInterpreter$run()`
 
 #### Usage
 
@@ -134,7 +134,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `get_variable()`
+### `PraatInterpreter$get_variable()`
 
 #### Usage
 
@@ -142,7 +142,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `set_variable()`
+### `PraatInterpreter$set_variable()`
 
 #### Usage
 
@@ -150,7 +150,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method [`eval()`](https://rdrr.io/r/base/eval.html)
+### `PraatInterpreter$eval()`
 
 #### Usage
 
@@ -158,7 +158,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `object_count()`
+### `PraatInterpreter$object_count()`
 
 #### Usage
 
@@ -166,7 +166,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `list_objects()`
+### `PraatInterpreter$list_objects()`
 
 #### Usage
 
@@ -174,7 +174,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `get_object()`
+### `PraatInterpreter$get_object()`
 
 #### Usage
 
@@ -182,7 +182,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `get_object_by_id()`
+### `PraatInterpreter$get_object_by_id()`
 
 #### Usage
 
@@ -190,7 +190,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `set_object()`
+### `PraatInterpreter$set_object()`
 
 #### Usage
 
@@ -198,7 +198,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `remove_object()`
+### `PraatInterpreter$remove_object()`
 
 #### Usage
 
@@ -206,7 +206,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `remove_object_by_id()`
+### `PraatInterpreter$remove_object_by_id()`
 
 #### Usage
 
@@ -214,7 +214,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `select_object()`
+### `PraatInterpreter$select_object()`
 
 #### Usage
 
@@ -222,7 +222,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `clear_objects()`
+### `PraatInterpreter$clear_objects()`
 
 #### Usage
 
@@ -230,7 +230,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `PraatInterpreter$print()`
 
 #### Usage
 
@@ -238,7 +238,7 @@ for Praat object classes
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `PraatInterpreter$clone()`
 
 The objects of this class are cloneable with this method.
 

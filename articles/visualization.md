@@ -10,9 +10,10 @@ library(ggplot2)
 
 ## Introduction
 
-`pladdrr` returns data as data frames (`as_data_frame()` methods) and
-matrices (`as_matrix()` methods) that plot directly with `ggplot2`, and
-it also ships a few `ggplot2`-based helper functions
+`pladdrr` returns data as data frames
+([`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
+methods) and matrices (`as_matrix()` methods) that plot directly with
+`ggplot2`, and it also ships a few `ggplot2`-based helper functions
 ([`plot_powercepstrum()`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrum.md),
 [`plot_powercepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrogram.md),
 [`plot_cpp_timeseries()`](https://humlab-speech.github.io/pladdrr/reference/plot_cpp_timeseries.md),
@@ -56,6 +57,8 @@ plot_powercepstrum(
 )
 ```
 
+![](visualization_files/figure-html/cepstrum-basic-1.png)
+
 **Parameters**:
 
 - `show_peak` - Highlight the cepstral peak (CPP location)
@@ -87,7 +90,11 @@ plot_powercepstrogram(
   db_range = c(20, 80),
   color_scale = "viridis"
 )
+#> Scale for fill is already present.
+#> Adding another scale for fill, which will replace the existing scale.
 ```
+
+![](visualization_files/figure-html/cepstrogram-1.png)
 
 **Color scales** (`color_scale` argument):
 
@@ -106,7 +113,10 @@ plot_cpp_timeseries(
   smooth = TRUE,
   title = "CPP Over Time"
 )
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
+
+![](visualization_files/figure-html/cpp-timeseries-1.png)
 
 **Features**:
 
@@ -123,8 +133,14 @@ Multi-panel diagnostic figure combining all cepstral visualizations:
 
 # Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
+```
 
-ggsave("cepstrum_report.pdf", report_plot, width = 12, height = 10)
+![](visualization_files/figure-html/cepstrum-report-1.png)
+
+``` r
+
+
+ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12, height = 10)
 ```
 
 **Report panels** (stacked with
@@ -191,7 +207,13 @@ ggplot(formant_data, aes(x = F2, y = F1, color = vowel, label = vowel)) +
   ) +
   theme_minimal() +
   theme(legend.position = "none")
+#> Warning: Removed 4 rows containing missing values or values outside the scale range
+#> (`geom_point()`).
+#> Warning: Removed 4 rows containing missing values or values outside the scale range
+#> (`geom_text()`).
 ```
+
+![](visualization_files/figure-html/vowel-space-1.png)
 
 ### Formant Trajectories
 
@@ -230,6 +252,8 @@ ggplot(formant_wide, aes(x = time)) +
   theme_minimal()
 ```
 
+![](visualization_files/figure-html/formant-trajectories-1.png)
+
 `autoplot(formant)` and `ggplot() + autolayer(formant)` provide the same
 F1-F3 trajectory plot without manual reshaping.
 
@@ -258,6 +282,8 @@ ggplot(pitch_df, aes(x = time, y = frequency)) +
   theme_minimal()
 ```
 
+![](visualization_files/figure-html/pitch-contour-1.png)
+
 ### Intensity Contour
 
 ``` r
@@ -279,6 +305,8 @@ ggplot(intensity_df, aes(x = time, y = intensity_db)) +
   ) +
   theme_minimal()
 ```
+
+![](visualization_files/figure-html/intensity-contour-1.png)
 
 ### Combined Pitch and Intensity
 
@@ -314,7 +342,11 @@ ggplot(combined, aes(x = time)) +
   ) +
   theme_minimal() +
   theme(legend.position = "top")
+#> Warning: Removed 4 rows containing missing values or values outside the scale range
+#> (`geom_line()`).
 ```
+
+![](visualization_files/figure-html/pitch-intensity-combined-1.png)
 
 ## TextGrid Visualization
 
@@ -337,6 +369,12 @@ tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 # autoplot() draws the whole TextGrid (all tiers stacked), delegating to the
 # base plot.TextGrid() method
 autoplot(tg)
+```
+
+![](visualization_files/figure-html/textgrid-tiers-1.png)
+
+``` r
+
 
 # autolayer() returns a list of geoms for a single tier, for use inside a
 # ggplot2 pipeline (e.g. layered over a Sound waveform or spectrogram)
@@ -344,12 +382,20 @@ ggplot() +
   autolayer(tg, tier = "words", color = "steelblue") +
   labs(title = "Word Tier", x = "Time (s)", y = "") +
   theme_minimal()
+```
+
+![](visualization_files/figure-html/textgrid-tiers-2.png)
+
+``` r
+
 
 ggplot() +
   autolayer(tg, tier = "phones", color = "darkgreen", alpha = 0.4) +
   labs(title = "Phone Tier", x = "Time (s)", y = "") +
   theme_minimal()
 ```
+
+![](visualization_files/figure-html/textgrid-tiers-3.png)
 
 ### Duration Analysis
 
@@ -374,6 +420,8 @@ ggplot(tier_data_labeled, aes(x = duration, fill = text)) +
   theme_minimal() +
   theme(legend.position = "none")
 ```
+
+![](visualization_files/figure-html/duration-histogram-1.png)
 
 ## Spectral Visualization
 
@@ -412,6 +460,8 @@ ggplot(spec_long, aes(x = time, y = frequency, fill = power)) +
   theme_minimal()
 ```
 
+![](visualization_files/figure-html/spectrogram-1.png)
+
 ### Spectrum
 
 ``` r
@@ -432,6 +482,8 @@ ggplot(spectrum_df, aes(x = frequency, y = power)) +
   ) +
   theme_minimal()
 ```
+
+![](visualization_files/figure-html/spectrum-1.png)
 
 ### Long-Term Average Spectrum (LTAS)
 
@@ -454,6 +506,8 @@ ggplot(ltas_df, aes(x = frequency, y = power_db)) +
   ) +
   theme_minimal()
 ```
+
+![](visualization_files/figure-html/ltas-1.png)
 
 ## Customization and Theming
 
@@ -479,7 +533,11 @@ ggplot(formant_data, aes(x = F2, y = F1, color = vowel)) +
   scale_x_reverse() +
   scale_y_reverse() +
   theme_minimal()
+#> Warning: Removed 4 rows containing missing values or values outside the scale range
+#> (`geom_point()`).
 ```
+
+![](visualization_files/figure-html/custom-colors-1.png)
 
 ### Publication Themes
 
@@ -499,6 +557,8 @@ ggplot(pitch_df, aes(x = time, y = frequency)) +
     text = element_text(size = 12, family = "serif")
   )
 ```
+
+![](visualization_files/figure-html/pub-theme-1.png)
 
 ### Multi-Panel Figures
 
@@ -526,6 +586,8 @@ p3 <- ggplot(formant_wide, aes(x = time)) +
 # Arrange in grid
 grid.arrange(p1, p2, p3, nrow = 3)
 ```
+
+![](visualization_files/figure-html/multipanel-1.png)
 
 ## Saving Plots
 
@@ -582,7 +644,9 @@ This vignette covered:
   and
   [`autolayer.TextGrid()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
 - **Spectral analysis**: spectrograms, spectra, and LTAS from the
-  corresponding `as_matrix()`/`as_data_frame()` methods
+  corresponding
+  `as_matrix()`/[`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
+  methods
 
 All examples produce ordinary `ggplot2` objects that can be themed,
 combined with

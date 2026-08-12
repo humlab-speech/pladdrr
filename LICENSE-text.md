@@ -19,4 +19,4 @@
     ---
 
     This package includes components from third-party projects.
-    See LICENSE.note for full attribution and licensing details.
+    See inst/COPYRIGHTS for full attribution and licensing details.

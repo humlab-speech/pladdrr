@@ -116,19 +116,15 @@ specify a seed value.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Generate 1 second of random noise</span></span></span>
 <span class="r-in"><span><span class="va">noise</span> <span class="op">&lt;-</span> <span class="fu">generate_noise</span><span class="op">(</span><span class="fl">1.0</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate reproducible noise</span></span></span>
 <span class="r-in"><span><span class="va">noise1</span> <span class="op">&lt;-</span> <span class="fu">generate_noise</span><span class="op">(</span><span class="fl">0.5</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span><span class="va">noise2</span> <span class="op">&lt;-</span> <span class="fu">generate_noise</span><span class="op">(</span><span class="fl">0.5</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">noise1</span><span class="op">$</span><span class="va">values</span>, <span class="va">noise2</span><span class="op">$</span><span class="va">values</span><span class="op">)</span>  <span class="co"># TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate quieter noise</span></span></span>
 <span class="r-in"><span><span class="va">quiet_noise</span> <span class="op">&lt;-</span> <span class="fu">generate_noise</span><span class="op">(</span><span class="fl">1.0</span>, amplitude <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

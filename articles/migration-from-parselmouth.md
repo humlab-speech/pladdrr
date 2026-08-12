@@ -42,6 +42,8 @@ sound = pm.Sound("audio.wav")
 ``` r
 
 library(pladdrr)
+#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
+#> Use citation('pladdrr') for citing this package in publications.
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
@@ -178,7 +180,7 @@ results <- lapply(files, function(filepath) {
 })
 
 results_df <- do.call(rbind, results)
-write.csv(results_df, "results.csv", row.names = FALSE)
+write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 ```
 
 ## Working with Data Frames
@@ -255,6 +257,8 @@ ggplot(pitch_data, aes(x = time, y = frequency)) +
   theme_minimal()
 ```
 
+![](migration-from-parselmouth_files/figure-html/unnamed-chunk-8-1.png)
+
 ## Advanced Workflows
 
 ### Voice Analysis Pipeline
@@ -330,6 +334,14 @@ df['speaker'] = ['A', 'B', 'C']
 # install separately if needed)
 library(pladdrr)
 library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(purrr)
 library(tidyr)
 
@@ -342,6 +354,12 @@ results <- tibble(
     analysis = map(file, analyze_voice)
   ) %>%
   unnest_wider(analysis)
+#> Warning: There were 3 warnings in `mutate()`.
+#> The first warning was:
+#> ℹ In argument: `analysis = map(file, analyze_voice)`.`.
+#> Caused by warning:
+#> ! time_step, max_period_factor, and max_amplitude_factor are not used by Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.
+#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 2 remaining warnings.s.
 ```
 
 ## Advantages of pladdrr

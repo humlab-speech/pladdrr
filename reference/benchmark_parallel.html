@@ -115,14 +115,14 @@ Useful for determining optimal core count for your workload.</p>
 <span class="r-in"><span>  <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="va">s</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"hertz"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  core_counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Testing with 1 core(s)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing with 1 core(s)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using single core (set n_cores &gt; 1 for parallel processing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Testing with 2 core(s)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing with 2 core(s)...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 1 files using 2 cores (2 thread(s)/worker)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cores    time_sec   speedup</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.002210617 1.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2 0.005699635 0.3878524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cores    time_sec speedup</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.002146959  1.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2 0.005916119  0.3629</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

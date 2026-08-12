@@ -46,17 +46,13 @@ reproducible results, specify a seed value.
 ``` r
 # Generate 1 second of random noise
 noise <- generate_noise(1.0)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 
 # Generate reproducible noise
 noise1 <- generate_noise(0.5, seed = 42)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 noise2 <- generate_noise(0.5, seed = 42)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 identical(noise1$values, noise2$values)  # TRUE
 #> [1] TRUE
 
 # Generate quieter noise
 quiet_noise <- generate_noise(1.0, amplitude = 0.1)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 ```

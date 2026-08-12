@@ -30,7 +30,6 @@ intensity.
 ``` r
 # RMS of a sine wave
 sine <- generate_sine_wave(440, 1.0, amplitude = 1.0)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 sound_rms(sine)  # Approximately 0.707
 #> [1] 0.7071068
 ```

@@ -125,7 +125,7 @@ cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
 ``` r
 
 # Create KlattGrid with extracted parameters
-kg <- KlattGrid_createFromVowel(
+kg <- klattgrid_create_from_vowel(
   duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
   f0start = f0_mean,
   f1 = f1_mean, b1 = 80,    # Use typical bandwidths
@@ -137,8 +137,11 @@ kg <- KlattGrid_createFromVowel(
 sound_resynth <- kg$to_sound()
 
 cat("Resynthesized audio:\n")
+#> Resynthesized audio:
 cat("  Duration:", sound_resynth$get_duration(), "s\n")
+#>   Duration: 1 s
 cat("  Samples:", sound_resynth$get_number_of_samples(), "\n")
+#>   Samples: 44100
 ```
 
 ### Step 4: Compare Original vs Resynthesized
@@ -203,12 +206,16 @@ target_f2 <- 1090
 target_f3 <- 2440
 
 cat("Target vowel: /a/\n")
+#> Target vowel: /a/
 cat(sprintf("  F1: %d Hz\n", target_f1))
+#>   F1: 730 Hz
 cat(sprintf("  F2: %d Hz\n", target_f2))
+#>   F2: 1090 Hz
 cat(sprintf("  F3: %d Hz\n", target_f3))
+#>   F3: 2440 Hz
 
 # Synthesize
-kg_vowel <- KlattGrid_createFromVowel(
+kg_vowel <- klattgrid_create_from_vowel(
   duration = 0.5,
   f0start = 120,
   f1 = target_f1, b1 = 80,
@@ -240,9 +247,14 @@ f2_extracted <- frm_result$get_value_at_time(2, mid_time, "hertz")
 f3_extracted <- frm_result$get_value_at_time(3, mid_time, "hertz")
 
 cat("\nExtracted formants (at midpoint):\n")
+#> 
+#> Extracted formants (at midpoint):
 cat(sprintf("  F1: %.0f Hz\n", f1_extracted))
+#>   F1: 730 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_extracted))
+#>   F2: 1097 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_extracted))
+#>   F3: 2469 Hz
 
 # Calculate errors
 f1_error <- abs(f1_extracted - target_f1) / target_f1 * 100
@@ -250,9 +262,14 @@ f2_error <- abs(f2_extracted - target_f2) / target_f2 * 100
 f3_error <- abs(f3_extracted - target_f3) / target_f3 * 100
 
 cat("\nExtraction accuracy:\n")
+#> 
+#> Extraction accuracy:
 cat(sprintf("  F1 error: %.1f%%\n", f1_error))
+#>   F1 error: 0.0%
 cat(sprintf("  F2 error: %.1f%%\n", f2_error))
+#>   F2 error: 0.7%
 cat(sprintf("  F3 error: %.1f%%\n", f3_error))
+#>   F3 error: 1.2%
 ```
 
 ### Visualize Round-Trip
@@ -303,7 +320,7 @@ for (v_name in names(vowels)) {
   v <- vowels[[v_name]]
   
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.3,
     f0start = 150,
     f1 = v$f1, b1 = 60,
@@ -316,6 +333,9 @@ for (v_name in names(vowels)) {
   cat(sprintf("Synthesized %s: F1=%d, F2=%d, F3=%d Hz\n",
               v$label, v$f1, v$f2, v$f3))
 }
+#> Synthesized /i/ (beet): F1=280, F2=2250, F3=2890 Hz
+#> Synthesized /a/ (father): F1=730, F2=1090, F3=2440 Hz
+#> Synthesized /u/ (boot): F1=310, F2=870, F3=2250 Hz
 ```
 
 ### Analyze Vowel Triangle
@@ -347,6 +367,9 @@ for (v_name in names(vowels)) {
   cat(sprintf("Analyzed %s: F1=%.0f, F2=%.0f Hz\n",
               vowels[[v_name]]$label, f1_mean, f2_mean))
 }
+#> Analyzed /i/ (beet): F1=305, F2=2262 Hz
+#> Analyzed /a/ (father): F1=750, F2=1088 Hz
+#> Analyzed /u/ (boot): F1=308, F2=893 Hz
 
 # Combine results
 vowel_space <- do.call(rbind, vowel_results)
@@ -403,38 +426,52 @@ ggplot(vowel_space_long, aes(F2, F1, color = type, shape = vowel)) +
 
 # Check phonetic relationships are preserved
 cat("Vowel space relationships:\n\n")
+#> Vowel space relationships:
 
 # F1: /a/ should be highest (lowest vowel)
 cat("F1 ordering (high to low vowel height):\n")
+#> F1 ordering (high to low vowel height):
 cat(sprintf("  /a/: %.0f Hz (low vowel, high F1)\n", 
             vowel_space[vowel_space$vowel == "a", "extracted_f1"]))
+#>   /a/: 750 Hz (low vowel, high F1)
 cat(sprintf("  /i/: %.0f Hz (high vowel, low F1)\n", 
             vowel_space[vowel_space$vowel == "i", "extracted_f1"]))
+#>   /i/: 305 Hz (high vowel, low F1)
 cat(sprintf("  /u/: %.0f Hz (high vowel, low F1)\n", 
             vowel_space[vowel_space$vowel == "u", "extracted_f1"]))
+#>   /u/: 308 Hz (high vowel, low F1)
 
 f1_a <- vowel_space[vowel_space$vowel == "a", "extracted_f1"]
 f1_i <- vowel_space[vowel_space$vowel == "i", "extracted_f1"]
 f1_u <- vowel_space[vowel_space$vowel == "u", "extracted_f1"]
 
 cat(sprintf("  /a/ F1 > /i/ F1: %s\n", f1_a > f1_i))
+#>   /a/ F1 > /i/ F1: TRUE
 cat(sprintf("  /a/ F1 > /u/ F1: %s\n", f1_a > f1_u))
+#>   /a/ F1 > /u/ F1: TRUE
 
 # F2: /i/ (front) > /a/ (central) > /u/ (back)
 cat("\nF2 ordering (front to back):\n")
+#> 
+#> F2 ordering (front to back):
 cat(sprintf("  /i/: %.0f Hz (front, high F2)\n", 
             vowel_space[vowel_space$vowel == "i", "extracted_f2"]))
+#>   /i/: 2262 Hz (front, high F2)
 cat(sprintf("  /a/: %.0f Hz (central, mid F2)\n", 
             vowel_space[vowel_space$vowel == "a", "extracted_f2"]))
+#>   /a/: 1088 Hz (central, mid F2)
 cat(sprintf("  /u/: %.0f Hz (back, low F2)\n", 
             vowel_space[vowel_space$vowel == "u", "extracted_f2"]))
+#>   /u/: 893 Hz (back, low F2)
 
 f2_i <- vowel_space[vowel_space$vowel == "i", "extracted_f2"]
 f2_a <- vowel_space[vowel_space$vowel == "a", "extracted_f2"]
 f2_u <- vowel_space[vowel_space$vowel == "u", "extracted_f2"]
 
 cat(sprintf("  /i/ F2 > /a/ F2: %s\n", f2_i > f2_a))
+#>   /i/ F2 > /a/ F2: TRUE
 cat(sprintf("  /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
+#>   /a/ F2 > /u/ F2: TRUE
 ```
 
 ## Advanced: Voice Morphing
@@ -469,7 +506,7 @@ for (i in seq_along(morph_alphas)) {
   f0 <- speaker_male$f0 + alpha * (speaker_female$f0 - speaker_male$f0)
   
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.4,
     f0start = f0,
     f1 = f1, b1 = 80,
@@ -492,6 +529,11 @@ for (i in seq_along(morph_alphas)) {
   cat(sprintf("Step %d (%.0f%% Female): F0=%.0f, F1=%.0f, F2=%.0f Hz\n",
               i, alpha * 100, f0, f1, f2))
 }
+#> Step 1 (0% Female): F0=100, F1=730, F2=1090 Hz
+#> Step 2 (25% Female): F0=130, F1=760, F2=1142 Hz
+#> Step 3 (50% Female): F0=160, F1=790, F2=1195 Hz
+#> Step 4 (75% Female): F0=190, F1=820, F2=1248 Hz
+#> Step 5 (100% Female): F0=220, F1=850, F2=1300 Hz
 ```
 
 ### Visualize Morph Continuum
@@ -537,7 +579,7 @@ Systematically vary one formant while holding others constant:
 f1_values <- seq(400, 800, by = 50)  # Low to high
 
 stimuli <- lapply(f1_values, function(f1) {
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = f1, b1 = 80,        # VARIED
     f2 = 1500, b2 = 120,      # CONSTANT
@@ -545,7 +587,7 @@ stimuli <- lapply(f1_values, function(f1) {
   )
   
   sound <- kg$to_sound()
-  sound$save(sprintf("f1_%04d.wav", f1), "WAV")
+  sound$save(file.path(tempdir(), sprintf("f1_%04d.wav", f1)), "WAV")
   
   sound
 })
@@ -558,7 +600,7 @@ Test perception with impossible voice combinations:
 ``` r
 
 # Male formants + Female pitch (impossible in nature)
-kg_impossible <- KlattGrid_createFromVowel(
+kg_impossible <- klattgrid_create_from_vowel(
   duration = 0.5,
   f0start = 220,              # Female pitch
   f1 = 730, b1 = 80,          # Male formants
@@ -583,7 +625,7 @@ test_vowels <- expand.grid(
 
 accuracy <- apply(test_vowels, 1, function(params) {
   # Synthesize
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = 0.5, f0start = 120,
     f1 = params[1], b1 = 80,
     f2 = params[2], b2 = 120,
@@ -613,6 +655,7 @@ accuracy <- apply(test_vowels, 1, function(params) {
 # Analyze accuracy across vowel space
 accuracy_df <- do.call(rbind, accuracy)
 mean(accuracy_df$error_f1, na.rm = TRUE)  # Mean F1 error in Hz
+#> [1] 8.27986
 ```
 
 ## Best Practices
@@ -667,7 +710,7 @@ duration (\>300 ms)
 **Symptoms**: R crashes when calling `kg$to_sound()`
 
 **Solutions**: - Always use
-[`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md)
+[`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
 (not empty constructor) - Verify all formant values are positive and
 finite - Check F1 \< F2 \< F3 constraint
 
@@ -693,7 +736,7 @@ morphing and transformation - Perceptual experiment stimulus generation
 
 **Key functions**: - `sound$to_formant_path()` - Robust analysis -
 `fp$extract_formant()` - Get optimal track -
-[`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md) -
+[`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md) -
 Safe synthesis -
 [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) - Extract
 formant values
@@ -702,7 +745,7 @@ formant values
 `fp <- sound$to_formant_path(num_steps_up_down=2L)` 3. Extract:
 `frm_result <- fp$extract_formant()` 4. Get values:
 `df <- as.data.frame(frm_result)` 5. Synthesize:
-`kg <- KlattGrid_createFromVowel(...)` 6. Compare: Visual/perceptual
+`kg <- klattgrid_create_from_vowel(...)` 6. Compare: Visual/perceptual
 validation
 
 ## Further Reading
@@ -744,14 +787,16 @@ sessionInfo()
 #> [1] ggplot2_4.0.3 pladdrr_5.0.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3        cli_3.6.6          knitr_1.51         rlang_1.3.0       
-#>  [5] xfun_0.60          otel_0.2.0         S7_0.2.2           textshaping_1.0.5 
-#>  [9] jsonlite_2.0.0     data.table_1.18.4  glue_1.8.1         htmltools_0.5.9   
-#> [13] ragg_1.5.2         sass_0.4.10        scales_1.4.0       rmarkdown_2.31    
-#> [17] grid_4.6.1         evaluate_1.0.5     jquerylib_0.1.4    fastmap_1.2.0     
-#> [21] yaml_2.3.12        lifecycle_1.0.5    compiler_4.6.1     codetools_0.2-20  
-#> [25] RColorBrewer_1.1-3 fs_2.1.0           Rcpp_1.1.2         farver_2.1.2      
-#> [29] systemfonts_1.3.2  digest_0.6.39      R6_2.6.1           bslib_0.12.0      
-#> [33] withr_3.0.3        gtable_0.3.6       tools_4.6.1        pkgdown_2.2.1     
-#> [37] cachem_1.1.0       desc_1.4.3
+#>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    
+#>  [5] tidyselect_1.2.1   Rcpp_1.1.2         jquerylib_0.1.4    systemfonts_1.3.2 
+#>  [9] scales_1.4.0       textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0     
+#> [13] R6_2.6.1           generics_0.1.4     knitr_1.51         tibble_3.3.1      
+#> [17] desc_1.4.3         bslib_0.12.0       pillar_1.11.1      RColorBrewer_1.1-3
+#> [21] rlang_1.3.0        cachem_1.1.0       xfun_0.60          fs_2.1.0          
+#> [25] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
+#> [29] pkgdown_2.2.1      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
+#> [33] grid_4.6.1         lifecycle_1.0.5    vctrs_0.7.3        evaluate_1.0.5    
+#> [37] glue_1.8.1         data.table_1.18.4  farver_2.1.2       codetools_0.2-20  
+#> [41] ragg_1.5.2         rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
+#> [45] htmltools_0.5.9
 ```

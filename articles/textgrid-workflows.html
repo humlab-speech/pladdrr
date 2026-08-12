@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-11</h4>
+            <h4 data-toc-skip class="date">2026-08-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/textgrid-workflows.Rmd" class="external-link"><code>vignettes/textgrid-workflows.Rmd</code></a></small>
       <div class="d-none name"><code>textgrid-workflows.Rmd</code></div>
@@ -175,6 +175,8 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/humlab-speech/pladdrr" class="external-link">pladdrr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.</span></span>
+<span><span class="co">#&gt; Use citation('pladdrr') for citing this package in publications.</span></span>
 <span></span>
 <span><span class="co"># Create a TextGrid with multiple tiers.</span></span>
 <span><span class="co"># tier_names lists ALL tiers to create; point_tiers is the subset of those</span></span>
@@ -188,7 +190,9 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Created TextGrid with"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_tiers</span><span class="op">(</span><span class="op">)</span>, <span class="st">"tiers\n"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Duration:"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span>, <span class="st">"seconds\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Created TextGrid with 4 tiers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Duration:"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span>, <span class="st">"seconds\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Duration: 10 seconds</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="adding-interval-boundaries">Adding Interval Boundaries<a class="anchor" aria-label="anchor" href="#adding-interval-boundaries"></a>
@@ -212,7 +216,8 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="va">word_tier</span>, <span class="fl">5</span>, <span class="st">"is"</span><span class="op">)</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="va">word_tier</span>, <span class="fl">6</span>, <span class="st">"test"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_intervals</span><span class="op">(</span><span class="va">word_tier</span><span class="op">)</span>, <span class="st">"intervals to words tier\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_intervals</span><span class="op">(</span><span class="va">word_tier</span><span class="op">)</span>, <span class="st">"intervals to words tier\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Added 6 intervals to words tier</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="adding-point-annotations">Adding Point Annotations<a class="anchor" aria-label="anchor" href="#adding-point-annotations"></a>
@@ -225,7 +230,8 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_point</span><span class="op">(</span><span class="va">events_tier</span>, time <span class="op">=</span> <span class="fl">5.0</span>, mark <span class="op">=</span> <span class="st">"sentence_boundary"</span><span class="op">)</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_point</span><span class="op">(</span><span class="va">events_tier</span>, time <span class="op">=</span> <span class="fl">9.5</span>, mark <span class="op">=</span> <span class="st">"recording_end"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_points</span><span class="op">(</span><span class="va">events_tier</span><span class="op">)</span>, <span class="st">"points to events tier\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_points</span><span class="op">(</span><span class="va">events_tier</span><span class="op">)</span>, <span class="st">"points to events tier\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Added 3 points to events tier</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="loading-from-file">Loading from File<a class="anchor" aria-label="anchor" href="#loading-from-file"></a>
@@ -263,7 +269,11 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Tier %d: %s (%s) - %d items\n"</span>, </span>
 <span>              <span class="va">i</span>, <span class="va">tier_names</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="va">tier_type</span>, <span class="va">n_items</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Tier 1: utterances (IntervalTier) - 1 items</span></span>
+<span><span class="co">#&gt; Tier 2: words (IntervalTier) - 6 items</span></span>
+<span><span class="co">#&gt; Tier 3: phones (IntervalTier) - 1 items</span></span>
+<span><span class="co">#&gt; Tier 4: events (PointTier) - 3 items</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="extracting-interval-information">Extracting Interval Information<a class="anchor" aria-label="anchor" href="#extracting-interval-information"></a>
@@ -290,7 +300,14 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>  <span class="va">intervals_df</span><span class="op">$</span><span class="va">label</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_interval_text</span><span class="op">(</span><span class="va">tier_idx</span>, <span class="va">i</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">intervals_df</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">intervals_df</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   index start  end duration label</span></span>
+<span><span class="co">#&gt; 1     1   0.0  1.0      1.0      </span></span>
+<span><span class="co">#&gt; 2     2   1.0  2.5      1.5 hello</span></span>
+<span><span class="co">#&gt; 3     3   2.5  4.0      1.5 world</span></span>
+<span><span class="co">#&gt; 4     4   4.0  6.5      2.5  this</span></span>
+<span><span class="co">#&gt; 5     5   6.5  8.0      1.5    is</span></span>
+<span><span class="co">#&gt; 6     6   8.0 10.0      2.0  test</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="time-based-queries">Time-Based Queries<a class="anchor" aria-label="anchor" href="#time-based-queries"></a>
@@ -308,6 +325,7 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"At time %.2f s: '%s' [%.2f - %.2f]\n"</span>, </span>
 <span>              <span class="va">query_time</span>, <span class="va">label</span>, <span class="va">start</span>, <span class="va">end</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span><span class="co">#&gt; At time 3.00 s: 'world' [2.50 - 4.00]</span></span>
 <span></span>
 <span><span class="co"># Find interval by label</span></span>
 <span><span class="va">target_label</span> <span class="op">&lt;-</span> <span class="st">"world"</span></span>
@@ -316,7 +334,8 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Found '%s' at interval %d\n"</span>, <span class="va">target_label</span>, <span class="va">i</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="kw">break</span></span>
 <span>  <span class="op">}</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Found 'world' at interval 3</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="point-tier-queries">Point Tier Queries<a class="anchor" aria-label="anchor" href="#point-tier-queries"></a>
@@ -330,7 +349,10 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>  <span class="va">time</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_point_time</span><span class="op">(</span><span class="va">points_tier</span>, <span class="va">i</span><span class="op">)</span></span>
 <span>  <span class="va">mark</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_point_text</span><span class="op">(</span><span class="va">points_tier</span>, <span class="va">i</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Point %d: %.3f s - '%s'\n"</span>, <span class="va">i</span>, <span class="va">time</span>, <span class="va">mark</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Point 1: 0.500 s - 'recording_start'</span></span>
+<span><span class="co">#&gt; Point 2: 5.000 s - 'sentence_boundary'</span></span>
+<span><span class="co">#&gt; Point 3: 9.500 s - 'recording_end'</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -351,6 +373,7 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Inserted boundary, now have"</span>, </span>
 <span>    <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_intervals</span><span class="op">(</span><span class="va">tier_idx</span><span class="op">)</span>, <span class="st">"intervals\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Inserted boundary, now have 7 intervals</span></span>
 <span></span>
 <span><span class="co"># Remove a boundary (merges adjacent intervals)</span></span>
 <span><span class="co"># tg$remove_boundary(tier_idx, time = 3.25)</span></span></code></pre></div>
@@ -368,7 +391,8 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">points_tier</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">set_point_text</span><span class="op">(</span><span class="va">points_tier</span>, <span class="fl">2</span>, <span class="st">"BOUNDARY"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Updated labels\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Updated labels\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updated labels</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="adding-and-removing-tiers">Adding and Removing Tiers<a class="anchor" aria-label="anchor" href="#adding-and-removing-tiers"></a>
@@ -377,17 +401,20 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <code class="sourceCode R"><span><span class="co"># Add a new interval tier</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">add_interval_tier</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"syllables"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added 'syllables' tier, now have"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_tiers</span><span class="op">(</span><span class="op">)</span>, <span class="st">"tiers\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Added 'syllables' tier, now have 5 tiers</span></span>
 <span></span>
 <span><span class="co"># Add a new point tier</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">add_point_tier</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"landmarks"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Added 'landmarks' tier, now have"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_tiers</span><span class="op">(</span><span class="op">)</span>, <span class="st">"tiers\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Added 'landmarks' tier, now have 6 tiers</span></span>
 <span></span>
 <span><span class="co"># Remove a tier (use with caution!)</span></span>
 <span><span class="co"># tg$remove_tier(tier = 6)</span></span>
 <span></span>
 <span><span class="co"># Rename a tier</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">set_tier_name</span><span class="op">(</span>tier <span class="op">=</span> <span class="fl">3</span>, new_name <span class="op">=</span> <span class="st">"segments"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Renamed tier 3 to 'segments'\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Renamed tier 3 to 'segments'\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Renamed tier 3 to 'segments'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="duplicating-tiers">Duplicating Tiers<a class="anchor" aria-label="anchor" href="#duplicating-tiers"></a>
@@ -414,8 +441,11 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">load_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">start_time</span>, units <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Loaded in %.3f seconds\n"</span>, <span class="va">load_time</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loaded in 0.010 seconds</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Duration: %.2f minutes\n"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"File size: %.1f MB\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tg_file</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1024</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Duration: 1.00 minutes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"File size: %.1f MB\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tg_file</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1024</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; File size: 1.2 MB</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="efficient-data-extraction">Efficient Data Extraction<a class="anchor" aria-label="anchor" href="#efficient-data-extraction"></a>
@@ -431,7 +461,24 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span></span>
 <span><span class="co"># Now use standard R operations</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tg_df</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tg_df</span><span class="op">$</span><span class="va">tier_name</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;      tier_name       tier_type    item_number    start_time       end_time     </span></span>
+<span><span class="co">#&gt;  Length   :802   Length   :802   Min.   :  1   Min.   : 0.00   Min.   : 0.105  </span></span>
+<span><span class="co">#&gt;  N.unique :  2   N.unique :  1   1st Qu.:101   1st Qu.:14.79   1st Qu.:14.976  </span></span>
+<span><span class="co">#&gt;  N.blank  :  0   N.blank  :  0   Median :201   Median :29.83   Median :29.999  </span></span>
+<span><span class="co">#&gt;  Min.nchar:  8   Min.nchar:  8   Mean   :201   Mean   :29.97   Mean   :30.118  </span></span>
+<span><span class="co">#&gt;  Max.nchar:  8   Max.nchar:  8   3rd Qu.:301   3rd Qu.:44.95   3rd Qu.:45.071  </span></span>
+<span><span class="co">#&gt;                                  Max.   :402   Max.   :59.98   Max.   :60.000  </span></span>
+<span><span class="co">#&gt;        label    </span></span>
+<span><span class="co">#&gt;  Length   :802  </span></span>
+<span><span class="co">#&gt;  N.unique :793  </span></span>
+<span><span class="co">#&gt;  N.blank  :  0  </span></span>
+<span><span class="co">#&gt;  Min.nchar:  1  </span></span>
+<span><span class="co">#&gt;  Max.nchar:290  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tg_df</span><span class="op">$</span><span class="va">tier_name</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Tier_1_1 Tier_1_2 </span></span>
+<span><span class="co">#&gt;      400      402</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="sampling-large-datasets">Sampling Large Datasets<a class="anchor" aria-label="anchor" href="#sampling-large-datasets"></a>
@@ -494,10 +541,17 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>    <span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span>
+<span><span class="co">#&gt; Processing: test.TextGrid </span></span>
+<span><span class="co">#&gt; Processing: benchmarkdata1min.TextGrid</span></span>
 <span></span>
 <span><span class="co"># Analyze corpus-wide</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">$</span><span class="va">file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span><span class="co">#&gt;  0.0210  0.1268  0.1515  0.1559  0.1740  1.0000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">$</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; benchmarkdata1min.TextGrid              test.TextGrid </span></span>
+<span><span class="co">#&gt;                        400                          4</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -536,8 +590,25 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span>  <span class="va">phone_durations</span><span class="op">$</span><span class="va">duration</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">end</span> <span class="op">-</span> <span class="va">start</span></span>
 <span><span class="op">}</span></span>
 <span></span>
+<span><span class="co"># IPA symbols (e.g. the open-mid vowels MFA/Praat produce) are multi-byte</span></span>
+<span><span class="co"># UTF-8. Some build environments render vignettes under a non-UTF-8 locale,</span></span>
+<span><span class="co"># where R can't line-wrap multi-byte text for printing and errors out —</span></span>
+<span><span class="co"># so escape non-ASCII phone labels to their Unicode code points for display.</span></span>
+<span><span class="va">phone_durations</span><span class="op">$</span><span class="va">phone</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">phone_durations</span><span class="op">$</span><span class="va">phone</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">codepoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/utf8Conversion.html" class="external-link">utf8ToInt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Encoding.html" class="external-link">enc2utf8</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">codepoints</span> <span class="op">&lt;</span> <span class="fl">128L</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"\\u%04x"</span>, <span class="va">codepoints</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="op">}</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Analyze by phone class</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">duration</span> <span class="op">~</span> <span class="va">phone</span>, data <span class="op">=</span> <span class="va">phone_durations</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">duration</span> <span class="op">~</span> <span class="va">phone</span>, data <span class="op">=</span> <span class="va">phone_durations</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     phone duration</span></span>
+<span><span class="co">#&gt; 1              0.5</span></span>
+<span><span class="co">#&gt; 2 \\u0254      0.5</span></span>
+<span><span class="co">#&gt; 3 \\u025b      0.4</span></span>
+<span><span class="co">#&gt; 4       h      0.3</span></span>
+<span><span class="co">#&gt; 5       l      0.3</span></span>
+<span><span class="co">#&gt; 6       w      0.5</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="quality-control-for-forced-alignment">Quality Control for Forced Alignment<a class="anchor" aria-label="anchor" href="#quality-control-for-forced-alignment"></a>
@@ -552,8 +623,11 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">long_intervals</span> <span class="op">&lt;-</span> <span class="va">phone_durations</span><span class="op">$</span><span class="va">duration</span> <span class="op">&gt;</span> <span class="va">max_duration</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Intervals needing review:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Intervals needing review:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Too short:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">short_intervals</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Too short: 0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Too long:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">long_intervals</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Too long: 0</span></span>
 <span></span>
 <span><span class="co"># Export for manual correction</span></span>
 <span><span class="va">flagged</span> <span class="op">&lt;-</span> <span class="va">phone_durations</span><span class="op">[</span><span class="va">short_intervals</span> <span class="op">|</span> <span class="va">long_intervals</span>, <span class="op">]</span></span>
@@ -600,11 +674,14 @@ be added to an existing plot, e.g. on top of a Sound’s waveform.</p>
 <span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># All tiers in one ggplot</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span>
-<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="textgrid-workflows_files/figure-html/visualize_textgrid-1.png" class="r-plt" alt="" width="672"></p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># One tier as a layer on top of a waveform</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">sound</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">tg</span>, tier <span class="op">=</span> <span class="st">"words"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="textgrid-workflows_files/figure-html/visualize_textgrid-2.png" class="r-plt" alt="" width="672"></p>
 <p>For further examples (interval duration distributions, label
 frequency plots, multi-tier layouts), see
 <code><a href="../articles/visualization.html">vignette("visualization")</a></code>.</p>
@@ -617,7 +694,7 @@ frequency plots, multi-tier layouts), see
 <h3 id="consistent-labeling">1. Consistent Labeling<a class="anchor" aria-label="anchor" href="#consistent-labeling"></a>
 </h3>
 <p>Use standardized labels for reproducibility:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">tier_idx</span> <span class="op">&lt;-</span> <span class="st">"phones"</span></span>
 <span><span class="va">n_intervals</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_intervals</span><span class="op">(</span><span class="va">tier_idx</span><span class="op">)</span></span>
@@ -632,25 +709,31 @@ frequency plots, multi-tier layouts), see
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="va">label</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">vowels</span>, <span class="va">consonants</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Non-standard label at interval"</span>, <span class="va">i</span>, <span class="st">":"</span>, <span class="va">label</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Non-standard label at interval 2 : h </span></span>
+<span><span class="co">#&gt; Non-standard label at interval 3 : ɛ </span></span>
+<span><span class="co">#&gt; Non-standard label at interval 4 : l </span></span>
+<span><span class="co">#&gt; Non-standard label at interval 5 : w </span></span>
+<span><span class="co">#&gt; Non-standard label at interval 6 : ɔ</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="handle-empty-intervals">2. Handle Empty Intervals<a class="anchor" aria-label="anchor" href="#handle-empty-intervals"></a>
 </h3>
 <p>Empty labels (silence, pauses) are common:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter out empty intervals</span></span>
 <span><span class="va">non_empty</span> <span class="op">&lt;-</span> <span class="va">intervals_df</span><span class="op">[</span><span class="va">intervals_df</span><span class="op">$</span><span class="va">label</span> <span class="op">!=</span> <span class="st">""</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Or analyze empty intervals separately</span></span>
 <span><span class="va">empty_intervals</span> <span class="op">&lt;-</span> <span class="va">intervals_df</span><span class="op">[</span><span class="va">intervals_df</span><span class="op">$</span><span class="va">label</span> <span class="op">==</span> <span class="st">""</span>, <span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Mean silence duration:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">empty_intervals</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span>, <span class="st">"s\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Mean silence duration:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">empty_intervals</span><span class="op">$</span><span class="va">duration</span><span class="op">)</span>, <span class="st">"s\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Mean silence duration: 1 s</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="time-precision">3. Time Precision<a class="anchor" aria-label="anchor" href="#time-precision"></a>
 </h3>
 <p>Be aware of floating-point precision:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Round times for comparison</span></span>
 <span><span class="va">time_precision</span> <span class="op">&lt;-</span> <span class="fl">0.001</span>  <span class="co"># 1 ms</span></span>
 <span></span>
@@ -659,13 +742,14 @@ frequency plots, multi-tier layouts), see
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">boundary1</span> <span class="op">-</span> <span class="va">boundary2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">time_precision</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Boundaries are effectively identical\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Boundaries are effectively identical</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="backup-before-editing">4. Backup Before Editing<a class="anchor" aria-label="anchor" href="#backup-before-editing"></a>
 </h3>
 <p>Always save a copy before modifying:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save original</span></span>
 <span><span class="va">original_tg</span> <span class="op">&lt;-</span> <span class="va">tg</span>  <span class="co"># R6 objects are passed by reference, so duplicate:</span></span>
 <span><span class="co"># (In practice, save to disk before editing)</span></span>
@@ -684,7 +768,7 @@ frequency plots, multi-tier layouts), see
 <h3 id="prosodic-analysis">1. Prosodic Analysis<a class="anchor" aria-label="anchor" href="#prosodic-analysis"></a>
 </h3>
 <p>Extract F0 contours aligned to intonational phrases:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Assume the "words" tier has intonational phrase boundaries</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span></span>
@@ -699,13 +783,17 @@ frequency plots, multi-tier layouts), see
 <span>  </span>
 <span>  <span class="va">f0_mean</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="va">start</span>, to_time <span class="op">=</span> <span class="va">end</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Phrase %d: Mean F0 = %.1f Hz\n"</span>, <span class="va">i</span>, <span class="va">f0_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Phrase 1: Mean F0 = 440.0 Hz</span></span>
+<span><span class="co">#&gt; Phrase 2: Mean F0 = 440.0 Hz</span></span>
+<span><span class="co">#&gt; Phrase 3: Mean F0 = NaN Hz</span></span>
+<span><span class="co">#&gt; Phrase 4: Mean F0 = NaN Hz</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="voice-onset-time-vot-measurement">2. Voice Onset Time (VOT) Measurement<a class="anchor" aria-label="anchor" href="#voice-onset-time-vot-measurement"></a>
 </h3>
 <p>Measure time between burst and voicing onset:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Assume a point tier with "burst" and "voicing_onset" marks</span></span>
 <span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va">TextGrid</span><span class="op">$</span><span class="fu">create</span><span class="op">(</span>tmin <span class="op">=</span> <span class="fl">0</span>, tmax <span class="op">=</span> <span class="fl">2</span>, tier_names <span class="op">=</span> <span class="st">"events"</span>, point_tiers <span class="op">=</span> <span class="st">"events"</span><span class="op">)</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_point</span><span class="op">(</span><span class="st">"events"</span>, time <span class="op">=</span> <span class="fl">0.10</span>, mark <span class="op">=</span> <span class="st">"burst"</span><span class="op">)</span></span>
@@ -728,13 +816,14 @@ frequency plots, multi-tier layouts), see
 <span></span>
 <span><span class="co"># Calculate VOTs (assumes paired marks)</span></span>
 <span><span class="va">vots</span> <span class="op">&lt;-</span> <span class="va">voicing_times</span> <span class="op">-</span> <span class="va">burst_times</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Mean VOT:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">vots</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span>, <span class="st">"ms\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Mean VOT:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">vots</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span>, <span class="st">"ms\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Mean VOT: 65 ms</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="automated-tier-creation">3. Automated Tier Creation<a class="anchor" aria-label="anchor" href="#automated-tier-creation"></a>
 </h3>
 <p>Generate derived tiers programmatically:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create syllable tier from phone tier</span></span>
 <span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">phone_tier</span> <span class="op">&lt;-</span> <span class="st">"phones"</span></span>
@@ -766,7 +855,7 @@ frequency plots, multi-tier layouts), see
 <li>Querying (intervals, points, time-based lookup)</li>
 <li>Editing (insert, delete, relabel, manage tiers)</li>
 <li>Corpus-scale processing (batch loading, sampling,
-<code>as_data_frame()</code> export)</li>
+<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> export)</li>
 <li>Loading forced-alignment output (e.g. Montreal Forced Aligner)</li>
 <li>Export to CSV/data frame for downstream analysis</li>
 </ul>

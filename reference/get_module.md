@@ -17,9 +17,3 @@ get_module(name)
 ## Value
 
 The loaded Rcpp Module
-
-## Examples
-
-``` r
-mod <- pladdrr:::get_module("pitch_module")
-```

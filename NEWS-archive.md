@@ -2892,9 +2892,9 @@ comprehensive documentation.
 
 - **KlattGrid** - Parametric speech synthesis (Klatt cascade/parallel
   synthesizer)
-  - [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md) -
+  - [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md) -
     Safe vowel synthesis with F1/F2/F3 + bandwidths
-  - [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createExample.md) -
+  - [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md) -
     Pre-configured complex synthesis
   - Pitch contour manipulation (`add_pitch_point()`)
   - Formant transitions for diphthongs
@@ -2983,9 +2983,9 @@ comprehensive documentation.
 
 - **KlattGrid empty grid**: `KlattGrid(0,1,5)$to_sound()` segfaults
   - **Workaround**: Always use
-    [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md)
+    [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
     or
-    [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createExample.md)
+    [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
 - **FormantPath API**: Some methods untested (core functionality works)
 
 ## Performance

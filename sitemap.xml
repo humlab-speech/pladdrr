@@ -1,6 +1,8 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://humlab-speech.github.io/pladdrr/404.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/CLAUDE.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/CONTRIBUTING.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/LICENSE-text.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/NEWS-archive.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/articles/analysis-resynthesis-workflow.html</loc></url>
@@ -46,8 +48,6 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Intensity.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/IntensityTier.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/KlattGrid.html</loc></url>
-<url><loc>https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createExample.html</loc></url>
-<url><loc>https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/LFCC.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/LPC.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/LongSound.html</loc></url>
@@ -220,6 +220,8 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/is_praat_intensity.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/is_praat_pitch.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/is_praat_sound.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/longsound_open.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/ltas_average.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/matrix_create.html</loc></url>

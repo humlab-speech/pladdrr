@@ -249,7 +249,7 @@ relationships</li>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create KlattGrid with extracted parameters</span></span>
-<span><span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span><span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>  duration <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">sound_orig</span><span class="op">$</span><span class="fu">get_duration</span><span class="op">(</span><span class="op">)</span>, <span class="fl">1.0</span><span class="op">)</span>,  <span class="co"># Limit for demo</span></span>
 <span>  f0start <span class="op">=</span> <span class="va">f0_mean</span>,</span>
 <span>  f1 <span class="op">=</span> <span class="va">f1_mean</span>, b1 <span class="op">=</span> <span class="fl">80</span>,    <span class="co"># Use typical bandwidths</span></span>
@@ -261,8 +261,11 @@ relationships</li>
 <span><span class="va">sound_resynth</span> <span class="op">&lt;-</span> <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Resynthesized audio:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Resynthesized audio:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Duration:"</span>, <span class="va">sound_resynth</span><span class="op">$</span><span class="fu">get_duration</span><span class="op">(</span><span class="op">)</span>, <span class="st">"s\n"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Samples:"</span>, <span class="va">sound_resynth</span><span class="op">$</span><span class="fu">get_number_of_samples</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;   Duration: 1 s</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Samples:"</span>, <span class="va">sound_resynth</span><span class="op">$</span><span class="fu">get_number_of_samples</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Samples: 44100</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-4-compare-original-vs-resynthesized">Step 4: Compare Original vs Resynthesized<a class="anchor" aria-label="anchor" href="#step-4-compare-original-vs-resynthesized"></a>
@@ -327,12 +330,16 @@ relationships</li>
 <span><span class="va">target_f3</span> <span class="op">&lt;-</span> <span class="fl">2440</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Target vowel: /a/\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Target vowel: /a/</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %d Hz\n"</span>, <span class="va">target_f1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F1: 730 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %d Hz\n"</span>, <span class="va">target_f2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F2: 1090 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %d Hz\n"</span>, <span class="va">target_f3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F3: 2440 Hz</span></span>
 <span></span>
 <span><span class="co"># Synthesize</span></span>
-<span><span class="va">kg_vowel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span><span class="va">kg_vowel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>  duration <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  f0start <span class="op">=</span> <span class="fl">120</span>,</span>
 <span>  f1 <span class="op">=</span> <span class="va">target_f1</span>, b1 <span class="op">=</span> <span class="fl">80</span>,</span>
@@ -363,9 +370,14 @@ relationships</li>
 <span><span class="va">f3_extracted</span> <span class="op">&lt;-</span> <span class="va">frm_result</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span><span class="fl">3</span>, <span class="va">mid_time</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nExtracted formants (at midpoint):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Extracted formants (at midpoint):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %.0f Hz\n"</span>, <span class="va">f1_extracted</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F1: 730 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %.0f Hz\n"</span>, <span class="va">f2_extracted</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F2: 1097 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %.0f Hz\n"</span>, <span class="va">f3_extracted</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F3: 2469 Hz</span></span>
 <span></span>
 <span><span class="co"># Calculate errors</span></span>
 <span><span class="va">f1_error</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">f1_extracted</span> <span class="op">-</span> <span class="va">target_f1</span><span class="op">)</span> <span class="op">/</span> <span class="va">target_f1</span> <span class="op">*</span> <span class="fl">100</span></span>
@@ -373,9 +385,14 @@ relationships</li>
 <span><span class="va">f3_error</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">f3_extracted</span> <span class="op">-</span> <span class="va">target_f3</span><span class="op">)</span> <span class="op">/</span> <span class="va">target_f3</span> <span class="op">*</span> <span class="fl">100</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nExtraction accuracy:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Extraction accuracy:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1 error: %.1f%%\n"</span>, <span class="va">f1_error</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F1 error: 0.0%</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2 error: %.1f%%\n"</span>, <span class="va">f2_error</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3 error: %.1f%%\n"</span>, <span class="va">f3_error</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;   F2 error: 0.7%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3 error: %.1f%%\n"</span>, <span class="va">f3_error</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   F3 error: 1.2%</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualize-round-trip">Visualize Round-Trip<a class="anchor" aria-label="anchor" href="#visualize-round-trip"></a>
@@ -426,7 +443,7 @@ relationships</li>
 <span>  <span class="va">v</span> <span class="op">&lt;-</span> <span class="va">vowels</span><span class="op">[[</span><span class="va">v_name</span><span class="op">]</span><span class="op">]</span></span>
 <span>  </span>
 <span>  <span class="co"># Synthesize</span></span>
-<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>    duration <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>    f0start <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>    f1 <span class="op">=</span> <span class="va">v</span><span class="op">$</span><span class="va">f1</span>, b1 <span class="op">=</span> <span class="fl">60</span>,</span>
@@ -438,7 +455,10 @@ relationships</li>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Synthesized %s: F1=%d, F2=%d, F3=%d Hz\n"</span>,</span>
 <span>              <span class="va">v</span><span class="op">$</span><span class="va">label</span>, <span class="va">v</span><span class="op">$</span><span class="va">f1</span>, <span class="va">v</span><span class="op">$</span><span class="va">f2</span>, <span class="va">v</span><span class="op">$</span><span class="va">f3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Synthesized /i/ (beet): F1=280, F2=2250, F3=2890 Hz</span></span>
+<span><span class="co">#&gt; Synthesized /a/ (father): F1=730, F2=1090, F3=2440 Hz</span></span>
+<span><span class="co">#&gt; Synthesized /u/ (boot): F1=310, F2=870, F3=2250 Hz</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="analyze-vowel-triangle">Analyze Vowel Triangle<a class="anchor" aria-label="anchor" href="#analyze-vowel-triangle"></a>
@@ -469,6 +489,9 @@ relationships</li>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Analyzed %s: F1=%.0f, F2=%.0f Hz\n"</span>,</span>
 <span>              <span class="va">vowels</span><span class="op">[[</span><span class="va">v_name</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">label</span>, <span class="va">f1_mean</span>, <span class="va">f2_mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
+<span><span class="co">#&gt; Analyzed /i/ (beet): F1=305, F2=2262 Hz</span></span>
+<span><span class="co">#&gt; Analyzed /a/ (father): F1=750, F2=1088 Hz</span></span>
+<span><span class="co">#&gt; Analyzed /u/ (boot): F1=308, F2=893 Hz</span></span>
 <span></span>
 <span><span class="co"># Combine results</span></span>
 <span><span class="va">vowel_space</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">vowel_results</span><span class="op">)</span></span></code></pre></div>
@@ -523,38 +546,52 @@ relationships</li>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check phonetic relationships are preserved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Vowel space relationships:\n\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Vowel space relationships:</span></span>
 <span></span>
 <span><span class="co"># F1: /a/ should be highest (lowest vowel)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"F1 ordering (high to low vowel height):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; F1 ordering (high to low vowel height):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/: %.0f Hz (low vowel, high F1)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /a/: 750 Hz (low vowel, high F1)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /i/: %.0f Hz (high vowel, low F1)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"i"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /i/: 305 Hz (high vowel, low F1)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /u/: %.0f Hz (high vowel, low F1)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"u"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /u/: 308 Hz (high vowel, low F1)</span></span>
 <span></span>
 <span><span class="va">f1_a</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span></span>
 <span><span class="va">f1_i</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"i"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span></span>
 <span><span class="va">f1_u</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"u"</span>, <span class="st">"extracted_f1"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/ F1 &gt; /i/ F1: %s\n"</span>, <span class="va">f1_a</span> <span class="op">&gt;</span> <span class="va">f1_i</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /a/ F1 &gt; /i/ F1: TRUE</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/ F1 &gt; /u/ F1: %s\n"</span>, <span class="va">f1_a</span> <span class="op">&gt;</span> <span class="va">f1_u</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /a/ F1 &gt; /u/ F1: TRUE</span></span>
 <span></span>
 <span><span class="co"># F2: /i/ (front) &gt; /a/ (central) &gt; /u/ (back)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nF2 ordering (front to back):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; F2 ordering (front to back):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /i/: %.0f Hz (front, high F2)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"i"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /i/: 2262 Hz (front, high F2)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/: %.0f Hz (central, mid F2)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /a/: 1088 Hz (central, mid F2)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /u/: %.0f Hz (back, low F2)\n"</span>, </span>
 <span>            <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"u"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /u/: 893 Hz (back, low F2)</span></span>
 <span></span>
 <span><span class="va">f2_i</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"i"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span></span>
 <span><span class="va">f2_a</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span></span>
 <span><span class="va">f2_u</span> <span class="op">&lt;-</span> <span class="va">vowel_space</span><span class="op">[</span><span class="va">vowel_space</span><span class="op">$</span><span class="va">vowel</span> <span class="op">==</span> <span class="st">"u"</span>, <span class="st">"extracted_f2"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /i/ F2 &gt; /a/ F2: %s\n"</span>, <span class="va">f2_i</span> <span class="op">&gt;</span> <span class="va">f2_a</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/ F2 &gt; /u/ F2: %s\n"</span>, <span class="va">f2_a</span> <span class="op">&gt;</span> <span class="va">f2_u</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;   /i/ F2 &gt; /a/ F2: TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  /a/ F2 &gt; /u/ F2: %s\n"</span>, <span class="va">f2_a</span> <span class="op">&gt;</span> <span class="va">f2_u</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   /a/ F2 &gt; /u/ F2: TRUE</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -590,7 +627,7 @@ relationships</li>
 <span>  <span class="va">f0</span> <span class="op">&lt;-</span> <span class="va">speaker_male</span><span class="op">$</span><span class="va">f0</span> <span class="op">+</span> <span class="va">alpha</span> <span class="op">*</span> <span class="op">(</span><span class="va">speaker_female</span><span class="op">$</span><span class="va">f0</span> <span class="op">-</span> <span class="va">speaker_male</span><span class="op">$</span><span class="va">f0</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># Synthesize</span></span>
-<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>    duration <span class="op">=</span> <span class="fl">0.4</span>,</span>
 <span>    f0start <span class="op">=</span> <span class="va">f0</span>,</span>
 <span>    f1 <span class="op">=</span> <span class="va">f1</span>, b1 <span class="op">=</span> <span class="fl">80</span>,</span>
@@ -612,14 +649,19 @@ relationships</li>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Step %d (%.0f%% Female): F0=%.0f, F1=%.0f, F2=%.0f Hz\n"</span>,</span>
 <span>              <span class="va">i</span>, <span class="va">alpha</span> <span class="op">*</span> <span class="fl">100</span>, <span class="va">f0</span>, <span class="va">f1</span>, <span class="va">f2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Step 1 (0% Female): F0=100, F1=730, F2=1090 Hz</span></span>
+<span><span class="co">#&gt; Step 2 (25% Female): F0=130, F1=760, F2=1142 Hz</span></span>
+<span><span class="co">#&gt; Step 3 (50% Female): F0=160, F1=790, F2=1195 Hz</span></span>
+<span><span class="co">#&gt; Step 4 (75% Female): F0=190, F1=820, F2=1248 Hz</span></span>
+<span><span class="co">#&gt; Step 5 (100% Female): F0=220, F1=850, F2=1300 Hz</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualize-morph-continuum">Visualize Morph Continuum<a class="anchor" aria-label="anchor" href="#visualize-morph-continuum"></a>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot formant trajectories across morph</span></span>
-<span><span class="va">morph_long</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu">pivot_longer</span><span class="op">(</span></span>
+<span><span class="va">morph_long</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
 <span>  <span class="va">morph_results</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">f0</span>, <span class="va">f1</span>, <span class="va">f2</span>, <span class="va">f3</span><span class="op">)</span>,</span>
 <span>  names_to <span class="op">=</span> <span class="st">"parameter"</span>,</span>
@@ -657,7 +699,7 @@ relationships</li>
 <span><span class="va">f1_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">800</span>, by <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>  <span class="co"># Low to high</span></span>
 <span></span>
 <span><span class="va">stimuli</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">f1_values</span>, <span class="kw">function</span><span class="op">(</span><span class="va">f1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>    duration <span class="op">=</span> <span class="fl">0.5</span>, f0start <span class="op">=</span> <span class="fl">120</span>,</span>
 <span>    f1 <span class="op">=</span> <span class="va">f1</span>, b1 <span class="op">=</span> <span class="fl">80</span>,        <span class="co"># VARIED</span></span>
 <span>    f2 <span class="op">=</span> <span class="fl">1500</span>, b2 <span class="op">=</span> <span class="fl">120</span>,      <span class="co"># CONSTANT</span></span>
@@ -665,7 +707,7 @@ relationships</li>
 <span>  <span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="va">sound</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"f1_%04d.wav"</span>, <span class="va">f1</span><span class="op">)</span>, <span class="st">"WAV"</span><span class="op">)</span></span>
+<span>  <span class="va">sound</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"f1_%04d.wav"</span>, <span class="va">f1</span><span class="op">)</span><span class="op">)</span>, <span class="st">"WAV"</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">sound</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
@@ -676,7 +718,7 @@ relationships</li>
 <p>Test perception with impossible voice combinations:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Male formants + Female pitch (impossible in nature)</span></span>
-<span><span class="va">kg_impossible</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span><span class="va">kg_impossible</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>  duration <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  f0start <span class="op">=</span> <span class="fl">220</span>,              <span class="co"># Female pitch</span></span>
 <span>  f1 <span class="op">=</span> <span class="fl">730</span>, b1 <span class="op">=</span> <span class="fl">80</span>,          <span class="co"># Male formants</span></span>
@@ -699,7 +741,7 @@ relationships</li>
 <span></span>
 <span><span class="va">accuracy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">test_vowels</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Synthesize</span></span>
-<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>    duration <span class="op">=</span> <span class="fl">0.5</span>, f0start <span class="op">=</span> <span class="fl">120</span>,</span>
 <span>    f1 <span class="op">=</span> <span class="va">params</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, b1 <span class="op">=</span> <span class="fl">80</span>,</span>
 <span>    f2 <span class="op">=</span> <span class="va">params</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, b2 <span class="op">=</span> <span class="fl">120</span>,</span>
@@ -728,7 +770,8 @@ relationships</li>
 <span></span>
 <span><span class="co"># Analyze accuracy across vowel space</span></span>
 <span><span class="va">accuracy_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">accuracy</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">accuracy_df</span><span class="op">$</span><span class="va">error_f1</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># Mean F1 error in Hz</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">accuracy_df</span><span class="op">$</span><span class="va">error_f1</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># Mean F1 error in Hz</span></span>
+<span><span class="co">#&gt; [1] 8.27986</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -815,7 +858,7 @@ longer vowel duration (&gt;300 ms)</p>
 <p><strong>Symptoms</strong>: R crashes when calling
 <code>kg$to_sound()</code></p>
 <p><strong>Solutions</strong>: - Always use
-<code><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel()</a></code> (not empty constructor) -
+<code><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel()</a></code> (not empty constructor) -
 Verify all formant values are positive and finite - Check F1 &lt; F2
 &lt; F3 constraint</p>
 </div>
@@ -847,14 +890,14 @@ stimulus generation</p>
 <p><strong>Key functions</strong>: -
 <code>sound$to_formant_path()</code> - Robust analysis -
 <code>fp$extract_formant()</code> - Get optimal track -
-<code><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel()</a></code> - Safe synthesis -
+<code><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel()</a></code> - Safe synthesis -
 <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> - Extract formant values</p>
 <p><strong>Typical pipeline</strong>: 1. Load audio:
 <code>Sound("file.wav")</code> 2. Analyze:
 <code>fp &lt;- sound$to_formant_path(num_steps_up_down=2L)</code> 3.
 Extract: <code>frm_result &lt;- fp$extract_formant()</code> 4. Get
 values: <code>df &lt;- as.data.frame(frm_result)</code> 5. Synthesize:
-<code>kg &lt;- KlattGrid_createFromVowel(...)</code> 6. Compare:
+<code>kg &lt;- klattgrid_create_from_vowel(...)</code> 6. Compare:
 Visual/perceptual validation</p>
 </div>
 <div class="section level2">
@@ -903,16 +946,18 @@ extraction</li>
 <span><span class="co">#&gt; [1] ggplot2_4.0.3 pladdrr_5.0.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] vctrs_0.7.3        cli_3.6.6          knitr_1.51         rlang_1.3.0       </span></span>
-<span><span class="co">#&gt;  [5] xfun_0.60          otel_0.2.0         S7_0.2.2           textshaping_1.0.5 </span></span>
-<span><span class="co">#&gt;  [9] jsonlite_2.0.0     data.table_1.18.4  glue_1.8.1         htmltools_0.5.9   </span></span>
-<span><span class="co">#&gt; [13] ragg_1.5.2         sass_0.4.10        scales_1.4.0       rmarkdown_2.31    </span></span>
-<span><span class="co">#&gt; [17] grid_4.6.1         evaluate_1.0.5     jquerylib_0.1.4    fastmap_1.2.0     </span></span>
-<span><span class="co">#&gt; [21] yaml_2.3.12        lifecycle_1.0.5    compiler_4.6.1     codetools_0.2-20  </span></span>
-<span><span class="co">#&gt; [25] RColorBrewer_1.1-3 fs_2.1.0           Rcpp_1.1.2         farver_2.1.2      </span></span>
-<span><span class="co">#&gt; [29] systemfonts_1.3.2  digest_0.6.39      R6_2.6.1           bslib_0.12.0      </span></span>
-<span><span class="co">#&gt; [33] withr_3.0.3        gtable_0.3.6       tools_4.6.1        pkgdown_2.2.1     </span></span>
-<span><span class="co">#&gt; [37] cachem_1.1.0       desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    </span></span>
+<span><span class="co">#&gt;  [5] tidyselect_1.2.1   Rcpp_1.1.2         jquerylib_0.1.4    systemfonts_1.3.2 </span></span>
+<span><span class="co">#&gt;  [9] scales_1.4.0       textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0     </span></span>
+<span><span class="co">#&gt; [13] R6_2.6.1           generics_0.1.4     knitr_1.51         tibble_3.3.1      </span></span>
+<span><span class="co">#&gt; [17] desc_1.4.3         bslib_0.12.0       pillar_1.11.1      RColorBrewer_1.1-3</span></span>
+<span><span class="co">#&gt; [21] rlang_1.3.0        cachem_1.1.0       xfun_0.60          fs_2.1.0          </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         </span></span>
+<span><span class="co">#&gt; [29] pkgdown_2.2.1      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     </span></span>
+<span><span class="co">#&gt; [33] grid_4.6.1         lifecycle_1.0.5    vctrs_0.7.3        evaluate_1.0.5    </span></span>
+<span><span class="co">#&gt; [37] glue_1.8.1         data.table_1.18.4  farver_2.1.2       codetools_0.2-20  </span></span>
+<span><span class="co">#&gt; [41] ragg_1.5.2         rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   </span></span>
+<span><span class="co">#&gt; [45] htmltools_0.5.9</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

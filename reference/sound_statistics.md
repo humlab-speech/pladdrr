@@ -52,7 +52,6 @@ A named list containing:
 
 ``` r
 sound <- generate_sine_wave(440, 0.5)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 stats <- sound_statistics(sound)
 print(stats)
 #> $mean

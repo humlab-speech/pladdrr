@@ -206,6 +206,7 @@ hello_sound <- sound$extract_part(
 )
 
 cat("Extracted 'hello':", hello_sound$get_total_duration(), "seconds\n")
+#> Extracted 'hello': 1.5 seconds
 ```
 
 ### Resampling
@@ -391,8 +392,13 @@ print(vowel_features)
 
 ``` r
 
-# Save for statistical analysis
-write.csv(vowel_features, "vowel_acoustic_features.csv", row.names = FALSE)
+# Save for statistical analysis (tempdir() here so the vignette writes nothing
+# into your working directory; use a real path in your own scripts)
+write.csv(
+  vowel_features,
+  file.path(tempdir(), "vowel_acoustic_features.csv"),
+  row.names = FALSE
+)
 ```
 
 ### Visualization

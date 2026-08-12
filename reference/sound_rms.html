@@ -101,7 +101,6 @@ RMS is useful for comparing signal levels and measuring acoustic intensity.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># RMS of a sine wave</span></span></span>
 <span class="r-in"><span><span class="va">sine</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_sine_wave.html">generate_sine_wave</a></span><span class="op">(</span><span class="fl">440</span>, <span class="fl">1.0</span>, amplitude <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span><span class="fu">sound_rms</span><span class="op">(</span><span class="va">sine</span><span class="op">)</span>  <span class="co"># Approximately 0.707</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7071068</span>
 <span class="r-in"><span></span></span>

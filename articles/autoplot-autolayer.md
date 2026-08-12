@@ -46,6 +46,8 @@ sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 autoplot(sound)
 ```
 
+![](autoplot-autolayer_files/figure-html/autoplot-sound-1.png)
+
 ### Pitch Contour
 
 ``` r
@@ -53,6 +55,8 @@ autoplot(sound)
 pitch <- sound$to_pitch()
 autoplot(pitch)
 ```
+
+![](autoplot-autolayer_files/figure-html/autoplot-pitch-1.png)
 
 ### Spectrogram
 
@@ -62,6 +66,8 @@ spec <- sound$to_spectrogram()
 autoplot(spec, to_freq = 5000)
 ```
 
+![](autoplot-autolayer_files/figure-html/autoplot-spectrogram-1.png)
+
 ### Spectrum
 
 ``` r
@@ -70,6 +76,8 @@ spectrum <- sound$to_spectrum()
 autoplot(spectrum, to_freq = 5000)
 ```
 
+![](autoplot-autolayer_files/figure-html/autoplot-spectrum-1.png)
+
 ### Intensity
 
 ``` r
@@ -77,6 +85,8 @@ autoplot(spectrum, to_freq = 5000)
 intensity <- sound$to_intensity()
 autoplot(intensity)
 ```
+
+![](autoplot-autolayer_files/figure-html/autoplot-intensity-1.png)
 
 ### Formants
 
@@ -87,12 +97,14 @@ formant <- tryCatch(
   sound$to_formant_burg(),
   error = function(e) {
     message("Formant extraction failed, using synthesized vowel")
-    kg <- KlattGrid_createFromVowel(duration = 0.3, f0start = 120)
+    kg <- klattgrid_create_from_vowel(duration = 0.3, f0start = 120)
     kg$to_sound()$to_formant_burg()
   }
 )
 autoplot(formant, max_formant = 4)
 ```
+
+![](autoplot-autolayer_files/figure-html/autoplot-formant-1.png)
 
 ## Composing Multi-Layer Plots
 
@@ -107,6 +119,8 @@ autoplot(spec, to_freq = 5000) +
   autolayer(pitch, color = "cyan", geom = "point")
 ```
 
+![](autoplot-autolayer_files/figure-html/spectrogram-pitch-1.png)
+
 ### Spectrogram with Formant Tracks
 
 ``` r
@@ -114,6 +128,8 @@ autoplot(spec, to_freq = 5000) +
 autoplot(spec, to_freq = 5000) +
   autolayer(formant, max_formant = 3)
 ```
+
+![](autoplot-autolayer_files/figure-html/spectrogram-formant-1.png)
 
 ### Spectrogram with Pitch and Formants
 
@@ -123,6 +139,8 @@ autoplot(spec, to_freq = 5000) +
   autolayer(formant, max_formant = 3) +
   autolayer(pitch, color = "white", geom = "point")
 ```
+
+![](autoplot-autolayer_files/figure-html/spectrogram-pitch-formant-1.png)
 
 ### Sound with Pitch Overlay
 
@@ -142,6 +160,8 @@ autoplot(sound) +
   )
 ```
 
+![](autoplot-autolayer_files/figure-html/sound-pitch-1.png)
+
 ## Customization with ggplot2
 
 All autoplot/autolayer methods return ggplot2 objects, so you can
@@ -159,6 +179,8 @@ autoplot(pitch) +
   )
 ```
 
+![](autoplot-autolayer_files/figure-html/custom-theme-1.png)
+
 ### Custom Colors
 
 ``` r
@@ -166,7 +188,11 @@ autoplot(pitch) +
 autoplot(spec, to_freq = 5000) +
   scale_fill_viridis_c(option = "magma") +
   theme_dark()
+#> Scale for fill is already present.
+#> Adding another scale for fill, which will replace the existing scale.
 ```
+
+![](autoplot-autolayer_files/figure-html/custom-colors-1.png)
 
 ### Faceting by Time Windows
 
@@ -178,6 +204,8 @@ autoplot(intensity) +
   annotate("text", x = 0, y = 70, label = "Loud", hjust = 0, size = 3) +
   annotate("text", x = 0, y = 50, label = "Quiet", hjust = 0, size = 3)
 ```
+
+![](autoplot-autolayer_files/figure-html/facet-example-1.png)
 
 ## Parameter Reference
 

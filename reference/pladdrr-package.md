@@ -128,9 +128,33 @@ Useful links:
 
 - <https://github.com/humlab-speech/pladdrr>
 
+- <https://humlab-speech.github.io/pladdrr/>
+
 - Report bugs at <https://github.com/humlab-speech/pladdrr/issues>
 
 ## Author
 
 **Maintainer**: Fredrik Nylén <fredrik.nylen@umu.se>
 ([ORCID](https://orcid.org/0000-0003-3373-0934))
+
+Authors:
+
+- Fredrik Nylén <fredrik.nylen@umu.se>
+  ([ORCID](https://orcid.org/0000-0003-3373-0934))
+
+Other contributors:
+
+- Paul Boersma (Author of the bundled Praat sources in
+  src/praat.github.io) \[copyright holder\]
+
+- David Weenink (Author of the bundled Praat sources in
+  src/praat.github.io) \[copyright holder\]
+
+- Max-Planck-Society (Copyright holder of the bundled pocketfft headers
+  in src/pocketfft) \[copyright holder\]
+
+- Xiph.Org Foundation (Copyright holder of the bundled Vorbis/Ogg and
+  Opusfile sources) \[copyright holder\]
+
+- Free Software Foundation (Copyright holder of the GNU Scientific
+  Library, linked but not bundled) \[copyright holder\]

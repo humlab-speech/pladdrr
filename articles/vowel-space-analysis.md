@@ -58,7 +58,7 @@ normalization for comparison:
 ### Loading Audio and Annotations
 
 For this demonstration we synthesize each vowel token with
-[`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid_createFromVowel.md),
+[`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md),
 using typical American English formant targets, rather than loading a
 recording. In real research, load an actual recording with
 `Sound$new("path/to/recording.wav")` and its annotation with
@@ -70,6 +70,8 @@ example pair for experimentation:
 ``` r
 
 library(pladdrr)
+#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
+#> Use citation('pladdrr') for citing this package in publications.
 library(ggplot2)
 
 sampling_rate <- 44100
@@ -103,7 +105,7 @@ parts <- list(make_silence(vowel_segments$start[1]))
 for (i in seq_len(nrow(vowel_segments))) {
   target <- vowel_targets[[vowel_segments$vowel[i]]]
   duration <- vowel_segments$end[i] - vowel_segments$start[i]
-  kg <- KlattGrid_createFromVowel(
+  kg <- klattgrid_create_from_vowel(
     duration = duration, f0start = 150,
     f1 = unname(target["f1"]), b1 = 50,
     f2 = unname(target["f2"]), b2 = 100,
@@ -143,6 +145,7 @@ for (i in 1:nrow(vowel_segments)) {
 }
 
 cat("Prepared", nrow(vowel_segments), "vowel tokens\n")
+#> Prepared 9 vowel tokens
 ```
 
 The
@@ -155,6 +158,8 @@ give a quick view of the annotation tier:
 
 autoplot(tg)
 ```
+
+![](vowel-space-analysis_files/figure-html/plot_textgrid-1.png)
 
 ## Part 2: Formant Extraction
 
@@ -202,8 +207,11 @@ formant <- sound$to_formant_burg(
 )
 
 cat("Formant object created\n")
+#> Formant object created
 cat("Time step:", time_step, "s\n")
+#> Time step: 0.01 s
 cat("Maximum formant:", max_formant, "Hz\n")
+#> Maximum formant: 5500 Hz
 ```
 
 ## Part 3: Multi-Point Measurements
@@ -281,6 +289,26 @@ for (i in 1:nrow(vowel_segments)) {
 }
 
 print(vowel_features)
+#>     vowel   word start end duration    f1_20     f2_20    f3_20    f1_50
+#> f1      i   beet   0.5   1      0.5 304.2825 2260.0171 3035.761 304.3400
+#> f11     e   bait   1.5   2      0.5 422.9372 2110.0704 2731.320 423.3906
+#> f12     a    bat   2.5   3      0.5 724.9220 1204.7395 2631.500 725.2976
+#> f13     o   boat   3.5   4      0.5 487.1170  902.4938 2632.282 487.1288
+#> f14     u   boot   4.5   5      0.5 304.6455  872.8370 2543.082 304.6590
+#> f15     i   beat   5.5   6      0.5 304.2825 2260.0155 3035.757 304.3400
+#> f16     a father   6.5   7      0.5 724.9210 1204.7388 2631.495 725.2969
+#> f17     e    bet   7.5   8      0.5 422.9372 2110.0697 2731.318 423.3905
+#> f18     u   boot   8.5   9      0.5 304.6464  872.8440 2543.122 304.6596
+#>         f2_50    f3_50    f1_80     f2_80    f3_80
+#> f1  2260.0977 3035.876 304.2825 2260.0168 3035.760
+#> f11 2110.1787 2731.423 422.9370 2110.0681 2731.315
+#> f12 1204.7535 2631.590 724.9211 1204.7389 2631.495
+#> f13  902.4855 2632.370 487.1180  902.4939 2632.290
+#> f14  872.8936 2543.196 304.6456  872.8379 2543.087
+#> f15 2260.0961 3035.872 304.2825 2260.0151 3035.756
+#> f16 1204.7529 2631.586 724.9207 1204.7385 2631.493
+#> f17 2110.1779 2731.421 422.9369 2110.0674 2731.313
+#> f18  872.8984 2543.223 304.6459  872.8406 2543.102
 ```
 
 ## Part 4: Formant Normalization
@@ -305,10 +333,13 @@ vowel_features$f2_norm <- lobanov_normalize(vowel_features$f2_50)
 vowel_features$f3_norm <- lobanov_normalize(vowel_features$f3_50)
 
 cat("Applied Lobanov normalization\n")
+#> Applied Lobanov normalization
 cat("F1_norm: mean =", round(mean(vowel_features$f1_norm), 2), 
     ", SD =", round(sd(vowel_features$f1_norm), 2), "\n")
+#> F1_norm: mean = 0 , SD = 1
 cat("F2_norm: mean =", round(mean(vowel_features$f2_norm), 2), 
     ", SD =", round(sd(vowel_features$f2_norm), 2), "\n")
+#> F2_norm: mean = 0 , SD = 1
 ```
 
 ## Part 5: Vowel Space Statistics
@@ -326,6 +357,18 @@ vowel_stats <- aggregate(
 )
 
 print(vowel_stats)
+#>   vowel   f1_50.mean     f1_50.sd   f2_50.mean     f2_50.sd  f1_norm.mean
+#> 1     a 7.252973e+02 5.435158e-04 1.204753e+03 3.880091e-04  1.623955e+00
+#> 2     e 4.233906e+02 4.791206e-05 2.110178e+03 4.996400e-04 -1.234687e-01
+#> 3     i 3.043400e+02 3.478289e-05 2.260097e+03 1.164839e-03 -8.125284e-01
+#> 4     o 4.871288e+02           NA 9.024855e+02           NA  2.454455e-01
+#> 5     u 3.046593e+02 4.420004e-04 8.728960e+02 3.378245e-03 -8.106803e-01
+#>      f1_norm.sd  f2_norm.mean    f2_norm.sd
+#> 1  3.145847e-06 -5.185803e-01  6.127189e-07
+#> 2  2.773130e-07  9.112086e-01  7.889993e-07
+#> 3  2.013219e-07  1.147950e+00  1.839439e-06
+#> 4            NA -9.959020e-01            NA
+#> 5  2.558280e-06 -1.042628e+00  5.334706e-06
 ```
 
 ### Vowel Space Area
@@ -355,6 +398,7 @@ shoelace_area <- function(x, y) {
 
 vowel_space_area <- shoelace_area(hull_points[,1], hull_points[,2])
 cat("Vowel space area (normalized):", round(vowel_space_area, 2), "square units\n")
+#> Vowel space area (normalized): 3.17 square units
 ```
 
 Larger vowel space area indicates: - Greater vowel dispersion (clearer
@@ -386,7 +430,9 @@ potential_diphthongs <- vowel_features$vowel[
 ]
 
 cat("Potential diphthongs (large F1-F2 movement):\n")
+#> Potential diphthongs (large F1-F2 movement):
 cat(paste(unique(potential_diphthongs), collapse = ", "), "\n")
+#> e, u
 ```
 
 ## Part 7: Visualization
@@ -416,6 +462,8 @@ text(
 )
 ```
 
+![](vowel-space-analysis_files/figure-html/vowel_plot_base-1.png)
+
 ### Advanced Plotting with ggplot2
 
 ``` r
@@ -435,6 +483,12 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
   ) +
   theme_minimal() +
   theme(legend.position = "none")
+```
+
+![](vowel-space-analysis_files/figure-html/vowel_plot_ggplot2-1.png)
+
+``` r
+
 
 # With trajectories
 ggplot(vowel_features) +
@@ -452,12 +506,16 @@ ggplot(vowel_features) +
   theme_minimal()
 ```
 
+![](vowel-space-analysis_files/figure-html/vowel_plot_ggplot2-2.png)
+
 ### Faceted by Speaker or Condition
 
 ``` r
 
-# For multi-speaker data:
-# vowel_features$speaker <- ... (add speaker ID)
+# With multi-speaker data you would already have a speaker column. The demo
+# data above comes from a single synthesised talker, so label it as such to
+# show the faceting call working.
+vowel_features$speaker <- "S01"
 
 ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowel)) +
   geom_point(size = 2) +
@@ -474,6 +532,8 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
   theme(legend.position = "none")
 ```
 
+![](vowel-space-analysis_files/figure-html/faceted_plot-1.png)
+
 ## Part 8: Statistical Analysis
 
 ### ANOVA: Vowel Differences
@@ -483,9 +543,31 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
 # Test if vowels differ in F1
 f1_model <- aov(f1_50 ~ vowel, data = vowel_features)
 summary(f1_model)
+#>             Df Sum Sq Mean Sq   F value Pr(>F)    
+#> vowel        4 238803   59701 4.831e+11 <2e-16 ***
+#> Residuals    4      0       0                     
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # Post-hoc pairwise comparisons
 TukeyHSD(f1_model)
+#>   Tukey multiple comparisons of means
+#>     95% family-wise confidence level
+#> 
+#> Fit: aov(formula = f1_50 ~ vowel, data = vowel_features)
+#> 
+#> $vowel
+#>             diff          lwr         upr p adj
+#> e-a -301.9067015 -301.9082643 -301.905139     0
+#> i-a -420.9572658 -420.9588286 -420.955703     0
+#> o-a -238.1684798 -238.1703937 -238.166566     0
+#> u-a -420.6379775 -420.6395403 -420.636415     0
+#> i-e -119.0505643 -119.0521271 -119.049002     0
+#> o-e   63.7382217   63.7363078   63.740136     0
+#> u-e -118.7312760 -118.7328388 -118.729713     0
+#> o-i  182.7887861  182.7868721  182.790700     0
+#> u-i    0.3192883    0.3177256    0.320851     0
+#> u-o -182.4694978 -182.4714117 -182.467584     0
 ```
 
 ### Mixed-Effects Models
@@ -496,10 +578,11 @@ dependency):
 
 ``` r
 
+# Not evaluated here: lme4 is not a pladdrr dependency, and a random intercept
+# needs genuine repeated measures across several speakers, which the synthetic
+# single-talker demo data above does not have.
 library(lme4)
 
-# vowel_features here must include a speaker column, e.g.
-# vowel_features$speaker <- ...
 model <- lmer(f1_50 ~ vowel + (1 | speaker), data = vowel_features)
 summary(model)
 ```
@@ -597,6 +680,7 @@ f1_outliers <- vowel_features$f1_50 > 1000 | vowel_features$f1_50 < 200
 f2_outliers <- vowel_features$f2_50 > 3000 | vowel_features$f2_50 < 500
 
 cat("Potential tracking errors:", sum(f1_outliers | f2_outliers), "\n")
+#> Potential tracking errors: 0
 
 # Manual review or retrack with different parameters
 ```

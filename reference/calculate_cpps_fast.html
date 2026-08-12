@@ -243,13 +243,11 @@ argument.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.671056</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Single-interval CPP is a different, cheaper path</span></span></span>
 <span class="r-in"><span><span class="va">segment</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">extract_part</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cpp</span> <span class="op">&lt;-</span> <span class="va">segment</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">to_power_cepstrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">get_peak_prominence</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fl">60</span>, <span class="fl">333.3</span>, <span class="st">"parabolic"</span>, <span class="fl">0.001</span>, <span class="fl">0.05</span>, <span class="st">"exponential decay"</span>, <span class="st">"robust slow"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

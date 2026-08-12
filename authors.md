@@ -5,17 +5,31 @@
 - **Fredrik Nylén**. Author, maintainer.
   [](https://orcid.org/0000-0003-3373-0934)
 
+- **Paul Boersma**. Copyright holder.  
+  Author of the bundled Praat sources in src/praat.github.io
+
+- **David Weenink**. Copyright holder.  
+  Author of the bundled Praat sources in src/praat.github.io
+
+- **Max-Planck-Society**. Copyright holder.  
+  Copyright holder of the bundled pocketfft headers in src/pocketfft
+
+- **Xiph.Org Foundation**. Copyright holder.  
+  Copyright holder of the bundled Vorbis/Ogg and Opusfile sources
+
+- **Free Software Foundation**. Copyright holder.  
+  Copyright holder of the GNU Scientific Library, linked but not bundled
+
 ## Citation
 
 Source:
 [`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/main/inst/CITATION)
 
 Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms of
-Praat in R. R package version 5.0.0.
-https://doi.org/10.5281/zenodo.21884218
+Praat. R package version 5.0.0. https://doi.org/10.5281/zenodo.21884218
 
     @Manual{,
-      title = {pladdrr: Direct Access to the Core Algorithms of Praat in R},
+      title = {pladdrr: Direct Access to the Core Algorithms of Praat},
       author = {Fredrik Nylén},
       year = {2026},
       note = {R package version 5.0.0},

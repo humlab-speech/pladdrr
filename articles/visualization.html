@@ -107,7 +107,7 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p><code>pladdrr</code> returns data as data frames
-(<code>as_data_frame()</code> methods) and matrices
+(<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> methods) and matrices
 (<code>as_matrix()</code> methods) that plot directly with
 <code>ggplot2</code>, and it also ships a few <code>ggplot2</code>-based
 helper functions (<code><a href="../reference/plot_powercepstrum.html">plot_powercepstrum()</a></code>,
@@ -149,6 +149,7 @@ Prominence).</p>
 <span>  fit_method <span class="op">=</span> <span class="st">"exponential decay"</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Power Cepstrum with CPP Peak"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/cepstrum-basic-1.png" class="r-plt" alt="" width="768"></p>
 <p><strong>Parameters</strong>:</p>
 <ul>
 <li>
@@ -188,7 +189,10 @@ decay”, or “parabolic”</li>
 <span>  quefrency_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.001</span>, <span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>  db_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">80</span><span class="op">)</span>,</span>
 <span>  color_scale <span class="op">=</span> <span class="st">"viridis"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">fill</span> is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/cepstrogram-1.png" class="r-plt" alt="" width="768"></p>
 <p><strong>Color scales</strong> (<code>color_scale</code>
 argument):</p>
 <ul>
@@ -206,7 +210,9 @@ argument):</p>
 <span>  <span class="va">cepstrogram</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"CPP Over Time"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/cpp-timeseries-1.png" class="r-plt" alt="" width="768"></p>
 <p><strong>Features</strong>:</p>
 <ul>
 <li>CPP values sampled across the cepstrogram’s time range</li>
@@ -223,9 +229,11 @@ argument)</li>
 visualizations:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)</span></span>
-<span><span class="va">report_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cepstrum_report.html">create_cepstrum_report</a></span><span class="op">(</span>cepstrogram <span class="op">=</span> <span class="va">cepstrogram</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"cepstrum_report.pdf"</span>, <span class="va">report_plot</span>, width <span class="op">=</span> <span class="fl">12</span>, height <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">report_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cepstrum_report.html">create_cepstrum_report</a></span><span class="op">(</span>cepstrogram <span class="op">=</span> <span class="va">cepstrogram</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/cepstrum-report-1.png" class="r-plt" alt="" width="768"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"cepstrum_report.pdf"</span><span class="op">)</span>, <span class="va">report_plot</span>, width <span class="op">=</span> <span class="fl">12</span>, height <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Report panels</strong> (stacked with
 <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">gridExtra::grid.arrange()</a></code>):</p>
 <ol style="list-style-type: decimal">
@@ -248,7 +256,7 @@ and trendline</li>
 <p>F1-F2 plots by segment label (the pattern is the same for vowel-only
 data; the bundled <code>test.TextGrid</code> has phone labels, not
 exclusively vowels):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract formants at the midpoint of each labeled interval on the "phones" tier</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">textgrid</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
@@ -295,13 +303,18 @@ exclusively vowels):</p>
 <span>    y <span class="op">=</span> <span class="st">"F1 (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 4 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span>
+<span><span class="co">#&gt; Warning: Removed 4 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_text()`).</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/vowel-space-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="formant-trajectories">Formant Trajectories<a class="anchor" aria-label="anchor" href="#formant-trajectories"></a>
 </h3>
 <p>Visualize formant movement over time:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract formant tracks</span></span>
 <span><span class="va">formant</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span></span>
 <span>  time_step <span class="op">=</span> <span class="fl">0.01</span>,</span>
@@ -331,6 +344,7 @@ exclusively vowels):</p>
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/formant-trajectories-1.png" class="r-plt" alt="" width="768"></p>
 <p><code>autoplot(formant)</code> and
 <code>ggplot() + autolayer(formant)</code> provide the same F1-F3
 trajectory plot without manual reshaping.</p>
@@ -342,7 +356,7 @@ trajectory plot without manual reshaping.</p>
 <div class="section level3">
 <h3 id="pitch-contour">Pitch Contour<a class="anchor" aria-label="anchor" href="#pitch-contour"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract pitch</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span></span>
@@ -360,11 +374,12 @@ trajectory plot without manual reshaping.</p>
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/pitch-contour-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="intensity-contour">Intensity Contour<a class="anchor" aria-label="anchor" href="#intensity-contour"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract intensity</span></span>
 <span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -381,6 +396,7 @@ trajectory plot without manual reshaping.</p>
 <span>    y <span class="op">=</span> <span class="st">"Intensity (dB)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/intensity-contour-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="combined-pitch-and-intensity">Combined Pitch and Intensity<a class="anchor" aria-label="anchor" href="#combined-pitch-and-intensity"></a>
@@ -388,7 +404,7 @@ trajectory plot without manual reshaping.</p>
 <p>Pitch and intensity are extracted on different time grids, so
 intensity is interpolated onto the pitch time points with
 <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code> before plotting:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  time <span class="op">=</span> <span class="va">pitch_df</span><span class="op">$</span><span class="va">time</span>,</span>
 <span>  frequency <span class="op">=</span> <span class="va">pitch_df</span><span class="op">$</span><span class="va">frequency</span>,</span>
@@ -413,7 +429,10 @@ intensity is interpolated onto the pitch time points with
 <span>    x <span class="op">=</span> <span class="st">"Time (s)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 4 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_line()`).</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/pitch-intensity-combined-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 </div>
 <div class="section level2">
@@ -426,30 +445,35 @@ require manually looping over intervals and building
 <div class="section level3">
 <h3 id="annotation-tier-display">Annotation Tier Display<a class="anchor" aria-label="anchor" href="#annotation-tier-display"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load TextGrid</span></span>
 <span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># autoplot() draws the whole TextGrid (all tiers stacked), delegating to the</span></span>
 <span><span class="co"># base plot.TextGrid() method</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span>
-<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/textgrid-tiers-1.png" class="r-plt" alt="" width="768"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># autolayer() returns a list of geoms for a single tier, for use inside a</span></span>
 <span><span class="co"># ggplot2 pipeline (e.g. layered over a Sound waveform or spectrogram)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">tg</span>, tier <span class="op">=</span> <span class="st">"words"</span>, color <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Word Tier"</span>, x <span class="op">=</span> <span class="st">"Time (s)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/textgrid-tiers-2.png" class="r-plt" alt="" width="768"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">tg</span>, tier <span class="op">=</span> <span class="st">"phones"</span>, color <span class="op">=</span> <span class="st">"darkgreen"</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Phone Tier"</span>, x <span class="op">=</span> <span class="st">"Time (s)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/textgrid-tiers-3.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="duration-analysis">Duration Analysis<a class="anchor" aria-label="anchor" href="#duration-analysis"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Interval durations for the "phones" tier, via get_all_intervals()</span></span>
 <span><span class="va">tier_data</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_all_intervals</span><span class="op">(</span><span class="st">"phones"</span><span class="op">)</span></span>
 <span><span class="va">tier_data</span><span class="op">$</span><span class="va">duration</span> <span class="op">&lt;-</span> <span class="va">tier_data</span><span class="op">$</span><span class="va">end</span> <span class="op">-</span> <span class="va">tier_data</span><span class="op">$</span><span class="va">start</span></span>
@@ -468,6 +492,7 @@ require manually looping over intervals and building
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/duration-histogram-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 </div>
 <div class="section level2">
@@ -476,7 +501,7 @@ require manually looping over intervals and building
 <div class="section level3">
 <h3 id="spectrogram">Spectrogram<a class="anchor" aria-label="anchor" href="#spectrogram"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create spectrogram</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">spectrogram</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrogram</span><span class="op">(</span></span>
@@ -506,11 +531,12 @@ require manually looping over intervals and building
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/spectrogram-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="spectrum">Spectrum<a class="anchor" aria-label="anchor" href="#spectrum"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create spectrum from sound</span></span>
 <span><span class="va">spectrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span>fast <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -526,11 +552,12 @@ require manually looping over intervals and building
 <span>    y <span class="op">=</span> <span class="st">"Power (dB)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/spectrum-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="long-term-average-spectrum-ltas">Long-Term Average Spectrum (LTAS)<a class="anchor" aria-label="anchor" href="#long-term-average-spectrum-ltas"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create LTAS</span></span>
 <span><span class="va">ltas</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_ltas</span><span class="op">(</span>bandwidth <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span></span>
@@ -547,6 +574,7 @@ require manually looping over intervals and building
 <span>    y <span class="op">=</span> <span class="st">"Power (dB)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/ltas-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 </div>
 <div class="section level2">
@@ -555,7 +583,7 @@ require manually looping over intervals and building
 <div class="section level3">
 <h3 id="custom-color-schemes">Custom Color Schemes<a class="anchor" aria-label="anchor" href="#custom-color-schemes"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define custom color palette</span></span>
 <span><span class="va">my_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"#E69F00"</span>,  <span class="co"># Orange</span></span>
@@ -573,12 +601,15 @@ require manually looping over intervals and building
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">my_colors</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 4 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/custom-colors-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="publication-themes">Publication Themes<a class="anchor" aria-label="anchor" href="#publication-themes"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Black and white theme for journals</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">pitch_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="va">frequency</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -592,11 +623,12 @@ require manually looping over intervals and building
 <span>    panel.grid.minor <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">12</span>, family <span class="op">=</span> <span class="st">"serif"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/pub-theme-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="multi-panel-figures">Multi-Panel Figures<a class="anchor" aria-label="anchor" href="#multi-panel-figures"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create individual plots</span></span>
@@ -618,6 +650,7 @@ require manually looping over intervals and building
 <span></span>
 <span><span class="co"># Arrange in grid</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualization_files/figure-html/multipanel-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 </div>
 <div class="section level2">
@@ -626,7 +659,7 @@ require manually looping over intervals and building
 <div class="section level3">
 <h3 id="high-resolution-output">High-Resolution Output<a class="anchor" aria-label="anchor" href="#high-resolution-output"></a>
 </h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save as PDF (vector graphics)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"figure1.pdf"</span>, plot <span class="op">=</span> <span class="va">p1</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span>, units <span class="op">=</span> <span class="st">"in"</span><span class="op">)</span></span>
 <span></span>
@@ -642,7 +675,7 @@ require manually looping over intervals and building
 <div class="section level3">
 <h3 id="batch-saving">Batch Saving<a class="anchor" aria-label="anchor" href="#batch-saving"></a>
 </h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># List of plots</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pitch <span class="op">=</span> <span class="va">p1</span>, intensity <span class="op">=</span> <span class="va">p2</span>, formants <span class="op">=</span> <span class="va">p3</span><span class="op">)</span></span>
 <span></span>
@@ -685,7 +718,7 @@ from <code>Pitch$as_data_frame()</code> and
 <li>
 <strong>Spectral analysis</strong>: spectrograms, spectra, and LTAS
 from the corresponding
-<code>as_matrix()</code>/<code>as_data_frame()</code> methods</li>
+<code>as_matrix()</code>/<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> methods</li>
 </ul>
 <p>All examples produce ordinary <code>ggplot2</code> objects that can
 be themed, combined with <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">gridExtra::grid.arrange()</a></code>, and

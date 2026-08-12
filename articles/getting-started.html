@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-11</h4>
+            <h4 data-toc-skip class="date">2026-08-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -135,10 +135,6 @@ conventions.</p>
 <code class="sourceCode R"><span><span class="co"># Generate a 440 Hz sine wave (A4 note)</span></span>
 <span><span class="va">sound_a4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_sine_wave.html">generate_sine_wave</a></span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, </span>
 <span>                               amplitude <span class="op">=</span> <span class="fl">0.7</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):</span></span>
-<span><span class="co">#&gt; create_sound() is deprecated and will be removed in v5.0.0. Use</span></span>
-<span><span class="co">#&gt; Sound$from_values(values, sampling_rate) instead. The R6 interface provides</span></span>
-<span><span class="co">#&gt; better performance and more features.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sound_a4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Praat Sound&gt;</span></span>
@@ -151,10 +147,6 @@ conventions.</p>
 <code class="sourceCode R"><span><span class="co"># Generate white noise</span></span>
 <span><span class="va">noise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_noise.html">generate_noise</a></span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.2</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span>, </span>
 <span>                       amplitude <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):</span></span>
-<span><span class="co">#&gt; create_sound() is deprecated and will be removed in v5.0.0. Use</span></span>
-<span><span class="co">#&gt; Sound$from_values(values, sampling_rate) instead. The R6 interface provides</span></span>
-<span><span class="co">#&gt; better performance and more features.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">noise</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Praat Sound&gt;</span></span>
@@ -555,7 +547,7 @@ f0 = Get mean: 0, 0, "Hertz"</code></pre>
 <span><span class="co">#&gt; To cite pladdrr in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms</span></span>
-<span><span class="co">#&gt;   of Praat in R. R package version 5.0.0.</span></span>
+<span><span class="co">#&gt;   of Praat. R package version 5.0.0.</span></span>
 <span><span class="co">#&gt;   https://doi.org/10.5281/zenodo.21884218</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Boersma, Paul &amp; Weenink, David (2024). Praat: doing phonetics by</span></span>

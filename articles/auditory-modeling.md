@@ -355,9 +355,9 @@ loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
-#>           used (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1826501 97.6    3056460 163.3  3056460 163.3
-#> Vcells 3138713 24.0    8388608  64.0  8155566  62.3
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 1873161 100.1    3127088 167.1  3127088 167.1
+#> Vcells 3202222  24.5    8388608  64.0  7288870  55.7
 ```
 
 ## Comparison with Traditional Analysis
@@ -410,14 +410,16 @@ sessionInfo()
 #> [1] ggplot2_4.0.3 pladdrr_5.0.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3        cli_3.6.6          knitr_1.51         rlang_1.3.0       
-#>  [5] xfun_0.60          otel_0.2.0         S7_0.2.2           textshaping_1.0.5 
-#>  [9] jsonlite_2.0.0     data.table_1.18.4  labeling_0.4.3     glue_1.8.1        
-#> [13] htmltools_0.5.9    ragg_1.5.2         sass_0.4.10        scales_1.4.0      
-#> [17] rmarkdown_2.31     grid_4.6.1         evaluate_1.0.5     jquerylib_0.1.4   
-#> [21] fastmap_1.2.0      yaml_2.3.12        lifecycle_1.0.5    compiler_4.6.1    
-#> [25] codetools_0.2-20   RColorBrewer_1.1-3 fs_2.1.0           Rcpp_1.1.2        
-#> [29] farver_2.1.2       systemfonts_1.3.2  digest_0.6.39      viridisLite_0.4.3 
-#> [33] R6_2.6.1           bslib_0.12.0       withr_3.0.3        gtable_0.3.6      
-#> [37] tools_4.6.1        pkgdown_2.2.1      cachem_1.1.0       desc_1.4.3
+#>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    
+#>  [5] tidyselect_1.2.1   Rcpp_1.1.2         jquerylib_0.1.4    systemfonts_1.3.2 
+#>  [9] scales_1.4.0       textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0     
+#> [13] R6_2.6.1           labeling_0.4.3     generics_0.1.4     knitr_1.51        
+#> [17] tibble_3.3.1       desc_1.4.3         bslib_0.12.0       pillar_1.11.1     
+#> [21] RColorBrewer_1.1-3 rlang_1.3.0        cachem_1.1.0       xfun_0.60         
+#> [25] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
+#> [29] viridisLite_0.4.3  cli_3.6.6          pkgdown_2.2.1      withr_3.0.3       
+#> [33] magrittr_2.0.5     digest_0.6.39      grid_4.6.1         lifecycle_1.0.5   
+#> [37] vctrs_0.7.3        evaluate_1.0.5     glue_1.8.1         data.table_1.18.4 
+#> [41] farver_2.1.2       codetools_0.2-20   ragg_1.5.2         rmarkdown_2.31    
+#> [45] tools_4.6.1        pkgconfig_2.0.3    htmltools_0.5.9
 ```

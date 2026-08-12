@@ -42,9 +42,7 @@ starts at phase 0 (value 0 at t=0).
 ``` r
 # Generate A4 note (440 Hz) for 1 second
 sine_a4 <- generate_sine_wave(440, 1.0)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 
 # Generate lower amplitude sine at 1000 Hz
 sine_quiet <- generate_sine_wave(1000, 0.5, amplitude = 0.3)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 ```

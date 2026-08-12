@@ -113,11 +113,9 @@ where t is time. The wave starts at phase 0 (value 0 at t=0).</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Generate A4 note (440 Hz) for 1 second</span></span></span>
 <span class="r-in"><span><span class="va">sine_a4</span> <span class="op">&lt;-</span> <span class="fu">generate_sine_wave</span><span class="op">(</span><span class="fl">440</span>, <span class="fl">1.0</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate lower amplitude sine at 1000 Hz</span></span></span>
 <span class="r-in"><span><span class="va">sine_quiet</span> <span class="op">&lt;-</span> <span class="fu">generate_sine_wave</span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">0.5</span>, amplitude <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

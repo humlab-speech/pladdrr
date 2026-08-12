@@ -36,10 +36,6 @@ The package includes functions to generate test signals:
 # Generate a 440 Hz sine wave (A4 note)
 sound_a4 <- generate_sine_wave(frequency = 440, duration = 0.5, 
                                amplitude = 0.7, sampling_rate = 44100)
-#> Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):
-#> create_sound() is deprecated and will be removed in v5.0.0. Use
-#> Sound$from_values(values, sampling_rate) instead. The R6 interface provides
-#> better performance and more features.
 
 print(sound_a4)
 #> <Praat Sound>
@@ -55,10 +51,6 @@ print(sound_a4)
 # Generate white noise
 noise <- generate_noise(duration = 0.2, sampling_rate = 44100, 
                        amplitude = 0.3)
-#> Warning in create_sound(values, sampling_rate = sampling_rate, start_time = 0):
-#> create_sound() is deprecated and will be removed in v5.0.0. Use
-#> Sound$from_values(values, sampling_rate) instead. The R6 interface provides
-#> better performance and more features.
 
 print(noise)
 #> <Praat Sound>
@@ -486,7 +478,7 @@ citation("pladdrr")
 #> To cite pladdrr in publications use:
 #> 
 #>   Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms
-#>   of Praat in R. R package version 5.0.0.
+#>   of Praat. R package version 5.0.0.
 #>   https://doi.org/10.5281/zenodo.21884218
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by

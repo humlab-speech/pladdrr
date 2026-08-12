@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-11</h4>
+            <h4 data-toc-skip class="date">2026-08-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/vowel-space-analysis.Rmd" class="external-link"><code>vignettes/vowel-space-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>vowel-space-analysis.Rmd</code></div>
@@ -195,16 +195,18 @@ speaker
 <h3 id="loading-audio-and-annotations">Loading Audio and Annotations<a class="anchor" aria-label="anchor" href="#loading-audio-and-annotations"></a>
 </h3>
 <p>For this demonstration we synthesize each vowel token with
-<code><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel()</a></code>, using typical American English
-formant targets, rather than loading a recording. In real research, load
-an actual recording with <code>Sound$new("path/to/recording.wav")</code>
-and its annotation with
+<code><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel()</a></code>, using typical American
+English formant targets, rather than loading a recording. In real
+research, load an actual recording with
+<code>Sound$new("path/to/recording.wav")</code> and its annotation with
 <code>TextGrid$new("path/to/recording.TextGrid")</code>. The package
 ships one example pair for experimentation:
 <code>system.file("extdata", "test.wav", package = "pladdrr")</code> and
 <code>system.file("extdata", "test.TextGrid", package = "pladdrr")</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/humlab-speech/pladdrr" class="external-link">pladdrr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.</span></span>
+<span><span class="co">#&gt; Use citation('pladdrr') for citing this package in publications.</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sampling_rate</span> <span class="op">&lt;-</span> <span class="fl">44100</span></span>
@@ -238,7 +240,7 @@ ships one example pair for experimentation:
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">target</span> <span class="op">&lt;-</span> <span class="va">vowel_targets</span><span class="op">[[</span><span class="va">vowel_segments</span><span class="op">$</span><span class="va">vowel</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">]</span></span>
 <span>  <span class="va">duration</span> <span class="op">&lt;-</span> <span class="va">vowel_segments</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">-</span> <span class="va">vowel_segments</span><span class="op">$</span><span class="va">start</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
-<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid_createFromVowel.html">KlattGrid_createFromVowel</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>    duration <span class="op">=</span> <span class="va">duration</span>, f0start <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>    f1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">target</span><span class="op">[</span><span class="st">"f1"</span><span class="op">]</span><span class="op">)</span>, b1 <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>    f2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">target</span><span class="op">[</span><span class="st">"f2"</span><span class="op">]</span><span class="op">)</span>, b2 <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -277,12 +279,14 @@ ships one example pair for experimentation:
 <span>  <span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="fl">1</span>, <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>, <span class="va">vowel_segments</span><span class="op">$</span><span class="va">vowel</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Prepared"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span>, <span class="st">"vowel tokens\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Prepared"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span>, <span class="st">"vowel tokens\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prepared 9 vowel tokens</span></span></code></pre></div>
 <p>The <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods for
 <code>TextGrid</code> (see <code><a href="../articles/autoplot-autolayer.html">vignette("autoplot-autolayer")</a></code>)
 give a quick view of the annotation tier:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vowel-space-analysis_files/figure-html/plot_textgrid-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level2">
@@ -328,8 +332,11 @@ analysis:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Formant object created\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Formant object created</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Time step:"</span>, <span class="va">time_step</span>, <span class="st">"s\n"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Maximum formant:"</span>, <span class="va">max_formant</span>, <span class="st">"Hz\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Time step: 0.01 s</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Maximum formant:"</span>, <span class="va">max_formant</span>, <span class="st">"Hz\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Maximum formant: 5500 Hz</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -408,7 +415,27 @@ analysis:</p>
 <span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     vowel   word start end duration    f1_20     f2_20    f3_20    f1_50</span></span>
+<span><span class="co">#&gt; f1      i   beet   0.5   1      0.5 304.2825 2260.0171 3035.761 304.3400</span></span>
+<span><span class="co">#&gt; f11     e   bait   1.5   2      0.5 422.9372 2110.0704 2731.320 423.3906</span></span>
+<span><span class="co">#&gt; f12     a    bat   2.5   3      0.5 724.9220 1204.7395 2631.500 725.2976</span></span>
+<span><span class="co">#&gt; f13     o   boat   3.5   4      0.5 487.1170  902.4938 2632.282 487.1288</span></span>
+<span><span class="co">#&gt; f14     u   boot   4.5   5      0.5 304.6455  872.8370 2543.082 304.6590</span></span>
+<span><span class="co">#&gt; f15     i   beat   5.5   6      0.5 304.2825 2260.0155 3035.757 304.3400</span></span>
+<span><span class="co">#&gt; f16     a father   6.5   7      0.5 724.9210 1204.7388 2631.495 725.2969</span></span>
+<span><span class="co">#&gt; f17     e    bet   7.5   8      0.5 422.9372 2110.0697 2731.318 423.3905</span></span>
+<span><span class="co">#&gt; f18     u   boot   8.5   9      0.5 304.6464  872.8440 2543.122 304.6596</span></span>
+<span><span class="co">#&gt;         f2_50    f3_50    f1_80     f2_80    f3_80</span></span>
+<span><span class="co">#&gt; f1  2260.0977 3035.876 304.2825 2260.0168 3035.760</span></span>
+<span><span class="co">#&gt; f11 2110.1787 2731.423 422.9370 2110.0681 2731.315</span></span>
+<span><span class="co">#&gt; f12 1204.7535 2631.590 724.9211 1204.7389 2631.495</span></span>
+<span><span class="co">#&gt; f13  902.4855 2632.370 487.1180  902.4939 2632.290</span></span>
+<span><span class="co">#&gt; f14  872.8936 2543.196 304.6456  872.8379 2543.087</span></span>
+<span><span class="co">#&gt; f15 2260.0961 3035.872 304.2825 2260.0151 3035.756</span></span>
+<span><span class="co">#&gt; f16 1204.7529 2631.586 724.9207 1204.7385 2631.493</span></span>
+<span><span class="co">#&gt; f17 2110.1779 2731.421 422.9369 2110.0674 2731.313</span></span>
+<span><span class="co">#&gt; f18  872.8984 2543.223 304.6459  872.8406 2543.102</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="part-4-formant-normalization">Part 4: Formant Normalization<a class="anchor" aria-label="anchor" href="#part-4-formant-normalization"></a>
@@ -432,10 +459,13 @@ analysis:</p>
 <span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f3_norm</span> <span class="op">&lt;-</span> <span class="fu">lobanov_normalize</span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f3_50</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Applied Lobanov normalization\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Applied Lobanov normalization</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"F1_norm: mean ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f1_norm</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, </span>
 <span>    <span class="st">", SD ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f1_norm</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; F1_norm: mean = 0 , SD = 1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"F2_norm: mean ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f2_norm</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, </span>
-<span>    <span class="st">", SD ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f2_norm</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<span>    <span class="st">", SD ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">$</span><span class="va">f2_norm</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; F2_norm: mean = 0 , SD = 1</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -453,7 +483,19 @@ analysis:</p>
 <span>                      sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_stats</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_stats</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   vowel   f1_50.mean     f1_50.sd   f2_50.mean     f2_50.sd  f1_norm.mean</span></span>
+<span><span class="co">#&gt; 1     a 7.252973e+02 5.435158e-04 1.204753e+03 3.880091e-04  1.623955e+00</span></span>
+<span><span class="co">#&gt; 2     e 4.233906e+02 4.791206e-05 2.110178e+03 4.996400e-04 -1.234687e-01</span></span>
+<span><span class="co">#&gt; 3     i 3.043400e+02 3.478289e-05 2.260097e+03 1.164839e-03 -8.125284e-01</span></span>
+<span><span class="co">#&gt; 4     o 4.871288e+02           NA 9.024855e+02           NA  2.454455e-01</span></span>
+<span><span class="co">#&gt; 5     u 3.046593e+02 4.420004e-04 8.728960e+02 3.378245e-03 -8.106803e-01</span></span>
+<span><span class="co">#&gt;      f1_norm.sd  f2_norm.mean    f2_norm.sd</span></span>
+<span><span class="co">#&gt; 1  3.145847e-06 -5.185803e-01  6.127189e-07</span></span>
+<span><span class="co">#&gt; 2  2.773130e-07  9.112086e-01  7.889993e-07</span></span>
+<span><span class="co">#&gt; 3  2.013219e-07  1.147950e+00  1.839439e-06</span></span>
+<span><span class="co">#&gt; 4            NA -9.959020e-01            NA</span></span>
+<span><span class="co">#&gt; 5  2.558280e-06 -1.042628e+00  5.334706e-06</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="vowel-space-area">Vowel Space Area<a class="anchor" aria-label="anchor" href="#vowel-space-area"></a>
@@ -480,7 +522,8 @@ analysis:</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">vowel_space_area</span> <span class="op">&lt;-</span> <span class="fu">shoelace_area</span><span class="op">(</span><span class="va">hull_points</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, <span class="va">hull_points</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Vowel space area (normalized):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">vowel_space_area</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"square units\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Vowel space area (normalized):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">vowel_space_area</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"square units\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Vowel space area (normalized): 3.17 square units</span></span></code></pre></div>
 <p>Larger vowel space area indicates: - Greater vowel dispersion
 (clearer articulation) - Useful for comparing clear vs. casual speech -
 Developmental changes (child vs. adult) - Clinical applications
@@ -511,7 +554,9 @@ Developmental changes (child vs. adult) - Clinical applications
 <span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Potential diphthongs (large F1-F2 movement):\n"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">potential_diphthongs</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Potential diphthongs (large F1-F2 movement):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">potential_diphthongs</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; e, u</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -540,6 +585,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <span>  pos <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  cex <span class="op">=</span> <span class="fl">0.8</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><img src="vowel-space-analysis_files/figure-html/vowel_plot_base-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="advanced-plotting-with-ggplot2">Advanced Plotting with ggplot2<a class="anchor" aria-label="anchor" href="#advanced-plotting-with-ggplot2"></a>
@@ -559,8 +605,10 @@ Developmental changes (child vs. adult) - Clinical applications
 <span>    y <span class="op">=</span> <span class="st">"F1 (z-score)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vowel-space-analysis_files/figure-html/vowel_plot_ggplot2-1.png" class="r-plt" alt="" width="672"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># With trajectories</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">f2_20</span>, y <span class="op">=</span> <span class="va">f1_20</span>, xend <span class="op">=</span> <span class="va">f2_80</span>, yend <span class="op">=</span> <span class="va">f1_80</span>, color <span class="op">=</span> <span class="va">vowel</span><span class="op">)</span>,</span>
@@ -575,13 +623,16 @@ Developmental changes (child vs. adult) - Clinical applications
 <span>    y <span class="op">=</span> <span class="st">"F1 (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vowel-space-analysis_files/figure-html/vowel_plot_ggplot2-2.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="faceted-by-speaker-or-condition">Faceted by Speaker or Condition<a class="anchor" aria-label="anchor" href="#faceted-by-speaker-or-condition"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># For multi-speaker data:</span></span>
-<span><span class="co"># vowel_features$speaker &lt;- ... (add speaker ID)</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># With multi-speaker data you would already have a speaker column. The demo</span></span>
+<span><span class="co"># data above comes from a single synthesised talker, so label it as such to</span></span>
+<span><span class="co"># show the faceting call working.</span></span>
+<span><span class="va">vowel_features</span><span class="op">$</span><span class="va">speaker</span> <span class="op">&lt;-</span> <span class="st">"S01"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">vowel_features</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">f2_norm</span>, y <span class="op">=</span> <span class="va">f1_norm</span>, label <span class="op">=</span> <span class="va">vowel</span>, color <span class="op">=</span> <span class="va">vowel</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
@@ -596,6 +647,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vowel-space-analysis_files/figure-html/faceted_plot-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level2">
@@ -604,13 +656,35 @@ Developmental changes (child vs. adult) - Clinical applications
 <div class="section level3">
 <h3 id="anova-vowel-differences">ANOVA: Vowel Differences<a class="anchor" aria-label="anchor" href="#anova-vowel-differences"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Test if vowels differ in F1</span></span>
 <span><span class="va">f1_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html" class="external-link">aov</a></span><span class="op">(</span><span class="va">f1_50</span> <span class="op">~</span> <span class="va">vowel</span>, data <span class="op">=</span> <span class="va">vowel_features</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">f1_model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             Df Sum Sq Mean Sq   F value Pr(&gt;F)    </span></span>
+<span><span class="co">#&gt; vowel        4 238803   59701 4.831e+11 &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt; Residuals    4      0       0                     </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span></span>
 <span><span class="co"># Post-hoc pairwise comparisons</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">TukeyHSD</a></span><span class="op">(</span><span class="va">f1_model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">TukeyHSD</a></span><span class="op">(</span><span class="va">f1_model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Tukey multiple comparisons of means</span></span>
+<span><span class="co">#&gt;     95% family-wise confidence level</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fit: aov(formula = f1_50 ~ vowel, data = vowel_features)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $vowel</span></span>
+<span><span class="co">#&gt;             diff          lwr         upr p adj</span></span>
+<span><span class="co">#&gt; e-a -301.9067015 -301.9082643 -301.905139     0</span></span>
+<span><span class="co">#&gt; i-a -420.9572658 -420.9588286 -420.955703     0</span></span>
+<span><span class="co">#&gt; o-a -238.1684798 -238.1703937 -238.166566     0</span></span>
+<span><span class="co">#&gt; u-a -420.6379775 -420.6395403 -420.636415     0</span></span>
+<span><span class="co">#&gt; i-e -119.0505643 -119.0521271 -119.049002     0</span></span>
+<span><span class="co">#&gt; o-e   63.7382217   63.7363078   63.740136     0</span></span>
+<span><span class="co">#&gt; u-e -118.7312760 -118.7328388 -118.729713     0</span></span>
+<span><span class="co">#&gt; o-i  182.7887861  182.7868721  182.790700     0</span></span>
+<span><span class="co">#&gt; u-i    0.3192883    0.3177256    0.320851     0</span></span>
+<span><span class="co">#&gt; u-o -182.4694978 -182.4714117 -182.467584     0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mixed-effects-models">Mixed-Effects Models<a class="anchor" aria-label="anchor" href="#mixed-effects-models"></a>
@@ -618,11 +692,12 @@ Developmental changes (child vs. adult) - Clinical applications
 <p>For multi-speaker data with repeated measures, add a
 <code>speaker</code> column and fit a random intercept (requires the
 <code>lme4</code> package, not a pladdrr dependency):</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Not evaluated here: lme4 is not a pladdrr dependency, and a random intercept</span></span>
+<span><span class="co"># needs genuine repeated measures across several speakers, which the synthetic</span></span>
+<span><span class="co"># single-talker demo data above does not have.</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># vowel_features here must include a speaker column, e.g.</span></span>
-<span><span class="co"># vowel_features$speaker &lt;- ...</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">lmer</span><span class="op">(</span><span class="va">f1_50</span> <span class="op">~</span> <span class="va">vowel</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">speaker</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">vowel_features</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -634,7 +709,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <h3 id="sociolinguistic-variation">1. Sociolinguistic Variation<a class="anchor" aria-label="anchor" href="#sociolinguistic-variation"></a>
 </h3>
 <p>Compare vowel systems across dialects:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data from multiple dialect regions</span></span>
 <span><span class="va">northeast</span> <span class="op">&lt;-</span> <span class="fu">load_vowels</span><span class="op">(</span><span class="st">"northeast_speakers/*.wav"</span><span class="op">)</span></span>
 <span><span class="va">south</span> <span class="op">&lt;-</span> <span class="fu">load_vowels</span><span class="op">(</span><span class="st">"south_speakers/*.wav"</span><span class="op">)</span></span>
@@ -652,7 +727,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <h3 id="l2-acquisition">2. L2 Acquisition<a class="anchor" aria-label="anchor" href="#l2-acquisition"></a>
 </h3>
 <p>Track vowel learning over time:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Longitudinal data (same learner, multiple sessions)</span></span>
 <span><span class="va">learner_data</span><span class="op">$</span><span class="va">session</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">learner_data</span><span class="op">$</span><span class="va">session</span><span class="op">)</span></span>
 <span></span>
@@ -668,7 +743,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <h3 id="speech-clarity-assessment">3. Speech Clarity Assessment<a class="anchor" aria-label="anchor" href="#speech-clarity-assessment"></a>
 </h3>
 <p>Compare clear vs. conversational speech:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate vowel space area for each style</span></span>
 <span><span class="va">clear_area</span> <span class="op">&lt;-</span> <span class="fu">compute_vowel_space_area</span><span class="op">(</span><span class="va">clear_speech_data</span><span class="op">)</span></span>
 <span><span class="va">casual_area</span> <span class="op">&lt;-</span> <span class="fu">compute_vowel_space_area</span><span class="op">(</span><span class="va">casual_speech_data</span><span class="op">)</span></span>
@@ -691,7 +766,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <li>Too low: Missing formants, tracking failures</li>
 <li>Test with known tokens and adjust iteratively</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Test multiple ceilings</span></span>
 <span><span class="va">ceilings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">5500</span>, <span class="fl">6000</span>, <span class="fl">6500</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">ceiling</span> <span class="kw">in</span> <span class="va">ceilings</span><span class="op">)</span> <span class="op">{</span></span>
@@ -709,12 +784,13 @@ Developmental changes (child vs. adult) - Clinical applications
 <h3 id="quality-control">2. Quality Control<a class="anchor" aria-label="anchor" href="#quality-control"></a>
 </h3>
 <p>Check for outliers and tracking errors:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Flag extreme values</span></span>
 <span><span class="va">f1_outliers</span> <span class="op">&lt;-</span> <span class="va">vowel_features</span><span class="op">$</span><span class="va">f1_50</span> <span class="op">&gt;</span> <span class="fl">1000</span> <span class="op">|</span> <span class="va">vowel_features</span><span class="op">$</span><span class="va">f1_50</span> <span class="op">&lt;</span> <span class="fl">200</span></span>
 <span><span class="va">f2_outliers</span> <span class="op">&lt;-</span> <span class="va">vowel_features</span><span class="op">$</span><span class="va">f2_50</span> <span class="op">&gt;</span> <span class="fl">3000</span> <span class="op">|</span> <span class="va">vowel_features</span><span class="op">$</span><span class="va">f2_50</span> <span class="op">&lt;</span> <span class="fl">500</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Potential tracking errors:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">f1_outliers</span> <span class="op">|</span> <span class="va">f2_outliers</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Potential tracking errors: 0</span></span>
 <span></span>
 <span><span class="co"># Manual review or retrack with different parameters</span></span></code></pre></div>
 </div>
@@ -751,7 +827,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <h3 id="missing-data">4. Missing Data<a class="anchor" aria-label="anchor" href="#missing-data"></a>
 </h3>
 <p>Handle tracking failures gracefully:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove rows with missing formants</span></span>
 <span><span class="va">vowel_features_clean</span> <span class="op">&lt;-</span> <span class="va">vowel_features</span><span class="op">[</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vowel_features</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"f1_50"</span>, <span class="st">"f2_50"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>

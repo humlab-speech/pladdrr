@@ -21,6 +21,8 @@ sound = Read from file: "audio.wav"
 ``` r
 
 library(pladdrr)
+#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
+#> Use citation('pladdrr') for citing this package in publications.
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
 
@@ -207,7 +209,7 @@ results <- lapply(files, function(filepath) {
 
 # Combine results
 results_df <- do.call(rbind, results)
-write.csv(results_df, "results.csv", row.names = FALSE)
+write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 ```
 
 ## Advanced Features in pladdrr
@@ -218,6 +220,14 @@ write.csv(results_df, "results.csv", row.names = FALSE)
 
 library(pladdrr)
 library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(purrr)
 
 results <- tibble(file = list.files(pattern = "\\.wav$")) %>%
@@ -247,6 +257,8 @@ ggplot(pitch_data, aes(x = time, y = frequency)) +
   labs(title = "Pitch Contour", x = "Time (s)", y = "Frequency (Hz)") +
   theme_minimal()
 ```
+
+![](migration-from-praat_files/figure-html/unnamed-chunk-10-1.png)
 
 ## Advantages Over Praat Scripts
 
@@ -301,9 +313,11 @@ Use lowercase for units in pladdrr:
 
 # Correct
 pitch$get_mean(unit = "hertz")
+#> [1] 440.0102
 
 # Also works (case-insensitive in many methods)
 pitch$get_mean(unit = "Hertz")
+#> [1] 440.0102
 ```
 
 ## Getting Help
