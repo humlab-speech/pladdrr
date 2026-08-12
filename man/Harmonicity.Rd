@@ -48,11 +48,11 @@ sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 4410
 hnr <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75)
 mean_hnr <- hnr$get_mean()
 hnr_at_05 <- hnr$get_value_at_time(0.5)
-\dontrun{
-sound <- Sound$new("recording.wav")
+
+# The same analysis on a recording read from disk
+sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 hnr <- sound$to_harmonicity_ac(time_step = 0.01, min_pitch = 75)
 df <- hnr$as_data_frame()
-}
 
 }
 \seealso{

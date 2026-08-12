@@ -12,8 +12,7 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
+  comment = "#>"
 )
 ```
 
@@ -181,7 +180,7 @@ results <- lapply(files, function(filepath) {
 })
 
 results_df <- do.call(rbind, results)
-write.csv(results_df, "results.csv", row.names = FALSE)
+write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 ```
 
 ## Working with Data Frames

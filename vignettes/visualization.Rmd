@@ -37,7 +37,7 @@ Cepstral analysis is essential for voice quality assessment, particularly for me
 
 Visualize a single power cepstrum with peak detection:
 
-```{r cepstrum-basic, eval=FALSE}
+```{r cepstrum-basic}
 # Create a PowerCepstrum object (Sound -> Spectrum -> PowerCepstrum)
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 cepstrum <- sound$to_spectrum()$to_power_cepstrum()
@@ -65,7 +65,7 @@ plot_powercepstrum(
 
 Time-varying cepstral analysis (heatmap):
 
-```{r cepstrogram, eval=FALSE}
+```{r cepstrogram}
 # Create PowerCepstrogram
 cepstrogram <- sound$to_powercepstrogram(
   pitch_floor = 60,
@@ -92,7 +92,7 @@ plot_powercepstrogram(
 
 Track Cepstral Peak Prominence over time:
 
-```{r cpp-timeseries, eval=FALSE}
+```{r cpp-timeseries}
 # CPP time series with smoothing
 plot_cpp_timeseries(
   cepstrogram,
@@ -112,11 +112,11 @@ plot_cpp_timeseries(
 
 Multi-panel diagnostic figure combining all cepstral visualizations:
 
-```{r cepstrum-report, eval=FALSE}
+```{r cepstrum-report}
 # Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
 
-ggsave("cepstrum_report.pdf", report_plot, width = 12, height = 10)
+ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12, height = 10)
 ```
 
 **Report panels** (stacked with `gridExtra::grid.arrange()`):
@@ -132,7 +132,7 @@ ggsave("cepstrum_report.pdf", report_plot, width = 12, height = 10)
 F1-F2 plots by segment label (the pattern is the same for vowel-only data; the
 bundled `test.TextGrid` has phone labels, not exclusively vowels):
 
-```{r vowel-space, eval=FALSE}
+```{r vowel-space}
 # Extract formants at the midpoint of each labeled interval on the "phones" tier
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 textgrid <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
@@ -186,7 +186,7 @@ ggplot(formant_data, aes(x = F2, y = F1, color = vowel, label = vowel)) +
 
 Visualize formant movement over time:
 
-```{r formant-trajectories, eval=FALSE}
+```{r formant-trajectories}
 # Extract formant tracks
 formant <- sound$to_formant_burg(
   time_step = 0.01,
@@ -225,7 +225,7 @@ trajectory plot without manual reshaping.
 
 ## Pitch Contour
 
-```{r pitch-contour, eval=FALSE}
+```{r pitch-contour}
 # Extract pitch
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch()
@@ -247,7 +247,7 @@ ggplot(pitch_df, aes(x = time, y = frequency)) +
 
 ## Intensity Contour
 
-```{r intensity-contour, eval=FALSE}
+```{r intensity-contour}
 # Extract intensity
 intensity <- sound$to_intensity()
 
@@ -272,7 +272,7 @@ Pitch and intensity are extracted on different time grids, so intensity is
 interpolated onto the pitch time points with `stats::approx()` before
 plotting:
 
-```{r pitch-intensity-combined, eval=FALSE}
+```{r pitch-intensity-combined}
 combined <- data.frame(
   time = pitch_df$time,
   frequency = pitch_df$frequency,
@@ -308,7 +308,7 @@ building `geom_rect()`/`geom_text()` calls.
 
 ## Annotation Tier Display
 
-```{r textgrid-tiers, eval=FALSE}
+```{r textgrid-tiers}
 # Load TextGrid
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
@@ -331,7 +331,7 @@ ggplot() +
 
 ## Duration Analysis
 
-```{r duration-histogram, eval=FALSE}
+```{r duration-histogram}
 # Interval durations for the "phones" tier, via get_all_intervals()
 tier_data <- tg$get_all_intervals("phones")
 tier_data$duration <- tier_data$end - tier_data$start
@@ -356,7 +356,7 @@ ggplot(tier_data_labeled, aes(x = duration, fill = text)) +
 
 ## Spectrogram
 
-```{r spectrogram, eval=FALSE}
+```{r spectrogram}
 # Create spectrogram
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrogram <- sound$to_spectrogram(
@@ -390,7 +390,7 @@ ggplot(spec_long, aes(x = time, y = frequency, fill = power)) +
 
 ## Spectrum
 
-```{r spectrum, eval=FALSE}
+```{r spectrum}
 # Create spectrum from sound
 spectrum <- sound$to_spectrum(fast = TRUE)
 
@@ -410,7 +410,7 @@ ggplot(spectrum_df, aes(x = frequency, y = power)) +
 
 ## Long-Term Average Spectrum (LTAS)
 
-```{r ltas, eval=FALSE}
+```{r ltas}
 # Create LTAS
 ltas <- sound$to_ltas(bandwidth = 100)
 
@@ -433,7 +433,7 @@ ggplot(ltas_df, aes(x = frequency, y = power_db)) +
 
 ## Custom Color Schemes
 
-```{r custom-colors, eval=FALSE}
+```{r custom-colors}
 # Define custom color palette
 my_colors <- c(
   "#E69F00",  # Orange
@@ -456,7 +456,7 @@ ggplot(formant_data, aes(x = F2, y = F1, color = vowel)) +
 
 ## Publication Themes
 
-```{r pub-theme, eval=FALSE}
+```{r pub-theme}
 # Black and white theme for journals
 ggplot(pitch_df, aes(x = time, y = frequency)) +
   geom_line() +
@@ -474,7 +474,7 @@ ggplot(pitch_df, aes(x = time, y = frequency)) +
 
 ## Multi-Panel Figures
 
-```{r multipanel, eval=FALSE}
+```{r multipanel}
 library(gridExtra)
 
 # Create individual plots

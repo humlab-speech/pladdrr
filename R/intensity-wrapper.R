@@ -42,11 +42,11 @@
 #' intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
 #' mean_int <- intensity$get_mean()
 #' df <- intensity$as_data_frame()
-#' \dontrun{
-#' sound <- Sound("recording.wav")
+#'
+#' # The same analysis on a recording read from disk
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
-#' int_at_1s <- intensity$get_value_at_time(1.0)
-#' }
+#' int_at_02s <- intensity$get_value_at_time(0.2)
 #'
 #' @return An \code{Intensity} object with methods for querying intensity values
 #'   (in dB) at time points or across the full contour.

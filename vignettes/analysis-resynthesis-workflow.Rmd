@@ -117,7 +117,7 @@ cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
 
 ### Step 3: Resynthesize with KlattGrid
 
-```{r resynthesize, eval=FALSE}
+```{r resynthesize}
 # Create KlattGrid with extracted parameters
 kg <- KlattGrid_createFromVowel(
   duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
@@ -188,7 +188,7 @@ ggplot(df_combined, aes(time, frequency, color = factor(formant_num))) +
 
 ### Create Synthetic Vowel with Known Parameters
 
-```{r synthetic-vowel, eval=FALSE}
+```{r synthetic-vowel}
 # Define target /a/ vowel parameters
 target_f1 <- 730
 target_f2 <- 1090
@@ -213,7 +213,7 @@ sound_vowel <- kg_vowel$to_sound()
 
 ### Analyze Synthetic Vowel
 
-```{r analyze-synthetic, eval=FALSE}
+```{r analyze-synthetic}
 # Analyze with FormantPath
 fp_vowel <- sound_vowel$to_formant_path(
   time_step = 0.005,
@@ -276,7 +276,7 @@ ggplot(df_comparison, aes(Formant, Frequency, fill = Type)) +
 
 ### Synthesize Vowel Triangle
 
-```{r vowel-triangle-synth, eval=FALSE}
+```{r vowel-triangle-synth}
 # Define cardinal vowels
 vowels <- list(
   i = list(label = "/i/ (beet)", f1 = 280, f2 = 2250, f3 = 2890),
@@ -309,7 +309,7 @@ for (v_name in names(vowels)) {
 
 ### Analyze Vowel Triangle
 
-```{r vowel-triangle-analyze, eval=FALSE}
+```{r vowel-triangle-analyze}
 # Analyze each synthetic vowel
 for (v_name in names(vowels)) {
   sound <- vowel_sounds[[v_name]]
@@ -386,7 +386,7 @@ ggplot(vowel_space_long, aes(F2, F1, color = type, shape = vowel)) +
 
 ### Verify Vowel Space Relationships
 
-```{r vowel-relationships, eval=FALSE}
+```{r vowel-relationships}
 # Check phonetic relationships are preserved
 cat("Vowel space relationships:\n\n")
 
@@ -427,7 +427,7 @@ cat(sprintf("  /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
 
 ### Morph Between Two Speakers
 
-```{r voice-morph, eval=FALSE}
+```{r voice-morph}
 # Define two speaker profiles
 speaker_male <- list(
   f1 = 730, f2 = 1090, f3 = 2440,
@@ -515,7 +515,7 @@ ggplot(morph_long, aes(alpha, frequency, color = parameter)) +
 
 Systematically vary one formant while holding others constant:
 
-```{r formant-manipulation, eval=FALSE}
+```{r formant-manipulation}
 # Create F1 continuum (F2/F3 constant)
 f1_values <- seq(400, 800, by = 50)  # Low to high
 
@@ -528,7 +528,7 @@ stimuli <- lapply(f1_values, function(f1) {
   )
   
   sound <- kg$to_sound()
-  sound$save(sprintf("f1_%04d.wav", f1), "WAV")
+  sound$save(file.path(tempdir(), sprintf("f1_%04d.wav", f1)), "WAV")
   
   sound
 })
@@ -538,7 +538,7 @@ stimuli <- lapply(f1_values, function(f1) {
 
 Test perception with impossible voice combinations:
 
-```{r pitch-formant-decouple, eval=FALSE}
+```{r pitch-formant-decouple}
 # Male formants + Female pitch (impossible in nature)
 kg_impossible <- KlattGrid_createFromVowel(
   duration = 0.5,
@@ -555,7 +555,7 @@ sound_impossible <- kg_impossible$to_sound()
 
 Verify formant tracking accuracy on known stimuli:
 
-```{r quality-assessment, eval=FALSE}
+```{r quality-assessment}
 # Generate test vowels with known formants
 test_vowels <- expand.grid(
   f1 = seq(300, 800, by = 100),

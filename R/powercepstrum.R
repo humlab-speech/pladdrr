@@ -46,11 +46,10 @@
 #' spectrum <- sound$to_spectrum()
 #' cepstrum <- spectrum$to_power_cepstrum()
 #' cpp <- cepstrum$get_peak_prominence()
-#' \dontrun{
-#' sound <- Sound$new("voice.wav")
-#' spectrum <- sound$to_spectrum()
-#' cepstrum <- spectrum$to_power_cepstrum()
-#' }
+#'
+#' # The same analysis on a recording read from disk
+#' wav <- system.file("extdata", "test.wav", package = "pladdrr")
+#' cepstrum <- Sound(wav)$to_spectrum()$to_power_cepstrum()
 #'
 #' @name PowerCepstrum
 NULL

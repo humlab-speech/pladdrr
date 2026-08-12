@@ -63,175 +63,207 @@ interp$eval("sqrt(2)")
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-PraatInterpreter-new}{\code{PraatInterpreter$new()}}
-\item \href{#method-PraatInterpreter-run}{\code{PraatInterpreter$run()}}
-\item \href{#method-PraatInterpreter-get_variable}{\code{PraatInterpreter$get_variable()}}
-\item \href{#method-PraatInterpreter-set_variable}{\code{PraatInterpreter$set_variable()}}
-\item \href{#method-PraatInterpreter-eval}{\code{PraatInterpreter$eval()}}
-\item \href{#method-PraatInterpreter-object_count}{\code{PraatInterpreter$object_count()}}
-\item \href{#method-PraatInterpreter-list_objects}{\code{PraatInterpreter$list_objects()}}
-\item \href{#method-PraatInterpreter-get_object}{\code{PraatInterpreter$get_object()}}
-\item \href{#method-PraatInterpreter-get_object_by_id}{\code{PraatInterpreter$get_object_by_id()}}
-\item \href{#method-PraatInterpreter-set_object}{\code{PraatInterpreter$set_object()}}
-\item \href{#method-PraatInterpreter-remove_object}{\code{PraatInterpreter$remove_object()}}
-\item \href{#method-PraatInterpreter-remove_object_by_id}{\code{PraatInterpreter$remove_object_by_id()}}
-\item \href{#method-PraatInterpreter-select_object}{\code{PraatInterpreter$select_object()}}
-\item \href{#method-PraatInterpreter-clear_objects}{\code{PraatInterpreter$clear_objects()}}
-\item \href{#method-PraatInterpreter-print}{\code{PraatInterpreter$print()}}
-\item \href{#method-PraatInterpreter-clone}{\code{PraatInterpreter$clone()}}
-}
+  \itemize{
+    \item \href{#method-PraatInterpreter-initialize}{\code{PraatInterpreter$new()}}
+    \item \href{#method-PraatInterpreter-run}{\code{PraatInterpreter$run()}}
+    \item \href{#method-PraatInterpreter-get_variable}{\code{PraatInterpreter$get_variable()}}
+    \item \href{#method-PraatInterpreter-set_variable}{\code{PraatInterpreter$set_variable()}}
+    \item \href{#method-PraatInterpreter-eval}{\code{PraatInterpreter$eval()}}
+    \item \href{#method-PraatInterpreter-object_count}{\code{PraatInterpreter$object_count()}}
+    \item \href{#method-PraatInterpreter-list_objects}{\code{PraatInterpreter$list_objects()}}
+    \item \href{#method-PraatInterpreter-get_object}{\code{PraatInterpreter$get_object()}}
+    \item \href{#method-PraatInterpreter-get_object_by_id}{\code{PraatInterpreter$get_object_by_id()}}
+    \item \href{#method-PraatInterpreter-set_object}{\code{PraatInterpreter$set_object()}}
+    \item \href{#method-PraatInterpreter-remove_object}{\code{PraatInterpreter$remove_object()}}
+    \item \href{#method-PraatInterpreter-remove_object_by_id}{\code{PraatInterpreter$remove_object_by_id()}}
+    \item \href{#method-PraatInterpreter-select_object}{\code{PraatInterpreter$select_object()}}
+    \item \href{#method-PraatInterpreter-clear_objects}{\code{PraatInterpreter$clear_objects()}}
+    \item \href{#method-PraatInterpreter-print}{\code{PraatInterpreter$print()}}
+    \item \href{#method-PraatInterpreter-clone}{\code{PraatInterpreter$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-PraatInterpreter-new"></a>}}
-\if{latex}{\out{\hypertarget{method-PraatInterpreter-new}{}}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-PraatInterpreter-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-PraatInterpreter-initialize}{}}}
+\subsection{\code{PraatInterpreter$new()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-run"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-run}{}}}
-\subsection{Method \code{run()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$run(script)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$run()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$run(script)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-get_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_variable}{}}}
-\subsection{Method \code{get_variable()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$get_variable(name)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$get_variable()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$get_variable(name)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-set_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-set_variable}{}}}
-\subsection{Method \code{set_variable()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$set_variable(name, value)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$set_variable()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$set_variable(name, value)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-eval"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-eval}{}}}
-\subsection{Method \code{eval()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$eval(expression)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$eval()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$eval(expression)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-object_count"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-object_count}{}}}
-\subsection{Method \code{object_count()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$object_count()}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$object_count()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$object_count()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-list_objects"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-list_objects}{}}}
-\subsection{Method \code{list_objects()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$list_objects()}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$list_objects()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$list_objects()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-get_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object}{}}}
-\subsection{Method \code{get_object()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$get_object(name, type = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$get_object()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$get_object(name, type = NULL)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-get_object_by_id"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object_by_id}{}}}
-\subsection{Method \code{get_object_by_id()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$get_object_by_id(id)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$get_object_by_id()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$get_object_by_id(id)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-set_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-set_object}{}}}
-\subsection{Method \code{set_object()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$set_object(name, object)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$set_object()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$set_object(name, object)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-remove_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object}{}}}
-\subsection{Method \code{remove_object()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$remove_object(name)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$remove_object()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$remove_object(name)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-remove_object_by_id"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object_by_id}{}}}
-\subsection{Method \code{remove_object_by_id()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$remove_object_by_id(id)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$remove_object_by_id()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$remove_object_by_id(id)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-select_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-select_object}{}}}
-\subsection{Method \code{select_object()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$select_object(name, add = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$select_object()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$select_object(name, add = FALSE)}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-clear_objects"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-clear_objects}{}}}
-\subsection{Method \code{clear_objects()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$clear_objects()}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$clear_objects()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$clear_objects()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-print"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$print()}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$print()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$print()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PraatInterpreter-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PraatInterpreter$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{PraatInterpreter$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{PraatInterpreter$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

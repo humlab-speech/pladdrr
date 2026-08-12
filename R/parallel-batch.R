@@ -336,7 +336,7 @@ benchmark_parallel <- function(files, analysis_func,
   baseline_time <- NULL
   
   for (n_cores in core_counts) {
-    cat(sprintf("Testing with %d core(s)...\n", n_cores))
+    message(sprintf("Testing with %d core(s)...", n_cores))
     
     start_time <- Sys.time()
     analyze_files_parallel(files, analysis_func, n_cores = n_cores)

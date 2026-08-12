@@ -8,7 +8,6 @@
 library(testthat)
 library(pladdrr)
 
-context("Phase 4 Task 4.1: FormantPath SIMD")
 
 # Helper function to create test sound
 create_test_vowel <- function(duration = 0.5, sr = 16000) {

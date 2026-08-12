@@ -52,12 +52,11 @@
 #' spectrum <- sound$to_spectrum(fast = FALSE)
 #' cog <- spectrum$get_centre_of_gravity(power = 2.0)
 #' energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
-#' \dontrun{
-#' # Create spectrum from external file
-#' sound <- Sound$new(system.file("extdata", "example.wav", package = "pladdrr"))
+#'
+#' # Create a spectrum from a recording read from disk
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' spectrum <- sound$to_spectrum(fast = TRUE)
 #' spec_df <- spectrum$as_data_frame()
-#' }
 #'
 #' @name Spectrum
 NULL

@@ -14,8 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
-  fig.height = 5,
-  eval = FALSE  # Disable evaluation due to complex dependencies
+  fig.height = 5
 )
 ```
 
@@ -125,7 +124,7 @@ cat("Added", tg$get_number_of_points(events_tier), "points to events tier\n")
 
 ### Loading from File
 
-```{r load_textgrid, eval=FALSE}
+```{r load_textgrid}
 # Load an existing TextGrid file:
 # tg_from_file <- TextGrid$new("path/to/annotation.TextGrid")
 
@@ -293,7 +292,7 @@ cat("Renamed tier 3 to 'segments'\n")
 
 ### Loading Large TextGrids
 
-```{r large_textgrid, eval=FALSE}
+```{r large_textgrid}
 # Example with 1min file (large files removed to reduce package size)
 tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
 
@@ -311,7 +310,7 @@ cat(sprintf("File size: %.1f MB\n", file.size(tg_file) / 1024^2))
 
 Extract all data at once using the built-in conversion:
 
-```{r efficient_extraction, eval=FALSE}
+```{r efficient_extraction}
 # Convert entire TextGrid to data frame
 tg_df <- tg$as_data_frame()
 
@@ -328,7 +327,7 @@ table(tg_df$tier_name)
 
 For extremely large TextGrids (e.g., multi-hour recordings):
 
-```{r sampling_strategy, eval=FALSE}
+```{r sampling_strategy}
 # Sample intervals instead of processing all
 tier_idx <- 1
 n_intervals <- tg$get_number_of_intervals(tier_idx)
@@ -349,7 +348,7 @@ for (i in sampled_indices) {
 
 Process an entire corpus of TextGrids:
 
-```{r batch_processing, eval=FALSE}
+```{r batch_processing}
 # List all TextGrid files in a corpus directory:
 # textgrid_dir <- "path/to/corpus/"
 # tg_files <- list.files(textgrid_dir, pattern = "\\.TextGrid$", full.names = TRUE)
@@ -398,7 +397,7 @@ table(all_data$file)
 
 MFA produces TextGrids with word and phone tiers:
 
-```{r mfa_integration, eval=FALSE}
+```{r mfa_integration}
 # Load MFA output:
 # mfa_tg <- TextGrid$new("speaker01_aligned.TextGrid")
 
@@ -435,7 +434,7 @@ aggregate(duration ~ phone, data = phone_durations, FUN = mean)
 
 Check alignment quality:
 
-```{r alignment_qa, eval=FALSE}
+```{r alignment_qa}
 # Flag suspiciously short or long intervals
 min_duration <- 0.020  # 20 ms
 max_duration <- 0.500  # 500 ms
@@ -456,7 +455,7 @@ write.csv(flagged, file.path(tempdir(), "alignment_review.csv"), row.names = FAL
 
 ### Export to CSV
 
-```{r export_csv, eval=FALSE}
+```{r export_csv}
 # Export interval data
 write.csv(intervals_df, file.path(tempdir(), "textgrid_intervals.csv"), row.names = FALSE)
 
@@ -470,7 +469,7 @@ write.csv(intervals_df, file.path(tempdir(), "corpus_annotations.csv"), row.name
 
 ### Save Modified TextGrid
 
-```{r save_textgrid, eval=FALSE}
+```{r save_textgrid}
 # Save to file
 tg$save(file.path(tempdir(), "modified_annotation.TextGrid"))
 
@@ -484,7 +483,7 @@ pladdrr defines `autoplot()`/`autolayer()` S3 methods for `TextGrid` objects.
 layer (interval boxes and labels, or point markers) that can be added to an
 existing plot, e.g. on top of a Sound's waveform.
 
-```{r visualize_textgrid, eval=FALSE}
+```{r visualize_textgrid}
 library(ggplot2)
 
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
@@ -505,7 +504,7 @@ For further examples (interval duration distributions, label frequency plots, mu
 
 Use standardized labels for reproducibility:
 
-```{r labeling_standards, eval=FALSE}
+```{r labeling_standards}
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 tier_idx <- "phones"
 n_intervals <- tg$get_number_of_intervals(tier_idx)
@@ -527,7 +526,7 @@ for (i in 1:n_intervals) {
 
 Empty labels (silence, pauses) are common:
 
-```{r handle_empty, eval=FALSE}
+```{r handle_empty}
 # Filter out empty intervals
 non_empty <- intervals_df[intervals_df$label != "", ]
 
@@ -540,7 +539,7 @@ cat("Mean silence duration:", mean(empty_intervals$duration), "s\n")
 
 Be aware of floating-point precision:
 
-```{r time_precision, eval=FALSE}
+```{r time_precision}
 # Round times for comparison
 time_precision <- 0.001  # 1 ms
 
@@ -556,7 +555,7 @@ if (abs(boundary1 - boundary2) < time_precision) {
 
 Always save a copy before modifying:
 
-```{r backup, eval=FALSE}
+```{r backup}
 # Save original
 original_tg <- tg  # R6 objects are passed by reference, so duplicate:
 # (In practice, save to disk before editing)
@@ -574,7 +573,7 @@ tg$insert_boundary(tier_idx, time = 0.9)
 
 Extract F0 contours aligned to intonational phrases:
 
-```{r prosodic_analysis, eval=FALSE}
+```{r prosodic_analysis}
 # Assume the "words" tier has intonational phrase boundaries
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch()
@@ -596,7 +595,7 @@ for (i in 1:n_phrases) {
 
 Measure time between burst and voicing onset:
 
-```{r vot_measurement, eval=FALSE}
+```{r vot_measurement}
 # Assume a point tier with "burst" and "voicing_onset" marks
 tg <- TextGrid$create(tmin = 0, tmax = 2, tier_names = "events", point_tiers = "events")
 tg$insert_point("events", time = 0.10, mark = "burst")
@@ -626,7 +625,7 @@ cat("Mean VOT:", mean(vots) * 1000, "ms\n")
 
 Generate derived tiers programmatically:
 
-```{r auto_tier_creation, eval=FALSE}
+```{r auto_tier_creation}
 # Create syllable tier from phone tier
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 phone_tier <- "phones"

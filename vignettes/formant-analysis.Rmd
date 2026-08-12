@@ -335,7 +335,7 @@ if (exists("sound") && !is.null(sound)) {
 
 ### Problem: No Formants Detected
 
-```{r no-formants, eval=FALSE}
+```{r no-formants}
 formant <- sound$to_formant_burg()
 f1 <- formant$get_value_at_time(1, 0.1, unit = "hertz")
 # Returns: NA
@@ -344,18 +344,18 @@ f1 <- formant$get_value_at_time(1, 0.1, unit = "hertz")
 **Solutions**:
 
 1. **Lower the ceiling**:
-```{r lower-ceiling, eval=FALSE}
+```{r lower-ceiling}
 # Try lower maximum frequency
 formant <- sound$to_formant_burg(max_frequency = 4500)
 ```
 
 2. **Increase window length**:
-```{r increase-window, eval=FALSE}
+```{r increase-window}
 formant <- sound$to_formant_burg(window_length = 0.050)
 ```
 
 3. **Check if sound is silent**:
-```{r check-silent, eval=FALSE}
+```{r check-silent}
 intensity <- sound$to_intensity()
 mean_intensity <- intensity$get_mean(0, 0)  # in dB
 # If < 30 dB, may be too quiet
@@ -370,7 +370,7 @@ mean_intensity <- intensity$get_mean(0, 0)  # in dB
 **Solutions**:
 
 1. **Use robust tracking**:
-```{r robust, eval=FALSE}
+```{r robust}
 formant <- sound$to_formant_robust(
   num_std_dev = 1.5,       # outlier threshold in standard deviations
   max_iterations = 5       # refit iterations
@@ -378,12 +378,12 @@ formant <- sound$to_formant_robust(
 ```
 
 2. **Increase window length**:
-```{r smooth-window, eval=FALSE}
+```{r smooth-window}
 formant <- sound$to_formant_burg(window_length = 0.040)
 ```
 
 3. **Reduce time step**:
-```{r reduce-step, eval=FALSE}
+```{r reduce-step}
 formant <- sound$to_formant_burg(time_step = 0.002)
 ```
 
@@ -396,18 +396,18 @@ formant <- sound$to_formant_burg(time_step = 0.002)
 **Solutions**:
 
 1. **Adjust formant ceiling**:
-```{r adjust-ceiling, eval=FALSE}
+```{r adjust-ceiling}
 # Lower ceiling may force re-evaluation
 formant <- sound$to_formant_burg(max_frequency = 4800)
 ```
 
 2. **Try Keep All method for comparison**:
-```{r try-keepall, eval=FALSE}
+```{r try-keepall}
 formant <- sound$to_formant_keepall(max_formants = 5)
 ```
 
 3. **Check bandwidth**:
-```{r check-bandwidth, eval=FALSE}
+```{r check-bandwidth}
 bandwidth <- formant$get_bandwidth_at_time(2, 0.1, unit = "hertz")
 # Very wide bandwidth may indicate spurious formant
 ```
@@ -521,7 +521,9 @@ formant_exc2 <- excitation2$to_formant(max_formants = 5)
 
 ### Quality Checks
 
-```{r quality-checks, eval=FALSE}
+```{r quality-checks}
+time <- 0.2  # the time point being checked, in seconds
+
 # 1. Check if formants are in expected ranges
 f1 <- formant$get_value_at_time(1, time, unit = "hertz")
 f2 <- formant$get_value_at_time(2, time, unit = "hertz")

@@ -2,7 +2,6 @@
 library(data.table)
 # Added 2026-01-06 based on user feedback
 
-context("Performance Enhancements")
 
 test_that("sound_concatenate_all works with Sound objects", {
   skip_on_cran()

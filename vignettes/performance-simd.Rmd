@@ -103,7 +103,7 @@ long plain vectors — for example the batch statistics bridges (`mean`,
 `pladdrr_simd()` lets you toggle SIMD on and off at runtime so you can A/B
 your own workload:
 
-```{r simd-toggle, eval=FALSE}
+```{r simd-toggle}
 library(microbenchmark)
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -215,7 +215,7 @@ the ratio on your own hardware if it matters for your pipeline.
 
 Higher sample rates mean more samples to process:
 
-```{r sample-rate, eval=FALSE}
+```{r sample-rate}
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # For speech analysis, 16-22 kHz is often sufficient
@@ -231,7 +231,7 @@ formant_48k <- sound_48k$to_formant_burg()
 
 Smaller time steps mean more frames to process:
 
-```{r time-step, eval=FALSE}
+```{r time-step}
 # Standard time step (good balance)
 formant_standard <- sound$to_formant_burg(time_step = 0.005)  # 5 ms
 
@@ -247,7 +247,7 @@ frames to compute without necessarily adding useful information.
 
 ### 3. Process Multiple Files Together
 
-```{r batch-processing, eval=FALSE}
+```{r batch-processing}
 # Load all sounds first
 sound_files <- list.files("data/", pattern = "\\.wav$", full.names = TRUE)
 sounds <- lapply(sound_files, Sound$new)
@@ -268,7 +268,7 @@ f1_f2 <- do.call(rbind, lapply(formants, function(f) {
 
 ### 4. Reuse Objects When Possible
 
-```{r reuse-objects, eval=FALSE}
+```{r reuse-objects}
 wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
 
 # Good: Reuse sound object
@@ -285,7 +285,7 @@ intensity <- Sound$new(wav_path)$to_intensity()
 
 ### 5. FFT Sizes
 
-```{r fft-size, eval=FALSE}
+```{r fft-size}
 # pladdrr handles all FFT sizes correctly, including non-power-of-2 sizes
 
 # If you can choose duration:
@@ -377,7 +377,7 @@ boxplot(result)
 
 SIMD operations in pladdrr are **numerically equivalent** to scalar operations:
 
-```{r simd-accuracy, eval=FALSE}
+```{r simd-accuracy}
 sound <- Sound$create_pure_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
 
 # Run same analysis twice
@@ -405,7 +405,7 @@ If SIMD is not available:
 3. **Same results**: Output is identical either way
 4. **No user action needed**: Everything works transparently
 
-```{r fallback, eval=FALSE}
+```{r fallback}
 # This code works identically on all systems, with or without SIMD
 formant <- sound$to_formant_burg()
 ```
@@ -437,7 +437,7 @@ CRAN binary packages are compiled per the capability table above:
 
 ### SIMD Not Detected
 
-```{r troubleshoot, eval=FALSE}
+```{r troubleshoot}
 # Check SIMD availability
 simd_info()$available
 
@@ -483,7 +483,7 @@ workflows that would otherwise cross the R/C++ boundary once per query.
 
 When calculating statistics over multiple time intervals, use batch functions instead of repeated R method calls:
 
-```{r batch-statistics, eval=FALSE}
+```{r batch-statistics}
 # Create pitch object
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch_cc()
@@ -515,7 +515,7 @@ stats_matrix <- pladdrr:::pitch_get_statistics_batch(
 
 Similar functions exist for Intensity:
 
-```{r intensity-batch, eval=FALSE}
+```{r intensity-batch}
 intensity <- sound$to_intensity()
 intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   intensity$.xptr,
@@ -530,7 +530,7 @@ intensity_stats <- pladdrr:::intensity_get_statistics_batch(
 
 For AVQI and voice quality analysis, use the fast CPPS functions:
 
-```{r cpps-fast, eval=FALSE}
+```{r cpps-fast}
 # R6 method dispatch
 cpps_standard <- {
   pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
@@ -552,7 +552,7 @@ cpps_fast <- calculate_cpps_fast(
 
 For two-pass pitch analysis, get quartiles and adaptive range in a single call:
 
-```{r adaptive-range, eval=FALSE}
+```{r adaptive-range}
 # Create initial pitch estimate
 pitch <- sound$to_pitch_cc(pitch_floor = 50, pitch_ceiling = 800)
 
@@ -579,7 +579,7 @@ pitch2 <- sound$to_pitch_cc(
 For custom window functions or transforms, use compiled C++ functions instead
 of an R callback evaluated once per sample:
 
-```{r xptr-windows, eval=FALSE}
+```{r xptr-windows}
 # Requires: install.packages("RcppXPtrUtils")
 library(RcppXPtrUtils)
 
@@ -603,7 +603,7 @@ windowed2 <- apply_window_xptr(sound, hamming)
 
 Custom transforms work similarly:
 
-```{r xptr-transforms, eval=FALSE}
+```{r xptr-transforms}
 # Create soft clipping function
 soft_clip <- cppXPtr(
   "double clip(double x) { return tanh(x * 2.0); }",

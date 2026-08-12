@@ -120,12 +120,27 @@ Boersma, Paul & Weenink, David (2023). Praat: doing phonetics by computer
 Useful links:
 \itemize{
   \item \url{https://github.com/humlab-speech/pladdrr}
+  \item \url{https://humlab-speech.github.io/pladdrr/}
   \item Report bugs at \url{https://github.com/humlab-speech/pladdrr/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Fredrik Nylén \email{fredrik.nylen@umu.se} (\href{https://orcid.org/0000-0003-3373-0934}{ORCID})
+
+Authors:
+\itemize{
+  \item Fredrik Nylén \email{fredrik.nylen@umu.se} (\href{https://orcid.org/0000-0003-3373-0934}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Paul Boersma (Author of the bundled Praat sources in src/praat.github.io) [copyright holder]
+  \item David Weenink (Author of the bundled Praat sources in src/praat.github.io) [copyright holder]
+  \item Max-Planck-Society (Copyright holder of the bundled pocketfft headers in src/pocketfft) [copyright holder]
+  \item Xiph.Org Foundation (Copyright holder of the bundled Vorbis/Ogg and Opusfile sources) [copyright holder]
+  \item Free Software Foundation (Copyright holder of the GNU Scientific Library, linked but not bundled) [copyright holder]
+}
 
 }
 \keyword{internal}

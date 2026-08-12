@@ -58,7 +58,7 @@ unlink(path)
 \seealso{
 [Sound], [LongSound]
 
-Other batch-ops: 
-\code{\link{textgrid_merge}()}
+Other batch-ops:
+\code{\link[=textgrid_merge]{textgrid_merge()}}
 }
 \concept{batch-ops}

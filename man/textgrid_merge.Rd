@@ -60,7 +60,7 @@ merged_eq <- textgrid_merge(list(tg1, tg2), equalize_domains = TRUE)
 \seealso{
 [TextGrid] for TextGrid object creation
 
-Other batch-ops: 
-\code{\link{sound_load_window}()}
+Other batch-ops:
+\code{\link[=sound_load_window]{sound_load_window()}}
 }
 \concept{batch-ops}

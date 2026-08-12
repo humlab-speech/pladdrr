@@ -305,7 +305,7 @@ ggplot(combined_df, aes(time, frequency, color = method)) +
 
 FormantPath can use a Viterbi-like algorithm to find the globally optimal path:
 
-```{r path-finder, eval=FALSE}
+```{r path-finder}
 fp <- sound$to_formant_path(num_steps_up_down = 3L)
 
 # Find optimal path with custom weights
@@ -371,7 +371,7 @@ cat("Using", fp$get_number_of_candidates(), "candidates for robustness\n")
 
 Compare formants across time-aligned segments using a TextGrid:
 
-```{r use-case-vowels, eval=FALSE}
+```{r use-case-vowels}
 textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Get labelled intervals from the phone tier
@@ -405,7 +405,7 @@ print(phone_formants)
 
 ### 4. Batch Processing Multiple Files
 
-```{r batch-processing, eval=FALSE}
+```{r batch-processing}
 # Process multiple recordings with unknown speaker characteristics.
 # Replace `files` with your own vector of file paths; here we reuse the
 # bundled example file to show the pattern.
@@ -429,7 +429,7 @@ names(formants) <- files
 
 FormantPath stores multiple formant candidates:
 
-```{r memory-note, eval=FALSE}
+```{r memory-note}
 # 5 candidates = 5× the memory of standard Formant
 fp <- sound$to_formant_path(num_steps_up_down = 2L)  # 5 candidates
 # Memory ≈ 5 × size of single Formant object
@@ -446,7 +446,7 @@ FormantPath fits `num_candidates` formant tracks per call instead of one, so
 expect its cost to scale roughly with the number of candidates requested.
 Measure on your own data:
 
-```{r timing, eval=FALSE}
+```{r timing}
 system.time(frm_result <- sound$to_formant_burg())
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 ```
@@ -500,7 +500,7 @@ Parselmouth does not currently expose FormantPath - only standard `to_formant()`
 
 **Solution**: Increase `ceiling_step_fraction` to 0.10 or higher
 
-```{r troubleshoot-similar, eval=FALSE}
+```{r troubleshoot-similar}
 # Instead of this (too narrow)
 fp <- sound$to_formant_path(
   formant_ceiling = 5500,
@@ -522,7 +522,7 @@ fp <- sound$to_formant_path(
 
 **Solution**: Increase `max_num_formants` or adjust `formant_ceiling`
 
-```{r troubleshoot-gaps, eval=FALSE}
+```{r troubleshoot-gaps}
 fp <- sound$to_formant_path(
   max_num_formants = 6,  # Instead of 5
   formant_ceiling = 5500,
@@ -534,7 +534,7 @@ fp <- sound$to_formant_path(
 
 **Solution**: Reduce candidates or increase time step
 
-```{r troubleshoot-slow, eval=FALSE}
+```{r troubleshoot-slow}
 # Faster: fewer candidates, larger time step
 fp <- sound$to_formant_path(
   time_step = 0.010,         # Instead of 0.005

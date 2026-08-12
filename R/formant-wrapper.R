@@ -59,16 +59,15 @@
 #'   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 #' )
 #' f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
-#' \dontrun{
-#' # Example with external file
-#' sound <- Sound("example.wav")
+#'
+#' # The same analysis on a recording read from disk
+#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' formant <- sound$to_formant_burg(
 #'   time_step = 0.01, max_number_of_formants = 5,
 #'   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 #' )
-#' f1_at_1s <- formant$get_value_at_time(formant_number = 1, time = 1.0, unit = "hertz")
+#' f1_at_02s <- formant$get_value_at_time(formant_number = 1, time = 0.2, unit = "hertz")
 #' mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "hertz")
-#' }
 #'
 #' @name Formant
 NULL

@@ -177,7 +177,7 @@ print(phone_data)
 
 Extract specific portions of audio based on TextGrid intervals:
 
-```{r extract_segments, eval=FALSE}
+```{r extract_segments}
 # Extract the "hello" word (interval 2 of word tier)
 hello_start <- tg$get_interval_start_time(1, 2)
 hello_end <- tg$get_interval_end_time(1, 2)
@@ -349,9 +349,14 @@ print(vowel_features)
 
 ### Export to CSV
 
-```{r export_csv, eval=FALSE}
-# Save for statistical analysis
-write.csv(vowel_features, "vowel_acoustic_features.csv", row.names = FALSE)
+```{r export_csv}
+# Save for statistical analysis (tempdir() here so the vignette writes nothing
+# into your working directory; use a real path in your own scripts)
+write.csv(
+  vowel_features,
+  file.path(tempdir(), "vowel_acoustic_features.csv"),
+  row.names = FALSE
+)
 ```
 
 ### Visualization

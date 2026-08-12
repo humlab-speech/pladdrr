@@ -14,8 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
-  fig.height = 5,
-  eval = FALSE  # Disable evaluation due to complex dependencies
+  fig.height = 5
 )
 ```
 
@@ -187,7 +186,7 @@ pre_emphasis <- 50
 
 Apply pre-emphasis to boost higher frequencies before formant analysis:
 
-```{r preemphasis, eval=FALSE}
+```{r preemphasis}
 # Note: pre_emphasize modifies sound in-place, so we skip for demonstration
 # sound$pre_emphasize(from_frequency = pre_emphasis)
 ```
@@ -394,7 +393,7 @@ cat(paste(unique(potential_diphthongs), collapse = ", "), "\n")
 
 ### Basic F1-F2 Vowel Plot
 
-```{r vowel_plot_base, eval=FALSE}
+```{r vowel_plot_base}
 # Using base R graphics
 plot(
   vowel_features$f2_50,
@@ -418,7 +417,7 @@ text(
 
 ### Advanced Plotting with ggplot2
 
-```{r vowel_plot_ggplot2, eval=FALSE}
+```{r vowel_plot_ggplot2}
 library(ggplot2)
 
 # Normalized vowel space
@@ -453,9 +452,11 @@ ggplot(vowel_features) +
 
 ### Faceted by Speaker or Condition
 
-```{r faceted_plot, eval=FALSE}
-# For multi-speaker data:
-# vowel_features$speaker <- ... (add speaker ID)
+```{r faceted_plot}
+# With multi-speaker data you would already have a speaker column. The demo
+# data above comes from a single synthesised talker, so label it as such to
+# show the faceting call working.
+vowel_features$speaker <- "S01"
 
 ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowel)) +
   geom_point(size = 2) +
@@ -476,7 +477,7 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
 
 ### ANOVA: Vowel Differences
 
-```{r anova_example, eval=FALSE}
+```{r anova_example}
 # Test if vowels differ in F1
 f1_model <- aov(f1_50 ~ vowel, data = vowel_features)
 summary(f1_model)
@@ -491,10 +492,11 @@ For multi-speaker data with repeated measures, add a `speaker` column and fit a 
 intercept (requires the `lme4` package, not a pladdrr dependency):
 
 ```{r mixed_effects, eval=FALSE}
+# Not evaluated here: lme4 is not a pladdrr dependency, and a random intercept
+# needs genuine repeated measures across several speakers, which the synthetic
+# single-talker demo data above does not have.
 library(lme4)
 
-# vowel_features here must include a speaker column, e.g.
-# vowel_features$speaker <- ...
 model <- lmer(f1_50 ~ vowel + (1 | speaker), data = vowel_features)
 summary(model)
 ```
@@ -581,7 +583,7 @@ for (ceiling in ceilings) {
 
 Check for outliers and tracking errors:
 
-```{r quality_control, eval=FALSE}
+```{r quality_control}
 # Flag extreme values
 f1_outliers <- vowel_features$f1_50 > 1000 | vowel_features$f1_50 < 200
 f2_outliers <- vowel_features$f2_50 > 3000 | vowel_features$f2_50 < 500
@@ -606,7 +608,7 @@ Select normalization based on research question:
 
 Handle tracking failures gracefully:
 
-```{r missing_data, eval=FALSE}
+```{r missing_data}
 # Remove rows with missing formants
 vowel_features_clean <- vowel_features[
   complete.cases(vowel_features[, c("f1_50", "f2_50")]),

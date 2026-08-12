@@ -12,8 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
-  fig.height = 5,
-  eval = FALSE  # Disable execution during package build; chunks are verified manually
+  fig.height = 5
 )
 ```
 
@@ -82,22 +81,22 @@ cat("  Sampling rate:", sound$get_sampling_frequency(), "Hz\n")
 
 ### Save to File
 
-```{r save-file, eval=FALSE}
+```{r save-file}
 # Save synthesized audio
-sound$save("vowel_a.wav", "WAV")
+sound$save(file.path(tempdir(), "vowel_a.wav"), "WAV")
 
 # Save KlattGrid parameters
-kg$save("vowel_a.KlattGrid")
+kg$save(file.path(tempdir(), "vowel_a.KlattGrid"))
 ```
 
 ### Avoid Empty Grids
 
 Do not use the empty constructor for synthesis:
 
-```{r empty-grid-warning, eval=FALSE}
-# THIS WILL ERROR
+```{r empty-grid-warning, error=TRUE}
+# THIS WILL ERROR -- the error below is the point of the example
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()  # errors: "Pitch tier should not be empty."
+sound <- kg$to_sound()
 ```
 
 **Why?** Empty grids need complete initialization:
@@ -243,7 +242,7 @@ ggplot(df, aes(time, frequency)) +
 
 ### Common Pitch Patterns
 
-```{r pitch-patterns, eval=FALSE}
+```{r pitch-patterns}
 # Flat pitch (citation form)
 kg_flat <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 120,
@@ -272,7 +271,7 @@ kg_rise$add_pitch_point(0.5, 180)  # Rise from 100 to 180 Hz
 
 Create smooth vowel-to-vowel transitions:
 
-```{r diphthong, eval=FALSE}
+```{r diphthong}
 # /ai/ diphthong: /a/ → /i/ (as in "buy")
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 150,
@@ -315,7 +314,7 @@ ggplot(df, aes(time, frequency, color = factor(formant_number))) +
 
 Generate perceptual continua for experiments:
 
-```{r vowel-continuum, eval=FALSE}
+```{r vowel-continuum}
 # Create /i/ to /u/ continuum (10 steps)
 f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) → 310 (/u/)
 f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 → 870
@@ -332,7 +331,7 @@ vowel_continuum <- lapply(1:10, function(i) {
 
 # Save each step
 for (i in 1:10) {
-  vowel_continuum[[i]]$save(sprintf("continuum_%02d.wav", i), "WAV")
+  vowel_continuum[[i]]$save(file.path(tempdir(), sprintf("continuum_%02d.wav", i)), "WAV")
 }
 ```
 
@@ -425,7 +424,7 @@ cat("\nSynthetic sound matches real speech formant averages\n")
 
 Manipulate voicing amplitude for breathiness or creaky voice:
 
-```{r voice-quality, eval=FALSE}
+```{r voice-quality}
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 120,
   f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
@@ -502,7 +501,7 @@ cat("\nResynthesis complete - compare original vs synthetic\n")
 
 Control stimuli precisely for categorical perception studies:
 
-```{r perceptual-experiment, eval=FALSE}
+```{r perceptual-experiment}
 # Voice onset time (VOT) continuum simulation
 # Generate /ba/ to /pa/ continuum by manipulating voice onset
 
@@ -529,7 +528,7 @@ stimuli <- lapply(vot_values, function(vot_ms) {
 
 Create intermediate voices between two speakers:
 
-```{r voice-morphing, eval=FALSE}
+```{r voice-morphing}
 # Male voice parameters
 f1_male <- 730
 f2_male <- 1090
@@ -562,7 +561,7 @@ morphed_voices <- lapply(morph_steps, function(alpha) {
 
 Demonstrate formant-vowel relationships interactively:
 
-```{r teaching-demo, eval=FALSE}
+```{r teaching-demo}
 # Function to synthesize any vowel from F1/F2
 synthesize_vowel <- function(f1, f2, label = "") {
   kg <- KlattGrid_createFromVowel(
@@ -571,7 +570,7 @@ synthesize_vowel <- function(f1, f2, label = "") {
   )
   
   sound <- kg$to_sound()
-  filename <- sprintf("vowel_%s_F1%d_F2%d.wav", label, f1, f2)
+  filename <- file.path(tempdir(), sprintf("vowel_%s_F1%d_F2%d.wav", label, f1, f2))
   sound$save(filename, "WAV")
   
   cat(sprintf("Created %s: F1=%d, F2=%d Hz\n", label, f1, f2))
@@ -592,7 +591,7 @@ synthesize_vowel(310, 870, "u")
 **Workaround**: Always use `KlattGrid_createFromVowel()` or `KlattGrid_createExample()`
 
 **Example of safe usage:**
-```{r safe-usage, eval=FALSE}
+```{r safe-usage, error=TRUE}
 # safe
 kg <- KlattGrid_createFromVowel(
   duration = 0.5, f0start = 120,

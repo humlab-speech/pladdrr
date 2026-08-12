@@ -96,21 +96,21 @@ dt_setkey <- function(dt, ...) {
   invisible(dt)
 }
 
+# Session state internal to the package. Held here rather than in options() so
+# that pladdrr never mutates the user's global R options.
+.pladdrr_state <- new.env(parent = emptyenv())
+
 #' Conditionally return data.table or data.frame
-#' 
+#'
 #' For backward compatibility, allows users to opt into data.frame returns.
 #' This is deprecated and will be removed in v5.0.
-#' 
+#'
 #' @param dt A data.table
 #' @return data.table or data.frame depending on options
 #' @keywords internal
 #' @examples
 #' dt <- data.table::data.table(x = 1:3)
 #' pladdrr:::.finalize_dataframe(dt)
-# Session state internal to the package. Held here rather than in options() so
-# that pladdrr never mutates the user's global R options.
-.pladdrr_state <- new.env(parent = emptyenv())
-
 .finalize_dataframe <- function(dt) {
   # Check if user explicitly wants data.frame (deprecated)
   if (isFALSE(getOption("pladdrr.return_datatable", default = TRUE))) {
