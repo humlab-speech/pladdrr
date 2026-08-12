@@ -204,14 +204,16 @@ implementation.</p>
 </h3>
 <p>Do not use the empty constructor for synthesis:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># THIS WILL ERROR -- the error below is the point of the example</span></span>
+<code class="sourceCode R"><span><span class="co"># THIS WILL ERROR -- the error below is the point of the example.</span></span>
+<span><span class="co"># Praat's own error text uses typographic quotes, which can break the</span></span>
+<span><span class="co"># CRAN vignette-rebuild pass under a non-UTF-8 locale, so it's caught and</span></span>
+<span><span class="co"># re-printed here as plain ASCII rather than let through raw.</span></span>
 <span><span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid.html">KlattGrid</a></span><span class="op">(</span>tmin <span class="op">=</span> <span class="fl">0</span>, tmax <span class="op">=</span> <span class="fl">1</span>, numberOfFormants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> to_sound failed: Pitch tier should not be empty.</span></span>
-<span><span class="co">#&gt; PhonationGrid “phonation”: no PhonationTier created.</span>ted.</span>
-<span><span class="co">#&gt; KlattGrid: no coupling could be set.</span></span>
-<span><span class="co">#&gt; KlattGrid: no Sound created.</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Error: uninitialized tiers (pitch, voicing, formants)\n"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: uninitialized tiers (pitch, voicing, formants)</span></span></code></pre></div>
 <p><strong>Why?</strong> Empty grids need complete initialization: -
 Pitch tier (fundamental frequency) - Voicing amplitude tier (phonation)
 - All formant frequency tiers (F1, F2, F3, …) - All formant bandwidth
@@ -290,7 +292,7 @@ tiers (B1, B2, B3, …)</p>
 </tr>
 <tr class="even">
 <td>bit</td>
-<td>/ɪ/</td>
+<td>/ih/</td>
 <td>400</td>
 <td>2000</td>
 <td>2550</td>
@@ -306,7 +308,7 @@ tiers (B1, B2, B3, …)</p>
 </tr>
 <tr class="even">
 <td>bet</td>
-<td>/ɛ/</td>
+<td>/eh/</td>
 <td>660</td>
 <td>1720</td>
 <td>2410</td>
@@ -314,7 +316,7 @@ tiers (B1, B2, B3, …)</p>
 </tr>
 <tr class="odd">
 <td>bat</td>
-<td>/æ/</td>
+<td>/ae/</td>
 <td>860</td>
 <td>1760</td>
 <td>2390</td>
@@ -330,7 +332,7 @@ tiers (B1, B2, B3, …)</p>
 </tr>
 <tr class="odd">
 <td>bought</td>
-<td>/ɔ/</td>
+<td>/ao/</td>
 <td>570</td>
 <td>840</td>
 <td>2410</td>
@@ -346,7 +348,7 @@ tiers (B1, B2, B3, …)</p>
 </tr>
 <tr class="odd">
 <td>book</td>
-<td>/ʊ/</td>
+<td>/uh/</td>
 <td>440</td>
 <td>1020</td>
 <td>2240</td>
@@ -435,7 +437,7 @@ tiers (B1, B2, B3, …)</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#E41A1C"</span>, size <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Question Intonation Pattern"</span>,</span>
-<span>    subtitle <span class="op">=</span> <span class="st">"Rising pitch contour: 120 → 105 → 150 Hz"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"Rising pitch contour: 120 -&gt; 105 -&gt; 150 Hz"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Time (s)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -476,7 +478,7 @@ tiers (B1, B2, B3, …)</p>
 </h3>
 <p>Create smooth vowel-to-vowel transitions:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># /ai/ diphthong: /a/ → /i/ (as in "buy")</span></span>
+<code class="sourceCode R"><span><span class="co"># /ai/ diphthong: /a/ -&gt; /i/ (as in "buy")</span></span>
 <span><span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
 <span>  duration <span class="op">=</span> <span class="fl">0.5</span>, f0start <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>  f1 <span class="op">=</span> <span class="fl">730</span>, b1 <span class="op">=</span> <span class="fl">80</span>,      <span class="co"># Start: /a/</span></span>
@@ -485,9 +487,9 @@ tiers (B1, B2, B3, …)</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Transition to /i/ at end (formantType 1 = oral formants)</span></span>
-<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">280</span><span class="op">)</span>   <span class="co"># F1: 730 → 280 Hz</span></span>
-<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">0.5</span>, <span class="fl">2250</span><span class="op">)</span>  <span class="co"># F2: 1090 → 2250 Hz</span></span>
-<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">0.5</span>, <span class="fl">2890</span><span class="op">)</span>  <span class="co"># F3: 2440 → 2890 Hz</span></span>
+<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">280</span><span class="op">)</span>   <span class="co"># F1: 730 -&gt; 280 Hz</span></span>
+<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">0.5</span>, <span class="fl">2250</span><span class="op">)</span>  <span class="co"># F2: 1090 -&gt; 2250 Hz</span></span>
+<span><span class="va">kg</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">0.5</span>, <span class="fl">2890</span><span class="op">)</span>  <span class="co"># F3: 2440 -&gt; 2890 Hz</span></span>
 <span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -505,7 +507,7 @@ tiers (B1, B2, B3, …)</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Diphthong /ai/ Formant Transitions"</span>,</span>
-<span>    subtitle <span class="op">=</span> <span class="st">"/a/ → /i/ transition over 500 ms"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"/a/ -&gt; /i/ transition over 500 ms"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Time (s)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"Formant"</span></span>
@@ -520,8 +522,8 @@ tiers (B1, B2, B3, …)</p>
 <p>Generate perceptual continua for experiments:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create /i/ to /u/ continuum (10 steps)</span></span>
-<span><span class="va">f1_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">280</span>, <span class="fl">310</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>  <span class="co"># F1: 280 (/i/) → 310 (/u/)</span></span>
-<span><span class="va">f2_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2250</span>, <span class="fl">870</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>  <span class="co"># F2: 2250 → 870</span></span>
+<span><span class="va">f1_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">280</span>, <span class="fl">310</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>  <span class="co"># F1: 280 (/i/) -&gt; 310 (/u/)</span></span>
+<span><span class="va">f2_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2250</span>, <span class="fl">870</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>  <span class="co"># F2: 2250 -&gt; 870</span></span>
 <span></span>
 <span><span class="va">vowel_continuum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
@@ -669,7 +671,7 @@ tiers (B1, B2, B3, …)</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="analysis-synthesis-workflow">Analysis → Synthesis Workflow<a class="anchor" aria-label="anchor" href="#analysis-synthesis-workflow"></a>
+<h2 id="analysis---synthesis-workflow">Analysis -&gt; Synthesis Workflow<a class="anchor" aria-label="anchor" href="#analysis---synthesis-workflow"></a>
 </h2>
 <div class="section level3">
 <h3 id="complete-pipeline">Complete Pipeline<a class="anchor" aria-label="anchor" href="#complete-pipeline"></a>
@@ -833,12 +835,11 @@ tiers (B1, B2, B3, …)</p>
 <span></span>
 <span><span class="co"># unsafe - errors, uninitialized tiers</span></span>
 <span><span class="va">kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/KlattGrid.html">KlattGrid</a></span><span class="op">(</span>tmin <span class="op">=</span> <span class="fl">0</span>, tmax <span class="op">=</span> <span class="fl">1</span>, numberOfFormants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span>  <span class="co"># errors</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> to_sound failed: Pitch tier should not be empty.</span></span>
-<span><span class="co">#&gt; PhonationGrid “phonation”: no PhonationTier created.</span>ted.</span>
-<span><span class="co">#&gt; KlattGrid: no coupling could be set.</span></span>
-<span><span class="co">#&gt; KlattGrid: no Sound created.</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="va">kg</span><span class="op">$</span><span class="fu">to_sound</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Error: uninitialized tiers (pitch, voicing, formants)\n"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: uninitialized tiers (pitch, voicing, formants)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="limited-tier-manipulation">2. Limited Tier Manipulation<a class="anchor" aria-label="anchor" href="#limited-tier-manipulation"></a>
@@ -873,7 +874,7 @@ synthesis</li>
 <strong>Start with known formant values</strong> from the reference
 table</li>
 <li>
-<strong>Adjust formants gradually</strong> (±50-100 Hz steps)</li>
+<strong>Adjust formants gradually</strong> (+/-50-100 Hz steps)</li>
 <li>
 <strong>Keep bandwidths proportional</strong>: B1 &lt; B2 &lt; B3
 (typically 50-80-120 Hz)</li>
@@ -924,7 +925,7 @@ instead)</li>
 <p><strong>Cause</strong>: Formant values out of range or wrong
 bandwidths</p>
 <p><strong>Solution</strong>: - Check F1 &lt; F2 &lt; F3 relationship -
-Use bandwidth ratio B1:B2:B3 ≈ 1:1.5:2 - Verify pitch is in 80-300 Hz
+Use bandwidth ratio B1:B2:B3 ~ 1:1.5:2 - Verify pitch is in 80-300 Hz
 range</p>
 </div>
 <div class="section level3">

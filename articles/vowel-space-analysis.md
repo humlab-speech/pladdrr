@@ -499,7 +499,7 @@ ggplot(vowel_features) +
   scale_x_reverse() +
   scale_y_reverse() +
   labs(
-    title = "Vowel Trajectories (20% → 80%)",
+    title = "Vowel Trajectories (20% -> 80%)",
     x = "F2 (Hz)",
     y = "F1 (Hz)"
   ) +

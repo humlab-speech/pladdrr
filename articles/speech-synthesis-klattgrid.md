@@ -95,14 +95,16 @@ Do not use the empty constructor for synthesis:
 
 ``` r
 
-# THIS WILL ERROR -- the error below is the point of the example
+# THIS WILL ERROR -- the error below is the point of the example.
+# Praat's own error text uses typographic quotes, which can break the
+# CRAN vignette-rebuild pass under a non-UTF-8 locale, so it's caught and
+# re-printed here as plain ASCII rather than let through raw.
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()
-#> Error:
-#> ! to_sound failed: Pitch tier should not be empty.
-#> PhonationGrid “phonation”: no PhonationTier created.ted.
-#> KlattGrid: no coupling could be set.
-#> KlattGrid: no Sound created.
+tryCatch(
+  kg$to_sound(),
+  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+)
+#> Error: uninitialized tiers (pitch, voicing, formants)
 ```
 
 **Why?** Empty grids need complete initialization: - Pitch tier
@@ -167,18 +169,18 @@ cat("  /u/: F1=", 310, " F2=", 870, " Hz (high back)\n", sep="")
 
 Adult male (~120 Hz pitch):
 
-| Vowel  | IPA | F1 (Hz) | F2 (Hz) | F3 (Hz) | Example Word |
-|--------|-----|---------|---------|---------|--------------|
-| beet   | /i/ | 280     | 2250    | 2890    | “beet”       |
-| bit    | /ɪ/ | 400     | 2000    | 2550    | “bit”        |
-| bait   | /e/ | 550     | 1770    | 2490    | “bait”       |
-| bet    | /ɛ/ | 660     | 1720    | 2410    | “bet”        |
-| bat    | /æ/ | 860     | 1760    | 2390    | “bat”        |
-| father | /a/ | 730     | 1090    | 2440    | “father”     |
-| bought | /ɔ/ | 570     | 840     | 2410    | “bought”     |
-| boat   | /o/ | 500     | 700     | 2410    | “boat”       |
-| book   | /ʊ/ | 440     | 1020    | 2240    | “book”       |
-| boot   | /u/ | 310     | 870     | 2250    | “boot”       |
+| Vowel  | IPA  | F1 (Hz) | F2 (Hz) | F3 (Hz) | Example Word |
+|--------|------|---------|---------|---------|--------------|
+| beet   | /i/  | 280     | 2250    | 2890    | “beet”       |
+| bit    | /ih/ | 400     | 2000    | 2550    | “bit”        |
+| bait   | /e/  | 550     | 1770    | 2490    | “bait”       |
+| bet    | /eh/ | 660     | 1720    | 2410    | “bet”        |
+| bat    | /ae/ | 860     | 1760    | 2390    | “bat”        |
+| father | /a/  | 730     | 1090    | 2440    | “father”     |
+| bought | /ao/ | 570     | 840     | 2410    | “bought”     |
+| boat   | /o/  | 500     | 700     | 2410    | “boat”       |
+| book   | /uh/ | 440     | 1020    | 2240    | “book”       |
+| boot   | /u/  | 310     | 870     | 2250    | “boot”       |
 
 ### Voice Types
 
@@ -253,7 +255,7 @@ ggplot(df, aes(time, frequency)) +
   geom_point(color = "#E41A1C", size = 2, alpha = 0.5) +
   labs(
     title = "Question Intonation Pattern",
-    subtitle = "Rising pitch contour: 120 → 105 → 150 Hz",
+    subtitle = "Rising pitch contour: 120 -> 105 -> 150 Hz",
     x = "Time (s)",
     y = "Frequency (Hz)"
   ) +
@@ -296,7 +298,7 @@ Create smooth vowel-to-vowel transitions:
 
 ``` r
 
-# /ai/ diphthong: /a/ → /i/ (as in "buy")
+# /ai/ diphthong: /a/ -> /i/ (as in "buy")
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 150,
   f1 = 730, b1 = 80,      # Start: /a/
@@ -305,9 +307,9 @@ kg <- klattgrid_create_from_vowel(
 )
 
 # Transition to /i/ at end (formantType 1 = oral formants)
-kg$add_formant_point(1, 1, 0.5, 280)   # F1: 730 → 280 Hz
-kg$add_formant_point(1, 2, 0.5, 2250)  # F2: 1090 → 2250 Hz
-kg$add_formant_point(1, 3, 0.5, 2890)  # F3: 2440 → 2890 Hz
+kg$add_formant_point(1, 1, 0.5, 280)   # F1: 730 -> 280 Hz
+kg$add_formant_point(1, 2, 0.5, 2250)  # F2: 1090 -> 2250 Hz
+kg$add_formant_point(1, 3, 0.5, 2890)  # F3: 2440 -> 2890 Hz
 
 sound <- kg$to_sound()
 
@@ -325,7 +327,7 @@ ggplot(df, aes(time, frequency, color = factor(formant_number))) +
   ) +
   labs(
     title = "Diphthong /ai/ Formant Transitions",
-    subtitle = "/a/ → /i/ transition over 500 ms",
+    subtitle = "/a/ -> /i/ transition over 500 ms",
     x = "Time (s)",
     y = "Frequency (Hz)",
     color = "Formant"
@@ -343,8 +345,8 @@ Generate perceptual continua for experiments:
 ``` r
 
 # Create /i/ to /u/ continuum (10 steps)
-f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) → 310 (/u/)
-f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 → 870
+f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) -> 310 (/u/)
+f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 -> 870
 
 vowel_continuum <- lapply(1:10, function(i) {
   kg <- klattgrid_create_from_vowel(
@@ -493,7 +495,7 @@ cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
 #>   Uses multiple pitch points, formant tiers, and amplitude control
 ```
 
-## Analysis → Synthesis Workflow
+## Analysis -\> Synthesis Workflow
 
 ### Complete Pipeline
 
@@ -664,12 +666,11 @@ kg <- klattgrid_create_example()
 
 # unsafe - errors, uninitialized tiers
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
-sound <- kg$to_sound()  # errors
-#> Error:
-#> ! to_sound failed: Pitch tier should not be empty.
-#> PhonationGrid “phonation”: no PhonationTier created.ted.
-#> KlattGrid: no coupling could be set.
-#> KlattGrid: no Sound created.
+tryCatch(
+  kg$to_sound(),
+  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+)
+#> Error: uninitialized tiers (pitch, voicing, formants)
 ```
 
 ### 2. Limited Tier Manipulation
@@ -695,7 +696,7 @@ unnatural)
     [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)**
     for vowel synthesis
 2.  **Start with known formant values** from the reference table
-3.  **Adjust formants gradually** (±50-100 Hz steps)
+3.  **Adjust formants gradually** (+/-50-100 Hz steps)
 4.  **Keep bandwidths proportional**: B1 \< B2 \< B3 (typically
     50-80-120 Hz)
 5.  **Match pitch to speaker type**: male ~100-120 Hz, female ~200-220
@@ -729,7 +730,7 @@ instead of empty grid
 **Cause**: Formant values out of range or wrong bandwidths
 
 **Solution**: - Check F1 \< F2 \< F3 relationship - Use bandwidth ratio
-B1:B2:B3 ≈ 1:1.5:2 - Verify pitch is in 80-300 Hz range
+B1:B2:B3 ~ 1:1.5:2 - Verify pitch is in 80-300 Hz range
 
 ### No sound output
 
