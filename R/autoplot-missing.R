@@ -1271,7 +1271,7 @@ autoplot.VocalTract <- function(object, garnish = TRUE,
   plot_type <- match.arg(plot_type)
   areas <- object$get_areas()
   n <- length(areas)
-  dx <- 0.01
+  dx <- object$get_section_length()
   df <- data.frame(
     distance = seq(0, (n - 1) * dx, length.out = n), area = areas)
   if (plot_type == "area") {
@@ -1296,7 +1296,7 @@ autoplot.VocalTract <- function(object, garnish = TRUE,
 autolayer.VocalTract <- function(object, ...) {
   areas <- object$get_areas()
   n <- length(areas)
-  dx <- 0.01
+  dx <- object$get_section_length()
   df <- data.frame(
     distance = seq(0, (n - 1) * dx, length.out = n), area = areas)
   ggplot2::geom_line(data = df,

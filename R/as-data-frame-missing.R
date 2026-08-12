@@ -129,6 +129,6 @@ as.data.frame.MelSpectrogram <- function(x, ...) {
 as.data.frame.VocalTract <- function(x, ...) {
   areas <- x$get_areas()
   n <- length(areas)
-  dx <- 0.01
+  dx <- x$get_section_length()
   data.frame(distance = seq(0, (n - 1) * dx, length.out = n), area = areas)
 }
