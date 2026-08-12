@@ -27,6 +27,7 @@
 // [[Rcpp::plugins(cpp17)]]
 
 #include "praat_types.h"
+#include "melder_utf8.h"
 #include <Rcpp.h>
 #include "praat_xptr_utils.h"
 
@@ -201,7 +202,7 @@ List textgrid_extract_intervals_batch(
     // Return structured list
     List result = List::create(
         Named("indices") = IntegerVector(indices.begin(), indices.end()),
-        Named("labels") = CharacterVector(labels.begin(), labels.end()),
+        Named("labels") = melder_utf8_vector(labels),
         Named("start_times") = NumericVector(start_times.begin(), start_times.end()),
         Named("end_times") = NumericVector(end_times.begin(), end_times.end()),
         Named("n_total") = n_intervals,
@@ -255,7 +256,7 @@ CharacterVector textgrid_get_all_labels(SEXP textgrid_xptr, int tier_number) {
     
     for (integer i = 1; i <= n_intervals; i++) {
         TextInterval interval = interval_tier->intervals.at[i];
-        result[i-1] = Melder_peek32to8(interval->text.get());
+        result[i-1] = melder_utf8(Melder_peek32to8(interval->text.get()));
     }
     
     return result;
@@ -322,7 +323,7 @@ DataFrame textgrid_interval_statistics_batch(SEXP textgrid_xptr, int tier_number
         TextInterval interval = interval_tier->intervals.at[i];
 
         indices[i-1] = i;
-        labels[i-1] = Melder_peek32to8(interval->text.get());
+        labels[i-1] = melder_utf8(Melder_peek32to8(interval->text.get()));
 
         start_arr[i-1] = interval->xmin;
         end_arr[i-1] = interval->xmax;
@@ -522,7 +523,7 @@ List textgrid_filter_xptr(
     // Return structured list
     List result = List::create(
         Named("indices") = IntegerVector(indices.begin(), indices.end()),
-        Named("labels") = CharacterVector(labels.begin(), labels.end()),
+        Named("labels") = melder_utf8_vector(labels),
         Named("start_times") = NumericVector(start_times.begin(), start_times.end()),
         Named("end_times") = NumericVector(end_times.begin(), end_times.end()),
         Named("n_total") = n_intervals,

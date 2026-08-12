@@ -426,6 +426,16 @@ for (i in 1:n_phones) {
   phone_durations$duration[i] <- end - start
 }
 
+# IPA symbols (e.g. the open-mid vowels MFA/Praat produce) are multi-byte
+# UTF-8. Some build environments render vignettes under a non-UTF-8 locale,
+# where R can't line-wrap multi-byte text for printing and errors out —
+# so escape non-ASCII phone labels to their Unicode code points for display.
+phone_durations$phone <- vapply(phone_durations$phone, function(s) {
+  codepoints <- utf8ToInt(enc2utf8(s))
+  if (all(codepoints < 128L)) return(s)
+  paste0(sprintf("\\u%04x", codepoints), collapse = "")
+}, character(1))
+
 # Analyze by phone class
 aggregate(duration ~ phone, data = phone_durations, FUN = mean)
 ```

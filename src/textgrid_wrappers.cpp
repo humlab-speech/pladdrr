@@ -24,6 +24,7 @@
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
 #include "datatable_utils.h"
+#include "melder_utf8.h"
 
 // Praat headers - TextGrid uses C++ features so no extern "C"
 #include "praat.github.io/sys/Data.h"
@@ -193,16 +194,16 @@ int textgrid_get_number_of_tiers(Rcpp::XPtr<structTextGrid> xptr) {
 // ============================================================================
 
 // [[Rcpp::export(.textgrid_get_tier_name)]]
-std::string textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
+Rcpp::String textgrid_get_tier_name(Rcpp::XPtr<structTextGrid> xptr, int tier_number) {
     return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         Function tier = xptr->tiers->at[tier_number];
-        return Melder_peek32to8(tier->name.get());
+        return melder_utf8(Melder_peek32to8(tier->name.get()));
     }, "Failed to get tier name");
 }
 
 // [[Rcpp::export(.textgrid_get_tier_names)]]
-std::vector<std::string> textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr) {
+Rcpp::CharacterVector textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr) {
     return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         std::vector<std::string> names;
@@ -210,7 +211,7 @@ std::vector<std::string> textgrid_get_tier_names(Rcpp::XPtr<structTextGrid> xptr
             Function tier = xptr->tiers->at[i];
             names.push_back(Melder_peek32to8(tier->name.get()));
         }
-        return names;
+        return melder_utf8_vector(names);
     }, "Failed to get tier names");
 }
 
@@ -284,14 +285,14 @@ double textgrid_get_interval_end_time(Rcpp::XPtr<structTextGrid> xptr, int tier_
 }
 
 // [[Rcpp::export(.textgrid_get_interval_text)]]
-std::string textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number) {
+Rcpp::String textgrid_get_interval_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int interval_number) {
     return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         if (interval_number < 1 || interval_number > tier->intervals.size)
             Rcpp::stop("Interval number out of range");
         TextInterval interval = tier->intervals.at[interval_number];
-        return Melder_peek32to8(interval->text.get());
+        return melder_utf8(Melder_peek32to8(interval->text.get()));
     }, "Failed to get interval text");
 }
 
@@ -306,14 +307,14 @@ int textgrid_get_interval_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_numb
 }
 
 // [[Rcpp::export(.textgrid_get_label_at_time)]]
-std::string textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
+Rcpp::String textgrid_get_label_at_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number, double time) {
     return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier(xptr.get(), tier_number);
         integer index = IntervalTier_timeToIndex(tier, time);
-        if (index == 0) return "";
+        if (index == 0) return melder_utf8("");
         TextInterval interval = tier->intervals.at[index];
-        return Melder_peek32to8(interval->text.get());
+        return melder_utf8(Melder_peek32to8(interval->text.get()));
     }, "Failed to get label at time");
 }
 
@@ -332,9 +333,9 @@ Rcpp::DataFrame textgrid_get_all_intervals(Rcpp::XPtr<structTextGrid> xptr, int 
             TextInterval interval = tier->intervals.at[i];
             starts[i-1] = interval->xmin;
             ends[i-1] = interval->xmax;
-            texts[i-1] = Melder_peek32to8(interval->text.get());
+            texts[i-1] = melder_utf8(Melder_peek32to8(interval->text.get()));
         }
-        
+
         return pladdrr::dt::create_datatable(
             Rcpp::List::create(
                 Rcpp::Named("start") = starts,
@@ -411,14 +412,14 @@ double textgrid_get_point_time(Rcpp::XPtr<structTextGrid> xptr, int tier_number,
 }
 
 // [[Rcpp::export(.textgrid_get_point_text)]]
-std::string textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number) {
+Rcpp::String textgrid_get_point_text(Rcpp::XPtr<structTextGrid> xptr, int tier_number, int point_number) {
     return praat_try_return([&]() {
         if (!xptr) Rcpp::stop("Invalid TextGrid pointer");
         TextTier tier = TextGrid_checkSpecifiedTierIsPointTier(xptr.get(), tier_number);
         if (point_number < 1 || point_number > tier->points.size)
             Rcpp::stop("Point number out of range");
         TextPoint point = tier->points.at[point_number];
-        return Melder_peek32to8(point->mark.get());
+        return melder_utf8(Melder_peek32to8(point->mark.get()));
     }, "Failed to get point text");
 }
 
@@ -435,7 +436,7 @@ Rcpp::DataFrame textgrid_get_all_points(Rcpp::XPtr<structTextGrid> xptr, int tie
         for (int i = 1; i <= n; i++) {
             TextPoint point = tier->points.at[i];
             times[i-1] = point->number;
-            texts[i-1] = Melder_peek32to8(point->mark.get());
+            texts[i-1] = melder_utf8(Melder_peek32to8(point->mark.get()));
         }
         
         return pladdrr::dt::create_datatable(
@@ -665,12 +666,12 @@ Rcpp::DataFrame textgrid_to_data_frame(
         
         return pladdrr::dt::create_datatable(
             Rcpp::List::create(
-                Rcpp::Named("tier_name") = tier_names,
+                Rcpp::Named("tier_name") = melder_utf8_vector(tier_names),
                 Rcpp::Named("tier_type") = tier_types,
                 Rcpp::Named("item_number") = item_numbers,
                 Rcpp::Named("start_time") = start_times,
                 Rcpp::Named("end_time") = end_times,
-                Rcpp::Named("label") = labels
+                Rcpp::Named("label") = melder_utf8_vector(labels)
             ),
             Rcpp::CharacterVector::create("tier_name", "tier_type", "item_number", "start_time", "end_time", "label"),
             Rcpp::CharacterVector::create("tier_name", "start_time")
