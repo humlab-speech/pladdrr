@@ -90,7 +90,7 @@ NULL
 }
 
 # Formant manipulation
-# formantType: 0=oral, 1=nasal, 2=frication, 3=tracheal, 4=nasal_anti, 5=tracheal_anti, 6=delta
+# formantType: 1=oral, 2=nasal, 3=frication, 4=tracheal, 5=nasal_anti, 6=tracheal_anti, 7=delta
 .klattgrid_methods$get_formant_at_time <- function(.self, formantType, iformant, t) {
   .self$.cpp$get_formant_at_time(as.integer(formantType), as.integer(iformant), t)
 }

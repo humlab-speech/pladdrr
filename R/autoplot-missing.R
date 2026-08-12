@@ -21,6 +21,12 @@
   df
 }
 
+.klattgrid_formant_type_code <- function(type) {
+  codes <- c(oral = 1L, nasal = 2L, frication = 3L, tracheal = 4L,
+             nasal_anti = 5L, tracheal_anti = 6L, delta = 7L)
+  unname(codes[[type]])
+}
+
 #' @rdname autoplot-methods
 #' @export
 autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
@@ -1329,7 +1335,7 @@ autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     rows <- list()
     for (t in times)
       for (f in seq_len(nf)) {
-        freq <- tryCatch(obj$get_formant_at_time(ftype, f, t),
+        freq <- tryCatch(obj$get_formant_at_time(.klattgrid_formant_type_code(ftype), f, t),
                          error = function(e) NA_real_)
         if (!is.na(freq))
           rows[[length(rows) + 1]] <- data.frame(
@@ -1376,7 +1382,7 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   rows <- list()
   for (t in times)
     for (f in seq_len(max_formant)) {
-      freq <- tryCatch(object$get_formant_at_time(formant_type, f, t),
+      freq <- tryCatch(object$get_formant_at_time(.klattgrid_formant_type_code(formant_type), f, t),
                        error = function(e) NA_real_)
       if (!is.na(freq))
         rows[[length(rows) + 1]] <- data.frame(

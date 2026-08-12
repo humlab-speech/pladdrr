@@ -57,7 +57,7 @@ as.data.frame.KlattGrid <- function(x, ...) {
   rows <- list()
   for (t in times) {
     for (f in seq_len(n_formants)) {
-      freq <- tryCatch(x$get_formant_at_time("oral", f, t),
+      freq <- tryCatch(x$get_formant_at_time(.klattgrid_formant_type_code("oral"), f, t),
                        error = function(e) NA_real_)
       if (!is.na(freq)) {
         rows[[length(rows) + 1]] <- data.frame(

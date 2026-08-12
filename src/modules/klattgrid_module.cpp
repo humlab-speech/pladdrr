@@ -250,12 +250,17 @@ public:
     // Formant frequency manipulation (formantType: 0=oral, 1=nasal, etc.)
     double get_formant_at_time(int formantType, int iformant, double t) {
         if (!is_valid()) Rcpp::stop("Invalid KlattGrid");
-        return KlattGrid_getFormantAtTime(
-            ptr.get(),
-            static_cast<kKlattGridFormantType>(formantType),
-            iformant,
-            t
-        );
+        try {
+            return KlattGrid_getFormantAtTime(
+                ptr.get(),
+                static_cast<kKlattGridFormantType>(formantType),
+                iformant,
+                t
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("get_formant_at_time failed: invalid formantType, iformant, or time");
+        }
     }
     
     void add_formant_point(int formantType, int iformant, double t, double value) {
@@ -295,12 +300,17 @@ public:
     // Bandwidth manipulation
     double get_bandwidth_at_time(int formantType, int iformant, double t) {
         if (!is_valid()) Rcpp::stop("Invalid KlattGrid");
-        return KlattGrid_getBandwidthAtTime(
-            ptr.get(),
-            static_cast<kKlattGridFormantType>(formantType),
-            iformant,
-            t
-        );
+        try {
+            return KlattGrid_getBandwidthAtTime(
+                ptr.get(),
+                static_cast<kKlattGridFormantType>(formantType),
+                iformant,
+                t
+            );
+        } catch (MelderError) {
+            Melder_clearError();
+            Rcpp::stop("get_bandwidth_at_time failed: invalid formantType, iformant, or time");
+        }
     }
     
     void add_bandwidth_point(int formantType, int iformant, double t, double value) {
