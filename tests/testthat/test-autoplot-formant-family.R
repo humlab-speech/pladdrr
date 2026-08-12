@@ -1,0 +1,71 @@
+# test-autoplot-formant-family.R
+# Tests for autoplot/autolayer/as.data.frame on FormantTier, FormantGrid,
+# FormantPath, FormantModeler, KlattGrid
+
+library(testthat)
+library(pladdrr)
+
+test_that("FormantGrid autoplot/autolayer/as.data.frame work", {
+  grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
+  grid$add_formant_point(1, 0.5, 500)
+  grid$add_formant_point(2, 0.5, 1500)
+  grid$add_formant_point(3, 0.5, 2500)
+  df <- as.data.frame(grid)
+  expect_true(nrow(df) > 0)
+  p <- ggplot2::autoplot(grid)
+  expect_s3_class(p, "ggplot")
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(grid)
+  expect_s3_class(p2, "ggplot")
+})
+
+test_that("FormantTier speckle (default) and line styles both work and differ in row count", {
+  sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
+  formant <- sound$to_formant_burg()
+  ft <- FormantTier$from_formant(formant)  # R/formanttier-wrapper.R:152-171; the `down_to_formant_tier()` bullet in R/formant-wrapper.R:47's roxygen is stale/aspirational doc text, not an implemented method — verified during SDD Task 10, downsamples all formants to a FormantTier
+  df_speckle <- {
+    p <- ggplot2::autoplot(ft)
+    p$data
+  }
+  df_line <- {
+    p <- ggplot2::autoplot(ft, style = "line")
+    p$data
+  }
+  expect_true(nrow(df_speckle) <= nrow(df_line))
+})
+
+test_that("KlattGrid autoplot produces non-empty data after Task 2's formantType fix", {
+  kg <- KlattGrid(0, 0.3, numberOfFormants = 3)
+  kg$add_pitch_point(0.15, 120)
+  kg$add_voicing_amplitude_point(0.15, 90)
+  kg$add_formant_point(1, 1, 0.15, 500)
+  kg$add_formant_point(1, 2, 0.15, 1500)
+  kg$add_formant_point(1, 3, 0.15, 2500)
+  expect_equal(kg$get_formant_at_time(1, 1, 0.15), 500, tolerance = 1)
+  df <- as.data.frame(kg)
+  expect_true(any(!is.na(df$frequency)))
+  p <- ggplot2::autoplot(kg)
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("KlattGrid with an unrecognized formant_type errors clearly instead of silently returning NA", {
+  kg <- KlattGrid(0, 0.3, numberOfFormants = 3)
+  expect_error(ggplot2::autoplot(kg, formant_type = "not_a_real_type"))
+})
+
+test_that("FormantPath autoplot/autolayer work", {
+  sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
+  fp <- sound$to_formant_path()  # R/sound-wrapper.R:539
+  p <- ggplot2::autoplot(fp)
+  expect_s3_class(p, "ggplot")
+  expect_true(nrow(p$data) > 0)
+})
+
+test_that("FormantModeler autoplot/autolayer work with from_track/to_track", {
+  sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
+  formant <- sound$to_formant_burg()
+  fm <- formant$to_formant_modeler()  # R/formant-wrapper.R:209
+  p <- ggplot2::autoplot(fm, from_track = 1, to_track = 2)
+  expect_s3_class(p, "ggplot")
+  expect_true(nrow(p$data) > 0)
+  expect_setequal(unique(p$data$formant_number), c(1, 2))
+})

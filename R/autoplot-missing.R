@@ -14,6 +14,9 @@
 }
 
 .prep_formant_df <- function(df, from_time, to_time, max_formant) {
+  if (!"formant_number" %in% names(df) && "formant" %in% names(df)) {
+    names(df)[names(df) == "formant"] <- "formant_number"
+  }
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
   df <- df[df$formant_number <= max_formant, ]
@@ -1138,15 +1141,32 @@ autolayer.Discriminant <- function(object, ...) {
     alpha = 0.6, size = 2, ...)
 }
 
+#' as.data.frame.FormantModeler() returns one row per time point, wide-format
+#' (F1_original, F1_modeled, F2_original, F2_modeled, ...). autoplot/autolayer
+#' need long format (time, formant_number, frequency) filtered to a track
+#' range; this reshapes on the *_modeled columns (the fitted/smoothed track,
+#' the point of a Modeler).
+.formant_modeler_long_df <- function(wide, from_track, to_track, n_tracks) {
+  if (to_track == 0L) to_track <- n_tracks
+  tracks <- seq.int(from_track, to_track)
+  rows <- lapply(tracks, function(tr) {
+    col <- paste0("F", tr, "_modeled")
+    if (!col %in% names(wide)) return(NULL)
+    data.frame(time = wide$time, formant_number = tr, frequency = wide[[col]])
+  })
+  rows <- rows[!vapply(rows, is.null, logical(1))]
+  if (length(rows) == 0) return(wide[0, c("time"), drop = FALSE])
+  do.call(rbind, rows)
+}
+
 #' @rdname autoplot-methods
 #' @export
 autoplot.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
     garnish = TRUE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
-  df <- as.data.frame(object)
-  if (to_track == 0L) to_track <- object$get_number_of_tracks()
-  df <- df[df$formant_number >= from_track & df$formant_number <= to_track, ]
+  df <- .formant_modeler_long_df(as.data.frame(object), from_track, to_track,
+                                  object$get_number_of_tracks())
   if (nrow(df) == 0) {
     warning("FormantModeler has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -1167,9 +1187,8 @@ autoplot.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
 #' @rdname autoplot-methods
 #' @export
 autolayer.FormantModeler <- function(object, from_track = 1L, to_track = 0L, ...) {
-  df <- as.data.frame(object)
-  if (to_track == 0L) to_track <- object$get_number_of_tracks()
-  df <- df[df$formant_number >= from_track & df$formant_number <= to_track, ]
+  df <- .formant_modeler_long_df(as.data.frame(object), from_track, to_track,
+                                  object$get_number_of_tracks())
   if (nrow(df) == 0) return(NULL)
   df$formant_label <- paste0("F", df$formant_number)
   list(
