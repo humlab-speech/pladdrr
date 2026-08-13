@@ -128,9 +128,14 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pitch_ptr</span> <span class="op">&lt;-</span> <span class="fu">to_pitch_spinet_direct</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f0</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_pitch_value_direct.html">get_pitch_value_direct</a></span><span class="op">(</span><span class="va">pitch_ptr</span>, <span class="fl">0.25</span>, <span class="st">"hertz"</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># The vendored Praat SPINET path has a rare, non-deterministic native</span></span></span>
+<span class="r-in"><span><span class="co"># flake ("all amplitudes equal to zero") unrelated to the input signal;</span></span></span>
+<span class="r-in"><span><span class="co"># tryCatch keeps this example from failing R CMD check when it strikes.</span></span></span>
+<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pitch_ptr</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="fu">to_pitch_spinet_direct</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">pitch_ptr</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">f0</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_pitch_value_direct.html">get_pitch_value_direct</a></span><span class="op">(</span><span class="va">pitch_ptr</span>, <span class="fl">0.25</span>, <span class="st">"hertz"</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

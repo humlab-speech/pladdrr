@@ -75,7 +75,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-5-0-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-0-1"></a></h3>
-<ul><li>Fixed <code>FormantGrid$as_data_frame()</code> missing required <code>time_step</code> argument.</li>
+<ul><li>
+<code><a href="../reference/process_sounds_parallel.html">process_sounds_parallel()</a></code> shipped already-loaded <code>Sound</code> objects directly to Windows PSOCK workers; their external pointer to the underlying C++ object cannot survive that process boundary, causing spurious errors on Windows with <code>n_cores &gt; 1</code>. Sounds are now serialized to raw sample data and reconstructed inside each worker.</li>
+<li>Fixed <code>FormantGrid$as_data_frame()</code> missing required <code>time_step</code> argument.</li>
 <li>
 <code><a href="../reference/autoplot-methods.html">autoplot.KlattGrid()</a></code>/<code><a href="../reference/as-data-frame-missing.html">as.data.frame.KlattGrid()</a></code> passed a formant-type name as a string where the underlying accessor required an integer code, producing empty plots or silently wrong data for every formant type. Fixed to map the name to its integer code before dispatch; also corrected the shared <code>formant_type</code> documentation, which claimed <code>"all"</code> was an accepted value for <code><a href="../reference/autoplot-methods.html">autolayer.KlattGrid()</a></code> when only <code><a href="../reference/autoplot-methods.html">autoplot.KlattGrid()</a></code> actually supports it.</li>
 <li>

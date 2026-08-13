@@ -20,6 +20,12 @@
 
 ### Bug fixes
 
+- [`process_sounds_parallel()`](https://humlab-speech.github.io/pladdrr/reference/process_sounds_parallel.md)
+  shipped already-loaded `Sound` objects directly to Windows PSOCK
+  workers; their external pointer to the underlying C++ object cannot
+  survive that process boundary, causing spurious errors on Windows with
+  `n_cores > 1`. Sounds are now serialized to raw sample data and
+  reconstructed inside each worker.
 - Fixed `FormantGrid$as_data_frame()` missing required `time_step`
   argument.
 - [`autoplot.KlattGrid()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)/[`as.data.frame.KlattGrid()`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)

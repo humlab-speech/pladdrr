@@ -478,11 +478,11 @@ citation("pladdrr")
 #> To cite pladdrr in publications use:
 #> 
 #>   Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms
-#>   of Praat. R package version 5.0.0.
+#>   of Praat. R package version 5.0.1.
 #>   https://doi.org/10.5281/zenodo.21884218
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by
-#>   computer [Computer program]. Version 6.4, retrieved from
+#>   computer [Computer program]. Version 6.4.47, retrieved from
 #>   https://praat.org/
 #> 
 #> Please also cite Praat itself:
