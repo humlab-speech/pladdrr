@@ -8,6 +8,40 @@
 ## Bug fixes
 
 * Fixed `FormantGrid$as_data_frame()` missing required `time_step` argument.
+* `autoplot.KlattGrid()`/`as.data.frame.KlattGrid()` passed a formant-type
+  name as a string where the underlying accessor required an integer code,
+  producing empty plots or silently wrong data for every formant type.
+  Fixed to map the name to its integer code before dispatch; also corrected
+  the shared `formant_type` documentation, which claimed `"all"` was an
+  accepted value for `autolayer.KlattGrid()` when only `autoplot.KlattGrid()`
+  actually supports it.
+* `as.data.frame.Cochleagram()` always errored.
+* `as.data.frame.LPC()` always errored, due to a typo'd `power_dB` column
+  name that did not exist on the object.
+* `autolayer.DTW()` plotted the wrong columns and crashed on some
+  `NULL`-valued paths.
+* `autoplot`/`autolayer`/`as.data.frame` for `Matrix`, `BarkSpectrogram`, and
+  `MelSpectrogram` plotted raw row/column bin indices instead of the real
+  time/frequency axis values.
+* `autoplot.Cepstrum()` defaulted to a power-cepstrum dB view; Praat's actual
+  default is a raw signed quefrency-domain view. Fixed the default and added
+  a `power` parameter to select the dB view explicitly.
+* `autoplot.ComplexSpectrogram()` and `autolayer.ComplexSpectrogram()` both
+  mislabeled linear amplitude values as dB and ignored `dynamic_range`.
+* `as.data.frame.VocalTract()`, `autoplot.VocalTract()`, and
+  `autolayer.VocalTract()` all hardcoded section spacing (`dx`) instead of
+  reading it from the object, giving wrong x-axis values whenever spacing
+  was non-default.
+* `autoplot.FormantTier()`/`autolayer.FormantTier()` defaulted to an
+  interpolated line view; Praat's actual default view is speckle (points).
+* `autoplot.FormantPath()` and `autoplot.FormantModeler()` always produced
+  empty plots — the former from a column-name mismatch, the latter from a
+  wide/long data-frame format mismatch.
+* `as.data.frame.PowerCepstrogram()` called a nonexistent `$as_data_frame()`
+  method and always crashed; fixed to route through `$to_matrix()`.
+* `Sound$extract_electroglottogram()` was never registered in the R6 method
+  table, despite its underlying C++ export existing and being registered;
+  every call crashed with "attempt to apply non-function".
 
 # pladdrr 5.0.0
 
