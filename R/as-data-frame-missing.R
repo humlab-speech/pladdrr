@@ -47,7 +47,7 @@ as.data.frame.PowerCepstrogram <- function(x, ...) {
   df <- as.data.frame(m)
   names(df)[names(df) == "col"] <- "time"
   names(df)[names(df) == "row"] <- "quefrency"
-  names(df)[names(df) == "value"] <- "power_dB"
+  names(df)[names(df) == "value"] <- "power"
   df
 }
 
@@ -177,5 +177,5 @@ as.data.frame.VocalTract <- function(x, ...) {
   areas <- x$get_areas()
   n <- length(areas)
   dx <- x$get_section_length()
-  data.frame(distance = seq(0, (n - 1) * dx, length.out = n), area = areas)
+  data.frame(distance = seq(0.5 * dx, by = dx, length.out = n), area = areas)
 }
