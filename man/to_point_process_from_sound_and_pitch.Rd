@@ -48,5 +48,5 @@ jitter <- pp_r6$get_jitter_local()
 
 }
 \seealso{
-[to_point_process_direct()] for the single-object Sound method
+\code{\link{to_point_process_direct}} for the single-object Sound method
 }

@@ -56,7 +56,7 @@ unlink(path)
 
 }
 \seealso{
-[Sound], [LongSound]
+\code{\link{Sound}}, \code{\link{LongSound}}
 
 Other batch-ops:
 \code{\link[=textgrid_merge]{textgrid_merge()}}

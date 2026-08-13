@@ -145,7 +145,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
-#' @seealso [to_pitch_ac_direct()], [to_pitch_cc_direct()] for full parameter control
+#' @seealso \code{\link{to_pitch_ac_direct}}, \code{\link{to_pitch_cc_direct}} for full parameter control
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
@@ -584,7 +584,7 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 #' q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
 #' q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
 #'
-#' @seealso [get_pitch_quantiles_batch()] for getting multiple quantiles at once
+#' @seealso \code{\link{get_pitch_quantiles_batch}} for getting multiple quantiles at once
 #' @export
 get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 0,
                                        unit = c("hertz", "semitones", "mel", "erb", "loghertz")) {
@@ -820,7 +820,7 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' pp_r6 <- PointProcess(.xptr = pp)
 #' jitter <- pp_r6$get_jitter_local()
 #'
-#' @seealso [to_point_process_direct()] for the single-object Sound method
+#' @seealso \code{\link{to_point_process_direct}} for the single-object Sound method
 #' @export
 to_point_process_from_sound_and_pitch <- function(sound, pitch) {
   sound_ptr <- extract_xptr(sound, "Sound")

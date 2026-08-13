@@ -85,24 +85,6 @@
 #' Unlike one-shot script execution, the interpreter maintains state between calls,
 #' enabling incremental script development and interactive exploration.
 #'
-#' @section Methods:
-#' \describe{
-#'   \item{\code{new()}}{Create new interpreter instance with empty state}
-#'   \item{\code{run(script)}}{Execute Praat script code, returns self for chaining}
-#'   \item{\code{get_variable(name)}}{Get variable value from interpreter}
-#'   \item{\code{set_variable(name, value)}}{Set variable value in interpreter}
-#'   \item{\code{eval(expression)}}{Evaluate expression and return result}
-#'   \item{\code{object_count()}}{Get count of objects in Praat object list}
-#'   \item{\code{list_objects()}}{List all objects (returns data.frame)}
-#'   \item{\code{get_object(name, type)}}{Get Praat object from interpreter's list}
-#'   \item{\code{get_object_by_id(id)}}{Get Praat object by ID}
-#'   \item{\code{set_object(name, object)}}{Add R object to Praat's object list}
-#'   \item{\code{remove_object(name)}}{Remove object by name}
-#'   \item{\code{remove_object_by_id(id)}}{Remove object by ID}
-#'   \item{\code{select_object(name, add)}}{Select object in Praat's list}
-#'   \item{\code{clear_objects()}}{Clear all objects from list}
-#' }
-#'
 #' @return An R6 object of class \code{PraatInterpreter}.
 #'
 #' @examples
@@ -134,40 +116,45 @@ PraatInterpreter <- R6::R6Class(
   "PraatInterpreter",
 
   public = list(
-    # Create new interpreter instance
+    #' @description
+    #' Create a new interpreter instance with empty state.
     initialize = function() {
       # Load Rcpp Module
       interp_mod <- get_module("interpreter_module")
       private$cpp <- interp_mod$RInterpreter$new()
     },
 
-    # Execute Praat script code
-    # @param script Character string with Praat script
-    # @return Self (invisibly), for method chaining
+    #' @description
+    #' Execute Praat script code.
+    #' @param script Character string with Praat script.
+    #' @return Self (invisibly), for method chaining.
     run = function(script) {
       private$cpp$run(script)
       invisible(self)
     },
 
-    # Get variable value from interpreter
-    # @param name Variable name
-    # @return Variable value
+    #' @description
+    #' Get a variable's value from the interpreter.
+    #' @param name Variable name.
+    #' @return Variable value.
     get_variable = function(name) {
       private$cpp$get_variable(name)
     },
 
-    # Set variable value in interpreter
-    # @param name Variable name
-    # @param value Variable value
-    # @return Self (invisibly)
+    #' @description
+    #' Set a variable's value in the interpreter.
+    #' @param name Variable name.
+    #' @param value Variable value.
+    #' @return Self (invisibly).
     set_variable = function(name, value) {
       private$cpp$set_variable(name, value)
       invisible(self)
     },
 
-    # Evaluate expression and return result
-    # @param expression Praat expression
-    # @return Result of expression
+    #' @description
+    #' Evaluate a Praat expression and return the result.
+    #' @param expression Praat expression.
+    #' @return Result of the expression.
     eval = function(expression) {
       # Try to determine result type and evaluate using interpreter context
       # Try numeric first
@@ -199,14 +186,16 @@ PraatInterpreter <- R6::R6Class(
       })
     },
 
-    # Get count of objects in Praat object list
-    # @return Integer count
+    #' @description
+    #' Get the count of objects in the Praat object list.
+    #' @return Integer count.
     object_count = function() {
       .praat_interpreter_object_count()
     },
 
-    # List all objects in Praat object list
-    # @return Data frame with id, name, class, selected columns
+    #' @description
+    #' List all objects in the Praat object list.
+    #' @return A data.frame with id, name, class, and selected columns.
     list_objects = function() {
       .praat_interpreter_list_objects()
     },
@@ -215,28 +204,31 @@ PraatInterpreter <- R6::R6Class(
     # Object Bridge: Transfer objects between R and Praat
     # ==========================================================================
 
-    # Get Praat object from interpreter's object list
-    # @param name Object name
-    # @param type Expected type (optional)
-    # @return R6 object
+    #' @description
+    #' Get a Praat object from the interpreter's object list.
+    #' @param name Object name.
+    #' @param type Expected type (optional).
+    #' @return An R6 object.
     get_object = function(name, type = NULL) {
       expected_type <- if (is.null(type)) "" else type
       xptr <- .praat_interpreter_get_object(name, expected_type)
       .wrap_praat_object(xptr)
     },
 
-    # Get Praat object by ID
-    # @param id Object ID
-    # @return R6 object
+    #' @description
+    #' Get a Praat object by ID.
+    #' @param id Object ID.
+    #' @return An R6 object.
     get_object_by_id = function(id) {
       xptr <- .praat_interpreter_get_object_by_id(as.integer(id))
       .wrap_praat_object(xptr)
     },
 
-    # Add R object to Praat's object list
-    # @param name Object name
-    # @param object PraatObject
-    # @return Object ID (invisibly)
+    #' @description
+    #' Add an R object to Praat's object list.
+    #' @param name Object name.
+    #' @param object A PraatObject.
+    #' @return Object ID (invisibly).
     set_object = function(name, object) {
       if (!inherits(object, "PraatObject")) {
         stop("object must be a PraatObject (Sound, Pitch, etc.)")
@@ -247,39 +239,45 @@ PraatInterpreter <- R6::R6Class(
       invisible(id)
     },
 
-    # Remove object from Praat's object list by name
-    # @param name Object name
-    # @return Self (invisibly)
+    #' @description
+    #' Remove an object from Praat's object list by name.
+    #' @param name Object name.
+    #' @return Self (invisibly).
     remove_object = function(name) {
       .praat_interpreter_remove_object(name)
       invisible(self)
     },
 
-    # Remove object from Praat's object list by ID
-    # @param id Object ID
-    # @return Self (invisibly)
+    #' @description
+    #' Remove an object from Praat's object list by ID.
+    #' @param id Object ID.
+    #' @return Self (invisibly).
     remove_object_by_id = function(id) {
       .praat_interpreter_remove_object_by_id(as.integer(id))
       invisible(self)
     },
 
-    # Select object in Praat's object list
-    # @param name Object name
-    # @param add If TRUE, add to selection
-    # @return Self (invisibly)
+    #' @description
+    #' Select an object in Praat's object list.
+    #' @param name Object name.
+    #' @param add If TRUE, add to the current selection.
+    #' @return Self (invisibly).
     select_object = function(name, add = FALSE) {
       .praat_interpreter_select_object(name, add)
       invisible(self)
     },
 
-    # Clear all objects from Praat's object list
-    # @return Self (invisibly)
+    #' @description
+    #' Clear all objects from Praat's object list.
+    #' @return Self (invisibly).
     clear_objects = function() {
       .praat_interpreter_clear_objects()
       invisible(self)
     },
 
-    # Print method
+    #' @description
+    #' Print a summary of the interpreter's current object list.
+    #' @return Self (invisibly).
     print = function() {
       cat("<PraatInterpreter>\n")
       n_objects <- self$object_count()

@@ -50,12 +50,12 @@ void praat_error_to_r(const std::string& error_msg) {
     Rcpp::stop("Praat error: " + error_msg);
 }
 
-//' Safe error wrapper for Praat calls
-//'
-//' Provides a consistent error handling pattern for Praat operations
-//'
-//' @param context Description of what operation failed
-//' @keywords internal
+// Safe error wrapper for Praat calls
+//
+// Provides a consistent error handling pattern for Praat operations
+//
+// @param context Description of what operation failed
+// @keywords internal
 void throw_praat_error(const std::string& context) {
     Rcpp::stop("Praat operation failed: " + context);
 }
@@ -64,13 +64,13 @@ void throw_praat_error(const std::string& context) {
 // Parameter Validation Utilities
 // ============================================================================
 
-//' Validate positive numeric parameter
-//'
-//' Ensures a numeric parameter is positive (> 0)
-//'
-//' @param value The value to check
-//' @param param_name Name of the parameter for error messages
-//' @keywords internal
+// Validate positive numeric parameter
+//
+// Ensures a numeric parameter is positive (> 0)
+//
+// @param value The value to check
+// @param param_name Name of the parameter for error messages
+// @keywords internal
 void validate_positive(double value, const std::string& param_name) {
     if (value <= 0.0) {
         Rcpp::stop("Parameter '" + param_name + "' must be positive, got: " +
@@ -78,13 +78,13 @@ void validate_positive(double value, const std::string& param_name) {
     }
 }
 
-//' Validate non-negative numeric parameter
-//'
-//' Ensures a numeric parameter is non-negative (>= 0)
-//'
-//' @param value The value to check
-//' @param param_name Name of the parameter for error messages
-//' @keywords internal
+// Validate non-negative numeric parameter
+//
+// Ensures a numeric parameter is non-negative (>= 0)
+//
+// @param value The value to check
+// @param param_name Name of the parameter for error messages
+// @keywords internal
 void validate_non_negative(double value, const std::string& param_name) {
     if (value < 0.0) {
         Rcpp::stop("Parameter '" + param_name + "' must be non-negative, got: " +
@@ -92,15 +92,15 @@ void validate_non_negative(double value, const std::string& param_name) {
     }
 }
 
-//' Validate numeric parameter is in range
-//'
-//' Ensures a numeric parameter falls within a specified range
-//'
-//' @param value The value to check
-//' @param min_val Minimum allowed value (inclusive)
-//' @param max_val Maximum allowed value (inclusive)
-//' @param param_name Name of the parameter for error messages
-//' @keywords internal
+// Validate numeric parameter is in range
+//
+// Ensures a numeric parameter falls within a specified range
+//
+// @param value The value to check
+// @param min_val Minimum allowed value (inclusive)
+// @param max_val Maximum allowed value (inclusive)
+// @param param_name Name of the parameter for error messages
+// @keywords internal
 void validate_range(double value, double min_val, double max_val,
                    const std::string& param_name) {
     if (value < min_val || value > max_val) {
@@ -110,13 +110,13 @@ void validate_range(double value, double min_val, double max_val,
     }
 }
 
-//' Validate integer parameter is positive
-//'
-//' Ensures an integer parameter is positive (> 0)
-//'
-//' @param value The value to check
-//' @param param_name Name of the parameter for error messages
-//' @keywords internal
+// Validate integer parameter is positive
+//
+// Ensures an integer parameter is positive (> 0)
+//
+// @param value The value to check
+// @param param_name Name of the parameter for error messages
+// @keywords internal
 void validate_positive_int(int value, const std::string& param_name) {
     if (value <= 0) {
         Rcpp::stop("Parameter '" + param_name + "' must be a positive integer, got: " +
@@ -128,13 +128,13 @@ void validate_positive_int(int value, const std::string& param_name) {
 // Sound Object Validation
 // ============================================================================
 
-//' Validate that an R list represents a valid sound object
-//'
-//' Checks that a list contains the required fields for a praat_sound object
-//'
-//' @param sound_obj R list representing a sound object
-//' @return true if valid, throws error if invalid
-//' @keywords internal
+// Validate that an R list represents a valid sound object
+//
+// Checks that a list contains the required fields for a praat_sound object
+//
+// @param sound_obj R list representing a sound object
+// @return true if valid, throws error if invalid
+// @keywords internal
 bool validate_sound_object(const List& sound_obj) {
     // Check required fields
     if (!sound_obj.containsElementNamed("values")) {
@@ -180,13 +180,13 @@ bool validate_sound_object(const List& sound_obj) {
 // Pitch Object Validation
 // ============================================================================
 
-//' Validate that an R list represents a valid pitch object
-//'
-//' Checks that a list contains the required fields for a praat_pitch object
-//'
-//' @param pitch_obj R list representing a pitch object
-//' @return true if valid, throws error if invalid
-//' @keywords internal
+// Validate that an R list represents a valid pitch object
+//
+// Checks that a list contains the required fields for a praat_pitch object
+//
+// @param pitch_obj R list representing a pitch object
+// @return true if valid, throws error if invalid
+// @keywords internal
 bool validate_pitch_object(const List& pitch_obj) {
     // Check class attribute
     if (!pitch_obj.hasAttribute("class")) {
@@ -215,14 +215,14 @@ bool validate_pitch_object(const List& pitch_obj) {
 // Type Conversion Utilities
 // ============================================================================
 
-//' Convert R logical to C++ bool with NA handling
-//'
-//' Safely converts R logical values to C++ bool, handling NA as false
-//'
-//' @param x R logical value
-//' @param default_val Default value if NA
-//' @return bool value
-//' @keywords internal
+// Convert R logical to C++ bool with NA handling
+//
+// Safely converts R logical values to C++ bool, handling NA as false
+//
+// @param x R logical value
+// @param default_val Default value if NA
+// @return bool value
+// @keywords internal
 bool logical_to_bool(LogicalVector x, bool default_val = false) {
     if (x.size() == 0) {
         return default_val;
@@ -233,13 +233,13 @@ bool logical_to_bool(LogicalVector x, bool default_val = false) {
     return x[0];
 }
 
-//' Convert R numeric to C++ double with NA handling
-//'
-//' Safely converts R numeric values to C++ double
-//'
-//' @param x R numeric value
-//' @return double value (returns R_NaN if NA)
-//' @keywords internal
+// Convert R numeric to C++ double with NA handling
+//
+// Safely converts R numeric values to C++ double
+//
+// @param x R numeric value
+// @return double value (returns R_NaN if NA)
+// @keywords internal
 double numeric_to_double(NumericVector x) {
     if (x.size() == 0) {
         return R_NaN;

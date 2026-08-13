@@ -630,7 +630,7 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #' merged_eq <- textgrid_merge(list(tg1, tg2), equalize_domains = TRUE)
 #'
 #' @family batch-ops
-#' @seealso [TextGrid] for TextGrid object creation
+#' @seealso \code{\link{TextGrid}} for TextGrid object creation
 #' @export
 textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
   if (!is.list(textgrids) || length(textgrids) == 0) {
@@ -692,7 +692,7 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' unlink(path)
 #'
 #' @family batch-ops
-#' @seealso [Sound], [LongSound]
+#' @seealso \code{\link{Sound}}, \code{\link{LongSound}}
 #' @export
 sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {
   if (!is.character(path) || length(path) != 1) {

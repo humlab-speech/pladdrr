@@ -37,5 +37,5 @@ stats <- get_pitch_stats_direct(pitch_ptr)
 
 }
 \seealso{
-[to_pitch_ac_direct()], [to_pitch_cc_direct()] for full parameter control
+\code{\link{to_pitch_ac_direct}}, \code{\link{to_pitch_cc_direct}} for full parameter control
 }

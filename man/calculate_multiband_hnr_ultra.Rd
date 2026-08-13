@@ -61,6 +61,6 @@ hnr_results$full_mean
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-[build_multiband_harmonicity()] and [multiband_hnr_stats()] for
+\code{\link{build_multiband_harmonicity}} and \code{\link{multiband_hnr_stats}} for
   the reusable multi-interval path
 }

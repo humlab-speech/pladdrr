@@ -31,7 +31,8 @@
 #'
 #' @section Conversion methods:
 #' \itemize{
-#'   \item \code{to_formant(margin)} - convert to a Formant object
+#'   \item \code{to_formant(margin)} - not available in this build (requires CLAPACK);
+#'     use \code{Sound$to_formant_burg()} for formant extraction instead
 #'   \item \code{to_spectrum(time, ...)} - convert to a Spectrum at a specific time
 #'   \item \code{to_matrix()} - convert to a Matrix object
 #' }

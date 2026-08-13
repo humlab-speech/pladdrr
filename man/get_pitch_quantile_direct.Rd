@@ -38,5 +38,5 @@ q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
 
 }
 \seealso{
-[get_pitch_quantiles_batch()] for getting multiple quantiles at once
+\code{\link{get_pitch_quantiles_batch}} for getting multiple quantiles at once
 }

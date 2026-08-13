@@ -16,26 +16,6 @@ R6 class for executing Praat scripts with persistent interpreter state.
 Allows running multiple scripts while maintaining variables and state between runs.
 Provides bidirectional object transfer between R and Praat's object list.
 }
-\section{Methods}{
-
-\describe{
-  \item{\code{new()}}{Create new interpreter instance with empty state}
-  \item{\code{run(script)}}{Execute Praat script code, returns self for chaining}
-  \item{\code{get_variable(name)}}{Get variable value from interpreter}
-  \item{\code{set_variable(name, value)}}{Set variable value in interpreter}
-  \item{\code{eval(expression)}}{Evaluate expression and return result}
-  \item{\code{object_count()}}{Get count of objects in Praat object list}
-  \item{\code{list_objects()}}{List all objects (returns data.frame)}
-  \item{\code{get_object(name, type)}}{Get Praat object from interpreter's list}
-  \item{\code{get_object_by_id(id)}}{Get Praat object by ID}
-  \item{\code{set_object(name, object)}}{Add R object to Praat's object list}
-  \item{\code{remove_object(name)}}{Remove object by name}
-  \item{\code{remove_object_by_id(id)}}{Remove object by ID}
-  \item{\code{select_object(name, add)}}{Select object in Praat's list}
-  \item{\code{clear_objects()}}{Clear all objects from list}
-}
-}
-
 \examples{
 # Create interpreter
 interp <- PraatInterpreter$new()
@@ -86,6 +66,7 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-initialize}{}}}
 \subsection{\code{PraatInterpreter$new()}}{
+  Create a new interpreter instance with empty state.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$new()}
@@ -97,10 +78,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-run"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-run}{}}}
 \subsection{\code{PraatInterpreter$run()}}{
+  Execute Praat script code.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$run(script)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{script}}{Character string with Praat script.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly), for method chaining.
   }
 }
 
@@ -108,10 +100,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-get_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_variable}{}}}
 \subsection{\code{PraatInterpreter$get_variable()}}{
+  Get a variable's value from the interpreter.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$get_variable(name)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Variable name.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Variable value.
   }
 }
 
@@ -119,10 +122,22 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-set_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-set_variable}{}}}
 \subsection{\code{PraatInterpreter$set_variable()}}{
+  Set a variable's value in the interpreter.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$set_variable(name, value)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Variable name.}
+      \item{\code{value}}{Variable value.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 
@@ -130,10 +145,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-eval"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-eval}{}}}
 \subsection{\code{PraatInterpreter$eval()}}{
+  Evaluate a Praat expression and return the result.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$eval(expression)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{expression}}{Praat expression.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Result of the expression.
   }
 }
 
@@ -141,10 +167,14 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-object_count"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-object_count}{}}}
 \subsection{\code{PraatInterpreter$object_count()}}{
+  Get the count of objects in the Praat object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$object_count()}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Integer count.
   }
 }
 
@@ -152,10 +182,14 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-list_objects"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-list_objects}{}}}
 \subsection{\code{PraatInterpreter$list_objects()}}{
+  List all objects in the Praat object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$list_objects()}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A data.frame with id, name, class, and selected columns.
   }
 }
 
@@ -163,10 +197,22 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-get_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object}{}}}
 \subsection{\code{PraatInterpreter$get_object()}}{
+  Get a Praat object from the interpreter's object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$get_object(name, type = NULL)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Object name.}
+      \item{\code{type}}{Expected type (optional).}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An R6 object.
   }
 }
 
@@ -174,10 +220,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-get_object_by_id"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-get_object_by_id}{}}}
 \subsection{\code{PraatInterpreter$get_object_by_id()}}{
+  Get a Praat object by ID.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$get_object_by_id(id)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{Object ID.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An R6 object.
   }
 }
 
@@ -185,10 +242,22 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-set_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-set_object}{}}}
 \subsection{\code{PraatInterpreter$set_object()}}{
+  Add an R object to Praat's object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$set_object(name, object)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Object name.}
+      \item{\code{object}}{A PraatObject.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Object ID (invisibly).
   }
 }
 
@@ -196,10 +265,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-remove_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object}{}}}
 \subsection{\code{PraatInterpreter$remove_object()}}{
+  Remove an object from Praat's object list by name.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$remove_object(name)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Object name.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 
@@ -207,10 +287,21 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-remove_object_by_id"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-remove_object_by_id}{}}}
 \subsection{\code{PraatInterpreter$remove_object_by_id()}}{
+  Remove an object from Praat's object list by ID.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$remove_object_by_id(id)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{Object ID.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 
@@ -218,10 +309,22 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-select_object"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-select_object}{}}}
 \subsection{\code{PraatInterpreter$select_object()}}{
+  Select an object in Praat's object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$select_object(name, add = FALSE)}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Object name.}
+      \item{\code{add}}{If TRUE, add to the current selection.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 
@@ -229,10 +332,14 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-clear_objects"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-clear_objects}{}}}
 \subsection{\code{PraatInterpreter$clear_objects()}}{
+  Clear all objects from Praat's object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$clear_objects()}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 
@@ -240,10 +347,14 @@ interp$eval("sqrt(2)")
 \if{html}{\out{<a id="method-PraatInterpreter-print"></a>}}
 \if{latex}{\out{\hypertarget{method-PraatInterpreter-print}{}}}
 \subsection{\code{PraatInterpreter$print()}}{
+  Print a summary of the interpreter's current object list.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{PraatInterpreter$print()}
     \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self (invisibly).
   }
 }
 

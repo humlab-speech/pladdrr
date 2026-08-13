@@ -48,5 +48,5 @@ hnr_full <- multiband_hnr_stats(built)
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-[multiband_hnr_stats()] and [calculate_multiband_hnr_ultra()]
+\code{\link{multiband_hnr_stats}} and \code{\link{calculate_multiband_hnr_ultra}}
 }

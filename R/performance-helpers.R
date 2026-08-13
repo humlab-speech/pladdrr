@@ -788,7 +788,7 @@ extract_voiced_segments_ultra <- function(
 #' - VQ_measurements_V2.praat (Voice Quality measurements)
 #' - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 #'
-#' @seealso [multiband_hnr_stats()] and [calculate_multiband_hnr_ultra()]
+#' @seealso \code{\link{multiband_hnr_stats}} and \code{\link{calculate_multiband_hnr_ultra}}
 #'
 #' @export
 build_multiband_harmonicity <- function(
@@ -925,7 +925,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' - VQ_measurements_V2.praat (Voice Quality measurements)
 #' - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 #'
-#' @seealso [build_multiband_harmonicity()] and [multiband_hnr_stats()] for
+#' @seealso \code{\link{build_multiband_harmonicity}} and \code{\link{multiband_hnr_stats}} for
 #'   the reusable multi-interval path
 #'
 #' @export
