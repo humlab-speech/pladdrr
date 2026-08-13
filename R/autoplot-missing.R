@@ -604,7 +604,7 @@ autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE, color = "da
     warning("Cepstrum has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  if (power) df$power_dB <- 10 * log10(pmax(df$power_dB, 1e-20))
+  if (power) df$power_dB <- 10 * log10(pmax(df$power, 1e-20))
   y_col <- if (power) "power_dB" else "value"
   y_lab <- if (power) "Power (dB)" else "Amplitude"
   p <- ggplot2::ggplot(df,
@@ -621,7 +621,7 @@ autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE, color = "da
 autolayer.Cepstrum <- function(object, power = FALSE, color = "darkblue", ...) {
   df <- as.data.frame(object, power = power)
   if (nrow(df) == 0) return(NULL)
-  if (power) df$power_dB <- 10 * log10(pmax(df$power_dB, 1e-20))
+  if (power) df$power_dB <- 10 * log10(pmax(df$power, 1e-20))
   y_col <- if (power) "power_dB" else "value"
   ggplot2::geom_line(data = df,
     ggplot2::aes(x = .data$quefrency, y = .data[[y_col]]),

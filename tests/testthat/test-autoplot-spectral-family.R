@@ -9,12 +9,16 @@ test_that("Cepstrum default view is raw (has negative values), power=TRUE view i
   df_raw <- as.data.frame(cep)
   expect_true(any(df_raw$value < 0))
   df_power <- as.data.frame(cep, power = TRUE)
-  expect_true("power_dB" %in% names(df_power))
-  # NOTE: as.data.frame(cep, power=TRUE)'s own power_dB column is raw linear
-  # power (pre-existing PowerCepstrum$as_data_frame() C++ module behaviour,
-  # out of scope for this branch -- see final-review-fix-report.md). The
-  # display-layer fix lives in autoplot.Cepstrum/autolayer.Cepstrum below;
-  # verify semantics there instead of on the raw data frame.
+  # Column is honestly named "power" (raw linear power from the underlying
+  # PowerCepstrum$as_data_frame() C++ module, which itself mislabels this
+  # value "power_dB" -- see cepstrum-power-column-fix-report.md). Linear
+  # power spans many orders of magnitude; assert that directly so a future
+  # regression back to a bogus "power_dB" name on this raw data frame is
+  # caught here, not only in the display layer below.
+  expect_true("power" %in% names(df_power))
+  expect_false("power_dB" %in% names(df_power))
+  expect_true(all(df_power$power >= 0))
+  expect_true(max(df_power$power) / min(df_power$power[df_power$power > 0]) > 1e6)
   p <- ggplot2::autoplot(cep)
   expect_s3_class(p, "ggplot")
   p_power <- ggplot2::autoplot(cep, power = TRUE)

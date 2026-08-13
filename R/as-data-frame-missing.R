@@ -62,15 +62,24 @@ as.data.frame.BarkSpectrogram <- function(x, ...) {
 #' @rdname as-data-frame-missing
 #' @param row.names Unused (required by the `as.data.frame()` generic).
 #' @param optional Unused (required by the `as.data.frame()` generic).
-#' @param power If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
-#'   Praat's default raw signed cepstrum view. Default FALSE matches
-#'   `Cepstrum_drawLinear`, Praat's default "Draw..." command.
+#' @param power If TRUE, convert to PowerCepstrum and return its nonnegative
+#'   linear power values (column `power`) instead of Praat's default raw
+#'   signed cepstrum view. Default FALSE matches `Cepstrum_drawLinear`,
+#'   Praat's default "Draw..." command. Note: this returns linear power, not
+#'   dB — `autoplot()`/`autolayer()` convert to dB (`10 * log10(power)`) for
+#'   display only; that conversion is not applied here.
 #' @export
 as.data.frame.Cepstrum <- function(x, row.names = NULL, optional = FALSE,
     power = FALSE, ...) {
   if (power) {
     pc <- x$to_powercepstrum()
-    return(pc$as_data_frame())
+    df <- pc$as_data_frame()
+    # The underlying C++ column is misleadingly named "power_dB" but holds
+    # raw linear power (see PowerCepstrum module). Rename honestly here,
+    # matching as.data.frame.PowerCepstrogram's "power" column convention.
+    # dB conversion happens only in autoplot.Cepstrum/autolayer.Cepstrum.
+    names(df)[names(df) == "power_dB"] <- "power"
+    return(df)
   }
   x$as_data_frame()
 }

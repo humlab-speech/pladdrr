@@ -60,9 +60,12 @@ KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).}
 
 \item{optional}{Unused (required by the `as.data.frame()` generic).}
 
-\item{power}{If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
-Praat's default raw signed cepstrum view. Default FALSE matches
-`Cepstrum_drawLinear`, Praat's default "Draw..." command.}
+\item{power}{If TRUE, convert to PowerCepstrum and return its nonnegative
+linear power values (column `power`) instead of Praat's default raw
+signed cepstrum view. Default FALSE matches `Cepstrum_drawLinear`,
+Praat's default "Draw..." command. Note: this returns linear power, not
+dB — `autoplot()`/`autolayer()` convert to dB (`10 * log10(power)`) for
+display only; that conversion is not applied here.}
 }
 \value{
 A data.frame. Column names vary by class; see each class's
