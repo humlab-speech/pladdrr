@@ -20,7 +20,8 @@ A Matrix object
 
 ## See also
 
-\[matrix_create()\], \[matrix_create_simple()\]
+[`matrix_create`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md),
+[`matrix_create_simple`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
 
 ## Examples
 

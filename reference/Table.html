@@ -73,6 +73,29 @@
 
 
     <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
+<dl><dt id="arg-numberofrows">numberOfRows<a class="anchor" aria-label="anchor" href="#arg-numberofrows"></a></dt>
+<dd><p>Number of rows. Required unless <code>.xptr</code> is given.</p></dd>
+
+
+<dt id="arg-numberofcolumns">numberOfColumns<a class="anchor" aria-label="anchor" href="#arg-numberofcolumns"></a></dt>
+<dd><p>Number of columns. Required unless <code>columnNames</code>
+or <code>.xptr</code> is given.</p></dd>
+
+
+<dt id="arg-columnnames">columnNames<a class="anchor" aria-label="anchor" href="#arg-columnnames"></a></dt>
+<dd><p>Character vector of column names, used instead of
+<code>numberOfColumns</code> to name columns as they are created.</p></dd>
+
+
+<dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
+<dd><p>Not for direct use. External pointer to the underlying C++
+Table object; set internally when a method returns a new Table.</p></dd>
+
+</dl></div>
+    <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <code>Table</code> object with methods for tabular data access and statistics.</p>
     </div>

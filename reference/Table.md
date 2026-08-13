@@ -3,6 +3,26 @@
 Praat Table object with direct C++ module binding for tabular data
 operations.
 
+## Arguments
+
+- numberOfRows:
+
+  Number of rows. Required unless `.xptr` is given.
+
+- numberOfColumns:
+
+  Number of columns. Required unless `columnNames` or `.xptr` is given.
+
+- columnNames:
+
+  Character vector of column names, used instead of `numberOfColumns` to
+  name columns as they are created.
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ Table
+  object; set internally when a method returns a new Table.
+
 ## Value
 
 A `Table` object with methods for tabular data access and statistics.

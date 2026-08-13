@@ -45,7 +45,8 @@ annotators - Workflow: Adding automatic tiers to manual annotations
 
 ## See also
 
-\[TextGrid\] for TextGrid object creation
+[`TextGrid`](https://humlab-speech.github.io/pladdrr/reference/TextGrid.md)
+for TextGrid object creation
 
 Other batch-ops:
 [`sound_load_window()`](https://humlab-speech.github.io/pladdrr/reference/sound_load_window.md)

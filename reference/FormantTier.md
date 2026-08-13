@@ -1,7 +1,22 @@
-# Praat FormantTier Object
+# FormantTier
 
-Praat FormantTier object with direct C++ module binding for formant
-manipulation.
+Praat FormantTier object: formant frequencies and bandwidths at discrete
+time points, with interpolation between points.
+
+## Arguments
+
+- tmin:
+
+  Start time in seconds. Default 0.
+
+- tmax:
+
+  End time in seconds. Default 1.
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ FormantTier
+  object; set internally when a method returns a new FormantTier.
 
 ## Value
 
@@ -10,31 +25,38 @@ manipulation via time-value points.
 
 ## Details
 
-A FormantTier stores formant frequencies and bandwidths at discrete time
-points, with interpolation between points. This allows for smooth
-formant contours that can be used to filter sounds for vowel
+The interpolated contour can be used to filter sounds for vowel
 modification or resynthesis.
 
-\## Creating FormantTier Objects
+## Usage
 
-\- \`FormantTier(tmin, tmax)\` - Create empty FormantTier -
-\`FormantTier\$from_formant(formant)\` - Convert from Formant object
 
-\## Querying
+    FormantTier(tmin, tmax)              # create an empty FormantTier
+    FormantTier$from_formant(formant)    # convert from a Formant object
 
-\- \`\$get_start_time()\` - Start time in seconds -
-\`\$get_end_time()\` - End time in seconds - \`\$get_duration()\` -
-Duration in seconds - \`\$get_number_of_points()\` - Number of time
-points - \`\$get_min_num_formants()\` - Min formants across points -
-\`\$get_max_num_formants()\` - Max formants across points -
-\`\$get_value_at_time(formant_number, time)\` - Formant frequency (Hz) -
-\`\$get_bandwidth_at_time(formant_number, time)\` - Bandwidth (Hz)
+## Query methods
 
-\## Transformation
+- `get_start_time()`, `get_end_time()`,
+  [`get_duration()`](https://humlab-speech.github.io/pladdrr/reference/get_duration.md) -
+  time range in seconds
 
-\- \`\$filter_sound(sound, scale=TRUE)\` - Filter sound through
-formants - \`\$as_data_frame()\` - Export to data frame -
-\`\$save(path)\` - Save to file
+- `get_number_of_points()` - number of time points
+
+- `get_min_num_formants()`, `get_max_num_formants()` - formant count
+  across points
+
+- `get_value_at_time(formant_number, time)` - formant frequency in Hz
+
+- `get_bandwidth_at_time(formant_number, time)` - bandwidth in Hz
+
+## Transformation
+
+- `filter_sound(sound, scale = TRUE)` - filter a sound through the
+  formants
+
+- `as_data_frame()` - export to a data frame
+
+- `save(path)` - save to file
 
 ## Examples
 

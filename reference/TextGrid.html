@@ -76,51 +76,89 @@ Uses shared dispatch table for minimal memory per object.</p>
 
 
     <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
+<dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>Path to a TextGrid file (Praat text or binary format). See the
+Creating TextGrid objects section for details.</p></dd>
+
+
+<dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
+<dd><p>Not for direct use. External pointer to the underlying C++
+TextGrid object; set internally when a method returns a new TextGrid.</p></dd>
+
+</dl></div>
+    <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <code>TextGrid</code> object with methods for tier and interval/point
   annotation access.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>TextGrids are the primary tool for linguistic annotation in Praat. They contain
-one or more tiers, where each tier can be:
-- **IntervalTier**: Consecutive time intervals with labels (e.g., phonemes, words)
-- **PointTier** (TextTier): Time points with labels (e.g., events, tones)</p>
-<p>## Creating TextGrid Objects</p>
-<p>- `TextGrid(path)` - Read from file (Praat text or binary format)
-- `textgrid_create(tmin, tmax, tier_names, point_tiers)` - Create empty grid</p>
-<p>## Querying Tiers</p>
-<p>- `$get_number_of_tiers()` - Number of tiers
-- `$get_tier_names()` - Names of all tiers
-- `$tier_is_interval_tier(tier)` - Check if tier is IntervalTier
-- `$tier_is_point_tier(tier)` - Check if tier is PointTier</p>
-<p>## IntervalTier Operations</p>
-<p>- `$get_number_of_intervals(tier)` - Number of intervals in tier
-- `$get_interval_text(tier, n)` - Get label of interval n
-- `$get_label_at_time(tier, time)` - Get label at specific time
-- `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
-- `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
-- `$extract_intervals_where(sound, tier, criterion, text, preserve_times)` - Extract Sound intervals matching a text criterion
-- `$set_interval_text(tier, n, text)` - Set label of interval n
-- `$insert_boundary(tier, time)` - Insert new boundary
-- `$remove_boundary(tier, time)` - Remove boundary</p>
-<p>## PointTier Operations</p>
-<p>- `$get_number_of_points(tier)` - Number of points in tier
-- `$get_point_text(tier, n)` - Get label of point n
-- `$insert_point(tier, time, mark)` - Insert new point
-- `$set_point_text(tier, n, text)` - Set label of point n
-- `$remove_point(tier, n)` - Remove point</p>
-<p>## Tier Management</p>
-<p>- `$add_interval_tier(name)` - Add new IntervalTier
-- `$add_point_tier(name)` - Add new PointTier
-- `$remove_tier(tier)` - Remove tier
-- `$set_tier_name(tier, name)` - Rename a tier
-- `$duplicate_tier(tier, new_name)` - Duplicate tier with new name</p>
-<p>## Export</p>
-<p>- `$as_data_frame(tiers)` - Convert to long-format data frame
-- `$save(path)` - Write to file
-- `$extract_part(start, end)` - Extract time range</p>
-    </div>
+    <p>TextGrids are the primary tool for linguistic annotation in Praat. They
+contain one or more tiers, where each tier can be:</p>
+<ul><li><p><code>IntervalTier</code>: consecutive time intervals with labels (e.g., phonemes, words)</p></li>
+<li><p><code>PointTier</code> (TextTier): time points with labels (e.g., events, tones)</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="creating-textgrid-objects">Creating TextGrid objects<a class="anchor" aria-label="anchor" href="#creating-textgrid-objects"></a></h2>
+
+
+<ul><li><p><code>TextGrid(path)</code> - read from file (Praat text or binary format)</p></li>
+<li><p><code>textgrid_create(tmin, tmax, tier_names, point_tiers)</code> - create an empty grid</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="querying-tiers">Querying tiers<a class="anchor" aria-label="anchor" href="#querying-tiers"></a></h2>
+
+
+<ul><li><p><code>get_number_of_tiers()</code> - number of tiers</p></li>
+<li><p><code>get_tier_names()</code> - names of all tiers</p></li>
+<li><p><code>tier_is_interval_tier(tier)</code> - check if a tier is an IntervalTier</p></li>
+<li><p><code>tier_is_point_tier(tier)</code> - check if a tier is a PointTier</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="intervaltier-operations">IntervalTier operations<a class="anchor" aria-label="anchor" href="#intervaltier-operations"></a></h2>
+
+
+<ul><li><p><code>get_number_of_intervals(tier)</code> - number of intervals in a tier</p></li>
+<li><p><code>get_interval_text(tier, n)</code> - get the label of interval n</p></li>
+<li><p><code>get_label_at_time(tier, time)</code> - get the label at a specific time</p></li>
+<li><p><code>get_all_intervals(tier)</code> - get all intervals as a data.frame (fast)</p></li>
+<li><p><code>extract_intervals_batch(tier, ...)</code> - extract matching intervals (fast)</p></li>
+<li><p><code>extract_intervals_where(sound, tier, criterion, text, preserve_times)</code> - extract Sound intervals matching a text criterion</p></li>
+<li><p><code>set_interval_text(tier, n, text)</code> - set the label of interval n</p></li>
+<li><p><code>insert_boundary(tier, time)</code> - insert a new boundary</p></li>
+<li><p><code>remove_boundary(tier, time)</code> - remove a boundary</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="pointtier-operations">PointTier operations<a class="anchor" aria-label="anchor" href="#pointtier-operations"></a></h2>
+
+
+<ul><li><p><code>get_number_of_points(tier)</code> - number of points in a tier</p></li>
+<li><p><code>get_point_text(tier, n)</code> - get the label of point n</p></li>
+<li><p><code>insert_point(tier, time, mark)</code> - insert a new point</p></li>
+<li><p><code>set_point_text(tier, n, text)</code> - set the label of point n</p></li>
+<li><p><code>remove_point(tier, n)</code> - remove a point</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="tier-management">Tier management<a class="anchor" aria-label="anchor" href="#tier-management"></a></h2>
+
+
+<ul><li><p><code>add_interval_tier(name)</code> - add a new IntervalTier</p></li>
+<li><p><code>add_point_tier(name)</code> - add a new PointTier</p></li>
+<li><p><code>remove_tier(tier)</code> - remove a tier</p></li>
+<li><p><code>set_tier_name(tier, name)</code> - rename a tier</p></li>
+<li><p><code>duplicate_tier(tier, new_name)</code> - duplicate a tier with a new name</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
+
+
+<ul><li><p><code>as_data_frame(tiers)</code> - convert to a long-format data frame</p></li>
+<li><p><code>save(path)</code> - write to a file</p></li>
+<li><p><code>extract_part(start, end)</code> - extract a time range</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

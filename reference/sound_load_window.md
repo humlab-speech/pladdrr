@@ -53,7 +53,8 @@ Large file processing: working with hours-long recordings
 
 ## See also
 
-\[Sound\], \[LongSound\]
+[`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+[`LongSound`](https://humlab-speech.github.io/pladdrr/reference/LongSound.md)
 
 Other batch-ops:
 [`textgrid_merge()`](https://humlab-speech.github.io/pladdrr/reference/textgrid_merge.md)

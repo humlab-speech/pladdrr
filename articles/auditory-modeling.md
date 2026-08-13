@@ -21,8 +21,8 @@ processes acoustic information, as opposed to a purely physical
 ``` r
 
 library(pladdrr)
-#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
-#> Use citation('pladdrr') for citing this package in publications.
+#> pladdrr: direct access to Praat's core algorithms from R.
+#> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 library(ggplot2)
 ```
 
@@ -356,8 +356,8 @@ loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {
 rm(cochlea)
 gc()  # Force garbage collection
 #>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1887310 100.8    3152840 168.4  3152840 168.4
-#> Vcells 3219518  24.6    8388608  64.0  7436441  56.8
+#> Ncells 1916608 102.4    3243245 173.3  3243245 173.3
+#> Vcells 3254248  24.9    8388608  64.0  7465197  57.0
 ```
 
 ## Comparison with Traditional Analysis

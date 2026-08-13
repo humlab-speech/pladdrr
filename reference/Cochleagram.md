@@ -1,7 +1,14 @@
-# Praat Cochleagram Object
+# Cochleagram
 
 Praat Cochleagram object with direct C++ module binding for auditory
 modeling.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ Cochleagram
+  object; set internally when a method returns a new Cochleagram.
 
 ## Value
 

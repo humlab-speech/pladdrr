@@ -3,10 +3,17 @@
 Praat Manipulation object with direct C++ module binding for PSOLA-based
 pitch and duration modification.
 
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++
+  Manipulation object; set internally when a method returns a new
+  Manipulation, e.g. `sound$to_manipulation()`.
+
 ## Value
 
-A `Manipulation` object with methods for PSOLA-based pitch and duration
-modification.
+A `Manipulation` object.
 
 ## Details
 

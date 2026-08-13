@@ -1,28 +1,39 @@
 # Polygon Object
 
-2D polygon for geometric operations and spatial analysis. Uses Rcpp
-Modules for high-performance access to Praat's Polygon object.
-
-\*\*Common uses:\*\* - Vowel space boundaries - Formant space
-visualization - Acoustic space analysis - Convex hull computation
+2D polygon for geometric operations and spatial analysis.
 
 ## Arguments
 
 - x:
 
-  Numeric vector of x coordinates (required unless .xptr provided)
+  Numeric vector of x coordinates. Required unless `.xptr` is given.
 
 - y:
 
-  Numeric vector of y coordinates (required unless .xptr provided)
+  Numeric vector of y coordinates. Required unless `.xptr` is given.
 
 - .xptr:
 
-  External pointer from C++ (internal use)
+  Not for direct use. External pointer to the underlying C++ Polygon
+  object; set internally when a method returns a new Polygon.
 
 ## Value
 
-Polygon object with methods for geometry operations
+A Polygon object with methods for geometry operations.
+
+## Details
+
+Uses Rcpp Modules for high-performance access to Praat's Polygon object.
+
+## Common uses
+
+- Vowel space boundaries
+
+- Formant space visualization
+
+- Acoustic space analysis
+
+- Convex hull computation
 
 ## Examples
 

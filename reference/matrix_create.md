@@ -57,8 +57,10 @@ A Matrix object
 
 ## See also
 
-\[matrix_create_simple()\] for simpler creation, \[Matrix\] for object
-methods
+[`matrix_create_simple`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
+for simpler creation,
+[`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+for object methods
 
 ## Examples
 

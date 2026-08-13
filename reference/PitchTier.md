@@ -1,7 +1,22 @@
-# Praat PitchTier Object
+# PitchTier
 
-Praat PitchTier object with direct C++ module binding for pitch
-manipulation.
+Praat PitchTier object: a sequence of time-value points describing a
+pitch contour.
+
+## Arguments
+
+- tmin:
+
+  Start time in seconds, for creating an empty PitchTier.
+
+- tmax:
+
+  End time in seconds, for creating an empty PitchTier.
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ PitchTier
+  object; set internally when a method returns a new PitchTier.
 
 ## Value
 
@@ -10,52 +25,77 @@ time-value points.
 
 ## Details
 
-PitchTiers are used in conjunction with Manipulation objects to modify
-the pitch contour of sounds. Unlike Pitch objects (which contain sampled
-data), PitchTiers contain discrete time-value pairs that can be edited.
+PitchTiers are used together with Manipulation objects to modify the
+pitch contour of sounds. Unlike Pitch objects, which hold sampled data,
+PitchTiers hold discrete time-value pairs that can be edited directly.
 
-\## Creating PitchTier Objects
+## Usage
 
-\- \`PitchTier\$new(path)\` - Load from file - \`PitchTier(tmin,
-tmax)\` - Create empty PitchTier - \`pitch\$down_to_pitch_tier()\` -
-Extract from Pitch object
 
-\## Querying
+    PitchTier$new(path)          # load from file
+    PitchTier(tmin, tmax)        # create an empty PitchTier
+    pitch$down_to_pitch_tier()   # extract from a Pitch object
 
-\- \`\$get_number_of_points()\` - Number of pitch points -
-\`\$get_value_at_time(time)\` - Interpolated F0 at time -
-\`\$get_value_at_index(index)\` - F0 of specific point -
-\`\$get_time_from_index(index)\` - Time of specific point -
-\`\$get_minimum()\` - Minimum F0 value - \`\$get_maximum()\` - Maximum
-F0 value - \`\$get_mean(tmin, tmax)\` - Mean F0 (interpolated curve) -
-\`\$get_standard_deviation(tmin, tmax)\` - Standard deviation -
-\`\$get_area(tmin, tmax)\` - Area under curve
+## Query methods
 
-\## Modification
+- `get_number_of_points()` - number of pitch points
 
-\- \`\$add_point(time, value)\` - Add pitch point (Hz) -
-\`\$remove_point(index)\` - Remove point by index -
-\`\$remove_points_between(tmin, tmax)\` - Remove points in time range -
-\`\$multiply_frequencies(factor)\` - Scale all frequencies -
-\`\$multiply_frequencies_in_range(tmin, tmax, factor)\` - Scale in
-range - \`\$shift_frequencies(shift, unit)\` - Add to all frequencies -
-\`\$shift_frequencies_in_range(tmin, tmax, shift, unit)\` - Shift in
-range - \`\$stylize(frequency_resolution, use_semitones)\` - Simplify
-contour - \`\$interpolate_quadratically(points_per_parabola,
-logarithmically)\` - Smooth
+- `get_value_at_time(time)` - interpolated F0 at a time
 
-\## Conversion
+- `get_value_at_index(index)` - F0 of a specific point
 
-\- \`\$to_sound_pulse_train(sample_rate)\` - Synthesize pulse train -
-\`\$to_sound_phonation(sample_rate)\` - Synthesize phonation -
-\`\$to_sound_sine(sample_rate)\` - Synthesize sine wave -
-\`\$down_to_point_process()\` - Extract time points -
-\`\$to_pitch(time_step, pitch_floor, pitch_ceiling)\` - Convert to Pitch
+- `get_time_from_index(index)` - time of a specific point
 
-\## Export
+- `get_minimum()`, `get_maximum()` - F0 range
 
-\- \`\$as_data_frame()\` - Convert to data.table - \`\$as_matrix()\` -
-Convert to matrix - \`\$save(path)\` - Write to file
+- `get_mean(tmin, tmax)` - mean F0 (interpolated curve)
+
+- `get_standard_deviation(tmin, tmax)` - standard deviation
+
+- `get_area(tmin, tmax)` - area under the curve
+
+## Modification
+
+- `add_point(time, value)` - add a pitch point (Hz)
+
+- `remove_point(index)` - remove a point by index
+
+- `remove_points_between(tmin, tmax)` - remove points in a time range
+
+- `multiply_frequencies(factor)` - scale all frequencies
+
+- `multiply_frequencies_in_range(tmin, tmax, factor)` - scale in a range
+
+- `shift_frequencies(shift, unit)` - add to all frequencies
+
+- `shift_frequencies_in_range(tmin, tmax, shift, unit)` - shift in a
+  range
+
+- `stylize(frequency_resolution, use_semitones)` - simplify the contour
+
+- `interpolate_quadratically(points_per_parabola, logarithmically)` -
+  smooth the contour
+
+## Conversion
+
+- `to_sound_pulse_train(sample_rate)` - synthesize a pulse train
+
+- `to_sound_phonation(sample_rate)` - synthesize phonation
+
+- `to_sound_sine(sample_rate)` - synthesize a sine wave
+
+- `down_to_point_process()` - extract time points
+
+- `to_pitch(time_step, pitch_floor, pitch_ceiling)` - convert to a Pitch
+  object
+
+## Export
+
+- `as_data_frame()` - convert to a data.table
+
+- `as_matrix()` - convert to a matrix
+
+- `save(path)` - write to file
 
 ## Examples
 

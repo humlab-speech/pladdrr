@@ -1,7 +1,15 @@
-# Praat FormantModeler Object
+# FormantModeler
 
 Robust formant trajectory modeling using polynomial fits with outlier
 detection.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++
+  FormantModeler object; set internally when a method returns a new
+  FormantModeler.
 
 ## Value
 

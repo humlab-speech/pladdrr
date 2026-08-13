@@ -1,7 +1,22 @@
-# Praat VocalTract Object
+# VocalTract
 
-Praat VocalTract object with direct C++ module binding for articulatory
-synthesis.
+Praat VocalTract object: the cross-sectional areas of the vocal tract,
+from glottis to lips, divided into sections.
+
+## Arguments
+
+- nx:
+
+  Number of sections. Default 17.
+
+- dx:
+
+  Section length in metres. Default 0.01.
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ VocalTract
+  object; set internally when a method returns a new VocalTract.
 
 ## Value
 
@@ -9,33 +24,38 @@ A `VocalTract` object with methods for articulatory tube-model access.
 
 ## Details
 
-A VocalTract represents the cross-sectional areas of the vocal tract
-from glottis to lips, divided into sections. This can be used for: -
-Articulatory synthesis (convert to Spectrum) - Vowel modeling (create
-from phone) - Acoustic tube modeling
+Used for articulatory synthesis (convert to a Spectrum), vowel modeling
+(create from a phone), and acoustic tube modeling.
 
-\## Creating VocalTract Objects
+## Usage
 
-\- \`VocalTract(nx, dx)\` - Create empty vocal tract with nx sections -
-\`VocalTract\$create_from_phone(phone)\` - Create from phone name
 
-\## Querying
+    VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+    VocalTract$create_from_phone(phone)      # create from a phone name
 
-\- \`\$get_length()\` - Total length in metres -
-\`\$get_number_of_sections()\` - Number of sections -
-\`\$get_section_length()\` - Section length in metres -
-\`\$get_area(section)\` - Area at section (m^2) - \`\$get_areas()\` -
-All areas as vector
+## Query methods
 
-\## Modification
+- `get_length()` - total length in metres
 
-\- \`\$set_area(section, area)\` - Set area at section -
-\`\$set_areas(areas)\` - Set all areas from vector
+- `get_number_of_sections()` - number of sections
 
-\## Transformation
+- `get_section_length()` - section length in metres
 
-\- \`\$to_spectrum(...)\` - Convert to Spectrum for synthesis -
-\`\$to_matrix()\` - Convert to Matrix
+- `get_area(section)` - area at a section (m^2)
+
+- `get_areas()` - all areas as a vector
+
+## Modification
+
+- `set_area(section, area)` - set the area at a section
+
+- `set_areas(areas)` - set all areas from a vector
+
+## Transformation
+
+- `to_spectrum(...)` - convert to a Spectrum for synthesis
+
+- `to_matrix()` - convert to a Matrix
 
 ## Examples
 

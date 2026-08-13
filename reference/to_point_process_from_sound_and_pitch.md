@@ -36,7 +36,8 @@ External pointer to PointProcess
 
 ## See also
 
-\[to_point_process_direct()\] for the single-object Sound method
+[`to_point_process_direct`](https://humlab-speech.github.io/pladdrr/reference/to_point_process_direct.md)
+for the single-object Sound method
 
 ## Examples
 

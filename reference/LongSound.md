@@ -1,4 +1,4 @@
-# LongSound Class
+# LongSound
 
 Function wrapper for Praat LongSound objects representing large audio
 files. Unlike Sound objects which load entirely into memory, LongSound
@@ -8,17 +8,18 @@ streams from disk, making it suitable for very long recordings.
 
 - .xptr:
 
-  External pointer to LongSound (for internal use)
+  Not for direct use. External pointer to the underlying C++ LongSound
+  object; set internally when a method returns a new LongSound.
 
 ## Value
 
-LongSound object (list with methods)
+A LongSound object.
 
 ## Details
 
 A LongSound keeps the audio file open and reads portions on demand. This
 allows working with files that would be too large to load into memory.
-Use \`extract_part()\` to get a Sound object for a specific time window.
+Use `extract_part()` to get a Sound object for a specific time window.
 
 ## Examples
 
@@ -30,7 +31,7 @@ Sound$create_tone(frequency = 150, duration = 1.0)$save(tmp)
 ls <- LongSound$open(tmp)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/RtmpAvQ3sT/file241825cb13c6.wav 
+#>   File: /tmp/Rtmp1wdPxA/file236522b2f976.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 44100 Hz
 #>   Channels: 1 

@@ -29,7 +29,7 @@ textgrid_create(tmin, tmax, tier_names = "", point_tiers = "")
 
 ## Value
 
-TextGrid object
+A `TextGrid` object.
 
 ## See also
 

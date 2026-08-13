@@ -1,6 +1,6 @@
-# PowerCepstrum Class
+# PowerCepstrum
 
-A PowerCepstrum is the power spectrum of the log power spectrum — a
+A PowerCepstrum is the power spectrum of the log power spectrum, a
 representation that separates the source (glottal pulse, low quefrency)
 from the filter (vocal tract, high quefrency). Created from a Spectrum
 or extracted from a PowerCepstrogram at a specific time. The primary
@@ -8,34 +8,57 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).
 
 ## Value
 
-A `PowerCepstrum` object with methods for power cepstrum analysis
-including CPP measurement.
+A PowerCepstrum object.
 
-## Methods
+## Query methods
 
-\*\*Information:\*\* \* \`get_qmin()\` / \`get_qmax()\` — Quefrency
-range (s) \* \`get_quefrency_range()\` — Quefrency range as vector \*
-\`get_n_bins()\` — Number of quefrency bins \* \`get_dq()\` — Quefrency
-step (s) \* \`get_q1()\` — Starting quefrency value (s)
+- `get_qmin()`, `get_qmax()` - quefrency range (s)
 
-\*\*Peak analysis:\*\* \* \`get_peak_prominence(pitch_floor,
-pitch_ceiling, ...)\` — CPP value (dB). Main voice quality metric. \*
-\`get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)\` — CPP
-using Hillenbrand algorithm \* \`get_quefrency_of_peak(interpolation)\`
-— Quefrency of cepstral peak (s) \* \`get_value_at_quefrency(quefrency,
-interpolation, unit)\` — Cepstral amplitude at quefrency
+- `get_quefrency_range()` - quefrency range as a vector
 
-\*\*Trend & smoothing:\*\* \* \`smooth(averaging_window)\` — Smooth the
-cepstrum \* \`fit_trend_line(qmin, qmax, trend_type, fit_method)\` — Fit
-regression trend line \* \`get_trend_line_value(quefrency, ...)\` —
-Value of fitted trend at quefrency \* \`subtract_trend(qstart_fit,
-qend_fit, ...)\` — Subtract regression trend (returns new PowerCepstrum)
-\* \`subtract_trend_inplace(qstart_fit, qend_fit, ...)\` — Subtract
-trend in-place (mutates)
+- `get_n_bins()` - number of quefrency bins
 
-\*\*Export / Transform:\*\* \* \`as_matrix()\` / \`as_data_frame()\` —
-Export \* \`to_spectrum(random_phases)\` — Convert back to Spectrum \*
-\`to_matrix()\` — Export as matrix
+- `get_dq()` - quefrency step (s)
+
+- `get_q1()` - starting quefrency value (s)
+
+## Peak analysis
+
+- `get_peak_prominence(pitch_floor, pitch_ceiling, ...)` - CPP value
+  (dB), the main voice quality metric
+
+- `get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)` - CPP
+  using the Hillenbrand algorithm
+
+- `get_quefrency_of_peak(interpolation)` - quefrency of the cepstral
+  peak (s)
+
+- `get_value_at_quefrency(quefrency, interpolation, unit)` - cepstral
+  amplitude at a quefrency
+
+## Trend and smoothing
+
+- `smooth(averaging_window)` - smooth the cepstrum
+
+- `fit_trend_line(qmin, qmax, trend_type, fit_method)` - fit a
+  regression trend line
+
+- `get_trend_line_value(quefrency, ...)` - value of the fitted trend at
+  a quefrency
+
+- `subtract_trend(qstart_fit, qend_fit, ...)` - subtract the regression
+  trend (returns a new PowerCepstrum)
+
+- `subtract_trend_inplace(qstart_fit, qend_fit, ...)` - subtract the
+  trend in place (mutates)
+
+## Export and transform
+
+- `as_matrix()`, `as_data_frame()` - export
+
+- `to_spectrum(random_phases)` - convert back to Spectrum
+
+- `to_matrix()` - export as a matrix
 
 ## See also
 

@@ -1,7 +1,16 @@
-# Discriminant Analysis (LDA)
+# Discriminant
 
-Linear Discriminant Analysis for vowel classification, speaker
+Linear Discriminant Analysis (LDA) for vowel classification, speaker
 identification, and other multivariate acoustic classification tasks.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++
+  Discriminant object; set internally when a method returns a new
+  Discriminant (for example
+  [`discriminant_from_matrix`](https://humlab-speech.github.io/pladdrr/reference/discriminant_from_matrix.md)).
 
 ## Value
 

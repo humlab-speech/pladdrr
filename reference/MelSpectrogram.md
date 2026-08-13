@@ -1,7 +1,7 @@
-# MelSpectrogram Object
+# MelSpectrogram
 
-Praat MelSpectrogram: mel-scale spectrogram commonly used in speech
-technology (ASR, speaker identification).
+A mel-scale spectrogram, commonly used in speech technology (ASR,
+speaker identification).
 
 ## Usage
 
@@ -13,11 +13,12 @@ MelSpectrogram(.xptr = NULL)
 
 - .xptr:
 
-  Internal use only - external pointer to C++ MelSpectrogram object
+  Not for direct use. External pointer to the underlying C++
+  MelSpectrogram object; set internally by `Sound$to_mel_spectrogram()`.
 
 ## Value
 
-A MelSpectrogram object
+A MelSpectrogram object.
 
 ## Examples
 

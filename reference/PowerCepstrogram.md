@@ -1,13 +1,10 @@
-# PowerCepstrogram Class
+# PowerCepstrogram
 
 Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
-Uses shared dispatch table for minimal memory per object. Note: No Rcpp
-module — uses direct Rcpp function calls.
 
 ## Value
 
-A `PowerCepstrogram` object with methods for time-varying power cepstrum
-analysis.
+A PowerCepstrogram object.
 
 ## Examples
 

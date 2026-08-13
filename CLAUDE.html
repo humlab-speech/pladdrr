@@ -99,6 +99,10 @@ R/
 <p><code>MelderThread</code> fully implemented (not stubbed). Key threaded paths: - <code>Sound_to_PowerCepstrogram</code>: <code>MelderThread_PARALLELIZE</code>, threshold=40 frames - <code>PowerCepstrogram_to_Matrix_CPP</code>: <code>SampledIntoSampled_mt</code> - <code>PowerCepstrogram_smooth_fast</code>: parallelized <code>Sampled_getMean</code></p>
 </div>
 <div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
+<p>Wrapper-type roxygen doc blocks (Sound, Formant, Pitch, etc.) follow a fixed convention — see <code>inst/agents/DOCUMENTATION.md</code>. Short version: this package does not enable roxygen markdown, so method lists must use <code>\itemize</code>/<code>\code{}</code> Rd markup, not <code>- `x`</code> bullets, or they silently render as one run-on paragraph.</p>
+</div>
+<div class="section level2">
 <h2 id="critical-api-notes">Critical API notes<a class="anchor" aria-label="anchor" href="#critical-api-notes"></a></h2>
 <ul><li>Sound R6 lazy fields (<code>duration</code>, <code>nx</code>, <code>dx</code>) return empty — use methods (<code>$get_total_duration()</code>)</li>
 <li>

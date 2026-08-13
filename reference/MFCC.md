@@ -1,7 +1,13 @@
-# Praat MFCC Object
+# MFCC
 
-Mel Frequency Cepstral Coefficients for speech/speaker recognition. Uses
-shared dispatch table for minimal memory per object.
+Mel-frequency cepstral coefficients for speech and speaker recognition.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ MFCC
+  object; set internally when a method returns a new MFCC.
 
 ## Value
 
@@ -12,33 +18,42 @@ analysis.
 
 MFCCs are widely used features in speech and speaker recognition
 systems. They represent the short-term power spectrum of a sound on a
-mel scale, which approximates human auditory perception.
+mel scale, which approximates human auditory perception. Uses a shared
+dispatch table for minimal memory per object.
 
-\## Creating MFCC Objects
+## Creating MFCC objects
 
-MFCC objects are created from Sound objects: - \`sound\$to_mfcc()\` -
-Extract MFCCs with default parameters
+- `sound$to_mfcc()` - extract MFCCs with default parameters
 
-\## Querying MFCC Properties
+## Query methods
 
-\- \`\$get_number_of_frames()\` - Number of analysis frames -
-\`\$get_time_step()\` - Time step between frames -
-\`\$get_max_num_coefficients()\` - Maximum number of coefficients -
-\`\$get_fmin()\` / \`\$get_fmax()\` - Frequency range (mel) -
-\`\$get_c0_at_frame(frame)\` - C0 (energy) for specific frame -
-\`\$get_value_in_frame(frame, coef)\` - Coefficient value at frame -
-\`\$get_coefficients_at_frame(frame)\` - All coefficients for frame -
-\`\$get_all_coefficients()\` - Matrix of all coefficients -
-\`\$get_all_c0()\` - Vector of all C0 values
+- `get_number_of_frames()` - number of analysis frames
 
-\## Liftering
+- `get_time_step()` - time step between frames
 
-\- \`\$lifter(L)\` - Apply cepstral liftering (weighting)
+- `get_max_num_coefficients()` - maximum number of coefficients
 
-\## Export
+- `get_fmin()`, `get_fmax()` - frequency range (mel)
 
-\- \`\$as_data_frame(include_c0)\` - Convert to data.frame/data.table -
-\`\$to_matrix()\` - Convert to Matrix object
+- `get_c0_at_frame(frame)` - C0 (energy) for a specific frame
+
+- `get_value_in_frame(frame, coef)` - coefficient value at a frame
+
+- `get_coefficients_at_frame(frame)` - all coefficients for a frame
+
+- `get_all_coefficients()` - matrix of all coefficients
+
+- `get_all_c0()` - vector of all C0 values
+
+## Liftering
+
+- `lifter(L)` - apply cepstral liftering (weighting)
+
+## Export
+
+- `as_data_frame(include_c0)` - convert to a data.frame/data.table
+
+- `to_matrix()` - convert to a Matrix object
 
 ## See also
 

@@ -25,8 +25,10 @@ A Matrix object
 
 ## See also
 
-\[matrix_create()\] for full parameter control, \[Matrix\] for object
-methods
+[`matrix_create`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md)
+for full parameter control,
+[`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+for object methods
 
 ## Examples
 

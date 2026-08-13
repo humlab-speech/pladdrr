@@ -12,9 +12,15 @@ vocaltract_create_from_phone(phone)
 
 - phone:
 
-  Phone name. Valid phones are: - Vowels: a, e, i, o, u - Special
-  vowels: y1, y2, y3, jery - Plosives: p, t, k, x - Syllables: pa, ta,
-  ka, pi, ti, ki, pu, tu, ku
+  Phone name. Valid phones:
+
+  - Vowels: a, e, i, o, u
+
+  - Special vowels: y1, y2, y3, jery
+
+  - Plosives: p, t, k, x
+
+  - Syllables: pa, ta, ka, pi, ti, ki, pu, tu, ku
 
 ## Value
 

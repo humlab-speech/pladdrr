@@ -11,8 +11,8 @@ workload.
 ``` r
 
 library(pladdrr)
-#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
-#> Use citation('pladdrr') for citing this package in publications.
+#> pladdrr: direct access to Praat's core algorithms from R.
+#> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 ```
 
 ## What is SIMD?
@@ -127,12 +127,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.809682 4.186156 7.639222 4.220044 4.263169 175.8153    50
+#>              expr     min       lq     mean   median       uq      max neval
+#>  sound$to_pitch() 3.61534 3.725553 6.411682 3.774824 3.894987 133.0576    50
 print(simd_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.777272 4.141663 4.201611 4.206599 4.237943 4.962144    50
+#>  sound$to_pitch() 3.644376 3.847713 4.015135 4.019075 4.186443 4.415535    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no

@@ -54,8 +54,8 @@ you would load existing recordings.
 ``` r
 
 library(pladdrr)
-#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
-#> Use citation('pladdrr') for citing this package in publications.
+#> pladdrr: direct access to Praat's core algorithms from R.
+#> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 
 # Create synthetic audio (440 Hz tone)
 sound <- Sound$create_tone(

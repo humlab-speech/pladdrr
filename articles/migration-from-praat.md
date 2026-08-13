@@ -21,8 +21,8 @@ sound = Read from file: "audio.wav"
 ``` r
 
 library(pladdrr)
-#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
-#> Use citation('pladdrr') for citing this package in publications.
+#> pladdrr: direct access to Praat's core algorithms from R.
+#> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
 

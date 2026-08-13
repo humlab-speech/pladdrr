@@ -1,26 +1,26 @@
-# ComplexSpectrogram Constructor
+# ComplexSpectrogram
 
-Create a ComplexSpectrogram object from a Sound
+Create a ComplexSpectrogram object from a Sound: a phase-preserving
+spectrogram computed with a complex FFT.
 
 ## Arguments
 
 - sound:
 
-  Sound object
+  Sound object.
 
 - window_length:
 
-  Window length in seconds (default: 0.005)
+  Window length in seconds. Default 0.005.
 
 - maximum_frequency:
 
-  Maximum frequency to analyze in Hz (default: 5000)
+  Maximum frequency to analyze, in Hz. Default 5000.
 
 ## Value
 
-An object of class `ComplexSpectrogram` wrapping a phase-preserving
-spectrogram (list with methods; dispatched via the shared `PraatObject`
-pattern).
+An object of class `ComplexSpectrogram` (a list with methods, dispatched
+via the shared `PraatObject` pattern).
 
 ## Examples
 

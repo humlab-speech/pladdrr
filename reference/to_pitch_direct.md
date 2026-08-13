@@ -37,8 +37,9 @@ External pointer to Pitch (NOT R6 object)
 
 ## See also
 
-\[to_pitch_ac_direct()\], \[to_pitch_cc_direct()\] for full parameter
-control
+[`to_pitch_ac_direct`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_ac_direct.md),
+[`to_pitch_cc_direct`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_cc_direct.md)
+for full parameter control
 
 ## Examples
 

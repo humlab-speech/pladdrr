@@ -54,7 +54,9 @@ Weenink (2015) - Multi-band HNR for voice quality
 
 ## See also
 
-\[multiband_hnr_stats()\] and \[calculate_multiband_hnr_ultra()\]
+[`multiband_hnr_stats`](https://humlab-speech.github.io/pladdrr/reference/multiband_hnr_stats.md)
+and
+[`calculate_multiband_hnr_ultra`](https://humlab-speech.github.io/pladdrr/reference/calculate_multiband_hnr_ultra.md)
 
 ## Examples
 

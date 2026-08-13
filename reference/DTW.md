@@ -1,10 +1,6 @@
-# Dynamic Time Warping Object
+# DTW
 
 Temporal alignment between two acoustic signals.
-
-DTW aligns a candidate signal (x-axis) to a prototype/reference
-(y-axis), computing an optimal path through a distance matrix that
-minimizes the total distance while respecting slope constraints.
 
 ## Usage
 
@@ -16,49 +12,54 @@ DTW(.xptr = NULL)
 
 - .xptr:
 
-  Internal external pointer to wrap an existing DTW object; not for
-  direct use.
+  Not for direct use. External pointer to the underlying C++ DTW object;
+  set internally when wrapping an existing alignment.
 
 ## Value
 
-An object of class `DTW` wrapping the alignment path and distance matrix
-(list with methods; dispatched via the shared `PraatObject` pattern).
+A DTW object wrapping the alignment path and distance matrix.
 
-## Creating DTW Objects
+## Details
+
+DTW aligns a candidate signal (x-axis) to a prototype or reference
+(y-axis), computing an optimal path through a distance matrix that
+minimizes the total distance while respecting slope constraints.
+
+## Creating DTW objects
 
 DTW objects are created by aligning two acoustic objects:
 
-- `sounds_to_dtw(reference, candidate)` - Align two sounds (most common)
+- `sounds_to_dtw(reference, candidate)` - align two sounds (most common)
 
-- `mfccs_to_dtw(mfcc1, mfcc2)` - Align MFCCs (speech recognition)
+- `mfccs_to_dtw(mfcc1, mfcc2)` - align MFCCs (speech recognition)
 
-- `spectrograms_to_dtw(spec1, spec2)` - Align spectrograms
+- `spectrograms_to_dtw(spec1, spec2)` - align spectrograms
 
-- `pitches_to_dtw(pitch1, pitch2)` - Align pitch contours
+- `pitches_to_dtw(pitch1, pitch2)` - align pitch contours
 
-## Time Mapping (Core Use Case)
+## Time mapping
 
-- `$get_y_time_from_x_time(tx)` - Map candidate time to reference time
+- `$get_y_time_from_x_time(tx)` - map candidate time to reference time
 
-- `$get_x_time_from_y_time(ty)` - Map reference time to candidate time
+- `$get_x_time_from_y_time(ty)` - map reference time to candidate time
 
-- `$map_times(times, direction)` - Vectorized time mapping
+- `$map_times(times, direction)` - vectorized time mapping
 
-## TextGrid Warping (Major Use Case)
+## TextGrid warping
 
-- `$warp_textgrid(textgrid)` - Warp annotation times
+- `$warp_textgrid(textgrid)` - warp annotation times
 
-## Path Analysis
+## Path analysis
 
-- `$get_weighted_distance()` - Global alignment distance
+- `$get_weighted_distance()` - global alignment distance
 
-- `$get_path_length()` - Number of cells in optimal path
+- `$get_path_length()` - number of cells in optimal path
 
-- `$get_path()` - Full path as data.frame
+- `$get_path()` - full path as a data.frame
 
-- `$get_maximum_consecutive_steps("x"|"y")` - Path regularity
+- `$get_maximum_consecutive_steps("x"|"y")` - path regularity
 
-## Slope Constraints
+## Slope constraints
 
 Controls path flexibility:
 

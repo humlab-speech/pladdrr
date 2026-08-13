@@ -72,8 +72,8 @@ maintain
 ``` r
 
 library(pladdrr)
-#> The pladdrr package provides direct access to Praat's DSP capabilities to R usersSee ?pladdrr for an overview and citation information.
-#> Use citation('pladdrr') for citing this package in publications.
+#> pladdrr: direct access to Praat's core algorithms from R.
+#> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 
 wav_file <- system.file("extdata", "test.wav", package = "pladdrr")
 
@@ -303,7 +303,7 @@ system.time({
   max_f0 <- pitch$get_maximum(0, 0, "hertz")
 })
 #>    user  system elapsed 
-#>   0.010   0.001   0.005
+#>   0.010   0.001   0.006
 # measure on your own data
 
 # Tier 2: Direct API
@@ -312,7 +312,7 @@ system.time({
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
 #>    user  system elapsed 
-#>   0.010   0.000   0.004
+#>   0.009   0.000   0.004
 # fewer crossings; measure on your own data
 ```
 
@@ -331,7 +331,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.210   0.001   0.098
+#>   0.188   0.006   0.090
 # measure on your own data
 
 # Tier 3: Batch
@@ -340,7 +340,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.205   0.006   0.097
+#>   0.193   0.003   0.086
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -349,7 +349,7 @@ system.time({
 })
 #> Processing 20 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.092   0.088   0.367
+#>   0.081   0.082   0.339
 # includes file I/O; measure on your own data
 ```
 
@@ -368,7 +368,7 @@ system.time({
   })
 })
 #>    user  system elapsed 
-#>   0.013   0.000   0.012
+#>   0.009   0.000   0.009
 # one R->C crossing per time point
 
 # Tier 3: Vectorized
@@ -376,7 +376,7 @@ system.time({
   f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.000
+#>   0.000   0.000   0.001
 # one R->C crossing for the whole vector — this is where batching pays off
 ```
 
@@ -467,8 +467,8 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.05182695 1.0000000
-#> 2     2 0.06118608 0.8470384
+#> 1     1 0.04801393 1.0000000
+#> 2     2 0.05621743 0.8540754
 # Inspect the returned table to see where returns diminish on your machine
 ```
 

@@ -1,7 +1,15 @@
-# Principal Component Analysis (PCA)
+# PCA
 
-PCA for dimensionality reduction and analysis of multivariate acoustic
-data.
+Principal Component Analysis (PCA) for dimensionality reduction and
+analysis of multivariate acoustic data.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ PCA object;
+  set internally when a method returns a new PCA (for example
+  [`pca_from_matrix`](https://humlab-speech.github.io/pladdrr/reference/pca_from_matrix.md)).
 
 ## Value
 

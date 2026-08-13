@@ -70,8 +70,10 @@ Weenink (2015) - Multi-band HNR for voice quality
 
 ## See also
 
-\[build_multiband_harmonicity()\] and \[multiband_hnr_stats()\] for the
-reusable multi-interval path
+[`build_multiband_harmonicity`](https://humlab-speech.github.io/pladdrr/reference/build_multiband_harmonicity.md)
+and
+[`multiband_hnr_stats`](https://humlab-speech.github.io/pladdrr/reference/multiband_hnr_stats.md)
+for the reusable multi-interval path
 
 ## Examples
 

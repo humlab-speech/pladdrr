@@ -1,41 +1,71 @@
-# Praat Harmonicity Object
+# Harmonicity
 
-A Harmonicity object represents the degree of acoustic periodicity — the
-Harmonics-to-Noise Ratio (HNR) — in a sound over time, measured in
-decibels. Created from a Sound via cross-correlation (CC) or
-glottal-to-noise excitation (GNE) analysis. Higher values indicate more
-periodic (voiced) speech.
+A Harmonicity object represents the degree of acoustic periodicity, the
+Harmonics-to-Noise Ratio (HNR), in a sound over time, measured in
+decibels.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ Harmonicity
+  object; set internally when a method returns a new Harmonicity.
 
 ## Value
 
 A `Harmonicity` object with methods for harmonics-to-noise ratio (HNR)
 analysis.
 
-## Methods
+## Details
 
-\*\*Information:\*\* \* \`get_start_time()\` / \`get_end_time()\` — Time
-range (s) \* \`get_sampling_period()\` — Time step between frames (s) \*
-\`get_number_of_frames()\` — Number of analysis frames \*
-\`get_time_from_frame(frame)\` — Time for frame index \*
-\`get_frame_from_time(time)\` — Frame index for time
+Created from a Sound via cross-correlation (CC) or glottal-to-noise
+excitation (GNE) analysis. Higher values indicate more periodic (voiced)
+speech.
 
-\*\*Point queries:\*\* \* \`get_value_at_time(time, interpolation)\` —
-HNR at time point (dB) \* \`get_values_at_times(times, interpolation)\`
-— HNR at vector of times (batch) \* \`get_values_vector()\` — Raw HNR
-values for all frames \* \`get_times_vector()\` — Frame time points
+## Information methods
 
-\*\*Statistics (over time range):\*\* \* \`get_mean(from_time,
-to_time)\` — Mean HNR (dB) \* \`get_minimum(from_time, to_time,
-interpolation)\` — Minimum HNR \* \`get_maximum(from_time, to_time,
-interpolation)\` — Maximum HNR \* \`get_standard_deviation(from_time,
-to_time)\` — Standard deviation \* \`get_time_of_minimum(...)\` /
-\`get_time_of_maximum(...)\` — Time of extremum
+- `get_start_time()`, `get_end_time()` - time range (s)
 
-\*\*Batch:\*\* \* \`get_statistics_batch(from_times, to_times)\` —
-Statistics for multiple intervals (single C++ call)
+- `get_sampling_period()` - time step between frames (s)
 
-\*\*Export:\*\* \* \`as_data_frame()\` / \`as_matrix()\` — Export as
-data.frame or matrix
+- `get_number_of_frames()` - number of analysis frames
+
+- `get_time_from_frame(frame)` - time for a frame index
+
+- `get_frame_from_time(time)` - frame index for a time
+
+## Point query methods
+
+- `get_value_at_time(time, interpolation)` - HNR at a time point (dB)
+
+- `get_values_at_times(times, interpolation)` - HNR at a vector of times
+  (batch)
+
+- `get_values_vector()` - raw HNR values for all frames
+
+- `get_times_vector()` - frame time points
+
+## Statistics methods (over a time range)
+
+- `get_mean(from_time, to_time)` - mean HNR (dB)
+
+- `get_minimum(from_time, to_time, interpolation)` - minimum HNR
+
+- `get_maximum(from_time, to_time, interpolation)` - maximum HNR
+
+- `get_standard_deviation(from_time, to_time)` - standard deviation
+
+- `get_time_of_minimum(...)`, `get_time_of_maximum(...)` - time of
+  extremum
+
+## Batch methods
+
+- `get_statistics_batch(from_times, to_times)` - statistics for multiple
+  intervals in a single C++ call
+
+## Export methods
+
+- `as_data_frame()`, `as_matrix()` - export as a data.frame or matrix
 
 ## See also
 

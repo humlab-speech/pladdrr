@@ -1,126 +1,105 @@
-# pladdrr: Direct Access to Praat C Functionality from R
+# pladdrr: Direct Access to Praat's Core Algorithms from R
 
-The pladdrr package provides direct access to Praat's C phonetic
-analysis functionality from R. Praat is a widely-used tool for speech
-analysis in phonetics research and this package wraps Praat's core C
-library using Rcpp, providing native access to Praat's analysis
-capabilities without requiring external Praat installation or scripting.
+Praat's C/C++ engine, called directly from R via Rcpp. No external Praat
+installation, no scripting layer, no shelling out. pladdrr links against
+Praat's own analysis code, so results match Praat to within a tight
+numerical tolerance, and covers most of what Praat can do: acoustic
+analysis, voice quality, articulatory synthesis, annotation and
+multivariate statistics.
 
-## Core Features
+## Acoustic Analysis
 
-**Sound Operations:**
+- **Sound**: read/write WAV, AIFF, FLAC, MP3, NIST; generate tones and
+  noise; `LongSound` for streaming files too large to hold in memory
 
-- Create and manipulate sound objects
+- **Pitch**: F0 contours, autocorrelation and cross-correlation methods,
+  quality-aware tracking
 
-- Read and write audio files (WAV, AIFF, FLAC, MP3, NIST via native
-  Praat)
+- **Formant**: F1-F5 via LPC and Burg estimation, `FormantPath` for
+  robust tracking, `FormantModeler`
 
-- Extract basic sound properties (duration, sampling rate, etc.)
+- **Intensity, Harmonicity, Spectrum/Spectrogram, Ltas, Cepstrum**: the
+  standard Praat contour and spectral objects
 
-- Generate synthetic sounds (sine waves, white noise)
+## Voice Quality
 
-**Pitch Analysis:**
+- CPPS (smoothed cepstral peak prominence) and AVQI (Acoustic Voice
+  Quality Index), both parameter-matched to Praat
 
-- Extract fundamental frequency (F0) contours
+- Jitter, shimmer and HNR in a single batched call
 
-- Get pitch at specific time points
+- Voice activity detection
 
-- Calculate pitch statistics (mean, median, range)
+## Synthesis, Annotation and Multivariate Tools
 
-- Quality-aware pitch tracking with configurable parameters
+- `Manipulation` (PSOLA resynthesis) and `KlattGrid` (formant synthesis)
 
-**Formant Analysis:**
+- `TextGrid` for reading, writing and querying annotations
 
-- Extract formant frequencies (F1-F5)
+- `PCA`, `DTW` and `Discriminant` for multivariate and comparative
+  analysis
 
-- Get formants at specific time points
+- `PraatInterpreter` to run raw Praat scripts when you need something
+  pladdrr doesn't wrap directly
 
-- Calculate formant statistics and trajectories
+## Performance
 
-- LPC-based formant estimation
+Batch queries (e.g. formants or pitch at many time points) run in a
+single C++ call rather than one R-level call per point. The
+CPPS/PowerCepstrogram path is multi-threaded via Praat's own
+`MelderThread`, and
+[`pladdrr_threads`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_threads.md)
+controls how many cores it uses.
+[`simd_info`](https://humlab-speech.github.io/pladdrr/reference/simd_info.md)
+reports whether the installed build is using SIMD kernels.
 
-**Intensity and Spectral Analysis:**
+## Object Model
 
-- Compute intensity contours
-
-- Create spectrograms
-
-- Extract spectral properties
-
-## Design Principles
-
-The pladdrr package follows these core principles:
-
-1.  **Scientific Accuracy**: All analyses must match Praat's output
-    within 0.1% relative error tolerance
-
-2.  **R Package Standards**: Full compliance with CRAN requirements and
-    R package best practices
-
-3.  **Direct C++ Integration**: Direct C++ access via Rcpp, avoiding
-    intermediate R-level translation layers
-
-4.  **Test-Driven Development**: Comprehensive test coverage with
-    reference validation
-
-5.  **Comprehensive Documentation**: All functions fully documented with
-    examples and vignettes
-
-## Object Types
-
-The package uses S3 classes to represent Praat objects:
-
-- `praat_sound`:
-
-  Sound object containing audio data and metadata
-
-- `praat_pitch`:
-
-  Pitch contour with time-frequency pairs
-
-- `praat_formant`:
-
-  Formant tracks (F1-F5) with bandwidths
-
-- `praat_intensity`:
-
-  Intensity contour over time
-
-- `praat_spectrogram`:
-
-  Time-frequency-power spectrogram
+Objects are lightweight S3 lists (e.g. class
+`c("Sound", "PraatObject")`) with a custom `$` method that dispatches to
+a shared method table: this gives R6-style `sound$get_pitch()` call
+syntax at a fraction of R6's per-object memory cost. `PraatInterpreter`
+is a plain R6 class, since its state (a live Praat interpreter session)
+doesn't fit the shared-table pattern.
 
 ## Undefined Values
 
-Following R conventions, undefined analysis values (e.g., pitch in
+Following R conventions, undefined analysis values (e.g. pitch in
 unvoiced segments, formants in silence) are returned as `NA`. Quality
-warnings are issued when analysis results may be unreliable, but can be
-suppressed using standard R warning control mechanisms.
+warnings are issued when a result may be unreliable, and can be
+suppressed with the usual R warning-control mechanisms.
 
 ## Getting Started
 
-See `vignette("basic-usage", package = "pladdrr")` for an introduction
-to the package. Additional vignettes cover specific analysis types:
-
-- `vignette("pitch-analysis")` - Pitch extraction and analysis
+[`vignette("getting-started", package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/articles/getting-started.md)
+is the place to start. Other vignettes worth knowing about:
 
 - [`vignette("formant-analysis")`](https://humlab-speech.github.io/pladdrr/articles/formant-analysis.md) -
-  Formant tracking
+  formant tracking, including `FormantPath`
 
-- `vignette("spectral-analysis")` - Spectrograms and spectral features
+- [`vignette("speech-synthesis-klattgrid")`](https://humlab-speech.github.io/pladdrr/articles/speech-synthesis-klattgrid.md) -
+  articulatory synthesis
+
+- [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
+  reading and querying annotations
+
+- [`vignette("performance-optimization")`](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.md) -
+  batching, threading, SIMD
+
+- [`vignette("migration-from-praat")`](https://humlab-speech.github.io/pladdrr/articles/migration-from-praat.md)
+  and
+  [`vignette("migration-from-parselmouth")`](https://humlab-speech.github.io/pladdrr/articles/migration-from-parselmouth.md) -
+  for those coming from Praat scripting or Python
 
 ## License and Attribution
 
-This package is licensed under GPL-3, compatible with Praat's GPL-2+
-license. Praat was created by Paul Boersma and David Weenink of the
-Institute of Phonetic Sciences, University of Amsterdam.
+pladdrr is licensed under GPL-3, compatible with Praat's own GPL-2+
+license. Praat was created by Paul Boersma and David Weenink at the
+Institute of Phonetic Sciences, University of Amsterdam, and its source
+is bundled here under `src/praat.github.io/`.
 
-When using this package in publications, please cite both this package
-and Praat:
-
-Boersma, Paul & Weenink, David (2023). Praat: doing phonetics by
-computer \[Computer program\]. Version 6.3.x, retrieved from
-https://praat.org/
+Run `citation("pladdrr")` for up-to-date citation details for both
+pladdrr and the bundled Praat version.
 
 ## See also
 

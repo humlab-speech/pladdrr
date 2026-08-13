@@ -1,7 +1,13 @@
-# Praat LFCC Object
+# LFCC
 
-Linear Frequency Cepstral Coefficients for speaker recognition. Uses
-shared dispatch table for minimal memory per object.
+Linear-frequency cepstral coefficients for speaker recognition.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ LFCC
+  object; set internally when a method returns a new LFCC.
 
 ## Value
 
@@ -12,7 +18,8 @@ analysis.
 
 LFCCs are similar to MFCCs but use a linear frequency scale instead of
 the mel scale. They are derived from LPC analysis and are useful for
-speaker recognition tasks.
+speaker recognition tasks. Uses a shared dispatch table for minimal
+memory per object.
 
 ## See also
 

@@ -16,64 +16,6 @@ Allows running multiple scripts while maintaining variables and state
 between runs. Provides bidirectional object transfer between R and
 Praat's object list.
 
-## Methods
-
-- `new()`:
-
-  Create new interpreter instance with empty state
-
-- `run(script)`:
-
-  Execute Praat script code, returns self for chaining
-
-- `get_variable(name)`:
-
-  Get variable value from interpreter
-
-- `set_variable(name, value)`:
-
-  Set variable value in interpreter
-
-- `eval(expression)`:
-
-  Evaluate expression and return result
-
-- `object_count()`:
-
-  Get count of objects in Praat object list
-
-- `list_objects()`:
-
-  List all objects (returns data.frame)
-
-- `get_object(name, type)`:
-
-  Get Praat object from interpreter's list
-
-- `get_object_by_id(id)`:
-
-  Get Praat object by ID
-
-- `set_object(name, object)`:
-
-  Add R object to Praat's object list
-
-- `remove_object(name)`:
-
-  Remove object by name
-
-- `remove_object_by_id(id)`:
-
-  Remove object by ID
-
-- `select_object(name, add)`:
-
-  Select object in Praat's list
-
-- `clear_objects()`:
-
-  Clear all objects from list
-
 ## See also
 
 [`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
@@ -120,6 +62,8 @@ for Praat object classes
 
 ### `PraatInterpreter$new()`
 
+Create a new interpreter instance with empty state.
+
 #### Usage
 
     PraatInterpreter$new()
@@ -128,113 +72,273 @@ for Praat object classes
 
 ### `PraatInterpreter$run()`
 
+Execute Praat script code.
+
 #### Usage
 
     PraatInterpreter$run(script)
+
+#### Arguments
+
+- `script`:
+
+  Character string with Praat script.
+
+#### Returns
+
+Self (invisibly), for method chaining.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$get_variable()`
 
+Get a variable's value from the interpreter.
+
 #### Usage
 
     PraatInterpreter$get_variable(name)
+
+#### Arguments
+
+- `name`:
+
+  Variable name.
+
+#### Returns
+
+Variable value.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$set_variable()`
 
+Set a variable's value in the interpreter.
+
 #### Usage
 
     PraatInterpreter$set_variable(name, value)
+
+#### Arguments
+
+- `name`:
+
+  Variable name.
+
+- `value`:
+
+  Variable value.
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$eval()`
 
+Evaluate a Praat expression and return the result.
+
 #### Usage
 
     PraatInterpreter$eval(expression)
+
+#### Arguments
+
+- `expression`:
+
+  Praat expression.
+
+#### Returns
+
+Result of the expression.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$object_count()`
 
+Get the count of objects in the Praat object list.
+
 #### Usage
 
     PraatInterpreter$object_count()
+
+#### Returns
+
+Integer count.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$list_objects()`
 
+List all objects in the Praat object list.
+
 #### Usage
 
     PraatInterpreter$list_objects()
+
+#### Returns
+
+A data.frame with id, name, class, and selected columns.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$get_object()`
 
+Get a Praat object from the interpreter's object list.
+
 #### Usage
 
     PraatInterpreter$get_object(name, type = NULL)
+
+#### Arguments
+
+- `name`:
+
+  Object name.
+
+- `type`:
+
+  Expected type (optional).
+
+#### Returns
+
+An R6 object.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$get_object_by_id()`
 
+Get a Praat object by ID.
+
 #### Usage
 
     PraatInterpreter$get_object_by_id(id)
+
+#### Arguments
+
+- `id`:
+
+  Object ID.
+
+#### Returns
+
+An R6 object.
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$set_object()`
 
+Add an R object to Praat's object list.
+
 #### Usage
 
     PraatInterpreter$set_object(name, object)
+
+#### Arguments
+
+- `name`:
+
+  Object name.
+
+- `object`:
+
+  A PraatObject.
+
+#### Returns
+
+Object ID (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$remove_object()`
 
+Remove an object from Praat's object list by name.
+
 #### Usage
 
     PraatInterpreter$remove_object(name)
+
+#### Arguments
+
+- `name`:
+
+  Object name.
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$remove_object_by_id()`
 
+Remove an object from Praat's object list by ID.
+
 #### Usage
 
     PraatInterpreter$remove_object_by_id(id)
+
+#### Arguments
+
+- `id`:
+
+  Object ID.
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$select_object()`
 
+Select an object in Praat's object list.
+
 #### Usage
 
     PraatInterpreter$select_object(name, add = FALSE)
+
+#### Arguments
+
+- `name`:
+
+  Object name.
+
+- `add`:
+
+  If TRUE, add to the current selection.
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$clear_objects()`
 
+Clear all objects from Praat's object list.
+
 #### Usage
 
     PraatInterpreter$clear_objects()
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 
 ### `PraatInterpreter$print()`
 
+Print a summary of the interpreter's current object list.
+
 #### Usage
 
     PraatInterpreter$print()
+
+#### Returns
+
+Self (invisibly).
 
 ------------------------------------------------------------------------
 

@@ -44,7 +44,8 @@ Quantile value in specified unit
 
 ## See also
 
-\[get_pitch_quantiles_batch()\] for getting multiple quantiles at once
+[`get_pitch_quantiles_batch`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_quantiles_batch.md)
+for getting multiple quantiles at once
 
 ## Examples
 

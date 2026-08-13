@@ -28,7 +28,8 @@ A Table object
 
 ## See also
 
-\[Table\] for object methods
+[`Table`](https://humlab-speech.github.io/pladdrr/reference/Table.md)
+for object methods
 
 ## Examples
 

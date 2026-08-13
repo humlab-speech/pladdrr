@@ -1,7 +1,7 @@
-# BarkSpectrogram Object
+# BarkSpectrogram
 
-Praat BarkSpectrogram: Bark-scale spectrogram used in psychoacoustic and
-perceptual analysis of speech.
+A Bark-scale spectrogram, used in psychoacoustic and perceptual analysis
+of speech.
 
 ## Usage
 
@@ -13,11 +13,13 @@ BarkSpectrogram(.xptr = NULL)
 
 - .xptr:
 
-  Internal use only - external pointer to C++ BarkSpectrogram object
+  Not for direct use. External pointer to the underlying C++
+  BarkSpectrogram object; set internally by
+  `Sound$to_bark_spectrogram()`.
 
 ## Value
 
-A BarkSpectrogram object
+A BarkSpectrogram object.
 
 ## Examples
 

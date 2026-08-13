@@ -1,54 +1,91 @@
-# Formant Class
+# Formant
 
 Formant objects represent vocal tract resonance frequencies over time.
 Created from a Sound via formant tracking algorithms (Burg,
 Split-Levinson, or Willems). Formant frequencies and bandwidths are the
 primary acoustic correlates of vowel quality in speech.
 
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++ Formant
+  object; set internally when a method returns a new Formant.
+
 ## Value
 
 A `Formant` object with methods for querying formant frequencies and
 bandwidths at time points or across the full contour.
 
-## Methods
+## Information
 
-\*\*Information:\*\* \* \`get_number_of_frames()\` — Number of analysis
-frames \* \`get_time_step()\` — Time step between frames (s) \*
-\`get_min_num_formants()\` / \`get_max_num_formants()\` — Formant count
-range per frame
+- `get_number_of_frames()` - number of analysis frames
 
-\*\*Point queries (single time):\*\* \*
-\`get_value_at_time(formant_number, time, unit)\` — Formant frequency at
-time \* \`get_bandwidth_at_time(formant_number, time, unit)\` — Formant
-bandwidth at time \* \`get_all_values_at_time(time, max_formants,
-unit)\` — All formant values at time point
+- `get_time_step()` - time step between frames (s)
 
-\*\*Statistics (over time range):\*\* \* \`get_mean(formant_number,
-from_time, to_time, unit)\` — Mean formant frequency \*
-\`get_standard_deviation(formant_number, from_time, to_time, unit)\` —
-SD \* \`get_minimum(formant_number, from_time, to_time, unit)\` —
-Minimum value \* \`get_maximum(formant_number, from_time, to_time,
-unit)\` — Maximum value \* \`get_quantile(formant_number, quantile,
-from_time, to_time, unit)\` — Quantile \* \`get_time_of_minimum(...)\` /
-\`get_time_of_maximum(...)\` — Time of extremum
+- `get_min_num_formants()`, `get_max_num_formants()` - formant count
+  range per frame
 
-\*\*Batch / vectorized:\*\* \* \`get_formant_track(formant_number,
-unit)\` — Full track for one formant \*
-\`get_bandwidth_track(formant_number, unit)\` — Full bandwidth track \*
-\`get_values_at_times(formant_number, times, unit)\` — Values at
-arbitrary vector of times \* \`get_all_formant_tracks(max_formants,
-unit)\` — All formants as matrix
+## Point queries (single time)
 
-\*\*Export:\*\* \* \`as_data_frame(max_formants)\` — Export as
-data.frame, long format: one row per (frame, formant number), columns
-\`time\`, \`formant\`, \`frequency\` (Hz), \`bandwidth\` (Hz). Matches
-\`FormantPath\$as_data_frame()\`. \* \`save(filepath)\` — Save to Praat
-binary file
+- `get_value_at_time(formant_number, time, unit)` - formant frequency at
+  time
 
-\*\*Transform:\*\* \* \`to_formant_tier(formant_number)\` — Extract one
-formant as FormantTier \* \`to_formant_modeler()\` — Create polynomial
-trajectory model \* \`down_to_formant_tier()\` — Extract all formants as
-FormantTier
+- `get_bandwidth_at_time(formant_number, time, unit)` - formant
+  bandwidth at time
+
+- `get_all_values_at_time(time, max_formants, unit)` - all formant
+  values at a time point
+
+## Statistics (over time range)
+
+- `get_mean(formant_number, from_time, to_time, unit)` - mean formant
+  frequency
+
+- `get_standard_deviation(formant_number, from_time, to_time, unit)` -
+  standard deviation
+
+- `get_minimum(formant_number, from_time, to_time, unit)` - minimum
+  value
+
+- `get_maximum(formant_number, from_time, to_time, unit)` - maximum
+  value
+
+- `get_quantile(formant_number, quantile, from_time, to_time, unit)` -
+  quantile
+
+- `get_time_of_minimum(...)`, `get_time_of_maximum(...)` - time of
+  extremum
+
+## Batch and vectorized
+
+- `get_formant_track(formant_number, unit)` - full track for one formant
+
+- `get_bandwidth_track(formant_number, unit)` - full bandwidth track
+
+- `get_values_at_times(formant_number, times, unit)` - values at an
+  arbitrary vector of times
+
+- `get_all_formant_tracks(max_formants, unit)` - all formants as a
+  matrix
+
+## Export
+
+- `as_data_frame(max_formants)` - export as a data.frame, long format:
+  one row per (frame, formant number), with columns `time`, `formant`,
+  `frequency` (Hz), and `bandwidth` (Hz). Matches
+  `FormantPath$as_data_frame()`.
+
+- `save(filepath)` - save to a Praat binary file
+
+## Transform
+
+- `to_formant_tier(formant_number)` - extract one formant as a
+  FormantTier
+
+- `to_formant_modeler()` - create a polynomial trajectory model
+
+- `down_to_formant_tier()` - extract all formants as a FormantTier
 
 ## See also
 
