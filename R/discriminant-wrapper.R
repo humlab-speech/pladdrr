@@ -1,12 +1,15 @@
-#' @title Discriminant Analysis (LDA)
-#' @description
-#' Linear Discriminant Analysis for vowel classification, speaker identification,
-#' and other multivariate acoustic classification tasks.
+#' Discriminant
 #'
-#' @details
-#' Discriminant analysis is commonly used in phonetics for vowel classification,
-#' speaker identification, dialect/accent classification, and phoneme recognition.
+#' Linear Discriminant Analysis (LDA) for vowel classification, speaker
+#' identification, and other multivariate acoustic classification tasks.
 #'
+#' Discriminant analysis is commonly used in phonetics for vowel
+#' classification, speaker identification, dialect/accent classification,
+#' and phoneme recognition.
+#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Discriminant object; set internally when a method returns a new
+#'   Discriminant (for example \code{\link{discriminant_from_matrix}}).
 #' @return A \code{Discriminant} object with methods for querying discriminant
 #'   functions, eigenvalues, and group statistics.
 #'

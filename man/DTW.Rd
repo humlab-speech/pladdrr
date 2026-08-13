@@ -2,66 +2,67 @@
 % Please edit documentation in R/dtw-wrapper.R
 \name{DTW}
 \alias{DTW}
-\title{Dynamic Time Warping Object}
+\title{DTW}
 \usage{
 DTW(.xptr = NULL)
 }
 \arguments{
-\item{.xptr}{Internal external pointer to wrap an existing DTW object; not for direct use.}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+DTW object; set internally when wrapping an existing alignment.}
 }
 \value{
-An object of class \code{DTW} wrapping the alignment path and distance
-  matrix (list with methods; dispatched via the shared \code{PraatObject} pattern).
+A DTW object wrapping the alignment path and distance matrix.
 }
 \description{
 Temporal alignment between two acoustic signals.
-
-DTW aligns a candidate signal (x-axis) to a prototype/reference (y-axis),
-computing an optimal path through a distance matrix that minimizes the total
-distance while respecting slope constraints.
 }
-\section{Creating DTW Objects}{
+\details{
+DTW aligns a candidate signal (x-axis) to a prototype or reference
+(y-axis), computing an optimal path through a distance matrix that
+minimizes the total distance while respecting slope constraints.
+}
+\section{Creating DTW objects}{
 
 
 DTW objects are created by aligning two acoustic objects:
 \itemize{
-  \item \code{sounds_to_dtw(reference, candidate)} - Align two sounds (most common)
-  \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - Align MFCCs (speech recognition)
-  \item \code{spectrograms_to_dtw(spec1, spec2)} - Align spectrograms
-  \item \code{pitches_to_dtw(pitch1, pitch2)} - Align pitch contours
+  \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most common)
+  \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
+  \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
+  \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
 }
 }
 
-\section{Time Mapping (Core Use Case)}{
+\section{Time mapping}{
 
 
 \itemize{
-  \item \code{$get_y_time_from_x_time(tx)} - Map candidate time to reference time
-  \item \code{$get_x_time_from_y_time(ty)} - Map reference time to candidate time
-  \item \code{$map_times(times, direction)} - Vectorized time mapping
+  \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference time
+  \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate time
+  \item \code{$map_times(times, direction)} - vectorized time mapping
 }
 }
 
-\section{TextGrid Warping (Major Use Case)}{
+\section{TextGrid warping}{
 
 
 \itemize{
-  \item \code{$warp_textgrid(textgrid)} - Warp annotation times
+  \item \code{$warp_textgrid(textgrid)} - warp annotation times
 }
 }
 
-\section{Path Analysis}{
+\section{Path analysis}{
 
 
 \itemize{
-  \item \code{$get_weighted_distance()} - Global alignment distance
-  \item \code{$get_path_length()} - Number of cells in optimal path
-  \item \code{$get_path()} - Full path as data.frame
-  \item \code{$get_maximum_consecutive_steps("x"|"y")} - Path regularity
+  \item \code{$get_weighted_distance()} - global alignment distance
+  \item \code{$get_path_length()} - number of cells in optimal path
+  \item \code{$get_path()} - full path as a data.frame
+  \item \code{$get_maximum_consecutive_steps("x"|"y")} - path regularity
 }
 }
 
-\section{Slope Constraints}{
+\section{Slope constraints}{
 
 Controls path flexibility:
 \itemize{

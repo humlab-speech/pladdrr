@@ -2,45 +2,60 @@
 % Please edit documentation in R/mfcc-wrapper.R
 \name{MFCC}
 \alias{MFCC}
-\title{Praat MFCC Object}
+\title{MFCC}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++ MFCC
+object; set internally when a method returns a new MFCC.}
+}
 \value{
 An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
 }
 \description{
-Mel Frequency Cepstral Coefficients for speech/speaker recognition.
-Uses shared dispatch table for minimal memory per object.
+Mel-frequency cepstral coefficients for speech and speaker recognition.
 }
 \details{
 MFCCs are widely used features in speech and speaker recognition systems.
 They represent the short-term power spectrum of a sound on a mel scale,
-which approximates human auditory perception.
-
-## Creating MFCC Objects
-
-MFCC objects are created from Sound objects:
-- `sound$to_mfcc()` - Extract MFCCs with default parameters
-
-## Querying MFCC Properties
-
-- `$get_number_of_frames()` - Number of analysis frames
-- `$get_time_step()` - Time step between frames
-- `$get_max_num_coefficients()` - Maximum number of coefficients
-- `$get_fmin()` / `$get_fmax()` - Frequency range (mel)
-- `$get_c0_at_frame(frame)` - C0 (energy) for specific frame
-- `$get_value_in_frame(frame, coef)` - Coefficient value at frame
-- `$get_coefficients_at_frame(frame)` - All coefficients for frame
-- `$get_all_coefficients()` - Matrix of all coefficients
-- `$get_all_c0()` - Vector of all C0 values
-
-## Liftering
-
-- `$lifter(L)` - Apply cepstral liftering (weighting)
-
-## Export
-
-- `$as_data_frame(include_c0)` - Convert to data.frame/data.table
-- `$to_matrix()` - Convert to Matrix object
+which approximates human auditory perception. Uses a shared dispatch table
+for minimal memory per object.
 }
+\section{Creating MFCC objects}{
+
+\itemize{
+  \item \code{sound$to_mfcc()} - extract MFCCs with default parameters
+}
+}
+
+\section{Query methods}{
+
+\itemize{
+  \item \code{get_number_of_frames()} - number of analysis frames
+  \item \code{get_time_step()} - time step between frames
+  \item \code{get_max_num_coefficients()} - maximum number of coefficients
+  \item \code{get_fmin()}, \code{get_fmax()} - frequency range (mel)
+  \item \code{get_c0_at_frame(frame)} - C0 (energy) for a specific frame
+  \item \code{get_value_in_frame(frame, coef)} - coefficient value at a frame
+  \item \code{get_coefficients_at_frame(frame)} - all coefficients for a frame
+  \item \code{get_all_coefficients()} - matrix of all coefficients
+  \item \code{get_all_c0()} - vector of all C0 values
+}
+}
+
+\section{Liftering}{
+
+\itemize{
+  \item \code{lifter(L)} - apply cepstral liftering (weighting)
+}
+}
+
+\section{Export}{
+
+\itemize{
+  \item \code{as_data_frame(include_c0)} - convert to a data.frame/data.table
+  \item \code{to_matrix()} - convert to a Matrix object
+}
+}
+
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 mfcc <- sound$to_mfcc(

@@ -2,9 +2,15 @@
 % Please edit documentation in R/formantmodeler-wrapper.R
 \name{FormantModeler}
 \alias{FormantModeler}
-\title{Praat FormantModeler Object}
+\title{FormantModeler}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+FormantModeler object; set internally when a method returns a new
+FormantModeler.}
+}
 \value{
-A \code{FormantModeler} object with methods for polynomial modeling of formant trajectories with outlier detection.
+A \code{FormantModeler} object with methods for polynomial modeling of
+  formant trajectories with outlier detection.
 }
 \description{
 Robust formant trajectory modeling using polynomial fits with outlier detection.

@@ -2,20 +2,21 @@
 % Please edit documentation in R/complexspectrogram-module.R
 \name{ComplexSpectrogram}
 \alias{ComplexSpectrogram}
-\title{ComplexSpectrogram Constructor}
+\title{ComplexSpectrogram}
 \arguments{
-\item{sound}{Sound object}
+\item{sound}{Sound object.}
 
-\item{window_length}{Window length in seconds (default: 0.005)}
+\item{window_length}{Window length in seconds. Default 0.005.}
 
-\item{maximum_frequency}{Maximum frequency to analyze in Hz (default: 5000)}
+\item{maximum_frequency}{Maximum frequency to analyze, in Hz. Default 5000.}
 }
 \value{
-An object of class \code{ComplexSpectrogram} wrapping a phase-preserving
-  spectrogram (list with methods; dispatched via the shared \code{PraatObject} pattern).
+An object of class \code{ComplexSpectrogram} (a list with methods,
+  dispatched via the shared \code{PraatObject} pattern).
 }
 \description{
-Create a ComplexSpectrogram object from a Sound
+Create a ComplexSpectrogram object from a Sound: a phase-preserving
+spectrogram computed with a complex FFT.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)

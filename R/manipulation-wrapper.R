@@ -7,7 +7,10 @@
 #' The Manipulation object is Praat's main tool for modifying pitch and duration
 #' of speech sounds using PSOLA (Pitch-Synchronous Overlap-Add) resynthesis.
 #'
-#' @return A \code{Manipulation} object with methods for PSOLA-based pitch and duration modification.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Manipulation object; set internally when a method returns a new
+#'   Manipulation, e.g. \code{sound$to_manipulation()}.
+#' @return A \code{Manipulation} object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)

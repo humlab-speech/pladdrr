@@ -1,37 +1,42 @@
-#' @title Praat VocalTract Object
-#' @description
-#' Praat VocalTract object with direct C++ module binding for articulatory synthesis.
+#' VocalTract
 #'
-#' @details
-#' A VocalTract represents the cross-sectional areas of the vocal tract from
-#' glottis to lips, divided into sections. This can be used for:
-#' - Articulatory synthesis (convert to Spectrum)
-#' - Vowel modeling (create from phone)
-#' - Acoustic tube modeling
+#' Praat VocalTract object: the cross-sectional areas of the vocal tract, from
+#' glottis to lips, divided into sections.
 #'
-#' ## Creating VocalTract Objects
+#' Used for articulatory synthesis (convert to a Spectrum), vowel modeling
+#' (create from a phone), and acoustic tube modeling.
 #'
-#' - `VocalTract(nx, dx)` - Create empty vocal tract with nx sections
-#' - `VocalTract$create_from_phone(phone)` - Create from phone name
+#' @section Usage:
+#' \preformatted{
+#' VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+#' VocalTract$create_from_phone(phone)      # create from a phone name
+#' }
 #'
-#' ## Querying
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_length()} - total length in metres
+#'   \item \code{get_number_of_sections()} - number of sections
+#'   \item \code{get_section_length()} - section length in metres
+#'   \item \code{get_area(section)} - area at a section (m^2)
+#'   \item \code{get_areas()} - all areas as a vector
+#' }
 #'
-#' - `$get_length()` - Total length in metres
-#' - `$get_number_of_sections()` - Number of sections
-#' - `$get_section_length()` - Section length in metres
-#' - `$get_area(section)` - Area at section (m^2)
-#' - `$get_areas()` - All areas as vector
+#' @section Modification:
+#' \itemize{
+#'   \item \code{set_area(section, area)} - set the area at a section
+#'   \item \code{set_areas(areas)} - set all areas from a vector
+#' }
 #'
-#' ## Modification
+#' @section Transformation:
+#' \itemize{
+#'   \item \code{to_spectrum(...)} - convert to a Spectrum for synthesis
+#'   \item \code{to_matrix()} - convert to a Matrix
+#' }
 #'
-#' - `$set_area(section, area)` - Set area at section
-#' - `$set_areas(areas)` - Set all areas from vector
-#'
-#' ## Transformation
-#'
-#' - `$to_spectrum(...)` - Convert to Spectrum for synthesis
-#' - `$to_matrix()` - Convert to Matrix
-#'
+#' @param nx Number of sections. Default 17.
+#' @param dx Section length in metres. Default 0.01.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   VocalTract object; set internally when a method returns a new VocalTract.
 #' @return A \code{VocalTract} object with methods for articulatory tube-model access.
 #'
 #' @examples
@@ -154,11 +159,14 @@ VocalTract <- function(nx = 17L, dx = 0.01, .xptr = NULL) {
 # ============================================================================
 
 #' Create VocalTract from phone
-#' @param phone Phone name. Valid phones are:
-#'   - Vowels: a, e, i, o, u
-#'   - Special vowels: y1, y2, y3, jery
-#'   - Plosives: p, t, k, x
-#'   - Syllables: pa, ta, ka, pi, ti, ki, pu, tu, ku
+#'
+#' @param phone Phone name. Valid phones:
+#' \itemize{
+#'   \item Vowels: a, e, i, o, u
+#'   \item Special vowels: y1, y2, y3, jery
+#'   \item Plosives: p, t, k, x
+#'   \item Syllables: pa, ta, ka, pi, ti, ki, pu, tu, ku
+#' }
 #' @return VocalTract object
 #' @export
 #' @examples

@@ -2,18 +2,22 @@
 % Please edit documentation in R/mfcc-wrapper.R
 \name{LFCC}
 \alias{LFCC}
-\title{Praat LFCC Object}
+\title{LFCC}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++ LFCC
+object; set internally when a method returns a new LFCC.}
+}
 \value{
 An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
 }
 \description{
-Linear Frequency Cepstral Coefficients for speaker recognition.
-Uses shared dispatch table for minimal memory per object.
+Linear-frequency cepstral coefficients for speaker recognition.
 }
 \details{
 LFCCs are similar to MFCCs but use a linear frequency scale instead of
 the mel scale. They are derived from LPC analysis and are useful for
-speaker recognition tasks.
+speaker recognition tasks. Uses a shared dispatch table for minimal memory
+per object.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)

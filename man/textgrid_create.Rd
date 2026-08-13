@@ -16,7 +16,7 @@ textgrid_create(tmin, tmax, tier_names = "", point_tiers = "")
 \item{point_tiers}{Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)}
 }
 \value{
-TextGrid object
+A \code{TextGrid} object.
 }
 \description{
 Create a new empty TextGrid with specified tiers

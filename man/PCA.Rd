@@ -2,13 +2,19 @@
 % Please edit documentation in R/pca-wrapper.R
 \name{PCA}
 \alias{PCA}
-\title{Principal Component Analysis (PCA)}
+\title{PCA}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+PCA object; set internally when a method returns a new PCA (for example
+\code{\link{pca_from_matrix}}).}
+}
 \value{
 A \code{PCA} object with methods for querying components, eigenvalues,
   and projections.
 }
 \description{
-PCA for dimensionality reduction and analysis of multivariate acoustic data.
+Principal Component Analysis (PCA) for dimensionality reduction and
+analysis of multivariate acoustic data.
 }
 \details{
 PCA is commonly used in phonetics for vowel space analysis, speaker

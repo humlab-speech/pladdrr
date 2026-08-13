@@ -3,6 +3,18 @@
 \name{Table}
 \alias{Table}
 \title{Praat Table Object}
+\arguments{
+\item{numberOfRows}{Number of rows. Required unless \code{.xptr} is given.}
+
+\item{numberOfColumns}{Number of columns. Required unless \code{columnNames}
+or \code{.xptr} is given.}
+
+\item{columnNames}{Character vector of column names, used instead of
+\code{numberOfColumns} to name columns as they are created.}
+
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Table object; set internally when a method returns a new Table.}
+}
 \value{
 A \code{Table} object with methods for tabular data access and statistics.
 }

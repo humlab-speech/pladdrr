@@ -24,5 +24,5 @@ tbl <- table_create(numberOfRows = 3, columnNames = c("speaker", "f0"))
 tbl2 <- table_create(numberOfRows = 3, numberOfColumns = 2)
 }
 \seealso{
-[Table] for object methods
+\code{\link{Table}} for object methods
 }

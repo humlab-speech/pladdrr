@@ -1,19 +1,19 @@
 # longsound-wrapper.R
 # Function wrapper for Praat LongSound objects (streaming large audio files)
 
-#' @title LongSound Class
-#' @description
+#' LongSound
+#'
 #' Function wrapper for Praat LongSound objects representing large audio files.
 #' Unlike Sound objects which load entirely into memory, LongSound streams
 #' from disk, making it suitable for very long recordings.
 #'
-#' @details
 #' A LongSound keeps the audio file open and reads portions on demand.
 #' This allows working with files that would be too large to load into memory.
-#' Use `extract_part()` to get a Sound object for a specific time window.
+#' Use \code{extract_part()} to get a Sound object for a specific time window.
 #'
-#' @param .xptr External pointer to LongSound (for internal use)
-#' @return LongSound object (list with methods)
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   LongSound object; set internally when a method returns a new LongSound.
+#' @return A LongSound object.
 #'
 #' @examples
 #' # LongSound streams from disk, so the example writes a small WAV file first

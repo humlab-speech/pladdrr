@@ -7,11 +7,13 @@
 vocaltract_create_from_phone(phone)
 }
 \arguments{
-\item{phone}{Phone name. Valid phones are:
-- Vowels: a, e, i, o, u
-- Special vowels: y1, y2, y3, jery
-- Plosives: p, t, k, x
-- Syllables: pa, ta, ka, pi, ti, ki, pu, tu, ku}
+\item{phone}{Phone name. Valid phones:
+\itemize{
+  \item Vowels: a, e, i, o, u
+  \item Special vowels: y1, y2, y3, jery
+  \item Plosives: p, t, k, x
+  \item Syllables: pa, ta, ka, pi, ti, ki, pu, tu, ku
+}}
 }
 \value{
 VocalTract object

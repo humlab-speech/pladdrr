@@ -1,11 +1,11 @@
-#' MelSpectrogram Object
+#' MelSpectrogram
 #'
-#' @description
-#' Praat MelSpectrogram: mel-scale spectrogram commonly used in speech
-#' technology (ASR, speaker identification).
+#' A mel-scale spectrogram, commonly used in speech technology (ASR, speaker
+#' identification).
 #'
-#' @param .xptr Internal use only - external pointer to C++ MelSpectrogram object
-#' @return A MelSpectrogram object
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   MelSpectrogram object; set internally by \code{Sound$to_mel_spectrogram()}.
+#' @return A MelSpectrogram object.
 #'
 #' @examples
 #' snd <- Sound$create_tone(frequency = 150, duration = 0.3)

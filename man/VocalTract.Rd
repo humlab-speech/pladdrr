@@ -2,43 +2,61 @@
 % Please edit documentation in R/vocaltract-wrapper.R
 \name{VocalTract}
 \alias{VocalTract}
-\title{Praat VocalTract Object}
+\title{VocalTract}
+\arguments{
+\item{nx}{Number of sections. Default 17.}
+
+\item{dx}{Section length in metres. Default 0.01.}
+
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+VocalTract object; set internally when a method returns a new VocalTract.}
+}
 \value{
 A \code{VocalTract} object with methods for articulatory tube-model access.
 }
 \description{
-Praat VocalTract object with direct C++ module binding for articulatory synthesis.
+Praat VocalTract object: the cross-sectional areas of the vocal tract, from
+glottis to lips, divided into sections.
 }
 \details{
-A VocalTract represents the cross-sectional areas of the vocal tract from
-glottis to lips, divided into sections. This can be used for:
-- Articulatory synthesis (convert to Spectrum)
-- Vowel modeling (create from phone)
-- Acoustic tube modeling
-
-## Creating VocalTract Objects
-
-- `VocalTract(nx, dx)` - Create empty vocal tract with nx sections
-- `VocalTract$create_from_phone(phone)` - Create from phone name
-
-## Querying
-
-- `$get_length()` - Total length in metres
-- `$get_number_of_sections()` - Number of sections
-- `$get_section_length()` - Section length in metres
-- `$get_area(section)` - Area at section (m^2)
-- `$get_areas()` - All areas as vector
-
-## Modification
-
-- `$set_area(section, area)` - Set area at section
-- `$set_areas(areas)` - Set all areas from vector
-
-## Transformation
-
-- `$to_spectrum(...)` - Convert to Spectrum for synthesis
-- `$to_matrix()` - Convert to Matrix
+Used for articulatory synthesis (convert to a Spectrum), vowel modeling
+(create from a phone), and acoustic tube modeling.
 }
+\section{Usage}{
+
+\preformatted{
+VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+VocalTract$create_from_phone(phone)      # create from a phone name
+}
+}
+
+\section{Query methods}{
+
+\itemize{
+  \item \code{get_length()} - total length in metres
+  \item \code{get_number_of_sections()} - number of sections
+  \item \code{get_section_length()} - section length in metres
+  \item \code{get_area(section)} - area at a section (m^2)
+  \item \code{get_areas()} - all areas as a vector
+}
+}
+
+\section{Modification}{
+
+\itemize{
+  \item \code{set_area(section, area)} - set the area at a section
+  \item \code{set_areas(areas)} - set all areas from a vector
+}
+}
+
+\section{Transformation}{
+
+\itemize{
+  \item \code{to_spectrum(...)} - convert to a Spectrum for synthesis
+  \item \code{to_matrix()} - convert to a Matrix
+}
+}
+
 \examples{
 # Create from phone
 vt <- VocalTract$create_from_phone("a")

@@ -1,14 +1,20 @@
-#' @title Praat DurationTier Object
-#' @description
-#' Praat DurationTier object with direct C++ module binding for duration manipulation.
+#' DurationTier
 #'
-#' @details
-#' DurationTiers are used in conjunction with Manipulation objects to modify the
+#' Praat DurationTier object for duration manipulation, created via direct
+#' C++ module binding.
+#'
+#' DurationTiers are used together with Manipulation objects to modify the
 #' duration/tempo of sounds. Values represent duration multiplication factors:
-#' - 1.0 = normal speed
-#' - 2.0 = half speed (doubled duration)
-#' - 0.5 = double speed (halved duration)
+#' \itemize{
+#'   \item 1.0 - normal speed
+#'   \item 2.0 - half speed (doubled duration)
+#'   \item 0.5 - double speed (halved duration)
+#' }
 #'
+#' @param tmin Start time in seconds. Used with \code{tmax} to create a new, empty DurationTier.
+#' @param tmax End time in seconds. Used with \code{tmin} to create a new, empty DurationTier.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   DurationTier object; set internally when a method returns a new DurationTier.
 #' @return A \code{DurationTier} object with methods for duration and tempo manipulation via time-value points.
 #'
 #' @examples

@@ -2,16 +2,34 @@
 % Please edit documentation in R/formantgrid-wrapper.R
 \name{FormantGrid}
 \alias{FormantGrid}
-\title{Praat FormantGrid Object}
+\title{FormantGrid}
+\arguments{
+\item{tmin}{Start time in seconds.}
+
+\item{tmax}{End time in seconds.}
+
+\item{number_of_formants}{Number of formants to track. Default 10.}
+
+\item{initial_first_formant}{Initial frequency of the first formant, in Hz. Default 550.}
+
+\item{initial_formant_spacing}{Initial spacing between formants, in Hz. Default 1100.}
+
+\item{initial_first_bandwidth}{Initial bandwidth of the first formant, in Hz. Default 60.}
+
+\item{initial_bandwidth_spacing}{Initial spacing between formant bandwidths, in Hz. Default 50.}
+
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+FormantGrid object; set internally when a method returns a new FormantGrid.}
+}
 \value{
 A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
 }
 \description{
-Praat FormantGrid object with direct C++ module binding for formant manipulation.
+Praat FormantGrid object: formant frequencies and bandwidths over time,
+editable at arbitrary time points.
 }
 \details{
-FormantGrid objects allow manipulation of formant frequencies and bandwidths
-over time for voice transformation and synthesis. This is the editable
+Used for voice transformation and synthesis. This is the editable
 counterpart to the read-only Formant object.
 }
 \examples{

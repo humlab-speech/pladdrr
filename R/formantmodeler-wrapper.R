@@ -1,13 +1,16 @@
-#' @title Praat FormantModeler Object
-#' @description
+#' FormantModeler
+#'
 #' Robust formant trajectory modeling using polynomial fits with outlier detection.
 #'
-#' @details
 #' FormantModeler provides polynomial modeling of formant trajectories over time.
 #' It automatically identifies outliers and can find the optimal formant ceiling
 #' for a given sound, making it useful for robust formant analysis in noisy speech.
 #'
-#' @return A \code{FormantModeler} object with methods for polynomial modeling of formant trajectories with outlier detection.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   FormantModeler object; set internally when a method returns a new
+#'   FormantModeler.
+#' @return A \code{FormantModeler} object with methods for polynomial modeling of
+#'   formant trajectories with outlier detection.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)

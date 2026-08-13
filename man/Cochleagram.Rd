@@ -2,7 +2,12 @@
 % Please edit documentation in R/cochleagram-wrapper.R
 \name{Cochleagram}
 \alias{Cochleagram}
-\title{Praat Cochleagram Object}
+\title{Cochleagram}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Cochleagram object; set internally when a method returns a new
+Cochleagram.}
+}
 \value{
 A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
 }

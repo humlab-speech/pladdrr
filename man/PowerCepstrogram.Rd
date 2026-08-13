@@ -2,14 +2,12 @@
 % Please edit documentation in R/powercepstrum.R
 \name{PowerCepstrogram}
 \alias{PowerCepstrogram}
-\title{PowerCepstrogram Class}
+\title{PowerCepstrogram}
 \value{
-A \code{PowerCepstrogram} object with methods for time-varying power cepstrum analysis.
+A PowerCepstrogram object.
 }
 \description{
 Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
-Uses shared dispatch table for minimal memory per object.
-Note: No Rcpp module — uses direct Rcpp function calls.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)

@@ -1,40 +1,49 @@
 # intensity-wrapper.R - Intensity object using shared dispatch table (pladdrr 4.8.33)
 # Architecture: minimal list + $.Intensity S3 dispatch → shared method env
 
-#' @title Praat Intensity Object
+#' Intensity
 #'
-#' @description
 #' Intensity objects represent sound power (loudness) over time, measured in
-#' decibels (dB) relative to the auditory threshold. Created from a Sound using
-#' intensity contour extraction.
+#' decibels (dB) relative to the auditory threshold.
 #'
-#' @section Methods:
+#' Created from a Sound using intensity contour extraction.
 #'
-#' **Information:**
-#' * `get_duration()` — Duration of the intensity contour (s)
-#' * `get_time_step()` — Time step between frames (s)
+#' @section Information methods:
+#' \itemize{
+#'   \item \code{get_duration()} - duration of the intensity contour (s)
+#'   \item \code{get_time_step()} - time step between frames (s)
+#' }
 #'
-#' **Point queries:**
-#' * `get_value_at_time(time, interpolation)` — Intensity at time point (dB)
-#' * `get_values_at_times(times, interpolation)` — Intensity at vector of times (batch)
+#' @section Point query methods:
+#' \itemize{
+#'   \item \code{get_value_at_time(time, interpolation)} - intensity at a time point (dB)
+#'   \item \code{get_values_at_times(times, interpolation)} - intensity at a vector of times (batch)
+#' }
 #'
-#' **Statistics (over time range):**
-#' * `get_mean(from_time, to_time, averaging_method)` — Mean intensity (dB)
-#' * `get_standard_deviation(from_time, to_time)` — Standard deviation (dB)
-#' * `get_minimum(from_time, to_time, interpolation)` — Minimum intensity
-#' * `get_maximum(from_time, to_time, interpolation)` — Maximum intensity
-#' * `get_quantile(quantile, from_time, to_time)` — Quantile
-#' * `get_time_of_minimum(...)` / `get_time_of_maximum(...)` — Time of extremum
+#' @section Statistics methods (over a time range):
+#' \itemize{
+#'   \item \code{get_mean(from_time, to_time, averaging_method)} - mean intensity (dB)
+#'   \item \code{get_standard_deviation(from_time, to_time)} - standard deviation (dB)
+#'   \item \code{get_minimum(from_time, to_time, interpolation)} - minimum intensity
+#'   \item \code{get_maximum(from_time, to_time, interpolation)} - maximum intensity
+#'   \item \code{get_quantile(quantile, from_time, to_time)} - quantile
+#'   \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+#' }
 #'
-#' **Export:**
-#' * `as_vector()` — Raw intensity values (dB)
-#' * `as_data_frame()` — Export as data.frame (time, intensity)
-#' * `save(filepath)` — Save to Praat binary file
+#' @section Export methods:
+#' \itemize{
+#'   \item \code{as_vector()} - raw intensity values (dB)
+#'   \item \code{as_data_frame()} - export as a data.frame (time, intensity)
+#'   \item \code{save(filepath)} - save to a Praat binary file
+#' }
 #'
 #' @section Interpolation:
-#' Codes: `"nearest"` (0), `"linear"` (1), `"cubic"` (2, default), `"sinc70"` (3), `"sinc700"` (4).
-#' Averaging methods: `"energy"` (0, default), `"sones"` (1), `"db"` (2).
+#' Codes: \code{"nearest"} (0), \code{"linear"} (1), \code{"cubic"} (2, default),
+#' \code{"sinc70"} (3), \code{"sinc700"} (4).
+#' Averaging methods: \code{"energy"} (0, default), \code{"sones"} (1), \code{"db"} (2).
 #'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Intensity object; set internally when a method returns a new Intensity.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{IntensityTier}}
 #'
 #' @examples

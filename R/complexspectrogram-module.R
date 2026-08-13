@@ -1,15 +1,16 @@
 # ComplexSpectrogram wrapper
 # Phase-preserving spectrogram analysis with complex FFT
 
-#' ComplexSpectrogram Constructor
+#' ComplexSpectrogram
 #'
-#' Create a ComplexSpectrogram object from a Sound
+#' Create a ComplexSpectrogram object from a Sound: a phase-preserving
+#' spectrogram computed with a complex FFT.
 #'
-#' @param sound Sound object
-#' @param window_length Window length in seconds (default: 0.005)
-#' @param maximum_frequency Maximum frequency to analyze in Hz (default: 5000)
-#' @return An object of class \code{ComplexSpectrogram} wrapping a phase-preserving
-#'   spectrogram (list with methods; dispatched via the shared \code{PraatObject} pattern).
+#' @param sound Sound object.
+#' @param window_length Window length in seconds. Default 0.005.
+#' @param maximum_frequency Maximum frequency to analyze, in Hz. Default 5000.
+#' @return An object of class \code{ComplexSpectrogram} (a list with methods,
+#'   dispatched via the shared \code{PraatObject} pattern).
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)

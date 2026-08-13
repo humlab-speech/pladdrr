@@ -4,116 +4,128 @@
 
 #' Sound
 #'
-#' Represents a digitized acoustic signal (Praat Sound object).
+#' Represents a digitized acoustic signal (a Praat Sound object).
 #'
-#' A Sound contains one or more channels of audio sampled at regular intervals.
-#' This is the entry point for most acoustic analyses in pladdrr.
+#' A Sound holds one or more channels of audio sampled at regular intervals.
+#' It is the starting point for most acoustic analyses in pladdrr: pitch,
+#' formants, intensity, and spectral measures all begin from a Sound.
 #'
 #' @section File I/O:
-#' The Sound constructor tries two readers in order:
+#' The constructor tries two readers in order:
 #'
-#' 1. **Native Praat reader** — WAV, AIFF, AIFC, NIST, NeXT/Sun. No extra
-#'    packages needed, and the fastest path.
-#' 2. **`av` package fallback** — everything else, including **FLAC, MP3** and
-#'    OGG Vorbis. The FLAC and MP3 decoder sources were dropped from the
-#'    vendored Praat tree in v4.9.5 to keep the CRAN tarball within limits, so
-#'    those formats need `av` installed (`install.packages("av")`). Without it,
-#'    reading a FLAC or MP3 file raises an error naming the missing package.
+#' \enumerate{
+#'   \item The native Praat reader, which handles WAV, AIFF, AIFC, NIST, and
+#'     NeXT/Sun files without extra packages, and is the fastest path.
+#'   \item The \code{av} package, used as a fallback for everything else,
+#'     including FLAC, MP3, and OGG Vorbis. The FLAC and MP3 decoder sources
+#'     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
+#'     tarball within limits, so those formats need \code{av} installed
+#'     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
+#'     file raises an error naming the missing package.
+#' }
 #'
-#' Convert to WAV up front if you want to avoid the dependency entirely.
+#' Convert to WAV up front if you want to avoid the \code{av} dependency entirely.
 #'
 #' @section Usage:
-#' ```r
+#' \preformatted{
 #' # From file
 #' sound <- Sound(path = "audio.wav")
 #'
 #' # From numeric data
 #' sound <- Sound$from_values(values, sampling_rate = 44100)
 #'
-#' # Create synthetic tone
+#' # Synthetic tone
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
-#' ```
+#' }
 #'
-#' @section Query Methods:
-#' - `get_duration()` - Duration in seconds
-#' - `get_sampling_frequency()` - Sampling rate in Hz
-#' - `get_number_of_samples()` - Number of samples
-#' - `get_number_of_channels()` - Number of channels
-#' - `get_value_at_time()` - Amplitude at specific time
-#' - `get_rms()`, `get_energy()`, `get_power()` - Energy measures
-#' - `get_intensity_db()` - Intensity in dB
-#' - `get_minimum()`, `get_maximum()`, `get_mean()` - Amplitude statistics
-#' - `get_values(channel)` - **NEW**: Get sample values as numeric vector (fast, no data frame)
-#' - `get_sample_times()` - **NEW**: Get sample times as numeric vector (fast, no data frame)
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_duration()} - duration in seconds
+#'   \item \code{get_sampling_frequency()} - sampling rate in Hz
+#'   \item \code{get_number_of_samples()} - number of samples
+#'   \item \code{get_number_of_channels()} - number of channels
+#'   \item \code{get_value_at_time()} - amplitude at a given time
+#'   \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy measures
+#'   \item \code{get_intensity_db()} - intensity in dB
+#'   \item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} - amplitude statistics
+#'   \item \code{get_values(channel)} - sample values as a numeric vector
+#'   \item \code{get_sample_times()} - sample times as a numeric vector
+#' }
 #'
-#' @section Analysis Methods:
-#' - `to_pitch()` - Extract pitch contour (F0)
-#' - `to_formant_burg()` - Extract formants (F1, F2, F3, ...)
-#' - `to_intensity()` - Extract intensity contour
-#' - `to_harmonicity_cc()` - Harmonics-to-noise ratio
-#' - `to_harmonicity_gne()` - Glottal-to-Noise Excitation ratio (GNE)
-#' - `extract_electroglottogram(channel, invert)` - Extract Electroglottogram (EGG) from a channel
-#' - `to_spectrum()` - Frequency spectrum
-#' - `to_spectrogram()` - Time-frequency representation
-#' - `to_ltas()` - Long-term average spectrum
-#' - `to_ltas_pitch_corrected()` - Pitch-corrected LTAS (voice quality)
-#' - `to_formant_robust()` - Outlier-resistant formant tracking
-#' - `to_mel_spectrogram()` - Mel-scale spectrogram
-#' - `to_bark_spectrogram()` - Bark-scale spectrogram
-#' - `to_point_process_periodic_cc()` - Extract glottal pulses
+#' @section Analysis methods:
+#' \itemize{
+#'   \item \code{to_pitch()} - extract pitch contour (F0)
+#'   \item \code{to_formant_burg()} - extract formants (F1, F2, F3, ...)
+#'   \item \code{to_intensity()} - extract intensity contour
+#'   \item \code{to_harmonicity_cc()} - harmonics-to-noise ratio
+#'   \item \code{to_harmonicity_gne()} - glottal-to-noise excitation ratio (GNE)
+#'   \item \code{extract_electroglottogram(channel, invert)} - extract an electroglottogram (EGG) from a channel
+#'   \item \code{to_spectrum()} - frequency spectrum
+#'   \item \code{to_spectrogram()} - time-frequency representation
+#'   \item \code{to_ltas()} - long-term average spectrum
+#'   \item \code{to_ltas_pitch_corrected()} - pitch-corrected LTAS (voice quality)
+#'   \item \code{to_formant_robust()} - outlier-resistant formant tracking
+#'   \item \code{to_mel_spectrogram()} - mel-scale spectrogram
+#'   \item \code{to_bark_spectrogram()} - Bark-scale spectrogram
+#'   \item \code{to_point_process_periodic_cc()} - extract glottal pulses
+#' }
 #'
-#' @section Signal Processing:
-#' - `lengthen()` - Time-stretch using overlap-add
-#' - `autocorrelate()` - Autocorrelation function
-#' - `convolve()` - Convolve with another sound
-#' - `cross_correlate()` - Cross-correlate with another sound
-#' - `deepen_band_modulation()` - Hearing enhancement
-#' - `filter_by_formant()` - Filter with Formant object
-#' - `filter_by_formant_noscale()` - Filter without scaling
+#' @section Signal processing:
+#' \itemize{
+#'   \item \code{lengthen()} - time-stretch using overlap-add
+#'   \item \code{autocorrelate()} - autocorrelation function
+#'   \item \code{convolve()} - convolve with another sound
+#'   \item \code{cross_correlate()} - cross-correlate with another sound
+#'   \item \code{deepen_band_modulation()} - hearing enhancement
+#'   \item \code{filter_by_formant()} - filter with a Formant object
+#'   \item \code{filter_by_formant_noscale()} - filter without scaling
+#' }
 #'
 #' @section Extraction:
-#' - `extract_channel()` - Extract single channel
-#' - `extract_part(from, to, window_shape, relative_width, preserve_times)` - Extract time range with optional windowing
-#'   * Supports 12 window shapes: rectangular, triangular, parabolic, hanning, hamming,
-#'     gaussian1-5, kaiser1-2
-#'   * See \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
+#' \itemize{
+#'   \item \code{extract_channel()} - extract a single channel
+#'   \item \code{extract_part(from, to, window_shape, relative_width, preserve_times)} -
+#'     extract a time range, with optional windowing. Supports 12 window shapes
+#'     (rectangular, triangular, parabolic, hanning, hamming, gaussian1-5, kaiser1-2);
+#'     see \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}.
+#' }
 #'
 #' @section Modification:
-#' - `scale_intensity()` - Scale to target dB level (in-place)
-#' - `scale_peak()` - Scale peak amplitude (in-place)
-#' - `pre_emphasize()` - High-pass filter (in-place)
-#' - `de_emphasize()` - Low-pass filter (in-place)
-#' - `resample()` - Resample to different rate (new object)
-#' - `convert_to_mono()` - Average channels to mono (new object)
-#' - `concatenate()` - Append another sound (new object)
-#' - `mix()` - Mix with another sound (new object)
+#' \itemize{
+#'   \item \code{scale_intensity()} - scale to a target dB level (in place)
+#'   \item \code{scale_peak()} - scale peak amplitude (in place)
+#'   \item \code{pre_emphasize()} - high-pass filter (in place)
+#'   \item \code{de_emphasize()} - low-pass filter (in place)
+#'   \item \code{resample()} - resample to a different rate (returns a new object)
+#'   \item \code{convert_to_mono()} - average channels to mono (returns a new object)
+#'   \item \code{concatenate()} - append another sound (returns a new object)
+#'   \item \code{mix()} - mix with another sound (returns a new object)
+#' }
 #'
 #' @section Export:
-#' - `as_matrix()` - Export as numeric matrix
-#' - `as_data_frame()` - Export as data.frame
-#' - `save()` - Save to audio file
+#' \itemize{
+#'   \item \code{as_matrix()} - export as a numeric matrix
+#'   \item \code{as_data_frame()} - export as a data.frame
+#'   \item \code{save()} - save to an audio file
+#' }
 #'
-#' @param path Path to an audio file. Read natively for WAV/AIFF/AIFC/NIST/NeXT;
-#'   FLAC, MP3 and other formats are read through the suggested `av` package.
-#' @param .xptr Internal use only - external pointer to C++ Sound object
-#' @return A Sound object (function wrapper with methods)
+#' @param path Path to an audio file. See the File I/O section for supported formats.
+#' @param .xptr Not for direct use. External pointer to the underlying C++ Sound
+#'   object; set internally when a method returns a new Sound.
+#' @return A Sound object.
 #'
 #' @examples
-#' # Basic workflow (synthetic tone, no external file needed)
+#' # Synthetic tone, no external file needed
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 #' pitch <- sound$to_pitch()
 #' formants <- sound$to_formant_burg()
 #'
-#' # Query properties
 #' cat("Duration:", sound$get_duration(), "s\n")
 #' cat("Sample rate:", sound$get_sampling_frequency(), "Hz\n")
 #'
-#' # Extract portion
 #' part <- sound$extract_part(0.2, 0.5)
 #'
-#' # Sound(path = "audio.wav") reads from a WAV/AIFF/etc. file the same way
-#'
-#' @seealso [Pitch], [Formant], [Intensity], [Spectrum]
+#' @seealso \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{Intensity}}, \code{\link{Spectrum}}
 #' @name Sound
 NULL
 

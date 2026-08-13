@@ -2,12 +2,13 @@
 % Please edit documentation in R/longsound-wrapper.R
 \name{LongSound}
 \alias{LongSound}
-\title{LongSound Class}
+\title{LongSound}
 \arguments{
-\item{.xptr}{External pointer to LongSound (for internal use)}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+LongSound object; set internally when a method returns a new LongSound.}
 }
 \value{
-LongSound object (list with methods)
+A LongSound object.
 }
 \description{
 Function wrapper for Praat LongSound objects representing large audio files.
@@ -17,7 +18,7 @@ from disk, making it suitable for very long recordings.
 \details{
 A LongSound keeps the audio file open and reads portions on demand.
 This allows working with files that would be too large to load into memory.
-Use `extract_part()` to get a Sound object for a specific time window.
+Use \code{extract_part()} to get a Sound object for a specific time window.
 }
 \examples{
 # LongSound streams from disk, so the example writes a small WAV file first

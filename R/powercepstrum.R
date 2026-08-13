@@ -1,45 +1,50 @@
 # powercepstrum.R - PowerCepstrum and PowerCepstrogram using shared dispatch tables (pladdrr 4.8.33)
 # Architecture: minimal list + S3 dispatch → shared method env
 
-#' PowerCepstrum Class
+#' PowerCepstrum
 #'
-#' @description
-#' A PowerCepstrum is the power spectrum of the log power spectrum — a
+#' A PowerCepstrum is the power spectrum of the log power spectrum, a
 #' representation that separates the source (glottal pulse, low quefrency)
 #' from the filter (vocal tract, high quefrency). Created from a Spectrum
 #' or extracted from a PowerCepstrogram at a specific time. The primary
 #' voice quality metric from this object is CPP (Cepstral Peak Prominence).
 #'
-#' @section Methods:
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_qmin()}, \code{get_qmax()} - quefrency range (s)
+#'   \item \code{get_quefrency_range()} - quefrency range as a vector
+#'   \item \code{get_n_bins()} - number of quefrency bins
+#'   \item \code{get_dq()} - quefrency step (s)
+#'   \item \code{get_q1()} - starting quefrency value (s)
+#' }
 #'
-#' **Information:**
-#' * `get_qmin()` / `get_qmax()` — Quefrency range (s)
-#' * `get_quefrency_range()` — Quefrency range as vector
-#' * `get_n_bins()` — Number of quefrency bins
-#' * `get_dq()` — Quefrency step (s)
-#' * `get_q1()` — Starting quefrency value (s)
+#' @section Peak analysis:
+#' \itemize{
+#'   \item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value (dB), the main voice quality metric
+#'   \item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} - CPP using the Hillenbrand algorithm
+#'   \item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral peak (s)
+#'   \item \code{get_value_at_quefrency(quefrency, interpolation, unit)} - cepstral amplitude at a quefrency
+#' }
 #'
-#' **Peak analysis:**
-#' * `get_peak_prominence(pitch_floor, pitch_ceiling, ...)` — CPP value (dB). Main voice quality metric.
-#' * `get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)` — CPP using Hillenbrand algorithm
-#' * `get_quefrency_of_peak(interpolation)` — Quefrency of cepstral peak (s)
-#' * `get_value_at_quefrency(quefrency, interpolation, unit)` — Cepstral amplitude at quefrency
+#' @section Trend and smoothing:
+#' \itemize{
+#'   \item \code{smooth(averaging_window)} - smooth the cepstrum
+#'   \item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a regression trend line
+#'   \item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend at a quefrency
+#'   \item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the regression trend (returns a new PowerCepstrum)
+#'   \item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the trend in place (mutates)
+#' }
 #'
-#' **Trend & smoothing:**
-#' * `smooth(averaging_window)` — Smooth the cepstrum
-#' * `fit_trend_line(qmin, qmax, trend_type, fit_method)` — Fit regression trend line
-#' * `get_trend_line_value(quefrency, ...)` — Value of fitted trend at quefrency
-#' * `subtract_trend(qstart_fit, qend_fit, ...)` — Subtract regression trend (returns new PowerCepstrum)
-#' * `subtract_trend_inplace(qstart_fit, qend_fit, ...)` — Subtract trend in-place (mutates)
-#'
-#' **Export / Transform:**
-#' * `as_matrix()` / `as_data_frame()` — Export
-#' * `to_spectrum(random_phases)` — Convert back to Spectrum
-#' * `to_matrix()` — Export as matrix
+#' @section Export and transform:
+#' \itemize{
+#'   \item \code{as_matrix()}, \code{as_data_frame()} - export
+#'   \item \code{to_spectrum(random_phases)} - convert back to Spectrum
+#'   \item \code{to_matrix()} - export as a matrix
+#' }
 #'
 #' @seealso \code{\link{Spectrum}}, \code{\link{PowerCepstrogram}}, \code{\link{Sound}}
 #'
-#' @return A \code{PowerCepstrum} object with methods for power cepstrum analysis including CPP measurement.
+#' @return A PowerCepstrum object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate = 44100)
@@ -244,14 +249,11 @@ print.PowerCepstrum <- function(x, ...) x$print()
 # PowerCepstrogram Shared Method Dispatch Table
 # ============================================================================
 
-#' PowerCepstrogram Class
+#' PowerCepstrogram
 #'
-#' @description
 #' Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
-#' Uses shared dispatch table for minimal memory per object.
-#' Note: No Rcpp module — uses direct Rcpp function calls.
 #'
-#' @return A \code{PowerCepstrogram} object with methods for time-varying power cepstrum analysis.
+#' @return A PowerCepstrogram object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)

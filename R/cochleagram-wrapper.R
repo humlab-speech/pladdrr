@@ -1,11 +1,13 @@
-#' @title Praat Cochleagram Object
-#' @description
+#' Cochleagram
+#'
 #' Praat Cochleagram object with direct C++ module binding for auditory modeling.
 #'
-#' @details
 #' A Cochleagram represents the output of a bank of auditory filters arranged
 #' along the basilar membrane. Frequency is measured in Bark units (0-25.6 Bark).
 #'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Cochleagram object; set internally when a method returns a new
+#'   Cochleagram.
 #' @return A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
 #'
 #' @examples

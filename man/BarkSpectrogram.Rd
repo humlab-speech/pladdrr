@@ -2,19 +2,20 @@
 % Please edit documentation in R/bark-spectrogram-wrapper.R
 \name{BarkSpectrogram}
 \alias{BarkSpectrogram}
-\title{BarkSpectrogram Object}
+\title{BarkSpectrogram}
 \usage{
 BarkSpectrogram(.xptr = NULL)
 }
 \arguments{
-\item{.xptr}{Internal use only - external pointer to C++ BarkSpectrogram object}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+BarkSpectrogram object; set internally by \code{Sound$to_bark_spectrogram()}.}
 }
 \value{
-A BarkSpectrogram object
+A BarkSpectrogram object.
 }
 \description{
-Praat BarkSpectrogram: Bark-scale spectrogram used in psychoacoustic
-and perceptual analysis of speech.
+A Bark-scale spectrogram, used in psychoacoustic and perceptual analysis
+of speech.
 }
 \examples{
 snd <- Sound$create_tone(frequency = 150, duration = 0.3)

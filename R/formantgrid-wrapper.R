@@ -1,12 +1,20 @@
-#' @title Praat FormantGrid Object
-#' @description
-#' Praat FormantGrid object with direct C++ module binding for formant manipulation.
+#' FormantGrid
 #'
-#' @details
-#' FormantGrid objects allow manipulation of formant frequencies and bandwidths
-#' over time for voice transformation and synthesis. This is the editable
+#' Praat FormantGrid object: formant frequencies and bandwidths over time,
+#' editable at arbitrary time points.
+#'
+#' Used for voice transformation and synthesis. This is the editable
 #' counterpart to the read-only Formant object.
 #'
+#' @param tmin Start time in seconds.
+#' @param tmax End time in seconds.
+#' @param number_of_formants Number of formants to track. Default 10.
+#' @param initial_first_formant Initial frequency of the first formant, in Hz. Default 550.
+#' @param initial_formant_spacing Initial spacing between formants, in Hz. Default 1100.
+#' @param initial_first_bandwidth Initial bandwidth of the first formant, in Hz. Default 60.
+#' @param initial_bandwidth_spacing Initial spacing between formant bandwidths, in Hz. Default 50.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   FormantGrid object; set internally when a method returns a new FormantGrid.
 #' @return A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
 #'
 #' @examples

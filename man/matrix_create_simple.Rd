@@ -23,5 +23,5 @@ m$set_value(1, 1, 5.0)
 m$get_value(1, 1)
 }
 \seealso{
-[matrix_create()] for full parameter control, [Matrix] for object methods
+\code{\link{matrix_create}} for full parameter control, \code{\link{Matrix}} for object methods
 }

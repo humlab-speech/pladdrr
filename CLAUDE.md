@@ -37,6 +37,14 @@ R/
 - `PowerCepstrogram_to_Matrix_CPP`: `SampledIntoSampled_mt`
 - `PowerCepstrogram_smooth_fast`: parallelized `Sampled_getMean`
 
+## Documentation
+
+Wrapper-type roxygen doc blocks (Sound, Formant, Pitch, etc.) follow a fixed
+convention — see `inst/agents/DOCUMENTATION.md`. Short version: this package
+does not enable roxygen markdown, so method lists must use `\itemize`/`\code{}`
+Rd markup, not `` - `x` `` bullets, or they silently render as one run-on
+paragraph.
+
 ## Critical API notes
 
 - Sound R6 lazy fields (`duration`, `nx`, `dx`) return empty — use methods (`$get_total_duration()`)

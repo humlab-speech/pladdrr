@@ -1,11 +1,14 @@
-#' @title Principal Component Analysis (PCA)
-#' @description
-#' PCA for dimensionality reduction and analysis of multivariate acoustic data.
+#' PCA
 #'
-#' @details
+#' Principal Component Analysis (PCA) for dimensionality reduction and
+#' analysis of multivariate acoustic data.
+#'
 #' PCA is commonly used in phonetics for vowel space analysis, speaker
 #' normalization, acoustic feature extraction, and data visualization.
 #'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   PCA object; set internally when a method returns a new PCA (for example
+#'   \code{\link{pca_from_matrix}}).
 #' @return A \code{PCA} object with methods for querying components, eigenvalues,
 #'   and projections.
 #'

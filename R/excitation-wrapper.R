@@ -1,12 +1,32 @@
-#' @title Praat Excitation Object
-#' @description
-#' Praat Excitation object with direct C++ module binding for auditory modeling.
+#' Excitation
 #'
-#' @details
-#' An Excitation pattern represents the perceptual loudness distribution across
-#' the auditory frequency range, measured in Bark scale.
+#' Represents a Praat auditory excitation pattern.
 #'
-#' @return An \code{Excitation} object with methods for auditory excitation pattern analysis.
+#' An excitation pattern is the perceptual loudness distribution across the
+#' auditory frequency range, measured on the Bark scale. It is produced from
+#' a Spectrum or a Cochleagram, not created directly.
+#'
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_loudness()} - total loudness in sones
+#'   \item \code{get_value_at_frequency(freq_bark)} - excitation level at a given Bark frequency
+#'   \item \code{get_distance(other)} - distance to another Excitation object
+#' }
+#'
+#' @section Conversion:
+#' \itemize{
+#'   \item \code{to_formant(max_formants = 20)} - estimate formants from the excitation pattern
+#' }
+#'
+#' @section Export:
+#' \itemize{
+#'   \item \code{as_vector()} - export as a numeric vector, one value per Bark bin
+#'   \item \code{as_data_frame()} - export as a data.frame of frequency (Bark) and excitation
+#' }
+#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++ Excitation
+#'   object; set internally when a method returns a new Excitation.
+#' @return An Excitation object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
@@ -14,6 +34,7 @@
 #' excitation <- spectrum$to_excitation()
 #' excitation$get_loudness()
 #'
+#' @seealso \code{\link{Spectrum}}, \code{\link{Formant}}
 #' @name Excitation
 NULL
 

@@ -1,12 +1,14 @@
-#' @title Praat Electroglottogram Object
+#' Electroglottogram
 #'
-#' @description
 #' Praat Electroglottogram (EGG) object. Measures electrical impedance across
 #' the larynx, varying with vocal fold contact during phonation.
 #'
-#' Electroglottogram inherits from Sound and represents a specialized single-channel
-#' sound that records vocal fold contact area.
+#' Electroglottogram inherits from Sound and represents a specialized
+#' single-channel sound that records vocal fold contact area.
 #'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Electroglottogram object; set internally when a method returns a new
+#'   Electroglottogram.
 #' @return An \code{Electroglottogram} object (triple-class \code{c("Electroglottogram",
 #'   "Sound", "PraatObject")}) that inherits Sound's methods in addition to its own.
 #'

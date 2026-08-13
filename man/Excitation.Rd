@@ -2,21 +2,53 @@
 % Please edit documentation in R/excitation-wrapper.R
 \name{Excitation}
 \alias{Excitation}
-\title{Praat Excitation Object}
+\title{Excitation}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++ Excitation
+object; set internally when a method returns a new Excitation.}
+}
 \value{
-An \code{Excitation} object with methods for auditory excitation pattern analysis.
+An Excitation object.
 }
 \description{
-Praat Excitation object with direct C++ module binding for auditory modeling.
+Represents a Praat auditory excitation pattern.
 }
 \details{
-An Excitation pattern represents the perceptual loudness distribution across
-the auditory frequency range, measured in Bark scale.
+An excitation pattern is the perceptual loudness distribution across the
+auditory frequency range, measured on the Bark scale. It is produced from
+a Spectrum or a Cochleagram, not created directly.
 }
+\section{Query methods}{
+
+\itemize{
+  \item \code{get_loudness()} - total loudness in sones
+  \item \code{get_value_at_frequency(freq_bark)} - excitation level at a given Bark frequency
+  \item \code{get_distance(other)} - distance to another Excitation object
+}
+}
+
+\section{Conversion}{
+
+\itemize{
+  \item \code{to_formant(max_formants = 20)} - estimate formants from the excitation pattern
+}
+}
+
+\section{Export}{
+
+\itemize{
+  \item \code{as_vector()} - export as a numeric vector, one value per Bark bin
+  \item \code{as_data_frame()} - export as a data.frame of frequency (Bark) and excitation
+}
+}
+
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 spectrum <- sound$to_spectrum()
 excitation <- spectrum$to_excitation()
 excitation$get_loudness()
 
+}
+\seealso{
+\code{\link{Spectrum}}, \code{\link{Formant}}
 }

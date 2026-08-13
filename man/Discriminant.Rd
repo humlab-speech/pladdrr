@@ -2,18 +2,24 @@
 % Please edit documentation in R/discriminant-wrapper.R
 \name{Discriminant}
 \alias{Discriminant}
-\title{Discriminant Analysis (LDA)}
+\title{Discriminant}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Discriminant object; set internally when a method returns a new
+Discriminant (for example \code{\link{discriminant_from_matrix}}).}
+}
 \value{
 A \code{Discriminant} object with methods for querying discriminant
   functions, eigenvalues, and group statistics.
 }
 \description{
-Linear Discriminant Analysis for vowel classification, speaker identification,
-and other multivariate acoustic classification tasks.
+Linear Discriminant Analysis (LDA) for vowel classification, speaker
+identification, and other multivariate acoustic classification tasks.
 }
 \details{
-Discriminant analysis is commonly used in phonetics for vowel classification,
-speaker identification, dialect/accent classification, and phoneme recognition.
+Discriminant analysis is commonly used in phonetics for vowel
+classification, speaker identification, dialect/accent classification,
+and phoneme recognition.
 }
 \examples{
 set.seed(1)

@@ -7,57 +7,70 @@
 #' Uses shared dispatch table for minimal memory per object.
 #'
 #' @details
-#' TextGrids are the primary tool for linguistic annotation in Praat. They contain
-#' one or more tiers, where each tier can be:
-#' - **IntervalTier**: Consecutive time intervals with labels (e.g., phonemes, words)
-#' - **PointTier** (TextTier): Time points with labels (e.g., events, tones)
+#' TextGrids are the primary tool for linguistic annotation in Praat. They
+#' contain one or more tiers, where each tier can be:
 #'
-#' ## Creating TextGrid Objects
+#' \itemize{
+#'   \item \code{IntervalTier}: consecutive time intervals with labels (e.g., phonemes, words)
+#'   \item \code{PointTier} (TextTier): time points with labels (e.g., events, tones)
+#' }
 #'
-#' - `TextGrid(path)` - Read from file (Praat text or binary format)
-#' - `textgrid_create(tmin, tmax, tier_names, point_tiers)` - Create empty grid
+#' @section Creating TextGrid objects:
+#' \itemize{
+#'   \item \code{TextGrid(path)} - read from file (Praat text or binary format)
+#'   \item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an empty grid
+#' }
 #'
-#' ## Querying Tiers
+#' @section Querying tiers:
+#' \itemize{
+#'   \item \code{get_number_of_tiers()} - number of tiers
+#'   \item \code{get_tier_names()} - names of all tiers
+#'   \item \code{tier_is_interval_tier(tier)} - check if a tier is an IntervalTier
+#'   \item \code{tier_is_point_tier(tier)} - check if a tier is a PointTier
+#' }
 #'
-#' - `$get_number_of_tiers()` - Number of tiers
-#' - `$get_tier_names()` - Names of all tiers
-#' - `$tier_is_interval_tier(tier)` - Check if tier is IntervalTier
-#' - `$tier_is_point_tier(tier)` - Check if tier is PointTier
+#' @section IntervalTier operations:
+#' \itemize{
+#'   \item \code{get_number_of_intervals(tier)} - number of intervals in a tier
+#'   \item \code{get_interval_text(tier, n)} - get the label of interval n
+#'   \item \code{get_label_at_time(tier, time)} - get the label at a specific time
+#'   \item \code{get_all_intervals(tier)} - get all intervals as a data.frame (fast)
+#'   \item \code{extract_intervals_batch(tier, ...)} - extract matching intervals (fast)
+#'   \item \code{extract_intervals_where(sound, tier, criterion, text, preserve_times)} - extract Sound intervals matching a text criterion
+#'   \item \code{set_interval_text(tier, n, text)} - set the label of interval n
+#'   \item \code{insert_boundary(tier, time)} - insert a new boundary
+#'   \item \code{remove_boundary(tier, time)} - remove a boundary
+#' }
 #'
-#' ## IntervalTier Operations
+#' @section PointTier operations:
+#' \itemize{
+#'   \item \code{get_number_of_points(tier)} - number of points in a tier
+#'   \item \code{get_point_text(tier, n)} - get the label of point n
+#'   \item \code{insert_point(tier, time, mark)} - insert a new point
+#'   \item \code{set_point_text(tier, n, text)} - set the label of point n
+#'   \item \code{remove_point(tier, n)} - remove a point
+#' }
 #'
-#' - `$get_number_of_intervals(tier)` - Number of intervals in tier
-#' - `$get_interval_text(tier, n)` - Get label of interval n
-#' - `$get_label_at_time(tier, time)` - Get label at specific time
-#' - `$get_all_intervals(tier)` - Get all intervals as data.frame (fast)
-#' - `$extract_intervals_batch(tier, ...)` - Extract matching intervals (fast)
-#' - `$extract_intervals_where(sound, tier, criterion, text, preserve_times)` - Extract Sound intervals matching a text criterion
-#' - `$set_interval_text(tier, n, text)` - Set label of interval n
-#' - `$insert_boundary(tier, time)` - Insert new boundary
-#' - `$remove_boundary(tier, time)` - Remove boundary
+#' @section Tier management:
+#' \itemize{
+#'   \item \code{add_interval_tier(name)} - add a new IntervalTier
+#'   \item \code{add_point_tier(name)} - add a new PointTier
+#'   \item \code{remove_tier(tier)} - remove a tier
+#'   \item \code{set_tier_name(tier, name)} - rename a tier
+#'   \item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new name
+#' }
 #'
-#' ## PointTier Operations
+#' @section Export:
+#' \itemize{
+#'   \item \code{as_data_frame(tiers)} - convert to a long-format data frame
+#'   \item \code{save(path)} - write to a file
+#'   \item \code{extract_part(start, end)} - extract a time range
+#' }
 #'
-#' - `$get_number_of_points(tier)` - Number of points in tier
-#' - `$get_point_text(tier, n)` - Get label of point n
-#' - `$insert_point(tier, time, mark)` - Insert new point
-#' - `$set_point_text(tier, n, text)` - Set label of point n
-#' - `$remove_point(tier, n)` - Remove point
-#'
-#' ## Tier Management
-#'
-#' - `$add_interval_tier(name)` - Add new IntervalTier
-#' - `$add_point_tier(name)` - Add new PointTier
-#' - `$remove_tier(tier)` - Remove tier
-#' - `$set_tier_name(tier, name)` - Rename a tier
-#' - `$duplicate_tier(tier, new_name)` - Duplicate tier with new name
-#'
-#' ## Export
-#'
-#' - `$as_data_frame(tiers)` - Convert to long-format data frame
-#' - `$save(path)` - Write to file
-#' - `$extract_part(start, end)` - Extract time range
-#'
+#' @param path Path to a TextGrid file (Praat text or binary format). See the
+#'   Creating TextGrid objects section for details.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   TextGrid object; set internally when a method returns a new TextGrid.
 #' @return A \code{TextGrid} object with methods for tier and interval/point
 #'   annotation access.
 #'
@@ -433,7 +446,7 @@ print.TextGrid <- function(x, ...) x$print()
 #' @param tier_names Space-separated tier names (e.g., "phones words syllables")
 #' @param point_tiers Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}
-#' @return TextGrid object
+#' @return A \code{TextGrid} object.
 #' @export
 #'
 #' @examples

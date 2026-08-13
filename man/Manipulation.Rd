@@ -3,8 +3,13 @@
 \name{Manipulation}
 \alias{Manipulation}
 \title{Praat Manipulation Object}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Manipulation object; set internally when a method returns a new
+Manipulation, e.g. \code{sound$to_manipulation()}.}
+}
 \value{
-A \code{Manipulation} object with methods for PSOLA-based pitch and duration modification.
+A \code{Manipulation} object.
 }
 \description{
 Praat Manipulation object with direct C++ module binding for PSOLA-based

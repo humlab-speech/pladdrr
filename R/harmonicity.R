@@ -1,46 +1,55 @@
 # harmonicity.R - Harmonicity object using shared dispatch table (pladdrr 4.8.33)
 # Architecture: minimal list + $.Harmonicity S3 dispatch → shared method env
 
-#' @title Praat Harmonicity Object
+#' Harmonicity
 #'
-#' @description
-#' A Harmonicity object represents the degree of acoustic periodicity — the
-#' Harmonics-to-Noise Ratio (HNR) — in a sound over time, measured in decibels.
+#' A Harmonicity object represents the degree of acoustic periodicity, the
+#' Harmonics-to-Noise Ratio (HNR), in a sound over time, measured in decibels.
+#'
 #' Created from a Sound via cross-correlation (CC) or glottal-to-noise
 #' excitation (GNE) analysis. Higher values indicate more periodic (voiced)
 #' speech.
 #'
-#' @section Methods:
+#' @section Information methods:
+#' \itemize{
+#'   \item \code{get_start_time()}, \code{get_end_time()} - time range (s)
+#'   \item \code{get_sampling_period()} - time step between frames (s)
+#'   \item \code{get_number_of_frames()} - number of analysis frames
+#'   \item \code{get_time_from_frame(frame)} - time for a frame index
+#'   \item \code{get_frame_from_time(time)} - frame index for a time
+#' }
 #'
-#' **Information:**
-#' * `get_start_time()` / `get_end_time()` — Time range (s)
-#' * `get_sampling_period()` — Time step between frames (s)
-#' * `get_number_of_frames()` — Number of analysis frames
-#' * `get_time_from_frame(frame)` — Time for frame index
-#' * `get_frame_from_time(time)` — Frame index for time
+#' @section Point query methods:
+#' \itemize{
+#'   \item \code{get_value_at_time(time, interpolation)} - HNR at a time point (dB)
+#'   \item \code{get_values_at_times(times, interpolation)} - HNR at a vector of times (batch)
+#'   \item \code{get_values_vector()} - raw HNR values for all frames
+#'   \item \code{get_times_vector()} - frame time points
+#' }
 #'
-#' **Point queries:**
-#' * `get_value_at_time(time, interpolation)` — HNR at time point (dB)
-#' * `get_values_at_times(times, interpolation)` — HNR at vector of times (batch)
-#' * `get_values_vector()` — Raw HNR values for all frames
-#' * `get_times_vector()` — Frame time points
+#' @section Statistics methods (over a time range):
+#' \itemize{
+#'   \item \code{get_mean(from_time, to_time)} - mean HNR (dB)
+#'   \item \code{get_minimum(from_time, to_time, interpolation)} - minimum HNR
+#'   \item \code{get_maximum(from_time, to_time, interpolation)} - maximum HNR
+#'   \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
+#'   \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+#' }
 #'
-#' **Statistics (over time range):**
-#' * `get_mean(from_time, to_time)` — Mean HNR (dB)
-#' * `get_minimum(from_time, to_time, interpolation)` — Minimum HNR
-#' * `get_maximum(from_time, to_time, interpolation)` — Maximum HNR
-#' * `get_standard_deviation(from_time, to_time)` — Standard deviation
-#' * `get_time_of_minimum(...)` / `get_time_of_maximum(...)` — Time of extremum
+#' @section Batch methods:
+#' \itemize{
+#'   \item \code{get_statistics_batch(from_times, to_times)} - statistics for multiple intervals in a single C++ call
+#' }
 #'
-#' **Batch:**
-#' * `get_statistics_batch(from_times, to_times)` — Statistics for multiple intervals (single C++ call)
+#' @section Export methods:
+#' \itemize{
+#'   \item \code{as_data_frame()}, \code{as_matrix()} - export as a data.frame or matrix
+#' }
 #'
-#' **Export:**
-#' * `as_data_frame()` / `as_matrix()` — Export as data.frame or matrix
-#'
-#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{PointProcess}}
-#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Harmonicity object; set internally when a method returns a new Harmonicity.
 #' @return A \code{Harmonicity} object with methods for harmonics-to-noise ratio (HNR) analysis.
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{PointProcess}}
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)

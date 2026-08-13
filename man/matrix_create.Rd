@@ -40,5 +40,5 @@ m$get_number_of_rows()
 m$get_number_of_columns()
 }
 \seealso{
-[matrix_create_simple()] for simpler creation, [Matrix] for object methods
+\code{\link{matrix_create_simple}} for simpler creation, \code{\link{Matrix}} for object methods
 }

@@ -2,19 +2,20 @@
 % Please edit documentation in R/mel-spectrogram-wrapper.R
 \name{MelSpectrogram}
 \alias{MelSpectrogram}
-\title{MelSpectrogram Object}
+\title{MelSpectrogram}
 \usage{
 MelSpectrogram(.xptr = NULL)
 }
 \arguments{
-\item{.xptr}{Internal use only - external pointer to C++ MelSpectrogram object}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+MelSpectrogram object; set internally by \code{Sound$to_mel_spectrogram()}.}
 }
 \value{
-A MelSpectrogram object
+A MelSpectrogram object.
 }
 \description{
-Praat MelSpectrogram: mel-scale spectrogram commonly used in speech
-technology (ASR, speaker identification).
+A mel-scale spectrogram, commonly used in speech technology (ASR, speaker
+identification).
 }
 \examples{
 snd <- Sound$create_tone(frequency = 150, duration = 0.3)

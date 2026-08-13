@@ -2,52 +2,69 @@
 % Please edit documentation in R/lpc-wrapper.R
 \name{LPC}
 \alias{LPC}
-\title{Praat LPC Object}
+\title{LPC}
+\arguments{
+\item{.xptr}{Not for direct use. External pointer to the underlying C++ LPC
+object; set internally when a method returns a new LPC.}
+}
 \value{
 An \code{LPC} object with methods for linear predictive coding analysis and inverse filtering.
 }
 \description{
-Praat LPC object with direct C++ module binding for linear predictive coding analysis.
+Praat LPC object for linear predictive coding analysis, created via direct
+C++ module binding.
 }
 \details{
-LPC (Linear Predictive Coding) is a method for estimating the spectral
-envelope of a sound by modeling it as an autoregressive process. The LPC
-coefficients describe the vocal tract filter and can be converted to
-formants, spectra, or other representations.
-
-## Creating LPC Objects
+LPC (Linear Predictive Coding) estimates the spectral envelope of a sound
+by modeling it as an autoregressive process. The LPC coefficients describe
+the vocal tract filter and can be converted to formants, spectra, or other
+representations.
+}
+\section{Creating LPC objects}{
 
 LPC objects are created from Sound objects using one of several methods:
-- `sound$to_lpc_burg()` - Burg method (fastest, most robust)
-- `sound$to_lpc_auto()` - Autocorrelation method
-- `sound$to_lpc_covariance()` - Covariance method
-- `sound$to_lpc_marple()` - Marple method (slowest, most accurate)
-
-## Querying LPC Properties
-
-- `$get_number_of_frames()` - Number of analysis frames
-- `$get_time_step()` - Time step between frames
-- `$get_sampling_period()` - Sampling period of original sound
-- `$get_max_num_coefficients()` - Maximum number of LPC coefficients
-- `$get_gain_at_frame(frame)` - Gain value for specific frame
-- `$get_coefficients_at_frame(frame)` - LPC coefficients for specific frame
-- `$get_all_gains()` - Vector of all gain values
-- `$get_all_coefficients()` - Matrix of all LPC coefficients
-
-## Converting to Other Objects
-
-- `$to_formant(margin)` - Convert to Formant object
-- `$to_spectrum(time, ...)` - Convert to Spectrum at specific time
-- `$to_matrix()` - Convert to Matrix object
-
-## Voice Source Extraction (Inverse Filtering)
-
-- `$filter_inverse(sound)` - Extract glottal flow by inverse filtering
-- `$filter_inverse_at_time(sound, time, channel)` - Use filter from specific time
-
-These methods remove vocal tract resonances to reveal the voice source (glottal
-flow waveform). Essential for voice quality research and vocal fold dynamics.
+\itemize{
+  \item \code{sound$to_lpc_burg()} - Burg method (fastest, most robust)
+  \item \code{sound$to_lpc_auto()} - autocorrelation method
+  \item \code{sound$to_lpc_covariance()} - covariance method
+  \item \code{sound$to_lpc_marple()} - Marple method (slowest, most accurate)
 }
+}
+
+\section{Query methods}{
+
+\itemize{
+  \item \code{get_number_of_frames()} - number of analysis frames
+  \item \code{get_time_step()} - time step between frames
+  \item \code{get_sampling_period()} - sampling period of the original sound
+  \item \code{get_max_num_coefficients()} - maximum number of LPC coefficients
+  \item \code{get_gain_at_frame(frame)} - gain value for a specific frame
+  \item \code{get_coefficients_at_frame(frame)} - LPC coefficients for a specific frame
+  \item \code{get_all_gains()} - vector of all gain values
+  \item \code{get_all_coefficients()} - matrix of all LPC coefficients
+}
+}
+
+\section{Conversion methods}{
+
+\itemize{
+  \item \code{to_formant(margin)} - convert to a Formant object
+  \item \code{to_spectrum(time, ...)} - convert to a Spectrum at a specific time
+  \item \code{to_matrix()} - convert to a Matrix object
+}
+}
+
+\section{Voice source extraction (inverse filtering)}{
+
+\itemize{
+  \item \code{filter_inverse(sound)} - extract glottal flow by inverse filtering
+  \item \code{filter_inverse_at_time(sound, time, channel)} - use the filter from a specific time
+}
+These methods remove vocal tract resonances to reveal the voice source
+(glottal flow waveform), useful for voice quality research and vocal fold
+dynamics.
+}
+
 \examples{
 # Load sound
 sound <- Sound$create_tone(frequency = 150, duration = 0.3)

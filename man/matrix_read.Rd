@@ -27,5 +27,5 @@ m2$get_number_of_rows()
 m2$get_value(1, 1)
 }
 \seealso{
-[matrix_create()], [matrix_create_simple()]
+\code{\link{matrix_create}}, \code{\link{matrix_create_simple}}
 }

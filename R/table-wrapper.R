@@ -6,6 +6,13 @@
 #' Table objects store tabular data with named columns and support various
 #' statistical operations.
 #'
+#' @param numberOfRows Number of rows. Required unless \code{.xptr} is given.
+#' @param numberOfColumns Number of columns. Required unless \code{columnNames}
+#'   or \code{.xptr} is given.
+#' @param columnNames Character vector of column names, used instead of
+#'   \code{numberOfColumns} to name columns as they are created.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   Table object; set internally when a method returns a new Table.
 #' @return A \code{Table} object with methods for tabular data access and statistics.
 #'
 #' @examples
@@ -236,7 +243,7 @@ as.data.frame.Table <- function(x, ...) x$as_data_frame()
 #' @param numberOfColumns Number of columns (optional if columnNames provided)
 #' @param columnNames Character vector of column names (optional)
 #' @return A Table object
-#' @seealso [Table] for object methods
+#' @seealso \code{\link{Table}} for object methods
 #' @examples
 #' tbl <- table_create(numberOfRows = 3, columnNames = c("speaker", "f0"))
 #' tbl2 <- table_create(numberOfRows = 3, numberOfColumns = 2)
