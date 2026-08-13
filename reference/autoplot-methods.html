@@ -11,7 +11,7 @@ flexible composition of multi-object visualizations."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@ flexible composition of multi-object visualizations."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Autoplot and Autolayer Methods for pladdrr Objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/R/autoplot-methods.R" class="external-link"><code>R/autoplot-methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/R/autoplot-methods.R" class="external-link"><code>R/autoplot-methods.R</code></a>, <a href="https://github.com/humlab-speech/pladdrr/blob/main/R/autoplot-missing.R" class="external-link"><code>R/autoplot-missing.R</code></a></small>
       <div class="d-none name"><code>autoplot-methods.Rd</code></div>
     </div>
 
@@ -230,6 +230,321 @@ flexible composition of multi-object visualizations.</p>
 <span>  color <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'AmplitudeTier'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"darkred"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'AmplitudeTier'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"darkred"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'DurationTier'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'DurationTier'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"steelblue"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'IntensityTier'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"darkgreen"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'IntensityTier'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"darkgreen"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PitchTier'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PitchTier'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"blue"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantTier'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  time_step <span class="op">=</span> <span class="fl">0.005</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"speckle"</span>, <span class="st">"line"</span><span class="op">)</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantTier'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  time_step <span class="op">=</span> <span class="fl">0.005</span>,</span>
+<span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"speckle"</span>, <span class="st">"line"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantGrid'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantGrid'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantPath'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_candidates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantPath'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_candidates <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Excitation'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="st">"darkred"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Excitation'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, color <span class="op">=</span> <span class="st">"darkred"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'ComplexSpectrogram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  from_freq <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_freq <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dynamic_range <span class="op">=</span> <span class="fl">70</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_phase <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'ComplexSpectrogram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  from_freq <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_freq <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dynamic_range <span class="op">=</span> <span class="fl">70</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Cepstrum'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, power <span class="op">=</span> <span class="cn">FALSE</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="st">"darkblue"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Cepstrum'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, power <span class="op">=</span> <span class="cn">FALSE</span>, color <span class="op">=</span> <span class="st">"darkblue"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Cochleagram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Cochleagram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PowerCepstrogram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quefrency_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PowerCepstrogram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quefrency_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'MFCC'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, coefficient_range <span class="op">=</span> <span class="cn">NULL</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'MFCC'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, coefficient_range <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LFCC'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, coefficient_range <span class="op">=</span> <span class="cn">NULL</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LFCC'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, coefficient_range <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'BarkSpectrogram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'BarkSpectrogram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'MelSpectrogram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'MelSpectrogram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Matrix'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  x_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Matrix'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, x_col <span class="op">=</span> <span class="cn">NULL</span>, y_col <span class="op">=</span> <span class="cn">NULL</span>, fill_col <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PCA'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scree"</span>, <span class="st">"scores"</span>, <span class="st">"both"</span><span class="op">)</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'PCA'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Discriminant'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scree"</span>, <span class="st">"scores"</span>, <span class="st">"both"</span><span class="op">)</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Discriminant'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantModeler'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, from_track <span class="op">=</span> <span class="fl">1L</span>, to_track <span class="op">=</span> <span class="fl">0L</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'FormantModeler'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_track <span class="op">=</span> <span class="fl">1L</span>, to_track <span class="op">=</span> <span class="fl">0L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Electroglottogram'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Electroglottogram'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="cn">NULL</span>, to_time <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"black"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LongSound'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LongSound'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"black"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'DTW'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, alpha_path <span class="op">=</span> <span class="fl">0.8</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'DTW'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, alpha_path <span class="op">=</span> <span class="fl">0.8</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Polygon'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  fill_polygon <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  fill_color <span class="op">=</span> <span class="st">"grey80"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Polygon'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, color <span class="op">=</span> <span class="st">"black"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'VocalTract'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"area"</span>, <span class="st">"line"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'VocalTract'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LPC'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span><span class="va">object</span>, frame <span class="op">=</span> <span class="fl">1L</span>, garnish <span class="op">=</span> <span class="cn">TRUE</span>, color <span class="op">=</span> <span class="st">"darkred"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'LPC'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span><span class="va">object</span>, frame <span class="op">=</span> <span class="fl">1L</span>, color <span class="op">=</span> <span class="st">"darkred"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'KlattGrid'</span></span>
+<span><span class="fu">autoplot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  formant_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"oral"</span>, <span class="st">"nasal"</span>, <span class="st">"frication"</span>, <span class="st">"tracheal"</span>, <span class="st">"delta"</span><span class="op">)</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">6L</span>,</span>
+<span>  garnish <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'KlattGrid'</span></span>
+<span><span class="fu">autolayer</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  from_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  formant_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"oral"</span>, <span class="st">"nasal"</span>, <span class="st">"frication"</span>, <span class="st">"tracheal"</span>, <span class="st">"delta"</span><span class="op">)</span>,</span>
+<span>  max_formant <span class="op">=</span> <span class="fl">6L</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -266,11 +581,11 @@ flexible composition of multi-object visualizations.</p>
 
 
 <dt id="arg-max-formant">max_formant<a class="anchor" aria-label="anchor" href="#arg-max-formant"></a></dt>
-<dd><p>Maximum formant number to display (default: 3)</p></dd>
+<dd><p>Maximum formant number to display (default: 3).</p></dd>
 
 
 <dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
-<dd><p>Colors for each formant track</p></dd>
+<dd><p>Colors for each formant track (default: auto).</p></dd>
 
 
 <dt id="arg-from-freq">from_freq<a class="anchor" aria-label="anchor" href="#arg-from-freq"></a></dt>
@@ -315,6 +630,89 @@ flexible composition of multi-object visualizations.</p>
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
 <dd><p>Fill transparency (default: 0.3)</p></dd>
+
+
+<dt id="arg-garnish">garnish<a class="anchor" aria-label="anchor" href="#arg-garnish"></a></dt>
+<dd><p>Whether to add a title and axis labels (default TRUE).</p></dd>
+
+
+<dt id="arg-time-step">time_step<a class="anchor" aria-label="anchor" href="#arg-time-step"></a></dt>
+<dd><p>Sampling interval in seconds, only used when style="line" (default: 0.005).</p></dd>
+
+
+<dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
+<dd><p>"speckle" (default, matches Praat's FormantTier_speckle: plots the
+tier's own stored points, unconnected) or "line" (interpolates on a
+time_step grid and connects with a line — not Praat's default view).</p></dd>
+
+
+<dt id="arg-show-candidates">show_candidates<a class="anchor" aria-label="anchor" href="#arg-show-candidates"></a></dt>
+<dd><p>Logical. Overlay candidate paths (default: TRUE).</p></dd>
+
+
+<dt id="arg-show-phase">show_phase<a class="anchor" aria-label="anchor" href="#arg-show-phase"></a></dt>
+<dd><p>Include phase as separate panel (default: FALSE).</p></dd>
+
+
+<dt id="arg-power">power<a class="anchor" aria-label="anchor" href="#arg-power"></a></dt>
+<dd><p>If TRUE, plot as PowerCepstrum (dB). Default FALSE matches
+Praat's default `Cepstrum_drawLinear` (raw signed cepstrum, linear scale).</p></dd>
+
+
+<dt id="arg-quefrency-range">quefrency_range<a class="anchor" aria-label="anchor" href="#arg-quefrency-range"></a></dt>
+<dd><p>Optional `c(min, max)` quefrency range to display
+(PowerCepstrogram); NULL shows the full range.</p></dd>
+
+
+<dt id="arg-coefficient-range">coefficient_range<a class="anchor" aria-label="anchor" href="#arg-coefficient-range"></a></dt>
+<dd><p>Range of coefficients to display (e.g. 1:12).</p></dd>
+
+
+<dt id="arg-x-col">x_col<a class="anchor" aria-label="anchor" href="#arg-x-col"></a></dt>
+<dd><p>Column name for x-axis (default: auto-detect).</p></dd>
+
+
+<dt id="arg-y-col">y_col<a class="anchor" aria-label="anchor" href="#arg-y-col"></a></dt>
+<dd><p>Column name for y-axis (default: auto-detect).</p></dd>
+
+
+<dt id="arg-fill-col">fill_col<a class="anchor" aria-label="anchor" href="#arg-fill-col"></a></dt>
+<dd><p>Column name for fill (default: auto-detect).</p></dd>
+
+
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>For PCA: "scree" (variance explained), "scores"
+(component scores), or "both" (combined via patchwork).</p></dd>
+
+
+<dt id="arg-from-track-to-track">from_track, to_track<a class="anchor" aria-label="anchor" href="#arg-from-track-to-track"></a></dt>
+<dd><p>Track index range to display (FormantModeler).</p></dd>
+
+
+<dt id="arg-alpha-path">alpha_path<a class="anchor" aria-label="anchor" href="#arg-alpha-path"></a></dt>
+<dd><p>Alpha for warping path line (default: 0.8).</p></dd>
+
+
+<dt id="arg-fill-polygon">fill_polygon<a class="anchor" aria-label="anchor" href="#arg-fill-polygon"></a></dt>
+<dd><p>Fill the polygon interior (default: FALSE).</p></dd>
+
+
+<dt id="arg-fill-color">fill_color<a class="anchor" aria-label="anchor" href="#arg-fill-color"></a></dt>
+<dd><p>Fill color for closed shapes (Polygon); distinct from
+`fill_col`, which selects a data column to map to a continuous fill scale.</p></dd>
+
+
+<dt id="arg-plot-type">plot_type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
+<dd><p>Plot style selector (VocalTract).</p></dd>
+
+
+<dt id="arg-frame">frame<a class="anchor" aria-label="anchor" href="#arg-frame"></a></dt>
+<dd><p>Time or frame index to extract LPC spectrum at.</p></dd>
+
+
+<dt id="arg-formant-type">formant_type<a class="anchor" aria-label="anchor" href="#arg-formant-type"></a></dt>
+<dd><p>Type of formant to plot: "oral", "nasal", "frication",
+"tracheal", "delta", or (autoplot.KlattGrid only) "all".</p></dd>
 
 </dl></div>
     <div class="section level2">

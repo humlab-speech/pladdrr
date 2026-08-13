@@ -68,11 +68,13 @@ sample times as numeric vector (fast, no data frame)
 Extract formants (F1, F2, F3, ...) - \`to_intensity()\` - Extract
 intensity contour - \`to_harmonicity_cc()\` - Harmonics-to-noise ratio -
 \`to_harmonicity_gne()\` - Glottal-to-Noise Excitation ratio (GNE) -
-\`to_spectrum()\` - Frequency spectrum - \`to_spectrogram()\` -
-Time-frequency representation - \`to_ltas()\` - Long-term average
-spectrum - \`to_ltas_pitch_corrected()\` - Pitch-corrected LTAS (voice
-quality) - \`to_formant_robust()\` - Outlier-resistant formant
-tracking - \`to_mel_spectrogram()\` - Mel-scale spectrogram -
+\`extract_electroglottogram(channel, invert)\` - Extract
+Electroglottogram (EGG) from a channel - \`to_spectrum()\` - Frequency
+spectrum - \`to_spectrogram()\` - Time-frequency representation -
+\`to_ltas()\` - Long-term average spectrum -
+\`to_ltas_pitch_corrected()\` - Pitch-corrected LTAS (voice quality) -
+\`to_formant_robust()\` - Outlier-resistant formant tracking -
+\`to_mel_spectrogram()\` - Mel-scale spectrogram -
 \`to_bark_spectrogram()\` - Bark-scale spectrogram -
 \`to_point_process_periodic_cc()\` - Extract glottal pulses
 

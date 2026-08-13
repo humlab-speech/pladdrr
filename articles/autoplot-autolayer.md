@@ -106,6 +106,96 @@ autoplot(formant, max_formant = 4)
 
 ![](autoplot-autolayer_files/figure-html/autoplot-formant-1.png)
 
+### Pitch Tier
+
+A `PitchTier` stores sparse, hand-editable F0 points (as opposed to
+`Pitch`’s dense per-frame contour) — it’s what you get from
+`pitch$down_to_pitch_tier()`, and it’s the object type Praat scripts
+manipulate when resynthesizing prosody.
+
+``` r
+
+pitch_tier <- pitch$down_to_pitch_tier()
+autoplot(pitch_tier)
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-pitchtier-1.png)
+
+Overlay the sparse tier points on the dense pitch contour with
+[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html):
+
+``` r
+
+autoplot(pitch) +
+  autolayer(pitch_tier, color = "red")
+```
+
+![](autoplot-autolayer_files/figure-html/pitch-pitchtier-overlay-1.png)
+
+### Formant Grid and Formant Tier Styles
+
+A `FormantGrid` holds formant frequency points directly (the editable
+structure behind Klatt synthesis), while a `FormantTier` is a
+downsampled view of a `Formant` object. `FormantTier`’s `style` argument
+switches between `"speckle"` (default, one point per Praat-selected
+candidate) and `"line"` (one interpolated point per fixed time step).
+
+``` r
+
+grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
+grid$add_formant_point(1, 0.5, 500)
+grid$add_formant_point(2, 0.5, 1500)
+grid$add_formant_point(3, 0.5, 2500)
+autoplot(grid)
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-formantgrid-1.png)
+
+``` r
+
+formant_tier <- FormantTier$from_formant(formant)
+autoplot(formant_tier)                  # style = "speckle" (default)
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-1.png)
+
+``` r
+
+autoplot(formant_tier, style = "line")  # interpolated at a fixed time step
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-2.png)
+
+### Cepstral Analysis
+
+`Cepstrum` supports two views of the same data via its `power` argument:
+the default raw (signed) cepstrum, and a `power = TRUE` dB view used for
+peak picking. `PowerCepstrogram` extends this over time and underlies
+CPPS-based voice-quality measures.
+
+``` r
+
+cepstrum <- sound$to_cepstrum()
+autoplot(cepstrum)                # raw view
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-1.png)
+
+``` r
+
+autoplot(cepstrum, power = TRUE)  # power (dB) view
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-2.png)
+
+``` r
+
+power_cepstrogram <- sound$to_powercepstrogram()
+autoplot(power_cepstrogram)
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-powercepstrogram-1.png)
+
 ## Composing Multi-Layer Plots
 
 Combine objects using
@@ -206,6 +296,71 @@ autoplot(intensity) +
 ```
 
 ![](autoplot-autolayer_files/figure-html/facet-example-1.png)
+
+## Statistical and Alignment Tools
+
+pladdrr also wraps a few non-acoustic-domain Praat objects used in
+analysis pipelines: PCA for dimensionality reduction, and DTW for
+aligning two sounds.
+
+### PCA: Scree, Scores, and Combined Plots
+
+[`autoplot.PCA()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)’s
+`type` argument selects a scree plot (variance explained per component),
+a scores plot (observations projected onto the first two components), or
+`"both"` combined side-by-side via the optional patchwork package.
+
+``` r
+
+set.seed(1)
+formant_matrix <- matrix(rnorm(200), nrow = 20)
+pca <- pca_from_matrix(formant_matrix)
+autoplot(pca, type = "scree")
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-pca-1.png)
+
+``` r
+
+autoplot(pca, type = "scores")
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-pca-2.png)
+
+``` r
+
+autoplot(pca, type = "both")
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-pca-both-1.png)
+
+### DTW Warping Path
+
+Dynamic Time Warping aligns two sounds (or feature sequences) that
+differ in timing —
+[`autoplot.DTW()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+plots the resulting warping path, and
+[`autolayer.DTW()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+overlays it on an existing plot.
+
+``` r
+
+dtw_sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
+dtw <- sounds_to_dtw(dtw_sound, dtw_sound)
+autoplot(dtw)
+```
+
+![](autoplot-autolayer_files/figure-html/autoplot-dtw-1.png)
+
+``` r
+
+autoplot(dtw) +
+  autolayer(dtw, color = "orange")
+#> Warning: Duplicated aesthetics after name standardisation:
+#> colour
+```
+
+![](autoplot-autolayer_files/figure-html/autolayer-dtw-1.png)
 
 ## Parameter Reference
 

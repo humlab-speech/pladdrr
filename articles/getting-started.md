@@ -471,7 +471,7 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 
 # Package version
 packageVersion("pladdrr")
-#> [1] '5.0.0'
+#> [1] '5.0.1'
 
 # Citation information
 citation("pladdrr")

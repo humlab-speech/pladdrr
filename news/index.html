@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,42 @@
       <small>Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="5.0.1" id="pladdrr-501">pladdrr 5.0.1<a class="anchor" aria-label="anchor" href="#pladdrr-501"></a></h2>
+<div class="section level3">
+<h3 id="new-features-5-0-1">New features<a class="anchor" aria-label="anchor" href="#new-features-5-0-1"></a></h3>
+<ul><li>Added <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> S3 methods for 27 previously unsupported Praat object classes: AmplitudeTier, DurationTier, IntensityTier, PitchTier, FormantTier, FormantGrid, FormantPath, Excitation, ComplexSpectrogram, Cepstrum, Cochleagram, PowerCepstrogram, MFCC, LFCC, BarkSpectrogram, MelSpectrogram, Matrix, PCA, Discriminant, FormantModeler, Electroglottogram, LongSound, DTW, Polygon, VocalTract, LPC, KlattGrid.</li>
+<li>Added <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> S3 methods for 15 classes that lacked them.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-5-0-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-0-1"></a></h3>
+<ul><li>Fixed <code>FormantGrid$as_data_frame()</code> missing required <code>time_step</code> argument.</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autoplot.KlattGrid()</a></code>/<code><a href="../reference/as-data-frame-missing.html">as.data.frame.KlattGrid()</a></code> passed a formant-type name as a string where the underlying accessor required an integer code, producing empty plots or silently wrong data for every formant type. Fixed to map the name to its integer code before dispatch; also corrected the shared <code>formant_type</code> documentation, which claimed <code>"all"</code> was an accepted value for <code><a href="../reference/autoplot-methods.html">autolayer.KlattGrid()</a></code> when only <code><a href="../reference/autoplot-methods.html">autoplot.KlattGrid()</a></code> actually supports it.</li>
+<li>
+<code><a href="../reference/as-data-frame-missing.html">as.data.frame.Cochleagram()</a></code> always errored.</li>
+<li>
+<code><a href="../reference/as-data-frame-missing.html">as.data.frame.LPC()</a></code> always errored, due to a typo’d <code>power_dB</code> column name that did not exist on the object.</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autolayer.DTW()</a></code> plotted the wrong columns and crashed on some <code>NULL</code>-valued paths.</li>
+<li>
+<code>autoplot</code>/<code>autolayer</code>/<code>as.data.frame</code> for <code>Matrix</code>, <code>BarkSpectrogram</code>, and <code>MelSpectrogram</code> plotted raw row/column bin indices instead of the real time/frequency axis values.</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autoplot.Cepstrum()</a></code> defaulted to a power-cepstrum dB view; Praat’s actual default is a raw signed quefrency-domain view. Fixed the default and added a <code>power</code> parameter to select the dB view explicitly.</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autoplot.ComplexSpectrogram()</a></code> and <code><a href="../reference/autoplot-methods.html">autolayer.ComplexSpectrogram()</a></code> both mislabeled linear amplitude values as dB and ignored <code>dynamic_range</code>.</li>
+<li>
+<code><a href="../reference/as-data-frame-missing.html">as.data.frame.VocalTract()</a></code>, <code><a href="../reference/autoplot-methods.html">autoplot.VocalTract()</a></code>, and <code><a href="../reference/autoplot-methods.html">autolayer.VocalTract()</a></code> all hardcoded section spacing (<code>dx</code>) instead of reading it from the object, giving wrong x-axis values whenever spacing was non-default.</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autoplot.FormantTier()</a></code>/<code><a href="../reference/autoplot-methods.html">autolayer.FormantTier()</a></code> defaulted to an interpolated line view; Praat’s actual default view is speckle (points).</li>
+<li>
+<code><a href="../reference/autoplot-methods.html">autoplot.FormantPath()</a></code> and <code><a href="../reference/autoplot-methods.html">autoplot.FormantModeler()</a></code> always produced empty plots — the former from a column-name mismatch, the latter from a wide/long data-frame format mismatch.</li>
+<li>
+<code><a href="../reference/as-data-frame-missing.html">as.data.frame.PowerCepstrogram()</a></code> called a nonexistent <code>$as_data_frame()</code> method and always crashed; fixed to route through <code>$to_matrix()</code>.</li>
+<li>
+<code>Sound$extract_electroglottogram()</code> was never registered in the R6 method table, despite its underlying C++ export existing and being registered; every call crashed with “attempt to apply non-function”.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.0.0" id="pladdrr-500">pladdrr 5.0.0<a class="anchor" aria-label="anchor" href="#pladdrr-500"></a></h2>
 <div class="section level3">
