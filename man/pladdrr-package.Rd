@@ -4,116 +4,115 @@
 \name{pladdrr-package}
 \alias{pladdrr-package}
 \alias{pladdrr}
-\title{pladdrr: Direct Access to Praat C Functionality from R}
+\title{pladdrr: Direct Access to Praat's Core Algorithms from R}
 \description{
-The pladdrr package provides direct access to Praat's C phonetic analysis
-functionality from R. Praat is a widely-used tool for speech analysis in
-phonetics research and this package wraps Praat's core C library using Rcpp,
-providing native access to Praat's analysis capabilities without
-requiring external Praat installation or scripting.
+Praat's C/C++ engine, called directly from R via Rcpp. No external Praat
+installation, no scripting layer, no shelling out. pladdrr links against
+Praat's own analysis code, so results match Praat to within a tight
+numerical tolerance, and covers most of what Praat can do: acoustic
+analysis, voice quality, articulatory synthesis, annotation and
+multivariate statistics.
 }
-\section{Core Features}{
+\section{Acoustic Analysis}{
 
 
-\strong{Sound Operations:}
 \itemize{
-  \item Create and manipulate sound objects
-  \item Read and write audio files (WAV, AIFF, FLAC, MP3, NIST via native Praat)
-  \item Extract basic sound properties (duration, sampling rate, etc.)
-  \item Generate synthetic sounds (sine waves, white noise)
+  \item \strong{Sound}: read/write WAV, AIFF, FLAC, MP3, NIST; generate
+        tones and noise; \code{LongSound} for streaming files too large to
+        hold in memory
+  \item \strong{Pitch}: F0 contours, autocorrelation and cross-correlation
+        methods, quality-aware tracking
+  \item \strong{Formant}: F1-F5 via LPC and Burg estimation,
+        \code{FormantPath} for robust tracking, \code{FormantModeler}
+  \item \strong{Intensity, Harmonicity, Spectrum/Spectrogram, Ltas,
+        Cepstrum}: the standard Praat contour and spectral objects
+}
 }
 
-\strong{Pitch Analysis:}
+\section{Voice Quality}{
+
+
 \itemize{
-  \item Extract fundamental frequency (F0) contours
-  \item Get pitch at specific time points
-  \item Calculate pitch statistics (mean, median, range)
-  \item Quality-aware pitch tracking with configurable parameters
+  \item CPPS (smoothed cepstral peak prominence) and AVQI (Acoustic Voice
+        Quality Index), both parameter-matched to Praat
+  \item Jitter, shimmer and HNR in a single batched call
+  \item Voice activity detection
+}
 }
 
-\strong{Formant Analysis:}
+\section{Synthesis, Annotation and Multivariate Tools}{
+
+
 \itemize{
-  \item Extract formant frequencies (F1-F5)
-  \item Get formants at specific time points
-  \item Calculate formant statistics and trajectories
-  \item LPC-based formant estimation
-}
-
-\strong{Intensity and Spectral Analysis:}
-\itemize{
-  \item Compute intensity contours
-  \item Create spectrograms
-  \item Extract spectral properties
+  \item \code{Manipulation} (PSOLA resynthesis) and \code{KlattGrid}
+        (formant synthesis)
+  \item \code{TextGrid} for reading, writing and querying annotations
+  \item \code{PCA}, \code{DTW} and \code{Discriminant} for multivariate
+        and comparative analysis
+  \item \code{PraatInterpreter} to run raw Praat scripts when you need
+        something pladdrr doesn't wrap directly
 }
 }
 
-\section{Design Principles}{
+\section{Performance}{
 
 
-The pladdrr package follows these core principles:
-
-\enumerate{
-  \item \strong{Scientific Accuracy}: All analyses must match Praat's output
-        within 0.1\% relative error tolerance
-  \item \strong{R Package Standards}: Full compliance with CRAN requirements
-        and R package best practices
-  \item \strong{Direct C++ Integration}: Direct C++ access via Rcpp, avoiding
-        intermediate R-level translation layers
-  \item \strong{Test-Driven Development}: Comprehensive test coverage with
-        reference validation
-  \item \strong{Comprehensive Documentation}: All functions fully documented
-        with examples and vignettes
-}
+Batch queries (e.g. formants or pitch at many time points) run in a
+single C++ call rather than one R-level call per point. The CPPS/PowerCepstrogram
+path is multi-threaded via Praat's own \code{MelderThread}, and
+\code{\link{pladdrr_threads}} controls how many cores it uses.
+\code{\link{simd_info}} reports whether the installed build is using SIMD
+kernels.
 }
 
-\section{Object Types}{
+\section{Object Model}{
 
 
-The package uses S3 classes to represent Praat objects:
-
-\describe{
-  \item{\code{praat_sound}}{Sound object containing audio data and metadata}
-  \item{\code{praat_pitch}}{Pitch contour with time-frequency pairs}
-  \item{\code{praat_formant}}{Formant tracks (F1-F5) with bandwidths}
-  \item{\code{praat_intensity}}{Intensity contour over time}
-  \item{\code{praat_spectrogram}}{Time-frequency-power spectrogram}
-}
+Objects are lightweight S3 lists (e.g. class \code{c("Sound", "PraatObject")})
+with a custom \code{$} method that dispatches to a shared method table:
+this gives R6-style \code{sound$get_pitch()} call syntax at a fraction of
+R6's per-object memory cost. \code{PraatInterpreter} is a plain R6 class,
+since its state (a live Praat interpreter session) doesn't fit the shared-table
+pattern.
 }
 
 \section{Undefined Values}{
 
 
-Following R conventions, undefined analysis values (e.g., pitch in unvoiced
+Following R conventions, undefined analysis values (e.g. pitch in unvoiced
 segments, formants in silence) are returned as \code{NA}. Quality warnings
-are issued when analysis results may be unreliable, but can be suppressed
-using standard R warning control mechanisms.
+are issued when a result may be unreliable, and can be suppressed with the
+usual R warning-control mechanisms.
 }
 
 \section{Getting Started}{
 
 
-See \code{vignette("basic-usage", package = "pladdrr")} for an introduction
-to the package. Additional vignettes cover specific analysis types:
+\code{vignette("getting-started", package = "pladdrr")} is the place to
+start. Other vignettes worth knowing about:
 
 \itemize{
-  \item \code{vignette("pitch-analysis")} - Pitch extraction and analysis
-  \item \code{vignette("formant-analysis")} - Formant tracking
-  \item \code{vignette("spectral-analysis")} - Spectrograms and spectral features
+  \item \code{vignette("formant-analysis")} - formant tracking, including
+        \code{FormantPath}
+  \item \code{vignette("speech-synthesis-klattgrid")} - articulatory synthesis
+  \item \code{vignette("textgrid-workflows")} - reading and querying annotations
+  \item \code{vignette("performance-optimization")} - batching, threading, SIMD
+  \item \code{vignette("migration-from-praat")} and
+        \code{vignette("migration-from-parselmouth")} - for those coming
+        from Praat scripting or Python
 }
 }
 
 \section{License and Attribution}{
 
 
-This package is licensed under GPL-3, compatible with Praat's GPL-2+ license.
-Praat was created by Paul Boersma and David Weenink of the Institute of
-Phonetic Sciences, University of Amsterdam.
+pladdrr is licensed under GPL-3, compatible with Praat's own GPL-2+
+license. Praat was created by Paul Boersma and David Weenink at the
+Institute of Phonetic Sciences, University of Amsterdam, and its source is
+bundled here under \code{src/praat.github.io/}.
 
-When using this package in publications, please cite both this package and
-Praat:
-
-Boersma, Paul & Weenink, David (2023). Praat: doing phonetics by computer
-[Computer program]. Version 6.3.x, retrieved from https://praat.org/
+Run \code{citation("pladdrr")} for up-to-date citation details for both
+pladdrr and the bundled Praat version.
 }
 
 \seealso{
