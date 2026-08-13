@@ -7,6 +7,11 @@
 
 ## Bug fixes
 
+* `process_sounds_parallel()` shipped already-loaded `Sound` objects directly
+  to Windows PSOCK workers; their external pointer to the underlying C++
+  object cannot survive that process boundary, causing spurious errors on
+  Windows with `n_cores > 1`. Sounds are now serialized to raw sample data
+  and reconstructed inside each worker.
 * Fixed `FormantGrid$as_data_frame()` missing required `time_step` argument.
 * `autoplot.KlattGrid()`/`as.data.frame.KlattGrid()` passed a formant-type
   name as a string where the underlying accessor required an integer code,

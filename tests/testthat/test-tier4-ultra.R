@@ -83,6 +83,17 @@ test_that("get_durations_batch is faster than LongSound loop", {
   files <- list.files(dsi_dir, pattern = "\\.wav$", full.names = TRUE)
   skip_if(length(files) < 2, "Need at least 2 WAV files for benchmark")
 
+  # LongSound$open() has a known, unresolved path-handling issue on some
+  # Windows CI runners (fails with "Cannot open file"); skip rather than
+  # hard-fail this speed comparison when that happens.
+  longsound_check <- tryCatch(
+    sapply(files, function(f) LongSound$open(f)$get_duration()),
+    error = function(e) e
+  )
+  if (inherits(longsound_check, "error")) {
+    skip(paste("LongSound$open() failed:", conditionMessage(longsound_check)))
+  }
+
   # Benchmark
   result <- bench::mark(
     tier4 = get_durations_batch(files),

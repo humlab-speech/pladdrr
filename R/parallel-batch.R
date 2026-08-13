@@ -193,12 +193,27 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
   if (.Platform$OS.type == "unix") {
     parallel::mclapply(sounds, capped_func, mc.cores = n_cores, ...)
   } else {
+    # PSOCK workers are separate processes; a Sound's external pointer to
+    # its C++ object can't survive that boundary (it deserializes as an
+    # invalid pointer on the worker side). Ship raw sample data instead and
+    # rebuild the Sound inside each worker.
+    sound_data <- lapply(sounds, function(s) {
+      nch <- s$get_number_of_channels()
+      values <- t(vapply(seq_len(nch), function(ch) s$get_values(ch),
+                          numeric(s$get_number_of_samples())))
+      list(values = values, sr = s$get_sampling_frequency(),
+           start = s$get_start_time())
+    })
+
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
     parallel::clusterEvalQ(cl, library(pladdrr))
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
-    parallel::parLapply(cl, sounds, capped_func, ...)
+    parallel::parLapply(cl, sound_data, function(d) {
+      pladdrr_threads(tpw)
+      analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
+    })
   }
 }
 
