@@ -15,8 +15,14 @@ test_that("Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 re
 test_that("VocalTract as.data.frame respects real dx, not hardcoded 0.01 (Task 9 regression guard)", {
   vt <- VocalTract(nx = 10L, dx = 0.02)
   df <- as.data.frame(vt)
-  expect_equal(max(df$distance), 9 * 0.02, tolerance = 1e-9)
+  # Section centers per Praat's Matrix_init half-section-offset convention
+  # (src/praat.github.io/fon/VocalTract.cpp:33): 0.5*dx, 1.5*dx, ..., not
+  # 0, dx, 2dx, ...
+  expect_equal(max(df$distance), 0.01 + 9 * 0.02, tolerance = 1e-9)
+  expect_equal(min(df$distance), 0.01, tolerance = 1e-9)
   expect_s3_class(ggplot2::autoplot(vt), "ggplot")
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(vt)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("DTW autoplot/autolayer render and degrade gracefully on empty path (Task 5 regression guard)", {
@@ -38,6 +44,8 @@ test_that("Polygon autoplot/autolayer render, fill_color vs fill_col are distinc
   poly <- Polygon(x = c(0, 1, 1, 0), y = c(0, 0, 1, 1))
   p <- ggplot2::autoplot(poly, fill_polygon = TRUE, fill_color = "steelblue")
   expect_s3_class(p, "ggplot")
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(poly)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("PCA autoplot renders for scree/scores/both type", {

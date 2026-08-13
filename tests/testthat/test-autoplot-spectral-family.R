@@ -10,8 +10,22 @@ test_that("Cepstrum default view is raw (has negative values), power=TRUE view i
   expect_true(any(df_raw$value < 0))
   df_power <- as.data.frame(cep, power = TRUE)
   expect_true("power_dB" %in% names(df_power))
-  expect_s3_class(ggplot2::autoplot(cep), "ggplot")
-  expect_s3_class(ggplot2::autoplot(cep, power = TRUE), "ggplot")
+  # NOTE: as.data.frame(cep, power=TRUE)'s own power_dB column is raw linear
+  # power (pre-existing PowerCepstrum$as_data_frame() C++ module behaviour,
+  # out of scope for this branch -- see final-review-fix-report.md). The
+  # display-layer fix lives in autoplot.Cepstrum/autolayer.Cepstrum below;
+  # verify semantics there instead of on the raw data frame.
+  p <- ggplot2::autoplot(cep)
+  expect_s3_class(p, "ggplot")
+  p_power <- ggplot2::autoplot(cep, power = TRUE)
+  expect_s3_class(p_power, "ggplot")
+  # dB-scale, not linear-power-scale: raw linear power spans 10+ orders of
+  # magnitude (e.g. 2.7e-04 .. 1.5e11), which would have caught the
+  # power_dB-mislabeled-as-linear bug found in the final review.
+  expect_true(max(p_power$data$power_dB) - min(p_power$data$power_dB) < 300)
+  expect_true(max(p_power$data$power_dB) < 1000)
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep), "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep, power = TRUE), "ggplot")
 })
 
 test_that("Cochleagram as.data.frame/autoplot work after Task 3's fix", {
@@ -39,6 +53,8 @@ test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range
   p <- ggplot2::autoplot(cs, dynamic_range = 40)
   expect_true(max(p$data$amplitude_dB) <= 0)
   expect_true(min(p$data$amplitude_dB) >= -40)
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(cs, dynamic_range = 40)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, not bin indices (Task 6 regression guard)", {
@@ -54,19 +70,27 @@ test_that("BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, no
 
 test_that("PowerCepstrogram, MFCC, LFCC, Excitation autoplot/autolayer all render", {
   pcg <- sound_fixture()$to_powercepstrogram()
-  expect_s3_class(ggplot2::autoplot(pcg), "ggplot")
+  p_pcg <- ggplot2::autoplot(pcg)
+  expect_s3_class(p_pcg, "ggplot")
+  # dB-scale, not linear-power-scale (Important-1 regression guard: raw
+  # linear power ranges over 3.8e-06 .. 2.6e11, ~11 orders of magnitude).
+  expect_true(max(p_pcg$data$power_dB) - min(p_pcg$data$power_dB) < 300)
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(pcg), "ggplot")
 
   mfcc <- sound_fixture()$to_mfcc()
   expect_s3_class(ggplot2::autoplot(mfcc), "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(mfcc), "ggplot")
 
   # LFCC has no direct sound$to_lfcc(); it's produced from an LPC object
   # (R/lpc-wrapper.R:129: .lpc_methods$to_lfcc).
   lpc <- sound_fixture()$to_lpc_burg(prediction_order = 10)
   lfcc <- lpc$to_lfcc()
   expect_s3_class(ggplot2::autoplot(lfcc), "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(lfcc), "ggplot")
 
   # Excitation has no direct sound$to_excitation(); it's produced from a
   # Spectrum object (R/spectrum-wrapper.R:207: .spectrum_methods$to_excitation).
   exc <- sound_fixture()$to_spectrum()$to_excitation(erb_density = 0.1)
   expect_s3_class(ggplot2::autoplot(exc), "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(exc), "ggplot")
 })

@@ -11,6 +11,8 @@ test_that("Electroglottogram autoplot/autolayer/as.data.frame work", {
   df <- as.data.frame(egg)
   expect_s3_class(df, "data.frame")
   expect_s3_class(ggplot2::autoplot(egg), "ggplot")
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(egg)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("LongSound as.data.frame errors with actionable guidance, does not silently return wrong data", {

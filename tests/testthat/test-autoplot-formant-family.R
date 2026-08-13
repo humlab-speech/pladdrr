@@ -18,19 +18,20 @@ test_that("FormantGrid autoplot/autolayer/as.data.frame work", {
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("FormantTier speckle (default) and line styles both work and differ in row count", {
+test_that("FormantTier speckle (default) and line styles both work and use the right geom", {
   sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
   ft <- FormantTier$from_formant(formant)  # R/formanttier-wrapper.R:152-171; the `down_to_formant_tier()` bullet in R/formant-wrapper.R:47's roxygen is stale/aspirational doc text, not an implemented method — verified during SDD Task 10, downsamples all formants to a FormantTier
-  df_speckle <- {
-    p <- ggplot2::autoplot(ft)
-    p$data
-  }
-  df_line <- {
-    p <- ggplot2::autoplot(ft, style = "line")
-    p$data
-  }
-  expect_true(nrow(df_speckle) <= nrow(df_line))
+  p_speckle <- ggplot2::autoplot(ft)
+  p_line <- ggplot2::autoplot(ft, style = "line")
+  expect_s3_class(p_speckle$layers[[1]]$geom, "GeomPoint")
+  expect_true(any(vapply(p_line$layers, function(l) inherits(l$geom, "GeomLine"),
+                         logical(1))))
+
+  layer_speckle <- ggplot2::autolayer(ft)
+  expect_true(is.list(layer_speckle) || inherits(layer_speckle, "Layer"))
+  layer_line <- ggplot2::autolayer(ft, style = "line")
+  expect_true(is.list(layer_line) || inherits(layer_line, "Layer"))
 })
 
 test_that("KlattGrid autoplot produces non-empty data after Task 2's formantType fix", {
@@ -45,6 +46,8 @@ test_that("KlattGrid autoplot produces non-empty data after Task 2's formantType
   expect_true(any(!is.na(df$frequency)))
   p <- ggplot2::autoplot(kg)
   expect_s3_class(p, "ggplot")
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(kg)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("KlattGrid with an unrecognized formant_type errors clearly instead of silently returning NA", {
@@ -58,6 +61,8 @@ test_that("FormantPath autoplot/autolayer work", {
   p <- ggplot2::autoplot(fp)
   expect_s3_class(p, "ggplot")
   expect_true(nrow(p$data) > 0)
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(fp)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that("FormantModeler autoplot/autolayer work with from_track/to_track", {
@@ -68,6 +73,8 @@ test_that("FormantModeler autoplot/autolayer work with from_track/to_track", {
   expect_s3_class(p, "ggplot")
   expect_true(nrow(p$data) > 0)
   expect_setequal(unique(p$data$formant_number), c(1, 2))
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(fm, from_track = 1, to_track = 2)
+  expect_s3_class(p2, "ggplot")
 })
 
 test_that(".formant_modeler_long_df degrades gracefully on edge-case inputs", {
