@@ -69,6 +69,7 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 - `to_intensity()` - Extract intensity contour
 - `to_harmonicity_cc()` - Harmonics-to-noise ratio
 - `to_harmonicity_gne()` - Glottal-to-Noise Excitation ratio (GNE)
+- `extract_electroglottogram(channel, invert)` - Extract Electroglottogram (EGG) from a channel
 - `to_spectrum()` - Frequency spectrum
 - `to_spectrogram()` - Time-frequency representation
 - `to_ltas()` - Long-term average spectrum

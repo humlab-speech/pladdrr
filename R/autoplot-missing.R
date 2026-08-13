@@ -1141,11 +1141,11 @@ autolayer.Discriminant <- function(object, ...) {
     alpha = 0.6, size = 2, ...)
 }
 
-#' as.data.frame.FormantModeler() returns one row per time point, wide-format
-#' (F1_original, F1_modeled, F2_original, F2_modeled, ...). autoplot/autolayer
-#' need long format (time, formant_number, frequency) filtered to a track
-#' range; this reshapes on the *_modeled columns (the fitted/smoothed track,
-#' the point of a Modeler).
+# as.data.frame.FormantModeler() returns one row per time point, wide-format
+# (F1_original, F1_modeled, F2_original, F2_modeled, ...). autoplot/autolayer
+# need long format (time, formant_number, frequency) filtered to a track
+# range; this reshapes on the *_modeled columns (the fitted/smoothed track,
+# the point of a Modeler).
 .formant_modeler_long_df <- function(wide, from_track, to_track, n_tracks) {
   empty <- data.frame(time = numeric(0), formant_number = integer(0),
                        frequency = numeric(0))

@@ -60,11 +60,14 @@ as.data.frame.BarkSpectrogram <- function(x, ...) {
 }
 
 #' @rdname as-data-frame-missing
+#' @param row.names Unused (required by the `as.data.frame()` generic).
+#' @param optional Unused (required by the `as.data.frame()` generic).
 #' @param power If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
 #'   Praat's default raw signed cepstrum view. Default FALSE matches
 #'   `Cepstrum_drawLinear`, Praat's default "Draw..." command.
 #' @export
-as.data.frame.Cepstrum <- function(x, power = FALSE, ...) {
+as.data.frame.Cepstrum <- function(x, row.names = NULL, optional = FALSE,
+    power = FALSE, ...) {
   if (power) {
     pc <- x$to_powercepstrum()
     return(pc$as_data_frame())

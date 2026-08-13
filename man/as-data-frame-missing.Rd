@@ -31,7 +31,7 @@
 
 \method{as.data.frame}{BarkSpectrogram}(x, ...)
 
-\method{as.data.frame}{Cepstrum}(x, power = FALSE, ...)
+\method{as.data.frame}{Cepstrum}(x, row.names = NULL, optional = FALSE, power = FALSE, ...)
 
 \method{as.data.frame}{Cochleagram}(x, ...)
 
@@ -55,6 +55,10 @@ PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
 KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).}
 
 \item{...}{Passed to methods; currently unused except `power` on `Cepstrum`.}
+
+\item{row.names}{Unused (required by the `as.data.frame()` generic).}
+
+\item{optional}{Unused (required by the `as.data.frame()` generic).}
 
 \item{power}{If TRUE, convert to PowerCepstrum (nonnegative, dB) instead of
 Praat's default raw signed cepstrum view. Default FALSE matches
