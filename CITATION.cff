@@ -9,7 +9,7 @@ abstract: >-
   without an external Praat installation.
 type: software
 version: 5.0.1
-date-released: "2026-08-12"
+date-released: "2026-08-13"
 doi: 10.5281/zenodo.21884218
 license: GPL-3.0-or-later
 repository-code: "https://github.com/humlab-speech/pladdrr"
