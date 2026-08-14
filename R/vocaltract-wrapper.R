@@ -40,16 +40,14 @@
 #' @return A \code{VocalTract} object with methods for articulatory tube-model access.
 #'
 #' @examples
-#' # Create from phone
 #' vt <- VocalTract$create_from_phone("a")
 #' print(vt)
 #'
-#' # Get areas
 #' areas <- vt$get_areas()
 #'
-#' # Convert to spectrum for synthesis
 #' spectrum <- vt$to_spectrum()
 #'
+#' @seealso [Spectrum], [Matrix]
 #' @name VocalTract
 NULL
 

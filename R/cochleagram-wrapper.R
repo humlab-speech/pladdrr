@@ -1,14 +1,42 @@
 #' Cochleagram
 #'
-#' Praat Cochleagram object with direct C++ module binding for auditory modeling.
+#' A Praat Cochleagram: the output of a bank of auditory filters modeling
+#' the basilar membrane, over time.
 #'
-#' A Cochleagram represents the output of a bank of auditory filters arranged
-#' along the basilar membrane. Frequency is measured in Bark units (0-25.6 Bark).
+#' Frequency runs along the Bark scale (0-25.6 Bark) rather than Hertz,
+#' matching the perceptual frequency resolution of the ear. Create one from a
+#' Sound with \code{sound$to_cochleagram()} or \code{sound$to_cochleagram_edb()};
+#' slice it at a time point to get an Excitation pattern, from which loudness
+#' can be read off.
+#'
+#' @section Usage:
+#' \preformatted{
+#' cochleagram <- sound$to_cochleagram()
+#' }
+#'
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} - time domain in seconds
+#'   \item \code{get_number_of_frames()}, \code{get_time_step()} - time sampling
+#'   \item \code{get_time_from_column(i_col)} - time at a 1-based frame index
+#'   \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - frequency range in Bark
+#'   \item \code{get_number_of_frequency_bands()}, \code{get_frequency_step()} - frequency sampling
+#'   \item \code{get_frequency_from_row()} - frequency at a 1-based band index
+#'   \item \code{get_value_at_time_and_frequency(time, freq_bark)} - excitation level at a point
+#'   \item \code{get_loudness_at_time(time)} - loudness (sone) at a time
+#' }
+#'
+#' @section Transformation and export:
+#' \itemize{
+#'   \item \code{to_excitation(time)} - excitation pattern (Excitation object) at a time
+#'   \item \code{get_difference(other, tmin, tmax)} - distance between two cochleagrams
+#'   \item \code{as_matrix()} - values as a numeric matrix (frequency bands x frames)
+#' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Cochleagram object; set internally when a method returns a new
 #'   Cochleagram.
-#' @return A \code{Cochleagram} object with methods for auditory filter-bank analysis in Bark scale.
+#' @return A \code{Cochleagram} object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 44100)
@@ -16,6 +44,7 @@
 #' cochleagram$get_duration()
 #' cochleagram$get_loudness_at_time(0.15)
 #'
+#' @seealso [Excitation], [Sound]
 #' @name Cochleagram
 NULL
 

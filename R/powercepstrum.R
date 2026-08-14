@@ -251,15 +251,47 @@ print.PowerCepstrum <- function(x, ...) x$print()
 
 #' PowerCepstrogram
 #'
-#' Represents a time-varying power cepstrum (PowerCepstrogram) from Praat.
+#' A Praat PowerCepstrogram: a power cepstrum computed at every time frame
+#' of a sound, forming a quefrency-by-time surface.
 #'
-#' @return A PowerCepstrogram object.
+#' It's the standard input for CPPS (cepstral peak prominence, smoothed), a
+#' widely used measure of voice quality: high CPPS means a strong, regular
+#' harmonic structure, low CPPS means a noisy or aperiodic voice. Create one
+#' with \code{sound$to_powercepstrogram()}, then either read \code{get_cpps()}
+#' directly or slice out a single frame as a PowerCepstrum for closer
+#' inspection.
+#'
+#' @section Usage:
+#' \preformatted{
+#' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
+#' }
+#'
+#' @section Query methods:
+#' \itemize{
+#'   \item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method, tolerance)} - cepstral peak prominence at a single time
+#'   \item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method, tolerance)} - mean cepstral peak prominence over a time range
+#'   \item \code{get_cpps(subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS, smoothed over time and quefrency
+#' }
+#'
+#' @section Transformation and export:
+#' \itemize{
+#'   \item \code{get_power_cepstrum_at_time(time)} - single frame as a PowerCepstrum object
+#'   \item \code{smooth(time_averaging_window, quefrency_averaging_window)} - smoothed copy as a new PowerCepstrogram
+#'   \item \code{to_matrix()} - values as a Matrix object
+#'   \item \code{as_matrix()} - values as a plain numeric matrix (quefrency x time)
+#' }
+#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   PowerCepstrogram object; set internally when a method returns a new
+#'   PowerCepstrogram.
+#' @return A \code{PowerCepstrogram} object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #' mean_cpp <- cepstrogram$get_mean_cpp()
 #'
+#' @seealso [PowerCepstrum], [Sound], [get_cpps_fast]
 #' @name PowerCepstrogram
 NULL
 
