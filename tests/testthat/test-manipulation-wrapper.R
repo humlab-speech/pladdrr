@@ -43,6 +43,14 @@ test_that("Manipulation can extract pitch tier, duration tier, and pulses", {
   expect_s3_class(pp, "PointProcess")
 })
 
+test_that("Manipulation can extract the original sound", {
+  manip <- manip_from_tone()
+
+  snd <- manip$extract_original_sound()
+  expect_s3_class(snd, "Sound")
+  expect_true(snd$get_duration() > 0)
+})
+
 test_that("Manipulation can replace pitch tier, duration tier, and pulses", {
   manip <- manip_from_tone()
   pt <- manip$extract_pitch_tier()

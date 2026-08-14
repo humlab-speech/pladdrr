@@ -50,7 +50,7 @@ NULL
   PointProcess(.xptr = pp_ptr)
 }
 .manipulation_methods$extract_original_sound <- function(.self) {
-  sound_ptr <- .manipulation_extract_sound(.self$.xptr)
+  sound_ptr <- .manipulation_extract_original_sound(.self$.xptr)
   Sound(.xptr = sound_ptr)
 }
 

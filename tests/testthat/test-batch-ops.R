@@ -190,3 +190,36 @@ test_that("unit_to_code utility provides consistent mapping", {
   # Default fallback
   expect_equal(pladdrr:::unit_to_code("unknown", "pitch"), 0L)
 })
+
+test_that("sound_load_window validates its arguments", {
+  wav <- tempfile(fileext = ".wav")
+  Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)$save(wav)
+  on.exit(unlink(wav))
+
+  expect_error(sound_load_window(123, 0, 0.5), "single character string")
+  expect_error(sound_load_window("nonexistent.wav", 0, 0.5), "File not found")
+  expect_error(sound_load_window(wav, -1, 0.5), "non-negative number")
+  expect_error(sound_load_window(wav, 0, "x"), "end must be a number")
+  expect_error(sound_load_window(wav, 0.5, 0.5), "end must be greater than start")
+  expect_error(sound_load_window(wav, 0, 0.5, resample_to = -1), "resample_to must be")
+  expect_error(sound_load_window(wav, 0, 0.5, preserve_times = "yes"), "TRUE or FALSE")
+})
+
+test_that("sound_load_window loads a time window from disk", {
+  wav <- tempfile(fileext = ".wav")
+  Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)$save(wav)
+  on.exit(unlink(wav))
+
+  window <- sound_load_window(wav, 0.2, 0.7)
+  expect_s3_class(window, "Sound")
+  expect_equal(window$get_duration(), 0.5, tolerance = 1e-2)
+})
+
+test_that("sound_load_window resamples when resample_to is given", {
+  wav <- tempfile(fileext = ".wav")
+  Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)$save(wav)
+  on.exit(unlink(wav))
+
+  window <- sound_load_window(wav, 0, 0.5, resample_to = 8000)
+  expect_equal(window$get_sampling_frequency(), 8000)
+})
