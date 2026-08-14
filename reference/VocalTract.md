@@ -57,10 +57,13 @@ Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 
 - `to_matrix()` - convert to a Matrix
 
+## See also
+
+\[Spectrum\], \[Matrix\]
+
 ## Examples
 
 ``` r
-# Create from phone
 vt <- VocalTract$create_from_phone("a")
 print(vt)
 #> <Praat VocalTract>
@@ -69,9 +72,7 @@ print(vt)
 #>   Section length: 5.0 mm
 #>   Area range: 0.80 - 8.60 cm^2
 
-# Get areas
 areas <- vt$get_areas()
 
-# Convert to spectrum for synthesis
 spectrum <- vt$to_spectrum()
 ```

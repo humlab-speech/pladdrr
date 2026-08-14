@@ -1,7 +1,7 @@
 # Cochleagram
 
-Praat Cochleagram object with direct C++ module binding for auditory
-modeling.
+A Praat Cochleagram: the output of a bank of auditory filters modeling
+the basilar membrane, over time.
 
 ## Arguments
 
@@ -12,14 +12,57 @@ modeling.
 
 ## Value
 
-A `Cochleagram` object with methods for auditory filter-bank analysis in
-Bark scale.
+A `Cochleagram` object.
 
 ## Details
 
-A Cochleagram represents the output of a bank of auditory filters
-arranged along the basilar membrane. Frequency is measured in Bark units
-(0-25.6 Bark).
+Frequency runs along the Bark scale (0-25.6 Bark) rather than Hertz,
+matching the perceptual frequency resolution of the ear. Create one from
+a Sound with `sound$to_cochleagram()` or `sound$to_cochleagram_edb()`;
+slice it at a time point to get an Excitation pattern, from which
+loudness can be read off.
+
+## Usage
+
+
+    cochleagram <- sound$to_cochleagram()
+
+## Query methods
+
+- `get_start_time()`, `get_end_time()`,
+  [`get_duration()`](https://humlab-speech.github.io/pladdrr/reference/get_duration.md) -
+  time domain in seconds
+
+- `get_number_of_frames()`, `get_time_step()` - time sampling
+
+- `get_time_from_column(i_col)` - time at a 1-based frame index
+
+- `get_lowest_frequency()`, `get_highest_frequency()` - frequency range
+  in Bark
+
+- `get_number_of_frequency_bands()`, `get_frequency_step()` - frequency
+  sampling
+
+- `get_frequency_from_row()` - frequency at a 1-based band index
+
+- `get_value_at_time_and_frequency(time, freq_bark)` - excitation level
+  at a point
+
+- `get_loudness_at_time(time)` - loudness (sone) at a time
+
+## Transformation and export
+
+- `to_excitation(time)` - excitation pattern (Excitation object) at a
+  time
+
+- `get_difference(other, tmin, tmax)` - distance between two
+  cochleagrams
+
+- `as_matrix()` - values as a numeric matrix (frequency bands x frames)
+
+## See also
+
+\[Excitation\], \[Sound\]
 
 ## Examples
 

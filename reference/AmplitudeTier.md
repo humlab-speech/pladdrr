@@ -1,18 +1,81 @@
-# Praat AmplitudeTier Object
+# AmplitudeTier
 
-Praat AmplitudeTier object with direct C++ module binding for amplitude
-analysis.
+A Praat AmplitudeTier: sound pressure amplitude in Pascals as a function
+of time.
+
+## Arguments
+
+- .xptr:
+
+  Not for direct use. External pointer to the underlying C++
+  AmplitudeTier object; set internally when a method returns a new
+  AmplitudeTier.
 
 ## Value
 
-An `AmplitudeTier` object with methods for amplitude-over-time
-manipulation via time-value points.
+An `AmplitudeTier` object.
 
 ## Details
 
-AmplitudeTier represents sound pressure amplitude in Pascals as a
-function of time, stored as a sequence of (time, value) points with
-interpolation between points.
+An AmplitudeTier stores amplitude as a sparse sequence of (time, value)
+points rather than a dense signal, with linear interpolation between
+points. It's the amplitude counterpart to an IntensityTier (which stores
+dB instead of Pa), and the two convert into each other. A common use is
+pulling amplitude at glottal pulse times (from a PointProcess) to
+compute shimmer.
+
+## Usage
+
+
+    tier <- amplitude_tier_create(0, 1)
+    tier <- amplitude_tier_from_point_process(point_process, sound)
+    tier <- intensity_tier_to_amplitude_tier(intensity_tier)
+
+## Query methods
+
+- `get_start_time()`, `get_end_time()` - time domain in seconds
+
+- `get_number_of_points()` - number of (time, value) points
+
+- `get_time_from_index(index)` - time at a 1-based point index
+
+- `get_value_at_index(index)` - amplitude at a 1-based point index (Pa)
+
+- `get_value_at_time(time)` - interpolated amplitude at a time (Pa)
+
+## Modification
+
+- `add_point(time, value)` - add a (time, value) point
+
+- `remove_point(index)` - remove the point at a 1-based index
+
+## Shimmer measures
+
+- `get_shimmer_local(period_floor, period_ceiling, max_period_factor)` -
+  relative amplitude perturbation
+
+- `get_shimmer_local_db(...)` - same, in dB
+
+- `get_shimmer_apq3(...)`, `get_shimmer_apq5(...)`,
+  `get_shimmer_apq11(...)` - amplitude perturbation quotients over 3, 5,
+  and 11 periods
+
+- `get_shimmer_dda(...)` - difference of differences of amplitudes
+
+## Conversion and export
+
+- `to_intensity_tier(threshold_db)` - convert amplitude to an
+  IntensityTier
+
+- `as_data_frame()` - points as a data frame with `time` and
+  `amplitude_pa` columns
+
+- `save(path)` - write to file
+
+## See also
+
+\[amplitude_tier_create\], \[amplitude_tier_from_point_process\],
+\[intensity_tier_to_amplitude_tier\]
 
 ## Examples
 

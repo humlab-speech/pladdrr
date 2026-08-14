@@ -1058,7 +1058,7 @@ Additional Praat data types
 - [`Polygon`](https://humlab-speech.github.io/pladdrr/reference/Polygon.md)
   : Polygon Object
 - [`AmplitudeTier`](https://humlab-speech.github.io/pladdrr/reference/AmplitudeTier.md)
-  : Praat AmplitudeTier Object
+  : AmplitudeTier
 - [`DurationTier`](https://humlab-speech.github.io/pladdrr/reference/DurationTier.md)
   : DurationTier
 - [`Electroglottogram`](https://humlab-speech.github.io/pladdrr/reference/Electroglottogram.md)
@@ -1107,7 +1107,7 @@ Helper functions and S3 methods
 - [`as.data.frame(`*`<praat_sound>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as.data.frame.praat_sound.md)
   : Convert praat_sound to data frame
 - [`AmplitudeTier`](https://humlab-speech.github.io/pladdrr/reference/AmplitudeTier.md)
-  : Praat AmplitudeTier Object
+  : AmplitudeTier
 - [`BarkSpectrogram()`](https://humlab-speech.github.io/pladdrr/reference/BarkSpectrogram.md)
   : BarkSpectrogram
 - [`Cepstrum`](https://humlab-speech.github.io/pladdrr/reference/Cepstrum.md)
