@@ -19,5 +19,8 @@ cat("\n")
 cat(strrep("=", 80), "\n")
 cat("SCALAR BASELINE COMPLETE\n")
 cat(strrep("=", 80), "\n\n")
-cat("Next step: Run inst/benchmarks/run_simd_optimized.R to generate SIMD results\n")
+cat(
+  "Next step: Run inst/benchmarks/run_simd_optimized.R",
+  "to generate SIMD results\n"
+)
 cat("Then compare: Rscript inst/benchmarks/compare_results.R\n\n")

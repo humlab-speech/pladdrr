@@ -11,9 +11,9 @@ library(reticulate)
 # Load Praat runner helper
 source("inst/benchmarks/praat_runner.R")
 
-cat("================================================================================\n")
+cat(strrep("=", 80), "\n", sep = "")
 cat("Benchmark 4: Three-Way Comparison (pladdrr vs Parselmouth vs Praat)\n")
-cat("================================================================================\n\n")
+cat(strrep("=", 80), "\n\n", sep = "")
 
 # Check Praat availability
 praat_exe <- "/Applications/Praat.app/Contents/MacOS/Praat"
@@ -288,7 +288,9 @@ cat("   Parselmouth:", format(pm_time), "\n")
 praat_time_intensity <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
-  praat_script <- praat_intensity_script(test_file, min_pitch = 100, time_step = 0.0)
+  praat_script <- praat_intensity_script(
+    test_file, min_pitch = 100, time_step = 0.0
+  )
   praat_result <- benchmark_praat(
     praat_exe, praat_script,
     iterations = 50, warmup = 3
@@ -441,38 +443,60 @@ results <- list(
     parselmouth_time = as.numeric(pm_time),
     praat_time = praat_time,
     speedup_vs_parselmouth = speedup_vs_pm,
-    speedup_vs_praat = if (!is.null(praat_time)) praat_time / as.numeric(sp_time) else NA
+    speedup_vs_praat = if (!is.null(praat_time)) {
+      praat_time / as.numeric(sp_time)
+    } else {
+      NA
+    }
   ),
   formant = list(
     pladdrr_time = as.numeric(sp_time),
     parselmouth_time = as.numeric(pm_time),
     praat_time = praat_time_formant,
     speedup_vs_parselmouth = speedup_formant,
-    speedup_vs_praat = if (!is.null(praat_time_formant)) praat_time_formant / as.numeric(sp_time) else NA
+    speedup_vs_praat = if (!is.null(praat_time_formant)) {
+      praat_time_formant / as.numeric(sp_time)
+    } else {
+      NA
+    }
   ),
   intensity = list(
     pladdrr_time = as.numeric(sp_time),
     parselmouth_time = as.numeric(pm_time),
     praat_time = praat_time_intensity,
     speedup_vs_parselmouth = speedup_intensity,
-    speedup_vs_praat = if (!is.null(praat_time_intensity)) praat_time_intensity / as.numeric(sp_time) else NA
+    speedup_vs_praat = if (!is.null(praat_time_intensity)) {
+      praat_time_intensity / as.numeric(sp_time)
+    } else {
+      NA
+    }
   ),
   spectrogram = list(
     pladdrr_time = as.numeric(sp_time),
     parselmouth_time = as.numeric(pm_time),
     praat_time = praat_time_spectrogram,
     speedup_vs_parselmouth = speedup_spectrogram,
-    speedup_vs_praat = if (!is.null(praat_time_spectrogram)) praat_time_spectrogram / as.numeric(sp_time) else NA
+    speedup_vs_praat = if (!is.null(praat_time_spectrogram)) {
+      praat_time_spectrogram / as.numeric(sp_time)
+    } else {
+      NA
+    }
   ),
   harmonicity = list(
     pladdrr_time = as.numeric(sp_time),
     parselmouth_time = as.numeric(pm_time),
     praat_time = praat_time_harmonicity,
     speedup_vs_parselmouth = speedup_harmonicity,
-    speedup_vs_praat = if (!is.null(praat_time_harmonicity)) praat_time_harmonicity / as.numeric(sp_time) else NA
+    speedup_vs_praat = if (!is.null(praat_time_harmonicity)) {
+      praat_time_harmonicity / as.numeric(sp_time)
+    } else {
+      NA
+    }
   ),
   summary = data.frame(
-    operation = c("Pitch", "Formant", "Intensity", "Spectrogram", "Harmonicity"),
+    operation = c(
+      "Pitch", "Formant", "Intensity", "Spectrogram", "Harmonicity"
+    ),
     speedup = c(
       speedup_vs_pm, speedup_formant, speedup_intensity,
       speedup_spectrogram, speedup_harmonicity
@@ -482,11 +506,31 @@ results <- list(
       speedup_spectrogram, speedup_harmonicity
     ),
     speedup_vs_praat = c(
-      if (!is.null(praat_time)) praat_time / as.numeric(sp_time) else NA,
-      if (!is.null(praat_time_formant)) praat_time_formant / as.numeric(sp_time) else NA,
-      if (!is.null(praat_time_intensity)) praat_time_intensity / as.numeric(sp_time) else NA,
-      if (!is.null(praat_time_spectrogram)) praat_time_spectrogram / as.numeric(sp_time) else NA,
-      if (!is.null(praat_time_harmonicity)) praat_time_harmonicity / as.numeric(sp_time) else NA
+      if (!is.null(praat_time)) {
+        praat_time / as.numeric(sp_time)
+      } else {
+        NA
+      },
+      if (!is.null(praat_time_formant)) {
+        praat_time_formant / as.numeric(sp_time)
+      } else {
+        NA
+      },
+      if (!is.null(praat_time_intensity)) {
+        praat_time_intensity / as.numeric(sp_time)
+      } else {
+        NA
+      },
+      if (!is.null(praat_time_spectrogram)) {
+        praat_time_spectrogram / as.numeric(sp_time)
+      } else {
+        NA
+      },
+      if (!is.null(praat_time_harmonicity)) {
+        praat_time_harmonicity / as.numeric(sp_time)
+      } else {
+        NA
+      }
     )
   )
 )

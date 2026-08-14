@@ -7,11 +7,18 @@
 
 cat("\n=== Phase 3: Formant/LPC Benchmark (SKIPPED) ===\n")
 cat("Status: Benchmark disabled - method signature verification needed\n")
-cat("Target operations: to_formant_burg(), to_lpc_burg(), to_lpc_autocorrelation()\n\n")
+cat(
+  "Target operations: to_formant_burg(), to_lpc_burg(), ",
+  "to_lpc_autocorrelation()\n\n",
+  sep = ""
+)
 
 # Create placeholder results file
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("inst/benchmarks/results/baseline/09_phase3_formant_lpc_%s.rds", timestamp)
+output_file <- sprintf(
+  "inst/benchmarks/results/baseline/09_phase3_formant_lpc_%s.rds",
+  timestamp
+)
 
 results_package <- list(
   metadata = list(
@@ -21,7 +28,10 @@ results_package <- list(
   )
 )
 
-dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+dir.create(
+  "inst/benchmarks/results/baseline",
+  showWarnings = FALSE, recursive = TRUE
+)
 saveRDS(results_package, output_file)
 
 cat(sprintf("\nPlaceholder saved to: %s\n", output_file))

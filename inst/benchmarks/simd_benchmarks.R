@@ -32,10 +32,10 @@ benchmark_sound_statistics <- function() {
   # Benchmark statistics computation
   results <- benchmark(
     "get_statistics" = {
-      min_val <- sound$get_minimum(0, 0)
-      max_val <- sound$get_maximum(0, 0)
-      mean_val <- sound$get_mean(0, 0)
-      rms_val <- sound$get_rms(0, 0)
+      sound$get_minimum(0, 0)
+      sound$get_maximum(0, 0)
+      sound$get_mean(0, 0)
+      sound$get_rms(0, 0)
     },
     replications = 100,
     columns = c("test", "replications", "elapsed", "relative")
@@ -59,7 +59,7 @@ benchmark_mono_conversion <- function() {
 
   stereo_results <- benchmark(
     "stereo_to_mono" = {
-      mono <- stereo$convert_to_mono()
+      stereo$convert_to_mono()
     },
     replications = 50,
     columns = c("test", "replications", "elapsed", "relative")
@@ -75,7 +75,7 @@ benchmark_mono_conversion <- function() {
 
   multi_results <- benchmark(
     "6ch_to_mono" = {
-      mono <- multichannel$convert_to_mono()
+      multichannel$convert_to_mono()
     },
     replications = 30,
     columns = c("test", "replications", "elapsed", "relative")
@@ -97,14 +97,9 @@ benchmark_matrix_operations <- function() {
   mat <- matrix(rnorm(n_rows * n_cols), nrow = n_rows, ncol = n_cols)
   vec <- rnorm(n_rows)
 
-  # Would need exposed function
-  # results <- benchmark(
-  #   "row_multiply" = {
-  #     .matrix_multiply_rows_simd(mat, vec)
-  #   },
-  #   replications = 50,
-  #   columns = c("test", "replications", "elapsed", "relative")
-  # )
+  # Would need exposed function: benchmark row_multiply via
+  # .matrix_multiply_rows_simd(mat, vec), replications 50, reporting
+  # test/replications/elapsed/relative columns.
 
   cat("Matrix operations benchmark (implementation pending)\n")
 }
@@ -117,13 +112,9 @@ benchmark_dot_product <- function() {
   x <- rnorm(n)
   y <- rnorm(n)
 
-  # Would need exposed function
-  # results <- benchmark(
-  #   "base_R" = sum(x * y),
-  #   "simd" = .dot_product_simd(x, y),
-  #   replications = 100,
-  #   columns = c("test", "replications", "elapsed", "relative")
-  # )
+  # Would need exposed function: benchmark base_R sum(x * y) vs
+  # simd .dot_product_simd(x, y), replications 100, reporting
+  # test/replications/elapsed/relative columns.
 
   # For now, just R comparison
   results <- benchmark(
@@ -157,10 +148,22 @@ test_simd_accuracy <- function() {
   s_mean <- sound$get_mean(0, 0)
   s_rms <- sound$get_rms(0, 0)
 
-  cat(sprintf("Min:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_min, s_min, abs(r_min - s_min)))
-  cat(sprintf("Max:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_max, s_max, abs(r_max - s_max)))
-  cat(sprintf("Mean: R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_mean, s_mean, abs(r_mean - s_mean)))
-  cat(sprintf("RMS:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_rms, s_rms, abs(r_rms - s_rms)))
+  cat(sprintf(
+    "Min:  R=%.10f  Speaker=%.10f  Diff=%.2e\n",
+    r_min, s_min, abs(r_min - s_min)
+  ))
+  cat(sprintf(
+    "Max:  R=%.10f  Speaker=%.10f  Diff=%.2e\n",
+    r_max, s_max, abs(r_max - s_max)
+  ))
+  cat(sprintf(
+    "Mean: R=%.10f  Speaker=%.10f  Diff=%.2e\n",
+    r_mean, s_mean, abs(r_mean - s_mean)
+  ))
+  cat(sprintf(
+    "RMS:  R=%.10f  Speaker=%.10f  Diff=%.2e\n",
+    r_rms, s_rms, abs(r_rms - s_rms)
+  ))
 
   # Test 2: Mono conversion accuracy
   stereo <- Sound$new(duration = 0.1, sample_rate = 16000, n_channels = 2)

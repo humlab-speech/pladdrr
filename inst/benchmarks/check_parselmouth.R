@@ -1,9 +1,9 @@
 # Helper script to check parselmouth installation
 # This can be run before benchmarks to verify Python dependencies
 
-cat("================================================================================\n")
+cat(strrep("=", 80), "\n", sep = "")
 cat("Parselmouth Installation Check\n")
-cat("================================================================================\n\n")
+cat(strrep("=", 80), "\n\n", sep = "")
 
 library(reticulate)
 
@@ -22,15 +22,15 @@ if (parselmouth_available) {
   cat("   ✓ Parselmouth is installed\n")
   cat("   Version:", pm$`__version__`, "\n\n")
 
-  cat("================================================================================\n")
+  cat(strrep("=", 80), "\n", sep = "")
   cat("STATUS: Ready to run parselmouth comparison benchmarks ✓\n")
-  cat("================================================================================\n\n")
+  cat(strrep("=", 80), "\n\n", sep = "")
 } else {
   cat("   ✗ Parselmouth is NOT installed\n\n")
 
-  cat("================================================================================\n")
+  cat(strrep("=", 80), "\n", sep = "")
   cat("STATUS: Parselmouth not available\n")
-  cat("================================================================================\n\n")
+  cat(strrep("=", 80), "\n\n", sep = "")
 
   cat("To install parselmouth:\n\n")
   cat("Option 1 - Using pip (recommended):\n")

@@ -29,9 +29,17 @@ if (file.exists(sys_info_file)) {
   cat(strrep("=", 80), "\n")
   cat("Platform:", sys_info$platform, "\n")
   cat("R version:", sys_info$r_version, "\n")
-  cat("CPU:", if (!is.null(sys_info$cpu_info)) sys_info$cpu_info else "Unknown", "\n")
+  cat(
+    "CPU:",
+    if (!is.null(sys_info$cpu_info)) sys_info$cpu_info else "Unknown",
+    "\n"
+  )
   cat("Package version:", sys_info$package_version, "\n")
-  cat("Benchmark date:", format(sys_info$timestamp, "%Y-%m-%d %H:%M:%S"), "\n\n")
+  cat(
+    "Benchmark date:",
+    format(sys_info$timestamp, "%Y-%m-%d %H:%M:%S"),
+    "\n\n"
+  )
 } else {
   cat("System information not found. Using default values.\n\n")
   sys_info <- list(
@@ -64,7 +72,9 @@ simd_comparisons_made <- FALSE
 for (benchmark_name in simd_benchmarks) {
   scalar_file <- file.path(results_dir, paste0(benchmark_name, "_scalar.rds"))
   simd_file <- file.path(results_dir, paste0(benchmark_name, "_simd.rds"))
-  baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
+  baseline_file <- file.path(
+    results_dir, paste0(benchmark_name, "_baseline.rds")
+  )
 
   # Support both scalar/simd and baseline naming
   if (!file.exists(scalar_file) && file.exists(baseline_file)) {
@@ -100,7 +110,7 @@ for (benchmark_name in simd_benchmarks) {
         if (is.list(scalar_config) && !inherits(scalar_config, "bench_mark")) {
           for (sub_name in names(scalar_config)) {
             if (inherits(scalar_config[[sub_name]], "bench_mark") &&
-              sub_name %in% names(simd_config)) {
+                  sub_name %in% names(simd_config)) {
               scalar_bench <- scalar_config[[sub_name]]
               simd_bench <- simd_config[[sub_name]]
 
@@ -191,19 +201,32 @@ for (benchmark_name in simd_benchmarks) {
 
     # Create visualization
     plot_data <- comparison_df
-    plot_data$expression <- factor(plot_data$expression, levels = plot_data$expression)
+    plot_data$expression <- factor(
+      plot_data$expression,
+      levels = plot_data$expression
+    )
 
     p <- ggplot(plot_data, aes(x = expression, y = speedup)) +
       geom_col(fill = "steelblue") +
-      geom_hline(yintercept = 1, linetype = "dashed", color = "red", linewidth = 1) +
-      geom_hline(yintercept = 2, linetype = "dotted", color = "darkgreen", linewidth = 0.5) +
-      geom_hline(yintercept = 4, linetype = "dotted", color = "darkgreen", linewidth = 0.5) +
+      geom_hline(
+        yintercept = 1, linetype = "dashed", color = "red", linewidth = 1
+      ) +
+      geom_hline(
+        yintercept = 2, linetype = "dotted", color = "darkgreen",
+        linewidth = 0.5
+      ) +
+      geom_hline(
+        yintercept = 4, linetype = "dotted", color = "darkgreen",
+        linewidth = 0.5
+      ) +
       geom_text(aes(label = sprintf("%.2fx", speedup)),
         vjust = -0.5, size = 3.5
       ) +
       labs(
         title = paste("SIMD Optimization Results:", benchmark_name),
-        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+        subtitle = paste0(
+          "Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info
+        ),
         x = "Operation",
         y = "Speedup (times faster)",
         caption = paste0(
@@ -218,7 +241,9 @@ for (benchmark_name in simd_benchmarks) {
         axis.text.x = element_text(angle = 45, hjust = 1)
       )
 
-    plot_filename <- file.path(results_dir, paste0(benchmark_name, "_simd_comparison.png"))
+    plot_filename <- file.path(
+      results_dir, paste0(benchmark_name, "_simd_comparison.png")
+    )
     ggsave(plot_filename, p, width = 10, height = 6, dpi = 300)
     cat("Saved plot:", plot_filename, "\n\n")
   }
@@ -236,13 +261,23 @@ if (!simd_comparisons_made) {
   baseline_available <- c()
 
   for (benchmark_name in simd_benchmarks) {
-    scalar_file <- file.path(results_dir, paste0(benchmark_name, "_scalar.rds"))
+    scalar_file <- file.path(
+      results_dir, paste0(benchmark_name, "_scalar.rds")
+    )
     simd_file <- file.path(results_dir, paste0(benchmark_name, "_simd.rds"))
-    baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
+    baseline_file <- file.path(
+      results_dir, paste0(benchmark_name, "_baseline.rds")
+    )
 
-    if (file.exists(scalar_file)) scalar_available <- c(scalar_available, benchmark_name)
-    if (file.exists(simd_file)) simd_available <- c(simd_available, benchmark_name)
-    if (file.exists(baseline_file)) baseline_available <- c(baseline_available, benchmark_name)
+    if (file.exists(scalar_file)) {
+      scalar_available <- c(scalar_available, benchmark_name)
+    }
+    if (file.exists(simd_file)) {
+      simd_available <- c(simd_available, benchmark_name)
+    }
+    if (file.exists(baseline_file)) {
+      baseline_available <- c(baseline_available, benchmark_name)
+    }
   }
 
   if (length(scalar_available) > 0 || length(baseline_available) > 0) {
@@ -260,7 +295,11 @@ if (!simd_comparisons_made) {
   }
 
   if (length(scalar_available) > 0 && length(simd_available) == 0) {
-    cat("\nRun benchmarks with RcppXsimd installed to generate SIMD comparisons.\n")
+    cat(
+      "\nRun benchmarks with RcppXsimd installed to generate SIMD ",
+      "comparisons.\n",
+      sep = ""
+    )
   } else if (length(scalar_available) == 0 && length(simd_available) > 0) {
     cat("\nRun benchmarks without RcppXsimd to generate scalar baseline.\n")
   }
@@ -284,8 +323,12 @@ if (file.exists(pm_file)) {
   cat("\n")
 
   # Calculate summary statistics for parselmouth comparison
-  mean_speedup_pm <- mean(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
-  median_speedup_pm <- median(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+  mean_speedup_pm <- mean(
+    pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE
+  )
+  median_speedup_pm <- median(
+    pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE
+  )
   min_speedup_pm <- min(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
   max_speedup_pm <- max(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
 
@@ -297,8 +340,12 @@ if (file.exists(pm_file)) {
 
   # Calculate summary statistics for Praat comparison (if available)
   if (!all(is.na(pm_results$summary$speedup_vs_praat))) {
-    mean_speedup_praat <- mean(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
-    median_speedup_praat <- median(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+    mean_speedup_praat <- mean(
+      pm_results$summary$speedup_vs_praat, na.rm = TRUE
+    )
+    median_speedup_praat <- median(
+      pm_results$summary$speedup_vs_praat, na.rm = TRUE
+    )
     min_speedup_praat <- min(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
     max_speedup_praat <- max(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
 
@@ -311,12 +358,15 @@ if (file.exists(pm_file)) {
   cat("\n")
 
   # Create visualizations - reshape data for faceting
-  if (!requireNamespace("tidyr", quietly = TRUE) || !requireNamespace("dplyr", quietly = TRUE)) {
+  if (!requireNamespace("tidyr", quietly = TRUE) ||
+        !requireNamespace("dplyr", quietly = TRUE)) {
     cat("⚠ tidyr or dplyr not available for advanced plotting\n")
     cat("  Creating simple plot instead\n\n")
 
     # Simple plot - just parselmouth comparison
-    p1 <- ggplot(pm_results$summary, aes(x = operation, y = speedup_vs_parselmouth)) +
+    p1 <- ggplot(
+      pm_results$summary, aes(x = operation, y = speedup_vs_parselmouth)
+    ) +
       geom_col(fill = "steelblue") +
       geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
       geom_text(aes(label = sprintf("%.2fx", speedup_vs_parselmouth)),
@@ -324,7 +374,9 @@ if (file.exists(pm_file)) {
       ) +
       labs(
         title = "pladdrr vs Parselmouth Performance",
-        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+        subtitle = paste0(
+          "Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info
+        ),
         x = "Operation",
         y = "Speedup (times faster than Parselmouth)",
         caption = paste0(
@@ -342,14 +394,14 @@ if (file.exists(pm_file)) {
     library(tidyr)
     library(dplyr)
 
-    plot_data <- pm_results$summary %>%
-      select(operation, speedup_vs_parselmouth, speedup_vs_praat) %>%
+    plot_data <- pm_results$summary |>
+      select(operation, speedup_vs_parselmouth, speedup_vs_praat) |>
       pivot_longer(
         cols = c(speedup_vs_parselmouth, speedup_vs_praat),
         names_to = "comparison",
         values_to = "speedup_value"
-      ) %>%
-      filter(!is.na(speedup_value)) %>%
+      ) |>
+      filter(!is.na(speedup_value)) |>
       mutate(
         comparison = ifelse(comparison == "speedup_vs_parselmouth",
           "vs Parselmouth", "vs Praat"
@@ -357,17 +409,23 @@ if (file.exists(pm_file)) {
       )
 
     # Create side-by-side comparison plot
-    p1 <- ggplot(plot_data, aes(x = operation, y = speedup_value, fill = comparison)) +
+    p1 <- ggplot(
+      plot_data, aes(x = operation, y = speedup_value, fill = comparison)
+    ) +
       geom_col(position = "dodge") +
       geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
       geom_text(aes(label = sprintf("%.2fx", speedup_value)),
         position = position_dodge(width = 0.9),
         vjust = -0.5, size = 3
       ) +
-      scale_fill_manual(values = c("vs Parselmouth" = "steelblue", "vs Praat" = "darkgreen")) +
+      scale_fill_manual(values = c(
+        "vs Parselmouth" = "steelblue", "vs Praat" = "darkgreen"
+      )) +
       labs(
         title = "pladdrr Performance: Three-Way Comparison",
-        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+        subtitle = paste0(
+          "Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info
+        ),
         x = "Operation",
         y = "Speedup (times faster than baseline)",
         fill = "Comparison",
@@ -431,7 +489,9 @@ if (file.exists(scripts_file)) {
     ) +
     labs(
       title = "speaker vs Parselmouth: Full Workflow Performance",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+      subtitle = paste0(
+        "Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info
+      ),
       x = "Workflow",
       y = "Speedup (times faster)",
       caption = paste0(
@@ -450,7 +510,9 @@ if (file.exists(scripts_file)) {
     p2,
     width = 8, height = 6, dpi = 300
   )
-  cat("Saved plot: inst/benchmarks/results/converted_scripts_comparison.png\n\n")
+  cat(
+    "Saved plot: inst/benchmarks/results/converted_scripts_comparison.png\n\n"
+  )
 } else {
   cat("Converted scripts comparison results not found. Skipping.\n\n")
 }
@@ -503,7 +565,9 @@ if (file.exists(pm_file) && file.exists(scripts_file)) {
     )) +
     labs(
       title = "speaker vs Parselmouth: Complete Performance Comparison",
-      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+      subtitle = paste0(
+        "Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info
+      ),
       x = "Test",
       y = "Speedup (times faster)",
       fill = "Category",
@@ -533,7 +597,11 @@ if (file.exists(pm_file) && file.exists(scripts_file)) {
 
   cat("Key Findings:\n")
   if (mean(all_speedups) > 1.5) {
-    cat("  ✅ speaker shows significant performance advantage (>1.5x on average)\n")
+    cat(
+      "  ✅ speaker shows significant performance advantage ",
+      "(>1.5x on average)\n",
+      sep = ""
+    )
   } else if (mean(all_speedups) > 1.0) {
     cat("  ✅ speaker shows moderate performance advantage (>1.0x on average)\n")
   } else {

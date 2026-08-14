@@ -60,7 +60,10 @@ for (config_name in names(configs)) {
   cfg <- configs[[config_name]]
 
   cat(sprintf("\nBenchmarking: %s\n", cfg$label))
-  cat(sprintf("  Duration: %.1fs, Sample rate: %d Hz\n", cfg$duration, cfg$sample_rate))
+  cat(sprintf(
+    "  Duration: %.1fs, Sample rate: %d Hz\n",
+    cfg$duration, cfg$sample_rate
+  ))
 
   # Create test sound (noise signal for realistic computation)
   n_samples <- cfg$duration * cfg$sample_rate
@@ -172,7 +175,9 @@ print(summary_df)
 
 # Save results
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("inst/benchmarks/results/baseline/06_phase2_intensity_%s.rds", timestamp)
+output_file <- sprintf(
+  "inst/benchmarks/results/baseline/06_phase2_intensity_%s.rds", timestamp
+)
 
 results_package <- list(
   metadata = list(
@@ -186,7 +191,9 @@ results_package <- list(
   summary = summary_df
 )
 
-dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+dir.create(
+  "inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE
+)
 saveRDS(results_package, output_file)
 
 cat(sprintf("\nResults saved to: %s\n", output_file))

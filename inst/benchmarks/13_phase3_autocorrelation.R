@@ -49,10 +49,16 @@ for (config_name in names(test_configs)) {
 
   # Benchmark autocorrelation
   result <- bench::mark(
-    autocorr_scalar = speaker:::.autocorrelation_scalar(data, config$max_lag),
+    autocorr_scalar = speaker:::.autocorrelation_scalar(
+      data, config$max_lag
+    ),
     autocorr_simd = speaker:::.autocorrelation_simd(data, config$max_lag),
-    autocorr_norm_scalar = speaker:::.autocorrelation_normalized_scalar(data, config$max_lag),
-    autocorr_norm_simd = speaker:::.autocorrelation_normalized_simd(data, config$max_lag),
+    autocorr_norm_scalar = speaker:::.autocorrelation_normalized_scalar(
+      data, config$max_lag
+    ),
+    autocorr_norm_simd = speaker:::.autocorrelation_normalized_simd(
+      data, config$max_lag
+    ),
     iterations = if (config$n < 1000) 100 else 50,
     check = FALSE
   )
@@ -60,12 +66,13 @@ for (config_name in names(test_configs)) {
   print(result[, c("expression", "median", "mem_alloc")])
 
   # Calculate speedups
-  speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_scalar"]) /
-    as.numeric(result$median[as.character(result$expression) == "autocorr_simd"])
+  expr <- as.character(result$expression)
+  speedup <- as.numeric(result$median[expr == "autocorr_scalar"]) /
+    as.numeric(result$median[expr == "autocorr_simd"])
   cat(sprintf("  Autocorrelation speedup: %.2fx\n", speedup))
 
-  norm_speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_norm_scalar"]) /
-    as.numeric(result$median[as.character(result$expression) == "autocorr_norm_simd"])
+  norm_speedup <- as.numeric(result$median[expr == "autocorr_norm_scalar"]) /
+    as.numeric(result$median[expr == "autocorr_norm_simd"])
   cat(sprintf("  Normalized autocorr speedup: %.2fx\n", norm_speedup))
 
   results[[config_name]] <- result
@@ -73,7 +80,8 @@ for (config_name in names(test_configs)) {
 
 # Benchmark LPC autocorrelation (used in formant extraction)
 cat("\n--- LPC Autocorrelation (Formant Extraction) ---\n")
-lpc_data <- sin(2 * pi * seq(0, 1, length.out = 8000) * 120) + rnorm(8000, sd = 0.1)
+lpc_data <- sin(2 * pi * seq(0, 1, length.out = 8000) * 120) +
+  rnorm(8000, sd = 0.1)
 num_coeffs <- 12 # Typical for formant extraction
 
 lpc_result <- bench::mark(
@@ -85,14 +93,22 @@ lpc_result <- bench::mark(
 
 print(lpc_result[, c("expression", "median", "mem_alloc")])
 
-lpc_speedup <- as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_scalar"]) /
-  as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_simd"])
+lpc_expr <- as.character(lpc_result$expression)
+lpc_speedup <- as.numeric(lpc_result$median[lpc_expr == "lpc_scalar"]) /
+  as.numeric(lpc_result$median[lpc_expr == "lpc_simd"])
 cat(sprintf("  LPC autocorrelation speedup: %.2fx\n", lpc_speedup))
 
 results$lpc <- lpc_result
 
 # Save results
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
-saveRDS(results, "inst/benchmarks/results/13_phase3_autocorrelation_baseline.rds")
+saveRDS(
+  results,
+  "inst/benchmarks/results/13_phase3_autocorrelation_baseline.rds"
+)
 cat("\n✓ Autocorrelation benchmark complete\n")
-cat("  This is the HIGHEST IMPACT optimization for pitch and formant analysis!\n")
+cat(
+  "  This is the HIGHEST IMPACT optimization for pitch and formant ",
+  "analysis!\n",
+  sep = ""
+)

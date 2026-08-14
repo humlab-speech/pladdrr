@@ -42,16 +42,17 @@ for (size_name in names(test_sizes)) {
   print(result[, c("expression", "median", "mem_alloc")])
 
   # Calculate speedups
-  hamming_speedup <- as.numeric(result$median[as.character(result$expression) == "hamming_scalar"]) /
-    as.numeric(result$median[as.character(result$expression) == "hamming_simd"])
+  expr <- as.character(result$expression)
+  hamming_speedup <- as.numeric(result$median[expr == "hamming_scalar"]) /
+    as.numeric(result$median[expr == "hamming_simd"])
   cat(sprintf("  Hamming speedup: %.2fx\n", hamming_speedup))
 
-  hanning_speedup <- as.numeric(result$median[as.character(result$expression) == "hanning_scalar"]) /
-    as.numeric(result$median[as.character(result$expression) == "hanning_simd"])
+  hanning_speedup <- as.numeric(result$median[expr == "hanning_scalar"]) /
+    as.numeric(result$median[expr == "hanning_simd"])
   cat(sprintf("  Hanning speedup: %.2fx\n", hanning_speedup))
 
-  gaussian_speedup <- as.numeric(result$median[as.character(result$expression) == "gaussian_scalar"]) /
-    as.numeric(result$median[as.character(result$expression) == "gaussian_simd"])
+  gaussian_speedup <- as.numeric(result$median[expr == "gaussian_scalar"]) /
+    as.numeric(result$median[expr == "gaussian_simd"])
   cat(sprintf("  Gaussian speedup: %.2fx\n", gaussian_speedup))
 
   results[[size_name]] <- result
@@ -59,5 +60,8 @@ for (size_name in names(test_sizes)) {
 
 # Save results
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
-saveRDS(results, "inst/benchmarks/results/12_phase3_window_functions_baseline.rds")
+saveRDS(
+  results,
+  "inst/benchmarks/results/12_phase3_window_functions_baseline.rds"
+)
 cat("\n✓ Window functions benchmark complete\n")

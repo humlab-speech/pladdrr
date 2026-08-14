@@ -9,14 +9,16 @@
 #' @param praat_exe Path to Praat executable (default: macOS location)
 #' @param script_code Praat script code to execute
 #' @param args Named list of arguments to pass to script
-#' @param return_type "info-window" for Info window output, "last-argument" for last arg
+#' @param return_type "info-window" for Info window output, "last-argument"
+#'   for last arg
 #' @param measure_only_execution If TRUE, wraps script to exclude startup time
 #' @return List with timing info and results
-run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
-                             script_code,
-                             args = NULL,
-                             return_type = c("info-window", "last-argument"),
-                             measure_only_execution = TRUE) {
+run_praat_script <- function(
+    praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
+    script_code,
+    args = NULL,
+    return_type = c("info-window", "last-argument"),
+    measure_only_execution = TRUE) {
   return_type <- match.arg(return_type)
 
   # Create temporary directory for this execution
@@ -84,22 +86,29 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
 #' @param iterations Number of iterations
 #' @param warmup Number of warmup iterations
 #' @return Timing statistics
-benchmark_praat <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
-                            script_code,
-                            args = NULL,
-                            iterations = 50,
-                            warmup = 3) {
+benchmark_praat <- function(
+    praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
+    script_code,
+    args = NULL,
+    iterations = 50,
+    warmup = 3) {
   # Warmup runs (not measured)
   if (warmup > 0) {
     for (i in seq_len(warmup)) {
-      run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
+      run_praat_script(
+        praat_exe, script_code, args,
+        measure_only_execution = TRUE
+      )
     }
   }
 
   # Measured runs
   times <- numeric(iterations)
   for (i in seq_len(iterations)) {
-    result <- run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
+    result <- run_praat_script(
+      praat_exe, script_code, args,
+      measure_only_execution = TRUE
+    )
     times[i] <- result$execution_time
   }
 
@@ -158,7 +167,8 @@ removeObject: sound, formant
 #' @param min_pitch Minimum pitch for analysis
 #' @param time_step Time step (0 = auto)
 #' @return Praat script code
-praat_intensity_script <- function(audio_file, min_pitch = 100, time_step = 0.0) {
+praat_intensity_script <- function(
+    audio_file, min_pitch = 100, time_step = 0.0) {
   sprintf('
 sound = Read from file: "%s"
 intensity = To Intensity: %f, %f, "yes"
@@ -176,9 +186,10 @@ removeObject: sound, intensity
 #' @param freq_step Frequency step (Hz)
 #' @param window_shape Window shape
 #' @return Praat script code
-praat_spectrogram_script <- function(audio_file, window_length = 0.005,
-                                     max_freq = 5000, time_step = 0.002,
-                                     freq_step = 20, window_shape = "Gaussian") {
+praat_spectrogram_script <- function(
+    audio_file, window_length = 0.005,
+    max_freq = 5000, time_step = 0.002,
+    freq_step = 20, window_shape = "Gaussian") {
   sprintf('
 sound = Read from file: "%s"
 spectrogram = To Spectrogram: %f, %f, %f, %f, "%s"

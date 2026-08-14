@@ -6,11 +6,12 @@
 library(pladdrr)
 library(bench)
 
-cat("================================================================================\n")
+divider <- paste(rep("=", 80), collapse = "")
+cat(divider, "\n", sep = "")
 cat("Benchmark 15: Module Architecture Performance (Phase 1+ Complete)\n")
 cat("Date:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n")
 cat("Status: 27/28 objects use Rcpp Modules (96%)\n")
-cat("================================================================================\n\n")
+cat(divider, "\n\n", sep = "")
 
 # Test audio file
 test_file <- system.file("extdata", "test.wav", package = "pladdrr")
@@ -50,8 +51,9 @@ dispatch_bench <- mark(
 )
 
 cat("   Results (median per call):\n")
-for (i in 1:nrow(dispatch_bench)) {
-  time_us <- as.numeric(dispatch_bench$median[i]) * 1e6 # Convert to microseconds
+for (i in seq_len(nrow(dispatch_bench))) {
+  # Convert to microseconds
+  time_us <- as.numeric(dispatch_bench$median[i]) * 1e6
   expr_name <- as.character(dispatch_bench$expression[i])
   cat(sprintf("   %-40s %.2f µs\n", expr_name, time_us))
 }
@@ -59,7 +61,9 @@ for (i in 1:nrow(dispatch_bench)) {
 avg_dispatch_us <- mean(as.numeric(dispatch_bench$median)) * 1e6
 cat(sprintf("\n   Average dispatch overhead: %.2f µs\n", avg_dispatch_us))
 cat(sprintf("   Target (R6 baseline):      1-2 µs\n"))
-cat(sprintf("   Improvement:               %.1fx faster\n\n", 1.5 / avg_dispatch_us))
+cat(sprintf(
+  "   Improvement:               %.1fx faster\n\n", 1.5 / avg_dispatch_us
+))
 
 # ==============================================================================
 # 2. TYPICAL WORKFLOW OVERHEAD (Real-world Impact)
@@ -72,7 +76,11 @@ cat("   Expected: ~15µs overhead (vs ~150µs with R6)\n\n")
 workflow_bench <- mark(
   complete_analysis = {
     # Load/create sound
-    snd <- if (file.exists(test_file)) Sound(test_file) else Sound$create_tone(1.0, 440, 16000, 0.5)
+    snd <- if (file.exists(test_file)) {
+      Sound(test_file)
+    } else {
+      Sound$create_tone(1.0, 440, 16000, 0.5)
+    }
 
     # Extract pitch (10-15 method calls)
     p <- snd$to_pitch()
@@ -128,7 +136,7 @@ creation_bench <- mark(
 )
 
 cat("   Results (median time):\n")
-for (i in 1:nrow(creation_bench)) {
+for (i in seq_len(nrow(creation_bench))) {
   time_ms <- as.numeric(creation_bench$median[i]) * 1000
   expr_name <- as.character(creation_bench$expression[i])
   cat(sprintf("   %-30s %.2f ms\n", expr_name, time_ms))
@@ -148,7 +156,9 @@ batch_bench <- mark(
     results <- numeric(1000)
     for (i in 1:1000) {
       frame_num <- ((i - 1) %% p$get_number_of_frames()) + 1
-      results[i] <- p$get_value_at_time(p$get_time_from_frame(frame_num), "Hertz", "LINEAR")
+      results[i] <- p$get_value_at_time(
+        p$get_time_from_frame(frame_num), "Hertz", "LINEAR"
+      )
     }
     results
   },
@@ -216,7 +226,7 @@ mem_bench <- mark(
 )
 
 cat("   Results (median allocation per 100 objects):\n")
-for (i in 1:nrow(mem_bench)) {
+for (i in seq_len(nrow(mem_bench))) {
   mem_mb <- as.numeric(mem_bench$mem_alloc[i]) / 1024^2
   expr_name <- as.character(mem_bench$expression[i])
   cat(sprintf("   %-35s %.2f MB\n", expr_name, mem_mb))
@@ -227,9 +237,9 @@ cat("\n")
 # SUMMARY AND COMPARISON
 # ==============================================================================
 
-cat("================================================================================\n")
+cat(divider, "\n", sep = "")
 cat("SUMMARY: Phase 1+ Performance Achievements\n")
-cat("================================================================================\n\n")
+cat(divider, "\n\n", sep = "")
 
 cat("Architecture Status:\n")
 cat("  - Objects converted:    27/28 (96%)\n")
@@ -237,11 +247,21 @@ cat("  - Remaining R6:         1/28 (PraatInterpreter - intentional)\n")
 cat("  - Module architecture:  Function wrappers with Rcpp Module backend\n\n")
 
 cat("Performance Improvements:\n")
-cat(sprintf("  - Method dispatch:      %.2f µs (target: 0.1-0.2 µs) ✓\n", avg_dispatch_us))
+cat(sprintf(
+  "  - Method dispatch:      %.2f µs (target: 0.1-0.2 µs) ✓\n",
+  avg_dispatch_us
+))
 cat(sprintf("  - Improvement vs R6:    %.1fx faster\n", 1.5 / avg_dispatch_us))
-cat(sprintf("  - Workflow overhead:    ~%.0f µs (target: ~15 µs) ✓\n", avg_dispatch_us * 40))
-cat(sprintf("  - Improvement vs R6:    ~%.1fx faster\n", 150 / (avg_dispatch_us * 40)))
-cat(sprintf("  - Batch 1000 calls:     %.2f ms overhead\n", avg_call_time_pitch / 1000))
+cat(sprintf(
+  "  - Workflow overhead:    ~%.0f µs (target: ~15 µs) ✓\n",
+  avg_dispatch_us * 40
+))
+cat(sprintf(
+  "  - Improvement vs R6:    ~%.1fx faster\n", 150 / (avg_dispatch_us * 40)
+))
+cat(sprintf(
+  "  - Batch 1000 calls:     %.2f ms overhead\n", avg_call_time_pitch / 1000
+))
 cat(sprintf(
   "  - Savings vs R6:        %.2f ms per 1000 calls\n\n",
   (1500 - avg_call_time_pitch) / 1000
@@ -314,7 +334,8 @@ results <- list(
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 
 # Save results
-saveRDS(results, "inst/benchmarks/results/15_module_architecture_benchmark.rds")
+results_path <- "inst/benchmarks/results/15_module_architecture_benchmark.rds"
+saveRDS(results, results_path)
 
-cat("Results saved to: inst/benchmarks/results/15_module_architecture_benchmark.rds\n")
+cat("Results saved to:", results_path, "\n")
 cat("Benchmark 15 complete!\n\n")

@@ -4,9 +4,9 @@
 library(speaker)
 library(bench)
 
-cat("================================================================================\n")
+cat(paste0(strrep("=", 80), "\n"))
 cat("Testing Benchmark Fixes\n")
-cat("================================================================================\n\n")
+cat(paste0(strrep("=", 80), "\n\n"))
 
 # Test 1: Simple benchmark with fresh Sound creation
 cat("Test 1: Benchmark with synthetic audio (create_tone)...\n")
@@ -80,9 +80,9 @@ if (error_count == 0) {
 cat("\n")
 
 # Summary
-cat("================================================================================\n")
+cat(paste0(strrep("=", 80), "\n"))
 cat("SUMMARY\n")
-cat("================================================================================\n")
+cat(paste0(strrep("=", 80), "\n"))
 
 if (!is.null(result1) && error_count == 0) {
   cat("✅ ALL TESTS PASSED\n")

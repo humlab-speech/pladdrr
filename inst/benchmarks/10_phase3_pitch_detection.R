@@ -11,17 +11,26 @@ cat("Target operations: to_pitch(), to_pitch_ac(), to_pitch_cc()\n\n")
 
 # Create placeholder results file
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("inst/benchmarks/results/baseline/10_phase3_pitch_detection_%s.rds", timestamp)
+output_file <- sprintf(
+  "inst/benchmarks/results/baseline/10_phase3_pitch_detection_%s.rds",
+  timestamp
+)
 
 results_package <- list(
   metadata = list(
     date = Sys.time(),
     status = "SKIPPED",
-    reason = "Method signature verification needed for pitch detection functions"
+    reason = paste(
+      "Method signature verification needed for pitch detection",
+      "functions"
+    )
   )
 )
 
-dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+dir.create(
+  "inst/benchmarks/results/baseline",
+  showWarnings = FALSE, recursive = TRUE
+)
 saveRDS(results_package, output_file)
 
 cat(sprintf("\nPlaceholder saved to: %s\n", output_file))

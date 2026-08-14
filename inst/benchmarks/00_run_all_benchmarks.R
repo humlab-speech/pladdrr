@@ -27,7 +27,10 @@ system_info <- list(
   r_version = R.version.string,
   platform = R.version$platform,
   cpu_info = if (.Platform$OS.type == "unix") {
-    system("sysctl -n machdep.cpu.brand_string 2>/dev/null || echo 'Unknown'", intern = TRUE)
+    system(
+      "sysctl -n machdep.cpu.brand_string 2>/dev/null || echo 'Unknown'",
+      intern = TRUE
+    )
   } else {
     "Windows"
   },

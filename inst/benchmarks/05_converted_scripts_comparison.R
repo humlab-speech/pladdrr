@@ -6,9 +6,9 @@ library(speaker)
 library(bench)
 library(reticulate)
 
-cat("================================================================================\n")
+cat(strrep("=", 80), "\n", sep = "")
 cat("Benchmark 5: Converted Scripts Comparison\n")
-cat("================================================================================\n\n")
+cat(strrep("=", 80), "\n\n", sep = "")
 
 # Check if parselmouth is available
 cat("Checking for parselmouth installation...\n")
@@ -25,14 +25,18 @@ tryCatch(
     cat("  To install: pip install praat-parselmouth\n")
     cat("  Skipping parselmouth comparison benchmarks.\n\n")
     cat("Note: This benchmark compares speaker performance against Python's\n")
-    cat("      parselmouth library. Install parselmouth to run the comparison.\n\n")
+    cat(
+      "      parselmouth library. Install parselmouth to run the ",
+      "comparison.\n\n",
+      sep = ""
+    )
   }
 )
 
 if (!parselmouth_available) {
-  cat("================================================================================\n")
+  cat(strrep("=", 80), "\n", sep = "")
   cat("BENCHMARK SKIPPED - Parselmouth not available\n")
-  cat("================================================================================\n")
+  cat(strrep("=", 80), "\n", sep = "")
   cat("\nTo enable this benchmark:\n")
   cat("  1. Install Python parselmouth: pip install praat-parselmouth\n")
   cat("  2. Verify installation: python -c 'import parselmouth'\n")
@@ -67,7 +71,11 @@ if (!parselmouth_available) {
     )
 
     print(result[, c("expression", "min", "median", "itr/sec")])
-    cat("\nNote: These are speaker-only timings. Install parselmouth for comparisons.\n")
+    cat(
+      "\nNote: These are speaker-only timings. ",
+      "Install parselmouth for comparisons.\n",
+      sep = ""
+    )
   }
 
   quit(save = "no", status = 0)
@@ -147,12 +155,22 @@ voice_quality_pm <- function(file) {
   point_process <- pm$call(list(snd, pitch), "To PointProcess (cc)")
 
   # Jitter
-  jitter_local <- pm$call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)
-  jitter_rap <- pm$call(point_process, "Get jitter (rap)", 0, 0, 0.0001, 0.02, 1.3)
+  jitter_local <- pm$call(
+    point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3
+  )
+  jitter_rap <- pm$call(
+    point_process, "Get jitter (rap)", 0, 0, 0.0001, 0.02, 1.3
+  )
 
   # Shimmer
-  shimmer_local <- pm$call(list(snd, point_process), "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
-  shimmer_apq3 <- pm$call(list(snd, point_process), "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+  shimmer_local <- pm$call(
+    list(snd, point_process), "Get shimmer (local)",
+    0, 0, 0.0001, 0.02, 1.3, 1.6
+  )
+  shimmer_apq3 <- pm$call(
+    list(snd, point_process), "Get shimmer (apq3)",
+    0, 0, 0.0001, 0.02, 1.3, 1.6
+  )
 
   # HNR
   harmonicity <- snd$to_harmonicity_cc()
@@ -178,8 +196,12 @@ voice_quality_speaker <- function(file) {
   jitter_rap <- point_process$get_jitter_rap(0, 0, 0.0001, 0.02, 1.3)
 
   # Shimmer
-  shimmer_local <- point_process$get_shimmer_local(snd, 0, 0, 0.0001, 0.02, 1.3, 1.6)
-  shimmer_apq3 <- point_process$get_shimmer_apq3(snd, 0, 0, 0.0001, 0.02, 1.3, 1.6)
+  shimmer_local <- point_process$get_shimmer_local(
+    snd, 0, 0, 0.0001, 0.02, 1.3, 1.6
+  )
+  shimmer_apq3 <- point_process$get_shimmer_apq3(
+    snd, 0, 0, 0.0001, 0.02, 1.3, 1.6
+  )
 
   # HNR
   harmonicity <- snd$to_harmonicity()
@@ -199,11 +221,16 @@ voice_quality_bench <- mark(
   check = FALSE
 )
 
-speedup_vq <- median(voice_quality_bench$time[voice_quality_bench$expression == "parselmouth"]) /
-  median(voice_quality_bench$time[voice_quality_bench$expression == "speaker"])
+vq_pm_time <- voice_quality_bench$time[
+  voice_quality_bench$expression == "parselmouth"
+]
+vq_sp_time <- voice_quality_bench$time[
+  voice_quality_bench$expression == "speaker"
+]
+speedup_vq <- median(vq_pm_time) / median(vq_sp_time)
 
-cat("   Parselmouth:", format(median(voice_quality_bench$time[voice_quality_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(voice_quality_bench$time[voice_quality_bench$expression == "speaker"])), "\n")
+cat("   Parselmouth:", format(median(vq_pm_time)), "\n")
+cat("   Speaker:    ", format(median(vq_sp_time)), "\n")
 cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_vq))
 
 # ============================================================================
@@ -247,11 +274,16 @@ formant_analysis_bench <- mark(
   check = FALSE
 )
 
-speedup_formant <- median(formant_analysis_bench$time[formant_analysis_bench$expression == "parselmouth"]) /
-  median(formant_analysis_bench$time[formant_analysis_bench$expression == "speaker"])
+formant_pm_time <- formant_analysis_bench$time[
+  formant_analysis_bench$expression == "parselmouth"
+]
+formant_sp_time <- formant_analysis_bench$time[
+  formant_analysis_bench$expression == "speaker"
+]
+speedup_formant <- median(formant_pm_time) / median(formant_sp_time)
 
-cat("   Parselmouth:", format(median(formant_analysis_bench$time[formant_analysis_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(formant_analysis_bench$time[formant_analysis_bench$expression == "speaker"])), "\n")
+cat("   Parselmouth:", format(median(formant_pm_time)), "\n")
+cat("   Speaker:    ", format(median(formant_sp_time)), "\n")
 cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_formant))
 
 # ============================================================================
@@ -295,11 +327,16 @@ spectral_analysis_bench <- mark(
   check = FALSE
 )
 
-speedup_spectral <- median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "parselmouth"]) /
-  median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "speaker"])
+spectral_pm_time <- spectral_analysis_bench$time[
+  spectral_analysis_bench$expression == "parselmouth"
+]
+spectral_sp_time <- spectral_analysis_bench$time[
+  spectral_analysis_bench$expression == "speaker"
+]
+speedup_spectral <- median(spectral_pm_time) / median(spectral_sp_time)
 
-cat("   Parselmouth:", format(median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "speaker"])), "\n")
+cat("   Parselmouth:", format(median(spectral_pm_time)), "\n")
+cat("   Speaker:    ", format(median(spectral_sp_time)), "\n")
 cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_spectral))
 
 # ============================================================================
@@ -337,11 +374,12 @@ psola_bench <- mark(
   check = FALSE
 )
 
-speedup_psola <- median(psola_bench$time[psola_bench$expression == "parselmouth"]) /
-  median(psola_bench$time[psola_bench$expression == "speaker"])
+psola_pm_time <- psola_bench$time[psola_bench$expression == "parselmouth"]
+psola_sp_time <- psola_bench$time[psola_bench$expression == "speaker"]
+speedup_psola <- median(psola_pm_time) / median(psola_sp_time)
 
-cat("   Parselmouth:", format(median(psola_bench$time[psola_bench$expression == "parselmouth"])), "\n")
-cat("   Speaker:    ", format(median(psola_bench$time[psola_bench$expression == "speaker"])), "\n")
+cat("   Parselmouth:", format(median(psola_pm_time)), "\n")
+cat("   Speaker:    ", format(median(psola_sp_time)), "\n")
 cat("   Speedup:    ", sprintf("%.2fx\n\n", speedup_psola))
 
 # Save results
@@ -363,7 +401,10 @@ results <- list(
     speedup = speedup_psola
   ),
   summary = data.frame(
-    workflow = c("Voice Quality", "Formant Analysis", "Spectral Analysis", "PSOLA Manipulation"),
+    workflow = c(
+      "Voice Quality", "Formant Analysis",
+      "Spectral Analysis", "PSOLA Manipulation"
+    ),
     speedup = c(speedup_vq, speedup_formant, speedup_spectral, speedup_psola)
   )
 )
@@ -380,5 +421,9 @@ cat("========================================\n")
 print(results$summary)
 cat("\n")
 
-cat("Results saved to: inst/benchmarks/results/05_converted_scripts_comparison.rds\n")
+cat(
+  "Results saved to: ",
+  "inst/benchmarks/results/05_converted_scripts_comparison.rds\n",
+  sep = ""
+)
 cat("Benchmark 5 complete!\n\n")

@@ -3,7 +3,8 @@
 # Related to v4.0.1 Direct API documentation (agents/AGENT_GUIDE.md)
 
 cat("\n=== Pitch API Tier Comparison Benchmark ===\n")
-cat("Purpose: Compare performance when custom voicing parameters are required\n\n")
+cat("Purpose: Compare performance when custom voicing parameters ",
+    "are required\n\n", sep = "")
 
 library(pladdrr)
 library(microbenchmark)
@@ -24,7 +25,8 @@ sound <- Sound(
 
 cat("Test audio: 1 second, 16kHz, dual-tone signal\n\n")
 
-# Custom parameters (these require Tier 1 or Tier 3, not available in Direct API)
+# Custom parameters (these require Tier 1 or Tier 3, not available in
+# Direct API)
 custom_params <- list(
   time_step = 0,
   pitch_floor = 75,
@@ -39,11 +41,21 @@ custom_params <- list(
 )
 
 cat("Custom parameters:\n")
-cat(sprintf("  silence_threshold: %.2f (vs default 0.03)\n", custom_params$silence_threshold))
-cat(sprintf("  voicing_threshold: %.2f (vs default 0.45)\n", custom_params$voicing_threshold))
-cat(sprintf("  octave_cost: %.2f (vs default 0.01)\n\n", custom_params$octave_cost))
+cat(sprintf(
+  "  silence_threshold: %.2f (vs default 0.03)\n",
+  custom_params$silence_threshold
+))
+cat(sprintf(
+  "  voicing_threshold: %.2f (vs default 0.45)\n",
+  custom_params$voicing_threshold
+))
+cat(sprintf(
+  "  octave_cost: %.2f (vs default 0.01)\n\n",
+  custom_params$octave_cost
+))
 
-# Benchmark 1: Single file - Tier 1 vs Direct API (if it existed with full params)
+# Benchmark 1: Single file - Tier 1 vs Direct API (if it existed with
+# full params)
 cat("Benchmark 1: Single File Processing\n")
 cat("Comparing Tier 1 (Standard API) with custom parameters\n\n")
 
@@ -74,7 +86,9 @@ batch_results <- list()
 
 for (n in n_files) {
   cat(sprintf("Benchmark 2: %d Files Processing\n", n))
-  cat("Comparing Tier 1 (Standard) vs Tier 3 (Batch) with custom parameters\n\n")
+  cat(
+    "Comparing Tier 1 (Standard) vs Tier 3 (Batch) with custom parameters\n\n"
+  )
 
   # Create multiple sound objects
   sounds <- replicate(n, sound, simplify = FALSE)
@@ -118,7 +132,8 @@ for (n in n_files) {
 
   # Calculate speedup
   medians <- summary(result)$median
-  speedup <- medians[1] / medians[2] # Tier1_Loop / Tier3_Batch
+  # speedup: Tier1_Loop median / Tier3_Batch median
+  speedup <- medians[1] / medians[2]
 
   cat(sprintf("\nSpeedup (Tier 3 vs Tier 1): %.2fx\n", speedup))
   cat(sprintf(
@@ -140,7 +155,9 @@ cat("For pitch extraction with custom parameters:\n\n")
 
 cat("Single file:\n")
 cat("  - Use Tier 1 (Standard API): sound$to_pitch_cc(...)\n")
-cat("  - Performance: ~", round(summary(tier1_result)$median, 2), " ms\n\n")
+cat(
+  "  - Performance: ~", round(summary(tier1_result)$median, 2), " ms\n\n"
+)
 
 cat("Multiple files:\n")
 for (n in names(batch_results)) {
@@ -153,15 +170,23 @@ for (n in names(batch_results)) {
 
 cat("\nRecommendation:\n")
 cat("  - 1 file: Use Tier 1 (Standard API)\n")
-best_batch_n <- min(as.numeric(names(batch_results)[sapply(batch_results, function(x) x$speedup > 1.5)]))
-cat(sprintf("  - >%d files: Use Tier 3 (Batch API) for best performance\n", best_batch_n))
+best_batch_n <- min(as.numeric(names(batch_results)[
+  sapply(batch_results, function(x) x$speedup > 1.5)
+]))
+cat(sprintf(
+  "  - >%d files: Use Tier 3 (Batch API) for best performance\n",
+  best_batch_n
+))
 
 cat("\nNote: Direct API (Tier 2) does NOT support custom voicing parameters.\n")
 cat("See agents/AGENT_GUIDE.md for workarounds and full documentation.\n\n")
 
 # Save results
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-output_file <- sprintf("inst/benchmarks/results/17_pitch_api_tier_comparison_%s.rds", timestamp)
+output_file <- sprintf(
+  "inst/benchmarks/results/17_pitch_api_tier_comparison_%s.rds",
+  timestamp
+)
 
 results <- list(
   metadata = list(

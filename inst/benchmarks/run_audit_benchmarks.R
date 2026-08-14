@@ -22,7 +22,8 @@
 # Skips quietly if Praat or pladdrr is unavailable.
 
 PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
-PKG_ROOT <- normalizePath(file.path(dirname(sys.frame(1)$ofile %||% "."), "..", ".."),
+PKG_ROOT <- normalizePath(
+  file.path(dirname(sys.frame(1)$ofile %||% "."), "..", ".."),
   mustWork = FALSE
 )
 if (!nzchar(PKG_ROOT) || !dir.exists(PKG_ROOT)) PKG_ROOT <- normalizePath(".")
@@ -77,7 +78,7 @@ run_praat <- function(script_text, path) {
 time_one <- function(expr, reps = 5L) {
   t <- numeric(reps)
   for (i in seq_len(reps)) {
-    g <- gc(verbose = FALSE)
+    gc(verbose = FALSE)
     a <- Sys.time()
     force(eval(expr))
     b <- Sys.time()
@@ -105,8 +106,10 @@ for (r in FAITHFULNESS_ROUTINES) {
     error = function(e) list(median_ms = NA, min_ms = NA, max_ms = NA)
   )
 
-  speedup <- if (!is.na(praat_t$median_ms) && !is.na(pladdrr_t$median_ms) &&
-    pladdrr_t$median_ms > 0) {
+  speedup <- if (
+    !is.na(praat_t$median_ms) && !is.na(pladdrr_t$median_ms) &&
+      pladdrr_t$median_ms > 0
+  ) {
     praat_t$median_ms / pladdrr_t$median_ms
   } else {
     NA_real_
