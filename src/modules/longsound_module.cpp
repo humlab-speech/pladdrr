@@ -69,6 +69,26 @@ public:
         return ptr->nx;
     }
 
+    double get_dx() {
+        VALIDATE_PTR(ptr, LongSound);
+        return ptr->dx;
+    }
+
+    double get_x1() {
+        VALIDATE_PTR(ptr, LongSound);
+        return ptr->x1;
+    }
+
+    double get_time_from_sample(int sample) {
+        VALIDATE_PTR(ptr, LongSound);
+        return Sampled_indexToX(ptr.get(), sample);
+    }
+
+    int get_sample_from_time(double time) {
+        VALIDATE_PTR(ptr, LongSound);
+        return static_cast<int>(Sampled_xToNearestIndex(ptr.get(), time));
+    }
+
     std::string get_file_path() {
         VALIDATE_PTR(ptr, LongSound);
         if (!ptr->file.path[0]) {   // path is a fixed-size array; test emptiness via first char
@@ -107,6 +127,34 @@ public:
         );
         return result;
     }
+
+    // Save methods
+    void save_part(int audio_file_type, double tmin, double tmax,
+                    std::string path, int bits_per_sample) {
+        VALIDATE_PTR(ptr, LongSound);
+        try {
+            structMelderFile file {};
+            Melder_relativePathToFile(Melder_8to32(path.c_str()).get(), &file);
+            LongSound_savePartAsAudioFile(ptr.get(), audio_file_type, tmin, tmax, &file, bits_per_sample);
+        } catch (MelderError) {
+            std::string error_msg = Melder_peek32to8(Melder_getError());
+            Melder_clearError();
+            Rcpp::stop("Failed to save part: " + error_msg);
+        }
+    }
+
+    void save_channel(int audio_file_type, int channel, std::string path) {
+        VALIDATE_PTR(ptr, LongSound);
+        try {
+            structMelderFile file {};
+            Melder_relativePathToFile(Melder_8to32(path.c_str()).get(), &file);
+            LongSound_saveChannelAsAudioFile(ptr.get(), audio_file_type, channel, &file);
+        } catch (MelderError) {
+            std::string error_msg = Melder_peek32to8(Melder_getError());
+            Melder_clearError();
+            Rcpp::stop("Failed to save channel: " + error_msg);
+        }
+    }
 };
 
 RCPP_MODULE(longsound_module) {
@@ -120,9 +168,15 @@ RCPP_MODULE(longsound_module) {
         .method("get_sample_rate", &RLongSound::get_sample_rate)
         .method("get_number_of_channels", &RLongSound::get_number_of_channels)
         .method("get_number_of_samples", &RLongSound::get_number_of_samples)
+        .method("get_dx", &RLongSound::get_dx)
+        .method("get_x1", &RLongSound::get_x1)
+        .method("get_time_from_sample", &RLongSound::get_time_from_sample)
+        .method("get_sample_from_time", &RLongSound::get_sample_from_time)
         .method("get_file_path", &RLongSound::get_file_path)
         .method("extract_part_ptr", &RLongSound::extract_part_ptr)
         .method("have_window", &RLongSound::have_window)
         .method("get_window_extrema", &RLongSound::get_window_extrema)
+        .method("save_part", &RLongSound::save_part)
+        .method("save_channel", &RLongSound::save_channel)
     ;
 }

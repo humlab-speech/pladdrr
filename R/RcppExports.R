@@ -1288,126 +1288,20 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_longsound_open`, path)
 }
 
-#' Get LongSound duration
-#' @param xptr External pointer to LongSound
-#' @return Duration in seconds
+#' Get the LongSound streaming buffer size preference
+#' @return Buffer size in seconds
 #' @keywords internal
 #' @noRd
-.longsound_get_duration <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_duration`, xptr)
+.longsound_get_buffer_size_pref_seconds <- function() {
+    .Call(`_pladdrr_longsound_get_buffer_size_pref_seconds`)
 }
 
-#' Get LongSound start time
-#' @param xptr External pointer to LongSound
-#' @return Start time in seconds
+#' Set the LongSound streaming buffer size preference
+#' @param seconds Buffer size in seconds
 #' @keywords internal
 #' @noRd
-.longsound_get_start_time <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_start_time`, xptr)
-}
-
-#' Get LongSound end time
-#' @param xptr External pointer to LongSound
-#' @return End time in seconds
-#' @keywords internal
-#' @noRd
-.longsound_get_end_time <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_end_time`, xptr)
-}
-
-#' Get LongSound sample rate
-#' @param xptr External pointer to LongSound
-#' @return Sample rate in Hz
-#' @keywords internal
-#' @noRd
-.longsound_get_sample_rate <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_sample_rate`, xptr)
-}
-
-#' Get LongSound number of channels
-#' @param xptr External pointer to LongSound
-#' @return Number of channels
-#' @keywords internal
-#' @noRd
-.longsound_get_number_of_channels <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_number_of_channels`, xptr)
-}
-
-#' Get LongSound number of samples
-#' @param xptr External pointer to LongSound
-#' @return Number of samples
-#' @keywords internal
-#' @noRd
-.longsound_get_number_of_samples <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_number_of_samples`, xptr)
-}
-
-#' Get LongSound file path
-#' @param xptr External pointer to LongSound
-#' @return File path
-#' @keywords internal
-#' @noRd
-.longsound_get_file_path <- function(xptr) {
-    .Call(`_pladdrr_longsound_get_file_path`, xptr)
-}
-
-#' Extract part of LongSound as Sound
-#' @param xptr External pointer to LongSound
-#' @param tmin Start time
-#' @param tmax End time
-#' @param preserve_times If TRUE, keep original time domain
-#' @return External pointer to Sound
-#' @keywords internal
-#' @noRd
-.longsound_extract_part <- function(xptr, tmin, tmax, preserve_times) {
-    .Call(`_pladdrr_longsound_extract_part`, xptr, tmin, tmax, preserve_times)
-}
-
-#' Check if window is available in buffer
-#' @param xptr External pointer to LongSound
-#' @param tmin Start time
-#' @param tmax End time
-#' @return TRUE if window is in buffer
-#' @keywords internal
-#' @noRd
-.longsound_have_window <- function(xptr, tmin, tmax) {
-    .Call(`_pladdrr_longsound_have_window`, xptr, tmin, tmax)
-}
-
-#' Get window extrema
-#' @param xptr External pointer to LongSound
-#' @param tmin Start time
-#' @param tmax End time
-#' @param channel Channel number (1-based)
-#' @return Named vector with minimum and maximum
-#' @keywords internal
-#' @noRd
-.longsound_get_window_extrema <- function(xptr, tmin, tmax, channel) {
-    .Call(`_pladdrr_longsound_get_window_extrema`, xptr, tmin, tmax, channel)
-}
-
-#' Save part of LongSound to audio file
-#' @param xptr External pointer to LongSound
-#' @param audio_file_type Audio file type (1=WAV, 2=AIFF, etc.)
-#' @param tmin Start time
-#' @param tmax End time
-#' @param path Output file path
-#' @param bits_per_sample Bits per sample (16 or 24)
-#' @keywords internal
-#' @noRd
-.longsound_save_part <- function(xptr, audio_file_type, tmin, tmax, path, bits_per_sample) {
-    invisible(.Call(`_pladdrr_longsound_save_part`, xptr, audio_file_type, tmin, tmax, path, bits_per_sample))
-}
-
-#' Save single channel of LongSound to audio file
-#' @param xptr External pointer to LongSound
-#' @param audio_file_type Audio file type
-#' @param channel Channel number (1-based)
-#' @param path Output file path
-#' @keywords internal
-#' @noRd
-.longsound_save_channel <- function(xptr, audio_file_type, channel, path) {
-    invisible(.Call(`_pladdrr_longsound_save_channel`, xptr, audio_file_type, channel, path))
+.longsound_set_buffer_size_pref_seconds <- function(seconds) {
+    invisible(.Call(`_pladdrr_longsound_set_buffer_size_pref_seconds`, seconds))
 }
 
 .sound_to_lpc_burg <- function(sound, prediction_order = 16L, analysis_width = 0.025, time_step = 0.005, pre_emphasis_frequency = 50.0) {

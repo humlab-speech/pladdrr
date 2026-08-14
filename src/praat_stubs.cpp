@@ -235,8 +235,13 @@ void Editor_doMenuCommand (Editor, conststring32, integer, Stackel, conststring3
     Melder_throw (U"Editor menu commands not available in library mode.");
 }
 
-void _Preferences_addEnum (conststring32, int *, int, int, conststring32 (*)(int), int (*)(conststring32), int) {
-    // Preferences system not available in library mode - do nothing
+void _Preferences_addEnum (conststring32, int *value, int, int, conststring32 (*)(int), int (*)(conststring32), int defaultValue) {
+    // Preferences persistence (file I/O, GUI dialogs) is not available in
+    // library mode, but callers still rely on Preferences_add* to establish
+    // the variable's default value at registration time (e.g. LongSound's
+    // streaming buffer-size preference, which sizes a real allocation).
+    // Keep that half of the contract; skip only the registry bookkeeping.
+    if (value) *value = defaultValue;
 }
 
 void praat_executeCommand (Interpreter, char32_t *) {
@@ -503,10 +508,15 @@ void praat_uvafon_Eeg_init () { /* No-op */ }
 void praat_uvafon_formant_init () { /* No-op */ }
 void praat_uvafon_FFNet_init () { /* No-op */ }
 
-void Preferences_addInteger (const char32 *name, integer *value, integer defaultValue) { /* No-op */ }
-void Preferences_addReal (const char32 *name, double *value, double defaultValue) { /* No-op */ }
-void Preferences_addString (const char32 *name, char32 **value, const char32 *defaultValue) { /* No-op */ }
-void Preferences_addBool (const char32 *name, bool *value, bool defaultValue) { /* No-op */ }
+// Preferences persistence (file I/O, GUI dialogs) is not available in library
+// mode, but callers still rely on these to establish the variable's default
+// value at registration time (e.g. LongSound's streaming buffer-size
+// preference, which sizes a real allocation, not just UI state) — keep that
+// half of the contract; skip only the registry bookkeeping.
+void Preferences_addInteger (const char32 *name, integer *value, integer defaultValue) { if (value) *value = defaultValue; }
+void Preferences_addReal (const char32 *name, double *value, double defaultValue) { if (value) *value = defaultValue; }
+void Preferences_addString (const char32 *name, char32 **value, const char32 *defaultValue) { /* No-op: no headless caller reads a string preference's default this way */ }
+void Preferences_addBool (const char32 *name, bool *value, bool defaultValue) { if (value) *value = defaultValue; }
 
 void manual_demoWindow_init (structManPages *) { /* No-op */ }
 void manual_keyboard_init (structManPages *) { /* No-op */ }

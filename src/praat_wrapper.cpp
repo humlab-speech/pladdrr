@@ -49,6 +49,7 @@
 #include "praat.github.io/fon/PitchTier.h"
 #include "praat.github.io/fon/DurationTier.h"
 #include "praat.github.io/fon/IntensityTier.h"
+#include "praat.github.io/fon/LongSound.h"
 
 #include <Rcpp.h>
 using namespace Rcpp;
@@ -140,6 +141,13 @@ bool praat_initialize() {
     
     // Note: Thing_listReadableClasses() call removed - was causing segfault
     // The registry is working correctly (classes are being registered)
+
+    // Registers LongSound's streaming buffer-size preference and its default
+    // (600 s). Without this, the preference variable stays zero-initialized,
+    // LongSound's internal read buffer gets allocated with capacity 0, and
+    // every write of a LongSound to disk overflows that buffer.
+    LongSound_preferences();
+
     return true;
 }
 
