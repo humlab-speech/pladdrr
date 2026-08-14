@@ -39,6 +39,7 @@ extern "C" {
     SEXP _rcpp_module_boot_amplitudetier_module();
     SEXP _rcpp_module_boot_pointprocess_module();
     SEXP _rcpp_module_boot_ltas_module();
+    SEXP _rcpp_module_boot_spectrumtier_module();
     SEXP _rcpp_module_boot_matrix_module();
     SEXP _rcpp_module_boot_cepstrum_module();
     SEXP _rcpp_module_boot_powercepstrum_module();
@@ -82,6 +83,7 @@ static const R_CallMethodDef ModuleEntries[] = {
     {"_rcpp_module_boot_amplitudetier_module",      (DL_FUNC) &_rcpp_module_boot_amplitudetier_module,      0},
     {"_rcpp_module_boot_pointprocess_module",       (DL_FUNC) &_rcpp_module_boot_pointprocess_module,       0},
     {"_rcpp_module_boot_ltas_module",               (DL_FUNC) &_rcpp_module_boot_ltas_module,               0},
+    {"_rcpp_module_boot_spectrumtier_module",       (DL_FUNC) &_rcpp_module_boot_spectrumtier_module,       0},
     {"_rcpp_module_boot_matrix_module",             (DL_FUNC) &_rcpp_module_boot_matrix_module,             0},
     {"_rcpp_module_boot_cepstrum_module",           (DL_FUNC) &_rcpp_module_boot_cepstrum_module,           0},
     {"_rcpp_module_boot_powercepstrum_module",      (DL_FUNC) &_rcpp_module_boot_powercepstrum_module,      0},

@@ -1,7 +1,7 @@
 Package: pladdrr
 Type: Package
 Title: Direct Access to the Core Algorithms of Praat
-Version: 5.0.2
+Version: 5.0.3
 Date: 2026-08-14
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
@@ -20,7 +20,7 @@ Authors@R: c(
 Description: Provides direct access to Praat C implemented
     functionality from R. This package allows R users to leverage
     Praat's powerful phonetic analysis capabilities directly from R. The package exposes
-    38 Praat modules with 500+ methods for sound manipulation, robust formant
+    39 Praat modules with 500+ methods for sound manipulation, robust formant
     tracking (FormantPath, FormantModeler), speech synthesis (KlattGrid), pitch
     analysis, intensity measurements, spectral analysis (ComplexSpectrogram),
     cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant),

@@ -3755,6 +3755,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ltas_to_spectrum_tier_peaks
+Rcpp::XPtr<structSpectrumTier> ltas_to_spectrum_tier_peaks(Rcpp::XPtr<structLtas> ltas);
+RcppExport SEXP _pladdrr_ltas_to_spectrum_tier_peaks(SEXP ltasSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<structLtas> >::type ltas(ltasSEXP);
+    rcpp_result_gen = Rcpp::wrap(ltas_to_spectrum_tier_peaks(ltas));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ltas_as_data_frame
 DataFrame ltas_as_data_frame(Rcpp::XPtr<structLtas> ltas);
 RcppExport SEXP _pladdrr_ltas_as_data_frame(SEXP ltasSEXP) {
@@ -11833,6 +11844,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_ltas_compute_trend_line", (DL_FUNC) &_pladdrr_ltas_compute_trend_line, 3},
     {"_pladdrr_ltas_subtract_trend_line", (DL_FUNC) &_pladdrr_ltas_subtract_trend_line, 3},
     {"_pladdrr_ltas_report_spectral_trend", (DL_FUNC) &_pladdrr_ltas_report_spectral_trend, 5},
+    {"_pladdrr_ltas_to_spectrum_tier_peaks", (DL_FUNC) &_pladdrr_ltas_to_spectrum_tier_peaks, 1},
     {"_pladdrr_ltas_as_data_frame", (DL_FUNC) &_pladdrr_ltas_as_data_frame, 1},
     {"_pladdrr_ltas_as_matrix", (DL_FUNC) &_pladdrr_ltas_as_matrix, 1},
     {"_pladdrr_ltases_average", (DL_FUNC) &_pladdrr_ltases_average, 1},

@@ -7,7 +7,7 @@
 
 ## Recent Changes
 
-See `AGENT_GUIDE.md` sections "What's New in v5.0.2" (line 133), "What's New in v5.0.1" (line 141), "What's New in v4.9.x" (line 160), and "What's New in v4.8.x" (line 245) for recent feature additions and breaking changes.
+See `AGENT_GUIDE.md` sections "What's New in v5.0.3" (line 133), "What's New in v5.0.2" (line 143), "What's New in v5.0.1" (line 151), "What's New in v4.9.x" (line 170), and "What's New in v4.8.x" (line 255) for recent feature additions and breaking changes.
 
 ## Historical Archive
 
@@ -21,6 +21,7 @@ See this file's section "Historical SIMD and performance archive (superseded)" (
 
 ## Key Breaking Changes
 
+- **v5.0.3:** Ltas gained 6 query methods that already existed in C++ but were never wired to R (`get_value_in_bin`, `get_local_peak_height`, `get_standard_deviation`, `get_frequency_range`, `to_matrix`, `save`), plus a new `SpectrumTier` class wrapping Praat's peak-picking (`ltas$to_spectrum_tier_peaks()`). Non-breaking, purely additive. Also fixed a real compile gap: `structSpectrumTier` was missing from `inst/include/pladdrr_types.h`'s forward-declaration list. See `AGENT_GUIDE.md` "What's New in v5.0.3".
 - **v5.0.2:** Fixed a real, pre-existing crash in `LongSound$save_part()`/`save_channel()` — root cause was `Preferences_add*` no-op stubs never setting a default value, leaving `LongSound`'s streaming buffer at 0 samples and causing an intermittent heap overflow on every write. Also: 4 new query/time-conversion methods, buffer-size-preference accessors, save_part/save_channel moved into the Rcpp module, 9 dead export duplicates removed, doc rewrite. See `AGENT_GUIDE.md` "What's New in v5.0.2".
 - **v5.0.1:** Added autoplot()/autolayer() for 27 classes, as.data.frame() for 15 classes, fixed FormantGrid as_data_frame() missing time_step argument.
   Pre-merge test-writing and review passes on that same branch found and fixed 12 further always-firing defects across the new methods (see NEWS.md for the full list) — highlights: KlattGrid formant-type string/int mismatch, Matrix/BarkSpectrogram/MelSpectrogram plotting raw bin indices instead of real axis values, ComplexSpectrogram dB mislabeling, FormantPath/FormantModeler always returning empty plots, PowerCepstrogram as.data.frame() calling a nonexistent method, and Sound$extract_electroglottogram() never wired into the R6 method table.

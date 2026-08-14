@@ -1483,6 +1483,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_report_spectral_trend`, xptr, fmin, fmax, frequency_scale, fit_method)
 }
 
+.ltas_to_spectrum_tier_peaks <- function(ltas) {
+    .Call(`_pladdrr_ltas_to_spectrum_tier_peaks`, ltas)
+}
+
 .ltas_as_data_frame <- function(ltas) {
     .Call(`_pladdrr_ltas_as_data_frame`, ltas)
 }

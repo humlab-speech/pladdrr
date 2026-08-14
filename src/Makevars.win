@@ -275,6 +275,7 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/pitchtier_module.cpp modules/intensitytier_module.cpp \
              modules/durationtier_module.cpp modules/amplitudetier_module.cpp \
              modules/pointprocess_module.cpp modules/ltas_module.cpp \
+             modules/spectrumtier_module.cpp \
              modules/matrix_module.cpp modules/cepstrum_module.cpp \
              modules/powercepstrum_module.cpp modules/cochleagram_module.cpp \
              modules/excitation_module.cpp modules/electroglottogram_module.cpp \

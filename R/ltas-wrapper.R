@@ -1,12 +1,84 @@
 # ltas-wrapper.R - Ltas object using shared dispatch table (pladdrr 4.8.33)
 # Architecture: minimal list + $.Ltas S3 dispatch -> shared method env
 
-#' @title Praat Ltas (Long-term Average Spectrum) Object
-#' @description
-#' Praat Ltas object for long-term spectral analysis.
-#' Uses shared dispatch table for minimal memory per object.
+#' Ltas
 #'
-#' @return An \code{Ltas} object with methods for long-term average spectrum analysis.
+#' Represents a long-term average spectrum (LTAS): the frequency spectrum of
+#' a sound averaged over its whole duration.
+#'
+#' An Ltas collapses a recording into a single spectral shape: how much
+#' energy sits in each frequency band once the moment-to-moment detail is
+#' averaged out. It's the standard tool for describing overall spectral
+#' shape (tilt, resonance pattern, noise floor), useful for comparing voice
+#' quality across speakers or checking a recording's frequency balance.
+#'
+#' @section Usage:
+#' \preformatted{
+#' ltas <- sound$to_ltas(bandwidth = 100)
+#' ltas <- sound$to_ltas_pitch_corrected(pitch_floor = 75, pitch_ceiling = 600)
+#' }
+#'
+#' @section Units and interpolation:
+#' Power values default to decibels (\code{unit = "dB"}); pass
+#' \code{"energy"} or \code{"sones"} for Praat's other two averaging units.
+#' Methods that locate a peak or trough take an \code{interpolation} of
+#' \code{"none"}, \code{"parabolic"} (the default), \code{"cubic"},
+#' \code{"sinc70"}, or \code{"sinc700"} - parabolic and cubic refine the
+#' peak's position between bins instead of snapping to the nearest one.
+#' \code{get_value_at_frequency()} takes a plain \code{interpolate} flag
+#' (\code{TRUE}/\code{FALSE}) rather than a named method.
+#'
+#' @section Frequency domain:
+#' \itemize{
+#'   \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - the frequency range, in Hz
+#'   \item \code{get_frequency_range()} - the width of that range, in Hz
+#'   \item \code{get_number_of_bins()} - number of frequency bins
+#'   \item \code{get_bin_width()} - width of each bin, in Hz
+#'   \item \code{get_frequency_from_bin(bin)} - centre frequency of a bin
+#'   \item \code{get_bin_from_frequency(frequency)} - the bin nearest a frequency
+#' }
+#'
+#' @section Query values:
+#' \itemize{
+#'   \item \code{get_value_at_frequency(frequency, unit, interpolate)} - power at a given frequency
+#'   \item \code{get_value_in_bin(bin)} - power in one bin, read directly with no interpolation
+#'   \item \code{get_minimum(fmin, fmax, unit, interpolation)}, \code{get_maximum(fmin, fmax, unit, interpolation)} - lowest/highest power in a frequency range
+#'   \item \code{get_frequency_of_minimum(fmin, fmax, interpolation)}, \code{get_frequency_of_maximum(fmin, fmax, interpolation)} - where those extremes occur
+#'   \item \code{get_mean(fmin, fmax, unit)} - average power across a frequency range
+#'   \item \code{get_standard_deviation(fmin, fmax, unit)} - how much the power varies across a frequency range
+#'   \item \code{get_slope(f1min, f1max, f2min, f2max, unit)} - the difference in average power between two bands, e.g. spectral tilt (high-frequency band minus low-frequency band)
+#'   \item \code{get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)} - how far a peak rises above its surrounding band, e.g. harmonic-to-noise prominence
+#' }
+#'
+#' @section Batch queries:
+#' Faster than calling the single-value methods in a loop, since each call
+#' crosses into C++ once for the whole set of frequencies or ranges.
+#' \itemize{
+#'   \item \code{get_values_at_frequencies(frequencies, interpolation)} - values at many frequencies at once
+#'   \item \code{get_means_batch(fmins, fmaxs, unit)} - means for many frequency ranges at once
+#'   \item \code{get_peaks_batch(fmins, fmaxs, interpolation)}, \code{get_minima_batch(fmins, fmaxs, interpolation)} - peaks or troughs for many ranges at once, returned as a data frame
+#' }
+#'
+#' @section Trend and peaks:
+#' \itemize{
+#'   \item \code{compute_trend_line(fmin, fmax)} - the fitted trend line, as its own Ltas
+#'   \item \code{subtract_trend_line(fmin, fmax)} - the spectrum with that trend removed, e.g. to flatten spectral tilt before comparing bands
+#'   \item \code{report_spectral_trend(fmin, fmax, frequency_scale, fit_method)} - slope, intercept, and fit quality (R-squared, residual error) as a structured result; print it directly or read \code{$fitted_values} for the per-point predictions
+#'   \item \code{get_spectral_slope(fmin, fmax, frequency_scale, fit_method)} - just the slope from the above, when that's all you need
+#'   \item \code{to_spectrum_tier_peaks()} - the local maxima across the whole spectrum, as a \link{SpectrumTier}
+#' }
+#'
+#' @section Export:
+#' \itemize{
+#'   \item \code{as_data_frame()} - frequency and power as a data frame
+#'   \item \code{as_matrix()} - frequency and power as a plain matrix
+#'   \item \code{to_matrix()} - the Ltas converted to a full \link{Matrix} object
+#'   \item \code{save(path)} - write to a Praat text file
+#' }
+#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   object; set internally when a method returns a new Ltas.
+#' @return An Ltas object with methods for long-term average spectrum analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
@@ -14,7 +86,7 @@
 #' ltas$get_mean()
 #' ltas$get_number_of_bins()
 #'
-#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{Spectrogram}}
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{Spectrogram}}, \code{\link{SpectrumTier}}
 #' @name Ltas
 NULL
 
@@ -53,10 +125,14 @@ NULL
 .ltas_methods$get_bin_width <- function(.self) .self$.cpp$get_bandwidth()
 .ltas_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_fmin()
 .ltas_methods$get_highest_frequency <- function(.self) .self$.cpp$get_fmax()
+.ltas_methods$get_frequency_range <- function(.self) .self$.cpp$get_frequency_range()
 
 # --- Query values ---
 .ltas_methods$get_value_at_frequency <- function(.self, frequency, unit = "dB", interpolate = TRUE) {
   .self$.cpp$get_value_at_frequency(as.numeric(frequency), if (interpolate) 2 else 0)
+}
+.ltas_methods$get_value_in_bin <- function(.self, bin) {
+  .self$.cpp$get_value_at_bin(as.integer(bin))
 }
 .ltas_methods$get_minimum <- function(.self, fmin = 0, fmax = 0, unit = "dB", interpolation = "parabolic") {
   .self$.cpp$get_minimum(fmin, fmax, .ltas_peak_interpolation_code(interpolation))
@@ -69,6 +145,14 @@ NULL
 }
 .ltas_methods$get_slope <- function(.self, f1min, f1max, f2min, f2max, unit = "dB") {
   .self$.cpp$get_slope(f1min, f1max, f2min, f2max, .ltas_unit_code(unit))
+}
+.ltas_methods$get_local_peak_height <- function(.self, environment_min, environment_max,
+                                                peak_min, peak_max, unit = "dB") {
+  .self$.cpp$get_local_peak_height(environment_min, environment_max, peak_min, peak_max,
+                                   .ltas_unit_code(unit))
+}
+.ltas_methods$get_standard_deviation <- function(.self, fmin = 0, fmax = 0, unit = "dB") {
+  .self$.cpp$get_standard_deviation(fmin, fmax, .ltas_unit_code(unit))
 }
 
 # --- Batch ---
@@ -123,6 +207,12 @@ NULL
   trend$slope
 }
 
+# --- Analyse ---
+.ltas_methods$to_spectrum_tier_peaks <- function(.self) {
+  ptr <- .ltas_to_spectrum_tier_peaks(.self$.xptr)
+  SpectrumTier(.xptr = ptr)
+}
+
 # --- Export ---
 .ltas_methods$as_data_frame <- function(.self) {
   df <- .self$.cpp$as_data_frame()
@@ -132,6 +222,14 @@ NULL
 .ltas_methods$as_matrix <- function(.self) {
   mat <- .self$.cpp$as_matrix()
   rbind(frequency = mat[, 1], power_db = mat[, 2])
+}
+.ltas_methods$to_matrix <- function(.self) {
+  ptr <- .self$.cpp$to_matrix_ptr()
+  Matrix(.xptr = ptr)
+}
+.ltas_methods$save <- function(.self, path) {
+  .self$.cpp$save(path.expand(path))
+  invisible(.self)
 }
 
 # --- Print ---

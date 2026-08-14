@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.1 guide refresh (2026-08-12)
+**Version:** 5.0.3 guide refresh (2026-08-14)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.0.0. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0).
+**Status:** Current through package 5.0.3. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -129,6 +129,16 @@ output to the matching pladdrr call at a per-routine tolerance, and emits
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.0.3
+
+- **v5.0.3 — Ltas full Praat-parity query coverage, new SpectrumTier peak-picking class (2026-08-14).**
+  - **6 Ltas methods that already existed in the `RLtas` Rcpp module but were never reachable from R:** `get_value_in_bin(bin)`, `get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)`, `get_standard_deviation(fmin, fmax, unit)`, `get_frequency_range()`, `to_matrix()` (returns a real `Matrix` object via the module's `to_matrix_ptr`, distinct from the existing `as_matrix()` which returns a plain R matrix), and `save(path)`. All were mechanical R-side wiring, matching Praat's Ltas "Query" and "Hack" menus — no new C++ needed.
+  - **New `SpectrumTier` class** (`R/spectrumtier-wrapper.R`, `src/modules/spectrumtier_module.cpp`), wrapping Praat's `Ltas_to_SpectrumTier_peaks` (`fon/Ltas_to_SpectrumTier.cpp`), previously unwrapped anywhere in pladdrr. Read-only: it's peak-picking analysis output, not something a user constructs by hand. `ltas$to_spectrum_tier_peaks()` returns one; query methods (`get_number_of_points()`, `get_frequency_from_index()`, `get_value_at_index()`) and export (`as_data_frame()`, `as_matrix()`, `save()`) mirror the existing tier-wrapper pattern (e.g. `IntensityTier`). Corresponds to Praat's Ltas "Analyse > To SpectrumTier (peaks)".
+  - **Build fix surfaced along the way:** `RcppExports.cpp` needs every Praat struct type used in an exported function signature forward-declared in `inst/include/pladdrr_types.h` (that's how the other ~30 wrapper types already do it) — `structSpectrumTier` was missing, which failed the compile with a real (not just the usual `-Wdelete-incomplete` warning noise) error until added.
+  - **Deliberately not wrapped:** Praat's Ltas `Formula...` (R already gives full vector access via `as_data_frame()`/`as_matrix()`, which is strictly more capable than Praat's scripting mini-language) and `Combine > Merge` (`Ltases_merge`, not requested; `ltas_average()` already covers the "Combine" case that exists today). `Draw...` was already covered by `plot.Ltas()`/`autoplot.Ltas()`/`autolayer.Ltas()`.
+  - **Documentation rewrite** for `?Ltas` and new `?SpectrumTier` following the `Sound`-reference doc convention (`inst/agents/DOCUMENTATION.md`): full `\itemize` method-list sections (Frequency domain, Query values, Batch queries, Trend and peaks, Export for Ltas; Query methods, Export for SpectrumTier), a shared "Units and interpolation" section explaining the `unit`/`interpolation` string codes once instead of repeating them per method, 90% usage-focused, humanized prose.
+  - Praat module count reconciled 38→39 in `DESCRIPTION`'s `Description:` field and here, matching the new `spectrumtier_module.cpp`.
 
 ## What's New in v5.0.2
 
@@ -335,7 +345,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Rcpp Module Layer (src/modules/*.cpp)                       │
-│   - 38 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc. │
+│   - 39 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc. │
 │   - XPtr<structPitch> wrapping Praat objects               │
 │   - Batch queries: batch_queries.cpp (vectorized)          │
 │   - Parallel processing: R/parallel-batch.R (multi-core)   │
@@ -412,7 +422,7 @@ to be read in isolation.
 
 ### Object Structure (Shared Dispatch Table Pattern)
 
-**All 35 wrappers use the Shared Dispatch Table pattern (v4.8.33):**
+**All 36 wrappers use the Shared Dispatch Table pattern (v4.8.33, extended since):**
 
 All wrappers use a shared `.{type}_methods` environment + `$.Type` S3 dispatch. PraatInterpreter is the only R6Class — it requires persistent mutable state and reference semantics.
 
@@ -448,13 +458,13 @@ Pitch <- function(.xptr = NULL) {
 - **AmplitudeTier**: `.pointer` compat alias in `$` dispatch (used by factory functions)
 - **PitchTier, FormantTier, LongSound, VocalTract**: static `$.{type}_constructor` for class methods
 
-**Intentionally R6 (1/36):** PraatInterpreter (requires persistent mutable state for script execution)
+**Intentionally R6 (1/37):** PraatInterpreter (requires persistent mutable state for script execution)
 
 ---
 
 ## Object Types
 
-**Note:** ~40 distinct object types are wrapped in R, backed by 38 `src/modules/*.cpp` files (not a 1:1 mapping —
+**Note:** ~41 distinct object types are wrapped in R, backed by 39 `src/modules/*.cpp` files (not a 1:1 mapping —
 some types like MelSpectrogram/BarkSpectrogram/LFCC/PowerCepstrogram share or lack a dedicated module file, while
 some modules like Electroglottogram/DTW/Polygon aren't broken out as separate rows below).
 
@@ -476,6 +486,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 | `MelSpectrogram` | `sound$to_mel_spectrogram()` | From Sound (v4.8.25) |
 | `BarkSpectrogram` | `sound$to_bark_spectrogram()` | From Sound (v4.8.25) |
 | `Ltas` | `sound$to_ltas()` | From Sound |
+| `SpectrumTier` | `ltas$to_spectrum_tier_peaks()` | From Ltas (read-only peak-picking output, v5.0.3) |
 | `PointProcess` | `sound$to_point_process_periodic_cc()` | From Sound |
 
 ### Editable Tiers
@@ -3652,7 +3663,7 @@ mean_f0 <- pitch$get_mean()
 
 ```
 src/
-├── modules/               # Rcpp Module C++ code (38 modules)
+├── modules/               # Rcpp Module C++ code (39 modules)
 │   ├── module_common.h    # Unit codes, validation macros
 │   ├── sound_module.cpp   # RSound class
 │   ├── pitch_module.cpp   # RPitch class

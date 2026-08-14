@@ -1,6 +1,6 @@
 # pladdrr Architecture Reference
 
-**Version:** 5.0.1 | **Maintained by:** coding agents and maintainers
+**Version:** 5.0.3 | **Maintained by:** coding agents and maintainers
 **Purpose:** Operational knowledge — build system, threading, dispatch patterns, stale-binary trap, compilation flags.
 
 ---
@@ -9,9 +9,9 @@
 
 pladdrr uses three object dispatch patterns (documented v4.9.18). Each exists for a specific reason.
 
-### 1. Shared Dispatch Table (Sound, Formant, Pitch, etc. — 35/38 types)
+### 1. Shared Dispatch Table (Sound, Formant, Pitch, etc. — 36/39 types)
 
-All 35 wrappers use a shared `.{type}_methods` environment + `$.Type` S3 dispatch. PraatInterpreter is the only R6Class.
+All 36 wrappers use a shared `.{type}_methods` environment + `$.Type` S3 dispatch. PraatInterpreter is the only R6Class.
 
 ```r
 .pitch_methods <- new.env(hash = TRUE, parent = emptyenv())
@@ -38,7 +38,7 @@ Pitch <- function(.xptr = NULL) {
 - Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
 - All wrappers inherit dispatch from this pattern via `$.PraatObject`.
 
-**List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, Matrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, Table, TextGrid, VocalTract.
+**List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, Matrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract.
 
 ### 2. Pure XPtr (PowerCepstrogram, PowerCepstrum)
 

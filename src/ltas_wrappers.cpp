@@ -25,6 +25,7 @@
 #include "praat.github.io/fon/Vector.h"
 #include "praat.github.io/fon/Spectrum.h"
 #include "praat.github.io/dwtools/Ltas_extensions.h"
+#include "praat.github.io/fon/Ltas_to_SpectrumTier.h"
 
 using namespace Rcpp;
 
@@ -365,6 +366,23 @@ List ltas_report_spectral_trend(
         Melder_clearError();
         stop("Failed to compute spectral trend");
     }
+}
+
+// ============================================================================
+// Analysis: peak-picking
+// ============================================================================
+
+// [[Rcpp::export(.ltas_to_spectrum_tier_peaks)]]
+Rcpp::XPtr<structSpectrumTier> ltas_to_spectrum_tier_peaks(Rcpp::XPtr<structLtas> ltas) {
+  if (!ltas) Rcpp::stop("Invalid Ltas pointer");
+
+  try {
+    autoSpectrumTier peaks = Ltas_to_SpectrumTier_peaks(ltas.get());
+    return create_xptr_from_auto<structSpectrumTier>(peaks);
+  } catch (MelderError) {
+    Melder_clearError();
+    Rcpp::stop("Failed to find peaks in Ltas");
+  }
 }
 
 // ============================================================================

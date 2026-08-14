@@ -13,6 +13,7 @@ struct structHarmonicity;
 struct structSpectrogram;
 struct structSpectrum;
 struct structLtas;
+struct structSpectrumTier;
 struct structTextGrid;
 struct structPointProcess;
 struct structManipulation;
