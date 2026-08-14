@@ -25,13 +25,16 @@ for (config_name in names(configs)) {
   cfg <- configs[[config_name]]
   n_samples <- as.integer(cfg$duration * cfg$rate)
 
-  cat(sprintf("\nTesting %s (%d channels, %.1f seconds, %d samples):\n",
-              config_name, cfg$channels, cfg$duration, n_samples))
+  cat(sprintf(
+    "\nTesting %s (%d channels, %.1f seconds, %d samples):\n",
+    config_name, cfg$channels, cfg$duration, n_samples
+  ))
 
   # Create test data
   test_data <- matrix(rnorm(cfg$channels * n_samples),
-                      nrow = cfg$channels,
-                      ncol = n_samples)
+    nrow = cfg$channels,
+    ncol = n_samples
+  )
 
   # Benchmark: R matrix -> Sound object
   bench_create <- bench::mark(
@@ -59,17 +62,20 @@ for (config_name in names(configs)) {
   )
 
   cat("\nCreation:\n")
-  print(bench_create[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
+  cols <- c("expression", "min", "median", "itr/sec", "mem_alloc")
+  print(bench_create[, cols])
 
   cat("\nExport:\n")
-  print(bench_export[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
+  print(bench_export[, cols])
   cat("\n")
 }
 
 # Save results
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
-output_file <- sprintf("inst/benchmarks/results/02_data_conversion_%s.rds", run_mode)
+output_file <- sprintf(
+  "inst/benchmarks/results/02_data_conversion_%s.rds",
+  run_mode
+)
 saveRDS(results, output_file)
 
 cat(sprintf("\nResults saved to: %s\n", output_file))
-

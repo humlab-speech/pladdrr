@@ -1,6 +1,7 @@
 # Benchmark 4: Three-Way Comparison (pladdrr vs Parselmouth vs Praat)
-# Tests: Direct comparison of pladdrr vs parselmouth vs native Praat for common operations
-# Expected speedup: pladdrr faster than both (direct C++ binding, no Python/startup overhead)
+# Tests: Direct comparison of pladdrr vs parselmouth vs native Praat
+# for common operations. Expected speedup: pladdrr faster than both
+# (direct C++ binding, no Python/startup overhead)
 
 
 library(pladdrr)
@@ -37,12 +38,15 @@ python_paths <- c(
 python_found <- FALSE
 for (py_path in python_paths) {
   if (file.exists(py_path)) {
-    tryCatch({
-      use_python(py_path, required = TRUE)
-      python_found <- TRUE
-      cat("✓ Using Python:", py_path, "\n")
-      break
-    }, error = function(e) {})
+    tryCatch(
+      {
+        use_python(py_path, required = TRUE)
+        python_found <- TRUE
+        cat("✓ Using Python:", py_path, "\n")
+        break
+      },
+      error = function(e) {}
+    )
   }
 }
 
@@ -54,29 +58,32 @@ if (!python_found) {
 cat("Checking parselmouth...\n")
 parselmouth_available <- FALSE
 
-tryCatch({
-  pm <- import("parselmouth")
-  parselmouth_available <- TRUE
-  cat("✓ Parselmouth version:", pm$`__version__`, "\n\n")
-}, error = function(e) {
-  cat("✗ Parselmouth not installed - skipping comparison\n")
-  cat("  Error:", conditionMessage(e), "\n")
-  cat("  Install: pip install praat-parselmouth\n")
-  cat("  Note: Install in the Python environment shown above\n\n")
-  quit(save = "no", status = 0)
-})
+tryCatch(
+  {
+    pm <- import("parselmouth")
+    parselmouth_available <- TRUE
+    cat("✓ Parselmouth version:", pm$`__version__`, "\n\n")
+  },
+  error = function(e) {
+    cat("✗ Parselmouth not installed - skipping comparison\n")
+    cat("  Error:", conditionMessage(e), "\n")
+    cat("  Install: pip install praat-parselmouth\n")
+    cat("  Note: Install in the Python environment shown above\n\n")
+    quit(save = "no", status = 0)
+  }
+)
 
 # Load test audio file - handle missing gracefully
 test_file <- system.file("extdata", "test.wav", package = "pladdrr")
 if (!file.exists(test_file) || test_file == "") {
   cat("✗ Test audio file not found at inst/extdata/test.wav\n")
   cat("  Using synthetic audio for pladdrr-only benchmarks...\n\n")
-  
+
   cat("Running pladdrr benchmarks (synthetic audio):\n\n")
-  
+
   # Note: bench::mark() with R6 objects requires separate calls
   # due to environment/serialization issues
-  
+
   cat("  Benchmarking pitch extraction...\n")
   system.time({
     for (i in 1:10) {
@@ -84,7 +91,7 @@ if (!file.exists(test_file) || test_file == "") {
       pitch <- sound$to_pitch()
     }
   }) -> time_pitch
-  
+
   cat("  Benchmarking formant extraction...\n")
   system.time({
     for (i in 1:10) {
@@ -92,7 +99,7 @@ if (!file.exists(test_file) || test_file == "") {
       formants <- sound$to_formant_burg()
     }
   }) -> time_formants
-  
+
   cat("  Benchmarking intensity...\n")
   system.time({
     for (i in 1:10) {
@@ -100,18 +107,24 @@ if (!file.exists(test_file) || test_file == "") {
       intensity <- sound$to_intensity()
     }
   }) -> time_intensity
-  
+
   cat("\nResults (10 iterations each):\n")
-  cat(sprintf("  Pitch:     %.3f seconds (%.1f ms/iter)\n", 
-              time_pitch["elapsed"], time_pitch["elapsed"]*100))
-  cat(sprintf("  Formants:  %.3f seconds (%.1f ms/iter)\n", 
-              time_formants["elapsed"], time_formants["elapsed"]*100))
-  cat(sprintf("  Intensity: %.3f seconds (%.1f ms/iter)\n", 
-              time_intensity["elapsed"], time_intensity["elapsed"]*100))
-  
+  cat(sprintf(
+    "  Pitch:     %.3f seconds (%.1f ms/iter)\n",
+    time_pitch["elapsed"], time_pitch["elapsed"] * 100
+  ))
+  cat(sprintf(
+    "  Formants:  %.3f seconds (%.1f ms/iter)\n",
+    time_formants["elapsed"], time_formants["elapsed"] * 100
+  ))
+  cat(sprintf(
+    "  Intensity: %.3f seconds (%.1f ms/iter)\n",
+    time_intensity["elapsed"], time_intensity["elapsed"] * 100
+  ))
+
   cat("\nNote: Parselmouth comparison requires test.wav file\n")
   cat("      Showing pladdrr-only results instead.\n\n")
-  
+
   quit(save = "no", status = 0)
 }
 
@@ -168,9 +181,14 @@ cat("   Parselmouth:", format(pm_time), "\n")
 praat_time <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
-  praat_script <- praat_pitch_script(test_file, time_step = 0.0, 
-                                     pitch_floor = 75, pitch_ceiling = 600)
-  praat_result <- benchmark_praat(praat_exe, praat_script, iterations = 50, warmup = 3)
+  praat_script <- praat_pitch_script(test_file,
+    time_step = 0.0,
+    pitch_floor = 75, pitch_ceiling = 600
+  )
+  praat_result <- benchmark_praat(
+    praat_exe, praat_script,
+    iterations = 50, warmup = 3
+  )
   praat_time <- praat_result$median
   cat("   Praat:      ", sprintf("%.4f s", praat_time), "\n")
 }
@@ -217,21 +235,34 @@ cat("   Parselmouth:", format(pm_time), "\n")
 praat_time_formant <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
-  praat_script <- praat_formant_script(test_file, time_step = 0.0, max_formants = 5, 
-                                       max_freq = 5500, window_length = 0.025, preemphasis = 50)
-  praat_result <- benchmark_praat(praat_exe, praat_script, iterations = 50, warmup = 3)
+  praat_script <- praat_formant_script(test_file,
+    time_step = 0.0, max_formants = 5,
+    max_freq = 5500, window_length = 0.025, preemphasis = 50
+  )
+  praat_result <- benchmark_praat(
+    praat_exe, praat_script,
+    iterations = 50, warmup = 3
+  )
   praat_time_formant <- praat_result$median
   cat("   Praat:      ", sprintf("%.4f s", praat_time_formant), "\n")
 }
 
 speedup_formant <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   vs Parselmouth: ", sprintf("%.2fx", speedup_formant))
-if (speedup_formant >= 1) cat(" (pladdrr faster)\n") else cat(" (Parselmouth faster)\n")
+if (speedup_formant >= 1) {
+  cat(" (pladdrr faster)\n")
+} else {
+  cat(" (Parselmouth faster)\n")
+}
 
 if (!is.null(praat_time_formant)) {
   speedup_vs_praat_formant <- praat_time_formant / as.numeric(sp_time)
   cat("   vs Praat:       ", sprintf("%.2fx", speedup_vs_praat_formant))
-  if (speedup_vs_praat_formant >= 1) cat(" (pladdrr faster)\n") else cat(" (Praat faster)\n")
+  if (speedup_vs_praat_formant >= 1) {
+    cat(" (pladdrr faster)\n")
+  } else {
+    cat(" (Praat faster)\n")
+  }
 }
 cat("\n")
 
@@ -258,19 +289,32 @@ praat_time_intensity <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
   praat_script <- praat_intensity_script(test_file, min_pitch = 100, time_step = 0.0)
-  praat_result <- benchmark_praat(praat_exe, praat_script, iterations = 50, warmup = 3)
+  praat_result <- benchmark_praat(
+    praat_exe, praat_script,
+    iterations = 50, warmup = 3
+  )
   praat_time_intensity <- praat_result$median
   cat("   Praat:      ", sprintf("%.4f s", praat_time_intensity), "\n")
 }
 
 speedup_intensity <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   vs Parselmouth: ", sprintf("%.2fx", speedup_intensity))
-if (speedup_intensity >= 1) cat(" (pladdrr faster)\n") else cat(" (Parselmouth faster)\n")
+if (speedup_intensity >= 1) {
+  cat(" (pladdrr faster)\n")
+} else {
+  cat(" (Parselmouth faster)\n")
+}
 
 if (!is.null(praat_time_intensity)) {
   speedup_vs_praat_intensity <- praat_time_intensity / as.numeric(sp_time)
   cat("   vs Praat:       ", sprintf("%.2fx", speedup_vs_praat_intensity))
-  if (speedup_vs_praat_intensity >= 1) cat(" (pladdrr faster)\n") else cat(" (Praat faster)\n")
+  if (speedup_vs_praat_intensity >= 1) {
+    cat(" (pladdrr faster)
+")
+  } else {
+    cat(" (Praat faster)
+")
+  }
 }
 cat("\n")
 
@@ -296,22 +340,39 @@ cat("   Parselmouth:", format(pm_time), "\n")
 praat_time_spectrogram <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
-  praat_script <- praat_spectrogram_script(test_file, window_length = 0.005,
-                                           max_freq = 5000, time_step = 0.002,
-                                           freq_step = 20, window_shape = "Gaussian")
-  praat_result <- benchmark_praat(praat_exe, praat_script, iterations = 50, warmup = 3)
+  praat_script <- praat_spectrogram_script(test_file,
+    window_length = 0.005,
+    max_freq = 5000, time_step = 0.002,
+    freq_step = 20, window_shape = "Gaussian"
+  )
+  praat_result <- benchmark_praat(
+    praat_exe, praat_script,
+    iterations = 50, warmup = 3
+  )
   praat_time_spectrogram <- praat_result$median
   cat("   Praat:      ", sprintf("%.4f s", praat_time_spectrogram), "\n")
 }
 
 speedup_spectrogram <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   vs Parselmouth: ", sprintf("%.2fx", speedup_spectrogram))
-if (speedup_spectrogram >= 1) cat(" (pladdrr faster)\n") else cat(" (Parselmouth faster)\n")
+if (speedup_spectrogram >= 1) {
+  cat(" (pladdrr faster)
+")
+} else {
+  cat(" (Parselmouth faster)
+")
+}
 
 if (!is.null(praat_time_spectrogram)) {
   speedup_vs_praat_spectrogram <- praat_time_spectrogram / as.numeric(sp_time)
   cat("   vs Praat:       ", sprintf("%.2fx", speedup_vs_praat_spectrogram))
-  if (speedup_vs_praat_spectrogram >= 1) cat(" (pladdrr faster)\n") else cat(" (Praat faster)\n")
+  if (speedup_vs_praat_spectrogram >= 1) {
+    cat(" (pladdrr faster)
+")
+  } else {
+    cat(" (Praat faster)
+")
+  }
 }
 cat("\n")
 
@@ -337,22 +398,39 @@ cat("   Parselmouth:", format(pm_time), "\n")
 praat_time_harmonicity <- NULL
 if (praat_available) {
   cat("   Running Praat benchmark...\n")
-  praat_script <- praat_harmonicity_script(test_file, time_step = 0.01,
-                                           min_pitch = 75, silence_threshold = 0.1,
-                                           periods_per_window = 1.0)
-  praat_result <- benchmark_praat(praat_exe, praat_script, iterations = 50, warmup = 3)
+  praat_script <- praat_harmonicity_script(test_file,
+    time_step = 0.01,
+    min_pitch = 75, silence_threshold = 0.1,
+    periods_per_window = 1.0
+  )
+  praat_result <- benchmark_praat(
+    praat_exe, praat_script,
+    iterations = 50, warmup = 3
+  )
   praat_time_harmonicity <- praat_result$median
   cat("   Praat:      ", sprintf("%.4f s", praat_time_harmonicity), "\n")
 }
 
 speedup_harmonicity <- as.numeric(pm_time) / as.numeric(sp_time)
 cat("   vs Parselmouth: ", sprintf("%.2fx", speedup_harmonicity))
-if (speedup_harmonicity >= 1) cat(" (pladdrr faster)\n") else cat(" (Parselmouth faster)\n")
+if (speedup_harmonicity >= 1) {
+  cat(" (pladdrr faster)
+")
+} else {
+  cat(" (Parselmouth faster)
+")
+}
 
 if (!is.null(praat_time_harmonicity)) {
   speedup_vs_praat_harmonicity <- praat_time_harmonicity / as.numeric(sp_time)
   cat("   vs Praat:       ", sprintf("%.2fx", speedup_vs_praat_harmonicity))
-  if (speedup_vs_praat_harmonicity >= 1) cat(" (pladdrr faster)\n") else cat(" (Praat faster)\n")
+  if (speedup_vs_praat_harmonicity >= 1) {
+    cat(" (pladdrr faster)
+")
+  } else {
+    cat(" (Praat faster)
+")
+  }
 }
 cat("\n")
 
@@ -395,10 +473,14 @@ results <- list(
   ),
   summary = data.frame(
     operation = c("Pitch", "Formant", "Intensity", "Spectrogram", "Harmonicity"),
-    speedup = c(speedup_vs_pm, speedup_formant, speedup_intensity, 
-                speedup_spectrogram, speedup_harmonicity),
-    speedup_vs_parselmouth = c(speedup_vs_pm, speedup_formant, speedup_intensity, 
-                                speedup_spectrogram, speedup_harmonicity),
+    speedup = c(
+      speedup_vs_pm, speedup_formant, speedup_intensity,
+      speedup_spectrogram, speedup_harmonicity
+    ),
+    speedup_vs_parselmouth = c(
+      speedup_vs_pm, speedup_formant, speedup_intensity,
+      speedup_spectrogram, speedup_harmonicity
+    ),
     speedup_vs_praat = c(
       if (!is.null(praat_time)) praat_time / as.numeric(sp_time) else NA,
       if (!is.null(praat_time_formant)) praat_time_formant / as.numeric(sp_time) else NA,

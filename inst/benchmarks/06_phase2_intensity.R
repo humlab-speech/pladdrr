@@ -11,20 +11,29 @@ cat("Operations: RMS over windows, energy calculations\n\n")
 
 # Check if required methods exist by trying to call them
 sound_test <- Sound$from_values(values = c(0, 0), sampling_rate = 16000)
-has_get_rms <- tryCatch({
-  sound_test$get_rms(0, 0)
-  TRUE
-}, error = function(e) FALSE)
+has_get_rms <- tryCatch(
+  {
+    sound_test$get_rms(0, 0)
+    TRUE
+  },
+  error = function(e) FALSE
+)
 
-has_get_energy <- tryCatch({
-  sound_test$get_energy(0, 0)
-  TRUE
-}, error = function(e) FALSE)
+has_get_energy <- tryCatch(
+  {
+    sound_test$get_energy(0, 0)
+    TRUE
+  },
+  error = function(e) FALSE
+)
 
-has_get_power <- tryCatch({
-  sound_test$get_power(0, 0)
-  TRUE
-}, error = function(e) FALSE)
+has_get_power <- tryCatch(
+  {
+    sound_test$get_power(0, 0)
+    TRUE
+  },
+  error = function(e) FALSE
+)
 
 if (!has_get_rms || !has_get_energy || !has_get_power) {
   cat("SKIPPING: Required Sound methods not yet implemented:\n")
@@ -35,7 +44,7 @@ if (!has_get_rms || !has_get_energy || !has_get_power) {
   quit(save = "no", status = 0)
 }
 
-rm(sound_test)  # Clean up test object
+rm(sound_test) # Clean up test object
 
 # Test configurations
 configs <- list(
@@ -49,10 +58,10 @@ results <- list()
 
 for (config_name in names(configs)) {
   cfg <- configs[[config_name]]
-  
+
   cat(sprintf("\nBenchmarking: %s\n", cfg$label))
   cat(sprintf("  Duration: %.1fs, Sample rate: %d Hz\n", cfg$duration, cfg$sample_rate))
-  
+
   # Create test sound (noise signal for realistic computation)
   n_samples <- cfg$duration * cfg$sample_rate
   values <- rnorm(n_samples)
@@ -60,7 +69,7 @@ for (config_name in names(configs)) {
     values = values,
     sampling_rate = cfg$sample_rate
   )
-  
+
   # Benchmark: RMS calculation
   bm_rms <- bench::mark(
     rms = {
@@ -69,7 +78,7 @@ for (config_name in names(configs)) {
     iterations = 100,
     check = FALSE
   )
-  
+
   # Benchmark: Energy calculation
   bm_energy <- bench::mark(
     energy = {
@@ -78,7 +87,7 @@ for (config_name in names(configs)) {
     iterations = 100,
     check = FALSE
   )
-  
+
   # Benchmark: Intensity extraction (windowed analysis)
   bm_intensity <- bench::mark(
     to_intensity = {
@@ -93,7 +102,7 @@ for (config_name in names(configs)) {
     iterations = 50,
     check = FALSE
   )
-  
+
   # Benchmark: Power calculation
   bm_power <- bench::mark(
     power = {
@@ -102,7 +111,7 @@ for (config_name in names(configs)) {
     iterations = 100,
     check = FALSE
   )
-  
+
   results[[config_name]] <- list(
     config = cfg,
     rms = bm_rms,
@@ -110,7 +119,7 @@ for (config_name in names(configs)) {
     to_intensity = bm_intensity,
     power = bm_power
   )
-  
+
   cat(sprintf("  RMS: median = %s\n", format(bm_rms$median)))
   cat(sprintf("  Energy: median = %s\n", format(bm_energy$median)))
   cat(sprintf("  to_intensity: median = %s\n", format(bm_intensity$median)))

@@ -23,7 +23,8 @@
 
 PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
 PKG_ROOT <- normalizePath(file.path(dirname(sys.frame(1)$ofile %||% "."), "..", ".."),
-                          mustWork = FALSE)
+  mustWork = FALSE
+)
 if (!nzchar(PKG_ROOT) || !dir.exists(PKG_ROOT)) PKG_ROOT <- normalizePath(".")
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
@@ -37,18 +38,25 @@ if (!requireNamespace("pladdrr", quietly = TRUE)) {
   quit(save = "no", status = 0)
 }
 
-routines_path <- file.path(PKG_ROOT, "tests", "testthat", "faithfulness",
-                           "routines.R")
+routines_path <- file.path(
+  PKG_ROOT, "tests", "testthat", "faithfulness",
+  "routines.R"
+)
 if (!file.exists(routines_path)) {
-  message("Routine registry missing at ", routines_path); quit(save = "no", status = 0)
+  message("Routine registry missing at ", routines_path)
+  quit(save = "no", status = 0)
 }
 source(routines_path, local = TRUE)
 
 resolve_fixture <- function(rel) {
   c1 <- system.file(rel, package = "pladdrr")
-  if (nzchar(c1) && file.exists(c1)) return(c1)
+  if (nzchar(c1) && file.exists(c1)) {
+    return(c1)
+  }
   c2 <- file.path(PKG_ROOT, "inst", rel)
-  if (file.exists(c2)) return(normalizePath(c2))
+  if (file.exists(c2)) {
+    return(normalizePath(c2))
+  }
   NA_character_
 }
 
@@ -57,8 +65,9 @@ run_praat <- function(script_text, path) {
   on.exit(unlink(tf), add = TRUE)
   writeLines(gsub("{path}", path, script_text, fixed = TRUE), tf)
   out <- suppressWarnings(system2(PRAAT_EXEC,
-                                  args = c("--utf8", "--run", tf),
-                                  stdout = TRUE, stderr = TRUE))
+    args = c("--utf8", "--run", tf),
+    stdout = TRUE, stderr = TRUE
+  ))
   if (!is.null(attr(out, "status")) && attr(out, "status") != 0) {
     stop("Praat oracle failed")
   }
@@ -82,17 +91,26 @@ for (r in FAITHFULNESS_ROUTINES) {
   path <- resolve_fixture(r$fixture)
   if (is.na(path)) next
 
-  praat_t <- tryCatch(time_one(quote(run_praat(r$praat_script, path)),
-                               reps = 3L),
-                      error = function(e) list(median_ms = NA, min_ms = NA, max_ms = NA))
+  praat_t <- tryCatch(
+    time_one(quote(run_praat(r$praat_script, path)),
+      reps = 3L
+    ),
+    error = function(e) list(median_ms = NA, min_ms = NA, max_ms = NA)
+  )
 
-  pladdrr_t <- tryCatch(time_one(bquote(.(r$pladdrr)(.(path))),
-                                 reps = 5L),
-                        error = function(e) list(median_ms = NA, min_ms = NA, max_ms = NA))
+  pladdrr_t <- tryCatch(
+    time_one(bquote(.(r$pladdrr)(.(path))),
+      reps = 5L
+    ),
+    error = function(e) list(median_ms = NA, min_ms = NA, max_ms = NA)
+  )
 
   speedup <- if (!is.na(praat_t$median_ms) && !is.na(pladdrr_t$median_ms) &&
-                 pladdrr_t$median_ms > 0)
-    praat_t$median_ms / pladdrr_t$median_ms else NA_real_
+    pladdrr_t$median_ms > 0) {
+    praat_t$median_ms / pladdrr_t$median_ms
+  } else {
+    NA_real_
+  }
 
   rows[[length(rows) + 1L]] <- data.frame(
     routine = r$name,
@@ -121,11 +139,13 @@ lines <- c(
   "|---------|-----------:|-------------:|--------:|"
 )
 for (i in seq_len(nrow(df))) {
-  lines <- c(lines, sprintf("| %s | %s | %s | %s× |",
-                            df$routine[i],
-                            format(df$praat_ms_median[i], digits = 4),
-                            format(df$pladdrr_ms_median[i], digits = 4),
-                            format(df$speedup_vs_praat[i], digits = 3)))
+  lines <- c(lines, sprintf(
+    "| %s | %s | %s | %s× |",
+    df$routine[i],
+    format(df$praat_ms_median[i], digits = 4),
+    format(df$pladdrr_ms_median[i], digits = 4),
+    format(df$speedup_vs_praat[i], digits = 3)
+  ))
 }
 writeLines(lines, out_md)
 cat("Wrote ", out_md, "\n", sep = "")

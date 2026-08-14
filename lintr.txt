@@ -1,0 +1,740 @@
+Warning message:
+package ‘lintr’ was built under R version 4.4.3 
+00_run_all_benchmarks.R:30:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+    system("sysctl -n machdep.cpu.brand_string 2>/dev/null || echo 'Unknown'", intern = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+04_parselmouth_comparison.R:14:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+04_parselmouth_comparison.R:16:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+04_parselmouth_comparison.R:133:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  snd <- pm$Sound(file)
+         ^~
+04_parselmouth_comparison.R:291:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+  praat_script <- praat_intensity_script(test_file, min_pitch = 100, time_step = 0.0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+04_parselmouth_comparison.R:444:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+    speedup_vs_praat = if (!is.null(praat_time)) praat_time / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+04_parselmouth_comparison.R:451:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 105 characters.
+    speedup_vs_praat = if (!is.null(praat_time_formant)) praat_time_formant / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+04_parselmouth_comparison.R:458:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 109 characters.
+    speedup_vs_praat = if (!is.null(praat_time_intensity)) praat_time_intensity / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+04_parselmouth_comparison.R:465:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 113 characters.
+    speedup_vs_praat = if (!is.null(praat_time_spectrogram)) praat_time_spectrogram / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+04_parselmouth_comparison.R:472:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 113 characters.
+    speedup_vs_praat = if (!is.null(praat_time_harmonicity)) praat_time_harmonicity / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+04_parselmouth_comparison.R:475:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+    operation = c("Pitch", "Formant", "Intensity", "Spectrogram", "Harmonicity"),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+04_parselmouth_comparison.R:486:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+      if (!is.null(praat_time_formant)) praat_time_formant / as.numeric(sp_time) else NA,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+04_parselmouth_comparison.R:487:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+      if (!is.null(praat_time_intensity)) praat_time_intensity / as.numeric(sp_time) else NA,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+04_parselmouth_comparison.R:488:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 97 characters.
+      if (!is.null(praat_time_spectrogram)) praat_time_spectrogram / as.numeric(sp_time) else NA,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+04_parselmouth_comparison.R:489:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 96 characters.
+      if (!is.null(praat_time_harmonicity)) praat_time_harmonicity / as.numeric(sp_time) else NA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:9:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+05_converted_scripts_comparison.R:11:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+05_converted_scripts_comparison.R:28:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+    cat("      parselmouth library. Install parselmouth to run the comparison.\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+05_converted_scripts_comparison.R:33:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+  cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+05_converted_scripts_comparison.R:35:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+  cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+05_converted_scripts_comparison.R:70:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+    cat("\nNote: These are speaker-only timings. Install parselmouth for comparisons.\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+05_converted_scripts_comparison.R:143:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  snd <- pm$Sound(file)
+         ^~
+05_converted_scripts_comparison.R:147:20: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  point_process <- pm$call(list(snd, pitch), "To PointProcess (cc)")
+                   ^~
+05_converted_scripts_comparison.R:150:19: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  jitter_local <- pm$call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)
+                  ^~
+05_converted_scripts_comparison.R:150:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+  jitter_local <- pm$call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+05_converted_scripts_comparison.R:151:17: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  jitter_rap <- pm$call(point_process, "Get jitter (rap)", 0, 0, 0.0001, 0.02, 1.3)
+                ^~
+05_converted_scripts_comparison.R:151:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+  jitter_rap <- pm$call(point_process, "Get jitter (rap)", 0, 0, 0.0001, 0.02, 1.3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+05_converted_scripts_comparison.R:154:20: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  shimmer_local <- pm$call(list(snd, point_process), "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+                   ^~
+05_converted_scripts_comparison.R:154:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 105 characters.
+  shimmer_local <- pm$call(list(snd, point_process), "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:155:19: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  shimmer_apq3 <- pm$call(list(snd, point_process), "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+                  ^~
+05_converted_scripts_comparison.R:155:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 103 characters.
+  shimmer_apq3 <- pm$call(list(snd, point_process), "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:159:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  hnr <- pm$call(harmonicity, "Get mean", 0, 0)
+         ^~
+05_converted_scripts_comparison.R:181:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+  shimmer_local <- point_process$get_shimmer_local(snd, 0, 0, 0.0001, 0.02, 1.3, 1.6)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+05_converted_scripts_comparison.R:182:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+  shimmer_apq3 <- point_process$get_shimmer_apq3(snd, 0, 0, 0.0001, 0.02, 1.3, 1.6)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+05_converted_scripts_comparison.R:202:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 97 characters.
+speedup_vq <- median(voice_quality_bench$time[voice_quality_bench$expression == "parselmouth"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:205:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 119 characters.
+cat("   Parselmouth:", format(median(voice_quality_bench$time[voice_quality_bench$expression == "parselmouth"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:206:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 115 characters.
+cat("   Speaker:    ", format(median(voice_quality_bench$time[voice_quality_bench$expression == "speaker"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:217:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  snd <- pm$Sound(file)
+         ^~
+05_converted_scripts_comparison.R:221:14: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  f1_mean <- pm$call(formant, "Get mean", 1, 0, 0, "Hertz")
+             ^~
+05_converted_scripts_comparison.R:222:14: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  f2_mean <- pm$call(formant, "Get mean", 2, 0, 0, "Hertz")
+             ^~
+05_converted_scripts_comparison.R:223:12: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  f1_sd <- pm$call(formant, "Get standard deviation", 1, 0, 0, "Hertz")
+           ^~
+05_converted_scripts_comparison.R:224:12: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  f2_sd <- pm$call(formant, "Get standard deviation", 2, 0, 0, "Hertz")
+           ^~
+05_converted_scripts_comparison.R:250:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 108 characters.
+speedup_formant <- median(formant_analysis_bench$time[formant_analysis_bench$expression == "parselmouth"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:251:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+  median(formant_analysis_bench$time[formant_analysis_bench$expression == "speaker"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+05_converted_scripts_comparison.R:253:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 125 characters.
+cat("   Parselmouth:", format(median(formant_analysis_bench$time[formant_analysis_bench$expression == "parselmouth"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:254:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 121 characters.
+cat("   Speaker:    ", format(median(formant_analysis_bench$time[formant_analysis_bench$expression == "speaker"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:265:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  snd <- pm$Sound(file)
+         ^~
+05_converted_scripts_comparison.R:269:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  cog <- pm$call(spectrum, "Get centre of gravity", 2.0)
+         ^~
+05_converted_scripts_comparison.R:270:9: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  sd <- pm$call(spectrum, "Get standard deviation", 2.0)
+        ^~
+05_converted_scripts_comparison.R:271:15: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  skewness <- pm$call(spectrum, "Get skewness", 2.0)
+              ^~
+05_converted_scripts_comparison.R:272:15: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  kurtosis <- pm$call(spectrum, "Get kurtosis", 2.0)
+              ^~
+05_converted_scripts_comparison.R:298:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 111 characters.
+speedup_spectral <- median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "parselmouth"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:299:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+  median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "speaker"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+05_converted_scripts_comparison.R:301:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 127 characters.
+cat("   Parselmouth:", format(median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "parselmouth"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:302:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 123 characters.
+cat("   Speaker:    ", format(median(spectral_analysis_bench$time[spectral_analysis_bench$expression == "speaker"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:313:10: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  snd <- pm$Sound(file)
+         ^~
+05_converted_scripts_comparison.R:314:19: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  manipulation <- pm$call(snd, "To Manipulation", 0.01, 75, 600)
+                  ^~
+05_converted_scripts_comparison.R:315:17: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  pitch_tier <- pm$call(manipulation, "Extract pitch tier")
+                ^~
+05_converted_scripts_comparison.R:316:3: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  pm$call(pitch_tier, "Multiply frequencies", 0, 0, 1.5)
+  ^~
+05_converted_scripts_comparison.R:317:3: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  pm$call(list(pitch_tier, manipulation), "Replace pitch tier")
+  ^~
+05_converted_scripts_comparison.R:318:20: warning: [object_usage_linter] no visible binding for global variable 'pm'
+  resynthesized <- pm$call(manipulation, "Get resynthesis (overlap-add)")
+                   ^~
+05_converted_scripts_comparison.R:340:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+speedup_psola <- median(psola_bench$time[psola_bench$expression == "parselmouth"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+05_converted_scripts_comparison.R:343:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 103 characters.
+cat("   Parselmouth:", format(median(psola_bench$time[psola_bench$expression == "parselmouth"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:344:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 99 characters.
+cat("   Speaker:    ", format(median(psola_bench$time[psola_bench$expression == "speaker"])), "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:366:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 97 characters.
+    workflow = c("Voice Quality", "Formant Analysis", "Spectral Analysis", "PSOLA Manipulation"),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+05_converted_scripts_comparison.R:383:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+cat("Results saved to: inst/benchmarks/results/05_converted_scripts_comparison.rds\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+06_phase2_intensity.R:63:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+  cat(sprintf("  Duration: %.1fs, Sample rate: %d Hz\n", cfg$duration, cfg$sample_rate))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+06_phase2_intensity.R:175:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 96 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/06_phase2_intensity_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+06_phase2_intensity.R:189:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+07_phase2_sound_mixing.R:10:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("Status: Benchmark disabled - awaiting sound manipulation function implementation\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+07_phase2_sound_mixing.R:15:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 99 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/07_phase2_sound_mixing_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+07_phase2_sound_mixing.R:25:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+07_phase2_sound_mixing.R:29:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+cat("This benchmark will be enabled once sound manipulation functions are implemented.\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+08_phase3_fft_operations.R:10:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+cat("Target operations: to_spectrogram(), to_spectrum(), to_ltas(), to_harmonicity_ac()\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+08_phase3_fft_operations.R:14:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 101 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/08_phase3_fft_operations_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+08_phase3_fft_operations.R:24:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+09_phase3_formant_lpc.R:10:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+cat("Target operations: to_formant_burg(), to_lpc_burg(), to_lpc_autocorrelation()\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+09_phase3_formant_lpc.R:14:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 98 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/09_phase3_formant_lpc_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+09_phase3_formant_lpc.R:24:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+10_phase3_pitch_detection.R:14:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 102 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/10_phase3_pitch_detection_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+10_phase3_pitch_detection.R:20:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+    reason = "Method signature verification needed for pitch detection functions"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+10_phase3_pitch_detection.R:24:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+11_end_to_end_pipelines.R:10:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+cat("Target pipelines: Vowel analysis, prosody extraction, complete workflows\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+11_end_to_end_pipelines.R:14:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 100 characters.
+output_file <- sprintf("inst/benchmarks/results/baseline/11_end_to_end_pipelines_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+11_end_to_end_pipelines.R:24:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+dir.create("inst/benchmarks/results/baseline", showWarnings = FALSE, recursive = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+12_phase3_window_functions.R:45:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 101 characters.
+  hamming_speedup <- as.numeric(result$median[as.character(result$expression) == "hamming_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+12_phase3_window_functions.R:49:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 101 characters.
+  hanning_speedup <- as.numeric(result$median[as.character(result$expression) == "hanning_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+12_phase3_window_functions.R:53:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 103 characters.
+  gaussian_speedup <- as.numeric(result$median[as.character(result$expression) == "gaussian_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+12_phase3_window_functions.R:54:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+    as.numeric(result$median[as.character(result$expression) == "gaussian_simd"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+12_phase3_window_functions.R:62:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+saveRDS(results, "inst/benchmarks/results/12_phase3_window_functions_baseline.rds")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+13_phase3_autocorrelation.R:54:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 94 characters.
+    autocorr_norm_scalar = speaker:::.autocorrelation_normalized_scalar(data, config$max_lag),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+13_phase3_autocorrelation.R:55:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+    autocorr_norm_simd = speaker:::.autocorrelation_normalized_simd(data, config$max_lag),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+13_phase3_autocorrelation.R:63:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 94 characters.
+  speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+13_phase3_autocorrelation.R:64:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+    as.numeric(result$median[as.character(result$expression) == "autocorr_simd"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+13_phase3_autocorrelation.R:67:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 104 characters.
+  norm_speedup <- as.numeric(result$median[as.character(result$expression) == "autocorr_norm_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+13_phase3_autocorrelation.R:68:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+    as.numeric(result$median[as.character(result$expression) == "autocorr_norm_simd"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+13_phase3_autocorrelation.R:76:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+lpc_data <- sin(2 * pi * seq(0, 1, length.out = 8000) * 120) + rnorm(8000, sd = 0.1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+13_phase3_autocorrelation.R:88:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 99 characters.
+lpc_speedup <- as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_scalar"]) /
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+13_phase3_autocorrelation.R:89:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+  as.numeric(lpc_result$median[as.character(lpc_result$expression) == "lpc_simd"])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+13_phase3_autocorrelation.R:96:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+saveRDS(results, "inst/benchmarks/results/13_phase3_autocorrelation_baseline.rds")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+13_phase3_autocorrelation.R:98:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+cat("  This is the HIGHEST IMPACT optimization for pitch and formant analysis!\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+15_module_architecture_benchmark.R:9:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+15_module_architecture_benchmark.R:13:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+15_module_architecture_benchmark.R:53:11: warning: [seq_linter] Use seq_len(nrow(...)) instead of 1:nrow(...), which is likely to be wrong in the empty edge case.
+for (i in 1:nrow(dispatch_bench)) {
+          ^~~~~~~~~~~~~~~~~~~~~~
+15_module_architecture_benchmark.R:54:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+  time_us <- as.numeric(dispatch_bench$median[i]) * 1e6 # Convert to microseconds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+15_module_architecture_benchmark.R:62:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+cat(sprintf("   Improvement:               %.1fx faster\n\n", 1.5 / avg_dispatch_us))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+15_module_architecture_benchmark.R:75:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 100 characters.
+    snd <- if (file.exists(test_file)) Sound(test_file) else Sound$create_tone(1.0, 440, 16000, 0.5)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+15_module_architecture_benchmark.R:131:11: warning: [seq_linter] Use seq_len(nrow(...)) instead of 1:nrow(...), which is likely to be wrong in the empty edge case.
+for (i in 1:nrow(creation_bench)) {
+          ^~~~~~~~~~~~~~~~~~~~~~
+15_module_architecture_benchmark.R:151:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 92 characters.
+      results[i] <- p$get_value_at_time(p$get_time_from_frame(frame_num), "Hertz", "LINEAR")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+15_module_architecture_benchmark.R:219:11: warning: [seq_linter] Use seq_len(nrow(...)) instead of 1:nrow(...), which is likely to be wrong in the empty edge case.
+for (i in 1:nrow(mem_bench)) {
+          ^~~~~~~~~~~~~~~~~
+15_module_architecture_benchmark.R:230:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+15_module_architecture_benchmark.R:232:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+15_module_architecture_benchmark.R:240:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat(sprintf("  - Method dispatch:      %.2f µs (target: 0.1-0.2 µs) ✓\n", avg_dispatch_us))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+15_module_architecture_benchmark.R:242:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+cat(sprintf("  - Workflow overhead:    ~%.0f µs (target: ~15 µs) ✓\n", avg_dispatch_us * 40))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+15_module_architecture_benchmark.R:243:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+cat(sprintf("  - Improvement vs R6:    ~%.1fx faster\n", 150 / (avg_dispatch_us * 40)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+15_module_architecture_benchmark.R:244:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+cat(sprintf("  - Batch 1000 calls:     %.2f ms overhead\n", avg_call_time_pitch / 1000))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+15_module_architecture_benchmark.R:319:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+cat("Results saved to: inst/benchmarks/results/15_module_architecture_benchmark.rds\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+17_pitch_api_tier_comparison.R:6:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+cat("Purpose: Compare performance when custom voicing parameters are required\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+17_pitch_api_tier_comparison.R:27:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+# Custom parameters (these require Tier 1 or Tier 3, not available in Direct API)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+17_pitch_api_tier_comparison.R:42:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 94 characters.
+cat(sprintf("  silence_threshold: %.2f (vs default 0.03)\n", custom_params$silence_threshold))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+17_pitch_api_tier_comparison.R:43:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 94 characters.
+cat(sprintf("  voicing_threshold: %.2f (vs default 0.45)\n", custom_params$voicing_threshold))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+17_pitch_api_tier_comparison.R:44:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+cat(sprintf("  octave_cost: %.2f (vs default 0.01)\n\n", custom_params$octave_cost))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+17_pitch_api_tier_comparison.R:46:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+# Benchmark 1: Single file - Tier 1 vs Direct API (if it existed with full params)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+17_pitch_api_tier_comparison.R:77:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+  cat("Comparing Tier 1 (Standard) vs Tier 3 (Batch) with custom parameters\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+17_pitch_api_tier_comparison.R:121:40: style: [commented_code_linter] Remove commented code.
+  speedup <- medians[1] / medians[2] # Tier1_Loop / Tier3_Batch
+                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+17_pitch_api_tier_comparison.R:156:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 105 characters.
+best_batch_n <- min(as.numeric(names(batch_results)[sapply(batch_results, function(x) x$speedup > 1.5)]))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+17_pitch_api_tier_comparison.R:157:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+cat(sprintf("  - >%d files: Use Tier 3 (Batch API) for best performance\n", best_batch_n))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+17_pitch_api_tier_comparison.R:164:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 96 characters.
+output_file <- sprintf("inst/benchmarks/results/17_pitch_api_tier_comparison_%s.rds", timestamp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+18_cpps_ultra_performance.R:2:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+# Tracks calculate_cpps_ultra() timing on the DSI reference file, and cross-checks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+18_cpps_ultra_performance.R:3:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+# fidelity vs the known-good Praat-matching values. See PLADDRR_CPPS_PERF_SPEC.md
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+18_cpps_ultra_performance.R:12:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+wav_path <- system.file("signalfiles", "DSI", "input", "ppq1.wav", package = "pladdrr")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+18_cpps_ultra_performance.R:22:3: style: [commented_code_linter] Remove commented code.
+# lsq = LEAST_SQUARES/straight.
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18_cpps_ultra_performance.R:29:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 92 characters.
+robust1 <- calculate_cpps_ultra(s, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+18_cpps_ultra_performance.R:44:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+if (abs(robust1 - reference$robust1) > 1e-9 || abs(lsq - reference$lsq) > 1e-9) {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+18_cpps_ultra_performance.R:50:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+  calculate_cpps_ultra(s, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+18_cpps_ultra_performance.R:55:44: style: [commented_code_linter] Remove commented code.
+elapsed_s <- summary(timing)$mean / 1000 # ms -> s
+                                           ^~~~~~~
+18_cpps_ultra_performance.R:56:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat(sprintf("\nMean warm elapsed: %.3f s (target <= 0.5s, stretch <= 0.35s)\n", elapsed_s))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+18_cpps_ultra_performance.R:58:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+# --- Long-signal case (regression guard for the slopeselector SIMD gate) --------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+18_cpps_ultra_performance.R:61:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+# to ~8x length so the trend-fit hot path is exercised at scale. The default gate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+18_cpps_ultra_performance.R:63:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+# PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1 in a *separate* R process to A/B (the gate is
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+18_cpps_ultra_performance.R:67:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat(sprintf("Long signal duration: %.2f s\n", long$get_end_time() - long$get_start_time()))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+18_cpps_ultra_performance.R:69:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+  calculate_cpps_ultra(long, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+18_cpps_ultra_performance.R:76:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+  "\nLong-signal mean warm elapsed: %.3f s (slopeselector SIMD force-enable=%s)\n",
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+18_cpps_ultra_performance.R:79:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 95 characters.
+cat("Compare across pladdrr versions / arches; a >20%% jump here is a trend-fit regression.\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+check_parselmouth.R:4:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+check_parselmouth.R:6:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+check_parselmouth.R:25:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+  cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+check_parselmouth.R:27:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+  cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+check_parselmouth.R:31:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+  cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+check_parselmouth.R:33:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+  cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+compare_results.R:32:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+  cat("CPU:", if (!is.null(sys_info$cpu_info)) sys_info$cpu_info else "Unknown", "\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+compare_results.R:34:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+  cat("Benchmark date:", format(sys_info$timestamp, "%Y-%m-%d %H:%M:%S"), "\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+compare_results.R:67:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+  baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+compare_results.R:103:14: style: [indentation_linter] Indentation should be 18 spaces but is 14 spaces.
+              sub_name %in% names(simd_config)) {
+             ^~~~~
+compare_results.R:194:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+    plot_data$expression <- factor(plot_data$expression, levels = plot_data$expression)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+compare_results.R:198:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+      geom_hline(yintercept = 1, linetype = "dashed", color = "red", linewidth = 1) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+compare_results.R:199:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+      geom_hline(yintercept = 2, linetype = "dotted", color = "darkgreen", linewidth = 0.5) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+compare_results.R:200:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+      geom_hline(yintercept = 4, linetype = "dotted", color = "darkgreen", linewidth = 0.5) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+compare_results.R:206:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+compare_results.R:221:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+    plot_filename <- file.path(results_dir, paste0(benchmark_name, "_simd_comparison.png"))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+compare_results.R:241:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+    baseline_file <- file.path(results_dir, paste0(benchmark_name, "_baseline.rds"))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+compare_results.R:243:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+    if (file.exists(scalar_file)) scalar_available <- c(scalar_available, benchmark_name)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+compare_results.R:244:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+    if (file.exists(simd_file)) simd_available <- c(simd_available, benchmark_name)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+compare_results.R:245:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 95 characters.
+    if (file.exists(baseline_file)) baseline_available <- c(baseline_available, benchmark_name)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+compare_results.R:263:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 84 characters.
+    cat("\nRun benchmarks with RcppXsimd installed to generate SIMD comparisons.\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+compare_results.R:287:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+  mean_speedup_pm <- mean(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+compare_results.R:288:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+  median_speedup_pm <- median(pm_results$summary$speedup_vs_parselmouth, na.rm = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+compare_results.R:300:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+    mean_speedup_praat <- mean(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+compare_results.R:301:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+    median_speedup_praat <- median(pm_results$summary$speedup_vs_praat, na.rm = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+compare_results.R:314:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 97 characters.
+  if (!requireNamespace("tidyr", quietly = TRUE) || !requireNamespace("dplyr", quietly = TRUE)) {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+compare_results.R:319:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+    p1 <- ggplot(pm_results$summary, aes(x = operation, y = speedup_vs_parselmouth)) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+compare_results.R:327:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+compare_results.R:345:37: style: [pipe_consistency_linter] Use the |> pipe operator instead of the %>% pipe operator.
+    plot_data <- pm_results$summary %>%
+                                    ^~~
+compare_results.R:346:67: style: [pipe_consistency_linter] Use the |> pipe operator instead of the %>% pipe operator.
+      select(operation, speedup_vs_parselmouth, speedup_vs_praat) %>%
+                                                                  ^~~
+compare_results.R:351:9: style: [pipe_consistency_linter] Use the |> pipe operator instead of the %>% pipe operator.
+      ) %>%
+        ^~~
+compare_results.R:352:37: style: [pipe_consistency_linter] Use the |> pipe operator instead of the %>% pipe operator.
+      filter(!is.na(speedup_value)) %>%
+                                    ^~~
+compare_results.R:360:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+    p1 <- ggplot(plot_data, aes(x = operation, y = speedup_value, fill = comparison)) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+compare_results.R:367:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 95 characters.
+      scale_fill_manual(values = c("vs Parselmouth" = "steelblue", "vs Praat" = "darkgreen")) +
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+compare_results.R:370:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 90 characters.
+        subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+compare_results.R:434:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+compare_results.R:453:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+  cat("Saved plot: inst/benchmarks/results/converted_scripts_comparison.png\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+compare_results.R:506:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+      subtitle = paste0("Platform: ", sys_info$platform, " | CPU: ", sys_info$cpu_info),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+compare_results.R:536:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+    cat("  ✅ speaker shows significant performance advantage (>1.5x on average)\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+praat_runner.R:12:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+#' @param return_type "info-window" for Info window output, "last-argument" for last arg
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+praat_runner.R:15:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 88 characters.
+run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+praat_runner.R:87:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 87 characters.
+benchmark_praat <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+praat_runner.R:95:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 83 characters.
+      run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+praat_runner.R:102:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+    result <- run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+praat_runner.R:161:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 82 characters.
+praat_intensity_script <- function(audio_file, min_pitch = 100, time_step = 0.0) {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+praat_runner.R:181:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
+                                     freq_step = 20, window_shape = "Gaussian") {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+run_audit_benchmarks.R:24:1: style: [object_name_linter] Variable and function name style should match snake_case or symbols.
+PRAAT_EXEC <- "/Applications/Praat.app/Contents/MacOS/Praat"
+^~~~~~~~~~
+run_audit_benchmarks.R:25:1: style: [object_name_linter] Variable and function name style should match snake_case or symbols.
+PKG_ROOT <- normalizePath(file.path(dirname(sys.frame(1)$ofile %||% "."), "..", ".."),
+^~~~~~~~
+run_audit_benchmarks.R:25:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+PKG_ROOT <- normalizePath(file.path(dirname(sys.frame(1)$ofile %||% "."), "..", ".."),
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+run_audit_benchmarks.R:28:49: style: [object_name_linter] Variable and function name style should match snake_case or symbols.
+if (!nzchar(PKG_ROOT) || !dir.exists(PKG_ROOT)) PKG_ROOT <- normalizePath(".")
+                                                ^~~~~~~~
+run_audit_benchmarks.R:80:5: warning: [object_usage_linter] local variable 'g' assigned but may not be used
+    g <- gc(verbose = FALSE)
+    ^
+run_audit_benchmarks.R:109:4: style: [indentation_linter] Indentation should be 19 spaces but is 4 spaces.
+    pladdrr_t$median_ms > 0) {
+   ^~~~~~~~~~~~~~~~
+run_scalar_baseline.R:22:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 85 characters.
+cat("Next step: Run inst/benchmarks/run_simd_optimized.R to generate SIMD results\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+run_simd_optimized.R:5:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 86 characters.
+  stop("RcppXsimd package not installed. Install with: install.packages('RcppXsimd')")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:5:1: warning: [object_usage_linter] Could not find exported symbols for package "speaker" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘speaker’). This may lead to false positives.
+library(speaker)
+^~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:6:1: warning: [object_usage_linter] Could not find exported symbols for package "rbenchmark" in library '/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library' (there is no package called ‘rbenchmark’). This may lead to false positives.
+library(rbenchmark)
+^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:33:14: warning: [object_usage_linter] no visible global function definition for 'benchmark'
+  results <- benchmark(
+             ^~~~~~~~~
+simd_benchmarks.R:35:7: warning: [object_usage_linter] local variable 'min_val' assigned but may not be used
+      min_val <- sound$get_minimum(0, 0)
+      ^~~~~~~
+simd_benchmarks.R:36:7: warning: [object_usage_linter] local variable 'max_val' assigned but may not be used
+      max_val <- sound$get_maximum(0, 0)
+      ^~~~~~~
+simd_benchmarks.R:37:7: warning: [object_usage_linter] local variable 'mean_val' assigned but may not be used
+      mean_val <- sound$get_mean(0, 0)
+      ^~~~~~~~
+simd_benchmarks.R:38:7: warning: [object_usage_linter] local variable 'rms_val' assigned but may not be used
+      rms_val <- sound$get_rms(0, 0)
+      ^~~~~~~
+simd_benchmarks.R:60:21: warning: [object_usage_linter] no visible global function definition for 'benchmark'
+  stereo_results <- benchmark(
+                    ^~~~~~~~~
+simd_benchmarks.R:62:7: warning: [object_usage_linter] local variable 'mono' assigned but may not be used
+      mono <- stereo$convert_to_mono()
+      ^~~~
+simd_benchmarks.R:76:20: warning: [object_usage_linter] no visible global function definition for 'benchmark'
+  multi_results <- benchmark(
+                   ^~~~~~~~~
+simd_benchmarks.R:97:3: warning: [object_usage_linter] local variable 'mat' assigned but may not be used
+  mat <- matrix(rnorm(n_rows * n_cols), nrow = n_rows, ncol = n_cols)
+  ^~~
+simd_benchmarks.R:98:3: warning: [object_usage_linter] local variable 'vec' assigned but may not be used
+  vec <- rnorm(n_rows)
+  ^~~
+simd_benchmarks.R:103:9: style: [commented_code_linter] Remove commented code.
+  #     .matrix_multiply_rows_simd(mat, vec)
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:105:7: style: [commented_code_linter] Remove commented code.
+  #   replications = 50,
+      ^~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:106:7: style: [commented_code_linter] Remove commented code.
+  #   columns = c("test", "replications", "elapsed", "relative")
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:122:7: style: [commented_code_linter] Remove commented code.
+  #   "base_R" = sum(x * y),
+      ^~~~~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:123:7: style: [commented_code_linter] Remove commented code.
+  #   "simd" = .dot_product_simd(x, y),
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:124:7: style: [commented_code_linter] Remove commented code.
+  #   replications = 100,
+      ^~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:125:7: style: [commented_code_linter] Remove commented code.
+  #   columns = c("test", "replications", "elapsed", "relative")
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+simd_benchmarks.R:129:14: warning: [object_usage_linter] no visible global function definition for 'benchmark'
+  results <- benchmark(
+             ^~~~~~~~~
+simd_benchmarks.R:160:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+  cat(sprintf("Min:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_min, s_min, abs(r_min - s_min)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+simd_benchmarks.R:161:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+  cat(sprintf("Max:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_max, s_max, abs(r_max - s_max)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+simd_benchmarks.R:162:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 97 characters.
+  cat(sprintf("Mean: R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_mean, s_mean, abs(r_mean - s_mean)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+simd_benchmarks.R:163:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 93 characters.
+  cat(sprintf("RMS:  R=%.10f  Speaker=%.10f  Diff=%.2e\n", r_rms, s_rms, abs(r_rms - s_rms)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+test_benchmark_fixes.R:7:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+test_benchmark_fixes.R:9:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 91 characters.
+cat("================================================================================\n\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+test_benchmark_fixes.R:83:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+test_benchmark_fixes.R:85:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 89 characters.
+cat("================================================================================\n")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~

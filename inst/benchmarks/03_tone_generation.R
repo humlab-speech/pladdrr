@@ -5,9 +5,9 @@
 library(speaker)
 library(bench)
 
-cat(strrep("=", 80)", toupper(run_mode))\n")
 run_mode <- Sys.getenv("SPEAKER_BENCHMARK_MODE", "baseline")
-cat(sprintf("Benchmark 3: Tone Generation [%s mode]\n")
+cat(strrep("=", 80), "\n")
+cat(sprintf("Benchmark 3: Tone Generation [%s mode]\n", run_mode))
 cat(strrep("=", 80), "\n\n")
 
 # Test different durations and frequencies
@@ -25,8 +25,10 @@ for (config_name in names(configs)) {
   cfg <- configs[[config_name]]
   n_samples <- as.integer(cfg$duration * cfg$rate)
 
-  cat(sprintf("\nTesting %s (%.1f s, %.0f Hz, %d samples):\n",
-              config_name, cfg$duration, cfg$freq, n_samples))
+  cat(sprintf(
+    "\nTesting %s (%.1f s, %.0f Hz, %d samples):\n",
+    config_name, cfg$duration, cfg$freq, n_samples
+  ))
 
   # Benchmark tone generation
   bench_result <- bench::mark(
@@ -41,7 +43,8 @@ for (config_name in names(configs)) {
     n_samples = n_samples
   )
 
-  print(bench_result[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
+  cols <- c("expression", "min", "median", "itr/sec", "mem_alloc")
+  print(bench_result[, cols])
   cat("\n")
 }
 
@@ -49,4 +52,5 @@ for (config_name in names(configs)) {
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
 saveRDS(results, "inst/benchmarks/results/03_tone_generation_baseline.rds")
 
-cat("\nBaseline results saved to: inst/benchmarks/results/03_tone_generation_baseline.rds\n")
+result_path <- "inst/benchmarks/results/03_tone_generation_baseline.rds"
+cat("\nBaseline results saved to:", result_path, "\n")

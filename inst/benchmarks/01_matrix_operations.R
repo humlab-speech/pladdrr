@@ -45,13 +45,17 @@ for (size_name in names(sizes)) {
   results[[size_name]] <- bench_result
 
   # Print results
-  print(bench_result[, c("expression", "min", "median", "itr/sec", "mem_alloc")])
+  cols <- c("expression", "min", "median", "itr/sec", "mem_alloc")
+  print(bench_result[, cols])
   cat("\n")
 }
 
 # Save results
 dir.create("inst/benchmarks/results", recursive = TRUE, showWarnings = FALSE)
-output_file <- sprintf("inst/benchmarks/results/01_matrix_operations_%s.rds", run_mode)
+output_file <- sprintf(
+  "inst/benchmarks/results/01_matrix_operations_%s.rds",
+  run_mode
+)
 saveRDS(results, output_file)
 
 cat(sprintf("\nResults saved to: %s\n", output_file))

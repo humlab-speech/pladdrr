@@ -10,9 +10,9 @@ library(microbenchmark)
 
 # Create test audio
 sr <- 16000
-duration <- 1.0  # 1 second
+duration <- 1.0 # 1 second
 n_samples <- as.integer(sr * duration)
-time <- seq(0, duration - 1/sr, length.out = n_samples)
+time <- seq(0, duration - 1 / sr, length.out = n_samples)
 test_audio <- sin(2 * pi * 200 * time) + sin(2 * pi * 300 * time)
 test_audio <- test_audio / max(abs(test_audio)) * 0.5
 
@@ -31,9 +31,9 @@ custom_params <- list(
   pitch_ceiling = 600,
   max_candidates = 15,
   very_accurate = FALSE,
-  silence_threshold = 0.01,      # Custom (default: 0.03)
-  voicing_threshold = 0.6,       # Custom (default: 0.45)
-  octave_cost = 0.02,            # Custom (default: 0.01)
+  silence_threshold = 0.01, # Custom (default: 0.03)
+  voicing_threshold = 0.6, # Custom (default: 0.45)
+  octave_cost = 0.02, # Custom (default: 0.01)
   octave_jump_cost = 0.35,
   voiced_unvoiced_cost = 0.14
 )
@@ -75,10 +75,10 @@ batch_results <- list()
 for (n in n_files) {
   cat(sprintf("Benchmark 2: %d Files Processing\n", n))
   cat("Comparing Tier 1 (Standard) vs Tier 3 (Batch) with custom parameters\n\n")
-  
+
   # Create multiple sound objects
   sounds <- replicate(n, sound, simplify = FALSE)
-  
+
   result <- microbenchmark(
     Tier1_Loop = {
       pitches <- lapply(sounds, function(s) {
@@ -113,17 +113,19 @@ for (n in n_files) {
     },
     times = 20
   )
-  
+
   print(result)
-  
+
   # Calculate speedup
   medians <- summary(result)$median
-  speedup <- medians[1] / medians[2]  # Tier1_Loop / Tier3_Batch
-  
+  speedup <- medians[1] / medians[2] # Tier1_Loop / Tier3_Batch
+
   cat(sprintf("\nSpeedup (Tier 3 vs Tier 1): %.2fx\n", speedup))
-  cat(sprintf("Recommendation: Use Tier 3 for >%d files with custom parameters\n\n", 
-              ifelse(speedup > 1.5, 5, 10)))
-  
+  cat(sprintf(
+    "Recommendation: Use Tier 3 for >%d files with custom parameters\n\n",
+    ifelse(speedup > 1.5, 5, 10)
+  ))
+
   batch_results[[as.character(n)]] <- list(
     n_files = n,
     tier1_median_ms = medians[1],
@@ -143,8 +145,10 @@ cat("  - Performance: ~", round(summary(tier1_result)$median, 2), " ms\n\n")
 cat("Multiple files:\n")
 for (n in names(batch_results)) {
   res <- batch_results[[n]]
-  cat(sprintf("  - %s files: Tier 3 is %.2fx faster (%.1f ms vs %.1f ms)\n",
-              n, res$speedup, res$tier3_median_ms, res$tier1_median_ms))
+  cat(sprintf(
+    "  - %s files: Tier 3 is %.2fx faster (%.1f ms vs %.1f ms)\n",
+    n, res$speedup, res$tier3_median_ms, res$tier1_median_ms
+  ))
 }
 
 cat("\nRecommendation:\n")

@@ -11,7 +11,7 @@ library(reticulate)
 cat("1. Checking Python installation...\n")
 py_config <- py_config()
 cat("   Python executable:", py_config$python, "\n")
-cat("   Python version:", paste(py_config$version, collapse="."), "\n\n")
+cat("   Python version:", paste(py_config$version, collapse = "."), "\n\n")
 
 # Check parselmouth
 cat("2. Checking for parselmouth module...\n")
@@ -21,31 +21,30 @@ if (parselmouth_available) {
   pm <- import("parselmouth")
   cat("   ✓ Parselmouth is installed\n")
   cat("   Version:", pm$`__version__`, "\n\n")
-  
+
   cat("================================================================================\n")
   cat("STATUS: Ready to run parselmouth comparison benchmarks ✓\n")
   cat("================================================================================\n\n")
-  
 } else {
   cat("   ✗ Parselmouth is NOT installed\n\n")
-  
+
   cat("================================================================================\n")
   cat("STATUS: Parselmouth not available\n")
   cat("================================================================================\n\n")
-  
+
   cat("To install parselmouth:\n\n")
   cat("Option 1 - Using pip (recommended):\n")
   cat("  pip install praat-parselmouth\n\n")
-  
+
   cat("Option 2 - From R:\n")
   cat("  py_install('praat-parselmouth')\n\n")
-  
+
   cat("Option 3 - Using conda:\n")
   cat("  conda install -c conda-forge praat-parselmouth\n\n")
-  
+
   cat("After installation, verify with:\n")
   cat("  python -c 'import parselmouth; print(parselmouth.__version__)'\n\n")
-  
+
   cat("Note: Parselmouth is only needed for comparison benchmarks.\n")
   cat("      The speaker package works independently.\n\n")
 }

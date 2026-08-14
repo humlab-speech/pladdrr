@@ -22,11 +22,11 @@ results <- list()
 for (size_name in names(test_sizes)) {
   size_info <- test_sizes[[size_name]]
   cat("\nBenchmarking:", size_info$name, "\n")
-  
+
   # Generate test signal (sine wave with noise)
-  data <- sin(2 * pi * seq(0, 1, length.out = size_info$n) * 5) + 
-          rnorm(size_info$n, sd = 0.1)
-  
+  data <- sin(2 * pi * seq(0, 1, length.out = size_info$n) * 5) +
+    rnorm(size_info$n, sd = 0.1)
+
   # Benchmark window functions
   result <- bench::mark(
     hamming_scalar = speaker:::.apply_hamming_window_scalar(data),
@@ -38,22 +38,22 @@ for (size_name in names(test_sizes)) {
     iterations = 100,
     check = FALSE
   )
-  
+
   print(result[, c("expression", "median", "mem_alloc")])
-  
+
   # Calculate speedups
   hamming_speedup <- as.numeric(result$median[as.character(result$expression) == "hamming_scalar"]) /
-                    as.numeric(result$median[as.character(result$expression) == "hamming_simd"])
+    as.numeric(result$median[as.character(result$expression) == "hamming_simd"])
   cat(sprintf("  Hamming speedup: %.2fx\n", hamming_speedup))
-  
+
   hanning_speedup <- as.numeric(result$median[as.character(result$expression) == "hanning_scalar"]) /
-                    as.numeric(result$median[as.character(result$expression) == "hanning_simd"])
+    as.numeric(result$median[as.character(result$expression) == "hanning_simd"])
   cat(sprintf("  Hanning speedup: %.2fx\n", hanning_speedup))
-  
+
   gaussian_speedup <- as.numeric(result$median[as.character(result$expression) == "gaussian_scalar"]) /
-                     as.numeric(result$median[as.character(result$expression) == "gaussian_simd"])
+    as.numeric(result$median[as.character(result$expression) == "gaussian_simd"])
   cat(sprintf("  Gaussian speedup: %.2fx\n", gaussian_speedup))
-  
+
   results[[size_name]] <- result
 }
 

@@ -2,10 +2,10 @@
 # Based on superassp approach with timing isolation
 
 #' Execute a Praat script and measure only execution time
-#' 
+#'
 #' This function runs a Praat script via command line, ensuring that only
 #' the actual script execution time is measured, not Praat startup overhead.
-#' 
+#'
 #' @param praat_exe Path to Praat executable (default: macOS location)
 #' @param script_code Praat script code to execute
 #' @param args Named list of arguments to pass to script
@@ -13,24 +13,23 @@
 #' @param measure_only_execution If TRUE, wraps script to exclude startup time
 #' @return List with timing info and results
 run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
-                              script_code,
-                              args = NULL,
-                              return_type = c("info-window", "last-argument"),
-                              measure_only_execution = TRUE) {
-  
+                             script_code,
+                             args = NULL,
+                             return_type = c("info-window", "last-argument"),
+                             measure_only_execution = TRUE) {
   return_type <- match.arg(return_type)
-  
+
   # Create temporary directory for this execution
   temp_dir <- tempfile()
   dir.create(temp_dir, recursive = TRUE)
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
-  
+
   # If measuring only execution, wrap script with timing
   if (measure_only_execution) {
     # Wrap script to measure execution time excluding startup
     wrapped_script <- paste0(
       "# Timing wrapper - captures only execution time\n",
-      "stopwatch\n",  # Start timing after Praat has loaded
+      "stopwatch\n", # Start timing after Praat has loaded
       script_code, "\n",
       "execution_time = stopwatch\n",
       "writeInfoLine: \"EXEC_TIME:\", fixed$(execution_time, 6)\n"
@@ -38,17 +37,17 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
   } else {
     wrapped_script <- script_code
   }
-  
+
   # Write script to temp file
   script_file <- file.path(temp_dir, "script.praat")
   writeLines(wrapped_script, script_file)
-  
+
   # Build arguments
   script_args <- character(0)
   if (!is.null(args)) {
     script_args <- vapply(args, shQuote, character(1))
   }
-  
+
   # Execute Praat script
   start_time <- Sys.time()
   output <- system2(
@@ -58,7 +57,7 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
     stderr = TRUE
   )
   total_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
-  
+
   # Parse execution time if available
   execution_time <- total_time
   if (measure_only_execution && !is.null(output)) {
@@ -67,7 +66,7 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
       execution_time <- as.numeric(sub("EXEC_TIME:\\s*", "", exec_line))
     }
   }
-  
+
   # Return results
   list(
     output = output,
@@ -78,7 +77,7 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
 }
 
 #' Benchmark a Praat script operation
-#' 
+#'
 #' @param praat_exe Path to Praat executable
 #' @param script_code Praat script code
 #' @param args Named list of arguments
@@ -86,25 +85,24 @@ run_praat_script <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS
 #' @param warmup Number of warmup iterations
 #' @return Timing statistics
 benchmark_praat <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/Praat",
-                           script_code,
-                           args = NULL,
-                           iterations = 50,
-                           warmup = 3) {
-  
+                            script_code,
+                            args = NULL,
+                            iterations = 50,
+                            warmup = 3) {
   # Warmup runs (not measured)
   if (warmup > 0) {
     for (i in seq_len(warmup)) {
       run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
     }
   }
-  
+
   # Measured runs
   times <- numeric(iterations)
   for (i in seq_len(iterations)) {
     result <- run_praat_script(praat_exe, script_code, args, measure_only_execution = TRUE)
     times[i] <- result$execution_time
   }
-  
+
   # Return statistics
   list(
     iterations = iterations,
@@ -123,7 +121,7 @@ benchmark_praat <- function(praat_exe = "/Applications/Praat.app/Contents/MacOS/
 #' @param pitch_floor Minimum pitch (Hz)
 #' @param pitch_ceiling Maximum pitch (Hz)
 #' @return Praat script code
-praat_pitch_script <- function(audio_file, time_step = 0.0, 
+praat_pitch_script <- function(audio_file, time_step = 0.0,
                                pitch_floor = 75, pitch_ceiling = 600) {
   sprintf('
 sound = Read from file: "%s"

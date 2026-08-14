@@ -27,13 +27,19 @@ reference <- list(
 
 cat("Fidelity check (vs saved Praat-matching baseline):\n")
 robust1 <- calculate_cpps_ultra(s, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002)
-lsq <- calculate_cpps_ultra(s, pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002,
-                             fit_method = "least_squares")
+lsq <- calculate_cpps_ultra(s,
+  pitch_floor = 60, pitch_ceiling = 333, time_step = 0.002,
+  fit_method = "least_squares"
+)
 
-cat(sprintf("  robust1: %.15f (ref %.15f, diff %.2e)\n",
-            robust1, reference$robust1, abs(robust1 - reference$robust1)))
-cat(sprintf("  lsq:     %.15f (ref %.15f, diff %.2e)\n",
-            lsq, reference$lsq, abs(lsq - reference$lsq)))
+cat(sprintf(
+  "  robust1: %.15f (ref %.15f, diff %.2e)\n",
+  robust1, reference$robust1, abs(robust1 - reference$robust1)
+))
+cat(sprintf(
+  "  lsq:     %.15f (ref %.15f, diff %.2e)\n",
+  lsq, reference$lsq, abs(lsq - reference$lsq)
+))
 
 if (abs(robust1 - reference$robust1) > 1e-9 || abs(lsq - reference$lsq) > 1e-9) {
   warning("CPPS fidelity regression detected vs saved reference values!")
@@ -46,7 +52,7 @@ timing <- microbenchmark(
 )
 print(timing)
 
-elapsed_s <- summary(timing)$mean / 1000  # ms -> s
+elapsed_s <- summary(timing)$mean / 1000 # ms -> s
 cat(sprintf("\nMean warm elapsed: %.3f s (target <= 0.5s, stretch <= 0.35s)\n", elapsed_s))
 
 # --- Long-signal case (regression guard for the slopeselector SIMD gate) --------
@@ -66,6 +72,8 @@ long_timing <- microbenchmark(
 print(long_timing)
 long_elapsed_s <- summary(long_timing)$mean / 1000
 simd_state <- Sys.getenv("PLADDRR_ENABLE_SLOPESELECTOR_SIMD", "0")
-cat(sprintf("\nLong-signal mean warm elapsed: %.3f s (slopeselector SIMD force-enable=%s)\n",
-            long_elapsed_s, simd_state))
+cat(sprintf(
+  "\nLong-signal mean warm elapsed: %.3f s (slopeselector SIMD force-enable=%s)\n",
+  long_elapsed_s, simd_state
+))
 cat("Compare across pladdrr versions / arches; a >20%% jump here is a trend-fit regression.\n")

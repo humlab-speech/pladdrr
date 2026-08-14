@@ -51,7 +51,7 @@ dispatch_bench <- mark(
 
 cat("   Results (median per call):\n")
 for (i in 1:nrow(dispatch_bench)) {
-  time_us <- as.numeric(dispatch_bench$median[i]) * 1e6  # Convert to microseconds
+  time_us <- as.numeric(dispatch_bench$median[i]) * 1e6 # Convert to microseconds
   expr_name <- as.character(dispatch_bench$expression[i])
   cat(sprintf("   %-40s %.2f µs\n", expr_name, time_us))
 }
@@ -73,25 +73,25 @@ workflow_bench <- mark(
   complete_analysis = {
     # Load/create sound
     snd <- if (file.exists(test_file)) Sound(test_file) else Sound$create_tone(1.0, 440, 16000, 0.5)
-    
+
     # Extract pitch (10-15 method calls)
     p <- snd$to_pitch()
     mean_f0 <- p$get_mean(0, 0, "Hertz")
     std_f0 <- p$get_standard_deviation(0, 0, "Hertz")
-    
+
     # Extract formants (10-15 method calls)
     f <- snd$to_formant_burg()
     f1_mean <- f$get_mean(1, 0, 0, "Hertz")
     f2_mean <- f$get_mean(2, 0, 0, "Hertz")
-    
+
     # Extract intensity (5-10 method calls)
     i <- snd$to_intensity()
     mean_int <- i$get_mean(0, 0, "energy")
-    
+
     # Extract spectrum (5-10 method calls)
     sp <- snd$to_spectrum()
     cog <- sp$get_centre_of_gravity(2.0)
-    
+
     # Return results
     c(mean_f0, std_f0, f1_mean, f2_mean, mean_int, cog)
   },
@@ -101,8 +101,10 @@ workflow_bench <- mark(
 
 workflow_time_ms <- as.numeric(workflow_bench$median[1]) * 1000
 cat(sprintf("   Workflow time: %.2f ms\n", workflow_time_ms))
-cat(sprintf("   Estimated dispatch overhead: ~%.0f µs (assuming ~40 method calls)\n", 
-            avg_dispatch_us * 40))
+cat(sprintf(
+  "   Estimated dispatch overhead: ~%.0f µs (assuming ~40 method calls)\n",
+  avg_dispatch_us * 40
+))
 cat(sprintf("   Target (R6):  ~150 µs overhead\n"))
 cat(sprintf("   Improvement:  ~%.1fx faster\n\n", 150 / (avg_dispatch_us * 40)))
 
@@ -166,18 +168,26 @@ batch_bench <- mark(
 
 batch_pitch_time <- as.numeric(batch_bench$median[1]) * 1000
 batch_formant_time <- as.numeric(batch_bench$median[2]) * 1000
-avg_call_time_pitch <- (batch_pitch_time * 1000) / 1000  # µs per call
-avg_call_time_formant <- (batch_formant_time * 1000) / 1000  # µs per call
+avg_call_time_pitch <- (batch_pitch_time * 1000) / 1000 # µs per call
+avg_call_time_formant <- (batch_formant_time * 1000) / 1000 # µs per call
 
-cat(sprintf("   Pitch batch (1000 calls):   %.2f ms (%.2f µs/call)\n", 
-            batch_pitch_time, avg_call_time_pitch))
-cat(sprintf("   Formant batch (1000 calls): %.2f ms (%.2f µs/call)\n", 
-            batch_formant_time, avg_call_time_formant))
+cat(sprintf(
+  "   Pitch batch (1000 calls):   %.2f ms (%.2f µs/call)\n",
+  batch_pitch_time, avg_call_time_pitch
+))
+cat(sprintf(
+  "   Formant batch (1000 calls): %.2f ms (%.2f µs/call)\n",
+  batch_formant_time, avg_call_time_formant
+))
 cat(sprintf("\n   With R6 (est. 1.5µs/call):  ~1500 µs = 1.5 ms overhead\n"))
-cat(sprintf("   With Modules:               ~%.0f µs overhead\n", 
-            avg_call_time_pitch))
-cat(sprintf("   Savings per 1000 calls:     ~%.0f µs = %.2f ms\n\n", 
-            1500 - avg_call_time_pitch, (1500 - avg_call_time_pitch) / 1000))
+cat(sprintf(
+  "   With Modules:               ~%.0f µs overhead\n",
+  avg_call_time_pitch
+))
+cat(sprintf(
+  "   Savings per 1000 calls:     ~%.0f µs = %.2f ms\n\n",
+  1500 - avg_call_time_pitch, (1500 - avg_call_time_pitch) / 1000
+))
 
 # ==============================================================================
 # 5. MEMORY EFFICIENCY
@@ -232,8 +242,10 @@ cat(sprintf("  - Improvement vs R6:    %.1fx faster\n", 1.5 / avg_dispatch_us))
 cat(sprintf("  - Workflow overhead:    ~%.0f µs (target: ~15 µs) ✓\n", avg_dispatch_us * 40))
 cat(sprintf("  - Improvement vs R6:    ~%.1fx faster\n", 150 / (avg_dispatch_us * 40)))
 cat(sprintf("  - Batch 1000 calls:     %.2f ms overhead\n", avg_call_time_pitch / 1000))
-cat(sprintf("  - Savings vs R6:        %.2f ms per 1000 calls\n\n", 
-            (1500 - avg_call_time_pitch) / 1000))
+cat(sprintf(
+  "  - Savings vs R6:        %.2f ms per 1000 calls\n\n",
+  (1500 - avg_call_time_pitch) / 1000
+))
 
 cat("Real-World Impact:\n")
 cat("  - Typical workflow:     ~90%% overhead reduction\n")
@@ -291,8 +303,10 @@ results <- list(
     metric = c("Method Dispatch", "Workflow Overhead", "Batch 1000 Calls"),
     current_us = c(avg_dispatch_us, avg_dispatch_us * 40, avg_call_time_pitch),
     r6_baseline_us = c(1.5, 150, 1500),
-    improvement = c(1.5 / avg_dispatch_us, 150 / (avg_dispatch_us * 40), 
-                    1500 / avg_call_time_pitch)
+    improvement = c(
+      1.5 / avg_dispatch_us, 150 / (avg_dispatch_us * 40),
+      1500 / avg_call_time_pitch
+    )
   )
 )
 

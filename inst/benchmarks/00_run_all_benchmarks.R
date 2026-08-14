@@ -20,7 +20,7 @@ if (!dir.exists("inst/benchmarks/results")) {
   cat("Created results directory: inst/benchmarks/results/\n\n")
 }
 
-# Store system info  
+# Store system info
 system_info <- list(
   timestamp = Sys.time(),
   package_version = as.character(packageVersion("speaker")),
@@ -40,26 +40,26 @@ saveRDS(system_info, "inst/benchmarks/results/00_system_info.rds")
 # List of benchmark scripts
 benchmarks <- c(
   # Phase 1: Foundation (Week 1) - Target: 4-8x speedup
-  "01_matrix_operations.R",           # Matrix stats
-  "02_data_conversion.R",             # Praat ↔ R conversion
-  "03_tone_generation.R",             # Sine wave synthesis
-  
+  "01_matrix_operations.R", # Matrix stats
+  "02_data_conversion.R", # Praat ↔ R conversion
+  "03_tone_generation.R", # Sine wave synthesis
+
   # Phase 2: Signal Processing (Week 2) - Target: 3-5x speedup
-  "06_phase2_intensity.R",            # RMS/energy calculations
-  "07_phase2_sound_mixing.R",         # Sound mixing/scaling
-  
+  "06_phase2_intensity.R", # RMS/energy calculations
+  "07_phase2_sound_mixing.R", # Sound mixing/scaling
+
   # Phase 3: DSP Operations (Week 3) - Target: 2.5-6x speedup  ⭐ NEW!
-  "12_phase3_window_functions.R",     # Hamming, Hanning, Gaussian windows
-  "13_phase3_autocorrelation.R",      # Autocorrelation (HIGHEST IMPACT!)
-  "08_phase3_fft_operations.R",       # Spectrogram, FFT
-  "09_phase3_formant_lpc.R",          # LPC autocorrelation
-  "10_phase3_pitch_detection.R",      # Pitch autocorrelation
-  
+  "12_phase3_window_functions.R", # Hamming, Hanning, Gaussian windows
+  "13_phase3_autocorrelation.R", # Autocorrelation (HIGHEST IMPACT!)
+  "08_phase3_fft_operations.R", # Spectrogram, FFT
+  "09_phase3_formant_lpc.R", # LPC autocorrelation
+  "10_phase3_pitch_detection.R", # Pitch autocorrelation
+
   # Phase 4: End-to-End (Week 4) - Target: 2-4x overall
-  "11_end_to_end_pipelines.R",        # Complete workflows
-  
+  "11_end_to_end_pipelines.R", # Complete workflows
+
   # Optional: Comparisons
-  "04_parselmouth_comparison.R",      # Compare with Python Parselmouth
+  "04_parselmouth_comparison.R", # Compare with Python Parselmouth
   "05_converted_scripts_comparison.R" # Praat script conversions
 )
 
@@ -74,16 +74,23 @@ if (forced_mode != "") {
   run_mode <- if (has_simd) "simd" else "scalar"
 }
 
-cat("SIMD support:", ifelse(has_simd, "✓ Available (RcppXsimd loaded)", "✗ Not available"), "\n")
+msg <- ifelse(
+  has_simd,
+  "✓ Available (RcppXsimd loaded)",
+  "✗ Not available"
+)
+cat("SIMD support:", msg, "\n")
 cat("Run mode:", run_mode, "\n")
 
 if (run_mode == "simd") {
   cat("\n💡 TIP: To generate scalar baseline for comparison:\n")
-  cat("   Sys.setenv(SPEAKER_BENCHMARK_MODE='scalar'); source('inst/benchmarks/00_run_all_benchmarks.R')\n")
+  cat("   Sys.setenv(SPEAKER_BENCHMARK_MODE='scalar');\n")
+  cat("   source('inst/benchmarks/00_run_all_benchmarks.R')\n")
 } else {
   cat("\n💡 TIP: To generate SIMD comparison:\n")
   cat("   install.packages('RcppXsimd') then re-run benchmarks\n")
-  cat("   OR: Sys.setenv(SPEAKER_BENCHMARK_MODE='simd'); source('inst/benchmarks/00_run_all_benchmarks.R')\n")
+  cat("   OR: Sys.setenv(SPEAKER_BENCHMARK_MODE='simd');\n")
+  cat("   source('inst/benchmarks/00_run_all_benchmarks.R')\n")
 }
 cat("\n")
 
@@ -100,18 +107,21 @@ for (benchmark_file in benchmarks) {
   benchmark_path <- file.path("inst/benchmarks", benchmark_file)
 
   if (file.exists(benchmark_path)) {
-    tryCatch({
-      # Source in inst/benchmarks directory for correct relative paths
-      old_wd <- getwd()
-      setwd("inst/benchmarks")
-      source(benchmark_file, local = new.env())
-      setwd(old_wd)
-      cat("✓ Completed:", benchmark_file, "\n")
-    }, error = function(e) {
-      cat("✗ Error in", benchmark_file, ":", conditionMessage(e), "\n")
-      # Restore directory in case of error
-      if (exists("old_wd")) setwd(old_wd)
-    })
+    tryCatch(
+      {
+        # Source in inst/benchmarks directory for correct relative paths
+        old_wd <- getwd()
+        setwd("inst/benchmarks")
+        source(benchmark_file, local = new.env())
+        setwd(old_wd)
+        cat("✓ Completed:", benchmark_file, "\n")
+      },
+      error = function(e) {
+        cat("✗ Error in", benchmark_file, ":", conditionMessage(e), "\n")
+        # Restore directory in case of error
+        if (exists("old_wd")) setwd(old_wd)
+      }
+    )
   } else {
     cat("✗ File not found:", benchmark_path, "\n")
   }
@@ -124,7 +134,12 @@ completion_info <- list(
   has_simd = has_simd,
   completed_benchmarks = benchmarks
 )
-saveRDS(completion_info, paste0("inst/benchmarks/results/00_completion_", run_mode, ".rds"))
+result_file <- paste0(
+  "inst/benchmarks/results/00_completion_",
+  run_mode,
+  ".rds"
+)
+saveRDS(completion_info, result_file)
 
 # Create summary report
 cat("\n")
@@ -134,7 +149,11 @@ cat(strrep("=", 80), "\n\n")
 
 cat("Results saved in: inst/benchmarks/results/\n")
 cat("Files created:\n")
-result_files <- list.files("inst/benchmarks/results", pattern = "\\.rds$", full.names = FALSE)
+result_files <- list.files(
+  "inst/benchmarks/results",
+  pattern = "\\.rds$",
+  full.names = FALSE
+)
 for (f in result_files) {
   cat("  -", f, "\n")
 }
