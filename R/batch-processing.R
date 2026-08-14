@@ -563,7 +563,7 @@ extract_measurements <- function(sound,
                                 pitch_params = list(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600),
                                 formant_params = list(time_step = 0.01, max_formants = 5, max_frequency = 5500,
                                                      window_length = 0.025, pre_emphasis = 50),
-                                intensity_params = list(min_pitch = 100, time_step = 0, subtract_mean = TRUE)) {
+                                intensity_params = list(minimum_pitch = 100, time_step = 0, subtract_mean = TRUE)) {
   
   time_point <- match.arg(time_point)
   
