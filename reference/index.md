@@ -13,7 +13,7 @@ Primary sound and acoustic representation objects
 - [`Spectrogram`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md)
   : Spectrogram
 - [`Ltas`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md) :
-  Praat Ltas (Long-term Average Spectrum) Object
+  Ltas
 - [`ComplexSpectrogram`](https://humlab-speech.github.io/pladdrr/reference/ComplexSpectrogram.md)
   : ComplexSpectrogram
 
@@ -602,7 +602,7 @@ Helper functions and S3 methods
 - [`LongSound`](https://humlab-speech.github.io/pladdrr/reference/LongSound.md)
   : LongSound
 - [`Ltas`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md) :
-  Praat Ltas (Long-term Average Spectrum) Object
+  Ltas
 - [`MFCC`](https://humlab-speech.github.io/pladdrr/reference/MFCC.md) :
   MFCC
 - [`Manipulation`](https://humlab-speech.github.io/pladdrr/reference/Manipulation.md)
@@ -635,6 +635,8 @@ Helper functions and S3 methods
   : Spectrogram
 - [`Spectrum`](https://humlab-speech.github.io/pladdrr/reference/Spectrum.md)
   : Spectrum
+- [`SpectrumTier`](https://humlab-speech.github.io/pladdrr/reference/SpectrumTier.md)
+  : SpectrumTier
 - [`Table`](https://humlab-speech.github.io/pladdrr/reference/Table.md)
   : Praat Table Object
 - [`TextGrid`](https://humlab-speech.github.io/pladdrr/reference/TextGrid.md)
@@ -912,8 +914,12 @@ Helper functions and S3 methods
   : Create example KlattGrid
 - [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
   : Create KlattGrid from vowel parameters
+- [`longsound_get_buffer_size_pref_seconds()`](https://humlab-speech.github.io/pladdrr/reference/longsound_get_buffer_size_pref_seconds.md)
+  : Get the LongSound streaming buffer size preference
 - [`longsound_open()`](https://humlab-speech.github.io/pladdrr/reference/longsound_open.md)
   : Open a LongSound from file
+- [`longsound_set_buffer_size_pref_seconds()`](https://humlab-speech.github.io/pladdrr/reference/longsound_set_buffer_size_pref_seconds.md)
+  : Set the LongSound streaming buffer size preference
 - [`ltas_average()`](https://humlab-speech.github.io/pladdrr/reference/ltas_average.md)
   : Average multiple Ltas objects
 - [`matrix_create()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md)

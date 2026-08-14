@@ -471,14 +471,14 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 
 # Package version
 packageVersion("pladdrr")
-#> [1] '5.0.1'
+#> [1] '5.0.3'
 
 # Citation information
 citation("pladdrr")
 #> To cite pladdrr in publications use:
 #> 
 #>   Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms
-#>   of Praat. R package version 5.0.1.
+#>   of Praat. R package version 5.0.2.
 #>   https://doi.org/10.5281/zenodo.21884218
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by

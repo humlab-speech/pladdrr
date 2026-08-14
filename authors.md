@@ -26,13 +26,13 @@ Source:
 [`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/main/inst/CITATION)
 
 Nylén, Fredrik (2026). pladdrr: Direct Access to the Core Algorithms of
-Praat. R package version 5.0.1. https://doi.org/10.5281/zenodo.21884218
+Praat. R package version 5.0.2. https://doi.org/10.5281/zenodo.21884218
 
     @Manual{,
       title = {pladdrr: Direct Access to the Core Algorithms of Praat},
       author = {Fredrik Nylén},
       year = {2026},
-      note = {R package version 5.0.1},
+      note = {R package version 5.0.2},
       doi = {10.5281/zenodo.21884218},
     }
 

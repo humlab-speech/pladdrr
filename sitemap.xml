@@ -68,6 +68,7 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Sound.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Spectrogram.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Spectrum.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/SpectrumTier.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Table.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/TextGrid.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/VocalTract.html</loc></url>
@@ -223,7 +224,9 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/is_praat_sound.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/longsound_get_buffer_size_pref_seconds.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/longsound_open.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/longsound_set_buffer_size_pref_seconds.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/ltas_average.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/matrix_create.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.html</loc></url>
