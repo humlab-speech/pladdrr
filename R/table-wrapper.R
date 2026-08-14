@@ -121,16 +121,18 @@ NULL
 
 # Statistics
 .table_methods$get_mean <- function(.self, column) {
-  .table_get_mean(.self$.xptr, as.character(column))
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .table_get_mean(.self$.xptr, col_idx)
 }
 .table_methods$get_standard_deviation <- function(.self, column) {
-  .table_get_stdev(.self$.xptr, as.character(column))
+  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  .table_get_stdev(.self$.xptr, col_idx)
 }
 
 # Export
 .table_methods$as_data_frame <- function(.self) .table_to_data_frame(.self$.xptr)
 .table_methods$save <- function(.self, path) {
-  .table_save(.self$.xptr, as.character(path))
+  .self$.cpp$save(as.character(path))
   invisible(.self)
 }
 
