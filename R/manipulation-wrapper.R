@@ -77,7 +77,7 @@ NULL
   Sound(.xptr = sound_ptr)
 }
 .manipulation_methods$get_resynthesis_pulses <- function(.self) {
-  sound_ptr <- .manipulation_get_resynthesis_pulses(.self$.xptr)
+  sound_ptr <- .self$.cpp$get_resynthesis_pulses_ptr()
   Sound(.xptr = sound_ptr)
 }
 

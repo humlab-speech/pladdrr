@@ -126,10 +126,10 @@ PitchModule <- function(.ptr = NULL) {
 
 #' @export
 print.PitchModule <- function(x, ...) {
-  obj <- x$.mod
+  obj <- x[[".mod"]]
   cat("<Praat Pitch (Module)>\n")
 
-  if (obj$is_valid) {
+  if (obj$is_valid()) {
     n_frames <- obj$nx
     time_step <- obj$dx
     n_voiced <- obj$count_voiced_frames()
@@ -163,18 +163,26 @@ print.PitchModule <- function(x, ...) {
 as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
                                        include_strength = FALSE,
                                        include_intensity = FALSE, ...) {
-  x$.mod$as_data_frame(include_strength, include_intensity)
+  x[[".mod"]]$as_data_frame(include_strength, include_intensity)
 }
 
 #' @method $ PitchModule
 #' @export
 `$.PitchModule` <- function(x, name) {
-  # First check for direct module properties/methods
-  obj <- x$.mod
+  # First check for direct module properties/methods.
+  # Must use [[ (not $) to fetch .mod: $ on a PitchModule dispatches back
+  # into this method, causing infinite recursion / C stack overflow.
+  obj <- x[[".mod"]]
 
   # Properties (direct access)
-  if (name %in% c("is_valid", "xmin", "xmax", "duration", "nx", "dx", "x1", "ceiling")) {
+  if (name %in% c("xmin", "xmax", "duration", "nx", "dx", "x1", "ceiling")) {
     return(obj[[name]])
+  }
+
+  # is_valid is a .method(), not a .property(), in the underlying module
+  # (see src/modules/pitch_module.cpp) - must be called, not accessed as a field.
+  if (name == "is_valid") {
+    return(obj$is_valid())
   }
 
   # Methods that need unit conversion wrappers
