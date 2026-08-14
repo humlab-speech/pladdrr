@@ -325,41 +325,49 @@ extract_formants <- function(sound,
   }
   
   for (k in seq_len(order)) {
+    # f and b stay full-length (n) throughout: only indices (k+1):n are
+    # meaningful at this order, and reassigning them to shorter vectors
+    # (as a prior version of this code did) misaligns every subsequent
+    # iteration's f[(k+1):n]/b[k:(n-1)] slice, silently pulling in R's
+    # NA-padded out-of-bounds values and poisoning every result with NA.
+    idx <- (k + 1):n
+
     # Calculate reflection coefficient
-    num <- sum(f[(k+1):n] * b[k:(n-1)])
-    den <- sum(f[(k+1):n]^2) + sum(b[k:(n-1)]^2)
-    
+    num <- sum(f[idx] * b[idx - 1])
+    den <- sum(f[idx]^2) + sum(b[idx - 1]^2)
+
     # Check for invalid values
     if (is.na(den) || !is.finite(den) || den == 0) {
       return(NULL)
     }
-    
+
     rc <- -2 * num / den
-    
+
     # Check reflection coefficient validity
     if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) {
       # Reflection coefficient out of range, stop iteration
       break
     }
-    
-    # Update coefficients
+
+    # Update coefficients. a[i+1] is the order-(k-1) coefficient vector,
+    # which has no i = k term yet; pad with a trailing zero so that term
+    # contributes 0 instead of reading past the vector's end (NA).
+    a_padded <- c(a, 0)
     a_new <- numeric(k + 1)
     a_new[1] <- 1
     for (i in seq_len(k)) {
-      a_new[i + 1] <- a[i + 1] + rc * a[k - i + 1]
+      a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
     }
     a <- a_new
-    
-    # Update forward and backward prediction errors
-    f_new <- f[(k+1):n] + rc * b[k:(n-1)]
-    b_new <- b[k:(n-1)] + rc * f[(k+1):n]
-    
-    f <- f_new
-    b <- b_new
-    
+
+    # Update forward and backward prediction errors in place (see idx note above)
+    old_f <- f[idx]
+    f[idx] <- old_f + rc * b[idx - 1]
+    b[idx] <- b[idx - 1] + rc * old_f
+
     # Update prediction error power
     p <- p * (1 - rc^2)
-    
+
     # Check if error power is valid
     if (is.na(p) || !is.finite(p) || p <= 0) {
       break
