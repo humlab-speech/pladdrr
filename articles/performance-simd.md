@@ -128,11 +128,11 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 print(scalar_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 4.028079 4.276819 7.336345 4.322061 4.353413 155.3436    50
+#>  sound$to_pitch() 4.265504 4.334505 7.313347 4.360131 4.432644 150.8537    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq     max neval
-#>  sound$to_pitch() 4.179539 4.282427 4.334166 4.314925 4.361445 4.94323    50
+#>              expr      min       lq     mean   median       uq      max neval
+#>  sound$to_pitch() 4.067195 4.360752 4.422838 4.399821 4.490671 5.096503    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
