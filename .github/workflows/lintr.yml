@@ -48,6 +48,13 @@ jobs:
         shell: Rscript {0}
         continue-on-error: true
 
+      - name: Fix invalid SARIF columns from lintr
+        run: |
+          jq '(.. | .startColumn? // empty | select(. < 1)) |= 1
+              | (.. | .endColumn? // empty | select(. < 1)) |= 1' \
+            lintr-results.sarif > lintr-results-fixed.sarif
+          mv lintr-results-fixed.sarif lintr-results.sarif
+
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
