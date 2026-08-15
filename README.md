@@ -8,7 +8,7 @@
 [![Codecov test coverage](https://codecov.io/gh/humlab-speech/pladdrr/graph/badge.svg)](https://app.codecov.io/gh/humlab-speech/pladdrr)
 [![lintr](https://github.com/humlab-speech/pladdrr/actions/workflows/lintr.yml/badge.svg?branch=main)](https://github.com/humlab-speech/pladdrr/actions/workflows/lintr.yml)
 [![License: GPL v3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-![Version](https://img.shields.io/badge/version-5.0.0-blue)
+![GitHub R package version](https://img.shields.io/github/r-package/v/humlab-speech/pladdrr?label=version)
 ![Rcpp Modules](https://img.shields.io/badge/modules-38-blue)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg)](https://doi.org/10.5281/zenodo.21884218)
 
