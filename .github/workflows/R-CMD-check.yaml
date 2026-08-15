@@ -37,9 +37,9 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-pandoc@v2.12.1
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@v2.12.1
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -63,7 +63,7 @@ jobs:
           if (-not $rtools) { throw 'No Rtools installation found on C:\' }
           & "$($rtools.FullName)\usr\bin\pacman.exe" -Sy --noconfirm mingw-w64-ucrt-x86_64-gsl
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2.12.1
         with:
           extra-packages: |
             any::rcmdcheck
@@ -76,7 +76,7 @@ jobs:
             any::testthat
           needs: check
 
-      - uses: r-lib/actions/check-r-package@v2
+      - uses: r-lib/actions/check-r-package@v2.12.1
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual")'
