@@ -303,7 +303,7 @@ system.time({
   max_f0 <- pitch$get_maximum(0, 0, "hertz")
 })
 #>    user  system elapsed 
-#>   0.013   0.000   0.006
+#>   0.011   0.001   0.006
 # measure on your own data
 
 # Tier 2: Direct API
@@ -312,7 +312,7 @@ system.time({
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
 #>    user  system elapsed 
-#>   0.011   0.000   0.004
+#>   0.011   0.000   0.005
 # fewer crossings; measure on your own data
 ```
 
@@ -331,7 +331,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.206   0.011   0.104
+#>   0.216   0.008   0.105
 # measure on your own data
 
 # Tier 3: Batch
@@ -340,7 +340,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.208   0.005   0.097
+#>   0.214   0.005   0.098
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -349,7 +349,7 @@ system.time({
 })
 #> Processing 20 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.105   0.082   0.378
+#>   0.092   0.107   0.398
 # includes file I/O; measure on your own data
 ```
 
@@ -467,8 +467,8 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.05285144 1.0000000
-#> 2     2 0.06149817 0.8593986
+#> 1     1 0.05443096 1.0000000
+#> 2     2 0.06482100 0.8397118
 # Inspect the returned table to see where returns diminish on your machine
 ```
 
