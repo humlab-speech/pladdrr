@@ -1,16 +1,6 @@
 # pladdrr
 
-**Direct Access to Praat C Functionality from R** [![Project Status:
-Active – the project has reached a stable, usable state and is being
-actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R-CMD-check](https://github.com/humlab-speech/pladdrr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/humlab-speech/pladdrr/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/humlab-speech/pladdrr/graph/badge.svg)](https://app.codecov.io/gh/humlab-speech/pladdrr)
-[![License: GPL
-v3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-![Version](https://img.shields.io/badge/version-5.0.0-blue)![Rcpp
-Modules](https://img.shields.io/badge/modules-38-blue)[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg)](https://doi.org/10.5281/zenodo.21884218)
+**Direct Access to Praat C Functionality from R**
 
 ## Overview
 
