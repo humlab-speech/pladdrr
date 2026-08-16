@@ -928,16 +928,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// complexspectrogram_simd_info
-Rcpp::List complexspectrogram_simd_info();
-RcppExport SEXP _pladdrr_complexspectrogram_simd_info() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(complexspectrogram_simd_info());
-    return rcpp_result_gen;
-END_RCPP
-}
 // durationtier_create
 SEXP durationtier_create(double tmin, double tmax);
 RcppExport SEXP _pladdrr_durationtier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
@@ -2811,45 +2801,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sound_get_rms_simd
-double sound_get_rms_simd(XPtr<structSound> xptr, double from_time, double to_time);
-RcppExport SEXP _pladdrr_sound_get_rms_simd(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
-    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_get_rms_simd(xptr, from_time, to_time));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sound_get_energy_simd
-double sound_get_energy_simd(XPtr<structSound> xptr, double from_time, double to_time);
-RcppExport SEXP _pladdrr_sound_get_energy_simd(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
-    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_get_energy_simd(xptr, from_time, to_time));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sound_get_power_simd
-double sound_get_power_simd(XPtr<structSound> xptr, double from_time, double to_time);
-RcppExport SEXP _pladdrr_sound_get_power_simd(SEXP xptrSEXP, SEXP from_timeSEXP, SEXP to_timeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<structSound> >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< double >::type from_time(from_timeSEXP);
-    Rcpp::traits::input_parameter< double >::type to_time(to_timeSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_get_power_simd(xptr, from_time, to_time));
-    return rcpp_result_gen;
-END_RCPP
-}
 // intensitytier_create
 SEXP intensitytier_create(double tmin, double tmax);
 RcppExport SEXP _pladdrr_intensitytier_create(SEXP tminSEXP, SEXP tmaxSEXP) {
@@ -3272,16 +3223,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     praat_interpreter_clear_objects();
     return R_NilValue;
-END_RCPP
-}
-// klattgrid_simd_info
-Rcpp::List klattgrid_simd_info();
-RcppExport SEXP _pladdrr_klattgrid_simd_info() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(klattgrid_simd_info());
-    return rcpp_result_gen;
 END_RCPP
 }
 // longsound_open
@@ -5789,17 +5730,6 @@ BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     rcpp_result_gen = Rcpp::wrap(get_global_simd_enabled());
-    return rcpp_result_gen;
-END_RCPP
-}
-// sound_convert_to_mono_simd
-SEXP sound_convert_to_mono_simd(SEXP xptr);
-RcppExport SEXP _pladdrr_sound_convert_to_mono_simd(SEXP xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(sound_convert_to_mono_simd(xptr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -11687,7 +11617,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_cochleagram_as_matrix", (DL_FUNC) &_pladdrr_cochleagram_as_matrix, 1},
     {"_pladdrr_cochleagram_get_info", (DL_FUNC) &_pladdrr_cochleagram_get_info, 1},
     {"_pladdrr_cochleagram_finalizer", (DL_FUNC) &_pladdrr_cochleagram_finalizer, 1},
-    {"_pladdrr_complexspectrogram_simd_info", (DL_FUNC) &_pladdrr_complexspectrogram_simd_info, 0},
     {"_pladdrr_durationtier_create", (DL_FUNC) &_pladdrr_durationtier_create, 2},
     {"_pladdrr_durationtier_get_start_time", (DL_FUNC) &_pladdrr_durationtier_get_start_time, 1},
     {"_pladdrr_durationtier_get_end_time", (DL_FUNC) &_pladdrr_durationtier_get_end_time, 1},
@@ -11765,9 +11694,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_formanttier_get_bandwidth_at_time", (DL_FUNC) &_pladdrr_formanttier_get_bandwidth_at_time, 3},
     {"_pladdrr_formanttier_filter_sound", (DL_FUNC) &_pladdrr_formanttier_filter_sound, 2},
     {"_pladdrr_formanttier_filter_sound_noscale", (DL_FUNC) &_pladdrr_formanttier_filter_sound_noscale, 2},
-    {"_pladdrr_sound_get_rms_simd", (DL_FUNC) &_pladdrr_sound_get_rms_simd, 3},
-    {"_pladdrr_sound_get_energy_simd", (DL_FUNC) &_pladdrr_sound_get_energy_simd, 3},
-    {"_pladdrr_sound_get_power_simd", (DL_FUNC) &_pladdrr_sound_get_power_simd, 3},
     {"_pladdrr_intensitytier_create", (DL_FUNC) &_pladdrr_intensitytier_create, 2},
     {"_pladdrr_intensitytier_get_start_time", (DL_FUNC) &_pladdrr_intensitytier_get_start_time, 1},
     {"_pladdrr_intensitytier_get_end_time", (DL_FUNC) &_pladdrr_intensitytier_get_end_time, 1},
@@ -11806,7 +11732,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_praat_interpreter_remove_object_by_id", (DL_FUNC) &_pladdrr_praat_interpreter_remove_object_by_id, 1},
     {"_pladdrr_praat_interpreter_select_object", (DL_FUNC) &_pladdrr_praat_interpreter_select_object, 2},
     {"_pladdrr_praat_interpreter_clear_objects", (DL_FUNC) &_pladdrr_praat_interpreter_clear_objects, 0},
-    {"_pladdrr_klattgrid_simd_info", (DL_FUNC) &_pladdrr_klattgrid_simd_info, 0},
     {"_pladdrr_longsound_open", (DL_FUNC) &_pladdrr_longsound_open, 1},
     {"_pladdrr_longsound_get_buffer_size_pref_seconds", (DL_FUNC) &_pladdrr_longsound_get_buffer_size_pref_seconds, 0},
     {"_pladdrr_longsound_set_buffer_size_pref_seconds", (DL_FUNC) &_pladdrr_longsound_set_buffer_size_pref_seconds, 1},
@@ -11999,7 +11924,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_simd_info", (DL_FUNC) &_pladdrr_simd_info, 0},
     {"_pladdrr_set_global_simd_enabled", (DL_FUNC) &_pladdrr_set_global_simd_enabled, 1},
     {"_pladdrr_get_global_simd_enabled", (DL_FUNC) &_pladdrr_get_global_simd_enabled, 0},
-    {"_pladdrr_sound_convert_to_mono_simd", (DL_FUNC) &_pladdrr_sound_convert_to_mono_simd, 1},
     {"_pladdrr_sound_values_fast", (DL_FUNC) &_pladdrr_sound_values_fast, 2},
     {"_pladdrr_sound_times_fast", (DL_FUNC) &_pladdrr_sound_times_fast, 1},
     {"_pladdrr_sound_as_matrix_fast_impl", (DL_FUNC) &_pladdrr_sound_as_matrix_fast_impl, 2},

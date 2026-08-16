@@ -684,15 +684,6 @@ should_use_simd_for_batch_queries_bridge <- function() {
     invisible(.Call(`_pladdrr_cochleagram_finalizer`, xptr))
 }
 
-#' Get ComplexSpectrogram SIMD implementation info
-#'
-#' @return List with SIMD availability and batch size
-#' @keywords internal
-#' @noRd
-.complexspectrogram_simd_info <- function() {
-    .Call(`_pladdrr_complexspectrogram_simd_info`)
-}
-
 .durationtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_durationtier_create`, tmin, tmax)
 }
@@ -1063,27 +1054,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_formanttier_filter_sound_noscale`, sound_xptr, ft_xptr)
 }
 
-#' SIMD-optimized RMS calculation
-#' @keywords internal
-#' @noRd
-.sound_get_rms_simd <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_rms_simd`, xptr, from_time, to_time)
-}
-
-#' SIMD-optimized energy calculation
-#' @keywords internal
-#' @noRd
-.sound_get_energy_simd <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_energy_simd`, xptr, from_time, to_time)
-}
-
-#' SIMD-optimized power calculation
-#' @keywords internal
-#' @noRd
-.sound_get_power_simd <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_power_simd`, xptr, from_time, to_time)
-}
-
 .intensitytier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_intensitytier_create`, tmin, tmax)
 }
@@ -1268,15 +1238,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @noRd
 .praat_interpreter_clear_objects <- function() {
     invisible(.Call(`_pladdrr_praat_interpreter_clear_objects`))
-}
-
-#' Get KlattGrid SIMD implementation info
-#'
-#' @return List with SIMD availability and batch size
-#' @keywords internal
-#' @noRd
-.klattgrid_simd_info <- function() {
-    .Call(`_pladdrr_klattgrid_simd_info`)
 }
 
 #' Open a LongSound from file
@@ -2462,10 +2423,6 @@ set_global_simd_enabled <- function(enabled) {
 
 get_global_simd_enabled <- function() {
     .Call(`_pladdrr_get_global_simd_enabled`)
-}
-
-.sound_convert_to_mono_simd <- function(xptr) {
-    .Call(`_pladdrr_sound_convert_to_mono_simd`, xptr)
 }
 
 #' Fast Sound Sample Access

@@ -267,19 +267,16 @@ WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \
               formant_stubs.cpp formantmodeler_drawing_stubs.cpp r_lapack_wrapper.cpp utils.cpp RcppExports.cpp
 
 # SIMD sources (Phases 1-5: Comprehensive SIMD optimizations)
-SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp intensity_simd.cpp \
-           window_functions_simd.cpp window_simd_bridge.cpp autocorrelation_simd.cpp \
-           formant_lpc_simd.cpp formant_simd_bridge.cpp \
-           sound_conversion_simd.cpp \
-           \
+SIMD_SRC = simd_utils.cpp sound_mixing_simd.cpp \
+           window_functions_simd.cpp autocorrelation_simd.cpp \
            \
            pitch_simd_bridge.cpp spectrogram_simd.cpp \
            preemphasis_simd.cpp pitch_filter_simd.cpp \
            mfcc_simd.cpp mfcc_simd_bridge.cpp \
            batch_queries_simd.cpp batch_queries_simd_bridge.cpp \
            textgrid_simd.cpp textgrid_simd_bridge.cpp \
-           formantpath_simd.cpp harmonicity_simd.cpp complexspectrogram_simd.cpp \
-           klattgrid_simd.cpp powercepstrogram_simd.cpp slopeselector_simd.cpp simd_info.cpp sound_fast_access.cpp textgrid_batch_operations.cpp batch_queries.cpp thread_control.cpp
+           formantpath_simd.cpp \
+           powercepstrogram_simd.cpp slopeselector_simd.cpp simd_info.cpp sound_fast_access.cpp textgrid_batch_operations.cpp batch_queries.cpp thread_control.cpp
 
 # Rcpp Module sources (pladdrr 2.0 architecture)
 MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_module.cpp \
