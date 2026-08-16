@@ -33,7 +33,7 @@ test_that("MFCC SIMD matches scalar implementation", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar MFCC
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   mfcc_scalar <- snd$to_mfcc(
     num_coefficients = 13,
     analysis_width = 0.015,
@@ -44,7 +44,7 @@ test_that("MFCC SIMD matches scalar implementation", {
   )
 
   # SIMD MFCC
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   mfcc_simd <- snd$to_mfcc(
     num_coefficients = 13,
     analysis_width = 0.015,
@@ -79,7 +79,7 @@ test_that("MFCC SIMD works with various signal lengths", {
     signal <- generate_test_signal(duration = dur, sr = 16000, freq = 440)
     snd <- Sound$from_values(signal, 16000)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
     expect_true(mfcc$get_number_of_frames() > 0)
@@ -99,7 +99,7 @@ test_that("MFCC SIMD works with different coefficient counts", {
   test_n_coeffs <- c(6, 12, 13, 20)
 
   for (n_coeff in test_n_coeffs) {
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = n_coeff, analysis_width = 0.015, time_step = 0.005)
 
     expect_true(mfcc$get_max_num_coefficients() >= n_coeff)
@@ -119,7 +119,7 @@ test_that("MFCC SIMD works with different analysis widths", {
   test_widths <- c(0.01, 0.015, 0.025, 0.032)
 
   for (width in test_widths) {
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = width, time_step = 0.005)
 
     expect_true(mfcc$get_number_of_frames() > 0)
@@ -137,12 +137,12 @@ test_that("MFCC SIMD can be toggled on/off", {
   snd <- Sound$from_values(signal, 16000)
 
   # Disable SIMD
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   mfcc1 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
   expect_true(mfcc1$get_number_of_frames() > 0)
 
   # Enable SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   mfcc2 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
   expect_true(mfcc2$get_number_of_frames() > 0)
 
@@ -162,7 +162,7 @@ test_that("MFCC SIMD works with different sampling rates", {
     signal <- generate_test_signal(duration = 0.5, sr = sr, freq = 440)
     snd <- Sound$from_values(signal, sr)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
     expect_true(mfcc$get_number_of_frames() > 0)
@@ -179,7 +179,7 @@ test_that("MFCC coefficients are in reasonable range", {
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015, time_step = 0.005)
 
   # Get coefficient matrix
@@ -208,7 +208,7 @@ test_that("MFCC SIMD works with custom Mel frequency ranges", {
   signal <- generate_speech_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   # Test different Mel frequency ranges
   mfcc1 <- snd$to_mfcc(
@@ -249,11 +249,11 @@ test_that("MFCC frames are consistent across SIMD/scalar", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   mfcc_scalar <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   mfcc_simd <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
   # Check frame-by-frame
@@ -279,7 +279,7 @@ test_that("MFCC SIMD works with real audio (if available)", {
   if (file.exists(test_file) && nchar(test_file) > 0) {
     snd <- Sound$new(test_file)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015, time_step = 0.005)
 
     expect_true(mfcc$get_number_of_frames() > 0)
@@ -313,7 +313,7 @@ test_that("MFCC full pipeline works end-to-end with SIMD", {
 
   snd <- Sound$from_values(signal, sr)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   # Full MFCC extraction
   mfcc <- snd$to_mfcc(

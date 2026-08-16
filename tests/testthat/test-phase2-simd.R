@@ -24,7 +24,7 @@ test_that("Spectrogram SIMD matches scalar (Gaussian window)", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec_scalar <- snd$to_spectrogram(
     window_length = 0.005,
     time_step = 0.002,
@@ -32,7 +32,7 @@ test_that("Spectrogram SIMD matches scalar (Gaussian window)", {
   )
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec_simd <- snd$to_spectrogram(
     window_length = 0.005,
     time_step = 0.002,
@@ -52,11 +52,11 @@ test_that("Spectrogram SIMD matches scalar (Hamming window)", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec_scalar <- snd$to_spectrogram(window_shape = "Hamming")
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec_simd <- snd$to_spectrogram(window_shape = "Hamming")
 
   scalar_mat <- spec_scalar$as_matrix()
@@ -70,11 +70,11 @@ test_that("Spectrogram SIMD matches scalar (Hanning window)", {
   snd <- Sound$from_values(signal, 16000)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec_scalar <- snd$to_spectrogram(window_shape = "Hanning")
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec_simd <- snd$to_spectrogram(window_shape = "Hanning")
 
   scalar_mat <- spec_scalar$as_matrix()
@@ -88,10 +88,10 @@ test_that("Spectrogram SIMD handles different signal lengths", {
     signal <- rnorm(n_samples)
     snd <- Sound$from_values(signal, 16000)
 
-    options(speaker.use_simd = FALSE)
+    pladdrr_simd(FALSE)
     spec_scalar <- snd$to_spectrogram()
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     spec_simd <- snd$to_spectrogram()
 
     expect_equal(
@@ -111,10 +111,10 @@ test_that("Spectrogram SIMD handles stereo signals", {
   stereo <- cbind(signal, signal * 0.9)
   snd <- Sound$from_values(stereo, 16000)
 
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec_scalar <- snd$to_spectrogram()
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec_simd <- snd$to_spectrogram()
 
   expect_equal(spec_simd$as_matrix(), spec_scalar$as_matrix(), tolerance = 1e-10)
@@ -132,10 +132,10 @@ test_that("Pre-emphasis SIMD matches scalar", {
   snd_simd <- Sound$from_values(signal, 16000)
 
   # Apply pre-emphasis
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   snd_scalar$pre_emphasize(50)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   snd_simd$pre_emphasize(50)
 
   # Compare
@@ -157,7 +157,7 @@ test_that("Pre-emphasis SIMD is exact (zero error)", {
   }
 
   # SIMD version
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   snd$pre_emphasize(50)
   result <- as.vector(snd$as_matrix()[1, ])
 
@@ -169,7 +169,7 @@ test_that("Pre-emphasis + de-emphasis round-trip", {
   signal <- generate_test_signal(duration = 0.5, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   snd$pre_emphasize(50)
   snd$de_emphasize(50)
 
@@ -186,10 +186,10 @@ test_that("Pre-emphasis SIMD handles different cutoff frequencies", {
     snd_scalar <- Sound$from_values(signal, 16000)
     snd_simd <- Sound$from_values(signal, 16000)
 
-    options(speaker.use_simd = FALSE)
+    pladdrr_simd(FALSE)
     snd_scalar$pre_emphasize(cutoff)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     snd_simd$pre_emphasize(cutoff)
 
     expect_equal(
@@ -213,7 +213,7 @@ test_that("Pre-emphasis SIMD handles various signal lengths", {
       expected[i] <- expected[i] - emphasis_factor * expected[i - 1]
     }
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     snd$pre_emphasize(50)
     result <- as.vector(snd$as_matrix()[1, ])
 
@@ -238,7 +238,7 @@ test_that("Pitch extraction works with SIMD enabled", {
   signal <- generate_test_signal(duration = 1.0, sr = 16000, freqs = c(200))
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch <- snd$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
 
   # Should detect ~200 Hz
@@ -251,10 +251,10 @@ test_that("SIMD does not break pitch extraction", {
   signal <- generate_test_signal(duration = 1.0, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   pitch_scalar <- snd$to_pitch()
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch_simd <- snd$to_pitch()
 
   # Should produce similar results
@@ -281,15 +281,15 @@ test_that("Phase 2 SIMD can be toggled on/off", {
   snd <- Sound$from_values(signal, 16000)
 
   # Disable
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec1 <- snd$to_spectrogram()
 
   # Enable
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec2 <- snd$to_spectrogram()
 
   # Disable again
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec3 <- snd$to_spectrogram()
 
   # All should match
@@ -301,7 +301,7 @@ test_that("Phase 2 operations work in sequence", {
   signal <- generate_test_signal(duration = 1.0, sr = 16000)
   snd <- Sound$from_values(signal, 16000)
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   # Apply Phase 2 operations in sequence
   snd$pre_emphasize(50)
@@ -314,4 +314,4 @@ test_that("Phase 2 operations work in sequence", {
 })
 
 # Cleanup
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)

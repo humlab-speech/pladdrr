@@ -42,7 +42,7 @@ test_that("Sound_to_ComplexSpectrogram works", {
     # Create test sound
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050, frequency = 200)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Convert to ComplexSpectrogram
     cs <- sound$to_complex_spectrogram()
@@ -56,11 +56,11 @@ test_that("ComplexSpectrogram SIMD matches scalar", {
     sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 150)
 
     # Force scalar
-    options(speaker.use_simd = FALSE)
+    pladdrr_simd(FALSE)
     cs_scalar <- sound$to_complex_spectrogram()
 
     # Force SIMD
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     cs_simd <- sound$to_complex_spectrogram()
 
     # Compare dimensions
@@ -71,7 +71,7 @@ test_that("ComplexSpectrogram SIMD matches scalar", {
 test_that("ComplexSpectrogram works with different window lengths", {
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050, frequency = 200)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Test different window lengths
     cs_short <- sound$to_complex_spectrogram(window_length = 0.020)
@@ -89,7 +89,7 @@ test_that("ComplexSpectrogram works with various signal lengths", {
     # Test various signal lengths to exercise SIMD remainder handling
     durations <- c(0.25, 0.5, 0.75, 1.0)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     for (dur in durations) {
         sound <- Sound$create_tone(duration = dur, sampling_rate = 22050, frequency = 200)
@@ -114,7 +114,7 @@ test_that("ComplexSpectrogram SIMD toggle works correctly", {
     results <- list()
 
     for (i in 1:3) {
-        options(speaker.use_simd = (i %% 2 == 1))  # Alternate TRUE/FALSE
+        pladdrr_simd((i %% 2 == 1))  # Alternate TRUE/FALSE
         cs <- sound$to_complex_spectrogram()
         results[[i]] <- cs$nx()
     }
@@ -128,7 +128,7 @@ test_that("ComplexSpectrogram to Sound roundtrip", {
     # Create test sound
     sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Convert to ComplexSpectrogram
     cs <- sound$to_complex_spectrogram()
@@ -143,7 +143,7 @@ test_that("ComplexSpectrogram to Sound roundtrip", {
 test_that("ComplexSpectrogram to Spectrum conversion", {
     sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     cs <- sound$to_complex_spectrogram()
 
@@ -158,7 +158,7 @@ test_that("ComplexSpectrogram to Spectrum conversion", {
 test_that("ComplexSpectrogram amplitude and phase retrieval", {
     sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     cs <- sound$to_complex_spectrogram()
 
@@ -181,4 +181,4 @@ test_that("ComplexSpectrogram amplitude and phase retrieval", {
 # =============================================================================
 
 # Reset SIMD setting
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)

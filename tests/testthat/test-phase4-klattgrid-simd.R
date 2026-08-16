@@ -43,7 +43,7 @@ test_that("KlattGrid SIMD info is available", {
 })
 
 test_that("KlattGrid creation works", {
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Create a simple KlattGrid
     kg <- KlattGrid(0, 0.5)
@@ -53,7 +53,7 @@ test_that("KlattGrid creation works", {
 })
 
 test_that("KlattGrid add pitch point works", {
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     kg <- KlattGrid(0, 0.5)
     kg$add_pitch_point(0.25, 120)
@@ -64,7 +64,7 @@ test_that("KlattGrid add pitch point works", {
 })
 
 test_that("KlattGrid getters work with SIMD enabled", {
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     kg <- KlattGrid(0, 0.5)
 
@@ -103,4 +103,4 @@ test_that("KlattGrid SIMD functions count is correct", {
 # =============================================================================
 
 # Reset SIMD setting
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)

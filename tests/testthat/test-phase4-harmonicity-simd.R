@@ -19,7 +19,7 @@ test_that("Harmonicity AC method works with SIMD", {
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 150)
 
     # Run with SIMD enabled
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     harm_simd <- sound$to_harmonicity_ac()
 
     expect_s3_class(harm_simd, "Harmonicity")
@@ -31,7 +31,7 @@ test_that("Harmonicity CC method works with SIMD", {
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 120)
 
     # Run with SIMD enabled
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     harm_simd <- sound$to_harmonicity_cc()
 
     expect_s3_class(harm_simd, "Harmonicity")
@@ -43,11 +43,11 @@ test_that("Harmonicity SIMD matches scalar for AC method", {
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 150)
 
     # Force scalar
-    options(speaker.use_simd = FALSE)
+    pladdrr_simd(FALSE)
     harm_scalar <- sound$to_harmonicity_ac()
 
     # Force SIMD
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     harm_simd <- sound$to_harmonicity_ac()
 
     # Compare number of frames (must be identical)
@@ -72,11 +72,11 @@ test_that("Harmonicity SIMD matches scalar for CC method (FCC - SIMD optimized)"
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 120)
 
     # Force scalar
-    options(speaker.use_simd = FALSE)
+    pladdrr_simd(FALSE)
     harm_scalar <- sound$to_harmonicity_cc()
 
     # Force SIMD
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     harm_simd <- sound$to_harmonicity_cc()
 
     # Compare number of frames (must be identical)
@@ -99,7 +99,7 @@ test_that("Harmonicity SIMD matches scalar for CC method (FCC - SIMD optimized)"
 test_that("Harmonicity works with different pitch floors", {
     sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 150)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Test different pitch floors
     harm_75 <- sound$to_harmonicity_ac(min_pitch =75)
@@ -117,7 +117,7 @@ test_that("Harmonicity works with different pitch floors", {
 test_that("Harmonicity works with different time steps", {
     sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100, frequency = 150)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     # Test different time steps
     harm_default <- sound$to_harmonicity_ac()
@@ -140,7 +140,7 @@ test_that("Harmonicity SIMD toggle works correctly", {
     results <- list()
 
     for (i in 1:3) {
-        options(speaker.use_simd = (i %% 2 == 1))  # Alternate TRUE/FALSE
+        pladdrr_simd((i %% 2 == 1))  # Alternate TRUE/FALSE
         harm <- sound$to_harmonicity_cc()
         results[[i]] <- harm$get_number_of_frames()
     }
@@ -154,7 +154,7 @@ test_that("Harmonicity CC method with various signal lengths", {
     # Test various signal lengths to exercise SIMD remainder handling
     durations <- c(0.5, 1.0, 2.0, 3.0)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
 
     for (dur in durations) {
         sound <- Sound$create_tone(duration = dur, sampling_rate = 44100, frequency = 150)
@@ -175,7 +175,7 @@ test_that("Harmonicity CC method with various signal lengths", {
 test_that("Harmonicity at specific time points", {
     sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100, frequency = 150)
 
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     harm <- sound$to_harmonicity_ac()
 
     # Get HNR at mid-point
@@ -202,4 +202,4 @@ test_that("Harmonicity SIMD info available", {
 # =============================================================================
 
 # Reset SIMD setting
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)

@@ -56,12 +56,12 @@ test_that("SIMD pitch extraction matches scalar (AC method)", {
   sound <- create_test_tone(440, duration = 1.0)
 
   # Force scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   pitch_scalar <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
   mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
   # Force SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch_simd <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
   mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
@@ -70,7 +70,7 @@ test_that("SIMD pitch extraction matches scalar (AC method)", {
                label = "SIMD pitch mean should match scalar")
 
   # Reset to default
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 test_that("SIMD pitch extraction matches scalar (CC method)", {
@@ -80,14 +80,14 @@ test_that("SIMD pitch extraction matches scalar (CC method)", {
   sound <- create_test_tone(220, duration = 2.0)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   pitch_scalar <- tryCatch(
     sound$to_pitch_cc(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600),
     error = function(e) NULL
   )
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch_simd <- tryCatch(
     sound$to_pitch_cc(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600),
     error = function(e) NULL
@@ -101,13 +101,13 @@ test_that("SIMD pitch extraction matches scalar (CC method)", {
                  label = "SIMD pitch (CC) should match scalar")
   }
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 test_that("SIMD pitch extraction accuracy on various frequencies", {
   skip_if_not(simd_status$enabled, "SIMD not enabled")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   # Test various frequencies with longer duration
   test_freqs <- c(110, 220, 440, 880)
@@ -141,25 +141,25 @@ test_that("SIMD intensity calculation matches scalar", {
   sound <- create_test_tone(440, duration = 1.0)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   intensity_scalar <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01)
   mean_scalar <- intensity_scalar$get_mean(from_time = 0, to_time = 0)
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   intensity_simd <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01)
   mean_simd <- intensity_simd$get_mean(from_time = 0, to_time = 0)
 
   expect_equal(mean_simd, mean_scalar, tolerance = 1e-10,
                label = "SIMD intensity should match scalar")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 test_that("SIMD intensity RMS calculation accuracy", {
   skip_if_not(simd_status$enabled, "SIMD not enabled")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   # Create tone with known amplitude
   sound <- create_test_tone(440, duration = 1.0, amplitude = 0.5)
@@ -185,7 +185,7 @@ test_that("SIMD formant extraction matches scalar", {
   sound <- create_test_tone(440, duration = 1.0)
 
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   formant_scalar <- tryCatch(
     sound$to_formant_burg(time_step = 0.01, max_number_of_formants = 5,
                           maximum_formant = 5500, window_length = 0.025,
@@ -194,7 +194,7 @@ test_that("SIMD formant extraction matches scalar", {
   )
 
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   formant_simd <- tryCatch(
     sound$to_formant_burg(time_step = 0.01, max_number_of_formants = 5,
                           maximum_formant = 5500, window_length = 0.025,
@@ -220,7 +220,7 @@ test_that("SIMD formant extraction matches scalar", {
     }
   }
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 # ============================================================================
@@ -230,7 +230,7 @@ test_that("SIMD formant extraction matches scalar", {
 test_that("SIMD windowing is applied consistently", {
   skip_if_not(simd_status$enabled, "SIMD not enabled")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   sound <- create_test_tone(440, duration = 1.0)
 
@@ -261,7 +261,7 @@ test_that("SIMD windowing is applied consistently", {
 test_that("SIMD operations complete without errors", {
   skip_if_not(simd_status$enabled, "SIMD not enabled")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 
   sound <- create_test_tone(440, duration = 1.0)
 
@@ -287,17 +287,17 @@ test_that("SIMD can be disabled and re-enabled", {
   sound <- create_test_tone(440, duration = 1.0)
 
   # Enable SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch_simd <- sound$to_pitch()
   mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
   # Disable SIMD
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   pitch_scalar <- sound$to_pitch()
   mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
   # Re-enable SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   pitch_simd2 <- sound$to_pitch()
   mean_simd2 <- pitch_simd2$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
@@ -316,7 +316,7 @@ test_that("SIMD spectrogram generation matches scalar", {
   sound <- create_test_tone(440, duration = 1.0)
 
   # Force scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   spec_scalar <- tryCatch(
     sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                          time_step = 0.002, frequency_step = 20,
@@ -325,7 +325,7 @@ test_that("SIMD spectrogram generation matches scalar", {
   )
 
   # Force SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   spec_simd <- tryCatch(
     sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
                          time_step = 0.002, frequency_step = 20,
@@ -364,13 +364,13 @@ test_that("SIMD spectrogram generation matches scalar", {
     }
   }
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 test_that("SIMD spectrogram works with different window shapes", {
   skip_if_not(simd_status$enabled, "SIMD not enabled")
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   sound <- create_test_tone(880, duration = 1.0)
 
   # Test multiple window shapes
@@ -388,7 +388,7 @@ test_that("SIMD spectrogram works with different window shapes", {
                  label = paste("SIMD spectrogram should work with", shape, "window"))
   }
 
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
 })
 
 # ============================================================================
@@ -424,4 +424,4 @@ test_that("pladdrr_simd toggles runtime state", {
 # ============================================================================
 
 # Reset to default SIMD state
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)

@@ -40,7 +40,7 @@ test_that("FormantPath: SIMD vs scalar produce same structure", {
   sound <- create_test_vowel(duration = 0.3, sr = 16000)
   
   # Scalar path
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -50,7 +50,7 @@ test_that("FormantPath: SIMD vs scalar produce same structure", {
   )
   
   # SIMD path
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -83,7 +83,7 @@ test_that("FormantPath: Extracted formants match SIMD vs scalar", {
   sound <- create_test_vowel(duration = 0.5, sr = 16000)
   
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -94,7 +94,7 @@ test_that("FormantPath: Extracted formants match SIMD vs scalar", {
   formant_scalar <- fp_scalar$extract_formant()
   
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -133,7 +133,7 @@ test_that("FormantPath: Path finding works with different weights", {
   
   sound <- create_test_vowel(duration = 0.4, sr = 16000)
   
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   
   # High frequency change weight (smooth paths)
   fp_smooth <- sound$to_formant_path(
@@ -165,7 +165,7 @@ test_that("FormantPath: Multiple ceiling candidates work", {
   
   sound <- create_test_vowel(duration = 0.3, sr = 16000)
   
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   
   # Test with different numbers of ceiling steps
   for (n_steps in c(1, 2, 3)) {
@@ -196,7 +196,7 @@ test_that("FormantPath: qSums matrix computation (SIMD vs scalar)", {
   sound <- create_test_vowel(duration = 0.3, sr = 16000)
   
   # Scalar
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   fp_scalar <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -206,7 +206,7 @@ test_that("FormantPath: qSums matrix computation (SIMD vs scalar)", {
   )
   
   # SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   fp_simd <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -237,7 +237,7 @@ test_that("FormantPath: SIMD can be toggled on/off", {
   sound <- create_test_vowel(duration = 0.2, sr = 16000)
   
   # Disable SIMD
-  options(speaker.use_simd = FALSE)
+  pladdrr_simd(FALSE)
   fp1 <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -248,7 +248,7 @@ test_that("FormantPath: SIMD can be toggled on/off", {
   expect_s3_class(fp1, "FormantPath")
   
   # Enable SIMD
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   fp2 <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -274,7 +274,7 @@ test_that("FormantPath: No performance regression", {
   
   sound <- create_test_vowel(duration = 0.5, sr = 16000)
   
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   
   # Should complete in reasonable time
   start_time <- Sys.time()
@@ -304,7 +304,7 @@ test_that("FormantPath: No performance regression", {
 test_that("FormantPath: Edge cases handled correctly", {
   skip_if_not(pladdrr::simd_info()$available, "SIMD not available")
   
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   
   # Very short sound
   sound_short <- create_test_vowel(duration = 0.1, sr = 16000)
@@ -354,7 +354,7 @@ test_that("FormantPath: Works with real audio", {
   if (!is.null(test_file)) {
     sound <- Sound$new(test_file)
     
-    options(speaker.use_simd = TRUE)
+    pladdrr_simd(TRUE)
     fp <- sound$to_formant_path(
       time_step = 0.01,
       max_num_formants = 5.0,
@@ -390,7 +390,7 @@ test_that("FormantPath: Results comparable to standard Formant", {
   )
   
   # FormantPath with single ceiling (should be similar)
-  options(speaker.use_simd = TRUE)
+  pladdrr_simd(TRUE)
   fp <- sound$to_formant_path(
     time_step = 0.01,
     max_num_formants = 5.0,
@@ -414,7 +414,7 @@ test_that("FormantPath: Results comparable to standard Formant", {
 
 
 # Reset SIMD option
-options(speaker.use_simd = TRUE)
+pladdrr_simd(TRUE)
 
 cat("\n")
 cat("========================================\n")
