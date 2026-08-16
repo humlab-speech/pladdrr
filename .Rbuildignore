@@ -27,6 +27,7 @@
 # The Praat cross-validation harness needs an external Praat install and the
 # plabench Python package, so it cannot run under R CMD check.
 ^dev/
+^data-raw$
 ^results$
 ^plans$
 ^specs$
