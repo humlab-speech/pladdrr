@@ -23,6 +23,15 @@
  * Provides form creation and argument parsing without GUI dependencies.
  * Extracted and adapted from Praat's Ui.cpp.
  */
+// NOTE (2026-08-16, test-coverage-expansion Task 2): 0% test coverage is expected, not
+// dead code. `Interpreter.cpp` and `praat_script.cpp` (both compiled unconditionally,
+// see src/Makevars.in) reference UiForm_create/UiForm_add*/UiForm_call/UiForm_parseString
+// from Interpreter_createForm() (used only by the GUI "form...endform" argument-prompt
+// dialog path, e.g. praat_script.cpp's firstPassThroughScript) and
+// Interpreter_getArgumentsFromDialog(). Deleting this file breaks the link. pladdrr's own
+// script-execution entry point (praat_run_script() -> interpreter_wrappers.cpp's call to
+// Interpreter_run()) never goes through Interpreter_createForm, so these symbols are
+// link-required but runtime-unreachable from R in library mode — not obsolete scaffolding.
 
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/sys/Ui.h"
