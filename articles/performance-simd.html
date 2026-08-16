@@ -92,7 +92,7 @@
       <h1>Performance Optimization and SIMD in pladdrr</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.0.3/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
       <div class="d-none name"><code>performance-simd.Rmd</code></div>
     </div>
 
@@ -249,12 +249,12 @@ runtime so you can A/B your own workload:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.953588 4.206279 7.706508 4.230504 4.248337 178.5298    50</span></span>
+<span><span class="co">#&gt;              expr      min       lq     mean  median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.802933 4.190016 7.674663 4.21057 4.232676 178.3919    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean  median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.896031 4.203654 4.238648 4.23636 4.258517 5.195713    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min       lq     mean   median      uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.926614 4.157495 4.195572 4.186875 4.21908 4.813541    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
