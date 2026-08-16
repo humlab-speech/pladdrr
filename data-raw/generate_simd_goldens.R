@@ -20,6 +20,7 @@ fixture_dir <- normalizePath(fixture_dir, mustWork = TRUE)
 
 mono_script <- normalizePath("data-raw/simd-golden/mono_analysis_golden.praat", mustWork = TRUE)
 mono_conversion_script <- normalizePath("data-raw/simd-golden/mono_conversion_golden.praat", mustWork = TRUE)
+klattgrid_script <- normalizePath("data-raw/simd-golden/klattgrid_golden.praat", mustWork = TRUE)
 
 # --- Mono fixtures -----------------------------------------------------
 # tone_200hz / tone_120hz_low: pure tones, cheap sanity check across the
@@ -67,3 +68,7 @@ if (requireNamespace("tuneR", quietly = TRUE)) {
 } else {
   cat("tuneR not installed -- skipped stereo_test fixture regeneration\n")
 }
+
+# --- KlattGrid synthesis (standalone, no input wav needed) -------------
+praat_run(klattgrid_script, file.path(fixture_dir, "klattgrid_vowel_golden.csv"))
+cat("klattgrid golden generated\n")

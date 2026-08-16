@@ -133,3 +133,44 @@ while si <= nrx
     appendFileLine: out_dir$ + "/" + out_prefix$ + "_resample_golden.csv", "'si','v:8'"
     si = si + 25
 endwhile
+
+# --- ComplexSpectrogram (validated indirectly via Down to Spectrogram: ---
+# --- Praat.app 6.4.47 itself asserts/crashes on "ComplexSpectrogram: To ---
+# --- Sound", so amplitude/phase resynthesis cannot be golden-tested. ---
+selectObject: sound
+cs = To ComplexSpectrogram: 0.005, 5000.0
+csspec = Down to Spectrogram
+writeFileLine: out_dir$ + "/" + out_prefix$ + "_complexspectrogram_golden.csv", "time,freq,power"
+cst1 = 0.3
+csf1 = 200
+csp1 = Get power at: cst1, csf1
+appendFileLine: out_dir$ + "/" + out_prefix$ + "_complexspectrogram_golden.csv", "'cst1:6','csf1:6','csp1:8'"
+cst2 = 0.3
+csf2 = 500
+csp2 = Get power at: cst2, csf2
+appendFileLine: out_dir$ + "/" + out_prefix$ + "_complexspectrogram_golden.csv", "'cst2:6','csf2:6','csp2:8'"
+cst3 = 0.5
+csf3 = 1000
+csp3 = Get power at: cst3, csf3
+appendFileLine: out_dir$ + "/" + out_prefix$ + "_complexspectrogram_golden.csv", "'cst3:6','csf3:6','csp3:8'"
+
+# --- FormantPath (burg) ---
+# parameters "1 1 1 1 1" and candidate 5 match pladdrr's to_formant_path()/
+# get_stress_of_candidate() defaults (max_num_formants=5, parameters all 1s).
+selectObject: sound
+fp = To FormantPath (burg): 0.005, 5, 5500, 0.025, 50, 0.05, 4
+fp_oc = Get optimal ceiling: 0, 0, "1 1 1 1 1", 1.25
+fp_st = Get stress of candidate: 0, 0, 5, "1 1 1 1 1", 1.25
+writeFileLine: out_dir$ + "/" + out_prefix$ + "_formantpath_golden.csv", "optimal_ceiling,stress_candidate5"
+appendFileLine: out_dir$ + "/" + out_prefix$ + "_formantpath_golden.csv", "'fp_oc:6','fp_st:8'"
+
+# --- TextGrid (silences), via Intensity ---
+selectObject: sound
+tgintens = To Intensity: 100, 0, "yes"
+tg = To TextGrid (silences): -25.0, 0.1, 0.05, "silent", "sounding"
+tgn = Get number of intervals: 1
+tglab$ = Get label of interval: 1, 1
+tgstart = Get start point: 1, 1
+tgend = Get end point: 1, tgn
+writeFileLine: out_dir$ + "/" + out_prefix$ + "_textgrid_silences_golden.csv", "n_intervals,label1,start,end"
+appendFileLine: out_dir$ + "/" + out_prefix$ + "_textgrid_silences_golden.csv", "'tgn','tglab$','tgstart:6','tgend:6'"
