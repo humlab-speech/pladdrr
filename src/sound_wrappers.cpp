@@ -321,12 +321,6 @@ double sound_get_value_at_time(
     }
 }
 
-#ifdef HAVE_XSIMD
-extern double sound_get_rms_simd(XPtr<structSound>, double, double);
-extern double sound_get_energy_simd(XPtr<structSound>, double, double);
-extern double sound_get_power_simd(XPtr<structSound>, double, double);
-#endif
-
 //' Get RMS (internal)
 //' @keywords internal
 //' @noRd
@@ -344,8 +338,8 @@ double sound_get_rms(
     // made test-batch-vectorized-ops.R fail at its 1e-10 tolerance. The SIMD
     // path was 1.41x faster; bit-exactness with Praat is the package's stated
     // primary correctness guarantee (see the -ffp-contract=off rationale in
-    // src/Makevars.in) and outranks that. `sound_get_rms_simd()` remains
-    // exported as .sound_get_rms_simd for explicit opt-in benchmarking.
+    // src/Makevars.in) and outranks that. The SIMD path (`intensity_simd.cpp`)
+    // was removed entirely since it had no callers left.
     structSound* sound = get_ptr(xptr, "Sound");
     
     if (from_time == 0.0) from_time = sound->xmin;

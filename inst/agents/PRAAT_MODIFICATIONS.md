@@ -18,6 +18,21 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### Unreleased — Document untestable Laguerre fallback branch (2026-08-16)
+
+Submodule commit `8a89e26e`.
+
+#### `fon/Sound_to_Formant.cpp` — NOTE comment on the Laguerre fallback (BUG-1, v4.9.1)
+
+**Summary:** comment-only change, no functional code touched. Adds a NOTE
+explaining why the `Polynomial_to_Roots` → Laguerre-fallback branch added in
+v4.9.1 (see below) is not exercised by pladdrr's test suite: it fires only
+when LAPACK's `dhseqr_` fails to converge on all eigenvalues, and a
+~650-combination probe of `to_formant_burg()`'s R-level arguments could not
+reproduce that non-convergence on this platform's LAPACK. The branch remains
+correct and in place; it is just not reachable from any tested R argument
+combination here.
+
 ### Unreleased — Disable Praat script shell-exec (2026-08-10)
 
 **Summary:** `PraatInterpreter` runs arbitrary Praat script text supplied from
@@ -1108,7 +1123,7 @@ Authoritative list: `git diff --name-status b1b3199a3..HEAD` in the submodule
 | `fon/Sound_to_Pitch.cpp` | SIMD + Performance | Pitch analysis SIMD + parallelization threshold (v4.8.9) + batched sqrt Fix 5 (v4.8.27); broken SIMD blocks reverted (v4.8.29); pitch-performance doc-comment refreshed, no behavior change (v4.9.9) |
 | `fon/praat_Tiers.cpp` | Bug fix | NO_GUI-gate `FormantGridEditor_create` instantiation — Windows COMDAT collision (v4.9.7) |
 | `fon/Sound_to_Harmonicity_GNE.cpp` | Performance | Loop B + Loop C parallelized via MelderThread (v4.8.27) |
-| `fon/Sound_to_Formant.cpp` | SIMD + Bug fix | Uses VECburg directly (v4.8.4); Laguerre root-finding fallback (v4.9.1) |
+| `fon/Sound_to_Formant.cpp` | SIMD + Bug fix | Uses VECburg directly (v4.8.4); Laguerre root-finding fallback (v4.9.1); NOTE comment on why the fallback isn't test-covered (8a89e26e) |
 | `fon/Sound_and_Spectrogram.cpp` | SIMD | Spectrogram optimization |
 | `fon/Sound.cpp` | SIMD | Pre-emphasis optimization |
 | `dwtools/Sound_and_Spectrogram_extensions.cpp` | SIMD | MFCC optimization |
@@ -1176,6 +1191,7 @@ Rscript -e "testthat::test_dir('tests/testthat')"
 
 | Commit | Description |
 |--------|-------------|
+| `8a89e26e5` | Document why Laguerre root-finder fallback isn't test-covered, comment-only |
 | `9cd0e87c0` | Refresh stale pitch-performance note, comment-only (v4.9.9) |
 | `42414e1d4` | NO_GUI-gate FormantGridEditor_create — fix Windows COMDAT collision (v4.9.7) |
 | `a17add655` | NO_GUI-gate Win32 GUI init; drop R headers from NUMlapack.h (v4.9.7) |
