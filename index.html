@@ -296,7 +296,7 @@
 <div class="section level3">
 <h3 id="object-oriented-interface">Object-Oriented Interface<a class="anchor" aria-label="anchor" href="#object-oriented-interface"></a>
 </h3>
-<p>All Praat objects are R6 classes with methods that mirror Praat’s native commands:</p>
+<p>All Praat objects are exposed to as R objects with methods that mirror Praat’s native commands:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create Sound objects</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">2.0</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
