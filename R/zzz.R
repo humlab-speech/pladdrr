@@ -34,7 +34,10 @@ get_module <- function(name) {
   simd_opt <- getOption("pladdrr.use_simd", TRUE)
   tryCatch(
     set_global_simd_enabled(isTRUE(simd_opt)),
-    error = function(e) NULL
+    error = function(e) {
+      warning("pladdrr: SIMD initialization failed: ", conditionMessage(e),
+              "; falling back to scalar code", call. = FALSE)
+    }
   )
   
   # Modules load lazily on first use via get_module() (which caches them).
