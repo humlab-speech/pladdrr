@@ -99,7 +99,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The <code>pladdrr</code> package gives R users direct access to <a href="https://praat.org" class="external-link">Praat</a> functionality through a consistent object-oriented interface, enabling conversion of Praat scripts into self-contained R implementations.</p>
+<p>The <code>pladdrr</code> package provides R users with direct access to the functionalities of <a href="https://praat.org" class="external-link">Praat</a> through a consistent Object Oriented interface, enabling conversion of Praat scripts to self-contained R implementations.</p>
 <p>Direct access to Praat’s C code base from R is achieved through Rcpp Modules and generated methods associated with Praat Objects of several types (38 Rcpp Modules in total):</p>
 <div class="section level3">
 <h3 id="speech-signal-analysis">Speech Signal Analysis<a class="anchor" aria-label="anchor" href="#speech-signal-analysis"></a>
@@ -296,7 +296,7 @@
 <div class="section level3">
 <h3 id="object-oriented-interface">Object-Oriented Interface<a class="anchor" aria-label="anchor" href="#object-oriented-interface"></a>
 </h3>
-<p>All Praat objects are exposed to as R objects with methods that mirror Praat’s native commands:</p>
+<p>All Praat objects are R6 classes with methods that mirror Praat’s native commands:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create Sound objects</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">2.0</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
@@ -577,7 +577,7 @@
 </h2>
 <p>To cite <strong>pladdrr</strong> in publications, run <code>citation("pladdrr")</code> in R, or use:</p>
 <blockquote>
-<p>Nylén, Fredrik (2026). <em>pladdrr: Direct Access to the Core Algorithms of Praat</em>. R package version 5.0.3. <a href="https://doi.org/10.5281/zenodo.21884218" class="external-link uri">https://doi.org/10.5281/zenodo.21884218</a></p>
+<p>Nylén, Fredrik (2026). <em>pladdrr: Direct Access to the Core Algorithms of Praat</em>. R package version 5.0.0. <a href="https://doi.org/10.5281/zenodo.21884218" class="external-link uri">https://doi.org/10.5281/zenodo.21884218</a></p>
 </blockquote>
 <p>Please also cite Praat itself:</p>
 <blockquote>
@@ -673,7 +673,7 @@
 <li><a href="https://app.codecov.io/gh/humlab-speech/pladdrr" class="external-link"><img src="https://codecov.io/gh/humlab-speech/pladdrr/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://github.com/humlab-speech/pladdrr/actions/workflows/lintr.yml" class="external-link"><img src="https://github.com/humlab-speech/pladdrr/actions/workflows/lintr.yml/badge.svg?branch=main" alt="lintr"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/license-GPL--3-blue.svg" alt="License: GPL v3"></a></li>
-<li><a href="https://doi.org/10.5281/zenodo.21949439" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21949439.svg" alt="DOI"></a></li>
+<li><a href="https://doi.org/10.5281/zenodo.21884218" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg" alt="DOI"></a></li>
 </ul>
 </div>
 

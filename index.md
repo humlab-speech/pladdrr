@@ -4,9 +4,9 @@
 
 ## Overview
 
-The `pladdrr` package gives R users direct access to
-[Praat](https://praat.org) functionality through a consistent
-object-oriented interface, enabling conversion of Praat scripts into
+The `pladdrr` package provides R users with direct access to the
+functionalities of [Praat](https://praat.org) through a consistent
+Object Oriented interface, enabling conversion of Praat scripts to
 self-contained R implementations.
 
 Direct access to Praat’s C code base from R is achieved through Rcpp
@@ -221,8 +221,8 @@ synthetic_vowel <- kg$to_sound()
 
 ### Object-Oriented Interface
 
-All Praat objects are exposed to as R objects with methods that mirror
-Praat’s native commands:
+All Praat objects are R6 classes with methods that mirror Praat’s native
+commands:
 
 ``` r
 
@@ -488,7 +488,7 @@ To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or
 use:
 
 > Nylén, Fredrik (2026). *pladdrr: Direct Access to the Core Algorithms
-> of Praat*. R package version 5.0.3.
+> of Praat*. R package version 5.0.0.
 > <https://doi.org/10.5281/zenodo.21884218>
 
 Please also cite Praat itself:

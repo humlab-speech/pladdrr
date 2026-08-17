@@ -92,7 +92,7 @@
       <h1>Performance Optimization and SIMD in pladdrr</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.0.3/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
       <div class="d-none name"><code>performance-simd.Rmd</code></div>
     </div>
 
@@ -250,11 +250,11 @@ runtime so you can A/B your own workload:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
 <span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 4.065694 4.294278 7.356998 4.334533 4.372625 155.6675    50</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.683377 3.779157 6.346018 3.826302 3.922089 128.1111    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.985319 4.292055 4.345938 4.317594 4.361708 5.150763    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min       lq     mean  median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.528081 3.588279 3.704396 3.65996 3.748969 4.458773    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
