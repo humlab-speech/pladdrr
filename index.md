@@ -4,9 +4,9 @@
 
 ## Overview
 
-The `pladdrr` package provides R users with direct access to the
-functionalities of [Praat](https://praat.org) through a consistent
-Object Oriented interface, enabling conversion of Praat scripts to
+The `pladdrr` package gives R users direct access to
+[Praat](https://praat.org) functionality through a consistent
+object-oriented interface, enabling conversion of Praat scripts into
 self-contained R implementations.
 
 Direct access to Praat’s C code base from R is achieved through Rcpp
