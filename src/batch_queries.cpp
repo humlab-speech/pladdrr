@@ -66,6 +66,17 @@ autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtra
 using namespace Rcpp;
 
 // ============================================================================
+// Shared Sound_to_Pitch_raw{Ac,Cc} defaults
+// Repeated identically at every raw pitch-extraction call site in this file
+// (voicing_threshold is the one parameter callers vary).
+// ============================================================================
+constexpr int PITCH_MAX_CANDIDATES = 15;
+constexpr double PITCH_SILENCE_THRESHOLD = 0.03;
+constexpr double PITCH_OCTAVE_COST = 0.01;
+constexpr double PITCH_OCTAVE_JUMP_COST = 0.35;
+constexpr double PITCH_VOICED_UNVOICED_COST = 0.14;
+
+// ============================================================================
 // SIMD Function Declarations (Phase 3 Task 3.2)
 // ============================================================================
 
@@ -1041,13 +1052,13 @@ double calculate_f0_stats_ultra_cpp(
             time_step,              // time_step (0 = auto)
             min_pitch,              // pitch floor
             max_pitch,              // pitch ceiling
-            15,                     // max_candidates
+            PITCH_MAX_CANDIDATES,   // max_candidates
             true,                   // very_accurate
-            0.03,                   // silence_threshold
+            PITCH_SILENCE_THRESHOLD,
             voicing_threshold,      // voicing_threshold
-            0.01,                   // octave_cost
-            0.35,                   // octave_jump_cost
-            0.14                    // voiced_unvoiced_cost
+            PITCH_OCTAVE_COST,
+            PITCH_OCTAVE_JUMP_COST,
+            PITCH_VOICED_UNVOICED_COST
         );
 
         // Use Praat's built-in statistics
@@ -1112,8 +1123,9 @@ double calculate_minimum_intensity_ultra_cpp(
         // Step 1: Pitch extraction with DSI parameters
         // voicing_threshold=0.8 (stricter), very_accurate=FALSE (faster)
         autoPitch pitch = Sound_to_Pitch_rawCc(
-            sound.get(), time_step, min_pitch, max_pitch, 15, false,
-            0.03, 0.8, 0.01, 0.35, 0.14
+            sound.get(), time_step, min_pitch, max_pitch, PITCH_MAX_CANDIDATES, false,
+            PITCH_SILENCE_THRESHOLD, 0.8, PITCH_OCTAVE_COST,
+            PITCH_OCTAVE_JUMP_COST, PITCH_VOICED_UNVOICED_COST
         );
 
         // Step 2: PointProcess from sound + pitch
@@ -1242,13 +1254,15 @@ List get_voice_quality_ultra_cpp(
             autoPitch pitch;
             if (pitch_method == "ac") {
                 pitch = Sound_to_Pitch_rawAc(
-                    sound.get(), time_step, min_pitch, max_pitch, 15, very_accurate,
-                    0.03, 0.45, 0.01, 0.35, 0.14
+                    sound.get(), time_step, min_pitch, max_pitch, PITCH_MAX_CANDIDATES, very_accurate,
+                    PITCH_SILENCE_THRESHOLD, 0.45, PITCH_OCTAVE_COST,
+                    PITCH_OCTAVE_JUMP_COST, PITCH_VOICED_UNVOICED_COST
                 );
             } else {
                 pitch = Sound_to_Pitch_rawCc(
-                    sound.get(), time_step, min_pitch, max_pitch, 15, very_accurate,
-                    0.03, 0.45, 0.01, 0.35, 0.14
+                    sound.get(), time_step, min_pitch, max_pitch, PITCH_MAX_CANDIDATES, very_accurate,
+                    PITCH_SILENCE_THRESHOLD, 0.45, PITCH_OCTAVE_COST,
+                    PITCH_OCTAVE_JUMP_COST, PITCH_VOICED_UNVOICED_COST
                 );
             }
             autoPointProcess pp = Sound_Pitch_to_PointProcess_cc(sound.get(), pitch.get());
