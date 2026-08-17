@@ -138,11 +138,14 @@ public:
         // For safety, don't destroy - let R's garbage collector handle it
     }
 
-    // Clear the pool (destroy all Sounds)
+    // Clear the pool (destroy all unused Sounds; in-use entries are left for
+    // the holder to release -- forgetting them here would use-after-free any
+    // XPtr an R caller still holds from sound_pool_acquire()).
     void clear() {
         std::lock_guard<std::mutex> lock(pool_mutex);
 
         for (auto& entry : pool) {
+            if (entry.in_use) continue;
             if (entry.sound) {
                 try {
                     forget(entry.sound);
@@ -151,7 +154,10 @@ public:
                 }
             }
         }
-        pool.clear();
+        pool.erase(
+            std::remove_if(pool.begin(), pool.end(),
+                [](const PooledSound& e) { return !e.in_use; }),
+            pool.end());
         hits = 0;
         misses = 0;
     }
