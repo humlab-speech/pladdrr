@@ -1538,11 +1538,17 @@ XPtr<structSound> sound_mix(
     
     structSound* sound1 = get_ptr(xptr1, "Sound");
     structSound* sound2 = get_ptr(xptr2, "Sound");
-    
+
     try {
         // Sounds_convolve_same creates a sound of same duration by overlapping
         // For mixing, we want to add the waveforms with a balance factor
-        
+
+        // balance == -1.0 makes the (1 + balance) normalizer zero, producing
+        // Inf/NaN throughout the mix formula below.
+        if (balance == -1.0) {
+            Melder_throw(U"balance cannot be -1.0 (division by zero in (1 + balance) normalizer)");
+        }
+
         // Ensure sounds have same sampling frequency
         if (sound1->dx != sound2->dx) {
             Melder_throw(U"Sounds must have same sampling frequency to mix");

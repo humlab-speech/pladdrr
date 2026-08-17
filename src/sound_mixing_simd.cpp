@@ -111,11 +111,17 @@ XPtr<structSound> sound_mix_simd(
     structSound* sound2 = get_ptr(xptr2, "Sound");
     
     try {
+        // balance == -1.0 makes the (1 + balance) normalizer zero, producing
+        // Inf/NaN throughout the mix formula below.
+        if (balance == -1.0) {
+            Melder_throw(U"balance cannot be -1.0 (division by zero in (1 + balance) normalizer)");
+        }
+
         // Ensure sounds have same sampling frequency
         if (sound1->dx != sound2->dx) {
             Melder_throw(U"Sounds must have same sampling frequency to mix");
         }
-        
+
         // Create result with duration = max of the two
         double xmax = std::max(sound1->xmax, sound2->xmax);
         double xmin = std::min(sound1->xmin, sound2->xmin);
