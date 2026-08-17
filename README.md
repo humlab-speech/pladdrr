@@ -177,7 +177,7 @@ synthetic_vowel <- kg$to_sound()
 
 ### Object-Oriented Interface
 
-All Praat objects are R6 classes with methods that mirror Praat's native commands:
+All Praat objects are exposed to as R objects with methods that mirror Praat's native commands:
 
 ```r
 # Create Sound objects
