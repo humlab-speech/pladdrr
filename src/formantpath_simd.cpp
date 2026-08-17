@@ -25,6 +25,7 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <atomic>
 
 // ============================================================================
 // SIMD-accelerated FormantPath operations
@@ -648,14 +649,14 @@ double compute_all_transitions_simd(
 extern "C" {
 
 // Runtime SIMD enable/disable flag
-static bool g_formantpath_simd_enabled = true;
+static std::atomic<bool> g_formantpath_simd_enabled(true);
 
 bool should_use_simd_for_formantpath() {
-    return g_formantpath_simd_enabled;
+    return g_formantpath_simd_enabled.load(std::memory_order_relaxed);
 }
 
 void set_formantpath_simd_enabled(bool enabled) {
-    g_formantpath_simd_enabled = enabled;
+    g_formantpath_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 // Expose namespace functions

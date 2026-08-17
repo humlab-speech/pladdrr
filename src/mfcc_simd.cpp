@@ -25,6 +25,7 @@
 #include <Rcpp.h>
 #include <cmath>
 #include <algorithm>
+#include <atomic>
 
 // ============================================================================
 // Hz to Mel Conversion (SIMD)
@@ -394,21 +395,21 @@ void dct_simd(
 // Runtime Control
 // ============================================================================
 
-static bool g_mfcc_simd_enabled = true;
+static std::atomic<bool> g_mfcc_simd_enabled(true);
 
 extern "C" {
 
 void set_mfcc_simd_enabled(bool enabled) {
-    g_mfcc_simd_enabled = enabled;
+    g_mfcc_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 bool get_mfcc_simd_enabled() {
-    return g_mfcc_simd_enabled;
+    return g_mfcc_simd_enabled.load(std::memory_order_relaxed);
 }
 
 bool should_use_simd_for_mfcc() {
 #ifdef HAVE_XSIMD
-    return g_mfcc_simd_enabled;
+    return g_mfcc_simd_enabled.load(std::memory_order_relaxed);
 #else
     return false;
 #endif

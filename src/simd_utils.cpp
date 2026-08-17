@@ -12,14 +12,14 @@
 #include "simd_utils.h"
 
 // Global SIMD toggle — default ON
-bool g_simd_enabled = true;
+std::atomic<bool> g_simd_enabled(true);
 
 // [[Rcpp::export]]
 void set_global_simd_enabled(bool enabled) {
-    g_simd_enabled = enabled;
+    g_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 // [[Rcpp::export]]
 bool get_global_simd_enabled() {
-    return g_simd_enabled;
+    return g_simd_enabled.load(std::memory_order_relaxed);
 }

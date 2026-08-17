@@ -25,6 +25,7 @@
 #include <Rcpp.h>
 #include <cmath>
 #include <algorithm>
+#include <atomic>
 
 // ============================================================================
 // Vectorized Statistics Calculations
@@ -446,21 +447,21 @@ void process_frames_simd(
 // Runtime Control
 // ============================================================================
 
-static bool g_batch_queries_simd_enabled = true;
+static std::atomic<bool> g_batch_queries_simd_enabled(true);
 
 extern "C" {
 
 void set_batch_queries_simd_enabled(bool enabled) {
-    g_batch_queries_simd_enabled = enabled;
+    g_batch_queries_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 bool get_batch_queries_simd_enabled() {
-    return g_batch_queries_simd_enabled;
+    return g_batch_queries_simd_enabled.load(std::memory_order_relaxed);
 }
 
 bool should_use_simd_for_batch_queries() {
 #ifdef HAVE_XSIMD
-    return g_batch_queries_simd_enabled;
+    return g_batch_queries_simd_enabled.load(std::memory_order_relaxed);
 #else
     return false;
 #endif

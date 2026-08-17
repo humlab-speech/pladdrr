@@ -20,6 +20,7 @@
 #define SIMD_UTILS_H
 
 #include <string>
+#include <atomic>
 
 // ============================================================================
 // Global SIMD toggle — thread-safe, no R API calls
@@ -27,11 +28,11 @@
 // ============================================================================
 
 // Defined in simd_utils.cpp
-extern bool g_simd_enabled;
+extern std::atomic<bool> g_simd_enabled;
 
 inline bool use_simd() {
 #ifdef HAVE_XSIMD
-    return g_simd_enabled;
+    return g_simd_enabled.load(std::memory_order_relaxed);
 #else
     return false;
 #endif

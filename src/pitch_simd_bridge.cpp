@@ -25,6 +25,7 @@
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/fon/Sound.h"
 #include "simd_utils.h"
+#include <atomic>
 
 using namespace Rcpp;
 
@@ -166,20 +167,20 @@ extern "C" void NUMautocorrelation_frames_simd_bridge(
 }
 
 // Utility: Check if SIMD should be used
-// Uses global bool toggle — set from R .onLoad()
-static bool g_pitch_simd_enabled = true;
+// Uses global atomic toggle — set from R .onLoad()
+static std::atomic<bool> g_pitch_simd_enabled(true);
 
 void set_pitch_simd_enabled(bool enabled) {
-    g_pitch_simd_enabled = enabled;
+    g_pitch_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 bool get_pitch_simd_enabled() {
-    return g_pitch_simd_enabled;
+    return g_pitch_simd_enabled.load(std::memory_order_relaxed);
 }
 
 bool should_use_simd_for_pitch() {
 #ifdef HAVE_XSIMD
-    return g_pitch_simd_enabled;
+    return g_pitch_simd_enabled.load(std::memory_order_relaxed);
 #else
     return false;
 #endif

@@ -25,6 +25,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <atomic>
 
 namespace textgrid_simd {
 
@@ -33,7 +34,7 @@ namespace textgrid_simd {
 // ============================================================================
 
 // Global flag to enable/disable SIMD (controllable from R)
-static bool g_simd_enabled = true;
+static std::atomic<bool> g_simd_enabled(true);
 
 extern "C" {
 
@@ -43,7 +44,7 @@ extern "C" {
  * @param enabled true to enable SIMD, false for scalar fallback
  */
 void set_textgrid_simd_enabled(bool enabled) {
-    g_simd_enabled = enabled;
+    g_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
 /**
@@ -53,7 +54,7 @@ void set_textgrid_simd_enabled(bool enabled) {
  */
 bool should_use_simd_for_textgrid() {
 #ifdef HAVE_XSIMD
-    return g_simd_enabled;
+    return g_simd_enabled.load(std::memory_order_relaxed);
 #else
     return false;
 #endif
