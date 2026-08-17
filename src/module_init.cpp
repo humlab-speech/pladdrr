@@ -127,8 +127,10 @@ void register_module_entries(DllInfo* dll) {
     int n_mod = 0;
     while (ModuleEntries[n_mod].name != NULL) n_mod++;
 
-    // Allocate combined table (+1 for NULL sentinel)
-    std::vector<R_CallMethodDef> combined(n_call + n_mod + 1);
+    // Allocate combined table (+1 for NULL sentinel). Must be static:
+    // R_registerRoutines stores this pointer in dll->CallEntries and keeps
+    // reading it for the life of the DLL, past this function's return.
+    static std::vector<R_CallMethodDef> combined(n_call + n_mod + 1);
     for (int i = 0; i < n_call; i++) combined[i] = CallEntries[i];
     for (int i = 0; i < n_mod; i++) combined[n_call + i] = ModuleEntries[i];
     combined[n_call + n_mod] = {NULL, NULL, 0};
