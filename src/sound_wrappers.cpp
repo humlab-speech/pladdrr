@@ -141,11 +141,13 @@ XPtr<structSound> sound_create_from_values(
         sound->xmax = start_time + duration;
         sound->x1 = start_time + 0.5 * sound->dx;
         
-        // Copy values
+        // Copy values. NumericMatrix is column-major, so a row (channel) is not
+        // contiguous in memory -- memcpy would interleave channels. Copy element-wise.
         for (int ch = 1; ch <= n_channels; ch++) {
-            const double* src = &values(ch - 1, 0);
             double* dst = &sound->z[ch][1];
-            std::memcpy(dst, src, n_samples * sizeof(double));
+            for (int i = 0; i < n_samples; i++) {
+                dst[i] = values(ch - 1, i);
+            }
         }
         
         return create_xptr_from_auto<structSound>(sound);
