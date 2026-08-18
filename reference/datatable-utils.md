@@ -12,5 +12,5 @@ This is a documentation-only overview; see the individual functions
 ## Examples
 
 ``` r
-# See individual functions, e.g. ?dt_create
+# See individual functions in R/datatable-utils.R
 ```

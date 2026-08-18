@@ -127,12 +127,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 4.358571 4.481123 7.736786 4.533766 4.589152 164.7044    50
+#>              expr      min       lq    mean   median       uq      max neval
+#>  sound$to_pitch() 3.762073 4.126963 7.69009 4.159609 4.191684 181.3188    50
 print(simd_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 4.068361 4.444778 4.513351 4.502159 4.580509 5.212045    50
+#>  sound$to_pitch() 3.898908 4.137713 4.204668 4.190025 4.230305 5.201537    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -680,10 +680,10 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 
 | API | Use When |
 |----|----|
-| [`pitch_get_statistics_batch()`](https://humlab-speech.github.io/pladdrr/reference/pitch_get_statistics_batch.md) | \>10 intervals, multiple metrics |
-| [`intensity_get_statistics_batch()`](https://humlab-speech.github.io/pladdrr/reference/intensity_get_statistics_batch.md) | \>10 intervals, multiple metrics |
+| `pitch_get_statistics_batch()` | \>10 intervals, multiple metrics |
+| `intensity_get_statistics_batch()` | \>10 intervals, multiple metrics |
 | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) | AVQI, voice quality analysis |
-| [`pitch_get_adaptive_range()`](https://humlab-speech.github.io/pladdrr/reference/pitch_get_adaptive_range.md) | Two-pass pitch analysis |
+| `pitch_get_adaptive_range()` | Two-pass pitch analysis |
 | [`apply_window_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_window_xptr.md) | Custom windowing on large files |
 | [`apply_transform_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_transform_xptr.md) | Custom DSP on large files |
 

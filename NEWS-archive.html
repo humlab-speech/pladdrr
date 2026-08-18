@@ -466,7 +466,7 @@
 <div class="section level2">
 <h2 id="optimization">Optimization<a class="anchor" aria-label="anchor" href="#optimization"></a></h2>
 <ul><li>
-<code><a href="reference/two_pass_adaptive_pitch.html">two_pass_adaptive_pitch()</a></code> now uses <code><a href="reference/pitch_get_adaptive_range.html">pitch_get_adaptive_range()</a></code> for single C++ call instead of 2x <code><a href="reference/get_pitch_quantile_direct.html">get_pitch_quantile_direct()</a></code> + manual factor math</li>
+<code><a href="reference/two_pass_adaptive_pitch.html">two_pass_adaptive_pitch()</a></code> now uses <code>pitch_get_adaptive_range()</code> for single C++ call instead of 2x <code><a href="reference/get_pitch_quantile_direct.html">get_pitch_quantile_direct()</a></code> + manual factor math</li>
 </ul></div>
 </div>
 <div class="section level1">
@@ -2169,10 +2169,10 @@
 <h3 id="textgrid-reading---critical-fix">TextGrid Reading - Critical Fix<a class="anchor" aria-label="anchor" href="#textgrid-reading---critical-fix"></a></h3>
 <ul><li>
 <strong>Fixed segfault when reading TextGrid files (CRITICAL)</strong>
-<ul><li>Root cause: <code><a href="reference/praat_initialize.html">praat_initialize()</a></code> never called on package load</li>
+<ul><li>Root cause: <code>praat_initialize()</code> never called on package load</li>
 <li>Praat class registry uninitialized → null pointer in <code>Data_readFromTextFile()</code>
 </li>
-<li>Added <code><a href="reference/praat_initialize.html">praat_initialize()</a></code> call to <code>.onLoad()</code> in <code>R/zzz.R</code>
+<li>Added <code>praat_initialize()</code> call to <code>.onLoad()</code> in <code>R/zzz.R</code>
 </li>
 <li>Tested with 1.7KB and 1.2MB TextGrid files ✓</li>
 <li>Pharyngeal test now unblocked</li>
@@ -2251,10 +2251,10 @@
 <h3 id="textgrid-reading---critical-fix-1">TextGrid Reading - Critical Fix<a class="anchor" aria-label="anchor" href="#textgrid-reading---critical-fix-1"></a></h3>
 <ul><li>
 <strong>Fixed segfault when reading TextGrid files (CRITICAL)</strong>
-<ul><li>Root cause: <code><a href="reference/praat_initialize.html">praat_initialize()</a></code> was never called on package load</li>
+<ul><li>Root cause: <code>praat_initialize()</code> was never called on package load</li>
 <li>Praat class registry was uninitialized, causing null pointer dereference in <code>Data_readFromTextFile()</code>
 </li>
-<li>Fix: Added <code><a href="reference/praat_initialize.html">praat_initialize()</a></code> call to <code>.onLoad()</code> in <code>R/zzz.R</code>
+<li>Fix: Added <code>praat_initialize()</code> call to <code>.onLoad()</code> in <code>R/zzz.R</code>
 </li>
 <li>
 <strong>Impact</strong>: TextGrid reading now works correctly for all file formats</li>

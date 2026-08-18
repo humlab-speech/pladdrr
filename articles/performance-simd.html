@@ -249,12 +249,12 @@ runtime so you can A/B your own workload:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 4.358571 4.481123 7.736786 4.533766 4.589152 164.7044    50</span></span>
+<span><span class="co">#&gt;              expr      min       lq    mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.762073 4.126963 7.69009 4.159609 4.191684 181.3188    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
 <span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 4.068361 4.444778 4.513351 4.502159 4.580509 5.212045    50</span></span></code></pre></div>
+<span><span class="co">#&gt;  sound$to_pitch() 3.898908 4.137713 4.204668 4.190025 4.230305 5.201537    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
@@ -726,7 +726,7 @@ functions instead of repeated R method calls:</p>
 <span></span>
 <span><span class="co"># Single C++ call (1 boundary crossing); pitch_get_statistics_batch()</span></span>
 <span><span class="co"># is an internal function, accessed with the ::: operator</span></span>
-<span><span class="va">stats_matrix</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/pitch_get_statistics_batch.html">pitch_get_statistics_batch</a></span><span class="op">(</span></span>
+<span><span class="va">stats_matrix</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">pitch_get_statistics_batch</span><span class="op">(</span></span>
 <span>  <span class="va">pitch</span><span class="op">$</span><span class="va">.xptr</span>,</span>
 <span>  <span class="va">from_times</span>,</span>
 <span>  <span class="va">to_times</span>,</span>
@@ -737,7 +737,7 @@ functions instead of repeated R method calls:</p>
 <p>Similar functions exist for Intensity:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">intensity_stats</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/intensity_get_statistics_batch.html">intensity_get_statistics_batch</a></span><span class="op">(</span></span>
+<span><span class="va">intensity_stats</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">intensity_get_statistics_batch</span><span class="op">(</span></span>
 <span>  <span class="va">intensity</span><span class="op">$</span><span class="va">.xptr</span>,</span>
 <span>  <span class="va">from_times</span>,</span>
 <span>  <span class="va">to_times</span>,</span>
@@ -777,7 +777,7 @@ single call:</p>
 <span></span>
 <span><span class="co"># Get Q1, Q3, and adaptive range in one call</span></span>
 <span><span class="co"># pitch_get_adaptive_range() is an internal function, accessed with :::</span></span>
-<span><span class="va">adaptive</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/pitch_get_adaptive_range.html">pitch_get_adaptive_range</a></span><span class="op">(</span></span>
+<span><span class="va">adaptive</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">pitch_get_adaptive_range</span><span class="op">(</span></span>
 <span>  <span class="va">pitch</span><span class="op">$</span><span class="va">.xptr</span>,</span>
 <span>  from_time <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  to_time <span class="op">=</span> <span class="fl">0</span>,  <span class="co"># 0 = full duration</span></span>
@@ -838,11 +838,11 @@ instead of an R callback evaluated once per sample:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code><a href="../reference/pitch_get_statistics_batch.html">pitch_get_statistics_batch()</a></code></td>
+<td><code>pitch_get_statistics_batch()</code></td>
 <td>&gt;10 intervals, multiple metrics</td>
 </tr>
 <tr class="even">
-<td><code><a href="../reference/intensity_get_statistics_batch.html">intensity_get_statistics_batch()</a></code></td>
+<td><code>intensity_get_statistics_batch()</code></td>
 <td>&gt;10 intervals, multiple metrics</td>
 </tr>
 <tr class="odd">
@@ -850,7 +850,7 @@ instead of an R callback evaluated once per sample:</p>
 <td>AVQI, voice quality analysis</td>
 </tr>
 <tr class="even">
-<td><code><a href="../reference/pitch_get_adaptive_range.html">pitch_get_adaptive_range()</a></code></td>
+<td><code>pitch_get_adaptive_range()</code></td>
 <td>Two-pass pitch analysis</td>
 </tr>
 <tr class="odd">

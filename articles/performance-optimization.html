@@ -354,7 +354,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">max_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_maximum</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.012   0.001   0.007</span></span>
+<span><span class="co">#&gt;   0.012   0.000   0.006</span></span>
 <span><span class="co"># measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 2: Direct API</span></span>
@@ -363,7 +363,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pitch_stats_direct.html">get_pitch_stats_direct</a></span><span class="op">(</span><span class="va">pitch_ptr</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.010   0.000   0.004</span></span>
+<span><span class="co">#&gt;   0.009   0.001   0.004</span></span>
 <span><span class="co"># fewer crossings; measure on your own data</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -381,7 +381,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">pitches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sounds</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="va">s</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.227   0.007   0.111</span></span>
+<span><span class="co">#&gt;   0.208   0.009   0.105</span></span>
 <span><span class="co"># measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 3: Batch</span></span>
@@ -390,7 +390,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">pitches</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sound_to_pitch_batch.html">sound_to_pitch_batch</a></span><span class="op">(</span><span class="va">sounds</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.216   0.005   0.100</span></span>
+<span><span class="co">#&gt;   0.207   0.005   0.098</span></span>
 <span><span class="co"># scales with cores; measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 3: Parallel (2 cores)</span></span>
@@ -399,7 +399,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Processing 20 files using 2 cores (2 thread(s)/worker)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.090   0.114   0.403</span></span>
+<span><span class="co">#&gt;   0.100   0.090   0.384</span></span>
 <span><span class="co"># includes file I/O; measure on your own data</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -417,7 +417,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.012   0.001   0.012</span></span>
+<span><span class="co">#&gt;   0.013   0.000   0.013</span></span>
 <span><span class="co"># one R-&gt;C crossing per time point</span></span>
 <span></span>
 <span><span class="co"># Tier 3: Vectorized</span></span>
@@ -510,8 +510,8 @@ for a full run:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">benchmark_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   cores   time_sec   speedup</span></span>
-<span><span class="co">#&gt; 1     1 0.05605960 1.0000000</span></span>
-<span><span class="co">#&gt; 2     2 0.06914258 0.8107826</span></span>
+<span><span class="co">#&gt; 1     1 0.05338359 1.0000000</span></span>
+<span><span class="co">#&gt; 2     2 0.06198621 0.8612172</span></span>
 <span><span class="co"># Inspect the returned table to see where returns diminish on your machine</span></span></code></pre></div>
 </div>
 <div class="section level4">

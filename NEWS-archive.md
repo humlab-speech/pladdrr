@@ -806,9 +806,8 @@ production code affected):
 ## Optimization
 
 - [`two_pass_adaptive_pitch()`](https://humlab-speech.github.io/pladdrr/reference/two_pass_adaptive_pitch.md)
-  now uses
-  [`pitch_get_adaptive_range()`](https://humlab-speech.github.io/pladdrr/reference/pitch_get_adaptive_range.md)
-  for single C++ call instead of 2x
+  now uses `pitch_get_adaptive_range()` for single C++ call instead of
+  2x
   [`get_pitch_quantile_direct()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_quantile_direct.md) +
   manual factor math
 
@@ -2642,14 +2641,10 @@ analysis workflows**
 ### TextGrid Reading - Critical Fix
 
 - **Fixed segfault when reading TextGrid files (CRITICAL)**
-  - Root cause:
-    [`praat_initialize()`](https://humlab-speech.github.io/pladdrr/reference/praat_initialize.md)
-    never called on package load
+  - Root cause: `praat_initialize()` never called on package load
   - Praat class registry uninitialized → null pointer in
     `Data_readFromTextFile()`
-  - Added
-    [`praat_initialize()`](https://humlab-speech.github.io/pladdrr/reference/praat_initialize.md)
-    call to `.onLoad()` in `R/zzz.R`
+  - Added `praat_initialize()` call to `.onLoad()` in `R/zzz.R`
   - Tested with 1.7KB and 1.2MB TextGrid files ✓
   - Pharyngeal test now unblocked
 
@@ -2710,14 +2705,10 @@ analysis workflows**
 ### TextGrid Reading - Critical Fix
 
 - **Fixed segfault when reading TextGrid files (CRITICAL)**
-  - Root cause:
-    [`praat_initialize()`](https://humlab-speech.github.io/pladdrr/reference/praat_initialize.md)
-    was never called on package load
+  - Root cause: `praat_initialize()` was never called on package load
   - Praat class registry was uninitialized, causing null pointer
     dereference in `Data_readFromTextFile()`
-  - Fix: Added
-    [`praat_initialize()`](https://humlab-speech.github.io/pladdrr/reference/praat_initialize.md)
-    call to `.onLoad()` in `R/zzz.R`
+  - Fix: Added `praat_initialize()` call to `.onLoad()` in `R/zzz.R`
   - **Impact**: TextGrid reading now works correctly for all file
     formats
   - Tested with 1.7KB and 1.2MB TextGrid files
