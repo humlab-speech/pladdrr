@@ -98,15 +98,6 @@ NULL
   switch(tolower(unit), "energy" = 1L, "sones" = 2L, "db" = 0L, 1L)
 }
 
-.ltas_interpolation_code <- function(method) {
-  switch(tolower(method),
-    "nearest" = 0, "linear" = 1, "cubic" = 2, "sinc70" = 3, "sinc700" = 4, 2)
-}
-
-.ltas_peak_interpolation_code <- function(method) {
-  switch(tolower(method),
-    "none" = 0, "parabolic" = 1, "cubic" = 2, "sinc70" = 3, "sinc700" = 4, 1)
-}
 
 # ============================================================================
 # Shared Method Dispatch Table
@@ -135,10 +126,10 @@ NULL
   .self$.cpp$get_value_at_bin(as.integer(bin))
 }
 .ltas_methods$get_minimum <- function(.self, fmin = 0, fmax = 0, unit = "dB", interpolation = "parabolic") {
-  .self$.cpp$get_minimum(fmin, fmax, .ltas_peak_interpolation_code(interpolation))
+  .self$.cpp$get_minimum(fmin, fmax, .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_maximum <- function(.self, fmin = 0, fmax = 0, unit = "dB", interpolation = "parabolic") {
-  .self$.cpp$get_maximum(fmin, fmax, .ltas_peak_interpolation_code(interpolation))
+  .self$.cpp$get_maximum(fmin, fmax, .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_mean <- function(.self, fmin = 0, fmax = 0, unit = "dB") {
   .self$.cpp$get_mean(fmin, fmax, .ltas_unit_code(unit))
@@ -158,24 +149,24 @@ NULL
 # --- Batch ---
 .ltas_methods$get_peaks_batch <- function(.self, fmins, fmaxs, interpolation = "parabolic") {
   .self$.cpp$get_peaks_batch(as.numeric(fmins), as.numeric(fmaxs),
-                             .ltas_peak_interpolation_code(interpolation))
+                             .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_minima_batch <- function(.self, fmins, fmaxs, interpolation = "parabolic") {
   .self$.cpp$get_minima_batch(as.numeric(fmins), as.numeric(fmaxs),
-                              .ltas_peak_interpolation_code(interpolation))
+                              .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_values_at_frequencies <- function(.self, frequencies, interpolation = "cubic") {
   .self$.cpp$get_values_at_frequencies(as.numeric(frequencies),
-                                       .ltas_interpolation_code(interpolation))
+                                       .praat_interpolation_code(interpolation))
 }
 .ltas_methods$get_means_batch <- function(.self, fmins, fmaxs, unit = "dB") {
   .self$.cpp$get_means_batch(as.numeric(fmins), as.numeric(fmaxs), .ltas_unit_code(unit))
 }
 .ltas_methods$get_frequency_of_maximum <- function(.self, fmin = 0, fmax = 0, interpolation = "parabolic") {
-  .self$.cpp$get_frequency_of_maximum(fmin, fmax, .ltas_peak_interpolation_code(interpolation))
+  .self$.cpp$get_frequency_of_maximum(fmin, fmax, .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_frequency_of_minimum <- function(.self, fmin = 0, fmax = 0, interpolation = "parabolic") {
-  .self$.cpp$get_frequency_of_minimum(fmin, fmax, .ltas_peak_interpolation_code(interpolation))
+  .self$.cpp$get_frequency_of_minimum(fmin, fmax, .praat_peak_interpolation_code(interpolation))
 }
 
 # --- Transform ---
@@ -276,6 +267,7 @@ Ltas <- function(.xptr = NULL) {
 #' @export
 print.Ltas <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

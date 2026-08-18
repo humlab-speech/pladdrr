@@ -508,3 +508,22 @@ validate_intensity_object <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+# ==============================================================================
+# Shared Praat interpolation-method code lookups
+# ==============================================================================
+# Praat's curve-interpolation and peak-picking methods share the same integer
+# codes everywhere they're used (Sound, Harmonicity, Intensity, Ltas); these
+# were previously copy-pasted per wrapper file with an inconsistent default.
+
+.praat_interpolation_code <- function(method, default = 2L) {
+  switch(tolower(method),
+    "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
+    "sinc70" = 3L, "sinc700" = 4L, as.integer(default))
+}
+
+.praat_peak_interpolation_code <- function(method, default = 1L) {
+  switch(tolower(method),
+    "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
+    "sinc70" = 3L, "sinc700" = 4L, as.integer(default))
+}

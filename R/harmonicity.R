@@ -69,17 +69,6 @@ NULL
 # Helpers
 # ============================================================================
 
-.harmonicity_interpolation_code <- function(method) {
-  switch(tolower(method),
-    "nearest" = 0, "linear" = 1, "cubic" = 2,
-    "sinc70" = 3, "sinc700" = 4, 2)
-}
-
-.harmonicity_peak_interpolation_code <- function(method) {
-  switch(tolower(method),
-    "none" = 0, "parabolic" = 1, "cubic" = 2,
-    "sinc70" = 3, "sinc700" = 4, 1)
-}
 
 # ============================================================================
 # Shared Method Dispatch Table
@@ -89,25 +78,25 @@ NULL
 
 # --- Query ---
 .harmonicity_methods$get_value_at_time <- function(.self, time, interpolation = "cubic") {
-  .self$.cpp$get_value_at_time(time, .harmonicity_interpolation_code(interpolation))
+  .self$.cpp$get_value_at_time(time, .praat_interpolation_code(interpolation))
 }
 .harmonicity_methods$get_mean <- function(.self, from_time = 0, to_time = 0) {
   .self$.cpp$get_mean(from_time, to_time)
 }
 .harmonicity_methods$get_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_minimum(from_time, to_time, .harmonicity_peak_interpolation_code(interpolation))
+  .self$.cpp$get_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .harmonicity_methods$get_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_maximum(from_time, to_time, .harmonicity_peak_interpolation_code(interpolation))
+  .self$.cpp$get_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .harmonicity_methods$get_standard_deviation <- function(.self, from_time = 0, to_time = 0) {
   .self$.cpp$get_standard_deviation(from_time, to_time)
 }
 .harmonicity_methods$get_time_of_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_minimum(from_time, to_time, .harmonicity_peak_interpolation_code(interpolation))
+  .self$.cpp$get_time_of_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .harmonicity_methods$get_time_of_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_maximum(from_time, to_time, .harmonicity_peak_interpolation_code(interpolation))
+  .self$.cpp$get_time_of_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 
 # --- Batch/Vectorized ---
@@ -118,7 +107,7 @@ NULL
 .harmonicity_methods$get_values_vector <- function(.self) .self$.cpp$get_values_vector()
 .harmonicity_methods$get_times_vector <- function(.self) .self$.cpp$get_times_vector()
 .harmonicity_methods$get_values_at_times <- function(.self, times, interpolation = "cubic") {
-  .self$.cpp$get_values_at_times(as.numeric(times), .harmonicity_interpolation_code(interpolation))
+  .self$.cpp$get_values_at_times(as.numeric(times), .praat_interpolation_code(interpolation))
 }
 
 # --- Time domain ---
@@ -188,6 +177,7 @@ Harmonicity <- function(.xptr = NULL) {
 #' @export
 print.Harmonicity <- function(x, ...) {
   x$print(...)
+  invisible(x)
 }
 
 #' @export

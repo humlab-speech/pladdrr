@@ -139,18 +139,6 @@ NULL
 .sound_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Helpers (package-level, not per-instance) ---
-.interp_code <- function(interpolation) {
-  switch(tolower(interpolation),
-    "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
-    "sinc70" = 3L, "sinc700" = 4L, 1L)
-}
-
-.peak_interp_code <- function(interpolation) {
-  switch(tolower(interpolation),
-    "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
-    "sinc70" = 3L, "sinc700" = 4L, 1L)
-}
-
 .window_shape_code <- function(window_shape) {
   switch(tolower(window_shape),
     "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
@@ -197,11 +185,11 @@ NULL
 .sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()
 
 .sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
-  .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time), .peak_interp_code(interpolation))
+  .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time), .praat_peak_interpolation_code(interpolation))
 }
 
 .sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
-  .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time), .peak_interp_code(interpolation))
+  .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time), .praat_peak_interpolation_code(interpolation))
 }
 
 .sound_methods$get_mean <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1) {
@@ -236,7 +224,7 @@ NULL
 
 # --- Batch/Vectorized Value Extraction ---
 .sound_methods$get_values_at_times <- function(.self, times, channel = 1, interpolation = "linear") {
-  .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel), .interp_code(interpolation))
+  .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel), .praat_interpolation_code(interpolation, default = 1L))
 }
 
 .sound_methods$get_values_in_range <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1) {
@@ -1148,4 +1136,7 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 class(Sound) <- c("sound_constructor", "function")
 
 #' @exportS3Method print Sound
-print.Sound <- function(x, ...) x$print()
+print.Sound <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

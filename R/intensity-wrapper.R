@@ -70,33 +70,23 @@ NULL
 .intensity_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Helpers
-.intensity_interp_code <- function(method) {
-  switch(tolower(method),
-    "nearest" = 0, "linear" = 1, "cubic" = 2,
-    "sinc70" = 3, "sinc700" = 4, 2)
-}
 .intensity_avg_code <- function(method) {
   switch(tolower(method),
     "energy" = 0, "sones" = 1, "db" = 2, 0)
 }
-.intensity_peak_interp_code <- function(interpolation) {
-  switch(tolower(interpolation),
-    "none" = 0, "parabolic" = 1, "cubic" = 2,
-    "sinc70" = 3, "sinc700" = 4, 1)
-}
 
 # --- Query ---
 .intensity_methods$get_value_at_time <- function(.self, time, interpolation = "cubic") {
-  .self$.cpp$get_value_at_time(time, .intensity_interp_code(interpolation))
+  .self$.cpp$get_value_at_time(time, .praat_interpolation_code(interpolation))
 }
 .intensity_methods$get_mean <- function(.self, from_time = 0, to_time = 0, averaging_method = "energy") {
   .self$.cpp$get_mean(from_time, to_time, .intensity_avg_code(averaging_method))
 }
 .intensity_methods$get_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_minimum(from_time, to_time, .intensity_peak_interp_code(interpolation))
+  .self$.cpp$get_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .intensity_methods$get_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_maximum(from_time, to_time, .intensity_peak_interp_code(interpolation))
+  .self$.cpp$get_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .intensity_methods$get_standard_deviation <- function(.self, from_time = 0, to_time = 0) {
   .self$.cpp$get_standard_deviation(from_time, to_time)
@@ -105,10 +95,10 @@ NULL
   .self$.cpp$get_quantile(from_time, to_time, quantile)
 }
 .intensity_methods$get_time_of_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_minimum(from_time, to_time, .intensity_peak_interp_code(interpolation))
+  .self$.cpp$get_time_of_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 .intensity_methods$get_time_of_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_maximum(from_time, to_time, .intensity_peak_interp_code(interpolation))
+  .self$.cpp$get_time_of_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
 }
 
 # --- Time domain ---
@@ -129,7 +119,7 @@ NULL
 
 # --- Batch ---
 .intensity_methods$get_values_at_times <- function(.self, times, interpolation = "cubic") {
-  .self$.cpp$get_values_at_times(as.numeric(times), .intensity_interp_code(interpolation))
+  .self$.cpp$get_values_at_times(as.numeric(times), .praat_interpolation_code(interpolation))
 }
 .intensity_methods$get_times_vector <- function(.self) .self$.cpp$get_times_vector()
 .intensity_methods$get_values_vector <- function(.self) .self$.cpp$get_values_vector()
@@ -205,7 +195,10 @@ Intensity <- function(.xptr = NULL) {
 }
 
 #' @export
-print.Intensity <- function(x, ...) x$print(...)
+print.Intensity <- function(x, ...) {
+  x$print(...)
+  invisible(x)
+}
 
 #' @export
 as.data.frame.Intensity <- function(x, ...) x$as_data_frame()
