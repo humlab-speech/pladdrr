@@ -77,3 +77,9 @@ A data.frame. Column names vary by class; see each class's
 as flat data frames (long format for 2-D matrix-like objects, one row per
 sample/point/frame for 1-D tiers and tracks).
 }
+\examples{
+sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+cepstrum <- sound$to_cepstrum()
+df <- as.data.frame(cepstrum)
+head(df)
+}

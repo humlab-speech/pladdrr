@@ -341,6 +341,7 @@ PitchTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
 #' loaded <- pladdrr:::pitchtier_from_file(tmp)
 #' unlink(tmp)
 #' @keywords internal
+#' @noRd
 pitchtier_from_file <- function(path) {
   ptr <- .pitchtier_read(as.character(path))
   PitchTier(.xptr = ptr)

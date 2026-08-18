@@ -25,6 +25,7 @@ NULL
 #' @examples
 #' df <- data.frame(x = 1:3, y = c("a", "b", "c"))
 #' pladdrr:::ensure_datatable(df)
+#' @noRd
 ensure_datatable <- function(df) {
   if (!data.table::is.data.table(df)) {
     data.table::setDT(df)
@@ -42,6 +43,7 @@ ensure_datatable <- function(df) {
 #' @examples
 #' df <- data.frame(x = 1:3, y = c("a", "b", "c"))
 #' pladdrr:::df_to_dt(df)
+#' @noRd
 df_to_dt <- function(df) {
   data.table::as.data.table(df)
 }
@@ -58,6 +60,7 @@ df_to_dt <- function(df) {
 #' # Before: results <- data.frame(time=numeric(), value=numeric())
 #' # After:  results <- pladdrr:::dt_empty(time=numeric(), value=numeric())
 #' results <- pladdrr:::dt_empty(time=numeric(), formant=integer(), frequency=numeric())
+#' @noRd
 dt_empty <- function(...) {
   data.table::data.table(...)
 }
@@ -75,6 +78,7 @@ dt_empty <- function(...) {
 #' results_list <- vector("list", 5)
 #' for (i in 1:5) results_list[[i]] <- list(x = i, y = i^2)
 #' results <- pladdrr:::dt_rbindlist(results_list)
+#' @noRd
 dt_rbindlist <- function(l, fill = TRUE) {
   data.table::rbindlist(l, fill = fill)
 }
@@ -91,6 +95,7 @@ dt_rbindlist <- function(l, fill = TRUE) {
 #' @examples
 #' dt <- data.table::data.table(time = 1:100, formant = rep(1:4, 25), freq = rnorm(100))
 #' pladdrr:::dt_setkey(dt, time, formant)  # sorted/indexed lookups on time+formant
+#' @noRd
 dt_setkey <- function(dt, ...) {
   data.table::setkeyv(dt, as.character(substitute(list(...)))[-1L])
   invisible(dt)
@@ -111,6 +116,7 @@ dt_setkey <- function(dt, ...) {
 #' @examples
 #' dt <- data.table::data.table(x = 1:3)
 #' pladdrr:::.finalize_dataframe(dt)
+#' @noRd
 .finalize_dataframe <- function(dt) {
   # Check if user explicitly wants data.frame (deprecated)
   if (isFALSE(getOption("pladdrr.return_datatable", default = TRUE))) {
@@ -141,6 +147,7 @@ dt_setkey <- function(dt, ...) {
 #' @keywords internal
 #' @examples
 #' pladdrr:::dt_create(time = 1:3, value = c(1.1, 2.2, 3.3), key = "time")
+#' @noRd
 dt_create <- function(..., key = NULL) {
   dt <- data.table::data.table(...)
   

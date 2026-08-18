@@ -13,6 +13,7 @@
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 8000)
 #' pladdrr:::extract_xptr(sound, "Sound")
+#' @noRd
 extract_xptr <- function(obj, class_name) {
   if (inherits(obj, class_name)) {
     # Try function-wrapper style first (.xptr field)
@@ -63,6 +64,7 @@ extract_xptr <- function(obj, class_name) {
 #' @examples
 #' pladdrr:::unit_to_code("semitones", type = "pitch")
 #' pladdrr:::unit_to_code("bark", type = "formant")
+#' @noRd
 unit_to_code <- function(unit, type = "pitch") {
   unit <- tolower(unit)
   
@@ -110,6 +112,7 @@ unit_to_code <- function(unit, type = "pitch") {
 #' @examples
 #' pladdrr:::interpolation_to_code("cubic")
 #' pladdrr:::interpolation_to_code("linear")
+#' @noRd
 interpolation_to_code <- function(interpolation) {
   switch(tolower(interpolation),
     nearest = 0L,

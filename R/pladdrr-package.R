@@ -122,6 +122,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 # .finalize_dataframe(), already defaults the option to TRUE.
 
 #' @keywords internal
+#' @noRd
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
     "pladdrr: direct access to Praat's core algorithms from R.\n",

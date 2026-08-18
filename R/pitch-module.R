@@ -8,6 +8,7 @@
 .pitch_module_env <- new.env(parent = emptyenv())
 
 #' @keywords internal
+#' @noRd
 .load_pitch_module <- function() {
   if (is.null(.pitch_module_env$module)) {
     .pitch_module_env$module <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
@@ -21,6 +22,7 @@
 #' @keywords internal
 #' @examples
 #' mod <- pladdrr:::get_pitch_module()
+#' @noRd
 get_pitch_module <- function() {
   .load_pitch_module()
 }
@@ -36,6 +38,7 @@ get_pitch_module <- function() {
 #' pladdrr:::pitch_unit_code("hertz")
 #' pladdrr:::pitch_unit_code("semitones")
 #' @keywords internal
+#' @noRd
 pitch_unit_code <- function(unit) {
   switch(tolower(unit),
     "hertz" = 0L,
@@ -309,6 +312,7 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 #' @examples
 #' pladdrr:::pitch_modules_available()
 #' @keywords internal
+#' @noRd
 pitch_modules_available <- function() {
   tryCatch({
     mod <- get_pitch_module()

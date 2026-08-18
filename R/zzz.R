@@ -8,6 +8,7 @@
 #' @param name Module name (e.g., "pitch_module")
 #' @return The loaded Rcpp Module
 #' @keywords internal
+#' @noRd
 get_module <- function(name) {
   if (!exists(name, envir = .module_cache)) {
     .module_cache[[name]] <- tryCatch(

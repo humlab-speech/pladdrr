@@ -134,6 +134,7 @@ extract_formants <- function(sound,
 #' pladdrr:::.detect_formants_burg(signal, sr = 16000, time_step = 0.05,
 #'                                  max_formant = 5500, n_formants = 4,
 #'                                  window_length = 0.025, pre_emphasis_from = 50)
+#' @noRd
 .detect_formants_burg <- function(signal, sr, time_step, max_formant,
                                   n_formants, window_length, pre_emphasis_from) {
   
@@ -233,6 +234,7 @@ extract_formants <- function(sound,
 #' frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd = 0.01)
 #' pladdrr:::.lpc_to_formants(frame, sr = 16000, lpc_order = 12,
 #'                             n_formants = 4, max_formant = 5500)
+#' @noRd
 .lpc_to_formants <- function(frame, sr, lpc_order, n_formants, max_formant) {
   
   # Burg's method for LPC estimation
@@ -302,6 +304,7 @@ extract_formants <- function(sound,
 #' set.seed(1)
 #' x <- sin(2 * pi * 5 * seq(0, 1, length.out = 100)) + rnorm(100, sd = 0.01)
 #' pladdrr:::.burg_algorithm(x, order = 8)
+#' @noRd
 .burg_algorithm <- function(x, order) {
   
   n <- length(x)

@@ -43,6 +43,7 @@
 #' )
 #' conditionMessage(cond)
 #' @keywords internal
+#' @noRd
 pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
   structure(
     class = c(klass, "pladdrr_error", "error", "condition"),
@@ -59,6 +60,7 @@ pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-
 #' )
 #' conditionMessage(cond)
 #' @keywords internal
+#' @noRd
 pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
   structure(
     class = c(klass, "pladdrr_warning", "warning", "condition"),
