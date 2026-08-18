@@ -274,4 +274,7 @@ KlattGrid_createExample <- function() {
 # ============================================================================
 
 #' @export
-print.KlattGrid <- function(x, ...) x$print()
+print.KlattGrid <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

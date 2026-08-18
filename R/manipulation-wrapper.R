@@ -131,4 +131,7 @@ Manipulation <- function(.xptr) {
 }
 
 #' @export
-print.Manipulation <- function(x, ...) x$print()
+print.Manipulation <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

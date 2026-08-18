@@ -157,4 +157,7 @@ FormantModeler <- function(.xptr = NULL) {
 }
 
 #' @export
-print.FormantModeler <- function(x, ...) x$print()
+print.FormantModeler <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

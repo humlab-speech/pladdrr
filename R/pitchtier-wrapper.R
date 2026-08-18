@@ -367,6 +367,7 @@ class(PitchTier) <- c("pitchtier_constructor", "function")
 #' @export
 print.PitchTier <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

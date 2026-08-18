@@ -120,7 +120,10 @@ IntensityTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
 # ============================================================================
 
 #' @export
-print.IntensityTier <- function(x, ...) x$print()
+print.IntensityTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' @export
 as.data.frame.IntensityTier <- function(x, ...) x$as_data_frame()

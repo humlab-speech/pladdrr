@@ -210,7 +210,10 @@ DTW <- function(.xptr = NULL) {
 }
 
 #' @export
-print.DTW <- function(x, ...) x$print()
+print.DTW <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 # ============================================================================
 # Factory Functions

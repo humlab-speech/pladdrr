@@ -391,6 +391,9 @@ PointProcess <- function(.xptr = NULL) {
 }
 
 #' @export
-print.PointProcess <- function(x, ...) x$print()
+print.PointProcess <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 # Note: Old factory/helper functions below preserved

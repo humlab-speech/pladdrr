@@ -141,7 +141,10 @@ PCA <- function(.xptr = NULL) {
 }
 
 #' @export
-print.PCA <- function(x, ...) x$print()
+print.PCA <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' Create PCA from data matrix
 #'

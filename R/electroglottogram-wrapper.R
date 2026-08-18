@@ -164,7 +164,10 @@ Electroglottogram <- function(.xptr = NULL) {
 }
 
 #' @export
-print.Electroglottogram <- function(x, ...) x$print()
+print.Electroglottogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' Create an Electroglottogram object
 #'

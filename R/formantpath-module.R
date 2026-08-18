@@ -193,7 +193,10 @@ FormantPath <- function(sound,
 }
 
 #' @export
-print.FormantPath <- function(x, ...) x$print()
+print.FormantPath <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' @export
 as.data.frame.FormantPath <- function(x, row.names = NULL, optional = FALSE,

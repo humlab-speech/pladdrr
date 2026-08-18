@@ -187,7 +187,10 @@ AmplitudeTier <- function(.xptr = NULL) {
 # ============================================================================
 
 #' @export
-print.AmplitudeTier <- function(x, ...) x$print()
+print.AmplitudeTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' @export
 as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()

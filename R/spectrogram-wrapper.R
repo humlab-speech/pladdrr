@@ -197,6 +197,7 @@ Spectrogram <- function(.xptr = NULL) {
 #' @export
 print.Spectrogram <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

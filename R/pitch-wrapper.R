@@ -318,6 +318,7 @@ Pitch <- function(.xptr = NULL) {
 #' @export
 print.Pitch <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

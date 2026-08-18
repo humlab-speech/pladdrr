@@ -149,4 +149,7 @@ Cochleagram <- function(.xptr) {
 }
 
 #' @export
-print.Cochleagram <- function(x, ...) x$print()
+print.Cochleagram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

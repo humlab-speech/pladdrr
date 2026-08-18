@@ -188,6 +188,7 @@ class(FormantTier) <- c("formanttier_constructor", "function")
 #' @export
 print.FormantTier <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

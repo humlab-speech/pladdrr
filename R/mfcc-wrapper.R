@@ -195,6 +195,7 @@ MFCC <- function(.xptr = NULL) {
 #' @export
 print.MFCC <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 # ============================================================================
@@ -330,4 +331,5 @@ LFCC <- function(.xptr = NULL) {
 #' @export
 print.LFCC <- function(x, ...) {
   x$print()
+  invisible(x)
 }

@@ -94,4 +94,7 @@ Cepstrum <- function(.xptr) {
 }
 
 #' @export
-print.Cepstrum <- function(x, ...) x$print()
+print.Cepstrum <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

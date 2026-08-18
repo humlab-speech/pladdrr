@@ -122,7 +122,10 @@ Excitation <- function(.xptr) {
 }
 
 #' @export
-print.Excitation <- function(x, ...) x$print()
+print.Excitation <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' @export
 as.data.frame.Excitation <- function(x, ...) x$as_data_frame()

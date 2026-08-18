@@ -209,4 +209,5 @@ LPC <- function(.xptr = NULL) {
 #' @export
 print.LPC <- function(x, ...) {
   x$print()
+  invisible(x)
 }

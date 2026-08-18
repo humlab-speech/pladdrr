@@ -300,4 +300,7 @@ class(LongSound) <- c("longsound_constructor", "function")
 # ============================================================================
 
 #' @export
-print.LongSound <- function(x, ...) x$print()
+print.LongSound <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

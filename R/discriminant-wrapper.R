@@ -155,7 +155,10 @@ Discriminant <- function(.xptr = NULL) {
 }
 
 #' @export
-print.Discriminant <- function(x, ...) x$print()
+print.Discriminant <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' Create Discriminant Analysis from labeled data
 #'

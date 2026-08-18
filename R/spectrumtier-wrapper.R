@@ -124,6 +124,7 @@ SpectrumTier <- function(.xptr = NULL) {
 #' @export
 print.SpectrumTier <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

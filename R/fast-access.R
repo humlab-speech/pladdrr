@@ -176,4 +176,5 @@ is_zerocopy_vector <- function(x) {
 #' @export
 print.zerocopy_vector <- function(x, ...) {
   print.fast_vector(x, ...)
+  invisible(x)
 }

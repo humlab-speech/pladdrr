@@ -431,7 +431,10 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 }
 
 #' @export
-print.TextGrid <- function(x, ...) x$print()
+print.TextGrid <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 # ============================================================================
 # Factory function

@@ -132,7 +132,10 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
 }
 
 #' @export
-print.Matrix <- function(x, ...) x$print()
+print.Matrix <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 #' @export
 as.matrix.Matrix <- function(x, ...) x$as_matrix()

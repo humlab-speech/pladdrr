@@ -154,6 +154,7 @@ Polygon <- function(x, y, .xptr = NULL) {
 #' @export
 print.Polygon <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export

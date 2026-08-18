@@ -242,7 +242,10 @@ PowerCepstrum <- function(.xptr = NULL) {
 }
 
 #' @export
-print.PowerCepstrum <- function(x, ...) x$print()
+print.PowerCepstrum <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
 
 
 # ============================================================================
@@ -407,4 +410,7 @@ PowerCepstrogram <- function(.xptr = NULL) {
 }
 
 #' @export
-print.PowerCepstrogram <- function(x, ...) x$print()
+print.PowerCepstrogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

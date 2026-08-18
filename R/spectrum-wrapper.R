@@ -285,6 +285,7 @@ Spectrum <- function(.xptr = NULL) {
 #' @export
 print.Spectrum <- function(x, ...) {
   x$print()
+  invisible(x)
 }
 
 #' @export
