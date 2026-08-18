@@ -138,74 +138,6 @@ Rcpp::XPtr<structLPC> sound_to_lpc_marple(
 // LPC Query Methods
 // ============================================================================
 
-// [[Rcpp::export(.lpc_get_number_of_frames)]]
-int lpc_get_number_of_frames(Rcpp::XPtr<structLPC> lpc) {
-    return lpc->nx;
-}
-
-// [[Rcpp::export(.lpc_get_time_step)]]
-double lpc_get_time_step(Rcpp::XPtr<structLPC> lpc) {
-    return lpc->dx;
-}
-
-// [[Rcpp::export(.lpc_get_sampling_period)]]
-double lpc_get_sampling_period(Rcpp::XPtr<structLPC> lpc) {
-    return lpc->samplingPeriod;
-}
-
-// [[Rcpp::export(.lpc_get_max_num_coefficients)]]
-int lpc_get_max_num_coefficients(Rcpp::XPtr<structLPC> lpc) {
-    return lpc->maxnCoefficients;
-}
-
-// [[Rcpp::export(.lpc_get_gain_at_frame)]]
-double lpc_get_gain_at_frame(Rcpp::XPtr<structLPC> lpc, int frame_number) {
-    if (frame_number < 1 || frame_number > lpc->nx) {
-        Rcpp::stop("Frame number out of range");
-    }
-    return lpc->d_frames[frame_number].gain;
-}
-
-// [[Rcpp::export(.lpc_get_coefficients_at_frame)]]
-Rcpp::NumericVector lpc_get_coefficients_at_frame(Rcpp::XPtr<structLPC> lpc, int frame_number) {
-    if (frame_number < 1 || frame_number > lpc->nx) {
-        Rcpp::stop("Frame number out of range");
-    }
-    
-    LPC_Frame frame = &lpc->d_frames[frame_number];
-    integer n = frame->nCoefficients;
-    
-    Rcpp::NumericVector result(n);
-    for (integer i = 1; i <= n; i++) {
-        result[i-1] = frame->a[i];
-    }
-    
-    return result;
-}
-
-// [[Rcpp::export(.lpc_get_all_gains)]]
-Rcpp::NumericVector lpc_get_all_gains(Rcpp::XPtr<structLPC> lpc) {
-    Rcpp::NumericVector result(lpc->nx);
-    for (integer i = 1; i <= lpc->nx; i++) {
-        result[i-1] = lpc->d_frames[i].gain;
-    }
-    return result;
-}
-
-// [[Rcpp::export(.lpc_get_all_coefficients)]]
-Rcpp::NumericMatrix lpc_get_all_coefficients(Rcpp::XPtr<structLPC> lpc) {
-    Rcpp::NumericMatrix result(lpc->maxnCoefficients, lpc->nx);
-    
-    for (integer iframe = 1; iframe <= lpc->nx; iframe++) {
-        LPC_Frame frame = &lpc->d_frames[iframe];
-        for (integer icoef = 1; icoef <= frame->nCoefficients; icoef++) {
-            result(icoef-1, iframe-1) = frame->a[icoef];
-        }
-    }
-    
-    return result;
-}
-
 // ============================================================================
 // LPC Conversion Methods
 // ============================================================================
@@ -353,43 +285,6 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time(
     } catch (MelderError) {
         Melder_clearError();
         Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
-    }
-}
-
-//' Helper wrapper for R6: LPC inverse filtering at time from R6 objects
-//' @param lpc_xptr External pointer to LPC object
-//' @param sound_r6 R6 Sound object
-//' @param channel Channel number
-//' @param time Time point (seconds)
-//' @return External pointer to new Sound object containing the voice source
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.lpc_sound_filter_inverse_at_time_r6)]]
-Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time_r6(
-    Rcpp::XPtr<structLPC> lpc_xptr,
-    Rcpp::S4 sound_r6,
-    int channel,
-    double time
-) {
-    try {
-        // Extract the external pointer from the R6 object
-        Rcpp::Environment env(sound_r6);
-        Rcpp::Environment private_env = env.get(".__enclos_env__");
-        private_env = private_env.get("private");
-        Rcpp::XPtr<structSound> sound_xptr(private_env.get("ptr"));
-        
-        autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
-            lpc_xptr.get(),
-            sound_xptr.get(),
-            static_cast<integer>(channel),
-            time
-        );
-        return create_xptr_from_auto<structSound>(source);
-    } catch (MelderError) {
-        Melder_clearError();
-        Rcpp::stop("Failed to perform LPC inverse filtering at specified time");
-    } catch (...) {
-        Rcpp::stop("Failed to extract Sound pointer from R6 object");
     }
 }
 

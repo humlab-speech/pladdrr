@@ -56,35 +56,6 @@ static void ensure_numeric_libs_initialized() {
 // Creation methods
 // ============================================================================
 
-// [[Rcpp::export(.formant_from_sound_burg)]]
-XPtr<structFormant> formant_from_sound_burg(
-    XPtr<structSound> sound,
-    double time_step,
-    double max_number_of_formants,
-    double maximum_formant,
-    double window_length,
-    double pre_emphasis_from
-) {
-    if (!sound) Rcpp::stop("Invalid Sound pointer");
-    // Ensure NUMfpp and RNG are initialized before formant analysis
-    ensure_numeric_libs_initialized();
-    
-    try {
-        autoFormant formant = Sound_to_Formant_burg(
-            sound.get(),
-            time_step,
-            max_number_of_formants,
-            maximum_formant,
-            window_length,
-            pre_emphasis_from
-        );
-        return create_xptr_from_auto<structFormant>(formant);
-    } catch (MelderError) {
-        Melder_clearError();
-        Rcpp::stop("Failed to extract formants using Burg's algorithm");
-    }
-}
-
 // [[Rcpp::export(.formant_from_sound_keepall)]]
 XPtr<structFormant> formant_from_sound_keepall(
     XPtr<structSound> sound,

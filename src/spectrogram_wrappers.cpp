@@ -137,19 +137,6 @@ double spectrogram_get_power_at(XPtr<structSpectrogram> spectrogram, double time
 // TRANSFORMATION METHODS
 // ============================================================================
 
-// [[Rcpp::export(.spectrogram_to_spectrum)]]
-SEXP spectrogram_to_spectrum(XPtr<structSpectrogram> spectrogram, double time) {
-    if (!spectrogram) stop("Invalid Spectrogram pointer");
-    
-    try {
-        autoSpectrum spectrum = Spectrogram_to_Spectrum(spectrogram.get(), time);
-        return create_xptr_from_auto<structSpectrum>(spectrum);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to create spectrum");
-    }
-}
-
 // ============================================================================
 // EXPORT METHODS
 // ============================================================================

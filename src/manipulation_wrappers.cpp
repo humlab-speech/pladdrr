@@ -57,18 +57,6 @@ SEXP manipulation_from_sound(XPtr<structSound> sound, double time_step,
 // QUERY METHODS
 // ============================================================================
 
-// [[Rcpp::export(.manipulation_get_start_time)]]
-double manipulation_get_start_time(XPtr<structManipulation> manip) {
-    if (!manip) stop("Invalid Manipulation pointer");
-    return manip->xmin;
-}
-
-// [[Rcpp::export(.manipulation_get_end_time)]]
-double manipulation_get_end_time(XPtr<structManipulation> manip) {
-    if (!manip) stop("Invalid Manipulation pointer");
-    return manip->xmax;
-}
-
 // ============================================================================
 // EXTRACT TIERS
 // ============================================================================
@@ -140,38 +128,6 @@ SEXP manipulation_extract_original_sound(XPtr<structManipulation> manip) {
 // ============================================================================
 // REPLACE TIERS
 // ============================================================================
-
-// [[Rcpp::export(.manipulation_replace_pitch_tier)]]
-void manipulation_replace_pitch_tier(XPtr<structManipulation> manip, 
-                                      XPtr<structPitchTier> pitch_tier) {
-    if (!manip) stop("Invalid Manipulation pointer");
-    if (!pitch_tier) stop("Invalid PitchTier pointer");
-    
-    try {
-        // Make a copy of the pitch tier and replace
-        autoPitchTier tier_copy = Data_copy(pitch_tier.get());
-        manip->pitch = tier_copy.move();
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to replace PitchTier");
-    }
-}
-
-// [[Rcpp::export(.manipulation_replace_duration_tier)]]
-void manipulation_replace_duration_tier(XPtr<structManipulation> manip,
-                                         XPtr<structDurationTier> duration_tier) {
-    if (!manip) stop("Invalid Manipulation pointer");
-    if (!duration_tier) stop("Invalid DurationTier pointer");
-    
-    try {
-        // Make a copy of the duration tier and replace
-        autoDurationTier tier_copy = Data_copy(duration_tier.get());
-        manip->duration = tier_copy.move();
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to replace DurationTier");
-    }
-}
 
 // ============================================================================
 // SYNTHESIS METHODS

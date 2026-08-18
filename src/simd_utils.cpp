@@ -19,7 +19,3 @@ void set_global_simd_enabled(bool enabled) {
     g_simd_enabled.store(enabled, std::memory_order_relaxed);
 }
 
-// [[Rcpp::export]]
-bool get_global_simd_enabled() {
-    return g_simd_enabled.load(std::memory_order_relaxed);
-}

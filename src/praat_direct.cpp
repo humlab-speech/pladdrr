@@ -60,6 +60,7 @@ extern void NUMmachar();
 //' @examples
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 //' pladdrr:::sound_get_duration_direct(sound$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double sound_get_duration_direct(SEXP sound_xptr) {
     XPtr<structSound> sound(sound_xptr);
@@ -78,6 +79,7 @@ double sound_get_duration_direct(SEXP sound_xptr) {
 //' @examples
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 //' pladdrr:::sound_get_rms_direct(sound$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structSound> sound(sound_xptr);
@@ -106,6 +108,7 @@ double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_tim
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_value_direct(pitch$.xptr, 0.5)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool interpolate = true) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -127,6 +130,7 @@ double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool i
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_mean_direct(pitch$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_mean_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -152,6 +156,7 @@ double pitch_get_mean_direct(SEXP pitch_xptr, double from_time = 0, double to_ti
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_stdev_direct(pitch$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -178,6 +183,7 @@ double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_t
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_minimum_direct(pitch$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0,
                                  int unit = 0, bool interpolate = false) {
@@ -205,6 +211,7 @@ double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_maximum_direct(pitch$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0,
                                  int unit = 0, bool interpolate = false) {
@@ -232,6 +239,7 @@ double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_quantile_direct(pitch$.xptr, 0.5)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile,
                                   double from_time = 0, double to_time = 0, int unit = 0) {
@@ -255,6 +263,7 @@ double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile,
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_count_voiced_direct(pitch$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 int pitch_count_voiced_direct(SEXP pitch_xptr) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -279,6 +288,7 @@ int pitch_count_voiced_direct(SEXP pitch_xptr) {
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 //' formant <- sound$to_formant_burg()
 //' pladdrr:::formant_get_value_direct(formant$.xptr, 1, 0.15, 0)
+//' @noRd
 // [[Rcpp::export]]
 double formant_get_value_direct(SEXP formant_xptr, int formant_number, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
@@ -300,6 +310,7 @@ double formant_get_value_direct(SEXP formant_xptr, int formant_number, double ti
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 //' formant <- sound$to_formant_burg()
 //' pladdrr:::formant_get_bandwidth_direct(formant$.xptr, 1, 0.15, 0)
+//' @noRd
 // [[Rcpp::export]]
 double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
@@ -322,6 +333,7 @@ double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, doubl
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 //' formant <- sound$to_formant_burg()
 //' pladdrr:::formant_get_mean_direct(formant$.xptr, 1)
+//' @noRd
 // [[Rcpp::export]]
 double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
                                 double from_time = 0, double to_time = 0, int unit = 0) {
@@ -351,6 +363,7 @@ double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' intensity <- sound$to_intensity()
 //' pladdrr:::intensity_get_value_direct(intensity$.xptr, 0.25)
+//' @noRd
 // [[Rcpp::export]]
 double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpolation = 2) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -372,6 +385,7 @@ double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpol
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' intensity <- sound$to_intensity()
 //' pladdrr:::intensity_get_mean_direct(intensity$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0,
                                   int averaging_method = 0) {
@@ -396,6 +410,7 @@ double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, doub
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' intensity <- sound$to_intensity()
 //' pladdrr:::intensity_get_minimum_direct(intensity$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -419,6 +434,7 @@ double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, d
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' intensity <- sound$to_intensity()
 //' pladdrr:::intensity_get_maximum_direct(intensity$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structIntensity> intensity(intensity_xptr);
@@ -446,6 +462,7 @@ double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, d
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' harmonicity <- sound$to_harmonicity_cc()
 //' pladdrr:::harmonicity_get_value_direct(harmonicity$.xptr, 0.25)
+//' @noRd
 // [[Rcpp::export]]
 double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int interpolation = 2) {
     XPtr<structHarmonicity> harmonicity(harmonicity_xptr);
@@ -466,6 +483,7 @@ double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int inte
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' harmonicity <- sound$to_harmonicity_cc()
 //' pladdrr:::harmonicity_get_mean_direct(harmonicity$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, double to_time = 0) {
     XPtr<structHarmonicity> harmonicity(harmonicity_xptr);
@@ -494,6 +512,7 @@ double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, 
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 //' pitch_xptr <- pladdrr:::sound_to_pitch_direct(sound$.xptr)
 //' pitch <- Pitch(.xptr = pitch_xptr)
+//' @noRd
 // [[Rcpp::export]]
 SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
                             double pitch_floor = 75, double pitch_ceiling = 600) {
@@ -527,6 +546,7 @@ SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 //' formant_xptr <- pladdrr:::sound_to_formant_direct(sound$.xptr)
 //' formant <- Formant(.xptr = formant_xptr)
+//' @noRd
 // [[Rcpp::export]]
 SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
                               double max_formants = 5, double max_formant = 5500,
@@ -561,6 +581,7 @@ SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 //' intensity_xptr <- pladdrr:::sound_to_intensity_direct(sound$.xptr)
 //' intensity <- Intensity(.xptr = intensity_xptr)
+//' @noRd
 // [[Rcpp::export]]
 SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
                                 double time_step = 0, bool subtract_mean = true) {
@@ -595,6 +616,7 @@ SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 //' harm_xptr <- pladdrr:::sound_to_harmonicity_direct(sound$.xptr)
 //' harmonicity <- Harmonicity(.xptr = harm_xptr)
+//' @noRd
 // [[Rcpp::export]]
 SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step = 0.01,
                                   double minimum_pitch = 75, double silence_threshold = 0.1,
@@ -634,6 +656,7 @@ SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step = 0.01,
 //' stats <- pladdrr:::pitch_get_all_stats_direct(pitch$.xptr)
 //' str(stats)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to_time = 0, int unit = 0) {
     XPtr<structPitch> pitch(pitch_xptr);
@@ -670,6 +693,7 @@ List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 //' formant <- sound$to_formant_burg()
 //' pladdrr:::formant_get_f1_f4_direct(formant$.xptr, 0.15, 0)
+//' @noRd
 // [[Rcpp::export]]
 NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit = 0) {
     XPtr<structFormant> formant(formant_xptr);
@@ -706,6 +730,7 @@ NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit 
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' pp <- sound$to_point_process_periodic_cc(75, 600)
 //' pladdrr:::get_point_process_mean_period_direct(pp$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double get_point_process_mean_period_direct(SEXP pp_xptr,
                                               double from_time = 0, 
@@ -746,6 +771,7 @@ double get_point_process_mean_period_direct(SEXP pp_xptr,
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' pp <- sound$to_point_process_periodic_cc(75, 600)
 //' pladdrr:::get_point_process_stdev_period_direct(pp$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 double get_point_process_stdev_period_direct(SEXP pp_xptr,
                                                double from_time = 0,

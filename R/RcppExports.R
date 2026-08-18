@@ -5,56 +5,12 @@ amplitude_tier_create_cpp <- function(tmin, tmax) {
     .Call(`_pladdrr_amplitude_tier_create_cpp`, tmin, tmax)
 }
 
-amplitude_tier_add_point_cpp <- function(xptr, time, value) {
-    invisible(.Call(`_pladdrr_amplitude_tier_add_point_cpp`, xptr, time, value))
-}
-
-amplitude_tier_get_value_at_time_cpp <- function(xptr, time) {
-    .Call(`_pladdrr_amplitude_tier_get_value_at_time_cpp`, xptr, time)
-}
-
-amplitude_tier_get_number_of_points_cpp <- function(xptr) {
-    .Call(`_pladdrr_amplitude_tier_get_number_of_points_cpp`, xptr)
-}
-
-amplitude_tier_to_intensity_tier_cpp <- function(xptr, threshold_db) {
-    .Call(`_pladdrr_amplitude_tier_to_intensity_tier_cpp`, xptr, threshold_db)
-}
-
 intensity_tier_to_amplitude_tier_cpp <- function(xptr) {
     .Call(`_pladdrr_intensity_tier_to_amplitude_tier_cpp`, xptr)
 }
 
-amplitude_tier_get_shimmer_local_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_local_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
-amplitude_tier_get_shimmer_local_db_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_local_db_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
-amplitude_tier_get_shimmer_apq3_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_apq3_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
-amplitude_tier_get_shimmer_apq5_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_apq5_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
-amplitude_tier_get_shimmer_apq11_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_apq11_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
-amplitude_tier_get_shimmer_dda_cpp <- function(xptr, shortest_period, longest_period, maximum_amplitude_factor) {
-    .Call(`_pladdrr_amplitude_tier_get_shimmer_dda_cpp`, xptr, shortest_period, longest_period, maximum_amplitude_factor)
-}
-
 point_process_sound_to_amplitude_tier_point_cpp <- function(pp_xptr, sound_xptr) {
     .Call(`_pladdrr_point_process_sound_to_amplitude_tier_point_cpp`, pp_xptr, sound_xptr)
-}
-
-sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
-    .Call(`_pladdrr_sound_amplitude_tier_multiply_cpp`, sound_xptr, tier_xptr)
 }
 
 .autocorrelation_simd <- function(data, max_lag) {
@@ -63,14 +19,6 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
 
 .autocorrelation_normalized_simd <- function(data, max_lag) {
     .Call(`_pladdrr_autocorrelation_normalized_simd`, data, max_lag)
-}
-
-.cross_correlation_simd <- function(x, y) {
-    .Call(`_pladdrr_cross_correlation_simd`, x, y)
-}
-
-.windowed_autocorrelation_simd <- function(data, frame_length, max_lag, hop_size) {
-    .Call(`_pladdrr_windowed_autocorrelation_simd`, data, frame_length, max_lag, hop_size)
 }
 
 .lpc_autocorrelation_simd <- function(data, num_coefficients) {
@@ -85,36 +33,8 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
     .Call(`_pladdrr_autocorrelation_normalized_scalar`, data, max_lag)
 }
 
-.cross_correlation_scalar <- function(x, y) {
-    .Call(`_pladdrr_cross_correlation_scalar`, x, y)
-}
-
-.windowed_autocorrelation_scalar <- function(data, frame_length, max_lag, hop_size) {
-    .Call(`_pladdrr_windowed_autocorrelation_scalar`, data, frame_length, max_lag, hop_size)
-}
-
 .lpc_autocorrelation_scalar <- function(data, num_coefficients) {
     .Call(`_pladdrr_lpc_autocorrelation_scalar`, data, num_coefficients)
-}
-
-.autocorrelation <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation`, data, max_lag)
-}
-
-.autocorrelation_normalized <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation_normalized`, data, max_lag)
-}
-
-.cross_correlation <- function(x, y) {
-    .Call(`_pladdrr_cross_correlation`, x, y)
-}
-
-.windowed_autocorrelation <- function(data, frame_length, max_lag, hop_size) {
-    .Call(`_pladdrr_windowed_autocorrelation`, data, frame_length, max_lag, hop_size)
-}
-
-.lpc_autocorrelation <- function(data, num_coefficients) {
-    .Call(`_pladdrr_lpc_autocorrelation`, data, num_coefficients)
 }
 
 #' Batch query MULTIPLE formant frequencies at multiple time points
@@ -131,6 +51,7 @@ sound_amplitude_tier_multiply_cpp <- function(sound_xptr, tier_xptr) {
 #' pladdrr:::formant_get_multiple_formants_at_times(
 #'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
 #' )
+#' @noRd
 formant_get_multiple_formants_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
     .Call(`_pladdrr_formant_get_multiple_formants_at_times`, formant_xptr, times, formant_numbers, unit)
 }
@@ -149,6 +70,7 @@ formant_get_multiple_formants_at_times <- function(formant_xptr, times, formant_
 #' pladdrr:::formant_get_multiple_bandwidths_at_times(
 #'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
 #' )
+#' @noRd
 formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, formant_numbers, unit = 0L) {
     .Call(`_pladdrr_formant_get_multiple_bandwidths_at_times`, formant_xptr, times, formant_numbers, unit)
 }
@@ -165,6 +87,7 @@ formant_get_multiple_bandwidths_at_times <- function(formant_xptr, times, forman
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
+#' @noRd
 pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_strengths_at_times`, pitch_xptr, times, unit, interpolate)
 }
@@ -182,6 +105,7 @@ pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpola
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 #' @keywords internal
+#' @noRd
 pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantiles_batch`, pitch_xptr, quantiles, from_time, to_time, unit)
 }
@@ -195,6 +119,7 @@ pitch_get_quantiles_batch <- function(pitch_xptr, quantiles, from_time = 0, to_t
 #' pp <- sound$to_pointprocess_periodic_cc()
 #' pladdrr:::pointprocess_get_all_times(pp$.xptr)
 #' @keywords internal
+#' @noRd
 pointprocess_get_all_times <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_all_times`, pp_xptr)
 }
@@ -208,6 +133,7 @@ pointprocess_get_all_times <- function(pp_xptr) {
 #' pp <- sound$to_pointprocess_periodic_cc()
 #' pladdrr:::pointprocess_get_intervals(pp$.xptr)
 #' @keywords internal
+#' @noRd
 pointprocess_get_intervals <- function(pp_xptr) {
     .Call(`_pladdrr_pointprocess_get_intervals`, pp_xptr)
 }
@@ -222,6 +148,7 @@ pointprocess_get_intervals <- function(pp_xptr) {
 #' pp <- sound$to_pointprocess_periodic_cc()
 #' pladdrr:::pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 #' @keywords internal
+#' @noRd
 pointprocess_get_nearest_indices <- function(pp_xptr, times) {
     .Call(`_pladdrr_pointprocess_get_nearest_indices`, pp_xptr, times)
 }
@@ -250,6 +177,7 @@ pointprocess_get_nearest_indices <- function(pp_xptr, times) {
 #'   metrics = c("min", "max", "mean")
 #' )
 #' @keywords internal
+#' @noRd
 pitch_get_statistics_batch <- function(pitch_xptr, from_times, to_times, metrics, unit = 0L) {
     .Call(`_pladdrr_pitch_get_statistics_batch`, pitch_xptr, from_times, to_times, metrics, unit)
 }
@@ -273,6 +201,7 @@ pitch_get_statistics_batch <- function(pitch_xptr, from_times, to_times, metrics
 #' range_info <- pladdrr:::pitch_get_adaptive_range(pitch$.xptr)
 #' str(range_info)
 #' @keywords internal
+#' @noRd
 pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_factor = 0.75, q3_factor = 1.5, unit = 0L) {
     .Call(`_pladdrr_pitch_get_adaptive_range`, pitch_xptr, from_time, to_time, q1_factor, q3_factor, unit)
 }
@@ -292,6 +221,7 @@ pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_
 #' pladdrr:::intensity_get_statistics_batch(
 #'   intensity$.xptr, c(0.1, 0.3), c(0.2, 0.4), c("mean", "max")
 #' )
+#' @noRd
 intensity_get_statistics_batch <- function(intensity_xptr, from_times, to_times, metrics, averaging_method = 0L) {
     .Call(`_pladdrr_intensity_get_statistics_batch`, intensity_xptr, from_times, to_times, metrics, averaging_method)
 }
@@ -307,6 +237,7 @@ intensity_get_statistics_batch <- function(intensity_xptr, from_times, to_times,
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
 #' pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
+#' @noRd
 intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_minimum_with_time`, intensity_xptr, from_time, to_time)
 }
@@ -332,6 +263,7 @@ intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_ti
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, sound$.xptr)
+#' @noRd
 get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3, max_amplitude_factor = 1.6) {
     .Call(`_pladdrr_get_jitter_shimmer_batch_cpp`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
 }
@@ -349,6 +281,7 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
 #' wav <- tempfile(fileext = ".wav")
 #' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav)
 #' pladdrr:::get_durations_batch_cpp(wav)
+#' @noRd
 get_durations_batch_cpp <- function(file_paths) {
     .Call(`_pladdrr_get_durations_batch_cpp`, file_paths)
 }
@@ -370,6 +303,7 @@ get_durations_batch_cpp <- function(file_paths) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #' pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "mean", 0, 75, 600, 0.45)
+#' @noRd
 calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold) {
     .Call(`_pladdrr_calculate_f0_stats_ultra_cpp`, sound_xptr, stat, time_step, min_pitch, max_pitch, voicing_threshold)
 }
@@ -391,6 +325,7 @@ calculate_f0_stats_ultra_cpp <- function(sound_xptr, stat, time_step, min_pitch,
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 #' pladdrr:::calculate_minimum_intensity_ultra_cpp(sound$.xptr, 75, 600, 0, TRUE)
+#' @noRd
 calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pitch, time_step, subtract_mean) {
     .Call(`_pladdrr_calculate_minimum_intensity_ultra_cpp`, sound_xptr, min_pitch, max_pitch, time_step, subtract_mean)
 }
@@ -415,6 +350,7 @@ calculate_minimum_intensity_ultra_cpp <- function(sound_xptr, min_pitch, max_pit
 #' pladdrr:::get_voice_quality_ultra_cpp(
 #'   sound$.xptr, "jitter", 75, 600, 0, "cc", TRUE
 #' )
+#' @noRd
 get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate) {
     .Call(`_pladdrr_get_voice_quality_ultra_cpp`, sound_xptr, metrics, min_pitch, max_pitch, time_step, pitch_method, very_accurate)
 }
@@ -640,10 +576,6 @@ should_use_simd_for_batch_queries_bridge <- function() {
     .Call(`_pladdrr_should_use_simd_for_batch_queries_bridge`)
 }
 
-.cochleagram_create <- function(tmin, tmax, nt, dt, t1, df, nf) {
-    .Call(`_pladdrr_cochleagram_create`, tmin, tmax, nt, dt, t1, df, nf)
-}
-
 .sound_to_cochleagram <- function(sound_xptr, dt, df, window_length, forward_masking_time) {
     .Call(`_pladdrr_sound_to_cochleagram`, sound_xptr, dt, df, window_length, forward_masking_time)
 }
@@ -652,80 +584,16 @@ should_use_simd_for_batch_queries_bridge <- function() {
     .Call(`_pladdrr_sound_to_cochleagram_edb`, sound_xptr, dtime, dfreq, has_synapse, replenishment_rate, loss_rate, return_rate, reprocessing_rate)
 }
 
-.cochleagram_get_value_at_time_and_frequency <- function(xptr, time, freq_bark) {
-    .Call(`_pladdrr_cochleagram_get_value_at_time_and_frequency`, xptr, time, freq_bark)
-}
-
-.cochleagram_get_time_from_column <- function(xptr, i_col) {
-    .Call(`_pladdrr_cochleagram_get_time_from_column`, xptr, i_col)
-}
-
-.cochleagram_get_frequency_from_row <- function(xptr, i_row) {
-    .Call(`_pladdrr_cochleagram_get_frequency_from_row`, xptr, i_row)
-}
-
 .cochleagram_to_excitation <- function(xptr, time) {
     .Call(`_pladdrr_cochleagram_to_excitation`, xptr, time)
-}
-
-.cochleagram_difference <- function(xptr1, xptr2, tmin, tmax) {
-    .Call(`_pladdrr_cochleagram_difference`, xptr1, xptr2, tmin, tmax)
-}
-
-.cochleagram_as_matrix <- function(xptr) {
-    .Call(`_pladdrr_cochleagram_as_matrix`, xptr)
-}
-
-.cochleagram_get_info <- function(xptr) {
-    .Call(`_pladdrr_cochleagram_get_info`, xptr)
-}
-
-.cochleagram_finalizer <- function(xptr) {
-    invisible(.Call(`_pladdrr_cochleagram_finalizer`, xptr))
 }
 
 .durationtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_durationtier_create`, tmin, tmax)
 }
 
-.durationtier_get_start_time <- function(tier) {
-    .Call(`_pladdrr_durationtier_get_start_time`, tier)
-}
-
-.durationtier_get_end_time <- function(tier) {
-    .Call(`_pladdrr_durationtier_get_end_time`, tier)
-}
-
-.durationtier_get_number_of_points <- function(tier) {
-    .Call(`_pladdrr_durationtier_get_number_of_points`, tier)
-}
-
-.durationtier_get_time_from_index <- function(tier, index) {
-    .Call(`_pladdrr_durationtier_get_time_from_index`, tier, index)
-}
-
-.durationtier_get_value_at_index <- function(tier, index) {
-    .Call(`_pladdrr_durationtier_get_value_at_index`, tier, index)
-}
-
-.durationtier_get_value_at_time <- function(tier, time) {
-    .Call(`_pladdrr_durationtier_get_value_at_time`, tier, time)
-}
-
-.durationtier_add_point <- function(tier, time, value) {
-    invisible(.Call(`_pladdrr_durationtier_add_point`, tier, time, value))
-}
-
-.durationtier_remove_point <- function(tier, index) {
-    invisible(.Call(`_pladdrr_durationtier_remove_point`, tier, index))
-}
-
 .durationtier_save <- function(tier, path) {
     invisible(.Call(`_pladdrr_durationtier_save`, tier, path))
-}
-
-.durationtier_read <- function(path) {
-    .Call(`_pladdrr_durationtier_read`, path)
 }
 
 electroglottogram_create_cpp <- function(xmin, xmax, nx, dx, x1) {
@@ -736,68 +604,12 @@ sound_extract_electroglottogram_cpp <- function(xptr, channel, invert) {
     .Call(`_pladdrr_sound_extract_electroglottogram_cpp`, xptr, channel, invert)
 }
 
-electroglottogram_to_textgrid_closed_glottis_cpp <- function(xptr, pitch_floor, pitch_ceiling, closing_threshold, peak_threshold) {
-    .Call(`_pladdrr_electroglottogram_to_textgrid_closed_glottis_cpp`, xptr, pitch_floor, pitch_ceiling, closing_threshold, peak_threshold)
-}
-
-electroglottogram_to_amplitude_tier_levels_cpp <- function(xptr, pitch_floor, pitch_ceiling, closing_threshold) {
-    .Call(`_pladdrr_electroglottogram_to_amplitude_tier_levels_cpp`, xptr, pitch_floor, pitch_ceiling, closing_threshold)
-}
-
-electroglottogram_derivative_cpp <- function(xptr, lowpass_freq, smoothing, peak_amplitude) {
-    .Call(`_pladdrr_electroglottogram_derivative_cpp`, xptr, lowpass_freq, smoothing, peak_amplitude)
-}
-
-electroglottogram_first_central_difference_cpp <- function(xptr, peak_amplitude) {
-    .Call(`_pladdrr_electroglottogram_first_central_difference_cpp`, xptr, peak_amplitude)
-}
-
-electroglottogram_high_pass_filter_cpp <- function(xptr, from_freq, smoothing) {
-    .Call(`_pladdrr_electroglottogram_high_pass_filter_cpp`, xptr, from_freq, smoothing)
-}
-
-electroglottogram_to_sound_cpp <- function(xptr) {
-    .Call(`_pladdrr_electroglottogram_to_sound_cpp`, xptr)
-}
-
-.excitation_create <- function(freq_step, n_freqs) {
-    .Call(`_pladdrr_excitation_create`, freq_step, n_freqs)
-}
-
 .spectrum_to_excitation <- function(spectrum_xptr, erb_density) {
     .Call(`_pladdrr_spectrum_to_excitation`, spectrum_xptr, erb_density)
 }
 
-.excitation_get_loudness <- function(xptr) {
-    .Call(`_pladdrr_excitation_get_loudness`, xptr)
-}
-
-.excitation_get_value_at_frequency <- function(xptr, freq_bark) {
-    .Call(`_pladdrr_excitation_get_value_at_frequency`, xptr, freq_bark)
-}
-
-.excitation_get_distance <- function(xptr1, xptr2) {
-    .Call(`_pladdrr_excitation_get_distance`, xptr1, xptr2)
-}
-
 .excitation_to_formant <- function(xptr, max_formants) {
     .Call(`_pladdrr_excitation_to_formant`, xptr, max_formants)
-}
-
-.excitation_as_vector <- function(xptr) {
-    .Call(`_pladdrr_excitation_as_vector`, xptr)
-}
-
-.excitation_get_info <- function(xptr) {
-    .Call(`_pladdrr_excitation_get_info`, xptr)
-}
-
-.excitation_finalizer <- function(xptr) {
-    invisible(.Call(`_pladdrr_excitation_finalizer`, xptr))
-}
-
-.formant_from_sound_burg <- function(sound, time_step, max_number_of_formants, maximum_formant, window_length, pre_emphasis_from) {
-    .Call(`_pladdrr_formant_from_sound_burg`, sound, time_step, max_number_of_formants, maximum_formant, window_length, pre_emphasis_from)
 }
 
 .formant_from_sound_keepall <- function(sound, time_step, max_number_of_formants, maximum_formant, window_length, pre_emphasis_from) {
@@ -896,42 +708,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_formantgrid_from_formant`, formant)
 }
 
-.formantgrid_get_start_time <- function(grid) {
-    .Call(`_pladdrr_formantgrid_get_start_time`, grid)
-}
-
-.formantgrid_get_end_time <- function(grid) {
-    .Call(`_pladdrr_formantgrid_get_end_time`, grid)
-}
-
-.formantgrid_get_number_of_formants <- function(grid) {
-    .Call(`_pladdrr_formantgrid_get_number_of_formants`, grid)
-}
-
-.formantgrid_get_formant_at_time <- function(grid, formant_number, time) {
-    .Call(`_pladdrr_formantgrid_get_formant_at_time`, grid, formant_number, time)
-}
-
-.formantgrid_get_bandwidth_at_time <- function(grid, formant_number, time) {
-    .Call(`_pladdrr_formantgrid_get_bandwidth_at_time`, grid, formant_number, time)
-}
-
-.formantgrid_add_formant_point <- function(grid, formant_number, time, value) {
-    invisible(.Call(`_pladdrr_formantgrid_add_formant_point`, grid, formant_number, time, value))
-}
-
-.formantgrid_add_bandwidth_point <- function(grid, formant_number, time, value) {
-    invisible(.Call(`_pladdrr_formantgrid_add_bandwidth_point`, grid, formant_number, time, value))
-}
-
-.formantgrid_remove_formant_points_between <- function(grid, formant_number, tmin, tmax) {
-    invisible(.Call(`_pladdrr_formantgrid_remove_formant_points_between`, grid, formant_number, tmin, tmax))
-}
-
-.formantgrid_remove_bandwidth_points_between <- function(grid, formant_number, tmin, tmax) {
-    invisible(.Call(`_pladdrr_formantgrid_remove_bandwidth_points_between`, grid, formant_number, tmin, tmax))
-}
-
 .formantgrid_to_formant <- function(grid, time_step, intensity) {
     .Call(`_pladdrr_formantgrid_to_formant`, grid, time_step, intensity)
 }
@@ -942,10 +718,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .sound_formantgrid_filter <- function(sound, grid) {
     .Call(`_pladdrr_sound_formantgrid_filter`, sound, grid)
-}
-
-.sound_formantgrid_filter_noscale <- function(sound, grid) {
-    .Call(`_pladdrr_sound_formantgrid_filter_noscale`, sound, grid)
 }
 
 #' Create an empty FormantTier
@@ -967,139 +739,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_formanttier_from_formant`, xptr)
 }
 
-#' Get FormantTier start time
-#' @param xptr External pointer to FormantTier
-#' @return Start time in seconds
-#' @keywords internal
-#' @noRd
-.formanttier_get_start_time <- function(xptr) {
-    .Call(`_pladdrr_formanttier_get_start_time`, xptr)
-}
-
-#' Get FormantTier end time
-#' @param xptr External pointer to FormantTier
-#' @return End time in seconds
-#' @keywords internal
-#' @noRd
-.formanttier_get_end_time <- function(xptr) {
-    .Call(`_pladdrr_formanttier_get_end_time`, xptr)
-}
-
-#' Get number of points in FormantTier
-#' @param xptr External pointer to FormantTier
-#' @return Number of points
-#' @keywords internal
-#' @noRd
-.formanttier_get_number_of_points <- function(xptr) {
-    .Call(`_pladdrr_formanttier_get_number_of_points`, xptr)
-}
-
-#' Get minimum number of formants
-#' @param xptr External pointer to FormantTier
-#' @return Minimum number of formants across points
-#' @keywords internal
-#' @noRd
-.formanttier_get_min_num_formants <- function(xptr) {
-    .Call(`_pladdrr_formanttier_get_min_num_formants`, xptr)
-}
-
-#' Get maximum number of formants
-#' @param xptr External pointer to FormantTier
-#' @return Maximum number of formants across points
-#' @keywords internal
-#' @noRd
-.formanttier_get_max_num_formants <- function(xptr) {
-    .Call(`_pladdrr_formanttier_get_max_num_formants`, xptr)
-}
-
-#' Get formant value at time
-#' @param xptr External pointer to FormantTier
-#' @param formant_number Formant number (1=F1, 2=F2, etc.)
-#' @param time Time in seconds
-#' @return Formant frequency in Hz
-#' @keywords internal
-#' @noRd
-.formanttier_get_value_at_time <- function(xptr, formant_number, time) {
-    .Call(`_pladdrr_formanttier_get_value_at_time`, xptr, formant_number, time)
-}
-
-#' Get formant bandwidth at time
-#' @param xptr External pointer to FormantTier
-#' @param formant_number Formant number (1=F1, 2=F2, etc.)
-#' @param time Time in seconds
-#' @return Bandwidth in Hz
-#' @keywords internal
-#' @noRd
-.formanttier_get_bandwidth_at_time <- function(xptr, formant_number, time) {
-    .Call(`_pladdrr_formanttier_get_bandwidth_at_time`, xptr, formant_number, time)
-}
-
-#' Filter Sound through FormantTier
-#' @param sound_xptr External pointer to Sound
-#' @param ft_xptr External pointer to FormantTier
-#' @return External pointer to filtered Sound
-#' @keywords internal
-#' @noRd
-.formanttier_filter_sound <- function(sound_xptr, ft_xptr) {
-    .Call(`_pladdrr_formanttier_filter_sound`, sound_xptr, ft_xptr)
-}
-
-#' Filter Sound through FormantTier (no scaling)
-#' @param sound_xptr External pointer to Sound
-#' @param ft_xptr External pointer to FormantTier
-#' @return External pointer to filtered Sound
-#' @keywords internal
-#' @noRd
-.formanttier_filter_sound_noscale <- function(sound_xptr, ft_xptr) {
-    .Call(`_pladdrr_formanttier_filter_sound_noscale`, sound_xptr, ft_xptr)
-}
-
 .intensitytier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_intensitytier_create`, tmin, tmax)
-}
-
-.intensitytier_get_start_time <- function(tier) {
-    .Call(`_pladdrr_intensitytier_get_start_time`, tier)
-}
-
-.intensitytier_get_end_time <- function(tier) {
-    .Call(`_pladdrr_intensitytier_get_end_time`, tier)
-}
-
-.intensitytier_get_number_of_points <- function(tier) {
-    .Call(`_pladdrr_intensitytier_get_number_of_points`, tier)
-}
-
-.intensitytier_get_time_from_index <- function(tier, index) {
-    .Call(`_pladdrr_intensitytier_get_time_from_index`, tier, index)
-}
-
-.intensitytier_get_value_at_index <- function(tier, index) {
-    .Call(`_pladdrr_intensitytier_get_value_at_index`, tier, index)
-}
-
-.intensitytier_get_value_at_time <- function(tier, time) {
-    .Call(`_pladdrr_intensitytier_get_value_at_time`, tier, time)
-}
-
-.intensitytier_get_mean <- function(tier, tmin, tmax) {
-    .Call(`_pladdrr_intensitytier_get_mean`, tier, tmin, tmax)
-}
-
-.intensitytier_add_point <- function(tier, time, value) {
-    invisible(.Call(`_pladdrr_intensitytier_add_point`, tier, time, value))
-}
-
-.intensitytier_remove_point <- function(tier, index) {
-    invisible(.Call(`_pladdrr_intensitytier_remove_point`, tier, index))
-}
-
-.intensitytier_save <- function(tier, path) {
-    invisible(.Call(`_pladdrr_intensitytier_save`, tier, path))
-}
-
-.intensitytier_read <- function(path) {
-    .Call(`_pladdrr_intensitytier_read`, path)
 }
 
 .praat_interpreter_init <- function() {
@@ -1132,42 +773,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .praat_evaluate_string_array <- function(expression) {
     .Call(`_pladdrr_praat_evaluate_string_array`, expression)
-}
-
-.praat_interpreter_create <- function() {
-    .Call(`_pladdrr_praat_interpreter_create`)
-}
-
-.praat_interpreter_run <- function(xptr, script) {
-    invisible(.Call(`_pladdrr_praat_interpreter_run`, xptr, script))
-}
-
-.praat_interpreter_get_variable <- function(xptr, name) {
-    .Call(`_pladdrr_praat_interpreter_get_variable`, xptr, name)
-}
-
-.praat_interpreter_set_variable <- function(xptr, name, value) {
-    invisible(.Call(`_pladdrr_praat_interpreter_set_variable`, xptr, name, value))
-}
-
-.praat_interpreter_eval_numeric <- function(xptr, expression) {
-    .Call(`_pladdrr_praat_interpreter_eval_numeric`, xptr, expression)
-}
-
-.praat_interpreter_eval_string <- function(xptr, expression) {
-    .Call(`_pladdrr_praat_interpreter_eval_string`, xptr, expression)
-}
-
-.praat_interpreter_eval_vector <- function(xptr, expression) {
-    .Call(`_pladdrr_praat_interpreter_eval_vector`, xptr, expression)
-}
-
-.praat_interpreter_eval_matrix <- function(xptr, expression) {
-    .Call(`_pladdrr_praat_interpreter_eval_matrix`, xptr, expression)
-}
-
-.praat_interpreter_eval_string_array <- function(xptr, expression) {
-    .Call(`_pladdrr_praat_interpreter_eval_string_array`, xptr, expression)
 }
 
 .praat_interpreter_object_count <- function() {
@@ -1281,38 +886,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_sound_to_lpc_marple`, sound, prediction_order, analysis_width, time_step, pre_emphasis_frequency, tol1, tol2)
 }
 
-.lpc_get_number_of_frames <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_number_of_frames`, lpc)
-}
-
-.lpc_get_time_step <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_time_step`, lpc)
-}
-
-.lpc_get_sampling_period <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_sampling_period`, lpc)
-}
-
-.lpc_get_max_num_coefficients <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_max_num_coefficients`, lpc)
-}
-
-.lpc_get_gain_at_frame <- function(lpc, frame_number) {
-    .Call(`_pladdrr_lpc_get_gain_at_frame`, lpc, frame_number)
-}
-
-.lpc_get_coefficients_at_frame <- function(lpc, frame_number) {
-    .Call(`_pladdrr_lpc_get_coefficients_at_frame`, lpc, frame_number)
-}
-
-.lpc_get_all_gains <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_all_gains`, lpc)
-}
-
-.lpc_get_all_coefficients <- function(lpc) {
-    .Call(`_pladdrr_lpc_get_all_coefficients`, lpc)
-}
-
 .lpc_to_spectrum <- function(lpc, time, df_min = 20.0, bandwidth_reduction = 0.0, de_emphasis_frequency = 50.0) {
     .Call(`_pladdrr_lpc_to_spectrum`, lpc, time, df_min, bandwidth_reduction, de_emphasis_frequency)
 }
@@ -1363,70 +936,10 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_lpc_sound_filter_inverse_at_time`, lpc_xptr, sound_xptr, channel, time)
 }
 
-#' Helper wrapper for R6: LPC inverse filtering at time from R6 objects
-#' @param lpc_xptr External pointer to LPC object
-#' @param sound_r6 R6 Sound object
-#' @param channel Channel number
-#' @param time Time point (seconds)
-#' @return External pointer to new Sound object containing the voice source
-#' @keywords internal
-#' @noRd
-.lpc_sound_filter_inverse_at_time_r6 <- function(lpc_xptr, sound_r6, channel, time) {
-    .Call(`_pladdrr_lpc_sound_filter_inverse_at_time_r6`, lpc_xptr, sound_r6, channel, time)
-}
-
 #' LPC: To Spectrogram (internal)
 #' @noRd
 .lpc_to_spectrogram <- function(xptr, df_min, bandwidth_reduction, de_emphasis_frequency) {
     .Call(`_pladdrr_lpc_to_spectrogram`, xptr, df_min, bandwidth_reduction, de_emphasis_frequency)
-}
-
-.ltas_get_bin_from_frequency <- function(ltas, frequency) {
-    .Call(`_pladdrr_ltas_get_bin_from_frequency`, ltas, frequency)
-}
-
-.ltas_get_frequency_from_bin <- function(ltas, bin) {
-    .Call(`_pladdrr_ltas_get_frequency_from_bin`, ltas, bin)
-}
-
-.ltas_get_number_of_bins <- function(ltas) {
-    .Call(`_pladdrr_ltas_get_number_of_bins`, ltas)
-}
-
-.ltas_get_bin_width <- function(ltas) {
-    .Call(`_pladdrr_ltas_get_bin_width`, ltas)
-}
-
-.ltas_get_lowest_frequency <- function(ltas) {
-    .Call(`_pladdrr_ltas_get_lowest_frequency`, ltas)
-}
-
-.ltas_get_highest_frequency <- function(ltas) {
-    .Call(`_pladdrr_ltas_get_highest_frequency`, ltas)
-}
-
-.ltas_get_value_at_frequency <- function(ltas, frequency, unit, interpolate) {
-    .Call(`_pladdrr_ltas_get_value_at_frequency`, ltas, frequency, unit, interpolate)
-}
-
-.ltas_get_minimum <- function(ltas, fmin, fmax, unit, interpolate) {
-    .Call(`_pladdrr_ltas_get_minimum`, ltas, fmin, fmax, unit, interpolate)
-}
-
-.ltas_get_maximum <- function(ltas, fmin, fmax, interpolation) {
-    .Call(`_pladdrr_ltas_get_maximum`, ltas, fmin, fmax, interpolation)
-}
-
-.ltas_get_frequency_of_maximum <- function(ltas, fmin, fmax, interpolation) {
-    .Call(`_pladdrr_ltas_get_frequency_of_maximum`, ltas, fmin, fmax, interpolation)
-}
-
-.ltas_get_mean <- function(ltas, fmin, fmax, unit) {
-    .Call(`_pladdrr_ltas_get_mean`, ltas, fmin, fmax, unit)
-}
-
-.ltas_get_slope <- function(ltas, f1min, f1max, f2min, f2max, averagingMethod) {
-    .Call(`_pladdrr_ltas_get_slope`, ltas, f1min, f1max, f2min, f2max, averagingMethod)
 }
 
 .ltas_compute_trend_line <- function(ltas, fmin, fmax) {
@@ -1448,28 +961,12 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_ltas_to_spectrum_tier_peaks`, ltas)
 }
 
-.ltas_as_data_frame <- function(ltas) {
-    .Call(`_pladdrr_ltas_as_data_frame`, ltas)
-}
-
-.ltas_as_matrix <- function(ltas) {
-    .Call(`_pladdrr_ltas_as_matrix`, ltas)
-}
-
 .ltases_average <- function(ltas_list) {
     .Call(`_pladdrr_ltases_average`, ltas_list)
 }
 
 .manipulation_from_sound <- function(sound, time_step, pitch_floor, pitch_ceiling) {
     .Call(`_pladdrr_manipulation_from_sound`, sound, time_step, pitch_floor, pitch_ceiling)
-}
-
-.manipulation_get_start_time <- function(manip) {
-    .Call(`_pladdrr_manipulation_get_start_time`, manip)
-}
-
-.manipulation_get_end_time <- function(manip) {
-    .Call(`_pladdrr_manipulation_get_end_time`, manip)
 }
 
 .manipulation_extract_pitch_tier <- function(manip) {
@@ -1488,14 +985,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_manipulation_extract_original_sound`, manip)
 }
 
-.manipulation_replace_pitch_tier <- function(manip, pitch_tier) {
-    invisible(.Call(`_pladdrr_manipulation_replace_pitch_tier`, manip, pitch_tier))
-}
-
-.manipulation_replace_duration_tier <- function(manip, duration_tier) {
-    invisible(.Call(`_pladdrr_manipulation_replace_duration_tier`, manip, duration_tier))
-}
-
 .manipulation_get_resynthesis_overlap_add <- function(manip) {
     .Call(`_pladdrr_manipulation_get_resynthesis_overlap_add`, manip)
 }
@@ -1506,58 +995,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .matrix_create_simple <- function(numberOfRows, numberOfColumns) {
     .Call(`_pladdrr_matrix_create_simple`, numberOfRows, numberOfColumns)
-}
-
-.matrix_get_nx <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_nx`, xptr)
-}
-
-.matrix_get_ny <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_ny`, xptr)
-}
-
-.matrix_get_dx <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_dx`, xptr)
-}
-
-.matrix_get_dy <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_dy`, xptr)
-}
-
-.matrix_get_x1 <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_x1`, xptr)
-}
-
-.matrix_get_y1 <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_y1`, xptr)
-}
-
-.matrix_get_xmin <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_xmin`, xptr)
-}
-
-.matrix_get_xmax <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_xmax`, xptr)
-}
-
-.matrix_get_ymin <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_ymin`, xptr)
-}
-
-.matrix_get_ymax <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_ymax`, xptr)
-}
-
-.matrix_get_value_at_xy <- function(xptr, x, y) {
-    .Call(`_pladdrr_matrix_get_value_at_xy`, xptr, x, y)
-}
-
-.matrix_get_value <- function(xptr, row, col) {
-    .Call(`_pladdrr_matrix_get_value`, xptr, row, col)
-}
-
-.matrix_set_value <- function(xptr, row, col, value) {
-    invisible(.Call(`_pladdrr_matrix_set_value`, xptr, row, col, value))
 }
 
 .matrix_to_r_matrix <- function(xptr) {
@@ -1572,84 +1009,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_matrix_read`, path)
 }
 
-.matrix_formula <- function(xptr, formula) {
-    invisible(.Call(`_pladdrr_matrix_formula`, xptr, formula))
-}
-
-.matrix_get_sum <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_sum`, xptr)
-}
-
-.matrix_get_mean <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_mean`, xptr)
-}
-
-.matrix_get_minimum <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_minimum`, xptr)
-}
-
-.matrix_get_maximum <- function(xptr) {
-    .Call(`_pladdrr_matrix_get_maximum`, xptr)
-}
-
 .pitchtier_create <- function(tmin, tmax) {
     .Call(`_pladdrr_pitchtier_create`, tmin, tmax)
-}
-
-.pitchtier_get_start_time <- function(tier) {
-    .Call(`_pladdrr_pitchtier_get_start_time`, tier)
-}
-
-.pitchtier_get_end_time <- function(tier) {
-    .Call(`_pladdrr_pitchtier_get_end_time`, tier)
-}
-
-.pitchtier_get_number_of_points <- function(tier) {
-    .Call(`_pladdrr_pitchtier_get_number_of_points`, tier)
-}
-
-.pitchtier_get_time_from_index <- function(tier, index) {
-    .Call(`_pladdrr_pitchtier_get_time_from_index`, tier, index)
-}
-
-.pitchtier_get_value_at_index <- function(tier, index) {
-    .Call(`_pladdrr_pitchtier_get_value_at_index`, tier, index)
-}
-
-.pitchtier_get_value_at_time <- function(tier, time) {
-    .Call(`_pladdrr_pitchtier_get_value_at_time`, tier, time)
-}
-
-.pitchtier_get_mean <- function(tier, tmin, tmax) {
-    .Call(`_pladdrr_pitchtier_get_mean`, tier, tmin, tmax)
-}
-
-.pitchtier_add_point <- function(tier, time, value) {
-    invisible(.Call(`_pladdrr_pitchtier_add_point`, tier, time, value))
-}
-
-.pitchtier_remove_point <- function(tier, index) {
-    invisible(.Call(`_pladdrr_pitchtier_remove_point`, tier, index))
-}
-
-.pitchtier_remove_points_between <- function(tier, tmin, tmax) {
-    invisible(.Call(`_pladdrr_pitchtier_remove_points_between`, tier, tmin, tmax))
-}
-
-.pitchtier_multiply_frequencies <- function(tier, factor) {
-    invisible(.Call(`_pladdrr_pitchtier_multiply_frequencies`, tier, factor))
-}
-
-.pitchtier_shift_frequencies <- function(tier, shift) {
-    invisible(.Call(`_pladdrr_pitchtier_shift_frequencies`, tier, shift))
-}
-
-.pitchtier_stylize <- function(tier, frequency_resolution, use_semitones) {
-    invisible(.Call(`_pladdrr_pitchtier_stylize`, tier, frequency_resolution, use_semitones))
-}
-
-.pitchtier_save <- function(tier, path) {
-    invisible(.Call(`_pladdrr_pitchtier_save`, tier, path))
 }
 
 .pitchtier_read <- function(path) {
@@ -1676,30 +1037,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pitchtier_to_pitch`, tier, time_step, pitch_floor, pitch_ceiling)
 }
 
-.pointprocess_get_number_of_points <- function(xptr) {
-    .Call(`_pladdrr_pointprocess_get_number_of_points`, xptr)
-}
-
-.pointprocess_get_time_from_index <- function(xptr, index) {
-    .Call(`_pladdrr_pointprocess_get_time_from_index`, xptr, index)
-}
-
-.pointprocess_get_nearest_index <- function(xptr, time) {
-    .Call(`_pladdrr_pointprocess_get_nearest_index`, xptr, time)
-}
-
-.pointprocess_get_low_index <- function(xptr, time) {
-    .Call(`_pladdrr_pointprocess_get_low_index`, xptr, time)
-}
-
-.pointprocess_get_high_index <- function(xptr, time) {
-    .Call(`_pladdrr_pointprocess_get_high_index`, xptr, time)
-}
-
-.pointprocess_get_interval <- function(xptr, time) {
-    .Call(`_pladdrr_pointprocess_get_interval`, xptr, time)
-}
-
 .pointprocess_get_jitter_local <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
     .Call(`_pladdrr_pointprocess_get_jitter_local`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
@@ -1718,54 +1055,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .pointprocess_get_jitter_ddp <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
     .Call(`_pladdrr_pointprocess_get_jitter_ddp`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
-}
-
-.pointprocess_sound_get_shimmer_local <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_local`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_sound_get_shimmer_local_db <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_local_db`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_sound_get_shimmer_apq3 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_apq3`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_sound_get_shimmer_apq5 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_apq5`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_sound_get_shimmer_apq11 <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_apq11`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_sound_get_shimmer_dda <- function(pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
-    .Call(`_pladdrr_pointprocess_sound_get_shimmer_dda`, pp_xptr, sound_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor, max_amplitude_factor)
-}
-
-.pointprocess_get_mean_period <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
-    .Call(`_pladdrr_pointprocess_get_mean_period`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
-}
-
-.pointprocess_get_stdev_period <- function(xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor) {
-    .Call(`_pladdrr_pointprocess_get_stdev_period`, xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
-}
-
-.pointprocess_add_point <- function(xptr, time) {
-    invisible(.Call(`_pladdrr_pointprocess_add_point`, xptr, time))
-}
-
-.pointprocess_remove_point <- function(xptr, index) {
-    invisible(.Call(`_pladdrr_pointprocess_remove_point`, xptr, index))
-}
-
-.pointprocess_remove_point_near <- function(xptr, time) {
-    invisible(.Call(`_pladdrr_pointprocess_remove_point_near`, xptr, time))
-}
-
-.pointprocess_remove_points_between <- function(xptr, from_time, to_time) {
-    invisible(.Call(`_pladdrr_pointprocess_remove_points_between`, xptr, from_time, to_time))
 }
 
 .pointprocess_to_textgrid_vuv <- function(xptr, max_voiced_period, max_unvoiced_period) {
@@ -1788,14 +1077,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_pointprocess_to_sound_hum`, xptr)
 }
 
-.pointprocess_save <- function(xptr, path) {
-    invisible(.Call(`_pladdrr_pointprocess_save`, xptr, path))
-}
-
-.should_use_simd_for_powercepstrogram_bridge <- function() {
-    .Call(`_pladdrr_should_use_simd_for_powercepstrogram_bridge`)
-}
-
 .sound_to_powercepstrogram <- function(sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency) {
     .Call(`_pladdrr_sound_to_powercepstrogram`, sound_xptr, pitch_floor, time_step, maximum_frequency, pre_emphasis_frequency)
 }
@@ -1806,26 +1087,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .powercepstrum_get_peak_prominence <- function(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance) {
     .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance)
-}
-
-.powercepstrum_get_quefrency_of_peak <- function(xptr, interpolation, qmin, qmax) {
-    .Call(`_pladdrr_powercepstrum_get_quefrency_of_peak`, xptr, interpolation, qmin, qmax)
-}
-
-.powercepstrum_get_value_at_quefrency <- function(xptr, quefrency, interpolation, unit) {
-    .Call(`_pladdrr_powercepstrum_get_value_at_quefrency`, xptr, quefrency, interpolation, unit)
-}
-
-.powercepstrum_smooth <- function(xptr, averaging_window, nsamples) {
-    .Call(`_pladdrr_powercepstrum_smooth`, xptr, averaging_window, nsamples)
-}
-
-.powercepstrum_to_matrix <- function(xptr) {
-    .Call(`_pladdrr_powercepstrum_to_matrix`, xptr)
-}
-
-.powercepstrum_as_matrix <- function(xptr) {
-    .Call(`_pladdrr_powercepstrum_as_matrix`, xptr)
 }
 
 .powercepstrogram_get_cpp_at_time <- function(xptr, time, interpolation, qmin, qmax, fit_method, tolerance) {
@@ -1856,16 +1117,8 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_powercepstrogram_get_cpps`, xptr, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
 }
 
-.powercepstrum_get_peak_prominence_cpps <- function(xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
-    .Call(`_pladdrr_powercepstrum_get_peak_prominence_cpps`, xptr, pitch_floor, pitch_ceiling, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
-}
-
 .sound_to_cpps_direct <- function(sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method) {
     .Call(`_pladdrr_sound_to_cpps_direct`, sound_xptr, cepstrogram_pitch_floor, time_step, max_frequency, pre_emphasis_from, subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)
-}
-
-.powercepstrum_get_peak_prominence_hillenbrand <- function(xptr, pitch_floor, pitch_ceiling) {
-    .Call(`_pladdrr_powercepstrum_get_peak_prominence_hillenbrand`, xptr, pitch_floor, pitch_ceiling)
 }
 
 .powercepstrum_get_rnr <- function(xptr, pitch_floor, pitch_ceiling, f0_fractional_width) {
@@ -1874,22 +1127,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 
 .powercepstrum_tabulate_rhamonics <- function(xptr, pitch_floor, pitch_ceiling, interpolation) {
     .Call(`_pladdrr_powercepstrum_tabulate_rhamonics`, xptr, pitch_floor, pitch_ceiling, interpolation)
-}
-
-.powercepstrum_fit_trend_line <- function(xptr, qmin, qmax, trend_type, fit_method) {
-    .Call(`_pladdrr_powercepstrum_fit_trend_line`, xptr, qmin, qmax, trend_type, fit_method)
-}
-
-.powercepstrum_get_trend_line_value <- function(xptr, quefrency, qstart_fit, qend_fit, trend_type, fit_method) {
-    .Call(`_pladdrr_powercepstrum_get_trend_line_value`, xptr, quefrency, qstart_fit, qend_fit, trend_type, fit_method)
-}
-
-.powercepstrum_subtract_trend <- function(xptr, qstart_fit, qend_fit, trend_type, fit_method) {
-    .Call(`_pladdrr_powercepstrum_subtract_trend`, xptr, qstart_fit, qend_fit, trend_type, fit_method)
-}
-
-.powercepstrum_subtract_trend_inplace <- function(xptr, qstart_fit, qend_fit, trend_type, fit_method) {
-    invisible(.Call(`_pladdrr_powercepstrum_subtract_trend_inplace`, xptr, qstart_fit, qend_fit, trend_type, fit_method))
 }
 
 .sound_to_cepstrum <- function(sound_xptr) {
@@ -1916,10 +1153,6 @@ electroglottogram_to_sound_cpp <- function(xptr) {
     .Call(`_pladdrr_spectrum_to_cepstrum_hillenbrand`, spectrum_xptr)
 }
 
-.powercepstrum_to_spectrum <- function(powercepstrum_xptr, random_phases) {
-    .Call(`_pladdrr_powercepstrum_to_spectrum`, powercepstrum_xptr, random_phases)
-}
-
 #' Get Sound duration directly
 #' @param sound_xptr External pointer to Sound
 #' @return Duration in seconds
@@ -1927,6 +1160,7 @@ electroglottogram_to_sound_cpp <- function(xptr) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' pladdrr:::sound_get_duration_direct(sound$.xptr)
+#' @noRd
 sound_get_duration_direct <- function(sound_xptr) {
     .Call(`_pladdrr_sound_get_duration_direct`, sound_xptr)
 }
@@ -1940,6 +1174,7 @@ sound_get_duration_direct <- function(sound_xptr) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' pladdrr:::sound_get_rms_direct(sound$.xptr)
+#' @noRd
 sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_sound_get_rms_direct`, sound_xptr, from_time, to_time)
 }
@@ -1955,6 +1190,7 @@ sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_value_direct(pitch$.xptr, 0.5)
 #' @keywords internal
+#' @noRd
 pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TRUE) {
     .Call(`_pladdrr_pitch_get_value_direct`, pitch_xptr, time, unit, interpolate)
 }
@@ -1970,6 +1206,7 @@ pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TR
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_mean_direct(pitch$.xptr)
 #' @keywords internal
+#' @noRd
 pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_mean_direct`, pitch_xptr, from_time, to_time, unit)
 }
@@ -1985,6 +1222,7 @@ pitch_get_mean_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit =
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_stdev_direct(pitch$.xptr)
 #' @keywords internal
+#' @noRd
 pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_stdev_direct`, pitch_xptr, from_time, to_time, unit)
 }
@@ -2001,6 +1239,7 @@ pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit 
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_minimum_direct(pitch$.xptr)
 #' @keywords internal
+#' @noRd
 pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_minimum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
 }
@@ -2017,6 +1256,7 @@ pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_maximum_direct(pitch$.xptr)
 #' @keywords internal
+#' @noRd
 pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L, interpolate = FALSE) {
     .Call(`_pladdrr_pitch_get_maximum_direct`, pitch_xptr, from_time, to_time, unit, interpolate)
 }
@@ -2033,6 +1273,7 @@ pitch_get_maximum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_get_quantile_direct(pitch$.xptr, 0.5)
 #' @keywords internal
+#' @noRd
 pitch_get_quantile_direct <- function(pitch_xptr, quantile, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_quantile_direct`, pitch_xptr, quantile, from_time, to_time, unit)
 }
@@ -2045,6 +1286,7 @@ pitch_get_quantile_direct <- function(pitch_xptr, quantile, from_time = 0, to_ti
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pitch <- sound$to_pitch()
 #' pladdrr:::pitch_count_voiced_direct(pitch$.xptr)
+#' @noRd
 pitch_count_voiced_direct <- function(pitch_xptr) {
     .Call(`_pladdrr_pitch_count_voiced_direct`, pitch_xptr)
 }
@@ -2060,6 +1302,7 @@ pitch_count_voiced_direct <- function(pitch_xptr) {
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #' pladdrr:::formant_get_value_direct(formant$.xptr, 1, 0.15, 0)
+#' @noRd
 formant_get_value_direct <- function(formant_xptr, formant_number, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_value_direct`, formant_xptr, formant_number, time, unit)
 }
@@ -2075,6 +1318,7 @@ formant_get_value_direct <- function(formant_xptr, formant_number, time, unit = 
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #' pladdrr:::formant_get_bandwidth_direct(formant$.xptr, 1, 0.15, 0)
+#' @noRd
 formant_get_bandwidth_direct <- function(formant_xptr, formant_number, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_bandwidth_direct`, formant_xptr, formant_number, time, unit)
 }
@@ -2091,6 +1335,7 @@ formant_get_bandwidth_direct <- function(formant_xptr, formant_number, time, uni
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #' pladdrr:::formant_get_mean_direct(formant$.xptr, 1)
+#' @noRd
 formant_get_mean_direct <- function(formant_xptr, formant_number, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_formant_get_mean_direct`, formant_xptr, formant_number, from_time, to_time, unit)
 }
@@ -2105,6 +1350,7 @@ formant_get_mean_direct <- function(formant_xptr, formant_number, from_time = 0,
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
 #' pladdrr:::intensity_get_value_direct(intensity$.xptr, 0.25)
+#' @noRd
 intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L) {
     .Call(`_pladdrr_intensity_get_value_direct`, intensity_xptr, time, interpolation)
 }
@@ -2120,6 +1366,7 @@ intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L)
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
 #' pladdrr:::intensity_get_mean_direct(intensity$.xptr)
+#' @noRd
 intensity_get_mean_direct <- function(intensity_xptr, from_time = 0, to_time = 0, averaging_method = 0L) {
     .Call(`_pladdrr_intensity_get_mean_direct`, intensity_xptr, from_time, to_time, averaging_method)
 }
@@ -2134,6 +1381,7 @@ intensity_get_mean_direct <- function(intensity_xptr, from_time = 0, to_time = 0
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
 #' pladdrr:::intensity_get_minimum_direct(intensity$.xptr)
+#' @noRd
 intensity_get_minimum_direct <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_minimum_direct`, intensity_xptr, from_time, to_time)
 }
@@ -2148,6 +1396,7 @@ intensity_get_minimum_direct <- function(intensity_xptr, from_time = 0, to_time 
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' intensity <- sound$to_intensity()
 #' pladdrr:::intensity_get_maximum_direct(intensity$.xptr)
+#' @noRd
 intensity_get_maximum_direct <- function(intensity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_intensity_get_maximum_direct`, intensity_xptr, from_time, to_time)
 }
@@ -2162,6 +1411,7 @@ intensity_get_maximum_direct <- function(intensity_xptr, from_time = 0, to_time 
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' harmonicity <- sound$to_harmonicity_cc()
 #' pladdrr:::harmonicity_get_value_direct(harmonicity$.xptr, 0.25)
+#' @noRd
 harmonicity_get_value_direct <- function(harmonicity_xptr, time, interpolation = 2L) {
     .Call(`_pladdrr_harmonicity_get_value_direct`, harmonicity_xptr, time, interpolation)
 }
@@ -2176,6 +1426,7 @@ harmonicity_get_value_direct <- function(harmonicity_xptr, time, interpolation =
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' harmonicity <- sound$to_harmonicity_cc()
 #' pladdrr:::harmonicity_get_mean_direct(harmonicity$.xptr)
+#' @noRd
 harmonicity_get_mean_direct <- function(harmonicity_xptr, from_time = 0, to_time = 0) {
     .Call(`_pladdrr_harmonicity_get_mean_direct`, harmonicity_xptr, from_time, to_time)
 }
@@ -2191,6 +1442,7 @@ harmonicity_get_mean_direct <- function(harmonicity_xptr, from_time = 0, to_time
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' pitch_xptr <- pladdrr:::sound_to_pitch_direct(sound$.xptr)
 #' pitch <- Pitch(.xptr = pitch_xptr)
+#' @noRd
 sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, pitch_ceiling = 600) {
     .Call(`_pladdrr_sound_to_pitch_direct`, sound_xptr, time_step, pitch_floor, pitch_ceiling)
 }
@@ -2208,6 +1460,7 @@ sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, p
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
 #' formant_xptr <- pladdrr:::sound_to_formant_direct(sound$.xptr)
 #' formant <- Formant(.xptr = formant_xptr)
+#' @noRd
 sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5, max_formant = 5500, window_length = 0.025, pre_emphasis = 50) {
     .Call(`_pladdrr_sound_to_formant_direct`, sound_xptr, time_step, max_formants, max_formant, window_length, pre_emphasis)
 }
@@ -2223,6 +1476,7 @@ sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5,
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' intensity_xptr <- pladdrr:::sound_to_intensity_direct(sound$.xptr)
 #' intensity <- Intensity(.xptr = intensity_xptr)
+#' @noRd
 sound_to_intensity_direct <- function(sound_xptr, minimum_pitch = 100, time_step = 0, subtract_mean = TRUE) {
     .Call(`_pladdrr_sound_to_intensity_direct`, sound_xptr, minimum_pitch, time_step, subtract_mean)
 }
@@ -2239,6 +1493,7 @@ sound_to_intensity_direct <- function(sound_xptr, minimum_pitch = 100, time_step
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 #' harm_xptr <- pladdrr:::sound_to_harmonicity_direct(sound$.xptr)
 #' harmonicity <- Harmonicity(.xptr = harm_xptr)
+#' @noRd
 sound_to_harmonicity_direct <- function(sound_xptr, time_step = 0.01, minimum_pitch = 75, silence_threshold = 0.1, periods_per_window = 1.0) {
     .Call(`_pladdrr_sound_to_harmonicity_direct`, sound_xptr, time_step, minimum_pitch, silence_threshold, periods_per_window)
 }
@@ -2255,6 +1510,7 @@ sound_to_harmonicity_direct <- function(sound_xptr, time_step = 0.01, minimum_pi
 #' stats <- pladdrr:::pitch_get_all_stats_direct(pitch$.xptr)
 #' str(stats)
 #' @keywords internal
+#' @noRd
 pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit = 0L) {
     .Call(`_pladdrr_pitch_get_all_stats_direct`, pitch_xptr, from_time, to_time, unit)
 }
@@ -2269,6 +1525,7 @@ pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, u
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
 #' formant <- sound$to_formant_burg()
 #' pladdrr:::formant_get_f1_f4_direct(formant$.xptr, 0.15, 0)
+#' @noRd
 formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
     .Call(`_pladdrr_formant_get_f1_f4_direct`, formant_xptr, time, unit)
 }
@@ -2286,6 +1543,7 @@ formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' pladdrr:::get_point_process_mean_period_direct(pp$.xptr)
+#' @noRd
 get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
     .Call(`_pladdrr_get_point_process_mean_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
@@ -2303,6 +1561,7 @@ get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' pladdrr:::get_point_process_stdev_period_direct(pp$.xptr)
+#' @noRd
 get_point_process_stdev_period_direct <- function(pp_xptr, from_time = 0, to_time = 0, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
     .Call(`_pladdrr_get_point_process_stdev_period_direct`, pp_xptr, from_time, to_time, period_floor, period_ceiling, max_period_factor)
 }
@@ -2328,12 +1587,9 @@ praat_version <- function() {
 #' @examples
 #' pladdrr:::praat_initialize()
 #' @keywords internal
+#' @noRd
 praat_initialize <- function() {
     .Call(`_pladdrr_praat_initialize`)
-}
-
-.test_class_registry <- function() {
-    .Call(`_pladdrr_test_class_registry`)
 }
 
 #' Calculate basic sound statistics
@@ -2345,6 +1601,7 @@ praat_initialize <- function() {
 #' @keywords internal
 #' @examples
 #' pladdrr:::sound_stats(sin(2 * pi * 150 * seq(0, 1, length.out = 1000)))
+#' @noRd
 sound_stats <- function(sound_data) {
     .Call(`_pladdrr_sound_stats`, sound_data)
 }
@@ -2376,6 +1633,7 @@ create_sound_from_values <- function(values, sampling_rate = 44100.0, start_time
 #' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 #' snd <- create_sound_from_values(values, sampling_rate = 10000)
 #' pladdrr:::get_sound_duration_cpp(snd)
+#' @noRd
 get_sound_duration_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_duration_cpp`, sound_obj)
 }
@@ -2391,6 +1649,7 @@ get_sound_duration_cpp <- function(sound_obj) {
 #' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 #' snd <- create_sound_from_values(values, sampling_rate = 10000)
 #' pladdrr:::get_sound_sampling_rate_cpp(snd)
+#' @noRd
 get_sound_sampling_rate_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_sampling_rate_cpp`, sound_obj)
 }
@@ -2406,6 +1665,7 @@ get_sound_sampling_rate_cpp <- function(sound_obj) {
 #' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 #' snd <- create_sound_from_values(values, sampling_rate = 10000)
 #' pladdrr:::get_sound_n_samples_cpp(snd)
+#' @noRd
 get_sound_n_samples_cpp <- function(sound_obj) {
     .Call(`_pladdrr_get_sound_n_samples_cpp`, sound_obj)
 }
@@ -2419,10 +1679,6 @@ get_sound_n_samples_cpp <- function(sound_obj) {
 
 set_global_simd_enabled <- function(enabled) {
     invisible(.Call(`_pladdrr_set_global_simd_enabled`, enabled))
-}
-
-get_global_simd_enabled <- function() {
-    .Call(`_pladdrr_get_global_simd_enabled`)
 }
 
 #' Fast Sound Sample Access
@@ -2493,6 +1749,7 @@ sound_times_fast <- function(sound_xptr) {
 #' mat <- pladdrr:::sound_as_matrix_fast_impl(sound$get_xptr())
 #'
 #' @keywords internal
+#' @noRd
 sound_as_matrix_fast_impl <- function(sound_xptr, zerocopy = FALSE) {
     .Call(`_pladdrr_sound_as_matrix_fast_impl`, sound_xptr, zerocopy)
 }
@@ -2555,16 +1812,12 @@ is_fast_access <- function(x) {
 #' SIMD-optimized sound scaling (peak amplitude)
 #' @keywords internal
 #' @noRd
-.sound_scale_peak_simd <- function(xptr, new_peak) {
-    invisible(.Call(`_pladdrr_sound_scale_peak_simd`, xptr, new_peak))
-}
+NULL
 
 #' SIMD-optimized sound mixing with balance
 #' @keywords internal
 #' @noRd
-.sound_mix_simd <- function(xptr1, xptr2, balance) {
-    .Call(`_pladdrr_sound_mix_simd`, xptr1, xptr2, balance)
-}
+NULL
 
 #' @title Sound Object Pool for Batch Processing
 #' @name sound_pool
@@ -2634,6 +1887,7 @@ sound_pool_resize <- function(max_size) {
 #' pladdrr:::sound_pool_release(xptr)
 #'
 #' @keywords internal
+#' @noRd
 sound_pool_acquire <- function(xmin, xmax, nx, dx, x1, ny) {
     .Call(`_pladdrr_sound_pool_acquire`, xmin, xmax, nx, dx, x1, ny)
 }
@@ -2649,6 +1903,7 @@ sound_pool_acquire <- function(xmin, xmax, nx, dx, x1, ny) {
 #' pladdrr:::sound_pool_release(xptr)
 #'
 #' @keywords internal
+#' @noRd
 sound_pool_release <- function(sound_xptr) {
     invisible(.Call(`_pladdrr_sound_pool_release`, sound_xptr))
 }
@@ -2741,13 +1996,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_get_number_of_samples`, xptr)
 }
 
-#' Get number of channels (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_number_of_channels <- function(xptr) {
-    .Call(`_pladdrr_sound_get_number_of_channels`, xptr)
-}
-
 #' Get value at time (internal)
 #' @keywords internal
 #' @noRd
@@ -2774,13 +2022,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @noRd
 .sound_get_power <- function(xptr, from_time, to_time) {
     .Call(`_pladdrr_sound_get_power`, xptr, from_time, to_time)
-}
-
-#' Get intensity in dB (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_intensity_db <- function(xptr) {
-    .Call(`_pladdrr_sound_get_intensity_db`, xptr)
 }
 
 #' Convert Sound to Pitch (internal)
@@ -2818,25 +2059,11 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_to_pitch_spinet`, sound_xptr, time_step, window_duration, min_frequency, max_frequency, n_filters, pitch_ceiling, max_candidates)
 }
 
-#' Convert Sound to Formant via Burg (internal)
-#' @keywords internal
-#' @noRd
-.sound_to_formant_burg <- function(sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from) {
-    .Call(`_pladdrr_sound_to_formant_burg`, sound_xptr, time_step, max_formants, max_frequency, window_length, pre_emphasis_from)
-}
-
 #' Convert Sound to Intensity (internal)
 #' @keywords internal
 #' @noRd
 .sound_to_intensity <- function(sound_xptr, minimum_pitch, time_step, subtract_mean) {
     .Call(`_pladdrr_sound_to_intensity`, sound_xptr, minimum_pitch, time_step, subtract_mean)
-}
-
-#' Convert Sound to Harmonicity (internal)
-#' @keywords internal
-#' @noRd
-.sound_to_harmonicity_cc <- function(sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window) {
-    .Call(`_pladdrr_sound_to_harmonicity_cc`, sound_xptr, time_step, min_pitch, silence_threshold, periods_per_window)
 }
 
 #' Convert Sound to Harmonicity using autocorrelation (internal)
@@ -2872,34 +2099,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @noRd
 .sound_to_spectrogram <- function(sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape) {
     .Call(`_pladdrr_sound_to_spectrogram`, sound_xptr, window_length, max_frequency, time_step, frequency_step, window_shape)
-}
-
-#' Write Sound to file using native Praat writers (internal)
-#' @keywords internal
-#' @noRd
-.sound_write_to_file_native <- function(sound_xptr, path, format, bits_per_sample) {
-    invisible(.Call(`_pladdrr_sound_write_to_file_native`, sound_xptr, path, format, bits_per_sample))
-}
-
-#' Export Sound as data frame (internal)
-#' @keywords internal
-#' @noRd
-.sound_as_data_frame <- function(xptr) {
-    .Call(`_pladdrr_sound_as_data_frame`, xptr)
-}
-
-#' Export Sound as matrix (internal)
-#' @keywords internal
-#' @noRd
-.sound_as_matrix <- function(xptr) {
-    .Call(`_pladdrr_sound_as_matrix`, xptr)
-}
-
-#' Save Sound to file (internal)
-#' @keywords internal
-#' @noRd
-.sound_save <- function(xptr, path, file_type) {
-    invisible(.Call(`_pladdrr_sound_save`, xptr, path, file_type))
 }
 
 #' Create PointProcess from Sound and Pitch using cross-correlation (internal)
@@ -2945,25 +2144,11 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_to_point_process_zeros`, xptr, channel, include_raisers, include_fallers)
 }
 
-#' Extract periodic pulses using cross-correlation (internal)
-#' @keywords internal
-#' @noRd
-.sound_to_pointprocess_periodic_cc <- function(xptr, pitch_floor, pitch_ceiling) {
-    .Call(`_pladdrr_sound_to_pointprocess_periodic_cc`, xptr, pitch_floor, pitch_ceiling)
-}
-
 #' Extract periodic pulses using peak detection (internal)
 #' @keywords internal
 #' @noRd
 .sound_to_pointprocess_periodic_peaks <- function(xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima) {
     .Call(`_pladdrr_sound_to_pointprocess_periodic_peaks`, xptr, pitch_floor, pitch_ceiling, include_maxima, include_minima)
-}
-
-#' Extract a specific channel from Sound (internal)
-#' @keywords internal
-#' @noRd
-.sound_extract_channel <- function(xptr, channel) {
-    .Call(`_pladdrr_sound_extract_channel`, xptr, channel)
 }
 
 #' Extract part of Sound by time (internal)
@@ -3062,10 +2247,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @noRd
 .sound_to_textgrid_silences <- function(sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label) {
     .Call(`_pladdrr_sound_to_textgrid_silences`, sound_xptr, min_pitch, time_step, silence_threshold, min_silent_duration, min_sounding_duration, silent_label, sounding_label)
-}
-
-.sound_extract_intervals_where <- function(sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern) {
-    .Call(`_pladdrr_sound_extract_intervals_where`, sound_xptr, textgrid_xptr, tier_number, which_comparison, text_pattern)
 }
 
 #' Concatenate multiple Sound objects in one C++ call (internal)
@@ -3413,10 +2594,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_spectrogram_get_power_at`, spectrogram, time, frequency)
 }
 
-.spectrogram_to_spectrum <- function(spectrogram, time) {
-    .Call(`_pladdrr_spectrogram_to_spectrum`, spectrogram, time)
-}
-
 .spectrogram_as_matrix <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_as_matrix`, spectrogram)
 }
@@ -3541,18 +2718,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_table_get_number_of_columns`, xptr)
 }
 
-.table_get_column_label <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_column_label`, xptr, columnNumber)
-}
-
-.table_get_column_index <- function(xptr, columnName) {
-    .Call(`_pladdrr_table_get_column_index`, xptr, columnName)
-}
-
-.table_set_column_label <- function(xptr, columnNumber, label) {
-    invisible(.Call(`_pladdrr_table_set_column_label`, xptr, columnNumber, label))
-}
-
 .table_get_numeric_value <- function(xptr, rowNumber, columnNumber) {
     .Call(`_pladdrr_table_get_numeric_value`, xptr, rowNumber, columnNumber)
 }
@@ -3565,28 +2730,12 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     invisible(.Call(`_pladdrr_table_set_numeric_value`, xptr, rowNumber, columnNumber, value))
 }
 
-.table_set_string_value <- function(xptr, rowNumber, columnNumber, value) {
-    invisible(.Call(`_pladdrr_table_set_string_value`, xptr, rowNumber, columnNumber, value))
-}
-
-.table_append_row <- function(xptr) {
-    invisible(.Call(`_pladdrr_table_append_row`, xptr))
-}
-
-.table_append_column <- function(xptr, columnName) {
-    invisible(.Call(`_pladdrr_table_append_column`, xptr, columnName))
-}
-
 .table_remove_row <- function(xptr, rowNumber) {
     invisible(.Call(`_pladdrr_table_remove_row`, xptr, rowNumber))
 }
 
 .table_remove_column <- function(xptr, columnNumber) {
     invisible(.Call(`_pladdrr_table_remove_column`, xptr, columnNumber))
-}
-
-.table_insert_row <- function(xptr, rowPosition) {
-    invisible(.Call(`_pladdrr_table_insert_row`, xptr, rowPosition))
 }
 
 .table_insert_column <- function(xptr, columnPosition, columnName) {
@@ -4121,156 +3270,12 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
     .Call(`_pladdrr_textgrid_create`, tmin, tmax, tier_names, point_tiers)
 }
 
-.textgrid_save <- function(xptr, path) {
-    invisible(.Call(`_pladdrr_textgrid_save`, xptr, path))
-}
-
-.textgrid_get_start_time <- function(xptr) {
-    .Call(`_pladdrr_textgrid_get_start_time`, xptr)
-}
-
-.textgrid_get_end_time <- function(xptr) {
-    .Call(`_pladdrr_textgrid_get_end_time`, xptr)
-}
-
-.textgrid_get_total_duration <- function(xptr) {
-    .Call(`_pladdrr_textgrid_get_total_duration`, xptr)
-}
-
-.textgrid_get_number_of_tiers <- function(xptr) {
-    .Call(`_pladdrr_textgrid_get_number_of_tiers`, xptr)
-}
-
-.textgrid_get_tier_name <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_get_tier_name`, xptr, tier_number)
-}
-
-.textgrid_get_tier_names <- function(xptr) {
-    .Call(`_pladdrr_textgrid_get_tier_names`, xptr)
-}
-
-.textgrid_tier_is_interval_tier <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_tier_is_interval_tier`, xptr, tier_number)
-}
-
-.textgrid_tier_is_point_tier <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_tier_is_point_tier`, xptr, tier_number)
-}
-
-.textgrid_get_number_of_intervals <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_get_number_of_intervals`, xptr, tier_number)
-}
-
-.textgrid_get_interval_start_time <- function(xptr, tier_number, interval_number) {
-    .Call(`_pladdrr_textgrid_get_interval_start_time`, xptr, tier_number, interval_number)
-}
-
-.textgrid_get_interval_end_time <- function(xptr, tier_number, interval_number) {
-    .Call(`_pladdrr_textgrid_get_interval_end_time`, xptr, tier_number, interval_number)
-}
-
-.textgrid_get_interval_text <- function(xptr, tier_number, interval_number) {
-    .Call(`_pladdrr_textgrid_get_interval_text`, xptr, tier_number, interval_number)
-}
-
-.textgrid_get_interval_at_time <- function(xptr, tier_number, time) {
-    .Call(`_pladdrr_textgrid_get_interval_at_time`, xptr, tier_number, time)
-}
-
-.textgrid_get_label_at_time <- function(xptr, tier_number, time) {
-    .Call(`_pladdrr_textgrid_get_label_at_time`, xptr, tier_number, time)
-}
-
-.textgrid_get_all_intervals <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_get_all_intervals`, xptr, tier_number)
-}
-
-.textgrid_set_interval_text <- function(xptr, tier_number, interval_number, text) {
-    invisible(.Call(`_pladdrr_textgrid_set_interval_text`, xptr, tier_number, interval_number, text))
-}
-
-.textgrid_insert_boundary <- function(xptr, tier_number, time) {
-    invisible(.Call(`_pladdrr_textgrid_insert_boundary`, xptr, tier_number, time))
-}
-
-.textgrid_remove_boundary <- function(xptr, tier_number, time) {
-    invisible(.Call(`_pladdrr_textgrid_remove_boundary`, xptr, tier_number, time))
-}
-
-.textgrid_get_number_of_points <- function(xptr, tier_number) {
-    .Call(`_pladdrr_textgrid_get_number_of_points`, xptr, tier_number)
-}
-
-.textgrid_get_point_time <- function(xptr, tier_number, point_number) {
-    .Call(`_pladdrr_textgrid_get_point_time`, xptr, tier_number, point_number)
-}
-
-.textgrid_get_point_text <- function(xptr, tier_number, point_number) {
-    .Call(`_pladdrr_textgrid_get_point_text`, xptr, tier_number, point_number)
-}
-
 .textgrid_get_all_points <- function(xptr, tier_number) {
     .Call(`_pladdrr_textgrid_get_all_points`, xptr, tier_number)
 }
 
-.textgrid_insert_point <- function(xptr, tier_number, time, mark) {
-    invisible(.Call(`_pladdrr_textgrid_insert_point`, xptr, tier_number, time, mark))
-}
-
-.textgrid_set_point_text <- function(xptr, tier_number, point_number, text) {
-    invisible(.Call(`_pladdrr_textgrid_set_point_text`, xptr, tier_number, point_number, text))
-}
-
-.textgrid_remove_point <- function(xptr, tier_number, point_number) {
-    invisible(.Call(`_pladdrr_textgrid_remove_point`, xptr, tier_number, point_number))
-}
-
-.textgrid_add_interval_tier <- function(xptr, name) {
-    invisible(.Call(`_pladdrr_textgrid_add_interval_tier`, xptr, name))
-}
-
-.textgrid_add_point_tier <- function(xptr, name) {
-    invisible(.Call(`_pladdrr_textgrid_add_point_tier`, xptr, name))
-}
-
-.textgrid_remove_tier <- function(xptr, tier_number) {
-    invisible(.Call(`_pladdrr_textgrid_remove_tier`, xptr, tier_number))
-}
-
-.textgrid_set_tier_name <- function(xptr, tier_number, name) {
-    invisible(.Call(`_pladdrr_textgrid_set_tier_name`, xptr, tier_number, name))
-}
-
 .textgrid_duplicate_tier <- function(xptr, tier_number, new_name) {
     invisible(.Call(`_pladdrr_textgrid_duplicate_tier`, xptr, tier_number, new_name))
-}
-
-.textgrid_extract_part <- function(xptr, start_time, end_time, preserve_times) {
-    .Call(`_pladdrr_textgrid_extract_part`, xptr, start_time, end_time, preserve_times)
-}
-
-.textgrid_to_data_frame <- function(xptr, tier_numbers = NULL) {
-    .Call(`_pladdrr_textgrid_to_data_frame`, xptr, tier_numbers)
-}
-
-.textgrid_change_labels <- function(textgrid, tier, search, replace, use_regexp = FALSE, from = 1L, to = 0L) {
-    invisible(.Call(`_pladdrr_textgrid_change_labels`, textgrid, tier, search, replace, use_regexp, from, to))
-}
-
-.textgrid_merge_identical_intervals <- function(textgrid, tier, label) {
-    invisible(.Call(`_pladdrr_textgrid_merge_identical_intervals`, textgrid, tier, label))
-}
-
-.textgrid_get_total_duration_where <- function(textgrid, tier, criterion) {
-    .Call(`_pladdrr_textgrid_get_total_duration_where`, textgrid, tier, criterion)
-}
-
-.textgrid_extend_time <- function(textgrid, delta_time, position) {
-    invisible(.Call(`_pladdrr_textgrid_extend_time`, textgrid, delta_time, position))
-}
-
-.textgrid_to_table <- function(textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals) {
-    .Call(`_pladdrr_textgrid_to_table`, textgrid, include_line_numbers, time_decimals, include_tier_names, include_empty_intervals)
 }
 
 .textgrid_sound_extract_intervals_where <- function(textgrid, sound, tier_number, which_criterion, text, preserve_times) {
@@ -4311,6 +3316,7 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
 #' )
 #' result
 #' @keywords internal
+#' @noRd
 praat_error_to_r <- function(error_msg) {
     invisible(.Call(`_pladdrr_praat_error_to_r`, error_msg))
 }
@@ -4332,94 +3338,6 @@ praat_error_to_r <- function(error_msg) {
 #' @noRd
 .vocaltract_create_from_phone <- function(phone) {
     .Call(`_pladdrr_vocaltract_create_from_phone`, phone)
-}
-
-#' Get VocalTract total length
-#' @param xptr External pointer to VocalTract
-#' @return Total length in metres
-#' @keywords internal
-#' @noRd
-.vocaltract_get_length <- function(xptr) {
-    .Call(`_pladdrr_vocaltract_get_length`, xptr)
-}
-
-#' Get number of sections
-#' @param xptr External pointer to VocalTract
-#' @return Number of sections
-#' @keywords internal
-#' @noRd
-.vocaltract_get_number_of_sections <- function(xptr) {
-    .Call(`_pladdrr_vocaltract_get_number_of_sections`, xptr)
-}
-
-#' Get section length
-#' @param xptr External pointer to VocalTract
-#' @return Section length in metres
-#' @keywords internal
-#' @noRd
-.vocaltract_get_section_length <- function(xptr) {
-    .Call(`_pladdrr_vocaltract_get_section_length`, xptr)
-}
-
-#' Get area at section
-#' @param xptr External pointer to VocalTract
-#' @param section Section index (1-based)
-#' @return Area in square metres
-#' @keywords internal
-#' @noRd
-.vocaltract_get_area <- function(xptr, section) {
-    .Call(`_pladdrr_vocaltract_get_area`, xptr, section)
-}
-
-#' Set area at section
-#' @param xptr External pointer to VocalTract
-#' @param section Section index (1-based)
-#' @param area Area in square metres
-#' @keywords internal
-#' @noRd
-.vocaltract_set_area <- function(xptr, section, area) {
-    invisible(.Call(`_pladdrr_vocaltract_set_area`, xptr, section, area))
-}
-
-#' Get all areas as vector
-#' @param xptr External pointer to VocalTract
-#' @return Numeric vector of areas
-#' @keywords internal
-#' @noRd
-.vocaltract_get_areas <- function(xptr) {
-    .Call(`_pladdrr_vocaltract_get_areas`, xptr)
-}
-
-#' Set all areas from vector
-#' @param xptr External pointer to VocalTract
-#' @param areas Numeric vector of areas
-#' @keywords internal
-#' @noRd
-.vocaltract_set_areas <- function(xptr, areas) {
-    invisible(.Call(`_pladdrr_vocaltract_set_areas`, xptr, areas))
-}
-
-#' Convert VocalTract to Spectrum
-#' @param xptr External pointer to VocalTract
-#' @param number_of_frequencies Number of frequency bins
-#' @param maximum_frequency Maximum frequency in Hz
-#' @param glottal_damping Glottal damping coefficient
-#' @param radiation_damping Include radiation damping
-#' @param internal_damping Include internal damping
-#' @return External pointer to Spectrum
-#' @keywords internal
-#' @noRd
-.vocaltract_to_spectrum <- function(xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping) {
-    .Call(`_pladdrr_vocaltract_to_spectrum`, xptr, number_of_frequencies, maximum_frequency, glottal_damping, radiation_damping, internal_damping)
-}
-
-#' Convert VocalTract to Matrix
-#' @param xptr External pointer to VocalTract
-#' @return External pointer to Matrix
-#' @keywords internal
-#' @noRd
-.vocaltract_to_matrix <- function(xptr) {
-    .Call(`_pladdrr_vocaltract_to_matrix`, xptr)
 }
 
 .apply_hamming_window_simd <- function(data) {
@@ -4444,18 +3362,6 @@ praat_error_to_r <- function(error_msg) {
 
 .apply_gaussian_window_scalar <- function(data, sigma = 0.4) {
     .Call(`_pladdrr_apply_gaussian_window_scalar`, data, sigma)
-}
-
-.apply_hamming_window <- function(data) {
-    .Call(`_pladdrr_apply_hamming_window`, data)
-}
-
-.apply_hanning_window <- function(data) {
-    .Call(`_pladdrr_apply_hanning_window`, data)
-}
-
-.apply_gaussian_window <- function(data, sigma = 0.4) {
-    .Call(`_pladdrr_apply_gaussian_window`, data, sigma)
 }
 
 # Register entry points for exported C++ functions

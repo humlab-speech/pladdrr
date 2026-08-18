@@ -111,6 +111,7 @@ extern "C" {
 //' pladdrr:::formant_get_multiple_formants_at_times(
 //'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
 //' )
+//' @noRd
 // [[Rcpp::export]]
 List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times,
                                              IntegerVector formant_numbers, int unit = 0) {
@@ -189,6 +190,7 @@ List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector tim
 //' pladdrr:::formant_get_multiple_bandwidths_at_times(
 //'   formant$.xptr, c(0.1, 0.15, 0.2), c(1L, 2L), 0L
 //' )
+//' @noRd
 // [[Rcpp::export]]
 List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector times,
                                                 IntegerVector formant_numbers, int unit = 0) {
@@ -244,6 +246,7 @@ List formant_get_multiple_bandwidths_at_times(SEXP formant_xptr, NumericVector t
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_strengths_at_times(pitch$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
                                             int unit = 0, bool interpolate = true) {
@@ -300,6 +303,7 @@ NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
 //' pitch <- sound$to_pitch()
 //' pladdrr:::pitch_get_quantiles_batch(pitch$.xptr, c(0.25, 0.5, 0.75))
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
                                           NumericVector quantiles,
@@ -353,6 +357,7 @@ NumericVector pitch_get_quantiles_batch(SEXP pitch_xptr,
 //' pp <- sound$to_pointprocess_periodic_cc()
 //' pladdrr:::pointprocess_get_all_times(pp$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
     XPtr<structPointProcess> pp(pp_xptr);
@@ -380,6 +385,7 @@ NumericVector pointprocess_get_all_times(SEXP pp_xptr) {
 //' pp <- sound$to_pointprocess_periodic_cc()
 //' pladdrr:::pointprocess_get_intervals(pp$.xptr)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
     XPtr<structPointProcess> pp(pp_xptr);
@@ -411,6 +417,7 @@ NumericVector pointprocess_get_intervals(SEXP pp_xptr) {
 //' pp <- sound$to_pointprocess_periodic_cc()
 //' pladdrr:::pointprocess_get_nearest_indices(pp$.xptr, c(0.2, 0.5, 0.8))
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times) {
     XPtr<structPointProcess> pp(pp_xptr);
@@ -464,6 +471,7 @@ IntegerVector pointprocess_get_nearest_indices(SEXP pp_xptr, NumericVector times
 //'   metrics = c("min", "max", "mean")
 //' )
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericMatrix pitch_get_statistics_batch(
     SEXP pitch_xptr,
@@ -596,6 +604,7 @@ NumericMatrix pitch_get_statistics_batch(
 //' range_info <- pladdrr:::pitch_get_adaptive_range(pitch$.xptr)
 //' str(range_info)
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 List pitch_get_adaptive_range(
     SEXP pitch_xptr,
@@ -654,6 +663,7 @@ List pitch_get_adaptive_range(
 //' pladdrr:::intensity_get_statistics_batch(
 //'   intensity$.xptr, c(0.1, 0.3), c(0.2, 0.4), c("mean", "max")
 //' )
+//' @noRd
 // [[Rcpp::export]]
 NumericMatrix intensity_get_statistics_batch(
     SEXP intensity_xptr,
@@ -759,6 +769,7 @@ NumericMatrix intensity_get_statistics_batch(
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' intensity <- sound$to_intensity()
 //' pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 List intensity_get_minimum_with_time(
     SEXP intensity_xptr,
@@ -828,6 +839,7 @@ List intensity_get_minimum_with_time(
 //' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 //' pp <- sound$to_point_process_periodic_cc(75, 600)
 //' pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, sound$.xptr)
+//' @noRd
 // [[Rcpp::export]]
 List get_jitter_shimmer_batch_cpp(
     SEXP pp_xptr,
@@ -922,6 +934,7 @@ List get_jitter_shimmer_batch_cpp(
 //' wav <- tempfile(fileext = ".wav")
 //' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav)
 //' pladdrr:::get_durations_batch_cpp(wav)
+//' @noRd
 // [[Rcpp::export]]
 NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
     int n = file_paths.size();
@@ -1028,6 +1041,7 @@ NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 //' pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "mean", 0, 75, 600, 0.45)
+//' @noRd
 // [[Rcpp::export]]
 double calculate_f0_stats_ultra_cpp(
     SEXP sound_xptr,
@@ -1106,6 +1120,7 @@ double calculate_f0_stats_ultra_cpp(
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
 //' pladdrr:::calculate_minimum_intensity_ultra_cpp(sound$.xptr, 75, 600, 0, TRUE)
+//' @noRd
 // [[Rcpp::export]]
 double calculate_minimum_intensity_ultra_cpp(
     SEXP sound_xptr,
@@ -1218,6 +1233,7 @@ static bool has_metric(CharacterVector metrics, const std::string& target) {
 //' pladdrr:::get_voice_quality_ultra_cpp(
 //'   sound$.xptr, "jitter", 75, 600, 0, "cc", TRUE
 //' )
+//' @noRd
 // [[Rcpp::export]]
 List get_voice_quality_ultra_cpp(
     SEXP sound_xptr,

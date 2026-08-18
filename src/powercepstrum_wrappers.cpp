@@ -220,126 +220,13 @@ double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
     }
 }
 
-// [[Rcpp::export(.powercepstrum_get_quefrency_of_peak)]]
-double powercepstrum_get_quefrency_of_peak(SEXP xptr, std::string interpolation,
-                                           double qmin, double qmax) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    kCepstrum_peakInterpolation interp_type = kCepstrum_peakInterpolation::PARABOLIC;
-    if (interpolation == "none") interp_type = kCepstrum_peakInterpolation::NONE;
-    else if (interpolation == "parabolic") interp_type = kCepstrum_peakInterpolation::PARABOLIC;
-    else if (interpolation == "cubic") interp_type = kCepstrum_peakInterpolation::CUBIC;
-    
-    if (qmax == 0) {
-        qmax = cepstrum->xmax;
-    }
-    
-    try {
-        double maximum, quefrency;
-        PowerCepstrum_getMaximumAndQuefrency_q(
-            cepstrum.get(),
-            qmin,
-            qmax,
-            interp_type,
-            maximum,
-            quefrency
-        );
-        return quefrency;
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get quefrency of peak");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_get_value_at_quefrency)]]
-double powercepstrum_get_value_at_quefrency(SEXP xptr, double quefrency,
-                                             std::string interpolation, std::string unit) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    // Find the quefrency index
-    double index = 1.0 + (quefrency - cepstrum->x1) / cepstrum->dx;
-    if (index < 1 || index > cepstrum->nx) {
-        stop("Quefrency out of range");
-    }
-    
-    try {
-        integer bin = (integer) floor(index);
-        double fraction = index - bin;
-
-        // z[1][.] stores linear power (Praat convention, see
-        // structPowerCepstrum::v_getValueAtSample). Convert to the requested
-        // unit per-sample, then interpolate — matching Praat's todBs()/
-        // getPeakAndPosition(), which interpolate in dB space, not linear.
-        double near_value = cepstrum->z[1][bin];
-        if (unit == "dB") near_value = 10.0 * log10(near_value + 1e-30);
-
-        double value;
-        if (interpolation == "linear" && bin < cepstrum->nx) {
-            double far_value = cepstrum->z[1][bin + 1];
-            if (unit == "dB") far_value = 10.0 * log10(far_value + 1e-30);
-            value = (1.0 - fraction) * near_value + fraction * far_value;
-        } else {
-            value = near_value;
-        }
-
-        return value;
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get value at quefrency");
-    }
-}
-
 // ==============================================================================
 // PowerCepstrum modification
 // ==============================================================================
 
-// [[Rcpp::export(.powercepstrum_smooth)]]
-SEXP powercepstrum_smooth(SEXP xptr, double averaging_window, int nsamples) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        autoPowerCepstrum smoothed = PowerCepstrum_smooth(cepstrum.get(), averaging_window, nsamples);
-        return create_xptr_from_auto<structPowerCepstrum>(smoothed);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to smooth PowerCepstrum");
-    }
-}
-
 // ==============================================================================
 // PowerCepstrum conversions
 // ==============================================================================
-
-// [[Rcpp::export(.powercepstrum_to_matrix)]]
-SEXP powercepstrum_to_matrix(SEXP xptr) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        autoMatrix matrix = PowerCepstrum_to_Matrix(cepstrum.get());
-        return create_xptr_from_auto<structMatrix>(matrix);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to convert PowerCepstrum to Matrix");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_as_matrix)]]
-NumericMatrix powercepstrum_as_matrix(SEXP xptr) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    NumericMatrix mat(1, cepstrum->nx);
-    
-    for (integer i = 1; i <= cepstrum->nx; i++) {
-        mat(0, i - 1) = cepstrum->z[1][i];
-    }
-    
-    return mat;
-}
 
 // ==============================================================================
 // PowerCepstrogram query methods
@@ -562,44 +449,6 @@ double powercepstrogram_get_cpps(SEXP xptr,
     }
 }
 
-// [[Rcpp::export(.powercepstrum_get_peak_prominence_cpps)]]
-double powercepstrum_get_peak_prominence_cpps(SEXP xptr,
-                                             double pitch_floor,
-                                             double pitch_ceiling,
-                                             int interpolation,
-                                             double qstart_fit,
-                                             double qend_fit,
-                                             int trend_type,
-                                             int fit_method) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        // Convert integer enums to Praat types
-        kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
-        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-        
-        double qpeak = 0.0;
-        double prominence = PowerCepstrum_getPeakProminence(
-            cepstrum.get(),
-            pitch_floor,
-            pitch_ceiling,
-            interp_type,
-            qstart_fit,
-            qend_fit,
-            trend,
-            fit,
-            qpeak
-        );
-        
-        return prominence;
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to compute peak prominence from PowerCepstrum");
-    }
-}
-
 // ==============================================================================
 // Direct Sound to CPPS - Optimized single-call API (v4.1.0)
 // ==============================================================================
@@ -668,30 +517,6 @@ double sound_to_cpps_direct(
 // Additional PowerCepstrum Methods - Voice Quality Analysis
 // ==============================================================================
 
-// [[Rcpp::export(.powercepstrum_get_peak_prominence_hillenbrand)]]
-List powercepstrum_get_peak_prominence_hillenbrand(SEXP xptr, double pitch_floor, double pitch_ceiling) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        double qpeak = 0.0;
-        double prominence = PowerCepstrum_getPeakProminence_hillenbrand(
-            cepstrum.get(),
-            pitch_floor,
-            pitch_ceiling,
-            qpeak
-        );
-        
-        return List::create(
-            Named("prominence") = prominence,
-            Named("quefrency") = qpeak
-        );
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get Hillenbrand peak prominence");
-    }
-}
-
 // [[Rcpp::export(.powercepstrum_get_rnr)]]
 double powercepstrum_get_rnr(SEXP xptr, double pitch_floor, double pitch_ceiling, double f0_fractional_width) {
     // NOTE: This function causes segfaults when PowerCepstrum is created from Spectrum.
@@ -724,108 +549,6 @@ SEXP powercepstrum_tabulate_rhamonics(SEXP xptr, double pitch_floor, double pitc
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to tabulate rhamonics");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_fit_trend_line)]]
-List powercepstrum_fit_trend_line(SEXP xptr, double qmin, double qmax, int trend_type, int fit_method) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-        
-        double slope = 0.0, intercept = 0.0;
-        PowerCepstrum_fitTrendLine(
-            cepstrum.get(),
-            qmin,
-            qmax,
-            &slope,
-            &intercept,
-            trend,
-            fit
-        );
-        
-        return List::create(
-            Named("slope") = slope,
-            Named("intercept") = intercept
-        );
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to fit trend line");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_get_trend_line_value)]]
-double powercepstrum_get_trend_line_value(SEXP xptr, double quefrency, double qstart_fit, double qend_fit, 
-                                          int trend_type, int fit_method) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-        
-        double value = PowerCepstrum_getTrendLineValue(
-            cepstrum.get(),
-            quefrency,
-            qstart_fit,
-            qend_fit,
-            trend,
-            fit
-        );
-        
-        return value;
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get trend line value");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_subtract_trend)]]
-SEXP powercepstrum_subtract_trend(SEXP xptr, double qstart_fit, double qend_fit, int trend_type, int fit_method) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-        
-        autoPowerCepstrum detrended = PowerCepstrum_subtractTrend(
-            cepstrum.get(),
-            qstart_fit,
-            qend_fit,
-            trend,
-            fit
-        );
-        
-        return create_xptr_from_auto<structPowerCepstrum>(detrended);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to subtract trend");
-    }
-}
-
-// [[Rcpp::export(.powercepstrum_subtract_trend_inplace)]]
-void powercepstrum_subtract_trend_inplace(SEXP xptr, double qstart_fit, double qend_fit, int trend_type, int fit_method) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-        kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-        
-        PowerCepstrum_subtractTrend_inplace(
-            cepstrum.get(),
-            qstart_fit,
-            qend_fit,
-            trend,
-            fit
-        );
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to subtract trend in-place");
     }
 }
 
@@ -921,16 +644,3 @@ SEXP spectrum_to_cepstrum_hillenbrand(SEXP spectrum_xptr) {
     }
 }
 
-// [[Rcpp::export(.powercepstrum_to_spectrum)]]
-SEXP powercepstrum_to_spectrum(SEXP powercepstrum_xptr, bool random_phases) {
-    XPtr<structPowerCepstrum> powercepstrum(powercepstrum_xptr);
-    if (!powercepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    try {
-        autoSpectrum spectrum = PowerCepstrum_to_Spectrum(powercepstrum.get(), random_phases);
-        return create_xptr_from_auto<structSpectrum>(spectrum);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to convert PowerCepstrum to Spectrum");
-    }
-}

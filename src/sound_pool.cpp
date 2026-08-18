@@ -293,6 +293,7 @@ void sound_pool_resize(int max_size) {
 //' pladdrr:::sound_pool_release(xptr)
 //'
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, int ny) {
     structSound* sound = g_sound_pool.acquire(xmin, xmax, (integer)nx, dx, x1, (integer)ny);
@@ -315,6 +316,7 @@ SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, 
 //' pladdrr:::sound_pool_release(xptr)
 //'
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 void sound_pool_release(SEXP sound_xptr) {
     if (TYPEOF(sound_xptr) != EXTPTRSXP) {

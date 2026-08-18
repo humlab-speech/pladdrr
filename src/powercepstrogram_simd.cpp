@@ -387,7 +387,3 @@ void compute_final_power_simd(
 // R Bridge for Testing (Optional)
 // ============================================================================
 
-// [[Rcpp::export(.should_use_simd_for_powercepstrogram_bridge)]]
-bool should_use_simd_for_powercepstrogram_bridge() {
-    return should_use_simd_for_powercepstrogram();
-}

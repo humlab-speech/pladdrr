@@ -86,6 +86,7 @@ String praat_version() {
 //' @examples
 //' pladdrr:::praat_initialize()
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 bool praat_initialize() {
     // pladdrr is always headless (no GUI, no progress display registered).
@@ -155,23 +156,6 @@ bool praat_initialize() {
 extern integer theNumberOfReadableClasses;
 extern ClassInfo theReadableClasses [1 + 1000];
 
-// [[Rcpp::export(.test_class_registry)]]
-int test_class_registry() {
-    Rcpp::Rcout << "Registry address: " << &theNumberOfReadableClasses << "\n";
-    Rcpp::Rcout << "Number of classes: " << theNumberOfReadableClasses << "\n";
-    
-    for (integer i = 1; i <= theNumberOfReadableClasses && i <= 10; i++) {
-        ClassInfo klas = theReadableClasses[i];
-        if (klas) {
-            Rcpp::Rcout << "  [" << i << "] " << Melder_peek32to8(klas->className) << "\n";
-        } else {
-            Rcpp::Rcout << "  [" << i << "] NULL\n";
-        }
-    }
-    
-    return theNumberOfReadableClasses;
-}
-
 // ============================================================================
 // Sound Object Creation and Basic Operations
 // ============================================================================
@@ -185,6 +169,7 @@ int test_class_registry() {
 //' @keywords internal
 //' @examples
 //' pladdrr:::sound_stats(sin(2 * pi * 150 * seq(0, 1, length.out = 1000)))
+//' @noRd
 // [[Rcpp::export]]
 List sound_stats(NumericVector sound_data) {
     if (sound_data.size() == 0) {
@@ -265,6 +250,7 @@ List create_sound_from_values(NumericVector values, double sampling_rate = 44100
 //' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 //' snd <- create_sound_from_values(values, sampling_rate = 10000)
 //' pladdrr:::get_sound_duration_cpp(snd)
+//' @noRd
 // [[Rcpp::export]]
 double get_sound_duration_cpp(List sound_obj) {
     if (!sound_obj.containsElementNamed("duration")) {
@@ -284,6 +270,7 @@ double get_sound_duration_cpp(List sound_obj) {
 //' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 //' snd <- create_sound_from_values(values, sampling_rate = 10000)
 //' pladdrr:::get_sound_sampling_rate_cpp(snd)
+//' @noRd
 // [[Rcpp::export]]
 double get_sound_sampling_rate_cpp(List sound_obj) {
     if (!sound_obj.containsElementNamed("sampling_rate")) {
@@ -303,6 +290,7 @@ double get_sound_sampling_rate_cpp(List sound_obj) {
 //' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
 //' snd <- create_sound_from_values(values, sampling_rate = 10000)
 //' pladdrr:::get_sound_n_samples_cpp(snd)
+//' @noRd
 // [[Rcpp::export]]
 int get_sound_n_samples_cpp(List sound_obj) {
     if (!sound_obj.containsElementNamed("n_samples")) {

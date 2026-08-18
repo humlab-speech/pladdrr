@@ -159,6 +159,7 @@ NumericVector sound_times_fast(SEXP sound_xptr) {
 //' mat <- pladdrr:::sound_as_matrix_fast_impl(sound$get_xptr())
 //'
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 NumericMatrix sound_as_matrix_fast_impl(SEXP sound_xptr, bool zerocopy = false) {
     BEGIN_RCPP

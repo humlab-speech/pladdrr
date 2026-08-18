@@ -271,29 +271,3 @@ NumericVector apply_gaussian_window_scalar(NumericVector data, double sigma = 0.
 // Dispatcher functions (choose SIMD or scalar at runtime)
 // ============================================================================
 
-// [[Rcpp::export(.apply_hamming_window)]]
-NumericVector apply_hamming_window(NumericVector data) {
-#ifdef HAVE_XSIMD
-    return apply_hamming_window_simd(data);
-#else
-    return apply_hamming_window_scalar(data);
-#endif
-}
-
-// [[Rcpp::export(.apply_hanning_window)]]
-NumericVector apply_hanning_window(NumericVector data) {
-#ifdef HAVE_XSIMD
-    return apply_hanning_window_simd(data);
-#else
-    return apply_hanning_window_scalar(data);
-#endif
-}
-
-// [[Rcpp::export(.apply_gaussian_window)]]
-NumericVector apply_gaussian_window(NumericVector data, double sigma = 0.4) {
-#ifdef HAVE_XSIMD
-    return apply_gaussian_window_simd(data, sigma);
-#else
-    return apply_gaussian_window_scalar(data, sigma);
-#endif
-}

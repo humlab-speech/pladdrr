@@ -26,20 +26,6 @@
 #include "praat.github.io/fon/Excitation_to_Formant.h"
 #include "praat.github.io/fon/Spectrum.h"
 
-// [[Rcpp::export(.excitation_create)]]
-SEXP excitation_create(double freq_step, int n_freqs) {
-  try {
-    autoExcitation result = Excitation_create(freq_step, n_freqs);
-    if (!result) {
-      Rcpp::stop("Failed to create Excitation object");
-    }
-    Rcpp::XPtr<structExcitation> ptr(result.releaseToAmbiguousOwner());
-    return ptr;
-  } catch (MelderError) {
-    Rcpp::stop("Praat error in Excitation_create");
-  }
-}
-
 // [[Rcpp::export(.spectrum_to_excitation)]]
 SEXP spectrum_to_excitation(SEXP spectrum_xptr, double erb_density) {
   try {
@@ -58,59 +44,6 @@ SEXP spectrum_to_excitation(SEXP spectrum_xptr, double erb_density) {
     return ptr;
   } catch (MelderError) {
     Rcpp::stop("Praat error in Spectrum_to_Excitation");
-  }
-}
-
-// [[Rcpp::export(.excitation_get_loudness)]]
-double excitation_get_loudness(SEXP xptr) {
-  try {
-    Rcpp::XPtr<structExcitation> excitation(xptr);
-    if (!excitation) {
-      Rcpp::stop("Invalid Excitation object");
-    }
-    
-    double loudness = Excitation_getLoudness(excitation);
-    return loudness;
-  } catch (MelderError) {
-    Rcpp::stop("Praat error getting loudness");
-  }
-}
-
-// [[Rcpp::export(.excitation_get_value_at_frequency)]]
-double excitation_get_value_at_frequency(SEXP xptr, double freq_bark) {
-  try {
-    Rcpp::XPtr<structExcitation> excitation(xptr);
-    if (!excitation) {
-      Rcpp::stop("Invalid Excitation object");
-    }
-    
-    // Excitation inherits from Vector, use Vector_getValueAtX
-    integer i = Melder_iround((freq_bark - excitation->x1) / excitation->dx + 1);
-    
-    if (i < 1 || i > excitation->nx) {
-      return 0.0;  // Outside range
-    }
-    
-    return excitation->z[1][i];
-  } catch (...) {
-    Rcpp::stop("Error getting value at frequency");
-  }
-}
-
-// [[Rcpp::export(.excitation_get_distance)]]
-double excitation_get_distance(SEXP xptr1, SEXP xptr2) {
-  try {
-    Rcpp::XPtr<structExcitation> excitation1(xptr1);
-    Rcpp::XPtr<structExcitation> excitation2(xptr2);
-    
-    if (!excitation1 || !excitation2) {
-      Rcpp::stop("Invalid Excitation object(s)");
-    }
-    
-    double distance = Excitation_getDistance(excitation1, excitation2);
-    return distance;
-  } catch (MelderError) {
-    Rcpp::stop("Praat error calculating excitation distance");
   }
 }
 
@@ -135,55 +68,4 @@ SEXP excitation_to_formant(SEXP xptr, int max_formants) {
   }
 }
 
-// [[Rcpp::export(.excitation_as_vector)]]
-Rcpp::DataFrame excitation_as_vector(SEXP xptr) {
-  try {
-    Rcpp::XPtr<structExcitation> excitation(xptr);
-    if (!excitation) {
-      Rcpp::stop("Invalid Excitation object");
-    }
-    
-    int n = excitation->nx;
-    Rcpp::NumericVector freqs(n);
-    Rcpp::NumericVector values(n);
-    
-    for (int i = 1; i <= n; i++) {
-      freqs(i-1) = excitation->x1 + (i - 1) * excitation->dx;
-      values(i-1) = excitation->z[1][i];
-    }
-    
-    return Rcpp::DataFrame::create(
-      Rcpp::Named("frequency_bark") = freqs,
-      Rcpp::Named("excitation") = values
-    );
-  } catch (...) {
-    Rcpp::stop("Error converting Excitation to vector");
-  }
-}
-
-// [[Rcpp::export(.excitation_get_info)]]
-Rcpp::List excitation_get_info(SEXP xptr) {
-  try {
-    Rcpp::XPtr<structExcitation> excitation(xptr);
-    if (!excitation) {
-      Rcpp::stop("Invalid Excitation object");
-    }
-    
-    return Rcpp::List::create(
-      Rcpp::Named("xmin") = excitation->xmin,
-      Rcpp::Named("xmax") = excitation->xmax,
-      Rcpp::Named("nx") = excitation->nx,
-      Rcpp::Named("dx") = excitation->dx,
-      Rcpp::Named("x1") = excitation->x1
-    );
-  } catch (...) {
-    Rcpp::stop("Error getting Excitation info");
-  }
-}
-
 // Finalizer for Excitation objects
-// [[Rcpp::export(.excitation_finalizer)]]
-void excitation_finalizer(SEXP xptr) {
-  // XPtr handles cleanup automatically, no need for explicit delete
-  // The finalizer is set up by create_xptr_from_auto which handles it
-}

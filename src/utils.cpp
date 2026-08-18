@@ -45,6 +45,7 @@ using namespace Rcpp;
 //' )
 //' result
 //' @keywords internal
+//' @noRd
 // [[Rcpp::export]]
 void praat_error_to_r(const std::string& error_msg) {
     Rcpp::stop("Praat error: " + error_msg);

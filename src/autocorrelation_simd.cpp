@@ -145,7 +145,6 @@ NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag) {
 }
 
 // Cross-correlation (used in pitch detection)
-// [[Rcpp::export(.cross_correlation_simd)]]
 double cross_correlation_simd(NumericVector x, NumericVector y) {
     if (x.size() != y.size()) {
         Rcpp::stop("Vectors must have same length for cross-correlation");
@@ -186,7 +185,6 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
 }
 
 // Windowed autocorrelation (for pitch detection with frames)
-// [[Rcpp::export(.windowed_autocorrelation_simd)]]
 NumericMatrix windowed_autocorrelation_simd(
     NumericVector data,
     int frame_length,
@@ -293,7 +291,6 @@ NumericVector autocorrelation_normalized_scalar(NumericVector data, int max_lag)
     return result;
 }
 
-// [[Rcpp::export(.cross_correlation_scalar)]]
 double cross_correlation_scalar(NumericVector x, NumericVector y) {
     if (x.size() != y.size()) {
         Rcpp::stop("Vectors must have same length for cross-correlation");
@@ -311,7 +308,6 @@ double cross_correlation_scalar(NumericVector x, NumericVector y) {
     return sum;
 }
 
-// [[Rcpp::export(.windowed_autocorrelation_scalar)]]
 NumericMatrix windowed_autocorrelation_scalar(
     NumericVector data,
     int frame_length,
@@ -362,52 +358,3 @@ NumericVector lpc_autocorrelation_scalar(NumericVector data, int num_coefficient
 // Dispatcher functions
 // ============================================================================
 
-// [[Rcpp::export(.autocorrelation)]]
-NumericVector autocorrelation(NumericVector data, int max_lag) {
-#ifdef HAVE_XSIMD
-    return autocorrelation_simd(data, max_lag);
-#else
-    return autocorrelation_scalar(data, max_lag);
-#endif
-}
-
-// [[Rcpp::export(.autocorrelation_normalized)]]
-NumericVector autocorrelation_normalized(NumericVector data, int max_lag) {
-#ifdef HAVE_XSIMD
-    return autocorrelation_normalized_simd(data, max_lag);
-#else
-    return autocorrelation_normalized_scalar(data, max_lag);
-#endif
-}
-
-// [[Rcpp::export(.cross_correlation)]]
-double cross_correlation(NumericVector x, NumericVector y) {
-#ifdef HAVE_XSIMD
-    return cross_correlation_simd(x, y);
-#else
-    return cross_correlation_scalar(x, y);
-#endif
-}
-
-// [[Rcpp::export(.windowed_autocorrelation)]]
-NumericMatrix windowed_autocorrelation(
-    NumericVector data,
-    int frame_length,
-    int max_lag,
-    int hop_size
-) {
-#ifdef HAVE_XSIMD
-    return windowed_autocorrelation_simd(data, frame_length, max_lag, hop_size);
-#else
-    return windowed_autocorrelation_scalar(data, frame_length, max_lag, hop_size);
-#endif
-}
-
-// [[Rcpp::export(.lpc_autocorrelation)]]
-NumericVector lpc_autocorrelation(NumericVector data, int num_coefficients) {
-#ifdef HAVE_XSIMD
-    return lpc_autocorrelation_simd(data, num_coefficients);
-#else
-    return lpc_autocorrelation_scalar(data, num_coefficients);
-#endif
-}

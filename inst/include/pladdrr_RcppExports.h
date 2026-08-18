@@ -25,27 +25,6 @@ namespace pladdrr {
         }
     }
 
-    inline XPtr<structFormant> _formant_from_sound_burg(XPtr<structSound> sound, double time_step, double max_number_of_formants, double maximum_formant, double window_length, double pre_emphasis_from) {
-        typedef SEXP(*Ptr__formant_from_sound_burg)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formant_from_sound_burg p__formant_from_sound_burg = NULL;
-        if (p__formant_from_sound_burg == NULL) {
-            validateSignature("XPtr<structFormant>(*_formant_from_sound_burg)(XPtr<structSound>,double,double,double,double,double)");
-            p__formant_from_sound_burg = (Ptr__formant_from_sound_burg)R_GetCCallable("pladdrr", "_pladdrr__formant_from_sound_burg");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formant_from_sound_burg(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(max_number_of_formants)), Shield<SEXP>(Rcpp::wrap(maximum_formant)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(pre_emphasis_from)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
-    }
-
     inline XPtr<structFormant> _formant_from_sound_keepall(XPtr<structSound> sound, double time_step, double max_number_of_formants, double maximum_formant, double window_length, double pre_emphasis_from) {
         typedef SEXP(*Ptr__formant_from_sound_keepall)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__formant_from_sound_keepall p__formant_from_sound_keepall = NULL;
@@ -549,191 +528,6 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structFormantGrid> >(rcpp_result_gen);
     }
 
-    inline double _formantgrid_get_start_time(XPtr<structFormantGrid> grid) {
-        typedef SEXP(*Ptr__formantgrid_get_start_time)(SEXP);
-        static Ptr__formantgrid_get_start_time p__formantgrid_get_start_time = NULL;
-        if (p__formantgrid_get_start_time == NULL) {
-            validateSignature("double(*_formantgrid_get_start_time)(XPtr<structFormantGrid>)");
-            p__formantgrid_get_start_time = (Ptr__formantgrid_get_start_time)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_get_start_time");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_get_start_time(Shield<SEXP>(Rcpp::wrap(grid)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<double >(rcpp_result_gen);
-    }
-
-    inline double _formantgrid_get_end_time(XPtr<structFormantGrid> grid) {
-        typedef SEXP(*Ptr__formantgrid_get_end_time)(SEXP);
-        static Ptr__formantgrid_get_end_time p__formantgrid_get_end_time = NULL;
-        if (p__formantgrid_get_end_time == NULL) {
-            validateSignature("double(*_formantgrid_get_end_time)(XPtr<structFormantGrid>)");
-            p__formantgrid_get_end_time = (Ptr__formantgrid_get_end_time)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_get_end_time");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_get_end_time(Shield<SEXP>(Rcpp::wrap(grid)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<double >(rcpp_result_gen);
-    }
-
-    inline int _formantgrid_get_number_of_formants(XPtr<structFormantGrid> grid) {
-        typedef SEXP(*Ptr__formantgrid_get_number_of_formants)(SEXP);
-        static Ptr__formantgrid_get_number_of_formants p__formantgrid_get_number_of_formants = NULL;
-        if (p__formantgrid_get_number_of_formants == NULL) {
-            validateSignature("int(*_formantgrid_get_number_of_formants)(XPtr<structFormantGrid>)");
-            p__formantgrid_get_number_of_formants = (Ptr__formantgrid_get_number_of_formants)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_get_number_of_formants");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_get_number_of_formants(Shield<SEXP>(Rcpp::wrap(grid)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<int >(rcpp_result_gen);
-    }
-
-    inline double _formantgrid_get_formant_at_time(XPtr<structFormantGrid> grid, int formant_number, double time) {
-        typedef SEXP(*Ptr__formantgrid_get_formant_at_time)(SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_get_formant_at_time p__formantgrid_get_formant_at_time = NULL;
-        if (p__formantgrid_get_formant_at_time == NULL) {
-            validateSignature("double(*_formantgrid_get_formant_at_time)(XPtr<structFormantGrid>,int,double)");
-            p__formantgrid_get_formant_at_time = (Ptr__formantgrid_get_formant_at_time)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_get_formant_at_time");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_get_formant_at_time(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<double >(rcpp_result_gen);
-    }
-
-    inline double _formantgrid_get_bandwidth_at_time(XPtr<structFormantGrid> grid, int formant_number, double time) {
-        typedef SEXP(*Ptr__formantgrid_get_bandwidth_at_time)(SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_get_bandwidth_at_time p__formantgrid_get_bandwidth_at_time = NULL;
-        if (p__formantgrid_get_bandwidth_at_time == NULL) {
-            validateSignature("double(*_formantgrid_get_bandwidth_at_time)(XPtr<structFormantGrid>,int,double)");
-            p__formantgrid_get_bandwidth_at_time = (Ptr__formantgrid_get_bandwidth_at_time)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_get_bandwidth_at_time");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_get_bandwidth_at_time(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<double >(rcpp_result_gen);
-    }
-
-    inline void _formantgrid_add_formant_point(XPtr<structFormantGrid> grid, int formant_number, double time, double value) {
-        typedef SEXP(*Ptr__formantgrid_add_formant_point)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_add_formant_point p__formantgrid_add_formant_point = NULL;
-        if (p__formantgrid_add_formant_point == NULL) {
-            validateSignature("void(*_formantgrid_add_formant_point)(XPtr<structFormantGrid>,int,double,double)");
-            p__formantgrid_add_formant_point = (Ptr__formantgrid_add_formant_point)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_add_formant_point");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_add_formant_point(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(value)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
-    inline void _formantgrid_add_bandwidth_point(XPtr<structFormantGrid> grid, int formant_number, double time, double value) {
-        typedef SEXP(*Ptr__formantgrid_add_bandwidth_point)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_add_bandwidth_point p__formantgrid_add_bandwidth_point = NULL;
-        if (p__formantgrid_add_bandwidth_point == NULL) {
-            validateSignature("void(*_formantgrid_add_bandwidth_point)(XPtr<structFormantGrid>,int,double,double)");
-            p__formantgrid_add_bandwidth_point = (Ptr__formantgrid_add_bandwidth_point)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_add_bandwidth_point");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_add_bandwidth_point(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(value)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
-    inline void _formantgrid_remove_formant_points_between(XPtr<structFormantGrid> grid, int formant_number, double tmin, double tmax) {
-        typedef SEXP(*Ptr__formantgrid_remove_formant_points_between)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_remove_formant_points_between p__formantgrid_remove_formant_points_between = NULL;
-        if (p__formantgrid_remove_formant_points_between == NULL) {
-            validateSignature("void(*_formantgrid_remove_formant_points_between)(XPtr<structFormantGrid>,int,double,double)");
-            p__formantgrid_remove_formant_points_between = (Ptr__formantgrid_remove_formant_points_between)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_remove_formant_points_between");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_remove_formant_points_between(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
-    inline void _formantgrid_remove_bandwidth_points_between(XPtr<structFormantGrid> grid, int formant_number, double tmin, double tmax) {
-        typedef SEXP(*Ptr__formantgrid_remove_bandwidth_points_between)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formantgrid_remove_bandwidth_points_between p__formantgrid_remove_bandwidth_points_between = NULL;
-        if (p__formantgrid_remove_bandwidth_points_between == NULL) {
-            validateSignature("void(*_formantgrid_remove_bandwidth_points_between)(XPtr<structFormantGrid>,int,double,double)");
-            p__formantgrid_remove_bandwidth_points_between = (Ptr__formantgrid_remove_bandwidth_points_between)R_GetCCallable("pladdrr", "_pladdrr__formantgrid_remove_bandwidth_points_between");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formantgrid_remove_bandwidth_points_between(Shield<SEXP>(Rcpp::wrap(grid)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(tmin)), Shield<SEXP>(Rcpp::wrap(tmax)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
     inline XPtr<structFormant> _formantgrid_to_formant(XPtr<structFormantGrid> grid, double time_step, double intensity) {
         typedef SEXP(*Ptr__formantgrid_to_formant)(SEXP,SEXP,SEXP);
         static Ptr__formantgrid_to_formant p__formantgrid_to_formant = NULL;
@@ -787,27 +581,6 @@ namespace pladdrr {
         {
             RNGScope RCPP_rngScope_gen;
             rcpp_result_gen = p__sound_formantgrid_filter(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(grid)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
-    }
-
-    inline XPtr<structSound> _sound_formantgrid_filter_noscale(XPtr<structSound> sound, XPtr<structFormantGrid> grid) {
-        typedef SEXP(*Ptr__sound_formantgrid_filter_noscale)(SEXP,SEXP);
-        static Ptr__sound_formantgrid_filter_noscale p__sound_formantgrid_filter_noscale = NULL;
-        if (p__sound_formantgrid_filter_noscale == NULL) {
-            validateSignature("XPtr<structSound>(*_sound_formantgrid_filter_noscale)(XPtr<structSound>,XPtr<structFormantGrid>)");
-            p__sound_formantgrid_filter_noscale = (Ptr__sound_formantgrid_filter_noscale)R_GetCCallable("pladdrr", "_pladdrr__sound_formantgrid_filter_noscale");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_formantgrid_filter_noscale(Shield<SEXP>(Rcpp::wrap(sound)), Shield<SEXP>(Rcpp::wrap(grid)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -1112,27 +885,6 @@ namespace pladdrr {
         return Rcpp::as<int >(rcpp_result_gen);
     }
 
-    inline int _sound_get_number_of_channels(XPtr<structSound> xptr) {
-        typedef SEXP(*Ptr__sound_get_number_of_channels)(SEXP);
-        static Ptr__sound_get_number_of_channels p__sound_get_number_of_channels = NULL;
-        if (p__sound_get_number_of_channels == NULL) {
-            validateSignature("int(*_sound_get_number_of_channels)(XPtr<structSound>)");
-            p__sound_get_number_of_channels = (Ptr__sound_get_number_of_channels)R_GetCCallable("pladdrr", "_pladdrr__sound_get_number_of_channels");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_get_number_of_channels(Shield<SEXP>(Rcpp::wrap(xptr)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<int >(rcpp_result_gen);
-    }
-
     inline double _sound_get_value_at_time(XPtr<structSound> xptr, double time, int channel, std::string interpolation = "linear") {
         typedef SEXP(*Ptr__sound_get_value_at_time)(SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_get_value_at_time p__sound_get_value_at_time = NULL;
@@ -1207,27 +959,6 @@ namespace pladdrr {
         {
             RNGScope RCPP_rngScope_gen;
             rcpp_result_gen = p__sound_get_power(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(from_time)), Shield<SEXP>(Rcpp::wrap(to_time)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<double >(rcpp_result_gen);
-    }
-
-    inline double _sound_get_intensity_db(XPtr<structSound> xptr) {
-        typedef SEXP(*Ptr__sound_get_intensity_db)(SEXP);
-        static Ptr__sound_get_intensity_db p__sound_get_intensity_db = NULL;
-        if (p__sound_get_intensity_db == NULL) {
-            validateSignature("double(*_sound_get_intensity_db)(XPtr<structSound>)");
-            p__sound_get_intensity_db = (Ptr__sound_get_intensity_db)R_GetCCallable("pladdrr", "_pladdrr__sound_get_intensity_db");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_get_intensity_db(Shield<SEXP>(Rcpp::wrap(xptr)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -1343,27 +1074,6 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPitch> >(rcpp_result_gen);
     }
 
-    inline XPtr<structFormant> _sound_to_formant_burg(XPtr<structSound> sound_xptr, double time_step, double max_formants, double max_frequency, double window_length, double pre_emphasis_from) {
-        typedef SEXP(*Ptr__sound_to_formant_burg)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr__sound_to_formant_burg p__sound_to_formant_burg = NULL;
-        if (p__sound_to_formant_burg == NULL) {
-            validateSignature("XPtr<structFormant>(*_sound_to_formant_burg)(XPtr<structSound>,double,double,double,double,double)");
-            p__sound_to_formant_burg = (Ptr__sound_to_formant_burg)R_GetCCallable("pladdrr", "_pladdrr__sound_to_formant_burg");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_to_formant_burg(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(max_formants)), Shield<SEXP>(Rcpp::wrap(max_frequency)), Shield<SEXP>(Rcpp::wrap(window_length)), Shield<SEXP>(Rcpp::wrap(pre_emphasis_from)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structFormant> >(rcpp_result_gen);
-    }
-
     inline XPtr<structIntensity> _sound_to_intensity(XPtr<structSound> sound_xptr, double minimum_pitch, double time_step, bool subtract_mean) {
         typedef SEXP(*Ptr__sound_to_intensity)(SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_intensity p__sound_to_intensity = NULL;
@@ -1383,27 +1093,6 @@ namespace pladdrr {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structIntensity> >(rcpp_result_gen);
-    }
-
-    inline XPtr<structHarmonicity> _sound_to_harmonicity_cc(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window) {
-        typedef SEXP(*Ptr__sound_to_harmonicity_cc)(SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr__sound_to_harmonicity_cc p__sound_to_harmonicity_cc = NULL;
-        if (p__sound_to_harmonicity_cc == NULL) {
-            validateSignature("XPtr<structHarmonicity>(*_sound_to_harmonicity_cc)(XPtr<structSound>,double,double,double,double)");
-            p__sound_to_harmonicity_cc = (Ptr__sound_to_harmonicity_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_to_harmonicity_cc");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_to_harmonicity_cc(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(time_step)), Shield<SEXP>(Rcpp::wrap(min_pitch)), Shield<SEXP>(Rcpp::wrap(silence_threshold)), Shield<SEXP>(Rcpp::wrap(periods_per_window)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structHarmonicity> >(rcpp_result_gen);
     }
 
     inline XPtr<structHarmonicity> _sound_to_harmonicity_ac(XPtr<structSound> sound_xptr, double time_step, double min_pitch, double silence_threshold, double periods_per_window) {
@@ -1511,88 +1200,6 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structSpectrogram> >(rcpp_result_gen);
     }
 
-    inline void _sound_write_to_file_native(XPtr<structSound> sound_xptr, std::string path, std::string format, int bits_per_sample) {
-        typedef SEXP(*Ptr__sound_write_to_file_native)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__sound_write_to_file_native p__sound_write_to_file_native = NULL;
-        if (p__sound_write_to_file_native == NULL) {
-            validateSignature("void(*_sound_write_to_file_native)(XPtr<structSound>,std::string,std::string,int)");
-            p__sound_write_to_file_native = (Ptr__sound_write_to_file_native)R_GetCCallable("pladdrr", "_pladdrr__sound_write_to_file_native");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_write_to_file_native(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(path)), Shield<SEXP>(Rcpp::wrap(format)), Shield<SEXP>(Rcpp::wrap(bits_per_sample)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
-    inline DataFrame _sound_as_data_frame(XPtr<structSound> xptr) {
-        typedef SEXP(*Ptr__sound_as_data_frame)(SEXP);
-        static Ptr__sound_as_data_frame p__sound_as_data_frame = NULL;
-        if (p__sound_as_data_frame == NULL) {
-            validateSignature("DataFrame(*_sound_as_data_frame)(XPtr<structSound>)");
-            p__sound_as_data_frame = (Ptr__sound_as_data_frame)R_GetCCallable("pladdrr", "_pladdrr__sound_as_data_frame");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_as_data_frame(Shield<SEXP>(Rcpp::wrap(xptr)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<DataFrame >(rcpp_result_gen);
-    }
-
-    inline NumericMatrix _sound_as_matrix(XPtr<structSound> xptr) {
-        typedef SEXP(*Ptr__sound_as_matrix)(SEXP);
-        static Ptr__sound_as_matrix p__sound_as_matrix = NULL;
-        if (p__sound_as_matrix == NULL) {
-            validateSignature("NumericMatrix(*_sound_as_matrix)(XPtr<structSound>)");
-            p__sound_as_matrix = (Ptr__sound_as_matrix)R_GetCCallable("pladdrr", "_pladdrr__sound_as_matrix");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_as_matrix(Shield<SEXP>(Rcpp::wrap(xptr)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<NumericMatrix >(rcpp_result_gen);
-    }
-
-    inline void _sound_save(XPtr<structSound> xptr, std::string path, int file_type) {
-        typedef SEXP(*Ptr__sound_save)(SEXP,SEXP,SEXP);
-        static Ptr__sound_save p__sound_save = NULL;
-        if (p__sound_save == NULL) {
-            validateSignature("void(*_sound_save)(XPtr<structSound>,std::string,int)");
-            p__sound_save = (Ptr__sound_save)R_GetCCallable("pladdrr", "_pladdrr__sound_save");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_save(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(path)), Shield<SEXP>(Rcpp::wrap(file_type)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-    }
-
     inline XPtr<structPointProcess> _sound_pitch_to_pointprocess_cc(XPtr<structSound> sound_xptr, XPtr<structPitch> pitch_xptr) {
         typedef SEXP(*Ptr__sound_pitch_to_pointprocess_cc)(SEXP,SEXP);
         static Ptr__sound_pitch_to_pointprocess_cc p__sound_pitch_to_pointprocess_cc = NULL;
@@ -1698,27 +1305,6 @@ namespace pladdrr {
         return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
     }
 
-    inline XPtr<structPointProcess> _sound_to_pointprocess_periodic_cc(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling) {
-        typedef SEXP(*Ptr__sound_to_pointprocess_periodic_cc)(SEXP,SEXP,SEXP);
-        static Ptr__sound_to_pointprocess_periodic_cc p__sound_to_pointprocess_periodic_cc = NULL;
-        if (p__sound_to_pointprocess_periodic_cc == NULL) {
-            validateSignature("XPtr<structPointProcess>(*_sound_to_pointprocess_periodic_cc)(XPtr<structSound>,double,double)");
-            p__sound_to_pointprocess_periodic_cc = (Ptr__sound_to_pointprocess_periodic_cc)R_GetCCallable("pladdrr", "_pladdrr__sound_to_pointprocess_periodic_cc");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_to_pointprocess_periodic_cc(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(pitch_floor)), Shield<SEXP>(Rcpp::wrap(pitch_ceiling)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
-    }
-
     inline XPtr<structPointProcess> _sound_to_pointprocess_periodic_peaks(XPtr<structSound> xptr, double pitch_floor, double pitch_ceiling, bool include_maxima, bool include_minima) {
         typedef SEXP(*Ptr__sound_to_pointprocess_periodic_peaks)(SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__sound_to_pointprocess_periodic_peaks p__sound_to_pointprocess_periodic_peaks = NULL;
@@ -1738,27 +1324,6 @@ namespace pladdrr {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structPointProcess> >(rcpp_result_gen);
-    }
-
-    inline XPtr<structSound> _sound_extract_channel(XPtr<structSound> xptr, int channel) {
-        typedef SEXP(*Ptr__sound_extract_channel)(SEXP,SEXP);
-        static Ptr__sound_extract_channel p__sound_extract_channel = NULL;
-        if (p__sound_extract_channel == NULL) {
-            validateSignature("XPtr<structSound>(*_sound_extract_channel)(XPtr<structSound>,int)");
-            p__sound_extract_channel = (Ptr__sound_extract_channel)R_GetCCallable("pladdrr", "_pladdrr__sound_extract_channel");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_extract_channel(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(channel)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<XPtr<structSound> >(rcpp_result_gen);
     }
 
     inline XPtr<structSound> _sound_extract_part(XPtr<structSound> xptr, double from_time, double to_time, int window_shape, double relative_width, bool preserve_times) {
@@ -2049,27 +1614,6 @@ namespace pladdrr {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<XPtr<structTextGrid> >(rcpp_result_gen);
-    }
-
-    inline Rcpp::List _sound_extract_intervals_where(XPtr<structSound> sound_xptr, XPtr<structTextGrid> textgrid_xptr, int tier_number, int which_comparison, std::string text_pattern) {
-        typedef SEXP(*Ptr__sound_extract_intervals_where)(SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr__sound_extract_intervals_where p__sound_extract_intervals_where = NULL;
-        if (p__sound_extract_intervals_where == NULL) {
-            validateSignature("Rcpp::List(*_sound_extract_intervals_where)(XPtr<structSound>,XPtr<structTextGrid>,int,int,std::string)");
-            p__sound_extract_intervals_where = (Ptr__sound_extract_intervals_where)R_GetCCallable("pladdrr", "_pladdrr__sound_extract_intervals_where");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sound_extract_intervals_where(Shield<SEXP>(Rcpp::wrap(sound_xptr)), Shield<SEXP>(Rcpp::wrap(textgrid_xptr)), Shield<SEXP>(Rcpp::wrap(tier_number)), Shield<SEXP>(Rcpp::wrap(which_comparison)), Shield<SEXP>(Rcpp::wrap(text_pattern)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
     inline XPtr<structSound> _sound_concatenate_all(Rcpp::List sound_list, double overlap = 0.0) {

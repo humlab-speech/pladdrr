@@ -38,7 +38,6 @@ using namespace Rcpp;
 //' SIMD-optimized sound scaling (peak amplitude)
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.sound_scale_peak_simd)]]
 void sound_scale_peak_simd(
     XPtr<structSound> xptr,
     double new_peak
@@ -101,7 +100,6 @@ void sound_scale_peak_simd(
 //' SIMD-optimized sound mixing with balance
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.sound_mix_simd)]]
 XPtr<structSound> sound_mix_simd(
     XPtr<structSound> xptr1,
     XPtr<structSound> xptr2,

@@ -77,48 +77,6 @@ int table_get_number_of_columns(SEXP xptr) {
   }
 }
 
-// [[Rcpp::export(.table_get_column_label)]]
-std::string table_get_column_label(SEXP xptr, int columnNumber) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    if (columnNumber < 1 || columnNumber > ptr->numberOfColumns) {
-      stop("Column number out of range");
-    }
-    return Melder_peek32to8(ptr->columnHeaders[columnNumber].label.get());
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to get column label");
-  }
-}
-
-// [[Rcpp::export(.table_get_column_index)]]
-int table_get_column_index(SEXP xptr, std::string columnName) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    conststring32 name = Melder_peek8to32(columnName.c_str());
-    integer index = Table_columnNameToNumber_0(ptr.get(), name);
-    return (int)index;
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to get column index");
-  }
-}
-
-// [[Rcpp::export(.table_set_column_label)]]
-void table_set_column_label(SEXP xptr, int columnNumber, std::string label) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    conststring32 labelStr = Melder_peek8to32(label.c_str());
-    Table_renameColumn_e(ptr.get(), columnNumber, labelStr);
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to set column label");
-  }
-}
-
 // [[Rcpp::export(.table_get_numeric_value)]]
 double table_get_numeric_value(SEXP xptr, int rowNumber, int columnNumber) {
   try {
@@ -156,44 +114,6 @@ void table_set_numeric_value(SEXP xptr, int rowNumber, int columnNumber, double 
   }
 }
 
-// [[Rcpp::export(.table_set_string_value)]]
-void table_set_string_value(SEXP xptr, int rowNumber, int columnNumber, std::string value) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    conststring32 valueStr = Melder_peek8to32(value.c_str());
-    Table_setStringValue(ptr.get(), rowNumber, columnNumber, valueStr);
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to set string value");
-  }
-}
-
-// [[Rcpp::export(.table_append_row)]]
-void table_append_row(SEXP xptr) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    Table_appendRow(ptr.get());
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to append row");
-  }
-}
-
-// [[Rcpp::export(.table_append_column)]]
-void table_append_column(SEXP xptr, std::string columnName) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    conststring32 name = Melder_peek8to32(columnName.c_str());
-    Table_appendColumn(ptr.get(), name);
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to append column");
-  }
-}
-
 // [[Rcpp::export(.table_remove_row)]]
 void table_remove_row(SEXP xptr, int rowNumber) {
   try {
@@ -215,18 +135,6 @@ void table_remove_column(SEXP xptr, int columnNumber) {
   } catch (MelderError) {
     Melder_clearError();
     stop("Failed to remove column");
-  }
-}
-
-// [[Rcpp::export(.table_insert_row)]]
-void table_insert_row(SEXP xptr, int rowPosition) {
-  try {
-    Rcpp::XPtr<structTable> ptr(xptr);
-    validate_xptr(ptr, "Table");
-    Table_insertRow(ptr.get(), rowPosition);
-  } catch (MelderError) {
-    Melder_clearError();
-    stop("Failed to insert row");
   }
 }
 

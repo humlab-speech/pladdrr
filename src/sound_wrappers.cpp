@@ -266,15 +266,6 @@ int sound_get_number_of_samples(XPtr<structSound> xptr) {
     return sound->nx;
 }
 
-//' Get number of channels (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_get_number_of_channels)]]
-int sound_get_number_of_channels(XPtr<structSound> xptr) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    return sound->ny;
-}
-
 //' Get value at time (internal)
 //' @keywords internal
 //' @noRd
@@ -403,23 +394,6 @@ double sound_get_power(
 
     try {
         return Sound_getPower(sound, from_time, to_time);
-    } catch (MelderError) {
-        Melder_clearError();
-        return NA_REAL;
-    }
-}
-
-//' Get intensity in dB (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_get_intensity_db)]]
-double sound_get_intensity_db(XPtr<structSound> xptr) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    try {
-        double power = Sound_getPower(sound, sound->xmin, sound->xmax);
-        if (power <= 0.0) return NA_REAL;
-        return 10.0 * log10(power / 4.0e-10);  // Reference: 2e-5 Pa RMS
     } catch (MelderError) {
         Melder_clearError();
         return NA_REAL;
@@ -623,46 +597,6 @@ XPtr<structPitch> sound_to_pitch_spinet(
     }
 }
 
-//' Convert Sound to Formant via Burg (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_to_formant_burg)]]
-XPtr<structFormant> sound_to_formant_burg(
-    XPtr<structSound> sound_xptr,
-    double time_step,
-    double max_formants,
-    double max_frequency,
-    double window_length,
-    double pre_emphasis_from
-) {
-    structSound* sound = get_ptr(sound_xptr, "Sound");
-    // Ensure NUMfpp is initialized
-    NUMmachar();
-
-    
-    try {
-        autoFormant formant = Sound_to_Formant_burg(
-            sound,
-            time_step,
-            max_formants,
-            max_frequency,
-            window_length,
-            pre_emphasis_from
-        );
-        
-        return create_xptr_from_auto<structFormant>(formant);
-        
-    } catch (MelderError) {
-        std::string error_msg = "Failed to extract formants: ";
-        conststring32 praat_error = Melder_getError();
-        if (praat_error) {
-            error_msg += Melder_peek32to8(praat_error);
-        }
-        Melder_clearError();
-        stop(error_msg);
-    }
-}
-
 //' Convert Sound to Intensity (internal)
 //' @keywords internal
 //' @noRd
@@ -688,36 +622,6 @@ XPtr<structIntensity> sound_to_intensity(
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to extract intensity");
-    }
-}
-
-//' Convert Sound to Harmonicity (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_to_harmonicity_cc)]]
-XPtr<structHarmonicity> sound_to_harmonicity_cc(
-    XPtr<structSound> sound_xptr,
-    double time_step,
-    double min_pitch,
-    double silence_threshold,
-    double periods_per_window
-) {
-    structSound* sound = get_ptr(sound_xptr, "Sound");
-    
-    try {
-        autoHarmonicity hnr = Sound_to_Harmonicity_cc(
-            sound,
-            time_step,
-            min_pitch,
-            silence_threshold,
-            periods_per_window
-        );
-        
-        return create_xptr_from_auto<structHarmonicity>(hnr);
-
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to extract harmonicity (cc)");
     }
 }
 
@@ -879,138 +783,9 @@ XPtr<structSpectrogram> sound_to_spectrogram(
 // Sound File Writing
 // ============================================================================
 
-//' Write Sound to file using native Praat writers (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_write_to_file_native)]]
-void sound_write_to_file_native(
-    XPtr<structSound> sound_xptr,
-    std::string path,
-    std::string format,
-    int bits_per_sample
-) {
-    structSound* sound = get_ptr(sound_xptr, "Sound");
-    ensure_numeric_libs_initialized();
-    
-    try {
-        // Convert format string to Praat constant
-        int praat_format = 0;
-        std::string fmt_upper = format;
-        std::transform(fmt_upper.begin(), fmt_upper.end(), fmt_upper.begin(), ::toupper);
-        
-        if (fmt_upper == "WAV") {
-            praat_format = Melder_WAV;
-        } else if (fmt_upper == "AIFF" || fmt_upper == "AIF") {
-            praat_format = Melder_AIFF;
-        } else if (fmt_upper == "AIFC") {
-            praat_format = Melder_AIFC;
-        } else if (fmt_upper == "NIST") {
-            praat_format = Melder_NIST;
-        } else if (fmt_upper == "NEXT" || fmt_upper == "SUN" || fmt_upper == "AU") {
-            praat_format = Melder_NEXT_SUN;
-        } else {
-            stop("Unsupported format: " + format + 
-                 ". Supported: WAV, AIFF, AIFC, NIST, NEXT/SUN");
-        }
-        
-        // Validate bits per sample
-        if (bits_per_sample != 16 && bits_per_sample != 24 && bits_per_sample != 32) {
-            stop("bits_per_sample must be 16, 24, or 32");
-        }
-        
-        // Create Praat MelderFile
-        structMelderFile file { };
-        Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
-        
-        // Write using Praat's native writer
-        Sound_saveAsAudioFile(sound, &file, praat_format, bits_per_sample);
-        
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to write Sound to file: " + path);
-    }
-}
-
 // ============================================================================
 // Sound Export Methods
 // ============================================================================
-
-//' Export Sound as data frame (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_as_data_frame)]]
-DataFrame sound_as_data_frame(XPtr<structSound> xptr) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    int n_samples = sound->nx;
-    int n_channels = sound->ny;
-    int total_rows = n_samples * n_channels;
-    
-    NumericVector time(total_rows);
-    IntegerVector channel(total_rows);
-    NumericVector value(total_rows);
-    
-    int row = 0;
-    for (int ch = 1; ch <= n_channels; ch++) {
-        for (int i = 1; i <= n_samples; i++) {
-            time[row] = sound->x1 + (i - 1) * sound->dx;
-            channel[row] = ch;
-            value[row] = sound->z[ch][i];
-            row++;
-        }
-    }
-    
-    return DataFrame::create(
-        Named("time") = time,
-        Named("channel") = channel,
-        Named("value") = value
-    );
-}
-
-//' Export Sound as matrix (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_as_matrix)]]
-NumericMatrix sound_as_matrix(XPtr<structSound> xptr) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    NumericMatrix mat(sound->ny, sound->nx);
-    
-    // Copy channels with SIMD optimization
-    for (int ch = 1; ch <= sound->ny; ch++) {
-        const double* src = &sound->z[ch][1];
-        double* dst = &mat(ch - 1, 0);
-        std::memcpy(dst, src, sound->nx * sizeof(double));
-    }
-    
-    return mat;
-}
-
-//' Save Sound to file (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_save)]]
-void sound_save(
-    XPtr<structSound> xptr,
-    std::string path,
-    int file_type
-) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    try {
-        structMelderFile file {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-        
-        // file_type: 0 = WAV, 1 = AIFF, 2 = AIFC, 3 = NeXT/Sun, 4 = NIST, 5 = FLAC
-        int format_int = file_type;
-        
-        Sound_saveAsAudioFile(sound, &file, format_int, 16);  // 16-bit
-        
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to save sound to: " + path);
-    }
-}
 
 // ============================================================================
 // Sound to PointProcess Conversions
@@ -1162,32 +937,6 @@ XPtr<structPointProcess> sound_to_point_process_zeros(
     }
 }
 
-//' Extract periodic pulses using cross-correlation (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_to_pointprocess_periodic_cc)]]
-XPtr<structPointProcess> sound_to_pointprocess_periodic_cc(
-    XPtr<structSound> xptr,
-    double pitch_floor,
-    double pitch_ceiling
-) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    try {
-        autoPointProcess pp = Sound_to_PointProcess_periodic_cc(
-            sound,
-            pitch_floor,
-            pitch_ceiling
-        );
-        
-        return create_xptr_from_auto<structPointProcess>(pp);
-        
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to extract periodic pulses (cross-correlation method)");
-    }
-}
-
 //' Extract periodic pulses using peak detection (internal)
 //' @keywords internal
 //' @noRd
@@ -1221,30 +970,6 @@ XPtr<structPointProcess> sound_to_pointprocess_periodic_peaks(
 // ============================================================================
 // Sound Extraction Methods
 // ============================================================================
-
-//' Extract a specific channel from Sound (internal)
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.sound_extract_channel)]]
-XPtr<structSound> sound_extract_channel(
-    XPtr<structSound> xptr,
-    int channel
-) {
-    structSound* sound = get_ptr(xptr, "Sound");
-    
-    if (channel < 1 || channel > sound->ny) {
-        stop("Channel must be between 1 and " + std::to_string(sound->ny));
-    }
-    
-    try {
-        autoSound extracted = Sound_extractChannel(sound, channel);
-        return create_xptr_from_auto<structSound>(extracted);
-        
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to extract channel from sound");
-    }
-}
 
 //' Extract part of Sound by time (internal)
 //' @keywords internal
@@ -1711,35 +1436,6 @@ XPtr<structTextGrid> sound_to_textgrid_silences(
 // ============================================================================
 // TextGrid interval extraction
 // ============================================================================
-
-// [[Rcpp::export(.sound_extract_intervals_where)]]
-Rcpp::List sound_extract_intervals_where(
-    XPtr<structSound> sound_xptr,
-    XPtr<structTextGrid> textgrid_xptr,
-    int tier_number,
-    int which_comparison,
-    std::string text_pattern
-) {
-    structSound* sound = get_ptr(sound_xptr, "Sound");
-    structTextGrid* textgrid = get_ptr(textgrid_xptr, "TextGrid");
-    
-    try {
-        // Extract matching intervals using Praat function
-        autoSoundList sounds = TextGrid_Sound_extractIntervalsWhere(
-            textgrid,
-            sound,
-            tier_number,
-            static_cast<kMelder_string>(which_comparison),
-            Melder_peek8to32(text_pattern.c_str()),
-            false  // preserveTimes
-        );
-        
-        return move_collection_to_xptr_list(sounds);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to extract sound intervals");
-    }
-}
 
 // ============================================================================
 // BATCH OPERATIONS - Minimize R→C boundary crossings
