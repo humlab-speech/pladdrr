@@ -10,13 +10,13 @@
 [![License: GPL v3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![GitHub R package version](https://img.shields.io/github/r-package/v/humlab-speech/pladdrr?label=version)
 ![Rcpp Modules](https://img.shields.io/badge/modules-38-blue)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884218.svg)](https://doi.org/10.5281/zenodo.21884218)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21949439.svg)](https://doi.org/10.5281/zenodo.21949439) 
 
 <!-- badges: end -->
 
 ## Overview
 
-The `pladdrr` package provides R users with direct access to the functionalities of [Praat](https://praat.org) through a consistent Object Oriented interface, enabling conversion of Praat scripts to self-contained R implementations. 
+The `pladdrr` package gives R users direct access to [Praat](https://praat.org) functionality through a consistent object-oriented interface, enabling conversion of Praat scripts into self-contained R implementations. 
 
 Direct access to Praat's C code base from R is achieved through Rcpp Modules and generated methods associated with Praat Objects of several types (38 Rcpp Modules in total):
 
