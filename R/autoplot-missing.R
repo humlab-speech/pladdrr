@@ -739,7 +739,7 @@ autoplot.MFCC <- function(object, coefficient_range = NULL, garnish = TRUE, ...)
   }
   df_long <- data.frame(
     time = rep(df$time, length(val_cols)),
-    coefficient = rep(as.integer(gsub("c", "", val_cols)),
+    coefficient = rep(as.integer(gsub("c", "", val_cols, fixed = TRUE)),
                       each = nrow(df)),
     value = as.vector(as.matrix(df[, val_cols, with = FALSE]))
   )
@@ -771,7 +771,7 @@ autolayer.MFCC <- function(object, coefficient_range = NULL, ...) {
   if (length(val_cols) == 0) return(NULL)
   df_long <- data.frame(
     time = rep(df$time, length(val_cols)),
-    coefficient = rep(as.integer(gsub("c", "", val_cols)),
+    coefficient = rep(as.integer(gsub("c", "", val_cols, fixed = TRUE)),
                       each = nrow(df)),
     value = as.vector(as.matrix(df[, val_cols, with = FALSE]))
   )
@@ -803,7 +803,7 @@ autoplot.LFCC <- function(object, coefficient_range = NULL, garnish = TRUE, ...)
   }
   df_long <- data.frame(
     time = rep(df$time, length(val_cols)),
-    coefficient = rep(as.integer(gsub("c", "", val_cols)),
+    coefficient = rep(as.integer(gsub("c", "", val_cols, fixed = TRUE)),
                       each = nrow(df)),
     value = as.vector(as.matrix(df[, val_cols, with = FALSE]))
   )
@@ -835,7 +835,7 @@ autolayer.LFCC <- function(object, coefficient_range = NULL, ...) {
   if (length(val_cols) == 0) return(NULL)
   df_long <- data.frame(
     time = rep(df$time, length(val_cols)),
-    coefficient = rep(as.integer(gsub("c", "", val_cols)),
+    coefficient = rep(as.integer(gsub("c", "", val_cols, fixed = TRUE)),
                       each = nrow(df)),
     value = as.vector(as.matrix(df[, val_cols, with = FALSE]))
   )

@@ -816,7 +816,7 @@ build_multiband_harmonicity <- function(
   if (!is.list(multiband) || length(multiband) != 5L) {
     stop("multiband must be a named list of 5 Harmonicity objects")
   }
-  if (is.null(names(multiband)) || any(is.na(names(multiband))) ||
+  if (is.null(names(multiband)) || anyNA(names(multiband)) ||
       any(names(multiband) == "") || anyDuplicated(names(multiband))) {
     stop("multiband must be a named list with unique band names")
   }

@@ -57,7 +57,7 @@ NULL
                         function(i) .table_get_string_value(xptr, i, j),
                         character(1))
     num_vals <- suppressWarnings(as.numeric(str_vals))
-    columns[[j]] <- if (!anyNA(num_vals)) num_vals else str_vals
+    columns[[j]] <- if (anyNA(num_vals)) str_vals else num_vals
   }
   names(columns) <- as.character(col_names)
 

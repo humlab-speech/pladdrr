@@ -103,14 +103,14 @@ NULL
 # Display
 .vocaltract_methods$print <- function(.self) {
   cat("<Praat VocalTract>\n")
-  if (!.self$.cpp$is_valid()) {
-    cat("  [Invalid or deleted object]\n")
-  } else {
+  if (.self$.cpp$is_valid()) {
     cat("  Total length:", sprintf("%.3f", .self$.cpp$get_length() * 100), "cm\n")
     cat("  Number of sections:", .self$.cpp$get_number_of_sections(), "\n")
     cat("  Section length:", sprintf("%.1f", .self$.cpp$get_section_length() * 1000), "mm\n")
     areas <- .self$.cpp$get_areas()
     cat("  Area range:", sprintf("%.2f - %.2f", min(areas) * 1e4, max(areas) * 1e4), "cm^2\n")
+  } else {
+    cat("  [Invalid or deleted object]\n")
   }
   invisible(.self)
 }

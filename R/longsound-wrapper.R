@@ -176,14 +176,14 @@ NULL
 # Display
 .longsound_methods$print <- function(.self) {
   cat("<Praat LongSound>\n")
-  if (!.self$.cpp$is_valid()) {
-    cat("  [Invalid or deleted object]\n")
-  } else {
+  if (.self$.cpp$is_valid()) {
     cat("  File:", .self$.cpp$get_file_path(), "\n")
     cat("  Duration:", sprintf("%.3f", .self$.cpp$get_duration()), "seconds\n")
     cat("  Sample rate:", .self$.cpp$get_sample_rate(), "Hz\n")
     cat("  Channels:", .self$.cpp$get_number_of_channels(), "\n")
     cat("  Samples:", .self$.cpp$get_number_of_samples(), "\n")
+  } else {
+    cat("  [Invalid or deleted object]\n")
   }
   invisible(.self)
 }

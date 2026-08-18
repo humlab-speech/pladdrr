@@ -97,9 +97,7 @@ NULL
 # Display
 .formanttier_methods$print <- function(.self) {
   cat("<Praat FormantTier>\n")
-  if (!.self$.cpp$is_valid()) {
-    cat("  [Invalid or deleted object]\n")
-  } else {
+  if (.self$.cpp$is_valid()) {
     cat(sprintf("  Time domain: %.3f - %.3f seconds\n",
                 .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
     cat("  Number of points:", .self$.cpp$get_number_of_points(), "\n")
@@ -110,6 +108,8 @@ NULL
     } else {
       cat("  Formants per point:", nf_min, "-", nf_max, "\n")
     }
+  } else {
+    cat("  [Invalid or deleted object]\n")
   }
   invisible(.self)
 }

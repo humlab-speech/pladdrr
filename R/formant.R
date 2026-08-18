@@ -154,7 +154,7 @@ extract_formants <- function(sound,
                        duration - window_length / 2,
                        by = time_step)
     
-    if (length(frame_times) == 0 || any(is.na(frame_times))) {
+    if (length(frame_times) == 0 || anyNA(frame_times)) {
       frame_times <- duration / 2
     }
   }
@@ -375,7 +375,7 @@ extract_formants <- function(sound,
   }
   
   # Check if we got valid coefficients
-  if (length(a) < 2 || any(is.na(a)) || any(!is.finite(a))) {
+  if (length(a) < 2 || anyNA(a) || !all(is.finite(a))) {
     return(NULL)
   }
   

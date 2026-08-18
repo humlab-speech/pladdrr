@@ -97,7 +97,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
     tiers_to_plot <- tier
   } else {
     # Find tier by name
-    tier_names <- sapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i))
+    tier_names <- vapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i), character(1))
     tiers_to_plot <- which(tier_names == tier)
     if (length(tiers_to_plot) == 0) {
       stop("Tier '", tier, "' not found in TextGrid")
@@ -279,7 +279,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   } else if (is.numeric(tier)) {
     tiers_to_plot <- tier
   } else {
-    tier_names <- sapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i))
+    tier_names <- vapply(seq_len(n_tiers), function(i) textgrid$get_tier_name(i), character(1))
     tiers_to_plot <- which(tier_names == tier)
     if (length(tiers_to_plot) == 0) {
       stop("Tier '", tier, "' not found in TextGrid")

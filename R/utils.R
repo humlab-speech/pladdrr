@@ -299,7 +299,7 @@ validate_file_exists <- function(path, name = deparse(substitute(path))) {
   if (!file.exists(path)) {
     stop(sprintf("File not found: %s", path), call. = FALSE)
   }
-  if (!file.info(path)$isdir == FALSE) {
+  if (isTRUE(file.info(path)$isdir)) {
     stop(sprintf("Path is a directory, not a file: %s", path), call. = FALSE)
   }
   invisible(path)
