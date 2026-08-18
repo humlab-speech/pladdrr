@@ -14,6 +14,11 @@
 #' @return A data.frame. Column names vary by class; see each class's
 #'   \code{$as_data_frame()} method or the corresponding `autoplot.*` method
 #'   for the exact columns used.
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+#' cepstrum <- sound$to_cepstrum()
+#' df <- as.data.frame(cepstrum)
+#' head(df)
 #' @name as-data-frame-missing
 NULL
 

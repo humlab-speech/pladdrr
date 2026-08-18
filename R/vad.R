@@ -5,6 +5,11 @@
 #' Used primarily for AVQI implementation to extract voiced segments from
 #' continuous speech.
 #'
+#' @return This page documents a family of functions; see the `@return`
+#'   section of each individual function (e.g. [sound_to_textgrid_silences()])
+#'   for its specific return value.
+#' @examples
+#' # See individual functions, e.g. ?sound_to_textgrid_silences
 #' @name vad
 NULL
 

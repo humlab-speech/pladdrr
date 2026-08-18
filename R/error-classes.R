@@ -106,7 +106,8 @@ pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call
 #' )
 #' @export
 with_pladdrr_errors <- function(expr) {
-  collected_loss <- list()
+  loss_env <- new.env(parent = emptyenv())
+  loss_env$items <- list()
   result <- withCallingHandlers(
     tryCatch(
       expr,
@@ -121,7 +122,7 @@ with_pladdrr_errors <- function(expr) {
     warning = function(w) {
       tag <- .parse_pladdrr_tag(conditionMessage(w))
       if (is.null(tag)) return(invisible())
-      collected_loss[[length(collected_loss) + 1L]] <<-
+      loss_env$items[[length(loss_env$items) + 1L]] <-
         list(routine = tag$routine, message = tag$message)
       mode <- getOption("pladdrr.data_loss", "warn")
       if (identical(mode, "error")) {
@@ -136,8 +137,8 @@ with_pladdrr_errors <- function(expr) {
       invokeRestart("muffleWarning")
     }
   )
-  if (length(collected_loss) > 0L && !is.null(result)) {
-    attr(result, "pladdrr_data_loss") <- collected_loss
+  if (length(loss_env$items) > 0L && !is.null(result)) {
+    attr(result, "pladdrr_data_loss") <- loss_env$items
   }
   result
 }
