@@ -5,7 +5,8 @@
 The `pladdrr` package provides direct access to Praat’s phonetic
 analysis capabilities from R, without requiring Python. It implements
 core phonetic analysis objects (Sound, Pitch, Formant, Intensity) with
-an R6 object-oriented interface that follows Praat’s conventions.
+an object-oriented interface (S3-based, with R6-like `$method()` syntax)
+that follows Praat’s conventions.
 
 ## Installation
 
@@ -65,7 +66,7 @@ print(noise)
 
 ``` r
 
-# Load a WAV file using the R6 interface
+# Load a WAV file using the object-oriented interface
 speech <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 speech
 #> <Praat Sound>
@@ -82,7 +83,7 @@ speech
 
 ## Basic Sound Properties
 
-Extract basic information from sound objects using R6 methods:
+Extract basic information from sound objects using object methods:
 
 ``` r
 
@@ -147,7 +148,7 @@ print(stats)
 ## Pitch Analysis
 
 Extract fundamental frequency (F0) from speech or sustained tones using
-R6 methods:
+object methods:
 
 ``` r
 
@@ -195,15 +196,14 @@ max_f0 <- pitch$get_maximum()
 
 ## Formant Analysis
 
-Analyze vocal tract resonances (formants) for vowel characterization
-using R6:
+Analyze vocal tract resonances (formants) for vowel characterization:
 
 ``` r
 
 # Extract formants (default settings for adult female)
 formants <- sound_a4$to_formant_burg(max_frequency = 5500, max_formants = 5)
 
-# R6 objects print nicely
+# Objects print nicely
 formants
 #> <Praat Formant object>
 #>   Number of frames: 90
@@ -256,14 +256,14 @@ cat("Mean F2:", round(mean_f2, 1), "Hz\n")
 
 ## Intensity Analysis
 
-Measure sound power (loudness) over time using R6:
+Measure sound power (loudness) over time:
 
 ``` r
 
 # Extract intensity
 intensity <- sound_a4$to_intensity(minimum_pitch = 100)
 
-# R6 objects print nicely
+# Objects print nicely
 intensity
 #> <Praat Intensity>
 #>   Duration: 0.500 s
@@ -316,7 +316,7 @@ further analysis:
 
 ``` r
 
-# Convert to data frame using R6 method
+# Convert to data frame using the object's method
 formant_df <- formants$as_data_frame()
 head(formant_df)
 #> Key: <time, formant>
@@ -364,7 +364,7 @@ which covers:
 
 ## Complete Workflow Example
 
-Here’s a complete analysis workflow using R6:
+Here’s a complete analysis workflow:
 
 ``` r
 
@@ -411,11 +411,11 @@ Praat scripts:
     pitch = To Pitch: 0.01, 75, 600
     f0 = Get mean: 0, 0, "Hertz"
 
-### pladdrr Equivalent (R6)
+### pladdrr Equivalent
 
 ``` r
 
-# R with pladdrr (R6 interface)
+# R with pladdrr
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01,
                        pitch_floor = 75, pitch_ceiling = 600)
@@ -498,9 +498,10 @@ citation("pladdrr")
 - Package documentation:
   [`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
 - Function reference:
-  [`?extract_pitch`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch.md),
-  [`?extract_formants`](https://humlab-speech.github.io/pladdrr/reference/extract_formants.md),
-  [`?extract_intensity`](https://humlab-speech.github.io/pladdrr/reference/extract_intensity.md)
+  [`?Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+  [`?Pitch`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md),
+  [`?Formant`](https://humlab-speech.github.io/pladdrr/reference/Formant.md),
+  [`?Intensity`](https://humlab-speech.github.io/pladdrr/reference/Intensity.md)
 
 ## Conclusion
 

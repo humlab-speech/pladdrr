@@ -15,11 +15,7 @@ improvements, particularly for heavy users with production code.
 
 - **Fixed:** Batch operations now work with function-wrapper objects
 - **Changed:** PowerCepstrogram converted from R6 to function wrapper
-- **Added:** Unified
-  [`extract_xptr()`](https://humlab-speech.github.io/pladdrr/reference/extract_xptr.md)
-  and
-  [`unit_to_code()`](https://humlab-speech.github.io/pladdrr/reference/unit_to_code.md)
-  utilities
+- **Added:** Unified `extract_xptr()` and `unit_to_code()` utilities
 
 #### v2.3.0 (January 2026)
 
@@ -294,8 +290,7 @@ all_stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
 
 ### Unit Code Standardization
 
-If you work with Praat unit codes directly, use the new
-[`unit_to_code()`](https://humlab-speech.github.io/pladdrr/reference/unit_to_code.md)
+If you work with Praat unit codes directly, use the new `unit_to_code()`
 utility (internal, not exported - call with `pladdrr:::`):
 
 ``` r

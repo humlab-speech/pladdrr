@@ -2004,9 +2004,8 @@ speedup.
 - **[`to_point_process_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_point_process_direct.md)** -
   Create PointProcess from Sound (returns XPtr)
 
-All Direct API functions now use the new
-[`extract_xptr()`](https://humlab-speech.github.io/pladdrr/reference/extract_xptr.md)
-utility for consistent pointer extraction.
+All Direct API functions now use the new `extract_xptr()` utility for
+consistent pointer extraction.
 
 **Example:**
 
@@ -2078,21 +2077,18 @@ spec <- Spectrum(.xptr = spec_ptr)
 
 ### API Consistency (Phase 2)
 
-- **Added
-  [`extract_xptr()`](https://humlab-speech.github.io/pladdrr/reference/extract_xptr.md)
-  utility** - Unified pointer extraction across all object types
+- **Added `extract_xptr()` utility** - Unified pointer extraction across
+  all object types
   - Handles function-wrapper style (`.xptr` field)
   - Fallback to method call (`$get_xptr()`)
   - Backward compatible with legacy R6 style
-- **Added
-  [`unit_to_code()`](https://humlab-speech.github.io/pladdrr/reference/unit_to_code.md)
-  utility** - Standardized unit mapping across all APIs
+- **Added `unit_to_code()` utility** - Standardized unit mapping across
+  all APIs
   - Consistent pitch unit codes (hertz, mel, erb, semitones, etc.)
   - Consistent formant unit codes (hertz, bark)
   - Prevents unit code inconsistencies between Tier 1/2/3 APIs
-- **Added
-  [`interpolation_to_code()`](https://humlab-speech.github.io/pladdrr/reference/interpolation_to_code.md)
-  utility** - Standardized interpolation mapping
+- **Added `interpolation_to_code()` utility** - Standardized
+  interpolation mapping
 
 ## Testing
 

@@ -67,7 +67,7 @@ sample/point/frame for 1-D tiers and tracks)."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>as.data.frame Methods for pladdrr Objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.0.3/R/as-data-frame-missing.R" class="external-link"><code>R/as-data-frame-missing.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/R/as-data-frame-missing.R" class="external-link"><code>R/as-data-frame-missing.R</code></a></small>
       <div class="d-none name"><code>as-data-frame-missing.Rd</code></div>
     </div>
 
@@ -163,6 +163,21 @@ display only; that conversion is not applied here.</p></dd>
   for the exact columns used.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.2</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cepstrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cepstrum</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">cepstrum</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   quefrency       value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.0000000 -428636.464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.0000625   46822.674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.0001250    7756.941</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.0001875   15252.597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.0002500    3524.146</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0.0003125    8754.908</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

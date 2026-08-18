@@ -96,7 +96,7 @@
       <h1>Migration Guide (v3.0)</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.0.3/vignettes/articles/migration-guide.Rmd" class="external-link"><code>vignettes/articles/migration-guide.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/articles/migration-guide.Rmd" class="external-link"><code>vignettes/articles/migration-guide.Rmd</code></a></small>
       <div class="d-none name"><code>migration-guide.Rmd</code></div>
     </div>
 
@@ -123,8 +123,8 @@ function-wrapper objects</li>
 <strong>Changed:</strong> PowerCepstrogram converted from R6 to
 function wrapper</li>
 <li>
-<strong>Added:</strong> Unified <code><a href="../reference/extract_xptr.html">extract_xptr()</a></code> and
-<code><a href="../reference/unit_to_code.html">unit_to_code()</a></code> utilities</li>
+<strong>Added:</strong> Unified <code>extract_xptr()</code> and
+<code>unit_to_code()</code> utilities</li>
 </ul>
 </div>
 <div class="section level4">
@@ -266,7 +266,7 @@ has been standardized.</p>
 </h4>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use the standardized utility (internal, not exported - call with :::)</span></span>
-<span><span class="va">ptr</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/extract_xptr.html">extract_xptr</a></span><span class="op">(</span><span class="va">obj</span>, <span class="st">"Sound"</span><span class="op">)</span></span>
+<span><span class="va">ptr</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">extract_xptr</span><span class="op">(</span><span class="va">obj</span>, <span class="st">"Sound"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Or access .xptr field directly</span></span>
 <span><span class="va">ptr</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="va">.xptr</span></span>
@@ -412,16 +412,16 @@ use Direct API.</p>
 <h3 id="unit-code-standardization">Unit Code Standardization<a class="anchor" aria-label="anchor" href="#unit-code-standardization"></a>
 </h3>
 <p>If you work with Praat unit codes directly, use the new
-<code><a href="../reference/unit_to_code.html">unit_to_code()</a></code> utility (internal, not exported - call with
+<code>unit_to_code()</code> utility (internal, not exported - call with
 <code>pladdrr:::</code>):</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Before: Inconsistent mappings in different files</span></span>
 <span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">unit</span>, hertz <span class="op">=</span> <span class="fl">0L</span>, mel <span class="op">=</span> <span class="fl">2L</span>, erb <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span>  <span class="co"># Different files had different codes!</span></span>
 <span></span>
 <span><span class="co"># After: Standardized utility</span></span>
-<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/unit_to_code.html">unit_to_code</a></span><span class="op">(</span><span class="st">"hertz"</span>, <span class="st">"pitch"</span><span class="op">)</span>  <span class="co"># Returns 0L</span></span>
-<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/unit_to_code.html">unit_to_code</a></span><span class="op">(</span><span class="st">"mel"</span>, <span class="st">"pitch"</span><span class="op">)</span>     <span class="co"># Returns 2L</span></span>
-<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu"><a href="../reference/unit_to_code.html">unit_to_code</a></span><span class="op">(</span><span class="st">"bark"</span>, <span class="st">"formant"</span><span class="op">)</span>  <span class="co"># Returns 1L</span></span></code></pre></div>
+<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">unit_to_code</span><span class="op">(</span><span class="st">"hertz"</span>, <span class="st">"pitch"</span><span class="op">)</span>  <span class="co"># Returns 0L</span></span>
+<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">unit_to_code</span><span class="op">(</span><span class="st">"mel"</span>, <span class="st">"pitch"</span><span class="op">)</span>     <span class="co"># Returns 2L</span></span>
+<span><span class="va">unit_code</span> <span class="op">&lt;-</span> <span class="fu">pladdrr</span><span class="fu">:::</span><span class="fu">unit_to_code</span><span class="op">(</span><span class="st">"bark"</span>, <span class="st">"formant"</span><span class="op">)</span>  <span class="co"># Returns 1L</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level3">

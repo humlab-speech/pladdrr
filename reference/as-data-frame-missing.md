@@ -87,3 +87,19 @@ as.data.frame(x, ...)
 A data.frame. Column names vary by class; see each class's
 `$as_data_frame()` method or the corresponding \`autoplot.\*\` method
 for the exact columns used.
+
+## Examples
+
+``` r
+sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+cepstrum <- sound$to_cepstrum()
+df <- as.data.frame(cepstrum)
+head(df)
+#>   quefrency       value
+#> 1 0.0000000 -428636.464
+#> 2 0.0000625   46822.674
+#> 3 0.0001250    7756.941
+#> 4 0.0001875   15252.597
+#> 5 0.0002500    3524.146
+#> 6 0.0003125    8754.908
+```
