@@ -23,6 +23,14 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+      # pkgcheck-action's docker step runs as root, but the workspace is
+      # owned by the runner user, so libgit2 refuses to open it ("dubious
+      # ownership") unless safe.directory is set in the container's HOME
+      # (/github/home). A host-side `git config --global` doesn't reach
+      # that path, so trust it from inside a container instead.
+      - uses: docker://alpine/git
+        with:
+          args: config --global --add safe.directory /github/workspace
       - uses: ropensci-review-tools/pkgcheck-action@main
         with:
           ref: ""
