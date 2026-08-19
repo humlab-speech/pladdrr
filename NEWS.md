@@ -60,6 +60,12 @@
   `save()`). Six `get_shimmer_*()` AmplitudeTier methods were also removed:
   shimmer is a PointProcess metric (already present there), and these
   AmplitudeTier copies had no C++ implementation.
+* `plot_spectrogram_pitch()`'s `freq_max` argument (documented "Maximum
+  frequency to display") was silently ignored — it was passed to
+  `plot.Spectrogram()`, which has no such parameter. It now maps to
+  `plot.Spectrogram()`'s `to_freq`, so the frequency cap is honored.
+* `plot_sound_pitch()`'s `pitch_floor`/`pitch_ceiling` arguments were dead —
+  passed to `plot.Pitch()`, which ignores them. Removed.
 
 # pladdrr 5.0.1
 
