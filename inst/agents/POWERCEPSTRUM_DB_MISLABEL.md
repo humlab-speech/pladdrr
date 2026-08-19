@@ -1,7 +1,9 @@
-# PowerCepstrum/PowerCepstrogram `power_dB` mislabel (pre-existing, unfixed)
+# PowerCepstrum/PowerCepstrogram `power_dB` mislabel (pre-existing, partially fixed)
 
-**Status:** Open. Found 2026-08-13 during the v5.0.1 autoplot branch's final review;
-confirmed pre-existing (predates that branch, already shipped in `main`).
+**Status:** Partially fixed. Found 2026-08-13 during the v5.0.1 autoplot branch's
+final review; confirmed pre-existing (predates that branch, already shipped in
+`main`). One more call site fixed 2026-08-19 (v5.0.4) — see "Where it's still
+broken" below, updated to reflect what remains open.
 
 **Severity:** Real faithfulness bug on a widely-used path (CPPS/voice-quality
 plotting), but not addressed here — closing it means editing already-shipped,
@@ -44,13 +46,24 @@ Commits: `0e68abd9`, `62c8b61f` on the merged history (search `git log
 --oneline --all -- R/as-data-frame-missing.R R/autoplot-missing.R` for
 context around those SHAs).
 
-## Where it's still broken (not touched by that branch)
+**Also fixed, 2026-08-19 (v5.0.4):** `plot_powercepstrum()`
+(`R/cepstrum_plots.R`) — a `plot_*()`-family function this doc didn't
+originally list, found while fixing an unrelated set of Spectrogram/
+PowerCepstrogram plotting bugs (see `AGENT_GUIDE.md` "What's New in
+v5.0.4"). Same fix pattern as the v5.0.1 sites: reads from the object's
+existing (misleadingly-named) `power_dB` column, writes the converted
+value to a new, honestly-named `power_db` (lowercase) column, matching
+this file's own "Option (b)" recommendation below.
 
-Same defect, still present, in files that branch never modified:
+## Where it's still broken (not touched by that branch, or by v5.0.4)
+
+Same defect, still present:
 
 - `R/autoplot-methods.R`:
   - `autoplot.PowerCepstrum` / `autolayer.PowerCepstrum` (~line 555-607):
-    plots `object$as_data_frame()$power_dB` directly, no conversion.
+    plots `object$as_data_frame()$power_dB` directly, no conversion. **Still
+    open as of v5.0.4** — the v5.0.4 fix touched the *different*
+    `plot_powercepstrum()` in `R/cepstrum_plots.R`, not this pair.
   - `autoplot.Ltas` / `autolayer.Ltas` and the `Spectrum`-family functions
     around lines 292-443 use a *different*, lowercase `power_db` column from
     a different code path — check each one individually before assuming
@@ -61,8 +74,9 @@ Same defect, still present, in files that branch never modified:
 - `R/plotting-methods.R`: `plot.PowerCepstrum` (~line 900-935) has the
   identical unguarded `power_dB` consumption — this is a `plot()` S3 method,
   not `autoplot()`, so it's a separate function with the same copy-pasted bug.
-- `R/plotting-combined.R`: not yet checked line-by-line; grep
-  `power_dB\|power_db` there before assuming it's clean.
+  **Still open as of v5.0.4.**
+- `R/plotting-combined.R`: checked 2026-08-19 — `grep -n "power_dB\|power_db"
+  R/plotting-combined.R` returns no matches. Clean; nothing to fix here.
 
 ## How to verify
 

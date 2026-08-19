@@ -1,3 +1,30 @@
+# pladdrr 5.0.4
+
+## Bug fixes
+
+* `autoplot.Spectrogram()`, `autolayer.Spectrogram()`, and `plot.Spectrogram()`
+  scrambled the frequency axis for any non-square spectrogram matrix (a
+  `expand.grid()`/`as.vector()` row/column-major mismatch — a 220 Hz tone
+  rendered with its peak at 2201 Hz), and plotted raw linear power directly
+  as if already in dB, making the `dynamic_range` clipping parameter a
+  silent no-op.
+* `plot_powercepstrogram()` had the same two defects (time/quefrency-axis
+  transposition and missing power-to-dB conversion), plus a hardcoded
+  `max_time <- 5.0` placeholder in place of the cepstrogram's real duration.
+* `plot_cpp_timeseries()` used the same hardcoded-duration placeholder, and
+  a `tryCatch()` scoping bug (`cpp_values[i] <- NA` instead of `<<-` inside
+  the error handler) meant a failed per-time-point CPP query silently
+  became `0` instead of being dropped as `NA`.
+* `plot_powercepstrum()` used a hardcoded `max_quefrency <- 0.05` placeholder
+  instead of the cepstrum's real quefrency range, and plotted its
+  `power_dB` column (misleadingly named — the values are raw linear power,
+  not dB) without converting, putting the line trace and its own
+  peak-prominence marker on incompatible scales.
+
+  None of these 5 functions had any test coverage before this release; 12
+  new regression tests were added (`test-spectrogram-plot-regression.R`,
+  `test-cepstrum-plots-regression.R`).
+
 # pladdrr 5.0.1
 
 ## New features
