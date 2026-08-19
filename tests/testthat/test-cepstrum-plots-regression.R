@@ -96,3 +96,14 @@ test_that("plot_powercepstrum converts power to dB, matching the peak marker's o
   # spanning 11+ orders of magnitude.
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
+
+test_that("create_cepstrum_report defaults time_slice to mid-signal, not a 5.0 s placeholder", {
+  skip_if_not_installed("gridExtra")
+  # 0.6 s signal: the old `max_time <- 5.0` placeholder set time_slice = 2.5 s,
+  # beyond the cepstrogram's real duration, so get_power_cepstrum_at_time()
+  # failed. Mid-signal is 0.3 s, which is valid.
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+  cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
+
+  expect_no_error(create_cepstrum_report(cepstrogram))
+})

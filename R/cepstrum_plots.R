@@ -530,9 +530,9 @@ create_cepstrum_report <- function(cepstrogram,
   
   # Determine time slice if not specified
   if (is.null(time_slice)) {
-    mat <- cepstrogram$as_matrix()
-    n_times <- ncol(mat)
-    max_time <- 5.0  # Placeholder
+    # Default to mid-signal, using the cepstrogram's real duration — not a
+    # hardcoded 5.0 s placeholder, which overran short signals.
+    max_time <- max(as.data.frame(cepstrogram)$time)
     time_slice <- max_time / 2
   }
   

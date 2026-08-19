@@ -69,10 +69,10 @@ test_that("plot_powercepstrogram contour tracks the real cepstral peak, not a fl
                              quefrency_range = c(0.001, 0.02))
   expect_s3_class(p, "ggplot")
 
-  # The contour layer carries only time + quefrency (the heatmap layer also
-  # has power/power_db).
-  contour_layer <- Find(function(l) all(c("time", "quefrency") %in% names(l$data)) &&
-                          !"power_db" %in% names(l$data), p$layers)
+  contour_layer <- Find(function(l) {
+    all(c("time", "quefrency") %in% names(l$data)) &&
+      !"power_db" %in% names(l$data)
+  }, p$layers)
   expect_false(is.null(contour_layer))
 
   qs <- contour_layer$data$quefrency
