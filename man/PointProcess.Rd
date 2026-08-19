@@ -4,6 +4,9 @@
 \alias{PointProcess}
 \title{Praat PointProcess object}
 \arguments{
+\item{tmin, tmax}{When creating an empty PointProcess, the time span of the
+object. Leave \code{NULL} (the default) when supplying \code{.xptr}.}
+
 \item{.xptr}{Not for direct use. External pointer to the underlying C++ PointProcess
 object; set internally when a method returns a new PointProcess.}
 }

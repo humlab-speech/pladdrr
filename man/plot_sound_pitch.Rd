@@ -11,8 +11,6 @@ plot_sound_pitch(
   to_time = NULL,
   waveform_color = "steelblue",
   pitch_color = "darkblue",
-  pitch_floor = NULL,
-  pitch_ceiling = NULL,
   title = NULL,
   ...
 )
@@ -29,10 +27,6 @@ plot_sound_pitch(
 \item{waveform_color}{Character. Waveform color (default: "steelblue")}
 
 \item{pitch_color}{Character. Pitch color (default: "darkblue")}
-
-\item{pitch_floor}{Minimum F0 to display in Hz (default: NULL = auto)}
-
-\item{pitch_ceiling}{Maximum F0 to display in Hz (default: NULL = auto)}
 
 \item{title}{Character. Overall plot title (default: NULL)}
 
