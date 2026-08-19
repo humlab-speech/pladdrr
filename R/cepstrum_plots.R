@@ -266,6 +266,8 @@ plot_powercepstrogram <- function(cepstrogram,
   # Add CPP contour if requested
   if (show_cpp_contour) {
     # Sample CPP values over time
+    times <- sort(unique(plot_data$time))
+    n_times <- length(times)
     n_samples <- min(100, n_times)
     sample_times <- seq(min(times), max(times), length.out = n_samples)
     
@@ -446,23 +448,25 @@ plot_cpp_timeseries <- function(cepstrogram,
   }
   
   # Add mean CPP line
-  mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
-  p <- p + ggplot2::geom_hline(
-    yintercept = mean_cpp,
-    linetype = "solid",
-    color = "red",
-    linewidth = 0.8,
-    alpha = 0.6
-  ) +
-  ggplot2::annotate("text",
-                   x = max(plot_data$time) * 0.95,
-                   y = mean_cpp,
-                   label = sprintf("Mean: %.2f dB", mean_cpp),
-                   vjust = -0.5,
-                   hjust = 1,
-                   size = 3.5,
-                   color = "red",
-                   fontface = "bold")
+  if (nrow(plot_data) > 0) {
+    mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
+    p <- p + ggplot2::geom_hline(
+      yintercept = mean_cpp,
+      linetype = "solid",
+      color = "red",
+      linewidth = 0.8,
+      alpha = 0.6
+    ) +
+    ggplot2::annotate("text",
+                     x = max(plot_data$time) * 0.95,
+                     y = mean_cpp,
+                     label = sprintf("Mean: %.2f dB", mean_cpp),
+                     vjust = -0.5,
+                     hjust = 1,
+                     size = 3.5,
+                     color = "red",
+                     fontface = "bold")
+  }
   
   # Add labels
   if (is.null(title)) {
