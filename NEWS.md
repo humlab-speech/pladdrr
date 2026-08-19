@@ -47,6 +47,12 @@
   renamed to the honest `power`. This is a breaking change for any caller
   that read `$as_data_frame()$power_dB` directly; the affected plotting
   functions now read `power` and convert to `power_db`.
+* `as.data.frame.LPC()` indexed the coefficient *matrix* as if it were a flat
+  list (`coeffs[[i]]`), so it emitted one row per frame with a single
+  mislabeled coefficient and silently dropped the other
+  `maxnCoefficients - 1` coefficients of every frame. It now reads each
+  frame's coefficient column (`coeffs[, i]`), yielding one row per
+  (frame, coefficient) as documented.
 
 # pladdrr 5.0.1
 

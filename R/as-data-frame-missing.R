@@ -142,11 +142,13 @@ as.data.frame.LPC <- function(x, ...) {
   n_frames <- length(gains)
   if (n_frames == 0) {
     return(data.frame(frame = integer(0), coefficient = integer(0),
-                       value = numeric(0)))
+                       value = numeric(0), gain = numeric(0)))
   }
   rows <- list()
   for (i in seq_len(n_frames)) {
-    frame_coeffs <- coeffs[[i]]
+    # coeffs is a (maxnCoefficients x n_frames) matrix; a frame's
+    # coefficients are a COLUMN, not a list element.
+    frame_coeffs <- coeffs[, i]
     for (j in seq_along(frame_coeffs)) {
       rows[[length(rows) + 1]] <- data.frame(
         frame = i, coefficient = j, value = frame_coeffs[j],

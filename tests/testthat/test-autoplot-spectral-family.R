@@ -52,6 +52,29 @@ test_that("LPC autoplot/autolayer render after Task 4's power_dB fix", {
   expect_true(inherits(layer, "Layer") || inherits(layer, "list"))
 })
 
+test_that("as.data.frame.LPC returns one row per (frame, coefficient), not one per frame", {
+  lpc <- sound_fixture()$to_lpc_burg(prediction_order = 8)
+  df <- as.data.frame(lpc)
+  expect_true(all(c("frame", "coefficient", "value", "gain") %in% names(df)))
+
+  gains <- lpc$get_all_gains()
+  coeffs <- lpc$get_all_coefficients()  # (maxnCoefficients x n_frames) matrix
+  n_frames <- length(gains)
+  n_coeffs <- nrow(coeffs)
+
+  # One row per (frame, coefficient); the old bug emitted one row per frame
+  # and dropped (n_coeffs - 1) * n_frames coefficients.
+  expect_equal(nrow(df), n_coeffs * n_frames)
+  expect_equal(sort(unique(df$frame)), seq_len(n_frames))
+  expect_equal(sort(unique(df$coefficient)), seq_len(n_coeffs))
+
+  # Each frame's values are exactly that frame's coefficient column.
+  for (i in seq_len(min(n_frames, 3L))) {
+    expect_equal(df$value[df$frame == i], as.numeric(coeffs[, i]))
+    expect_equal(unique(df$gain[df$frame == i]), gains[i])
+  }
+})
+
 test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range (Task 8 regression guard)", {
   cs <- sound_fixture()$to_complex_spectrogram()  # R/sound-wrapper.R:550
   p <- ggplot2::autoplot(cs, dynamic_range = 40)
