@@ -252,7 +252,7 @@ public:
         }
         return DataFrame::create(
             Named("quefrency") = quefrencies,
-            Named("power_dB") = values
+            Named("power") = values
         );
     }
 

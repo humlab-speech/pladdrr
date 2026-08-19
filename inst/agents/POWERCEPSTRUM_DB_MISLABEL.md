@@ -1,12 +1,12 @@
-# PowerCepstrum/PowerCepstrogram `power_dB` mislabel (fixed at the R layer)
+# PowerCepstrum/PowerCepstrogram `power_dB` mislabel (fixed)
 
-**Status:** Fixed at every R-layer plotting call site (option (b) below).
-Found 2026-08-13 during the v5.0.1 autoplot branch's final review; confirmed
-pre-existing (predates that branch, already shipped in `main`). The last two
-call sites — `autoplot.PowerCepstrum`/`autolayer.PowerCepstrum` and
-`plot.PowerCepstrum` — were fixed 2026-08-19. The underlying C++ column name
-(`power_dB` holding raw linear power) is still misleading for any caller that
-reads `as_data_frame()` directly; renaming it (option (a)) remains deferred.
+**Status:** Fixed end-to-end. Found 2026-08-13 during the v5.0.1 autoplot
+branch's final review; confirmed pre-existing (predates that branch, already
+shipped in `main`). Fixed in two stages: option (b) — every R-layer plotting
+call site converts to real dB — and, on 2026-08-19, option (a) — the C++
+`RPowerCepstrum::as_data_frame()` column is renamed from the misleading
+`power_dB` to the honest `power` (raw linear), so a direct `as_data_frame()`
+reader is no longer lied to.
 
 **Severity:** Real faithfulness bug on a widely-used path (CPPS/voice-quality
 plotting), but not addressed here — closing it means editing already-shipped,
@@ -58,25 +58,28 @@ existing (misleadingly-named) `power_dB` column, writes the converted
 value to a new, honestly-named `power_db` (lowercase) column, matching
 this file's own "Option (b)" recommendation below.
 
-## Remaining: the C++ data-layer column name (option (a), deferred)
+## Resolution
 
-All R-layer plotting call sites now apply the option (b) conversion — read the
-misleadingly-named `power_dB` column, write a real dB `power_db` column before
-plotting. The last two were fixed 2026-08-19:
+Both options below are now applied, 2026-08-19:
 
-- `autoplot.PowerCepstrum` / `autolayer.PowerCepstrum` (`R/autoplot-methods.R`):
-  now `df$power_db <- 10 * log10(pmax(df$power_dB, 1e-20))` and plot/peak-mark
-  `power_db`. (Note the `Ltas`/`Spectrum`-family blocks around lines 292-443 use
-  a *different*, already-correct lowercase `power_db` path — unaffected.)
-- `plot.PowerCepstrum` (`R/plotting-methods.R`): same conversion, plus its
-  cepstral-peak marker now selects `which.max(df$power_db)` instead of linear.
+- **Option (b) — R-layer conversion (done):** every R-layer plotting call site
+  reads the `power` column and writes a real dB `power_db` column before
+  plotting, so every shipped plot is correct. `autoplot.PowerCepstrum` /
+  `autolayer.PowerCepstrum` (`R/autoplot-methods.R`), `plot.PowerCepstrum`
+  (`R/plotting-methods.R`), and `plot_powercepstrum` (`R/cepstrum_plots.R`) all
+  do `df$power_db <- 10 * log10(pmax(df$power, 1e-20))`.
+- **Option (a) — C++ column rename (done):** `RPowerCepstrum::as_data_frame()`
+  (`src/modules/powercepstrum_module.cpp`) now returns `Named("power")` instead
+  of the misleading `Named("power_dB")`, so a direct `as_data_frame()` reader
+  sees the honest linear-power name. `as.data.frame.Cepstrum(power = TRUE)` no
+  longer needs its own rename step. This is a breaking change for any caller
+  that read `$as_data_frame()$power_dB` (documented in NEWS.md 5.0.4).
 
-The only thing left is option (a): renaming the C++ module's output column so
-`as_data_frame()` itself is honest. That still ripples into every consumer and
-is deliberately deferred — the R-layer fix is sufficient for correctness of
-every shipped plot, and a direct `as_data_frame()` reader still sees a
-misleadingly-named column. `R/plotting-combined.R` remains clean (no
-`power_dB`/`power_db` references).
+The one cosmetic leftover is a naming inconsistency across the *converted* dB
+column: the PowerCepstrum sites write lowercase `power_db`, while the older
+Cepstrum/Spectrum/Ltas sites in `R/autoplot-missing.R` write capital `power_dB`.
+Both hold real dB; the names are cosmetic and were left as-is to avoid an
+unrelated churn.
 
 ## How to verify
 

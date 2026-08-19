@@ -42,6 +42,11 @@
 * `plot_cpp_timeseries()` no longer emits a cosmetic
   "Mean CPP: NaN dB (SD: NA)" subtitle when every sample fails; it now
   shows "No samples".
+* `PowerCepstrum$as_data_frame()` (the C++ `RPowerCepstrum` module) returned
+  a column misleadingly named `power_dB` that actually held raw linear power;
+  renamed to the honest `power`. This is a breaking change for any caller
+  that read `$as_data_frame()$power_dB` directly; the affected plotting
+  functions now read `power` and convert to `power_db`.
 
 # pladdrr 5.0.1
 

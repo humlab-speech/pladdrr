@@ -894,9 +894,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
   
-  # as_data_frame()'s "power_dB" column is raw linear power (misleading name);
-  # convert explicitly so the y-axis and peak marker are real dB.
-  df$power_db <- 10 * log10(pmax(df$power_dB, 1e-20))
+  # as_data_frame() returns raw linear power in a "power" column; convert
+  # explicitly so the y-axis and peak marker are real dB.
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
   
   # Filter quefrency range
   if (!is.null(from_quefrency)) {

@@ -79,11 +79,8 @@ as.data.frame.Cepstrum <- function(x, row.names = NULL, optional = FALSE,
   if (power) {
     pc <- x$to_powercepstrum()
     df <- pc$as_data_frame()
-    # The underlying C++ column is misleadingly named "power_dB" but holds
-    # raw linear power (see PowerCepstrum module). Rename honestly here,
-    # matching as.data.frame.PowerCepstrogram's "power" column convention.
-    # dB conversion happens only in autoplot.Cepstrum/autolayer.Cepstrum.
-    names(df)[names(df) == "power_dB"] <- "power"
+    # The C++ as_data_frame() column is honestly named "power" (raw linear
+    # power). dB conversion happens only in autoplot.Cepstrum/autolayer.Cepstrum.
     return(df)
   }
   x$as_data_frame()

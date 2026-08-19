@@ -4,11 +4,11 @@
 # The two remaining PowerCepstrum call sites that still plotted raw linear
 # power under a "Power (dB)" axis — autoplot.PowerCepstrum /
 # autolayer.PowerCepstrum (R/autoplot-methods.R) and plot.PowerCepstrum
-# (R/plotting-methods.R) — now convert the misleadingly-named "power_dB"
-# column (raw linear power from the C++ as_data_frame()) to a real dB
-# "power_db" column before plotting. Also covered: plot_cpp_timeseries'
-# all-samples-failed "NaN dB" subtitle, and plot_powercepstrogram's
-# show_cpp_contour overlay (previously a flat quefrency = 0.01 placeholder).
+# (R/plotting-methods.R) — now convert the C++ as_data_frame()'s raw-linear
+# "power" column to a real dB "power_db" column before plotting. Also
+# covered: plot_cpp_timeseries' all-samples-failed "NaN dB" subtitle, and
+# plot_powercepstrogram's show_cpp_contour overlay (previously a flat
+# quefrency = 0.01 placeholder).
 
 test_that("autoplot.PowerCepstrum plots real dB, not raw linear power", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.5)
@@ -16,10 +16,10 @@ test_that("autoplot.PowerCepstrum plots real dB, not raw linear power", {
 
   p <- ggplot2::autoplot(pc)
   expect_s3_class(p, "ggplot")
-  expect_true(all(c("quefrency", "power_dB", "power_db") %in% names(p$data)))
+  expect_true(all(c("quefrency", "power", "power_db") %in% names(p$data)))
 
-  # power_db is the explicit dB conversion of the raw linear power_dB column.
-  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power_dB, 1e-20)))
+  # power_db is the explicit dB conversion of the raw linear power column.
+  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)))
   # Raw linear power spans many orders of magnitude; real dB is bounded.
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
@@ -32,8 +32,8 @@ test_that("autolayer.PowerCepstrum layer data is real dB", {
   expect_s3_class(p, "ggplot")
 
   layer_data <- p$layers[[1]]$data
-  expect_true(all(c("quefrency", "power_dB", "power_db") %in% names(layer_data)))
-  expect_equal(layer_data$power_db, 10 * log10(pmax(layer_data$power_dB, 1e-20)))
+  expect_true(all(c("quefrency", "power", "power_db") %in% names(layer_data)))
+  expect_equal(layer_data$power_db, 10 * log10(pmax(layer_data$power, 1e-20)))
 })
 
 test_that("plot.PowerCepstrum plots real dB, not raw linear power", {
@@ -42,9 +42,8 @@ test_that("plot.PowerCepstrum plots real dB, not raw linear power", {
 
   p <- plot(pc)
   expect_s3_class(p, "ggplot")
-  expect_true(all(c("quefrency", "power_dB", "power_db") %in% names(p$data)))
-
-  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power_dB, 1e-20)))
+  expect_true(all(c("quefrency", "power", "power_db") %in% names(p$data)))
+  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)))
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
 

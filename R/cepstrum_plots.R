@@ -72,12 +72,11 @@ plot_powercepstrum <- function(cepstrum,
   theme <- match.arg(theme)
   
   # Real quefrency values and power come from the object's own
-  # as_data_frame(); its "power_dB" column is misleadingly named — it is
-  # raw linear power (confirmed against get_value_at_quefrency(unit =
-  # "dB"), a different accessor on the same object that returns real dB).
-  # Convert explicitly rather than trusting the column name.
+  # as_data_frame(), whose "power" column holds raw linear power (confirmed
+  # against get_value_at_quefrency(unit = "dB"), a different accessor on the
+  # same object that returns real dB). Convert explicitly.
   plot_data <- cepstrum$as_data_frame()
-  plot_data$power_db <- 10 * log10(pmax(plot_data$power_dB, 1e-20))
+  plot_data$power_db <- 10 * log10(pmax(plot_data$power, 1e-20))
   
   # Apply quefrency range filter if specified
   if (!is.null(quefrency_range)) {
