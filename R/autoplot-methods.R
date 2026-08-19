@@ -542,17 +542,21 @@ autoplot.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency =
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
 
+  # as_data_frame()'s "power_dB" column is raw linear power (misleading name);
+  # convert explicitly so the y-axis and peak marker are real dB.
+  df$power_db <- 10 * log10(pmax(df$power_dB, 1e-20))
+
   if (!is.null(from_quefrency)) df <- df[df$quefrency >= from_quefrency, ]
   if (!is.null(to_quefrency)) df <- df[df$quefrency <= to_quefrency, ]
 
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_dB)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
 
   if (mark_peak && nrow(df) > 0) {
-    peak_idx <- which.max(df$power_dB)
+    peak_idx <- which.max(df$power_db)
     if (length(peak_idx) > 0) {
       peak_q <- df$quefrency[peak_idx]
-      peak_v <- df$power_dB[peak_idx]
+      peak_v <- df$power_db[peak_idx]
 
       p <- p +
         ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed",
@@ -574,12 +578,16 @@ autolayer.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency 
   df <- object$as_data_frame()
   if (nrow(df) == 0) return(NULL)
 
+  # as_data_frame()'s "power_dB" column is raw linear power (misleading name);
+  # convert explicitly so the layer plots real dB.
+  df$power_db <- 10 * log10(pmax(df$power_dB, 1e-20))
+
   if (!is.null(from_quefrency)) df <- df[df$quefrency >= from_quefrency, ]
   if (!is.null(to_quefrency)) df <- df[df$quefrency <= to_quefrency, ]
 
   ggplot2::geom_line(
     data = df,
-    ggplot2::aes(x = .data$quefrency, y = .data$power_dB),
+    ggplot2::aes(x = .data$quefrency, y = .data$power_db),
     color = color, linewidth = 0.8, inherit.aes = FALSE, ...
   )
 }

@@ -358,7 +358,6 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' @param garnish Logical. Add axis labels and title (default: TRUE)
 #' @param title Character. Plot title (default: "Spectrogram")
 #' @param dynamic_range Numeric. Dynamic range in dB (default: 70)
-#' @param preemphasis Numeric. Pre-emphasis from Hz (default: 50)
 #' @param ... Additional arguments (currently unused)
 #'
 #' @return A ggplot2 object
@@ -377,7 +376,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
                             from_freq = NULL, to_freq = NULL,
                             garnish = TRUE, title = "Spectrogram",
-                            dynamic_range = 70, preemphasis = 50, ...) {
+                            dynamic_range = 70, ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
@@ -895,6 +894,10 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
   
+  # as_data_frame()'s "power_dB" column is raw linear power (misleading name);
+  # convert explicitly so the y-axis and peak marker are real dB.
+  df$power_db <- 10 * log10(pmax(df$power_dB, 1e-20))
+  
   # Filter quefrency range
   if (!is.null(from_quefrency)) {
     df <- df[df$quefrency >= from_quefrency, ]
@@ -904,16 +907,16 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_dB)) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
 
   # Optionally mark peak
   if (mark_peak && nrow(df) > 0) {
     # Find peak in visible range
-    peak_idx <- which.max(df$power_dB)
+    peak_idx <- which.max(df$power_db)
     if (length(peak_idx) > 0) {
       peak_q <- df$quefrency[peak_idx]
-      peak_v <- df$power_dB[peak_idx]
+      peak_v <- df$power_db[peak_idx]
       
       p <- p +
         ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed", 

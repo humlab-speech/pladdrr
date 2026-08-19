@@ -24,6 +24,24 @@
   None of these 5 functions had any test coverage before this release; 12
   new regression tests were added (`test-spectrogram-plot-regression.R`,
   `test-cepstrum-plots-regression.R`).
+* Follow-up fixes closing the remaining `power_dB`-mislabel call sites:
+  `autoplot.PowerCepstrum()`/`autolayer.PowerCepstrum()` and
+  `plot.PowerCepstrum()` still plotted the C++ `as_data_frame()`'s
+  misleadingly-named `power_dB` column (raw linear power) directly under a
+  "Power (dB)" axis, and selected their cepstral-peak marker with
+  `which.max()` on linear power. Both now convert to a real dB `power_db`
+  column before plotting (5 new tests in
+  `test-powercepstrum-db-regression.R`).
+* `plot_powercepstrogram(show_cpp_contour = TRUE)` drew its CPP-contour
+  overlay as a flat line at a hardcoded `quefrency = 0.01` placeholder; it
+  now overlays the real per-time-frame cepstral-peak quefrency, computed as
+  the argmax of each frame's own raster row.
+* `plot.Spectrogram()`'s `preemphasis` argument (default 50) was accepted
+  but never referenced; removed as dead — pre-emphasis belongs in the DSP
+  layer, not a plot method.
+* `plot_cpp_timeseries()` no longer emits a cosmetic
+  "Mean CPP: NaN dB (SD: NA)" subtitle when every sample fails; it now
+  shows "No samples".
 
 # pladdrr 5.0.1
 

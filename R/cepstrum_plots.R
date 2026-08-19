@@ -263,42 +263,28 @@ plot_powercepstrogram <- function(cepstrogram,
     )
   }
   
-  # Add CPP contour if requested
-  if (show_cpp_contour) {
-    # Sample CPP values over time
-    times <- sort(unique(plot_data$time))
-    n_times <- length(times)
-    n_samples <- min(100, n_times)
-    sample_times <- seq(min(times), max(times), length.out = n_samples)
-    
-    cpp_data <- data.frame(
-      time = sample_times,
-      cpp = numeric(n_samples),
-      quefrency = numeric(n_samples)
-    )
-    
-    tryCatch({
-      for (i in seq_along(sample_times)) {
-        cpp_data$cpp[i] <- cepstrogram$get_cpp_at_time(
-          time = sample_times[i],
-          interpolation = "linear"
-        )
-        # Convert CPP to approximate quefrency for visualization
-        # This is approximate - actual peak quefrency would be better
-        cpp_data$quefrency[i] <- 0.01  # Placeholder
-      }
-      
-      # Add contour line
-      p <- p + ggplot2::geom_line(
-        data = cpp_data,
-        ggplot2::aes(x = time, y = quefrency),
-        color = contour_color,
-        linewidth = 1.2,
-        inherit.aes = FALSE
+  # Add CPP contour if requested: overlay the cepstral-peak quefrency track,
+  # computed per time frame from the cepstrogram's own raster. Peak location
+  # is invariant under the monotone log transform, so power_db (already
+  # computed above) selects the same bin as raw power. This replaces the
+  # previous flat placeholder at quefrency = 0.01 with the real per-frame
+  # argmax; no per-time-point C++ query or interpolation is needed.
+  if (show_cpp_contour && nrow(plot_data) > 0) {
+    peak_q_by_time <- do.call(rbind, lapply(
+      split(plot_data, plot_data$time),
+      function(d) data.frame(
+        time = d$time[1],
+        quefrency = d$quefrency[which.max(d$power_db)]
       )
-    }, error = function(e) {
-      warning("Could not compute CPP contour: ", e$message)
-    })
+    ))
+
+    p <- p + ggplot2::geom_line(
+      data = peak_q_by_time,
+      ggplot2::aes(x = time, y = quefrency),
+      color = contour_color,
+      linewidth = 1.2,
+      inherit.aes = FALSE
+    )
   }
   
   # Add labels
@@ -475,9 +461,13 @@ plot_cpp_timeseries <- function(cepstrogram,
   
   p <- p + ggplot2::labs(
     title = title,
-    subtitle = sprintf("Mean CPP: %.2f dB (SD: %.2f)", 
-                       mean(plot_data$cpp, na.rm = TRUE),
-                       sd(plot_data$cpp, na.rm = TRUE)),
+    subtitle = if (nrow(plot_data) > 0) {
+      sprintf("Mean CPP: %.2f dB (SD: %.2f)",
+              mean(plot_data$cpp, na.rm = TRUE),
+              sd(plot_data$cpp, na.rm = TRUE))
+    } else {
+      "No samples"
+    },
     x = "Time (s)",
     y = "CPP (dB)"
   )

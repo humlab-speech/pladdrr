@@ -13,7 +13,6 @@
   garnish = TRUE,
   title = "Spectrogram",
   dynamic_range = 70,
-  preemphasis = 50,
   ...
 )
 }
@@ -33,8 +32,6 @@
 \item{title}{Character. Plot title (default: "Spectrogram")}
 
 \item{dynamic_range}{Numeric. Dynamic range in dB (default: 70)}
-
-\item{preemphasis}{Numeric. Pre-emphasis from Hz (default: 50)}
 
 \item{...}{Additional arguments (currently unused)}
 }
