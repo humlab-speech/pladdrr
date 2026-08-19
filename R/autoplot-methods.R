@@ -277,19 +277,8 @@ autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
     stop("Package 'ggplot2' is required. Please install it.")
   }
 
-  mat <- object$as_matrix()
-  n_times <- ncol(mat)
-  n_freqs <- nrow(mat)
-
-  t_min <- object$get_start_time()
-  t_max <- object$get_end_time()
-  f_max <- object$get_highest_frequency()
-
-  times <- seq(t_min, t_max, length.out = n_times)
-  freqs <- seq(0, f_max, length.out = n_freqs)
-
-  df <- expand.grid(time = times, frequency = freqs)
-  df$power_db <- as.vector(mat)
+  df <- object$as_data_frame()
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
@@ -312,19 +301,8 @@ autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
 autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
                                   from_freq = NULL, to_freq = NULL,
                                   dynamic_range = 70, ...) {
-  mat <- object$as_matrix()
-  n_times <- ncol(mat)
-  n_freqs <- nrow(mat)
-
-  t_min <- object$get_start_time()
-  t_max <- object$get_end_time()
-  f_max <- object$get_highest_frequency()
-
-  times <- seq(t_min, t_max, length.out = n_times)
-  freqs <- seq(0, f_max, length.out = n_freqs)
-
-  df <- expand.grid(time = times, frequency = freqs)
-  df$power_db <- as.vector(mat)
+  df <- object$as_data_frame()
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
