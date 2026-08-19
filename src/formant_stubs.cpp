@@ -51,6 +51,7 @@ autoFormant Formant_extractPart(Formant me, double tmin, double tmax) {
             Formant_Frame newFrame = &thy frames[newFrameNum];
             
             newFrame->intensity = oldFrame->intensity;
+            newFrame->formant = newvectorzero <structFormant_Formant> (oldFrame->numberOfFormants);
             newFrame->numberOfFormants = oldFrame->numberOfFormants;
             
             // Copy formants and bandwidths

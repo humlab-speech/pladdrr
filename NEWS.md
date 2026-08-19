@@ -2,6 +2,17 @@
 
 ## Bug fixes
 
+* `Sound$get_optimal_formant_ceiling()` and `Sound$to_formant_optimal()`
+  crashed the R session (SIGTRAP / "irrecoverable exception") for every
+  input. Two stacked causes were fixed. (1) The vendored Praat
+  `Sound_to_Formant_common` read the null output `sound` instead of the local
+  `resampled` when setting up the short-term analysis and Formant/LPC
+  objects, crashing every Burg/robust formant-analysis entry point
+  (`to_formant_burg()` was also broken). (2) The pladdrr `Formant_extractPart`
+  stub wrote `newFrame->formant[]` without allocating it — `Formant_create`
+  zeroes frames so the array is null — so the interval path aborted on the
+  first dereference. `to_formant_burg()`, `to_formant_optimal()`, and
+  `get_optimal_formant_ceiling()` now all work.
 * `autoplot.Spectrogram()`, `autolayer.Spectrogram()`, and `plot.Spectrogram()`
   scrambled the frequency axis for any non-square spectrogram matrix (a
   `expand.grid()`/`as.vector()` row/column-major mismatch — a 220 Hz tone
