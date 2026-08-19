@@ -66,6 +66,9 @@
   `plot.Spectrogram()`'s `to_freq`, so the frequency cap is honored.
 * `plot_sound_pitch()`'s `pitch_floor`/`pitch_ceiling` arguments were dead —
   passed to `plot.Pitch()`, which ignores them. Removed.
+* Deprecated `get_intensity_at_time()`'s `interpolate` argument and
+  `create_sound()`'s `start_time` argument were silently ignored; both now
+  forward to the underlying R6 methods.
 
 # pladdrr 5.0.1
 

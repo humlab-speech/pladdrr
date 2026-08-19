@@ -33,7 +33,7 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
     )
   )
   
-  Sound$from_values(values, sampling_rate)
+  Sound$from_values(values, sampling_rate, start_time)
 }
 
 #' Read sound from audio file (DEPRECATED)
