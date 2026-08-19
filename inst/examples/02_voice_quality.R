@@ -33,15 +33,15 @@ if (FALSE) {
                           pitch_floor = pitch_floor,
                           pitch_ceiling = pitch_ceiling)
     
-    # NEW: Extract point process (pitch marks) - TO IMPLEMENT
-    point_process <- extract_point_process(sound, 
+    # Extract point process (pitch marks)
+    point_process <- sound$to_point_process_periodic_cc(
                                           pitch_floor = pitch_floor,
                                           pitch_ceiling = pitch_ceiling)
     
-    # NEW: Extract harmonicity (HNR/NHR) - TO IMPLEMENT
-    harmonicity <- extract_harmonicity(sound,
+    # Extract harmonicity (HNR/NHR)
+    harmonicity <- sound$to_harmonicity_cc(
                                       time_step = 0.01,
-                                      pitch_floor = pitch_floor,
+                                      min_pitch = pitch_floor,
                                       silence_threshold = silence_threshold,
                                       periods_per_window = 1.0)
     
@@ -52,90 +52,81 @@ if (FALSE) {
     min_pitch <- pitch$get_minimum(interpolate = FALSE)
     max_pitch <- pitch$get_maximum(interpolate = FALSE)
     
-    # NEW: Jitter measures - TO IMPLEMENT
-    jitter_local <- get_jitter_local(point_process, 
+    # Jitter measures
+    jitter_local <- point_process$get_jitter_local(
                                      from_time = from_time,
                                      to_time = to_time,
                                      period_floor = 1/pitch_ceiling,
                                      period_ceiling = 1/pitch_floor,
                                      max_period_factor = max_period_factor)
     
-    jitter_local_abs <- get_jitter_local_absolute(point_process,
+    jitter_local_abs <- point_process$get_jitter_local_absolute(
                                                   from_time = from_time,
                                                   to_time = to_time)
     
-    jitter_rap <- get_jitter_rap(point_process,
+    jitter_rap <- point_process$get_jitter_rap(
                                  from_time = from_time,
                                  to_time = to_time)
     
-    jitter_ppq5 <- get_jitter_ppq5(point_process,
+    jitter_ppq5 <- point_process$get_jitter_ppq5(
                                    from_time = from_time,
                                    to_time = to_time)
     
-    jitter_ddp <- get_jitter_ddp(point_process,
+    jitter_ddp <- point_process$get_jitter_ddp(
                                  from_time = from_time,
                                  to_time = to_time)
     
-    # NEW: Shimmer measures - TO IMPLEMENT
-    shimmer_local <- get_shimmer_local(sound, point_process,
+    # Shimmer measures
+    shimmer_local <- point_process$get_shimmer_local(sound,
                                        from_time = from_time,
                                        to_time = to_time,
                                        max_amplitude_factor = max_amplitude_factor)
     
-    shimmer_local_db <- get_shimmer_local_db(sound, point_process,
+    shimmer_local_db <- point_process$get_shimmer_local_db(sound,
                                              from_time = from_time,
                                              to_time = to_time)
     
-    shimmer_apq3 <- get_shimmer_apq3(sound, point_process,
+    shimmer_apq3 <- point_process$get_shimmer_apq3(sound,
                                      from_time = from_time,
                                      to_time = to_time)
     
-    shimmer_apq5 <- get_shimmer_apq5(sound, point_process,
+    shimmer_apq5 <- point_process$get_shimmer_apq5(sound,
                                      from_time = from_time,
                                      to_time = to_time)
     
-    shimmer_apq11 <- get_shimmer_apq11(sound, point_process,
+    shimmer_apq11 <- point_process$get_shimmer_apq11(sound,
                                        from_time = from_time,
                                        to_time = to_time)
     
-    shimmer_dda <- get_shimmer_dda(sound, point_process,
+    shimmer_dda <- point_process$get_shimmer_dda(sound,
                                    from_time = from_time,
                                    to_time = to_time)
     
-    # NEW: Harmonicity measures - TO IMPLEMENT
-    mean_hnr <- get_mean_harmonicity(harmonicity,
+    # Harmonicity measures
+    mean_hnr <- harmonicity$get_mean(
                                      from_time = from_time,
                                      to_time = to_time)
     
-    mean_nhr <- hnr_to_nhr(mean_hnr)  # Helper conversion
-    mean_autocorr <- hnr_to_autocorrelation(mean_hnr)  # Helper conversion
+    mean_nhr <- -mean_hnr  # NHR = -HNR (dB)
+    mean_autocorr <- 10^(-mean_hnr / 20)  # amplitude autocorrelation from HNR (dB)
     
-    # NEW: Voice breaks - TO IMPLEMENT  
-    num_breaks <- count_voice_breaks(pitch,
+    # Voice breaks
+    num_breaks <- point_process$get_voice_breaks(
                                      from_time = from_time,
                                      to_time = to_time)
     
-    degree_breaks <- get_degree_voice_breaks(pitch,
-                                             from_time = from_time,
-                                             to_time = to_time)
     
-    # NEW: Pulses and periods - TO IMPLEMENT
-    num_pulses <- get_number_of_pulses(point_process,
-                                       from_time = from_time,
-                                       to_time = to_time)
+    # Pulses and periods
+    num_pulses <- point_process$get_number_of_points()
     
-    num_periods <- get_number_of_periods(point_process,
+    num_periods <- point_process$get_number_of_periods(
                                          from_time = from_time,
                                          to_time = to_time)
     
-    mean_period <- get_mean_period(point_process,
+    mean_period <- point_process$get_mean_period(
                                    from_time = from_time,
                                    to_time = to_time)
     
-    # NEW: Unvoiced frames - TO IMPLEMENT
-    frac_unvoiced <- get_fraction_unvoiced_frames(pitch,
-                                                  from_time = from_time,
-                                                  to_time = to_time)
     
     # Combine into comprehensive report
     data.frame(
@@ -152,9 +143,7 @@ if (FALSE) {
       mean_period = mean_period,
       
       # Voicing measures
-      frac_unvoiced = frac_unvoiced,
       num_breaks = num_breaks,
-      degree_breaks = degree_breaks,
       
       # Jitter measures (%)
       jitter_local = jitter_local,

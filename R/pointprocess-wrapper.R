@@ -117,10 +117,10 @@ NULL
     as.numeric(period_floor), as.numeric(period_ceiling), as.numeric(max_period_factor))
 }
 .pp_methods$get_voice_breaks <- function(.self, from_time = 0, to_time = 0,
-                                         period_floor = 0.0001, period_ceiling = 0.02,
-                                         max_period_factor = 1.3) {
-  .self$.cpp$get_voice_breaks(as.numeric(from_time), as.numeric(to_time),
-    as.numeric(period_floor), as.numeric(period_ceiling), as.numeric(max_period_factor))
+                                         maximum_period = 0.02) {
+  res <- .self$.cpp$get_voice_breaks(as.numeric(from_time), as.numeric(to_time),
+    as.numeric(maximum_period))
+  res$count
 }
 
 # --- Modification (return invisible self) ---
