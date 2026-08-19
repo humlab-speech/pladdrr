@@ -519,7 +519,7 @@ test_that("pitch_get_statistics_batch returns correct matrix", {
   expect_equal(colnames(result), metrics)
 
   # Verify values are reasonable
-  for (i in 1:nrow(result)) {
+  for (i in seq_len(nrow(result))) {
     expect_true(result[i, "min"] <= result[i, "mean"])
     expect_true(result[i, "mean"] <= result[i, "max"])
     expect_gte(result[i, "stdev"], 0)
@@ -561,7 +561,7 @@ test_that("intensity_get_statistics_batch returns correct matrix", {
   expect_equal(colnames(result), metrics)
 
   # Verify values are reasonable
-  for (i in 1:nrow(result)) {
+  for (i in seq_len(nrow(result))) {
     expect_true(result[i, "min"] <= result[i, "mean"])
     expect_true(result[i, "mean"] <= result[i, "max"])
     expect_gte(result[i, "stdev"], 0)

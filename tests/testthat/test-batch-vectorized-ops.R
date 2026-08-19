@@ -75,7 +75,7 @@ test_that("Pitch batch operations work", {
 
   # Get values at times
   times <- pitch$get_times_vector()
-  values_batch <- pitch$get_values_at_times(times[1:min(10, length(times))])
+  values_batch <- pitch$get_values_at_times(times[seq_len(min(10, length(times)))])
 
   expect_type(values_batch, "double")
 })

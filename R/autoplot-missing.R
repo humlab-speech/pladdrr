@@ -1052,7 +1052,7 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
       warning("PCA scores data frame has fewer than 2 columns")
       if (type == "scores") return(ggplot2::ggplot() + ggplot2::theme_void())
     }
-    pc_cols <- names(df)[1:min(2, ncol(df))]
+    pc_cols <- names(df)[seq_len(min(2, ncol(df)))]
     p_scores <- ggplot2::ggplot(df,
                  ggplot2::aes(x = .data[[pc_cols[1]]],
                               y = .data[[pc_cols[2]]])) +
@@ -1115,7 +1115,7 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
       warning("Discriminant scores data frame has fewer than 2 columns")
       if (type == "scores") return(ggplot2::ggplot() + ggplot2::theme_void())
     }
-    pc_cols <- names(df)[1:min(2, ncol(df))]
+    pc_cols <- names(df)[seq_len(min(2, ncol(df)))]
     p_scores <- ggplot2::ggplot(df,
                  ggplot2::aes(x = .data[[pc_cols[1]]],
                               y = .data[[pc_cols[2]]])) +

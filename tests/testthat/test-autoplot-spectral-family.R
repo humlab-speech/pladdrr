@@ -64,7 +64,7 @@ test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range
 test_that("BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, not bin indices (Task 6 regression guard)", {
   bark <- sound_fixture()$to_bark_spectrogram()
   df <- as.data.frame(bark)
-  expect_false(isTRUE(all.equal(sort(unique(df$col)), seq_len(length(unique(df$col))))))
+  expect_false(isTRUE(all.equal(sort(unique(df$col)), seq_along(unique(df$col)))))
   expect_s3_class(ggplot2::autoplot(bark), "ggplot")
 
   mel <- sound_fixture()$to_mel_spectrogram()
