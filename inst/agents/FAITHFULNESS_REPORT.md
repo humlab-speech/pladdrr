@@ -1,6 +1,6 @@
 # Faithfulness Report (pladdrr vs Praat)
 
-_Generated: 2026-08-05 10:32:46 CEST_
+_Generated: 2026-08-19 17:10:44 CEST_
 
 Each row is one Praat DSP routine. Praat output is the oracle; pladdrr
 is checked against it at the documented tolerance. `pass` = within
@@ -12,7 +12,7 @@ tolerance, `fail` = drift (open an issue or document the rationale).
 | Sound$get_number_of_samples | pass | 44100 | 44100 | 0 | 0 |
 | Sound -> Pitch (cc) -> mean F0 (Hz) | pass | 440.0102 | 440.0102 | 8.6402e-12 | 1e-04 |
 | Sound -> Intensity -> mean (dB) | pass | 84.94803 | 84.94803 | 3.079001e-07 | 1e-06 |
-| Sound -> Formant (burg) -> F1@0.5s (Hz) | pass | 420.6684 | 420.6684 | 5.360334e-11 | 0.001 |
+| Sound -> Formant (burg) -> F1@0.5s (Hz) | pass | 420.6684 | 420.6684 | 5.633183e-11 | 0.001 |
 | CPPS (calculate_cpps_ultra) | pass | 9.923184 | 9.920529 | 0.002654309 | 0.005 |
 | Pitch (AC) -> mean F0 (Hz) | pass | 440.0102 | 440.0102 | 9.549694e-12 | 1e-04 |
 | Pitch (SHS) -> mean F0 (Hz) | pass | 440.8181 | 440.8181 | 5.684342e-14 | 1e-04 |
@@ -22,6 +22,10 @@ tolerance, `fail` = drift (open an issue or document the rationale).
 | Spectrogram -> power at (0.5 s, 1000 Hz) | pass | 3.131686e-05 | 3.131686e-05 | 2.236167e-19 | 1e-09 |
 | PointProcess (cc) -> jitter local | pass | 8.023673e-07 | 8.023673e-07 | 1.787663e-18 | 1e-09 |
 | MFCC -> number of frames | pass | 195 | 195 | 0 | 0 |
+| Sound$get_sampling_frequency | pass | 44100 | 44100 | 0 | 0 |
+| Sound$get_number_of_channels | pass | 1 | 1 | 0 | 0 |
+| Sound$get_mean | pass | 0 | 0 | 0 | 1e-12 |
+| Sound$get_rms | pass | 0.3535251 | 0.3535251 | 0 | 1e-12 |
 
 **Non-determinism caveat (CPPS row above):** the tolerance reported for
 `CPPS (calculate_cpps_ultra)` reflects the deterministic fast/default

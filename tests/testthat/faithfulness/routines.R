@@ -365,5 +365,34 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr     = function(path) pladdrr::Sound(path)$get_number_of_channels()
+  ),
+
+  # Sound amplitude statistics (bundled Praat core; near-exact)
+  list(
+    name        = "Sound$get_mean",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-12,
+    rationale   = "Amplitude mean; simple sum/n, near-exact against Praat.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      m = Get mean: 1, 0, 0
+      writeInfoLine: m
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr     = function(path) pladdrr::Sound(path)$get_mean()
+  ),
+
+  list(
+    name        = "Sound$get_rms",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-12,
+    rationale   = "Root-mean-square; sqrt(mean of squares), near-exact.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      r = Get root-mean-square: 0, 0
+      writeInfoLine: r
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr     = function(path) pladdrr::Sound(path)$get_rms()
   )
 )
