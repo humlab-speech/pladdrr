@@ -631,7 +631,7 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   
   # Create base spectrogram plot
   p <- plot(spectrogram, from_time = from_time, to_time = to_time,
-           garnish = TRUE, title = title, freq_max = freq_max)
+           garnish = TRUE, title = title, to_freq = freq_max)
   
   # Get pitch data
   pitch_df <- pitch$as_data_frame()
@@ -688,8 +688,6 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' @param to_time End time in seconds (NULL = to end)
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param pitch_color Character. Pitch color (default: "darkblue")
-#' @param pitch_floor Minimum F0 to display in Hz (default: NULL = auto)
-#' @param pitch_ceiling Maximum F0 to display in Hz (default: NULL = auto)
 #' @param title Character. Overall plot title (default: NULL)
 #' @param ... Additional arguments (currently unused)
 #'
@@ -716,8 +714,6 @@ plot_sound_pitch <- function(sound, pitch,
                             from_time = NULL, to_time = NULL,
                             waveform_color = "steelblue",
                             pitch_color = "darkblue",
-                            pitch_floor = NULL,
-                            pitch_ceiling = NULL,
                             title = NULL, ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -738,9 +734,7 @@ plot_sound_pitch <- function(sound, pitch,
   
   p_pitch <- plot(pitch, from_time = from_time, to_time = to_time,
                  garnish = TRUE, title = "Pitch",
-                 color = pitch_color,
-                 pitch_floor = pitch_floor,
-                 pitch_ceiling = pitch_ceiling)
+                 color = pitch_color)
   
   # Try patchwork first, then gridExtra
   if (requireNamespace("patchwork", quietly = TRUE)) {
