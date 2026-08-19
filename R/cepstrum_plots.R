@@ -235,27 +235,11 @@ plot_powercepstrogram <- function(cepstrogram,
   color_scale <- match.arg(color_scale)
   theme <- match.arg(theme)
   
-  # Extract cepstrogram data as matrix (quefrency × time)
-  mat <- cepstrogram$as_matrix()
-  
-  # Get dimensions
-  n_quefrencies <- nrow(mat)
-  n_times <- ncol(mat)
-  
-  # Create time and quefrency axes
-  # These would ideally come from the object metadata
-  max_time <- 5.0  # Placeholder - should be extracted from object
-  max_quefrency <- quefrency_range[2]
-  
-  times <- seq(0, max_time, length.out = n_times)
-  quefrencies <- seq(0, max_quefrency, length.out = n_quefrencies)
-  
-  # Convert matrix to long format for ggplot2
-  plot_data <- expand.grid(
-    time = times,
-    quefrency = quefrencies
-  )
-  plot_data$power_db <- as.vector(mat)
+  # Long-format data frame with real per-bin time/quefrency values,
+  # correctly oriented (delegates to as.data.frame.PowerCepstrogram,
+  # which already gets this right — see R/as-data-frame-missing.R).
+  plot_data <- as.data.frame(cepstrogram)
+  plot_data$power_db <- 10 * log10(pmax(plot_data$power, 1e-20))
   
   # Apply time range filter if specified
   if (!is.null(time_range)) {
