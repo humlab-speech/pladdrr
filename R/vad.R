@@ -569,7 +569,6 @@ sound_get_zcr <- function(sound,
   # Get sound timing info
   duration <- sound$get_duration()
   start_time <- sound$get_xmin()
-  end_time <- sound$get_xmax()
 
   # Calculate frame parameters
   n_frames <- max(1L, as.integer((duration - window_duration) / hop_duration) + 1L)

@@ -599,7 +599,6 @@ extract_measurements <- function(sound,
     return(NULL)
   }
   intervals <- intervals[keep, , drop = FALSE]
-  n <- nrow(intervals)
   
   # Compute measurement times (vectorized)
   meas_times <- switch(time_point,

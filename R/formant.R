@@ -83,8 +83,7 @@ extract_formants <- function(sound,
   # Extract signal and metadata
   signal <- sound$values
   sr <- sound$sampling_rate
-  duration <- sound$duration
-  
+
   # Auto time step (Praat default: 4 times Nyquist frequency / max_formant)
   if (time_step == 0.0) {
     time_step <- window_length / 4
