@@ -223,7 +223,6 @@ test_that("PointProcess nearest indices query works", {
 })
 
 test_that("PointProcess batch operations handle empty objects", {
-  skip("Empty PointProcess constructor not implemented - requires C++ factory function")
   # Create empty PointProcess
   pp <- PointProcess(0, 1)
   

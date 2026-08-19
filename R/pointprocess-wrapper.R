@@ -366,13 +366,18 @@ lockEnvironment(.pp_methods, bindings = TRUE)
 
 #' @export
 #' @export
-PointProcess <- function(.xptr = NULL) {
-  if (is.null(.xptr)) {
-    stop("PointProcess objects must be created from a Sound or Pitch object using to_point_process_*() methods")
-  }
+PointProcess <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   pp_mod <- get_module("pointprocess_module")
-  cpp_pp <- pp_mod$RPointProcess$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_pp), class = c("PointProcess", "PraatObject"))
+  if (!is.null(.xptr)) {
+    cpp_pp <- pp_mod$RPointProcess$new(.xptr)
+    return(structure(list(.xptr = .xptr, .cpp = cpp_pp), class = c("PointProcess", "PraatObject")))
+  }
+  if (!is.null(tmin) && !is.null(tmax)) {
+    xptr <- pp_mod$create_empty(tmin, tmax)
+    cpp_pp <- pp_mod$RPointProcess$new(xptr)
+    return(structure(list(.xptr = xptr, .cpp = cpp_pp), class = c("PointProcess", "PraatObject")))
+  }
+  stop("PointProcess objects must be created from a Sound or Pitch object using to_point_process_*() methods, or with PointProcess(tmin, tmax) for an empty object")
 }
 
 # ============================================================================

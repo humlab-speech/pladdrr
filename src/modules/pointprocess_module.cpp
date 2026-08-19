@@ -364,6 +364,17 @@ public:
     }
 };
 
+// Create an empty PointProcess spanning [tmin, tmax]
+XPtr<structPointProcess> pointprocess_create_empty(double tmin, double tmax) {
+    try {
+        autoPointProcess pp = PointProcess_create(tmin, tmax, 0);
+        return create_xptr_from_auto<structPointProcess>(pp);
+    } catch (MelderError) {
+        Melder_clearError();
+        Rcpp::stop("Failed to create empty PointProcess");
+    }
+}
+
 RCPP_MODULE(pointprocess_module) {
     class_<RPointProcess>("RPointProcess")
         .constructor()
@@ -412,4 +423,5 @@ RCPP_MODULE(pointprocess_module) {
         .method("as_data_frame", &RPointProcess::as_data_frame)
         .method("save", &RPointProcess::save)
     ;
+    function("create_empty", &pointprocess_create_empty);
 }

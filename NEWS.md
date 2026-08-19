@@ -2,6 +2,10 @@
 
 ## Bug fixes
 
+* `PointProcess(tmin, tmax)` now creates an empty PointProcess (previously
+  it only accepted an internal pointer and stopped otherwise). Backed by a new
+  `pointprocess_module$create_empty()` C++ factory wrapping Praat's
+  `PointProcess_create()`. Enables empty-object batch operations.
 * `praat_eval_string_array("empty$# (n)")` segfaulted the R session. The
   vendored Praat `do_empty_STRVEC` built its result with
   `autoSTRVEC result { n }`, which zero-initialises the vector and so leaves
