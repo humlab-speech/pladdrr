@@ -43,11 +43,17 @@ parameters: 10 poles, `safetyMargin` 50), which is the function the R
 `to_formant_burg()` wrapper already exercises.
 
 **Known remaining issue:** `get_optimal_formant_ceiling()` /
-`to_formant_optimal()` still abort (SIGTRAP) later, in the
-`formants.at[istep_best]` argument of `Formant_extractPart` at the end of
-`Sound_to_Formant_interval` — a separate, not-yet-root-caused vendored-Praat
-fault. `to_formant_burg()` (the base analysis) is fixed.
-
+`to_formant_optimal()` still abort later, in the `formants.at[istep_best]`
+argument of `Formant_extractPart` at the end of `Sound_to_Formant_interval`.
+Diagnosed as a use-after-free: the candidate formant stored in the `formants`
+collection (owned via `addItem_move`) is freed prematurely during the loop's
+`Formant_to_FormantModeler` / `FormantModeler_setParameterValuesToZero` /
+`FormantModeler_getStress` steps (running under `MallocGuardEdges=1` turns the
+abort into a `caught segfault` on the dangling pointer; the pointer itself is
+verified stable — created at iteration 9, still `formants.at[9]` at the end).
+The exact freeing site was not yet isolated (ASan could not be installed on
+this machine's R due to a clang-runtime architecture mismatch). Base analysis
+`to_formant_burg()` is fixed.
 ### Unreleased — Document untestable Laguerre fallback branch (2026-08-16)
 
 Submodule commit `8a89e26e`.
