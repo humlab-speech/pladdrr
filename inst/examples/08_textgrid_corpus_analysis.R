@@ -186,7 +186,7 @@ if (length(interval_tiers) > 0) {
       
       if (length(top_labels) > 0) {
         cat("\n  Top 10 most frequent labels:\n")
-        for (j in 1:min(10, length(top_labels))) {
+        for (j in seq_len(min(10, length(top_labels)))) {
           label_name <- names(top_labels)[j]
           count <- top_labels[j]
           pct <- 100 * count / sum(non_empty)

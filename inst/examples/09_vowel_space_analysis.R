@@ -65,26 +65,26 @@ vowel_data <- data.frame(
 )
 
 # Add boundaries and labels to vowels tier
-for (i in 1:nrow(vowel_data)) {
+for (i in seq_len(nrow(vowel_data))) {
   tg$insert_boundary(1, vowel_data$start[i])
   if (i == nrow(vowel_data)) {
     tg$insert_boundary(1, vowel_data$end[i])
   }
 }
 
-for (i in 1:nrow(vowel_data)) {
+for (i in seq_len(nrow(vowel_data))) {
   tg$set_interval_label(1, i + 1, vowel_data$vowel[i])  # +1 because first interval is pre-speech
 }
 
 # Add word context to second tier
-for (i in 1:nrow(vowel_data)) {
+for (i in seq_len(nrow(vowel_data))) {
   tg$insert_boundary(2, vowel_data$start[i])
   if (i == nrow(vowel_data)) {
     tg$insert_boundary(2, vowel_data$end[i])
   }
 }
 
-for (i in 1:nrow(vowel_data)) {
+for (i in seq_len(nrow(vowel_data))) {
   tg$set_interval_label(2, i + 1, vowel_data$word[i])
 }
 
@@ -116,7 +116,7 @@ max_formant <- ifelse(speaker_gender == "female", 5500,
 cat(sprintf("Using formant ceiling: %d Hz (%s speaker)\n\n", max_formant, speaker_gender))
 
 # Process each vowel token
-for (i in 1:nrow(vowel_data)) {
+for (i in seq_len(nrow(vowel_data))) {
   vowel_label <- vowel_data$vowel[i]
   word_context <- vowel_data$word[i]
   start_time <- vowel_data$start[i]
@@ -146,7 +146,7 @@ for (i in 1:nrow(vowel_data)) {
   time_points <- c(0.20, 0.50, 0.80)  # 20%, 50%, 80% into vowel
   point_labels <- c("onset", "midpoint", "offset")
   
-  for (j in 1:length(time_points)) {
+  for (j in seq_along(time_points)) {
     prop <- time_points[j]
     label <- point_labels[j]
     
@@ -280,7 +280,7 @@ cat(sprintf("  %-6s %-8s %-8s %-8s %-10s %-10s %-8s\n",
             "Vowel", "F1 (Hz)", "F2 (Hz)", "F3 (Hz)", "F1 SD", "F2 SD", "N"))
 cat(sprintf("  %s\n", strrep("-", 70)))
 
-for (i in 1:nrow(vowel_stats)) {
+for (i in seq_len(nrow(vowel_stats))) {
   cat(sprintf("  %-6s %-8.0f %-8.0f %-8.0f %-10.0f %-10.0f %-8d\n",
               vowel_stats$vowel[i],
               vowel_stats$f1[i],

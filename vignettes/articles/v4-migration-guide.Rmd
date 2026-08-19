@@ -312,7 +312,7 @@ pairs <- pair_sound_textgrid(
 )
 
 # Process all pairs efficiently
-results <- rbindlist(lapply(1:nrow(pairs), function(i) {
+results <- rbindlist(lapply(seq_len(nrow(pairs)), function(i) {
   snd <- Sound$new(pairs$sound_file[i])
   tg <- TextGrid$new(pairs$textgrid_file[i])
   

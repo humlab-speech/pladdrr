@@ -51,7 +51,7 @@ cat("\n   First 10 intervals:\n")
 cat("   ", sprintf("%-6s %-10s %-10s %-20s\n", "Index", "Start", "End", "Label"))
 cat("   ", strrep("-", 50), "\n")
 
-for (i in 1:min(10, n_intervals)) {
+for (i in seq_len(min(10, n_intervals))) {
   start_time <- tg$get_interval_start_time(tier_idx, i)
   end_time <- tg$get_interval_end_time(tier_idx, i)
   label <- tg$get_interval_label(tier_idx, i)
@@ -87,7 +87,7 @@ for (i in 1:n_intervals) {
 label_counts <- table(labels)
 cat("   Label distribution (top 10):\n")
 top_labels <- head(sort(label_counts, decreasing = TRUE), 10)
-for (i in 1:length(top_labels)) {
+for (i in seq_along(top_labels)) {
   cat(sprintf("   %-20s: %d occurrences\n", 
               names(top_labels)[i], top_labels[i]))
 }
@@ -114,7 +114,7 @@ if (length(matching_intervals) > 0) {
   cat(sprintf("   Found %d intervals matching pattern '%s'\n", 
               length(matching_intervals), pattern))
   cat("\n   Sample matches (first 5):\n")
-  for (i in 1:min(5, length(matching_intervals))) {
+  for (i in seq_len(min(5, length(matching_intervals)))) {
     item <- matching_intervals[[i]]
     cat(sprintf("   [%.3f - %.3f]: %s\n", 
                 item$start, item$end, item$label))
