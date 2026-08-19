@@ -214,9 +214,9 @@ if (exists("sound") && !is.null(sound)) {
 
   # Report results
   cat("Formant extraction results:\n")
-  cat("  Male (5000 Hz):", if(!is.null(formant_male)) "OK" else "failed", "\n")
-  cat("  Female (5500 Hz):", if(!is.null(formant_female)) "OK" else "failed", "\n")
-  cat("  Child (8000 Hz):", if(!is.null(formant_child)) "OK" else "failed", "\n")
+  cat("  Male (5000 Hz):", if (!is.null(formant_male)) "OK" else "failed", "\n")
+  cat("  Female (5500 Hz):", if (!is.null(formant_female)) "OK" else "failed", "\n")
+  cat("  Child (8000 Hz):", if (!is.null(formant_child)) "OK" else "failed", "\n")
 } else {
   message("Skipping ceiling demo - sound not available")
 }

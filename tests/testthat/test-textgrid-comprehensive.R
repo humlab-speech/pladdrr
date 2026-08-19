@@ -95,7 +95,7 @@ test_that("TextGrid handles edge cases", {
 
 test_that("TextGrid errors on invalid input", {
   expect_error(
-    TextGrid$new('nonexistent.TextGrid'),
+    TextGrid$new("nonexistent.TextGrid"),
     "not found"
   )
 })

@@ -330,7 +330,7 @@ library(tidyr)
 wav <- system.file("extdata", "test.wav", package = "pladdrr")
 results <- tibble(
   file = c(wav, wav, wav),
-  speaker = c('A', 'B', 'C')
+  speaker = c("A", "B", "C")
 ) %>%
   mutate(
     analysis = map(file, analyze_voice)

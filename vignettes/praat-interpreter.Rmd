@@ -56,7 +56,7 @@ praat_eval_string('"Hello" + " " + "World"')
 
 # String functions
 praat_eval_string('left$("testing", 4)')
-praat_eval_string('string$(42)')
+praat_eval_string("string$(42)")
 ```
 
 ### Vector Expressions
