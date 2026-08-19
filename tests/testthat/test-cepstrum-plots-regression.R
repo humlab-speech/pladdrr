@@ -1,23 +1,23 @@
 # Regression tests for R/cepstrum_plots.R bugs found during the autoplot
 # coverage work (2026-08-19): plot_powercepstrogram, plot_cpp_timeseries,
-# and plot_cpp_contour all had axis transposition issues, power unit
+# and plot_powercepstrum all independently hand-rolled matrix->data-frame
 # conversion with hardcoded placeholder axis ranges (max_time <- 5.0,
 # max_quefrency <- 0.05) instead of the object's real values, and two of
 # the three skipped the raw-power-to-dB conversion entirely. None of these
-# had test coverage before.
+# 4 functions had any prior test coverage.
 
+library(testthat)
 library(pladdrr)
 
 test_that("plot_powercepstrogram uses the cepstrogram's real time range, not a hardcoded placeholder", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
 
-  p <- plot_powercepstrogram(cepstrogram, quefrency_range = c(0, 0.05))
+  p <- plot_powercepstrogram(cepstrogram)
+  expect_s3_class(p, "ggplot")
   # Real duration for this fixture is ~0.25s; the placeholder was 5.0s.
-  # If using the placeholder, max(plot_data$time) would be ~5.0, way off.
-  # The correct values should cluster around the real audio duration.
-  expect_lt(max(p$data$time), 0.5)
-  expect_lt(max(p$data$time), 1.0)  # Should be ~0.25, nowhere near 5.0
+  expect_lt(max(p$data$time), 1.0)
+  expect_gt(max(p$data$time), 0.1)
 })
 
 test_that("plot_powercepstrogram is not quefrency/time-transposed", {
