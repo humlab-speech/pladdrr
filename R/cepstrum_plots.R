@@ -271,10 +271,12 @@ plot_powercepstrogram <- function(cepstrogram,
   if (show_cpp_contour && nrow(plot_data) > 0) {
     peak_q_by_time <- do.call(rbind, lapply(
       split(plot_data, plot_data$time),
-      function(d) data.frame(
-        time = d$time[1],
-        quefrency = d$quefrency[which.max(d$power_db)]
-      )
+      function(d) {
+        data.frame(
+          time = d$time[1],
+          quefrency = d$quefrency[which.max(d$power_db)]
+        )
+      }
     ))
 
     p <- p + ggplot2::geom_line(
