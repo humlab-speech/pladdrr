@@ -44,3 +44,29 @@ test_that("plot_powercepstrogram converts power to dB", {
   # conversion brings that into roughly a -100..150 dB range.
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
+
+test_that("plot_cpp_timeseries uses the cepstrogram's real time range, not a hardcoded placeholder", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
+
+  p <- plot_cpp_timeseries(cepstrogram, n_samples = 20)
+  expect_s3_class(p, "ggplot")
+  # Default time_range should span the real ~0.25s duration, not 0-5s.
+  expect_lt(max(p$data$time), 1.0)
+})
+
+test_that("plot_cpp_timeseries drops failed samples as NA, not silent zeros", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
+
+  # qmin = -1 makes every get_cpp_at_time() call error (verified directly:
+  # cepstrogram$get_cpp_at_time(time = 0.1, qmin = -1, qmax = 0) throws
+  # "Failed to get CPP at time"). With the tryCatch scoping bug, the
+  # error handler's `cpp_values[i] <- NA` only touches a copy of
+  # cpp_values local to the handler closure, so the outer cpp_values
+  # keeps its numeric(n_samples) default of 0 for every sample, and the
+  # NA-filter downstream never removes them — 5 rows all showing cpp = 0
+  # instead of 0 rows.
+  p <- plot_cpp_timeseries(cepstrogram, time_range = c(0, 0.2), qmin = -1, n_samples = 5)
+  expect_equal(nrow(p$data), 0)
+})

@@ -391,10 +391,7 @@ plot_cpp_timeseries <- function(cepstrogram,
   
   theme <- match.arg(theme)
   
-  # Extract matrix to get time dimension
-  mat <- cepstrogram$as_matrix()
-  n_times <- ncol(mat)
-  max_time <- 5.0  # Placeholder - should be extracted from object
+  max_time <- max(as.data.frame(cepstrogram)$time)
   
   # Determine time range
   if (is.null(time_range)) {
@@ -416,7 +413,7 @@ plot_cpp_timeseries <- function(cepstrogram,
         qmax = qmax
       )
     }, error = function(e) {
-      cpp_values[i] <- NA
+      cpp_values[i] <<- NA
     })
   }
   
