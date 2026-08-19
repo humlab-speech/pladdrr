@@ -15,86 +15,46 @@ library(pladdrr)
 # Returns: DataFrame with time, CenterOfGravity, SD, Skewness, Kurtosis
 
 # PLANNED R implementation (Phase 2.5):
-if (FALSE) {
-  
-  spectral_moments <- function(sound,
-                              from_time = 0,
-                              to_time = 0,
-                              window_length = 0.005,
-                              time_step = 0.005,
-                              maximum_frequency = 0,  # 0 = Nyquist
-                              frequency_step = 20,
-                              power = 2.0) {
-    
-    # Validate inputs
-    validate_praat_sound(sound)
-    
-    # Get sampling frequency
-    sr <- sound$sampling_frequency
-    
-    # Set maximum frequency to Nyquist if not specified
-    if (maximum_frequency == 0) {
-      maximum_frequency <- sr / 2
-    }
-    
-    # NEW: Create spectrogram - TO IMPLEMENT
-    spectrogram <- extract_spectrogram(
-      sound,
-      window_length = window_length,
-      maximum_frequency = maximum_frequency,
-      time_step = time_step,
-      frequency_step = frequency_step,
-      window_shape = "Gaussian"
-    )
-    
-    # Get number of frames
-    n_frames <- spectrogram$nx
-    
-    # Initialize output
-    times <- numeric(n_frames)
-    cog_values <- numeric(n_frames)
-    sd_values <- numeric(n_frames)
-    skew_values <- numeric(n_frames)
-    kurt_values <- numeric(n_frames)
-    
-    # Process each frame
-    for (i in 1:n_frames) {
-      # Get time for this frame
-      times[i] <- get_time_from_frame(spectrogram, frame = i)
-      
-      # NEW: Extract spectrum slice - TO IMPLEMENT
-      spectrum <- extract_spectrum_slice(spectrogram, time = times[i])
-      
-      # NEW: Compute spectral moments - TO IMPLEMENT
-      cog_values[i] <- get_center_of_gravity(spectrum, power = power)
-      sd_values[i] <- get_spectral_standard_deviation(spectrum, power = power)
-      skew_values[i] <- get_spectral_skewness(spectrum, power = power)
-      kurt_values[i] <- get_spectral_kurtosis(spectrum, power = power)
-    }
-    
-    # Return as data frame
-    data.frame(
-      time = times,
-      center_of_gravity = cog_values,
-      standard_deviation = sd_values,
-      skewness = skew_values,
-      kurtosis = kurt_values
-    )
-  }
-  
-  # Usage:
-  sound <- read_sound("speech.wav")
-  moments <- spectral_moments(sound, 
-                             window_length = 0.005,
-                             time_step = 0.005,
-                             power = 2.0)
-  
-  # Plot spectral evolution
-  plot(moments$time, moments$center_of_gravity,
-       type = "l", col = "blue",
-       xlab = "Time (s)", ylab = "Center of Gravity (Hz)",
-       main = "Spectral Center of Gravity")
+spectral_moments <- function(sound,
+                            from_time = 0,
+                            to_time = 0,
+                            window_length = 0.005,
+                            time_step = 0.005,
+                            maximum_frequency = 0,  # 0 = Nyquist
+                            frequency_step = 20,
+                            power = 2.0) {
+
+  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+
+  sr <- sound$get_sampling_frequency()
+  if (maximum_frequency == 0) maximum_frequency <- sr / 2
+
+  spectrogram <- sound$to_spectrogram(
+    window_length = window_length,
+    max_frequency = maximum_frequency,
+    time_step = time_step,
+    frequency_step = frequency_step,
+    window_shape = "Gaussian"
+  )
+
+  moments <- spectrogram$get_spectral_moments_batch(power = power)
+  data.frame(
+    time = moments$time,
+    center_of_gravity = moments$cog,
+    standard_deviation = moments$sd,
+    skewness = moments$skewness,
+    kurtosis = moments$kurtosis
+  )
 }
+
+# Usage:
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+moments <- spectral_moments(sound, window_length = 0.005, time_step = 0.005, power = 2.0)
+
+plot(moments$time, moments$center_of_gravity,
+     type = "l", col = "blue",
+     xlab = "Time (s)", ylab = "Center of Gravity (Hz)",
+     main = "Spectral Center of Gravity")
 
 # CURRENT WORKAROUND: Manual Spectral Analysis ================================
 # Using formants as a proxy for spectral characteristics
