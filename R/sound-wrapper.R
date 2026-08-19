@@ -320,13 +320,15 @@ NULL
 }
 
 .sound_methods$get_optimal_formant_ceiling <- function(.self,
-    start_time = 0.0, end_time = 0.0,
+    start_time = NULL, end_time = NULL,
     window_length = 0.025, time_step = 0.005,
     min_freq = 4500.0, max_freq = 6500.0, num_freq_steps = 11,
     preemphasis_freq = 50.0,
     num_formant_tracks = 4, num_params_per_track = 5,
     weigh_formants = "bandwidth",
     num_sigmas = 1.0, power = 1.25) {
+  if (is.null(start_time)) start_time <- .self$get_xmin()
+  if (is.null(end_time)) end_time <- .self$get_xmax()
   weigh_code <- switch(tolower(weigh_formants),
     "equal" = 1L, "bandwidth" = 2L, "sqrt_bandwidth" = 3L, "q_factor" = 4L, 2L)
   fm_mod <- get_module("formantmodeler_module")
