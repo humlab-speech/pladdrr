@@ -73,6 +73,10 @@
   by voicing strength: it looked for a `voicing_strength` column, but
   `Pitch$as_data_frame()` names it `strength` (and only includes it with
   `include_strength = TRUE`). Both now pull the strength column and color by it.
+* `autolayer.PointProcess()`'s `ymin`/`ymax` arguments were ignored (it used
+  `geom_vline`), `autoplot.PCA()`/`autoplot.Discriminant()`'s `garnish`
+  argument was dead, and `.formant_colors()`'s `max_formant` was redundant.
+  All now honor their documented behavior.
 
 # pladdrr 5.0.1
 
