@@ -54,10 +54,10 @@ analyze_speaker <- function(audio_file,
   
   # Pitch statistics
   mean_f0 <- get_mean_pitch(pitch, unit = "Hertz")
-  median_f0 <- get_quantile_pitch(pitch, quantile = 0.5, unit = "Hertz")
-  sd_f0 <- get_standard_deviation_pitch(pitch, unit = "Hertz")
-  min_f0 <- get_minimum_pitch(pitch, interpolate = FALSE, unit = "Hertz")
-  max_f0 <- get_maximum_pitch(pitch, interpolate = FALSE, unit = "Hertz")
+  median_f0 <- pitch$get_quantile(quantile = 0.5, unit = "hertz")
+  sd_f0 <- pitch$get_standard_deviation(unit = "hertz")
+  min_f0 <- pitch$get_minimum(interpolate = FALSE, unit = "hertz")
+  max_f0 <- pitch$get_maximum(interpolate = FALSE, unit = "hertz")
   
   cat("  Mean F0:", round(mean_f0, 1), "Hz\n")
   cat("  Median F0:", round(median_f0, 1), "Hz\n")
@@ -92,9 +92,9 @@ analyze_speaker <- function(audio_file,
   
   # Intensity statistics
   mean_db <- get_mean_intensity(intensity)
-  sd_db <- get_standard_deviation_intensity(intensity)
-  min_db <- get_minimum_intensity(intensity, interpolate = FALSE)
-  max_db <- get_maximum_intensity(intensity, interpolate = FALSE)
+  sd_db <- intensity$get_standard_deviation()
+  min_db <- intensity$get_minimum(interpolation = "none")
+  max_db <- intensity$get_maximum(interpolation = "none")
   
   cat("  Mean intensity:", round(mean_db, 1), "dB\n")
   cat("  SD intensity:", round(sd_db, 1), "dB\n")

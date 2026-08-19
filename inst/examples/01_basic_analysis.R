@@ -29,11 +29,11 @@ analyze_pitch <- function(audio_file,
   )
   
   # Get statistics
-  mean_f0 <- get_mean_pitch(pitch, from_time = 0, to_time = 0, unit = "Hertz")
-  median_f0 <- get_quantile_pitch(pitch, from_time = 0, to_time = 0, quantile = 0.5, unit = "Hertz")
-  sd_f0 <- get_standard_deviation_pitch(pitch, from_time = 0, to_time = 0, unit = "Hertz")
-  min_f0 <- get_minimum_pitch(pitch, from_time = 0, to_time = 0, unit = "Hertz", interpolate = FALSE)
-  max_f0 <- get_maximum_pitch(pitch, from_time = 0, to_time = 0, unit = "Hertz", interpolate = FALSE)
+  mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  median_f0 <- pitch$get_quantile(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz")
+  sd_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+  min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz", interpolate = FALSE)
+  max_f0 <- pitch$get_maximum(from_time = 0, to_time = 0, unit = "hertz", interpolate = FALSE)
   
   # Return summary
   list(
@@ -133,11 +133,11 @@ analyze_intensity <- function(audio_file,
   )
   
   # Get statistics
-  mean_db <- get_mean_intensity(intensity, from_time = 0, to_time = 0)
-  median_db <- get_quantile_intensity(intensity, from_time = 0, to_time = 0, quantile = 0.5)
-  sd_db <- get_standard_deviation_intensity(intensity, from_time = 0, to_time = 0)
-  min_db <- get_minimum_intensity(intensity, from_time = 0, to_time = 0, interpolate = FALSE)
-  max_db <- get_maximum_intensity(intensity, from_time = 0, to_time = 0, interpolate = FALSE)
+  mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
+  median_db <- intensity$get_quantile(from_time = 0, to_time = 0, quantile = 0.5)
+  sd_db <- intensity$get_standard_deviation(from_time = 0, to_time = 0)
+  min_db <- intensity$get_minimum(from_time = 0, to_time = 0, interpolation = "none")
+  max_db <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "none")
   
   # Convert to data frame
   intensity_df <- as.data.frame(intensity)

@@ -46,11 +46,11 @@ if (FALSE) {
                                       periods_per_window = 1.0)
     
     # Get pitch statistics (already works)
-    median_pitch <- get_quantile_pitch(pitch, quantile = 0.5)
+    median_pitch <- pitch$get_quantile(quantile = 0.5)
     mean_pitch <- get_mean_pitch(pitch)
-    sd_pitch <- get_standard_deviation_pitch(pitch)
-    min_pitch <- get_minimum_pitch(pitch, interpolate = FALSE)
-    max_pitch <- get_maximum_pitch(pitch, interpolate = FALSE)
+    sd_pitch <- pitch$get_standard_deviation()
+    min_pitch <- pitch$get_minimum(interpolate = FALSE)
+    max_pitch <- pitch$get_maximum(interpolate = FALSE)
     
     # NEW: Jitter measures - TO IMPLEMENT
     jitter_local <- get_jitter_local(point_process, 
@@ -200,11 +200,11 @@ basic_voice_quality <- function(audio_file,
                         pitch_ceiling = pitch_ceiling)
   
   # Get pitch statistics (already implemented)
-  median_f0 <- get_quantile_pitch(pitch, quantile = 0.5, unit = "Hertz")
+  median_f0 <- pitch$get_quantile(quantile = 0.5, unit = "hertz")
   mean_f0 <- get_mean_pitch(pitch, unit = "Hertz")
-  sd_f0 <- get_standard_deviation_pitch(pitch, unit = "Hertz")
-  min_f0 <- get_minimum_pitch(pitch, interpolate = FALSE, unit = "Hertz")
-  max_f0 <- get_maximum_pitch(pitch, interpolate = FALSE, unit = "Hertz")
+  sd_f0 <- pitch$get_standard_deviation(unit = "hertz")
+  min_f0 <- pitch$get_minimum(interpolate = FALSE, unit = "hertz")
+  max_f0 <- pitch$get_maximum(interpolate = FALSE, unit = "hertz")
   
   # Pitch range
   pitch_range <- max_f0 - min_f0
@@ -219,7 +219,7 @@ basic_voice_quality <- function(audio_file,
   # Extract intensity
   intensity <- extract_intensity(sound, minimum_pitch = pitch_floor)
   mean_db <- get_mean_intensity(intensity)
-  sd_db <- get_standard_deviation_intensity(intensity)
+  sd_db <- intensity$get_standard_deviation()
   
   # Create summary
   data.frame(
