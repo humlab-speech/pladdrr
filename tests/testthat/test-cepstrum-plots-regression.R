@@ -70,3 +70,25 @@ test_that("plot_cpp_timeseries drops failed samples as NA, not silent zeros", {
   p <- plot_cpp_timeseries(cepstrogram, time_range = c(0, 0.2), qmin = -1, n_samples = 5)
   expect_equal(nrow(p$data), 0)
 })
+
+test_that("plot_powercepstrum uses the cepstrum's real quefrency range, not a hardcoded placeholder", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  cepstrum <- sound$to_cepstrum()$to_power_cepstrum()
+
+  p <- plot_powercepstrum(cepstrum, show_peak = FALSE, show_trendline = FALSE)
+  expect_s3_class(p, "ggplot")
+  # Real quefrency range for this fixture is ~0.256s; the placeholder was 0.05s.
+  expect_gt(max(p$data$quefrency), 0.1)
+})
+
+test_that("plot_powercepstrum converts power to dB, matching the peak marker's own dB scale", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  cepstrum <- sound$to_cepstrum()$to_power_cepstrum()
+
+  p <- plot_powercepstrum(cepstrum, show_peak = FALSE, show_trendline = FALSE)
+  # Raw linear power for this fixture spans ~3e-4 to ~1.5e11; a correct dB
+  # conversion brings the line trace into the same rough range as
+  # get_value_at_quefrency(unit = "dB") (tens to low hundreds of dB), not
+  # spanning 11+ orders of magnitude.
+  expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
+})

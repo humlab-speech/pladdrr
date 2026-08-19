@@ -71,22 +71,13 @@ plot_powercepstrum <- function(cepstrum,
   fit_method <- match.arg(fit_method)
   theme <- match.arg(theme)
   
-  # Extract cepstrum data as matrix
-  mat <- cepstrum$as_matrix()
-  
-  # Get quefrency values (assuming uniform sampling)
-  n_frames <- ncol(mat)
-  max_quefrency <- 0.05  # Reasonable default max quefrency
-  quefrencies <- seq(0, max_quefrency, length.out = n_frames)
-  
-  # Extract first row (power cepstrum values)
-  values <- mat[1, ]
-  
-  # Create data frame
-  plot_data <- data.frame(
-    quefrency = quefrencies,
-    power_db = values
-  )
+  # Real quefrency values and power come from the object's own
+  # as_data_frame(); its "power_dB" column is misleadingly named — it is
+  # raw linear power (confirmed against get_value_at_quefrency(unit =
+  # "dB"), a different accessor on the same object that returns real dB).
+  # Convert explicitly rather than trusting the column name.
+  plot_data <- cepstrum$as_data_frame()
+  plot_data$power_db <- 10 * log10(pmax(plot_data$power_dB, 1e-20))
   
   # Apply quefrency range filter if specified
   if (!is.null(quefrency_range)) {
