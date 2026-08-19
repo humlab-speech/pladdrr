@@ -434,7 +434,7 @@ NULL
 .sound_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
 .sound_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 
-.sound_methods$save <- function(.self, path, format = "WAV", bits_per_sample = 16) {
+.sound_methods$save <- function(.self, path, format = "WAV") {
   format_code <- switch(toupper(format),
     "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
     "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
