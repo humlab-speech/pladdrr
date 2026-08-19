@@ -1,0 +1,7 @@
+# Vendored/upstream code excluded from coverage measurement.
+# pladdrr's coverage should reflect pladdrr-authored code (R/ + the thin
+# C++ wrappers in src/*.cpp and src/modules/), not the ~2.3M lines of
+# vendored Praat DSP core or the bundled third-party FFT libraries.
+src/praat.github.io
+src/pffft
+src/pocketfft
