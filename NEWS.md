@@ -69,6 +69,10 @@
 * Deprecated `get_intensity_at_time()`'s `interpolate` argument and
   `create_sound()`'s `start_time` argument were silently ignored; both now
   forward to the underlying R6 methods.
+* `plot.Pitch()`/`autoplot.Pitch()`'s `show_voicing` argument never colored
+  by voicing strength: it looked for a `voicing_strength` column, but
+  `Pitch$as_data_frame()` names it `strength` (and only includes it with
+  `include_strength = TRUE`). Both now pull the strength column and color by it.
 
 # pladdrr 5.0.1
 
