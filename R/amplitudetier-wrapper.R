@@ -32,14 +32,6 @@
 #'   \item \code{remove_point(index)} - remove the point at a 1-based index
 #' }
 #'
-#' @section Shimmer measures:
-#' \itemize{
-#'   \item \code{get_shimmer_local(period_floor, period_ceiling, max_period_factor)} - relative amplitude perturbation
-#'   \item \code{get_shimmer_local_db(...)} - same, in dB
-#'   \item \code{get_shimmer_apq3(...)}, \code{get_shimmer_apq5(...)}, \code{get_shimmer_apq11(...)} - amplitude perturbation quotients over 3, 5, and 11 periods
-#'   \item \code{get_shimmer_dda(...)} - difference of differences of amplitudes
-#' }
-#'
 #' @section Conversion and export:
 #' \itemize{
 #'   \item \code{to_intensity_tier(threshold_db)} - convert amplitude to an IntensityTier
@@ -90,28 +82,8 @@ NULL
 
 # Conversion
 .amplitudetier_methods$to_intensity_tier <- function(.self, threshold_db = -200) {
-  ptr <- .amplitudetier_to_intensitytier(.self$.xptr, threshold_db)
+  ptr <- .self$.cpp$to_intensity_tier_ptr(threshold_db)
   IntensityTier(.xptr = ptr)
-}
-
-# Shimmer measures
-.amplitudetier_methods$get_shimmer_local <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_local(.self$.xptr, period_floor, period_ceiling, max_period_factor)
-}
-.amplitudetier_methods$get_shimmer_local_db <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_local_db(.self$.xptr, period_floor, period_ceiling, max_period_factor)
-}
-.amplitudetier_methods$get_shimmer_apq3 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_apq3(.self$.xptr, period_floor, period_ceiling, max_period_factor)
-}
-.amplitudetier_methods$get_shimmer_apq5 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_apq5(.self$.xptr, period_floor, period_ceiling, max_period_factor)
-}
-.amplitudetier_methods$get_shimmer_apq11 <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_apq11(.self$.xptr, period_floor, period_ceiling, max_period_factor)
-}
-.amplitudetier_methods$get_shimmer_dda <- function(.self, period_floor = 0.0001, period_ceiling = 0.02, max_period_factor = 1.3) {
-  .amplitudetier_get_shimmer_dda(.self$.xptr, period_floor, period_ceiling, max_period_factor)
 }
 
 # Export
@@ -129,7 +101,7 @@ NULL
   data.frame(time = times, amplitude_pa = values)
 }
 .amplitudetier_methods$save <- function(.self, path) {
-  .amplitudetier_save(.self$.xptr, as.character(path))
+  .self$.cpp$save(as.character(path))
   invisible(.self)
 }
 

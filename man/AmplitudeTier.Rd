@@ -51,16 +51,6 @@ tier <- intensity_tier_to_amplitude_tier(intensity_tier)
 }
 }
 
-\section{Shimmer measures}{
-
-\itemize{
-  \item \code{get_shimmer_local(period_floor, period_ceiling, max_period_factor)} - relative amplitude perturbation
-  \item \code{get_shimmer_local_db(...)} - same, in dB
-  \item \code{get_shimmer_apq3(...)}, \code{get_shimmer_apq5(...)}, \code{get_shimmer_apq11(...)} - amplitude perturbation quotients over 3, 5, and 11 periods
-  \item \code{get_shimmer_dda(...)} - difference of differences of amplitudes
-}
-}
-
 \section{Conversion and export}{
 
 \itemize{

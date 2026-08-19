@@ -53,6 +53,13 @@
   `maxnCoefficients - 1` coefficients of every frame. It now reads each
   frame's coefficient column (`coeffs[, i]`), yielding one row per
   (frame, coefficient) as documented.
+* `AmplitudeTier$to_intensity_tier()` and `AmplitudeTier$save()` called
+  non-existent internal wrappers (`.amplitudetier_to_intensitytier()` /
+  `.amplitudetier_save()`), so both errored with "could not find function".
+  They now dispatch through the Rcpp module (`to_intensity_tier_ptr()` /
+  `save()`). Six `get_shimmer_*()` AmplitudeTier methods were also removed:
+  shimmer is a PointProcess metric (already present there), and these
+  AmplitudeTier copies had no C++ implementation.
 
 # pladdrr 5.0.1
 
