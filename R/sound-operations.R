@@ -269,4 +269,3 @@ sound_filter_stop_hann_band <- function(sound, fmin, fmax, smooth = 100) {
     
     Sound(.xptr = xptr)
 }
-

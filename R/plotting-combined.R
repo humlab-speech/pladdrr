@@ -766,4 +766,3 @@ plot_sound_pitch <- function(sound, pitch,
     stop("Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
   }
 }
-

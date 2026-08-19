@@ -1045,4 +1045,3 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
 
   p
 }
-
