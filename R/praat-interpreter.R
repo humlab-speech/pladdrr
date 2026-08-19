@@ -1,6 +1,14 @@
 # praat-interpreter.R
 # R interface for Praat interpreter functionality
 
+# Validate a single non-empty character string argument.
+.check_character1 <- function(x, arg = "expression") {
+  if (!is.character(x) || length(x) != 1L || !nzchar(x)) {
+    stop(sprintf("'%s' must be a single non-empty character string", arg), call. = FALSE)
+  }
+  invisible(x)
+}
+
 #' Execute a Praat script
 #'
 #' Executes a Praat script with automatic interpreter initialization.
@@ -16,6 +24,7 @@
 #'   pitch = To Pitch: 0.0, 75, 600
 #' ')
 praat_run_script <- function(script) {
+  .check_character1(script, "script")
   .praat_run_script(script)
   invisible(NULL)
 }
@@ -29,6 +38,7 @@ praat_run_script <- function(script) {
 #' # Calculate value
 #' result <- praat_eval_numeric("sqrt(16) + 2^3")
 praat_eval_numeric <- function(expression) {
+  .check_character1(expression, "expression")
   .praat_evaluate_numeric(expression)
 }
 
@@ -41,6 +51,7 @@ praat_eval_numeric <- function(expression) {
 #' # String operations
 #' result <- praat_eval_string('"Hello" + " " + "World"')
 praat_eval_string <- function(expression) {
+  .check_character1(expression, "expression")
   .praat_evaluate_string(expression)
 }
 
@@ -53,6 +64,7 @@ praat_eval_string <- function(expression) {
 #' # Create vector
 #' vec <- praat_eval_vector("{ 1, 2, 3, 4, 5 }")
 praat_eval_vector <- function(expression) {
+  .check_character1(expression, "expression")
   .praat_evaluate_vector(expression)
 }
 
@@ -65,6 +77,7 @@ praat_eval_vector <- function(expression) {
 #' # Create matrix
 #' mat <- praat_eval_matrix("{{ 1, 2 }, { 3, 4 }}")
 praat_eval_matrix <- function(expression) {
+  .check_character1(expression, "expression")
   .praat_evaluate_matrix(expression)
 }
 
@@ -77,6 +90,7 @@ praat_eval_matrix <- function(expression) {
 #' # Create string array
 #' arr <- praat_eval_string_array('{ "hello", "world" }')
 praat_eval_string_array <- function(expression) {
+  .check_character1(expression, "expression")
   .praat_evaluate_string_array(expression)
 }
 

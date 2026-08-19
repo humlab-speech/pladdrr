@@ -129,6 +129,9 @@ PraatInterpreter <- R6::R6Class(
     #' @param script Character string with Praat script.
     #' @return Self (invisibly), for method chaining.
     run = function(script) {
+      if (!is.character(script) || length(script) != 1L || !nzchar(script)) {
+        stop("'script' must be a single non-empty character string", call. = FALSE)
+      }
       private$cpp$run(script)
       invisible(self)
     },
@@ -147,6 +150,9 @@ PraatInterpreter <- R6::R6Class(
     #' @param value Variable value.
     #' @return Self (invisibly).
     set_variable = function(name, value) {
+      if (!is.character(name) || length(name) != 1L || !nzchar(name)) {
+        stop("'name' must be a single non-empty character string", call. = FALSE)
+      }
       private$cpp$set_variable(name, value)
       invisible(self)
     },
@@ -156,6 +162,9 @@ PraatInterpreter <- R6::R6Class(
     #' @param expression Praat expression.
     #' @return Result of the expression.
     eval = function(expression) {
+      if (!is.character(expression) || length(expression) != 1L || !nzchar(expression)) {
+        stop("'expression' must be a single non-empty character string", call. = FALSE)
+      }
       # Try to determine result type and evaluate using interpreter context
       # Try numeric first
       tryCatch({

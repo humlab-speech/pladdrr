@@ -2,6 +2,12 @@
 
 ## Bug fixes
 
+* The Praat interpreter entry points (`praat_run_script()`,
+  `praat_eval_numeric()`, `praat_eval_string()`, `praat_eval_vector()`,
+  `praat_eval_matrix()`, `praat_eval_string_array()`, and
+  `PraatInterpreter$run()`/`$eval()`/`$set_variable()`) now reject `NULL`,
+  empty, non-scalar, or non-character inputs with a clear R error instead of
+  an opaque C++ failure.
 * `Sound$to_textgrid_silences()` accepted `min_silent_duration` /
   `min_sounding_duration` but silently ignored them (a `TODO`). It now
   merges short silent and sounding intervals via the same
