@@ -59,3 +59,30 @@ test_that("Pitch autoplot/autolayer render, drop unvoiced frames, and warn when 
   # Same empty case for autolayer: returns NULL, not an error.
   expect_null(ggplot2::autolayer(pitch, from_time = 100, to_time = 200))
 })
+
+test_that("Formant autoplot/autolayer render long-format multi-track data and warn when filtered empty", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  formant <- sound$to_formant()
+
+  p <- ggplot2::autoplot(formant)
+  expect_s3_class(p, "ggplot")
+  expect_true(all(c("time", "formant", "frequency") %in% names(p$data)))
+
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(formant)
+  expect_s3_class(p2, "ggplot")
+
+  p_filtered <- ggplot2::autoplot(formant, from_time = 0.05, to_time = 0.1)
+  expect_s3_class(p_filtered, "ggplot")
+  expect_true(all(p_filtered$data$time >= 0.05 & p_filtered$data$time <= 0.1))
+
+  # from_time/to_time beyond the signal duration: initial df is non-empty
+  # (formant tracking always produces frames), filtering empties it ->
+  # R/autoplot-methods.R:171-173's distinct "after filtering" warning.
+  expect_warning(
+    p_empty <- ggplot2::autoplot(formant, from_time = 100, to_time = 200),
+    "No formant data after filtering"
+  )
+  expect_s3_class(p_empty, "ggplot")
+
+  expect_null(ggplot2::autolayer(formant, from_time = 100, to_time = 200))
+})
