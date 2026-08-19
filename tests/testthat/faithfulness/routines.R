@@ -336,5 +336,34 @@ FAITHFULNESS_ROUTINES <- list(
       s <- pladdrr::Sound(path)
       s$to_mfcc(12, 0.015, 0.005, 100, 100, 0)$get_number_of_frames()
     }
+  ),
+
+  # Sound metadata reads (exact; must match Praat to the last bit)
+  list(
+    name        = "Sound$get_sampling_frequency",
+    fixture     = "extdata/test.wav",
+    tolerance   = 0,
+    rationale   = "Pure metadata read; must match Praat to the last bit.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      f = Get sampling frequency
+      writeInfoLine: f
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr     = function(path) pladdrr::Sound(path)$get_sampling_frequency()
+  ),
+
+  list(
+    name        = "Sound$get_number_of_channels",
+    fixture     = "extdata/test.wav",
+    tolerance   = 0,
+    rationale   = "Pure metadata read; integer equality required.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      n = Get number of channels
+      writeInfoLine: n
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 1)),
+    pladdrr     = function(path) pladdrr::Sound(path)$get_number_of_channels()
   )
 )
