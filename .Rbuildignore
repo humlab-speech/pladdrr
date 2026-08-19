@@ -22,6 +22,8 @@
 ^\.gitlab-ci\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
+^\.covrignore$
+^\.lintr$
 
 # Dev-only trees: notes, planning docs, benchmark/cross-validation harnesses.
 # The Praat cross-validation harness needs an external Praat install and the
