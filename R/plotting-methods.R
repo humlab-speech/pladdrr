@@ -387,24 +387,8 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
     stop("x must be a Spectrogram object")
   }
   
-  # Convert to matrix
-  mat <- x$as_matrix()
-  
-  # Get dimensions
-  n_times <- ncol(mat)
-  n_freqs <- nrow(mat)
-  
-  # Get time and frequency ranges from object methods
-  t_min <- x$get_start_time()
-  t_max <- x$get_end_time()
-  f_max <- x$get_highest_frequency()
-  
-  times <- seq(t_min, t_max, length.out = n_times)
-  freqs <- seq(0, f_max, length.out = n_freqs)
-  
-  # Create long-format data frame
-  df <- expand.grid(time = times, frequency = freqs)
-  df$power_db <- as.vector(mat)
+  df <- x$as_data_frame()
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
   
   # Filter time range
   if (!is.null(from_time)) {

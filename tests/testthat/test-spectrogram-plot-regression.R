@@ -45,3 +45,24 @@ test_that("autolayer.Spectrogram matches autoplot.Spectrogram's data", {
   peak_row <- layer_data[which.max(layer_data$power_db), ]
   expect_lt(abs(peak_row$frequency - 220), 50)
 })
+
+test_that("plot.Spectrogram renders the frequency axis correctly, not transposed", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+
+  p <- plot(spectrogram)
+  expect_s3_class(p, "ggplot")
+  expect_true(all(c("time", "frequency", "power_db") %in% names(p$data)))
+
+  peak_row <- p$data[which.max(p$data$power_db), ]
+  expect_lt(abs(peak_row$frequency - 220), 50)
+})
+
+test_that("plot.Spectrogram converts power to dB (dynamic_range is not a no-op)", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+
+  p <- plot(spectrogram, dynamic_range = 20)
+  clipped_floor <- max(p$data$power_db) - 20
+  expect_gt(mean(p$data$power_db == clipped_floor), 0.5)
+})
