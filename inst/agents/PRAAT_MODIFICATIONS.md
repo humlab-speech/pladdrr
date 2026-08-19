@@ -1,6 +1,6 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-08-14
+**Last Updated:** 2026-08-19
 **Package Version:** 5.0.2
 **Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
@@ -17,6 +17,36 @@ This document details all modifications made to the Praat source code to enable 
 ---
 
 ## Recent Changes
+
+### Unreleased — Fix Sound→Formant (Burg) NULL-deref; single-thread the interval path (2026-08-19)
+
+Submodule commit `7c574b053`.
+
+#### `LPC/Sound_to_Formant_mt.cpp` — `Sound_to_Formant_common` used the null output `sound`
+
+**Summary:** `Sound_to_Formant_common` computed the short-term analysis frame
+count and created the Formant/LPC objects from `sound` — the function's output
+parameter, still null at that point — instead of the local `resampled` it had
+just produced. Three call sites (`Sampled_shortTermAnalysis`, `Formant_create`,
+`LPC_createCompletelyInitialized`) now read `resampled`. This was a genuine
+upstream-Praat regression (introduced 2025-09-26 by a Burg refactor) that
+crashed every `Sound_to_Formant_burg_mt` / `_robust_mt` caller; `to_formant_burg()`
+now works for all inputs.
+
+#### `LPC/FormantModeler.cpp` — `Sound_to_Formant_interval` switched to single-threaded Burg
+
+**Summary:** `Sound_to_Formant_interval` called the multithreaded
+`Sound_to_Formant_burg_mt`, which — independently of the NULL-deref above —
+crashes inside `Sound_resample` on the interval's resampled input. It now calls
+the single-threaded `Sound_to_Formant_burg` (same Burg analysis, equivalent
+parameters: 10 poles, `safetyMargin` 50), which is the function the R
+`to_formant_burg()` wrapper already exercises.
+
+**Known remaining issue:** `get_optimal_formant_ceiling()` /
+`to_formant_optimal()` still abort (SIGTRAP) later, in the
+`formants.at[istep_best]` argument of `Formant_extractPart` at the end of
+`Sound_to_Formant_interval` — a separate, not-yet-root-caused vendored-Praat
+fault. `to_formant_burg()` (the base analysis) is fixed.
 
 ### Unreleased — Document untestable Laguerre fallback branch (2026-08-16)
 
