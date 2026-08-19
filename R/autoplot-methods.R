@@ -520,9 +520,9 @@ autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
   if (!is.null(from_time)) df <- df[df$time >= from_time, , drop = FALSE]
   if (!is.null(to_time)) df <- df[df$time <= to_time, , drop = FALSE]
 
-  ggplot2::geom_vline(
+  ggplot2::geom_segment(
     data = df,
-    ggplot2::aes(xintercept = .data$time),
+    ggplot2::aes(x = .data$time, xend = .data$time, y = ymin, yend = ymax),
     color = color, linewidth = 0.5, inherit.aes = FALSE, ...
   )
 }

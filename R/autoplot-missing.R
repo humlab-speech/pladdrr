@@ -5,7 +5,7 @@
 # Helpers
 # ===========================================================================
 
-.formant_colors <- function(df, max_formant, colors) {
+.formant_colors <- function(df, colors) {
   if (!is.null(colors)) return(colors)
   n <- length(unique(df$formant_label))
   pal <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00",
@@ -265,7 +265,7 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
     warning("FormantTier has no data after filtering")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data$time, y = .data$frequency,
                      color = .data$formant_label))
@@ -327,7 +327,7 @@ autolayer.FormantTier <- function(object, from_time = NULL, to_time = NULL,
   if (length(rows) == 0) return(NULL)
   df <- .prep_formant_df(do.call(rbind, rows), NULL, NULL, max_formant)
   if (nrow(df) == 0) return(NULL)
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   if (style == "speckle") {
     list(
       ggplot2::geom_point(data = df,
@@ -363,7 +363,7 @@ autoplot.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
     warning("FormantGrid has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data$time, y = .data$frequency,
                      color = .data$formant_label)) +
@@ -383,7 +383,7 @@ autolayer.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
                                    max_formant = 3L, colors = NULL, ...) {
   df <- .prep_formant_df(object$as_data_frame(), from_time, to_time, max_formant)
   if (nrow(df) == 0) return(NULL)
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   list(
     ggplot2::geom_line(data = df,
       ggplot2::aes(x = .data$time, y = .data$frequency,
@@ -411,7 +411,7 @@ autoplot.FormantPath <- function(object, from_time = NULL, to_time = NULL,
     warning("FormantPath has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   if (show_candidates && "candidate" %in% names(df)) {
     optimal <- df[df$candidate == 0 | is.na(df$candidate), ]
     candidates <- df[df$candidate > 0, ]
@@ -456,7 +456,7 @@ autolayer.FormantPath <- function(object, from_time = NULL, to_time = NULL,
   df <- .prep_formant_df(object$as_data_frame(max_formants = max_formant),
                           from_time, to_time, max_formant)
   if (nrow(df) == 0) return(NULL)
-  colors <- .formant_colors(df, max_formant, colors)
+  colors <- .formant_colors(df, colors)
   if (show_candidates && "candidate" %in% names(df)) {
     optimal <- df[df$candidate == 0 | is.na(df$candidate), ]
     if (nrow(optimal) == 0) return(NULL)
@@ -1056,9 +1056,12 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
         color = "darkred", size = 2) +
       ggplot2::scale_y_continuous(
         name = "Variance Explained (%)",
-        sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)")) +
-      ggplot2::labs(title = "PCA Scree Plot", x = "Principal Component") +
-      ggplot2::theme_minimal()
+        sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)"))
+    if (garnish) {
+      p_scree <- p_scree +
+        ggplot2::labs(title = "PCA Scree Plot", x = "Principal Component") +
+        ggplot2::theme_minimal()
+    }
   }
   if (type == "scores" || type == "both") {
     df <- as.data.frame(object)
@@ -1070,9 +1073,12 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
     p_scores <- ggplot2::ggplot(df,
                  ggplot2::aes(x = .data[[pc_cols[1]]],
                               y = .data[[pc_cols[2]]])) +
-      ggplot2::geom_point(alpha = 0.6, size = 2, ...) +
-      ggplot2::labs(title = "PCA Scores", x = pc_cols[1], y = pc_cols[2]) +
-      ggplot2::theme_minimal()
+      ggplot2::geom_point(alpha = 0.6, size = 2, ...)
+    if (garnish) {
+      p_scores <- p_scores +
+        ggplot2::labs(title = "PCA Scores", x = pc_cols[1], y = pc_cols[2]) +
+        ggplot2::theme_minimal()
+    }
   }
   if (type == "both") {
     if (requireNamespace("patchwork", quietly = TRUE))
@@ -1118,10 +1124,13 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
         color = "darkred", size = 2) +
       ggplot2::scale_y_continuous(
         name = "Variance Explained (%)",
-        sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)")) +
-      ggplot2::labs(title = "Discriminant Analysis Scree Plot",
-                    x = "Function") +
-      ggplot2::theme_minimal()
+        sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)"))
+    if (garnish) {
+      p_scree <- p_scree +
+        ggplot2::labs(title = "Discriminant Analysis Scree Plot",
+                      x = "Function") +
+        ggplot2::theme_minimal()
+    }
   }
   if (type == "scores" || type == "both") {
     df <- as.data.frame(object)
@@ -1133,10 +1142,13 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
     p_scores <- ggplot2::ggplot(df,
                  ggplot2::aes(x = .data[[pc_cols[1]]],
                               y = .data[[pc_cols[2]]])) +
-      ggplot2::geom_point(alpha = 0.6, size = 2, ...) +
-      ggplot2::labs(title = "Discriminant Scores",
-                    x = pc_cols[1], y = pc_cols[2]) +
-      ggplot2::theme_minimal()
+      ggplot2::geom_point(alpha = 0.6, size = 2, ...)
+    if (garnish) {
+      p_scores <- p_scores +
+        ggplot2::labs(title = "Discriminant Scores",
+                      x = pc_cols[1], y = pc_cols[2]) +
+        ggplot2::theme_minimal()
+    }
   }
   if (type == "both") {
     if (requireNamespace("patchwork", quietly = TRUE))
