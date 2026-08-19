@@ -86,3 +86,19 @@ test_that("Formant autoplot/autolayer render long-format multi-track data and wa
 
   expect_null(ggplot2::autolayer(formant, from_time = 100, to_time = 200))
 })
+
+test_that("Spectrogram autoplot/autolayer render the power_db heatmap and respect from_time/to_time", {
+  sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+
+  p <- ggplot2::autoplot(spectrogram)
+  expect_s3_class(p, "ggplot")
+  expect_true(all(c("time", "frequency", "power_db") %in% names(p$data)))
+
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(spectrogram)
+  expect_s3_class(p2, "ggplot")
+
+  p_filtered <- ggplot2::autoplot(spectrogram, from_time = 0.05, to_time = 0.1)
+  expect_s3_class(p_filtered, "ggplot")
+  expect_true(all(p_filtered$data$time >= 0.05 & p_filtered$data$time <= 0.1))
+})
