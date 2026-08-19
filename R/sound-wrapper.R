@@ -224,7 +224,8 @@ NULL
 
 # --- Batch/Vectorized Value Extraction ---
 .sound_methods$get_values_at_times <- function(.self, times, channel = 1, interpolation = "linear") {
-  .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel), .praat_interpolation_code(interpolation, default = 1L))
+  .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel),
+                                   .praat_interpolation_code(interpolation, default = 1L))
 }
 
 .sound_methods$get_values_in_range <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1) {
@@ -339,7 +340,8 @@ NULL
 }
 
 .sound_methods$to_intensity <- function(.self, minimum_pitch = 100.0, time_step = 0.0, subtract_mean = TRUE) {
-  intensity_ptr <- .self$.cpp$to_intensity_ptr(as.numeric(minimum_pitch), as.numeric(time_step), as.logical(subtract_mean))
+  intensity_ptr <- .self$.cpp$to_intensity_ptr(as.numeric(minimum_pitch), as.numeric(time_step),
+                                                 as.logical(subtract_mean))
   Intensity(.xptr = intensity_ptr)
 }
 

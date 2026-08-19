@@ -134,22 +134,26 @@ NULL
 .formant_methods$get_minimum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                          unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .formant_get_minimum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_minimum(.self$.xptr, as.integer(formant_number), from_time,
+                       to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_maximum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                          unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .formant_get_maximum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_maximum(.self$.xptr, as.integer(formant_number), from_time,
+                       to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_time_of_minimum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                                   unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .formant_get_time_of_minimum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_time_of_minimum(.self$.xptr, as.integer(formant_number), from_time,
+                                  to_time, .formant_unit_code(unit), interpolate)
 }
 .formant_methods$get_time_of_maximum <- function(.self, formant_number, from_time = 0, to_time = 0,
                                                   unit = c("hertz", "bark"), interpolate = FALSE) {
   unit <- match.arg(unit)
-  .formant_get_time_of_maximum(.self$.xptr, as.integer(formant_number), from_time, to_time, .formant_unit_code(unit), interpolate)
+  .formant_get_time_of_maximum(.self$.xptr, as.integer(formant_number), from_time,
+                                  to_time, .formant_unit_code(unit), interpolate)
 }
 
 # --- Batch/Vectorized ---

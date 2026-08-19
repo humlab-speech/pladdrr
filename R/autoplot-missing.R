@@ -530,7 +530,8 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL, to_time = NULL
   if (!"amplitude_dB" %in% names(df)) {
     if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
     ref <- max(df$amplitude, 1e-300)
-    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)  # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
     floor_dB <- -dynamic_range
     df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
   }
@@ -577,7 +578,8 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
   if (!"amplitude_dB" %in% names(df)) {
     if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
     ref <- max(df$amplitude, 1e-300)
-    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)  # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    # equivalent to 10*log10(power/ref^2) since power = amplitude^2
+    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
     floor_dB <- -dynamic_range
     df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
   }
@@ -863,7 +865,10 @@ autoplot.BarkSpectrogram <- function(object, garnish = TRUE, ...) {
     warning("BarkSpectrogram has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  xc <- if ("time" %in% names(df)) "time" else if ("col" %in% names(df)) "col" else if ("row" %in% names(df)) "row" else names(df)[1]
+  xc <- if ("time" %in% names(df)) "time"
+    else if ("col" %in% names(df)) "col"
+    else if ("row" %in% names(df)) "row"
+    else names(df)[1]
   yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
   fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   p <- ggplot2::ggplot(df,
@@ -884,7 +889,10 @@ autoplot.BarkSpectrogram <- function(object, garnish = TRUE, ...) {
 autolayer.BarkSpectrogram <- function(object, ...) {
   df <- as.data.frame(object)
   if (nrow(df) == 0) return(NULL)
-  xc <- if ("time" %in% names(df)) "time" else if ("col" %in% names(df)) "col" else if ("row" %in% names(df)) "row" else names(df)[1]
+  xc <- if ("time" %in% names(df)) "time"
+    else if ("col" %in% names(df)) "col"
+    else if ("row" %in% names(df)) "row"
+    else names(df)[1]
   yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
   fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   list(
@@ -907,7 +915,10 @@ autoplot.MelSpectrogram <- function(object, garnish = TRUE, ...) {
     warning("MelSpectrogram has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  xc <- if ("time" %in% names(df)) "time" else if ("col" %in% names(df)) "col" else if ("row" %in% names(df)) "row" else names(df)[1]
+  xc <- if ("time" %in% names(df)) "time"
+    else if ("col" %in% names(df)) "col"
+    else if ("row" %in% names(df)) "row"
+    else names(df)[1]
   yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
   fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   p <- ggplot2::ggplot(df,
@@ -928,7 +939,10 @@ autoplot.MelSpectrogram <- function(object, garnish = TRUE, ...) {
 autolayer.MelSpectrogram <- function(object, ...) {
   df <- as.data.frame(object)
   if (nrow(df) == 0) return(NULL)
-  xc <- if ("time" %in% names(df)) "time" else if ("col" %in% names(df)) "col" else if ("row" %in% names(df)) "row" else names(df)[1]
+  xc <- if ("time" %in% names(df)) "time"
+    else if ("col" %in% names(df)) "col"
+    else if ("row" %in% names(df)) "row"
+    else names(df)[1]
   yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
   fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   list(
