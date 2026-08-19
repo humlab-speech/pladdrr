@@ -30,7 +30,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
     "sound$to_pitch()",
     package = "pladdrr",
     msg = paste(
-      "extract_pitch() is deprecated and will be removed in v5.0.0.",
+      "extract_pitch() is deprecated and will be removed in v6.0.0.",
       "Use sound$to_pitch(time_step, pitch_floor, pitch_ceiling) instead."
     )
   )
