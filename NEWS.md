@@ -2,6 +2,13 @@
 
 ## Bug fixes
 
+* `praat_eval_string_array("empty$# (n)")` segfaulted the R session. The
+  vendored Praat `do_empty_STRVEC` built its result with
+  `autoSTRVEC result { n }`, which zero-initialises the vector and so leaves
+  every element a null pointer instead of a valid empty C string; the R
+  wrapper's `Melder_peek32to8()` then dereferenced null. It now returns `n`
+  empty strings. Also un-skipped `formant$save()` (its earlier segfault was a
+  symptom of the fixed `to_formant_burg()` crash).
 * `Sound$get_optimal_formant_ceiling()` and `Sound$to_formant_optimal()`
   crashed the R session (SIGTRAP / "irrecoverable exception") for every
   input. Two stacked causes were fixed. (1) The vendored Praat

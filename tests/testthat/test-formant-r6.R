@@ -182,7 +182,6 @@ test_that("Formant export to data frame works", {
 })
 
 test_that("Formant save method works", {
-  skip("Skipping - formant$save() causes segfault - needs C++ debugging")
   skip_if_not(require("pladdrr"), message = "speaker package not available")
   
   sound <- create_test_sound()

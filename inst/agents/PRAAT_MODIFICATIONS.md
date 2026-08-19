@@ -18,6 +18,20 @@ This document details all modifications made to the Praat source code to enable 
 
 ## Recent Changes
 
+### Unreleased — Fix `empty$#` string-array formula creating null strings (2026-08-20)
+
+Submodule commit `4b0da55c8`.
+
+#### `sys/Formula.cpp` — `do_empty_STRVEC` created null strings
+
+**Summary:** `do_empty_STRVEC` built the result with
+`autoSTRVEC result { N }`, which `MelderArray::_alloc` ZERO-initialises via
+`calloc`, leaving every `_autostring<T>::ptr` null. The resulting `STRVEC`'s
+elements were null pointers, not valid empty C strings, so any consumer that
+dereferences them (pladdrr's `praat_eval_string_array` via `Melder_peek32to8`)
+segfaulted. Fix: after constructing the vector, assign each element a real
+empty string — `result.all() [i] = Melder_dup (U"")`.
+
 ### Unreleased — Fix Sound→Formant (Burg) NULL-deref; single-thread the interval path (2026-08-19)
 
 Submodule commit `7c574b053`.

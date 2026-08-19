@@ -54,10 +54,9 @@ test_that("praat_eval_string_array() evaluates string array expressions correctl
   result <- praat_eval_string_array("{ \"a\", \"b\", \"c\" }")
   expect_equal(result, c("a", "b", "c"))
   
-  # TODO: Fix segfault with empty$# function
-  # result <- praat_eval_string_array("empty$# (3)")
-  # expect_equal(result, c("", "", ""))
-  # expect_length(result, 3)
+  result <- praat_eval_string_array("empty$# (3)")
+  expect_equal(result, c("", "", ""))
+  expect_length(result, 3)
 })
 
 # === PraatInterpreter R6 Class Tests ===
