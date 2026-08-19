@@ -88,9 +88,9 @@ NULL
 .manipulation_methods$print <- function(.self) {
   cat("<Praat Manipulation>\n")
   cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
-  cat(sprintf("  Has pitch tier: %s\n", if(.self$.cpp$has_pitch_tier()) "yes" else "no"))
-  cat(sprintf("  Has duration tier: %s\n", if(.self$.cpp$has_duration_tier()) "yes" else "no"))
-  cat(sprintf("  Has pulses: %s\n", if(.self$.cpp$has_pulses()) "yes" else "no"))
+  cat(sprintf("  Has pitch tier: %s\n", if (.self$.cpp$has_pitch_tier()) "yes" else "no"))
+  cat(sprintf("  Has duration tier: %s\n", if (.self$.cpp$has_duration_tier()) "yes" else "no"))
+  cat(sprintf("  Has pulses: %s\n", if (.self$.cpp$has_pulses()) "yes" else "no"))
   invisible(.self)
 }
 
