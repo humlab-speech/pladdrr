@@ -25,6 +25,18 @@ test_that("plot.Pitch renders a ggplot with time/frequency columns", {
   expect_s3_class(p2, "ggplot")
 })
 
+test_that("plot.Pitch show_voicing actually colors by strength (was a dead column name)", {
+  pitch <- fixture_sound()$to_pitch()
+  # show_voicing = TRUE must pull the strength column (Pitch$as_data_frame()
+  # names it "strength", not "voicing_strength") and color by it.
+  p <- plot(pitch, show_voicing = TRUE)
+  expect_s3_class(p, "ggplot")
+  expect_true("strength" %in% names(p$data))
+  # show_voicing = FALSE omits the strength column.
+  p2 <- plot(pitch, show_voicing = FALSE)
+  expect_false("strength" %in% names(p2$data))
+})
+
 test_that("plot.Formant renders long-format time/formant/frequency columns", {
   formant <- fixture_sound()$to_formant_burg()
   p <- plot(formant, max_formant = 3)

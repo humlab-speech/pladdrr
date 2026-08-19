@@ -139,8 +139,9 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
     stop("x must be a Pitch object")
   }
   
-  # Convert to data frame
-  df <- x$as_data_frame()
+  # Convert to data frame (include the strength column when coloring by
+  # voicing; Pitch$as_data_frame() names it "strength", not "voicing_strength")
+  df <- x$as_data_frame(include_strength = show_voicing)
   
   # Filter time range
   if (!is.null(from_time)) {
@@ -151,10 +152,10 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
   }
   
   # Create plot
-  if (show_voicing && "voicing_strength" %in% names(df)) {
+  if (show_voicing && "strength" %in% names(df)) {
     # Color by voicing strength
     p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency, 
-                                          color = .data$voicing_strength)) +
+                                          color = .data$strength)) +
       ggplot2::geom_line(linewidth = 0.8) +
       ggplot2::scale_color_gradient(low = "gray70", high = color, 
                                     name = "Voicing")
