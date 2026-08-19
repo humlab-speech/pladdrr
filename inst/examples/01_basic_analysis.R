@@ -25,14 +25,7 @@ analyze_pitch <- function(audio_file,
     sound,
     time_step = time_step,
     pitch_floor = pitch_floor,
-    pitch_ceiling = pitch_ceiling,
-    max_candidates = 15,
-    very_accurate = TRUE,
-    silence_threshold = 0.03,
-    voicing_threshold = 0.45,
-    octave_cost = 0.01,
-    octave_jump_cost = 0.35,
-    voiced_unvoiced_cost = 0.14
+    pitch_ceiling = pitch_ceiling
   )
   
   # Get statistics

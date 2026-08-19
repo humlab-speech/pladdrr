@@ -31,9 +31,7 @@ if (FALSE) {
     # Extract pitch (already implemented)
     pitch <- extract_pitch(sound, 
                           pitch_floor = pitch_floor,
-                          pitch_ceiling = pitch_ceiling,
-                          silence_threshold = silence_threshold,
-                          voicing_threshold = voicing_threshold)
+                          pitch_ceiling = pitch_ceiling)
     
     # NEW: Extract point process (pitch marks) - TO IMPLEMENT
     point_process <- extract_point_process(sound, 

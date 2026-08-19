@@ -50,8 +50,7 @@ analyze_speaker <- function(audio_file,
   pitch <- extract_pitch(sound, 
                         pitch_floor = pitch_floor,
                         pitch_ceiling = pitch_ceiling,
-                        time_step = 0.01,
-                        very_accurate = TRUE)
+                        time_step = 0.01)
   
   # Pitch statistics
   mean_f0 <- get_mean_pitch(pitch, unit = "Hertz")
