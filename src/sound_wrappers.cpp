@@ -1422,8 +1422,15 @@ XPtr<structTextGrid> sound_to_textgrid_silences(
             TextInterval_setText(interval, is_silent ? silent_u32.get() : sounding_u32.get());
         }
         
-        // Step 6: Merge short intervals
-        // (TODO: implement min_silent_duration and min_sounding_duration filtering)
+        // Step 6: Merge short intervals (honour min_silent_duration / min_sounding_duration)
+        if (min_sounding_duration > 0.0) {
+            IntervalTier_cutIntervals_minimumDuration(tier, sounding_u32.get(), min_sounding_duration);
+            IntervalTier_combineIntervalsOnLabelMatch(tier, silent_u32.get());
+        }
+        if (min_silent_duration > 0.0) {
+            IntervalTier_cutIntervals_minimumDuration(tier, silent_u32.get(), min_silent_duration);
+            IntervalTier_combineIntervalsOnLabelMatch(tier, sounding_u32.get());
+        }
         
         return create_xptr_from_auto<structTextGrid>(textgrid);
         

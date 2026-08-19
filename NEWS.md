@@ -2,6 +2,12 @@
 
 ## Bug fixes
 
+* `Sound$to_textgrid_silences()` accepted `min_silent_duration` /
+  `min_sounding_duration` but silently ignored them (a `TODO`). It now
+  merges short silent and sounding intervals via the same
+  `IntervalTier_cutIntervals_minimumDuration` +
+  `IntervalTier_combineIntervalsOnLabelMatch` passes the intensity-based
+  path already used.
 * `PointProcess(tmin, tmax)` now creates an empty PointProcess (previously
   it only accepted an internal pointer and stopped otherwise). Backed by a new
   `pointprocess_module$create_empty()` C++ factory wrapping Praat's
