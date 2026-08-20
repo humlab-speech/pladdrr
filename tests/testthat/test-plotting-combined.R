@@ -32,6 +32,48 @@ test_that("plot_spectrogram_pitch renders without a freq_max cap", {
   expect_s3_class(p, "ggplot")
 })
 
+test_that("plot_spectrogram_pitch validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  pitch <- sound$to_pitch()
+
+  expect_error(plot_spectrogram_pitch("not a spectrogram", pitch),
+               "spectrogram must be a Spectrogram object")
+  expect_error(plot_spectrogram_pitch(spectrogram, "not a pitch"),
+               "pitch must be a Pitch object")
+})
+
+test_that("plot_spectrogram_pitch accepts pitch_color and title", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  pitch <- sound$to_pitch()
+
+  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_color = "purple", title = "Custom")
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$labels$title, "Custom")
+})
+
+test_that("plot_spectrogram_pitch filters by pitch_floor/pitch_ceiling", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  pitch <- sound$to_pitch()
+
+  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 75, pitch_ceiling = 500)
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("plot_spectrogram_pitch warns and returns bare spectrogram when pitch range excludes all data", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  pitch <- sound$to_pitch()
+
+  expect_warning(
+    p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 10000, pitch_ceiling = 10001),
+    "No pitch data available in the specified range"
+  )
+  expect_s3_class(p, "ggplot")
+})
+
 test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceiling", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
   pitch <- sound$to_pitch()
