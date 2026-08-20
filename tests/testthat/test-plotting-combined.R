@@ -93,3 +93,57 @@ test_that("plot_textgrid_sound renders a point tier", {
   expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
               inherits(p, "gtable") || inherits(p, "grob"))
 })
+test_that("plot_textgrid_pitch validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
+
+  expect_error(plot_textgrid_pitch("not a textgrid", pitch), "textgrid must be a TextGrid object")
+  expect_error(plot_textgrid_pitch(tg, "not a pitch"), "pitch must be a Pitch object")
+})
+
+test_that("plot_textgrid_pitch errors on an unknown tier name", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
+
+  expect_error(plot_textgrid_pitch(tg, pitch, tier = "nonexistent"),
+               "Tier 'nonexistent' not found in TextGrid")
+})
+
+test_that("plot_textgrid_pitch renders all interval tiers by default", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
+  tg$insert_boundary("words", 0.5)
+  tg$set_interval_text("words", 1, "hello")
+  tg$set_interval_text("words", 2, "world")
+
+  p <- plot_textgrid_pitch(tg, pitch)
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
+
+test_that("plot_textgrid_pitch accepts a numeric tier index, time range, and custom color", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
+  tg$insert_boundary("words", 0.5)
+
+  p <- plot_textgrid_pitch(tg, pitch, tier = 1, from_time = 0.1, to_time = 0.9,
+                            pitch_color = "darkblue")
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
+
+test_that("plot_textgrid_pitch renders a point tier", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones", point_tiers = "tones")
+  tg$insert_point("tones", 0.2, "H*")
+  tg$insert_point("tones", 0.8, "L-L%")
+
+  p <- plot_textgrid_pitch(tg, pitch, tier = "tones")
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
