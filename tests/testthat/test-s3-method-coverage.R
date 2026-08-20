@@ -149,3 +149,37 @@ test_that("summary.praat_pitch reports no voiced frames when fully unvoiced", {
   x <- make_legacy_pitch(all_unvoiced = TRUE)
   expect_output(summary(x), "No voiced frames detected")
 })
+
+test_that("print.praat_formant prints header and head of values", {
+  x <- make_legacy_formant()
+  expect_output(print(x), "Praat Formant Object")
+  expect_output(print(x), "Number of formants tracked: 2")
+  expect_output(print(x), "First few measurements:")
+  ret <- withVisible(print(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("summary.praat_formant reports per-formant stats across the loop", {
+  x <- make_legacy_formant(n_formants = 2)
+  out <- capture.output(summary(x))
+  expect_true(any(grepl("Formant F1:", out)))
+  expect_true(any(grepl("Formant F2:", out)))
+  expect_true(any(grepl("Mean: .* Hz", out)))
+  ret <- withVisible(summary(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("summary.praat_formant reports no valid measurements for an all-NA formant", {
+  x <- make_legacy_formant(n_formants = 2, all_na_formant = 2)
+  out <- capture.output(summary(x))
+  f2_idx <- grep("Formant F2:", out)
+  expect_true(any(grepl("No valid measurements", out[f2_idx:(f2_idx + 2)])))
+})
+
+test_that("as.data.frame.praat_formant returns the values data.frame", {
+  x <- make_legacy_formant()
+  df <- as.data.frame(x)
+  expect_identical(df, x$values)
+})

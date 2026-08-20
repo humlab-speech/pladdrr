@@ -34,3 +34,30 @@ make_legacy_pitch <- function(all_unvoiced = FALSE) {
   class(x) <- c("praat_pitch", "data.frame")
   x
 }
+
+make_legacy_formant <- function(n_formants = 2, all_na_formant = NULL) {
+  times <- c(0.1, 0.2, 0.3)
+  rows <- do.call(rbind, lapply(seq_len(n_formants), function(f) {
+    freqs <- if (!is.null(all_na_formant) && f == all_na_formant) {
+      rep(NA_real_, length(times))
+    } else {
+      500 * f + c(0, 5, -5)
+    }
+    data.frame(
+      time = times,
+      formant_number = f,
+      frequency = freqs,
+      bandwidth = 80 + f
+    )
+  }))
+  x <- list(
+    n_frames = length(times),
+    n_formants = n_formants,
+    time_step = 0.01,
+    max_formant = 5000,
+    window_length = 0.025,
+    values = rows
+  )
+  class(x) <- "praat_formant"
+  x
+}
