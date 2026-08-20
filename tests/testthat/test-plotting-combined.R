@@ -58,7 +58,8 @@ test_that("plot_spectrogram_pitch filters by pitch_floor/pitch_ceiling", {
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
-  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 75, pitch_ceiling = 500)
+  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 75, pitch_ceiling = 500,
+                               from_time = 0.05, to_time = 0.4)
   expect_s3_class(p, "ggplot")
 })
 
@@ -80,8 +81,7 @@ test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceil
 
   p <- plot_sound_pitch(sound, pitch)
   # patchwork or gridExtra result; either way it should not error
-  expect_true(inherits(p, "ggplot") || inherits(p, "patchwork") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_sound_pitch validates its inputs", {
@@ -99,8 +99,7 @@ test_that("plot_sound_pitch accepts a time range, custom colors, and a title", {
   p <- plot_sound_pitch(sound, pitch, from_time = 0.2, to_time = 0.8,
                          waveform_color = "black", pitch_color = "red",
                          title = "Custom")
-  expect_true(inherits(p, "ggplot") || inherits(p, "patchwork") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_sound_pitch no longer has pitch_floor/pitch_ceiling formals", {
@@ -131,9 +130,8 @@ test_that("plot_textgrid_sound renders all interval tiers by default", {
   tg$set_interval_text("words", 1, "hello")
   tg$set_interval_text("words", 2, "world")
 
-  p <- plot_textgrid_sound(tg, sound)
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  p <- plot_textgrid_sound(tg, sound, tier_colors = c("red", "blue"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_textgrid_sound accepts a numeric tier index and a time range", {
@@ -145,8 +143,7 @@ test_that("plot_textgrid_sound accepts a numeric tier index and a time range", {
 
   p <- plot_textgrid_sound(tg, sound, tier = 1, from_time = 0.1, to_time = 0.9,
                             title = "Custom Title")
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_textgrid_sound renders a point tier", {
@@ -156,9 +153,9 @@ test_that("plot_textgrid_sound renders a point tier", {
   tg$insert_point("tones", 0.8, "L-L%")
 
   p <- plot_textgrid_sound(tg, sound, tier = "tones")
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
+
 test_that("plot_textgrid_pitch validates its inputs", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
   pitch <- sound$to_pitch()
@@ -185,9 +182,8 @@ test_that("plot_textgrid_pitch renders all interval tiers by default", {
   tg$set_interval_text("words", 1, "hello")
   tg$set_interval_text("words", 2, "world")
 
-  p <- plot_textgrid_pitch(tg, pitch)
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  p <- plot_textgrid_pitch(tg, pitch, tier_colors = c("red", "blue"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_textgrid_pitch accepts a numeric tier index, time range, and custom color", {
@@ -198,8 +194,7 @@ test_that("plot_textgrid_pitch accepts a numeric tier index, time range, and cus
 
   p <- plot_textgrid_pitch(tg, pitch, tier = 1, from_time = 0.1, to_time = 0.9,
                             pitch_color = "darkblue")
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_textgrid_pitch renders a point tier", {
@@ -210,8 +205,7 @@ test_that("plot_textgrid_pitch renders a point tier", {
   tg$insert_point("tones", 0.8, "L-L%")
 
   p <- plot_textgrid_pitch(tg, pitch, tier = "tones")
-  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
-              inherits(p, "gtable") || inherits(p, "grob"))
+  expect_combined_plot(p)
 })
 
 test_that("plot_pitch_intensity validates its inputs", {
