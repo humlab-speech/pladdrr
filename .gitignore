@@ -112,3 +112,4 @@ src/Makevars
 build.log
 /.pi
 /.superpowers/
+/.worktrees/
