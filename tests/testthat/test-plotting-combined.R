@@ -41,3 +41,55 @@ test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceil
   expect_true(inherits(p, "ggplot") || inherits(p, "patchwork") ||
               inherits(p, "gtable") || inherits(p, "grob"))
 })
+
+test_that("plot_textgrid_sound validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
+
+  expect_error(plot_textgrid_sound("not a textgrid", sound), "textgrid must be a TextGrid object")
+  expect_error(plot_textgrid_sound(tg, "not a sound"), "sound must be a Sound object")
+})
+
+test_that("plot_textgrid_sound errors on an unknown tier name", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
+
+  expect_error(plot_textgrid_sound(tg, sound, tier = "nonexistent"),
+               "Tier 'nonexistent' not found in TextGrid")
+})
+
+test_that("plot_textgrid_sound renders all interval tiers by default", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
+  tg$insert_boundary("words", 0.5)
+  tg$set_interval_text("words", 1, "hello")
+  tg$set_interval_text("words", 2, "world")
+
+  p <- plot_textgrid_sound(tg, sound)
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
+
+test_that("plot_textgrid_sound accepts a numeric tier index and a time range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
+  tg$insert_boundary("words", 0.5)
+  tg$set_interval_text("words", 1, "hello")
+  tg$set_interval_text("words", 2, "world")
+
+  p <- plot_textgrid_sound(tg, sound, tier = 1, from_time = 0.1, to_time = 0.9,
+                            title = "Custom Title")
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
+
+test_that("plot_textgrid_sound renders a point tier", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones", point_tiers = "tones")
+  tg$insert_point("tones", 0.2, "H*")
+  tg$insert_point("tones", 0.8, "L-L%")
+
+  p <- plot_textgrid_sound(tg, sound, tier = "tones")
+  expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
