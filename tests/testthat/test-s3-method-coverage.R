@@ -115,3 +115,37 @@ test_that("as.data.frame.Sound delegates to Sound$as_data_frame()", {
   expect_true("time" %in% names(df))
   expect_equal(df, sound$as_data_frame())
 })
+
+test_that("print.praat_pitch reports voiced/unvoiced statistics", {
+  x <- make_legacy_pitch()
+  expect_output(print(x), "Praat Pitch Object")
+  expect_output(print(x), "Voiced:")
+  expect_output(print(x), "Pitch Statistics")
+  expect_output(print(x), "Std Dev:")
+  ret <- withVisible(print(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("print.praat_pitch omits pitch statistics when fully unvoiced", {
+  x <- make_legacy_pitch(all_unvoiced = TRUE)
+  out <- capture.output(print(x))
+  expect_false(any(grepl("Pitch Statistics", out)))
+  expect_true(any(grepl("Voiced:\\s+0", out)))
+})
+
+test_that("summary.praat_pitch reports quantiles when voiced frames exist", {
+  x <- make_legacy_pitch()
+  expect_output(summary(x), "Praat Pitch Object - Summary")
+  expect_output(summary(x), "Quantiles:")
+  expect_output(summary(x), "25%:")
+  expect_output(summary(x), "75%:")
+  ret <- withVisible(summary(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("summary.praat_pitch reports no voiced frames when fully unvoiced", {
+  x <- make_legacy_pitch(all_unvoiced = TRUE)
+  expect_output(summary(x), "No voiced frames detected")
+})

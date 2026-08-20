@@ -20,3 +20,17 @@ make_legacy_sound <- function(n_channels = 1) {
   class(x) <- "praat_sound"
   x
 }
+
+make_legacy_pitch <- function(all_unvoiced = FALSE) {
+  freqs <- if (all_unvoiced) {
+    rep(NA_real_, 5)
+  } else {
+    c(120, 125, NA, 130, 128)
+  }
+  x <- data.frame(
+    time = c(0.1, 0.2, 0.3, 0.4, 0.5),
+    frequency = freqs
+  )
+  class(x) <- c("praat_pitch", "data.frame")
+  x
+}
