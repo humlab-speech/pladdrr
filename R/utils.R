@@ -4,6 +4,12 @@
 # the C++ layer. These functions ensure type safety and provide user-friendly
 # error messages.
 
+# Raise a classed pladdrr_input_error (consistent with R/validators.R).
+.stop_validate <- function(routine, name, message) {
+  stop(pladdrr_error_cond("pladdrr_input_error", routine, name, message,
+                          call = sys.call(-1L)))
+}
+
 # ==============================================================================
 # Parameter Validation Functions
 # ==============================================================================
@@ -21,13 +27,13 @@
 #' @noRd
 validate_positive <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
+    .stop_validate("validate_positive", name, sprintf("'%s' must be a single numeric value", name))
   }
   if (is.na(x)) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_positive", name, sprintf("'%s' cannot be NA", name))
   }
   if (x <= 0) {
-    stop(sprintf("'%s' must be positive, got: %g", name, x), call. = FALSE)
+    .stop_validate("validate_positive", name, sprintf("'%s' must be positive, got: %g", name, x))
   }
   invisible(x)
 }
@@ -45,13 +51,13 @@ validate_positive <- function(x, name = deparse(substitute(x))) {
 #' @noRd
 validate_non_negative <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
+    .stop_validate("validate_non_negative", name, sprintf("'%s' must be a single numeric value", name))
   }
   if (is.na(x)) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_non_negative", name, sprintf("'%s' cannot be NA", name))
   }
   if (x < 0) {
-    stop(sprintf("'%s' must be non-negative, got: %g", name, x), call. = FALSE)
+    .stop_validate("validate_non_negative", name, sprintf("'%s' must be non-negative, got: %g", name, x))
   }
   invisible(x)
 }
@@ -71,14 +77,14 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
 #' @noRd
 validate_range <- function(x, min, max, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single numeric value", name), call. = FALSE)
+    .stop_validate("validate_range", name, sprintf("'%s' must be a single numeric value", name))
   }
   if (is.na(x)) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_range", name, sprintf("'%s' cannot be NA", name))
   }
   if (x < min || x > max) {
-    stop(sprintf("'%s' must be in range [%g, %g], got: %g",
-                 name, min, max, x), call. = FALSE)
+    .stop_validate("validate_range", name, sprintf("'%s' must be in range [%g, %g], got: %g",
+                 name, min, max, x))
   }
   invisible(x)
 }
@@ -96,14 +102,13 @@ validate_range <- function(x, min, max, name = deparse(substitute(x))) {
 #' @noRd
 validate_positive_int <- function(x, name = deparse(substitute(x))) {
   if (!is.numeric(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single integer value", name), call. = FALSE)
+    .stop_validate("validate_positive_int", name, sprintf("'%s' must be a single integer value", name))
   }
   if (is.na(x)) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_positive_int", name, sprintf("'%s' cannot be NA", name))
   }
   if (x <= 0 || x != as.integer(x)) {
-    stop(sprintf("'%s' must be a positive integer, got: %g", name, x),
-         call. = FALSE)
+    .stop_validate("validate_positive_int", name, sprintf("'%s' must be a positive integer, got: %g", name, x))
   }
   invisible(as.integer(x))
 }
@@ -123,14 +128,13 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 validate_string <- function(x, name = deparse(substitute(x)),
                            allow_na = FALSE) {
   if (!is.character(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single character string", name),
-         call. = FALSE)
+    .stop_validate("validate_string", name, sprintf("'%s' must be a single character string", name))
   }
   if (is.na(x) && !allow_na) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_string", name, sprintf("'%s' cannot be NA", name))
   }
   if (!is.na(x) && nchar(x) == 0) {
-    stop(sprintf("'%s' cannot be an empty string", name), call. = FALSE)
+    .stop_validate("validate_string", name, sprintf("'%s' cannot be an empty string", name))
   }
   invisible(x)
 }
@@ -148,11 +152,10 @@ validate_string <- function(x, name = deparse(substitute(x)),
 #' @noRd
 validate_logical <- function(x, name = deparse(substitute(x))) {
   if (!is.logical(x) || length(x) != 1) {
-    stop(sprintf("'%s' must be a single logical value (TRUE/FALSE)", name),
-         call. = FALSE)
+    .stop_validate("validate_logical", name, sprintf("'%s' must be a single logical value (TRUE/FALSE)", name))
   }
   if (is.na(x)) {
-    stop(sprintf("'%s' cannot be NA", name), call. = FALSE)
+    .stop_validate("validate_logical", name, sprintf("'%s' cannot be NA", name))
   }
   invisible(x)
 }
