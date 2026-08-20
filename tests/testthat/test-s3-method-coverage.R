@@ -220,3 +220,47 @@ test_that("as.data.frame.praat_intensity returns the values data.frame", {
   df <- as.data.frame(x)
   expect_identical(df, x$values)
 })
+
+test_that("as.data.frame.Formant delegates and forwards ... (max_formants)", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  formant <- sound$to_formant_burg()
+  df_default <- as.data.frame(formant)
+  expect_true(is.data.frame(df_default))
+  expect_true(all(c("time", "formant", "frequency", "bandwidth") %in% names(df_default)))
+
+  df_limited <- as.data.frame(formant, max_formants = 2)
+  expect_true(is.data.frame(df_limited))
+  expect_true(max(df_limited$formant) <= 2)
+})
+
+test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  intensity <- sound$to_intensity()
+  df <- as.data.frame(intensity)
+  expect_true(is.data.frame(df))
+  expect_equal(df, intensity$as_data_frame())
+})
+
+test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  df <- as.data.frame(pitch)
+  expect_true(is.data.frame(df))
+  expect_equal(df, pitch$as_data_frame())
+})
+
+test_that("as.data.frame.MFCC delegates to MFCC$as_data_frame()", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  mfcc <- sound$to_mel_spectrogram()$to_mfcc()
+  df <- as.data.frame(mfcc)
+  expect_true(is.data.frame(df))
+  expect_equal(df, mfcc$as_data_frame())
+})
+
+test_that("as.data.frame.LFCC delegates to LFCC$as_data_frame()", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  lfcc <- sound$to_lpc_burg()$to_lfcc()
+  df <- as.data.frame(lfcc)
+  expect_true(is.data.frame(df))
+  expect_equal(df, lfcc$as_data_frame())
+})
