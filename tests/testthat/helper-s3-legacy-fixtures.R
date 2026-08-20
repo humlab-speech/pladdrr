@@ -61,3 +61,20 @@ make_legacy_formant <- function(n_formants = 2, all_na_formant = NULL) {
   class(x) <- "praat_formant"
   x
 }
+
+make_legacy_intensity <- function(all_na = FALSE) {
+  intensities <- if (all_na) rep(NA_real_, 4) else c(62.1, 65.2, 66.1, 64.8)
+  x <- list(
+    n_frames = 4,
+    time_step = 0.01,
+    minimum_pitch = 100,
+    window_length = 0.032,
+    subtract_mean = TRUE,
+    values = data.frame(
+      time = c(0.1, 0.2, 0.3, 0.4),
+      intensity_db = intensities
+    )
+  )
+  class(x) <- "praat_intensity"
+  x
+}

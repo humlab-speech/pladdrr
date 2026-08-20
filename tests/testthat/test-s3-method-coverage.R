@@ -183,3 +183,40 @@ test_that("as.data.frame.praat_formant returns the values data.frame", {
   df <- as.data.frame(x)
   expect_identical(df, x$values)
 })
+
+test_that("print.praat_intensity prints header and head of values", {
+  x <- make_legacy_intensity()
+  expect_output(print(x), "Praat Intensity Object")
+  expect_output(print(x), "Mean subtracted: yes")
+  expect_output(print(x), "First few measurements:")
+  ret <- withVisible(print(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("print.praat_intensity reports 'no' when mean not subtracted", {
+  x <- make_legacy_intensity()
+  x$subtract_mean <- FALSE
+  expect_output(print(x), "Mean subtracted: no")
+})
+
+test_that("summary.praat_intensity reports statistics when valid frames exist", {
+  x <- make_legacy_intensity()
+  expect_output(summary(x), "Intensity statistics:")
+  expect_output(summary(x), "Mean: .* dB")
+  expect_output(summary(x), "Range: .* dB")
+  ret <- withVisible(summary(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("summary.praat_intensity reports no valid measurements when all NA", {
+  x <- make_legacy_intensity(all_na = TRUE)
+  expect_output(summary(x), "No valid intensity measurements")
+})
+
+test_that("as.data.frame.praat_intensity returns the values data.frame", {
+  x <- make_legacy_intensity()
+  df <- as.data.frame(x)
+  expect_identical(df, x$values)
+})
