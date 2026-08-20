@@ -107,3 +107,11 @@ test_that("as.data.frame.praat_sound validates its input", {
     "must be a praat_sound object"
   )
 })
+
+test_that("as.data.frame.Sound delegates to Sound$as_data_frame()", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+  df <- as.data.frame(sound)
+  expect_true(is.data.frame(df))
+  expect_true("time" %in% names(df))
+  expect_equal(df, sound$as_data_frame())
+})
