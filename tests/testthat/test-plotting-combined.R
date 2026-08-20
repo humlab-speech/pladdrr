@@ -178,3 +178,48 @@ test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Custom")
 })
+
+test_that("plot_spectrogram_formants validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  formant <- sound$to_formant()
+
+  expect_error(plot_spectrogram_formants("not a spectrogram", formant),
+               "spectrogram must be a Spectrogram object")
+  expect_error(plot_spectrogram_formants(spectrogram, "not a formant"),
+               "formant must be a Formant object")
+})
+
+test_that("plot_spectrogram_formants overlays formant tracks by default", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  formant <- sound$to_formant()
+
+  p <- plot_spectrogram_formants(spectrogram, formant)
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$labels$title, "Spectrogram + Formants")
+})
+
+test_that("plot_spectrogram_formants accepts max_formant, formant_colors, dynamic_range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  formant <- sound$to_formant()
+
+  p <- plot_spectrogram_formants(spectrogram, formant, max_formant = 2,
+                                  formant_colors = c("black", "grey"),
+                                  dynamic_range = 50, title = "Custom")
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$labels$title, "Custom")
+})
+
+test_that("plot_spectrogram_formants warns and returns bare spectrogram when no formant data in range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  spectrogram <- sound$to_spectrogram()
+  formant <- sound$to_formant()
+
+  expect_warning(
+    p <- plot_spectrogram_formants(spectrogram, formant, from_time = 10, to_time = 20),
+    "No formant data available in the specified time range"
+  )
+  expect_s3_class(p, "ggplot")
+})
