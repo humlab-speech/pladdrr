@@ -60,3 +60,50 @@ test_that("as.data.frame.TextGrid works", {
   df <- as.data.frame(tg)
   expect_true(is.data.frame(df))
 })
+
+test_that("print.praat_sound prints expected fields (mono)", {
+  x <- make_legacy_sound(n_channels = 1)
+  expect_output(print(x), "Praat Sound Object")
+  expect_output(print(x), "Duration:")
+  expect_output(print(x), "mono")
+  expect_output(print(x), "Amplitude:")
+  ret <- withVisible(print(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("print.praat_sound reports stereo channel label", {
+  x <- make_legacy_sound(n_channels = 2)
+  expect_output(print(x), "stereo")
+})
+
+test_that("summary.praat_sound prints amplitude statistics", {
+  x <- make_legacy_sound()
+  expect_output(summary(x), "Praat Sound Object - Summary")
+  expect_output(summary(x), "Mean:")
+  expect_output(summary(x), "RMS:")
+  expect_output(summary(x), "Std Dev:")
+  ret <- withVisible(summary(x))
+  expect_false(ret$visible)
+  expect_identical(ret$value, x)
+})
+
+test_that("as.data.frame.praat_sound is deprecated and returns time/amplitude columns", {
+  x <- make_legacy_sound()
+  # Test that warning is produced
+  expect_warning(as.data.frame(x), "deprecated")
+  # Get the result without warning
+  df <- suppressWarnings(as.data.frame(x))
+  expect_true(is.data.frame(df))
+  expect_named(df, c("time", "amplitude"))
+  expect_equal(nrow(df), x$n_samples)
+})
+
+test_that("as.data.frame.praat_sound validates its input", {
+  bad <- list(not_a_sound = TRUE)
+  class(bad) <- "praat_sound"
+  expect_error(
+    suppressWarnings(as.data.frame(bad)),
+    "must be a praat_sound object"
+  )
+})
