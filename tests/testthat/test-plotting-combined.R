@@ -84,6 +84,30 @@ test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceil
               inherits(p, "gtable") || inherits(p, "grob"))
 })
 
+test_that("plot_sound_pitch validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+
+  expect_error(plot_sound_pitch("not a sound", pitch), "sound must be a Sound object")
+  expect_error(plot_sound_pitch(sound, "not a pitch"), "pitch must be a Pitch object")
+})
+
+test_that("plot_sound_pitch accepts a time range, custom colors, and a title", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+
+  p <- plot_sound_pitch(sound, pitch, from_time = 0.2, to_time = 0.8,
+                         waveform_color = "black", pitch_color = "red",
+                         title = "Custom")
+  expect_true(inherits(p, "ggplot") || inherits(p, "patchwork") ||
+              inherits(p, "gtable") || inherits(p, "grob"))
+})
+
+test_that("plot_sound_pitch no longer has pitch_floor/pitch_ceiling formals", {
+  expect_false("pitch_floor" %in% names(formals(plot_sound_pitch)))
+  expect_false("pitch_ceiling" %in% names(formals(plot_sound_pitch)))
+})
+
 test_that("plot_textgrid_sound validates its inputs", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
   tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
