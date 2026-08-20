@@ -95,16 +95,10 @@ NULL
 # Helpers
 # ============================================================================
 
-# Helper: pitch unit string -> integer code (matches Praat's kPitch_unit enum;
-# same mapping as .pitch_unit_code() in pitch-wrapper.R)
+# Helper: pitch unit string -> integer code.
+# Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid drift.
 .pitchtier_unit_code <- function(unit) {
-  switch(tolower(unit),
-    "hertz" = 0L, "hz" = 0L,
-    "semitones" = 1L,
-    "mel" = 2L,
-    "erb" = 3L,
-    stop("Unknown unit: ", unit, ". Use: hertz, semitones, mel, erb")
-  )
+  .pitch_unit_code(unit)
 }
 
 # ============================================================================
