@@ -86,15 +86,15 @@ plot_cpp_timeseries(cepstrogram,
                    reference_lines = c(5, 10, 15))
 #> `geom_smooth()` using formula = 'y ~ x'
 #> Warning: span too small.   fewer data values than degrees of freedom.
-#> Warning: pseudoinverse used at -0.025
-#> Warning: neighborhood radius 0.28816
+#> Warning: pseudoinverse used at -0.00225
+#> Warning: neighborhood radius 0.025934
 #> Warning: reciprocal condition number  0
-#> Warning: There are other near singularities as well. 0.083035
+#> Warning: There are other near singularities as well. 0.00067258
 #> Warning: span too small.   fewer data values than degrees of freedom.
-#> Warning: pseudoinverse used at -0.025
-#> Warning: neighborhood radius 0.28816
+#> Warning: pseudoinverse used at -0.00225
+#> Warning: neighborhood radius 0.025934
 #> Warning: reciprocal condition number  0
-#> Warning: There are other near singularities as well. 0.083035
+#> Warning: There are other near singularities as well. 0.00067258
 #> Warning: no non-missing arguments to max; returning -Inf
 
 ```

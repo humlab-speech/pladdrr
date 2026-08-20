@@ -83,7 +83,7 @@ object using Praat's Burg algorithm.
 # and returns an R6 Formant object (see the second value's \value above).
 sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
 formants <- extract_formants(sound, max_formant = 5500)
-#> Warning: extract_formants() is deprecated and will be removed in v5.0.0. Use the R6 interface: sound$to_formant_burg()
+#> Warning: extract_formants() is deprecated and will be removed in v6.0.0. Use the R6 interface: sound$to_formant_burg()
 f1_mean <- formants$get_mean(formant_number = 1)
 
 # Equivalent, and the recommended way to spell it directly:

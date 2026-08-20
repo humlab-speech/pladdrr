@@ -9,7 +9,7 @@ Use `sound$to_formant_burg()` instead."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,7 +148,7 @@ using Praat's Burg algorithm.</p>
 <span class="r-in"><span><span class="co"># and returns an R6 Formant object (see the second value's \value above).</span></span></span>
 <span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formants</span> <span class="op">&lt;-</span> <span class="fu">extract_formants</span><span class="op">(</span><span class="va">sound</span>, max_formant <span class="op">=</span> <span class="fl">5500</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>extract_formants() is deprecated and will be removed in v5.0.0. Use the R6 interface: sound$to_formant_burg()</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>extract_formants() is deprecated and will be removed in v6.0.0. Use the R6 interface: sound$to_formant_burg()</span>
 <span class="r-in"><span><span class="va">f1_mean</span> <span class="op">&lt;-</span> <span class="va">formants</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Equivalent, and the recommended way to spell it directly:</span></span></span>

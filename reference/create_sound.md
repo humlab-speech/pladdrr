@@ -32,7 +32,7 @@ Sound R6 object
 ``` r
 # Old S3 approach (DEPRECATED, shown for reference)
 sound <- create_sound(c(0.1, 0.2), sampling_rate = 1000)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
+#> Warning: create_sound() is deprecated and will be removed in v6.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 
 # New R6 approach (RECOMMENDED)
 sound2 <- Sound$from_values(c(0.1, 0.2), sampling_rate = 1000)

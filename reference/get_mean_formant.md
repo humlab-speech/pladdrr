@@ -56,6 +56,6 @@ formant <- structure(
   class = "praat_formant"
 )
 get_mean_formant(formant, formant_number = 1)
-#> Warning: get_mean_formant() is deprecated and will be removed in v5.0.0. Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)
+#> Warning: get_mean_formant() is deprecated and will be removed in v6.0.0. Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)
 #> [1] 510
 ```

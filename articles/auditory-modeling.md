@@ -356,8 +356,8 @@ loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {
 rm(cochlea)
 gc()  # Force garbage collection
 #>           used (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1869079 99.9    3131377 167.3  3131377 167.3
-#> Vcells 3186788 24.4    8388608  64.0  7198997  55.0
+#> Ncells 1868651 99.8    3130382 167.2  3130382 167.2
+#> Vcells 3186282 24.4    8388608  64.0  7198525  55.0
 ```
 
 ## Comparison with Traditional Analysis
@@ -407,7 +407,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.0.3
+#> [1] ggplot2_4.0.3 pladdrr_5.0.4
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    

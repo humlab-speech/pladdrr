@@ -7,6 +7,11 @@ perturbation).
 
 ## Arguments
 
+- tmin, tmax:
+
+  When creating an empty PointProcess, the time span of the object.
+  Leave `NULL` (the default) when supplying `.xptr`.
+
 - .xptr:
 
   Not for direct use. External pointer to the underlying C++

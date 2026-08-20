@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-19</h4>
+            <h4 data-toc-skip class="date">2026-08-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/vowel-space-analysis.Rmd" class="external-link"><code>vignettes/vowel-space-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>vowel-space-analysis.Rmd</code></div>
@@ -270,12 +270,12 @@ ships one example pair for experimentation:
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add boundaries and labels</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">tg</span><span class="op">$</span><span class="fu">insert_boundary</span><span class="op">(</span><span class="fl">1</span>, <span class="va">vowel_segments</span><span class="op">$</span><span class="va">start</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_boundary</span><span class="op">(</span><span class="fl">1</span>, <span class="va">vowel_segments</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="fl">1</span>, <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>, <span class="va">vowel_segments</span><span class="op">$</span><span class="va">vowel</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -373,7 +373,7 @@ analysis:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Measure formants for each vowel</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vowel_segments</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">start</span> <span class="op">&lt;-</span> <span class="va">vowel_segments</span><span class="op">$</span><span class="va">start</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span>  <span class="va">end</span> <span class="op">&lt;-</span> <span class="va">vowel_segments</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span>  <span class="va">duration</span> <span class="op">&lt;-</span> <span class="va">end</span> <span class="op">-</span> <span class="va">start</span></span>

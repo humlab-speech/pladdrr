@@ -49,19 +49,6 @@ compute shimmer.
 
 - `remove_point(index)` - remove the point at a 1-based index
 
-## Shimmer measures
-
-- `get_shimmer_local(period_floor, period_ceiling, max_period_factor)` -
-  relative amplitude perturbation
-
-- `get_shimmer_local_db(...)` - same, in dB
-
-- `get_shimmer_apq3(...)`, `get_shimmer_apq5(...)`,
-  `get_shimmer_apq11(...)` - amplitude perturbation quotients over 3, 5,
-  and 11 periods
-
-- `get_shimmer_dda(...)` - difference of differences of amplitudes
-
 ## Conversion and export
 
 - `to_intensity_tier(threshold_db)` - convert amplitude to an

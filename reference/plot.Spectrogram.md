@@ -15,7 +15,6 @@ plot(
   garnish = TRUE,
   title = "Spectrogram",
   dynamic_range = 70,
-  preemphasis = 50,
   ...
 )
 ```
@@ -53,10 +52,6 @@ plot(
 - dynamic_range:
 
   Numeric. Dynamic range in dB (default: 70)
-
-- preemphasis:
-
-  Numeric. Pre-emphasis from Hz (default: 50)
 
 - ...:
 

@@ -228,9 +228,9 @@ if (exists("sound") && !is.null(sound)) {
 
   # Report results
   cat("Formant extraction results:\n")
-  cat("  Male (5000 Hz):", if(!is.null(formant_male)) "OK" else "failed", "\n")
-  cat("  Female (5500 Hz):", if(!is.null(formant_female)) "OK" else "failed", "\n")
-  cat("  Child (8000 Hz):", if(!is.null(formant_child)) "OK" else "failed", "\n")
+  cat("  Male (5000 Hz):", if (!is.null(formant_male)) "OK" else "failed", "\n")
+  cat("  Female (5500 Hz):", if (!is.null(formant_female)) "OK" else "failed", "\n")
+  cat("  Child (8000 Hz):", if (!is.null(formant_child)) "OK" else "failed", "\n")
 } else {
   message("Skipping ceiling demo - sound not available")
 }
@@ -622,7 +622,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.0.3
+#> [1] ggplot2_4.0.3 pladdrr_5.0.4
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    

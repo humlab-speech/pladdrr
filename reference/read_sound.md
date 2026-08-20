@@ -32,7 +32,7 @@ Sound$create_tone(frequency = 440, duration = 0.2)$save(tmp)
 
 # Old S3 approach (DEPRECATED)
 sound <- read_sound(tmp)
-#> Warning: read_sound() is deprecated and will be removed in v5.0.0. Use Sound$new(file_path) instead. For channel extraction, use sound$extract_channel(channel).
+#> Warning: read_sound() is deprecated and will be removed in v6.0.0. Use Sound$new(file_path) instead. For channel extraction, use sound$extract_channel(channel).
 
 # New R6 approach (RECOMMENDED)
 sound <- Sound$new(tmp)

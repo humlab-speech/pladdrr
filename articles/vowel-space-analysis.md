@@ -135,12 +135,12 @@ tg <- TextGrid$create(
 )
 
 # Add boundaries and labels
-for (i in 1:nrow(vowel_segments)) {
+for (i in seq_len(nrow(vowel_segments))) {
   tg$insert_boundary(1, vowel_segments$start[i])
 }
 tg$insert_boundary(1, vowel_segments$end[nrow(vowel_segments)])
 
-for (i in 1:nrow(vowel_segments)) {
+for (i in seq_len(nrow(vowel_segments))) {
   tg$set_interval_text(1, i + 1, vowel_segments$vowel[i])
 }
 
@@ -246,7 +246,7 @@ vowel_features <- data.frame(
 )
 
 # Measure formants for each vowel
-for (i in 1:nrow(vowel_segments)) {
+for (i in seq_len(nrow(vowel_segments))) {
   start <- vowel_segments$start[i]
   end <- vowel_segments$end[i]
   duration <- end - start

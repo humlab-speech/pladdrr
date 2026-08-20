@@ -60,6 +60,6 @@ formant <- structure(
   class = "praat_formant"
 )
 get_formant_at_time(formant, formant_number = 1, time = 0.15)
-#> Warning: get_formant_at_time() is deprecated and will be removed in v5.0.0. Use the R6 interface: formant$get_value_at_time(formant_number, time)
+#> Warning: get_formant_at_time() is deprecated and will be removed in v6.0.0. Use the R6 interface: formant$get_value_at_time(formant_number, time)
 #> [1] 500
 ```

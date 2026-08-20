@@ -14,8 +14,6 @@ plot_sound_pitch(
   to_time = NULL,
   waveform_color = "steelblue",
   pitch_color = "darkblue",
-  pitch_floor = NULL,
-  pitch_ceiling = NULL,
   title = NULL,
   ...
 )
@@ -46,14 +44,6 @@ plot_sound_pitch(
 - pitch_color:
 
   Character. Pitch color (default: "darkblue")
-
-- pitch_floor:
-
-  Minimum F0 to display in Hz (default: NULL = auto)
-
-- pitch_ceiling:
-
-  Maximum F0 to display in Hz (default: NULL = auto)
 
 - title:
 

@@ -27,7 +27,7 @@ The object x, invisibly
 
 ``` r
 sound <- create_sound(rep(0, 1000), sampling_rate = 44100)
-#> Warning: create_sound() is deprecated and will be removed in v5.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
+#> Warning: create_sound() is deprecated and will be removed in v6.0.0. Use Sound$from_values(values, sampling_rate) instead. The R6 interface provides better performance and more features.
 print(sound)
 #> <Praat Sound>
 #>   Duration: 0.023 s
