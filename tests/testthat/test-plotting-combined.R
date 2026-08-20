@@ -147,3 +147,34 @@ test_that("plot_textgrid_pitch renders a point tier", {
   expect_true(inherits(p, "patchwork") || inherits(p, "ggplot") ||
               inherits(p, "gtable") || inherits(p, "grob"))
 })
+
+test_that("plot_pitch_intensity validates its inputs", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  intensity <- sound$to_intensity()
+
+  expect_error(plot_pitch_intensity("not a pitch", intensity), "pitch must be a Pitch object")
+  expect_error(plot_pitch_intensity(pitch, "not an intensity"), "intensity must be an Intensity object")
+})
+
+test_that("plot_pitch_intensity renders a dual-axis ggplot with default range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  intensity <- sound$to_intensity()
+
+  p <- plot_pitch_intensity(pitch, intensity)
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$labels$title, "Pitch and Intensity")
+})
+
+test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  pitch <- sound$to_pitch()
+  intensity <- sound$to_intensity()
+
+  p <- plot_pitch_intensity(pitch, intensity, from_time = 0.2, to_time = 0.8,
+                             pitch_color = "purple", intensity_color = "gold",
+                             title = "Custom")
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$labels$title, "Custom")
+})
