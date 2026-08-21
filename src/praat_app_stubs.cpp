@@ -36,6 +36,11 @@
 #include "praat.github.io/sys/Interpreter.h"
 #include "praat.github.io/sys/ManPages.h"
 
+// nocov start
+// Praat application/GUI stubs for library mode (never executed from R)
+// These provide linker symbols for praat.cpp and praat_script.cpp but are never
+// called when pladdrr is used as a library.
+
 // Forward declarations
 struct structUiForm;
 struct structGuiWindow;
@@ -270,3 +275,4 @@ typedef struct structSpeechSynthesizer *SpeechSynthesizer;
 SpeechSynthesizer SpeechSynthesizer_create (conststring32, conststring32) {
     return nullptr;  // Speech synthesis not available
 }
+// nocov end

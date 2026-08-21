@@ -29,6 +29,11 @@
 
 using namespace Rcpp;
 
+// nocov start
+// Orphaned SIMD autocorrelation bridge functions — no caller found in Praat or pladdrr
+// These were experimental pitch extraction accelerators; excluded from coverage because
+// they are genuinely unreachable from R today.
+
 // Forward declarations of SIMD functions from autocorrelation_simd.cpp
 #ifdef HAVE_XSIMD
 extern NumericVector autocorrelation_simd(NumericVector data, int max_lag);
@@ -359,3 +364,4 @@ extern "C" void NUMautocorrelation_simd_bridge_fast(
     Melder_throw(U"SIMD not available - should not reach here");
 #endif
 }
+// nocov end

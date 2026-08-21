@@ -27,6 +27,11 @@
 #include <limits>
 #include <atomic>
 
+// nocov start
+// Orphaned SIMD FormantPath implementation — no caller in praat.github.io/LPC/FormantPath.cpp
+// (which uses its own scalar path) or anywhere else in src/. Kept for potential future wiring;
+// excluded from coverage because it is genuinely unreachable from R today.
+
 // ============================================================================
 // SIMD-accelerated FormantPath operations
 // ============================================================================
@@ -749,3 +754,4 @@ double compute_all_transitions_simd_bridge(
 } // extern "C"
 
 /* End of file formantpath_simd.cpp */
+// nocov end
