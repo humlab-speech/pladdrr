@@ -87,13 +87,13 @@ pitch <- sound$to_pitch()
 pitch$duration
 #> function (...) 
 #> method(x, ...)
-#> <bytecode: 0x55df35065658>
-#> <environment: 0x55df33d26ba0>
+#> <bytecode: 0x55656eb87148>
+#> <environment: 0x55657523bf88>
 pitch$nx
 #> function (...) 
 #> method(x, ...)
-#> <bytecode: 0x55df35065658>
-#> <environment: 0x55df33a73ab0>
+#> <bytecode: 0x55656eb87148>
+#> <environment: 0x556575063ed8>
 
 # Query methods
 pitch$get_mean(0, 0, "hertz")  # Mean F0 in Hz
