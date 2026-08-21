@@ -44,6 +44,13 @@ test_that("unit_to_code covers all pitch unit aliases", {
   expect_equal(pladdrr:::unit_to_code("nonsense", "pitch"), 0L)
 })
 
+test_that("unit_to_code covers formant units", {
+  expect_equal(pladdrr:::unit_to_code("hertz", "formant"), 0L)
+  expect_equal(pladdrr:::unit_to_code("Hz", "formant"), 0L)
+  expect_equal(pladdrr:::unit_to_code("bark", "formant"), 1L)
+  expect_equal(pladdrr:::unit_to_code("nonsense", "formant"), 0L)
+})
+
 test_that("unit_to_code covers intensity units", {
   expect_equal(pladdrr:::unit_to_code("db", "intensity"), 0L)
   expect_equal(pladdrr:::unit_to_code("nonsense", "intensity"), 0L)

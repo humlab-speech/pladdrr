@@ -1,10 +1,12 @@
 # test-batch-ops.R - Tests for R/batch-ops.R batch-processing functions
-# (only textgrid_merge was previously tested, in test-textgrid-merge.R;
-#  this file covers the remaining 11 exported functions: sound_concatenate_all,
-#  sound_to_pitch_batch, sound_to_pitch_ac_batch, sound_to_pitch_cc_batch,
-#  sound_to_pitch_shs_batch, sound_to_pitch_spinet_batch, sound_to_formant_batch,
-#  sound_to_intensity_batch, sound_extract_and_pitch, sound_extract_and_formant,
-#  sound_load_window)
+# (an earlier draft of this file already covered 6 of 11 functions with
+#  shallow expect_no_error()/expect_length() checks; this version covers all
+#  11 exported functions -- sound_concatenate_all, sound_to_pitch_batch,
+#  sound_to_pitch_ac_batch, sound_to_pitch_cc_batch, sound_to_pitch_shs_batch,
+#  sound_to_pitch_spinet_batch, sound_to_formant_batch, sound_to_intensity_batch,
+#  sound_extract_and_pitch, sound_extract_and_formant, sound_load_window --
+#  with type/shape/validity assertions, batch-vs-individual numeric parity,
+#  and xptr-as-input acceptance)
 #
 # All *_batch functions return a plain list() of R6 objects (via lapply over
 # xptrs), not a data.frame or bespoke collection object -- verified directly
@@ -65,6 +67,44 @@ test_that("sound_to_pitch_batch, sound_to_pitch_ac_batch, sound_to_pitch_cc_batc
   raw_ptrs <- sound_to_pitch_batch(sounds, return_r6 = FALSE)
   expect_length(raw_ptrs, 2)
   expect_true(all(vapply(raw_ptrs, inherits, logical(1), what = "externalptr")))
+})
+
+test_that("sound_to_pitch_batch accepts a list of raw external pointers as input", {
+  sounds <- make_test_sounds(2)
+  xptrs <- lapply(sounds, function(s) s$.xptr)
+  expect_true(all(vapply(xptrs, inherits, logical(1), what = "externalptr")))
+
+  pitches <- sound_to_pitch_batch(xptrs, return_r6 = FALSE)
+  expect_length(pitches, 2)
+  expect_true(all(vapply(pitches, inherits, logical(1), what = "externalptr")))
+
+  # Wrapping the raw result should produce valid Pitch objects, confirming
+  # the xptr-input path actually ran real analysis (not a silent no-op)
+  wrapped <- Pitch(.xptr = pitches[[1]])
+  expect_true(wrapped$is_valid())
+  expect_gte(wrapped$get_number_of_frames(), 1)
+})
+
+test_that("sound_to_pitch_batch and sound_to_formant_batch match individual per-sound computation", {
+  sound <- generate_sine_wave(150, 0.5, sampling_rate = 16000)
+  sounds <- list(sound, sound)
+
+  batch_pitches <- sound_to_pitch_batch(sounds, pitch_floor = 75, pitch_ceiling = 300)
+  individual_pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
+  expect_equal(
+    batch_pitches[[1]]$get_mean(0, 0, "hertz"),
+    individual_pitch$get_mean(0, 0, "hertz"),
+    tolerance = 1e-10
+  )
+
+  batch_formants <- sound_to_formant_batch(sounds, time_step = 0.005, max_formants = 5)
+  individual_formant <- sound$to_formant(time_step = 0.005, max_formants = 5)
+  time_point <- individual_formant$get_times_vector()[1]
+  expect_equal(
+    batch_formants[[1]]$get_value_at_time(1, time_point, "hertz"),
+    individual_formant$get_value_at_time(1, time_point, "hertz"),
+    tolerance = 1e-10
+  )
 })
 
 test_that("sound_to_pitch_shs_batch and sound_to_pitch_spinet_batch return per-sound Pitch results", {
