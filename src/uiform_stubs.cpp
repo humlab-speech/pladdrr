@@ -49,6 +49,7 @@ typedef struct structInterpreter *Interpreter;
 // ============================================================================
 
 // Getter functions (return empty values in library mode)
+// nocov start
 conststring32 UiForm_getString (UiForm, conststring32) { return U""; }
 integer UiForm_getInteger (UiForm, conststring32) { return 0; }
 double UiForm_getReal (UiForm, conststring32) { return 0.0; }
@@ -211,6 +212,7 @@ double UiPause_positive (conststring32, conststring32) {
 conststring32 UiPause_sentence (conststring32, conststring32) {
     Melder_throw (U"UiPause_sentence not available in library mode.");
 }
+// nocov end
 
 // ============================================================================
 // GUI file selection stubs
