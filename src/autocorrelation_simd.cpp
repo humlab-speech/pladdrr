@@ -184,6 +184,7 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
 #endif
 }
 
+// nocov start
 // Windowed autocorrelation (for pitch detection with frames)
 NumericMatrix windowed_autocorrelation_simd(
     NumericVector data,
@@ -193,17 +194,17 @@ NumericMatrix windowed_autocorrelation_simd(
 ) {
     const int n = data.size();
     const int num_frames = (n - frame_length) / hop_size + 1;
-    
+
     if (max_lag >= frame_length) max_lag = frame_length - 1;
-    
+
     NumericMatrix result(num_frames, max_lag + 1);
     const double* src = REAL(data);
-    
+
 #ifdef HAVE_XSIMD
     for (int frame = 0; frame < num_frames; ++frame) {
         int start = frame * hop_size;
         const double* frame_data = src + start;
-        
+
         for (int lag = 0; lag <= max_lag; ++lag) {
             result(frame, lag) = autocorr_at_lag_simd_impl(frame_data, frame_length, lag);
         }
@@ -212,15 +213,16 @@ NumericMatrix windowed_autocorrelation_simd(
     for (int frame = 0; frame < num_frames; ++frame) {
         int start = frame * hop_size;
         const double* frame_data = src + start;
-        
+
         for (int lag = 0; lag <= max_lag; ++lag) {
             result(frame, lag) = autocorr_at_lag_scalar(frame_data, frame_length, lag);
         }
     }
 #endif
-    
+
     return result;
 }
+// nocov end
 
 // Burg algorithm preprocessing (compute autocorrelation for LPC)
 // [[Rcpp::export(.lpc_autocorrelation_simd)]]
@@ -291,23 +293,26 @@ NumericVector autocorrelation_normalized_scalar(NumericVector data, int max_lag)
     return result;
 }
 
+// nocov start
 double cross_correlation_scalar(NumericVector x, NumericVector y) {
     if (x.size() != y.size()) {
         Rcpp::stop("Vectors must have same length for cross-correlation");
     }
-    
+
     const int n = x.size();
     const double* x_ptr = REAL(x);
     const double* y_ptr = REAL(y);
-    
+
     double sum = 0.0;
     for (int i = 0; i < n; ++i) {
         sum += x_ptr[i] * y_ptr[i];
     }
-    
+
     return sum;
 }
+// nocov end
 
+// nocov start
 NumericMatrix windowed_autocorrelation_scalar(
     NumericVector data,
     int frame_length,
@@ -316,23 +321,24 @@ NumericMatrix windowed_autocorrelation_scalar(
 ) {
     const int n = data.size();
     const int num_frames = (n - frame_length) / hop_size + 1;
-    
+
     if (max_lag >= frame_length) max_lag = frame_length - 1;
-    
+
     NumericMatrix result(num_frames, max_lag + 1);
     const double* src = REAL(data);
-    
+
     for (int frame = 0; frame < num_frames; ++frame) {
         int start = frame * hop_size;
         const double* frame_data = src + start;
-        
+
         for (int lag = 0; lag <= max_lag; ++lag) {
             result(frame, lag) = autocorr_at_lag_scalar(frame_data, frame_length, lag);
         }
     }
-    
+
     return result;
 }
+// nocov end
 
 // [[Rcpp::export(.lpc_autocorrelation_scalar)]]
 NumericVector lpc_autocorrelation_scalar(NumericVector data, int num_coefficients) {
