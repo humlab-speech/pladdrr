@@ -117,12 +117,9 @@ test_that("sound_to_pitch_shs_batch and sound_to_pitch_spinet_batch return per-s
   expect_true(pitches_shs[[1]]$is_valid())
 
   # The vendored Praat SPINET path intermittently fails with "all amplitudes
-  # equal to zero" (see tests/testthat/test-sound-shs-spinet-pitch.R). A
+  # equal to zero" (see tests/testthat/helper-retry.R::retry_once()). A
   # single retry of the whole batch call reliably avoids double-failures.
-  pitches_spinet <- tryCatch(
-    sound_to_pitch_spinet_batch(sounds),
-    error = function(e) sound_to_pitch_spinet_batch(sounds)
-  )
+  pitches_spinet <- retry_once(sound_to_pitch_spinet_batch(sounds))
   expect_length(pitches_spinet, 2)
   expect_s3_class(pitches_spinet[[1]], "Pitch")
   expect_true(pitches_spinet[[1]]$is_valid())
