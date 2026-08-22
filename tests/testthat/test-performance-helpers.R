@@ -169,6 +169,15 @@ test_that("extract_voiced_segments_ultra returns a shorter voiced-only Sound (bo
   sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
   full_duration <- sound$get_total_duration()
 
+  # inst/extdata/test.wav's low intensity range triggers Praat's own
+  # "The loudest and softest part in your sound differ by only ... dB"
+  # notice (Melder_warning, src/praat.github.io/dwtools/Intensity_extensions.cpp).
+  # Note this is NOT an R condition -- Melder_warning's default handler writes
+  # straight to the console/stderr (MelderConsole::write in
+  # src/praat.github.io/melder/melder_warning.cpp), so suppressWarnings() has
+  # no actual effect here (verified: no R warning condition is raised); kept
+  # defensively in case that wiring changes and it starts routing through
+  # R's warning() in the future.
   voiced_v2 <- suppressWarnings(
     extract_voiced_segments_ultra(sound, version = "v2.03")
   )
@@ -196,6 +205,8 @@ test_that("extract_voiced_segments_ultra rejects a non-Sound, non-pointer argume
 
 test_that("build_multiband_harmonicity returns 5 named Harmonicity objects", {
   sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  # See the low-dB-range Melder_warning note above extract_voiced_segments_ultra's
+  # test -- same benign, non-R-condition notice, same test.wav.
   built <- suppressWarnings(build_multiband_harmonicity(sound))
 
   expect_type(built, "list")
@@ -214,6 +225,8 @@ test_that("build_multiband_harmonicity rejects a bands vector of the wrong lengt
 
 test_that("multiband_hnr_stats returns mean/sd for each band and matches calculate_multiband_hnr_ultra", {
   sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  # See the low-dB-range Melder_warning note above extract_voiced_segments_ultra's
+  # test -- same benign, non-R-condition notice, same test.wav.
   built <- suppressWarnings(build_multiband_harmonicity(sound))
 
   stats_interval <- multiband_hnr_stats(built, 0, 0.5)
@@ -232,6 +245,8 @@ test_that("multiband_hnr_stats returns mean/sd for each band and matches calcula
   # with the single-call ultra path, since both run the identical C++
   # Harmonicity computation - one reuses cached objects, one doesn't.
   stats_whole <- multiband_hnr_stats(built, 0, 0)
+  # See the low-dB-range Melder_warning note above extract_voiced_segments_ultra's
+  # test -- same benign, non-R-condition notice, same test.wav.
   hnr_whole <- suppressWarnings(calculate_multiband_hnr_ultra(sound))
   expect_equal(stats_whole, hnr_whole, tolerance = 1e-6)
 })
@@ -243,6 +258,8 @@ test_that("multiband_hnr_stats rejects a malformed multiband list", {
 
 test_that("calculate_multiband_hnr_ultra returns mean/sd for each band directly from a Sound", {
   sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  # See the low-dB-range Melder_warning note above extract_voiced_segments_ultra's
+  # test -- same benign, non-R-condition notice, same test.wav.
   hnr <- suppressWarnings(calculate_multiband_hnr_ultra(sound))
 
   expect_type(hnr, "list")
