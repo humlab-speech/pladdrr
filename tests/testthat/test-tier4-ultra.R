@@ -442,6 +442,20 @@ test_that("get_voice_quality_ultra validates input", {
   sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
   expect_error(get_voice_quality_ultra(Sound(sound_path), pitch_method = "bad"))
+
+  # Both checks above are caught by the R wrapper (inherits()/match.arg())
+  # before ever reaching get_voice_quality_ultra_cpp(); call the internal
+  # export directly to cover its own null-pointer and pitch_method guards.
+  null_ptr <- methods::new("externalptr")
+  expect_error(
+    pladdrr:::get_voice_quality_ultra_cpp(null_ptr, "all", 75, 600, 0, "cc", TRUE),
+    "Sound"
+  )
+  sound <- Sound(sound_path)
+  expect_error(
+    pladdrr:::get_voice_quality_ultra_cpp(sound$.xptr, "all", 75, 600, 0, "not_cc_or_ac", TRUE),
+    "pitch_method"
+  )
 })
 
 test_that("get_voice_quality_ultra HNR output does not depend on pitch settings", {
