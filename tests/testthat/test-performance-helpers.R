@@ -165,6 +165,15 @@ test_that("calculate_cpps_ultra rejects a non-Sound, non-pointer argument", {
                "sound must be a Sound object or external pointer")
 })
 
+test_that("calculate_cpps_ultra rejects a null external pointer at the C++ layer", {
+  # calculate_cpps_ultra() accepts a bare externalptr (not just a Sound R6
+  # object), so a null externalptr reaches calculate_cpps_ultra_cpp()'s own
+  # "Invalid Sound pointer" guard directly through the public API, unlike
+  # the R-level "not a sound" check above.
+  null_ptr <- methods::new("externalptr")
+  expect_error(calculate_cpps_ultra(null_ptr), "Invalid Sound pointer")
+})
+
 test_that("extract_voiced_segments_ultra returns a shorter voiced-only Sound (both AVQI versions)", {
   sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
   full_duration <- sound$get_total_duration()
