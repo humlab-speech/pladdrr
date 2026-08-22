@@ -54,6 +54,26 @@ test_that("Pitch get_statistics warns (not errors) on an unknown metric name", {
 })
 
 # ============================================================================
+# get_time_of_minimum() / get_time_of_maximum()
+# (unlike Formant/Harmonicity's like-named methods - different C++ classes
+# entirely - Pitch's own get_time_of_minimum/get_time_of_maximum were never
+# exercised anywhere in the suite)
+# ============================================================================
+
+test_that("Pitch get_time_of_minimum and get_time_of_maximum return times within the domain", {
+  pitch <- pitch_fixture()
+  t_min <- pitch$get_time_of_minimum()
+  t_max <- pitch$get_time_of_maximum()
+
+  expect_type(t_min, "double")
+  expect_type(t_max, "double")
+  expect_gte(t_min, pitch$get_start_time())
+  expect_lte(t_min, pitch$get_end_time())
+  expect_gte(t_max, pitch$get_start_time())
+  expect_lte(t_max, pitch$get_end_time())
+})
+
+# ============================================================================
 # get_intensity_at_time() / get_mean_intensity()
 # (frame intensity carried on the Pitch object itself, distinct from the
 # deprecated free functions of the same name that operate on an Intensity
