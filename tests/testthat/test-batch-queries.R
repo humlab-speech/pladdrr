@@ -225,12 +225,185 @@ test_that("PointProcess nearest indices query works", {
 test_that("PointProcess batch operations handle empty objects", {
   # Create empty PointProcess
   pp <- PointProcess(0, 1)
-  
+
   times <- get_pointprocess_times(pp)
   expect_equal(length(times), 0)
-  
+
   intervals <- get_pointprocess_intervals(pp)
   expect_equal(length(intervals), 0)
+})
+
+test_that("formant/bandwidth/pitch-strength batch queries return NA for non-finite query times", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  formant <- sound$to_formant_burg()
+  pitch <- sound$to_pitch_cc()
+
+  mid_time <- (formant$get_xmin() + formant$get_xmax()) / 2
+  times_with_gaps <- c(mid_time, NA_real_, Inf, -Inf, NaN)
+
+  expect_warning(
+    formants <- get_formants_at_times(formant, times_with_gaps, 1:2),
+    "undefined"
+  )
+  expect_equal(length(formants$F1), 5)
+  expect_true(all(is.na(formants$F1[2:5])))
+  expect_false(is.na(formants$F1[1]))
+
+  # Unlike get_formants_at_times(), the bandwidth batch C++ export
+  # (formant_get_multiple_bandwidths_at_times) does not pre-filter
+  # non-finite times per-value; a non-finite time reaches
+  # Formant_getBandwidthAtTime()/Sampled_getValueAtX() directly, which
+  # raises a MelderError that the wrapper turns into a hard R error
+  # (see src/batch_queries.cpp's catch block around "Failed to query
+  # formant bandwidths"). Verified by direct run, not assumed.
+  expect_error(
+    get_formant_bandwidths_at_times(formant, times_with_gaps, 1:2),
+    "Failed to query formant bandwidths"
+  )
+
+  pitch_times <- c((pitch$get_xmin() + pitch$get_xmax()) / 2, NA_real_, Inf)
+  expect_warning(
+    strengths <- get_pitch_strengths_at_times(pitch, pitch_times),
+    "undefined"
+  )
+  expect_equal(length(strengths), 3)
+  expect_true(all(is.na(strengths[2:3])))
+})
+
+test_that("internal formant batch functions reject an out-of-range formant index directly", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  formant <- sound$to_formant_burg()
+
+  # get_formants_at_times()/get_formant_bandwidths_at_times() only check that
+  # formant_numbers is non-empty numeric; they do not check that each entry
+  # is >= 1, so a 0/negative formant number reaches the C++ bounds check.
+  expect_error(
+    pladdrr:::formant_get_multiple_formants_at_times(formant$.xptr, 0.1, 0L),
+    "formant index"
+  )
+  # formant_get_multiple_bandwidths_at_times() has no equivalent >= 1 bounds
+  # check (verified by reading src/batch_queries.cpp and running directly):
+  # an out-of-range formant index reaches Formant_getBandwidthAtTime()/
+  # Sampled_getValueAtX() with an invalid column and comes back as NaN
+  # rather than throwing. Confirmed non-crashing by direct run.
+  bandwidth_oor <- pladdrr:::formant_get_multiple_bandwidths_at_times(formant$.xptr, 0.1, -1L)
+  expect_true(is.nan(bandwidth_oor[[1]]))
+
+  # Calling the internal C++ export directly (bypassing the R wrapper's
+  # non-empty check) exercises the empty-vector guard inside the C++ layer.
+  expect_error(
+    pladdrr:::formant_get_multiple_formants_at_times(formant$.xptr, 0.1, integer(0)),
+    "non-empty"
+  )
+})
+
+test_that("get_pitch_quantiles_batch() computes named quantiles over default and explicit ranges", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  pitch <- sound$to_pitch_cc()
+
+  # Default from_time = to_time = 0 means "use the whole object range"
+  quartiles_default <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
+  expect_equal(length(quartiles_default), 3)
+  expect_named(quartiles_default, c("q0.25", "q0.5", "q0.75"))
+
+  # Explicit sub-range skips the "use whole range" branch
+  quartiles_range <- get_pitch_quantiles_batch(
+    pitch, c(0.25, 0.75),
+    from_time = pitch$get_xmin(), to_time = pitch$get_xmax()
+  )
+  expect_equal(length(quartiles_range), 2)
+
+  # Quartiles should be non-decreasing and within a plausible F0 range
+  valid <- quartiles_default[!is.na(quartiles_default)]
+  if (length(valid) == 3) {
+    expect_true(valid["q0.25"] <= valid["q0.5"])
+    expect_true(valid["q0.5"] <= valid["q0.75"])
+  }
+})
+
+test_that("internal batch-query C++ exports reject a null external pointer", {
+  null_ptr <- methods::new("externalptr")
+
+  expect_error(pladdrr:::formant_get_multiple_bandwidths_at_times(null_ptr, 0.1, 1L))
+  expect_error(pladdrr:::pitch_get_quantiles_batch(null_ptr, 0.5))
+  expect_error(pladdrr:::pointprocess_get_all_times(null_ptr))
+  expect_error(pladdrr:::pointprocess_get_intervals(null_ptr))
+  expect_error(pladdrr:::pointprocess_get_nearest_indices(null_ptr, 0.1))
+  expect_error(
+    pladdrr:::pitch_get_statistics_batch(null_ptr, 0, 1, "mean")
+  )
+  expect_error(pladdrr:::pitch_get_adaptive_range(null_ptr))
+  expect_error(
+    pladdrr:::intensity_get_statistics_batch(null_ptr, 0, 1, "mean")
+  )
+  expect_error(pladdrr:::intensity_get_minimum_with_time(null_ptr))
+})
+
+test_that("pitch_get_statistics_batch supports median/count_voiced metrics and validates inputs", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  pitch <- sound$to_pitch_cc()
+
+  # Mismatched from_times/to_times length -> C++ input-validation error
+  expect_error(
+    pladdrr:::pitch_get_statistics_batch(
+      pitch$.xptr, c(0, 0.5), c(1.0), c("mean"), 0L
+    ),
+    "same length"
+  )
+
+  # "q50" (median) and "count_voiced" are supported metrics that the existing
+  # performance-enhancement tests never exercise; from=to=0 also exercises the
+  # "use whole object range" branch (as opposed to an explicit sub-interval).
+  result <- pladdrr:::pitch_get_statistics_batch(
+    pitch$.xptr, 0, 0, c("q50", "count_voiced"), 0L
+  )
+  expect_equal(colnames(result), c("q50", "count_voiced"))
+  expect_equal(nrow(result), 1)
+  expect_true(result[1, "count_voiced"] >= 0)
+})
+
+test_that("intensity_get_minimum_with_time() returns a minimum value and time", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  intensity <- sound$to_intensity()
+
+  # Default from_time = to_time = 0 -> whole-object range branch
+  result_default <- pladdrr:::intensity_get_minimum_with_time(intensity$.xptr)
+  expect_type(result_default, "list")
+  expect_named(result_default, c("value", "time"))
+  expect_true(is.numeric(result_default$value))
+  expect_true(result_default$time >= intensity$get_xmin())
+  expect_true(result_default$time <= intensity$get_xmax())
+
+  # Explicit sub-range skips the "use whole range" branch
+  result_range <- pladdrr:::intensity_get_minimum_with_time(
+    intensity$.xptr, intensity$get_xmin(), intensity$get_xmax()
+  )
+  expect_true(is.numeric(result_range$value))
+})
+
+test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates inputs", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  intensity <- sound$to_intensity()
+
+  expect_error(
+    pladdrr:::intensity_get_statistics_batch(
+      intensity$.xptr, c(0, 0.5), c(1.0), c("mean"), 0L
+    ),
+    "same length"
+  )
+
+  result <- pladdrr:::intensity_get_statistics_batch(
+    intensity$.xptr, 0, 0, c("q25", "q75"), 0L
+  )
+  expect_equal(colnames(result), c("q25", "q75"))
+  expect_equal(nrow(result), 1)
+  expect_true(result[1, "q75"] >= result[1, "q25"])
 })
 
 # Performance benchmarks
