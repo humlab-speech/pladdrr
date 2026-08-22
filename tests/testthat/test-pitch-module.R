@@ -219,3 +219,30 @@ test_that("RPitch matches R6 Pitch values", {
   mod_mean <- rpitch$get_mean(0, 0, 0)
   expect_equal(mod_mean, r6_mean, tolerance = 1e-10)
 })
+
+test_that("RPitch default (no-arg) constructor fails safely rather than producing a usable object", {
+  skip_if_no_pitch_module()
+  mod <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
+
+  # RPitch() : ptr(R_NilValue) {} - the zero-arg constructor path.
+  # Rcpp::XPtr's own constructor rejects a NILSXP (it requires an EXTPTRSXP),
+  # so this throws immediately rather than yielding an invalid-but-usable
+  # object. Confirmed safe (clean R error, no crash) before writing this test.
+  expect_error(new(mod$RPitch), "external pointer")
+})
+
+test_that("RPitch debug_candidates returns per-frame candidate detail", {
+  skip_if_no_pitch_module()
+  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  pitch_r6 <- snd$to_pitch()
+  rpitch <- get_rpitch(pitch_r6)
+
+  dc <- rpitch$debug_candidates(3L)
+  expect_type(dc, "list")
+  expect_equal(length(dc), 3)
+
+  first <- dc[[1]]
+  expect_true(all(c("time", "nCandidates", "frequencies", "strengths", "ceiling") %in% names(first)))
+  expect_equal(length(first$frequencies), first$nCandidates)
+  expect_equal(length(first$strengths), first$nCandidates)
+})
