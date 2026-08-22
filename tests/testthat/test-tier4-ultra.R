@@ -67,6 +67,90 @@ test_that("get_durations_batch handles single file", {
   expect_true(duration > 0)
 })
 
+# get_durations_batch_cpp() parses only the minimal WAV header/chunk layout
+# itself (it doesn't reuse the full Sound-reading path), so it has its own
+# chunk-walking edge cases the tests above never exercise: a file that opens
+# but isn't RIFF-tagged, a fmt chunk wider than the 16-byte PCM minimum,
+# a non-fmt/non-data chunk before or after fmt, and a fmt chunk with no
+# data chunk at all. These are constructed by hand below (not via
+# Sound$save()) specifically to hit those chunk-walking branches.
+test_that("get_durations_batch_cpp handles WAV chunk-layout edge cases", {
+  wu32 <- function(con, x) writeBin(as.integer(x), con, size = 4, endian = "little")
+  wchunk_id <- function(con, id) writeBin(charToRaw(id), con)
+  fmt_chunk_bytes <- function(extra_bytes = 0) {
+    body <- c(
+      writeBin(1L, raw(), size = 2, endian = "little"),      # audio_format = PCM
+      writeBin(1L, raw(), size = 2, endian = "little"),      # num_channels
+      writeBin(16000L, raw(), size = 4, endian = "little"),  # sample_rate
+      writeBin(32000L, raw(), size = 4, endian = "little"),  # byte_rate
+      writeBin(2L, raw(), size = 2, endian = "little"),      # block_align
+      writeBin(16L, raw(), size = 2, endian = "little")      # bits_per_sample
+    )
+    if (extra_bytes > 0) body <- c(body, raw(extra_bytes))
+    body
+  }
+
+  # Opens fine but has no "RIFF" magic -> NA, not a parse error
+  not_riff <- tempfile(fileext = ".wav")
+  writeLines("not a wav file", not_riff)
+
+  # fmt chunk size 18 (> 16, e.g. WAVE_FORMAT_EXTENSIBLE-style padding) ->
+  # exercises the "skip trailing fmt bytes" branch
+  wide_fmt <- tempfile(fileext = ".wav")
+  con <- file(wide_fmt, "wb")
+  wchunk_id(con, "RIFF"); wu32(con, 100); wchunk_id(con, "WAVE")
+  fmt_body <- fmt_chunk_bytes(extra_bytes = 2)
+  wchunk_id(con, "fmt "); wu32(con, length(fmt_body)); writeBin(fmt_body, con)
+  data_body <- raw(8)
+  wchunk_id(con, "data"); wu32(con, length(data_body)); writeBin(data_body, con)
+  close(con)
+
+  # Extra "LIST" chunk between fmt and data -> exercises the
+  # skip-unrecognized-chunk branch inside the data-search loop
+  extra_chunk_before_data <- tempfile(fileext = ".wav")
+  con <- file(extra_chunk_before_data, "wb")
+  wchunk_id(con, "RIFF"); wu32(con, 100); wchunk_id(con, "WAVE")
+  fmt_body <- fmt_chunk_bytes()
+  wchunk_id(con, "fmt "); wu32(con, length(fmt_body)); writeBin(fmt_body, con)
+  list_body <- raw(4)
+  wchunk_id(con, "LIST"); wu32(con, length(list_body)); writeBin(list_body, con)
+  data_body <- raw(8)
+  wchunk_id(con, "data"); wu32(con, length(data_body)); writeBin(data_body, con)
+  close(con)
+
+  # fmt chunk present, file ends before any "data" chunk -> exercises the
+  # "end of file without data chunk" branch (falls back to NA)
+  no_data_chunk <- tempfile(fileext = ".wav")
+  con <- file(no_data_chunk, "wb")
+  wchunk_id(con, "RIFF"); wu32(con, 100); wchunk_id(con, "WAVE")
+  fmt_body <- fmt_chunk_bytes()
+  wchunk_id(con, "fmt "); wu32(con, length(fmt_body)); writeBin(fmt_body, con)
+  close(con)
+
+  # Extra "JUNK" chunk before fmt -> exercises the skip-unrecognized-chunk
+  # branch in the outer (pre-fmt) chunk-search loop
+  extra_chunk_before_fmt <- tempfile(fileext = ".wav")
+  con <- file(extra_chunk_before_fmt, "wb")
+  wchunk_id(con, "RIFF"); wu32(con, 100); wchunk_id(con, "WAVE")
+  junk_body <- raw(4)
+  wchunk_id(con, "JUNK"); wu32(con, length(junk_body)); writeBin(junk_body, con)
+  fmt_body <- fmt_chunk_bytes()
+  wchunk_id(con, "fmt "); wu32(con, length(fmt_body)); writeBin(fmt_body, con)
+  data_body <- raw(8)
+  wchunk_id(con, "data"); wu32(con, length(data_body)); writeBin(data_body, con)
+  close(con)
+
+  durations <- get_durations_batch(c(
+    not_riff, wide_fmt, extra_chunk_before_data, no_data_chunk, extra_chunk_before_fmt
+  ))
+
+  expect_true(is.na(durations[1]))
+  expect_equal(durations[2], 0.00025, tolerance = 1e-8)
+  expect_equal(durations[3], 0.00025, tolerance = 1e-8)
+  expect_true(is.na(durations[4]))
+  expect_equal(durations[5], 0.00025, tolerance = 1e-8)
+})
+
 test_that("get_durations_batch validates input", {
   expect_error(get_durations_batch(123), "character")
   expect_error(get_durations_batch(NULL), "character")

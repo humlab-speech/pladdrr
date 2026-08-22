@@ -340,6 +340,20 @@ test_that("internal batch-query C++ exports reject a null external pointer", {
     pladdrr:::intensity_get_statistics_batch(null_ptr, 0, 1, "mean")
   )
   expect_error(pladdrr:::intensity_get_minimum_with_time(null_ptr))
+
+  # get_jitter_shimmer_batch_cpp() validates its two pointers (PointProcess,
+  # Sound) independently -- exercise both guards, not just "both null".
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound <- Sound(sound_path)
+  pp <- sound$to_point_process_periodic_cc(75, 600)
+  expect_error(
+    pladdrr:::get_jitter_shimmer_batch_cpp(null_ptr, sound$.xptr),
+    "PointProcess"
+  )
+  expect_error(
+    pladdrr:::get_jitter_shimmer_batch_cpp(pp$.xptr, null_ptr),
+    "Sound"
+  )
 })
 
 test_that("pitch_get_statistics_batch supports median/count_voiced metrics and validates inputs", {
@@ -364,6 +378,12 @@ test_that("pitch_get_statistics_batch supports median/count_voiced metrics and v
   expect_equal(colnames(result), c("q50", "count_voiced"))
   expect_equal(nrow(result), 1)
   expect_true(result[1, "count_voiced"] >= 0)
+
+  # Unrecognized metric name -> "Unknown metric" C++ input-validation error
+  expect_error(
+    pladdrr:::pitch_get_statistics_batch(pitch$.xptr, 0, 0, "not_a_real_metric", 0L),
+    "Unknown metric"
+  )
 })
 
 test_that("intensity_get_minimum_with_time() returns a minimum value and time", {
@@ -404,6 +424,19 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   expect_equal(colnames(result), c("q25", "q75"))
   expect_equal(nrow(result), 1)
   expect_true(result[1, "q75"] >= result[1, "q25"])
+
+  # "q50"/"median" (both accepted spellings) are supported but exercised by
+  # no existing intensity-statistics test.
+  result_median <- pladdrr:::intensity_get_statistics_batch(
+    intensity$.xptr, 0, 0, c("q50", "median"), 0L
+  )
+  expect_equal(as.numeric(result_median[1, "q50"]), as.numeric(result_median[1, "median"]))
+
+  # Unrecognized metric name -> "Unknown metric" C++ input-validation error
+  expect_error(
+    pladdrr:::intensity_get_statistics_batch(intensity$.xptr, 0, 0, "not_a_real_metric", 0L),
+    "Unknown metric"
+  )
 })
 
 # Performance benchmarks
