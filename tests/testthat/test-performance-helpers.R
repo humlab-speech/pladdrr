@@ -288,3 +288,28 @@ test_that("calculate_multiband_hnr_ultra rejects a bands vector of the wrong len
   expect_error(calculate_multiband_hnr_ultra(sound, bands = c(0, 500)),
                "bands parameter must have exactly 5 elements")
 })
+
+test_that("validate_multiband_hnr_bands() C++ guard is reachable directly (both R wrappers pre-validate)", {
+  # Both build_multiband_harmonicity() and calculate_multiband_hnr_ultra()
+  # validate length(bands) == 5 in R before ever calling into C++, so the
+  # two tests above never exercise validate_multiband_hnr_bands() itself.
+  # Call the internal exports directly to close that gap.
+  sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  expect_error(
+    pladdrr:::.build_multiband_harmonicity_cpp(sound$.xptr, c(0, 500, 1500), 0.005, 75),
+    "bands parameter must have exactly 5 elements"
+  )
+  expect_error(
+    pladdrr:::.calculate_multiband_hnr_ultra_cpp(sound$.xptr, c(0, 500), 0.005, 75, 0, 0),
+    "bands parameter must have exactly 5 elements"
+  )
+})
+
+test_that("build_multiband_harmonicity / calculate_multiband_hnr_ultra reject a null pointer at the C++ layer", {
+  # Both accept a bare externalptr (via extract_xptr()), so a null pointer
+  # with a valid bands length reaches each C++ export's own null-pointer
+  # guard directly through the public API.
+  null_ptr <- methods::new("externalptr")
+  expect_error(build_multiband_harmonicity(null_ptr), "Invalid Sound pointer")
+  expect_error(calculate_multiband_hnr_ultra(null_ptr), "Invalid Sound pointer")
+})
