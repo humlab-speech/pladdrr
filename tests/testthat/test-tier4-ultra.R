@@ -261,6 +261,20 @@ test_that("calculate_f0_stats_ultra validates input", {
 
   expect_error(calculate_f0_stats_ultra("not_a_sound", "max"))
   expect_error(calculate_f0_stats_ultra(sound, "invalid_stat"))
+
+  # calculate_f0_stats_ultra()'s R wrapper validates both the Sound object
+  # and the stat string *before* reaching calculate_f0_stats_ultra_cpp(),
+  # so the two checks above never actually exercise the C++ guards. Call
+  # the internal C++ export directly to cover those.
+  null_ptr <- methods::new("externalptr")
+  expect_error(
+    pladdrr:::calculate_f0_stats_ultra_cpp(null_ptr, "max", 0, 75, 600, 0.45),
+    "Sound"
+  )
+  expect_error(
+    pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "not_a_real_stat", 0, 75, 600, 0.45),
+    "Unknown stat"
+  )
 })
 
 
@@ -305,6 +319,37 @@ test_that("calculate_minimum_intensity_ultra matches DSI reference value", {
 
 test_that("calculate_minimum_intensity_ultra validates input", {
   expect_error(calculate_minimum_intensity_ultra("not_a_sound"))
+})
+
+test_that("calculate_minimum_intensity_ultra_cpp handles null pointer, single-voiced-region, and no-voiced-region cases", {
+  # The R wrapper's inherits(sound, "Sound") check means the "not_a_sound"
+  # test above never reaches the C++ null-pointer guard; call the internal
+  # export directly.
+  null_ptr <- methods::new("externalptr")
+  expect_error(
+    pladdrr:::calculate_minimum_intensity_ultra_cpp(null_ptr, 75, 600, 0, TRUE),
+    "Sound"
+  )
+
+  # A clean single tone should produce exactly one continuous voiced
+  # interval, exercising the "single voiced region, no concatenation
+  # needed" branch (as opposed to the multi-region Sounds_concatenate()
+  # path already exercised by the DSI reference-value test above).
+  tone <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  single_region_result <- pladdrr:::calculate_minimum_intensity_ultra_cpp(
+    tone$.xptr, 75, 600, 0, TRUE
+  )
+  expect_true(is.numeric(single_region_result))
+  expect_false(is.na(single_region_result))
+
+  # A zero-amplitude "tone" (frequency = 0) has no detectable pitch, so
+  # pitch-based voiced/unvoiced segmentation should find zero voiced
+  # intervals, exercising the "no voiced regions found -> NA" branch.
+  silence <- Sound$create_tone(frequency = 0, duration = 0.3, sampling_rate = 16000)
+  no_voiced_result <- pladdrr:::calculate_minimum_intensity_ultra_cpp(
+    silence$.xptr, 75, 600, 0, TRUE
+  )
+  expect_true(is.na(no_voiced_result))
 })
 
 
