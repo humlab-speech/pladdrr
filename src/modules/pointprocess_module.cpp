@@ -157,7 +157,12 @@ public:
         try {
             autoPointProcess result = PointProcesses_union(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
+            // Mutate this object's own pointer in place (not just return a
+            // new one) so the R6 union_with()/intersection_with()/
+            // difference_with() wrappers - which discard the return value
+            // and just do `invisible(.self)` - actually take effect.
+            ptr = make_praat_xptr(raw);
+            return ptr;
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute union");
@@ -171,7 +176,8 @@ public:
         try {
             autoPointProcess result = PointProcesses_intersection(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
+            ptr = make_praat_xptr(raw);
+            return ptr;
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute intersection");
@@ -185,7 +191,8 @@ public:
         try {
             autoPointProcess result = PointProcesses_difference(ptr.get(), other_ptr.get());
             PointProcess raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
+            ptr = make_praat_xptr(raw);
+            return ptr;
         } catch (MelderError) {
             Melder_clearError();
             Rcpp::stop("Failed to compute difference");

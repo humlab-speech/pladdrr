@@ -146,17 +146,31 @@ NULL
 }
 
 # --- Set operations ---
+# NOTE: these were previously broken - the RPointProcess module methods
+# compute and return a *new* merged PointProcess, but the old R wrappers
+# discarded that return value and did `invisible(.self)`, so union_with()/
+# intersection_with()/difference_with() were silent no-ops from the
+# caller's perspective. The C++ side now also reassigns its own `ptr`
+# member (so .self$.cpp-backed reads on the original object, e.g.
+# get_number_of_points()/get_xmin()/get_xmax(), reflect the result even
+# without reassignment), and the R wrapper now returns a fresh
+# PointProcess wrapping the result so .xptr-backed methods (jitter/
+# voice_report/to_textgrid_vuv/to_sound_*) are consistent too. Callers
+# should reassign: pp <- pp$union_with(other).
 .pp_methods$union_with <- function(.self, other_pp) {
   if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
-  .self$.cpp$union_with(other_pp$.xptr); invisible(.self)
+  new_xptr <- .self$.cpp$union_with(other_pp$.xptr)
+  PointProcess(.xptr = new_xptr)
 }
 .pp_methods$intersection_with <- function(.self, other_pp) {
   if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
-  .self$.cpp$intersection_with(other_pp$.xptr); invisible(.self)
+  new_xptr <- .self$.cpp$intersection_with(other_pp$.xptr)
+  PointProcess(.xptr = new_xptr)
 }
 .pp_methods$difference_with <- function(.self, other_pp) {
   if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
-  .self$.cpp$difference_with(other_pp$.xptr); invisible(.self)
+  new_xptr <- .self$.cpp$difference_with(other_pp$.xptr)
+  PointProcess(.xptr = new_xptr)
 }
 
 # --- Conversions ---
