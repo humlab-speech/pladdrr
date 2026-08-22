@@ -20,6 +20,16 @@ test_that("LPC per-frame coefficient/gain queries work", {
   expect_type(lpc$get_coefficients_at_frame(1), "double")
   expect_type(lpc$get_all_gains(), "double")
   expect_true(is.matrix(lpc$get_all_coefficients()))
+
+  # get_all_gains()/get_all_coefficients() and their per-frame counterparts read
+  # the same underlying LPC_Frame data (src/modules/lpc_module.cpp) -- cross-check
+  # they agree rather than just type-checking each independently.
+  n_frames <- lpc$get_number_of_frames()
+  expect_length(lpc$get_all_gains(), n_frames)
+  expect_equal(lpc$get_all_gains()[1], lpc$get_gain_at_frame(1))
+  expect_equal(lpc$get_all_gains()[n_frames], lpc$get_gain_at_frame(n_frames))
+  expect_equal(ncol(lpc$get_all_coefficients()), n_frames)
+  expect_equal(lpc$get_all_coefficients()[, 1], lpc$get_coefficients_at_frame(1))
 })
 
 test_that("LPC conversions: to_spectrum, to_matrix, to_spectrogram, to_lfcc", {
@@ -61,7 +71,10 @@ test_that("LPC filter_inverse (whole-sound) is broken for the real Sound impleme
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
 
-  expect_error(lpc$filter_inverse(sound), "S4")
+  # No regexp: the error text ("Not an S4 object") is an Rcpp-internal message,
+  # not pladdrr-owned, and could change with an Rcpp upgrade. The comment above
+  # documents what's actually being tested (filter_inverse() is unreachable).
+  expect_error(lpc$filter_inverse(sound))
 })
 
 test_that("LPC to_formant is unavailable in this build (hard-coded stop, no CLAPACK probe)", {

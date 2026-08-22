@@ -37,6 +37,21 @@ test_that("FormantModeler per-track value queries and refit", {
   expect_type(modeler$get_data_point_sigma(1, 1), "double")
   expect_type(modeler$get_track_model_values(1), "double")
 
+  # get_estimated_value_at_time() is documented as a distinct query, but
+  # src/modules/formantmodeler_module.cpp's implementation literally calls
+  # FormantModeler_getModelValueAtTime() -- the same underlying Praat call as
+  # get_model_value_at_time() (getEstimatedValueAtTime() is declared but not
+  # implemented in Praat source, per the C++ comment there). They must agree.
+  expect_equal(
+    modeler$get_estimated_value_at_time(1, 0.25),
+    modeler$get_model_value_at_time(1, 0.25)
+  )
+
+  # get_track_model_values(track) returns one modeled value per data point
+  # (src/modules/formantmodeler_module.cpp loops i = 1..n_data_points) --
+  # cross-check its length against the data-point count.
+  expect_length(modeler$get_track_model_values(1), modeler$get_number_of_data_points())
+
   # process_outliers() is a pure function: it returns a *new* FormantModeler
   # (verified via identical() against the original -- FALSE), it does not
   # mutate `modeler` in place. Capture the return value to actually exercise
@@ -60,6 +75,17 @@ test_that("FormantModeler to_formant, as_data_frame, get_info, save", {
   df <- modeler$as_data_frame()
   expect_s3_class(df, "data.frame")
   expect_true(all(c("time", "F1_original", "F1_modeled") %in% names(df)))
+  expect_equal(nrow(df), modeler$get_number_of_data_points())
+
+  # as_data_frame()'s F1_original column and get_data_point_value(1, i) both
+  # read FormantModeler_getDataPointValue() per data point (same C++ call in
+  # src/modules/formantmodeler_module.cpp) -- cross-check they agree.
+  original_via_getter <- vapply(
+    seq_len(nrow(df)),
+    function(i) modeler$get_data_point_value(1, i),
+    numeric(1)
+  )
+  expect_equal(df$F1_original, original_via_getter)
 
   # get_info() returns a *list* of summary fields (xmin, xmax, n_tracks,
   # n_data_points, track_r2, track_sd, track_parameters) -- not a character
