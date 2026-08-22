@@ -195,6 +195,33 @@ test_that("CPPS calculation on ultra-extracted segments is reasonable", {
     }
 })
 
+test_that("use_manual_zcr = TRUE takes the sample-based zero-crossing path", {
+  # extract_voiced_segments_ultra() (the public R wrapper) never exposes
+  # use_manual_zcr, so its manual sample-based zero-crossing counting
+  # branch -- distinct from the default PointProcess-interpolation ZCR --
+  # is only reachable via the internal .extract_voiced_segments_ultra_cpp()
+  # export. Confirmed to produce a materially different (non-crashing)
+  # result from the default path on the same input, showing the branch
+  # actually ran rather than silently falling through.
+  sound <- Sound$create_tone(frequency = 150, duration = 1.0, sampling_rate = 44100)
+
+  manual_ptr <- pladdrr:::.extract_voiced_segments_ultra_cpp(
+    sound$.xptr, "v3.01", 50, -25, 0.1, 0.1, 0.3, 3000, 0.03, TRUE
+  )
+  manual_result <- Sound$new(.xptr = manual_ptr)
+
+  default_ptr <- suppressWarnings(pladdrr:::.extract_voiced_segments_ultra_cpp(
+    sound$.xptr, "v3.01", 50, -25, 0.1, 0.1, 0.3, 3000, 0.03, FALSE
+  ))
+  default_result <- Sound$new(.xptr = default_ptr)
+
+  expect_s3_class(manual_result, "Sound")
+  expect_true(manual_result$get_total_duration() > 0.001)
+  expect_false(isTRUE(all.equal(
+    manual_result$get_total_duration(), default_result$get_total_duration()
+  )))
+})
+
 test_that("extract_voiced_segments_ultra rejects a null external pointer at the C++ layer", {
   # extract_voiced_segments_ultra() accepts a bare externalptr, so a null
   # pointer reaches extract_voiced_segments_ultra_cpp()'s own "Invalid
