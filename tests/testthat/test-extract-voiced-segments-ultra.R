@@ -194,3 +194,40 @@ test_that("CPPS calculation on ultra-extracted segments is reasonable", {
                     label = sprintf("CPPS %.2f dB should be > 0 for periodic signal", cpps))
     }
 })
+
+test_that("extract_voiced_segments_ultra rejects a null external pointer at the C++ layer", {
+  # extract_voiced_segments_ultra() accepts a bare externalptr, so a null
+  # pointer reaches extract_voiced_segments_ultra_cpp()'s own "Invalid
+  # Sound pointer" guard directly through the public API.
+  null_ptr <- methods::new("externalptr")
+  expect_error(extract_voiced_segments_ultra(null_ptr), "Invalid Sound pointer")
+})
+
+test_that("extract_voiced_segments_ultra returns the minimal 1ms seed when nothing is sounding", {
+  # Every other test in this file uses a synthetic continuous tone, which is
+  # one single unbroken sounding interval throughout. A silent (zero-
+  # amplitude) sound has zero sounding intervals, exercising the "no
+  # sounding regions found -> return Praat's minimal 1ms silence" branch,
+  # distinct from both the single-region and multi-region concatenation
+  # paths.
+  silence <- Sound$create_tone(frequency = 0, duration = 0.5, sampling_rate = 16000)
+  result <- suppressWarnings(extract_voiced_segments_ultra(silence, version = "v3.01"))
+  expect_s3_class(result, "Sound")
+  expect_equal(result$get_total_duration(), 0.001, tolerance = 1e-9)
+})
+
+test_that("extract_voiced_segments_ultra concatenates multiple sounding regions on real speech", {
+  # Real speech has natural pauses, so TextGrid_Sound_extractIntervalsWhere()
+  # returns more than one sounding interval, exercising the
+  # Sounds_concatenate() multi-region branch that the synthetic
+  # continuous-tone fixtures used elsewhere in this file never reach (those
+  # are always a single unbroken sounding interval).
+  wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  skip_if(!file.exists(wav), "Test WAV file not found")
+  sound <- Sound(wav)
+
+  result <- extract_voiced_segments_ultra(sound, version = "v3.01")
+  expect_s3_class(result, "Sound")
+  expect_true(result$get_total_duration() > 0.001)
+  expect_true(result$get_total_duration() < sound$get_total_duration())
+})
