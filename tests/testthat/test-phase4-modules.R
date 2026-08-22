@@ -192,6 +192,128 @@ test_that("RPowerCepstrogram CPPS works", {
   expect_type(cpps, "double")
 })
 
+test_that("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
+  # Coverage gap-fill note (task 20): PowerCepstrum$get_peak_prominence() (the
+  # R6 method) dispatches to the bare .powercepstrum_get_peak_prominence()
+  # wrapper.cpp export, NOT to this module's own get_peak_prominence() method
+  # -- so this module method is otherwise dead code from the R6 API's
+  # perspective (confirmed dual-implementation trap). Exercised directly here
+  # via new(pc_mod$RPowerCepstrum, ptr), matching this file's existing
+  # convention of testing module-only surface that the R6 wrapper doesn't use.
+  skip_if_no_module("powercepstrum")
+  skip_if_no_module("sound")
+  skip_if_no_module("spectrum")
+
+  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  spectrum <- snd$to_spectrum()
+  spec_ptr <- spectrum$.xptr
+
+  pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
+  pc_ptr <- pc_mod$Spectrum_to_PowerCepstrum(spec_ptr)
+  rpc <- new(pc_mod$RPowerCepstrum, pc_ptr)
+
+  # interpolation = parabolic(1), trend_type = exponential decay(2),
+  # fit_method = robust slow(3) -- same integer codes R/constants.R's
+  # .interp_map / .trend_line_map / .trend_fit_map use for these module calls.
+  prom <- rpc$get_peak_prominence(60, 333.3, 1L, 0.001, 0.05, 2L, 3L)
+  expect_true(is.numeric(prom))
+
+  hb <- rpc$get_peak_prominence_hillenbrand(60, 333.3)
+  expect_true(is.list(hb))
+
+  trend <- rpc$fit_trend_line(0.001, 0.05, 2L, 3L)
+  expect_true(is.list(trend))
+
+  trend_val <- rpc$get_trend_line_value(0.005, 0.001, 0.05, 2L, 3L)
+  expect_true(is.numeric(trend_val))
+
+  smoothed_ptr <- rpc$smooth_ptr(0.0005, 100L)
+  rpc_smoothed <- new(pc_mod$RPowerCepstrum, smoothed_ptr)
+  expect_true(rpc_smoothed$is_valid())
+
+  detrended_ptr <- rpc$subtract_trend_ptr(0.001, 0.05, 2L, 3L)
+  rpc_detrended <- new(pc_mod$RPowerCepstrum, detrended_ptr)
+  expect_true(rpc_detrended$is_valid())
+
+  expect_no_error(rpc$subtract_trend_inplace(0.001, 0.05, 2L, 3L))
+
+  spec_ptr2 <- rpc$to_spectrum_ptr(FALSE)
+  expect_false(is.null(spec_ptr2))
+
+  mat_ptr <- rpc$to_matrix_ptr()
+  expect_false(is.null(mat_ptr))
+
+  am <- rpc$as_matrix()
+  expect_true(is.matrix(am))
+
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  expect_no_error(rpc$save(tmp))
+})
+
+test_that("RPowerCepstrogram exposes time/quefrency domain properties, slicing, smoothing, matrix export, and save", {
+  # Coverage gap-fill note (task 20): the PowerCepstrogram R6 class has NO
+  # module at all ("# No module -- pure Rcpp function wrapper" in
+  # R/powercepstrum.R) -- every one of RPowerCepstrogram's methods below is
+  # unreachable from the normal PowerCepstrogram R6 API and can only be
+  # exercised via direct module instantiation, as done throughout this file.
+  skip_if_no_module("powercepstrum")
+  skip_if_no_module("sound")
+
+  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound_ptr <- snd$.xptr
+
+  pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
+  pcg_ptr <- pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 5000, 50)
+  rpcg <- new(pc_mod$RPowerCepstrogram, pcg_ptr)
+
+  expect_true(is.numeric(rpcg$get_xmin()))
+  expect_true(is.numeric(rpcg$get_xmax()))
+  expect_gt(rpcg$get_duration(), 0)
+  expect_gt(rpcg$get_dx(), 0)
+  expect_true(is.numeric(rpcg$get_ymin()))
+  expect_true(is.numeric(rpcg$get_ymax()))
+  expect_gt(rpcg$get_dy(), 0)
+
+  mid_time <- (rpcg$get_xmin() + rpcg$get_xmax()) / 2
+  cpp <- rpcg$get_cpp_at_time(mid_time, "cubic", 0.003, 0.04, "exponential decay", 0.05)
+  expect_true(is.numeric(cpp))
+
+  slice_ptr <- rpcg$get_slice_ptr(mid_time)
+  rpc_slice <- new(pc_mod$RPowerCepstrum, slice_ptr)
+  expect_true(rpc_slice$is_valid())
+
+  smoothed_ptr <- rpcg$smooth_ptr(0.02, 0.001)
+  rpcg_smoothed <- new(pc_mod$RPowerCepstrogram, smoothed_ptr)
+  expect_true(rpcg_smoothed$is_valid())
+
+  mat_ptr <- rpcg$to_matrix_ptr()
+  expect_false(is.null(mat_ptr))
+
+  am <- rpcg$as_matrix()
+  expect_true(is.matrix(am))
+
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  expect_no_error(rpcg$save(tmp))
+})
+
+test_that("powercepstrum_module's Sound_to_PowerCepstrogram free function validates pitch_floor, time_step, and maximum_frequency", {
+  skip_if_no_module("powercepstrum")
+  skip_if_no_module("sound")
+
+  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound_ptr <- snd$.xptr
+  pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
+
+  expect_error(pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 0, 0.01, 5000, 50),
+               "pitch_floor must be positive")
+  expect_error(pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0, 5000, 50),
+               "time_step must be positive")
+  expect_error(pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 0, 50),
+               "maximum_frequency must be between")
+})
+
 # ============================================================================
 # Cochleagram Module Tests
 # ============================================================================
