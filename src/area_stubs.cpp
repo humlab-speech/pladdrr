@@ -23,9 +23,10 @@
 
 #include "praat.github.io/sys/Thing.h"
 
-// nocov start
-// GUI Area class stubs for Praat editor components (never executed from R)
-// These are editor/viewer components not needed for script execution.
+// GUI Area class stubs for Praat editor components. Most functions in this file are
+// unreachable GUI-editor stubs, but some (preferences/init entry points) do execute
+// during Praat initialization — left uninstrumented-by-exclusion, coverage reflects
+// actual reachability (baseline measured ~18.9% covered, 17/90 lines genuinely live).
 
 // Forward declarations
 struct structPointProcess;
@@ -304,4 +305,3 @@ void structSoundRecorder::f_preferences() { }
 void structFunctionEditor::f_preferences() { }
 void structTextGridEditor::f_preferences() { }
 void structSpectrumEditor::f_preferences() { }
-// nocov end

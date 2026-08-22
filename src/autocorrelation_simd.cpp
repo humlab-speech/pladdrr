@@ -184,8 +184,8 @@ double cross_correlation_simd(NumericVector x, NumericVector y) {
 #endif
 }
 
-// nocov start
 // Windowed autocorrelation (for pitch detection with frames)
+// Confirmed-orphaned: zero callers anywhere in src/ — not covered, not excluded.
 NumericMatrix windowed_autocorrelation_simd(
     NumericVector data,
     int frame_length,
@@ -222,7 +222,6 @@ NumericMatrix windowed_autocorrelation_simd(
 
     return result;
 }
-// nocov end
 
 // Burg algorithm preprocessing (compute autocorrelation for LPC)
 // [[Rcpp::export(.lpc_autocorrelation_simd)]]
@@ -293,7 +292,7 @@ NumericVector autocorrelation_normalized_scalar(NumericVector data, int max_lag)
     return result;
 }
 
-// nocov start
+// Confirmed-orphaned: zero callers anywhere in src/ — not covered, not excluded.
 double cross_correlation_scalar(NumericVector x, NumericVector y) {
     if (x.size() != y.size()) {
         Rcpp::stop("Vectors must have same length for cross-correlation");
@@ -310,9 +309,8 @@ double cross_correlation_scalar(NumericVector x, NumericVector y) {
 
     return sum;
 }
-// nocov end
 
-// nocov start
+// Confirmed-orphaned: zero callers anywhere in src/ — not covered, not excluded.
 NumericMatrix windowed_autocorrelation_scalar(
     NumericVector data,
     int frame_length,
@@ -338,7 +336,6 @@ NumericMatrix windowed_autocorrelation_scalar(
 
     return result;
 }
-// nocov end
 
 // [[Rcpp::export(.lpc_autocorrelation_scalar)]]
 NumericVector lpc_autocorrelation_scalar(NumericVector data, int num_coefficients) {

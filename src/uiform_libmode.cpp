@@ -37,9 +37,9 @@
 #include "praat.github.io/sys/Ui.h"
 #include "praat.github.io/sys/Interpreter.h"
 
-// nocov start
 // Library-mode stubs for UiForm functions (GUI-only, never executed from R)
 // see lines 26-34 for full explanation of why these are link-required but unreachable
+// Whole file excluded from coverage measurement via .covrignore (see repo root).
 
 // ============================================================================
 // UiField creation (from Ui.cpp)
@@ -809,4 +809,3 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 }
 
 /* End of uiform_libmode.cpp */
-// nocov end

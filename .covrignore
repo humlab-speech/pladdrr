@@ -5,3 +5,14 @@
 src/praat.github.io
 src/pffft
 src/pocketfft
+
+# Individually-confirmed fully-dead files (0.00%-or-near-0% baseline coverage,
+# zero external callers). `// nocov start`/`// nocov end` markers do NOT work
+# in C++ files under covr's default exclude-region regex (it requires a
+# literal `#`, R-comment style, and never matches `//`) — this file-level
+# .covrignore entry is the actual, working exclusion mechanism.
+src/uiform_libmode.cpp
+src/formantpath_simd.cpp
+src/graphics_stubs_comprehensive.cpp
+src/pitch_simd_bridge.cpp
+src/uiform_stubs.cpp

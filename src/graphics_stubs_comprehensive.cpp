@@ -25,9 +25,9 @@
 #include "praat.github.io/dwtools/Sound_extensions_enums.h"
 #include "praat.github.io/fon/Matrix.h"
 
-// nocov start
 // Graphics stubs for NO_GRAPHICS builds (GUI-only, never executed from R)
 // These are no-op function implementations for the Graphics subsystem.
+// Whole file excluded from coverage measurement via .covrignore (see repo root).
 
 // Forward declarations for GUI types
 struct structGuiForm;
@@ -275,4 +275,3 @@ double Graphics_dyWCtoMM (Graphics me, double dy) {
     // Stub: no graphics context
     return 10.0;  // Return dummy value
 }
-// nocov end
