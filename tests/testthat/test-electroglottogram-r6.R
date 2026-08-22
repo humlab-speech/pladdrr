@@ -9,13 +9,16 @@
 # R/sound-wrapper.R) converts it to an Electroglottogram carrying that data.
 #
 # `to_textgrid_closed_glottis()` is exercised with `expect_error()`, not a
-# success path: `Vector_getNearestLevelCrossing()` (src/melderthread_impl.cpp)
-# is an unconditional stub that always throws "not available in this build"
-# regardless of build flags or input signal -- verified by temporarily
-# surfacing the underlying Melder error message (no combination of pitch
-# floor/ceiling, closing threshold, peak threshold, or signal shape avoids
-# it). This is a real, permanent limitation of this build, not a fixture
-# problem.
+# success path: the stub in src/melderthread_impl.cpp always throws "not
+# available in this build" regardless of build flags or input signal --
+# verified by temporarily surfacing the underlying Melder error message (no
+# combination of pitch floor/ceiling, closing threshold, peak threshold, or
+# signal shape avoids it). This is NOT a fundamental limitation: the real
+# implementation (`Vector_getNearestLevelCrossing`) exists in-tree at
+# src/praat.github.io/dwtools/Vector_extensions.cpp:27, it is just missing
+# from the `DWTOOLS_SRC` file list in src/Makevars.in, so it never gets
+# compiled in and the stub wins at link time. Wiring it up is a one-line
+# Makevars.in fix, tracked as a separate follow-up -- out of scope here.
 
 make_test_egg <- function(sampling_rate = 16000, duration = 0.2, f0 = 120) {
   n <- round(sampling_rate * duration)
