@@ -16,3 +16,8 @@ src/formantpath_simd.cpp
 src/graphics_stubs_comprehensive.cpp
 src/pitch_simd_bridge.cpp
 src/uiform_stubs.cpp
+# Legacy dead helpers: praat_error_to_r/throw_praat_error (unused by any R
+# code; praat_error_to_r is an Rcpp::export but absent from NAMESPACE) and
+# validate_*_object for the long-removed praat_sound/praat_pitch S3 classes
+# (0 external callers). Whole-file exclusion is the only working mechanism.
+src/utils.cpp
