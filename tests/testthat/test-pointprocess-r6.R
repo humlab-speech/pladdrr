@@ -157,10 +157,10 @@ test_that("union_with/intersection_with/difference_with combine two PointProcess
   merged <- pp1$union_with(pp2)
   expect_s3_class(merged, "PointProcess")
   expect_equal(merged$get_number_of_points(), 4)
-  # The C++ side also mutates its own internal pointer, so reads through
-  # the original object's $.cpp-backed methods reflect the union too, even
-  # without reassignment.
-  expect_equal(pp1$get_number_of_points(), 4)
+  # The receiver is NOT mutated in place (the C++ side only returns the new
+  # xptr; mutating the receiver's ptr in place would free the original
+  # PointProcess while the caller's .xptr still referenced it).
+  expect_equal(pp1$get_number_of_points(), 2)
 
   ipp1 <- PointProcess(0, 1); ipp1$add_point(0.1); ipp1$add_point(0.2)
   ipp2 <- PointProcess(0, 1); ipp2$add_point(0.2); ipp2$add_point(0.3)

@@ -150,13 +150,13 @@ NULL
 # compute and return a *new* merged PointProcess, but the old R wrappers
 # discarded that return value and did `invisible(.self)`, so union_with()/
 # intersection_with()/difference_with() were silent no-ops from the
-# caller's perspective. The C++ side now also reassigns its own `ptr`
-# member (so .self$.cpp-backed reads on the original object, e.g.
-# get_number_of_points()/get_xmin()/get_xmax(), reflect the result even
-# without reassignment), and the R wrapper now returns a fresh
-# PointProcess wrapping the result so .xptr-backed methods (jitter/
-# voice_report/to_textgrid_vuv/to_sound_*) are consistent too. Callers
-# should reassign: pp <- pp$union_with(other).
+# caller's perspective. The R wrapper now returns a fresh PointProcess
+# wrapping the result (so both .cpp- and .xptr-backed methods are
+# consistent). Callers should reassign: pp <- pp$union_with(other).
+# The C++ side only returns the new xptr; it deliberately does NOT mutate
+# the receiver's ptr member in place, because doing so frees the original
+# PointProcess (the old XPtr finalizer) while the caller's .xptr still
+# references it -> use-after-free.
 .pp_methods$union_with <- function(.self, other_pp) {
   if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
   new_xptr <- .self$.cpp$union_with(other_pp$.xptr)
