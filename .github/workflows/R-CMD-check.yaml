@@ -190,8 +190,16 @@ jobs:
       # test crashes (Trace/BPT trap observed on macOS CI); non-blocking.
       - name: Upload macOS crash reports
         if: always() && runner.os == 'macOS'
+        shell: bash
+        run: |
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || echo "(no DiagnosticReports dir)"
+          find / -maxdepth 4 -name "*.ips" -o -name "R*.crash" 2>/dev/null | head -20 || true
+      - name: Upload macOS crash reports
+        if: always() && runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
           name: macos-crashreports-${{ matrix.config.r }}
-          path: ~/Library/Logs/DiagnosticReports/*
+          path: |
+            ~/Library/Logs/DiagnosticReports/**
+            **/DiagnosticReports/**
