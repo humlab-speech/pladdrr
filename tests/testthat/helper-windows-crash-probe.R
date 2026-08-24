@@ -10,10 +10,11 @@
 #
 # `probe_test()` replaces `test_that()` for those bodies:
 #   * non-Windows platforms: the body runs inline, exactly as before;
-#   * Windows: the body runs inside an isolated child R process
-#     (callr::rscript). If the child aborts (nonzero exit) -- or any
+#   * Windows: the body runs inside an isolated child R process (base R
+#     Rscript via system2 -- deliberately not callr, to avoid an undeclared
+#     test dependency). If the child aborts (nonzero exit) -- or any
 #     expectation fails -- the parent test FAILS with the child's status and
-#     stderr, and the rest of the suite survives.
+#     output, and the rest of the suite survives.
 #
 # The child runs the body inside testthat::test_that(), which exits non-zero
 # on both assertion failures and R aborts, so the probe reports the true state
@@ -49,16 +50,14 @@ windows_crash_probe <- function(desc, code_expr, preamble = NULL, env = parent.f
   ), script)
   on.exit(unlink(script), add = TRUE)
 
-  res <- tryCatch(
-    callr::rscript(script, fail_on_status = FALSE, echo = FALSE, timeout = 600),
-    error = function(e) e
-  )
-  status <- if (inherits(res, "error")) 1L else res$status
-  detail <- if (inherits(res, "error")) {
-    conditionMessage(res)
-  } else {
-    paste(c(res$stdout, res$stderr), collapse = "\n")
-  }
+  # Base-R child process: Rscript + system2. A child that aborts (MSVC crash)
+  # or fails its expectations exits non-zero; system2 surfaces that as the
+  # 'status' attribute.
+  rscript <- file.path(R.home("bin"), "Rscript")
+  out <- suppressWarnings(system2(rscript, shQuote(script), stdout = TRUE, stderr = TRUE))
+  status <- attr(out, "status")
+  if (is.null(status)) status <- 0L
+  detail <- paste(out, collapse = "\n")
   testthat::expect_equal(
     status, 0L,
     info = sprintf(
