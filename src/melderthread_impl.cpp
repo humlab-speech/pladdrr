@@ -190,6 +190,91 @@ void praat_show () { /* No-op */ }
 #include <thread>
 #include <vector>
 #include <functional>
+#include <exception>
+#include <system_error>
+#include <memory>
+
+#if defined (_WIN32)
+	#define WIN32_LEAN_AND_MEAN
+	#define NOMINMAX
+	#include <windows.h>
+	#undef WIN32_LEAN_AND_MEAN
+	#undef NOMINMAX
+#endif
+
+/*
+	Worker thread with an explicit stack size.
+	MSVC's std::thread inherits the executable's default thread stack
+	(reserved 1 MB on Windows), which overflows in the deep-recursion DSP
+	paths that are fine on Linux/macOS (pthread default 8 MB). CreateThread
+	with an explicit 8 MB stack matches the Unix default. On pthread
+	platforms std::thread already gets 8 MB, so it is used unchanged.
+	Unlike std::thread, the destructor of a still-joinable worker joins
+	instead of calling std::terminate (which would abort R silently).
+*/
+#if defined (_WIN32)
+class WorkerThread {
+public:
+	WorkerThread () = default;
+	template <typename Fn>
+	explicit WorkerThread (Fn&& fn) {
+		holder_ = new Holder <Fn> (std::forward <Fn> (fn));
+		handle_ = CreateThread (nullptr, (SIZE_T) 8 * 1024 * 1024, &WorkerThread::trampoline, holder_, 0, nullptr);
+		if (handle_ == nullptr) {
+			delete holder_;
+			holder_ = nullptr;
+			throw std::system_error (std::error_code (GetLastError (), std::system_category ()), "CreateThread");
+		}
+	}
+	WorkerThread (const WorkerThread&) = delete;
+	WorkerThread& operator= (const WorkerThread&) = delete;
+	WorkerThread (WorkerThread&& other) noexcept
+		: handle_ (other.handle_), holder_ (other.holder_)
+	{
+		other.handle_ = nullptr;
+		other.holder_ = nullptr;
+	}
+	WorkerThread& operator= (WorkerThread&& other) noexcept {
+		if (this != &other) {
+			if (joinable ()) join ();
+			handle_ = other.handle_;
+			holder_ = other.holder_;
+			other.handle_ = nullptr;
+			other.holder_ = nullptr;
+		}
+		return *this;
+	}
+	~WorkerThread () { if (joinable ()) join (); }
+	void join () {
+		if (handle_) {
+			WaitForSingleObject (handle_, INFINITE);
+			CloseHandle (handle_);
+			handle_ = nullptr;
+		}
+	}
+	bool joinable () const noexcept { return handle_ != nullptr; }
+private:
+	struct HolderBase {
+		virtual ~HolderBase () = default;
+		virtual void run () = 0;
+	};
+	template <typename Fn>
+	struct Holder : HolderBase {
+		Fn fn_;
+		explicit Holder (Fn&& fn) : fn_ (std::move (fn)) {}
+		void run () override { fn_ (); }
+	};
+	static DWORD WINAPI trampoline (LPVOID param) {
+		std::unique_ptr <HolderBase> holder (static_cast <HolderBase*> (param));
+		holder->run ();
+		return 0;
+	}
+	HANDLE handle_ = nullptr;
+	HolderBase* holder_ = nullptr;
+};
+#else
+using WorkerThread = std::thread;
+#endif
 
 static struct {
     bool useMultithreading = true;
@@ -307,7 +392,7 @@ void MelderThread_run (
         threadFunction (0, 1, numberOfElements);
     } else {
         const integer numberOfExtraThreads = numberOfThreads - 1;
-        std::vector <std::thread> spawns;
+        std::vector <WorkerThread> spawns;
         try {
             spawns.resize ((size_t) numberOfExtraThreads);
         } catch (...) {
@@ -316,10 +401,26 @@ void MelderThread_run (
         const integer base = numberOfElements / numberOfThreads;
         const integer remainder = numberOfElements % numberOfThreads;
         integer firstElement = 1;
+        std::atomic <bool> workerFailed { false };
+        std::exception_ptr workerError;
         try {
             for (integer ispawn1 = 1; ispawn1 <= numberOfExtraThreads; ispawn1 ++) {
                 const integer lastElement = firstElement + base - 1 + ( ispawn1 <= remainder );
-                spawns [(size_t)(ispawn1 - 1)] = std::thread (threadFunction, ispawn1, firstElement, lastElement);
+                spawns [(size_t)(ispawn1 - 1)] = WorkerThread ([&, ispawn1, firstElement, lastElement] () {
+                    try {
+                        threadFunction (ispawn1, firstElement, lastElement);
+                    } catch (...) {
+                        /*
+                            A C++ exception escaping a worker thread body calls
+                            std::terminate, which aborts the whole R process
+                            silently (the MSVC Windows crash class). Capture the
+                            first failure and rethrow it on the calling thread
+                            after all workers have joined.
+                        */
+                        if (! workerFailed.exchange (true))
+                            workerError = std::current_exception ();
+                    }
+                });
                 firstElement = lastElement + 1;
             }
         } catch (...) {
@@ -332,6 +433,10 @@ void MelderThread_run (
         threadFunction (0, firstElement, numberOfElements);
         for (size_t i = 0; i < spawns.size(); i ++)
             spawns [i].join ();
+        if (workerFailed) {
+            theMelder_error_threadId = Melder_thisThread_getUniqueID ();
+            std::rethrow_exception (workerError);
+        }
     }
     if (*p_errorFlag) {
         theMelder_error_threadId = Melder_thisThread_getUniqueID ();
