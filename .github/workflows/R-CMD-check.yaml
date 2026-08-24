@@ -115,16 +115,17 @@ jobs:
           # '* checking ' prefix), the remaining lines are its body.
           # (A plain line-based split cannot work: section bodies contain
           # embedded newlines, so name|body records are multi-line.)
+          # CRLF logs (win-builder) are handled by stripping \r per record.
 
           # Check names whose WARNING status is known, justified and permanent
           # (cran-comments.md). Any other check WARNING is a regression.
-          allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|compilation flags used) \.\.\. WARNING$'
+          allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|use of S3 registration|compilation flags used) \.\.\. WARNING$'
 
           fail=0
 
           # 1. Unexpected check-name WARNINGs.
           unknown=$(awk 'BEGIN { RS = "\n\\* checking " }
-            { n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print l[1] }
+            { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print l[1] }
           ' "$log" | grep -Ev "$allowed_names" || true)
           if [ -n "$unknown" ]; then
             echo "::error::R CMD check reported WARNINGs from unexpected checks:"
@@ -141,6 +142,7 @@ jobs:
           #    new symbol or object fails.
           bad=$(awk 'BEGIN { RS = "\n\\* checking " }
             {
+              gsub(/\r/, "", $0)
               n = split($0, lines, "\n")
               name = lines[1]
               if (name ~ /^compilation flags in Makevars \.\.\. WARNING$/) {
@@ -152,7 +154,7 @@ jobs:
               } else if (name ~ /^compiled code \.\.\. WARNING$/) {
                 for (i = 2; i <= n; i++) {
                   line = lines[i]
-                  if (line ~ /^  Found / && line !~ /possibly from .(stderr|stdout|exit). \(C\)$/) print "compiled code: " line
+                  if (line ~ /^  Found / && line !~ /possibly from .(stderr|stdout|exit). \(C\)(, .stop. \(Fortran\))?$/) print "compiled code: " line
                   if (line ~ /praat\.github\.io\// && line !~ /praat\.github\.io\/(melder\/melder_console|sys\/praat)\.o/) print "compiled code: " line
                 }
               }
@@ -166,7 +168,7 @@ jobs:
 
           echo "--- all WARNINGs reported ---"
           awk 'BEGIN { RS = "\n\\* checking " }
-            { n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print "* checking " l[1] }
+            { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print "* checking " l[1] }
           ' "$log" || echo "(none)"
 
           if [ "$fail" -eq 1 ]; then
