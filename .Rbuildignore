@@ -15,6 +15,7 @@
 ^\.serena$
 ^\.pi$
 ^\.superpowers$
+^\.worktrees$
 ^\.ruff_cache$
 
 # CI configs not used by R CMD check

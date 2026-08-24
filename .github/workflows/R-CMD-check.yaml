@@ -174,11 +174,15 @@ jobs:
           # --- NOTEs --------------------------------------------------------
           # Justified NOTES:
           #  * 'if this is a source package': R-devel ONLY and TEMPORARY —
-          #    R-devel's R CMD build leaves src/modules/*.o behind after its
-          #    vignette temp-install, and its source-package check flags them
-          #    in the tarball. The Makevars clean target (added 2026-08) is
-          #    the fix; REMOVE this entry once a devel run confirms the NOTE
-          #    is gone.
+          #    R CMD build compiles in-tree to build vignettes and its
+          #    "cleaning src" does NOT remove the resulting src/*.o (verified
+          #    on R 4.6.1: a Makevars/Makefile clean target cannot be added —
+          #    R passes no SHLIB/OBJECTS when src/Makefile exists and a
+          #    clean-only Makevars becomes make's default goal, breaking
+          #    R CMD INSTALL). On stable R the tarball stays clean via the
+          #    .Rbuildignore src/.*\.(o|...) rule (verified: 0 object files);
+          #    R-devel evidently filters differently. Inspect the devel
+          #    tarball contents once, then REMOVE this entry.
           #  * 'HTML version of manual': HTML Tidy missing/outdated on the
           #    runner (environmental, not a package issue).
           #  * 'CRAN incoming feasibility': new-submission metadata chatter;
