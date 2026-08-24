@@ -54,7 +54,10 @@ test_that("Willems method produces valid formant values", {
 })
 
 test_that("Split-Levinson method produces valid formant values", {
-  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  # Voiced signal, not silence: on a silent input every formant query is NA
+  # and the conditional assertions never ran, silently producing an
+  # "empty test" skip.
+  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050, frequency = 200)
   
   formant <- sound$to_formant_sl(
     time_step = 0.01,
@@ -67,10 +70,10 @@ test_that("Split-Levinson method produces valid formant values", {
   f2 <- formant$get_value_at_time(2, 0.1, unit = "hertz")
   
   # Basic sanity checks
-  if (!is.na(f1) && !is.na(f2)) {
-    expect_true(f1 > 0)
-    expect_true(f2 > f1)  # F2 should be higher than F1
-  }
+  expect_false(is.na(f1))
+  expect_false(is.na(f2))
+  expect_true(f1 > 0)
+  expect_true(f2 > f1)  # F2 should be higher than F1
 })
 
 test_that("Different formant methods produce comparable results", {

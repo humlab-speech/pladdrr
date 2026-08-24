@@ -123,9 +123,12 @@ test_that("extract_voiced_segments_ultra handles edge cases", {
         error = function(e) NULL
     )
 
-    # Should either return a valid Sound or NULL (not error)
+    # Contract: a very short voiced signal yields either a valid Sound or
+    # NULL (never an uncaught error). Assert both branches explicitly so the
+    # test cannot silently become empty.
+    expect_true(is.null(result) || inherits(result, "Sound"))
     if (!is.null(result)) {
-        expect_s3_class(result, "Sound")
+        expect_true(result$get_duration() > 0)
     }
 })
 

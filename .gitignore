@@ -113,3 +113,6 @@ build.log
 /.pi
 /.superpowers/
 /.worktrees/
+
+# testthat problem artifacts (regenerated on failure, never committed)
+tests/testthat/testthat-problems.rds

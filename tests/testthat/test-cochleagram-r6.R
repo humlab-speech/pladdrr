@@ -2,7 +2,9 @@
 # Tests for auditory modeling using Bark scale representation
 
 test_that("Cochleagram can be created from Sound", {
-  skip_if_not(dir.exists(system.file("audio", package = "pladdrr")), 
+  # Fixtures live in inst/extdata (the old inst/audio path was removed in
+  # the CRAN slimming; the stale guard made every test here skip forever).
+  skip_if_not(dir.exists(system.file("extdata", package = "pladdrr")), 
               "Test audio files not available")
   
   # Create test sound

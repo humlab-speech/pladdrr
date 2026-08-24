@@ -3,7 +3,6 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
 
 name: R-CMD-check
 
@@ -66,8 +65,6 @@ jobs:
           New-Item -ItemType Directory -Force -Path C:\crashdumps | Out-Null
 
       - uses: r-lib/actions/setup-r-dependencies@v2.12.1
-
-      - uses: r-lib/actions/setup-r-dependencies@v2.12.1
         with:
           extra-packages: |
             any::rcmdcheck
@@ -88,26 +85,30 @@ jobs:
           # vendors Praat C++ and deliberately sets -ffp-contract=off for
           # bit-exact DSP output, both of which are permanent, CRAN-documented
           # WARNINGs (see cran-comments.md), not regressions to gate CI on.
-          # The step below re-imposes the gate for every *other* warning, so
-          # that "error-on: error" cannot silently absorb a new one.
+          # The steps below re-impose the gate for every *other* warning and
+          # note, so that "error-on: error" cannot silently absorb a new one.
           error-on: '"error"'
 
-      # R CMD check WARNINGs are gated content-exactly, not by check name:
-      # every WARNING section must match a known, justified, permanent entry
-      # (cran-comments.md). A new check WARNING -- or drift inside a justified
-      # one (e.g. a *second* non-portable flag beside -ffp-contract=off, or a
-      # new prohibited symbol in the compiled code) -- fails the build. The
-      # error-on: "error" above catches new errors; this step catches warning
-      # regressions that a check-name allowlist would silently absorb.
-      - name: Fail on unexpected R CMD check WARNINGs
+      # --------------------------------------------------------------------
+      # R CMD check WARNINGs and NOTEs are gated content-exactly, not by
+      # check name: every WARNING/NOTE section must match a known, justified,
+      # permanent entry (cran-comments.md). A new check WARNING/NOTE — or
+      # drift inside a justified one (e.g. a *second* non-portable flag beside
+      # -ffp-contract=off, or a new prohibited symbol in the compiled code) —
+      # fails the build. "error-on: error" above catches check ERRORS; these
+      # steps catch warning/note regressions that a check-name allowlist would
+      # silently absorb.
+      - name: Gate R CMD check WARNINGs and NOTEs
         if: always()
         shell: bash
+        env:
+          R_VERSION: ${{ matrix.config.r }}
         run: |
           set -euo pipefail
           log=$(find check -name 00check.log 2>/dev/null | head -n 1 || true)
           if [ -z "$log" ]; then
-            echo "No 00check.log found; nothing to inspect."
-            exit 0
+            echo "::error::No 00check.log found under check/ — cannot verify the R CMD check result. The check step always produces a log; a missing log is a pipeline failure, not 'nothing to inspect'."
+            exit 1
           fi
 
           # Split the log into per-check sections via regex record separator:
@@ -117,13 +118,13 @@ jobs:
           # embedded newlines, so name|body records are multi-line.)
           # CRLF logs (win-builder) are handled by stripping \r per record.
 
+          fail=0
+
+          # --- WARNINGs: unexpected check names ----------------------------
           # Check names whose WARNING status is known, justified and permanent
           # (cran-comments.md). Any other check WARNING is a regression.
           allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|use of S3 registration|compilation flags used) \.\.\.( \[[^]]*\])? WARNING$'
 
-          fail=0
-
-          # 1. Unexpected check-name WARNINGs.
           unknown=$(awk 'BEGIN { RS = "\n\\* checking " }
             { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print l[1] }
           ' "$log" | grep -Ev "$allowed_names" || true)
@@ -133,25 +134,22 @@ jobs:
             fail=1
           fi
 
-          # 2. Content drift inside the content-stable justified WARNINGs.
-          #    Makevars: the ONLY justified flag is -ffp-contract=off (required
-          #    for bit-exact Praat parity; GCC implements no FP_CONTRACT pragma).
-          #    Any other flag line (e.g. -march=native, -O3, -flto) fails.
-          #    compiled code: only the vendored Praat stderr/stdout/_exit
-          #    symbols from melder_console.o and praat.o are justified; any
-          #    new symbol or object fails.
+          # --- WARNINGs: content drift inside justified sections ------------
+          # Makevars: the ONLY justified flag is -ffp-contract=off (required
+          # for bit-exact Praat parity; GCC implements no FP_CONTRACT pragma).
+          # Any other flag line (e.g. -march=native, -O3, -flto) fails.
+          # compiled code: only the vendored Praat stderr/stdout/_exit
+          # symbols from melder_console.o and praat.o are justified; any
+          # new symbol or object fails. Both branches iterate the section
+          # body lines (a shared `line` variable across records previously
+          # made the compiled-code check dead: it only ever saw the last
+          # Makevars line).
           bad=$(awk 'BEGIN { RS = "\n\\* checking " }
             {
               gsub(/\r/, "", $0)
               n = split($0, lines, "\n")
               name = lines[1]
               if (name ~ /^compilation flags in Makevars \.\.\. WARNING$/) {
-                # Invariant: the only justified *flag* is -ffp-contract=off
-                # (bit-exact Praat parity; GCC implements no FP_CONTRACT
-                # pragma). R-devel also emits multi-line informational
-                # advisories about the configure/Makevars.in layout -- prose,
-                # never flag-shaped -- which are allowed. Any other
-                # flag-shaped line (e.g. -march=native, -O3, -flto) fails.
                 for (i = 2; i <= n; i++) {
                   line = lines[i]
                   gsub(/^[ \t]+/, "", line)
@@ -160,8 +158,9 @@ jobs:
               } else if (name ~ /^compiled code \.\.\. WARNING$/) {
                 for (i = 2; i <= n; i++) {
                   line = lines[i]
-                  if (line ~ /^  Found / && line !~ /possibly from .(stderr|stdout|exit). \(C\)(, .stop. \(Fortran\))?$/) print "compiled code: " line
-                  if (line ~ /praat\.github\.io\// && line !~ /praat\.github\.io\/(melder\/melder_console|sys\/praat)\.o/) print "compiled code: " line
+                  gsub(/^[ \t]+/, "", line)
+                  if (line ~ /^Found / && line !~ /possibly from .(stderr|stdout|exit). \(C\)(, .stop. \(Fortran\))?$/) print "compiled code: " lines[i]
+                  if (line ~ /praat\.github\.io\// && line !~ /praat\.github\.io\/(melder\/melder_console|sys\/praat)\.o/) print "compiled code: " lines[i]
                 }
               }
             }
@@ -172,23 +171,126 @@ jobs:
             fail=1
           fi
 
+          # --- NOTEs --------------------------------------------------------
+          # Justified NOTES:
+          #  * 'if this is a source package': R-devel ONLY and TEMPORARY —
+          #    R-devel's R CMD build leaves src/modules/*.o behind after its
+          #    vignette temp-install, and its source-package check flags them
+          #    in the tarball. The Makevars clean target (added 2026-08) is
+          #    the fix; REMOVE this entry once a devel run confirms the NOTE
+          #    is gone.
+          #  * 'HTML version of manual': HTML Tidy missing/outdated on the
+          #    runner (environmental, not a package issue).
+          #  * 'CRAN incoming feasibility': new-submission metadata chatter;
+          #    CI disables CRAN incoming anyway.
+          note_allow_release='^(HTML version of manual|CRAN incoming feasibility) \.\.\.( \[[^]]*\])? NOTE$'
+          note_allow_devel='^(if this is a source package|HTML version of manual|CRAN incoming feasibility) \.\.\.( \[[^]]*\])? NOTE$'
+          if [ "$R_VERSION" = "devel" ]; then
+            note_allow="$note_allow_devel"
+          else
+            note_allow="$note_allow_release"
+          fi
+          notes=$(awk 'BEGIN { RS = "\n\\* checking " }
+            { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / NOTE$/) print l[1] }
+          ' "$log" | grep -Ev "$note_allow" || true)
+          if [ -n "$notes" ]; then
+            echo "::error::R CMD check reported NOTEs from unexpected checks (a new NOTE, or a justified one drifted):"
+            echo "$notes"
+            fail=1
+          fi
+
           echo "--- all WARNINGs reported ---"
           awk 'BEGIN { RS = "\n\\* checking " }
             { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print "* checking " l[1] }
           ' "$log" || echo "(none)"
+          echo "--- all NOTEs reported ---"
+          awk 'BEGIN { RS = "\n\\* checking " }
+            { gsub(/\r/, "", $0); n = split($0, l, "\n"); if (l[1] ~ / NOTE$/) print "* checking " l[1] }
+          ' "$log" || echo "(none)"
 
           if [ "$fail" -eq 1 ]; then
             echo
-            echo "::error::R CMD check WARNINGs are not all on the justified list."
-            echo "Fix the warning, or -- if genuinely permanent -- document it in"
+            echo "::error::R CMD check result is not fully on the justified list."
+            echo "Fix the issue, or -- if genuinely permanent -- document it in"
             echo "cran-comments.md and extend the exact-content registry in this workflow."
             exit 1
           fi
-          echo "All reported WARNINGs are on the justified list."
+          echo "All reported WARNINGs and NOTEs are on the justified list."
+
+      # --------------------------------------------------------------------
+      # testthat summary gate: every skip reason in the run must be either a
+      # known PERMANENT skip (justified by design, cran-comments.md) or known
+      # DEBT (flagged loudly so it cannot persist silently). Any other reason
+      # -- e.g. someone "fixing" a failing test by skipping it -- fails the
+      # build. "empty test" is NOT allowed: it means a test_that() block ran
+      # zero assertions (a dead test hiding missing coverage).
+      - name: Gate testthat skip reasons
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rout=$(find check -name 'testthat.Rout' 2>/dev/null | head -n 1 || true)
+          if [ -z "$rout" ]; then
+            # Test crash / missing summary: the check ERROR gate already
+            # fails the job; do not mask it with a second confusing error.
+            echo "No testthat.Rout found; the check ERROR gate covers this case."
+            exit 0
+          fi
+
+          # Extract skip reasons from the '== Skipped tests (N) ==' section.
+          # Each entry starts '* reason (count): 'file:line:col', ...' and
+          # may wrap across lines; continuation lines do not start with '* '.
+          reasons=$(awk '
+            /== Skipped tests \(/ { in_skips = 1; next }
+            in_skips && /^\[ FAIL/ { exit }
+            in_skips && /^\* / {
+              line = $0
+              sub(/^\* /, "", line)
+              sub(/ \([0-9]+\):.*$/, "", line)   # strip the count + file list
+              print line
+            }
+          ' "$rout" | sort -u)
+
+          if [ -z "$reasons" ]; then
+            echo "No skipped tests reported. OK."
+            exit 0
+          fi
+
+          # PERMANENT: genuinely justified skips. Keep this list as small as
+          # possible; each entry needs a reason in cran-comments.md.
+          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^SIMD not available'
+
+          # DEBT: known-current state we intend to eliminate (Windows SIMD
+          # gap, catch-and-skip fixture guards, feature-gap skips, TODO skips,
+          # data-dependent skips). Matches print a loud warning so the debt
+          # cannot silently persist. Do not add new entries here without a
+          # tracking issue.
+          debt='^Could not create test (sound|pitch object|intensity object|TextGrid)$|^Could not compile XPtr|^create_window_xptr|^apply_(window|transform)_xptr not available|^get_values method not available|^get_sample_times method not available|^get_statistics method not available|^pitch_get_statistics_batch not available|^intensity_get_statistics_batch not available|^get_all_points not available|^get_all_intervals not available|^get_adaptive_range not available|^extract_intervals_batch|^SIMD .* not exported|^Scalar .* not exported|^Spectrum\$to_sound\(\)|^Scalar vs SIMD comparison|^Edge case testing - implementation pending|^LPC\$to_formant\(\)|^multichannel Sound construction|^SIMD Blackman window function not exported|^No voiced segments extracted|^SIMD autocorrelation function not exported'
+
+          fail=0
+          while IFS= read -r reason; do
+            if printf '%s\n' "$reason" | grep -Eq "$permanent"; then
+              echo "OK (permanent skip): $reason"
+            elif printf '%s\n' "$reason" | grep -Eq "$debt"; then
+              echo "::warning::DEBT skip reason (should be eliminated; see plan in cran-comments.md): $reason"
+            else
+              echo "::error::Unexpected testthat skip reason: $reason"
+              fail=1
+            fi
+          done <<< "$reasons"
+
+          if [ "$fail" -eq 1 ]; then
+            echo
+            echo "::error::testthat reported a skip reason that is not on the justified list."
+            echo "A new skip usually hides a regression (a failing test was silenced)."
+            echo "Fix the test, or -- if genuinely justified -- extend the registry in this workflow."
+            exit 1
+          fi
+          echo "All testthat skip reasons are on the justified list."
 
       # Upload macOS crash reports (if any) for diagnosis of intermittent
       # test crashes (Trace/BPT trap observed on macOS CI); non-blocking.
-      - name: Upload macOS crash reports
+      - name: Inspect macOS crash reports
         if: always() && runner.os == 'macOS'
         shell: bash
         run: |

@@ -71,11 +71,12 @@ test_that("ComplexSpectrogram to Sound roundtrip", {
     # Convert to ComplexSpectrogram
     cs <- sound$to_complex_spectrogram()
 
-    # Convert back to Sound (if method exists)
-    if ("to_sound" %in% names(cs)) {
-        reconstructed <- cs$to_sound()
-        expect_s3_class(reconstructed, "Sound")
-    }
+    # Convert back to Sound. Module-attached methods are not listed in
+    # names(), so the old names() guard made this test silently empty; call
+    # the method directly and assert the result.
+    reconstructed <- cs$to_sound()
+    expect_s3_class(reconstructed, "Sound")
+    expect_true(reconstructed$get_duration() > 0)
 })
 
 test_that("ComplexSpectrogram to Spectrum conversion", {
@@ -83,12 +84,12 @@ test_that("ComplexSpectrogram to Spectrum conversion", {
 
     cs <- sound$to_complex_spectrogram()
 
-    # Get spectrum at a specific time (if method exists)
-    if ("to_spectrum" %in% names(cs)) {
-        t_mid <- (cs$xmin() + cs$xmax()) / 2
-        spectrum <- cs$to_spectrum(t_mid)
-        expect_s3_class(spectrum, "Spectrum")
-    }
+    # Get spectrum at a specific time. Module-attached methods are not listed
+    # in names(), so the old names() guard made this test silently empty.
+    t_mid <- (cs$xmin() + cs$xmax()) / 2
+    spectrum <- cs$to_spectrum(t_mid)
+    expect_s3_class(spectrum, "Spectrum")
+    expect_true(length(spectrum$get_frequencies_vector()) > 0)
 })
 
 test_that("ComplexSpectrogram amplitude and phase retrieval", {

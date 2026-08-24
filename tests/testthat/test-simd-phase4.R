@@ -131,17 +131,19 @@ test_that("SIMD autocorrelation in LPC is accurate", {
 test_that("SIMD bandwidth estimation works", {
   skip_if_not(simd_info()$available, "SIMD not available")
   
-  sound <- Sound$from_values(rep(0, round(0.2 * 22050)), sampling_rate = 22050)
+  # Voiced signal, not silence: on silence every bandwidth query is NA and
+  # the old conditional assertions never ran, silently producing an
+  # "empty test" skip.
+  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050, frequency = 200)
   formant <- sound$to_formant_burg()
   
   # Query bandwidth
   b1 <- formant$get_bandwidth_at_time(1, 0.1, unit = "hertz")
   
-  # If bandwidth found, should be positive and reasonable
-  if (!is.na(b1)) {
-    expect_true(b1 > 0)
-    expect_true(b1 < 1000)  # Typical bandwidth range
-  }
+  # Bandwidth should be positive and reasonable
+  expect_false(is.na(b1))
+  expect_true(b1 > 0)
+  expect_true(b1 < 1000)  # Typical bandwidth range
 })
 
 test_that("SIMD Willems formant method works", {

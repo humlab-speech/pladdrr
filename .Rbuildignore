@@ -58,6 +58,8 @@
 ^.*\.sh$
 ^.*\.log$
 ^.*\.py$
+^00install\.out.*$
+^00check\.log.*$
 ^test_.*\.R$
 ^verify_.*\.R$
 ^final_.*\.R$
