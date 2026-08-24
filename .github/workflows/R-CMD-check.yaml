@@ -119,7 +119,7 @@ jobs:
 
           # Check names whose WARNING status is known, justified and permanent
           # (cran-comments.md). Any other check WARNING is a regression.
-          allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|use of S3 registration|compilation flags used) \.\.\. WARNING$'
+          allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|use of S3 registration|compilation flags used) \.\.\.( \[[^]]*\])? WARNING$'
 
           fail=0
 
