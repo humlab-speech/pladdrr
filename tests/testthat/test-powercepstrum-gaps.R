@@ -24,13 +24,22 @@ sound_fixture <- function() {
 # PowerCepstrum -- wrapper.cpp gaps: get_peak_prominence() branches, the
 # permanently-unsupported get_rnr(), and tabulate_rhamonics()
 # ---------------------------------------------------------------------------
+# R CMD check. Previously skipped on Windows; now each body runs in an
+# isolated child R process there (see helper-windows-crash-probe.R), so an
+# abort is a visible test failure instead of a silent skip.
+windows_probe_test <- function(desc, code) {
+  expr <- substitute(code)
+  env <- parent.frame()
+  test_that(desc, {
+    windows_crash_probe(desc, expr, env = env, preamble = c(
+      "sound_fixture <- function() {",
+      "  Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)",
+      "}"
+    ))
+  })
+}
 
-# PowerCepstrum/PowerCepstrogram numerical code (trend fitting, peak
-# prominence, cepstral smoothing) aborts silently under MSVC during Windows
-# R CMD check. Coverage-only tests; public API is verified on macOS/Linux.
-skip_on_os("windows")
-
-test_that("PowerCepstrum$get_peak_prominence covers cubic/sinc70/sinc700 interpolation", {
+windows_probe_test("PowerCepstrum$get_peak_prominence covers cubic/sinc70/sinc700 interpolation", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   for (interp in c("cubic", "sinc70", "sinc700")) {
     cpp <- pc$get_peak_prominence(interpolation = interp)
@@ -38,7 +47,7 @@ test_that("PowerCepstrum$get_peak_prominence covers cubic/sinc70/sinc700 interpo
   }
 })
 
-test_that("PowerCepstrum$get_peak_prominence covers the least-squares fit_method branch (both spellings)", {
+windows_probe_test("PowerCepstrum$get_peak_prominence covers the least-squares fit_method branch (both spellings)", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   cpp1 <- pc$get_peak_prominence(fit_method = "least squares")
   expect_true(is.numeric(cpp1))
@@ -46,7 +55,7 @@ test_that("PowerCepstrum$get_peak_prominence covers the least-squares fit_method
   expect_true(is.numeric(cpp2))
 })
 
-test_that("PowerCepstrum$get_rnr is a documented, permanently-unsupported stub", {
+windows_probe_test("PowerCepstrum$get_rnr is a documented, permanently-unsupported stub", {
   # powercepstrum_get_rnr() in powercepstrum_wrappers.cpp always stop()s --
   # PowerCepstrum_getRNR() is noted (in a comment right above the stop()) to
   # segfault when the PowerCepstrum was created from a Spectrum, so the
@@ -71,13 +80,13 @@ test_that("PowerCepstrum$get_rnr is a documented, permanently-unsupported stub",
 # as_matrix, save)
 # ---------------------------------------------------------------------------
 
-test_that("PowerCepstrum$get_peak_prominence_hillenbrand returns a list", {
+windows_probe_test("PowerCepstrum$get_peak_prominence_hillenbrand returns a list", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   h <- pc$get_peak_prominence_hillenbrand()
   expect_true(is.list(h))
 })
 
-test_that("PowerCepstrum$fit_trend_line covers multiple trend_type/fit_method combinations", {
+windows_probe_test("PowerCepstrum$fit_trend_line covers multiple trend_type/fit_method combinations", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   fit1 <- pc$fit_trend_line(trend_type = "parabolic", fit_method = "least squares")
   expect_true(is.list(fit1))
@@ -85,20 +94,20 @@ test_that("PowerCepstrum$fit_trend_line covers multiple trend_type/fit_method co
   expect_true(is.list(fit2))
 })
 
-test_that("PowerCepstrum$get_trend_line_value returns a numeric value", {
+windows_probe_test("PowerCepstrum$get_trend_line_value returns a numeric value", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   val <- pc$get_trend_line_value(quefrency = 0.005)
   expect_true(is.numeric(val))
 })
 
-test_that("PowerCepstrum$smooth returns a new, valid, smoothed PowerCepstrum", {
+windows_probe_test("PowerCepstrum$smooth returns a new, valid, smoothed PowerCepstrum", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   smoothed <- pc$smooth(averaging_window = 0.0005)
   expect_s3_class(smoothed, "PowerCepstrum")
   expect_true(smoothed$is_valid())
 })
 
-test_that("PowerCepstrum$subtract_trend returns a new object; subtract_trend_inplace mutates and returns self", {
+windows_probe_test("PowerCepstrum$subtract_trend returns a new object; subtract_trend_inplace mutates and returns self", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   detrended <- pc$subtract_trend()
   expect_s3_class(detrended, "PowerCepstrum")
@@ -109,7 +118,7 @@ test_that("PowerCepstrum$subtract_trend returns a new object; subtract_trend_inp
   expect_identical(ret, pc2)
 })
 
-test_that("PowerCepstrum$to_spectrum round-trips with and without random phases", {
+windows_probe_test("PowerCepstrum$to_spectrum round-trips with and without random phases", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   spec1 <- pc$to_spectrum(random_phases = FALSE)
   expect_s3_class(spec1, "Spectrum")
@@ -117,7 +126,7 @@ test_that("PowerCepstrum$to_spectrum round-trips with and without random phases"
   expect_s3_class(spec2, "Spectrum")
 })
 
-test_that("PowerCepstrum$to_matrix and $as_matrix export data", {
+windows_probe_test("PowerCepstrum$to_matrix and $as_matrix export data", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   m <- pc$to_matrix()
   expect_s3_class(m, "Matrix")
@@ -126,7 +135,7 @@ test_that("PowerCepstrum$to_matrix and $as_matrix export data", {
   expect_gt(ncol(am), 0)
 })
 
-test_that("PowerCepstrum$save writes a file", {
+windows_probe_test("PowerCepstrum$save writes a file", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   tmp <- tempfile()
   on.exit(unlink(tmp))
@@ -139,13 +148,13 @@ test_that("PowerCepstrum$save writes a file", {
 # get_mean_cpp(), to_matrix(), smooth(), get_cpps()
 # ---------------------------------------------------------------------------
 
-test_that("PowerCepstrogram$get_cpp_at_time covers cubic interpolation and exponential-decay fit_method", {
+windows_probe_test("PowerCepstrogram$get_cpp_at_time covers cubic interpolation and exponential-decay fit_method", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   cpp <- pcg$get_cpp_at_time(0.25, interpolation = "cubic", fit_method = "exponential decay")
   expect_true(is.numeric(cpp))
 })
 
-test_that("PowerCepstrogram$get_mean_cpp works with defaults and an explicit time range/fit_method", {
+windows_probe_test("PowerCepstrogram$get_mean_cpp works with defaults and an explicit time range/fit_method", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   mean_cpp <- pcg$get_mean_cpp()
   expect_true(is.numeric(mean_cpp))
@@ -153,19 +162,19 @@ test_that("PowerCepstrogram$get_mean_cpp works with defaults and an explicit tim
   expect_true(is.numeric(mean_cpp2))
 })
 
-test_that("PowerCepstrogram$to_matrix returns a Matrix object", {
+windows_probe_test("PowerCepstrogram$to_matrix returns a Matrix object", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   m <- pcg$to_matrix()
   expect_s3_class(m, "Matrix")
 })
 
-test_that("PowerCepstrogram$smooth returns a new PowerCepstrogram", {
+windows_probe_test("PowerCepstrogram$smooth returns a new PowerCepstrogram", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   smoothed <- pcg$smooth(time_averaging_window = 0.02, quefrency_averaging_window = 0.001)
   expect_s3_class(smoothed, "PowerCepstrogram")
 })
 
-test_that("PowerCepstrogram$get_cpps works with default and non-default arguments", {
+windows_probe_test("PowerCepstrogram$get_cpps works with default and non-default arguments", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   cpps1 <- pcg$get_cpps()
   expect_true(is.numeric(cpps1))
@@ -182,7 +191,7 @@ test_that("PowerCepstrogram$get_cpps works with default and non-default argument
 # elsewhere in this codebase).
 # ---------------------------------------------------------------------------
 
-test_that("Sound$to_powercepstrogram validates pitch_floor", {
+windows_probe_test("Sound$to_powercepstrogram validates pitch_floor", {
   s <- sound_fixture()
   expect_error(s$to_powercepstrogram(pitch_floor = 0), "pitch_floor must be positive")
   expect_error(s$to_powercepstrogram(pitch_floor = -10), "pitch_floor must be positive")
@@ -190,25 +199,25 @@ test_that("Sound$to_powercepstrogram validates pitch_floor", {
   expect_error(s$to_powercepstrogram(pitch_floor = 9000), "Nyquist")
 })
 
-test_that("Sound$to_powercepstrogram validates duration vs pitch_floor", {
+windows_probe_test("Sound$to_powercepstrogram validates duration vs pitch_floor", {
   short <- Sound$create_tone(frequency = 150, duration = 0.01, sampling_rate = 16000)
   expect_error(short$to_powercepstrogram(pitch_floor = 60), "too short")
 })
 
-test_that("Sound$to_powercepstrogram validates time_step", {
+windows_probe_test("Sound$to_powercepstrogram validates time_step", {
   s <- sound_fixture()
   expect_error(s$to_powercepstrogram(time_step = 0), "time_step must be positive")
   expect_error(s$to_powercepstrogram(time_step = -1), "time_step must be positive")
   expect_error(s$to_powercepstrogram(time_step = 10), "cannot be longer than sound duration")
 })
 
-test_that("Sound$to_powercepstrogram validates maximum_frequency", {
+windows_probe_test("Sound$to_powercepstrogram validates maximum_frequency", {
   s <- sound_fixture()
   expect_error(s$to_powercepstrogram(maximum_frequency = 0), "maximum_frequency must be positive")
   expect_error(s$to_powercepstrogram(maximum_frequency = 9000), "Nyquist")
 })
 
-test_that("Sound$to_powercepstrogram validates pre_emphasis_frequency", {
+windows_probe_test("Sound$to_powercepstrogram validates pre_emphasis_frequency", {
   s <- sound_fixture()
   expect_error(s$to_powercepstrogram(pre_emphasis_frequency = -1), "cannot be negative")
   expect_error(s$to_powercepstrogram(pre_emphasis_frequency = 9000), "Nyquist")
@@ -221,7 +230,7 @@ test_that("Sound$to_powercepstrogram validates pre_emphasis_frequency", {
 # PowerCepstrum/PowerCepstrogram)
 # ---------------------------------------------------------------------------
 
-test_that("Cepstrum$to_sound is a documented, permanently-unsupported stub", {
+windows_probe_test("Cepstrum$to_sound is a documented, permanently-unsupported stub", {
   # cepstrum_to_sound() always stop()s -- a code comment records that
   # Cepstrum_to_Sound() fails with an "invalid file argument" error coming
   # from R's error handling, not Praat, so the wrapper disables the call.
@@ -229,13 +238,13 @@ test_that("Cepstrum$to_sound is a documented, permanently-unsupported stub", {
   expect_error(cep$to_sound(), "unsupported")
 })
 
-test_that("Cepstrum$to_spectrum converts back to a Spectrum", {
+windows_probe_test("Cepstrum$to_spectrum converts back to a Spectrum", {
   cep <- sound_fixture()$to_cepstrum()
   spec <- cep$to_spectrum()
   expect_s3_class(spec, "Spectrum")
 })
 
-test_that("Spectrum$to_cepstrum_hillenbrand creates a Cepstrum", {
+windows_probe_test("Spectrum$to_cepstrum_hillenbrand creates a Cepstrum", {
   spec <- sound_fixture()$to_spectrum()
   cep <- spec$to_cepstrum_hillenbrand()
   expect_s3_class(cep, "Cepstrum")

@@ -24,6 +24,7 @@
 ^codecov\.yml$
 ^\.covrignore$
 ^\.lintr$
+^lintr\.txt$
 
 # Dev-only trees: notes, planning docs, benchmark/cross-validation harnesses.
 # The Praat cross-validation harness needs an external Praat install and the

@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Without this, testthat::skip_on_cran() tests are silently skipped
+      # during covr's coverage run, undercounting coverage (same fix as
+      # pkgcheck.yaml).
+      NOT_CRAN: "true"
 
     steps:
       - uses: actions/checkout@v4

@@ -16,6 +16,32 @@ skip_if_no_module <- function(module_name) {
   })
 }
 
+# Shared state for the PowerCepstrum/PowerCepstrogram direct-module tests
+# below. Those tests historically re-created this state across sibling
+# test_that() frames (testthat shares one env per file); the three that abort
+# R under MSVC on Windows run their bodies in an isolated child R process via
+# probe_test() (helper-windows-crash-probe.R), so the child must rebuild the
+# same state itself. Keep in sync with the inline setups in the tests.
+PHASE4_PC_PREAMBLE <- c(
+  "skip_if_no_module <- function(module_name) {",
+  "  tryCatch({",
+  "    mod <- Rcpp::Module(paste0(module_name, '_module'), PACKAGE = 'pladdrr')",
+  "    TRUE",
+  "  }, error = function(e) {",
+  "    skip(paste0(module_name, ' module not available'))",
+  "  })",
+  "}",
+  "snd <- Sound$new(system.file('extdata', 'test.wav', package = 'pladdrr'))",
+  "sound_ptr <- snd$.xptr",
+  "spectrum <- snd$to_spectrum()",
+  "spec_ptr <- spectrum$.xptr",
+  "pc_mod <- Rcpp::Module('powercepstrum_module', PACKAGE = 'pladdrr')",
+  "pc_ptr <- pc_mod$Spectrum_to_PowerCepstrum(spec_ptr)",
+  "rpc <- new(pc_mod$RPowerCepstrum, pc_ptr)",
+  "pcg_ptr <- pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 5000, 50)",
+  "rpcg <- new(pc_mod$RPowerCepstrogram, pcg_ptr)"
+)
+
 # ============================================================================
 # Matrix Module Tests
 # ============================================================================
@@ -192,8 +218,7 @@ test_that("RPowerCepstrogram CPPS works", {
   expect_type(cpps, "double")
 })
 
-test_that("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
-  skip_on_os("windows")  # Windows-specific C++ crash in direct module calls (task 20 coverage test)
+probe_test("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
   # Coverage gap-fill note (task 20): PowerCepstrum$get_peak_prominence() (the
   # R6 method) dispatches to the bare .powercepstrum_get_peak_prominence()
   # wrapper.cpp export, NOT to this module's own get_peak_prominence() method
@@ -250,10 +275,9 @@ test_that("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, an
   tmp <- tempfile()
   on.exit(unlink(tmp))
   expect_no_error(rpc$save(tmp))
-})
+}, preamble = PHASE4_PC_PREAMBLE)
 
-test_that("RPowerCepstrogram exposes time/quefrency domain properties, slicing, smoothing, matrix export, and save", {
-  skip_on_os("windows")  # Windows-specific C++ crash in direct module calls (task 20 coverage test)
+probe_test("RPowerCepstrogram exposes time/quefrency domain properties, slicing, smoothing, matrix export, and save", {
   # Coverage gap-fill note (task 20): the PowerCepstrogram R6 class has NO
   # module at all ("# No module -- pure Rcpp function wrapper" in
   # R/powercepstrum.R) -- every one of RPowerCepstrogram's methods below is
@@ -298,10 +322,9 @@ test_that("RPowerCepstrogram exposes time/quefrency domain properties, slicing, 
   tmp <- tempfile()
   on.exit(unlink(tmp))
   expect_no_error(rpcg$save(tmp))
-})
+}, preamble = PHASE4_PC_PREAMBLE)
 
-test_that("powercepstrum_module's Sound_to_PowerCepstrogram free function validates pitch_floor, time_step, and maximum_frequency", {
-  skip_on_os("windows")  # Windows-specific C++ crash in direct module calls (task 20 coverage test)
+probe_test("powercepstrum_module's Sound_to_PowerCepstrogram free function validates pitch_floor, time_step, and maximum_frequency", {
   skip_if_no_module("powercepstrum")
   skip_if_no_module("sound")
 
@@ -315,7 +338,7 @@ test_that("powercepstrum_module's Sound_to_PowerCepstrogram free function valida
                "time_step must be positive")
   expect_error(pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 0, 50),
                "maximum_frequency must be between")
-})
+}, preamble = PHASE4_PC_PREAMBLE)
 
 # ============================================================================
 # Cochleagram Module Tests

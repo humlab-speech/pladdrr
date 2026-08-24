@@ -53,15 +53,19 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install gsl
 
-      # src/Makevars.win links -lgsl -lgslcblas from the Rtools UCRT toolchain.
-      - name: Install system dependencies (Windows)
+      # Capture Windows Error Reporting minidumps for the MSVC silent aborts in
+      # vendored Praat DSP paths (see tests/testthat/helper-windows-crash-probe.R).
+      # Uploaded as an artifact so the crash site can be diagnosed.
+      - name: Enable Windows Error Reporting local dumps
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $rtools = Get-ChildItem C:\ -Filter 'rtools*' -Directory |
-                    Sort-Object Name | Select-Object -Last 1
-          if (-not $rtools) { throw 'No Rtools installation found on C:\' }
-          & "$($rtools.FullName)\usr\bin\pacman.exe" -Sy --noconfirm mingw-w64-ucrt-x86_64-gsl
+          reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpFolder /t REG_EXPAND_SZ /d "C:\crashdumps" /f
+          reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpType /t REG_DWORD /d 2 /f
+          reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpCount /t REG_DWORD /d 10 /f
+          New-Item -ItemType Directory -Force -Path C:\crashdumps | Out-Null
+
+      - uses: r-lib/actions/setup-r-dependencies@v2.12.1
 
       - uses: r-lib/actions/setup-r-dependencies@v2.12.1
         with:
@@ -88,9 +92,13 @@ jobs:
           # that "error-on: error" cannot silently absorb a new one.
           error-on: '"error"'
 
-      # The four WARNINGs below are documented and justified in cran-comments.md
-      # and are inherent to vendoring Praat. Any WARNING outside that set is a
-      # regression and fails the build.
+      # R CMD check WARNINGs are gated content-exactly, not by check name:
+      # every WARNING section must match a known, justified, permanent entry
+      # (cran-comments.md). A new check WARNING -- or drift inside a justified
+      # one (e.g. a *second* non-portable flag beside -ffp-contract=off, or a
+      # new prohibited symbol in the compiled code) -- fails the build. The
+      # error-on: "error" above catches new errors; this step catches warning
+      # regressions that a check-name allowlist would silently absorb.
       - name: Fail on unexpected R CMD check WARNINGs
         if: always()
         shell: bash
@@ -102,21 +110,80 @@ jobs:
             exit 0
           fi
 
-          # Check names whose WARNING status is known, justified and permanent.
-          allowed='checking compiled code|checking compilation flags used|checking compilation flags in Makevars|checking whether package .* can be installed|checking S3 generic/method consistency'
+          # Split the log into per-check sections via regex record separator:
+          # each record's first line is the check name (minus the
+          # '* checking ' prefix), the remaining lines are its body.
+          # (A plain line-based split cannot work: section bodies contain
+          # embedded newlines, so name|body records are multi-line.)
 
-          unexpected=$(grep -E '^\* checking .*\.\.\. WARNING' "$log" | grep -Ev "$allowed" || true)
+          # Check names whose WARNING status is known, justified and permanent
+          # (cran-comments.md). Any other check WARNING is a regression.
+          allowed_names='^(compiled code|compilation flags in Makevars|whether package .* can be installed|S3 generic/method consistency|compilation flags used) \.\.\. WARNING$'
+
+          fail=0
+
+          # 1. Unexpected check-name WARNINGs.
+          unknown=$(awk 'BEGIN { RS = "\n\\* checking " }
+            { n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print l[1] }
+          ' "$log" | grep -Ev "$allowed_names" || true)
+          if [ -n "$unknown" ]; then
+            echo "::error::R CMD check reported WARNINGs from unexpected checks:"
+            echo "$unknown"
+            fail=1
+          fi
+
+          # 2. Content drift inside the content-stable justified WARNINGs.
+          #    Makevars: the ONLY justified flag is -ffp-contract=off (required
+          #    for bit-exact Praat parity; GCC implements no FP_CONTRACT pragma).
+          #    Any other flag line (e.g. -march=native, -O3, -flto) fails.
+          #    compiled code: only the vendored Praat stderr/stdout/_exit
+          #    symbols from melder_console.o and praat.o are justified; any
+          #    new symbol or object fails.
+          bad=$(awk 'BEGIN { RS = "\n\\* checking " }
+            {
+              n = split($0, lines, "\n")
+              name = lines[1]
+              if (name ~ /^compilation flags in Makevars \.\.\. WARNING$/) {
+                for (i = 2; i <= n; i++) {
+                  if (lines[i] !~ /^Non-portable flags in variable .PKG_CXXFLAGS.:$/ &&
+                      lines[i] !~ /^  -ffp-contract=off$/ &&
+                      lines[i] !~ /^$/) print "Makevars: " lines[i]
+                }
+              } else if (name ~ /^compiled code \.\.\. WARNING$/) {
+                for (i = 2; i <= n; i++) {
+                  line = lines[i]
+                  if (line ~ /^  Found / && line !~ /possibly from .(stderr|stdout|exit). \(C\)$/) print "compiled code: " line
+                  if (line ~ /praat\.github\.io\// && line !~ /praat\.github\.io\/(melder\/melder_console|sys\/praat)\.o/) print "compiled code: " line
+                }
+              }
+            }
+          ' "$log")
+          if [ -n "$bad" ]; then
+            echo "::error::Justified WARNING sections drifted from their allowed content:"
+            echo "$bad"
+            fail=1
+          fi
 
           echo "--- all WARNINGs reported ---"
-          grep -E '^\* checking .*\.\.\. WARNING' "$log" || echo "(none)"
+          awk 'BEGIN { RS = "\n\\* checking " }
+            { n = split($0, l, "\n"); if (l[1] ~ / WARNING$/) print "* checking " l[1] }
+          ' "$log" || echo "(none)"
 
-          if [ -n "$unexpected" ]; then
+          if [ "$fail" -eq 1 ]; then
             echo
-            echo "::error::R CMD check reported WARNINGs that are not on the justified list:"
-            echo "$unexpected"
-            echo
-            echo "Either fix the warning, or — if it is genuinely permanent — document it"
-            echo "in cran-comments.md and add its check name to the allowlist in this workflow."
+            echo "::error::R CMD check WARNINGs are not all on the justified list."
+            echo "Fix the warning, or -- if genuinely permanent -- document it in"
+            echo "cran-comments.md and extend the exact-content registry in this workflow."
             exit 1
           fi
           echo "All reported WARNINGs are on the justified list."
+
+      # Upload Windows crash dumps (if any) for diagnosis of the MSVC silent
+      # aborts; non-blocking.
+      - name: Upload Windows crash dumps
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: windows-crashdumps-${{ matrix.config.r }}
+          path: C:\crashdumps\*

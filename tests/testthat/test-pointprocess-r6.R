@@ -299,8 +299,10 @@ test_that("print.PointProcess() and $print() report time domain and point count"
 
 # --- voice_report edge case (no jitter/shimmer-qualifying periods, still succeeds) ---
 
-test_that("voice_report() on a nearly-empty PointProcess still returns a list (no crash)", {
-  skip_on_os("windows")  # voice_report on empty PointProcess aborts silently under Windows R CMD check
+# voice_report on an empty PointProcess aborts silently under MSVC on
+# Windows; the body runs in an isolated child R process there (see
+# helper-windows-crash-probe.R) so the abort is a visible failure, not a skip.
+probe_test("voice_report() on a nearly-empty PointProcess still returns a list (no crash)", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp_empty <- PointProcess(0, s$get_total_duration())
