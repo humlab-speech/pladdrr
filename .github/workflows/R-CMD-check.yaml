@@ -147,8 +147,14 @@ jobs:
               name = lines[1]
               if (name ~ /^compilation flags in Makevars \.\.\. WARNING$/) {
                 for (i = 2; i <= n; i++) {
+                  # Only -ffp-contract=off is justified. R-devel also emits
+                  # informational advisories about the configure/Makevars.in
+                  # layout (not flags); those are allowed, anything else fails.
                   if (lines[i] !~ /^Non-portable flags in variable .PKG_CXXFLAGS.:$/ &&
                       lines[i] !~ /^  -ffp-contract=off$/ &&
+                      lines[i] !~ /^Package has both .src\/Makevars\.in. and .src\/Makevars..$/ &&
+                      lines[i] !~ /^Installation with --no-configure. is unlikely to work\./ &&
+                      lines[i] !~ /^.src\/Makevars. to be used on Windows, rename it to .src\/Makevars\.win.$/ &&
                       lines[i] !~ /^$/) print "Makevars: " lines[i]
                 }
               } else if (name ~ /^compiled code \.\.\. WARNING$/) {
