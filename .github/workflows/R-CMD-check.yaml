@@ -180,12 +180,12 @@ jobs:
           fi
           echo "All reported WARNINGs are on the justified list."
 
-      # Upload Windows crash dumps (if any) for diagnosis of the MSVC silent
-      # aborts; non-blocking.
-      - name: Upload Windows crash dumps
-        if: always() && runner.os == 'Windows'
+      # Upload macOS crash reports (if any) for diagnosis of intermittent
+      # test crashes (Trace/BPT trap observed on macOS CI); non-blocking.
+      - name: Upload macOS crash reports
+        if: always() && runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: windows-crashdumps-${{ matrix.config.r }}
-          path: C:\crashdumps\*
+          name: macos-crashreports-${{ matrix.config.r }}
+          path: ~/Library/Logs/DiagnosticReports/*
