@@ -89,11 +89,20 @@ jobs:
           # note, so that "error-on: error" cannot silently absorb a new one.
           error-on: '"error"'
 
-      # Upload the WER minidumps from C:\crashdumps AFTER the check has run:
-      # the LocalDumps config captures dumps when the test suite crashes
-      # (silent abort / heap corruption in the vendored DSP), which happens
-      # inside check-r-package — an upload placed before it can never see
-      # them. Non-blocking: only present when the check crashed.
+      # WER writes full dumps asynchronously after the crash; the check step
+      # fails ~2 min before the dump is on disk. Wait for it (bounded: a
+      # missing dump just means the upload below finds nothing).
+      - name: Wait for Windows WER minidumps
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $deadline = (Get-Date).AddMinutes(4)
+          while ((Get-Date) -lt $deadline) {
+            $dumps = Get-ChildItem -Path C:\crashdumps -Filter *.dmp -Recurse -ErrorAction SilentlyContinue
+            if ($dumps) { break }
+            Start-Sleep -Seconds 10
+          }
+          Get-ChildItem -Path C:\crashdumps -Recurse -ErrorAction SilentlyContinue | Select-Object FullName, Length
       - name: Upload Windows WER minidumps
         if: always() && runner.os == 'Windows'
         uses: actions/upload-artifact@v4
