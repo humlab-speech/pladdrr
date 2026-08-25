@@ -1,0 +1,16 @@
+#!/bin/sh
+# Remove compiled artifacts from the working copy that R CMD build creates
+# when it compiles the package in-tree to build the vignettes. R CMD build
+# runs this script on its working copy AFTER building the vignettes and
+# BEFORE creating the tarball, so the shipped source tarball stays free of
+# object files/libraries. Without this, R-devel's
+# 'checking if this is a source package' reports
+# "Object files/libraries should not be included in a source package"
+# (src/modules/*.o, src/praat.github.io/**/*.o, ...) and the check NOTE
+# fails the CRAN gate in .github/workflows/R-CMD-check.yaml.
+#
+# Mirrors the .Rbuildignore exclusion pattern '^src/.*\.(o|...)'
+# (which R-devel applies late enough to miss files created during the
+# vignette build). Only touches files under src/ in the build copy.
+find src -type f \( -name '*.o' -o -name '*.o.tmp' -o -name '*.so' \
+  -o -name '*.dll' -o -name '*.dylib' -o -name '*.a' -o -name '*.la' \) -delete

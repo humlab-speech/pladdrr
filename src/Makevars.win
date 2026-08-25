@@ -11,6 +11,10 @@ CXX_STD = CXX17
 # Praat's own mingw makefiles build with -municode; plain defines are the
 # portable equivalent for an R package. -D_FILE_OFFSET_BITS=64 also mirrors
 # Praat's makefile.defs.msys-mingw64.
+# NOTE: -DHAVE_XSIMD deliberately NOT set on Windows (unlike Makevars.in).
+# The SIMD kernels run on Windows but a pre-existing heap-corruption bug in
+# the SIMD/batch region crashes the test suite deterministically there
+# (same bug crashes macOS intermittently). Tracked: re-enable once fixed.
 PKG_CPPFLAGS = -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64 \
                -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipocketfft \

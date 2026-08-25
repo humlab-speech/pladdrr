@@ -14,7 +14,7 @@ create_test_tone <- function(frequency, duration, sample_rate = 44100, amplitude
   Sound$from_values(samples, sample_rate)
 }
 
-# Helper: Get SIMD info
+# Helper: Get SIMD status
 get_simd_status <- function() {
   tryCatch(simd_info(), error = function(e) list(enabled = FALSE))
 }
@@ -22,7 +22,10 @@ get_simd_status <- function() {
 # Skip all tests if SIMD not available
 simd_status <- get_simd_status()
 if (!simd_status$enabled) {
-  skip("SIMD not available on this platform")
+  # Message must stay exactly "SIMD not available": the CI skip gate in
+  # .github/workflows/R-CMD-check.yaml classifies reasons against a fixed
+  # registry (this matches the 29 other SIMD skips on Windows).
+  skip("SIMD not available")
 }
 
 # ============================================================================

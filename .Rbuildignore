@@ -74,6 +74,9 @@
 ^pladdrr\.Rcheck$
 ^pladdrr_.*\.tar\.gz$
 ^src/Makevars$
+# R CMD build runs the cleanup script to strip vignette-build objects
+# from the tarball, but the script itself must not ship.
+^cleanup$
 
 # --- src/praat.github.io: keep only what's compiled or on an -I include path ---
 ^src/praat\.github\.io/docs/
