@@ -127,12 +127,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 4.111934 4.403846 7.560768 4.451502 4.501482 160.0469    50
+#>              expr      min       lq     mean  median       uq      max neval
+#>  sound$to_pitch() 3.769458 4.098612 7.527766 4.12425 4.157001 175.2869    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min      lq    mean   median       uq      max neval
-#>  sound$to_pitch() 4.094927 4.33171 4.39394 4.380011 4.421212 5.264684    50
+#>              expr      min       lq     mean   median      uq      max neval
+#>  sound$to_pitch() 3.731717 4.110774 4.130688 4.134995 4.16159 4.924945    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -724,16 +724,19 @@ sessionInfo()
 #> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.0.4       
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.1    
-#>  [5] tidyselect_1.2.1   Rcpp_1.1.2         jquerylib_0.1.4    systemfonts_1.3.2 
-#>  [9] scales_1.4.0       textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0     
-#> [13] ggplot2_4.0.3      R6_2.6.1           generics_0.1.4     knitr_1.51        
-#> [17] tibble_3.3.1       desc_1.4.3         bslib_0.12.0       pillar_1.11.1     
-#> [21] RColorBrewer_1.1-3 rlang_1.3.0        cachem_1.1.0       xfun_0.60         
-#> [25] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
-#> [29] cli_3.6.6          pkgdown_2.2.1      magrittr_2.0.5     digest_0.6.39     
-#> [33] grid_4.6.1         lifecycle_1.0.5    vctrs_0.7.3        evaluate_1.0.5    
-#> [37] glue_1.8.1         data.table_1.18.4  farver_2.1.2       codetools_0.2-20  
-#> [41] ragg_1.5.2         rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
-#> [45] htmltools_0.5.9
+#>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
+#>  [4] compiler_4.6.1      tidyselect_1.2.1    Rcpp_1.1.2         
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
+#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#> [13] ggplot2_4.0.3       R6_2.6.1            generics_0.1.4     
+#> [16] knitr_1.51          tibble_3.3.1        desc_1.4.3         
+#> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
+#> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.60          
+#> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
+#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         
+#> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
+#> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       
+#> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.31     
+#> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
 ```
