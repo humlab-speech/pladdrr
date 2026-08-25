@@ -64,6 +64,19 @@ jobs:
           reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpCount /t REG_DWORD /d 10 /f
           New-Item -ItemType Directory -Force -Path C:\crashdumps | Out-Null
 
+      # Upload the WER minidumps from C:\crashdumps so a Windows test crash
+      # (silent abort / heap corruption in the vendored DSP, see the macOS
+      # Trace/BPT reports) can be diagnosed: the LocalDumps config above
+      # captures them but without this step they never leave the runner.
+      # Non-blocking: only present when the check crashed.
+      - name: Upload Windows WER minidumps
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: windows-wer-minidumps-${{ matrix.config.r }}
+          path: C:\crashdumps\**/*
+
       - uses: r-lib/actions/setup-r-dependencies@v2.12.1
         with:
           extra-packages: |
