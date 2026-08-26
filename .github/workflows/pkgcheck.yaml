@@ -46,7 +46,8 @@ jobs:
       # below re-imposes the gate content-exactly for every *other* failure,
       # so a regression can never be silently absorbed by this
       # continue-on-error (the previous state: the run went green while
-      # pkgcheck internally failed three checks).      - uses: ropensci-review-tools/pkgcheck-action@main
+      # pkgcheck internally failed three checks).
+      - uses: ropensci-review-tools/pkgcheck-action@main
         continue-on-error: true
         with:
           ref: ""
