@@ -68,13 +68,15 @@ the vendored Praat objects was resolved in this release. The `abort` calls and
 the app-shutdown `_Exit` had already been removed; the remaining direct
 references to the libc `stdout`/`stderr` streams and to `exit()` are gone:
 
-- `melder_console.cpp` now routes console output through R's own
-  `R_Outputfile`/`R_Consolefile` handles in library builds instead of the
-  libc streams. Praat runs DSP frame loops on worker threads that can emit
-  these messages, so `Rprintf`/`REprintf` (main-thread-only R API) were not
-  an option; writing to R's `FILE*` handles keeps the same raw-stream thread
-  profile as before while dropping the banned symbols. In batch mode
-  `R_Consolefile` can be NULL, in which case the message is dropped.
+- `melder_console.cpp` now routes console output through the R API
+  (`Rprintf`/`REprintf`) in library builds instead of the libc streams.
+  R's console API is only safe on the main thread, and Praat DSP frame
+  loops on worker threads can emit casual messages (e.g.
+  `Sound_to_Pitch.cpp`), so writes are gated to the main thread — the first
+  writer (the R main thread at package load) is recorded and messages from
+  other threads are dropped; a mutex serializes main-thread writers. (The
+  `R_Outputfile`/`R_Consolefile` handles were considered and rejected: R
+  CMD check flags them as non-API entry points.)
 - All remaining `exit()` call sites (Praat's interactive CLI/argument
   handling, compiled but never entered from the embedded library) now throw a
   `MelderError` under `PRAAT_LIB` instead of terminating the process.

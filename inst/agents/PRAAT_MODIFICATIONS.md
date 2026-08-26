@@ -39,19 +39,21 @@ Behavior outside `PRAAT_LIB` builds is unchanged.
 
 Submodule commit `6843ffec0`.
 
-#### `melder/melder_console.cpp` — console output routed through R's streams
+#### `melder/melder_console.cpp` — console output routed through Rprintf/REprintf
 
 **Summary:** R CMD check's `checking compiled code` flagged `___stderrp`/
 `___stdoutp` in `melder_console.o` (and `praat.o`) plus `_exit` in `praat.o`.
-Under `PRAAT_LIB` builds, `MelderConsole_init` and `MelderConsole::write` now
-reference R's own `R_Outputfile`/`R_Consolefile` (`Rinterface.h`) instead of
-the libc `stdout`/`stderr` FILE* globals. Raw `FILE*` writes preserve the
-worker-thread safety profile of the old streams (the earlier rationale against
-`Rprintf`/`REprintf` from DSP worker threads still holds — no R API is
-called). `R_Consolefile` can be NULL in batch mode, so `write()` drops the
-message rather than dereferencing NULL (the previous segfault guard's
-behavior). The Win32 console-attach block is skipped entirely in library
-builds — R owns the console.
+Under `PRAAT_LIB` builds, `MelderConsole::write` now calls
+`Rprintf`/`REprintf` (R API). R's console API is only safe on the main
+thread, and Praat DSP frame loops on worker threads can emit `Melder_casual`
+messages (e.g. `Sound_to_Pitch.cpp`), so writes are gated to the recorded
+main thread (first writer at package load; worker-thread messages dropped)
+and serialized by a mutex. The `R_Outputfile`/`R_Consolefile` handles
+(`Rinterface.h`) were tried first and rejected: R CMD check flags them as
+non-API entry points. The libc `stdout`/`stderr` globals are no longer
+referenced at all; the Win32 console-attach block is skipped in library
+builds and `MelderConsole_init` leaves the stream globals NULL (R owns the
+console).
 
 #### `sys/praat.cpp` — 25 `exit()` call sites routed through `PLADDRR_EXIT`
 
