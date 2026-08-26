@@ -16,6 +16,6 @@ test_that("Sound$mix() still works for ordinary balance values", {
   mixed <- s1$mix(s2, balance = 0.5)
   values <- mixed$get_values(1)
 
-  expect_false(any(is.na(values)))
+  expect_false(anyNA(values))
   expect_true(all(is.finite(values)))
 })

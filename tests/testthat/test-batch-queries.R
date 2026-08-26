@@ -19,8 +19,8 @@ test_that("Formant batch queries work correctly", {
   
   expect_type(result, "list")
   expect_named(result, c("F1", "F2", "F3", "F4"))
-  expect_equal(length(result$F1), 10)
-  expect_equal(length(result$F2), 10)
+  expect_length(result$F1, 10)
+  expect_length(result$F2, 10)
   
   # Verify batch results match individual queries
   f1_individual <- sapply(times, function(t) formant$get_value_at_time(1, t, "hertz"))
@@ -41,7 +41,7 @@ test_that("Formant bandwidth batch queries work", {
   
   expect_type(result, "list")
   expect_named(result, c("B1", "B2", "B3", "B4"))
-  expect_equal(length(result$B1), 5)
+  expect_length(result$B1, 5)
   
   # Verify correctness
   b1_individual <- sapply(times, function(t) formant$get_bandwidth_at_time(1, t, "hertz"))
@@ -54,13 +54,13 @@ test_that("Formant batch queries handle edge cases", {
   formant <- sound$to_formant_burg()
   
   # Single time point
-  result <- get_formants_at_times(formant, c(1.0), 1:2)
-  expect_equal(length(result$F1), 1)
+  result <- get_formants_at_times(formant, 1.0, 1:2)
+  expect_length(result$F1, 1)
   
   # Single formant number
   result <- get_formants_at_times(formant, c(1.0, 2.0), 1)
   expect_named(result, "F1")
-  expect_equal(length(result$F1), 2)
+  expect_length(result$F1, 2)
   
   # Error on invalid input
   expect_error(get_formants_at_times("not_a_formant", c(1.0), 1))
@@ -79,7 +79,7 @@ test_that("Pitch batch queries work correctly", {
   result <- get_pitch_at_times(pitch, times)
   
   expect_type(result, "double")
-  expect_equal(length(result), 20)
+  expect_length(result, 20)
   
   # Verify batch results match individual queries
   individual <- sapply(times, function(t) pitch$get_value_at_time(t, "hertz", TRUE))
@@ -96,7 +96,7 @@ test_that("Pitch strength batch queries work", {
   result <- get_pitch_strengths_at_times(pitch, times)
   
   expect_type(result, "double")
-  expect_equal(length(result), 10)
+  expect_length(result, 10)
   
   # Strengths should be between 0 and 1 (or undefined)
   valid_strengths <- result[!is.na(result)]
@@ -117,8 +117,8 @@ test_that("Pitch batch queries handle interpolation", {
   result_no_interp <- get_pitch_at_times(pitch, times, interpolate = FALSE)
   
   # Results should be similar but may differ slightly
-  expect_equal(length(result_interp), 3)
-  expect_equal(length(result_no_interp), 3)
+  expect_length(result_interp, 3)
+  expect_length(result_no_interp, 3)
 })
 
 # Test Intensity batch queries
@@ -132,7 +132,7 @@ test_that("Intensity batch queries work correctly", {
   result <- get_intensity_at_times(intensity, times)
   
   expect_type(result, "double")
-  expect_equal(length(result), 15)
+  expect_length(result, 15)
   
   # Verify batch results match individual queries
   # Note: Slight numerical differences may occur due to internal interpolation details
@@ -152,9 +152,9 @@ test_that("Intensity batch queries support interpolation methods", {
   result_linear <- get_intensity_at_times(intensity, times, "linear")
   result_cubic <- get_intensity_at_times(intensity, times, "cubic")
   
-  expect_equal(length(result_nearest), 3)
-  expect_equal(length(result_linear), 3)
-  expect_equal(length(result_cubic), 3)
+  expect_length(result_nearest, 3)
+  expect_length(result_linear, 3)
+  expect_length(result_cubic, 3)
   
   # Results should be similar but may differ
   expect_true(cor(result_nearest, result_cubic, use = "complete.obs") > 0.95)
@@ -171,7 +171,7 @@ test_that("PointProcess get all times works", {
   
   expect_type(result, "double")
   expect_true(length(result) > 0)
-  expect_equal(length(result), pp$get_number_of_points())
+  expect_length(result, pp$get_number_of_points())
   
   # Verify times match individual queries
   individual <- sapply(1:pp$get_number_of_points(), function(i) pp$get_time(i))
@@ -190,7 +190,7 @@ test_that("PointProcess intervals work correctly", {
   result <- get_pointprocess_intervals(pp)
   
   expect_type(result, "double")
-  expect_equal(length(result), pp$get_number_of_points() - 1)
+  expect_length(result, pp$get_number_of_points() - 1)
   
   # All intervals should be positive
   expect_true(all(result > 0))
@@ -212,7 +212,7 @@ test_that("PointProcess nearest indices query works", {
   result <- get_pointprocess_nearest_indices(pp, query_times)
   
   expect_type(result, "integer")
-  expect_equal(length(result), 10)
+  expect_length(result, 10)
   
   # All indices should be valid
   expect_true(all(result >= 1 & result <= pp$get_number_of_points()))
@@ -227,10 +227,10 @@ test_that("PointProcess batch operations handle empty objects", {
   pp <- PointProcess(0, 1)
 
   times <- get_pointprocess_times(pp)
-  expect_equal(length(times), 0)
+  expect_length(times, 0)
 
   intervals <- get_pointprocess_intervals(pp)
-  expect_equal(length(intervals), 0)
+  expect_length(intervals, 0)
 })
 
 test_that("formant/bandwidth/pitch-strength batch queries return NA for non-finite query times", {
@@ -246,7 +246,7 @@ test_that("formant/bandwidth/pitch-strength batch queries return NA for non-fini
     formants <- get_formants_at_times(formant, times_with_gaps, 1:2),
     "undefined"
   )
-  expect_equal(length(formants$F1), 5)
+  expect_length(formants$F1, 5)
   expect_true(all(is.na(formants$F1[2:5])))
   expect_false(is.na(formants$F1[1]))
 
@@ -267,7 +267,7 @@ test_that("formant/bandwidth/pitch-strength batch queries return NA for non-fini
     strengths <- get_pitch_strengths_at_times(pitch, pitch_times),
     "undefined"
   )
-  expect_equal(length(strengths), 3)
+  expect_length(strengths, 3)
   expect_true(all(is.na(strengths[2:3])))
 })
 
@@ -306,7 +306,7 @@ test_that("get_pitch_quantiles_batch() computes named quantiles over default and
 
   # Default from_time = to_time = 0 means "use the whole object range"
   quartiles_default <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
-  expect_equal(length(quartiles_default), 3)
+  expect_length(quartiles_default, 3)
   expect_named(quartiles_default, c("q0.25", "q0.5", "q0.75"))
 
   # Explicit sub-range skips the "use whole range" branch
@@ -314,13 +314,13 @@ test_that("get_pitch_quantiles_batch() computes named quantiles over default and
     pitch, c(0.25, 0.75),
     from_time = pitch$get_xmin(), to_time = pitch$get_xmax()
   )
-  expect_equal(length(quartiles_range), 2)
+  expect_length(quartiles_range, 2)
 
   # Quartiles should be non-decreasing and within a plausible F0 range
   valid <- quartiles_default[!is.na(quartiles_default)]
   if (length(valid) == 3) {
-    expect_true(valid["q0.25"] <= valid["q0.5"])
-    expect_true(valid["q0.5"] <= valid["q0.75"])
+    expect_lte(valid["q0.25"], valid["q0.5"])
+    expect_lte(valid["q0.5"], valid["q0.75"])
   }
 })
 
@@ -468,7 +468,7 @@ test_that("Batch queries are faster than loops", {
   speedup <- medians[2] / medians[1]
   
   message(sprintf("Formant batch query speedup: %.1fx", speedup))
-  expect_true(speedup > 2.0)  # At least 2x faster
+  expect_gt(speedup, 2.0)  # At least 2x faster
 })
 
 test_that("PointProcess batch operations are faster than loops", {
@@ -490,5 +490,5 @@ test_that("PointProcess batch operations are faster than loops", {
   speedup <- medians[2] / medians[1]
   
   message(sprintf("PointProcess batch query speedup: %.1fx", speedup))
-  expect_true(speedup > 3.0)  # At least 3x faster
+  expect_gt(speedup, 3.0)  # At least 3x faster
 })

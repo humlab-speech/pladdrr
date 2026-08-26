@@ -21,7 +21,7 @@ test_that("to_powercepstrogram_fast returns a bare external pointer usable by ge
 
   # This is the raw Rcpp XPtr<PowerCepstrogram>, not a classed PowerCepstrogram
   # R6/wrapper object - it has no extra class beyond "externalptr".
-  expect_true(inherits(pcg, "externalptr"))
+  expect_s3_class(pcg, "externalptr")
   expect_identical(class(pcg), "externalptr")
 
   cpps <- get_cpps_fast(pcg)
@@ -98,7 +98,7 @@ test_that("apply_window_xptr applies a Hanning window that zeroes the edges", {
   hann <- create_window_xptr("hanning")
   windowed <- apply_window_xptr(sound, hann)
 
-  expect_true(inherits(windowed, "Sound"))
+  expect_s3_class(windowed, "Sound")
   expect_equal(windowed$get_total_duration(), sound$get_total_duration())
 
   orig <- sound$get_values()
@@ -130,7 +130,7 @@ test_that("apply_transform_xptr applies a compiled sample transform", {
   )
   transformed <- apply_transform_xptr(sound, square_xptr)
 
-  expect_true(inherits(transformed, "Sound"))
+  expect_s3_class(transformed, "Sound")
   ts <- transformed$get_values()
   expect_length(ts, length(orig))
   # x*x cannot be negative
@@ -194,8 +194,8 @@ test_that("extract_voiced_segments_ultra returns a shorter voiced-only Sound (bo
     extract_voiced_segments_ultra(sound, version = "v3.01")
   )
 
-  expect_true(inherits(voiced_v2, "Sound"))
-  expect_true(inherits(voiced_v3, "Sound"))
+  expect_s3_class(voiced_v2, "Sound")
+  expect_s3_class(voiced_v3, "Sound")
   expect_true(voiced_v2$get_total_duration() > 0)
   expect_true(voiced_v3$get_total_duration() > 0)
   expect_true(voiced_v2$get_total_duration() <= full_duration)
@@ -247,7 +247,8 @@ test_that("multiband_hnr_stats returns mean/sd for each band and matches calcula
     "band3500_mean", "band3500_sd"
   ))
   for (v in stats_interval) {
-    expect_true(is.numeric(v) && !is.na(v))
+    expect_true(is.numeric(v))
+    expect_false(is.na(v))
   }
 
   # Whole-sound stats (to_time = 0 means "full sound") must agree exactly
@@ -279,7 +280,8 @@ test_that("calculate_multiband_hnr_ultra returns mean/sd for each band directly 
     "band3500_mean", "band3500_sd"
   ))
   for (v in hnr) {
-    expect_true(is.numeric(v) && !is.na(v))
+    expect_true(is.numeric(v))
+    expect_false(is.na(v))
   }
 })
 

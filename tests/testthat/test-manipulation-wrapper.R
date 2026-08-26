@@ -78,16 +78,16 @@ test_that("Manipulation resynthesis methods return Sound objects", {
 
 test_that("Manipulation$get_xptr() returns the underlying external pointer", {
   manip <- manip_from_tone()
-  expect_true(is(manip$get_xptr(), "externalptr"))
+  expect_type(manip$get_xptr(), "externalptr")
 })
 
 test_that("print.Manipulation prints a summary without erroring", {
   manip <- manip_from_tone()
   out <- capture.output(print(manip))
 
-  expect_true(any(grepl("Praat Manipulation", out)))
-  expect_true(any(grepl("Time domain:", out)))
-  expect_true(any(grepl("Has pitch tier:", out)))
+  expect_true(any(grepl("Praat Manipulation", out, fixed = TRUE)))
+  expect_true(any(grepl("Time domain:", out, fixed = TRUE)))
+  expect_true(any(grepl("Has pitch tier:", out, fixed = TRUE)))
 })
 
 test_that("unknown $ access on Manipulation returns NULL", {

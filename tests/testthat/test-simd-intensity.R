@@ -32,7 +32,7 @@ test_that("SIMD energy calculation is consistent", {
   energy <- sound$get_energy(0, dur)
   
   # Energy should be positive
-  expect_true(energy > 0)
+  expect_gt(energy, 0)
   
   # Energy should scale with square of amplitude
   sound2 <- Sound$create_tone(1.0, 44100, 440, 1.0)  # Double amplitude

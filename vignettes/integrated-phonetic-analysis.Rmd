@@ -297,7 +297,7 @@ Process all vowel segments systematically:
 ```{r batch_processing}
 # Identify vowel intervals: labels containing an uppercase vowel letter
 # (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in "world")
-vowel_intervals <- which(grepl("[AEIOUY3]", phone_data$label, ignore.case = FALSE))
+vowel_intervals <- grep("[AEIOUY3]", phone_data$label, ignore.case = FALSE)
 
 # Extract acoustic features for each vowel
 vowel_features <- data.frame(

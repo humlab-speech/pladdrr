@@ -80,8 +80,8 @@ test_that("SIMD formant extraction is accurate", {
   
   # If formant found, should be in reasonable range
   if (!is.na(f1)) {
-    expect_true(f1 > 50)     # Lower bound
-    expect_true(f1 < 2000)   # Upper bound for F1
+    expect_gt(f1, 50)     # Lower bound
+    expect_lt(f1, 2000)   # Upper bound for F1
   }
 })
 
@@ -142,8 +142,8 @@ test_that("SIMD bandwidth estimation works", {
   
   # Bandwidth should be positive and reasonable
   expect_false(is.na(b1))
-  expect_true(b1 > 0)
-  expect_true(b1 < 1000)  # Typical bandwidth range
+  expect_gt(b1, 0)
+  expect_lt(b1, 1000)  # Typical bandwidth range
 })
 
 test_that("SIMD Willems formant method works", {
@@ -264,8 +264,8 @@ test_that("SIMD complex operations work correctly", {
   power_660 <- spec_value_at_freq(spectrum, 660)
   
   # Peaks at 440 and 880 should be larger than at 660
-  expect_true(power_440 > power_660)
-  expect_true(power_880 > power_660)
+  expect_gt(power_440, power_660)
+  expect_gt(power_880, power_660)
 })
 
 test_that("SIMD performance is better than scalar", {
@@ -288,5 +288,5 @@ test_that("SIMD performance is better than scalar", {
   
   # SIMD should complete in reasonable time
   # (Not testing absolute performance, just that it runs)
-  expect_true(time_simd["elapsed"] < 10)  # 10 seconds for 10 iterations
+  expect_lt(time_simd["elapsed"], 10)  # 10 seconds for 10 iterations
 })

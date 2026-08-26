@@ -83,15 +83,15 @@ windows_probe_test("PowerCepstrum$get_rnr is a documented, permanently-unsupport
 windows_probe_test("PowerCepstrum$get_peak_prominence_hillenbrand returns a list", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   h <- pc$get_peak_prominence_hillenbrand()
-  expect_true(is.list(h))
+  expect_type(h, "list")
 })
 
 windows_probe_test("PowerCepstrum$fit_trend_line covers multiple trend_type/fit_method combinations", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   fit1 <- pc$fit_trend_line(trend_type = "parabolic", fit_method = "least squares")
-  expect_true(is.list(fit1))
+  expect_type(fit1, "list")
   fit2 <- pc$fit_trend_line(trend_type = "straight", fit_method = "robust")
-  expect_true(is.list(fit2))
+  expect_type(fit2, "list")
 })
 
 windows_probe_test("PowerCepstrum$get_trend_line_value returns a numeric value", {

@@ -11,7 +11,7 @@ test_that("get_pitch_stats_direct returns full stats and accepts R6 or xptr inpu
 
   stats <- get_pitch_stats_direct(pitch)
   expect_named(stats, c("min", "max", "mean", "stdev", "median", "q25", "q75", "count_voiced"))
-  expect_true(stats$count_voiced > 0)
+  expect_gt(stats$count_voiced, 0)
 
   stats_xptr <- get_pitch_stats_direct(pitch$.xptr)
   expect_equal(stats_xptr$mean, stats$mean)
@@ -36,12 +36,12 @@ test_that("to_pitch_direct returns a usable Pitch xptr", {
   sound <- tone_sound()
   ptr <- to_pitch_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
 
-  expect_true(inherits(ptr, "externalptr"))
+  expect_s3_class(ptr, "externalptr")
   pitch <- Pitch(.xptr = ptr)
   expect_true(pitch$get_mean(0, 0, "hertz") > 0)
 
   ptr2 <- to_pitch_direct(sound$.xptr)
-  expect_true(inherits(ptr2, "externalptr"))
+  expect_s3_class(ptr2, "externalptr")
 
   expect_error(to_pitch_direct(list()), "Sound object or external pointer")
 })
@@ -68,7 +68,7 @@ test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return us
   expect_true(get_intensity_value_direct(iptr, 0.25) > 0)
 
   hptr <- to_harmonicity_direct(sound)
-  expect_true(inherits(hptr, "externalptr"))
+  expect_s3_class(hptr, "externalptr")
 })
 
 test_that("get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6", {
@@ -94,7 +94,7 @@ test_that("to_spectrum_direct and to_ltas_direct produce usable results", {
   sound <- tone_sound()
 
   spec_ptr <- to_spectrum_direct(sound)
-  expect_true(inherits(spec_ptr, "externalptr"))
+  expect_s3_class(spec_ptr, "externalptr")
 
   ltas <- to_ltas_direct(sound)
   expect_s3_class(ltas, "Ltas")
@@ -105,11 +105,11 @@ test_that("to_point_process_direct and to_point_process_from_sound_and_pitch pro
   pitch <- sound$to_pitch()
 
   pp_ptr1 <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
-  expect_true(inherits(pp_ptr1, "externalptr"))
+  expect_s3_class(pp_ptr1, "externalptr")
   expect_true(pp_get_mean_period_direct(pp_ptr1) > 0)
 
   pp_ptr2 <- to_point_process_from_sound_and_pitch(sound, pitch)
-  expect_true(inherits(pp_ptr2, "externalptr"))
+  expect_s3_class(pp_ptr2, "externalptr")
   expect_true(pp_get_stdev_period_direct(pp_ptr2) >= 0)
 })
 
@@ -117,8 +117,8 @@ test_that("two_pass_adaptive_pitch returns an adaptive-range pitch result", {
   sound <- tone_sound(dur = 1.0)
 
   result <- two_pass_adaptive_pitch(sound)
-  expect_true(inherits(result$pitch, "externalptr"))
-  expect_true(result$min_pitch < result$max_pitch)
+  expect_s3_class(result$pitch, "externalptr")
+  expect_lt(result$min_pitch, result$max_pitch)
 
   pitch_refined <- Pitch(.xptr = result$pitch)
   expect_true(pitch_refined$get_mean(0, 0, "hertz") > 0)

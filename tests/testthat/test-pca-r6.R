@@ -116,7 +116,7 @@ test_that("PCA project/transform, as_data_frame, get_info, save, labels", {
   expect_true(all(is.na(labels)))
 
   # get_xptr() returns the raw external pointer
-  expect_true(is(pca$get_xptr(), "externalptr"))
+  expect_type(pca$get_xptr(), "externalptr")
 
   # save() round-trips to a Praat text file and returns self invisibly
   tf <- tempfile(fileext = ".PCA")

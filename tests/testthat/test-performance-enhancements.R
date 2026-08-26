@@ -56,8 +56,8 @@ test_that("Sound$get_values returns correct data", {
   
   # Compare with data frame method
   df <- sound$as_data_frame()
-  expect_equal(length(values), nrow(df))
-  expect_equal(length(times), nrow(df))
+  expect_length(values, nrow(df))
+  expect_length(times, nrow(df))
   expect_equal(values, df$value, tolerance = 1e-10)
   expect_equal(times, df$time, tolerance = 1e-10)
 })
@@ -137,8 +137,8 @@ test_that("Pitch$get_statistics returns all metrics", {
   
   # Verify values are numeric and reasonable
   expect_true(all(sapply(stats, is.numeric)))
-  expect_true(stats$minimum <= stats$mean)
-  expect_true(stats$mean <= stats$maximum)
+  expect_lte(stats$minimum, stats$mean)
+  expect_lte(stats$mean, stats$maximum)
   expect_gte(stats$stdev, 0)
 })
 
@@ -178,8 +178,8 @@ test_that("Intensity$get_statistics returns all metrics", {
   
   # Verify values are numeric and reasonable
   expect_true(all(sapply(stats, is.numeric)))
-  expect_true(stats$minimum <= stats$mean)
-  expect_true(stats$mean <= stats$maximum)
+  expect_lte(stats$minimum, stats$mean)
+  expect_lte(stats$mean, stats$maximum)
   expect_gte(stats$stdev, 0)
 })
 
@@ -201,7 +201,7 @@ test_that("TextGrid$get_all_intervals works correctly", {
   }, error = function(e) skip("get_all_intervals not available - needs recompilation"))
   
   expect_s3_class(intervals, "data.frame")
-  expect_equal(names(intervals), c("start", "end", "text"))
+  expect_named(intervals, c("start", "end", "text"))
   expect_equal(nrow(intervals), 3)
   
   for (i in 1:3) {
@@ -227,7 +227,7 @@ test_that("TextGrid$get_all_points works correctly", {
   }, error = function(e) skip("get_all_points not available - needs recompilation"))
   
   expect_s3_class(points, "data.frame")
-  expect_equal(names(points), c("time", "text"))
+  expect_named(points, c("time", "text"))
   expect_equal(nrow(points), 3)
 })
 
@@ -266,7 +266,7 @@ test_that("TextGrid$extract_intervals_batch works correctly", {
   expect_true("end_times" %in% names(result))
   
   # Should extract 3 "V" intervals
-  expect_equal(length(result$indices), 3)
+  expect_length(result$indices, 3)
   expect_equal(result$indices, c(1, 3, 5))
   expect_equal(result$labels, c("V", "V", "V"))
   expect_equal(result$start_times, c(0, 2, 4))
@@ -305,7 +305,7 @@ test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
   
   expect_type(result, "list")
   expect_true("sounds" %in% names(result))
-  expect_equal(length(result$sounds), 2)
+  expect_length(result$sounds, 2)
   
   # Verify sounds are Sound objects
   expect_s3_class(result$sounds[[1]], "Sound")

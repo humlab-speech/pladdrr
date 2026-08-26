@@ -196,7 +196,7 @@ test_that("MFCC coefficients are in reasonable range", {
   # (This is a rough heuristic check)
   c0_mean <- mean(abs(coeffs[1, ]))
   c1_mean <- mean(abs(coeffs[2, ]))
-  expect_true(c0_mean > 0)
+  expect_gt(c0_mean, 0)
 })
 
 # ============================================================================

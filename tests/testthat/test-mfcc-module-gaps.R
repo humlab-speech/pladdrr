@@ -84,7 +84,7 @@ test_that("MFCC time-domain and CC properties are correct", {
 test_that("MFCC frame-level queries work for valid frame numbers", {
   mfcc <- make_test_mfcc(12)
   n_frames <- mfcc$get_number_of_frames()
-  expect_true(n_frames > 1)
+  expect_gt(n_frames, 1)
 
   expect_type(mfcc$get_c0_at_frame(1), "double")
   expect_equal(mfcc$get_num_coefficients_at_frame(1), 12)
@@ -93,10 +93,10 @@ test_that("MFCC frame-level queries work for valid frame numbers", {
 
   coefs <- mfcc$get_coefficients_at_frame(1)
   expect_type(coefs, "double")
-  expect_equal(length(coefs), 13)  # 12 coefficients + c0
+  expect_length(coefs, 13)  # 12 coefficients + c0
 
   all_c0 <- mfcc$get_all_c0()
-  expect_equal(length(all_c0), n_frames)
+  expect_length(all_c0, n_frames)
 
   all_coefs <- mfcc$get_all_coefficients()
   expect_equal(ncol(all_coefs), n_frames)
@@ -139,7 +139,7 @@ test_that("MFCC frame/time conversion round-trips", {
   expect_equal(f, 1)
 
   t_last <- mfcc$get_time_from_frame(n_frames)
-  expect_true(t_last > t)
+  expect_gt(t_last, t)
 })
 
 # ============================================================================
@@ -262,7 +262,7 @@ test_that("LFCC frame-level queries work for valid frame numbers", {
   expect_type(lfcc$get_value_at_time(lfcc$get_xmin(), 1), "double")
 
   coefs <- lfcc$get_coefficients_at_frame(1)
-  expect_equal(length(coefs), 13)
+  expect_length(coefs, 13)
 
   all_coefs <- lfcc$get_all_coefficients()
   expect_equal(ncol(all_coefs), n_frames)

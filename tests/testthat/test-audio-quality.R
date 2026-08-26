@@ -16,9 +16,9 @@ test_that("check_audio_quality returns expected metrics for a clean tone", {
   expect_equal(q$clipping_percentage, 0)
   expect_equal(q$duration, 0.5, tolerance = 1e-6)
   expect_equal(q$sampling_frequency, 16000)
-  expect_true(q$rms_amplitude > 0)
-  expect_true(q$max_amplitude > 0 && q$max_amplitude <= 1)
-  expect_true(q$intensity_range_db >= 0)
+  expect_gt(q$rms_amplitude, 0)
+  expect_gt(q$max_amplitude, 0); expect_lte(q$max_amplitude, 1)
+  expect_gte(q$intensity_range_db, 0)
 })
 
 test_that("check_audio_quality detects clipping", {
@@ -27,8 +27,8 @@ test_that("check_audio_quality detects clipping", {
   q <- check_audio_quality(snd, clipping_threshold = 0.5)
 
   expect_true(q$is_clipped)
-  expect_true(q$n_clipping_samples > 0)
-  expect_true(q$clipping_percentage > 0)
+  expect_gt(q$n_clipping_samples, 0)
+  expect_gt(q$clipping_percentage, 0)
 })
 
 test_that("check_audio_quality respects clipping_threshold and intensity_floor args", {
@@ -48,11 +48,11 @@ test_that("format_quality_report produces a character report with expected secti
 
   expect_type(report, "character")
   expect_length(report, 1)
-  expect_true(grepl("Audio Quality Report", report))
-  expect_true(grepl("Overall Status", report))
-  expect_true(grepl("Basic Properties", report))
-  expect_true(grepl("Amplitude Metrics", report))
-  expect_true(grepl("Clipping: NO", report))
+  expect_true(grepl("Audio Quality Report", report, fixed = TRUE))
+  expect_true(grepl("Overall Status", report, fixed = TRUE))
+  expect_true(grepl("Basic Properties", report, fixed = TRUE))
+  expect_true(grepl("Amplitude Metrics", report, fixed = TRUE))
+  expect_true(grepl("Clipping: NO", report, fixed = TRUE))
 })
 
 test_that("format_quality_report flags clipping and quiet recordings", {
@@ -61,7 +61,7 @@ test_that("format_quality_report flags clipping and quiet recordings", {
   q_clip <- check_audio_quality(loud, clipping_threshold = 0.5)
   report_clip <- format_quality_report(q_clip)
 
-  expect_true(grepl("Clipping: YES", report_clip))
+  expect_true(grepl("Clipping: YES", report_clip, fixed = TRUE))
   expect_true(grepl("BAD|Re-record", report_clip))
 
   quiet <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000,
@@ -77,8 +77,8 @@ test_that("format_quality_report(detailed = FALSE) omits detail sections", {
   report <- format_quality_report(q, detailed = FALSE)
 
   expect_type(report, "character")
-  expect_true(grepl("Overall Status", report))
-  expect_true(grepl("Amplitude Metrics", report))
-  expect_false(grepl("Intensity Metrics", report))
-  expect_false(grepl("Recommendations", report))
+  expect_true(grepl("Overall Status", report, fixed = TRUE))
+  expect_true(grepl("Amplitude Metrics", report, fixed = TRUE))
+  expect_false(grepl("Intensity Metrics", report, fixed = TRUE))
+  expect_false(grepl("Recommendations", report, fixed = TRUE))
 })

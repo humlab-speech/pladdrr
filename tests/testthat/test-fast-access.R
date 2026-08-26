@@ -10,7 +10,7 @@ test_that("sound_values_fast returns correct data", {
 
   # Values should be identical (ignoring class attributes)
   expect_equal(as.numeric(fast), as.numeric(regular), tolerance = 1e-10)
-  expect_equal(length(fast), sound$get_number_of_samples())
+  expect_length(fast, sound$get_number_of_samples())
 })
 
 
@@ -21,7 +21,7 @@ test_that("fast_vector has correct attributes", {
   fast <- get_sound_values_fast(sound, channel = 1)
 
   # Check attributes
-  expect_true(inherits(fast, "fast_vector"))
+  expect_s3_class(fast, "fast_vector")
   expect_true(attr(fast, "readonly"))
   expect_true(is_fast_vector(fast))
 
@@ -55,7 +55,7 @@ test_that("sound_times_fast returns correct times", {
   times_regular <- sound$get_sample_times()
 
   expect_equal(times_fast, times_regular, tolerance = 1e-10)
-  expect_equal(length(times_fast), sound$get_number_of_samples())
+  expect_length(times_fast, sound$get_number_of_samples())
 })
 
 
@@ -72,8 +72,8 @@ test_that("fast data remains valid while Sound exists", {
   # Sound still exists, data should be valid
   expect_true(is.numeric(rms1))
   expect_true(is.numeric(peak1))
-  expect_true(rms1 > 0)
-  expect_true(peak1 > 0)
+  expect_gt(rms1, 0)
+  expect_gt(peak1, 0)
 
   # Recompute - should get same results
   rms2 <- sqrt(mean(fast^2))
@@ -106,7 +106,7 @@ test_that("deprecated aliases still work with warning", {
     vals <- get_sound_values_zerocopy(sound, channel = 1),
     "deprecated"
   )
-  expect_equal(length(vals), sound$get_number_of_samples())
+  expect_length(vals, sound$get_number_of_samples())
 
   # sound_as_matrix_zerocopy -> sound_as_matrix_fast
   expect_warning(

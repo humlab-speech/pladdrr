@@ -78,7 +78,7 @@ test_that("period statistics work with both qualifying and non-qualifying period
   # Defaults (period_floor = 0.0001, period_ceiling = 0.02) should qualify
   # most ~6.7ms periods of a 150 Hz tone.
   n_periods <- pp$get_number_of_periods(0, 0)
-  expect_true(n_periods > 0)
+  expect_gt(n_periods, 0)
   expect_true(is.finite(pp$get_mean_period(0, 0)))
   expect_true(is.finite(pp$get_stdev_period(0, 0)))
   expect_equal(pp$get_voice_breaks(0, 0), 0)
@@ -137,7 +137,7 @@ test_that("add_point/remove_point/remove_point_near/remove_points_between/fill/v
 
   pp$fill(0.5, 0.6, 0.02)
   n_after_fill <- pp$get_number_of_points()
-  expect_true(n_after_fill > 2)
+  expect_gt(n_after_fill, 2)
 
   pp$remove_points_between(0.5, 0.6)
   expect_equal(pp$get_number_of_points(), 2)
@@ -218,7 +218,7 @@ test_that("get_values_from_sound() returns one value per point, and rejects non-
 
   vals <- pp$get_values_from_sound(s, channel = 1, interpolation = "cubic")
   expect_type(vals, "double")
-  expect_equal(length(vals), pp$get_number_of_points())
+  expect_length(vals, pp$get_number_of_points())
 
   expect_error(pp$get_values_from_sound("not a sound"), "sound must be a Sound object")
 })
@@ -229,7 +229,7 @@ test_that("get_jitter_batch() returns all five jitter measures in one call", {
   pp <- suppressWarnings(pitch$to_point_process())
 
   res <- pp$get_jitter_batch(0, 0, 0.0001, 0.02, 1.3)
-  expect_true(is.list(res))
+  expect_type(res, "list")
   expect_named(res, c("local", "local_absolute", "rap", "ppq5", "ddp"), ignore.order = TRUE)
   for (nm in names(res)) {
     expect_type(res[[nm]], "double")
@@ -277,12 +277,12 @@ test_that("save() writes a PointProcess to a Praat text file", {
   ret <- pp$save(f)
   expect_true(file.exists(f))
   content <- readLines(f)
-  expect_true(any(grepl("PointProcess", content)))
+  expect_true(any(grepl("PointProcess", content, fixed = TRUE)))
 })
 
 test_that("get_xptr() returns the underlying external pointer", {
   pp <- PointProcess(0, 1)
-  expect_true(inherits(pp$get_xptr(), "externalptr"))
+  expect_s3_class(pp$get_xptr(), "externalptr")
 })
 
 # --- Print ---
@@ -308,5 +308,5 @@ probe_test("voice_report() on a nearly-empty PointProcess still returns a list (
   pp_empty <- PointProcess(0, s$get_total_duration())
 
   report <- pp_empty$voice_report(s, pitch)
-  expect_true(is.list(report))
+  expect_type(report, "list")
 })

@@ -281,7 +281,7 @@ test_that("SIMD maintains numerical stability", {
   result <- calculate_batch_statistics_simd_bridge(close_values)
 
   expect_equal(result$mean, mean(close_values), tolerance = 1e-6)
-  expect_true(result$stdev > 0)  # Should detect variation
+  expect_gt(result$stdev, 0)  # Should detect variation
   expect_equal(result$min, min(close_values), tolerance = 1e-6)
   expect_equal(result$max, max(close_values), tolerance = 1e-6)
 })

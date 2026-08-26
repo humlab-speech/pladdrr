@@ -20,7 +20,7 @@ test_that("Spectrogram R6 time queries work", {
   
   expect_type(tmin, "double")
   expect_type(tmax, "double")
-  expect_true(tmax > tmin)
+  expect_gt(tmax, tmin)
 })
 
 test_that("Spectrogram R6 frequency queries work", {
@@ -34,7 +34,7 @@ test_that("Spectrogram R6 frequency queries work", {
   
   expect_type(fmin, "double")
   expect_type(fmax, "double")
-  expect_true(fmax > fmin)
+  expect_gt(fmax, fmin)
   expect_lte(fmax, 5000)
 })
 

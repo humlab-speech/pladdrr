@@ -7,7 +7,7 @@ test_that("Sound$extract_intervals_where works with matching intervals", {
   # Should find unvoiced intervals
   result <- s$extract_intervals_where(tg, 1, "is equal to", "U", FALSE)
   
-  expect_true(is.list(result))
+  expect_type(result, "list")
   expect_gte(length(result), 0)
 })
 
@@ -21,8 +21,8 @@ test_that("Sound$extract_intervals_where handles no matches without crashing", {
   # (Praat warning goes to stderr, not R warning system)
   result <- s$extract_intervals_where(tg, 1, "is equal to", "NONEXISTENT", FALSE)
   
-  expect_true(is.list(result))
-  expect_equal(length(result), 0)
+  expect_type(result, "list")
+  expect_length(result, 0)
 })
 
 test_that("Sound$extract_intervals_where works with different criteria", {
@@ -33,9 +33,9 @@ test_that("Sound$extract_intervals_where works with different criteria", {
   
   # Test "is not equal to"
   result <- s$extract_intervals_where(tg, 1, "is not equal to", "U", FALSE)
-  expect_true(is.list(result))
+  expect_type(result, "list")
   
   # Test "contains"  
   result <- s$extract_intervals_where(tg, 1, "contains", "U", FALSE)
-  expect_true(is.list(result))
+  expect_type(result, "list")
 })

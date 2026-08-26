@@ -20,7 +20,7 @@ test_that("Spectrum R6 frequency queries work", {
   
   expect_type(fmin, "double")
   expect_type(fmax, "double")
-  expect_true(fmax > fmin)
+  expect_gt(fmax, fmin)
   expect_equal(fmin, 0.0)  # Should start at 0 Hz
 })
 
@@ -259,14 +259,14 @@ test_that("Spectrum R6 print and is_valid work", {
   expect_true(spectrum$is_valid())
 
   output <- capture.output(spectrum$print())
-  expect_true(any(grepl("Praat Spectrum", output)))
-  expect_true(any(grepl("Frequency range", output)))
-  expect_true(any(grepl("Number of bins", output)))
-  expect_true(any(grepl("Frequency step", output)))
+  expect_true(any(grepl("Praat Spectrum", output, fixed = TRUE)))
+  expect_true(any(grepl("Frequency range", output, fixed = TRUE)))
+  expect_true(any(grepl("Number of bins", output, fixed = TRUE)))
+  expect_true(any(grepl("Frequency step", output, fixed = TRUE)))
 
   # print.Spectrum S3 dispatch
   output2 <- capture.output(print(spectrum))
-  expect_true(any(grepl("Praat Spectrum", output2)))
+  expect_true(any(grepl("Praat Spectrum", output2, fixed = TRUE)))
 })
 
 test_that("Spectrum R6 get_band_densities and get_power_at_frequencies batch ops work", {

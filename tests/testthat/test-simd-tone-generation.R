@@ -17,7 +17,7 @@ test_that("SIMD tone generation creates valid sine wave", {
   sound <- create_test_tone(1.0, 440, 44100, 0.5)
 
   # Check basic properties
-  expect_true(!is.null(sound))
+  expect_false(is.null(sound))
   expect_equal(sound$get_duration(), 1.0, tolerance = 0.01)
 
   # Convert to matrix
@@ -143,5 +143,5 @@ test_that("SIMD tone generation performance is reasonable", {
   })["elapsed"]
 
   # Should be fast (< 0.5 seconds for 10 seconds of audio)
-  expect_true(time_taken < 0.5)
+  expect_lt(time_taken, 0.5)
 })

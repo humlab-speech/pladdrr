@@ -58,7 +58,7 @@ test_that("Cochleagram can query values at time and frequency", {
   
   expect_type(value, "double")
   expect_true(is.finite(value))
-  expect_true(value >= 0)  # Excitation is non-negative
+  expect_gte(value, 0)  # Excitation is non-negative
 })
 
 test_that("Cochleagram can query values", {
@@ -71,7 +71,7 @@ test_that("Cochleagram can query values", {
   
   expect_type(value, "double")
   expect_true(is.finite(value))
-  expect_true(value >= 0)  # Excitation is non-negative
+  expect_gte(value, 0)  # Excitation is non-negative
 })
 
 test_that("Cochleagram can be converted to Excitation", {
@@ -109,8 +109,8 @@ test_that("Cochleagram difference can be computed", {
   
   expect_type(diff, "double")
   expect_true(is.finite(diff))
-  expect_true(diff >= 0)  # Distance metric
-  expect_true(diff > 0)   # Different frequencies should differ
+  expect_gte(diff, 0)  # Distance metric
+  expect_gt(diff, 0)   # Different frequencies should differ
 })
 
 test_that("Cochleagram handles edge cases", {

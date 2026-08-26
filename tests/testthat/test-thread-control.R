@@ -4,7 +4,7 @@ test_that("pladdrr_threads() with no args just queries current state", {
   state <- pladdrr_threads()
   expect_type(state, "list")
   expect_true(all(c("processors", "enabled", "max_threads", "min_elements_per_thread") %in% names(state)))
-  expect_true(state$processors >= 1)
+  expect_gte(state$processors, 1)
 })
 
 test_that("pladdrr_threads(1) disables multithreading", {
@@ -21,7 +21,7 @@ test_that("pladdrr_threads(0) restores automatic (all-core) mode", {
   state <- pladdrr_threads(0)
 
   expect_true(state$enabled)
-  expect_true(state$max_threads >= 1L)
+  expect_gte(state$max_threads, 1L)
 })
 
 test_that("pladdrr_threads rejects invalid n", {

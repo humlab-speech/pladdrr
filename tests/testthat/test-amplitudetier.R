@@ -14,7 +14,7 @@ test_that("intensity_tier_to_amplitude_tier converts a populated IntensityTier",
   at <- intensity_tier_to_amplitude_tier(it)
 
   expect_s3_class(at, "AmplitudeTier")
-  expect_equal(at$get_number_of_points(), 2)
+  expect_identical(at$get_number_of_points(), 2L)
 })
 
 test_that("amplitude_tier_from_point_process converts a Sound/PointProcess pair", {

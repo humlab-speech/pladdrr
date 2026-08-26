@@ -17,10 +17,10 @@ manip_from_tone <- function() {
 test_that("module extract_*_ptr methods return external pointers", {
   manip <- manip_from_tone()
 
-  expect_true(is(manip$.cpp$extract_pitch_tier_ptr(), "externalptr"))
-  expect_true(is(manip$.cpp$extract_duration_tier_ptr(), "externalptr"))
-  expect_true(is(manip$.cpp$extract_pulses_ptr(), "externalptr"))
-  expect_true(is(manip$.cpp$extract_original_sound_ptr(), "externalptr"))
+  expect_type(manip$.cpp$extract_pitch_tier_ptr(), "externalptr")
+  expect_type(manip$.cpp$extract_duration_tier_ptr(), "externalptr")
+  expect_type(manip$.cpp$extract_pulses_ptr(), "externalptr")
+  expect_type(manip$.cpp$extract_original_sound_ptr(), "externalptr")
 })
 
 test_that("module extract_*_ptr methods error when the tier is absent", {
@@ -33,15 +33,15 @@ test_that("module extract_*_ptr methods error when the tier is absent", {
   expect_error(empty$extract_pitch_tier_ptr(), "No pitch tier")
   expect_error(empty$extract_pulses_ptr(), "No pulses")
   expect_error(empty$extract_original_sound_ptr(), "No original sound")
-  expect_true(is(empty$extract_duration_tier_ptr(), "externalptr"))
+  expect_type(empty$extract_duration_tier_ptr(), "externalptr")
 })
 
 test_that("module resynthesis methods return external pointers", {
   manip <- manip_from_tone()
 
-  expect_true(is(manip$.cpp$get_resynthesis_overlap_add_ptr(), "externalptr"))
-  expect_true(is(manip$.cpp$get_resynthesis_pulses_ptr(), "externalptr"))
-  expect_true(is(manip$.cpp$get_resynthesis_pulses_hum_ptr(), "externalptr"))
+  expect_type(manip$.cpp$get_resynthesis_overlap_add_ptr(), "externalptr")
+  expect_type(manip$.cpp$get_resynthesis_pulses_ptr(), "externalptr")
+  expect_type(manip$.cpp$get_resynthesis_pulses_hum_ptr(), "externalptr")
 })
 
 test_that("module get_info returns a named list", {
@@ -67,7 +67,7 @@ test_that("module factory Sound_to_Manipulation builds a valid Manipulation", {
   snd <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
 
   xptr <- mod$Sound_to_Manipulation(snd$get_xptr(), 0.01, 75, 300)
-  expect_true(is(xptr, "externalptr"))
+  expect_type(xptr, "externalptr")
 
   manip <- mod$RManipulation$new(xptr)
   expect_true(manip$is_valid())
@@ -86,7 +86,7 @@ test_that("module factory Sound_to_Manipulation rejects a null sound pointer", {
 test_that("module factory Manipulation_create builds an empty Manipulation", {
   mod <- pladdrr:::get_module("manipulation_module")
   xptr <- mod$Manipulation_create(0.0, 0.5)
-  expect_true(is(xptr, "externalptr"))
+  expect_type(xptr, "externalptr")
 
   manip <- mod$RManipulation$new(xptr)
   expect_true(manip$is_valid())

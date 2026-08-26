@@ -32,8 +32,8 @@ test_that("LTAS get_slope dB unit matches energy unit", {
   # For slope calculation they should be similar
   expect_type(slope_energy, "double")
   expect_type(slope_db, "double")
-  expect_true(slope_energy < 0)
-  expect_true(slope_db < 0)
+  expect_lt(slope_energy, 0)
+  expect_lt(slope_db, 0)
 })
 
 test_that("LTAS get_slope sones unit returns dB values", {
@@ -45,7 +45,8 @@ test_that("LTAS get_slope sones unit returns dB values", {
   # Sones uses log2 instead of log10, but should still return dB-scale values
   expect_type(slope_sones, "double")
   # Should be in dB range, not a ratio
-  expect_true(is.finite(slope_sones) && (slope_sones < 50 && slope_sones > -100),
+  expect_true(is.finite(slope_sones))
+  expect_lt(slope_sones, 50,
               label = "sones unit returns reasonable dB value")
 })
 

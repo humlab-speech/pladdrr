@@ -32,7 +32,7 @@ test_that("TextGrid tier properties are correct", {
   # Tier count and names
   expect_equal(tg$get_number_of_tiers(), 3)
   tier_names <- tg$get_tier_names()
-  expect_equal(length(tier_names), 3)
+  expect_length(tier_names, 3)
   expect_equal(tier_names[1], "words")
   expect_equal(tier_names[2], "phones")
   expect_equal(tier_names[3], "tones")

@@ -15,7 +15,7 @@ test_that("as.data.frame.Matrix returns long-format with real axis values", {
   expect_true(all(c("row", "col", "value") %in% names(df)))
 
   # One row per matrix cell, in the same order as as.vector() (column-major).
-  expect_equal(nrow(df), length(m$as_matrix()))
+  expect_identical(nrow(df), length(m$as_matrix()))
   expect_equal(df$value, as.vector(m$as_matrix()))
 
   # Axis values are real coordinates, not bin indices.

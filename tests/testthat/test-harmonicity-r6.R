@@ -41,8 +41,8 @@ test_that("Harmonicity point queries return numeric HNR values", {
 
   raw_vals <- hnr$get_values_vector()
   raw_times <- hnr$get_times_vector()
-  expect_equal(length(raw_vals), length(raw_times))
-  expect_equal(length(raw_vals), hnr$get_number_of_frames())
+  expect_length(raw_vals, length(raw_times))
+  expect_length(raw_vals, hnr$get_number_of_frames())
 })
 
 test_that("Harmonicity statistics over a time range", {
@@ -53,15 +53,15 @@ test_that("Harmonicity statistics over a time range", {
 
   min_hnr <- hnr$get_minimum(interpolation = "parabolic")
   max_hnr <- hnr$get_maximum(interpolation = "parabolic")
-  expect_true(min_hnr <= max_hnr)
+  expect_lte(min_hnr, max_hnr)
 
   sd_hnr <- hnr$get_standard_deviation()
   expect_true(is.numeric(sd_hnr))
 
   t_min <- hnr$get_time_of_minimum()
   t_max <- hnr$get_time_of_maximum()
-  expect_true(t_min >= hnr$get_start_time() && t_min <= hnr$get_end_time())
-  expect_true(t_max >= hnr$get_start_time() && t_max <= hnr$get_end_time())
+  expect_gte(t_min, hnr$get_start_time()); expect_lte(t_min, hnr$get_end_time())
+  expect_gte(t_max, hnr$get_start_time()); expect_lte(t_max, hnr$get_end_time())
 })
 
 test_that("Harmonicity get_statistics_batch computes per-interval stats in one call", {

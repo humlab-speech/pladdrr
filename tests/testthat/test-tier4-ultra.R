@@ -22,7 +22,7 @@ test_that("get_durations_batch returns correct durations", {
   durations <- get_durations_batch(files)
 
   expect_type(durations, "double")
-  expect_equal(length(durations), 2)
+  expect_length(durations, 2)
   expect_true(all(durations > 0))
 })
 
@@ -51,8 +51,8 @@ test_that("get_durations_batch handles invalid files gracefully", {
 
   durations <- get_durations_batch(files)
 
-  expect_equal(length(durations), 2)
-  expect_true(durations[1] > 0)
+  expect_length(durations, 2)
+  expect_gt(durations[1], 0)
   expect_true(is.na(durations[2]))  # Invalid file returns NA
 })
 
@@ -63,8 +63,8 @@ test_that("get_durations_batch handles single file", {
   duration <- get_durations_batch(file)
 
   expect_type(duration, "double")
-  expect_equal(length(duration), 1)
-  expect_true(duration > 0)
+  expect_length(duration, 1)
+  expect_gt(duration, 0)
 })
 
 # get_durations_batch_cpp() parses only the minimal WAV header/chunk layout
@@ -197,7 +197,7 @@ test_that("get_durations_batch is faster than LongSound loop", {
   # Tier 4 should be significantly faster (target: 77x)
   speedup <- result$median[2] / result$median[1]
   message(sprintf("get_durations_batch speedup: %.1fx", speedup))
-  expect_true(speedup > 5)  # At least 5x faster
+  expect_gt(speedup, 5)  # At least 5x faster
 })
 
 
@@ -215,8 +215,8 @@ test_that("calculate_f0_stats_ultra returns correct max F0", {
   max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
 
   expect_type(max_f0, "double")
-  expect_true(!is.na(max_f0))
-  expect_true(max_f0 >= 75 && max_f0 <= 600)
+  expect_false(is.na(max_f0))
+  expect_gte(max_f0, 75); expect_lte(max_f0, 600)
 })
 
 test_that("calculate_f0_stats_ultra matches existing pitch methods", {
@@ -291,8 +291,8 @@ test_that("calculate_minimum_intensity_ultra returns valid intensity", {
   min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
 
   expect_type(min_int, "double")
-  expect_true(!is.na(min_int))
-  expect_true(min_int > 0 && min_int < 100)  # Reasonable dB range
+  expect_false(is.na(min_int))
+  expect_gt(min_int, 0); expect_lt(min_int, 100)  # Reasonable dB range
 })
 
 test_that("calculate_minimum_intensity_ultra matches DSI reference value", {
@@ -514,8 +514,8 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
 
   # Verify it runs successfully
   result <- tier4_dsi()
-  expect_equal(length(result), 4)
-  expect_true(all(!is.na(result)))
+  expect_length(result, 4)
+  expect_true(!any(is.na(result)))
 
   message(sprintf("DSI Tier 4 result: MPT=%.2fs, F0=%.1fHz, Int=%.1fdB, PPQ5=%.4f",
                   result["max_mpt"], result["max_f0"], result["min_int"], result["jitter_ppq5"]))
@@ -592,7 +592,7 @@ test_that("build_multiband_harmonicity returns named Harmonicity objects", {
   sound <- Sound(sound_path)
   built <- build_multiband_harmonicity(sound)
 
-  expect_equal(names(built), c("full", "band500", "band1500", "band2500", "band3500"))
+  expect_named(built, c("full", "band500", "band1500", "band2500", "band3500"))
   expect_true(all(vapply(built, inherits, logical(1), "Harmonicity")))
 })
 

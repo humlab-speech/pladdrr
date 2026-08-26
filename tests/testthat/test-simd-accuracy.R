@@ -57,7 +57,7 @@ test_that("SIMD mono conversion is accurate for stereo", {
   
   # Check samples match expected (within floating point tolerance)
   mono_samples <- mono$get_samples(1)
-  expect_equal(length(mono_samples), length(expected_mono))
+  expect_length(mono_samples, length(expected_mono))
   expect_equal(mono_samples, expected_mono, tolerance = 1e-12)
 })
 
@@ -91,7 +91,7 @@ test_that("SIMD mono conversion is accurate for multi-channel", {
   
   # Check samples match expected
   mono_samples <- mono$get_samples(1)
-  expect_equal(length(mono_samples), length(expected_mono))
+  expect_length(mono_samples, length(expected_mono))
   expect_equal(mono_samples, expected_mono, tolerance = 1e-12)
 })
 

@@ -100,7 +100,7 @@ test_that("generate_noise() creates random noise with correct properties", {
   expect_length(sound$get_values(), expected_samples)
 
   # Check no NAs or infinite values
-  expect_false(any(is.na(sound$get_values())))
+  expect_false(anyNA(sound$get_values()))
   expect_false(any(is.infinite(sound$get_values())))
 
   # Check amplitude scaling (noise should be roughly within amplitude range)

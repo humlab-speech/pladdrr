@@ -57,8 +57,8 @@ test_that("validate_string accepts non-empty strings and rejects the rest", {
 # --- validate_logical ------------------------------------------------------------
 
 test_that("validate_logical accepts TRUE/FALSE and rejects the rest", {
-  expect_equal(pladdrr:::validate_logical(TRUE), TRUE)
-  expect_equal(pladdrr:::validate_logical(FALSE), FALSE)
+  expect_true(pladdrr:::validate_logical(TRUE))
+  expect_false(pladdrr:::validate_logical(FALSE))
   expect_error(pladdrr:::validate_logical(NA), "cannot be NA")
   expect_error(pladdrr:::validate_logical(1), "single logical value")
   expect_error(pladdrr:::validate_logical(c(TRUE, FALSE)), "single logical value")

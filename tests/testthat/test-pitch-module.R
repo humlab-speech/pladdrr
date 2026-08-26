@@ -193,15 +193,15 @@ test_that("RPitch conversion methods return valid XPtrs", {
 
   # to_point_process_ptr
   pp_ptr <- rpitch$to_point_process_ptr()
-  expect_true(inherits(pp_ptr, "externalptr"))
+  expect_s3_class(pp_ptr, "externalptr")
 
   # down_to_pitch_tier_ptr
   pt_ptr <- rpitch$down_to_pitch_tier_ptr()
-  expect_true(inherits(pt_ptr, "externalptr"))
+  expect_s3_class(pt_ptr, "externalptr")
 
   # to_textgrid_vuv_ptr
   tg_ptr <- rpitch$to_textgrid_vuv_ptr(0.02, 0.01)
-  expect_true(inherits(tg_ptr, "externalptr"))
+  expect_s3_class(tg_ptr, "externalptr")
 })
 
 test_that("RPitch matches R6 Pitch values", {
@@ -239,10 +239,10 @@ test_that("RPitch debug_candidates returns per-frame candidate detail", {
 
   dc <- rpitch$debug_candidates(3L)
   expect_type(dc, "list")
-  expect_equal(length(dc), 3)
+  expect_length(dc, 3)
 
   first <- dc[[1]]
   expect_true(all(c("time", "nCandidates", "frequencies", "strengths", "ceiling") %in% names(first)))
-  expect_equal(length(first$frequencies), first$nCandidates)
-  expect_equal(length(first$strengths), first$nCandidates)
+  expect_length(first$frequencies, first$nCandidates)
+  expect_length(first$strengths, first$nCandidates)
 })

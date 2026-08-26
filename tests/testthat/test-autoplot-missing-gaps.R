@@ -84,7 +84,7 @@ test_that("FormantTier autoplot/autolayer respect from_time/to_time and warn whe
   p3 <- ggplot2::autoplot(ft, style = "line", from_time = 0.05, to_time = 0.15)
   expect_s3_class(p3, "ggplot")
   layer2 <- ggplot2::autolayer(ft, style = "line", from_time = 0.05, to_time = 0.15)
-  expect_true(is.list(layer2))
+  expect_type(layer2, "list")
 })
 
 # ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ test_that("FormantPath autoplot/autolayer respect from_time/to_time (non-empty r
   p2 <- ggplot2::autoplot(fp, from_time = 0.02, to_time = 0.1)
   expect_s3_class(p2, "ggplot")
   layer2 <- ggplot2::autolayer(fp, from_time = 0.02, to_time = 0.1)
-  expect_true(is.list(layer2))
+  expect_type(layer2, "list")
 })
 
 test_that("FormantPath show_candidates has no effect because as_data_frame() never returns a 'candidate' column", {
@@ -368,7 +368,7 @@ test_that("DTW autoplot/autolayer accept a custom alpha_path", {
   p <- ggplot2::autoplot(dtw, alpha_path = 0.3)
   expect_s3_class(p, "ggplot")
   layer <- ggplot2::autolayer(dtw, alpha_path = 0.3)
-  expect_true(is.list(layer))
+  expect_type(layer, "list")
 })
 
 # ---------------------------------------------------------------------------

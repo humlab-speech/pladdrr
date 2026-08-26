@@ -55,7 +55,7 @@ test_that("with_pladdrr_errors attaches data-loss attribute on tagged warning", 
     c(1, 2, 3, NA, NA)
   }))
   loss <- attr(res, "pladdrr_data_loss")
-  expect_true(!is.null(loss))
+  expect_false(is.null(loss))
   expect_equal(loss[[1]]$routine, "probe")
   expect_match(loss[[1]]$message, "3 of 5")
 })

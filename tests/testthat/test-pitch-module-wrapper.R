@@ -25,9 +25,9 @@ test_that("PitchModule() constructs a valid wrapper from a Sound-derived pointer
   expect_s3_class(pm, "PitchModule")
   expect_s3_class(pm, "PraatObjectModule")
   expect_true(pm$is_valid)
-  expect_true(pm$duration > 0)
-  expect_true(pm$nx > 0)
-  expect_true(pm$dx > 0)
+  expect_gt(pm$duration, 0)
+  expect_gt(pm$nx, 0)
+  expect_gt(pm$dx, 0)
 })
 
 test_that("print.PitchModule reports summary statistics without erroring", {
@@ -35,8 +35,8 @@ test_that("print.PitchModule reports summary statistics without erroring", {
   out <- capture.output(print(pm))
 
   expect_true(any(grepl("Praat Pitch \\(Module\\)", out)))
-  expect_true(any(grepl("Duration:", out)))
-  expect_true(any(grepl("Frames:", out)))
+  expect_true(any(grepl("Duration:", out, fixed = TRUE)))
+  expect_true(any(grepl("Frames:", out, fixed = TRUE)))
 })
 
 test_that("as.data.frame.PitchModule returns a data frame with expected rows", {
@@ -87,7 +87,7 @@ test_that("$.PitchModule to_point_process transform returns a PointProcess", {
   pm <- PitchModule(pitch_module_ptr())
   pp <- pm$to_point_process()
 
-  expect_true(!is.null(pp))
+  expect_false(is.null(pp))
 })
 
 test_that("pitch_modules_available reports module load status", {

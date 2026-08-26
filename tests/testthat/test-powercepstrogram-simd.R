@@ -41,7 +41,7 @@ test_that("CPPS calculation with SIMD matches scalar", {
   }, error = function(e) NA_real_)
   
   # Should return valid CPPS value (typically 5-20 dB for voiced)
-  expect_true(!is.na(cpps))
+  expect_false(is.na(cpps))
   expect_gt(cpps, 0)
   expect_lt(cpps, 30)
 })

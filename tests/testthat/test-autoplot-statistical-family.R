@@ -6,8 +6,10 @@ test_that("Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 re
   mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   df <- as.data.frame(mat)
-  expect_true(max(df$col) <= 1.0 && min(df$col) >= 0)
-  expect_true(max(df$row) <= 2.0 && min(df$row) >= 0)
+  expect_lte(max(df$col), 1.0)
+  expect_gte(min(df$col), 0)
+  expect_lte(max(df$row), 2.0)
+  expect_gte(min(df$row), 0)
   expect_false(isTRUE(all.equal(sort(unique(df$col)), 1:10)))
   expect_s3_class(ggplot2::autoplot(mat), "ggplot")
 })
@@ -31,8 +33,8 @@ test_that("DTW autoplot/autolayer render and degrade gracefully on empty path (T
   p <- ggplot2::autoplot(dtw)
   expect_s3_class(p, "ggplot")
   layer <- ggplot2::autolayer(dtw)
-  expect_true(is.list(layer))
-  expect_equal(length(layer), 2)
+  expect_type(layer, "list")
+  expect_length(layer, 2)
 
   fake <- structure(list(get_path = function() NULL), class = "DTW")
   expect_warning(p2 <- ggplot2::autoplot(fake))

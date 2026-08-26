@@ -50,7 +50,7 @@ test_that("LTAS get_values_at_frequencies returns correct values", {
   freqs <- c(100, 440, 880, 1000)
   values <- ltas$get_values_at_frequencies(freqs)
 
-  expect_equal(length(values), length(freqs))
+  expect_length(values, length(freqs))
   expect_true(is.numeric(values))
 })
 
@@ -64,7 +64,7 @@ test_that("LTAS get_means_batch returns correct means", {
 
   means <- ltas$get_means_batch(fmins, fmaxs)
 
-  expect_equal(length(means), 3)
+  expect_length(means, 3)
   expect_true(is.numeric(means))
 })
 
@@ -77,7 +77,7 @@ test_that("Pitch get_values_detrended produces valid output", {
   # Get detrended values
   detrended <- pitch$get_values_detrended(unit = "hertz")
 
-  expect_equal(length(detrended), pitch$get_number_of_frames())
+  expect_length(detrended, pitch$get_number_of_frames())
   expect_true(is.numeric(detrended))
 })
 
@@ -88,7 +88,7 @@ test_that("Pitch subtract_linear_fit returns new Pitch object", {
 
   detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")
 
-  expect_true(inherits(detrended_pitch, "Pitch"))
+  expect_s3_class(detrended_pitch, "Pitch")
   expect_true(detrended_pitch$is_valid())
   expect_equal(detrended_pitch$get_number_of_frames(), pitch$get_number_of_frames())
 })
@@ -100,7 +100,7 @@ test_that("Pitch interpolate returns new Pitch object", {
 
   interpolated <- pitch$interpolate()
 
-  expect_true(inherits(interpolated, "Pitch"))
+  expect_s3_class(interpolated, "Pitch")
   expect_true(interpolated$is_valid())
 })
 
@@ -111,7 +111,7 @@ test_that("Pitch smooth returns new Pitch object", {
 
   smoothed <- pitch$smooth(bandwidth = 10)
 
-  expect_true(inherits(smoothed, "Pitch"))
+  expect_s3_class(smoothed, "Pitch")
   expect_true(smoothed$is_valid())
 })
 
@@ -127,7 +127,7 @@ test_that("Sound extract_windows_filtered works correctly", {
   # Extract with low power threshold (should include all)
   filtered <- sound$extract_windows_filtered(starts, ends, min_power = 0.0)
 
-  expect_true(inherits(filtered, "Sound"))
+  expect_s3_class(filtered, "Sound")
   expect_true(filtered$is_valid())
   expect_gt(filtered$get_duration(), 0)
 })
@@ -141,7 +141,7 @@ test_that("Sound get_windows_passing_filter returns logical vector", {
 
   passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.0)
 
-  expect_equal(length(passes), 3)
+  expect_length(passes, 3)
   expect_true(is.logical(passes))
 })
 
@@ -154,7 +154,7 @@ test_that("PointProcess get_values_from_sound returns correct values", {
   if (pp$get_number_of_points() > 0) {
     values <- pp$get_values_from_sound(sound, channel = 1, interpolation = "cubic")
 
-    expect_equal(length(values), pp$get_number_of_points())
+    expect_length(values, pp$get_number_of_points())
     expect_true(is.numeric(values))
   }
 })
@@ -168,7 +168,7 @@ test_that("PointProcess get_periods_vector returns inter-point intervals", {
   if (n_points >= 2) {
     periods <- pp$get_periods_vector()
 
-    expect_equal(length(periods), n_points - 1)
+    expect_length(periods, n_points - 1)
     expect_true(is.numeric(periods))
     expect_true(all(periods > 0))
   }
@@ -185,7 +185,7 @@ test_that("PointProcess get_jitter_batch returns all jitter measures", {
     max_period_factor = 1.3
   )
 
-  expect_true(is.list(jitter))
+  expect_type(jitter, "list")
   expect_true("local" %in% names(jitter))
   expect_true("local_absolute" %in% names(jitter))
   expect_true("rap" %in% names(jitter))
@@ -201,7 +201,7 @@ test_that("Spectrum get_power_at_frequencies works correctly", {
   freqs <- c(100, 440, 880, 1000)
   powers <- spectrum$get_power_at_frequencies(freqs)
 
-  expect_equal(length(powers), length(freqs))
+  expect_length(powers, length(freqs))
   expect_true(is.numeric(powers))
   # Power at 440Hz should be highest (fundamental frequency)
   expect_gt(powers[2], powers[1])
@@ -218,8 +218,8 @@ test_that("Spectrum batch band operations work", {
   energies <- spectrum$get_band_energies(fmins, fmaxs)
   densities <- spectrum$get_band_densities(fmins, fmaxs)
 
-  expect_equal(length(energies), 3)
-  expect_equal(length(densities), 3)
+  expect_length(energies, 3)
+  expect_length(densities, 3)
   expect_true(is.numeric(energies))
   expect_true(is.numeric(densities))
 })

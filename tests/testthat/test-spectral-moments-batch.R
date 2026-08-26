@@ -66,7 +66,8 @@ test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
 
   expect_gt(length(valid_cog), 0)
   # Median CoG should be in 0–5000 Hz range (the analysis range)
-  expect_true(median(valid_cog) > 0 && median(valid_cog) < 5000,
+  expect_gt(median(valid_cog), 0)
+  expect_lt(median(valid_cog), 5000,
     info = paste("Median CoG:", round(median(valid_cog)), "Hz"))
 })
 
@@ -89,7 +90,7 @@ test_that("get_spectral_moments_batch() computes moments for power != 2 (the def
   spg <- sound$to_spectrogram()
 
   result <- get_spectral_moments_batch(spg, power = 1.0)
-  expect_true(any(!is.na(result$cog)))
+  expect_true(!all(is.na(result$cog)))
 })
 
 test_that("get_spectral_moments_batch() returns all-NA moments for a silent (zero-energy) frame", {

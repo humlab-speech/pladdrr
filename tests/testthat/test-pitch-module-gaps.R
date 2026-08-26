@@ -22,8 +22,8 @@ test_that("Pitch get_statistics returns all default metrics", {
   expect_type(stats, "list")
   expect_true(all(c("mean", "stdev", "min", "max", "median", "q1", "q3") %in% names(stats)))
   expect_equal(stats$mean, 200, tolerance = 1)
-  expect_true(stats$min <= stats$mean)
-  expect_true(stats$max >= stats$mean)
+  expect_lte(stats$min, stats$mean)
+  expect_gte(stats$max, stats$mean)
 })
 
 test_that("Pitch get_statistics accepts every metric alias, including count_voiced", {
@@ -50,7 +50,7 @@ test_that("Pitch get_statistics warns (not errors) on an unknown metric name", {
     result <- pitch$get_statistics(metrics = "bogus_metric"),
     "Unknown metric"
   )
-  expect_equal(length(result), 0)
+  expect_length(result, 0)
 })
 
 # ============================================================================
@@ -113,7 +113,7 @@ test_that("Pitch get_strengths_vector returns one strength per frame", {
   pitch <- pitch_fixture()
   strengths <- pitch$get_strengths_vector()
   expect_type(strengths, "double")
-  expect_equal(length(strengths), pitch$get_number_of_frames())
+  expect_length(strengths, pitch$get_number_of_frames())
   expect_true(all(strengths[!is.na(strengths)] >= 0))
 })
 
@@ -121,7 +121,7 @@ test_that("Pitch get_intensities_vector returns one frame intensity per frame", 
   pitch <- pitch_fixture()
   intensities <- pitch$get_intensities_vector()
   expect_type(intensities, "double")
-  expect_equal(length(intensities), pitch$get_number_of_frames())
+  expect_length(intensities, pitch$get_number_of_frames())
   expect_true(all(intensities > 0))
 })
 

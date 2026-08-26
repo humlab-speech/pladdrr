@@ -20,7 +20,7 @@ test_that(".pladdrr_worker_thread_budget divides cores and honors explicit overr
   expect_equal(budget(2, threads_per_worker = 3), 3)
   expect_equal(budget(2, threads_per_worker = 0), 1) # clamps to >= 1
   auto <- budget(2, threads_per_worker = NULL)
-  expect_true(auto >= 1)
+  expect_gte(auto, 1)
 })
 
 test_that("analyze_files_parallel n_cores = 1 processes files sequentially", {
@@ -93,7 +93,7 @@ test_that("extract_formant_parallel returns one Formant object per file", {
   formants <- extract_formant_parallel(files, n_cores = 1)
 
   expect_length(formants, 1)
-  expect_true(inherits(formants[[1]], "Formant"))
+  expect_s3_class(formants[[1]], "Formant")
 })
 
 test_that("extract_intensity_parallel returns one Intensity object per file", {
@@ -101,7 +101,7 @@ test_that("extract_intensity_parallel returns one Intensity object per file", {
   intensities <- extract_intensity_parallel(files, n_cores = 1)
 
   expect_length(intensities, 1)
-  expect_true(inherits(intensities[[1]], "Intensity"))
+  expect_s3_class(intensities[[1]], "Intensity")
 })
 
 test_that("benchmark_parallel returns timing rows for each requested core count", {

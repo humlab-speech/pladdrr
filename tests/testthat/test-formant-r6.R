@@ -70,19 +70,19 @@ test_that("Formant query methods return valid values", {
   # Test time domain queries
   n_frames <- formant$get_number_of_frames()
   expect_type(n_frames, "integer")
-  expect_true(n_frames > 0)
+  expect_gt(n_frames, 0)
   
   time_step <- formant$get_time_step()
   expect_type(time_step, "double")
-  expect_true(time_step > 0)
+  expect_gt(time_step, 0)
   
   min_formants <- formant$get_min_num_formants()
   expect_type(min_formants, "integer")
-  expect_true(min_formants >= 0)
+  expect_gte(min_formants, 0)
   
   max_formants <- formant$get_max_num_formants()
   expect_type(max_formants, "integer")
-  expect_true(max_formants >= min_formants)
+  expect_gte(max_formants, min_formants)
 })
 
 test_that("Formant value queries work", {
@@ -134,7 +134,7 @@ test_that("Formant statistics methods work", {
   expect_type(f1_max, "double")
   
   if (!is.na(f1_min) && !is.na(f1_max)) {
-    expect_true(f1_max >= f1_min)
+    expect_gte(f1_max, f1_min)
   }
 })
 
@@ -152,10 +152,10 @@ test_that("Formant time of min/max methods work", {
   
   # Times should be within sound duration
   if (!is.na(t_min)) {
-    expect_true(t_min >= 0 && t_min <= 0.5)
+    expect_gte(t_min, 0); expect_lte(t_min, 0.5)
   }
   if (!is.na(t_max)) {
-    expect_true(t_max >= 0 && t_max <= 0.5)
+    expect_gte(t_max, 0); expect_lte(t_max, 0.5)
   }
 })
 
@@ -169,7 +169,7 @@ test_that("Formant export to data frame works", {
   
   expect_s3_class(df, "data.frame")
   expect_s3_class(df, "data.table")
-  expect_equal(names(df), c("time", "formant", "frequency", "bandwidth"))
+  expect_named(df, c("time", "formant", "frequency", "bandwidth"))
   
   expect_true(nrow(df) > 0)
   expect_true(all(df$time >= 0))
@@ -207,9 +207,9 @@ test_that("Formant print method works", {
   # Capture print output
   output <- capture.output(formant$print())
   
-  expect_true(any(grepl("Praat Formant", output)))
-  expect_true(any(grepl("Number of frames", output)))
-  expect_true(any(grepl("Time step", output)))
+  expect_true(any(grepl("Praat Formant", output, fixed = TRUE)))
+  expect_true(any(grepl("Number of frames", output, fixed = TRUE)))
+  expect_true(any(grepl("Time step", output, fixed = TRUE)))
 })
 
 test_that("Formant unit parameter works (hertz vs bark)", {
@@ -232,7 +232,7 @@ test_that("Formant unit parameter works (hertz vs bark)", {
   if (!is.na(f1_hz) && !is.na(f1_bark)) {
     expect_true(f1_hz != f1_bark)
     # Bark should be smaller than Hz for typical formant frequencies
-    expect_true(f1_bark < f1_hz)
+    expect_lt(f1_bark, f1_hz)
   }
 })
 

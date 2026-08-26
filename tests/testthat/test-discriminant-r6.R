@@ -94,7 +94,7 @@ test_that("Discriminant set_apriori_probability, as_data_frame, get_info, save r
   # "function" is an R reserved word; DataFrame::create() from Rcpp becomes
   # a data.frame with make.names()-syntactic column names, so it's punned
   # to "function." on the R side.
-  expect_equal(names(df), c("function.", "eigenvalue", "variance_fraction",
+  expect_named(df, c("function.", "eigenvalue", "variance_fraction",
                              "cumulative_variance", "wilks_lambda"))
   expect_equal(nrow(df), disc$get_number_of_functions())
 

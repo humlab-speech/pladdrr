@@ -58,7 +58,7 @@ test_that("Sound value extraction is vectorized", {
   values_range <- sound$get_values_in_range(0.1, 0.2, channel = 1)
   times_range <- sound$get_times_in_range(0.1, 0.2)
 
-  expect_equal(length(values_range), length(times_range))
+  expect_length(values_range, length(times_range))
   expect_true(all(times_range >= 0.1 & times_range <= 0.2))
 })
 

@@ -243,7 +243,7 @@ test_that("Pitch extraction works with SIMD enabled", {
 
   # Should detect ~200 Hz
   mean_pitch <- pitch$get_mean(from = 0, to = 1, unit = "Hertz")
-  expect_true(!is.na(mean_pitch))
+  expect_false(is.na(mean_pitch))
   expect_true(abs(mean_pitch - 200) < 10)  # Within 10 Hz
 })
 

@@ -34,7 +34,7 @@ test_that("Excitation can calculate total loudness", {
   
   expect_type(loudness, "double")
   expect_true(is.finite(loudness))
-  expect_true(loudness > 0)  # Non-silent sound should have loudness
+  expect_gt(loudness, 0)  # Non-silent sound should have loudness
 })
 
 test_that("Excitation can query value at frequency", {
@@ -47,7 +47,7 @@ test_that("Excitation can query value at frequency", {
   
   expect_type(value, "double")
   expect_true(is.finite(value))
-  expect_true(value >= 0)  # Excitation is non-negative
+  expect_gte(value, 0)  # Excitation is non-negative
 })
 
 test_that("Excitation perceptual distance works", {
@@ -65,8 +65,8 @@ test_that("Excitation perceptual distance works", {
   
   expect_type(distance, "double")
   expect_true(is.finite(distance))
-  expect_true(distance >= 0)  # Distance metric property
-  expect_true(distance > 0)   # Different sounds should differ
+  expect_gte(distance, 0)  # Distance metric property
+  expect_gt(distance, 0)   # Different sounds should differ
 })
 
 test_that("Excitation can be converted to Formant", {

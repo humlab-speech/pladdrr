@@ -130,7 +130,7 @@ test_that("print.praat_pitch reports voiced/unvoiced statistics", {
 test_that("print.praat_pitch omits pitch statistics when fully unvoiced", {
   x <- make_legacy_pitch(all_unvoiced = TRUE)
   out <- capture.output(print(x))
-  expect_false(any(grepl("Pitch Statistics", out)))
+  expect_false(any(grepl("Pitch Statistics", out, fixed = TRUE)))
   expect_true(any(grepl("Voiced:\\s+0", out)))
 })
 
@@ -163,8 +163,8 @@ test_that("print.praat_formant prints header and head of values", {
 test_that("summary.praat_formant reports per-formant stats across the loop", {
   x <- make_legacy_formant(n_formants = 2)
   out <- capture.output(summary(x))
-  expect_true(any(grepl("Formant F1:", out)))
-  expect_true(any(grepl("Formant F2:", out)))
+  expect_true(any(grepl("Formant F1:", out, fixed = TRUE)))
+  expect_true(any(grepl("Formant F2:", out, fixed = TRUE)))
   expect_true(any(grepl("Mean: .* Hz", out)))
   ret <- withVisible(summary(x))
   expect_false(ret$visible)
@@ -174,8 +174,8 @@ test_that("summary.praat_formant reports per-formant stats across the loop", {
 test_that("summary.praat_formant reports no valid measurements for an all-NA formant", {
   x <- make_legacy_formant(n_formants = 2, all_na_formant = 2)
   out <- capture.output(summary(x))
-  f2_idx <- grep("Formant F2:", out)
-  expect_true(any(grepl("No valid measurements", out[f2_idx:(f2_idx + 2)])))
+  f2_idx <- grep("Formant F2:", out, fixed = TRUE)
+  expect_true(any(grepl("No valid measurements", out[f2_idx:(f2_idx + 2)], fixed = TRUE)))
 })
 
 test_that("as.data.frame.praat_formant returns the values data.frame", {

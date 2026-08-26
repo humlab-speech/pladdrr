@@ -55,7 +55,7 @@ test_that("calculate_cpps_ultra() formals match documented defaults", {
   expect_equal(f$quefrency_averaging_window, 0.0005)
   expect_equal(f$pitch_floor, 60)
   expect_equal(f$pitch_ceiling, 333.3)
-  expect_equal(f$subtract_trend, TRUE)
+  expect_true(f$subtract_trend)
   expect_equal(f$line_type, "straight")
   expect_equal(f$fit_method, "robust")
   expect_equal(f$interpolation, "parabolic")

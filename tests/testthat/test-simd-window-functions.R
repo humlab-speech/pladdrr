@@ -12,11 +12,11 @@ test_that("SIMD Hamming window has correct properties", {
     windowed <- pladdrr:::.apply_hamming_window_simd(data)
     
     # Window should have correct length
-    expect_equal(length(windowed), n)
+    expect_length(windowed, n)
     
     # Endpoints should be close to zero (Hamming window property)
-    expect_true(windowed[1] < 0.1)
-    expect_true(windowed[n] < 0.1)
+    expect_lt(windowed[1], 0.1)
+    expect_lt(windowed[n], 0.1)
     
     # Maximum should be near center
     max_idx <- which.max(windowed)
@@ -40,7 +40,7 @@ test_that("SIMD Hanning window has correct properties", {
     windowed <- pladdrr:::.apply_hanning_window_simd(data)
     
     # Window should have correct length
-    expect_equal(length(windowed), n)
+    expect_length(windowed, n)
     
     # Hanning window endpoints should be exactly zero
     expect_equal(windowed[1], 0.0, tolerance = 1e-10)
@@ -69,7 +69,7 @@ test_that("SIMD Gaussian window has correct shape", {
     windowed <- pladdrr:::.apply_gaussian_window_simd(data, alpha)
     
     # Gaussian window properties
-    expect_equal(length(windowed), n)
+    expect_length(windowed, n)
     
     # Maximum at center
     max_idx <- which.max(windowed)
@@ -96,8 +96,8 @@ test_that("SIMD Blackman window has correct properties", {
     windowed <- pladdrr:::.apply_blackman_window_simd(data)
     
     # Blackman window endpoints near zero
-    expect_true(windowed[1] < 0.01)
-    expect_true(windowed[n] < 0.01)
+    expect_lt(windowed[1], 0.01)
+    expect_lt(windowed[n], 0.01)
     
     # Maximum near center
     max_idx <- which.max(windowed)
@@ -140,22 +140,22 @@ test_that("SIMD window functions handle different sizes", {
     # Small window
     data_small <- rep(1.0, 32)
     windowed_small <- pladdrr:::.apply_hamming_window_simd(data_small)
-    expect_equal(length(windowed_small), 32)
+    expect_length(windowed_small, 32)
     
     # Medium window
     data_medium <- rep(1.0, 512)
     windowed_medium <- pladdrr:::.apply_hamming_window_simd(data_medium)
-    expect_equal(length(windowed_medium), 512)
+    expect_length(windowed_medium, 512)
     
     # Large window
     data_large <- rep(1.0, 4096)
     windowed_large <- pladdrr:::.apply_hamming_window_simd(data_large)
-    expect_equal(length(windowed_large), 4096)
+    expect_length(windowed_large, 4096)
     
     # Odd size
     data_odd <- rep(1.0, 511)
     windowed_odd <- pladdrr:::.apply_hamming_window_simd(data_odd)
-    expect_equal(length(windowed_odd), 511)
+    expect_length(windowed_odd, 511)
   } else {
     skip("SIMD Hamming window function not exported")
   }
@@ -177,7 +177,7 @@ test_that("SIMD window functions handle real signals", {
     expect_true(abs(windowed[512]) < abs(signal[256]))
     
     # Should preserve general shape
-    expect_equal(length(windowed), length(signal))
+    expect_length(windowed, length(signal))
   } else {
     skip("SIMD Hamming window function not exported")
   }

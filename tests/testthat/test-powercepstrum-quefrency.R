@@ -16,7 +16,7 @@ test_that("get_quefrency_of_peak works for all interpolation methods", {
     q <- cepstrum$get_quefrency_of_peak(interpolation = interp, qmin = 0.003, qmax = 0.04)
     expect_type(q, "double")
     expect_false(is.na(q))
-    expect_true(q >= 0.003 && q <= 0.04)
+    expect_gte(q, 0.003); expect_lte(q, 0.04)
   }
 })
 
@@ -46,7 +46,7 @@ test_that("get_value_at_quefrency dB and linear units agree and are plausible", 
   db_value <- cepstrum$get_value_at_quefrency(q1, interpolation = "linear", unit = "dB")
   linear_value <- cepstrum$get_value_at_quefrency(q1, interpolation = "linear", unit = "linear")
 
-  expect_true(db_value > -300 && db_value < 300)
-  expect_true(linear_value >= 0)
+  expect_gt(db_value, -300); expect_lt(db_value, 300)
+  expect_gte(linear_value, 0)
   expect_equal(db_value, 10 * log10(linear_value + 1e-30), tolerance = 1e-9)
 })

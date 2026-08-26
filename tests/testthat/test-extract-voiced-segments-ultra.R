@@ -106,8 +106,7 @@ test_that("extract_voiced_segments_ultra works with different sampling rates", {
             error = function(e) NULL
         )
 
-        expect_true(!is.null(result),
-                    label = sprintf("Should work with SR=%d", sr))
+        expect_false(is.null(result), label = sprintf("Should work with SR=%d", sr))
         if (!is.null(result)) {
             expect_s3_class(result, "Sound")
         }

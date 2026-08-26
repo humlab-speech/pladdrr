@@ -253,8 +253,8 @@ test_that("SIMD windowing is applied consistently", {
   )
 
   # Both should succeed (not NULL)
-  expect_true(!is.null(spec_hamming), label = "Hamming window should work with SIMD")
-  expect_true(!is.null(spec_hanning), label = "Hanning window should work with SIMD")
+  expect_false(is.null(spec_hamming), label = "Hamming window should work with SIMD")
+  expect_false(is.null(spec_hanning), label = "Hanning window should work with SIMD")
 })
 
 # ============================================================================

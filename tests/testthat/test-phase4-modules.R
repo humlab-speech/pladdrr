@@ -245,10 +245,10 @@ probe_test("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, a
   expect_true(is.numeric(prom))
 
   hb <- rpc$get_peak_prominence_hillenbrand(60, 333.3)
-  expect_true(is.list(hb))
+  expect_type(hb, "list")
 
   trend <- rpc$fit_trend_line(0.001, 0.05, 2L, 3L)
-  expect_true(is.list(trend))
+  expect_type(trend, "list")
 
   trend_val <- rpc$get_trend_line_value(0.005, 0.001, 0.05, 2L, 3L)
   expect_true(is.numeric(trend_val))

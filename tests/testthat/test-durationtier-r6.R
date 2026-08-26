@@ -69,7 +69,7 @@ test_that("DurationTier as_data_frame, save, print", {
   expect_named(empty_df, c("time", "duration_factor"))
 
   # get_xptr() returns the raw external pointer
-  expect_true(is(dt$get_xptr(), "externalptr"))
+  expect_type(dt$get_xptr(), "externalptr")
 
   # save() round-trips to a Praat text file and returns self invisibly
   tmp <- tempfile(fileext = ".DurationTier")

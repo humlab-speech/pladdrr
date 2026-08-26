@@ -11,7 +11,7 @@ test_that("AmplitudeTier constructs and reports basics", {
   expect_true(tier$is_valid())
   expect_equal(tier$get_start_time(), 0.0, tolerance = 1e-9)
   expect_equal(tier$get_end_time(), 1.0, tolerance = 1e-9)
-  expect_equal(tier$get_number_of_points(), 0)
+  expect_identical(tier$get_number_of_points(), 0L)
 })
 
 test_that("AmplitudeTier requires an xptr", {
@@ -22,13 +22,13 @@ test_that("AmplitudeTier can add, query, and remove points", {
   tier <- amplitude_tier_create(0.0, 1.0)
   expect_invisible(tier$add_point(0.5, 0.8))
 
-  expect_equal(tier$get_number_of_points(), 1)
+  expect_identical(tier$get_number_of_points(), 1L)
   expect_equal(tier$get_time_from_index(1), 0.5, tolerance = 1e-9)
   expect_equal(tier$get_value_at_index(1), 0.8, tolerance = 1e-9)
   expect_type(tier$get_value_at_time(0.5), "double")
 
   expect_invisible(tier$remove_point(1))
-  expect_equal(tier$get_number_of_points(), 0)
+  expect_identical(tier$get_number_of_points(), 0L)
 })
 
 test_that("AmplitudeTier to_intensity_tier, as_data_frame, save, print work", {

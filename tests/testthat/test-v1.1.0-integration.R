@@ -86,7 +86,7 @@ test_that("Cochleagram comparison workflow for hearing simulation", {
   difference <- cochlea_normal$get_difference(cochlea_impaired, tmin = 0, tmax = 0)
   
   expect_true(is.finite(difference))
-  expect_true(difference >= 0)
+  expect_gte(difference, 0)
 })
 
 test_that("Batch processing with new objects works", {
@@ -103,13 +103,13 @@ test_that("Batch processing with new objects works", {
   })
   
   # Verify all succeeded
-  expect_equal(length(cochleagrams), 3)
+  expect_length(cochleagrams, 3)
   expect_true(all(sapply(cochleagrams, function(c) inherits(c, "Cochleagram"))))
   
   # Get loudness from all
   loudnesses <- sapply(cochleagrams, function(c) c$get_loudness_at_time(0.05))
   
-  expect_equal(length(loudnesses), 3)
+  expect_length(loudnesses, 3)
   expect_true(all(is.finite(loudnesses)))
   expect_true(all(loudnesses > 0))
 })

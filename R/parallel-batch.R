@@ -115,7 +115,12 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     # install location during R CMD build's vignette pass). Propagate the
     # library path before loading the package.
     parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
-    parallel::clusterEvalQ(cl, library(pladdrr))
+    # Attach in each worker so unqualified names (Sound(), analysis_func's
+    # symbols, ...) resolve on the search path, same effect as library().
+    parallel::clusterEvalQ(cl, {
+      loadNamespace("pladdrr")
+      attachNamespace("pladdrr")
+    })
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
 
     results <- parallel::parLapply(cl, files, function(f) {
@@ -208,7 +213,10 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
-    parallel::clusterEvalQ(cl, library(pladdrr))
+    parallel::clusterEvalQ(cl, {
+      loadNamespace("pladdrr")
+      attachNamespace("pladdrr")
+    })
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
     parallel::parLapply(cl, sound_data, function(d) {
       pladdrr_threads(tpw)

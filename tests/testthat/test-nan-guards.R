@@ -18,7 +18,7 @@ test_that("Ltas NaN guards return NA instead of crashing", {
 
   # Batch with NaN element
   vals <- ltas$get_values_at_frequencies(c(100, NaN, 440))
-  expect_equal(length(vals), 3)
+  expect_length(vals, 3)
   expect_true(is.na(vals[2]))
   expect_false(is.na(vals[1]))
 })
@@ -44,7 +44,7 @@ test_that("Formant NaN guards return NA instead of crashing", {
 
   # Batch with NaN
   vals <- formant$get_values_at_times(1, c(0.1, NaN, 0.3))
-  expect_equal(length(vals), 3)
+  expect_length(vals, 3)
   expect_true(is.na(vals[2]))
 })
 
@@ -66,7 +66,7 @@ test_that("Harmonicity NaN guards return NA", {
 
   # Batch with NaN
   vals <- hnr$get_values_at_times(c(0.1, NaN, 0.3))
-  expect_equal(length(vals), 3)
+  expect_length(vals, 3)
   expect_true(is.na(vals[2]))
 })
 
@@ -82,7 +82,7 @@ test_that("Intensity$get_values_at_times works correctly", {
   times <- c(0.1, 0.2, 0.3)
   vals <- intensity$get_values_at_times(times)
 
-  expect_equal(length(vals), 3)
+  expect_length(vals, 3)
   expect_true(is.numeric(vals))
 
   # Should match individual calls
@@ -111,8 +111,8 @@ test_that("Formant$get_values_at_times accepts interpolation param", {
   vals_linear <- formant$get_values_at_times(1, times, interpolation = "linear")
   vals_nearest <- formant$get_values_at_times(1, times, interpolation = "nearest")
 
-  expect_equal(length(vals_linear), 3)
-  expect_equal(length(vals_nearest), 3)
+  expect_length(vals_linear, 3)
+  expect_length(vals_nearest, 3)
 })
 
 # ========================================================================
@@ -129,8 +129,8 @@ test_that("Spectrogram$as_matrix includes dimnames by default", {
   expect_false(is.null(colnames(mat)))
 
   # Dimensions should match
-  expect_equal(length(rownames(mat)), nrow(mat))
-  expect_equal(length(colnames(mat)), ncol(mat))
+  expect_length(rownames(mat), nrow(mat))
+  expect_length(colnames(mat), ncol(mat))
 
   # Dimnames should be numeric frequency and time values (no NAs from conversion)
   expect_false(anyNA(as.numeric(rownames(mat))))

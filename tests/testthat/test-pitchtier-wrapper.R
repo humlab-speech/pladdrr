@@ -76,7 +76,7 @@ test_that("PitchTier as_data_frame/as_matrix reflect the stored points", {
   tier$add_point(0.8, 200)
 
   df <- tier$as_data_frame()
-  expect_equal(names(df), c("time", "frequency"))
+  expect_named(df, c("time", "frequency"))
   expect_equal(nrow(df), 2)
 
   mat <- tier$as_matrix()
@@ -126,7 +126,7 @@ test_that("PitchTier print, is_valid, get_xptr, and unknown-name access", {
   tier$add_point(0.5, 150)
 
   expect_true(tier$is_valid())
-  expect_true(inherits(tier$get_xptr(), "externalptr"))
+  expect_s3_class(tier$get_xptr(), "externalptr")
   expect_output(print(tier), "Praat PitchTier")
   expect_null(tier$totally_bogus_field)
 })

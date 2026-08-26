@@ -154,7 +154,7 @@ f2_burg <- formant_b$get_value_at_time(2, time, unit = "hertz")
 f2_keep <- formant_k$get_value_at_time(2, time, unit = "hertz")
 
 # Comparison
-if (!any(is.na(c(f1_burg, f1_keep, f2_burg, f2_keep)))) {
+if (!anyNA(c(f1_burg, f1_keep, f2_burg, f2_keep))) {
   cat("Method Comparison:\n")
   cat(sprintf("  Burg:     F1 = %d Hz, F2 = %d Hz\n", round(f1_burg), round(f2_burg)))
   cat(sprintf("  Keep All: F1 = %d Hz, F2 = %d Hz\n", round(f1_keep), round(f2_keep)))

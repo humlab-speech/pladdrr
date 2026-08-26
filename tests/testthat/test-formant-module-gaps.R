@@ -187,7 +187,7 @@ test_that("Formant$get_bandwidth_track returns one bandwidth per frame", {
 
   track <- formant$get_bandwidth_track(1, unit = "hertz")
   expect_type(track, "double")
-  expect_equal(length(track), formant$get_number_of_frames())
+  expect_length(track, formant$get_number_of_frames())
   expect_true(all(is.na(track) | track > 0))
 })
 

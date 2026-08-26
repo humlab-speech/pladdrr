@@ -62,13 +62,13 @@ test_that("extract_textgrid_intervals with sound extraction works", {
   # Should have sounds list
   expect_true("sounds" %in% names(result))
   expect_type(result$sounds, "list")
-  expect_equal(length(result$sounds), result$n_matched)
+  expect_length(result$sounds, result$n_matched)
   
   # Each sound should be valid
   for (i in seq_along(result$sounds)) {
     snd <- result$sounds[[i]]
     if (!is.null(snd)) {
-      expect_true(inherits(snd, "Sound"))
+      expect_s3_class(snd, "Sound")
       expect_true(snd$get_duration() > 0)
     }
   }
@@ -133,7 +133,7 @@ test_that("get_textgrid_labels_all returns all labels", {
   
   # Should have same length as number of intervals
   n_intervals <- tg$get_number_of_intervals(1)
-  expect_equal(length(labels), n_intervals)
+  expect_length(labels, n_intervals)
   
   # Labels should match individual queries
   for (i in 1:min(5, n_intervals)) {
@@ -326,12 +326,12 @@ test_that("get_interval_predicate builds usable built-in predicates and errors o
   expect_error(get_interval_predicate("bogus"), "Unknown predicate type")
 
   pred_ne <- get_interval_predicate("non_empty")
-  expect_true(inherits(pred_ne, "externalptr"))
+  expect_s3_class(pred_ne, "externalptr")
 
   pred_min <- get_interval_predicate("min_duration", 0.35)
   pred_max <- get_interval_predicate("max_duration", 0.35)
-  expect_true(inherits(pred_min, "externalptr"))
-  expect_true(inherits(pred_max, "externalptr"))
+  expect_s3_class(pred_min, "externalptr")
+  expect_s3_class(pred_max, "externalptr")
 })
 
 test_that("textgrid_filter_xptr filters with built-in predicates and errors on bad inputs", {
@@ -360,7 +360,7 @@ test_that("textgrid_filter_xptr filters with built-in predicates and errors on b
     sound_xptr = sound$.xptr, extract_sounds = TRUE
   )
   expect_true("sounds" %in% names(result3))
-  expect_equal(length(result3$sounds), result3$n_matched)
+  expect_length(result3$sounds, result3$n_matched)
 
   null_ptr <- methods::new("externalptr")
   expect_error(textgrid_filter_xptr(null_ptr, 1L, pred_ne), "Invalid TextGrid pointer")

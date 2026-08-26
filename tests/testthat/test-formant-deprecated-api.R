@@ -106,7 +106,8 @@ test_that(".burg_algorithm() returns finite LPC coefficients for a well-behaved 
   expect_false(is.null(result))
   expect_length(result$coefficients, 8)
   expect_true(all(is.finite(result$coefficients)))
-  expect_true(is.finite(result$error) && result$error > 0)
+  expect_true(is.finite(result$error))
+  expect_gt(result$error, 0)
 })
 
 test_that(".burg_algorithm() returns NULL for degenerate input", {

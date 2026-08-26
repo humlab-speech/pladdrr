@@ -23,7 +23,7 @@ test_that("DTW self-alignment has near-zero distance", {
   # Self-alignment distance should be very small (not exactly 0 due to MFCC quantization)
   dist <- dtw$get_weighted_distance()
   expect_true(is.finite(dist))
-  expect_true(dist >= 0)
+  expect_gte(dist, 0)
 })
 
 test_that("DTW time mapping is consistent for self-alignment", {

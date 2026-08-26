@@ -51,11 +51,11 @@ test_that("print.LongSound() reports file, duration, rate, channels, samples", {
   ls <- LongSound$open(path)
 
   output <- capture.output(print(ls))
-  expect_true(any(grepl("LongSound", output)))
-  expect_true(any(grepl("Duration", output)))
-  expect_true(any(grepl("Sample rate", output)))
-  expect_true(any(grepl("Channels", output)))
-  expect_true(any(grepl("Samples", output)))
+  expect_true(any(grepl("LongSound", output, fixed = TRUE)))
+  expect_true(any(grepl("Duration", output, fixed = TRUE)))
+  expect_true(any(grepl("Sample rate", output, fixed = TRUE)))
+  expect_true(any(grepl("Channels", output, fixed = TRUE)))
+  expect_true(any(grepl("Samples", output, fixed = TRUE)))
 })
 
 test_that("LongSound query methods match an equivalent in-memory Sound", {
@@ -110,9 +110,9 @@ test_that("have_window() and get_window_extrema() report sane values", {
   expect_type(ls$have_window(0, 0.5), "logical")
 
   extrema <- ls$get_window_extrema(0, 0.5, channel = 1)
-  expect_true(extrema[["maximum"]] >= extrema[["minimum"]])
-  expect_true(extrema[["maximum"]] <= 1.0)
-  expect_true(extrema[["minimum"]] >= -1.0)
+  expect_gte(extrema[["maximum"]], extrema[["minimum"]])
+  expect_lte(extrema[["maximum"]], 1.0)
+  expect_gte(extrema[["minimum"]], -1.0)
 })
 
 test_that("get_dx()/get_x1() match the Sampled convention (dx = 1/rate, x1 = xmin + dx/2)", {

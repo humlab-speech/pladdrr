@@ -64,7 +64,7 @@ bm_pitch <- microbenchmark(
   datatable_output = {
     df <- pitch$as_data_frame()
     # Simulate filtering and aggregation
-    subset(df, !is.na(frequency) & voiced == TRUE)
+    subset(df, !is.na(frequency) & voiced)
   },
   times = 100
 )

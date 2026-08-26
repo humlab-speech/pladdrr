@@ -48,8 +48,8 @@ test_that("Willems method produces valid formant values", {
   expect_type(f1, "double")
   # F1 should be in reasonable range for speech (100-1000 Hz typically)
   if (!is.na(f1)) {
-    expect_true(f1 > 0)
-    expect_true(f1 < 2000)  # Upper bound for F1
+    expect_gt(f1, 0)
+    expect_lt(f1, 2000)  # Upper bound for F1
   }
 })
 
@@ -72,8 +72,8 @@ test_that("Split-Levinson method produces valid formant values", {
   # Basic sanity checks
   expect_false(is.na(f1))
   expect_false(is.na(f2))
-  expect_true(f1 > 0)
-  expect_true(f2 > f1)  # F2 should be higher than F1
+  expect_gt(f1, 0)
+  expect_gt(f2, f1)  # F2 should be higher than F1
 })
 
 test_that("Different formant methods produce comparable results", {

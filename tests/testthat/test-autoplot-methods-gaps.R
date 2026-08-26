@@ -118,15 +118,15 @@ test_that("autolayer.TextGrid resolves tiers by name/index, filters by from_time
 
   # Default: tier = 1 (interval tier)
   layer <- ggplot2::autolayer(tg)
-  expect_true(is.list(layer))
+  expect_type(layer, "list")
 
   # Tier resolved by character name
   layer2 <- ggplot2::autolayer(tg, tier = "words")
-  expect_true(is.list(layer2))
+  expect_type(layer2, "list")
 
   # from_time/to_time filtering on an interval tier
   layer3 <- ggplot2::autolayer(tg, tier = "words", from_time = 0.6, to_time = 1.0)
-  expect_true(is.list(layer3))
+  expect_type(layer3, "list")
 
   expect_error(ggplot2::autolayer(tg, tier = "nonexistent"), "not found")
   expect_error(ggplot2::autolayer(tg, tier = 99), "out of range")
@@ -140,7 +140,7 @@ test_that("autolayer.TextGrid resolves tiers by name/index, filters by from_time
 
   # Point tier branch (is_interval == FALSE)
   layer4 <- ggplot2::autolayer(tg2, tier = "tones")
-  expect_true(is.list(layer4))
+  expect_type(layer4, "list")
   layer5 <- ggplot2::autolayer(tg2, tier = "tones", from_time = 0.5, to_time = 1.0)
-  expect_true(is.list(layer5))
+  expect_type(layer5, "list")
 })

@@ -110,8 +110,7 @@ measurements <- list()
 # Gender/speaker setting (affects formant ceiling)
 # Female: 5500 Hz, Male: 5000 Hz, Child: 8000 Hz
 speaker_gender <- "male"
-max_formant <- ifelse(speaker_gender == "female", 5500,
-                     ifelse(speaker_gender == "male", 5000, 8000))
+max_formant <- switch(speaker_gender, female = 5500, male = 5000, 8000)
 
 cat(sprintf("Using formant ceiling: %d Hz (%s speaker)\n\n", max_formant, speaker_gender))
 

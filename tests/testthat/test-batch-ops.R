@@ -34,7 +34,7 @@ test_that("sound_concatenate_all supports overlap and return_r6 = FALSE", {
   expect_equal(combined_overlap$get_total_duration(), 0.9, tolerance = 1e-6)
 
   ptr <- sound_concatenate_all(sounds, return_r6 = FALSE)
-  expect_true(inherits(ptr, "externalptr"))
+  expect_s3_class(ptr, "externalptr")
 })
 
 test_that("sound_concatenate_all validates its arguments", {

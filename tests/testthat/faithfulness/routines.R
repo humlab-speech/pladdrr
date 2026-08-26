@@ -61,7 +61,7 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -107,7 +107,7 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -156,7 +156,7 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -184,7 +184,7 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -235,7 +235,7 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE)) NA_real_ else v
+      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)

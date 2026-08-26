@@ -128,7 +128,7 @@ test_that("SIMD data conversion performance is reasonable", {
   })["elapsed"]
 
   # Should be fast (< 1 second for 10 second audio)
-  expect_true(time_matrix < 1.0)
+  expect_lt(time_matrix, 1.0)
   # Data frame conversion is slower but should still be reasonable
-  expect_true(time_df < 2.0)
+  expect_lt(time_df, 2.0)
 })
