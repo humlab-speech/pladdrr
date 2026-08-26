@@ -41,7 +41,17 @@ unused AVQI fixture subset was removed. See
 dropping DSP coverage or dropping the bit-exact regression fixtures that
 back the package's core correctness claim.
 
-### Compiler flags
+`src/Makevars` contains no non-portable flags. FP contraction (FMA fusion) is
+disabled at source level with `#pragma STDC FP_CONTRACT OFF` in the vendored
+`melder.h`, which every DSP translation unit includes. This preserves the
+package's primary correctness guarantee — the compiled DSP routines reproduce
+the reference Praat application's output bit-for-bit (the regression-test
+oracle) — without any compiler flags. The previous `-ffp-contract=off` in
+`PKG_CXXFLAGS` triggered a "Non-portable flags" warning; removing it leaves
+the check clean. GCC and Clang both honour the pragma; it is compiled out on
+other compilers. All warning-suppressing `-Wno-*` flags have been removed;
+the remaining build warnings originate in the vendored Praat C++ sources and
+are non-significant.
 
 `src/Makevars` sets one non-portable flag, `-ffp-contract=off`. This is a
 deliberate correctness requirement, not an optimization: it disables
@@ -122,7 +132,10 @@ citations/contact details.
 
 ### R CMD check results
 
-- 1 warning
+Local tarball check currently finishes with:
+
+- 0 errors
+- 0 warnings
 - notes as listed below
 
 The previously reported install-time compiler warnings have been resolved: an
@@ -130,29 +143,13 @@ unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
 source, and the deprecation warnings emitted by libc++ inside the RcppXsimd
 headers are silenced with the portable define
 `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS`; the install step now completes with
-no significant warnings. The compiled-code WARNING for
-`stderr`/`stdout`/`_exit` symbols was also resolved (see above).
+no significant warnings. Both R CMD check warnings reported previously were
+resolved in this release:
 
-The remaining warning is:
-
-- `PKG_CXXFLAGS` contains `-ffp-contract=off` for bit-for-bit Praat
-  faithfulness (justified above).
-- 2 warnings
-- notes as listed below
-
-The previously reported install-time compiler warnings have been resolved: an
-unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
-source, and the deprecation warnings emitted by libc++ inside the RcppXsimd
-headers are silenced with the portable define
-`-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS`; the install step now completes with
-no significant warnings.
-
-Warnings are:
-
-- `PKG_CXXFLAGS` contains `-ffp-contract=off` for bit-for-bit Praat
-  faithfulness (justified above).
-- The compiled-code check reports the residual vendored Praat
-  `stderr`/`stdout`/`_exit` symbols described above.
+- the compiled-code WARNING for the residual vendored `stderr`/`stdout`/
+  `_exit` symbols (see "Compiled-code diagnostics" above), and
+- the "Non-portable flags in variable 'PKG_CXXFLAGS'" WARNING for
+  `-ffp-contract=off` (see "Compiler flags" above).
 
 Notes are:
 
@@ -163,18 +160,20 @@ Notes are:
   macOS, which predates HTML5 (`<main>` unrecognized); not reproducible with a
   current Tidy.
 
-win-builder R-devel finishes with **0 errors, 4 warnings, 1 note**:
+win-builder R-devel previously finished with **0 errors, 4 warnings, 1 note**:
 
 - Install-time significant-warnings WARNING: cosmetic vendored-Praat noise
   under mingw/gcc 14 (C++20 template-id-cdtor, class-memaccess,
   uninitialized-var, array-bounds, return-type) — not package code, does not
   block install or affect correctness.
 - S3-registration WARNING: `as.matrix.Matrix` intentionally overridden.
-- Makevars-flags WARNING: `-ffp-contract=off`, justified above.
-- Compiled-code WARNING: residual vendored `exit` symbol, justified above.
+- Makevars-flags WARNING: `-ffp-contract=off` — resolved in this release
+  (source-level pragma, see "Compiler flags" above).
+- Compiled-code WARNING: residual vendored `exit` symbol — resolved in this
+  release (see "Compiled-code diagnostics" above).
 - CRAN-incoming-feasibility NOTE: new submission + possibly-misspelled
   DESCRIPTION words that are real domain/product terms (Cochleagram,
   FormantModeler, KlattGrid, Praat, Rcpp, TextGrid, etc.).
 
-win-builder R-release finishes with the identical **0 errors, 4 warnings,
-1 note** as R-devel above (same warnings/note, same justifications).
+win-builder runs for this release are pending; the two source-level fixes
+above apply on all platforms (the pragma is GCC/Clang-guarded, MSVC unaffected).

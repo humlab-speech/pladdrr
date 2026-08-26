@@ -38,10 +38,10 @@ PKG_CPPFLAGS = -DHAVE_XSIMD -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT \
 # Compiler flags
 # Note: R's own Makeconf provides optimization flags (-O2 typically).
 # Do NOT add -O3, -flto, or -march=native — these violate CRAN policy.
-# -ffp-contract=off is deliberate and required: it disables FMA contraction so
-# the DSP output is bit-exact with the reference Praat application (the package's
-# primary correctness guarantee). It is the one intentional non-portable flag;
-# see cran-comments.md. All -Wno-* warning suppressions were removed for CRAN.
+# FP contraction is disabled at source level (#pragma STDC FP_CONTRACT OFF in
+# melder.h) so the DSP output stays bit-exact with the reference Praat
+# application (previously -ffp-contract=off in PKG_CXXFLAGS, which R CMD check
+# flags as non-portable). All -Wno-* warning suppressions were removed for CRAN.
 PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_GUI \
                -DNO_AUDIO \
@@ -49,8 +49,7 @@ PKG_CXXFLAGS = -DPRAAT_LIB \
                -DNO_NETWORK \
                -DUNIX \
                -DPLADDRR_NO_DEBUG \
-               -pthread \
-               -ffp-contract=off
+               -pthread
 
 # Linker flags — GSL detected by configure, LAPACK/BLAS from R
 PKG_LIBS = @GSL_LIBS@ $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -pthread

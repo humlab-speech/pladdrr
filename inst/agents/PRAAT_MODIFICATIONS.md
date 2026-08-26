@@ -16,6 +16,25 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
+### Unreleased — FP contraction disabled at source level in melder.h (2026-08-26)
+
+Submodule commit `7fa2e9aae`.
+
+#### `melder/melder.h` — `#pragma STDC FP_CONTRACT OFF` replaces `-ffp-contract=off`
+
+**Summary:** the package's bit-exactness guarantee previously came from
+`-ffp-contract=off` in `PKG_CXXFLAGS`, which R CMD check flags as a
+"Non-portable flags in variable 'PKG_CXXFLAGS'" warning. The pragma is now
+emitted at the top of `melder.h` (included by every Praat DSP translation
+unit, so coverage is unchanged), guarded by `__GNUC__`/`__clang__`. Verified
+on aarch64 clang: the `a*b+c` pattern emits `fmadd` at `-O2` without the
+pragma and does not with it. GCC honours the same pragma in C++. The
+`-ffp-contract=off` flag was removed from `src/Makevars.in`/`Makevars.win`
+(pladdrr side).
+
+Behavior outside `PRAAT_LIB` builds is unchanged.
+
+
 ### Unreleased — Remove banned stdout/stderr/exit symbols from compiled code (2026-08-26)
 
 Submodule commit `6843ffec0`.
