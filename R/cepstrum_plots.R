@@ -385,16 +385,15 @@ plot_cpp_timeseries <- function(cepstrogram,
   cpp_values <- numeric(n_samples)
   
   for (i in seq_along(sample_times)) {
-    tryCatch({
-      cpp_values[i] <- cepstrogram$get_cpp_at_time(
+    cpp_values[i] <- tryCatch(
+      cepstrogram$get_cpp_at_time(
         time = sample_times[i],
         interpolation = "linear",
         qmin = qmin,
         qmax = qmax
-      )
-    }, error = function(e) {
-      cpp_values[i] <<- NA
-    })
+      ),
+      error = function(e) NA_real_
+    )
   }
   
   # Create plot data
