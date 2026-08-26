@@ -37,12 +37,136 @@ jobs:
       - uses: docker://alpine/git
         with:
           args: config --global --add safe.directory /github/workspace
-      # Non-blocking: pkgcheck enforces rOpenSci review-level bars (e.g. any
-      # R CMD check WARNING fails it), and two of ours are permanent per
-      # cran-comments.md (-ffp-contract=off for bit-exact Praat parity;
-      # justified vendored stderr/stdout/_exit symbols) - not CRAN
-      # blockers, so this shouldn't block CI/merges.
-      - uses: ropensci-review-tools/pkgcheck-action@main
+
+      # pkgcheck enforces rOpenSci review-level bars (e.g. any R CMD check
+      # WARNING fails it), and two of ours are permanent per cran-comments.md
+      # (-ffp-contract=off for bit-exact Praat parity; justified vendored
+      # stderr/stdout/_exit symbols) - not CRAN blockers. The action itself
+      # must therefore stay non-blocking; the "Gate pkgcheck failures" step
+      # below re-imposes the gate content-exactly for every *other* failure,
+      # so a regression can never be silently absorbed by this
+      # continue-on-error (the previous state: the run went green while
+      # pkgcheck internally failed three checks).      - uses: ropensci-review-tools/pkgcheck-action@main
         continue-on-error: true
         with:
           ref: ""
+          # Refresh the single "pkgcheck results - main" report issue body on
+          # each run instead of appending a comment: the action's default
+          # (append-to-issue: true) left the issue body pointing at an old
+          # commit (v5.0.3/171c1780) while the run was v5.0.4/ab24af91.
+          append-to-issue: false
+
+      # --------------------------------------------------------------------
+      # pkgcheck's own exit status reflects its rOpenSci review bar, which
+      # the package's two permanent, CRAN-documented WARNINGs can never
+      # pass. So the gate is applied to pkgcheck's *report*
+      # (.pkgcheck/summary.md, written into the workspace by the action),
+      # not to its exit code. Every failing check in the report must be a
+      # known, justified, permanent entry (cran-comments.md) or registered
+      # debt; anything else fails the build:
+      #
+      #   PERMANENT  "R CMD check found 2 warnings." — the -ffp-contract=off
+      #              PKG_CXXFLAGS flag and the vendored Praat compiled-code
+      #              symbols; both documented in cran-comments.md. Their
+      #              exact content is gated content-exactly by the
+      #              R-CMD-check workflow on all 4 platforms; a *third*
+      #              warning changes this summary line and fails here.
+      #
+      #   DEBT       "Package coverage failed" / "Package coverage is N% ..."
+      #              — pkgcheck's internal covr run is unstable (sometimes
+      #              try-errors; when it completes, coverage is far below the
+      #              75% rOpenSci bar). Tracked:
+      #              docs/superpowers/plans/2026-08-21-coverage-75-percent.md.
+      #              Warns loudly; fails only if the reported percentage drops
+      #              below the registered baseline (a regression).
+      #
+      #   RACE       "Package fails continuous integration checks." —
+      #              pkgcheck queries /actions/runs inside its container while
+      #              the sibling R-CMD-check/test-coverage runs for the same
+      #              push are still in progress (NULL conclusions -> spurious
+      #              failure). Verified against the GitHub API here:
+      #              tolerated as a race only when the current-SHA sibling
+      #              runs actually succeeded; a genuine sibling failure (or an
+      #              unverifiable state on manual dispatch) does not fail.
+      #
+      # Any other failing check (a new WARNING count, a new check, an
+      # R CMD check process failure, ...) fails the build.
+      - name: Gate pkgcheck failures
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          md=".pkgcheck/summary.md"
+          if [ ! -f "$md" ]; then
+            echo "::error::pkgcheck summary.md not found under .pkgcheck/ - the pkgcheck step did not produce its report. A missing report is a pipeline failure, not 'nothing to inspect'."
+            exit 1
+          fi
+          fails=$(grep '^- :heavy_multiplication_x:' "$md" | sed 's/^- :heavy_multiplication_x: *//' | sort -u)
+          if [ -z "$fails" ]; then
+            echo "All pkgcheck checks passed - no failing checks in the report."
+            exit 0
+          fi
+          # Registered permanent failures (cran-comments.md).
+          permanent='^R CMD check found 2 warnings\.$'
+          # Registered debt: coverage bar + covr instability (see the
+          # coverage plan). Warns loudly; must not silently persist.
+          debt='^Package coverage failed$|^Package coverage is [0-9]+\.[0-9]+% \(should be at least 75%\)\.$'
+          # Registered coverage baseline: pkgcheck's last completed covr run
+          # reported 27.4%. Raise this as coverage improves; a drop below it
+          # is a regression and fails.
+          coverage_baseline=27.4
+          fail=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if printf '%s\n' "$f" | grep -Eq "$permanent"; then
+              echo "OK (permanent; see cran-comments.md): $f"
+            elif printf '%s\n' "$f" | grep -Eq '^Package coverage is [0-9]+\.[0-9]+% \(should be at least 75%\)\.$'; then
+              pct=$(printf '%s\n' "$f" | sed -n 's/^Package coverage is \([0-9]*\.[0-9]*\)%.*/\1/p')
+              if awk -v p="$pct" -v b="$coverage_baseline" 'BEGIN { exit !(p < b) }'; then
+                echo "::error::Coverage regression: pkgcheck reports $pct%, below the registered baseline $coverage_baseline%."
+                fail=1
+              else
+                echo "::warning::DEBT coverage below the 75% rOpenSci bar ($pct%); tracked in docs/superpowers/plans/2026-08-21-coverage-75-percent.md."
+              fi
+            elif printf '%s\n' "$f" | grep -Eq "$debt"; then
+              echo "::warning::DEBT pkgcheck failure (should be eliminated; see plan): $f"
+            elif [ "$f" = "Package fails continuous integration checks." ]; then
+              # pkgcheck's CI sub-check reads the latest run per workflow
+              # name while the sibling runs for this push are still in
+              # progress (NULL conclusion), so it fails spuriously on every
+              # push. Verify the true state for this SHA: a sibling run that
+              # exists and concluded "failure" is a real failure; a run that
+              # succeeded is a race; a run that does not exist (manual
+              # dispatch) cannot be verified and is tolerated.
+              sha="${GITHUB_SHA}"
+              ok=1
+              for wf in R-CMD-check test-coverage; do
+                concl=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?event=push&head_sha=${sha}" \
+                  --jq ".workflow_runs[] | select(.name == \"${wf}\") | .conclusion" | head -n 1)
+                if [ -z "$concl" ]; then
+                  echo "::warning::pkgcheck CI sub-check unverifiable for ${wf} on ${sha:0:7} (no run found; manual dispatch?) - tolerated."
+                elif [ "$concl" != "success" ]; then
+                  echo "::error::pkgcheck CI check failed AND ${wf} did not pass for ${sha:0:7} (conclusion: ${concl})."
+                  ok=0
+                else
+                  echo "OK (race, verified): ${wf} concluded ${concl} for ${sha:0:7}."
+                fi
+              done
+              if [ "$ok" -eq 1 ]; then
+                echo "::warning::pkgcheck CI sub-check raced the sibling workflows; actual conclusions for ${sha:0:7} are success - tolerated."
+              else
+                fail=1
+              fi
+            else
+              echo "::error::Unexpected pkgcheck failure: $f"
+              fail=1
+            fi
+          done <<< "$fails"
+          if [ "$fail" -eq 1 ]; then
+            echo ""
+            echo "::error::pkgcheck reported failures not on the justified list."
+            echo "Fix the issue, or - if genuinely permanent - document it in"
+            echo "cran-comments.md and extend the registry in this workflow."
+            exit 1
+          fi

@@ -291,14 +291,20 @@ jobs:
 
           # PERMANENT: genuinely justified skips. Keep this list as small as
           # possible; each entry needs a reason in cran-comments.md.
-          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^SIMD not available'
+          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available'
+
+          # 'SIMD not available' is DEBT, not permanent: src/Makevars.win
+          # disables -DHAVE_XSIMD as a workaround for a heap-corruption bug
+          # in the SIMD/batch region (deterministic on Windows, intermittent
+          # on macOS, suspected in the Linux covr crash); the comment there
+          # says "re-enable once fixed". Every run warns until re-enabled.
 
           # DEBT: known-current state we intend to eliminate (Windows SIMD
           # gap, catch-and-skip fixture guards, feature-gap skips, TODO skips,
           # data-dependent skips). Matches print a loud warning so the debt
           # cannot silently persist. Do not add new entries here without a
           # tracking issue.
-          debt='^Could not create test (sound|pitch object|intensity object|TextGrid)$|^Could not compile XPtr|^create_window_xptr|^apply_(window|transform)_xptr not available|^get_values method not available|^get_sample_times method not available|^get_statistics method not available|^pitch_get_statistics_batch not available|^intensity_get_statistics_batch not available|^get_all_points not available|^get_all_intervals not available|^get_adaptive_range not available|^extract_intervals_batch|^SIMD .* not exported|^Scalar .* not exported|^Spectrum\$to_sound\(\)|^Scalar vs SIMD comparison|^Edge case testing - implementation pending|^LPC\$to_formant\(\)|^multichannel Sound construction|^SIMD Blackman window function not exported|^No voiced segments extracted|^SIMD autocorrelation function not exported|^LongSound\$open\(\) failed'
+          debt='^SIMD not available|^Could not create test (sound|pitch object|intensity object|TextGrid)$|^Could not compile XPtr|^create_window_xptr|^apply_(window|transform)_xptr not available|^get_values method not available|^get_sample_times method not available|^get_statistics method not available|^pitch_get_statistics_batch not available|^intensity_get_statistics_batch not available|^get_all_points not available|^get_all_intervals not available|^get_adaptive_range not available|^extract_intervals_batch|^SIMD .* not exported|^Scalar .* not exported|^Spectrum\$to_sound\(\)|^Scalar vs SIMD comparison|^Edge case testing - implementation pending|^LPC\$to_formant\(\)|^multichannel Sound construction|^SIMD Blackman window function not exported|^No voiced segments extracted|^SIMD autocorrelation function not exported|^LongSound\$open\(\) failed'
 
           fail=0
           while IFS= read -r reason; do

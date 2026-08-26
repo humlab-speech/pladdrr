@@ -11,11 +11,17 @@ CXX_STD = CXX17
 # Praat's own mingw makefiles build with -municode; plain defines are the
 # portable equivalent for an R package. -D_FILE_OFFSET_BITS=64 also mirrors
 # Praat's makefile.defs.msys-mingw64.
-# NOTE: -DHAVE_XSIMD deliberately NOT set on Windows (unlike Makevars.in).
-# The SIMD kernels run on Windows but a pre-existing heap-corruption bug in
-# the SIMD/batch region crashes the test suite deterministically there
-# (same bug crashes macOS intermittently). Tracked: re-enable once fixed.
-PKG_CPPFLAGS = -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64 \
+# SIMD is now enabled on Windows (was disabled while a heap-corruption bug in
+# the SIMD/batch region crashed the suite deterministically there; the root
+# cause - heap OOB writes in PowerCepstrum_to_Spectrum and
+# ComplexSpectrogram_to_Sound - was fixed in the praat submodule (see git log
+# f4df8a305, 46ea32f44). The Windows crash-probe tests
+# (tests/testthat/helper-windows-crash-probe.R) now run the previously-crashing
+# bodies in isolated child R processes, so any residual crash is a visible test
+# failure (plus a WER minidump), not a silent skip. If the Windows job turns
+# red with a crash dump, that is the signal to re-investigate - do not revert
+# this flag silently.
+PKG_CPPFLAGS = -DHAVE_XSIMD -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64 \
                -DPLADDRR_NO_DEBUG -DPLADDRR_FULL_PRAAT -I. \
                -Ipocketfft \
                -Ipraat.github.io \
