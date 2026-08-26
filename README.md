@@ -257,7 +257,7 @@ See `inst/examples/` for complete, real-world workflows:
 
 
 
-# Implmentation details
+# Implementation details
 
 ## Implemented Objects
 
