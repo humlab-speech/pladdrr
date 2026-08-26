@@ -500,14 +500,14 @@ Please also cite Praat itself:
 ## Contributing
 
 Contributions are welcome. See
-[CONTRIBUTING.md](https://humlab-speech.github.io/pladdrr/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/humlab-speech/pladdrr/blob/main/.github/CONTRIBUTING.md)
 for how to get a working build (the vendored Praat sources are git
 submodules, and GSL is required) and what a good pull request looks
 like.
 
 Please note that this project is released with a [Contributor Code of
-Conduct](https://humlab-speech.github.io/pladdrr/CODE_OF_CONDUCT.md). By
-participating in this project you agree to abide by its terms.
+Conduct](https://github.com/humlab-speech/pladdrr/blob/main/.github/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ## License
 
