@@ -16,7 +16,37 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
-## Recent Changes
+### Unreleased — Remove banned stdout/stderr/exit symbols from compiled code (2026-08-26)
+
+Submodule commit `6843ffec0`.
+
+#### `melder/melder_console.cpp` — console output routed through R's streams
+
+**Summary:** R CMD check's `checking compiled code` flagged `___stderrp`/
+`___stdoutp` in `melder_console.o` (and `praat.o`) plus `_exit` in `praat.o`.
+Under `PRAAT_LIB` builds, `MelderConsole_init` and `MelderConsole::write` now
+reference R's own `R_Outputfile`/`R_Consolefile` (`Rinterface.h`) instead of
+the libc `stdout`/`stderr` FILE* globals. Raw `FILE*` writes preserve the
+worker-thread safety profile of the old streams (the earlier rationale against
+`Rprintf`/`REprintf` from DSP worker threads still holds — no R API is
+called). `R_Consolefile` can be NULL in batch mode, so `write()` drops the
+message rather than dereferencing NULL (the previous segfault guard's
+behavior). The Win32 console-attach block is skipped entirely in library
+builds — R owns the console.
+
+#### `sys/praat.cpp` — 25 `exit()` call sites routed through `PLADDRR_EXIT`
+
+**Summary:** `--version`/`--help`/argument-validation/NO_GUI-interactive/
+switch-to-running paths called `exit()` directly (compiled even though the
+embedded library never executes them). A `PLADDRR_EXIT(code)` macro throws
+`MelderError` under `PRAAT_LIB` (same pattern as `praat_exit`) and calls
+`exit(code)` upstream, so upstream behavior is unchanged.
+`tryToAttachToTheCommandLine()` now returns `false` in library mode instead of
+probing `isatty(fileno(stdout/stderr))` (also removes the `stdout`/`stderr`
+references). `praat_exit()`'s `_Exit`/`exit` remain `#ifndef PRAAT_LIB`-gated
+as before.
+
+Behavior outside `PRAAT_LIB` builds is byte-for-byte unchanged.
 
 ### Unreleased — Fix `empty$#` string-array formula creating null strings (2026-08-20)
 
