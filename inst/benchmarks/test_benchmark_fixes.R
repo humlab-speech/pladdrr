@@ -56,14 +56,13 @@ for (i in 1:5) {
       pitch <- sound$to_pitch()
       TRUE
     },
-    error = function(e) {
-      error_count <<- error_count + 1
-      FALSE
-    }
+    error = function(e) FALSE
   )
 
   if (result) {
     success_count <- success_count + 1
+  } else {
+    error_count <- error_count + 1
   }
 }
 

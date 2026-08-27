@@ -142,7 +142,7 @@ test_that("Sound get_windows_passing_filter returns logical vector", {
   passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.0)
 
   expect_length(passes, 3)
-  expect_true(is.logical(passes))
+  expect_type(passes, "logical")
 })
 
 test_that("PointProcess get_values_from_sound returns correct values", {

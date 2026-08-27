@@ -401,7 +401,7 @@ test_that("SIMD spectrogram works with different window shapes", {
 test_that("SIMD info is reported correctly", {
   info <- simd_info()
 
-  expect_true(is.list(info), label = "simd_info() should return a list")
+  expect_type(info, "list")
   expect_true("enabled" %in% names(info), label = "Should report 'enabled' status")
   expect_true("architecture" %in% names(info), label = "Should report architecture")
 

@@ -43,7 +43,7 @@ test_that("KlattGrid autoplot produces non-empty data after Task 2's formantType
   kg$add_formant_point(1, 3, 0.15, 2500)
   expect_equal(kg$get_formant_at_time(1, 1, 0.15), 500, tolerance = 1)
   df <- as.data.frame(kg)
-  expect_true(!all(is.na(df$frequency)))
+  expect_false(all(is.na(df$frequency)))
   p <- ggplot2::autoplot(kg)
   expect_s3_class(p, "ggplot")
   p2 <- ggplot2::ggplot() + ggplot2::autolayer(kg)

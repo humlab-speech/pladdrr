@@ -89,7 +89,7 @@ test_that("get_spectral_moments_batch() computes moments for power != 2 (the def
   spg <- sound$to_spectrogram()
 
   result <- get_spectral_moments_batch(spg, power = 1.0)
-  expect_true(!all(is.na(result$cog)))
+  expect_false(all(is.na(result$cog)))
 })
 
 test_that("get_spectral_moments_batch() returns all-NA moments for a silent (zero-energy) frame", {

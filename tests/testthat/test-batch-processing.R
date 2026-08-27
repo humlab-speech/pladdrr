@@ -45,8 +45,8 @@ test_that("pair_sound_textgrid matches by basename and requires both by default"
 
   expect_s3_class(pairs, "data.frame")
   expect_equal(nrow(pairs), 2)
-  expect_true(!any(is.na(pairs$sound_file)))
-  expect_true(!any(is.na(pairs$textgrid_file)))
+  expect_true(!anyNA(pairs$sound_file))
+  expect_true(!anyNA(pairs$textgrid_file))
 })
 
 test_that("pair_sound_textgrid with require_both = FALSE keeps unmatched sound files", {

@@ -57,7 +57,7 @@ test_that("Table as_data_frame infers numeric vs character columns", {
   tbl$set_numeric_value(2, "duration", 0.2)
 
   df <- tbl$as_data_frame()
-  expect_true(is.character(df$word))
+  expect_type(df$word, "character")
   expect_true(is.numeric(df$duration))
   expect_equal(df$word, c("cat", "dog"))
 
@@ -70,7 +70,7 @@ test_that("Table as_data_frame handles zero rows without misclassifying columns"
   tbl <- Table(.xptr = ptr)
   df <- tbl$as_data_frame()
   expect_equal(nrow(df), 0)
-  expect_true(is.character(df$word))
+  expect_type(df$word, "character")
 })
 
 test_that("Table get_mean/get_standard_deviation compute column statistics", {

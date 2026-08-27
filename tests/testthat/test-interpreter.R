@@ -441,7 +441,7 @@ test_that("String manipulation functions work correctly", {
   
   # Case conversion
   result <- praat_eval_string("replace_regex$(\"Hello\", \"H\", \"h\", 0)")
-  expect_true(is.character(result))
+  expect_type(result, "character")
 })
 
 test_that("String concatenation with multiple parts works", {
