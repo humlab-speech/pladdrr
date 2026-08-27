@@ -3499,7 +3499,7 @@ Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before
 
 **libc++ note:** `PKG_CPPFLAGS` in `Makevars.in` carries `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` — silences C++17 allocator-member deprecations inside RcppXsimd's `xsimd_aligned_allocator.hpp` under `--as-cran`; portable define, inert on libstdc++ (so not needed in `Makevars.win`).
 
-**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, or `-march=native` to Makevars.in — R provides its own optimization via `Makeconf`. Do NOT re-add `-Wno-*` suppressions (all were removed in v4.9.6; the only justified non-standard flag is `-ffp-contract=off`, required for bit-exact fidelity with Praat). The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
+**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, `-march=native`, or `-ffp-contract=off` to Makevars.in — R provides its own optimization via `Makeconf`. Do NOT re-add `-Wno-*` suppressions (all were removed in v4.9.6). FP contraction is disabled at source level: `#pragma STDC FP_CONTRACT OFF` in the vendored `melder.h` (included by every DSP translation unit; GCC and Clang both honour it) — see PRAAT_MODIFICATIONS.md. Never restore a compiler-flag version: R CMD check flags `-ffp-contract=off` in `PKG_CXXFLAGS` as non-portable. The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
 
 The former bundled GSL trees (`src/gsl-2.8/`, `src/praat/external/gsl/`, `src/build_gsl.sh`) were removed in the v4.9.5 slimming — only Praat's GSL 1.10 *headers* under `praat.github.io/external/gsl/` remain in the tarball.
 
