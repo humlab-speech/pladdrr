@@ -157,9 +157,10 @@ jobs:
           fi
 
           # --- WARNINGs: content drift inside justified sections ------------
-          # Makevars: the ONLY justified flag is -ffp-contract=off (required
-          # for bit-exact Praat parity; GCC implements no FP_CONTRACT pragma).
-          # Any other flag line (e.g. -march=native, -O3, -flto) fails.
+          # Makevars: no non-portable flags are justified anymore — the
+          # bit-exactness guarantee moved to #pragma STDC FP_CONTRACT OFF in
+          # the vendored melder.h (GCC and Clang both honour it). Any flag
+          # line (e.g. -march=native, -O3, -flto, -ffp-contract) fails.
           # compiled code: only the vendored Praat stderr/stdout/_exit
           # symbols from melder_console.o and praat.o are justified; any
           # new symbol or object fails. Both branches iterate the section
