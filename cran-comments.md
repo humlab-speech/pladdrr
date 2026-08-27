@@ -134,11 +134,11 @@ citations/contact details.
 
 ### R CMD check results
 
-Local tarball check currently finishes with:
+Local tarball check (R 4.6.1, aarch64) finishes with:
 
 - 0 errors
 - 0 warnings
-- notes as listed below
+- 0 notes (`R CMD check --no-manual`; Status: OK)
 
 The previously reported install-time compiler warnings have been resolved: an
 unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
