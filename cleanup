@@ -13,4 +13,13 @@
 # (which R-devel applies late enough to miss files created during the
 # vignette build). Only touches files under src/ in the build copy.
 find src -type f \( -name '*.o' -o -name '*.o.tmp' -o -name '*.so' \
-  -o -name '*.dll' -o -name '*.dylib' -o -name '*.a' -o -name '*.la' \) -delete
+  -o -name '*.dll' -o -name '*.dylib' -o -name '*.a' -o -name '*.la' \
+  -o -name 'Makevars' \) -delete
+
+# Removing the configure-generated src/Makevars from the working copy is
+# required for R-devel 4.7+'s 'checking compilation flags in Makevars':
+# a package that ships src/Makevars.in AND has configure generate
+# src/Makevars is flagged with "Package has both 'src/Makevars.in' and
+# 'src/Makevars'". The tarball already excludes src/Makevars via
+# .Rbuildignore; removing it here (after configure has done its work)
+# keeps the checked tree from carrying the generated copy.

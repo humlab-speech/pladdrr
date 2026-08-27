@@ -218,7 +218,7 @@ jobs:
           #  * 'CRAN incoming feasibility': new-submission metadata chatter;
           #    CI disables CRAN incoming anyway.
           note_allow_release='^(HTML version of manual|CRAN incoming feasibility) \.\.\.( \[[^]]*\])? NOTE$'
-          note_allow_devel='^(if this is a source package|HTML version of manual|CRAN incoming feasibility) \.\.\.( \[[^]]*\])? NOTE$'
+          note_allow_devel='^(if this is a source package|compilation flags in Makevars|HTML version of manual|CRAN incoming feasibility) \.\.\.( \[[^]]*\])? NOTE$'
           if [ "$R_VERSION" = "devel" ]; then
             note_allow="$note_allow_devel"
           else
