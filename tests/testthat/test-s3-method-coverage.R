@@ -225,11 +225,11 @@ test_that("as.data.frame.Formant delegates and forwards ... (max_formants)", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
   df_default <- as.data.frame(formant)
-  expect_true(is.data.frame(df_default))
+  expect_s3_class(df_default, "data.frame")
   expect_true(all(c("time", "formant", "frequency", "bandwidth") %in% names(df_default)))
 
   df_limited <- as.data.frame(formant, max_formants = 2)
-  expect_true(is.data.frame(df_limited))
+  expect_s3_class(df_limited, "data.frame")
   expect_lte(max(df_limited$formant), 2)
 })
 

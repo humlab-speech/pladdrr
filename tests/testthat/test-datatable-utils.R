@@ -67,7 +67,7 @@ test_that(".finalize_dataframe converts to data.frame and warns once when opted 
   dt <- data.table::data.table(x = 1:3)
   expect_warning(out <- pladdrr:::.finalize_dataframe(dt), "deprecated")
   expect_false(data.table::is.data.table(out))
-  expect_true(is.data.frame(out))
+  expect_s3_class(out, "data.frame")
 
   # Warning only fires once per session
   expect_no_warning(pladdrr:::.finalize_dataframe(dt))

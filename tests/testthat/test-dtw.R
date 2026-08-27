@@ -49,7 +49,7 @@ test_that("DTW get_path returns valid data.frame", {
 
   path <- dtw$get_path()
 
-  expect_true(is.data.frame(path))
+  expect_s3_class(path, "data.frame")
   expect_equal(nrow(path), dtw$get_path_length())
   expect_true(all(c("x_index", "y_index", "x_time", "y_time") %in% names(path)))
 })

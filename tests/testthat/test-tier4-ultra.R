@@ -515,7 +515,7 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
   # Verify it runs successfully
   result <- tier4_dsi()
   expect_length(result, 4)
-  expect_true(!anyNA(result))
+  expect_false(anyNA(result))
 
   message(sprintf("DSI Tier 4 result: MPT=%.2fs, F0=%.1fHz, Int=%.1fdB, PPQ5=%.4f",
                   result["max_mpt"], result["max_f0"], result["min_int"], result["jitter_ppq5"]))

@@ -31,7 +31,7 @@ test_that("SIMD data conversion preserves values", {
   df <- sound$as_data_frame()
 
   # Check structure
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_true("time" %in% names(df))
   expect_true("value" %in% names(df))
 
