@@ -51,14 +51,14 @@ test_that("as.data.frame.PointProcess works", {
   sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
   pp <- sound$to_point_process_periodic_cc()
   df <- as.data.frame(pp)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
 })
 
 test_that("as.data.frame.TextGrid works", {
 
   tg <- textgrid_create(0, 1, "words")
   df <- as.data.frame(tg)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
 })
 
 test_that("print.praat_sound prints expected fields (mono)", {
@@ -94,7 +94,7 @@ test_that("as.data.frame.praat_sound is deprecated and returns time/amplitude co
   expect_warning(as.data.frame(x), "deprecated")
   # Get the result without warning
   df <- suppressWarnings(as.data.frame(x))
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_named(df, c("time", "amplitude"))
   expect_equal(nrow(df), x$n_samples)
 })
@@ -111,7 +111,7 @@ test_that("as.data.frame.praat_sound validates its input", {
 test_that("as.data.frame.Sound delegates to Sound$as_data_frame()", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
   df <- as.data.frame(sound)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_true("time" %in% names(df))
   expect_equal(df, sound$as_data_frame())
 })
@@ -237,7 +237,7 @@ test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
   intensity <- sound$to_intensity()
   df <- as.data.frame(intensity)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_equal(df, intensity$as_data_frame())
 })
 
@@ -245,7 +245,7 @@ test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
   pitch <- sound$to_pitch()
   df <- as.data.frame(pitch)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_equal(df, pitch$as_data_frame())
 })
 
@@ -253,7 +253,7 @@ test_that("as.data.frame.MFCC delegates to MFCC$as_data_frame()", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
   mfcc <- sound$to_mel_spectrogram()$to_mfcc()
   df <- as.data.frame(mfcc)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_equal(df, mfcc$as_data_frame())
 })
 
@@ -261,6 +261,6 @@ test_that("as.data.frame.LFCC delegates to LFCC$as_data_frame()", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
   lfcc <- sound$to_lpc_burg()$to_lfcc()
   df <- as.data.frame(lfcc)
-  expect_true(is.data.frame(df))
+  expect_s3_class(df, "data.frame")
   expect_equal(df, lfcc$as_data_frame())
 })
