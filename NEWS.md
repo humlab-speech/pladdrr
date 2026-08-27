@@ -1,18 +1,30 @@
-# pladdrr 5.0.4 (unreleased CRAN-compliance changes)
+# pladdrr (unreleased)
 
 ## CRAN compliance
 
-* Removed the last two R CMD check warnings:
+* Removed the last two `R CMD check` warnings:
   * The compiled-code warning (`stderr`/`stdout`/`_exit` symbols in the
-    vendored Praat objects) is fixed: `melder_console.cpp` now routes
-    console output through R's own `R_Outputfile`/`R_Consolefile` handles
-    in library builds, and all `exit()` call sites in Praat's CLI paths
-    throw a `MelderError` under `PRAAT_LIB` instead of terminating the
-    process.
-  * The `PKG_CXXFLAGS` non-portable flag `-ffp-contract=off` was replaced
+    vendored Praat objects): `melder_console.cpp` now routes console
+    output through the R API (`Rprintf`/`REprintf`), gated to the main
+    thread (R's console API is unsafe off-main-thread, and `Melder_casual`
+    can fire inside threaded DSP frame loops; worker-thread messages are
+    dropped). All `exit()` call sites in Praat's CLI paths throw a
+    `MelderError` under `PRAAT_LIB` instead of terminating the process.
+  * The non-portable `PKG_CXXFLAGS` flag `-ffp-contract=off` was replaced
     by a source-level `#pragma STDC FP_CONTRACT OFF` in the vendored
-    `melder.h`, which every DSP translation unit includes. Same
-    bit-exactness guarantee, no non-portable compiler flags.
+    `melder.h` (included by every DSP translation unit) — the same
+    bit-exactness guarantee with no compiler flags.
+* Removed the R-devel "package has both `src/Makevars.in` and
+  `src/Makevars`" NOTE: the `cleanup` script now deletes the
+  configure-generated `src/Makevars` from the build copy.
+* Expanded `inst/WORDLIST` and fixed a typo; the documentation now passes
+  `spelling::spell_check_package()`.
+* Modernized the test suite (~440 assertion conversions: `expect_gt/gte/
+  lt/lte`, `expect_length`, `expect_named`, `expect_type`,
+  `expect_s3_class`, `expect_identical` for exact integer comparisons,
+  `expect_false`, `fixed = TRUE` on literal patterns, `anyNA`).
+
+# pladdrr 5.0.4
 
 ## Bug fixes
 
