@@ -67,7 +67,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="5.0.4" id="pladdrr-504">pladdrr 5.0.4<a class="anchor" aria-label="anchor" href="#pladdrr-504"></a></h2>
+<h2 class="pkg-version" data-toc-text="5.0.4" id="pladdrr-504-unreleased-cran-compliance-changes">pladdrr 5.0.4 (unreleased CRAN-compliance changes)<a class="anchor" aria-label="anchor" href="#pladdrr-504-unreleased-cran-compliance-changes"></a></h2>
+<div class="section level3">
+<h3 id="cran-compliance-5-0-4">CRAN compliance<a class="anchor" aria-label="anchor" href="#cran-compliance-5-0-4"></a></h3>
+<ul><li>Removed the last two R CMD check warnings:
+<ul><li>The compiled-code warning (<code>stderr</code>/<code>stdout</code>/<code>_exit</code> symbols in the vendored Praat objects) is fixed: <code>melder_console.cpp</code> now routes console output through R’s own <code>R_Outputfile</code>/<code>R_Consolefile</code> handles in library builds, and all <code>exit()</code> call sites in Praat’s CLI paths throw a <code>MelderError</code> under <code>PRAAT_LIB</code> instead of terminating the process.</li>
+<li>The <code>PKG_CXXFLAGS</code> non-portable flag <code>-ffp-contract=off</code> was replaced by a source-level <code>#pragma STDC FP_CONTRACT OFF</code> in the vendored <code>melder.h</code>, which every DSP translation unit includes. Same bit-exactness guarantee, no non-portable compiler flags.</li>
+</ul></li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-5-0-4">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-0-4"></a></h3>
 <ul><li><p>The Praat interpreter entry points (<code><a href="../reference/praat_run_script.html">praat_run_script()</a></code>,</p></li>
