@@ -305,7 +305,7 @@ See `inst/examples/` for complete, real-world workflows:
 - **Complete phonetic pipelines** (integrated analysis combining
   multiple measures)
 
-# Implmentation details
+# Implementation details
 
 ## Implemented Objects
 

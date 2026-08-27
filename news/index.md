@@ -1,8 +1,25 @@
 # Changelog
 
-## pladdrr 5.0.4
+## pladdrr 5.0.4 (unreleased CRAN-compliance changes)
+
+### CRAN compliance
+
+- Removed the last two R CMD check warnings:
+  - The compiled-code warning (`stderr`/`stdout`/`_exit` symbols in the
+    vendored Praat objects) is fixed: `melder_console.cpp` now routes
+    console output through R’s own `R_Outputfile`/`R_Consolefile`
+    handles in library builds, and all `exit()` call sites in Praat’s
+    CLI paths throw a `MelderError` under `PRAAT_LIB` instead of
+    terminating the process.
+  - The `PKG_CXXFLAGS` non-portable flag `-ffp-contract=off` was
+    replaced by a source-level `#pragma STDC FP_CONTRACT OFF` in the
+    vendored `melder.h`, which every DSP translation unit includes. Same
+    bit-exactness guarantee, no non-portable compiler flags.
 
 ### Bug fixes
+
+- The Praat interpreter entry points
+  ([`praat_run_script()`](https://humlab-speech.github.io/pladdrr/reference/praat_run_script.md),
 
 - The Praat interpreter entry points
   ([`praat_run_script()`](https://humlab-speech.github.io/pladdrr/reference/praat_run_script.md),

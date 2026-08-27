@@ -63,5 +63,12 @@ kg$add_formant_point(1, 2, 0.5, 1500) # F2 = 1500 Hz
 
 # Synthesize
 sound <- kg$to_sound()
+#> 
+#> Warning:
+#>  Nasal formants: one or more are missing.
+#>  Nasal antiformants: one or more are missing.
+#>  Tracheal formants: one or more are missing.
+#>  Tracheal antiformants: one or more are missing.
+#>  Oral formants: one or more are missing.
 # }
 ```
