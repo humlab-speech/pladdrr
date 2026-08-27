@@ -3,17 +3,18 @@
 # class mappings (only Sound/Pitch were exercised), PraatInterpreter$run(),
 # and print().
 #
-# NOTE (2026-08-28): three interpreter conversion commands SEGFAULT the R
-# session (verified in isolated child processes, status 139 on macOS):
-#   - "To Matrix"              (Spectrogram -> Matrix)
-#   - "To PitchTier"           (Pitch -> PitchTier)
-#   - "To IntensityTier"       (Manipulation -> IntensityTier)
-# and three need different signatures / are unavailable:
-#   - "To Cepstrum" / "To PowerCepstrum" (command not available)
-#   - "To Cochleagram: 0.01, 0.05" (needs 3 args)
-# These are pre-existing vendored-interpreter bugs; the crashing commands
-# are deliberately NOT exercised here (a suite crash is worse than a
-# coverage gap). Track separately.
+# NOTE (2026-08-28): "To Matrix" on a Spectrogram used to segfault the R
+# session. Root cause: praat_doAction() matched actions by title only, so
+# the FIRST "To Matrix" action (registered for PointProcess, Cochleagram,
+# Harmonicity, Ltas, Pitch, Spectrogram, ...) won regardless of the
+# selected class and ran the wrong callback on the object
+# (PointProcess_to_Matrix on a Spectrogram). Fixed in
+# src/praat_actions_libmode.cpp: dispatch now also matches the selected
+# objects' classes. "To PitchTier" (Pitch) and "To IntensityTier"
+# (Manipulation) had the same crash; they now produce a clean Praat
+# "command not available" error because this build registers no single-
+# selection action for those conversions (the C++ converters exist; the
+# action registration is upstream-slimmed).
 
 interp_fixture <- function(tag) {
   interp <- PraatInterpreter$new()
@@ -59,6 +60,7 @@ test_that("wrap_praat_object maps spectral classes", {
   interp <- interp_fixture("spec")
   interp$run("To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
   expect_s3_class(last_object(interp), "Spectrogram")
+  interp$run('selectObject: "Sound tonespec"')
   interp$run("To Spectrum: \"yes\"")
   expect_s3_class(last_object(interp), "Spectrum")
 })
@@ -69,6 +71,22 @@ test_that("wrap_praat_object maps Manipulation and TextGrid", {
   expect_s3_class(last_object(interp), "Manipulation")
   interp$run('Create TextGrid: 0, 1, "word", ""')
   expect_s3_class(last_object(interp), "TextGrid")
+})
+
+test_that("To Matrix on a Spectrogram dispatches to the right class (regression: segfault)", {
+  interp <- interp_fixture("matrix")
+  interp$run("To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
+  interp$run("To Matrix")
+  expect_s3_class(last_object(interp), "Matrix")
+})
+
+test_that("mis-classed conversions fail cleanly instead of crashing (regression: segfault)", {
+  interp <- interp_fixture("nocrashtier")
+  interp$run("To Pitch: 0, 75, 600")
+  expect_error(interp$run("To PitchTier"), "not available")
+  interp$run('selectObject: "Sound tonenocrashtier"')
+  interp$run("To Manipulation: 0.01, 75, 600")
+  expect_error(interp$run("To IntensityTier"), "not available")
 })
 
 test_that("PraatInterpreter$print() summarizes the object list", {

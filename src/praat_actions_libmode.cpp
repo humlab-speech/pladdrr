@@ -180,10 +180,60 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 }
 
 // Action dispatch - the key function for script execution
+
+// pladdrr: dispatch an action only when the current selection matches the
+// action's class signature. Upstream Praat filters by the selected objects'
+// classes; the previous title-only matching dispatched the FIRST action with
+// the requested title regardless of the selection — for titles registered on
+// several classes (e.g. "To Matrix" on PointProcess/Cochleagram/Harmonicity/
+// Ltas/Pitch/Spectrogram/...) that ran the wrong callback on the selected
+// object and segfaulted (e.g. PointProcess_to_Matrix on a Spectrogram).
+static bool actionMatchesSelection (Praat_Command action) {
+	ClassInfo classes [4] = { action->class1, action->class2, action->class3, action->class4 };
+	integer required [4] = { action->n1, action->n2, action->n3, action->n4 };
+	// Collect the classes of the selected objects, in object-list order.
+	ClassInfo selectedClasses [4] = { nullptr, nullptr, nullptr, nullptr };
+	integer nSelected = 0;
+	for (integer i = 1; i <= theCurrentPraatObjects -> n; i ++)
+		if (theCurrentPraatObjects -> list [i].isSelected) {
+			if (nSelected < 4)
+				selectedClasses [nSelected] = theCurrentPraatObjects -> list [i].klas;
+			nSelected ++;
+		}
+	// No class constraint: matches any selection.
+	bool anyClassSet = false;
+	for (int k = 0; k < 4; k ++)
+		if (classes [k])
+			anyClassSet = true;
+	if (! anyClassSet)
+		return true;
+	// Every selected object must belong to one of the action's classes.
+	for (integer i = 0; i < nSelected; i ++) {
+		bool ok = false;
+		for (int k = 0; k < 4; k ++)
+			if (classes [k] && selectedClasses [i] == classes [k])
+				ok = true;
+		if (! ok)
+			return false;
+	}
+	// For each class with a required count > 0, the selection must match exactly.
+	for (int k = 0; k < 4; k ++) {
+		if (! classes [k] || required [k] == 0)
+			continue;
+		integer count = 0;
+		for (integer i = 0; i < nSelected; i ++)
+			if (selectedClasses [i] == classes [k])
+				count ++;
+		if (count != required [k])
+			return false;
+	}
+	return true;
+}
+
 int praat_doAction (conststring32 title, conststring32 arguments, Interpreter interpreter) {
     for (integer i = 1; i <= theActions.size; i++) {
         Praat_Command action = theActions.at[i];
-        if (action->executable && str32equ(action->title.get(), title)) {
+        if (action->executable && str32equ(action->title.get(), title) && actionMatchesSelection(action)) {
             // Found the action - call its callback
             action->callback(nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr, nullptr);
             return 1;  // Success
@@ -195,7 +245,7 @@ int praat_doAction (conststring32 title, conststring32 arguments, Interpreter in
 int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter interpreter) {
     for (integer i = 1; i <= theActions.size; i++) {
         Praat_Command action = theActions.at[i];
-        if (action->executable && str32equ(action->title.get(), title)) {
+        if (action->executable && str32equ(action->title.get(), title) && actionMatchesSelection(action)) {
             // Found the action - call its callback
             action->callback(nullptr, narg, args, nullptr, interpreter, title, false, nullptr, nullptr);
             return 1;  // Success
@@ -257,7 +307,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpreter interpreter) {
     for (integer i = 1; i <= theCommands.size; i++) {
         Praat_Command command = theCommands.at[i];
-        if (command->executable && str32equ(command->title.get(), title)) {
+        if (command->executable && str32equ(command->title.get(), title) && actionMatchesSelection(command)) {
             command->callback(nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr, nullptr);
             return 1;
         }
@@ -268,7 +318,7 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interpreter interpreter) {
     for (integer i = 1; i <= theCommands.size; i++) {
         Praat_Command command = theCommands.at[i];
-        if (command->executable && str32equ(command->title.get(), title)) {
+        if (command->executable && str32equ(command->title.get(), title) && actionMatchesSelection(command)) {
             command->callback(nullptr, narg, args, nullptr, interpreter, title, false, nullptr, nullptr);
             return 1;
         }
