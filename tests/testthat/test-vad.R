@@ -158,7 +158,7 @@ test_that("sound_extract_parts return_r6 = FALSE returns raw external pointers",
   parts <- sound_extract_parts(sound, c(0.1), c(0.5), return_r6 = FALSE)
 
   expect_type(parts, "list")
-  expect_s3_class(parts[[1]], "externalptr")
+  expect_type(parts[[1]], "externalptr")
 })
 
 test_that("sound_extract_parts accepts a non-default window_shape", {

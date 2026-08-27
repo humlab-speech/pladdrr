@@ -90,12 +90,12 @@ test_that("RLPC$to_spectrum_ptr / to_matrix_ptr work directly (R6 routes through
   lpc <- sound$to_lpc_burg()
 
   spec_ptr <- lpc$.cpp$to_spectrum_ptr(0.1, 20.0, 0.0, 50.0)
-  expect_s3_class(spec_ptr, "externalptr")
+  expect_type(spec_ptr, "externalptr")
   spec <- Spectrum(.xptr = spec_ptr)
   expect_s3_class(spec, "Spectrum")
 
   mat_ptr <- lpc$.cpp$to_matrix_ptr()
-  expect_s3_class(mat_ptr, "externalptr")
+  expect_type(mat_ptr, "externalptr")
   mat <- Matrix(.xptr = mat_ptr)
   expect_s3_class(mat, "Matrix")
 })
@@ -110,12 +110,12 @@ test_that("RLPC$filter_inverse_ptr / filter_inverse_at_time_ptr work directly on
   lpc <- sound$to_lpc_burg()
 
   source_ptr <- lpc$.cpp$filter_inverse_ptr(sound$get_xptr())
-  expect_s3_class(source_ptr, "externalptr")
+  expect_type(source_ptr, "externalptr")
   source_sound <- Sound(.xptr = source_ptr)
   expect_s3_class(source_sound, "Sound")
 
   source_ptr2 <- lpc$.cpp$filter_inverse_at_time_ptr(sound$get_xptr(), 1L, 0.1)
-  expect_s3_class(source_ptr2, "externalptr")
+  expect_type(source_ptr2, "externalptr")
   source_sound2 <- Sound(.xptr = source_ptr2)
   expect_s3_class(source_sound2, "Sound")
 })
@@ -158,19 +158,19 @@ test_that("Module_Sound_to_LPC_burg/auto/covar/marple factory functions work dir
   lpc_mod <- pladdrr:::get_module("lpc_module")
 
   burg_ptr <- lpc_mod$Sound_to_LPC_burg(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
-  expect_s3_class(burg_ptr, "externalptr")
+  expect_type(burg_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = burg_ptr), "LPC")
 
   auto_ptr <- lpc_mod$Sound_to_LPC_auto(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
-  expect_s3_class(auto_ptr, "externalptr")
+  expect_type(auto_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = auto_ptr), "LPC")
 
   covar_ptr <- lpc_mod$Sound_to_LPC_covar(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
-  expect_s3_class(covar_ptr, "externalptr")
+  expect_type(covar_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = covar_ptr), "LPC")
 
   marple_ptr <- lpc_mod$Sound_to_LPC_marple(sound$get_xptr(), 12L, 0.025, 0.005, 50.0, 1e-6, 1e-6)
-  expect_s3_class(marple_ptr, "externalptr")
+  expect_type(marple_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = marple_ptr), "LPC")
 })
 
@@ -193,7 +193,7 @@ test_that(".lpc_sound_filter_inverse (raw-xptr variant) works directly, unlike t
   lpc <- sound$to_lpc_burg()
 
   source_ptr <- pladdrr:::.lpc_sound_filter_inverse(lpc$.xptr, sound$get_xptr())
-  expect_s3_class(source_ptr, "externalptr")
+  expect_type(source_ptr, "externalptr")
   source_sound <- Sound(.xptr = source_ptr)
   expect_s3_class(source_sound, "Sound")
 })

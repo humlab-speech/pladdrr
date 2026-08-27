@@ -127,7 +127,7 @@ test_that("Table print, is_valid, get_xptr, and unknown-name access", {
   tbl <- Table(numberOfRows = 1, columnNames = "x")
 
   expect_true(tbl$is_valid())
-  expect_s3_class(tbl$get_xptr(), "externalptr")
+  expect_type(tbl$get_xptr(), "externalptr")
   expect_output(print(tbl), "Praat Table")
   expect_null(tbl$totally_bogus_field)
 })
@@ -212,7 +212,7 @@ test_that("internal .table_remove_row/.table_remove_column/.table_insert_column 
 
 test_that("Table() creates an RTable module usable directly via $.cpp", {
   tbl <- Table(numberOfRows = 2, columnNames = c("x", "y"))
-  expect_s3_class(tbl$.cpp, "Rcpp_RTable")
+  expect_s4_class(tbl$.cpp, "Rcpp_RTable")
 })
 
 test_that("RTable module get_mean/get_stdev/get_minimum/get_maximum/get_sum/get_quantile work via $.cpp", {

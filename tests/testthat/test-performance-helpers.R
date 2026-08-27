@@ -21,7 +21,7 @@ test_that("to_powercepstrogram_fast returns a bare external pointer usable by ge
 
   # This is the raw Rcpp XPtr<PowerCepstrogram>, not a classed PowerCepstrogram
   # R6/wrapper object - it has no extra class beyond "externalptr".
-  expect_s3_class(pcg, "externalptr")
+  expect_type(pcg, "externalptr")
   expect_identical(class(pcg), "externalptr")
 
   cpps <- get_cpps_fast(pcg)

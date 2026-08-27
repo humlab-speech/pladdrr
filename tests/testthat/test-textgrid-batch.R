@@ -326,12 +326,12 @@ test_that("get_interval_predicate builds usable built-in predicates and errors o
   expect_error(get_interval_predicate("bogus"), "Unknown predicate type")
 
   pred_ne <- get_interval_predicate("non_empty")
-  expect_s3_class(pred_ne, "externalptr")
+  expect_type(pred_ne, "externalptr")
 
   pred_min <- get_interval_predicate("min_duration", 0.35)
   pred_max <- get_interval_predicate("max_duration", 0.35)
-  expect_s3_class(pred_min, "externalptr")
-  expect_s3_class(pred_max, "externalptr")
+  expect_type(pred_min, "externalptr")
+  expect_type(pred_max, "externalptr")
 })
 
 test_that("textgrid_filter_xptr filters with built-in predicates and errors on bad inputs", {

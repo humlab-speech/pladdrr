@@ -193,15 +193,15 @@ test_that("RPitch conversion methods return valid XPtrs", {
 
   # to_point_process_ptr
   pp_ptr <- rpitch$to_point_process_ptr()
-  expect_s3_class(pp_ptr, "externalptr")
+  expect_type(pp_ptr, "externalptr")
 
   # down_to_pitch_tier_ptr
   pt_ptr <- rpitch$down_to_pitch_tier_ptr()
-  expect_s3_class(pt_ptr, "externalptr")
+  expect_type(pt_ptr, "externalptr")
 
   # to_textgrid_vuv_ptr
   tg_ptr <- rpitch$to_textgrid_vuv_ptr(0.02, 0.01)
-  expect_s3_class(tg_ptr, "externalptr")
+  expect_type(tg_ptr, "externalptr")
 })
 
 test_that("RPitch matches R6 Pitch values", {

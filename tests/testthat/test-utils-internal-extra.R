@@ -6,7 +6,7 @@
 test_that("extract_xptr uses the .xptr field when present", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.1, sampling_rate = 8000)
   ptr <- pladdrr:::extract_xptr(sound, "Sound")
-  expect_s3_class(ptr, "externalptr")
+  expect_type(ptr, "externalptr")
 })
 
 test_that("extract_xptr passes external pointers through unchanged", {

@@ -36,12 +36,12 @@ test_that("to_pitch_direct returns a usable Pitch xptr", {
   sound <- tone_sound()
   ptr <- to_pitch_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
 
-  expect_s3_class(ptr, "externalptr")
+  expect_type(ptr, "externalptr")
   pitch <- Pitch(.xptr = ptr)
   expect_true(pitch$get_mean(0, 0, "hertz") > 0)
 
   ptr2 <- to_pitch_direct(sound$.xptr)
-  expect_s3_class(ptr2, "externalptr")
+  expect_type(ptr2, "externalptr")
 
   expect_error(to_pitch_direct(list()), "Sound object or external pointer")
 })
@@ -68,7 +68,7 @@ test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return us
   expect_true(get_intensity_value_direct(iptr, 0.25) > 0)
 
   hptr <- to_harmonicity_direct(sound)
-  expect_s3_class(hptr, "externalptr")
+  expect_type(hptr, "externalptr")
 })
 
 test_that("get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6", {
@@ -94,7 +94,7 @@ test_that("to_spectrum_direct and to_ltas_direct produce usable results", {
   sound <- tone_sound()
 
   spec_ptr <- to_spectrum_direct(sound)
-  expect_s3_class(spec_ptr, "externalptr")
+  expect_type(spec_ptr, "externalptr")
 
   ltas <- to_ltas_direct(sound)
   expect_s3_class(ltas, "Ltas")
@@ -105,11 +105,11 @@ test_that("to_point_process_direct and to_point_process_from_sound_and_pitch pro
   pitch <- sound$to_pitch()
 
   pp_ptr1 <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
-  expect_s3_class(pp_ptr1, "externalptr")
+  expect_type(pp_ptr1, "externalptr")
   expect_true(pp_get_mean_period_direct(pp_ptr1) > 0)
 
   pp_ptr2 <- to_point_process_from_sound_and_pitch(sound, pitch)
-  expect_s3_class(pp_ptr2, "externalptr")
+  expect_type(pp_ptr2, "externalptr")
   expect_true(pp_get_stdev_period_direct(pp_ptr2) >= 0)
 })
 
@@ -117,7 +117,7 @@ test_that("two_pass_adaptive_pitch returns an adaptive-range pitch result", {
   sound <- tone_sound(dur = 1.0)
 
   result <- two_pass_adaptive_pitch(sound)
-  expect_s3_class(result$pitch, "externalptr")
+  expect_type(result$pitch, "externalptr")
   expect_lt(result$min_pitch, result$max_pitch)
 
   pitch_refined <- Pitch(.xptr = result$pitch)

@@ -247,7 +247,7 @@ test_that("to_table_ptr() C++ module method converts a TextGrid to a Table", {
   tg$set_interval_text(1, 2, "hello")
 
   ptr <- tg$.cpp$to_table_ptr(TRUE, 3L, TRUE, TRUE)
-  expect_s3_class(ptr, "externalptr")
+  expect_type(ptr, "externalptr")
   tbl <- Table(.xptr = ptr)
   expect_s3_class(tbl, "Table")
 })
@@ -262,7 +262,7 @@ test_that("Module_TextGrid_create/Module_TextGrid_read factory functions work di
   mod <- pladdrr:::get_module("textgrid_module")
 
   ptr <- mod$TextGrid_create(0, 1, "phones", "")
-  expect_s3_class(ptr, "externalptr")
+  expect_type(ptr, "externalptr")
   tg <- TextGrid(.xptr = ptr)
   expect_equal(tg$get_number_of_tiers(), 1)
 

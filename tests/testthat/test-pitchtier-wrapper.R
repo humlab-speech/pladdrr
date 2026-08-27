@@ -126,7 +126,7 @@ test_that("PitchTier print, is_valid, get_xptr, and unknown-name access", {
   tier$add_point(0.5, 150)
 
   expect_true(tier$is_valid())
-  expect_s3_class(tier$get_xptr(), "externalptr")
+  expect_type(tier$get_xptr(), "externalptr")
   expect_output(print(tier), "Praat PitchTier")
   expect_null(tier$totally_bogus_field)
 })

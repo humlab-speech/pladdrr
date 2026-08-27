@@ -67,8 +67,7 @@ test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
   expect_gt(length(valid_cog), 0)
   # Median CoG should be in 0–5000 Hz range (the analysis range)
   expect_gt(median(valid_cog), 0)
-  expect_lt(median(valid_cog), 5000,
-    info = paste("Median CoG:", round(median(valid_cog)), "Hz"))
+  expect_lt(median(valid_cog), 5000)
 })
 
 test_that("get_spectral_moments_batch() rejects a null pointer at the C++ layer", {

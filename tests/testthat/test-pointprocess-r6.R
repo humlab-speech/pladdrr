@@ -282,7 +282,7 @@ test_that("save() writes a PointProcess to a Praat text file", {
 
 test_that("get_xptr() returns the underlying external pointer", {
   pp <- PointProcess(0, 1)
-  expect_s3_class(pp$get_xptr(), "externalptr")
+  expect_type(pp$get_xptr(), "externalptr")
 })
 
 # --- Print ---
