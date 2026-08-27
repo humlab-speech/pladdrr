@@ -62,7 +62,7 @@ test_that("sounds_convolve returns a Sound with combined-length duration", {
   conv <- sounds_convolve(s1, s2)
 
   expect_s3_class(conv, "Sound")
-  expect_true(conv$get_duration() > 0)
+  expect_gt(conv$get_duration(), 0)
 })
 
 test_that("sounds_cross_correlate returns a valid Sound", {
@@ -71,7 +71,7 @@ test_that("sounds_cross_correlate returns a valid Sound", {
   xcorr <- sounds_cross_correlate(s1, s2)
 
   expect_s3_class(xcorr, "Sound")
-  expect_true(xcorr$get_duration() > 0)
+  expect_gt(xcorr$get_duration(), 0)
 })
 
 test_that("sound_auto_correlate returns a valid Sound", {
@@ -79,7 +79,7 @@ test_that("sound_auto_correlate returns a valid Sound", {
   ac <- sound_auto_correlate(s)
 
   expect_s3_class(ac, "Sound")
-  expect_true(ac$get_duration() > 0)
+  expect_gt(ac$get_duration(), 0)
 })
 
 test_that("sound_filter_pass_hann_band and sound_filter_stop_hann_band preserve duration", {

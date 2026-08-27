@@ -149,7 +149,7 @@ test_that("Export and visualization pipeline works", {
   cochlea_mat <- cochlea$as_matrix()
   
   expect_true(is.data.frame(cochlea_mat) || is.matrix(cochlea_mat))
-  expect_true(nrow(cochlea_mat) > 0)
+  expect_gt(nrow(cochlea_mat), 0)
   
   # Create excitation and export
   excitation <- sound$to_spectrum()$to_excitation()

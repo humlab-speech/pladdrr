@@ -308,7 +308,7 @@ test_that("FormantModeler autoplot/autolayer default to_track=0 means 'all track
   # n_tracks inside .formant_modeler_long_df.
   p <- ggplot2::autoplot(fm)
   expect_s3_class(p, "ggplot")
-  expect_true(nrow(p$data) > 0)
+  expect_gt(nrow(p$data), 0)
 
   expect_warning(p2 <- ggplot2::autoplot(fm, from_track = 10, to_track = 12),
                   "FormantModeler has no data")

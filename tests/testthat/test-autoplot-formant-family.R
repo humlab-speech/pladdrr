@@ -11,7 +11,7 @@ test_that("FormantGrid autoplot/autolayer/as.data.frame work", {
   grid$add_formant_point(2, 0.5, 1500)
   grid$add_formant_point(3, 0.5, 2500)
   df <- as.data.frame(grid)
-  expect_true(nrow(df) > 0)
+  expect_gt(nrow(df), 0)
   p <- ggplot2::autoplot(grid)
   expect_s3_class(p, "ggplot")
   p2 <- ggplot2::ggplot() + ggplot2::autolayer(grid)
@@ -60,7 +60,7 @@ test_that("FormantPath autoplot/autolayer work", {
   fp <- sound$to_formant_path()  # R/sound-wrapper.R:539
   p <- ggplot2::autoplot(fp)
   expect_s3_class(p, "ggplot")
-  expect_true(nrow(p$data) > 0)
+  expect_gt(nrow(p$data), 0)
   p2 <- ggplot2::ggplot() + ggplot2::autolayer(fp)
   expect_s3_class(p2, "ggplot")
 })
@@ -71,7 +71,7 @@ test_that("FormantModeler autoplot/autolayer work with from_track/to_track", {
   fm <- formant$to_formant_modeler()  # R/formant-wrapper.R:209
   p <- ggplot2::autoplot(fm, from_track = 1, to_track = 2)
   expect_s3_class(p, "ggplot")
-  expect_true(nrow(p$data) > 0)
+  expect_gt(nrow(p$data), 0)
   expect_setequal(unique(p$data$formant_number), c(1, 2))
   p2 <- ggplot2::ggplot() + ggplot2::autolayer(fm, from_track = 1, to_track = 2)
   expect_s3_class(p2, "ggplot")

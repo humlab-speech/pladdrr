@@ -21,7 +21,7 @@ test_that("voice_report() returns sane, in-range statistics", {
   expect_gte(report$jitter_local, 0); expect_lt(report$jitter_local, 0.1)
 
   # median_pitch should be near the synthesized frequency.
-  expect_true(abs(report$median_pitch - 150) / 150 < 0.1)
+  expect_lt(abs(report$median_pitch - 150) / 150, 0.1)
 })
 
 test_that("voice_report() accepts silence_threshold/voicing_threshold and rejects bad types", {

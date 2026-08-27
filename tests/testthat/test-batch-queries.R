@@ -157,7 +157,7 @@ test_that("Intensity batch queries support interpolation methods", {
   expect_length(result_cubic, 3)
   
   # Results should be similar but may differ
-  expect_true(cor(result_nearest, result_cubic, use = "complete.obs") > 0.95)
+  expect_gt(cor(result_nearest, result_cubic, use = "complete.obs"), 0.95)
 })
 
 # Test PointProcess batch operations
@@ -170,7 +170,7 @@ test_that("PointProcess get all times works", {
   result <- get_pointprocess_times(pp)
   
   expect_type(result, "double")
-  expect_true(length(result) > 0)
+  expect_gt(length(result), 0)
   expect_length(result, pp$get_number_of_points())
   
   # Verify times match individual queries
@@ -396,8 +396,8 @@ test_that("intensity_get_minimum_with_time() returns a minimum value and time", 
   expect_type(result_default, "list")
   expect_named(result_default, c("value", "time"))
   expect_true(is.numeric(result_default$value))
-  expect_true(result_default$time >= intensity$get_xmin())
-  expect_true(result_default$time <= intensity$get_xmax())
+  expect_gte(result_default$time, intensity$get_xmin())
+  expect_lte(result_default$time, intensity$get_xmax())
 
   # Explicit sub-range skips the "use whole range" branch
   result_range <- pladdrr:::intensity_get_minimum_with_time(

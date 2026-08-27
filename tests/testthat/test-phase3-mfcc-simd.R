@@ -82,7 +82,7 @@ test_that("MFCC SIMD works with various signal lengths", {
     pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
-    expect_true(mfcc$get_number_of_frames() > 0)
+    expect_gt(mfcc$get_number_of_frames(), 0)
     expect_equal(mfcc$get_num_coefficients_at_frame(1), 12)
   }
 })
@@ -102,8 +102,8 @@ test_that("MFCC SIMD works with different coefficient counts", {
     pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = n_coeff, analysis_width = 0.015, time_step = 0.005)
 
-    expect_true(mfcc$get_max_num_coefficients() >= n_coeff)
-    expect_true(mfcc$get_number_of_frames() > 0)
+    expect_gte(mfcc$get_max_num_coefficients(), n_coeff)
+    expect_gt(mfcc$get_number_of_frames(), 0)
   }
 })
 
@@ -122,7 +122,7 @@ test_that("MFCC SIMD works with different analysis widths", {
     pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = width, time_step = 0.005)
 
-    expect_true(mfcc$get_number_of_frames() > 0)
+    expect_gt(mfcc$get_number_of_frames(), 0)
     expect_equal(mfcc$get_num_coefficients_at_frame(1), 12)
   }
 })
@@ -139,12 +139,12 @@ test_that("MFCC SIMD can be toggled on/off", {
   # Disable SIMD
   pladdrr_simd(FALSE)
   mfcc1 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
-  expect_true(mfcc1$get_number_of_frames() > 0)
+  expect_gt(mfcc1$get_number_of_frames(), 0)
 
   # Enable SIMD
   pladdrr_simd(TRUE)
   mfcc2 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
-  expect_true(mfcc2$get_number_of_frames() > 0)
+  expect_gt(mfcc2$get_number_of_frames(), 0)
 
   # Both should produce valid results
   expect_equal(mfcc1$get_number_of_frames(), mfcc2$get_number_of_frames())
@@ -165,7 +165,7 @@ test_that("MFCC SIMD works with different sampling rates", {
     pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
 
-    expect_true(mfcc$get_number_of_frames() > 0)
+    expect_gt(mfcc$get_number_of_frames(), 0)
     expect_equal(mfcc$get_num_coefficients_at_frame(1), 12)
   }
 })
@@ -229,8 +229,8 @@ test_that("MFCC SIMD works with custom Mel frequency ranges", {
     df_mel = 100
   )
 
-  expect_true(mfcc1$get_number_of_frames() > 0)
-  expect_true(mfcc2$get_number_of_frames() > 0)
+  expect_gt(mfcc1$get_number_of_frames(), 0)
+  expect_gt(mfcc2$get_number_of_frames(), 0)
 
   # Both should produce different results due to different frequency ranges
   coeffs1 <- mfcc1$get_all_coefficients()
@@ -282,7 +282,7 @@ test_that("MFCC SIMD works with real audio (if available)", {
     pladdrr_simd(TRUE)
     mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015, time_step = 0.005)
 
-    expect_true(mfcc$get_number_of_frames() > 0)
+    expect_gt(mfcc$get_number_of_frames(), 0)
     expect_equal(mfcc$get_num_coefficients_at_frame(1), 13)
 
     # Check that coefficients are valid
@@ -326,7 +326,7 @@ test_that("MFCC full pipeline works end-to-end with SIMD", {
   )
 
   # Verify output
-  expect_true(mfcc$get_number_of_frames() > 0)
+  expect_gt(mfcc$get_number_of_frames(), 0)
   expect_equal(mfcc$get_num_coefficients_at_frame(1), 13)
 
   # Get full coefficient matrix
@@ -334,11 +334,11 @@ test_that("MFCC full pipeline works end-to-end with SIMD", {
 
   # Basic sanity checks
   expect_equal(nrow(coeffs), 14)  # 13 coefficients + c0
-  expect_true(ncol(coeffs) > 0)
+  expect_gt(ncol(coeffs), 0)
   expect_true(all(is.finite(coeffs)))
 
   # Check that we have variation across frames (not all zeros/constants)
-  expect_true(sd(coeffs[2, ]) > 0.01)  # C1 should vary across frames
+  expect_gt(sd(coeffs[2, ]), 0.01)  # C1 should vary across frames
 })
 
 cat("\n=== Phase 3 Task 3.1: MFCC SIMD Tests Complete ===\n")

@@ -23,7 +23,7 @@ test_that("Harmonicity AC method works", {
     harm <- sound$to_harmonicity_ac()
 
     expect_s3_class(harm, "Harmonicity")
-    expect_true(harm$get_number_of_frames() > 0)
+    expect_gt(harm$get_number_of_frames(), 0)
     expect_true(is.numeric(harm$get_mean()))
 })
 
@@ -33,7 +33,7 @@ test_that("Harmonicity CC method works", {
     harm <- sound$to_harmonicity_cc()
 
     expect_s3_class(harm, "Harmonicity")
-    expect_true(harm$get_number_of_frames() > 0)
+    expect_gt(harm$get_number_of_frames(), 0)
     expect_true(is.numeric(harm$get_mean()))
 })
 
@@ -45,8 +45,8 @@ test_that("Harmonicity works with different pitch floors", {
     harm_100 <- sound$to_harmonicity_ac(min_pitch = 100)
 
     # Both should produce valid results
-    expect_true(harm_75$get_number_of_frames() > 0)
-    expect_true(harm_100$get_number_of_frames() > 0)
+    expect_gt(harm_75$get_number_of_frames(), 0)
+    expect_gt(harm_100$get_number_of_frames(), 0)
 
     # Results should be numeric
     expect_true(is.numeric(harm_75$get_mean()))
@@ -62,7 +62,7 @@ test_that("Harmonicity works with different time steps", {
     harm_coarse <- sound$to_harmonicity_ac(time_step = 0.02)
 
     # Finer time step should produce more frames
-    expect_true(harm_fine$get_number_of_frames() > harm_coarse$get_number_of_frames())
+    expect_gt(harm_fine$get_number_of_frames(), harm_coarse$get_number_of_frames())
 
     # All should produce numeric results
     expect_true(is.numeric(harm_default$get_mean()))
@@ -85,7 +85,7 @@ test_that("Harmonicity CC method with various signal lengths", {
 
         if (!is.null(harm)) {
             expect_s3_class(harm, "Harmonicity")
-            expect_true(harm$get_number_of_frames() > 0)
+            expect_gt(harm$get_number_of_frames(), 0)
         }
     }
 })

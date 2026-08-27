@@ -56,7 +56,7 @@ test_that("extract_formants() on an R6 Sound delegates to sound$to_formant_burg(
   expect_warning(formants <- extract_formants(sound, max_formant = 5500), "deprecated")
 
   expect_s3_class(formants, "Formant")
-  expect_true(formants$get_mean(formant_number = 1) > 0)
+  expect_gt(formants$get_mean(formant_number = 1), 0)
 })
 
 test_that("extract_formants() on a legacy praat_sound runs the R Burg-algorithm path", {

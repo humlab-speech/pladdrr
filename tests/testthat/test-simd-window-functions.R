@@ -20,7 +20,7 @@ test_that("SIMD Hamming window has correct properties", {
     
     # Maximum should be near center
     max_idx <- which.max(windowed)
-    expect_true(abs(max_idx - n/2) < n/10)
+    expect_lt(abs(max_idx - n/2), n/10)
     
     # All values should be positive
     expect_true(all(windowed >= 0))
@@ -48,7 +48,7 @@ test_that("SIMD Hanning window has correct properties", {
     
     # Maximum at center
     max_idx <- which.max(windowed)
-    expect_true(abs(max_idx - n/2) < 5)
+    expect_lt(abs(max_idx - n/2), 5)
     
     # Symmetric
     expect_equal(windowed[1:(n/2)], rev(windowed[(n/2+1):n]), tolerance = 1e-10)
@@ -101,7 +101,7 @@ test_that("SIMD Blackman window has correct properties", {
     
     # Maximum near center
     max_idx <- which.max(windowed)
-    expect_true(abs(max_idx - n/2) < 10)
+    expect_lt(abs(max_idx - n/2), 10)
     
     # Positive values
     expect_true(all(windowed >= 0))
@@ -122,11 +122,11 @@ test_that("SIMD window functions preserve DC component correctly", {
     windowed <- pladdrr:::.apply_hamming_window_simd(data)
     
     # Windowed signal should have values scaled by window
-    expect_true(max(windowed) <= amplitude)
-    expect_true(min(windowed) >= 0)
+    expect_lte(max(windowed), amplitude)
+    expect_gte(min(windowed), 0)
     
     # Sum should be less than original (due to tapering)
-    expect_true(sum(windowed) < sum(data))
+    expect_lt(sum(windowed), sum(data))
   } else {
     skip("SIMD Hamming window function not exported")
   }
@@ -173,8 +173,8 @@ test_that("SIMD window functions handle real signals", {
     windowed <- pladdrr:::.apply_hamming_window_simd(signal)
     
     # Should taper signal at edges
-    expect_true(abs(windowed[1]) < abs(signal[256]))
-    expect_true(abs(windowed[512]) < abs(signal[256]))
+    expect_lt(abs(windowed[1]), abs(signal[256]))
+    expect_lt(abs(windowed[512]), abs(signal[256]))
     
     # Should preserve general shape
     expect_length(windowed, length(signal))

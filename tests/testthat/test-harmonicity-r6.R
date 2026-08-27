@@ -22,8 +22,8 @@ test_that("Harmonicity time-domain accessors are consistent", {
   hnr <- hnr_of_tone()
 
   expect_equal(hnr$get_start_time(), 0)
-  expect_true(hnr$get_end_time() > 0)
-  expect_true(hnr$get_number_of_frames() > 0)
+  expect_gt(hnr$get_end_time(), 0)
+  expect_gt(hnr$get_number_of_frames(), 0)
   expect_equal(hnr$get_sampling_period(), 0.01, tolerance = 1e-6)
 
   t1 <- hnr$get_time_from_frame(1)

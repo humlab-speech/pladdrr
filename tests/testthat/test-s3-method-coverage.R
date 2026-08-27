@@ -230,7 +230,7 @@ test_that("as.data.frame.Formant delegates and forwards ... (max_formants)", {
 
   df_limited <- as.data.frame(formant, max_formants = 2)
   expect_true(is.data.frame(df_limited))
-  expect_true(max(df_limited$formant) <= 2)
+  expect_lte(max(df_limited$formant), 2)
 })
 
 test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {

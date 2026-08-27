@@ -29,7 +29,7 @@ test_that("extract_voiced_segments_ultra v2.03 returns valid sound", {
     result <- extract_voiced_segments_ultra(sound, version = "v2.03")
 
     expect_s3_class(result, "Sound")
-    expect_true(result$get_duration() > 0)
+    expect_gt(result$get_duration(), 0)
 })
 
 test_that("extract_voiced_segments_ultra v3.01 returns valid sound", {
@@ -39,7 +39,7 @@ test_that("extract_voiced_segments_ultra v3.01 returns valid sound", {
 
     expect_s3_class(result, "Sound")
     # v3.01 applies additional filtering, may have shorter duration
-    expect_true(result$get_duration() >= 0)
+    expect_gte(result$get_duration(), 0)
 })
 
 test_that("extract_voiced_segments_ultra matches Praat on a constant-amplitude tone", {
@@ -79,8 +79,7 @@ test_that("ZCR calculation uses interpolated zero crossings", {
     mean_zcr <- mean(zcr$zcr, na.rm = TRUE)
 
     # Allow 20% tolerance (windowing effects can cause some variation)
-    expect_true(abs(mean_zcr - expected_zcr) / expected_zcr < 0.2,
-                label = sprintf("ZCR %.1f should be ~%.1f Hz", mean_zcr, expected_zcr))
+    expect_lt(abs(mean_zcr - expected_zcr) / expected_zcr, 0.2, label = sprintf("ZCR %.1f should be ~%.1f Hz", mean_zcr, expected_zcr))
 })
 
 test_that("extract_voiced_segments_ultra always returns at least Praat's 1 ms seed", {
@@ -127,7 +126,7 @@ test_that("extract_voiced_segments_ultra handles edge cases", {
     # test cannot silently become empty.
     expect_true(is.null(result) || inherits(result, "Sound"))
     if (!is.null(result)) {
-        expect_true(result$get_duration() > 0)
+        expect_gt(result$get_duration(), 0)
     }
 })
 
@@ -144,8 +143,8 @@ test_that("v2.03 and v3.01 produce different results", {
     # v3.01 typically has more aggressive filtering
     # so duration may be different (but not always)
     # Just verify both work correctly
-    expect_true(v203$get_duration() > 0)
-    expect_true(v301$get_duration() >= 0)  # Can be 0 if heavily filtered
+    expect_gt(v203$get_duration(), 0)
+    expect_gte(v301$get_duration(), 0)  # Can be 0 if heavily filtered
 })
 
 # =============================================================================
@@ -192,8 +191,7 @@ test_that("CPPS calculation on ultra-extracted segments is reasonable", {
 
     # For a clean periodic signal, CPPS should be high (typically > 5 dB)
     if (is.finite(cpps)) {
-        expect_true(cpps > 0,
-                    label = sprintf("CPPS %.2f dB should be > 0 for periodic signal", cpps))
+        expect_gt(cpps, 0, label = sprintf("CPPS %.2f dB should be > 0 for periodic signal", cpps))
     }
 })
 
@@ -218,7 +216,7 @@ test_that("use_manual_zcr = TRUE takes the sample-based zero-crossing path", {
   default_result <- Sound$new(.xptr = default_ptr)
 
   expect_s3_class(manual_result, "Sound")
-  expect_true(manual_result$get_total_duration() > 0.001)
+  expect_gt(manual_result$get_total_duration(), 0.001)
   expect_false(isTRUE(all.equal(
     manual_result$get_total_duration(), default_result$get_total_duration()
   )))
@@ -257,6 +255,6 @@ test_that("extract_voiced_segments_ultra concatenates multiple sounding regions 
 
   result <- extract_voiced_segments_ultra(sound, version = "v3.01")
   expect_s3_class(result, "Sound")
-  expect_true(result$get_total_duration() > 0.001)
-  expect_true(result$get_total_duration() < sound$get_total_duration())
+  expect_gt(result$get_total_duration(), 0.001)
+  expect_lt(result$get_total_duration(), sound$get_total_duration())
 })

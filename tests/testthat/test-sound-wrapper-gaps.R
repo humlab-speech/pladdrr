@@ -465,7 +465,7 @@ test_that("Sound$create_pure_tone creates a fade-enveloped tone", {
   expect_equal(s$get_duration(), 0.5, tolerance = 1e-6)
   # Fade-in means the very first sample should be much quieter than the peak.
   vals <- s$get_values()
-  expect_true(abs(vals[1]) < max(abs(vals)) * 0.1)
+  expect_lt(abs(vals[1]), max(abs(vals)) * 0.1)
 })
 
 test_that("Sound$create_pure_tone supports multiple channels", {

@@ -24,7 +24,7 @@ test_that("SIMD FFT produces accurate results", {
   
   # Peak should be at ~440 Hz
   peak_freq <- spec_peak_freq(spectrum, 0, 1000)
-  expect_true(abs(peak_freq - 440) < 10)  # Within 10 Hz
+  expect_lt(abs(peak_freq - 440), 10)  # Within 10 Hz
 })
 
 test_that("SIMD FFT matches scalar FFT", {
@@ -61,7 +61,7 @@ test_that("SIMD inverse FFT works correctly", {
   reconstructed_rms <- sound_reconstructed$get_root_mean_square(0, 0)
   
   # RMS should be in same ballpark
-  expect_true(abs(original_rms - reconstructed_rms) / original_rms < 0.5)
+  expect_lt(abs(original_rms - reconstructed_rms) / original_rms, 0.5)
 })
 
 test_that("SIMD formant extraction is accurate", {
@@ -206,7 +206,7 @@ test_that("SIMD FFT handles non-power-of-2 sizes correctly", {
   
   # Should still find peak at ~440 Hz
   peak_freq <- spec_peak_freq(spectrum, 400, 480)
-  expect_true(abs(peak_freq - 440) < 20)
+  expect_lt(abs(peak_freq - 440), 20)
 })
 
 test_that("SIMD formant extraction handles edge cases", {

@@ -171,7 +171,7 @@ test_that("Formant export to data frame works", {
   expect_s3_class(df, "data.table")
   expect_named(df, c("time", "formant", "frequency", "bandwidth"))
   
-  expect_true(nrow(df) > 0)
+  expect_gt(nrow(df), 0)
   expect_true(all(df$time >= 0))
   
   # Check that formant frequencies are in reasonable ranges (or NA)
@@ -313,7 +313,7 @@ test_that("Formant interpolation parameter works", {
   # Both should be valid (or both NA)
   if (!is.na(f1_min_no_interp) && !is.na(f1_min_interp)) {
     # Interpolated might be slightly different
-    expect_true(abs(f1_min_interp - f1_min_no_interp) < 100)  # Within 100 Hz
+    expect_lt(abs(f1_min_interp - f1_min_no_interp), 100)  # Within 100 Hz
   }
 })
 

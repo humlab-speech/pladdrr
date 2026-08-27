@@ -173,8 +173,7 @@ test_that("SIMD intensity RMS calculation accuracy", {
   std_db <- intensity$get_standard_deviation(from_time = 0, to_time = 0)
 
   # Relaxed tolerance: std_db < 3.0 for pure tone (edge effects can increase variance)
-  expect_true(std_db < 3.0,
-              label = "SIMD intensity should have reasonable variance for pure tone")
+  expect_lt(std_db, 3.0, label = "SIMD intensity should have reasonable variance for pure tone")
 })
 
 # ============================================================================

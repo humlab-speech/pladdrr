@@ -113,7 +113,7 @@ test_that("Different formant methods produce comparable results", {
   
   if (!is.na(f1_burg) && !is.na(f1_willems)) {
     # Should be within an octave of each other for similar algorithm
-    expect_true(abs(f1_burg - f1_willems) / f1_burg < 1.0)
+    expect_lt(abs(f1_burg - f1_willems) / f1_burg, 1.0)
   }
 })
 

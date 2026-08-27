@@ -16,7 +16,7 @@ test_that("Manipulation constructed from Sound$to_manipulation() is valid", {
   expect_s3_class(manip, "Manipulation")
   expect_s3_class(manip, "PraatObject")
   expect_true(manip$is_valid())
-  expect_true(manip$get_end_time() > manip$get_start_time())
+  expect_gt(manip$get_end_time(), manip$get_start_time())
   expect_equal(manip$get_duration(), manip$get_end_time() - manip$get_start_time(),
                tolerance = 1e-9)
 })
@@ -48,7 +48,7 @@ test_that("Manipulation can extract the original sound", {
 
   snd <- manip$extract_original_sound()
   expect_s3_class(snd, "Sound")
-  expect_true(snd$get_duration() > 0)
+  expect_gt(snd$get_duration(), 0)
 })
 
 test_that("Manipulation can replace pitch tier, duration tier, and pulses", {

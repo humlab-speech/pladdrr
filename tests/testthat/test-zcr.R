@@ -24,7 +24,7 @@ test_that("sound_get_zcr for sine wave matches expected frequency", {
   mean_zcr <- mean(zcr_data$zcr)
 
   # Allow 10% tolerance for windowing effects
-  expect_true(abs(mean_zcr - expected_zcr) / expected_zcr < 0.1,
+  expect_lt(abs(mean_zcr - expected_zcr) / expected_zcr, 0.1,
               label = sprintf("ZCR %.0f should be near %.0f", mean_zcr, expected_zcr))
 })
 
@@ -34,7 +34,7 @@ test_that("sound_get_zcr handles short sounds", {
   zcr_data <- sound_get_zcr(sound, window_duration = 0.03, hop_duration = 0.01)
 
   expect_type(zcr_data, "list")
-  expect_true(length(zcr_data$times) >= 1)
+  expect_gte(length(zcr_data$times), 1)
 })
 
 test_that("extract_voiced_segments with ZCR filtering works", {

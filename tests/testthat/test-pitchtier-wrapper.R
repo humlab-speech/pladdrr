@@ -67,7 +67,7 @@ test_that("PitchTier stylize and interpolate_quadratically run without error", {
 
   expect_silent(tier$stylize(2, FALSE))
   expect_silent(tier$interpolate_quadratically(4, FALSE))
-  expect_true(tier$get_number_of_points() >= 3)
+  expect_gte(tier$get_number_of_points(), 3)
 })
 
 test_that("PitchTier as_data_frame/as_matrix reflect the stored points", {
@@ -104,7 +104,7 @@ test_that("PitchTier to_sound_pulse_train/to_sound_phonation/to_sound_sine produ
 
   pulse <- tier$to_sound_pulse_train(sample_rate = 16000)
   expect_s3_class(pulse, "Sound")
-  expect_true(pulse$get_duration() > 0)
+  expect_gt(pulse$get_duration(), 0)
 
   phon <- tier$to_sound_phonation(sample_rate = 16000)
   expect_s3_class(phon, "Sound")

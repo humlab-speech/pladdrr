@@ -17,8 +17,7 @@ test_that("LTAS get_slope returns dB values, not ratios", {
   # If returning dB, should be negative ~-10 to -40
   expect_true(slope_energy < 0,
               label = "energy unit should return dB (negative), not ratio")
-  expect_true(slope_energy > -100,
-              label = "energy unit value should be reasonable dB")
+  expect_gt(slope_energy, -100, label = "energy unit value should be reasonable dB")
 })
 
 test_that("LTAS get_slope dB unit matches energy unit", {

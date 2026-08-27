@@ -24,8 +24,8 @@ test_that("DTW x/y duration and dx/dy are accessible", {
 
   # get_dx()/get_dy() aren't exposed on the R6-style wrapper at all (only
   # get_nx()/get_ny() are); reach them via the raw .cpp module object.
-  expect_true(dtw$.cpp$get_dx() > 0)
-  expect_true(dtw$.cpp$get_dy() > 0)
+  expect_gt(dtw$.cpp$get_dx(), 0)
+  expect_gt(dtw$.cpp$get_dy(), 0)
 })
 
 test_that("DTW get_x_time_from_y_time maps time (reverse of get_y_time_from_x_time)", {

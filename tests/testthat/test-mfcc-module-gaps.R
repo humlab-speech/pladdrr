@@ -54,20 +54,20 @@ test_that("MFCC time-domain and CC properties are correct", {
   expect_true(mfcc$is_valid())
   expect_type(mfcc$get_xmin(), "double")
   expect_type(mfcc$get_xmax(), "double")
-  expect_true(mfcc$get_xmax() > mfcc$get_xmin())
+  expect_gt(mfcc$get_xmax(), mfcc$get_xmin())
   expect_equal(mfcc$get_duration(), mfcc$get_xmax() - mfcc$get_xmin())
   # get_max_num_coefficients() reflects MFCC's mel-filter-bank *capacity*
   # (MelSpectrogram_to_MFCC sets maximumNumberOfCoefficients = ny - 1, the
   # number of mel filters), not the num_coefficients requested at
   # extraction time -- so just check it's a sane positive integer, and
   # confirm the number *actually used per frame* via get_info() instead.
-  expect_true(mfcc$get_max_num_coefficients() > 0)
+  expect_gt(mfcc$get_max_num_coefficients(), 0)
   expect_equal(mfcc$get_info()$max_n_coefficients_used, 12)
   expect_equal(mfcc$get_number_of_frames(), mfcc$get_number_of_frames())
-  expect_true(mfcc$get_time_step() > 0)
+  expect_gt(mfcc$get_time_step(), 0)
 
   # get_fmin/get_fmax (mel-scale range) are exposed at the R level
-  expect_true(mfcc$get_fmax() > mfcc$get_fmin())
+  expect_gt(mfcc$get_fmax(), mfcc$get_fmin())
 
   # get_dx / get_x1 are not exposed through the R6-style dispatch table at
   # all (only get_time_step, an alias for get_dx, is) -- reach them via the
@@ -241,12 +241,12 @@ test_that("LFCC time-domain and CC properties are correct", {
   expect_true(lfcc$is_valid())
   expect_type(lfcc$get_xmin(), "double")
   expect_type(lfcc$get_xmax(), "double")
-  expect_true(lfcc$get_xmax() > lfcc$get_xmin())
+  expect_gt(lfcc$get_xmax(), lfcc$get_xmin())
   expect_equal(lfcc$get_duration(), lfcc$get_xmax() - lfcc$get_xmin())
   expect_equal(lfcc$get_max_num_coefficients(), 12)
-  expect_true(lfcc$get_number_of_frames() > 1)
-  expect_true(lfcc$get_time_step() > 0)
-  expect_true(lfcc$get_fmax() > lfcc$get_fmin())
+  expect_gt(lfcc$get_number_of_frames(), 1)
+  expect_gt(lfcc$get_time_step(), 0)
+  expect_gt(lfcc$get_fmax(), lfcc$get_fmin())
 
   expect_equal(lfcc$.cpp$get_dx(), lfcc$get_time_step())
   expect_type(lfcc$.cpp$get_x1(), "double")

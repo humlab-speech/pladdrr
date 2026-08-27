@@ -76,8 +76,8 @@ test_that("FormantGrid to Formant conversion works", {
   formant <- grid$to_formant(time_step = 0.01)
   
   expect_s3_class(formant, "Formant")
-  expect_true(formant$get_start_time() >= 0)
-  expect_true(formant$get_end_time() <= 1)
+  expect_gte(formant$get_start_time(), 0)
+  expect_lte(formant$get_end_time(), 1)
 })
 
 test_that("FormantGrid synthesis works", {
@@ -99,7 +99,7 @@ test_that("FormantGrid synthesis works", {
   
   expect_s3_class(sound, "Sound")
   expect_equal(sound$get_sampling_frequency(), 22050)
-  expect_true(sound$get_duration() > 0)
+  expect_gt(sound$get_duration(), 0)
 })
 
 test_that("praat_formantgrid_create_empty works", {
@@ -127,7 +127,7 @@ test_that("Sound FormantGrid filtering works", {
   
   expect_s3_class(filtered, "Sound")
   expect_equal(filtered$get_sampling_frequency(), 44100)
-  expect_true(filtered$get_duration() > 0)
+  expect_gt(filtered$get_duration(), 0)
 })
 
 test_that("FormantGrid from Formant works", {
@@ -142,5 +142,5 @@ test_that("FormantGrid from Formant works", {
   grid <- formant$to_formantgrid()
   
   expect_s3_class(grid, "FormantGrid")
-  expect_true(grid$get_number_of_formants() > 0)
+  expect_gt(grid$get_number_of_formants(), 0)
 })

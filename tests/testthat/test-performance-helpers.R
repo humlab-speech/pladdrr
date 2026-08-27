@@ -106,8 +106,8 @@ test_that("apply_window_xptr applies a Hanning window that zeroes the edges", {
   expect_length(ws, length(orig))
   # Hanning window is 0 at t=0 and t=1 (sample edges), so the windowed
   # edge samples should collapse toward zero relative to the un-windowed tone.
-  expect_true(abs(ws[1]) < abs(orig[1]))
-  expect_true(abs(ws[length(ws)]) < abs(orig[length(orig)]))
+  expect_lt(abs(ws[1]), abs(orig[1]))
+  expect_lt(abs(ws[length(ws)]), abs(orig[length(orig)]))
 })
 
 test_that("apply_window_xptr rejects a non-Sound, non-pointer argument", {
@@ -196,10 +196,10 @@ test_that("extract_voiced_segments_ultra returns a shorter voiced-only Sound (bo
 
   expect_s3_class(voiced_v2, "Sound")
   expect_s3_class(voiced_v3, "Sound")
-  expect_true(voiced_v2$get_total_duration() > 0)
-  expect_true(voiced_v3$get_total_duration() > 0)
-  expect_true(voiced_v2$get_total_duration() <= full_duration)
-  expect_true(voiced_v3$get_total_duration() <= full_duration)
+  expect_gt(voiced_v2$get_total_duration(), 0)
+  expect_gt(voiced_v3$get_total_duration(), 0)
+  expect_lte(voiced_v2$get_total_duration(), full_duration)
+  expect_lte(voiced_v3$get_total_duration(), full_duration)
 })
 
 test_that("extract_voiced_segments_ultra rejects an invalid version", {

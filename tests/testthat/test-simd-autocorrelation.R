@@ -14,7 +14,7 @@ test_that("SIMD autocorrelation is symmetric", {
     acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 50)
     
     # Lag-0 should be maximum (variance)
-    expect_true(acf_result[1] >= max(acf_result[-1]))
+    expect_gte(acf_result[1], max(acf_result[-1]))
     
     # Autocorrelation values should be reasonable
     expect_true(all(is.finite(acf_result)))

@@ -25,8 +25,8 @@ test_that("Sound_to_ComplexSpectrogram works", {
     cs <- sound$to_complex_spectrogram()
 
     expect_s3_class(cs, "ComplexSpectrogram")
-    expect_true(cs$nx() > 0)  # number of frames
-    expect_true(cs$ny() > 0)  # number of frequency bins
+    expect_gt(cs$nx(), 0)  # number of frames
+    expect_gt(cs$ny(), 0)  # number of frequency bins
 })
 
 test_that("ComplexSpectrogram works with different window lengths", {
@@ -40,8 +40,8 @@ test_that("ComplexSpectrogram works with different window lengths", {
     expect_s3_class(cs_long, "ComplexSpectrogram")
 
     # Both should have frames
-    expect_true(cs_short$nx() > 0)
-    expect_true(cs_long$nx() > 0)
+    expect_gt(cs_short$nx(), 0)
+    expect_gt(cs_long$nx(), 0)
 })
 
 test_that("ComplexSpectrogram works with various signal lengths", {
@@ -59,7 +59,7 @@ test_that("ComplexSpectrogram works with various signal lengths", {
 
         if (!is.null(cs)) {
             expect_s3_class(cs, "ComplexSpectrogram")
-            expect_true(cs$nx() > 0)
+            expect_gt(cs$nx(), 0)
         }
     }
 })
@@ -76,7 +76,7 @@ test_that("ComplexSpectrogram to Sound roundtrip", {
     # the method directly and assert the result.
     reconstructed <- cs$to_sound()
     expect_s3_class(reconstructed, "Sound")
-    expect_true(reconstructed$get_duration() > 0)
+    expect_gt(reconstructed$get_duration(), 0)
 })
 
 test_that("ComplexSpectrogram to Spectrum conversion", {
@@ -89,7 +89,7 @@ test_that("ComplexSpectrogram to Spectrum conversion", {
     t_mid <- (cs$xmin() + cs$xmax()) / 2
     spectrum <- cs$to_spectrum(t_mid)
     expect_s3_class(spectrum, "Spectrum")
-    expect_true(length(spectrum$get_frequencies_vector()) > 0)
+    expect_gt(length(spectrum$get_frequencies_vector()), 0)
 })
 
 test_that("ComplexSpectrogram amplitude and phase retrieval", {

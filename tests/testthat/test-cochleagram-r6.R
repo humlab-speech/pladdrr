@@ -93,8 +93,8 @@ test_that("Cochleagram can be exported as matrix", {
   result <- cochlea$as_matrix()
   
   expect_true(is.matrix(result))
-  expect_true(nrow(result) > 0)
-  expect_true(ncol(result) > 0)
+  expect_gt(nrow(result), 0)
+  expect_gt(ncol(result), 0)
 })
 
 test_that("Cochleagram difference can be computed", {

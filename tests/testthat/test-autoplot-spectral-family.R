@@ -18,7 +18,7 @@ test_that("Cepstrum default view is raw (has negative values), power=TRUE view i
   expect_true("power" %in% names(df_power))
   expect_false("power_dB" %in% names(df_power))
   expect_true(all(df_power$power >= 0))
-  expect_true(max(df_power$power) / min(df_power$power[df_power$power > 0]) > 1e6)
+  expect_gt(max(df_power$power) / min(df_power$power[df_power$power > 0]), 1e6)
   p <- ggplot2::autoplot(cep)
   expect_s3_class(p, "ggplot")
   p_power <- ggplot2::autoplot(cep, power = TRUE)
@@ -26,8 +26,8 @@ test_that("Cepstrum default view is raw (has negative values), power=TRUE view i
   # dB-scale, not linear-power-scale: raw linear power spans 10+ orders of
   # magnitude (e.g. 2.7e-04 .. 1.5e11), which would have caught the
   # power_dB-mislabeled-as-linear bug found in the final review.
-  expect_true(max(p_power$data$power_dB) - min(p_power$data$power_dB) < 300)
-  expect_true(max(p_power$data$power_dB) < 1000)
+  expect_lt(max(p_power$data$power_dB) - min(p_power$data$power_dB), 300)
+  expect_lt(max(p_power$data$power_dB), 1000)
   expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep), "ggplot")
   expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep, power = TRUE), "ggplot")
 })
@@ -78,8 +78,8 @@ test_that("as.data.frame.LPC returns one row per (frame, coefficient), not one p
 test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range (Task 8 regression guard)", {
   cs <- sound_fixture()$to_complex_spectrogram()  # R/sound-wrapper.R:550
   p <- ggplot2::autoplot(cs, dynamic_range = 40)
-  expect_true(max(p$data$amplitude_dB) <= 0)
-  expect_true(min(p$data$amplitude_dB) >= -40)
+  expect_lte(max(p$data$amplitude_dB), 0)
+  expect_gte(min(p$data$amplitude_dB), -40)
   p2 <- ggplot2::ggplot() + ggplot2::autolayer(cs, dynamic_range = 40)
   expect_s3_class(p2, "ggplot")
 })
@@ -101,7 +101,7 @@ test_that("PowerCepstrogram, MFCC, LFCC, Excitation autoplot/autolayer all rende
   expect_s3_class(p_pcg, "ggplot")
   # dB-scale, not linear-power-scale (Important-1 regression guard: raw
   # linear power ranges over 3.8e-06 .. 2.6e11, ~11 orders of magnitude).
-  expect_true(max(p_pcg$data$power_dB) - min(p_pcg$data$power_dB) < 300)
+  expect_lt(max(p_pcg$data$power_dB) - min(p_pcg$data$power_dB), 300)
   expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(pcg), "ggplot")
 
   mfcc <- sound_fixture()$to_mfcc()

@@ -111,12 +111,12 @@ test_that("RFormant module time-domain methods not wired into the R6 API are rea
   expect_equal(formant$.cpp$get_duration(), formant$get_xmax() - formant$get_xmin())
   expect_type(formant$.cpp$get_x1(), "double")
   # x1 (centre of first analysis frame) should be within the signal's domain
-  expect_true(formant$.cpp$get_x1() >= formant$get_xmin())
-  expect_true(formant$.cpp$get_x1() <= formant$get_xmax())
+  expect_gte(formant$.cpp$get_x1(), formant$get_xmin())
+  expect_lte(formant$.cpp$get_x1(), formant$get_xmax())
 
   expect_equal(formant$.cpp$get_time_from_frame(1L), formant$.cpp$get_x1())
   expect_type(formant$.cpp$get_frame_from_time(0.1), "integer")
-  expect_true(formant$.cpp$get_frame_from_time(0.1) >= 1L)
+  expect_gte(formant$.cpp$get_frame_from_time(0.1), 1L)
 })
 
 test_that("RFormant module query methods (dead via R6, live via .cpp$) match the public wrapper results", {

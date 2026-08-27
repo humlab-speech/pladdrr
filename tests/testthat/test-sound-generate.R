@@ -25,7 +25,7 @@ test_that("generate_sine_wave() creates mathematically correct waveform", {
   # Check amplitude range
   expect_true(all(sound$get_values() >= -amplitude))
   expect_true(all(sound$get_values() <= amplitude))
-  expect_true(max(abs(sound$get_values())) >= amplitude * 0.99)  # Should reach near amplitude
+  expect_gte(max(abs(sound$get_values())), amplitude * 0.99)  # Should reach near amplitude
 
   # Check sine wave properties
   # At t=0, sin(2*pi*f*0) = 0, so first value should be near 0
@@ -106,7 +106,7 @@ test_that("generate_noise() creates random noise with correct properties", {
   # Check amplitude scaling (noise should be roughly within amplitude range)
   # For Gaussian noise, ~99.7% should be within 3 standard deviations
   # If amplitude scales the standard deviation, most values should be within amplitude range
-  expect_true(mean(abs(sound$get_values())) < amplitude)
+  expect_lt(mean(abs(sound$get_values())), amplitude)
 })
 
 test_that("generate_noise() with seed produces reproducible results", {

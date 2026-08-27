@@ -22,10 +22,10 @@ test_that("SIMD data conversion preserves values", {
 
   # Check dimensions
   expect_true(nrow(mat) == 1)  # Mono
-  expect_true(nrow(mat) > 0)
+  expect_gt(nrow(mat), 0)
 
   # Check values are in reasonable range
-  expect_true(max(abs(mat)) <= 0.5 + 1e-10)
+  expect_lte(max(abs(mat)), 0.5 + 1e-10)
 
   # Convert to data frame
   df <- sound$as_data_frame()
@@ -52,8 +52,8 @@ test_that("SIMD data conversion handles stereo", {
   mat_left <- sound_left$as_matrix()
   mat_right <- sound_right$as_matrix()
 
-  expect_true(max(abs(mat_left)) <= 0.3 + 0.01)
-  expect_true(max(abs(mat_right)) <= 0.7 + 0.01)
+  expect_lte(max(abs(mat_left)), 0.3 + 0.01)
+  expect_lte(max(abs(mat_right)), 0.7 + 0.01)
 })
 
 test_that("SIMD data conversion handles different sample rates", {
@@ -103,11 +103,11 @@ test_that("SIMD data conversion handles edge cases", {
   sound_short <- create_test_tone(0.01, 440, 44100, 0.5)
 
   mat_short <- sound_short$as_matrix()
-  expect_true(nrow(mat_short) > 0)
+  expect_gt(nrow(mat_short), 0)
   expect_true(nrow(mat_short) == 1)
 
   df_short <- sound_short$as_data_frame()
-  expect_true(nrow(df_short) > 0)
+  expect_gt(nrow(df_short), 0)
   expect_true("time" %in% names(df_short))
 })
 

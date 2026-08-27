@@ -69,7 +69,7 @@ test_that("extract_textgrid_intervals with sound extraction works", {
     snd <- result$sounds[[i]]
     if (!is.null(snd)) {
       expect_s3_class(snd, "Sound")
-      expect_true(snd$get_duration() > 0)
+      expect_gt(snd$get_duration(), 0)
     }
   }
 })

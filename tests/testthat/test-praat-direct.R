@@ -38,7 +38,7 @@ test_that("to_pitch_direct returns a usable Pitch xptr", {
 
   expect_type(ptr, "externalptr")
   pitch <- Pitch(.xptr = ptr)
-  expect_true(pitch$get_mean(0, 0, "hertz") > 0)
+  expect_gt(pitch$get_mean(0, 0, "hertz"), 0)
 
   ptr2 <- to_pitch_direct(sound$.xptr)
   expect_type(ptr2, "externalptr")
@@ -54,8 +54,8 @@ test_that("to_pitch_ac_direct and to_pitch_cc_direct accept full voicing paramet
   ptr_cc <- to_pitch_cc_direct(sound, pitch_floor = 75, pitch_ceiling = 600,
                                 voicing_threshold = 0.45)
 
-  expect_true(get_pitch_mean_direct(ptr_ac) > 0)
-  expect_true(get_pitch_mean_direct(ptr_cc) > 0)
+  expect_gt(get_pitch_mean_direct(ptr_ac), 0)
+  expect_gt(get_pitch_mean_direct(ptr_cc), 0)
 })
 
 test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return usable xptrs", {
@@ -65,7 +65,7 @@ test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return us
   expect_true(get_formant_value_direct(fptr, 1, 0.25) >= 0 || is.na(get_formant_value_direct(fptr, 1, 0.25)))
 
   iptr <- to_intensity_direct(sound)
-  expect_true(get_intensity_value_direct(iptr, 0.25) > 0)
+  expect_gt(get_intensity_value_direct(iptr, 0.25), 0)
 
   hptr <- to_harmonicity_direct(sound)
   expect_type(hptr, "externalptr")
@@ -106,11 +106,11 @@ test_that("to_point_process_direct and to_point_process_from_sound_and_pitch pro
 
   pp_ptr1 <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
   expect_type(pp_ptr1, "externalptr")
-  expect_true(pp_get_mean_period_direct(pp_ptr1) > 0)
+  expect_gt(pp_get_mean_period_direct(pp_ptr1), 0)
 
   pp_ptr2 <- to_point_process_from_sound_and_pitch(sound, pitch)
   expect_type(pp_ptr2, "externalptr")
-  expect_true(pp_get_stdev_period_direct(pp_ptr2) >= 0)
+  expect_gte(pp_get_stdev_period_direct(pp_ptr2), 0)
 })
 
 test_that("two_pass_adaptive_pitch returns an adaptive-range pitch result", {
@@ -121,5 +121,5 @@ test_that("two_pass_adaptive_pitch returns an adaptive-range pitch result", {
   expect_lt(result$min_pitch, result$max_pitch)
 
   pitch_refined <- Pitch(.xptr = result$pitch)
-  expect_true(pitch_refined$get_mean(0, 0, "hertz") > 0)
+  expect_gt(pitch_refined$get_mean(0, 0, "hertz"), 0)
 })

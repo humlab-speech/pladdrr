@@ -82,11 +82,11 @@ test_that("DTW properties are accessible", {
   expect_true(is.finite(dtw$get_ymax()))
 
   # Matrix properties
-  expect_true(dtw$get_nx() > 0)
-  expect_true(dtw$get_ny() > 0)
+  expect_gt(dtw$get_nx(), 0)
+  expect_gt(dtw$get_ny(), 0)
 
   # Path properties
-  expect_true(dtw$get_path_length() > 0)
+  expect_gt(dtw$get_path_length(), 0)
   expect_true(is.finite(dtw$get_weighted_distance()))
 })
 

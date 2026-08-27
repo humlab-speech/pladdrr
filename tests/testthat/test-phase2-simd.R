@@ -244,7 +244,7 @@ test_that("Pitch extraction works with SIMD enabled", {
   # Should detect ~200 Hz
   mean_pitch <- pitch$get_mean(from = 0, to = 1, unit = "Hertz")
   expect_false(is.na(mean_pitch))
-  expect_true(abs(mean_pitch - 200) < 10)  # Within 10 Hz
+  expect_lt(abs(mean_pitch - 200), 10)  # Within 10 Hz
 })
 
 test_that("SIMD does not break pitch extraction", {
@@ -309,8 +309,8 @@ test_that("Phase 2 operations work in sequence", {
   pitch <- snd$to_pitch()
 
   # All should complete without error
-  expect_true(spec$get_number_of_time_bins() > 0)
-  expect_true(pitch$get_number_of_frames() > 0)
+  expect_gt(spec$get_number_of_time_bins(), 0)
+  expect_gt(pitch$get_number_of_frames(), 0)
 })
 
 # Cleanup

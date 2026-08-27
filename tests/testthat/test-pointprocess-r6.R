@@ -36,11 +36,11 @@ test_that("Pitch$to_point_process() and Sound$to_point_process_periodic_cc() bot
 
   pp_from_pitch <- suppressWarnings(pitch$to_point_process())
   expect_s3_class(pp_from_pitch, "PointProcess")
-  expect_true(pp_from_pitch$get_number_of_points() > 0)
+  expect_gt(pp_from_pitch$get_number_of_points(), 0)
 
   pp_from_sound <- s$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
   expect_s3_class(pp_from_sound, "PointProcess")
-  expect_true(pp_from_sound$get_number_of_points() > 0)
+  expect_gt(pp_from_sound$get_number_of_points(), 0)
 })
 
 # --- Basic query getters ---
@@ -143,7 +143,7 @@ test_that("add_point/remove_point/remove_point_near/remove_points_between/fill/v
   expect_equal(pp$get_number_of_points(), 2)
 
   pp$voice(0.01, 1.3)
-  expect_true(pp$get_number_of_points() >= 2)
+  expect_gte(pp$get_number_of_points(), 2)
 })
 
 # --- Set operations ---
@@ -202,11 +202,11 @@ test_that("to_sound_pulse_train() and to_sound_hum() synthesize Sound objects", 
 
   pulse_train <- pp$to_sound_pulse_train()
   expect_s3_class(pulse_train, "Sound")
-  expect_true(pulse_train$get_total_duration() > 0)
+  expect_gt(pulse_train$get_total_duration(), 0)
 
   hum <- pp$to_sound_hum()
   expect_s3_class(hum, "Sound")
-  expect_true(hum$get_total_duration() > 0)
+  expect_gt(hum$get_total_duration(), 0)
 })
 
 # --- Batch operations ---
@@ -249,8 +249,8 @@ test_that("jitter accessors work directly (no prior shimmer call caching a Sound
   expect_type(pp$get_jitter_ppq5(), "double")
   expect_type(pp$get_jitter_ddp(), "double")
 
-  expect_true(pp$get_jitter_local() >= 0)
-  expect_true(pp$get_jitter_local_absolute() >= 0)
+  expect_gte(pp$get_jitter_local(), 0)
+  expect_gte(pp$get_jitter_local_absolute(), 0)
 })
 
 # --- Export / I/O ---

@@ -191,8 +191,8 @@ test_that("Spectrogram batch queries work", {
   times <- spectrogram$get_times_vector()
   freqs <- spectrogram$get_frequencies_vector()
 
-  expect_true(length(times) > 0)
-  expect_true(length(freqs) > 0)
+  expect_gt(length(times), 0)
+  expect_gt(length(freqs), 0)
 
   # Get a frame
   frame <- spectrogram$get_frame(times[1])
