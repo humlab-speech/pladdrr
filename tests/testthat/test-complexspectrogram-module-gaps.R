@@ -27,6 +27,19 @@ test_that("ComplexSpectrogram amplitude/phase queries", {
   expect_type(p, "double")
 })
 
+test_that("ComplexSpectrogram unknown method returns NULL", {
+  cs <- cs_fixture()
+  expect_null(cs$no_such_method)
+})
+
+test_that("ComplexSpectrogram constructor validation and print", {
+  expect_error(ComplexSpectrogram("not a sound"), "must be a Sound")
+  cs <- cs_fixture()
+  expect_output(print(cs), "ComplexSpectrogram")
+  expect_output(print(cs), "Time domain")
+  expect_invisible(print(cs))
+})
+
 test_that("ComplexSpectrogram conversions", {
   cs <- cs_fixture()
   snd <- cs$to_sound()
