@@ -121,3 +121,6 @@ tests/testthat/testthat-problems.rds
 GTAGS
 GRTAGS
 GPATH
+
+# Local pkgcheck output (regenerated on demand)
+^pkgcheck\.log$
