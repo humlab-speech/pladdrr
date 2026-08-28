@@ -34,7 +34,7 @@ test_that("analyze_files_parallel n_cores = 1 processes files sequentially", {
 })
 
 test_that("analyze_files_parallel n_cores = 2 runs on a real cluster and gets correct results", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   files <- make_audio_dir(2)
   results <- analyze_files_parallel(files, function(sound) {
     sound$to_pitch()$get_mean(0, 0, "hertz")
@@ -45,7 +45,7 @@ test_that("analyze_files_parallel n_cores = 2 runs on a real cluster and gets co
 })
 
 test_that("analyze_files_parallel passes ... through to analysis_func on a cluster", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   files <- make_audio_dir(2)
   results <- analyze_files_parallel(files, function(sound, multiplier) {
     sound$get_duration() * multiplier
@@ -66,7 +66,7 @@ test_that("process_sounds_parallel n_cores = 1 applies analysis_func directly", 
 })
 
 test_that("process_sounds_parallel n_cores = 2 round-trips Sounds through a cluster", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   sounds <- list(
     Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000),
     Sound$create_tone(frequency = 440, duration = 0.1, sampling_rate = 8000)
@@ -105,7 +105,7 @@ test_that("extract_intensity_parallel returns one Intensity object per file", {
 })
 
 test_that("benchmark_parallel returns timing rows for each requested core count", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   files <- make_audio_dir(1)
   results <- benchmark_parallel(files, function(s) s$get_duration(),
                                  core_counts = c(1, 2))

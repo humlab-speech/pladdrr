@@ -21,7 +21,7 @@ test_that("process_sounds_parallel single-core fallback applies func", {
 })
 
 test_that("process_sounds_parallel mclapply path applies func", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   snds <- list(snd_fixture(), snd_fixture())
   res <- process_sounds_parallel(snds, function(s) s$get_duration(), n_cores = 2)
   expect_length(res, 2)
@@ -35,14 +35,14 @@ test_that("analyze_files_parallel single-core fallback", {
 })
 
 test_that("analyze_files_parallel PSOCK path attaches pladdrr in workers", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   res <- analyze_files_parallel(test_wav(), function(s) s$get_duration(), n_cores = 2)
   expect_length(res, 1)
   expect_gt(res[[1]], 0)
 })
 
 test_that("extract_pitch/formant/intensity_parallel return analysis objects", {
-  skip_on_cran()
+  skip_parallel_on_cran()
   p <- extract_pitch_parallel(test_wav(), n_cores = 1)
   expect_s3_class(p[[1]], "Pitch")
   f <- extract_formant_parallel(test_wav(), n_cores = 1)
