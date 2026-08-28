@@ -190,8 +190,8 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
     all_bases <- unique(c(sound_base, tg_base))
     pairs <- data.frame(
       basename = all_bases,
-      sound_file = NA_character_,
-      textgrid_file = NA_character_,
+      sound_file = rep(NA_character_, length(all_bases)),
+      textgrid_file = rep(NA_character_, length(all_bases)),
       stringsAsFactors = FALSE
     )
     
