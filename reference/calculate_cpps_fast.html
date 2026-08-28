@@ -17,7 +17,7 @@ for passing valid values (see the arguments below)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -226,6 +226,10 @@ argument.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="fu"><a href="Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Full-file CPPS calls on the 60 s demo file are CPU-heavy (&gt; 5 s under</span></span></span>
+<span class="r-in"><span><span class="co"># R CMD check), so they live in \donttest{} (still run under</span></span></span>
+<span class="r-in"><span><span class="co"># --run-donttest).</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># One-call CPPS with the default (AVQI-convention) parameters</span></span></span>
 <span class="r-in"><span><span class="fu">calculate_cpps_fast</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9.920529</span>
@@ -242,7 +246,7 @@ argument.</p>
 <span class="r-in"><span>  trend_line_type <span class="op">=</span> <span class="st">"exponential"</span>, fit_method <span class="op">=</span> <span class="st">"least_squares"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.671056</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># Single-interval CPP is a different, cheaper path</span></span></span>
 <span class="r-in"><span><span class="va">segment</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">extract_part</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cpp</span> <span class="op">&lt;-</span> <span class="va">segment</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">to_power_cepstrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">get_peak_prominence</span><span class="op">(</span></span></span>

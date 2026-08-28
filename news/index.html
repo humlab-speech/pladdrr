@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,19 @@
       <small>Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="5.0.5" id="pladdrr-505">pladdrr 5.0.5<a class="anchor" aria-label="anchor" href="#pladdrr-505"></a></h2>
+<div class="section level3">
+<h3 id="cran-compliance-5-0-5">CRAN compliance<a class="anchor" aria-label="anchor" href="#cran-compliance-5-0-5"></a></h3>
+<ul><li>Removed the last two <code>R CMD check</code> warnings:
+<ul><li>The compiled-code warning (<code>stderr</code>/<code>stdout</code>/<code>_exit</code> symbols in the vendored Praat objects): <code>melder_console.cpp</code> now routes console output through the R API (<code>Rprintf</code>/<code>REprintf</code>), gated to the main thread (R’s console API is unsafe off-main-thread, and <code>Melder_casual</code> can fire inside threaded DSP frame loops; worker-thread messages are dropped). All <code>exit()</code> call sites in Praat’s CLI paths throw a <code>MelderError</code> under <code>PRAAT_LIB</code> instead of terminating the process.</li>
+<li>The non-portable <code>PKG_CXXFLAGS</code> flag <code>-ffp-contract=off</code> was replaced by a source-level <code>#pragma STDC FP_CONTRACT OFF</code> in the vendored <code>melder.h</code> (included by every DSP translation unit) — the same bit-exactness guarantee with no compiler flags.</li>
+</ul></li>
+<li>Removed the R-devel “package has both <code>src/Makevars.in</code> and <code>src/Makevars</code>” NOTE: the <code>cleanup</code> script now deletes the configure-generated <code>src/Makevars</code> from the build copy.</li>
+<li>Expanded <code>inst/WORDLIST</code> and fixed a typo; the documentation now passes <code>spelling::spell_check_package()</code>.</li>
+<li>Modernized the test suite (~440 assertion conversions: <code>expect_gt/gte/ lt/lte</code>, <code>expect_length</code>, <code>expect_named</code>, <code>expect_type</code>, <code>expect_s3_class</code>, <code>expect_identical</code> for exact integer comparisons, <code>expect_false</code>, <code>fixed = TRUE</code> on literal patterns, <code>anyNA</code>).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.0.4" id="pladdrr-504">pladdrr 5.0.4<a class="anchor" aria-label="anchor" href="#pladdrr-504"></a></h2>
 <div class="section level3">
