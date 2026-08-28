@@ -39,6 +39,14 @@ test_that("FormantTier value queries", {
   expect_type(b, "double")
 })
 
+test_that("FormantTier S3 methods and accessor NULL branch", {
+  ft <- FormantTier$from_formant(formant_fixture())
+  expect_null(ft$no_such_method)
+  expect_output(print(ft), "FormantTier")
+  expect_invisible(print(ft))
+  expect_s3_class(as.data.frame(ft), "data.frame")
+})
+
 test_that("FormantTier as_data_frame/save/filter_sound", {
   ft <- FormantTier$from_formant(formant_fixture())
   df <- ft$as_data_frame()
