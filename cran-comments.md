@@ -134,11 +134,13 @@ citations/contact details.
 
 ### R CMD check results
 
-Local tarball check (R 4.6.1, aarch64) finishes with:
+Local tarball check (R 4.6.1, aarch64, full `R CMD check --as-cran`
+including the PDF manual) finishes with:
 
 - 0 errors
 - 0 warnings
-- 0 notes (`R CMD check --no-manual`; Status: OK)
+- 2 notes: the new-submission boilerplate and the outdated-macOS-HTML-Tidy
+  environmental note (documented below)
 
 The previously reported install-time compiler warnings have been resolved: an
 unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
