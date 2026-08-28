@@ -1,4 +1,4 @@
-# pladdrr (unreleased)
+# pladdrr 5.0.5
 
 ## CRAN compliance
 
