@@ -127,10 +127,10 @@ citations/contact details.
 
 ### Test environments
 
-- local macOS (aarch64), R 4.4 — `R CMD check --as-cran pladdrr_5.0.0.tar.gz`
-- win-builder, R-devel (x86_64-w64-mingw32, Windows Server 2022) — clean
-- win-builder, R-release (x86_64-w64-mingw32, R 4.6.1, Windows Server 2022) — clean
-- (to be completed: R-hub)
+- local macOS (aarch64), R 4.6.1 — `R CMD check --as-cran --no-manual pladdrr_5.0.5.tar.gz` (0 errors, 0 warnings, 1 note — the new-submission boilerplate)
+- GitHub Actions: R CMD check on ubuntu-latest (release + devel), macos-latest and windows-latest (all success), plus test-coverage, lintr and pkgdown
+- win-builder, R-devel and R-release — pladdrr_5.0.5 submitted, results pending (the identical source already passes the windows-latest R CMD check in CI)
+- R-hub: pending
 
 ### R CMD check results
 
