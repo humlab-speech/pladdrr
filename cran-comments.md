@@ -53,15 +53,10 @@ other compilers. All warning-suppressing `-Wno-*` flags have been removed;
 the remaining build warnings originate in the vendored Praat C++ sources and
 are non-significant.
 
-`src/Makevars` sets one non-portable flag, `-ffp-contract=off`. This is a
-deliberate correctness requirement, not an optimization: it disables
-floating-point FMA contraction so the compiled DSP routines reproduce the
-reference Praat application's output bit-for-bit (the package's primary purpose
-and its regression-test oracle). Removing it changes results (e.g. a CPPS value
-shifts by ~0.003 dB), breaking the faithfulness guarantee. It is supported by
-GCC and Clang. All warning-suppressing `-Wno-*` flags have been removed; the
-remaining build warnings originate in the vendored Praat C++ sources and are
-non-significant.
+→
+(paragraph removed — superseded by the `#pragma STDC FP_CONTRACT OFF`
+resolution described in the preceding "Compiler flags" paragraph; the
+pragma is GCC/Clang-guarded and MSVC is unaffected)
 
 The 'checking compiled code' WARNING for `stderr`/`stdout`/`_exit` symbols in
 the vendored Praat objects was resolved in this release. The `abort` calls and
@@ -129,18 +124,20 @@ citations/contact details.
 
 - local macOS (aarch64), R 4.6.1 — `R CMD check --as-cran --no-manual pladdrr_5.0.5.tar.gz` (0 errors, 0 warnings, 1 note — the new-submission boilerplate)
 - GitHub Actions: R CMD check on ubuntu-latest (release + devel), macos-latest and windows-latest (all success), plus test-coverage, lintr and pkgdown
-- win-builder, R-devel and R-release — pladdrr_5.0.5 submitted, results pending (the identical source already passes the windows-latest R CMD check in CI)
+- win-builder, R-devel and R-release — pladdrr_5.0.5 submitted, results emailed to the maintainer (identical source already passes the windows-latest R CMD check in CI)
 - R-hub: pending
 
 ### R CMD check results
 
-Local tarball check (R 4.6.1, aarch64, full `R CMD check --as-cran`
-including the PDF manual) finishes with:
+→
+Local tarball check of the final `pladdrr_5.0.5.tar.gz` (R 4.6.1, aarch64,
+`R CMD check --as-cran --no-manual`) finishes with:
 
 - 0 errors
 - 0 warnings
-- 2 notes: the new-submission boilerplate and the outdated-macOS-HTML-Tidy
-  environmental note (documented below)
+- 1 note: the new-submission boilerplate. An environmental
+  outdated-macOS-HTML-Tidy note appeared on an earlier run of this release
+  and may recur on CRAN's check machines (documented below)
 
 The previously reported install-time compiler warnings have been resolved: an
 unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
