@@ -411,7 +411,7 @@ etc.
 ## Getting Help
 
 - Package documentation:
-  [`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
+  [`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man)
 - Vignettes: `vignette(package = "pladdrr")`
 - Maintainer: <fredrik.nylen@umu.se>
 - Compare with Praat manual: <https://www.fon.hum.uva.nl/praat/manual/>

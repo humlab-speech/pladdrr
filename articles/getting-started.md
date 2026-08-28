@@ -496,7 +496,7 @@ citation("pladdrr")
 
 - Praat: <https://praat.org>
 - Package documentation:
-  [`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
+  [`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man)
 - Function reference:
   [`?Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
   [`?Pitch`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md),
@@ -508,9 +508,9 @@ citation("pladdrr")
 This vignette covered the core `pladdrr` analysis objects: Sound, Pitch,
 Formant, and Intensity. The package exposes 38 Praat modules with 500+
 methods in total (see `DESCRIPTION` and
-[`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
-for the full list), including auditory modeling, TextGrid annotation,
-voice quality assessment, and a persistent Praat script interpreter.
+[`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man) for the
+full list), including auditory modeling, TextGrid annotation, voice
+quality assessment, and a persistent Praat script interpreter.
 
 For more information, see the individual function documentation and the
 package README.

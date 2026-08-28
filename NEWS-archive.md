@@ -19,7 +19,7 @@
   the Praat binary at CPPS” gap — it was never the code.** The `.so`
   being measured had been compiled *without* `NDEBUG` and *without*
   optimisation.
-  [`pkgbuild::compile_dll()`](https://pkgbuild.r-lib.org/reference/compile_dll.html)
+  [`pkgbuild::compile_dll()`](https://rdrr.io/pkg/pkgbuild/man/compile_dll.html)
   (i.e. `devtools::load_all()`) forces
   `-UNDEBUG -Wall -pedantic -g -O0`, and a subsequent `R CMD INSTALL`
   silently reuses those objects — `make` sees the `.o` files as current,

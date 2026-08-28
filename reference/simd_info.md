@@ -42,7 +42,7 @@ A list with the following components:
 
   Logical indicating the shared object was compiled without `NDEBUG`,
   i.e. by `devtools::load_all()` /
-  [`pkgbuild::compile_dll()`](https://pkgbuild.r-lib.org/reference/compile_dll.html),
+  [`pkgbuild::compile_dll()`](https://rdrr.io/pkg/pkgbuild/man/compile_dll.html),
   which force `-UNDEBUG -Wall -pedantic -g -O0`. Such a build is not
   representative of normal operation and must not be used for timing
   comparisons; reinstall with `R CMD INSTALL --preclean .` to get
