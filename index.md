@@ -111,8 +111,9 @@ alternative routes to do what you want:
 - Run `browseVignettes("pladdrr")` after installation for packaged
   articles
 - See `inst/examples/` for end-to-end workflows
-- Use [`help(package = "pladdrr")`](https://rdrr.io/pkg/pladdrr/man) for
-  the installed reference index
+- Use
+  [`help(package = "pladdrr")`](https://humlab-speech.github.io/pladdrr/reference)
+  for the installed reference index
 
 ## Installation
 
