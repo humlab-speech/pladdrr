@@ -250,11 +250,11 @@ runtime so you can A/B your own workload:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
 <span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.830713 4.126081 7.558445 4.151559 4.183749 174.7853    50</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.818094 4.101682 7.596139 4.146415 4.177874 177.3212    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq     max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.845849 4.134878 4.157288 4.154243 4.173831 4.87632    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.783078 4.125487 4.154526 4.166964 4.186841 4.849756    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
