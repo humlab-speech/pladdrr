@@ -4,7 +4,8 @@
 test_that("get_spectral_moments_batch() returns correct shape", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20, window_shape = "Gaussian")
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+    window_shape = "Gaussian")
 
   result <- get_spectral_moments_batch(spg)
 
@@ -21,7 +22,8 @@ test_that("get_spectral_moments_batch() returns correct shape", {
 test_that("get_spectral_moments_batch() matches per-frame Spectrum calls", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.2)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20, window_shape = "Gaussian")
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+    window_shape = "Gaussian")
 
   batch <- get_spectral_moments_batch(spg, power = 2.0)
 
@@ -59,7 +61,8 @@ test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
 
   # 1 kHz tone: CoG should cluster around 1000 Hz
   sound <- Sound$create_tone(frequency = 1000, duration = 0.3)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20, window_shape = "Gaussian")
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+    window_shape = "Gaussian")
 
   batch <- get_spectral_moments_batch(spg)
   valid_cog <- batch$cog[!is.na(batch$cog)]

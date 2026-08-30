@@ -107,7 +107,8 @@ windows_probe_test("PowerCepstrum$smooth returns a new, valid, smoothed PowerCep
   expect_true(smoothed$is_valid())
 })
 
-windows_probe_test("PowerCepstrum$subtract_trend returns a new object; subtract_trend_inplace mutates and returns self", {
+windows_probe_test("PowerCepstrum$subtract_trend returns a new object; subtract_trend_inplace mutates and returns self",
+  {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   detrended <- pc$subtract_trend()
   expect_s3_class(detrended, "PowerCepstrum")

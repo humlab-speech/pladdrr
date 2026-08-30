@@ -2,7 +2,8 @@
 # class, not a deprecated S3 wrapper -- had no dedicated test file before).
 
 hnr_of_tone <- function(freq = 150, dur = 1.0, sr = 44100) {
-  Sound$create_tone(frequency = freq, duration = dur, sampling_rate = sr)$to_harmonicity_cc(time_step = 0.01, min_pitch = 75)
+  Sound$create_tone(frequency = freq, duration = dur, sampling_rate = sr)$to_harmonicity_cc(time_step = 0.01, min_pitch
+    = 75)
 }
 
 test_that("Harmonicity() requires a pointer", {
@@ -14,7 +15,8 @@ test_that("Harmonicity is constructed via Sound$to_harmonicity_cc()/to_harmonici
   expect_s3_class(hnr, "Harmonicity")
   expect_true(hnr$is_valid())
 
-  hnr_ac <- Sound$create_tone(frequency = 150, duration = 1.0, sampling_rate = 44100)$to_harmonicity_ac(time_step = 0.01, min_pitch = 75)
+  hnr_ac <- Sound$create_tone(frequency = 150, duration = 1.0, sampling_rate = 44100)$to_harmonicity_ac(time_step =
+    0.01, min_pitch = 75)
   expect_s3_class(hnr_ac, "Harmonicity")
 })
 

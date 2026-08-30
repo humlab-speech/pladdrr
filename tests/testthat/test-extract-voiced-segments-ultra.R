@@ -79,7 +79,8 @@ test_that("ZCR calculation uses interpolated zero crossings", {
     mean_zcr <- mean(zcr$zcr, na.rm = TRUE)
 
     # Allow 20% tolerance (windowing effects can cause some variation)
-    expect_lt(abs(mean_zcr - expected_zcr) / expected_zcr, 0.2, label = sprintf("ZCR %.1f should be ~%.1f Hz", mean_zcr, expected_zcr))
+    expect_lt(abs(mean_zcr - expected_zcr) / expected_zcr, 0.2, label = sprintf("ZCR %.1f should be ~%.1f Hz", mean_zcr,
+      expected_zcr))
 })
 
 test_that("extract_voiced_segments_ultra always returns at least Praat's 1 ms seed", {

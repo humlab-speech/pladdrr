@@ -21,7 +21,9 @@ test_that("FormantGrid autoplot/autolayer/as.data.frame work", {
 test_that("FormantTier speckle (default) and line styles both work and use the right geom", {
   sound <- generate_sine_wave(440, 0.3, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
-  ft <- FormantTier$from_formant(formant)  # R/formanttier-wrapper.R:152-171; the `down_to_formant_tier()` bullet in R/formant-wrapper.R:47's roxygen is stale/aspirational doc text, not an implemented method — verified during SDD Task 10, downsamples all formants to a FormantTier
+  ft <- FormantTier$from_formant(formant)  # R/formanttier-wrapper.R:152-171; the `down_to_formant_tier()` bullet in R/formant-wrapper.R:47's
+  # roxygen is stale/aspirational doc text, not an implemented method — verified during SDD Task 10,
+  # downsamples all formants to a FormantTier
   p_speckle <- ggplot2::autoplot(ft)
   p_line <- ggplot2::autoplot(ft, style = "line")
   expect_s3_class(p_speckle$layers[[1]]$geom, "GeomPoint")

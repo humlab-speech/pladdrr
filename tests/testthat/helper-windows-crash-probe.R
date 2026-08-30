@@ -61,7 +61,8 @@ windows_crash_probe <- function(desc, code_expr, preamble = NULL, env = parent.f
   testthat::expect_equal(
     status, 0L,
     info = sprintf(
-      "Windows crash probe '%s' exited with status %s. This is a REAL abort or failure in pladdrr C++ on Windows -- fix the crash, do not skip the test. Child output:\n%s",
+
+        "Windows crash probe '%s' exited with status %s. This is a REAL abort or failure in pladdrr C++ on Windows -- fix the crash, do not skip the test. Child output:\n%s",
       desc, status, detail
     )
   )

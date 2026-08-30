@@ -1,5 +1,6 @@
 # Test Batch/Vectorized Operations
-sound_generate_tone <- function(frequency, duration, sample_rate) Sound$create_tone(frequency = frequency, duration = duration, sampling_rate = sample_rate)
+sound_generate_tone <- function(frequency, duration, sample_rate) Sound$create_tone(frequency = frequency, duration =
+  duration, sampling_rate = sample_rate)
 module_available <- function(name) !is.null(tryCatch(pladdrr:::get_module(name), error = function(e) NULL))
 # These tests verify that batch operations produce the same results as
 # individual calls, while being significantly faster.

@@ -71,7 +71,8 @@ test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return us
   expect_type(hptr, "externalptr")
 })
 
-test_that("get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6", {
+test_that("get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6",
+  {
   sound <- tone_sound()
   pitch <- sound$to_pitch_cc()
 
