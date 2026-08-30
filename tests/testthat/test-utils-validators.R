@@ -179,3 +179,8 @@ test_that("is_praat_formant handles legacy praat_formant objects", {
                                                n_formants = 1),
                                           class = "praat_formant")))
 })
+
+test_that("is_praat_intensity handles legacy praat_intensity objects", {
+  expect_false(is_praat_intensity(structure(42, class = "praat_intensity")))
+  expect_false(is_praat_intensity(structure(list(), class = "praat_intensity")))
+})

@@ -237,3 +237,7 @@ test_that("batch pitch functions reject invalid input type", {
   expect_error(sound_to_pitch_ac_batch("x"), "Invalid input type")
   expect_error(sound_to_pitch_cc_batch("x"), "Invalid input type")
 })
+
+test_that("sound_extract_and_formant rejects invalid input type", {
+  expect_error(sound_extract_and_formant("x", 0, 0.1), "Invalid input type")
+})
