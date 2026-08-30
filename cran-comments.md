@@ -216,10 +216,17 @@ accepted; the code is correct as written and "fixing" it would make it worse.
   whole-package scan reports 0 functions over 50 lines and 0 functions over
   cyclomatic complexity 15 (both exported and internal helpers; Phase 7
   refactors, verified fresh with `cyclocomp`/`length(deparse(body()))`). The
-  `@inheritParams` check (141 duplicated `@param` descriptions) is left as-is:
-  consolidating would churn 200+ roxygen blocks with roxygen-rebuild risk for
-  doc-dedup only. lintr `object_usage` findings for package-internal dot-prefixed
+  `@inheritParams` check is substantially addressed: 274 identical `@param`
+  descriptions across ~40 params were consolidated into 13 shared
+  `@name pladdrr-shared-*` topics (roxygenise() regenerates the affected man
+  files byte-identically; check_man clean; R CMD check 0/0/0). Remaining
+  duplicates are `...` (roxygen2 @inheritParams does not resolve the special
+  `...` param into \arguments) and 2-place groups too small to justify a topic.
+  lintr `object_usage` findings for package-internal dot-prefixed
   helpers used across files are false positives (lintr lints each file in
   isolation and cannot resolve cross-file internal symbols); consistent with the
-  pre-existing pattern and left as-is. The 12 exported-name clashes under
-  "Other checks" cannot be changed without renaming public API.
+  pre-existing pattern and left as-is. The 3 remaining `expect_s3_class_linter`
+  findings are `expect_true(inherits(x, "externalptr"))` — `externalptr` is not
+  an S3 class and `expect_s3_class()` rejects it; false positive, kept as-is.
+  The 12 exported-name clashes under "Other checks" cannot be changed without
+  renaming public API.
