@@ -356,7 +356,7 @@ shoelace_area <- function(x, y) {
   abs(area) / 2
 }
 
-vowel_space_area <- shoelace_area(hull_points[,1], hull_points[,2])
+vowel_space_area <- shoelace_area(hull_points[, 1], hull_points[, 2])
 cat("Vowel space area (normalized):", round(vowel_space_area, 2), "square units\n")
 ```
 
