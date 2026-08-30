@@ -133,3 +133,11 @@ test_that("to_spectrogram_direct accepts a Sound via its C++ pointer path", {
   sg <- to_spectrogram_direct(snd, time_step = 0.005, max_frequency = 5000)
   expect_true(inherits(sg, "externalptr"))
 })
+
+test_that("to_pitch_shs_direct accepts Sound and rejects invalid input", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  p <- to_pitch_shs_direct(snd, time_step = 0.005, pitch_floor = 75,
+                           max_frequency = 300)
+  expect_true(inherits(p, "externalptr"))
+  expect_error(to_pitch_shs_direct("x"), "sound must be a Sound object")
+})
