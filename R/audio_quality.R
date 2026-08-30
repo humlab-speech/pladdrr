@@ -119,6 +119,24 @@ check_audio_quality <- function(sound,
   )
 }
 
+
+# Detect quality issues from metrics; returns character vector of issues.
+.assess_quality_issues <- function(m) {
+  issues <- character(0)
+  if (m$is_clipped) issues <- c(issues, "CLIPPING DETECTED")
+  if (m$mean_intensity_db < -30) issues <- c(issues, "Very low signal level")
+  if (m$max_amplitude < 0.3) issues <- c(issues, "Underutilized dynamic range")
+  if (m$intensity_range_db < 15) issues <- c(issues, "Low dynamic range")
+  issues
+}
+
+# Summarize issue count into an overall status label.
+.overall_quality_status <- function(issues, is_clipped) {
+  if (length(issues) == 0) "GOOD"
+  else if (is_clipped) "POOR (clipping)"
+  else "FAIR"
+}
+
 #' Format Audio Quality Report
 #'
 #' Creates a human-readable text report from audio quality metrics.
@@ -139,27 +157,8 @@ check_audio_quality <- function(sound,
 format_quality_report <- function(quality_metrics, detailed = TRUE) {
   
   # Determine overall quality
-  issues <- character(0)
-  if (quality_metrics$is_clipped) {
-    issues <- c(issues, "CLIPPING DETECTED")
-  }
-  if (quality_metrics$mean_intensity_db < -30) {
-    issues <- c(issues, "Very low signal level")
-  }
-  if (quality_metrics$max_amplitude < 0.3) {
-    issues <- c(issues, "Underutilized dynamic range")
-  }
-  if (quality_metrics$intensity_range_db < 15) {
-    issues <- c(issues, "Low dynamic range")
-  }
-  
-  overall_status <- if (length(issues) == 0) {
-    "GOOD"
-  } else if (quality_metrics$is_clipped) {
-    "POOR (clipping)"
-  } else {
-    "FAIR"
-  }
+  issues <- .assess_quality_issues(quality_metrics)
+  overall_status <- .overall_quality_status(issues, quality_metrics$is_clipped)
   
   # Build report
   lines <- character(0)
