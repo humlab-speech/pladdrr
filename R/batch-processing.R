@@ -263,16 +263,16 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
   }
   
   # Extract basenames (without extension)
-  if (by == "basename") {
+  if (is.function(by)) {
+    # Custom matching function
+    pairs <- by(sound_files, textgrid_files)
+  } else if (by == "basename") {
     pairs <- .pair_files_by_basename(sound_files, textgrid_files)
     # Filter if needed
     if (require_both) {
       pairs <- pairs[!is.na(pairs$sound_file) & !is.na(pairs$textgrid_file), ]
     }
-    }
-    
-    
-    else if (by == "full") {
+  } else if (by == "full") {
     # Match on full filename
     pairs <- data.frame(
       sound_file = sound_files,
@@ -280,14 +280,9 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
       basename = tools::file_path_sans_ext(basename(sound_files)),
       stringsAsFactors = FALSE
     )
-    
     if (require_both) {
       pairs <- pairs[!is.na(pairs$textgrid_file), ]
     }
-    
-  } else if (is.function(by)) {
-    # Custom matching function
-    pairs <- by(sound_files, textgrid_files)
   } else {
     stop("Unknown matching strategy: ", by)
   }

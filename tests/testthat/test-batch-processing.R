@@ -220,3 +220,24 @@ test_that("aggregate_measurements errors on an unknown grouping column", {
   measurements <- data.frame(label = c("a", "b"), f0 = c(150, 160))
   expect_error(aggregate_measurements(measurements, by = "bogus"), "not found")
 })
+
+test_that("pair_sound_textgrid matches by basename, full, and custom function", {
+  sd <- tempfile("snd"); td <- tempfile("tg")
+  dir.create(sd); dir.create(td)
+  on.exit(unlink(c(sd, td), recursive = TRUE), add = TRUE)
+  file.create(file.path(sd, "a.wav"), file.path(sd, "b.wav"))
+  file.create(file.path(td, "a.TextGrid"))
+
+  p <- pair_sound_textgrid(sd, td)  # basename, require_both=TRUE
+  expect_true(nrow(p) >= 1)
+  expect_true(all(!is.na(p$textgrid_file)))
+
+  p2 <- pair_sound_textgrid(sd, td, require_both = FALSE)
+  expect_true(any(is.na(p2$textgrid_file)))
+
+  p3 <- pair_sound_textgrid(sd, td, by = "full")
+  expect_true(is.data.frame(p3))
+
+  p4 <- pair_sound_textgrid(sd, td, by = function(s, t) data.frame(sound_file = s))
+  expect_true(is.data.frame(p4))
+})
