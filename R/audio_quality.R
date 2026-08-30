@@ -166,25 +166,7 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
   }
   
   if (detailed) {
-    lines <- c(lines, "\nIntensity Metrics:")
-    lines <- c(lines, sprintf("  Mean: %.1f dB", quality_metrics$mean_intensity_db))
-    lines <- c(lines, sprintf("  Range: %.1f dB", quality_metrics$intensity_range_db))
-    lines <- c(lines, sprintf("  Min: %.1f dB", quality_metrics$min_intensity_db))
-    lines <- c(lines, sprintf("  Max: %.1f dB", quality_metrics$max_intensity_db))
-    
-    lines <- c(lines, "\nRecommendations:")
-    if (quality_metrics$is_clipped) {
-      lines <- c(lines, "  - Re-record with lower input gain to avoid clipping")
-    }
-    if (quality_metrics$mean_intensity_db < -30) {
-      lines <- c(lines, "  - Recording level is very low; consider using normalization")
-    }
-    if (quality_metrics$max_amplitude < 0.3) {
-      lines <- c(lines, "  - Recording could use more dynamic range; increase input gain")
-    }
-    if (quality_metrics$intensity_range_db > 40) {
-      lines <- c(lines, "  - Very high dynamic range; check for background noise")
-    }
+    lines <- .append_detailed_report(lines, quality_metrics)
   }
   
   lines <- c(lines, "============================\n")
@@ -216,4 +198,20 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
   list(max_amplitude = max_amplitude, rms_amplitude = rms_amplitude,
        is_clipped = is_clipped, n_clipping_samples = n_clipping_samples,
        clipping_percentage = clipping_percentage)
+}
+
+
+# Append the detailed intensity/recommendation section to a report.
+.append_detailed_report <- function(lines, m) {
+  lines <- c(lines, "\nIntensity Metrics:",
+    sprintf("  Mean: %.1f dB", m$mean_intensity_db),
+    sprintf("  Range: %.1f dB", m$intensity_range_db),
+    sprintf("  Min: %.1f dB", m$min_intensity_db),
+    sprintf("  Max: %.1f dB", m$max_intensity_db),
+    "\nRecommendations:")
+  if (m$is_clipped) lines <- c(lines, "  - Re-record with lower input gain to avoid clipping")
+  if (m$mean_intensity_db < -30) lines <- c(lines, "  - Recording level is very low; consider using normalization")
+  if (m$max_amplitude < 0.3) lines <- c(lines, "  - Recording could use more dynamic range; increase input gain")
+  if (m$intensity_range_db > 40) lines <- c(lines, "  - Very high dynamic range; check for background noise")
+  lines
 }
