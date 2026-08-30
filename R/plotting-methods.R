@@ -1042,5 +1042,7 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
   if (garnish) {
     p + ggplot2::labs(title = title, x = "Time (s)", y = "Frequency (Hz)") +
       ggplot2::theme_minimal()
-  } else p
+  } else {
+    p
+  }
 }

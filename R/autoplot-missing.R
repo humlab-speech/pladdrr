@@ -1485,7 +1485,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   if (garnish) {
     p + ggplot2::labs(title = title, x = "Principal Component") +
       ggplot2::theme_minimal()
-  } else p
+  } else {
+    p
+  }
 }
 
 # PCA component-scores scatter plot.
@@ -1502,5 +1504,7 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   if (garnish) {
     p_scores + ggplot2::labs(title = title, x = pc_cols[1], y = pc_cols[2]) +
       ggplot2::theme_minimal()
-  } else p_scores
+  } else {
+    p_scores
+  }
 }

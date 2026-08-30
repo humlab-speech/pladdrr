@@ -488,7 +488,9 @@ create_cepstrum_report <- function(cepstrogram,
   if (!is.null(db_range)) {
     p + ggplot2::scale_fill_viridis_c(name = "Power (dB)",
                                       option = color_scale, limits = db_range)
-  } else p
+  } else {
+    p
+  }
 }
 
 
