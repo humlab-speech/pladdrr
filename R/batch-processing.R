@@ -145,6 +145,28 @@ NULL
   })
 }
 
+# Pair sound and TextGrid files by shared basename.
+.pair_files_by_basename <- function(sound_files, textgrid_files) {
+  sound_base <- tools::file_path_sans_ext(basename(sound_files))
+  tg_base <- tools::file_path_sans_ext(basename(textgrid_files))
+  all_bases <- unique(c(sound_base, tg_base))
+  pairs <- data.frame(
+    basename = all_bases,
+    sound_file = rep(NA_character_, length(all_bases)),
+    textgrid_file = rep(NA_character_, length(all_bases)),
+    stringsAsFactors = FALSE
+  )
+  for (i in seq_along(all_bases)) {
+    base <- all_bases[i]
+    sound_idx <- match(base, sound_base)
+    tg_idx <- match(base, tg_base)
+    if (!is.na(sound_idx)) pairs$sound_file[i] <- sound_files[sound_idx]
+    if (!is.na(tg_idx)) pairs$textgrid_file[i] <- textgrid_files[tg_idx]
+  }
+  pairs
+}
+
+
 
 batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 
@@ -257,38 +279,15 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
   
   # Extract basenames (without extension)
   if (by == "basename") {
-    sound_base <- tools::file_path_sans_ext(basename(sound_files))
-    tg_base <- tools::file_path_sans_ext(basename(textgrid_files))
-    
-    # Create data frame
-    all_bases <- unique(c(sound_base, tg_base))
-    pairs <- data.frame(
-      basename = all_bases,
-      sound_file = rep(NA_character_, length(all_bases)),
-      textgrid_file = rep(NA_character_, length(all_bases)),
-      stringsAsFactors = FALSE
-    )
-    
-    # Match files
-    for (i in seq_along(all_bases)) {
-      base <- all_bases[i]
-      sound_idx <- match(base, sound_base)
-      tg_idx <- match(base, tg_base)
-      
-      if (!is.na(sound_idx)) {
-        pairs$sound_file[i] <- sound_files[sound_idx]
-      }
-      if (!is.na(tg_idx)) {
-        pairs$textgrid_file[i] <- textgrid_files[tg_idx]
-      }
-    }
-    
+    pairs <- .pair_files_by_basename(sound_files, textgrid_files)
     # Filter if needed
     if (require_both) {
       pairs <- pairs[!is.na(pairs$sound_file) & !is.na(pairs$textgrid_file), ]
     }
+    }
     
-  } else if (by == "full") {
+    
+    else if (by == "full") {
     # Match on full filename
     pairs <- data.frame(
       sound_file = sound_files,
