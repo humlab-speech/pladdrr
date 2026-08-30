@@ -108,6 +108,18 @@ NULL
   ))
 }
 
+# Arrange the three cepstrum panels and optionally save the report.
+.assemble_cepstrum_report <- function(p1, p2, p3, save_path, dpi, format) {
+  combined <- gridExtra::grid.arrange(p1, p2, p3, ncol = 1, heights = c(1, 1.5, 1))
+  if (!is.null(save_path)) {
+    ggplot2::ggsave(filename = save_path, plot = combined,
+                    width = 10, height = 12, dpi = dpi, device = format)
+    message("Cepstrum report saved to: ", save_path)
+  }
+  invisible(combined)
+}
+
+
 
 
 
@@ -533,25 +545,7 @@ create_cepstrum_report <- function(cepstrogram,
     title = "CPP Over Time"
   )
   
-  # Combine plots
-  combined <- gridExtra::grid.arrange(
-    p1, p2, p3,
-    ncol = 1,
-    heights = c(1, 1.5, 1)
-  )
-  
-  # Save if requested
-  if (!is.null(save_path)) {
-    ggplot2::ggsave(
-      filename = save_path,
-      plot = combined,
-      width = 10,
-      height = 12,
-      dpi = dpi,
-      device = format
-    )
-    message("Cepstrum report saved to: ", save_path)
-  }
+  .assemble_cepstrum_report(p1, p2, p3, save_path, dpi, format)
   
   invisible(combined)
 }
