@@ -374,26 +374,8 @@ plot_cpp_timeseries <- function(cepstrogram,
   # Add mean CPP line
   p <- .add_mean_cpp_line(p, plot_data)
   
-  # Add labels
-  if (is.null(title)) {
-    title <- "CPP Time Series"
-  }
-  
-  p <- p + ggplot2::labs(
-    title = title,
-    subtitle = if (nrow(plot_data) > 0) {
-      sprintf("Mean CPP: %.2f dB (SD: %.2f)",
-              mean(plot_data$cpp, na.rm = TRUE),
-              sd(plot_data$cpp, na.rm = TRUE))
-    } else {
-      "No samples"
-    },
-    x = "Time (s)",
-    y = "CPP (dB)"
-  )
-  
-  # Apply theme
-  p <- .apply_cepstrum_theme(p, theme)
+  # Add labels + theme
+  p <- .finish_cpp_timeseries_plot(p, plot_data, title, theme)
   
   return(p)
 }
@@ -540,4 +522,18 @@ create_cepstrum_report <- function(cepstrogram,
     p + ggplot2::scale_fill_viridis_c(name = "Power (dB)",
                                       option = color_scale, limits = db_range)
   } else p
+}
+
+
+# Finish a CPP time-series plot: labels + theme.
+.finish_cpp_timeseries_plot <- function(p, plot_data, title, theme) {
+  if (is.null(title)) title <- "CPP Time Series"
+  p <- p + ggplot2::labs(title = title,
+    subtitle = if (nrow(plot_data) > 0) {
+      sprintf("Mean CPP: %.2f dB (SD: %.2f)",
+              mean(plot_data$cpp, na.rm = TRUE),
+              sd(plot_data$cpp, na.rm = TRUE))
+    } else "No samples",
+    x = "Time (s)", y = "CPP (dB)")
+  .apply_cepstrum_theme(p, theme)
 }
