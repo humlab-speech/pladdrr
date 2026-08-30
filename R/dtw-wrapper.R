@@ -81,43 +81,14 @@
 #'   DTW object; set internally when wrapping an existing alignment.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
 #' @export
-DTW <- function(.xptr = NULL) {
-  if (is.null(.xptr)) {
-    stop("DTW objects must be created via sounds_to_dtw(), mfccs_to_dtw(), etc.")
-  }
-
-  dtw_mod <- get_module("dtw_module")
-  cpp_obj <- dtw_mod$RDTW$new(.xptr)
-
-  obj <- structure(list(
-    .cpp = cpp_obj,
-    .xptr = .xptr,
-
-    # === Domain Properties ===
-    get_xmin = function() cpp_obj$get_xmin(),
-    get_xmax = function() cpp_obj$get_xmax(),
-    get_ymin = function() cpp_obj$get_ymin(),
-    get_ymax = function() cpp_obj$get_ymax(),
-    get_x_duration = function() cpp_obj$get_x_duration(),
-    get_y_duration = function() cpp_obj$get_y_duration(),
-    get_nx = function() cpp_obj$get_nx(),
-    get_ny = function() cpp_obj$get_ny(),
-
-    # === Distance/Path Metrics ===
-    get_weighted_distance = function() cpp_obj$get_weighted_distance(),
-    get_path_length = function() cpp_obj$get_path_length(),
-
-    # === Time Mapping (Core) ===
-    get_y_time_from_x_time = function(tx) {
+.dtw_method_factories <- list(
+  get_y_time_from_x_time = function(cpp_obj, .xptr) function(tx) {
       cpp_obj$get_y_time_from_x_time(as.numeric(tx))
     },
-
-    get_x_time_from_y_time = function(ty) {
+  get_x_time_from_y_time = function(cpp_obj, .xptr) function(ty) {
       cpp_obj$get_x_time_from_y_time(as.numeric(ty))
     },
-
-    # Vectorized time mapping
-    map_times = function(times, direction = c("x_to_y", "y_to_x")) {
+  map_times = function(cpp_obj, .xptr) function(times, direction = c("x_to_y", "y_to_x")) {
       direction <- match.arg(direction)
       times <- as.numeric(times)
       if (direction == "x_to_y") {
@@ -126,71 +97,52 @@ DTW <- function(.xptr = NULL) {
         cpp_obj$get_x_times_from_y_times(times)
       }
     },
-
-    # === Path Analysis ===
-    get_maximum_consecutive_steps = function(direction = c("x", "y", "horizontal", "vertical")) {
+  get_maximum_consecutive_steps = function(cpp_obj, .xptr) function(direction = c("x", "y", "horizontal", "vertical")) {
       direction <- match.arg(direction)
       cpp_obj$get_maximum_consecutive_steps(direction)
     },
-
-    get_path = function() {
+  get_path = function(cpp_obj, .xptr) function() {
       cpp_obj$get_path()
     },
-
-    # === Transformations ===
-    swap_axes = function() {
+  swap_axes = function(cpp_obj, .xptr) function() {
       swapped_ptr <- cpp_obj$swap_axes_ptr()
       DTW(.xptr = swapped_ptr)
     },
-
-    to_polygon = function(band = 0.0, slope = 1) {
+  to_polygon = function(cpp_obj, .xptr) function(band = 0.0, slope = 1) {
       poly_ptr <- cpp_obj$to_polygon_ptr(as.numeric(band), as.integer(slope))
       Polygon(.xptr = poly_ptr)
     },
-
-    to_matrix_distances = function() {
+  to_matrix_distances = function(cpp_obj, .xptr) function() {
       mat_ptr <- cpp_obj$to_matrix_distances_ptr()
       Matrix(.xptr = mat_ptr)
     },
-
-    to_matrix_cumulative = function(band = 0.0, slope = 1) {
+  to_matrix_cumulative = function(cpp_obj, .xptr) function(band = 0.0, slope = 1) {
       mat_ptr <- cpp_obj$to_matrix_cumulative_distances_ptr(
         as.numeric(band), as.integer(slope))
       Matrix(.xptr = mat_ptr)
     },
-
-    to_duration_tier = function() {
+  to_duration_tier = function(cpp_obj, .xptr) function() {
       tier_ptr <- cpp_obj$to_duration_tier_ptr()
       DurationTier(.xptr = tier_ptr)
     },
-
-    # === TextGrid Warping (Major Use Case) ===
-    warp_textgrid = function(textgrid, precision = 0.0) {
+  warp_textgrid = function(cpp_obj, .xptr) function(textgrid, precision = 0.0) {
       if (!inherits(textgrid, "TextGrid")) {
         stop("textgrid must be a TextGrid object")
       }
       warped_ptr <- cpp_obj$warp_textgrid_ptr(textgrid$.xptr, as.numeric(precision))
       TextGrid(.xptr = warped_ptr)
     },
-
-    # === Export ===
-    as_matrix = function() {
+  as_matrix = function(cpp_obj, .xptr) function() {
       cpp_obj$as_matrix()
     },
-
-    get_info = function() {
+  get_info = function(cpp_obj, .xptr) function() {
       cpp_obj$get_info()
     },
-
-    get_xptr = function() .xptr,
-
-    save = function(path) {
+  save = function(cpp_obj, .xptr) function(path) {
       cpp_obj$save(path)
       invisible(obj)
     },
-
-    # === Display ===
-    print = function() {
+  print = function(cpp_obj, .xptr) function() {
       info <- cpp_obj$get_info()
       cat("<Praat DTW>\n")
       cat(sprintf("  Candidate (x): %.3f - %.3f s (%.3f s)\n",
@@ -203,7 +155,31 @@ DTW <- function(.xptr = NULL) {
       cat(sprintf("  Weighted distance: %.4f\n", info$path$weighted_distance))
       invisible(obj)
     }
+)
 
+DTW <- function(.xptr = NULL) {
+  if (is.null(.xptr)) {
+    stop("DTW objects must be created via sounds_to_dtw(), mfccs_to_dtw(), etc.")
+  }
+
+  dtw_mod <- get_module("dtw_module")
+  cpp_obj <- dtw_mod$RDTW$new(.xptr)
+
+  obj <- structure(c(
+    list(.cpp = cpp_obj,
+         .xptr = .xptr,
+         get_xmin = function() cpp_obj$get_xmin(),
+         get_xmax = function() cpp_obj$get_xmax(),
+         get_ymin = function() cpp_obj$get_ymin(),
+         get_ymax = function() cpp_obj$get_ymax(),
+         get_x_duration = function() cpp_obj$get_x_duration(),
+         get_y_duration = function() cpp_obj$get_y_duration(),
+         get_nx = function() cpp_obj$get_nx(),
+         get_ny = function() cpp_obj$get_ny(),
+         get_weighted_distance = function() cpp_obj$get_weighted_distance(),
+         get_path_length = function() cpp_obj$get_path_length(),
+         get_xptr = function() .xptr),
+    lapply(.dtw_method_factories, function(f) f(cpp_obj, .xptr))
   ), class = c("DTW", "PraatObject"))
 
   obj
