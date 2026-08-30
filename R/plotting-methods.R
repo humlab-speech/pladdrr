@@ -179,6 +179,15 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
   p
 }
 
+
+# Filter a long-format formant data frame to time range, formant number,
+# and defined frequencies.
+.filter_formant_df <- function(df, from_time, to_time, max_formant) {
+  if (!is.null(from_time)) df <- df[df$time >= from_time, ]
+  if (!is.null(to_time)) df <- df[df$time <= to_time, ]
+  df[df$formant <= max_formant & !is.na(df$frequency), ]
+}
+
 #' @title Plot Formant Tracks
 #'
 #' @description
@@ -233,16 +242,8 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
              ggplot2::labs(title = "No formant data available"))
   }
 
-  # Filter time range
-  if (!is.null(from_time)) {
-    df <- df[df$time >= from_time, ]
-  }
-  if (!is.null(to_time)) {
-    df <- df[df$time <= to_time, ]
-  }
-
-  # Filter formant number and undefined frequencies
-  df <- df[df$formant <= max_formant & !is.na(df$frequency), ]
+  # Filter time range and formant number
+  df <- .filter_formant_df(df, from_time, to_time, max_formant)
 
   # Check if we have formant data
   if (nrow(df) == 0) {
