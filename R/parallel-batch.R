@@ -17,6 +17,14 @@
   max(1L, total %/% max(1L, as.integer(n_cores)))
 }
 
+
+# Analyze one file on a worker: cap threads, load Sound, run analysis_func.
+.analyze_one_file <- function(f, tpw, analysis_func, ...) {
+  pladdrr_threads(tpw)
+  sound <- Sound(f)
+  analysis_func(sound, ...)
+}
+
 #' Process Audio Files in Parallel
 #'
 #' @description
@@ -99,11 +107,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   # macOS fork has known issues with R's event loop; PSOCK is safer
   is_macos <- Sys.info()[["sysname"]] == "Darwin"
   if (.Platform$OS.type == "unix" && !is_macos) {
-    results <- parallel::mclapply(files, function(f) {
-      pladdrr_threads(tpw)
-      sound <- Sound(f)
-      analysis_func(sound, ...)
-    }, mc.cores = n_cores)
+    results <- parallel::mclapply(files, function(f) .analyze_one_file(f, tpw, analysis_func, ...), mc.cores = n_cores)
   } else {
     # Windows: use PSOCK cluster
     cl <- parallel::makeCluster(n_cores)
@@ -123,11 +127,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     })
     parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
 
-    results <- parallel::parLapply(cl, files, function(f) {
-      pladdrr_threads(tpw)
-      sound <- Sound(f)
-      analysis_func(sound, ...)
-    })
+    results <- parallel::parLapply(cl, files, function(f) .analyze_one_file(f, tpw, analysis_func, ...))
   }
 
   results
