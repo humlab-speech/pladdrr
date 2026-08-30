@@ -305,17 +305,3 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 # ============================================================================
 # Module Integration Helpers
 # ============================================================================
-
-#' Check if Pitch Modules are Available
-#'
-#' @return TRUE if modules are loaded successfully
-#' @examples
-#' pladdrr:::pitch_modules_available()
-#' @keywords internal
-#' @noRd
-pitch_modules_available <- function() {
-  tryCatch({
-    mod <- get_pitch_module()
-    !is.null(mod$RPitch)
-  }, error = function(e) FALSE)
-}

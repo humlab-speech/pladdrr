@@ -24,14 +24,6 @@ test_that("validate_non_negative accepts zero and positive, rejects negative", {
 
 # --- validate_range ------------------------------------------------------------
 
-test_that("validate_range accepts in-range values and rejects out-of-range", {
-  expect_equal(pladdrr:::validate_range(5, 0, 10), 5)
-  expect_error(pladdrr:::validate_range(-1, 0, 10), "must be in range")
-  expect_error(pladdrr:::validate_range(11, 0, 10), "must be in range")
-  expect_error(pladdrr:::validate_range(NA_real_, 0, 10), "cannot be NA")
-  expect_error(pladdrr:::validate_range("x", 0, 10), "single numeric value")
-})
-
 # --- validate_positive_int -----------------------------------------------------
 
 test_that("validate_positive_int accepts positive integers and rejects the rest", {
@@ -55,14 +47,6 @@ test_that("validate_string accepts non-empty strings and rejects the rest", {
 })
 
 # --- validate_logical ------------------------------------------------------------
-
-test_that("validate_logical accepts TRUE/FALSE and rejects the rest", {
-  expect_true(pladdrr:::validate_logical(TRUE))
-  expect_false(pladdrr:::validate_logical(FALSE))
-  expect_error(pladdrr:::validate_logical(NA), "cannot be NA")
-  expect_error(pladdrr:::validate_logical(1), "single logical value")
-  expect_error(pladdrr:::validate_logical(c(TRUE, FALSE)), "single logical value")
-})
 
 # --- is_praat_sound / validate_sound_object --------------------------------
 
@@ -124,43 +108,12 @@ test_that("is_praat_pitch recognizes R6 Pitch and well-formed legacy praat_pitch
   expect_false(is_praat_pitch(structure(list(), class = "praat_pitch")))
 })
 
-test_that("validate_pitch_object passes through valid pitch objects and errors otherwise", {
-  legacy <- data.frame(time = 0.1, frequency = 120)
-  class(legacy) <- c("praat_pitch", "data.frame")
-  expect_equal(pladdrr:::validate_pitch_object(legacy), legacy)
-  expect_error(pladdrr:::validate_pitch_object(42), "must be a praat_pitch object")
-})
-
 # --- validate_file_exists / validate_file_extension -------------------------
 
-test_that("validate_file_exists accepts existing files and rejects missing/directory paths", {
-  tmp <- tempfile(fileext = ".wav")
-  file.create(tmp)
-  on.exit(unlink(tmp))
-
-  expect_equal(pladdrr:::validate_file_exists(tmp), tmp)
-  expect_error(pladdrr:::validate_file_exists(tempfile()), "File not found")
-  expect_error(pladdrr:::validate_file_exists(tempdir()), "directory, not a file")
-})
-
-test_that("validate_file_extension accepts allowed extensions and rejects others", {
-  expect_equal(pladdrr:::validate_file_extension("speech.wav", c("wav", "WAV")), "speech.wav")
-  expect_error(pladdrr:::validate_file_extension("speech.mp3", c("wav", "WAV")),
-               "must have one of these extensions")
-})
-
-# --- quality_warning / undefined_to_na ---------------------------------------
+# --- quality_warning ---------------------------------------
 
 test_that("quality_warning issues an immediate warning with the given message", {
   expect_warning(pladdrr:::quality_warning("example quality issue"), "example quality issue")
-})
-
-test_that("undefined_to_na returns NA_real_ and warns only when a message is given", {
-  expect_warning(result <- pladdrr:::undefined_to_na("pitch undefined"), "pitch undefined")
-  expect_true(is.na(result))
-
-  expect_no_warning(result2 <- pladdrr:::undefined_to_na())
-  expect_true(is.na(result2))
 })
 
 # --- is_praat_formant / validate_formant_object ------------------------------
@@ -191,7 +144,7 @@ test_that("validate_formant_object passes through valid formants and errors othe
   expect_error(pladdrr:::validate_formant_object(42), "must be a praat_formant object")
 })
 
-# --- is_praat_intensity / validate_intensity_object ---------------------------
+# --- is_praat_intensity ---------------------------
 
 test_that("is_praat_intensity recognizes R6 Intensity and well-formed legacy praat_intensity", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
@@ -206,11 +159,4 @@ test_that("is_praat_intensity recognizes R6 Intensity and well-formed legacy pra
 
   expect_false(is_praat_intensity(42))
   expect_false(is_praat_intensity(structure(list(n_frames = 1), class = "praat_intensity")))
-})
-
-test_that("validate_intensity_object passes through valid intensity objects and errors otherwise", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.2, sampling_rate = 16000)
-  intensity <- sound$to_intensity()
-  expect_equal(pladdrr:::validate_intensity_object(intensity), intensity)
-  expect_error(pladdrr:::validate_intensity_object(42), "must be a praat_intensity object")
 })

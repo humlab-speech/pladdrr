@@ -100,26 +100,3 @@ unit_to_code <- function(unit, type = "pitch") {
   )
 }
 
-
-#' Convert Interpolation Name to Praat Code
-#'
-#' Maps interpolation method names to integer codes.
-#'
-#' @param interpolation Character. Interpolation method name
-#'
-#' @return Integer interpolation code
-#' @keywords internal
-#' @examples
-#' pladdrr:::interpolation_to_code("cubic")
-#' pladdrr:::interpolation_to_code("linear")
-#' @noRd
-interpolation_to_code <- function(interpolation) {
-  switch(tolower(interpolation),
-    nearest = 0L,
-    linear = 1L,
-    cubic = 2L,
-    sinc70 = 3L,
-    sinc700 = 4L,
-    1L  # default to linear
-  )
-}

@@ -118,8 +118,8 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 # .onLoad lives in R/zzz.R. A second definition used to sit here; with no
 # Collate field, files collate alphabetically, so zzz.R always overwrote it and
 # this copy never ran. Its only extra effect was seeding
-# options(pladdrr.return_datatable = TRUE), which is redundant: the sole reader,
-# .finalize_dataframe(), already defaults the option to TRUE.
+# options(pladdrr.return_datatable = TRUE), which was redundant (the helper
+# that read it defaulted to TRUE) and has since been removed.
 
 #' @keywords internal
 #' @noRd

@@ -1,7 +1,7 @@
 # test-utils-internal-extra.R - Extra branches of R/utils-internal.R not
 # already hit incidentally by other tests (extract_xptr fallback paths,
 # unit_to_code's semitones_re_*/erb/formant/intensity branches and its
-# unknown-type error, interpolation_to_code).
+# unknown-type error).
 
 test_that("extract_xptr uses the .xptr field when present", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.1, sampling_rate = 8000)
@@ -58,13 +58,4 @@ test_that("unit_to_code covers intensity units", {
 
 test_that("unit_to_code errors for an unknown type", {
   expect_error(pladdrr:::unit_to_code("hertz", "bogus_type"), "Unknown unit type")
-})
-
-test_that("interpolation_to_code maps all known names and defaults to linear", {
-  expect_equal(pladdrr:::interpolation_to_code("nearest"), 0L)
-  expect_equal(pladdrr:::interpolation_to_code("LINEAR"), 1L)
-  expect_equal(pladdrr:::interpolation_to_code("cubic"), 2L)
-  expect_equal(pladdrr:::interpolation_to_code("sinc70"), 3L)
-  expect_equal(pladdrr:::interpolation_to_code("sinc700"), 4L)
-  expect_equal(pladdrr:::interpolation_to_code("nonsense"), 1L)
 })

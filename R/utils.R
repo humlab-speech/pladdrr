@@ -62,33 +62,6 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
   invisible(x)
 }
 
-#' Validate numeric parameter is in range
-#'
-#' Ensures a numeric parameter falls within a specified range
-#'
-#' @param x Value to validate
-#' @param min Minimum allowed value (inclusive)
-#' @param max Maximum allowed value (inclusive)
-#' @param name Parameter name for error messages
-#' @return The validated value (invisibly)
-#' @keywords internal
-#' @examples
-#' pladdrr:::validate_range(5, min = 0, max = 10)
-#' @noRd
-validate_range <- function(x, min, max, name = deparse(substitute(x))) {
-  if (!is.numeric(x) || length(x) != 1) {
-    .stop_validate("validate_range", name, sprintf("'%s' must be a single numeric value", name))
-  }
-  if (is.na(x)) {
-    .stop_validate("validate_range", name, sprintf("'%s' cannot be NA", name))
-  }
-  if (x < min || x > max) {
-    .stop_validate("validate_range", name, sprintf("'%s' must be in range [%g, %g], got: %g",
-                 name, min, max, x))
-  }
-  invisible(x)
-}
-
 #' Validate positive integer parameter
 #'
 #' Ensures an integer parameter is positive (> 0)
@@ -135,27 +108,6 @@ validate_string <- function(x, name = deparse(substitute(x)),
   }
   if (!is.na(x) && nchar(x) == 0) {
     .stop_validate("validate_string", name, sprintf("'%s' cannot be an empty string", name))
-  }
-  invisible(x)
-}
-
-#' Validate logical parameter
-#'
-#' Ensures a parameter is a logical value
-#'
-#' @param x Value to validate
-#' @param name Parameter name for error messages
-#' @return The validated value (invisibly)
-#' @keywords internal
-#' @examples
-#' pladdrr:::validate_logical(TRUE)
-#' @noRd
-validate_logical <- function(x, name = deparse(substitute(x))) {
-  if (!is.logical(x) || length(x) != 1) {
-    .stop_validate("validate_logical", name, sprintf("'%s' must be a single logical value (TRUE/FALSE)", name))
-  }
-  if (is.na(x)) {
-    .stop_validate("validate_logical", name, sprintf("'%s' cannot be NA", name))
   }
   invisible(x)
 }
@@ -268,80 +220,10 @@ is_praat_pitch <- function(x) {
   TRUE
 }
 
-#' Validate praat_pitch object
-#'
-#' Ensures an object is a valid praat_pitch, throwing an error if not
-#'
-#' @param x Object to validate
-#' @param name Parameter name for error messages
-#' @return The validated object (invisibly)
-#' @keywords internal
-#' @examples
-#' pitch_df <- data.frame(time = c(0.1, 0.2), frequency = c(120, 130))
-#' class(pitch_df) <- c("praat_pitch", "data.frame")
-#' pladdrr:::validate_pitch_object(pitch_df)
-#' @noRd
-validate_pitch_object <- function(x, name = deparse(substitute(x))) {
-  if (!is_praat_pitch(x)) {
-    stop(sprintf("'%s' must be a praat_pitch object", name), call. = FALSE)
-  }
-  invisible(x)
-}
-
 # ==============================================================================
 # File Path Utilities
 # ==============================================================================
 
-#' Validate file path exists
-#'
-#' Ensures a file path points to an existing file
-#'
-#' @param path File path to validate
-#' @param name Parameter name for error messages
-#' @return The validated path (invisibly)
-#' @keywords internal
-#' @examples
-#' path <- tempfile(fileext = ".wav")
-#' file.create(path)
-#' pladdrr:::validate_file_exists(path)
-#' unlink(path)
-#' @noRd
-validate_file_exists <- function(path, name = deparse(substitute(path))) {
-  validate_string(path, name)
-  if (!file.exists(path)) {
-    stop(sprintf("File not found: %s", path), call. = FALSE)
-  }
-  if (isTRUE(file.info(path)$isdir)) {
-    stop(sprintf("Path is a directory, not a file: %s", path), call. = FALSE)
-  }
-  invisible(path)
-}
-
-#' Validate file has expected extension
-#'
-#' Ensures a file path has one of the expected extensions
-#'
-#' @param path File path to validate
-#' @param extensions Character vector of allowed extensions (e.g., c("wav", "WAV"))
-#' @param name Parameter name for error messages
-#' @return The validated path (invisibly)
-#' @keywords internal
-#' @examples
-#' pladdrr:::validate_file_extension("speech.wav", c("wav", "WAV"))
-#' @noRd
-validate_file_extension <- function(path, extensions,
-                                   name = deparse(substitute(path))) {
-  validate_string(path, name)
-  ext <- tools::file_ext(path)
-  if (!ext %in% extensions) {
-    stop(sprintf("'%s' must have one of these extensions: %s (got: %s)",
-                 name, toString(extensions), ext),
-         call. = FALSE)
-  }
-  invisible(path)
-}
-
-# ==============================================================================
 # Message Utilities
 # ==============================================================================
 
@@ -365,27 +247,6 @@ validate_file_extension <- function(path, extensions,
 #' @noRd
 quality_warning <- function(message) {
   warning(message, call. = FALSE, immediate. = TRUE)
-}
-
-#' Convert value to NA with warning
-#'
-#' Converts undefined analysis values to NA and issues a warning
-#' (Per clarification: return NA for undefined values)
-#'
-#' @param message Reason for NA
-#' @return NA_real_
-#' @keywords internal
-#' @examples
-#' withCallingHandlers(
-#'   pladdrr:::undefined_to_na("pitch could not be determined"),
-#'   warning = function(w) invokeRestart("muffleWarning")
-#' )
-#' @noRd
-undefined_to_na <- function(message = NULL) {
-  if (!is.null(message)) {
-    quality_warning(paste("Undefined value:", message))
-  }
-  NA_real_
 }
 
 # ==============================================================================
@@ -504,26 +365,6 @@ is_praat_intensity <- function(x) {
   }
   
   TRUE
-}
-
-#' Validate praat_intensity object
-#'
-#' Ensures an object is a valid praat_intensity, throwing an error if not
-#'
-#' @param x Object to validate
-#' @param name Parameter name for error messages
-#' @return The validated object (invisibly)
-#' @keywords internal
-#' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.2)
-#' intensity <- sound$to_intensity()
-#' pladdrr:::validate_intensity_object(intensity)
-#' @noRd
-validate_intensity_object <- function(x, name = deparse(substitute(x))) {
-  if (!is_praat_intensity(x)) {
-    stop(sprintf("'%s' must be a praat_intensity object", name), call. = FALSE)
-  }
-  invisible(x)
 }
 
 # ==============================================================================

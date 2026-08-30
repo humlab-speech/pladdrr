@@ -89,7 +89,3 @@ test_that("$.PitchModule to_point_process transform returns a PointProcess", {
 
   expect_false(is.null(pp))
 })
-
-test_that("pitch_modules_available reports module load status", {
-  expect_true(pladdrr:::pitch_modules_available())
-})
