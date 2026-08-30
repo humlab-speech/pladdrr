@@ -285,33 +285,15 @@ extract_formants <- function(sound,
     # NA-padded out-of-bounds values and poisoning every result with NA.
     idx <- (k + 1):n
 
-    # Calculate reflection coefficient
-    num <- sum(f[idx] * b[idx - 1])
-    den <- sum(f[idx]^2) + sum(b[idx - 1]^2)
-
-    # Check for invalid values
-    if (is.na(den) || !is.finite(den) || den == 0) {
-      return(NULL)
-    }
-
-    rc <- -2 * num / den
-
-    # Check reflection coefficient validity
-    if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) {
-      # Reflection coefficient out of range, stop iteration
-      break
-    }
+    rc_info <- .burg_reflection_coefficient(f, b, idx)
+    if (rc_info$status == "abort") return(NULL)
+    if (rc_info$status == "break") break
+    rc <- rc_info$rc
 
     # Update coefficients. a[i+1] is the order-(k-1) coefficient vector,
     # which has no i = k term yet; pad with a trailing zero so that term
     # contributes 0 instead of reading past the vector's end (NA).
-    a_padded <- c(a, 0)
-    a_new <- numeric(k + 1)
-    a_new[1] <- 1
-    for (i in seq_len(k)) {
-      a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
-    }
-    a <- a_new
+    a <- .update_burg_coefficients(a, k, rc)
 
     # Update forward and backward prediction errors in place (see idx note above)
     old_f <- f[idx]
@@ -530,4 +512,34 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
     bandwidths <- bandwidths[seq_len(n_formants)]
   }
   data.frame(frequency = freqs, bandwidth = bandwidths)
+}
+
+
+# Burg reflection coefficient; status abort/break/ok.
+.burg_reflection_coefficient <- function(f, b, idx) {
+  num <- sum(f[idx] * b[idx - 1])
+  den <- sum(f[idx]^2) + sum(b[idx - 1]^2)
+  if (is.na(den) || !is.finite(den) || den == 0) return(list(status = "abort"))
+  rc <- -2 * num / den
+  if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) return(list(status = "break"))
+  list(status = "ok", rc = rc)
+}
+
+# Update Burg LPC coefficients for order k with reflection coefficient rc.
+.update_burg_coefficients <- function(a, k, rc) {
+  a_padded <- c(a, 0)
+  a_new <- numeric(k + 1)
+  a_new[1] <- 1
+  for (i in seq_len(k)) a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
+  a_new
+}
+
+
+# Update Burg LPC coefficients for order k with reflection coefficient rc.
+.update_burg_coefficients <- function(a, k, rc) {
+  a_padded <- c(a, 0)
+  a_new <- numeric(k + 1)
+  a_new[1] <- 1
+  for (i in seq_len(k)) a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
+  a_new
 }
