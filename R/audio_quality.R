@@ -92,16 +92,11 @@ check_audio_quality <- function(sound,
   }
   
   # Intensity analysis using Praat's Intensity object
-  intensity <- sound$to_intensity(
-    minimum_pitch = intensity_floor,
-    time_step = time_step,
-    subtract_mean = TRUE
-  )
-  
-  mean_intensity_db <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
-  min_intensity_db <- intensity$get_minimum(from_time = 0, to_time = 0, interpolation = "parabolic")
-  max_intensity_db <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "parabolic")
-  intensity_range_db <- max_intensity_db - min_intensity_db
+  inten <- .analyze_intensity(sound, intensity_floor, time_step)
+  mean_intensity_db <- inten$mean_intensity_db
+  min_intensity_db <- inten$min_intensity_db
+  max_intensity_db <- inten$max_intensity_db
+  intensity_range_db <- inten$intensity_range_db
   
   # Return quality metrics
   list(
@@ -211,4 +206,17 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
   
   lines <- c(lines, "============================\n")
   paste(lines, collapse = "\n")
+}
+
+
+# Intensity statistics via Praat Intensity object.
+.analyze_intensity <- function(sound, intensity_floor, time_step) {
+  intensity <- sound$to_intensity(
+    minimum_pitch = intensity_floor, time_step = time_step, subtract_mean = TRUE)
+  mean_intensity_db <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
+  min_intensity_db <- intensity$get_minimum(from_time = 0, to_time = 0, interpolation = "parabolic")
+  max_intensity_db <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "parabolic")
+  list(mean_intensity_db = mean_intensity_db, min_intensity_db = min_intensity_db,
+       max_intensity_db = max_intensity_db,
+       intensity_range_db = max_intensity_db - min_intensity_db)
 }
