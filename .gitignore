@@ -124,3 +124,7 @@ GPATH
 
 # Local pkgcheck output (regenerated on demand)
 ^pkgcheck\.log$
+
+# pkgcheck diagnostic report (generated)
+/pkgcheck.log
+
