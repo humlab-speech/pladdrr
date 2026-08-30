@@ -240,14 +240,7 @@ textgrid_get_intervals_where <- function(textgrid,
     interval_text <- textgrid$get_interval_text(tier, i)
 
     # Check if interval matches condition
-    match <- switch(condition,
-      "equals" = interval_text == text,
-      "contains" = grepl(text, interval_text, fixed = TRUE),
-      "does not contain" = !grepl(text, interval_text, fixed = TRUE),
-      "starts with" = startsWith(interval_text, text),
-      "ends with" = endsWith(interval_text, text),
-      FALSE
-    )
+    match <- .interval_condition_matches(condition, interval_text, text)
 
     if (match) {
       k <- k + 1L
@@ -589,4 +582,17 @@ sound_get_zcr <- function(sound,
     return(1 / window_duration)
   }
   0
+}
+
+
+# Test whether an interval label matches the requested condition.
+.interval_condition_matches <- function(condition, interval_text, text) {
+  switch(condition,
+    "equals" = interval_text == text,
+    "contains" = grepl(text, interval_text, fixed = TRUE),
+    "does not contain" = !grepl(text, interval_text, fixed = TRUE),
+    "starts with" = startsWith(interval_text, text),
+    "ends with" = endsWith(interval_text, text),
+    FALSE
+  )
 }
