@@ -902,25 +902,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 }
 
 
-#' Plot TextGrid Annotations
-#'
-#' Visualize tier labels and boundaries as a standalone plot.
-#'
-#' @param x A TextGrid object
-#' @param tier Integer or character specifying which tier to plot (default: all tiers)
-#' @param from_time Start time in seconds (NULL = beginning)
-#' @param to_time End time in seconds (NULL = end)
-#' @param ... Additional arguments (ignored)
-#'
-#' @return A ggplot2 object
-#'
-#' @examples
-#' tg <- TextGrid$create(0, 1, "words")
-#' tg$set_interval_text("words", 1, "hello")
-#' plot(tg)
-#' plot(tg, tier = 1)
-#'
-#' @export
 # ============================================================================
 # plot.TextGrid helpers
 # ============================================================================
@@ -949,6 +930,28 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
   }
   all_data
 }
+
+#' Plot TextGrid Annotations
+#'
+#'
+#' Visualize tier labels and boundaries as a standalone plot.
+#'
+#' @param x A TextGrid object
+#' @param tier Integer or character specifying which tier to plot (default: all tiers)
+#' @param from_time Start time in seconds (NULL = beginning)
+#' @param to_time End time in seconds (NULL = end)
+#' @param ... Additional arguments (ignored)
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' tg <- TextGrid$create(0, 1, "words")
+#' tg$set_interval_text("words", 1, "hello")
+#' plot(tg)
+#' plot(tg, tier = 1)
+#'
+#' @export
+#' @method plot TextGrid
 
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...) {
 

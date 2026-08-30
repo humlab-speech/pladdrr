@@ -169,8 +169,6 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   x[[".mod"]]$as_data_frame(include_strength, include_intensity)
 }
 
-#' @method $ PitchModule
-#' @export
 .pitch_module_methods <- list(
   get_value_at_time = function(obj) function(time, unit = "hertz", interpolate = TRUE) {
       obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
@@ -228,6 +226,8 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
     }
 )
 
+#' @method $ PitchModule
+#' @export
 `$.PitchModule` <- function(x, name) {
   # First check for direct module properties/methods.
   # Must use [[ (not $) to fetch .mod: $ on a PitchModule dispatches back

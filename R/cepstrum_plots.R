@@ -10,45 +10,9 @@
 #'
 #' @examples
 #' # See individual functions, e.g. ?plot_powercepstrum
-#'
 #' @name cepstrum_plots
 NULL
-
-#' @title Plot PowerCepstrum
 #'
-#' @description
-#' Creates a visualization of a power cepstrum showing the cepstral values
-#' across quefrencies, with optional peak and trend line annotations.
-#'
-#' @param cepstrum PowerCepstrum object
-#' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
-#' @param show_trendline Logical. Show regression trend line (default: TRUE)
-#' @param qmin Numeric. Minimum quefrency for peak search (seconds, default: 0.001)
-#' @param qmax Numeric. Maximum quefrency for peak search (seconds, default: 0)
-#' @param fit_method Character. Trend line fit method (default: "straight")
-#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
-#' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
-#' @param title Character. Plot title (default: auto-generated)
-#' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
-#'
-#' @return A ggplot2 object
-#'
-#' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
-#' spectrum <- sound$to_spectrum()
-#' cepstrum <- spectrum$to_power_cepstrum()
-#'
-#' # Basic plot
-#' plot_powercepstrum(cepstrum)
-#'
-#' # Customized plot
-#' plot_powercepstrum(cepstrum,
-#'                   show_peak = TRUE,
-#'                   show_trendline = TRUE,
-#'                   quefrency_range = c(0.001, 0.02),
-#'                   title = "Voice Quality Analysis")
-#'
-#' @export
 
 # Apply the shared cepstrum plot theme (minimal/bw/classic + title styling).
 .apply_cepstrum_theme <- function(p, theme) {
@@ -122,6 +86,43 @@ NULL
 
 
 
+
+
+#' @title Plot PowerCepstrum
+#'
+#' @description
+#' Creates a visualization of a power cepstrum showing the cepstral values
+#' across quefrencies, with optional peak and trend line annotations.
+#'
+#' @param cepstrum PowerCepstrum object
+#' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
+#' @param show_trendline Logical. Show regression trend line (default: TRUE)
+#' @param qmin Numeric. Minimum quefrency for peak search (seconds, default: 0.001)
+#' @param qmax Numeric. Maximum quefrency for peak search (seconds, default: 0)
+#' @param fit_method Character. Trend line fit method (default: "straight")
+#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
+#' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
+#' @param title Character. Plot title (default: auto-generated)
+#' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
+#'
+#' @return A ggplot2 object
+#'
+#' @examples
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
+#' spectrum <- sound$to_spectrum()
+#' cepstrum <- spectrum$to_power_cepstrum()
+#'
+#' # Basic plot
+#' plot_powercepstrum(cepstrum)
+#'
+#' # Customized plot
+#' plot_powercepstrum(cepstrum,
+#'                   show_peak = TRUE,
+#'                   show_trendline = TRUE,
+#'                   quefrency_range = c(0.001, 0.02),
+#'                   title = "Voice Quality Analysis")
+#'
+#' @export
 
 plot_powercepstrum <- function(cepstrum,
                               show_peak = TRUE,

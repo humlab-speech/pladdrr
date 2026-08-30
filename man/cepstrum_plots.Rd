@@ -14,5 +14,4 @@ Praat's native graphics system with R's powerful plotting capabilities.
 }
 \examples{
 # See individual functions, e.g. ?plot_powercepstrum
-
 }

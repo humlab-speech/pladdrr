@@ -17,5 +17,4 @@ the need for Praat's Strings and Table objects with R-idiomatic workflows.
 }
 \examples{
 # See individual functions, e.g. ?batch_process, ?create_file_list
-
 }

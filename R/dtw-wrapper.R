@@ -6,81 +6,6 @@
 # - TextGrid annotation warping
 # - Time mapping between signals
 
-#' DTW
-#'
-#' Temporal alignment between two acoustic signals.
-#'
-#' DTW aligns a candidate signal (x-axis) to a prototype or reference
-#' (y-axis), computing an optimal path through a distance matrix that
-#' minimizes the total distance while respecting slope constraints.
-#'
-#' @section Creating DTW objects:
-#'
-#' DTW objects are created by aligning two acoustic objects:
-#' \itemize{
-#'   \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most common)
-#'   \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
-#'   \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
-#'   \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
-#' }
-#'
-#' @section Time mapping:
-#'
-#' \itemize{
-#'   \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference time
-#'   \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate time
-#'   \item \code{$map_times(times, direction)} - vectorized time mapping
-#' }
-#'
-#' @section TextGrid warping:
-#'
-#' \itemize{
-#'   \item \code{$warp_textgrid(textgrid)} - warp annotation times
-#' }
-#'
-#' @section Path analysis:
-#'
-#' \itemize{
-#'   \item \code{$get_weighted_distance()} - global alignment distance
-#'   \item \code{$get_path_length()} - number of cells in optimal path
-#'   \item \code{$get_path()} - full path as a data.frame
-#'   \item \code{$get_maximum_consecutive_steps("x"|"y")} - path regularity
-#' }
-#'
-#' @section Slope constraints:
-#' Controls path flexibility:
-#' \itemize{
-#'   \item 1: No constraint (any slope)
-#'   \item 2: 1/3 < slope < 3
-#'   \item 3: 1/2 < slope < 2 (recommended)
-#'   \item 4: 2/3 < slope < 3/2 (strict)
-#' }
-#'
-#' @return A DTW object wrapping the alignment path and distance matrix.
-#'
-#' @examples
-#' # Basic alignment workflow
-#' reference <- Sound$create_tone(frequency = 150, duration = 0.3)
-#' candidate <- Sound$create_tone(frequency = 160, duration = 0.3)
-#'
-#' # Create DTW alignment
-#' dtw <- sounds_to_dtw(reference, candidate,
-#'   analysis_width = 0.015,
-#'   time_step = 0.005,
-#'   band = 0.0,
-#'   slope = 3
-#' )
-#'
-#' # Check alignment quality
-#' cat("Distance:", dtw$get_weighted_distance(), "\n")
-#'
-#' # Map time point from candidate to reference
-#' ref_time <- dtw$get_y_time_from_x_time(0.1)
-#'
-#' @param .xptr Not for direct use. External pointer to the underlying C++
-#'   DTW object; set internally when wrapping an existing alignment.
-#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
-#' @export
 .dtw_method_factories <- list(
   get_y_time_from_x_time = function(cpp_obj, .xptr) function(tx) {
       cpp_obj$get_y_time_from_x_time(as.numeric(tx))
@@ -156,6 +81,82 @@
       invisible(NULL)
     }
 )
+
+#' DTW
+#'
+#' Temporal alignment between two acoustic signals.
+#'
+#' DTW aligns a candidate signal (x-axis) to a prototype or reference
+#' (y-axis), computing an optimal path through a distance matrix that
+#' minimizes the total distance while respecting slope constraints.
+#'
+#' @section Creating DTW objects:
+#'
+#' DTW objects are created by aligning two acoustic objects:
+#' \itemize{
+#'   \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most common)
+#'   \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
+#'   \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
+#'   \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
+#' }
+#'
+#' @section Time mapping:
+#'
+#' \itemize{
+#'   \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference time
+#'   \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate time
+#'   \item \code{$map_times(times, direction)} - vectorized time mapping
+#' }
+#'
+#' @section TextGrid warping:
+#'
+#' \itemize{
+#'   \item \code{$warp_textgrid(textgrid)} - warp annotation times
+#' }
+#'
+#' @section Path analysis:
+#'
+#' \itemize{
+#'   \item \code{$get_weighted_distance()} - global alignment distance
+#'   \item \code{$get_path_length()} - number of cells in optimal path
+#'   \item \code{$get_path()} - full path as a data.frame
+#'   \item \code{$get_maximum_consecutive_steps("x"|"y")} - path regularity
+#' }
+#'
+#' @section Slope constraints:
+#' Controls path flexibility:
+#' \itemize{
+#'   \item 1: No constraint (any slope)
+#'   \item 2: 1/3 < slope < 3
+#'   \item 3: 1/2 < slope < 2 (recommended)
+#'   \item 4: 2/3 < slope < 3/2 (strict)
+#' }
+#'
+#' @return A DTW object wrapping the alignment path and distance matrix.
+#'
+#' @examples
+#' # Basic alignment workflow
+#' reference <- Sound$create_tone(frequency = 150, duration = 0.3)
+#' candidate <- Sound$create_tone(frequency = 160, duration = 0.3)
+#'
+#' # Create DTW alignment
+#' dtw <- sounds_to_dtw(reference, candidate,
+#'   analysis_width = 0.015,
+#'   time_step = 0.005,
+#'   band = 0.0,
+#'   slope = 3
+#' )
+#'
+#' # Check alignment quality
+#' cat("Distance:", dtw$get_weighted_distance(), "\n")
+#'
+#' # Map time point from candidate to reference
+#' ref_time <- dtw$get_y_time_from_x_time(0.1)
+#'
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#'   DTW object; set internally when wrapping an existing alignment.
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
+#' @export
 
 DTW <- function(.xptr = NULL) {
   if (is.null(.xptr)) {

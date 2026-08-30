@@ -926,6 +926,19 @@ pp_get_stdev_period_direct <- function(pointprocess,
 # Pipeline Operations (Composite Functions)
 # =============================================================================
 
+
+
+# Run one pitch-extraction pass at the given floor/ceiling.
+.run_pitch_pass <- function(pitch_fn, sound_ptr, pitch_floor, pitch_ceiling, time_step,
+                            voicing_threshold, silence_threshold, octave_cost,
+                            octave_jump_cost, voiced_unvoiced_cost) {
+  pitch_fn(sound_ptr, time_step = time_step, pitch_floor = pitch_floor,
+           pitch_ceiling = pitch_ceiling, voicing_threshold = voicing_threshold,
+           silence_threshold = silence_threshold, octave_cost = octave_cost,
+           octave_jump_cost = octave_jump_cost,
+           voiced_unvoiced_cost = voiced_unvoiced_cost)
+}
+
 #' Two-Pass Adaptive Pitch Extraction
 #'
 #' @description
@@ -961,18 +974,6 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' 1. Pass 1: Extract pitch with wide range (initial_floor to initial_ceiling)
 #' 2. Compute Q1 and Q3 from voiced frames
 
-
-# Run one pitch-extraction pass at the given floor/ceiling.
-.run_pitch_pass <- function(pitch_fn, sound_ptr, pitch_floor, pitch_ceiling, time_step,
-                            voicing_threshold, silence_threshold, octave_cost,
-                            octave_jump_cost, voiced_unvoiced_cost) {
-  pitch_fn(sound_ptr, time_step = time_step, pitch_floor = pitch_floor,
-           pitch_ceiling = pitch_ceiling, voicing_threshold = voicing_threshold,
-           silence_threshold = silence_threshold, octave_cost = octave_cost,
-           octave_jump_cost = octave_jump_cost,
-           voiced_unvoiced_cost = voiced_unvoiced_cost)
-}
-
 #' 3. Pass 2: Re-extract with adaptive range (Q1*0.75 to Q3*1.5)
 #'
 #' @section Performance:
@@ -1001,6 +1002,8 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #'
 #' @export
 two_pass_adaptive_pitch <- function(sound,
+
+
                                      time_step = 0,
                                      initial_floor = 50,
                                      initial_ceiling = 800,

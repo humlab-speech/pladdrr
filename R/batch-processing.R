@@ -13,48 +13,9 @@
 #'
 #' @examples
 #' # See individual functions, e.g. ?batch_process, ?create_file_list
-#'
 #' @name batch_processing
 NULL
-
-#' Batch Process Audio Files
 #'
-#' @description
-#' Process multiple audio files with a custom function. This replaces Praat's
-#' pattern of creating Strings objects and looping over files.
-#'
-#' @param directory Character path to directory containing audio files
-#' @param pattern Regular expression pattern to match files (default: "\\\\.wav$")
-#' @param func Function to apply to each file. Should accept a Sound object
-#'   as first argument and return a named list or data frame row
-#' @param recursive Logical, search directories recursively (default: FALSE)
-#' @param parallel Logical, use parallel processing (default: FALSE)
-#' @param ncores Integer, number of cores for parallel processing (default: NULL = all-1)
-#' @param progress Logical, show progress bar (default: TRUE)
-#' @param ... Additional arguments passed to func
-#'
-#' @return Data frame with results from all files
-#'
-#' @examples
-#' audio_dir <- tempfile("audio_")
-#' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
-#' tone$save(file.path(audio_dir, "tone1.wav"))
-#'
-#' results <- batch_process(
-#'   directory = audio_dir,
-#'   pattern = "\\.wav$",
-#'   progress = FALSE,
-#'   func = function(sound) {
-#'     pitch <- sound$to_pitch()
-#'     list(
-#'       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
-#'       sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
-#'     )
-#'   }
-#' )
-#'
-#' @export
 
 # Extract measurements for every interval tier, applying measure functions
 # to each extracted sound part. Returns a list of row lists.
@@ -177,6 +138,46 @@ NULL
 
 
 
+
+
+#' Batch Process Audio Files
+#'
+#' @description
+#' Process multiple audio files with a custom function. This replaces Praat's
+#' pattern of creating Strings objects and looping over files.
+#'
+#' @param directory Character path to directory containing audio files
+#' @param pattern Regular expression pattern to match files (default: "\\\\.wav$")
+#' @param func Function to apply to each file. Should accept a Sound object
+#'   as first argument and return a named list or data frame row
+#' @param recursive Logical, search directories recursively (default: FALSE)
+#' @param parallel Logical, use parallel processing (default: FALSE)
+#' @param ncores Integer, number of cores for parallel processing (default: NULL = all-1)
+#' @param progress Logical, show progress bar (default: TRUE)
+#' @param ... Additional arguments passed to func
+#'
+#' @return Data frame with results from all files
+#'
+#' @examples
+#' audio_dir <- tempfile("audio_")
+#' dir.create(audio_dir)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone$save(file.path(audio_dir, "tone1.wav"))
+#'
+#' results <- batch_process(
+#'   directory = audio_dir,
+#'   pattern = "\\.wav$",
+#'   progress = FALSE,
+#'   func = function(sound) {
+#'     pitch <- sound$to_pitch()
+#'     list(
+#'       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
+#'       sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+#'     )
+#'   }
+#' )
+#'
+#' @export
 
 batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 

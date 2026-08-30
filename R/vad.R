@@ -13,6 +13,62 @@
 #' @name vad
 NULL
 
+
+# Per-segment zero-crossing-rate keep test (shared by extract_voiced_segments
+# and sound_get_zcr). Long segments (>= zcr_window) use the AVQI 0.0025-0.0275s
+# analysis window; short segments use the whole segment.
+.segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold, zcr_window) {
+  segment_zeros <- all_zeros[all_zeros >= seg_start & all_zeros < seg_end]
+  if (seg_end - seg_start >= zcr_window) {
+    relative_zeros <- segment_zeros - seg_start
+    analysis_end <- min(0.0275, (seg_end - seg_start) - 0.0025)
+    zc <- relative_zeros[relative_zeros >= 0.0025 & relative_zeros <= analysis_end]
+  } else {
+    zc <- segment_zeros
+  }
+  if (length(zc) < 2) return(TRUE)
+  afstand <- zc[length(zc)] - zc[1]
+  if (afstand <= 0) return(TRUE)
+  (length(zc) / afstand) < zcr_threshold
+}
+
+.detect_voiced_intervals <- function(sound, minimum_pitch, time_step, silence_threshold,
+                                     min_silent_interval, min_sounding_interval) {
+  vad_grid <- sound_to_textgrid_silences(
+    sound, minimum_pitch = minimum_pitch, time_step = time_step,
+    silence_threshold = silence_threshold,
+    min_silent_interval = min_silent_interval,
+    min_sounding_interval = min_sounding_interval)
+  list(
+    vad_grid = vad_grid,
+    voiced_intervals = textgrid_get_intervals_where(
+      vad_grid, tier = 1, condition = "equals", text = "sounding")
+  )
+}
+
+# Filter voiced segments by zero-crossing rate (all-rejected handled by caller).
+.apply_zcr_filter <- function(xmin, xmax, sound, zcr_threshold, zcr_window) {
+  pp_zeros <- sound$to_point_process_zeros(
+    channel = 1L, include_raisers = TRUE, include_fallers = TRUE)
+  all_zeros <- pp_zeros$as_vector()
+  keep <- vapply(seq_along(xmin), function(i) {
+    .segment_zcr_keep(all_zeros, xmin[i], xmax[i], zcr_threshold, zcr_window)
+  }, logical(1))
+  list(xmin = xmin[keep], xmax = xmax[keep])
+}
+
+# Extract and concatenate voiced segments into a single Sound, optionally
+# returning the source TextGrid.
+.extract_voiced_sound <- function(sound, xmin, xmax, vad_grid, return_textgrid) {
+  voiced_sounds <- sound_extract_parts(
+    sound, xmin, xmax, window_shape = "rectangular",
+    relative_width = 1.0, preserve_times = FALSE)
+  voiced_concatenated <- sound$concatenate_sounds(voiced_sounds)
+  if (return_textgrid) list(sound = voiced_concatenated, textgrid = vad_grid)
+  else voiced_concatenated
+}
+
+
 #' @title Detect Silences in Sound and Create TextGrid
 #'
 #' @description
@@ -85,61 +141,6 @@ NULL
 #' )
 #'
 #' @export
-
-# Per-segment zero-crossing-rate keep test (shared by extract_voiced_segments
-# and sound_get_zcr). Long segments (>= zcr_window) use the AVQI 0.0025-0.0275s
-# analysis window; short segments use the whole segment.
-.segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold, zcr_window) {
-  segment_zeros <- all_zeros[all_zeros >= seg_start & all_zeros < seg_end]
-  if (seg_end - seg_start >= zcr_window) {
-    relative_zeros <- segment_zeros - seg_start
-    analysis_end <- min(0.0275, (seg_end - seg_start) - 0.0025)
-    zc <- relative_zeros[relative_zeros >= 0.0025 & relative_zeros <= analysis_end]
-  } else {
-    zc <- segment_zeros
-  }
-  if (length(zc) < 2) return(TRUE)
-  afstand <- zc[length(zc)] - zc[1]
-  if (afstand <= 0) return(TRUE)
-  (length(zc) / afstand) < zcr_threshold
-}
-
-.detect_voiced_intervals <- function(sound, minimum_pitch, time_step, silence_threshold,
-                                     min_silent_interval, min_sounding_interval) {
-  vad_grid <- sound_to_textgrid_silences(
-    sound, minimum_pitch = minimum_pitch, time_step = time_step,
-    silence_threshold = silence_threshold,
-    min_silent_interval = min_silent_interval,
-    min_sounding_interval = min_sounding_interval)
-  list(
-    vad_grid = vad_grid,
-    voiced_intervals = textgrid_get_intervals_where(
-      vad_grid, tier = 1, condition = "equals", text = "sounding")
-  )
-}
-
-# Filter voiced segments by zero-crossing rate (all-rejected handled by caller).
-.apply_zcr_filter <- function(xmin, xmax, sound, zcr_threshold, zcr_window) {
-  pp_zeros <- sound$to_point_process_zeros(
-    channel = 1L, include_raisers = TRUE, include_fallers = TRUE)
-  all_zeros <- pp_zeros$as_vector()
-  keep <- vapply(seq_along(xmin), function(i) {
-    .segment_zcr_keep(all_zeros, xmin[i], xmax[i], zcr_threshold, zcr_window)
-  }, logical(1))
-  list(xmin = xmin[keep], xmax = xmax[keep])
-}
-
-# Extract and concatenate voiced segments into a single Sound, optionally
-# returning the source TextGrid.
-.extract_voiced_sound <- function(sound, xmin, xmax, vad_grid, return_textgrid) {
-  voiced_sounds <- sound_extract_parts(
-    sound, xmin, xmax, window_shape = "rectangular",
-    relative_width = 1.0, preserve_times = FALSE)
-  voiced_concatenated <- sound$concatenate_sounds(voiced_sounds)
-  if (return_textgrid) list(sound = voiced_concatenated, textgrid = vad_grid)
-  else voiced_concatenated
-}
-
 
 sound_to_textgrid_silences <- function(sound,
                                        minimum_pitch = 100,
