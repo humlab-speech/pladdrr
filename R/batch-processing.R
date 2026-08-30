@@ -166,6 +166,16 @@ NULL
   pairs
 }
 
+# Create the requested analysis objects (pitch/formants/intensity).
+.create_analysis_objects <- function(sound, measurements, pitch_params, formant_params, intensity_params) {
+  pitch_obj <- formant_obj <- intensity_obj <- NULL
+  if ("pitch" %in% measurements) pitch_obj <- do.call(sound$to_pitch, pitch_params)
+  if ("formants" %in% measurements) formant_obj <- do.call(sound$to_formant_burg, formant_params)
+  if ("intensity" %in% measurements) intensity_obj <- do.call(sound$to_intensity, intensity_params)
+  list(pitch = pitch_obj, formants = formant_obj, intensity = intensity_obj)
+}
+
+
 
 
 batch_process <- function(directory, pattern = "\\.wav$", func,
@@ -556,19 +566,10 @@ extract_measurements <- function(sound,
   }
   
   # Create analysis objects
-  pitch_obj <- NULL
-  formant_obj <- NULL
-  intensity_obj <- NULL
-  
-  if ("pitch" %in% measurements) {
-    pitch_obj <- do.call(sound$to_pitch, pitch_params)
-  }
-  if ("formants" %in% measurements) {
-    formant_obj <- do.call(sound$to_formant_burg, formant_params)
-  }
-  if ("intensity" %in% measurements) {
-    intensity_obj <- do.call(sound$to_intensity, intensity_params)
-  }
+  objs <- .create_analysis_objects(sound, measurements, pitch_params, formant_params, intensity_params)
+  pitch_obj <- objs$pitch
+  formant_obj <- objs$formants
+  intensity_obj <- objs$intensity
   
   # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
   intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
