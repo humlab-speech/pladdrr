@@ -906,20 +906,9 @@ autolayer.MelSpectrogram <- function(object, ...) {
   )
 }
 
-#' @rdname autoplot-methods
-#' @param x_col Column name for x-axis (default: auto-detect).
-#' @param y_col Column name for y-axis (default: auto-detect).
-#' @param fill_col Column name for fill (default: auto-detect).
-#' @export
-autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
-    fill_col = NULL, garnish = TRUE, ...) {
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-  df <- as.data.frame(object)
-  if (nrow(df) == 0) {
-    warning("Matrix has no data")
-    return(ggplot2::ggplot() + ggplot2::theme_void())
-  }
+
+# Resolve auto-detectable plot columns for a Matrix autoplot.
+.resolve_plot_columns <- function(df, x_col, y_col, fill_col) {
   if (is.null(x_col)) {
     x_col <- if ("x" %in% names(df)) "x"
              else if ("time" %in% names(df)) "time"
@@ -937,6 +926,27 @@ autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
                 else if ("power_db" %in% names(df)) "power_db"
                 else names(df)[3]
   }
+  list(x_col = x_col, y_col = y_col, fill_col = fill_col)
+}
+
+#' @rdname autoplot-methods
+#' @param x_col Column name for x-axis (default: auto-detect).
+#' @param y_col Column name for y-axis (default: auto-detect).
+#' @param fill_col Column name for fill (default: auto-detect).
+#' @export
+autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
+    fill_col = NULL, garnish = TRUE, ...) {
+  if (!requireNamespace("ggplot2", quietly = TRUE))
+    stop("Package 'ggplot2' is required. Please install it.")
+  df <- as.data.frame(object)
+  if (nrow(df) == 0) {
+    warning("Matrix has no data")
+    return(ggplot2::ggplot() + ggplot2::theme_void())
+  }
+  cols <- .resolve_plot_columns(df, x_col, y_col, fill_col)
+  x_col <- cols$x_col
+  y_col <- cols$y_col
+  fill_col <- cols$fill_col
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data[[x_col]], y = .data[[y_col]],
                      fill = .data[[fill_col]])) +
