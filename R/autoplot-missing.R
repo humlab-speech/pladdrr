@@ -225,37 +225,7 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
   tmax <- if (is.null(to_time)) object$get_end_time() else to_time
   n_max <- min(object$get_max_num_formants(), max_formant)
 
-  if (style == "speckle") {
-    point_info <- object$as_data_frame()  # time, num_formants per stored point
-    rows <- list()
-    for (i in seq_len(nrow(point_info))) {
-      t <- point_info$time[i]
-      if (t < tmin || t > tmax) next
-      nf <- min(point_info$num_formants[i], n_max)
-      for (f in seq_len(nf)) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) {
-          rows[[length(rows) + 1]] <- data.frame(
-            time = t, formant_number = f, frequency = freq,
-            bandwidth = NA_real_, stringsAsFactors = FALSE)
-        }
-      }
-    }
-  } else {
-    times <- seq(tmin, tmax, by = time_step)
-    rows <- list()
-    for (f in seq_len(n_max)) {
-      for (t in times) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) {
-          rows[[length(rows) + 1]] <- data.frame(
-            time = t, formant_number = f, frequency = freq,
-            bandwidth = NA_real_, stringsAsFactors = FALSE)
-        }
-      }
-    }
-  }
-
+  rows <- .formant_tier_rows(object, tmin, tmax, n_max, style, time_step)
   if (length(rows) == 0) {
     warning("FormantTier has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -293,37 +263,7 @@ autolayer.FormantTier <- function(object, from_time = NULL, to_time = NULL,
   tmax <- if (is.null(to_time)) object$get_end_time() else to_time
   n_max <- min(object$get_max_num_formants(), max_formant)
 
-  if (style == "speckle") {
-    point_info <- object$as_data_frame()  # time, num_formants per stored point
-    rows <- list()
-    for (i in seq_len(nrow(point_info))) {
-      t <- point_info$time[i]
-      if (t < tmin || t > tmax) next
-      nf <- min(point_info$num_formants[i], n_max)
-      for (f in seq_len(nf)) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) {
-          rows[[length(rows) + 1]] <- data.frame(
-            time = t, formant_number = f, frequency = freq,
-            bandwidth = NA_real_, stringsAsFactors = FALSE)
-        }
-      }
-    }
-  } else {
-    times <- seq(tmin, tmax, by = time_step)
-    rows <- list()
-    for (f in seq_len(n_max)) {
-      for (t in times) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) {
-          rows[[length(rows) + 1]] <- data.frame(
-            time = t, formant_number = f, frequency = freq,
-            bandwidth = NA_real_, stringsAsFactors = FALSE)
-        }
-      }
-    }
-  }
-
+  rows <- .formant_tier_rows(object, tmin, tmax, n_max, style, time_step)
   if (length(rows) == 0) return(NULL)
   df <- .prep_formant_df(do.call(rbind, rows), NULL, NULL, max_formant)
   if (nrow(df) == 0) return(NULL)
@@ -1539,4 +1479,35 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
       linewidth = 0.8, ...),
     ggplot2::scale_color_brewer(palette = "Set1", name = "Formant")
   )
+}
+
+
+# Build formant rows (speckle from stored points, or track over a grid).
+.formant_tier_rows <- function(object, tmin, tmax, n_max, style, time_step) {
+  rows <- list()
+  if (style == "speckle") {
+    point_info <- object$as_data_frame()  # time, num_formants per stored point
+    for (i in seq_len(nrow(point_info))) {
+      t <- point_info$time[i]
+      if (t < tmin || t > tmax) next
+      nf <- min(point_info$num_formants[i], n_max)
+      for (f in seq_len(nf)) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) rows[[length(rows) + 1]] <- data.frame(
+          time = t, formant_number = f, frequency = freq,
+          bandwidth = NA_real_, stringsAsFactors = FALSE)
+      }
+    }
+  } else {
+    times <- seq(tmin, tmax, by = time_step)
+    for (f in seq_len(n_max)) {
+      for (t in times) {
+        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+        if (!is.na(freq)) rows[[length(rows) + 1]] <- data.frame(
+          time = t, formant_number = f, frequency = freq,
+          bandwidth = NA_real_, stringsAsFactors = FALSE)
+      }
+    }
+  }
+  rows
 }
