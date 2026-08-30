@@ -920,22 +920,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 
   # Optionally mark peak
   p <- .mark_df_peak(p, df, mark_peak)
-  if (mark_peak && nrow(df) > 0) {
-    # Find peak in visible range
-    peak_idx <- which.max(df$power_db)
-    if (length(peak_idx) > 0) {
-      peak_q <- df$quefrency[peak_idx]
-      peak_v <- df$power_db[peak_idx]
-      
-      p <- p +
-        ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed", 
-                           color = "red", alpha = 0.5) +
-        ggplot2::annotate("text", x = peak_q, y = peak_v,
-                         label = sprintf("Peak\n%.4f s\n(%.0f Hz)",
-                                       peak_q, 1/peak_q),
-                         hjust = -0.1, size = 3, color = "red")
-    }
-  }
 
   # Add garnish
   if (garnish) {
