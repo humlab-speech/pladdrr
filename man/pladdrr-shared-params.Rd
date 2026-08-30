@@ -39,6 +39,16 @@
 \item{pitch_ceiling}{Numeric. Pitch ceiling in Hz (default: 600)}
 
 \item{max_candidates}{Integer. Max candidates per frame (default: 15)}
+
+\item{unit}{Unit: "Hz" or "semitones"}
+
+\item{row.names}{Ignored}
+
+\item{optional}{Ignored}
+
+\item{fmin}{Low frequency cutoff (Hz)}
+
+\item{fmax}{High frequency cutoff (Hz)}
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit

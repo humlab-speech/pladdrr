@@ -44,7 +44,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #'
 #' @param pitch A Pitch R6 object
 #' @inheritParams pladdrr-shared-params time
-#' @param unit Unit: "Hz" or "semitones"
+#' @inheritParams pladdrr-shared-params unit
 #' @param interpolate Whether to interpolate
 #' @return Pitch value or NA
 #' @examples
@@ -65,7 +65,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' **DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.
 #'
 #' @param pitch A Pitch R6 object
-#' @param unit Unit: "Hz" or "semitones"
+#' @inheritParams pladdrr-shared-params unit
 #' @param time_range Optional time range c(start, end)
 #' @return Mean pitch value
 #' @examples
@@ -88,7 +88,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' **DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.
 #'
 #' @param pitch A Pitch R6 object
-#' @param unit Unit: "Hz" or "semitones"
+#' @inheritParams pladdrr-shared-params unit
 #' @inheritParams pladdrr-shared-params time_range
 #' @return Minimum pitch value
 #' @examples
@@ -111,7 +111,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' **DEPRECATED:** Use \code{pitch$get_maximum(unit)} instead.
 #'
 #' @param pitch A Pitch R6 object
-#' @param unit Unit: "Hz" or "semitones"
+#' @inheritParams pladdrr-shared-params unit
 #' @inheritParams pladdrr-shared-params time_range
 #' @return Maximum pitch value
 #' @examples

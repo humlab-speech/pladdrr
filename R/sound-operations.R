@@ -229,8 +229,8 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 #' Apply Hann band-pass filter
 #'
 #' @param sound Sound object
-#' @param fmin Low frequency cutoff (Hz)
-#' @param fmax High frequency cutoff (Hz)
+#' @inheritParams pladdrr-shared-params fmin
+#' @inheritParams pladdrr-shared-params fmax
 #' @param smooth Smoothing bandwidth (Hz)
 #' @return New Sound object
 #' @export
@@ -251,8 +251,8 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 #' Apply Hann band-stop filter
 #'
 #' @param sound Sound object
-#' @param fmin Low frequency cutoff (Hz)
-#' @param fmax High frequency cutoff (Hz)
+#' @inheritParams pladdrr-shared-params fmin
+#' @inheritParams pladdrr-shared-params fmax
 #' @param smooth Smoothing bandwidth (Hz)
 #' @return New Sound object
 #' @export

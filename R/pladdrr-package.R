@@ -164,6 +164,12 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
 #' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @param unit Unit: "Hz" or "semitones"
+#' @param row.names Ignored
+#' @param optional Ignored
+#' @param fmin Low frequency cutoff (Hz)
+#' @param fmax High frequency cutoff (Hz)
+
 
 
 #' @name pladdrr-shared-params
