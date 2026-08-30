@@ -121,3 +121,10 @@ test_that("PowerCepstrogram, MFCC, LFCC, Excitation autoplot/autolayer all rende
   expect_s3_class(ggplot2::autoplot(exc), "ggplot")
   expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(exc), "ggplot")
 })
+
+test_that("Harmonicity autoplot/autolayer render", {
+  harm <- sound_fixture()$to_harmonicity_cc()
+  p <- ggplot2::autoplot(harm)
+  expect_s3_class(p, "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(harm), "ggplot")
+})
