@@ -88,9 +88,7 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
                                        text_starts_with = NULL,
                                        extract_sounds = FALSE) {
   
-  if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
-  }
+  tier <- .validate_textgrid_intervals_args(textgrid, sound, tier, extract_sounds)
   
   # Validate tier
   if (is.character(tier)) {
@@ -212,4 +210,17 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
   }
   
   textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
+}
+
+
+# Validate extract_textgrid_intervals arguments; returns resolved tier.
+.validate_textgrid_intervals_args <- function(textgrid, sound, tier, extract_sounds) {
+  if (!inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+  if (is.character(tier)) tier <- textgrid$get_tier_number(tier)
+  if (!is.numeric(tier) || tier < 1) stop("tier must be a positive integer or valid tier name")
+  if (extract_sounds) {
+    if (is.null(sound)) stop("sound argument required when extract_sounds = TRUE")
+    if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  }
+  tier
 }
