@@ -168,25 +168,8 @@ plot_powercepstrum <- function(cepstrum,
   # Add trend line if requested
   p <- .add_trendline(p, plot_data, show_trendline)
   
-  # Apply dB range if specified
-  if (!is.null(db_range)) {
-    p <- p + ggplot2::coord_cartesian(ylim = db_range)
-  }
-  
-  # Add labels
-  if (is.null(title)) {
-    title <- "Power Cepstrum"
-  }
-  
-  p <- p + ggplot2::labs(
-    title = title,
-    subtitle = "Cepstral analysis for voice quality assessment",
-    x = "Quefrency (s)",
-    y = "Power (dB)"
-  )
-  
-  # Apply theme
-  p <- .apply_cepstrum_theme(p, theme)
+  # Finish plot (dB range, labels, theme)
+  p <- .finish_powercepstrum_plot(p, title, db_range, theme)
   
   return(p)
 }
@@ -546,4 +529,15 @@ create_cepstrum_report <- function(cepstrogram,
   p + ggplot2::geom_line(data = plot_data,
     ggplot2::aes(x = quefrency, y = fitted),
     color = "darkgray", linetype = "dashed", linewidth = 0.6)
+}
+
+
+# Finish a power cepstrum plot: dB range, labels, theme.
+.finish_powercepstrum_plot <- function(p, title, db_range, theme) {
+  if (!is.null(db_range)) p <- p + ggplot2::coord_cartesian(ylim = db_range)
+  if (is.null(title)) title <- "Power Cepstrum"
+  p <- p + ggplot2::labs(title = title,
+    subtitle = "Cepstral analysis for voice quality assessment",
+    x = "Quefrency (s)", y = "Power (dB)")
+  .apply_cepstrum_theme(p, theme)
 }
