@@ -732,6 +732,22 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 }
 
 
+
+# Convert a Matrix to long-format plot data, filtered to the requested ranges.
+.matrix_plot_data <- function(x, from_x, to_x, from_y, to_y) {
+  mat <- x$as_matrix()
+  nx <- x$get_number_of_columns()
+  ny <- x$get_number_of_rows()
+  xs <- x$get_xmin() + (seq_len(nx) - 0.5) * x$get_dx()
+  ys <- x$get_ymin() + (seq_len(ny) - 0.5) * x$get_dy()
+  df <- data.frame(x = rep(xs, each = ny), y = rep(ys, times = nx), value = as.vector(mat))
+  if (!is.null(from_x) && "x" %in% names(df)) df <- df[df$x >= from_x, ]
+  if (!is.null(to_x) && "x" %in% names(df)) df <- df[df$x <= to_x, ]
+  if (!is.null(from_y) && "y" %in% names(df)) df <- df[df$y >= from_y, ]
+  if (!is.null(to_y) && "y" %in% names(df)) df <- df[df$y <= to_y, ]
+  df
+}
+
 #' @title Plot Matrix as Heatmap
 #'
 #' @description
@@ -779,31 +795,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 
   # Convert to long-format data frame (Matrix has no as_data_frame(); build
   # it from the raw matrix plus its axis metadata)
-  mat <- x$as_matrix()
-  nx <- x$get_number_of_columns()
-  ny <- x$get_number_of_rows()
-  xs <- x$get_xmin() + (seq_len(nx) - 0.5) * x$get_dx()
-  ys <- x$get_ymin() + (seq_len(ny) - 0.5) * x$get_dy()
-  df <- data.frame(x = rep(xs, each = ny), y = rep(ys, times = nx), value = as.vector(mat))
-
-  if (nrow(df) == 0) {
-    warning("Matrix contains no data")
-    return(ggplot2::ggplot() + ggplot2::theme_void())
-  }
-  
-  # Filter ranges
-  if (!is.null(from_x) && "x" %in% names(df)) {
-    df <- df[df$x >= from_x, ]
-  }
-  if (!is.null(to_x) && "x" %in% names(df)) {
-    df <- df[df$x <= to_x, ]
-  }
-  if (!is.null(from_y) && "y" %in% names(df)) {
-    df <- df[df$y >= from_y, ]
-  }
-  if (!is.null(to_y) && "y" %in% names(df)) {
-    df <- df[df$y <= to_y, ]
-  }
+  df <- .matrix_plot_data(x, from_x, to_x, from_y, to_y)
   
   # Determine column names (flexible for different matrix types)
   x_col <- if ("time" %in% names(df)) "time" else if ("x" %in% names(df)) "x" else names(df)[1]
