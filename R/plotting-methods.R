@@ -679,10 +679,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
   
-  times <- numeric(n_points)
-  for (i in seq_len(n_points)) {
-    times[i] <- x$get_time_from_index(i)
-  }
+  times <- .point_process_times(x)
   
   df <- data.frame(time = times, y = 1)
   
@@ -1037,4 +1034,11 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
   if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
   if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
   df
+}
+
+
+# Point times from a PointProcess object.
+.point_process_times <- function(x) {
+  n_points <- x$get_number_of_points()
+  vapply(seq_len(n_points), function(i) x$get_time_from_index(i), numeric(1))
 }
