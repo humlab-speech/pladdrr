@@ -350,33 +350,8 @@ plot_pitch_intensity <- function(pitch, intensity,
   offset <- s$offset
   
   # Create combined plot
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_line(data = pitch_df,
-                      ggplot2::aes(x = .data$time, y = .data$frequency),
-                      color = pitch_color, linewidth = 0.8) +
-    ggplot2::geom_line(data = intensity_df,
-                      ggplot2::aes(x = .data$time, y = .data$scaled_intensity),
-                      color = intensity_color, linewidth = 0.8) +
-    ggplot2::scale_y_continuous(
-      name = "Frequency (Hz)",
-      sec.axis = ggplot2::sec_axis(
-        trans = ~ (. - offset) / scale_factor,
-        name = "Intensity (dB)"
-      )
-    ) +
-    ggplot2::labs(
-      title = title,
-      x = "Time (s)"
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      axis.title.y.left = ggplot2::element_text(color = pitch_color),
-      axis.text.y.left = ggplot2::element_text(color = pitch_color),
-      axis.title.y.right = ggplot2::element_text(color = intensity_color),
-      axis.text.y.right = ggplot2::element_text(color = intensity_color)
-    )
-  
-  p
+  p <- .build_pitch_intensity_plot(pitch_df, intensity_df, pitch_color,
+                                   intensity_color, scale_factor, offset, title)
 }
 
 #' @title Plot Spectrogram with Formant Overlay
@@ -649,4 +624,27 @@ plot_sound_pitch <- function(sound, pitch,
   } else {
     stop("Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
   }
+}
+
+
+# Build the pitch/intensity dual-axis combined plot.
+.build_pitch_intensity_plot <- function(pitch_df, intensity_df, pitch_color,
+                                        intensity_color, scale_factor, offset, title) {
+  ggplot2::ggplot() +
+    ggplot2::geom_line(data = pitch_df,
+      ggplot2::aes(x = .data$time, y = .data$frequency),
+      color = pitch_color, linewidth = 0.8) +
+    ggplot2::geom_line(data = intensity_df,
+      ggplot2::aes(x = .data$time, y = .data$scaled_intensity),
+      color = intensity_color, linewidth = 0.8) +
+    ggplot2::scale_y_continuous(name = "Frequency (Hz)",
+      sec.axis = ggplot2::sec_axis(trans = ~ (. - offset) / scale_factor,
+                                   name = "Intensity (dB)")) +
+    ggplot2::labs(title = title, x = "Time (s)") +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.title.y.left = ggplot2::element_text(color = pitch_color),
+      axis.text.y.left = ggplot2::element_text(color = pitch_color),
+      axis.title.y.right = ggplot2::element_text(color = intensity_color),
+      axis.text.y.right = ggplot2::element_text(color = intensity_color))
 }
