@@ -42,7 +42,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #'
 #' **DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.
 #'
-#' @param pitch A Pitch R6 object
+#' @inheritParams pladdrr-shared-pitch-r6 pitch
 #' @inheritParams pladdrr-shared-params time
 #' @inheritParams pladdrr-shared-params unit
 #' @param interpolate Whether to interpolate
@@ -64,7 +64,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.
 #'
-#' @param pitch A Pitch R6 object
+#' @inheritParams pladdrr-shared-pitch-r6 pitch
 #' @inheritParams pladdrr-shared-params unit
 #' @param time_range Optional time range c(start, end)
 #' @return Mean pitch value
@@ -87,7 +87,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.
 #'
-#' @param pitch A Pitch R6 object
+#' @inheritParams pladdrr-shared-pitch-r6 pitch
 #' @inheritParams pladdrr-shared-params unit
 #' @inheritParams pladdrr-shared-params time_range
 #' @return Minimum pitch value
@@ -110,7 +110,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_maximum(unit)} instead.
 #'
-#' @param pitch A Pitch R6 object
+#' @inheritParams pladdrr-shared-pitch-r6 pitch
 #' @inheritParams pladdrr-shared-params unit
 #' @inheritParams pladdrr-shared-params time_range
 #' @return Maximum pitch value

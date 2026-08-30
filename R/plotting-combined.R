@@ -217,7 +217,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' annotation tiers. This replicates Praat's TextGrid_Pitch_draw() function.
 #'
 #' @inheritParams pladdrr-shared-params textgrid
-#' @param pitch Pitch object
+#' @inheritParams pladdrr-shared-pitch pitch
 #' @param tier Integer or character. Tier number or name to display (default: all)
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
@@ -291,7 +291,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' Creates a dual-axis visualization showing pitch and intensity contours together.
 #' This replicates Praat's Pitch_Intensity_draw() function.
 #'
-#' @param pitch Pitch object
+#' @inheritParams pladdrr-shared-pitch pitch
 #' @param intensity Intensity object
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
@@ -441,7 +441,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #' overlaid. This is one of the most common Praat visualizations for voice analysis.
 #'
 #' @param spectrogram Spectrogram object
-#' @param pitch Pitch object
+#' @inheritParams pladdrr-shared-pitch pitch
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
 #' @param freq_max Maximum frequency to display in Hz (default: 5000)
@@ -524,7 +524,7 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' Praat visualization pattern.
 #'
 #' @inheritParams pladdrr-shared-sound sound
-#' @param pitch Pitch object
+#' @inheritParams pladdrr-shared-pitch pitch
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")

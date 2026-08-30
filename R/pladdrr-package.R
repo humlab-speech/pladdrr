@@ -213,3 +213,15 @@ NULL
 #' @param sound A Sound object
 #' @name pladdrr-shared-sound-a
 NULL
+
+#' Shared parameter docs for functions taking a plain Pitch object
+#'
+#' @param pitch Pitch object
+#' @name pladdrr-shared-pitch
+NULL
+
+#' Shared parameter docs for functions taking an R6 Pitch object
+#'
+#' @param pitch A Pitch R6 object
+#' @name pladdrr-shared-pitch-r6
+NULL
