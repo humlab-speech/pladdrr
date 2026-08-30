@@ -633,22 +633,7 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL, to_time = NUL
   is_interval <- object$tier_is_interval_tier(tier)
 
   if (is_interval) {
-    n_intervals <- object$get_number_of_intervals(tier)
-    tier_data <- data.frame(
-      start = vapply(seq_len(n_intervals),
-                     function(i) object$get_interval_start_time(tier, i),
-                     numeric(1)),
-      end = vapply(seq_len(n_intervals),
-                   function(i) object$get_interval_end_time(tier, i),
-                   numeric(1)),
-      label = vapply(seq_len(n_intervals),
-                     function(i) object$get_interval_text(tier, i),
-                     character(1)),
-      stringsAsFactors = FALSE
-    )
-
-    if (!is.null(from_time)) tier_data <- tier_data[tier_data$end >= from_time, ]
-    if (!is.null(to_time)) tier_data <- tier_data[tier_data$start <= to_time, ]
+    tier_data <- .textgrid_interval_data(object, tier, from_time, to_time)
 
     list(
       ggplot2::geom_rect(
@@ -663,19 +648,7 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL, to_time = NUL
       )
     )
   } else {
-    n_points <- object$get_number_of_points(tier)
-    tier_data <- data.frame(
-      time = vapply(seq_len(n_points),
-                    function(i) object$get_point_time(tier, i),
-                    numeric(1)),
-      label = vapply(seq_len(n_points),
-                     function(i) object$get_point_text(tier, i),
-                     character(1)),
-      stringsAsFactors = FALSE
-    )
-
-    if (!is.null(from_time)) tier_data <- tier_data[tier_data$time >= from_time, ]
-    if (!is.null(to_time)) tier_data <- tier_data[tier_data$time <= to_time, ]
+    tier_data <- .textgrid_point_data(object, tier, from_time, to_time)
 
     list(
       ggplot2::geom_vline(

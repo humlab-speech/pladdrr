@@ -119,6 +119,34 @@ NULL
   }
 }
 
+# Build an interval-tier data frame (start/end/label) filtered to time range.
+.textgrid_interval_data <- function(object, tier, from_time = NULL, to_time = NULL) {
+  n <- object$get_number_of_intervals(tier)
+  d <- data.frame(
+    start = vapply(seq_len(n), function(i) object$get_interval_start_time(tier, i), numeric(1)),
+    end = vapply(seq_len(n), function(i) object$get_interval_end_time(tier, i), numeric(1)),
+    label = vapply(seq_len(n), function(i) object$get_interval_text(tier, i), character(1)),
+    stringsAsFactors = FALSE
+  )
+  if (!is.null(from_time)) d <- d[d$end >= from_time, ]
+  if (!is.null(to_time)) d <- d[d$start <= to_time, ]
+  d
+}
+
+# Build a point-tier data frame (time/label) filtered to time range.
+.textgrid_point_data <- function(object, tier, from_time = NULL, to_time = NULL) {
+  n <- object$get_number_of_points(tier)
+  d <- data.frame(
+    time = vapply(seq_len(n), function(i) object$get_point_time(tier, i), numeric(1)),
+    label = vapply(seq_len(n), function(i) object$get_point_text(tier, i), character(1)),
+    stringsAsFactors = FALSE
+  )
+  if (!is.null(from_time)) d <- d[d$time >= from_time, ]
+  if (!is.null(to_time)) d <- d[d$time <= to_time, ]
+  d
+}
+
+
 # ============================================================================
 # Shared Method Dispatch Table
 # ============================================================================
