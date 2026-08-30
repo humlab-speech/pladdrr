@@ -10,7 +10,7 @@
 #'
 #' @param frequency Frequency in Hz (must be positive)
 #' @param duration Duration in seconds (must be positive)
-#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @inheritParams pladdrr-shared-params sampling_rate
 #' @param amplitude Peak amplitude (default: 1.0, must be positive)
 #'
 #' @return A praat_sound object containing the sine wave
@@ -55,7 +55,7 @@ generate_sine_wave <- function(frequency, duration,
 #' a normal distribution). Optionally specify a seed for reproducible noise.
 #'
 #' @param duration Duration in seconds (must be positive)
-#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @inheritParams pladdrr-shared-params sampling_rate
 #' @param amplitude Amplitude scaling factor (default: 1.0, must be positive).
 #'   Controls the standard deviation of the noise.
 #' @param seed Optional random seed for reproducible noise generation. If NULL

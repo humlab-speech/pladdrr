@@ -9,7 +9,7 @@
 #' \code{Sound$from_values(values, sampling_rate)}
 #'
 #' @param values Numeric vector of amplitude values
-#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @inheritParams pladdrr-shared-params sampling_rate
 #' @param start_time Start time in seconds (default: 0.0)
 #'
 #' @return Sound R6 object
