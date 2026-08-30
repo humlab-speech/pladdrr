@@ -171,3 +171,11 @@ test_that("is_praat_pitch returns FALSE for non-Pitch input", {
   expect_false(is_praat_pitch(Sound$create_tone(frequency = 200, duration = 0.2)))
   expect_false(is_praat_pitch(list()))
 })
+
+test_that("is_praat_formant handles legacy praat_formant objects", {
+  expect_false(is_praat_formant(structure(42, class = "praat_formant")))
+  expect_false(is_praat_formant(structure(list(), class = "praat_formant")))
+  expect_false(is_praat_formant(structure(list(values = 1, n_frames = 1,
+                                               n_formants = 1),
+                                          class = "praat_formant")))
+})

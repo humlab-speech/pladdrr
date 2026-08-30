@@ -232,3 +232,8 @@ test_that("sound_extract_and_pitch / _and_formant accept external-pointer input"
   f <- sound_extract_and_formant(xptr, 0, 0.1, return_r6 = FALSE)
   expect_true(inherits(f, "externalptr") || is.list(f))
 })
+
+test_that("batch pitch functions reject invalid input type", {
+  expect_error(sound_to_pitch_ac_batch("x"), "Invalid input type")
+  expect_error(sound_to_pitch_cc_batch("x"), "Invalid input type")
+})

@@ -518,3 +518,10 @@ test_that("get_pitch_quantiles_batch validates pitch and quantiles", {
   expect_error(get_pitch_quantiles_batch(pitch, c(-0.1)),
                "between 0 and 1")
 })
+
+test_that("get_jitter_shimmer_batch validates pointprocess and sound", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  expect_error(get_jitter_shimmer_batch("x", snd), "PointProcess")
+  pp <- snd$to_point_process_periodic_cc(75, 300)
+  expect_error(get_jitter_shimmer_batch(pp, "x"), "Sound object")
+})
