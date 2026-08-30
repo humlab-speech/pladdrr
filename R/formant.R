@@ -47,6 +47,38 @@
 #' # Equivalent, and the recommended way to spell it directly:
 #' formants2 <- sound$to_formant_burg(max_frequency = 5500)
 #' f1_mean2 <- formants2$get_mean(formant_number = 1)
+# ============================================================================
+# Frame-processing helpers (shared by .detect_formants_burg / .burg_algorithm)
+# ============================================================================
+
+# Extract a Hamming-windowed, pre-emphasised frame centered at time t.
+.extract_windowed_frame <- function(signal, sr, t, window_samples, pre_emphasis_from) {
+  n_samples <- length(signal)
+  center_sample <- round(t * sr)
+  start_sample <- max(1, center_sample - window_samples %/% 2)
+  end_sample <- min(n_samples, center_sample + window_samples %/% 2)
+  frame <- signal[start_sample:end_sample]
+  hamming <- 0.54 - 0.46 * cos(2 * pi * seq(0, length(frame) - 1) / (length(frame) - 1))
+  frame <- frame * hamming
+  if (pre_emphasis_from > 0) {
+    alpha <- exp(-2 * pi * pre_emphasis_from / sr)
+    frame <- c(frame[1], frame[-1] - alpha * frame[-length(frame)])
+  }
+  frame
+}
+
+# Build the per-frame formant row lists (NA for undefined formants).
+.frame_formant_rows <- function(t, formants, n_formants) {
+  lapply(seq_len(n_formants), function(f) {
+    if (f <= nrow(formants)) {
+      list(time = t, formant_number = f,
+           frequency = formants$frequency[f], bandwidth = formants$bandwidth[f])
+    } else {
+      list(time = t, formant_number = f, frequency = NA_real_, bandwidth = NA_real_)
+    }
+  })
+}
+
 extract_formants <- function(sound,
                              time_step = 0.0,
                              max_formant = 5500,
@@ -167,45 +199,17 @@ extract_formants <- function(sound,
   for (i in seq_along(frame_times)) {
     t <- frame_times[i]
     
-    # Extract windowed frame
-    center_sample <- round(t * sr)
-    start_sample <- max(1, center_sample - window_samples %/% 2)
-    end_sample <- min(n_samples, center_sample + window_samples %/% 2)
-    
-    frame <- signal[start_sample:end_sample]
-    
-    # Apply Hamming window
-    hamming <- 0.54 - 0.46 * cos(2 * pi * seq(0, length(frame) - 1) / (length(frame) - 1))
-    frame <- frame * hamming
-    
-    # Pre-emphasis filter
-    if (pre_emphasis_from > 0) {
-      alpha <- exp(-2 * pi * pre_emphasis_from / sr)
-      frame <- c(frame[1], frame[-1] - alpha * frame[-length(frame)])
-    }
-    
+    # Extract windowed frame (Hamming + pre-emphasis)
+    frame <- .extract_windowed_frame(signal, sr, t, window_samples, pre_emphasis_from)
+
     # LPC analysis using Burg's method
     lpc_order <- 2 * n_formants + 2
     formants <- .lpc_to_formants(frame, sr, lpc_order, n_formants, max_formant)
-    
+
     # Add to results list
-    for (f in seq_len(n_formants)) {
-      if (f <= nrow(formants)) {
-        results_list[[idx]] <- list(
-          time = t,
-          formant_number = f,
-          frequency = formants$frequency[f],
-          bandwidth = formants$bandwidth[f]
-        )
-      } else {
-        # Undefined formant
-        results_list[[idx]] <- list(
-          time = t,
-          formant_number = f,
-          frequency = NA_real_,
-          bandwidth = NA_real_
-        )
-      }
+    rows <- .frame_formant_rows(t, formants, n_formants)
+    for (r in rows) {
+      results_list[[idx]] <- r
       idx <- idx + 1L
     }
   }
