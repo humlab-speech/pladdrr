@@ -942,48 +942,37 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 # Constructor
 # ============================================================================
 
+
+# Read a sound file: native Praat reader first, av fallback for exotic formats.
+.sound_ptr_from_path <- function(path) {
+  if (!file.exists(path)) stop("Sound file not found: ", path)
+  tryCatch(
+    .sound_read_from_file_native(path),
+    error = function(e) {
+      if (!requireNamespace("av", quietly = TRUE)) {
+        stop("Native reader failed and 'av' package not available.\n",
+             "Install av: remotes::install_github('humlab-speech/av')\n",
+             "Native error: ", e$message)
+      }
+      audio_info <- av::av_media_info(path)
+      audio_data <- av::read_audio_bin(path)
+      max_value <- max(abs(audio_data))
+      if (max_value > 0) audio_data <- audio_data / max_value
+      if (is.matrix(audio_data)) audio_data <- t(audio_data)
+      else audio_data <- matrix(audio_data, nrow = 1)
+      sampling_rate <- audio_info$audio$sample_rate
+      .sound_create_from_values(audio_data, sampling_rate)
+    }
+  )
+}
+
 #' @export
 Sound <- function(path = NULL, .xptr = NULL) {
   # Handle initialization
   if (!is.null(.xptr)) {
     ptr <- .xptr
   } else if (!is.null(path)) {
-    if (!file.exists(path)) {
-      stop("Sound file not found: ", path)
-    }
-
-    # Try native Praat reader first (fast path for common formats)
-    ptr <- tryCatch({
-      .sound_read_from_file_native(path)
-    }, error = function(e) {
-      # Native failed - fallback to av package for exotic formats
-      if (!requireNamespace("av", quietly = TRUE)) {
-        stop("Native reader failed and 'av' package not available.\n",
-             "Install av: remotes::install_github('humlab-speech/av')\n",
-             "Native error: ", e$message)
-      }
-
-      # Read audio using av
-      audio_info <- av::av_media_info(path)
-      audio_data <- av::read_audio_bin(path)
-
-      # Normalize PCM integers to [-1, 1] range
-      max_value <- max(abs(audio_data))
-      if (max_value > 0) {
-        audio_data <- audio_data / max_value
-      }
-
-      # av returns samples x channels matrix, we need channels x samples
-      if (is.matrix(audio_data)) {
-        audio_data <- t(audio_data)
-      } else {
-        audio_data <- matrix(audio_data, nrow = 1)
-      }
-
-      # Create Sound from matrix
-      sampling_rate <- audio_info$audio$sample_rate
-      .sound_create_from_values(audio_data, sampling_rate)
-    })
+    ptr <- .sound_ptr_from_path(path)
   } else {
     stop("Must provide either path or .xptr")
   }
