@@ -110,22 +110,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     results <- parallel::mclapply(files, function(f) .analyze_one_file(f, tpw, analysis_func, ...), mc.cores = n_cores)
   } else {
     # Windows: use PSOCK cluster
-    cl <- parallel::makeCluster(n_cores)
-    on.exit(parallel::stopCluster(cl), add = TRUE)
-
-    # Workers are fresh R sessions and don't inherit the calling session's
-    # .libPaths(), so pladdrr can be invisible to them even though it's
-    # loaded here (e.g. installed to a non-default library, or a temp
-    # install location during R CMD build's vignette pass). Propagate the
-    # library path before loading the package.
-    parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
-    # Attach in each worker so unqualified names (Sound(), analysis_func's
-    # symbols, ...) resolve on the search path, same effect as library().
-    parallel::clusterEvalQ(cl, {
-      loadNamespace("pladdrr")
-      attachNamespace("pladdrr")
-    })
-    parallel::clusterExport(cl, c("analysis_func", "tpw", ".analyze_one_file"), envir = environment())
+    cl <- .make_worker_cluster(n_cores, c("analysis_func", "tpw", ".analyze_one_file"))
 
     results <- parallel::parLapply(cl, files, function(f) .analyze_one_file(f, tpw, analysis_func, ...))
   }
@@ -202,13 +187,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     # its C++ object can't survive that boundary (it deserializes as an
     # invalid pointer on the worker side). Ship raw sample data instead and
     # rebuild the Sound inside each worker.
-    sound_data <- lapply(sounds, function(s) {
-      nch <- s$get_number_of_channels()
-      values <- t(vapply(seq_len(nch), s$get_values,
-                         numeric(s$get_number_of_samples())))
-      list(values = values, sr = s$get_sampling_frequency(),
-           start = s$get_start_time())
-    })
+    sound_data <- lapply(sounds, .sound_to_worker_data)
 
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
@@ -394,4 +373,24 @@ benchmark_parallel <- function(files, analysis_func,
   }
   
   results
+}
+
+
+# Serialize a Sound to worker-safe data (raw samples + metadata).
+.sound_to_worker_data <- function(s) {
+  nch <- s$get_number_of_channels()
+  values <- t(vapply(seq_len(nch), s$get_values, numeric(s$get_number_of_samples())))
+  list(values = values, sr = s$get_sampling_frequency(), start = s$get_start_time())
+}
+
+# Build a PSOCK worker cluster with pladdrr attached and vars exported.
+.make_worker_cluster <- function(n_cores, export_vars) {
+  cl <- parallel::makeCluster(n_cores)
+  parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
+  parallel::clusterEvalQ(cl, {
+    loadNamespace("pladdrr")
+    attachNamespace("pladdrr")
+  })
+  parallel::clusterExport(cl, export_vars, envir = environment())
+  cl
 }
