@@ -28,8 +28,8 @@ test_that("SIMD tone generation creates valid sine wave", {
   expect_equal(max_amp, 0.5, tolerance = 0.01)
 
   # Check it's roughly sinusoidal (zero crossings)
-  # Matrix is 1 x N (channels x samples), so use mat[1,] to get samples
-  zero_crossings <- sum(diff(sign(mat[1,])) != 0)
+  # Matrix is 1 x N (channels x samples), so use mat[1, ] to get samples
+  zero_crossings <- sum(diff(sign(mat[1, ])) != 0)
   expected_crossings <- 440 * 2  # Two crossings per cycle
   expect_equal(zero_crossings, expected_crossings, tolerance = 10)
 })
@@ -42,14 +42,14 @@ test_that("SIMD tone generation handles different frequencies", {
   sound_low <- create_test_tone(1.0, 110, 44100, 0.5)
 
   mat_low <- sound_low$as_matrix()
-  zero_crossings_low <- sum(diff(sign(mat_low[1,])) != 0)
+  zero_crossings_low <- sum(diff(sign(mat_low[1, ])) != 0)
   expect_equal(zero_crossings_low, 110 * 2, tolerance = 10)
 
   # High frequency
   sound_high <- create_test_tone(1.0, 1000, 44100, 0.5)
 
   mat_high <- sound_high$as_matrix()
-  zero_crossings_high <- sum(diff(sign(mat_high[1,])) != 0)
+  zero_crossings_high <- sum(diff(sign(mat_high[1, ])) != 0)
   expect_equal(zero_crossings_high, 1000 * 2, tolerance = 10)
 })
 
