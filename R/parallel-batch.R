@@ -391,6 +391,6 @@ benchmark_parallel <- function(files, analysis_func,
     loadNamespace("pladdrr")
     attachNamespace("pladdrr")
   })
-  parallel::clusterExport(cl, export_vars, envir = environment())
+  parallel::clusterExport(cl, export_vars, envir = parent.frame())
   cl
 }
