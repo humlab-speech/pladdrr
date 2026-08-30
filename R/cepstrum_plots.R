@@ -62,6 +62,55 @@ NULL
   )
 }
 
+# Sample the CPP time series at the given times (NA on error).
+.sample_cpp_timeseries <- function(cepstrogram, sample_times, qmin, qmax) {
+  vapply(sample_times, function(t) {
+    tryCatch(
+      cepstrogram$get_cpp_at_time(time = t, interpolation = "linear",
+                                 qmin = qmin, qmax = qmax),
+      error = function(e) NA_real_
+    )
+  }, numeric(1))
+}
+
+# Add a peak marker + CPP label to a power cepstrum plot.
+.add_peak_annotation <- function(p, cepstrum, qmin, qmax, fit_method) {
+  tryCatch({
+    peak_quefrency <- cepstrum$get_quefrency_of_peak(
+      interpolation = "parabolic", qmin = qmin, qmax = qmax)
+    cpp <- cepstrum$get_peak_prominence(
+      interpolation = "parabolic", qmin = qmin, qmax = qmax, fit_method = fit_method)
+    peak_value <- cepstrum$get_value_at_quefrency(
+      quefrency = peak_quefrency, interpolation = "parabolic",
+      qmin = qmin, qmax = qmax, unit = "dB")
+    p + ggplot2::geom_point(
+      data = data.frame(quefrency = peak_quefrency, power_db = peak_value),
+      ggplot2::aes(x = quefrency, y = power_db),
+      color = "red", size = 4, shape = 17
+    ) + ggplot2::annotate("text",
+      x = peak_quefrency, y = peak_value,
+      label = sprintf("CPP: %.2f dB\nQ: %.4f s", cpp, peak_quefrency),
+      vjust = -1.5, hjust = 0.5, size = 3.5, fontface = "bold", color = "red")
+  }, error = function(e) {
+    warning("Could not compute peak: ", e$message)
+    p
+  })
+}
+
+# Per-time-frame cepstral peak quefrency from a cepstrogram raster.
+.cpp_peak_by_time <- function(plot_data) {
+  do.call(rbind, lapply(
+    split(plot_data, plot_data$time),
+    function(d) data.frame(
+      time = d$time[1],
+      quefrency = d$quefrency[which.max(d$power_db)]
+    )
+  ))
+}
+
+
+
+
 plot_powercepstrum <- function(cepstrum,
                               show_peak = TRUE,
                               show_trendline = TRUE,
@@ -102,43 +151,7 @@ plot_powercepstrum <- function(cepstrum,
     ggplot2::geom_line(color = "steelblue", linewidth = 0.8)
   
   # Add peak annotation if requested
-  if (show_peak) {
-    tryCatch({
-      peak_quefrency <- cepstrum$get_quefrency_of_peak(
-        interpolation = "parabolic",
-        qmin = qmin,
-        qmax = qmax
-      )
-      
-      cpp <- cepstrum$get_peak_prominence(
-        interpolation = "parabolic",
-        qmin = qmin,
-        qmax = qmax,
-        fit_method = fit_method
-      )
-      
-      peak_value <- cepstrum$get_value_at_quefrency(
-        quefrency = peak_quefrency,
-        interpolation = "linear",
-        unit = "dB"
-      )
-      
-      # Add peak marker
-      p <- p + ggplot2::geom_point(
-        data = data.frame(quefrency = peak_quefrency, power_db = peak_value),
-        ggplot2::aes(x = quefrency, y = power_db),
-        color = "red", size = 4, shape = 17
-      ) +
-      ggplot2::annotate("text",
-                       x = peak_quefrency,
-                       y = peak_value,
-                       label = sprintf("CPP: %.2f dB\nQ: %.4f s", cpp, peak_quefrency),
-                       vjust = -1.5, hjust = 0.5,
-                       size = 3.5, fontface = "bold", color = "red")
-    }, error = function(e) {
-      warning("Could not compute peak: ", e$message)
-    })
-  }
+  if (show_peak) p <- .add_peak_annotation(p, cepstrum, qmin, qmax, fit_method)
   
   # Add trend line if requested
   if (show_trendline) {
@@ -273,15 +286,7 @@ plot_powercepstrogram <- function(cepstrogram,
   # previous flat placeholder at quefrency = 0.01 with the real per-frame
   # argmax; no per-time-point C++ query or interpolation is needed.
   if (show_cpp_contour && nrow(plot_data) > 0) {
-    peak_q_by_time <- do.call(rbind, lapply(
-      split(plot_data, plot_data$time),
-      function(d) {
-        data.frame(
-          time = d$time[1],
-          quefrency = d$quefrency[which.max(d$power_db)]
-        )
-      }
-    ))
+    peak_q_by_time <- .cpp_peak_by_time(plot_data)
 
     p <- p + ggplot2::geom_line(
       data = peak_q_by_time,
@@ -376,19 +381,7 @@ plot_cpp_timeseries <- function(cepstrogram,
   sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
   
   # Compute CPP at each time point
-  cpp_values <- numeric(n_samples)
-  
-  for (i in seq_along(sample_times)) {
-    cpp_values[i] <- tryCatch(
-      cepstrogram$get_cpp_at_time(
-        time = sample_times[i],
-        interpolation = "linear",
-        qmin = qmin,
-        qmax = qmax
-      ),
-      error = function(e) NA_real_
-    )
-  }
+  cpp_values <- .sample_cpp_timeseries(cepstrogram, sample_times, qmin, qmax)
   
   # Create plot data
   plot_data <- data.frame(
