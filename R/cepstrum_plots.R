@@ -337,20 +337,8 @@ plot_cpp_timeseries <- function(cepstrogram,
     time_range <- c(0, max_time)
   }
   
-  # Sample times
-  sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
-  
-  # Compute CPP at each time point
-  cpp_values <- .sample_cpp_timeseries(cepstrogram, sample_times, qmin, qmax)
-  
-  # Create plot data
-  plot_data <- data.frame(
-    time = sample_times,
-    cpp = cpp_values
-  )
-  
-  # Remove NAs
-  plot_data <- plot_data[!is.na(plot_data$cpp), ]
+  # Sample CPP time series and build plot data
+  plot_data <- .cpp_timeseries_data(cepstrogram, time_range, n_samples, qmin, qmax)
   
   # Create base plot
   p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = cpp)) +
@@ -536,4 +524,13 @@ create_cepstrum_report <- function(cepstrogram,
     } else "No samples",
     x = "Time (s)", y = "CPP (dB)")
   .apply_cepstrum_theme(p, theme)
+}
+
+
+# Sample a CPP time series and build NA-filtered plot data.
+.cpp_timeseries_data <- function(cepstrogram, time_range, n_samples, qmin, qmax) {
+  sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
+  cpp_values <- .sample_cpp_timeseries(cepstrogram, sample_times, qmin, qmax)
+  plot_data <- data.frame(time = sample_times, cpp = cpp_values)
+  plot_data[!is.na(plot_data$cpp), ]
 }
