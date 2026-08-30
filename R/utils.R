@@ -116,6 +116,20 @@ validate_string <- function(x, name = deparse(substitute(x)),
 # Sound Object Validation
 # ==============================================================================
 
+
+# Validate a legacy praat_sound-shaped object (deprecated S3 path).
+.is_valid_praat_sound_legacy <- function(x) {
+  if (!inherits(x, "praat_sound")) return(FALSE)
+  if (!is.list(x)) return(FALSE)
+  required_fields <- c("values", "time", "sampling_rate", "n_samples",
+                       "duration", "start_time", "end_time")
+  if (!all(required_fields %in% names(x))) return(FALSE)
+  if (!is.numeric(x$values) || !is.numeric(x$time)) return(FALSE)
+  if (!is.numeric(x$sampling_rate) || !is.numeric(x$duration)) return(FALSE)
+  if (!is.numeric(x$n_samples) || length(x$n_samples) != 1) return(FALSE)
+  TRUE
+}
+
 #' Check if object is a valid Sound (R6 or legacy S3)
 #'
 #' Validates that an object is a Sound R6 object or legacy praat_sound
@@ -134,32 +148,7 @@ is_praat_sound <- function(x) {
   }
   
   # Legacy S3 check (deprecated but still supported for now)
-  if (!inherits(x, "praat_sound")) {
-    return(FALSE)
-  }
-  if (!is.list(x)) {
-    return(FALSE)
-  }
-
-  # Check required fields for legacy S3
-  required_fields <- c("values", "time", "sampling_rate", "n_samples",
-                      "duration", "start_time", "end_time")
-  if (!all(required_fields %in% names(x))) {
-    return(FALSE)
-  }
-
-  # Basic type checks
-  if (!is.numeric(x$values) || !is.numeric(x$time)) {
-    return(FALSE)
-  }
-  if (!is.numeric(x$sampling_rate) || !is.numeric(x$duration)) {
-    return(FALSE)
-  }
-  if (!is.numeric(x$n_samples) || length(x$n_samples) != 1) {
-    return(FALSE)
-  }
-
-  TRUE
+  .is_valid_praat_sound_legacy(x)
 }
 
 #' Validate praat_sound object
