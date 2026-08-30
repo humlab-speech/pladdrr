@@ -65,10 +65,12 @@ NULL
 .cpp_peak_by_time <- function(plot_data) {
   do.call(rbind, lapply(
     split(plot_data, plot_data$time),
-    function(d) data.frame(
-      time = d$time[1],
-      quefrency = d$quefrency[which.max(d$power_db)]
-    )
+    function(d) {
+      data.frame(
+        time = d$time[1],
+        quefrency = d$quefrency[which.max(d$power_db)]
+      )
+    }
   ))
 }
 
@@ -502,7 +504,9 @@ create_cepstrum_report <- function(cepstrogram,
       sprintf("Mean CPP: %.2f dB (SD: %.2f)",
               mean(plot_data$cpp, na.rm = TRUE),
               sd(plot_data$cpp, na.rm = TRUE))
-    } else "No samples",
+    } else {
+      "No samples"
+    },
     x = "Time (s)", y = "CPP (dB)")
   .apply_cepstrum_theme(p, theme)
 }

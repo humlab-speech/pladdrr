@@ -37,12 +37,16 @@ klattgrid_script <- normalizePath(
 #   any interesting way, this fixture gives them actual spectral structure
 #   to track.
 mono_fixtures <- list(
-  tone_200hz = function() Sound$create_tone(
-    duration = 1.0, sampling_rate = 16000, frequency = 200
-  ),
-  tone_120hz_low = function() Sound$create_tone(
-    duration = 1.0, sampling_rate = 16000, frequency = 120
-  ),
+  tone_200hz = function() {
+    Sound$create_tone(
+      duration = 1.0, sampling_rate = 16000, frequency = 200
+    )
+  },
+  tone_120hz_low = function() {
+    Sound$create_tone(
+      duration = 1.0, sampling_rate = 16000, frequency = 120
+    )
+  },
   silence = function() Sound$from_values(rep(0, 16000), 16000),
   complex_tone = function() {
     sr <- 16000
