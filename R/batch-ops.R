@@ -648,6 +648,21 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 }
 
 
+
+# Validate sound_load_window arguments.
+.validate_sound_load_window <- function(path, start, end, resample_to, preserve_times) {
+  if (!is.character(path) || length(path) != 1) stop("path must be a single character string")
+  if (!file.exists(path)) stop("File not found: ", path)
+  if (!is.numeric(start) || length(start) != 1 || start < 0) stop("start must be a non-negative number")
+  if (!is.numeric(end) || length(end) != 1) stop("end must be a number")
+  if (end <= start) stop("end must be greater than start")
+  if (!is.null(resample_to)) {
+    if (!is.numeric(resample_to) || length(resample_to) != 1 || resample_to <= 0) stop("resample_to must be a positive number or NULL")
+  }
+  if (!is.logical(preserve_times) || length(preserve_times) != 1) stop("preserve_times must be TRUE or FALSE")
+  invisible(NULL)
+}
+
 #' Load Sound Window from File with Optional Resampling
 #'
 #' Extracts a time window from a sound file without loading the entire file.
@@ -695,29 +710,7 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' @seealso \code{\link{Sound}}, \code{\link{LongSound}}
 #' @export
 sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {
-  if (!is.character(path) || length(path) != 1) {
-    stop("path must be a single character string")
-  }
-  if (!file.exists(path)) {
-    stop("File not found: ", path)
-  }
-  if (!is.numeric(start) || length(start) != 1 || start < 0) {
-    stop("start must be a non-negative number")
-  }
-  if (!is.numeric(end) || length(end) != 1) {
-    stop("end must be a number")
-  }
-  if (end <= start) {
-    stop("end must be greater than start")
-  }
-  if (!is.null(resample_to)) {
-    if (!is.numeric(resample_to) || length(resample_to) != 1 || resample_to <= 0) {
-      stop("resample_to must be a positive number or NULL")
-    }
-  }
-  if (!is.logical(preserve_times) || length(preserve_times) != 1) {
-    stop("preserve_times must be TRUE or FALSE")
-  }
+  .validate_sound_load_window(path, start, end, resample_to, preserve_times)
   
   # Call C++ wrapper (returns external pointer)
   result_xptr <- .sound_load_window(path, start, end, resample_to, preserve_times)
