@@ -416,8 +416,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #'
 #' @param pointprocess PointProcess object or external pointer (glottal pulses)
 #' @param sound Sound object or external pointer (required for shimmer)
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param period_floor Minimum period in seconds (default 0.0001 = 10000 Hz)
 #' @param period_ceiling Maximum period in seconds (default 0.02 = 50 Hz)
 #' @param max_period_factor Maximum period factor (default 1.3)

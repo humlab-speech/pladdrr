@@ -194,3 +194,10 @@ NULL
 #' @param sound Sound object
 #' @name pladdrr-shared-sound
 NULL
+
+#' Shared parameter docs for functions using 0-based time conventions
+#'
+#' @param from_time Start time (0 = beginning)
+#' @param to_time End time (0 = end)
+#' @name pladdrr-shared-time0
+NULL

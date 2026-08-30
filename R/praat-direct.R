@@ -572,8 +572,8 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 #'
 #' @inheritParams pladdrr-shared-params pitch
 #' @param quantile Quantile value (0.25 for Q1, 0.75 for Q3, 0.5 for median)
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param unit Pitch unit ("hertz", "semitones", "mel", "erb", "loghertz")
 #'
 #' @return Quantile value in specified unit
@@ -602,8 +602,8 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 
 #' Get mean pitch value without R6 wrapper overhead.
 #'
 #' @inheritParams pladdrr-shared-params pitch
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param unit Pitch unit
 #'
 #' @return Mean pitch value
@@ -630,8 +630,8 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
 #' Get standard deviation of pitch values without R6 wrapper overhead.
 #'
 #' @inheritParams pladdrr-shared-params pitch
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param unit Pitch unit
 #'
 #' @return Standard deviation
@@ -841,8 +841,8 @@ to_point_process_from_sound_and_pitch <- function(sound, pitch) {
 #' Critical for VUV analysis workflows.
 #'
 #' @param pointprocess PointProcess object or external pointer
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param period_floor Minimum period (default: 0.0001)
 #' @param period_ceiling Maximum period (default: 0.02)
 #' @param max_period_factor Maximum period factor (default: 1.3)
@@ -885,8 +885,8 @@ pp_get_mean_period_direct <- function(pointprocess,
 #' Get standard deviation of periods from PointProcess without R6 wrapper overhead.
 #'
 #' @param pointprocess PointProcess object or external pointer
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr-shared-time0 from_time
+#' @inheritParams pladdrr-shared-time0 to_time
 #' @param period_floor Minimum period
 #' @param period_ceiling Maximum period
 #' @param max_period_factor Maximum period factor
