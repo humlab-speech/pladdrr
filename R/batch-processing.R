@@ -55,6 +55,80 @@ NULL
 #' )
 #'
 #' @export
+
+# Extract measurements for every interval tier, applying measure functions
+# to each extracted sound part. Returns a list of row lists.
+.extract_interval_measurements <- function(sound, textgrid, tier_idx, measures, interval_filter) {
+  n_items <- textgrid$get_number_of_intervals(tier_idx)
+  results <- list()
+  for (i in seq_len(n_items)) {
+    label <- textgrid$get_interval_text(tier_idx, i)
+    if (!is.null(interval_filter) && !interval_filter(label)) next
+    tmin <- textgrid$get_interval_start_time(tier_idx, i)
+    tmax <- textgrid$get_interval_end_time(tier_idx, i)
+    part <- sound$extract_part(tmin, tmax, preserve_times = FALSE)
+    row <- list(tier = tier_idx, interval = i, label = label,
+                tmin = tmin, tmax = tmax, duration = tmax - tmin)
+    for (measure_name in names(measures)) {
+      measure_func <- measures[[measure_name]]
+      tryCatch({
+        value <- measure_func(part, 0, tmax - tmin)
+        row[[measure_name]] <- value
+      }, error = function(e) {
+        warning("Error in measure '", measure_name, "' for interval ", i, ": ", e$message)
+        row[[measure_name]] <- NA
+      })
+    }
+    results[[length(results) + 1]] <- row
+  }
+  results
+}
+
+# Extract measurements at each point tier, applying measure functions to the
+# sound at the point time. Returns a list of row lists.
+.extract_point_measurements <- function(sound, textgrid, tier_idx, measures, interval_filter) {
+  n_items <- textgrid$get_number_of_points(tier_idx)
+  results <- list()
+  for (i in seq_len(n_items)) {
+    label <- textgrid$get_point_text(tier_idx, i)
+    if (!is.null(interval_filter) && !interval_filter(label)) next
+    time <- textgrid$get_point_time(tier_idx, i)
+    row <- list(tier = tier_idx, point = i, label = label, time = time)
+    for (measure_name in names(measures)) {
+      measure_func <- measures[[measure_name]]
+      tryCatch({
+        value <- measure_func(sound, time, time)
+        row[[measure_name]] <- value
+      }, error = function(e) {
+        warning("Error in measure '", measure_name, "' for point ", i, ": ", e$message)
+        row[[measure_name]] <- NA
+      })
+    }
+    results[[length(results) + 1]] <- row
+  }
+  results
+}
+
+# Aggregate a measurements data frame by label (mean/sd of numeric columns).
+.aggregate_measurements_by_label <- function(df) {
+  measure_cols <- setdiff(names(df), c("tier", "interval", "point", "label",
+                                        "tmin", "tmax", "time", "duration"))
+  agg_list <- lapply(split(df, df$label), function(subset) {
+    row <- list(label = subset$label[1])
+    row$n <- nrow(subset)
+    for (col in measure_cols) {
+      if (is.numeric(subset[[col]])) {
+        row[[paste0(col, "_mean")]] <- mean(subset[[col]], na.rm = TRUE)
+        row[[paste0(col, "_sd")]] <- sd(subset[[col]], na.rm = TRUE)
+      }
+    }
+    as.data.frame(row, stringsAsFactors = FALSE)
+  })
+  out <- do.call(rbind, agg_list)
+  rownames(out) <- NULL
+  out
+}
+
 batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 
                          ncores = NULL, progress = TRUE, ...) {
@@ -297,84 +371,9 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 
   # Get intervals/points
   if (is_interval_tier) {
-    n_items <- textgrid$get_number_of_intervals(tier_idx)
-
-    # Extract measurements
-    results <- list()
-    for (i in seq_len(n_items)) {
-      label <- textgrid$get_interval_text(tier_idx, i)
-
-      # Filter if needed
-      if (!is.null(interval_filter) && !interval_filter(label)) {
-        next
-      }
-
-      tmin <- textgrid$get_interval_start_time(tier_idx, i)
-      tmax <- textgrid$get_interval_end_time(tier_idx, i)
-      
-      # Extract part
-      part <- sound$extract_part(tmin, tmax, preserve_times = FALSE)
-      
-      # Apply measurements
-      row <- list(
-        tier = tier_idx,
-        interval = i,
-        label = label,
-        tmin = tmin,
-        tmax = tmax,
-        duration = tmax - tmin
-      )
-      
-      for (measure_name in names(measures)) {
-        measure_func <- measures[[measure_name]]
-        tryCatch({
-          value <- measure_func(part, 0, tmax - tmin)
-          row[[measure_name]] <- value
-        }, error = function(e) {
-          warning("Error in measure '", measure_name, "' for interval ", i, ": ", e$message)
-          row[[measure_name]] <- NA
-        })
-      }
-      
-      results[[length(results) + 1]] <- row
-    }
-    
+    results <- .extract_interval_measurements(sound, textgrid, tier_idx, measures, interval_filter)
   } else {
-    # Point tier
-    n_items <- textgrid$get_number_of_points(tier_idx)
-
-    results <- list()
-    for (i in seq_len(n_items)) {
-      label <- textgrid$get_point_text(tier_idx, i)
-
-      # Filter if needed
-      if (!is.null(interval_filter) && !interval_filter(label)) {
-        next
-      }
-
-      time <- textgrid$get_point_time(tier_idx, i)
-      
-      # Apply measurements at point
-      row <- list(
-        tier = tier_idx,
-        point = i,
-        label = label,
-        time = time
-      )
-      
-      for (measure_name in names(measures)) {
-        measure_func <- measures[[measure_name]]
-        tryCatch({
-          value <- measure_func(sound, time, time)
-          row[[measure_name]] <- value
-        }, error = function(e) {
-          warning("Error in measure '", measure_name, "' for point ", i, ": ", e$message)
-          row[[measure_name]] <- NA
-        })
-      }
-      
-      results[[length(results) + 1]] <- row
-    }
+    results <- .extract_point_measurements(sound, textgrid, tier_idx, measures, interval_filter)
   }
   
   # Convert to data frame
@@ -384,25 +383,7 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
   
   # Aggregate if needed
   if (aggregate_by == "label" && nrow(df) > 0) {
-    # Group by label and aggregate
-    measure_cols <- setdiff(names(df), c("tier", "interval", "point", "label", "tmin", "tmax", "time", "duration"))
-    
-    agg_list <- lapply(split(df, df$label), function(subset) {
-      row <- list(label = subset$label[1])
-      row$n <- nrow(subset)
-      
-      for (col in measure_cols) {
-        if (is.numeric(subset[[col]])) {
-          row[[paste0(col, "_mean")]] <- mean(subset[[col]], na.rm = TRUE)
-          row[[paste0(col, "_sd")]] <- sd(subset[[col]], na.rm = TRUE)
-        }
-      }
-      
-      as.data.frame(row, stringsAsFactors = FALSE)
-    })
-    
-    df <- do.call(rbind, agg_list)
-    rownames(df) <- NULL
+    df <- .aggregate_measurements_by_label(df)
   }
   
   df
