@@ -104,6 +104,43 @@ NULL
   (length(zc) / afstand) < zcr_threshold
 }
 
+.detect_voiced_intervals <- function(sound, minimum_pitch, time_step, silence_threshold,
+                                     min_silent_interval, min_sounding_interval) {
+  vad_grid <- sound_to_textgrid_silences(
+    sound, minimum_pitch = minimum_pitch, time_step = time_step,
+    silence_threshold = silence_threshold,
+    min_silent_interval = min_silent_interval,
+    min_sounding_interval = min_sounding_interval)
+  list(
+    vad_grid = vad_grid,
+    voiced_intervals = textgrid_get_intervals_where(
+      vad_grid, tier = 1, condition = "equals", text = "sounding")
+  )
+}
+
+# Filter voiced segments by zero-crossing rate (all-rejected handled by caller).
+.apply_zcr_filter <- function(xmin, xmax, sound, zcr_threshold, zcr_window) {
+  pp_zeros <- sound$to_point_process_zeros(
+    channel = 1L, include_raisers = TRUE, include_fallers = TRUE)
+  all_zeros <- pp_zeros$as_vector()
+  keep <- vapply(seq_along(xmin), function(i) {
+    .segment_zcr_keep(all_zeros, xmin[i], xmax[i], zcr_threshold, zcr_window)
+  }, logical(1))
+  list(xmin = xmin[keep], xmax = xmax[keep])
+}
+
+# Extract and concatenate voiced segments into a single Sound, optionally
+# returning the source TextGrid.
+.extract_voiced_sound <- function(sound, xmin, xmax, vad_grid, return_textgrid) {
+  voiced_sounds <- sound_extract_parts(
+    sound, xmin, xmax, window_shape = "rectangular",
+    relative_width = 1.0, preserve_times = FALSE)
+  voiced_concatenated <- sound$concatenate_sounds(voiced_sounds)
+  if (return_textgrid) list(sound = voiced_concatenated, textgrid = vad_grid)
+  else voiced_concatenated
+}
+
+
 sound_to_textgrid_silences <- function(sound,
                                        minimum_pitch = 100,
                                        time_step = 0.0,
@@ -400,23 +437,11 @@ extract_voiced_segments <- function(sound,
     stop("sound must be a Sound object")
   }
 
-  # Step 1: Intensity-based detection
-  vad_grid <- sound_to_textgrid_silences(
-    sound,
-    minimum_pitch = minimum_pitch,
-    time_step = time_step,
-    silence_threshold = silence_threshold,
-    min_silent_interval = min_silent_interval,
-    min_sounding_interval = min_sounding_interval
-  )
-
-  # Step 2: Get initial voiced intervals
-  voiced_intervals <- textgrid_get_intervals_where(
-    vad_grid,
-    tier = 1,
-    condition = "equals",
-    text = "sounding"
-  )
+  # Steps 1-2: Intensity-based detection of voiced intervals
+  det <- .detect_voiced_intervals(sound, minimum_pitch, time_step, silence_threshold,
+                                   min_silent_interval, min_sounding_interval)
+  vad_grid <- det$vad_grid
+  voiced_intervals <- det$voiced_intervals
 
   if (voiced_intervals$count == 0) {
     warning("No voiced segments detected by intensity")
@@ -431,22 +456,9 @@ extract_voiced_segments <- function(sound,
   xmax <- voiced_intervals$xmax
 
   if (use_zcr && voiced_intervals$count > 0) {
-    # Get all zero crossings for entire sound (efficient - single call)
-    pp_zeros <- sound$to_point_process_zeros(
-      channel = 1L,
-      include_raisers = TRUE,
-      include_fallers = TRUE
-    )
-    all_zeros <- pp_zeros$as_vector()
-
-    keep_mask <- logical(length(xmin))
-
-    keep_mask <- vapply(seq_along(xmin), function(i) {
-      .segment_zcr_keep(all_zeros, xmin[i], xmax[i], zcr_threshold, zcr_window)
-    }, logical(1))
-
-    xmin <- xmin[keep_mask]
-    xmax <- xmax[keep_mask]
+    f <- .apply_zcr_filter(xmin, xmax, sound, zcr_threshold, zcr_window)
+    xmin <- f$xmin
+    xmax <- f$xmax
 
     if (length(xmin) == 0) {
       warning("All segments rejected by ZCR filter")
@@ -458,22 +470,7 @@ extract_voiced_segments <- function(sound,
   }
 
   # Step 4: Extract and concatenate
-  voiced_sounds <- sound_extract_parts(
-    sound,
-    xmin,
-    xmax,
-    window_shape = "rectangular",
-    relative_width = 1.0,
-    preserve_times = FALSE
-  )
-
-  voiced_concatenated <- sound$concatenate_sounds(voiced_sounds)
-
-  if (return_textgrid) {
-    list(sound = voiced_concatenated, textgrid = vad_grid)
-  } else {
-    voiced_concatenated
-  }
+  .extract_voiced_sound(sound, xmin, xmax, vad_grid, return_textgrid)
 }
 
 #' @title Calculate Zero Crossing Rate for Sound
