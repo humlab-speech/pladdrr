@@ -139,13 +139,6 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
   if (extract_sounds && length(result$sounds) > 0) {
     result$sounds <- .wrap_sound_xptrs(result$sounds)
   }
-  if (extract_sounds && length(result$sounds) > 0) {
-    result$sounds <- lapply(result$sounds, function(xptr) {
-      if (is.null(xptr)) return(NULL)
-      # Create Sound object from xptr
-      Sound(.xptr = xptr)
-    })
-  }
   
   return(result)
 }
