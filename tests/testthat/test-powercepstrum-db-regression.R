@@ -57,7 +57,7 @@ test_that("plot_cpp_timeseries shows 'No samples' subtitle when all CPP samples 
   # "Mean CPP: NaN dB (SD: NA)" subtitle.
   p <- plot_cpp_timeseries(cepstrogram, n_samples = 20, qmin = -1, qmax = 0)
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$subtitle, "No samples")
+  expect_identical(p$labels$subtitle, "No samples")
 })
 
 test_that("plot_powercepstrogram contour tracks the real cepstral peak, not a flat placeholder", {

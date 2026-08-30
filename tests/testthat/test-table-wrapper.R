@@ -18,11 +18,11 @@ test_that("Table() constructs by numberOfColumns and by columnNames", {
 
 test_that("Table column label get/set and index lookup", {
   tbl <- Table(numberOfRows = 1, columnNames = c("word", "duration"))
-  expect_equal(tbl$get_column_label(1), "word")
+  expect_identical(tbl$get_column_label(1), "word")
   expect_equal(tbl$get_column_index("duration"), 2)
 
   tbl$set_column_label(1, "token")
-  expect_equal(tbl$get_column_label(1), "token")
+  expect_identical(tbl$get_column_label(1), "token")
 })
 
 test_that("Table string/numeric value get/set by name and by index", {
@@ -32,7 +32,7 @@ test_that("Table string/numeric value get/set by name and by index", {
   tbl$set_string_value(2, 1, "dog")
   tbl$set_numeric_value(2, 2, 0.7)
 
-  expect_equal(tbl$get_string_value(1, "word"), "cat")
+  expect_identical(tbl$get_string_value(1, "word"), "cat")
   expect_equal(tbl$get_numeric_value(1, "duration"), 0.42)
   expect_equal(tbl$get_string_value(2, 1), "dog")
 })
@@ -268,7 +268,7 @@ test_that("Table insert_column adds a column via the R6 method (never exercised 
   tbl <- Table(numberOfRows = 2, columnNames = "x")
   tbl$insert_column(1, "y")
   expect_equal(tbl$get_number_of_columns(), 2)
-  expect_equal(tbl$get_column_label(1), "y")
+  expect_identical(tbl$get_column_label(1), "y")
 })
 
 test_that("Table get_column_label errors on an out-of-range column number", {

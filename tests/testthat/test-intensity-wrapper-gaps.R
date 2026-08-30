@@ -51,7 +51,7 @@ test_that("Intensity vector/statistics conversions", {
   vals <- it$get_values_at_times(tv[seq_len(min(3, length(tv)))])
   expect_type(vals, "double")
   stats <- it$get_statistics()
-  expect_true(is.list(stats))
+  expect_type(stats, "list")
   expect_true(all(c("mean", "stdev", "min", "max") %in% names(stats)))
 })
 

@@ -195,7 +195,7 @@ test_that("Pitch to_textgrid_silences on a fully-voiced tone returns one soundin
   expect_true(tg$is_valid())
   df <- tg$as_data_frame()
   expect_equal(nrow(df), 1)
-  expect_equal(df$label[1], "sounding")
+  expect_identical(df$label[1], "sounding")
 })
 
 test_that("Pitch to_textgrid_silences splits silence/tone/silence into three labeled intervals", {

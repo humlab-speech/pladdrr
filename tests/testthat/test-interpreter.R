@@ -14,9 +14,9 @@ test_that("praat_eval_numeric() evaluates numeric expressions correctly", {
 })
 
 test_that("praat_eval_string() evaluates string expressions correctly", {
-  expect_equal(praat_eval_string("\"hello\""), "hello")
-  expect_equal(praat_eval_string("\"world\" + \" test\""), "world test")
-  expect_equal(praat_eval_string("string$(42)"), "42")
+  expect_identical(praat_eval_string("\"hello\""), "hello")
+  expect_identical(praat_eval_string("\"world\" + \" test\""), "world test")
+  expect_identical(praat_eval_string("string$(42)"), "42")
   expect_match(praat_eval_string("left$(\"testing\", 4)"), "test")
 })
 
@@ -74,7 +74,7 @@ test_that("PraatInterpreter$eval() evaluates expressions in interpreter context"
   expect_equal(result, 5)
   
   result <- interp$eval("\"test\"")
-  expect_equal(result, "test")
+  expect_identical(result, "test")
   
   result <- interp$eval("{ 1, 2, 3 }")
   expect_equal(result, c(1, 2, 3))
@@ -107,17 +107,17 @@ test_that("set_variable() and get_variable() work for string variables", {
   # Set and get string
   interp$set_variable("name", "alice")
   result <- interp$get_variable("name$")
-  expect_equal(result, "alice")
+  expect_identical(result, "alice")
   
   # Empty string
   interp$set_variable("empty", "")
   result <- interp$get_variable("empty$")
-  expect_equal(result, "")
+  expect_identical(result, "")
   
   # String with spaces
   interp$set_variable("phrase", "hello world")
   result <- interp$get_variable("phrase$")
-  expect_equal(result, "hello world")
+  expect_identical(result, "hello world")
 })
 
 test_that("set_variable() and get_variable() work for vector variables", {
@@ -185,7 +185,7 @@ test_that("set_variable() auto-detects correct Praat suffix", {
   
   # String adds $ suffix
   interp$set_variable("str", "test")
-  expect_equal(interp$get_variable("str$"), "test")
+  expect_identical(interp$get_variable("str$"), "test")
   
   # Vector adds # suffix
   interp$set_variable("vec", c(1, 2, 3))
@@ -211,9 +211,9 @@ test_that("Variables can be updated with new values", {
   
   # Update string variable
   interp$set_variable("name", "old")
-  expect_equal(interp$get_variable("name$"), "old")
+  expect_identical(interp$get_variable("name$"), "old")
   interp$set_variable("name", "new")
-  expect_equal(interp$get_variable("name$"), "new")
+  expect_identical(interp$get_variable("name$"), "new")
 })
 
 test_that("Multiple interpreters have isolated variable spaces", {
@@ -297,7 +297,7 @@ test_that("String variables can be concatenated in expressions", {
   interp$set_variable("second", "world")
   
   result <- interp$eval("first$ + \" \" + second$")
-  expect_equal(result, "hello world")
+  expect_identical(result, "hello world")
 })
 
 test_that("Vector operations work with set variables", {
@@ -452,7 +452,7 @@ test_that("String concatenation with multiple parts works", {
   interp$set_variable("c", "three")
   
   result <- interp$eval("a$ + \"-\" + b$ + \"-\" + c$")
-  expect_equal(result, "one-two-three")
+  expect_identical(result, "one-two-three")
 })
 
 test_that("String array indexing works", {
@@ -462,11 +462,11 @@ test_that("String array indexing works", {
   
   # Access first element (1-based indexing in Praat)
   result <- interp$eval("names$#[1]")
-  expect_equal(result, "alice")
+  expect_identical(result, "alice")
   
   # Access last element
   result <- interp$eval("names$#[3]")
-  expect_equal(result, "charlie")
+  expect_identical(result, "charlie")
 })
 
 # === Vector and Matrix Operation Tests ===
@@ -541,7 +541,7 @@ test_that("Numeric variables can be converted to strings", {
   
   interp$set_variable("num", 42)
   result <- interp$eval("string$(num)")
-  expect_equal(result, "42")
+  expect_identical(result, "42")
   
   interp$set_variable("decimal", 3.14159)
   result <- interp$eval("fixed$(decimal, 2)")
@@ -560,7 +560,7 @@ test_that("Multiple variable types can coexist", {
   
   # Verify all are accessible
   expect_equal(interp$get_variable("n"), 42)
-  expect_equal(interp$get_variable("s$"), "hello")
+  expect_identical(interp$get_variable("s$"), "hello")
   expect_equal(interp$get_variable("v#"), c(1, 2, 3))
   expect_equal(interp$get_variable("m##"), matrix(1:4, 2, 2))
   expect_equal(interp$get_variable("a$#"), c("a", "b"))
@@ -574,7 +574,7 @@ test_that("Variables can be used in mixed-type expressions", {
   
   # Combine numeric and string
   result <- interp$eval("string$(count) + \" \" + label$")
-  expect_equal(result, "5 items")
+  expect_identical(result, "5 items")
 })
 
 # === Interpreter State Persistence Tests ===
@@ -702,7 +702,7 @@ test_that("Empty and single-element collections work", {
   
   # Empty string
   interp$set_variable("empty", "")
-  expect_equal(interp$get_variable("empty$"), "")
+  expect_identical(interp$get_variable("empty$"), "")
   
   # Single element vector treated as scalar
   interp$set_variable("single", 42)

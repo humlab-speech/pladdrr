@@ -120,10 +120,10 @@ test_that("TextGrid batch labels work", {
   times <- c(0.2, 0.7, 1.2, 1.8)
   labels <- tg$get_labels_at_times("words", times)
 
-  expect_equal(labels[1], "hello")
-  expect_equal(labels[2], "world")
-  expect_equal(labels[3], "test")
-  expect_equal(labels[4], "")  # empty last interval
+  expect_identical(labels[1], "hello")
+  expect_identical(labels[2], "world")
+  expect_identical(labels[3], "test")
+  expect_identical(labels[4], "")  # empty last interval
 
   # Batch set interval texts
   tg$set_interval_texts_batch("words", c(1, 2), c("foo", "bar"))

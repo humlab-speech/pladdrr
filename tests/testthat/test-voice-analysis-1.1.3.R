@@ -21,7 +21,7 @@ test_that("Sound$to_textgrid_silences() works with all parameters", {
   
   # Check tier name
   tier_name <- tg$get_tier_name(1)
-  expect_equal(tier_name, "silences")
+  expect_identical(tier_name, "silences")
   
   # Check labels exist
   n_intervals <- tg$get_number_of_intervals(1)
@@ -114,7 +114,7 @@ test_that("PointProcess$to_textgrid_vuv() creates voiced/unvoiced intervals", {
   
   # Check tier name
   tier_name <- tg_vuv$get_tier_name(1)
-  expect_equal(tier_name, "vuv")
+  expect_identical(tier_name, "vuv")
   
   # Check labels are V or U
   n_intervals <- tg_vuv$get_number_of_intervals(1)

@@ -20,10 +20,10 @@ test_that("tag parser is round-trip clean", {
   parse <- pladdrr:::.parse_pladdrr_tag
   msg <- "[pladdrr_input_error:foo_bar:baz] something is wrong"
   res <- parse(msg)
-  expect_equal(res$class, "pladdrr_input_error")
-  expect_equal(res$routine, "foo_bar")
-  expect_equal(res$param, "baz")
-  expect_equal(res$message, "something is wrong")
+  expect_identical(res$class, "pladdrr_input_error")
+  expect_identical(res$routine, "foo_bar")
+  expect_identical(res$param, "baz")
+  expect_identical(res$message, "something is wrong")
 
   expect_null(parse("this is an untagged error"))
 })
@@ -37,9 +37,9 @@ test_that("with_pladdrr_errors reclassifies tagged errors", {
   )
   expect_s3_class(err, "pladdrr_input_error")
   expect_s3_class(err, "pladdrr_error")
-  expect_equal(err$routine, "probe")
-  expect_equal(err$param, "p1")
-  expect_equal(conditionMessage(err), "bad p1")
+  expect_identical(err$routine, "probe")
+  expect_identical(err$param, "p1")
+  expect_identical(conditionMessage(err), "bad p1")
 })
 
 test_that("with_pladdrr_errors passes through untagged errors", {
@@ -56,7 +56,7 @@ test_that("with_pladdrr_errors attaches data-loss attribute on tagged warning", 
   }))
   loss <- attr(res, "pladdrr_data_loss")
   expect_false(is.null(loss))
-  expect_equal(loss[[1]]$routine, "probe")
+  expect_identical(loss[[1]]$routine, "probe")
   expect_match(loss[[1]]$message, "3 of 5")
 })
 
@@ -74,8 +74,8 @@ test_that("retrofitted formant wrapper raises classed input error on null xptr",
     error = function(e) e
   )
   expect_s3_class(err, "pladdrr_input_error")
-  expect_equal(err$routine, "formant_get_multiple_formants_at_times")
-  expect_equal(err$param, "formant_xptr")
+  expect_identical(err$routine, "formant_get_multiple_formants_at_times")
+  expect_identical(err$param, "formant_xptr")
 })
 
 test_that("options(pladdrr.data_loss=) controls reaction to data loss", {

@@ -39,7 +39,7 @@ test_that("dt_setkey sets a key on the data.table by reference", {
   dt <- data.table::data.table(time = c(3, 1, 2), value = c("c", "a", "b"))
   out <- pladdrr:::dt_setkey(dt, time)
 
-  expect_equal(data.table::key(dt), "time")
+  expect_identical(data.table::key(dt), "time")
   expect_identical(out, dt)
 })
 
@@ -47,7 +47,7 @@ test_that("dt_create builds a data.table from named vectors and applies a key", 
   dt <- pladdrr:::dt_create(time = c(2, 1), value = c(20, 10), key = "time")
 
   expect_true(data.table::is.data.table(dt))
-  expect_equal(data.table::key(dt), "time")
+  expect_identical(data.table::key(dt), "time")
 
   dt_nokey <- pladdrr:::dt_create(x = 1:3)
   expect_null(data.table::key(dt_nokey))

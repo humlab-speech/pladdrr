@@ -377,7 +377,7 @@ test_that("pitch_get_statistics_batch supports median/count_voiced metrics and v
   )
   expect_equal(colnames(result), c("q50", "count_voiced"))
   expect_equal(nrow(result), 1)
-  expect_true(result[1, "count_voiced"] >= 0)
+  expect_gte(result[1, "count_voiced"], 0)
 
   # Unrecognized metric name -> "Unknown metric" C++ input-validation error
   expect_error(
@@ -423,7 +423,7 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   )
   expect_equal(colnames(result), c("q25", "q75"))
   expect_equal(nrow(result), 1)
-  expect_true(result[1, "q75"] >= result[1, "q25"])
+  expect_gte(result[1, "q75"], result[1, "q25"])
 
   # "q50"/"median" (both accepted spellings) are supported but exercised by
   # no existing intensity-statistics test.

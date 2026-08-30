@@ -15,7 +15,7 @@ test_that("interpreter can receive and return Sound objects", {
   # List objects
   objs <- interp$list_objects()
   expect_equal(nrow(objs), 1)
-  expect_equal(objs$class[1], "Sound")
+  expect_identical(objs$class[1], "Sound")
 
   # Retrieve the sound
   retrieved <- interp$get_object("testSound", "Sound")

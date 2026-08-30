@@ -23,8 +23,8 @@ test_that("TextGrid tier name queries work", {
   names <- tg$get_tier_names()
   expect_type(names, "character")
   expect_length(names, 10)
-  expect_equal(tg$get_tier_name(1), "Tier_1_1")
-  expect_equal(tg$get_tier_name(5), "Tier_1_5")
+  expect_identical(tg$get_tier_name(1), "Tier_1_1")
+  expect_identical(tg$get_tier_name(5), "Tier_1_5")
 })
 
 test_that("IntervalTier queries work", {

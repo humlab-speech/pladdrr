@@ -45,7 +45,7 @@ test_that("validate_positive_int accepts positive integers and rejects the rest"
 # --- validate_string ------------------------------------------------------------
 
 test_that("validate_string accepts non-empty strings and rejects the rest", {
-  expect_equal(pladdrr:::validate_string("hello"), "hello")
+  expect_identical(pladdrr:::validate_string("hello"), "hello")
   expect_error(pladdrr:::validate_string(""), "cannot be an empty string")
   expect_error(pladdrr:::validate_string(NA_character_), "cannot be NA")
   expect_error(pladdrr:::validate_string(5), "single character string")

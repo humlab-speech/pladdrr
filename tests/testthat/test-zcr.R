@@ -39,7 +39,7 @@ test_that("sound_get_zcr handles short sounds", {
 
 test_that("extract_voiced_segments with ZCR filtering works", {
   # Test that the function exists and has correct signature
-  expect_true(is.function(extract_voiced_segments))
+  expect_type(extract_voiced_segments, "closure")
 })
 
 test_that("textgrid_get_intervals_where works", {

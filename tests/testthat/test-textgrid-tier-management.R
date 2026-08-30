@@ -11,7 +11,7 @@ test_that("set_tier_name() works with tier number", {
   tg$set_tier_name(1, "WORDS")
   
   # Verify
-  expect_equal(tg$get_tier_name(1), "WORDS")
+  expect_identical(tg$get_tier_name(1), "WORDS")
   expect_equal(tg$get_tier_names(), c("WORDS", "phones"))
 })
 
@@ -22,7 +22,7 @@ test_that("set_tier_name() works with tier name", {
   tg$set_tier_name("phones", "PHONES")
   
   # Verify
-  expect_equal(tg$get_tier_name(2), "PHONES")
+  expect_identical(tg$get_tier_name(2), "PHONES")
   expect_equal(tg$get_tier_names(), c("words", "PHONES"))
 })
 
@@ -139,7 +139,7 @@ test_that("Integration with existing benchmark TextGrid", {
   
   # Rename first tier
   tg$set_tier_name(1, "TIER1_RENAMED")
-  expect_equal(tg$get_tier_name(1), "TIER1_RENAMED")
+  expect_identical(tg$get_tier_name(1), "TIER1_RENAMED")
   
   # Duplicate first tier
   tg$duplicate_tier(1, "TIER1_COPY")

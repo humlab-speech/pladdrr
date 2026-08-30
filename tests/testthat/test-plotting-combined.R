@@ -50,7 +50,7 @@ test_that("plot_spectrogram_pitch accepts pitch_color and title", {
 
   p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_color = "purple", title = "Custom")
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$title, "Custom")
+  expect_identical(p$labels$title, "Custom")
 })
 
 test_that("plot_spectrogram_pitch filters by pitch_floor/pitch_ceiling", {
@@ -224,7 +224,7 @@ test_that("plot_pitch_intensity renders a dual-axis ggplot with default range", 
 
   p <- plot_pitch_intensity(pitch, intensity)
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$title, "Pitch and Intensity")
+  expect_identical(p$labels$title, "Pitch and Intensity")
 })
 
 test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
@@ -236,7 +236,7 @@ test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
                              pitch_color = "purple", intensity_color = "gold",
                              title = "Custom")
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$title, "Custom")
+  expect_identical(p$labels$title, "Custom")
 })
 
 test_that("plot_spectrogram_formants validates its inputs", {
@@ -257,7 +257,7 @@ test_that("plot_spectrogram_formants overlays formant tracks by default", {
 
   p <- plot_spectrogram_formants(spectrogram, formant)
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$title, "Spectrogram + Formants")
+  expect_identical(p$labels$title, "Spectrogram + Formants")
 })
 
 test_that("plot_spectrogram_formants accepts max_formant, formant_colors, dynamic_range", {
@@ -269,7 +269,7 @@ test_that("plot_spectrogram_formants accepts max_formant, formant_colors, dynami
                                   formant_colors = c("black", "grey"),
                                   dynamic_range = 50, title = "Custom")
   expect_s3_class(p, "ggplot")
-  expect_equal(p$labels$title, "Custom")
+  expect_identical(p$labels$title, "Custom")
 })
 
 test_that("plot_spectrogram_formants warns and returns bare spectrogram when no formant data in range", {

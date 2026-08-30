@@ -21,7 +21,7 @@ test_that("SIMD data conversion preserves values", {
   mat <- sound$as_matrix()
 
   # Check dimensions
-  expect_true(nrow(mat) == 1)  # Mono
+  expect_identical(nrow(mat), 1L)  # Mono
   expect_gt(nrow(mat), 0)
 
   # Check values are in reasonable range
@@ -104,7 +104,7 @@ test_that("SIMD data conversion handles edge cases", {
 
   mat_short <- sound_short$as_matrix()
   expect_gt(nrow(mat_short), 0)
-  expect_true(nrow(mat_short) == 1)
+  expect_identical(nrow(mat_short), 1L)
 
   df_short <- sound_short$as_data_frame()
   expect_gt(nrow(df_short), 0)

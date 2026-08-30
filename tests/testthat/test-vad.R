@@ -91,7 +91,7 @@ test_that("textgrid_get_intervals_where 'contains' / 'does not contain' / 'start
 
   contains <- textgrid_get_intervals_where(tg, tier = 1, condition = "contains", text = "il")
   expect_equal(contains$count, 1L)
-  expect_equal(contains$text, "sil")
+  expect_identical(contains$text, "sil")
 
   does_not_contain <- textgrid_get_intervals_where(tg, tier = 1, condition = "does not contain", text = "sil")
   expect_equal(does_not_contain$count, 2L)
@@ -102,7 +102,7 @@ test_that("textgrid_get_intervals_where 'contains' / 'does not contain' / 'start
 
   ends_with <- textgrid_get_intervals_where(tg, tier = 1, condition = "ends with", text = "l")
   expect_equal(ends_with$count, 1L)
-  expect_equal(ends_with$text, "sil")
+  expect_identical(ends_with$text, "sil")
 })
 
 test_that("textgrid_get_intervals_where returns empty result when nothing matches", {

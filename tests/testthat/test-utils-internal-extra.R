@@ -17,12 +17,12 @@ test_that("extract_xptr passes external pointers through unchanged", {
 
 test_that("extract_xptr falls back to get_xptr() when .xptr is absent", {
   fake <- structure(list(get_xptr = function() "fake-pointer"), class = "Fake")
-  expect_equal(pladdrr:::extract_xptr(fake, "Fake"), "fake-pointer")
+  expect_identical(pladdrr:::extract_xptr(fake, "Fake"), "fake-pointer")
 })
 
 test_that("extract_xptr falls back to .pointer when neither .xptr nor get_xptr() work", {
   fake <- structure(list(.pointer = "fake-pointer-2"), class = "Fake")
-  expect_equal(pladdrr:::extract_xptr(fake, "Fake"), "fake-pointer-2")
+  expect_identical(pladdrr:::extract_xptr(fake, "Fake"), "fake-pointer-2")
 })
 
 test_that("extract_xptr errors when no pointer can be found on a classed object", {

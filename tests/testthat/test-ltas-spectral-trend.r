@@ -33,8 +33,8 @@ test_that("logarithmic scale produces correct slope units", {
   
   result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
   
-  expect_equal(result$slope_units, "dB/decade")
-  expect_equal(result$frequency_scale, "logarithmic")
+  expect_identical(result$slope_units, "dB/decade")
+  expect_identical(result$frequency_scale, "logarithmic")
 })
 
 test_that("linear scale produces correct slope units", {
@@ -44,8 +44,8 @@ test_that("linear scale produces correct slope units", {
   
   result <- ltas$report_spectral_trend(100, 5000, "linear", "least squares")
   
-  expect_equal(result$slope_units, "dB/Hz")
-  expect_equal(result$frequency_scale, "linear")
+  expect_identical(result$slope_units, "dB/Hz")
+  expect_identical(result$frequency_scale, "linear")
 })
 
 test_that("R-squared is between 0 and 1", {
@@ -112,7 +112,7 @@ test_that("robust method runs without error", {
   
   expect_type(result$slope, "double")
   expect_type(result$intercept, "double")
-  expect_equal(result$fit_method, "robust")
+  expect_identical(result$fit_method, "robust")
 })
 
 test_that("default parameters work correctly", {
@@ -123,8 +123,8 @@ test_that("default parameters work correctly", {
   # Should use logarithmic scale and least squares by default
   result <- ltas$report_spectral_trend()
   
-  expect_equal(result$frequency_scale, "logarithmic")
-  expect_equal(result$fit_method, "least squares")
+  expect_identical(result$frequency_scale, "logarithmic")
+  expect_identical(result$fit_method, "least squares")
   expect_equal(result$fmin, 100)
   expect_equal(result$fmax, 5000)
 })

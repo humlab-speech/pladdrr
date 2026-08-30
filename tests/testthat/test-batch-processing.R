@@ -151,7 +151,7 @@ test_that("extract_measurements_custom applies interval_filter", {
   )
 
   expect_equal(nrow(measurements), 1)
-  expect_equal(measurements$label, "a")
+  expect_identical(measurements$label, "a")
 })
 
 test_that("extract_measurements_custom loads sound/textgrid from file paths", {

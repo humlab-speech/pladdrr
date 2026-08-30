@@ -72,7 +72,7 @@ test_that("extract_measurements_custom extracts from point tiers", {
     measures = list(f0 = function(sound, tmin, tmax) 200)
   )
   expect_s3_class(df, "data.frame")
-  expect_equal(df$label[1], "p")
+  expect_identical(df$label[1], "p")
 })
 
 test_that("extract_measurements returns formant columns at interval midpoints", {
