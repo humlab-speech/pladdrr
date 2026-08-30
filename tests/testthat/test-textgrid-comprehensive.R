@@ -152,13 +152,13 @@ test_that("get_labels_at_times returns NA outside the time domain and errors on 
   expect_false(is.na(labels[2]))
   expect_true(is.na(labels[3]))
 
-  expect_error(tg$get_labels_at_times(5, c(0.5)))
+  expect_error(tg$get_labels_at_times(5, 0.5))
 })
 
 test_that("set_interval_texts_batch validates length and interval numbers", {
   tg <- TextGrid$new(benchmark_tg)
-  expect_error(tg$set_interval_texts_batch(1, c(1L, 2L), c("only one")))
-  expect_error(tg$set_interval_texts_batch(1, c(999999L), c("x")))
+  expect_error(tg$set_interval_texts_batch(1, c(1L, 2L), "only one"))
+  expect_error(tg$set_interval_texts_batch(1, 999999L, "x"))
 })
 
 test_that("get_all_intervals_fast/get_all_points_fast work and error on wrong tier type", {

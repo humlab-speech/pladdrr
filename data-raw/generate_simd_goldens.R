@@ -18,9 +18,15 @@ fixture_dir <- "tests/testthat/fixtures/simd-golden"
 dir.create(fixture_dir, showWarnings = FALSE, recursive = TRUE)
 fixture_dir <- normalizePath(fixture_dir, mustWork = TRUE)
 
-mono_script <- normalizePath("data-raw/simd-golden/mono_analysis_golden.praat", mustWork = TRUE)
-mono_conversion_script <- normalizePath("data-raw/simd-golden/mono_conversion_golden.praat", mustWork = TRUE)
-klattgrid_script <- normalizePath("data-raw/simd-golden/klattgrid_golden.praat", mustWork = TRUE)
+mono_script <- normalizePath(
+  "data-raw/simd-golden/mono_analysis_golden.praat", mustWork = TRUE
+)
+mono_conversion_script <- normalizePath(
+  "data-raw/simd-golden/mono_conversion_golden.praat", mustWork = TRUE
+)
+klattgrid_script <- normalizePath(
+  "data-raw/simd-golden/klattgrid_golden.praat", mustWork = TRUE
+)
 
 # --- Mono fixtures -----------------------------------------------------
 # tone_200hz / tone_120hz_low: pure tones, cheap sanity check across the
@@ -31,8 +37,12 @@ klattgrid_script <- normalizePath("data-raw/simd-golden/klattgrid_golden.praat",
 #   any interesting way, this fixture gives them actual spectral structure
 #   to track.
 mono_fixtures <- list(
-  tone_200hz = function() Sound$create_tone(duration = 1.0, sampling_rate = 16000, frequency = 200),
-  tone_120hz_low = function() Sound$create_tone(duration = 1.0, sampling_rate = 16000, frequency = 120),
+  tone_200hz = function() Sound$create_tone(
+    duration = 1.0, sampling_rate = 16000, frequency = 200
+  ),
+  tone_120hz_low = function() Sound$create_tone(
+    duration = 1.0, sampling_rate = 16000, frequency = 120
+  ),
   silence = function() Sound$from_values(rep(0, 16000), 16000),
   complex_tone = function() {
     sr <- 16000

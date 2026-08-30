@@ -235,7 +235,7 @@ test_that("Pre-emphasis SIMD handles various signal lengths", {
 # Testing via standard pitch extraction to ensure no regressions
 
 test_that("Pitch extraction works with SIMD enabled", {
-  signal <- generate_test_signal(duration = 1.0, sr = 16000, freqs = c(200))
+  signal <- generate_test_signal(duration = 1.0, sr = 16000, freqs = 200)
   snd <- Sound$from_values(signal, 16000)
 
   pladdrr_simd(TRUE)

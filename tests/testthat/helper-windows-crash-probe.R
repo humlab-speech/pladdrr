@@ -39,7 +39,7 @@ windows_crash_probe <- function(desc, code_expr, preamble = NULL, env = parent.f
     return(invisible(TRUE))
   }
 
-  body <- paste(deparse(code_expr, width.cutoff = 500L), collapse = "\n")
+  body <- deparse1(code_expr, collapse = "\n")
   pre <- paste(preamble, collapse = "\n")
   script <- tempfile(fileext = ".R")
   writeLines(c(

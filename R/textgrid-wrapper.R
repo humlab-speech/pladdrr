@@ -229,7 +229,7 @@ NULL
   which_criterion <- criterion_map[[criterion]]
   if (is.null(which_criterion)) {
     stop("Invalid criterion: '", criterion, "'. Must be one of: ",
-         paste(names(criterion_map), collapse = ", "))
+         toString(names(criterion_map)))
   }
 
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier_number)

@@ -63,7 +63,7 @@ test_that("Formant batch queries handle edge cases", {
   expect_length(result$F1, 2)
   
   # Error on invalid input
-  expect_error(get_formants_at_times("not_a_formant", c(1.0), 1))
+  expect_error(get_formants_at_times("not_a_formant", 1.0, 1))
   expect_error(get_formants_at_times(formant, numeric(0), 1))
 })
 
@@ -174,7 +174,7 @@ test_that("PointProcess get all times works", {
   expect_length(result, pp$get_number_of_points())
   
   # Verify times match individual queries
-  individual <- sapply(1:pp$get_number_of_points(), function(i) pp$get_time(i))
+  individual <- sapply(1:pp$get_number_of_points(), pp$get_time)
   expect_equal(result, individual, tolerance = 1e-10)
   
   # Times should be monotonically increasing
@@ -364,7 +364,7 @@ test_that("pitch_get_statistics_batch supports median/count_voiced metrics and v
   # Mismatched from_times/to_times length -> C++ input-validation error
   expect_error(
     pladdrr:::pitch_get_statistics_batch(
-      pitch$.xptr, c(0, 0.5), c(1.0), c("mean"), 0L
+      pitch$.xptr, c(0, 0.5), 1.0, "mean", 0L
     ),
     "same length"
   )
@@ -413,7 +413,7 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
 
   expect_error(
     pladdrr:::intensity_get_statistics_batch(
-      intensity$.xptr, c(0, 0.5), c(1.0), c("mean"), 0L
+      intensity$.xptr, c(0, 0.5), 1.0, "mean", 0L
     ),
     "same length"
   )
@@ -482,7 +482,7 @@ test_that("PointProcess batch operations are faster than loops", {
   
   benchmark_result <- microbenchmark::microbenchmark(
     batch = get_pointprocess_times(pp),
-    loop = sapply(1:pp$get_number_of_points(), function(i) pp$get_time(i)),
+    loop = sapply(1:pp$get_number_of_points(), pp$get_time),
     times = 20
   )
   

@@ -56,7 +56,7 @@ test_that("sound_extract_parts_pooled validates start/end lengths", {
   snd <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
 
   expect_error(
-    sound_extract_parts_pooled(snd$get_xptr(), c(0.0), c(0.1, 0.2)),
+    sound_extract_parts_pooled(snd$get_xptr(), 0.0, c(0.1, 0.2)),
     "same length"
   )
 })

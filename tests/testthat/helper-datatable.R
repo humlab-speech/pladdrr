@@ -23,7 +23,7 @@ expect_datatable <- function(object, expected_cols, expected_rows = NULL, key = 
   testthat::expect_named(
     object, 
     expected_cols,
-    info = sprintf("Expected columns: %s", paste(expected_cols, collapse = ", "))
+    info = sprintf("Expected columns: %s", toString(expected_cols))
   )
   
   # Check row count if specified
@@ -41,7 +41,7 @@ expect_datatable <- function(object, expected_cols, expected_rows = NULL, key = 
     testthat::expect_equal(
       actual_key,
       key,
-      info = sprintf("Expected key: %s", paste(key, collapse = ", "))
+      info = sprintf("Expected key: %s", toString(key))
     )
   }
   

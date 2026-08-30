@@ -17,7 +17,7 @@ test_that("get_durations_batch returns correct durations", {
   )
 
   # Skip if files don't exist
-  skip_if(any(!file.exists(files)), "Test WAV files not found")
+  skip_if(!all(file.exists(files)), "Test WAV files not found")
 
   durations <- get_durations_batch(files)
 

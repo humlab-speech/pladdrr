@@ -114,7 +114,7 @@ cat("  Duration:", fp$get_duration(), "seconds\n")
 cat("  Frames:", fp$get_nx(), "\n")
 cat("  Candidates:", fp$get_number_of_candidates(), "\n")
 cat("  Ceilings tested:", 
-    paste(round(fp$get_all_ceiling_frequencies()), collapse = ", "), 
+    toString(round(fp$get_all_ceiling_frequencies())), 
     "Hz\n")
 ```
 

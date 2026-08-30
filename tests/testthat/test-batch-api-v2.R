@@ -248,12 +248,12 @@ test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values
 
   # No physically impossible values (hard limit: nothing > 200 dB in any spectrum)
   expect_true(all(peaks_para$peak_value < 200),
-    info = paste("Parabolic peaks:", paste(round(peaks_para$peak_value, 1), collapse = ", ")))
+    info = paste("Parabolic peaks:", toString(round(peaks_para$peak_value, 1))))
 
   # Parabolic result must be within 50 dB of no-interpolation result
   diff_db <- abs(peaks_para$peak_value - peaks_none$peak_value)
   expect_true(all(diff_db < 50),
-    info = paste("Parabolic vs none diff:", paste(round(diff_db, 1), collapse = ", ")))
+    info = paste("Parabolic vs none diff:", toString(round(diff_db, 1))))
 })
 
 # API-1 regression: to_ltas_direct() must return a wrapped Ltas, not externalptr
@@ -263,7 +263,7 @@ test_that("API-1: to_ltas_direct() returns usable Ltas object without manual wra
   ltas  <- to_ltas_direct(sound, bandwidth = 100)
 
   expect_true(inherits(ltas, "Ltas"),
-    info = paste("class:", paste(class(ltas), collapse = ", ")))
+    info = paste("class:", toString(class(ltas))))
   expect_false(inherits(ltas, "externalptr"))
 
   # Must be directly usable — no manual Ltas(.xptr = ...) wrapping needed

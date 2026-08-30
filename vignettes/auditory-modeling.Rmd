@@ -336,9 +336,7 @@ Cochleagrams and excitation patterns can be large. Clean up when done:
 ```{r memory}
 # Process and extract only what you need
 cochlea <- sound$to_cochleagram()
-loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {
-  cochlea$get_loudness_at_time(t)
-})
+loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), cochlea$get_loudness_at_time)
 
 # Remove large object if no longer needed
 rm(cochlea)

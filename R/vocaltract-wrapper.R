@@ -179,7 +179,7 @@ vocaltract_create_from_phone <- function(phone) {
                     "p", "t", "k", "x",
                     "pa", "ta", "ka", "pi", "ti", "ki", "pu", "tu", "ku")
   if (!phone %in% valid_phones) {
-    stop("Invalid phone '", phone, "'. Valid phones: ", paste(valid_phones, collapse = ", "))
+    stop("Invalid phone '", phone, "'. Valid phones: ", toString(valid_phones))
   }
   ptr <- .vocaltract_create_from_phone(phone)
   VocalTract(.xptr = ptr)

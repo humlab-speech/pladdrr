@@ -389,7 +389,7 @@ potential_diphthongs <- vowel_features$vowel[
 ]
 
 cat("Potential diphthongs (large F1-F2 movement):\n")
-cat(paste(unique(potential_diphthongs), collapse = ", "), "\n")
+cat(toString(unique(potential_diphthongs)), "\n")
 ```
 
 ## Part 7: Visualization

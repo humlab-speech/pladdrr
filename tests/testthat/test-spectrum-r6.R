@@ -288,6 +288,6 @@ test_that("Spectrum R6 get_band_densities and get_power_at_frequencies batch ops
 
   # Mismatched-length fmins/fmaxs is a real, guarded-against user mistake
   # (Rcpp::stop in spectrum_module.cpp), not a crash.
-  expect_error(spectrum$get_band_densities(fmins = c(100, 500), fmaxs = c(500)))
-  expect_error(spectrum$get_band_energies(fmins = c(100, 500), fmaxs = c(500)))
+  expect_error(spectrum$get_band_densities(fmins = c(100, 500), fmaxs = 500))
+  expect_error(spectrum$get_band_energies(fmins = c(100, 500), fmaxs = 500))
 })

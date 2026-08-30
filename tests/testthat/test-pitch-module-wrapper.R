@@ -34,7 +34,7 @@ test_that("print.PitchModule reports summary statistics without erroring", {
   pm <- PitchModule(pitch_module_ptr())
   out <- capture.output(print(pm))
 
-  expect_true(any(grepl("Praat Pitch \\(Module\\)", out)))
+  expect_true(any(grepl("Praat Pitch (Module)", out, fixed = TRUE)))
   expect_true(any(grepl("Duration:", out, fixed = TRUE)))
   expect_true(any(grepl("Frames:", out, fixed = TRUE)))
 })

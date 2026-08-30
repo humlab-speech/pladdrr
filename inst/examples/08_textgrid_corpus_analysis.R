@@ -334,7 +334,7 @@ export_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
 
 cat(sprintf("  ✓ Exported in %.3f seconds\n", export_time))
 cat(sprintf("  Dimensions: %d rows × %d columns\n", nrow(tg_df), ncol(tg_df)))
-cat(sprintf("  Columns: %s\n", paste(names(tg_df), collapse = ", ")))
+cat(sprintf("  Columns: %s\n", toString(names(tg_df))))
 cat("\n")
 
 # Show sample

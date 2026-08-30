@@ -599,7 +599,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 
   valid_stats <- c("max", "min", "mean", "median", "sd")
   if (!stat %in% valid_stats) {
-    stop("stat must be one of: ", paste(valid_stats, collapse = ", "))
+    stop("stat must be one of: ", toString(valid_stats))
   }
 
   calculate_f0_stats_ultra_cpp(
@@ -792,7 +792,7 @@ get_voice_quality_ultra <- function(sound,
 
   valid_metrics <- c("jitter", "shimmer", "hnr", "all")
   if (!all(metrics %in% valid_metrics)) {
-    stop("metrics must be one or more of: ", paste(valid_metrics, collapse = ", "))
+    stop("metrics must be one or more of: ", toString(valid_metrics))
   }
 
   pitch_method <- match.arg(pitch_method)

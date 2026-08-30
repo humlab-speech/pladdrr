@@ -204,8 +204,8 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     # rebuild the Sound inside each worker.
     sound_data <- lapply(sounds, function(s) {
       nch <- s$get_number_of_channels()
-      values <- t(vapply(seq_len(nch), function(ch) s$get_values(ch),
-                          numeric(s$get_number_of_samples())))
+      values <- t(vapply(seq_len(nch), s$get_values,
+                         numeric(s$get_number_of_samples())))
       list(values = values, sr = s$get_sampling_frequency(),
            start = s$get_start_time())
     })

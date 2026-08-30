@@ -105,7 +105,7 @@ NULL
   cat(sprintf("  Groups: %d, Functions: %d, Dimension: %d\n",
               info$n_groups, info$n_functions, info$dimension))
   cat(sprintf("  Total observations: %d\n", info$n_observations))
-  cat(sprintf("  Group labels: %s\n", paste(info$group_labels, collapse = ", ")))
+  cat(sprintf("  Group labels: %s\n", toString(info$group_labels)))
   cat("  Discriminant functions:\n")
   for (i in seq_len(min(5, length(eigenvals)))) {
     wilks <- .self$.cpp$get_wilks_lambda(i)

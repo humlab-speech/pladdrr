@@ -155,7 +155,7 @@ test_that("sound_extract_parts extracts non-overlapping segments as R6 Sound obj
 test_that("sound_extract_parts return_r6 = FALSE returns raw external pointers", {
   sound <- Sound$create_tone(frequency = 200, duration = 1.0, sampling_rate = 16000)
 
-  parts <- sound_extract_parts(sound, c(0.1), c(0.5), return_r6 = FALSE)
+  parts <- sound_extract_parts(sound, 0.1, 0.5, return_r6 = FALSE)
 
   expect_type(parts, "list")
   expect_type(parts[[1]], "externalptr")
@@ -164,7 +164,7 @@ test_that("sound_extract_parts return_r6 = FALSE returns raw external pointers",
 test_that("sound_extract_parts accepts a non-default window_shape", {
   sound <- Sound$create_tone(frequency = 200, duration = 1.0, sampling_rate = 16000)
 
-  parts <- sound_extract_parts(sound, c(0.1), c(0.5), window_shape = "hanning")
+  parts <- sound_extract_parts(sound, 0.1, 0.5, window_shape = "hanning")
 
   expect_s3_class(parts[[1]], "Sound")
   expect_equal(parts[[1]]$get_total_duration(), 0.4, tolerance = 1e-6)
@@ -174,14 +174,14 @@ test_that("sound_extract_parts rejects mismatched start/end lengths", {
   sound <- Sound$create_tone(frequency = 200, duration = 1.0, sampling_rate = 16000)
 
   expect_error(
-    sound_extract_parts(sound, c(0, 0.5), c(0.3)),
+    sound_extract_parts(sound, c(0, 0.5), 0.3),
     "start_times and end_times must have the same length"
   )
 })
 
 test_that("sound_extract_parts rejects an invalid sound argument", {
   expect_error(
-    sound_extract_parts(1:5, c(0), c(0.5)),
+    sound_extract_parts(1:5, 0, 0.5),
     "sound must be a Sound object or external pointer"
   )
 })

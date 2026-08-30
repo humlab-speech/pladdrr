@@ -6,7 +6,7 @@
 library(pladdrr)
 library(bench)
 
-divider <- paste(rep("=", 80), collapse = "")
+divider <- strrep("=", 80)
 cat(divider, "\n", sep = "")
 cat("Benchmark 15: Module Architecture Performance (Phase 1+ Complete)\n")
 cat("Date:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n")

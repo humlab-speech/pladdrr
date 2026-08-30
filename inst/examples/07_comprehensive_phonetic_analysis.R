@@ -266,7 +266,7 @@ cat(strrep("=", 80), "\n\n")
 cat("Exporting TextGrid to data frame...\n")
 tg_df <- tg$as_data_frame()
 cat("  ✓ TextGrid exported:", nrow(tg_df), "rows\n")
-cat("  Columns:", paste(names(tg_df), collapse = ", "), "\n\n")
+cat("  Columns:", toString(names(tg_df)), "\n\n")
 
 # Show summary statistics by phone type
 cat("Summary statistics by phone type:\n\n")

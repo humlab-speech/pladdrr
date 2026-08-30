@@ -335,7 +335,7 @@ validate_file_extension <- function(path, extensions,
   ext <- tools::file_ext(path)
   if (!ext %in% extensions) {
     stop(sprintf("'%s' must have one of these extensions: %s (got: %s)",
-                 name, paste(extensions, collapse = ", "), ext),
+                 name, toString(extensions), ext),
          call. = FALSE)
   }
   invisible(path)

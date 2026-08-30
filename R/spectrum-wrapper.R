@@ -223,7 +223,7 @@ NULL
 .spectrum_methods$as_data_frame <- function(.self) {
   mat <- .spectrum_as_matrix(.self$.xptr)
   nbins <- ncol(mat)
-  freq <- vapply(seq_len(nbins), function(i) .self$.cpp$get_frequency_from_bin(i), numeric(1))
+  freq <- vapply(seq_len(nbins), .self$.cpp$get_frequency_from_bin, numeric(1))
   real_vals <- mat[1, ]
   imag_vals <- mat[2, ]
   power <- real_vals^2 + imag_vals^2

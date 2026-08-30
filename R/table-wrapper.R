@@ -173,7 +173,7 @@ NULL
               .self$.cpp$get_number_of_rows(), .self$.cpp$get_number_of_columns()))
   col_names <- .self$.cpp$get_column_names()
   if (length(col_names) > 0) {
-    cat(sprintf("  Columns: %s\n", paste(col_names, collapse = ", ")))
+    cat(sprintf("  Columns: %s\n", toString(col_names)))
   }
   invisible(.self)
 }

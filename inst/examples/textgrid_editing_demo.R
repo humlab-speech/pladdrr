@@ -21,7 +21,7 @@ if (tg_path == "") {
 tg <- TextGrid$new(tg_path)
 print(tg)
 
-cat("\nTier names:", paste(tg$get_tier_names(), collapse = ", "), "\n")
+cat("\nTier names:", toString(tg$get_tier_names()), "\n")
 
 # Query first tier information
 tier1_name <- tg$get_tier_name(1)
@@ -147,7 +147,7 @@ print(tg_new)
 # Set tier name
 cat("\nRenaming 'events' to 'landmarks'...\n")
 tg_new$set_tier_name("events", "landmarks")
-cat("New tier names:", paste(tg_new$get_tier_names(), collapse = ", "), "\n")
+cat("New tier names:", toString(tg_new$get_tier_names()), "\n")
 
 # Duplicate a tier
 cat("\nDuplicating 'phones' tier to 'phones_copy'...\n")
@@ -157,7 +157,7 @@ print(tg_new)
 # Remove a tier
 cat("\nRemoving 'phones_copy' tier...\n")
 tg_new$remove_tier("phones_copy")
-cat("Remaining tiers:", paste(tg_new$get_tier_names(), collapse = ", "), "\n")
+cat("Remaining tiers:", toString(tg_new$get_tier_names()), "\n")
 
 # ============================================================================
 # PART 6: Boundary Manipulation
@@ -236,7 +236,7 @@ print(tg_segment)
 cat("\nConverting to data frame...\n")
 df_all <- tg_new$as_data_frame()
 cat("Data frame dimensions:", nrow(df_all), "rows x", ncol(df_all), "columns\n")
-cat("Column names:", paste(colnames(df_all), collapse = ", "), "\n")
+cat("Column names:", toString(colnames(df_all)), "\n")
 cat("\nFirst 10 rows:\n")
 print(head(df_all, 10))
 

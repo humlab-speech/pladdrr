@@ -89,7 +89,7 @@ for (i in seq_len(nrow(vowel_data))) {
 }
 
 cat(sprintf("  ✓ Created TextGrid with %d vowel tokens\n", nrow(vowel_data)))
-cat(sprintf("  Vowel types: %s\n", paste(unique(vowel_data$vowel), collapse = ", ")))
+cat(sprintf("  Vowel types: %s\n", toString(unique(vowel_data$vowel))))
 cat("\n")
 
 # ============================================================================
@@ -322,14 +322,14 @@ cat("Creating data files for plotting...\n\n")
 tokens_file <- file.path(tempdir(), "vowel_tokens.csv")
 write.csv(midpoint_data, tokens_file, row.names = FALSE)
 cat("  • Individual tokens:", tokens_file, "\n")
-cat("    Columns:", paste(names(midpoint_data), collapse = ", "), "\n")
+cat("    Columns:", toString(names(midpoint_data)), "\n")
 cat("    Use for: Scatter plot of individual tokens\n\n")
 
 # Vowel means (for centroids)
 means_file <- file.path(tempdir(), "vowel_means.csv")
 write.csv(vowel_stats, means_file, row.names = FALSE)
 cat("  • Vowel means:", means_file, "\n")
-cat("    Columns:", paste(names(vowel_stats), collapse = ", "), "\n")
+cat("    Columns:", toString(names(vowel_stats)), "\n")
 cat("    Use for: Vowel space plot with centroids and error ellipses\n\n")
 
 # Time-series data (for formant trajectories)

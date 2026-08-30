@@ -28,7 +28,7 @@ test_that("SIMD mean handles edge cases", {
   expect_true(is.na(calculate_mean_simd_bridge(numeric(0))))
 
   # Single value
-  expect_equal(calculate_mean_simd_bridge(c(42)), 42)
+  expect_equal(calculate_mean_simd_bridge(42), 42)
 
   # Two values
   expect_equal(calculate_mean_simd_bridge(c(10, 20)), 15)
@@ -69,7 +69,7 @@ test_that("SIMD stdev with pre-computed mean", {
 
 test_that("SIMD stdev handles edge cases", {
   # Single value
-  expect_equal(calculate_stdev_simd_bridge(c(42)), 0)
+  expect_equal(calculate_stdev_simd_bridge(42), 0)
 
   # Two identical values
   expect_equal(calculate_stdev_simd_bridge(c(10, 10)), 0)
@@ -107,7 +107,7 @@ test_that("SIMD min/max handles edge cases", {
   expect_true(is.na(result$max))
 
   # Single value
-  result <- calculate_min_max_simd_bridge(c(42))
+  result <- calculate_min_max_simd_bridge(42)
   expect_equal(result$min, 42)
   expect_equal(result$max, 42)
 })
@@ -134,7 +134,7 @@ test_that("SIMD quantile handles edge cases", {
   expect_true(is.na(calculate_quantile_simd_bridge(numeric(0), 0.5)))
 
   # Single value
-  expect_equal(calculate_quantile_simd_bridge(c(42), 0.5), 42)
+  expect_equal(calculate_quantile_simd_bridge(42, 0.5), 42)
 
   # Edge quantiles
   values <- 1:100
@@ -166,7 +166,7 @@ test_that("SIMD batch statistics handles edge cases", {
   expect_true(is.na(result$max))
 
   # Single value
-  result <- calculate_batch_statistics_simd_bridge(c(42))
+  result <- calculate_batch_statistics_simd_bridge(42)
   expect_equal(result$mean, 42)
   expect_equal(result$stdev, 0)
   expect_equal(result$min, 42)

@@ -98,7 +98,7 @@ for (benchmark_name in simd_benchmarks) {
     # Handle both list and bench_mark formats
     if (is.list(scalar) && !inherits(scalar, "bench_mark")) {
       # Nested list format - extract all test configurations
-      all_speedups <- c()
+      all_speedups <- NULL
 
       for (size_name in names(scalar)) {
         if (!size_name %in% names(simd)) next
@@ -256,9 +256,9 @@ if (!simd_comparisons_made) {
   cat("No SIMD optimization results found yet.\n")
 
   # Check what modes are available
-  scalar_available <- c()
-  simd_available <- c()
-  baseline_available <- c()
+  scalar_available <- NULL
+  simd_available <- NULL
+  baseline_available <- NULL
 
   for (benchmark_name in simd_benchmarks) {
     scalar_file <- file.path(
