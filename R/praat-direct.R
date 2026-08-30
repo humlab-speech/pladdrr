@@ -179,7 +179,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
@@ -244,7 +244,7 @@ to_pitch_ac_direct <- function(sound,
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
@@ -302,7 +302,7 @@ to_pitch_cc_direct <- function(sound,
 
 #' Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step in seconds (default 0.01)
 #' @param pitch_floor Minimum pitch (Hz, default 50)
 #' @param max_frequency Maximum frequency for analysis (Hz, default 1250)
@@ -346,7 +346,7 @@ to_pitch_shs_direct <- function(sound,
 
 #' Create Pitch from Sound using SPINET Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step in seconds (default 0.005)
 #' @param window_duration Analysis window duration (default 0.04)
 #' @param min_frequency Minimum frequency (Hz, default 70)
@@ -393,7 +393,7 @@ to_pitch_spinet_direct <- function(sound,
 
 #' Create Formant from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto)
 #' @param max_formants Maximum number of formants
 #' @param max_formant Maximum formant frequency (Hz)
@@ -438,7 +438,7 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
 
 #' Create Intensity from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param minimum_pitch Minimum pitch (Hz)
 #' @param time_step Time step (0 = auto)
 #' @param subtract_mean Whether to subtract mean
@@ -467,7 +467,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 
 #' Create Harmonicity from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step
 #' @param minimum_pitch Minimum pitch (Hz)
 #' @param silence_threshold Silence threshold
@@ -659,7 +659,7 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
 
 #' Create Spectrum from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param fast Logical. Use fast algorithm (default: TRUE)
 #'
 #' @return External pointer to Spectrum
@@ -686,7 +686,7 @@ to_spectrum_direct <- function(sound, fast = TRUE) {
 
 #' Create Spectrogram from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param window_length Numeric. Window length in seconds (default: 0.005)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
 #' @param time_step Numeric. Time step in seconds (default: 0.002)
@@ -731,7 +731,7 @@ to_spectrogram_direct <- function(sound, window_length = 0.005,
 
 #' Create LTAS from Sound Directly
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param bandwidth Numeric. Bandwidth in Hz (default: 100)
 #'
 #' @return A wrapped \code{Ltas} object
@@ -750,7 +750,7 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 
 #' Create PointProcess from Sound Directly (returns XPtr)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
 #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
 #' @param max_period_factor Numeric. Max period factor (default: 1.3)
@@ -797,7 +797,7 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' - `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch range
 #' - `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch contour (recommended)
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param pitch Pitch object or external pointer (from to_pitch_ac/cc)
 #'
 #' @return External pointer to PointProcess
@@ -950,7 +950,7 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' different voice ranges. Returns both the refined pitch contour and the
 #' computed range parameters for transparency.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
 #' @param initial_floor Initial pitch floor for pass 1 (default 50 Hz)
 #' @param initial_ceiling Initial pitch ceiling for pass 1 (default 800 Hz)

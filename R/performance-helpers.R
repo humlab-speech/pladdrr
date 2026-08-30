@@ -162,7 +162,7 @@ calculate_cpps_fast <- function(
 #' Create a PowerCepstrogram object bypassing R6 method dispatch for maximum performance.
 #' Returns an external pointer that can be used with other fast path functions.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param pitch_floor Numeric, minimum pitch in Hz (default 60)
 #' @param time_step Numeric, time step in seconds (default 0.002)
 #' @param max_frequency Numeric, maximum frequency in Hz (default 5000)
@@ -309,7 +309,7 @@ get_cpps_fast <- function(
 #' RcppXPtrUtils, instead of calling an R callback per sample. Requires the
 #' RcppXPtrUtils package.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param window_func External pointer from RcppXPtrUtils::cppXPtr()
 #'
 #' @return Sound object with window function applied
@@ -382,7 +382,7 @@ apply_window_xptr <- function(sound, window_func) {
 #' RcppXPtrUtils, instead of calling an R callback per sample. Requires the
 #' RcppXPtrUtils package.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param transform_func External pointer from RcppXPtrUtils::cppXPtr()
 #'
 #' @return Sound object with transform function applied
@@ -523,7 +523,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' about the same: the R/C++ boundary crossing is negligible next to the
 #' per-frame trend fit, so pick whichever reads best at the call site.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_averaging_window Time averaging window in seconds (default 0.001)
 #' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.0005)
 #' @param pitch_floor Minimum F0 in Hz (default 60)
@@ -659,7 +659,7 @@ calculate_cpps_ultra <- function(
 #' [v3.01: Window power/ZCR filtering] -> Final concatenation, in a single
 #' C++ call instead of a multi-step R implementation.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering, default)
 #' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
 #' @param silence_threshold_db Silence threshold in dB (default -25)
@@ -767,7 +767,7 @@ extract_voiced_segments_ultra <- function(
 #' then reuse them across repeated interval queries with
 #' [multiband_hnr_stats()].
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param bands Numeric vector of upper frequency limits in Hz (default
 #'   `c(0, 500, 1500, 2500, 3500)`)
 #' @param time_step Time step for harmonicity in seconds (default `0.005`)
@@ -910,7 +910,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' Computes HNR (mean + standard deviation) for 5 frequency bands in a single
 #' call: full spectrum, 0-500 Hz, 0-1500 Hz, 0-2500 Hz, 0-3500 Hz.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param bands Numeric vector of upper frequency limits in Hz
 #'   (default `c(0, 500, 1500, 2500, 3500)`, where `0` = full spectrum)
 #' @param time_step Time step for harmonicity in seconds (default `0.005`)
