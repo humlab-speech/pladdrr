@@ -547,22 +547,13 @@ extract_measurements <- function(sound,
   intensity_obj <- objs$intensity
   
   # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
-  intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
-  
-  # Filter non-empty labels (vectorized)
-  keep <- nzchar(intervals$label)
-  if (!any(keep)) {
-    return(NULL)
-  }
-  intervals <- intervals[keep, , drop = FALSE]
+  # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
+  intervals <- .get_filtered_intervals(textgrid, tier)
+  if (is.null(intervals)) return(NULL)
   
   # Compute measurement times (vectorized)
-  meas_times <- switch(time_point,
-    midpoint = (intervals$start + intervals$end) / 2,
-    start = intervals$start,
-    end = intervals$end,
-    mean = (intervals$start + intervals$end) / 2
-  )
+  # Compute measurement times (vectorized)
+  meas_times <- .measurement_times(intervals, time_point)
   
   # Build base result data.frame
   results <- data.frame(
@@ -692,4 +683,23 @@ aggregate_measurements <- function(measurements,
   } else {
     lapply(files, function(f) .process_batch_file(f, func, ...))
   }
+}
+
+
+# Fetch intervals and filter to non-empty labels (NULL if none).
+.get_filtered_intervals <- function(textgrid, tier) {
+  intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
+  keep <- nzchar(intervals$label)
+  if (!any(keep)) return(NULL)
+  intervals[keep, , drop = FALSE]
+}
+
+# Measurement times for each interval per the requested time_point.
+.measurement_times <- function(intervals, time_point) {
+  switch(time_point,
+    midpoint = (intervals$start + intervals$end) / 2,
+    start = intervals$start,
+    end = intervals$end,
+    mean = (intervals$start + intervals$end) / 2
+  )
 }
