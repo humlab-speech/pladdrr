@@ -178,3 +178,43 @@ win-builder R-devel previously finished with **0 errors, 4 warnings, 1 note**:
 
 win-builder runs for this release are pending; the two source-level fixes
 above apply on all platforms (the pragma is GCC/Clang-guarded, MSVC unaffected).
+
+## Accepted goodpractice lint findings (pkgcheck)
+
+`pkgcheck` reports goodpractice lint findings as advisory (`ℹ Some goodpractice
+linters failed`); they are non-blocking and do not affect the `R CMD check`
+result (0 errors / 0 warnings). The following findings are intentionally
+accepted; the code is correct as written and "fixing" it would make it worse.
+
+- **45 `$.X` S3 methods flagged "defined but never called"**: all are registered
+  `S3method("$", Class)` in NAMESPACE and dispatched dynamically by `obj$field`;
+  the check misses the quoted `"$"` generic in the registration. False positive.
+- **19 `RcppExports.R` internal wrappers with no R-side caller**: removing them
+  requires editing vendored Praat C++ and a full recompile for zero functional
+  gain. Many are SIMD variants used by the regression test suite.
+- **71 `expect_true(is.numeric(x))` (expect_type linter)**: `is.numeric()` is
+  true for both integer and double; converting to `expect_type(x, "double")`
+  would wrongly reject integer results. The assertion is correct as written.
+- **`expect_equal()` on count/dimension results**: `get_number_of_*` and related
+  getters return a mix of double and integer types, so `expect_identical()`
+  would be type-fragile; `expect_equal()`'s tolerance is the correct assertion.
+- **70 implicit assignments in `expect_warning(x <- f())` / `expect_silent(x <- f())`**:
+  the standard testthat idiom for capturing both the warning and the return
+  value. `expect_warning()` does not return the expression value, so
+  `x <- expect_warning(f())` would break. Linter misfires on this idiom.
+- **14 unreachable-code findings**: all are `switch(...) = ..., stop(...)` default
+  branches or intentional `if (FALSE)` demonstration guards in examples —
+  linter false positives, not dead-code bugs.
+- **`line_length_linter` (2,975 hits)**: the repo's own lint standard is 120 cols
+  (`.lintr`); pkgcheck's bundled goodpractice enforces 80 cols and ignores
+  `.lintr`, including on generated `R/RcppExports.R`. Wrapping to 80 would
+  contradict the repo standard for zero functional gain.
+- **`library_require_linter` (236) / `undesirable_operator_linter` (310)**:
+  `library()` in tests/vignettes and `pladdrr:::` for testing internals are the
+  idiomatic patterns; `<<-` appears only in benchmark scripts.
+- **Function-length/cyclomatic-complexity findings**: the six largest offenders
+  were refactored (see git history, Phase 7); the remaining ~24 are verbose
+  constructor/dispatch methods and distributed-length plotting functions where
+  further splitting is architectural or visual-regression risk for an advisory
+  lint. The 12 exported-name clashes under "Other checks" cannot be changed
+  without renaming public API.
