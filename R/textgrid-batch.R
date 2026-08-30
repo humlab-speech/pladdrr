@@ -3,6 +3,23 @@
 #
 # High-performance batch operations for TextGrid interval extraction and analysis
 
+
+# Resolve the interval text-comparison criterion to a type + target.
+
+# Wrap extracted Sound external pointers into Sound objects.
+.wrap_sound_xptrs <- function(xptrs) {
+  lapply(xptrs, function(xptr) {
+    if (is.null(xptr)) return(NULL)
+    Sound(.xptr = xptr)
+  })
+}
+
+.resolve_interval_criterion <- function(text_equals, text_contains, text_starts_with) {
+  if (!is.null(text_equals)) list(type = "equals", target = as.character(text_equals))
+  else if (!is.null(text_contains)) list(type = "contains", target = as.character(text_contains))
+  else list(type = "starts_with", target = as.character(text_starts_with))
+}
+
 #' Extract Intervals Matching Criteria (Batch)
 #'
 #' Extract all intervals from a TextGrid tier that match specified text
@@ -102,16 +119,9 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
     stop("Specify only ONE comparison criterion")
   }
   
-  if (!is.null(text_equals)) {
-    comp_type <- "equals"
-    target <- as.character(text_equals)
-  } else if (!is.null(text_contains)) {
-    comp_type <- "contains"
-    target <- as.character(text_contains)
-  } else {
-    comp_type <- "starts_with"
-    target <- as.character(text_starts_with)
-  }
+  crit <- .resolve_interval_criterion(text_equals, text_contains, text_starts_with)
+  comp_type <- crit$type
+  target <- crit$target
   
   # Call C++ batch operation
   sound_xptr <- if (extract_sounds) sound$get_xptr() else NULL
@@ -126,6 +136,9 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
   )
   
   # Wrap Sound xptrs in Sound objects if extracted
+  if (extract_sounds && length(result$sounds) > 0) {
+    result$sounds <- .wrap_sound_xptrs(result$sounds)
+  }
   if (extract_sounds && length(result$sounds) > 0) {
     result$sounds <- lapply(result$sounds, function(xptr) {
       if (is.null(xptr)) return(NULL)
