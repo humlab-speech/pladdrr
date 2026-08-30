@@ -961,6 +961,18 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' 1. Pass 1: Extract pitch with wide range (initial_floor to initial_ceiling)
 #' 2. Compute Q1 and Q3 from voiced frames
 
+
+# Run one pitch-extraction pass at the given floor/ceiling.
+.run_pitch_pass <- function(pitch_fn, sound_ptr, pitch_floor, pitch_ceiling, time_step,
+                            voicing_threshold, silence_threshold, octave_cost,
+                            octave_jump_cost, voiced_unvoiced_cost) {
+  pitch_fn(sound_ptr, time_step = time_step, pitch_floor = pitch_floor,
+           pitch_ceiling = pitch_ceiling, voicing_threshold = voicing_threshold,
+           silence_threshold = silence_threshold, octave_cost = octave_cost,
+           octave_jump_cost = octave_jump_cost,
+           voiced_unvoiced_cost = voiced_unvoiced_cost)
+}
+
 #' 3. Pass 2: Re-extract with adaptive range (Q1*0.75 to Q3*1.5)
 #'
 #' @section Performance:
@@ -1009,17 +1021,9 @@ two_pass_adaptive_pitch <- function(sound,
   pitch_fn <- if (method == "cc") to_pitch_cc_direct else to_pitch_ac_direct
 
   # Pass 1: Wide range
-  pitch_rough <- pitch_fn(
-    sound_ptr,
-    time_step = time_step,
-    pitch_floor = initial_floor,
-    pitch_ceiling = initial_ceiling,
-    voicing_threshold = voicing_threshold,
-    silence_threshold = silence_threshold,
-    octave_cost = octave_cost,
-    octave_jump_cost = octave_jump_cost,
-    voiced_unvoiced_cost = voiced_unvoiced_cost
-  )
+  pitch_rough <- .run_pitch_pass(pitch_fn, sound_ptr, initial_floor, initial_ceiling,
+                                  time_step, voicing_threshold, silence_threshold,
+                                  octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 
   # Get quartiles + adaptive range in single C++ call
   range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,
@@ -1042,17 +1046,9 @@ two_pass_adaptive_pitch <- function(sound,
   max_pitch <- range$max_pitch
 
   # Pass 2: Refined range
-  pitch_refined <- pitch_fn(
-    sound_ptr,
-    time_step = time_step,
-    pitch_floor = min_pitch,
-    pitch_ceiling = max_pitch,
-    voicing_threshold = voicing_threshold,
-    silence_threshold = silence_threshold,
-    octave_cost = octave_cost,
-    octave_jump_cost = octave_jump_cost,
-    voiced_unvoiced_cost = voiced_unvoiced_cost
-  )
+  pitch_refined <- .run_pitch_pass(pitch_fn, sound_ptr, min_pitch, max_pitch,
+                                    time_step, voicing_threshold, silence_threshold,
+                                    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 
   list(
     pitch = pitch_refined,
