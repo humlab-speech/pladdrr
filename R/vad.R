@@ -85,6 +85,25 @@ NULL
 #' )
 #'
 #' @export
+
+# Per-segment zero-crossing-rate keep test (shared by extract_voiced_segments
+# and sound_get_zcr). Long segments (>= zcr_window) use the AVQI 0.0025-0.0275s
+# analysis window; short segments use the whole segment.
+.segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold, zcr_window) {
+  segment_zeros <- all_zeros[all_zeros >= seg_start & all_zeros < seg_end]
+  if (seg_end - seg_start >= zcr_window) {
+    relative_zeros <- segment_zeros - seg_start
+    analysis_end <- min(0.0275, (seg_end - seg_start) - 0.0025)
+    zc <- relative_zeros[relative_zeros >= 0.0025 & relative_zeros <= analysis_end]
+  } else {
+    zc <- segment_zeros
+  }
+  if (length(zc) < 2) return(TRUE)
+  afstand <- zc[length(zc)] - zc[1]
+  if (afstand <= 0) return(TRUE)
+  (length(zc) / afstand) < zcr_threshold
+}
+
 sound_to_textgrid_silences <- function(sound,
                                        minimum_pitch = 100,
                                        time_step = 0.0,
@@ -422,57 +441,9 @@ extract_voiced_segments <- function(sound,
 
     keep_mask <- logical(length(xmin))
 
-    for (i in seq_along(xmin)) {
-      segment_duration <- xmax[i] - xmin[i]
-
-      # For segments >= 30ms, use AVQI-style ZCR (0.0025-0.0275 window)
-      if (segment_duration >= zcr_window) {
-        # Get zeros within segment
-        segment_zeros <- all_zeros[all_zeros >= xmin[i] & all_zeros < xmax[i]]
-
-        if (length(segment_zeros) >= 2) {
-          # Convert to segment-relative times
-          relative_zeros <- segment_zeros - xmin[i]
-
-          # AVQI analysis window: 0.0025s to 0.0275s within segment
-          analysis_start <- 0.0025
-          analysis_end <- min(0.0275, segment_duration - 0.0025)
-
-          analysis_zeros <- relative_zeros[
-            relative_zeros >= analysis_start & relative_zeros <= analysis_end
-          ]
-
-          if (length(analysis_zeros) >= 2) {
-            # AVQI formula: N / (last_zero - first_zero)
-            afstand <- analysis_zeros[length(analysis_zeros)] - analysis_zeros[1]
-            if (afstand > 0) {
-              segment_zcr <- length(analysis_zeros) / afstand
-              keep_mask[i] <- segment_zcr < zcr_threshold
-            } else {
-              keep_mask[i] <- TRUE  # Can't calculate, keep segment
-            }
-          } else {
-            keep_mask[i] <- TRUE  # Not enough zeros in analysis window
-          }
-        } else {
-          keep_mask[i] <- TRUE  # Not enough zeros
-        }
-      } else {
-        # Short segment - use simple ZCR across entire segment
-        segment_zeros <- all_zeros[all_zeros >= xmin[i] & all_zeros < xmax[i]]
-        if (length(segment_zeros) >= 2) {
-          afstand <- segment_zeros[length(segment_zeros)] - segment_zeros[1]
-          if (afstand > 0) {
-            segment_zcr <- length(segment_zeros) / afstand
-            keep_mask[i] <- segment_zcr < zcr_threshold
-          } else {
-            keep_mask[i] <- TRUE
-          }
-        } else {
-          keep_mask[i] <- TRUE
-        }
-      }
-    }
+    keep_mask <- vapply(seq_along(xmin), function(i) {
+      .segment_zcr_keep(all_zeros, xmin[i], xmax[i], zcr_threshold, zcr_window)
+    }, logical(1))
 
     xmin <- xmin[keep_mask]
     xmax <- xmax[keep_mask]
