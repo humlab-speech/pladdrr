@@ -140,7 +140,7 @@
     },
   save = function(cpp_obj, .xptr) function(path) {
       cpp_obj$save(path)
-      invisible(obj)
+      invisible(NULL)
     },
   print = function(cpp_obj, .xptr) function() {
       info <- cpp_obj$get_info()
@@ -153,7 +153,7 @@
                   info$matrix$nx, info$matrix$ny, info$matrix$dx, info$matrix$dy))
       cat(sprintf("  Path length: %d cells\n", info$path$length))
       cat(sprintf("  Weighted distance: %.4f\n", info$path$weighted_distance))
-      invisible(obj)
+      invisible(NULL)
     }
 )
 
