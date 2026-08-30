@@ -105,12 +105,7 @@ extract_formants <- function(sound,
   }
   
   # S3 object - old implementation
-  validate_sound_object(sound)
-  validate_positive(max_formant, "max_formant")
-  validate_positive_int(n_formants, "n_formants")
-  validate_non_negative(time_step, "time_step")
-  validate_positive(window_length, "window_length")
-  validate_positive(pre_emphasis_from, "pre_emphasis_from")
+  .validate_formant_args(sound, max_formant, n_formants, time_step, window_length, pre_emphasis_from)
   
   # Extract signal and metadata
   signal <- sound$values
@@ -122,15 +117,8 @@ extract_formants <- function(sound,
   }
   
   # Call formant detection algorithm
-  formant_data <- .detect_formants_burg(
-    signal = signal,
-    sr = sr,
-    time_step = time_step,
-    max_formant = max_formant,
-    n_formants = n_formants,
-    window_length = window_length,
-    pre_emphasis_from = pre_emphasis_from
-  )
+  result <- .burg_formants(signal, sr, time_step, max_formant, n_formants,
+                           window_length, pre_emphasis_from)
   
   # Create formant object (plain list - S3 class removed)
   result <- list(
@@ -527,4 +515,30 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   frame_times <- seq(window_length / 2, duration - window_length / 2, by = time_step)
   if (length(frame_times) == 0 || anyNA(frame_times)) return(duration / 2)
   frame_times
+}
+
+
+# Run Burg formant detection and assemble the (deprecated) formant list.
+.burg_formants <- function(signal, sr, time_step, max_formant, n_formants,
+                           window_length, pre_emphasis_from) {
+  formant_data <- .detect_formants_burg(
+    signal = signal, sr = sr, time_step = time_step, max_formant = max_formant,
+    n_formants = n_formants, window_length = window_length,
+    pre_emphasis_from = pre_emphasis_from)
+  list(values = formant_data,
+       n_frames = length(unique(formant_data$time)),
+       time_step = time_step, max_formant = max_formant,
+       n_formants = n_formants, window_length = window_length)
+}
+
+
+# Validate the (deprecated) formant-extraction arguments.
+.validate_formant_args <- function(sound, max_formant, n_formants, time_step,
+                                   window_length, pre_emphasis_from) {
+  validate_sound_object(sound)
+  validate_positive(max_formant, "max_formant")
+  validate_positive_int(n_formants, "n_formants")
+  validate_non_negative(time_step, "time_step")
+  validate_positive(window_length, "window_length")
+  validate_positive(pre_emphasis_from, "pre_emphasis_from")
 }
