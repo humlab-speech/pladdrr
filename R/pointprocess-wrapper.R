@@ -393,7 +393,8 @@ PointProcess <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
     cpp_pp <- pp_mod$RPointProcess$new(xptr)
     return(structure(list(.xptr = xptr, .cpp = cpp_pp), class = c("PointProcess", "PraatObject")))
   }
-  stop("PointProcess objects must be created from a Sound or Pitch object using to_point_process_*() methods, or with PointProcess(tmin, tmax) for an empty object")
+
+    stop("PointProcess objects must be created from a Sound or Pitch object using to_point_process_*() methods, or with PointProcess(tmin, tmax) for an empty object")
 }
 
 # ============================================================================

@@ -1030,8 +1030,12 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   type <- match.arg(type)
-  p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "LD", "Discriminant Scree Plot", garnish) else NULL
-  p_scores <- if (type == "scores" || type == "both") .scores_plot(object, type, "Discriminant Scores", garnish, ...) else NULL
+  p_scree <- if (type == "scree" || type == "both") {
+    .scree_plot(object, "LD", "Discriminant Scree Plot", garnish)
+  } else NULL
+  p_scores <- if (type == "scores" || type == "both") {
+    .scores_plot(object, type, "Discriminant Scores", garnish, ...)
+  } else NULL
   if (type == "both") {
     if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")

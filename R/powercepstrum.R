@@ -76,10 +76,12 @@ NULL
 
 .powercepstrum_methods$get_peak_prominence <- function(.self, pitch_floor = 60,
                                                        pitch_ceiling = 333.3,
-                                                       interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
+                                                       interpolation = c("parabolic", "none", "cubic", "sinc70",
+                                                         "sinc700"),
                                                        qmin = 0.001, qmax = 0.05,
                                                        trend_type = c("exponential decay", "straight"),
-                                                       fit_method = c("robust slow", "robust", "least squares", "least_squares"),
+                                                       fit_method = c("robust slow", "robust", "least squares",
+                                                         "least_squares"),
                                                        tolerance = 0.05) {
   interpolation <- match.arg(interpolation)
   if (missing(trend_type) && !missing(fit_method) &&
@@ -123,7 +125,8 @@ NULL
 }
 
 .powercepstrum_methods$tabulate_rhamonics <- function(.self, pitch_floor = 60, pitch_ceiling = 333.3,
-                                                      interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700")) {
+                                                      interpolation = c("parabolic", "none", "cubic", "sinc70",
+                                                        "sinc700")) {
   interpolation <- match.arg(interpolation)
   interp_map <- .interp_map
   xptr <- .powercepstrum_tabulate_rhamonics(.self$.xptr, pitch_floor = pitch_floor,

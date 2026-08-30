@@ -151,7 +151,8 @@ lockEnvironment(.egg_methods, bindings = TRUE)
 #' @export
 Electroglottogram <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("Electroglottogram objects must be created using sound$extract_electroglottogram() or electroglottogram_create()")
+
+      stop("Electroglottogram objects must be created using sound$extract_electroglottogram() or electroglottogram_create()")
   }
   
   egg_mod <- get_module("electroglottogram_module")

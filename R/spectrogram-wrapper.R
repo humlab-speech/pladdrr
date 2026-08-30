@@ -76,7 +76,8 @@ NULL
 .spectrogram_methods$get_lowest_frequency <- function(.self) .spectrogram_get_lowest_frequency(.self$.xptr)
 .spectrogram_methods$get_highest_frequency <- function(.self) .spectrogram_get_highest_frequency(.self$.xptr)
 .spectrogram_methods$get_frequency_step <- function(.self) .spectrogram_get_frequency_step(.self$.xptr)
-.spectrogram_methods$get_number_of_frequency_bins <- function(.self) .spectrogram_get_number_of_frequency_bins(.self$.xptr)
+.spectrogram_methods$get_number_of_frequency_bins <- function(.self)
+  .spectrogram_get_number_of_frequency_bins(.self$.xptr)
 
 # --- Conversion ---
 .spectrogram_methods$get_time_from_frame <- function(.self, frame) {

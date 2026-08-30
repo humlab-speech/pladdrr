@@ -184,11 +184,13 @@ NULL
 
 .sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()
 
-.sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
+.sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic")
+  {
   .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time), .praat_peak_interpolation_code(interpolation))
 }
 
-.sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic") {
+.sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0, channel = 1, interpolation = "parabolic")
+  {
   .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time), .praat_peak_interpolation_code(interpolation))
 }
 
@@ -579,8 +581,10 @@ NULL
   stopifnot(
     "dt must be a positive number" = is.numeric(dt) && length(dt) == 1 && dt > 0,
     "df must be a positive number" = is.numeric(df) && length(df) == 1 && df > 0,
-    "window_length must be a positive number" = is.numeric(window_length) && length(window_length) == 1 && window_length > 0,
-    "forward_masking_time must be a non-negative number" = is.numeric(forward_masking_time) && length(forward_masking_time) == 1 && forward_masking_time >= 0)
+    "window_length must be a positive number" = is.numeric(window_length) && length(window_length) == 1 &&
+      window_length > 0,
+    "forward_masking_time must be a non-negative number" = is.numeric(forward_masking_time) &&
+      length(forward_masking_time) == 1 && forward_masking_time >= 0)
   cochleagram_ptr <- .sound_to_cochleagram(.self$.xptr, dt, df, window_length, forward_masking_time)
   Cochleagram(.xptr = cochleagram_ptr)
 }
@@ -670,7 +674,8 @@ NULL
 
 .sound_methods$to_point_process_extrema <- function(.self, channel = 1, include_maxima = TRUE,
                                                      include_minima = FALSE,
-                                                     interpolation = c("None", "Parabolic", "Cubic", "Sinc70", "Sinc700")) {
+                                                     interpolation = c("None", "Parabolic", "Cubic", "Sinc70",
+                                                       "Sinc700")) {
   interpolation <- match.arg(interpolation)
   interpolation_int <- switch(interpolation,
     "None" = 0, "Parabolic" = 1, "Cubic" = 2, "Sinc70" = 3, "Sinc700" = 4, 1)
@@ -1120,7 +1125,8 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 `$.sound_constructor` <- function(x, name) {
   val <- .sound_static_env[[name]]
   if (is.null(val)) {
-    stop("Sound has no static method '", name, "'. Available: from_values, create_tone, create_pure_tone, create_tone_complex, new")
+    stop("Sound has no static method '", name,
+      "'. Available: from_values, create_tone, create_pure_tone, create_tone_complex, new")
   }
   val
 }
