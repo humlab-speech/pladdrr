@@ -501,24 +501,8 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   # Get pitch data
   pitch_df <- pitch$as_data_frame()
   
-  # Filter time range
-  if (!is.null(from_time)) {
-    pitch_df <- pitch_df[pitch_df$time >= from_time, ]
-  }
-  if (!is.null(to_time)) {
-    pitch_df <- pitch_df[pitch_df$time <= to_time, ]
-  }
-  
-  # Filter pitch range
-  if (!is.null(pitch_floor)) {
-    pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
-  }
-  if (!is.null(pitch_ceiling)) {
-    pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
-  }
-  
-  # Remove unvoiced frames
-  pitch_df <- pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
+  # Filter pitch track to ranges and voiced frames
+  pitch_df <- .filter_pitch_track(pitch_df, from_time, to_time, pitch_floor, pitch_ceiling)
   
   if (nrow(pitch_df) == 0) {
     warning("No pitch data available in the specified range")
@@ -647,4 +631,14 @@ plot_sound_pitch <- function(sound, pitch,
       axis.text.y.left = ggplot2::element_text(color = pitch_color),
       axis.title.y.right = ggplot2::element_text(color = intensity_color),
       axis.text.y.right = ggplot2::element_text(color = intensity_color))
+}
+
+
+# Filter a pitch-track data frame to time/pitch ranges and voiced frames.
+.filter_pitch_track <- function(pitch_df, from_time, to_time, pitch_floor, pitch_ceiling) {
+  if (!is.null(from_time)) pitch_df <- pitch_df[pitch_df$time >= from_time, ]
+  if (!is.null(to_time)) pitch_df <- pitch_df[pitch_df$time <= to_time, ]
+  if (!is.null(pitch_floor)) pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
+  if (!is.null(pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
+  pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
 }
