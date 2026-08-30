@@ -238,29 +238,8 @@ extract_formants <- function(sound,
   freqs <- angles[valid] * sr / (2 * pi)
   bandwidths <- -log(magnitudes[valid]) * sr / pi
   
-  # Sort by frequency
-  ord <- order(freqs)
-  freqs <- freqs[ord]
-  bandwidths <- bandwidths[ord]
-  
-  # Filter by max formant
-  valid_freqs <- freqs <= max_formant
-  freqs <- freqs[valid_freqs]
-  bandwidths <- bandwidths[valid_freqs]
-  
-  # Pad or truncate to n_formants
-  if (length(freqs) < n_formants) {
-    freqs <- c(freqs, rep(NA_real_, n_formants - length(freqs)))
-    bandwidths <- c(bandwidths, rep(NA_real_, n_formants - length(bandwidths)))
-  } else if (length(freqs) > n_formants) {
-    freqs <- freqs[seq_len(n_formants)]
-    bandwidths <- bandwidths[seq_len(n_formants)]
-  }
-  
-  return(data.frame(
-    frequency = freqs,
-    bandwidth = bandwidths
-  ))
+  # Sort, filter, and pad to n_formants
+  .sort_filter_formants(freqs, bandwidths, max_formant, n_formants)
 }
 
 #' Burg's algorithm for LPC estimation
@@ -532,4 +511,23 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   validate_non_negative(time_step, "time_step")
   validate_positive(window_length, "window_length")
   validate_positive(pre_emphasis_from, "pre_emphasis_from")
+}
+
+
+# Sort LPC-derived formant frequencies, filter to max, pad/truncate.
+.sort_filter_formants <- function(freqs, bandwidths, max_formant, n_formants) {
+  ord <- order(freqs)
+  freqs <- freqs[ord]
+  bandwidths <- bandwidths[ord]
+  valid_freqs <- freqs <= max_formant
+  freqs <- freqs[valid_freqs]
+  bandwidths <- bandwidths[valid_freqs]
+  if (length(freqs) < n_formants) {
+    freqs <- c(freqs, rep(NA_real_, n_formants - length(freqs)))
+    bandwidths <- c(bandwidths, rep(NA_real_, n_formants - length(bandwidths)))
+  } else if (length(freqs) > n_formants) {
+    freqs <- freqs[seq_len(n_formants)]
+    bandwidths <- bandwidths[seq_len(n_formants)]
+  }
+  data.frame(frequency = freqs, bandwidth = bandwidths)
 }
