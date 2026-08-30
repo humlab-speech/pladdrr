@@ -410,6 +410,7 @@ plot_cpp_timeseries <- function(cepstrogram,
   }
   
   # Add reference lines if specified
+  p <- .add_reference_lines(p, reference_lines)
   if (!is.null(reference_lines)) {
     for (ref_val in reference_lines) {
       p <- p + ggplot2::geom_hline(
@@ -422,6 +423,7 @@ plot_cpp_timeseries <- function(cepstrogram,
   }
   
   # Add mean CPP line
+  p <- .add_mean_cpp_line(p, plot_data)
   if (nrow(plot_data) > 0) {
     mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
     p <- p + ggplot2::geom_hline(
@@ -549,4 +551,27 @@ create_cepstrum_report <- function(cepstrogram,
   }
   plot_data[plot_data$quefrency >= quefrency_range[1] &
             plot_data$quefrency <= quefrency_range[2], ]
+}
+
+
+# Add dashed horizontal reference lines to a CPP time-series plot.
+.add_reference_lines <- function(p, reference_lines) {
+  if (is.null(reference_lines)) return(p)
+  for (ref_val in reference_lines) {
+    p <- p + ggplot2::geom_hline(yintercept = ref_val,
+      linetype = "dashed", color = "red", alpha = 0.7)
+  }
+  p
+}
+
+# Add the mean CPP line + label.
+.add_mean_cpp_line <- function(p, plot_data) {
+  if (nrow(plot_data) == 0) return(p)
+  mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
+  p + ggplot2::geom_hline(yintercept = mean_cpp,
+    linetype = "solid", color = "red", linewidth = 0.8, alpha = 0.6) +
+    ggplot2::annotate("text", x = max(plot_data$time) * 0.95, y = mean_cpp,
+                      label = sprintf("Mean: %.2f dB", mean_cpp),
+                      vjust = -0.5, hjust = 1, size = 3.5,
+                      color = "red", fontface = "bold")
 }
