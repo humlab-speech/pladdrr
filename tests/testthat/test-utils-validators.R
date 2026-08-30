@@ -166,3 +166,8 @@ test_that("is_praat_formant returns FALSE for non-Formant input", {
   expect_false(is_praat_formant("x"))
   expect_false(is_praat_formant(123))
 })
+
+test_that("is_praat_pitch returns FALSE for non-Pitch input", {
+  expect_false(is_praat_pitch(Sound$create_tone(frequency = 200, duration = 0.2)))
+  expect_false(is_praat_pitch(list()))
+})

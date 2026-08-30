@@ -42,3 +42,8 @@ test_that("to_intensity_tier and save use the module methods, not missing wrappe
   expect_true(file.exists(tmp))
   expect_gt(file.info(tmp)$size, 0)
 })
+
+test_that("intensity_tier_to_amplitude_tier rejects non-IntensityTier", {
+  expect_error(intensity_tier_to_amplitude_tier("x"),
+               "intensity_tier must be an IntensityTier")
+})

@@ -123,3 +123,13 @@ test_that("two_pass_adaptive_pitch returns an adaptive-range pitch result", {
   pitch_refined <- Pitch(.xptr = result$pitch)
   expect_gt(pitch_refined$get_mean(0, 0, "hertz"), 0)
 })
+
+test_that("to_pitch_cc_direct rejects invalid input", {
+  expect_error(to_pitch_cc_direct("x"), "sound must be a Sound object")
+})
+
+test_that("to_spectrogram_direct accepts a Sound via its C++ pointer path", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  sg <- to_spectrogram_direct(snd, time_step = 0.005, max_frequency = 5000)
+  expect_true(inherits(sg, "externalptr"))
+})
