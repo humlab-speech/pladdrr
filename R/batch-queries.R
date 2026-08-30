@@ -553,7 +553,7 @@ get_durations_batch <- function(file_paths) {
 #' Index) calculations where maximum F0 is the FH (Highest Frequency)
 #' component.
 #'
-#' @param sound A Sound object
+#' @inheritParams pladdrr-shared-sound-a sound
 #' @param stat Statistic to compute: "max", "min", "mean", "median", or "sd"
 #' @param min_pitch Pitch floor in Hz (default: 75)
 #' @inheritParams pladdrr-shared-params max_pitch
@@ -624,7 +624,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' Index) calculations where minimum intensity is the IM (Intensity
 #' Minimum) component.
 #'
-#' @param sound A Sound object
+#' @inheritParams pladdrr-shared-sound-a sound
 #' @param min_pitch Pitch floor in Hz (default: 75)
 #' @inheritParams pladdrr-shared-params max_pitch
 #' @param time_step Time step for analysis (0 = auto)
@@ -708,7 +708,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' matching Tier 4 path by name instead of having to know the two are
 #' equivalent.
 #'
-#' @param sound A Sound object
+#' @inheritParams pladdrr-shared-sound-a sound
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
 #'   "hnr", or "all" for all metrics
 #' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).

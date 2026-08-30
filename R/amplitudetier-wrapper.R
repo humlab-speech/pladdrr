@@ -186,7 +186,7 @@ amplitude_tier_create <- function(tmin, tmax) {
 #' Extracts amplitude values from a Sound at the times specified by a PointProcess.
 #'
 #' @param point_process A PointProcess object
-#' @param sound A Sound object
+#' @inheritParams pladdrr-shared-sound-a sound
 #' @return An AmplitudeTier object with amplitudes at each point time
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)

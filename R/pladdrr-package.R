@@ -207,3 +207,9 @@ NULL
 #' @param sound A Sound R6 object
 #' @name pladdrr-shared-sound-r6
 NULL
+
+#' Shared parameter docs for functions taking an R6 Sound object (alternate)
+#'
+#' @param sound A Sound object
+#' @name pladdrr-shared-sound-a
+NULL
