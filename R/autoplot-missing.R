@@ -449,6 +449,27 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
     color = color, linewidth = 0.8, ...)
 }
 
+
+# Filter a ComplexSpectrogram data frame to time/freq ranges.
+.filter_complex_spectrogram_df <- function(df, from_time, to_time, from_freq, to_freq) {
+  if (!is.null(from_time)) df <- df[df$time >= from_time, ]
+  if (!is.null(to_time)) df <- df[df$time <= to_time, ]
+  if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
+  if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
+  df
+}
+
+# Ensure a ComplexSpectrogram data frame has an amplitude_dB column.
+.to_amplitude_db <- function(df, dynamic_range) {
+  if ("amplitude_dB" %in% names(df)) return(df)
+  if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
+  ref <- max(df$amplitude, 1e-300)
+  df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
+  floor_dB <- -dynamic_range
+  df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
+  df
+}
+
 #' @rdname autoplot-methods
 #' @param show_phase Include phase as separate panel (default: FALSE).
 #' @export
@@ -458,23 +479,13 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL, to_time = NULL
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   df <- as.data.frame(object)
-  if (!is.null(from_time)) df <- df[df$time >= from_time, ]
-  if (!is.null(to_time))   df <- df[df$time <= to_time, ]
-  if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
-  if (!is.null(to_freq))   df <- df[df$frequency <= to_freq, ]
+  df <- .filter_complex_spectrogram_df(df, from_time, to_time, from_freq, to_freq)
   if (nrow(df) == 0) {
     warning("ComplexSpectrogram has no data in range")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
+  df <- .to_amplitude_db(df, dynamic_range)
   amp_col <- "amplitude_dB"
-  if (!"amplitude_dB" %in% names(df)) {
-    if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
-    ref <- max(df$amplitude, 1e-300)
-    # equivalent to 10*log10(power/ref^2) since power = amplitude^2
-    df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
-    floor_dB <- -dynamic_range
-    df$amplitude_dB <- pmax(df$amplitude_dB, floor_dB)
-  }
   p_amp <- ggplot2::ggplot(df,
             ggplot2::aes(x = .data$time, y = .data$frequency,
                          fill = .data[[amp_col]])) +
