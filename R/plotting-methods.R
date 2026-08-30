@@ -196,7 +196,7 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #' @param x Formant object
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
-#' @param max_formant Maximum formant number to display (default: 3)
+#' @inheritParams pladdrr-shared-maxformant max_formant
 #' @inheritParams pladdrr-shared-params garnish
 #' @param title Character. Plot title (default: "Formant")
 #' @param colors Character vector. Colors for each formant (default: auto)

@@ -244,3 +244,27 @@ NULL
 #' @param time_step Time step (0 = auto)
 #' @name pladdrr-shared-timeauto
 NULL
+
+#' Shared parameter docs for functions taking a TextGrid R6 object
+#'
+#' @param textgrid A TextGrid object
+#' @name pladdrr-shared-textgrid-r6
+NULL
+
+#' Shared parameter docs for functions taking an R6 Pitch object (alt)
+#'
+#' @param pitch A Pitch object
+#' @name pladdrr-shared-pitch-a
+NULL
+
+#' Shared parameter docs for display-formant functions
+#'
+#' @param max_formant Maximum formant number to display (default: 3)
+#' @name pladdrr-shared-maxformant
+NULL
+
+#' Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
+#'
+#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @name pladdrr-shared-timeauto75
+NULL

@@ -364,7 +364,7 @@ plot_pitch_intensity <- function(pitch, intensity,
 #' @param formant Formant object
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
-#' @param max_formant Maximum formant number to display (default: 3)
+#' @inheritParams pladdrr-shared-maxformant max_formant
 #' @param formant_colors Character vector. Colors for formants (default: auto)
 #' @param dynamic_range Numeric. Spectrogram dynamic range in dB (default: 70)
 #' @param title Character. Plot title (default: "Spectrogram + Formants")

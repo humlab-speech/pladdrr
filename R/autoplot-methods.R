@@ -154,7 +154,7 @@ autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
 
 #' @rdname autoplot-methods
 #' @param object Formant object
-#' @param max_formant Maximum formant number to display (default: 3)
+#' @inheritParams pladdrr-shared-maxformant max_formant
 #' @param colors Colors for each formant track
 #' @export
 autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,

@@ -180,7 +180,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' available in Tier 1 (Standard) API.
 #'
 #' @inheritParams pladdrr-shared-params sound
-#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @inheritParams pladdrr-shared-timeauto75 time_step
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
 #' @param max_candidates Maximum number of pitch candidates (default 15)
@@ -245,7 +245,7 @@ to_pitch_ac_direct <- function(sound,
 #' available in Tier 1 (Standard) API.
 #'
 #' @inheritParams pladdrr-shared-params sound
-#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @inheritParams pladdrr-shared-timeauto75 time_step
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
 #' @param max_candidates Maximum number of pitch candidates (default 15)
@@ -951,7 +951,7 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' computed range parameters for transparency.
 #'
 #' @inheritParams pladdrr-shared-params sound
-#' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @inheritParams pladdrr-shared-timeauto75 time_step
 #' @param initial_floor Initial pitch floor for pass 1 (default 50 Hz)
 #' @param initial_ceiling Initial pitch ceiling for pass 1 (default 800 Hz)
 #' @param voicing_threshold Voicing threshold (default 0.45)

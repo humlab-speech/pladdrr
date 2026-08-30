@@ -112,7 +112,7 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' Query pitch (F0) values at multiple time points in a single function call,
 #' instead of repeated calls to `get_value_at_time()`.
 #'
-#' @param pitch A Pitch object
+#' @inheritParams pladdrr-shared-pitch-a pitch
 #' @inheritParams pladdrr-shared-params times
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
@@ -154,7 +154,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #'
 #' Query pitch strength (voicing confidence) at multiple time points.
 #'
-#' @param pitch A Pitch object
+#' @inheritParams pladdrr-shared-pitch-a pitch
 #' @inheritParams pladdrr-shared-params times
 #' @param unit Unit for pitch (used internally by Praat)
 #' @param interpolate Logical; whether to interpolate (default TRUE)
@@ -191,7 +191,7 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #' designed for VUV analysis workflows where adaptive pitch ranges are
 #' calculated from quartiles.
 #'
-#' @param pitch A Pitch object
+#' @inheritParams pladdrr-shared-pitch-a pitch
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)
 #' @param from_time Start time (0 = beginning of pitch object)
 #' @param to_time End time (0 = end of pitch object)
