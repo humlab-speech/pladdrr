@@ -201,3 +201,9 @@ NULL
 #' @param to_time End time (0 = end)
 #' @name pladdrr-shared-time0
 NULL
+
+#' Shared parameter docs for functions taking an R6 Sound object
+#'
+#' @param sound A Sound R6 object
+#' @name pladdrr-shared-sound-r6
+NULL

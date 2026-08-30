@@ -83,7 +83,7 @@ read_sound <- function(file_path, channel = 0) {
 #'
 #' **DEPRECATED:** Use \code{sound$get_duration()} instead.
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @return Duration in seconds
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -98,7 +98,7 @@ get_duration <- function(sound) {
 #'
 #' **DEPRECATED:** Use \code{sound$get_sampling_frequency()} instead.
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @return Sampling rate in Hz
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -113,7 +113,7 @@ get_sampling_rate <- function(sound) {
 #'
 #' **DEPRECATED:** Use \code{sound$get_number_of_channels()} instead.
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @return Number of channels
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -128,7 +128,7 @@ get_n_channels <- function(sound) {
 #'
 #' **DEPRECATED:** Use \code{sound$get_number_of_samples()} instead.
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @return Number of samples
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)

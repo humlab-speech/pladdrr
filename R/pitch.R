@@ -8,7 +8,7 @@
 #' **DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
 #' \code{sound$to_pitch(time_step, pitch_floor, pitch_ceiling)}
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @param pitch_floor Minimum pitch in Hz (default: 75)
 #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
 #' @param time_step Time step in seconds (default: 0.01)

@@ -4,7 +4,7 @@
 #'
 #' **DEPRECATED:** Use \code{sound$to_intensity()} instead.
 #'
-#' @param sound A Sound R6 object
+#' @inheritParams pladdrr-shared-sound-r6 sound
 #' @param time_step Time step in seconds
 #' @param minimum_pitch Minimum pitch in Hz
 #' @param subtract_mean Subtract mean intensity
