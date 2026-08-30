@@ -257,18 +257,7 @@ plot_powercepstrogram <- function(cepstrogram,
   # Long-format data frame with real per-bin time/quefrency values,
   # correctly oriented (delegates to as.data.frame.PowerCepstrogram,
   # which already gets this right — see R/as-data-frame-missing.R).
-  plot_data <- as.data.frame(cepstrogram)
-  plot_data$power_db <- 10 * log10(pmax(plot_data$power, 1e-20))
-  
-  # Apply time range filter if specified
-  if (!is.null(time_range)) {
-    plot_data <- plot_data[plot_data$time >= time_range[1] & 
-                           plot_data$time <= time_range[2], ]
-  }
-  
-  # Apply quefrency range filter
-  plot_data <- plot_data[plot_data$quefrency >= quefrency_range[1] & 
-                         plot_data$quefrency <= quefrency_range[2], ]
+  plot_data <- .cepstrogram_plot_data(cepstrogram, time_range, quefrency_range)
   
   # Create base heatmap
   p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = quefrency, fill = power_db)) +
@@ -547,4 +536,17 @@ create_cepstrum_report <- function(cepstrogram,
   
   .assemble_cepstrum_report(p1, p2, p3, save_path, dpi, format)
   
+}
+
+
+# Build cepstrogram plot data (long format, dB) filtered to ranges.
+.cepstrogram_plot_data <- function(cepstrogram, time_range, quefrency_range) {
+  plot_data <- as.data.frame(cepstrogram)
+  plot_data$power_db <- 10 * log10(pmax(plot_data$power, 1e-20))
+  if (!is.null(time_range)) {
+    plot_data <- plot_data[plot_data$time >= time_range[1] &
+                           plot_data$time <= time_range[2], ]
+  }
+  plot_data[plot_data$quefrency >= quefrency_range[1] &
+            plot_data$quefrency <= quefrency_range[2], ]
 }
