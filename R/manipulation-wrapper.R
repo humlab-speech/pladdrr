@@ -129,4 +129,3 @@ Manipulation <- function(.xptr) {
     .xptr = .xptr
   ), class = c("Manipulation", "PraatObject"))
 }
-

@@ -57,4 +57,3 @@ MelSpectrogram <- function(.xptr = NULL) {
 
   obj
 }
-

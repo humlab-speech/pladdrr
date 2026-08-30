@@ -193,4 +193,3 @@ Spectrogram <- function(.xptr = NULL) {
   if (is.null(method)) return(NULL)
   function(...) method(x, ...)
 }
-

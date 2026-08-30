@@ -92,4 +92,3 @@ Cepstrum <- function(.xptr) {
     .xptr = .xptr
   ), class = c("Cepstrum", "PraatObject"))
 }
-

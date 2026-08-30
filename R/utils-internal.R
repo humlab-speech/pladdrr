@@ -99,4 +99,3 @@ unit_to_code <- function(unit, type = "pitch") {
     stop(sprintf("Unknown unit type: %s", type))
   )
 }
-

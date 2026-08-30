@@ -155,4 +155,3 @@ FormantModeler <- function(.xptr = NULL) {
     .xptr = .xptr
   ), class = c("FormantModeler", "PraatObject"))
 }
-

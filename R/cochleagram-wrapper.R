@@ -147,4 +147,3 @@ Cochleagram <- function(.xptr) {
     .xptr = .xptr
   ), class = c("Cochleagram", "PraatObject"))
 }
-

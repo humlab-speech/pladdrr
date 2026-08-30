@@ -49,4 +49,3 @@ BarkSpectrogram <- function(.xptr = NULL) {
 
   obj
 }
-

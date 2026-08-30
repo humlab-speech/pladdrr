@@ -205,4 +205,3 @@ LPC <- function(.xptr = NULL) {
     .xptr = .xptr
   ), class = c("LPC", "PraatObject"))
 }
-
