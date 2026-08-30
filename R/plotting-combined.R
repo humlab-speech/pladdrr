@@ -412,9 +412,8 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   
   # Get formant data. Long format: one row per (frame, formant number),
   # columns time/formant/frequency/bandwidth.
-  formant_df <- formant$as_data_frame(max_formants = max_formant)
-  formant_df <- formant_df[formant_df$time >= from_time & formant_df$time <= to_time, ]
-  formant_df <- formant_df[formant_df$formant <= max_formant & !is.na(formant_df$frequency), ]
+  formant_df <- .filter_formant_df(formant$as_data_frame(max_formants = max_formant),
+                                 from_time, to_time, max_formant)
 
   # Check if we have formant data
   if (nrow(formant_df) == 0) {
@@ -431,14 +430,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   }
 
   # Overlay formant tracks
-  p <- p +
-    ggplot2::geom_line(data = formant_df,
-                      ggplot2::aes(x = .data$time, y = .data$frequency,
-                                  color = .data$formant_label),
-                      linewidth = 1.2, alpha = 0.8, inherit.aes = FALSE) +
-    ggplot2::scale_color_manual(values = formant_colors, name = "Formant")
-  
-  p
+  p <- .overlay_formant_tracks(p, formant_df, formant_colors)
 }
 
 
@@ -641,4 +633,14 @@ plot_sound_pitch <- function(sound, pitch,
   if (!is.null(pitch_floor)) pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
   if (!is.null(pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
   pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
+}
+
+
+# Overlay formant tracks on a spectrogram plot.
+.overlay_formant_tracks <- function(p, formant_df, formant_colors) {
+  p + ggplot2::geom_line(data = formant_df,
+    ggplot2::aes(x = .data$time, y = .data$frequency,
+                 color = .data$formant_label),
+    linewidth = 1.2, alpha = 0.8, inherit.aes = FALSE) +
+    ggplot2::scale_color_manual(values = formant_colors, name = "Formant")
 }
