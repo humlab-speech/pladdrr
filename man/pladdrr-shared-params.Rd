@@ -23,6 +23,22 @@
 \item{return_r6}{Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)}
 
 \item{time_step}{Numeric. Time step (0 = automatic)}
+
+\item{name}{Parameter name for error messages}
+
+\item{times}{Numeric vector of time points (in seconds)}
+
+\item{intensity}{An Intensity R6 object}
+
+\item{time_range}{Optional time range}
+
+\item{pitch}{Pitch object or external pointer}
+
+\item{pitch_floor}{Numeric. Pitch floor in Hz (default: 75)}
+
+\item{pitch_ceiling}{Numeric. Pitch ceiling in Hz (default: 600)}
+
+\item{max_candidates}{Integer. Max candidates per frame (default: 15)}
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit

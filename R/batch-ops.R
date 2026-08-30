@@ -69,8 +69,8 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
 #'
 #' @inheritParams pladdrr-shared-params sounds
 #' @inheritParams pladdrr-shared-params time_step
-#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
+#' @inheritParams pladdrr-shared-params pitch_floor
+#' @inheritParams pladdrr-shared-params pitch_ceiling
 #' @inheritParams pladdrr-shared-params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
@@ -119,9 +119,9 @@ sound_to_pitch_batch <- function(sounds,
 #'
 #' @inheritParams pladdrr-shared-params sounds
 #' @inheritParams pladdrr-shared-params time_step
-#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
-#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @inheritParams pladdrr-shared-params pitch_floor
+#' @inheritParams pladdrr-shared-params pitch_ceiling
+#' @inheritParams pladdrr-shared-params max_candidates
 #' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
 #' @param silence_threshold Numeric. Silence threshold (default: 0.03)
 #' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
@@ -188,9 +188,9 @@ sound_to_pitch_ac_batch <- function(sounds,
 #'
 #' @inheritParams pladdrr-shared-params sounds
 #' @inheritParams pladdrr-shared-params time_step
-#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
-#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @inheritParams pladdrr-shared-params pitch_floor
+#' @inheritParams pladdrr-shared-params pitch_ceiling
+#' @inheritParams pladdrr-shared-params max_candidates
 #' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
 #' @param silence_threshold Numeric. Silence threshold (default: 0.03)
 #' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
@@ -260,7 +260,7 @@ sound_to_pitch_cc_batch <- function(sounds,
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 1250)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
 #' @param max_subharmonics Integer. Number of subharmonics (default: 15)
-#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @inheritParams pladdrr-shared-params max_candidates
 #' @param compression_factor Numeric. Compression factor (default: 0.84)
 #' @param n_points_per_octave Integer. Points per octave (default: 48)
 #' @inheritParams pladdrr-shared-params return_r6
@@ -324,7 +324,7 @@ sound_to_pitch_shs_batch <- function(sounds,
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
 #' @param n_filters Integer. Number of gamma-tone filters (default: 250)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
-#' @param max_candidates Integer. Max candidates per frame (default: 15)
+#' @inheritParams pladdrr-shared-params max_candidates
 #' @inheritParams pladdrr-shared-params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
@@ -486,8 +486,8 @@ sound_to_intensity_batch <- function(sounds,
 #' @param from_times Numeric vector of start times
 #' @param to_times Numeric vector of end times
 #' @param time_step Numeric. Pitch time step (0 = automatic)
-#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
+#' @inheritParams pladdrr-shared-params pitch_floor
+#' @inheritParams pladdrr-shared-params pitch_ceiling
 #' @inheritParams pladdrr-shared-params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)

@@ -45,7 +45,7 @@ NULL
 #' @description
 #' Get all common pitch statistics in a single call, bypassing R6 dispatch.
 #'
-#' @param pitch Pitch object or external pointer
+#' @inheritParams pladdrr-shared-params pitch
 #' @param from_time Start time (0 = start of signal)
 #' @param to_time End time (0 = end of signal)
 #' @param unit Character: "hertz", "semitones", "mel", "erb", "loghertz"
@@ -503,7 +503,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 
 #' Get Single Pitch Value Directly
 #'
-#' @param pitch Pitch object or external pointer
+#' @inheritParams pladdrr-shared-params pitch
 #' @inheritParams pladdrr-shared-params time
 #' @param unit Unit string
 #' @param interpolate Whether to interpolate
@@ -570,7 +570,7 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 #' Get a specific quantile of pitch values without R6 wrapper overhead.
 #' Useful for VUV analysis workflows where you need Q1, Q3 for adaptive pitch range.
 #'
-#' @param pitch Pitch object or external pointer
+#' @inheritParams pladdrr-shared-params pitch
 #' @param quantile Quantile value (0.25 for Q1, 0.75 for Q3, 0.5 for median)
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
@@ -601,7 +601,7 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 
 #' @description
 #' Get mean pitch value without R6 wrapper overhead.
 #'
-#' @param pitch Pitch object or external pointer
+#' @inheritParams pladdrr-shared-params pitch
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
 #' @param unit Pitch unit
@@ -629,7 +629,7 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
 #' @description
 #' Get standard deviation of pitch values without R6 wrapper overhead.
 #'
-#' @param pitch Pitch object or external pointer
+#' @inheritParams pladdrr-shared-params pitch
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
 #' @param unit Pitch unit

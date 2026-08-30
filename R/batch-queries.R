@@ -9,7 +9,7 @@
 #' `get_value_at_time()` repeatedly in a loop.
 #'
 #' @param formant A Formant object
-#' @param times Numeric vector of time points (in seconds)
+#' @inheritParams pladdrr-shared-params times
 #' @param formant_numbers Integer vector specifying which formants to extract
 #'   (e.g., `1:4` for F1-F4). Default is `1:4`.
 #' @param unit Unit for formant values: "hertz" (default) or "bark"
@@ -69,7 +69,7 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
 #' Query formant bandwidths at multiple time points in a single function call.
 #'
 #' @param formant A Formant object
-#' @param times Numeric vector of time points (in seconds)
+#' @inheritParams pladdrr-shared-params times
 #' @param formant_numbers Integer vector specifying which formants (default `1:4`)
 #' @param unit Unit for bandwidth values: "hertz" (default) or "bark"
 #'
@@ -113,7 +113,7 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' instead of repeated calls to `get_value_at_time()`.
 #'
 #' @param pitch A Pitch object
-#' @param times Numeric vector of time points (in seconds)
+#' @inheritParams pladdrr-shared-params times
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
 #' @param interpolate Logical; whether to interpolate between frames (default TRUE)
@@ -155,7 +155,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #' Query pitch strength (voicing confidence) at multiple time points.
 #'
 #' @param pitch A Pitch object
-#' @param times Numeric vector of time points (in seconds)
+#' @inheritParams pladdrr-shared-params times
 #' @param unit Unit for pitch (used internally by Praat)
 #' @param interpolate Logical; whether to interpolate (default TRUE)
 #'
@@ -257,7 +257,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' Query intensity (amplitude in dB) at multiple time points in a single call.
 #'
 #' @param intensity An Intensity object
-#' @param times Numeric vector of time points (in seconds)
+#' @inheritParams pladdrr-shared-params times
 #' @param interpolate Interpolation method: "nearest", "linear", "cubic" (default),
 #'   or "sinc70". Kept for backward compatibility; prefer `interpolation`.
 #' @param interpolation Alias for `interpolate` (consistent with R6 method naming).

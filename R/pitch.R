@@ -89,7 +89,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' @param pitch A Pitch R6 object
 #' @param unit Unit: "Hz" or "semitones"
-#' @param time_range Optional time range
+#' @inheritParams pladdrr-shared-params time_range
 #' @return Minimum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
@@ -112,7 +112,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' @param pitch A Pitch R6 object
 #' @param unit Unit: "Hz" or "semitones"
-#' @param time_range Optional time range
+#' @inheritParams pladdrr-shared-params time_range
 #' @return Maximum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)

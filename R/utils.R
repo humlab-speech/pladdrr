@@ -19,7 +19,7 @@
 #' Ensures a numeric parameter is positive (> 0)
 #'
 #' @param x Value to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -43,7 +43,7 @@ validate_positive <- function(x, name = deparse(substitute(x))) {
 #' Ensures a numeric parameter is non-negative (>= 0)
 #'
 #' @param x Value to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -67,7 +67,7 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
 #' Ensures an integer parameter is positive (> 0)
 #'
 #' @param x Value to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -91,7 +91,7 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 #' Ensures a parameter is a non-empty character string
 #'
 #' @param x Value to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @param allow_na Allow NA values (default: FALSE)
 #' @return The validated value (invisibly)
 #' @keywords internal
@@ -156,7 +156,7 @@ is_praat_sound <- function(x) {
 #' Ensures an object is a valid praat_sound, throwing an error if not
 #'
 #' @param x Object to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @return The validated object (invisibly)
 #' @keywords internal
 #' @examples
@@ -292,7 +292,7 @@ is_praat_formant <- function(x) {
 #' Ensures an object is a valid praat_formant, throwing an error if not
 #'
 #' @param x Object to validate
-#' @param name Parameter name for error messages
+#' @inheritParams pladdrr-shared-params name
 #' @return The validated object (invisibly)
 #' @keywords internal
 #' @examples

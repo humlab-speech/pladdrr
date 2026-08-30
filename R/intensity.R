@@ -31,7 +31,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #'
 #' **DEPRECATED:** Use \code{intensity$get_value_at_time(time)} instead.
 #'
-#' @param intensity An Intensity R6 object
+#' @inheritParams pladdrr-shared-params intensity
 #' @inheritParams pladdrr-shared-params time
 #' @param interpolate Whether to interpolate
 #' @return Intensity in dB
@@ -49,7 +49,7 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #'
 #' **DEPRECATED:** Use \code{intensity$get_mean()} instead.
 #'
-#' @param intensity An Intensity R6 object
+#' @inheritParams pladdrr-shared-params intensity
 #' @param time_range Optional time range c(start, end)
 #' @return Mean intensity in dB
 #' @examples
@@ -70,8 +70,8 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{intensity$get_minimum()} instead.
 #'
-#' @param intensity An Intensity R6 object
-#' @param time_range Optional time range
+#' @inheritParams pladdrr-shared-params intensity
+#' @inheritParams pladdrr-shared-params time_range
 #' @return Minimum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -91,8 +91,8 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{intensity$get_maximum()} instead.
 #'
-#' @param intensity An Intensity R6 object
-#' @param time_range Optional time range
+#' @inheritParams pladdrr-shared-params intensity
+#' @inheritParams pladdrr-shared-params time_range
 #' @return Maximum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -112,8 +112,8 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{intensity$get_standard_deviation()} instead.
 #'
-#' @param intensity An Intensity R6 object
-#' @param time_range Optional time range
+#' @inheritParams pladdrr-shared-params intensity
+#' @inheritParams pladdrr-shared-params time_range
 #' @return Standard deviation in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)

@@ -156,6 +156,15 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param sampling_rate Sampling rate in Hz (default: 44100)
 #' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
 #' @param time_step Numeric. Time step (0 = automatic)
+#' @param name Parameter name for error messages
+#' @param times Numeric vector of time points (in seconds)
+#' @param intensity An Intensity R6 object
+#' @param time_range Optional time range
+#' @param pitch Pitch object or external pointer
+#' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
+#' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
+#' @param max_candidates Integer. Max candidates per frame (default: 15)
+
 
 #' @name pladdrr-shared-params
 NULL
