@@ -91,6 +91,22 @@ NULL
   }
 }
 
+# Combine the main plot with tier plots (patchwork preferred, gridExtra fallback).
+.combine_tier_plots <- function(main, tier_plots) {
+  if (requireNamespace("patchwork", quietly = TRUE)) {
+    combined <- main
+    for (p in tier_plots) combined <- combined / p
+    combined + patchwork::plot_layout(heights = c(2, rep(1, length(tier_plots))))
+  } else {
+    if (!requireNamespace("gridExtra", quietly = TRUE)) {
+      stop("Either 'patchwork' or 'gridExtra' is required for combined plots")
+    }
+    gridExtra::grid.arrange(main, grobs = tier_plots, ncol = 1,
+                            heights = c(2, rep(1, length(tier_plots))))
+  }
+}
+
+
 
 #' @title Plot TextGrid with Sound Waveform
 #'
@@ -171,24 +187,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   })
   
   # Combine plots
-  if (requireNamespace("patchwork", quietly = TRUE)) {
-    # Use patchwork for better layout
-    combined <- p_wave
-    for (p in tier_plots) {
-      combined <- combined / p
-    }
-    combined <- combined + patchwork::plot_layout(heights = c(2, rep(1, length(tier_plots))))
-  } else {
-    # Fallback to gridExtra
-    if (!requireNamespace("gridExtra", quietly = TRUE)) {
-      stop("Either 'patchwork' or 'gridExtra' is required for combined plots")
-    }
-    combined <- gridExtra::grid.arrange(p_wave, grobs = tier_plots,
-                                       ncol = 1,
-                                       heights = c(2, rep(1, length(tier_plots))))
-  }
-  
-  combined
+  .combine_tier_plots(p_wave, tier_plots)
 }
 
 #' @title Plot TextGrid with Pitch Contour
@@ -263,22 +262,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
     .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time, to_time)
   })
   # Combine plots
-  if (requireNamespace("patchwork", quietly = TRUE)) {
-    combined <- p_pitch
-    for (p in tier_plots) {
-      combined <- combined / p
-    }
-    combined <- combined + patchwork::plot_layout(heights = c(2, rep(1, length(tier_plots))))
-  } else {
-    if (!requireNamespace("gridExtra", quietly = TRUE)) {
-      stop("Either 'patchwork' or 'gridExtra' is required for combined plots")
-    }
-    combined <- gridExtra::grid.arrange(p_pitch, grobs = tier_plots,
-                                       ncol = 1,
-                                       heights = c(2, rep(1, length(tier_plots))))
-  }
-  
-  combined
+  .combine_tier_plots(p_pitch, tier_plots)
 }
 
 #' @title Plot Pitch and Intensity Together
