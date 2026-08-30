@@ -8,8 +8,8 @@
 #' It allows detailed control over phonation, vocal tract resonances, frication,
 #' and other articulatory parameters.
 #'
-#' @inheritParams pladdrr-shared-params tmin
-#' @inheritParams pladdrr-shared-params tmax
+#' @param tmin Start time in seconds
+#' @param tmax End time in seconds
 #' @param numberOfFormants Number of oral formants (typically 6)
 #' @param numberOfNasalFormants Number of nasal formants (typically 1)
 #' @param numberOfNasalAntiFormants Number of nasal antiformants (typically 1)
