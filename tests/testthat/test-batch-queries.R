@@ -492,3 +492,19 @@ test_that("PointProcess batch operations are faster than loops", {
   message(sprintf("PointProcess batch query speedup: %.1fx", speedup))
   expect_gt(speedup, 3.0)  # At least 3x faster
 })
+
+test_that("get_jitter_shimmer_batch accepts external-pointer pointprocess", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  pp <- snd$to_point_process_periodic_cc(75, 300)
+  res <- get_jitter_shimmer_batch(pp$.xptr, snd$.xptr)
+  expect_type(res, "list")
+})
+
+test_that("get_intensity_at_times validates intensity and times", {
+  expect_error(get_intensity_at_times("not_an_intensity", c(0.1)),
+               "Intensity object")
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  inten <- snd$to_intensity()
+  expect_error(get_intensity_at_times(inten, numeric(0)),
+               "non-empty numeric vector")
+})
