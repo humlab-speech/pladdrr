@@ -120,15 +120,6 @@ extract_formants <- function(sound,
   result <- .burg_formants(signal, sr, time_step, max_formant, n_formants,
                            window_length, pre_emphasis_from)
   
-  # Create formant object (plain list - S3 class removed)
-  result <- list(
-    values = formant_data,
-    n_frames = length(unique(formant_data$time)),
-    time_step = time_step,
-    max_formant = max_formant,
-    n_formants = n_formants,
-    window_length = window_length
-  )
   
   # S3 class assignment removed - this path deprecated
   # Function delegates to R6 for R6 objects
