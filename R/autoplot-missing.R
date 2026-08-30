@@ -981,7 +981,7 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
     stop("Package 'ggplot2' is required. Please install it.")
   type <- match.arg(type)
   p_scree <- if (type == "scree" || type == "both") .pca_scree_plot(object, garnish) else NULL
-  p_scores <- if (type == "scores" || type == "both") .pca_scores_plot(object, type, ...) else NULL
+  p_scores <- if (type == "scores" || type == "both") .pca_scores_plot(object, type, garnish, ...) else NULL
   if (type == "both") {
     if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")
@@ -1497,7 +1497,7 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 }
 
 # PCA component-scores scatter plot.
-.pca_scores_plot <- function(object, type, ...) {
+.pca_scores_plot <- function(object, type, garnish = TRUE, ...) {
   df <- as.data.frame(object)
   if (ncol(df) < 2) {
     warning("PCA scores data frame has fewer than 2 columns")
