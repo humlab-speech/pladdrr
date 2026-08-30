@@ -430,12 +430,6 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.TextGrid <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 # ============================================================================
 # Factory function
 # ============================================================================

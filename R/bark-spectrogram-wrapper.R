@@ -50,8 +50,3 @@ BarkSpectrogram <- function(.xptr = NULL) {
   obj
 }
 
-#' @exportS3Method print BarkSpectrogram
-print.BarkSpectrogram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

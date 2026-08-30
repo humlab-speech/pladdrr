@@ -163,12 +163,6 @@ Electroglottogram <- function(.xptr = NULL) {
   ), class = c("Electroglottogram", "Sound", "PraatObject"))
 }
 
-#' @export
-print.Electroglottogram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 #' Create an Electroglottogram object
 #'
 #' @param xmin Start time in seconds

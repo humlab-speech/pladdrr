@@ -516,3 +516,241 @@ as.data.frame.MFCC <- function(x, row.names = NULL, optional = FALSE, ...) {
 as.data.frame.LFCC <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()
 }
+# ============================================================================
+# Consolidated S3 methods (print.* / as.data.frame.*)
+# Moved here from per-class wrapper files so identical bodies share one file
+# (cross-file duplicate-body lint). Each delegates to the R6 object's
+# $print() / $as_data_frame() method.
+# ============================================================================
+#' @export
+print.AmplitudeTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @exportS3Method print BarkSpectrogram
+print.BarkSpectrogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Cepstrum <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Cochleagram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Discriminant <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.DTW <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.DurationTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Electroglottogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Excitation <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Formant <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.FormantGrid <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.FormantModeler <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.FormantPath <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.FormantTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.FormantTier <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.Harmonicity <- function(x, ...) {
+  x$print(...)
+  invisible(x)
+}
+#' @export
+as.data.frame.Harmonicity <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.Intensity <- function(x, ...) {
+  x$print(...)
+  invisible(x)
+}
+#' @export
+print.IntensityTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.KlattGrid <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.LongSound <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.LPC <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Ltas <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.Ltas <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.Manipulation <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Matrix <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @exportS3Method print MelSpectrogram
+print.MelSpectrogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.MFCC <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.LFCC <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.PCA <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Pitch <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.PitchTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.PitchTier <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.PointProcess <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Polygon <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.Polygon <- function(x, row.names = NULL, optional = FALSE, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.PowerCepstrum <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.PowerCepstrogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @exportS3Method print Sound
+print.Sound <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.Spectrogram <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.Spectrogram <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.Spectrum <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.Spectrum <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.SpectrumTier <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+as.data.frame.SpectrumTier <- function(x, ...) {
+  x$as_data_frame()
+}
+#' @export
+print.Table <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.TextGrid <- function(x, ...) {
+  x$print()
+  invisible(x)
+}
+#' @export
+print.VocalTract <- function(x, ...) {
+  x$print()
+  invisible(x)
+}

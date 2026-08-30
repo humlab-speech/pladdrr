@@ -200,8 +200,3 @@ class(VocalTract) <- c("vocaltract_constructor", "function")
 # S3 Methods
 # ============================================================================
 
-#' @export
-print.VocalTract <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

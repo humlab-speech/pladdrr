@@ -316,12 +316,6 @@ Pitch <- function(.xptr = NULL) {
 }
 
 #' @export
-print.Pitch <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE,
                                 include_strength = FALSE, include_intensity = FALSE, ...) {
   x$as_data_frame(include_strength = include_strength,

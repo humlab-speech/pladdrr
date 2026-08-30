@@ -282,13 +282,3 @@ Spectrum <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.Spectrum <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.Spectrum <- function(x, ...) {
-  x$as_data_frame()
-}

@@ -148,8 +148,3 @@ Cochleagram <- function(.xptr) {
   ), class = c("Cochleagram", "PraatObject"))
 }
 
-#' @export
-print.Cochleagram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

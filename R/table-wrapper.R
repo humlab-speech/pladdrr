@@ -230,12 +230,6 @@ Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
 }
 
 #' @export
-print.Table <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
 as.data.frame.Table <- function(x, ...) x$as_data_frame()
 
 # Factory functions

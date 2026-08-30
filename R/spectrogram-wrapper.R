@@ -194,13 +194,3 @@ Spectrogram <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.Spectrogram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.Spectrogram <- function(x, ...) {
-  x$as_data_frame()
-}

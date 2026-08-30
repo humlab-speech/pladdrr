@@ -93,8 +93,3 @@ Cepstrum <- function(.xptr) {
   ), class = c("Cepstrum", "PraatObject"))
 }
 
-#' @export
-print.Cepstrum <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

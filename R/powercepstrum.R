@@ -241,13 +241,6 @@ PowerCepstrum <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.PowerCepstrum <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-
 # ============================================================================
 # PowerCepstrogram Shared Method Dispatch Table
 # ============================================================================
@@ -409,8 +402,3 @@ PowerCepstrogram <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.PowerCepstrogram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

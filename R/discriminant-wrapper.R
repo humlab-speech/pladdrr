@@ -154,12 +154,6 @@ Discriminant <- function(.xptr = NULL) {
   ), class = c("Discriminant", "PraatObject"))
 }
 
-#' @export
-print.Discriminant <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 #' Create Discriminant Analysis from labeled data
 #'
 #' Performs Linear Discriminant Analysis on a labeled numeric matrix.

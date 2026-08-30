@@ -156,8 +156,3 @@ FormantModeler <- function(.xptr = NULL) {
   ), class = c("FormantModeler", "PraatObject"))
 }
 
-#' @export
-print.FormantModeler <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

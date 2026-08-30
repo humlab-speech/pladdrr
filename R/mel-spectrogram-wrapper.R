@@ -58,8 +58,3 @@ MelSpectrogram <- function(.xptr = NULL) {
   obj
 }
 
-#' @exportS3Method print MelSpectrogram
-print.MelSpectrogram <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

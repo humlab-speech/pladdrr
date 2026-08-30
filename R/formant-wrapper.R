@@ -273,10 +273,4 @@ Formant <- function(.xptr = NULL) {
 }
 
 # S3 methods
-#' @export
-print.Formant <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 # as.data.frame.Formant is defined once, in R/s3-methods.R.

@@ -130,8 +130,3 @@ Manipulation <- function(.xptr) {
   ), class = c("Manipulation", "PraatObject"))
 }
 
-#' @export
-print.Manipulation <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

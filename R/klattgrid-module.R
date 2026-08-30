@@ -273,8 +273,3 @@ KlattGrid_createExample <- function() {
 # S3 Methods
 # ============================================================================
 
-#' @export
-print.KlattGrid <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

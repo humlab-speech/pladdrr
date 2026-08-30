@@ -1139,8 +1139,3 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 # Assign class to enable $ operator
 class(Sound) <- c("sound_constructor", "function")
 
-#' @exportS3Method print Sound
-print.Sound <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

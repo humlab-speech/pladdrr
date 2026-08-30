@@ -195,10 +195,4 @@ Intensity <- function(.xptr = NULL) {
 }
 
 #' @export
-print.Intensity <- function(x, ...) {
-  x$print(...)
-  invisible(x)
-}
-
-#' @export
 as.data.frame.Intensity <- function(x, ...) x$as_data_frame()

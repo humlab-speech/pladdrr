@@ -170,10 +170,4 @@ FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
 # ============================================================================
 
 #' @export
-print.FormantGrid <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
 as.data.frame.FormantGrid <- function(x, ...) x$as_data_frame()

@@ -192,12 +192,6 @@ MFCC <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.MFCC <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 # ============================================================================
 # LFCC Shared Method Dispatch Table
 # ============================================================================
@@ -328,8 +322,3 @@ LFCC <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.LFCC <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

@@ -299,8 +299,3 @@ class(LongSound) <- c("longsound_constructor", "function")
 # S3 Methods
 # ============================================================================
 
-#' @export
-print.LongSound <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

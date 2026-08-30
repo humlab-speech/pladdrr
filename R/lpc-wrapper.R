@@ -206,8 +206,3 @@ LPC <- function(.xptr = NULL) {
   ), class = c("LPC", "PraatObject"))
 }
 
-#' @export
-print.LPC <- function(x, ...) {
-  x$print()
-  invisible(x)
-}

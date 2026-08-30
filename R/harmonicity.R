@@ -174,13 +174,3 @@ Harmonicity <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.Harmonicity <- function(x, ...) {
-  x$print(...)
-  invisible(x)
-}
-
-#' @export
-as.data.frame.Harmonicity <- function(x, ...) {
-  x$as_data_frame()
-}

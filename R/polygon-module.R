@@ -152,17 +152,6 @@ Polygon <- function(x, y, .xptr = NULL) {
 # ============================================================================
 
 #' @export
-print.Polygon <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.Polygon <- function(x, row.names = NULL, optional = FALSE, ...) {
-  x$as_data_frame()
-}
-
-#' @export
 as.matrix.Polygon <- function(x, ...) {
   x$as_matrix()
 }

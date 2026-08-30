@@ -185,13 +185,3 @@ class(FormantTier) <- c("formanttier_constructor", "function")
 # S3 Methods
 # ============================================================================
 
-#' @export
-print.FormantTier <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.FormantTier <- function(x, ...) {
-  x$as_data_frame()
-}

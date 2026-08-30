@@ -140,12 +140,6 @@ PCA <- function(.xptr = NULL) {
   ), class = c("PCA", "PraatObject"))
 }
 
-#' @export
-print.PCA <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 #' Create PCA from data matrix
 #'
 #' Performs Principal Component Analysis on a numeric matrix.

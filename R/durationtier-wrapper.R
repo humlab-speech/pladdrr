@@ -132,10 +132,4 @@ DurationTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
 # ============================================================================
 
 #' @export
-print.DurationTier <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
 as.data.frame.DurationTier <- function(x, ...) x$as_data_frame()

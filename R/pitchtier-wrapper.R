@@ -359,13 +359,3 @@ class(PitchTier) <- c("pitchtier_constructor", "function")
 # S3 Methods
 # ============================================================================
 
-#' @export
-print.PitchTier <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.PitchTier <- function(x, ...) {
-  x$as_data_frame()
-}

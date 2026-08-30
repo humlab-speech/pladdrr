@@ -193,12 +193,6 @@ FormantPath <- function(sound,
 }
 
 #' @export
-print.FormantPath <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
 as.data.frame.FormantPath <- function(x, row.names = NULL, optional = FALSE,
                                       max_formants = 5L, ...) {
     x$as_data_frame(max_formants = max_formants)

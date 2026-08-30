@@ -264,17 +264,6 @@ Ltas <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.Ltas <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.Ltas <- function(x, ...) {
-  x$as_data_frame()
-}
-
 #' Average multiple Ltas objects
 #'
 #' @param ... Ltas objects to average

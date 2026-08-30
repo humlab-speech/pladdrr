@@ -121,13 +121,3 @@ SpectrumTier <- function(.xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.SpectrumTier <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
-#' @export
-as.data.frame.SpectrumTier <- function(x, ...) {
-  x$as_data_frame()
-}

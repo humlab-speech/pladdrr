@@ -411,10 +411,4 @@ PointProcess <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   function(...) method(x, ...)
 }
 
-#' @export
-print.PointProcess <- function(x, ...) {
-  x$print()
-  invisible(x)
-}
-
 # Note: Old factory/helper functions below preserved
