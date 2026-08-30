@@ -125,7 +125,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
       loadNamespace("pladdrr")
       attachNamespace("pladdrr")
     })
-    parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
+    parallel::clusterExport(cl, c("analysis_func", "tpw", ".analyze_one_file"), envir = environment())
 
     results <- parallel::parLapply(cl, files, function(f) .analyze_one_file(f, tpw, analysis_func, ...))
   }
@@ -217,7 +217,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
       loadNamespace("pladdrr")
       attachNamespace("pladdrr")
     })
-    parallel::clusterExport(cl, c("analysis_func", "tpw"), envir = environment())
+    parallel::clusterExport(cl, c("analysis_func", "tpw", ".analyze_one_file"), envir = environment())
     parallel::parLapply(cl, sound_data, function(d) {
       pladdrr_threads(tpw)
       analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
