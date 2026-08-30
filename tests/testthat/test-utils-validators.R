@@ -160,3 +160,9 @@ test_that("is_praat_intensity recognizes R6 Intensity and well-formed legacy pra
   expect_false(is_praat_intensity(42))
   expect_false(is_praat_intensity(structure(list(n_frames = 1), class = "praat_intensity")))
 })
+
+test_that("is_praat_formant returns FALSE for non-Formant input", {
+  expect_false(is_praat_formant(list()))
+  expect_false(is_praat_formant("x"))
+  expect_false(is_praat_formant(123))
+})

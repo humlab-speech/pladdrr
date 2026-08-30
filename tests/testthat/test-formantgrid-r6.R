@@ -144,3 +144,7 @@ test_that("FormantGrid from Formant works", {
   expect_s3_class(grid, "FormantGrid")
   expect_gt(grid$get_number_of_formants(), 0)
 })
+
+test_that("formanttier_from_formant rejects non-Formant input", {
+  expect_error(formanttier_from_formant("x"), "formant must be a Formant")
+})

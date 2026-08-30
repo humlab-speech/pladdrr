@@ -508,3 +508,13 @@ test_that("get_intensity_at_times validates intensity and times", {
   expect_error(get_intensity_at_times(inten, numeric(0)),
                "non-empty numeric vector")
 })
+
+test_that("get_pitch_quantiles_batch validates pitch and quantiles", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  expect_error(get_pitch_quantiles_batch(snd, c(0.5)), "pitch must be a Pitch")
+  pitch <- snd$to_pitch()
+  expect_error(get_pitch_quantiles_batch(pitch, numeric(0)),
+               "non-empty numeric vector")
+  expect_error(get_pitch_quantiles_batch(pitch, c(-0.1)),
+               "between 0 and 1")
+})

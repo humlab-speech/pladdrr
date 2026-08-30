@@ -647,3 +647,9 @@ test_that("reusable multiband HNR helpers validate input", {
     "named list of 5 Harmonicity objects"
   )
 })
+
+test_that("get_voice_quality_ultra rejects invalid metrics", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  expect_error(get_voice_quality_ultra(snd, metrics = "bogus"),
+               "metrics must be one or more of")
+})
