@@ -1319,6 +1319,23 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
     color = color, linewidth = 0.8, ...)
 }
 
+
+# Extract KlattGrid formant rows for a formant type over a time grid.
+.klattgrid_formant_rows <- function(obj, ftype, nf, tmin, tmax) {
+  times <- seq(tmin, tmax, length.out = 100)
+  rows <- list()
+  for (t in times)
+    for (f in seq_len(nf)) {
+      freq <- tryCatch(obj$get_formant_at_time(.klattgrid_formant_type_code(ftype), f, t),
+                       error = function(e) NA_real_)
+      if (!is.na(freq))
+        rows[[length(rows) + 1]] <- data.frame(
+          time = t, formant = f, frequency = freq, stringsAsFactors = FALSE)
+    }
+  if (length(rows) == 0) return(data.frame())
+  do.call(rbind, rows)
+}
+
 #' @rdname autoplot-methods
 #' @param formant_type Type of formant to plot: "oral", "nasal", "frication",
 #'   "tracheal", "delta", or (autoplot.KlattGrid only) "all".
@@ -1329,27 +1346,13 @@ autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   formant_type <- match.arg(formant_type)
-  .ekf <- function(obj, ftype, nf, tmin, tmax) {
-    times <- seq(tmin, tmax, length.out = 100)
-    rows <- list()
-    for (t in times)
-      for (f in seq_len(nf)) {
-        freq <- tryCatch(obj$get_formant_at_time(.klattgrid_formant_type_code(ftype), f, t),
-                         error = function(e) NA_real_)
-        if (!is.na(freq))
-          rows[[length(rows) + 1]] <- data.frame(
-            time = t, formant = f, frequency = freq, stringsAsFactors = FALSE)
-      }
-    if (length(rows) == 0) return(data.frame())
-    do.call(rbind, rows)
-  }
   tmin <- if (is.null(from_time)) object$get_xmin() else from_time
   tmax <- if (is.null(to_time)) object$get_xmax() else to_time
   types <- if (formant_type == "all")
     c("oral", "nasal", "frication", "tracheal", "delta") else formant_type
   all_dfs <- list()
   for (ft in types) {
-    df <- .ekf(object, ft, max_formant, tmin, tmax)
+    df <- .klattgrid_formant_rows(object, ft, max_formant, tmin, tmax)
     if (nrow(df) > 0) {
       df$formant_label <- paste0(toupper(substr(ft, 1, 1)), "F", df$formant)
       all_dfs[[ft]] <- df
