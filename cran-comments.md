@@ -216,5 +216,8 @@ accepted; the code is correct as written and "fixing" it would make it worse.
   were refactored (see git history, Phase 7); the remaining ~24 are verbose
   constructor/dispatch methods and distributed-length plotting functions where
   further splitting is architectural or visual-regression risk for an advisory
-  lint. The 12 exported-name clashes under "Other checks" cannot be changed
+  lint. The 141 duplicated `@param` descriptions (pkgcheck `@inheritParams`
+  check) are left as-is: consolidating would churn 200+ roxygen blocks with
+  roxygen-rebuild risk for doc-dedup only. The 12 exported-name clashes under
+  "Other checks" cannot be changed
   without renaming public API.
