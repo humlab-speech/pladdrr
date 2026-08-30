@@ -137,8 +137,8 @@ NULL
 #' @param textgrid TextGrid object
 #' @param sound Sound object
 #' @param tier Integer or character. Tier number or name to display (default: all)
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param tier_colors Character vector. Colors for each tier (default: auto)
 #' @param title Character. Plot title (default: NULL)
@@ -219,8 +219,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' @param textgrid TextGrid object
 #' @param pitch Pitch object
 #' @param tier Integer or character. Tier number or name to display (default: all)
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
 #' @param tier_colors Character vector. Colors for each tier (default: auto)
 #' @param title Character. Plot title (default: NULL)
@@ -293,8 +293,8 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #'
 #' @param pitch Pitch object
 #' @param intensity Intensity object
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
 #' @param intensity_color Character. Intensity line color (default: "darkorange")
 #' @param title Character. Plot title (default: "Pitch and Intensity")
@@ -362,8 +362,8 @@ plot_pitch_intensity <- function(pitch, intensity,
 #'
 #' @param spectrogram Spectrogram object
 #' @param formant Formant object
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param max_formant Maximum formant number to display (default: 3)
 #' @param formant_colors Character vector. Colors for formants (default: auto)
 #' @param dynamic_range Numeric. Spectrogram dynamic range in dB (default: 70)
@@ -442,8 +442,8 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #'
 #' @param spectrogram Spectrogram object
 #' @param pitch Pitch object
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param freq_max Maximum frequency to display in Hz (default: 5000)
 #' @param pitch_color Character. Pitch track color (default: "blue")
 #' @param pitch_floor Minimum F0 to display in Hz (default: NULL = auto)
@@ -525,8 +525,8 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #'
 #' @param sound Sound object
 #' @param pitch Pitch object
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param pitch_color Character. Pitch color (default: "darkblue")
 #' @param title Character. Overall plot title (default: NULL)

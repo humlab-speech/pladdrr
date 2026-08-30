@@ -139,3 +139,16 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
     )
   }
 }
+
+#' Shared parameter documentation for pladdrr functions
+#'
+#' Common `@param` descriptions used across many functions. Functions inherit
+#' from this topic via `@inheritParams pladdrr-shared-params <param>` to avoid
+#' duplicating identical documentation.
+#'
+#' @param sound Sound object or external pointer
+#' @param from_time Start time in seconds (NULL = from beginning)
+#' @param to_time End time in seconds (NULL = to end)
+#' @param garnish Logical. Add axis labels and title (default: TRUE)
+#' @name pladdrr-shared-params
+NULL

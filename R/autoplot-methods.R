@@ -36,8 +36,8 @@ NULL
 
 #' @rdname autoplot-methods
 #' @param object Sound object
-#' @param from_time Start time in seconds (NULL = from beginning)
-#' @param to_time End time in seconds (NULL = to end)
+#' @inheritParams pladdrr-shared-params from_time
+#' @inheritParams pladdrr-shared-params to_time
 #' @param color Line color (default: "steelblue")
 #' @param ... Additional arguments passed to geom_line
 #' @return A ggplot2 object

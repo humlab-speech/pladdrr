@@ -138,7 +138,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #' voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
 #' instead.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto)
 #' @param pitch_floor Minimum pitch (Hz)
 #' @param pitch_ceiling Maximum pitch (Hz)

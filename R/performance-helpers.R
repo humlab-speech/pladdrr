@@ -30,7 +30,7 @@
 #' `"robust slow"` (Theil-Sen) is not reproducible — see the `fit_method`
 #' argument.
 #'
-#' @param sound Sound object or external pointer
+#' @inheritParams pladdrr-shared-params sound
 #' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default TRUE)
 #' @param time_averaging_window Numeric, time averaging window in seconds (default 0.001)
 #' @param quefrency_averaging_window Numeric, quefrency averaging window in seconds (default 0.0005)
