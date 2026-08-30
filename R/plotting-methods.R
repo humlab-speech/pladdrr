@@ -732,13 +732,6 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 }
 
 
-
-# Convert a Matrix to long-format plot data, filtered to the requested ranges.
-.matrix_plot_data <- function(x, from_x, to_x, from_y, to_y) {
-  df <- .matrix_plot_data(x, from_x, to_x, from_y, to_y)
-  df
-}
-
 #' @title Plot Matrix as Heatmap
 #'
 #' @description
