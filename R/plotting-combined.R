@@ -15,6 +15,83 @@
 #' @name plotting-combined
 NULL
 
+# ============================================================================
+# Shared helpers (internal)
+# ============================================================================
+
+# Resolve from_time/to_time from both objects' data frames (lazily: only
+# computes the frames when a bound is missing). Behavior identical to the
+# per-function inline logic it replaces.
+.resolve_plot_time_range <- function(textgrid, obj, from_time, to_time) {
+  if (!is.null(from_time) && !is.null(to_time)) return(c(from_time, to_time))
+  tg_df <- textgrid$as_data_frame()
+  obj_df <- obj$as_data_frame()
+  if (is.null(from_time)) {
+    from_time <- max(min(tg_df$start, na.rm = TRUE), min(obj_df$time, na.rm = TRUE))
+  }
+  if (is.null(to_time)) {
+    to_time <- min(max(tg_df$end, na.rm = TRUE), max(obj_df$time, na.rm = TRUE))
+  }
+  c(from_time, to_time)
+}
+
+# Resolve which tiers to plot: all, a numeric subset, or a named tier.
+.resolve_tiers_to_plot <- function(textgrid, tier) {
+  n_tiers <- textgrid$get_number_of_tiers()
+  if (is.null(tier)) return(seq_len(n_tiers))
+  if (is.numeric(tier)) return(tier)
+  tier_names <- vapply(seq_len(n_tiers), textgrid$get_tier_name, character(1))
+  tiers <- which(tier_names == tier)
+  if (length(tiers) == 0) stop("Tier '", tier, "' not found in TextGrid")
+  tiers
+}
+
+# Build a single tier's ggplot (interval rectangles or point segments).
+.build_tier_plot <- function(textgrid, tier_idx, tier_color, from_time, to_time) {
+  tier_name <- textgrid$get_tier_name(tier_idx)
+  if (textgrid$tier_is_interval_tier(tier_idx)) {
+    n <- textgrid$get_number_of_intervals(tier_idx)
+    d <- data.frame(start = numeric(n), end = numeric(n), label = character(n),
+                    stringsAsFactors = FALSE)
+    for (j in seq_len(n)) {
+      d$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
+      d$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
+      d$label[j] <- textgrid$get_interval_text(tier_idx, j)
+    }
+    d <- d[d$end >= from_time & d$start <= to_time, ]
+    ggplot2::ggplot(d) +
+      ggplot2::geom_rect(ggplot2::aes(xmin = .data$start, xmax = .data$end,
+                                     ymin = 0, ymax = 1),
+                         fill = tier_color, alpha = 0.3, color = "black") +
+      ggplot2::geom_text(ggplot2::aes(x = (.data$start + .data$end) / 2, y = 0.5,
+                                     label = .data$label), size = 3) +
+      ggplot2::xlim(from_time, to_time) +
+      ggplot2::labs(x = NULL, y = tier_name) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(axis.text.y = ggplot2::element_blank(),
+                     axis.ticks.y = ggplot2::element_blank())
+  } else {
+    n <- textgrid$get_number_of_points(tier_idx)
+    d <- data.frame(time = numeric(n), label = character(n), stringsAsFactors = FALSE)
+    for (j in seq_len(n)) {
+      d$time[j] <- textgrid$get_point_time(tier_idx, j)
+      d$label[j] <- textgrid$get_point_text(tier_idx, j)
+    }
+    d <- d[d$time >= from_time & d$time <= to_time, ]
+    ggplot2::ggplot(d, ggplot2::aes(x = .data$time)) +
+      ggplot2::geom_segment(ggplot2::aes(xend = .data$time, y = 0, yend = 1),
+                            color = tier_color) +
+      ggplot2::geom_text(ggplot2::aes(y = 1.1, label = .data$label),
+                         size = 3, angle = 90, hjust = 0) +
+      ggplot2::xlim(from_time, to_time) +
+      ggplot2::labs(x = NULL, y = tier_name) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(axis.text.y = ggplot2::element_blank(),
+                     axis.ticks.y = ggplot2::element_blank())
+  }
+}
+
+
 #' @title Plot TextGrid with Sound Waveform
 #'
 #' @description
@@ -70,117 +147,28 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
     stop("sound must be a Sound object")
   }
   
-  # Determine time range
-  if (is.null(from_time)) {
-    tg_df <- textgrid$as_data_frame()
-    snd_df <- sound$as_data_frame()
-    from_time <- max(min(tg_df$start, na.rm = TRUE), min(snd_df$time, na.rm = TRUE))
-  }
-  if (is.null(to_time)) {
-    tg_df <- if (exists("tg_df")) tg_df else textgrid$as_data_frame()
-    snd_df <- if (exists("snd_df")) snd_df else sound$as_data_frame()
-    to_time <- min(max(tg_df$end, na.rm = TRUE), max(snd_df$time, na.rm = TRUE))
-  }
+  # Resolve time range (shared helper)
+  tr <- .resolve_plot_time_range(textgrid, sound, from_time, to_time)
+  from_time <- tr[1]
+  to_time <- tr[2]
   
   # Plot waveform
   p_wave <- plot(sound, from_time = from_time, to_time = to_time,
                 color = waveform_color, garnish = TRUE,
                 title = if (!is.null(title)) title else "Sound + TextGrid")
   
-  # Get tier information
-  n_tiers <- textgrid$get_number_of_tiers()
-  
-  # Determine which tiers to plot
-  if (is.null(tier)) {
-    tiers_to_plot <- seq_len(n_tiers)
-  } else if (is.numeric(tier)) {
-    tiers_to_plot <- tier
-  } else {
-    # Find tier by name
-    tier_names <- vapply(seq_len(n_tiers), textgrid$get_tier_name, character(1))
-    tiers_to_plot <- which(tier_names == tier)
-    if (length(tiers_to_plot) == 0) {
-      stop("Tier '", tier, "' not found in TextGrid")
-    }
-  }
+  # Resolve which tiers to plot
+  tiers_to_plot <- .resolve_tiers_to_plot(textgrid, tier)
   
   # Default tier colors
   if (is.null(tier_colors)) {
     tier_colors <- scales::hue_pal()(length(tiers_to_plot))
   }
   
-  # Create tier plots
-  tier_plots <- list()
-  for (i in seq_along(tiers_to_plot)) {
-    tier_idx <- tiers_to_plot[i]
-    tier_name <- textgrid$get_tier_name(tier_idx)
-    tier_type <- if (textgrid$tier_is_interval_tier(tier_idx)) "interval" else "point"
-    
-    # Create tier visualization data
-    if (tier_type == "interval") {
-      n_intervals <- textgrid$get_number_of_intervals(tier_idx)
-      tier_data <- data.frame(
-        start = numeric(n_intervals),
-        end = numeric(n_intervals),
-        label = character(n_intervals),
-        stringsAsFactors = FALSE
-      )
-      
-      for (j in seq_len(n_intervals)) {
-        tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
-        tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
-      }
-      
-      # Filter by time range
-      tier_data <- tier_data[tier_data$end >= from_time & tier_data$start <= to_time, ]
-      
-      # Create tier plot
-      p_tier <- ggplot2::ggplot(tier_data) +
-        ggplot2::geom_rect(ggplot2::aes(xmin = .data$start, xmax = .data$end,
-                                       ymin = 0, ymax = 1),
-                          fill = tier_colors[i], alpha = 0.3, color = "black") +
-        ggplot2::geom_text(ggplot2::aes(x = (.data$start + .data$end) / 2, y = 0.5,
-                                       label = .data$label),
-                          size = 3) +
-        ggplot2::xlim(from_time, to_time) +
-        ggplot2::labs(x = NULL, y = tier_name) +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.y = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank())
-      
-    } else {
-      # Point tier
-      n_points <- textgrid$get_number_of_points(tier_idx)
-      tier_data <- data.frame(
-        time = numeric(n_points),
-        label = character(n_points),
-        stringsAsFactors = FALSE
-      )
-      
-      for (j in seq_len(n_points)) {
-        tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
-      }
-      
-      # Filter by time range
-      tier_data <- tier_data[tier_data$time >= from_time & tier_data$time <= to_time, ]
-      
-      # Create tier plot
-      p_tier <- ggplot2::ggplot(tier_data, ggplot2::aes(x = .data$time)) +
-        ggplot2::geom_segment(ggplot2::aes(xend = .data$time, y = 0, yend = 1),
-                             color = tier_colors[i]) +
-        ggplot2::geom_text(ggplot2::aes(y = 1.1, label = .data$label),
-                          size = 3, angle = 90, hjust = 0) +
-        ggplot2::xlim(from_time, to_time) +
-        ggplot2::labs(x = NULL, y = tier_name) +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.y = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank())
-    }
-    
-    tier_plots[[i]] <- p_tier
-  }
+  # Create tier plots (shared builder)
+  tier_plots <- lapply(seq_along(tiers_to_plot), function(i) {
+    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time, to_time)
+  })
   
   # Combine plots
   if (requireNamespace("patchwork", quietly = TRUE)) {
@@ -255,108 +243,25 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   }
   
   # Determine time range
-  if (is.null(from_time)) {
-    tg_df <- textgrid$as_data_frame()
-    p_df <- pitch$as_data_frame()
-    from_time <- max(min(tg_df$start, na.rm = TRUE), min(p_df$time, na.rm = TRUE))
-  }
-  if (is.null(to_time)) {
-    tg_df <- if (exists("tg_df")) tg_df else textgrid$as_data_frame()
-    p_df <- if (exists("p_df")) p_df else pitch$as_data_frame()
-    to_time <- min(max(tg_df$end, na.rm = TRUE), max(p_df$time, na.rm = TRUE))
-  }
-  
+  # Resolve time range (shared helper)
+  tr <- .resolve_plot_time_range(textgrid, pitch, from_time, to_time)
+  from_time <- tr[1]
+  to_time <- tr[2]
   # Plot pitch
   p_pitch <- plot(pitch, from_time = from_time, to_time = to_time,
                  color = pitch_color, garnish = TRUE,
                  title = if (!is.null(title)) title else "Pitch + TextGrid")
   
-  # Get tier information (reuse logic from plot_textgrid_sound)
-  n_tiers <- textgrid$get_number_of_tiers()
-  
-  if (is.null(tier)) {
-    tiers_to_plot <- seq_len(n_tiers)
-  } else if (is.numeric(tier)) {
-    tiers_to_plot <- tier
-  } else {
-    tier_names <- vapply(seq_len(n_tiers), textgrid$get_tier_name, character(1))
-    tiers_to_plot <- which(tier_names == tier)
-    if (length(tiers_to_plot) == 0) {
-      stop("Tier '", tier, "' not found in TextGrid")
-    }
-  }
-  
+  # Resolve which tiers to plot
+  tiers_to_plot <- .resolve_tiers_to_plot(textgrid, tier)
   if (is.null(tier_colors)) {
     tier_colors <- scales::hue_pal()(length(tiers_to_plot))
   }
   
-  # Create tier plots (same as plot_textgrid_sound)
-  tier_plots <- list()
-  for (i in seq_along(tiers_to_plot)) {
-    tier_idx <- tiers_to_plot[i]
-    tier_name <- textgrid$get_tier_name(tier_idx)
-    tier_type <- if (textgrid$tier_is_interval_tier(tier_idx)) "interval" else "point"
-    
-    if (tier_type == "interval") {
-      n_intervals <- textgrid$get_number_of_intervals(tier_idx)
-      tier_data <- data.frame(
-        start = numeric(n_intervals),
-        end = numeric(n_intervals),
-        label = character(n_intervals),
-        stringsAsFactors = FALSE
-      )
-      
-      for (j in seq_len(n_intervals)) {
-        tier_data$start[j] <- textgrid$get_interval_start_time(tier_idx, j)
-        tier_data$end[j] <- textgrid$get_interval_end_time(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_interval_text(tier_idx, j)
-      }
-      
-      tier_data <- tier_data[tier_data$end >= from_time & tier_data$start <= to_time, ]
-      
-      p_tier <- ggplot2::ggplot(tier_data) +
-        ggplot2::geom_rect(ggplot2::aes(xmin = .data$start, xmax = .data$end,
-                                       ymin = 0, ymax = 1),
-                          fill = tier_colors[i], alpha = 0.3, color = "black") +
-        ggplot2::geom_text(ggplot2::aes(x = (.data$start + .data$end) / 2, y = 0.5,
-                                       label = .data$label),
-                          size = 3) +
-        ggplot2::xlim(from_time, to_time) +
-        ggplot2::labs(x = NULL, y = tier_name) +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.y = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank())
-      
-    } else {
-      n_points <- textgrid$get_number_of_points(tier_idx)
-      tier_data <- data.frame(
-        time = numeric(n_points),
-        label = character(n_points),
-        stringsAsFactors = FALSE
-      )
-      
-      for (j in seq_len(n_points)) {
-        tier_data$time[j] <- textgrid$get_point_time(tier_idx, j)
-        tier_data$label[j] <- textgrid$get_point_text(tier_idx, j)
-      }
-      
-      tier_data <- tier_data[tier_data$time >= from_time & tier_data$time <= to_time, ]
-      
-      p_tier <- ggplot2::ggplot(tier_data, ggplot2::aes(x = .data$time)) +
-        ggplot2::geom_segment(ggplot2::aes(xend = .data$time, y = 0, yend = 1),
-                             color = tier_colors[i]) +
-        ggplot2::geom_text(ggplot2::aes(y = 1.1, label = .data$label),
-                          size = 3, angle = 90, hjust = 0) +
-        ggplot2::xlim(from_time, to_time) +
-        ggplot2::labs(x = NULL, y = tier_name) +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.y = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank())
-    }
-    
-    tier_plots[[i]] <- p_tier
-  }
-  
+  # Create tier plots (shared builder)
+  tier_plots <- lapply(seq_along(tiers_to_plot), function(i) {
+    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time, to_time)
+  })
   # Combine plots
   if (requireNamespace("patchwork", quietly = TRUE)) {
     combined <- p_pitch
