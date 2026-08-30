@@ -198,32 +198,7 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
   
   
   # Execute
-  if (parallel) {
-    if (!requireNamespace("parallel", quietly = TRUE)) {
-      stop("Package 'parallel' is required for parallel processing")
-    }
-    if (is.null(ncores)) {
-      ncores <- parallel::detectCores() - 1
-    }
-    # Cap each worker's C++ threads to avoid oversubscription: N workers each
-    # running all-core Praat kernels would spawn ~ncores^2 threads.
-    tpw <- .pladdrr_worker_thread_budget(ncores)
-    results <- parallel::mclapply(files, function(f) {
-      pladdrr_threads(tpw)
-      .process_batch_file(f, func, ...)
-    }, mc.cores = ncores)
-  } else {
-    if (progress && requireNamespace("utils", quietly = TRUE)) {
-      pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
-      results <- lapply(seq_along(files), function(i) {
-        utils::setTxtProgressBar(pb, i)
-        .process_batch_file(files[i], func, ...)
-      })
-      close(pb)
-    } else {
-      results <- lapply(files, function(f) .process_batch_file(f, func, ...))
-    }
-  }
+  results <- .run_batch_process(files, func, parallel, ncores, progress, ...)
   
   # Combine results
   do.call(rbind, lapply(results, function(x) {
@@ -693,4 +668,28 @@ aggregate_measurements <- function(measurements,
     results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr, meas_times, interpolation = 1L)
   }
   results
+}
+
+
+# Run batch processing (parallel mclapply or sequential with progress).
+.run_batch_process <- function(files, func, parallel, ncores, progress, ...) {
+  if (parallel) {
+    if (!requireNamespace("parallel", quietly = TRUE)) stop("Package 'parallel' is required for parallel processing")
+    if (is.null(ncores)) ncores <- parallel::detectCores() - 1
+    tpw <- .pladdrr_worker_thread_budget(ncores)
+    parallel::mclapply(files, function(f) {
+      pladdrr_threads(tpw)
+      .process_batch_file(f, func, ...)
+    }, mc.cores = ncores)
+  } else if (progress && requireNamespace("utils", quietly = TRUE)) {
+    pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
+    results <- lapply(seq_along(files), function(i) {
+      utils::setTxtProgressBar(pb, i)
+      .process_batch_file(files[i], func, ...)
+    })
+    close(pb)
+    results
+  } else {
+    lapply(files, function(f) .process_batch_file(f, func, ...))
+  }
 }
