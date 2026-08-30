@@ -352,7 +352,8 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
     "formant$get_value_at_time()",
     package = "pladdrr",
     msg =
-      "get_formant_at_time() is deprecated and will be removed in v6.0.0. Use the R6 interface: formant$get_value_at_time(formant_number, time)"
+      paste0("get_formant_at_time() is deprecated and will be removed in v6.0.0. ",
+             "Use the R6 interface: formant$get_value_at_time(formant_number, time)")
   )
   
   validate_formant_object(formant)
@@ -430,7 +431,8 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
     "formant$get_mean()",
     package = "pladdrr",
     msg =
-      "get_mean_formant() is deprecated and will be removed in v6.0.0. Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)"
+      paste0("get_mean_formant() is deprecated and will be removed in v6.0.0. ",
+             "Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)")
   )
   
   validate_formant_object(formant)

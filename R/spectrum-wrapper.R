@@ -182,7 +182,8 @@ NULL
   if (bandwidth <= dx) {
     stop(sprintf(
 
-        "bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping.",
+        paste0("bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). ",
+               "Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping."),
       bandwidth, dx, dx
     ))
   }
