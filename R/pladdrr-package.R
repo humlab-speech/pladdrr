@@ -169,6 +169,20 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param optional Ignored
 #' @param fmin Low frequency cutoff (Hz)
 #' @param fmax High frequency cutoff (Hz)
+#' @param x Object to check
+#' @param smooth Smoothing bandwidth (Hz)
+#' @param tmin Start time in seconds
+#' @param tmax End time in seconds
+#' @param title Character. Plot title (default: auto-generated)
+#' @param tier Tier number (1-based) or tier name
+#' @param textgrid TextGrid object
+#' @param sound1 First Sound object
+#' @param signal_outside Signal outside time domain: 1=zero, 2=similar
+#' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
+#' @param pointprocess A PointProcess object
+#' @param n_cores Integer. Number of cores (default: auto)
+#' @param max_pitch Pitch ceiling in Hz (default: 600)
+
 
 
 

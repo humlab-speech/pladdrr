@@ -27,7 +27,7 @@
 #'
 #' @param textgrid A TextGrid object
 #' @param sound A Sound object (optional, required if extract_sounds = TRUE)
-#' @param tier Tier number (1-based) or tier name
+#' @inheritParams pladdrr-shared-params tier
 #' @param text_equals Exact label match (e.g., "V" for voiced)
 #' @param text_contains Substring match (e.g., "vowel")
 #' @param text_starts_with Prefix match (e.g., "IPA_")
@@ -131,7 +131,7 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
 #' calling `textgrid$get_interval_text()` repeatedly.
 #'
 #' @param textgrid A TextGrid object
-#' @param tier Tier number (1-based) or tier name
+#' @inheritParams pladdrr-shared-params tier
 #'
 #' @return Character vector of all interval labels
 #'
@@ -163,7 +163,7 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 #' ready for analysis.
 #'
 #' @param textgrid A TextGrid object
-#' @param tier Tier number (1-based) or tier name
+#' @inheritParams pladdrr-shared-params tier
 #'
 #' @return Data frame with columns:
 #'   - `index`: Interval index (1-based)

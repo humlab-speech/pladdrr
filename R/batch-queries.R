@@ -312,7 +312,7 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #' Extract all point times from a PointProcess object as a numeric vector,
 #' in a single call instead of calling `get_time(i)` in a loop.
 #'
-#' @param pointprocess A PointProcess object
+#' @inheritParams pladdrr-shared-params pointprocess
 #'
 #' @return Numeric vector of all point times (in seconds)
 #'
@@ -338,7 +338,7 @@ get_pointprocess_times <- function(pointprocess) {
 #' Compute the time intervals between consecutive points in a PointProcess.
 #' Useful for jitter analysis and prosody studies.
 #'
-#' @param pointprocess A PointProcess object
+#' @inheritParams pladdrr-shared-params pointprocess
 #'
 #' @return Numeric vector of intervals (in seconds). Length is `n_points - 1`.
 #'
@@ -364,7 +364,7 @@ get_pointprocess_intervals <- function(pointprocess) {
 #'
 #' Find the nearest point index for each of multiple query times.
 #'
-#' @param pointprocess A PointProcess object
+#' @inheritParams pladdrr-shared-params pointprocess
 #' @param times Numeric vector of query times (in seconds)
 #'
 #' @return Integer vector of nearest point indices (1-based)
@@ -556,7 +556,7 @@ get_durations_batch <- function(file_paths) {
 #' @param sound A Sound object
 #' @param stat Statistic to compute: "max", "min", "mean", "median", or "sd"
 #' @param min_pitch Pitch floor in Hz (default: 75)
-#' @param max_pitch Pitch ceiling in Hz (default: 600)
+#' @inheritParams pladdrr-shared-params max_pitch
 #' @param time_step Time step for pitch extraction (0 = auto)
 #' @param voicing_threshold Voicing threshold (default: 0.45)
 #'
@@ -626,7 +626,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #'
 #' @param sound A Sound object
 #' @param min_pitch Pitch floor in Hz (default: 75)
-#' @param max_pitch Pitch ceiling in Hz (default: 600)
+#' @inheritParams pladdrr-shared-params max_pitch
 #' @param time_step Time step for analysis (0 = auto)
 #' @param subtract_mean Whether to subtract mean for intensity calculation (default: TRUE)
 #'
@@ -714,7 +714,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).
 #'   Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
 #'   independent of this parameter.
-#' @param max_pitch Pitch ceiling in Hz (default: 600)
+#' @inheritParams pladdrr-shared-params max_pitch
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
 #' @param pitch_method Pitch algorithm for the jitter/shimmer pitch object:
 #'   `"cc"` (default, preserves existing Tier 4 behaviour), `"ac"`, or

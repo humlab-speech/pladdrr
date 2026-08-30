@@ -4,10 +4,6 @@
 \alias{KlattGrid}
 \title{Create a KlattGrid object}
 \arguments{
-\item{tmin}{Start time in seconds}
-
-\item{tmax}{End time in seconds}
-
 \item{numberOfFormants}{Number of oral formants (typically 6)}
 
 \item{numberOfNasalFormants}{Number of nasal formants (typically 1)}

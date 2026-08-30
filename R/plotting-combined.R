@@ -134,7 +134,7 @@ NULL
 #' Creates a combined visualization showing a waveform with TextGrid annotation
 #' tiers overlaid. This replicates Praat's TextGrid_Sound_draw() function.
 #'
-#' @param textgrid TextGrid object
+#' @inheritParams pladdrr-shared-params textgrid
 #' @param sound Sound object
 #' @param tier Integer or character. Tier number or name to display (default: all)
 #' @inheritParams pladdrr-shared-params from_time
@@ -216,7 +216,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' Creates a combined visualization showing a pitch contour with TextGrid
 #' annotation tiers. This replicates Praat's TextGrid_Pitch_draw() function.
 #'
-#' @param textgrid TextGrid object
+#' @inheritParams pladdrr-shared-params textgrid
 #' @param pitch Pitch object
 #' @param tier Integer or character. Tier number or name to display (default: all)
 #' @inheritParams pladdrr-shared-params from_time

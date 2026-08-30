@@ -175,7 +175,7 @@ sound_to_textgrid_silences <- function(sound,
 #' Extracts intervals from a TextGrid tier that match a specified criterion.
 #' Returns time boundaries and labels of matching intervals.
 #'
-#' @param textgrid TextGrid object
+#' @inheritParams pladdrr-shared-params textgrid
 #' @param tier Integer. Tier number (1-indexed)
 #' @param condition Character. Matching condition:
 #'   - "equals" or "is equal to" - Exact match

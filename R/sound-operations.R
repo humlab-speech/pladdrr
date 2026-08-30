@@ -4,7 +4,7 @@
 
 #' Append two sounds with optional silence
 #'
-#' @param sound1 First Sound object
+#' @inheritParams pladdrr-shared-params sound1
 #' @param sound2 Second Sound object
 #' @param silence_duration Duration of silence to insert between sounds (seconds)
 #' @return New Sound object containing sound1, silence, and sound2
@@ -156,10 +156,10 @@ sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
 
 #' Convolve two sounds
 #'
-#' @param sound1 First Sound object
+#' @inheritParams pladdrr-shared-params sound1
 #' @param sound2 Second Sound object (filter/impulse response)
-#' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
-#' @param signal_outside Signal outside time domain: 1=zero, 2=similar
+#' @inheritParams pladdrr-shared-params scaling
+#' @inheritParams pladdrr-shared-params signal_outside
 #' @return New Sound object
 #' @export
 #' @examples
@@ -181,10 +181,10 @@ sounds_convolve <- function(sound1, sound2, scaling = 4L, signal_outside = 1L) {
 
 #' Cross-correlate two sounds
 #'
-#' @param sound1 First Sound object
+#' @inheritParams pladdrr-shared-params sound1
 #' @param sound2 Second Sound object
-#' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
-#' @param signal_outside Signal outside time domain: 1=zero, 2=similar
+#' @inheritParams pladdrr-shared-params scaling
+#' @inheritParams pladdrr-shared-params signal_outside
 #' @return New Sound object (cross-correlation function)
 #' @export
 #' @examples
@@ -207,8 +207,8 @@ sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside 
 #' Auto-correlate a sound with itself
 #'
 #' @param sound Sound object
-#' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
-#' @param signal_outside Signal outside time domain: 1=zero, 2=similar
+#' @inheritParams pladdrr-shared-params scaling
+#' @inheritParams pladdrr-shared-params signal_outside
 #' @return New Sound object (auto-correlation function)
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5)
@@ -231,7 +231,7 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 #' @param sound Sound object
 #' @inheritParams pladdrr-shared-params fmin
 #' @inheritParams pladdrr-shared-params fmax
-#' @param smooth Smoothing bandwidth (Hz)
+#' @inheritParams pladdrr-shared-params smooth
 #' @return New Sound object
 #' @export
 #' @examples
@@ -253,7 +253,7 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 #' @param sound Sound object
 #' @inheritParams pladdrr-shared-params fmin
 #' @inheritParams pladdrr-shared-params fmax
-#' @param smooth Smoothing bandwidth (Hz)
+#' @inheritParams pladdrr-shared-params smooth
 #' @return New Sound object
 #' @export
 #' @examples

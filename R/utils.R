@@ -18,7 +18,7 @@
 #'
 #' Ensures a numeric parameter is positive (> 0)
 #'
-#' @param x Value to validate
+#' @inheritParams pladdrr-shared-params x
 #' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
@@ -42,7 +42,7 @@ validate_positive <- function(x, name = deparse(substitute(x))) {
 #'
 #' Ensures a numeric parameter is non-negative (>= 0)
 #'
-#' @param x Value to validate
+#' @inheritParams pladdrr-shared-params x
 #' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
@@ -66,7 +66,7 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
 #'
 #' Ensures an integer parameter is positive (> 0)
 #'
-#' @param x Value to validate
+#' @inheritParams pladdrr-shared-params x
 #' @inheritParams pladdrr-shared-params name
 #' @return The validated value (invisibly)
 #' @keywords internal
@@ -90,7 +90,7 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 #'
 #' Ensures a parameter is a non-empty character string
 #'
-#' @param x Value to validate
+#' @inheritParams pladdrr-shared-params x
 #' @inheritParams pladdrr-shared-params name
 #' @param allow_na Allow NA values (default: FALSE)
 #' @return The validated value (invisibly)
@@ -134,7 +134,7 @@ validate_string <- function(x, name = deparse(substitute(x)),
 #'
 #' Validates that an object is a Sound R6 object or legacy praat_sound
 #'
-#' @param x Object to check
+#' @inheritParams pladdrr-shared-params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -178,7 +178,7 @@ validate_sound_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' Validates that an object is a Pitch R6 object or legacy praat_pitch
 #'
-#' @param x Object to check
+#' @inheritParams pladdrr-shared-params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
@@ -246,7 +246,7 @@ quality_warning <- function(message) {
 #'
 #' Validates that an object is a Formant R6 object or legacy praat_formant
 #'
-#' @param x Object to check
+#' @inheritParams pladdrr-shared-params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -315,7 +315,7 @@ validate_formant_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' Validates that an object is an Intensity R6 object or legacy praat_intensity
 #'
-#' @param x Object to check
+#' @inheritParams pladdrr-shared-params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)

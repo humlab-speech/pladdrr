@@ -102,7 +102,7 @@ NULL
 #' @param fit_method Character. Trend line fit method (default: "straight")
 #' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
 #' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
-#' @param title Character. Plot title (default: auto-generated)
+#' @inheritParams pladdrr-shared-params title
 #' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
 #'
 #' @return A ggplot2 object
@@ -189,7 +189,7 @@ plot_powercepstrum <- function(cepstrum,
 #' @param color_scale Character. Color palette: "viridis", "inferno", "magma", "plasma" (default: "viridis")
 #' @param show_cpp_contour Logical. Overlay CPP contour over time (default: FALSE)
 #' @param contour_color Character. Color for CPP contour line (default: "white")
-#' @param title Character. Plot title (default: auto-generated)
+#' @inheritParams pladdrr-shared-params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
 #' @return A ggplot2 object
@@ -269,7 +269,7 @@ plot_powercepstrogram <- function(cepstrogram,
 #' @param smooth Logical. Apply smoothing to CPP contour (default: FALSE)
 #' @param smooth_span Numeric. Smoothing span for loess (default: 0.1)
 #' @param reference_lines Numeric vector. Reference CPP values to plot as horizontal lines (default: NULL)
-#' @param title Character. Plot title (default: auto-generated)
+#' @inheritParams pladdrr-shared-params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
 #' @return A ggplot2 object

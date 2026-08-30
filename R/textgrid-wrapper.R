@@ -466,8 +466,8 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 #' @description
 #' Create a new empty TextGrid with specified tiers
 #'
-#' @param tmin Start time in seconds
-#' @param tmax End time in seconds
+#' @inheritParams pladdrr-shared-params tmin
+#' @inheritParams pladdrr-shared-params tmax
 #' @param tier_names Space-separated tier names (e.g., "phones words syllables")
 #' @param point_tiers Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}

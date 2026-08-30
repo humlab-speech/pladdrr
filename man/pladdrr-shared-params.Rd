@@ -49,6 +49,32 @@
 \item{fmin}{Low frequency cutoff (Hz)}
 
 \item{fmax}{High frequency cutoff (Hz)}
+
+\item{x}{Object to check}
+
+\item{smooth}{Smoothing bandwidth (Hz)}
+
+\item{tmin}{Start time in seconds}
+
+\item{tmax}{End time in seconds}
+
+\item{title}{Character. Plot title (default: auto-generated)}
+
+\item{tier}{Tier number (1-based) or tier name}
+
+\item{textgrid}{TextGrid object}
+
+\item{sound1}{First Sound object}
+
+\item{signal_outside}{Signal outside time domain: 1=zero, 2=similar}
+
+\item{scaling}{Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99}
+
+\item{pointprocess}{A PointProcess object}
+
+\item{n_cores}{Integer. Number of cores (default: auto)}
+
+\item{max_pitch}{Pitch ceiling in Hz (default: 600)}
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit

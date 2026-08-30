@@ -169,8 +169,8 @@ as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()
 #'
 #' Creates a new AmplitudeTier object with no points.
 #'
-#' @param tmin Start time in seconds
-#' @param tmax End time in seconds
+#' @inheritParams pladdrr-shared-params tmin
+#' @inheritParams pladdrr-shared-params tmax
 #' @return An AmplitudeTier object
 #' @examples
 #' tier <- amplitude_tier_create(0, 1)
