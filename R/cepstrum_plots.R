@@ -49,6 +49,19 @@ NULL
 #'                   title = "Voice Quality Analysis")
 #'
 #' @export
+
+# Apply the shared cepstrum plot theme (minimal/bw/classic + title styling).
+.apply_cepstrum_theme <- function(p, theme) {
+  p + switch(theme,
+    minimal = ggplot2::theme_minimal(),
+    bw = ggplot2::theme_bw(),
+    classic = ggplot2::theme_classic()
+  ) + ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold", size = 14),
+    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40")
+  )
+}
+
 plot_powercepstrum <- function(cepstrum,
                               show_peak = TRUE,
                               show_trendline = TRUE,
@@ -158,16 +171,7 @@ plot_powercepstrum <- function(cepstrum,
   )
   
   # Apply theme
-  p <- p + switch(theme,
-    minimal = ggplot2::theme_minimal(),
-    bw = ggplot2::theme_bw(),
-    classic = ggplot2::theme_classic()
-  )
-  
-  p <- p + ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", size = 14),
-    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40")
-  )
+  p <- .apply_cepstrum_theme(p, theme)
   
   return(p)
 }
@@ -301,17 +305,7 @@ plot_powercepstrogram <- function(cepstrogram,
   )
   
   # Apply theme
-  p <- p + switch(theme,
-    minimal = ggplot2::theme_minimal(),
-    bw = ggplot2::theme_bw(),
-    classic = ggplot2::theme_classic()
-  )
-  
-  p <- p + ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", size = 14),
-    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40"),
-    legend.position = "right"
-  )
+  p <- .apply_cepstrum_theme(p, theme)
   
   return(p)
 }
@@ -473,16 +467,7 @@ plot_cpp_timeseries <- function(cepstrogram,
   )
   
   # Apply theme
-  p <- p + switch(theme,
-    minimal = ggplot2::theme_minimal(),
-    bw = ggplot2::theme_bw(),
-    classic = ggplot2::theme_classic()
-  )
-  
-  p <- p + ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", size = 14),
-    plot.subtitle = ggplot2::element_text(size = 10, color = "gray40")
-  )
+  p <- .apply_cepstrum_theme(p, theme)
   
   return(p)
 }
