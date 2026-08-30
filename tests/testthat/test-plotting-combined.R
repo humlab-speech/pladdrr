@@ -283,3 +283,15 @@ test_that("plot_spectrogram_formants warns and returns bare spectrogram when no 
   )
   expect_s3_class(p, "ggplot")
 })
+
+test_that("plot_sound_pitch falls back to gridExtra when patchwork unavailable", {
+  s <- Sound$create_tone(frequency = 200, duration = 0.2)
+  pitch <- s$to_pitch()
+  local_mocked_bindings(
+    requireNamespace = function(pkg, ...) pkg %in% c("ggplot2", "grid", "gridExtra"),
+    .package = "base"
+  )
+  res <- plot_sound_pitch(s, pitch)
+  # gridExtra::grid.arrange returns a gtable
+  expect_s3_class(res, "gtable")
+})
