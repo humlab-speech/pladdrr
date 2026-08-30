@@ -7,13 +7,18 @@
 # - Time mapping between signals
 
 .dtw_method_factories <- list(
-  get_y_time_from_x_time = function(cpp_obj, .xptr) function(tx) {
+  get_y_time_from_x_time = function(cpp_obj, .xptr) {
+    function(tx) {
       cpp_obj$get_y_time_from_x_time(as.numeric(tx))
-    },
-  get_x_time_from_y_time = function(cpp_obj, .xptr) function(ty) {
+    }
+  },
+  get_x_time_from_y_time = function(cpp_obj, .xptr) {
+    function(ty) {
       cpp_obj$get_x_time_from_y_time(as.numeric(ty))
-    },
-  map_times = function(cpp_obj, .xptr) function(times, direction = c("x_to_y", "y_to_x")) {
+    }
+  },
+  map_times = function(cpp_obj, .xptr) {
+    function(times, direction = c("x_to_y", "y_to_x")) {
       direction <- match.arg(direction)
       times <- as.numeric(times)
       if (direction == "x_to_y") {
@@ -21,53 +26,77 @@
       } else {
         cpp_obj$get_x_times_from_y_times(times)
       }
-    },
-  get_maximum_consecutive_steps = function(cpp_obj, .xptr) function(direction = c("x", "y", "horizontal", "vertical")) {
+    }
+  },
+  get_maximum_consecutive_steps = function(cpp_obj, .xptr) {
+    function(direction = c("x", "y", "horizontal", "vertical")) {
       direction <- match.arg(direction)
       cpp_obj$get_maximum_consecutive_steps(direction)
-    },
-  get_path = function(cpp_obj, .xptr) function() {
+    }
+  },
+  get_path = function(cpp_obj, .xptr) {
+    function() {
       cpp_obj$get_path()
-    },
-  swap_axes = function(cpp_obj, .xptr) function() {
+    }
+  },
+  swap_axes = function(cpp_obj, .xptr) {
+    function() {
       swapped_ptr <- cpp_obj$swap_axes_ptr()
       DTW(.xptr = swapped_ptr)
-    },
-  to_polygon = function(cpp_obj, .xptr) function(band = 0.0, slope = 1) {
+    }
+  },
+  to_polygon = function(cpp_obj, .xptr) {
+    function(band = 0.0, slope = 1) {
       poly_ptr <- cpp_obj$to_polygon_ptr(as.numeric(band), as.integer(slope))
       Polygon(.xptr = poly_ptr)
-    },
-  to_matrix_distances = function(cpp_obj, .xptr) function() {
+    }
+  },
+  to_matrix_distances = function(cpp_obj, .xptr) {
+    function() {
       mat_ptr <- cpp_obj$to_matrix_distances_ptr()
       Matrix(.xptr = mat_ptr)
-    },
-  to_matrix_cumulative = function(cpp_obj, .xptr) function(band = 0.0, slope = 1) {
+    }
+  },
+  to_matrix_cumulative = function(cpp_obj, .xptr) {
+    function(band = 0.0, slope = 1) {
       mat_ptr <- cpp_obj$to_matrix_cumulative_distances_ptr(
         as.numeric(band), as.integer(slope))
       Matrix(.xptr = mat_ptr)
-    },
-  to_duration_tier = function(cpp_obj, .xptr) function() {
+    }
+  },
+  to_duration_tier = function(cpp_obj, .xptr) {
+    function() {
       tier_ptr <- cpp_obj$to_duration_tier_ptr()
       DurationTier(.xptr = tier_ptr)
-    },
-  warp_textgrid = function(cpp_obj, .xptr) function(textgrid, precision = 0.0) {
+    }
+  },
+  warp_textgrid = function(cpp_obj, .xptr) {
+    function(textgrid, precision = 0.0) {
       if (!inherits(textgrid, "TextGrid")) {
         stop("textgrid must be a TextGrid object")
       }
       warped_ptr <- cpp_obj$warp_textgrid_ptr(textgrid$.xptr, as.numeric(precision))
       TextGrid(.xptr = warped_ptr)
-    },
-  as_matrix = function(cpp_obj, .xptr) function() {
+    }
+  },
+  as_matrix = function(cpp_obj, .xptr) {
+    function() {
       cpp_obj$as_matrix()
-    },
-  get_info = function(cpp_obj, .xptr) function() {
+    }
+  },
+  get_info = function(cpp_obj, .xptr) {
+    function() {
       cpp_obj$get_info()
-    },
-  save = function(cpp_obj, .xptr) function(path) {
+    }
+  },
+  save = function(cpp_obj, .xptr) {
+    function(path) {
       cpp_obj$save(path)
       invisible(NULL)
-    },
-  print = function(cpp_obj, .xptr) function() {
+    }
+  },
+  print = function(cpp_obj, .xptr) {
+    function() {
       info <- cpp_obj$get_info()
       cat("<Praat DTW>\n")
       cat(sprintf("  Candidate (x): %.3f - %.3f s (%.3f s)\n",
@@ -80,6 +109,7 @@
       cat(sprintf("  Weighted distance: %.4f\n", info$path$weighted_distance))
       invisible(NULL)
     }
+  }
 )
 
 #' DTW
