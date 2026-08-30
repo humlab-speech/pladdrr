@@ -129,6 +129,23 @@ NULL
   out
 }
 
+# Process one batch file: load Sound, run func, tag with file/path.
+.process_batch_file <- function(filepath, func, ...) {
+  tryCatch({
+    sound <- Sound$new(filepath)
+    result <- func(sound, ...)
+    if (is.list(result)) {
+      result$file <- basename(filepath)
+      result$path <- filepath
+    }
+    result
+  }, error = function(e) {
+    warning("Error processing ", filepath, ": ", e$message)
+    list(file = basename(filepath), path = filepath, error = e$message)
+  })
+}
+
+
 batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 
                          ncores = NULL, progress = TRUE, ...) {
@@ -147,23 +164,6 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
     message("Processing ", length(files), " files...")
   }
   
-  # Processing function
-  process_file <- function(filepath) {
-    tryCatch({
-      sound <- Sound$new(filepath)
-      result <- func(sound, ...)
-      
-      # Add filename to result
-      if (is.list(result)) {
-        result$file <- basename(filepath)
-        result$path <- filepath
-      }
-      result
-    }, error = function(e) {
-      warning("Error processing ", filepath, ": ", e$message)
-      list(file = basename(filepath), path = filepath, error = e$message)
-    })
-  }
   
   # Execute
   if (parallel) {
@@ -178,18 +178,18 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
     tpw <- .pladdrr_worker_thread_budget(ncores)
     results <- parallel::mclapply(files, function(f) {
       pladdrr_threads(tpw)
-      process_file(f)
+      .process_batch_file(f, func, ...)
     }, mc.cores = ncores)
   } else {
     if (progress && requireNamespace("utils", quietly = TRUE)) {
       pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
       results <- lapply(seq_along(files), function(i) {
         utils::setTxtProgressBar(pb, i)
-        process_file(files[i])
+        .process_batch_file(files[i], func, ...)
       })
       close(pb)
     } else {
-      results <- lapply(files, process_file)
+      results <- lapply(files, function(f) .process_batch_file(f, func, ...))
     }
   }
   
