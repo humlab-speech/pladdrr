@@ -90,23 +90,6 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
   
   tier <- .validate_textgrid_intervals_args(textgrid, sound, tier, extract_sounds)
   
-  # Validate tier
-  if (is.character(tier)) {
-    tier <- textgrid$get_tier_number(tier)
-  }
-  if (!is.numeric(tier) || tier < 1) {
-    stop("tier must be a positive integer or valid tier name")
-  }
-  
-  # Validate sound if extracting
-  if (extract_sounds) {
-    if (is.null(sound)) {
-      stop("sound argument required when extract_sounds = TRUE")
-    }
-    if (!inherits(sound, "Sound")) {
-      stop("sound must be a Sound object")
-    }
-  }
   
   # Determine comparison type
   n_criteria <- sum(!is.null(text_equals), !is.null(text_contains), !is.null(text_starts_with))
