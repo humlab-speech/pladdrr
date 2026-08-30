@@ -257,25 +257,13 @@ extract_formants <- function(sound,
 #' @noRd
 .burg_algorithm <- function(x, order) {
   
-  n <- length(x)
-  
-  if (n < order + 1) {
-    return(NULL)
-  }
-  
-  # Initialize
-  a <- numeric(order + 1)
-  a[1] <- 1
-  
-  f <- x
-  b <- x
-  
-  p <- sum(x^2) / n
-  
-  # Check if signal has any variation
-  if (p == 0 || is.na(p) || !is.finite(p)) {
-    return(NULL)
-  }
+  init <- .burg_initialize(x, order)
+  if (is.null(init)) return(NULL)
+  n <- init$n
+  a <- init$a
+  f <- init$f
+  b <- init$b
+  p <- init$p
   
   for (k in seq_len(order)) {
     # f and b stay full-length (n) throughout: only indices (k+1):n are
@@ -295,18 +283,11 @@ extract_formants <- function(sound,
     # contributes 0 instead of reading past the vector's end (NA).
     a <- .update_burg_coefficients(a, k, rc)
 
-    # Update forward and backward prediction errors in place (see idx note above)
-    old_f <- f[idx]
-    f[idx] <- old_f + rc * b[idx - 1]
-    b[idx] <- b[idx - 1] + rc * old_f
-
-    # Update prediction error power
-    p <- p * (1 - rc^2)
-
-    # Check if error power is valid
-    if (is.na(p) || !is.finite(p) || p <= 0) {
-      break
-    }
+    up <- .update_burg_errors(f, b, idx, rc, p)
+    f <- up$f
+    b <- up$b
+    p <- up$p
+    if (is.na(p) || !is.finite(p) || p <= 0) break
   }
   
   # Check if we got valid coefficients
@@ -542,4 +523,28 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   a_new[1] <- 1
   for (i in seq_len(k)) a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
   a_new
+}
+
+
+# Update Burg forward/backward errors and prediction error power.
+.update_burg_errors <- function(f, b, idx, rc, p) {
+  old_f <- f[idx]
+  f[idx] <- old_f + rc * b[idx - 1]
+  b[idx] <- b[idx - 1] + rc * old_f
+  p <- p * (1 - rc^2)
+  list(f = f, b = b, p = p)
+}
+
+
+# Initialize the Burg algorithm state; NULL if degenerate.
+.burg_initialize <- function(x, order) {
+  n <- length(x)
+  if (n < order + 1) return(NULL)
+  a <- numeric(order + 1)
+  a[1] <- 1
+  f <- x
+  b <- x
+  p <- sum(x^2) / n
+  if (p == 0 || is.na(p) || !is.finite(p)) return(NULL)
+  list(a = a, f = f, b = b, p = p, n = n)
 }
