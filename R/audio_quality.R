@@ -66,30 +66,13 @@ check_audio_quality <- function(sound,
   duration <- sound$get_total_duration()
   sampling_frequency <- sound$get_sampling_frequency()
   
-  # Amplitude analysis
-  max_amplitude <- max(abs(sound$get_minimum(from_time = 0, to_time = 0)),
-                        abs(sound$get_maximum(from_time = 0, to_time = 0)))
-  rms_amplitude <- sound$get_rms(from_time = 0, to_time = 0)
-  
-  # Clipping detection
-  is_clipped <- max_amplitude > clipping_threshold
-  
-  # Count clipping samples (approximate using maximum)
-  # Note: This is a conservative estimate since we don't have sample-level access
-  # A value > 0.99 almost certainly means clipping occurred
-  n_clipping_samples <- if (is_clipped) {
-    # Rough estimate: if peak is clipped, assume ~0.1% of samples
-    # This is conservative and encourages proper recording levels
-    as.integer(sampling_frequency * duration * 0.001)
-  } else {
-    0L
-  }
-  
-  clipping_percentage <- if (is_clipped) {
-    (n_clipping_samples / (sampling_frequency * duration)) * 100
-  } else {
-    0
-  }
+  # Amplitude analysis + clipping
+  amp <- .analyze_amplitude(sound, clipping_threshold, sampling_frequency, duration)
+  max_amplitude <- amp$max_amplitude
+  rms_amplitude <- amp$rms_amplitude
+  is_clipped <- amp$is_clipped
+  n_clipping_samples <- amp$n_clipping_samples
+  clipping_percentage <- amp$clipping_percentage
   
   # Intensity analysis using Praat's Intensity object
   inten <- .analyze_intensity(sound, intensity_floor, time_step)
@@ -219,4 +202,18 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
   list(mean_intensity_db = mean_intensity_db, min_intensity_db = min_intensity_db,
        max_intensity_db = max_intensity_db,
        intensity_range_db = max_intensity_db - min_intensity_db)
+}
+
+
+# Amplitude + clipping analysis.
+.analyze_amplitude <- function(sound, clipping_threshold, sampling_frequency, duration) {
+  max_amplitude <- max(abs(sound$get_minimum(from_time = 0, to_time = 0)),
+                        abs(sound$get_maximum(from_time = 0, to_time = 0)))
+  rms_amplitude <- sound$get_rms(from_time = 0, to_time = 0)
+  is_clipped <- max_amplitude > clipping_threshold
+  n_clipping_samples <- if (is_clipped) as.integer(sampling_frequency * duration * 0.001) else 0L
+  clipping_percentage <- if (is_clipped) (n_clipping_samples / (sampling_frequency * duration)) * 100 else 0
+  list(max_amplitude = max_amplitude, rms_amplitude = rms_amplitude,
+       is_clipped = is_clipped, n_clipping_samples = n_clipping_samples,
+       clipping_percentage = clipping_percentage)
 }
