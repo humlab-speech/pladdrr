@@ -104,6 +104,13 @@ lockEnvironment(.matrix_methods, bindings = TRUE)
 # Constructor
 # ============================================================================
 
+
+# Check whether all full-domain Matrix construction parameters are present.
+.matrix_has_full_params <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
+  !is.null(xmin) && !is.null(xmax) && !is.null(nx) && !is.null(dx) && !is.null(x1) &&
+    !is.null(ymin) && !is.null(ymax) && !is.null(ny) && !is.null(dy) && !is.null(y1)
+}
+
 #' @export
 Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
                    ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
@@ -114,9 +121,7 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
     ptr <- .xptr
   } else if (!is.null(numberOfRows) && !is.null(numberOfColumns)) {
     ptr <- .matrix_create_simple(numberOfRows, numberOfColumns)
-  } else if (!is.null(xmin) && !is.null(xmax) && !is.null(nx) && 
-             !is.null(dx) && !is.null(x1) && !is.null(ymin) && 
-             !is.null(ymax) && !is.null(ny) && !is.null(dy) && !is.null(y1)) {
+  } else if (.matrix_has_full_params(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) {
     ptr <- .matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
   } else {
     stop("Either provide (numberOfRows, numberOfColumns) or all full parameters")
