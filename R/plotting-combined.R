@@ -106,6 +106,26 @@ NULL
   }
 }
 
+# Resolve from_time/to_time from a single object's data frame (lazy).
+.resolve_single_time_range <- function(obj, from_time, to_time) {
+  if (!is.null(from_time) && !is.null(to_time)) return(c(from_time, to_time))
+  df <- obj$as_data_frame()
+  if (is.null(from_time)) from_time <- min(df$time, na.rm = TRUE)
+  if (is.null(to_time)) to_time <- max(df$time, na.rm = TRUE)
+  c(from_time, to_time)
+}
+
+# Scale intensity values onto the pitch axis for a dual-axis plot.
+.scale_intensity_to_pitch <- function(pitch_df, intensity_df) {
+  pitch_range <- range(pitch_df$frequency, na.rm = TRUE)
+  intensity_range <- range(intensity_df$intensity_db, na.rm = TRUE)
+  scale_factor <- diff(pitch_range) / diff(intensity_range)
+  offset <- pitch_range[1] - intensity_range[1] * scale_factor
+  intensity_df$scaled_intensity <- intensity_df$intensity_db * scale_factor + offset
+  list(df = intensity_df, scale_factor = scale_factor, offset = offset)
+}
+
+
 
 
 #' @title Plot TextGrid with Sound Waveform
@@ -312,15 +332,9 @@ plot_pitch_intensity <- function(pitch, intensity,
     stop("intensity must be an Intensity object")
   }
   
-  # Determine time range
-  if (is.null(from_time)) {
-    df_temp <- pitch$as_data_frame()
-    from_time <- min(df_temp$time, na.rm = TRUE)
-  }
-  if (is.null(to_time)) {
-    df_temp <- if (exists("df_temp")) df_temp else pitch$as_data_frame()
-    to_time <- max(df_temp$time, na.rm = TRUE)
-  }
+  tr <- .resolve_single_time_range(pitch, from_time, to_time)
+  from_time <- tr[1]
+  to_time <- tr[2]
   
   # Get data frames
   pitch_df <- pitch$as_data_frame()
@@ -330,15 +344,10 @@ plot_pitch_intensity <- function(pitch, intensity,
   pitch_df <- pitch_df[pitch_df$time >= from_time & pitch_df$time <= to_time, ]
   intensity_df <- intensity_df[intensity_df$time >= from_time & intensity_df$time <= to_time, ]
   
-  # Normalize intensity to pitch scale for dual axis
-  pitch_range <- range(pitch_df$frequency, na.rm = TRUE)
-  intensity_range <- range(intensity_df$intensity_db, na.rm = TRUE)
-  
-  # Scale factor for intensity to match pitch range
-  scale_factor <- diff(pitch_range) / diff(intensity_range)
-  offset <- pitch_range[1] - intensity_range[1] * scale_factor
-  
-  intensity_df$scaled_intensity <- intensity_df$intensity_db * scale_factor + offset
+  s <- .scale_intensity_to_pitch(pitch_df, intensity_df)
+  intensity_df <- s$df
+  scale_factor <- s$scale_factor
+  offset <- s$offset
   
   # Create combined plot
   p <- ggplot2::ggplot() +
@@ -418,17 +427,9 @@ plot_spectrogram_formants <- function(spectrogram, formant,
     stop("formant must be a Formant object")
   }
   
-  # Determine time range
-  if (is.null(from_time)) {
-    s_mat <- spectrogram$as_matrix()
-    f_df <- formant$as_data_frame()
-    from_time <- min(f_df$time, na.rm = TRUE)
-  }
-  if (is.null(to_time)) {
-    s_mat <- if (exists("s_mat")) s_mat else spectrogram$as_matrix()
-    f_df <- if (exists("f_df")) f_df else formant$as_data_frame()
-    to_time <- max(f_df$time, na.rm = TRUE)
-  }
+  tr <- .resolve_single_time_range(formant, from_time, to_time)
+  from_time <- tr[1]
+  to_time <- tr[2]
   
   # Create spectrogram base plot
   p <- plot(spectrogram, from_time = from_time, to_time = to_time,
