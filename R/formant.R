@@ -178,18 +178,7 @@ extract_formants <- function(sound,
   n_frames <- floor((duration - window_length) / time_step) + 1
   if (n_frames < 1) n_frames <- 1
   
-  # If time_step would be negative (very short signal), just use one frame
-  if (duration <= window_length) {
-    frame_times <- duration / 2
-  } else {
-    frame_times <- seq(window_length / 2, 
-                       duration - window_length / 2,
-                       by = time_step)
-    
-    if (length(frame_times) == 0 || anyNA(frame_times)) {
-      frame_times <- duration / 2
-    }
-  }
+  frame_times <- .frame_times_for_detection(duration, window_length, time_step)
   
   # Pre-allocate results as list for rbindlist
   results_list <- vector("list", length(frame_times) * n_formants)
@@ -529,4 +518,13 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   }
   
   return(mean(formant_data$frequency, na.rm = TRUE))
+}
+
+
+# Compute the frame times for formant detection.
+.frame_times_for_detection <- function(duration, window_length, time_step) {
+  if (duration <= window_length) return(duration / 2)
+  frame_times <- seq(window_length / 2, duration - window_length / 2, by = time_step)
+  if (length(frame_times) == 0 || anyNA(frame_times)) return(duration / 2)
+  frame_times
 }
