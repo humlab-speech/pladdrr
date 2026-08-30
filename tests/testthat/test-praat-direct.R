@@ -141,3 +141,11 @@ test_that("to_pitch_shs_direct accepts Sound and rejects invalid input", {
   expect_true(inherits(p, "externalptr"))
   expect_error(to_pitch_shs_direct("x"), "sound must be a Sound object")
 })
+
+test_that("to_pitch_spinet_direct accepts Sound and rejects invalid input", {
+  snd <- Sound$create_tone(frequency = 200, duration = 0.2)
+  p <- to_pitch_spinet_direct(snd, time_step = 0.005, window_duration = 0.015,
+                              n_filters = 40, pitch_ceiling = 300)
+  expect_true(inherits(p, "externalptr"))
+  expect_error(to_pitch_spinet_direct("x"), "sound must be a Sound object")
+})
