@@ -201,3 +201,12 @@ test_that("sound_load_window validates its arguments", {
   expect_error(sound_load_window(path, 0, 0.5, resample_to = -100), "resample_to must be a positive number or NULL")
   expect_error(sound_load_window(path, 0, 0.5, preserve_times = "yes"), "preserve_times must be TRUE or FALSE")
 })
+
+test_that("sound_to_pitch_ac_batch / cc_batch accept raw external pointers", {
+  snds <- make_test_sounds(2)
+  xptrs <- lapply(snds, function(s) s$.xptr)
+  ac <- sound_to_pitch_ac_batch(xptrs, return_r6 = FALSE)
+  expect_true(all(vapply(ac, inherits, logical(1), what = "externalptr")))
+  cc <- sound_to_pitch_cc_batch(xptrs, return_r6 = FALSE)
+  expect_true(all(vapply(cc, inherits, logical(1), what = "externalptr")))
+})
