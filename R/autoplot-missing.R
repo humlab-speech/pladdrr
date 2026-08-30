@@ -980,8 +980,8 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   type <- match.arg(type)
-  p_scree <- if (type == "scree" || type == "both") .pca_scree_plot(object, garnish) else NULL
-  p_scores <- if (type == "scores" || type == "both") .pca_scores_plot(object, type, garnish, ...) else NULL
+  p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "PC", "PCA Scree Plot", garnish) else NULL
+  p_scores <- if (type == "scores" || type == "both") .scores_plot(object, type, "PCA Scores", garnish, ...) else NULL
   if (type == "both") {
     if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")
@@ -1009,51 +1009,10 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   type <- match.arg(type)
-  if (type == "scree" || type == "both") {
-    eigenvals <- object$get_eigenvalues()
-    variance <- eigenvals / sum(eigenvals) * 100
-    comp_labels <- paste0("LD", seq_along(variance))
-    scree_df <- data.frame(
-      component = factor(comp_labels, levels = comp_labels),
-      variance = variance, cumulative = cumsum(variance))
-    p_scree <- ggplot2::ggplot(scree_df,
-                ggplot2::aes(x = .data$component, y = .data$variance)) +
-      ggplot2::geom_col(fill = "darkgreen", alpha = 0.7) +
-      ggplot2::geom_line(ggplot2::aes(y = .data$cumulative, group = 1),
-        color = "darkred", linewidth = 1) +
-      ggplot2::geom_point(ggplot2::aes(y = .data$cumulative),
-        color = "darkred", size = 2) +
-      ggplot2::scale_y_continuous(
-        name = "Variance Explained (%)",
-        sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)"))
-    if (garnish) {
-      p_scree <- p_scree +
-        ggplot2::labs(title = "Discriminant Analysis Scree Plot",
-                      x = "Function") +
-        ggplot2::theme_minimal()
-    }
-  }
-  if (type == "scores" || type == "both") {
-    df <- as.data.frame(object)
-    if (ncol(df) < 2) {
-      warning("Discriminant scores data frame has fewer than 2 columns")
-      if (type == "scores") return(ggplot2::ggplot() + ggplot2::theme_void())
-    }
-    pc_cols <- names(df)[seq_len(min(2, ncol(df)))]
-    p_scores <- ggplot2::ggplot(df,
-                 ggplot2::aes(x = .data[[pc_cols[1]]],
-                              y = .data[[pc_cols[2]]])) +
-      ggplot2::geom_point(alpha = 0.6, size = 2, ...)
-    if (garnish) {
-      p_scores <- p_scores +
-        ggplot2::labs(title = "Discriminant Scores",
-                      x = pc_cols[1], y = pc_cols[2]) +
-        ggplot2::theme_minimal()
-    }
-  }
+  p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "LD", "Discriminant Scree Plot", garnish) else NULL
+  p_scores <- if (type == "scores" || type == "both") .scores_plot(object, type, "Discriminant Scores", garnish, ...) else NULL
   if (type == "both") {
-    if (requireNamespace("patchwork", quietly = TRUE))
-      return(p_scree | p_scores)
+    if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")
     return(p_scree)
   }
@@ -1475,10 +1434,10 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 
 
 # PCA scree plot (variance + cumulative).
-.pca_scree_plot <- function(object, garnish) {
+.scree_plot <- function(object, prefix, title, garnish) {
   eigenvals <- object$get_eigenvalues()
   variance <- eigenvals / sum(eigenvals) * 100
-  comp_labels <- paste0("PC", seq_along(variance))
+  comp_labels <- paste0(prefix, seq_along(variance))
   scree_df <- data.frame(component = factor(comp_labels, levels = comp_labels),
                          variance = variance, cumulative = cumsum(variance))
   p <- ggplot2::ggplot(scree_df,
@@ -1491,13 +1450,13 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     ggplot2::scale_y_continuous(name = "Variance Explained (%)",
       sec.axis = ggplot2::sec_axis(~ ., name = "Cumulative (%)"))
   if (garnish) {
-    p + ggplot2::labs(title = "PCA Scree Plot", x = "Principal Component") +
+    p + ggplot2::labs(title = title, x = "Principal Component") +
       ggplot2::theme_minimal()
   } else p
 }
 
 # PCA component-scores scatter plot.
-.pca_scores_plot <- function(object, type, garnish = TRUE, ...) {
+.scores_plot <- function(object, type, title, garnish = TRUE, ...) {
   df <- as.data.frame(object)
   if (ncol(df) < 2) {
     warning("PCA scores data frame has fewer than 2 columns")
@@ -1508,7 +1467,7 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
                ggplot2::aes(x = .data[[pc_cols[1]]], y = .data[[pc_cols[2]]])) +
     ggplot2::geom_point(alpha = 0.6, size = 2, ...)
   if (garnish) {
-    p_scores + ggplot2::labs(title = "PCA Scores", x = pc_cols[1], y = pc_cols[2]) +
+    p_scores + ggplot2::labs(title = title, x = pc_cols[1], y = pc_cols[2]) +
       ggplot2::theme_minimal()
   } else p_scores
 }
