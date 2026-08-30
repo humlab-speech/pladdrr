@@ -839,7 +839,11 @@ build_multiband_harmonicity <- function(
 
 # Validate a (from_time, to_time) pair as single numeric values.
 .validate_time_pair <- function(from_time, to_time) {
-  .validate_time_pair(from_time, to_time)
+  if (!is.numeric(from_time) || !is.numeric(to_time) ||
+      length(from_time) != 1L || length(to_time) != 1L ||
+      is.na(from_time) || is.na(to_time)) {
+    stop("from_time and to_time must be single numeric values")
+  }
   invisible(NULL)
 }
 
