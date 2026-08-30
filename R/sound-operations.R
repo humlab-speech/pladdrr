@@ -31,7 +31,7 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #' Extracts time range from Sound, applying optional window function.
 #' Implements Praat's "Sound: Extract part..." with full window shape support.
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @param t1 Start time (seconds)
 #' @param t2 End time (seconds)
 #' @param window_shape Window shape code or name:
@@ -102,7 +102,7 @@ sound_extract_part <- function(sound, t1, t2, window_shape = 1L,
 
 #' Time-stretch a sound using overlap-add
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @param fmin Minimum pitch (Hz)
 #' @param fmax Maximum pitch (Hz)
 #' @param factor Lengthening factor (>1 = slower, <1 = faster)
@@ -125,7 +125,7 @@ sound_lengthen <- function(sound, fmin = 75, fmax = 600, factor = 1.5) {
 
 #' Deepen band modulation (hearing enhancement)
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @param enhancement_db Enhancement in dB
 #' @param flow Low frequency bound (Hz)
 #' @param fhigh High frequency bound (Hz)
@@ -206,7 +206,7 @@ sounds_cross_correlate <- function(sound1, sound2, scaling = 4L, signal_outside 
 
 #' Auto-correlate a sound with itself
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @inheritParams pladdrr-shared-params scaling
 #' @inheritParams pladdrr-shared-params signal_outside
 #' @return New Sound object (auto-correlation function)
@@ -228,7 +228,7 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 
 #' Apply Hann band-pass filter
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @inheritParams pladdrr-shared-params fmin
 #' @inheritParams pladdrr-shared-params fmax
 #' @inheritParams pladdrr-shared-params smooth
@@ -250,7 +250,7 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 
 #' Apply Hann band-stop filter
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @inheritParams pladdrr-shared-params fmin
 #' @inheritParams pladdrr-shared-params fmax
 #' @inheritParams pladdrr-shared-params smooth

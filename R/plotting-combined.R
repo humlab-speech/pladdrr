@@ -135,7 +135,7 @@ NULL
 #' tiers overlaid. This replicates Praat's TextGrid_Sound_draw() function.
 #'
 #' @inheritParams pladdrr-shared-params textgrid
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @param tier Integer or character. Tier number or name to display (default: all)
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
@@ -523,7 +523,7 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' and pitch contour in the bottom panel, aligned by time. This is a common
 #' Praat visualization pattern.
 #'
-#' @param sound Sound object
+#' @inheritParams pladdrr-shared-sound sound
 #' @param pitch Pitch object
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time

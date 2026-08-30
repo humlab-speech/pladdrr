@@ -188,3 +188,9 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 
 #' @name pladdrr-shared-params
 NULL
+
+#' Shared parameter docs for functions taking a plain Sound object
+#'
+#' @param sound Sound object
+#' @name pladdrr-shared-sound
+NULL
