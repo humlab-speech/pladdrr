@@ -75,6 +75,18 @@
 \item{n_cores}{Integer. Number of cores (default: auto)}
 
 \item{max_pitch}{Pitch ceiling in Hz (default: 600)}
+
+\item{interpolate}{Whether to interpolate}
+
+\item{from_freq}{Start frequency in Hz (NULL = from 0)}
+
+\item{files}{Character vector of file paths}
+
+\item{duration}{Duration in seconds (default: 1.0)}
+
+\item{cepstrogram}{PowerCepstrogram object}
+
+\item{max_formant}{Maximum formant frequency (Hz)}
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit

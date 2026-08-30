@@ -204,7 +204,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 #' Extract pitch from multiple files in parallel.
 #' Convenience wrapper around analyze_files_parallel.
 #'
-#' @param files Character vector of file paths
+#' @inheritParams pladdrr-shared-params files
 #' @inheritParams pladdrr-shared-params n_cores
 #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
 #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
@@ -239,7 +239,7 @@ extract_pitch_parallel <- function(files, n_cores = NULL,
 #' @description
 #' Extract formants from multiple files in parallel.
 #'
-#' @param files Character vector of file paths
+#' @inheritParams pladdrr-shared-params files
 #' @inheritParams pladdrr-shared-params n_cores
 #' @param time_step Numeric. Time step in seconds (default: 0.005)
 #' @param max_formants Numeric. Max number of formants (default: 5)
@@ -275,7 +275,7 @@ extract_formant_parallel <- function(files, n_cores = NULL,
 #' @description
 #' Extract intensity from multiple files in parallel.
 #'
-#' @param files Character vector of file paths
+#' @inheritParams pladdrr-shared-params files
 #' @inheritParams pladdrr-shared-params n_cores
 #' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
 #' @param time_step Numeric. Time step (default: 0, auto)

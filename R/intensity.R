@@ -33,7 +33,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #'
 #' @inheritParams pladdrr-shared-params intensity
 #' @inheritParams pladdrr-shared-params time
-#' @param interpolate Whether to interpolate
+#' @inheritParams pladdrr-shared-params interpolate
 #' @return Intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)

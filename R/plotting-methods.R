@@ -340,7 +340,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' @param x Spectrogram object
 #' @inheritParams pladdrr-shared-params from_time
 #' @inheritParams pladdrr-shared-params to_time
-#' @param from_freq Start frequency in Hz (NULL = from 0)
+#' @inheritParams pladdrr-shared-params from_freq
 #' @param to_freq End frequency in Hz (NULL = to Nyquist)
 #' @inheritParams pladdrr-shared-params garnish
 #' @param title Character. Plot title (default: "Spectrogram")
@@ -405,7 +405,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a frequency spectrum visualization.
 #'
 #' @param x Spectrum object
-#' @param from_freq Start frequency in Hz (NULL = from 0)
+#' @inheritParams pladdrr-shared-params from_freq
 #' @param to_freq End frequency in Hz (NULL = to Nyquist)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
 #' @inheritParams pladdrr-shared-params garnish
@@ -483,7 +483,7 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' Creates a LTAS (long-term average spectrum) visualization.
 #'
 #' @param x Ltas object
-#' @param from_freq Start frequency in Hz (NULL = from 0)
+#' @inheritParams pladdrr-shared-params from_freq
 #' @param to_freq End frequency in Hz (NULL = to maximum)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
 #' @inheritParams pladdrr-shared-params garnish

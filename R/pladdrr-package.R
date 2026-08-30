@@ -182,6 +182,13 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param pointprocess A PointProcess object
 #' @param n_cores Integer. Number of cores (default: auto)
 #' @param max_pitch Pitch ceiling in Hz (default: 600)
+#' @param interpolate Whether to interpolate
+#' @param from_freq Start frequency in Hz (NULL = from 0)
+#' @param files Character vector of file paths
+#' @param duration Duration in seconds (default: 1.0)
+#' @param cepstrogram PowerCepstrogram object
+#' @param max_formant Maximum formant frequency (Hz)
+
 
 
 

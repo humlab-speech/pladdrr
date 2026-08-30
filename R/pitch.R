@@ -45,7 +45,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #' @inheritParams pladdrr-shared-pitch-r6 pitch
 #' @inheritParams pladdrr-shared-params time
 #' @inheritParams pladdrr-shared-params unit
-#' @param interpolate Whether to interpolate
+#' @inheritParams pladdrr-shared-params interpolate
 #' @return Pitch value or NA
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)

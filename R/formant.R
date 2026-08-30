@@ -132,7 +132,7 @@ extract_formants <- function(sound,
 #' @param signal Numeric vector, the audio samples
 #' @param sr Sampling rate in Hz
 #' @param time_step Time between analysis frames in seconds
-#' @param max_formant Maximum formant frequency (Hz)
+#' @inheritParams pladdrr-shared-params max_formant
 #' @param n_formants Number of formants to detect per frame
 #' @param window_length Analysis window length in seconds
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz
@@ -196,7 +196,7 @@ extract_formants <- function(sound,
 #' @param sr Sampling rate in Hz
 #' @param lpc_order LPC order (number of coefficients)
 #' @param n_formants Number of formants to return
-#' @param max_formant Maximum formant frequency (Hz)
+#' @inheritParams pladdrr-shared-params max_formant
 #' @return A data.frame with columns \code{frequency} and \code{bandwidth},
 #'   one row per formant, padded with \code{NA} if fewer roots were found
 #'   than \code{n_formants}

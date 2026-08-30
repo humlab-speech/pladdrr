@@ -396,7 +396,7 @@ to_pitch_spinet_direct <- function(sound,
 #' @inheritParams pladdrr-shared-params sound
 #' @param time_step Time step (0 = auto)
 #' @param max_formants Maximum number of formants
-#' @param max_formant Maximum formant frequency (Hz)
+#' @inheritParams pladdrr-shared-params max_formant
 #' @param window_length Window length (seconds)
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
 #' @param max_number_of_formants Alias for `max_formants` (maximum number of formants)
@@ -506,7 +506,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 #' @inheritParams pladdrr-shared-params pitch
 #' @inheritParams pladdrr-shared-params time
 #' @param unit Unit string
-#' @param interpolate Whether to interpolate
+#' @inheritParams pladdrr-shared-params interpolate
 #'
 #' @return Pitch value
 #'
