@@ -261,23 +261,8 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
   df$formant_label <- paste0("F", df$formant)
 
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
-                                        color = .data$formant_label)) +
-    ggplot2::geom_line(linewidth = 0.8) +
-    ggplot2::scale_color_manual(values = colors, name = "Formant")
-  
-  # Add garnish
-  if (garnish) {
-    p <- p + 
-      ggplot2::labs(
-        title = title,
-        x = "Time (s)",
-        y = "Frequency (Hz)"
-      ) + 
-      ggplot2::theme_minimal()
-  }
-  
-  p
+  # Create plot
+  p <- .build_formant_plot(df, colors, title, garnish)
 }
 
 #' @title Plot Intensity Contour
@@ -1041,4 +1026,18 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
 .point_process_times <- function(x) {
   n_points <- x$get_number_of_points()
   vapply(seq_len(n_points), function(i) x$get_time_from_index(i), numeric(1))
+}
+
+
+# Build a Formant track plot with color scale + optional garnish.
+.build_formant_plot <- function(df, colors, title, garnish) {
+  p <- ggplot2::ggplot(df,
+            ggplot2::aes(x = .data$time, y = .data$frequency,
+                         color = .data$formant_label)) +
+    ggplot2::geom_line(linewidth = 0.8) +
+    ggplot2::scale_color_manual(values = colors, name = "Formant")
+  if (garnish) {
+    p + ggplot2::labs(title = title, x = "Time (s)", y = "Frequency (Hz)") +
+      ggplot2::theme_minimal()
+  } else p
 }
