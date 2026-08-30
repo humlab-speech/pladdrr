@@ -56,3 +56,12 @@ test_that("MelSpectrogram$to_mfcc returns an MFCC", {
   mfcc <- mel$to_mfcc(number_of_coefficients = 12L)
   expect_s3_class(mfcc, "MFCC")
 })
+
+# ---------------------------------------------------------------------------
+# MelSpectrogram wrapper methods
+
+test_that("MelSpectrogram$print prints a header and returns the object invisibly", {
+  mel <- sound_fixture()$to_mel_spectrogram(0.005, 40, 8000)
+  expect_output(print(mel), "<Praat MelSpectrogram>")
+  expect_invisible(print(mel))
+})

@@ -116,3 +116,19 @@ test_that("benchmark_parallel returns timing rows for each requested core count"
   expect_true(all(results$time_sec >= 0))
   expect_equal(results$speedup[1], 1)
 })
+
+test_that("process_sounds_parallel uses default n_cores", {
+  snds <- list(Sound$create_tone(200, 0.1), Sound$create_tone(300, 0.1))
+  res <- process_sounds_parallel(snds, function(s) s$get_duration())
+  expect_length(res, 2)
+})
+
+test_that("analyze_files_parallel uses default n_cores on a real wav", {
+  s <- Sound$create_tone(frequency = 200, duration = 0.1)
+  tmp <- tempfile(fileext = ".wav")
+  s$save(tmp)
+  on.exit(unlink(tmp), add = TRUE)
+  res <- analyze_files_parallel(tmp, function(sound) sound$get_duration())
+  expect_length(res, 1)
+  expect_true(abs(res[[1]] - 0.1) < 1e-6)
+})
