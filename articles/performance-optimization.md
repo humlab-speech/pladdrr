@@ -218,9 +218,9 @@ Extract values at multiple time points in one call:
 
 # Tier 1 approach: one R->C crossing per time point
 times <- seq(0.1, 1.0, by = 0.01)
-f0_values <- sapply(times, function(t) {
+f0_values <- vapply(times, function(t) {
   pitch$get_value_at_time(t, "hertz")
-})
+}, numeric(1))
 
 # Tier 3 approach: one R->C crossing for the whole vector
 f0_values <- get_pitch_at_times(pitch, times)
@@ -303,7 +303,7 @@ system.time({
   max_f0 <- pitch$get_maximum(0, 0, "hertz")
 })
 #>    user  system elapsed 
-#>   0.012   0.000   0.005
+#>   0.010   0.000   0.005
 # measure on your own data
 
 # Tier 2: Direct API
@@ -312,7 +312,7 @@ system.time({
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
 #>    user  system elapsed 
-#>   0.010   0.000   0.004
+#>   0.009   0.000   0.003
 # fewer crossings; measure on your own data
 ```
 
@@ -331,7 +331,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.204   0.009   0.102
+#>   0.180   0.009   0.086
 # measure on your own data
 
 # Tier 3: Batch
@@ -340,7 +340,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.203   0.005   0.096
+#>   0.182   0.004   0.082
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -349,7 +349,7 @@ system.time({
 })
 #> Processing 20 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.102   0.084   0.377
+#>   0.231   0.149   0.324
 # includes file I/O; measure on your own data
 ```
 
@@ -363,12 +363,12 @@ times <- seq(0.1, 0.5, by = 0.001)
 
 # Tier 1: Loop
 system.time({
-  f1_values <- sapply(times, function(t) {
+  f1_values <- vapply(times, function(t) {
     formant$get_value_at_time(1, t, "hertz")
-  })
+  }, numeric(1))
 })
 #>    user  system elapsed 
-#>   0.012   0.001   0.013
+#>   0.009   0.000   0.009
 # one R->C crossing per time point
 
 # Tier 3: Vectorized
@@ -376,7 +376,7 @@ system.time({
   f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.000
+#>       0       0       0
 # one R->C crossing for the whole vector — this is where batching pays off
 ```
 
@@ -467,8 +467,8 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.05271816 1.0000000
-#> 2     2 0.06042171 0.8725037
+#> 1     1 0.04663444 1.0000000
+#> 2     2 0.05293441 0.8809853
 # Inspect the returned table to see where returns diminish on your machine
 ```
 

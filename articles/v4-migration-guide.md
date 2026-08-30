@@ -108,9 +108,9 @@ stopifnot(class(df) == "data.frame")  # Fails
 
 ``` r
 
-stopifnot(inherits(df, "data.frame"))  # Works
-# OR
-stopifnot("data.frame" %in% class(df))  # Works
+stopifnot(inherits(df, "data.frame"))  # Works (preferred)
+# Older `class(df)` forms still work, but `inherits()` handles inherited
+# classes; e.g. `stopifnot("data.frame" %in% class(df))`.
 ```
 
 ##### 3. Functions That Reject data.table
@@ -156,7 +156,7 @@ pitch_df[time > 1.0 & time < 2.0]
 pitch_df[, .(mean_freq = mean(frequency, na.rm = TRUE)), by = voiced]
 
 # In-place updates (no copies!)
-pitch_df[voiced == TRUE, frequency_class := cut(frequency, breaks = 3)]
+pitch_df[voiced, frequency_class := cut(frequency, breaks = 3)]
 ```
 
 #### Efficient Batch Processing

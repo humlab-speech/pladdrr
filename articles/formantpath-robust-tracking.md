@@ -117,7 +117,7 @@ cat("  Frames:", fp$get_nx(), "\n")
 cat("  Candidates:", fp$get_number_of_candidates(), "\n")
 #>   Candidates: 3
 cat("  Ceilings tested:", 
-    paste(round(fp$get_all_ceiling_frequencies()), collapse = ", "), 
+    toString(round(fp$get_all_ceiling_frequencies())), 
     "Hz\n")
 #>   Ceilings tested: 5232, 5500, 5782 Hz
 ```
@@ -173,13 +173,13 @@ fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Calculate stress for each candidate
 n_candidates <- fp$get_number_of_candidates()
-stresses <- sapply(1:n_candidates, function(i) {
+stresses <- vapply(1:n_candidates, function(i) {
   fp$get_stress_of_candidate(
     candidate = i,
     parameters = c(1, 1, 1, 1, 1),  # Equal weights
     powerf = 1.25
   )
-})
+}, numeric(1))
 
 # Find best candidate
 best_idx <- which.min(stresses)
@@ -500,10 +500,10 @@ requested. Measure on your own data:
 
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.018   0.000   0.008
+#>   0.014   0.000   0.007
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.064   0.005   0.040
+#>   0.055   0.001   0.034
 ```
 
 ## Best Practices

@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr
 Development Team</h4>
             
-            <h4 data-toc-skip class="date">2026-08-29</h4>
+            <h4 data-toc-skip class="date">2026-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/articles/v4-migration-guide.Rmd" class="external-link"><code>vignettes/articles/v4-migration-guide.Rmd</code></a></small>
       <div class="d-none name"><code>v4-migration-guide.Rmd</code></div>
@@ -219,9 +219,9 @@ work without changes.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">==</span> <span class="st">"data.frame"</span><span class="op">)</span>  <span class="co"># Fails</span></span></code></pre></div>
 <p><strong>FIX:</strong></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"data.frame"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Works</span></span>
-<span><span class="co"># OR</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="st">"data.frame"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Works</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"data.frame"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Works (preferred)</span></span>
+<span><span class="co"># Older `class(df)` forms still work, but `inherits()` handles inherited</span></span>
+<span><span class="co"># classes; e.g. `stopifnot("data.frame" %in% class(df))`.</span></span></code></pre></div>
 </div>
 <div class="section level5">
 <h5 id="functions-that-reject-data-table">3. Functions That Reject data.table<a class="anchor" aria-label="anchor" href="#functions-that-reject-data-table"></a>
@@ -262,7 +262,7 @@ directly:</p>
 <span><span class="va">pitch_df</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>mean_freq <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">frequency</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">voiced</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># In-place updates (no copies!)</span></span>
-<span><span class="va">pitch_df</span><span class="op">[</span><span class="va">voiced</span> <span class="op">==</span> <span class="cn">TRUE</span>, <span class="va">frequency_class</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">frequency</span>, breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">pitch_df</span><span class="op">[</span><span class="va">voiced</span>, <span class="va">frequency_class</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">frequency</span>, breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="efficient-batch-processing">Efficient Batch Processing<a class="anchor" aria-label="anchor" href="#efficient-batch-processing"></a>

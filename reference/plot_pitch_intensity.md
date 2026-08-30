@@ -66,9 +66,7 @@ intensity <- sound$to_intensity()
 # Combined plot
 plot_pitch_intensity(pitch, intensity)
 
-
 # Time range
 plot_pitch_intensity(pitch, intensity,
                     from_time = 0.2, to_time = 0.8)
-
 ```

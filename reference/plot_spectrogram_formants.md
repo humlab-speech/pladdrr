@@ -71,8 +71,6 @@ formant <- sound$to_formant_burg()
 # Combined plot
 plot_spectrogram_formants(spectrogram, formant)
 
-
 # Show F1-F5
 plot_spectrogram_formants(spectrogram, formant, max_formant = 5)
-
 ```

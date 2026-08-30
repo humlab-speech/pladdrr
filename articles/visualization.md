@@ -55,6 +55,8 @@ plot_powercepstrum(
   fit_method = "exponential decay",
   title = "Power Cepstrum with CPP Peak"
 )
+#> Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =
+#> 0.001, qmax = 0)
 ```
 
 ![](visualization_files/figure-html/cepstrum-basic-1.png)
@@ -133,6 +135,8 @@ Multi-panel diagnostic figure combining all cepstral visualizations:
 
 # Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
+#> Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =
+#> 0.001, qmax = 0)
 ```
 
 ![](visualization_files/figure-html/cepstrum-report-1.png)

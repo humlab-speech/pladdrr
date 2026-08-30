@@ -148,7 +148,9 @@ Prominence).</p>
 <span>  show_trendline <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fit_method <span class="op">=</span> <span class="st">"exponential decay"</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Power Cepstrum with CPP Peak"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =</span></span>
+<span><span class="co">#&gt; 0.001, qmax = 0)</span></span></code></pre></div>
 <p><img src="visualization_files/figure-html/cepstrum-basic-1.png" class="r-plt" alt="" width="768"></p>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -229,7 +231,9 @@ argument)</li>
 visualizations:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)</span></span>
-<span><span class="va">report_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cepstrum_report.html">create_cepstrum_report</a></span><span class="op">(</span>cepstrogram <span class="op">=</span> <span class="va">cepstrogram</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">report_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cepstrum_report.html">create_cepstrum_report</a></span><span class="op">(</span>cepstrogram <span class="op">=</span> <span class="va">cepstrogram</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =</span></span>
+<span><span class="co">#&gt; 0.001, qmax = 0)</span></span></code></pre></div>
 <p><img src="visualization_files/figure-html/cepstrum-report-1.png" class="r-plt" alt="" width="768"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>

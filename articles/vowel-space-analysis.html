@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-29</h4>
+            <h4 data-toc-skip class="date">2026-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/vowel-space-analysis.Rmd" class="external-link"><code>vignettes/vowel-space-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>vowel-space-analysis.Rmd</code></div>
@@ -479,8 +479,10 @@ analysis:</p>
 <span><span class="va">vowel_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">f1_50</span>, <span class="va">f2_50</span>, <span class="va">f1_norm</span>, <span class="va">f2_norm</span><span class="op">)</span> <span class="op">~</span> <span class="va">vowel</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">vowel_features</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, </span>
-<span>                      sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_stats</span><span class="op">)</span></span>
@@ -521,7 +523,7 @@ analysis:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">vowel_space_area</span> <span class="op">&lt;-</span> <span class="fu">shoelace_area</span><span class="op">(</span><span class="va">hull_points</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, <span class="va">hull_points</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">vowel_space_area</span> <span class="op">&lt;-</span> <span class="fu">shoelace_area</span><span class="op">(</span><span class="va">hull_points</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">hull_points</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Vowel space area (normalized):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">vowel_space_area</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"square units\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Vowel space area (normalized): 3.17 square units</span></span></code></pre></div>
 <p>Larger vowel space area indicates: - Greater vowel dispersion
@@ -555,7 +557,7 @@ Developmental changes (child vs. adult) - Clinical applications
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Potential diphthongs (large F1-F2 movement):\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Potential diphthongs (large F1-F2 movement):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">potential_diphthongs</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/toString.html" class="external-link">toString</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">potential_diphthongs</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; e, u</span></span></code></pre></div>
 </div>
 </div>

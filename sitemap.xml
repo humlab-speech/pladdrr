@@ -114,7 +114,6 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/create_sound.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/create_sound_from_values.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/create_window_xptr.html</loc></url>
-<url><loc>https://humlab-speech.github.io/pladdrr/reference/datatable-utils.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/discriminant_from_matrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/duration_statistics_simd_bridge.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/electroglottogram_create.html</loc></url>
@@ -200,6 +199,19 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/pca_from_matrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/pitches_to_dtw.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-package.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-maxformant.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-params.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch-a.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch-r6.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-a.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-legacy.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-r6.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-textgrid-r6.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-time0.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-timeauto.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-timeauto75.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr_simd.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/pladdrr_threads.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Formant.html</loc></url>

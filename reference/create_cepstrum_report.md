@@ -51,5 +51,6 @@ if (requireNamespace("gridExtra", quietly = TRUE)) {
   # Create comprehensive report at t = 0.3s (mid-signal)
   create_cepstrum_report(cepstrogram, time_slice = 0.3)
 }
+#> Warning: Could not compute peak: unused arguments (qmin = 0.001, qmax = 0)
 
 ```

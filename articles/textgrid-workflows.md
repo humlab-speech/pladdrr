@@ -322,7 +322,7 @@ tg <- TextGrid$new(tg_file)
 load_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
 
 cat(sprintf("Loaded in %.3f seconds\n", load_time))
-#> Loaded in 0.010 seconds
+#> Loaded in 0.009 seconds
 cat(sprintf("Duration: %.2f minutes\n", tg$get_total_duration() / 60))
 #> Duration: 1.00 minutes
 cat(sprintf("File size: %.1f MB\n", file.size(tg_file) / 1024^2))
@@ -484,7 +484,7 @@ for (i in 1:n_phones) {
 phone_durations$phone <- vapply(phone_durations$phone, function(s) {
   codepoints <- utf8ToInt(enc2utf8(s))
   if (all(codepoints < 128L)) return(s)
-  paste0(sprintf("\\u%04x", codepoints), collapse = "")
+  paste(sprintf("\\u%04x", codepoints), collapse = "")
 }, character(1))
 
 # Analyze by phone class
@@ -711,8 +711,8 @@ tg$insert_point("events", time = 0.58, mark = "voicing_onset")
 
 events_tier <- "events"
 n_points <- tg$get_number_of_points(events_tier)
-burst_times <- c()
-voicing_times <- c()
+burst_times <- NULL
+voicing_times <- NULL
 
 for (i in seq_len(n_points)) {
   mark <- tg$get_point_text(events_tier, i)

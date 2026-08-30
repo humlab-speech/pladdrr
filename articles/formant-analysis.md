@@ -211,19 +211,28 @@ if (exists("sound") && !is.null(sound)) {
   # Adult male
   formant_male <- tryCatch(
     sound$to_formant_burg(max_frequency = 5000),
-    error = function(e) { message("Male ceiling failed: ", e$message); NULL }
+    error = function(e) {
+        message("Male ceiling failed: ", e$message)
+        NULL
+      }
   )
 
   # Adult female
   formant_female <- tryCatch(
     sound$to_formant_burg(max_frequency = 5500),
-    error = function(e) { message("Female ceiling failed: ", e$message); NULL }
+    error = function(e) {
+        message("Female ceiling failed: ", e$message)
+        NULL
+      }
   )
 
   # Child
   formant_child <- tryCatch(
     sound$to_formant_burg(max_frequency = 8000),
-    error = function(e) { message("Child ceiling failed: ", e$message); NULL }
+    error = function(e) {
+        message("Child ceiling failed: ", e$message)
+        NULL
+      }
   )
 
   # Report results
@@ -261,19 +270,28 @@ if (exists("sound") && !is.null(sound)) {
   # Short window (better time resolution)
   formant_short <- tryCatch(
     sound$to_formant_burg(window_length = 0.010),
-    error = function(e) { message("10ms window failed"); NULL }
+    error = function(e) {
+        message("10ms window failed")
+        NULL
+      }
   )
 
   # Standard window (balanced)
   formant_std <- tryCatch(
     sound$to_formant_burg(window_length = 0.025),
-    error = function(e) { message("25ms window failed"); NULL }
+    error = function(e) {
+        message("25ms window failed")
+        NULL
+      }
   )
 
   # Long window (better frequency resolution)
   formant_long <- tryCatch(
     sound$to_formant_burg(window_length = 0.050),
-    error = function(e) { message("50ms window failed"); NULL }
+    error = function(e) {
+        message("50ms window failed")
+        NULL
+      }
   )
 } else {
   message("Skipping window-length demo - sound not available")
@@ -292,19 +310,28 @@ if (exists("sound") && !is.null(sound)) {
   # Coarse (fast, less detail)
   formant_coarse <- tryCatch(
     sound$to_formant_burg(time_step = 0.010),
-    error = function(e) { message("10ms step failed"); NULL }
+    error = function(e) {
+        message("10ms step failed")
+        NULL
+      }
   )
 
   # Standard (good balance)
   formant_std <- tryCatch(
     sound$to_formant_burg(time_step = 0.005),
-    error = function(e) { message("5ms step failed"); NULL }
+    error = function(e) {
+        message("5ms step failed")
+        NULL
+      }
   )
 
   # Fine (slow, more detail)
   formant_fine <- tryCatch(
     sound$to_formant_burg(time_step = 0.002),
-    error = function(e) { message("2ms step failed"); NULL }
+    error = function(e) {
+        message("2ms step failed")
+        NULL
+      }
   )
 } else {
   message("Skipping time-step demo - sound not available")
@@ -323,25 +350,38 @@ if (exists("sound") && !is.null(sound)) {
   # Note: Low max_formants can fail on some sounds due to polynomial constraints
   formant_2 <- tryCatch(
     sound$to_formant_burg(max_formants = 2),
-    error = function(e) tryCatch(
-      sound$to_formant_burg(max_formants = 4),
-      error = function(e2) { message("F2 tracking failed"); NULL }
-    )
+    error = function(e) {
+      tryCatch(
+        sound$to_formant_burg(max_formants = 4),
+        error = function(e2) {
+          message("F2 tracking failed")
+          NULL
+        }
+      )
+    }
   )
 
   # Standard (F1-F5) - most reliable
   formant_5 <- tryCatch(
     sound$to_formant_burg(max_formants = 5),
-    error = function(e) { message("F5 tracking failed"); NULL }
+    error = function(e) {
+        message("F5 tracking failed")
+        NULL
+      }
   )
 
   # Extended (up to F7, slower)
   formant_7 <- tryCatch(
     sound$to_formant_burg(max_formants = 7, max_frequency = 7000),
-    error = function(e) tryCatch(
-      sound$to_formant_burg(max_formants = 5, max_frequency = 5500),
-      error = function(e2) { message("F7 tracking failed"); NULL }
-    )
+    error = function(e) {
+      tryCatch(
+        sound$to_formant_burg(max_formants = 5, max_frequency = 5500),
+        error = function(e2) {
+          message("F7 tracking failed")
+          NULL
+        }
+      )
+    }
   )
 } else {
   message("Skipping num-formants demo - sound not available")
@@ -504,12 +544,12 @@ formant <- sound$to_formant_burg(time_step = 0.005)
 
 # Extract F1 and F2 across time
 times <- seq(0, sound$get_total_duration(), by = 0.005)
-f1_values <- sapply(times, function(t) {
+f1_values <- vapply(times, function(t) {
   formant$get_value_at_time(1, t, unit = "hertz")
-})
-f2_values <- sapply(times, function(t) {
+}, numeric(1))
+f2_values <- vapply(times, function(t) {
   formant$get_value_at_time(2, t, unit = "hertz")
-})
+}, numeric(1))
 
 # Plot formant tracks
 df <- data.frame(

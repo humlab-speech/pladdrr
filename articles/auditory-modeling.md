@@ -84,8 +84,8 @@ print(paste("Excitation at 440 Hz:", round(excitation_440hz, 4)))
 cochlea_matrix <- as.matrix(cochlea$as_matrix())
 
 # Convert to long format for ggplot2 (rows = frequency bands, columns = time frames)
-times <- sapply(seq_len(cochlea$get_number_of_frames()), cochlea$get_time_from_column)
-barks <- sapply(seq_len(cochlea$get_number_of_frequency_bands()), cochlea$get_frequency_from_row)
+times <- vapply(seq_len(cochlea$get_number_of_frames()), cochlea$get_time_from_column, numeric(1))
+barks <- vapply(seq_len(cochlea$get_number_of_frequency_bands()), cochlea$get_frequency_from_row, numeric(1))
 df_long <- expand.grid(Bark = barks, Time = times)
 df_long$Excitation <- as.vector(cochlea_matrix)
 
@@ -335,9 +335,9 @@ cochleagrams <- lapply(sounds, function(s) {
 })
 
 # Extract loudness from all
-loudnesses <- sapply(cochleagrams, function(c) {
+loudnesses <- vapply(cochleagrams, function(c) {
   c$get_loudness_at_time(0.1)
-})
+}, numeric(1))
 ```
 
 ### Memory Management
@@ -348,16 +348,14 @@ Cochleagrams and excitation patterns can be large. Clean up when done:
 
 # Process and extract only what you need
 cochlea <- sound$to_cochleagram()
-loudness_time_series <- sapply(seq(0, 0.5, by = 0.01), function(t) {
-  cochlea$get_loudness_at_time(t)
-})
+loudness_time_series <- vapply(seq(0, 0.5, by = 0.01), cochlea$get_loudness_at_time, numeric(1))
 
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
-#>           used (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1868785 99.9    3130837 167.3  3130837 167.3
-#> Vcells 3186491 24.4    8388608  64.0  7198778  55.0
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 1874891 100.2    3145828 168.1  3145828 168.1
+#> Vcells 3193743  24.4    8388608  64.0  7208756  55.0
 ```
 
 ## Comparison with Traditional Analysis

@@ -352,8 +352,10 @@ cat("F2_norm: mean =", round(mean(vowel_features$f2_norm), 2),
 vowel_stats <- aggregate(
   cbind(f1_50, f2_50, f1_norm, f2_norm) ~ vowel,
   data = vowel_features,
-  FUN = function(x) c(mean = mean(x, na.rm = TRUE), 
-                      sd = sd(x, na.rm = TRUE))
+  FUN = function(x) {
+    c(mean = mean(x, na.rm = TRUE),
+      sd = sd(x, na.rm = TRUE))
+  }
 )
 
 print(vowel_stats)
@@ -396,7 +398,7 @@ shoelace_area <- function(x, y) {
   abs(area) / 2
 }
 
-vowel_space_area <- shoelace_area(hull_points[,1], hull_points[,2])
+vowel_space_area <- shoelace_area(hull_points[, 1], hull_points[, 2])
 cat("Vowel space area (normalized):", round(vowel_space_area, 2), "square units\n")
 #> Vowel space area (normalized): 3.17 square units
 ```
@@ -431,7 +433,7 @@ potential_diphthongs <- vowel_features$vowel[
 
 cat("Potential diphthongs (large F1-F2 movement):\n")
 #> Potential diphthongs (large F1-F2 movement):
-cat(paste(unique(potential_diphthongs), collapse = ", "), "\n")
+cat(toString(unique(potential_diphthongs)), "\n")
 #> e, u
 ```
 

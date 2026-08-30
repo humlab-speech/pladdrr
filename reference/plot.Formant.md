@@ -65,13 +65,10 @@ formant <- sound$to_formant_burg()
 # Basic plot
 plot(formant)
 
-
 # Show first 5 formants
 plot(formant, max_formant = 5)
-
 
 # Customize
 plot(formant, max_formant = 2,
      colors = c("red", "blue"))
-
 ```

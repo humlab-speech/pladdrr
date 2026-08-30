@@ -221,7 +221,7 @@ ceiling values to test above and below the center:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Candidates:"</span>, <span class="va">fp</span><span class="op">$</span><span class="fu">get_number_of_candidates</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Candidates: 3</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Ceilings tested:"</span>, </span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">fp</span><span class="op">$</span><span class="fu">get_all_ceiling_frequencies</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/toString.html" class="external-link">toString</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">fp</span><span class="op">$</span><span class="fu">get_all_ceiling_frequencies</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    <span class="st">"Hz\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Ceilings tested: 5232, 5500, 5782 Hz</span></span></code></pre></div>
 </div>
@@ -308,13 +308,13 @@ ceiling values to test above and below the center:</p>
 <span></span>
 <span><span class="co"># Calculate stress for each candidate</span></span>
 <span><span class="va">n_candidates</span> <span class="op">&lt;-</span> <span class="va">fp</span><span class="op">$</span><span class="fu">get_number_of_candidates</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">stresses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_candidates</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">stresses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_candidates</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">fp</span><span class="op">$</span><span class="fu">get_stress_of_candidate</span><span class="op">(</span></span>
 <span>    candidate <span class="op">=</span> <span class="va">i</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,  <span class="co"># Equal weights</span></span>
 <span>    powerf <span class="op">=</span> <span class="fl">1.25</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Find best candidate</span></span>
 <span><span class="va">best_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">stresses</span><span class="op">)</span></span>
@@ -631,10 +631,10 @@ candidates requested. Measure on your own data:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">frm_result</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.018   0.000   0.008</span></span>
+<span><span class="co">#&gt;   0.014   0.000   0.007</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fp</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_path</span><span class="op">(</span>num_steps_up_down <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.064   0.005   0.040</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.055   0.001   0.034</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

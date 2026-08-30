@@ -77,6 +77,7 @@ cepstrum <- spectrum$to_power_cepstrum()
 
 # Basic plot
 plot_powercepstrum(cepstrum)
+#> Warning: Could not compute peak: unused arguments (qmin = 0.001, qmax = 0)
 
 
 # Customized plot
@@ -85,5 +86,6 @@ plot_powercepstrum(cepstrum,
                   show_trendline = TRUE,
                   quefrency_range = c(0.001, 0.02),
                   title = "Voice Quality Analysis")
+#> Warning: Could not compute peak: unused arguments (qmin = 0.001, qmax = 0)
 
 ```
