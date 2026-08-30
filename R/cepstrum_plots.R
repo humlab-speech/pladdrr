@@ -547,5 +547,4 @@ create_cepstrum_report <- function(cepstrogram,
   
   .assemble_cepstrum_report(p1, p2, p3, save_path, dpi, format)
   
-  invisible(combined)
 }
