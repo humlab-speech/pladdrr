@@ -189,14 +189,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     # rebuild the Sound inside each worker.
     sound_data <- lapply(sounds, .sound_to_worker_data)
 
-    cl <- parallel::makeCluster(n_cores)
-    on.exit(parallel::stopCluster(cl), add = TRUE)
-    parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
-    parallel::clusterEvalQ(cl, {
-      loadNamespace("pladdrr")
-      attachNamespace("pladdrr")
-    })
-    parallel::clusterExport(cl, c("analysis_func", "tpw", ".analyze_one_file"), envir = environment())
+    cl <- .make_worker_cluster(n_cores, c("analysis_func", "tpw", ".analyze_one_file"))
     parallel::parLapply(cl, sound_data, function(d) {
       pladdrr_threads(tpw)
       analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
