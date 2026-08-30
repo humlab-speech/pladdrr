@@ -556,45 +556,10 @@ sound_get_zcr <- function(sound,
 
     times[i] <- frame_center
 
-    # Get zeros in frame
-    in_frame <- zero_times >= frame_start & zero_times < frame_end
-    frame_zeros <- zero_times[in_frame]
-
-    if (avqi_compatible && window_duration >= 0.03) {
-      # AVQI-compatible: analyze 0.0025-0.0275s within frame
-      relative_zeros <- frame_zeros - frame_start
-      analysis_zeros <- relative_zeros[
-        relative_zeros >= avqi_start_offset & relative_zeros <= avqi_end_offset
-      ]
-      n_crossings <- length(analysis_zeros)
-
-      if (n_crossings >= 2) {
-        afstand <- analysis_zeros[n_crossings] - analysis_zeros[1]
-        if (afstand > 0) {
-          zcr[i] <- n_crossings / afstand
-        } else {
-          zcr[i] <- 0
-        }
-      } else {
-        zcr[i] <- 0
-      }
-    } else {
-      # Standard: use full frame
-      n_crossings <- length(frame_zeros)
-
-      if (n_crossings >= 2) {
-        afstand <- frame_zeros[n_crossings] - frame_zeros[1]
-        if (afstand > 0) {
-          zcr[i] <- n_crossings / afstand
-        } else {
-          zcr[i] <- 0
-        }
-      } else if (n_crossings == 1) {
-        zcr[i] <- 1 / window_duration
-      } else {
-        zcr[i] <- 0
-      }
-    }
+    # Get zeros in frame and compute ZCR
+    frame_zeros <- zero_times[zero_times >= frame_start & zero_times < frame_end]
+    zcr[i] <- .frame_zcr(frame_zeros, frame_start, window_duration,
+                         avqi_compatible, avqi_start_offset, avqi_end_offset)
   }
 
   list(
@@ -603,4 +568,25 @@ sound_get_zcr <- function(sound,
     window_duration = window_duration,
     hop_duration = hop_duration
   )
+}
+
+
+# ZCR for one frame (AVQI 0.0025-0.0275s window or full frame).
+.frame_zcr <- function(frame_zeros, frame_start, window_duration,
+                       avqi_compatible, avqi_start_offset, avqi_end_offset) {
+  if (avqi_compatible && window_duration >= 0.03) {
+    relative_zeros <- frame_zeros - frame_start
+    zc <- relative_zeros[relative_zeros >= avqi_start_offset & relative_zeros <= avqi_end_offset]
+  } else {
+    zc <- frame_zeros
+  }
+  n <- length(zc)
+  if (n >= 2) {
+    afstand <- zc[n] - zc[1]
+    if (afstand > 0) return(n / afstand)
+    return(0)
+  } else if (n == 1) {
+    return(1 / window_duration)
+  }
+  0
 }
