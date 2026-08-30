@@ -599,23 +599,9 @@ extract_measurements <- function(sound,
     stringsAsFactors = FALSE
   )
   
-  # Batch pitch: single C++ call for all time points
-  if (!is.null(pitch_obj)) {
-    results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times, unit = 0L, interpolate = TRUE)
-  }
-  
-  # Batch formants: all formant numbers in a single C++ call
-  if (!is.null(formant_obj)) {
-    formant_values <- formant_get_multiple_formants_at_times(
-      formant_obj$.xptr, meas_times, seq_len(formant_params$max_formants), 0L
-    )
-    results[names(formant_values)] <- formant_values
-  }
-  
-  # Batch intensity: single C++ call for all time points
-  if (!is.null(intensity_obj)) {
-    results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr, meas_times, interpolation = 1L)
-  }
+  # Batch pitch/formant/intensity measurements
+  results <- .apply_batch_measurements(results, meas_times, pitch_obj,
+                                      formant_obj, intensity_obj, formant_params)
   
   results
 }
@@ -689,4 +675,22 @@ aggregate_measurements <- function(measurements,
   }
   
   as.data.frame(agg_list, stringsAsFactors = FALSE)
+}
+
+
+# Apply pitch/formant/intensity batch measurements to a results frame.
+.apply_batch_measurements <- function(results, meas_times, pitch_obj, formant_obj,
+                                     intensity_obj, formant_params) {
+  if (!is.null(pitch_obj)) {
+    results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times, unit = 0L, interpolate = TRUE)
+  }
+  if (!is.null(formant_obj)) {
+    formant_values <- formant_get_multiple_formants_at_times(
+      formant_obj$.xptr, meas_times, seq_len(formant_params$max_formants), 0L)
+    results[names(formant_values)] <- formant_values
+  }
+  if (!is.null(intensity_obj)) {
+    results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr, meas_times, interpolation = 1L)
+  }
+  results
 }
