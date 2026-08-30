@@ -171,6 +171,63 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 
 #' @method $ PitchModule
 #' @export
+.pitch_module_methods <- list(
+  get_value_at_time = function(obj) function(time, unit = "hertz", interpolate = TRUE) {
+      obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_mean = function(obj) function(from_time = 0, to_time = 0, unit = "hertz") {
+      obj$get_mean(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+    },
+  get_standard_deviation = function(obj) function(from_time = 0, to_time = 0, unit = "hertz") {
+      obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+    },
+  get_quantile = function(obj) function(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
+      obj$get_quantile(as.numeric(from_time), as.numeric(to_time),
+                       as.numeric(quantile), pitch_unit_code(unit))
+    },
+  get_minimum = function(obj) function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+      obj$get_minimum(as.numeric(from_time), as.numeric(to_time),
+                      pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_maximum = function(obj) function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+      obj$get_maximum(as.numeric(from_time), as.numeric(to_time),
+                      pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_time_of_minimum = function(obj) function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+      obj$get_time_of_minimum(as.numeric(from_time), as.numeric(to_time),
+                               pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_time_of_maximum = function(obj) function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+      obj$get_time_of_maximum(as.numeric(from_time), as.numeric(to_time),
+                               pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_strength_at_time = function(obj) function(time, unit = "hertz", interpolate = TRUE) {
+      obj$get_strength_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
+    },
+  get_mean_strength = function(obj) function(from_time = 0, to_time = 0, unit = "hertz") {
+      obj$get_mean_strength(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+    },
+  as_data_frame = function(obj) function(include_strength = FALSE, include_intensity = FALSE) {
+      obj$as_data_frame(as.logical(include_strength), as.logical(include_intensity))
+    },
+  to_point_process = function(obj) function() {
+      pp_ptr <- obj$to_point_process_ptr()
+      PointProcess(.xptr = pp_ptr)
+    },
+  down_to_pitch_tier = function(obj) function() {
+      tier_ptr <- obj$down_to_pitch_tier_ptr()
+      PitchTier(.xptr = tier_ptr)
+    },
+  to_textgrid_vuv = function(obj) function() {
+      tg_ptr <- obj$to_textgrid_vuv_ptr()
+      TextGrid(.xptr = tg_ptr)
+    },
+  to_textgrid_silences = function(obj) function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
+      tg_ptr <- obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
+      TextGrid(.xptr = tg_ptr)
+    }
+)
+
 `$.PitchModule` <- function(x, name) {
   # First check for direct module properties/methods.
   # Must use [[ (not $) to fetch .mod: $ on a PitchModule dispatches back
@@ -188,107 +245,10 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
     return(obj$is_valid())
   }
 
-  # Methods that need unit conversion wrappers
-  if (name == "get_value_at_time") {
-    return(function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
+  # Unit-conversion / transform wrappers (looked up in the shared factory list)
+  if (name %in% names(.pitch_module_methods)) return(.pitch_module_methods[[name]](obj))
 
-  if (name == "get_mean") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_mean(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
-    })
-  }
-
-  if (name == "get_standard_deviation") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
-    })
-  }
-
-  if (name == "get_quantile") {
-    return(function(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
-      obj$get_quantile(as.numeric(from_time), as.numeric(to_time),
-                       as.numeric(quantile), pitch_unit_code(unit))
-    })
-  }
-
-  if (name == "get_minimum") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
-      obj$get_minimum(as.numeric(from_time), as.numeric(to_time),
-                      pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
-
-  if (name == "get_maximum") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
-      obj$get_maximum(as.numeric(from_time), as.numeric(to_time),
-                      pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
-
-  if (name == "get_time_of_minimum") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
-      obj$get_time_of_minimum(as.numeric(from_time), as.numeric(to_time),
-                               pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
-
-  if (name == "get_time_of_maximum") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
-      obj$get_time_of_maximum(as.numeric(from_time), as.numeric(to_time),
-                               pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
-
-  if (name == "get_strength_at_time") {
-    return(function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_strength_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
-    })
-  }
-
-  if (name == "get_mean_strength") {
-    return(function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_mean_strength(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
-    })
-  }
-
-  if (name == "as_data_frame") {
-    return(function(include_strength = FALSE, include_intensity = FALSE) {
-      obj$as_data_frame(as.logical(include_strength), as.logical(include_intensity))
-    })
-  }
-
-  # Transform methods that return wrapped objects
-  if (name == "to_point_process") {
-    return(function() {
-      pp_ptr <- obj$to_point_process_ptr()
-      PointProcess(.xptr = pp_ptr)
-    })
-  }
-
-  if (name == "down_to_pitch_tier") {
-    return(function() {
-      tier_ptr <- obj$down_to_pitch_tier_ptr()
-      PitchTier(.xptr = tier_ptr)
-    })
-  }
-
-  if (name == "to_textgrid_vuv") {
-    return(function() {
-      tg_ptr <- obj$to_textgrid_vuv_ptr()
-      TextGrid(.xptr = tg_ptr)
-    })
-  }
-
-  if (name == "to_textgrid_silences") {
-    return(function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
-      tg_ptr <- obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
-      TextGrid(.xptr = tg_ptr)
-    })
-  }
-
+  # Direct passthrough for other methods
   # Direct passthrough for other methods
   if (name %in% c("get_time_from_frame", "get_frame_from_time",
                   "get_number_of_frames", "get_time_step",
