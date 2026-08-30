@@ -133,9 +133,9 @@ for (i in 1:n_intervals) {
   durations[i] <- end_time - start_time
 }
 
-non_empty_labels <- sapply(1:n_intervals, function(i) {
+non_empty_labels <- vapply(1:n_intervals, function(i) {
   nchar(trimws(tg$get_interval_label(tier_idx, i))) > 0
-})
+}, logical(1))
 
 if (sum(non_empty_labels) > 0) {
   labeled_durations <- durations[non_empty_labels]

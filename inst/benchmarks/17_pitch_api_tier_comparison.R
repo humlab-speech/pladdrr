@@ -171,7 +171,7 @@ for (n in names(batch_results)) {
 cat("\nRecommendation:\n")
 cat("  - 1 file: Use Tier 1 (Standard API)\n")
 best_batch_n <- min(as.numeric(names(batch_results)[
-  sapply(batch_results, function(x) x$speedup > 1.5)
+  vapply(batch_results, function(x) x$speedup > 1.5, logical(1))
 ]))
 cat(sprintf(
   "  - >%d files: Use Tier 3 (Batch API) for best performance\n",

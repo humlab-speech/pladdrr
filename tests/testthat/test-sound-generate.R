@@ -169,11 +169,11 @@ test_that("generate_noise() creates white noise (flat spectrum)", {
   chunk_size <- 1000
   n_chunks <- floor(length(sound$get_values()) / chunk_size)
 
-  variances <- sapply(1:n_chunks, function(i) {
+  variances <- vapply(1:n_chunks, function(i) {
     start_idx <- (i-1) * chunk_size + 1
     end_idx <- i * chunk_size
     var(sound$get_values()[start_idx:end_idx])
-  })
+  }, numeric(1))
 
   # Coefficient of variation should be relatively small for white noise
   cv <- sd(variances) / mean(variances)

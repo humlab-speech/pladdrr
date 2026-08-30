@@ -104,10 +104,10 @@ test_that("Batch processing with new objects works", {
   
   # Verify all succeeded
   expect_length(cochleagrams, 3)
-  expect_true(all(sapply(cochleagrams, function(c) inherits(c, "Cochleagram"))))
+  expect_true(all(vapply(cochleagrams, function(c) inherits(c, "Cochleagram"), logical(1))))
   
   # Get loudness from all
-  loudnesses <- sapply(cochleagrams, function(c) c$get_loudness_at_time(0.05))
+  loudnesses <- vapply(cochleagrams, function(c) c$get_loudness_at_time(0.05), numeric(1))
   
   expect_length(loudnesses, 3)
   expect_true(all(is.finite(loudnesses)))

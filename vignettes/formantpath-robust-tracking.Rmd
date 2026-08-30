@@ -161,13 +161,13 @@ fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Calculate stress for each candidate
 n_candidates <- fp$get_number_of_candidates()
-stresses <- sapply(1:n_candidates, function(i) {
+stresses <- vapply(1:n_candidates, function(i) {
   fp$get_stress_of_candidate(
     candidate = i,
     parameters = c(1, 1, 1, 1, 1),  # Equal weights
     powerf = 1.25
   )
-})
+}, numeric(1))
 
 # Find best candidate
 best_idx <- which.min(stresses)

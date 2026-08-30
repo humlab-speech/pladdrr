@@ -396,9 +396,9 @@ formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
 
 # One R->C crossing per time point
-f1_values <- sapply(times, function(t) {
+f1_values <- vapply(times, function(t) {
   formant$get_value_at_time(1, t, "hertz")
-})
+}, numeric(1))
 
 # After (v2.3.0) - Vectorized, one R->C crossing for the whole vector
 f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)$F1

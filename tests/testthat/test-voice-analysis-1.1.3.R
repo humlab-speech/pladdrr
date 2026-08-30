@@ -28,9 +28,9 @@ test_that("Sound$to_textgrid_silences() works with all parameters", {
   expect_gt(n_intervals, 0)
   
   # Check label values
-  labels <- sapply(1:n_intervals, function(i) {
+  labels <- vapply(1:n_intervals, function(i) {
     tg$get_interval_text(1, i)
-  })
+  }, character(1))
   expect_true(all(labels %in% c("silent", "sounding")))
 })
 
@@ -50,9 +50,9 @@ test_that("Sound$to_textgrid_silences() respects custom labels", {
   )
   
   n_intervals <- tg$get_number_of_intervals(1)
-  labels <- sapply(1:n_intervals, function(i) {
+  labels <- vapply(1:n_intervals, function(i) {
     tg$get_interval_text(1, i)
-  })
+  }, character(1))
   
   expect_true(all(labels %in% c("pause", "speech")))
   expect_false(any(labels %in% c("silent", "sounding")))
@@ -82,7 +82,7 @@ test_that("Sound$to_textgrid_silences() threshold affects detection", {
   # Count silent intervals
   count_silent <- function(tg) {
     n <- tg$get_number_of_intervals(1)
-    sum(sapply(1:n, function(i) tg$get_interval_text(1, i) == "silent"))
+    sum(vapply(1:n, function(i) tg$get_interval_text(1, i) == "silent", logical(1)))
   }
   
   n_silent_strict <- count_silent(tg_strict)
@@ -118,9 +118,9 @@ test_that("PointProcess$to_textgrid_vuv() creates voiced/unvoiced intervals", {
   
   # Check labels are V or U
   n_intervals <- tg_vuv$get_number_of_intervals(1)
-  labels <- sapply(1:n_intervals, function(i) {
+  labels <- vapply(1:n_intervals, function(i) {
     tg_vuv$get_interval_text(1, i)
-  })
+  }, character(1))
   
   expect_true(all(labels %in% c("V", "U")))
 })
@@ -151,7 +151,7 @@ test_that("PointProcess$to_textgrid_vuv() parameters affect detection", {
   # Count voiced intervals
   count_voiced <- function(tg) {
     n <- tg$get_number_of_intervals(1)
-    sum(sapply(1:n, function(i) tg$get_interval_text(1, i) == "V"))
+    sum(vapply(1:n, function(i) tg$get_interval_text(1, i) == "V", logical(1)))
   }
   
   n_voiced_strict <- count_voiced(tg_strict)
@@ -208,9 +208,9 @@ test_that("New methods integrate in AVQI workflow", {
   # Step 2: Extract sounding intervals only
   # (This would be used for subsequent CPPS analysis)
   n_intervals <- tg_silences$get_number_of_intervals(1)
-  sounding_count <- sum(sapply(1:n_intervals, function(i) {
+  sounding_count <- sum(vapply(1:n_intervals, function(i) {
     tg_silences$get_interval_text(1, i) == "sounding"
-  }))
+  }, logical(1)))
   
   # Should detect at least some sounding intervals
   expect_gt(sounding_count, 0)

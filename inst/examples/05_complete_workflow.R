@@ -333,13 +333,13 @@ analyze_vowel_space <- function(audio_files,
     vowel_times <- vowel_times_list[[i]]
     vowel_labels <- if (!is.null(vowel_labels_list)) vowel_labels_list[[i]] else NULL
     
-    f1_values <- sapply(vowel_times, function(t) {
+    f1_values <- vapply(vowel_times, function(t) {
       get_formant_at_time(formants, formant_number = 1, time = t)
-    })
+    }, numeric(1))
     
-    f2_values <- sapply(vowel_times, function(t) {
+    f2_values <- vapply(vowel_times, function(t) {
       get_formant_at_time(formants, formant_number = 2, time = t)
-    })
+    }, numeric(1))
     
     # Create data frame
     vowel_data <- data.frame(

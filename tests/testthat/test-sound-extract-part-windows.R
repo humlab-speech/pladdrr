@@ -87,7 +87,7 @@ test_that("extract_parts_batch works with window shapes", {
   )
   
   expect_length(parts, 3)
-  expect_true(all(sapply(parts, function(p) inherits(p, "Sound"))))
+  expect_true(all(vapply(parts, function(p) inherits(p, "Sound"), logical(1))))
 })
 
 test_that("sound_extract_parts function works with window shapes", {
@@ -106,5 +106,5 @@ test_that("sound_extract_parts function works with window shapes", {
   )
   
   expect_length(parts, 3)
-  expect_true(all(sapply(parts, function(p) inherits(p, "Sound"))))
+  expect_true(all(vapply(parts, function(p) inherits(p, "Sound"), logical(1))))
 })

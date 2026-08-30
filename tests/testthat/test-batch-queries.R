@@ -23,10 +23,10 @@ test_that("Formant batch queries work correctly", {
   expect_length(result$F2, 10)
   
   # Verify batch results match individual queries
-  f1_individual <- sapply(times, function(t) formant$get_value_at_time(1, t, "hertz"))
+  f1_individual <- vapply(times, function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
   expect_equal(result$F1, f1_individual, tolerance = 1e-6)
   
-  f2_individual <- sapply(times, function(t) formant$get_value_at_time(2, t, "hertz"))
+  f2_individual <- vapply(times, function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
   expect_equal(result$F2, f2_individual, tolerance = 1e-6)
 })
 
@@ -44,7 +44,7 @@ test_that("Formant bandwidth batch queries work", {
   expect_length(result$B1, 5)
   
   # Verify correctness
-  b1_individual <- sapply(times, function(t) formant$get_bandwidth_at_time(1, t, "hertz"))
+  b1_individual <- vapply(times, function(t) formant$get_bandwidth_at_time(1, t, "hertz"), numeric(1))
   expect_equal(result$B1, b1_individual, tolerance = 1e-6)
 })
 
@@ -82,7 +82,7 @@ test_that("Pitch batch queries work correctly", {
   expect_length(result, 20)
   
   # Verify batch results match individual queries
-  individual <- sapply(times, function(t) pitch$get_value_at_time(t, "hertz", TRUE))
+  individual <- vapply(times, function(t) pitch$get_value_at_time(t, "hertz", TRUE), numeric(1))
   expect_equal(result, individual, tolerance = 1e-6)
 })
 
@@ -136,7 +136,7 @@ test_that("Intensity batch queries work correctly", {
   
   # Verify batch results match individual queries
   # Note: Slight numerical differences may occur due to internal interpolation details
-  individual <- sapply(times, function(t) intensity$get_value_at_time(t, "cubic"))
+  individual <- vapply(times, function(t) intensity$get_value_at_time(t, "cubic"), numeric(1))
   expect_equal(result, individual, tolerance = 0.5)  # 0.5 dB tolerance
 })
 
@@ -174,7 +174,7 @@ test_that("PointProcess get all times works", {
   expect_length(result, pp$get_number_of_points())
   
   # Verify times match individual queries
-  individual <- sapply(1:pp$get_number_of_points(), pp$get_time)
+  individual <- vapply(1:pp$get_number_of_points(), pp$get_time, numeric(1))
   expect_equal(result, individual, tolerance = 1e-10)
   
   # Times should be monotonically increasing
@@ -454,10 +454,10 @@ test_that("Batch queries are faster than loops", {
   benchmark_result <- microbenchmark::microbenchmark(
     batch = get_formants_at_times(formant, times, 1:4),
     loop = {
-      f1 <- sapply(times, function(t) formant$get_value_at_time(1, t, "hertz"))
-      f2 <- sapply(times, function(t) formant$get_value_at_time(2, t, "hertz"))
-      f3 <- sapply(times, function(t) formant$get_value_at_time(3, t, "hertz"))
-      f4 <- sapply(times, function(t) formant$get_value_at_time(4, t, "hertz"))
+      f1 <- vapply(times, function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
+      f2 <- vapply(times, function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
+      f3 <- vapply(times, function(t) formant$get_value_at_time(3, t, "hertz"), numeric(1))
+      f4 <- vapply(times, function(t) formant$get_value_at_time(4, t, "hertz"), numeric(1))
       list(F1 = f1, F2 = f2, F3 = f3, F4 = f4)
     },
     times = 10
@@ -482,7 +482,7 @@ test_that("PointProcess batch operations are faster than loops", {
   
   benchmark_result <- microbenchmark::microbenchmark(
     batch = get_pointprocess_times(pp),
-    loop = sapply(1:pp$get_number_of_points(), pp$get_time),
+    loop = vapply(1:pp$get_number_of_points(), pp$get_time, numeric(1)),
     times = 20
   )
   

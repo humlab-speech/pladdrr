@@ -171,7 +171,7 @@ test_that("get_durations_batch is faster than LongSound loop", {
   # Windows CI runners (fails with "Cannot open file"); skip rather than
   # hard-fail this speed comparison when that happens.
   longsound_check <- tryCatch(
-    sapply(files, function(f) LongSound$open(f)$get_duration()),
+    vapply(files, function(f) LongSound$open(f)$get_duration(), numeric(1)),
     error = function(e) e
   )
   if (inherits(longsound_check, "error")) {
@@ -184,7 +184,7 @@ test_that("get_durations_batch is faster than LongSound loop", {
   result <- tryCatch(
     bench::mark(
       tier4 = get_durations_batch(files),
-      longsound = sapply(files, function(f) LongSound$open(f)$get_duration()),
+      longsound = vapply(files, function(f) LongSound$open(f)$get_duration(), numeric(1)),
       check = FALSE,
       min_iterations = 3
     ),

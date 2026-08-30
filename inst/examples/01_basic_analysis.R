@@ -207,13 +207,13 @@ vowel_space_analysis <- function(audio_file,
                                n_formants = 5)
   
   # Extract F1 and F2 at each vowel timepoint
-  f1_values <- sapply(vowel_times, function(t) {
+  f1_values <- vapply(vowel_times, function(t) {
     get_formant_at_time(formants, formant_number = 1, time = t)
-  })
+  }, numeric(1))
   
-  f2_values <- sapply(vowel_times, function(t) {
+  f2_values <- vapply(vowel_times, function(t) {
     get_formant_at_time(formants, formant_number = 2, time = t)
-  })
+  }, numeric(1))
   
   # Create data frame
   vowel_data <- data.frame(

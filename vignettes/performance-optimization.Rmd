@@ -208,9 +208,9 @@ Extract values at multiple time points in one call:
 ```{r vectorized}
 # Tier 1 approach: one R->C crossing per time point
 times <- seq(0.1, 1.0, by = 0.01)
-f0_values <- sapply(times, function(t) {
+f0_values <- vapply(times, function(t) {
   pitch$get_value_at_time(t, "hertz")
-})
+}, numeric(1))
 
 # Tier 3 approach: one R->C crossing for the whole vector
 f0_values <- get_pitch_at_times(pitch, times)
@@ -323,9 +323,9 @@ times <- seq(0.1, 0.5, by = 0.001)
 
 # Tier 1: Loop
 system.time({
-  f1_values <- sapply(times, function(t) {
+  f1_values <- vapply(times, function(t) {
     formant$get_value_at_time(1, t, "hertz")
-  })
+  }, numeric(1))
 })
 # one R->C crossing per time point
 

@@ -128,7 +128,7 @@ cat("\nPart 3: Computing interval duration statistics\n")
 cat(strrep("=", 80), "\n\n")
 
 # Analyze each interval tier
-interval_tiers <- which(sapply(tier_info, function(x) x$is_interval))
+interval_tiers <- which(vapply(tier_info, function(x) x$is_interval, numeric(1)))
 
 if (length(interval_tiers) > 0) {
   cat(sprintf("Analyzing %d interval tier(s):\n\n", length(interval_tiers)))

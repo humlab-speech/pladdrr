@@ -136,7 +136,7 @@ test_that("Pitch$get_statistics returns all metrics", {
   expect_true("stdev" %in% names(stats))
   
   # Verify values are numeric and reasonable
-  expect_true(all(sapply(stats, is.numeric)))
+  expect_true(all(vapply(stats, is.numeric, logical(1))))
   expect_lte(stats$minimum, stats$mean)
   expect_lte(stats$mean, stats$maximum)
   expect_gte(stats$stdev, 0)
@@ -177,7 +177,7 @@ test_that("Intensity$get_statistics returns all metrics", {
   expect_true("stdev" %in% names(stats))
   
   # Verify values are numeric and reasonable
-  expect_true(all(sapply(stats, is.numeric)))
+  expect_true(all(vapply(stats, is.numeric, logical(1))))
   expect_lte(stats$minimum, stats$mean)
   expect_lte(stats$mean, stats$maximum)
   expect_gte(stats$stdev, 0)
@@ -341,7 +341,7 @@ test_that("Pitch$get_adaptive_range works correctly", {
   expect_true("max_pitch" %in% names(result))
   
   # Verify values are numeric and reasonable
-  expect_true(all(sapply(result, is.numeric)))
+  expect_true(all(vapply(result, is.numeric, logical(1))))
   expect_gt(result$q1, 0)
   expect_gt(result$q3, result$q1)
   expect_equal(result$min_pitch, result$q1 * 0.75, tolerance = 0.01)

@@ -462,12 +462,12 @@ formant <- sound$to_formant_burg(time_step = 0.005)
 
 # Extract F1 and F2 across time
 times <- seq(0, sound$get_total_duration(), by = 0.005)
-f1_values <- sapply(times, function(t) {
+f1_values <- vapply(times, function(t) {
   formant$get_value_at_time(1, t, unit = "hertz")
-})
-f2_values <- sapply(times, function(t) {
+}, numeric(1))
+f2_values <- vapply(times, function(t) {
   formant$get_value_at_time(2, t, unit = "hertz")
-})
+}, numeric(1))
 
 # Plot formant tracks
 df <- data.frame(
