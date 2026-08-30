@@ -139,7 +139,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #' instead.
 #'
 #' @inheritParams pladdrr-shared-params sound
-#' @param time_step Time step (0 = auto)
+#' @inheritParams pladdrr-shared-timeauto time_step
 #' @param pitch_floor Minimum pitch (Hz)
 #' @param pitch_ceiling Maximum pitch (Hz)
 #'
@@ -394,7 +394,7 @@ to_pitch_spinet_direct <- function(sound,
 #' Create Formant from Sound Directly (returns XPtr)
 #'
 #' @inheritParams pladdrr-shared-params sound
-#' @param time_step Time step (0 = auto)
+#' @inheritParams pladdrr-shared-timeauto time_step
 #' @param max_formants Maximum number of formants
 #' @inheritParams pladdrr-shared-params max_formant
 #' @param window_length Window length (seconds)
@@ -440,7 +440,7 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
 #'
 #' @inheritParams pladdrr-shared-params sound
 #' @param minimum_pitch Minimum pitch (Hz)
-#' @param time_step Time step (0 = auto)
+#' @inheritParams pladdrr-shared-timeauto time_step
 #' @param subtract_mean Whether to subtract mean
 #'
 #' @return External pointer to Intensity

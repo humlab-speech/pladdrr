@@ -232,3 +232,15 @@ NULL
 #' @param pitch A Pitch R6 object
 #' @name pladdrr-shared-pitch-r6
 NULL
+
+#' Shared parameter docs for functions taking an S3/R6 Sound
+#'
+#' @param sound A praat_sound (S3) or Sound (R6) object
+#' @name pladdrr-shared-sound-legacy
+NULL
+
+#' Shared parameter docs for auto time-step functions
+#'
+#' @param time_step Time step (0 = auto)
+#' @name pladdrr-shared-timeauto
+NULL
