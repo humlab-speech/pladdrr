@@ -388,24 +388,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
     stop("x must be a Spectrogram object")
   }
   
-  df <- x$as_data_frame()
-  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
-  
-  # Filter time range
-  if (!is.null(from_time)) {
-    df <- df[df$time >= from_time, ]
-  }
-  if (!is.null(to_time)) {
-    df <- df[df$time <= to_time, ]
-  }
-  
-  # Filter frequency range
-  if (!is.null(from_freq)) {
-    df <- df[df$frequency >= from_freq, ]
-  }
-  if (!is.null(to_freq)) {
-    df <- df[df$frequency <= to_freq, ]
-  }
+  df <- .spectrogram_plot_data(x, from_time, to_time, from_freq, to_freq)
   
   # Apply dynamic range
   max_power <- max(df$power_db, na.rm = TRUE)
@@ -1042,4 +1025,16 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
                                 labels = tier_names[tier_indices]) +
     ggplot2::labs(x = "Time (s)", y = "Tier", title = "TextGrid") +
     ggplot2::theme_minimal()
+}
+
+
+# Spectrogram long-format dB data filtered to time/freq ranges.
+.spectrogram_plot_data <- function(x, from_time, to_time, from_freq, to_freq) {
+  df <- x$as_data_frame()
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
+  if (!is.null(from_time)) df <- df[df$time >= from_time, ]
+  if (!is.null(to_time)) df <- df[df$time <= to_time, ]
+  if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
+  if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
+  df
 }
