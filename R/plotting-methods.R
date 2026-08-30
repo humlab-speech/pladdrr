@@ -963,6 +963,35 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #' plot(tg, tier = 1)
 #'
 #' @export
+# ============================================================================
+# plot.TextGrid helpers
+# ============================================================================
+
+# Resolve which tier indices to plot (character names or numeric).
+.resolve_textgrid_tiers <- function(x, tier, tier_names) {
+  if (is.null(tier)) return(seq_len(x$get_number_of_tiers()))
+  if (is.character(tier)) {
+    idx <- match(tier, tier_names)
+    idx[!is.na(idx)]
+  } else {
+    as.integer(tier)
+  }
+}
+
+# Collect interval data across tiers into a list of data frames.
+.collect_tier_intervals <- function(x, tier_indices, tier_names) {
+  all_data <- list()
+  for (ti in tier_indices) {
+    intervals <- tryCatch(x$get_all_intervals(ti), error = function(e) NULL)
+    if (!is.null(intervals) && nrow(intervals) > 0) {
+      intervals$tier <- tier_names[ti]
+      intervals$tier_y <- match(ti, tier_indices)
+      all_data[[length(all_data) + 1]] <- intervals
+    }
+  }
+  all_data
+}
+
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...) {
 
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -981,36 +1010,14 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
 
   tier_names <- x$get_tier_names()
 
-  # Determine which tiers to plot
-  if (!is.null(tier)) {
-    if (is.character(tier)) {
-      tier_indices <- match(tier, tier_names)
-      tier_indices <- tier_indices[!is.na(tier_indices)]
-    } else {
-      tier_indices <- as.integer(tier)
-    }
-  } else {
-    tier_indices <- seq_len(n_tiers)
-  }
+  tier_indices <- .resolve_textgrid_tiers(x, tier, tier_names)
 
   if (length(tier_indices) == 0) {
     warning("No matching tiers found")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
 
-  # Collect interval data across tiers
-  all_data <- list()
-  for (ti in tier_indices) {
-    intervals <- tryCatch(
-      x$get_all_intervals(ti),
-      error = function(e) NULL
-    )
-    if (!is.null(intervals) && nrow(intervals) > 0) {
-      intervals$tier <- tier_names[ti]
-      intervals$tier_y <- match(ti, tier_indices)
-      all_data[[length(all_data) + 1]] <- intervals
-    }
-  }
+  all_data <- .collect_tier_intervals(x, tier_indices, tier_names)
 
   if (length(all_data) == 0) {
     warning("No interval data found")
