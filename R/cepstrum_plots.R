@@ -166,17 +166,7 @@ plot_powercepstrum <- function(cepstrum,
   if (show_peak) p <- .add_peak_annotation(p, cepstrum, qmin, qmax, fit_method)
   
   # Add trend line if requested
-  if (show_trendline) {
-    # Simple linear regression for visualization
-    fit <- lm(power_db ~ quefrency, data = plot_data)
-    plot_data$fitted <- predict(fit)
-    
-    p <- p + ggplot2::geom_line(
-      data = plot_data,
-      ggplot2::aes(x = quefrency, y = fitted),
-      color = "darkgray", linetype = "dashed", linewidth = 0.6
-    )
-  }
+  p <- .add_trendline(p, plot_data, show_trendline)
   
   # Apply dB range if specified
   if (!is.null(db_range)) {
@@ -545,4 +535,15 @@ create_cepstrum_report <- function(cepstrogram,
                       label = sprintf("Mean: %.2f dB", mean_cpp),
                       vjust = -0.5, hjust = 1, size = 3.5,
                       color = "red", fontface = "bold")
+}
+
+
+# Add a linear-regression trend line to a power cepstrum plot.
+.add_trendline <- function(p, plot_data, show_trendline) {
+  if (!show_trendline) return(p)
+  fit <- lm(power_db ~ quefrency, data = plot_data)
+  plot_data$fitted <- predict(fit)
+  p + ggplot2::geom_line(data = plot_data,
+    ggplot2::aes(x = quefrency, y = fitted),
+    color = "darkgray", linetype = "dashed", linewidth = 0.6)
 }
