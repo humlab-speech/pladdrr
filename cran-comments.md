@@ -212,12 +212,14 @@ accepted; the code is correct as written and "fixing" it would make it worse.
 - **`library_require_linter` (236) / `undesirable_operator_linter` (310)**:
   `library()` in tests/vignettes and `pladdrr:::` for testing internals are the
   idiomatic patterns; `<<-` appears only in benchmark scripts.
-- **Function-length/cyclomatic-complexity findings**: the six largest offenders
-  were refactored (see git history, Phase 7); the remaining ~24 are verbose
-  constructor/dispatch methods and distributed-length plotting functions where
-  further splitting is architectural or visual-regression risk for an advisory
-  lint. The 141 duplicated `@param` descriptions (pkgcheck `@inheritParams`
-  check) are left as-is: consolidating would churn 200+ roxygen blocks with
-  roxygen-rebuild risk for doc-dedup only. The 12 exported-name clashes under
-  "Other checks" cannot be changed
-  without renaming public API.
+- **Function-length/cyclomatic-complexity findings**: fully addressed. A
+  whole-package scan reports 0 functions over 50 lines and 0 functions over
+  cyclomatic complexity 15 (both exported and internal helpers; Phase 7
+  refactors, verified fresh with `cyclocomp`/`length(deparse(body()))`). The
+  `@inheritParams` check (141 duplicated `@param` descriptions) is left as-is:
+  consolidating would churn 200+ roxygen blocks with roxygen-rebuild risk for
+  doc-dedup only. lintr `object_usage` findings for package-internal dot-prefixed
+  helpers used across files are false positives (lintr lints each file in
+  isolation and cannot resolve cross-file internal symbols); consistent with the
+  pre-existing pattern and left as-is. The 12 exported-name clashes under
+  "Other checks" cannot be changed without renaming public API.
