@@ -816,12 +816,18 @@ build_multiband_harmonicity <- function(
   lapply(built, function(ptr) Harmonicity(.xptr = ptr))
 }
 
+
+
+# Do multiband names form a non-empty set of unique non-blank labels?
+.valid_multiband_names <- function(multiband) {
+  !is.null(names(multiband)) && !anyNA(names(multiband)) &&
+    !any(names(multiband) == "") && !anyDuplicated(names(multiband))
+}
 .coerce_multiband_harmonicity <- function(multiband) {
   if (!is.list(multiband) || length(multiband) != 5L) {
     stop("multiband must be a named list of 5 Harmonicity objects")
   }
-  if (is.null(names(multiband)) || anyNA(names(multiband)) ||
-      any(names(multiband) == "") || anyDuplicated(names(multiband))) {
+  if (!.valid_multiband_names(multiband)) {
     stop("multiband must be a named list with unique band names")
   }
 
@@ -839,9 +845,7 @@ build_multiband_harmonicity <- function(
 
 # Validate a (from_time, to_time) pair as single numeric values.
 .validate_time_pair <- function(from_time, to_time) {
-  if (!is.numeric(from_time) || !is.numeric(to_time) ||
-      length(from_time) != 1L || length(to_time) != 1L ||
-      is.na(from_time) || is.na(to_time)) {
+  if (!.is_numeric_scalar(from_time) || !.is_numeric_scalar(to_time)) {
     stop("from_time and to_time must be single numeric values")
   }
   invisible(NULL)

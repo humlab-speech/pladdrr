@@ -1427,29 +1427,38 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 
 
 # Build formant rows (speckle from stored points, or track over a grid).
+
+
+# Build one formant row at (formant_number, time); skip if uncomputable.
+
+# Is t within [tmin, tmax]?
+.in_time_range <- function(t, tmin, tmax) t >= tmin && t <= tmax
+.append_formant_row <- function(rows, object, f, t) {
+  freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
+  if (!is.na(freq)) {
+    rows[[length(rows) + 1]] <- data.frame(
+      time = t, formant_number = f, frequency = freq,
+      bandwidth = NA_real_, stringsAsFactors = FALSE)
+  }
+  rows
+}
 .formant_tier_rows <- function(object, tmin, tmax, n_max, style, time_step) {
   rows <- list()
   if (style == "speckle") {
     point_info <- object$as_data_frame()  # time, num_formants per stored point
     for (i in seq_len(nrow(point_info))) {
       t <- point_info$time[i]
-      if (t < tmin || t > tmax) next
+      if (!.in_time_range(t, tmin, tmax)) next
       nf <- min(point_info$num_formants[i], n_max)
       for (f in seq_len(nf)) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) rows[[length(rows) + 1]] <- data.frame(
-          time = t, formant_number = f, frequency = freq,
-          bandwidth = NA_real_, stringsAsFactors = FALSE)
+        rows <- .append_formant_row(rows, object, f, t)
       }
     }
   } else {
     times <- seq(tmin, tmax, by = time_step)
     for (f in seq_len(n_max)) {
       for (t in times) {
-        freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
-        if (!is.na(freq)) rows[[length(rows) + 1]] <- data.frame(
-          time = t, formant_number = f, frequency = freq,
-          bandwidth = NA_real_, stringsAsFactors = FALSE)
+        rows <- .append_formant_row(rows, object, f, t)
       }
     }
   }

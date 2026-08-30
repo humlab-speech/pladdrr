@@ -124,8 +124,8 @@ validate_string <- function(x, name = deparse(substitute(x)),
   required_fields <- c("values", "time", "sampling_rate", "n_samples",
                        "duration", "start_time", "end_time")
   if (!all(required_fields %in% names(x))) return(FALSE)
-  if (!is.numeric(x$values) || !is.numeric(x$time)) return(FALSE)
-  if (!is.numeric(x$sampling_rate) || !is.numeric(x$duration)) return(FALSE)
+  numeric_fields <- c("values", "time", "sampling_rate", "duration")
+  if (!all(vapply(x[numeric_fields], is.numeric, logical(1)))) return(FALSE)
   if (!is.numeric(x$n_samples) || length(x$n_samples) != 1) return(FALSE)
   TRUE
 }

@@ -107,8 +107,8 @@ lockEnvironment(.matrix_methods, bindings = TRUE)
 
 # Check whether all full-domain Matrix construction parameters are present.
 .matrix_has_full_params <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
-  !is.null(xmin) && !is.null(xmax) && !is.null(nx) && !is.null(dx) && !is.null(x1) &&
-    !is.null(ymin) && !is.null(ymax) && !is.null(ny) && !is.null(dy) && !is.null(y1)
+  all(!vapply(list(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1),
+              is.null, logical(1)))
 }
 
 #' @export

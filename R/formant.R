@@ -255,6 +255,13 @@ extract_formants <- function(sound,
 #' x <- sin(2 * pi * 5 * seq(0, 1, length.out = 100)) + rnorm(100, sd = 0.01)
 #' pladdrr:::.burg_algorithm(x, order = 8)
 #' @noRd
+
+
+# Is the running Burg prediction error still usable?
+.burg_error_valid <- function(p) !is.na(p) && is.finite(p) && p > 0
+
+# Are the Burg coefficients a usable filter?
+.burg_coefficients_valid <- function(a) length(a) >= 2 && !anyNA(a) && all(is.finite(a))
 .burg_algorithm <- function(x, order) {
   
   init <- .burg_initialize(x, order)
@@ -287,11 +294,11 @@ extract_formants <- function(sound,
     f <- up$f
     b <- up$b
     p <- up$p
-    if (is.na(p) || !is.finite(p) || p <= 0) break
+    if (!.burg_error_valid(p)) break
   }
   
   # Check if we got valid coefficients
-  if (length(a) < 2 || anyNA(a) || !all(is.finite(a))) {
+  if (!.burg_coefficients_valid(a)) {
     return(NULL)
   }
   
@@ -505,16 +512,6 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) return(list(status = "break"))
   list(status = "ok", rc = rc)
 }
-
-# Update Burg LPC coefficients for order k with reflection coefficient rc.
-.update_burg_coefficients <- function(a, k, rc) {
-  a_padded <- c(a, 0)
-  a_new <- numeric(k + 1)
-  a_new[1] <- 1
-  for (i in seq_len(k)) a_new[i + 1] <- a_padded[i + 1] + rc * a[k - i + 1]
-  a_new
-}
-
 
 # Update Burg LPC coefficients for order k with reflection coefficient rc.
 .update_burg_coefficients <- function(a, k, rc) {

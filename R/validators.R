@@ -16,6 +16,16 @@
 # Warn that output is incomplete relative to what was requested. Praat itself
 # often returns a silently padded or clipped result; design principle 6 says the
 # user must be told. Honours options(pladdrr.data_loss = "warn"|"error"|"silent").
+# Is x a single (length-1) non-NA numeric scalar?
+.is_numeric_scalar <- function(x) is.numeric(x) && length(x) == 1L && !is.na(x)
+
+
+# Is x a single (length-1) character string?
+.is_string_scalar <- function(x) is.character(x) && length(x) == 1L
+
+# Is x a single (length-1) logical?
+.is_logical_scalar <- function(x) is.logical(x) && length(x) == 1L
+
 .warn_data_loss <- function(routine, msg, call = sys.call(-2L)) {
   mode <- getOption("pladdrr.data_loss", "warn")
   if (identical(mode, "silent")) return(invisible(FALSE))
@@ -33,14 +43,12 @@
 # the C++ analysis either fails opaquely or silently computes on an inverted
 # range.
 .check_pitch_range <- function(pitch_floor, pitch_ceiling) {
-  if (!is.numeric(pitch_floor) || length(pitch_floor) != 1L || is.na(pitch_floor) ||
-      pitch_floor <= 0) {
+  if (!.is_numeric_scalar(pitch_floor) || pitch_floor <= 0) {
     .stop_input("check_pitch_range", "pitch_floor",
                 paste0("pitch_floor must be a single positive number (Hz), got: ",
                        deparse(pitch_floor)))
   }
-  if (!is.numeric(pitch_ceiling) || length(pitch_ceiling) != 1L || is.na(pitch_ceiling) ||
-      pitch_ceiling <= pitch_floor) {
+  if (!.is_numeric_scalar(pitch_ceiling) || pitch_ceiling <= pitch_floor) {
     .stop_input("check_pitch_range", "pitch_ceiling",
                 paste0("pitch_ceiling (", deparse(pitch_ceiling),
                        ") must be a single number greater than pitch_floor (",
@@ -99,12 +107,12 @@
 # rather than return a silently different measurement.
 .check_quefrency_range <- function(qstart, qend, qstart_name = "qstart_fit",
                                    qend_name = "qend_fit") {
-  if (!is.numeric(qstart) || length(qstart) != 1L || is.na(qstart) || qstart < 0) {
+  if (!.is_numeric_scalar(qstart) || qstart < 0) {
     .stop_input("check_quefrency_range", qstart_name,
                 paste0(qstart_name, " must be a single non-negative number (s), got: ",
                        deparse(qstart)))
   }
-  if (!is.numeric(qend) || length(qend) != 1L || is.na(qend) || qend < 0) {
+  if (!.is_numeric_scalar(qend) || qend < 0) {
     .stop_input("check_quefrency_range", qend_name,
                 paste0(qend_name, " must be a single non-negative number (s), got: ",
                        deparse(qend)))

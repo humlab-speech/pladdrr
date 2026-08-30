@@ -651,15 +651,15 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 
 # Validate sound_load_window arguments.
 .validate_sound_load_window <- function(path, start, end, resample_to, preserve_times) {
-  if (!is.character(path) || length(path) != 1) stop("path must be a single character string")
+  if (!.is_string_scalar(path)) stop("path must be a single character string")
   if (!file.exists(path)) stop("File not found: ", path)
-  if (!is.numeric(start) || length(start) != 1 || start < 0) stop("start must be a non-negative number")
-  if (!is.numeric(end) || length(end) != 1) stop("end must be a number")
+  if (!.is_numeric_scalar(start) || start < 0) stop("start must be a non-negative number")
+  if (!.is_numeric_scalar(end)) stop("end must be a number")
   if (end <= start) stop("end must be greater than start")
   if (!is.null(resample_to)) {
-    if (!is.numeric(resample_to) || length(resample_to) != 1 || resample_to <= 0) stop("resample_to must be a positive number or NULL")
+    if (!.is_numeric_scalar(resample_to) || resample_to <= 0) stop("resample_to must be a positive number or NULL")
   }
-  if (!is.logical(preserve_times) || length(preserve_times) != 1) stop("preserve_times must be TRUE or FALSE")
+  if (!.is_logical_scalar(preserve_times)) stop("preserve_times must be TRUE or FALSE")
   invisible(NULL)
 }
 
