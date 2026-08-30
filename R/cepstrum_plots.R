@@ -236,22 +236,8 @@ plot_powercepstrogram <- function(cepstrogram,
   p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = quefrency, fill = power_db)) +
     ggplot2::geom_raster(interpolate = TRUE)
   
-  # Apply color scale
-  p <- p + switch(color_scale,
-    viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "viridis"),
-    inferno = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "inferno"),
-    magma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "magma"),
-    plasma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "plasma")
-  )
-  
-  # Apply dB range to color scale if specified
-  if (!is.null(db_range)) {
-    p <- p + ggplot2::scale_fill_viridis_c(
-      name = "Power (dB)",
-      option = color_scale,
-      limits = db_range
-    )
-  }
+  # Apply color scale (with dB range)
+  p <- .apply_cepstrogram_color_scale(p, color_scale, db_range)
   
   # Add CPP contour if requested: overlay the cepstral-peak quefrency track,
   # computed per time frame from the cepstrogram's own raster. Peak location
@@ -540,4 +526,18 @@ create_cepstrum_report <- function(cepstrogram,
     subtitle = "Cepstral analysis for voice quality assessment",
     x = "Quefrency (s)", y = "Power (dB)")
   .apply_cepstrum_theme(p, theme)
+}
+
+
+# Apply the cepstrogram color scale, optionally with a dB range.
+.apply_cepstrogram_color_scale <- function(p, color_scale, db_range) {
+  p <- p + switch(color_scale,
+    viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "viridis"),
+    inferno = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "inferno"),
+    magma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "magma"),
+    plasma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "plasma"))
+  if (!is.null(db_range)) {
+    p + ggplot2::scale_fill_viridis_c(name = "Power (dB)",
+                                      option = color_scale, limits = db_range)
+  } else p
 }
