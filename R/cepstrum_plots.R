@@ -245,32 +245,10 @@ plot_powercepstrogram <- function(cepstrogram,
   # computed above) selects the same bin as raw power. This replaces the
   # previous flat placeholder at quefrency = 0.01 with the real per-frame
   # argmax; no per-time-point C++ query or interpolation is needed.
-  if (show_cpp_contour && nrow(plot_data) > 0) {
-    peak_q_by_time <- .cpp_peak_by_time(plot_data)
-
-    p <- p + ggplot2::geom_line(
-      data = peak_q_by_time,
-      ggplot2::aes(x = time, y = quefrency),
-      color = contour_color,
-      linewidth = 1.2,
-      inherit.aes = FALSE
-    )
-  }
+  p <- .add_cpp_contour(p, plot_data, show_cpp_contour, contour_color)
   
-  # Add labels
-  if (is.null(title)) {
-    title <- "Power Cepstrogram"
-  }
-  
-  p <- p + ggplot2::labs(
-    title = title,
-    subtitle = "Time-varying cepstral analysis",
-    x = "Time (s)",
-    y = "Quefrency (s)"
-  )
-  
-  # Apply theme
-  p <- .apply_cepstrum_theme(p, theme)
+  # Add labels + theme
+  p <- .finish_cepstrogram_plot(p, title, theme)
   
   return(p)
 }
@@ -533,4 +511,23 @@ create_cepstrum_report <- function(cepstrogram,
   cpp_values <- .sample_cpp_timeseries(cepstrogram, sample_times, qmin, qmax)
   plot_data <- data.frame(time = sample_times, cpp = cpp_values)
   plot_data[!is.na(plot_data$cpp), ]
+}
+
+
+# Overlay the cepstral-peak quefrency contour.
+.add_cpp_contour <- function(p, plot_data, show_cpp_contour, contour_color) {
+  if (!show_cpp_contour || nrow(plot_data) == 0) return(p)
+  peak_q_by_time <- .cpp_peak_by_time(plot_data)
+  p + ggplot2::geom_line(data = peak_q_by_time,
+    ggplot2::aes(x = time, y = quefrency),
+    color = contour_color, linewidth = 1.2, inherit.aes = FALSE)
+}
+
+# Finish a cepstrogram plot: labels + theme.
+.finish_cepstrogram_plot <- function(p, title, theme) {
+  if (is.null(title)) title <- "Power Cepstrogram"
+  p <- p + ggplot2::labs(title = title,
+    subtitle = "Time-varying cepstral analysis",
+    x = "Time (s)", y = "Quefrency (s)")
+  .apply_cepstrum_theme(p, theme)
 }
