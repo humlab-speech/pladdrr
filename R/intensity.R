@@ -32,7 +32,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #' **DEPRECATED:** Use \code{intensity$get_value_at_time(time)} instead.
 #'
 #' @param intensity An Intensity R6 object
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param interpolate Whether to interpolate
 #' @return Intensity in dB
 #' @examples

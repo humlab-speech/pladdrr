@@ -91,7 +91,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 #' Get F1, F2, F3, F4 at a single time point in one call.
 #'
 #' @param formant Formant object or external pointer
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param unit Character: "hertz" or "bark"
 #'
 #' @return Named numeric vector: F1, F2, F3, F4
@@ -504,7 +504,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 #' Get Single Pitch Value Directly
 #'
 #' @param pitch Pitch object or external pointer
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param unit Unit string
 #' @param interpolate Whether to interpolate
 #'
@@ -525,7 +525,7 @@ get_pitch_value_direct <- function(pitch, time, unit = "hertz", interpolate = TR
 #' Get Single Intensity Value Directly
 #'
 #' @param intensity Intensity object or external pointer
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param interpolation Interpolation method
 #'
 #' @return Intensity in dB
@@ -546,7 +546,7 @@ get_intensity_value_direct <- function(intensity, time, interpolation = "cubic")
 #'
 #' @param formant Formant object or external pointer
 #' @param formant_number Formant number (1=F1, etc)
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param unit Unit string
 #'
 #' @return Formant frequency

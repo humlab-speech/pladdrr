@@ -150,5 +150,12 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param from_time Start time in seconds (NULL = from beginning)
 #' @param to_time End time in seconds (NULL = to end)
 #' @param garnish Logical. Add axis labels and title (default: TRUE)
+#' @param ... Additional arguments (currently unused)
+#' @param sounds List of Sound objects (R6) or external pointers
+#' @param time Time in seconds
+#' @param sampling_rate Sampling rate in Hz (default: 44100)
+#' @param return_r6 Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)
+#' @param time_step Numeric. Time step (0 = automatic)
+
 #' @name pladdrr-shared-params
 NULL

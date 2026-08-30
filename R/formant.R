@@ -323,7 +323,7 @@ extract_formants <- function(sound,
 #'   \code{formant$get_value_at_time()} on an R6 \code{Formant} object
 #'   directly instead of this deprecated wrapper.
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param interpolate Logical; if TRUE, interpolate between frames
 #'
 #' @return Formant frequency in Hz, or NA if undefined

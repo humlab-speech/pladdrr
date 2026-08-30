@@ -43,7 +43,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #' **DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.
 #'
 #' @param pitch A Pitch R6 object
-#' @param time Time in seconds
+#' @inheritParams pladdrr-shared-params time
 #' @param unit Unit: "Hz" or "semitones"
 #' @param interpolate Whether to interpolate
 #' @return Pitch value or NA

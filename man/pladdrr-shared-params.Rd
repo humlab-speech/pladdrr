@@ -11,6 +11,18 @@
 \item{to_time}{End time in seconds (NULL = to end)}
 
 \item{garnish}{Logical. Add axis labels and title (default: TRUE)}
+
+\item{...}{Additional arguments (currently unused)}
+
+\item{sounds}{List of Sound objects (R6) or external pointers}
+
+\item{time}{Time in seconds}
+
+\item{sampling_rate}{Sampling rate in Hz (default: 44100)}
+
+\item{return_r6}{Logical. Return R6 Pitch objects (TRUE) or raw xptrs (FALSE)}
+
+\item{time_step}{Numeric. Time step (0 = automatic)}
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit
