@@ -236,8 +236,8 @@ test_that("pair_sound_textgrid matches by basename, full, and custom function", 
   expect_true(any(is.na(p2$textgrid_file)))
 
   p3 <- pair_sound_textgrid(sd, td, by = "full")
-  expect_true(is.data.frame(p3))
+  expect_s3_class(p3, "data.frame")
 
   p4 <- pair_sound_textgrid(sd, td, by = function(s, t) data.frame(sound_file = s))
-  expect_true(is.data.frame(p4))
+  expect_s3_class(p4, "data.frame")
 })
