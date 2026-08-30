@@ -541,26 +541,10 @@ sound_get_zcr <- function(sound,
   avqi_start_offset <- 0.0025
   avqi_end_offset <- 0.0275
 
-  for (i in seq_len(n_frames)) {
-    # Frame boundaries
-    frame_start <- start_time + (i - 1L) * hop_duration
-    frame_end <- frame_start + window_duration
-    frame_center <- frame_start + window_duration / 2
-
-    times[i] <- frame_center
-
-    # Get zeros in frame and compute ZCR
-    frame_zeros <- zero_times[zero_times >= frame_start & zero_times < frame_end]
-    zcr[i] <- .frame_zcr(frame_zeros, frame_start, window_duration,
-                         avqi_compatible, avqi_start_offset, avqi_end_offset)
-  }
-
-  list(
-    times = times,
-    zcr = zcr,
-    window_duration = window_duration,
-    hop_duration = hop_duration
-  )
+  fr <- .compute_zcr_frames(zero_times, start_time, n_frames, window_duration,
+                            hop_duration, avqi_compatible, avqi_start_offset, avqi_end_offset)
+  list(times = fr$times, zcr = fr$zcr,
+       window_duration = window_duration, hop_duration = hop_duration)
 }
 
 
@@ -595,4 +579,21 @@ sound_get_zcr <- function(sound,
     "ends with" = endsWith(interval_text, text),
     FALSE
   )
+}
+
+
+# Compute per-frame ZCR time series from zero-crossing times.
+.compute_zcr_frames <- function(zero_times, start_time, n_frames, window_duration,
+                                hop_duration, avqi_compatible, avqi_start_offset, avqi_end_offset) {
+  times <- numeric(n_frames)
+  zcr <- numeric(n_frames)
+  for (i in seq_len(n_frames)) {
+    frame_start <- start_time + (i - 1L) * hop_duration
+    frame_end <- frame_start + window_duration
+    times[i] <- frame_start + window_duration / 2
+    frame_zeros <- zero_times[zero_times >= frame_start & zero_times < frame_end]
+    zcr[i] <- .frame_zcr(frame_zeros, frame_start, window_duration,
+                         avqi_compatible, avqi_start_offset, avqi_end_offset)
+  }
+  list(times = times, zcr = zcr)
 }
