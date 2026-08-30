@@ -1025,24 +1025,21 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
 
   df$mid <- (df$start + df$end) / 2
 
-  p <- ggplot2::ggplot(df) +
+  .build_textgrid_plot(df, tier_indices, tier_names)
+}
+
+
+# Build the TextGrid tier plot from long-format interval data.
+.build_textgrid_plot <- function(df, tier_indices, tier_names) {
+  ggplot2::ggplot(df) +
     ggplot2::geom_rect(
-      ggplot2::aes(
-        xmin = .data$start, xmax = .data$end,
-        ymin = .data$tier_y - 0.4, ymax = .data$tier_y + 0.4
-      ),
-      fill = "grey90", color = "grey50", linewidth = 0.3
-    ) +
-    ggplot2::geom_text(
-      ggplot2::aes(x = .data$mid, y = .data$tier_y, label = .data$text),
-      size = 3, na.rm = TRUE
-    ) +
-    ggplot2::scale_y_continuous(
-      breaks = seq_along(tier_indices),
-      labels = tier_names[tier_indices]
-    ) +
+      ggplot2::aes(xmin = .data$start, xmax = .data$end,
+                   ymin = .data$tier_y - 0.4, ymax = .data$tier_y + 0.4),
+      fill = "grey90", color = "grey50", linewidth = 0.3) +
+    ggplot2::geom_text(ggplot2::aes(x = .data$mid, y = .data$tier_y, label = .data$text),
+                       size = 3, na.rm = TRUE) +
+    ggplot2::scale_y_continuous(breaks = seq_along(tier_indices),
+                                labels = tier_names[tier_indices]) +
     ggplot2::labs(x = "Time (s)", y = "Tier", title = "TextGrid") +
     ggplot2::theme_minimal()
-
-  p
 }
