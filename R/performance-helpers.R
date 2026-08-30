@@ -836,6 +836,18 @@ build_multiband_harmonicity <- function(
   })
 }
 
+
+# Validate a (from_time, to_time) pair as single numeric values.
+.validate_time_pair <- function(from_time, to_time) {
+  .validate_time_pair(from_time, to_time)
+  invisible(NULL)
+}
+
+# Build the _mean/_sd result names for multi-band HNR.
+.multiband_result_names <- function(band_names) {
+  as.vector(rbind(paste0(band_names, "_mean"), paste0(band_names, "_sd")))
+}
+
 #' Query reusable multiband HNR statistics
 #'
 #' @description
@@ -862,11 +874,7 @@ build_multiband_harmonicity <- function(
 multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
   multiband <- .coerce_multiband_harmonicity(multiband)
 
-  if (!is.numeric(from_time) || !is.numeric(to_time) ||
-      length(from_time) != 1L || length(to_time) != 1L ||
-      is.na(from_time) || is.na(to_time)) {
-    stop("from_time and to_time must be single numeric values")
-  }
+  .validate_time_pair(from_time, to_time)
 
   if (to_time <= from_time) {
     from_time <- 0
@@ -874,10 +882,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
   }
 
   result <- vector("list", length(multiband) * 2L)
-  names(result) <- as.vector(rbind(
-    paste0(names(multiband), "_mean"),
-    paste0(names(multiband), "_sd")
-  ))
+  names(result) <- .multiband_result_names(names(multiband))
 
   out_i <- 1L
   for (name in names(multiband)) {
