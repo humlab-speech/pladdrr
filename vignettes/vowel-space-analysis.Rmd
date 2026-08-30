@@ -325,8 +325,10 @@ cat("F2_norm: mean =", round(mean(vowel_features$f2_norm), 2),
 vowel_stats <- aggregate(
   cbind(f1_50, f2_50, f1_norm, f2_norm) ~ vowel,
   data = vowel_features,
-  FUN = function(x) c(mean = mean(x, na.rm = TRUE), 
-                      sd = sd(x, na.rm = TRUE))
+  FUN = function(x) {
+    c(mean = mean(x, na.rm = TRUE),
+      sd = sd(x, na.rm = TRUE))
+  }
 )
 
 print(vowel_stats)
