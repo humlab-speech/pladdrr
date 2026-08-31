@@ -29,8 +29,6 @@
 \item{title}{Character. Plot title (default: "LTAS")}
 
 \item{color}{Character. Line color (default: "darkred")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

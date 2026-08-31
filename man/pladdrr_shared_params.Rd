@@ -31,9 +31,13 @@ pladdrr_shared_params()
 
 \item{times}{Numeric vector of time points (in seconds)}
 
+\item{from_times}{Numeric vector of start times}
+
+\item{to_times}{Numeric vector of end times}
+
 \item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional time range}
+\item{time_range}{Optional time range c(start, end)}
 
 \item{pitch}{Pitch object or external pointer}
 

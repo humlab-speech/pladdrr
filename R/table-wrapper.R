@@ -261,7 +261,7 @@ as.data.frame.Table <- function(x, ...) x$as_data_frame()
 #'
 #' Creates a new Table object with specified dimensions.
 #'
-#' @param numberOfRows Number of rows
+#' @inheritParams pladdrr_shared_analysis numberOfRows
 #' @param numberOfColumns Number of columns (optional if columnNames provided)
 #' @param columnNames Character vector of column names (optional)
 #' @return A Table object

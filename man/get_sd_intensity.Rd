@@ -9,7 +9,7 @@ get_sd_intensity(intensity, time_range = NULL)
 \arguments{
 \item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional time range}
+\item{time_range}{Optional time range c(start, end)}
 }
 \value{
 Standard deviation in dB

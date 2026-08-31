@@ -26,8 +26,6 @@
 \item{title}{Character. Plot title (default: "PointProcess")}
 
 \item{color}{Character. Line color (default: "black")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

@@ -40,8 +40,6 @@
 \item{color_scale}{Character. Color scale to use: "viridis", "magma",
 "plasma",
  "inferno", "cividis", or "greyscale" (default: "viridis")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

@@ -24,8 +24,6 @@
 \item{row.names}{Ignored}
 
 \item{optional}{Ignored}
-
-\item{...}{Additional arguments (ignored)}
 }
 \value{
 A data.table (inherits from data.frame) with pitch measurements

@@ -8,7 +8,7 @@
 #' Provides a concise, informative display of a praat_sound object.
 #'
 #' @param x A praat_sound object
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return The object x, invisibly
 #'
@@ -43,7 +43,7 @@ print.praat_sound <- function(x, ...) {
 #' statistics and metadata.
 #'
 #' @param object A praat_sound object
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return The object, invisibly
 #'
@@ -86,7 +86,7 @@ summary.praat_sound <- function(object, ...) {
 #' This is useful for plotting and further analysis in R.
 #'
 #' @param x A praat_sound object
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A data.table (inherits from data.frame) with two columns:
 #'   \describe{
@@ -127,7 +127,7 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' @param x A Sound R6 object
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
-#' @param ... Additional arguments (ignored)
+#' @inheritParams pladdrr_shared_params ...
 #' @return A data.table (inherits from data.frame) with time, channel, and value
 #'  columns
 #' @examples
@@ -150,7 +150,7 @@ as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' Provides a concise display of a pitch contour.
 #'
 #' @param x A praat_pitch object
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return The object x, invisibly
 #'
@@ -195,7 +195,7 @@ print.praat_pitch <- function(x, ...) {
 #' Provides a detailed statistical summary of a pitch contour.
 #'
 #' @param object A praat_pitch object
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return The object, invisibly
 #'
@@ -484,7 +484,7 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @param x An Intensity R6 object
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
-#' @param ... Additional arguments (ignored)
+#' @inheritParams pladdrr_shared_params ...
 #' @return A data.table (inherits from data.frame) with time and intensity
 #'  columns
 #' @examples
@@ -507,7 +507,7 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
 #' @param x A Pitch R6 object
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
-#' @param ... Additional arguments (ignored)
+#' @inheritParams pladdrr_shared_params ...
 #' @return A data.table (inherits from data.frame) with pitch measurements
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =

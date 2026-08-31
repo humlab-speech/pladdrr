@@ -10,8 +10,6 @@ create_sound_from_values(values, sampling_rate = 44100, start_time = 0)
 \item{values}{Numeric vector of sound amplitude values}
 
 \item{sampling_rate}{Sampling rate in Hz (default: 44100)}
-
-\item{start_time}{Start time in seconds (default: 0.0)}
 }
 \value{
 List representing a praat_sound object with values and metadata

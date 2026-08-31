@@ -70,7 +70,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #'
 #' @inheritParams pladdrr_shared_pitch_r6 pitch
 #' @inheritParams pladdrr_shared_params unit
-#' @param time_range Optional time range c(start, end)
+#' @inheritParams pladdrr_shared_params time_range
 #' @return Mean pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =

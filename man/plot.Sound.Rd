@@ -26,8 +26,6 @@
 \item{title}{Character. Plot title (default: "Sound")}
 
 \item{color}{Character. Line color (default: "steelblue")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

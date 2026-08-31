@@ -15,8 +15,6 @@ tiers)}
 \item{from_time}{Start time in seconds (NULL = beginning)}
 
 \item{to_time}{End time in seconds (NULL = end)}
-
-\item{...}{Additional arguments (ignored)}
 }
 \value{
 A ggplot2 object

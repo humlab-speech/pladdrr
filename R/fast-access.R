@@ -10,7 +10,7 @@
 #' through Praat's per-sample accessor as `sound$get_values()` does.
 #'
 #' @param sound A Sound object created with `Sound()`
-#' @param channel Channel number (1-based, default 1)
+#' @inheritParams pladdrr_shared_analysis channel
 #'
 #' @return Numeric vector (independent copy of sample data).
 #'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute

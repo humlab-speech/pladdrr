@@ -96,8 +96,6 @@ pitch_get_strengths_at_times <- function(pitch_xptr, times, unit = 0L, interpola
 #'
 #' @param pitch_xptr External pointer to Pitch object
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
 #' @param unit Integer code for unit (0=HERTZ, etc)
 #' @return Named numeric vector with quantile values
 #' @examples
@@ -251,12 +249,10 @@ intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_ti
 #'
 #' @param pp_xptr External pointer to PointProcess object
 #' @param sound_xptr External pointer to Sound object (required for shimmer)
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param period_floor Minimum period in seconds (default 0.0001)
 #' @param period_ceiling Maximum period in seconds (default 0.02)
-#' @param max_period_factor Maximum period factor (default 1.3)
-#' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
 #' @return Named list with 11 voice quality measures
 #' @keywords internal
 #' @examples
@@ -274,7 +270,6 @@ get_jitter_shimmer_batch_cpp <- function(pp_xptr, sound_xptr, from_time = 0, to_
 #' Reads only the 44-byte WAV header to calculate duration, avoiding full file
 #' loading.
 #'
-#' @param file_paths Character vector of .wav file paths
 #' @return Numeric vector of durations (seconds), NA for errors
 #' @keywords internal
 #' @examples
@@ -297,7 +292,6 @@ get_durations_batch_cpp <- function(file_paths) {
 #' @param time_step Time step for pitch extraction
 #' @param min_pitch Pitch floor (Hz)
 #' @param max_pitch Pitch ceiling (Hz)
-#' @param voicing_threshold Voicing threshold (default 0.45)
 #' @return Single double value of the requested statistic
 #' @keywords internal
 #' @examples
@@ -364,17 +358,13 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #' @param sound_xptr External pointer to Sound object
 #' @param time_averaging_window Time averaging window in seconds (default 0.01)
 #' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
-#' @param pitch_floor Minimum F0 in Hz (default 60)
 #' @param pitch_ceiling Maximum F0 in Hz (default 330)
 #' @param subtract_trend Subtract tilt before smoothing (default TRUE)
-#' @param time_step Time step for cepstrogram in seconds (default 0.002)
 #' @param max_quefrency End of the trend-fit quefrency window in seconds (default
 #'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
 #'   (Fixed in v4.9.10: was previously ignored.)
 #'   was hardcoded to [0.003, 0.04] regardless of this and tilt_line_quefrency.
-#' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
-#' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
 #'   (default 0.003).
 #' @param line_type Trend line type (1=straight, 2=exponential decay)
 #' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
@@ -403,12 +393,9 @@ get_voice_quality_ultra_cpp <- function(sound_xptr, metrics, min_pitch, max_pitc
 #'
 #' @param sound_xptr External pointer to Sound object
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)
-#' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
-#' @param silence_threshold_db Silence threshold in dB (default -25)
 #' @param min_silent_duration Minimum silent interval duration in seconds (default 0.1)
 #' @param min_sounding_duration Minimum sounding interval duration in seconds (default 0.1)
 #' @param power_threshold_factor Power threshold as fraction of global power (default 0.3)
-#' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
 #' @param window_width Window width for v3.01 filtering in seconds (default 0.03)
 #' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 #' @return External pointer to concatenated voiced Sound object
@@ -1168,7 +1155,7 @@ sound_get_duration_direct <- function(sound_xptr) {
 #' Get Sound RMS directly
 #' @param sound_xptr External pointer to Sound
 #' @param from_time Start time (0 = start)
-#' @param to_time End time (0 = end)
+#' @inheritParams pladdrr_shared_sound to_time
 #' @return RMS value
 #' @keywords internal
 #' @examples
@@ -1181,9 +1168,7 @@ sound_get_rms_direct <- function(sound_xptr, from_time = 0, to_time = 0) {
 
 #' Get pitch value at time directly (no R6 dispatch)
 #' @param pitch_xptr External pointer to Pitch
-#' @param time Time in seconds
 #' @param unit 0=Hertz, 1=Hertz_log, 2=mel, 3=logHertz, 4=semitones
-#' @param interpolate Whether to interpolate
 #' @return Pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -1198,7 +1183,6 @@ pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TR
 #' Get pitch mean directly
 #' @param pitch_xptr External pointer to Pitch
 #' @param from_time Start time (0 = start)
-#' @param to_time End time (0 = end)
 #' @param unit Unit code
 #' @return Mean pitch
 #' @examples
@@ -1232,7 +1216,7 @@ pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit 
 #' @param from_time Start time
 #' @param to_time End time
 #' @param unit Unit code
-#' @param interpolate Whether to interpolate
+#' @inheritParams pladdrr_shared_params interpolate
 #' @return Minimum pitch
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -1249,7 +1233,6 @@ pitch_get_minimum_direct <- function(pitch_xptr, from_time = 0, to_time = 0, uni
 #' @param from_time Start time
 #' @param to_time End time
 #' @param unit Unit code
-#' @param interpolate Whether to interpolate
 #' @return Maximum pitch
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -1294,7 +1277,7 @@ pitch_count_voiced_direct <- function(pitch_xptr) {
 #' Get formant value at time directly
 #' @param formant_xptr External pointer to Formant
 #' @param formant_number Formant number (1=F1, 2=F2, etc)
-#' @param time Time in seconds
+#' @inheritParams pladdrr_shared_params time
 #' @param unit 0=Hertz, 1=Bark
 #' @return Formant frequency
 #' @keywords internal
@@ -1310,7 +1293,6 @@ formant_get_value_direct <- function(formant_xptr, formant_number, time, unit = 
 #' Get formant bandwidth at time directly
 #' @param formant_xptr External pointer to Formant
 #' @param formant_number Formant number
-#' @param time Time in seconds
 #' @param unit Unit code
 #' @return Bandwidth
 #' @keywords internal
@@ -1342,7 +1324,6 @@ formant_get_mean_direct <- function(formant_xptr, formant_number, from_time = 0,
 
 #' Get intensity value at time directly
 #' @param intensity_xptr External pointer to Intensity
-#' @param time Time in seconds
 #' @param interpolation 0=nearest, 1=linear, 2=cubic, 3=sinc70, 4=sinc700
 #' @return Intensity in dB
 #' @keywords internal
@@ -1403,8 +1384,6 @@ intensity_get_maximum_direct <- function(intensity_xptr, from_time = 0, to_time 
 
 #' Get harmonicity value at time directly
 #' @param harmonicity_xptr External pointer to Harmonicity
-#' @param time Time in seconds
-#' @param interpolation Interpolation method
 #' @return HNR in dB
 #' @keywords internal
 #' @examples
@@ -1433,9 +1412,6 @@ harmonicity_get_mean_direct <- function(harmonicity_xptr, from_time = 0, to_time
 
 #' Create Pitch from Sound directly (no R6 wrapping)
 #' @param sound_xptr External pointer to Sound
-#' @param time_step Time step (0 = auto)
-#' @param pitch_floor Minimum pitch (Hz)
-#' @param pitch_ceiling Maximum pitch (Hz)
 #' @return External pointer to Pitch
 #' @keywords internal
 #' @examples
@@ -1449,11 +1425,7 @@ sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, p
 
 #' Create Formant from Sound directly (Burg method)
 #' @param sound_xptr External pointer to Sound
-#' @param time_step Time step (0 = auto)
-#' @param max_formants Maximum number of formants
-#' @param max_formant Maximum formant frequency (Hz)
-#' @param window_length Window length (seconds)
-#' @param pre_emphasis Pre-emphasis frequency (Hz)
+#' @inheritParams pladdrr_shared_sound_legacy time_step
 #' @return External pointer to Formant
 #' @keywords internal
 #' @examples
@@ -1468,8 +1440,6 @@ sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5,
 #' Create Intensity from Sound directly
 #' @param sound_xptr External pointer to Sound
 #' @param minimum_pitch Minimum pitch for analysis (Hz)
-#' @param time_step Time step (0 = auto)
-#' @param subtract_mean Whether to subtract mean
 #' @return External pointer to Intensity
 #' @keywords internal
 #' @examples
@@ -1483,10 +1453,6 @@ sound_to_intensity_direct <- function(sound_xptr, minimum_pitch = 100, time_step
 
 #' Create Harmonicity from Sound directly (cross-correlation)
 #' @param sound_xptr External pointer to Sound
-#' @param time_step Time step
-#' @param minimum_pitch Minimum pitch (Hz)
-#' @param silence_threshold Silence threshold
-#' @param periods_per_window Periods per window
 #' @return External pointer to Harmonicity
 #' @keywords internal
 #' @examples
@@ -1517,7 +1483,6 @@ pitch_get_all_stats_direct <- function(pitch_xptr, from_time = 0, to_time = 0, u
 
 #' Get F1-F4 at single time point
 #' @param formant_xptr External pointer to Formant
-#' @param time Time in seconds
 #' @param unit Unit code (0=Hertz, 1=Bark)
 #' @return NumericVector with F1, F2, F3, F4
 #' @keywords internal
@@ -1532,11 +1497,8 @@ formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
 
 #' Get PointProcess mean period directly
 #' @param pp_xptr External pointer to PointProcess
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
-#' @param period_floor Minimum period (default: 0.0001)
-#' @param period_ceiling Maximum period (default: 0.02)
-#' @param max_period_factor Maximum period factor (default: 1.3)
+#' @inheritParams pladdrr_shared_sound from_time
+#' @inheritParams pladdrr_shared_sound to_time
 #' @return Mean period in seconds
 #' @keywords internal
 #' @examples
@@ -1550,11 +1512,6 @@ get_point_process_mean_period_direct <- function(pp_xptr, from_time = 0, to_time
 
 #' Get PointProcess standard deviation of periods directly
 #' @param pp_xptr External pointer to PointProcess
-#' @param from_time Start time (0 = beginning)
-#' @param to_time End time (0 = end)
-#' @param period_floor Minimum period
-#' @param period_ceiling Maximum period
-#' @param max_period_factor Maximum period factor
 #' @return Standard deviation of periods
 #' @keywords internal
 #' @examples
@@ -1611,8 +1568,8 @@ sound_stats <- function(sound_data) {
 #' Creates a praat_sound object structure from R numeric data
 #'
 #' @param values Numeric vector of sound amplitude values
-#' @param sampling_rate Sampling rate in Hz (default: 44100)
-#' @param start_time Start time in seconds (default: 0.0)
+#' @inheritParams pladdrr_shared_params sampling_rate
+#' @inheritParams pladdrr_shared_timeauto75 start_time
 #' @return List representing a praat_sound object with values and metadata
 #' @examples
 #' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
@@ -1688,7 +1645,7 @@ set_global_simd_enabled <- function(enabled) {
 #' accessor in a loop.
 #'
 #' @param sound_xptr External pointer to Sound object
-#' @param channel Channel number (1-based, default 1)
+#' @inheritParams pladdrr_shared_timeauto75 channel
 #'
 #' @return Numeric vector (independent copy of sample data).
 #'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
@@ -1740,7 +1697,6 @@ sound_times_fast <- function(sound_xptr) {
 #' pointer access.
 #'
 #' @param sound_xptr External pointer to Sound object
-#' @param zerocopy Ignored (kept for backward compatibility). All paths copy.
 #'
 #' @return Numeric matrix with dimensions (n_samples x n_channels)
 #'
@@ -1773,8 +1729,6 @@ is_fast_access <- function(x) {
 #' Optionally resamples the window to a target sampling rate.
 #'
 #' @param path Path to sound file
-#' @param start Start time of window in seconds
-#' @param end End time of window in seconds
 #' @param resample_to Target sampling rate (Hz). If NULL or 0, no resampling. (default: NULL)
 #' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to start at 0. (default: FALSE)
 #' @return External pointer to Sound object containing the windowed (and optionally resampled) audio
@@ -1875,7 +1829,6 @@ sound_pool_resize <- function(max_size) {
 #'
 #' @param xmin Start time
 #' @param xmax End time
-#' @param nx Number of samples
 #' @param dx Sample period
 #' @param x1 First sample time
 #' @param ny Number of channels
@@ -2269,8 +2222,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Avoids O(n) R→C boundary crossings from calling extract_part() in a loop.
 #'
 #' @param xptr Sound external pointer
-#' @param from_times Numeric vector of start times
-#' @param to_times Numeric vector of end times
 #' @param window_shape Window shape (0=rectangular, etc.)
 #' @param relative_width Relative width for windowing
 #' @param preserve_times Whether to preserve original times
@@ -2308,7 +2259,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pitch_ceiling Pitch ceiling in Hz
 #' @param max_candidates Maximum candidates per frame
 #' @param very_accurate Use very accurate algorithm
-#' @param silence_threshold Silence threshold
 #' @param voicing_threshold Voicing threshold
 #' @param octave_cost Octave cost
 #' @param octave_jump_cost Octave jump cost
@@ -2331,7 +2281,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pitch_ceiling Pitch ceiling in Hz
 #' @param max_candidates Maximum candidates per frame
 #' @param very_accurate Use very accurate algorithm
-#' @param silence_threshold Silence threshold
 #' @param voicing_threshold Voicing threshold
 #' @param octave_cost Octave cost
 #' @param octave_jump_cost Octave jump cost
@@ -2346,8 +2295,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Extract formants from multiple sounds in one C++ call (internal)
 #'
 #' @param sound_list List of Sound external pointers
-#' @param time_step Time step in seconds
-#' @param max_formants Maximum number of formants
 #' @param max_frequency Maximum frequency in Hz
 #' @param window_length Window length in seconds
 #' @param pre_emphasis_from Pre-emphasis from frequency
@@ -2363,7 +2310,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param sound_list List of Sound external pointers
 #' @param minimum_pitch Minimum pitch for analysis
 #' @param time_step Time step (0 = automatic)
-#' @param subtract_mean Whether to subtract mean
 #' @return List of Intensity external pointers
 #' @keywords internal
 #' @noRd
@@ -2377,8 +2323,8 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Combines extract_parts_batch + to_pitch_batch in a single C++ call.
 #'
 #' @param xptr Sound external pointer
-#' @param from_times Numeric vector of start times
-#' @param to_times Numeric vector of end times
+#' @inheritParams pladdrr_shared_params from_times
+#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Pitch time step
 #' @param pitch_floor Pitch floor in Hz
 #' @param pitch_ceiling Pitch ceiling in Hz
@@ -2392,10 +2338,9 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Combined extract-and-analyze: extract parts and compute formants in one C++ call (internal)
 #'
 #' @param xptr Sound external pointer
-#' @param from_times Numeric vector of start times
-#' @param to_times Numeric vector of end times
+#' @inheritParams pladdrr_shared_params from_times
+#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Formant time step
-#' @param max_formants Maximum number of formants
 #' @param max_frequency Maximum frequency
 #' @param window_length Window length
 #' @param pre_emphasis_from Pre-emphasis frequency
@@ -2413,7 +2358,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param xptr Pitch external pointer
 #' @param times Numeric vector of times
 #' @param unit Unit (0=Hertz, 1=Hertz logarithmic, etc.)
-#' @param interpolate Whether to interpolate
 #' @return Numeric vector of pitch values
 #' @keywords internal
 #' @noRd

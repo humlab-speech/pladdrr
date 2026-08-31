@@ -325,7 +325,7 @@ sound_to_pitch_shs_batch <- function(sounds,
 #' @param time_step Numeric. Time step (default: 0.005)
 #' @param window_duration Numeric. Analysis window (default: 0.04)
 #' @param min_frequency Numeric. Minimum frequency in Hz (default: 70)
-#' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
+#' @inheritParams pladdrr_shared_analysis max_frequency
 #' @param n_filters Integer. Number of gamma-tone filters (default: 250)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
 #' @inheritParams pladdrr_shared_params max_candidates
@@ -385,7 +385,7 @@ sound_to_pitch_spinet_batch <- function(sounds,
 #' Extract Formants from Multiple Sounds in Single C++ Call
 #'
 #' @inheritParams pladdrr_shared_params sounds
-#' @param time_step Numeric. Time step in seconds (default: 0.005)
+#' @inheritParams pladdrr_shared_analysis time_step
 #' @param max_formants Numeric. Maximum number of formants (default: 5)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5500)
 #' @param window_length Numeric. Window length in seconds (default: 0.025)
@@ -439,7 +439,7 @@ sound_to_formant_batch <- function(sounds,
 #' Extract Intensity from Multiple Sounds in Single C++ Call
 #'
 #' @inheritParams pladdrr_shared_params sounds
-#' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
+#' @inheritParams pladdrr_shared_analysis minimum_pitch
 #' @inheritParams pladdrr_shared_params time_step
 #' @param subtract_mean Logical. Subtract mean pressure (default: TRUE)
 #' @param return_r6 Logical. Return R6 Intensity objects (TRUE) or raw xptrs
@@ -491,8 +491,8 @@ sound_to_intensity_batch <- function(sounds,
 #' extracting each part and calling `$to_pitch()` on it in a loop.
 #'
 #' @param sound Sound object (R6) or external pointer
-#' @param from_times Numeric vector of start times
-#' @param to_times Numeric vector of end times
+#' @inheritParams pladdrr_shared_params from_times
+#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Numeric. Pitch time step (0 = automatic)
 #' @inheritParams pladdrr_shared_params pitch_floor
 #' @inheritParams pladdrr_shared_params pitch_ceiling
@@ -539,8 +539,8 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
 #' Extract Parts and Analyze Formants in Single C++ Call
 #'
 #' @param sound Sound object (R6) or external pointer
-#' @param from_times Numeric vector of start times
-#' @param to_times Numeric vector of end times
+#' @inheritParams pladdrr_shared_params from_times
+#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Numeric. Formant time step (default: 0.005)
 #' @param max_formants Numeric. Maximum number of formants (default: 5)
 #' @param max_frequency Numeric. Maximum frequency (default: 5500)

@@ -10,7 +10,7 @@
 #'
 #' @param values Numeric vector of amplitude values
 #' @inheritParams pladdrr_shared_params sampling_rate
-#' @param start_time Start time in seconds (default: 0.0)
+#' @inheritParams pladdrr_shared_analysis start_time
 #'
 #' @return Sound R6 object
 #'

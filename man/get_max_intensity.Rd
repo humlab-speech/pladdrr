@@ -9,7 +9,7 @@ get_max_intensity(intensity, time_range = NULL)
 \arguments{
 \item{intensity}{An Intensity R6 object}
 
-\item{time_range}{Optional time range}
+\item{time_range}{Optional time range c(start, end)}
 }
 \value{
 Maximum intensity in dB

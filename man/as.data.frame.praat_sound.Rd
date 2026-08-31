@@ -8,8 +8,6 @@
 }
 \arguments{
 \item{x}{A praat_sound object}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A data.table (inherits from data.frame) with two columns:

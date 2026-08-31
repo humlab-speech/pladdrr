@@ -411,7 +411,7 @@ to_pitch_spinet_direct <- function(sound,
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @inheritParams pladdrr_shared_timeauto time_step
-#' @param max_formants Maximum number of formants
+#' @inheritParams pladdrr_shared_analysis max_formants
 #' @inheritParams pladdrr_shared_params max_formant
 #' @param window_length Window length (seconds)
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
@@ -489,7 +489,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 #' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step
 #' @param minimum_pitch Minimum pitch (Hz)
-#' @param silence_threshold Silence threshold
+#' @inheritParams pladdrr_shared_analysis silence_threshold
 #' @param periods_per_window Periods per window
 #'
 #' @return External pointer to Harmonicity
@@ -725,7 +725,7 @@ to_spectrum_direct <- function(sound, fast = TRUE) {
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param window_length Numeric. Window length in seconds (default: 0.005)
-#' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
+#' @inheritParams pladdrr_shared_analysis max_frequency
 #' @param time_step Numeric. Time step in seconds (default: 0.002)
 #' @param frequency_step Numeric. Frequency step in Hz (default: 20)
 #' @param window_shape Character. Window shape (default: "Gaussian")
@@ -788,8 +788,8 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 #' Create PointProcess from Sound Directly (returns XPtr)
 #'
 #' @inheritParams pladdrr_shared_params sound
-#' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
+#' @inheritParams pladdrr_shared_analysis pitch_floor
+#' @inheritParams pladdrr_shared_analysis pitch_ceiling
 #' @param max_period_factor Numeric. Max period factor (default: 1.3)
 #' @param max_amplitude_factor Numeric. Max amplitude factor (default: 1.6)
 #' @param time_step Numeric. Time step in seconds (0 = auto)

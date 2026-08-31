@@ -29,8 +29,6 @@
 \item{title}{Character. Plot title (default: "Spectrum")}
 
 \item{color}{Character. Line color (default: "navy")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

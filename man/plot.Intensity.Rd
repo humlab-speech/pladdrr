@@ -26,8 +26,6 @@
 \item{title}{Character. Plot title (default: "Intensity")}
 
 \item{color}{Character. Line color (default: "darkorange")}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

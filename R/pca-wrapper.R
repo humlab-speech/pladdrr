@@ -150,8 +150,7 @@ PCA <- function(.xptr = NULL) {
 #'
 #' Performs Principal Component Analysis on a numeric matrix.
 #'
-#' @param data Numeric matrix where rows are observations and columns are
-#'  variables
+#' @inheritParams pladdrr_shared_analysis data
 #' @return A PCA object
 #' @examples
 #' set.seed(1)

@@ -8,8 +8,6 @@
 }
 \arguments{
 \item{object}{A praat_pitch object}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 The object, invisibly

@@ -32,8 +32,6 @@
 \item{title}{Character. Plot title (default: "Spectrogram")}
 
 \item{dynamic_range}{Numeric. Dynamic range in dB (default: 70)}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

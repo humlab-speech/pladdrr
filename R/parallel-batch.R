@@ -214,8 +214,8 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 #'
 #' @inheritParams pladdrr_shared_params files
 #' @inheritParams pladdrr_shared_params n_cores
-#' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
-#' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
+#' @inheritParams pladdrr_shared_analysis pitch_floor
+#' @inheritParams pladdrr_shared_analysis pitch_ceiling
 #' @param time_step Numeric. Time step (default: 0, auto)
 #'
 #' @return List of Pitch objects
@@ -250,7 +250,7 @@ extract_pitch_parallel <- function(files, n_cores = NULL,
 #'
 #' @inheritParams pladdrr_shared_params files
 #' @inheritParams pladdrr_shared_params n_cores
-#' @param time_step Numeric. Time step in seconds (default: 0.005)
+#' @inheritParams pladdrr_shared_analysis time_step
 #' @param max_formants Numeric. Max number of formants (default: 5)
 #' @param max_frequency Numeric. Max frequency in Hz (default: 5500)
 #'
@@ -287,7 +287,7 @@ extract_formant_parallel <- function(files, n_cores = NULL,
 #'
 #' @inheritParams pladdrr_shared_params files
 #' @inheritParams pladdrr_shared_params n_cores
-#' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
+#' @inheritParams pladdrr_shared_analysis minimum_pitch
 #' @param time_step Numeric. Time step (default: 0, auto)
 #'
 #' @return List of Intensity objects

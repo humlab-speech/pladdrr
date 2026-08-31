@@ -37,7 +37,7 @@ NULL
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Sound")
 #' @param color Character. Line color (default: "steelblue")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -108,7 +108,7 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 #' @param title Character. Plot title (default: "Pitch")
 #' @param color Character. Line color (default: "darkgreen")
 #' @param show_voicing Logical. Color by voicing (default: TRUE)
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -201,7 +201,7 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Formant")
 #' @param colors Character vector. Colors for each formant (default: auto)
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -278,7 +278,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Intensity")
 #' @param color Character. Line color (default: "darkorange")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -348,7 +348,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Spectrogram")
 #' @param dynamic_range Numeric. Dynamic range in dB (default: 70)
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -416,7 +416,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Spectrum")
 #' @param color Character. Line color (default: "navy")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -495,7 +495,7 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "LTAS")
 #' @param color Character. Line color (default: "darkred")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -568,7 +568,7 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Harmonicity")
 #' @param color Character. Line color (default: "darkviolet")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -636,7 +636,7 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "PointProcess")
 #' @param color Character. Line color (default: "black")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -741,7 +741,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @param color_scale Character. Color scale to use: "viridis", "magma",
 #'  "plasma",
 #'   "inferno", "cividis", or "greyscale" (default: "viridis")
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -848,7 +848,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @param color Character. Line color (default: "darkblue")
 #' @param mark_peak Logical. Mark the peak prominence if available (default:
 #'  TRUE)
-#' @param ... Additional arguments (currently unused)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'
@@ -961,7 +961,7 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #'  tiers)
 #' @param from_time Start time in seconds (NULL = beginning)
 #' @param to_time End time in seconds (NULL = end)
-#' @param ... Additional arguments (ignored)
+#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot2 object
 #'

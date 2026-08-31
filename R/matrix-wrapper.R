@@ -182,7 +182,7 @@ matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
 #' Creates a new Matrix object with given dimensions. Domain defaults to [0,1]
 #'  for both axes.
 #'
-#' @param numberOfRows Number of rows
+#' @inheritParams pladdrr_shared_analysis numberOfRows
 #' @param numberOfColumns Number of columns
 #' @return A Matrix object
 #' @seealso \code{\link{matrix_create}} for full parameter control,

@@ -165,8 +165,10 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param time_step Numeric. Time step (0 = automatic)
 #' @param name Parameter name for error messages
 #' @param times Numeric vector of time points (in seconds)
+#' @param from_times Numeric vector of start times
+#' @param to_times Numeric vector of end times
 #' @param intensity An Intensity R6 object
-#' @param time_range Optional time range
+#' @param time_range Optional time range c(start, end)
 #' @param pitch Pitch object or external pointer
 #' @param pitch_floor Numeric. Pitch floor in Hz (default: 75)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 600)
@@ -275,3 +277,20 @@ pladdrr_shared_maxformant <- function() invisible(NULL)
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
 #' @rdname pladdrr_shared_timeauto75
 pladdrr_shared_timeauto75 <- function() invisible(NULL)
+
+#' Shared parameter docs for analysis defaults (batch/parallel wrappers)
+#'
+#' @param time_step Numeric. Time step in seconds (default: 0.005)
+#' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
+#' @param data Numeric matrix where rows are observations and columns are
+#'   variables
+#' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
+#' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
+#' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
+#' @param channel Channel number (1-based, default 1)
+#' @param silence_threshold Silence threshold
+#' @param max_formants Maximum number of formants
+#' @param start_time Start time in seconds (default: 0.0)
+#' @param numberOfRows Number of rows
+#' @rdname pladdrr_shared_analysis
+pladdrr_shared_analysis <- function() invisible(NULL)

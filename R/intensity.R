@@ -55,7 +55,7 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #' **DEPRECATED:** Use \code{intensity$get_mean()} instead.
 #'
 #' @inheritParams pladdrr_shared_params intensity
-#' @param time_range Optional time range c(start, end)
+#' @inheritParams pladdrr_shared_params time_range
 #' @return Mean intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =

@@ -29,8 +29,6 @@
 \item{title}{Character. Plot title (default: "Formant")}
 
 \item{colors}{Character vector. Colors for each formant (default: auto)}
-
-\item{...}{Additional arguments (currently unused)}
 }
 \value{
 A ggplot2 object

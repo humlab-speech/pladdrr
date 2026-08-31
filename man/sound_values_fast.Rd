@@ -8,8 +8,6 @@ sound_values_fast(sound_xptr, channel = 1L)
 }
 \arguments{
 \item{sound_xptr}{External pointer to Sound object}
-
-\item{channel}{Channel number (1-based, default 1)}
 }
 \value{
 Numeric vector (independent copy of sample data).
