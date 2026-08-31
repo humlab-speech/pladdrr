@@ -8,4 +8,5 @@ linters: linters_with_defaults(
     semicolon_linter = NULL,
     indentation_linter = NULL
   )
-exclusions: list("R/RcppExports.R")
+exclusions: list("R/RcppExports.R", "tests/testthat", "inst/benchmarks",
+                 "inst/examples", "data-raw", "vignettes")

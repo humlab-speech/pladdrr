@@ -1051,7 +1051,7 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 # Point times from a PointProcess object.
 .point_process_times <- function(x) {
   n_points <- x$get_number_of_points()
-  vapply(seq_len(n_points), function(i) x$get_time_from_index(i), numeric(1))
+  vapply(seq_len(n_points), x$get_time_from_index, numeric(1))
 }
 
 

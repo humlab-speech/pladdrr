@@ -378,9 +378,7 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
   }
   
   # Convert to data frame
-  df <- do.call(rbind, lapply(results, function(x) {
-    as.data.frame(x, stringsAsFactors = FALSE)
-  }))
+  df <- do.call(rbind, lapply(results, as.data.frame, stringsAsFactors = FALSE))
   
   # Aggregate if needed
   if (aggregate_by == "label" && nrow(df) > 0) {
@@ -733,7 +731,7 @@ aggregate_measurements <- function(measurements,
     close(pb)
     results
   } else {
-    lapply(files, function(f) .process_batch_file(f, func, ...))
+    lapply(files, .process_batch_file, func, ...)
   }
 }
 

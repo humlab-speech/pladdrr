@@ -110,16 +110,15 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   # macOS fork has known issues with R's event loop; PSOCK is safer
   is_macos <- Sys.info()[["sysname"]] == "Darwin"
   if (.Platform$OS.type == "unix" && !is_macos) {
-    results <- parallel::mclapply(files,
-      function(f) .analyze_one_file(f, tpw, analysis_func,
-        ...), mc.cores = n_cores)
+    results <- parallel::mclapply(files, .analyze_one_file,
+      tpw, analysis_func, ..., mc.cores = n_cores)
   } else {
     # Windows: use PSOCK cluster
     cl <- .make_worker_cluster(n_cores,
       c("analysis_func", "tpw", ".analyze_one_file"))
 
-    results <- parallel::parLapply(cl, files,
-      function(f) .analyze_one_file(f, tpw, analysis_func, ...))
+    results <- parallel::parLapply(cl, files, .analyze_one_file,
+      tpw, analysis_func, ...)
   }
 
   results
