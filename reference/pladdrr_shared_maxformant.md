@@ -5,7 +5,7 @@ Shared parameter docs for display-formant functions
 ## Usage
 
 ``` r
-pladdrr_shared_maxformant()
+pladdrr_shared_maxformant(max_formant = 3)
 ```
 
 ## Arguments

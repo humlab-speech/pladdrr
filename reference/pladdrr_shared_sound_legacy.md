@@ -5,7 +5,7 @@ Shared parameter docs for functions taking an S3/R6 Sound
 ## Usage
 
 ``` r
-pladdrr_shared_sound_legacy()
+pladdrr_shared_sound_legacy(sound = NULL)
 ```
 
 ## Arguments

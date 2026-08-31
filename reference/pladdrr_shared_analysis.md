@@ -5,7 +5,19 @@ Shared parameter docs for analysis defaults (batch/parallel wrappers)
 ## Usage
 
 ``` r
-pladdrr_shared_analysis()
+pladdrr_shared_analysis(
+  time_step = 0.005,
+  minimum_pitch = 100,
+  data = NULL,
+  max_frequency = 5000,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  channel = 1,
+  silence_threshold = NULL,
+  max_formants = NULL,
+  start_time = 0,
+  numberOfRows = NULL
+)
 ```
 
 ## Arguments

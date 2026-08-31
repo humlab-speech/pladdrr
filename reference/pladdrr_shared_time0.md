@@ -5,7 +5,7 @@ Shared parameter docs for functions using 0-based time conventions
 ## Usage
 
 ``` r
-pladdrr_shared_time0()
+pladdrr_shared_time0(from_time = NULL, to_time = NULL)
 ```
 
 ## Arguments

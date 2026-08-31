@@ -102,3 +102,30 @@ contain one or more tiers, where each tier can be:
 - `extract_part(start, end)` - extract a time range
 
 ## Examples
+
+``` r
+# Create new TextGrid with one interval tier and one point tier
+# (tier_names lists all tiers; point_tiers names the subset that are point
+# tiers)
+tg <- textgrid_create(0, 1, "words tones", "tones")
+tg$get_tier_names()
+#> [1] "words" "tones"
+
+# Add boundaries and labels (IntervalTier)
+tg$insert_boundary("words", 0.4)
+tg$insert_boundary("words", 0.7)
+tg$set_interval_text("words", 1, "hello")
+tg$set_interval_text("words", 2, "world")
+
+# Add points and labels (PointTier)
+tg$insert_point("tones", 0.2, "H*")
+tg$insert_point("tones", 0.8, "L-L%")
+
+# Query
+tg$get_number_of_intervals("words")
+#> [1] 3
+label <- tg$get_label_at_time("words", 0.5)
+
+# Export to R
+df <- tg$as_data_frame()
+```

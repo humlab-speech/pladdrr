@@ -53,6 +53,10 @@ plot(
 
   Numeric. Dynamic range in dB (default: 70)
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A ggplot2 object

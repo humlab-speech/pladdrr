@@ -50,6 +50,10 @@ plot(
 
   Logical. Mark the peak prominence if available (default: TRUE)
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A ggplot2 object

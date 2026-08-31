@@ -43,6 +43,10 @@ plot(
 
   Character. Line color (default: "steelblue")
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A ggplot2 object

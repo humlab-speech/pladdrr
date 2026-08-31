@@ -6,7 +6,7 @@ time-step
 ## Usage
 
 ``` r
-pladdrr_shared_timeauto75()
+pladdrr_shared_timeauto75(time_step = NULL)
 ```
 
 ## Arguments

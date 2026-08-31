@@ -43,6 +43,10 @@ plot(
 
   Character. Line color (default: "darkorange")
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A ggplot2 object

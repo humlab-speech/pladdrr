@@ -5,7 +5,7 @@ Shared parameter docs for functions taking a plain Sound object
 ## Usage
 
 ``` r
-pladdrr_shared_sound()
+pladdrr_shared_sound(sound = NULL)
 ```
 
 ## Arguments

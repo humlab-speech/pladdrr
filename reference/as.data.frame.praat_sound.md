@@ -16,6 +16,10 @@ as.data.frame(x, ...)
 
   A praat_sound object
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A data.table (inherits from data.frame) with two columns:

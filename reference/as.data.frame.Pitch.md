@@ -36,6 +36,10 @@ as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 
   Ignored
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 A data.table (inherits from data.frame) with pitch measurements

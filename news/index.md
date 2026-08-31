@@ -27,6 +27,20 @@
   `expect_type`, `expect_s3_class`, `expect_identical` for exact integer
   comparisons, `expect_false`, `fixed = TRUE` on literal patterns,
   `anyNA`).
+- Parallel batch functions
+  ([`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md),
+  [`process_sounds_parallel()`](https://humlab-speech.github.io/pladdrr/reference/process_sounds_parallel.md))
+  now cap their automatic core count at 2 under `R CMD check` (honouring
+  `_R_CHECK_LIMIT_CORES_`), so the default-`n_cores` tests pass CRAN’s
+  process-spawn limit while dev/CI still uses all cores.
+- Fixed a broken example in the
+  [`textgrid_create()`](https://humlab-speech.github.io/pladdrr/reference/textgrid_create.md)
+  docs (an uncommented continuation line) that made `R CMD check` fail
+  to run any examples.
+- Documented the `...` argument on `plot.*`, `as.data.frame.*`,
+  `print.*`, and `summary.*` methods, and synced the shared
+  `pladdrr_shared_*` parameter docs with their usage — clears the “Rd
+  sections” warning.
 
 ## pladdrr 5.0.4
 

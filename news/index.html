@@ -77,6 +77,9 @@
 <li>Removed the R-devel “package has both <code>src/Makevars.in</code> and <code>src/Makevars</code>” NOTE: the <code>cleanup</code> script now deletes the configure-generated <code>src/Makevars</code> from the build copy.</li>
 <li>Expanded <code>inst/WORDLIST</code> and fixed a typo; the documentation now passes <code>spelling::spell_check_package()</code>.</li>
 <li>Modernized the test suite (~440 assertion conversions: <code>expect_gt/gte/ lt/lte</code>, <code>expect_length</code>, <code>expect_named</code>, <code>expect_type</code>, <code>expect_s3_class</code>, <code>expect_identical</code> for exact integer comparisons, <code>expect_false</code>, <code>fixed = TRUE</code> on literal patterns, <code>anyNA</code>).</li>
+<li>Parallel batch functions (<code><a href="../reference/analyze_files_parallel.html">analyze_files_parallel()</a></code>, <code><a href="../reference/process_sounds_parallel.html">process_sounds_parallel()</a></code>) now cap their automatic core count at 2 under <code>R CMD check</code> (honouring <code>_R_CHECK_LIMIT_CORES_</code>), so the default-<code>n_cores</code> tests pass CRAN’s process-spawn limit while dev/CI still uses all cores.</li>
+<li>Fixed a broken example in the <code><a href="../reference/textgrid_create.html">textgrid_create()</a></code> docs (an uncommented continuation line) that made <code>R CMD check</code> fail to run any examples.</li>
+<li>Documented the <code>...</code> argument on <code>plot.*</code>, <code>as.data.frame.*</code>, <code>print.*</code>, and <code>summary.*</code> methods, and synced the shared <code>pladdrr_shared_*</code> parameter docs with their usage — clears the “Rd sections” warning.</li>
 </ul></div>
 </div>
     <div class="section level2">

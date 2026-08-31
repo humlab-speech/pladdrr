@@ -16,6 +16,10 @@ summary(object, ...)
 
   A praat_sound object
 
+- ...:
+
+  Additional arguments passed to the underlying function or ignored.
+
 ## Value
 
 The object, invisibly

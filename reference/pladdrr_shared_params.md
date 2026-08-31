@@ -7,7 +7,52 @@ inherit from this topic via \`@inheritParams pladdrr_shared_params
 ## Usage
 
 ``` r
-pladdrr_shared_params()
+pladdrr_shared_params(
+  sound = NULL,
+  from_time = NULL,
+  to_time = NULL,
+  garnish = NULL,
+  sounds = NULL,
+  time = NULL,
+  sampling_rate = 44100,
+  return_r6 = NULL,
+  time_step = NULL,
+  name = NULL,
+  times = NULL,
+  from_times = NULL,
+  to_times = NULL,
+  intensity = NULL,
+  time_range = NULL,
+  pitch = NULL,
+  pitch_floor = 75,
+  pitch_ceiling = 600,
+  max_candidates = 15,
+  unit = NULL,
+  row.names = NULL,
+  optional = NULL,
+  fmin = NULL,
+  fmax = NULL,
+  x = NULL,
+  smooth = NULL,
+  tmin = NULL,
+  tmax = NULL,
+  title = NULL,
+  tier = NULL,
+  textgrid = NULL,
+  sound1 = NULL,
+  signal_outside = NULL,
+  scaling = NULL,
+  pointprocess = NULL,
+  n_cores = NULL,
+  max_pitch = 600,
+  interpolate = NULL,
+  from_freq = NULL,
+  files = NULL,
+  duration = 1,
+  cepstrogram = NULL,
+  max_formant = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -27,10 +72,6 @@ pladdrr_shared_params()
 - garnish:
 
   Logical. Add axis labels and title (default: TRUE)
-
-- ...:
-
-  Additional arguments (currently unused)
 
 - sounds:
 
@@ -187,3 +228,7 @@ pladdrr_shared_params()
 - max_formant:
 
   Maximum formant frequency (Hz)
+
+- ...:
+
+  Additional arguments (currently unused)
