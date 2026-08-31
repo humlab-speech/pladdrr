@@ -73,7 +73,6 @@ double sound_get_duration_direct(SEXP sound_xptr) {
 //' Get Sound RMS directly
 //' @param sound_xptr External pointer to Sound
 //' @param from_time Start time (0 = start)
-//' @param to_time End time (0 = end)
 //' @return RMS value
 //' @keywords internal
 //' @examples
@@ -99,9 +98,7 @@ double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_tim
 
 //' Get pitch value at time directly (no R6 dispatch)
 //' @param pitch_xptr External pointer to Pitch
-//' @param time Time in seconds
 //' @param unit 0=Hertz, 1=Hertz_log, 2=mel, 3=logHertz, 4=semitones
-//' @param interpolate Whether to interpolate
 //' @return Pitch value
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -122,7 +119,7 @@ double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool i
 //' Get pitch mean directly
 //' @param pitch_xptr External pointer to Pitch
 //' @param from_time Start time (0 = start)
-//' @param to_time End time (0 = end)
+//' @inheritParams pladdrr_shared_time0 to_time
 //' @param unit Unit code
 //' @return Mean pitch
 //' @examples
@@ -176,7 +173,6 @@ double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_t
 //' @param from_time Start time
 //' @param to_time End time
 //' @param unit Unit code
-//' @param interpolate Whether to interpolate
 //' @return Minimum pitch
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -204,7 +200,6 @@ double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to
 //' @param from_time Start time
 //' @param to_time End time
 //' @param unit Unit code
-//' @param interpolate Whether to interpolate
 //' @return Maximum pitch
 //' @examples
 //' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -280,7 +275,6 @@ int pitch_count_voiced_direct(SEXP pitch_xptr) {
 //' Get formant value at time directly
 //' @param formant_xptr External pointer to Formant
 //' @param formant_number Formant number (1=F1, 2=F2, etc)
-//' @param time Time in seconds
 //' @param unit 0=Hertz, 1=Bark
 //' @return Formant frequency
 //' @keywords internal
@@ -302,7 +296,6 @@ double formant_get_value_direct(SEXP formant_xptr, int formant_number, double ti
 //' Get formant bandwidth at time directly
 //' @param formant_xptr External pointer to Formant
 //' @param formant_number Formant number
-//' @param time Time in seconds
 //' @param unit Unit code
 //' @return Bandwidth
 //' @keywords internal
@@ -355,7 +348,6 @@ double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
 
 //' Get intensity value at time directly
 //' @param intensity_xptr External pointer to Intensity
-//' @param time Time in seconds
 //' @param interpolation 0=nearest, 1=linear, 2=cubic, 3=sinc70, 4=sinc700
 //' @return Intensity in dB
 //' @keywords internal
@@ -454,8 +446,6 @@ double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, d
 
 //' Get harmonicity value at time directly
 //' @param harmonicity_xptr External pointer to Harmonicity
-//' @param time Time in seconds
-//' @param interpolation Interpolation method
 //' @return HNR in dB
 //' @keywords internal
 //' @examples
@@ -503,9 +493,6 @@ double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, 
 
 //' Create Pitch from Sound directly (no R6 wrapping)
 //' @param sound_xptr External pointer to Sound
-//' @param time_step Time step (0 = auto)
-//' @param pitch_floor Minimum pitch (Hz)
-//' @param pitch_ceiling Maximum pitch (Hz)
 //' @return External pointer to Pitch
 //' @keywords internal
 //' @examples
@@ -535,11 +522,6 @@ SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
 
 //' Create Formant from Sound directly (Burg method)
 //' @param sound_xptr External pointer to Sound
-//' @param time_step Time step (0 = auto)
-//' @param max_formants Maximum number of formants
-//' @param max_formant Maximum formant frequency (Hz)
-//' @param window_length Window length (seconds)
-//' @param pre_emphasis Pre-emphasis frequency (Hz)
 //' @return External pointer to Formant
 //' @keywords internal
 //' @examples
@@ -573,8 +555,7 @@ SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
 //' Create Intensity from Sound directly
 //' @param sound_xptr External pointer to Sound
 //' @param minimum_pitch Minimum pitch for analysis (Hz)
-//' @param time_step Time step (0 = auto)
-//' @param subtract_mean Whether to subtract mean
+//' @inheritParams pladdrr_shared_timeauto time_step
 //' @return External pointer to Intensity
 //' @keywords internal
 //' @examples
@@ -606,10 +587,6 @@ SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
 
 //' Create Harmonicity from Sound directly (cross-correlation)
 //' @param sound_xptr External pointer to Sound
-//' @param time_step Time step
-//' @param minimum_pitch Minimum pitch (Hz)
-//' @param silence_threshold Silence threshold
-//' @param periods_per_window Periods per window
 //' @return External pointer to Harmonicity
 //' @keywords internal
 //' @examples
@@ -685,7 +662,6 @@ List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to
 
 //' Get F1-F4 at single time point
 //' @param formant_xptr External pointer to Formant
-//' @param time Time in seconds
 //' @param unit Unit code (0=Hertz, 1=Bark)
 //' @return NumericVector with F1, F2, F3, F4
 //' @keywords internal
@@ -719,11 +695,7 @@ NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit 
 
 //' Get PointProcess mean period directly
 //' @param pp_xptr External pointer to PointProcess
-//' @param from_time Start time (0 = beginning)
-//' @param to_time End time (0 = end)
-//' @param period_floor Minimum period (default: 0.0001)
-//' @param period_ceiling Maximum period (default: 0.02)
-//' @param max_period_factor Maximum period factor (default: 1.3)
+//' @inheritParams pladdrr_shared_time0 from_time
 //' @return Mean period in seconds
 //' @keywords internal
 //' @examples
@@ -760,11 +732,6 @@ double get_point_process_mean_period_direct(SEXP pp_xptr,
 
 //' Get PointProcess standard deviation of periods directly
 //' @param pp_xptr External pointer to PointProcess
-//' @param from_time Start time (0 = beginning)
-//' @param to_time End time (0 = end)
-//' @param period_floor Minimum period
-//' @param period_ceiling Maximum period
-//' @param max_period_factor Maximum period factor
 //' @return Standard deviation of periods
 //' @keywords internal
 //' @examples

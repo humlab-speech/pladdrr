@@ -1526,8 +1526,6 @@ XPtr<structSound> sound_concatenate_all(
 //' Avoids O(n) R→C boundary crossings from calling extract_part() in a loop.
 //'
 //' @param xptr Sound external pointer
-//' @param from_times Numeric vector of start times
-//' @param to_times Numeric vector of end times
 //' @param window_shape Window shape (0=rectangular, etc.)
 //' @param relative_width Relative width for windowing
 //' @param preserve_times Whether to preserve original times
@@ -1630,7 +1628,6 @@ Rcpp::List sound_to_pitch_batch(
 //' @param pitch_ceiling Pitch ceiling in Hz
 //' @param max_candidates Maximum candidates per frame
 //' @param very_accurate Use very accurate algorithm
-//' @param silence_threshold Silence threshold
 //' @param voicing_threshold Voicing threshold
 //' @param octave_cost Octave cost
 //' @param octave_jump_cost Octave jump cost
@@ -1695,7 +1692,7 @@ Rcpp::List sound_to_pitch_ac_batch(
 //' @param pitch_ceiling Pitch ceiling in Hz
 //' @param max_candidates Maximum candidates per frame
 //' @param very_accurate Use very accurate algorithm
-//' @param silence_threshold Silence threshold
+//' @inheritParams pladdrr_shared_analysis silence_threshold
 //' @param voicing_threshold Voicing threshold
 //' @param octave_cost Octave cost
 //' @param octave_jump_cost Octave jump cost
@@ -1752,8 +1749,6 @@ Rcpp::List sound_to_pitch_cc_batch(
 //' Extract formants from multiple sounds in one C++ call (internal)
 //'
 //' @param sound_list List of Sound external pointers
-//' @param time_step Time step in seconds
-//' @param max_formants Maximum number of formants
 //' @param max_frequency Maximum frequency in Hz
 //' @param window_length Window length in seconds
 //' @param pre_emphasis_from Pre-emphasis from frequency
@@ -1803,7 +1798,6 @@ Rcpp::List sound_to_formant_batch(
 //' @param sound_list List of Sound external pointers
 //' @param minimum_pitch Minimum pitch for analysis
 //' @param time_step Time step (0 = automatic)
-//' @param subtract_mean Whether to subtract mean
 //' @return List of Intensity external pointers
 //' @keywords internal
 //' @noRd
@@ -1845,8 +1839,6 @@ Rcpp::List sound_to_intensity_batch(
 //' Combines extract_parts_batch + to_pitch_batch in a single C++ call.
 //'
 //' @param xptr Sound external pointer
-//' @param from_times Numeric vector of start times
-//' @param to_times Numeric vector of end times
 //' @param time_step Pitch time step
 //' @param pitch_floor Pitch floor in Hz
 //' @param pitch_ceiling Pitch ceiling in Hz
@@ -1904,10 +1896,8 @@ Rcpp::List sound_extract_and_pitch_batch(
 //' Combined extract-and-analyze: extract parts and compute formants in one C++ call (internal)
 //'
 //' @param xptr Sound external pointer
-//' @param from_times Numeric vector of start times
-//' @param to_times Numeric vector of end times
 //' @param time_step Formant time step
-//' @param max_formants Maximum number of formants
+//' @inheritParams pladdrr_shared_analysis max_formants
 //' @param max_frequency Maximum frequency
 //' @param window_length Window length
 //' @param pre_emphasis_from Pre-emphasis frequency
@@ -1974,7 +1964,6 @@ Rcpp::List sound_extract_and_formant_batch(
 //' @param xptr Pitch external pointer
 //' @param times Numeric vector of times
 //' @param unit Unit (0=Hertz, 1=Hertz logarithmic, etc.)
-//' @param interpolate Whether to interpolate
 //' @return Numeric vector of pitch values
 //' @keywords internal
 //' @noRd

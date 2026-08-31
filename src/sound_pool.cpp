@@ -281,7 +281,6 @@ void sound_pool_resize(int max_size) {
 //'
 //' @param xmin Start time
 //' @param xmax End time
-//' @param nx Number of samples
 //' @param dx Sample period
 //' @param x1 First sample time
 //' @param ny Number of channels

@@ -294,8 +294,6 @@ NumericVector pitch_get_strengths_at_times(SEXP pitch_xptr, NumericVector times,
 //'
 //' @param pitch_xptr External pointer to Pitch object
 //' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75))
-//' @param from_time Start time (0 = beginning)
-//' @param to_time End time (0 = end)
 //' @param unit Integer code for unit (0=HERTZ, etc)
 //' @return Named numeric vector with quantile values
 //' @examples
@@ -827,12 +825,8 @@ List intensity_get_minimum_with_time(
 //'
 //' @param pp_xptr External pointer to PointProcess object
 //' @param sound_xptr External pointer to Sound object (required for shimmer)
-//' @param from_time Start time (0 = beginning)
-//' @param to_time End time (0 = end)
 //' @param period_floor Minimum period in seconds (default 0.0001)
 //' @param period_ceiling Maximum period in seconds (default 0.02)
-//' @param max_period_factor Maximum period factor (default 1.3)
-//' @param max_amplitude_factor Maximum amplitude factor (default 1.6)
 //' @return Named list with 11 voice quality measures
 //' @keywords internal
 //' @examples
@@ -927,7 +921,6 @@ List get_jitter_shimmer_batch_cpp(
 //' Reads only the 44-byte WAV header to calculate duration, avoiding full file
 //' loading.
 //'
-//' @param file_paths Character vector of .wav file paths
 //' @return Numeric vector of durations (seconds), NA for errors
 //' @keywords internal
 //' @examples
@@ -1035,7 +1028,6 @@ NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
 //' @param time_step Time step for pitch extraction
 //' @param min_pitch Pitch floor (Hz)
 //' @param max_pitch Pitch ceiling (Hz)
-//' @param voicing_threshold Voicing threshold (default 0.45)
 //' @return Single double value of the requested statistic
 //' @keywords internal
 //' @examples
@@ -1442,17 +1434,13 @@ static double PowerCepstrogram_getCPPS_fast(
 //' @param sound_xptr External pointer to Sound object
 //' @param time_averaging_window Time averaging window in seconds (default 0.01)
 //' @param quefrency_averaging_window Quefrency averaging window in seconds (default 0.001)
-//' @param pitch_floor Minimum F0 in Hz (default 60)
 //' @param pitch_ceiling Maximum F0 in Hz (default 330)
 //' @param subtract_trend Subtract tilt before smoothing (default TRUE)
-//' @param time_step Time step for cepstrogram in seconds (default 0.002)
 //' @param max_quefrency End of the trend-fit quefrency window in seconds (default
 //'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
 //'   (Fixed in v4.9.10: was previously ignored.)
 //'   was hardcoded to [0.003, 0.04] regardless of this and tilt_line_quefrency.
-//' @param tolerance Tolerance for peak detection (default 0.05)
 //' @param interpolation Peak interpolation method (0=none, 1=parabolic, 2=cubic, 3=sinc70, 4=sinc700)
-//' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
 //'   (default 0.003).
 //' @param line_type Trend line type (1=straight, 2=exponential decay)
 //' @param fit_method Fitting method (1=robust fast, 2=least squares, 3=robust slow)
@@ -1545,12 +1533,9 @@ double calculate_cpps_ultra_cpp(
 //'
 //' @param sound_xptr External pointer to Sound object
 //' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering)
-//' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
-//' @param silence_threshold_db Silence threshold in dB (default -25)
 //' @param min_silent_duration Minimum silent interval duration in seconds (default 0.1)
 //' @param min_sounding_duration Minimum sounding interval duration in seconds (default 0.1)
 //' @param power_threshold_factor Power threshold as fraction of global power (default 0.3)
-//' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
 //' @param window_width Window width for v3.01 filtering in seconds (default 0.03)
 //' @param use_manual_zcr Use manual sample-based ZCR instead of PointProcess interpolation (default false)
 //' @return External pointer to concatenated voiced Sound object

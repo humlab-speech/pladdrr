@@ -47,8 +47,6 @@ using namespace Rcpp;
 //' Optionally resamples the window to a target sampling rate.
 //'
 //' @param path Path to sound file
-//' @param start Start time of window in seconds
-//' @param end End time of window in seconds
 //' @param resample_to Target sampling rate (Hz). If NULL or 0, no resampling. (default: NULL)
 //' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to start at 0. (default: FALSE)
 //' @return External pointer to Sound object containing the windowed (and optionally resampled) audio

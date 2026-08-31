@@ -194,8 +194,8 @@ List sound_stats(NumericVector sound_data) {
 //' Creates a praat_sound object structure from R numeric data
 //'
 //' @param values Numeric vector of sound amplitude values
-//' @param sampling_rate Sampling rate in Hz (default: 44100)
-//' @param start_time Start time in seconds (default: 0.0)
+//' @inheritParams pladdrr_shared_params sampling_rate
+//' @inheritParams pladdrr_shared_analysis start_time
 //' @return List representing a praat_sound object with values and metadata
 //' @examples
 //' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))

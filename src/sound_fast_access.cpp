@@ -44,7 +44,7 @@ using namespace Rcpp;
 //' accessor in a loop.
 //'
 //' @param sound_xptr External pointer to Sound object
-//' @param channel Channel number (1-based, default 1)
+//' @inheritParams pladdrr_shared_analysis channel
 //'
 //' @return Numeric vector (independent copy of sample data).
 //'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
@@ -150,7 +150,6 @@ NumericVector sound_times_fast(SEXP sound_xptr) {
 //' pointer access.
 //'
 //' @param sound_xptr External pointer to Sound object
-//' @param zerocopy Ignored (kept for backward compatibility). All paths copy.
 //'
 //' @return Numeric matrix with dimensions (n_samples x n_channels)
 //'
