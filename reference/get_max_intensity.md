@@ -16,7 +16,7 @@ get_max_intensity(intensity, time_range = NULL)
 
 - time_range:
 
-  Optional time range
+  Optional time range c(start, end)
 
 ## Value
 
@@ -25,7 +25,8 @@ Maximum intensity in dB
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 intensity <- sound$to_intensity()
 suppressWarnings(get_max_intensity(intensity))
 #> [1] 90.88218

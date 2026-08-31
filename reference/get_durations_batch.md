@@ -50,8 +50,10 @@ duration
 ``` r
 wav1 <- tempfile(fileext = ".wav")
 wav2 <- tempfile(fileext = ".wav")
-Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav1)
-Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)$save(wav2)
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)$save(wav1)
+Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)$save(wav2)
 
 # Multiple files (DSI workflow)
 durations <- get_durations_batch(c(wav1, wav2))

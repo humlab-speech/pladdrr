@@ -48,10 +48,6 @@ plot(
 
   Logical. Color by voicing (default: TRUE)
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A ggplot2 object

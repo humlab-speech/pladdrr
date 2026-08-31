@@ -95,7 +95,8 @@ parameters from the same PowerCepstrogram object.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Create cepstrogram once
 pcep_ptr <- to_powercepstrogram_fast(sound)

@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Fredrik
 Nylén</h4>
             
-            <h4 data-toc-skip class="date">2026-08-30</h4>
+            <h4 data-toc-skip class="date">2026-08-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/migration-from-parselmouth.Rmd" class="external-link"><code>vignettes/migration-from-parselmouth.Rmd</code></a></small>
       <div class="d-none name"><code>migration-from-parselmouth.Rmd</code></div>
@@ -223,8 +223,10 @@ parameters - Direct C++ binding (Rcpp)</p>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span>minimum_pitch <span class="op">=</span> <span class="fl">100</span>, time_step <span class="op">=</span> <span class="fl">0.01</span>, subtract_mean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">mean_int</span> <span class="op">&lt;-</span> <span class="va">intensity</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, averaging_method <span class="op">=</span> <span class="st">"energy"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span>minimum_pitch <span class="op">=</span> <span class="fl">100</span>, time_step <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  subtract_mean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">mean_int</span> <span class="op">&lt;-</span> <span class="va">intensity</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  averaging_method <span class="op">=</span> <span class="st">"energy"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="spectral-analysis">Spectral Analysis<a class="anchor" aria-label="anchor" href="#spectral-analysis"></a>
@@ -276,7 +278,8 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">filepath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">filepath</span><span class="op">)</span></span>
-<span>  <span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
+<span>  <span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>    pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span>  <span class="va">mean_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -373,30 +376,35 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    pitch <span class="op">=</span> pm.praat.call(sound, <span class="st">"To Pitch"</span>, <span class="fl">0.01</span>, <span class="dv">75</span>, <span class="dv">600</span>)</span>
 <span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    mean_f0 <span class="op">=</span> pm.praat.call(pitch, <span class="st">"Get mean"</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="st">"Hertz"</span>)</span>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    </span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    harmonicity <span class="op">=</span> pm.praat.call(sound, <span class="st">"To Harmonicity (cc)"</span>, <span class="fl">0.01</span>, <span class="dv">75</span>, <span class="fl">0.1</span>, <span class="fl">1.0</span>)</span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>    mean_hnr <span class="op">=</span> pm.praat.call(harmonicity, <span class="st">"Get mean"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    </span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    pointprocess <span class="op">=</span> pm.praat.call(sound, <span class="st">"To PointProcess (periodic, cc)"</span>, <span class="dv">75</span>, <span class="dv">600</span>)</span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>    jitter <span class="op">=</span> pm.praat.call(pointprocess, <span class="st">"Get jitter (local)"</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.0001</span>, <span class="fl">0.02</span>, <span class="fl">1.3</span>)</span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>    </span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>    <span class="cf">return</span> {</span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>        <span class="st">'mean_f0'</span>: mean_f0,</span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>        <span class="st">'mean_hnr'</span>: mean_hnr,</span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>        <span class="st">'jitter'</span>: jitter</span>
-<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>    }</span></code></pre></div>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    harmonicity <span class="op">=</span> pm.praat.call(sound, <span class="st">"To Harmonicity (cc)"</span>, <span class="fl">0.01</span>, <span class="dv">75</span>, <span class="fl">0.1</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>      <span class="fl">1.0</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    mean_hnr <span class="op">=</span> pm.praat.call(harmonicity, <span class="st">"Get mean"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    </span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>    pointprocess <span class="op">=</span> pm.praat.call(sound, <span class="st">"To PointProcess (periodic, cc)"</span>, <span class="dv">75</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>      <span class="dv">600</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>    jitter <span class="op">=</span> pm.praat.call(pointprocess, <span class="st">"Get jitter (local)"</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.0001</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>      <span class="fl">0.02</span>, <span class="fl">1.3</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>    </span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>        <span class="st">'mean_f0'</span>: mean_f0,</span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>        <span class="st">'mean_hnr'</span>: mean_hnr,</span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>        <span class="st">'jitter'</span>: jitter</span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>    }</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">analyze_voice</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span></span>
 <span>  </span>
-<span>  <span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
+<span>  <span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>    pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span>  <span class="va">mean_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">harmonicity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_harmonicity_cc</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, min_pitch <span class="op">=</span> <span class="fl">75</span>,</span>
 <span>                                         silence_threshold <span class="op">=</span> <span class="fl">0.1</span>, periods_per_window <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
 <span>  <span class="va">mean_hnr</span> <span class="op">&lt;-</span> <span class="va">harmonicity</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>  </span>
-<span>  <span class="va">pointprocess</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pointprocess_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
+<span>  <span class="va">pointprocess</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pointprocess_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>    pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span>  <span class="va">jitter</span> <span class="op">&lt;-</span> <span class="va">pointprocess</span><span class="op">$</span><span class="fu">get_jitter_local</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                                          period_floor <span class="op">=</span> <span class="fl">0.0001</span>, period_ceiling <span class="op">=</span> <span class="fl">0.02</span>,</span>
 <span>                                          max_period_factor <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span></span>
@@ -552,8 +560,9 @@ with named parameters, instead of a string-based
 <code>praat.call()</code> dispatcher, and integrates with the R
 ecosystem (tidyverse, ggplot2).</p>
 <p>The transition from Parselmouth to pladdrr mainly involves replacing
-<code>praat.call()</code> calls with direct method calls, using the
-naming conventions shown above.</p>
+`praat.call(</p>
+<p>)` calls with direct method calls, using the naming conventions shown
+above.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

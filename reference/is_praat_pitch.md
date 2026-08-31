@@ -21,7 +21,8 @@ Logical indicating validity
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 is_praat_pitch(pitch)
 #> [1] TRUE

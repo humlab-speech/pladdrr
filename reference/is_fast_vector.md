@@ -24,7 +24,8 @@ Logical. TRUE if vector has fast_vector/zerocopy_vector class.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 
 fast_vec <- get_sound_values_fast(sound, 1)
 regular_vec <- sound$get_values(1)

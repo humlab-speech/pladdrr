@@ -21,7 +21,8 @@ Number of samples
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 suppressWarnings(get_n_samples(sound))
 #> [1] 8000
 ```

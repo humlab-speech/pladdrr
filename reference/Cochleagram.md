@@ -67,7 +67,8 @@ loudness can be read off.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 44100)
+sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 44100)
 cochleagram <- sound$to_cochleagram()
 cochleagram$get_duration()
 #> [1] 0.3

@@ -145,7 +145,8 @@ pitch-based Ultra functions.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 cpps <- calculate_cpps_ultra(sound)

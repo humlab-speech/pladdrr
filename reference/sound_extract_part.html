@@ -104,30 +104,33 @@ Implements Praat's "Sound: Extract part..." with full window shape support.</p>
 
 <dt id="arg-window-shape">window_shape<a class="anchor" aria-label="anchor" href="#arg-window-shape"></a></dt>
 <dd><p>Window shape code or name:
-* 0 or "rectangular" - Rectangular (no tapering)
-* 1 or "triangular" - Triangular (Bartlett)
-* 2 or "parabolic" - Parabolic (Welch)
-* 3 or "hanning" - Hanning
-* 4 or "hamming" - Hamming
-* 5 or "gaussian1" - Gaussian with sd=0.42466 (relative to duration)
-* 6 or "gaussian2" - Gaussian with sd=0.21233 (narrower, use relative_width=2.0)
-* 7 or "gaussian3" - Gaussian with sd=0.14155 (use relative_width=3.0)
-* 8 or "gaussian4" - Gaussian with sd=0.10616 (use relative_width=4.0)
-* 9 or "gaussian5" - Gaussian with sd=0.08493 (use relative_width=5.0)
-* 10 or "kaiser1" - Kaiser-Bessel with alpha=20.7
-* 11 or "kaiser2" - Kaiser-Bessel with alpha=40.5 (use relative_width=2.0)</p></dd>
+  * 0 or "rectangular" - Rectangular (no tapering)
+  * 1 or "triangular" - Triangular (Bartlett)
+  * 2 or "parabolic" - Parabolic (Welch)
+  * 3 or "hanning" - Hanning
+  * 4 or "hamming" - Hamming
+  * 5 or "gaussian1" - Gaussian with sd=0.42466 (relative to duration)
+* 6 or "gaussian2" - Gaussian with sd=0.21233 (narrower, use
+ relative_width=2.0)
+  * 7 or "gaussian3" - Gaussian with sd=0.14155 (use relative_width=3.0)
+  * 8 or "gaussian4" - Gaussian with sd=0.10616 (use relative_width=4.0)
+  * 9 or "gaussian5" - Gaussian with sd=0.08493 (use relative_width=5.0)
+  * 10 or "kaiser1" - Kaiser-Bessel with alpha=20.7
+  * 11 or "kaiser2" - Kaiser-Bessel with alpha=40.5 (use relative_width=2.0)</p></dd>
 
 
 <dt id="arg-relative-width">relative_width<a class="anchor" aria-label="anchor" href="#arg-relative-width"></a></dt>
 <dd><p>Relative width for windowing (default: 1.0).
-For gaussian2/kaiser2, use 2.0 to maintain effective window duration.
-For gaussian3, use 3.0. For gaussian4, use 4.0. For gaussian5, use 5.0.
-This extends physical extraction beyond [t1,t2] while keeping effective duration.</p></dd>
+  For gaussian2/kaiser2, use 2.0 to maintain effective window duration.
+  For gaussian3, use 3.0. For gaussian4, use 4.0. For gaussian5, use 5.0.
+This extends physical extraction beyond [t1,t2] while keeping effective
+ duration.</p></dd>
 
 
 <dt id="arg-preserve-times">preserve_times<a class="anchor" aria-label="anchor" href="#arg-preserve-times"></a></dt>
-<dd><p>If TRUE, preserve original time domain (result spans t1 to t2).
-If FALSE, time-shift result to start at 0.</p></dd>
+<dd><p>If TRUE, preserve original time domain (result spans t1
+to t2).
+ If FALSE, time-shift result to start at 0.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -136,16 +139,20 @@ If FALSE, time-shift result to start at 0.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Window shapes with higher numbers (gaussian2-5, kaiser2) have narrower effective
+    <p>Window shapes with higher numbers (gaussian2-5, kaiser2) have narrower
+ effective
 windows. To maintain comparable effective duration to gaussian1/kaiser1, use
 relative_width &gt; 1.0, which extracts a longer physical segment while applying
 a more aggressive taper.</p>
-<p>For spectral analysis, Kaiser2 and Gaussian2 with relative_width=2.0 are commonly
-used (e.g., in Praat's "To Spectrogram..." and "To Pitch (ac)... Very accurate").</p>
+<p>For spectral analysis, Kaiser2 and Gaussian2 with relative_width=2.0 are
+ commonly
+used (e.g., in Praat's "To Spectrogram..." and "To Pitch (ac)... Very
+ accurate").</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Praat documentation: <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a></p>
+    <p>Praat documentation:
+ <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a></p>
     </div>
 
     <div class="section level2">
@@ -156,13 +163,16 @@ used (e.g., in Praat's "To Spectrogram..." and "To Pitch (ac)... Very accurate")
 <span class="r-in"><span><span class="va">rect</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gaussian1 window (standard)</span></span></span>
-<span class="r-in"><span><span class="va">gauss1</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">5L</span>, relative_width <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gauss1</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">5L</span>,</span></span>
+<span class="r-in"><span> relative_width <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gaussian2 with wider physical extraction</span></span></span>
-<span class="r-in"><span><span class="va">gauss2</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">6L</span>, relative_width <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gauss2</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">6L</span>,</span></span>
+<span class="r-in"><span> relative_width <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Kaiser2 for spectral analysis</span></span></span>
-<span class="r-in"><span><span class="va">kaiser</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">11L</span>, relative_width <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kaiser</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_part</span><span class="op">(</span><span class="va">sound</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, window_shape <span class="op">=</span> <span class="fl">11L</span>,</span></span>
+<span class="r-in"><span> relative_width <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

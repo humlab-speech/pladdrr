@@ -55,6 +55,7 @@ A Sound object
 
 ``` r
 # Harmonic tone with 10 components at 100 Hz intervals
-tone <- sound_create_tone_complex(frequency_step = 100, number_of_components = 10)
+tone <- sound_create_tone_complex(frequency_step = 100, number_of_components
+ = 10)
 tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
 ```

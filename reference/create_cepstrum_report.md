@@ -45,7 +45,8 @@ A combined plot object (invisibly)
 
 ``` r
 if (requireNamespace("gridExtra", quietly = TRUE)) {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+ 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 
   # Create comprehensive report at t = 0.3s (mid-signal)

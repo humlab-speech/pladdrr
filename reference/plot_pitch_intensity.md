@@ -48,10 +48,6 @@ plot_pitch_intensity(
 
   Character. Plot title (default: "Pitch and Intensity")
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A ggplot object with dual y-axes

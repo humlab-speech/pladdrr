@@ -91,14 +91,17 @@ F0 unit codes: `"hertz"` (0), `"semitones re 1 Hz"` (1),
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
-pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
+ 44100)
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
+ 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz")
 df <- as.data.frame(pitch)
 
 # The same analysis on a recording read from disk
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
+ 600)
 n_voiced <- pitch$count_voiced_frames()
 ```

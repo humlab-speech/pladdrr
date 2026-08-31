@@ -102,27 +102,33 @@ as a Sound object. This matches the AVQI v2.03/v3.01 voiced extraction.</p>
 
 
 <dt id="arg-minimum-pitch">minimum_pitch<a class="anchor" aria-label="anchor" href="#arg-minimum-pitch"></a></dt>
-<dd><p>Numeric. Minimum pitch for intensity detection (Hz, default: 50)</p></dd>
+<dd><p>Numeric. Minimum pitch for intensity detection (Hz,
+default: 50)</p></dd>
 
 
 <dt id="arg-time-step">time_step<a class="anchor" aria-label="anchor" href="#arg-time-step"></a></dt>
-<dd><p>Numeric. Time step for intensity analysis (s, default: 0.003)</p></dd>
+<dd><p>Numeric. Time step for intensity analysis (s, default:
+0.003)</p></dd>
 
 
 <dt id="arg-silence-threshold">silence_threshold<a class="anchor" aria-label="anchor" href="#arg-silence-threshold"></a></dt>
-<dd><p>Numeric. Silence threshold in dB below max (default: -25)</p></dd>
+<dd><p>Numeric. Silence threshold in dB below max (default:
+-25)</p></dd>
 
 
 <dt id="arg-min-silent-interval">min_silent_interval<a class="anchor" aria-label="anchor" href="#arg-min-silent-interval"></a></dt>
-<dd><p>Numeric. Minimum silence duration (s, default: 0.1)</p></dd>
+<dd><p>Numeric. Minimum silence duration (s, default:
+0.1)</p></dd>
 
 
 <dt id="arg-min-sounding-interval">min_sounding_interval<a class="anchor" aria-label="anchor" href="#arg-min-sounding-interval"></a></dt>
-<dd><p>Numeric. Minimum voiced duration (s, default: 0.1)</p></dd>
+<dd><p>Numeric. Minimum voiced duration (s, default:
+0.1)</p></dd>
 
 
 <dt id="arg-zcr-threshold">zcr_threshold<a class="anchor" aria-label="anchor" href="#arg-zcr-threshold"></a></dt>
-<dd><p>Numeric. Maximum ZCR for voiced speech (Hz, default: 3000)</p></dd>
+<dd><p>Numeric. Maximum ZCR for voiced speech (Hz, default:
+3000)</p></dd>
 
 
 <dt id="arg-zcr-window">zcr_window<a class="anchor" aria-label="anchor" href="#arg-zcr-window"></a></dt>
@@ -139,8 +145,9 @@ as a Sound object. This matches the AVQI v2.03/v3.01 voiced extraction.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If `return_textgrid = FALSE`: Sound object with concatenated voiced segments.
-        If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.</p>
+    <p>If `return_textgrid = FALSE`: Sound object with concatenated voiced
+ segments.
+If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -154,7 +161,8 @@ intensity-only detection.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">1</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">1</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Full AVQI-compatible extraction (default)</span></span></span>
 <span class="r-in"><span><span class="va">voiced</span> <span class="op">&lt;-</span> <span class="fu">extract_voiced_segments</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>

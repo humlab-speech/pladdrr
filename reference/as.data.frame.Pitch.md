@@ -36,10 +36,6 @@ as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 
   Ignored
 
-- ...:
-
-  Additional arguments (ignored)
-
 ## Value
 
 A data.table (inherits from data.frame) with pitch measurements
@@ -57,7 +53,8 @@ A data.table (inherits from data.frame) with pitch measurements
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 df <- as.data.frame(pitch)
 head(df)

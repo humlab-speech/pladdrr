@@ -39,7 +39,8 @@ number), \`frequency\` (Hz), \`bandwidth\` (Hz). Matches
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 df <- as.data.frame(formant)
 head(df)

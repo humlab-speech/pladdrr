@@ -39,7 +39,8 @@ This function uses existing optimized C++ code.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 times <- seq(0.05, 0.45, length.out = 10)
 f0_contour <- get_pitch_at_times(pitch, times)

@@ -104,19 +104,26 @@ Intensity object; set internally when a method returns a new Intensity.</p></dd>
     <h2 id="point-query-methods">Point query methods<a class="anchor" aria-label="anchor" href="#point-query-methods"></a></h2>
 
 
-<ul><li><p><code>get_value_at_time(time, interpolation)</code> - intensity at a time point (dB)</p></li>
-<li><p><code>get_values_at_times(times, interpolation)</code> - intensity at a vector of times (batch)</p></li>
+<ul><li><p><code>get_value_at_time(time, interpolation)</code> - intensity at a time
+ point (dB)</p></li>
+<li><p><code>get_values_at_times(times, interpolation)</code> - intensity at a
+ vector of times (batch)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="statistics-methods-over-a-time-range-">Statistics methods (over a time range)<a class="anchor" aria-label="anchor" href="#statistics-methods-over-a-time-range-"></a></h2>
 
 
-<ul><li><p><code>get_mean(from_time, to_time, averaging_method)</code> - mean intensity (dB)</p></li>
-<li><p><code>get_standard_deviation(from_time, to_time)</code> - standard deviation (dB)</p></li>
-<li><p><code>get_minimum(from_time, to_time, interpolation)</code> - minimum intensity</p></li>
-<li><p><code>get_maximum(from_time, to_time, interpolation)</code> - maximum intensity</p></li>
+<ul><li><p><code>get_mean(from_time, to_time, averaging_method)</code> - mean intensity
+ (dB)</p></li>
+<li><p><code>get_standard_deviation(from_time, to_time)</code> - standard deviation
+ (dB)</p></li>
+<li><p><code>get_minimum(from_time, to_time, interpolation)</code> - minimum
+ intensity</p></li>
+<li><p><code>get_maximum(from_time, to_time, interpolation)</code> - maximum
+ intensity</p></li>
 <li><p><code>get_quantile(quantile, from_time, to_time)</code> - quantile</p></li>
-<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time of extremum</p></li>
+<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time
+ of extremum</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export-methods">Export methods<a class="anchor" aria-label="anchor" href="#export-methods"></a></h2>
@@ -130,18 +137,22 @@ Intensity object; set internally when a method returns a new Intensity.</p></dd>
     <h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a></h2>
 
 
-<p>Codes: <code>"nearest"</code> (0), <code>"linear"</code> (1), <code>"cubic"</code> (2, default),
+<p>Codes: <code>"nearest"</code> (0), <code>"linear"</code> (1), <code>"cubic"</code> (2,
+ default),
 <code>"sinc70"</code> (3), <code>"sinc700"</code> (4).
-Averaging methods: <code>"energy"</code> (0, default), <code>"sones"</code> (1), <code>"db"</code> (2).</p>
+Averaging methods: <code>"energy"</code> (0, default), <code>"sones"</code> (1),
+ <code>"db"</code> (2).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Pitch.html">Pitch</a></code>, <code><a href="IntensityTier.html">IntensityTier</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Pitch.html">Pitch</a></code>,
+ <code><a href="IntensityTier.html">IntensityTier</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span>minimum_pitch <span class="op">=</span> <span class="fl">100</span>, time_step <span class="op">=</span> <span class="fl">0.0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mean_int</span> <span class="op">&lt;-</span> <span class="va">intensity</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">intensity</span><span class="op">$</span><span class="fu">as_data_frame</span><span class="op">(</span><span class="op">)</span></span></span>

@@ -103,12 +103,14 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Named list with: min, max, mean, stdev, median, q25, q75, count_voiced</p>
+    <p>Named list with: min, max, mean, stdev, median, q25, q75,
+ count_voiced</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch_cc</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Direct call</span></span></span>

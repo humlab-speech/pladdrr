@@ -115,17 +115,21 @@ modification or resynthesis.</p>
     <h2 id="query-methods">Query methods<a class="anchor" aria-label="anchor" href="#query-methods"></a></h2>
 
 
-<ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code>, <code><a href="get_duration.html">get_duration()</a></code> - time range in seconds</p></li>
+<ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code>, <code><a href="get_duration.html">get_duration()</a></code> -
+ time range in seconds</p></li>
 <li><p><code>get_number_of_points()</code> - number of time points</p></li>
-<li><p><code>get_min_num_formants()</code>, <code>get_max_num_formants()</code> - formant count across points</p></li>
-<li><p><code>get_value_at_time(formant_number, time)</code> - formant frequency in Hz</p></li>
+<li><p><code>get_min_num_formants()</code>, <code>get_max_num_formants()</code> - formant
+ count across points</p></li>
+<li><p><code>get_value_at_time(formant_number, time)</code> - formant frequency in
+ Hz</p></li>
 <li><p><code>get_bandwidth_at_time(formant_number, time)</code> - bandwidth in Hz</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="transformation">Transformation<a class="anchor" aria-label="anchor" href="#transformation"></a></h2>
 
 
-<ul><li><p><code>filter_sound(sound, scale = TRUE)</code> - filter a sound through the formants</p></li>
+<ul><li><p><code>filter_sound(sound, scale = TRUE)</code> - filter a sound through the
+ formants</p></li>
 <li><p><code>as_data_frame()</code> - export to a data frame</p></li>
 <li><p><code>save(path)</code> - save to file</p></li>
 </ul></div>

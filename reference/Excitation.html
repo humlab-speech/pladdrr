@@ -77,8 +77,9 @@
 
 
 <dl><dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
-<dd><p>Not for direct use. External pointer to the underlying C++ Excitation
-object; set internally when a method returns a new Excitation.</p></dd>
+<dd><p>Not for direct use. External pointer to the underlying C++
+Excitation
+ object; set internally when a method returns a new Excitation.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -96,21 +97,24 @@ a Spectrum or a Cochleagram, not created directly.</p>
 
 
 <ul><li><p><code>get_loudness()</code> - total loudness in sones</p></li>
-<li><p><code>get_value_at_frequency(freq_bark)</code> - excitation level at a given Bark frequency</p></li>
+<li><p><code>get_value_at_frequency(freq_bark)</code> - excitation level at a given
+ Bark frequency</p></li>
 <li><p><code>get_distance(other)</code> - distance to another Excitation object</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="conversion">Conversion<a class="anchor" aria-label="anchor" href="#conversion"></a></h2>
 
 
-<ul><li><p><code>to_formant(max_formants = 20)</code> - estimate formants from the excitation pattern</p></li>
+<ul><li><p><code>to_formant(max_formants = 20)</code> - estimate formants from the
+ excitation pattern</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
 
 
 <ul><li><p><code>as_vector()</code> - export as a numeric vector, one value per Bark bin</p></li>
-<li><p><code>as_data_frame()</code> - export as a data.frame of frequency (Bark) and excitation</p></li>
+<li><p><code>as_data_frame()</code> - export as a data.frame of frequency (Bark) and
+ excitation</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

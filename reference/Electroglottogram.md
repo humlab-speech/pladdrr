@@ -25,7 +25,8 @@ single-channel sound that records vocal fold contact area.
 ## Examples
 
 ``` r
-egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
+ 16000, x1 = 0)
 egg$get_duration()
 #> [1] 1
 egg$get_number_of_samples()

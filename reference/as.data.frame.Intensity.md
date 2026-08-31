@@ -24,10 +24,6 @@ as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 
   Ignored
 
-- ...:
-
-  Additional arguments (ignored)
-
 ## Value
 
 A data.table (inherits from data.frame) with time and intensity columns
@@ -35,7 +31,8 @@ A data.table (inherits from data.frame) with time and intensity columns
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 intensity <- sound$to_intensity()
 df <- as.data.frame(intensity)
 head(df)

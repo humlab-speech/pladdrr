@@ -28,7 +28,8 @@ get_spectral_moments_batch(spectrogram, power = 2)
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 spectrogram <- sound$to_spectrogram()
 moments <- get_spectral_moments_batch(spectrogram)
 head(moments)

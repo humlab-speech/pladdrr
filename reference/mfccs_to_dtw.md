@@ -53,7 +53,9 @@ A DTW object
 ## Examples
 
 ``` r
-s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+ 16000)
+s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 dtw <- mfccs_to_dtw(s1$to_mfcc(), s2$to_mfcc())
 ```

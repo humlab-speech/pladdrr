@@ -53,7 +53,8 @@ Data frame with columns: sound_file, textgrid_file, basename.
 ``` r
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)$save(
   file.path(audio_dir, "utt1.wav")
 )
 tg <- TextGrid$create(0, 0.3, "words")

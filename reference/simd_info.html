@@ -91,11 +91,13 @@ available in the current installation, for diagnostics and debugging.</p>
 <dd><p>Character string describing the SIMD instruction set
     (e.g., "AVX2", "SSE4.2", "NEON")</p></dd>
 
-  <dt>batch_size_double</dt>
-<dd><p>Integer number of doubles processed per SIMD operation</p></dd>
+<dt>batch_size_double</dt>
+<dd><p>Integer number of doubles processed per SIMD
+ operation</p></dd>
 
-  <dt>batch_size_float</dt>
-<dd><p>Integer number of floats processed per SIMD operation</p></dd>
+<dt>batch_size_float</dt>
+<dd><p>Integer number of floats processed per SIMD
+ operation</p></dd>
 
   <dt>version</dt>
 <dd><p>Character string describing the SIMD library in use</p></dd>
@@ -117,9 +119,11 @@ available in the current installation, for diagnostics and debugging.</p>
 operations like autocorrelation, windowing, and statistical computations.
 The effect varies by code path and platform; use [pladdrr_simd()] to
 toggle SIMD at runtime and compare a given workload directly.</p>
-<p>Common SIMD instruction sets:</p><ul><li><p><strong>AVX2</strong>: 256-bit vectors (4 doubles or 8 floats) - Intel/AMD x86_64</p></li>
+<p>Common SIMD instruction sets:</p><ul><li><p><strong>AVX2</strong>: 256-bit vectors (4 doubles or 8 floats) - Intel/AMD
+ x86_64</p></li>
 <li><p><strong>SSE4.2</strong>: 128-bit vectors (2 doubles or 4 floats) - Older x86_64</p></li>
-<li><p><strong>NEON</strong>: 128-bit vectors (2 doubles or 4 floats) - ARM (Apple Silicon)</p></li>
+<li><p><strong>NEON</strong>: 128-bit vectors (2 doubles or 4 floats) - ARM (Apple
+ Silicon)</p></li>
 </ul><p>Set <code>options(pladdrr.use_simd = FALSE)</code> before loading the package to
 start in scalar mode, or use [pladdrr_simd()] after load for runtime A/B
 checks. The option is read during <code>.onLoad</code>.</p>

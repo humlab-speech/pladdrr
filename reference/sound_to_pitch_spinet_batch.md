@@ -70,5 +70,6 @@ sounds <- list(
   Sound$create_tone(frequency = 150, duration = 0.5),
   Sound$create_tone(frequency = 200, duration = 0.5)
 )
-pitches <- tryCatch(sound_to_pitch_spinet_batch(sounds), error = function(e) NULL)
+pitches <- tryCatch(sound_to_pitch_spinet_batch(sounds), error = function(e)
+ NULL)
 ```

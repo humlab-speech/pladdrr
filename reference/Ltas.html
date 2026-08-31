@@ -122,7 +122,8 @@ peak's position between bins instead of snapping to the nearest one.
     <h2 id="frequency-domain">Frequency domain<a class="anchor" aria-label="anchor" href="#frequency-domain"></a></h2>
 
 
-<ul><li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> - the frequency range, in Hz</p></li>
+<ul><li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> - the
+ frequency range, in Hz</p></li>
 <li><p><code>get_frequency_range()</code> - the width of that range, in Hz</p></li>
 <li><p><code>get_number_of_bins()</code> - number of frequency bins</p></li>
 <li><p><code>get_bin_width()</code> - width of each bin, in Hz</p></li>
@@ -133,33 +134,56 @@ peak's position between bins instead of snapping to the nearest one.
     <h2 id="query-values">Query values<a class="anchor" aria-label="anchor" href="#query-values"></a></h2>
 
 
-<ul><li><p><code>get_value_at_frequency(frequency, unit, interpolate)</code> - power at a given frequency</p></li>
-<li><p><code>get_value_in_bin(bin)</code> - power in one bin, read directly with no interpolation</p></li>
-<li><p><code>get_minimum(fmin, fmax, unit, interpolation)</code>, <code>get_maximum(fmin, fmax, unit, interpolation)</code> - lowest/highest power in a frequency range</p></li>
-<li><p><code>get_frequency_of_minimum(fmin, fmax, interpolation)</code>, <code>get_frequency_of_maximum(fmin, fmax, interpolation)</code> - where those extremes occur</p></li>
-<li><p><code>get_mean(fmin, fmax, unit)</code> - average power across a frequency range</p></li>
-<li><p><code>get_standard_deviation(fmin, fmax, unit)</code> - how much the power varies across a frequency range</p></li>
-<li><p><code>get_slope(f1min, f1max, f2min, f2max, unit)</code> - the difference in average power between two bands, e.g. spectral tilt (high-frequency band minus low-frequency band)</p></li>
-<li><p><code>get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)</code> - how far a peak rises above its surrounding band, e.g. harmonic-to-noise prominence</p></li>
+<ul><li><p><code>get_value_at_frequency(frequency, unit, interpolate)</code> - power at
+ a given frequency</p></li>
+<li><p><code>get_value_in_bin(bin)</code> - power in one bin, read directly with no
+ interpolation</p></li>
+<li><p><code>get_minimum(fmin, fmax, unit, interpolation)</code>,
+ <code>get_maximum(fmin, fmax, unit, interpolation)</code> - lowest/highest power
+ in a frequency range</p></li>
+<li><p><code>get_frequency_of_minimum(fmin, fmax, interpolation)</code>,
+ <code>get_frequency_of_maximum(fmin, fmax, interpolation)</code> - where those
+ extremes occur</p></li>
+<li><p><code>get_mean(fmin, fmax, unit)</code> - average power across a frequency
+ range</p></li>
+<li><p><code>get_standard_deviation(fmin, fmax, unit)</code> - how much the power
+ varies across a frequency range</p></li>
+<li><p><code>get_slope(f1min, f1max, f2min, f2max, unit)</code> - the difference in
+ average power between two bands, e.g. spectral tilt (high-frequency band
+ minus low-frequency band)</p></li>
+<li><p><code>get_local_peak_height(environment_min, environment_max, peak_min,
+ peak_max, unit)</code> - how far a peak rises above its surrounding band, e.g.
+ harmonic-to-noise prominence</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="batch-queries">Batch queries<a class="anchor" aria-label="anchor" href="#batch-queries"></a></h2>
 
 
 <p>Faster than calling the single-value methods in a loop, since each call
-crosses into C++ once for the whole set of frequencies or ranges.</p><ul><li><p><code>get_values_at_frequencies(frequencies, interpolation)</code> - values at many frequencies at once</p></li>
-<li><p><code>get_means_batch(fmins, fmaxs, unit)</code> - means for many frequency ranges at once</p></li>
-<li><p><code>get_peaks_batch(fmins, fmaxs, interpolation)</code>, <code>get_minima_batch(fmins, fmaxs, interpolation)</code> - peaks or troughs for many ranges at once, returned as a data frame</p></li>
+crosses into C++ once for the whole set of frequencies or ranges.</p><ul><li><p><code>get_values_at_frequencies(frequencies, interpolation)</code> - values
+ at many frequencies at once</p></li>
+<li><p><code>get_means_batch(fmins, fmaxs, unit)</code> - means for many frequency
+ ranges at once</p></li>
+<li><p><code>get_peaks_batch(fmins, fmaxs, interpolation)</code>,
+ <code>get_minima_batch(fmins, fmaxs, interpolation)</code> - peaks or troughs
+ for many ranges at once, returned as a data frame</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="trend-and-peaks">Trend and peaks<a class="anchor" aria-label="anchor" href="#trend-and-peaks"></a></h2>
 
 
-<ul><li><p><code>compute_trend_line(fmin, fmax)</code> - the fitted trend line, as its own Ltas</p></li>
-<li><p><code>subtract_trend_line(fmin, fmax)</code> - the spectrum with that trend removed, e.g. to flatten spectral tilt before comparing bands</p></li>
-<li><p><code>report_spectral_trend(fmin, fmax, frequency_scale, fit_method)</code> - slope, intercept, and fit quality (R-squared, residual error) as a structured result; print it directly or read <code>$fitted_values</code> for the per-point predictions</p></li>
-<li><p><code>get_spectral_slope(fmin, fmax, frequency_scale, fit_method)</code> - just the slope from the above, when that's all you need</p></li>
-<li><p><code>to_spectrum_tier_peaks()</code> - the local maxima across the whole spectrum, as a <a href="SpectrumTier.html">SpectrumTier</a></p></li>
+<ul><li><p><code>compute_trend_line(fmin, fmax)</code> - the fitted trend line, as its
+ own Ltas</p></li>
+<li><p><code>subtract_trend_line(fmin, fmax)</code> - the spectrum with that trend
+ removed, e.g. to flatten spectral tilt before comparing bands</p></li>
+<li><p><code>report_spectral_trend(fmin, fmax, frequency_scale, fit_method)</code> -
+ slope, intercept, and fit quality (R-squared, residual error) as a
+ structured result; print it directly or read <code>$fitted_values</code> for the
+ per-point predictions</p></li>
+<li><p><code>get_spectral_slope(fmin, fmax, frequency_scale, fit_method)</code> -
+ just the slope from the above, when that's all you need</p></li>
+<li><p><code>to_spectrum_tier_peaks()</code> - the local maxima across the whole
+ spectrum, as a <a href="SpectrumTier.html">SpectrumTier</a></p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
@@ -172,7 +196,8 @@ crosses into C++ once for the whole set of frequencies or ranges.</p><ul><li><p>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="Spectrogram.html">Spectrogram</a></code>, <code><a href="SpectrumTier.html">SpectrumTier</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>,
+ <code><a href="Spectrogram.html">Spectrogram</a></code>, <code><a href="SpectrumTier.html">SpectrumTier</a></code></p></div>
     </div>
 
     <div class="section level2">

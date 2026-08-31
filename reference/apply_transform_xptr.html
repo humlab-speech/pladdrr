@@ -103,7 +103,8 @@ RcppXPtrUtils package.</p>
     <p>**ADVANCED API** - Requires RcppXPtrUtils package.</p>
 <p>The transform function receives sample amplitude and returns transformed
 amplitude. Common transforms:</p>
-<ul><li><p>Clipping: `x &gt; threshold ? threshold : (x &lt; -threshold ? -threshold : x)`</p></li>
+<ul><li><p>Clipping: `x &gt; threshold ? threshold : (x &lt; -threshold ? -threshold :
+ x)`</p></li>
 <li><p>Soft clipping: `tanh(x * gain)`</p></li>
 <li><p>Rectification: `fabs(x)`</p></li>
 <li><p>Squaring: `x * x`</p></li>
@@ -119,7 +120,8 @@ amplitude. Common transforms:</p>
 <span class="r-in"><span>    depends <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">clipped</span> <span class="op">&lt;-</span> <span class="fu">apply_transform_xptr</span><span class="op">(</span><span class="va">sound</span>, <span class="va">soft_clip</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>

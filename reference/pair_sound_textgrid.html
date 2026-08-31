@@ -104,15 +104,18 @@ pattern of manually pairing files based on naming conventions.</p>
 
 
 <dt id="arg-textgrid-pattern">textgrid_pattern<a class="anchor" aria-label="anchor" href="#arg-textgrid-pattern"></a></dt>
-<dd><p>Pattern to match TextGrid files (default: "\\.TextGrid$")</p></dd>
+<dd><p>Pattern to match TextGrid files (default:
+"\\.TextGrid$")</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>Matching strategy: "basename" (default), "full", or a custom function</p></dd>
+<dd><p>Matching strategy: "basename" (default), "full", or a custom
+function</p></dd>
 
 
 <dt id="arg-require-both">require_both<a class="anchor" aria-label="anchor" href="#arg-require-both"></a></dt>
-<dd><p>Logical, only return pairs where both files exist (default: TRUE)</p></dd>
+<dd><p>Logical, only return pairs where both files exist
+(default: TRUE)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -124,7 +127,8 @@ pattern of manually pairing files based on naming conventions.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">audio_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="st">"audio_"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">audio_dir</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">audio_dir</span>, <span class="st">"utt1.wav"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="va">TextGrid</span><span class="op">$</span><span class="fu">create</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span>, <span class="st">"words"</span><span class="op">)</span></span></span>

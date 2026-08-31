@@ -91,18 +91,21 @@ per-frame Spectrum methods in an R loop.</p>
 
 
 <dt id="arg-power">power<a class="anchor" aria-label="anchor" href="#arg-power"></a></dt>
-<dd><p>Numeric. Power for moment weighting (default 2.0, matching Praat)</p></dd>
+<dd><p>Numeric. Power for moment weighting (default 2.0, matching
+Praat)</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>data.frame</code> with columns <code>time</code>, <code>cog</code>, <code>sd</code>,
-  <code>skewness</code>, <code>kurtosis</code> (one row per frame; <code>NA</code> where undefined)</p>
+<code>skewness</code>, <code>kurtosis</code> (one row per frame; <code>NA</code> where
+ undefined)</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">spectrogram</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrogram</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">moments</span> <span class="op">&lt;-</span> <span class="fu">get_spectral_moments_batch</span><span class="op">(</span><span class="va">spectrogram</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">moments</span><span class="op">)</span></span></span>

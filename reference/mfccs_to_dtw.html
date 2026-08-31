@@ -105,15 +105,18 @@
 
 
 <dt id="arg-coefficient-regression-weight">coefficient_regression_weight<a class="anchor" aria-label="anchor" href="#arg-coefficient-regression-weight"></a></dt>
-<dd><p>Weight for coefficient regression (default: 0.0)</p></dd>
+<dd><p>Weight for coefficient regression
+(default: 0.0)</p></dd>
 
 
 <dt id="arg-log-energy-regression-weight">log_energy_regression_weight<a class="anchor" aria-label="anchor" href="#arg-log-energy-regression-weight"></a></dt>
-<dd><p>Weight for energy regression (default: 0.0)</p></dd>
+<dd><p>Weight for energy regression (default:
+0.0)</p></dd>
 
 
 <dt id="arg-regression-window-length">regression_window_length<a class="anchor" aria-label="anchor" href="#arg-regression-window-length"></a></dt>
-<dd><p>Window for regression calculation (default: 0.0)</p></dd>
+<dd><p>Window for regression calculation (default:
+0.0)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -123,8 +126,10 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">s1</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">s2</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">s1</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">s2</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dtw</span> <span class="op">&lt;-</span> <span class="fu">mfccs_to_dtw</span><span class="op">(</span><span class="va">s1</span><span class="op">$</span><span class="fu">to_mfcc</span><span class="op">(</span><span class="op">)</span>, <span class="va">s2</span><span class="op">$</span><span class="fu">to_mfcc</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

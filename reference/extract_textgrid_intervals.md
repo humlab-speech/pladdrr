@@ -77,7 +77,8 @@ intervals
 
 ``` r
 # Create sound and a voiced/unvoiced TextGrid
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 tg <- pitch$to_textgrid_vuv(0.02, 0.01)
 

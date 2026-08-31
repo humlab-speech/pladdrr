@@ -41,7 +41,8 @@ Character vector of file paths
 ``` r
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 
 # Equivalent to: Create Strings as file list: "list", "*.wav"

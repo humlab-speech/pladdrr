@@ -24,10 +24,6 @@ as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 
   Ignored
 
-- ...:
-
-  Additional arguments (ignored)
-
 ## Value
 
 A data.table (inherits from data.frame) with time, channel, and value
@@ -36,7 +32,8 @@ columns
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate =
+ 8000)
 df <- as.data.frame(sound)
 head(df)
 #> Key: <time, channel>

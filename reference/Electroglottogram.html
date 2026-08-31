@@ -87,8 +87,10 @@ Electroglottogram.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An <code>Electroglottogram</code> object (triple-class <code>c("Electroglottogram",
-  "Sound", "PraatObject")</code>) that inherits Sound's methods in addition to its own.</p>
+    <p>An <code>Electroglottogram</code> object (triple-class
+ <code>c("Electroglottogram",
+"Sound", "PraatObject")</code>) that inherits Sound's methods in addition to its
+ own.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -98,7 +100,8 @@ single-channel sound that records vocal fold contact area.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">egg</span> <span class="op">&lt;-</span> <span class="fu"><a href="electroglottogram_create.html">electroglottogram_create</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="fl">0</span>, xmax <span class="op">=</span> <span class="fl">1</span>, nx <span class="op">=</span> <span class="fl">16000</span>, dx <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">16000</span>, x1 <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">egg</span> <span class="op">&lt;-</span> <span class="fu"><a href="electroglottogram_create.html">electroglottogram_create</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="fl">0</span>, xmax <span class="op">=</span> <span class="fl">1</span>, nx <span class="op">=</span> <span class="fl">16000</span>, dx <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span>, x1 <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">egg</span><span class="op">$</span><span class="fu">get_duration</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="va">egg</span><span class="op">$</span><span class="fu">get_number_of_samples</span><span class="op">(</span><span class="op">)</span></span></span>

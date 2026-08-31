@@ -16,7 +16,7 @@ get_sd_intensity(intensity, time_range = NULL)
 
 - time_range:
 
-  Optional time range
+  Optional time range c(start, end)
 
 ## Value
 
@@ -25,7 +25,8 @@ Standard deviation in dB
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 intensity <- sound$to_intensity()
 suppressWarnings(get_sd_intensity(intensity))
 #> [1] 0.0001379489

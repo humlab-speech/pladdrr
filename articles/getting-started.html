@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-30</h4>
+            <h4 data-toc-skip class="date">2026-08-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -239,7 +239,7 @@ methods:</p>
 <div class="section level2">
 <h2 id="pitch-analysis">Pitch Analysis<a class="anchor" aria-label="anchor" href="#pitch-analysis"></a>
 </h2>
-<p>Extract fundamental frequency (F0) from speech or sustained tones
+<p>Extract fundamental frequency ( F0) from speech or sustained tones
 using object methods:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For speech, use typical settings</span></span>
@@ -305,7 +305,8 @@ characterization:</p>
 <span><span class="va">formants_male</span> <span class="op">&lt;-</span> <span class="va">speech</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span>max_frequency <span class="op">=</span> <span class="fl">5000</span>, max_formants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Adult female</span></span>
-<span><span class="va">formants_female</span> <span class="op">&lt;-</span> <span class="va">speech</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span>max_frequency <span class="op">=</span> <span class="fl">5500</span>, max_formants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">formants_female</span> <span class="op">&lt;-</span> <span class="va">speech</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span>max_frequency <span class="op">=</span> <span class="fl">5500</span>,</span>
+<span>  max_formants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Child</span></span>
 <span><span class="va">formants_child</span> <span class="op">&lt;-</span> <span class="va">speech</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span>max_frequency <span class="op">=</span> <span class="fl">8000</span>, max_formants <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
@@ -421,9 +422,9 @@ further analysis:</p>
 <h2 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h2>
 <p>The <code>pladdrr</code> package provides ggplot2-based visualization
-functions (<code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods, see
-<code><a href="../articles/autoplot-autolayer.html">vignette("autoplot-autolayer")</a></code>) for its analysis objects.
-For detailed examples of creating plots, see
+functions ( <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot(     )</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code>
+methods, see <code><a href="../articles/autoplot-autolayer.html">vignette("autoplot-autolayer")</a></code>) for its
+analysis objects. For detailed examples of creating plots, see
 <code><a href="../articles/visualization.html">vignette("visualization")</a></code>, which covers:</p>
 <ul>
 <li>Voice quality visualization (AVQI, DSI, CPP)</li>

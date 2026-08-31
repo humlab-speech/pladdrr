@@ -102,7 +102,8 @@ Do not use the empty constructor for synthesis:
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
 tryCatch(
   kg$to_sound(),
-  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+  error = function(
+    e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
 )
 #> Error: uninitialized tiers (pitch, voicing, formants)
 ```
@@ -113,7 +114,7 @@ formant frequency tiers (F1, F2, F3, …) - All formant bandwidth tiers
 (B1, B2, B3, …)
 
 **Always use
-[`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
+[`klattgrid_create_from_vowel( )`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
 or
 [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
 instead.**
@@ -360,7 +361,8 @@ vowel_continuum <- lapply(1:10, function(i) {
 
 # Save each step
 for (i in 1:10) {
-  vowel_continuum[[i]]$save(file.path(tempdir(), sprintf("continuum_%02d.wav", i)), "WAV")
+  vowel_continuum[[i]]$save(
+    file.path(tempdir(), sprintf("continuum_%02d.wav", i)), "WAV")
 }
 ```
 
@@ -623,7 +625,8 @@ synthesize_vowel <- function(f1, f2, label = "") {
   )
   
   sound <- kg$to_sound()
-  filename <- file.path(tempdir(), sprintf("vowel_%s_F1%d_F2%d.wav", label, f1, f2))
+  filename <- file.path(tempdir(),
+    sprintf("vowel_%s_F1%d_F2%d.wav", label, f1, f2))
   sound$save(filename, "WAV")
   
   cat(sprintf("Created %s: F1=%d, F2=%d Hz\n", label, f1, f2))
@@ -643,11 +646,11 @@ synthesize_vowel(310, 870, "u")
 ### 1. Empty Grid Errors on Synthesis
 
 **Issue**: Direct synthesis from an empty
-[`KlattGrid()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
+[`KlattGrid( )`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
 errors (`"Pitch tier should not be empty."`)
 
 **Workaround**: Always use
-[`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
+[`klattgrid_create_from_vowel( )`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
 or
 [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
 
@@ -668,7 +671,8 @@ kg <- klattgrid_create_example()
 kg <- KlattGrid(tmin = 0, tmax = 1, numberOfFormants = 5)
 tryCatch(
   kg$to_sound(),
-  error = function(e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
+  error = function(
+    e) cat("Error: uninitialized tiers (pitch, voicing, formants)\n")
 )
 #> Error: uninitialized tiers (pitch, voicing, formants)
 ```
@@ -780,7 +784,7 @@ audio
 
 ## Further Reading
 
-- Klatt, D. H. (1980). “Software for a cascade/parallel formant
+- Klatt, D. H. ( 1980). “Software for a cascade/parallel formant
   synthesizer”. *JASA*, 67(3), 971-995.
 - Praat manual:
   [KlattGrid](https://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)

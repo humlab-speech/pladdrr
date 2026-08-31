@@ -48,10 +48,6 @@ plot(
 
   Character vector. Colors for each formant (default: auto)
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A ggplot2 object

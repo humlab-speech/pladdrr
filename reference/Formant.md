@@ -98,12 +98,14 @@ bandwidths at time points or across the full contour.
 
 ``` r
 # Self-contained example with generated tone
-sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate =
+ 44100)
 formant <- sound$to_formant_burg(
   time_step = 0.01, max_number_of_formants = 5,
   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 )
-f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
+f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit =
+ "hertz")
 
 # The same analysis on a recording read from disk
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -111,6 +113,8 @@ formant <- sound$to_formant_burg(
   time_step = 0.01, max_number_of_formants = 5,
   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 )
-f1_at_02s <- formant$get_value_at_time(formant_number = 1, time = 0.2, unit = "hertz")
-mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "hertz")
+f1_at_02s <- formant$get_value_at_time(formant_number = 1, time = 0.2, unit =
+ "hertz")
+mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0,
+ unit = "hertz")
 ```

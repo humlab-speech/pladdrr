@@ -49,10 +49,6 @@ plot_sound_pitch(
 
   Character. Overall plot title (default: NULL)
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A combined plot object (requires patchwork or gridExtra)

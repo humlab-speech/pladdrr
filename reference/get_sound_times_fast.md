@@ -22,6 +22,7 @@ Numeric vector of sample times (in seconds)
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 times <- get_sound_times_fast(sound)
 ```

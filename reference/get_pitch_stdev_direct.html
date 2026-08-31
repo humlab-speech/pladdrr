@@ -108,7 +108,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pitch_ptr</span> <span class="op">&lt;-</span> <span class="fu"><a href="to_pitch_cc_direct.html">to_pitch_cc_direct</a></span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_pitch_stdev_direct</span><span class="op">(</span><span class="va">pitch_ptr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.138077e-07</span>

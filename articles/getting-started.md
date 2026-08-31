@@ -147,7 +147,7 @@ print(stats)
 
 ## Pitch Analysis
 
-Extract fundamental frequency (F0) from speech or sustained tones using
+Extract fundamental frequency ( F0) from speech or sustained tones using
 object methods:
 
 ``` r
@@ -220,7 +220,8 @@ formants
 formants_male <- speech$to_formant_burg(max_frequency = 5000, max_formants = 5)
 
 # Adult female
-formants_female <- speech$to_formant_burg(max_frequency = 5500, max_formants = 5)
+formants_female <- speech$to_formant_burg(max_frequency = 5500,
+  max_formants = 5)
 
 # Child
 formants_child <- speech$to_formant_burg(max_frequency = 8000, max_formants = 5)
@@ -347,8 +348,8 @@ head(intensity_df)
 
 ## Visualization
 
-The `pladdrr` package provides ggplot2-based visualization functions
-([`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
+The `pladdrr` package provides ggplot2-based visualization functions (
+[`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
 methods, see
 [`vignette("autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md))
 for its analysis objects. For detailed examples of creating plots, see

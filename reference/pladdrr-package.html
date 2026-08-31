@@ -131,7 +131,8 @@ multivariate statistics.</p>
 
 
 <p>Batch queries (e.g. formants or pitch at many time points) run in a
-single C++ call rather than one R-level call per point. The CPPS/PowerCepstrogram
+single C++ call rather than one R-level call per point. The
+ CPPS/PowerCepstrogram
 path is multi-threaded via Praat's own <code>MelderThread</code>, and
 <code><a href="pladdrr_threads.html">pladdrr_threads</a></code> controls how many cores it uses.
 <code><a href="simd_info.html">simd_info</a></code> reports whether the installed build is using SIMD
@@ -142,11 +143,13 @@ kernels.</p>
 
 
 
-<p>Objects are lightweight S3 lists (e.g. class <code>c("Sound", "PraatObject")</code>)
+<p>Objects are lightweight S3 lists (e.g. class <code>c("Sound",
+ "PraatObject")</code>)
 with a custom <code>$</code> method that dispatches to a shared method table:
 this gives R6-style <code>sound$get_pitch()</code> call syntax at a fraction of
 R6's per-object memory cost. <code>PraatInterpreter</code> is a plain R6 class,
-since its state (a live Praat interpreter session) doesn't fit the shared-table
+since its state (a live Praat interpreter session) doesn't fit the
+ shared-table
 pattern.</p>
     </div>
     <div class="section level2">
@@ -169,7 +172,8 @@ start. Other vignettes worth knowing about:</p>
 <ul><li><p><code><a href="../articles/formant-analysis.html">vignette("formant-analysis")</a></code> - formant tracking, including
         <code>FormantPath</code></p></li>
 <li><p><code><a href="../articles/speech-synthesis-klattgrid.html">vignette("speech-synthesis-klattgrid")</a></code> - articulatory synthesis</p></li>
-<li><p><code><a href="../articles/textgrid-workflows.html">vignette("textgrid-workflows")</a></code> - reading and querying annotations</p></li>
+<li><p><code><a href="../articles/textgrid-workflows.html">vignette("textgrid-workflows")</a></code> - reading and querying
+ annotations</p></li>
 <li><p><code><a href="../articles/performance-optimization.html">vignette("performance-optimization")</a></code> - batching, threading, SIMD</p></li>
 <li><p><code><a href="../articles/migration-from-praat.html">vignette("migration-from-praat")</a></code> and
         <code><a href="../articles/migration-from-parselmouth.html">vignette("migration-from-parselmouth")</a></code> - for those coming

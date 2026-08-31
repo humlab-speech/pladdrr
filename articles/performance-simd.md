@@ -21,7 +21,7 @@ SIMD allows modern CPUs to process multiple data points simultaneously
 using a single instruction:
 
 - **Scalar**: Process 1 sample at a time
-- **SIMD**: Process several samples simultaneously (the exact count
+- **SIMD**: Process several samples simultaneously ( the exact count
   depends on the CPU and instruction set)
 
 ### Example: Adding Two Vectors
@@ -127,12 +127,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq    mean   median      uq      max neval
-#>  sound$to_pitch() 3.742695 4.094012 7.54992 4.140263 4.16279 175.8654    50
+#>              expr      min       lq     mean   median       uq      max neval
+#>  sound$to_pitch() 3.823531 4.195876 7.812176 4.242752 4.285542 183.6641    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.763344 4.093601 4.108001 4.121924 4.150136 4.646313    50
+#>              expr      min      lq     mean   median       uq      max neval
+#>  sound$to_pitch() 3.873243 4.17715 4.220879 4.218377 4.264403 5.193235    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -178,7 +178,8 @@ and hardware you actually care about.
 ``` r
 
 # Create test sound
-sound <- Sound$create_pure_tone(frequency = 440, duration = 1.0, sampling_rate = 44100)
+sound <- Sound$create_pure_tone(frequency = 440, duration = 1.0,
+  sampling_rate = 44100)
 
 # Benchmark FFT (used in Spectrum creation)
 library(microbenchmark)
@@ -220,7 +221,8 @@ relative cost depends on formant order, time step, and signal length.
 ``` r
 
 # The EDB algorithm requires a sampling rate of at least 44.1 kHz
-sound <- Sound$create_pure_tone(frequency = 440, duration = 2.0, sampling_rate = 44100)
+sound <- Sound$create_pure_tone(frequency = 440, duration = 2.0,
+  sampling_rate = 44100)
 
 result <- microbenchmark(
   standard = sound$to_cochleagram(dt = 0.01, df = 0.1),
@@ -346,7 +348,7 @@ duration_any <- 0.05  # 800 samples (not power of 2, still works)
 ### Server CPUs with AVX-512
 
 - Reachable only via a source rebuild with an explicit `-march=` target
-  (see the capability table above)
+  ( see the capability table above)
 - Relevant mainly for large-scale batch processing and high-throughput
   pipelines where you control the build
 
@@ -419,7 +421,8 @@ operations:
 
 ``` r
 
-sound <- Sound$create_pure_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
+sound <- Sound$create_pure_tone(frequency = 440, duration = 0.5,
+  sampling_rate = 22050)
 
 # Run same analysis twice
 formant1 <- sound$to_formant_burg()

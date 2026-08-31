@@ -110,18 +110,26 @@ inspection.</p>
     <h2 id="query-methods">Query methods<a class="anchor" aria-label="anchor" href="#query-methods"></a></h2>
 
 
-<ul><li><p><code>get_cpp_at_time(time, interpolation, qmin, qmax, fit_method, tolerance)</code> - cepstral peak prominence at a single time</p></li>
-<li><p><code>get_mean_cpp(from_time, to_time, qmin, qmax, fit_method, tolerance)</code> - mean cepstral peak prominence over a time range</p></li>
-<li><p><code>get_cpps(subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)</code> - CPPS, smoothed over time and quefrency</p></li>
+<ul><li><p><code>get_cpp_at_time(time, interpolation, qmin, qmax, fit_method,
+ tolerance)</code> - cepstral peak prominence at a single time</p></li>
+<li><p><code>get_mean_cpp(from_time, to_time, qmin, qmax, fit_method,
+ tolerance)</code> - mean cepstral peak prominence over a time range</p></li>
+<li><p><code>get_cpps(subtract_tilt, time_averaging_window,
+ quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0,
+ interpolation, qstart_fit, qend_fit, trend_type, fit_method)</code> - CPPS,
+ smoothed over time and quefrency</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="transformation-and-export">Transformation and export<a class="anchor" aria-label="anchor" href="#transformation-and-export"></a></h2>
 
 
-<ul><li><p><code>get_power_cepstrum_at_time(time)</code> - single frame as a PowerCepstrum object</p></li>
-<li><p><code>smooth(time_averaging_window, quefrency_averaging_window)</code> - smoothed copy as a new PowerCepstrogram</p></li>
+<ul><li><p><code>get_power_cepstrum_at_time(time)</code> - single frame as a
+ PowerCepstrum object</p></li>
+<li><p><code>smooth(time_averaging_window, quefrency_averaging_window)</code> -
+ smoothed copy as a new PowerCepstrogram</p></li>
 <li><p><code>to_matrix()</code> - values as a Matrix object</p></li>
-<li><p><code>as_matrix()</code> - values as a plain numeric matrix (quefrency x time)</p></li>
+<li><p><code>as_matrix()</code> - values as a plain numeric matrix (quefrency x
+ time)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

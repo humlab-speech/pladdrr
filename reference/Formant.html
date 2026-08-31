@@ -86,8 +86,9 @@ correlates of vowel quality in speech.</p>
 
 
 <dl><dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
-<dd><p>Not for direct use. External pointer to the underlying C++ Formant
-object; set internally when a method returns a new Formant.</p></dd>
+<dd><p>Not for direct use. External pointer to the underlying C++
+Formant
+ object; set internally when a method returns a new Formant.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -101,42 +102,57 @@ object; set internally when a method returns a new Formant.</p></dd>
 
 <ul><li><p><code>get_number_of_frames()</code> - number of analysis frames</p></li>
 <li><p><code>get_time_step()</code> - time step between frames (s)</p></li>
-<li><p><code>get_min_num_formants()</code>, <code>get_max_num_formants()</code> - formant count range per frame</p></li>
+<li><p><code>get_min_num_formants()</code>, <code>get_max_num_formants()</code> - formant
+ count range per frame</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="point-queries-single-time-">Point queries (single time)<a class="anchor" aria-label="anchor" href="#point-queries-single-time-"></a></h2>
 
 
-<ul><li><p><code>get_value_at_time(formant_number, time, unit)</code> - formant frequency at time</p></li>
-<li><p><code>get_bandwidth_at_time(formant_number, time, unit)</code> - formant bandwidth at time</p></li>
-<li><p><code>get_all_values_at_time(time, max_formants, unit)</code> - all formant values at a time point</p></li>
+<ul><li><p><code>get_value_at_time(formant_number, time, unit)</code> - formant
+ frequency at time</p></li>
+<li><p><code>get_bandwidth_at_time(formant_number, time, unit)</code> - formant
+ bandwidth at time</p></li>
+<li><p><code>get_all_values_at_time(time, max_formants, unit)</code> - all formant
+ values at a time point</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="statistics-over-time-range-">Statistics (over time range)<a class="anchor" aria-label="anchor" href="#statistics-over-time-range-"></a></h2>
 
 
-<ul><li><p><code>get_mean(formant_number, from_time, to_time, unit)</code> - mean formant frequency</p></li>
-<li><p><code>get_standard_deviation(formant_number, from_time, to_time, unit)</code> - standard deviation</p></li>
-<li><p><code>get_minimum(formant_number, from_time, to_time, unit)</code> - minimum value</p></li>
-<li><p><code>get_maximum(formant_number, from_time, to_time, unit)</code> - maximum value</p></li>
-<li><p><code>get_quantile(formant_number, quantile, from_time, to_time, unit)</code> - quantile</p></li>
-<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time of extremum</p></li>
+<ul><li><p><code>get_mean(formant_number, from_time, to_time, unit)</code> - mean
+ formant frequency</p></li>
+<li><p><code>get_standard_deviation(formant_number, from_time, to_time, unit)</code>
+ - standard deviation</p></li>
+<li><p><code>get_minimum(formant_number, from_time, to_time, unit)</code> - minimum
+ value</p></li>
+<li><p><code>get_maximum(formant_number, from_time, to_time, unit)</code> - maximum
+ value</p></li>
+<li><p><code>get_quantile(formant_number, quantile, from_time, to_time, unit)</code>
+ - quantile</p></li>
+<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time
+ of extremum</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="batch-and-vectorized">Batch and vectorized<a class="anchor" aria-label="anchor" href="#batch-and-vectorized"></a></h2>
 
 
-<ul><li><p><code>get_formant_track(formant_number, unit)</code> - full track for one formant</p></li>
+<ul><li><p><code>get_formant_track(formant_number, unit)</code> - full track for one
+ formant</p></li>
 <li><p><code>get_bandwidth_track(formant_number, unit)</code> - full bandwidth track</p></li>
-<li><p><code>get_values_at_times(formant_number, times, unit)</code> - values at an arbitrary vector of times</p></li>
-<li><p><code>get_all_formant_tracks(max_formants, unit)</code> - all formants as a matrix</p></li>
+<li><p><code>get_values_at_times(formant_number, times, unit)</code> - values at an
+ arbitrary vector of times</p></li>
+<li><p><code>get_all_formant_tracks(max_formants, unit)</code> - all formants as a
+ matrix</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
 
 
-<ul><li><p><code>as_data_frame(max_formants)</code> - export as a data.frame, long format:
-    one row per (frame, formant number), with columns <code>time</code>, <code>formant</code>,
+<ul><li><p><code>as_data_frame(max_formants)</code> - export as a data.frame, long
+ format:
+one row per (frame, formant number), with columns <code>time</code>,
+ <code>formant</code>,
     <code>frequency</code> (Hz), and <code>bandwidth</code> (Hz). Matches
     <code>FormantPath$as_data_frame()</code>.</p></li>
 <li><p><code>save(filepath)</code> - save to a Praat binary file</p></li>
@@ -145,24 +161,28 @@ object; set internally when a method returns a new Formant.</p></dd>
     <h2 id="transform">Transform<a class="anchor" aria-label="anchor" href="#transform"></a></h2>
 
 
-<ul><li><p><code>to_formant_tier(formant_number)</code> - extract one formant as a FormantTier</p></li>
+<ul><li><p><code>to_formant_tier(formant_number)</code> - extract one formant as a
+ FormantTier</p></li>
 <li><p><code>to_formant_modeler()</code> - create a polynomial trajectory model</p></li>
 <li><p><code>down_to_formant_tier()</code> - extract all formants as a FormantTier</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="LPC.html">LPC</a></code>, <code><a href="FormantPath.html">FormantPath</a></code>, <code><a href="FormantModeler.html">FormantModeler</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="LPC.html">LPC</a></code>, <code><a href="FormantPath.html">FormantPath</a></code>,
+ <code><a href="FormantModeler.html">FormantModeler</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Self-contained example with generated tone</span></span></span>
-<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">150</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">150</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formant</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  time_step <span class="op">=</span> <span class="fl">0.01</span>, max_number_of_formants <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  maximum_formant <span class="op">=</span> <span class="fl">5500</span>, window_length <span class="op">=</span> <span class="fl">0.025</span>, pre_emphasis_from <span class="op">=</span> <span class="fl">50</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="fl">0.5</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="fl">0.5</span>, unit <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The same analysis on a recording read from disk</span></span></span>
 <span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="fu"><a href="Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -170,8 +190,10 @@ object; set internally when a method returns a new Formant.</p></dd>
 <span class="r-in"><span>  time_step <span class="op">=</span> <span class="fl">0.01</span>, max_number_of_formants <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  maximum_formant <span class="op">=</span> <span class="fl">5500</span>, window_length <span class="op">=</span> <span class="fl">0.025</span>, pre_emphasis_from <span class="op">=</span> <span class="fl">50</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f1_at_02s</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="fl">0.2</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mean_f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f1_at_02s</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="fl">0.2</span>, unit <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mean_f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span> unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

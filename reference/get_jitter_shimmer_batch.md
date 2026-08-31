@@ -91,7 +91,8 @@ contour to guide period detection: “\`r \# Recommended workflow sound
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pp <- sound$to_point_process_periodic_cc(75, 600)
 
 # Get all voice quality measures at once

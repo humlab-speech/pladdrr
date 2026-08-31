@@ -49,8 +49,10 @@ A DTW object
 ## Examples
 
 ``` r
-ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+ 16000)
+test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 dtw <- sounds_to_dtw(ref, test)
 print(dtw$get_weighted_distance())
 #> [1] 93.25283

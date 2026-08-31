@@ -20,7 +20,7 @@ get_min_pitch(pitch, unit = "Hz", time_range = NULL)
 
 - time_range:
 
-  Optional time range
+  Optional time range c(start, end)
 
 ## Value
 
@@ -29,7 +29,8 @@ Minimum pitch value
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 suppressWarnings(get_min_pitch(pitch))
 #> [1] 150.0017

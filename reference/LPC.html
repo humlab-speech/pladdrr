@@ -86,7 +86,8 @@ object; set internally when a method returns a new LPC.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An <code>LPC</code> object with methods for linear predictive coding analysis and inverse filtering.</p>
+    <p>An <code>LPC</code> object with methods for linear predictive coding
+ analysis and inverse filtering.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -113,7 +114,8 @@ representations.</p>
 <li><p><code>get_sampling_period()</code> - sampling period of the original sound</p></li>
 <li><p><code>get_max_num_coefficients()</code> - maximum number of LPC coefficients</p></li>
 <li><p><code>get_gain_at_frame(frame)</code> - gain value for a specific frame</p></li>
-<li><p><code>get_coefficients_at_frame(frame)</code> - LPC coefficients for a specific frame</p></li>
+<li><p><code>get_coefficients_at_frame(frame)</code> - LPC coefficients for a
+ specific frame</p></li>
 <li><p><code>get_all_gains()</code> - vector of all gain values</p></li>
 <li><p><code>get_all_coefficients()</code> - matrix of all LPC coefficients</p></li>
 </ul></div>
@@ -121,24 +123,29 @@ representations.</p>
     <h2 id="conversion-methods">Conversion methods<a class="anchor" aria-label="anchor" href="#conversion-methods"></a></h2>
 
 
-<ul><li><p><code>to_formant(margin)</code> - not available in this build (requires CLAPACK);
+<ul><li><p><code>to_formant(margin)</code> - not available in this build (requires
+ CLAPACK);
     use <code>Sound$to_formant_burg()</code> for formant extraction instead</p></li>
-<li><p><code>to_spectrum(time, ...)</code> - convert to a Spectrum at a specific time</p></li>
+<li><p><code>to_spectrum(time, ...)</code> - convert to a Spectrum at a specific
+ time</p></li>
 <li><p><code>to_matrix()</code> - convert to a Matrix object</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="voice-source-extraction-inverse-filtering-">Voice source extraction (inverse filtering)<a class="anchor" aria-label="anchor" href="#voice-source-extraction-inverse-filtering-"></a></h2>
 
 
-<ul><li><p><code>filter_inverse(sound)</code> - extract glottal flow by inverse filtering</p></li>
-<li><p><code>filter_inverse_at_time(sound, time, channel)</code> - use the filter from a specific time</p></li>
+<ul><li><p><code>filter_inverse(sound)</code> - extract glottal flow by inverse
+ filtering</p></li>
+<li><p><code>filter_inverse_at_time(sound, time, channel)</code> - use the filter
+ from a specific time</p></li>
 </ul><p>These methods remove vocal tract resonances to reveal the voice source
 (glottal flow waveform), useful for voice quality research and vocal fold
 dynamics.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Formant.html">Formant</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="LFCC.html">LFCC</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Formant.html">Formant</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>,
+ <code><a href="LFCC.html">LFCC</a></code></p></div>
     </div>
 
     <div class="section level2">

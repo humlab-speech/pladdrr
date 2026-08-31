@@ -70,10 +70,12 @@ sound$save(path)
 window <- sound_load_window(path, start = 0.5, end = 0.6)
 
 # Extract and resample (for spectral analysis)
-window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 10000)
+window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to =
+ 10000)
 
 # Preserve original time domain (window starts at 0.5, not 0.0)
-window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+window_timed <- sound_load_window(path, start = 0.5, end = 0.6,
+ preserve_times = TRUE)
 
 unlink(path)
 ```

@@ -121,7 +121,7 @@ detection issues, and parameter tuning for formant analysis.</p>
 <strong>Burg</strong> (<code>to_formant_burg</code>) - LPC-based,
 recommended for general use</li>
 <li>
-<strong>Keep All</strong> (<code>to_formant_keepall</code>) -
+<strong>Keep All</strong> ( <code>to_formant_keepall</code>) -
 Retains all LPC formants without filtering</li>
 <li>
 <strong>Robust</strong> (<code>to_formant_robust</code>) -
@@ -133,8 +133,8 @@ Alternative LPC formant tracker</li>
 <strong>Split-Levinson</strong> (<code>to_formant_sl</code>) - LPC
 via split-Levinson recursion</li>
 <li>
-<strong>From Excitation</strong>
-(<code>excitation$to_formant</code>) - Perceptual-based extraction, via
+<strong>From Excitation</strong> (
+<code>excitation$to_formant</code>) - Perceptual-based extraction, via
 <code>Spectrum$to_excitation()</code> or
 <code>Cochleagram$to_excitation()</code>
 </li>
@@ -221,7 +221,8 @@ analysis:</p>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Formant extraction failed: "</span>, <span class="va">e</span><span class="op">$</span><span class="va">message</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Note: This requires completed polynomial root finding implementation"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span></span>
+<span>      <span class="st">"Note: This requires completed polynomial root finding implementation"</span><span class="op">)</span></span>
 <span>    <span class="cn">NULL</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span>  </span>
@@ -298,8 +299,12 @@ filtered out</p>
 <span><span class="co"># Comparison</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">f1_burg</span>, <span class="va">f1_keep</span>, <span class="va">f2_burg</span>, <span class="va">f2_keep</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Method Comparison:\n"</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Burg:     F1 = %d Hz, F2 = %d Hz\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f1_burg</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f2_burg</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Keep All: F1 = %d Hz, F2 = %d Hz\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f1_keep</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f2_keep</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Burg:     F1 = %d Hz, F2 = %d Hz\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f1_burg</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f2_burg</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Keep All: F1 = %d Hz, F2 = %d Hz\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f1_keep</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">f2_keep</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Diff:     F1 = %d Hz, F2 = %d Hz\n"</span>,</span>
 <span>              <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">f1_burg</span> <span class="op">-</span> <span class="va">f1_keep</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>              <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">f2_burg</span> <span class="op">-</span> <span class="va">f2_keep</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -313,9 +318,9 @@ filtered out</p>
 <div class="section level2">
 <h2 id="alternative-methods-advanced">3. Alternative Methods (Advanced)<a class="anchor" aria-label="anchor" href="#alternative-methods-advanced"></a>
 </h2>
-<p><code>to_formant_willems()</code> and <code>to_formant_sl()</code>
+<p><code>to_formant_willems(   )</code> and <code>to_formant_sl()</code>
 (split-Levinson) provide alternative LPC-based extraction.
-<code>to_formant_robust()</code> iteratively refits Burg while
+<code>to_formant_robust(   )</code> iteratively refits Burg while
 down-weighting outlier frames (<code>num_std_dev</code>,
 <code>max_iterations</code>). Burg (recommended) or Keep All cover most
 use cases; these are for comparison or specific research needs.</p>
@@ -377,8 +382,10 @@ use cases; these are for comparison or specific research needs.</p>
 <span>  <span class="co"># Report results</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Formant extraction results:\n"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Male (5000 Hz):"</span>, <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">formant_male</span><span class="op">)</span><span class="op">)</span> <span class="st">"OK"</span> <span class="kw">else</span> <span class="st">"failed"</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Female (5500 Hz):"</span>, <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">formant_female</span><span class="op">)</span><span class="op">)</span> <span class="st">"OK"</span> <span class="kw">else</span> <span class="st">"failed"</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Child (8000 Hz):"</span>, <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">formant_child</span><span class="op">)</span><span class="op">)</span> <span class="st">"OK"</span> <span class="kw">else</span> <span class="st">"failed"</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Female (5500 Hz):"</span>, <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">formant_female</span><span class="op">)</span><span class="op">)</span> <span class="st">"OK"</span> <span class="kw">else</span> <span class="st">"failed"</span>,</span>
+<span>    <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Child (8000 Hz):"</span>, <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">formant_child</span><span class="op">)</span><span class="op">)</span> <span class="st">"OK"</span> <span class="kw">else</span> <span class="st">"failed"</span>,</span>
+<span>    <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Skipping ceiling demo - sound not available"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>

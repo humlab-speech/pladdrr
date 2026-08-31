@@ -9,7 +9,7 @@ library(ggplot2)
 ## Overview
 
 pladdrr provides
-[`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
+[`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)
 and
 [`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
 methods following the ggplot2 convention for visualizing acoustic data.
@@ -30,7 +30,7 @@ autoplot(spec) +
 ## Basic Usage: Single Object Plots
 
 Each Praat object type has an
-[`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
+[`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)
 method that creates an appropriate visualization.
 
 ``` r
@@ -92,7 +92,8 @@ autoplot(intensity)
 
 ``` r
 
-# Formant extraction may fail on some sounds (e.g., if too short or no voiced content)
+# Formant extraction may fail on some sounds (e.g., if too short or no voiced
+#  content)
 formant <- tryCatch(
   sound$to_formant_burg(),
   error = function(e) {

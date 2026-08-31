@@ -38,7 +38,8 @@ use after the Sound object is garbage collected.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 
 # Fast copy for analysis
 samples <- get_sound_values_fast(sound, channel = 1)

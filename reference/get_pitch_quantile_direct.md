@@ -50,7 +50,8 @@ for getting multiple quantiles at once
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch_ptr <- to_pitch_cc_direct(sound)
 q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
 q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)

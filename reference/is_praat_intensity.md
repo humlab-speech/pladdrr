@@ -22,7 +22,8 @@ Logical indicating validity
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 intensity <- sound$to_intensity()
 is_praat_intensity(intensity)
 #> [1] TRUE

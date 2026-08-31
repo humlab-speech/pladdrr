@@ -106,8 +106,8 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>pladdrr</code> returns data as data frames
-(<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> methods) and matrices
+<p><code>pladdrr</code> returns data as data frames (
+<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame(     )</a></code> methods) and matrices
 (<code>as_matrix()</code> methods) that plot directly with
 <code>ggplot2</code>, and it also ships a few <code>ggplot2</code>-based
 helper functions (<code><a href="../reference/plot_powercepstrum.html">plot_powercepstrum()</a></code>,
@@ -120,9 +120,8 @@ types (<code>Sound</code>, <code>Pitch</code>, <code>Intensity</code>,
 <code>Ltas</code>, <code>TextGrid</code>, <code>Harmonicity</code>,
 <code>PointProcess</code>, <code>PowerCepstrum</code>).</p>
 <p>Plots produced this way are ordinary <code>ggplot2</code> objects:
-they can be saved as PDF/SVG/PNG with <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave()</a></code>, themed and
-recolored with standard <code>ggplot2</code> calls, and combined with
-<code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">gridExtra::grid.arrange()</a></code> or <code>patchwork</code>.</p>
+they can be saved as PDF/SVG/PNG with `ggsave(</p>
+<p>)<code>, themed and recolored with standard</code>ggplot2<code>calls, and combined with</code>gridExtra::grid.arrange()<code>or</code>patchwork`.</p>
 <p>This vignette demonstrates the plotting functions available in
 <code>pladdrr</code>, organized by analysis type.</p>
 </div>
@@ -130,8 +129,8 @@ recolored with standard <code>ggplot2</code> calls, and combined with
 <h2 id="cepstral-analysis-visualization">Cepstral Analysis Visualization<a class="anchor" aria-label="anchor" href="#cepstral-analysis-visualization"></a>
 </h2>
 <p>Cepstral analysis is essential for voice quality assessment,
-particularly for measuring periodicity (CPP - Cepstral Peak
-Prominence).</p>
+particularly for measuring periodicity (</p>
+<p>CPP - Cepstral Peak Prominence).</p>
 <div class="section level3">
 <h3 id="power-cepstrum">Power Cepstrum<a class="anchor" aria-label="anchor" href="#power-cepstrum"></a>
 </h3>
@@ -230,14 +229,16 @@ argument)</li>
 <p>Multi-panel diagnostic figure combining all cepstral
 visualizations:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)</span></span>
+<code class="sourceCode R"><span><span class="co"># Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time</span></span>
+<span><span class="co">#  series)</span></span>
 <span><span class="va">report_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_cepstrum_report.html">create_cepstrum_report</a></span><span class="op">(</span>cepstrogram <span class="op">=</span> <span class="va">cepstrogram</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =</span></span>
 <span><span class="co">#&gt; 0.001, qmax = 0)</span></span></code></pre></div>
 <p><img src="visualization_files/figure-html/cepstrum-report-1.png" class="r-plt" alt="" width="768"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"cepstrum_report.pdf"</span><span class="op">)</span>, <span class="va">report_plot</span>, width <span class="op">=</span> <span class="fl">12</span>, height <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"cepstrum_report.pdf"</span><span class="op">)</span>, <span class="va">report_plot</span>, width <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Report panels</strong> (stacked with
 <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">gridExtra::grid.arrange()</a></code>):</p>
 <ol style="list-style-type: decimal">
@@ -263,7 +264,8 @@ exclusively vowels):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract formants at the midpoint of each labeled interval on the "phones" tier</span></span>
 <span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">textgrid</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">textgrid</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/TextGrid.html">TextGrid</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.TextGrid"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">formant_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  vowel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -330,7 +332,8 @@ exclusively vowels):</p>
 <span><span class="co"># Keep F1-F3 and reshape to wide for a multi-line plot.</span></span>
 <span><span class="va">formant_df</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">as_data_frame</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">formant_df</span> <span class="op">&lt;-</span> <span class="va">formant_df</span><span class="op">[</span><span class="va">formant_df</span><span class="op">$</span><span class="va">formant</span> <span class="op">&lt;=</span> <span class="fl">3</span>, <span class="op">]</span></span>
-<span><span class="va">formant_wide</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">formant_df</span>, <span class="va">time</span> <span class="op">~</span> <span class="va">formant</span>, value.var <span class="op">=</span> <span class="st">"frequency"</span><span class="op">)</span></span>
+<span><span class="va">formant_wide</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">formant_df</span>, <span class="va">time</span> <span class="op">~</span> <span class="va">formant</span>,</span>
+<span>  value.var <span class="op">=</span> <span class="st">"frequency"</span><span class="op">)</span></span>
 <span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">formant_wide</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"F1"</span>, <span class="st">"F2"</span>, <span class="st">"F3"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot F1-F3 over time</span></span>
@@ -674,7 +677,8 @@ require manually looping over intervals and building
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"figure1.svg"</span>, plot <span class="op">=</span> <span class="va">p1</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save as TIFF (for journals)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"figure1.tiff"</span>, plot <span class="op">=</span> <span class="va">p1</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span>, dpi <span class="op">=</span> <span class="fl">300</span>, compression <span class="op">=</span> <span class="st">"lzw"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"figure1.tiff"</span>, plot <span class="op">=</span> <span class="va">p1</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span>, dpi <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  compression <span class="op">=</span> <span class="st">"lzw"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="batch-saving">Batch Saving<a class="anchor" aria-label="anchor" href="#batch-saving"></a>
@@ -699,34 +703,31 @@ require manually looping over intervals and building
 </h2>
 <p>This vignette covered:</p>
 <ul>
-<li>
-<strong>Cepstral analysis</strong>:
-<code><a href="../reference/plot_powercepstrum.html">plot_powercepstrum()</a></code>, <code><a href="../reference/plot_powercepstrogram.html">plot_powercepstrogram()</a></code>,
+<li><p><strong>Cepstral analysis</strong>:
+<code><a href="../reference/plot_powercepstrum.html">plot_powercepstrum( )</a></code>,
+<code><a href="../reference/plot_powercepstrogram.html">plot_powercepstrogram()</a></code>,
 <code><a href="../reference/plot_cpp_timeseries.html">plot_cpp_timeseries()</a></code>,
-<code><a href="../reference/create_cepstrum_report.html">create_cepstrum_report()</a></code>
-</li>
+<code><a href="../reference/create_cepstrum_report.html">create_cepstrum_report()</a></code></p></li>
 <li>
-<strong>Formant analysis</strong>: F1-F2 formant space and F1-F3
-trajectories from <code>Formant$as_data_frame()</code>
+<p><strong>Formant analysis</strong>: F1-F2 formant space and F1-F3
+trajectories from `Formant$as_data_frame(</p>
+<p>)`</p>
 </li>
+<li><p><strong>Prosodic features</strong>: pitch and intensity contours
+from <code>Pitch$as_data_frame( )</code> and
+<code>Intensity$as_data_frame()</code></p></li>
+<li><p><strong>Annotation</strong>: TextGrid tier display via
+<code><a href="../reference/autoplot-methods.html">autoplot.TextGrid( )</a></code> and
+<code><a href="../reference/autoplot-methods.html">autolayer.TextGrid()</a></code></p></li>
 <li>
-<strong>Prosodic features</strong>: pitch and intensity contours
-from <code>Pitch$as_data_frame()</code> and
-<code>Intensity$as_data_frame()</code>
+<p><strong>Spectral analysis</strong>: spectrograms, spectra, and
+LTAS from the corresponding `as_matrix(</p>
+<p>)<code>/</code>as_data_frame()` methods</p>
 </li>
-<li>
-<strong>Annotation</strong>: TextGrid tier display via
-<code><a href="../reference/autoplot-methods.html">autoplot.TextGrid()</a></code> and
-<code><a href="../reference/autoplot-methods.html">autolayer.TextGrid()</a></code>
-</li>
-<li>
-<strong>Spectral analysis</strong>: spectrograms, spectra, and LTAS
-from the corresponding
-<code>as_matrix()</code>/<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> methods</li>
 </ul>
 <p>All examples produce ordinary <code>ggplot2</code> objects that can
-be themed, combined with <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">gridExtra::grid.arrange()</a></code>, and
-saved with <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave()</a></code>.</p>
+be themed, combined with `gridExtra::grid.arrange(</p>
+<p>)<code>, and saved with</code>ggsave()`.</p>
 <p>For more information on specific acoustic analyses, see:</p>
 <ul>
 <li>
@@ -738,8 +739,8 @@ Multi-parameter analysis</li>
 <code><a href="../articles/textgrid-workflows.html">vignette("textgrid-workflows")</a></code> - Annotation-based
 analysis</li>
 <li>
-<code><a href="../articles/autoplot-autolayer.html">vignette("autoplot-autolayer")</a></code> - Full reference for the
-<code>autoplot</code>/<code>autolayer</code> methods</li>
+<code><a href="../articles/autoplot-autolayer.html">vignette( "autoplot-autolayer")</a></code> - Full reference for
+the <code>autoplot</code>/<code>autolayer</code> methods</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

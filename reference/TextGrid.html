@@ -98,15 +98,18 @@ TextGrid object; set internally when a method returns a new TextGrid.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>TextGrids are the primary tool for linguistic annotation in Praat. They
 contain one or more tiers, where each tier can be:</p>
-<ul><li><p><code>IntervalTier</code>: consecutive time intervals with labels (e.g., phonemes, words)</p></li>
-<li><p><code>PointTier</code> (TextTier): time points with labels (e.g., events, tones)</p></li>
+<ul><li><p><code>IntervalTier</code>: consecutive time intervals with labels (e.g.,
+ phonemes, words)</p></li>
+<li><p><code>PointTier</code> (TextTier): time points with labels (e.g., events,
+ tones)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="creating-textgrid-objects">Creating TextGrid objects<a class="anchor" aria-label="anchor" href="#creating-textgrid-objects"></a></h2>
 
 
 <ul><li><p><code>TextGrid(path)</code> - read from file (Praat text or binary format)</p></li>
-<li><p><code>textgrid_create(tmin, tmax, tier_names, point_tiers)</code> - create an empty grid</p></li>
+<li><p><code>textgrid_create(tmin, tmax, tier_names, point_tiers)</code> - create an
+ empty grid</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="querying-tiers">Querying tiers<a class="anchor" aria-label="anchor" href="#querying-tiers"></a></h2>
@@ -124,9 +127,12 @@ contain one or more tiers, where each tier can be:</p>
 <ul><li><p><code>get_number_of_intervals(tier)</code> - number of intervals in a tier</p></li>
 <li><p><code>get_interval_text(tier, n)</code> - get the label of interval n</p></li>
 <li><p><code>get_label_at_time(tier, time)</code> - get the label at a specific time</p></li>
-<li><p><code>get_all_intervals(tier)</code> - get all intervals as a data.frame (fast)</p></li>
-<li><p><code>extract_intervals_batch(tier, ...)</code> - extract matching intervals (fast)</p></li>
-<li><p><code>extract_intervals_where(sound, tier, criterion, text, preserve_times)</code> - extract Sound intervals matching a text criterion</p></li>
+<li><p><code>get_all_intervals(tier)</code> - get all intervals as a data.frame
+ (fast)</p></li>
+<li><p><code>extract_intervals_batch(tier, ...)</code> - extract matching intervals
+ (fast)</p></li>
+<li><p><code>extract_intervals_where(sound, tier, criterion, text,
+ preserve_times)</code> - extract Sound intervals matching a text criterion</p></li>
 <li><p><code>set_interval_text(tier, n, text)</code> - set the label of interval n</p></li>
 <li><p><code>insert_boundary(tier, time)</code> - insert a new boundary</p></li>
 <li><p><code>remove_boundary(tier, time)</code> - remove a boundary</p></li>
@@ -149,7 +155,8 @@ contain one or more tiers, where each tier can be:</p>
 <li><p><code>add_point_tier(name)</code> - add a new PointTier</p></li>
 <li><p><code>remove_tier(tier)</code> - remove a tier</p></li>
 <li><p><code>set_tier_name(tier, name)</code> - rename a tier</p></li>
-<li><p><code>duplicate_tier(tier, new_name)</code> - duplicate a tier with a new name</p></li>
+<li><p><code>duplicate_tier(tier, new_name)</code> - duplicate a tier with a new
+ name</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
@@ -162,31 +169,7 @@ contain one or more tiers, where each tier can be:</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create new TextGrid with one interval tier and one point tier</span></span></span>
-<span class="r-in"><span><span class="co"># (tier_names lists all tiers; point_tiers names the subset that are point tiers)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span> <span class="op">&lt;-</span> <span class="fu"><a href="textgrid_create.html">textgrid_create</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="st">"words tones"</span>, <span class="st">"tones"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">get_tier_names</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "words" "tones"</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add boundaries and labels (IntervalTier)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_boundary</span><span class="op">(</span><span class="st">"words"</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_boundary</span><span class="op">(</span><span class="st">"words"</span>, <span class="fl">0.7</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="st">"words"</span>, <span class="fl">1</span>, <span class="st">"hello"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">set_interval_text</span><span class="op">(</span><span class="st">"words"</span>, <span class="fl">2</span>, <span class="st">"world"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add points and labels (PointTier)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_point</span><span class="op">(</span><span class="st">"tones"</span>, <span class="fl">0.2</span>, <span class="st">"H*"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">insert_point</span><span class="op">(</span><span class="st">"tones"</span>, <span class="fl">0.8</span>, <span class="st">"L-L%"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Query</span></span></span>
-<span class="r-in"><span><span class="va">tg</span><span class="op">$</span><span class="fu">get_number_of_intervals</span><span class="op">(</span><span class="st">"words"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
-<span class="r-in"><span><span class="va">label</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">get_label_at_time</span><span class="op">(</span><span class="st">"words"</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Export to R</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">tg</span><span class="op">$</span><span class="fu">as_data_frame</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
+
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

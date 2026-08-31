@@ -120,7 +120,8 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Extract glottal pulses</span></span></span>
-<span class="r-in"><span><span class="va">pp_ptr</span> <span class="op">&lt;-</span> <span class="fu">to_point_process_direct</span><span class="op">(</span><span class="va">sound</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pp_ptr</span> <span class="op">&lt;-</span> <span class="fu">to_point_process_direct</span><span class="op">(</span><span class="va">sound</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">300</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="fu"><a href="PointProcess.html">PointProcess</a></span><span class="op">(</span>.xptr <span class="op">=</span> <span class="va">pp_ptr</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pp</span><span class="op">$</span><span class="fu">get_number_of_points</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 96</span>

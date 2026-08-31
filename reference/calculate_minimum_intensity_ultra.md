@@ -72,7 +72,8 @@ FH component of DSI
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # Get minimum intensity in voiced regions (DSI IM component)
 min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)

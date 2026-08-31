@@ -35,7 +35,8 @@ Pitch R6 object
 
 ``` r
 # Old S3 approach (DEPRECATED, shown for reference)
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 #> Warning: extract_pitch() is deprecated and will be removed in v6.0.0. Use sound$to_pitch(time_step, pitch_floor, pitch_ceiling) instead.
 

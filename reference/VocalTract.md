@@ -30,7 +30,7 @@ Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 ## Usage
 
 
-    VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+    VocalTract(nx, dx) # create an empty vocal tract with nx sections
     VocalTract$create_from_phone(phone)      # create from a phone name
 
 ## Query methods

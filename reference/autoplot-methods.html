@@ -637,13 +637,15 @@ flexible composition of multi-object visualizations.</p>
 
 
 <dt id="arg-time-step">time_step<a class="anchor" aria-label="anchor" href="#arg-time-step"></a></dt>
-<dd><p>Sampling interval in seconds, only used when style="line" (default: 0.005).</p></dd>
+<dd><p>Sampling interval in seconds, only used when style="line"
+(default: 0.005).</p></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
-<dd><p>"speckle" (default, matches Praat's FormantTier_speckle: plots the
-tier's own stored points, unconnected) or "line" (interpolates on a
-time_step grid and connects with a line — not Praat's default view).</p></dd>
+<dd><p>"speckle" (default, matches Praat's FormantTier_speckle: plots
+the
+ tier's own stored points, unconnected) or "line" (interpolates on a
+ time_step grid and connects with a line — not Praat's default view).</p></dd>
 
 
 <dt id="arg-show-candidates">show_candidates<a class="anchor" aria-label="anchor" href="#arg-show-candidates"></a></dt>
@@ -732,7 +734,8 @@ Praat's default `Cepstrum_drawLinear` (raw signed cepstrum, linear scale).</p></
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span></span></span>

@@ -16,10 +16,6 @@ sound_values_fast(sound_xptr, channel = 1L)
 
   External pointer to Sound object
 
-- channel:
-
-  Channel number (1-based, default 1)
-
 ## Value
 
 Numeric vector (independent copy of sample data). Has class

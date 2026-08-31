@@ -107,8 +107,9 @@ by voice activity detection.</p>
 
 
 <dt id="arg-window-shape">window_shape<a class="anchor" aria-label="anchor" href="#arg-window-shape"></a></dt>
-<dd><p>Character. Window shape for extraction (default: "rectangular").
-See details for all options.</p></dd>
+<dd><p>Character. Window shape for extraction (default:
+"rectangular").
+ See details for all options.</p></dd>
 
 
 <dt id="arg-relative-width">relative_width<a class="anchor" aria-label="anchor" href="#arg-relative-width"></a></dt>
@@ -121,8 +122,9 @@ For gaussian2/kaiser2, use 2.0. For gaussian3-5, use 3.0-5.0 respectively.</p></
 
 
 <dt id="arg-return-r-">return_r6<a class="anchor" aria-label="anchor" href="#arg-return-r-"></a></dt>
-<dd><p>Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
-Using FALSE skips R6 wrapper construction.</p></dd>
+<dd><p>Logical. Return R6 Sound objects (TRUE) or raw xptrs
+(FALSE).
+ Using FALSE skips R6 wrapper construction.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -149,7 +151,8 @@ Each extracted sound can then be concatenated or analyzed separately.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Praat documentation: <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a></p>
+    <p>Praat documentation:
+ <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a></p>
     </div>
 
     <div class="section level2">
@@ -159,7 +162,8 @@ Each extracted sound can then be concatenated or analyzed separately.</p>
 <span class="r-in"><span>  <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">200</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, amplitude <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vad_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="sound_to_textgrid_silences.html">sound_to_textgrid_silences</a></span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">voiced_intervals</span> <span class="op">&lt;-</span> <span class="fu"><a href="textgrid_get_intervals_where.html">textgrid_get_intervals_where</a></span><span class="op">(</span><span class="va">vad_grid</span>, <span class="fl">1</span>, <span class="st">"equals"</span>, <span class="st">"sounding"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">voiced_intervals</span> <span class="op">&lt;-</span> <span class="fu"><a href="textgrid_get_intervals_where.html">textgrid_get_intervals_where</a></span><span class="op">(</span><span class="va">vad_grid</span>, <span class="fl">1</span>, <span class="st">"equals"</span>,</span></span>
+<span class="r-in"><span> <span class="st">"sounding"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">voiced_sounds</span> <span class="op">&lt;-</span> <span class="fu">sound_extract_parts</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">sound</span>,</span></span>
@@ -169,7 +173,8 @@ Each extracted sound can then be concatenated or analyzed separately.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Analyze each segment separately</span></span></span>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">voiced_sounds</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Segment"</span>, <span class="va">i</span>, <span class="st">"duration:"</span>, <span class="va">voiced_sounds</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span>, <span class="st">"s\n"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Segment"</span>, <span class="va">i</span>, <span class="st">"duration:"</span>, <span class="va">voiced_sounds</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> <span class="st">"s\n"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Segment 1 duration: 0.52 s</span>
 <span class="r-in"><span></span></span>

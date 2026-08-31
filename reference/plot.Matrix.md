@@ -65,10 +65,6 @@ plot(
   Character. Color scale to use: "viridis", "magma", "plasma",
   "inferno", "cividis", or "greyscale" (default: "viridis")
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A ggplot2 object

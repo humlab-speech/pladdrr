@@ -83,7 +83,8 @@ intensity-only detection.
 
 ``` r
 # \donttest{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # Full AVQI-compatible extraction (default)
 voiced <- extract_voiced_segments(sound)

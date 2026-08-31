@@ -86,11 +86,14 @@ sound <- Sound$create_tone(frequency = 220, duration = 3.0)
 rect <- sound_extract_part(sound, 1.0, 2.0, window_shape = 0L)
 
 # Gaussian1 window (standard)
-gauss1 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 5L, relative_width = 1.0)
+gauss1 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 5L,
+ relative_width = 1.0)
 
 # Gaussian2 with wider physical extraction
-gauss2 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 6L, relative_width = 2.0)
+gauss2 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 6L,
+ relative_width = 2.0)
 
 # Kaiser2 for spectral analysis
-kaiser <- sound_extract_part(sound, 1.0, 2.0, window_shape = 11L, relative_width = 2.0)
+kaiser <- sound_extract_part(sound, 1.0, 2.0, window_shape = 11L,
+ relative_width = 2.0)
 ```

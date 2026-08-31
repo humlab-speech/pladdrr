@@ -116,17 +116,21 @@ the requested time window and hands back a normal Sound.</p>
 <li><p><code>get_start_time()</code>, <code>get_end_time()</code> - time domain in seconds</p></li>
 <li><p><code>get_sample_rate()</code> - sampling frequency in Hz</p></li>
 <li><p><code>get_number_of_samples()</code> - number of samples per channel</p></li>
-<li><p><code>get_number_of_channels()</code> - number of channels (1 = mono, 2 = stereo)</p></li>
+<li><p><code>get_number_of_channels()</code> - number of channels (1 = mono, 2 =
+ stereo)</p></li>
 <li><p><code>get_file_path()</code> - path to the underlying audio file</p></li>
-<li><p><code>get_dx()</code> - sampling period in seconds (<code>1 / get_sample_rate()</code>)</p></li>
+<li><p><code>get_dx()</code> - sampling period in seconds (<code>1 /
+ get_sample_rate()</code>)</p></li>
 <li><p><code>get_x1()</code> - time of the first sample</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="time-sample-conversion">Time/sample conversion<a class="anchor" aria-label="anchor" href="#time-sample-conversion"></a></h2>
 
 
-<ul><li><p><code>get_time_from_sample(sample)</code> - time, in seconds, of a given sample index</p></li>
-<li><p><code>get_sample_from_time(time)</code> - index of the sample nearest a given time</p></li>
+<ul><li><p><code>get_time_from_sample(sample)</code> - time, in seconds, of a given
+ sample index</p></li>
+<li><p><code>get_sample_from_time(time)</code> - index of the sample nearest a given
+ time</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="streaming">Streaming<a class="anchor" aria-label="anchor" href="#streaming"></a></h2>
@@ -179,7 +183,7 @@ how much Praat keeps cached between reads.</p>
 <span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="va">LongSound</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Praat LongSound&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   File: /tmp/Rtmp0wqSKd/file248f21bdecbc.wav </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   File: /tmp/RtmpfJP1hL/file2786661652bd.wav </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Duration: 1.000 seconds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Sample rate: 44100 Hz</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Channels: 1 </span>

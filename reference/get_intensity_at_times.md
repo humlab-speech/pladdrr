@@ -45,7 +45,8 @@ Uses existing optimized C++ code.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 intensity <- sound$to_intensity()
 times <- seq(0.05, 0.45, length.out = 10)
 intensities <- get_intensity_at_times(intensity, times)

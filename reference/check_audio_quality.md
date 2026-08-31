@@ -105,7 +105,8 @@ or excessive compression.
 
 ``` r
 # \donttest{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 quality <- check_audio_quality(sound)
 
 cat("Audio Quality Report:\n")

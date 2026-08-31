@@ -33,7 +33,8 @@ Numeric vector of pitch strengths (0-1) at the specified times
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 times <- seq(0.05, 0.45, length.out = 10)
 strengths <- get_pitch_strengths_at_times(pitch, times)

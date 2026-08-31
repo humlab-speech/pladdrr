@@ -6,14 +6,6 @@ resonances, frication, and other articulatory parameters.
 
 ## Arguments
 
-- tmin:
-
-  Start time in seconds
-
-- tmax:
-
-  End time in seconds
-
 - numberOfFormants:
 
   Number of oral formants (typically 6)

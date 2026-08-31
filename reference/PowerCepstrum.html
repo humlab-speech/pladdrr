@@ -102,20 +102,28 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).</p>
     <h2 id="peak-analysis">Peak analysis<a class="anchor" aria-label="anchor" href="#peak-analysis"></a></h2>
 
 
-<ul><li><p><code>get_peak_prominence(pitch_floor, pitch_ceiling, ...)</code> - CPP value (dB), the main voice quality metric</p></li>
-<li><p><code>get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)</code> - CPP using the Hillenbrand algorithm</p></li>
-<li><p><code>get_quefrency_of_peak(interpolation)</code> - quefrency of the cepstral peak (s)</p></li>
-<li><p><code>get_value_at_quefrency(quefrency, interpolation, unit)</code> - cepstral amplitude at a quefrency</p></li>
+<ul><li><p><code>get_peak_prominence(pitch_floor, pitch_ceiling, ...)</code> - CPP value
+ (dB), the main voice quality metric</p></li>
+<li><p><code>get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)</code> -
+ CPP using the Hillenbrand algorithm</p></li>
+<li><p><code>get_quefrency_of_peak(interpolation)</code> - quefrency of the cepstral
+ peak (s)</p></li>
+<li><p><code>get_value_at_quefrency(quefrency, interpolation, unit)</code> -
+ cepstral amplitude at a quefrency</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="trend-and-smoothing">Trend and smoothing<a class="anchor" aria-label="anchor" href="#trend-and-smoothing"></a></h2>
 
 
 <ul><li><p><code>smooth(averaging_window)</code> - smooth the cepstrum</p></li>
-<li><p><code>fit_trend_line(qmin, qmax, trend_type, fit_method)</code> - fit a regression trend line</p></li>
-<li><p><code>get_trend_line_value(quefrency, ...)</code> - value of the fitted trend at a quefrency</p></li>
-<li><p><code>subtract_trend(qstart_fit, qend_fit, ...)</code> - subtract the regression trend (returns a new PowerCepstrum)</p></li>
-<li><p><code>subtract_trend_inplace(qstart_fit, qend_fit, ...)</code> - subtract the trend in place (mutates)</p></li>
+<li><p><code>fit_trend_line(qmin, qmax, trend_type, fit_method)</code> - fit a
+ regression trend line</p></li>
+<li><p><code>get_trend_line_value(quefrency, ...)</code> - value of the fitted trend
+ at a quefrency</p></li>
+<li><p><code>subtract_trend(qstart_fit, qend_fit, ...)</code> - subtract the
+ regression trend (returns a new PowerCepstrum)</p></li>
+<li><p><code>subtract_trend_inplace(qstart_fit, qend_fit, ...)</code> - subtract the
+ trend in place (mutates)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export-and-transform">Export and transform<a class="anchor" aria-label="anchor" href="#export-and-transform"></a></h2>
@@ -127,12 +135,14 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).</p>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="PowerCepstrogram.html">PowerCepstrogram</a></code>, <code><a href="Sound.html">Sound</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="PowerCepstrogram.html">PowerCepstrogram</a></code>,
+ <code><a href="Sound.html">Sound</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">spectrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cepstrum</span> <span class="op">&lt;-</span> <span class="va">spectrum</span><span class="op">$</span><span class="fu">to_power_cepstrum</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cpp</span> <span class="op">&lt;-</span> <span class="va">cepstrum</span><span class="op">$</span><span class="fu">get_peak_prominence</span><span class="op">(</span><span class="op">)</span></span></span>

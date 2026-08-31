@@ -33,7 +33,8 @@ Data frame with timing results
 # \donttest{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 
@@ -49,7 +50,7 @@ results <- benchmark_parallel(
 #> Processing 1 files using 2 cores (2 thread(s)/worker)
 print(results)
 #>   cores    time_sec   speedup
-#> 1     1 0.002250671 1.0000000
-#> 2     2 0.005630970 0.3996951
+#> 1     1 0.002610445 1.0000000
+#> 2     2 0.006235123 0.4186678
 # }
 ```

@@ -86,7 +86,8 @@ A `Spectrum` object with methods for frequency-domain spectral analysis.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate =
+ 44100)
 spectrum <- sound$to_spectrum(fast = FALSE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
 energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)

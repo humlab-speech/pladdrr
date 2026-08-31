@@ -83,13 +83,15 @@ Uses a shared dispatch table for minimal memory per object.</p>
 
 
 <dl><dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
-<dd><p>Not for direct use. External pointer to the underlying C++ Spectrum
-object; set internally when a method returns a new Spectrum.</p></dd>
+<dd><p>Not for direct use. External pointer to the underlying C++
+Spectrum
+ object; set internally when a method returns a new Spectrum.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>Spectrum</code> object with methods for frequency-domain spectral analysis.</p>
+    <p>A <code>Spectrum</code> object with methods for frequency-domain spectral
+ analysis.</p>
     </div>
     <div class="section level2">
     <h2 id="query-methods">Query methods<a class="anchor" aria-label="anchor" href="#query-methods"></a></h2>
@@ -106,7 +108,8 @@ object; set internally when a method returns a new Spectrum.</p></dd>
 <li><p><code>get_band_density(fmin, fmax)</code> - power density in a band (Pa²/Hz²)</p></li>
 <li><p><code>get_band_energy(fmin, fmax)</code> - energy in a band (Pa²·s)</p></li>
 <li><p><code>get_centre_of_gravity(power = 2.0)</code> - spectral center of gravity</p></li>
-<li><p><code>get_standard_deviation(power = 2.0)</code> - spectral standard deviation</p></li>
+<li><p><code>get_standard_deviation(power = 2.0)</code> - spectral standard
+ deviation</p></li>
 <li><p><code>get_skewness(power = 2.0)</code> - spectral skewness</p></li>
 <li><p><code>get_kurtosis(power = 2.0)</code> - spectral kurtosis</p></li>
 <li><p><code>get_central_moment(moment, power = 2.0)</code> - central moment</p></li>
@@ -115,8 +118,10 @@ object; set internally when a method returns a new Spectrum.</p></dd>
     <h2 id="modification-methods">Modification methods<a class="anchor" aria-label="anchor" href="#modification-methods"></a></h2>
 
 
-<ul><li><p><code>pass_hann_band(fmin, fmax, smooth = 100)</code> - apply a Hann band-pass filter</p></li>
-<li><p><code>stop_hann_band(fmin, fmax, smooth = 100)</code> - apply a Hann band-stop filter</p></li>
+<ul><li><p><code>pass_hann_band(fmin, fmax, smooth = 100)</code> - apply a Hann
+ band-pass filter</p></li>
+<li><p><code>stop_hann_band(fmin, fmax, smooth = 100)</code> - apply a Hann
+ band-stop filter</p></li>
 <li><p><code>cepstral_smoothing(bandwidth)</code> - smooth using the cepstral method</p></li>
 </ul></div>
     <div class="section level2">
@@ -126,24 +131,28 @@ object; set internally when a method returns a new Spectrum.</p></dd>
 <ul><li><p><code>to_sound()</code> - convert to Sound (inverse FFT)</p></li>
 <li><p><code>to_ltas(bandwidth)</code> - convert to long-term average spectrum</p></li>
 <li><p><code>to_spectrogram(...)</code> - convert to Spectrogram</p></li>
-<li><p><code>to_excitation(erb_density)</code> - convert to Excitation (auditory representation)</p></li>
+<li><p><code>to_excitation(erb_density)</code> - convert to Excitation (auditory
+ representation)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export-methods">Export methods<a class="anchor" aria-label="anchor" href="#export-methods"></a></h2>
 
 
 <ul><li><p><code>as_matrix()</code> - export as a numeric matrix (real + imaginary)</p></li>
-<li><p><code>as_data_frame()</code> - export as a data.frame (freq, real, imag, power)</p></li>
+<li><p><code>as_data_frame()</code> - export as a data.frame (freq, real, imag,
+ power)</p></li>
 <li><p><code>save(path)</code> - save to a file</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrogram.html">Spectrogram</a></code>, <code><a href="Ltas.html">Ltas</a></code>, <code><a href="PowerCepstrum.html">PowerCepstrum</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrogram.html">Spectrogram</a></code>, <code><a href="Ltas.html">Ltas</a></code>,
+ <code><a href="PowerCepstrum.html">PowerCepstrum</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">440</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">440</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">spectrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span>fast <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cog</span> <span class="op">&lt;-</span> <span class="va">spectrum</span><span class="op">$</span><span class="fu">get_centre_of_gravity</span><span class="op">(</span>power <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">energy</span> <span class="op">&lt;-</span> <span class="va">spectrum</span><span class="op">$</span><span class="fu">get_band_energy</span><span class="op">(</span>fmin <span class="op">=</span> <span class="fl">400</span>, fmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>

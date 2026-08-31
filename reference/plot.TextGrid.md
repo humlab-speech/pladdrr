@@ -28,10 +28,6 @@ plot(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
 
   End time in seconds (NULL = end)
 
-- ...:
-
-  Additional arguments (ignored)
-
 ## Value
 
 A ggplot2 object

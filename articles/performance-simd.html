@@ -120,7 +120,7 @@ simultaneously using a single instruction:</p>
 <li>
 <strong>Scalar</strong>: Process 1 sample at a time</li>
 <li>
-<strong>SIMD</strong>: Process several samples simultaneously (the
+<strong>SIMD</strong>: Process several samples simultaneously ( the
 exact count depends on the CPU and instruction set)</li>
 </ul>
 <div class="section level3">
@@ -249,12 +249,12 @@ runtime so you can A/B your own workload:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq    mean   median      uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.742695 4.094012 7.54992 4.140263 4.16279 175.8654    50</span></span>
+<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.823531 4.195876 7.812176 4.242752 4.285542 183.6641    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.763344 4.093601 4.108001 4.121924 4.150136 4.646313    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min      lq     mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.873243 4.17715 4.220879 4.218377 4.264403 5.193235    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
@@ -317,7 +317,8 @@ FFT)</li>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create test sound</span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">1.0</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
+<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">1.0</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Benchmark FFT (used in Spectrum creation)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/joshuaulrich/microbenchmark/" class="external-link">microbenchmark</a></span><span class="op">)</span></span>
@@ -355,7 +356,8 @@ length.</p>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The EDB algorithm requires a sampling rate of at least 44.1 kHz</span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">2.0</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
+<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">2.0</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span></span>
 <span>  standard <span class="op">=</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cochleagram</span><span class="op">(</span>dt <span class="op">=</span> <span class="fl">0.01</span>, df <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
@@ -488,7 +490,7 @@ algebra, separately from pladdrr’s SIMD kernels</li>
 </h3>
 <ul>
 <li>Reachable only via a source rebuild with an explicit
-<code>-march=</code> target (see the capability table above)</li>
+<code>-march=</code> target ( see the capability table above)</li>
 <li>Relevant mainly for large-scale batch processing and high-throughput
 pipelines where you control the build</li>
 </ul>
@@ -564,7 +566,8 @@ set is unavailable at runtime</li>
 <p>SIMD operations in pladdrr are <strong>numerically
 equivalent</strong> to scalar operations:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_pure_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Run same analysis twice</span></span>
 <span><span class="va">formant1</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span><span class="op">)</span></span>

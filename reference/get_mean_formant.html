@@ -82,14 +82,15 @@
 
 <dl><dt id="arg-formant">formant<a class="anchor" aria-label="anchor" href="#arg-formant"></a></dt>
 <dd><p>A legacy <code>praat_formant</code>-shaped list: a plain list
-with a <code>values</code> element (a data.frame with columns <code>time</code>,
-<code>formant_number</code>, <code>frequency</code>, <code>bandwidth</code>) and a
-<code>class</code> attribute of <code>"praat_formant"</code>. <code><a href="extract_formants.html">extract_formants()</a></code>
-no longer produces this (it now returns an R6 <code>Formant</code> object
-instead — see its <code><a href="extract_formants.html">extract_formants</a></code> documentation); build
-one by hand for this legacy function, or use
-<code>formant$get_mean()</code> on an R6 <code>Formant</code> object directly
-instead of this deprecated wrapper.</p></dd>
+  with a <code>values</code> element (a data.frame with columns <code>time</code>,
+  <code>formant_number</code>, <code>frequency</code>, <code>bandwidth</code>) and a
+<code>class</code> attribute of <code>"praat_formant"</code>.
+ <code><a href="extract_formants.html">extract_formants()</a></code>
+  no longer produces this (it now returns an R6 <code>Formant</code> object
+  instead — see its <code><a href="extract_formants.html">extract_formants</a></code> documentation); build
+  one by hand for this legacy function, or use
+  <code>formant$get_mean()</code> on an R6 <code>Formant</code> object directly
+  instead of this deprecated wrapper.</p></dd>
 
 
 <dt id="arg-formant-number">formant_number<a class="anchor" aria-label="anchor" href="#arg-formant-number"></a></dt>

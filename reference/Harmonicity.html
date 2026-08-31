@@ -86,7 +86,8 @@ Harmonicity object; set internally when a method returns a new Harmonicity.</p><
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>Harmonicity</code> object with methods for harmonics-to-noise ratio (HNR) analysis.</p>
+    <p>A <code>Harmonicity</code> object with methods for harmonics-to-noise ratio
+ (HNR) analysis.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -108,8 +109,10 @@ speech.</p>
     <h2 id="point-query-methods">Point query methods<a class="anchor" aria-label="anchor" href="#point-query-methods"></a></h2>
 
 
-<ul><li><p><code>get_value_at_time(time, interpolation)</code> - HNR at a time point (dB)</p></li>
-<li><p><code>get_values_at_times(times, interpolation)</code> - HNR at a vector of times (batch)</p></li>
+<ul><li><p><code>get_value_at_time(time, interpolation)</code> - HNR at a time point
+ (dB)</p></li>
+<li><p><code>get_values_at_times(times, interpolation)</code> - HNR at a vector of
+ times (batch)</p></li>
 <li><p><code>get_values_vector()</code> - raw HNR values for all frames</p></li>
 <li><p><code>get_times_vector()</code> - frame time points</p></li>
 </ul></div>
@@ -121,19 +124,22 @@ speech.</p>
 <li><p><code>get_minimum(from_time, to_time, interpolation)</code> - minimum HNR</p></li>
 <li><p><code>get_maximum(from_time, to_time, interpolation)</code> - maximum HNR</p></li>
 <li><p><code>get_standard_deviation(from_time, to_time)</code> - standard deviation</p></li>
-<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time of extremum</p></li>
+<li><p><code>get_time_of_minimum(...)</code>, <code>get_time_of_maximum(...)</code> - time
+ of extremum</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="batch-methods">Batch methods<a class="anchor" aria-label="anchor" href="#batch-methods"></a></h2>
 
 
-<ul><li><p><code>get_statistics_batch(from_times, to_times)</code> - statistics for multiple intervals in a single C++ call</p></li>
+<ul><li><p><code>get_statistics_batch(from_times, to_times)</code> - statistics for
+ multiple intervals in a single C++ call</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export-methods">Export methods<a class="anchor" aria-label="anchor" href="#export-methods"></a></h2>
 
 
-<ul><li><p><code>as_data_frame()</code>, <code>as_matrix()</code> - export as a data.frame or matrix</p></li>
+<ul><li><p><code>as_data_frame()</code>, <code>as_matrix()</code> - export as a data.frame or
+ matrix</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -142,7 +148,8 @@ speech.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">200</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hnr</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_harmonicity_cc</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, min_pitch <span class="op">=</span> <span class="fl">75</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mean_hnr</span> <span class="op">&lt;-</span> <span class="va">hnr</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hnr_at_05</span> <span class="op">&lt;-</span> <span class="va">hnr</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span></span></span>

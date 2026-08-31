@@ -117,7 +117,7 @@ cat("TextGrid created with", tg$get_number_of_tiers(), "tiers\n")
 
 ### Plotting the TextGrid
 
-[`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
+[`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)
 and
 [`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
 methods let you compose TextGrid tier displays with ggplot2:
@@ -260,7 +260,8 @@ pitch <- sound$to_pitch(
 
 # Get statistics
 f0_mean <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
-f0_sd <- pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+f0_sd <- pitch$get_standard_deviation(from_time = 0, to_time = 0,
+  unit = "hertz")
 
 cat(sprintf("F0: Mean = %.1f Hz, SD = %.1f Hz\n", f0_mean, f0_sd))
 #> F0: Mean = 440.0 Hz, SD = 0.0 Hz
@@ -281,9 +282,12 @@ formant <- sound$to_formant_burg(
 
 # Measure formants at specific time point (e.g., vowel midpoint)
 vowel_time <- 1.5  # Middle of "E" vowel
-f1 <- formant$get_value_at_time(formant_number = 1, time = vowel_time, unit = "hertz")
-f2 <- formant$get_value_at_time(formant_number = 2, time = vowel_time, unit = "hertz")
-f3 <- formant$get_value_at_time(formant_number = 3, time = vowel_time, unit = "hertz")
+f1 <- formant$get_value_at_time(formant_number = 1, time = vowel_time,
+  unit = "hertz")
+f2 <- formant$get_value_at_time(formant_number = 2, time = vowel_time,
+  unit = "hertz")
+f3 <- formant$get_value_at_time(formant_number = 3, time = vowel_time,
+  unit = "hertz")
 
 cat(sprintf("Formants at %.2f s: F1 = %.0f Hz, F2 = %.0f Hz, F3 = %.0f Hz\n",
             vowel_time, f1, f2, f3))
@@ -329,7 +333,8 @@ Process all vowel segments systematically:
 ``` r
 
 # Identify vowel intervals: labels containing an uppercase vowel letter
-# (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in "world")
+# (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in
+#  "world")
 vowel_intervals <- grep("[AEIOUY3]", phone_data$label, ignore.case = FALSE)
 
 # Extract acoustic features for each vowel
@@ -354,7 +359,8 @@ for (idx in vowel_intervals) {
   midpoint <- start + (end - start) / 2
   
   # Extract features at vowel midpoint
-  f0 <- pitch$get_value_at_time(time = midpoint, unit = "hertz", interpolate = TRUE)
+  f0 <- pitch$get_value_at_time(time = midpoint, unit = "hertz",
+    interpolate = TRUE)
   f1 <- formant$get_value_at_time(1, midpoint, "hertz")
   f2 <- formant$get_value_at_time(2, midpoint, "hertz")
   f3 <- formant$get_value_at_time(3, midpoint, "hertz")
@@ -404,7 +410,7 @@ write.csv(
 ### Visualization
 
 `pladdrr` provides
-[`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
+[`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
 methods (shown above for `TextGrid`) plus
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods for
 Sound, Pitch, Formant, Intensity, and other analysis objects. For vowel
@@ -457,7 +463,8 @@ Multi-dimensional voice profiling:
 ``` r
 
 # Extract voice quality metrics
-pointprocess <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 300)
+pointprocess <- sound$to_point_process_periodic_cc(pitch_floor = 75,
+  pitch_ceiling = 300)
 voice_profile <- data.frame(
   f0_mean = pitch$get_mean(),
   f0_sd = pitch$get_standard_deviation(),
@@ -483,8 +490,8 @@ voice_profile$cpps <- cepstrogram$get_cpps(
 ```
 
 **Note:** CPPS values are sensitive to parameters. See
-`system.file("examples", "10_cpps_analysis.R", package = "pladdrr")` for
-parameter effects and clinical interpretation.
+`system.file( "examples", "10_cpps_analysis.R", package = "pladdrr")`
+for parameter effects and clinical interpretation.
 
 ## Best Practices
 
@@ -547,13 +554,16 @@ if (nrow(data) > 10000) {
 The **pladdrr** package enables:
 
 - **Annotation workflows** with TextGrid creation and manipulation
+
 - **Sound processing** (segmentation, resampling, filtering)
+
 - **Multi-dimensional acoustic analysis** (prosody, voice quality,
   spectral features)
+
 - **R integration** for statistical analysis and visualization via
-  `data.frame` output and
-  [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
-  methods
+  `data.frame` output and \`autoplot(
+
+  )`/`autolayer()\` methods
 
 For more examples, see:
 
@@ -565,7 +575,7 @@ For more examples, see:
 
 ## References
 
-- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by
+- Boersma, P., & Weenink, D. ( 2023). *Praat: doing phonetics by
   computer*. <https://praat.org/>
-- Thomas, E. R., & Kendall, T. (2007). *NORM: The vowel normalization
+- Thomas, E. R., & Kendall, T. ( 2007). *NORM: The vowel normalization
   and plotting suite*.

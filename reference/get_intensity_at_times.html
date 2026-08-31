@@ -94,13 +94,15 @@
 
 
 <dt id="arg-interpolate">interpolate<a class="anchor" aria-label="anchor" href="#arg-interpolate"></a></dt>
-<dd><p>Interpolation method: "nearest", "linear", "cubic" (default),
-or "sinc70". Kept for backward compatibility; prefer `interpolation`.</p></dd>
+<dd><p>Interpolation method: "nearest", "linear", "cubic"
+(default),
+ or "sinc70". Kept for backward compatibility; prefer `interpolation`.</p></dd>
 
 
 <dt id="arg-interpolation">interpolation<a class="anchor" aria-label="anchor" href="#arg-interpolation"></a></dt>
-<dd><p>Alias for `interpolate` (consistent with R6 method naming).
-When provided, supersedes `interpolate`.</p></dd>
+<dd><p>Alias for `interpolate` (consistent with R6 method
+naming).
+ When provided, supersedes `interpolate`.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -116,7 +118,8 @@ When provided, supersedes `interpolate`.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.45</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">intensities</span> <span class="op">&lt;-</span> <span class="fu">get_intensity_at_times</span><span class="op">(</span><span class="va">intensity</span>, <span class="va">times</span><span class="op">)</span></span></span>

@@ -43,7 +43,8 @@ This function reduces R\<-\>C++ boundary crossings from \`4n\` calls
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 
 # Extract F1-F4 at 5 time points

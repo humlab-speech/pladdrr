@@ -40,7 +40,8 @@ each containing a numeric vector of bandwidths.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 times <- seq(0.1, 0.4, length.out = 5)
 bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)

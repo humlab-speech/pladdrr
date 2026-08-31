@@ -10,8 +10,8 @@ library(ggplot2)
 
 ## Introduction
 
-`pladdrr` returns data as data frames
-([`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
+`pladdrr` returns data as data frames (
+[`as_data_frame( )`](https://tibble.tidyverse.org/reference/deprecated.html)
 methods) and matrices (`as_matrix()` methods) that plot directly with
 `ggplot2`, and it also ships a few `ggplot2`-based helper functions
 ([`plot_powercepstrum()`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrum.md),
@@ -23,11 +23,9 @@ and `autoplot`/`autolayer` methods for common object types (`Sound`,
 `TextGrid`, `Harmonicity`, `PointProcess`, `PowerCepstrum`).
 
 Plots produced this way are ordinary `ggplot2` objects: they can be
-saved as PDF/SVG/PNG with
-[`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html),
-themed and recolored with standard `ggplot2` calls, and combined with
-[`gridExtra::grid.arrange()`](https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html)
-or `patchwork`.
+saved as PDF/SVG/PNG with \`ggsave(
+
+)`, themed and recolored with standard`ggplot2`calls, and combined with`gridExtra::grid.arrange()`or`patchwork\`.
 
 This vignette demonstrates the plotting functions available in
 `pladdrr`, organized by analysis type.
@@ -35,7 +33,9 @@ This vignette demonstrates the plotting functions available in
 ## Cepstral Analysis Visualization
 
 Cepstral analysis is essential for voice quality assessment,
-particularly for measuring periodicity (CPP - Cepstral Peak Prominence).
+particularly for measuring periodicity (
+
+CPP - Cepstral Peak Prominence).
 
 ### Power Cepstrum
 
@@ -133,7 +133,8 @@ Multi-panel diagnostic figure combining all cepstral visualizations:
 
 ``` r
 
-# Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
+# Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time
+#  series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
 #> Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =
 #> 0.001, qmax = 0)
@@ -144,7 +145,8 @@ report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
 ``` r
 
 
-ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12, height = 10)
+ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12,
+  height = 10)
 ```
 
 **Report panels** (stacked with
@@ -166,7 +168,8 @@ vowels):
 
 # Extract formants at the midpoint of each labeled interval on the "phones" tier
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-textgrid <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+textgrid <- TextGrid$new(
+  system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 formant_data <- data.frame(
   vowel = character(),
@@ -236,7 +239,8 @@ formant <- sound$to_formant_burg(
 # Keep F1-F3 and reshape to wide for a multi-line plot.
 formant_df <- formant$as_data_frame()
 formant_df <- formant_df[formant_df$formant <= 3, ]
-formant_wide <- data.table::dcast(formant_df, time ~ formant, value.var = "frequency")
+formant_wide <- data.table::dcast(formant_df, time ~ formant,
+  value.var = "frequency")
 data.table::setnames(formant_wide, c("1", "2", "3"), c("F1", "F2", "F3"))
 
 # Plot F1-F3 over time
@@ -609,7 +613,8 @@ ggsave("figure1.png", plot = p1, width = 8, height = 6, dpi = 300)
 ggsave("figure1.svg", plot = p1, width = 8, height = 6)
 
 # Save as TIFF (for journals)
-ggsave("figure1.tiff", plot = p1, width = 8, height = 6, dpi = 300, compression = "lzw")
+ggsave("figure1.tiff", plot = p1, width = 8, height = 6, dpi = 300,
+  compression = "lzw")
 ```
 
 ### Batch Saving
@@ -635,28 +640,33 @@ for (name in names(plots)) {
 This vignette covered:
 
 - **Cepstral analysis**:
-  [`plot_powercepstrum()`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrum.md),
+  [`plot_powercepstrum( )`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrum.md),
   [`plot_powercepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/plot_powercepstrogram.md),
   [`plot_cpp_timeseries()`](https://humlab-speech.github.io/pladdrr/reference/plot_cpp_timeseries.md),
   [`create_cepstrum_report()`](https://humlab-speech.github.io/pladdrr/reference/create_cepstrum_report.md)
+
 - **Formant analysis**: F1-F2 formant space and F1-F3 trajectories from
-  `Formant$as_data_frame()`
+  \`Formant\$as_data_frame(
+
+  )\`
+
 - **Prosodic features**: pitch and intensity contours from
-  `Pitch$as_data_frame()` and `Intensity$as_data_frame()`
+  `Pitch$as_data_frame( )` and `Intensity$as_data_frame()`
+
 - **Annotation**: TextGrid tier display via
-  [`autoplot.TextGrid()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+  [`autoplot.TextGrid( )`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   and
   [`autolayer.TextGrid()`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+
 - **Spectral analysis**: spectrograms, spectra, and LTAS from the
-  corresponding
-  `as_matrix()`/[`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
-  methods
+  corresponding \`as_matrix(
+
+  )`/`as_data_frame()\` methods
 
 All examples produce ordinary `ggplot2` objects that can be themed,
-combined with
-[`gridExtra::grid.arrange()`](https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html),
-and saved with
-[`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html).
+combined with \`gridExtra::grid.arrange(
+
+)`, and saved with`ggsave()\`.
 
 For more information on specific acoustic analyses, see:
 
@@ -666,5 +676,5 @@ For more information on specific acoustic analyses, see:
   Multi-parameter analysis
 - [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
   Annotation-based analysis
-- [`vignette("autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md) -
+- [`vignette( "autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md) -
   Full reference for the `autoplot`/`autolayer` methods

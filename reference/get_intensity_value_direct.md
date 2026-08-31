@@ -29,7 +29,8 @@ Intensity in dB
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 intensity_ptr <- to_intensity_direct(sound)
 get_intensity_value_direct(intensity_ptr, 0.25)
 #> [1] 90.88181

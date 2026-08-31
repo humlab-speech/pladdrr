@@ -103,7 +103,8 @@ Original Praat script - intensity-based only
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # AVQI v3.01 (default, with ZCR filtering)
 voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")

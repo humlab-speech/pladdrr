@@ -120,7 +120,8 @@ per-frame trend fit, so pick whichever reads best at the call site.</p>
 
 
 <dt id="arg-quefrency-averaging-window">quefrency_averaging_window<a class="anchor" aria-label="anchor" href="#arg-quefrency-averaging-window"></a></dt>
-<dd><p>Quefrency averaging window in seconds (default 0.0005)</p></dd>
+<dd><p>Quefrency averaging window in seconds
+(default 0.0005)</p></dd>
 
 
 <dt id="arg-pitch-floor">pitch_floor<a class="anchor" aria-label="anchor" href="#arg-pitch-floor"></a></dt>
@@ -140,8 +141,9 @@ per-frame trend fit, so pick whichever reads best at the call site.</p>
 
 
 <dt id="arg-max-quefrency">max_quefrency<a class="anchor" aria-label="anchor" href="#arg-max-quefrency"></a></dt>
-<dd><p>End of the trend-fit quefrency window in seconds (default
-0.04); 0 means autowindow to the full quefrency range (Praat convention).</p></dd>
+<dd><p>End of the trend-fit quefrency window in seconds
+(default
+ 0.04); 0 means autowindow to the full quefrency range (Praat convention).</p></dd>
 
 
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
@@ -149,7 +151,8 @@ per-frame trend fit, so pick whichever reads best at the call site.</p>
 
 
 <dt id="arg-interpolation">interpolation<a class="anchor" aria-label="anchor" href="#arg-interpolation"></a></dt>
-<dd><p>Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")</p></dd>
+<dd><p>Peak interpolation: "none", "parabolic", "cubic",
+"sinc70", "sinc700" (default "parabolic")</p></dd>
 
 
 <dt id="arg-tilt-line-quefrency">tilt_line_quefrency<a class="anchor" aria-label="anchor" href="#arg-tilt-line-quefrency"></a></dt>
@@ -158,7 +161,8 @@ per-frame trend fit, so pick whichever reads best at the call site.</p>
 
 
 <dt id="arg-line-type">line_type<a class="anchor" aria-label="anchor" href="#arg-line-type"></a></dt>
-<dd><p>Trend line type: "straight" or "exponential" (default "straight")</p></dd>
+<dd><p>Trend line type: "straight" or "exponential" (default
+"straight")</p></dd>
 
 
 <dt id="arg-fit-method">fit_method<a class="anchor" aria-label="anchor" href="#arg-fit-method"></a></dt>
@@ -168,11 +172,13 @@ per-frame trend fit, so pick whichever reads best at the call site.</p>
 
 
 <dt id="arg-pre-emphasis-from">pre_emphasis_from<a class="anchor" aria-label="anchor" href="#arg-pre-emphasis-from"></a></dt>
-<dd><p>Pre-emphasis frequency in Hz for the cepstrogram (default 50).</p></dd>
+<dd><p>Pre-emphasis frequency in Hz for the cepstrogram
+(default 50).</p></dd>
 
 
 <dt id="arg-max-frequency">max_frequency<a class="anchor" aria-label="anchor" href="#arg-max-frequency"></a></dt>
-<dd><p>Maximum frequency in Hz for the cepstrogram (default 5000).</p></dd>
+<dd><p>Maximum frequency in Hz for the cepstrogram (default
+5000).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -196,7 +202,8 @@ section of <code><a href="calculate_cpps_fast.html">calculate_cpps_fast</a></cod
 <p>This is still a **CPPS** helper. For a single-interval **CPP** measurement,
 use the segment's `Spectrum -&gt; PowerCepstrum -&gt; get_peak_prominence()` path
 instead of `calculate_cpps_ultra()`. It is both cheaper and closer to the
-Praat workflow used by voice-quality scripts that query one interval at a time.</p>
+Praat workflow used by voice-quality scripts that query one interval at a
+ time.</p>
 <p>**Use Cases:**
 - AVQI v2.03/v3.01 implementation
 - High-throughput voice quality analysis
@@ -218,7 +225,8 @@ Ultra functions.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tier 4 Ultra (same defaults as calculate_cpps_fast)</span></span></span>
 <span class="r-in"><span><span class="va">cpps</span> <span class="op">&lt;-</span> <span class="fu">calculate_cpps_ultra</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>

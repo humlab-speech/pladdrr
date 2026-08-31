@@ -11,7 +11,7 @@ tracking path. This approach is particularly valuable when:
 - Standard formant tracking produces spurious values
 - You need maximum robustness across diverse speakers
 
-Unlike standard formant extraction (`to_formant_burg()`), FormantPath
+Unlike standard formant extraction ( `to_formant_burg( )`), FormantPath
 generates multiple candidate formant tracks with different ceiling
 frequencies, then uses statistical criteria to select the best path
 frame-by-frame.
@@ -282,7 +282,8 @@ ggplot(df_plot, aes(time, frequency, color = factor(formant_num))) +
   ) +
   labs(
     title = "FormantPath: Optimal Formant Track",
-    subtitle = paste("Selected from", fp$get_number_of_candidates(), "ceiling frequency candidates"),
+    subtitle = paste("Selected from", fp$get_number_of_candidates(),
+      "ceiling frequency candidates"),
     x = "Time (s)",
     y = "Frequency (Hz)",
     color = "Formant"
@@ -417,7 +418,8 @@ Compare formants across time-aligned segments using a TextGrid:
 
 ``` r
 
-textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+textgrid <- TextGrid(
+  system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Get labelled intervals from the phone tier
 intervals <- textgrid$get_all_intervals("phones")
@@ -500,10 +502,10 @@ requested. Measure on your own data:
 
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.018   0.000   0.008
+#>   0.018   0.000   0.009
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.069   0.000   0.039
+#>   0.068   0.003   0.041
 ```
 
 ## Best Practices
@@ -556,7 +558,7 @@ pladdrr provides direct R access to Praat’s FormantPath algorithm:
 ### vs Parselmouth
 
 Parselmouth does not currently expose FormantPath - only standard
-`to_formant()`.
+`to_formant( )`.
 
 ## Troubleshooting
 
@@ -629,7 +631,7 @@ audio - `ceiling_step_fraction`: 0.05 (narrow) to 0.10 (wide)
 
 - Praat manual:
   [FormantPath](https://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
-- Weenink, D. (2015). “Improved formant frequency measurements of short
+- Weenink, D. ( 2015). “Improved formant frequency measurements of short
   segments”
 - pladdrr documentation: `?to_formant_path`
 

@@ -104,26 +104,24 @@
 <p>pladdrr provides auditory modeling through the
 <strong>Cochleagram</strong> and <strong>Excitation</strong> objects.
 These model how the human auditory system processes acoustic
-information, as opposed to a purely physical (spectral) analysis.</p>
+information, as opposed to a purely physical (</p>
+<p>spectral) analysis.</p>
 <div class="section level3">
 <h3 id="key-concepts">Key Concepts<a class="anchor" aria-label="anchor" href="#key-concepts"></a>
 </h3>
 <ul>
 <li>
-<strong>Cochleagram</strong>: Models the basilar membrane response
-in the cochlea using the <strong>Bark scale</strong> (0-25.6 Bark ≈
-0-20,000 Hz)</li>
-<li>
-<strong>Excitation</strong>: Represents auditory nerve firing
-patterns on the <strong>ERB (Equivalent Rectangular Bandwidth)
-scale</strong>
+<p><strong>Cochleagram</strong>: Models the basilar membrane
+response in the cochlea using the <strong>Bark scale</strong> (</p>
+<p>0-25.6 Bark ≈ 0-20,000 Hz)</p>
 </li>
-<li>
-<strong>Loudness</strong>: Perceptual loudness measured in sones
-(not physical intensity)</li>
-<li>
-<strong>Perceptual Distance</strong>: Quantifies how different two
-sounds “sound” to human listeners</li>
+<li><p><strong>Excitation</strong>: Represents auditory nerve firing
+patterns on the <strong>ERB ( Equivalent Rectangular Bandwidth)
+scale</strong></p></li>
+<li><p><strong>Loudness</strong>: Perceptual loudness measured in sones
+(not physical intensity)</p></li>
+<li><p><strong>Perceptual Distance</strong>: Quantifies how different
+two sounds “sound” to human listeners</p></li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/humlab-speech/pladdrr" class="external-link">pladdrr</a></span><span class="op">)</span></span>
@@ -142,7 +140,8 @@ sounds “sound” to human listeners</li>
 the human cochlea’s tonotopic organization.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load or create a sound</span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
+<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create cochleagram</span></span>
 <span><span class="va">cochlea</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cochleagram</span><span class="op">(</span></span>
@@ -185,9 +184,12 @@ critical band (frequency resolution of human hearing) - 0 Bark = 0 Hz -
 <code class="sourceCode R"><span><span class="co"># Export to matrix for plotting</span></span>
 <span><span class="va">cochlea_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">$</span><span class="fu">as_matrix</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Convert to long format for ggplot2 (rows = frequency bands, columns = time frames)</span></span>
-<span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">$</span><span class="fu">get_number_of_frames</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="va">cochlea</span><span class="op">$</span><span class="va">get_time_from_column</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">barks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">$</span><span class="fu">get_number_of_frequency_bands</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="va">cochlea</span><span class="op">$</span><span class="va">get_frequency_from_row</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Convert to long format for ggplot2 (rows = frequency bands, columns = time</span></span>
+<span><span class="co">#  frames)</span></span>
+<span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">$</span><span class="fu">get_number_of_frames</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">cochlea</span><span class="op">$</span><span class="va">get_time_from_column</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">barks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">$</span><span class="fu">get_number_of_frequency_bands</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">cochlea</span><span class="op">$</span><span class="va">get_frequency_from_row</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">df_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Bark <span class="op">=</span> <span class="va">barks</span>, Time <span class="op">=</span> <span class="va">times</span><span class="op">)</span></span>
 <span><span class="va">df_long</span><span class="op">$</span><span class="va">Excitation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">cochlea_matrix</span><span class="op">)</span></span>
 <span></span>
@@ -207,7 +209,7 @@ critical band (frequency resolution of human hearing) - 0 Bark = 0 Hz -
 <div class="section level3">
 <h3 id="advanced-ear-drum-brain-model">Advanced: Ear-Drum-Brain Model<a class="anchor" aria-label="anchor" href="#advanced-ear-drum-brain-model"></a>
 </h3>
-<p>For more realistic auditory modeling, use the EDB (Ear-Drum-Brain)
+<p>For more realistic auditory modeling, use the EDB ( Ear-Drum-Brain)
 method which includes synaptic processing:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cochlea_edb</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cochleagram_edb</span><span class="op">(</span></span>
@@ -262,8 +264,10 @@ cochleagram:</p>
 <p>Quantify how different two sounds are perceptually:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create two different sounds</span></span>
-<span><span class="va">sound1</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.2</span>, sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
-<span><span class="va">sound2</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">550</span>, duration <span class="op">=</span> <span class="fl">0.2</span>, sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
+<span><span class="va">sound1</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">440</span>, duration <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
+<span><span class="va">sound2</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">550</span>, duration <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  sampling_rate <span class="op">=</span> <span class="fl">22050</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get excitation patterns</span></span>
 <span><span class="va">exc1</span> <span class="op">&lt;-</span> <span class="va">sound1</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">to_excitation</span><span class="op">(</span><span class="op">)</span></span>
@@ -286,12 +290,14 @@ different.</p>
 <p>Compare cochleagrams of normal and impaired hearing:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Original speech sound</span></span>
-<span><span class="va">sound_original</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sound_original</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># In practice, apply a low-pass filter to sound_filtered here to simulate</span></span>
 <span><span class="co"># high-frequency hearing loss (Sound objects have no clone() method, so</span></span>
 <span><span class="co"># start from a fresh load rather than copying sound_original)</span></span>
-<span><span class="va">sound_filtered</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sound_filtered</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create cochleagrams</span></span>
 <span><span class="va">cochlea_normal</span> <span class="op">&lt;-</span> <span class="va">sound_original</span><span class="op">$</span><span class="fu">to_cochleagram</span><span class="op">(</span><span class="op">)</span></span>
@@ -320,10 +326,12 @@ uses the bundled test file for both, so <code>distance</code> will be
 0.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Clean speech</span></span>
-<span><span class="va">speech_clean</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">speech_clean</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Noisy speech (in practice, a separate recording made in noise)</span></span>
-<span><span class="va">speech_noisy</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">speech_noisy</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get excitation patterns</span></span>
 <span><span class="va">exc_clean</span> <span class="op">&lt;-</span> <span class="va">speech_clean</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">to_excitation</span><span class="op">(</span><span class="op">)</span></span>
@@ -434,14 +442,15 @@ done:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Process and extract only what you need</span></span>
 <span><span class="va">cochlea</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cochleagram</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">loudness_time_series</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, by <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span>, <span class="va">cochlea</span><span class="op">$</span><span class="va">get_loudness_at_time</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">loudness_time_series</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, by <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span>,</span>
+<span>  <span class="va">cochlea</span><span class="op">$</span><span class="va">get_loudness_at_time</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Remove large object if no longer needed</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">cochlea</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># Force garbage collection</span></span>
 <span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1874891 100.2    3145817 168.1  3145817 168.1</span></span>
-<span><span class="co">#&gt; Vcells 3193743  24.4    8388608  64.0  7208761  55.0</span></span></code></pre></div>
+<span><span class="co">#&gt; Ncells 1879033 100.4    3158540 168.7  3158540 168.7</span></span>
+<span><span class="co">#&gt; Vcells 3198845  24.5    8388608  64.0  7261183  55.4</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -486,8 +495,12 @@ Psychoacoustic research - Hearing aid algorithm development</p>
 <li>
 <strong>Cochleagram</strong>: Patterson et al. (1992)</li>
 <li>
-<strong>Excitation patterns</strong>: Moore (2012) - <em>An
-Introduction to the Psychology of Hearing</em>
+<strong>Excitation patterns</strong>: Moore (
+<ol start="2012" style="list-style-type: decimal">
+<li><ul>
+<li><em>An Introduction to the Psychology of Hearing</em></li>
+</ul></li>
+</ol>
 </li>
 </ul>
 </div>

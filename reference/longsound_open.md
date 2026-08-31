@@ -22,12 +22,13 @@ LongSound object
 
 ``` r
 wav <- tempfile(fileext = ".wav")
-Sound$create_tone(frequency = 220, duration = 1, sampling_rate = 16000)$save(wav)
+Sound$create_tone(frequency = 220, duration = 1, sampling_rate =
+ 16000)$save(wav)
 
 ls <- longsound_open(wav)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/Rtmp0wqSKd/file248f2b6c2f16.wav 
+#>   File: /tmp/RtmpfJP1hL/file27865ebccffe.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 16000 Hz
 #>   Channels: 1 

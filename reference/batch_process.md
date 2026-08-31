@@ -63,7 +63,8 @@ Data frame with results from all files
 ``` r
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 
 results <- batch_process(
@@ -74,7 +75,8 @@ results <- batch_process(
     pitch <- sound$to_pitch()
     list(
       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
-      sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit =
+ "hertz")
     )
   }
 )

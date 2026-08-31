@@ -119,8 +119,10 @@ parameters return from cache (no additional C++ call).
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
-pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate =
+ 44100)
+pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling =
+ 600)
 jitter <- pp$get_jitter_local()
 shimmer <- pp$get_shimmer_local(sound)
 ```

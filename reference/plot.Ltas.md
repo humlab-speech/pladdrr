@@ -48,10 +48,6 @@ plot(
 
   Character. Line color (default: "darkred")
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 A ggplot2 object

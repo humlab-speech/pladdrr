@@ -15,10 +15,6 @@ print(x, ...)
 
   A praat_pitch object
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 The object x, invisibly

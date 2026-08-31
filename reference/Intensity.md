@@ -72,7 +72,8 @@ default), `"sones"` (1), `"db"` (2).
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
+ 44100)
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
 mean_int <- intensity$get_mean()
 df <- intensity$as_data_frame()

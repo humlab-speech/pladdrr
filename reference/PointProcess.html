@@ -88,13 +88,15 @@ object. Leave <code>NULL</code> (the default) when supplying <code>.xptr</code>.
 
 
 <dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
-<dd><p>Not for direct use. External pointer to the underlying C++ PointProcess
-object; set internally when a method returns a new PointProcess.</p></dd>
+<dd><p>Not for direct use. External pointer to the underlying C++
+PointProcess
+ object; set internally when a method returns a new PointProcess.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>PointProcess</code> object with methods for glottal pulse analysis, including jitter and shimmer.</p>
+    <p>A <code>PointProcess</code> object with methods for glottal pulse analysis,
+ including jitter and shimmer.</p>
     </div>
     <div class="section level2">
     <h2 id="query-methods">Query methods<a class="anchor" aria-label="anchor" href="#query-methods"></a></h2>
@@ -103,47 +105,65 @@ object; set internally when a method returns a new PointProcess.</p></dd>
 <ul><li><p><code>get_number_of_points()</code> - total number of time points</p></li>
 <li><p><code>get_time(index)</code> - time of point at index</p></li>
 <li><p><code>get_nearest_index(time)</code> - index of point nearest to a given time</p></li>
-<li><p><code>get_low_index(time)</code>, <code>get_high_index(time)</code> - index bounding a time</p></li>
+<li><p><code>get_low_index(time)</code>, <code>get_high_index(time)</code> - index
+ bounding a time</p></li>
 <li><p><code>get_interval(time)</code> - time between surrounding points</p></li>
 <li><p><code>get_mean_period(from_time, to_time, ...)</code> - mean glottal period</p></li>
 <li><p><code>get_stdev_period(from_time, to_time, ...)</code> - SD of glottal period</p></li>
-<li><p><code>get_number_of_periods(from_time, to_time, ...)</code> - number of periods in range</p></li>
-<li><p><code>get_voice_breaks(from_time, to_time, ...)</code> - number of voice breaks</p></li>
+<li><p><code>get_number_of_periods(from_time, to_time, ...)</code> - number of
+ periods in range</p></li>
+<li><p><code>get_voice_breaks(from_time, to_time, ...)</code> - number of voice
+ breaks</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="jitter-methods">Jitter methods<a class="anchor" aria-label="anchor" href="#jitter-methods"></a></h2>
 
 
 <p>Period perturbation measures. See the Note section for units.</p><ul><li><p><code>get_jitter_local(from_time, to_time, ...)</code> - local jitter (Jloc)</p></li>
-<li><p><code>get_jitter_local_absolute(from_time, to_time, ...)</code> - local absolute jitter</p></li>
-<li><p><code>get_jitter_rap(from_time, to_time, ...)</code> - relative average perturbation</p></li>
-<li><p><code>get_jitter_ppq5(from_time, to_time, ...)</code> - 5-period perturbation quotient</p></li>
-<li><p><code>get_jitter_ddp(from_time, to_time, ...)</code> - difference of differences of periods</p></li>
+<li><p><code>get_jitter_local_absolute(from_time, to_time, ...)</code> - local
+ absolute jitter</p></li>
+<li><p><code>get_jitter_rap(from_time, to_time, ...)</code> - relative average
+ perturbation</p></li>
+<li><p><code>get_jitter_ppq5(from_time, to_time, ...)</code> - 5-period perturbation
+ quotient</p></li>
+<li><p><code>get_jitter_ddp(from_time, to_time, ...)</code> - difference of
+ differences of periods</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="shimmer-methods">Shimmer methods<a class="anchor" aria-label="anchor" href="#shimmer-methods"></a></h2>
 
 
-<p>Amplitude perturbation measures; each takes a Sound. See the Note section for units.</p><ul><li><p><code>get_shimmer_local(sound, from_time, to_time, ...)</code> - local shimmer (Shim)</p></li>
-<li><p><code>get_shimmer_local_db(sound, from_time, to_time, ...)</code> - local shimmer in dB</p></li>
-<li><p><code>get_shimmer_apq3(sound, from_time, to_time, ...)</code> - 3-period amplitude perturbation quotient</p></li>
+<p>Amplitude perturbation measures; each takes a Sound. See the Note section for
+ units.</p><ul><li><p><code>get_shimmer_local(sound, from_time, to_time, ...)</code> - local
+ shimmer (Shim)</p></li>
+<li><p><code>get_shimmer_local_db(sound, from_time, to_time, ...)</code> - local
+ shimmer in dB</p></li>
+<li><p><code>get_shimmer_apq3(sound, from_time, to_time, ...)</code> - 3-period
+ amplitude perturbation quotient</p></li>
 <li><p><code>get_shimmer_apq5(sound, from_time, to_time, ...)</code> - 5-period APQ</p></li>
-<li><p><code>get_shimmer_apq11(sound, from_time, to_time, ...)</code> - 11-period APQ</p></li>
-<li><p><code>get_shimmer_dda(sound, from_time, to_time, ...)</code> - difference of differences of amplitude</p></li>
+<li><p><code>get_shimmer_apq11(sound, from_time, to_time, ...)</code> - 11-period
+ APQ</p></li>
+<li><p><code>get_shimmer_dda(sound, from_time, to_time, ...)</code> - difference of
+ differences of amplitude</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="batch-and-report-methods">Batch and report methods<a class="anchor" aria-label="anchor" href="#batch-and-report-methods"></a></h2>
 
 
-<ul><li><p><code>get_jitter_shimmer_batch(pointprocess, sound, ...)</code> - all jitter and shimmer values as a named list, computed in one C++ call. Cache-aware: later calls with the same parameters return instantly.</p></li>
-<li><p><code>voice_report(sound, pitch, ...)</code> - combined voice report (jitter, shimmer, HNR)</p></li>
+<ul><li><p><code>get_jitter_shimmer_batch(pointprocess, sound, ...)</code> - all jitter
+ and shimmer values as a named list, computed in one C++ call. Cache-aware:
+ later calls with the same parameters return instantly.</p></li>
+<li><p><code>voice_report(sound, pitch, ...)</code> - combined voice report (jitter,
+ shimmer, HNR)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export-and-conversion-methods">Export and conversion methods<a class="anchor" aria-label="anchor" href="#export-and-conversion-methods"></a></h2>
 
 
-<ul><li><p><code>as_vector()</code>, <code>as_data_frame()</code> - export as a vector or data.frame</p></li>
-<li><p><code>to_textgrid_vuv(max_voiced_period, ...)</code> - create a voiced/unvoiced TextGrid</p></li>
+<ul><li><p><code>as_vector()</code>, <code>as_data_frame()</code> - export as a vector or
+ data.frame</p></li>
+<li><p><code>to_textgrid_vuv(max_voiced_period, ...)</code> - create a
+ voiced/unvoiced TextGrid</p></li>
 <li><p><code>to_pitch_tier()</code> - convert to a PitchTier</p></li>
 <li><p><code>to_sound_pulse_train(...)</code> - create a pulse train Sound</p></li>
 </ul></div>
@@ -158,13 +178,16 @@ cache (no additional C++ call).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Pitch.html">Pitch</a></code>, <code><a href="AmplitudeTier.html">AmplitudeTier</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Pitch.html">Pitch</a></code>,
+ <code><a href="AmplitudeTier.html">AmplitudeTier</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">150</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_point_process_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">1.0</span>, frequency <span class="op">=</span> <span class="fl">150</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_point_process_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">600</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">jitter</span> <span class="op">&lt;-</span> <span class="va">pp</span><span class="op">$</span><span class="fu">get_jitter_local</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">shimmer</span> <span class="op">&lt;-</span> <span class="va">pp</span><span class="op">$</span><span class="fu">get_shimmer_local</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

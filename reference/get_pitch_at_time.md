@@ -33,7 +33,8 @@ Pitch value or NA
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 get_pitch_at_time(pitch, 0.25)
 #> Warning: 'get_pitch_at_time' is deprecated.

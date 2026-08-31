@@ -77,7 +77,8 @@
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Path to an audio file. See the File I/O section for supported formats.</p></dd>
+<dd><p>Path to an audio file. See the File I/O section for supported
+formats.</p></dd>
 
 
 <dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
@@ -108,7 +109,8 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
     tarball within limits, so those formats need <code>av</code> installed
     (<code>install.packages("av")</code>). Without it, reading a FLAC or MP3
     file raises an error naming the missing package.</p></li>
-</ol><p>Convert to WAV up front if you want to avoid the <code>av</code> dependency entirely.</p>
+</ol><p>Convert to WAV up front if you want to avoid the <code>av</code> dependency
+ entirely.</p>
     </div>
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
@@ -134,9 +136,11 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
 <li><p><code>get_number_of_samples()</code> - number of samples</p></li>
 <li><p><code>get_number_of_channels()</code> - number of channels</p></li>
 <li><p><code>get_value_at_time()</code> - amplitude at a given time</p></li>
-<li><p><code>get_rms()</code>, <code>get_energy()</code>, <code>get_power()</code> - energy measures</p></li>
+<li><p><code>get_rms()</code>, <code>get_energy()</code>, <code>get_power()</code> - energy
+ measures</p></li>
 <li><p><code>get_intensity_db()</code> - intensity in dB</p></li>
-<li><p><code>get_minimum()</code>, <code>get_maximum()</code>, <code>get_mean()</code> - amplitude statistics</p></li>
+<li><p><code>get_minimum()</code>, <code>get_maximum()</code>, <code>get_mean()</code> -
+ amplitude statistics</p></li>
 <li><p><code>get_values(channel)</code> - sample values as a numeric vector</p></li>
 <li><p><code>get_sample_times()</code> - sample times as a numeric vector</p></li>
 </ul></div>
@@ -149,7 +153,8 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
 <li><p><code>to_intensity()</code> - extract intensity contour</p></li>
 <li><p><code>to_harmonicity_cc()</code> - harmonics-to-noise ratio</p></li>
 <li><p><code>to_harmonicity_gne()</code> - glottal-to-noise excitation ratio (GNE)</p></li>
-<li><p><code>extract_electroglottogram(channel, invert)</code> - extract an electroglottogram (EGG) from a channel</p></li>
+<li><p><code>extract_electroglottogram(channel, invert)</code> - extract an
+ electroglottogram (EGG) from a channel</p></li>
 <li><p><code>to_spectrum()</code> - frequency spectrum</p></li>
 <li><p><code>to_spectrogram()</code> - time-frequency representation</p></li>
 <li><p><code>to_ltas()</code> - long-term average spectrum</p></li>
@@ -176,10 +181,13 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
 
 
 <ul><li><p><code>extract_channel()</code> - extract a single channel</p></li>
-<li><p><code>extract_part(from, to, window_shape, relative_width, preserve_times)</code> -
+<li><p><code>extract_part(from, to, window_shape, relative_width,
+ preserve_times)</code> -
     extract a time range, with optional windowing. Supports 12 window shapes
-    (rectangular, triangular, parabolic, hanning, hamming, gaussian1-5, kaiser1-2);
-    see <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a>.</p></li>
+(rectangular, triangular, parabolic, hanning, hamming, gaussian1-5,
+ kaiser1-2);
+see
+ <a href="https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html" class="external-link">https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html</a>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="modification">Modification<a class="anchor" aria-label="anchor" href="#modification"></a></h2>
@@ -190,7 +198,8 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
 <li><p><code>pre_emphasize()</code> - high-pass filter (in place)</p></li>
 <li><p><code>de_emphasize()</code> - low-pass filter (in place)</p></li>
 <li><p><code>resample()</code> - resample to a different rate (returns a new object)</p></li>
-<li><p><code>convert_to_mono()</code> - average channels to mono (returns a new object)</p></li>
+<li><p><code>convert_to_mono()</code> - average channels to mono (returns a new
+ object)</p></li>
 <li><p><code>concatenate()</code> - append another sound (returns a new object)</p></li>
 <li><p><code>mix()</code> - mix with another sound (returns a new object)</p></li>
 </ul></div>
@@ -204,7 +213,8 @@ formants, intensity, and spectral measures all begin from a Sound.</p>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Pitch.html">Pitch</a></code>, <code><a href="Formant.html">Formant</a></code>, <code><a href="Intensity.html">Intensity</a></code>, <code><a href="Spectrum.html">Spectrum</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Pitch.html">Pitch</a></code>, <code><a href="Formant.html">Formant</a></code>, <code><a href="Intensity.html">Intensity</a></code>,
+ <code><a href="Spectrum.html">Spectrum</a></code></p></div>
     </div>
 
     <div class="section level2">

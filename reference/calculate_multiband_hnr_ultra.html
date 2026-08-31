@@ -145,13 +145,15 @@ Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="build_multiband_harmonicity.html">build_multiband_harmonicity</a></code> and <code><a href="multiband_hnr_stats.html">multiband_hnr_stats</a></code> for
+    <div class="dont-index"><p><code><a href="build_multiband_harmonicity.html">build_multiband_harmonicity</a></code> and
+ <code><a href="multiband_hnr_stats.html">multiband_hnr_stats</a></code> for
   the reusable multi-interval path</p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">hnr_results</span> <span class="op">&lt;-</span> <span class="fu">calculate_multiband_hnr_ultra</span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hnr_results</span><span class="op">$</span><span class="va">full_mean</span></span></span>

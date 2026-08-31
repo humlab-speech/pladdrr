@@ -35,7 +35,8 @@ External pointer to compiled window function
 if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   hamming <- create_window_xptr("hamming")
 
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
   windowed <- apply_window_xptr(sound, hamming)
 }
 # }

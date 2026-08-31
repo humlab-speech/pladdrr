@@ -61,7 +61,8 @@ and
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 built <- build_multiband_harmonicity(sound)
 hnr_full <- multiband_hnr_stats(built)

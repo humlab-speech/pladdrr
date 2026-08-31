@@ -15,10 +15,6 @@ summary(object, ...)
 
   A praat_pitch object
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 The object, invisibly

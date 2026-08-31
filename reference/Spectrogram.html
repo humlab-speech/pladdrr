@@ -89,7 +89,8 @@ Sound via short-time Fourier transform (STFT).</p>
 <ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code> - time range (s)</p></li>
 <li><p><code>get_time_step()</code> - time between frames (s)</p></li>
 <li><p><code>get_number_of_time_bins()</code> - number of time frames</p></li>
-<li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> - frequency range (Hz)</p></li>
+<li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> -
+ frequency range (Hz)</p></li>
 <li><p><code>get_frequency_step()</code> - frequency resolution (Hz)</p></li>
 <li><p><code>get_number_of_frequency_bins()</code> - number of frequency bins</p></li>
 </ul></div>
@@ -107,12 +108,15 @@ Sound via short-time Fourier transform (STFT).</p>
 
 
 <ul><li><p><code>get_power_at(time, frequency)</code> - power at a time-frequency point</p></li>
-<li><p><code>get_power_at_points(times, frequencies)</code> - power at a vector of points (batch)</p></li>
+<li><p><code>get_power_at_points(times, frequencies)</code> - power at a vector of
+ points (batch)</p></li>
 <li><p><code>get_frame(time)</code> - full frequency spectrum at one time</p></li>
 <li><p><code>get_frequency_slice(frequency)</code> - time series at one frequency</p></li>
 <li><p><code>get_frames(times)</code> - matrix of frames at multiple times</p></li>
-<li><p><code>get_band_power(fmin, fmax)</code> - integrated power in a frequency band</p></li>
-<li><p><code>get_spectral_moments_batch(power)</code> - center of gravity, SD, skewness, and kurtosis per frame (single C++ call)</p></li>
+<li><p><code>get_band_power(fmin, fmax)</code> - integrated power in a frequency
+ band</p></li>
+<li><p><code>get_spectral_moments_batch(power)</code> - center of gravity, SD,
+ skewness, and kurtosis per frame (single C++ call)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h2>
@@ -130,12 +134,14 @@ Sound via short-time Fourier transform (STFT).</p>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="DTW.html">DTW</a></code>, <code><a href="ComplexSpectrogram.html">ComplexSpectrogram</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Sound.html">Sound</a></code>, <code><a href="Spectrum.html">Spectrum</a></code>, <code><a href="DTW.html">DTW</a></code>,
+ <code><a href="ComplexSpectrogram.html">ComplexSpectrogram</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">snd</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">440</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">snd</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>duration <span class="op">=</span> <span class="fl">0.5</span>, frequency <span class="op">=</span> <span class="fl">440</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="va">snd</span><span class="op">$</span><span class="fu">to_spectrogram</span><span class="op">(</span>window_length <span class="op">=</span> <span class="fl">0.005</span>, max_frequency <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">power</span> <span class="op">&lt;-</span> <span class="va">spec</span><span class="op">$</span><span class="fu">get_power_at</span><span class="op">(</span>time <span class="op">=</span> <span class="fl">0.25</span>, frequency <span class="op">=</span> <span class="fl">440</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

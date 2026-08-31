@@ -16,10 +16,6 @@ summary(object, ...)
 
   A praat_sound object
 
-- ...:
-
-  Additional arguments (currently unused)
-
 ## Value
 
 The object, invisibly

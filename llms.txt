@@ -1479,34 +1479,6 @@ Helper functions and S3 methods
   : Create PCA from data matrix
 - [`pitches_to_dtw()`](https://humlab-speech.github.io/pladdrr/reference/pitches_to_dtw.md)
   : Create DTW from two Pitch objects
-- [`pladdrr-shared-maxformant`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-maxformant.md)
-  : Shared parameter docs for display-formant functions
-- [`pladdrr-shared-params`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-params.md)
-  : Shared parameter documentation for pladdrr functions
-- [`pladdrr-shared-pitch-a`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch-a.md)
-  : Shared parameter docs for functions taking an R6 Pitch object (alt)
-- [`pladdrr-shared-pitch-r6`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch-r6.md)
-  : Shared parameter docs for functions taking an R6 Pitch object
-- [`pladdrr-shared-pitch`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-pitch.md)
-  : Shared parameter docs for functions taking a plain Pitch object
-- [`pladdrr-shared-sound-a`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-a.md)
-  : Shared parameter docs for functions taking an R6 Sound object
-  (alternate)
-- [`pladdrr-shared-sound-legacy`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-legacy.md)
-  : Shared parameter docs for functions taking an S3/R6 Sound
-- [`pladdrr-shared-sound-r6`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound-r6.md)
-  : Shared parameter docs for functions taking an R6 Sound object
-- [`pladdrr-shared-sound`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-sound.md)
-  : Shared parameter docs for functions taking a plain Sound object
-- [`pladdrr-shared-textgrid-r6`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-textgrid-r6.md)
-  : Shared parameter docs for functions taking a TextGrid R6 object
-- [`pladdrr-shared-time0`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-time0.md)
-  : Shared parameter docs for functions using 0-based time conventions
-- [`pladdrr-shared-timeauto`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-timeauto.md)
-  : Shared parameter docs for auto time-step functions
-- [`pladdrr-shared-timeauto75`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-shared-timeauto75.md)
-  : Shared parameter docs for functions using the 0.75/pitch_floor auto
-  time-step
 - [`pladdrr_simd()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_simd.md)
   : Get or set runtime SIMD usage
 - [`pladdrr_threads()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_threads.md)

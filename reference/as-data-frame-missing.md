@@ -91,7 +91,8 @@ for the exact columns used.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
+ 16000)
 cepstrum <- sound$to_cepstrum()
 df <- as.data.frame(cepstrum)
 head(df)

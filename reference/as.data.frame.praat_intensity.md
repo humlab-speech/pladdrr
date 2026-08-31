@@ -35,7 +35,8 @@ object
 ## Examples
 
 ``` r
-x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1)))
+x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2,
+ 66.1)))
 class(x) <- "praat_intensity"
 as.data.frame(x)
 #>   time intensity_db

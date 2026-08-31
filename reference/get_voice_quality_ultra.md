@@ -155,7 +155,8 @@ Tier 2/3 voice quality analysis
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Get all voice quality metrics
 vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)

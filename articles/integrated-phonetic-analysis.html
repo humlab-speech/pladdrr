@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-08-30</h4>
+            <h4 data-toc-skip class="date">2026-08-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/integrated-phonetic-analysis.Rmd" class="external-link"><code>vignettes/integrated-phonetic-analysis.Rmd</code></a></small>
       <div class="d-none name"><code>integrated-phonetic-analysis.Rmd</code></div>
@@ -243,8 +243,8 @@ research, you would load existing recordings.</p>
 <div class="section level3">
 <h3 id="plotting-the-textgrid">Plotting the TextGrid<a class="anchor" aria-label="anchor" href="#plotting-the-textgrid"></a>
 </h3>
-<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods let you
-compose TextGrid tier displays with ggplot2:</p>
+<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot(   )</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods let
+you compose TextGrid tier displays with ggplot2:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">tg</span><span class="op">)</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">tg</span>, tier <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"darkred"</span><span class="op">)</span></span>
@@ -377,7 +377,8 @@ compose TextGrid tier displays with ggplot2:</p>
 <span></span>
 <span><span class="co"># Get statistics</span></span>
 <span><span class="va">f0_mean</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
-<span><span class="va">f0_sd</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_standard_deviation</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
+<span><span class="va">f0_sd</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_standard_deviation</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"F0: Mean = %.1f Hz, SD = %.1f Hz\n"</span>, <span class="va">f0_mean</span>, <span class="va">f0_sd</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; F0: Mean = 440.0 Hz, SD = 0.0 Hz</span></span></code></pre></div>
@@ -397,9 +398,12 @@ compose TextGrid tier displays with ggplot2:</p>
 <span></span>
 <span><span class="co"># Measure formants at specific time point (e.g., vowel midpoint)</span></span>
 <span><span class="va">vowel_time</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>  <span class="co"># Middle of "E" vowel</span></span>
-<span><span class="va">f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="va">vowel_time</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
-<span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">2</span>, time <span class="op">=</span> <span class="va">vowel_time</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
-<span><span class="va">f3</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">3</span>, time <span class="op">=</span> <span class="va">vowel_time</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
+<span><span class="va">f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span>, time <span class="op">=</span> <span class="va">vowel_time</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
+<span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">2</span>, time <span class="op">=</span> <span class="va">vowel_time</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
+<span><span class="va">f3</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">3</span>, time <span class="op">=</span> <span class="va">vowel_time</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Formants at %.2f s: F1 = %.0f Hz, F2 = %.0f Hz, F3 = %.0f Hz\n"</span>,</span>
 <span>            <span class="va">vowel_time</span>, <span class="va">f1</span>, <span class="va">f2</span>, <span class="va">f3</span><span class="op">)</span><span class="op">)</span></span>
@@ -442,7 +446,8 @@ compose TextGrid tier displays with ggplot2:</p>
 <p>Process all vowel segments systematically:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Identify vowel intervals: labels containing an uppercase vowel letter</span></span>
-<span><span class="co"># (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in "world")</span></span>
+<span><span class="co"># (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in</span></span>
+<span><span class="co">#  "world")</span></span>
 <span><span class="va">vowel_intervals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"[AEIOUY3]"</span>, <span class="va">phone_data</span><span class="op">$</span><span class="va">label</span>, ignore.case <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract acoustic features for each vowel</span></span>
@@ -467,7 +472,8 @@ compose TextGrid tier displays with ggplot2:</p>
 <span>  <span class="va">midpoint</span> <span class="op">&lt;-</span> <span class="va">start</span> <span class="op">+</span> <span class="op">(</span><span class="va">end</span> <span class="op">-</span> <span class="va">start</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span></span>
 <span>  </span>
 <span>  <span class="co"># Extract features at vowel midpoint</span></span>
-<span>  <span class="va">f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>time <span class="op">=</span> <span class="va">midpoint</span>, unit <span class="op">=</span> <span class="st">"hertz"</span>, interpolate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span>time <span class="op">=</span> <span class="va">midpoint</span>, unit <span class="op">=</span> <span class="st">"hertz"</span>,</span>
+<span>    interpolate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="va">f1</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span><span class="fl">1</span>, <span class="va">midpoint</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
 <span>  <span class="va">f2</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span><span class="fl">2</span>, <span class="va">midpoint</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
 <span>  <span class="va">f3</span> <span class="op">&lt;-</span> <span class="va">formant</span><span class="op">$</span><span class="fu">get_value_at_time</span><span class="op">(</span><span class="fl">3</span>, <span class="va">midpoint</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
@@ -517,7 +523,7 @@ compose TextGrid tier displays with ggplot2:</p>
 <h3 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h3>
 <p><code>pladdrr</code> provides
-<code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods (shown above
+<code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot(   )</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods (shown above
 for <code>TextGrid</code>) plus <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods for Sound,
 Pitch, Formant, Intensity, and other analysis objects. For vowel spaces,
 formant trajectories, pitch/intensity contours, spectrograms, and voice
@@ -566,7 +572,8 @@ groups:</p>
 <p>Multi-dimensional voice profiling:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract voice quality metrics</span></span>
-<span><span class="va">pointprocess</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_point_process_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span><span class="va">pointprocess</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_point_process_periodic_cc</span><span class="op">(</span>pitch_floor <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>  pitch_ceiling <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
 <span><span class="va">voice_profile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  f0_mean <span class="op">=</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  f0_sd <span class="op">=</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_standard_deviation</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -590,7 +597,7 @@ groups:</p>
 <span>  pitch_ceiling <span class="op">=</span> <span class="fl">330</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note:</strong> CPPS values are sensitive to parameters. See
-<code>system.file("examples", "10_cpps_analysis.R", package = "pladdrr")</code>
+<code>system.file(   "examples", "10_cpps_analysis.R", package = "pladdrr")</code>
 for parameter effects and clinical interpretation.</p>
 </div>
 </div>
@@ -649,19 +656,17 @@ for parameter effects and clinical interpretation.</p>
 </h2>
 <p>The <strong>pladdrr</strong> package enables:</p>
 <ul>
+<li><p><strong>Annotation workflows</strong> with TextGrid creation and
+manipulation</p></li>
+<li><p><strong>Sound processing</strong> (segmentation, resampling,
+filtering)</p></li>
+<li><p><strong>Multi-dimensional acoustic analysis</strong> (prosody,
+voice quality, spectral features)</p></li>
 <li>
-<strong>Annotation workflows</strong> with TextGrid creation and
-manipulation</li>
-<li>
-<strong>Sound processing</strong> (segmentation, resampling,
-filtering)</li>
-<li>
-<strong>Multi-dimensional acoustic analysis</strong> (prosody, voice
-quality, spectral features)</li>
-<li>
-<strong>R integration</strong> for statistical analysis and
-visualization via <code>data.frame</code> output and
-<code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code> methods</li>
+<p><strong>R integration</strong> for statistical analysis and
+visualization via <code>data.frame</code> output and `autoplot(</p>
+<p>)<code>/</code>autolayer()` methods</p>
+</li>
 </ul>
 <p>For more examples, see:</p>
 <ul>
@@ -679,10 +684,10 @@ manipulation</li>
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
-<li>Boersma, P., &amp; Weenink, D. (2023). <em>Praat: doing phonetics by
-computer</em>. <a href="https://praat.org/" class="external-link uri">https://praat.org/</a>
+<li>Boersma, P., &amp; Weenink, D. ( 2023). <em>Praat: doing phonetics
+by computer</em>. <a href="https://praat.org/" class="external-link uri">https://praat.org/</a>
 </li>
-<li>Thomas, E. R., &amp; Kendall, T. (2007). <em>NORM: The vowel
+<li>Thomas, E. R., &amp; Kendall, T. ( 2007). <em>NORM: The vowel
 normalization and plotting suite</em>.</li>
 </ul>
 </div>

@@ -78,7 +78,8 @@ for the reusable multi-interval path
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 hnr_results <- calculate_multiband_hnr_ultra(sound)
 hnr_results$full_mean

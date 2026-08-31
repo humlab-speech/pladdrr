@@ -93,7 +93,8 @@ Cochleagram.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Frequency runs along the Bark scale (0-25.6 Bark) rather than Hertz,
 matching the perceptual frequency resolution of the ear. Create one from a
-Sound with <code>sound$to_cochleagram()</code> or <code>sound$to_cochleagram_edb()</code>;
+Sound with <code>sound$to_cochleagram()</code> or
+ <code>sound$to_cochleagram_edb()</code>;
 slice it at a time point to get an Excitation pattern, from which loudness
 can be read off.</p>
     </div>
@@ -109,22 +110,29 @@ can be read off.</p>
     <h2 id="query-methods">Query methods<a class="anchor" aria-label="anchor" href="#query-methods"></a></h2>
 
 
-<ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code>, <code><a href="get_duration.html">get_duration()</a></code> - time domain in seconds</p></li>
+<ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code>, <code><a href="get_duration.html">get_duration()</a></code> -
+ time domain in seconds</p></li>
 <li><p><code>get_number_of_frames()</code>, <code>get_time_step()</code> - time sampling</p></li>
 <li><p><code>get_time_from_column(i_col)</code> - time at a 1-based frame index</p></li>
-<li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> - frequency range in Bark</p></li>
-<li><p><code>get_number_of_frequency_bands()</code>, <code>get_frequency_step()</code> - frequency sampling</p></li>
+<li><p><code>get_lowest_frequency()</code>, <code>get_highest_frequency()</code> -
+ frequency range in Bark</p></li>
+<li><p><code>get_number_of_frequency_bands()</code>, <code>get_frequency_step()</code> -
+ frequency sampling</p></li>
 <li><p><code>get_frequency_from_row()</code> - frequency at a 1-based band index</p></li>
-<li><p><code>get_value_at_time_and_frequency(time, freq_bark)</code> - excitation level at a point</p></li>
+<li><p><code>get_value_at_time_and_frequency(time, freq_bark)</code> - excitation
+ level at a point</p></li>
 <li><p><code>get_loudness_at_time(time)</code> - loudness (sone) at a time</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="transformation-and-export">Transformation and export<a class="anchor" aria-label="anchor" href="#transformation-and-export"></a></h2>
 
 
-<ul><li><p><code>to_excitation(time)</code> - excitation pattern (Excitation object) at a time</p></li>
-<li><p><code>get_difference(other, tmin, tmax)</code> - distance between two cochleagrams</p></li>
-<li><p><code>as_matrix()</code> - values as a numeric matrix (frequency bands x frames)</p></li>
+<ul><li><p><code>to_excitation(time)</code> - excitation pattern (Excitation object) at
+ a time</p></li>
+<li><p><code>get_difference(other, tmin, tmax)</code> - distance between two
+ cochleagrams</p></li>
+<li><p><code>as_matrix()</code> - values as a numeric matrix (frequency bands x
+ frames)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -133,7 +141,8 @@ can be read off.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span> <span class="fl">44100</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">0.3</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">44100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cochleagram</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cochleagram</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cochleagram</span><span class="op">$</span><span class="fu">get_duration</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3</span>

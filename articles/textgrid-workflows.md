@@ -120,7 +120,8 @@ cat("Added", tg$get_number_of_points(events_tier), "points to events tier\n")
 
 # From package example data (kept as a separate object here; the rest of
 # this vignette continues to use the `tg` built in Part 1)
-tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "pladdrr")
 tg_from_file <- TextGrid$new(tg_file)
 ```
 
@@ -314,7 +315,8 @@ cat("Renamed tier 3 to 'segments'\n")
 ``` r
 
 # Example with 1min file (large files removed to reduce package size)
-tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "pladdrr")
 
 # Measure load time
 start_time <- Sys.time()
@@ -394,7 +396,8 @@ Process an entire corpus of TextGrids:
 
 # List all TextGrid files in a corpus directory:
 # textgrid_dir <- "path/to/corpus/"
-# tg_files <- list.files(textgrid_dir, pattern = "\\.TextGrid$", full.names = TRUE)
+# tg_files <- list.files(textgrid_dir, pattern = "\\.TextGrid$", full.names =
+#  TRUE)
 
 # For this example, use the package's own sample files as a toy corpus
 tg_files <- c(
@@ -454,7 +457,8 @@ MFA produces TextGrids with word and phone tiers:
 
 # The package's sample TextGrid has the same word/phone tier layout MFA
 # produces, so it stands in for an MFA output file here.
-mfa_tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+mfa_tg <- TextGrid$new(
+  system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Typical MFA structure:
 # Tier 1: words
@@ -520,7 +524,8 @@ cat("  Too long:", sum(long_intervals), "\n")
 
 # Export for manual correction
 flagged <- phone_durations[short_intervals | long_intervals, ]
-write.csv(flagged, file.path(tempdir(), "alignment_review.csv"), row.names = FALSE)
+write.csv(flagged, file.path(tempdir(), "alignment_review.csv"),
+  row.names = FALSE)
 ```
 
 ## Part 6: Data Export and Visualization
@@ -530,14 +535,16 @@ write.csv(flagged, file.path(tempdir(), "alignment_review.csv"), row.names = FAL
 ``` r
 
 # Export interval data
-write.csv(intervals_df, file.path(tempdir(), "textgrid_intervals.csv"), row.names = FALSE)
+write.csv(intervals_df, file.path(tempdir(), "textgrid_intervals.csv"),
+  row.names = FALSE)
 
 # Export with additional metadata
 intervals_df$file <- "recording01.wav"
 intervals_df$speaker <- "S01"
 intervals_df$tier <- "words"
 
-write.csv(intervals_df, file.path(tempdir(), "corpus_annotations.csv"), row.names = FALSE)
+write.csv(intervals_df, file.path(tempdir(), "corpus_annotations.csv"),
+  row.names = FALSE)
 ```
 
 ### Save Modified TextGrid
@@ -703,7 +710,8 @@ Measure time between burst and voicing onset:
 ``` r
 
 # Assume a point tier with "burst" and "voicing_onset" marks
-tg <- TextGrid$create(tmin = 0, tmax = 2, tier_names = "events", point_tiers = "events")
+tg <- TextGrid$create(tmin = 0, tmax = 2, tier_names = "events",
+  point_tiers = "events")
 tg$insert_point("events", time = 0.10, mark = "burst")
 tg$insert_point("events", time = 0.15, mark = "voicing_onset")
 tg$insert_point("events", time = 0.50, mark = "burst")
@@ -780,10 +788,10 @@ For related workflows, see:
 
 ## References
 
-- Boersma, P., & Weenink, D. (2023). *Praat: doing phonetics by
+- Boersma, P., & Weenink, D. ( 2023). *Praat: doing phonetics by
   computer*. <https://praat.org/>
-- McAuliffe, M., Socolof, M., Mihuc, S., Wagner, M., & Sonderegger, M.
-  (2017). Montreal Forced Aligner: Trainable text-speech alignment using
+- McAuliffe, M., Socolof, M., Mihuc, S., Wagner, M., & Sonderegger, M. (
+  2017). Montreal Forced Aligner: Trainable text-speech alignment using
   Kaldi. *Interspeech 2017*.
-- Kisler, T., Reichel, U., & Schiel, F. (2017). Multilingual processing
+- Kisler, T., Reichel, U., & Schiel, F. ( 2017). Multilingual processing
   of speech via web services. *Computer Speech & Language*, 45, 326-347.

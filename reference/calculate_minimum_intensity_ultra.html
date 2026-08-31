@@ -118,7 +118,8 @@ Minimum) component.</p>
 
 
 <dt id="arg-subtract-mean">subtract_mean<a class="anchor" aria-label="anchor" href="#arg-subtract-mean"></a></dt>
-<dd><p>Whether to subtract mean for intensity calculation (default: TRUE)</p></dd>
+<dd><p>Whether to subtract mean for intensity calculation
+(default: TRUE)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -154,7 +155,8 @@ exposed as parameters (including `voicing_threshold`, unlike
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">1</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">150</span>, duration <span class="op">=</span> <span class="fl">1</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get minimum intensity in voiced regions (DSI IM component)</span></span></span>
 <span class="r-in"><span><span class="va">min_int</span> <span class="op">&lt;-</span> <span class="fu">calculate_minimum_intensity_ultra</span><span class="op">(</span><span class="va">sound</span>, min_pitch <span class="op">=</span> <span class="fl">75</span><span class="op">)</span></span></span>

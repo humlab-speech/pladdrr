@@ -96,12 +96,14 @@ Use `sound$to_formant_burg()` instead.</p>
 
 
 <dt id="arg-time-step">time_step<a class="anchor" aria-label="anchor" href="#arg-time-step"></a></dt>
-<dd><p>Time step in seconds for formant analysis (0 = auto: 4x Nyquist)</p></dd>
+<dd><p>Time step in seconds for formant analysis (0 = auto: 4x
+Nyquist)</p></dd>
 
 
 <dt id="arg-max-formant">max_formant<a class="anchor" aria-label="anchor" href="#arg-max-formant"></a></dt>
-<dd><p>Maximum formant frequency in Hz (default: 5500 for adult female,
-use 5000 for adult male, 8000 for child)</p></dd>
+<dd><p>Maximum formant frequency in Hz (default: 5500 for adult
+female,
+ use 5000 for adult male, 8000 for child)</p></dd>
 
 
 <dt id="arg-n-formants">n_formants<a class="anchor" aria-label="anchor" href="#arg-n-formants"></a></dt>
@@ -146,7 +148,8 @@ using Praat's Burg algorithm.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># sound is an R6 Sound object here, so this delegates to to_formant_burg()</span></span></span>
 <span class="r-in"><span><span class="co"># and returns an R6 Formant object (see the second value's \value above).</span></span></span>
-<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va">Sound</span><span class="op">$</span><span class="fu">create_tone</span><span class="op">(</span>frequency <span class="op">=</span> <span class="fl">220</span>, duration <span class="op">=</span> <span class="fl">0.5</span>, sampling_rate <span class="op">=</span></span></span>
+<span class="r-in"><span> <span class="fl">16000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formants</span> <span class="op">&lt;-</span> <span class="fu">extract_formants</span><span class="op">(</span><span class="va">sound</span>, max_formant <span class="op">=</span> <span class="fl">5500</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>extract_formants() is deprecated and will be removed in v6.0.0. Use the R6 interface: sound$to_formant_burg()</span>
 <span class="r-in"><span><span class="va">f1_mean</span> <span class="op">&lt;-</span> <span class="va">formants</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>formant_number <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>

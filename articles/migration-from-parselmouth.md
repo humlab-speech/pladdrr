@@ -111,8 +111,10 @@ mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
 ``` r
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01, subtract_mean = TRUE)
-mean_int <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
+intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
+  subtract_mean = TRUE)
+mean_int <- intensity$get_mean(from_time = 0, to_time = 0,
+  averaging_method = "energy")
 ```
 
 ### Spectral Analysis
@@ -170,7 +172,8 @@ files <- list.files(system.file("extdata", package = "pladdrr"),
 
 results <- lapply(files, function(filepath) {
   sound <- Sound$new(filepath)
-  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
   mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
   data.frame(
@@ -272,11 +275,14 @@ def analyze_voice(filename):
     pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
     mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
     
-    harmonicity = pm.praat.call(sound, "To Harmonicity (cc)", 0.01, 75, 0.1, 1.0)
+    harmonicity = pm.praat.call(sound, "To Harmonicity (cc)", 0.01, 75, 0.1,
+      1.0)
     mean_hnr = pm.praat.call(harmonicity, "Get mean", 0, 0)
     
-    pointprocess = pm.praat.call(sound, "To PointProcess (periodic, cc)", 75, 600)
-    jitter = pm.praat.call(pointprocess, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)
+    pointprocess = pm.praat.call(sound, "To PointProcess (periodic, cc)", 75,
+      600)
+    jitter = pm.praat.call(pointprocess, "Get jitter (local)", 0, 0, 0.0001,
+      0.02, 1.3)
     
     return {
         'mean_f0': mean_f0,
@@ -292,14 +298,16 @@ def analyze_voice(filename):
 analyze_voice <- function(filename) {
   sound <- Sound$new(filename)
   
-  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
   mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
   harmonicity <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75,
                                          silence_threshold = 0.1, periods_per_window = 1.0)
   mean_hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
   
-  pointprocess <- sound$to_pointprocess_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  pointprocess <- sound$to_pointprocess_periodic_cc(pitch_floor = 75,
+    pitch_ceiling = 600)
   jitter <- pointprocess$get_jitter_local(from_time = 0, to_time = 0,
                                           period_floor = 0.0001, period_ceiling = 0.02,
                                           max_period_factor = 1.3)
@@ -424,5 +432,7 @@ with named parameters, instead of a string-based `praat.call()`
 dispatcher, and integrates with the R ecosystem (tidyverse, ggplot2).
 
 The transition from Parselmouth to pladdrr mainly involves replacing
-`praat.call()` calls with direct method calls, using the naming
-conventions shown above.
+\`praat.call(
+
+)\` calls with direct method calls, using the naming conventions shown
+above.

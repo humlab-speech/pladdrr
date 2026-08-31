@@ -59,7 +59,8 @@ quantiles\["q0.25"\] \* 0.75, pitch_ceiling = quantiles\["q0.75"\] \*
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 
 # Get Q1, median, Q3 in one call

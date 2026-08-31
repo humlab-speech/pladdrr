@@ -117,15 +117,18 @@ for passing valid values (see the arguments below).</p>
 
 
 <dt id="arg-subtract-tilt">subtract_tilt<a class="anchor" aria-label="anchor" href="#arg-subtract-tilt"></a></dt>
-<dd><p>Logical, subtract tilt before calculating CPPS (default TRUE)</p></dd>
+<dd><p>Logical, subtract tilt before calculating CPPS (default
+TRUE)</p></dd>
 
 
 <dt id="arg-time-averaging-window">time_averaging_window<a class="anchor" aria-label="anchor" href="#arg-time-averaging-window"></a></dt>
-<dd><p>Numeric, time averaging window in seconds (default 0.001)</p></dd>
+<dd><p>Numeric, time averaging window in seconds
+(default 0.001)</p></dd>
 
 
 <dt id="arg-quefrency-averaging-window">quefrency_averaging_window<a class="anchor" aria-label="anchor" href="#arg-quefrency-averaging-window"></a></dt>
-<dd><p>Numeric, quefrency averaging window in seconds (default 0.0005)</p></dd>
+<dd><p>Numeric, quefrency averaging window in
+seconds (default 0.0005)</p></dd>
 
 
 <dt id="arg-pitch-floor">pitch_floor<a class="anchor" aria-label="anchor" href="#arg-pitch-floor"></a></dt>
@@ -141,11 +144,13 @@ for passing valid values (see the arguments below).</p>
 
 
 <dt id="arg-interpolation">interpolation<a class="anchor" aria-label="anchor" href="#arg-interpolation"></a></dt>
-<dd><p>Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700" (default "parabolic")</p></dd>
+<dd><p>Character, one of "parabolic", "none", "cubic",
+"sinc70", "sinc700" (default "parabolic")</p></dd>
 
 
 <dt id="arg-qstart-fit">qstart_fit<a class="anchor" aria-label="anchor" href="#arg-qstart-fit"></a></dt>
-<dd><p>Numeric, quefrency range start for fitting in seconds (default 0.003)</p></dd>
+<dd><p>Numeric, quefrency range start for fitting in seconds
+(default 0.003)</p></dd>
 
 
 <dt id="arg-qend-fit">qend_fit<a class="anchor" aria-label="anchor" href="#arg-qend-fit"></a></dt>
@@ -153,28 +158,34 @@ for passing valid values (see the arguments below).</p>
 
 
 <dt id="arg-trend-line-type">trend_line_type<a class="anchor" aria-label="anchor" href="#arg-trend-line-type"></a></dt>
-<dd><p>Character, "straight" or "exponential" (default "straight")</p></dd>
+<dd><p>Character, "straight" or "exponential" (default
+"straight")</p></dd>
 
 
 <dt id="arg-fit-method">fit_method<a class="anchor" aria-label="anchor" href="#arg-fit-method"></a></dt>
-<dd><p>Character, "robust" (Siegel repeated median), "least_squares",
-or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
-reproducible**: it samples randomly inside Praat's slope selection, so repeated
+<dd><p>Character, "robust" (Siegel repeated median),
+ "least_squares",
+  or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+reproducible**: it samples randomly inside Praat's slope selection, so
+ repeated
 runs on the same input differ (~0.8 dB observed) and can return values on the
 order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
-pladdrr warns once per session when you select it.</p></dd>
+  pladdrr warns once per session when you select it.</p></dd>
 
 
 <dt id="arg-cepstrogram-pitch-floor">cepstrogram_pitch_floor<a class="anchor" aria-label="anchor" href="#arg-cepstrogram-pitch-floor"></a></dt>
-<dd><p>Numeric, pitch floor for cepstrogram creation (default 60)</p></dd>
+<dd><p>Numeric, pitch floor for cepstrogram creation
+(default 60)</p></dd>
 
 
 <dt id="arg-time-step">time_step<a class="anchor" aria-label="anchor" href="#arg-time-step"></a></dt>
-<dd><p>Numeric, time step for cepstrogram in seconds (default 0.002)</p></dd>
+<dd><p>Numeric, time step for cepstrogram in seconds (default
+0.002)</p></dd>
 
 
 <dt id="arg-max-frequency">max_frequency<a class="anchor" aria-label="anchor" href="#arg-max-frequency"></a></dt>
-<dd><p>Numeric, max frequency for cepstrogram in Hz (default 5000)</p></dd>
+<dd><p>Numeric, max frequency for cepstrogram in Hz (default
+5000)</p></dd>
 
 
 <dt id="arg-pre-emphasis-from">pre_emphasis_from<a class="anchor" aria-label="anchor" href="#arg-pre-emphasis-from"></a></dt>

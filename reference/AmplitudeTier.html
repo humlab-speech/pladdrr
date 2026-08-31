@@ -115,7 +115,8 @@ shimmer.</p>
 <ul><li><p><code>get_start_time()</code>, <code>get_end_time()</code> - time domain in seconds</p></li>
 <li><p><code>get_number_of_points()</code> - number of (time, value) points</p></li>
 <li><p><code>get_time_from_index(index)</code> - time at a 1-based point index</p></li>
-<li><p><code>get_value_at_index(index)</code> - amplitude at a 1-based point index (Pa)</p></li>
+<li><p><code>get_value_at_index(index)</code> - amplitude at a 1-based point index
+ (Pa)</p></li>
 <li><p><code>get_value_at_time(time)</code> - interpolated amplitude at a time (Pa)</p></li>
 </ul></div>
     <div class="section level2">
@@ -129,8 +130,10 @@ shimmer.</p>
     <h2 id="conversion-and-export">Conversion and export<a class="anchor" aria-label="anchor" href="#conversion-and-export"></a></h2>
 
 
-<ul><li><p><code>to_intensity_tier(threshold_db)</code> - convert amplitude to an IntensityTier</p></li>
-<li><p><code>as_data_frame()</code> - points as a data frame with <code>time</code> and <code>amplitude_pa</code> columns</p></li>
+<ul><li><p><code>to_intensity_tier(threshold_db)</code> - convert amplitude to an
+ IntensityTier</p></li>
+<li><p><code>as_data_frame()</code> - points as a data frame with <code>time</code> and
+ <code>amplitude_pa</code> columns</p></li>
 <li><p><code>save(path)</code> - write to file</p></li>
 </ul></div>
     <div class="section level2">

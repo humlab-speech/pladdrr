@@ -4,17 +4,23 @@
 
 pladdrr provides auditory modeling through the **Cochleagram** and
 **Excitation** objects. These model how the human auditory system
-processes acoustic information, as opposed to a purely physical
-(spectral) analysis.
+processes acoustic information, as opposed to a purely physical (
+
+spectral) analysis.
 
 ### Key Concepts
 
 - **Cochleagram**: Models the basilar membrane response in the cochlea
-  using the **Bark scale** (0-25.6 Bark ≈ 0-20,000 Hz)
+  using the **Bark scale** (
+
+  0-25.6 Bark ≈ 0-20,000 Hz)
+
 - **Excitation**: Represents auditory nerve firing patterns on the **ERB
-  (Equivalent Rectangular Bandwidth) scale**
+  ( Equivalent Rectangular Bandwidth) scale**
+
 - **Loudness**: Perceptual loudness measured in sones (not physical
   intensity)
+
 - **Perceptual Distance**: Quantifies how different two sounds “sound”
   to human listeners
 
@@ -36,7 +42,8 @@ human cochlea’s tonotopic organization.
 ``` r
 
 # Load or create a sound
-sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 44100)
+sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+  sampling_rate = 44100)
 
 # Create cochleagram
 cochlea <- sound$to_cochleagram(
@@ -83,9 +90,12 @@ print(paste("Excitation at 440 Hz:", round(excitation_440hz, 4)))
 # Export to matrix for plotting
 cochlea_matrix <- as.matrix(cochlea$as_matrix())
 
-# Convert to long format for ggplot2 (rows = frequency bands, columns = time frames)
-times <- vapply(seq_len(cochlea$get_number_of_frames()), cochlea$get_time_from_column, numeric(1))
-barks <- vapply(seq_len(cochlea$get_number_of_frequency_bands()), cochlea$get_frequency_from_row, numeric(1))
+# Convert to long format for ggplot2 (rows = frequency bands, columns = time
+#  frames)
+times <- vapply(seq_len(cochlea$get_number_of_frames()),
+  cochlea$get_time_from_column, numeric(1))
+barks <- vapply(seq_len(cochlea$get_number_of_frequency_bands()),
+  cochlea$get_frequency_from_row, numeric(1))
 df_long <- expand.grid(Bark = barks, Time = times)
 df_long$Excitation <- as.vector(cochlea_matrix)
 
@@ -106,7 +116,7 @@ ggplot(df_long, aes(x = Time, y = Bark, fill = Excitation)) +
 
 ### Advanced: Ear-Drum-Brain Model
 
-For more realistic auditory modeling, use the EDB (Ear-Drum-Brain)
+For more realistic auditory modeling, use the EDB ( Ear-Drum-Brain)
 method which includes synaptic processing:
 
 ``` r
@@ -168,8 +178,10 @@ Quantify how different two sounds are perceptually:
 ``` r
 
 # Create two different sounds
-sound1 <- Sound$create_tone(frequency = 440, duration = 0.2, sampling_rate = 22050)
-sound2 <- Sound$create_tone(frequency = 550, duration = 0.2, sampling_rate = 22050)
+sound1 <- Sound$create_tone(frequency = 440, duration = 0.2,
+  sampling_rate = 22050)
+sound2 <- Sound$create_tone(frequency = 550, duration = 0.2,
+  sampling_rate = 22050)
 
 # Get excitation patterns
 exc1 <- sound1$to_spectrum()$to_excitation()
@@ -193,12 +205,14 @@ Compare cochleagrams of normal and impaired hearing:
 ``` r
 
 # Original speech sound
-sound_original <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_original <- Sound$new(
+  system.file("extdata", "test.wav", package = "pladdrr"))
 
 # In practice, apply a low-pass filter to sound_filtered here to simulate
 # high-frequency hearing loss (Sound objects have no clone() method, so
 # start from a fresh load rather than copying sound_original)
-sound_filtered <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_filtered <- Sound$new(
+  system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Create cochleagrams
 cochlea_normal <- sound_original$to_cochleagram()
@@ -228,10 +242,12 @@ uses the bundled test file for both, so `distance` will be 0.
 ``` r
 
 # Clean speech
-speech_clean <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+speech_clean <- Sound$new(
+  system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Noisy speech (in practice, a separate recording made in noise)
-speech_noisy <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+speech_noisy <- Sound$new(
+  system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Get excitation patterns
 exc_clean <- speech_clean$to_spectrum()$to_excitation()
@@ -348,14 +364,15 @@ Cochleagrams and excitation patterns can be large. Clean up when done:
 
 # Process and extract only what you need
 cochlea <- sound$to_cochleagram()
-loudness_time_series <- vapply(seq(0, 0.5, by = 0.01), cochlea$get_loudness_at_time, numeric(1))
+loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
+  cochlea$get_loudness_at_time, numeric(1))
 
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
 #>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1874891 100.2    3145817 168.1  3145817 168.1
-#> Vcells 3193743  24.4    8388608  64.0  7208761  55.0
+#> Ncells 1879033 100.4    3158540 168.7  3158540 168.7
+#> Vcells 3198845  24.5    8388608  64.0  7261183  55.4
 ```
 
 ## Comparison with Traditional Analysis
@@ -376,8 +393,8 @@ Psychoacoustic research - Hearing aid algorithm development
 - **Bark scale**: Zwicker & Terhardt (1980)
 - **ERB scale**: Glasberg & Moore (1990)
 - **Cochleagram**: Patterson et al. (1992)
-- **Excitation patterns**: Moore (2012) - *An Introduction to the
-  Psychology of Hearing*
+- **Excitation patterns**: Moore (
+  2012. - *An Introduction to the Psychology of Hearing*
 
 ## Session Info
 

@@ -69,7 +69,8 @@ A PowerCepstrum object.
 ## Examples
 
 ``` r
-sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate =
+ 44100)
 spectrum <- sound$to_spectrum()
 cepstrum <- spectrum$to_power_cepstrum()
 cpp <- cepstrum$get_peak_prominence()
