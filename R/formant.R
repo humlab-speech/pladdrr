@@ -133,7 +133,7 @@ extract_formants <- function(sound,
 #' @param signal Numeric vector, the audio samples
 #' @param sr Sampling rate in Hz
 #' @param time_step Time between analysis frames in seconds
-#' @inheritParams pladdrr-shared-params max_formant
+#' @inheritParams pladdrr_shared_params max_formant
 #' @param n_formants Number of formants to detect per frame
 #' @param window_length Analysis window length in seconds
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz
@@ -197,7 +197,7 @@ extract_formants <- function(sound,
 #' @param sr Sampling rate in Hz
 #' @param lpc_order LPC order (number of coefficients)
 #' @param n_formants Number of formants to return
-#' @inheritParams pladdrr-shared-params max_formant
+#' @inheritParams pladdrr_shared_params max_formant
 #' @return A data.frame with columns \code{frequency} and \code{bandwidth},
 #'   one row per formant, padded with \code{NA} if fewer roots were found
 #'   than \code{n_formants}
@@ -324,7 +324,7 @@ extract_formants <- function(sound,
 #'   \code{formant$get_value_at_time()} on an R6 \code{Formant} object
 #'   directly instead of this deprecated wrapper.
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
-#' @inheritParams pladdrr-shared-params time
+#' @inheritParams pladdrr_shared_params time
 #' @param interpolate Logical; if TRUE, interpolate between frames
 #'
 #' @return Formant frequency in Hz, or NA if undefined

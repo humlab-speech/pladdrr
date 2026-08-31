@@ -143,7 +143,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' Shared parameter documentation for pladdrr functions
 #'
 #' Common `@param` descriptions used across many functions. Functions inherit
-#' from this topic via `@inheritParams pladdrr-shared-params <param>` to avoid
+#' from this topic via `@inheritParams pladdrr_shared_params <param>` to avoid
 #' duplicating identical documentation.
 #'
 #' @param sound Sound object or external pointer
@@ -193,78 +193,78 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 
 
 
-#' @name pladdrr-shared-params
-NULL
+#' @rdname pladdrr_shared_params
+pladdrr_shared_params <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Sound object
 #'
 #' @param sound Sound object
-#' @name pladdrr-shared-sound
-NULL
+#' @rdname pladdrr_shared_sound
+pladdrr_shared_sound <- function() invisible(NULL)
 
 #' Shared parameter docs for functions using 0-based time conventions
 #'
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
-#' @name pladdrr-shared-time0
-NULL
+#' @rdname pladdrr_shared_time0
+pladdrr_shared_time0 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object
 #'
 #' @param sound A Sound R6 object
-#' @name pladdrr-shared-sound-r6
-NULL
+#' @rdname pladdrr_shared_sound_r6
+pladdrr_shared_sound_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object (alternate)
 #'
 #' @param sound A Sound object
-#' @name pladdrr-shared-sound-a
-NULL
+#' @rdname pladdrr_shared_sound_a
+pladdrr_shared_sound_a <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Pitch object
 #'
 #' @param pitch Pitch object
-#' @name pladdrr-shared-pitch
-NULL
+#' @rdname pladdrr_shared_pitch
+pladdrr_shared_pitch <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object
 #'
 #' @param pitch A Pitch R6 object
-#' @name pladdrr-shared-pitch-r6
-NULL
+#' @rdname pladdrr_shared_pitch_r6
+pladdrr_shared_pitch_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an S3/R6 Sound
 #'
 #' @param sound A praat_sound (S3) or Sound (R6) object
-#' @name pladdrr-shared-sound-legacy
-NULL
+#' @rdname pladdrr_shared_sound_legacy
+pladdrr_shared_sound_legacy <- function() invisible(NULL)
 
 #' Shared parameter docs for auto time-step functions
 #'
 #' @param time_step Time step (0 = auto)
-#' @name pladdrr-shared-timeauto
-NULL
+#' @rdname pladdrr_shared_timeauto
+pladdrr_shared_timeauto <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a TextGrid R6 object
 #'
 #' @param textgrid A TextGrid object
-#' @name pladdrr-shared-textgrid-r6
-NULL
+#' @rdname pladdrr_shared_textgrid_r6
+pladdrr_shared_textgrid_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object (alt)
 #'
 #' @param pitch A Pitch object
-#' @name pladdrr-shared-pitch-a
-NULL
+#' @rdname pladdrr_shared_pitch_a
+pladdrr_shared_pitch_a <- function() invisible(NULL)
 
 #' Shared parameter docs for display-formant functions
 #'
 #' @param max_formant Maximum formant number to display (default: 3)
-#' @name pladdrr-shared-maxformant
-NULL
+#' @rdname pladdrr_shared_maxformant
+pladdrr_shared_maxformant <- function() invisible(NULL)
 
 #' Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
 #'
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
-#' @name pladdrr-shared-timeauto75
-NULL
+#' @rdname pladdrr_shared_timeauto75
+pladdrr_shared_timeauto75 <- function() invisible(NULL)

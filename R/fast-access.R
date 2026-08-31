@@ -49,7 +49,7 @@ get_sound_values_fast <- function(sound, channel = 1) {
 #' Returns time values for each sample using a direct computation, instead of
 #' `sound$get_sample_times()`. Still allocates memory for the result.
 #'
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #'
 #' @return Numeric vector of sample times (in seconds)
 #'
@@ -72,7 +72,7 @@ get_sound_times_fast <- function(sound) {
 #' Copies Sound data into a matrix (samples x channels) via direct
 #' pointer access.
 #'
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #' @param zerocopy Ignored (kept for backward compatibility). All paths copy.
 #'
 #' @return Numeric matrix (samples x channels)

@@ -1000,7 +1000,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' Use `Sound$from_values()` for backward compatibility (calls this function).
 #'
 #' @param values Numeric matrix with channels as rows, samples as columns (or vector for mono)
-#' @inheritParams pladdrr-shared-params sampling_rate
+#' @inheritParams pladdrr_shared_params sampling_rate
 #' @param start_time Start time of the sound in seconds (default: 0.0)
 #' @return A Sound object
 #' @export
@@ -1029,8 +1029,8 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' Factory function to generate a pure sine wave tone.
 #' Use `Sound$create_tone()` for backward compatibility (calls this function).
 #'
-#' @inheritParams pladdrr-shared-params duration
-#' @inheritParams pladdrr-shared-params sampling_rate
+#' @inheritParams pladdrr_shared_params duration
+#' @inheritParams pladdrr_shared_params sampling_rate
 #' @param frequency Frequency in Hz (default: 440)
 #' @param amplitude Amplitude 0-1 (default: 0.99)
 #' @return A Sound object
@@ -1052,8 +1052,8 @@ sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
 #' Creates a sinusoidal pure tone with optional fade in/out envelopes.
 #'
 #' @param frequency Frequency in Hz (default: 440)
-#' @inheritParams pladdrr-shared-params duration
-#' @inheritParams pladdrr-shared-params sampling_rate
+#' @inheritParams pladdrr_shared_params duration
+#' @inheritParams pladdrr_shared_params sampling_rate
 #' @param amplitude Peak amplitude (default: 0.99)
 #' @param fade_in_duration Fade-in duration in seconds (default: 0.01)
 #' @param fade_out_duration Fade-out duration in seconds (default: 0.01)
@@ -1077,8 +1077,8 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
 #' Creates a sound consisting of multiple sinusoids at equal frequency intervals.
 #'
 #' @param frequency_step Step between harmonics in Hz (default: 100)
-#' @inheritParams pladdrr-shared-params duration
-#' @inheritParams pladdrr-shared-params sampling_rate
+#' @inheritParams pladdrr_shared_params duration
+#' @inheritParams pladdrr_shared_params sampling_rate
 #' @param phase Phase type: "sine" or "cosine" (default: "sine")
 #' @param first_frequency Lowest component frequency in Hz (default: 0, uses frequency_step)
 #' @param ceiling Maximum frequency to include in Hz (default: Nyquist)

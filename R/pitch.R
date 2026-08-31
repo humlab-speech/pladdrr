@@ -8,7 +8,7 @@
 #' **DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
 #' \code{sound$to_pitch(time_step, pitch_floor, pitch_ceiling)}
 #'
-#' @inheritParams pladdrr-shared-sound-r6 sound
+#' @inheritParams pladdrr_shared_sound_r6 sound
 #' @param pitch_floor Minimum pitch in Hz (default: 75)
 #' @param pitch_ceiling Maximum pitch in Hz (default: 600)
 #' @param time_step Time step in seconds (default: 0.01)
@@ -42,10 +42,10 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #'
 #' **DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.
 #'
-#' @inheritParams pladdrr-shared-pitch-r6 pitch
-#' @inheritParams pladdrr-shared-params time
-#' @inheritParams pladdrr-shared-params unit
-#' @inheritParams pladdrr-shared-params interpolate
+#' @inheritParams pladdrr_shared_pitch_r6 pitch
+#' @inheritParams pladdrr_shared_params time
+#' @inheritParams pladdrr_shared_params unit
+#' @inheritParams pladdrr_shared_params interpolate
 #' @return Pitch value or NA
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
@@ -64,8 +64,8 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.
 #'
-#' @inheritParams pladdrr-shared-pitch-r6 pitch
-#' @inheritParams pladdrr-shared-params unit
+#' @inheritParams pladdrr_shared_pitch_r6 pitch
+#' @inheritParams pladdrr_shared_params unit
 #' @param time_range Optional time range c(start, end)
 #' @return Mean pitch value
 #' @examples
@@ -87,9 +87,9 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.
 #'
-#' @inheritParams pladdrr-shared-pitch-r6 pitch
-#' @inheritParams pladdrr-shared-params unit
-#' @inheritParams pladdrr-shared-params time_range
+#' @inheritParams pladdrr_shared_pitch_r6 pitch
+#' @inheritParams pladdrr_shared_params unit
+#' @inheritParams pladdrr_shared_params time_range
 #' @return Minimum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
@@ -110,9 +110,9 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #'
 #' **DEPRECATED:** Use \code{pitch$get_maximum(unit)} instead.
 #'
-#' @inheritParams pladdrr-shared-pitch-r6 pitch
-#' @inheritParams pladdrr-shared-params unit
-#' @inheritParams pladdrr-shared-params time_range
+#' @inheritParams pladdrr_shared_pitch_r6 pitch
+#' @inheritParams pladdrr_shared_params unit
+#' @inheritParams pladdrr_shared_params time_range
 #' @return Maximum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)

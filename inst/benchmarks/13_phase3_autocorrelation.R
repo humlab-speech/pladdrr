@@ -2,7 +2,7 @@
 # 13_phase3_autocorrelation.R
 # Benchmark autocorrelation functions (SIMD Phase 3 - Highest Impact)
 
-library(speaker)
+library(pladdrr)
 library(bench)
 
 cat("\n=== Phase 3: Autocorrelation Benchmark ===\n")
@@ -49,14 +49,14 @@ for (config_name in names(test_configs)) {
 
   # Benchmark autocorrelation
   result <- bench::mark(
-    autocorr_scalar = speaker:::.autocorrelation_scalar(
+    autocorr_scalar = pladdrr:::.autocorrelation_scalar(
       data, config$max_lag
     ),
-    autocorr_simd = speaker:::.autocorrelation_simd(data, config$max_lag),
-    autocorr_norm_scalar = speaker:::.autocorrelation_normalized_scalar(
+    autocorr_simd = pladdrr:::.autocorrelation_simd(data, config$max_lag),
+    autocorr_norm_scalar = pladdrr:::.autocorrelation_normalized_scalar(
       data, config$max_lag
     ),
-    autocorr_norm_simd = speaker:::.autocorrelation_normalized_simd(
+    autocorr_norm_simd = pladdrr:::.autocorrelation_normalized_simd(
       data, config$max_lag
     ),
     iterations = if (config$n < 1000) 100 else 50,
@@ -85,8 +85,8 @@ lpc_data <- sin(2 * pi * seq(0, 1, length.out = 8000) * 120) +
 num_coeffs <- 12 # Typical for formant extraction
 
 lpc_result <- bench::mark(
-  lpc_scalar = speaker:::.lpc_autocorrelation_scalar(lpc_data, num_coeffs),
-  lpc_simd = speaker:::.lpc_autocorrelation_simd(lpc_data, num_coeffs),
+  lpc_scalar = pladdrr:::.lpc_autocorrelation_scalar(lpc_data, num_coeffs),
+  lpc_simd = pladdrr:::.lpc_autocorrelation_simd(lpc_data, num_coeffs),
   iterations = 100,
   check = FALSE
 )

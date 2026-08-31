@@ -9,7 +9,7 @@
 #' `get_value_at_time()` repeatedly in a loop.
 #'
 #' @param formant A Formant object
-#' @inheritParams pladdrr-shared-params times
+#' @inheritParams pladdrr_shared_params times
 #' @param formant_numbers Integer vector specifying which formants to extract
 #'   (e.g., `1:4` for F1-F4). Default is `1:4`.
 #' @param unit Unit for formant values: "hertz" (default) or "bark"
@@ -51,9 +51,11 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
   unit_code <- switch(tolower(unit),
     "hertz" = 0L,
     "hz" = 0L,
-    "bark" = 1L,
-    stop("Unknown unit: ", unit, ". Use 'hertz' or 'bark'")
+    "bark" = 1L
   )
+  if (is.null(unit_code)) {
+    stop("Unknown unit: ", unit, ". Use 'hertz' or 'bark'")
+  }
   
   # Call C++ implementation
   formant_get_multiple_formants_at_times(
@@ -69,7 +71,7 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
 #' Query formant bandwidths at multiple time points in a single function call.
 #'
 #' @param formant A Formant object
-#' @inheritParams pladdrr-shared-params times
+#' @inheritParams pladdrr_shared_params times
 #' @param formant_numbers Integer vector specifying which formants (default `1:4`)
 #' @param unit Unit for bandwidth values: "hertz" (default) or "bark"
 #'
@@ -95,9 +97,11 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
   unit_code <- switch(tolower(unit),
     "hertz" = 0L,
     "hz" = 0L,
-    "bark" = 1L,
-    stop("Unknown unit: ", unit)
+    "bark" = 1L
   )
+  if (is.null(unit_code)) {
+    stop("Unknown unit: ", unit)
+  }
   
   formant_get_multiple_bandwidths_at_times(
     formant$.xptr,
@@ -112,8 +116,8 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' Query pitch (F0) values at multiple time points in a single function call,
 #' instead of repeated calls to `get_value_at_time()`.
 #'
-#' @inheritParams pladdrr-shared-pitch-a pitch
-#' @inheritParams pladdrr-shared-params times
+#' @inheritParams pladdrr_shared_pitch_a pitch
+#' @inheritParams pladdrr_shared_params times
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
 #' @param interpolate Logical; whether to interpolate between frames (default TRUE)
@@ -154,8 +158,8 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #'
 #' Query pitch strength (voicing confidence) at multiple time points.
 #'
-#' @inheritParams pladdrr-shared-pitch-a pitch
-#' @inheritParams pladdrr-shared-params times
+#' @inheritParams pladdrr_shared_pitch_a pitch
+#' @inheritParams pladdrr_shared_params times
 #' @param unit Unit for pitch (used internally by Praat)
 #' @param interpolate Logical; whether to interpolate (default TRUE)
 #'
@@ -191,7 +195,7 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #' designed for VUV analysis workflows where adaptive pitch ranges are
 #' calculated from quartiles.
 #'
-#' @inheritParams pladdrr-shared-pitch-a pitch
+#' @inheritParams pladdrr_shared_pitch_a pitch
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)
 #' @param from_time Start time (0 = beginning of pitch object)
 #' @param to_time End time (0 = end of pitch object)
@@ -257,7 +261,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' Query intensity (amplitude in dB) at multiple time points in a single call.
 #'
 #' @param intensity An Intensity object
-#' @inheritParams pladdrr-shared-params times
+#' @inheritParams pladdrr_shared_params times
 #' @param interpolate Interpolation method: "nearest", "linear", "cubic" (default),
 #'   or "sinc70". Kept for backward compatibility; prefer `interpolation`.
 #' @param interpolation Alias for `interpolate` (consistent with R6 method naming).
@@ -295,9 +299,11 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
     "linear" = 1L,
     "cubic" = 2L,
     "sinc70" = 3L,
-    "sinc700" = 4L,
-    stop("Unknown interpolation method: ", interpolate)
+    "sinc700" = 4L
   )
+  if (is.null(interp_code)) {
+    stop("Unknown interpolation method: ", interpolate)
+  }
   
   # Use existing optimized function from sound_wrappers.cpp
   .intensity_get_values_at_times(
@@ -312,7 +318,7 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #' Extract all point times from a PointProcess object as a numeric vector,
 #' in a single call instead of calling `get_time(i)` in a loop.
 #'
-#' @inheritParams pladdrr-shared-params pointprocess
+#' @inheritParams pladdrr_shared_params pointprocess
 #'
 #' @return Numeric vector of all point times (in seconds)
 #'
@@ -338,7 +344,7 @@ get_pointprocess_times <- function(pointprocess) {
 #' Compute the time intervals between consecutive points in a PointProcess.
 #' Useful for jitter analysis and prosody studies.
 #'
-#' @inheritParams pladdrr-shared-params pointprocess
+#' @inheritParams pladdrr_shared_params pointprocess
 #'
 #' @return Numeric vector of intervals (in seconds). Length is `n_points - 1`.
 #'
@@ -364,7 +370,7 @@ get_pointprocess_intervals <- function(pointprocess) {
 #'
 #' Find the nearest point index for each of multiple query times.
 #'
-#' @inheritParams pladdrr-shared-params pointprocess
+#' @inheritParams pladdrr_shared_params pointprocess
 #' @param times Numeric vector of query times (in seconds)
 #'
 #' @return Integer vector of nearest point indices (1-based)
@@ -416,8 +422,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #'
 #' @param pointprocess PointProcess object or external pointer (glottal pulses)
 #' @param sound Sound object or external pointer (required for shimmer)
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param period_floor Minimum period in seconds (default 0.0001 = 10000 Hz)
 #' @param period_ceiling Maximum period in seconds (default 0.02 = 50 Hz)
 #' @param max_period_factor Maximum period factor (default 1.3)
@@ -553,10 +559,10 @@ get_durations_batch <- function(file_paths) {
 #' Index) calculations where maximum F0 is the FH (Highest Frequency)
 #' component.
 #'
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #' @param stat Statistic to compute: "max", "min", "mean", "median", or "sd"
 #' @param min_pitch Pitch floor in Hz (default: 75)
-#' @inheritParams pladdrr-shared-params max_pitch
+#' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for pitch extraction (0 = auto)
 #' @param voicing_threshold Voicing threshold (default: 0.45)
 #'
@@ -624,9 +630,9 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' Index) calculations where minimum intensity is the IM (Intensity
 #' Minimum) component.
 #'
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #' @param min_pitch Pitch floor in Hz (default: 75)
-#' @inheritParams pladdrr-shared-params max_pitch
+#' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for analysis (0 = auto)
 #' @param subtract_mean Whether to subtract mean for intensity calculation (default: TRUE)
 #'
@@ -708,13 +714,13 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' matching Tier 4 path by name instead of having to know the two are
 #' equivalent.
 #'
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
 #'   "hnr", or "all" for all metrics
 #' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).
 #'   Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
 #'   independent of this parameter.
-#' @inheritParams pladdrr-shared-params max_pitch
+#' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
 #' @param pitch_method Pitch algorithm for the jitter/shimmer pitch object:
 #'   `"cc"` (default, preserves existing Tier 4 behaviour), `"ac"`, or

@@ -121,8 +121,8 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
 #' @param x A Sound R6 object
-#' @inheritParams pladdrr-shared-params row.names
-#' @inheritParams pladdrr-shared-params optional
+#' @inheritParams pladdrr_shared_params row.names
+#' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time, channel, and value columns
 #' @examples
@@ -431,8 +431,8 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE,
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
 #' @param x A Formant R6 object
-#' @inheritParams pladdrr-shared-params row.names
-#' @inheritParams pladdrr-shared-params optional
+#' @inheritParams pladdrr_shared_params row.names
+#' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments passed to `$as_data_frame()`
 #'   (e.g. `max_formants`)
 #' @return A data.table (inherits from data.frame) in long format, one row per
@@ -455,8 +455,8 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
 #' @param x An Intensity R6 object
-#' @inheritParams pladdrr-shared-params row.names
-#' @inheritParams pladdrr-shared-params optional
+#' @inheritParams pladdrr_shared_params row.names
+#' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time and intensity columns
 #' @examples
@@ -475,8 +475,8 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) 
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
 #' @param x A Pitch R6 object
-#' @inheritParams pladdrr-shared-params row.names
-#' @inheritParams pladdrr-shared-params optional
+#' @inheritParams pladdrr_shared_params row.names
+#' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with pitch measurements
 #' @examples

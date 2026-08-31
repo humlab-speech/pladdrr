@@ -169,8 +169,8 @@ as.data.frame.AmplitudeTier <- function(x, ...) x$as_data_frame()
 #'
 #' Creates a new AmplitudeTier object with no points.
 #'
-#' @inheritParams pladdrr-shared-params tmin
-#' @inheritParams pladdrr-shared-params tmax
+#' @inheritParams pladdrr_shared_params tmin
+#' @inheritParams pladdrr_shared_params tmax
 #' @return An AmplitudeTier object
 #' @examples
 #' tier <- amplitude_tier_create(0, 1)
@@ -186,7 +186,7 @@ amplitude_tier_create <- function(tmin, tmax) {
 #' Extracts amplitude values from a Sound at the times specified by a PointProcess.
 #'
 #' @param point_process A PointProcess object
-#' @inheritParams pladdrr-shared-sound-a sound
+#' @inheritParams pladdrr_shared_sound_a sound
 #' @return An AmplitudeTier object with amplitudes at each point time
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)

@@ -131,27 +131,33 @@ if (!file.exists(test_file) || test_file == "") {
 # Helper function to run parselmouth operation
 run_pm <- function(file, operation) {
   snd <- pm$Sound(file)
-  switch(operation,
+  res <- switch(operation,
     "pitch" = snd$to_pitch(),
     "formant" = snd$to_formant_burg(),
     "intensity" = snd$to_intensity(),
     "spectrogram" = snd$to_spectrogram(),
-    "harmonicity" = snd$to_harmonicity_cc(),
-    stop("Unknown operation")
+    "harmonicity" = snd$to_harmonicity_cc()
   )
+  if (is.null(res)) {
+    stop("Unknown operation")
+  }
+  res
 }
 
 # Helper function to run pladdrr operation
 run_pladdrr <- function(file, operation) {
   snd <- Sound$new(file)
-  switch(operation,
+  res <- switch(operation,
     "pitch" = snd$to_pitch(),
     "formant" = snd$to_formant_burg(),
     "intensity" = snd$to_intensity(),
     "spectrogram" = snd$to_spectrogram(),
-    "harmonicity" = snd$to_harmonicity_cc(),
-    stop("Unknown operation")
+    "harmonicity" = snd$to_harmonicity_cc()
   )
+  if (is.null(res)) {
+    stop("Unknown operation")
+  }
+  res
 }
 
 cat("Running benchmarks (this may take several minutes)...\n\n")

@@ -68,7 +68,7 @@ extract_xptr <- function(obj, class_name) {
 unit_to_code <- function(unit, type = "pitch") {
   unit <- tolower(unit)
   
-  switch(type,
+  code <- switch(type,
     pitch = switch(unit,
       hertz = 0L,
       hz = 0L,
@@ -94,8 +94,10 @@ unit_to_code <- function(unit, type = "pitch") {
     intensity = switch(unit,
       db = 0L,
       0L
-    ),
-    
-    stop(sprintf("Unknown unit type: %s", type))
+    )
   )
+  if (is.null(code)) {
+    stop(sprintf("Unknown unit type: %s", type))
+  }
+  code
 }

@@ -7,7 +7,7 @@
 #' Calculates the mean (average) of all amplitude values in a sound object.
 #' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @inheritParams pladdrr-shared-sound-legacy sound
+#' @inheritParams pladdrr_shared_sound_legacy sound
 #'
 #' @return Mean amplitude (numeric scalar)
 #'
@@ -35,7 +35,7 @@ sound_mean <- function(sound) {
 #' Finds the minimum amplitude value in a sound object.
 #' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @inheritParams pladdrr-shared-sound-legacy sound
+#' @inheritParams pladdrr_shared_sound_legacy sound
 #'
 #' @return Minimum amplitude (numeric scalar)
 #'
@@ -62,7 +62,7 @@ sound_min <- function(sound) {
 #' Finds the maximum amplitude value in a sound object.
 #' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @inheritParams pladdrr-shared-sound-legacy sound
+#' @inheritParams pladdrr_shared_sound_legacy sound
 #'
 #' @return Maximum amplitude (numeric scalar)
 #'
@@ -122,7 +122,7 @@ sound_rms <- function(sound) {
 #' amplitude statistics and metadata.
 #' Works with both S3 praat_sound objects and R6 Sound objects.
 #'
-#' @inheritParams pladdrr-shared-sound-legacy sound
+#' @inheritParams pladdrr_shared_sound_legacy sound
 #'
 #' @return A named list containing:
 #'   \describe{

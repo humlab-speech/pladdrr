@@ -45,7 +45,7 @@ NULL
 #' @description
 #' Get all common pitch statistics in a single call, bypassing R6 dispatch.
 #'
-#' @inheritParams pladdrr-shared-params pitch
+#' @inheritParams pladdrr_shared_params pitch
 #' @param from_time Start time (0 = start of signal)
 #' @param to_time End time (0 = end of signal)
 #' @param unit Character: "hertz", "semitones", "mel", "erb", "loghertz"
@@ -91,7 +91,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 #' Get F1, F2, F3, F4 at a single time point in one call.
 #'
 #' @param formant Formant object or external pointer
-#' @inheritParams pladdrr-shared-params time
+#' @inheritParams pladdrr_shared_params time
 #' @param unit Character: "hertz" or "bark"
 #'
 #' @return Named numeric vector: F1, F2, F3, F4
@@ -138,8 +138,8 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #' voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
 #' instead.
 #'
-#' @inheritParams pladdrr-shared-params sound
-#' @inheritParams pladdrr-shared-timeauto time_step
+#' @inheritParams pladdrr_shared_params sound
+#' @inheritParams pladdrr_shared_timeauto time_step
 #' @param pitch_floor Minimum pitch (Hz)
 #' @param pitch_ceiling Maximum pitch (Hz)
 #'
@@ -179,8 +179,8 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75, pitch_ceilin
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
 #'
-#' @inheritParams pladdrr-shared-params sound
-#' @inheritParams pladdrr-shared-timeauto75 time_step
+#' @inheritParams pladdrr_shared_params sound
+#' @inheritParams pladdrr_shared_timeauto75 time_step
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
 #' @param max_candidates Maximum number of pitch candidates (default 15)
@@ -244,8 +244,8 @@ to_pitch_ac_direct <- function(sound,
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
 #'
-#' @inheritParams pladdrr-shared-params sound
-#' @inheritParams pladdrr-shared-timeauto75 time_step
+#' @inheritParams pladdrr_shared_params sound
+#' @inheritParams pladdrr_shared_timeauto75 time_step
 #' @param pitch_floor Minimum pitch (Hz, default 75)
 #' @param pitch_ceiling Maximum pitch (Hz, default 600)
 #' @param max_candidates Maximum number of pitch candidates (default 15)
@@ -302,7 +302,7 @@ to_pitch_cc_direct <- function(sound,
 
 #' Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step in seconds (default 0.01)
 #' @param pitch_floor Minimum pitch (Hz, default 50)
 #' @param max_frequency Maximum frequency for analysis (Hz, default 1250)
@@ -346,7 +346,7 @@ to_pitch_shs_direct <- function(sound,
 
 #' Create Pitch from Sound using SPINET Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step in seconds (default 0.005)
 #' @param window_duration Analysis window duration (default 0.04)
 #' @param min_frequency Minimum frequency (Hz, default 70)
@@ -393,10 +393,10 @@ to_pitch_spinet_direct <- function(sound,
 
 #' Create Formant from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
-#' @inheritParams pladdrr-shared-timeauto time_step
+#' @inheritParams pladdrr_shared_params sound
+#' @inheritParams pladdrr_shared_timeauto time_step
 #' @param max_formants Maximum number of formants
-#' @inheritParams pladdrr-shared-params max_formant
+#' @inheritParams pladdrr_shared_params max_formant
 #' @param window_length Window length (seconds)
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
 #' @param max_number_of_formants Alias for `max_formants` (maximum number of formants)
@@ -438,9 +438,9 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
 
 #' Create Intensity from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param minimum_pitch Minimum pitch (Hz)
-#' @inheritParams pladdrr-shared-timeauto time_step
+#' @inheritParams pladdrr_shared_timeauto time_step
 #' @param subtract_mean Whether to subtract mean
 #'
 #' @return External pointer to Intensity
@@ -467,7 +467,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 
 #' Create Harmonicity from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step
 #' @param minimum_pitch Minimum pitch (Hz)
 #' @param silence_threshold Silence threshold
@@ -503,10 +503,10 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 
 #' Get Single Pitch Value Directly
 #'
-#' @inheritParams pladdrr-shared-params pitch
-#' @inheritParams pladdrr-shared-params time
+#' @inheritParams pladdrr_shared_params pitch
+#' @inheritParams pladdrr_shared_params time
 #' @param unit Unit string
-#' @inheritParams pladdrr-shared-params interpolate
+#' @inheritParams pladdrr_shared_params interpolate
 #'
 #' @return Pitch value
 #'
@@ -525,7 +525,7 @@ get_pitch_value_direct <- function(pitch, time, unit = "hertz", interpolate = TR
 #' Get Single Intensity Value Directly
 #'
 #' @param intensity Intensity object or external pointer
-#' @inheritParams pladdrr-shared-params time
+#' @inheritParams pladdrr_shared_params time
 #' @param interpolation Interpolation method
 #'
 #' @return Intensity in dB
@@ -546,7 +546,7 @@ get_intensity_value_direct <- function(intensity, time, interpolation = "cubic")
 #'
 #' @param formant Formant object or external pointer
 #' @param formant_number Formant number (1=F1, etc)
-#' @inheritParams pladdrr-shared-params time
+#' @inheritParams pladdrr_shared_params time
 #' @param unit Unit string
 #'
 #' @return Formant frequency
@@ -570,10 +570,10 @@ get_formant_value_direct <- function(formant, formant_number, time, unit = "hert
 #' Get a specific quantile of pitch values without R6 wrapper overhead.
 #' Useful for VUV analysis workflows where you need Q1, Q3 for adaptive pitch range.
 #'
-#' @inheritParams pladdrr-shared-params pitch
+#' @inheritParams pladdrr_shared_params pitch
 #' @param quantile Quantile value (0.25 for Q1, 0.75 for Q3, 0.5 for median)
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param unit Pitch unit ("hertz", "semitones", "mel", "erb", "loghertz")
 #'
 #' @return Quantile value in specified unit
@@ -601,9 +601,9 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0, to_time = 
 #' @description
 #' Get mean pitch value without R6 wrapper overhead.
 #'
-#' @inheritParams pladdrr-shared-params pitch
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_params pitch
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param unit Pitch unit
 #'
 #' @return Mean pitch value
@@ -629,9 +629,9 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
 #' @description
 #' Get standard deviation of pitch values without R6 wrapper overhead.
 #'
-#' @inheritParams pladdrr-shared-params pitch
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_params pitch
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param unit Pitch unit
 #'
 #' @return Standard deviation
@@ -659,7 +659,7 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
 
 #' Create Spectrum from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param fast Logical. Use fast algorithm (default: TRUE)
 #'
 #' @return External pointer to Spectrum
@@ -686,7 +686,7 @@ to_spectrum_direct <- function(sound, fast = TRUE) {
 
 #' Create Spectrogram from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param window_length Numeric. Window length in seconds (default: 0.005)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
 #' @param time_step Numeric. Time step in seconds (default: 0.002)
@@ -731,7 +731,7 @@ to_spectrogram_direct <- function(sound, window_length = 0.005,
 
 #' Create LTAS from Sound Directly
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param bandwidth Numeric. Bandwidth in Hz (default: 100)
 #'
 #' @return A wrapped \code{Ltas} object
@@ -750,7 +750,7 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 
 #' Create PointProcess from Sound Directly (returns XPtr)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param pitch_floor Numeric. Minimum pitch in Hz (default: 75)
 #' @param pitch_ceiling Numeric. Maximum pitch in Hz (default: 600)
 #' @param max_period_factor Numeric. Max period factor (default: 1.3)
@@ -797,7 +797,7 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' - `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch range
 #' - `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch contour (recommended)
 #'
-#' @inheritParams pladdrr-shared-params sound
+#' @inheritParams pladdrr_shared_params sound
 #' @param pitch Pitch object or external pointer (from to_pitch_ac/cc)
 #'
 #' @return External pointer to PointProcess
@@ -841,8 +841,8 @@ to_point_process_from_sound_and_pitch <- function(sound, pitch) {
 #' Critical for VUV analysis workflows.
 #'
 #' @param pointprocess PointProcess object or external pointer
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param period_floor Minimum period (default: 0.0001)
 #' @param period_ceiling Maximum period (default: 0.02)
 #' @param max_period_factor Maximum period factor (default: 1.3)
@@ -885,8 +885,8 @@ pp_get_mean_period_direct <- function(pointprocess,
 #' Get standard deviation of periods from PointProcess without R6 wrapper overhead.
 #'
 #' @param pointprocess PointProcess object or external pointer
-#' @inheritParams pladdrr-shared-time0 from_time
-#' @inheritParams pladdrr-shared-time0 to_time
+#' @inheritParams pladdrr_shared_time0 from_time
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param period_floor Minimum period
 #' @param period_ceiling Maximum period
 #' @param max_period_factor Maximum period factor
@@ -950,8 +950,8 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' different voice ranges. Returns both the refined pitch contour and the
 #' computed range parameters for transparency.
 #'
-#' @inheritParams pladdrr-shared-params sound
-#' @inheritParams pladdrr-shared-timeauto75 time_step
+#' @inheritParams pladdrr_shared_params sound
+#' @inheritParams pladdrr_shared_timeauto75 time_step
 #' @param initial_floor Initial pitch floor for pass 1 (default 50 Hz)
 #' @param initial_ceiling Initial pitch ceiling for pass 1 (default 800 Hz)
 #' @param voicing_threshold Voicing threshold (default 0.45)

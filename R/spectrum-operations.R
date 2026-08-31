@@ -26,9 +26,9 @@ spectrum_cepstral_smoothing <- function(spectrum, bandwidth = 500) {
 #' Apply Hann band-pass filter to spectrum (in-place)
 #'
 #' @param spectrum Spectrum object (will be modified)
-#' @inheritParams pladdrr-shared-params fmin
-#' @inheritParams pladdrr-shared-params fmax
-#' @inheritParams pladdrr-shared-params smooth
+#' @inheritParams pladdrr_shared_params fmin
+#' @inheritParams pladdrr_shared_params fmax
+#' @inheritParams pladdrr_shared_params smooth
 #' @return NULL (modifies spectrum in place)
 #' @export
 #' @examples
@@ -50,9 +50,9 @@ spectrum_pass_hann_band <- function(spectrum, fmin, fmax, smooth = 100) {
 #' Apply Hann band-stop filter to spectrum (in-place)
 #'
 #' @param spectrum Spectrum object (will be modified)
-#' @inheritParams pladdrr-shared-params fmin
-#' @inheritParams pladdrr-shared-params fmax
-#' @inheritParams pladdrr-shared-params smooth
+#' @inheritParams pladdrr_shared_params fmin
+#' @inheritParams pladdrr_shared_params fmax
+#' @inheritParams pladdrr_shared_params smooth
 #' @return NULL (modifies spectrum in place)
 #' @export
 #' @examples

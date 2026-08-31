@@ -2,7 +2,7 @@
 # 12_phase3_window_functions.R
 # Benchmark window functions (SIMD Phase 3)
 
-library(speaker)
+library(pladdrr)
 library(bench)
 
 cat("\n=== Phase 3: Window Functions Benchmark ===\n")
@@ -29,12 +29,12 @@ for (size_name in names(test_sizes)) {
 
   # Benchmark window functions
   result <- bench::mark(
-    hamming_scalar = speaker:::.apply_hamming_window_scalar(data),
-    hamming_simd = speaker:::.apply_hamming_window_simd(data),
-    hanning_scalar = speaker:::.apply_hanning_window_scalar(data),
-    hanning_simd = speaker:::.apply_hanning_window_simd(data),
-    gaussian_scalar = speaker:::.apply_gaussian_window_scalar(data, 0.4),
-    gaussian_simd = speaker:::.apply_gaussian_window_simd(data, 0.4),
+    hamming_scalar = pladdrr:::.apply_hamming_window_scalar(data),
+    hamming_simd = pladdrr:::.apply_hamming_window_simd(data),
+    hanning_scalar = pladdrr:::.apply_hanning_window_scalar(data),
+    hanning_simd = pladdrr:::.apply_hanning_window_simd(data),
+    gaussian_scalar = pladdrr:::.apply_gaussian_window_scalar(data, 0.4),
+    gaussian_simd = pladdrr:::.apply_gaussian_window_simd(data, 0.4),
     iterations = 100,
     check = FALSE
   )

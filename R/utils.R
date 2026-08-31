@@ -18,8 +18,8 @@
 #'
 #' Ensures a numeric parameter is positive (> 0)
 #'
-#' @inheritParams pladdrr-shared-params x
-#' @inheritParams pladdrr-shared-params name
+#' @inheritParams pladdrr_shared_params x
+#' @inheritParams pladdrr_shared_params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -42,8 +42,8 @@ validate_positive <- function(x, name = deparse(substitute(x))) {
 #'
 #' Ensures a numeric parameter is non-negative (>= 0)
 #'
-#' @inheritParams pladdrr-shared-params x
-#' @inheritParams pladdrr-shared-params name
+#' @inheritParams pladdrr_shared_params x
+#' @inheritParams pladdrr_shared_params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -66,8 +66,8 @@ validate_non_negative <- function(x, name = deparse(substitute(x))) {
 #'
 #' Ensures an integer parameter is positive (> 0)
 #'
-#' @inheritParams pladdrr-shared-params x
-#' @inheritParams pladdrr-shared-params name
+#' @inheritParams pladdrr_shared_params x
+#' @inheritParams pladdrr_shared_params name
 #' @return The validated value (invisibly)
 #' @keywords internal
 #' @examples
@@ -86,31 +86,6 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
   invisible(as.integer(x))
 }
 
-#' Validate string parameter
-#'
-#' Ensures a parameter is a non-empty character string
-#'
-#' @inheritParams pladdrr-shared-params x
-#' @inheritParams pladdrr-shared-params name
-#' @param allow_na Allow NA values (default: FALSE)
-#' @return The validated value (invisibly)
-#' @keywords internal
-#' @examples
-#' pladdrr:::validate_string("hello")
-#' @noRd
-validate_string <- function(x, name = deparse(substitute(x)),
-                           allow_na = FALSE) {
-  if (!is.character(x) || length(x) != 1) {
-    .stop_validate("validate_string", name, sprintf("'%s' must be a single character string", name))
-  }
-  if (is.na(x) && !allow_na) {
-    .stop_validate("validate_string", name, sprintf("'%s' cannot be NA", name))
-  }
-  if (!is.na(x) && nchar(x) == 0) {
-    .stop_validate("validate_string", name, sprintf("'%s' cannot be an empty string", name))
-  }
-  invisible(x)
-}
 
 # ==============================================================================
 # Sound Object Validation
@@ -134,7 +109,7 @@ validate_string <- function(x, name = deparse(substitute(x)),
 #'
 #' Validates that an object is a Sound R6 object or legacy praat_sound
 #'
-#' @inheritParams pladdrr-shared-params x
+#' @inheritParams pladdrr_shared_params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -156,7 +131,7 @@ is_praat_sound <- function(x) {
 #' Ensures an object is a valid praat_sound, throwing an error if not
 #'
 #' @param x Object to validate
-#' @inheritParams pladdrr-shared-params name
+#' @inheritParams pladdrr_shared_params name
 #' @return The validated object (invisibly)
 #' @keywords internal
 #' @examples
@@ -178,7 +153,7 @@ validate_sound_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' Validates that an object is a Pitch R6 object or legacy praat_pitch
 #'
-#' @inheritParams pladdrr-shared-params x
+#' @inheritParams pladdrr_shared_params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
@@ -216,27 +191,6 @@ is_praat_pitch <- function(x) {
 # Message Utilities
 # ==============================================================================
 
-#' Issue a quality warning
-#'
-#' Issues a warning about potentially poor analysis quality
-#' (Constitution Principle I: User should be warned about quality issues)
-#'
-#' @param message Warning message
-#' @return The result of the underlying \code{warning()} call, invisibly;
-#'   called for the side effect of issuing a warning.
-#' @examples
-#' withCallingHandlers(
-#'   pladdrr:::quality_warning("example quality issue"),
-#'   warning = function(w) {
-#'     message("caught: ", conditionMessage(w))
-#'     invokeRestart("muffleWarning")
-#'   }
-#' )
-#' @keywords internal
-#' @noRd
-quality_warning <- function(message) {
-  warning(message, call. = FALSE, immediate. = TRUE)
-}
 
 # ==============================================================================
 # Formant Object Validation
@@ -246,7 +200,7 @@ quality_warning <- function(message) {
 #'
 #' Validates that an object is a Formant R6 object or legacy praat_formant
 #'
-#' @inheritParams pladdrr-shared-params x
+#' @inheritParams pladdrr_shared_params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
@@ -292,7 +246,7 @@ is_praat_formant <- function(x) {
 #' Ensures an object is a valid praat_formant, throwing an error if not
 #'
 #' @param x Object to validate
-#' @inheritParams pladdrr-shared-params name
+#' @inheritParams pladdrr_shared_params name
 #' @return The validated object (invisibly)
 #' @keywords internal
 #' @examples
@@ -315,7 +269,7 @@ validate_formant_object <- function(x, name = deparse(substitute(x))) {
 #'
 #' Validates that an object is an Intensity R6 object or legacy praat_intensity
 #'
-#' @inheritParams pladdrr-shared-params x
+#' @inheritParams pladdrr_shared_params x
 #' @return Logical indicating validity
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)

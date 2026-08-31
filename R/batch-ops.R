@@ -6,7 +6,7 @@
 #' Concatenates a list of Sound objects at the C++ level, avoiding the O(n)
 #' R→C boundary crossings that occur with `Reduce(function(a,b) a$concatenate(b), sounds)`.
 #'
-#' @inheritParams pladdrr-shared-params sounds
+#' @inheritParams pladdrr_shared_params sounds
 #' @param overlap Numeric. Overlap duration in seconds (default: 0)
 #' @param return_r6 Logical. Return R6 Sound object (TRUE) or raw xptr (FALSE)
 #'
@@ -67,11 +67,11 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
 #' Processes multiple Sound objects and extracts Pitch at the C++ level,
 #' avoiding O(n) R→C boundary crossings from calling `$to_pitch()` in a loop.
 #'
-#' @inheritParams pladdrr-shared-params sounds
-#' @inheritParams pladdrr-shared-params time_step
-#' @inheritParams pladdrr-shared-params pitch_floor
-#' @inheritParams pladdrr-shared-params pitch_ceiling
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params sounds
+#' @inheritParams pladdrr_shared_params time_step
+#' @inheritParams pladdrr_shared_params pitch_floor
+#' @inheritParams pladdrr_shared_params pitch_ceiling
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
@@ -117,18 +117,18 @@ sound_to_pitch_batch <- function(sounds,
 #' Batch version of to_pitch_ac with full voicing parameters.
 #' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
 #'
-#' @inheritParams pladdrr-shared-params sounds
-#' @inheritParams pladdrr-shared-params time_step
-#' @inheritParams pladdrr-shared-params pitch_floor
-#' @inheritParams pladdrr-shared-params pitch_ceiling
-#' @inheritParams pladdrr-shared-params max_candidates
+#' @inheritParams pladdrr_shared_params sounds
+#' @inheritParams pladdrr_shared_params time_step
+#' @inheritParams pladdrr_shared_params pitch_floor
+#' @inheritParams pladdrr_shared_params pitch_ceiling
+#' @inheritParams pladdrr_shared_params max_candidates
 #' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
 #' @param silence_threshold Numeric. Silence threshold (default: 0.03)
 #' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
 #' @param octave_cost Numeric. Octave cost (default: 0.01)
 #' @param octave_jump_cost Numeric. Octave jump cost (default: 0.35)
 #' @param voiced_unvoiced_cost Numeric. Voiced/unvoiced cost (default: 0.14)
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
@@ -186,18 +186,18 @@ sound_to_pitch_ac_batch <- function(sounds,
 #' Avoids O(n) R→C boundary crossings for VUV analysis workflows.
 #' Use this when processing many sound segments in a loop.
 #'
-#' @inheritParams pladdrr-shared-params sounds
-#' @inheritParams pladdrr-shared-params time_step
-#' @inheritParams pladdrr-shared-params pitch_floor
-#' @inheritParams pladdrr-shared-params pitch_ceiling
-#' @inheritParams pladdrr-shared-params max_candidates
+#' @inheritParams pladdrr_shared_params sounds
+#' @inheritParams pladdrr_shared_params time_step
+#' @inheritParams pladdrr_shared_params pitch_floor
+#' @inheritParams pladdrr_shared_params pitch_ceiling
+#' @inheritParams pladdrr_shared_params max_candidates
 #' @param very_accurate Logical. Use very accurate algorithm (default: FALSE)
 #' @param silence_threshold Numeric. Silence threshold (default: 0.03)
 #' @param voicing_threshold Numeric. Voicing threshold (default: 0.45)
 #' @param octave_cost Numeric. Octave cost (default: 0.01)
 #' @param octave_jump_cost Numeric. Octave jump cost (default: 0.35)
 #' @param voiced_unvoiced_cost Numeric. Voiced/unvoiced cost (default: 0.14)
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
@@ -254,16 +254,16 @@ sound_to_pitch_cc_batch <- function(sounds,
 #'
 #' Batch version of to_pitch_shs using Subharmonic Summation.
 #'
-#' @inheritParams pladdrr-shared-params sounds
+#' @inheritParams pladdrr_shared_params sounds
 #' @param time_step Numeric. Time step (default: 0.01)
 #' @param pitch_floor Numeric. Pitch floor in Hz (default: 50)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 1250)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
 #' @param max_subharmonics Integer. Number of subharmonics (default: 15)
-#' @inheritParams pladdrr-shared-params max_candidates
+#' @inheritParams pladdrr_shared_params max_candidates
 #' @param compression_factor Numeric. Compression factor (default: 0.84)
 #' @param n_points_per_octave Integer. Points per octave (default: 48)
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
@@ -317,15 +317,15 @@ sound_to_pitch_shs_batch <- function(sounds,
 #'
 #' Batch version of to_pitch_spinet using spectral integration.
 #'
-#' @inheritParams pladdrr-shared-params sounds
+#' @inheritParams pladdrr_shared_params sounds
 #' @param time_step Numeric. Time step (default: 0.005)
 #' @param window_duration Numeric. Analysis window (default: 0.04)
 #' @param min_frequency Numeric. Minimum frequency in Hz (default: 70)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5000)
 #' @param n_filters Integer. Number of gamma-tone filters (default: 250)
 #' @param pitch_ceiling Numeric. Pitch ceiling in Hz (default: 500)
-#' @inheritParams pladdrr-shared-params max_candidates
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params max_candidates
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'
@@ -379,7 +379,7 @@ sound_to_pitch_spinet_batch <- function(sounds,
 
 #' Extract Formants from Multiple Sounds in Single C++ Call
 #'
-#' @inheritParams pladdrr-shared-params sounds
+#' @inheritParams pladdrr_shared_params sounds
 #' @param time_step Numeric. Time step in seconds (default: 0.005)
 #' @param max_formants Numeric. Maximum number of formants (default: 5)
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5500)
@@ -432,9 +432,9 @@ sound_to_formant_batch <- function(sounds,
 
 #' Extract Intensity from Multiple Sounds in Single C++ Call
 #'
-#' @inheritParams pladdrr-shared-params sounds
+#' @inheritParams pladdrr_shared_params sounds
 #' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
-#' @inheritParams pladdrr-shared-params time_step
+#' @inheritParams pladdrr_shared_params time_step
 #' @param subtract_mean Logical. Subtract mean pressure (default: TRUE)
 #' @param return_r6 Logical. Return R6 Intensity objects (TRUE) or raw xptrs (FALSE)
 #'
@@ -486,9 +486,9 @@ sound_to_intensity_batch <- function(sounds,
 #' @param from_times Numeric vector of start times
 #' @param to_times Numeric vector of end times
 #' @param time_step Numeric. Pitch time step (0 = automatic)
-#' @inheritParams pladdrr-shared-params pitch_floor
-#' @inheritParams pladdrr-shared-params pitch_ceiling
-#' @inheritParams pladdrr-shared-params return_r6
+#' @inheritParams pladdrr_shared_params pitch_floor
+#' @inheritParams pladdrr_shared_params pitch_ceiling
+#' @inheritParams pladdrr_shared_params return_r6
 #'
 #' @return List of Pitch objects (R6 or xptr depending on return_r6)
 #'

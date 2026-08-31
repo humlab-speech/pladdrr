@@ -104,7 +104,7 @@ NULL
 #' @param fit_method Character. Trend line fit method (default: "straight")
 #' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
 #' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
-#' @inheritParams pladdrr-shared-params title
+#' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
 #'
 #' @return A ggplot2 object
@@ -184,14 +184,14 @@ plot_powercepstrum <- function(cepstrum,
 #' Creates a heatmap visualization of a power cepstrogram showing how
 #' the cepstral spectrum varies over time, similar to a spectrogram.
 #'
-#' @inheritParams pladdrr-shared-params cepstrogram
+#' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
 #' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: c(0, 0.05))
 #' @param db_range Numeric vector. c(min, max) dB range for color scale (default: NULL = auto)
 #' @param color_scale Character. Color palette: "viridis", "inferno", "magma", "plasma" (default: "viridis")
 #' @param show_cpp_contour Logical. Overlay CPP contour over time (default: FALSE)
 #' @param contour_color Character. Color for CPP contour line (default: "white")
-#' @inheritParams pladdrr-shared-params title
+#' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
 #' @return A ggplot2 object
@@ -263,7 +263,7 @@ plot_powercepstrogram <- function(cepstrogram,
 #' Creates a line plot of Cepstral Peak Prominence (CPP) values over time
 #' from a PowerCepstrogram object. Useful for tracking voice quality variation.
 #'
-#' @inheritParams pladdrr-shared-params cepstrogram
+#' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
 #' @param qmin Numeric. Minimum quefrency for peak search (default: 0.001)
 #' @param qmax Numeric. Maximum quefrency for peak search (default: 0)
@@ -271,7 +271,7 @@ plot_powercepstrogram <- function(cepstrogram,
 #' @param smooth Logical. Apply smoothing to CPP contour (default: FALSE)
 #' @param smooth_span Numeric. Smoothing span for loess (default: 0.1)
 #' @param reference_lines Numeric vector. Reference CPP values to plot as horizontal lines (default: NULL)
-#' @inheritParams pladdrr-shared-params title
+#' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
 #' @return A ggplot2 object
@@ -356,7 +356,7 @@ plot_cpp_timeseries <- function(cepstrogram,
 #' Creates a multi-panel diagnostic plot combining power cepstrum,
 #' cepstrogram, and CPP time series for comprehensive analysis.
 #'
-#' @inheritParams pladdrr-shared-params cepstrogram
+#' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_slice Numeric. Time point for extracting single cepstrum (default: middle)
 #' @param save_path Character. Path to save plot (optional)
 #' @param format Character. Output format: "png", "pdf", "svg" (default: "png")

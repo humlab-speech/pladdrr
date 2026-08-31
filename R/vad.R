@@ -175,7 +175,7 @@ sound_to_textgrid_silences <- function(sound,
 #' Extracts intervals from a TextGrid tier that match a specified criterion.
 #' Returns time boundaries and labels of matching intervals.
 #'
-#' @inheritParams pladdrr-shared-params textgrid
+#' @inheritParams pladdrr_shared_params textgrid
 #' @param tier Integer. Tier number (1-indexed)
 #' @param condition Character. Matching condition:
 #'   - "equals" or "is equal to" - Exact match
@@ -267,7 +267,7 @@ textgrid_get_intervals_where <- function(textgrid,
 #' a list of Sound objects. Useful for extracting voiced segments identified
 #' by voice activity detection.
 #'
-#' @inheritParams pladdrr-shared-sound sound
+#' @inheritParams pladdrr_shared_sound sound
 #' @param start_times Numeric vector of interval start times (seconds)
 #' @param end_times Numeric vector of interval end times (seconds)
 #' @param window_shape Character. Window shape for extraction (default: "rectangular").
@@ -474,7 +474,7 @@ extract_voiced_segments <- function(sound,
 #' crossing detection. ZCR is the rate at which the signal changes sign,
 #' useful for distinguishing voiced (low ZCR) from unvoiced (high ZCR) speech.
 #'
-#' @inheritParams pladdrr-shared-sound sound
+#' @inheritParams pladdrr_shared_sound sound
 #' @param window_duration Numeric. Window duration in seconds (default: 0.03)
 #' @param hop_duration Numeric. Hop between windows in seconds (default: 0.01)
 #' @param channel Integer. Channel to analyze for stereo (default: 1)

@@ -32,9 +32,9 @@ NULL
 #' Creates a waveform visualization of a Sound object.
 #'
 #' @param x Sound object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Sound")
 #' @param color Character. Line color (default: "steelblue")
 #' @param ... Additional arguments (currently unused)
@@ -102,9 +102,9 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a pitch (F0) contour visualization of a Pitch object.
 #'
 #' @param x Pitch object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Pitch")
 #' @param color Character. Line color (default: "darkgreen")
 #' @param show_voicing Logical. Color by voicing (default: TRUE)
@@ -194,10 +194,10 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a formant trajectory visualization showing F1, F2, F3, etc.
 #'
 #' @param x Formant object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-maxformant max_formant
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_maxformant max_formant
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Formant")
 #' @param colors Character vector. Colors for each formant (default: auto)
 #' @param ... Additional arguments (currently unused)
@@ -271,9 +271,9 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 #' Creates an intensity (loudness) contour visualization.
 #'
 #' @param x Intensity object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Intensity")
 #' @param color Character. Line color (default: "darkorange")
 #' @param ... Additional arguments (currently unused)
@@ -338,11 +338,11 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a time-frequency heatmap visualization of a Spectrogram.
 #'
 #' @param x Spectrogram object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params from_freq
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params from_freq
 #' @param to_freq End frequency in Hz (NULL = to Nyquist)
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Spectrogram")
 #' @param dynamic_range Numeric. Dynamic range in dB (default: 70)
 #' @param ... Additional arguments (currently unused)
@@ -405,10 +405,10 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a frequency spectrum visualization.
 #'
 #' @param x Spectrum object
-#' @inheritParams pladdrr-shared-params from_freq
+#' @inheritParams pladdrr_shared_params from_freq
 #' @param to_freq End frequency in Hz (NULL = to Nyquist)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Spectrum")
 #' @param color Character. Line color (default: "navy")
 #' @param ... Additional arguments (currently unused)
@@ -483,10 +483,10 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' Creates a LTAS (long-term average spectrum) visualization.
 #'
 #' @param x Ltas object
-#' @inheritParams pladdrr-shared-params from_freq
+#' @inheritParams pladdrr_shared_params from_freq
 #' @param to_freq End frequency in Hz (NULL = to maximum)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "LTAS")
 #' @param color Character. Line color (default: "darkred")
 #' @param ... Additional arguments (currently unused)
@@ -556,9 +556,9 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
 #' Creates a harmonics-to-noise ratio contour visualization.
 #'
 #' @param x Harmonicity object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Harmonicity")
 #' @param color Character. Line color (default: "darkviolet")
 #' @param ... Additional arguments (currently unused)
@@ -624,9 +624,9 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 #' Creates a visualization of PointProcess events (e.g., glottal pulses).
 #'
 #' @param x PointProcess object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "PointProcess")
 #' @param color Character. Line color (default: "black")
 #' @param ... Additional arguments (currently unused)
@@ -725,7 +725,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @param to_x End value for x-axis (NULL = to end)
 #' @param from_y Start value for y-axis (NULL = from beginning)
 #' @param to_y End value for y-axis (NULL = to end)
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Matrix")
 #' @param x_label Character. X-axis label (default: "X")
 #' @param y_label Character. Y-axis label (default: "Y")
@@ -825,7 +825,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @param x PowerCepstrum object
 #' @param from_quefrency Start quefrency in seconds (NULL = from beginning)
 #' @param to_quefrency End quefrency in seconds (NULL = to end)
-#' @inheritParams pladdrr-shared-params garnish
+#' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Power Cepstrum")
 #' @param color Character. Line color (default: "darkblue")
 #' @param mark_peak Logical. Mark the peak prominence if available (default: TRUE)

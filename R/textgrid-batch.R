@@ -25,9 +25,9 @@
 #' Extract all intervals from a TextGrid tier that match specified text
 #' criteria, in a single call instead of a manual R loop.
 #'
-#' @inheritParams pladdrr-shared-textgrid-r6 textgrid
+#' @inheritParams pladdrr_shared_textgrid_r6 textgrid
 #' @param sound A Sound object (optional, required if extract_sounds = TRUE)
-#' @inheritParams pladdrr-shared-params tier
+#' @inheritParams pladdrr_shared_params tier
 #' @param text_equals Exact label match (e.g., "V" for voiced)
 #' @param text_contains Substring match (e.g., "vowel")
 #' @param text_starts_with Prefix match (e.g., "IPA_")
@@ -130,8 +130,8 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
 #' Extract all interval labels from a tier in a single operation, instead of
 #' calling `textgrid$get_interval_text()` repeatedly.
 #'
-#' @inheritParams pladdrr-shared-textgrid-r6 textgrid
-#' @inheritParams pladdrr-shared-params tier
+#' @inheritParams pladdrr_shared_textgrid_r6 textgrid
+#' @inheritParams pladdrr_shared_params tier
 #'
 #' @return Character vector of all interval labels
 #'
@@ -162,8 +162,8 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 #' tier in a single call, instead of a manual loop. Returns a data frame
 #' ready for analysis.
 #'
-#' @inheritParams pladdrr-shared-textgrid-r6 textgrid
-#' @inheritParams pladdrr-shared-params tier
+#' @inheritParams pladdrr_shared_textgrid_r6 textgrid
+#' @inheritParams pladdrr_shared_params tier
 #'
 #' @return Data frame with columns:
 #'   - `index`: Interval index (1-based)

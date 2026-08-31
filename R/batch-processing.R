@@ -614,8 +614,10 @@ aggregate_measurements <- function(measurements,
                         median = median,
                         min = min,
                         max = max,
-                        n = length,
-                        stop(sprintf("Unknown statistic: %s", stat)))
+                        n = length)
+      if (is.null(stat_fun)) {
+        stop(sprintf("Unknown statistic: %s", stat))
+      }
       
       agg_col <- aggregate(measurements[[col]], 
                           by = list(label = measurements[[by]]),

@@ -40,14 +40,17 @@ get_pitch_module <- function() {
 #' @keywords internal
 #' @noRd
 pitch_unit_code <- function(unit) {
-  switch(tolower(unit),
+  code <- switch(tolower(unit),
     "hertz" = 0L,
     "hz" = 0L,
     "semitones" = 1L,
     "mel" = 2L,
-    "erb" = 3L,
-    stop("Unknown unit: ", unit)
+    "erb" = 3L
   )
+  if (is.null(code)) {
+    stop("Unknown unit: ", unit)
+  }
+  code
 }
 
 # ============================================================================

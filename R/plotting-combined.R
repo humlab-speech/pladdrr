@@ -134,11 +134,11 @@ NULL
 #' Creates a combined visualization showing a waveform with TextGrid annotation
 #' tiers overlaid. This replicates Praat's TextGrid_Sound_draw() function.
 #'
-#' @inheritParams pladdrr-shared-params textgrid
-#' @inheritParams pladdrr-shared-sound sound
+#' @inheritParams pladdrr_shared_params textgrid
+#' @inheritParams pladdrr_shared_sound sound
 #' @param tier Integer or character. Tier number or name to display (default: all)
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param tier_colors Character vector. Colors for each tier (default: auto)
 #' @param title Character. Plot title (default: NULL)
@@ -216,11 +216,11 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' Creates a combined visualization showing a pitch contour with TextGrid
 #' annotation tiers. This replicates Praat's TextGrid_Pitch_draw() function.
 #'
-#' @inheritParams pladdrr-shared-params textgrid
-#' @inheritParams pladdrr-shared-pitch pitch
+#' @inheritParams pladdrr_shared_params textgrid
+#' @inheritParams pladdrr_shared_pitch pitch
 #' @param tier Integer or character. Tier number or name to display (default: all)
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
 #' @param tier_colors Character vector. Colors for each tier (default: auto)
 #' @param title Character. Plot title (default: NULL)
@@ -291,10 +291,10 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' Creates a dual-axis visualization showing pitch and intensity contours together.
 #' This replicates Praat's Pitch_Intensity_draw() function.
 #'
-#' @inheritParams pladdrr-shared-pitch pitch
+#' @inheritParams pladdrr_shared_pitch pitch
 #' @param intensity Intensity object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
 #' @param intensity_color Character. Intensity line color (default: "darkorange")
 #' @param title Character. Plot title (default: "Pitch and Intensity")
@@ -362,9 +362,9 @@ plot_pitch_intensity <- function(pitch, intensity,
 #'
 #' @param spectrogram Spectrogram object
 #' @param formant Formant object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
-#' @inheritParams pladdrr-shared-maxformant max_formant
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
+#' @inheritParams pladdrr_shared_maxformant max_formant
 #' @param formant_colors Character vector. Colors for formants (default: auto)
 #' @param dynamic_range Numeric. Spectrogram dynamic range in dB (default: 70)
 #' @param title Character. Plot title (default: "Spectrogram + Formants")
@@ -441,9 +441,9 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #' overlaid. This is one of the most common Praat visualizations for voice analysis.
 #'
 #' @param spectrogram Spectrogram object
-#' @inheritParams pladdrr-shared-pitch pitch
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_pitch pitch
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param freq_max Maximum frequency to display in Hz (default: 5000)
 #' @param pitch_color Character. Pitch track color (default: "blue")
 #' @param pitch_floor Minimum F0 to display in Hz (default: NULL = auto)
@@ -523,10 +523,10 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' and pitch contour in the bottom panel, aligned by time. This is a common
 #' Praat visualization pattern.
 #'
-#' @inheritParams pladdrr-shared-sound sound
-#' @inheritParams pladdrr-shared-pitch pitch
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_sound sound
+#' @inheritParams pladdrr_shared_pitch pitch
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param pitch_color Character. Pitch color (default: "darkblue")
 #' @param title Character. Overall plot title (default: NULL)

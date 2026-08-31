@@ -36,8 +36,8 @@ NULL
 
 #' @rdname autoplot-methods
 #' @param object Sound object
-#' @inheritParams pladdrr-shared-params from_time
-#' @inheritParams pladdrr-shared-params to_time
+#' @inheritParams pladdrr_shared_params from_time
+#' @inheritParams pladdrr_shared_params to_time
 #' @param color Line color (default: "steelblue")
 #' @param ... Additional arguments passed to geom_line
 #' @return A ggplot2 object
@@ -154,7 +154,7 @@ autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
 
 #' @rdname autoplot-methods
 #' @param object Formant object
-#' @inheritParams pladdrr-shared-maxformant max_formant
+#' @inheritParams pladdrr_shared_maxformant max_formant
 #' @param colors Colors for each formant track
 #' @export
 autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,

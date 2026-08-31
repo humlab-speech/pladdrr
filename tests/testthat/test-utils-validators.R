@@ -34,17 +34,6 @@ test_that("validate_positive_int accepts positive integers and rejects the rest"
   expect_error(pladdrr:::validate_positive_int(NA_real_), "cannot be NA")
 })
 
-# --- validate_string ------------------------------------------------------------
-
-test_that("validate_string accepts non-empty strings and rejects the rest", {
-  expect_identical(pladdrr:::validate_string("hello"), "hello")
-  expect_error(pladdrr:::validate_string(""), "cannot be an empty string")
-  expect_error(pladdrr:::validate_string(NA_character_), "cannot be NA")
-  expect_error(pladdrr:::validate_string(5), "single character string")
-  expect_error(pladdrr:::validate_string(c("a", "b")), "single character string")
-
-  expect_equal(pladdrr:::validate_string(NA_character_, allow_na = TRUE), NA_character_)
-})
 
 # --- validate_logical ------------------------------------------------------------
 
@@ -110,11 +99,6 @@ test_that("is_praat_pitch recognizes R6 Pitch and well-formed legacy praat_pitch
 
 # --- validate_file_exists / validate_file_extension -------------------------
 
-# --- quality_warning ---------------------------------------
-
-test_that("quality_warning issues an immediate warning with the given message", {
-  expect_warning(pladdrr:::quality_warning("example quality issue"), "example quality issue")
-})
 
 # --- is_praat_formant / validate_formant_object ------------------------------
 
