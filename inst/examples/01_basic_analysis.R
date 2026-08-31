@@ -245,39 +245,39 @@ vowel_space_analysis <- function(audio_file,
 
 # Usage Examples ==============================================================
 
-if (FALSE) {  # Don't run automatically
-  
-  # Basic pitch analysis
-  pitch_results <- analyze_pitch("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
-  
-  # Formant analysis
-  formant_results <- analyze_formants("speech.wav", gender = "female")
-  
-  # Intensity analysis  
-  intensity_results <- analyze_intensity("speech.wav")
-  
-  # Complete analysis
-  all_results <- complete_phonetic_analysis(
-    "speech.wav",
-    pitch_floor = 75,
-    pitch_ceiling = 600,
-    max_formant = 5500,
-    gender = "female"
-  )
-  
-  # Vowel space
-  vowel_times <- c(0.5, 1.0, 1.5, 2.0)  # Times where vowels occur
-  vowel_labels <- c("i", "e", "a", "o")
-  vowel_data <- vowel_space_analysis("speech.wav", vowel_times, vowel_labels)
-  
-  # Plot time series
-  formant_df <- as.data.frame(all_results$formants$formant_object)
-  plot(formant_df$time, formant_df$F1, type = "l", 
-       xlab = "Time (s)", ylab = "F1 (Hz)",
-       main = "F1 Trajectory")
-  lines(formant_df$time, formant_df$F2, col = "red")
-  legend("topright", legend = c("F1", "F2"), col = c("black", "red"), lty = 1)
-}
+# if (FALSE) {  # Don't run automatically
+#   
+#   # Basic pitch analysis
+#   pitch_results <- analyze_pitch("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
+#   
+#   # Formant analysis
+#   formant_results <- analyze_formants("speech.wav", gender = "female")
+#   
+#   # Intensity analysis  
+#   intensity_results <- analyze_intensity("speech.wav")
+#   
+#   # Complete analysis
+#   all_results <- complete_phonetic_analysis(
+#     "speech.wav",
+#     pitch_floor = 75,
+#     pitch_ceiling = 600,
+#     max_formant = 5500,
+#     gender = "female"
+#   )
+#   
+#   # Vowel space
+#   vowel_times <- c(0.5, 1.0, 1.5, 2.0)  # Times where vowels occur
+#   vowel_labels <- c("i", "e", "a", "o")
+#   vowel_data <- vowel_space_analysis("speech.wav", vowel_times, vowel_labels)
+#   
+#   # Plot time series
+#   formant_df <- as.data.frame(all_results$formants$formant_object)
+#   plot(formant_df$time, formant_df$F1, type = "l", 
+#        xlab = "Time (s)", ylab = "F1 (Hz)",
+#        main = "F1 Trajectory")
+#   lines(formant_df$time, formant_df$F2, col = "red")
+#   legend("topright", legend = c("F1", "F2"), col = c("black", "red"), lty = 1)
+# }
 
 # Note: All examples above directly replace Python Parselmouth code
 # with pure R implementations using the speaker package.

@@ -407,44 +407,44 @@ analyze_vowel_space <- function(audio_files,
 
 # Usage Examples ==============================================================
 
-if (FALSE) {  # Don't run automatically
-  
-  # Example 1: Single speaker analysis
-  results <- analyze_speaker(
-    "speech.wav",
-    speaker_gender = "female",
-    output_dir = "analysis_output"
-  )
-  
-  # Example 2: Batch analysis
-  files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
-  genders <- c("male", "female", "female")
-  labels <- c("John", "Mary", "Susan")
-  
-  batch_results <- batch_analyze_speakers(
-    files,
-    speaker_genders = genders,
-    speaker_labels = labels,
-    output_dir = "batch_analysis"
-  )
-  
-  # Example 3: Vowel space analysis
-  vowel_files <- c("vowels_speaker1.wav", "vowels_speaker2.wav")
-  vowel_times <- list(
-    c(0.5, 1.0, 1.5, 2.0),  # Speaker 1 vowel timepoints
-    c(0.6, 1.1, 1.6, 2.1)   # Speaker 2 vowel timepoints
-  )
-  vowel_labels <- list(
-    c("i", "e", "a", "o"),
-    c("i", "e", "a", "o")
-  )
-  speaker_names <- c("Speaker 1", "Speaker 2")
-  
-  vowel_data <- analyze_vowel_space(
-    vowel_files,
-    vowel_times,
-    vowel_labels,
-    speaker_names,
-    plot_output = "vowel_space.pdf"
-  )
-}
+# if (FALSE) {  # Don't run automatically
+#   
+#   # Example 1: Single speaker analysis
+#   results <- analyze_speaker(
+#     "speech.wav",
+#     speaker_gender = "female",
+#     output_dir = "analysis_output"
+#   )
+#   
+#   # Example 2: Batch analysis
+#   files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
+#   genders <- c("male", "female", "female")
+#   labels <- c("John", "Mary", "Susan")
+#   
+#   batch_results <- batch_analyze_speakers(
+#     files,
+#     speaker_genders = genders,
+#     speaker_labels = labels,
+#     output_dir = "batch_analysis"
+#   )
+#   
+#   # Example 3: Vowel space analysis
+#   vowel_files <- c("vowels_speaker1.wav", "vowels_speaker2.wav")
+#   vowel_times <- list(
+#     c(0.5, 1.0, 1.5, 2.0),  # Speaker 1 vowel timepoints
+#     c(0.6, 1.1, 1.6, 2.1)   # Speaker 2 vowel timepoints
+#   )
+#   vowel_labels <- list(
+#     c("i", "e", "a", "o"),
+#     c("i", "e", "a", "o")
+#   )
+#   speaker_names <- c("Speaker 1", "Speaker 2")
+#   
+#   vowel_data <- analyze_vowel_space(
+#     vowel_files,
+#     vowel_times,
+#     vowel_labels,
+#     speaker_names,
+#     plot_output = "vowel_space.pdf"
+#   )
+# }

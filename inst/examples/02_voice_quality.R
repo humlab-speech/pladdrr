@@ -16,162 +16,162 @@ library(pladdrr)
 # Returns: dict with jitter, shimmer, HNR, NHR, voice breaks, etc.
 
 # PLANNED R implementation (Phase 2.5):
-if (FALSE) {
-  
-  voice_report <- function(sound,
-                          pitch_floor = 75,
-                          pitch_ceiling = 600,
-                          from_time = 0,
-                          to_time = 0,
-                          max_period_factor = 1.3,
-                          max_amplitude_factor = 1.6,
-                          silence_threshold = 0.03,
-                          voicing_threshold = 0.45) {
-    
-    # Extract pitch (already implemented)
-    pitch <- extract_pitch(sound, 
-                          pitch_floor = pitch_floor,
-                          pitch_ceiling = pitch_ceiling)
-    
-    # Extract point process (pitch marks)
-    point_process <- sound$to_point_process_periodic_cc(
-                                          pitch_floor = pitch_floor,
-                                          pitch_ceiling = pitch_ceiling)
-    
-    # Extract harmonicity (HNR/NHR)
-    harmonicity <- sound$to_harmonicity_cc(
-                                      time_step = 0.01,
-                                      min_pitch = pitch_floor,
-                                      silence_threshold = silence_threshold,
-                                      periods_per_window = 1.0)
-    
-    # Get pitch statistics (already works)
-    median_pitch <- pitch$get_quantile(quantile = 0.5)
-    mean_pitch <- get_mean_pitch(pitch)
-    sd_pitch <- pitch$get_standard_deviation()
-    min_pitch <- pitch$get_minimum(interpolate = FALSE)
-    max_pitch <- pitch$get_maximum(interpolate = FALSE)
-    
-    # Jitter measures
-    jitter_local <- point_process$get_jitter_local(
-                                     from_time = from_time,
-                                     to_time = to_time,
-                                     period_floor = 1/pitch_ceiling,
-                                     period_ceiling = 1/pitch_floor,
-                                     max_period_factor = max_period_factor)
-    
-    jitter_local_abs <- point_process$get_jitter_local_absolute(
-                                                  from_time = from_time,
-                                                  to_time = to_time)
-    
-    jitter_rap <- point_process$get_jitter_rap(
-                                 from_time = from_time,
-                                 to_time = to_time)
-    
-    jitter_ppq5 <- point_process$get_jitter_ppq5(
-                                   from_time = from_time,
-                                   to_time = to_time)
-    
-    jitter_ddp <- point_process$get_jitter_ddp(
-                                 from_time = from_time,
-                                 to_time = to_time)
-    
-    # Shimmer measures
-    shimmer_local <- point_process$get_shimmer_local(sound,
-                                       from_time = from_time,
-                                       to_time = to_time,
-                                       max_amplitude_factor = max_amplitude_factor)
-    
-    shimmer_local_db <- point_process$get_shimmer_local_db(sound,
-                                             from_time = from_time,
-                                             to_time = to_time)
-    
-    shimmer_apq3 <- point_process$get_shimmer_apq3(sound,
-                                     from_time = from_time,
-                                     to_time = to_time)
-    
-    shimmer_apq5 <- point_process$get_shimmer_apq5(sound,
-                                     from_time = from_time,
-                                     to_time = to_time)
-    
-    shimmer_apq11 <- point_process$get_shimmer_apq11(sound,
-                                       from_time = from_time,
-                                       to_time = to_time)
-    
-    shimmer_dda <- point_process$get_shimmer_dda(sound,
-                                   from_time = from_time,
-                                   to_time = to_time)
-    
-    # Harmonicity measures
-    mean_hnr <- harmonicity$get_mean(
-                                     from_time = from_time,
-                                     to_time = to_time)
-    
-    mean_nhr <- -mean_hnr  # NHR = -HNR (dB)
-    mean_autocorr <- 10^(-mean_hnr / 20)  # amplitude autocorrelation from HNR (dB)
-    
-    # Voice breaks
-    num_breaks <- point_process$get_voice_breaks(
-                                     from_time = from_time,
-                                     to_time = to_time)
-    
-    
-    # Pulses and periods
-    num_pulses <- point_process$get_number_of_points()
-    
-    num_periods <- point_process$get_number_of_periods(
-                                         from_time = from_time,
-                                         to_time = to_time)
-    
-    mean_period <- point_process$get_mean_period(
-                                   from_time = from_time,
-                                   to_time = to_time)
-    
-    
-    # Combine into comprehensive report
-    data.frame(
-      # Pitch measures
-      median_pitch = median_pitch,
-      mean_pitch = mean_pitch,
-      sd_pitch = sd_pitch,
-      min_pitch = min_pitch,
-      max_pitch = max_pitch,
-      
-      # Pulse/period measures
-      num_pulses = num_pulses,
-      num_periods = num_periods,
-      mean_period = mean_period,
-      
-      # Voicing measures
-      num_breaks = num_breaks,
-      
-      # Jitter measures (%)
-      jitter_local = jitter_local,
-      jitter_local_abs = jitter_local_abs,
-      jitter_rap = jitter_rap,
-      jitter_ppq5 = jitter_ppq5,
-      jitter_ddp = jitter_ddp,
-      
-      # Shimmer measures (%)
-      shimmer_local = shimmer_local,
-      shimmer_local_db = shimmer_local_db,
-      shimmer_apq3 = shimmer_apq3,
-      shimmer_apq5 = shimmer_apq5,
-      shimmer_apq11 = shimmer_apq11,
-      shimmer_dda = shimmer_dda,
-      
-      # Harmonicity measures
-      mean_hnr = mean_hnr,
-      mean_nhr = mean_nhr,
-      mean_autocorr = mean_autocorr
-    )
-  }
-  
-  # Usage:
-  sound <- read_sound("speech.wav")
-  report <- voice_report(sound, pitch_floor = 75, pitch_ceiling = 600)
-  print(report)
-}
+# if (FALSE) {
+#   
+#   voice_report <- function(sound,
+#                           pitch_floor = 75,
+#                           pitch_ceiling = 600,
+#                           from_time = 0,
+#                           to_time = 0,
+#                           max_period_factor = 1.3,
+#                           max_amplitude_factor = 1.6,
+#                           silence_threshold = 0.03,
+#                           voicing_threshold = 0.45) {
+#     
+#     # Extract pitch (already implemented)
+#     pitch <- extract_pitch(sound, 
+#                           pitch_floor = pitch_floor,
+#                           pitch_ceiling = pitch_ceiling)
+#     
+#     # Extract point process (pitch marks)
+#     point_process <- sound$to_point_process_periodic_cc(
+#                                           pitch_floor = pitch_floor,
+#                                           pitch_ceiling = pitch_ceiling)
+#     
+#     # Extract harmonicity (HNR/NHR)
+#     harmonicity <- sound$to_harmonicity_cc(
+#                                       time_step = 0.01,
+#                                       min_pitch = pitch_floor,
+#                                       silence_threshold = silence_threshold,
+#                                       periods_per_window = 1.0)
+#     
+#     # Get pitch statistics (already works)
+#     median_pitch <- pitch$get_quantile(quantile = 0.5)
+#     mean_pitch <- get_mean_pitch(pitch)
+#     sd_pitch <- pitch$get_standard_deviation()
+#     min_pitch <- pitch$get_minimum(interpolate = FALSE)
+#     max_pitch <- pitch$get_maximum(interpolate = FALSE)
+#     
+#     # Jitter measures
+#     jitter_local <- point_process$get_jitter_local(
+#                                      from_time = from_time,
+#                                      to_time = to_time,
+#                                      period_floor = 1/pitch_ceiling,
+#                                      period_ceiling = 1/pitch_floor,
+#                                      max_period_factor = max_period_factor)
+#     
+#     jitter_local_abs <- point_process$get_jitter_local_absolute(
+#                                                   from_time = from_time,
+#                                                   to_time = to_time)
+#     
+#     jitter_rap <- point_process$get_jitter_rap(
+#                                  from_time = from_time,
+#                                  to_time = to_time)
+#     
+#     jitter_ppq5 <- point_process$get_jitter_ppq5(
+#                                    from_time = from_time,
+#                                    to_time = to_time)
+#     
+#     jitter_ddp <- point_process$get_jitter_ddp(
+#                                  from_time = from_time,
+#                                  to_time = to_time)
+#     
+#     # Shimmer measures
+#     shimmer_local <- point_process$get_shimmer_local(sound,
+#                                        from_time = from_time,
+#                                        to_time = to_time,
+#                                        max_amplitude_factor = max_amplitude_factor)
+#     
+#     shimmer_local_db <- point_process$get_shimmer_local_db(sound,
+#                                              from_time = from_time,
+#                                              to_time = to_time)
+#     
+#     shimmer_apq3 <- point_process$get_shimmer_apq3(sound,
+#                                      from_time = from_time,
+#                                      to_time = to_time)
+#     
+#     shimmer_apq5 <- point_process$get_shimmer_apq5(sound,
+#                                      from_time = from_time,
+#                                      to_time = to_time)
+#     
+#     shimmer_apq11 <- point_process$get_shimmer_apq11(sound,
+#                                        from_time = from_time,
+#                                        to_time = to_time)
+#     
+#     shimmer_dda <- point_process$get_shimmer_dda(sound,
+#                                    from_time = from_time,
+#                                    to_time = to_time)
+#     
+#     # Harmonicity measures
+#     mean_hnr <- harmonicity$get_mean(
+#                                      from_time = from_time,
+#                                      to_time = to_time)
+#     
+#     mean_nhr <- -mean_hnr  # NHR = -HNR (dB)
+#     mean_autocorr <- 10^(-mean_hnr / 20)  # amplitude autocorrelation from HNR (dB)
+#     
+#     # Voice breaks
+#     num_breaks <- point_process$get_voice_breaks(
+#                                      from_time = from_time,
+#                                      to_time = to_time)
+#     
+#     
+#     # Pulses and periods
+#     num_pulses <- point_process$get_number_of_points()
+#     
+#     num_periods <- point_process$get_number_of_periods(
+#                                          from_time = from_time,
+#                                          to_time = to_time)
+#     
+#     mean_period <- point_process$get_mean_period(
+#                                    from_time = from_time,
+#                                    to_time = to_time)
+#     
+#     
+#     # Combine into comprehensive report
+#     data.frame(
+#       # Pitch measures
+#       median_pitch = median_pitch,
+#       mean_pitch = mean_pitch,
+#       sd_pitch = sd_pitch,
+#       min_pitch = min_pitch,
+#       max_pitch = max_pitch,
+#       
+#       # Pulse/period measures
+#       num_pulses = num_pulses,
+#       num_periods = num_periods,
+#       mean_period = mean_period,
+#       
+#       # Voicing measures
+#       num_breaks = num_breaks,
+#       
+#       # Jitter measures (%)
+#       jitter_local = jitter_local,
+#       jitter_local_abs = jitter_local_abs,
+#       jitter_rap = jitter_rap,
+#       jitter_ppq5 = jitter_ppq5,
+#       jitter_ddp = jitter_ddp,
+#       
+#       # Shimmer measures (%)
+#       shimmer_local = shimmer_local,
+#       shimmer_local_db = shimmer_local_db,
+#       shimmer_apq3 = shimmer_apq3,
+#       shimmer_apq5 = shimmer_apq5,
+#       shimmer_apq11 = shimmer_apq11,
+#       shimmer_dda = shimmer_dda,
+#       
+#       # Harmonicity measures
+#       mean_hnr = mean_hnr,
+#       mean_nhr = mean_nhr,
+#       mean_autocorr = mean_autocorr
+#     )
+#   }
+#   
+#   # Usage:
+#   sound <- read_sound("speech.wav")
+#   report <- voice_report(sound, pitch_floor = 75, pitch_ceiling = 600)
+#   print(report)
+# }
 
 # CURRENT WORKAROUND: Manual Computation ======================================
 # Until voice_report() is implemented, you can compute some measures manually
@@ -314,24 +314,24 @@ plot_voice_profile <- function(audio_file,
 
 # Usage Examples ==============================================================
 
-if (FALSE) {  # Don't run automatically
-  
-  # Basic voice quality
-  quality <- basic_voice_quality("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
-  print(quality)
-  
-  # Compare multiple speakers
-  files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
-  labels <- c("Speaker A", "Speaker B", "Speaker C")
-  comparison <- compare_speakers(files, labels, pitch_floor = 75, pitch_ceiling = 600)
-  print(comparison)
-  
-  # Voice profile visualization
-  profile_data <- plot_voice_profile("speech.wav", 
-                                     pitch_floor = 75, 
-                                     pitch_ceiling = 600,
-                                     max_formant = 5500)
-}
+# if (FALSE) {  # Don't run automatically
+#   
+#   # Basic voice quality
+#   quality <- basic_voice_quality("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
+#   print(quality)
+#   
+#   # Compare multiple speakers
+#   files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
+#   labels <- c("Speaker A", "Speaker B", "Speaker C")
+#   comparison <- compare_speakers(files, labels, pitch_floor = 75, pitch_ceiling = 600)
+#   print(comparison)
+#   
+#   # Voice profile visualization
+#   profile_data <- plot_voice_profile("speech.wav", 
+#                                      pitch_floor = 75, 
+#                                      pitch_ceiling = 600,
+#                                      max_formant = 5500)
+# }
 
 # Note: Full voice_report() with jitter, shimmer, and HNR will be implemented
 # in Phase 2.5. The functions shown above provide the intended API.

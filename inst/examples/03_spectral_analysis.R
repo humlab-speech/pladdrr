@@ -301,29 +301,29 @@ estimate_spectral_tilt <- function(audio_file,
 
 # Usage Examples ==============================================================
 
-if (FALSE) {  # Don't run automatically
-  
-  # Approximate spectral analysis using formants
-  spectral_data <- approximate_spectral_center("speech.wav", max_formant = 5500)
-  
-  # Visualize spectral evolution
-  plot_spectral_evolution("speech.wav", max_formant = 5500)
-  
-  # Analyze a fricative
-  fricative_analysis <- analyze_fricative("speech.wav", 
-                                         fricative_start = 0.5,
-                                         fricative_end = 0.65)
-  print(fricative_analysis)
-  
-  # Compare sibilants
-  sibilant_comparison <- compare_sibilants("speech.wav",
-                                          s_start = 0.5, s_end = 0.65,
-                                          sh_start = 1.2, sh_end = 1.35)
-  
-  # Spectral tilt
-  tilt_analysis <- estimate_spectral_tilt("speech.wav", from_time = 0, to_time = 0)
-  print(paste("Mean spectral tilt:", round(tilt_analysis$mean_tilt, 2)))
-}
+# if (FALSE) {  # Don't run automatically
+#   
+#   # Approximate spectral analysis using formants
+#   spectral_data <- approximate_spectral_center("speech.wav", max_formant = 5500)
+#   
+#   # Visualize spectral evolution
+#   plot_spectral_evolution("speech.wav", max_formant = 5500)
+#   
+#   # Analyze a fricative
+#   fricative_analysis <- analyze_fricative("speech.wav", 
+#                                          fricative_start = 0.5,
+#                                          fricative_end = 0.65)
+#   print(fricative_analysis)
+#   
+#   # Compare sibilants
+#   sibilant_comparison <- compare_sibilants("speech.wav",
+#                                           s_start = 0.5, s_end = 0.65,
+#                                           sh_start = 1.2, sh_end = 1.35)
+#   
+#   # Spectral tilt
+#   tilt_analysis <- estimate_spectral_tilt("speech.wav", from_time = 0, to_time = 0)
+#   print(paste("Mean spectral tilt:", round(tilt_analysis$mean_tilt, 2)))
+# }
 
 # Note: Full spectral_moments() function will be implemented in Phase 2.5
 # with proper spectrogram and spectrum extraction.
