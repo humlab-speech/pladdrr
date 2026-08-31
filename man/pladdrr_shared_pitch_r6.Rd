@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_pitch_r6}
 \title{Shared parameter docs for functions taking an R6 Pitch object}
 \usage{
-pladdrr_shared_pitch_r6()
+pladdrr_shared_pitch_r6(pitch = NULL)
 }
 \arguments{
 \item{pitch}{A Pitch R6 object}

@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_textgrid_r6}
 \title{Shared parameter docs for functions taking a TextGrid R6 object}
 \usage{
-pladdrr_shared_textgrid_r6()
+pladdrr_shared_textgrid_r6(textgrid = NULL)
 }
 \arguments{
 \item{textgrid}{A TextGrid object}

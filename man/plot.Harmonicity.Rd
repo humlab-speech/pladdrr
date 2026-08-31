@@ -26,6 +26,8 @@
 \item{title}{Character. Plot title (default: "Harmonicity")}
 
 \item{color}{Character. Line color (default: "darkviolet")}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A ggplot2 object

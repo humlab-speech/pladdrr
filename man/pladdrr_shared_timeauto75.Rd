@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_timeauto75}
 \title{Shared parameter docs for functions using the 0.75/pitch_floor auto time-step}
 \usage{
-pladdrr_shared_timeauto75()
+pladdrr_shared_timeauto75(time_step = NULL)
 }
 \arguments{
 \item{time_step}{Time step (0 = auto, typically 0.75/pitch_floor)}

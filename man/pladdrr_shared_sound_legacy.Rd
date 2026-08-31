@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_sound_legacy}
 \title{Shared parameter docs for functions taking an S3/R6 Sound}
 \usage{
-pladdrr_shared_sound_legacy()
+pladdrr_shared_sound_legacy(sound = NULL)
 }
 \arguments{
 \item{sound}{A praat_sound (S3) or Sound (R6) object}

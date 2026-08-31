@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_pitch}
 \title{Shared parameter docs for functions taking a plain Pitch object}
 \usage{
-pladdrr_shared_pitch()
+pladdrr_shared_pitch(pitch = NULL)
 }
 \arguments{
 \item{pitch}{Pitch object}

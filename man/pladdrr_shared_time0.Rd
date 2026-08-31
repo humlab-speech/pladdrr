@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_time0}
 \title{Shared parameter docs for functions using 0-based time conventions}
 \usage{
-pladdrr_shared_time0()
+pladdrr_shared_time0(from_time = NULL, to_time = NULL)
 }
 \arguments{
 \item{from_time}{Start time (0 = beginning)}

@@ -26,6 +26,8 @@
 \item{title}{Character. Plot title (default: "Sound")}
 
 \item{color}{Character. Line color (default: "steelblue")}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A ggplot2 object

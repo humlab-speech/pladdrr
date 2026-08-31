@@ -205,7 +205,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_params
-pladdrr_shared_params <- function() invisible(NULL)
+pladdrr_shared_params <- function(sound = NULL, from_time = NULL, to_time = NULL, garnish = NULL, sounds = NULL, time = NULL, sampling_rate = 44100, return_r6 = NULL, time_step = NULL, name = NULL, times = NULL, from_times = NULL, to_times = NULL, intensity = NULL, time_range = NULL, pitch = NULL, pitch_floor = 75, pitch_ceiling = 600, max_candidates = 15, unit = NULL, row.names = NULL, optional = NULL, fmin = NULL, fmax = NULL, x = NULL, smooth = NULL, tmin = NULL, tmax = NULL, title = NULL, tier = NULL, textgrid = NULL, sound1 = NULL, signal_outside = NULL, scaling = NULL, pointprocess = NULL, n_cores = NULL, max_pitch = 600, interpolate = NULL, from_freq = NULL, files = NULL, duration = 1.0, cepstrogram = NULL, max_formant = NULL, ...) invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Sound object
 #'
@@ -213,7 +213,7 @@ pladdrr_shared_params <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound
-pladdrr_shared_sound <- function() invisible(NULL)
+pladdrr_shared_sound <- function(sound = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions using 0-based time conventions
 #'
@@ -222,7 +222,7 @@ pladdrr_shared_sound <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_time0
-pladdrr_shared_time0 <- function() invisible(NULL)
+pladdrr_shared_time0 <- function(from_time = NULL, to_time = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object
 #'
@@ -230,7 +230,7 @@ pladdrr_shared_time0 <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound_r6
-pladdrr_shared_sound_r6 <- function() invisible(NULL)
+pladdrr_shared_sound_r6 <- function(sound = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object (alternate)
 #'
@@ -238,7 +238,7 @@ pladdrr_shared_sound_r6 <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound_a
-pladdrr_shared_sound_a <- function() invisible(NULL)
+pladdrr_shared_sound_a <- function(sound = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Pitch object
 #'
@@ -246,7 +246,7 @@ pladdrr_shared_sound_a <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_pitch
-pladdrr_shared_pitch <- function() invisible(NULL)
+pladdrr_shared_pitch <- function(pitch = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object
 #'
@@ -254,7 +254,7 @@ pladdrr_shared_pitch <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_pitch_r6
-pladdrr_shared_pitch_r6 <- function() invisible(NULL)
+pladdrr_shared_pitch_r6 <- function(pitch = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an S3/R6 Sound
 #'
@@ -262,7 +262,7 @@ pladdrr_shared_pitch_r6 <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound_legacy
-pladdrr_shared_sound_legacy <- function() invisible(NULL)
+pladdrr_shared_sound_legacy <- function(sound = NULL) invisible(NULL)
 
 #' Shared parameter docs for auto time-step functions
 #'
@@ -270,7 +270,7 @@ pladdrr_shared_sound_legacy <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_timeauto
-pladdrr_shared_timeauto <- function() invisible(NULL)
+pladdrr_shared_timeauto <- function(time_step = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking a TextGrid R6 object
 #'
@@ -278,7 +278,7 @@ pladdrr_shared_timeauto <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_textgrid_r6
-pladdrr_shared_textgrid_r6 <- function() invisible(NULL)
+pladdrr_shared_textgrid_r6 <- function(textgrid = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object (alt)
 #'
@@ -286,7 +286,7 @@ pladdrr_shared_textgrid_r6 <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_pitch_a
-pladdrr_shared_pitch_a <- function() invisible(NULL)
+pladdrr_shared_pitch_a <- function(pitch = NULL) invisible(NULL)
 
 #' Shared parameter docs for display-formant functions
 #'
@@ -294,7 +294,7 @@ pladdrr_shared_pitch_a <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_maxformant
-pladdrr_shared_maxformant <- function() invisible(NULL)
+pladdrr_shared_maxformant <- function(max_formant = 3) invisible(NULL)
 
 #' Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
 #'
@@ -302,7 +302,7 @@ pladdrr_shared_maxformant <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_timeauto75
-pladdrr_shared_timeauto75 <- function() invisible(NULL)
+pladdrr_shared_timeauto75 <- function(time_step = NULL) invisible(NULL)
 
 #' Shared parameter docs for analysis defaults (batch/parallel wrappers)
 #'
@@ -321,4 +321,4 @@ pladdrr_shared_timeauto75 <- function() invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_analysis
-pladdrr_shared_analysis <- function() invisible(NULL)
+pladdrr_shared_analysis <- function(time_step = 0.005, minimum_pitch = 100, data = NULL, max_frequency = 5000, pitch_floor = 75, pitch_ceiling = 600, channel = 1, silence_threshold = NULL, max_formants = NULL, start_time = 0.0, numberOfRows = NULL) invisible(NULL)

@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_sound_a}
 \title{Shared parameter docs for functions taking an R6 Sound object (alternate)}
 \usage{
-pladdrr_shared_sound_a()
+pladdrr_shared_sound_a(sound = NULL)
 }
 \arguments{
 \item{sound}{A Sound object}

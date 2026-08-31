@@ -85,7 +85,7 @@
 #' @examples
 #' # Create new TextGrid with one interval tier and one point tier
 #' # (tier_names lists all tiers; point_tiers names the subset that are point
-#'  tiers)
+#' # tiers)
 #' tg <- textgrid_create(0, 1, "words tones", "tones")
 #' tg$get_tier_names()
 #'

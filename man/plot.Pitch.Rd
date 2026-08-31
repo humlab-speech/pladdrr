@@ -29,6 +29,8 @@
 \item{color}{Character. Line color (default: "darkgreen")}
 
 \item{show_voicing}{Logical. Color by voicing (default: TRUE)}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A ggplot2 object

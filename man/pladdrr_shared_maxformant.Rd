@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_maxformant}
 \title{Shared parameter docs for display-formant functions}
 \usage{
-pladdrr_shared_maxformant()
+pladdrr_shared_maxformant(max_formant = 3)
 }
 \arguments{
 \item{max_formant}{Maximum formant number to display (default: 3)}

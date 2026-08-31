@@ -4,7 +4,7 @@
 \alias{pladdrr_shared_timeauto}
 \title{Shared parameter docs for auto time-step functions}
 \usage{
-pladdrr_shared_timeauto()
+pladdrr_shared_timeauto(time_step = NULL)
 }
 \arguments{
 \item{time_step}{Time step (0 = auto)}

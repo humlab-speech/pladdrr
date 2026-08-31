@@ -30,6 +30,8 @@
 
 \item{mark_peak}{Logical. Mark the peak prominence if available (default:
 TRUE)}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A ggplot2 object

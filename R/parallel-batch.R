@@ -17,6 +17,17 @@
   max(1L, total %/% max(1L, as.integer(n_cores)))
 }
 
+# Default core count: n-1 cores, capped at 2 under R CMD check.
+#
+# R CMD check sets _R_CHECK_LIMIT_CORES_ to stop parallel::makeCluster() /
+# mclapply() calls that spawn more than 2 processes (see parallel:::.check_ncores).
+# Honor that limit in the default so package checks pass while dev/CI still
+# uses the full machine.
+.default_n_cores <- function() {
+  n <- max(1, parallel::detectCores() - 1)
+  chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+  if (nzchar(chk) && chk != "false") min(n, 2L) else n
+}
 
 # Analyze one file on a worker: cap threads, load Sound, run analysis_func.
 .analyze_one_file <- function(f, tpw, analysis_func, ...) {
@@ -86,9 +97,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
       "parallel package required. Install with: install.packages('parallel')")
   }
 
-  # Default to n-1 cores
+  # Default to n-1 cores, capped at 2 under R CMD check
   if (is.null(n_cores)) {
-    n_cores <- max(1, parallel::detectCores() - 1)
+    n_cores <- .default_n_cores()
   }
 
   # Single core fallback
@@ -168,7 +179,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
   }
 
   if (is.null(n_cores)) {
-    n_cores <- max(1, parallel::detectCores() - 1)
+    n_cores <- .default_n_cores()
   }
 
   if (n_cores == 1) {

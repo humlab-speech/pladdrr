@@ -29,6 +29,8 @@ plot_sound_pitch(
 \item{pitch_color}{Character. Pitch color (default: "darkblue")}
 
 \item{title}{Character. Overall plot title (default: NULL)}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A combined plot object (requires patchwork or gridExtra)

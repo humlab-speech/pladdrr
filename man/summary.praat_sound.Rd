@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{A praat_sound object}
+
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 The object, invisibly
