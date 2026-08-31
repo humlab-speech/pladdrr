@@ -11,7 +11,8 @@ sounds_append(sound1, sound2, silence_duration = 0)
 
 \item{sound2}{Second Sound object}
 
-\item{silence_duration}{Duration of silence to insert between sounds (seconds)}
+\item{silence_duration}{Duration of silence to insert between sounds
+(seconds)}
 }
 \value{
 New Sound object containing sound1, silence, and sound2

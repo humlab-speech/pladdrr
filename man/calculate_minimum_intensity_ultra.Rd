@@ -21,7 +21,8 @@ calculate_minimum_intensity_ultra(
 
 \item{time_step}{Time step for analysis (0 = auto)}
 
-\item{subtract_mean}{Whether to subtract mean for intensity calculation (default: TRUE)}
+\item{subtract_mean}{Whether to subtract mean for intensity calculation
+(default: TRUE)}
 }
 \value{
 Minimum intensity in dB (in voiced regions only). Returns `NA` if
@@ -55,7 +56,8 @@ exposed as parameters (including `voicing_threshold`, unlike
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # Get minimum intensity in voiced regions (DSI IM component)
 min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)

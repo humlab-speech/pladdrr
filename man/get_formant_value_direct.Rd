@@ -22,7 +22,8 @@ Formant frequency
 Get Single Formant Value Directly
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant_ptr <- to_formant_direct(sound)
 get_formant_value_direct(formant_ptr, 1, 0.25)
 

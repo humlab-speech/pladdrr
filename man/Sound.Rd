@@ -4,7 +4,8 @@
 \alias{Sound}
 \title{Sound}
 \arguments{
-\item{path}{Path to an audio file. See the File I/O section for supported formats.}
+\item{path}{Path to an audio file. See the File I/O section for supported
+formats.}
 
 \item{.xptr}{Not for direct use. External pointer to the underlying C++ Sound
 object; set internally when a method returns a new Sound.}
@@ -35,7 +36,8 @@ The constructor tries two readers in order:
     file raises an error naming the missing package.
 }
 
-Convert to WAV up front if you want to avoid the \code{av} dependency entirely.
+Convert to WAV up front if you want to avoid the \code{av} dependency
+ entirely.
 }
 
 \section{Usage}{
@@ -60,9 +62,11 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   \item \code{get_number_of_samples()} - number of samples
   \item \code{get_number_of_channels()} - number of channels
   \item \code{get_value_at_time()} - amplitude at a given time
-  \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy measures
+\item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy
+ measures
   \item \code{get_intensity_db()} - intensity in dB
-  \item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} - amplitude statistics
+\item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} -
+ amplitude statistics
   \item \code{get_values(channel)} - sample values as a numeric vector
   \item \code{get_sample_times()} - sample times as a numeric vector
 }
@@ -76,11 +80,12 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   \item \code{to_intensity()} - extract intensity contour
   \item \code{to_harmonicity_cc()} - harmonics-to-noise ratio
   \item \code{to_harmonicity_gne()} - glottal-to-noise excitation ratio (GNE)
-  \item \code{extract_electroglottogram(channel, invert)} - extract an electroglottogram (EGG) from a channel
+\item \code{extract_electroglottogram(channel, invert)} - extract an
+ electroglottogram (EGG) from a channel
   \item \code{to_spectrum()} - frequency spectrum
   \item \code{to_spectrogram()} - time-frequency representation
   \item \code{to_ltas()} - long-term average spectrum
-  \item \code{to_ltas_pitch_corrected()} - pitch-corrected LTAS (voice quality)
+\item \code{to_ltas_pitch_corrected()} - pitch-corrected LTAS (voice quality)
   \item \code{to_formant_robust()} - outlier-resistant formant tracking
   \item \code{to_mel_spectrogram()} - mel-scale spectrogram
   \item \code{to_bark_spectrogram()} - Bark-scale spectrogram
@@ -105,10 +110,13 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 
 \itemize{
   \item \code{extract_channel()} - extract a single channel
-  \item \code{extract_part(from, to, window_shape, relative_width, preserve_times)} -
+\item \code{extract_part(from, to, window_shape, relative_width,
+ preserve_times)} -
     extract a time range, with optional windowing. Supports 12 window shapes
-    (rectangular, triangular, parabolic, hanning, hamming, gaussian1-5, kaiser1-2);
-    see \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}.
+(rectangular, triangular, parabolic, hanning, hamming, gaussian1-5,
+ kaiser1-2);
+see
+ \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}.
 }
 }
 
@@ -119,8 +127,9 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   \item \code{scale_peak()} - scale peak amplitude (in place)
   \item \code{pre_emphasize()} - high-pass filter (in place)
   \item \code{de_emphasize()} - low-pass filter (in place)
-  \item \code{resample()} - resample to a different rate (returns a new object)
-  \item \code{convert_to_mono()} - average channels to mono (returns a new object)
+\item \code{resample()} - resample to a different rate (returns a new object)
+\item \code{convert_to_mono()} - average channels to mono (returns a new
+ object)
   \item \code{concatenate()} - append another sound (returns a new object)
   \item \code{mix()} - mix with another sound (returns a new object)
 }
@@ -148,5 +157,6 @@ part <- sound$extract_part(0.2, 0.5)
 
 }
 \seealso{
-\code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{Intensity}}, \code{\link{Spectrum}}
+\code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{Intensity}},
+ \code{\link{Spectrum}}
 }

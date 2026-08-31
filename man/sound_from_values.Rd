@@ -7,7 +7,8 @@
 sound_from_values(values, sampling_rate = 44100, start_time = 0)
 }
 \arguments{
-\item{values}{Numeric matrix with channels as rows, samples as columns (or vector for mono)}
+\item{values}{Numeric matrix with channels as rows, samples as columns (or
+vector for mono)}
 
 \item{sampling_rate}{Sampling rate in Hz (default: 44100)}
 

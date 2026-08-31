@@ -22,26 +22,26 @@
 #' @section Peak analysis:
 #' \itemize{
 #' \item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value
-#  (dB), the main voice quality metric
+#'  (dB), the main voice quality metric
 #' \item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} -
-#  CPP using the Hillenbrand algorithm
+#'  CPP using the Hillenbrand algorithm
 #' \item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral
-#  peak (s)
+#'  peak (s)
 #' \item \code{get_value_at_quefrency(quefrency, interpolation, unit)} -
-#  cepstral amplitude at a quefrency
+#'  cepstral amplitude at a quefrency
 #' }
 #'
 #' @section Trend and smoothing:
 #' \itemize{
 #'   \item \code{smooth(averaging_window)} - smooth the cepstrum
 #' \item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a
-#  regression trend line
+#'  regression trend line
 #' \item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend
-#  at a quefrency
+#'  at a quefrency
 #' \item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the
-#  regression trend (returns a new PowerCepstrum)
+#'  regression trend (returns a new PowerCepstrum)
 #' \item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the
-#  trend in place (mutates)
+#'  trend in place (mutates)
 #' }
 #'
 #' @section Export and transform:
@@ -52,13 +52,13 @@
 #' }
 #'
 #' @seealso \code{\link{Spectrum}}, \code{\link{PowerCepstrogram}},
-#  \code{\link{Sound}}
+#'  \code{\link{Sound}}
 #'
 #' @return A PowerCepstrum object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate =
-#  44100)
+#'  44100)
 #' spectrum <- sound$to_spectrum()
 #' cepstrum <- spectrum$to_power_cepstrum()
 #' cpp <- cepstrum$get_peak_prominence()
@@ -314,24 +314,24 @@ PowerCepstrum <- function(.xptr = NULL) {
 #' @section Query methods:
 #' \itemize{
 #' \item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method,
-#  tolerance)} - cepstral peak prominence at a single time
+#'  tolerance)} - cepstral peak prominence at a single time
 #' \item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method,
-#  tolerance)} - mean cepstral peak prominence over a time range
+#'  tolerance)} - mean cepstral peak prominence over a time range
 #' \item \code{get_cpps(subtract_tilt, time_averaging_window,
-#  quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0,
-#  interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS,
-#  smoothed over time and quefrency
+#'  quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0,
+#'  interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS,
+#'  smoothed over time and quefrency
 #' }
 #'
 #' @section Transformation and export:
 #' \itemize{
 #' \item \code{get_power_cepstrum_at_time(time)} - single frame as a
-#  PowerCepstrum object
+#'  PowerCepstrum object
 #' \item \code{smooth(time_averaging_window, quefrency_averaging_window)} -
-#  smoothed copy as a new PowerCepstrogram
+#'  smoothed copy as a new PowerCepstrogram
 #'   \item \code{to_matrix()} - values as a Matrix object
 #' \item \code{as_matrix()} - values as a plain numeric matrix (quefrency x
-#  time)
+#'  time)
 #' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++

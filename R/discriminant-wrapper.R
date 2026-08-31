@@ -175,7 +175,7 @@ Discriminant <- function(.xptr = NULL) {
 #' Performs Linear Discriminant Analysis on a labeled numeric matrix.
 #'
 #' @param data Numeric matrix where rows are observations and columns are
-#  variables
+#'  variables
 #' @param labels Character vector of group labels (one per row in data)
 #' @return A Discriminant object
 #' @examples

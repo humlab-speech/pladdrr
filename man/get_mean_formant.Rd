@@ -8,14 +8,15 @@ get_mean_formant(formant, formant_number, time_range = NULL)
 }
 \arguments{
 \item{formant}{A legacy \code{praat_formant}-shaped list: a plain list
-with a \code{values} element (a data.frame with columns \code{time},
-\code{formant_number}, \code{frequency}, \code{bandwidth}) and a
-\code{class} attribute of \code{"praat_formant"}. \code{\link{extract_formants}()}
-no longer produces this (it now returns an R6 \code{Formant} object
-instead — see its \code{\link{extract_formants}} documentation); build
-one by hand for this legacy function, or use
-\code{formant$get_mean()} on an R6 \code{Formant} object directly
-instead of this deprecated wrapper.}
+  with a \code{values} element (a data.frame with columns \code{time},
+  \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
+\code{class} attribute of \code{"praat_formant"}.
+ \code{\link{extract_formants}()}
+  no longer produces this (it now returns an R6 \code{Formant} object
+  instead — see its \code{\link{extract_formants}} documentation); build
+  one by hand for this legacy function, or use
+  \code{formant$get_mean()} on an R6 \code{Formant} object directly
+  instead of this deprecated wrapper.}
 
 \item{formant_number}{Which formant (1 = F1, 2 = F2, etc.)}
 

@@ -16,7 +16,8 @@
 
 \item{numberOfTrachealFormants}{Number of tracheal formants (typically 1)}
 
-\item{numberOfTrachealAntiFormants}{Number of tracheal antiformants (typically 1)}
+\item{numberOfTrachealAntiFormants}{Number of tracheal antiformants
+(typically 1)}
 
 \item{numberOfFricationFormants}{Number of frication formants (typically 6)}
 

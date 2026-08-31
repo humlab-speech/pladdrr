@@ -19,6 +19,7 @@ Print method for legacy zerocopy_vector class (deprecated)
 }
 \examples{
 # zerocopy_vector is a deprecated class name; fast_vector is current.
-legacy_vec <- structure(c(0.1, 0.2, 0.3), class = c("zerocopy_vector", "numeric"))
+legacy_vec <- structure(c(0.1, 0.2, 0.3), class = c("zerocopy_vector",
+ "numeric"))
 print(legacy_vec)
 }

@@ -21,7 +21,8 @@ sound_to_intensity_batch(
 
 \item{subtract_mean}{Logical. Subtract mean pressure (default: TRUE)}
 
-\item{return_r6}{Logical. Return R6 Intensity objects (TRUE) or raw xptrs (FALSE)}
+\item{return_r6}{Logical. Return R6 Intensity objects (TRUE) or raw xptrs
+(FALSE)}
 }
 \value{
 List of Intensity objects (R6 or xptr depending on return_r6)

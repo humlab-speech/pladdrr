@@ -20,7 +20,8 @@ Named numeric vector: F1, F2, F3, F4
 Get F1, F2, F3, F4 at a single time point in one call.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 
 # Get all 4 formants in one call

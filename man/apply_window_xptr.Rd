@@ -47,7 +47,8 @@ if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
   # Verify signature (optional but recommended)
   RcppXPtrUtils::checkXPtr(gauss_window, "double", "double")
 
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
   windowed <- apply_window_xptr(sound, gauss_window)
 }
 }

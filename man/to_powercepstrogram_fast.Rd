@@ -27,7 +27,8 @@ to_powercepstrogram_fast(
 External pointer to PowerCepstrogram object
 }
 \description{
-Create a PowerCepstrogram object bypassing R6 method dispatch for maximum performance.
+Create a PowerCepstrogram object bypassing R6 method dispatch for maximum
+ performance.
 Returns an external pointer that can be used with other fast path functions.
 }
 \details{

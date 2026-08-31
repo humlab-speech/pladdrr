@@ -61,7 +61,8 @@ This function reduces R<->C++ boundary crossings from 11 calls to 1 call.
 
 \section{Workflow}{
 
-For accurate voice quality analysis, use `to_point_process_from_sound_and_pitch()`
+For accurate voice quality analysis, use
+ `to_point_process_from_sound_and_pitch()`
 which uses the refined pitch contour to guide period detection:
 ```r
 # Recommended workflow
@@ -73,7 +74,8 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pp <- sound$to_point_process_periodic_cc(75, 600)
 
 # Get all voice quality measures at once

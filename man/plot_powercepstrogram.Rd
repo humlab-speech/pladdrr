@@ -19,15 +19,20 @@ plot_powercepstrogram(
 \arguments{
 \item{cepstrogram}{PowerCepstrogram object}
 
-\item{time_range}{Numeric vector. c(start, end) time range to display (default: NULL = auto)}
+\item{time_range}{Numeric vector. c(start, end) time range to display
+(default: NULL = auto)}
 
-\item{quefrency_range}{Numeric vector. c(min, max) quefrency range to display (default: c(0, 0.05))}
+\item{quefrency_range}{Numeric vector. c(min, max) quefrency range to display
+(default: c(0, 0.05))}
 
-\item{db_range}{Numeric vector. c(min, max) dB range for color scale (default: NULL = auto)}
+\item{db_range}{Numeric vector. c(min, max) dB range for color scale
+(default: NULL = auto)}
 
-\item{color_scale}{Character. Color palette: "viridis", "inferno", "magma", "plasma" (default: "viridis")}
+\item{color_scale}{Character. Color palette: "viridis", "inferno", "magma",
+"plasma" (default: "viridis")}
 
-\item{show_cpp_contour}{Logical. Overlay CPP contour over time (default: FALSE)}
+\item{show_cpp_contour}{Logical. Overlay CPP contour over time (default:
+FALSE)}
 
 \item{contour_color}{Character. Color for CPP contour line (default: "white")}
 

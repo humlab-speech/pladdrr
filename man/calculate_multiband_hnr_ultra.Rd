@@ -50,7 +50,8 @@ Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 hnr_results <- calculate_multiband_hnr_ultra(sound)
 hnr_results$full_mean
@@ -61,6 +62,7 @@ hnr_results$full_mean
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-\code{\link{build_multiband_harmonicity}} and \code{\link{multiband_hnr_stats}} for
+\code{\link{build_multiband_harmonicity}} and
+ \code{\link{multiband_hnr_stats}} for
   the reusable multi-interval path
 }

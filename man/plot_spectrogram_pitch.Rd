@@ -43,7 +43,8 @@ A ggplot2 object
 }
 \description{
 Creates a combined visualization showing a spectrogram with pitch contour
-overlaid. This is one of the most common Praat visualizations for voice analysis.
+overlaid. This is one of the most common Praat visualizations for voice
+ analysis.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.5)

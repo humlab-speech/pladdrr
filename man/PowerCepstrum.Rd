@@ -27,10 +27,14 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).
 \section{Peak analysis}{
 
 \itemize{
-  \item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value (dB), the main voice quality metric
-  \item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} - CPP using the Hillenbrand algorithm
-  \item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral peak (s)
-  \item \code{get_value_at_quefrency(quefrency, interpolation, unit)} - cepstral amplitude at a quefrency
+\item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value
+ (dB), the main voice quality metric
+\item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} -
+ CPP using the Hillenbrand algorithm
+\item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral
+ peak (s)
+\item \code{get_value_at_quefrency(quefrency, interpolation, unit)} -
+ cepstral amplitude at a quefrency
 }
 }
 
@@ -38,10 +42,14 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).
 
 \itemize{
   \item \code{smooth(averaging_window)} - smooth the cepstrum
-  \item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a regression trend line
-  \item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend at a quefrency
-  \item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the regression trend (returns a new PowerCepstrum)
-  \item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the trend in place (mutates)
+\item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a
+ regression trend line
+\item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend
+ at a quefrency
+\item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the
+ regression trend (returns a new PowerCepstrum)
+\item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the
+ trend in place (mutates)
 }
 }
 
@@ -55,7 +63,8 @@ voice quality metric from this object is CPP (Cepstral Peak Prominence).
 }
 
 \examples{
-sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate =
+ 44100)
 spectrum <- sound$to_spectrum()
 cepstrum <- spectrum$to_power_cepstrum()
 cpp <- cepstrum$get_peak_prominence()
@@ -66,5 +75,6 @@ cepstrum <- Sound(wav)$to_spectrum()$to_power_cepstrum()
 
 }
 \seealso{
-\code{\link{Spectrum}}, \code{\link{PowerCepstrogram}}, \code{\link{Sound}}
+\code{\link{Spectrum}}, \code{\link{PowerCepstrogram}},
+ \code{\link{Sound}}
 }

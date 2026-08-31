@@ -7,7 +7,8 @@
 pca_from_matrix(data)
 }
 \arguments{
-\item{data}{Numeric matrix where rows are observations and columns are variables}
+\item{data}{Numeric matrix where rows are observations and columns are
+variables}
 }
 \value{
 A PCA object

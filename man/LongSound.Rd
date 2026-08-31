@@ -36,12 +36,14 @@ part <- ls$extract_part(10, 15)   # 5 seconds as a Sound
 
 \itemize{
   \item \code{get_duration()} - total duration in seconds
-  \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
+\item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
   \item \code{get_sample_rate()} - sampling frequency in Hz
   \item \code{get_number_of_samples()} - number of samples per channel
-  \item \code{get_number_of_channels()} - number of channels (1 = mono, 2 = stereo)
+\item \code{get_number_of_channels()} - number of channels (1 = mono, 2 =
+ stereo)
   \item \code{get_file_path()} - path to the underlying audio file
-  \item \code{get_dx()} - sampling period in seconds (\code{1 / get_sample_rate()})
+\item \code{get_dx()} - sampling period in seconds (\code{1 /
+ get_sample_rate()})
   \item \code{get_x1()} - time of the first sample
 }
 }
@@ -49,8 +51,10 @@ part <- ls$extract_part(10, 15)   # 5 seconds as a Sound
 \section{Time/sample conversion}{
 
 \itemize{
-  \item \code{get_time_from_sample(sample)} - time, in seconds, of a given sample index
-  \item \code{get_sample_from_time(time)} - index of the sample nearest a given time
+\item \code{get_time_from_sample(sample)} - time, in seconds, of a given
+ sample index
+\item \code{get_sample_from_time(time)} - index of the sample nearest a given
+ time
 }
 }
 

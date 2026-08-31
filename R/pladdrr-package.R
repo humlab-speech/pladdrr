@@ -46,7 +46,7 @@
 #'
 #' Batch queries (e.g. formants or pitch at many time points) run in a
 #' single C++ call rather than one R-level call per point. The
-#  CPPS/PowerCepstrogram
+#'  CPPS/PowerCepstrogram
 #' path is multi-threaded via Praat's own \code{MelderThread}, and
 #' \code{\link{pladdrr_threads}} controls how many cores it uses.
 #' \code{\link{simd_info}} reports whether the installed build is using SIMD
@@ -55,12 +55,12 @@
 #' @section Object Model:
 #'
 #' Objects are lightweight S3 lists (e.g. class \code{c("Sound",
-#  "PraatObject")})
+#'  "PraatObject")})
 #' with a custom \code{$} method that dispatches to a shared method table:
 #' this gives R6-style \code{sound$get_pitch()} call syntax at a fraction of
 #' R6's per-object memory cost. \code{PraatInterpreter} is a plain R6 class,
 #' since its state (a live Praat interpreter session) doesn't fit the
-#  shared-table
+#'  shared-table
 #' pattern.
 #'
 #' @section Undefined Values:
@@ -80,7 +80,7 @@
 #'         \code{FormantPath}
 #' \item \code{vignette("speech-synthesis-klattgrid")} - articulatory synthesis
 #' \item \code{vignette("textgrid-workflows")} - reading and querying
-#  annotations
+#'  annotations
 #' \item \code{vignette("performance-optimization")} - batching, threading, SIMD
 #'   \item \code{vignette("migration-from-praat")} and
 #'         \code{vignette("migration-from-parselmouth")} - for those coming
@@ -105,9 +105,9 @@
 #' @importFrom R6 R6Class
 #' @importFrom rlang .data
 #' @importFrom data.table data.table as.data.table is.data.table setDT setkeyv
-#  rbindlist
+#'  rbindlist
 #' @importFrom stats aggregate approx fitted lm median predict quantile rnorm sd
-#  time
+#'  time
 #' @importFrom utils head
 #' @importFrom methods setLoadAction
 #' @rawNamespace export(PraatInterpreter)

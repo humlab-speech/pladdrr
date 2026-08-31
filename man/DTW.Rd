@@ -26,7 +26,8 @@ minimizes the total distance while respecting slope constraints.
 
 DTW objects are created by aligning two acoustic objects:
 \itemize{
-  \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most common)
+\item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most
+ common)
   \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
   \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
   \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
@@ -37,8 +38,10 @@ DTW objects are created by aligning two acoustic objects:
 
 
 \itemize{
-  \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference time
-  \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate time
+\item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference
+ time
+\item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate
+ time
   \item \code{$map_times(times, direction)} - vectorized time mapping
 }
 }
@@ -94,5 +97,6 @@ ref_time <- dtw$get_y_time_from_x_time(0.1)
 
 }
 \seealso{
-\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
+\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}},
+ \code{\link{MFCC}}
 }

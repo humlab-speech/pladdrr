@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Fast copy for analysis
 #' samples <- get_sound_values_fast(sound, channel = 1)
@@ -56,7 +56,7 @@ get_sound_values_fast <- function(sound, channel = 1) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' times <- get_sound_times_fast(sound)
 #'
 #' @export
@@ -81,7 +81,7 @@ get_sound_times_fast <- function(sound) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' mat <- sound_as_matrix_fast(sound)
 #'
 #' @export
@@ -104,7 +104,7 @@ sound_as_matrix_fast <- function(sound, zerocopy = FALSE) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' fast_vec <- get_sound_values_fast(sound, 1)
 #' regular_vec <- sound$get_values(1)
@@ -125,7 +125,7 @@ is_fast_vector <- function(x) {
 #' @return \code{x}, invisibly.
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
-#  16000)
+#'  16000)
 #' samples <- get_sound_values_fast(sound, channel = 1)
 #' print(samples)
 #' @export
@@ -177,7 +177,7 @@ is_zerocopy_vector <- function(x) {
 #' @examples
 #' # zerocopy_vector is a deprecated class name; fast_vector is current.
 #' legacy_vec <- structure(c(0.1, 0.2, 0.3), class = c("zerocopy_vector",
-#  "numeric"))
+#'  "numeric"))
 #' print(legacy_vec)
 #' @export
 print.zerocopy_vector <- function(x, ...) {

@@ -15,14 +15,14 @@
 #'   \item \code{get_time(index)} - time of point at index
 #' \item \code{get_nearest_index(time)} - index of point nearest to a given time
 #' \item \code{get_low_index(time)}, \code{get_high_index(time)} - index
-#  bounding a time
+#'  bounding a time
 #'   \item \code{get_interval(time)} - time between surrounding points
 #'   \item \code{get_mean_period(from_time, to_time, ...)} - mean glottal period
 #' \item \code{get_stdev_period(from_time, to_time, ...)} - SD of glottal period
 #' \item \code{get_number_of_periods(from_time, to_time, ...)} - number of
-#  periods in range
+#'  periods in range
 #' \item \code{get_voice_breaks(from_time, to_time, ...)} - number of voice
-#  breaks
+#'  breaks
 #' }
 #'
 #' @section Jitter methods:
@@ -30,47 +30,47 @@
 #' \itemize{
 #' \item \code{get_jitter_local(from_time, to_time, ...)} - local jitter (Jloc)
 #' \item \code{get_jitter_local_absolute(from_time, to_time, ...)} - local
-#  absolute jitter
+#'  absolute jitter
 #' \item \code{get_jitter_rap(from_time, to_time, ...)} - relative average
-#  perturbation
+#'  perturbation
 #' \item \code{get_jitter_ppq5(from_time, to_time, ...)} - 5-period perturbation
-#  quotient
+#'  quotient
 #' \item \code{get_jitter_ddp(from_time, to_time, ...)} - difference of
-#  differences of periods
+#'  differences of periods
 #' }
 #'
 #' @section Shimmer methods:
 #' Amplitude perturbation measures; each takes a Sound. See the Note section for
-#  units.
+#'  units.
 #' \itemize{
 #' \item \code{get_shimmer_local(sound, from_time, to_time, ...)} - local
-#  shimmer (Shim)
+#'  shimmer (Shim)
 #' \item \code{get_shimmer_local_db(sound, from_time, to_time, ...)} - local
-#  shimmer in dB
+#'  shimmer in dB
 #' \item \code{get_shimmer_apq3(sound, from_time, to_time, ...)} - 3-period
-#  amplitude perturbation quotient
+#'  amplitude perturbation quotient
 #' \item \code{get_shimmer_apq5(sound, from_time, to_time, ...)} - 5-period APQ
 #' \item \code{get_shimmer_apq11(sound, from_time, to_time, ...)} - 11-period
-#  APQ
+#'  APQ
 #' \item \code{get_shimmer_dda(sound, from_time, to_time, ...)} - difference of
-#  differences of amplitude
+#'  differences of amplitude
 #' }
 #'
 #' @section Batch and report methods:
 #' \itemize{
 #' \item \code{get_jitter_shimmer_batch(pointprocess, sound, ...)} - all jitter
-#  and shimmer values as a named list, computed in one C++ call. Cache-aware:
-#  later calls with the same parameters return instantly.
+#'  and shimmer values as a named list, computed in one C++ call. Cache-aware:
+#'  later calls with the same parameters return instantly.
 #' \item \code{voice_report(sound, pitch, ...)} - combined voice report (jitter,
-#  shimmer, HNR)
+#'  shimmer, HNR)
 #' }
 #'
 #' @section Export and conversion methods:
 #' \itemize{
 #' \item \code{as_vector()}, \code{as_data_frame()} - export as a vector or
-#  data.frame
+#'  data.frame
 #' \item \code{to_textgrid_vuv(max_voiced_period, ...)} - create a
-#  voiced/unvoiced TextGrid
+#'  voiced/unvoiced TextGrid
 #'   \item \code{to_pitch_tier()} - convert to a PitchTier
 #'   \item \code{to_sound_pulse_train(...)} - create a pulse train Sound
 #' }
@@ -84,20 +84,20 @@
 #' @param tmin,tmax When creating an empty PointProcess, the time span of the
 #'   object. Leave \code{NULL} (the default) when supplying \code{.xptr}.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
-#  PointProcess
+#'  PointProcess
 #'   object; set internally when a method returns a new PointProcess.
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}},
-#  \code{\link{AmplitudeTier}}
+#'  \code{\link{AmplitudeTier}}
 #'
 #' @return A \code{PointProcess} object with methods for glottal pulse analysis,
-#  including jitter and shimmer.
+#'  including jitter and shimmer.
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate =
-#  44100)
+#'  44100)
 #' pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling =
-#  600)
+#'  600)
 #' jitter <- pp$get_jitter_local()
 #' shimmer <- pp$get_shimmer_local(sound)
 #'

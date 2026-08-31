@@ -12,7 +12,8 @@
 VocalTract object; set internally when a method returns a new VocalTract.}
 }
 \value{
-A \code{VocalTract} object with methods for articulatory tube-model access.
+A \code{VocalTract} object with methods for articulatory tube-model
+ access.
 }
 \description{
 Praat VocalTract object: the cross-sectional areas of the vocal tract, from
@@ -25,7 +26,7 @@ Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 \section{Usage}{
 
 \preformatted{
-VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+VocalTract(nx, dx) # create an empty vocal tract with nx sections
 VocalTract$create_from_phone(phone)      # create from a phone name
 }
 }

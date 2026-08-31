@@ -37,8 +37,9 @@
 
 \item{y_label}{Character. Y-axis label (default: "Y")}
 
-\item{color_scale}{Character. Color scale to use: "viridis", "magma", "plasma", 
-"inferno", "cividis", or "greyscale" (default: "viridis")}
+\item{color_scale}{Character. Color scale to use: "viridis", "magma",
+"plasma",
+ "inferno", "cividis", or "greyscale" (default: "viridis")}
 
 \item{...}{Additional arguments (currently unused)}
 }
@@ -46,7 +47,8 @@
 A ggplot2 object
 }
 \description{
-Creates a heatmap visualization of a Matrix object. Supports any Matrix-derived
+Creates a heatmap visualization of a Matrix object. Supports any
+ Matrix-derived
 objects including generic matrices, spectrograms, etc.
 }
 \examples{

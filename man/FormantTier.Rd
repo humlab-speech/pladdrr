@@ -34,10 +34,13 @@ FormantTier$from_formant(formant)    # convert from a Formant object
 \section{Query methods}{
 
 \itemize{
-  \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} - time range in seconds
+\item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} -
+ time range in seconds
   \item \code{get_number_of_points()} - number of time points
-  \item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant count across points
-  \item \code{get_value_at_time(formant_number, time)} - formant frequency in Hz
+\item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant
+ count across points
+\item \code{get_value_at_time(formant_number, time)} - formant frequency in
+ Hz
   \item \code{get_bandwidth_at_time(formant_number, time)} - bandwidth in Hz
 }
 }
@@ -45,7 +48,8 @@ FormantTier$from_formant(formant)    # convert from a Formant object
 \section{Transformation}{
 
 \itemize{
-  \item \code{filter_sound(sound, scale = TRUE)} - filter a sound through the formants
+\item \code{filter_sound(sound, scale = TRUE)} - filter a sound through the
+ formants
   \item \code{as_data_frame()} - export to a data frame
   \item \code{save(path)} - save to file
 }

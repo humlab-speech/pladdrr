@@ -21,11 +21,14 @@ pair_sound_textgrid(
 
 \item{sound_pattern}{Pattern to match sound files (default: "\\\\.wav$")}
 
-\item{textgrid_pattern}{Pattern to match TextGrid files (default: "\\\\.TextGrid$")}
+\item{textgrid_pattern}{Pattern to match TextGrid files (default:
+"\\\\.TextGrid$")}
 
-\item{by}{Matching strategy: "basename" (default), "full", or a custom function}
+\item{by}{Matching strategy: "basename" (default), "full", or a custom
+function}
 
-\item{require_both}{Logical, only return pairs where both files exist (default: TRUE)}
+\item{require_both}{Logical, only return pairs where both files exist
+(default: TRUE)}
 }
 \value{
 Data frame with columns: sound_file, textgrid_file, basename
@@ -37,7 +40,8 @@ pattern of manually pairing files based on naming conventions.
 \examples{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)$save(
   file.path(audio_dir, "utt1.wav")
 )
 tg <- TextGrid$create(0, 0.3, "words")

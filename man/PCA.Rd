@@ -9,7 +9,8 @@ PCA object; set internally when a method returns a new PCA (for example
 \code{\link{pca_from_matrix}}).}
 }
 \value{
-A \code{PCA} object with methods for querying components, eigenvalues,
+A \code{PCA} object with methods for querying components,
+ eigenvalues,
   and projections.
 }
 \description{

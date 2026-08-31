@@ -726,7 +726,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #'
 #' @description
 #' Creates a heatmap visualization of a Matrix object. Supports any
-#  Matrix-derived
+#'  Matrix-derived
 #' objects including generic matrices, spectrograms, etc.
 #'
 #' @param x Matrix object
@@ -739,7 +739,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @param x_label Character. X-axis label (default: "X")
 #' @param y_label Character. Y-axis label (default: "Y")
 #' @param color_scale Character. Color scale to use: "viridis", "magma",
-#  "plasma",
+#'  "plasma",
 #'   "inferno", "cividis", or "greyscale" (default: "viridis")
 #' @param ... Additional arguments (currently unused)
 #'
@@ -847,7 +847,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @param title Character. Plot title (default: "Power Cepstrum")
 #' @param color Character. Line color (default: "darkblue")
 #' @param mark_peak Logical. Mark the peak prominence if available (default:
-#  TRUE)
+#'  TRUE)
 #' @param ... Additional arguments (currently unused)
 #'
 #' @return A ggplot2 object
@@ -958,7 +958,7 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #'
 #' @param x A TextGrid object
 #' @param tier Integer or character specifying which tier to plot (default: all
-#  tiers)
+#'  tiers)
 #' @param from_time Start time in seconds (NULL = beginning)
 #' @param to_time End time in seconds (NULL = end)
 #' @param ... Additional arguments (ignored)

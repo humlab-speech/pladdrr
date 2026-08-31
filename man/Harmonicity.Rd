@@ -8,7 +8,8 @@
 Harmonicity object; set internally when a method returns a new Harmonicity.}
 }
 \value{
-A \code{Harmonicity} object with methods for harmonics-to-noise ratio (HNR) analysis.
+A \code{Harmonicity} object with methods for harmonics-to-noise ratio
+ (HNR) analysis.
 }
 \description{
 A Harmonicity object represents the degree of acoustic periodicity, the
@@ -33,8 +34,10 @@ speech.
 \section{Point query methods}{
 
 \itemize{
-  \item \code{get_value_at_time(time, interpolation)} - HNR at a time point (dB)
-  \item \code{get_values_at_times(times, interpolation)} - HNR at a vector of times (batch)
+\item \code{get_value_at_time(time, interpolation)} - HNR at a time point
+ (dB)
+\item \code{get_values_at_times(times, interpolation)} - HNR at a vector of
+ times (batch)
   \item \code{get_values_vector()} - raw HNR values for all frames
   \item \code{get_times_vector()} - frame time points
 }
@@ -46,27 +49,31 @@ speech.
   \item \code{get_mean(from_time, to_time)} - mean HNR (dB)
   \item \code{get_minimum(from_time, to_time, interpolation)} - minimum HNR
   \item \code{get_maximum(from_time, to_time, interpolation)} - maximum HNR
-  \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
-  \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+\item \code{get_standard_deviation(from_time, to_time)} - standard deviation
+\item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
+ of extremum
 }
 }
 
 \section{Batch methods}{
 
 \itemize{
-  \item \code{get_statistics_batch(from_times, to_times)} - statistics for multiple intervals in a single C++ call
+\item \code{get_statistics_batch(from_times, to_times)} - statistics for
+ multiple intervals in a single C++ call
 }
 }
 
 \section{Export methods}{
 
 \itemize{
-  \item \code{as_data_frame()}, \code{as_matrix()} - export as a data.frame or matrix
+\item \code{as_data_frame()}, \code{as_matrix()} - export as a data.frame or
+ matrix
 }
 }
 
 \examples{
-sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
+ 44100)
 hnr <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75)
 mean_hnr <- hnr$get_mean()
 hnr_at_05 <- hnr$get_value_at_time(0.5)

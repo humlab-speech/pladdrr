@@ -15,19 +15,19 @@
 #' @section Query methods:
 #' \itemize{
 #' \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} -
-#  time range in seconds
+#'  time range in seconds
 #'   \item \code{get_number_of_points()} - number of time points
 #' \item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant
-#  count across points
+#'  count across points
 #' \item \code{get_value_at_time(formant_number, time)} - formant frequency in
-#  Hz
+#'  Hz
 #'   \item \code{get_bandwidth_at_time(formant_number, time)} - bandwidth in Hz
 #' }
 #'
 #' @section Transformation:
 #' \itemize{
 #' \item \code{filter_sound(sound, scale = TRUE)} - filter a sound through the
-#  formants
+#'  formants
 #'   \item \code{as_data_frame()} - export to a data frame
 #'   \item \code{save(path)} - save to file
 #' }
@@ -170,7 +170,7 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
 #' @export
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #' ft <- FormantTier$from_formant(formant)
 #' print(ft)

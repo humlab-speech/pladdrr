@@ -8,7 +8,7 @@
 #' sample/point/frame for 1-D tiers and tracks).
 #'
 #' @param x A pladdrr R6 object (Discriminant, Electroglottogram,
-#  FormantModeler,
+#'  FormantModeler,
 #'   PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
 #'   KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).
 #' @param ... Passed to methods; currently unused except `power` on `Cepstrum`.
@@ -17,7 +17,7 @@
 #'   for the exact columns used.
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
-#  16000)
+#'  16000)
 #' cepstrum <- sound$to_cepstrum()
 #' df <- as.data.frame(cepstrum)
 #' head(df)

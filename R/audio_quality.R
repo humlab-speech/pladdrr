@@ -1,15 +1,15 @@
 #' Check Audio Quality Metrics
 #'
 #' Analyzes a Sound object for common quality issues and returns diagnostic
-#  metrics.
+#'  metrics.
 #' This function provides basic quality control checks useful for validating
 #' recording quality in production pipelines.
 #'
 #' @param sound A Sound object to analyze
 #' @param clipping_threshold Amplitude threshold for clipping detection (default
-#  0.99)
+#'  0.99)
 #' @param intensity_floor Minimum pitch for intensity calculation (default 100
-#  Hz)
+#'  Hz)
 #' @param time_step Time step for intensity analysis (0 = auto, default 0.0)
 #'
 #' @return A list with the following components:
@@ -31,15 +31,15 @@
 #' This function is designed to catch common recording problems:
 #'
 #' **Clipping Detection**: Identifies if the signal exceeds a threshold (default
-#  0.99).
+#'  0.99).
 #' Clipped recordings have distorted peaks and should typically be re-recorded.
 #'
 #' **Intensity Analysis**: Uses Praat's intensity measurement to assess signal
-#  strength.
+#'  strength.
 #' Very low mean intensity may indicate recording level problems.
 #'
 #' **Dynamic Range**: The difference between maximum and minimum intensity can
-#  help
+#'  help
 #' identify recordings with poor signal-to-noise ratio or excessive compression.
 #'
 #' **Quality Criteria** (general guidelines):
@@ -53,7 +53,7 @@
 #' @examples
 #' \donttest{
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' quality <- check_audio_quality(sound)
 #'
 #' cat("Audio Quality Report:\n")
@@ -136,7 +136,7 @@ check_audio_quality <- function(sound,
 #' @examples
 #' \donttest{
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' quality <- check_audio_quality(sound)
 #' report <- format_quality_report(quality)
 #' cat(report)

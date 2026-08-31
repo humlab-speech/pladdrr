@@ -26,11 +26,14 @@ calculate_cpps_fast(
 \arguments{
 \item{sound}{Sound object or external pointer}
 
-\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default TRUE)}
+\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default
+TRUE)}
 
-\item{time_averaging_window}{Numeric, time averaging window in seconds (default 0.001)}
+\item{time_averaging_window}{Numeric, time averaging window in seconds
+(default 0.001)}
 
-\item{quefrency_averaging_window}{Numeric, quefrency averaging window in seconds (default 0.0005)}
+\item{quefrency_averaging_window}{Numeric, quefrency averaging window in
+seconds (default 0.0005)}
 
 \item{pitch_floor}{Numeric, minimum F0 in Hz (default 60)}
 
@@ -38,26 +41,34 @@ calculate_cpps_fast(
 
 \item{delta_f0}{Numeric, F0 fractional precision (default 0.05)}
 
-\item{interpolation}{Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700" (default "parabolic")}
+\item{interpolation}{Character, one of "parabolic", "none", "cubic",
+"sinc70", "sinc700" (default "parabolic")}
 
-\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds (default 0.003)}
+\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds
+(default 0.003)}
 
 \item{qend_fit}{Numeric, quefrency range end in seconds (default 0.04)}
 
-\item{trend_line_type}{Character, "straight" or "exponential" (default "straight")}
+\item{trend_line_type}{Character, "straight" or "exponential" (default
+"straight")}
 
-\item{fit_method}{Character, "robust" (Siegel repeated median), "least_squares",
-or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
-reproducible**: it samples randomly inside Praat's slope selection, so repeated
+\item{fit_method}{Character, "robust" (Siegel repeated median),
+ "least_squares",
+  or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+reproducible**: it samples randomly inside Praat's slope selection, so
+ repeated
 runs on the same input differ (~0.8 dB observed) and can return values on the
 order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
-pladdrr warns once per session when you select it.}
+  pladdrr warns once per session when you select it.}
 
-\item{cepstrogram_pitch_floor}{Numeric, pitch floor for cepstrogram creation (default 60)}
+\item{cepstrogram_pitch_floor}{Numeric, pitch floor for cepstrogram creation
+(default 60)}
 
-\item{time_step}{Numeric, time step for cepstrogram in seconds (default 0.002)}
+\item{time_step}{Numeric, time step for cepstrogram in seconds (default
+0.002)}
 
-\item{max_frequency}{Numeric, max frequency for cepstrogram in Hz (default 5000)}
+\item{max_frequency}{Numeric, max frequency for cepstrogram in Hz (default
+5000)}
 
 \item{pre_emphasis_from}{Numeric, pre-emphasis frequency in Hz (default 50)}
 }

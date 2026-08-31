@@ -82,7 +82,7 @@ summary.praat_sound <- function(object, ...) {
 #' Convert praat_sound to data frame
 #'
 #' Converts a praat_sound object to a data frame with time and amplitude
-#  columns.
+#'  columns.
 #' This is useful for plotting and further analysis in R.
 #'
 #' @param x A praat_sound object
@@ -129,10 +129,10 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time, channel, and value
-#  columns
+#'  columns
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate =
-#  8000)
+#'  8000)
 #' df <- as.data.frame(sound)
 #' head(df)
 #' @export
@@ -343,7 +343,7 @@ summary.praat_formant <- function(object, ...) {
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
 #' @return The values data.table (inherits from data.frame) from the formant
-#  object
+#'  object
 #' @examples
 #' x <- list(values = data.frame(
 #'   time = c(0.1, 0.2), formant_number = c(1, 1),
@@ -435,10 +435,10 @@ summary.praat_intensity <- function(object, ...) {
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
 #' @return The values data.table (inherits from data.frame) from the intensity
-#  object
+#'  object
 #' @examples
 #' x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2,
-#  66.1)))
+#'  66.1)))
 #' class(x) <- "praat_intensity"
 #' as.data.frame(x)
 #' @export
@@ -467,7 +467,7 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL,
 #'   `as.data.frame.FormantPath()`.
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #' df <- as.data.frame(formant)
 #' head(df)
@@ -486,10 +486,10 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with time and intensity
-#  columns
+#'  columns
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' df <- as.data.frame(intensity)
 #' head(df)
@@ -511,7 +511,7 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
 #' @return A data.table (inherits from data.frame) with pitch measurements
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' df <- as.data.frame(pitch)
 #' head(df)

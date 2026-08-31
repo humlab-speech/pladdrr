@@ -9,21 +9,26 @@ FormantModeler object; set internally when a method returns a new
 FormantModeler.}
 }
 \value{
-A \code{FormantModeler} object with methods for polynomial modeling of
+A \code{FormantModeler} object with methods for polynomial modeling
+ of
   formant trajectories with outlier detection.
 }
 \description{
-Robust formant trajectory modeling using polynomial fits with outlier detection.
+Robust formant trajectory modeling using polynomial fits with outlier
+ detection.
 }
 \details{
-FormantModeler provides polynomial modeling of formant trajectories over time.
+FormantModeler provides polynomial modeling of formant trajectories over
+ time.
 It automatically identifies outliers and can find the optimal formant ceiling
-for a given sound, making it useful for robust formant analysis in noisy speech.
+for a given sound, making it useful for robust formant analysis in noisy
+ speech.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 150, duration = 0.5)
 formant <- sound$to_formant_burg()
-modeler <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 3, num_params = 3)
+modeler <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 3,
+ num_params = 3)
 r2 <- modeler$get_coefficient_of_determination(1, 3)
 f1_modeled <- modeler$get_track_model_values(1)
 

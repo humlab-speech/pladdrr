@@ -2,7 +2,8 @@
 % Please edit documentation in R/praat-direct.R
 \name{to_pitch_shs_direct}
 \alias{to_pitch_shs_direct}
-\title{Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns XPtr)}
+\title{Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns
+ XPtr)}
 \usage{
 to_pitch_shs_direct(
   sound,
@@ -29,9 +30,11 @@ to_pitch_shs_direct(
 
 \item{max_subharmonics}{Number of subharmonics to sum (default 15)}
 
-\item{max_candidates}{Maximum number of pitch candidates per frame (default 15)}
+\item{max_candidates}{Maximum number of pitch candidates per frame (default
+15)}
 
-\item{compression_factor}{Compression factor for subharmonic weighting (default 0.84)}
+\item{compression_factor}{Compression factor for subharmonic weighting
+(default 0.84)}
 
 \item{n_points_per_octave}{Number of frequency points per octave (default 48)}
 }
@@ -39,7 +42,8 @@ to_pitch_shs_direct(
 External pointer to Pitch (NOT R6 object)
 }
 \description{
-Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns XPtr)
+Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns
+ XPtr)
 }
 \examples{
 sound <- Sound$create_tone(frequency = 200, duration = 0.5)

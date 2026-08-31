@@ -32,35 +32,35 @@
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default
-#  TRUE)
+#'  TRUE)
 #' @param time_averaging_window Numeric, time averaging window in seconds
-#  (default 0.001)
+#'  (default 0.001)
 #' @param quefrency_averaging_window Numeric, quefrency averaging window in
-#  seconds (default 0.0005)
+#'  seconds (default 0.0005)
 #' @param pitch_floor Numeric, minimum F0 in Hz (default 60)
 #' @param pitch_ceiling Numeric, maximum F0 in Hz (default 333.3)
 #' @param delta_f0 Numeric, F0 fractional precision (default 0.05)
 #' @param interpolation Character, one of "parabolic", "none", "cubic",
-#  "sinc70", "sinc700" (default "parabolic")
+#'  "sinc70", "sinc700" (default "parabolic")
 #' @param qstart_fit Numeric, quefrency range start for fitting in seconds
-#  (default 0.003)
+#'  (default 0.003)
 #' @param qend_fit Numeric, quefrency range end in seconds (default 0.04)
 #' @param trend_line_type Character, "straight" or "exponential" (default
-#  "straight")
+#'  "straight")
 #' @param fit_method Character, "robust" (Siegel repeated median),
-#  "least_squares",
+#'  "least_squares",
 #'   or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
 #' reproducible**: it samples randomly inside Praat's slope selection, so
-#  repeated
+#'  repeated
 #' runs on the same input differ (~0.8 dB observed) and can return values on the
 #' order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
 #'   pladdrr warns once per session when you select it.
 #' @param cepstrogram_pitch_floor Numeric, pitch floor for cepstrogram creation
-#  (default 60)
+#'  (default 60)
 #' @param time_step Numeric, time step for cepstrogram in seconds (default
-#  0.002)
+#'  0.002)
 #' @param max_frequency Numeric, max frequency for cepstrogram in Hz (default
-#  5000)
+#'  5000)
 #' @param pre_emphasis_from Numeric, pre-emphasis frequency in Hz (default 50)
 #'
 #' @return A single numeric CPPS value in dB.
@@ -171,7 +171,7 @@ calculate_cpps_fast <- function(
 #'
 #' @description
 #' Create a PowerCepstrogram object bypassing R6 method dispatch for maximum
-#  performance.
+#'  performance.
 #' Returns an external pointer that can be used with other fast path functions.
 #'
 #' @inheritParams pladdrr_shared_params sound
@@ -228,31 +228,31 @@ to_powercepstrogram_fast <- function(sound,
 #'
 #' @description
 #' Calculate CPPS from a PowerCepstrogram external pointer, bypassing R6
-#  dispatch.
+#'  dispatch.
 #'
 #' @param powercepstrogram External pointer to PowerCepstrogram object
 #' @param subtract_tilt Logical, subtract tilt before calculating CPPS (default
-#  FALSE)
+#'  FALSE)
 #' @param time_averaging_window Numeric, time averaging window in seconds
-#  (default 0.01)
+#'  (default 0.01)
 #' @param quefrency_averaging_window Numeric, quefrency averaging window in
-#  seconds (default 0.001)
+#'  seconds (default 0.001)
 #' @param pitch_floor Numeric, minimum F0 in Hz (default 60)
 #' @param pitch_ceiling Numeric, maximum F0 in Hz (default 330)
 #' @param delta_f0 Numeric, F0 fractional precision (default 0.05)
 #' @param interpolation Character, one of "parabolic", "none", "cubic",
-#  "sinc70", "sinc700" (default "parabolic")
+#'  "sinc70", "sinc700" (default "parabolic")
 #' @param qstart_fit Numeric, quefrency range start for fitting in seconds
-#  (default 0.001)
+#'  (default 0.001)
 #' @param qend_fit Numeric, quefrency range end in seconds (default 0, means
-#  auto)
+#'  auto)
 #' @param trend_line_type Character, "straight" or "exponential" (default
-#  "straight")
+#'  "straight")
 #' @param fit_method Character, "robust" (Siegel repeated median),
-#  "least_squares",
+#'  "least_squares",
 #'   or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
 #' reproducible**: it samples randomly inside Praat's slope selection, so
-#  repeated
+#'  repeated
 #' runs on the same input differ (~0.8 dB observed) and can return values on the
 #' order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
 #'   pladdrr warns once per session when you select it.
@@ -264,12 +264,12 @@ to_powercepstrogram_fast <- function(sound,
 #' `to_powercepstrogram_fast()` instead of a `PowerCepstrogram` R6 object.
 #'
 #' Useful when you need to calculate CPPS multiple times with different
-#  parameters
+#'  parameters
 #' from the same PowerCepstrogram object.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Create cepstrogram once
 #' pcep_ptr <- to_powercepstrogram_fast(sound)
@@ -368,7 +368,7 @@ get_cpps_fast <- function(
 #'   RcppXPtrUtils::checkXPtr(gauss_window, "double", "double")
 #'
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #'   windowed <- apply_window_xptr(sound, gauss_window)
 #' }
 #' }
@@ -421,7 +421,7 @@ apply_window_xptr <- function(sound, window_func) {
 #'
 #' \itemize{
 #' \item Clipping: `x > threshold ? threshold : (x < -threshold ? -threshold :
-#  x)`
+#'  x)`
 #'   \item Soft clipping: `tanh(x * gain)`
 #'   \item Rectification: `fabs(x)`
 #'   \item Squaring: `x * x`
@@ -437,7 +437,7 @@ apply_window_xptr <- function(sound, window_func) {
 #'   )
 #'
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #'   clipped <- apply_transform_xptr(sound, soft_clip)
 #' }
 #' }
@@ -474,7 +474,7 @@ apply_transform_xptr <- function(sound, transform_func) {
 #'
 #' @description
 #' Convenience function to create pre-defined window functions as compiled
-#  XPtrs.
+#'  XPtrs.
 #' Requires the RcppXPtrUtils package.
 #'
 #' @param type Character, one of "hamming", "hanning", "gaussian", "triangular",
@@ -490,7 +490,7 @@ apply_transform_xptr <- function(sound, transform_func) {
 #'   hamming <- create_window_xptr("hamming")
 #'
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #'   windowed <- apply_window_xptr(sound, hamming)
 #' }
 #' }
@@ -556,21 +556,21 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @inheritParams pladdrr_shared_params sound
 #' @param time_averaging_window Time averaging window in seconds (default 0.001)
 #' @param quefrency_averaging_window Quefrency averaging window in seconds
-#  (default 0.0005)
+#'  (default 0.0005)
 #' @param pitch_floor Minimum F0 in Hz (default 60)
 #' @param pitch_ceiling Maximum F0 in Hz (default 333.3)
 #' @param subtract_trend Logical, subtract tilt before smoothing (default TRUE)
 #' @param time_step Time step for cepstrogram in seconds (default 0.002)
 #' @param max_quefrency End of the trend-fit quefrency window in seconds
-#  (default
+#'  (default
 #'   0.04); 0 means autowindow to the full quefrency range (Praat convention).
 #' @param tolerance Tolerance for peak detection (default 0.05)
 #' @param interpolation Peak interpolation: "none", "parabolic", "cubic",
-#  "sinc70", "sinc700" (default "parabolic")
+#'  "sinc70", "sinc700" (default "parabolic")
 #' @param tilt_line_quefrency Start of the trend-fit quefrency window in seconds
 #'   (default 0.003).
 #' @param line_type Trend line type: "straight" or "exponential" (default
-#  "straight")
+#'  "straight")
 #' @param fit_method Fitting method: "robust" (Siegel repeated median),
 #'   "least_squares", or "robust slow" (Theil-Sen). Default "robust".
 #'   **"robust slow" is not reproducible** — see `calculate_cpps_fast()`.
@@ -597,7 +597,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' use the segment's `Spectrum -> PowerCepstrum -> get_peak_prominence()` path
 #' instead of `calculate_cpps_ultra()`. It is both cheaper and closer to the
 #' Praat workflow used by voice-quality scripts that query one interval at a
-#  time.
+#'  time.
 #'
 #' **Use Cases:**
 #' - AVQI v2.03/v3.01 implementation
@@ -616,7 +616,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 #' cpps <- calculate_cpps_ultra(sound)
@@ -626,9 +626,9 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' all.equal(cpps, cpps_fast, tolerance = 0.01)
 #'
 #' @param pre_emphasis_from Pre-emphasis frequency in Hz for the cepstrogram
-#  (default 50).
+#'  (default 50).
 #' @param max_frequency Maximum frequency in Hz for the cepstrogram (default
-#  5000).
+#'  5000).
 #' @export
 calculate_cpps_ultra <- function(
   sound,
@@ -694,25 +694,25 @@ calculate_cpps_ultra <- function(
 #' @description
 #' Complete AVQI voiced segment extraction pipeline in a single C++ call.
 #' Supports both AVQI v2.03 (simple intensity-based) and v3.01 (with ZCR
-#  filtering).
+#'  filtering).
 #' Performs: Sound -> TextGrid (silence) -> Extract sounding -> Concatenate ->
 #' [v3.01: Window power/ZCR filtering] -> Final concatenation, in a single
 #' C++ call instead of a multi-step R implementation.
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param version AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering,
-#  default)
+#'  default)
 #' @param min_pitch Minimum pitch for silence detection in Hz (default 50)
 #' @param silence_threshold_db Silence threshold in dB (default -25)
 #' @param min_silent_duration Minimum silent interval duration in seconds
-#  (default 0.1)
+#'  (default 0.1)
 #' @param min_sounding_duration Minimum sounding interval duration in seconds
-#  (default 0.1)
+#'  (default 0.1)
 #' @param power_threshold_factor Power threshold as fraction of global power
-#  (default 0.3)
+#'  (default 0.3)
 #' @param max_zcr Maximum zero-crossing rate for voiced segments (default 3000)
 #' @param window_width Window width for v3.01 filtering in seconds (default
-#  0.03)
+#'  0.03)
 #'
 #' @return Sound object containing only voiced segments (concatenated)
 #'
@@ -737,7 +737,7 @@ calculate_cpps_ultra <- function(
 #' **Version Differences:**
 #' - v2.03: Simpler, keeps most voiced content (~37s from 37s input)
 #' - v3.01: Aggressive ZCR filtering, removes fricatives (~25-30s from 37s
-#  input)
+#'  input)
 #'
 #' @section Algorithm choice:
 #' No pitch algorithm is used here — voiced/silence segmentation is
@@ -750,7 +750,7 @@ calculate_cpps_ultra <- function(
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # AVQI v3.01 (default, with ZCR filtering)
 #' voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")
@@ -831,7 +831,7 @@ extract_voiced_segments_ultra <- function(
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_full <- multiband_hnr_stats(built)
@@ -841,7 +841,7 @@ extract_voiced_segments_ultra <- function(
 #' - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 #'
 #' @seealso \code{\link{multiband_hnr_stats}} and
-#  \code{\link{calculate_multiband_hnr_ultra}}
+#'  \code{\link{calculate_multiband_hnr_ultra}}
 #'
 #' @export
 build_multiband_harmonicity <- function(
@@ -923,7 +923,7 @@ build_multiband_harmonicity <- function(
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' built <- build_multiband_harmonicity(sound)
 #' hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)
@@ -986,7 +986,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' hnr_results <- calculate_multiband_hnr_ultra(sound)
 #' hnr_results$full_mean
@@ -996,7 +996,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 #'
 #' @seealso \code{\link{build_multiband_harmonicity}} and
-#  \code{\link{multiband_hnr_stats}} for
+#'  \code{\link{multiband_hnr_stats}} for
 #'   the reusable multi-interval path
 #'
 #' @export

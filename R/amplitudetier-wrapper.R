@@ -23,7 +23,7 @@
 #'   \item \code{get_number_of_points()} - number of (time, value) points
 #'   \item \code{get_time_from_index(index)} - time at a 1-based point index
 #' \item \code{get_value_at_index(index)} - amplitude at a 1-based point index
-#  (Pa)
+#'  (Pa)
 #' \item \code{get_value_at_time(time)} - interpolated amplitude at a time (Pa)
 #' }
 #'
@@ -36,9 +36,9 @@
 #' @section Conversion and export:
 #' \itemize{
 #' \item \code{to_intensity_tier(threshold_db)} - convert amplitude to an
-#  IntensityTier
+#'  IntensityTier
 #' \item \code{as_data_frame()} - points as a data frame with \code{time} and
-#  \code{amplitude_pa} columns
+#'  \code{amplitude_pa} columns
 #'   \item \code{save(path)} - write to file
 #' }
 #'
@@ -195,14 +195,14 @@ amplitude_tier_create <- function(tmin, tmax) {
 #' Create AmplitudeTier from PointProcess and Sound
 #'
 #' Extracts amplitude values from a Sound at the times specified by a
-#  PointProcess.
+#'  PointProcess.
 #'
 #' @param point_process A PointProcess object
 #' @inheritParams pladdrr_shared_sound_a sound
 #' @return An AmplitudeTier object with amplitudes at each point time
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' tier <- amplitude_tier_from_point_process(pp, sound)
 #' tier$get_number_of_points()

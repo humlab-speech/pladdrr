@@ -4,7 +4,8 @@
 \alias{Matrix}
 \title{Praat Matrix Object}
 \value{
-A \code{Matrix} object with methods for two-dimensional sampled data access.
+A \code{Matrix} object with methods for two-dimensional sampled data
+ access.
 }
 \description{
 Praat Matrix object with direct C++ module binding for matrix operations.

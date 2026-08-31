@@ -4,8 +4,9 @@
 \alias{Formant}
 \title{Formant}
 \arguments{
-\item{.xptr}{Not for direct use. External pointer to the underlying C++ Formant
-object; set internally when a method returns a new Formant.}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Formant
+ object; set internally when a method returns a new Formant.}
 }
 \value{
 A \code{Formant} object with methods for querying formant frequencies
@@ -22,46 +23,61 @@ correlates of vowel quality in speech.
 \itemize{
   \item \code{get_number_of_frames()} - number of analysis frames
   \item \code{get_time_step()} - time step between frames (s)
-  \item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant count range per frame
+\item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant
+ count range per frame
 }
 }
 
 \section{Point queries (single time)}{
 
 \itemize{
-  \item \code{get_value_at_time(formant_number, time, unit)} - formant frequency at time
-  \item \code{get_bandwidth_at_time(formant_number, time, unit)} - formant bandwidth at time
-  \item \code{get_all_values_at_time(time, max_formants, unit)} - all formant values at a time point
+\item \code{get_value_at_time(formant_number, time, unit)} - formant
+ frequency at time
+\item \code{get_bandwidth_at_time(formant_number, time, unit)} - formant
+ bandwidth at time
+\item \code{get_all_values_at_time(time, max_formants, unit)} - all formant
+ values at a time point
 }
 }
 
 \section{Statistics (over time range)}{
 
 \itemize{
-  \item \code{get_mean(formant_number, from_time, to_time, unit)} - mean formant frequency
-  \item \code{get_standard_deviation(formant_number, from_time, to_time, unit)} - standard deviation
-  \item \code{get_minimum(formant_number, from_time, to_time, unit)} - minimum value
-  \item \code{get_maximum(formant_number, from_time, to_time, unit)} - maximum value
-  \item \code{get_quantile(formant_number, quantile, from_time, to_time, unit)} - quantile
-  \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+\item \code{get_mean(formant_number, from_time, to_time, unit)} - mean
+ formant frequency
+\item \code{get_standard_deviation(formant_number, from_time, to_time, unit)}
+ - standard deviation
+\item \code{get_minimum(formant_number, from_time, to_time, unit)} - minimum
+ value
+\item \code{get_maximum(formant_number, from_time, to_time, unit)} - maximum
+ value
+\item \code{get_quantile(formant_number, quantile, from_time, to_time, unit)}
+ - quantile
+\item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
+ of extremum
 }
 }
 
 \section{Batch and vectorized}{
 
 \itemize{
-  \item \code{get_formant_track(formant_number, unit)} - full track for one formant
-  \item \code{get_bandwidth_track(formant_number, unit)} - full bandwidth track
-  \item \code{get_values_at_times(formant_number, times, unit)} - values at an arbitrary vector of times
-  \item \code{get_all_formant_tracks(max_formants, unit)} - all formants as a matrix
+\item \code{get_formant_track(formant_number, unit)} - full track for one
+ formant
+\item \code{get_bandwidth_track(formant_number, unit)} - full bandwidth track
+\item \code{get_values_at_times(formant_number, times, unit)} - values at an
+ arbitrary vector of times
+\item \code{get_all_formant_tracks(max_formants, unit)} - all formants as a
+ matrix
 }
 }
 
 \section{Export}{
 
 \itemize{
-  \item \code{as_data_frame(max_formants)} - export as a data.frame, long format:
-    one row per (frame, formant number), with columns \code{time}, \code{formant},
+\item \code{as_data_frame(max_formants)} - export as a data.frame, long
+ format:
+one row per (frame, formant number), with columns \code{time},
+ \code{formant},
     \code{frequency} (Hz), and \code{bandwidth} (Hz). Matches
     \code{FormantPath$as_data_frame()}.
   \item \code{save(filepath)} - save to a Praat binary file
@@ -71,7 +87,8 @@ correlates of vowel quality in speech.
 \section{Transform}{
 
 \itemize{
-  \item \code{to_formant_tier(formant_number)} - extract one formant as a FormantTier
+\item \code{to_formant_tier(formant_number)} - extract one formant as a
+ FormantTier
   \item \code{to_formant_modeler()} - create a polynomial trajectory model
   \item \code{down_to_formant_tier()} - extract all formants as a FormantTier
 }
@@ -79,12 +96,14 @@ correlates of vowel quality in speech.
 
 \examples{
 # Self-contained example with generated tone
-sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
+sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate =
+ 44100)
 formant <- sound$to_formant_burg(
   time_step = 0.01, max_number_of_formants = 5,
   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 )
-f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit = "hertz")
+f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit =
+ "hertz")
 
 # The same analysis on a recording read from disk
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -92,10 +111,13 @@ formant <- sound$to_formant_burg(
   time_step = 0.01, max_number_of_formants = 5,
   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50
 )
-f1_at_02s <- formant$get_value_at_time(formant_number = 1, time = 0.2, unit = "hertz")
-mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "hertz")
+f1_at_02s <- formant$get_value_at_time(formant_number = 1, time = 0.2, unit =
+ "hertz")
+mean_f1 <- formant$get_mean(formant_number = 1, from_time = 0, to_time = 0,
+ unit = "hertz")
 
 }
 \seealso{
-\code{\link{Sound}}, \code{\link{LPC}}, \code{\link{FormantPath}}, \code{\link{FormantModeler}}
+\code{\link{Sound}}, \code{\link{LPC}}, \code{\link{FormantPath}},
+ \code{\link{FormantModeler}}
 }

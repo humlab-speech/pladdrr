@@ -14,7 +14,8 @@ Invisibly returns NULL
 }
 \description{
 Executes a Praat script with automatic interpreter initialization.
-Objects created during script execution remain in Praat's internal object list.
+Objects created during script execution remain in Praat's internal object
+ list.
 }
 \examples{
 # Create a sound and extract pitch

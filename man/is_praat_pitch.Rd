@@ -16,7 +16,8 @@ Logical indicating validity
 Validates that an object is a Pitch R6 object or legacy praat_pitch
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 is_praat_pitch(pitch)
 is_praat_pitch(42)

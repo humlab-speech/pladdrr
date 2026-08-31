@@ -78,14 +78,14 @@
 #'
 #' R6 class for executing Praat scripts with persistent interpreter state.
 #' Allows running multiple scripts while maintaining variables and state between
-#  runs.
+#'  runs.
 #' Provides bidirectional object transfer between R and Praat's object list.
 #'
 #' @description
 #' The PraatInterpreter provides a persistent Praat scripting environment within
-#  R.
+#'  R.
 #' Unlike one-shot script execution, the interpreter maintains state between
-#  calls,
+#'  calls,
 #' enabling incremental script development and interactive exploration.
 #'
 #' @return An R6 object of class \code{PraatInterpreter}.

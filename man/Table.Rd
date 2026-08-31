@@ -16,10 +16,12 @@ or \code{.xptr} is given.}
 Table object; set internally when a method returns a new Table.}
 }
 \value{
-A \code{Table} object with methods for tabular data access and statistics.
+A \code{Table} object with methods for tabular data access and
+ statistics.
 }
 \description{
-Praat Table object with direct C++ module binding for tabular data operations.
+Praat Table object with direct C++ module binding for tabular data
+ operations.
 }
 \details{
 Table objects store tabular data with named columns and support various

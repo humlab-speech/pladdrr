@@ -26,7 +26,8 @@ plot_pitch_intensity(
 
 \item{pitch_color}{Character. Pitch line color (default: "darkgreen")}
 
-\item{intensity_color}{Character. Intensity line color (default: "darkorange")}
+\item{intensity_color}{Character. Intensity line color (default:
+"darkorange")}
 
 \item{title}{Character. Plot title (default: "Pitch and Intensity")}
 
@@ -36,7 +37,8 @@ plot_pitch_intensity(
 A ggplot object with dual y-axes
 }
 \description{
-Creates a dual-axis visualization showing pitch and intensity contours together.
+Creates a dual-axis visualization showing pitch and intensity contours
+ together.
 This replicates Praat's Pitch_Intensity_draw() function.
 }
 \examples{

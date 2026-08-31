@@ -10,19 +10,24 @@
 
 \item{number_of_formants}{Number of formants to track. Default 10.}
 
-\item{initial_first_formant}{Initial frequency of the first formant, in Hz. Default 550.}
+\item{initial_first_formant}{Initial frequency of the first formant, in Hz.
+Default 550.}
 
-\item{initial_formant_spacing}{Initial spacing between formants, in Hz. Default 1100.}
+\item{initial_formant_spacing}{Initial spacing between formants, in Hz.
+Default 1100.}
 
-\item{initial_first_bandwidth}{Initial bandwidth of the first formant, in Hz. Default 60.}
+\item{initial_first_bandwidth}{Initial bandwidth of the first formant, in Hz.
+Default 60.}
 
-\item{initial_bandwidth_spacing}{Initial spacing between formant bandwidths, in Hz. Default 50.}
+\item{initial_bandwidth_spacing}{Initial spacing between formant bandwidths,
+in Hz. Default 50.}
 
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 FormantGrid object; set internally when a method returns a new FormantGrid.}
 }
 \value{
-A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
+A \code{FormantGrid} object with methods for formant frequency and
+ bandwidth manipulation.
 }
 \description{
 Praat FormantGrid object: formant frequencies and bandwidths over time,

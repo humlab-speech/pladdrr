@@ -20,7 +20,8 @@ plot_cpp_timeseries(
 \arguments{
 \item{cepstrogram}{PowerCepstrogram object}
 
-\item{time_range}{Numeric vector. c(start, end) time range to display (default: NULL = auto)}
+\item{time_range}{Numeric vector. c(start, end) time range to display
+(default: NULL = auto)}
 
 \item{qmin}{Numeric. Minimum quefrency for peak search (default: 0.001)}
 
@@ -32,7 +33,8 @@ plot_cpp_timeseries(
 
 \item{smooth_span}{Numeric. Smoothing span for loess (default: 0.1)}
 
-\item{reference_lines}{Numeric vector. Reference CPP values to plot as horizontal lines (default: NULL)}
+\item{reference_lines}{Numeric vector. Reference CPP values to plot as
+horizontal lines (default: NULL)}
 
 \item{title}{Character. Plot title (default: auto-generated)}
 

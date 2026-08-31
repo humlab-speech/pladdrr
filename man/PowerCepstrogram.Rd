@@ -33,19 +33,27 @@ cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 \section{Query methods}{
 
 \itemize{
-  \item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method, tolerance)} - cepstral peak prominence at a single time
-  \item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method, tolerance)} - mean cepstral peak prominence over a time range
-  \item \code{get_cpps(subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS, smoothed over time and quefrency
+\item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method,
+ tolerance)} - cepstral peak prominence at a single time
+\item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method,
+ tolerance)} - mean cepstral peak prominence over a time range
+\item \code{get_cpps(subtract_tilt, time_averaging_window,
+ quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0,
+ interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS,
+ smoothed over time and quefrency
 }
 }
 
 \section{Transformation and export}{
 
 \itemize{
-  \item \code{get_power_cepstrum_at_time(time)} - single frame as a PowerCepstrum object
-  \item \code{smooth(time_averaging_window, quefrency_averaging_window)} - smoothed copy as a new PowerCepstrogram
+\item \code{get_power_cepstrum_at_time(time)} - single frame as a
+ PowerCepstrum object
+\item \code{smooth(time_averaging_window, quefrency_averaging_window)} -
+ smoothed copy as a new PowerCepstrogram
   \item \code{to_matrix()} - values as a Matrix object
-  \item \code{as_matrix()} - values as a plain numeric matrix (quefrency x time)
+\item \code{as_matrix()} - values as a plain numeric matrix (quefrency x
+ time)
 }
 }
 

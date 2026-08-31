@@ -17,7 +17,8 @@ Open a LongSound from file
 }
 \examples{
 wav <- tempfile(fileext = ".wav")
-Sound$create_tone(frequency = 220, duration = 1, sampling_rate = 16000)$save(wav)
+Sound$create_tone(frequency = 220, duration = 1, sampling_rate =
+ 16000)$save(wav)
 
 ls <- longsound_open(wav)
 print(ls)

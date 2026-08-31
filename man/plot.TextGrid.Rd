@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{A TextGrid object}
 
-\item{tier}{Integer or character specifying which tier to plot (default: all tiers)}
+\item{tier}{Integer or character specifying which tier to plot (default: all
+tiers)}
 
 \item{from_time}{Start time in seconds (NULL = beginning)}
 

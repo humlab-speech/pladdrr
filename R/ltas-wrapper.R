@@ -31,7 +31,7 @@
 #' @section Frequency domain:
 #' \itemize{
 #' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - the
-#  frequency range, in Hz
+#'  frequency range, in Hz
 #'   \item \code{get_frequency_range()} - the width of that range, in Hz
 #'   \item \code{get_number_of_bins()} - number of frequency bins
 #'   \item \code{get_bin_width()} - width of each bin, in Hz
@@ -42,25 +42,25 @@
 #' @section Query values:
 #' \itemize{
 #' \item \code{get_value_at_frequency(frequency, unit, interpolate)} - power at
-#  a given frequency
+#'  a given frequency
 #' \item \code{get_value_in_bin(bin)} - power in one bin, read directly with no
-#  interpolation
+#'  interpolation
 #' \item \code{get_minimum(fmin, fmax, unit, interpolation)},
-#  \code{get_maximum(fmin, fmax, unit, interpolation)} - lowest/highest power
-#  in a frequency range
+#'  \code{get_maximum(fmin, fmax, unit, interpolation)} - lowest/highest power
+#'  in a frequency range
 #' \item \code{get_frequency_of_minimum(fmin, fmax, interpolation)},
-#  \code{get_frequency_of_maximum(fmin, fmax, interpolation)} - where those
-#  extremes occur
+#'  \code{get_frequency_of_maximum(fmin, fmax, interpolation)} - where those
+#'  extremes occur
 #' \item \code{get_mean(fmin, fmax, unit)} - average power across a frequency
-#  range
+#'  range
 #' \item \code{get_standard_deviation(fmin, fmax, unit)} - how much the power
-#  varies across a frequency range
+#'  varies across a frequency range
 #' \item \code{get_slope(f1min, f1max, f2min, f2max, unit)} - the difference in
-#  average power between two bands, e.g. spectral tilt (high-frequency band
-#  minus low-frequency band)
+#'  average power between two bands, e.g. spectral tilt (high-frequency band
+#'  minus low-frequency band)
 #' \item \code{get_local_peak_height(environment_min, environment_max, peak_min,
-#  peak_max, unit)} - how far a peak rises above its surrounding band, e.g.
-#  harmonic-to-noise prominence
+#'  peak_max, unit)} - how far a peak rises above its surrounding band, e.g.
+#'  harmonic-to-noise prominence
 #' }
 #'
 #' @section Batch queries:
@@ -68,28 +68,28 @@
 #' crosses into C++ once for the whole set of frequencies or ranges.
 #' \itemize{
 #' \item \code{get_values_at_frequencies(frequencies, interpolation)} - values
-#  at many frequencies at once
+#'  at many frequencies at once
 #' \item \code{get_means_batch(fmins, fmaxs, unit)} - means for many frequency
-#  ranges at once
+#'  ranges at once
 #' \item \code{get_peaks_batch(fmins, fmaxs, interpolation)},
-#  \code{get_minima_batch(fmins, fmaxs, interpolation)} - peaks or troughs
-#  for many ranges at once, returned as a data frame
+#'  \code{get_minima_batch(fmins, fmaxs, interpolation)} - peaks or troughs
+#'  for many ranges at once, returned as a data frame
 #' }
 #'
 #' @section Trend and peaks:
 #' \itemize{
 #' \item \code{compute_trend_line(fmin, fmax)} - the fitted trend line, as its
-#  own Ltas
+#'  own Ltas
 #' \item \code{subtract_trend_line(fmin, fmax)} - the spectrum with that trend
-#  removed, e.g. to flatten spectral tilt before comparing bands
+#'  removed, e.g. to flatten spectral tilt before comparing bands
 #' \item \code{report_spectral_trend(fmin, fmax, frequency_scale, fit_method)} -
-#  slope, intercept, and fit quality (R-squared, residual error) as a
-#  structured result; print it directly or read \code{$fitted_values} for the
-#  per-point predictions
+#'  slope, intercept, and fit quality (R-squared, residual error) as a
+#'  structured result; print it directly or read \code{$fitted_values} for the
+#'  per-point predictions
 #' \item \code{get_spectral_slope(fmin, fmax, frequency_scale, fit_method)} -
-#  just the slope from the above, when that's all you need
+#'  just the slope from the above, when that's all you need
 #' \item \code{to_spectrum_tier_peaks()} - the local maxima across the whole
-#  spectrum, as a \link{SpectrumTier}
+#'  spectrum, as a \link{SpectrumTier}
 #' }
 #'
 #' @section Export:
@@ -111,7 +111,7 @@
 #' ltas$get_number_of_bins()
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{Spectrum}},
-#  \code{\link{Spectrogram}}, \code{\link{SpectrumTier}}
+#'  \code{\link{Spectrogram}}, \code{\link{SpectrumTier}}
 #' @name Ltas
 NULL
 
@@ -324,9 +324,9 @@ Ltas <- function(.xptr = NULL) {
 #' @return A new Ltas object representing the average
 #' @examples
 #' s1 <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' s2 <- Sound$create_tone(frequency = 240, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' avg <- ltas_average(s1$to_ltas(), s2$to_ltas())
 #' @export
 ltas_average <- function(...) {

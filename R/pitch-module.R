@@ -81,7 +81,7 @@ pitch_unit_code <- function(unit) {
 #'   \item{`get_maximum(from_time, to_time, unit, interpolate)`}{Get max pitch}
 #'   \item{`count_voiced_frames()`}{Count voiced frames}
 #' \item{`as_data_frame(include_strength, include_intensity)`}{Convert to
-#  data.frame}
+#'  data.frame}
 #' }
 #'
 #' @section Properties:

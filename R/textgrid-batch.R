@@ -36,7 +36,7 @@
 #' @param text_contains Substring match (e.g., "vowel")
 #' @param text_starts_with Prefix match (e.g., "IPA_")
 #' @param extract_sounds Logical. If TRUE, extract Sound parts for matched
-#  intervals
+#'  intervals
 #'
 #' @return List with components:
 #'   - `indices`: Integer vector of matching interval indices
@@ -60,7 +60,7 @@
 #' @examples
 #' # Create sound and a voiced/unvoiced TextGrid
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' tg <- pitch$to_textgrid_vuv(0.02, 0.01)
 #'

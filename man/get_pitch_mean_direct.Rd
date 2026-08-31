@@ -27,7 +27,8 @@ Mean pitch value
 Get mean pitch value without R6 wrapper overhead.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch_ptr <- to_pitch_cc_direct(sound)
 get_pitch_mean_direct(pitch_ptr)
 

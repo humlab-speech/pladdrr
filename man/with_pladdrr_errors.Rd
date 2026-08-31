@@ -38,7 +38,8 @@ classed warning per incident, \code{"error"} stops at the first incident,
 \code{"silent"} only records the attribute.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 tryCatch(
   with_pladdrr_errors(
@@ -46,6 +47,6 @@ tryCatch(
       formant$.xptr, times = c(0.1, 0.2), formant_numbers = 0L
     )
   ),
-  pladdrr_input_error = function(e) message("bad input: ", conditionMessage(e))
+pladdrr_input_error = function(e) message("bad input: ", conditionMessage(e))
 )
 }

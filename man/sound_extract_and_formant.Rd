@@ -33,7 +33,8 @@ sound_extract_and_formant(
 
 \item{pre_emphasis_from}{Numeric. Pre-emphasis frequency (default: 50)}
 
-\item{return_r6}{Logical. Return R6 Formant objects (TRUE) or raw xptrs (FALSE)}
+\item{return_r6}{Logical. Return R6 Formant objects (TRUE) or raw xptrs
+(FALSE)}
 }
 \value{
 List of Formant objects (R6 or xptr depending on return_r6)

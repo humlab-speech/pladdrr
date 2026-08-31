@@ -143,7 +143,7 @@ NULL
 #' @inheritParams pladdrr_shared_params textgrid
 #' @inheritParams pladdrr_shared_sound sound
 #' @param tier Integer or character. Tier number or name to display (default:
-#  all)
+#'  all)
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
@@ -228,7 +228,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #' @inheritParams pladdrr_shared_params textgrid
 #' @inheritParams pladdrr_shared_pitch pitch
 #' @param tier Integer or character. Tier number or name to display (default:
-#  all)
+#'  all)
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
@@ -300,7 +300,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #'
 #' @description
 #' Creates a dual-axis visualization showing pitch and intensity contours
-#  together.
+#'  together.
 #' This replicates Praat's Pitch_Intensity_draw() function.
 #'
 #' @inheritParams pladdrr_shared_pitch pitch
@@ -309,7 +309,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
 #' @param intensity_color Character. Intensity line color (default:
-#  "darkorange")
+#'  "darkorange")
 #' @param title Character. Plot title (default: "Pitch and Intensity")
 #' @param ... Additional arguments (currently unused)
 #'
@@ -454,7 +454,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #' @description
 #' Creates a combined visualization showing a spectrogram with pitch contour
 #' overlaid. This is one of the most common Praat visualizations for voice
-#  analysis.
+#'  analysis.
 #'
 #' @param spectrogram Spectrogram object
 #' @inheritParams pladdrr_shared_pitch pitch

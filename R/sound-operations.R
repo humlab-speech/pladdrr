@@ -7,7 +7,7 @@
 #' @inheritParams pladdrr_shared_params sound1
 #' @param sound2 Second Sound object
 #' @param silence_duration Duration of silence to insert between sounds
-#  (seconds)
+#'  (seconds)
 #' @return New Sound object containing sound1, silence, and sound2
 #' @export
 #' @examples
@@ -43,7 +43,7 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #'   * 4 or "hamming" - Hamming
 #'   * 5 or "gaussian1" - Gaussian with sd=0.42466 (relative to duration)
 #' * 6 or "gaussian2" - Gaussian with sd=0.21233 (narrower, use
-#  relative_width=2.0)
+#'  relative_width=2.0)
 #'   * 7 or "gaussian3" - Gaussian with sd=0.14155 (use relative_width=3.0)
 #'   * 8 or "gaussian4" - Gaussian with sd=0.10616 (use relative_width=4.0)
 #'   * 9 or "gaussian5" - Gaussian with sd=0.08493 (use relative_width=5.0)
@@ -54,29 +54,29 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #'   For gaussian2/kaiser2, use 2.0 to maintain effective window duration.
 #'   For gaussian3, use 3.0. For gaussian4, use 4.0. For gaussian5, use 5.0.
 #' This extends physical extraction beyond [t1,t2] while keeping effective
-#  duration.
+#'  duration.
 #'
 #' @param preserve_times If TRUE, preserve original time domain (result spans t1
-#  to t2).
+#'  to t2).
 #'   If FALSE, time-shift result to start at 0.
 #'
 #' @return New Sound object with extracted and windowed portion
 #'
 #' @details
 #' Window shapes with higher numbers (gaussian2-5, kaiser2) have narrower
-#  effective
+#'  effective
 #' windows. To maintain comparable effective duration to gaussian1/kaiser1, use
 #' relative_width > 1.0, which extracts a longer physical segment while applying
 #' a more aggressive taper.
 #'
 #' For spectral analysis, Kaiser2 and Gaussian2 with relative_width=2.0 are
-#  commonly
+#'  commonly
 #' used (e.g., in Praat's "To Spectrogram..." and "To Pitch (ac)... Very
-#  accurate").
+#'  accurate").
 #'
 #' @references
 #' Praat documentation:
-#  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
+#'  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 3.0)
@@ -86,15 +86,15 @@ sounds_append <- function(sound1, sound2, silence_duration = 0.0) {
 #'
 #' # Gaussian1 window (standard)
 #' gauss1 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 5L,
-#  relative_width = 1.0)
+#'  relative_width = 1.0)
 #'
 #' # Gaussian2 with wider physical extraction
 #' gauss2 <- sound_extract_part(sound, 1.0, 2.0, window_shape = 6L,
-#  relative_width = 2.0)
+#'  relative_width = 2.0)
 #'
 #' # Kaiser2 for spectral analysis
 #' kaiser <- sound_extract_part(sound, 1.0, 2.0, window_shape = 11L,
-#  relative_width = 2.0)
+#'  relative_width = 2.0)
 #' @export
 sound_extract_part <- function(sound, t1, t2, window_shape = 1L, 
                                relative_width = 1.0, preserve_times = FALSE) {
@@ -249,7 +249,7 @@ sound_auto_correlate <- function(sound, scaling = 4L, signal_outside = 1L) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 #' filtered <- sound_filter_pass_hann_band(sound, fmin = 300, fmax = 3000,
-#  smooth = 100)
+#'  smooth = 100)
 sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
     
     # Use existing .sound_filter_pass_hann_band from sound_wrappers.cpp
@@ -272,7 +272,7 @@ sound_filter_pass_hann_band <- function(sound, fmin, fmax, smooth = 100) {
 #' @examples
 #' sound <- Sound$create_tone(frequency = 1000, duration = 0.5)
 #' filtered <- sound_filter_stop_hann_band(sound, fmin = 300, fmax = 3000,
-#  smooth = 100)
+#'  smooth = 100)
 sound_filter_stop_hann_band <- function(sound, fmin, fmax, smooth = 100) {
     
     # Use existing .sound_filter_stop_hann_band from sound_wrappers.cpp

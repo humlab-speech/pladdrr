@@ -13,16 +13,16 @@
 #'
 #' \itemize{
 #' \item \code{IntervalTier}: consecutive time intervals with labels (e.g.,
-#  phonemes, words)
+#'  phonemes, words)
 #' \item \code{PointTier} (TextTier): time points with labels (e.g., events,
-#  tones)
+#'  tones)
 #' }
 #'
 #' @section Creating TextGrid objects:
 #' \itemize{
 #'   \item \code{TextGrid(path)} - read from file (Praat text or binary format)
 #' \item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an
-#  empty grid
+#'  empty grid
 #' }
 #'
 #' @section Querying tiers:
@@ -39,11 +39,11 @@
 #'   \item \code{get_interval_text(tier, n)} - get the label of interval n
 #' \item \code{get_label_at_time(tier, time)} - get the label at a specific time
 #' \item \code{get_all_intervals(tier)} - get all intervals as a data.frame
-#  (fast)
+#'  (fast)
 #' \item \code{extract_intervals_batch(tier, ...)} - extract matching intervals
-#  (fast)
+#'  (fast)
 #' \item \code{extract_intervals_where(sound, tier, criterion, text,
-#  preserve_times)} - extract Sound intervals matching a text criterion
+#'  preserve_times)} - extract Sound intervals matching a text criterion
 #'   \item \code{set_interval_text(tier, n, text)} - set the label of interval n
 #'   \item \code{insert_boundary(tier, time)} - insert a new boundary
 #'   \item \code{remove_boundary(tier, time)} - remove a boundary
@@ -65,7 +65,7 @@
 #'   \item \code{remove_tier(tier)} - remove a tier
 #'   \item \code{set_tier_name(tier, name)} - rename a tier
 #' \item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new
-#  name
+#'  name
 #' }
 #'
 #' @section Export:
@@ -85,7 +85,7 @@
 #' @examples
 #' # Create new TextGrid with one interval tier and one point tier
 #' # (tier_names lists all tiers; point_tiers names the subset that are point
-#  tiers)
+#'  tiers)
 #' tg <- textgrid_create(0, 1, "words tones", "tones")
 #' tg$get_tier_names()
 #'
@@ -504,9 +504,9 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 #' @inheritParams pladdrr_shared_params tmax
 #' @param tier_names Space-separated tier names (e.g., "phones words syllables")
 #' @param point_tiers Space-separated names of tiers that should be PointTiers
-#  (default: all are IntervalTiers)
+#'  (default: all are IntervalTiers)
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}},
-#  \code{\link{PointProcess}}
+#'  \code{\link{PointProcess}}
 #' @return A \code{TextGrid} object.
 #' @export
 #'

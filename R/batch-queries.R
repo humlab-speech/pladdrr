@@ -16,7 +16,7 @@
 #'
 #' @return A list with one element per formant number (e.g., `F1`, `F2`, ...),
 #' each containing a numeric vector of formant frequencies at the specified
-#  times.
+#'  times.
 #'
 #' @section Performance:
 #' This function reduces R<->C++ boundary crossings from `4n` calls
@@ -24,7 +24,7 @@
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #'
 #' # Extract F1-F4 at 5 time points
@@ -76,7 +76,7 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4,
 #' @param formant A Formant object
 #' @inheritParams pladdrr_shared_params times
 #' @param formant_numbers Integer vector specifying which formants (default
-#  `1:4`)
+#'  `1:4`)
 #' @param unit Unit for bandwidth values: "hertz" (default) or "bark"
 #'
 #' @return A list with one element per formant number (e.g., `B1`, `B2`, ...),
@@ -84,7 +84,7 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #' times <- seq(0.1, 0.4, length.out = 5)
 #' bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)
@@ -127,7 +127,7 @@ get_formant_bandwidths_at_times <- function(formant, times,
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
 #' @param interpolate Logical; whether to interpolate between frames (default
-#  TRUE)
+#'  TRUE)
 #'
 #' @return Numeric vector of pitch values at the specified times
 #'
@@ -136,7 +136,7 @@ get_formant_bandwidths_at_times <- function(formant, times,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' f0_contour <- get_pitch_at_times(pitch, times)
@@ -176,7 +176,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz",
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' strengths <- get_pitch_strengths_at_times(pitch, times)
@@ -208,14 +208,14 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz",
 #'
 #' @inheritParams pladdrr_shared_pitch_a pitch
 #' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for
-#  Q1 and Q3)
+#'  Q1 and Q3)
 #' @param from_time Start time (0 = beginning of pitch object)
 #' @param to_time End time (0 = end of pitch object)
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
 #'
 #' @return Named numeric vector with quantile values (names like "q0.25",
-#  "q0.75")
+#'  "q0.75")
 #'
 #' @section Performance:
 #' Reduces R<->C++ boundary crossings from n separate calls to 1 call.
@@ -233,7 +233,7 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz",
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #'
 #' # Get Q1, median, Q3 in one call
@@ -277,10 +277,10 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' @param intensity An Intensity object
 #' @inheritParams pladdrr_shared_params times
 #' @param interpolate Interpolation method: "nearest", "linear", "cubic"
-#  (default),
+#'  (default),
 #'   or "sinc70". Kept for backward compatibility; prefer `interpolation`.
 #' @param interpolation Alias for `interpolate` (consistent with R6 method
-#  naming).
+#'  naming).
 #'   When provided, supersedes `interpolate`.
 #'
 #' @return Numeric vector of intensity values (in dB) at the specified times
@@ -290,7 +290,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' intensities <- get_intensity_at_times(intensity, times)
@@ -344,7 +344,7 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' times <- get_pointprocess_times(pp)
 #'
@@ -371,7 +371,7 @@ get_pointprocess_times <- function(pointprocess) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' intervals <- get_pointprocess_intervals(pp)
 #' jitter <- sd(intervals) / mean(intervals)
@@ -396,7 +396,7 @@ get_pointprocess_intervals <- function(pointprocess) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' query_times <- seq(0.1, 0.4, by = 0.05)
 #' indices <- get_pointprocess_nearest_indices(pp, query_times)
@@ -456,7 +456,7 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #'
 #' @section Workflow:
 #' For accurate voice quality analysis, use
-#  `to_point_process_from_sound_and_pitch()`
+#'  `to_point_process_from_sound_and_pitch()`
 #' which uses the refined pitch contour to guide period detection:
 #' ```r
 #' # Recommended workflow
@@ -468,7 +468,7 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #'
 #' # Get all voice quality measures at once
@@ -552,9 +552,9 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' wav1 <- tempfile(fileext = ".wav")
 #' wav2 <- tempfile(fileext = ".wav")
 #' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)$save(wav1)
+#'  16000)$save(wav1)
 #' Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)$save(wav2)
+#'  16000)$save(wav2)
 #'
 #' # Multiple files (DSI workflow)
 #' durations <- get_durations_batch(c(wav1, wav2))
@@ -606,11 +606,11 @@ get_durations_batch <- function(file_paths) {
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Get maximum F0 (DSI FH component)
 #' max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75,
-#  max_pitch = 600)
+#'  max_pitch = 600)
 #'
 #' # Get mean F0
 #' mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
@@ -661,7 +661,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for analysis (0 = auto)
 #' @param subtract_mean Whether to subtract mean for intensity calculation
-#  (default: TRUE)
+#'  (default: TRUE)
 #'
 #' @return Minimum intensity in dB (in voiced regions only). Returns `NA` if
 #'   no voiced regions are detected.
@@ -682,7 +682,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Get minimum intensity in voiced regions (DSI IM component)
 #' min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
@@ -747,7 +747,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   "hnr", or "all" for all metrics
 #' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).
 #' Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity
-#  default),
+#'  default),
 #'   independent of this parameter.
 #' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
@@ -786,7 +786,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Get all voice quality metrics
 #' vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
@@ -861,15 +861,15 @@ get_voice_quality_ultra <- function(sound,
 #'
 #' @param spectrogram A \code{Spectrogram} object
 #' @param power Numeric. Power for moment weighting (default 2.0, matching
-#  Praat)
+#'  Praat)
 #'
 #' @return \code{data.frame} with columns \code{time}, \code{cog}, \code{sd},
 #' \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where
-#  undefined)
+#'  undefined)
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' spectrogram <- sound$to_spectrogram()
 #' moments <- get_spectral_moments_batch(spectrogram)
 #' head(moments)

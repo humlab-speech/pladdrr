@@ -33,7 +33,8 @@ Convenience wrapper around analyze_files_parallel.
 \examples{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
 

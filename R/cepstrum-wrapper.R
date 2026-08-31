@@ -4,11 +4,11 @@
 #'
 #' @details
 #' The cepstrum is the inverse Fourier transform of the logarithm of the
-#  spectrum.
+#'  spectrum.
 #' Unlike PowerCepstrum, it preserves phase information.
 #'
 #' @return A \code{Cepstrum} object with methods for cepstral analysis and
-#  quefrency-domain processing.
+#'  quefrency-domain processing.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)

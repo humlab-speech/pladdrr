@@ -25,7 +25,7 @@
 #' \item \code{get_max_num_coefficients()} - maximum number of LPC coefficients
 #'   \item \code{get_gain_at_frame(frame)} - gain value for a specific frame
 #' \item \code{get_coefficients_at_frame(frame)} - LPC coefficients for a
-#  specific frame
+#'  specific frame
 #'   \item \code{get_all_gains()} - vector of all gain values
 #'   \item \code{get_all_coefficients()} - matrix of all LPC coefficients
 #' }
@@ -33,19 +33,19 @@
 #' @section Conversion methods:
 #' \itemize{
 #' \item \code{to_formant(margin)} - not available in this build (requires
-#  CLAPACK);
+#'  CLAPACK);
 #'     use \code{Sound$to_formant_burg()} for formant extraction instead
 #' \item \code{to_spectrum(time, ...)} - convert to a Spectrum at a specific
-#  time
+#'  time
 #'   \item \code{to_matrix()} - convert to a Matrix object
 #' }
 #'
 #' @section Voice source extraction (inverse filtering):
 #' \itemize{
 #' \item \code{filter_inverse(sound)} - extract glottal flow by inverse
-#  filtering
+#'  filtering
 #' \item \code{filter_inverse_at_time(sound, time, channel)} - use the filter
-#  from a specific time
+#'  from a specific time
 #' }
 #' These methods remove vocal tract resonances to reveal the voice source
 #' (glottal flow waveform), useful for voice quality research and vocal fold
@@ -54,9 +54,9 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LPC
 #'   object; set internally when a method returns a new LPC.
 #' @return An \code{LPC} object with methods for linear predictive coding
-#  analysis and inverse filtering.
+#'  analysis and inverse filtering.
 #' @seealso \code{\link{Sound}}, \code{\link{Formant}}, \code{\link{Spectrum}},
-#  \code{\link{LFCC}}
+#'  \code{\link{LFCC}}
 #'
 #' @examples
 #' # Load sound

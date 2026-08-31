@@ -13,9 +13,11 @@ sound_load_window(path, start, end, resample_to = NULL, preserve_times = FALSE)
 
 \item{end}{End time of window in seconds}
 
-\item{resample_to}{Target sampling rate in Hz (optional). If NULL, no resampling.}
+\item{resample_to}{Target sampling rate in Hz (optional). If NULL, no
+resampling.}
 
-\item{preserve_times}{If TRUE, keep original time domain. If FALSE, shift to start at 0 (default: FALSE)}
+\item{preserve_times}{If TRUE, keep original time domain. If FALSE, shift to
+start at 0 (default: FALSE)}
 }
 \value{
 Sound object containing the windowed (and optionally resampled) audio
@@ -23,7 +25,8 @@ Sound object containing the windowed (and optionally resampled) audio
 \description{
 Extracts a time window from a sound file without loading the entire file.
 Optionally resamples the window to a target sampling rate.
-Uses LongSound for lazy loading - only the requested window is loaded from disk.
+Uses LongSound for lazy loading - only the requested window is loaded from
+ disk.
 }
 \details{
 A traditional workflow loads the entire file, resamples the entire file,
@@ -47,10 +50,12 @@ sound$save(path)
 window <- sound_load_window(path, start = 0.5, end = 0.6)
 
 # Extract and resample (for spectral analysis)
-window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 10000)
+window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to =
+ 10000)
 
 # Preserve original time domain (window starts at 0.5, not 0.0)
-window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+window_timed <- sound_load_window(path, start = 0.5, end = 0.6,
+ preserve_times = TRUE)
 
 unlink(path)
 

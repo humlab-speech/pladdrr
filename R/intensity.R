@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- suppressWarnings(extract_intensity(sound))
 #' intensity$get_mean(from_time = 0, to_time = 0)
 extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
@@ -40,7 +40,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
 #' @return Intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_intensity_at_time(intensity, 0.25))
 #' @export
@@ -59,7 +59,7 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #' @return Mean intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_mean_intensity(intensity))
 #' @export
@@ -81,7 +81,7 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #' @return Minimum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_min_intensity(intensity))
 #' @export
@@ -103,7 +103,7 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #' @return Maximum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_max_intensity(intensity))
 #' @export
@@ -125,7 +125,7 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #' @return Standard deviation in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_sd_intensity(intensity))
 #' @export

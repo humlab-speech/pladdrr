@@ -42,7 +42,7 @@
 #' @param power If TRUE, use the power/dB variant of the quantity instead of
 #'   the raw linear default (Cepstrum).
 #' @param style Speckle vs. line rendering style, where applicable
-#  (FormantTier).
+#'  (FormantTier).
 #' @export
 autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkred", garnish = TRUE, ...) {
@@ -213,9 +213,9 @@ autolayer.PitchTier <- function(object, from_time = NULL, to_time = NULL,
 #' @param max_formant Maximum formant number to display (default: 3).
 #' @param colors Colors for each formant track (default: auto).
 #' @param time_step Sampling interval in seconds, only used when style="line"
-#  (default: 0.005).
+#'  (default: 0.005).
 #' @param style "speckle" (default, matches Praat's FormantTier_speckle: plots
-#  the
+#'  the
 #'   tier's own stored points, unconnected) or "line" (interpolates on a
 #'   time_step grid and connects with a line — not Praat's default view).
 #' @export

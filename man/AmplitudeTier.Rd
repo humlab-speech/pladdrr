@@ -35,11 +35,12 @@ tier <- intensity_tier_to_amplitude_tier(intensity_tier)
 \section{Query methods}{
 
 \itemize{
-  \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
+\item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
   \item \code{get_number_of_points()} - number of (time, value) points
   \item \code{get_time_from_index(index)} - time at a 1-based point index
-  \item \code{get_value_at_index(index)} - amplitude at a 1-based point index (Pa)
-  \item \code{get_value_at_time(time)} - interpolated amplitude at a time (Pa)
+\item \code{get_value_at_index(index)} - amplitude at a 1-based point index
+ (Pa)
+\item \code{get_value_at_time(time)} - interpolated amplitude at a time (Pa)
 }
 }
 
@@ -54,8 +55,10 @@ tier <- intensity_tier_to_amplitude_tier(intensity_tier)
 \section{Conversion and export}{
 
 \itemize{
-  \item \code{to_intensity_tier(threshold_db)} - convert amplitude to an IntensityTier
-  \item \code{as_data_frame()} - points as a data frame with \code{time} and \code{amplitude_pa} columns
+\item \code{to_intensity_tier(threshold_db)} - convert amplitude to an
+ IntensityTier
+\item \code{as_data_frame()} - points as a data frame with \code{time} and
+ \code{amplitude_pa} columns
   \item \code{save(path)} - write to file
 }
 }

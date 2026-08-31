@@ -28,19 +28,19 @@
 #'   \item \code{get_sample_rate()} - sampling frequency in Hz
 #'   \item \code{get_number_of_samples()} - number of samples per channel
 #' \item \code{get_number_of_channels()} - number of channels (1 = mono, 2 =
-#  stereo)
+#'  stereo)
 #'   \item \code{get_file_path()} - path to the underlying audio file
 #' \item \code{get_dx()} - sampling period in seconds (\code{1 /
-#  get_sample_rate()})
+#'  get_sample_rate()})
 #'   \item \code{get_x1()} - time of the first sample
 #' }
 #'
 #' @section Time/sample conversion:
 #' \itemize{
 #' \item \code{get_time_from_sample(sample)} - time, in seconds, of a given
-#  sample index
+#'  sample index
 #' \item \code{get_sample_from_time(time)} - index of the sample nearest a given
-#  time
+#'  time
 #' }
 #'
 #' @section Streaming:
@@ -246,7 +246,7 @@ LongSound <- function(.xptr = NULL) {
 #' @examples
 #' wav <- tempfile(fileext = ".wav")
 #' Sound$create_tone(frequency = 220, duration = 1, sampling_rate =
-#  16000)$save(wav)
+#'  16000)$save(wav)
 #'
 #' ls <- longsound_open(wav)
 #' print(ls)

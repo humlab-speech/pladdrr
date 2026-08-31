@@ -23,11 +23,14 @@ mfccs_to_dtw(
 
 \item{log_energy_weight}{Weight for log energy (c0) (default: 0.0)}
 
-\item{coefficient_regression_weight}{Weight for coefficient regression (default: 0.0)}
+\item{coefficient_regression_weight}{Weight for coefficient regression
+(default: 0.0)}
 
-\item{log_energy_regression_weight}{Weight for energy regression (default: 0.0)}
+\item{log_energy_regression_weight}{Weight for energy regression (default:
+0.0)}
 
-\item{regression_window_length}{Window for regression calculation (default: 0.0)}
+\item{regression_window_length}{Window for regression calculation (default:
+0.0)}
 }
 \value{
 A DTW object
@@ -36,8 +39,10 @@ A DTW object
 Create DTW from two MFCC objects
 }
 \examples{
-s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+ 16000)
+s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
 dtw <- mfccs_to_dtw(s1$to_mfcc(), s2$to_mfcc())
 
 }

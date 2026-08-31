@@ -35,7 +35,7 @@
 #' @param analysis_func Function. Analysis function to apply to each file.
 #'   Should accept a Sound object and return results.
 #' @param n_cores Integer. Number of CPU cores to use (default:
-#  parallel::detectCores() - 1)
+#'  parallel::detectCores() - 1)
 #' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
 #'   for Praat kernels. `NULL` (default) auto-divides cores among workers so
 #'   total concurrency stays near the machine's core count, preventing
@@ -55,7 +55,7 @@
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -224,7 +224,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -260,7 +260,7 @@ extract_pitch_parallel <- function(files, n_cores = NULL,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -296,7 +296,7 @@ extract_formant_parallel <- function(files, n_cores = NULL,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -331,7 +331,7 @@ extract_intensity_parallel <- function(files, n_cores = NULL,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'

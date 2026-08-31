@@ -8,7 +8,8 @@
 object; set internally when a method returns a new MFCC.}
 }
 \value{
-An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
+An \code{MFCC} object with methods for Mel-frequency cepstral
+ coefficient analysis.
 }
 \description{
 Mel-frequency cepstral coefficients for speech and speaker recognition.
@@ -35,7 +36,7 @@ for minimal memory per object.
   \item \code{get_fmin()}, \code{get_fmax()} - frequency range (mel)
   \item \code{get_c0_at_frame(frame)} - C0 (energy) for a specific frame
   \item \code{get_value_in_frame(frame, coef)} - coefficient value at a frame
-  \item \code{get_coefficients_at_frame(frame)} - all coefficients for a frame
+\item \code{get_coefficients_at_frame(frame)} - all coefficients for a frame
   \item \code{get_all_coefficients()} - matrix of all coefficients
   \item \code{get_all_c0()} - vector of all C0 values
 }

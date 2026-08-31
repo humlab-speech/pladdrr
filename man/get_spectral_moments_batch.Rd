@@ -9,11 +9,13 @@ get_spectral_moments_batch(spectrogram, power = 2)
 \arguments{
 \item{spectrogram}{A \code{Spectrogram} object}
 
-\item{power}{Numeric. Power for moment weighting (default 2.0, matching Praat)}
+\item{power}{Numeric. Power for moment weighting (default 2.0, matching
+Praat)}
 }
 \value{
 \code{data.frame} with columns \code{time}, \code{cog}, \code{sd},
-  \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where undefined)
+\code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where
+ undefined)
 }
 \description{
 Computes centre of gravity, standard deviation, skewness, and kurtosis for
@@ -21,7 +23,8 @@ every frame in a Spectrogram in a single C++ pass, instead of calling the
 per-frame Spectrum methods in an R loop.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 spectrogram <- sound$to_spectrogram()
 moments <- get_spectral_moments_batch(spectrogram)
 head(moments)

@@ -93,6 +93,6 @@ pladdrr_shared_params()
 }
 \description{
 Common `@param` descriptions used across many functions. Functions inherit
-from this topic via `@inheritParams pladdrr-shared-params <param>` to avoid
+from this topic via `@inheritParams pladdrr_shared_params <param>` to avoid
 duplicating identical documentation.
 }

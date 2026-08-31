@@ -16,7 +16,8 @@
 \item{...}{Additional arguments (unused)}
 }
 \value{
-The values data.table (inherits from data.frame) from the formant object
+The values data.table (inherits from data.frame) from the formant
+ object
 }
 \description{
 Convert praat_formant to data.frame

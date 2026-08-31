@@ -18,22 +18,30 @@ sound_to_textgrid_silences(
 \arguments{
 \item{sound}{Sound object to analyze}
 
-\item{minimum_pitch}{Numeric. Minimum pitch for intensity calculation (Hz, default: 100)}
+\item{minimum_pitch}{Numeric. Minimum pitch for intensity calculation (Hz,
+default: 100)}
 
-\item{time_step}{Numeric. Time step for intensity calculation (s, default: 0.0 = auto)}
+\item{time_step}{Numeric. Time step for intensity calculation (s, default:
+0.0 = auto)}
 
-\item{silence_threshold}{Numeric. Silence threshold in dB below maximum (default: -25)}
+\item{silence_threshold}{Numeric. Silence threshold in dB below maximum
+(default: -25)}
 
-\item{min_silent_interval}{Numeric. Minimum duration of silent interval (s, default: 0.1)}
+\item{min_silent_interval}{Numeric. Minimum duration of silent interval (s,
+default: 0.1)}
 
-\item{min_sounding_interval}{Numeric. Minimum duration of sounding interval (s, default: 0.1)}
+\item{min_sounding_interval}{Numeric. Minimum duration of sounding interval
+(s, default: 0.1)}
 
-\item{silent_label}{Character. Label for silent intervals (default: "silence")}
+\item{silent_label}{Character. Label for silent intervals (default:
+"silence")}
 
-\item{sounding_label}{Character. Label for sounding intervals (default: "sounding")}
+\item{sounding_label}{Character. Label for sounding intervals (default:
+"sounding")}
 }
 \value{
-TextGrid object with one interval tier containing silent and sounding intervals
+TextGrid object with one interval tier containing silent and sounding
+ intervals
 }
 \description{
 Detects silent and sounding (voiced) intervals in a Sound object and returns

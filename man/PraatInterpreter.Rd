@@ -7,13 +7,16 @@
 An R6 object of class \code{PraatInterpreter}.
 }
 \description{
-The PraatInterpreter provides a persistent Praat scripting environment within R.
-Unlike one-shot script execution, the interpreter maintains state between calls,
+The PraatInterpreter provides a persistent Praat scripting environment within
+ R.
+Unlike one-shot script execution, the interpreter maintains state between
+ calls,
 enabling incremental script development and interactive exploration.
 }
 \details{
 R6 class for executing Praat scripts with persistent interpreter state.
-Allows running multiple scripts while maintaining variables and state between runs.
+Allows running multiple scripts while maintaining variables and state between
+ runs.
 Provides bidirectional object transfer between R and Praat's object list.
 }
 \examples{

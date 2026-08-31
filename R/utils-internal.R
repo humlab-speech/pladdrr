@@ -12,7 +12,7 @@
 #' @keywords internal
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
-#  8000)
+#'  8000)
 #' pladdrr:::extract_xptr(sound, "Sound")
 #' @noRd
 extract_xptr <- function(obj, class_name) {

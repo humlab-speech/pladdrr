@@ -38,7 +38,7 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   VocalTract object; set internally when a method returns a new VocalTract.
 #' @return A \code{VocalTract} object with methods for articulatory tube-model
-#  access.
+#'  access.
 #'
 #' @examples
 #' vt <- VocalTract$create_from_phone("a")

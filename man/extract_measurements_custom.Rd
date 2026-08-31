@@ -33,12 +33,14 @@ interval label and should return TRUE/FALSE}
 Data frame with measurements for each interval/point
 }
 \description{
-Extract acoustic measurements from intervals or points in TextGrid annotations.
+Extract acoustic measurements from intervals or points in TextGrid
+ annotations.
 This replaces complex Praat scripts that loop over TextGrid intervals.
 }
 \examples{
 \donttest{
-sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+ 16000)
 tg <- textgrid_create(0, 0.6, "phones")
 tg$insert_boundary("phones", 0.3)
 tg$set_interval_text("phones", 1, "a")

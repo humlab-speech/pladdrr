@@ -46,7 +46,8 @@ Delegates to the R6 `$as_data_frame()` method.
 
 }}
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 df <- as.data.frame(pitch)
 head(df)

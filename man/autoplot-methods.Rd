@@ -515,11 +515,13 @@
 
 \item{garnish}{Whether to add a title and axis labels (default TRUE).}
 
-\item{time_step}{Sampling interval in seconds, only used when style="line" (default: 0.005).}
+\item{time_step}{Sampling interval in seconds, only used when style="line"
+(default: 0.005).}
 
-\item{style}{"speckle" (default, matches Praat's FormantTier_speckle: plots the
-tier's own stored points, unconnected) or "line" (interpolates on a
-time_step grid and connects with a line — not Praat's default view).}
+\item{style}{"speckle" (default, matches Praat's FormantTier_speckle: plots
+the
+ tier's own stored points, unconnected) or "line" (interpolates on a
+ time_step grid and connects with a line — not Praat's default view).}
 
 \item{show_candidates}{Logical. Overlay candidate paths (default: TRUE).}
 
@@ -581,7 +583,8 @@ autoplot(spectrogram) +
 }
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 p <- ggplot2::autoplot(sound)
 
 pitch <- sound$to_pitch()

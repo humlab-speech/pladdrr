@@ -17,10 +17,12 @@ extract_formants(
 \item{sound}{A praat_sound object created by \code{\link{read_sound}} or
 \code{\link{create_sound}}}
 
-\item{time_step}{Time step in seconds for formant analysis (0 = auto: 4x Nyquist)}
+\item{time_step}{Time step in seconds for formant analysis (0 = auto: 4x
+Nyquist)}
 
-\item{max_formant}{Maximum formant frequency in Hz (default: 5500 for adult female,
-use 5000 for adult male, 8000 for child)}
+\item{max_formant}{Maximum formant frequency in Hz (default: 5500 for adult
+female,
+ use 5000 for adult male, 8000 for child)}
 
 \item{n_formants}{Number of formants to track (default: 5)}
 
@@ -61,7 +63,8 @@ using Praat's Burg algorithm.
 \examples{
 # sound is an R6 Sound object here, so this delegates to to_formant_burg()
 # and returns an R6 Formant object (see the second value's \\value above).
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formants <- extract_formants(sound, max_formant = 5500)
 f1_mean <- formants$get_mean(formant_number = 1)
 

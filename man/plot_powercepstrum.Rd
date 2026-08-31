@@ -24,19 +24,23 @@ plot_powercepstrum(
 
 \item{show_trendline}{Logical. Show regression trend line (default: TRUE)}
 
-\item{qmin}{Numeric. Minimum quefrency for peak search (seconds, default: 0.001)}
+\item{qmin}{Numeric. Minimum quefrency for peak search (seconds, default:
+0.001)}
 
 \item{qmax}{Numeric. Maximum quefrency for peak search (seconds, default: 0)}
 
 \item{fit_method}{Character. Trend line fit method (default: "straight")}
 
-\item{quefrency_range}{Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)}
+\item{quefrency_range}{Numeric vector. c(min, max) quefrency range to display
+(default: NULL = auto)}
 
-\item{db_range}{Numeric vector. c(min, max) dB range to display (default: NULL = auto)}
+\item{db_range}{Numeric vector. c(min, max) dB range to display (default:
+NULL = auto)}
 
 \item{title}{Character. Plot title (default: auto-generated)}
 
-\item{theme}{Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")}
+\item{theme}{Character. ggplot2 theme: "minimal", "bw", "classic" (default:
+"minimal")}
 }
 \value{
 A ggplot2 object

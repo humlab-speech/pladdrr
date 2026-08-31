@@ -14,7 +14,8 @@ get_pitch_at_times(pitch, times, unit = "hertz", interpolate = TRUE)
 \item{unit}{Unit for pitch values: "hertz" (default), "mel", "loghertz",
 "semitones", or "erb"}
 
-\item{interpolate}{Logical; whether to interpolate between frames (default TRUE)}
+\item{interpolate}{Logical; whether to interpolate between frames (default
+TRUE)}
 }
 \value{
 Numeric vector of pitch values at the specified times
@@ -29,7 +30,8 @@ This function uses existing optimized C++ code.
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 times <- seq(0.05, 0.45, length.out = 10)
 f0_contour <- get_pitch_at_times(pitch, times)

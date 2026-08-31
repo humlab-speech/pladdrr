@@ -18,7 +18,8 @@ Sound object (R6 or xptr depending on return_r6)
 }
 \description{
 Concatenates a list of Sound objects at the C++ level, avoiding the O(n)
-R→C boundary crossings that occur with `Reduce(function(a,b) a$concatenate(b), sounds)`.
+R→C boundary crossings that occur with `Reduce(function(a,b)
+ a$concatenate(b), sounds)`.
 }
 \examples{
 sound_list <- list(

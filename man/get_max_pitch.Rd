@@ -20,7 +20,8 @@ Maximum pitch value
 **DEPRECATED:** Use \code{pitch$get_maximum(unit)} instead.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 suppressWarnings(get_max_pitch(pitch))
 }

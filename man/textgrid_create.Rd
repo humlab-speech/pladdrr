@@ -13,7 +13,8 @@ textgrid_create(tmin, tmax, tier_names = "", point_tiers = "")
 
 \item{tier_names}{Space-separated tier names (e.g., "phones words syllables")}
 
-\item{point_tiers}{Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)}
+\item{point_tiers}{Space-separated names of tiers that should be PointTiers
+(default: all are IntervalTiers)}
 }
 \value{
 A \code{TextGrid} object.
@@ -29,5 +30,6 @@ tg <- textgrid_create(0, 10, "phones words syllables")
 tg2 <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 }
 \seealso{
-\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}
+\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}},
+ \code{\link{PointProcess}}
 }

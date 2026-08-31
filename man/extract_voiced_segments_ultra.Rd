@@ -19,28 +19,34 @@ extract_voiced_segments_ultra(
 \arguments{
 \item{sound}{Sound object or external pointer}
 
-\item{version}{AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering, default)}
+\item{version}{AVQI version: "v2.03" (simple) or "v3.01" (ZCR filtering,
+default)}
 
 \item{min_pitch}{Minimum pitch for silence detection in Hz (default 50)}
 
 \item{silence_threshold_db}{Silence threshold in dB (default -25)}
 
-\item{min_silent_duration}{Minimum silent interval duration in seconds (default 0.1)}
+\item{min_silent_duration}{Minimum silent interval duration in seconds
+(default 0.1)}
 
-\item{min_sounding_duration}{Minimum sounding interval duration in seconds (default 0.1)}
+\item{min_sounding_duration}{Minimum sounding interval duration in seconds
+(default 0.1)}
 
-\item{power_threshold_factor}{Power threshold as fraction of global power (default 0.3)}
+\item{power_threshold_factor}{Power threshold as fraction of global power
+(default 0.3)}
 
 \item{max_zcr}{Maximum zero-crossing rate for voiced segments (default 3000)}
 
-\item{window_width}{Window width for v3.01 filtering in seconds (default 0.03)}
+\item{window_width}{Window width for v3.01 filtering in seconds (default
+0.03)}
 }
 \value{
 Sound object containing only voiced segments (concatenated)
 }
 \description{
 Complete AVQI voiced segment extraction pipeline in a single C++ call.
-Supports both AVQI v2.03 (simple intensity-based) and v3.01 (with ZCR filtering).
+Supports both AVQI v2.03 (simple intensity-based) and v3.01 (with ZCR
+ filtering).
 Performs: Sound -> TextGrid (silence) -> Extract sounding -> Concatenate ->
 [v3.01: Window power/ZCR filtering] -> Final concatenation, in a single
 C++ call instead of a multi-step R implementation.
@@ -65,7 +71,8 @@ Steps 1-3 only (no window filtering)
 
 **Version Differences:**
 - v2.03: Simpler, keeps most voiced content (~37s from 37s input)
-- v3.01: Aggressive ZCR filtering, removes fricatives (~25-30s from 37s input)
+- v3.01: Aggressive ZCR filtering, removes fricatives (~25-30s from 37s
+ input)
 }
 \section{Algorithm choice}{
 
@@ -79,7 +86,8 @@ algorithm choice. See the Tier 4 Ultra algorithm table in
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # AVQI v3.01 (default, with ZCR filtering)
 voiced_v3 <- extract_voiced_segments_ultra(sound, version = "v3.01")

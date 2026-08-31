@@ -24,7 +24,8 @@ Pitch R6 object
 }
 \examples{
 # Old S3 approach (DEPRECATED, shown for reference)
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 
 # New R6 approach (RECOMMENDED)

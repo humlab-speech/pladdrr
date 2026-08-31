@@ -36,7 +36,7 @@
 
 #' Build a classed pladdrr error condition
 #' @return A condition object with class \code{c(klass, "pladdrr_error",
-#  "error", "condition")}
+#'  "error", "condition")}
 #'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
 #' @examples
 #' cond <- pladdrr:::pladdrr_error_cond(
@@ -55,7 +55,7 @@ pladdrr_error_cond <- function(klass, routine, param, message,
 
 #' Build a classed pladdrr warning condition
 #' @return A condition object with class \code{c(klass, "pladdrr_warning",
-#  "warning", "condition")}
+#'  "warning", "condition")}
 #'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
 #' @examples
 #' cond <- pladdrr:::pladdrr_warning_cond(
@@ -101,7 +101,7 @@ pladdrr_warning_cond <- function(klass, routine, param, message,
 #'   attribute.
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #' tryCatch(
 #'   with_pladdrr_errors(

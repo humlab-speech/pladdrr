@@ -4,13 +4,16 @@
 \alias{IntensityTier}
 \title{Praat IntensityTier Object}
 \value{
-An \code{IntensityTier} object with methods for intensity (dB SPL) manipulation via time-value points.
+An \code{IntensityTier} object with methods for intensity (dB SPL)
+ manipulation via time-value points.
 }
 \description{
-Praat IntensityTier object with direct C++ module binding for intensity manipulation.
+Praat IntensityTier object with direct C++ module binding for intensity
+ manipulation.
 }
 \details{
-IntensityTiers contain discrete time-value pairs representing intensity in dB SPL.
+IntensityTiers contain discrete time-value pairs representing intensity in dB
+ SPL.
 They can be used to modify the amplitude envelope of sounds.
 }
 \examples{

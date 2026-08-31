@@ -51,11 +51,11 @@ NULL
 #' @param unit Character: "hertz", "semitones", "mel", "erb", "loghertz"
 #'
 #' @return Named list with: min, max, mean, stdev, median, q25, q75,
-#  count_voiced
+#'  count_voiced
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch_cc()
 #'
 #' # Direct call
@@ -101,7 +101,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formant <- sound$to_formant_burg()
 #'
 #' # Get all 4 formants in one call
@@ -140,7 +140,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #'
 #' **NOTE:** For full control over voicing parameters (silence_threshold,
 #' voicing_threshold, etc.), use `to_pitch_ac_direct()` or
-#  `to_pitch_cc_direct()`
+#'  `to_pitch_cc_direct()`
 #' instead.
 #'
 #' @inheritParams pladdrr_shared_params sound
@@ -151,7 +151,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #' @return External pointer to Pitch (NOT R6 object)
 #'
 #' @seealso \code{\link{to_pitch_ac_direct}}, \code{\link{to_pitch_cc_direct}}
-#  for full parameter control
+#'  for full parameter control
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
@@ -182,7 +182,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75,
 #' @description
 #' Create Pitch analysis using autocorrelation method with full control over
 #' all voicing parameters. Returns a raw external pointer instead of an R6
-#  object.
+#'  object.
 #'
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
@@ -194,7 +194,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75,
 #' @param max_candidates Maximum number of pitch candidates (default 15)
 #' @param very_accurate Use accurate but slower method (default FALSE)
 #' @param silence_threshold Frames below this relative intensity are unvoiced
-#  (default 0.03)
+#'  (default 0.03)
 #' @param voicing_threshold Strength required for voiced decision (default 0.45)
 #' @param octave_cost Cost per octave in path finding (default 0.01)
 #' @param octave_jump_cost Cost for octave jumps (default 0.35)
@@ -249,7 +249,7 @@ to_pitch_ac_direct <- function(sound,
 #' @description
 #' Create Pitch analysis using cross-correlation method with full control over
 #' all voicing parameters. Returns a raw external pointer instead of an R6
-#  object.
+#'  object.
 #'
 #' **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 #' available in Tier 1 (Standard) API.
@@ -261,7 +261,7 @@ to_pitch_ac_direct <- function(sound,
 #' @param max_candidates Maximum number of pitch candidates (default 15)
 #' @param very_accurate Use accurate but slower method (default FALSE)
 #' @param silence_threshold Frames below this relative intensity are unvoiced
-#  (default 0.03)
+#'  (default 0.03)
 #' @param voicing_threshold Strength required for voiced decision (default 0.45)
 #' @param octave_cost Cost per octave in path finding (default 0.01)
 #' @param octave_jump_cost Cost for octave jumps (default 0.35)
@@ -312,7 +312,7 @@ to_pitch_cc_direct <- function(sound,
 
 
 #' Create Pitch from Sound using Subharmonic Summation (SHS) Directly (returns
-#  XPtr)
+#'  XPtr)
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step in seconds (default 0.01)
@@ -321,9 +321,9 @@ to_pitch_cc_direct <- function(sound,
 #' @param pitch_ceiling Maximum pitch (Hz, default 500)
 #' @param max_subharmonics Number of subharmonics to sum (default 15)
 #' @param max_candidates Maximum number of pitch candidates per frame (default
-#  15)
+#'  15)
 #' @param compression_factor Compression factor for subharmonic weighting
-#  (default 0.84)
+#'  (default 0.84)
 #' @param n_points_per_octave Number of frequency points per octave (default 48)
 #'
 #' @return External pointer to Pitch (NOT R6 object)
@@ -368,7 +368,7 @@ to_pitch_shs_direct <- function(sound,
 #' @param n_filters Number of gamma-tone filters (default 250)
 #' @param pitch_ceiling Maximum pitch (Hz, default 500)
 #' @param max_candidates Maximum number of pitch candidates per frame (default
-#  15)
+#'  15)
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
@@ -378,7 +378,7 @@ to_pitch_shs_direct <- function(sound,
 #' # tryCatch keeps this example from failing R CMD check when it strikes.
 #' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' pitch_ptr <- tryCatch(to_pitch_spinet_direct(sound), error = function(e)
-#  NULL)
+#'  NULL)
 #' if (!is.null(pitch_ptr)) {
 #'   f0 <- get_pitch_value_direct(pitch_ptr, 0.25, "hertz", TRUE)
 #' }
@@ -416,11 +416,11 @@ to_pitch_spinet_direct <- function(sound,
 #' @param window_length Window length (seconds)
 #' @param pre_emphasis Pre-emphasis frequency (Hz)
 #' @param max_number_of_formants Alias for `max_formants` (maximum number of
-#  formants)
+#'  formants)
 #' @param maximum_formant Alias for `max_formant` (maximum formant frequency,
-#  Hz)
+#'  Hz)
 #' @param pre_emphasis_from Alias for `pre_emphasis` (pre-emphasis frequency,
-#  Hz)
+#'  Hz)
 #'
 #' @return External pointer to Formant
 #'
@@ -531,7 +531,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch_ptr <- to_pitch_cc_direct(sound)
 #' get_pitch_value_direct(pitch_ptr, 0.25)
 #'
@@ -554,7 +554,7 @@ get_pitch_value_direct <- function(pitch, time, unit = "hertz",
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' intensity_ptr <- to_intensity_direct(sound)
 #' get_intensity_value_direct(intensity_ptr, 0.25)
 #'
@@ -579,7 +579,7 @@ get_intensity_value_direct <- function(intensity, time,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formant_ptr <- to_formant_direct(sound)
 #' get_formant_value_direct(formant_ptr, 1, 0.25)
 #'
@@ -597,7 +597,7 @@ get_formant_value_direct <- function(formant, formant_number, time,
 #' @description
 #' Get a specific quantile of pitch values without R6 wrapper overhead.
 #' Useful for VUV analysis workflows where you need Q1, Q3 for adaptive pitch
-#  range.
+#'  range.
 #'
 #' @inheritParams pladdrr_shared_params pitch
 #' @param quantile Quantile value (0.25 for Q1, 0.75 for Q3, 0.5 for median)
@@ -609,13 +609,13 @@ get_formant_value_direct <- function(formant, formant_number, time,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch_ptr <- to_pitch_cc_direct(sound)
 #' q1 <- get_pitch_quantile_direct(pitch_ptr, 0.25)
 #' q3 <- get_pitch_quantile_direct(pitch_ptr, 0.75)
 #'
 #' @seealso \code{\link{get_pitch_quantiles_batch}} for getting multiple
-#  quantiles at once
+#'  quantiles at once
 #' @export
 get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0,
   to_time = 0,
@@ -643,7 +643,7 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch_ptr <- to_pitch_cc_direct(sound)
 #' get_pitch_mean_direct(pitch_ptr)
 #'
@@ -673,7 +673,7 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch_ptr <- to_pitch_cc_direct(sound)
 #' get_pitch_stdev_direct(pitch_ptr)
 #'
@@ -800,7 +800,7 @@ to_ltas_direct <- function(sound, bandwidth = 100.0) {
 #' sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 #' # Extract glottal pulses
 #' pp_ptr <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling =
-#  300)
+#'  300)
 #' pp <- PointProcess(.xptr = pp_ptr)
 #' pp$get_number_of_points()
 #'
@@ -831,14 +831,14 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' **IMPORTANT for VUV Analysis:** This function uses the refined pitch contour
 #' to guide period detection, which is more accurate than using pitch range
 #' parameters alone. This is the correct method for voice quality analysis
-#  (jitter,
+#'  (jitter,
 #' shimmer, VUV detection).
 #'
 #' **Algorithm Difference:**
 #' - `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch
-#  range
+#'  range
 #' - `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch
-#  contour (recommended)
+#'  contour (recommended)
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param pitch Pitch object or external pointer (from to_pitch_ac/cc)
@@ -864,7 +864,7 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
 #' jitter <- pp_r6$get_jitter_local()
 #'
 #' @seealso \code{\link{to_point_process_direct}} for the single-object Sound
-#  method
+#'  method
 #' @export
 to_point_process_from_sound_and_pitch <- function(sound, pitch) {
   sound_ptr <- extract_xptr(sound, "Sound")
@@ -927,7 +927,7 @@ pp_get_mean_period_direct <- function(pointprocess,
 #'
 #' @description
 #' Get standard deviation of periods from PointProcess without R6 wrapper
-#  overhead.
+#'  overhead.
 #'
 #' @param pointprocess PointProcess object or external pointer
 #' @inheritParams pladdrr_shared_time0 from_time
@@ -991,7 +991,7 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' Performs a two-pass pitch extraction where the first pass uses a wide range
 #' (50-800 Hz by default) to estimate the speaker's pitch distribution, then
 #' the second pass uses an adaptive range based on quartiles (Q1*0.75 to
-#  Q3*1.5).
+#'  Q3*1.5).
 #'
 #' This is a standard technique for robust pitch extraction across speakers with
 #' different voice ranges. Returns both the refined pitch contour and the
@@ -1009,7 +1009,7 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #' @param q1_factor Factor to multiply Q1 for min_pitch (default 0.75)
 #' @param q3_factor Factor to multiply Q3 for max_pitch (default 1.5)
 #' @param method Pitch method: "cc" (cross-correlation, default) or "ac"
-#  (autocorrelation)
+#'  (autocorrelation)
 #'
 #' @return Named list with:
 #'   - `pitch`: External pointer to the refined Pitch object

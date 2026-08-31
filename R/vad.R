@@ -81,22 +81,22 @@ NULL
 #'
 #' @param sound Sound object to analyze
 #' @param minimum_pitch Numeric. Minimum pitch for intensity calculation (Hz,
-#  default: 100)
+#'  default: 100)
 #' @param time_step Numeric. Time step for intensity calculation (s, default:
-#  0.0 = auto)
+#'  0.0 = auto)
 #' @param silence_threshold Numeric. Silence threshold in dB below maximum
-#  (default: -25)
+#'  (default: -25)
 #' @param min_silent_interval Numeric. Minimum duration of silent interval (s,
-#  default: 0.1)
+#'  default: 0.1)
 #' @param min_sounding_interval Numeric. Minimum duration of sounding interval
-#  (s, default: 0.1)
+#'  (s, default: 0.1)
 #' @param silent_label Character. Label for silent intervals (default:
-#  "silence")
+#'  "silence")
 #' @param sounding_label Character. Label for sounding intervals (default:
-#  "sounding")
+#'  "sounding")
 #'
 #' @return TextGrid object with one interval tier containing silent and sounding
-#  intervals
+#'  intervals
 #'
 #' @details
 #' The function works by:
@@ -282,7 +282,7 @@ textgrid_get_intervals_where <- function(textgrid,
 #' @param start_times Numeric vector of interval start times (seconds)
 #' @param end_times Numeric vector of interval end times (seconds)
 #' @param window_shape Character. Window shape for extraction (default:
-#  "rectangular").
+#'  "rectangular").
 #'   See details for all options.
 #' @param relative_width Numeric. Relative width of window (default: 1.0).
 #'   For gaussian2/kaiser2, use 2.0. For gaussian3-5, use 3.0-5.0 respectively.
@@ -310,7 +310,7 @@ textgrid_get_intervals_where <- function(textgrid,
 #'
 #' @references
 #' Praat documentation:
-#  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
+#'  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @examples
 #' sound <- sounds_append(
@@ -319,7 +319,7 @@ textgrid_get_intervals_where <- function(textgrid,
 #' )
 #' vad_grid <- sound_to_textgrid_silences(sound)
 #' voiced_intervals <- textgrid_get_intervals_where(vad_grid, 1, "equals",
-#  "sounding")
+#'  "sounding")
 #'
 #' voiced_sounds <- sound_extract_parts(
 #'   sound,
@@ -330,11 +330,11 @@ textgrid_get_intervals_where <- function(textgrid,
 #' # Analyze each segment separately
 #' for (i in seq_along(voiced_sounds)) {
 #' cat("Segment", i, "duration:", voiced_sounds[[i]]$get_total_duration(),
-#  "s\n")
+#'  "s\n")
 #' }
 #'
 #' @param return_r6 Logical. Return R6 Sound objects (TRUE) or raw xptrs
-#  (FALSE).
+#'  (FALSE).
 #'   Using FALSE skips R6 wrapper construction.
 #' @export
 sound_extract_parts <- function(sound,
@@ -396,23 +396,23 @@ sound_extract_parts <- function(sound,
 #'
 #' @param sound Sound object (continuous speech)
 #' @param minimum_pitch Numeric. Minimum pitch for intensity detection (Hz,
-#  default: 50)
+#'  default: 50)
 #' @param time_step Numeric. Time step for intensity analysis (s, default:
-#  0.003)
+#'  0.003)
 #' @param silence_threshold Numeric. Silence threshold in dB below max (default:
-#  -25)
+#'  -25)
 #' @param min_silent_interval Numeric. Minimum silence duration (s, default:
-#  0.1)
+#'  0.1)
 #' @param min_sounding_interval Numeric. Minimum voiced duration (s, default:
-#  0.1)
+#'  0.1)
 #' @param zcr_threshold Numeric. Maximum ZCR for voiced speech (Hz, default:
-#  3000)
+#'  3000)
 #' @param zcr_window Numeric. ZCR analysis window duration (s, default: 0.03)
 #' @param use_zcr Logical. Apply ZCR filtering (default: TRUE)
 #' @param return_textgrid Logical. Also return VAD TextGrid (default: FALSE)
 #'
 #' @return If `return_textgrid = FALSE`: Sound object with concatenated voiced
-#  segments.
+#'  segments.
 #' If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
 #'
 #' @details
@@ -426,7 +426,7 @@ sound_extract_parts <- function(sound,
 #' @examples
 #' \donttest{
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
-#  16000)
+#'  16000)
 #'
 #' # Full AVQI-compatible extraction (default)
 #' voiced <- extract_voiced_segments(sound)

@@ -16,7 +16,8 @@ A \code{PitchTier} object with methods for pitch-contour manipulation
   via time-value points.
 }
 \description{
-Praat PitchTier object: a sequence of time-value points describing a pitch contour.
+Praat PitchTier object: a sequence of time-value points describing a pitch
+ contour.
 }
 \details{
 PitchTiers are used together with Manipulation objects to modify the pitch
@@ -51,13 +52,18 @@ pitch$down_to_pitch_tier()   # extract from a Pitch object
 \itemize{
   \item \code{add_point(time, value)} - add a pitch point (Hz)
   \item \code{remove_point(index)} - remove a point by index
-  \item \code{remove_points_between(tmin, tmax)} - remove points in a time range
+\item \code{remove_points_between(tmin, tmax)} - remove points in a time
+ range
   \item \code{multiply_frequencies(factor)} - scale all frequencies
-  \item \code{multiply_frequencies_in_range(tmin, tmax, factor)} - scale in a range
+\item \code{multiply_frequencies_in_range(tmin, tmax, factor)} - scale in a
+ range
   \item \code{shift_frequencies(shift, unit)} - add to all frequencies
-  \item \code{shift_frequencies_in_range(tmin, tmax, shift, unit)} - shift in a range
-  \item \code{stylize(frequency_resolution, use_semitones)} - simplify the contour
-  \item \code{interpolate_quadratically(points_per_parabola, logarithmically)} - smooth the contour
+\item \code{shift_frequencies_in_range(tmin, tmax, shift, unit)} - shift in a
+ range
+\item \code{stylize(frequency_resolution, use_semitones)} - simplify the
+ contour
+\item \code{interpolate_quadratically(points_per_parabola, logarithmically)}
+ - smooth the contour
 }
 }
 
@@ -68,7 +74,8 @@ pitch$down_to_pitch_tier()   # extract from a Pitch object
   \item \code{to_sound_phonation(sample_rate)} - synthesize phonation
   \item \code{to_sound_sine(sample_rate)} - synthesize a sine wave
   \item \code{down_to_point_process()} - extract time points
-  \item \code{to_pitch(time_step, pitch_floor, pitch_ceiling)} - convert to a Pitch object
+\item \code{to_pitch(time_step, pitch_floor, pitch_ceiling)} - convert to a
+ Pitch object
 }
 }
 

@@ -15,7 +15,7 @@
 #' @param numberOfNasalAntiFormants Number of nasal antiformants (typically 1)
 #' @param numberOfTrachealFormants Number of tracheal formants (typically 1)
 #' @param numberOfTrachealAntiFormants Number of tracheal antiformants
-#  (typically 1)
+#'  (typically 1)
 #' @param numberOfFricationFormants Number of frication formants (typically 6)
 #' @param numberOfDeltaFormants Number of delta formants (typically 1)
 #'

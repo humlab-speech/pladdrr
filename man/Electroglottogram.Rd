@@ -9,8 +9,10 @@ Electroglottogram object; set internally when a method returns a new
 Electroglottogram.}
 }
 \value{
-An \code{Electroglottogram} object (triple-class \code{c("Electroglottogram",
-  "Sound", "PraatObject")}) that inherits Sound's methods in addition to its own.
+An \code{Electroglottogram} object (triple-class
+ \code{c("Electroglottogram",
+"Sound", "PraatObject")}) that inherits Sound's methods in addition to its
+ own.
 }
 \description{
 Praat Electroglottogram (EGG) object. Measures electrical impedance across
@@ -21,7 +23,8 @@ Electroglottogram inherits from Sound and represents a specialized
 single-channel sound that records vocal fold contact area.
 }
 \examples{
-egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
+ 16000, x1 = 0)
 egg$get_duration()
 egg$get_number_of_samples()
 egg$is_valid()

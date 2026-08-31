@@ -101,16 +101,16 @@ NULL
 #' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
 #' @param show_trendline Logical. Show regression trend line (default: TRUE)
 #' @param qmin Numeric. Minimum quefrency for peak search (seconds, default:
-#  0.001)
+#'  0.001)
 #' @param qmax Numeric. Maximum quefrency for peak search (seconds, default: 0)
 #' @param fit_method Character. Trend line fit method (default: "straight")
 #' @param quefrency_range Numeric vector. c(min, max) quefrency range to display
-#  (default: NULL = auto)
+#'  (default: NULL = auto)
 #' @param db_range Numeric vector. c(min, max) dB range to display (default:
-#  NULL = auto)
+#'  NULL = auto)
 #' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default:
-#  "minimal")
+#'  "minimal")
 #'
 #' @return A ggplot2 object
 #'
@@ -192,15 +192,15 @@ plot_powercepstrum <- function(cepstrum,
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_range Numeric vector. c(start, end) time range to display
-#  (default: NULL = auto)
+#'  (default: NULL = auto)
 #' @param quefrency_range Numeric vector. c(min, max) quefrency range to display
-#  (default: c(0, 0.05))
+#'  (default: c(0, 0.05))
 #' @param db_range Numeric vector. c(min, max) dB range for color scale
-#  (default: NULL = auto)
+#'  (default: NULL = auto)
 #' @param color_scale Character. Color palette: "viridis", "inferno", "magma",
-#  "plasma" (default: "viridis")
+#'  "plasma" (default: "viridis")
 #' @param show_cpp_contour Logical. Overlay CPP contour over time (default:
-#  FALSE)
+#'  FALSE)
 #' @param contour_color Character. Color for CPP contour line (default: "white")
 #' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
@@ -278,14 +278,14 @@ plot_powercepstrogram <- function(cepstrogram,
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_range Numeric vector. c(start, end) time range to display
-#  (default: NULL = auto)
+#'  (default: NULL = auto)
 #' @param qmin Numeric. Minimum quefrency for peak search (default: 0.001)
 #' @param qmax Numeric. Maximum quefrency for peak search (default: 0)
 #' @param n_samples Integer. Number of time points to sample (default: 100)
 #' @param smooth Logical. Apply smoothing to CPP contour (default: FALSE)
 #' @param smooth_span Numeric. Smoothing span for loess (default: 0.1)
 #' @param reference_lines Numeric vector. Reference CPP values to plot as
-#  horizontal lines (default: NULL)
+#'  horizontal lines (default: NULL)
 #' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
@@ -374,7 +374,7 @@ plot_cpp_timeseries <- function(cepstrogram,
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
 #' @param time_slice Numeric. Time point for extracting single cepstrum
-#  (default: middle)
+#'  (default: middle)
 #' @param save_path Character. Path to save plot (optional)
 #' @param format Character. Output format: "png", "pdf", "svg" (default: "png")
 #' @param dpi Numeric. Resolution for raster formats (default: 300)
@@ -384,7 +384,7 @@ plot_cpp_timeseries <- function(cepstrogram,
 #' @examples
 #' if (requireNamespace("gridExtra", quietly = TRUE)) {
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
-#  16000)
+#'  16000)
 #'   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #'
 #'   # Create comprehensive report at t = 0.3s (mid-signal)

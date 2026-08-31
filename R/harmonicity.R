@@ -23,9 +23,9 @@
 #' @section Point query methods:
 #' \itemize{
 #' \item \code{get_value_at_time(time, interpolation)} - HNR at a time point
-#  (dB)
+#'  (dB)
 #' \item \code{get_values_at_times(times, interpolation)} - HNR at a vector of
-#  times (batch)
+#'  times (batch)
 #'   \item \code{get_values_vector()} - raw HNR values for all frames
 #'   \item \code{get_times_vector()} - frame time points
 #' }
@@ -37,30 +37,30 @@
 #'   \item \code{get_maximum(from_time, to_time, interpolation)} - maximum HNR
 #' \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
 #' \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
-#  of extremum
+#'  of extremum
 #' }
 #'
 #' @section Batch methods:
 #' \itemize{
 #' \item \code{get_statistics_batch(from_times, to_times)} - statistics for
-#  multiple intervals in a single C++ call
+#'  multiple intervals in a single C++ call
 #' }
 #'
 #' @section Export methods:
 #' \itemize{
 #' \item \code{as_data_frame()}, \code{as_matrix()} - export as a data.frame or
-#  matrix
+#'  matrix
 #' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Harmonicity object; set internally when a method returns a new Harmonicity.
 #' @return A \code{Harmonicity} object with methods for harmonics-to-noise ratio
-#  (HNR) analysis.
+#'  (HNR) analysis.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{PointProcess}}
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
-#  44100)
+#'  44100)
 #' hnr <- sound$to_harmonicity_cc(time_step = 0.01, min_pitch = 75)
 #' mean_hnr <- hnr$get_mean()
 #' hnr_at_05 <- hnr$get_value_at_time(0.5)

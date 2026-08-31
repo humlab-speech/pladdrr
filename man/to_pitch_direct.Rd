@@ -23,7 +23,8 @@ Create Pitch analysis directly, returning raw external pointer.
 This is a simplified version with basic parameters only.
 
 **NOTE:** For full control over voicing parameters (silence_threshold,
-voicing_threshold, etc.), use `to_pitch_ac_direct()` or `to_pitch_cc_direct()`
+voicing_threshold, etc.), use `to_pitch_ac_direct()` or
+ `to_pitch_cc_direct()`
 instead.
 }
 \examples{
@@ -37,5 +38,6 @@ stats <- get_pitch_stats_direct(pitch_ptr)
 
 }
 \seealso{
-\code{\link{to_pitch_ac_direct}}, \code{\link{to_pitch_cc_direct}} for full parameter control
+\code{\link{to_pitch_ac_direct}}, \code{\link{to_pitch_cc_direct}}
+ for full parameter control
 }

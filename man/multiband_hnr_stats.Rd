@@ -24,7 +24,8 @@ Extract mean and standard deviation from a reusable set of multiband
 cheap query step for repeated interval workflows.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 built <- build_multiband_harmonicity(sound)
 hnr_interval1 <- multiband_hnr_stats(built, 0, 0.5)

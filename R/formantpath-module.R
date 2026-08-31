@@ -10,18 +10,18 @@
 #'
 #' @param sound A Sound object or path to audio file
 #' @param time_step Time step for analysis in seconds (must be > 0, typically
-#  0.005)
+#'  0.005)
 #' @param max_num_formants Maximum number of formants to track (typically 5)
 #' @param formant_ceiling Maximum formant frequency in Hz (typically 5000-5500)
 #' @param window_length Analysis window length in seconds (typically 0.025)
 #' @param preemphasis_from Preemphasis frequency in Hz (typically 50)
 #' @param ceiling_step_fraction Step size for ceiling frequency variation
-#  (0.05-0.1)
+#'  (0.05-0.1)
 #' @param num_steps_up_down Number of steps above/below ceiling (typically 2-4)
 #'
 #' @return An object of class \code{FormantPath} wrapping the set of candidate
 #' formant tracks (list with methods; dispatched via the shared
-#  \code{PraatObject} pattern).
+#'  \code{PraatObject} pattern).
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)

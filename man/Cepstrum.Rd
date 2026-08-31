@@ -4,13 +4,15 @@
 \alias{Cepstrum}
 \title{Praat Cepstrum Object}
 \value{
-A \code{Cepstrum} object with methods for cepstral analysis and quefrency-domain processing.
+A \code{Cepstrum} object with methods for cepstral analysis and
+ quefrency-domain processing.
 }
 \description{
 Praat Cepstrum object with direct C++ module binding.
 }
 \details{
-The cepstrum is the inverse Fourier transform of the logarithm of the spectrum.
+The cepstrum is the inverse Fourier transform of the logarithm of the
+ spectrum.
 Unlike PowerCepstrum, it preserves phase information.
 }
 \examples{

@@ -14,7 +14,7 @@
 #'   \item \code{get_time_step()} - time between frames (s)
 #'   \item \code{get_number_of_time_bins()} - number of time frames
 #' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} -
-#  frequency range (Hz)
+#'  frequency range (Hz)
 #'   \item \code{get_frequency_step()} - frequency resolution (Hz)
 #'   \item \code{get_number_of_frequency_bins()} - number of frequency bins
 #' }
@@ -31,14 +31,14 @@
 #' \itemize{
 #' \item \code{get_power_at(time, frequency)} - power at a time-frequency point
 #' \item \code{get_power_at_points(times, frequencies)} - power at a vector of
-#  points (batch)
+#'  points (batch)
 #'   \item \code{get_frame(time)} - full frequency spectrum at one time
 #'   \item \code{get_frequency_slice(frequency)} - time series at one frequency
 #'   \item \code{get_frames(times)} - matrix of frames at multiple times
 #' \item \code{get_band_power(fmin, fmax)} - integrated power in a frequency
-#  band
+#'  band
 #' \item \code{get_spectral_moments_batch(power)} - center of gravity, SD,
-#  skewness, and kurtosis per frame (single C++ call)
+#'  skewness, and kurtosis per frame (single C++ call)
 #' }
 #'
 #' @section Export:
@@ -54,13 +54,13 @@
 #' }
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{DTW}},
-#  \code{\link{ComplexSpectrogram}}
+#'  \code{\link{ComplexSpectrogram}}
 #'
 #' @return A Spectrogram object.
 #'
 #' @examples
 #' snd <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate =
-#  44100)
+#'  44100)
 #' spec <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 #' power <- spec$get_power_at(time = 0.25, frequency = 440)
 #'

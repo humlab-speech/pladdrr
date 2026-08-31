@@ -10,7 +10,7 @@
 #'   PCA object; set internally when a method returns a new PCA (for example
 #'   \code{\link{pca_from_matrix}}).
 #' @return A \code{PCA} object with methods for querying components,
-#  eigenvalues,
+#'  eigenvalues,
 #'   and projections.
 #'
 #' @examples
@@ -151,7 +151,7 @@ PCA <- function(.xptr = NULL) {
 #' Performs Principal Component Analysis on a numeric matrix.
 #'
 #' @param data Numeric matrix where rows are observations and columns are
-#  variables
+#'  variables
 #' @return A PCA object
 #' @examples
 #' set.seed(1)

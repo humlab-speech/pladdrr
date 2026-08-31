@@ -27,7 +27,8 @@ Copies Sound sample data via direct pointer access, instead of going
 through Praat's per-sample accessor as `sound$get_values()` does.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 
 # Fast copy for analysis
 samples <- get_sound_values_fast(sound, channel = 1)

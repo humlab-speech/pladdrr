@@ -1,15 +1,15 @@
 #' @title Praat IntensityTier Object
 #' @description
 #' Praat IntensityTier object with direct C++ module binding for intensity
-#  manipulation.
+#'  manipulation.
 #'
 #' @details
 #' IntensityTiers contain discrete time-value pairs representing intensity in dB
-#  SPL.
+#'  SPL.
 #' They can be used to modify the amplitude envelope of sounds.
 #'
 #' @return An \code{IntensityTier} object with methods for intensity (dB SPL)
-#  manipulation via time-value points.
+#'  manipulation via time-value points.
 #'
 #' @examples
 #' it <- IntensityTier(0, 1)

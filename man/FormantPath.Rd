@@ -6,7 +6,8 @@
 \arguments{
 \item{sound}{A Sound object or path to audio file}
 
-\item{time_step}{Time step for analysis in seconds (must be > 0, typically 0.005)}
+\item{time_step}{Time step for analysis in seconds (must be > 0, typically
+0.005)}
 
 \item{max_num_formants}{Maximum number of formants to track (typically 5)}
 
@@ -16,13 +17,15 @@
 
 \item{preemphasis_from}{Preemphasis frequency in Hz (typically 50)}
 
-\item{ceiling_step_fraction}{Step size for ceiling frequency variation (0.05-0.1)}
+\item{ceiling_step_fraction}{Step size for ceiling frequency variation
+(0.05-0.1)}
 
 \item{num_steps_up_down}{Number of steps above/below ceiling (typically 2-4)}
 }
 \value{
 An object of class \code{FormantPath} wrapping the set of candidate
-  formant tracks (list with methods; dispatched via the shared \code{PraatObject} pattern).
+formant tracks (list with methods; dispatched via the shared
+ \code{PraatObject} pattern).
 }
 \description{
 A FormantPath object represents multiple formant tracking candidates with

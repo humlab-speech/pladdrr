@@ -35,7 +35,8 @@ Create PointProcess from Sound Directly (returns XPtr)
 \examples{
 sound <- Sound$create_tone(frequency = 200, duration = 0.5)
 # Extract glottal pulses
-pp_ptr <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 300)
+pp_ptr <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling =
+ 300)
 pp <- PointProcess(.xptr = pp_ptr)
 pp$get_number_of_points()
 

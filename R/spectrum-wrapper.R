@@ -22,7 +22,7 @@
 #'   \item \code{get_band_energy(fmin, fmax)} - energy in a band (Pa²·s)
 #' \item \code{get_centre_of_gravity(power = 2.0)} - spectral center of gravity
 #' \item \code{get_standard_deviation(power = 2.0)} - spectral standard
-#  deviation
+#'  deviation
 #'   \item \code{get_skewness(power = 2.0)} - spectral skewness
 #'   \item \code{get_kurtosis(power = 2.0)} - spectral kurtosis
 #'   \item \code{get_central_moment(moment, power = 2.0)} - central moment
@@ -31,9 +31,9 @@
 #' @section Modification methods:
 #' \itemize{
 #' \item \code{pass_hann_band(fmin, fmax, smooth = 100)} - apply a Hann
-#  band-pass filter
+#'  band-pass filter
 #' \item \code{stop_hann_band(fmin, fmax, smooth = 100)} - apply a Hann
-#  band-stop filter
+#'  band-stop filter
 #' \item \code{cepstral_smoothing(bandwidth)} - smooth using the cepstral method
 #' }
 #'
@@ -43,26 +43,26 @@
 #'   \item \code{to_ltas(bandwidth)} - convert to long-term average spectrum
 #'   \item \code{to_spectrogram(...)} - convert to Spectrogram
 #' \item \code{to_excitation(erb_density)} - convert to Excitation (auditory
-#  representation)
+#'  representation)
 #' }
 #'
 #' @section Export methods:
 #' \itemize{
 #'   \item \code{as_matrix()} - export as a numeric matrix (real + imaginary)
 #' \item \code{as_data_frame()} - export as a data.frame (freq, real, imag,
-#  power)
+#'  power)
 #'   \item \code{save(path)} - save to a file
 #' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
-#  Spectrum
+#'  Spectrum
 #'   object; set internally when a method returns a new Spectrum.
 #' @return A \code{Spectrum} object with methods for frequency-domain spectral
-#  analysis.
+#'  analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate =
-#  44100)
+#'  44100)
 #' spectrum <- sound$to_spectrum(fast = FALSE)
 #' cog <- spectrum$get_centre_of_gravity(power = 2.0)
 #' energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
@@ -73,7 +73,7 @@
 #' spec_df <- spectrum$as_data_frame()
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{Spectrogram}}, \code{\link{Ltas}},
-#  \code{\link{PowerCepstrum}}
+#'  \code{\link{PowerCepstrum}}
 #' @name Spectrum
 NULL
 

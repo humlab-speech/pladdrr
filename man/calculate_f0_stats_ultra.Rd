@@ -55,10 +55,12 @@ Ultra functions.
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # Get maximum F0 (DSI FH component)
-max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
+max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75,
+ max_pitch = 600)
 
 # Get mean F0
 mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")

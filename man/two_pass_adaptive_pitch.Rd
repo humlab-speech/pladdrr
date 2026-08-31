@@ -42,7 +42,8 @@ two_pass_adaptive_pitch(
 
 \item{q3_factor}{Factor to multiply Q3 for max_pitch (default 1.5)}
 
-\item{method}{Pitch method: "cc" (cross-correlation, default) or "ac" (autocorrelation)}
+\item{method}{Pitch method: "cc" (cross-correlation, default) or "ac"
+(autocorrelation)}
 }
 \value{
 Named list with:
@@ -55,7 +56,8 @@ Named list with:
 \description{
 Performs a two-pass pitch extraction where the first pass uses a wide range
 (50-800 Hz by default) to estimate the speaker's pitch distribution, then
-the second pass uses an adaptive range based on quartiles (Q1*0.75 to Q3*1.5).
+the second pass uses an adaptive range based on quartiles (Q1*0.75 to
+ Q3*1.5).
 
 This is a standard technique for robust pitch extraction across speakers with
 different voice ranges. Returns both the refined pitch contour and the

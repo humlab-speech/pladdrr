@@ -25,7 +25,7 @@
 #' }
 #'
 #' Convert to WAV up front if you want to avoid the \code{av} dependency
-#  entirely.
+#'  entirely.
 #'
 #' @section Usage:
 #' \preformatted{
@@ -47,10 +47,10 @@
 #'   \item \code{get_number_of_channels()} - number of channels
 #'   \item \code{get_value_at_time()} - amplitude at a given time
 #' \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy
-#  measures
+#'  measures
 #'   \item \code{get_intensity_db()} - intensity in dB
 #' \item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} -
-#  amplitude statistics
+#'  amplitude statistics
 #'   \item \code{get_values(channel)} - sample values as a numeric vector
 #'   \item \code{get_sample_times()} - sample times as a numeric vector
 #' }
@@ -63,7 +63,7 @@
 #'   \item \code{to_harmonicity_cc()} - harmonics-to-noise ratio
 #'   \item \code{to_harmonicity_gne()} - glottal-to-noise excitation ratio (GNE)
 #' \item \code{extract_electroglottogram(channel, invert)} - extract an
-#  electroglottogram (EGG) from a channel
+#'  electroglottogram (EGG) from a channel
 #'   \item \code{to_spectrum()} - frequency spectrum
 #'   \item \code{to_spectrogram()} - time-frequency representation
 #'   \item \code{to_ltas()} - long-term average spectrum
@@ -89,12 +89,12 @@
 #' \itemize{
 #'   \item \code{extract_channel()} - extract a single channel
 #' \item \code{extract_part(from, to, window_shape, relative_width,
-#  preserve_times)} -
+#'  preserve_times)} -
 #'     extract a time range, with optional windowing. Supports 12 window shapes
 #' (rectangular, triangular, parabolic, hanning, hamming, gaussian1-5,
-#  kaiser1-2);
+#'  kaiser1-2);
 #' see
-#  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}.
+#'  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}.
 #' }
 #'
 #' @section Modification:
@@ -105,7 +105,7 @@
 #'   \item \code{de_emphasize()} - low-pass filter (in place)
 #' \item \code{resample()} - resample to a different rate (returns a new object)
 #' \item \code{convert_to_mono()} - average channels to mono (returns a new
-#  object)
+#'  object)
 #'   \item \code{concatenate()} - append another sound (returns a new object)
 #'   \item \code{mix()} - mix with another sound (returns a new object)
 #' }
@@ -118,7 +118,7 @@
 #' }
 #'
 #' @param path Path to an audio file. See the File I/O section for supported
-#  formats.
+#'  formats.
 #' @param .xptr Not for direct use. External pointer to the underlying C++ Sound
 #'   object; set internally when a method returns a new Sound.
 #' @return A Sound object.
@@ -135,7 +135,7 @@
 #' part <- sound$extract_part(0.2, 0.5)
 #'
 #' @seealso \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{Intensity}},
-#  \code{\link{Spectrum}}
+#'  \code{\link{Spectrum}}
 #' @name Sound
 NULL
 
@@ -1139,7 +1139,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' Use `Sound$from_values()` for backward compatibility (calls this function).
 #'
 #' @param values Numeric matrix with channels as rows, samples as columns (or
-#  vector for mono)
+#'  vector for mono)
 #' @inheritParams pladdrr_shared_params sampling_rate
 #' @param start_time Start time of the sound in seconds (default: 0.0)
 #' @return A Sound object
@@ -1216,23 +1216,23 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
 #' Create a tone complex (harmonic series)
 #'
 #' Creates a sound consisting of multiple sinusoids at equal frequency
-#  intervals.
+#'  intervals.
 #'
 #' @param frequency_step Step between harmonics in Hz (default: 100)
 #' @inheritParams pladdrr_shared_params duration
 #' @inheritParams pladdrr_shared_params sampling_rate
 #' @param phase Phase type: "sine" or "cosine" (default: "sine")
 #' @param first_frequency Lowest component frequency in Hz (default: 0, uses
-#  frequency_step)
+#'  frequency_step)
 #' @param ceiling Maximum frequency to include in Hz (default: Nyquist)
 #' @param number_of_components Number of components (default: 0 = all up to
-#  ceiling)
+#'  ceiling)
 #' @return A Sound object
 #' @export
 #' @examples
 #' # Harmonic tone with 10 components at 100 Hz intervals
 #' tone <- sound_create_tone_complex(frequency_step = 100, number_of_components
-#  = 10)
+#'  = 10)
 #' tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
 sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
                                        sampling_rate = 44100,

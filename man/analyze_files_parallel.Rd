@@ -18,7 +18,8 @@ analyze_files_parallel(
 \item{analysis_func}{Function. Analysis function to apply to each file.
 Should accept a Sound object and return results.}
 
-\item{n_cores}{Integer. Number of CPU cores to use (default: parallel::detectCores() - 1)}
+\item{n_cores}{Integer. Number of CPU cores to use (default:
+parallel::detectCores() - 1)}
 
 \item{threads_per_worker}{Integer or `NULL`. C++ threads each worker may use
 for Praat kernels. `NULL` (default) auto-divides cores among workers so
@@ -44,7 +45,8 @@ Each file is:
 \examples{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 files <- list.files(audio_dir, pattern = "\\\\.wav$", full.names = TRUE)
 

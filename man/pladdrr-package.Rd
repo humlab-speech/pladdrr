@@ -58,7 +58,8 @@ multivariate statistics.
 
 
 Batch queries (e.g. formants or pitch at many time points) run in a
-single C++ call rather than one R-level call per point. The CPPS/PowerCepstrogram
+single C++ call rather than one R-level call per point. The
+ CPPS/PowerCepstrogram
 path is multi-threaded via Praat's own \code{MelderThread}, and
 \code{\link{pladdrr_threads}} controls how many cores it uses.
 \code{\link{simd_info}} reports whether the installed build is using SIMD
@@ -68,11 +69,13 @@ kernels.
 \section{Object Model}{
 
 
-Objects are lightweight S3 lists (e.g. class \code{c("Sound", "PraatObject")})
+Objects are lightweight S3 lists (e.g. class \code{c("Sound",
+ "PraatObject")})
 with a custom \code{$} method that dispatches to a shared method table:
 this gives R6-style \code{sound$get_pitch()} call syntax at a fraction of
 R6's per-object memory cost. \code{PraatInterpreter} is a plain R6 class,
-since its state (a live Praat interpreter session) doesn't fit the shared-table
+since its state (a live Praat interpreter session) doesn't fit the
+ shared-table
 pattern.
 }
 
@@ -94,9 +97,10 @@ start. Other vignettes worth knowing about:
 \itemize{
   \item \code{vignette("formant-analysis")} - formant tracking, including
         \code{FormantPath}
-  \item \code{vignette("speech-synthesis-klattgrid")} - articulatory synthesis
-  \item \code{vignette("textgrid-workflows")} - reading and querying annotations
-  \item \code{vignette("performance-optimization")} - batching, threading, SIMD
+\item \code{vignette("speech-synthesis-klattgrid")} - articulatory synthesis
+\item \code{vignette("textgrid-workflows")} - reading and querying
+ annotations
+\item \code{vignette("performance-optimization")} - batching, threading, SIMD
   \item \code{vignette("migration-from-praat")} and
         \code{vignette("migration-from-parselmouth")} - for those coming
         from Praat scripting or Python

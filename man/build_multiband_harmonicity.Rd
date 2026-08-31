@@ -37,7 +37,8 @@ band-pass filtering and Harmonicity computation are done once; only the
 summary stats are repeated.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 built <- build_multiband_harmonicity(sound)
 hnr_full <- multiband_hnr_stats(built)
@@ -48,5 +49,6 @@ hnr_full <- multiband_hnr_stats(built)
 - Maryn & Weenink (2015) - Multi-band HNR for voice quality
 }
 \seealso{
-\code{\link{multiband_hnr_stats}} and \code{\link{calculate_multiband_hnr_ultra}}
+\code{\link{multiband_hnr_stats}} and
+ \code{\link{calculate_multiband_hnr_ultra}}
 }

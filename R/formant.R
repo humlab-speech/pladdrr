@@ -44,9 +44,9 @@
 #' @param sound A praat_sound object created by \code{\link{read_sound}} or
 #'   \code{\link{create_sound}}
 #' @param time_step Time step in seconds for formant analysis (0 = auto: 4x
-#  Nyquist)
+#'  Nyquist)
 #' @param max_formant Maximum formant frequency in Hz (default: 5500 for adult
-#  female,
+#'  female,
 #'   use 5000 for adult male, 8000 for child)
 #' @param n_formants Number of formants to track (default: 5)
 #' @param window_length Analysis window length in seconds (default: 0.025)
@@ -77,7 +77,7 @@
 #' # sound is an R6 Sound object here, so this delegates to to_formant_burg()
 #' # and returns an R6 Formant object (see the second value's \\value above).
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' formants <- extract_formants(sound, max_formant = 5500)
 #' f1_mean <- formants$get_mean(formant_number = 1)
 #'
@@ -150,7 +150,7 @@ extract_formants <- function(sound,
 #' @examples
 #' set.seed(1)
 #' signal <- sin(2 * pi * 500 * seq(0, 0.5, by = 1 / 16000)) + rnorm(8001, sd =
-#  0.01)
+#'  0.01)
 #' pladdrr:::.detect_formants_burg(signal, sr = 16000, time_step = 0.05,
 #'                                  max_formant = 5500, n_formants = 4,
 #' window_length = 0.025, pre_emphasis_from = 50)
@@ -214,7 +214,7 @@ extract_formants <- function(sound,
 #' @examples
 #' set.seed(1)
 #' frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd
-#  = 0.01)
+#'  = 0.01)
 #' pladdrr:::.lpc_to_formants(frame, sr = 16000, lpc_order = 12,
 #'                             n_formants = 4, max_formant = 5500)
 #' @noRd
@@ -329,7 +329,7 @@ extract_formants <- function(sound,
 #'   with a \code{values} element (a data.frame with columns \code{time},
 #'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
 #' \code{class} attribute of \code{"praat_formant"}.
-#  \code{\link{extract_formants}()}
+#'  \code{\link{extract_formants}()}
 #'   no longer produces this (it now returns an R6 \code{Formant} object
 #'   instead — see its \code{\link{extract_formants}} documentation); build
 #'   one by hand for this legacy function, or use
@@ -412,7 +412,7 @@ get_formant_at_time <- function(formant, formant_number, time,
 #'   with a \code{values} element (a data.frame with columns \code{time},
 #'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
 #' \code{class} attribute of \code{"praat_formant"}.
-#  \code{\link{extract_formants}()}
+#'  \code{\link{extract_formants}()}
 #'   no longer produces this (it now returns an R6 \code{Formant} object
 #'   instead — see its \code{\link{extract_formants}} documentation); build
 #'   one by hand for this legacy function, or use

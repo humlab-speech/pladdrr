@@ -18,24 +18,24 @@
 #' @section Point query methods:
 #' \itemize{
 #' \item \code{get_value_at_time(time, interpolation)} - intensity at a time
-#  point (dB)
+#'  point (dB)
 #' \item \code{get_values_at_times(times, interpolation)} - intensity at a
-#  vector of times (batch)
+#'  vector of times (batch)
 #' }
 #'
 #' @section Statistics methods (over a time range):
 #' \itemize{
 #' \item \code{get_mean(from_time, to_time, averaging_method)} - mean intensity
-#  (dB)
+#'  (dB)
 #' \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
-#  (dB)
+#'  (dB)
 #' \item \code{get_minimum(from_time, to_time, interpolation)} - minimum
-#  intensity
+#'  intensity
 #' \item \code{get_maximum(from_time, to_time, interpolation)} - maximum
-#  intensity
+#'  intensity
 #'   \item \code{get_quantile(quantile, from_time, to_time)} - quantile
 #' \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
-#  of extremum
+#'  of extremum
 #' }
 #'
 #' @section Export methods:
@@ -47,19 +47,19 @@
 #'
 #' @section Interpolation:
 #' Codes: \code{"nearest"} (0), \code{"linear"} (1), \code{"cubic"} (2,
-#  default),
+#'  default),
 #' \code{"sinc70"} (3), \code{"sinc700"} (4).
 #' Averaging methods: \code{"energy"} (0, default), \code{"sones"} (1),
-#  \code{"db"} (2).
+#'  \code{"db"} (2).
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Intensity object; set internally when a method returns a new Intensity.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}},
-#  \code{\link{IntensityTier}}
+#'  \code{\link{IntensityTier}}
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
-#  44100)
+#'  44100)
 #' intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
 #' mean_int <- intensity$get_mean()
 #' df <- intensity$as_data_frame()

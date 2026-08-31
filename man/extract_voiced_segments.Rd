@@ -20,17 +20,23 @@ extract_voiced_segments(
 \arguments{
 \item{sound}{Sound object (continuous speech)}
 
-\item{minimum_pitch}{Numeric. Minimum pitch for intensity detection (Hz, default: 50)}
+\item{minimum_pitch}{Numeric. Minimum pitch for intensity detection (Hz,
+default: 50)}
 
-\item{time_step}{Numeric. Time step for intensity analysis (s, default: 0.003)}
+\item{time_step}{Numeric. Time step for intensity analysis (s, default:
+0.003)}
 
-\item{silence_threshold}{Numeric. Silence threshold in dB below max (default: -25)}
+\item{silence_threshold}{Numeric. Silence threshold in dB below max (default:
+-25)}
 
-\item{min_silent_interval}{Numeric. Minimum silence duration (s, default: 0.1)}
+\item{min_silent_interval}{Numeric. Minimum silence duration (s, default:
+0.1)}
 
-\item{min_sounding_interval}{Numeric. Minimum voiced duration (s, default: 0.1)}
+\item{min_sounding_interval}{Numeric. Minimum voiced duration (s, default:
+0.1)}
 
-\item{zcr_threshold}{Numeric. Maximum ZCR for voiced speech (Hz, default: 3000)}
+\item{zcr_threshold}{Numeric. Maximum ZCR for voiced speech (Hz, default:
+3000)}
 
 \item{zcr_window}{Numeric. ZCR analysis window duration (s, default: 0.03)}
 
@@ -39,8 +45,9 @@ extract_voiced_segments(
 \item{return_textgrid}{Logical. Also return VAD TextGrid (default: FALSE)}
 }
 \value{
-If `return_textgrid = FALSE`: Sound object with concatenated voiced segments.
-        If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
+If `return_textgrid = FALSE`: Sound object with concatenated voiced
+ segments.
+If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
 }
 \description{
 Voice activity detection combining intensity-based detection with optional
@@ -57,7 +64,8 @@ intensity-only detection.
 }
 \examples{
 \donttest{
-sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+ 16000)
 
 # Full AVQI-compatible extraction (default)
 voiced <- extract_voiced_segments(sound)

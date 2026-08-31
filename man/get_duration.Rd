@@ -16,6 +16,7 @@ Duration in seconds
 **DEPRECATED:** Use \code{sound$get_duration()} instead.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 suppressWarnings(get_duration(sound))
 }

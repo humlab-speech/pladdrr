@@ -19,7 +19,8 @@ A data.table (inherits from data.frame) with two columns:
   }
 }
 \description{
-Converts a praat_sound object to a data frame with time and amplitude columns.
+Converts a praat_sound object to a data frame with time and amplitude
+ columns.
 This is useful for plotting and further analysis in R.
 }
 \examples{

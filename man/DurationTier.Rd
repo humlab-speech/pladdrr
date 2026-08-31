@@ -4,15 +4,18 @@
 \alias{DurationTier}
 \title{DurationTier}
 \arguments{
-\item{tmin}{Start time in seconds. Used with \code{tmax} to create a new, empty DurationTier.}
+\item{tmin}{Start time in seconds. Used with \code{tmax} to create a new,
+empty DurationTier.}
 
-\item{tmax}{End time in seconds. Used with \code{tmin} to create a new, empty DurationTier.}
+\item{tmax}{End time in seconds. Used with \code{tmin} to create a new, empty
+DurationTier.}
 
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 DurationTier object; set internally when a method returns a new DurationTier.}
 }
 \value{
-A \code{DurationTier} object with methods for duration and tempo manipulation via time-value points.
+A \code{DurationTier} object with methods for duration and tempo
+ manipulation via time-value points.
 }
 \description{
 Praat DurationTier object for duration manipulation, created via direct

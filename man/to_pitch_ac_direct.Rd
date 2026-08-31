@@ -32,7 +32,8 @@ to_pitch_ac_direct(
 
 \item{very_accurate}{Use accurate but slower method (default FALSE)}
 
-\item{silence_threshold}{Frames below this relative intensity are unvoiced (default 0.03)}
+\item{silence_threshold}{Frames below this relative intensity are unvoiced
+(default 0.03)}
 
 \item{voicing_threshold}{Strength required for voiced decision (default 0.45)}
 
@@ -49,7 +50,8 @@ External pointer to Pitch (NOT R6 object)
 }
 \description{
 Create Pitch analysis using autocorrelation method with full control over
-all voicing parameters. Returns a raw external pointer instead of an R6 object.
+all voicing parameters. Returns a raw external pointer instead of an R6
+ object.
 
 **NEW in v4.0.1:** Exposes all voicing parameters that were previously only
 available in Tier 1 (Standard) API.

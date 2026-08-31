@@ -7,11 +7,13 @@
 \item{tmin, tmax}{When creating an empty PointProcess, the time span of the
 object. Leave \code{NULL} (the default) when supplying \code{.xptr}.}
 
-\item{.xptr}{Not for direct use. External pointer to the underlying C++ PointProcess
-object; set internally when a method returns a new PointProcess.}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+PointProcess
+ object; set internally when a method returns a new PointProcess.}
 }
 \value{
-A \code{PointProcess} object with methods for glottal pulse analysis, including jitter and shimmer.
+A \code{PointProcess} object with methods for glottal pulse analysis,
+ including jitter and shimmer.
 }
 \description{
 A PointProcess is a sequence of time points, typically representing glottal
@@ -23,13 +25,16 @@ analysis: jitter (period perturbation) and shimmer (amplitude perturbation).
 \itemize{
   \item \code{get_number_of_points()} - total number of time points
   \item \code{get_time(index)} - time of point at index
-  \item \code{get_nearest_index(time)} - index of point nearest to a given time
-  \item \code{get_low_index(time)}, \code{get_high_index(time)} - index bounding a time
+\item \code{get_nearest_index(time)} - index of point nearest to a given time
+\item \code{get_low_index(time)}, \code{get_high_index(time)} - index
+ bounding a time
   \item \code{get_interval(time)} - time between surrounding points
   \item \code{get_mean_period(from_time, to_time, ...)} - mean glottal period
-  \item \code{get_stdev_period(from_time, to_time, ...)} - SD of glottal period
-  \item \code{get_number_of_periods(from_time, to_time, ...)} - number of periods in range
-  \item \code{get_voice_breaks(from_time, to_time, ...)} - number of voice breaks
+\item \code{get_stdev_period(from_time, to_time, ...)} - SD of glottal period
+\item \code{get_number_of_periods(from_time, to_time, ...)} - number of
+ periods in range
+\item \code{get_voice_breaks(from_time, to_time, ...)} - number of voice
+ breaks
 }
 }
 
@@ -37,40 +42,55 @@ analysis: jitter (period perturbation) and shimmer (amplitude perturbation).
 
 Period perturbation measures. See the Note section for units.
 \itemize{
-  \item \code{get_jitter_local(from_time, to_time, ...)} - local jitter (Jloc)
-  \item \code{get_jitter_local_absolute(from_time, to_time, ...)} - local absolute jitter
-  \item \code{get_jitter_rap(from_time, to_time, ...)} - relative average perturbation
-  \item \code{get_jitter_ppq5(from_time, to_time, ...)} - 5-period perturbation quotient
-  \item \code{get_jitter_ddp(from_time, to_time, ...)} - difference of differences of periods
+\item \code{get_jitter_local(from_time, to_time, ...)} - local jitter (Jloc)
+\item \code{get_jitter_local_absolute(from_time, to_time, ...)} - local
+ absolute jitter
+\item \code{get_jitter_rap(from_time, to_time, ...)} - relative average
+ perturbation
+\item \code{get_jitter_ppq5(from_time, to_time, ...)} - 5-period perturbation
+ quotient
+\item \code{get_jitter_ddp(from_time, to_time, ...)} - difference of
+ differences of periods
 }
 }
 
 \section{Shimmer methods}{
 
-Amplitude perturbation measures; each takes a Sound. See the Note section for units.
+Amplitude perturbation measures; each takes a Sound. See the Note section for
+ units.
 \itemize{
-  \item \code{get_shimmer_local(sound, from_time, to_time, ...)} - local shimmer (Shim)
-  \item \code{get_shimmer_local_db(sound, from_time, to_time, ...)} - local shimmer in dB
-  \item \code{get_shimmer_apq3(sound, from_time, to_time, ...)} - 3-period amplitude perturbation quotient
-  \item \code{get_shimmer_apq5(sound, from_time, to_time, ...)} - 5-period APQ
-  \item \code{get_shimmer_apq11(sound, from_time, to_time, ...)} - 11-period APQ
-  \item \code{get_shimmer_dda(sound, from_time, to_time, ...)} - difference of differences of amplitude
+\item \code{get_shimmer_local(sound, from_time, to_time, ...)} - local
+ shimmer (Shim)
+\item \code{get_shimmer_local_db(sound, from_time, to_time, ...)} - local
+ shimmer in dB
+\item \code{get_shimmer_apq3(sound, from_time, to_time, ...)} - 3-period
+ amplitude perturbation quotient
+\item \code{get_shimmer_apq5(sound, from_time, to_time, ...)} - 5-period APQ
+\item \code{get_shimmer_apq11(sound, from_time, to_time, ...)} - 11-period
+ APQ
+\item \code{get_shimmer_dda(sound, from_time, to_time, ...)} - difference of
+ differences of amplitude
 }
 }
 
 \section{Batch and report methods}{
 
 \itemize{
-  \item \code{get_jitter_shimmer_batch(pointprocess, sound, ...)} - all jitter and shimmer values as a named list, computed in one C++ call. Cache-aware: later calls with the same parameters return instantly.
-  \item \code{voice_report(sound, pitch, ...)} - combined voice report (jitter, shimmer, HNR)
+\item \code{get_jitter_shimmer_batch(pointprocess, sound, ...)} - all jitter
+ and shimmer values as a named list, computed in one C++ call. Cache-aware:
+ later calls with the same parameters return instantly.
+\item \code{voice_report(sound, pitch, ...)} - combined voice report (jitter,
+ shimmer, HNR)
 }
 }
 
 \section{Export and conversion methods}{
 
 \itemize{
-  \item \code{as_vector()}, \code{as_data_frame()} - export as a vector or data.frame
-  \item \code{to_textgrid_vuv(max_voiced_period, ...)} - create a voiced/unvoiced TextGrid
+\item \code{as_vector()}, \code{as_data_frame()} - export as a vector or
+ data.frame
+\item \code{to_textgrid_vuv(max_voiced_period, ...)} - create a
+ voiced/unvoiced TextGrid
   \item \code{to_pitch_tier()} - convert to a PitchTier
   \item \code{to_sound_pulse_train(...)} - create a pulse train Sound
 }
@@ -85,12 +105,15 @@ cache (no additional C++ call).
 }
 
 \examples{
-sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate = 44100)
-pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+sound <- Sound$create_tone(duration = 1.0, frequency = 150, sampling_rate =
+ 44100)
+pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling =
+ 600)
 jitter <- pp$get_jitter_local()
 shimmer <- pp$get_shimmer_local(sound)
 
 }
 \seealso{
-\code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{AmplitudeTier}}
+\code{\link{Sound}}, \code{\link{Pitch}},
+ \code{\link{AmplitudeTier}}
 }

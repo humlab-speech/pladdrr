@@ -10,17 +10,17 @@
 #' @param tmax End time in seconds.
 #' @param number_of_formants Number of formants to track. Default 10.
 #' @param initial_first_formant Initial frequency of the first formant, in Hz.
-#  Default 550.
+#'  Default 550.
 #' @param initial_formant_spacing Initial spacing between formants, in Hz.
-#  Default 1100.
+#'  Default 1100.
 #' @param initial_first_bandwidth Initial bandwidth of the first formant, in Hz.
-#  Default 60.
+#'  Default 60.
 #' @param initial_bandwidth_spacing Initial spacing between formant bandwidths,
-#  in Hz. Default 50.
+#'  in Hz. Default 50.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   FormantGrid object; set internally when a method returns a new FormantGrid.
 #' @return A \code{FormantGrid} object with methods for formant frequency and
-#  bandwidth manipulation.
+#'  bandwidth manipulation.
 #'
 #' @examples
 #' fg <- FormantGrid(0, 1, number_of_formants = 3)

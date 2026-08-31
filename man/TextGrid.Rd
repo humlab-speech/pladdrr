@@ -23,15 +23,18 @@ TextGrids are the primary tool for linguistic annotation in Praat. They
 contain one or more tiers, where each tier can be:
 
 \itemize{
-  \item \code{IntervalTier}: consecutive time intervals with labels (e.g., phonemes, words)
-  \item \code{PointTier} (TextTier): time points with labels (e.g., events, tones)
+\item \code{IntervalTier}: consecutive time intervals with labels (e.g.,
+ phonemes, words)
+\item \code{PointTier} (TextTier): time points with labels (e.g., events,
+ tones)
 }
 }
 \section{Creating TextGrid objects}{
 
 \itemize{
   \item \code{TextGrid(path)} - read from file (Praat text or binary format)
-  \item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an empty grid
+\item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an
+ empty grid
 }
 }
 
@@ -40,7 +43,7 @@ contain one or more tiers, where each tier can be:
 \itemize{
   \item \code{get_number_of_tiers()} - number of tiers
   \item \code{get_tier_names()} - names of all tiers
-  \item \code{tier_is_interval_tier(tier)} - check if a tier is an IntervalTier
+\item \code{tier_is_interval_tier(tier)} - check if a tier is an IntervalTier
   \item \code{tier_is_point_tier(tier)} - check if a tier is a PointTier
 }
 }
@@ -50,10 +53,13 @@ contain one or more tiers, where each tier can be:
 \itemize{
   \item \code{get_number_of_intervals(tier)} - number of intervals in a tier
   \item \code{get_interval_text(tier, n)} - get the label of interval n
-  \item \code{get_label_at_time(tier, time)} - get the label at a specific time
-  \item \code{get_all_intervals(tier)} - get all intervals as a data.frame (fast)
-  \item \code{extract_intervals_batch(tier, ...)} - extract matching intervals (fast)
-  \item \code{extract_intervals_where(sound, tier, criterion, text, preserve_times)} - extract Sound intervals matching a text criterion
+\item \code{get_label_at_time(tier, time)} - get the label at a specific time
+\item \code{get_all_intervals(tier)} - get all intervals as a data.frame
+ (fast)
+\item \code{extract_intervals_batch(tier, ...)} - extract matching intervals
+ (fast)
+\item \code{extract_intervals_where(sound, tier, criterion, text,
+ preserve_times)} - extract Sound intervals matching a text criterion
   \item \code{set_interval_text(tier, n, text)} - set the label of interval n
   \item \code{insert_boundary(tier, time)} - insert a new boundary
   \item \code{remove_boundary(tier, time)} - remove a boundary
@@ -78,7 +84,8 @@ contain one or more tiers, where each tier can be:
   \item \code{add_point_tier(name)} - add a new PointTier
   \item \code{remove_tier(tier)} - remove a tier
   \item \code{set_tier_name(tier, name)} - rename a tier
-  \item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new name
+\item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new
+ name
 }
 }
 
@@ -93,7 +100,8 @@ contain one or more tiers, where each tier can be:
 
 \examples{
 # Create new TextGrid with one interval tier and one point tier
-# (tier_names lists all tiers; point_tiers names the subset that are point tiers)
+# (tier_names lists all tiers; point_tiers names the subset that are point
+ tiers)
 tg <- textgrid_create(0, 1, "words tones", "tones")
 tg$get_tier_names()
 

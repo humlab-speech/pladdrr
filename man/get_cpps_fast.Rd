@@ -22,11 +22,14 @@ get_cpps_fast(
 \arguments{
 \item{powercepstrogram}{External pointer to PowerCepstrogram object}
 
-\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default FALSE)}
+\item{subtract_tilt}{Logical, subtract tilt before calculating CPPS (default
+FALSE)}
 
-\item{time_averaging_window}{Numeric, time averaging window in seconds (default 0.01)}
+\item{time_averaging_window}{Numeric, time averaging window in seconds
+(default 0.01)}
 
-\item{quefrency_averaging_window}{Numeric, quefrency averaging window in seconds (default 0.001)}
+\item{quefrency_averaging_window}{Numeric, quefrency averaging window in
+seconds (default 0.001)}
 
 \item{pitch_floor}{Numeric, minimum F0 in Hz (default 60)}
 
@@ -34,36 +37,45 @@ get_cpps_fast(
 
 \item{delta_f0}{Numeric, F0 fractional precision (default 0.05)}
 
-\item{interpolation}{Character, one of "parabolic", "none", "cubic", "sinc70", "sinc700" (default "parabolic")}
+\item{interpolation}{Character, one of "parabolic", "none", "cubic",
+"sinc70", "sinc700" (default "parabolic")}
 
-\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds (default 0.001)}
+\item{qstart_fit}{Numeric, quefrency range start for fitting in seconds
+(default 0.001)}
 
-\item{qend_fit}{Numeric, quefrency range end in seconds (default 0, means auto)}
+\item{qend_fit}{Numeric, quefrency range end in seconds (default 0, means
+auto)}
 
-\item{trend_line_type}{Character, "straight" or "exponential" (default "straight")}
+\item{trend_line_type}{Character, "straight" or "exponential" (default
+"straight")}
 
-\item{fit_method}{Character, "robust" (Siegel repeated median), "least_squares",
-or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
-reproducible**: it samples randomly inside Praat's slope selection, so repeated
+\item{fit_method}{Character, "robust" (Siegel repeated median),
+ "least_squares",
+  or "robust slow" (Theil-Sen). Default "robust". **"robust slow" is not
+reproducible**: it samples randomly inside Praat's slope selection, so
+ repeated
 runs on the same input differ (~0.8 dB observed) and can return values on the
 order of 1e290. That is an upstream Praat defect, reproduced faithfully here;
-pladdrr warns once per session when you select it.}
+  pladdrr warns once per session when you select it.}
 }
 \value{
 Numeric CPPS value in dB
 }
 \description{
-Calculate CPPS from a PowerCepstrogram external pointer, bypassing R6 dispatch.
+Calculate CPPS from a PowerCepstrogram external pointer, bypassing R6
+ dispatch.
 }
 \details{
 **ADVANCED API** - Takes the external pointer returned by
 `to_powercepstrogram_fast()` instead of a `PowerCepstrogram` R6 object.
 
-Useful when you need to calculate CPPS multiple times with different parameters
+Useful when you need to calculate CPPS multiple times with different
+ parameters
 from the same PowerCepstrogram object.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Create cepstrogram once
 pcep_ptr <- to_powercepstrogram_fast(sound)

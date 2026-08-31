@@ -15,7 +15,8 @@ aggregate_measurements(
 
 \item{by}{Character. Column to group by (default: "label").}
 
-\item{stats}{Character vector. Statistics to compute: "mean", "sd", "median", "min", "max", "n".}
+\item{stats}{Character vector. Statistics to compute: "mean", "sd", "median",
+"min", "max", "n".}
 }
 \value{
 Data frame with aggregated statistics.

@@ -16,7 +16,8 @@ Logical indicating validity
 Validates that an object is a Sound R6 object or legacy praat_sound
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 is_praat_sound(sound)
 is_praat_sound(42)
 }

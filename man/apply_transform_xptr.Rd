@@ -26,7 +26,8 @@ The transform function receives sample amplitude and returns transformed
 amplitude. Common transforms:
 
 \itemize{
-  \item Clipping: `x > threshold ? threshold : (x < -threshold ? -threshold : x)`
+\item Clipping: `x > threshold ? threshold : (x < -threshold ? -threshold :
+ x)`
   \item Soft clipping: `tanh(x * gain)`
   \item Rectification: `fabs(x)`
   \item Squaring: `x * x`
@@ -41,7 +42,8 @@ if (requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
     depends = character()
   )
 
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+ 16000)
   clipped <- apply_transform_xptr(sound, soft_clip)
 }
 }

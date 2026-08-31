@@ -6,7 +6,7 @@
 #' Generate a sine wave
 #'
 #' Creates a praat_sound object containing a pure sine wave at a specified
-#  frequency.
+#'  frequency.
 #' Useful for testing and creating reference signals.
 #'
 #' @param frequency Frequency in Hz (must be positive)
@@ -18,7 +18,7 @@
 #'
 #' @details
 #' The generated sine wave follows the formula: \code{amplitude * sin(2 * pi *
-#  frequency * t)}
+#'  frequency * t)}
 #' where t is time. The wave starts at phase 0 (value 0 at t=0).
 #'
 #' @examples

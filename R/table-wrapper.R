@@ -1,7 +1,7 @@
 #' @title Praat Table Object
 #' @description
 #' Praat Table object with direct C++ module binding for tabular data
-#  operations.
+#'  operations.
 #'
 #' @details
 #' Table objects store tabular data with named columns and support various
@@ -15,7 +15,7 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Table object; set internally when a method returns a new Table.
 #' @return A \code{Table} object with methods for tabular data access and
-#  statistics.
+#'  statistics.
 #'
 #' @examples
 #' tbl <- Table(numberOfRows = 3, columnNames = c("word", "duration"))

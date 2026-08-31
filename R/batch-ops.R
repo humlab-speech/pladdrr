@@ -5,7 +5,7 @@
 #'
 #' Concatenates a list of Sound objects at the C++ level, avoiding the O(n)
 #' R→C boundary crossings that occur with `Reduce(function(a,b)
-#  a$concatenate(b), sounds)`.
+#'  a$concatenate(b), sounds)`.
 #'
 #' @inheritParams pladdrr_shared_params sounds
 #' @param overlap Numeric. Overlap duration in seconds (default: 0)
@@ -342,7 +342,7 @@ sound_to_pitch_shs_batch <- function(sounds,
 #'   Sound$create_tone(frequency = 200, duration = 0.5)
 #' )
 #' pitches <- tryCatch(sound_to_pitch_spinet_batch(sounds), error = function(e)
-#  NULL)
+#'  NULL)
 #'
 #' @export
 sound_to_pitch_spinet_batch <- function(sounds,
@@ -391,7 +391,7 @@ sound_to_pitch_spinet_batch <- function(sounds,
 #' @param window_length Numeric. Window length in seconds (default: 0.025)
 #' @param pre_emphasis_from Numeric. Pre-emphasis from frequency (default: 50)
 #' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs
-#  (FALSE)
+#'  (FALSE)
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
 #'
@@ -443,7 +443,7 @@ sound_to_formant_batch <- function(sounds,
 #' @inheritParams pladdrr_shared_params time_step
 #' @param subtract_mean Logical. Subtract mean pressure (default: TRUE)
 #' @param return_r6 Logical. Return R6 Intensity objects (TRUE) or raw xptrs
-#  (FALSE)
+#'  (FALSE)
 #'
 #' @return List of Intensity objects (R6 or xptr depending on return_r6)
 #'
@@ -547,7 +547,7 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
 #' @param window_length Numeric. Window length (default: 0.025)
 #' @param pre_emphasis_from Numeric. Pre-emphasis frequency (default: 50)
 #' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs
-#  (FALSE)
+#'  (FALSE)
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
 #'
@@ -593,15 +593,15 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 #' Merge Multiple TextGrid Objects
 #'
 #' Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier
-#  copying.
+#'  copying.
 #' Manual merge requires save/reload + insert_boundary for each interval (each
-#  insert shifts
+#'  insert shifts
 #' all later intervals). Batch merge is single-pass.
 #'
 #' @param textgrids List of TextGrid objects (external pointers or R6 objects
-#  with .xptr)
+#'  with .xptr)
 #' @param equalize_domains If TRUE, all tiers extended to same domain with empty
-#  intervals
+#'  intervals
 #'   at edges if needed (default: FALSE)
 #'
 #' @return TextGrid object (external pointer)
@@ -688,15 +688,15 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' Extracts a time window from a sound file without loading the entire file.
 #' Optionally resamples the window to a target sampling rate.
 #' Uses LongSound for lazy loading - only the requested window is loaded from
-#  disk.
+#'  disk.
 #'
 #' @param path Path to sound file (WAV, AIFF, FLAC, MP3, etc.)
 #' @param start Start time of window in seconds
 #' @param end End time of window in seconds
 #' @param resample_to Target sampling rate in Hz (optional). If NULL, no
-#  resampling.
+#'  resampling.
 #' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to
-#  start at 0 (default: FALSE)
+#'  start at 0 (default: FALSE)
 #'
 #' @return Sound object containing the windowed (and optionally resampled) audio
 #'
@@ -723,11 +723,11 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #'
 #' # Extract and resample (for spectral analysis)
 #' window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to =
-#  10000)
+#'  10000)
 #'
 #' # Preserve original time domain (window starts at 0.5, not 0.0)
 #' window_timed <- sound_load_window(path, start = 0.5, end = 0.6,
-#  preserve_times = TRUE)
+#'  preserve_times = TRUE)
 #'
 #' unlink(path)
 #'

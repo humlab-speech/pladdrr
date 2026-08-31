@@ -16,11 +16,11 @@
 #' }
 #'
 #' @param x Numeric vector of x coordinates. Required unless \code{.xptr} is
-#  given.
+#'  given.
 #' @param y Numeric vector of y coordinates. Required unless \code{.xptr} is
-#  given.
+#'  given.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
-#  Polygon
+#'  Polygon
 #'   object; set internally when a method returns a new Polygon.
 #' @return A Polygon object with methods for geometry operations.
 #'

@@ -4,12 +4,15 @@
 \alias{Polygon}
 \title{Polygon Object}
 \arguments{
-\item{x}{Numeric vector of x coordinates. Required unless \code{.xptr} is given.}
+\item{x}{Numeric vector of x coordinates. Required unless \code{.xptr} is
+given.}
 
-\item{y}{Numeric vector of y coordinates. Required unless \code{.xptr} is given.}
+\item{y}{Numeric vector of y coordinates. Required unless \code{.xptr} is
+given.}
 
-\item{.xptr}{Not for direct use. External pointer to the underlying C++ Polygon
-object; set internally when a method returns a new Polygon.}
+\item{.xptr}{Not for direct use. External pointer to the underlying C++
+Polygon
+ object; set internally when a method returns a new Polygon.}
 }
 \value{
 A Polygon object with methods for geometry operations.

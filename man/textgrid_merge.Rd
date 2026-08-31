@@ -7,17 +7,21 @@
 textgrid_merge(textgrids, equalize_domains = FALSE)
 }
 \arguments{
-\item{textgrids}{List of TextGrid objects (external pointers or R6 objects with .xptr)}
+\item{textgrids}{List of TextGrid objects (external pointers or R6 objects
+with .xptr)}
 
-\item{equalize_domains}{If TRUE, all tiers extended to same domain with empty intervals
-at edges if needed (default: FALSE)}
+\item{equalize_domains}{If TRUE, all tiers extended to same domain with empty
+intervals
+ at edges if needed (default: FALSE)}
 }
 \value{
 TextGrid object (external pointer)
 }
 \description{
-Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier copying.
-Manual merge requires save/reload + insert_boundary for each interval (each insert shifts
+Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier
+ copying.
+Manual merge requires save/reload + insert_boundary for each interval (each
+ insert shifts
 all later intervals). Batch merge is single-pass.
 }
 \details{

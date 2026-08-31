@@ -29,11 +29,14 @@ to_formant_direct(
 
 \item{pre_emphasis}{Pre-emphasis frequency (Hz)}
 
-\item{max_number_of_formants}{Alias for `max_formants` (maximum number of formants)}
+\item{max_number_of_formants}{Alias for `max_formants` (maximum number of
+formants)}
 
-\item{maximum_formant}{Alias for `max_formant` (maximum formant frequency, Hz)}
+\item{maximum_formant}{Alias for `max_formant` (maximum formant frequency,
+Hz)}
 
-\item{pre_emphasis_from}{Alias for `pre_emphasis` (pre-emphasis frequency, Hz)}
+\item{pre_emphasis_from}{Alias for `pre_emphasis` (pre-emphasis frequency,
+Hz)}
 }
 \value{
 External pointer to Formant

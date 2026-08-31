@@ -15,7 +15,8 @@ matrix_create_simple(numberOfRows, numberOfColumns)
 A Matrix object
 }
 \description{
-Creates a new Matrix object with given dimensions. Domain defaults to [0,1] for both axes.
+Creates a new Matrix object with given dimensions. Domain defaults to [0,1]
+ for both axes.
 }
 \examples{
 m <- matrix_create_simple(3, 4)
@@ -23,5 +24,6 @@ m$set_value(1, 1, 5.0)
 m$get_value(1, 1)
 }
 \seealso{
-\code{\link{matrix_create}} for full parameter control, \code{\link{Matrix}} for object methods
+\code{\link{matrix_create}} for full parameter control,
+ \code{\link{Matrix}} for object methods
 }

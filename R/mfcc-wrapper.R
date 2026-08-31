@@ -43,7 +43,7 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++ MFCC
 #'   object; set internally when a method returns a new MFCC.
 #' @return An \code{MFCC} object with methods for Mel-frequency cepstral
-#  coefficient analysis.
+#'  coefficient analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
@@ -223,7 +223,7 @@ MFCC <- function(.xptr = NULL) {
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LFCC
 #'   object; set internally when a method returns a new LFCC.
 #' @return An \code{LFCC} object with methods for linear-frequency cepstral
-#  coefficient analysis.
+#'  coefficient analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)

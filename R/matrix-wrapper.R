@@ -6,7 +6,7 @@
 #' Matrix objects represent two-dimensional sampled data with x and y axes.
 #'
 #' @return A \code{Matrix} object with methods for two-dimensional sampled data
-#  access.
+#'  access.
 #'
 #' @examples
 #' m <- Matrix(numberOfRows = 3, numberOfColumns = 4)
@@ -165,7 +165,7 @@ as.matrix.Matrix <- function(x, ...) x$as_matrix()
 #' @param y1 Y value of first row
 #' @return A Matrix object
 #' @seealso \code{\link{matrix_create_simple}} for simpler creation,
-#  \code{\link{Matrix}} for object methods
+#'  \code{\link{Matrix}} for object methods
 #' @examples
 #' m <- matrix_create(xmin = 0, xmax = 2, nx = 2, dx = 1, x1 = 0.5,
 #'                     ymin = 0, ymax = 1, ny = 1, dy = 1, y1 = 0.5)
@@ -180,13 +180,13 @@ matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
 #' Create a simple Praat Matrix
 #'
 #' Creates a new Matrix object with given dimensions. Domain defaults to [0,1]
-#  for both axes.
+#'  for both axes.
 #'
 #' @param numberOfRows Number of rows
 #' @param numberOfColumns Number of columns
 #' @return A Matrix object
 #' @seealso \code{\link{matrix_create}} for full parameter control,
-#  \code{\link{Matrix}} for object methods
+#'  \code{\link{Matrix}} for object methods
 #' @examples
 #' m <- matrix_create_simple(3, 4)
 #' m$set_value(1, 1, 5.0)

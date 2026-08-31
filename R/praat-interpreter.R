@@ -14,7 +14,7 @@
 #'
 #' Executes a Praat script with automatic interpreter initialization.
 #' Objects created during script execution remain in Praat's internal object
-#  list.
+#'  list.
 #'
 #' @param script Character string containing Praat script code
 #' @return Invisibly returns NULL

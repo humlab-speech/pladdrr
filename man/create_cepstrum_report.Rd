@@ -15,7 +15,8 @@ create_cepstrum_report(
 \arguments{
 \item{cepstrogram}{PowerCepstrogram object}
 
-\item{time_slice}{Numeric. Time point for extracting single cepstrum (default: middle)}
+\item{time_slice}{Numeric. Time point for extracting single cepstrum
+(default: middle)}
 
 \item{save_path}{Character. Path to save plot (optional)}
 
@@ -32,7 +33,8 @@ cepstrogram, and CPP time series for comprehensive analysis.
 }
 \examples{
 if (requireNamespace("gridExtra", quietly = TRUE)) {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+ 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 
   # Create comprehensive report at t = 0.3s (mid-signal)

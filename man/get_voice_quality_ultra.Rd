@@ -21,8 +21,9 @@ get_voice_quality_ultra(
 "hnr", or "all" for all metrics}
 
 \item{min_pitch}{Pitch floor in Hz for pitch extraction (default: 75).
-Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
-independent of this parameter.}
+Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity
+ default),
+  independent of this parameter.}
 
 \item{max_pitch}{Pitch ceiling in Hz (default: 600)}
 
@@ -46,7 +47,7 @@ Named list with requested voice quality metrics:
   \item{jitter_local}{Local jitter (relative, fraction)}
   \item{jitter_local_abs}{Local absolute jitter (seconds)}
   \item{jitter_rap}{Relative average perturbation}
-  \item{jitter_ppq5}{5-point period perturbation quotient (DSI PPQ component)}
+\item{jitter_ppq5}{5-point period perturbation quotient (DSI PPQ component)}
   \item{jitter_ddp}{Difference of differences of periods}
   \item{shimmer_local}{Local shimmer (relative, fraction)}
   \item{shimmer_local_db}{Local shimmer (dB)}
@@ -97,7 +98,8 @@ with no intermediate R objects.
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Get all voice quality metrics
 vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)

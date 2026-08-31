@@ -27,7 +27,8 @@ calculate_cpps_ultra(
 
 \item{time_averaging_window}{Time averaging window in seconds (default 0.001)}
 
-\item{quefrency_averaging_window}{Quefrency averaging window in seconds (default 0.0005)}
+\item{quefrency_averaging_window}{Quefrency averaging window in seconds
+(default 0.0005)}
 
 \item{pitch_floor}{Minimum F0 in Hz (default 60)}
 
@@ -37,25 +38,30 @@ calculate_cpps_ultra(
 
 \item{time_step}{Time step for cepstrogram in seconds (default 0.002)}
 
-\item{max_quefrency}{End of the trend-fit quefrency window in seconds (default
-0.04); 0 means autowindow to the full quefrency range (Praat convention).}
+\item{max_quefrency}{End of the trend-fit quefrency window in seconds
+(default
+ 0.04); 0 means autowindow to the full quefrency range (Praat convention).}
 
 \item{tolerance}{Tolerance for peak detection (default 0.05)}
 
-\item{interpolation}{Peak interpolation: "none", "parabolic", "cubic", "sinc70", "sinc700" (default "parabolic")}
+\item{interpolation}{Peak interpolation: "none", "parabolic", "cubic",
+"sinc70", "sinc700" (default "parabolic")}
 
 \item{tilt_line_quefrency}{Start of the trend-fit quefrency window in seconds
 (default 0.003).}
 
-\item{line_type}{Trend line type: "straight" or "exponential" (default "straight")}
+\item{line_type}{Trend line type: "straight" or "exponential" (default
+"straight")}
 
 \item{fit_method}{Fitting method: "robust" (Siegel repeated median),
 "least_squares", or "robust slow" (Theil-Sen). Default "robust".
 **"robust slow" is not reproducible** — see `calculate_cpps_fast()`.}
 
-\item{pre_emphasis_from}{Pre-emphasis frequency in Hz for the cepstrogram (default 50).}
+\item{pre_emphasis_from}{Pre-emphasis frequency in Hz for the cepstrogram
+(default 50).}
 
-\item{max_frequency}{Maximum frequency in Hz for the cepstrogram (default 5000).}
+\item{max_frequency}{Maximum frequency in Hz for the cepstrogram (default
+5000).}
 }
 \value{
 Numeric CPPS value in dB
@@ -88,7 +94,8 @@ section of \code{\link{calculate_cpps_fast}}.
 This is still a **CPPS** helper. For a single-interval **CPP** measurement,
 use the segment's `Spectrum -> PowerCepstrum -> get_peak_prominence()` path
 instead of `calculate_cpps_ultra()`. It is both cheaper and closer to the
-Praat workflow used by voice-quality scripts that query one interval at a time.
+Praat workflow used by voice-quality scripts that query one interval at a
+ time.
 
 **Use Cases:**
 - AVQI v2.03/v3.01 implementation
@@ -108,7 +115,8 @@ Ultra functions.
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 
 # Tier 4 Ultra (same defaults as calculate_cpps_fast)
 cpps <- calculate_cpps_ultra(sound)

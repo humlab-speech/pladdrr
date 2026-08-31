@@ -156,13 +156,13 @@ NULL
 #'
 #' @param directory Character path to directory containing audio files
 #' @param pattern Regular expression pattern to match files (default:
-#  "\\\\.wav$")
+#'  "\\\\.wav$")
 #' @param func Function to apply to each file. Should accept a Sound object
 #'   as first argument and return a named list or data frame row
 #' @param recursive Logical, search directories recursively (default: FALSE)
 #' @param parallel Logical, use parallel processing (default: FALSE)
 #' @param ncores Integer, number of cores for parallel processing (default: NULL
-#  = all-1)
+#'  = all-1)
 #' @param progress Logical, show progress bar (default: TRUE)
 #' @param ... Additional arguments passed to func
 #'
@@ -172,7 +172,7 @@ NULL
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #'
 #' results <- batch_process(
@@ -184,7 +184,7 @@ NULL
 #'     list(
 #'       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
 #' sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit =
-#  "hertz")
+#'  "hertz")
 #'     )
 #'   }
 #' )
@@ -231,11 +231,11 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #'   (default: same as sound_dir)
 #' @param sound_pattern Pattern to match sound files (default: "\\\\.wav$")
 #' @param textgrid_pattern Pattern to match TextGrid files (default:
-#  "\\\\.TextGrid$")
+#'  "\\\\.TextGrid$")
 #' @param by Matching strategy: "basename" (default), "full", or a custom
-#  function
+#'  function
 #' @param require_both Logical, only return pairs where both files exist
-#  (default: TRUE)
+#'  (default: TRUE)
 #'
 #' @return Data frame with columns: sound_file, textgrid_file, basename
 #'
@@ -243,7 +243,7 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)$save(
+#'  16000)$save(
 #'   file.path(audio_dir, "utt1.wav")
 #' )
 #' tg <- TextGrid$create(0, 0.3, "words")
@@ -313,7 +313,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #'
 #' @description
 #' Extract acoustic measurements from intervals or points in TextGrid
-#  annotations.
+#'  annotations.
 #' This replaces complex Praat scripts that loop over TextGrid intervals.
 #'
 #' @param sound Sound object or path to sound file
@@ -331,7 +331,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' @examples
 #' \donttest{
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
-#  16000)
+#'  16000)
 #' tg <- textgrid_create(0, 0.6, "phones")
 #' tg$insert_boundary("phones", 0.3)
 #' tg$set_interval_text("phones", 1, "a")
@@ -407,7 +407,7 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #'
 #' # Equivalent to: Create Strings as file list: "list", "*.wav"
@@ -429,13 +429,13 @@ create_file_list <- function(directory, pattern = NULL,
 #'
 #' @param sound_dir Character. Directory containing sound files.
 #' @param textgrid_dir Character. Directory containing TextGrid files (default:
-#  same as sound_dir).
+#'  same as sound_dir).
 #' @param sound_pattern Character. Pattern for sound files (default:
-#  "\\\\.wav$").
+#'  "\\\\.wav$").
 #' @param textgrid_pattern Character. Pattern for TextGrid files (default:
-#  "\\\\.TextGrid$").
+#'  "\\\\.TextGrid$").
 #' @param by Character. Matching strategy: "basename" (default), "exact", or a
-#  custom function.
+#'  custom function.
 #' @param require_both Logical. Require both files to exist (default: TRUE).
 #'
 #' @return Data frame with columns: sound_file, textgrid_file, basename.
@@ -444,7 +444,7 @@ create_file_list <- function(directory, pattern = NULL,
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
 #' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
-#  16000)$save(
+#'  16000)$save(
 #'   file.path(audio_dir, "utt1.wav")
 #' )
 #' tg <- TextGrid$create(0, 0.3, "words")
@@ -518,29 +518,29 @@ pair_files <- function(sound_dir,
 #' Extract Measurements from Sound and TextGrid Pairs
 #'
 #' High-level function to extract acoustic measurements aligned with TextGrid
-#  intervals.
+#'  intervals.
 #' Automates the common Praat workflow of measuring formants/pitch at interval
-#  midpoints.
+#'  midpoints.
 #'
 #' @param sound Sound object or file path.
 #' @param textgrid TextGrid object or file path.
 #' @param tier Integer. Tier number to use for segmentation.
 #' @param measurements Character vector. Measurements to extract: "pitch",
-#  "formants", "intensity", etc.
+#'  "formants", "intensity", etc.
 #' @param time_point Character. Where to measure: "midpoint" (default), "start",
-#  "end", or "mean".
+#'  "end", or "mean".
 #' @param pitch_params List. Parameters for pitch extraction (time_step,
-#  pitch_floor, pitch_ceiling).
+#'  pitch_floor, pitch_ceiling).
 #' @param formant_params List. Parameters for formant extraction (max_formants,
-#  max_frequency, etc.).
+#'  max_frequency, etc.).
 #' @param intensity_params List. Parameters for intensity extraction.
 #'
 #' @return Data frame with one row per interval, columns for label and requested
-#  measurements.
+#'  measurements.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
-#  16000)
+#'  16000)
 #' tg <- textgrid_create(0, 0.6, "phones")
 #' tg$insert_boundary("phones", 0.3)
 #' tg$set_interval_text("phones", 1, "a")
@@ -624,7 +624,7 @@ extract_measurements <- function(sound,
 #' @param measurements Data frame from extract_measurements().
 #' @param by Character. Column to group by (default: "label").
 #' @param stats Character vector. Statistics to compute: "mean", "sd", "median",
-#  "min", "max", "n".
+#'  "min", "max", "n".
 #'
 #' @return Data frame with aggregated statistics.
 #'

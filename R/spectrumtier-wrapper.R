@@ -20,7 +20,7 @@
 #' @section Query methods:
 #' \itemize{
 #' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - the
-#  frequency range the peaks were picked from, in Hz
+#'  frequency range the peaks were picked from, in Hz
 #'   \item \code{get_number_of_points()} - number of peaks found
 #'   \item \code{get_frequency_from_index(index)} - frequency of one peak
 #'   \item \code{get_value_at_index(index)} - power of one peak, in dB
@@ -29,7 +29,7 @@
 #' @section Export:
 #' \itemize{
 #' \item \code{as_data_frame()} - all peaks as a data frame, with
-#  \code{frequency} and \code{power_db} columns
+#'  \code{frequency} and \code{power_db} columns
 #'   \item \code{as_matrix()} - the same data as a plain matrix
 #'   \item \code{save(path)} - write to a Praat text file
 #' }

@@ -10,13 +10,13 @@
 #'   Electroglottogram object; set internally when a method returns a new
 #'   Electroglottogram.
 #' @return An \code{Electroglottogram} object (triple-class
-#  \code{c("Electroglottogram",
+#'  \code{c("Electroglottogram",
 #' "Sound", "PraatObject")}) that inherits Sound's methods in addition to its
-#  own.
+#'  own.
 #'
 #' @examples
 #' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
-#  16000, x1 = 0)
+#'  16000, x1 = 0)
 #' egg$get_duration()
 #' egg$get_number_of_samples()
 #' egg$is_valid()
@@ -180,7 +180,7 @@ Electroglottogram <- function(.xptr = NULL) {
 #' @return Electroglottogram object
 #' @examples
 #' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
-#  16000, x1 = 0)
+#'  16000, x1 = 0)
 #' egg$get_duration()
 #' @export
 electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {

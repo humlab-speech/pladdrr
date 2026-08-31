@@ -15,18 +15,18 @@
 #'   \item \code{get_number_of_frames()} - number of analysis frames
 #'   \item \code{get_time_step()} - time step between frames, in seconds
 #' \item \code{count_voiced_frames()} - number of frames with voiced (non-zero)
-#  pitch
+#'  pitch
 #' }
 #'
 #' @section Point queries:
 #' \itemize{
 #' \item \code{get_value_at_time(time, unit, interpolate)} - F0 at a time point
 #' \item \code{get_values_at_times(times, unit, interpolate)} - F0 at a vector
-#  of times (batch)
+#'  of times (batch)
 #' \item \code{get_strength_at_time(time)} - strength (voicing likelihood) at a
-#  time
+#'  time
 #' \item \code{get_strengths_at_times(times)} - strengths at a vector of times
-#  (batch)
+#'  (batch)
 #' }
 #'
 #' @section Statistics:
@@ -34,19 +34,19 @@
 #' \itemize{
 #'   \item \code{get_mean(from_time, to_time, unit)} - mean F0
 #' \item \code{get_standard_deviation(from_time, to_time, unit)} - standard
-#  deviation
+#'  deviation
 #' \item \code{get_minimum(from_time, to_time, unit, interpolate)} - minimum F0
 #' \item \code{get_maximum(from_time, to_time, unit, interpolate)} - maximum F0
 #' \item \code{get_quantile(quantile, from_time, to_time, unit)} - quantile of
-#  F0
+#'  F0
 #' \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
-#  of extremum
+#'  of extremum
 #' }
 #'
 #' @section Export:
 #' \itemize{
 #' \item \code{as_vector()}, \code{as_data_frame()} - export as vector or
-#  data.frame
+#'  data.frame
 #'   \item \code{get_times_vector()} - frame time points
 #'   \item \code{as_matrix()} - F0 values as a matrix (frames by candidates)
 #' }
@@ -54,9 +54,9 @@
 #' @section Transform:
 #' \itemize{
 #' \item \code{to_point_process(voicing_threshold, octave_cost, ...)} - convert
-#  to a PointProcess (glottal pulses)
+#'  to a PointProcess (glottal pulses)
 #' \item \code{down_to_pitch_tier()} - convert to a PitchTier (editable pitch
-#  contour)
+#'  contour)
 #' }
 #'
 #' @section Units:
@@ -66,7 +66,7 @@
 #' \code{"erb"} (7). Default is \code{"hertz"}.
 #'
 #' @seealso \code{\link{Sound}}, \code{\link{PointProcess}},
-#  \code{\link{PitchTier}}
+#'  \code{\link{PitchTier}}
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Pitch object; set internally when a method returns a new Pitch.
@@ -74,9 +74,9 @@
 #'
 #' @examples
 #' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
-#  44100)
+#'  44100)
 #' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
-#  600)
+#'  600)
 #' mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 #' min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz")
 #' df <- as.data.frame(pitch)
@@ -84,7 +84,7 @@
 #' # The same analysis on a recording read from disk
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 #' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
-#  600)
+#'  600)
 #' n_voiced <- pitch$count_voiced_frames()
 #' 
 #' @name Pitch

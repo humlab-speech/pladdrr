@@ -8,7 +8,8 @@
 object; set internally when a method returns a new LFCC.}
 }
 \value{
-An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
+An \code{LFCC} object with methods for linear-frequency cepstral
+ coefficient analysis.
 }
 \description{
 Linear-frequency cepstral coefficients for speaker recognition.

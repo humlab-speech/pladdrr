@@ -16,13 +16,17 @@ pair_files(
 \arguments{
 \item{sound_dir}{Character. Directory containing sound files.}
 
-\item{textgrid_dir}{Character. Directory containing TextGrid files (default: same as sound_dir).}
+\item{textgrid_dir}{Character. Directory containing TextGrid files (default:
+same as sound_dir).}
 
-\item{sound_pattern}{Character. Pattern for sound files (default: "\\\\.wav$").}
+\item{sound_pattern}{Character. Pattern for sound files (default:
+"\\\\.wav$").}
 
-\item{textgrid_pattern}{Character. Pattern for TextGrid files (default: "\\\\.TextGrid$").}
+\item{textgrid_pattern}{Character. Pattern for TextGrid files (default:
+"\\\\.TextGrid$").}
 
-\item{by}{Character. Matching strategy: "basename" (default), "exact", or a custom function.}
+\item{by}{Character. Matching strategy: "basename" (default), "exact", or a
+custom function.}
 
 \item{require_both}{Logical. Require both files to exist (default: TRUE).}
 }
@@ -36,7 +40,8 @@ Equivalent to Praat's manual file pairing but automated.
 \examples{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)$save(
   file.path(audio_dir, "utt1.wav")
 )
 tg <- TextGrid$create(0, 0.3, "words")

@@ -16,7 +16,8 @@ get_formant_bandwidths_at_times(
 
 \item{times}{Numeric vector of time points (in seconds)}
 
-\item{formant_numbers}{Integer vector specifying which formants (default `1:4`)}
+\item{formant_numbers}{Integer vector specifying which formants (default
+`1:4`)}
 
 \item{unit}{Unit for bandwidth values: "hertz" (default) or "bark"}
 }
@@ -28,7 +29,8 @@ A list with one element per formant number (e.g., `B1`, `B2`, ...),
 Query formant bandwidths at multiple time points in a single function call.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 times <- seq(0.1, 0.4, length.out = 5)
 bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)

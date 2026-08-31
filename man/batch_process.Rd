@@ -18,7 +18,8 @@ batch_process(
 \arguments{
 \item{directory}{Character path to directory containing audio files}
 
-\item{pattern}{Regular expression pattern to match files (default: "\\\\.wav$")}
+\item{pattern}{Regular expression pattern to match files (default:
+"\\\\.wav$")}
 
 \item{func}{Function to apply to each file. Should accept a Sound object
 as first argument and return a named list or data frame row}
@@ -27,7 +28,8 @@ as first argument and return a named list or data frame row}
 
 \item{parallel}{Logical, use parallel processing (default: FALSE)}
 
-\item{ncores}{Integer, number of cores for parallel processing (default: NULL = all-1)}
+\item{ncores}{Integer, number of cores for parallel processing (default: NULL
+= all-1)}
 
 \item{progress}{Logical, show progress bar (default: TRUE)}
 
@@ -43,7 +45,8 @@ pattern of creating Strings objects and looping over files.
 \examples{
 audio_dir <- tempfile("audio_")
 dir.create(audio_dir)
-tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+ 16000)
 tone$save(file.path(audio_dir, "tone1.wav"))
 
 results <- batch_process(
@@ -54,7 +57,8 @@ results <- batch_process(
     pitch <- sound$to_pitch()
     list(
       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
-      sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit =
+ "hertz")
     )
   }
 )

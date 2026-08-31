@@ -21,13 +21,15 @@ get_pitch_stats_direct(
 \item{unit}{Character: "hertz", "semitones", "mel", "erb", "loghertz"}
 }
 \value{
-Named list with: min, max, mean, stdev, median, q25, q75, count_voiced
+Named list with: min, max, mean, stdev, median, q25, q75,
+ count_voiced
 }
 \description{
 Get all common pitch statistics in a single call, bypassing R6 dispatch.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch_cc()
 
 # Direct call

@@ -126,7 +126,7 @@
 #' DTW objects are created by aligning two acoustic objects:
 #' \itemize{
 #' \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most
-#  common)
+#'  common)
 #'   \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
 #'   \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
 #'   \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
@@ -136,9 +136,9 @@
 #'
 #' \itemize{
 #' \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference
-#  time
+#'  time
 #' \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate
-#  time
+#'  time
 #'   \item \code{$map_times(times, direction)} - vectorized time mapping
 #' }
 #'
@@ -190,7 +190,7 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   DTW object; set internally when wrapping an existing alignment.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}},
-#  \code{\link{MFCC}}
+#'  \code{\link{MFCC}}
 #' @export
 
 DTW <- function(.xptr = NULL) {
@@ -241,9 +241,9 @@ DTW <- function(.xptr = NULL) {
 #'
 #' @examples
 #' ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' dtw <- sounds_to_dtw(ref, test)
 #' print(dtw$get_weighted_distance())
 #'
@@ -275,18 +275,18 @@ sounds_to_dtw <- function(reference, candidate,
 #' @param coefficient_weight Weight for cepstral coefficients (default: 1.0)
 #' @param log_energy_weight Weight for log energy (c0) (default: 0.0)
 #' @param coefficient_regression_weight Weight for coefficient regression
-#  (default: 0.0)
+#'  (default: 0.0)
 #' @param log_energy_regression_weight Weight for energy regression (default:
-#  0.0)
+#'  0.0)
 #' @param regression_window_length Window for regression calculation (default:
-#  0.0)
+#'  0.0)
 #' @return A DTW object
 #'
 #' @examples
 #' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' dtw <- mfccs_to_dtw(s1$to_mfcc(), s2$to_mfcc())
 #'
 #' @export
@@ -323,9 +323,9 @@ mfccs_to_dtw <- function(mfcc1, mfcc2,
 #'
 #' @examples
 #' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
-#  16000)
+#'  16000)
 #' dtw <- spectrograms_to_dtw(s1$to_spectrogram(), s2$to_spectrogram())
 #'
 #' @export

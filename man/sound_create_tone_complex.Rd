@@ -23,20 +23,24 @@ sound_create_tone_complex(
 
 \item{phase}{Phase type: "sine" or "cosine" (default: "sine")}
 
-\item{first_frequency}{Lowest component frequency in Hz (default: 0, uses frequency_step)}
+\item{first_frequency}{Lowest component frequency in Hz (default: 0, uses
+frequency_step)}
 
 \item{ceiling}{Maximum frequency to include in Hz (default: Nyquist)}
 
-\item{number_of_components}{Number of components (default: 0 = all up to ceiling)}
+\item{number_of_components}{Number of components (default: 0 = all up to
+ceiling)}
 }
 \value{
 A Sound object
 }
 \description{
-Creates a sound consisting of multiple sinusoids at equal frequency intervals.
+Creates a sound consisting of multiple sinusoids at equal frequency
+ intervals.
 }
 \examples{
 # Harmonic tone with 10 components at 100 Hz intervals
-tone <- sound_create_tone_complex(frequency_step = 100, number_of_components = 10)
+tone <- sound_create_tone_complex(frequency_step = 100, number_of_components
+ = 10)
 tone <- Sound$create_tone_complex(frequency_step = 200, phase = "cosine")
 }

@@ -18,7 +18,8 @@ get_formants_at_times(formant, times, formant_numbers = 1:4, unit = "hertz")
 }
 \value{
 A list with one element per formant number (e.g., `F1`, `F2`, ...),
-  each containing a numeric vector of formant frequencies at the specified times.
+each containing a numeric vector of formant frequencies at the specified
+ times.
 }
 \description{
 Query formant frequencies (F1, F2, F3, F4, etc.) at multiple time points
@@ -32,7 +33,8 @@ This function reduces R<->C++ boundary crossings from `4n` calls
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 formant <- sound$to_formant_burg()
 
 # Extract F1-F4 at 5 time points

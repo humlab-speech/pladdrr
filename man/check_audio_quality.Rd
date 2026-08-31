@@ -14,9 +14,11 @@ check_audio_quality(
 \arguments{
 \item{sound}{A Sound object to analyze}
 
-\item{clipping_threshold}{Amplitude threshold for clipping detection (default 0.99)}
+\item{clipping_threshold}{Amplitude threshold for clipping detection (default
+0.99)}
 
-\item{intensity_floor}{Minimum pitch for intensity calculation (default 100 Hz)}
+\item{intensity_floor}{Minimum pitch for intensity calculation (default 100
+Hz)}
 
 \item{time_step}{Time step for intensity analysis (0 = auto, default 0.0)}
 }
@@ -37,20 +39,24 @@ A list with the following components:
 }
 }
 \description{
-Analyzes a Sound object for common quality issues and returns diagnostic metrics.
+Analyzes a Sound object for common quality issues and returns diagnostic
+ metrics.
 This function provides basic quality control checks useful for validating
 recording quality in production pipelines.
 }
 \details{
 This function is designed to catch common recording problems:
 
-**Clipping Detection**: Identifies if the signal exceeds a threshold (default 0.99).
+**Clipping Detection**: Identifies if the signal exceeds a threshold (default
+ 0.99).
 Clipped recordings have distorted peaks and should typically be re-recorded.
 
-**Intensity Analysis**: Uses Praat's intensity measurement to assess signal strength.
+**Intensity Analysis**: Uses Praat's intensity measurement to assess signal
+ strength.
 Very low mean intensity may indicate recording level problems.
 
-**Dynamic Range**: The difference between maximum and minimum intensity can help
+**Dynamic Range**: The difference between maximum and minimum intensity can
+ help
 identify recordings with poor signal-to-noise ratio or excessive compression.
 
 **Quality Criteria** (general guidelines):
@@ -61,7 +67,8 @@ identify recordings with poor signal-to-noise ratio or excessive compression.
 }
 \examples{
 \donttest{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 quality <- check_audio_quality(sound)
 
 cat("Audio Quality Report:\n")

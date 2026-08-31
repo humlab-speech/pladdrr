@@ -23,25 +23,33 @@ extract_measurements(
 
 \item{tier}{Integer. Tier number to use for segmentation.}
 
-\item{measurements}{Character vector. Measurements to extract: "pitch", "formants", "intensity", etc.}
+\item{measurements}{Character vector. Measurements to extract: "pitch",
+"formants", "intensity", etc.}
 
-\item{time_point}{Character. Where to measure: "midpoint" (default), "start", "end", or "mean".}
+\item{time_point}{Character. Where to measure: "midpoint" (default), "start",
+"end", or "mean".}
 
-\item{pitch_params}{List. Parameters for pitch extraction (time_step, pitch_floor, pitch_ceiling).}
+\item{pitch_params}{List. Parameters for pitch extraction (time_step,
+pitch_floor, pitch_ceiling).}
 
-\item{formant_params}{List. Parameters for formant extraction (max_formants, max_frequency, etc.).}
+\item{formant_params}{List. Parameters for formant extraction (max_formants,
+max_frequency, etc.).}
 
 \item{intensity_params}{List. Parameters for intensity extraction.}
 }
 \value{
-Data frame with one row per interval, columns for label and requested measurements.
+Data frame with one row per interval, columns for label and requested
+ measurements.
 }
 \description{
-High-level function to extract acoustic measurements aligned with TextGrid intervals.
-Automates the common Praat workflow of measuring formants/pitch at interval midpoints.
+High-level function to extract acoustic measurements aligned with TextGrid
+ intervals.
+Automates the common Praat workflow of measuring formants/pitch at interval
+ midpoints.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+ 16000)
 tg <- textgrid_create(0, 0.6, "phones")
 tg$insert_boundary("phones", 0.3)
 tg$set_interval_text("phones", 1, "a")

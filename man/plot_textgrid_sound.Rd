@@ -21,7 +21,8 @@ plot_textgrid_sound(
 
 \item{sound}{Sound object}
 
-\item{tier}{Integer or character. Tier number or name to display (default: all)}
+\item{tier}{Integer or character. Tier number or name to display (default:
+all)}
 
 \item{from_time}{Start time in seconds (NULL = from beginning)}
 

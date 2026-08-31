@@ -21,12 +21,15 @@ objects are selected.
 
 **IMPORTANT for VUV Analysis:** This function uses the refined pitch contour
 to guide period detection, which is more accurate than using pitch range
-parameters alone. This is the correct method for voice quality analysis (jitter,
+parameters alone. This is the correct method for voice quality analysis
+ (jitter,
 shimmer, VUV detection).
 
 **Algorithm Difference:**
-- `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch range
-- `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch contour (recommended)
+- `sound$to_point_process_periodic_cc(floor, ceiling)` - Uses only pitch
+ range
+- `to_point_process_from_sound_and_pitch(sound, pitch)` - Uses refined pitch
+ contour (recommended)
 }
 \examples{
 sound <- Sound$create_tone(frequency = 200, duration = 0.5)
@@ -48,5 +51,6 @@ jitter <- pp_r6$get_jitter_local()
 
 }
 \seealso{
-\code{\link{to_point_process_direct}} for the single-object Sound method
+\code{\link{to_point_process_direct}} for the single-object Sound
+ method
 }

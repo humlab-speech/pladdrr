@@ -22,7 +22,8 @@ Copies Sound data into a matrix (samples x channels) via direct
 pointer access.
 }
 \examples{
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+ 16000)
 mat <- sound_as_matrix_fast(sound)
 
 }

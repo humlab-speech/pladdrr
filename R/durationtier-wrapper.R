@@ -12,13 +12,13 @@
 #' }
 #'
 #' @param tmin Start time in seconds. Used with \code{tmax} to create a new,
-#  empty DurationTier.
+#'  empty DurationTier.
 #' @param tmax End time in seconds. Used with \code{tmin} to create a new, empty
-#  DurationTier.
+#'  DurationTier.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #' DurationTier object; set internally when a method returns a new DurationTier.
 #' @return A \code{DurationTier} object with methods for duration and tempo
-#  manipulation via time-value points.
+#'  manipulation via time-value points.
 #'
 #' @examples
 #' dt <- DurationTier(0, 1)

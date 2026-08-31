@@ -15,7 +15,8 @@ get_pitch_quantiles_batch(
 \arguments{
 \item{pitch}{A Pitch object}
 
-\item{quantiles}{Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)}
+\item{quantiles}{Numeric vector of quantile values (e.g., c(0.25, 0.75) for
+Q1 and Q3)}
 
 \item{from_time}{Start time (0 = beginning of pitch object)}
 
@@ -25,7 +26,8 @@ get_pitch_quantiles_batch(
 "semitones", or "erb"}
 }
 \value{
-Named numeric vector with quantile values (names like "q0.25", "q0.75")
+Named numeric vector with quantile values (names like "q0.25",
+ "q0.75")
 }
 \description{
 Extract multiple quantiles (e.g., Q1, Q3) from a Pitch object in a single
@@ -52,7 +54,8 @@ pitch_refined <- to_pitch_cc_direct(
 }
 
 \examples{
-sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+ 16000)
 pitch <- sound$to_pitch()
 
 # Get Q1, median, Q3 in one call

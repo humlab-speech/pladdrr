@@ -18,7 +18,7 @@
 #' @examples
 #' # Old S3 approach (DEPRECATED, shown for reference)
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 #'
 #' # New R6 approach (RECOMMENDED)
@@ -52,7 +52,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600,
 #' @return Pitch value or NA
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' get_pitch_at_time(pitch, 0.25)
 #' @export
@@ -74,7 +74,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' @return Mean pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_mean_pitch(pitch))
 #' @export
@@ -98,7 +98,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @return Minimum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_min_pitch(pitch))
 #' @export
@@ -122,7 +122,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @return Maximum pitch value
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
-#  16000)
+#'  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_max_pitch(pitch))
 #' @export
